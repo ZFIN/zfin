@@ -4,6 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
+import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
 import org.zfin.gwt.root.dto.*;
 
 import java.util.List;
@@ -64,5 +65,6 @@ public interface CurationDiseaseRPC extends RemoteService {
     List<FishDTO> getFishList(String publicationID);
 
     List<DiseaseAnnotationDTO> deleteDiseaseModel(DiseaseAnnotationDTO diseaseAnnotationDTO) throws TermNotFoundException;
+    List<DiseaseAnnotationDTO> deleteDiseaseAnnotationModel(DiseaseAnnotationModelDTO diseaseAnnotationModelDTO) throws TermNotFoundException;
 
 }

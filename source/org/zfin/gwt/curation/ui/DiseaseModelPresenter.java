@@ -141,6 +141,10 @@ public class DiseaseModelPresenter implements Presenter {
         for (Button deleteButton : map.keySet()) {
             deleteButton.addClickHandler(new HumanDiseaseModelDeleteClickListener(map.get(deleteButton)));
         }
+        Map<Button, DiseaseAnnotationModelDTO> map1 = view.getDeleteModeMap1();
+        for (Button deleteButton1 : map1.keySet()) {
+            deleteButton1.addClickHandler(new HumanDiseaseAnnotationModelDeleteClickListener(map1.get(deleteButton1)));
+        }
 
         Map<Hyperlink, DiseaseAnnotationDTO> linkMap = view.getTermLinkDiseaseModelMap();
         for (Hyperlink link : linkMap.keySet()) {
@@ -366,6 +370,36 @@ public class DiseaseModelPresenter implements Presenter {
             processing = false;
         }
     }
+    class RetrieveDiseaseAnnotationModelListCallBack extends ZfinAsyncCallback<List<DiseaseAnnotationModelDTO>> {
+
+        public RetrieveDiseaseAnnotationModelListCallBack(String errorMessage, ErrorHandler errorLabel) {
+            super(errorMessage, errorLabel, view.loadingImage);
+        }
+
+
+        public void onSuccess(List<DiseaseAnnotationDTO> modelDTOs) {
+            if (modelDTOs == null) {
+                diseaseModelList.clear();
+            } else {
+                diseaseModelList = modelDTOs;
+                Set<TermDTO> diseaseList = new HashSet<>(modelDTOs.size());
+                for (DiseaseAnnotationDTO dto : modelDTOs) {
+                    diseaseList.add(dto.getDisease());
+                }
+            }
+            view.updateDiseaseModelTableContent(modelDTOs);
+            updateDiseaseList(diseaseList);
+            view.getLoadingImage().setVisible(false);
+            addDynamicClickHandler();
+            processing = false;
+        }
+
+        @Override
+        public void onFailure(Throwable throwable) {
+            super.onFailure(throwable);
+            processing = false;
+        }
+    }
 
     private class HumanDiseaseModelDeleteClickListener implements ClickHandler {
 
@@ -380,7 +414,18 @@ public class DiseaseModelPresenter implements Presenter {
         }
     }
 
+    private class HumanDiseaseAnnotationModelDeleteClickListener implements ClickHandler {
 
+        private DiseaseAnnotationModelDTO diseaseAnnotationModelDTO;
+
+        public HumanDiseaseAnnotationModelDeleteClickListener(DiseaseAnnotationModelDTO diseaseAnnotationModelDTO) {
+            this.diseaseAnnotationModelDTO = diseaseAnnotationModelDTO;
+        }
+
+        public void onClick(ClickEvent event) {
+            diseaseRpcService.deleteDiseaseAnnotationModel(diseaseAnnotationModelDTO, new RetrieveDiseaseAnnotationModelListCallBack("Could not delete Disease model", view.getErrorLabel()));
+        }
+    }
     private class PopulateTermEntryClickListener implements ClickHandler {
 
         private TermDTO termDTO;

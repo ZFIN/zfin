@@ -11,9 +11,27 @@ public class DiseaseAnnotationModelDTO implements IsSerializable {
     private DiseaseAnnotationDTO dat;
 
     private FishDTO fish;
-
+    private long damoID;
 
     private EnvironmentDTO environment;
+
+    public long getDamoID() {
+        return damoID;
+    }
+
+    public void setDamoID(long damoID) {
+        this.damoID = damoID;
+    }
+
+    public DiseaseAnnotationDTO getDat() {
+
+        return dat;
+    }
+
+    public void setDat(DiseaseAnnotationDTO dat) {
+        this.dat = dat;
+    }
+
     public FishDTO getFish() {
         return fish;
     }

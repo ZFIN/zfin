@@ -1341,6 +1341,7 @@ public class DTOConversionService {
         DiseaseAnnotationModelDTO entity = new DiseaseAnnotationModelDTO();
         entity.setEnvironment(convertToEnvironmentDTO(str.getFishExperiment().getExperiment()));
         entity.setFish(convertToFishDtoFromFish(str.getFishExperiment().getFish()));
+        entity.setDamoID(str.getID());
         return entity;
     }
     public static Fish convertToFishFromFishDTO(FishDTO newFish) {
@@ -1447,17 +1448,17 @@ public class DTOConversionService {
         dto.setDisease(convertToTermDTO(model.getDisease()));
         dto.setEvidenceCode(model.getEvidenceCode());
         dto.setZdbID(model.getZdbID());
-        if (model.getDiseaseAnnotationModel() != null){
-
-            List<DiseaseAnnotationModelDTO> damoDTO = new ArrayList<>(model.getDiseaseAnnotationModel().size());
+       /* dto.setFish(null);
+        dto.setEnvironment(null);*/
+        if (CollectionUtils.isNotEmpty(model.getDiseaseAnnotationModel())) {
+            List<DiseaseAnnotationModelDTO> damoDTO = new ArrayList<>(model.getDiseaseAnnotationModel().size());;
             for (DiseaseAnnotationModel damo : model.getDiseaseAnnotationModel()) {
                 damoDTO.add(DTOConversionService.convertDamoToDamoDTO(damo));
             }
             dto.setDamoDTO(damoDTO);
         }
 
-
-        return dto;
+       return dto;
     }
 
     public static ZygosityDTO convertToZygosityDTO(Zygosity zygosity) {

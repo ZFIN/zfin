@@ -1486,10 +1486,11 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public void createDiseaseModel(DiseaseAnnotation diseaseAnnotation) {
         DiseaseAnnotation existsDiseaseAnnotation = getMutantRepository().getDiseaseModel(diseaseAnnotation);
-        if (existsDiseaseAnnotation==null) {
+        if (existsDiseaseAnnotation == null){
             HibernateUtil.currentSession().save(diseaseAnnotation);
-            getInfrastructureRepository().insertRecordAttribution(diseaseAnnotation.getZdbID(), diseaseAnnotation.getPublication().getZdbID());
-        }
+        getInfrastructureRepository().insertRecordAttribution(diseaseAnnotation.getZdbID(), diseaseAnnotation.getPublication().getZdbID());
+    }
+//
         /*if (diseaseAnnotation.getFishExperiment() != null) {
             FishExperiment existingModel = getMutantRepository().getFishModel(diseaseAnnotation.getFishExperiment().getFish().getZdbID(),
                     diseaseAnnotation.getFishExperiment().getExperiment().getZdbID());
@@ -1499,7 +1500,8 @@ public class HibernateMutantRepository implements MutantRepository {
                 diseaseAnnotation.setFishExperiment(existingModel);
             }
         }*/
-       //  DiseaseAnnotation existingDiseaseAnnotation = getMutantRepository().getDiseaseModel(diseaseAnnotation);
+
+         DiseaseAnnotation existingDiseaseAnnotation = getMutantRepository().getDiseaseModel(diseaseAnnotation);
     }
 
     @Override
@@ -1553,10 +1555,18 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
+    public DiseaseAnnotationModel getDiseaseAnnotationModelByID(Long id) {
+        return (DiseaseAnnotationModel) HibernateUtil.currentSession().get(DiseaseAnnotationModel.class, id);
+    }
+
+    @Override
     public void deleteDiseaseModel(DiseaseAnnotation diseaseAnnotation) {
         HibernateUtil.currentSession().delete(diseaseAnnotation);
     }
-
+    @Override
+    public void deleteDiseaseAnnotationModel(DiseaseAnnotationModel diseaseAnnotationModel) {
+        HibernateUtil.currentSession().delete(diseaseAnnotationModel);
+    }
     @Override
     public List<DiseaseAnnotation> getDiseaseModel(String fishID, String pubID) {
         Query query = HibernateUtil.currentSession().createQuery("select diseaseAnnotation" +

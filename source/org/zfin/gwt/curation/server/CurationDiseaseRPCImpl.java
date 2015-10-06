@@ -9,6 +9,7 @@ import org.zfin.ExternalNote;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
+import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
 import org.zfin.gwt.curation.ui.CurationDiseaseRPC;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
@@ -294,15 +295,11 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
         try {
             HibernateUtil.createTransaction();
             diseaseAnnotation = DTOConversionService.convertToDiseaseFromDiseaseDTO(diseaseAnnotationDTO);
+
             getMutantRepository().createDiseaseModel(diseaseAnnotation);
 
-            String daZDB=diseaseAnnotation.getZdbID();
-
             if (diseaseAnnotationDTO.getFish() != null && diseaseAnnotationDTO.getFish().getZdbID() != null) {
-                // dam.setDiseaseAnnotation(getMutantRepository().getDiseaseModelByID(daZDB));
-
                 dam = DTOConversionService.convertToDiseaseModelFromDiseaseDTO(diseaseAnnotationDTO);
-
                 FishExperiment existingModel = getMutantRepository().getFishModel(dam.getFishExperiment().getFish().getZdbID(),
                         dam.getFishExperiment().getExperiment().getZdbID());
                 if (existingModel == null) {
@@ -312,29 +309,25 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
                 } else {
                     dam.setFishExperiment(existingModel);
                 }
-
-
                 DiseaseAnnotation existingDiseaseAnnotation = getMutantRepository().getDiseaseModel(diseaseAnnotation);
                 dam.setDiseaseAnnotation(existingDiseaseAnnotation);
-
                 HibernateUtil.currentSession().save(dam);
             }
                 HibernateUtil.flushAndCommitCurrentSession();
-
-
         }catch (ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
-           if (dam==null){
-                if (diseaseAnnotation != null)
+
+              /*  if (diseaseAnnotation != null)
                     throw new TermNotFoundException("Could not insert fish model [" + diseaseAnnotation + "] as it already exists.");
                 else
                     throw new TermNotFoundException("Could not insert fish model");
-
-        }}
-        catch (Exception e) {
+*/
+        }
+       /* catch (Exception e) {
             HibernateUtil.rollbackTransaction();
             throw new TermNotFoundException(e.getMessage());
-        }return getHumanDiseaseModelList(diseaseAnnotationDTO.getPublication().getZdbID());
+        }*/
+    return getHumanDiseaseModelList(diseaseAnnotationDTO.getPublication().getZdbID());
 
     }
 
@@ -390,6 +383,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             DiseaseAnnotation diseaseAnnotation = getMutantRepository().getDiseaseModelByID(diseaseAnnotationDTO.getZdbID());
             if (diseaseAnnotation == null)
                 throw new TermNotFoundException("No disease model found ");
+
             getMutantRepository().deleteDiseaseModel(diseaseAnnotation);
             tx.commit();
         } catch (HibernateException e) {
@@ -397,5 +391,22 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
         }
         return getHumanDiseaseModelList(diseaseAnnotationDTO.getPublication().getZdbID());
     }
+    public List<DiseaseAnnotationDTO> deleteDiseaseAnnotationModel(DiseaseAnnotationModelDTO diseaseAnnotationModelDTO) throws TermNotFoundException {
+        if (diseaseAnnotationModelDTO == null)
+            throw new TermNotFoundException("No disease model found");
+        DiseaseAnnotationModel diseaseAnnotationModel = getMutantRepository().getDiseaseAnnotationModelByID(diseaseAnnotationModelDTO.getDamoID());
+        DiseaseAnnotation dA=diseaseAnnotationModel.getDiseaseAnnotation();
 
+        Transaction tx = HibernateUtil.currentSession().beginTransaction();
+        try {
+
+            if (diseaseAnnotationModel == null)
+                throw new TermNotFoundException("No disease model found ");
+            getMutantRepository().deleteDiseaseAnnotationModel(diseaseAnnotationModel);
+            tx.commit();
+        } catch (HibernateException e) {
+            tx.rollback();
+        }
+        return getHumanDiseaseModelList(dA.getPublication().getZdbID());
+    }
 }
