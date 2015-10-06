@@ -199,11 +199,6 @@ insert into ortholog_external_reference (oef_ortho_zdb_id, oef_accession_number,
    where ncbigeneid = ortho_other_species_ncbi_gene_id
    ;
 
-
-
-
-
-
 commit work;
 
 --rollback work;
