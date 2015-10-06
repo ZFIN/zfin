@@ -3,7 +3,7 @@ create trigger disease_annotation_insert_trigger insert
     
     for each row
         (
-        execute procedure p_disease_annotation_term_is_from_do(new_da.da_term_zdb_id),
+        execute procedure p_disease_annotation_term_is_from_do(new_da.dat_term_zdb_id),
 	execute procedure p_insert_into_record_attribution_datazdbids(
                         new_da.dat_term_zdb_id,
                         new_da.dat_pub_zdb_id)
