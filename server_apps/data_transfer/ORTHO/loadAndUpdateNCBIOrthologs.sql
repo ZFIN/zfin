@@ -180,14 +180,14 @@ update tmp_ortho_xref
 delete from tmp_ortho_xref
  where fdbcont_id is null;
 
-unload to orthologExternalReferencesGoingAway.txt
- select ortho_zdb_id, noi_symbol, oef_accession_number 
-   from ortholog, ortholog_external_reference, ncbi_ortholog
-   where ortho_zdb_id = oef_ortho_Zdb_id
-   and ortho_other_species_ncbi_gene_id = noi_ncbi_gene_id
-   and not exists (Select 'x' from tmp_ortho_xref
-       	   	  	  where oef_accession_number = xrefaccnum
-			  and oef_fdbcont_zdb_id = fdbcont_id);
+--unload to orthologExternalReferencesGoingAway.txt
+-- select ortho_zdb_id, noi_symbol, oef_accession_number 
+--   from ortholog, ortholog_external_reference, ncbi_ortholog
+--   where ortho_zdb_id = oef_ortho_Zdb_id
+--   and ortho_other_species_ncbi_gene_id = noi_ncbi_gene_id
+--   and not exists (Select 'x' from tmp_ortho_xref
+--       	   	  	  where oef_accession_number = xrefaccnum
+--			  and oef_fdbcont_zdb_id = fdbcont_id);
 
 
 delete from ortholog_external_reference;
