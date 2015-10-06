@@ -112,7 +112,7 @@ delete from tmp_ortho_xref
  where fdbcont_id is null;
 
 unload to orthologExternalReferencesGoingAway.txt
- select ortho_zdb_id, ortho_symbol, oef_accession_number 
+ select ortho_zdb_id, noi_symbol, oef_accession_number 
    from ortholog, ortholog_external_reference, ncbi_ortholog
    where ortho_zdb_id = oef_ortho_Zdb_id
    and ortho_other_species_ncbi_gene_id = noi_ncbi_gene_id
@@ -125,7 +125,7 @@ delete from ortholog_external_reference;
   
 
 insert into ortholog_external_reference (oef_ortho_zdb_id, oef_accession_number, oef_fdbcont_zdb_id)
-  select ortho_zdb_id, xrefaccnum, fdbcont_id
+  select ortholog.ortho_zdb_id, xrefaccnum, fdbcont_id
    from ortholog, tmp_ortho_xref
    where ncbigeneid = ortho_other_species_ncbi_gene_id
    ;
