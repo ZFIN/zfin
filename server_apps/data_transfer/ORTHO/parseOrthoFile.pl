@@ -17,6 +17,7 @@ sub parseOrthoFiles() {
 system("rm -rf <!--|TARGETROOT|-->/server_apps/data_transfer/ORTHO/parsedOrthos.txt");
 open (NCBI, "<!--|TARGETROOT|-->/server_apps/data_transfer/ORTHO/ortholog_info") ||  die "Cannot open ortholog_info : $!\n";
 open PARSED, "><!--|TARGETROOT|-->/server_apps/data_transfer/ORTHO/parsedOrthos.txt" or die "Cannot open parsed ortho file : $!\n" ;
+open CHECK, "><!--|TARGETROOT|-->/server_apps/data_transfer/ORTHO/check.txt" or die "Cannot open parsed ortho file : $!\n" ;
 $ctLines = $ctHumanGenes = $ctMouseGenes = $ctFlyGenes = 0;
 
 while (<NCBI>) {
@@ -30,6 +31,7 @@ while (<NCBI>) {
   $ctLines++;
   
   $ncbiGeneId = $fieldsNCBI[1];
+  $symbolNonOfficial = $fieldsNCBI[2];
   $xrefsAll = $fieldsNCBI[5];
   $chromosome = $fieldsNCBI[6];
   $position = $fieldsNCBI[7];
@@ -45,7 +47,8 @@ while (<NCBI>) {
       @xrefParts = split (/\:/, $xref);
       $xrefDbname = $xrefParts[0];
       $xrefAccNum = $xrefParts[1];
-      print PARSED join ("\t",$taxonId,$ncbiGeneId,$chromosome,$position,$symbol,$name,$xrefDbname,$xrefAccNum,$xref,$lastUpdated)."|\n";
+      print PARSED join ("\t",$taxonId,$ncbiGeneId,$chromosome,$position,$symbol,$name,$xrefDbname,$xrefAccNum,$xref,$lastUpdated)."\n";
+      print CHECK join ("\t",$taxonId,$ncbiGeneId,$symbolNonOfficial,$symbol)."\n";
   }
  
 }
