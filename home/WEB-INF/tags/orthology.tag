@@ -9,7 +9,6 @@
 <%@ attribute name="title" required="false" %>
 <%@ attribute name="showTitle" required="false" type="java.lang.Boolean" %>
 <%@ attribute name="hideEvidence" required="false" type="java.lang.Boolean" %>
-<%@ attribute name="update" required="false" type="java.lang.Boolean" %>
 
 <c:if test="${empty title && showTitle}">
     <c:set var="title" value="ORTHOLOGY"/>
@@ -119,40 +118,12 @@
 
     <c:set var="hasNote"
            value="${!empty orthologyPresentationBean.notes and !empty orthologyPresentationBean.notes[0]}"/>
-    <c:choose>
-        <c:when test="${empty update or !update}">
-            <c:if test="${hasNote}">
-                <div class="summary">
-                    <b>Orthology Note</b><a class="popup-link data-popup-link"
-                                            href="/action/marker/note/external/${marker.zdbID}"></a>
-                </div>
-            </c:if>
-        </c:when>
-        <c:otherwise>
-            <div class="summary">
-                <b>Orthology Note</b>
-                <div>
-                <c:choose>
-                    <c:when test="${hasNote}">
-                        <c:forEach items="${orthologyPresentationBean.notes}" var="note">
-                            <div>${note}</div>
-                            <div>
-                                <a href="/action/orthology/view-note-form/${marker.zdbID}">
-                                    Edit Orthology Note
-                                </a>
-                            </div>
-                        </c:forEach>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="/action/orthology/view-note-form/${marker.zdbID}">
-                            Create Orthology Note
-                        </a>
-                    </c:otherwise>
-                </c:choose>
-                </div>
-            </div>
-        </c:otherwise>
-    </c:choose>
+    <c:if test="${hasNote}">
+        <div class="summary">
+            <b>Orthology Note</b><br>
+            ${orthologyPresentationBean.notes[0]}
+        </div>
+    </c:if>
 
 
 </zfin2:subsection>

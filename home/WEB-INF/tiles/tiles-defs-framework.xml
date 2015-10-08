@@ -12,7 +12,6 @@
     <definition name="def-pub.page" template="/WEB-INF/jsp-include/def-pub.jsp"/>
     <definition name="ajax/login-required" template="/WEB-INF/jsp/ajax_login_required.jsp"/>
     <definition name="mapping-summary.simple-page" template="/WEB-INF/jsp/mapping/mapping-summary.jsp"/>
-    <definition name="marker-orthology.simple-page" template="/WEB-INF/jsp/marker/marker-orthology.jsp"/>
 
     <definition name="record-not-found.page" extends="main_layout">
         <put-attribute name="staticTitle" value="Record Not Found"/>

@@ -509,15 +509,16 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return externalNote;
     }
 
-    public void createOrUpdateOrthologyExternalNote(Marker gene, String note) {
+    public OrthologyNote createOrUpdateOrthologyExternalNote(Marker gene, String note) {
         logger.debug("add orthology note");
         Person currentUser = ProfileService.getCurrentSecurityUser();
         if (currentUser == null)
             throw new RuntimeException("Cannot add an orthology note without an authenticated user");
 
+        OrthologyNote extnote;
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         if (gene.getOrthologyNotes() == null || gene.getOrthologyNotes().size() == 0) {
-            OrthologyNote extnote = new OrthologyNote();
+            extnote = new OrthologyNote();
             extnote.setMarker(gene);
             extnote.setNote(note);
             extnote.setType(ExternalNote.Type.ORTHOLOGY.toString());
@@ -534,11 +535,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
             markerExternalNotes.add(extnote);
             gene.setOrthologyNotes(markerExternalNotes);
         } else {
-            OrthologyNote extNote = gene.getOrthologyNotes().iterator().next();
+            extnote = gene.getOrthologyNotes().iterator().next();
             String oldNote = gene.getOrthologyNotes().iterator().next().getNote();
-            extNote.setNote(note);
+            extnote.setNote(note);
             ir.insertUpdatesTable(gene, "notes", "", note, oldNote);
         }
+        return extnote;
     }
 
     public void editAntibodyExternalNote(String notezdbid, String note) {

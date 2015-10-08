@@ -2,8 +2,8 @@ package org.zfin.marker.repository;
 
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
-import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructComponent;
+import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.presentation.ConstructComponentPresentation;
 import org.zfin.feature.Feature;
 import org.zfin.framework.presentation.LookupEntry;
@@ -103,7 +103,7 @@ public interface MarkerRepository {
      * @param gene gene
      * @param note note text
      */
-    void createOrUpdateOrthologyExternalNote(Marker gene, String note);
+    OrthologyNote createOrUpdateOrthologyExternalNote(Marker gene, String note);
 
     void editAntibodyExternalNote(String notezdbid, String note);
 
