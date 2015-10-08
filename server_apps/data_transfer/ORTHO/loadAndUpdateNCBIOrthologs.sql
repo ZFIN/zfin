@@ -12,6 +12,8 @@ create temp table tmp_orthos (taxonId int,
 			      lastUpdated varchar(20))
 with no log;
 
+
+
 --have to tab delimit the file because pipes are used throughout 
 --the chromosome and position fields
 
@@ -26,13 +28,46 @@ update tmp_orthos
   set xrefDbname= 'OMIM'
  where xrefdbname = 'MIM';
 
-create index ncbi_gene_id_tmp_index
- on tmp_orthos(ncbiGeneId)
+create temp table just_ncbi_info (taxonId int, 
+       	    	  	      ncbiGeneId varchar(50),
+			      chromosome varchar(10),
+			      position varchar(50),
+			      symbol varchar(255),
+			      name varchar(255))
+with no log;
+
+create index tmp_chrom_index
+ on just_ncbi_info (chromosome)
+using btree in idxdbs1;
+
+create index tmp_position_index
+ on just_ncbi_info (position)
+using btree in idxdbs2;
+
+create index tmp_symbol_index
+ on just_ncbi_info(symbol)
  using btree in idxdbs2;
 
-create index ncbi_symbol_tmp_index
-  on tmp_orthos (symbol)
+create index tmp_name_index
+ on just_ncbi_info(name)
  using btree in idxdbs1;
+
+create index tmp_ncbigeneid_index
+ on just_ncbi_info(ncbigeneid)
+ using btree in idxdbs3;
+
+
+insert into just_ncbi_info 
+  select distinct taxonId, 
+       	    	  	      ncbiGeneId,
+			      chromosome,
+			      position,
+			      symbol,
+			      name
+  from tmp_orthos;
+
+update statistics high for table just_ncbi_info;
+update statistics high for table ncbi_ortholog;
 
 unload to changedSymbols.txt
 select ncbiGeneId, name, symbol
@@ -42,62 +77,94 @@ select ncbiGeneId, name, symbol
 
 update ncbi_ortholog
   set noi_chromosome = (Select distinct chromosome
-				from tmp_orthos
+				from just_ncbi_info
 				where noi_ncbi_gene_id = ncbiGeneId)
-where exists (Select 'x' from tmp_orthos
+where exists (Select 'x' from just_ncbi_info
       	     	     where noi_ncbi_Gene_id = ncbiGeneId);
 
 update ncbi_ortholog
   set noi_position = (Select distinct position
-				from tmp_orthos
+				from just_ncbi_info
 				where noi_ncbi_gene_id = ncbiGeneId)
-where exists (Select 'x' from tmp_orthos
+where exists (Select 'x' from just_ncbi_info
       	     	     where noi_ncbi_Gene_id = ncbiGeneId);
 
 
 
 update ncbi_ortholog
   set noi_symbol = (Select distinct symbol
-				from tmp_orthos
+				from just_ncbi_info
 				where noi_ncbi_gene_id = ncbiGeneId)
-where exists (Select 'x' from tmp_orthos
+where exists (Select 'x' from just_ncbi_info
       	     	     where noi_ncbi_Gene_id = ncbiGeneId);
 
 
 update ncbi_ortholog
   set noi_name = (Select distinct name
-				from tmp_orthos
+				from just_ncbi_info
 				where noi_ncbi_gene_id = ncbiGeneId)
-where exists (Select 'x' from tmp_orthos
+where exists (Select 'x' from just_ncbi_info
       	     	     where noi_ncbi_Gene_id = ncbiGeneId);
 
 
 unload to missingNCBIIds.txt
  select noi_ncbi_gene_id, noi_symbol
    from ncbi_ortholog
- where not exists (Select 'x' from tmp_orthos
+ where not exists (Select 'x' from just_ncbi_info
        	   	  	  where ncbiGeneId = noi_ncbi_gene_id);
 
 delete from ncbi_ortholog
- where not exists (Select 'x' from tmp_orthos
+ where not exists (Select 'x' from just_ncbi_info
        	   	  	  where ncbiGeneId = noi_ncbi_gene_id);
 
 
 insert into ncbi_ortholog (noi_ncbi_gene_id, noi_chromosome, noi_position, noi_symbol, noi_name, noi_taxid)
  select distinct ncbiGeneId, chromosome, position, symbol, name, taxonid
-   from tmp_orthos
+   from just_ncbi_info
   where not exists (Select 'x' from ncbi_ortholog
   	    	   	   where ncbigeneid = noi_ncbi_gene_id);
 
 
 ---Now we do external references.
 
-create temp table tmp_ortho_xref (ortho_zdb_id varchar(50), ncbigeneid varchar(50), fdbcont_id varchar(50), xrefDbname varchar(50), xrefaccnum varchar(50))
+create temp table tmp_ortho_xref (ortho_zdb_id varchar(50), ncbigeneid varchar(50), fdbcont_id varchar(50), xrefDbname varchar(50), xrefaccnum varchar(50), taxonid varchar(50))
 with no log;
 
-insert into tmp_ortho_xref (ncbigeneid, xrefdbname, xrefaccnum)
- select distinct ncbigeneid, xrefdbname, xrefaccnum
+insert into tmp_ortho_xref (ncbigeneid, xrefdbname, xrefaccnum, taxonid)
+ select distinct ncbigeneid, xrefdbname, xrefaccnum, taxonid
    from tmp_orthos;
+
+insert into tmp_ortho_xref (ncbigeneid, xrefdbname, xrefaccnum, taxonid)
+ select distinct ncbigeneid, "Gene", ncbigeneid, taxonid
+   from tmp_orthos;
+
+create index tmp_ortho_index 
+ on tmp_ortho_xref (ortho_Zdb_id)
+ using btree in idxdbs1;
+
+create index tmp_ncbigeneid_xref_index 
+ on tmp_ortho_xref (ncbigeneid)
+ using btree in idxdbs1;
+
+create index tmp_fdbcontid_index 
+ on tmp_ortho_xref (fdbcont_id)
+ using btree in idxdbs2;
+
+update tmp_ortho_xref
+  set taxonid = 'Mouse'
+ where taxonid = '10090'
+;
+
+update tmp_ortho_xref
+  set taxonid = 'Human'
+ where taxonid = '9606'
+;
+
+update tmp_ortho_xref
+  set taxonid = 'Fruit fly'
+ where taxonid = '7227'
+;
+
 
 update tmp_ortho_xref
   set fdbcont_id = (select fdbcont_zdb_id	
@@ -105,20 +172,22 @@ update tmp_ortho_xref
 		     where fdbcont_fdb_db_id = fdb_db_pk_id
 		     and fdbcont_Fdbdt_id = fdbdt_pk_id
 		     and fdbdt_data_type = 'orthologue'
-		     and fdb_db_name = xrefDbname);
+		     and fdb_db_name = xrefDbname
+		     and fdbcont_organism_common_name = taxonid)
+ where fdbcont_id is null;
 
 
 delete from tmp_ortho_xref
  where fdbcont_id is null;
 
-unload to orthologExternalReferencesGoingAway.txt
- select ortho_zdb_id, noi_symbol, oef_accession_number 
-   from ortholog, ortholog_external_reference, ncbi_ortholog
-   where ortho_zdb_id = oef_ortho_Zdb_id
-   and ortho_other_species_ncbi_gene_id = noi_ncbi_gene_id
-   and not exists (Select 'x' from tmp_ortho_xref
-       	   	  	  where oef_accession_number = xrefaccnum
-			  and oef_fdbcont_zdb_id = fdbcont_id);
+--unload to orthologExternalReferencesGoingAway.txt
+-- select ortho_zdb_id, noi_symbol, oef_accession_number 
+--   from ortholog, ortholog_external_reference, ncbi_ortholog
+--   where ortho_zdb_id = oef_ortho_Zdb_id
+--   and ortho_other_species_ncbi_gene_id = noi_ncbi_gene_id
+--   and not exists (Select 'x' from tmp_ortho_xref
+--       	   	  	  where oef_accession_number = xrefaccnum
+--			  and oef_fdbcont_zdb_id = fdbcont_id);
 
 
 delete from ortholog_external_reference;
@@ -129,11 +198,6 @@ insert into ortholog_external_reference (oef_ortho_zdb_id, oef_accession_number,
    from ortholog, tmp_ortho_xref
    where ncbigeneid = ortho_other_species_ncbi_gene_id
    ;
-
-
-
-
-
 
 commit work;
 
