@@ -421,11 +421,11 @@ public class MutantRepositoryTest {
         GenericTerm disease = getOntologyRepository().getTermByZdbID(diseaseID);
         String pubID = "ZDB-PUB-990507-16";
         Publication pub = getPublicationRepository().getPublication(pubID);
-        DiseaseModel model = new DiseaseModel();
+        DiseaseAnnotation model = new DiseaseAnnotation();
         model.setDisease(disease);
         model.setPublication(pub);
         model.setEvidenceCode("IC");
-        DiseaseModel fishModel = RepositoryFactory.getMutantRepository().getDiseaseModel(model);
+        DiseaseAnnotation fishModel = RepositoryFactory.getMutantRepository().getDiseaseModel(model);
     }
 
     @Test

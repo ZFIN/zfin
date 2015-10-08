@@ -7,7 +7,8 @@ import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.mutant.DiseaseModel;
+import org.zfin.mutant.DiseaseAnnotation;
+import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.presentation.FishModelDisplay;
@@ -192,21 +193,24 @@ public class OntologyService {
     }
 
     public static List<FishModelDisplay> getDiseaseModels(GenericTerm disease, boolean fishModelRequired) {
-        List<DiseaseModel> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease);
+      //  List<DiseaseAnnotation> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease);
+        List<DiseaseAnnotationModel> modelList=getPhenotypeRepository().getHumanDiseaseModels(disease);;
         if (CollectionUtils.isEmpty(modelList))
             return null;
         Map<FishExperiment, FishModelDisplay> map = new HashMap<>();
-        for (DiseaseModel model : modelList) {
+        for (DiseaseAnnotationModel model : modelList) {
             // ignore disease models without fish models
-            if(model.getFishExperiment() == null && fishModelRequired)
+
+            if(model ==null)
                 continue;
+
             FishModelDisplay display = new FishModelDisplay(model.getFishExperiment());
-            display.addPublication(model.getPublication());
+            display.addPublication(model.getDiseaseAnnotation().getPublication());
             FishModelDisplay mapModel = map.get(model.getFishExperiment());
             if (mapModel == null)
                 map.put(model.getFishExperiment(), display);
             else
-                mapModel.addPublication(model.getPublication());
+                mapModel.addPublication(model.getDiseaseAnnotation().getPublication());
         }
         List<FishModelDisplay> displayList = new ArrayList<>(map.values());
         Collections.sort(displayList);

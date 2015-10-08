@@ -135,8 +135,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = PanelPresentation.getLink((Panel) o);
         else if (o instanceof OrthologySpecies)
             link = OrthologyPresentation.getLink((OrthologySpecies) o);
-        else if (o instanceof DiseaseModel)
-            link = DiseaseModelPresentation.getLink((DiseaseModel) o);
+        else if (o instanceof DiseaseAnnotation)
+            link = DiseaseModelPresentation.getLink((DiseaseAnnotation) o);
         else if (o instanceof Genotype)
             link = GenotypePresentation.getLink((Genotype) o, suppressPopupLink);
         else if (o instanceof Feature)

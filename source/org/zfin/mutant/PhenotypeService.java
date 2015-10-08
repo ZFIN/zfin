@@ -6,7 +6,7 @@ import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.fish.repository.FishService;
-import org.zfin.gwt.curation.dto.DiseaseModelDTO;
+import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
@@ -333,12 +333,14 @@ public class PhenotypeService {
         return new ArrayList<>(publicationSet);
     }
 
-    public static List<DiseaseModelDTO> getDiseaseModelDTOs(String publicationID) {
-        List<DiseaseModel> diseaseModelList = getPhenotypeRepository().getHumanDiseaseModels(publicationID);
-        List<DiseaseModelDTO> dtoList = new ArrayList<>();
-        for (DiseaseModel diseaseModel : diseaseModelList) {
-            dtoList.add(DTOConversionService.convertToDiseaseModelDTO(diseaseModel));
+    public static List<DiseaseAnnotationDTO> getDiseaseModelDTOs(String publicationID) {
+        List<DiseaseAnnotation> diseaseAnnotationList = getPhenotypeRepository().getHumanDiseaseModels(publicationID);
+
+        List<DiseaseAnnotationDTO> dtoList = new ArrayList<>();
+        for (DiseaseAnnotation diseaseAnnotation : diseaseAnnotationList) {
+            dtoList.add(DTOConversionService.convertToDiseaseModelDTO(diseaseAnnotation));
         }
+
         return dtoList;
     }
 

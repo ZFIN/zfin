@@ -1991,12 +1991,13 @@ SELECT genox_fish_zdb_id,
        term_name,
        da_pub_zdb_id,
        accession_no
-FROM   disease_annotation,
-       publication,
+FROM   disease_annotation_model,
+       disease_annotation,publication,
        term,
 OUTER  fish_experiment
-WHERE  genox_zdb_id = da_genox_zdb_id
-       AND da_term_zdb_id = term_zdb_id
-       AND da_pub_zdb_id = zdb_id;
+WHERE  genox_zdb_id = damo_genox_zdb_id
+       AND damo_dat_Zdb_id=dat_zdb_id
+       AND dat_term_zdb_id = term_zdb_id
+       AND dat_source_zdb_id = zdb_id;
 
 commit work;
