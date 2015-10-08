@@ -452,7 +452,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
     @Test
     public void getHumanDiseaseModelsByFish() {
         String fishID = "ZDB-FISH-150901-19447";
-        List<DiseaseAnnotation> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModelsByFish(fishID);
+        List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModelsByFish(fishID);
         assertNotNull(diseaseAnnotations);
     }
 

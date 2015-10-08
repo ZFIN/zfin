@@ -448,6 +448,7 @@ public interface MutantRepository {
      * @return
      */
     DiseaseAnnotationModel getDiseaseAnnotationModelByID(Long id);
+    List<DiseaseAnnotationModel> getDiseaseAnnotationModelByZdb(String zdbID);
 
     /**
      * Remove a disease model

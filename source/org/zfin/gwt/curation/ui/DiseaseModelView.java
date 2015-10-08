@@ -85,6 +85,7 @@ public class DiseaseModelView extends Composite {
                if (diseaseModel.getDamoDTO()!= null) {
                     for (DiseaseAnnotationModelDTO damo : diseaseModel.getDamoDTO()) {
                          int colIndex=0;
+                        damoCount=diseaseModel.getDamoDTO().size();
                         //if (diseaseModel.getFish() != null) {
                         //   Anchor fish = new Anchor(SafeHtmlUtils.fromTrustedString(diseaseModel.getFish().getHandle()), "/" + diseaseModel.getFish().getZdbID());
                         Anchor fish = new Anchor(SafeHtmlUtils.fromTrustedString(damo.getFish().getHandle()), "/" + damo.getFish().getZdbID());
@@ -106,7 +107,8 @@ public class DiseaseModelView extends Composite {
                         termLinkDiseaseModelMap.put(disease, diseaseModel);
                         diseaseModelTable.setWidget(rowIndex, colIndex++, disease);
                         diseaseModelTable.setText(rowIndex, colIndex++, diseaseModel.getEvidenceCode());
-                        Button deleteButton1 = new Button("X");
+
+                        Button deleteButton1 = new Button("X"+damoCount);
 
                         deleteModeMap1.put(deleteButton1, damo);
                         deleteButton1.setTitle("ID: " + damo.getDamoID());
@@ -118,8 +120,17 @@ public class DiseaseModelView extends Composite {
                 }
 
                 else{
-                    int colIndex=2;
-                    diseaseModelTable.setText(rowIndex, colIndex, IS_A_MODEL_OF);
+                   int colIndex=0;
+                   Anchor fish=new Anchor("");
+                   fish.setTitle("");
+                   diseaseModelTable.setWidget(rowIndex, colIndex++, fish);
+                   //  InlineHTML environment = new InlineHTML(diseaseModel.getEnvironment().getName());
+                   InlineHTML environment = new InlineHTML("");
+                    environment.setTitle("");
+
+                   diseaseModelTable.setWidget(rowIndex, colIndex++, environment);
+
+                   diseaseModelTable.setText(rowIndex, colIndex, IS_A_MODEL_OF);
                     diseaseModelTable.getCellFormatter().setStyleName(rowIndex, colIndex++, "bold");
                     Hyperlink disease = new Hyperlink(SafeHtmlUtils.fromTrustedString(diseaseModel.getDisease().getTermName()), "diseaseName");
 

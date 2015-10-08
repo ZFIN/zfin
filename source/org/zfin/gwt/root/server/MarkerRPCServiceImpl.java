@@ -30,6 +30,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.DiseaseAnnotation;
+import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.orthology.Species;
@@ -1188,7 +1189,7 @@ markerRelationship.setFirstMarker(markerRepository.getMarkerByID(constructDTO.ge
         }
         if (ActiveData.Type.FISH.equals(ActiveData.getType(entityID))) {
             Fish fish = getMutantRepository().getFish(entityID);
-            List<DiseaseAnnotation> diseaseAnnotationList = getPhenotypeRepository().getHumanDiseaseModelsByFish(entityID);
+            List<DiseaseAnnotationModel> diseaseAnnotationList = getPhenotypeRepository().getHumanDiseaseModelsByFish(entityID);
             if (CollectionUtils.isNotEmpty(diseaseAnnotationList)) {
                 throw new DeAttributionException("Cannot remove attribution as there is human disease data associated to this fish");
             }

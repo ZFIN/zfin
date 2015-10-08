@@ -78,7 +78,7 @@ public class FishDetailController {
         model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition", "phenotypeStatement"));
 
         // disease model
-        List<DiseaseAnnotation> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModelsByFish(fishZdbId);
+        List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModelsByFish(fishZdbId);
         model.addAttribute("diseases", getDiseaseModelDisplay(diseaseAnnotations));
 
         // Expression data
@@ -125,15 +125,15 @@ public class FishDetailController {
         return "fish/fish-detail-popup.popup";
     }
 
-    private static Collection<DiseaseModelDisplay> getDiseaseModelDisplay(Collection<DiseaseAnnotation> models) {
+    private static Collection<DiseaseModelDisplay> getDiseaseModelDisplay(Collection<DiseaseAnnotationModel> models) {
         MultiKeyMap map = new MultiKeyMap();
-       /* for (DiseaseAnnotation model : models) {
-            if (!map.containsKey(model.getDisease(), model.getFishExperiment())) {
-                map.put(model.getDisease(), model.getFishExperiment(), new ArrayList<Publication>());
+       for (DiseaseAnnotationModel model : models) {
+            if (!map.containsKey(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment())) {
+                map.put(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment(), new ArrayList<Publication>());
             }
-            if (!((Collection<Publication>) map.get(model.getDisease(), model.getFishExperiment())).contains(model.getPublication()))
-                 ((Collection<Publication>) map.get(model.getDisease(), model.getFishExperiment())).add(model.getPublication());
-        }*/
+            if (!((Collection<Publication>) map.get(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment())).contains(model.getDiseaseAnnotation().getPublication()))
+                 ((Collection<Publication>) map.get(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment())).add(model.getDiseaseAnnotation().getPublication());
+        }
 
         List<DiseaseModelDisplay> modelDisplays = new ArrayList<>();
         MapIterator it = map.mapIterator();

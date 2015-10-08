@@ -1558,6 +1558,16 @@ public class HibernateMutantRepository implements MutantRepository {
     public DiseaseAnnotationModel getDiseaseAnnotationModelByID(Long id) {
         return (DiseaseAnnotationModel) HibernateUtil.currentSession().get(DiseaseAnnotationModel.class, id);
     }
+    public List<DiseaseAnnotationModel> getDiseaseAnnotationModelByZdb(String zdb) {
+        Query query = HibernateUtil.currentSession().createQuery(
+                "from DiseaseAnnotationModel  " +
+                "where diseaseAnnotation.zdbID = :zdb ");
+
+        query.setParameter("zdb", zdb);
+
+
+        return (List<DiseaseAnnotationModel>)query.list();
+    }
 
     @Override
     public void deleteDiseaseModel(DiseaseAnnotation diseaseAnnotation) {

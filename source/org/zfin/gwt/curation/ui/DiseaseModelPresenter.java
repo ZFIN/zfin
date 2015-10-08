@@ -378,6 +378,7 @@ public class DiseaseModelPresenter implements Presenter {
 
 
         public void onSuccess(List<DiseaseAnnotationDTO> modelDTOs) {
+
             if (modelDTOs == null) {
                 diseaseModelList.clear();
             } else {

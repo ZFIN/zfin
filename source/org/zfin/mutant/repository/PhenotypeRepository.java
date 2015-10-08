@@ -249,7 +249,8 @@ public interface PhenotypeRepository {
      * @param zdbID
      * @return
      */
-    List<DiseaseAnnotation> getHumanDiseaseModelsByFish(String zdbID);
+    List<DiseaseAnnotationModel> getHumanDiseaseModelsByFish(String zdbID);
+
 
     /**
      * Retrieve disease models by disease

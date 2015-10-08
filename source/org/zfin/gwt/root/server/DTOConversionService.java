@@ -1342,6 +1342,7 @@ public class DTOConversionService {
         entity.setEnvironment(convertToEnvironmentDTO(str.getFishExperiment().getExperiment()));
         entity.setFish(convertToFishDtoFromFish(str.getFishExperiment().getFish()));
         entity.setDamoID(str.getID());
+
         return entity;
     }
     public static Fish convertToFishFromFishDTO(FishDTO newFish) {
@@ -1450,12 +1451,17 @@ public class DTOConversionService {
         dto.setZdbID(model.getZdbID());
        /* dto.setFish(null);
         dto.setEnvironment(null);*/
-        if (CollectionUtils.isNotEmpty(model.getDiseaseAnnotationModel())) {
-            List<DiseaseAnnotationModelDTO> damoDTO = new ArrayList<>(model.getDiseaseAnnotationModel().size());;
-            for (DiseaseAnnotationModel damo : model.getDiseaseAnnotationModel()) {
+       List<DiseaseAnnotationModel> dam=getMutantRepository().getDiseaseAnnotationModelByZdb(model.getZdbID());
+        if (CollectionUtils.isNotEmpty(dam)) {
+            List<DiseaseAnnotationModelDTO> damoDTO = new ArrayList<>(dam.size());;
+            for (DiseaseAnnotationModel damo : dam) {
                 damoDTO.add(DTOConversionService.convertDamoToDamoDTO(damo));
+
             }
             dto.setDamoDTO(damoDTO);
+        }
+        else {
+            dto.setDamoDTO(null);
         }
 
        return dto;
