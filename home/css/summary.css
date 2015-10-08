@@ -149,3 +149,13 @@ div.analysis_tools_box_popup_entry { margin-left: 20px; margin-right: 5px; text-
 a.analysis_tools_single_link { font-size: small;  white-space: nowrap;}
 
 td.qualifier { font-style: italic }
+
+table.summary.basicstripes tr:nth-child(odd) { background-color: #eee; }
+table.summary.basicstripes tr:nth-child(even) { background-color: #fff; }
+
+table.summary td.no-data {
+    text-align: center;
+    padding: 1em;
+    font-style: italic;
+    color: #9A9A9A;
+}

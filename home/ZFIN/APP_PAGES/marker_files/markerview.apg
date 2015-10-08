@@ -2684,23 +2684,6 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
 
 <form name=updater1>
 
-<!------------ ORTHOLOGY ------------------------------------>
-
-<?MIBLOCK COND="$(XST,$type_of_genedom)">
- <HR width="80%">
- <a name=orthologue><b>ORTHOLOGY</b></a>
- <?MICOMMENT>at update mode, user will choose species, and invoke refresh<?/MICOMMENT>
- <?MIBLOCK COND="$(XST,$UPDATE)">
-   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-orthoedit.apg';">$1<?/MISQL>
- <?/MIBLOCK>
-
-
-            <div id="orthology"></div>
-
-<?/MIBLOCK>
-
-<!-------------- ends ORTHOLOGY ------------------------------------>
-
 
 <!------------------ PUBLICATION ------------------------------------>
 

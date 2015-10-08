@@ -206,6 +206,7 @@ table.data_manager a.root {
 .error {
     color: red;
     display: block;
+    margin-top: 5px;
 }
 
 /** error messages for forms **/
@@ -941,4 +942,89 @@ a + .inline-upload {
 
 .zfin-collapsed .zfin-warning-close:before {
     content: "\f054";
+}
+
+.curation-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    margin-top: 15px;
+}
+.curation-form input, .curation-form textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #CCCCCC;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+}
+.curation-form.curation-inline input {
+    display: inline;
+    width: auto;
+}
+
+.list-select-options {
+    position: absolute;
+    background-color: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    padding: 15px 0;
+    margin: 0;
+    box-shadow: 0 5px 10px rgba(0,0,0,.2)
+}
+.list-select-options li {
+    list-style: none;
+    padding: 5px 15px;
+    cursor: pointer;
+}
+.list-select-options li:hover {
+    background-color: lightyellow;
+}
+.list-select-options input {
+    display: inline;
+    width: auto;
+    cursor: pointer;
+}
+.list-select-options label {
+    font-weight: normal;
+    margin: 0;
+    cursor: pointer;
+}
+.list-select-text {
+    cursor: text;
+}
+
+.zfin-button {
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    background: #DDDDDD;
+    color: #333333;
+    font-size: 0.8em;
+}
+.zfin-button.cancel {
+    background: #b0b4b3;
+    color: #2b3037;
+}
+.zfin-button.approve {
+    background: #008000;
+    color: #FFFFFF;
+}
+.zfin-button.reject {
+    background: #C82506;
+    color: #FFFFFF;
+}
+
+.inline-edit {
+    cursor: text;
+    padding: 5px 0;
+}
+.inline-edit:hover {
+    background: lightyellow;
+}
+
+.muted {
+    font-style: italic;
+    color: #9A9A9A;
 }

@@ -7,8 +7,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.expression.FigureService;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.service.ExpressionService;
@@ -18,8 +16,6 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.mutant.Fish;
-import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthology;
 import org.zfin.orthology.OrthologyEvidenceService;
 import org.zfin.repository.RepositoryFactory;
@@ -130,23 +126,6 @@ public class GeneViewController {
 
     public void setMarkerRepository(MarkerRepository markerRepository) {
         this.markerRepository = markerRepository;
-    }
-
-    @RequestMapping("/{zdbID}/orthology")
-    public String showOrthology(@PathVariable("zdbID") String zdbID,
-                                @RequestParam(value = "update", required = false, defaultValue = "0") String update,
-                                @ModelAttribute("formBean") GeneBean geneBean,
-                                Model model) {
-
-        logger.info("zdbID: " + zdbID);
-        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
-        logger.info("gene: " + gene);
-        geneBean.setMarker(gene);
-        geneBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(gene));
-
-        model.addAttribute("update", update.equals("1"));
-
-        return "marker-orthology.simple-page";
     }
 
     @RequestMapping("/{markerID}/orthology-detail")
