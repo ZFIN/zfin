@@ -7,9 +7,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.Updates;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.orthology.OrthoEvidence;
-import org.zfin.orthology.Orthologue;
-import org.zfin.orthology.Species;
+import org.zfin.orthology.*;
 import org.zfin.orthology.repository.OrthologyRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -44,18 +42,22 @@ public class OrthologyTest extends AbstractDatabaseTest {
             Marker pax2a = markerRepository.getMarkerByAbbreviation("fsb");
             Publication publication = pubRepository.getPublication("ZDB-PUB-030905-1");
 
-            Orthologue ortho = new Orthologue();
+            Ortholog ortho = new Ortholog();
+/*
             ortho.setAbbreviation("FGF8");
             ortho.setName("fibroblast growth factor 8 (androgen-induced)");
+*/
+
+
             Species human = Species.HUMAN;
-            ortho.setOrganism(human);
-            ortho.setGene(pax2a);
-            Set<OrthoEvidence> evidences  = new HashSet<OrthoEvidence>();
-            OrthoEvidence evidence = new OrthoEvidence();
-            evidence.setOrthologueEvidenceCode(OrthoEvidence.Code.AA);
+//            ortho.setOrganism(human);
+            ortho.setZebrafishGene(pax2a);
+            Set<OrthologEvidence> evidences  = new HashSet<>();
+            OrthologEvidence evidence = new OrthologEvidence();
+            evidence.setEvidenceCode(getEvidenceCode("AA"));
             evidence.setPublication(publication);
             evidences.add(evidence);
-            ortho.setEvidences(evidences);
+            ortho.setEvidenceSet(evidences);
 
             Entrez entrez = new Entrez() ;
             entrez.setEntrezAccNum("2253");
@@ -68,11 +70,11 @@ public class OrthologyTest extends AbstractDatabaseTest {
             relatedAccession.setProteinAccNum("12345678");
 
 
-            ortho.setAccession(relatedAccession);
+//            ortho.setAccession(relatedAccession);
             orthoRepository.saveOrthology(ortho, publication, new Updates());
 
             String zdbID = ortho.getZdbID();
-            assertTrue("ID created for Orthologue", zdbID != null && zdbID.startsWith("ZDB-ORTHO"));
+            assertTrue("ID created for Ortholog", zdbID != null && zdbID.startsWith("ZDB-ORTHO"));
 
             String hql = "from OrthoEvidence where orthologueZdbID = :zdbID ";
             Query query = HibernateUtil.currentSession().createQuery(hql);
@@ -87,6 +89,12 @@ public class OrthologyTest extends AbstractDatabaseTest {
             // rollback on success or exception to leave no new records in the database
             HibernateUtil.rollbackTransaction();
         }
+    }
+
+    private EvidenceCode getEvidenceCode(String aa) {
+        EvidenceCode evidenceCode = new EvidenceCode();
+        evidenceCode.setCode(aa);
+        return evidenceCode;
     }
 
 }

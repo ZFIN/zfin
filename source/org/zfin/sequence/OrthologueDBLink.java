@@ -1,17 +1,17 @@
 package org.zfin.sequence;
 
-import org.zfin.orthology.Orthologue;
+import org.zfin.orthology.Ortholog;
 
 
 public class OrthologueDBLink extends DBLink {
 
-    private Orthologue orthologue;
+    private Ortholog ortholog;
 
-    public Orthologue getOrthologue() {
-        return orthologue;
+    public Ortholog getOrtholog() {
+        return ortholog;
     }
 
-    public void setOrthologue(Orthologue orthologue) {
-        this.orthologue = orthologue;
+    public void setOrtholog(Ortholog ortholog) {
+        this.ortholog = ortholog;
     }
 }

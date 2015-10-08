@@ -7,9 +7,8 @@ import org.springframework.validation.Errors;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerFamilyName;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.orthology.OrthoEvidence;
-import org.zfin.orthology.Orthologue;
-import org.zfin.orthology.Species;
+import org.zfin.orthology.Ortholog;
+import org.zfin.orthology.OrthologEvidence;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
@@ -42,16 +41,16 @@ public class NomenclatureCandidateValidator extends AbstractRunCandidateValidato
         //we need to be sure that the RunCandidate is in a state that the controller
         //can work with.   (more documentation below)
         if (StringUtils.equals(candidateBean.getAssociatedGeneField(), CandidateBean.IGNORE)
-                || (candidateBean.getAssociatedGeneField() == null)){
+                || (candidateBean.getAssociatedGeneField() == null)) {
             validateRunCandidate(candidateBean, errors);
         }
 
-        validateNomenclature(candidateBean,  errors);
+        validateNomenclature(candidateBean, errors);
 
     }
 
 
-    protected void validateNomenclature(CandidateBean candidateBean,  Errors errors) {
+    protected void validateNomenclature(CandidateBean candidateBean, Errors errors) {
 
         LOG.info("Validating nomenclature pipeline submission");
 
@@ -63,14 +62,14 @@ public class NomenclatureCandidateValidator extends AbstractRunCandidateValidato
                 candidateBean.getOrthologyPublicationZdbID(), RunBean.ORTHOLOGY_PUBLICATION_ZDB_ID, errors);
 
         if (!StringUtils.isEmpty(candidateBean.getMouseOrthologueAbbrev().getEntrezAccession().getEntrezAccNum())) {
-            Set<OrthoEvidence.Code> mouseEvidence = candidateBean.getMouseOrthologyEvidence();
+            Set<OrthologEvidence.Code> mouseEvidence = candidateBean.getMouseOrthologyEvidence();
             if (CollectionUtils.isEmpty(mouseEvidence)) {
                 errors.rejectValue(CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE, "code", "At least one Mouse evidence code needs to be selected");
             }
         }
 
         if (!StringUtils.isEmpty(candidateBean.getHumanOrthologueAbbrev().getEntrezAccession().getEntrezAccNum())) {
-            Set<OrthoEvidence.Code> humanEvidence = candidateBean.getHumanOrthologyEvidence();
+            Set<OrthologEvidence.Code> humanEvidence = candidateBean.getHumanOrthologyEvidence();
             if (CollectionUtils.isEmpty(humanEvidence)) {
                 errors.rejectValue(CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE, "code", "At least one Human evidence code needs to be selected");
             }
@@ -127,24 +126,26 @@ public class NomenclatureCandidateValidator extends AbstractRunCandidateValidato
             Marker m = rc.getIdentifiedMarker();
 
             // if(true) throw new RuntimeException("method Candidate.getIdentifiedMarker not supported") ;
-            for (Orthologue o : m.getOrthologues()) {
-                if (o.getOrganism() == Species.HUMAN
+            for (Ortholog o : m.getOrthologs()) {
+/* todo
+                if (o.getNcbiGene().getOrganism() == Species.HUMAN
                         && !StringUtils.isEmpty(candidateBean.getHumanOrthologueAbbrev().getEntrezAccession().getEntrezAccNum()))
                     errors.rejectValue("humanOrthologueAbbrev.entrezAccession.entrezAccNum", "code", m.getAbbreviation() + " already has a human orthologue.");
-                if (o.getOrganism() == Species.MOUSE
+                if (o.getNcbiGene().getOrganism() == Species.MOUSE
                         && !StringUtils.isEmpty(candidateBean.getMouseOrthologueAbbrev().getEntrezAccession().getEntrezAccNum()))
                     errors.rejectValue("mouseOrthologueAbbrev.entrezAccession.entrezAccNum", "code", m.getAbbreviation() + " already has a mouse orthologue.");
+*/
 
             }
 
         }
 
         if (mr.getMarkerByAbbreviation(newAbbreviation) != null) {
-            errors.rejectValue(CandidateBean.NEW_ABBREVIATION, "code", "Gene with the abbreviation " + newAbbreviation+ " already exists in ZFIN");
+            errors.rejectValue(CandidateBean.NEW_ABBREVIATION, "code", "Gene with the abbreviation " + newAbbreviation + " already exists in ZFIN");
         }
 
         if (mr.getMarkerByName(candidateBean.getGeneName()) != null) {
-            errors.rejectValue(CandidateBean.NEW_GENE_NAME, "code", "Gene with the name " + newGeneName+ " already exists in ZFIN");
+            errors.rejectValue(CandidateBean.NEW_GENE_NAME, "code", "Gene with the name " + newGeneName + " already exists in ZFIN");
         }
 
     }

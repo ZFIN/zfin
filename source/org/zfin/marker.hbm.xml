@@ -129,9 +129,9 @@
             <one-to-many class="org.zfin.expression.ExpressionExperiment"/>
         </set>
 
-        <set name="orthologues" lazy="true">
-            <key column="c_gene_id"/>
-            <one-to-many class="org.zfin.orthology.Orthologue"/>
+        <set name="orthologs" lazy="true">
+            <key column="ortho_zdb_id"/>
+            <one-to-many class="org.zfin.orthology.Ortholog"/>
         </set>
 
         <set name="firstMarkerRelationships" lazy="true">

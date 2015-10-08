@@ -629,31 +629,27 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
      * This method also creates the DB links (related accessions for
      * this ZF orthology.
      *
-     * @param orthologue  Orthologue object
+     * @param ortholog    Ortholog object
      * @param publication Publication object
      */
-    public void saveOrthology(Orthologue orthologue, Publication publication, Updates up) {
+    public void saveOrthology(Ortholog ortholog, Publication publication, Updates up) {
 
-        currentSession().save(orthologue);
+        currentSession().save(ortholog);
         up.setSubmitterID(ProfileService.getCurrentSecurityUser().getZdbID());
         up.setSubmitterName(ProfileService.getCurrentSecurityUser().getUsername());
         currentSession().save(up);
-        String orthologyZdbID = orthologue.getZdbID();
-        Set<OrthoEvidence> evidences = orthologue.getEvidences();
-        for (OrthoEvidence evidence : evidences) {
-            evidence.setOrthologueZdbID(orthologyZdbID);
-            currentSession().save(evidence);
-        }
+        String orthologyZdbID = ortholog.getZdbID();
         // create record attribution record
         RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(orthologyZdbID, publication.getZdbID());
         // create DB links
         MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-        mr.addOrthoDBLink(orthologue, orthologue.getAccession());
+        //// need to go to ortholog_externalreference
+        // mr.addOrthoDBLink(ortholog, ortholog.getgetAccession());
 
     }
 
-    public void updateFastSearchEvidenceCodes(Set<Orthologue> orthologues) {
-        Set<OrthologyEvidenceFastSearch> fastSearches = OrthologyEvidenceService.getOrthoEvidenceFastSearches(orthologues);
+    public void updateFastSearchEvidenceCodes(Set<Ortholog> orthologs) {
+        Set<OrthologyEvidenceFastSearch> fastSearches = OrthologyEvidenceService.getOrthoEvidenceFastSearches(orthologs);
         for (OrthologyEvidenceFastSearch fastSearch : fastSearches) {
             currentSession().save(fastSearch);
             String orthologyFastSearchZdbID = fastSearch.getZdbID();
@@ -787,4 +783,32 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         })
                 .list();
     }
+
+    @Override
+    public List<Ortholog> getOrthologs(String zdbID) {
+        String sql = "from Ortholog " +
+                "where ";
+
+        return null;
+    }
+
+    @Override
+    public List<Ortholog> getOrthologs(Marker gene) {
+        String sql = "from Ortholog " +
+                "where zebrafishGene = :gene";
+        Query query = HibernateUtil.currentSession().createQuery(sql);
+        query.setParameter("gene", gene);
+        return (List<Ortholog>) query.list();
+    }
+
+    @Override
+    public NcbiOtherSpeciesGene getNcbiGene(String ncbiID) {
+        return (NcbiOtherSpeciesGene) HibernateUtil.currentSession().get(NcbiOtherSpeciesGene.class, ncbiID);
+    }
+
+    @Override
+    public EvidenceCode getEvidenceCode(String name) {
+        return (EvidenceCode) HibernateUtil.currentSession().get(EvidenceCode.class, name);
+    }
+
 }
