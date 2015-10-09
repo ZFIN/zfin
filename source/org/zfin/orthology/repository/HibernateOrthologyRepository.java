@@ -623,13 +623,6 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     /**
      * Save a new orthology including evidence codes.
      * In addition, a record attribution is created as well.
-     * <p/>
-     * Constraints:
-     * Each zfin gene can have only one orthologous gene per species.
-     * <p/>
-     * Note: Each evidence code needs to also update the fast search table!
-     * This method also creates the DB links (related accessions for
-     * this ZF orthology.
      *
      * @param ortholog    Ortholog object
      * @param publication Publication object
@@ -643,11 +636,6 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         String orthologyZdbID = ortholog.getZdbID();
         // create record attribution record
         getInfrastructureRepository().insertRecordAttribution(orthologyZdbID, publication.getZdbID());
-        // create DB links
-        MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-        //// need to go to ortholog_externalreference
-        // mr.addOrthoDBLink(ortholog, ortholog.getgetAccession());
-
     }
 
     public void updateFastSearchEvidenceCodes(Set<Ortholog> orthologs) {
