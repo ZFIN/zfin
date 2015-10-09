@@ -104,10 +104,9 @@ public class OrthologyController {
             getOrthologyRepository().saveOrthology(ortholog, null);
             tx.commit();
         } catch (Exception e) {
+            tx.rollback();
             throw new InvalidWebRequestException("Error while creating an Ortholog with (" + ncbiID + ", " + geneID + "): " +
                     e.getMessage(), null);
-        } finally {
-            tx.rollback();
         }
         return DTOConversionService.convertToOrthologDTO(ortholog);
     }
