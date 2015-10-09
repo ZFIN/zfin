@@ -87,7 +87,7 @@ $sql = 'select distinct mrel_mrkr_2_zdb_id
 my $ct24 = ZFINPerlModules->countData($sql);
 
 $sql =  'select distinct mrel_mrkr_2_zdb_id
-           from marker_relationship, fish_str, fish, fish_experiment, genotype_feature, genotype, phenotype_experiment
+           from marker_relationship, fish_str, fish, fish_experiment, genotype_feature, feature, genotype, phenotype_experiment
           where mrel_type = "knockdown reagent targets gene"
             and mrel_mrkr_1_zdb_id like "ZDB-TALEN%"
             and mrel_mrkr_1_zdb_id = fishstr_str_zdb_id
@@ -95,7 +95,8 @@ $sql =  'select distinct mrel_mrkr_2_zdb_id
             and fish_genotype_zdb_id = genofeat_geno_zdb_id
             and geno_zdb_id = fish_genotype_zdb_id
             and geno_zdb_id = genofeat_geno_zdb_id
-            and get_feature_type(genofeat_feature_zdb_id) = "TRANSGENIC_INSERTION"
+            and genofeat_feature_zdb_id = feature_zdb_id
+            and feature_type = "TRANSGENIC_INSERTION" 
             and geno_zdb_id = genofeat_geno_zdb_id
             and geno_is_wildtype = "f"
             and phenox_genox_zdb_id = genox_zdb_id;';
@@ -103,7 +104,7 @@ $sql =  'select distinct mrel_mrkr_2_zdb_id
 my $ct25 = ZFINPerlModules->countData($sql);
 
 $sql =  'select distinct mrel_mrkr_2_zdb_id
-           from marker_relationship, fish_str, fish, fish_experiment, genotype_feature, genotype, phenotype_experiment
+           from marker_relationship, fish_str, fish, fish_experiment, genotype_feature, feature, genotype, phenotype_experiment
           where mrel_type = "knockdown reagent targets gene"
             and mrel_mrkr_1_zdb_id like "ZDB-CRISPR%" 
             and mrel_mrkr_1_zdb_id = fishstr_str_zdb_id
@@ -111,7 +112,8 @@ $sql =  'select distinct mrel_mrkr_2_zdb_id
             and fish_genotype_zdb_id = genofeat_geno_zdb_id
             and geno_zdb_id = fish_genotype_zdb_id
             and geno_zdb_id = genofeat_geno_zdb_id
-            and get_feature_type(genofeat_feature_zdb_id) = "TRANSGENIC_INSERTION"
+            and genofeat_feature_zdb_id = feature_zdb_id
+            and feature_type = "TRANSGENIC_INSERTION"
             and geno_zdb_id = genofeat_geno_zdb_id
             and geno_is_wildtype = "f"
             and phenox_genox_zdb_id = genox_zdb_id;';
@@ -120,12 +122,12 @@ my $ct26 = ZFINPerlModules->countData($sql);
 
 open (PHENO, ">>PhenotypeStatistics.txt") || die "Cannot open PhenotypeStatistics.txt : $!\n";
 
-print PHENO "\n\nNumber of Genes with TALEN (in environment) Phenotype: $ct21";
-print PHENO "\n\nNumber of Genes with CRISPR (in environment) Phenotype: $ct22";
-print PHENO "\n\nNumber of Genes with only TALEN phenotype in a WT background (TALEN in environment \n  and target gene for TALEN has no other alleles with associated phenotype): $ct23";
-print PHENO "\n\nNumber of Genes with only CRISPR phenotype in a WT background (CRISPR in environment \n  and target gene for CRISPR has no other alleles with associated phenotype): $ct24";
-print PHENO "\n\nNumber of Genes with TALEN phenotype in a Tg background (TALEN in environment): $ct25";
-print PHENO "\n\nNumber of Genes with CRISPR phenotype in a Tg background (CRISPR in environment): $ct26";
+print PHENO "\n\nNumber of Genes with TALEN (used transiently) Phenotype: $ct21";
+print PHENO "\n\nNumber of Genes with CRISPR (used transiently) Phenotype: $ct22";
+print PHENO "\n\nNumber of Genes with only TALEN phenotype in a WT background (TALEN used transiently \n  and target gene for TALEN has no other alleles with associated phenotype): $ct23";
+print PHENO "\n\nNumber of Genes with only CRISPR phenotype in a WT background (CRISPR used transiently \n  and target gene for CRISPR has no other alleles with associated phenotype): $ct24";
+print PHENO "\n\nNumber of Genes with TALEN phenotype in a Tg background (TALEN used transiently): $ct25";
+print PHENO "\n\nNumber of Genes with CRISPR phenotype in a Tg background (CRISPR used transiently): $ct26";
 
 
 close PHENO;
