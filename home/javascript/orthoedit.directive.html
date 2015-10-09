@@ -43,9 +43,9 @@
             <div ng-repeat="(pubId, ev) in ortholog.evidenceMap">
                 <a ng-href="/{{ev.publication.zdbID}}" ng-attr-title="{{ev.publication.citation}}">
                     {{ev.publication.zdbID}}
-                </a>: {{ev.codes.join(', ')}}
-                <a href ng-click="vm.editEvidence(ortholog, ev, $index)"><i class="fa fa-pencil"></i></a>
-                <a href ng-click="vm.deleteEvidence(ortholog, ev, $index)"><i class="fa fa-trash"></i></a>
+                </a>: {{vm.formatCodes(ev.codes)}}
+                <a href class="clickable" ng-click="vm.editEvidence(ortholog, ev, $index)"><i class="fa fa-pencil"></i></a>
+                <a href class="clickable" ng-click="vm.deleteEvidence(ortholog, ev, $index)"><i class="fa fa-trash"></i></a>
             </div>
             <a href="#" ng-click="vm.addEvidence(ortholog)">Add</a>
         </td>
@@ -75,19 +75,27 @@
         <div class="list-select">
             <input type="text"
                    class="list-select-text"
-                   ng-model="vm.modalEvidence.publication"
+                   ng-model="vm.modalEvidence.publication.zdbID"
                    ng-disabled="vm.modalEvidenceIndex > -1"
                    ng-change="vm.evidencePublicationError = ''">
             <ul class="list-select-options">
-                <li ng-repeat="pub in vm.pubs" ng-click="vm.modalEvidence.publication = pub">
+                <li ng-repeat="pub in vm.pubs" ng-click="vm.selectPub(pub)">
                     {{pub}}
                 </li>
             </ul>
         </div>
         <div class="error" ng-show="vm.evidencePublicationError">{{vm.evidencePublicationError}}</div>
+
+        <p class="warning" ng-show="vm.evidencePublicationWarning">
+            {{vm.modalEvidence.publication.zdbID}} is already a reference for
+            {{vm.modalOrtholog.ncbiOtherSpeciesGeneDTO.organism}}
+            <i>{{vm.modalOrtholog.ncbiOtherSpeciesGeneDTO.abbreviation}}</i> orthology. You
+            are now editing the existing record.
+        </p>
+
         <label>Evidence Codes</label>
         <div class="list-select keep-open">
-            <input class="list-select-text" ng-value="vm.modalEvidence.codes" readonly>
+            <input class="list-select-text" ng-value="vm.formatCodes(vm.modalEvidence.codes)" readonly>
             <ul class="list-select-options">
                 <li ng-repeat="code in vm.modalEvidence.codes">
                     <label>
@@ -98,6 +106,7 @@
             </ul>
         </div>
         <div class="error" ng-show="vm.evidenceCodeError">{{vm.evidenceCodeError}}</div>
+
         <div class="popup-actions">
             <button class="zfin-button cancel" ng-click="vm.cancelEvidence()">Cancel</button>
             <button class="zfin-button approve" ng-click="vm.saveEvidence()">Save</button>

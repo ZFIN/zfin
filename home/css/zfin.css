@@ -962,6 +962,12 @@ a + .inline-upload {
     display: inline;
     width: auto;
 }
+.curation-form .warning {
+    background-color: lightyellow;
+    border: 1px solid darkgoldenrod;
+    padding: 5px;
+    border-radius: 3px;
+}
 
 .list-select-options {
     position: absolute;

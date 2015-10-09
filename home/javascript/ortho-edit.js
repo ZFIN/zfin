@@ -29,7 +29,7 @@ function orthoEdit() {
             var text = container.find('.list-select-text');
 
             if (!container.hasClass('keep-open')) {
-                opts.children().on('click', function (event) {
+                opts.on('click', 'li', function (event) {
                     event.stopPropagation();
                     opts.hide();
                 });
@@ -93,6 +93,7 @@ function OrthoEditController($http) {
 
     vm.evidenceCodeError = '';
     vm.evidencePublicationError = '';
+    vm.evidencePublicationWarning = '';
 
     vm.modalOrtholog = {};
     vm.modalEvidence = {};
@@ -115,6 +116,8 @@ function OrthoEditController($http) {
     vm.cancelNoteEdit = cancelNoteEdit;
     vm.saveNoteEdit = saveNoteEdit;
 
+    vm.selectPub = selectPub;
+
     activate();
 
     function activate() {
@@ -131,11 +134,15 @@ function OrthoEditController($http) {
                         if (ev[e.publication.zdbID] === undefined) {
                             ev[e.publication.zdbID] = {
                                 publication: e.publication,
-                                codes: []
+                                codes: angular.copy(vm.codes)
                             };
                         }
 
-                        ev[e.publication.zdbID].codes.push(e.evidenceCode);
+                        ev[e.publication.zdbID].codes.forEach(function (c) {
+                            if (c.abbrev === e.evidenceCode) {
+                                c.selected = true;
+                            }
+                        })
                     });
                     ortholog.evidenceMap = ev;
                 });
@@ -184,18 +191,19 @@ function OrthoEditController($http) {
 
     function confirmDeleteOrtholog(ortholog) {
         vm.modalOrtholog = ortholog;
-        $('#delete-modal').modal({
-            escapeClose: false,
-            clickClose: false,
-            showClose: false,
-            fadeDuration: 100
-        })
-            .on($.modal.CLOSE, function() {
+        $('#delete-modal')
+            .modal({
+                escapeClose: false,
+                clickClose: false,
+                showClose: false,
+                fadeDuration: 100
+            })
+            .on($.modal.AFTER_CLOSE, function() {
                 vm.modalOrtholog = {};
             });
     }
 
-    function deleteOrtholog(index) {
+    function deleteOrtholog() {
         var idx = vm.orthologs.indexOf(vm.modalOrtholog);
         $http.delete('/action/gene/' + vm.gene + '/ortholog/' + vm.modalOrtholog.zdbID)
             .then(function (resp) {
@@ -289,25 +297,37 @@ function OrthoEditController($http) {
         vm.modalOrtholog = ortholog;
         vm.modalEvidence = evidence;
 
-        $('#evidence-modal').modal({
-            escapeClose: false,
-            clickClose: false,
-            showClose: false,
-            fadeDuration: 100
-        })
-            .on($.modal.OPEN, function(event, modal) {
-                modal.elm.css('top', '20%');
+        $('#evidence-modal')
+            .modal({
+                escapeClose: false,
+                clickClose: false,
+                showClose: false,
+                fadeDuration: 100
             })
-            .on($.modal.CLOSE, function() {
+            .on($.modal.AFTER_CLOSE, function() {
                 vm.modalOrtholog = {};
                 vm.modalEvidence = {};
                 vm.modalEvidenceIndex = -1;
+                vm.evidencePublicationWarning = false;
             });
+    }
+
+    function selectPub(pub) {
+        var existingEvidence = vm.modalOrtholog.evidenceMap[pub];
+        if (existingEvidence) {
+            vm.modalEvidence = angular.copy(existingEvidence);
+            vm.evidencePublicationWarning = true;
+        } else {
+            vm.modalEvidence.publication.zdbId = pub;
+            vm.evidencePublicationWarning = false;
+        }
     }
 
     function blankEvidence() {
         return {
-            publication: '',
+            publication: {
+                zdbId: ''
+            },
             codes: vm.codes.map(function(code) {
                 return {
                     abbrev: code.abbrev,
