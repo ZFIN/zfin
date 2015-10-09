@@ -197,9 +197,14 @@ function OrthoEditController($http) {
 
     function deleteOrtholog(index) {
         var idx = vm.orthologs.indexOf(vm.modalOrtholog);
-        /* TODO: send delete to server */
-        vm.orthologs.splice(idx, 1);
-        $.modal.close();
+        $http.delete('/action/gene/' + vm.gene + '/ortholog/' + vm.modalOrtholog.zdbID)
+            .then(function (resp) {
+                vm.orthologs.splice(idx, 1);
+                $.modal.close();
+            })
+            .catch(function (error) {
+                alert('PANIC! There was an error!')
+            });
     }
 
     function cancelDelete() {

@@ -106,7 +106,10 @@
 </div>
 
 <div id="delete-modal" class="jq-modal curation">
-    <h3>Delete {{vm.modalOrtholog.species}} <i>{{vm.modalOrtholog.symbol}}</i> ortholog?</h3>
+    <h3>
+        Delete {{vm.modalOrtholog.ncbiOtherSpeciesGeneDTO.organism}}
+        <i>{{vm.modalOrtholog.ncbiOtherSpeciesGeneDTO.abbreviation}}</i> ortholog?
+    </h3>
     <div class="popup-actions">
         <button class="zfin-button cancel" ng-click="vm.cancelDelete()">Cancel</button>
         <button class="zfin-button reject" ng-click="vm.deleteOrtholog()">Delete</button>
