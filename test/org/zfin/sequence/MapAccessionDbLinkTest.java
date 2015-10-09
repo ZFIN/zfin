@@ -391,30 +391,6 @@ public class MapAccessionDbLinkTest extends AbstractDatabaseTest {
     }
 
 
-    @Test
-    public void testOrthologueDBLink() {
-        Session session = HibernateUtil.currentSession();
-        session.beginTransaction();
-        try {
-            insertOrthologueDBLinkRunCandidate();
-
-            List<Hit> hits1 = session.createQuery("from Hit h where h.targetAccession.number='" + ACCESSION_NUM1 + "'").list();
-            assertEquals("hits1 for " + ACCESSION_NUM1 + " is 1", 1, hits1.size());
-            Accession acc1 = hits1.get(0).getTargetAccession();
-            Set<DBLink> dbLinks1 = acc1.getDbLinks();
-            assertEquals("number of orthologues for " + ACCESSION_NUM1, 1, dbLinks1.size());
-            assertTrue("link is instance of OrthologueDBLink" + ACCESSION_NUM1, dbLinks1.iterator().next() instanceof OrthologueDBLink);
-            assertFalse("link is instance of MarkerDBLink" + ACCESSION_NUM1, dbLinks1.iterator().next() instanceof MarkerDBLink);
-
-            List<Marker> markers1 = hits1.get(0).getTargetAccession().getMarkers();
-            assertEquals("orthologues should not be returned as markers " + ACCESSION_NUM1, 0, markers1.size());
-
-        } finally {
-            session.getTransaction().rollback();
-        }
-    }
-
-
     private void insertOrthologueDBLinkRunCandidate() {
         Session session = HibernateUtil.currentSession();
         PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();

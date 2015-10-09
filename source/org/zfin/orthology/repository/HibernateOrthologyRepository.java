@@ -13,6 +13,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.orthology.*;
 import org.zfin.orthology.presentation.OrthologySlimPresentation;
+import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -22,6 +23,7 @@ import org.zfin.util.FilterType;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 /**
  * This class creates the calls to Hibernate to retrieve the Orthology information.
@@ -640,7 +642,7 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         currentSession().save(up);
         String orthologyZdbID = ortholog.getZdbID();
         // create record attribution record
-        RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(orthologyZdbID, publication.getZdbID());
+        getInfrastructureRepository().insertRecordAttribution(orthologyZdbID, publication.getZdbID());
         // create DB links
         MarkerRepository mr = RepositoryFactory.getMarkerRepository();
         //// need to go to ortholog_externalreference
@@ -653,7 +655,7 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         for (OrthologyEvidenceFastSearch fastSearch : fastSearches) {
             currentSession().save(fastSearch);
             String orthologyFastSearchZdbID = fastSearch.getZdbID();
-            RepositoryFactory.getInfrastructureRepository().
+            getInfrastructureRepository().
                     insertRecordAttribution(orthologyFastSearchZdbID, fastSearch.getPublication().getZdbID());
         }
     }
@@ -760,28 +762,27 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     @Override
     public List<String> getEvidenceCodes(Marker gene, Publication publication) {
 
-        String sql = " select distinct oe.orthologueEvidenceCode , ec.order " +
-                "from Orthologue o , OrthoEvidence oe, EvidenceCode ec " +
-                "where o.zdbID=oe.orthologueZdbID " +
-                "and ec.code=oe.orthologueEvidenceCode " +
-                "and o.gene = :gene ";
-        if (publication != null)
-            sql += "and oe.publication = :publication ";
-        sql += "order by ec.order  ";
-
+        String sql = " from Ortholog " +
+                "where zebrafishGene = :gene ";
 
         Query query = HibernateUtil.currentSession().createQuery(sql)
                 .setParameter("gene", gene);
-        if (publication != null)
-            query.setParameter("publication", publication);
 
-        return query.setResultTransformer(new BasicTransformerAdapter() {
-            @Override
-            public Object transformTuple(Object[] tuple, String[] aliases) {
-                return tuple[0].toString();
+        List<Ortholog> orthologs = (List<Ortholog>) query.list();
+
+        Set<EvidenceCode> evidenceCodes = new HashSet<>();
+        for (Ortholog ortholog : orthologs) {
+            for (OrthologEvidence evidence : ortholog.getEvidenceSet()) {
+                if (publication == null || evidence.getPublication().equals(publication)) {
+                    evidenceCodes.add(evidence.getEvidenceCode());
+                }
             }
-        })
-                .list();
+        }
+        List<String> evidenceCodeNames = new ArrayList<>();
+        for (EvidenceCode code : evidenceCodes)
+            evidenceCodeNames.add(code.getCode());
+        return evidenceCodeNames;
+
     }
 
     @Override
@@ -809,6 +810,31 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     @Override
     public EvidenceCode getEvidenceCode(String name) {
         return (EvidenceCode) HibernateUtil.currentSession().get(EvidenceCode.class, name);
+    }
+
+    @Override
+    public Ortholog getOrtholog(String orthID) {
+        return (Ortholog) HibernateUtil.currentSession().get(Ortholog.class, orthID);
+    }
+
+    @Override
+    public void deleteOrtholog(Ortholog ortholog) {
+        Person currentSecurityUser = ProfileService.getCurrentSecurityUser();
+        if (currentSecurityUser == null)
+            throw new RuntimeException("No Authenticated User. Please log in first.");
+
+        Session session = HibernateUtil.currentSession();
+        session.delete(ortholog);
+        int numOfRecords = getInfrastructureRepository().deleteRecordAttributionsForData(ortholog.getZdbID());
+        Updates up = new Updates();
+        up.setRecID(ortholog.getZdbID());
+        up.setFieldName("Ortholog");
+        up.setOldValue(ortholog.getZdbID());
+        up.setComments("Delete Ortholog");
+        up.setWhenUpdated(new Date());
+        up.setSubmitterID(currentSecurityUser.getZdbID());
+        up.setSubmitterName(currentSecurityUser.getUsername());
+        session.save(up);
     }
 
 }

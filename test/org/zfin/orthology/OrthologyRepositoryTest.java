@@ -355,4 +355,11 @@ public class OrthologyRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(evidence);
     }
 
+    @Test
+    public void getOrthoByID() {
+        String ID = "ZDB-ORTHO-151008-1";
+        Ortholog ortholog = getOrthologyRepository().getOrtholog(ID);
+        assertNotNull(ortholog);
+    }
+
 }

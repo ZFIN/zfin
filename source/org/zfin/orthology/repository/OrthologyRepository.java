@@ -78,4 +78,19 @@ public interface OrthologyRepository extends CachedRepository {
     NcbiOtherSpeciesGene getNcbiGene(String ncbiID);
 
     EvidenceCode getEvidenceCode(String string);
+
+    /**
+     * Retrieve Ortholog by ID
+     *
+     * @param orthID Ortholog ID
+     * @return Ortholog
+     */
+    Ortholog getOrtholog(String orthID);
+
+    /**
+     * Delete an Ortholog
+     *
+     * @param ortholog Ortholog
+     */
+    void deleteOrtholog(Ortholog ortholog);
 }
