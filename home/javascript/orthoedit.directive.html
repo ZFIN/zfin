@@ -1,4 +1,4 @@
-<table class="primary-entity-attribute">
+<table class="primary-entity-attributes">
     <tr>
         <th>Import from NCBI</th>
         <td>
@@ -10,8 +10,6 @@
         </td>
     </tr>
 </table>
-
-<button ng-click="vm.addEvidence({})">modal</button>
 
 <hr>
 
@@ -32,19 +30,22 @@
     </tr>
     <tr ng-repeat="ortholog in vm.orthologs">
         <td><a href="#" ng-click="vm.confirmDeleteOrtholog(ortholog)">Delete</a></td>
-        <td>{{ortholog.species}}</td>
-        <td><i>{{ortholog.symbol}}</i></td>
-        <td>{{ortholog.location}}</td>
+        <td>{{ortholog.ncbiOtherSpeciesGeneDTO.organism}}</td>
+        <td><i>{{ortholog.ncbiOtherSpeciesGeneDTO.abbreviation}}</i></td>
+        <td>{{ortholog.ncbiOtherSpeciesGeneDTO.chromosome}} ({{ortholog.ncbiOtherSpeciesGeneDTO.position}})</td>
         <td>
-            <div ng-repeat="accession in ortholog.accessions">
-                <a ng-href="{{accession.url}}">{{accession.display}}</a>
+            <div ng-repeat="reference in ortholog.referenceDTOList">
+                <!--todo when references are populated-->
+                <!--<a ng-href="{{accession.url}}">{{accession.display}}</a>-->
             </div>
         </td>
         <td>
-            <div ng-repeat="ev in ortholog.evidence">
-                <a href="#">{{ev.publication}}</a>: {{vm.formatCodes(ev.codes)}} &mdash;
-                <a href="#" ng-click="vm.editEvidence(ortholog, ev, $index)">Edit</a>
-                <a href="#" ng-click="vm.deleteEvidence(ortholog, ev, $index)">Delete</a>
+            <div ng-repeat="(pubId, ev) in ortholog.evidenceMap">
+                <a ng-href="/{{ev.publication.zdbID}}" ng-attr-title="{{ev.publication.citation}}">
+                    {{ev.publication.zdbID}}
+                </a>: {{ev.codes.join(', ')}}
+                <a href ng-click="vm.editEvidence(ortholog, ev, $index)"><i class="fa fa-pencil"></i></a>
+                <a href ng-click="vm.deleteEvidence(ortholog, ev, $index)"><i class="fa fa-trash"></i></a>
             </div>
             <a href="#" ng-click="vm.addEvidence(ortholog)">Add</a>
         </td>
@@ -65,7 +66,10 @@
 </div>
 
 <div id="evidence-modal" class="jq-modal curation">
-    <h3>Evidence for {{vm.modalOrtholog.species}} <i>{{vm.modalOrtholog.symbol}}</i> ortholog</h3>
+    <h3>
+        Evidence for {{vm.modalOrtholog.ncbiOtherSpeciesGeneDTO.organism}}
+        <i>{{vm.modalOrtholog.ncbiOtherSpeciesGeneDTO.abbreviation}}</i> ortholog
+    </h3>
     <div class="curation-form">
         <label>Publication</label>
         <div class="list-select">
@@ -75,16 +79,15 @@
                    ng-disabled="vm.modalEvidenceIndex > -1"
                    ng-change="vm.evidencePublicationError = ''">
             <ul class="list-select-options">
-                <li ng-click="vm.modalEvidence.publication = 'Ortho Curation Pub'">Ortho Curation Pub</li>
-                <li ng-click="vm.modalEvidence.publication = 'ZDB-PUB-XXXXXX-X'">ZDB-PUB-XXXXXX-X</li>
-                <li ng-click="vm.modalEvidence.publication = 'ZDB-PUB-YYYYYY-Y'">ZDB-PUB-YYYYYY-Y</li>
-                <li ng-click="vm.modalEvidence.publication = 'ZDB-PUB-ZZZZZZ-Z'">ZDB-PUB-ZZZZZZ-Z</li>
+                <li ng-repeat="pub in vm.pubs" ng-click="vm.modalEvidence.publication = pub">
+                    {{pub}}
+                </li>
             </ul>
         </div>
         <div class="error" ng-show="vm.evidencePublicationError">{{vm.evidencePublicationError}}</div>
         <label>Evidence Codes</label>
         <div class="list-select keep-open">
-            <input class="list-select-text" ng-value="vm.formatCodes(vm.modalEvidence.codes)" readonly>
+            <input class="list-select-text" ng-value="vm.modalEvidence.codes" readonly>
             <ul class="list-select-options">
                 <li ng-repeat="code in vm.modalEvidence.codes">
                     <label>

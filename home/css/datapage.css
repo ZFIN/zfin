@@ -37,10 +37,12 @@ table.primary-entity-attributes {
     margin-top: .3em;
 }
 
+table.primary-entity-attributes tr {
+    vertical-align: baseline;
+}
 
 table.primary-entity-attributes th {
     text-align: left;
-    vertical-align: top;
     padding-right: 1em;
     padding-top: .1em;
     padding-bottom: .1em;
@@ -54,7 +56,7 @@ table.primary-entity-attributes td.genotype-name-value {
 
 table.primary-entity-attributes td {
     text-align: left;
-    vertical-align: top;
+    /*vertical-align: top;*/
     padding-top: .1em;
     padding-bottom: .1em;
 }

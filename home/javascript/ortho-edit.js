@@ -58,7 +58,7 @@ function OrthoEditController($http) {
     vm.noteText = '';
     vm.noteEditing = false;
 
-    vm.pubs = ['Ortho Curation Pub', 'ZDB-PUB-XXXXXX-X', 'ZDB-PUB-YYYYYY-Y', 'ZDB-PUB-ZZZZZZ-Z'];
+    vm.pubs = ['Ortho Curation Pub'];
 
     vm.codes = [
         {
@@ -118,9 +118,27 @@ function OrthoEditController($http) {
     activate();
 
     function activate() {
-        $http.get('/gene/' + vm.gene + '/orthologs')
+        $http.get('/action/gene/' + vm.gene + '/orthologs')
             .then(function(resp) {
-                vm.orthologs = resp.data.orthologs;
+                vm.orthologs = resp.data;
+                vm.orthologs.forEach(function (ortholog) {
+                    var ev = {};
+                    ortholog.evidenceSet.forEach(function (e) {
+                        if (vm.pubs.indexOf(e.publication.zdbID) < 0) {
+                            vm.pubs.push(e.publication.zdbID);
+                        }
+
+                        if (ev[e.publication.zdbID] === undefined) {
+                            ev[e.publication.zdbID] = {
+                                publication: e.publication,
+                                codes: []
+                            };
+                        }
+
+                        ev[e.publication.zdbID].codes.push(e.evidenceCode);
+                    });
+                    ortholog.evidenceMap = ev;
+                });
             })
             .catch(function(error) {
                 console.error(error);
@@ -138,7 +156,7 @@ function OrthoEditController($http) {
 
     function addOrtholog() {
         var alreadyAdded = vm.orthologs.some(function(existing) {
-            return existing.id === vm.ncbiGeneNumber;
+            return existing.ncbiOtherSpeciesGeneDTO.id === vm.ncbiGeneNumber;
         });
 
         if (alreadyAdded) {
@@ -146,10 +164,15 @@ function OrthoEditController($http) {
             return;
         }
 
-        $http.get('/ncbi/' + vm.ncbiGeneNumber)
+        $http.get('/action/gene/ncbi/' + vm.ncbiGeneNumber)
             .then(function(resp) {
-                var newOrtholog = resp.data;
-                newOrtholog.evidence = [];
+                var newOrtholog = {
+                    zdbID: "",
+                    zebrafishGene: {},
+                    ncbiOtherSpeciesGeneDTO: resp.data,
+                    evidenceSet: [],
+                    evidenceMap: {}
+                };
                 vm.orthologs.push(newOrtholog);
                 /* TODO: send new ortholog back to server */
                 vm.ncbiGeneNumber = '';
