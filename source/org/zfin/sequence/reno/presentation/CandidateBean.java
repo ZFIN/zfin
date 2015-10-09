@@ -4,17 +4,12 @@ import org.apache.log4j.Logger;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.zfin.marker.Marker;
-import org.zfin.orthology.OrthoEvidence;
+import org.zfin.orthology.OrthologEvidence;
 import org.zfin.profile.Person;
-import org.zfin.sequence.Entrez;
-import org.zfin.sequence.EntrezProtRelation;
-import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.*;
 import org.zfin.sequence.reno.RunCandidate;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class CandidateBean {
     private static Logger logger = Logger.getLogger(CandidateBean.class);
@@ -60,8 +55,8 @@ public class CandidateBean {
 
 
     private EntrezProtRelation humanOrthologueAbbrev;
-    private ReferenceDatabase humanReferenceDatabase ;
-    private ReferenceDatabase mouseReferenceDatabase ;
+    private ReferenceDatabase humanReferenceDatabase;
+    private ReferenceDatabase mouseReferenceDatabase;
     private boolean geneAlias;
 
     private String geneFamilyJson;
@@ -74,10 +69,10 @@ public class CandidateBean {
         this.relationPublicationZdbID = relationPublicationZdbID;
     }
 
-    private Set<OrthoEvidence.Code> humanOrthologyEvidence;
+    private Set<OrthologEvidence.Code> humanOrthologyEvidence;
 
     private EntrezProtRelation mouseOrthologueAbbrev;
-    private Set<OrthoEvidence.Code> mouseOrthologyEvidence;
+    private Set<OrthologEvidence.Code> mouseOrthologyEvidence;
 
     public void setCandidateNote(String candidateNote) {
         this.candidateNote = candidateNote;
@@ -125,20 +120,20 @@ public class CandidateBean {
         this.mouseReferenceDatabase = mouseReferenceDatabase;
     }
 
-    public Set<OrthoEvidence.Code> getHumanOrthologyEvidence() {
+    public Set<OrthologEvidence.Code> getHumanOrthologyEvidence() {
         return humanOrthologyEvidence;
     }
 
-    public void setHumanOrthologyEvidence(Set<OrthoEvidence.Code> humanOrthologyEvidence) {
+    public void setHumanOrthologyEvidence(Set<OrthologEvidence.Code> humanOrthologyEvidence) {
         this.humanOrthologyEvidence = humanOrthologyEvidence;
     }
 
-    public Set<OrthoEvidence.Code> getMouseOrthologyEvidence() {
+    public Set<OrthologEvidence.Code> getMouseOrthologyEvidence() {
 
         return mouseOrthologyEvidence;
     }
 
-    public void setMouseOrthologyEvidence(Set<OrthoEvidence.Code> mouseOrthologyEvidence) {
+    public void setMouseOrthologyEvidence(Set<OrthologEvidence.Code> mouseOrthologyEvidence) {
         this.mouseOrthologyEvidence = mouseOrthologyEvidence;
     }
 
@@ -257,14 +252,13 @@ public class CandidateBean {
         return DONE;
     }
 
-    public boolean getSuggestedNameExists(){
-        if(allSingleAssociatedGenesFromQueries==null){
-            return false ;
-        }
-        else{
-           Set<String> geneSymbols = new HashSet<String>();
-            for(Marker m : allSingleAssociatedGenesFromQueries){
-                geneSymbols.add(m.getAbbreviation()) ;
+    public boolean getSuggestedNameExists() {
+        if (allSingleAssociatedGenesFromQueries == null) {
+            return false;
+        } else {
+            Set<String> geneSymbols = new HashSet<>();
+            for (Marker m : allSingleAssociatedGenesFromQueries) {
+                geneSymbols.add(m.getAbbreviation());
             }
 
             return geneSymbols.contains(getRunCandidate().getCandidate().getSuggestedName());
@@ -281,6 +275,7 @@ public class CandidateBean {
 
     /**
      * Warning message that the candidate is already related to any of the associated genes
+     *
      * @return message
      */
     public String getMessage() {
@@ -288,7 +283,8 @@ public class CandidateBean {
     }
 
     /**
-     * Warning message that the candidate is already related to any of the associated genes 
+     * Warning message that the candidate is already related to any of the associated genes
+     *
      * @param message string
      */
     public void addMessage(String message) {
@@ -308,10 +304,11 @@ public class CandidateBean {
     }
 
     /**
-     * Check if there is a message used in case the candidate is laready related to any of the associated genes.
+     * Check if there is a message used in case the candidate is already related to any of the associated genes.
+     *
      * @return boolean
      */
-    public boolean isAlreadyAssociatedGenes(){
+    public boolean isAlreadyAssociatedGenes() {
         return message != null;
     }
 
@@ -362,12 +359,12 @@ public class CandidateBean {
     }
 
     public void createRunCandidateForZdbID(String zdbID) {
-        if(runCandidate!=null){
-            logger.error("run candidate was not null, but still overwriting it: "+runCandidate);
+        if (runCandidate != null) {
+            logger.error("run candidate was not null, but still overwriting it: " + runCandidate);
             // releasing from memory
-            runCandidate = null ;
+            runCandidate = null;
         }
-        runCandidate = new RunCandidate() ;
+        runCandidate = new RunCandidate();
         runCandidate.setZdbID(zdbID);
     }
 
@@ -386,5 +383,6 @@ public class CandidateBean {
     public void setGeneFamilyJson(String geneFamilyJson) {
         this.geneFamilyJson = geneFamilyJson;
     }
+
 }
        

@@ -17,7 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 import static org.zfin.repository.RepositoryFactory.getOrthologyRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
@@ -292,12 +294,12 @@ public class OrthologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getOrthologuesForGene(){
+    public void getOrthologuesForGene() {
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
         List<OrthologyPresentationRow> orthologues = getOrthologyRepository().getOrthologyForGene(m);
-        assertEquals(2,orthologues .size());
-        for(OrthologyPresentationRow orthologue : orthologues ){
-           assertTrue(orthologue.getEvidenceCodes().size() > 0);
+        assertEquals(2, orthologues.size());
+        for (OrthologyPresentationRow orthologue : orthologues) {
+            assertTrue(orthologue.getEvidenceCodes().size() > 0);
         }
 
         // pax2a
@@ -305,17 +307,17 @@ public class OrthologyRepositoryTest extends AbstractDatabaseTest {
         // Pfeffer
         Publication publication = getPublicationRepository().getPublication("ZDB-PUB-980916-4");
         orthologues = getOrthologyRepository().getOrthologyForGene(m, publication);
-        assertEquals(1,orthologues .size());
+        assertEquals(1, orthologues.size());
 
     }
 
 
     @Test
-    public void getEvidenceCodesForMarker(){
+    public void getEvidenceCodesForMarker() {
 
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
         List<String> codes = getOrthologyRepository().getEvidenceCodes(m);
-        assertEquals(2,codes.size());
+        assertEquals(2, codes.size());
         assertEquals("AA", codes.get(0));
         assertEquals("NT", codes.get(1));
 
@@ -325,8 +327,39 @@ public class OrthologyRepositoryTest extends AbstractDatabaseTest {
         Publication publication = getPublicationRepository().getPublication("ZDB-PUB-050803-7");
 
         codes = getOrthologyRepository().getEvidenceCodes(m, publication);
-        assertEquals(1,codes.size());
+        assertEquals(1, codes.size());
         assertEquals("CL", codes.get(0));
 
     }
+
+    @Test
+    public void getOrthologsByGene() {
+        String zdbID = "ZDB-GENE-991207-24";
+        Marker gene = getMarkerRepository().getMarkerByID(zdbID);
+        List<Ortholog> orthologList = getOrthologyRepository().getOrthologs(gene);
+        System.out.println(orthologList.get(0).getEvidenceSet());
+        assertNotNull(orthologList);
+    }
+
+    @Test
+    public void getOrthologsByNcbiGene() {
+        String zdbID = "1495";
+        NcbiOtherSpeciesGene ncbiGene = getOrthologyRepository().getNcbiGene(zdbID);
+        assertNotNull(ncbiGene);
+    }
+
+    @Test
+    public void getOrthogEvdidenceCode() {
+        String code = "AA";
+        EvidenceCode evidence = getOrthologyRepository().getEvidenceCode(code);
+        assertNotNull(evidence);
+    }
+
+    @Test
+    public void getOrthoByID() {
+        String ID = "ZDB-ORTHO-151008-1";
+        Ortholog ortholog = getOrthologyRepository().getOrtholog(ID);
+        assertNotNull(ortholog);
+    }
+
 }

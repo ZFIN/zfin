@@ -7,8 +7,9 @@ import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.orthology.OrthoEvidence;
-import org.zfin.orthology.Orthologue;
+import org.zfin.orthology.EvidenceCode;
+import org.zfin.orthology.Ortholog;
+import org.zfin.orthology.OrthologEvidence;
 import org.zfin.orthology.Species;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Publication;
@@ -390,30 +391,6 @@ public class MapAccessionDbLinkTest extends AbstractDatabaseTest {
     }
 
 
-    @Test
-    public void testOrthologueDBLink() {
-        Session session = HibernateUtil.currentSession();
-        session.beginTransaction();
-        try {
-            insertOrthologueDBLinkRunCandidate();
-
-            List<Hit> hits1 = session.createQuery("from Hit h where h.targetAccession.number='" + ACCESSION_NUM1 + "'").list();
-            assertEquals("hits1 for " + ACCESSION_NUM1 + " is 1", 1, hits1.size());
-            Accession acc1 = hits1.get(0).getTargetAccession();
-            Set<DBLink> dbLinks1 = acc1.getDbLinks();
-            assertEquals("number of orthologues for " + ACCESSION_NUM1, 1, dbLinks1.size());
-            assertTrue("link is instance of OrthologueDBLink" + ACCESSION_NUM1, dbLinks1.iterator().next() instanceof OrthologueDBLink);
-            assertFalse("link is instance of MarkerDBLink" + ACCESSION_NUM1, dbLinks1.iterator().next() instanceof MarkerDBLink);
-
-            List<Marker> markers1 = hits1.get(0).getTargetAccession().getMarkers();
-            assertEquals("orthologues should not be returned as markers " + ACCESSION_NUM1, 0, markers1.size());
-
-        } finally {
-            session.getTransaction().rollback();
-        }
-    }
-
-
     private void insertOrthologueDBLinkRunCandidate() {
         Session session = HibernateUtil.currentSession();
         PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
@@ -452,26 +429,29 @@ public class MapAccessionDbLinkTest extends AbstractDatabaseTest {
         cDNA.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
         session.save(cDNA);
 
-        Orthologue orthology1 = new Orthologue();
-        orthology1.setOrganism(Species.HUMAN);
-        orthology1.setGene(gene);
-        OrthoEvidence evidence1 = new OrthoEvidence();
-        evidence1.setOrthologueEvidenceCode(OrthoEvidence.Code.AA);
+        EvidenceCode evidenceAA = new EvidenceCode();
+        evidenceAA.setCode("AA");
+
+        Ortholog orthology1 = new Ortholog();
+        ////ToDo orthology1.setOrganism(Species.HUMAN);
+        orthology1.setZebrafishGene(gene);
+        OrthologEvidence evidence1 = new OrthologEvidence();
+        evidence1.setEvidenceCode(evidenceAA);
         evidence1.setPublication(publication);
-        Set<OrthoEvidence> evidences = new HashSet<OrthoEvidence>();
+        Set<OrthologEvidence> evidences = new HashSet<>();
         evidences.add(evidence1);
-        orthology1.setEvidences(evidences);
+        orthology1.setEvidenceSet(evidences);
         session.save(orthology1);
 
-        Orthologue orthology2 = new Orthologue();
-        orthology2.setOrganism(Species.MOUSE);
-        orthology2.setGene(cDNA);
-        OrthoEvidence evidenceThree = new OrthoEvidence();
-        evidenceThree.setOrthologueEvidenceCode(OrthoEvidence.Code.AA);
+        Ortholog orthology2 = new Ortholog();
+        /////ToDo orthology2.setOrganism(Species.MOUSE);
+        orthology2.setZebrafishGene(cDNA);
+        OrthologEvidence evidenceThree = new OrthologEvidence();
+        evidenceThree.setEvidenceCode(evidenceAA);
         evidenceThree.setPublication(publication);
-        Set<OrthoEvidence> evidences2 = new HashSet<OrthoEvidence>();
+        Set<OrthologEvidence> evidences2 = new HashSet<>();
         evidences2.add(evidenceThree);
-        orthology2.setEvidences(evidences2);
+        orthology2.setEvidenceSet(evidences2);
         session.save(orthology2);
 
         // should find the cdna marker for accession1
@@ -484,7 +464,7 @@ public class MapAccessionDbLinkTest extends AbstractDatabaseTest {
         OrthologueDBLink dblink1 = new OrthologueDBLink();
         dblink1.setAccessionNumber(ACCESSION_NUM1);
         dblink1.setReferenceDatabase(genBankRefDB);
-        dblink1.setOrthologue(orthology1);
+        dblink1.setOrtholog(orthology1);
 
         session.save(dblink1);
         session.save(accession1);
@@ -499,7 +479,7 @@ public class MapAccessionDbLinkTest extends AbstractDatabaseTest {
         OrthologueDBLink dblink2 = new OrthologueDBLink();
         dblink2.setAccessionNumber(ACCESSION_NUM2);
         dblink2.setReferenceDatabase(genBankRefDB);
-        dblink2.setOrthologue(orthology2);
+        dblink2.setOrtholog(orthology2);
 
         session.save(dblink2);
         session.save(accession2);

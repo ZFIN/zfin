@@ -189,7 +189,7 @@ create dba function "informix".regen_names() returning integer
      --   3 Clone name                Marker
      --   4 Marker relations          Marker (not used in regen_names)
      --   5 Previous name             Marker
-     --   6 Orthologue                Marker
+     --   6 Ortholog                Marker
      --   7 Accession number          Marker
      --   8 Sequence similarity       Marker
      --   9 Clone contains gene       Marker (not used in regen_names)

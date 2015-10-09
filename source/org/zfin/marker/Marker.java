@@ -6,12 +6,9 @@ import org.apache.log4j.Logger;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.infrastructure.*;
-import org.zfin.mapping.MappedMarker;
 import org.zfin.mapping.MappedMarkerImpl;
 import org.zfin.mutant.MarkerGoTermEvidence;
-import org.zfin.mutant.OmimPhenotype;
-import org.zfin.ontology.presentation.DiseaseDisplay;
-import org.zfin.orthology.Orthologue;
+import org.zfin.orthology.Ortholog;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
@@ -41,7 +38,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     private HashMap<String, List<Publication>> pubsPerAnatomy;
     private Set<Figure> figures;
     private Set<MarkerFamilyName> familyName;
-    private Set<Orthologue> orthologues;
+    private Set<Ortholog> orthologs;
     protected Set<MarkerRelationship> firstMarkerRelationships;    //  where this marker = "mrel_mrkr_1_zdb_id" in mrel
     private Set<MarkerRelationship> secondMarkerRelationships;   //  where this marker = "mrel_mrkr_2_zdb_id" in mrel
     private MarkerType markerType;
@@ -233,12 +230,12 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         this.figures = figures;
     }
 
-    public Set<Orthologue> getOrthologues() {
-        return orthologues;
+    public Set<Ortholog> getOrthologs() {
+        return orthologs;
     }
 
-    public void setOrthologues(Set<Orthologue> orthologues) {
-        this.orthologues = orthologues;
+    public void setOrthologs(Set<Ortholog> orthologs) {
+        this.orthologs = orthologs;
     }
 
     public Set<MarkerRelationship> getFirstMarkerRelationships() {

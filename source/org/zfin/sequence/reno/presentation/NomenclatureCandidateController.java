@@ -197,6 +197,8 @@ public class NomenclatureCandidateController extends AbstractCandidateController
            // geneToRename.setName(newGeneName);
 //            renameGene(geneToRename, candidateBean.getOrthologyPublicationZdbID());
             renoService.renameGene(renamedGene, candidateBean.getNomenclaturePublicationZdbID());
+        } else {
+            renamedGene = geneToRename;
         }
 
         //handle gene families
