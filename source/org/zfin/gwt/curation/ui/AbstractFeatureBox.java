@@ -178,6 +178,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
                             else{
                                 labDesignationBox.addItem(featurePrefixDTO.getPrefix());
                             }
+                            labDesignationBox.addItem(featurePrefixDTO.getPrefix());
                         }
                         // always has zf
                         if(!hasZf){
@@ -265,7 +266,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
 
         }
 
-//        mutagenBox.clear();
+       mutagenBox.clear();
 
         FeatureRPCService.App.getInstance().getMutagensForFeatureType(featureTypeSelected,
                 new FeatureEditCallBack<List<String>>("Failed to return mutagen for feature type: " + featureTypeSelected.getName(), this) {
@@ -276,7 +277,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
                                 if (result.size() == 1) {
                                     mutagenBox.addItem(result.get(0));
                                 } else {
-                                    //mutagenBox.addItem("-------");
+                                    mutagenBox.addItem("not specified");
                                     for (String mut : result) {
                                         if (!mutagenBox.containsValue(mut)) {
                                             mutagenBox.addItem(mut);
@@ -434,7 +435,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
 
     protected void setValues() {
 
-        //mutagenBox.addEnumValues(Mutagen.values());
+      //  mutagenBox.addEnumValues(Mutagen.values());
         mutageeBox.addEnumValues(Mutagee.values());
         featureSuffixBox.addEnumValues(TransgenicSuffix.values());
 
@@ -453,7 +454,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
     protected class ConstructOracle extends LookupOracle {
         @Override
         public void doLookup(Request request, Callback callback) {
-            LookupRPCService.App.getInstance().getConstructSuggestions(request,
+            LookupRPCService.App.getInstance().getConstructSuggestions(request,dto.getPublicationZdbID(),
                     new LookupCallback(request, callback));
         }
     }
@@ -508,7 +509,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
         mutageeBox.setEnabled(false);
         mutageeBox.setSelectedIndex(0);
         mutagenBox.setEnabled(false);
-        //mutagenBox.setSelectedIndex(0);
+        mutagenBox.setSelectedIndex(0);
         publicNoteBox.setEnabled(false);
         publicNoteBox.setText("");
         curatorNoteBox.setEnabled(false);
