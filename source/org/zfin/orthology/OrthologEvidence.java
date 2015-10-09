@@ -69,16 +69,9 @@ public class OrthologEvidence implements Serializable {
         CE,
         CL,
         FC,
-        FH,
-        IX,
-        NS,
         NT,
-        SI,
-        SL,
-        SS,
-        SU,
-        XH,
-        PT;
+	    PT,
+	    OT;
 
         public String toString() {
             return name();
