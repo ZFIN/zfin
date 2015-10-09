@@ -6,51 +6,25 @@ import spock.lang.Shared
 class MeshHeadingSpec extends AbstractZfinSpec {
 
     @Shared descriptors = [
-            yogurt: new MeshTerm().with {
-                name = "Yogurt"
-                id = "D015014"
-                return it
-            },
-            zebrafish: new MeshTerm().with {
-                name = "Zebrafish"
-                id = "D015027"
-                return it
-            },
-            nails: new MeshTerm().with {
-                name = "Nails, Malformed"
-                id = "D009264"
-                return it
-            }
+            yogurt: new MeshTerm(name: "Yogurt", id: "D015014"),
+            zebrafish: new MeshTerm(name: "Zebrafish", id: "D015027"),
+            nails: new MeshTerm(name: "Nails, Malformed", id: "D009264")
     ]
 
     @Shared quals = [
-            abnormalities: new MeshTerm().with {
-                name = "abnormalities"
-                id = "Q000002"
-                return  it
-            },
-            dosage: new MeshTerm().with {
-                name = "administration & dosage"
-                id = "Q000008"
-                return it
-            },
-            diet: new MeshTerm().with {
-                name = "diet therapy"
-                id = "Q000178"
-                return it
-            }
+            abnormalities: new MeshTerm(name: "abnormalities", id: "Q000002"),
+            dosage: new MeshTerm(name: "administration & dosage", id: "Q000008"),
+            diet: new MeshTerm(name: "diet therapy", id: "Q000178")
     ]
 
     def "mesh heading with only descriptor"() {
         when:
-        def heading = new MeshHeading().with {
-            descriptor = new MeshHeadingTerm().with {
-                term = descriptors.yogurt
-                majorTopic = false
-                return it
-            }
-            return it
-        }
+        def heading = new MeshHeading(
+                descriptor: new MeshHeadingTerm(
+                        term: descriptors.yogurt,
+                        majorTopic: false
+                )
+        )
 
         then:
         heading.displayList == ["Yogurt"]
@@ -58,14 +32,12 @@ class MeshHeadingSpec extends AbstractZfinSpec {
 
     def "mesh heading with major topic descriptor"() {
         when:
-        def heading = new MeshHeading().with {
-            descriptor = new MeshHeadingTerm().with {
-                term = descriptors.zebrafish
-                majorTopic = true
-                return it
-            }
-            return it
-        }
+        def heading = new MeshHeading(
+            descriptor: new MeshHeadingTerm(
+                    term: descriptors.zebrafish,
+                    majorTopic: true
+            )
+        )
 
         then:
         heading.displayList == ["Zebrafish*"]
@@ -73,26 +45,22 @@ class MeshHeadingSpec extends AbstractZfinSpec {
 
     def "mesh heading with qualifiers"() {
         when:
-        def heading = new MeshHeading().with {
-            descriptor = new MeshHeadingTerm().with {
-                term = descriptors.yogurt
-                majorTopic = false
-                return it
-            }
-            qualifiers = [
-                    new MeshHeadingTerm().with {
-                        term = quals.diet
-                        majorTopic = false
-                        return it
-                    },
-                    new MeshHeadingTerm().with {
-                        term = quals.dosage
-                        majorTopic = false
-                        return it
-                    }
-            ] as Set
-            return it
-        }
+        def heading = new MeshHeading(
+                descriptor: new MeshHeadingTerm(
+                        term: descriptors.yogurt,
+                        majorTopic: false
+                ),
+                qualifiers: [
+                    new MeshHeadingTerm(
+                            term: quals.diet,
+                            majorTopic: false
+                    ),
+                    new MeshHeadingTerm(
+                            term: quals.dosage,
+                            majorTopic: false
+                    )
+                ] as Set
+        )
 
         then:
         heading.displayList == ["Yogurt/diet therapy", "Yogurt/administration & dosage"]
@@ -100,26 +68,22 @@ class MeshHeadingSpec extends AbstractZfinSpec {
 
     def "mesh heading with major topic qualifiers"() {
         when:
-        def heading = new MeshHeading().with {
-            descriptor = new MeshHeadingTerm().with {
-                term = descriptors.nails
-                majorTopic = false
-                return it
-            }
-            qualifiers = [
-                    new MeshHeadingTerm().with {
-                        term = quals.abnormalities
-                        majorTopic = true
-                        return it
-                    },
-                    new MeshHeadingTerm().with {
-                        term = quals.diet
-                        majorTopic = false
-                        return it
-                    }
-            ] as Set
-            return it
-        }
+        def heading = new MeshHeading(
+                descriptor: new MeshHeadingTerm(
+                        term: descriptors.nails,
+                        majorTopic: false
+                ),
+                qualifiers: [
+                    new MeshHeadingTerm(
+                            term: quals.abnormalities,
+                            majorTopic: true
+                    ),
+                    new MeshHeadingTerm(
+                            term: quals.diet,
+                            majorTopic: false
+                    )
+                ] as Set
+        )
 
         then:
         heading.displayList == ["Nails, Malformed/abnormalities*", "Nails, Malformed/diet therapy"]
