@@ -125,6 +125,8 @@ function OrthoEditController($http) {
             .then(function(resp) {
                 vm.orthologs = resp.data;
                 vm.orthologs.forEach(function (ortholog) {
+                    if (ortholog.evidenceSet === null) { return; }
+
                     var ev = {};
                     ortholog.evidenceSet.forEach(function (e) {
                         if (vm.pubs.indexOf(e.publication.zdbID) < 0) {
@@ -171,17 +173,11 @@ function OrthoEditController($http) {
             return;
         }
 
-        $http.get('/action/gene/ncbi/' + vm.ncbiGeneNumber)
+        $http.post('/action/gene/' + vm.gene + '/ortholog/ncbi/' + vm.ncbiGeneNumber)
             .then(function(resp) {
-                var newOrtholog = {
-                    zdbID: "",
-                    zebrafishGene: {},
-                    ncbiOtherSpeciesGeneDTO: resp.data,
-                    evidenceSet: [],
-                    evidenceMap: {}
-                };
+                var newOrtholog = resp.data;
+                newOrtholog.evidenceMap = {};
                 vm.orthologs.push(newOrtholog);
-                /* TODO: send new ortholog back to server */
                 vm.ncbiGeneNumber = '';
             })
             .catch(function(error) {
