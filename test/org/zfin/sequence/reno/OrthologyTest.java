@@ -3,7 +3,6 @@ package org.zfin.sequence.reno;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.infrastructure.Updates;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.orthology.EvidenceCode;
@@ -51,7 +50,7 @@ public class OrthologyTest extends AbstractDatabaseTest {
             NcbiOtherSpeciesGene ncbiOtherSpeciesGene = getOrthologyRepository().getNcbiGene("2253");
             ortho.setNcbiOtherSpeciesGene(ncbiOtherSpeciesGene);
 
-            orthoRepository.saveOrthology(ortho, publication, new Updates());
+            orthoRepository.saveOrthology(ortho, publication);
 
             String zdbID = ortho.getZdbID();
             assertTrue("ID created for Ortholog", zdbID != null && zdbID.startsWith("ZDB-ORTHO"));

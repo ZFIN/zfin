@@ -627,15 +627,31 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
      * @param ortholog    Ortholog object
      * @param publication Publication object
      */
-    public void saveOrthology(Ortholog ortholog, Publication publication, Updates up) {
+    public void saveOrthology(Ortholog ortholog, Publication publication) {
 
         currentSession().save(ortholog);
-        up.setSubmitterID(ProfileService.getCurrentSecurityUser().getZdbID());
-        up.setSubmitterName(ProfileService.getCurrentSecurityUser().getUsername());
+
+        Updates up = new Updates();
+        up.setRecID(ortholog.getZebrafishGene().getZdbID());
+        up.setFieldName("Ortholog");
+        up.setNewValue(ortholog.getNcbiOtherSpeciesGene().getOrganism().getCommonName());
+        up.setComments("Create new ortholog record.");
+        up.setSubmitterID(getCurrentSecurityUser().getZdbID());
+        up.setSubmitterName(getCurrentSecurityUser().getUsername());
+        up.setWhenUpdated(new Date());
         currentSession().save(up);
         String orthologyZdbID = ortholog.getZdbID();
-        // create record attribution record
-        getInfrastructureRepository().insertRecordAttribution(orthologyZdbID, publication.getZdbID());
+        // create record attribution record if exists
+        if (publication != null)
+            getInfrastructureRepository().insertRecordAttribution(orthologyZdbID, publication.getZdbID());
+    }
+
+    private Person getCurrentSecurityUser() {
+        Person currentSecurityUser = ProfileService.getCurrentSecurityUser();
+        if (currentSecurityUser == null)
+            throw new RuntimeException("No Authenticated User. Please log in first.");
+
+        return currentSecurityUser;
     }
 
     public void updateFastSearchEvidenceCodes(Set<Ortholog> orthologs) {
@@ -807,7 +823,7 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
 
     @Override
     public void deleteOrtholog(Ortholog ortholog) {
-        Person currentSecurityUser = ProfileService.getCurrentSecurityUser();
+        Person currentSecurityUser = getCurrentSecurityUser();
         if (currentSecurityUser == null)
             throw new RuntimeException("No Authenticated User. Please log in first.");
 
@@ -823,6 +839,16 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         up.setSubmitterID(currentSecurityUser.getZdbID());
         up.setSubmitterName(currentSecurityUser.getUsername());
         session.save(up);
+    }
+
+    @Override
+    public Ortholog getOrthologByGeneAndNcbi(Marker gene, NcbiOtherSpeciesGene ncbiGene) {
+        String hql = "from Ortholog where " +
+                "zebrafishGene = :zebrafishGene and ncbiOtherSpeciesGene = :otherSpeciesGene ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("zebrafishGene", gene);
+        query.setParameter("otherSpeciesGene", ncbiGene);
+        return (Ortholog) query.uniqueResult();
     }
 
 }

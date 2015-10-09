@@ -362,4 +362,14 @@ public class OrthologyRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(ortholog);
     }
 
+    @Test
+    public void getOrthoByGeneId() {
+        String geneID = "ZDB-GENE-991207-24";
+        String ncbiID = "12385";
+        Marker gene = getMarkerRepository().getMarkerByID(geneID);
+        NcbiOtherSpeciesGene otherSpeciesGene = getOrthologyRepository().getNcbiGene(ncbiID);
+        Ortholog ortholog = getOrthologyRepository().getOrthologByGeneAndNcbi(gene, otherSpeciesGene);
+        assertNotNull(ortholog);
+    }
+
 }

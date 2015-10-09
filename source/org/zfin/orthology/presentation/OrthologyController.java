@@ -20,7 +20,6 @@ import java.util.List;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 import static org.zfin.repository.RepositoryFactory.getOrthologyRepository;
-import static org.zfin.repository.RepositoryFactory.setAnatomyRepository;
 
 @Controller
 public class OrthologyController {
@@ -62,7 +61,7 @@ public class OrthologyController {
             getOrthologyRepository().deleteOrtholog(ortholog);
             tx.commit();
         } catch (Exception e) {
-            throw new InvalidWebRequestException("Error while deleting Ortholg " + orthoID +
+            throw new InvalidWebRequestException("Error while deleting Ortholg: " + orthoID + ":" +
                     e.getMessage(), null);
         } finally {
             tx.rollback();
@@ -78,6 +77,39 @@ public class OrthologyController {
         if (ncbiGene == null)
             throw new InvalidWebRequestException("No NCBI ncbiGene with ID " + ncbiID + " found!", null);
         return DTOConversionService.convertToNcbiOtherSpeciesGeneDTO(ncbiGene);
+    }
+
+    @RequestMapping(value = "/gene/{geneID}/ortholog/ncbi/{ncbiID}", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    OrthologDTO createOrthologFromNcbi(@PathVariable String geneID,
+                                       @PathVariable String ncbiID) throws InvalidWebRequestException {
+        Transaction tx = HibernateUtil.createTransaction();
+        Ortholog ortholog = null;
+        try {
+            tx.begin();
+            NcbiOtherSpeciesGene ncbiGene = getOrthologyRepository().getNcbiGene(ncbiID);
+            if (ncbiGene == null)
+                throw new InvalidWebRequestException("No NCBI ncbiGene with ID " + ncbiID + " found!", null);
+            Marker gene = getMarkerRepository().getMarkerByID(geneID);
+            if (gene == null)
+                throw new InvalidWebRequestException("No Zebrafish gene with ID " + geneID + " found!", null);
+            Ortholog existingOrtholog = getOrthologyRepository().getOrthologByGeneAndNcbi(gene, ncbiGene);
+            if (existingOrtholog != null)
+                throw new InvalidWebRequestException("Ortholog with ID (" + ncbiID + ", " + geneID + ") already exists.  " +
+                        existingOrtholog.getZdbID(), null);
+            ortholog = new Ortholog();
+            ortholog.setZebrafishGene(gene);
+            ortholog.setNcbiOtherSpeciesGene(ncbiGene);
+            getOrthologyRepository().saveOrthology(ortholog, null);
+            tx.commit();
+        } catch (Exception e) {
+            throw new InvalidWebRequestException("Error while creating an Ortholog with (" + ncbiID + ", " + geneID + "): " +
+                    e.getMessage(), null);
+        } finally {
+            tx.rollback();
+        }
+        return DTOConversionService.convertToOrthologDTO(ortholog);
     }
 
 

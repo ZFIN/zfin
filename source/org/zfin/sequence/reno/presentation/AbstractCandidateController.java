@@ -160,14 +160,7 @@ public abstract class AbstractCandidateController {
             Set<OrthologEvidence> orthoEvidences = renoService.createEvidenceCollection(candidateBean.getHumanOrthologyEvidence(), orthologyPub, humanOrtholog);
             humanOrtholog.setEvidenceSet(orthoEvidences);
             LOG.info("Orthology: " + humanOrtholog);
-            Updates up = new Updates();
-            Date date = new Date();
-            up.setRecID(zebrafishMarker.getZdbID());
-            up.setFieldName("orthologue");
-            up.setNewValue("Human");
-            up.setComments("Created a new orthologue record for species=Human for this record.");
-            up.setWhenUpdated(date);
-            or.saveOrthology(humanOrtholog, orthologyPub, up);
+            or.saveOrthology(humanOrtholog, orthologyPub);
         }
 
         //get the mouse ortholog from the form
@@ -183,14 +176,7 @@ public abstract class AbstractCandidateController {
             mouseOrtholog.setNcbiOtherSpeciesGene(ncbiGene);
             Set<OrthologEvidence> orthoEvidences = renoService.createEvidenceCollection(candidateBean.getMouseOrthologyEvidence(), orthologyPub, mouseOrtholog);
             mouseOrtholog.setEvidenceSet(orthoEvidences);
-            Updates up = new Updates();
-            Date date = new Date();
-            up.setRecID(zebrafishMarker.getZdbID());
-            up.setFieldName("orthologue");
-            up.setNewValue("Mouse");
-            up.setComments("Created a new orthologue record for species=Mouse for this record.");
-            up.setWhenUpdated(date);
-            or.saveOrthology(mouseOrtholog, orthologyPub, up);
+            or.saveOrthology(mouseOrtholog, orthologyPub);
         }
         LOG.debug("exit handleOrthology");
     }
