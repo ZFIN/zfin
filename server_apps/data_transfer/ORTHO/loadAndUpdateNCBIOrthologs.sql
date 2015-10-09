@@ -75,6 +75,37 @@ select ncbiGeneId, name, symbol
  where ncbiGeneId = noi_ncbi_gene_id
  and symbol != noi_symbol;
 
+update ortholog
+  set ortho_chromosome = (Select distinct chromosome
+				from just_ncbi_info
+				where ortho_other_species_ncbi_gene_id = ncbiGeneId)
+where exists (Select 'x' from just_ncbi_info
+      	     	     where ortho_other_species_ncbi_Gene_id = ncbiGeneId);
+
+update ortholog
+  set ortho_name = (Select distinct name
+				from just_ncbi_info
+				where ortho_other_species_ncbi_gene_id = ncbiGeneId)
+where exists (Select 'x' from just_ncbi_info
+      	     	     where ortho_other_species_ncbi_Gene_id = ncbiGeneId);
+
+
+update ortholog
+  set ortho_position = (Select distinct position
+				from just_ncbi_info
+				where ortho_other_species_ncbi_gene_id = ncbiGeneId)
+where exists (Select 'x' from just_ncbi_info
+      	     	     where ortho_other_species_ncbi_Gene_id = ncbiGeneId);
+
+
+update ortholog
+  set ortho_symbol = (Select distinct symbol
+				from just_ncbi_info
+				where ortho_other_species_ncbi_gene_id = ncbiGeneId)
+where exists (Select 'x' from just_ncbi_info
+      	     	     where ortho_other_species_ncbi_Gene_id = ncbiGeneId);
+
+
 update ncbi_ortholog
   set noi_chromosome = (Select distinct chromosome
 				from just_ncbi_info
@@ -113,9 +144,27 @@ unload to missingNCBIIds.txt
  where not exists (Select 'x' from just_ncbi_info
        	   	  	  where ncbiGeneId = noi_ncbi_gene_id);
 
+
 delete from ncbi_ortholog
  where not exists (Select 'x' from just_ncbi_info
        	   	  	  where ncbiGeneId = noi_ncbi_gene_id);
+
+unload to missingNcbiGeneIdsWithOrthos.txt
+  select * from ortholog
+ where not exists (Select 'x' from ncbi_ortholog
+       	   	  	  where noi_ncbi_gene_id = ortho_other_species_ncbi_gene_id);
+
+update ortholog
+  set ortho_other_species_ncbi_gene_is_obsolete = 't'
+  where not exists (Select 'x' from ncbi_ortholog
+  	    	   	   where ncbi_gene_id = ortho_other_species_ncbi_gene_id);
+
+update ortholog
+    set ortho_other_species_ncbi_gene_is_obsolete = 'f'
+   where  exists (Select 'x' from ncbi_ortholog
+  	    	   	   where ncbi_gene_id = ortho_other_species_ncbi_gene_id)
+   and ortho_orther_species_ncbi_gene_is_obsolete = 't';
+
 
 
 insert into ncbi_ortholog (noi_ncbi_gene_id, noi_chromosome, noi_position, noi_symbol, noi_name, noi_taxid)
