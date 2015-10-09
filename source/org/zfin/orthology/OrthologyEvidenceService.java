@@ -3,7 +3,7 @@ package org.zfin.orthology;
 import java.util.*;
 
 /**
- * ToDo: Please add documentation for this class.
+ * service class that deals with orthology evidence handling.
  */
 public class OrthologyEvidenceService {
 
@@ -17,15 +17,15 @@ public class OrthologyEvidenceService {
      * @param orthologs set of Orthology objects
      * @return a set of fast search objects.
      */
-    public static Set<OrthologyEvidenceFastSearch> getOrthoEvidenceFastSearches(Set<Orthologue> orthologs) {
+    public static Set<OrthologyEvidenceFastSearch> getOrthoEvidenceFastSearches(Set<Ortholog> orthologs) {
         // first get a list of all evidence codes being used:
-        Set<OrthologyEvidenceFastSearch> fastSearchEvidences = new HashSet<OrthologyEvidenceFastSearch>();
-        for (Orthologue ortho : orthologs) {
-            Species organism = ortho.getOrganism();
-            for (OrthoEvidence evidence : ortho.getEvidences()) {
+        Set<OrthologyEvidenceFastSearch> fastSearchEvidences = new HashSet<>();
+        for (Ortholog ortho : orthologs) {
+            org.zfin.Species organism = ortho.getNcbiOtherSpeciesGene().getOrganism();
+            for (OrthologEvidence evidence : ortho.getEvidenceSet()) {
                 OrthologyEvidenceFastSearch fastSearch = new OrthologyEvidenceFastSearch();
-                fastSearch.setCode(evidence.getOrthologueEvidenceCode());
-                fastSearch.setMarker(ortho.getGene());
+                /// fastSearch.setCode(evidence);
+                fastSearch.setMarker(ortho.getZebrafishGene());
                 fastSearch.setPublication(evidence.getPublication());
                 fastSearch.setOrganism(organism.toString());
                 if (!fastSearchEvidences.contains(fastSearch))

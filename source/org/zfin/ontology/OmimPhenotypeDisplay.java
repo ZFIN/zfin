@@ -1,15 +1,11 @@
 package org.zfin.ontology;
 
 import org.zfin.marker.Marker;
-import org.zfin.mutant.OmimPhenotype;
-import org.zfin.orthology.Orthologue;
-import org.zfin.orthology.Orthology;
+import org.zfin.orthology.Ortholog;
 import org.zfin.sequence.DBLink;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
 
 /**
  * OMIM Phenotype
@@ -52,15 +48,15 @@ public class OmimPhenotypeDisplay {
         this.omimNum = omimNum;
     }
 
-    public Orthologue getOrthology() {
+    public Ortholog getOrthology() {
         return orthology;
     }
 
-    public void setOrthology(Orthologue orthology) {
+    public void setOrthology(Ortholog orthology) {
         this.orthology = orthology;
     }
 
-    private Orthologue orthology;
+    private Ortholog orthology;
     private DBLink humanAccession;
     private List<Marker> zfinGene;
 

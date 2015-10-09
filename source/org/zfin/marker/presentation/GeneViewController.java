@@ -114,8 +114,8 @@ public class GeneViewController {
         geneBean.setPlasmidDBLinks(
                 markerRepository.getMarkerDBLinksFast(gene, DisplayGroup.GroupName.PLASMIDS));
 
-        // ORTHOLOGY
-        geneBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(gene));
+        // ORTHOLOGY ToDo
+        //geneBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(gene));
 
         model.addAttribute(LookupStrings.FORM_BEAN, geneBean);
 

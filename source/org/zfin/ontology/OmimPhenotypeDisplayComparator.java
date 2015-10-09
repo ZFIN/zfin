@@ -1,8 +1,5 @@
 package org.zfin.ontology;
 
-import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.anatomy.presentation.AnatomyLabel;
-
 import java.util.Comparator;
 
 /**
@@ -17,13 +14,9 @@ public class OmimPhenotypeDisplayComparator implements Comparator<OmimPhenotypeD
         else if (display2 == null)
             return 1;
 
+        String humanAbbrev1 = display1.getOrthology().getNcbiOtherSpeciesGene().getAbbreviation();
+        String humanAbbrev2 = display2.getOrthology().getNcbiOtherSpeciesGene().getAbbreviation();
 
-       String humanAbbrev1  = display1.getOrthology().getAbbreviation();
-        String humanAbbrev2 = display2.getOrthology().getAbbreviation();
-
-
-        int result = humanAbbrev1.compareTo(humanAbbrev2);
-        return result;
-
+        return humanAbbrev1.compareTo(humanAbbrev2);
     }
 }

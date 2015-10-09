@@ -17,7 +17,6 @@ sub parseOrthoFiles() {
 system("rm -rf <!--|TARGETROOT|-->/server_apps/data_transfer/ORTHO/parsedOrthos.txt");
 open (NCBI, "<!--|TARGETROOT|-->/server_apps/data_transfer/ORTHO/ortholog_info") ||  die "Cannot open ortholog_info : $!\n";
 open PARSED, "><!--|TARGETROOT|-->/server_apps/data_transfer/ORTHO/parsedOrthos.txt" or die "Cannot open parsed ortho file : $!\n" ;
-open CHECK, "><!--|TARGETROOT|-->/server_apps/data_transfer/ORTHO/check.txt" or die "Cannot open parsed ortho file : $!\n" ;
 $ctLines = $ctHumanGenes = $ctMouseGenes = $ctFlyGenes = 0;
 
 while (<NCBI>) {
@@ -47,15 +46,12 @@ while (<NCBI>) {
       @xrefParts = split (/\:/, $xref);
       $xrefDbname = $xrefParts[0];
       $xrefAccNum = $xrefParts[1];
-      print PARSED join ("\t",$taxonId,$ncbiGeneId,$chromosome,$position,$symbol,$name,$xrefDbname,$xrefAccNum,$xref,$lastUpdated)."\t\n";
-      print CHECK join ("\t",$taxonId,$ncbiGeneId,$symbolNonOfficial,$symbol)."\t\n";
+      print PARSED join ("\t",$taxonId,$ncbiGeneId,$chromosome,$position,$symbolNonOfficial,$name,$xrefDbname,$xrefAccNum,$xref,$lastUpdated)."\t\n";
   }
  
 }
 
 print "\ntotal number of lines parsed: $ctLines\n";
-
-print LOG "\ntotal number of lines parsed: $ctLines\nnumber of human genes: $ctHumanGenes\nnumber of mouse genes: $ctMouseGenes  \nnumber of fly genes: $ctFlyGenes\n\n";    
 
 
 close(PARSED);

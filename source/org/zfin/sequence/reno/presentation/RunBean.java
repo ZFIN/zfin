@@ -113,8 +113,8 @@ public class RunBean {
      *
      * @param propertyName Property to sort by
      * @return <code>true</code> if and only if the
-     *         <code>runCandidates</code> property is
-     *         successfully sorted.
+     * <code>runCandidates</code> property is
+     * successfully sorted.
      */
     public boolean sortRunCandidates(String propertyName) {
         if (runCandidates == null) {

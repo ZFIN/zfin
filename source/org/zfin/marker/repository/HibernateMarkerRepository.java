@@ -44,11 +44,10 @@ import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerRelationshipPresentationTransformer;
 import org.zfin.marker.service.MarkerRelationshipSupplierPresentationTransformer;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.orthology.Orthologue;
+import org.zfin.orthology.Ortholog;
 import org.zfin.orthology.Species;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Person;
@@ -773,43 +772,48 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return mdb;
     }
 
-    public void addOrthoDBLink(Orthologue orthologue, EntrezProtRelation accession) {
+    public void addOrthoDBLink(Ortholog ortholog, EntrezProtRelation accession) {
         if (accession == null)
             return;
 
-        if (orthologue.getOrganism() == Species.MOUSE) {
+/*
+        if (ortholog.getNcbiGene().getOrganism() == Species.MOUSE) {
             for (EntrezMGI mgiOrthologue : accession.getEntrezAccession().getRelatedMGIAccessions()) {
                 if (mgiOrthologue != null) {
                     OrthologueDBLink oldb = new OrthologueDBLink();
-                    oldb.setOrthologue(orthologue);
+                    oldb.setOrtholog(ortholog);
                     oldb.setAccessionNumber(accession.getEntrezAccession().getEntrezAccNum());
                     oldb.setReferenceDatabase(sequenceService.getEntrezGeneMouseRefDB());
                     currentSession().save(oldb);
                     OrthologueDBLink mgioldb = new OrthologueDBLink();
-                    mgioldb.setOrthologue(orthologue);
+                    mgioldb.setOrtholog(ortholog);
                     mgioldb.setAccessionNumber(mgiOrthologue.getMgiAccession().replaceAll("MGI:", ""));
                     mgioldb.setReferenceDatabase(mgiOrthologue.getRefDB());
                     currentSession().save(mgioldb);
                 }
             }
         }
-        if (orthologue.getOrganism() == Species.HUMAN) {
+*/
+/*
+todo
+        if (ortholog.getNcbiGene().getOrganism() == Species.HUMAN) {
 
             for (EntrezOMIM omimOrthologue : accession.getEntrezAccession().getRelatedOMIMAccessions()) {
                 if (omimOrthologue != null) {
                     OrthologueDBLink humoldb = new OrthologueDBLink();
-                    humoldb.setOrthologue(orthologue);
+                    humoldb.setOrtholog(ortholog);
                     humoldb.setAccessionNumber(accession.getEntrezAccession().getEntrezAccNum());
                     humoldb.setReferenceDatabase(sequenceService.getEntrezGeneHumanRefDB());
                     currentSession().save(humoldb);
                     OrthologueDBLink omimoldb = new OrthologueDBLink();
-                    omimoldb.setOrthologue(orthologue);
+                    omimoldb.setOrtholog(ortholog);
                     omimoldb.setAccessionNumber(omimOrthologue.getOmimAccession().replaceAll("MIM:", ""));
                     omimoldb.setReferenceDatabase(sequenceService.getOMIMHumanOrthologue());
                     currentSession().save(omimoldb);
                 }
             }
         }
+*/
 
 
     }
@@ -2831,12 +2835,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public List<OmimPhenotype> getOmimPhenotype(Marker marker) {
         Session session = HibernateUtil.currentSession();
         String sql = "FROM OmimPhenotype " +
-                "WHERE orthologue.gene = :gene " +
-                "AND orthologue.organism = :organism ";
+                "WHERE ortholog.zebrafishGene = :gene " +
+                "AND ortholog.ncbiOtherSpeciesGene.organism.commonName = :organism ";
 
         Query query = session.createQuery(sql);
         query.setParameter("gene", marker);
-        query.setParameter("organism", Species.HUMAN);
+        query.setParameter("organism", Species.HUMAN.toString());
         return query.list();
     }
 

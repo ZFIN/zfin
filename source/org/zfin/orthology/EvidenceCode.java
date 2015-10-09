@@ -9,6 +9,7 @@ public class EvidenceCode implements Comparable<EvidenceCode>, Serializable {
 
     private String code;
     private Integer order;
+    private String name;
 
     public Integer getOrder() {
         return order;
@@ -28,6 +29,15 @@ public class EvidenceCode implements Comparable<EvidenceCode>, Serializable {
 
     public int compareTo(EvidenceCode e) {
         return code.compareTo(e.getCode());
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

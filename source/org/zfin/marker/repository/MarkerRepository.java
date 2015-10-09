@@ -14,11 +14,10 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.orthology.Orthologue;
+import org.zfin.orthology.Ortholog;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.*;
@@ -152,7 +151,7 @@ public interface MarkerRepository {
 
     DBLink addDBLink(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID);
 
-    void addOrthoDBLink(Orthologue orthologue, EntrezProtRelation accessionNumber);
+    void addOrthoDBLink(Ortholog ortholog, EntrezProtRelation accessionNumber);
 
     MarkerHistory getLastMarkerHistory(Marker marker, MarkerHistory.Event event);
 
