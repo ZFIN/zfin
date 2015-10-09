@@ -18,7 +18,7 @@ public interface OrthologyRepository extends CachedRepository {
 
     Object[] getOrthologies(List<SpeciesCriteria> speciesCriteria, ZfinCriteria criteria);
 
-    void saveOrthology(Ortholog ortholog, Publication publication, Updates up);
+    void saveOrthology(Ortholog ortholog, Publication publication);
 
     /**
      * Update a fast-search table to hold info about evidence codes. In order
@@ -93,4 +93,6 @@ public interface OrthologyRepository extends CachedRepository {
      * @param ortholog Ortholog
      */
     void deleteOrtholog(Ortholog ortholog);
+
+    Ortholog getOrthologByGeneAndNcbi(Marker gene, NcbiOtherSpeciesGene ncbiGene);
 }
