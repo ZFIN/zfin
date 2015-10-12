@@ -388,6 +388,7 @@ public class DiseaseModelPresenter implements Presenter {
                     diseaseList.add(dto.getDisease());
                 }
             }
+
             view.updateDiseaseModelTableContent(modelDTOs);
             updateDiseaseList(diseaseList);
             view.getLoadingImage().setVisible(false);

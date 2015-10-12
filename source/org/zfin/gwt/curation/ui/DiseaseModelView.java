@@ -82,7 +82,7 @@ public class DiseaseModelView extends Composite {
         if (modelDTOList != null) {
             for (DiseaseAnnotationDTO diseaseModel : modelDTOList) {
 
-               if (diseaseModel.getDamoDTO()!= null) {
+            if (diseaseModel.getDamoDTO()!= null) {
                     for (DiseaseAnnotationModelDTO damo : diseaseModel.getDamoDTO()) {
                          int colIndex=0;
                         damoCount=diseaseModel.getDamoDTO().size();
