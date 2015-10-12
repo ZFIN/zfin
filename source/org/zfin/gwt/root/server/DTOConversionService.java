@@ -1445,13 +1445,15 @@ public class DTOConversionService {
         orthologDTO.setZdbID(ortholog.getZdbID());
         orthologDTO.setZebrafishGene(DTOConversionService.convertToMarkerDTO(ortholog.getZebrafishGene()));
         orthologDTO.setNcbiOtherSpeciesGeneDTO(DTOConversionService.convertToNcbiOtherSpeciesGeneDTO(ortholog.getNcbiOtherSpeciesGene()));
+
+        Set<OrthologEvidenceDTO> orthologEvidenceDTOs = new HashSet<>();
         if (CollectionUtils.isNotEmpty(ortholog.getEvidenceSet())) {
-            Set<OrthologEvidenceDTO> orthologEvidenceDTOs = new HashSet<>();
             for (OrthologEvidence evidence : ortholog.getEvidenceSet()) {
                 orthologEvidenceDTOs.add(DTOConversionService.convertToOrthologEvidenceDTO(evidence));
             }
-            orthologDTO.setEvidenceSet(orthologEvidenceDTOs);
         }
+        orthologDTO.setEvidenceSet(orthologEvidenceDTOs);
+
         return orthologDTO;
     }
 
