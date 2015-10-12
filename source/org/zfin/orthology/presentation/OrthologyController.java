@@ -2,6 +2,7 @@ package org.zfin.orthology.presentation;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
@@ -14,6 +15,7 @@ import org.zfin.orthology.EvidenceCode;
 import org.zfin.orthology.NcbiOtherSpeciesGene;
 import org.zfin.orthology.Ortholog;
 import org.zfin.orthology.OrthologEvidence;
+import org.zfin.orthology.service.OrthologService;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 
@@ -26,6 +28,9 @@ import static org.zfin.repository.RepositoryFactory.*;
 
 @Controller
 public class OrthologyController {
+
+    @Autowired
+    OrthologService orthologService;
 
     @RequestMapping(value = "/gene/{geneID}/orthologs", method = RequestMethod.GET)
     public
@@ -124,10 +129,10 @@ public class OrthologyController {
         Transaction tx = HibernateUtil.createTransaction();
         try {
             tx.begin();
+//            checkSecurityProfile();
             checkValidGene(geneID);
             Publication publication = checkValidPublication(orthologDTO.getPublicationID());
             Ortholog ortholog = checkValidOrtholog(orthologDTO.getOrthologID());
-            checkSecurityProfile();
             Set<OrthologEvidence> evidenceSet = new HashSet<>(4);
             for (String code : orthologDTO.getEvidenceCodeList()) {
                 OrthologEvidence evidence = new OrthologEvidence();
@@ -141,7 +146,7 @@ public class OrthologyController {
             }
             // this will re-create the set of evidence codes. No update is done but all of them are deleted first.
             // that is ok as those records are value objects and not entities.
-            ortholog.setEvidenceSet(evidenceSet);
+            orthologService.replaceEvidenceCodes(ortholog, evidenceSet, publication);
             tx.commit();
         } catch (Exception e) {
             tx.rollback();

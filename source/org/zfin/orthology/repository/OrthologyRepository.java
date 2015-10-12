@@ -2,7 +2,6 @@ package org.zfin.orthology.repository;
 
 import org.zfin.criteria.ZfinCriteria;
 import org.zfin.framework.CachedRepository;
-import org.zfin.infrastructure.Updates;
 import org.zfin.marker.Marker;
 import org.zfin.orthology.EvidenceCode;
 import org.zfin.orthology.NcbiOtherSpeciesGene;
