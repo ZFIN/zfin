@@ -95,8 +95,8 @@ function orthoEdit() {
     return directive;
 }
 
-OrthoEditController.$inject = ['$http'];
-function OrthoEditController($http) {
+OrthoEditController.$inject = ['$http', '$q'];
+function OrthoEditController($http, $q) {
     var vm = this;
 
     vm.orthologs = [];
@@ -106,6 +106,7 @@ function OrthoEditController($http) {
     vm.noteText = '';
     vm.noteEditing = false;
 
+    vm.codes = [];
     vm.pubs = [
         {
             zdbID: 'ZDB-PUB-030905-1'
@@ -142,9 +143,14 @@ function OrthoEditController($http) {
     activate();
 
     function activate() {
-        $http.get('/action/gene/' + vm.gene + '/orthologs')
+        $q
+            .all([
+                $http.get('/action/gene/' + vm.gene + '/orthologs'),
+                $http.get('/action/ortholog/evidence-codes')
+            ])
             .then(function(resp) {
-                vm.orthologs = resp.data;
+                vm.codes = resp[1].data;
+                vm.orthologs = resp[0].data;
                 vm.orthologs.forEach(function (ortholog) {
                     var evidenceDisplayMap = {};
                     ortholog.evidenceSet.forEach(function (e) {
@@ -157,7 +163,7 @@ function OrthoEditController($http) {
                         }
 
                         if (evidenceDisplayMap[e.publication.zdbID] === undefined) {
-                            var evidenceDisplay = new EvidenceDisplay();
+                            var evidenceDisplay = new EvidenceDisplay(vm.codes);
                             evidenceDisplay.publication = e.publication;
                             evidenceDisplayMap[e.publication.zdbID] = evidenceDisplay;
                         }
@@ -234,7 +240,7 @@ function OrthoEditController($http) {
     }
 
     function addEvidence(ortholog) {
-        openEvidenceModal(ortholog, new EvidenceDisplay());
+        openEvidenceModal(ortholog, new EvidenceDisplay(vm.codes));
     }
 
     function saveEvidence() {
@@ -252,15 +258,23 @@ function OrthoEditController($http) {
             return;
         }
 
-        if (vm.modalEvidenceIndex < 0) {
-            vm.modalOrtholog.evidence.push(angular.copy(vm.modalEvidence));
-            /* TODO: call server */
-        } else {
-            vm.modalOrtholog.evidence.splice(vm.modalEvidenceIndex, 1, angular.copy(vm.modalEvidence));
-            /* TODO: call server */
-        }
-
-        $.modal.close();
+        var pubID = vm.modalEvidence.publication.zdbID;
+        var payload = {
+            'publicationID': pubID,
+            'orthologID': vm.modalOrtholog.zdbID,
+            'evidenceCodeList': vm.modalEvidence.codes
+                .filter(function(c) { return c.selected; })
+                .map(function(c) { return c.code; })
+        };
+        $http.post('/action/gene/' + vm.gene + '/ortholog/evidence', payload)
+            .then(function (resp) {
+                vm.modalOrtholog.evidenceMap[pubID] = angular.copy(vm.modalEvidence);
+                console.log('OK!')
+                $.modal.close();
+            })
+            .catch(function (error) {
+                console.log('Error!', error);
+            });
     }
 
     function cancelEvidence() {
@@ -281,7 +295,7 @@ function OrthoEditController($http) {
         if (!codes) { return; }
         return codes
             .filter(function(c) { return c.selected; })
-            .map(function(c) { return c.abbrev; })
+            .map(function(c) { return c.code; })
             .join(', ');
     }
 
@@ -339,53 +353,20 @@ function OrthoEditController($http) {
 
 }
 
-function EvidenceDisplay() {
+function EvidenceDisplay(codes) {
     this.publication = {
         zdbID: ''
     };
 
-    this.codes = [
-        {
-            abbrev: 'AA',
-            full: 'Amino acid sequence comparison',
-            selected: false
-        },
-        {
-            abbrev: 'CE',
-            full: 'Coincident expression',
-            selected: false
-        },
-        {
-            abbrev: 'CL',
-            full: 'Conserved genome location',
-            selected: false
-        },
-        {
-            abbrev: 'FC',
-            full: 'Functional complementation',
-            selected: false
-        },
-        {
-            abbrev: 'NT',
-            full: 'Nucleotide sequence comparison',
-            selected: false
-        },
-        {
-            abbrev: 'PT',
-            full: 'Phylogenetic tree',
-            selected: false
-        },
-        {
-            abbrev: 'OT',
-            full: 'Other',
-            selected: false
-        }
-    ];
+    this.codes = angular.copy(codes).map(function (code) {
+        code.selected = false;
+        return code;
+    });
 }
 
 EvidenceDisplay.prototype.toggleCode = function(evidenceCode) {
     this.codes.forEach(function (code) {
-        if (code.abbrev === evidenceCode) {
+        if (code.code === evidenceCode) {
             code.selected = !code.selected;
         }
     });

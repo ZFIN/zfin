@@ -101,7 +101,7 @@
                 <li ng-repeat="code in vm.modalEvidence.codes">
                     <label>
                         <input type="checkbox" ng-model="code.selected" ng-change="vm.evidenceCodeError = ''">
-                        {{code.full}} ({{code.abbrev}})
+                        {{code.name}} ({{code.code}})
                     </label>
                 </li>
             </ul>

@@ -812,6 +812,11 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     }
 
     @Override
+    public List<EvidenceCode> getEvidenceCodes() {
+        return HibernateUtil.currentSession().createCriteria(EvidenceCode.class).list();
+    }
+
+    @Override
     public EvidenceCode getEvidenceCode(String name) {
         return (EvidenceCode) HibernateUtil.currentSession().get(EvidenceCode.class, name);
     }
