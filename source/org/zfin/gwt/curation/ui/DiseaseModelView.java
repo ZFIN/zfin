@@ -108,7 +108,7 @@ public class DiseaseModelView extends Composite {
                         diseaseModelTable.setWidget(rowIndex, colIndex++, disease);
                         diseaseModelTable.setText(rowIndex, colIndex++, diseaseModel.getEvidenceCode());
 
-                        Button deleteButton1 = new Button("X"+damoCount);
+                        Button deleteButton1 = new Button("X");
 
                         deleteModeMap1.put(deleteButton1, damo);
                         deleteButton1.setTitle("ID: " + damo.getDamoID());
