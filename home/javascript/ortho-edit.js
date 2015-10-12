@@ -125,8 +125,6 @@ function OrthoEditController($http) {
             .then(function(resp) {
                 vm.orthologs = resp.data;
                 vm.orthologs.forEach(function (ortholog) {
-                    if (ortholog.evidenceSet === null) { return; }
-
                     var ev = {};
                     ortholog.evidenceSet.forEach(function (e) {
                         if (vm.pubs.indexOf(e.publication.zdbID) < 0) {
@@ -314,7 +312,7 @@ function OrthoEditController($http) {
             vm.modalEvidence = angular.copy(existingEvidence);
             vm.evidencePublicationWarning = true;
         } else {
-            vm.modalEvidence.publication.zdbId = pub;
+            vm.modalEvidence.publication.zdbID = pub;
             vm.evidencePublicationWarning = false;
         }
     }
@@ -322,7 +320,7 @@ function OrthoEditController($http) {
     function blankEvidence() {
         return {
             publication: {
-                zdbId: ''
+                zdbID: ''
             },
             codes: vm.codes.map(function(code) {
                 return {
