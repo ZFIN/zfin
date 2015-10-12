@@ -287,8 +287,18 @@ function OrthoEditController($http, $q) {
     }
 
     function deleteEvidence(ortholog, evidence, index) {
-        /* TODO: server call */
-        ortholog.evidence.splice(index, 1);
+        var payload = {
+            'publicationID': vm.modalEvidence.publication.zdbID,
+            'orthologID': vm.modalOrtholog.zdbID,
+            'evidenceCodeList': []
+        };
+        $http.post('/action/gene/' + vm.gene + '/ortholog/evidence', payload)
+            .then(function (resp) {
+                ortholog.evidence.splice(index, 1);
+            })
+            .catch(function (error) {
+                console.log('Error!', error);
+            });
     }
 
     function formatCodes(codes) {
