@@ -15,7 +15,6 @@ import org.zfin.feature.FeaturePrefix;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.*;
-
 import org.zfin.profile.presentation.PersonMemberPresentation;
 import org.zfin.profile.presentation.ProfileUpdateMessageBean;
 import org.zfin.profile.repository.ProfileRepository;
@@ -24,7 +23,10 @@ import org.zfin.repository.RepositoryFactory;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.sql.Blob;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 /**
  */
@@ -163,7 +165,6 @@ public class ProfileService {
     }
 
 
-
     public List<BeanFieldUpdate> compareAccountInfoFields(AccountInfo oldAccountInfo, AccountInfo newAccountInfo) throws Exception {
         List<BeanFieldUpdate> fieldUpdateList = new ArrayList<BeanFieldUpdate>();
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("login", oldAccountInfo, newAccountInfo));
@@ -194,7 +195,7 @@ public class ProfileService {
         beanCompareService.applyUpdates(person, fields);
         HibernateUtil.currentSession().update(person);
         for (BeanFieldUpdate beanFieldUpdate : fields) {
-            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(person.getZdbID(),beanFieldUpdate);
+            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(person.getZdbID(), beanFieldUpdate);
         }
 
         if (person.getZdbID().equals(securityPersonZdbID)) {
@@ -270,7 +271,7 @@ public class ProfileService {
     public void updateImage(String zdbID, String securityPersonZdbID, Blob snapshot) throws Exception {
 
         if (snapshot != null)
-            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(zdbID, "snapsnot", "updating snapshot " + snapshot.length() + " bytes" );
+            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(zdbID, "snapsnot", "updating snapshot " + snapshot.length() + " bytes");
         else
             RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(zdbID, "snapshot", "deleting snapshot");
 
@@ -408,7 +409,7 @@ public class ProfileService {
      * If there is one, then update the join record.
      * If there are multiple . . . create an error log and update both records.
      *
-     * @param address   address string to use for update.
+     * @param address     address string to use for update.
      * @param personZdbId Id of the person to update.
      * @return Number of addresses updated.
      */
@@ -514,7 +515,7 @@ public class ProfileService {
         }
         int returnValue = setAddressForPerson(address, person.getZdbID());
         final PersonMemberPresentation personMemberPresentation = new PersonMemberPresentation();
-        personMemberPresentation.setAddressToExisting(address,person.getZdbID());
+        personMemberPresentation.setAddressToExisting(address, person.getZdbID());
         HibernateUtil.currentSession().flush();
         return 1;
     }
@@ -656,8 +657,8 @@ public class ProfileService {
         String newUrl;
 
         //if the url is set and doesn't start with http://, magically make it happen, just like browsers do
-        if(!StringUtils.isEmpty(url) && !url.startsWith("http://"))
-           newUrl = "http://" + url;
+        if (!StringUtils.isEmpty(url) && !url.startsWith("http://"))
+            newUrl = "http://" + url;
         else
             newUrl = url;
 
@@ -666,4 +667,9 @@ public class ProfileService {
         return newUrl;
     }
 
+    public static boolean isRootUser() {
+        if (getCurrentSecurityUser() == null)
+            return false;
+        return getCurrentSecurityUser().getAccountInfo().getRoot();
+    }
 }

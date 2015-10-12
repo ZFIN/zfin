@@ -1,5 +1,7 @@
 package org.zfin.gwt.root.dto;
 
+import org.zfin.orthology.presentation.OrthologEvidenceDTO;
+
 import java.util.Set;
 
 public class OrthologDTO {

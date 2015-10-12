@@ -32,6 +32,7 @@ import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
 import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.orthology.*;
+import org.zfin.orthology.presentation.OrthologEvidenceDTO;
 import org.zfin.profile.CuratorSession;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Organization;
@@ -413,7 +414,7 @@ public class DTOConversionService {
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
         genotypeDTO.setNickName(genotype.getNickname());
-        genotypeDTO.setWildtype(genotype.isWildtype());
+        //genotypeDTO.setWildtype(genotype.isWildtype());
         if (genotype.getAssociatedGenotypes() != null) {
             for (Genotype background : genotype.getAssociatedGenotypes())
                 genotypeDTO.addBackgroundGenotype(convertToPureGenotypeDTOs(background));
