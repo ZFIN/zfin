@@ -82,7 +82,7 @@ public class DiseaseModelView extends Composite {
         if (modelDTOList != null) {
             for (DiseaseAnnotationDTO diseaseModel : modelDTOList) {
 
-               if (diseaseModel.getDamoDTO()!= null) {
+            if (diseaseModel.getDamoDTO()!= null) {
                     for (DiseaseAnnotationModelDTO damo : diseaseModel.getDamoDTO()) {
                          int colIndex=0;
                         damoCount=diseaseModel.getDamoDTO().size();
@@ -108,7 +108,7 @@ public class DiseaseModelView extends Composite {
                         diseaseModelTable.setWidget(rowIndex, colIndex++, disease);
                         diseaseModelTable.setText(rowIndex, colIndex++, diseaseModel.getEvidenceCode());
 
-                        Button deleteButton1 = new Button("X"+damoCount);
+                        Button deleteButton1 = new Button("X");
 
                         deleteModeMap1.put(deleteButton1, damo);
                         deleteButton1.setTitle("ID: " + damo.getDamoID());
