@@ -43,7 +43,7 @@ public interface LookupRPCService extends RemoteService {
 
     SuggestOracle.Response getSupplierSuggestions(SuggestOracle.Request req);
 
-    SuggestOracle.Response getConstructSuggestions(SuggestOracle.Request req);
+    SuggestOracle.Response getConstructSuggestions(SuggestOracle.Request req,String pubZdbID);
 
     SuggestOracle.Response getFeatureSuggestions(SuggestOracle.Request req);
 
