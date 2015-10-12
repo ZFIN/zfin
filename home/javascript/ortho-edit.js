@@ -1,6 +1,54 @@
 angular
     .module('app', [])
-    .directive('orthoEdit', orthoEdit);
+    .directive('orthoEdit', orthoEdit)
+    .directive('pubDisplay', pubDisplayDirective)
+    .filter('pub', pubDisplayFilter);
+
+var namedPubs = [
+    {
+        zdbID: 'ZDB-PUB-030905-1',
+        display: 'Ortho Curation Pub'
+    }
+];
+
+function zdbIdToDisplay(value) {
+    var out = value;
+    namedPubs.forEach(function (namedPub) {
+        if (namedPub.zdbID === value) {
+            out = namedPub.display;
+        }
+    });
+    return out;
+}
+
+function displayToZdbId(value) {
+    var out = value;
+    namedPubs.forEach(function (namedPub) {
+        if (namedPub.display === value) {
+            out = namedPub.zdbID;
+        }
+    });
+    return out;
+}
+
+function pubDisplayDirective() {
+    var directive = {
+        restrict: 'A',
+        require: 'ngModel',
+        link: link
+    };
+
+    function link(scope, element, attrs, modelCtrl) {
+        modelCtrl.$parsers.push(displayToZdbId);
+        modelCtrl.$formatters.push(zdbIdToDisplay);
+    }
+
+    return directive;
+}
+
+function pubDisplayFilter() {
+    return zdbIdToDisplay;
+}
 
 function orthoEdit() {
     var directive = {
@@ -58,36 +106,9 @@ function OrthoEditController($http) {
     vm.noteText = '';
     vm.noteEditing = false;
 
-    vm.pubs = ['Ortho Curation Pub'];
-
-    vm.codes = [
+    vm.pubs = [
         {
-            abbrev: 'AA',
-            full: 'Amino acid sequence comparison'
-        },
-        {
-            abbrev: 'CE',
-            full: 'Coincident expression'
-        },
-        {
-            abbrev: 'CL',
-            full: 'Conserved genome location'
-        },
-        {
-            abbrev: 'FC',
-            full: 'Functional complementation'
-        },
-        {
-            abbrev: 'NT',
-            full: 'Nucleotide sequence comparison'
-        },
-        {
-            abbrev: 'PT',
-            full: 'Phylogenetic tree'
-        },
-        {
-            abbrev: 'OT',
-            full: 'Other'
+            zdbID: 'ZDB-PUB-030905-1'
         }
     ];
 
@@ -125,26 +146,25 @@ function OrthoEditController($http) {
             .then(function(resp) {
                 vm.orthologs = resp.data;
                 vm.orthologs.forEach(function (ortholog) {
-                    var ev = {};
+                    var evidenceDisplayMap = {};
                     ortholog.evidenceSet.forEach(function (e) {
-                        if (vm.pubs.indexOf(e.publication.zdbID) < 0) {
-                            vm.pubs.push(e.publication.zdbID);
+                        var pubUsed = vm.pubs.find(function (pub) {
+                            return pub.zdbID === e.publication.zdbID;
+                        });
+
+                        if (!pubUsed) {
+                            vm.pubs.push(e.publication);
                         }
 
-                        if (ev[e.publication.zdbID] === undefined) {
-                            ev[e.publication.zdbID] = {
-                                publication: e.publication,
-                                codes: angular.copy(vm.codes)
-                            };
+                        if (evidenceDisplayMap[e.publication.zdbID] === undefined) {
+                            var evidenceDisplay = new EvidenceDisplay();
+                            evidenceDisplay.publication = e.publication;
+                            evidenceDisplayMap[e.publication.zdbID] = evidenceDisplay;
                         }
 
-                        ev[e.publication.zdbID].codes.forEach(function (c) {
-                            if (c.abbrev === e.evidenceCode) {
-                                c.selected = true;
-                            }
-                        })
+                        evidenceDisplayMap[e.publication.zdbID].toggleCode(e.evidenceCode);
                     });
-                    ortholog.evidenceMap = ev;
+                    ortholog.evidenceMap = evidenceDisplayMap;
                 });
             })
             .catch(function(error) {
@@ -214,7 +234,7 @@ function OrthoEditController($http) {
     }
 
     function addEvidence(ortholog) {
-        openEvidenceModal(ortholog, blankEvidence());
+        openEvidenceModal(ortholog, new EvidenceDisplay());
     }
 
     function saveEvidence() {
@@ -307,28 +327,66 @@ function OrthoEditController($http) {
     }
 
     function selectPub(pub) {
-        var existingEvidence = vm.modalOrtholog.evidenceMap[pub];
+        var existingEvidence = vm.modalOrtholog.evidenceMap[pub.zdbID];
         if (existingEvidence) {
             vm.modalEvidence = angular.copy(existingEvidence);
             vm.evidencePublicationWarning = true;
         } else {
-            vm.modalEvidence.publication.zdbID = pub;
+            vm.modalEvidence.publication = pub;
             vm.evidencePublicationWarning = false;
         }
     }
 
-    function blankEvidence() {
-        return {
-            publication: {
-                zdbID: ''
-            },
-            codes: vm.codes.map(function(code) {
-                return {
-                    abbrev: code.abbrev,
-                    full: code.full,
-                    selected: false
-                };
-            })
-        };
-    }
 }
+
+function EvidenceDisplay() {
+    this.publication = {
+        zdbID: ''
+    };
+
+    this.codes = [
+        {
+            abbrev: 'AA',
+            full: 'Amino acid sequence comparison',
+            selected: false
+        },
+        {
+            abbrev: 'CE',
+            full: 'Coincident expression',
+            selected: false
+        },
+        {
+            abbrev: 'CL',
+            full: 'Conserved genome location',
+            selected: false
+        },
+        {
+            abbrev: 'FC',
+            full: 'Functional complementation',
+            selected: false
+        },
+        {
+            abbrev: 'NT',
+            full: 'Nucleotide sequence comparison',
+            selected: false
+        },
+        {
+            abbrev: 'PT',
+            full: 'Phylogenetic tree',
+            selected: false
+        },
+        {
+            abbrev: 'OT',
+            full: 'Other',
+            selected: false
+        }
+    ];
+}
+
+EvidenceDisplay.prototype.toggleCode = function(evidenceCode) {
+    this.codes.forEach(function (code) {
+        if (code.abbrev === evidenceCode) {
+            code.selected = !code.selected;
+        }
+    });
+};
