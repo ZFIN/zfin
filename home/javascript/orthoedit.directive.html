@@ -42,7 +42,7 @@
         <td>
             <div ng-repeat="(pubId, ev) in ortholog.evidenceMap">
                 <a ng-href="/{{ev.publication.zdbID}}" ng-attr-title="{{ev.publication.citation}}">
-                    {{ev.publication.zdbID}}
+                    {{ev.publication.zdbID | pub}}
                 </a>: {{vm.formatCodes(ev.codes)}}
                 <a href class="clickable" ng-click="vm.editEvidence(ortholog, ev, $index)"><i class="fa fa-pencil"></i></a>
                 <a href class="clickable" ng-click="vm.deleteEvidence(ortholog, ev, $index)"><i class="fa fa-trash"></i></a>
@@ -73,21 +73,22 @@
     <div class="curation-form">
         <label>Publication</label>
         <div class="list-select">
-            <input type="text"
+            <input pub-display
+                   type="text"
                    class="list-select-text"
                    ng-model="vm.modalEvidence.publication.zdbID"
                    ng-disabled="vm.modalEvidenceIndex > -1"
                    ng-change="vm.evidencePublicationError = ''">
             <ul class="list-select-options">
                 <li ng-repeat="pub in vm.pubs" ng-click="vm.selectPub(pub)">
-                    {{pub}}
+                    {{pub.zdbID | pub}}
                 </li>
             </ul>
         </div>
         <div class="error" ng-show="vm.evidencePublicationError">{{vm.evidencePublicationError}}</div>
 
         <p class="warning" ng-show="vm.evidencePublicationWarning">
-            {{vm.modalEvidence.publication.zdbID}} is already a reference for
+            {{vm.modalEvidence.publication.zdbID | pub}} is already a reference for
             {{vm.modalOrtholog.ncbiOtherSpeciesGeneDTO.organism}}
             <i>{{vm.modalOrtholog.ncbiOtherSpeciesGeneDTO.abbreviation}}</i> orthology. You
             are now editing the existing record.
@@ -100,7 +101,7 @@
                 <li ng-repeat="code in vm.modalEvidence.codes">
                     <label>
                         <input type="checkbox" ng-model="code.selected" ng-change="vm.evidenceCodeError = ''">
-                        {{code.full}} ({{code.abbrev}})
+                        {{code.name}} ({{code.code}})
                     </label>
                 </li>
             </ul>

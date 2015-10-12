@@ -1,6 +1,54 @@
 angular
     .module('app', [])
-    .directive('orthoEdit', orthoEdit);
+    .directive('orthoEdit', orthoEdit)
+    .directive('pubDisplay', pubDisplayDirective)
+    .filter('pub', pubDisplayFilter);
+
+var namedPubs = [
+    {
+        zdbID: 'ZDB-PUB-030905-1',
+        display: 'Ortho Curation Pub'
+    }
+];
+
+function zdbIdToDisplay(value) {
+    var out = value;
+    namedPubs.forEach(function (namedPub) {
+        if (namedPub.zdbID === value) {
+            out = namedPub.display;
+        }
+    });
+    return out;
+}
+
+function displayToZdbId(value) {
+    var out = value;
+    namedPubs.forEach(function (namedPub) {
+        if (namedPub.display === value) {
+            out = namedPub.zdbID;
+        }
+    });
+    return out;
+}
+
+function pubDisplayDirective() {
+    var directive = {
+        restrict: 'A',
+        require: 'ngModel',
+        link: link
+    };
+
+    function link(scope, element, attrs, modelCtrl) {
+        modelCtrl.$parsers.push(displayToZdbId);
+        modelCtrl.$formatters.push(zdbIdToDisplay);
+    }
+
+    return directive;
+}
+
+function pubDisplayFilter() {
+    return zdbIdToDisplay;
+}
 
 function orthoEdit() {
     var directive = {
@@ -47,8 +95,8 @@ function orthoEdit() {
     return directive;
 }
 
-OrthoEditController.$inject = ['$http'];
-function OrthoEditController($http) {
+OrthoEditController.$inject = ['$http', '$q'];
+function OrthoEditController($http, $q) {
     var vm = this;
 
     vm.orthologs = [];
@@ -58,36 +106,10 @@ function OrthoEditController($http) {
     vm.noteText = '';
     vm.noteEditing = false;
 
-    vm.pubs = ['Ortho Curation Pub'];
-
-    vm.codes = [
+    vm.codes = [];
+    vm.pubs = [
         {
-            abbrev: 'AA',
-            full: 'Amino acid sequence comparison'
-        },
-        {
-            abbrev: 'CE',
-            full: 'Coincident expression'
-        },
-        {
-            abbrev: 'CL',
-            full: 'Conserved genome location'
-        },
-        {
-            abbrev: 'FC',
-            full: 'Functional complementation'
-        },
-        {
-            abbrev: 'NT',
-            full: 'Nucleotide sequence comparison'
-        },
-        {
-            abbrev: 'PT',
-            full: 'Phylogenetic tree'
-        },
-        {
-            abbrev: 'OT',
-            full: 'Other'
+            zdbID: 'ZDB-PUB-030905-1'
         }
     ];
 
@@ -121,30 +143,34 @@ function OrthoEditController($http) {
     activate();
 
     function activate() {
-        $http.get('/action/gene/' + vm.gene + '/orthologs')
+        $q
+            .all([
+                $http.get('/action/gene/' + vm.gene + '/orthologs'),
+                $http.get('/action/ortholog/evidence-codes')
+            ])
             .then(function(resp) {
-                vm.orthologs = resp.data;
+                vm.codes = resp[1].data;
+                vm.orthologs = resp[0].data;
                 vm.orthologs.forEach(function (ortholog) {
-                    var ev = {};
+                    var evidenceDisplayMap = {};
                     ortholog.evidenceSet.forEach(function (e) {
-                        if (vm.pubs.indexOf(e.publication.zdbID) < 0) {
-                            vm.pubs.push(e.publication.zdbID);
+                        var pubUsed = vm.pubs.find(function (pub) {
+                            return pub.zdbID === e.publication.zdbID;
+                        });
+
+                        if (!pubUsed) {
+                            vm.pubs.push(e.publication);
                         }
 
-                        if (ev[e.publication.zdbID] === undefined) {
-                            ev[e.publication.zdbID] = {
-                                publication: e.publication,
-                                codes: angular.copy(vm.codes)
-                            };
+                        if (evidenceDisplayMap[e.publication.zdbID] === undefined) {
+                            var evidenceDisplay = new EvidenceDisplay(vm.codes);
+                            evidenceDisplay.publication = e.publication;
+                            evidenceDisplayMap[e.publication.zdbID] = evidenceDisplay;
                         }
 
-                        ev[e.publication.zdbID].codes.forEach(function (c) {
-                            if (c.abbrev === e.evidenceCode) {
-                                c.selected = true;
-                            }
-                        })
+                        evidenceDisplayMap[e.publication.zdbID].toggleCode(e.evidenceCode);
                     });
-                    ortholog.evidenceMap = ev;
+                    ortholog.evidenceMap = evidenceDisplayMap;
                 });
             })
             .catch(function(error) {
@@ -214,7 +240,7 @@ function OrthoEditController($http) {
     }
 
     function addEvidence(ortholog) {
-        openEvidenceModal(ortholog, blankEvidence());
+        openEvidenceModal(ortholog, new EvidenceDisplay(vm.codes));
     }
 
     function saveEvidence() {
@@ -232,15 +258,23 @@ function OrthoEditController($http) {
             return;
         }
 
-        if (vm.modalEvidenceIndex < 0) {
-            vm.modalOrtholog.evidence.push(angular.copy(vm.modalEvidence));
-            /* TODO: call server */
-        } else {
-            vm.modalOrtholog.evidence.splice(vm.modalEvidenceIndex, 1, angular.copy(vm.modalEvidence));
-            /* TODO: call server */
-        }
-
-        $.modal.close();
+        var pubID = vm.modalEvidence.publication.zdbID;
+        var payload = {
+            'publicationID': pubID,
+            'orthologID': vm.modalOrtholog.zdbID,
+            'evidenceCodeList': vm.modalEvidence.codes
+                .filter(function(c) { return c.selected; })
+                .map(function(c) { return c.code; })
+        };
+        $http.post('/action/gene/' + vm.gene + '/ortholog/evidence', payload)
+            .then(function (resp) {
+                vm.modalOrtholog.evidenceMap[pubID] = angular.copy(vm.modalEvidence);
+                console.log('OK!')
+                $.modal.close();
+            })
+            .catch(function (error) {
+                console.log('Error!', error);
+            });
     }
 
     function cancelEvidence() {
@@ -261,7 +295,7 @@ function OrthoEditController($http) {
         if (!codes) { return; }
         return codes
             .filter(function(c) { return c.selected; })
-            .map(function(c) { return c.abbrev; })
+            .map(function(c) { return c.code; })
             .join(', ');
     }
 
@@ -307,28 +341,33 @@ function OrthoEditController($http) {
     }
 
     function selectPub(pub) {
-        var existingEvidence = vm.modalOrtholog.evidenceMap[pub];
+        var existingEvidence = vm.modalOrtholog.evidenceMap[pub.zdbID];
         if (existingEvidence) {
             vm.modalEvidence = angular.copy(existingEvidence);
             vm.evidencePublicationWarning = true;
         } else {
-            vm.modalEvidence.publication.zdbID = pub;
+            vm.modalEvidence.publication = pub;
             vm.evidencePublicationWarning = false;
         }
     }
 
-    function blankEvidence() {
-        return {
-            publication: {
-                zdbID: ''
-            },
-            codes: vm.codes.map(function(code) {
-                return {
-                    abbrev: code.abbrev,
-                    full: code.full,
-                    selected: false
-                };
-            })
-        };
-    }
 }
+
+function EvidenceDisplay(codes) {
+    this.publication = {
+        zdbID: ''
+    };
+
+    this.codes = angular.copy(codes).map(function (code) {
+        code.selected = false;
+        return code;
+    });
+}
+
+EvidenceDisplay.prototype.toggleCode = function(evidenceCode) {
+    this.codes.forEach(function (code) {
+        if (code.code === evidenceCode) {
+            code.selected = !code.selected;
+        }
+    });
+};

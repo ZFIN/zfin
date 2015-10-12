@@ -19,10 +19,7 @@ import org.zfin.orthology.service.OrthologService;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -31,6 +28,12 @@ public class OrthologyController {
 
     @Autowired
     OrthologService orthologService;
+
+    @ResponseBody
+    @RequestMapping(value = "/ortholog/evidence-codes", method = RequestMethod.GET)
+    public List<EvidenceCode> listOrthologyEvidenceCodes() {
+        return getOrthologyRepository().getEvidenceCodes();
+    }
 
     @RequestMapping(value = "/gene/{geneID}/orthologs", method = RequestMethod.GET)
     public

@@ -76,6 +76,8 @@ public interface OrthologyRepository extends CachedRepository {
      */
     NcbiOtherSpeciesGene getNcbiGene(String ncbiID);
 
+    List<EvidenceCode> getEvidenceCodes();
+
     EvidenceCode getEvidenceCode(String string);
 
     /**
