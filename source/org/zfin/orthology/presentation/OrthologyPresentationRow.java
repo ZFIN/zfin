@@ -1,5 +1,6 @@
-package org.zfin.orthology.repository;
+package org.zfin.orthology.presentation;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -12,7 +13,7 @@ public class OrthologyPresentationRow {
     private String chromosome ;
     private String position ;
     private Set<String> accessions;
-    private Set<String> evidenceCodes ;
+    private Collection<OrthologEvidencePresentation> evidence;
 
     public String getSpecies() {
         return species;
@@ -61,19 +62,12 @@ public class OrthologyPresentationRow {
         this.accessions = accessions;
     }
 
-    public void addEvidenceCode(String evidenceCode){
-        if(evidenceCodes==null){
-            evidenceCodes = new TreeSet<String>();
-        }
-        evidenceCodes.add(evidenceCode);
+    public void setEvidence(Collection<OrthologEvidencePresentation> evidence){
+        this.evidence = evidence;
     }
 
-    public Set<String> getEvidenceCodes() {
-        return evidenceCodes;
-    }
-
-    public void setEvidenceCodes(Set<String> evidenceCodes) {
-        this.evidenceCodes = evidenceCodes;
+    public Collection<OrthologEvidencePresentation> getEvidence() {
+        return evidence;
     }
 
     /**
@@ -87,10 +81,8 @@ public class OrthologyPresentationRow {
             }
         }
 
-        if(row.getEvidenceCodes()!=null){
-            for(String evidenceCode : row.getEvidenceCodes()){
-                addEvidenceCode(evidenceCode);
-            }
+        if(row.getEvidence()!=null){
+            setEvidence(row.getEvidence());
         }
     }
 

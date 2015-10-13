@@ -8,7 +8,6 @@ import org.zfin.TestConfiguration;
 import org.zfin.criteria.ZfinCriteria;
 import org.zfin.marker.Marker;
 import org.zfin.orthology.repository.HibernateOrthologyRepository;
-import org.zfin.orthology.repository.OrthologyPresentationRow;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FilterType;
@@ -16,12 +15,11 @@ import org.zfin.util.FilterType;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
-import static org.zfin.repository.RepositoryFactory.getOrthologyRepository;
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Test for utility methods in the repository class.
@@ -294,21 +292,13 @@ public class OrthologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getOrthologuesForGene() {
+    public void getOrthologsForGene() {
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
-        List<OrthologyPresentationRow> orthologues = getOrthologyRepository().getOrthologyForGene(m);
-        assertEquals(2, orthologues.size());
-        for (OrthologyPresentationRow orthologue : orthologues) {
-            assertTrue(orthologue.getEvidenceCodes().size() > 0);
+        List<Ortholog> orthologs = getOrthologyRepository().getOrthologs(m);
+        assertThat(orthologs, hasSize(2));
+        for (Ortholog ortholog : orthologs) {
+            assertThat(ortholog.getEvidenceSet(), not(empty()));
         }
-
-        // pax2a
-        m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-990415-8");
-        // Pfeffer
-        Publication publication = getPublicationRepository().getPublication("ZDB-PUB-980916-4");
-        orthologues = getOrthologyRepository().getOrthologyForGene(m, publication);
-        assertEquals(1, orthologues.size());
-
     }
 
 

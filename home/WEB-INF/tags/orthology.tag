@@ -15,116 +15,57 @@
 </c:if>
 
 <zfin2:subsection title="${title}"
-                  test="${!empty orthologyPresentationBean.evidenceCodes || !empty orthologyPresentationBean.notes}"
+                  test="${!empty orthologyPresentationBean.orthologs || !empty orthologyPresentationBean.note}"
                   showNoData="true">
 
-    <%--<table class="summary horizontal-solidblock" >--%>
-    <c:if test="${!empty orthologyPresentationBean.evidenceCodes}">
+    <c:if test="${!empty orthologyPresentationBean.orthologs}">
         <table class="summary rowstripes">
-            <c:if test="${not hideEvidence}">
-                <tr>
-                    <th style="background: #cccccc" colspan="4">&nbsp;</th>
-                    <th bgcolor="#cccccc" align="left" colspan="3"><b>Evidence</b> <a class="info-popup-link popup-link"
-                                                                                      href="/zf_info/oev.html"></a></th>
-                </tr>
-            </c:if>
-            <tr bgcolor="#cccccc">
+            <tr>
                 <th>Species</th>
                 <th>Symbol</th>
                 <th>Chr (Position)</th>
                 <th>Accession #</th>
-                <c:if test="${not hideEvidence}">
-                    <c:forEach var="evidenceCode" items="${orthologyPresentationBean.evidenceCodes}">
-                        <th>
-                                ${evidenceCode}
-                        </th>
-                    </c:forEach>
-                </c:if>
+                <th>Evidence</th>
             </tr>
 
-                <%--Zebrafish Data--%>
-            <tr class="odd">
-                <td>
-                    <b>Zebrafish</b>
-                </td>
-                <td><i>${marker.abbreviation}</i></td>
-                <td>
-                    <zfin2:displayLocation entity="${marker}" hideTitles="true"/>
-                </td>
-                <td>
-                        <%--no accession--%>
-                    &nbsp;
-                </td>
-                <c:if test="${not hideEvidence}">
-                    <c:forEach var="evidence" items="${orthologyPresentationBean.evidenceCodes}">
-                        <td style="vertical-align: middle;">
-                            <img valign='center' src='/images/fill_green_ball.gif' border=0 height=10>
-                        </td>
-                    </c:forEach>
-                </c:if>
-            </tr>
-
-                <%--Human / Mouse / Fly Data--%>
-            <c:forEach var="orthologue" items="${orthologyPresentationBean.orthologues}" varStatus="loop">
-                <tr class=${loop.index%2==0 ? "even": "odd"}>
+            <c:forEach var="ortholog" items="${orthologyPresentationBean.orthologs}" varStatus="loop">
+                <zfin:alternating-tr loopName="loop">
                     <td>
-                        <b>${orthologue.species}</b>
+                        <b>${ortholog.species}</b>
                     </td>
                     <td>
-                        <i>${orthologue.abbreviation}</i>
+                        <i>${ortholog.abbreviation}</i>
                     </td>
                     <td>
-                            ${orthologue.chromosome}
+                            ${ortholog.chromosome}
 
-                        <c:if test="${orthologue.positionValid}">
-                            (${orthologue.position})
+                        <c:if test="${ortholog.positionValid}">
+                            (${ortholog.position})
                         </c:if>
                     </td>
                     <td>
-                        <c:forEach var="accession" items="${orthologue.accessions}">
+                        <c:forEach var="accession" items="${ortholog.accessions}">
                             <li style="list-style-type: none;">
                                     ${accession}
                             </li>
                         </c:forEach>
                     </td>
-                    <c:if test="${not hideEvidence}">
-                        <c:forEach var="evidenceCode" items="${orthologyPresentationBean.evidenceCodes}">
-                            <td style="vertical-align: middle;">
-                                <c:forEach var="evidence" items="${orthologue.evidenceCodes}">
-                                    ${ (evidence eq evidenceCode ?
-                            "<img valign='center' src='/images/fill_green_ball.gif' border=0 height=10>"
-                            : "" )}
-                                </c:forEach>
-                            </td>
-                        </c:forEach>
-                    </c:if>
-                </tr>
-                <c:if test="${loop.last}">
-                    <c:if test="${not hideEvidence}">
-                        <c:if test="${!empty orthologyPresentationBean.evidenceCodes}">
-                            <tr class=${loop.index%2==0 ? "even": "odd"}>
-                                <td colspan="${4 + fn:length(orthologyPresentationBean.evidenceCodes)}">
-                                    <a href="/action/marker/${marker.zdbID}/orthology-detail">
-                                        <b>Orthology Details</b>
-                                    </a>
-                                </td>
-                            </tr>
-                        </c:if>
-                    </c:if>
-                </c:if>
+                    <td>
+                    <c:forEach var="evidence" items="${ortholog.evidence}">
+                        ${evidence.code.name} (${fn:length(evidence.publications)})<br>
+                    </c:forEach>
+                    </td>
+                </zfin:alternating-tr>
             </c:forEach>
         </table>
     </c:if>
 
-    <c:set var="hasNote"
-           value="${!empty orthologyPresentationBean.notes and !empty orthologyPresentationBean.notes[0]}"/>
-    <c:if test="${hasNote}">
+    <c:if test="${!empty orthologyPresentationBean.note}">
         <div class="summary">
             <b>Orthology Note</b><br>
-            ${orthologyPresentationBean.notes[0]}
+            ${orthologyPresentationBean.note}
         </div>
     </c:if>
-
 
 </zfin2:subsection>
 

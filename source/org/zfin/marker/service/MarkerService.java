@@ -1,6 +1,7 @@
 package org.zfin.marker.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.framework.HibernateUtil;
@@ -22,6 +23,11 @@ import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.TermExternalReference;
 import org.zfin.ontology.presentation.DiseaseDisplay;
+import org.zfin.orthology.NcbiOtherSpeciesGene;
+import org.zfin.orthology.Ortholog;
+import org.zfin.orthology.OrthologEvidence;
+import org.zfin.orthology.presentation.OrthologEvidencePresentation;
+import org.zfin.orthology.presentation.OrthologyPresentationRow;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
@@ -37,6 +43,7 @@ import java.util.regex.Pattern;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
+import static org.zfin.repository.RepositoryFactory.getOrthologyRepository;
 
 /**
  * Sevice Class that deals with Marker related logic.
@@ -199,8 +206,9 @@ public class MarkerService {
         if (marker.getDbLinks() != null) {
             logger.debug(marker.getDbLinks().size() + " total marker dblinks");
             for (MarkerDBLink dblink : marker.getDbLinks()) {
-                if (dblink.getReferenceDatabase().getForeignDBDataType().getSuperType().equals(ForeignDBDataType.SuperType.SEQUENCE) && !dblink.isInDisplayGroup(DisplayGroup.GroupName.HIDDEN_DBLINKS))
+                if (dblink.getReferenceDatabase().getForeignDBDataType().getSuperType().equals(ForeignDBDataType.SuperType.SEQUENCE) && !dblink.isInDisplayGroup(DisplayGroup.GroupName.HIDDEN_DBLINKS)) {
                     sequenceInfo.addDBLink(dblink);
+                }
             }
         }
 
@@ -234,43 +242,52 @@ public class MarkerService {
      * @return a set of markers
      */
     public static PaginationResult<Marker> getRelatedMarker(Marker marker, Set<MarkerRelationship.Type> types, Integer numOfRecords) {
-        if (marker == null)
+        if (marker == null) {
             return null;
+        }
         PaginationBean paginationBean = new PaginationBean();
-        if (numOfRecords < 0)
+        if (numOfRecords < 0) {
             paginationBean.setMaxDisplayRecords(Integer.MAX_VALUE);
-        else
+        } else {
             paginationBean.setMaxDisplayRecords(numOfRecords);
+        }
         return getMarkerRepository().getRelatedMarker(marker, types, paginationBean);
     }
 
     public static Set<Marker> getRelatedMarker(Marker marker, Set<MarkerRelationship.Type> types) {
-        if (types == null)
+        if (types == null) {
             return null;
+        }
 
         Set<Marker> markers = new TreeSet<Marker>();
         if (CollectionUtils.isEmpty(types)) {
             Set<MarkerRelationship> relationOne = marker.getFirstMarkerRelationships();
             Set<MarkerRelationship> relationTwo = marker.getSecondMarkerRelationships();
-            if (relationOne != null)
-                for (MarkerRelationship rel : relationOne)
+            if (relationOne != null) {
+                for (MarkerRelationship rel : relationOne) {
                     markers.add(rel.getSecondMarker());
-            if (relationTwo != null)
-                for (MarkerRelationship rel : relationTwo)
+                }
+            }
+            if (relationTwo != null) {
+                for (MarkerRelationship rel : relationTwo) {
                     markers.add(rel.getFirstMarker());
+                }
+            }
         } else {
             Set<MarkerRelationship> relationOne = marker.getFirstMarkerRelationships();
             Set<MarkerRelationship> relationTwo = marker.getSecondMarkerRelationships();
             if (relationOne != null) {
                 for (MarkerRelationship rel : relationOne) {
-                    if (types.contains(rel.getType()))
+                    if (types.contains(rel.getType())) {
                         markers.add(rel.getSecondMarker());
+                    }
                 }
             }
             if (relationTwo != null) {
                 for (MarkerRelationship rel : relationTwo) {
-                    if (types.contains(rel.getType()))
+                    if (types.contains(rel.getType())) {
                         markers.add(rel.getFirstMarker());
+                    }
                 }
             }
         }
@@ -309,8 +326,9 @@ public class MarkerService {
         TreeSet<RelatedMarker> relatedMarkers = new TreeSet<RelatedMarker>();
 
         for (MarkerRelationship mrel : marker.getFirstMarkerRelationships()) {
-            if (mrel.getType().equals(type))
+            if (mrel.getType().equals(type)) {
                 relatedMarkers.add(new RelatedMarker(marker, mrel));
+            }
         }
         for (MarkerRelationship mrel : marker.getSecondMarkerRelationships()) {
             if (mrel.getType().equals(type)) {
@@ -612,8 +630,9 @@ public class MarkerService {
             for (MarkerAlias alias : marker.getAliases()) {
                 Set<PublicationAttribution> aliasPubs = alias.getPublications();
                 if (aliasPubs != null && !aliasPubs.isEmpty()) {
-                    for (PublicationAttribution pubAttr : aliasPubs)
+                    for (PublicationAttribution pubAttr : aliasPubs) {
                         publications.add(pubAttr.getPublication());
+                    }
                 }
             }
         }
@@ -635,8 +654,9 @@ public class MarkerService {
         for (MarkerRelationship mrel : allRelationships) {
             Set<PublicationAttribution> mrelPubs = mrel.getPublications();
             if (mrelPubs != null && !mrelPubs.isEmpty()) {
-                for (PublicationAttribution pubAttr : mrelPubs)
+                for (PublicationAttribution pubAttr : mrelPubs) {
                     publications.add(pubAttr.getPublication());
+                }
             }
         }
 
@@ -649,8 +669,9 @@ public class MarkerService {
         for (DBLink dblink : marker.getDbLinks()) {
             Set<PublicationAttribution> dblinkPubs = dblink.getPublications();
             if (dblinkPubs != null && !dblinkPubs.isEmpty()) {
-                for (PublicationAttribution pubAttr : dblinkPubs)
+                for (PublicationAttribution pubAttr : dblinkPubs) {
                     publications.add(pubAttr.getPublication());
+                }
             }
         }
 
@@ -732,13 +753,53 @@ public class MarkerService {
         return geneOntologyOnMarkerBean;
     }
 
-    public static OrthologyPresentationBean getOrthologyEvidence(Marker gene) {
+    public static OrthologyPresentationBean getOrthologyEvidence(Marker gene, Publication publication) {
         OrthologyPresentationBean orthologyPresentationBean = new OrthologyPresentationBean();
-        orthologyPresentationBean.setEvidenceCodes(RepositoryFactory.getOrthologyRepository().getEvidenceCodes(gene));
-        orthologyPresentationBean.setOrthologues(RepositoryFactory.getOrthologyRepository().getOrthologyForGene(gene));
-        orthologyPresentationBean.setNotes(RepositoryFactory.getInfrastructureRepository().getExternalOrthologyNoteStrings(gene.getZdbID()));
+        Collection<Ortholog> orthologs = getOrthologyRepository().getOrthologs(gene);
+        List<OrthologyPresentationRow> rows = new ArrayList<>();
+        for (Ortholog ortholog : orthologs) {
+            OrthologyPresentationRow row = new OrthologyPresentationRow();
+            NcbiOtherSpeciesGene otherGene = ortholog.getNcbiOtherSpeciesGene();
+            row.setSpecies(otherGene.getOrganism().getCommonName());
+            row.setAbbreviation(otherGene.getAbbreviation());
+            row.setChromosome(otherGene.getChromosome());
+            row.setPosition(otherGene.getPosition());
+            row.setAccessions(new HashSet<String>()); // todo: will get filled out later
+
+            // Collect all the evidence records by code into a map then pull out the values
+            Map<String, OrthologEvidencePresentation> evidenceMap = new HashMap<>();
+            for (OrthologEvidence evidence : ortholog.getEvidenceSet()) {
+                if (publication != null && !publication.equals(evidence.getPublication())) {
+                    continue;
+                }
+                String key = evidence.getEvidenceCode().getCode();
+                if (!evidenceMap.containsKey(key)) {
+                    OrthologEvidencePresentation evidencePresentation = new OrthologEvidencePresentation();
+                    evidencePresentation.setCode(evidence.getEvidenceCode());
+                    evidenceMap.put(key, evidencePresentation);
+                }
+                evidenceMap.get(key).addPublications(evidence.getPublication());
+            }
+            // if the evidence map is empty (probably because a publication was provided, and that publication
+            // does not support the current ortholog), then just go to the next ortholog; don't add a row with
+            // no evidence.
+            if (MapUtils.isEmpty(evidenceMap)) {
+                continue;
+            }
+            row.setEvidence(evidenceMap.values());
+            rows.add(row);
+        }
+        orthologyPresentationBean.setOrthologs(rows);
+        OrthologyNote note = gene.getOrthologyNote();
+        if (note != null) {
+            orthologyPresentationBean.setNote(note.getNote());
+        }
 
         return orthologyPresentationBean;
+    }
+
+    public static OrthologyPresentationBean getOrthologyEvidence(Marker gene) {
+        return getOrthologyEvidence(gene, null);
     }
 
     public static String getMarkerTypeString(Marker marker) {
@@ -841,15 +902,6 @@ public class MarkerService {
         Database.AvailableAbbrev database = Database.AvailableAbbrev.ENSEMBL_ZF;
         String accessionID = getMarkerRepository().getAccessionNumber(marker, database);
         return accessionID;
-    }
-
-    public static OrthologyPresentationBean getOrthologyEvidence(Marker gene, Publication publication) {
-        OrthologyPresentationBean orthologyPresentationBean = new OrthologyPresentationBean();
-        orthologyPresentationBean.setEvidenceCodes(RepositoryFactory.getOrthologyRepository().getEvidenceCodes(gene, publication));
-        orthologyPresentationBean.setOrthologues(RepositoryFactory.getOrthologyRepository().getOrthologyForGene(gene, publication));
-        orthologyPresentationBean.setNotes(RepositoryFactory.getInfrastructureRepository().getExternalOrthologyNoteStrings(gene.getZdbID()));
-
-        return orthologyPresentationBean;
     }
 
     public static List<GenotypeFigure> getPhenotypeDataForSTR(SequenceTargetingReagent str) {

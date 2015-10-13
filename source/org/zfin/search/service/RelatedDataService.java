@@ -13,9 +13,10 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
-import org.zfin.orthology.repository.OrthologyPresentationRow;
+import org.zfin.orthology.presentation.OrthologyPresentationRow;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.search.Category;
 import org.zfin.search.FieldName;
@@ -80,7 +81,9 @@ public class RelatedDataService {
 
             if (StringUtils.equals(category, Category.GENE.getName())) {
                 if (!ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
-                    List<OrthologyPresentationRow> markerList=getOrthologyRepository().getOrthologyForGene(getMarkerRepository().getGeneByID(id));
+                    List<OrthologyPresentationRow> markerList = MarkerService
+                            .getOrthologyEvidence(getMarkerRepository().getGeneByID(id))
+                            .getOrthologs();
                     if (CollectionUtils.isNotEmpty(markerList)) {
                         links.add(getOrthologyLink(id));
                     }
