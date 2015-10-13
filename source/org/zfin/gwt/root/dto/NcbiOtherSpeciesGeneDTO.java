@@ -13,7 +13,6 @@ public class NcbiOtherSpeciesGeneDTO {
     private String chromosome;
     private String position;
     private String organism;
-    private List<NcbiExternalReferenceDTO> referenceDTOList;
 
     public String getOrganism() {
         return organism;
@@ -61,13 +60,5 @@ public class NcbiOtherSpeciesGeneDTO {
 
     public void setID(String ID) {
         this.ID = ID;
-    }
-
-    public List<NcbiExternalReferenceDTO> getReferenceDTOList() {
-        return referenceDTOList;
-    }
-
-    public void setReferenceDTOList(List<NcbiExternalReferenceDTO> referenceDTOList) {
-        this.referenceDTOList = referenceDTOList;
     }
 }

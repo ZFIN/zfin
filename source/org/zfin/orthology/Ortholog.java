@@ -11,6 +11,13 @@ public class Ortholog implements Comparable, Serializable {
     private Marker zebrafishGene;
     private Set<OrthologEvidence> evidenceSet;
     private NcbiOtherSpeciesGene ncbiOtherSpeciesGene;
+    private Set<OrthologExternalReference> externalReferenceList;
+
+    private String name;
+    private String symbol;
+    private String chromosome;
+    private String position;
+    private boolean obsolete;
 
     public NcbiOtherSpeciesGene getNcbiOtherSpeciesGene() {
         return ncbiOtherSpeciesGene;
@@ -34,6 +41,55 @@ public class Ortholog implements Comparable, Serializable {
 
     public void setZebrafishGene(Marker gene) {
         this.zebrafishGene = gene;
+    }
+
+
+    public Set<OrthologExternalReference> getExternalReferenceList() {
+        return externalReferenceList;
+    }
+
+    public void setExternalReferenceList(Set<OrthologExternalReference> externalReferenceList) {
+        this.externalReferenceList = externalReferenceList;
+    }
+
+    public String getChromosome() {
+        return chromosome;
+    }
+
+    public void setChromosome(String chromosome) {
+        this.chromosome = chromosome;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isObsolete() {
+        return obsolete;
+    }
+
+    public void setObsolete(boolean obsolete) {
+        this.obsolete = obsolete;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
     }
 
     public int compareTo(Object o) {

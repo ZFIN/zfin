@@ -12,6 +12,7 @@ public class ReferenceDatabaseDTO implements IsSerializable {
     private String type;
     private String superType;
     private String blastName;
+    private String url;
 
     public String getZdbID() {
         return zdbID;
@@ -55,6 +56,15 @@ public class ReferenceDatabaseDTO implements IsSerializable {
 
     public void setBlastName(String blastName) {
         this.blastName = blastName;
+    }
+
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public ReferenceDatabaseDTO clone() {

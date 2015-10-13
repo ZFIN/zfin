@@ -1,6 +1,7 @@
 package org.zfin.gwt.root.dto;
 
 import org.zfin.orthology.presentation.OrthologEvidenceDTO;
+import org.zfin.orthology.presentation.OrthologExternalReferenceDTO;
 
 import java.util.Set;
 
@@ -10,6 +11,7 @@ public class OrthologDTO {
     private MarkerDTO zebrafishGene;
     private NcbiOtherSpeciesGeneDTO ncbiOtherSpeciesGeneDTO;
     private Set<OrthologEvidenceDTO> evidenceSet;
+    private Set<OrthologExternalReferenceDTO> orthologExternalReferenceDTOSet;
 
     public MarkerDTO getZebrafishGene() {
         return zebrafishGene;
@@ -33,6 +35,14 @@ public class OrthologDTO {
 
     public void setNcbiOtherSpeciesGeneDTO(NcbiOtherSpeciesGeneDTO ncbiGene) {
         this.ncbiOtherSpeciesGeneDTO = ncbiGene;
+    }
+
+    public Set<OrthologExternalReferenceDTO> getOrthologExternalReferenceDTOSet() {
+        return orthologExternalReferenceDTOSet;
+    }
+
+    public void setOrthologExternalReferenceDTOSet(Set<OrthologExternalReferenceDTO> orthologExternalReferenceDTOSet) {
+        this.orthologExternalReferenceDTOSet = orthologExternalReferenceDTOSet;
     }
 
     public Set<OrthologEvidenceDTO> getEvidenceSet() {

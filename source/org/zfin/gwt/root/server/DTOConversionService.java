@@ -33,6 +33,7 @@ import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.orthology.*;
 import org.zfin.orthology.presentation.OrthologEvidenceDTO;
+import org.zfin.orthology.presentation.OrthologExternalReferenceDTO;
 import org.zfin.profile.CuratorSession;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Organization;
@@ -302,6 +303,7 @@ public class DTOConversionService {
         if (referenceDatabase.getPrimaryBlastDatabase() != null) {
             referenceDatabaseDTO.setBlastName(referenceDatabase.getPrimaryBlastDatabase().getName());
         }
+        referenceDatabaseDTO.setUrl(referenceDatabase.getForeignDB().getDbUrlPrefix());
         return referenceDatabaseDTO;
     }
 
@@ -1455,6 +1457,14 @@ public class DTOConversionService {
         }
         orthologDTO.setEvidenceSet(orthologEvidenceDTOs);
 
+        if (ortholog.getExternalReferenceList() != null) {
+            Set<OrthologExternalReferenceDTO> referenceDTOList = new HashSet<>(ortholog.getExternalReferenceList().size());
+            for (OrthologExternalReference reference : ortholog.getExternalReferenceList()) {
+                referenceDTOList.add(convertToOrthologExternalReferenceDTO(reference));
+            }
+            orthologDTO.setOrthologExternalReferenceDTOSet(referenceDTOList);
+        }
+
         return orthologDTO;
     }
 
@@ -1467,6 +1477,8 @@ public class DTOConversionService {
     }
 
     public static NcbiOtherSpeciesGeneDTO convertToNcbiOtherSpeciesGeneDTO(NcbiOtherSpeciesGene ncbiGene) {
+        if (ncbiGene == null)
+            return null;
         NcbiOtherSpeciesGeneDTO geneDTO = new NcbiOtherSpeciesGeneDTO();
         geneDTO.setID(ncbiGene.getID());
         geneDTO.setAbbreviation(ncbiGene.getAbbreviation());
@@ -1474,20 +1486,13 @@ public class DTOConversionService {
         geneDTO.setChromosome(ncbiGene.getChromosome());
         geneDTO.setPosition(ncbiGene.getPosition());
         geneDTO.setOrganism(ncbiGene.getOrganism().getCommonName());
-        if (ncbiGene.getNcbiExternalReferenceList() != null) {
-            List<NcbiExternalReferenceDTO> referenceDTOList = new ArrayList<>(ncbiGene.getNcbiExternalReferenceList().size());
-            for (NcbiExternalReference reference : ncbiGene.getNcbiExternalReferenceList()) {
-                referenceDTOList.add(convertToNcbiReferenceDTO(reference));
-            }
-            geneDTO.setReferenceDTOList(referenceDTOList);
-        }
         return geneDTO;
     }
 
-    public static NcbiExternalReferenceDTO convertToNcbiReferenceDTO(NcbiExternalReference reference) {
-        NcbiExternalReferenceDTO dto = new NcbiExternalReferenceDTO();
-        dto.setID(reference.getID());
+    public static OrthologExternalReferenceDTO convertToOrthologExternalReferenceDTO(OrthologExternalReference reference) {
+        OrthologExternalReferenceDTO dto = new OrthologExternalReferenceDTO();
         dto.setAccessionNumber(reference.getAccessionNumber());
+        dto.setReferenceDatabaseDTO(convertToReferenceDatabaseDTO(reference.getReferenceDatabase()));
         return dto;
     }
 }
