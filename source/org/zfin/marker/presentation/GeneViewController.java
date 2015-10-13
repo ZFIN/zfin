@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.expression.FigureService;
@@ -16,8 +15,6 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.orthology.Orthology;
-import org.zfin.orthology.OrthologyEvidenceService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.service.SequenceService;
@@ -27,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
  */
@@ -126,22 +122,6 @@ public class GeneViewController {
 
     public void setMarkerRepository(MarkerRepository markerRepository) {
         this.markerRepository = markerRepository;
-    }
-
-    @RequestMapping("/{markerID}/orthology-detail")
-    public String showOrthologyDetail(@PathVariable String markerID,
-                                      @ModelAttribute("formBean") GeneBean geneBean,
-                                      Model model) {
-        logger.info("zdbID: " + markerID);
-        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(markerID);
-        geneBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(gene));
-        List<Orthology> list = getPublicationRepository().getOrthologyPublications(gene);
-        List<Orthology> evidenceList = OrthologyEvidenceService.getEvidenceCenteredList(list);
-        geneBean.setMarker(gene);
-        model.addAttribute("publicationOrthologyList", list);
-        model.addAttribute("evidenceOrthologyList", evidenceList);
-
-        return "marker/marker-orthology-detail.page";
     }
 
 

@@ -25,7 +25,6 @@ import org.zfin.search.presentation.SearchResult;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
-import static org.zfin.repository.RepositoryFactory.getOrthologyRepository;
 
 
 @Service
@@ -69,9 +68,11 @@ public class RelatedDataService {
             String gBrowseLink = getGBrowseLink(id);
 
             if (!(id.contains("EFG"))) {
-                if (!(entityName.contains("WITHDRAWN")))
-                    if (gBrowseLink != null)
+                if (!(entityName.contains("WITHDRAWN"))) {
+                    if (gBrowseLink != null) {
                         links.add(gBrowseLink);
+                    }
+                }
             }
         }
 
@@ -106,8 +107,9 @@ public class RelatedDataService {
         links.addAll(getXrefLinks(id));
 
 
-        if (StringUtils.equals(category, Category.MUTANT.getName()))
+        if (StringUtils.equals(category, Category.MUTANT.getName())) {
             links = sortLinks(links, featureRelatedDataCategories);
+        }
         if (StringUtils.equals(category, Category.MARKER.getName())) {
             if (ActiveData.isValidActiveData(id, ActiveData.Type.BAC) || ActiveData.isValidActiveData(id, ActiveData.Type.PAC)
                     || ActiveData.isValidActiveData(id, ActiveData.Type.CDNA) || ActiveData.isValidActiveData(id, ActiveData.Type.EST)) {
@@ -132,12 +134,15 @@ public class RelatedDataService {
 
             links = sortLinks(links, constructRelatedDateCategories);
         }
-        if (StringUtils.equals(category, Category.GENE.getName()))
+        if (StringUtils.equals(category, Category.GENE.getName())) {
             links = sortLinks(links, geneRelatedDataCategories);
-        if (StringUtils.equals(category, Category.ANTIBODY.getName()))
+        }
+        if (StringUtils.equals(category, Category.ANTIBODY.getName())) {
             links = sortLinks(links, antibodyRelatedDataCategories);
-        if (StringUtils.equals(category, Category.PUBLICATION.getName()))
-             links = sortLinks(links, pubRelatedDataCategories);
+        }
+        if (StringUtils.equals(category, Category.PUBLICATION.getName())) {
+            links = sortLinks(links, pubRelatedDataCategories);
+        }
         if (StringUtils.equals(category, Category.ANATOMY.getName())) {
             getRelatedDataForAnatomyGO(links, id);
             links = sortLinks(links, anatomyGoRelatedDataCategories);
@@ -156,8 +161,9 @@ public class RelatedDataService {
     private void getRelatedDataForAnatomyGO(List<String> links, String id) {
 
         Ontology ontology = OntologyManager.getInstance().getOntologyForTerm(id);
-        if (Ontology.isGoOntology(ontology))
+        if (Ontology.isGoOntology(ontology)) {
             getGoAnnotationData(links, id, FieldName.getFieldName(ontology));
+        }
         createAffectedPhenotypeData(links, id, FieldName.getAffectedFieldName(ontology));
         createExpressedGenesData(links, id, FieldName.EXPRESSED_IN_TF);
     }
@@ -166,7 +172,7 @@ public class RelatedDataService {
         QueryResponse response = getQueryResponse(fieldName);
 
         FacetField category = response.getFacetField("category");
-        if (category != null && category.getValues() != null)
+        if (category != null && category.getValues() != null) {
             for (FacetField.Count count : category.getValues()) {
                 if (count.getName().equals(Category.GENE.getName())) {
                     Properties properties = new Properties();
@@ -174,13 +180,14 @@ public class RelatedDataService {
                     links.add(createHyperLink(id, category.getName(), count.getName(), count.getCount(), GENES_CAUSING_PHENOTYPE, false, properties).toString());
                 }
             }
+        }
     }
 
     private void createExpressedGenesData(List<String> links, String id, FieldName fieldName) {
         QueryResponse response = getQueryResponse(fieldName.getName());
 
         FacetField category = response.getFacetField("category");
-        if (category != null && category.getValues() != null)
+        if (category != null && category.getValues() != null) {
             for (FacetField.Count count : category.getValues()) {
                 if (count.getName().equals(Category.GENE.getName())) {
                     Properties properties = new Properties();
@@ -188,13 +195,14 @@ public class RelatedDataService {
                     links.add(createHyperLink(id, category.getName(), count.getName(), count.getCount(), GENES_EXPRESSED, false, properties).toString());
                 }
             }
+        }
     }
 
     private void getGoAnnotationData(List<String> links, String id, String fieldName) {
         QueryResponse response = getQueryResponse(fieldName);
 
         FacetField category = response.getFacetField("category");
-        if (category != null && category.getValues() != null)
+        if (category != null && category.getValues() != null) {
             for (FacetField.Count count : category.getValues()) {
                 if (count.getName().equals(Category.GENE.getName())) {
                     Properties properties = new Properties();
@@ -202,6 +210,7 @@ public class RelatedDataService {
                     links.add(createHyperLink(id, category.getName(), count.getName(), count.getCount(), GENES_WITH_GO, false, properties).toString());
                 }
             }
+        }
     }
 
     private QueryResponse getQueryResponse(String ontologyName) {
@@ -233,12 +242,14 @@ public class RelatedDataService {
         List<String> returnList = new ArrayList<>(links.size());
         Map<Integer, String> linkMap = new TreeMap<>();
         for (String link : links) {
-            if (link == null)
+            if (link == null) {
                 continue;
+            }
             int index = 0;
             for (String relatedDatum : relatedDataFeatureCategories) {
-                if (link.contains(relatedDatum))
+                if (link.contains(relatedDatum)) {
                     linkMap.put(index, link);
+                }
                 index++;
             }
         }
@@ -256,12 +267,13 @@ public class RelatedDataService {
 
         FacetField facetField = response.getFacetField("category");
 
-        if (facetField != null && facetField.getValues() != null)
+        if (facetField != null && facetField.getValues() != null) {
             for (FacetField.Count count : facetField.getValues()) {
                 StringBuilder link = createHyperLink(id, facetField.getName(), count.getName(), count.getCount());
                 links.add(link.toString());
 
             }
+        }
         return links;
     }
 
@@ -279,9 +291,9 @@ public class RelatedDataService {
             return link.append("");
 
         } else {
-            if (StringUtils.isEmpty(hyperlinkName))
-
+            if (StringUtils.isEmpty(hyperlinkName)) {
                 hyperlinkName = categoryName;
+            }
             if (id.startsWith("ZDB-PERS") && StringUtils.equals(categoryName, "Community")) {
                 hyperlinkName = "Labs";
             }
@@ -352,22 +364,22 @@ public class RelatedDataService {
         if (ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
             List<Marker> markerList = getMarkerRepository().getTranscriptByZdbID(id).getAllRelatedMarker();
             int numberOfTargetGenes = 0;
-            for (Marker marker : markerList)
+            for (Marker marker : markerList) {
                 if (marker.getMarkerType().getType().name().equals(ActiveData.Type.GENE.name())) {
                     id = marker.getZdbID();
                     numberOfTargetGenes++;
                 }
-            if (numberOfTargetGenes > 1)
+            }
+            if (numberOfTargetGenes > 1) {
                 return null;
+            }
         }
         return "<a href=\"" + "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id + "\">Genome Browser</a>";
     }
 
 
     public String getOrthologyLink(String id) {
-
-
-        return "<a href=\"" + "/action/marker/" + id + "/orthology-detail\">Orthology</a>";
+        return "<a href=\"" + "/" + id + "#orthology\">Orthology</a>";
     }
 
     public String getOrtholistLink(String id) {

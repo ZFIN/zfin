@@ -89,7 +89,11 @@
 
 
 <%--ORTHOLOGY--%>
-<zfin2:orthology orthologyPresentationBean="${formBean.orthologyPresentationBean}" marker="${formBean.marker}" title="ORTHOLOGY" webdriverPathFromRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
+<zfin2:orthology
+        orthologyPresentationBean="${formBean.orthologyPresentationBean}"
+        marker="${formBean.marker}"
+        title="ORTHOLOGY for ${formBean.marker.name}"
+        webdriverPathFromRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
 
 <%--CITATIONS--%>
 <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>

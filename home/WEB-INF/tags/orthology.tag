@@ -15,6 +15,7 @@
 </c:if>
 
 <zfin2:subsection title="${title}"
+                  anchor="orthology"
                   test="${!empty orthologyPresentationBean.orthologs || !empty orthologyPresentationBean.note}"
                   showNoData="true">
 
