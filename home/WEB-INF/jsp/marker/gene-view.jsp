@@ -89,10 +89,13 @@
 
 
 <%--ORTHOLOGY--%>
+<c:set var="geneSymbol">
+    <zfin:abbrev entity="${formBean.marker}"/>
+</c:set>
 <zfin2:orthology
         orthologyPresentationBean="${formBean.orthologyPresentationBean}"
         marker="${formBean.marker}"
-        title="ORTHOLOGY for ${formBean.marker.name}"
+        title="ORTHOLOGY for ${geneSymbol}"
         webdriverPathFromRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
 
 <%--CITATIONS--%>
