@@ -1,14 +1,19 @@
 package org.zfin.gwt.curation.ui;
 
+import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.curation.dto.DiseaseModelDTO;
+import org.apache.commons.collections.CollectionUtils;
+import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
+import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
 import org.zfin.gwt.root.ui.ZfinFlexTable;
+import org.zfin.mutant.DiseaseAnnotationModel;
 
 import java.util.HashMap;
 import java.util.List;
@@ -63,45 +68,95 @@ public class DiseaseModelView extends Composite {
         diseaseModelTable.getRowFormatter().setStyleName(0, "table-header");
     }
 
-    private Map<Button, DiseaseModelDTO> deleteModeMap = new HashMap<>();
-    private Map<Hyperlink, DiseaseModelDTO> termLinkDiseaseModelMap = new HashMap<>();
+    private Map<Button, DiseaseAnnotationDTO> deleteModeMap = new HashMap<>();
+    private Map<Button, DiseaseAnnotationModelDTO> deleteModeMap1 = new HashMap<>();
+    private Map<Hyperlink, DiseaseAnnotationDTO> termLinkDiseaseModelMap = new HashMap<>();
 
-    public void updateDiseaseModelTableContent(List<DiseaseModelDTO> modelDTOList) {
+    public void updateDiseaseModelTableContent(List<DiseaseAnnotationDTO> modelDTOList) {
         diseaseModelTable.removeAllRows();
         initDiseaseModelTable();
         int groupIndex = 0;
         int rowIndex = 1;
+        int damoCount=0;
+
         if (modelDTOList != null) {
-            for (DiseaseModelDTO diseaseModel : modelDTOList) {
-                int colIndex = 0;
-                if (diseaseModel.getFish() != null) {
-                    Anchor fish = new Anchor(SafeHtmlUtils.fromTrustedString(diseaseModel.getFish().getHandle()), "/" + diseaseModel.getFish().getZdbID());
-                    fish.setTitle(diseaseModel.getFish().getZdbID());
-                    diseaseModelTable.setWidget(rowIndex, colIndex++, fish);
-                    InlineHTML environment = new InlineHTML(diseaseModel.getEnvironment().getName());
-                    environment.setTitle(diseaseModel.getEnvironment().getZdbID());
-                    diseaseModelTable.setWidget(rowIndex, colIndex++, environment);
-                } else {
-                    colIndex += 2;
+            for (DiseaseAnnotationDTO diseaseModel : modelDTOList) {
+
+            if (diseaseModel.getDamoDTO()!= null) {
+                    for (DiseaseAnnotationModelDTO damo : diseaseModel.getDamoDTO()) {
+                         int colIndex=0;
+                        damoCount=diseaseModel.getDamoDTO().size();
+                        //if (diseaseModel.getFish() != null) {
+                        //   Anchor fish = new Anchor(SafeHtmlUtils.fromTrustedString(diseaseModel.getFish().getHandle()), "/" + diseaseModel.getFish().getZdbID());
+                        Anchor fish = new Anchor(SafeHtmlUtils.fromTrustedString(damo.getFish().getHandle()), "/" + damo.getFish().getZdbID());
+                        //fish.setTitle(diseaseModel.getFish().getZdbID());
+                        fish.setTitle(damo.getFish().getZdbID());
+                        diseaseModelTable.setWidget(rowIndex, colIndex++, fish);
+                        //  InlineHTML environment = new InlineHTML(diseaseModel.getEnvironment().getName());
+                        InlineHTML environment = new InlineHTML(damo.getEnvironment().getName());
+                        //  environment.setTitle(diseaseModel.getEnvironment().getZdbID());
+                        environment.setTitle(damo.getEnvironment().getZdbID());
+                        diseaseModelTable.setWidget(rowIndex, colIndex++, environment);
+
+
+                        diseaseModelTable.setText(rowIndex, colIndex, IS_A_MODEL_OF);
+                        diseaseModelTable.getCellFormatter().setStyleName(rowIndex, colIndex++, "bold");
+                        Hyperlink disease = new Hyperlink(SafeHtmlUtils.fromTrustedString(diseaseModel.getDisease().getTermName()), "diseaseName");
+
+                        disease.setTitle(diseaseModel.getDisease().getOboID());
+                        termLinkDiseaseModelMap.put(disease, diseaseModel);
+                        diseaseModelTable.setWidget(rowIndex, colIndex++, disease);
+                        diseaseModelTable.setText(rowIndex, colIndex++, diseaseModel.getEvidenceCode());
+
+                        Button deleteButton1 = new Button("X");
+
+                        deleteModeMap1.put(deleteButton1, damo);
+                        deleteButton1.setTitle("ID: " + damo.getDamoID());
+                        diseaseModelTable.setWidget(rowIndex, colIndex, deleteButton1);
+                        groupIndex = diseaseModelTable.setRowStyle(rowIndex++, null, diseaseModel.getDisease().getZdbID(), groupIndex);
+                //
+                    }
+                    addConstructionRow(rowIndex);
                 }
-                diseaseModelTable.setText(rowIndex, colIndex, IS_A_MODEL_OF);
-                diseaseModelTable.getCellFormatter().setStyleName(rowIndex, colIndex++, "bold");
-                Hyperlink disease = new Hyperlink(SafeHtmlUtils.fromTrustedString(diseaseModel.getDisease().getTermName()), "diseaseName");
-                disease.setTitle(diseaseModel.getDisease().getOboID());
-                termLinkDiseaseModelMap.put(disease, diseaseModel);
-                diseaseModelTable.setWidget(rowIndex, colIndex++, disease);
-                diseaseModelTable.setText(rowIndex, colIndex++, diseaseModel.getEvidenceCode());
-                Button deleteButton = new Button("X");
-                deleteModeMap.put(deleteButton, diseaseModel);
-                deleteButton.setTitle("ID: " + diseaseModel.getID());
-                diseaseModelTable.setWidget(rowIndex, colIndex, deleteButton);
-                groupIndex = diseaseModelTable.setRowStyle(rowIndex++, null, diseaseModel.getDisease().getZdbID(), groupIndex);
+
+                else{
+                   int colIndex=0;
+                   Anchor fish=new Anchor("");
+                   fish.setTitle("");
+                   diseaseModelTable.setWidget(rowIndex, colIndex++, fish);
+                   //  InlineHTML environment = new InlineHTML(diseaseModel.getEnvironment().getName());
+                   InlineHTML environment = new InlineHTML("");
+                    environment.setTitle("");
+
+                   diseaseModelTable.setWidget(rowIndex, colIndex++, environment);
+
+                   diseaseModelTable.setText(rowIndex, colIndex, IS_A_MODEL_OF);
+                    diseaseModelTable.getCellFormatter().setStyleName(rowIndex, colIndex++, "bold");
+                    Hyperlink disease = new Hyperlink(SafeHtmlUtils.fromTrustedString(diseaseModel.getDisease().getTermName()), "diseaseName");
+
+                    disease.setTitle(diseaseModel.getDisease().getOboID());
+                    termLinkDiseaseModelMap.put(disease, diseaseModel);
+                    diseaseModelTable.setWidget(rowIndex, colIndex++, disease);
+                    diseaseModelTable.setText(rowIndex, colIndex++, diseaseModel.getEvidenceCode());
+                    Button deleteButton = new Button("X");
+                    deleteModeMap.put(deleteButton, diseaseModel);
+                    deleteButton.setTitle("ID: " + diseaseModel.getZdbID());
+                    diseaseModelTable.setWidget(rowIndex, colIndex, deleteButton);
+                    groupIndex = diseaseModelTable.setRowStyle(rowIndex++, null, diseaseModel.getDisease().getZdbID(), groupIndex);
+                                    }
             }
+            addConstructionRow(rowIndex);
         }
-        addConstructionRow(rowIndex);
     }
 
+
+
+
+
+
+
     private void addConstructionRow(int rowIndex) {
+
         int colIndex = 0;
         diseaseModelTable.setWidget(rowIndex, colIndex++, fishSelectionBox);
         diseaseModelTable.setWidget(rowIndex, colIndex++, environmentSelectionBox);
@@ -141,11 +196,14 @@ public class DiseaseModelView extends Composite {
         return loadingImage;
     }
 
-    public Map<Button, DiseaseModelDTO> getDeleteModeMap() {
+    public Map<Button, DiseaseAnnotationDTO> getDeleteModeMap() {
         return deleteModeMap;
     }
+    public Map<Button, DiseaseAnnotationModelDTO> getDeleteModeMap1() {
+        return deleteModeMap1;
+    }
 
-    public Map<Hyperlink, DiseaseModelDTO> getTermLinkDiseaseModelMap() {
+    public Map<Hyperlink, DiseaseAnnotationDTO> getTermLinkDiseaseModelMap() {
         return termLinkDiseaseModelMap;
     }
 }

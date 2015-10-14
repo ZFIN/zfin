@@ -16,7 +16,8 @@ import org.zfin.feature.FeaturePrefix;
 import org.zfin.feature.presentation.FeaturePresentation;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.curation.dto.DiseaseModelDTO;
+import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
+import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.util.StringUtils;
@@ -1340,7 +1341,14 @@ public class DTOConversionService {
         entity.setZdbID(str.getZdbID());
         return entity;
     }
+    public static DiseaseAnnotationModelDTO convertDamoToDamoDTO(DiseaseAnnotationModel str) {
+        DiseaseAnnotationModelDTO entity = new DiseaseAnnotationModelDTO();
+        entity.setEnvironment(convertToEnvironmentDTO(str.getFishExperiment().getExperiment()));
+        entity.setFish(convertToFishDtoFromFish(str.getFishExperiment().getFish()));
+        entity.setDamoID(str.getID());
 
+        return entity;
+    }
     public static Fish convertToFishFromFishDTO(FishDTO newFish) {
         Fish fish = new Fish();
         if (newFish.getZdbID() != null) {
@@ -1396,22 +1404,33 @@ public class DTOConversionService {
         return dto;
     }
 
-    public static DiseaseModel convertToDiseaseFromDiseaseDTO(DiseaseModelDTO diseaseModelDTO) throws TermNotFoundException {
-        DiseaseModel diseaseModel = new DiseaseModel();
-        diseaseModel.setDisease(convertToTerm(diseaseModelDTO.getDisease()));
-        diseaseModel.setPublication(convertToPublication(diseaseModelDTO.getPublication()));
-        diseaseModel.setEvidenceCode(diseaseModelDTO.getEvidenceCode());
-        if (diseaseModelDTO.getFish() != null && diseaseModelDTO.getFish().getZdbID() != null) {
-            FishExperiment model = DTOConversionService.convertToFishModel(diseaseModelDTO);
-            diseaseModel.setFishExperiment(model);
-        }
-        return diseaseModel;
+    public static DiseaseAnnotation convertToDiseaseFromDiseaseDTO(DiseaseAnnotationDTO diseaseAnnotationDTO) throws TermNotFoundException {
+        DiseaseAnnotation diseaseAnnotation = new DiseaseAnnotation();
+        diseaseAnnotation.setDisease(convertToTerm(diseaseAnnotationDTO.getDisease()));
+        diseaseAnnotation.setPublication(convertToPublication(diseaseAnnotationDTO.getPublication()));
+        diseaseAnnotation.setEvidenceCode(diseaseAnnotationDTO.getEvidenceCode());
+
+
+        return diseaseAnnotation;
     }
 
-    private static FishExperiment convertToFishModel(DiseaseModelDTO diseaseModelDTO) {
+    public static DiseaseAnnotationModel convertToDiseaseModelFromDiseaseDTO(DiseaseAnnotationDTO diseaseAnnotationDTO) throws TermNotFoundException {
+
+        DiseaseAnnotationModel damo = new DiseaseAnnotationModel();
+        if (diseaseAnnotationDTO.getFish() != null && diseaseAnnotationDTO.getFish().getZdbID() != null) {
+            FishExperiment model = DTOConversionService.convertToFishModel(diseaseAnnotationDTO);
+            damo.setFishExperiment(model);
+
+        }
+
+
+
+        return damo;
+    }
+    private static FishExperiment convertToFishModel(DiseaseAnnotationDTO diseaseAnnotationDTO) {
         FishExperiment model = new FishExperiment();
-        model.setFish(getMutantRepository().getFish(diseaseModelDTO.getFish().getZdbID()));
-        Experiment experiment = getExpressionRepository().getExperimentByID(diseaseModelDTO.getEnvironment().getZdbID());
+        model.setFish(getMutantRepository().getFish(diseaseAnnotationDTO.getFish().getZdbID()));
+        Experiment experiment = getExpressionRepository().getExperimentByID(diseaseAnnotationDTO.getEnvironment().getZdbID());
         model.setExperiment(experiment);
         model.setStandard(experiment.isOnlyStandard());
         model.setStandardOrGenericControl(experiment.isStandard());
@@ -1422,18 +1441,34 @@ public class DTOConversionService {
         return getPublicationRepository().getPublication(pub.getZdbID());
     }
 
-    public static DiseaseModelDTO convertToDiseaseModelDTO(DiseaseModel model) {
-        DiseaseModelDTO dto = new DiseaseModelDTO();
-        dto.setID(model.getID());
+    public static DiseaseAnnotationDTO convertToDiseaseModelDTO(DiseaseAnnotation model) {
+        DiseaseAnnotationDTO dto = new DiseaseAnnotationDTO();
+        /*dto.setID(model.getID());
         if (model.getFishExperiment() != null) {
             dto.setFish(convertToFishDtoFromFish(model.getFishExperiment().getFish()));
             dto.setEnvironment(convertToEnvironmentDTO(model.getFishExperiment().getExperiment()));
-        }
+        }*/
         dto.setPublication(convertToPublicationDTO(model.getPublication()));
-        dto.setEvidenceCode(model.getEvidenceCode());
+
         dto.setDisease(convertToTermDTO(model.getDisease()));
         dto.setEvidenceCode(model.getEvidenceCode());
-        return dto;
+        dto.setZdbID(model.getZdbID());
+       /* dto.setFish(null);
+        dto.setEnvironment(null);*/
+       List<DiseaseAnnotationModel> dam=getMutantRepository().getDiseaseAnnotationModelByZdb(model.getZdbID());
+        if (CollectionUtils.isNotEmpty(dam)) {
+            List<DiseaseAnnotationModelDTO> damoDTO = new ArrayList<>(dam.size());;
+            for (DiseaseAnnotationModel damo : dam) {
+                damoDTO.add(DTOConversionService.convertDamoToDamoDTO(damo));
+
+            }
+            dto.setDamoDTO(damoDTO);
+        }
+        else {
+            dto.setDamoDTO(null);
+        }
+
+       return dto;
     }
 
     public static ZygosityDTO convertToZygosityDTO(Zygosity zygosity) {

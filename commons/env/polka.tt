@@ -63,7 +63,7 @@
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFFFCC
-<!--|SOURCEROOT|-->	/research/zusers/pm/Projects/releases/trunk/
+<!--|SOURCEROOT|-->	/research/zusers/pm/Projects/releases/DiseaseBranch/ZFIN_WWW//
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	young.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	pm\@zfin.org

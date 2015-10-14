@@ -662,7 +662,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   	<TR bgcolor=$showpubs_tr_bg>
     	<TD align=left>
       	<DIV class="show_pubs">
-		<A HREF="/$2&$rtype=publication">$4 ($3) $1. $5.$6$7</A>
+		<A HREF="/$2">$4 ($3) $1. $5.$6$7</A>
         </DIV>
     	</TD>
   	</TR>
@@ -701,7 +701,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   	<TR bgcolor=$showpubs_tr_bg>
     	<TD align=left>
       	<DIV class="show_pubs">
-		<A HREF="/$2&$rtype=publication">$4 ($3) $1. $5.</A>
+		<A HREF="/$2">$4 ($3) $1. $5.</A>
         </DIV>
     	</TD>
   	</TR>
@@ -737,7 +737,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   	<TR bgcolor=$showpubs_tr_bg>
     	<TD align=left>
       	<DIV class="show_pubs">
-		<A HREF="/$2&$rtype=publication">$4 ($3) $1. $5.</A>
+		<A HREF="/$2">$4 ($3) $1. $5.</A>
         </DIV>
     	</TD>
   	</TR>
@@ -774,7 +774,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   	<TR bgcolor=$showpubs_tr_bg>
     	<TD align=left>
       	<DIV class="show_pubs">
-		<A HREF="/$2&$rtype=publication">$4 ($3) $1. $5.</A>
+		<A HREF="/$2">$4 ($3) $1. $5.</A>
         </DIV>
     	</TD>
   	</TR>

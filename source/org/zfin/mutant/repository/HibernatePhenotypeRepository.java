@@ -6,9 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
 import org.zfin.database.InformixUtil;
-import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
-import org.zfin.fish.repository.FishService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
@@ -799,31 +797,39 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     }
 
     @Override
-    public List<DiseaseModel> getHumanDiseaseModels(String publicationID) {
-        String hql = "from DiseaseModel as disease where" +
+    public List<DiseaseAnnotation> getHumanDiseaseModels(String publicationID) {
+        String hql = "from DiseaseAnnotation as disease where" +
                 " disease.publication.zdbID = :publicationID " +
                 "order by disease.disease.termName";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("publicationID", publicationID);
-        return (List<DiseaseModel>) query.list();
+        return (List<DiseaseAnnotation>) query.list();
     }
 
     @Override
-    public List<DiseaseModel> getHumanDiseaseModelsByFish(String fishID) {
-        String hql = "from DiseaseModel as disease where" +
+    public List<DiseaseAnnotationModel> getHumanDiseaseModelsByFish(String fishID) {
+        String hql = "from DiseaseAnnotationModel as disease where" +
                 " disease.fishExperiment.fish.zdbID = :fishID";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("fishID", fishID);
-        return (List<DiseaseModel>) query.list();
+        return (List<DiseaseAnnotationModel>) query.list();
     }
 
     @Override
-    public List<DiseaseModel> getHumanDiseaseModels(GenericTerm disease) {
-        String hql = "from DiseaseModel where" +
+   /* public List<DiseaseAnnotation> getHumanDiseaseModels(GenericTerm disease) {
+        String hql = "from DiseaseAnnotation where" +
                 " disease = :disease";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("disease", disease);
-        return (List<DiseaseModel>) query.list();
+        return (List<DiseaseAnnotation>) query.list();
+    }*/
+    public List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease) {
+        String hql = "select damo  from DiseaseAnnotationModel damo ,DiseaseAnnotation da where " +
+                "da=damo.diseaseAnnotation"+
+                " and  da.disease = :disease";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("disease", disease);
+        return (List<DiseaseAnnotationModel>) query.list();
     }
 
     @Override

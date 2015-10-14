@@ -6,11 +6,12 @@ begin work ;
 !echo "number of genes with phenotypes, non-transgenic only" ;
 
 select count(distinct fmrel_mrkr_zdb_id)
- from feature_marker_relationship, genotype_feature,
+ from feature_marker_relationship, feature, genotype_feature,
       fish, fish_experiment,
       phenotype_experiment        
  where fmrel_type = "is allele of"   
- and get_feature_type(fmrel_ftr_zdb_id) != "TRANSGENIC_INSERTION"
+ and fmrel_ftr_zdb_id = feature_zdb_id
+ and feature_type != "TRANSGENIC_INSERTION" 
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
  and fish_genotype_Zdb_id = genofeat_geno_zdb_id
  and fish_Zdb_id = genox_fish_zdb_id
@@ -40,7 +41,7 @@ select count(distinct mrel_mrkr_2_zdb_id)
    and mrel_mrkr_1_zdb_id != fmrel_mrkr_zdb_id;
 
 -- ct3   
-!echo "number of genes whose morpholinos are used in environments on WT genotypes that have phenotypes";
+!echo "number of genes whose morpholinos are used in fish with WT genotypes that have phenotypes";
 
 --transgenic doesn't matter because we're on a WT background
 
@@ -63,6 +64,7 @@ select count(distinct mrel_mrkr_2_zdb_id)
 
 select count(distinct fmrel_mrkr_zdb_id)
  from feature_marker_relationship,
+      feature,
       genotype_feature, 
       fish,
       fish_experiment,
@@ -70,7 +72,8 @@ select count(distinct fmrel_mrkr_zdb_id)
       figure,
       image      
  where fmrel_type = "is allele of"
- and get_feature_type(fmrel_ftr_zdb_id) != "TRANSGENIC_INSERTION"
+ and fmrel_ftr_zdb_id = feature_zdb_id 
+ and feature_type != "TRANSGENIC_INSERTION"
  and fmrel_ftr_zdb_id = genofeat_feature_zdb_id 
  and fish_genotype_Zdb_id = genofeat_geno_zdb_id
  and genox_fish_zdb_id = fish_Zdb_id  
@@ -80,12 +83,12 @@ select count(distinct fmrel_mrkr_zdb_id)
  and img_image is not null;
  
 -- ct5
-!echo "number of genes whose morpholinos are used in environments with non-transgenic, non-WT genotypes that have phenotypes and images" ;
+!echo "number of genes whose morpholinos are used in fish with non-transgenic, non-WT genotypes that have phenotypes and images" ;
 
 select count(distinct mrel_mrkr_2_zdb_id)
    from marker_relationship,
         fish_str, fish,
-        genotype_feature, genotype,
+        genotype_feature, feature, genotype,
         fish_experiment,
         phenotype_experiment,
         figure,
@@ -95,7 +98,8 @@ select count(distinct mrel_mrkr_2_zdb_id)
    and mrel_mrkr_1_zdb_id = fishstr_str_zdb_id
    and fishstr_fish_Zdb_id = fish_zdb_id
    and fish_genotype_zdb_id = genofeat_geno_zdb_id
-   and get_feature_type(genofeat_feature_zdb_id) != "TRANSGENIC_INSERTION"
+   and genofeat_feature_zdb_id = feature_zdb_id
+   and feature_type != "TRANSGENIC_INSERTION"
    and geno_zdb_id = genofeat_geno_zdb_id
    and geno_is_wildtype = "f"
    and genox_fish_Zdb_id = fish_Zdb_id
@@ -109,41 +113,46 @@ select count(distinct mrel_mrkr_2_zdb_id)
 !echo "number of features with phenotypes; non-transgenic features only" ;
 
 select count(distinct fmrel_ftr_zdb_id)
- from feature_marker_relationship, genotype_feature,
+ from feature_marker_relationship, feature, genotype_feature,
       fish, fish_experiment, phenotype_experiment
  where fmrel_type = "is allele of"
- and get_feature_type(fmrel_ftr_zdb_id) != "TRANSGENIC_INSERTION"
+ and fmrel_ftr_zdb_id = feature_zdb_id
+ and feature_type != "TRANSGENIC_INSERTION"
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
  and fish_genotype_Zdb_id = genofeat_geno_zdb_id
  and genox_fish_zdb_id = fish_zdb_id
- and phenox_genox_zdb_id = genox_zdb_id;
+ and phenox_genox_zdb_id = genox_zdb_id
+ and not exists (select "x" from fish_str where fishstr_fish_Zdb_id = fish_zdb_id); 
 
 -- ct7
 !echo "number of features with phenotypes and images; non-transgenic features only" ;
 
 select count(distinct fmrel_ftr_zdb_id)
- from feature_marker_relationship, genotype_feature, fish, fish_experiment, phenotype_experiment, 
+ from feature_marker_relationship, feature, genotype_feature, fish, fish_experiment, phenotype_experiment, 
       figure, image
  where fmrel_type = "is allele of"
- and get_feature_type(fmrel_ftr_zdb_id) != "TRANSGENIC_INSERTION" 
+ and fmrel_ftr_zdb_id = feature_zdb_id
+ and feature_type != "TRANSGENIC_INSERTION"
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
  and fish_genotype_Zdb_id = genofeat_geno_zdb_id
  and genox_fish_zdb_id = fish_zdb_id
  and phenox_genox_zdb_id = genox_zdb_id
  and phenox_fig_zdb_id = fig_zdb_id
  and img_fig_zdb_id = fig_zdb_id
- and img_image is not null ;
+ and img_image is not null 
+ and not exists (select "x" from fish_str where fishstr_fish_Zdb_id = fish_zdb_id);
 
 ---------------------------- transgenics------------------------------------------
 -- ct8
 !echo "number of transgenic constructs with phenotypes (Transgenic constructs w/Phenotypes)" ;
 
 select count(distinct fmrel_mrkr_zdb_id)
- from feature_marker_relationship, genotype_feature,
+ from feature_marker_relationship, feature, genotype_feature,
       fish, fish_experiment, phenotype_experiment
  where fmrel_type = "contains phenotypic sequence feature"
- and get_feature_type(fmrel_ftr_zdb_id) = "TRANSGENIC_INSERTION"
- and get_obj_type(fmrel_mrkr_zdb_id) = "TGCONSTRCT"
+ and fmrel_ftr_zdb_id = feature_zdb_id
+ and feature_type = "TRANSGENIC_INSERTION" 
+ and get_obj_type(fmrel_mrkr_zdb_id) in ("TGCONSTRCT", "ETCONSTRCT", "GTCONSTRCT", "PTCONSTRCT")
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
  and genofeat_geno_zdb_id = fish_genotype_Zdb_id
  and fish_Zdb_id = genox_Fish_zdb_id
@@ -153,11 +162,12 @@ select count(distinct fmrel_mrkr_zdb_id)
 !echo "number of transgenic constructs with phenotypes and images" ;
 
 select count(distinct fmrel_mrkr_zdb_id)
- from feature_marker_relationship, genotype_feature, fish,
+ from feature_marker_relationship, feature, genotype_feature, fish,
       fish_experiment, phenotype_experiment,
       figure, image
  where fmrel_type in ("contains sequence feature", "contains phenotypic sequence feature")
- and get_feature_type(fmrel_ftr_zdb_id) = "TRANSGENIC_INSERTION"
+ and fmrel_ftr_zdb_id = feature_zdb_id
+ and feature_type = "TRANSGENIC_INSERTION"
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
  and fish_genotype_zdb_id = genofeat_geno_zdb_id
  and genox_fish_Zdb_id = fish_zdb_id
@@ -167,32 +177,33 @@ select count(distinct fmrel_mrkr_zdb_id)
  and img_image is not null;
 
 -- ct10
-!echo "number of distinct genes whose morpholinos are used in genotype environments, where the genotypes have tg insertion features and produce phenotypes" ;
+!echo "number of distinct genes whose morpholinos are used in fish where the fish have tg insertion features and produce phenotypes" ;
 
 select count(distinct mrel_mrkr_2_zdb_id)
    from marker_relationship, fish_str, fish,
-        genotype_feature, genotype,
+        genotype_feature, feature, genotype,
         fish_experiment, phenotype_experiment
    where mrel_type = "knockdown reagent targets gene"
    and mrel_mrkr_1_zdb_id like "ZDB-MRPHLNO%"
    and mrel_mrkr_1_zdb_id = fishstr_str_zdb_id
    and fishstr_fish_zdb_id = fish_Zdb_id
    and fish_genotype_Zdb_id = genofeat_geno_zdb_id
-   and get_feature_type(genofeat_feature_zdb_id) = "TRANSGENIC_INSERTION"
+   and genofeat_feature_zdb_id = feature_zdb_id
+   and feature_type = "TRANSGENIC_INSERTION"
    and geno_zdb_id = genofeat_geno_zdb_id
    and geno_is_wildtype = "f"
    and fish_zdb_id = genox_fish_zdb_id
    and phenox_genox_zdb_id = genox_Zdb_id;
 
 -- ct11
-!echo "number of distinct genes whose morpholinos are used in genotype environments, where the genotypes have tg insertion features and produce phenotypes and have images" ;
+!echo "number of distinct genes whose morpholinos are used in fish, where the fish have tg insertion features and produce phenotypes and have images" ;
 
 select count(distinct mrel_mrkr_2_zdb_id)
    from marker_relationship, fish_str,
         fish_experiment,fish,
         phenotype_experiment,
         figure, image,
-        genotype_feature
+        genotype_feature, feature
    where mrel_type = "knockdown reagent targets gene"
    and mrel_mrkr_1_zdb_id like "ZDB-MRPHLNO%"
    and mrel_mrkr_1_zdb_id = fishstr_str_zdb_id
@@ -203,14 +214,16 @@ select count(distinct mrel_mrkr_2_zdb_id)
    and img_fig_zdb_id = fig_zdb_id
    and img_image is not null
    and fish_genotype_Zdb_id = genofeat_geno_zdb_id
-   and get_feature_type(genofeat_feature_zdb_id) = "TRANSGENIC_INSERTION";
+   and genofeat_feature_zdb_id = feature_zdb_id
+   and feature_type = "TRANSGENIC_INSERTION";
 
 -- ct12
 !echo "number of transgenic insertion features with phenotypes" ;
 
 select count(distinct genofeat_feature_zdb_id)
- from genotype_feature, fish, fish_experiment, phenotype_experiment
- where get_feature_type(genofeat_feature_zdb_id) = "TRANSGENIC_INSERTION"
+ from genotype_feature, feature, fish, fish_experiment, phenotype_experiment
+ where genofeat_feature_zdb_id = feature_zdb_id
+ and feature_type = "TRANSGENIC_INSERTION"
  and fish_genotype_Zdb_id = genofeat_geno_zdb_id
  and fish_zdb_id = genox_fish_zdb_id
  and phenox_genox_zdb_id = genox_zdb_id;
@@ -219,9 +232,10 @@ select count(distinct genofeat_feature_zdb_id)
 !echo "number of transgenic insertion features with phenotypes and images" ;
 
 select count(distinct genofeat_feature_zdb_id)
- from genotype_feature, fish, fish_experiment,
+ from genotype_feature, feature, fish, fish_experiment,
       phenotype_experiment, figure, image
- where get_feature_type(genofeat_feature_zdb_id) = "TRANSGENIC_INSERTION"
+ where genofeat_feature_zdb_id = feature_zdb_id
+ and feature_type = "TRANSGENIC_INSERTION"
  and fish_genotype_Zdb_id = genofeat_geno_zdb_id
  and fish_zdb_id = genox_fish_zdb_id
  and phenox_genox_zdb_id = genox_zdb_id
@@ -230,14 +244,15 @@ select count(distinct genofeat_feature_zdb_id)
  and img_image is not null;
 
 -- ct14
-!echo "total number of distinct transgenic constructs with images (both tgconstructs with either FX images and/or tg constructs with PATO images)" ;
+!echo "transgenic fish with number of distinct constructs that have at least 1 image (either FX or pheno)" ;
 
 select distinct fmrel_mrkr_zdb_id
- from feature_marker_relationship, genotype_feature, fish,
+ from feature_marker_relationship, feature, genotype_feature, fish,
       fish_experiment, phenotype_experiment, figure, image
  where fmrel_type = "contains sequence feature"
- and get_feature_type(fmrel_ftr_zdb_id) = "TRANSGENIC_INSERTION"
- and get_obj_type(fmrel_mrkr_zdb_id) = "TGCONSTRCT"
+ and fmrel_ftr_zdb_id = feature_zdb_id
+ and feature_type = "TRANSGENIC_INSERTION" 
+ and get_obj_type(fmrel_mrkr_zdb_id) in ("TGCONSTRCT", "ETCONSTRCT", "GTCONSTRCT", "PTCONSTRCT")
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
  and fish_genotype_Zdb_id = genofeat_geno_zdb_id
  and genox_fish_zdb_id = fish_Zdb_id
@@ -251,19 +266,17 @@ union
         fish, fish_experiment, expression_experiment,
         expression_result, expression_pattern_figure,
         figure, image
-        where get_feature_type(fmrel_mrkr_zdb_id)="TRANSGENIC_CONSTRUCT"
-        and feature_zdb_id = fmrel_ftr_zdb_id
+        where feature_zdb_id = fmrel_ftr_zdb_id                                                        
         and feature_type = "TRANSGENIC_INSERTION"
         and feature_zdb_id = genofeat_feature_zdb_id
         and fish_genotype_zdb_id = genofeat_geno_zdb_id
         and genox_fish_zdb_id = fish_Zdb_id
         and xpatex_genox_zdb_id = genox_zdb_id
-        and xpatex_zdb_id = xpatres_xpatex_zdb_id       
+        and xpatex_zdb_id = xpatres_xpatex_zdb_id
         and xpatres_zdb_id = xpatfig_xpatres_zdb_id
         and xpatfig_fig_zdb_id = fig_Zdb_id
         and fig_zdb_id = img_fig_zdb_id
         and img_image is not null
-        
 into temp tmp_distinct_genes_with_images_trans;
 
 select count(*) from tmp_distinct_genes_with_images_trans;
@@ -301,7 +314,7 @@ select count(distinct fig_source_zdb_id)
 -- ct18        
 !echo "number of phenotypes (EQs) total";
 
-select count(distinct phenos_pk_id)
+select count(phenos_pk_id)
   from phenotype_statement;
 
 
@@ -324,10 +337,11 @@ select count(distinct xpatex_gene_zdb_id)
 !echo "total number of distinct genes with images (either FX or PATO images).  genes included: those in non-transgenic genotypes with phenotype images, those in non-transgeinc genotype-backgrounds with FX images, those in FX experiments" ;
 
 select distinct fmrel_mrkr_zdb_id
- from feature_marker_relationship, genotype_feature, fish,
+ from feature_marker_relationship, feature, genotype_feature, fish,
       phenotype_experiment, fish_experiment, figure, image
  where fmrel_type = "is allele of"
- and get_feature_type(fmrel_ftr_zdb_id) != "TRANSGENIC_INSERTION"
+ and fmrel_ftr_zdb_id = feature_zdb_id
+ and feature_type != "TRANSGENIC_INSERTION"
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
  and fish_genotype_Zdb_id = genofeat_geno_zdb_id
  and genox_fish_zdb_id = fish_zdb_id

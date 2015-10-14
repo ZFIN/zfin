@@ -1222,8 +1222,9 @@ WHERE  ( NOT g.geno_is_wildtype
                                                  term_ont_id as xref,
                                                  genox_fish_zdb_id
                                           from term
-                                          inner join disease_annotation on term.term_zdb_id = disease_annotation.da_term_zdb_id
-                                          inner join fish_experiment on fish_experiment.genox_zdb_id = disease_annotation.da_genox_zdb_id;"
+                                          inner join disease_annotation on term.term_zdb_id = disease_annotation.dat_term_zdb_id
+                                          inner join disease_annotation_model on disease_annotation.dat_zdb_id = disease_annotation_model.damo.dat_zdb_id
+                                          inner join fish_experiment on fish_experiment.genox_zdb_id = disease_annotation_mode.damo_genox_zdb_id;"
                    processor="CachedSqlEntityProcessor"
                    where="genox_fish_zdb_id=fish.id"/>
 
@@ -3594,8 +3595,9 @@ where feature_zdb_id = ids_data_zdb_id
                                           genox_fish_zdb_id as xref,
                                           term_zdb_id
                                           from term
-                                          join disease_annotation on term.term_zdb_id = disease_annotation.da_term_zdb_id
-                                          join fish_experiment on fish_experiment.genox_zdb_id = disease_annotation.da_genox_zdb_id
+                                          join disease_annotation on term.term_zdb_id = disease_annotation.dat_term_zdb_id
+                                          join disease_annotation_model on disease_annotation.dat_zdb_id=disease_annotation_model.damo_dat_zdb_id
+                                          join fish_experiment on fish_experiment.genox_zdb_id = disease_annotation_model.damo_genox_zdb_id
                                           join fish on genox_fish_zdb_id = fish_zdb_id;"
                    where="term_zdb_id=term.internal_id"
                    processor="CachedSqlEntityProcessor"/>
@@ -3603,10 +3605,10 @@ where feature_zdb_id = ids_data_zdb_id
            <entity name="disease_publication_xref"
                    datasource="db" query="
                                    select
-                                        da_pub_zdb_id as xref,
+                                        dat_source_zdb_id as xref,
                                         term_zdb_id
                                         from term
-                                             join disease_annotation on term_zdb_id = da_term_zdb_id
+                                             join disease_annotation on term_zdb_id = dat_term_zdb_id
                                    union
                                    select
                                         recattrib_source_zdb_id as xref,
@@ -3951,9 +3953,9 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                    datasource="db" query="select
                                term_name as disease,
                                term_ont_id as xref,
-                               da_pub_zdb_id as pub_zdb_id
+                               dat_source_zdb_id as pub_zdb_id
                                from term
-                               join disease_annotation on term.term_zdb_id = disease_annotation.da_term_zdb_id
+                               join disease_annotation on term.term_zdb_id = disease_annotation.dat_term_zdb_id
                                where term_ontology = 'disease_ontology';"
                    processor="CachedSqlEntityProcessor"
                    where="pub_zdb_id=publication.id"/>
