@@ -1,6 +1,7 @@
 package org.zfin.orthology.presentation;
 
 import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.orthology.OrthologExternalReference;
 import org.zfin.orthology.OrthologySpecies;
 
 /**
@@ -19,6 +20,14 @@ public class OrthologyPresentation extends EntityPresentation {
      */
     public static String getLink(OrthologySpecies orthologySpecies) {
         return getWebdriverLink(uri, orthologySpecies.getMarker().getZdbID(), ORTHOLOGY_DETAILS);
+    }
+
+    public static String getLink(OrthologExternalReference reference) {
+        String url = reference.getReferenceDatabase().getBaseURL() + reference.getAccessionNumber();
+        String text = String.format("%s:%s",
+                reference.getReferenceDatabase().getForeignDB().getDbName().toString(),
+                reference.getAccessionNumber());
+        return getGeneralHyperLink(url, text);
     }
 
 }

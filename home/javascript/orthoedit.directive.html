@@ -34,9 +34,8 @@
         <td><i>{{ortholog.ncbiOtherSpeciesGeneDTO.abbreviation}}</i></td>
         <td>{{ortholog.ncbiOtherSpeciesGeneDTO.chromosome}} ({{ortholog.ncbiOtherSpeciesGeneDTO.position}})</td>
         <td>
-            <div ng-repeat="reference in ortholog.referenceDTOList">
-                <!--todo when references are populated-->
-                <!--<a ng-href="{{accession.url}}">{{accession.display}}</a>-->
+            <div ng-repeat="reference in ortholog.orthologExternalReferenceDTOSet">
+                <a ng-href="{{reference.referenceDatabaseDTO.url}}{{reference.accessionNumber}}">{{reference.referenceDatabaseDTO.name}}:{{reference.accessionNumber}}</a>
             </div>
         </td>
         <td>
