@@ -157,12 +157,12 @@ unload to missingNcbiGeneIdsWithOrthos.txt
 update ortholog
   set ortho_other_species_ncbi_gene_is_obsolete = 't'
   where not exists (Select 'x' from ncbi_ortholog
-  	    	   	   where ncbi_gene_id = ortho_other_species_ncbi_gene_id);
+  	    	   	   where noi_ncbi_gene_id = ortho_other_species_ncbi_gene_id);
 
 update ortholog
     set ortho_other_species_ncbi_gene_is_obsolete = 'f'
    where  exists (Select 'x' from ncbi_ortholog
-  	    	   	   where ncbi_gene_id = ortho_other_species_ncbi_gene_id)
+  	    	   	   where noi_ncbi_gene_id = ortho_other_species_ncbi_gene_id)
    and ortho_orther_species_ncbi_gene_is_obsolete = 't';
 
 
