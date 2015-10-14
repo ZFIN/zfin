@@ -163,7 +163,7 @@ update ortholog
     set ortho_other_species_ncbi_gene_is_obsolete = 'f'
    where  exists (Select 'x' from ncbi_ortholog
   	    	   	   where noi_ncbi_gene_id = ortho_other_species_ncbi_gene_id)
-   and ortho_orther_species_ncbi_gene_is_obsolete = 't';
+   and ortho_other_species_ncbi_gene_is_obsolete = 't';
 
 
 
