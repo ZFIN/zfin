@@ -1,7 +1,8 @@
-SELECT ortho_zdb_id,
-       ortho_gene_zdb_id,
-       ortho_ncbi_gene_id
-FROM   orthologe
+SELECT o.ortho_zdb_id,
+       o.ortho_zebrafish_gene_zdb_id,
+       og.organism_common_name
+FROM   ortholog o,organism og
 WHERE  NOT EXISTS (SELECT 'x'
                    FROM   orthologue_evidence
                    WHERE  ortho_zdb_id = oev_ortho_zdb_id);
+AND o.ortho_other_species_taxid=og.orgnism_taxid
