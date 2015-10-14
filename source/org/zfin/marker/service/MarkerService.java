@@ -765,7 +765,7 @@ public class MarkerService {
             row.setAbbreviation(otherGene.getAbbreviation());
             row.setChromosome(otherGene.getChromosome());
             row.setPosition(otherGene.getPosition());
-            row.setAccessions(new HashSet<String>()); // todo: will get filled out later
+            row.setAccessions(ortholog.getExternalReferenceList());
 
             // Collect all the evidence records by code into a map then pull out the values
             Map<String, OrthologEvidencePresentation> evidenceMap = new HashMap<>();

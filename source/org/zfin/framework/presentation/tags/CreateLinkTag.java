@@ -34,6 +34,7 @@ import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.TermExternalReference;
 import org.zfin.ontology.presentation.*;
+import org.zfin.orthology.OrthologExternalReference;
 import org.zfin.orthology.OrthologySpecies;
 import org.zfin.orthology.presentation.OrthologyPresentation;
 import org.zfin.profile.Organization;
@@ -135,6 +136,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = PanelPresentation.getLink((Panel) o);
         else if (o instanceof OrthologySpecies)
             link = OrthologyPresentation.getLink((OrthologySpecies) o);
+        else if (o instanceof OrthologExternalReference)
+            link = OrthologyPresentation.getLink((OrthologExternalReference) o);
         else if (o instanceof DiseaseAnnotation)
             link = DiseaseModelPresentation.getLink((DiseaseAnnotation) o);
         else if (o instanceof Genotype)

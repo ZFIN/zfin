@@ -47,7 +47,7 @@
                     <td>
                         <c:forEach var="accession" items="${ortholog.accessions}">
                             <li style="list-style-type: none;">
-                                    ${accession}
+                                <zfin:link entity="${accession}"/>
                             </li>
                         </c:forEach>
                     </td>
