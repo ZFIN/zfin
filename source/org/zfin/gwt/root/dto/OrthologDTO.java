@@ -12,6 +12,11 @@ public class OrthologDTO {
     private NcbiOtherSpeciesGeneDTO ncbiOtherSpeciesGeneDTO;
     private Set<OrthologEvidenceDTO> evidenceSet;
     private Set<OrthologExternalReferenceDTO> orthologExternalReferenceDTOSet;
+    private String name;
+    private String symbol;
+    private String chromosome;
+    private String position;
+
 
     public MarkerDTO getZebrafishGene() {
         return zebrafishGene;
@@ -51,5 +56,37 @@ public class OrthologDTO {
 
     public void setEvidenceSet(Set<OrthologEvidenceDTO> evidenceSet) {
         this.evidenceSet = evidenceSet;
+    }
+
+    public String getChromosome() {
+        return chromosome;
+    }
+
+    public void setChromosome(String chromosome) {
+        this.chromosome = chromosome;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
     }
 }

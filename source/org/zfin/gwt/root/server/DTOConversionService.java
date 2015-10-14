@@ -1484,6 +1484,10 @@ public class DTOConversionService {
         orthologDTO.setZebrafishGene(DTOConversionService.convertToMarkerDTO(ortholog.getZebrafishGene()));
         orthologDTO.setNcbiOtherSpeciesGeneDTO(DTOConversionService.convertToNcbiOtherSpeciesGeneDTO(ortholog.getNcbiOtherSpeciesGene()));
 
+        orthologDTO.setName(ortholog.getName());
+        orthologDTO.setChromosome(ortholog.getChromosome());
+        orthologDTO.setSymbol(ortholog.getSymbol());
+        orthologDTO.setPosition(ortholog.getPosition());
         Set<OrthologEvidenceDTO> orthologEvidenceDTOs = new HashSet<>();
         if (CollectionUtils.isNotEmpty(ortholog.getEvidenceSet())) {
             for (OrthologEvidence evidence : ortholog.getEvidenceSet()) {
