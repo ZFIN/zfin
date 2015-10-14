@@ -16,4 +16,8 @@
         <put-attribute name="body" value="/WEB-INF/jsp/orthology/orthology_search_result.jsp"/>
     </definition>
 
+    <definition name="orthology/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/orthology/{1}.jsp"/>
+    </definition>
+
 </tiles-definitions>

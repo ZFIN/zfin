@@ -8,12 +8,21 @@ import java.util.TreeSet;
  */
 public class OrthologyPresentationRow {
 
+    private String orthoID;
     private String species ;
     private String abbreviation ;
     private String chromosome ;
     private String position ;
     private Set<String> accessions;
     private Collection<OrthologEvidencePresentation> evidence;
+
+    public String getOrthoID() {
+        return orthoID;
+    }
+
+    public void setOrthoID(String orthoID) {
+        this.orthoID = orthoID;
+    }
 
     public String getSpecies() {
         return species;

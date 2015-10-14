@@ -4,22 +4,24 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.NcbiOtherSpeciesGeneDTO;
 import org.zfin.gwt.root.dto.OrthologDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
-import org.zfin.orthology.EvidenceCode;
-import org.zfin.orthology.NcbiOtherSpeciesGene;
-import org.zfin.orthology.Ortholog;
-import org.zfin.orthology.OrthologEvidence;
+import org.zfin.orthology.*;
 import org.zfin.orthology.service.OrthologService;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -28,6 +30,32 @@ public class OrthologyController {
 
     @Autowired
     OrthologService orthologService;
+
+    @RequestMapping(value = "/ortholog/{orthoID}/citation-list")
+    public String orthologCitationList(@PathVariable String orthoID,
+                                       @RequestParam(value = "evidenceCode", required = true) String evidenceCode,
+                                       @RequestParam(value = "orderBy", required = false) String orderBy,
+                                       Model model) {
+        Ortholog ortholog = getOrthologyRepository().getOrtholog(orthoID);
+        if (ortholog == null) {
+            return LookupStrings.idNotFound(model, orthoID);
+        }
+
+        EvidenceCode code = getOrthologyRepository().getEvidenceCode(evidenceCode);
+        if (code == null) {
+            return LookupStrings.ERROR_PAGE;
+        }
+
+        OrthologPublicationListBean bean = new OrthologPublicationListBean();
+        bean.setOrtholog(ortholog);
+        bean.setEvidenceCode(code);
+        if (StringUtils.isNotEmpty(orderBy)) {
+            bean.setOrderBy(orderBy);
+        }
+        model.addAttribute("formBean", bean);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "publication list");
+        return "orthology/ortholog-publication-list.page";
+    }
 
     @ResponseBody
     @RequestMapping(value = "/ortholog/evidence-codes", method = RequestMethod.GET)
