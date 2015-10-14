@@ -2000,4 +2000,8 @@ WHERE  genox_zdb_id = damo_genox_zdb_id
        AND dat_term_zdb_id = term_zdb_id
        AND dat_source_zdb_id = zdb_id;
 
+!echo "unload feature/STR relations"
+
+
+
 commit work;
