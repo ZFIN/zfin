@@ -4,24 +4,30 @@ import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * Disease model entity:
  */
-public class DiseaseModel implements EntityZdbID {
+public class DiseaseAnnotation implements EntityZdbID {
 
-    private long ID;
+    private String zdbID;
     private GenericTerm disease;
     private Publication publication;
     private String evidenceCode;
-    private FishExperiment fishExperiment;
 
-    public FishExperiment getFishExperiment() {
-        return fishExperiment;
+    public List<DiseaseAnnotationModel> getDiseaseAnnotationModel() {
+        return diseaseAnnotationModel;
     }
 
-    public void setFishExperiment(FishExperiment fishExperiment) {
-        this.fishExperiment = fishExperiment;
+    public void setDiseaseAnnotationModel(List<DiseaseAnnotationModel> diseaseAnnotationModel) {
+        this.diseaseAnnotationModel = diseaseAnnotationModel;
     }
+
+    private List<DiseaseAnnotationModel> diseaseAnnotationModel;
+
+
 
     public String getEvidenceCode() {
         return evidenceCode;
@@ -31,13 +37,7 @@ public class DiseaseModel implements EntityZdbID {
         this.evidenceCode = evidenceCode;
     }
 
-    public long getID() {
-        return ID;
-    }
 
-    public void setID(long ID) {
-        this.ID = ID;
-    }
 
     public Publication getPublication() {
         return publication;
@@ -56,6 +56,17 @@ public class DiseaseModel implements EntityZdbID {
     }
 
     @Override
+    public String getZdbID() {
+        return zdbID;
+    }
+
+    @Override
+    public void setZdbID(String zdbID) {
+        this.zdbID = zdbID;
+    }
+
+    @Override
+
     public String getAbbreviation() {
         return disease.getTermName();
     }
@@ -75,13 +86,5 @@ public class DiseaseModel implements EntityZdbID {
         return disease.getTermName();
     }
 
-    @Override
-    public String getZdbID() {
-        return String.valueOf(ID);
-    }
 
-    @Override
-    public void setZdbID(String zdbID) {
-
-    }
 }

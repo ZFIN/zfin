@@ -114,15 +114,32 @@
         </bag>
     </class>
 
-    <class name="DiseaseModel" table="disease_annotation">
+    <class name="DiseaseAnnotation" table="disease_annotation">
+        <id name="zdbID" type="string">
+            <column name="dat_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">DAT</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+        <property name="evidenceCode" column="dat_evidence_code"/>
+        <many-to-one name="publication" column="dat_source_zdb_id" class="org.zfin.publication.Publication"/>
+        <many-to-one name="disease" column="dat_term_zdb_id" class="org.zfin.ontology.GenericTerm"/>
+        <bag name="diseaseAnnotationModel" lazy="true" table="disease_annotation_model">
+            <key column="damo_dat_zdb_id"/>
+            <one-to-many class="org.zfin.mutant.DiseaseAnnotationModel"/>
+        </bag>
+
+    </class>
+    <class name="DiseaseAnnotationModel" table="disease_annotation_model">
         <id name="ID" type="long">
-            <column name="da_pk_id" not-null="true"/>
+            <column name="damo_pk_id" not-null="true"/>
             <generator class="identity"/>
         </id>
-        <property name="evidenceCode" column="da_evidence_code"/>
-        <many-to-one name="publication" column="da_pub_zdb_id" class="org.zfin.publication.Publication"/>
-        <many-to-one name="disease" column="da_term_zdb_id" class="org.zfin.ontology.GenericTerm"/>
-        <many-to-one name="fishExperiment" column="da_genox_zdb_id" class="org.zfin.mutant.FishExperiment"/>
+
+        <many-to-one name="diseaseAnnotation" column="damo_dat_zdb_id" class="org.zfin.mutant.DiseaseAnnotation"/>
+
+        <many-to-one name="fishExperiment" column="damo_genox_zdb_id" class="org.zfin.mutant.FishExperiment"/>
 
     </class>
 

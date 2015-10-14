@@ -3,9 +3,9 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import org.zfin.gwt.curation.dto.DiseaseModelDTO;
+import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
+import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
 import org.zfin.gwt.root.dto.*;
-import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
 import java.util.List;
 
@@ -54,9 +54,9 @@ public interface CurationDiseaseRPC extends RemoteService {
 
     List<TermDTO> getHumanDiseaseList(String publicationID);
 
-    List<DiseaseModelDTO> getHumanDiseaseModelList(String publicationID) throws TermNotFoundException;
+    List<DiseaseAnnotationDTO> getHumanDiseaseModelList(String publicationID) throws TermNotFoundException;
 
-    List<DiseaseModelDTO> addHumanDiseaseModel(DiseaseModelDTO diseaseModelDTO) throws TermNotFoundException;
+    List<DiseaseAnnotationDTO> addHumanDiseaseAnnotation(DiseaseAnnotationDTO diseaseAnnotationDTO) throws TermNotFoundException;
 
     List<RelatedEntityDTO> getStrList(String publicationID);
 
@@ -64,6 +64,7 @@ public interface CurationDiseaseRPC extends RemoteService {
 
     List<FishDTO> getFishList(String publicationID);
 
-    List<DiseaseModelDTO> deleteDiseaseModel(DiseaseModelDTO diseaseModelDTO) throws TermNotFoundException;
+    List<DiseaseAnnotationDTO> deleteDiseaseModel(DiseaseAnnotationDTO diseaseAnnotationDTO) throws TermNotFoundException;
+    List<DiseaseAnnotationDTO> deleteDiseaseAnnotationModel(DiseaseAnnotationModelDTO diseaseAnnotationModelDTO) throws TermNotFoundException;
 
 }

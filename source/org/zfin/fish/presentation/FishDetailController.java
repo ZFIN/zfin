@@ -13,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.FigureExpressionSummary;
 import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.expression.presentation.GeneCentricExpressionData;
 import org.zfin.expression.repository.ExpressionRepository;
@@ -23,7 +22,6 @@ import org.zfin.fish.FeatureGene;
 import org.zfin.fish.MutationType;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.framework.presentation.PresentationConverter;
 import org.zfin.marker.ExpressedGene;
 import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.DiseaseModelDisplay;
@@ -80,8 +78,8 @@ public class FishDetailController {
         model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition", "phenotypeStatement"));
 
         // disease model
-        List<DiseaseModel> diseaseModels = getPhenotypeRepository().getHumanDiseaseModelsByFish(fishZdbId);
-        model.addAttribute("diseases", getDiseaseModelDisplay(diseaseModels));
+        List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModelsByFish(fishZdbId);
+        model.addAttribute("diseases", getDiseaseModelDisplay(diseaseAnnotations));
 
         // Expression data
         ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
@@ -127,14 +125,14 @@ public class FishDetailController {
         return "fish/fish-detail-popup.popup";
     }
 
-    private static Collection<DiseaseModelDisplay> getDiseaseModelDisplay(Collection<DiseaseModel> models) {
+    private static Collection<DiseaseModelDisplay> getDiseaseModelDisplay(Collection<DiseaseAnnotationModel> models) {
         MultiKeyMap map = new MultiKeyMap();
-        for (DiseaseModel model : models) {
-            if (!map.containsKey(model.getDisease(), model.getFishExperiment())) {
-                map.put(model.getDisease(), model.getFishExperiment(), new ArrayList<Publication>());
+       for (DiseaseAnnotationModel model : models) {
+            if (!map.containsKey(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment())) {
+                map.put(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment(), new ArrayList<Publication>());
             }
-            if (!((Collection<Publication>) map.get(model.getDisease(), model.getFishExperiment())).contains(model.getPublication()))
-                 ((Collection<Publication>) map.get(model.getDisease(), model.getFishExperiment())).add(model.getPublication());
+            if (!((Collection<Publication>) map.get(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment())).contains(model.getDiseaseAnnotation().getPublication()))
+                 ((Collection<Publication>) map.get(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment())).add(model.getDiseaseAnnotation().getPublication());
         }
 
         List<DiseaseModelDisplay> modelDisplays = new ArrayList<>();

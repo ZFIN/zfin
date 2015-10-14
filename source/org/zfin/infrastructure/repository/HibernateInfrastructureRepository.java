@@ -1651,7 +1651,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     @Override
     public List<Publication> getTermReferences(GenericTerm term, String orderBy) {
         String hql = "select distinct model.publication, model.publication.publicationDate, " +
-                "model.publication.authors  from DiseaseModel as model where " +
+                "model.publication.authors  from DiseaseAnnotation as model where " +
                 "model.disease = :term";
 
         if (orderBy == null || orderBy.equalsIgnoreCase("date"))

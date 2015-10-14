@@ -87,7 +87,7 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
         termEntry.setTermInfoTable(termInfoBox);
 
         diseaseModelPresenter = new DiseaseModelPresenter(eventBus, diseaseModelView, publicationID);
-        diseaseModelPresenter.go();
+      diseaseModelPresenter.go();
 
         RelatedEntityDTO relatedEntityDTO = new RelatedEntityDTO();
         relatedEntityDTO.setPublicationZdbID(publicationID);

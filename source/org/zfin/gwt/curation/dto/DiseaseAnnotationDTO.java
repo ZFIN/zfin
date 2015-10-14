@@ -3,22 +3,35 @@ package org.zfin.gwt.curation.dto;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import org.zfin.gwt.root.dto.*;
 
-public class DiseaseModelDTO implements IsSerializable {
+import java.util.List;
 
-    private long ID;
+public class DiseaseAnnotationDTO implements IsSerializable {
+    private String zdbID;
+
     private FishDTO fish;
+    private List<DiseaseAnnotationModelDTO> damoDTO;
+
+    public String getZdbID() {
+        return zdbID;
+    }
+
+    public void setZdbID(String zdbID) {
+        this.zdbID = zdbID;
+    }
+
+    public List<DiseaseAnnotationModelDTO> getDamoDTO() {
+        return damoDTO;
+    }
+
+    public void setDamoDTO(List<DiseaseAnnotationModelDTO> damoDTO) {
+        this.damoDTO = damoDTO;
+    }
+
     private TermDTO disease;
     private EnvironmentDTO environment;
     private PublicationDTO publication;
     private String evidenceCode;
 
-    public long getID() {
-        return ID;
-    }
-
-    public void setID(long ID) {
-        this.ID = ID;
-    }
 
     public FishDTO getFish() {
         return fish;
