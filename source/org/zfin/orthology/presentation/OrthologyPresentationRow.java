@@ -1,5 +1,7 @@
 package org.zfin.orthology.presentation;
 
+import org.zfin.orthology.OrthologExternalReference;
+
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
@@ -8,12 +10,21 @@ import java.util.TreeSet;
  */
 public class OrthologyPresentationRow {
 
+    private String orthoID;
     private String species ;
     private String abbreviation ;
     private String chromosome ;
     private String position ;
-    private Set<String> accessions;
+    private Set<OrthologExternalReference> accessions;
     private Collection<OrthologEvidencePresentation> evidence;
+
+    public String getOrthoID() {
+        return orthoID;
+    }
+
+    public void setOrthoID(String orthoID) {
+        this.orthoID = orthoID;
+    }
 
     public String getSpecies() {
         return species;
@@ -47,18 +58,18 @@ public class OrthologyPresentationRow {
         this.position = position;
     }
 
-    public void addAccession(String accession){
-        if(accessions==null){
-            this.accessions = new TreeSet<String>();
+    public void addAccession(OrthologExternalReference accession) {
+        if (accessions==null) {
+            this.accessions = new TreeSet<>();
         }
         accessions.add(accession) ;
     }
 
-    public Set<String> getAccessions() {
+    public Set<OrthologExternalReference> getAccessions() {
         return accessions;
     }
 
-    public void setAccessions(Set<String> accessions) {
+    public void setAccessions(Set<OrthologExternalReference> accessions) {
         this.accessions = accessions;
     }
 
@@ -70,26 +81,7 @@ public class OrthologyPresentationRow {
         return evidence;
     }
 
-    /**
-     * Copy from the row passed in.
-     * @param row
-     */
-    public void copyFrom(OrthologyPresentationRow row) {
-        if(row.getAccessions()!=null){
-            for(String accession : row.getAccessions()){
-                addAccession(accession);
-            }
-        }
-
-        if(row.getEvidence()!=null){
-            setEvidence(row.getEvidence());
-        }
-    }
-
     public boolean isPositionValid() {
-        if (position == null || position.equals("") || position.equals("-")) {
-            return false;
-        }
-        return true;
+        return !(position == null || position.equals("") || position.equals("-"));
     }
 }

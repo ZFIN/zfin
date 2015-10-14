@@ -47,13 +47,23 @@
                     <td>
                         <c:forEach var="accession" items="${ortholog.accessions}">
                             <li style="list-style-type: none;">
-                                    ${accession}
+                                <zfin:link entity="${accession}"/>
                             </li>
                         </c:forEach>
                     </td>
                     <td>
                     <c:forEach var="evidence" items="${ortholog.evidence}">
-                        ${evidence.code.name} (${fn:length(evidence.publications)})<br>
+                        <c:set var="numPubs" value="${fn:length(evidence.publications)}"/>
+                        ${evidence.code.name}
+                        <c:choose>
+                            <c:when test="${numPubs > 1}">
+                                (<a href="/action/ortholog/${ortholog.orthoID}/citation-list?evidenceCode=${evidence.code.code}">${numPubs}</a>)
+                            </c:when>
+                            <c:otherwise>
+                                (<a href="/${evidence.publications.iterator().next().zdbID}">1</a>)
+                            </c:otherwise>
+                        </c:choose>
+                        <br>
                     </c:forEach>
                     </td>
                 </zfin:alternating-tr>
