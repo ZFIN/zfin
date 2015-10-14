@@ -22,7 +22,7 @@ require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/downloadFiles.pl");
 &reportOrthoNameChanges;
 
 print "finished parsing and reporting, do updates.\n";
-$cmd = "$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> loadAndUpdateNCBIOrthologs.sql > updateOrthologySQLlog1 2> updateOrthologySQLlog2";
+$cmd = "$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> loadAndUpdateNCBIOrthologs.sql";
 ;
 
 &doSystemCommand($cmd);
