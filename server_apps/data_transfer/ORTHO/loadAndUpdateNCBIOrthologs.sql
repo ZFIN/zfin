@@ -76,22 +76,14 @@ select ncbiGeneId, name, symbol
  and symbol != noi_symbol;
 
 update ortholog
-  set ortho_chromosome = (Select distinct chromosome
+  set ortho_other_species_chromosome = (Select distinct chromosome
 				from just_ncbi_info
 				where ortho_other_species_ncbi_gene_id = ncbiGeneId)
 where exists (Select 'x' from just_ncbi_info
       	     	     where ortho_other_species_ncbi_Gene_id = ncbiGeneId);
 
 update ortholog
-  set ortho_name = (Select distinct name
-				from just_ncbi_info
-				where ortho_other_species_ncbi_gene_id = ncbiGeneId)
-where exists (Select 'x' from just_ncbi_info
-      	     	     where ortho_other_species_ncbi_Gene_id = ncbiGeneId);
-
-
-update ortholog
-  set ortho_position = (Select distinct position
+  set ortho_other_species_name = (Select distinct name
 				from just_ncbi_info
 				where ortho_other_species_ncbi_gene_id = ncbiGeneId)
 where exists (Select 'x' from just_ncbi_info
@@ -99,7 +91,15 @@ where exists (Select 'x' from just_ncbi_info
 
 
 update ortholog
-  set ortho_symbol = (Select distinct symbol
+  set ortho_other_species_position = (Select distinct position
+				from just_ncbi_info
+				where ortho_other_species_ncbi_gene_id = ncbiGeneId)
+where exists (Select 'x' from just_ncbi_info
+      	     	     where ortho_other_species_ncbi_Gene_id = ncbiGeneId);
+
+
+update ortholog
+  set ortho_other_species_symbol = (Select distinct symbol
 				from just_ncbi_info
 				where ortho_other_species_ncbi_gene_id = ncbiGeneId)
 where exists (Select 'x' from just_ncbi_info
