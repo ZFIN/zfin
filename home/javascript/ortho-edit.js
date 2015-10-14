@@ -287,14 +287,15 @@ function OrthoEditController($http, $q) {
     }
 
     function deleteEvidence(ortholog, evidence, index) {
+        var pubID = evidence.publication.zdbID;
         var payload = {
-            'publicationID': vm.modalEvidence.publication.zdbID,
-            'orthologID': vm.modalOrtholog.zdbID,
+            'publicationID': pubID,
+            'orthologID': ortholog.zdbID,
             'evidenceCodeList': []
         };
         $http.post('/action/gene/' + vm.gene + '/ortholog/evidence', payload)
             .then(function (resp) {
-                ortholog.evidence.splice(index, 1);
+                delete ortholog.evidenceMap[pubID];
             })
             .catch(function (error) {
                 console.log('Error!', error);
