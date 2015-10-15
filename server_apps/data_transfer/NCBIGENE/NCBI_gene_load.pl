@@ -839,12 +839,6 @@ open (GENE2ACC, "gene2accession") ||  die "Cannot open gene2accession : $!\n";
 
 ##Format: tax_id GeneID status RNA_nucleotide_accession.version RNA_nucleotide_gi protein_accession.version protein_gi genomic_nucleotide_accession.version genomic_nucleotide_gi start_position_on_the_genomic_accession end_position_on_the_genomic_accession orientation assembly mature_peptide_accession.version mature_peptide_gi Symbol
 
-## Sample record (with "PROVISIONAL" as the value for status column, meaning RefSeq
-## 7955    30560   PROVISIONAL     NM_001001398.2   89191827    NP_001001398.2  89191828     NW_003336223.1  312122430       3478905 3485447 +       Reference Zv9 Primary Assembly  -       -       fgf6a
-
-## Another sample record (with no value for status column, meaning GenBank
-## 7955    30037   -       BC163556.1      190339183       AAI63556.1      190339184       -       -       -       -       ?       -       -       -       tnc
-
 while (<GENE2ACC>) {
   chomp;
 
