@@ -82,6 +82,7 @@ update ortholog
 where exists (Select 'x' from just_ncbi_info
       	     	     where ortho_other_species_ncbi_Gene_id = ncbiGeneId);
 
+
 update ortholog
   set ortho_other_species_taxid = (Select distinct taxonid
 				from just_ncbi_info
