@@ -47,7 +47,13 @@
 
 
 <%--ORTHOLOGY--%>
-<zfin2:orthology orthologyPresentationBean="${formBean.orthologyPresentationBean}" marker="${formBean.marker}" title="ORTHOLOGY" webdriverPathFromRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
+<c:set var="geneSymbol">
+    <zfin:abbrev entity="${formBean.marker}"/>
+</c:set>
+<zfin2:orthology
+        orthologyPresentationBean="${formBean.orthologyPresentationBean}"
+        marker="${formBean.marker}"
+        title="ORTHOLOGY for ${geneSymbol}"/>
 
 <%--CITATIONS--%>
 <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>
