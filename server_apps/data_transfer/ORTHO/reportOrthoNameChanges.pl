@@ -1,6 +1,6 @@
 #!/private/bin/perl
 
-# NCBIorthology.pl
+# reportOrthoNameChanges.pl
 # The script then parses data in the above files and store related data in a series of data structures and then compare data stored at ZFIN to decide what
 # should be updated. 
 
@@ -149,12 +149,13 @@ $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
 
 ### needs to change to conform to new schema.
 $sqlGetZFgeneNamesByHumanAndMouseOrth =
-'select distinct organism,ortho_name,ortho_abbrev,dblink_acc_num,c_gene_id,mrkr_abbrev,mrkr_name ' . 
-  'from db_link,orthologue,marker ' . 
- 'where dblink_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-27","ZDB-FDBCONT-040412-28","ZDB-FDBCONT-040412-23") ' .
-   'and zdb_id = dblink_linked_recid ' .
-   'and c_gene_id = mrkr_zdb_id ' .
+'select distinct organism_common_name,ortho_other_species_name,ortho_other_species_symbol,oef_accession_number,ortho_zebrafish_gene_zdb_id,mrkr_abbrev,mrkr_name ' . 
+  'from ortholog, ortholog_external_reference ,marker, organism ' . 
+ 'where oef_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-27","ZDB-FDBCONT-040412-28","ZDB-FDBCONT-040412-23") ' .
+   'and ortho_zdb_id = oef_ortho_zdb_id' .
+   'and ortho_zebrafish_gene_zdb_id = mrkr_zdb_id ' .
    'and mrkr_type = "GENE" ' .
+   'and organism_taxid = ortho_other_species_taxid'.
    'order by mrkr_abbrev;';
 
 $cur = $dbh->prepare($sqlGetZFgeneNamesByHumanAndMouseOrth);
@@ -469,7 +470,7 @@ sub doSystemCommand {
   $returnCode = system( $systemCommand );
 
   if ( $returnCode != 0 ) { 
-     $subjectLine = "Auto from $dbname: " . "NCBIorthology.pl :: failed at: $systemCommand . $! ";
+     $subjectLine = "Auto from $dbname: " . "reportOrthoNameChanges.pl :: failed at: $systemCommand . $! ";
      print LOG "\nFailed to execute system command, $systemCommand\nExit.\n\n";
      
      &reportErrAndExit($subjectLine);
