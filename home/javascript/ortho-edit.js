@@ -139,6 +139,7 @@ function OrthoEditController($http, $q) {
     vm.saveNoteEdit = saveNoteEdit;
 
     vm.selectPub = selectPub;
+    vm.checkPub = checkPub;
 
     activate();
 
@@ -244,7 +245,7 @@ function OrthoEditController($http, $q) {
     }
 
     function saveEvidence() {
-        if (!vm.modalEvidence.publication) {
+        if (!vm.modalEvidence.publication.zdbID) {
             vm.evidencePublicationError = 'Select a publication';
             return;
         }
@@ -352,12 +353,18 @@ function OrthoEditController($http, $q) {
     }
 
     function selectPub(pub) {
-        var existingEvidence = vm.modalOrtholog.evidenceMap[pub.zdbID];
+        vm.modalEvidence.publication.zdbID = pub.zdbID;
+        checkPub();
+    }
+
+    function checkPub() {
+        vm.evidencePublicationError = '';
+        var existingEvidence = vm.modalOrtholog.evidenceMap[vm.modalEvidence.publication.zdbID];
         if (existingEvidence) {
             vm.modalEvidence = angular.copy(existingEvidence);
             vm.evidencePublicationWarning = true;
         } else {
-            vm.modalEvidence.publication = pub;
+            vm.modalEvidence.clearAllCodes();
             vm.evidencePublicationWarning = false;
         }
     }
@@ -380,5 +387,11 @@ EvidenceDisplay.prototype.toggleCode = function(evidenceCode) {
         if (code.code === evidenceCode) {
             code.selected = !code.selected;
         }
+    });
+};
+
+EvidenceDisplay.prototype.clearAllCodes = function() {
+    this.codes.forEach(function (code) {
+        code.selected = false;
     });
 };
