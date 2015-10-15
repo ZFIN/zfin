@@ -132,8 +132,6 @@ function OrthoEditController($http, $q) {
     vm.editEvidence = editEvidence;
     vm.deleteEvidence = deleteEvidence;
 
-    vm.formatCodes = formatCodes;
-
     vm.editNote = editNote;
     vm.cancelNoteEdit = cancelNoteEdit;
     vm.saveNoteEdit = saveNoteEdit;
@@ -220,7 +218,7 @@ function OrthoEditController($http, $q) {
                 fadeDuration: 100
             })
             .on($.modal.AFTER_CLOSE, function() {
-                vm.modalOrtholog = {};
+                vm.modalOrtholog = undefined;
             });
     }
 
@@ -246,31 +244,25 @@ function OrthoEditController($http, $q) {
 
     function saveEvidence() {
         if (!vm.modalEvidence.publication.zdbID) {
-            vm.evidencePublicationError = 'Select a publication';
+            vm.evidencePublicationError = 'Select or enter a publication';
             return;
         }
 
-        var hasSelectedCodes = vm.modalEvidence.codes.some(function(code) {
-            return code.selected;
-        });
-
-        if (!hasSelectedCodes) {
+        if (!vm.modalEvidence.anySelected()) {
             vm.evidenceCodeError = 'Select at least one evidence code';
             return;
         }
 
-        var pubID = vm.modalEvidence.publication.zdbID;
+        var pubID = makeZdb(vm.modalEvidence.publication.zdbID);
+        vm.modalEvidence.publication.zdbID = pubID;
         var payload = {
             'publicationID': pubID,
             'orthologID': vm.modalOrtholog.zdbID,
-            'evidenceCodeList': vm.modalEvidence.codes
-                .filter(function(c) { return c.selected; })
-                .map(function(c) { return c.code; })
+            'evidenceCodeList': vm.modalEvidence.asArray()
         };
         $http.post('/action/gene/' + vm.gene + '/ortholog/evidence', payload)
             .then(function (resp) {
                 vm.modalOrtholog.evidenceMap[pubID] = angular.copy(vm.modalEvidence);
-                console.log('OK!')
                 $.modal.close();
             })
             .catch(function (error) {
@@ -287,7 +279,7 @@ function OrthoEditController($http, $q) {
         openEvidenceModal(ortholog, angular.copy(evidence));
     }
 
-    function deleteEvidence(ortholog, evidence, index) {
+    function deleteEvidence(ortholog, evidence) {
         var pubID = evidence.publication.zdbID;
         var payload = {
             'publicationID': pubID,
@@ -301,14 +293,6 @@ function OrthoEditController($http, $q) {
             .catch(function (error) {
                 console.log('Error!', error);
             });
-    }
-
-    function formatCodes(codes) {
-        if (!codes) { return; }
-        return codes
-            .filter(function(c) { return c.selected; })
-            .map(function(c) { return c.code; })
-            .join(', ');
     }
 
     function editNote() {
@@ -345,8 +329,8 @@ function OrthoEditController($http, $q) {
                 fadeDuration: 100
             })
             .on($.modal.AFTER_CLOSE, function() {
-                vm.modalOrtholog = {};
-                vm.modalEvidence = {};
+                vm.modalOrtholog = undefined;
+                vm.modalEvidence = undefined;
                 vm.modalEvidenceIndex = -1;
                 vm.evidencePublicationWarning = false;
             });
@@ -359,7 +343,8 @@ function OrthoEditController($http, $q) {
 
     function checkPub() {
         vm.evidencePublicationError = '';
-        var existingEvidence = vm.modalOrtholog.evidenceMap[vm.modalEvidence.publication.zdbID];
+        var pubID = makeZdb(vm.modalEvidence.publication.zdbID);
+        var existingEvidence = vm.modalOrtholog.evidenceMap[pubID];
         if (existingEvidence) {
             vm.modalEvidence = angular.copy(existingEvidence);
             vm.evidencePublicationWarning = true;
@@ -367,6 +352,14 @@ function OrthoEditController($http, $q) {
             vm.modalEvidence.clearAllCodes();
             vm.evidencePublicationWarning = false;
         }
+    }
+
+    function makeZdb(value) {
+        var out = value;
+        if (out.match(/^\d+/)) {
+            out = 'ZDB-PUB-' + out;
+        }
+        return out;
     }
 
 }
@@ -394,4 +387,20 @@ EvidenceDisplay.prototype.clearAllCodes = function() {
     this.codes.forEach(function (code) {
         code.selected = false;
     });
+};
+
+EvidenceDisplay.prototype.anySelected = function() {
+    return this.codes.some(function(code) {
+        return code.selected;
+    });
+};
+
+EvidenceDisplay.prototype.asArray = function() {
+    return this.codes
+        .filter(function(c) { return c.selected; })
+        .map(function(c) { return c.code; });
+};
+
+EvidenceDisplay.prototype.asList = function() {
+    return this.asArray().join(', ');
 };
