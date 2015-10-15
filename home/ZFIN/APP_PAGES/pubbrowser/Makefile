@@ -20,7 +20,7 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/pubbrowser
 
 SUBDIRS = EDITpubs
 
-GENERICS = citlink.apg curate_ortho_select.apg journalselect.apg \
+GENERICS = citlink.apg journalselect.apg \
 	journalupdate.apg journalview.apg js-delete_attrib.apg link_authors.apg \
 	miniref_display.apg notif_content.apg notif_frame.apg \
 	pubacknowledgement.apg pubselect2.apg \

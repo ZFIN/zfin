@@ -2684,6 +2684,15 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
 
 <form name=updater1>
 
+<!------------ ORTHOLOGY ------------------------------------>
+
+<?MIBLOCK COND="$(XST,$type_of_genedom)">
+ <HR width="80%">
+ <a name=orthologue><b>ORTHOLOGY</b></a>
+ <?MIVAR><a href="/action/marker/$OID/edit#orthology">Edit Orthology</a><?/MIVAR>
+<?/MIBLOCK>
+
+<!-------------- ends ORTHOLOGY ------------------------------------>
 
 <!------------------ PUBLICATION ------------------------------------>
 

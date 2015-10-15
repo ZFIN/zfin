@@ -22,11 +22,11 @@
     <c:if test="${!empty orthologyPresentationBean.orthologs}">
         <table class="summary rowstripes">
             <tr>
-                <th>Species</th>
-                <th>Symbol</th>
-                <th>Chr (Position)</th>
-                <th>Accession #</th>
-                <th>Evidence</th>
+                <th width="10%">Species</th>
+                <th width="10%">Symbol</th>
+                <th width="20%">Chr (Position)</th>
+                <th width="20%">Accession #</th>
+                <th width="40%">Evidence</th>
             </tr>
 
             <c:forEach var="ortholog" items="${orthologyPresentationBean.orthologs}" varStatus="loop">

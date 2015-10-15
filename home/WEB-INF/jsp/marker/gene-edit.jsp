@@ -17,6 +17,6 @@
 <a href="${editURL}"><< Back to old edit page</a>
 
 <div ng-app="app">
-    <h1>Orthology</h1>
+    <h1 id="orthology">Orthology</h1>
     <div ortho-edit gene="${gene.zdbID}"></div>
 </div>
