@@ -178,7 +178,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
                             else{
                                 labDesignationBox.addItem(featurePrefixDTO.getPrefix());
                             }
-                            labDesignationBox.addItem(featurePrefixDTO.getPrefix());
+                           // labDesignationBox.addItem(featurePrefixDTO.getPrefix());
                         }
                         // always has zf
                         if(!hasZf){
