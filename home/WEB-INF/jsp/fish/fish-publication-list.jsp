@@ -5,9 +5,11 @@
 
 <zfin2:citationList pubListBean="${formBean}" url="fish-publication-list?fishID=${formBean.fish.fishID}&">
 
-    <div class="name-label">
-        Fish:&nbsp;
-        <a href="fish-detail/${formBean.fish.fishID}">${formBean.fish.displayName}</a>
-    </div>
+    <table class="primary-entity-attributes">
+        <tr>
+            <th>Fish</th>
+            <td><a href="fish-detail/${formBean.fish.fishID}">${formBean.fish.displayName}</a></td>
+        </tr>
+    </table>
 
 </zfin2:citationList>

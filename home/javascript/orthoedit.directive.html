@@ -35,16 +35,18 @@
         <td>{{ortholog.ncbiOtherSpeciesGeneDTO.chromosome}} ({{ortholog.ncbiOtherSpeciesGeneDTO.position}})</td>
         <td>
             <div ng-repeat="reference in ortholog.orthologExternalReferenceDTOSet">
-                <a ng-href="{{reference.referenceDatabaseDTO.url}}{{reference.accessionNumber}}">{{reference.referenceDatabaseDTO.name}}:{{reference.accessionNumber}}</a>
+                <a ng-href="{{reference.referenceDatabaseDTO.url}}{{reference.accessionNumber}}">
+                    {{reference.referenceDatabaseDTO.name}}:{{reference.accessionNumber}}
+                </a>
             </div>
         </td>
         <td>
             <div ng-repeat="(pubId, ev) in ortholog.evidenceMap">
                 <a ng-href="/{{ev.publication.zdbID}}" ng-attr-title="{{ev.publication.citation}}">
                     {{ev.publication.zdbID | pub}}
-                </a>: {{vm.formatCodes(ev.codes)}}
+                </a>: {{ev.asList()}}
                 <a href class="clickable" ng-click="vm.editEvidence(ortholog, ev, $index)"><i class="fa fa-pencil"></i></a>
-                <a href class="clickable" ng-click="vm.deleteEvidence(ortholog, ev, $index)"><i class="fa fa-trash"></i></a>
+                <a href class="clickable" ng-click="vm.deleteEvidence(ortholog, ev)"><i class="fa fa-trash"></i></a>
             </div>
             <a href="#" ng-click="vm.addEvidence(ortholog)">Add</a>
         </td>
@@ -77,14 +79,17 @@
                    class="list-select-text"
                    ng-model="vm.modalEvidence.publication.zdbID"
                    ng-disabled="vm.modalEvidenceIndex > -1"
-                   ng-change="vm.evidencePublicationError = ''">
+                   ng-change="vm.checkPub()">
             <ul class="list-select-options">
                 <li ng-repeat="pub in vm.pubs" ng-click="vm.selectPub(pub)">
                     {{pub.zdbID | pub}}
                 </li>
             </ul>
         </div>
-        <div class="error" ng-show="vm.evidencePublicationError">{{vm.evidencePublicationError}}</div>
+
+        <div class="error" ng-show="vm.evidencePublicationError">
+            {{vm.evidencePublicationError}}
+        </div>
 
         <p class="warning" ng-show="vm.evidencePublicationWarning">
             {{vm.modalEvidence.publication.zdbID | pub}} is already a reference for
@@ -95,7 +100,7 @@
 
         <label>Evidence Codes</label>
         <div class="list-select keep-open">
-            <input class="list-select-text" ng-value="vm.formatCodes(vm.modalEvidence.codes)" readonly>
+            <input class="list-select-text" ng-value="vm.modalEvidence.asList()" readonly>
             <ul class="list-select-options">
                 <li ng-repeat="code in vm.modalEvidence.codes">
                     <label>

@@ -15,8 +15,11 @@
 
 <zfin2:citationList pubListBean="${formBean}" url="snp-publication-list?markerID=${formBean.marker.zdbID}">
 
-    <div class="name-label">
-        Clone name: <zfin:link entity="${formBean.marker}"/>
-    </div>
+    <table class="primary-entity-attributes">
+        <tr>
+            <th>Clone name</th>
+            <td><zfin:link entity="${formBean.marker}"/></td>
+        </tr>
+    </table>
 
 </zfin2:citationList>

@@ -5,14 +5,15 @@
 <%@ attribute name="orthologyPresentationBean" required="true" rtexprvalue="true"
               type="org.zfin.marker.presentation.OrthologyPresentationBean" %>
 <%@ attribute name="marker" required="true" rtexprvalue="true" type="org.zfin.marker.Marker" %>
-<%@ attribute name="webdriverPathFromRoot" required="true" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="title" required="false" %>
 <%@ attribute name="showTitle" required="false" type="java.lang.Boolean" %>
-<%@ attribute name="hideEvidence" required="false" type="java.lang.Boolean" %>
+<%@ attribute name="hideCounts" required="false" type="java.lang.Boolean" %>
 
 <c:if test="${empty title && showTitle}">
     <c:set var="title" value="ORTHOLOGY"/>
 </c:if>
+
+<c:set var="hideCounts" value="${empty hideCounts ? false : hideCounts}"/>
 
 <zfin2:subsection title="${title}"
                   anchor="orthology"
@@ -55,14 +56,16 @@
                     <c:forEach var="evidence" items="${ortholog.evidence}">
                         <c:set var="numPubs" value="${fn:length(evidence.publications)}"/>
                         ${evidence.code.name}
-                        <c:choose>
-                            <c:when test="${numPubs > 1}">
-                                (<a href="/action/ortholog/${ortholog.orthoID}/citation-list?evidenceCode=${evidence.code.code}">${numPubs}</a>)
-                            </c:when>
-                            <c:otherwise>
-                                (<a href="/${evidence.publications.iterator().next().zdbID}">1</a>)
-                            </c:otherwise>
-                        </c:choose>
+                        <c:if test="${!hideCounts}">
+                            <c:choose>
+                                <c:when test="${numPubs > 1}">
+                                    (<a href="/action/ortholog/${ortholog.orthoID}/citation-list?evidenceCode=${evidence.code.code}">${numPubs}</a>)
+                                </c:when>
+                                <c:otherwise>
+                                    (<a href="/${evidence.publications.iterator().next().zdbID}">1</a>)
+                                </c:otherwise>
+                            </c:choose>
+                        </c:if>
                         <br>
                     </c:forEach>
                     </td>

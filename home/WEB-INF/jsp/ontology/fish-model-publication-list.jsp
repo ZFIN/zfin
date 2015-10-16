@@ -2,10 +2,16 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <zfin2:citationList pubListBean="${citationList}" url="/action/ontology/fish-model-publication-list/${term.oboID}/${fish.zdbID}?">
-    <div class="name-label">
-        Disease Name: <a href="/${term.oboID}">${term.termName}</a>
-    </div>
-    <div class="name-label">
-        Fish Name: <a href="/${fish.zdbID}">${fish.name}</a>
-    </div>
+
+    <table class="primary-entity-attributes">
+        <tr>
+            <th>Disease Name</th>
+            <td><a href="/${term.oboID}">${term.termName}</a></td>
+        </tr>
+        <tr>
+            <th>Fish Name</th>
+            <td><a href="/${fish.zdbID}">${fish.name}</a></td>
+        </tr>
+    </table>
+
 </zfin2:citationList>
