@@ -13,6 +13,7 @@
 
 <hr>
 
+<div class="error" ng-show="vm.generalError">{{vm.generalError}}</div>
 <table class="summary basicstripes">
     <thead>
     <tr>
@@ -45,8 +46,8 @@
                 <a ng-href="/{{ev.publication.zdbID}}" ng-attr-title="{{ev.publication.citation}}">
                     {{ev.publication.zdbID | pub}}
                 </a>: {{ev.asList()}}
-                <a href class="clickable" ng-click="vm.editEvidence(ortholog, ev, $index)"><i class="fa fa-pencil"></i></a>
-                <a href class="clickable" ng-click="vm.deleteEvidence(ortholog, ev)"><i class="fa fa-trash"></i></a>
+                <a href class="clickable" ng-click="vm.editEvidence(ortholog, ev, $index)"><i class="fa fa-fw fa-pencil"></i></a>
+                <a href class="clickable" ng-click="vm.deleteEvidence(ortholog, ev)"><i class="fa fa-fw fa-trash"></i></a>
             </div>
             <a href="#" ng-click="vm.addEvidence(ortholog)">Add</a>
         </td>
