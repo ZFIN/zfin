@@ -251,7 +251,7 @@ function OrthoEditController($http, $q) {
         }
 
         if (!vm.modalEvidence.publication.zdbID.match(/^ZDB-PUB-\d{6}-\d+/)) {
-            vm.evidencePublicationError = 'Not a valid ZDB-PUB ID';
+            vm.evidencePublicationError = 'Enter a valid publication ID';
         }
 
         if (!vm.modalEvidence.anySelected()) {
@@ -271,7 +271,13 @@ function OrthoEditController($http, $q) {
                 $.modal.close();
             })
             .catch(function (error) {
-                console.log('Error!', error);
+                var message = error.data.message;
+                // todo: hackity hack hack -- we should really use the fieldErrors attribute instead
+                if (message.indexOf('publication') < 0) {
+                    vm.evidenceCodeError = message;
+                } else {
+                    vm.evidencePublicationError = message;
+                }
             });
     }
 
@@ -339,6 +345,8 @@ function OrthoEditController($http, $q) {
                 vm.modalEvidence = undefined;
                 vm.modalEvidenceIndex = -1;
                 vm.evidencePublicationWarning = false;
+                vm.evidencePublicationError = '';
+                vm.evidenceCodeError = '';
             });
     }
 

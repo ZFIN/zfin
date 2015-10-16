@@ -182,7 +182,7 @@ public class OrthologyController {
                 evidence.setOrtholog(ortholog);
                 EvidenceCode evCode = getOrthologyRepository().getEvidenceCode(code);
                 if (evCode == null)
-                    throw new InvalidWebRequestException("No No evidence code with name " + code + " found;", null);
+                    throw new InvalidWebRequestException("Invalid evidence code: " + code, null);
                 evidence.setEvidenceCode(evCode);
                 evidenceSet.add(evidence);
             }
@@ -192,7 +192,10 @@ public class OrthologyController {
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
-            throw new InvalidWebRequestException("Error while creating new Evidence code for gene " + geneID + ": " +
+            if (e instanceof InvalidWebRequestException) {
+                throw e;
+            }
+            throw new InvalidWebRequestException("Error while updating evidence code for " + geneID + ": " +
                     e.getMessage(), null);
         }
         return "Successful added Evidence";
@@ -200,36 +203,36 @@ public class OrthologyController {
 
     private void checkSecurityProfile() {
         if (!ProfileService.isRootUser())
-            throw new InvalidWebRequestException("No authenitcated user found in session.", null);
+            throw new InvalidWebRequestException("No authenticated user found in session", null);
     }
 
     private Ortholog checkValidOrtholog(String orthologID) {
         if (StringUtils.isEmpty(orthologID))
-            throw new InvalidWebRequestException("No Zebrafish gene ID provided.", null);
+            throw new InvalidWebRequestException("No ortholog ID provided", null);
         // find the ortholog
         Ortholog ortholog = getOrthologyRepository().getOrtholog(orthologID);
         if (ortholog == null)
-            throw new InvalidWebRequestException("No ortholog with ID " + orthologID + " found!", null);
+            throw new InvalidWebRequestException("No ortholog with ID " + orthologID + " found", null);
         return ortholog;
     }
 
     private Publication checkValidPublication(String publicationID) {
         if (StringUtils.isEmpty(publicationID))
-            throw new InvalidWebRequestException("No Zebrafish gene ID provided.", null);
+            throw new InvalidWebRequestException("Select or enter a publication", null);
         // find the publication
         Publication publication = getPublicationRepository().getPublication(publicationID);
         if (publication == null)
-            throw new InvalidWebRequestException("No publication with ID " + publicationID + " found!", null);
+            throw new InvalidWebRequestException("Couldn't find a publication with this ID", null);
         return publication;
     }
 
     private Marker checkValidGene(@PathVariable String geneID) {
         if (StringUtils.isEmpty(geneID))
-            throw new InvalidWebRequestException("No Zebrafish gene ID provided.", null);
+            throw new InvalidWebRequestException("No zebrafish gene ID provided", null);
         // find the gene
         Marker gene = getMarkerRepository().getMarkerByID(geneID);
         if (gene == null)
-            throw new InvalidWebRequestException("No Zebrafish gene with ID " + geneID + " found!", null);
+            throw new InvalidWebRequestException("No zebrafish gene with ID " + geneID + " found", null);
         return gene;
     }
 
