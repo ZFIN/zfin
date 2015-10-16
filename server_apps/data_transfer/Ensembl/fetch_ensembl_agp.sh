@@ -5,8 +5,7 @@
 # Makefile has a run_agp target to fire this off
 # keep assembly version up to date
 
-V="9"                                         # <-- CHANGEME!
-AGP="Zv${V}_chr.agp"
+AGP="GRCz10.agp"
 
 # where we put these source data files these days
 gffdir="/research/zprodmore/gff3"
@@ -17,21 +16,6 @@ dest="<!--|ROOT_PATH|-->/home/data_transfer/Downloads"
 # where we start from
 wrkdir="`pwd`"
 
-cd ${gffdir}
-
-echo "retreiving Assembly $V chromosome Golden Path to: ${gffdir}" 
-echo "!!!  Be sure it is the Assembly version we need !!!!"
-cd ${gffdir}
-prior="`ls -lt ${AGP}.gz | head -1`"
-wget -q --timestamping "ftp://ftp.ensembl.org/pub/assembly/zebrafish/Zv${V}release/${AGP}.gz"
-geterr=$?
-post="`ls -lt ${AGP}.gz | head -1`"
-
-if [ -f ${AGP}.gz -a ${geterr} -eq 0 ]; then
-	# preserve the "timestamped" download to avoid re-fetching
-	gunzip -c  ${AGP}.gz > ${AGP}
-	chmod g+w ${AGP}*
-fi
 cd ${wrkdir}
 
 echo `pwd`
