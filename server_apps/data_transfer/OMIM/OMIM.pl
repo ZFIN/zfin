@@ -263,7 +263,7 @@ foreach $line (@lines) {
 
      $ctFoundMIMwithSymbolOnGenemap++;
 
-     $cur = $dbh->prepare('select distinct c_gene_id, dblink_acc_num from orthologue, db_link where zdb_id = dblink_linked_recid and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25" and organism = "Human" and dblink_acc_num = ?;');
+     $cur = $dbh->prepare('select distinct ortho_zebrafish_gene_zdb_id, oef_accession_number from ortholog, ortholog_external_reference where oef_ortho_zdb_id = ortho_zdb_id and oef_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25" and oef_accession_number = ?;');
      $cur->execute($mimNumGene);
      my ($ZFINgeneId);
      my ($dblinkAcc);
@@ -378,7 +378,7 @@ foreach $line (@lines) {
 close OMIM;
 close CHECKNOPHENO;
 
-$cur = $dbh->prepare('select distinct c_gene_id, dblink_acc_num from orthologue, db_link where zdb_id = dblink_linked_recid and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25" and organism = "Human";');
+$cur = $dbh->prepare('select distinct ortho_zebrafish_gene_zdb_id, oef_accession_number from ortholog, ortholog_external_reference where oef_ortho_zdb_id = ortho_zdb_id and oef_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25";');
 $cur->execute();
 my ($orthoId, $omimNum);
 $cur->bind_columns(\$geneId,\$omimNum);
@@ -392,7 +392,7 @@ while ($cur->fetch()) {
 
 print LOG " \n";
 
-$cur = $dbh->prepare('select distinct c_gene_id, dblink_acc_num from orthologue, db_link where zdb_id = dblink_linked_recid and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25" and organism = "Human";');
+$cur = $dbh->prepare('select distinct ortho_zebrafish_gene_zdb_id, oef_accession_number from ortholog, ortholog_external_reference where oef_ortho_zdb_id = ortho_zdb_id and oef_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25";');
 $cur->execute();
 $cur->bind_columns(\$geneId,\$omimNum);
 
@@ -405,7 +405,7 @@ while ($cur->fetch()) {
 
 print LOG " \n";
 
-$cur = $dbh->prepare('select distinct c_gene_id, dblink_acc_num from orthologue, db_link where zdb_id = dblink_linked_recid and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25" and organism = "Human";');
+$cur = $dbh->prepare('select distinct ortho_zebrafish_gene_zdb_id, oef_accession_number from ortholog, ortholog_external_reference where oef_ortho_zdb_id = ortho_zdb_id and oef_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25";');
 $cur->execute();
 $cur->bind_columns(\$geneId,\$omimNum);
 
@@ -418,7 +418,7 @@ while ($cur->fetch()) {
 
 print LOG " \n";
 
-$cur = $dbh->prepare('select distinct c_gene_id, dblink_acc_num from orthologue, db_link where zdb_id = dblink_linked_recid and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25" and organism = "Human";');
+$cur = $dbh->prepare('select distinct ortho_zebrafish_gene_zdb_id, oef_accession_number from ortholog, ortholog_external_reference where oef_ortho_zdb_id = ortho_zdb_id and oef_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25";');
 $cur->execute();
 $cur->bind_columns(\$geneId,\$omimNum);
 
