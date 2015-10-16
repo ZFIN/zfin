@@ -805,7 +805,7 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     @Override
     public List<NcbiOrthoExternalReference> getNcbiExternalReferenceList(String ncbiID) {
         String hql = "from NcbiOrthoExternalReference where " +
-                "accessionNumber = :accessionNumber  ";
+                "ncbiOtherSpeciesGene.ID = :accessionNumber  ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("accessionNumber", ncbiID);
         return (List<NcbiOrthoExternalReference>) query.list();

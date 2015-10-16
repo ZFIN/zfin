@@ -143,7 +143,7 @@ public class OrthologyController {
             Set<OrthologExternalReference> referenceList = new HashSet<>(ncbiOrthoExternalReferenceList.size());
             for (NcbiOrthoExternalReference ref : ncbiOrthoExternalReferenceList) {
                 OrthologExternalReference orthoRef = new OrthologExternalReference();
-                orthoRef.setAccessionNumber(ncbiID);
+                orthoRef.setAccessionNumber(ref.getAccessionNumber());
                 orthoRef.setOrtholog(ortholog);
                 orthoRef.setReferenceDatabase(ref.getReferenceDatabase());
                 referenceList.add(orthoRef);
