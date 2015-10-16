@@ -95,8 +95,7 @@
 <zfin2:orthology
         orthologyPresentationBean="${formBean.orthologyPresentationBean}"
         marker="${formBean.marker}"
-        title="ORTHOLOGY for ${geneSymbol}"
-        webdriverPathFromRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
+        title="ORTHOLOGY for ${geneSymbol}"/>
 
 <%--CITATIONS--%>
 <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>

@@ -14,6 +14,7 @@
 <jsp:doBody/>
 
 <c:if test="${pubListBean.numOfPublishedPublications > 1}">
+  <hr>
   <c:choose>
     <c:when test="${pubListBean.orderBy == 'author'}">
       <input type=button name=resultOrder
@@ -28,14 +29,38 @@
   </c:choose>
 </c:if>
 
-<table class="summary rowstripes">
-  <c:forEach var="pub" items="${pubListBean.sortedPublishedPublications}" varStatus="loop">
+<c:if test="${pubListBean.numOfPublishedPublications > 0}">
+  <hr>
+  <table class="summary rowstripes">
+    <c:forEach var="pub" items="${pubListBean.sortedPublishedPublications}" varStatus="loop">
+      <zfin:alternating-tr loopName="loop">
+        <td>
+          <div class="show_pubs">
+            <a href="/${pub.zdbID}"
+               id="${pub.zdbID}">${pub.authors}&nbsp;(${pub.year})&nbsp;${pub.title}.&nbsp;${pub.journal.abbreviation}&nbsp;<c:if
+                      test="${pub.volume != null}">${pub.volume}:</c:if>${pub.pages}</a>
+            <authz:authorize ifAnyGranted="root"><c:if
+              test="${pub.open}">OPEN</c:if><c:if
+              test="${!pub.open}">CLOSED</c:if><c:if
+              test="${pub.indexed}">, INDEXED</c:if>
+            </authz:authorize>
+          </div>
+        </td>
+      </zfin:alternating-tr>
+    </c:forEach>
+  </table>
+</c:if>
+
+<c:if test="${pubListBean.numOfUnpublishedPublications > 0}">
+  <hr>
+  <b>Other Citations (${pubListBean.numOfUnpublishedPublications}):</b>
+  <table class="summary rowstripes">
+  <c:forEach var="pub" items="${pubListBean.sortedUnpublishedPublications}"
+             varStatus="loop">
     <zfin:alternating-tr loopName="loop">
       <td>
         <div class="show_pubs">
-          <a href="/${pub.zdbID}"
-             id="${pub.zdbID}">${pub.authors}&nbsp;(${pub.year})&nbsp;${pub.title}.&nbsp;${pub.journal.abbreviation}&nbsp;<c:if
-                    test="${pub.volume != null}">${pub.volume}:</c:if>${pub.pages}</a>
+          <a href="/${pub.zdbID}">${pub.authors}&nbsp;(${pub.year})&nbsp;${pub.title}</a>
           <authz:authorize ifAnyGranted="root"><c:if
             test="${pub.open}">OPEN</c:if><c:if
             test="${!pub.open}">CLOSED</c:if><c:if
@@ -45,26 +70,5 @@
       </td>
     </zfin:alternating-tr>
   </c:forEach>
-</table>
-
-<c:if test="${pubListBean.numOfUnpublishedPublications > 0}">
-<hr>
-<b>Other Citations (${pubListBean.numOfUnpublishedPublications}):</b>
-<table class="summary rowstripes">
-<c:forEach var="pub" items="${pubListBean.sortedUnpublishedPublications}"
-           varStatus="loop">
-  <zfin:alternating-tr loopName="loop">
-    <td>
-      <div class="show_pubs">
-        <a href="/${pub.zdbID}">${pub.authors}&nbsp;(${pub.year})&nbsp;${pub.title}</a>
-        <authz:authorize ifAnyGranted="root"><c:if
-          test="${pub.open}">OPEN</c:if><c:if
-          test="${!pub.open}">CLOSED</c:if><c:if
-          test="${pub.indexed}">, INDEXED</c:if>
-        </authz:authorize>
-      </div>
-    </td>
-  </zfin:alternating-tr>
-</c:forEach>
-</c:if>
+  </c:if>
 </table>

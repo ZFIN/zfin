@@ -12,7 +12,12 @@
 </table>
 
 <zfin2:citationList pubListBean="${citationList}" url="/action/ontology/disease-publication-list/${term.oboID}?">
-    <div class="name-label">
-        Term Name: <a href="/action/ontology/term-detail/${term.oboID}">${term.termName}</a>
-    </div>
+
+    <table class="primary-entity-attributes">
+        <tr>
+            <th>Term Name</th>
+            <td><a href="/action/ontology/term-detail/${term.oboID}">${term.termName}</a></td>
+        </tr>
+    </table>
+
 </zfin2:citationList>

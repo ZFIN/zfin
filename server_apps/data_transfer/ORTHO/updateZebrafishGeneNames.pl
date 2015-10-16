@@ -67,11 +67,11 @@ $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
     or die "Cannot connect to Informix database: $DBI::errstr\n";
 
 $sqlGetZFgeneNamesByHumanAndMouseOrth =
-'select distinct c_gene_id,mrkr_abbrev,mrkr_name ' . 
-  'from db_link,orthologue,marker ' . 
- 'where dblink_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-27","ZDB-FDBCONT-040412-28","ZDB-FDBCONT-040412-23") ' .
-   'and zdb_id = dblink_linked_recid ' .
-   'and c_gene_id = mrkr_zdb_id ' .
+'select distinct ortho_zebrafish_gene_zdb_id,mrkr_abbrev,mrkr_name ' . 
+  'from ortholog,marker,ortholog_external_reference ' . 
+ 'where oef_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-27","ZDB-FDBCONT-040412-28","ZDB-FDBCONT-040412-23") ' .
+   'and oef_ortho_zdb_id = ortho_zdb_id ' .
+   'and ortho_zebrafish_gene_zdb_id = mrkr_zdb_id ' .
    'and mrkr_type = "GENE" ' .
    'order by mrkr_abbrev;';
 

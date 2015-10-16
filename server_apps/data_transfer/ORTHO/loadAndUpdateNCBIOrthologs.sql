@@ -82,6 +82,7 @@ update ortholog
 where exists (Select 'x' from just_ncbi_info
       	     	     where ortho_other_species_ncbi_Gene_id = ncbiGeneId);
 
+
 update ortholog
   set ortho_other_species_taxid = (Select distinct taxonid
 				from just_ncbi_info
@@ -246,14 +247,26 @@ delete from tmp_ortho_xref
 --			  and oef_fdbcont_zdb_id = fdbcont_id);
 
 
-delete from ortholog_external_reference;
-  
+delete from ncbi_ortholog_external_reference;
+
+delete from ortholog_external_reference
+ where exists (Select 'x' from tmp_ortho_xref, ortholog
+       	      	      where ncbigeneid = ortho_other_species_ncbi_gene_id
+		      and ortholog.ortho_zdb_id = tmp_ortho_xref.ortho_zdb_id);
+
+insert into ncbi_ortholog_external_reference (noer_other_species_ncbi_gene_id, noer_other_species_accession_number, noer_fdbcont_zdb_id)
+  select distinct ncbigeneid, xrefaccnum, fdbcont_id
+   from  tmp_ortho_xref
+   ;
 
 insert into ortholog_external_reference (oef_ortho_zdb_id, oef_accession_number, oef_fdbcont_zdb_id)
-  select ortholog.ortho_zdb_id, xrefaccnum, fdbcont_id
+  select distinct ortholog.ortho_zdb_id, xrefaccnum, fdbcont_id
    from ortholog, tmp_ortho_xref
    where ncbigeneid = ortho_other_species_ncbi_gene_id
-   ;
+   and not exists (select 'x' from ortholog_external_reference
+       	   	  	  where oef_ortho_zdb_id = ortholog.ortho_zdb_id
+			  and oef_accession_number = xrefaccnum
+			  and oef_fdbcont_zdb_id = fdbcont_id);
 
 commit work;
 
