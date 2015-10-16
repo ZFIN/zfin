@@ -957,6 +957,12 @@ a + .inline-upload {
     border: 1px solid #CCCCCC;
     padding: 5px;
     margin-bottom: 5px;
+    border-radius: 3px;
+}
+.curation-form input:disabled, .curation-form textarea:disabled {
+    background-color: #FAFAFA;
+    color: #909090;
+    cursor: not-allowed;
 }
 .curation-form.curation-inline input {
     display: inline;
