@@ -145,14 +145,6 @@ update ncbi_ortholog
 where exists (Select 'x' from just_ncbi_info
       	     	     where noi_ncbi_Gene_id = ncbiGeneId);
 
-
-unload to missingNCBIIds.txt
- select noi_ncbi_gene_id, noi_symbol
-   from ncbi_ortholog
- where not exists (Select 'x' from just_ncbi_info
-       	   	  	  where ncbiGeneId = noi_ncbi_gene_id);
-
-
 delete from ncbi_ortholog
  where not exists (Select 'x' from just_ncbi_info
        	   	  	  where ncbiGeneId = noi_ncbi_gene_id);
@@ -173,6 +165,11 @@ update ortholog
   	    	   	   where noi_ncbi_gene_id = ortho_other_species_ncbi_gene_id)
    and ortho_other_species_ncbi_gene_is_obsolete = 't';
 
+
+select distinct taxonid
+  from just_ncbi_info
+ where not exists (Select 'x' from organism
+       	   	  	  where organism_taxid = taxonid);
 
 
 insert into ncbi_ortholog (noi_ncbi_gene_id, noi_chromosome, noi_position, noi_symbol, noi_name, noi_taxid)
