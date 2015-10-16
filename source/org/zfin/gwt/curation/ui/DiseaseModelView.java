@@ -77,24 +77,22 @@ public class DiseaseModelView extends Composite {
         initDiseaseModelTable();
         int groupIndex = 0;
         int rowIndex = 1;
-        int damoCount=0;
+
 
         if (modelDTOList != null) {
             for (DiseaseAnnotationDTO diseaseModel : modelDTOList) {
 
-            if (diseaseModel.getDamoDTO()!= null) {
+                if (diseaseModel.getDamoDTO() != null) {
                     for (DiseaseAnnotationModelDTO damo : diseaseModel.getDamoDTO()) {
-                         int colIndex=0;
-                        damoCount=diseaseModel.getDamoDTO().size();
-                        //if (diseaseModel.getFish() != null) {
-                        //   Anchor fish = new Anchor(SafeHtmlUtils.fromTrustedString(diseaseModel.getFish().getHandle()), "/" + diseaseModel.getFish().getZdbID());
+                        int colIndex = 0;
+
                         Anchor fish = new Anchor(SafeHtmlUtils.fromTrustedString(damo.getFish().getHandle()), "/" + damo.getFish().getZdbID());
-                        //fish.setTitle(diseaseModel.getFish().getZdbID());
+
                         fish.setTitle(damo.getFish().getZdbID());
                         diseaseModelTable.setWidget(rowIndex, colIndex++, fish);
-                        //  InlineHTML environment = new InlineHTML(diseaseModel.getEnvironment().getName());
+
                         InlineHTML environment = new InlineHTML(damo.getEnvironment().getName());
-                        //  environment.setTitle(diseaseModel.getEnvironment().getZdbID());
+
                         environment.setTitle(damo.getEnvironment().getZdbID());
                         diseaseModelTable.setWidget(rowIndex, colIndex++, environment);
 
@@ -114,23 +112,21 @@ public class DiseaseModelView extends Composite {
                         deleteButton1.setTitle("ID: " + damo.getDamoID());
                         diseaseModelTable.setWidget(rowIndex, colIndex, deleteButton1);
                         groupIndex = diseaseModelTable.setRowStyle(rowIndex++, null, diseaseModel.getDisease().getZdbID(), groupIndex);
-                //
+
                     }
                     addConstructionRow(rowIndex);
-                }
-
-                else{
-                   int colIndex=0;
-                   Anchor fish=new Anchor("");
-                   fish.setTitle("");
-                   diseaseModelTable.setWidget(rowIndex, colIndex++, fish);
-                   //  InlineHTML environment = new InlineHTML(diseaseModel.getEnvironment().getName());
-                   InlineHTML environment = new InlineHTML("");
+                } else {
+                    int colIndex = 0;
+                    Anchor fish = new Anchor("");
+                    fish.setTitle("");
+                    diseaseModelTable.setWidget(rowIndex, colIndex++, fish);
+                    //  InlineHTML environment = new InlineHTML(diseaseModel.getEnvironment().getName());
+                    InlineHTML environment = new InlineHTML("");
                     environment.setTitle("");
 
-                   diseaseModelTable.setWidget(rowIndex, colIndex++, environment);
+                    diseaseModelTable.setWidget(rowIndex, colIndex++, environment);
 
-                   diseaseModelTable.setText(rowIndex, colIndex, IS_A_MODEL_OF);
+                    diseaseModelTable.setText(rowIndex, colIndex, IS_A_MODEL_OF);
                     diseaseModelTable.getCellFormatter().setStyleName(rowIndex, colIndex++, "bold");
                     Hyperlink disease = new Hyperlink(SafeHtmlUtils.fromTrustedString(diseaseModel.getDisease().getTermName()), "diseaseName");
 
@@ -143,16 +139,11 @@ public class DiseaseModelView extends Composite {
                     deleteButton.setTitle("ID: " + diseaseModel.getZdbID());
                     diseaseModelTable.setWidget(rowIndex, colIndex, deleteButton);
                     groupIndex = diseaseModelTable.setRowStyle(rowIndex++, null, diseaseModel.getDisease().getZdbID(), groupIndex);
-                                    }
+                }
             }
             addConstructionRow(rowIndex);
         }
     }
-
-
-
-
-
 
 
     private void addConstructionRow(int rowIndex) {
@@ -199,6 +190,7 @@ public class DiseaseModelView extends Composite {
     public Map<Button, DiseaseAnnotationDTO> getDeleteModeMap() {
         return deleteModeMap;
     }
+
     public Map<Button, DiseaseAnnotationModelDTO> getDeleteModeMap1() {
         return deleteModeMap1;
     }
