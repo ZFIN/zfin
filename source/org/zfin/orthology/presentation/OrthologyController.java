@@ -128,14 +128,13 @@ public class OrthologyController {
             tx.begin();
             NcbiOtherSpeciesGene ncbiGene = getOrthologyRepository().getNcbiGene(ncbiID);
             if (ncbiGene == null)
-                throw new InvalidWebRequestException("No NCBI ncbiGene with ID " + ncbiID + " found!", null);
+                throw new InvalidWebRequestException("Couldn\'t find gene with this ID", null);
             Marker gene = getMarkerRepository().getMarkerByID(geneID);
             if (gene == null)
-                throw new InvalidWebRequestException("No Zebrafish gene with ID " + geneID + " found!", null);
+                throw new InvalidWebRequestException("Couldn\'t find zebrafish gene with ID " + geneID, null);
             Ortholog existingOrtholog = getOrthologyRepository().getOrthologByGeneAndNcbi(gene, ncbiGene);
             if (existingOrtholog != null)
-                throw new InvalidWebRequestException("Ortholog with ID (" + ncbiID + ", " + geneID + ") already exists.  " +
-                        existingOrtholog.getZdbID(), null);
+                throw new InvalidWebRequestException("Ortholog already added", null);
             ortholog = new Ortholog();
             ortholog.setZebrafishGene(gene);
             ortholog.setNcbiOtherSpeciesGene(ncbiGene);
@@ -153,6 +152,9 @@ public class OrthologyController {
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
+            if (e instanceof InvalidWebRequestException) {
+                throw e;
+            }
             throw new InvalidWebRequestException("Error while creating an Ortholog with (" + ncbiID + ", " + geneID + "): " +
                     e.getMessage(), null);
         }

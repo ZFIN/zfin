@@ -206,7 +206,7 @@ function OrthoEditController($http, $q) {
                 vm.ncbiGeneNumber = '';
             })
             .catch(function(error) {
-                vm.ncbiError = 'Couldn\'t find gene with this ID';
+                vm.ncbiError = error.data.message;
             });
     }
 
