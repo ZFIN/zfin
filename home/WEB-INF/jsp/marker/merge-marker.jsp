@@ -45,7 +45,7 @@ jQuery(document).ready(function () {
     ncbiGeneIdsIgnored = true;
     uniGeneIdsIgnored = true;
     vegaIdsIgnored = true;
-    ensemblZv9IdsIgnored = true;
+    EnsemblGRCz10IdsIgnored = true;
     transcriptsIgnored = true;
     orthologyIgnored = true;
     mapInfoIgnored = true;
@@ -152,7 +152,7 @@ jQuery(document).ready(function () {
     jQuery('#ignoreNCBIGeneId').hide();
     jQuery('#ignoreUniGeneId').hide();
     jQuery('#ignoreVegaId').hide();
-    jQuery('#ignoreEnsemblZv9Id').hide();
+    jQuery('#ignoreEnsemblGRCz10Id').hide();
     jQuery('#ignoreTranscript').hide();
     jQuery('#ignoreOrth').hide();
     jQuery('#ignoreMapping').hide();
@@ -548,69 +548,69 @@ var validateVegaIds = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMerg
     checkVegaIdsDone = 1;
 
     if (checkVegaIdsDone == 1)
-        validateEnsemblZv9Ids(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+        validateEnsemblGRCz10Ids(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
 };
 
-var validateEnsemblZv9Ids = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
-    var checkEnsemblZv9IdsDone = 0;
-    var ensemblZv9OfGene1 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-accession?db=EnsemblZV9&markerZdbId=" + geneIDdelete,
+var validateEnsemblGRCz10Ids = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
+    var checkEnsemblGRCz10IdsDone = 0;
+    var EnsemblGRCz10OfGene1 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-accession?db=EnsemblGRCz10&markerZdbId=" + geneIDdelete,
         dataType: "json",
         async: false
     }).responseText);
 
-    var ensemblZv9IdsOfGene1 = new Array();
-    var ensemblZv9LinksOfGene1 = new Array();
-    for (ensemblZv9 in ensemblZv9OfGene1) {
-        ensemblZv9IdsOfGene1.push(ensemblZv9OfGene1[ensemblZv9].accessionNumber);
-        ensemblZv9LinksOfGene1.push(ensemblZv9OfGene1[ensemblZv9].url);
+    var EnsemblGRCz10IdsOfGene1 = new Array();
+    var EnsemblGRCz10LinksOfGene1 = new Array();
+    for (EnsemblGRCz10 in EnsemblGRCz10OfGene1) {
+        EnsemblGRCz10IdsOfGene1.push(EnsemblGRCz10OfGene1[EnsemblGRCz10].accessionNumber);
+        EnsemblGRCz10LinksOfGene1.push(EnsemblGRCz10OfGene1[EnsemblGRCz10].url);
     }
-    var ensemblZv9OfGene2 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-accession?db=EnsemblZV9&markerZdbId=" + geneZdbIdMergedInto,
+    var EnsemblGRCz10OfGene2 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-accession?db=EnsemblGRCz10&markerZdbId=" + geneZdbIdMergedInto,
         dataType: "json",
         async: false
     }).responseText);
 
-    var ensemblZv9IdsOfGene2 = new Array();
-    var ensemblZv9LinksOfGene2 = new Array();
-    for (ensemblZv9 in ensemblZv9OfGene2) {
-        ensemblZv9IdsOfGene2.push(ensemblZv9OfGene2[ensemblZv9].accessionNumber);
-        ensemblZv9LinksOfGene2.push(ensemblZv9OfGene2[ensemblZv9].url);
+    var EnsemblGRCz10IdsOfGene2 = new Array();
+    var EnsemblGRCz10LinksOfGene2 = new Array();
+    for (EnsemblGRCz10 in EnsemblGRCz10OfGene2) {
+        EnsemblGRCz10IdsOfGene2.push(EnsemblGRCz10OfGene2[EnsemblGRCz10].accessionNumber);
+        EnsemblGRCz10LinksOfGene2.push(EnsemblGRCz10OfGene2[EnsemblGRCz10].url);
     }
-    var differentEnsemblZv9Ids = false;
-    if(ensemblZv9IdsOfGene1.length !== 0 && ensemblZv9IdsOfGene2.length !== 0) {
-        if (ensemblZv9IdsOfGene1.length !== ensemblZv9IdsOfGene2.length) {
-            differentEnsemblZv9Ids = true;
+    var differentEnsemblGRCz10Ids = false;
+    if(EnsemblGRCz10IdsOfGene1.length !== 0 && EnsemblGRCz10IdsOfGene2.length !== 0) {
+        if (EnsemblGRCz10IdsOfGene1.length !== EnsemblGRCz10IdsOfGene2.length) {
+            differentEnsemblGRCz10Ids = true;
         } else {
-            for (var i = 0; i < ensemblZv9IdsOfGene1.length; i++) {
-                if (ensemblZv9IdsOfGene1[i] !== ensemblZv9IdsOfGene2[i])
-                    differentEnsemblZv9Ids = true;
+            for (var i = 0; i < EnsemblGRCz10IdsOfGene1.length; i++) {
+                if (EnsemblGRCz10IdsOfGene1[i] !== EnsemblGRCz10IdsOfGene2[i])
+                    differentEnsemblGRCz10Ids = true;
             }
         }
     }
 
-    if (differentEnsemblZv9Ids) {
-        ensemblZv9IdsIgnored = false;
-        jQuery('#validationEnsemblZv9IdsText').append('<h3><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following Ensembl(Zv9) Id:</h3>');
-        for (var i = 0; i < ensemblZv9IdsOfGene1.length; i++) {
-            jQuery('#validationEnsemblZv9IdsText').append('<div>'
-                    + '<a target="_blank" href="' + ensemblZv9LinksOfGene1[i] +'">'
-                    + ensemblZv9IdsOfGene1[i] + '</a>'
+    if (differentEnsemblGRCz10Ids) {
+        EnsemblGRCz10IdsIgnored = false;
+        jQuery('#validationEnsemblGRCz10IdsText').append('<h3><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following Ensembl(GRCz10) Id:</h3>');
+        for (var i = 0; i < EnsemblGRCz10IdsOfGene1.length; i++) {
+            jQuery('#validationEnsemblGRCz10IdsText').append('<div>'
+                    + '<a target="_blank" href="' + EnsemblGRCz10LinksOfGene1[i] +'">'
+                    + EnsemblGRCz10IdsOfGene1[i] + '</a>'
                     + '</div>');
         }
 
-        jQuery('#validationEnsemblZv9IdsText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following Ensembl(Zv9) Id:</h3>');
-        for (var i = 0; i < ensemblZv9IdsOfGene2.length; i++) {
-            jQuery('#validationEnsemblZv9IdsText').append('<div>'
-                    + '<a target="_blank" href="' + ensemblZv9LinksOfGene2[i] +'">'
-                    + ensemblZv9IdsOfGene2[i] + '</a>'
+        jQuery('#validationEnsemblGRCz10IdsText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following Ensembl(GRCz10) Id:</h3>');
+        for (var i = 0; i < EnsemblGRCz10IdsOfGene2.length; i++) {
+            jQuery('#validationEnsemblGRCz10IdsText').append('<div>'
+                    + '<a target="_blank" href="' + EnsemblGRCz10LinksOfGene2[i] +'">'
+                    + EnsemblGRCz10IdsOfGene2[i] + '</a>'
                     + '</div>');
         }
 
-        jQuery('#ignoreEnsemblZv9Id').show();
+        jQuery('#ignoreEnsemblGRCz10Id').show();
     }
 
-    checkEnsemblZv9IdsDone = 1;
+    checkEnsemblGRCz10IdsDone = 1;
 
-    if (checkEnsemblZv9IdsDone == 1)
+    if (checkEnsemblGRCz10IdsDone == 1)
         validateGeneWithTranscript(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
 };
 
@@ -1035,10 +1035,10 @@ function ignoreVegaIds(formObj) {
     enableMerge();
 }
 
-function ignoreEnsemblZv9Ids(formObj) {
-    ensemblZv9IdsIgnored = true;
-    jQuery('#validationEnsemblZv9IdsText').hide();
-    jQuery('#ignoreEnsemblZv9Id').hide();
+function ignoreEnsemblGRCz10Ids(formObj) {
+    EnsemblGRCz10IdsIgnored = true;
+    jQuery('#validationEnsemblGRCz10IdsText').hide();
+    jQuery('#ignoreEnsemblGRCz10Id').hide();
 
     enableMerge();
 }
@@ -1075,7 +1075,7 @@ function ignoreFishListForSTRs(formObj) {
 }
 
 function enableMerge() {
-    if (unspecifiedAllelesIgnored && sequenceTargetingReagentsIgnored && antibodiesIgnored && ncbiGeneIdsIgnored && uniGeneIdsIgnored && vegaIdsIgnored && ensemblZv9IdsIgnored && transcriptsIgnored && orthologyIgnored && mapInfoIgnored && !differentFish) {
+    if (unspecifiedAllelesIgnored && sequenceTargetingReagentsIgnored && antibodiesIgnored && ncbiGeneIdsIgnored && uniGeneIdsIgnored && vegaIdsIgnored && EnsemblGRCz10IdsIgnored && transcriptsIgnored && orthologyIgnored && mapInfoIgnored && !differentFish) {
         jQuery('#submitMerge').removeAttr('disabled');
     }
 }
@@ -1124,9 +1124,9 @@ function enableMerge() {
     <form id="ignoreVegaId">
         <input type="button" value="Ignore Vega Ids" onclick="ignoreVegaIds(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, all the above Vega Ids will be associated with the gene retained.">
     </form>
-    <div id="validationEnsemblZv9IdsText"></div>
-    <form id="ignoreEnsemblZv9Id">
-        <input type="button" value="Ignore Ensembl(Zv9) Ids" onclick="ignoreEnsemblZv9Ids(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, all the above Ensembl(Zv9) Ids will be associated with the gene retained.">
+    <div id="validationEnsemblGRCz10IdsText"></div>
+    <form id="ignoreEnsemblGRCz10Id">
+        <input type="button" value="Ignore Ensembl(GRCz10) Ids" onclick="ignoreEnsemblGRCz10Ids(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, all the above Ensembl(GRCz10) Ids will be associated with the gene retained.">
     </form>
     <div id="validationTranscriptText"></div>
     <form id="ignoreTranscript">

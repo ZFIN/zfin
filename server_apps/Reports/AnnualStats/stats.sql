@@ -247,7 +247,7 @@ select count(*), "externalLinks" from db_link, foreign_db_contains,foreign_db
 "Curated miRNA Stem Loop", --                3
 "EBI-Cell", --                             776
 "EC", --                                   858
-"Ensembl(Zv9)", --                       16279
+"Ensembl(GRCz10)", --                       16279
 "Ensembl_SNP", --                         2024
 "Ensembl_Trans", --                      27310
 "FLYBASE", --                               55

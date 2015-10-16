@@ -13,8 +13,8 @@
 gffdir="/research/zprodmore/gff3"
 
 # the Ensembl GTF file (with embedded version number)
-GTF="Danio_rerio.Zv*.gtf.gz"
-FASTA="Danio_rerio.Zv*.dna.toplevel.fa.gz"
+GTF="Danio_rerio.GRCz*.chr.gtf.gz"
+FASTA="Danio_rerio.GRCz*.dna.toplevel.fa.gz"
 
 echo "`pwd`/$0"
 
@@ -61,7 +61,7 @@ post="`ls -lt ${GTF} | head -1`"
 
 #if the oldest matches the newest, then  they are the same
 
-#echo "Is ${post} newer than ${prior}"
+echo "Is ${post} newer than ${prior}"
 
 if [[ ( "${post}" != "${prior}" ) && ${geterr} -eq 0  ]] ; then
 	echo "delete all but the most recent downloaded ${GTF}"
