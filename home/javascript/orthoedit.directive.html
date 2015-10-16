@@ -55,6 +55,7 @@
 
 <h3>Orthology Note</h3>
 <div class="curation-form">
+    <div class="error" ng-show="vm.noteError">{{vm.noteError}}</div>
     <div ng-click="vm.editNote()" ng-hide="vm.noteEditing" class="inline-edit" title="Click to edit">
         <div ng-show="vm.note.note" class="keep-breaks">{{vm.note.note}}</div>
         <div ng-hide="vm.note.note" class="muted">Click to add</div>
