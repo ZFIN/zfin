@@ -188,8 +188,11 @@ public class NomenclatureCandidateController extends AbstractCandidateController
         } else {
             renamedGene = geneToRename;
         }
-        if (renameGene)
+        if (renameGene) {
+            renamedGene.setAbbreviation(newAbbreviation);
+            renamedGene.setName(newGeneName);
             renoService.renameGene(renamedGene, candidateBean.getNomenclaturePublicationZdbID());
+        }
 
         //handle gene families
         if (!StringUtils.isEmpty(candidateBean.getGeneFamilyName())) {
