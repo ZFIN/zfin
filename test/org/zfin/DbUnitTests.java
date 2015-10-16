@@ -47,6 +47,7 @@ import org.zfin.ontology.repository.OntologyRepositoryTest;
 import org.zfin.orthology.OrthologyRepositoryTest;
 import org.zfin.profile.repository.ProfileRepositoryTest;
 import org.zfin.profile.service.ProfileServiceTest;
+import org.zfin.publication.PublicationServiceSpec;
 import org.zfin.publication.repository.PublicationRepositoryTest;
 import org.zfin.sequence.DisplayGroupRepositoryTest;
 import org.zfin.sequence.MapAccessionDbLinkTest;
@@ -128,6 +129,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         ProfileRepositoryTest.class,
         ProfileServiceTest.class,
         PublicationRepositoryTest.class,
+        PublicationServiceSpec.class,
         RenoMultiRunTest.class,
         RenoRedundancyCandidateControllerTest.class,
         RenoRepositoryTest.class,

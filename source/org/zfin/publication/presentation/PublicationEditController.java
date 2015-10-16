@@ -1,5 +1,12 @@
 package org.zfin.publication.presentation;
 
+import org.apache.bcel.Repository;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
@@ -8,21 +15,27 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.gwt.root.dto.PersonDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.CustomCalendarEditor;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.profile.Person;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.repository.RepositoryFactory;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
+
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+import static org.zfin.repository.RepositoryFactory.getProfileRepository;
 
 @Controller
 @RequestMapping("/publication")
@@ -36,6 +49,9 @@ public class PublicationEditController {
 
     @Autowired
     private PublicationService publicationService;
+
+    private static Logger logger = Logger.getLogger(PublicationEditController.class);
+
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -148,6 +164,196 @@ public class PublicationEditController {
     @ModelAttribute("typeList")
     public List<Publication.Type> getTypeList() {
         return Arrays.asList(Publication.Type.values());
+    }
+
+    @RequestMapping(value = "/{zdbID}/link")
+    public String linkAuthors(@PathVariable String zdbID, Model model, HttpServletResponse response) {
+
+        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+
+
+        Publication publication = publicationRepository.getPublication(zdbID);
+        //try zdb_replaced data if necessary
+        if (publication == null) {
+            String replacedZdbID = getInfrastructureRepository().getReplacedZdbID(zdbID);
+            if (replacedZdbID != null) {
+                publication = publicationRepository.getPublication(replacedZdbID);
+            }
+        }
+
+        //give up
+        if (publication == null) {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+
+        model.addAttribute("publication",publication);
+
+        model.addAttribute("authorStrings", publicationService.splitAuthorListString(publication.getAuthors()));
+
+        return "publication/link-authors.page";
+    }
+
+    @RequestMapping(value = "/{zdbID}/author-strings")
+    @ResponseBody
+    public List<String> authorStrings(@PathVariable String zdbID, HttpServletResponse response) {
+        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+
+
+        Publication publication = publicationRepository.getPublication(zdbID);
+        //try zdb_replaced data if necessary
+        if (publication == null) {
+            String replacedZdbID = getInfrastructureRepository().getReplacedZdbID(zdbID);
+            if (replacedZdbID != null) {
+                publication = publicationRepository.getPublication(replacedZdbID);
+            }
+        }
+
+        //give up
+        if (publication == null) {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            return null;
+        }
+
+
+        return publicationService.splitAuthorListString(publication.getAuthors());
+    }
+
+    @RequestMapping(value = "/{zdbID}/registered-authors")
+    @ResponseBody
+    public List<PersonDTO> registeredAuthors(@PathVariable String zdbID, HttpServletResponse response) {
+
+        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+
+
+        Publication publication = publicationRepository.getPublication(zdbID);
+        //try zdb_replaced data if necessary
+        if (publication == null) {
+            String replacedZdbID = getInfrastructureRepository().getReplacedZdbID(zdbID);
+            if (replacedZdbID != null) {
+                publication = publicationRepository.getPublication(replacedZdbID);
+            }
+        }
+
+        //give up
+        if (publication == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
+        }
+
+
+        List<PersonDTO> authorList = new ArrayList<>();
+
+        for (Person person : publication.getPeople()) {
+            authorList.add(DTOConversionService.convertToPersonDTO(person));
+        }
+
+        return authorList;
+    }
+
+    @RequestMapping(value = "/link-author-suggestions")
+    @ResponseBody
+    public List<PersonDTO> linkAuthorSuggestions(@RequestParam String authorString) {
+        List<PersonDTO> personDTOList = new ArrayList<>();
+        for (Person person : publicationService.getAuthorSuggestions(authorString)) {
+            personDTOList.add(DTOConversionService.convertToPersonDTO(person));
+        }
+        return personDTOList;
+    }
+
+    @RequestMapping(value = "/{zdbID}/addAuthor/{personZdbID}")
+    public void addAuthor(@PathVariable String zdbID, @PathVariable String personZdbID, HttpServletResponse response) {
+        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+        Session session = HibernateUtil.currentSession();
+
+        Publication publication = publicationRepository.getPublication(zdbID);
+        //try zdb_replaced data if necessary
+        if (publication == null) {
+            String replacedZdbID = getInfrastructureRepository().getReplacedZdbID(zdbID);
+            if (replacedZdbID != null) {
+                publication = publicationRepository.getPublication(replacedZdbID);
+            }
+        }
+
+        //give up
+        if (publication == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        Person person = RepositoryFactory.getProfileRepository().getPerson(personZdbID);
+        if (person == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            publication.getPeople().add(person);
+
+            HibernateUtil.currentSession().save(publication);
+            tx.commit();
+        } catch (Exception exception) {
+            try {
+                if (tx != null)
+                    tx.rollback();
+            } catch (HibernateException hibernateException) {
+                logger.error("Error during roll back of transaction", hibernateException);
+            }
+            logger.error("Error in Transaction", exception);
+            throw new RuntimeException("Error during transaction. Rolled back.", exception);
+        }
+        
+
+    }
+
+    @RequestMapping(value = "/{zdbID}/removeAuthor/{personZdbID}")
+    public void removeAuthor(@PathVariable String zdbID, @PathVariable String personZdbID, HttpServletResponse response) {
+        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+        Session session = HibernateUtil.currentSession();
+
+        Publication publication = publicationRepository.getPublication(zdbID);
+        //try zdb_replaced data if necessary
+        if (publication == null) {
+            String replacedZdbID = getInfrastructureRepository().getReplacedZdbID(zdbID);
+            if (replacedZdbID != null) {
+                publication = publicationRepository.getPublication(replacedZdbID);
+            }
+        }
+
+        //give up
+        if (publication == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        Person person = RepositoryFactory.getProfileRepository().getPerson(personZdbID);
+        if (person == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+
+
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            publication.getPeople().remove(person);
+
+            HibernateUtil.currentSession().save(publication);
+            tx.commit();
+        } catch (Exception exception) {
+            try {
+                if (tx != null)
+                    tx.rollback();
+            } catch (HibernateException hibernateException) {
+                logger.error("Error during roll back of transaction", hibernateException);
+            }
+            logger.error("Error in Transaction", exception);
+            throw new RuntimeException("Error during transaction. Rolled back.", exception);
+        }
     }
 
 }

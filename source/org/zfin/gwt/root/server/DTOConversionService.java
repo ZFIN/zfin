@@ -36,6 +36,7 @@ import org.zfin.orthology.Species;
 import org.zfin.profile.CuratorSession;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Organization;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
@@ -1474,4 +1475,13 @@ public class DTOConversionService {
         return dto;
     }
 
+    public static PersonDTO convertToPersonDTO(Person person) {
+        PersonDTO dto = new PersonDTO();
+        dto.setFirstName(person.getFirstName());
+        dto.setLastName(person.getLastName());
+        dto.setDisplay(person.getFullName());
+        dto.setZdbID(person.getZdbID());
+
+        return dto;
+    }
 }

@@ -7,11 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.expression.Figure;
 import org.zfin.profile.Person;
+import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.BeanCompareService;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
+import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.ServletContext;
 import java.text.DateFormat;
@@ -179,4 +181,61 @@ public class PublicationService {
             cal.set(Calendar.MILLISECOND, 0);
         }
     }
+
+    public List<String> splitAuthorListString(String authorListString) {
+        List<String> strings = new ArrayList<>();
+
+        //regex would be nice, but this is more straightforward
+        String[] authorStringArray = authorListString.split(",");
+        for (int i = 0 ; i < authorStringArray.length ; i = i + 2) {
+            if (i + 1 < authorStringArray.length) {
+                String lastName = authorStringArray[i];
+                String initials = authorStringArray[i + 1];
+
+                if (lastName.contains(" and ")) {
+                    lastName = lastName.replace(" and ", "");
+                }
+
+                strings.add( lastName.trim() + ", " + initials.trim());
+            }
+        }
+
+        return strings;
+    }
+
+    public List<Person> getAuthorSuggestions(String authorString) {
+        List<Person> suggestions = new ArrayList<>();
+
+        String lastName = null;
+        String firstInitial = null;
+
+        try {
+            lastName = authorString.split(",")[0];
+            firstInitial = authorString.split(",")[1].substring(1, 2);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            //if it couldn't split on a comma, don't even try to suggest anything
+            return suggestions;
+        }
+
+
+        ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
+
+        suggestions.addAll(profileRepository.getPersonByLastNameEqualsAndFirstNameStartsWith(lastName, firstInitial));
+
+        for (Person person : profileRepository.getPersonByLastNameStartsWithAndFirstNameStartsWith(lastName.trim(),firstInitial)) {
+            if (!suggestions.contains(person)) {
+                suggestions.add(person);
+            }
+        }
+
+        for (Person person : profileRepository.getPersonByLastNameStartsWith(lastName.trim())) {
+            if (!suggestions.contains(person)) {
+                suggestions.add(person);
+            }
+        }
+
+
+        return suggestions;
+    }
+
 }

@@ -196,6 +196,10 @@ public interface ProfileRepository {
 
     List<Person> getPersonByLastNameStartsWith(String lastNameStartsWith);
 
+    List<Person> getPersonByLastNameStartsWithAndFirstNameStartsWith(String lastNameStartsWith, String firstNameStartsWith);
+
+    List<Person> getPersonByLastNameEqualsAndFirstNameStartsWith(String lastName, String firstNameStartsWith);
+
     boolean isOrganizationPersonExist(String personZdbID, String organizationZdbID);
 
     Address getAddress(Long addressId);
