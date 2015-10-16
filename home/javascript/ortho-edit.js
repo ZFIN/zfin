@@ -250,7 +250,7 @@ function OrthoEditController($http, $q) {
             return;
         }
 
-        if (!vm.modalEvidence.publication.match(/^ZDB-PUB-\d{6}-\d+/)) {
+        if (!vm.modalEvidence.publication.zdbID.match(/^ZDB-PUB-\d{6}-\d+/)) {
             vm.evidencePublicationError = 'Not a valid ZDB-PUB ID';
         }
 
