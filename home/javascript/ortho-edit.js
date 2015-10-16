@@ -116,6 +116,7 @@ function OrthoEditController($http, $q) {
     vm.evidenceCodeError = '';
     vm.evidencePublicationError = '';
     vm.evidencePublicationWarning = '';
+    vm.noteError = '';
 
     vm.modalOrtholog = {};
     vm.modalEvidence = {};
@@ -182,6 +183,7 @@ function OrthoEditController($http, $q) {
                 vm.noteText = vm.note.note;
             })
             .catch(function(error) {
+                vm.noteError = 'Couldn\'t retrieve orthology note';
                 console.error(error);
             });
     }
@@ -204,7 +206,7 @@ function OrthoEditController($http, $q) {
                 vm.ncbiGeneNumber = '';
             })
             .catch(function(error) {
-                vm.ncbiError = 'Couldn\'t find gene with this ID';
+                vm.ncbiError = error.data.message;
             });
     }
 
@@ -248,13 +250,16 @@ function OrthoEditController($http, $q) {
             return;
         }
 
+        if (!vm.modalEvidence.publication.zdbID.match(/^ZDB-PUB-\d{6}-\d+/)) {
+            vm.evidencePublicationError = 'Enter a valid publication ID';
+        }
+
         if (!vm.modalEvidence.anySelected()) {
             vm.evidenceCodeError = 'Select at least one evidence code';
             return;
         }
 
-        var pubID = makeZdb(vm.modalEvidence.publication.zdbID);
-        vm.modalEvidence.publication.zdbID = pubID;
+        var pubID = vm.modalEvidence.publication.zdbID;
         var payload = {
             'publicationID': pubID,
             'orthologID': vm.modalOrtholog.zdbID,
@@ -266,7 +271,13 @@ function OrthoEditController($http, $q) {
                 $.modal.close();
             })
             .catch(function (error) {
-                console.log('Error!', error);
+                var message = error.data.message;
+                // todo: hackity hack hack -- we should really use the fieldErrors attribute instead
+                if (message.indexOf('publication') < 0) {
+                    vm.evidenceCodeError = message;
+                } else {
+                    vm.evidencePublicationError = message;
+                }
             });
     }
 
@@ -302,17 +313,18 @@ function OrthoEditController($http, $q) {
 
     function cancelNoteEdit() {
         vm.noteEditing = false;
+        vm.noteError = '';
     }
 
     function saveNoteEdit() {
-        vm.note.note = vm.noteText;
-        vm.note.geneID = vm.gene;
-        $http.post('/action/gene/' + vm.gene + '/orthology-note', vm.note)
+        $http.post('/action/gene/' + vm.gene + '/orthology-note', { note: vm.noteText })
             .then(function (resp) {
                 vm.note = resp.data;
                 vm.noteEditing = false;
+                vm.noteError = '';
             })
             .catch(function (error) {
+                vm.noteError = error.data.message;
                 console.log('error saving note', error);
             });
     }
@@ -333,6 +345,8 @@ function OrthoEditController($http, $q) {
                 vm.modalEvidence = undefined;
                 vm.modalEvidenceIndex = -1;
                 vm.evidencePublicationWarning = false;
+                vm.evidencePublicationError = '';
+                vm.evidenceCodeError = '';
             });
     }
 
@@ -344,6 +358,7 @@ function OrthoEditController($http, $q) {
     function checkPub() {
         vm.evidencePublicationError = '';
         var pubID = makeZdb(vm.modalEvidence.publication.zdbID);
+        vm.modalEvidence.publication.zdbID = pubID;
         var existingEvidence = vm.modalOrtholog.evidenceMap[pubID];
         if (existingEvidence) {
             vm.modalEvidence = angular.copy(existingEvidence);
@@ -356,7 +371,7 @@ function OrthoEditController($http, $q) {
 
     function makeZdb(value) {
         var out = value;
-        if (out.match(/^\d+/)) {
+        if (out.match(/^\d{6}-\d+$/)) {
             out = 'ZDB-PUB-' + out;
         }
         return out;

@@ -88,15 +88,8 @@ public class OrthoEvidence implements Serializable {
         CE,
         CL,
         FC,
-        FH,
-        IX,
-        NS,
         NT,
-        SI,
-        SL,
-        SS,
-        SU,
-        XH,
+        OT,
         PT;
 
         public String toString() {

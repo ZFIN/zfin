@@ -1,12 +1,12 @@
 package org.zfin.orthology.presentation;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.marker.Marker;
 import org.zfin.marker.OrthologyNote;
 import org.zfin.marker.presentation.OrthologyNoteDTO;
@@ -26,6 +26,9 @@ public class OrthologyNoteController {
     @RequestMapping(value = "/gene/{geneID}/orthology-note", method = RequestMethod.GET)
     public OrthologyNoteDTO getOrthologyNote(@PathVariable String geneID) {
         Marker gene = markerRepository.getMarkerByID(geneID);
+        if (gene == null) {
+            throw new InvalidWebRequestException("No zebrafish gene with ID " + geneID + " found", null);
+        }
         OrthologyNote note = gene.getOrthologyNote();
         OrthologyNoteDTO dto = new OrthologyNoteDTO();
         if (note != null) {
@@ -41,23 +44,15 @@ public class OrthologyNoteController {
     public OrthologyNoteDTO setOrthologyNote(@PathVariable String geneID,
                                              @RequestBody OrthologyNoteDTO dto) {
         Marker gene = markerRepository.getMarkerByID(geneID);
-        Transaction tx = null;
         Session session = HibernateUtil.currentSession();
+        Transaction tx = session.beginTransaction();
         OrthologyNote note;
         try {
-            tx = session.beginTransaction();
             note = markerRepository.createOrUpdateOrthologyExternalNote(gene, dto.getNote());
             tx.commit();
         } catch (Exception e) {
-            try {
-                if (tx != null) {
-                    tx.rollback();
-                }
-            } catch (HibernateException he) {
-                LOG.error("Error during roll back of transaction", he);
-            }
-            LOG.error("Error in Transaction", e);
-            throw new RuntimeException("Error during transaction. Rolled back.", e);
+            tx.rollback();
+            throw new InvalidWebRequestException("Couldn't save note", null);
         }
         if (note != null) {
             dto.setZdbID(note.getZdbID());

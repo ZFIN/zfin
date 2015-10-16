@@ -777,9 +777,6 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     @Override
     public void deleteOrtholog(Ortholog ortholog) {
         Person currentSecurityUser = getCurrentSecurityUser();
-        if (currentSecurityUser == null) {
-            throw new RuntimeException("No Authenticated User. Please log in first.");
-        }
 
         Session session = HibernateUtil.currentSession();
         session.delete(ortholog);
@@ -803,6 +800,15 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         query.setParameter("zebrafishGene", gene);
         query.setParameter("otherSpeciesGene", ncbiGene);
         return (Ortholog) query.uniqueResult();
+    }
+
+    @Override
+    public List<NcbiOrthoExternalReference> getNcbiExternalReferenceList(String ncbiID) {
+        String hql = "from NcbiOrthoExternalReference where " +
+                "ncbiOtherSpeciesGene.ID = :accessionNumber  ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("accessionNumber", ncbiID);
+        return (List<NcbiOrthoExternalReference>) query.list();
     }
 
 }

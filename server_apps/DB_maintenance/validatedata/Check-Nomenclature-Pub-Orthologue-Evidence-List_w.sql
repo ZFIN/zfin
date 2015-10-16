@@ -2,8 +2,8 @@ SELECT oev_ortho_zdb_id
        ortho_gene_zdb_id,
        ortho_ncbi_gene_id
        oev_evidence_code
-FROM   orthology,
-       orthologue_evidence
+FROM   ortholog,
+       ortholog_evidence
 WHERE  (oev_source_zdb_id = 'ZDB-PUB-030508-1'
         or oev_source_zdb_id='ZDB-PUB-150115-23' or 
         oev_source_zdb_id='ZDB-PUB-150115-24')
