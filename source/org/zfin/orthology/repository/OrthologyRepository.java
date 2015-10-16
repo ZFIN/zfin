@@ -3,10 +3,7 @@ package org.zfin.orthology.repository;
 import org.zfin.criteria.ZfinCriteria;
 import org.zfin.framework.CachedRepository;
 import org.zfin.marker.Marker;
-import org.zfin.orthology.EvidenceCode;
-import org.zfin.orthology.NcbiOtherSpeciesGene;
-import org.zfin.orthology.Ortholog;
-import org.zfin.orthology.SpeciesCriteria;
+import org.zfin.orthology.*;
 import org.zfin.orthology.presentation.OrthologySlimPresentation;
 import org.zfin.publication.Publication;
 
@@ -84,4 +81,6 @@ public interface OrthologyRepository extends CachedRepository {
     void deleteOrtholog(Ortholog ortholog);
 
     Ortholog getOrthologByGeneAndNcbi(Marker gene, NcbiOtherSpeciesGene ncbiGene);
+
+    List<NcbiOrthoExternalReference> getNcbiExternalReferenceList(String ncbiID);
 }

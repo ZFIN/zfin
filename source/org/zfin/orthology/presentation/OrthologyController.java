@@ -100,10 +100,9 @@ public class OrthologyController {
             getOrthologyRepository().deleteOrtholog(ortholog);
             tx.commit();
         } catch (Exception e) {
+            tx.rollback();
             throw new InvalidWebRequestException("Error while deleting Ortholg: " + orthoID + ":" +
                     e.getMessage(), null);
-        } finally {
-            tx.rollback();
         }
         return "Successfully deleted " + orthoID;
     }
@@ -124,7 +123,7 @@ public class OrthologyController {
     OrthologDTO createOrthologFromNcbi(@PathVariable String geneID,
                                        @PathVariable String ncbiID) throws InvalidWebRequestException {
         Transaction tx = HibernateUtil.createTransaction();
-        Ortholog ortholog = null;
+        Ortholog ortholog;
         try {
             tx.begin();
             NcbiOtherSpeciesGene ncbiGene = getOrthologyRepository().getNcbiGene(ncbiID);
@@ -140,6 +139,16 @@ public class OrthologyController {
             ortholog = new Ortholog();
             ortholog.setZebrafishGene(gene);
             ortholog.setNcbiOtherSpeciesGene(ncbiGene);
+            List<NcbiOrthoExternalReference> ncbiOrthoExternalReferenceList = getOrthologyRepository().getNcbiExternalReferenceList(ncbiID);
+            Set<OrthologExternalReference> referenceList = new HashSet<>(ncbiOrthoExternalReferenceList.size());
+            for (NcbiOrthoExternalReference ref : ncbiOrthoExternalReferenceList) {
+                OrthologExternalReference orthoRef = new OrthologExternalReference();
+                orthoRef.setAccessionNumber(ncbiID);
+                orthoRef.setOrtholog(ortholog);
+                orthoRef.setReferenceDatabase(ref.getReferenceDatabase());
+                referenceList.add(orthoRef);
+            }
+            ortholog.setExternalReferenceList(referenceList);
             getOrthologyRepository().saveOrthology(ortholog, null);
             tx.commit();
         } catch (Exception e) {

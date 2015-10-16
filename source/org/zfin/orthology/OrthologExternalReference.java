@@ -4,7 +4,6 @@ import org.zfin.sequence.ReferenceDatabase;
 
 public class OrthologExternalReference {
 
-    private long ID;
     private Ortholog ortholog;
     private String accessionNumber;
     private ReferenceDatabase referenceDatabase;
@@ -15,14 +14,6 @@ public class OrthologExternalReference {
 
     public void setAccessionNumber(String accessionNumber) {
         this.accessionNumber = accessionNumber;
-    }
-
-    public long getID() {
-        return ID;
-    }
-
-    public void setID(long ID) {
-        this.ID = ID;
     }
 
     public Ortholog getOrtholog() {
