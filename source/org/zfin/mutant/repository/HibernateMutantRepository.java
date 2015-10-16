@@ -1486,22 +1486,13 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public void createDiseaseModel(DiseaseAnnotation diseaseAnnotation) {
         DiseaseAnnotation existsDiseaseAnnotation = getMutantRepository().getDiseaseModel(diseaseAnnotation);
-        if (existsDiseaseAnnotation == null){
+        if (existsDiseaseAnnotation == null) {
             HibernateUtil.currentSession().save(diseaseAnnotation);
-        getInfrastructureRepository().insertRecordAttribution(diseaseAnnotation.getZdbID(), diseaseAnnotation.getPublication().getZdbID());
-    }
-//
-        /*if (diseaseAnnotation.getFishExperiment() != null) {
-            FishExperiment existingModel = getMutantRepository().getFishModel(diseaseAnnotation.getFishExperiment().getFish().getZdbID(),
-                    diseaseAnnotation.getFishExperiment().getExperiment().getZdbID());
-            if (existingModel == null) {
-                HibernateUtil.currentSession().save(diseaseAnnotation.getFishExperiment());
-            } else {
-                diseaseAnnotation.setFishExperiment(existingModel);
-            }
-        }*/
+            getInfrastructureRepository().insertRecordAttribution(diseaseAnnotation.getZdbID(), diseaseAnnotation.getPublication().getZdbID());
+        }
 
-         DiseaseAnnotation existingDiseaseAnnotation = getMutantRepository().getDiseaseModel(diseaseAnnotation);
+
+        //DiseaseAnnotation existingDiseaseAnnotation = getMutantRepository().getDiseaseModel(diseaseAnnotation);
     }
 
     @Override
@@ -1536,16 +1527,12 @@ public class HibernateMutantRepository implements MutantRepository {
                 "     where disease = :disease and" +
                 "     publication = :publication and " +
                 "     evidenceCode = :evidenceCode  ";
-      /*  if (diseaseAnnotation.getFishExperiment() != null) {
-            hql += "  and fishExperiment = :fishExperiment   ";
-        }*/
+
         Query query = session.createQuery(hql);
         query.setParameter("disease", diseaseAnnotation.getDisease());
         query.setParameter("publication", diseaseAnnotation.getPublication());
         query.setString("evidenceCode", diseaseAnnotation.getEvidenceCode());
-        /*if (diseaseAnnotation.getFishExperiment() != null) {
-            query.setParameter("fishExperiment", diseaseAnnotation.getFishExperiment());
-        }*/
+
         return (DiseaseAnnotation) query.uniqueResult();
     }
 
@@ -1558,25 +1545,28 @@ public class HibernateMutantRepository implements MutantRepository {
     public DiseaseAnnotationModel getDiseaseAnnotationModelByID(Long id) {
         return (DiseaseAnnotationModel) HibernateUtil.currentSession().get(DiseaseAnnotationModel.class, id);
     }
+
     public List<DiseaseAnnotationModel> getDiseaseAnnotationModelByZdb(String zdb) {
         Query query = HibernateUtil.currentSession().createQuery(
                 "from DiseaseAnnotationModel  " +
-                "where diseaseAnnotation.zdbID = :zdb ");
+                        "where diseaseAnnotation.zdbID = :zdb ");
 
         query.setParameter("zdb", zdb);
 
 
-        return (List<DiseaseAnnotationModel>)query.list();
+        return (List<DiseaseAnnotationModel>) query.list();
     }
 
     @Override
     public void deleteDiseaseModel(DiseaseAnnotation diseaseAnnotation) {
         HibernateUtil.currentSession().delete(diseaseAnnotation);
     }
+
     @Override
     public void deleteDiseaseAnnotationModel(DiseaseAnnotationModel diseaseAnnotationModel) {
         HibernateUtil.currentSession().delete(diseaseAnnotationModel);
     }
+
     @Override
     public List<DiseaseAnnotation> getDiseaseModel(String fishID, String pubID) {
         Query query = HibernateUtil.currentSession().createQuery("select diseaseAnnotation" +
