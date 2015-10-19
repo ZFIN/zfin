@@ -265,6 +265,47 @@ insert into ortholog_external_reference (oef_ortho_zdb_id, oef_accession_number,
 			  and oef_accession_number = xrefaccnum
 			  and oef_fdbcont_zdb_id = fdbcont_id);
 
+
+insert into ortholog_load_tracking (olt_load_name,
+       	     			    	olt_last_run,
+					olt_number_of_mgi_links,
+					olt_number_of_hgnc_links,
+					olt_number_of_omim_links,
+					olt_number_of_gene_links,
+					olt_number_of_flybase_links
+select "ncbi ortho load", current year to second,
+( select count(*)
+    from ortholog_external_reference, foreign_db_contains, foreign_db
+   where oef_fdbcont_zdb_id = fdbcont_zdb_id
+   and fdbcont_fdb_db_id = fdb_db_pk_id
+   and fdb_db_name = "MGI"),
+( select count(*)
+   from ortholog_external_reference, foreign_db_contains, foreign_db
+   where oef_fdbcont_zdb_id = fdbcont_zdb_id
+   and fdbcont_fdb_db_id = fdb_db_pk_id
+   and fdb_db_name = "HGNC"),
+ (select count(*)
+    from ortholog_external_reference, foreign_db_contains, foreign_db
+   where oef_fdbcont_zdb_id = fdbcont_zdb_id
+   and fdbcont_fdb_db_id = fdb_db_pk_id
+   and fdb_db_name = "OMIM"),
+ (select count(*)
+    from ortholog_external_reference, foreign_db_contains, foreign_db
+   where oef_fdbcont_zdb_id = fdbcont_zdb_id
+   and fdbcont_fdb_db_id = fdb_db_pk_id
+   and fdb_db_name = "Gene"),
+ (select count(*)
+    from ortholog_external_reference, foreign_db_contains, foreign_db
+   where oef_fdbcont_zdb_id = fdbcont_zdb_id
+   and fdbcont_fdb_db_id = fdb_db_pk_id
+   and fdb_db_name = "FLYBASE")
+ from single;
+
+
+unload to ortho_statistics.txt
+ select * from ortholog_load_tracking
+   where olt_last_run > current year to second - 30 units day;
+
 commit work;
 
 --rollback work;
