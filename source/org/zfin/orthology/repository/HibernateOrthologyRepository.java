@@ -748,7 +748,8 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     @Override
     public List<Ortholog> getOrthologs(Marker gene) {
         String sql = "from Ortholog " +
-                "where zebrafishGene = :gene";
+                "where zebrafishGene = :gene " +
+                "order by ncbiOtherSpeciesGene.organism.displayOrder, symbol";
         Query query = HibernateUtil.currentSession().createQuery(sql);
         query.setParameter("gene", gene);
         return (List<Ortholog>) query.list();
