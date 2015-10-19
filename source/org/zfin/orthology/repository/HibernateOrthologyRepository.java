@@ -662,6 +662,7 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         if (publication != null) {
             getInfrastructureRepository().insertRecordAttribution(orthologyZdbID, publication.getZdbID());
         }
+        currentSession().flush();
     }
 
     private Person getCurrentSecurityUser() {

@@ -1497,7 +1497,7 @@ public class DTOConversionService {
         orthologDTO.setEvidenceSet(orthologEvidenceDTOs);
 
         if (ortholog.getExternalReferenceList() != null) {
-            Set<OrthologExternalReferenceDTO> referenceDTOList = new HashSet<>(ortholog.getExternalReferenceList().size());
+            Set<OrthologExternalReferenceDTO> referenceDTOList = new LinkedHashSet<>();
             for (OrthologExternalReference reference : ortholog.getExternalReferenceList()) {
                 referenceDTOList.add(convertToOrthologExternalReferenceDTO(reference));
             }

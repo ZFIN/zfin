@@ -18,6 +18,7 @@ import org.zfin.orthology.NcbiOtherSpeciesGene;
 import org.zfin.orthology.Ortholog;
 import org.zfin.orthology.OrthologEvidence;
 import org.zfin.orthology.repository.OrthologyRepository;
+import org.zfin.orthology.service.OrthologService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -50,6 +51,9 @@ public abstract class AbstractCandidateController {
 
     @Autowired
     protected RenoRepository renoRepository;
+
+    @Autowired
+    protected OrthologService orthologService;
 
     /**
      * Does all the work for referenceData method, handles loading up the runCandidate for viewing,
@@ -150,17 +154,16 @@ public abstract class AbstractCandidateController {
         String humanAccessionNumber = candidateBean.getHumanOrthologueAbbrev().getEntrezAccession().getEntrezAccNum();
         if (!StringUtils.isEmpty(humanAccessionNumber)) {
             LOG.info(" Working on Human Orthologs ...: ");
-            Ortholog humanOrtholog = new Ortholog();
-            humanOrtholog.setZebrafishGene(zebrafishMarker);
             NcbiOtherSpeciesGene ncbiGene = getOrthologyRepository().getNcbiGene(humanAccessionNumber);
             if (ncbiGene == null)
                 throw new NullPointerException("Could not find an NCBI Gene record with accession number " + humanAccessionNumber);
 
-            humanOrtholog.setNcbiOtherSpeciesGene(ncbiGene);
-            Set<OrthologEvidence> orthoEvidences = renoService.createEvidenceCollection(candidateBean.getHumanOrthologyEvidence(), orthologyPub, humanOrtholog);
-            humanOrtholog.setEvidenceSet(orthoEvidences);
+            Ortholog humanOrtholog = orthologService.createOrthologWithoutReferences(zebrafishMarker, ncbiGene);
+            renoService.createEvidenceCollection(candidateBean.getHumanOrthologyEvidence(), orthologyPub, humanOrtholog);
             LOG.info("Orthology: " + humanOrtholog);
-            or.saveOrthology(humanOrtholog, orthologyPub);
+            or.saveOrthology(humanOrtholog, null);
+            //orthologService.createReferences(humanOrtholog, ncbiGene);
+
         }
 
         //get the mouse ortholog from the form

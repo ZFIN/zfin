@@ -1,9 +1,13 @@
 package org.zfin.orthology;
 
 import org.zfin.marker.Marker;
+import org.zfin.sequence.ForeignDB;
 
 import java.io.Serializable;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class Ortholog implements Comparable, Serializable {
 
@@ -113,6 +117,18 @@ public class Ortholog implements Comparable, Serializable {
                 "name: " + ncbiOtherSpeciesGene.getName() + lineFeed +
                 "gene: " + zebrafishGene + lineFeed +
                 "organism: " + ncbiOtherSpeciesGene.getOrganism().toString() + lineFeed + evidenceSet;
+    }
+
+    public void setExternalReferenceListFromNcbiReferenceList(List<NcbiOrthoExternalReference> ncbiOrthoExternalReferenceList) {
+        Set<OrthologExternalReference> referenceList = new TreeSet<>(new OrthologAccessionSorting());
+        for (NcbiOrthoExternalReference ref : ncbiOrthoExternalReferenceList) {
+            OrthologExternalReference orthoRef = new OrthologExternalReference();
+            orthoRef.setAccessionNumber(ref.getAccessionNumber());
+            orthoRef.setOrtholog(this);
+            orthoRef.setReferenceDatabase(ref.getReferenceDatabase());
+            referenceList.add(orthoRef);
+        }
+        externalReferenceList = referenceList;
     }
 }
 

@@ -13,9 +13,11 @@ import org.zfin.gwt.root.dto.NcbiOtherSpeciesGeneDTO;
 import org.zfin.gwt.root.dto.OrthologDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
-import org.zfin.orthology.*;
+import org.zfin.orthology.EvidenceCode;
+import org.zfin.orthology.NcbiOtherSpeciesGene;
+import org.zfin.orthology.Ortholog;
+import org.zfin.orthology.OrthologEvidence;
 import org.zfin.orthology.service.OrthologService;
-import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 
 import java.util.ArrayList;
@@ -135,19 +137,7 @@ public class OrthologyController {
             Ortholog existingOrtholog = getOrthologyRepository().getOrthologByGeneAndNcbi(gene, ncbiGene);
             if (existingOrtholog != null)
                 throw new InvalidWebRequestException("Ortholog already added", null);
-            ortholog = new Ortholog();
-            ortholog.setZebrafishGene(gene);
-            ortholog.setNcbiOtherSpeciesGene(ncbiGene);
-            List<NcbiOrthoExternalReference> ncbiOrthoExternalReferenceList = getOrthologyRepository().getNcbiExternalReferenceList(ncbiID);
-            Set<OrthologExternalReference> referenceList = new HashSet<>(ncbiOrthoExternalReferenceList.size());
-            for (NcbiOrthoExternalReference ref : ncbiOrthoExternalReferenceList) {
-                OrthologExternalReference orthoRef = new OrthologExternalReference();
-                orthoRef.setAccessionNumber(ref.getAccessionNumber());
-                orthoRef.setOrtholog(ortholog);
-                orthoRef.setReferenceDatabase(ref.getReferenceDatabase());
-                referenceList.add(orthoRef);
-            }
-            ortholog.setExternalReferenceList(referenceList);
+            ortholog = orthologService.createOrtholog(gene, ncbiGene);
             getOrthologyRepository().saveOrthology(ortholog, null);
             tx.commit();
         } catch (Exception e) {
@@ -171,7 +161,6 @@ public class OrthologyController {
         Transaction tx = HibernateUtil.createTransaction();
         try {
             tx.begin();
-//            checkSecurityProfile();
             checkValidGene(geneID);
             Publication publication = checkValidPublication(orthologDTO.getPublicationID());
             Ortholog ortholog = checkValidOrtholog(orthologDTO.getOrthologID());
@@ -199,11 +188,6 @@ public class OrthologyController {
                     e.getMessage(), null);
         }
         return "Successful added Evidence";
-    }
-
-    private void checkSecurityProfile() {
-        if (!ProfileService.isRootUser())
-            throw new InvalidWebRequestException("No authenticated user found in session", null);
     }
 
     private Ortholog checkValidOrtholog(String orthologID) {

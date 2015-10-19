@@ -27,7 +27,7 @@
                      not-null="true"/>
         <many-to-one name="ncbiOtherSpeciesGene" column="ortho_other_species_ncbi_gene_id" not-null="true"/>
 
-        <set name="externalReferenceList" table="ortholog_external_reference" cascade="delete">
+        <set name="externalReferenceList" table="ortholog_external_reference" sort="org.zfin.orthology.OrthologAccessionSorting">
             <key column="oef_ortho_zdb_id"/>
             <composite-element class="org.zfin.orthology.OrthologExternalReference">
                 <parent name="ortholog"/>

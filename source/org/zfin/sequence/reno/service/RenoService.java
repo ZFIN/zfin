@@ -119,6 +119,7 @@ public class RenoService {
                 orthoEvidences.add(oe);
             }
         }
+        ortholog.setEvidenceSet(orthoEvidences);
         return orthoEvidences;
 
     }
