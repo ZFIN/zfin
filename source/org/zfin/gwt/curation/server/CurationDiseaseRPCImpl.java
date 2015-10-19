@@ -385,8 +385,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             DiseaseAnnotation diseaseAnnotation = getMutantRepository().getDiseaseModelByID(diseaseAnnotationDTO.getZdbID());
             if (diseaseAnnotation == null)
                 throw new TermNotFoundException("No disease model found ");
-            getInfrastructureRepository().deleteRecordAttributionsForData(diseaseAnnotation.getZdbID());
-            getInfrastructureRepository().deleteRecordAttributionsForData(diseaseAnnotation.getDisease().getZdbID());
+
             getMutantRepository().deleteDiseaseModel(diseaseAnnotation);
             session.flush();
             tx.commit();
