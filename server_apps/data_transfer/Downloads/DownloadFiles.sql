@@ -295,8 +295,8 @@ update tmp_ortho_exp set flybase = (
 	 where oef_fdbcont_zdb_id = fdbcont_zdb_id
 	   and fdb_db_name = 'FLYBASE'
 	   and fdbcont_fdb_db_id = fdb_db_pk_id
-	   and o.zdb_id = oef_ortho_zdb_id
-	   and ortho_id = o.zdb_id
+	   and o.ortho_zdb_id = oef_ortho_zdb_id
+	   and ortho_id = o.ortho_zdb_id
 );
 
 update tmp_ortho_exp set Entrez = (
@@ -305,8 +305,8 @@ update tmp_ortho_exp set Entrez = (
 	 where oef_fdbcont_zdb_id  = fdbcont_zdb_id
 	   and fdb_db_name = 'Gene'
 	   and fdbcont_fdb_db_id = fdb_db_pk_id
-	   and o.zdb_id = oef_ortho_zdb_id
-	   and ortho_id = o.zdb_id
+	   and o.ortho_zdb_id = oef_ortho_zdb_id
+	   and ortho_id = o.ortho_zdb_id
 );
 
 update tmp_ortho_exp set mgi = (
@@ -315,8 +315,8 @@ update tmp_ortho_exp set mgi = (
 	 where oef_fdbcont_zdb_id  = fdbcont_zdb_id
 	   and fdbcont_fdb_db_id = fdb_db_pk_id
 	   and fdb_db_name = 'MGI'
-	   and o.zdb_id = oef_ortho_zdb_id
-	   and ortho_id = o.zdb_id
+	   and o.ortho_zdb_id = oef_ortho_zdb_id
+	   and ortho_id = o.ortho_zdb_id
 );
 
 update tmp_ortho_exp set omim = (
@@ -325,8 +325,8 @@ update tmp_ortho_exp set omim = (
 	 where oef_fdbcont_zdb_id  = fdbcont_zdb_id
 	   and fdbcont_fdb_db_id = fdb_db_pk_id
 	   and fdb_db_name = 'OMIM'
-	   and o.zdb_id = oef_ortho_zdb_id
-	   and ortho_id = o.zdb_id
+	   and o.ortho_zdb_id = oef_ortho_zdb_id
+	   and ortho_id = o.ortho_zdb_id
 );
 
 update tmp_ortho_exp set hgnc = (
@@ -336,8 +336,8 @@ update tmp_ortho_exp set hgnc = (
 	   and fdb_db_name = 'SGD'
 	   and fdbcont_fdb_db_id = fdb_db_pk_id
 	   and fdb_db_name = 'HGNC'
-	   and o.zdb_id = oef_ortho_zdb_id
-	   and ortho_id = o.zdb_id
+	   and o.ortho_zdb_id = oef_ortho_zdb_id
+	   and ortho_id = o.ortho_zdb_id
 );
 
 
