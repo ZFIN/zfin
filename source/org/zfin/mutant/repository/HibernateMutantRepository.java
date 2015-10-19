@@ -1559,6 +1559,8 @@ public class HibernateMutantRepository implements MutantRepository {
 
     @Override
     public void deleteDiseaseModel(DiseaseAnnotation diseaseAnnotation) {
+        getInfrastructureRepository().deleteRecordAttributionsForData(diseaseAnnotation.getZdbID());
+        getInfrastructureRepository().deleteRecordAttributionsForData(diseaseAnnotation.getDisease().getZdbID());
         HibernateUtil.currentSession().delete(diseaseAnnotation);
     }
 
