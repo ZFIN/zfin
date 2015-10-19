@@ -57,7 +57,11 @@ function updateAuthor(strURL) {
 
   <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
-
+    <h4>
+      <?MIVAR>
+        <a href="/action/publication/$OID/link">Link Authors 2.0 Beta</a>
+      <?/MIVAR>
+    </h4>
     <?MICOMMENT> ** First, convert the author list into an array of name parts ** <?/MICOMMENT>
  
     <?MISQL SQL="select authors from publication where zdb_id='$OID';">

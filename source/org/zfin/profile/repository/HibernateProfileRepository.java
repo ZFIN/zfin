@@ -3,14 +3,11 @@ package org.zfin.profile.repository;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Repository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
@@ -46,7 +43,6 @@ public class HibernateProfileRepository implements ProfileRepository {
                 .add(Restrictions.eq("zdbID", zdbID))
                 .uniqueResult();
     }
-
 
     public Organization getOrganizationByName(String name) {
         Session session = HibernateUtil.currentSession();
@@ -824,6 +820,28 @@ public class HibernateProfileRepository implements ProfileRepository {
                 .addOrder(Order.asc("lastName"))
                 .addOrder(Order.asc("firstName"))
 //                .addOrder(Order.asc("middleNameOrInitial"))
+                .list();
+    }
+
+    @Override
+    public List<Person> getPersonByLastNameStartsWithAndFirstNameStartsWith(String lastNameStartsWith,String firstNameStartsWith) {
+
+        return HibernateUtil.currentSession().createCriteria(Person.class)
+                .add(Restrictions.ilike("lastName", lastNameStartsWith + "%"))
+                .add(Restrictions.ilike("firstName", firstNameStartsWith + "%"))
+                .addOrder(Order.asc("lastName"))
+                .addOrder(Order.asc("firstName"))
+                .list();
+    }
+
+    @Override
+    public List<Person> getPersonByLastNameEqualsAndFirstNameStartsWith(String lastName,String firstNameStartsWith) {
+
+        return HibernateUtil.currentSession().createCriteria(Person.class)
+                .add(Restrictions.eq("lastName", lastName))
+                .add(Restrictions.ilike("firstName", firstNameStartsWith + "%"))
+                .addOrder(Order.asc("lastName"))
+                .addOrder(Order.asc("firstName"))
                 .list();
     }
 
