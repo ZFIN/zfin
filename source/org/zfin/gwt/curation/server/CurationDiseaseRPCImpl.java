@@ -3,6 +3,7 @@ package org.zfin.gwt.curation.server;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 import org.zfin.ExternalNote;
@@ -377,14 +378,17 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             throw new TermNotFoundException("No disease model found");
         if (diseaseAnnotationDTO.getPublication() == null || diseaseAnnotationDTO.getPublication().getZdbID() == null)
             throw new TermNotFoundException("No Publication found");
+        Session session = HibernateUtil.currentSession();
+        Transaction tx = session.beginTransaction();
 
-        Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
             DiseaseAnnotation diseaseAnnotation = getMutantRepository().getDiseaseModelByID(diseaseAnnotationDTO.getZdbID());
             if (diseaseAnnotation == null)
                 throw new TermNotFoundException("No disease model found ");
-
+            getInfrastructureRepository().deleteRecordAttributionsForData(diseaseAnnotation.getZdbID());
+            getInfrastructureRepository().deleteRecordAttributionsForData(diseaseAnnotation.getDisease().getZdbID());
             getMutantRepository().deleteDiseaseModel(diseaseAnnotation);
+            session.flush();
             tx.commit();
         } catch (HibernateException e) {
             tx.rollback();
