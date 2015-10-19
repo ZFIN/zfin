@@ -137,7 +137,7 @@ public class OrthologyController {
             Ortholog existingOrtholog = getOrthologyRepository().getOrthologByGeneAndNcbi(gene, ncbiGene);
             if (existingOrtholog != null)
                 throw new InvalidWebRequestException("Ortholog already added", null);
-            ortholog = orthologService.createOrtholog(gene, ncbiGene);
+            ortholog = orthologService.createOrthologEntity(gene, ncbiGene);
             getOrthologyRepository().saveOrthology(ortholog, null);
             tx.commit();
         } catch (Exception e) {

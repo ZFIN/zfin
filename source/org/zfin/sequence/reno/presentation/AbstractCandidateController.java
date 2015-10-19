@@ -158,8 +158,10 @@ public abstract class AbstractCandidateController {
             if (ncbiGene == null)
                 throw new NullPointerException("Could not find an NCBI Gene record with accession number " + humanAccessionNumber);
 
-            Ortholog humanOrtholog = orthologService.createOrthologWithoutReferences(zebrafishMarker, ncbiGene);
-            renoService.createEvidenceCollection(candidateBean.getHumanOrthologyEvidence(), orthologyPub, humanOrtholog);
+            Ortholog humanOrtholog = orthologService.createOrthologEntity(zebrafishMarker, ncbiGene);
+            Set<OrthologEvidence> orthoEvidences = renoService.createEvidenceCollection(candidateBean.getHumanOrthologyEvidence(), orthologyPub, humanOrtholog);
+            humanOrtholog.setEvidenceSet(orthoEvidences);
+
             LOG.info("Orthology: " + humanOrtholog);
             or.saveOrthology(humanOrtholog, null);
             //orthologService.createReferences(humanOrtholog, ncbiGene);
@@ -170,13 +172,11 @@ public abstract class AbstractCandidateController {
         String mouseAccessionNumber = candidateBean.getMouseOrthologueAbbrev().getEntrezAccession().getEntrezAccNum();
         if (!StringUtils.isEmpty(mouseAccessionNumber)) {
             LOG.info(" Working on Mouse Orthologs ...: " + candidateBean.getMouseOrthologueAbbrev());
-            Ortholog mouseOrtholog = new Ortholog();
-            mouseOrtholog.setZebrafishGene(zebrafishMarker);
             NcbiOtherSpeciesGene ncbiGene = getOrthologyRepository().getNcbiGene(mouseAccessionNumber);
             if (ncbiGene == null)
                 throw new NullPointerException("Could not find an NCBI Gene record with accession number " + mouseAccessionNumber);
 
-            mouseOrtholog.setNcbiOtherSpeciesGene(ncbiGene);
+            Ortholog mouseOrtholog = orthologService.createOrthologEntity(zebrafishMarker, ncbiGene);
             Set<OrthologEvidence> orthoEvidences = renoService.createEvidenceCollection(candidateBean.getMouseOrthologyEvidence(), orthologyPub, mouseOrtholog);
             mouseOrtholog.setEvidenceSet(orthoEvidences);
             or.saveOrthology(mouseOrtholog, orthologyPub);
