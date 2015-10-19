@@ -232,18 +232,6 @@ function jump(form_select){
  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr_type=delete-supplier&old_value='+supplier_zdb_id);
 	}
 
-	function new_ortho() {
-		var speciesind=document.updater1.species.selectedIndex;
-		var species=document.updater1.species[speciesind].value;
-		var oname=document.updater1.oname.value;
-		var oabbrev=document.updater1.oabbrev.value;
-		if ((oname != '') && (oabbrev != '')) {
-  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=orthologue&attr_type=special-newortho&old_value='+species+'&new_value='+escape(oname)+'&target_table=marker&info='+oabbrev);
-  		}
-	}
-
-
-
 	function new_seqnum() {
 		var dbind=document.updateseq.seqdb.selectedIndex;
 		var dbfull=document.updateseq.seqdb[dbind].text;
@@ -2688,7 +2676,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
 
 <?MIBLOCK COND="$(XST,$type_of_genedom)">
  <HR width="80%">
- <a name=orthologue><b>ORTHOLOGY</b></a>
+ <a name=orthologue><b>ORTHOLOGY</b></a><br>
  <?MIVAR><a href="/action/marker/$OID/edit#orthology">Edit Orthology</a><?/MIVAR>
 <?/MIBLOCK>
 
@@ -2732,10 +2720,6 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
      $('#supplier').bind('typeahead:selected', function(obj, datum, name) {
           supplierToAddZdbID = datum.id;
       });
-
-    <?MIVAR>
-            jQuery('#orthology').load('/action/marker/$OID/orthology?update=$UPDATE');
-    <?/MIVAR>
 
     $( "#supplier" ).keypress(function(event) {
        if (event.keyCode == 13) {
