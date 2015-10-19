@@ -378,8 +378,8 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             throw new TermNotFoundException("No disease model found");
         if (diseaseAnnotationDTO.getPublication() == null || diseaseAnnotationDTO.getPublication().getZdbID() == null)
             throw new TermNotFoundException("No Publication found");
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = session.beginTransaction();
+
+        Transaction tx = HibernateUtil.currentSession().beginTransaction();
 
         try {
             DiseaseAnnotation diseaseAnnotation = getMutantRepository().getDiseaseModelByID(diseaseAnnotationDTO.getZdbID());
@@ -387,7 +387,6 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
                 throw new TermNotFoundException("No disease model found ");
 
             getMutantRepository().deleteDiseaseModel(diseaseAnnotation);
-            session.flush();
             tx.commit();
         } catch (HibernateException e) {
             tx.rollback();
