@@ -25,7 +25,7 @@
             <tr>
                 <th width="10%">Species</th>
                 <th width="10%">Symbol</th>
-                <th width="20%">Chr (Position)</th>
+                <th width="20%">Chromosome</th>
                 <th width="20%">Accession #</th>
                 <th width="40%">Evidence</th>
             </tr>
@@ -39,11 +39,7 @@
                         <i>${ortholog.abbreviation}</i>
                     </td>
                     <td>
-                            ${ortholog.chromosome}
-
-                        <c:if test="${ortholog.positionValid}">
-                            (${ortholog.position})
-                        </c:if>
+                        ${ortholog.chromosome}
                     </td>
                     <td>
                         <c:forEach var="accession" items="${ortholog.accessions}">

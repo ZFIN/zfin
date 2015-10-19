@@ -20,7 +20,7 @@
         <th></th>
         <th>Species</th>
         <th>Symbol</th>
-        <th>Chr (Position)</th>
+        <th>Chromosome</th>
         <th>Accession #</th>
         <th>Evidence</th>
     </tr>
@@ -33,7 +33,7 @@
         <td><a href="#" ng-click="vm.confirmDeleteOrtholog(ortholog)">Delete</a></td>
         <td>{{ortholog.ncbiOtherSpeciesGeneDTO.organism}}</td>
         <td><i>{{ortholog.ncbiOtherSpeciesGeneDTO.abbreviation}}</i></td>
-        <td>{{ortholog.ncbiOtherSpeciesGeneDTO.chromosome}} ({{ortholog.ncbiOtherSpeciesGeneDTO.position}})</td>
+        <td>{{ortholog.ncbiOtherSpeciesGeneDTO.chromosome}}</td>
         <td>
             <div ng-repeat="reference in ortholog.orthologExternalReferenceDTOSet">
                 <a ng-href="{{reference.referenceDatabaseDTO.url}}{{reference.accessionNumber}}">
