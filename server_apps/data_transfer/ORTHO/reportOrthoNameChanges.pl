@@ -69,7 +69,7 @@ sub reportOrthoNameChanges() {
 %NCBIidsAndNamesFly = (); 
 
 
-open (NCBI, "Homo_sapiens.gene_info") ||  die "Cannot open Homo_sapiens.gene_info : $!\n";
+open (NCBI, "ortholog_info") ||  die "Cannot open Homo_sapiens.gene_info : $!\n";
 
 $ctLines = $ctHumanGenes = $ctMouseGenes = $ctFlyGenes = 0;
 
@@ -81,13 +81,12 @@ while (<NCBI>) {
   $taxId = $fieldsNCBI[0];
   
   ## excluding species other than human, mouse, fly and the documentation lines
-  ## this line does not actually work -- it only parses the first taxId...
-  next if $taxId ne "9606" and $taxId ne "10090" and $taxId ne "7227";
   
   $ctLines++;
   
   ## human gene info
   if ($taxId eq "9606") {
+     
     $humanNCBIgeneID = $fieldsNCBI[1];
     if (ZFINPerlModules->stringStartsWithLetterOrNumber($fieldsNCBI[11])) {
         $NCBIidsAndNamesHuman{$humanNCBIgeneID} = $fieldsNCBI[11];
@@ -103,6 +102,7 @@ while (<NCBI>) {
   
   ## mouse gene info
   if ($taxId eq "10090") {
+  
     $mouseNCBIgeneID = $fieldsNCBI[1];
     if (ZFINPerlModules->stringStartsWithLetterOrNumber($fieldsNCBI[11])) {
         $NCBIidsAndNamesMouse{$mouseNCBIgeneID} = $fieldsNCBI[11];
@@ -118,6 +118,7 @@ while (<NCBI>) {
 
   ## fly gene info
   if ($taxId eq "7227") {
+   
     $flyNCBIgeneID = $fieldsNCBI[1];
     if (ZFINPerlModules->stringStartsWithLetterOrNumber($fieldsNCBI[11])) {
          $NCBIidsAndNamesFly{$flyNCBIgeneID} = $fieldsNCBI[11];

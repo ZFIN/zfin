@@ -204,6 +204,10 @@ create index tmp_fdbcontid_index
  on tmp_ortho_xref (fdbcont_id)
  using btree in idxdbs2;
 
+create index tmp_orthoref_index 
+ on tmp_ortho_xref (ncbigeneid, xrefaccnum, fdbcont_id)
+ using btree in idxdbs2;
+
 update tmp_ortho_xref
   set taxonid = 'Mouse'
  where taxonid = '10090'
@@ -251,6 +255,8 @@ delete from ortholog_external_reference
        	      	      where ncbigeneid = ortho_other_species_ncbi_gene_id
 		      and ortholog.ortho_zdb_id = tmp_ortho_xref.ortho_zdb_id);
 
+update statistics high for table tmp_ortho_xref;
+
 insert into ncbi_ortholog_external_reference (noer_other_species_ncbi_gene_id, noer_other_species_accession_number, noer_fdbcont_zdb_id)
   select distinct ncbigeneid, xrefaccnum, fdbcont_id
    from  tmp_ortho_xref
@@ -272,35 +278,34 @@ insert into ortholog_load_tracking (olt_load_name,
 					olt_number_of_hgnc_links,
 					olt_number_of_omim_links,
 					olt_number_of_gene_links,
-					olt_number_of_flybase_links
-select "ncbi ortho load", current year to second,
-( select count(*)
+					olt_number_of_flybase_links)
+select "ncbi ortho load" as namer, current year to second as dater,
+( select count(*) as mgi_count
     from ortholog_external_reference, foreign_db_contains, foreign_db
    where oef_fdbcont_zdb_id = fdbcont_zdb_id
    and fdbcont_fdb_db_id = fdb_db_pk_id
    and fdb_db_name = "MGI"),
-( select count(*)
+( select count(*) as hgnc_count
    from ortholog_external_reference, foreign_db_contains, foreign_db
    where oef_fdbcont_zdb_id = fdbcont_zdb_id
    and fdbcont_fdb_db_id = fdb_db_pk_id
    and fdb_db_name = "HGNC"),
- (select count(*)
+ (select count(*) as omim_count
     from ortholog_external_reference, foreign_db_contains, foreign_db
    where oef_fdbcont_zdb_id = fdbcont_zdb_id
    and fdbcont_fdb_db_id = fdb_db_pk_id
    and fdb_db_name = "OMIM"),
- (select count(*)
+ (select count(*) as gene_count
     from ortholog_external_reference, foreign_db_contains, foreign_db
    where oef_fdbcont_zdb_id = fdbcont_zdb_id
    and fdbcont_fdb_db_id = fdb_db_pk_id
    and fdb_db_name = "Gene"),
- (select count(*)
+ (select count(*) as flybase_count
     from ortholog_external_reference, foreign_db_contains, foreign_db
    where oef_fdbcont_zdb_id = fdbcont_zdb_id
    and fdbcont_fdb_db_id = fdb_db_pk_id
    and fdb_db_name = "FLYBASE")
  from single;
-
 
 unload to ortho_statistics.txt
  select * from ortholog_load_tracking
