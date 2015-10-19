@@ -98,13 +98,6 @@ where exists (Select 'x' from just_ncbi_info
       	     	     where ortho_other_species_ncbi_Gene_id = ncbiGeneId);
 
 
-update ortholog
-  set ortho_other_species_position = (Select distinct position
-				from just_ncbi_info
-				where ortho_other_species_ncbi_gene_id = ncbiGeneId)
-where exists (Select 'x' from just_ncbi_info
-      	     	     where ortho_other_species_ncbi_Gene_id = ncbiGeneId);
-
 
 update ortholog
   set ortho_other_species_symbol = (Select distinct symbol
@@ -116,13 +109,6 @@ where exists (Select 'x' from just_ncbi_info
 
 update ncbi_ortholog
   set noi_chromosome = (Select distinct chromosome
-				from just_ncbi_info
-				where noi_ncbi_gene_id = ncbiGeneId)
-where exists (Select 'x' from just_ncbi_info
-      	     	     where noi_ncbi_Gene_id = ncbiGeneId);
-
-update ncbi_ortholog
-  set noi_position = (Select distinct position
 				from just_ncbi_info
 				where noi_ncbi_gene_id = ncbiGeneId)
 where exists (Select 'x' from just_ncbi_info
@@ -172,8 +158,8 @@ select distinct taxonid
        	   	  	  where organism_taxid = taxonid);
 
 
-insert into ncbi_ortholog (noi_ncbi_gene_id, noi_chromosome, noi_position, noi_symbol, noi_name, noi_taxid)
- select distinct ncbiGeneId, chromosome, position, symbol, name, taxonid
+insert into ncbi_ortholog (noi_ncbi_gene_id, noi_chromosome,noi_symbol, noi_name, noi_taxid)
+ select distinct ncbiGeneId, chromosome, symbol, name, taxonid
    from just_ncbi_info
   where not exists (Select 'x' from ncbi_ortholog
   	    	   	   where ncbigeneid = noi_ncbi_gene_id);
@@ -308,7 +294,19 @@ select "ncbi ortho load" as namer, current year to second as dater,
  from single;
 
 unload to ortho_statistics.txt
- select * from ortholog_load_tracking
+ delimiter "	"
+ select "load name","run date","number of MGI links",
+ 	"number of HGNC links", "number of OMIM links",
+	"number of GENE links", "number of FLYBASE links"
+ from single
+union
+ select olt_load_name,
+       	     			    	olt_last_run,
+					olt_number_of_mgi_links,
+					olt_number_of_hgnc_links,
+					olt_number_of_omim_links,
+					olt_number_of_gene_links,
+					olt_number_of_flybase_links from ortholog_load_tracking
    where olt_last_run > current year to second - 30 units day;
 
 commit work;
