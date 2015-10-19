@@ -113,6 +113,7 @@ function OrthoEditController($http, $q) {
         }
     ];
 
+    vm.generalError = '';
     vm.evidenceCodeError = '';
     vm.evidencePublicationError = '';
     vm.evidencePublicationWarning = '';
@@ -174,6 +175,7 @@ function OrthoEditController($http, $q) {
                 });
             })
             .catch(function(error) {
+                vm.generalError = 'Couldn\'t fetch orthology details';
                 console.error(error);
             });
 
@@ -204,6 +206,7 @@ function OrthoEditController($http, $q) {
                 newOrtholog.evidenceMap = {};
                 vm.orthologs.push(newOrtholog);
                 vm.ncbiGeneNumber = '';
+                vm.generalError = '';
             })
             .catch(function(error) {
                 vm.ncbiError = error.data.message;
@@ -212,6 +215,7 @@ function OrthoEditController($http, $q) {
 
     function confirmDeleteOrtholog(ortholog) {
         vm.modalOrtholog = ortholog;
+        vm.generalError = '';
         $('#delete-modal')
             .modal({
                 escapeClose: false,
@@ -227,12 +231,15 @@ function OrthoEditController($http, $q) {
     function deleteOrtholog() {
         var idx = vm.orthologs.indexOf(vm.modalOrtholog);
         $http.delete('/action/gene/' + vm.gene + '/ortholog/' + vm.modalOrtholog.zdbID)
-            .then(function (resp) {
+            .then(function () {
                 vm.orthologs.splice(idx, 1);
-                $.modal.close();
             })
             .catch(function (error) {
-                alert('PANIC! There was an error!')
+                vm.generalError = 'Couldn\'t delete ortholog';
+                console.error(error);
+            })
+            .finally(function () {
+                $.modal.close();
             });
     }
 
@@ -266,7 +273,7 @@ function OrthoEditController($http, $q) {
             'evidenceCodeList': vm.modalEvidence.asArray()
         };
         $http.post('/action/gene/' + vm.gene + '/ortholog/evidence', payload)
-            .then(function (resp) {
+            .then(function () {
                 vm.modalOrtholog.evidenceMap[pubID] = angular.copy(vm.modalEvidence);
                 $.modal.close();
             })
@@ -291,6 +298,7 @@ function OrthoEditController($http, $q) {
     }
 
     function deleteEvidence(ortholog, evidence) {
+        vm.generalError = '';
         var pubID = evidence.publication.zdbID;
         var payload = {
             'publicationID': pubID,
@@ -298,11 +306,12 @@ function OrthoEditController($http, $q) {
             'evidenceCodeList': []
         };
         $http.post('/action/gene/' + vm.gene + '/ortholog/evidence', payload)
-            .then(function (resp) {
+            .then(function () {
                 delete ortholog.evidenceMap[pubID];
             })
             .catch(function (error) {
-                console.log('Error!', error);
+                vm.generalError = 'Couldn\'t delete evidence';
+                console.error(error);
             });
     }
 
@@ -325,13 +334,14 @@ function OrthoEditController($http, $q) {
             })
             .catch(function (error) {
                 vm.noteError = error.data.message;
-                console.log('error saving note', error);
+                console.error(error);
             });
     }
 
     function openEvidenceModal(ortholog, evidence) {
         vm.modalOrtholog = ortholog;
         vm.modalEvidence = evidence;
+        vm.generalError = '';
 
         $('#evidence-modal')
             .modal({
