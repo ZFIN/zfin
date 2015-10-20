@@ -38,6 +38,7 @@ import org.zfin.orthology.presentation.OrthologExternalReferenceDTO;
 import org.zfin.profile.CuratorSession;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Organization;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
@@ -1478,6 +1479,7 @@ public class DTOConversionService {
         return dto;
     }
 
+<<<<<<< HEAD
     public static OrthologDTO convertToOrthologDTO(Ortholog ortholog) {
         OrthologDTO orthologDTO = new OrthologDTO();
         orthologDTO.setZdbID(ortholog.getZdbID());
@@ -1532,6 +1534,14 @@ public class DTOConversionService {
         OrthologExternalReferenceDTO dto = new OrthologExternalReferenceDTO();
         dto.setAccessionNumber(reference.getAccessionNumber());
         dto.setReferenceDatabaseDTO(convertToReferenceDatabaseDTO(reference.getReferenceDatabase()));
-        return dto;
+      return dto;
+    }
+    public static PersonDTO convertToPersonDTO(Person person) {
+        PersonDTO dto = new PersonDTO();
+        dto.setFirstName(person.getFirstName());
+        dto.setLastName(person.getLastName());
+        dto.setDisplay(person.getFullName());
+        dto.setZdbID(person.getZdbID());
+  
     }
 }

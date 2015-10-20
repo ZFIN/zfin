@@ -1988,7 +1988,7 @@ SELECT genox_fish_zdb_id,
        END,
        term_ont_id,
        term_name,
-       da_pub_zdb_id,
+       dat_source_zdb_id,
        accession_no
 FROM   disease_annotation_model,
        disease_annotation,publication,

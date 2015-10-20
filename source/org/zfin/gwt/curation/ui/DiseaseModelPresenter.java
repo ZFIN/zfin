@@ -26,23 +26,23 @@ import java.util.*;
  */
 public class DiseaseModelPresenter implements Presenter {
 
+    private final HandlerManager eventBus;
     private CurationDiseaseRPCAsync diseaseRpcService = CurationDiseaseRPC.App.getInstance();
     private CurationExperimentRPCAsync curationRPCService = CurationExperimentRPC.App.getInstance();
-    private final HandlerManager eventBus;
     private DiseaseModelView view;
     private String publicationID;
     private List<DiseaseAnnotationModelDTO> damoDTOList = new ArrayList<>();
+    private List<FishDTO> fishList = new ArrayList<>();
+    private List<EnvironmentDTO> environmentList = new ArrayList<>();
+    private List<TermDTO> diseaseList = new ArrayList<>();
+    private List<DiseaseAnnotationDTO> diseaseModelList = new ArrayList<>();
+    private boolean processing = false;
 
     public DiseaseModelPresenter(HandlerManager eventBus, DiseaseModelView view, String publicationID) {
         this.eventBus = eventBus;
         this.view = view;
         this.publicationID = publicationID;
     }
-
-    private List<FishDTO> fishList = new ArrayList<>();
-    private List<EnvironmentDTO> environmentList = new ArrayList<>();
-    private List<TermDTO> diseaseList = new ArrayList<>();
-    private List<DiseaseAnnotationDTO> diseaseModelList = new ArrayList<>();
 
     public void bind() {
         view.getFishSelectionBox().addChangeHandler(new ChangeHandler() {
@@ -83,9 +83,6 @@ public class DiseaseModelPresenter implements Presenter {
         addDynamicClickHandler();
     }
 
-    private boolean processing = false;
-
-
     private DiseaseAnnotationDTO getDiseaseModel() {
         DiseaseAnnotationDTO dto = new DiseaseAnnotationDTO();
         int selectedIndexFish = view.getFishSelectionBox().getSelectedIndex();
@@ -113,6 +110,7 @@ public class DiseaseModelPresenter implements Presenter {
         return dto;
 
     }
+
     private DiseaseAnnotationModelDTO getDiseaseAnnotationModel() {
         DiseaseAnnotationModelDTO dto = new DiseaseAnnotationModelDTO();
         int selectedIndexFish = view.getFishSelectionBox().getSelectedIndex();
@@ -250,10 +248,10 @@ public class DiseaseModelPresenter implements Presenter {
         diseaseRpcService.getFishList(publicationID, new RetrieveFishListCallBack(message, view.getErrorLabel()));
     }
 
-    public void updateConditions(){
-        String termSel=view.getFishSelectionBox().getItemText(view.getFishSelectionBox().getSelectedIndex());
-        String envSel=view.getEnvironmentSelectionBox().getItemText(1);
-        String message="geting wildtype";
+    public void updateConditions() {
+        String termSel = view.getFishSelectionBox().getItemText(view.getFishSelectionBox().getSelectedIndex());
+        String envSel = view.getEnvironmentSelectionBox().getItemText(1);
+        String message = "geting wildtype";
         curationRPCService.getBackgroundGenotypes(publicationID, new RetrieveBackgroundNewGenoCallback(message, view.getErrorLabel()));
 
 
@@ -286,6 +284,7 @@ public class DiseaseModelPresenter implements Presenter {
             resetUI();
         }
     }
+
     class RetrieveBackgroundNewGenoCallback extends ZfinAsyncCallback<List<GenotypeDTO>> {
 
         public RetrieveBackgroundNewGenoCallback(String errorMessage, ErrorHandler errorLabel) {
@@ -294,20 +293,19 @@ public class DiseaseModelPresenter implements Presenter {
 
         @Override
         public void onSuccess(List<GenotypeDTO> list) {
-           List<String>genos= new ArrayList<>();
-            String termSel=view.getFishSelectionBox().getItemText(view.getFishSelectionBox().getSelectedIndex());
+            List<String> genos = new ArrayList<>();
+            String termSel = view.getFishSelectionBox().getItemText(view.getFishSelectionBox().getSelectedIndex());
 
             for (GenotypeDTO dto : list) {
                 genos.add(dto.getName());
             }
             genos.add("WT");
-            String strGeno=genos.toString();
-            if (view.getEnvironmentSelectionBox().getSelectedValue()== "ZDB-EXP-041102-1" || view.getEnvironmentSelectionBox().getSelectedValue()== "ZDB-EXP-070511-5"){
-                int selInd=view.getEnvironmentSelectionBox().getSelectedIndex();
+            String strGeno = genos.toString();
+            if (view.getEnvironmentSelectionBox().getSelectedValue() == "ZDB-EXP-041102-1" || view.getEnvironmentSelectionBox().getSelectedValue() == "ZDB-EXP-070511-5") {
+                int selInd = view.getEnvironmentSelectionBox().getSelectedIndex();
                 view.getEnvironmentSelectionBox().getElement().getElementsByTagName("option").getItem(selInd).setAttribute("disabled", "disabled");
-            }
-            else{
-                int selInd=view.getEnvironmentSelectionBox().getSelectedIndex();
+            } else {
+                int selInd = view.getEnvironmentSelectionBox().getSelectedIndex();
                 view.getEnvironmentSelectionBox().getElement().getElementsByTagName("option").getItem(selInd).removeAttribute("disabled");
             }
             if (genos.contains(termSel)) {
@@ -315,13 +313,13 @@ public class DiseaseModelPresenter implements Presenter {
                 view.getEnvironmentSelectionBox().getElement().getElementsByTagName("option").getItem(1).setAttribute("disabled", "disabled");
                 view.getEnvironmentSelectionBox().getElement().getElementsByTagName("option").getItem(2).setAttribute("disabled", "disabled");
                 //view.getEnvironmentSelectionBox().setEnabled(false);
-            }
-            else{
+            } else {
                 view.getEnvironmentSelectionBox().getElement().getElementsByTagName("option").getItem(1).removeAttribute("disabled");
                 view.getEnvironmentSelectionBox().getElement().getElementsByTagName("option").getItem(2).removeAttribute("disabled");
             }
         }
     }
+
     class RetrieveFishListCallBack extends ZfinAsyncCallback<List<FishDTO>> {
 
         public RetrieveFishListCallBack(String errorMessage, ErrorHandler errorLabel) {
@@ -370,7 +368,8 @@ public class DiseaseModelPresenter implements Presenter {
             processing = false;
         }
     }
-    class RetrieveDiseaseAnnotationModelListCallBack extends ZfinAsyncCallback<List<DiseaseAnnotationModelDTO>> {
+
+    class RetrieveDiseaseAnnotationModelListCallBack extends ZfinAsyncCallback<List<DiseaseAnnotationDTO>> {
 
         public RetrieveDiseaseAnnotationModelListCallBack(String errorMessage, ErrorHandler errorLabel) {
             super(errorMessage, errorLabel, view.loadingImage);
@@ -428,6 +427,7 @@ public class DiseaseModelPresenter implements Presenter {
             diseaseRpcService.deleteDiseaseAnnotationModel(diseaseAnnotationModelDTO, new RetrieveDiseaseAnnotationModelListCallBack("Could not delete Disease model", view.getErrorLabel()));
         }
     }
+
     private class PopulateTermEntryClickListener implements ClickHandler {
 
         private TermDTO termDTO;

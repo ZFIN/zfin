@@ -25,7 +25,7 @@ public interface CurationDiseaseRPCAsync {
     void getFishList(String publicationID, AsyncCallback<List<FishDTO>> callback);
 
     void deleteDiseaseModel(DiseaseAnnotationDTO diseaseAnnotationDTO, AsyncCallback<List<DiseaseAnnotationDTO>> callback);
-    void deleteDiseaseAnnotationModel(DiseaseAnnotationModelDTO diseaseAnnotationModelDTO, AsyncCallback<List<DiseaseAnnotationModelDTO>> callback);
+    void deleteDiseaseAnnotationModel(DiseaseAnnotationModelDTO diseaseAnnotationModelDTO, AsyncCallback<List<DiseaseAnnotationDTO>> callback);
 
     void getGenotypeList(String publicationID, AsyncCallback<List<GenotypeDTO>> callback);
 

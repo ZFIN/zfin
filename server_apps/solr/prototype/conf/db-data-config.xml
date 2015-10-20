@@ -1223,7 +1223,7 @@ WHERE  ( NOT g.geno_is_wildtype
                                                  genox_fish_zdb_id
                                           from term
                                           inner join disease_annotation on term.term_zdb_id = disease_annotation.dat_term_zdb_id
-                                          inner join disease_annotation_model on disease_annotation.dat_zdb_id = disease_annotation_model.damo.dat_zdb_id
+                                          inner join disease_annotation_model on disease_annotation.dat_zdb_id = disease_annotation_model.damo_dat_zdb_id
                                           inner join fish_experiment on fish_experiment.genox_zdb_id = disease_annotation_mode.damo_genox_zdb_id;"
                    processor="CachedSqlEntityProcessor"
                    where="genox_fish_zdb_id=fish.id"/>
