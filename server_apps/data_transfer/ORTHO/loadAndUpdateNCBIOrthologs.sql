@@ -295,7 +295,7 @@ select "ncbi ortho load" as namer, current year to second as dater,
 
 unload to ortho_statistics.txt
  delimiter "	"
- select "load name","run date","number of MGI links",
+ select "load name",current year to second,"number of MGI links",
  	"number of HGNC links", "number of OMIM links",
 	"number of GENE links", "number of FLYBASE links"
  from single
