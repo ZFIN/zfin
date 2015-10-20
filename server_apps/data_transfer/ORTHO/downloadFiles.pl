@@ -19,6 +19,7 @@ sub downloadFiles() {
 open LOG, '>', "logOrthologyUpdateName" or die "can not open logOrthologyUpdateName: $! \n";
 
 ## clean up after last run of this script
+doSystemCommand("/bin/rm -f *.txt");
 doSystemCommand("/bin/rm -f logOrthologyUpdateName");
 doSystemCommand("/bin/rm -f ortholog_info");
 doSystemCommand("/bin/rm -f orthNamesUpdatedReport");
