@@ -55,7 +55,14 @@ that would be better --%>
     </label>
     <form:checkbox path="<%= CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE %>"
                    value="<%= OrthoEvidence.Code.NT.name()%>"></form:checkbox>
+
+    <label for="humanOrthologyEvidence4"><%= OrthoEvidence.Code.PT.name()%>
+    </label>
+    <form:checkbox path="<%= CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE %>"
+                   value="<%= OrthoEvidence.Code.PT.name()%>"></form:checkbox>
     <form:errors path="<%= CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE %>" cssClass="error indented-error"/>
+
+
     <form:errors path="humanOrthologueAbbrev.entrezAccession.entrezAccNum" cssClass="error indented-error"/>
 
 
@@ -80,6 +87,11 @@ that would be better --%>
     </label>
     <form:checkbox path="<%= CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE %>"
                    value="<%= OrthoEvidence.Code.NT.name()%>"></form:checkbox>
+    <label for="mouseOrthologyEvidence4"><%= OrthoEvidence.Code.PT.name()%>
+    </label>
+    <form:checkbox path="<%= CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE %>"
+                   value="<%= OrthoEvidence.Code.PT.name()%>"></form:checkbox>
+
     <form:errors path="<%= CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE %>" cssClass="error indented-error"/>
     <form:errors path="mouseOrthologueAbbrev.entrezAccession.entrezAccNum" cssClass="error indented-error"/>
 
