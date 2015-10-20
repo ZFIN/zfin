@@ -69,7 +69,7 @@ sub reportOrthoNameChanges() {
 %NCBIidsAndNamesFly = (); 
 
 
-open (NCBI, "ortholog_info") ||  die "Cannot open Homo_sapiens.gene_info : $!\n";
+open (NCBI, "ortholog_info") ||  die "Cannot open ortholog_info : $!\n";
 
 $ctLines = $ctHumanGenes = $ctMouseGenes = $ctFlyGenes = 0;
 
@@ -239,7 +239,7 @@ $cur->bind_columns(\$organism,\$orthoName,\$orthoAbbrev,\$ncbiID,\$zdbGeneId,\$z
 
 %namesFlyOrthNCBI = ();
 
-open (NOTFOUND, ">ncbiIdsNotFoundReport") || die "Cannot open ncbiIdsNotFoundReport : $!\n";
+open (NOTFOUND, ">ncbiIdsNotFoundReport.txt") || die "Cannot open ncbiIdsNotFoundReport.txt : $!\n";
 
 $ctNotFound = 0;
 
@@ -305,9 +305,9 @@ $ctAll3NamesIdentical = $ctIdenticalToHumanAndNoMouse = $ctIdenticalToMouseAndNo
 $total = 0;
 $ctDiffrentZFgeneNames = $ctUpdatedOrthNames = 0;
 
-open (ORTHNAMEREPORT, ">orthNamesUpdatedReport") || die "Cannot open orthNamesUpdatedReport : $!\n";
-open (ORTHNAMEUPDATE, ">orthNamesUpdateList.unl") || die "Cannot open orthNamesUpdateList.unl : $!\n";
-open (ZFNAMEREPORT, ">inconsistentZebrafishGeneNamesReport") ||  die "Cannot open inconsistentZebrafishGeneNamesReport : $!\n";
+open (ORTHNAMEREPORT, ">orthNamesUpdatedReport.txt") || die "Cannot open orthNamesUpdatedReport : $!\n";
+open (ORTHNAMEUPDATE, ">orthNamesUpdateList.txt") || die "Cannot open orthNamesUpdateList.unl : $!\n";
+open (ZFNAMEREPORT, ">inconsistentZebrafishGeneNamesReport.txt") ||  die "Cannot open inconsistentZebrafishGeneNamesReport : $!\n";
 open (PREVIOUSLYREPORTED, ">>alreadyExamined") ||  die "Cannot open alreadyExamined : $!\n";
 
 %zdbGeneIdsAlreadyReported = ();
