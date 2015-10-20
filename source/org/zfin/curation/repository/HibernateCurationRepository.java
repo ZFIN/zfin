@@ -1,5 +1,6 @@
 package org.zfin.curation.repository;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -52,7 +53,7 @@ public class HibernateCurationRepository implements CurationRepository {
                     .add(Restrictions.eq("publication", pub))
                     .add(Restrictions.eq("topic", topic))
                     .list();
-            if (curationList != null) {
+            if (CollectionUtils.isNotEmpty(curationList)) {
                 for (Curation curation : curationList) {
                     if (curation.getClosedDate() == null) {
                         // existing curation topics which haven't been closed yet need to be closed
