@@ -1479,7 +1479,6 @@ public class DTOConversionService {
         return dto;
     }
 
-<<<<<<< HEAD
     public static OrthologDTO convertToOrthologDTO(Ortholog ortholog) {
         OrthologDTO orthologDTO = new OrthologDTO();
         orthologDTO.setZdbID(ortholog.getZdbID());
