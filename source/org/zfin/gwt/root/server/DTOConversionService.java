@@ -1541,6 +1541,6 @@ public class DTOConversionService {
         dto.setLastName(person.getLastName());
         dto.setDisplay(person.getFullName());
         dto.setZdbID(person.getZdbID());
-  
+        return dto;
     }
 }
