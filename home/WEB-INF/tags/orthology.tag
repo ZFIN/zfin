@@ -72,8 +72,8 @@
 
     <c:if test="${!empty orthologyPresentationBean.note}">
         <div class="summary">
-            <b>Orthology Note</b><br>
-            ${orthologyPresentationBean.note}
+            <b>Orthology Note</b>
+            <div class="keep-breaks">${orthologyPresentationBean.note}</div>
         </div>
     </c:if>
 

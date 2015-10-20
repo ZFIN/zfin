@@ -47,30 +47,27 @@ public class HibernateCurationRepository implements CurationRepository {
 
             Date now = new Date();
             Session session = HibernateUtil.currentSession();
-            Curation curation = (Curation) session
+            List<Curation> curationList = (List<Curation>) session
                     .createCriteria(Curation.class)
                     .add(Restrictions.eq("publication", pub))
                     .add(Restrictions.eq("topic", topic))
-                    .uniqueResult();
-            if (curation != null) {
-                if (curation.getClosedDate() == null) {
-                    // existing curation topics which haven't been closed yet need to be closed
-                    if (curation.getOpenedDate() == null) {
-                        // this is a topic in the "new" state -- not opened or closed. Need to set the
-                        // curator, opened and closed date.
-                        curation.setCurator(curator);
-                        curation.setOpenedDate(now);
+                    .list();
+            if (curationList != null) {
+                for (Curation curation : curationList) {
+                    if (curation.getClosedDate() == null) {
+                        // existing curation topics which haven't been closed yet need to be closed
+                        if (curation.getOpenedDate() == null) {
+                            // this is a topic in the "new" state -- not opened or closed. Need to set the
+                            // curator, opened and closed date.
+                            curation.setCurator(curator);
+                            curation.setOpenedDate(now);
+                        }
                         curation.setClosedDate(now);
-                        session.update(curation);
-                    } else {
-                        // a currently open curation topic. just close it, no need to set curator
-                        curation.setClosedDate(now);
-                        session.update(curation);
                     }
                 }
             } else {
                 // curation topic hasn't been created, so make one with no data found and closed
-                curation = new Curation();
+                Curation curation = new Curation();
                 curation.setTopic(topic);
                 curation.setPublication(pub);
                 curation.setCurator(curator);
