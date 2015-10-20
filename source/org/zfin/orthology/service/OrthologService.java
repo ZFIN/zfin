@@ -1,15 +1,11 @@
 package org.zfin.orthology.service;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.zfin.marker.Marker;
 import org.zfin.orthology.*;
 import org.zfin.publication.Publication;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getOrthologyRepository;
 
@@ -35,7 +31,7 @@ public class OrthologService {
         ortholog.setZebrafishGene(gene);
         ortholog.setNcbiOtherSpeciesGene(ncbiGene);
         List<NcbiOrthoExternalReference> ncbiOrthoExternalReferenceList = getOrthologyRepository().getNcbiExternalReferenceList(ncbiGene.getID());
-        Set<OrthologExternalReference> referenceList = new HashSet<>(ncbiOrthoExternalReferenceList.size());
+        SortedSet<OrthologExternalReference> referenceList = new TreeSet<>();
         for (NcbiOrthoExternalReference ref : ncbiOrthoExternalReferenceList) {
             OrthologExternalReference orthoRef = new OrthologExternalReference();
             orthoRef.setAccessionNumber(ref.getAccessionNumber());

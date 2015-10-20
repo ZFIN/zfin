@@ -1,12 +1,11 @@
 package org.zfin.orthology;
 
 import org.zfin.marker.Marker;
-import org.zfin.sequence.ForeignDB;
 
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class Ortholog implements Comparable, Serializable {
@@ -15,7 +14,7 @@ public class Ortholog implements Comparable, Serializable {
     private Marker zebrafishGene;
     private Set<OrthologEvidence> evidenceSet;
     private NcbiOtherSpeciesGene ncbiOtherSpeciesGene;
-    private Set<OrthologExternalReference> externalReferenceList;
+    private SortedSet<OrthologExternalReference> externalReferenceList;
 
     private String name;
     private String symbol;
@@ -48,11 +47,11 @@ public class Ortholog implements Comparable, Serializable {
     }
 
 
-    public Set<OrthologExternalReference> getExternalReferenceList() {
+    public SortedSet<OrthologExternalReference> getExternalReferenceList() {
         return externalReferenceList;
     }
 
-    public void setExternalReferenceList(Set<OrthologExternalReference> externalReferenceList) {
+    public void setExternalReferenceList(SortedSet<OrthologExternalReference> externalReferenceList) {
         this.externalReferenceList = externalReferenceList;
     }
 
@@ -119,16 +118,5 @@ public class Ortholog implements Comparable, Serializable {
                 "organism: " + ncbiOtherSpeciesGene.getOrganism().toString() + lineFeed + evidenceSet;
     }
 
-    public void setExternalReferenceListFromNcbiReferenceList(List<NcbiOrthoExternalReference> ncbiOrthoExternalReferenceList) {
-        Set<OrthologExternalReference> referenceList = new TreeSet<>(new OrthologAccessionSorting());
-        for (NcbiOrthoExternalReference ref : ncbiOrthoExternalReferenceList) {
-            OrthologExternalReference orthoRef = new OrthologExternalReference();
-            orthoRef.setAccessionNumber(ref.getAccessionNumber());
-            orthoRef.setOrtholog(this);
-            orthoRef.setReferenceDatabase(ref.getReferenceDatabase());
-            referenceList.add(orthoRef);
-        }
-        externalReferenceList = referenceList;
-    }
 }
 
