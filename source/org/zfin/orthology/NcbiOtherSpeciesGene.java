@@ -11,7 +11,6 @@ public class NcbiOtherSpeciesGene {
     private String name;
     private String abbreviation;
     private String chromosome;
-    private String position;
     private org.zfin.Species organism;
 
     private Set<NcbiExternalReference> ncbiExternalReferenceList;
@@ -22,14 +21,6 @@ public class NcbiOtherSpeciesGene {
 
     public void setOrganism(org.zfin.Species organism) {
         this.organism = organism;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
     }
 
     public String getChromosome() {

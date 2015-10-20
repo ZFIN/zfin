@@ -67,7 +67,7 @@ public class MarkerService {
      * @return Retuns set of marker relationships related by GENEDOM.
      */
     public static Set<MarkerRelationship> getRelatedGenedomMarkerRelations(Marker marker) {
-        Set<MarkerRelationship> markerRelationships = new HashSet<MarkerRelationship>();
+        Set<MarkerRelationship> markerRelationships = new HashSet<>();
         Set<MarkerRelationship> relationTwo = marker.getSecondMarkerRelationships();
 
         if (relationTwo != null) {
@@ -122,8 +122,8 @@ public class MarkerService {
 //        sequenceInfo.setNumberDBLinks(RepositoryFactory.getSequenceRepository().getNumberDBLinks(marker));
         sequenceInfo.setNumberDBLinks(sequenceInfo.getDbLinks().size());
 
-        List<DBLink> dbLinkSet = new ArrayList<DBLink>();
-        Set<String> types = new HashSet<String>();
+        List<DBLink> dbLinkSet = new ArrayList<>();
+        Set<String> types = new HashSet<>();
         for (DBLink dbLink : sequenceInfo.getDbLinks()) {
             String type = dbLink.getReferenceDatabase().getForeignDBDataType().getDataType().toString();
             if (!types.contains(type)) {
@@ -259,7 +259,7 @@ public class MarkerService {
             return null;
         }
 
-        Set<Marker> markers = new TreeSet<Marker>();
+        Set<Marker> markers = new TreeSet<>();
         if (CollectionUtils.isEmpty(types)) {
             Set<MarkerRelationship> relationOne = marker.getFirstMarkerRelationships();
             Set<MarkerRelationship> relationTwo = marker.getSecondMarkerRelationships();
@@ -323,7 +323,7 @@ public class MarkerService {
      * @return ordered set of RelatedMarkers
      */
     public static TreeSet<RelatedMarker> getRelatedMarkers(Marker marker, MarkerRelationship.Type type) {
-        TreeSet<RelatedMarker> relatedMarkers = new TreeSet<RelatedMarker>();
+        TreeSet<RelatedMarker> relatedMarkers = new TreeSet<>();
 
         for (MarkerRelationship mrel : marker.getFirstMarkerRelationships()) {
             if (mrel.getType().equals(type)) {
@@ -372,7 +372,7 @@ public class MarkerService {
      * @return Set<Marker> object
      */
     public static Set<Marker> getRelatedSmallSegmentGenesFromClone(Marker clone) {
-        Set<MarkerRelationship.Type> types = new HashSet<MarkerRelationship.Type>();
+        Set<MarkerRelationship.Type> types = new HashSet<>();
         types.add(MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT);
         types.add(MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
 
@@ -403,7 +403,7 @@ public class MarkerService {
             return null;
         }
 
-        Set<LinkageGroup> groups = new TreeSet<LinkageGroup>();
+        Set<LinkageGroup> groups = new TreeSet<>();
         // if it is a clone (non-gene) check lg for clone first then the gene.
         Set<String> linkageGroups = lr.getChromosomeLocations(marker);
         if (marker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)) {
@@ -641,8 +641,8 @@ public class MarkerService {
     }
 
     public static Set<Publication> getMarkerRelationshipAttributions(Marker marker) {
-        Set<Publication> publications = new HashSet<Publication>();
-        Set<MarkerRelationship> allRelationships = new HashSet<MarkerRelationship>();
+        Set<Publication> publications = new HashSet<>();
+        Set<MarkerRelationship> allRelationships = new HashSet<>();
 
         for (MarkerRelationship mrel : marker.getFirstMarkerRelationships()) {
             allRelationships.add(mrel);
@@ -664,7 +664,7 @@ public class MarkerService {
     }
 
     public static Set<Publication> getDBLinkPublicaions(Marker marker) {
-        Set<Publication> publications = new HashSet<Publication>();
+        Set<Publication> publications = new HashSet<>();
 
         for (DBLink dblink : marker.getDbLinks()) {
             Set<PublicationAttribution> dblinkPubs = dblink.getPublications();
@@ -681,7 +681,7 @@ public class MarkerService {
 
     public static List<String> getCloneMarkerTypes() {
         // set clone marker types
-        List<String> typeList = new ArrayList<String>();
+        List<String> typeList = new ArrayList<>();
         typeList.add(Marker.Type.BAC.toString());
         typeList.add(Marker.Type.PAC.toString());
         typeList.add(Marker.Type.FOSMID.toString());
@@ -693,7 +693,7 @@ public class MarkerService {
 
     public static List<String> getSuppliers(Marker marker) {
         Set<MarkerSupplier> markerSuppliers = marker.getSuppliers();
-        List<String> supplierList = new ArrayList<String>();
+        List<String> supplierList = new ArrayList<>();
         for (MarkerSupplier markerSupplier : markerSuppliers) {
             supplierList.add(markerSupplier.getOrganization().getName());
         }
@@ -705,7 +705,7 @@ public class MarkerService {
         ActiveData activeData = new ActiveData();
         activeData.setZdbID(marker.getZdbID());
         List<RecordAttribution> recordAttributions = RepositoryFactory.getInfrastructureRepository().getRecordAttributions(activeData);
-        List<String> attributions = new ArrayList<String>();
+        List<String> attributions = new ArrayList<>();
         for (RecordAttribution recordAttribution : recordAttributions) {
             attributions.add(recordAttribution.getSourceZdbID());
         }
@@ -764,7 +764,6 @@ public class MarkerService {
             row.setSpecies(otherGene.getOrganism().getCommonName());
             row.setAbbreviation(otherGene.getAbbreviation());
             row.setChromosome(otherGene.getChromosome());
-            row.setPosition(otherGene.getPosition());
             row.setAccessions(ortholog.getExternalReferenceList());
 
             // Collect all the evidence records by code into a map then pull out the values
@@ -810,7 +809,7 @@ public class MarkerService {
     public static MarkerBean createDefaultViewForMarker(MarkerBean markerBean) {
 
         Marker marker = markerBean.getMarker();
-        logger.debug("marker is:" + marker.getZdbID().toString());
+        logger.debug("marker is:" + marker.getZdbID());
         String zdbID = marker.getZdbID();
         if (Marker.Type.GENE == marker.getType()) {
             List<OmimPhenotype> omimPhenotypes = markerRepository.getOmimPhenotype(marker);
@@ -838,7 +837,7 @@ public class MarkerService {
         markerBean.setSequenceInfo(MarkerService.getSequenceInfoSummary(marker));
 
         // MARKER RELATIONSHIPS (same as clone relationships for gene)
-        List<MarkerRelationshipPresentation> cloneRelationships = new ArrayList<MarkerRelationshipPresentation>();
+        List<MarkerRelationshipPresentation> cloneRelationships = new ArrayList<>();
         cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, true));
         cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, false));
         Collections.sort(cloneRelationships, markerRelationshipSupplierComparator);

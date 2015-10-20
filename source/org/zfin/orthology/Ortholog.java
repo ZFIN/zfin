@@ -3,10 +3,8 @@ package org.zfin.orthology;
 import org.zfin.marker.Marker;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
 public class Ortholog implements Comparable, Serializable {
 
@@ -19,7 +17,6 @@ public class Ortholog implements Comparable, Serializable {
     private String name;
     private String symbol;
     private String chromosome;
-    private String position;
     private boolean obsolete;
 
     public NcbiOtherSpeciesGene getNcbiOtherSpeciesGene() {
@@ -77,14 +74,6 @@ public class Ortholog implements Comparable, Serializable {
 
     public void setObsolete(boolean obsolete) {
         this.obsolete = obsolete;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
     }
 
     public String getSymbol() {

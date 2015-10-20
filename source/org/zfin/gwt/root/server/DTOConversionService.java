@@ -766,23 +766,6 @@ public class DTOConversionService {
         return dto;
     }
 
-//    public static AliasDTO convertToAliasDTO(TermAlias termAlias){
-//        AliasDTO aliasDTO = new AliasDTO();
-//
-//        aliasDTO.setAlias(termAlias.getAlias());
-//        aliasDTO.setSignificance(termAlias.getAliasGroup().getSignificance());
-//
-//        return  aliasDTO ;
-//    }
-//
-//    private static List<AliasDTO> convertToAliasDTO(Set<TermAlias> aliases) {
-//        List<AliasDTO> aliasDTOs = new ArrayList<AliasDTO>();
-//        for(TermAlias termAlias : aliases){
-//            aliasDTOs.add(convertToAliasDTO(termAlias)) ;
-//        }
-//        return aliasDTOs ;
-//    }
-
     private static Set<String> convertToAliasDTO(Set<TermAlias> aliases) {
         Set<String> aliasDTOs = new HashSet<>();
         for (TermAlias termAlias : aliases) {
@@ -1342,6 +1325,7 @@ public class DTOConversionService {
         entity.setZdbID(str.getZdbID());
         return entity;
     }
+
     public static DiseaseAnnotationModelDTO convertDamoToDamoDTO(DiseaseAnnotationModel str) {
         DiseaseAnnotationModelDTO entity = new DiseaseAnnotationModelDTO();
         entity.setEnvironment(convertToEnvironmentDTO(str.getFishExperiment().getExperiment()));
@@ -1350,6 +1334,7 @@ public class DTOConversionService {
 
         return entity;
     }
+
     public static Fish convertToFishFromFishDTO(FishDTO newFish) {
         Fish fish = new Fish();
         if (newFish.getZdbID() != null) {
@@ -1425,9 +1410,9 @@ public class DTOConversionService {
         }
 
 
-
         return damo;
     }
+
     private static FishExperiment convertToFishModel(DiseaseAnnotationDTO diseaseAnnotationDTO) {
         FishExperiment model = new FishExperiment();
         model.setFish(getMutantRepository().getFish(diseaseAnnotationDTO.getFish().getZdbID()));
@@ -1444,32 +1429,24 @@ public class DTOConversionService {
 
     public static DiseaseAnnotationDTO convertToDiseaseModelDTO(DiseaseAnnotation model) {
         DiseaseAnnotationDTO dto = new DiseaseAnnotationDTO();
-        /*dto.setID(model.getID());
-        if (model.getFishExperiment() != null) {
-            dto.setFish(convertToFishDtoFromFish(model.getFishExperiment().getFish()));
-            dto.setEnvironment(convertToEnvironmentDTO(model.getFishExperiment().getExperiment()));
-        }*/
         dto.setPublication(convertToPublicationDTO(model.getPublication()));
 
         dto.setDisease(convertToTermDTO(model.getDisease()));
         dto.setEvidenceCode(model.getEvidenceCode());
         dto.setZdbID(model.getZdbID());
-       /* dto.setFish(null);
-        dto.setEnvironment(null);*/
-       List<DiseaseAnnotationModel> dam=getMutantRepository().getDiseaseAnnotationModelByZdb(model.getZdbID());
+        List<DiseaseAnnotationModel> dam = getMutantRepository().getDiseaseAnnotationModelByZdb(model.getZdbID());
         if (CollectionUtils.isNotEmpty(dam)) {
-            List<DiseaseAnnotationModelDTO> damoDTO = new ArrayList<>(dam.size());;
+            List<DiseaseAnnotationModelDTO> damoDTO = new ArrayList<>(dam.size());
             for (DiseaseAnnotationModel damo : dam) {
                 damoDTO.add(DTOConversionService.convertDamoToDamoDTO(damo));
 
             }
             dto.setDamoDTO(damoDTO);
-        }
-        else {
+        } else {
             dto.setDamoDTO(null);
         }
 
-       return dto;
+        return dto;
     }
 
     public static ZygosityDTO convertToZygosityDTO(Zygosity zygosity) {
@@ -1488,7 +1465,6 @@ public class DTOConversionService {
         orthologDTO.setName(ortholog.getName());
         orthologDTO.setChromosome(ortholog.getChromosome());
         orthologDTO.setSymbol(ortholog.getSymbol());
-        orthologDTO.setPosition(ortholog.getPosition());
         Set<OrthologEvidenceDTO> orthologEvidenceDTOs = new HashSet<>();
         if (CollectionUtils.isNotEmpty(ortholog.getEvidenceSet())) {
             for (OrthologEvidence evidence : ortholog.getEvidenceSet()) {
@@ -1524,7 +1500,6 @@ public class DTOConversionService {
         geneDTO.setAbbreviation(ncbiGene.getAbbreviation());
         geneDTO.setName(ncbiGene.getName());
         geneDTO.setChromosome(ncbiGene.getChromosome());
-        geneDTO.setPosition(ncbiGene.getPosition());
         geneDTO.setOrganism(ncbiGene.getOrganism().getCommonName());
         return geneDTO;
     }
@@ -1533,8 +1508,9 @@ public class DTOConversionService {
         OrthologExternalReferenceDTO dto = new OrthologExternalReferenceDTO();
         dto.setAccessionNumber(reference.getAccessionNumber());
         dto.setReferenceDatabaseDTO(convertToReferenceDatabaseDTO(reference.getReferenceDatabase()));
-      return dto;
+        return dto;
     }
+
     public static PersonDTO convertToPersonDTO(Person person) {
         PersonDTO dto = new PersonDTO();
         dto.setFirstName(person.getFirstName());

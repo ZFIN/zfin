@@ -20,7 +20,6 @@
         <property name="name" column="ortho_other_species_name"/>
         <property name="symbol" column="ortho_other_species_symbol"/>
         <property name="chromosome" column="ortho_other_species_chromosome"/>
-        <property name="position" column="ortho_other_species_position"/>
         <property name="obsolete" column="ortho_other_species_ncbi_gene_is_obsolete"/>
 
         <many-to-one name="zebrafishGene" column="ortho_zebrafish_gene_zdb_id" class="org.zfin.marker.Marker"
@@ -54,7 +53,6 @@
         <property name="name" column="noi_name"/>
         <property name="abbreviation" column="noi_symbol"/>
         <property name="chromosome" column="noi_chromosome" type="string"/>
-        <property name="position" column="noi_position" type="string"/>
 
         <many-to-one name="organism" column="noi_taxid" class="org.zfin.Species"/>
 
