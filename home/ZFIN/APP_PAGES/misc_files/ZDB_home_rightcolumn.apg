@@ -29,8 +29,7 @@
 
         <li>
           Regen
-                        <a href="javascript:document.maps.submit();"><em>Maps</em></a>,
-                        <a href="javascript:document.orthologue.submit();"><em>Orthologue</em></a>
+                        <a href="javascript:document.maps.submit();"><em>Maps</em></a>
 
             <form name="fishsearch" action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi'
 			    method="POST" >
