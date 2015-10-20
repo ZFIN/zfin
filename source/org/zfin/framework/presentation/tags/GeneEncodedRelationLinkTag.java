@@ -49,7 +49,7 @@ public class GeneEncodedRelationLinkTag extends BodyTagSupport {
         try {
             if (this.accession != null) {
                 Set<MarkerDBLink> markerLinks = accession.getBlastableMarkerDBLinks();
-                List<Marker> markers = new ArrayList<Marker>();
+                List<Marker> markers = new ArrayList<>();
                 for (MarkerDBLink link : markerLinks) {
                     if (link.getMarker() != null) {
                         markers.add(link.getMarker());

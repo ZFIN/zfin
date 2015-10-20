@@ -12,10 +12,11 @@
 
 
 <c:forEach var="formBean" items="${orthologyBeanList}">
-
+    <h4>Orthology for <zfin:link entity="${formBean.marker}"/></h4>
     <zfin2:orthology orthologyPresentationBean="${formBean.orthologyPresentationBean}"
-                     marker="${formBean.marker}" showTitle="false"
-                     webdriverPathFromRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
+                     marker="${formBean.marker}"
+                     showTitle="false"
+                     hideCounts="true"/>
 
     <hr/>
 </c:forEach>

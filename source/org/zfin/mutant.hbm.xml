@@ -307,7 +307,7 @@
         </id>
         <property name="name" column="omimp_name"/>
         <property name="omimNum" column="omimp_omim_id"/>
-        <many-to-one name="orthologue" column="omimp_ortho_zdb_id"/>
+        <many-to-one name="ortholog" column="omimp_ortho_zdb_id"/>
 
         <set name="externalReferences" lazy="true" table="omimp_termxref_mapping" access="field">
             <key column="otm_omimp_id"/>

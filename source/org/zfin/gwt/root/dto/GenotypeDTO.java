@@ -17,6 +17,15 @@ public class GenotypeDTO extends RelatedEntityDTO {
     private List<FeatureDTO> featureList;
     private List<ExternalNoteDTO> publicNotes;
     private List<CuratorNoteDTO> privateNotes;
+    private boolean wildtype;
+
+    public boolean isWildtype() {
+        return wildtype;
+    }
+
+    public void setWildtype(boolean wildtype) {
+        this.wildtype = wildtype;
+    }
 
     public GenotypeDTO() {
     }

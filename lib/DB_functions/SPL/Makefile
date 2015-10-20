@@ -28,7 +28,7 @@ SUBDIRS = Regen_names Regen_genox regen_clean_expression
 # 2. Generic or static.  The makefile needs to know this.
 
 DBLINK_STATS = get_dblink_acc_num_display.sql p_dblink_has_parent.sql \
-	       p_check_caps_acc_num.sql p_one_ortho_per_db.sql p_update_dblink_length.sql \
+	       p_check_caps_acc_num.sql  p_update_dblink_length.sql \
 	       get_genbank_dblink_length_type.sql increment_candidate_occurrences.sql \
 	       getZfinAccessionNumberNoInsert.sql \
 	       getZfinAccessionNumber.sql \
@@ -95,7 +95,7 @@ PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 
 PER_STATS    = get_person_full_name.sql	 
 
-REGEN_GNRCS  = regen_fish_components.sql regen_oevdisp.sql regen_genotype_display.sql regen_accession.sql\
+REGEN_GNRCS  = regen_fish_components.sql regen_genotype_display.sql regen_accession.sql\
 	       regen_panelcount.sql regen_maps.sql regen_feature_term_fast_search.sql regen_anatomy.sql regen_term.sql regen_pheno_term.sql regen_expression_term_fast_search.sql regen_anatomy_counts.sql
 REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql add_ab_ao_fast_search.sql  
 ZDB_GNRCS    = table_exists.sql  

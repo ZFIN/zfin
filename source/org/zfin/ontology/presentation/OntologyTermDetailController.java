@@ -19,6 +19,8 @@ import org.zfin.mutant.*;
 import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.publication.Publication;
+import org.zfin.publication.presentation.PublicationListAdapter;
+import org.zfin.publication.presentation.PublicationListBean;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
@@ -320,7 +322,9 @@ public class OntologyTermDetailController {
         }
         model.addAttribute("term", term);
         model.addAttribute("orderBy", orderBy);
-        model.addAttribute("citationList", getInfrastructureRepository().getTermReferences(term, orderBy));
+        PublicationListBean citationBean = new PublicationListAdapter(getInfrastructureRepository().getTermReferences(term, orderBy));
+        citationBean.setOrderBy(orderBy);
+        model.addAttribute("citationList", citationBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
         return "ontology/disease-publication-list.page";
     }
@@ -362,8 +366,9 @@ public class OntologyTermDetailController {
 
         model.addAttribute("fish", fish);
         model.addAttribute("term", disease);
-        model.addAttribute("orderBy", orderBy);
-        model.addAttribute("citationList", citationList);
+        PublicationListBean citationBean = new PublicationListAdapter(citationList);
+        citationBean.setOrderBy(orderBy);
+        model.addAttribute("citationList", citationBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
         return "ontology/fish-model-publication-list.page";
     }

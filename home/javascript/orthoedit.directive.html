@@ -1,0 +1,133 @@
+<table class="primary-entity-attributes">
+    <tr>
+        <th>Import from NCBI</th>
+        <td>
+            <form class="curation-form curation-inline">
+                <input type="text" ng-model="vm.ncbiGeneNumber" ng-change="vm.ncbiError = ''">
+                <button class="zfin-button" ng-click="vm.addOrtholog()">Import</button>
+                <div class="error" ng-show="vm.ncbiError">{{vm.ncbiError}}</div>
+            </form>
+        </td>
+    </tr>
+</table>
+
+<hr>
+
+<div class="error" ng-show="vm.generalError">{{vm.generalError}}</div>
+<table class="summary basicstripes">
+    <thead>
+    <tr>
+        <th></th>
+        <th>Species</th>
+        <th>Symbol</th>
+        <th>Chromosome</th>
+        <th>Accession #</th>
+        <th>Evidence</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-show="vm.orthologs.length == 0">
+        <td class="no-data" colspan="6">No Orthologs Yet</td>
+    </tr>
+    <tr ng-repeat="ortholog in vm.orthologs">
+        <td><a href="#" ng-click="vm.confirmDeleteOrtholog(ortholog)">Delete</a></td>
+        <td>{{ortholog.ncbiOtherSpeciesGeneDTO.organism}}</td>
+        <td><i>{{ortholog.ncbiOtherSpeciesGeneDTO.abbreviation}}</i></td>
+        <td>{{ortholog.ncbiOtherSpeciesGeneDTO.chromosome}}</td>
+        <td>
+            <div ng-repeat="reference in ortholog.orthologExternalReferenceDTOSet">
+                <a ng-href="{{reference.referenceDatabaseDTO.url}}{{reference.accessionNumber}}">
+                    {{reference.referenceDatabaseDTO.name}}:{{reference.accessionNumber}}
+                </a>
+            </div>
+        </td>
+        <td>
+            <div ng-repeat="(pubId, ev) in ortholog.evidenceMap">
+                <a ng-href="/{{ev.publication.zdbID}}" ng-attr-title="{{ev.publication.citation}}">
+                    {{ev.publication.zdbID | pub}}
+                </a>: {{ev.asList()}}
+                <a href class="clickable" ng-click="vm.editEvidence(ortholog, ev, $index)"><i class="fa fa-fw fa-pencil"></i></a>
+                <a href class="clickable" ng-click="vm.deleteEvidence(ortholog, ev)"><i class="fa fa-fw fa-trash"></i></a>
+            </div>
+            <a href="#" ng-click="vm.addEvidence(ortholog)">Add</a>
+        </td>
+    </tr>
+</table>
+
+<h3>Orthology Note</h3>
+<div class="curation-form">
+    <div class="error" ng-show="vm.noteError">{{vm.noteError}}</div>
+    <div ng-click="vm.editNote()" ng-hide="vm.noteEditing" class="inline-edit" title="Click to edit">
+        <div ng-show="vm.note.note" class="keep-breaks">{{vm.note.note}}</div>
+        <div ng-hide="vm.note.note" class="muted">Click to add</div>
+    </div>
+    <div ng-show="vm.noteEditing">
+        <textarea ng-model="vm.noteText" rows="5"></textarea>
+        <button ng-click="vm.saveNoteEdit()" class="zfin-button approve">Save</button>
+        <button ng-click="vm.cancelNoteEdit()" class="zfin-button cancel">Cancel</button>
+    </div>
+</div>
+
+<div id="evidence-modal" class="jq-modal curation">
+    <h3>
+        Evidence for {{vm.modalOrtholog.ncbiOtherSpeciesGeneDTO.organism}}
+        <i>{{vm.modalOrtholog.ncbiOtherSpeciesGeneDTO.abbreviation}}</i> ortholog
+    </h3>
+    <div class="curation-form">
+        <label>Publication</label>
+        <div class="list-select">
+            <input pub-display
+                   type="text"
+                   class="list-select-text"
+                   ng-model="vm.modalEvidence.publication.zdbID"
+                   ng-disabled="vm.modalEvidenceIndex > -1"
+                   ng-change="vm.checkPub()">
+            <ul class="list-select-options">
+                <li ng-repeat="pub in vm.pubs" ng-click="vm.selectPub(pub)">
+                    {{pub.zdbID | pub}}
+                </li>
+            </ul>
+        </div>
+
+        <div class="error" ng-show="vm.evidencePublicationError">
+            {{vm.evidencePublicationError}}
+        </div>
+
+        <p class="warning" ng-show="vm.evidencePublicationWarning">
+            {{vm.modalEvidence.publication.zdbID | pub}} is already a reference for
+            {{vm.modalOrtholog.ncbiOtherSpeciesGeneDTO.organism}}
+            <i>{{vm.modalOrtholog.ncbiOtherSpeciesGeneDTO.abbreviation}}</i> orthology. You
+            are now editing the existing record.
+        </p>
+
+        <label>Evidence Codes</label>
+        <div class="list-select keep-open">
+            <input class="list-select-text" ng-value="vm.modalEvidence.asList()" readonly>
+            <ul class="list-select-options">
+                <li ng-repeat="code in vm.modalEvidence.codes">
+                    <label>
+                        <input type="checkbox" ng-model="code.selected" ng-change="vm.evidenceCodeError = ''">
+                        {{code.name}} ({{code.code}})
+                    </label>
+                </li>
+            </ul>
+        </div>
+        <div class="error" ng-show="vm.evidenceCodeError">{{vm.evidenceCodeError}}</div>
+
+        <div class="popup-actions">
+            <button class="zfin-button cancel" ng-click="vm.cancelEvidence()">Cancel</button>
+            <button class="zfin-button approve" ng-click="vm.saveEvidence()">Save</button>
+        </div>
+    </div>
+</div>
+
+<div id="delete-modal" class="jq-modal curation">
+    <h3>
+        Delete {{vm.modalOrtholog.ncbiOtherSpeciesGeneDTO.organism}}
+        <i>{{vm.modalOrtholog.ncbiOtherSpeciesGeneDTO.abbreviation}}</i> ortholog?
+    </h3>
+    <div class="popup-actions">
+        <button class="zfin-button cancel" ng-click="vm.cancelDelete()">Cancel</button>
+        <button class="zfin-button reject" ng-click="vm.deleteOrtholog()">Delete</button>
+    </div>
+</div>

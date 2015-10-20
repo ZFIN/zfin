@@ -42,11 +42,10 @@ create index omimPhenotypesAndGenes_phenotype_idx on omimPhenotypesAndGenes(phen
 load from pre_load_input_omim.txt insert into omimPhenotypesAndGenes;
 
 insert into omimPhenotypesAndGenesOrtho 
-  select gene_Zdb_id, gene_omim_num, phenotype, phenotype_omim_id, zdb_id
-    from orthologue, db_link, omimPhenotypesAndGenes
-    where c_gene_id = gene_Zdb_id
-    and gene_omim_num = dblink_acc_num
-    and organism = "Human";
+  select gene_Zdb_id, gene_omim_num, phenotype, phenotype_omim_id, ortho_zdb_id
+    from ortholog, ortholog_external_reference, omimPhenotypesAndGenes
+    where ortho_zebrafish_gene_zdb_id = gene_Zdb_id
+    and gene_omim_num = oef_accession_number;
 
 select count(*) from omimPhenotypesAndGenesOrtho ;
 
@@ -133,13 +132,12 @@ insert into omim_phenotype (omimp_ortho_zdb_id, omimp_name, omimp_omim_id)
 
 --!echo 'check what genes with human ortholog not having disorder records'
 unload to genesWithMIMnotFoundOnOMIMPtable.txt delimiter "	"
- select distinct c_gene_id gene, dblink_acc_num mim
-   from orthologue, db_link 
-  where zdb_id = dblink_linked_recid 
-    and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25" 
-    and organism = "Human"
+ select distinct ortho_zebrafish_gene_zdb_id, oef_accession_number
+   from ortholog, ortholog_external_reference
+  where oef_ortho_zdb_id = ortho_zdb_id
+    and oef_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25" 
     and not exists (select "x" from omim_phenotype
-                     where omimp_ortho_zdb_id = zdb_id);
+                     where omimp_ortho_zdb_id = ortho_zdb_id);
 
 
 --rollback work;

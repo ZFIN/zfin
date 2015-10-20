@@ -24,10 +24,6 @@ create trigger db_link_insert_trigger
 					new_db_link.dblink_fdbcont_zdb_id)
       into db_link.dblink_fdbcont_zdb_id, db_link.dblink_length,
 
-  execute procedure 
-      p_one_ortho_per_db(new_db_link.dblink_fdbcont_zdb_id,
-			 new_db_link.dblink_linked_recid),
-
   execute function get_dblink_acc_num_display(
 			new_db_link.dblink_fdbcont_zdb_id,
 			new_db_link.dblink_acc_num) 

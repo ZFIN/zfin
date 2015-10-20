@@ -12,7 +12,9 @@ import org.zfin.infrastructure.Updates;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.orthology.*;
+import org.zfin.orthology.presentation.OrthologyPresentationRow;
 import org.zfin.orthology.presentation.OrthologySlimPresentation;
+import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -22,6 +24,7 @@ import org.zfin.util.FilterType;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 /**
  * This class creates the calls to Hibernate to retrieve the Orthology information.
@@ -37,20 +40,22 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     public static final String OPEN_BRACKET = "(";
 
     public Object[] getOrthologies(List<SpeciesCriteria> speciesCriteria, ZfinCriteria criteria) {
-        if (criteria.isOrRelationship())
+        if (criteria.isOrRelationship()) {
             return getOrthologiesOr(speciesCriteria, criteria);
+        }
 
         Object[] repositoryResults = new Object[2];
-        List<Orthologs> orthologies = new ArrayList<Orthologs>();
+        List<Orthologs> orthologies = new ArrayList<>();
         repositoryResults[0] = orthologies;
         Session session = HibernateUtil.currentSession();
         StringBuilder hql = new StringBuilder("from ");
 
         for (SpeciesCriteria currentSpecies : speciesCriteria) {
-            if (currentSpecies.getName().equals(Species.ZEBRAFISH.toString()))
+            if (currentSpecies.getName().equals(Species.ZEBRAFISH.toString())) {
                 hql.append(" ZebrafishOrthologyHelper ");
-            else
+            } else {
                 hql.append(" OrthologyHelper ");
+            }
             hql.append(currentSpecies.getName());
             hql.append(",");
         }
@@ -65,10 +70,11 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
             String species = currentSpecies.getName();
             hql.append(AND);
             hql.append(species);
-            if (criteria.isOrRelationship())
+            if (criteria.isOrRelationship()) {
                 hql.append(".vorthy_species = '");
-            else
+            } else {
                 hql.append(".species = '");
+            }
 
             hql.append(species);
             hql.append("'");
@@ -102,29 +108,31 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
 
         // filter out duplicates via hashset.
         // awkward but Hibernate does not do it for you here.
-        List<ZebrafishOrthologyHelper> distinctResult = new ArrayList<ZebrafishOrthologyHelper>();
+        List<ZebrafishOrthologyHelper> distinctResult = new ArrayList<>();
         for (ZebrafishOrthologyHelper helper : results) {
-            if (!distinctResult.contains(helper))
+            if (!distinctResult.contains(helper)) {
                 distinctResult.add(helper);
+            }
         }
 
         for (ZebrafishOrthologyHelper zebrafishOrthologue : distinctResult) {
             Orthologs currentOrthologs = new Orthologs();
             currentOrthologs.setGeneSymbol(zebrafishOrthologue.getSymbol());
-            List<OrthologySpecies> orthologySpecies = new ArrayList<OrthologySpecies>();
+            List<OrthologySpecies> orthologySpecies = new ArrayList<>();
             currentOrthologs.setOrthologSpecies(orthologySpecies);
 
             // ToDo: Do the sorting in the database query
             Set<OrthologyHelper> orthologySet = zebrafishOrthologue.getOrthologies();
-            List<OrthologyHelper> orthologyList = new ArrayList<OrthologyHelper>(orthologySet);
+            List<OrthologyHelper> orthologyList = new ArrayList<>(orthologySet);
             Collections.sort(orthologyList, new OrthologyComparator());
             for (OrthologyHelper currentHelper : orthologyList) {
                 OrthologySpecies currentOrthologySpecies = new OrthologySpecies();
 
                 // if the species is not part of the criteria skip it.
                 // Todo: Find a way to not even retrieve the species
-                if (!requestedSpecies(currentHelper.getSpecies(), speciesCriteria))
+                if (!requestedSpecies(currentHelper.getSpecies(), speciesCriteria)) {
                     continue;
+                }
 
                 if (currentHelper.getSpecies().equals(Species.ZEBRAFISH.toString())) {
                     currentOrthologySpecies.setSpecies(Species.ZEBRAFISH);
@@ -141,12 +149,12 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
                     currentOrthologySpecies.setSpecies(Species.YEAST);
                 }
 
-                List<OrthologyItem> currentOrthItems = new ArrayList<OrthologyItem>();
+                List<OrthologyItem> currentOrthItems = new ArrayList<>();
                 currentOrthologySpecies.setItems(currentOrthItems);
                 OrthologyItem currentOrthItem = new OrthologyItem();
                 currentOrthItems.add(currentOrthItem);
                 currentOrthItem.setSymbol(currentHelper.getSymbol());
-                List<Chromosome> chromList = new ArrayList<Chromosome>();
+                List<Chromosome> chromList = new ArrayList<>();
                 Chromosome currentChrom = new Chromosome();
                 currentChrom.setNumber(currentHelper.getChromosome());
                 Position currentPos = new Position();
@@ -169,11 +177,13 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     }
 
     private boolean requestedSpecies(String species, List<SpeciesCriteria> speciesCriteria) {
-        if (speciesCriteria == null)
+        if (speciesCriteria == null) {
             return false;
+        }
         for (SpeciesCriteria criteria : speciesCriteria) {
-            if (criteria.getName().equals(species))
+            if (criteria.getName().equals(species)) {
                 return true;
+            }
         }
         return false;
     }
@@ -229,16 +239,16 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     }
 
     private List<Orthologs> createOrthologs(List<ZebrafishOrthologyHelper> results) {
-        List<Orthologs> orthologies = new ArrayList<Orthologs>();
+        List<Orthologs> orthologies = new ArrayList<>();
         for (ZebrafishOrthologyHelper zebrafishOrthologue : results) {
             Orthologs currentOrthologs = new Orthologs();
             currentOrthologs.setGeneSymbol(zebrafishOrthologue.getSymbol());
-            List<OrthologySpecies> orthologySpecies = new ArrayList<OrthologySpecies>();
+            List<OrthologySpecies> orthologySpecies = new ArrayList<>();
             currentOrthologs.setOrthologSpecies(orthologySpecies);
 
             // ToDo: Do the sorting in the database query
             Set<OrthologyHelper> orthologySet = zebrafishOrthologue.getOrthologies();
-            List<OrthologyHelper> orthologyList = new ArrayList<OrthologyHelper>(orthologySet);
+            List<OrthologyHelper> orthologyList = new ArrayList<>(orthologySet);
             Collections.sort(orthologyList, new OrthologyComparator());
             for (OrthologyHelper currentHelper : orthologyList) {
                 OrthologySpecies currentOrthologySpecies = new OrthologySpecies();
@@ -258,12 +268,12 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
                     currentOrthologySpecies.setSpecies(Species.YEAST);
                 }
 
-                List<OrthologyItem> currentOrthItems = new ArrayList<OrthologyItem>();
+                List<OrthologyItem> currentOrthItems = new ArrayList<>();
                 currentOrthologySpecies.setItems(currentOrthItems);
                 OrthologyItem currentOrthItem = new OrthologyItem();
                 currentOrthItems.add(currentOrthItem);
                 currentOrthItem.setSymbol(currentHelper.getSymbol());
-                List<Chromosome> chromList = new ArrayList<Chromosome>();
+                List<Chromosome> chromList = new ArrayList<>();
                 Chromosome currentChrom = new Chromosome();
                 currentChrom.setNumber(currentHelper.getChromosome());
                 Position currentPos = new Position();
@@ -286,7 +296,7 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
 
     private Object[] getOrthologiesInOrClause(List<SpeciesCriteria> speciesCriteria, ZfinCriteria criteria) {
         Object[] repositoryResults = new Object[2];
-        List<Orthologs> orthologies = new ArrayList<Orthologs>();
+        List<Orthologs> orthologies = new ArrayList<>();
         repositoryResults[0] = orthologies;
         Session session = HibernateUtil.currentSession();
         StringBuilder fullSql = new StringBuilder();
@@ -299,8 +309,9 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
             if (!currentSpecies.getName().equals(Species.ZEBRAFISH.toString())) {
                 sql.append(" OUTER ");
                 sql.append(" Orthology_view ");
-            } else
+            } else {
                 sql.append(" Orthology_view ");
+            }
             sql.append(currentSpecies.getName());
             sql.append(",");
         }
@@ -333,8 +344,9 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
 
 
         String orderByClause = criteria.getOrderByClause();
-        if (criteria.isOrRelationship())
+        if (criteria.isOrRelationship()) {
             orderByClause = StringUtils.replace(orderByClause, "symbol", "vorthy_gene_abbrev");
+        }
         fullSql.append(orderByClause);
 
         SQLQuery query = session.createSQLQuery(fullSql.toString());
@@ -349,13 +361,14 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
             Orthologs currentOrthologs = new Orthologs();
             OrthologyHelper zebrafishHelper = (OrthologyHelper) currentOrthologyArray[0];
             currentOrthologs.setGeneSymbol(zebrafishHelper.getSymbol());
-            List<OrthologySpecies> orthologySpecies = new ArrayList<OrthologySpecies>();
+            List<OrthologySpecies> orthologySpecies = new ArrayList<>();
             currentOrthologs.setOrthologSpecies(orthologySpecies);
 
             for (Object aCurrentOrthologyArray : currentOrthologyArray) {
                 OrthologyHelper currentHelper = (OrthologyHelper) aCurrentOrthologyArray;
-                if (currentHelper == null)
+                if (currentHelper == null) {
                     continue;
+                }
 
                 OrthologySpecies currentOrthologySpecies = new OrthologySpecies();
 
@@ -374,12 +387,12 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
                     currentOrthologySpecies.setSpecies(Species.YEAST);
                 }
 
-                List<OrthologyItem> currentOrthItems = new ArrayList<OrthologyItem>();
+                List<OrthologyItem> currentOrthItems = new ArrayList<>();
                 currentOrthologySpecies.setItems(currentOrthItems);
                 OrthologyItem currentOrthItem = new OrthologyItem();
                 currentOrthItems.add(currentOrthItem);
                 currentOrthItem.setSymbol(currentHelper.getSymbol());
-                List<Chromosome> chromList = new ArrayList<Chromosome>();
+                List<Chromosome> chromList = new ArrayList<>();
                 Chromosome currentChrom = new Chromosome();
                 currentChrom.setNumber(currentHelper.getChromosome());
                 Position currentPos = new Position();
@@ -418,7 +431,7 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     }
 
     private List<AccessionItem> populuateAccessionLinks(List<AccessionHelperDBLink> accessionResults) {
-        List<AccessionItem> accessionItems = new ArrayList<AccessionItem>();
+        List<AccessionItem> accessionItems = new ArrayList<>();
 
         for (AccessionHelperDBLink currentAccessionHelper : accessionResults) {
             AccessionItem currentItem = new AccessionItem();
@@ -441,12 +454,14 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     public void createPositionWhereClause(SpeciesCriteria currentSpecies, StringBuilder hql) {
         String species = currentSpecies.getName();
         PositionCriteria position = currentSpecies.getPosition();
-        if (position == null)
+        if (position == null) {
             return;
+        }
 
         // Exclude ZF
-        if (species.equals(Species.ZEBRAFISH.toString()))
+        if (species.equals(Species.ZEBRAFISH.toString())) {
             return;
+        }
 
         hql.append(AND);
         hql.append(species);
@@ -483,8 +498,9 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
 
     public void createCromosomeWhereClause(SpeciesCriteria currentSpecies, StringBuilder hql, ZfinCriteria criteria) {
         ChromosomeCriteria chromosome = currentSpecies.getChromosome();
-        if (chromosome == null || !chromosome.hasChromosomeNames())
+        if (chromosome == null || !chromosome.hasChromosomeNames()) {
             return;
+        }
 
         hql.append(AND);
         hql.append(currentSpecies.getName());
@@ -527,8 +543,9 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     public void createGeneSymbolWhereClause(SpeciesCriteria currentSpecies, StringBuilder hql, boolean isOrRelation) {
         String species = currentSpecies.getName();
         GeneSymbolCriteria symbol = currentSpecies.getSymbol();
-        if (symbol == null)
+        if (symbol == null) {
             return;
+        }
 
         hql.append(" AND upper");
         hql.append(OPEN_BRACKET);
@@ -578,16 +595,18 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
                     hql.append(AND);
                 }
                 hql.append(lastSpecies);
-                if (isOrRelationhip)
+                if (isOrRelationhip) {
                     hql.append(".vorthy_gene_zdb_id");
-                else
+                } else {
                     hql.append(".geneID");
+                }
                 hql.append("=");
                 hql.append(currentSpecies.getName());
-                if (isOrRelationhip)
+                if (isOrRelationhip) {
                     hql.append(".vorthy_gene_zdb_id");
-                else
+                } else {
                     hql.append(".geneID");
+                }
             }
         }
 
@@ -621,117 +640,48 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     /**
      * Save a new orthology including evidence codes.
      * In addition, a record attribution is created as well.
-     * <p/>
-     * Constraints:
-     * Each zfin gene can have only one orthologous gene per species.
-     * <p/>
-     * Note: Each evidence code needs to also update the fast search table!
-     * This method also creates the DB links (related accessions for
-     * this ZF orthology.
      *
-     * @param orthologue  Orthologue object
+     * @param ortholog    Ortholog object
      * @param publication Publication object
      */
-    public void saveOrthology(Orthologue orthologue, Publication publication, Updates up) {
+    public void saveOrthology(Ortholog ortholog, Publication publication) {
 
-        currentSession().save(orthologue);
-        up.setSubmitterID(ProfileService.getCurrentSecurityUser().getZdbID());
-        up.setSubmitterName(ProfileService.getCurrentSecurityUser().getUsername());
+        currentSession().save(ortholog);
+
+        Updates up = new Updates();
+        up.setRecID(ortholog.getZebrafishGene().getZdbID());
+        up.setFieldName("Ortholog");
+        up.setNewValue(ortholog.getNcbiOtherSpeciesGene().getOrganism().getCommonName());
+        up.setComments("Create new ortholog record.");
+        up.setSubmitterID(getCurrentSecurityUser().getZdbID());
+        up.setSubmitterName(getCurrentSecurityUser().getUsername());
+        up.setWhenUpdated(new Date());
         currentSession().save(up);
-        String orthologyZdbID = orthologue.getZdbID();
-        Set<OrthoEvidence> evidences = orthologue.getEvidences();
-        for (OrthoEvidence evidence : evidences) {
-            evidence.setOrthologueZdbID(orthologyZdbID);
-            currentSession().save(evidence);
+        String orthologyZdbID = ortholog.getZdbID();
+        // create record attribution record if exists
+        if (publication != null) {
+            getInfrastructureRepository().insertRecordAttribution(orthologyZdbID, publication.getZdbID());
         }
-        // create record attribution record
-        RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(orthologyZdbID, publication.getZdbID());
-        // create DB links
-        MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-        mr.addOrthoDBLink(orthologue, orthologue.getAccession());
-
+        currentSession().flush();
     }
 
-    public void updateFastSearchEvidenceCodes(Set<Orthologue> orthologues) {
-        Set<OrthologyEvidenceFastSearch> fastSearches = OrthologyEvidenceService.getOrthoEvidenceFastSearches(orthologues);
+    private Person getCurrentSecurityUser() {
+        Person currentSecurityUser = ProfileService.getCurrentSecurityUser();
+        if (currentSecurityUser == null) {
+            throw new RuntimeException("No Authenticated User. Please log in first.");
+        }
+
+        return currentSecurityUser;
+    }
+
+    public void updateFastSearchEvidenceCodes(Set<Ortholog> orthologs) {
+        Set<OrthologyEvidenceFastSearch> fastSearches = OrthologyEvidenceService.getOrthoEvidenceFastSearches(orthologs);
         for (OrthologyEvidenceFastSearch fastSearch : fastSearches) {
             currentSession().save(fastSearch);
             String orthologyFastSearchZdbID = fastSearch.getZdbID();
-            RepositoryFactory.getInfrastructureRepository().
+            getInfrastructureRepository().
                     insertRecordAttribution(orthologyFastSearchZdbID, fastSearch.getPublication().getZdbID());
         }
-    }
-
-    @Override
-    public List<OrthologyPresentationRow> getOrthologyForGene(Marker m) {
-        return getOrthologyForGene(m, null);
-    }
-
-    public List<OrthologyPresentationRow> getOrthologyForGene(Marker m, Publication publication) {
-        String sql = " select distinct o.organism ,o.ortho_abbrev,o.ortho_chromosome, " +
-                "o.ortho_position,oe.oev_evidence_code , fdb.fdb_db_name,dbl.dblink_acc_num, " +
-                "fdb.fdb_db_query,fdb.fdb_url_suffix " +
-                "from orthologue o  " +
-                "join orthologue_evidence oe on o.zdb_id=oe.oev_ortho_zdb_id " +
-                "left outer join db_link dbl on o.zdb_id=dbl.dblink_linked_recid " +
-                "left join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
-                "left join foreign_db fdb on fdb.fdb_db_pk_id=fdbc.fdbcont_fdb_db_id " +
-                "where o.c_gene_id=:markerZdbId ";
-        if (publication != null)
-            sql += " and oe.oev_pub_zdb_id = :pubID";
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql)
-                .setString("markerZdbId", m.getZdbID());
-        if (publication != null)
-            query.setString("pubID", publication.getZdbID());
-        return query.setResultTransformer(new ResultTransformer() {
-            @Override
-            public Object transformTuple(Object[] tuple, String[] aliases) {
-                OrthologyPresentationRow row = new OrthologyPresentationRow();
-                row.setSpecies(tuple[0].toString());
-                row.setAbbreviation(tuple[1].toString());
-                if (tuple[2] != null) {
-                    row.setChromosome(tuple[2].toString());
-                }
-                if (tuple[3] != null) {
-                    row.setPosition(tuple[3].toString());
-                }
-                if (tuple[4] != null) {
-                    row.addEvidenceCode(tuple[4].toString());
-                }
-                if (tuple[6] != null) {
-                    row.addAccession(DBLinkPresentation.getGeneralHyperLink(
-                            tuple[7].toString() + tuple[6]
-                                    + (tuple[8] != null ? tuple[8].toString() : ""),   // url
-                            tuple[5] + ":" + tuple[6])      // name
-                    );
-                }
-
-
-                return row;
-            }
-
-            /**
-             * Here we compact the list.
-             * @param collection
-             * @return
-             */
-            @Override
-            public List transformList(List collection) {
-                Map<String, OrthologyPresentationRow> condensed = new HashMap<String, OrthologyPresentationRow>();
-                for (Iterator iter = collection.iterator(); iter.hasNext(); ) {
-                    OrthologyPresentationRow row = (OrthologyPresentationRow) iter.next();
-                    if (condensed.containsKey(row.getSpecies())) {
-                        OrthologyPresentationRow rowInstance = condensed.get(row.getSpecies());
-                        rowInstance.copyFrom(row);
-                    } else {
-                        condensed.put(row.getSpecies(), row);
-                    }
-                }
-
-                return new ArrayList<OrthologyPresentationRow>(condensed.values());
-            }
-        })
-                .list();
     }
 
     @Override
@@ -764,27 +714,103 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     @Override
     public List<String> getEvidenceCodes(Marker gene, Publication publication) {
 
-        String sql = " select distinct oe.orthologueEvidenceCode , ec.order " +
-                "from Orthologue o , OrthoEvidence oe, EvidenceCode ec " +
-                "where o.zdbID=oe.orthologueZdbID " +
-                "and ec.code=oe.orthologueEvidenceCode " +
-                "and o.gene = :gene ";
-        if (publication != null)
-            sql += "and oe.publication = :publication ";
-        sql += "order by ec.order  ";
-
+        String sql = " from Ortholog " +
+                "where zebrafishGene = :gene ";
 
         Query query = HibernateUtil.currentSession().createQuery(sql)
                 .setParameter("gene", gene);
-        if (publication != null)
-            query.setParameter("publication", publication);
 
-        return query.setResultTransformer(new BasicTransformerAdapter() {
-            @Override
-            public Object transformTuple(Object[] tuple, String[] aliases) {
-                return tuple[0].toString();
+        List<Ortholog> orthologs = (List<Ortholog>) query.list();
+
+        Set<EvidenceCode> evidenceCodes = new HashSet<>();
+        for (Ortholog ortholog : orthologs) {
+            for (OrthologEvidence evidence : ortholog.getEvidenceSet()) {
+                if (publication == null || evidence.getPublication().equals(publication)) {
+                    evidenceCodes.add(evidence.getEvidenceCode());
+                }
             }
-        })
-                .list();
+        }
+        List<String> evidenceCodeNames = new ArrayList<>();
+        for (EvidenceCode code : evidenceCodes) {
+            evidenceCodeNames.add(code.getCode());
+        }
+        return evidenceCodeNames;
+
     }
+
+    @Override
+    public List<Ortholog> getOrthologs(String zdbID) {
+        String sql = "from Ortholog " +
+                "where ";
+
+        return null;
+    }
+
+    @Override
+    public List<Ortholog> getOrthologs(Marker gene) {
+        String sql = "from Ortholog " +
+                "where zebrafishGene = :gene " +
+                "order by ncbiOtherSpeciesGene.organism.displayOrder, symbol";
+        Query query = HibernateUtil.currentSession().createQuery(sql);
+        query.setParameter("gene", gene);
+        return (List<Ortholog>) query.list();
+    }
+
+    @Override
+    public NcbiOtherSpeciesGene getNcbiGene(String ncbiID) {
+        return (NcbiOtherSpeciesGene) HibernateUtil.currentSession().get(NcbiOtherSpeciesGene.class, ncbiID);
+    }
+
+    @Override
+    public List<EvidenceCode> getEvidenceCodes() {
+        return HibernateUtil.currentSession().createCriteria(EvidenceCode.class).list();
+    }
+
+    @Override
+    public EvidenceCode getEvidenceCode(String name) {
+        return (EvidenceCode) HibernateUtil.currentSession().get(EvidenceCode.class, name);
+    }
+
+    @Override
+    public Ortholog getOrtholog(String orthID) {
+        return (Ortholog) HibernateUtil.currentSession().get(Ortholog.class, orthID);
+    }
+
+    @Override
+    public void deleteOrtholog(Ortholog ortholog) {
+        Person currentSecurityUser = getCurrentSecurityUser();
+
+        Session session = HibernateUtil.currentSession();
+        session.delete(ortholog);
+        int numOfRecords = getInfrastructureRepository().deleteRecordAttributionsForData(ortholog.getZdbID());
+        Updates up = new Updates();
+        up.setRecID(ortholog.getZdbID());
+        up.setFieldName("Ortholog");
+        up.setOldValue(ortholog.getZdbID());
+        up.setComments("Delete Ortholog");
+        up.setWhenUpdated(new Date());
+        up.setSubmitterID(currentSecurityUser.getZdbID());
+        up.setSubmitterName(currentSecurityUser.getUsername());
+        session.save(up);
+    }
+
+    @Override
+    public Ortholog getOrthologByGeneAndNcbi(Marker gene, NcbiOtherSpeciesGene ncbiGene) {
+        String hql = "from Ortholog where " +
+                "zebrafishGene = :zebrafishGene and ncbiOtherSpeciesGene = :otherSpeciesGene ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("zebrafishGene", gene);
+        query.setParameter("otherSpeciesGene", ncbiGene);
+        return (Ortholog) query.uniqueResult();
+    }
+
+    @Override
+    public List<NcbiOrthoExternalReference> getNcbiExternalReferenceList(String ncbiID) {
+        String hql = "from NcbiOrthoExternalReference where " +
+                "ncbiOtherSpeciesGene.ID = :accessionNumber  ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("accessionNumber", ncbiID);
+        return (List<NcbiOrthoExternalReference>) query.list();
+    }
+
 }

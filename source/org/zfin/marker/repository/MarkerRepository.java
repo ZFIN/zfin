@@ -2,8 +2,8 @@ package org.zfin.marker.repository;
 
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
-import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructComponent;
+import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.presentation.ConstructComponentPresentation;
 import org.zfin.feature.Feature;
 import org.zfin.framework.presentation.LookupEntry;
@@ -14,11 +14,10 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.orthology.Orthologue;
+import org.zfin.orthology.Ortholog;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.*;
@@ -104,7 +103,7 @@ public interface MarkerRepository {
      * @param gene gene
      * @param note note text
      */
-    void createOrUpdateOrthologyExternalNote(Marker gene, String note);
+    OrthologyNote createOrUpdateOrthologyExternalNote(Marker gene, String note);
 
     void editAntibodyExternalNote(String notezdbid, String note);
 
@@ -152,7 +151,7 @@ public interface MarkerRepository {
 
     DBLink addDBLink(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID);
 
-    void addOrthoDBLink(Orthologue orthologue, EntrezProtRelation accessionNumber);
+    void addOrthoDBLink(Ortholog ortholog, EntrezProtRelation accessionNumber);
 
     MarkerHistory getLastMarkerHistory(Marker marker, MarkerHistory.Event event);
 

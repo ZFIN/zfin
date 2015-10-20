@@ -59,7 +59,7 @@ public class OntologyService {
 
     public static List<RelationshipPresentation> getRelatedTermsWithoutStages(GenericTerm term) {
         List<RelationshipPresentation> list = getRelatedTerms(term);
-        List<RelationshipPresentation> newList = new ArrayList<RelationshipPresentation>(list.size());
+        List<RelationshipPresentation> newList = new ArrayList<>(list.size());
         for (RelationshipPresentation presentation : list) {
             if (!presentation.getType().equalsIgnoreCase("start stage") && !presentation.getType().equalsIgnoreCase("end stage"))
                 newList.add(presentation);
@@ -69,7 +69,7 @@ public class OntologyService {
 
     public static List<RelationshipPresentation> getRelatedTerms(GenericTerm term) {
         logger.debug("get related terms for " + term.getTermName());
-        Map<String, RelationshipPresentation> types = new HashMap<String, RelationshipPresentation>(5);
+        Map<String, RelationshipPresentation> types = new HashMap<>(5);
         List<TermRelationship> relatedItems = term.getAllDirectlyRelatedTerms();
         if (relatedItems != null) {
             for (TermRelationship rel : relatedItems) {
@@ -93,7 +93,7 @@ public class OntologyService {
         } else {
             logger.debug("term has no RelatedTerms");
         }
-        List<RelationshipPresentation> relPresentations = new ArrayList<RelationshipPresentation>(types.size());
+        List<RelationshipPresentation> relPresentations = new ArrayList<>(types.size());
         for (String type : types.keySet()) {
             relPresentations.add(types.get(type));
         }
@@ -110,7 +110,7 @@ public class OntologyService {
     public static Map<OntologyDTO, Integer> getHistogramOfTerms(List<TermDTO> terms) {
         if (terms == null)
             return null;
-        Map<OntologyDTO, Integer> map = new HashMap<OntologyDTO, Integer>(5);
+        Map<OntologyDTO, Integer> map = new HashMap<>(5);
         for (TermDTO term : terms) {
             Integer count = map.get(term.getOntology());
             if (count == null)
@@ -132,11 +132,11 @@ public class OntologyService {
 
 
     public static List<OmimPhenotypeDisplay> getOmimPhenotypeForTerm(GenericTerm term) {
-        SequenceService sequenceService=new SequenceService();
+        SequenceService sequenceService = new SequenceService();
 
         if (term == null)
             return null;
-        Map<String, OmimPhenotypeDisplay> map = new HashMap<String, OmimPhenotypeDisplay>();
+        Map<String, OmimPhenotypeDisplay> map = new HashMap<>();
         Set<TermExternalReference> termXRef = term.getExternalReferences();
         ArrayList<String> hA = new ArrayList<>();
         for (TermExternalReference xRef : termXRef) {
@@ -145,7 +145,7 @@ public class OntologyService {
             for (OmimPhenotype omimResult : omimResults) {
                 // form the key
 
-                String key = omimResult.getOrthologue().getAbbreviation() + omimResult.getName();
+                String key = omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation() + omimResult.getName();
 
                 OmimPhenotypeDisplay omimDisplay;
 
@@ -157,14 +157,14 @@ public class OntologyService {
                 } else {
                     omimDisplay = map.get(key);
                 }
-                omimDisplay.setOrthology(omimResult.getOrthologue());
-                omimDisplay.setHumanAccession(getSequenceRepository().getDBLinkByData(omimResult.getOrthologue().getZdbID(),sequenceService.getOMIMHumanOrthologue()));
+                omimDisplay.setOrthology(omimResult.getOrtholog());
+                omimDisplay.setHumanAccession(getSequenceRepository().getDBLinkByData(omimResult.getOrtholog().getZdbID(), sequenceService.getOMIMHumanOrthologue()));
                 omimDisplay.setName(omimResult.getName());
                 omimDisplay.setOmimNum(omimResult.getOmimNum());
-                omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrthologue().getAbbreviation()));
-                if (omimResult.getOrthologue() != null) {
+                omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation()));
+                if (omimResult.getOrtholog() != null) {
 
-                    hA.add(omimResult.getOrthologue().getAbbreviation());
+                    hA.add(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation());
                     omimDisplay.setHumanGene(hA);
                 }
 
@@ -173,7 +173,7 @@ public class OntologyService {
         }
 
         // use SortedSet to hold the values of the map so that the data could be displayed in order
-        List<OmimPhenotypeDisplay> omimDisplays = new ArrayList<OmimPhenotypeDisplay>();
+        List<OmimPhenotypeDisplay> omimDisplays = new ArrayList<>();
 
         if (map.values().size() > 0)
             omimDisplays.addAll(map.values());
@@ -189,7 +189,7 @@ public class OntologyService {
     }
 
     public static List<FishModelDisplay> getDiseaseModels(GenericTerm disease) {
-               return getDiseaseModels(disease, false);
+        return getDiseaseModels(disease, false);
     }
 
     public static List<FishModelDisplay> getDiseaseModels(GenericTerm disease, boolean fishModelRequired) {
@@ -200,7 +200,6 @@ public class OntologyService {
         Map<FishExperiment, FishModelDisplay> map = new HashMap<>();
         for (DiseaseAnnotationModel model : modelList) {
             // ignore disease models without fish models
-
             if(model ==null)
                 continue;
 

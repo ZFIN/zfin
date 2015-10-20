@@ -32,7 +32,9 @@ import org.zfin.mutant.presentation.Construct;
 import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
 import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
-import org.zfin.orthology.Species;
+import org.zfin.orthology.*;
+import org.zfin.orthology.presentation.OrthologEvidenceDTO;
+import org.zfin.orthology.presentation.OrthologExternalReferenceDTO;
 import org.zfin.profile.CuratorSession;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Organization;
@@ -302,6 +304,7 @@ public class DTOConversionService {
         if (referenceDatabase.getPrimaryBlastDatabase() != null) {
             referenceDatabaseDTO.setBlastName(referenceDatabase.getPrimaryBlastDatabase().getName());
         }
+        referenceDatabaseDTO.setUrl(referenceDatabase.getForeignDB().getDbUrlPrefix());
         return referenceDatabaseDTO;
     }
 
@@ -414,6 +417,7 @@ public class DTOConversionService {
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
         genotypeDTO.setNickName(genotype.getNickname());
+        //genotypeDTO.setWildtype(genotype.isWildtype());
         if (genotype.getAssociatedGenotypes() != null) {
             for (Genotype background : genotype.getAssociatedGenotypes())
                 genotypeDTO.addBackgroundGenotype(convertToPureGenotypeDTOs(background));
@@ -1474,4 +1478,60 @@ public class DTOConversionService {
         return dto;
     }
 
+    public static OrthologDTO convertToOrthologDTO(Ortholog ortholog) {
+        OrthologDTO orthologDTO = new OrthologDTO();
+        orthologDTO.setZdbID(ortholog.getZdbID());
+        orthologDTO.setZebrafishGene(DTOConversionService.convertToMarkerDTO(ortholog.getZebrafishGene()));
+        orthologDTO.setNcbiOtherSpeciesGeneDTO(DTOConversionService.convertToNcbiOtherSpeciesGeneDTO(ortholog.getNcbiOtherSpeciesGene()));
+
+        orthologDTO.setName(ortholog.getName());
+        orthologDTO.setChromosome(ortholog.getChromosome());
+        orthologDTO.setSymbol(ortholog.getSymbol());
+        orthologDTO.setPosition(ortholog.getPosition());
+        Set<OrthologEvidenceDTO> orthologEvidenceDTOs = new HashSet<>();
+        if (CollectionUtils.isNotEmpty(ortholog.getEvidenceSet())) {
+            for (OrthologEvidence evidence : ortholog.getEvidenceSet()) {
+                orthologEvidenceDTOs.add(DTOConversionService.convertToOrthologEvidenceDTO(evidence));
+            }
+        }
+        orthologDTO.setEvidenceSet(orthologEvidenceDTOs);
+
+        if (ortholog.getExternalReferenceList() != null) {
+            Set<OrthologExternalReferenceDTO> referenceDTOList = new LinkedHashSet<>();
+            for (OrthologExternalReference reference : ortholog.getExternalReferenceList()) {
+                referenceDTOList.add(convertToOrthologExternalReferenceDTO(reference));
+            }
+            orthologDTO.setOrthologExternalReferenceDTOSet(referenceDTOList);
+        }
+
+        return orthologDTO;
+    }
+
+    public static OrthologEvidenceDTO convertToOrthologEvidenceDTO(OrthologEvidence evidence) {
+        OrthologEvidenceDTO dto = new OrthologEvidenceDTO();
+        dto.setEvidenceCode(evidence.getEvidenceCode().getCode());
+        dto.setEvidenceName(evidence.getEvidenceCode().getName());
+        dto.setPublication(DTOConversionService.convertToPublicationDTO(evidence.getPublication()));
+        return dto;
+    }
+
+    public static NcbiOtherSpeciesGeneDTO convertToNcbiOtherSpeciesGeneDTO(NcbiOtherSpeciesGene ncbiGene) {
+        if (ncbiGene == null)
+            return null;
+        NcbiOtherSpeciesGeneDTO geneDTO = new NcbiOtherSpeciesGeneDTO();
+        geneDTO.setID(ncbiGene.getID());
+        geneDTO.setAbbreviation(ncbiGene.getAbbreviation());
+        geneDTO.setName(ncbiGene.getName());
+        geneDTO.setChromosome(ncbiGene.getChromosome());
+        geneDTO.setPosition(ncbiGene.getPosition());
+        geneDTO.setOrganism(ncbiGene.getOrganism().getCommonName());
+        return geneDTO;
+    }
+
+    public static OrthologExternalReferenceDTO convertToOrthologExternalReferenceDTO(OrthologExternalReference reference) {
+        OrthologExternalReferenceDTO dto = new OrthologExternalReferenceDTO();
+        dto.setAccessionNumber(reference.getAccessionNumber());
+        dto.setReferenceDatabaseDTO(convertToReferenceDatabaseDTO(reference.getReferenceDatabase()));
+        return dto;
+    }
 }

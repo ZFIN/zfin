@@ -16,9 +16,8 @@
         <put-attribute name="body" value="/WEB-INF/jsp/orthology/orthology_search_result.jsp"/>
     </definition>
 
-    <definition name="create-note.page" extends="main_layout">
-        <put-attribute name="staticTitle" value="Create / Update Orthology Note" />
-        <put-attribute name="body" value="/WEB-INF/jsp/orthology/create_orthology_note.jsp"/>
+    <definition name="orthology/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/orthology/{1}.jsp"/>
     </definition>
 
 </tiles-definitions>

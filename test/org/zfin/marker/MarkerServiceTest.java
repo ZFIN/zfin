@@ -10,6 +10,9 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.orthology.presentation.OrthologEvidencePresentation;
+import org.zfin.orthology.presentation.OrthologyPresentationRow;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.ForeignDB;
@@ -21,6 +24,7 @@ import java.util.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
  * Tests for org.zfin.marker.service.MarkerService
@@ -378,5 +382,49 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         Marker gene = getMarkerRepository().getMarkerByID(geneAbbreviation);
         PhenotypeOnMarkerBean bean = MarkerService.getPhenotypeOnGene(gene);
         assertNotNull(bean);
+    }
+
+    @Test
+    public void getOrthologyForGene() {
+        // pax2a
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-990415-8");
+
+        OrthologyPresentationBean orthology = MarkerService.getOrthologyEvidence(m);
+        List<OrthologyPresentationRow> orthologs = orthology.getOrthologs();
+        assertThat("pax2a should have human and mouse orthologs", orthologs, hasSize(greaterThanOrEqualTo(2)));
+
+        for (OrthologyPresentationRow ortholog : orthologs) {
+            Collection<OrthologEvidencePresentation> evidenceCollection = ortholog.getEvidence();
+            assertThat("each ortholog should have some evidence", evidenceCollection, not(empty()));
+            for (OrthologEvidencePresentation evidence : evidenceCollection) {
+                assertThat(evidence.getCode(), notNullValue());
+                assertThat(evidence.getPublications(), not(empty()));
+            }
+        }
+    }
+
+    @Test
+    public void getOrthologyForGeneAndPublication() {
+        // pax2a
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-990415-8");
+        // Pfeffer
+        Publication publication = getPublicationRepository().getPublication("ZDB-PUB-980916-4");
+
+        OrthologyPresentationBean orthology = MarkerService.getOrthologyEvidence(m, publication);
+        List<OrthologyPresentationRow> orthologs = orthology.getOrthologs();
+        assertThat("pax2a should only have mouse orthology in Pheffer et al., 1998", orthologs, hasSize(1));
+
+        for (OrthologyPresentationRow ortholog : orthologs) {
+            Collection<OrthologEvidencePresentation> evidenceCollection = ortholog.getEvidence();
+            assertThat("each ortholog should have some evidence", evidenceCollection, not(empty()));
+            for (OrthologEvidencePresentation evidence : evidenceCollection) {
+                assertThat(evidence.getCode(), notNullValue());
+
+                Set<Publication> publications = evidence.getPublications();
+                assertThat(publications, hasSize(1));
+                assertThat(publications.iterator().next(), is(publication));
+            }
+        }
+
     }
 }

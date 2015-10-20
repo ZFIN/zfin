@@ -1,23 +1,18 @@
 package org.zfin.sequence.reno;
 
-import org.hibernate.Query;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.infrastructure.Updates;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.orthology.OrthoEvidence;
-import org.zfin.orthology.Orthologue;
-import org.zfin.orthology.Species;
+import org.zfin.orthology.EvidenceCode;
+import org.zfin.orthology.NcbiOtherSpeciesGene;
+import org.zfin.orthology.Ortholog;
+import org.zfin.orthology.OrthologEvidence;
 import org.zfin.orthology.repository.OrthologyRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.Entrez;
-import org.zfin.sequence.EntrezMGI;
-import org.zfin.sequence.EntrezOMIM;
-import org.zfin.sequence.EntrezProtRelation;
 
 import java.util.HashSet;
 import java.util.List;
@@ -25,15 +20,13 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-/**
- */
+import static org.zfin.repository.RepositoryFactory.getOrthologyRepository;
 
 public class OrthologyTest extends AbstractDatabaseTest {
 
     private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private static PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
-    private static OrthologyRepository orthoRepository = RepositoryFactory.getOrthologyRepository();
+    private static OrthologyRepository orthoRepository = getOrthologyRepository();
 
     @Test
     // Test that there are Redundancy runs in the database
@@ -44,49 +37,39 @@ public class OrthologyTest extends AbstractDatabaseTest {
             Marker pax2a = markerRepository.getMarkerByAbbreviation("fsb");
             Publication publication = pubRepository.getPublication("ZDB-PUB-030905-1");
 
-            Orthologue ortho = new Orthologue();
-            ortho.setAbbreviation("FGF8");
-            ortho.setName("fibroblast growth factor 8 (androgen-induced)");
-            Species human = Species.HUMAN;
-            ortho.setOrganism(human);
-            ortho.setGene(pax2a);
-            Set<OrthoEvidence> evidences  = new HashSet<OrthoEvidence>();
-            OrthoEvidence evidence = new OrthoEvidence();
-            evidence.setOrthologueEvidenceCode(OrthoEvidence.Code.AA);
+            Ortholog ortho = new Ortholog();
+            ortho.setZebrafishGene(pax2a);
+            Set<OrthologEvidence> evidences  = new HashSet<>();
+            OrthologEvidence evidence = new OrthologEvidence();
+            evidence.setEvidenceCode(getEvidenceCode("AA"));
             evidence.setPublication(publication);
+            evidence.setOrtholog(ortho);
             evidences.add(evidence);
-            ortho.setEvidences(evidences);
+            ortho.setEvidenceSet(evidences);
 
-            Entrez entrez = new Entrez() ;
-            entrez.setEntrezAccNum("2253");
-            entrez.setAbbreviation("FGF8");
-            entrez.setRelatedMGIAccessions(new HashSet<EntrezMGI>());
-            entrez.setRelatedOMIMAccessions(new HashSet<EntrezOMIM>());
+            NcbiOtherSpeciesGene ncbiOtherSpeciesGene = getOrthologyRepository().getNcbiGene("2253");
+            ortho.setNcbiOtherSpeciesGene(ncbiOtherSpeciesGene);
 
-            EntrezProtRelation relatedAccession= new EntrezProtRelation() ;
-            relatedAccession.setEntrezAccession(entrez);
-            relatedAccession.setProteinAccNum("12345678");
-
-
-            ortho.setAccession(relatedAccession);
-            orthoRepository.saveOrthology(ortho, publication, new Updates());
+            orthoRepository.saveOrthology(ortho, publication);
 
             String zdbID = ortho.getZdbID();
-            assertTrue("ID created for Orthologue", zdbID != null && zdbID.startsWith("ZDB-ORTHO"));
+            assertTrue("ID created for Ortholog", zdbID != null && zdbID.startsWith("ZDB-ORTHO"));
 
-            String hql = "from OrthoEvidence where orthologueZdbID = :zdbID ";
-            Query query = HibernateUtil.currentSession().createQuery(hql);
-            query.setParameter("zdbID", zdbID);
-            List<OrthoEvidence> evids = (List<OrthoEvidence>) query.list();
+            List<String> evids = getOrthologyRepository().getEvidenceCodes(pax2a);
             assertTrue("One evidence code created", evids != null);
             assertEquals("One evidence code created", evids.size(), 1);
-            OrthoEvidence evid = evids.get(0);
-            assertEquals("One evidence code created", evid.getOrthologueEvidenceCode(), OrthoEvidence.Code.AA);
+            assertEquals("One evidence code created", evids.get(0), "AA");
 
         } finally {
             // rollback on success or exception to leave no new records in the database
             HibernateUtil.rollbackTransaction();
         }
+    }
+
+    private EvidenceCode getEvidenceCode(String aa) {
+        EvidenceCode evidenceCode = new EvidenceCode();
+        evidenceCode.setCode(aa);
+        return evidenceCode;
     }
 
 }

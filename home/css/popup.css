@@ -40,6 +40,11 @@ div.popup-body {
 
 }
 
+div.popup-actions {
+    padding: 15px 0;
+    text-align: right;
+}
+
 div.phenotype-figure-popup-body {
 
     max-height:500px;

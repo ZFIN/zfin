@@ -278,70 +278,69 @@ create temp table tmp_ortho_exp (
   entrez varchar(50),
   mgi varchar(50),
   omim varchar(50),
-  sgd varchar(50)
+  hgnc varchar(50)
 ) with no log;
 
 insert into tmp_ortho_exp
-select distinct c_gene_id, zdb_id, mrkr_name, mrkr_abbrev, organism, ortho_name,ortho_abbrev,
-	NULL::varchar(50),NULL::varchar(50),NULL::varchar(50),NULL::varchar(50),NULL::varchar(50)
- from orthologue,marker
- where c_gene_id = mrkr_zdb_id
+select distinct ortho_zebrafish_gene_zdb_id, ortho_zdb_id, mrkr_name, mrkr_abbrev, organism_common_name, ortho_other_species_name,ortho_other_species_symbol,
+NULL::varchar(50),NULL::varchar(50),NULL::varchar(50),NULL::varchar(50),NULL::varchar(50)
+ from ortholog,marker,organism
+ where ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+  and ortho_other_species_taxid=organism_taxid
 ;
 
 update tmp_ortho_exp set flybase = (
-	select distinct dblink_acc_num
-	 from db_link, orthologue o, foreign_db_contains, foreign_db
-	 where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	select distinct oef_accession_number
+	 from ortholog o, ortholog_external_reference,foreign_db_contains, foreign_db
+	 where oef_fdbcont_zdb_id = fdbcont_zdb_id
 	   and fdb_db_name = 'FLYBASE'
 	   and fdbcont_fdb_db_id = fdb_db_pk_id
-	   and fdbcont_organism_common_name = o.organism
-	   and o.zdb_id = dblink_linked_recid
-	   and ortho_id = o.zdb_id
+	   and o.ortho_zdb_id = oef_ortho_zdb_id
+	   and ortho_id = o.ortho_zdb_id
 );
 
 update tmp_ortho_exp set Entrez = (
-	select dblink_acc_num
-	 from db_link, orthologue o, foreign_db_contains, foreign_db
-	 where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	select distinct oef_accession_number
+	 from ortholog o, ortholog_external_reference, foreign_db_contains, foreign_db
+	 where oef_fdbcont_zdb_id  = fdbcont_zdb_id
 	   and fdb_db_name = 'Gene'
 	   and fdbcont_fdb_db_id = fdb_db_pk_id
-	   and fdbcont_organism_common_name = o.organism
-	   and o.zdb_id = dblink_linked_recid
-	   and ortho_id = o.zdb_id
+	   and o.ortho_zdb_id = oef_ortho_zdb_id
+	   and ortho_id = o.ortho_zdb_id
 );
 
 update tmp_ortho_exp set mgi = (
-	select 'MGI:' || dblink_acc_num
-	 from db_link , orthologue o, foreign_db_contains, foreign_db
-	 where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	select 'MGI:' ||  oef_accession_number
+	 from ortholog o, ortholog_external_reference, foreign_db_contains, foreign_db
+	 where oef_fdbcont_zdb_id  = fdbcont_zdb_id
 	   and fdbcont_fdb_db_id = fdb_db_pk_id
 	   and fdb_db_name = 'MGI'
-	   and fdbcont_organism_common_name = o.organism
-	   and o.zdb_id = dblink_linked_recid
-	   and ortho_id = o.zdb_id
+	   and o.ortho_zdb_id = oef_ortho_zdb_id
+	   and ortho_id = o.ortho_zdb_id
 );
 
 update tmp_ortho_exp set omim = (
-	select distinct dblink_acc_num
-	 from db_link, orthologue o, foreign_db_contains, foreign_db
-	 where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	select distinct oef_accession_number
+	 from ortholog o, ortholog_external_reference, foreign_db_contains, foreign_db
+	 where oef_fdbcont_zdb_id  = fdbcont_zdb_id
 	   and fdbcont_fdb_db_id = fdb_db_pk_id
 	   and fdb_db_name = 'OMIM'
-	   and fdbcont_organism_common_name = o.organism
-	   and o.zdb_id = dblink_linked_recid
-	   and ortho_id = o.zdb_id
+	   and o.ortho_zdb_id = oef_ortho_zdb_id
+	   and ortho_id = o.ortho_zdb_id
 );
 
-update tmp_ortho_exp set sgd = (
-	select dblink_acc_num
-	 from db_link, orthologue o, foreign_db_contains, foreign_db
-	 where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+update tmp_ortho_exp set hgnc = (
+	select distinct oef_accession_number
+	 from ortholog o, ortholog_external_reference, foreign_db_contains, foreign_db
+	 where oef_fdbcont_zdb_id  = fdbcont_zdb_id
 	   and fdb_db_name = 'SGD'
 	   and fdbcont_fdb_db_id = fdb_db_pk_id
-	   and fdbcont_organism_common_name = o.organism
-	   and o.zdb_id = dblink_linked_recid
-	   and ortho_id = o.zdb_id
+	   and fdb_db_name = 'HGNC'
+	   and o.ortho_zdb_id = oef_ortho_zdb_id
+	   and ortho_id = o.ortho_zdb_id
 );
+
+
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fly_orthos.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fly_orthos.txt'
@@ -1272,8 +1271,8 @@ select t.tscript_mrkr_zdb_id,szm_term_ont_id,m.mrkr_name,gene.mrkr_zdb_id,c.mrkr
          m.mrkr_type,
          ra.recattrib_source_zdb_id AS source_id
   FROM record_attribution ra
-  INNER JOIN orthologue_evidence_display ev ON ev.oevdisp_zdb_id = ra.recattrib_data_zdb_id
-  INNER JOIN marker m ON m.mrkr_zdb_id = ev.oevdisp_gene_zdb_id
+  INNER JOIN ortholog ev ON ev.ortho_zdb_id = ra.recattrib_data_zdb_id
+  INNER JOIN marker m ON m.mrkr_zdb_id = ev.ortho_zebrafish_gene_zdb_id
 
   UNION -- marker_go_term_Evidence
 
@@ -1999,5 +1998,9 @@ WHERE  genox_zdb_id = damo_genox_zdb_id
        AND damo_dat_Zdb_id=dat_zdb_id
        AND dat_term_zdb_id = term_zdb_id
        AND dat_source_zdb_id = zdb_id;
+
+!echo "unload feature/STR relations"
+
+
 
 commit work;

@@ -69,7 +69,7 @@ create procedure regen_names_marker_list()
   insert into regen_all_names_temp
       ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
         rgnallnm_precedence, rgnallnm_name_lower )
-    select dalias_alias, dblink_linked_recid, nameSignificance, 
+    select distinct dalias_alias, dblink_linked_recid, nameSignificance, 
            namePrecedence, dalias_alias_lower
    from db_link, data_alias, regen_zdb_id_temp
   where dalias_data_zdb_id = dblink_zdb_id 
@@ -79,11 +79,11 @@ create procedure regen_names_marker_list()
   insert into regen_all_names_temp
       ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
         rgnallnm_precedence, rgnallnm_name_lower )
-    select distinct dblink_acc_num, c_gene_id, nameSignificance, 
-                    namePrecedence, lower(dblink_acc_num)
-      from db_link, orthologue, regen_zdb_id_temp
-      where dblink_linked_recid = orthologue.zdb_id
-        and c_gene_id = rgnz_zdb_id;
+    select distinct oef_accession_number, ortho_zebrafish_gene_zdb_id, nameSignificance, 
+                    namePrecedence, lower(oef_accession_number)
+      from ortholog_external_reference, ortholog, regen_zdb_id_temp
+      where oef_ortho_zdb_id = ortho_zdb_id
+        and ortho_zebrafish_gene_zdb_id = rgnz_zdb_id;
 
 
 
@@ -106,22 +106,23 @@ create procedure regen_names_marker_list()
   insert into regen_all_names_temp
       ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
 	rgnallnm_precedence, rgnallnm_name_lower )
-    select distinct ortho_abbrev, c_gene_id, nameSignificance, namePrecedence,
-	     lower(ortho_abbrev)
-      from orthologue, regen_zdb_id_temp
-      where ortho_abbrev is not null
-        and c_gene_id = rgnz_zdb_id;
+    select distinct ortho_other_species_symbol, ortho_zebrafish_gene_zdb_id, nameSignificance, namePrecedence,
+	     lower(ortho_other_species_symbol)
+      from ortholog, regen_zdb_id_temp
+      where ortho_other_species_symbol is not null
+        and ortho_zebrafish_gene_zdb_id = rgnz_zdb_id
+	;
 
 
   insert into regen_all_names_temp
       ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
 	rgnallnm_precedence, rgnallnm_name_lower )
-    select distinct ortho_name, c_gene_id allmapnm_zdb_id, nameSignificance,
-                    namePrecedence, lower(ortho_name)
-      from orthologue, regen_zdb_id_temp
-      where ortho_name is not null
-        and ortho_abbrev <> ortho_name
-        and c_gene_id = rgnz_zdb_id;
+    select distinct ortho_other_species_name, ortho_zebrafish_gene_zdb_id allmapnm_zdb_id, nameSignificance,
+                    namePrecedence, lower(ortho_other_species_name)
+      from ortholog,regen_zdb_id_temp
+      where ortho_other_species_name is not null
+        and ortho_zebrafish_gene_zdb_id = rgnz_zdb_id
+         and ortho_other_species_name != ortho_other_species_symbol;
 
 
   -- -------------------------------------------------------------------

@@ -5,11 +5,21 @@ package org.zfin;
  */
 public class Species {
 
+    private int taxonomyID;
     private String speciesName;
     private String commonName;
     int displayOrder;
     boolean antibodyImmunogen;
     boolean antibodyHost;
+    private org.zfin.orthology.Species organism;
+
+    public int getTaxonomyID() {
+        return taxonomyID;
+    }
+
+    public void setTaxonomyID(int taxonomyID) {
+        this.taxonomyID = taxonomyID;
+    }
 
     public String getSpeciesName() {
         return speciesName;
@@ -49,5 +59,13 @@ public class Species {
 
     public void setAntibodyHost(boolean antibodyHost) {
         this.antibodyHost = antibodyHost;
+    }
+
+    public org.zfin.orthology.Species getOrganism() {
+        return organism;
+    }
+
+    public void setOrganism(org.zfin.orthology.Species organism) {
+        this.organism = organism;
     }
 }

@@ -10,7 +10,8 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.orthology.OrthoEvidence;
+import org.zfin.orthology.Ortholog;
+import org.zfin.orthology.OrthologEvidence;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
@@ -28,6 +29,8 @@ import org.zfin.sequence.reno.presentation.CandidateBean;
 import org.zfin.sequence.reno.repository.RenoRepository;
 
 import java.util.*;
+
+import static org.zfin.repository.RepositoryFactory.getOrthologyRepository;
 
 /**
  * Common reno services.
@@ -102,18 +105,21 @@ public class RenoService {
      *
      * @param formEvidenceCodes Set of evidences
      * @param orthologyPub      publication
-     * @return set of OrthoEvidence codes
+     * @param ortholog          Ortholog
+     * @return set of OrthologEvidence codes
      */
-    public Set<OrthoEvidence> createEvidenceCollection(Set<OrthoEvidence.Code> formEvidenceCodes, Publication orthologyPub) {
-        HashSet<OrthoEvidence> orthoEvidences = new HashSet<OrthoEvidence>();
+    public Set<OrthologEvidence> createEvidenceCollection(Set<OrthologEvidence.Code> formEvidenceCodes, Publication orthologyPub, Ortholog ortholog) {
+        HashSet<OrthologEvidence> orthoEvidences = new HashSet<>();
         if (formEvidenceCodes != null) {
-            for (OrthoEvidence.Code orthoevidence : formEvidenceCodes) {
-                OrthoEvidence oe = new OrthoEvidence();
-                oe.setOrthologueEvidenceCode(orthoevidence);
+            for (OrthologEvidence.Code orthoevidence : formEvidenceCodes) {
+                OrthologEvidence oe = new OrthologEvidence();
+                oe.setEvidenceCode(getOrthologyRepository().getEvidenceCode(orthoevidence.getString()));
                 oe.setPublication(orthologyPub);
+                oe.setOrtholog(ortholog);
                 orthoEvidences.add(oe);
             }
         }
+        ortholog.setEvidenceSet(orthoEvidences);
         return orthoEvidences;
 
     }

@@ -1,12 +1,9 @@
 package org.zfin.orthology.repository;
 
-import org.springframework.stereotype.Repository;
 import org.zfin.criteria.ZfinCriteria;
 import org.zfin.framework.CachedRepository;
-import org.zfin.infrastructure.Updates;
 import org.zfin.marker.Marker;
-import org.zfin.orthology.Orthologue;
-import org.zfin.orthology.SpeciesCriteria;
+import org.zfin.orthology.*;
 import org.zfin.orthology.presentation.OrthologySlimPresentation;
 import org.zfin.publication.Publication;
 
@@ -17,27 +14,15 @@ public interface OrthologyRepository extends CachedRepository {
 
     Object[] getOrthologies(List<SpeciesCriteria> speciesCriteria, ZfinCriteria criteria);
 
-    void saveOrthology(Orthologue orthologue, Publication publication, Updates up);
+    void saveOrthology(Ortholog ortholog, Publication publication);
 
     /**
      * Update a fast-search table to hold info about evidence codes. In order
      * to display them correctly evidence codes have to be stored in a particular way
      *
-     * @param orthologue
+     * @param ortholog
      */
-    void updateFastSearchEvidenceCodes(Set<Orthologue> orthologue);
-
-    List<OrthologyPresentationRow> getOrthologyForGene(Marker gene);
-
-    /**
-     * Retrieve Orthologues for given gene and publication
-     *
-     * @param gene        gene
-     * @param publication publication
-     * @return
-     */
-    List<OrthologyPresentationRow> getOrthologyForGene(Marker gene, Publication publication);
-
+    void updateFastSearchEvidenceCodes(Set<Ortholog> ortholog);
 
     List<String> getEvidenceCodes(Marker gene);
 
@@ -46,9 +31,56 @@ public interface OrthologyRepository extends CachedRepository {
     /**
      * Retrieve Evidence codes for given gene and publication
      *
-     * @param m           marker
+     * @param gene        marker
      * @param publication publication
      * @return list of evidence codes.
      */
     List<String> getEvidenceCodes(Marker gene, Publication publication);
+
+    /**
+     * Retireve list of orthologs for given zebrafish gene
+     *
+     * @param zdbID gene zdb ID
+     * @return list of orthologs
+     */
+    List<Ortholog> getOrthologs(String zdbID);
+
+    /**
+     * Retireve list of orthologs for given zebrafish gene
+     *
+     * @param gene gene
+     * @return list of orthologs
+     */
+    List<Ortholog> getOrthologs(Marker gene);
+
+    /**
+     * Retrieve NcbiOtherSpeciesGene object
+     *
+     * @param ncbiID NCBI Gene
+     * @return
+     */
+    NcbiOtherSpeciesGene getNcbiGene(String ncbiID);
+
+    List<EvidenceCode> getEvidenceCodes();
+
+    EvidenceCode getEvidenceCode(String string);
+
+    /**
+     * Retrieve Ortholog by ID
+     *
+     * @param orthID Ortholog ID
+     * @return Ortholog
+     */
+    Ortholog getOrtholog(String orthID);
+
+    /**
+     * Delete an Ortholog
+     *
+     * @param ortholog Ortholog
+     */
+    void deleteOrtholog(Ortholog ortholog);
+
+    Ortholog getOrthologByGeneAndNcbi(Marker gene, NcbiOtherSpeciesGene ncbiGene);
+
+    List<NcbiOrthoExternalReference> getNcbiExternalReferenceList(String ncbiID);
 }

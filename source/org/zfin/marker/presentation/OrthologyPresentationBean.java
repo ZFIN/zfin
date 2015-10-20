@@ -1,6 +1,6 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.orthology.repository.OrthologyPresentationRow;
+import org.zfin.orthology.presentation.OrthologyPresentationRow;
 
 import java.util.List;
 
@@ -9,31 +9,22 @@ import java.util.List;
  */
 public class OrthologyPresentationBean {
 
-    private List<OrthologyPresentationRow> orthologues;
-    private List<String> evidenceCodes ;
-    private List<String> notes ;
+    private List<OrthologyPresentationRow> orthologs;
+    private String note;
 
-    public List<OrthologyPresentationRow> getOrthologues() {
-        return orthologues;
+    public List<OrthologyPresentationRow> getOrthologs() {
+        return orthologs;
     }
 
-    public void setOrthologues(List<OrthologyPresentationRow> orthologues) {
-        this.orthologues = orthologues;
+    public void setOrthologs(List<OrthologyPresentationRow> orthologs) {
+        this.orthologs = orthologs;
     }
 
-    public List<String> getEvidenceCodes() {
-        return evidenceCodes;
+    public String getNote() {
+        return note;
     }
 
-    public void setEvidenceCodes(List<String> evidenceCodes) {
-        this.evidenceCodes = evidenceCodes;
-    }
-
-    public List<String> getNotes() {
-        return notes;
-    }
-
-    public void setNotes(List<String> notes) {
-        this.notes = notes;
+    public void setNote(String note) {
+        this.note = note;
     }
 }

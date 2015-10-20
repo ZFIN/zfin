@@ -14,15 +14,14 @@ import org.zfin.infrastructure.Updates;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.orthology.OrthoEvidence;
-import org.zfin.orthology.Orthologue;
-import org.zfin.orthology.Species;
+import org.zfin.orthology.NcbiOtherSpeciesGene;
+import org.zfin.orthology.Ortholog;
+import org.zfin.orthology.OrthologEvidence;
 import org.zfin.orthology.repository.OrthologyRepository;
-import org.zfin.profile.Person;
+import org.zfin.orthology.service.OrthologService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.EntrezProtRelation;
 import org.zfin.sequence.reno.RunCandidate;
 import org.zfin.sequence.reno.repository.RenoRepository;
 import org.zfin.sequence.reno.service.RenoService;
@@ -30,8 +29,9 @@ import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
+
+import static org.zfin.repository.RepositoryFactory.getOrthologyRepository;
 
 
 /**
@@ -41,7 +41,7 @@ public abstract class AbstractCandidateController {
 
     private static Logger LOG = Logger.getLogger(AbstractCandidateController.class);
     protected MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-    protected OrthologyRepository or = RepositoryFactory.getOrthologyRepository();
+    protected OrthologyRepository or = getOrthologyRepository();
     protected InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
     protected SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
 
@@ -51,6 +51,9 @@ public abstract class AbstractCandidateController {
 
     @Autowired
     protected RenoRepository renoRepository;
+
+    @Autowired
+    protected OrthologService orthologService;
 
     /**
      * Does all the work for referenceData method, handles loading up the runCandidate for viewing,
@@ -134,7 +137,7 @@ public abstract class AbstractCandidateController {
      * This method works on the orthology information being submitted on the nomenclature page.
      * Each organism can have an accession object (abbreviation and number) and
      * multiple evidence codes.
-     * After all orthologous genes are worked on the fast search table is updated accordingly.
+     * After all orthologs are worked on the fast search table is updated accordingly.
      * <p/>
      * Note: Currently, this code is hard-coded to only handle Mouse and Human orthologies.
      *
@@ -144,66 +147,40 @@ public abstract class AbstractCandidateController {
     protected void handleOrthology(CandidateBean candidateBean, Marker zebrafishMarker) {
         LOG.debug("enter handleOrthology");
 
-        RunCandidate rc = candidateBean.getRunCandidate();
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
         String zdbID = candidateBean.getOrthologyPublicationZdbID();
         Publication orthologyPub = pr.getPublication(zdbID);
         //first get the human ortholog from the from
-        Set<Orthologue> orthologies = new HashSet<Orthologue>();
         String humanAccessionNumber = candidateBean.getHumanOrthologueAbbrev().getEntrezAccession().getEntrezAccNum();
         if (!StringUtils.isEmpty(humanAccessionNumber)) {
             LOG.info(" Working on Human Orthologs ...: ");
-            Orthologue humanOrtholog = new Orthologue();
-            humanOrtholog.setGene(zebrafishMarker);
-            EntrezProtRelation targetHumanAccession = candidateBean.getTargetAccessionHuman(rc, humanAccessionNumber);
-            LOG.debug("humanOrthology accession: " + targetHumanAccession);
+            NcbiOtherSpeciesGene ncbiGene = getOrthologyRepository().getNcbiGene(humanAccessionNumber);
+            if (ncbiGene == null)
+                throw new NullPointerException("Could not find an NCBI Gene record with accession number " + humanAccessionNumber);
 
-            humanOrtholog.setAbbreviation(targetHumanAccession.getEntrezAccession().getAbbreviation());
-            humanOrtholog.setName(targetHumanAccession.getEntrezAccession().getName());
-            humanOrtholog.setAccession(targetHumanAccession);
-            humanOrtholog.setOrganism(Species.HUMAN);
+            Ortholog humanOrtholog = orthologService.createOrthologEntity(zebrafishMarker, ncbiGene);
+            Set<OrthologEvidence> orthoEvidences = renoService.createEvidenceCollection(candidateBean.getHumanOrthologyEvidence(), orthologyPub, humanOrtholog);
+            humanOrtholog.setEvidenceSet(orthoEvidences);
 
-            Set<OrthoEvidence> orthoEvidences = renoService.createEvidenceCollection(candidateBean.getHumanOrthologyEvidence(), orthologyPub);
-            humanOrtholog.setEvidences(orthoEvidences);
             LOG.info("Orthology: " + humanOrtholog);
-            Updates up = new Updates();
-            Date date = new Date();
-            up.setRecID(zebrafishMarker.getZdbID());
-            up.setFieldName("orthologue");
-            up.setNewValue("Human");
-            up.setComments("Created a new orthologue record for species=Human for this record.");
-            up.setWhenUpdated(date);
-            or.saveOrthology(humanOrtholog, orthologyPub, up);
-            orthologies.add(humanOrtholog);
-            //ir.insertUpdatesTable(zebrafishMarker.getZdbID(),"orthologue","Human","Created a new orthologue record for species=Human for this record.",rc.getLockPerson().getZdbID(),rc.getLockPerson().getName());
+            or.saveOrthology(humanOrtholog, null);
+            //orthologService.createReferences(humanOrtholog, ncbiGene);
+
         }
 
         //get the mouse ortholog from the form
         String mouseAccessionNumber = candidateBean.getMouseOrthologueAbbrev().getEntrezAccession().getEntrezAccNum();
         if (!StringUtils.isEmpty(mouseAccessionNumber)) {
             LOG.info(" Working on Mouse Orthologs ...: " + candidateBean.getMouseOrthologueAbbrev());
-            Orthologue mouseOrtholog = new Orthologue();
-            mouseOrtholog.setGene(zebrafishMarker);
-            EntrezProtRelation targetMouseAccession = candidateBean.getTargetAccessionMouse(rc, mouseAccessionNumber);
-            mouseOrtholog.setAbbreviation(targetMouseAccession.getEntrezAccession().getAbbreviation());
-            mouseOrtholog.setName(targetMouseAccession.getEntrezAccession().getName());
-            mouseOrtholog.setAccession(targetMouseAccession);
-            mouseOrtholog.setOrganism(Species.MOUSE);
-            Set<OrthoEvidence> orthoEvidences = renoService.createEvidenceCollection(candidateBean.getMouseOrthologyEvidence(), orthologyPub);
-            mouseOrtholog.setEvidences(orthoEvidences);
-            Updates up = new Updates();
-            Date date = new Date();
-            up.setRecID(zebrafishMarker.getZdbID());
-            up.setFieldName("orthologue");
-            up.setNewValue("Mouse");
-            up.setComments("Created a new orthologue record for species=Mouse for this record.");
-            up.setWhenUpdated(date);
-            or.saveOrthology(mouseOrtholog, orthologyPub, up);
-            orthologies.add(mouseOrtholog);
-            //    ir.insertUpdatesTable(zebrafishMarker.getZdbID(),"orthologue","Mouse","Created a new orthologue record for species=Mouse for this record.",rc.getLockPerson().getZdbID(),rc.getLockPerson().getName());
+            NcbiOtherSpeciesGene ncbiGene = getOrthologyRepository().getNcbiGene(mouseAccessionNumber);
+            if (ncbiGene == null)
+                throw new NullPointerException("Could not find an NCBI Gene record with accession number " + mouseAccessionNumber);
+
+            Ortholog mouseOrtholog = orthologService.createOrthologEntity(zebrafishMarker, ncbiGene);
+            Set<OrthologEvidence> orthoEvidences = renoService.createEvidenceCollection(candidateBean.getMouseOrthologyEvidence(), orthologyPub, mouseOrtholog);
+            mouseOrtholog.setEvidenceSet(orthoEvidences);
+            or.saveOrthology(mouseOrtholog, orthologyPub);
         }
-        LOG.info("Update Fast Search Evidence Codes");
-        or.updateFastSearchEvidenceCodes(orthologies);
         LOG.debug("exit handleOrthology");
     }
 
@@ -245,14 +222,12 @@ public abstract class AbstractCandidateController {
     public void handleDone(CandidateBean candidateBean, BindingResult errors) {
         //this method will save the note if necessary.
 
-        if (candidateBean.getAction().equals(CandidateBean.UNLOCK_RECORD.toString())) {
+        if (candidateBean.getAction().equals(CandidateBean.UNLOCK_RECORD)) {
             renoService.handleLock(candidateBean);
             return;
         }
 
         handleNote(candidateBean);
-
-
         handleRunCandidate(candidateBean, errors);
 
         candidateBean.getRunCandidate().setDone(true);
@@ -263,7 +238,7 @@ public abstract class AbstractCandidateController {
     }
 
     protected boolean doLock(String zdbID, CandidateBean candidateBean) {
-        if (candidateBean.getAction().equals(CandidateBean.LOCK_RECORD.toString())) {
+        if (candidateBean.getAction().equals(CandidateBean.LOCK_RECORD)) {
             if (candidateBean.getRunCandidate() == null) {
                 RunCandidate runCandidate = RepositoryFactory.getRenoRepository().getRunCandidateByID(zdbID);
                 candidateBean.setRunCandidate(runCandidate);

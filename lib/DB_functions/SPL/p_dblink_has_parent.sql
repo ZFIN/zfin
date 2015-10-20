@@ -1,12 +1,12 @@
   --P_CHECK_DB_LINKS.SQL
   -------------------------------------------------------------
   --procedure that checks to see that there is at least one record in either 
-  --the marker, orthologue or term table for each linked_recid in db_link.  
-  --This procedure checks the orthologue table first, then the marker table.
-  --we can not do a foreign key to this table b/c orthologue or marker can be 
+  --the marker,  or term table for each linked_recid in db_link.  
+  --This procedure checks thetable first, then the marker table.
+  --we can not do a foreign key to this table b/c marker can be 
   --parent table.
   --REPLACES:
-  --sub dblinkRecidIsOrthoOrMarker
+  --sub 
 
   create procedure p_dblink_has_parent (vLinkedRecid varchar(55))
 
@@ -19,14 +19,6 @@
     from marker
    where mrkr_zdb_id = vLinkedRecid;
 
-  if ( not vHasParent) then 
-
-    -- check orthologue table
-    select 't'
-      into vHasParent
-      from orthologue
-     where zdb_id = vLinkedRecid;
-
     if (not vHasParent) then 
 	
 	-- check term table
@@ -36,11 +28,9 @@
          where term_zdb_id = vLinkedRecid;
   
 	if (not vHasParent) then 
-   	    raise exception -746,0,"FAIL!: dblink must have orth or marker parent";
+   	    raise exception -746,0,"FAIL!: dblink must have marker or term parent";
   	end if;
     end if 	
-
-  end if;
 
   
   end procedure;
