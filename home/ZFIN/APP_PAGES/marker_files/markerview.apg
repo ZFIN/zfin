@@ -2670,14 +2670,20 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
   <?/MIBLOCK>
 <?/MIBLOCK>
 
-<form name=updater1>
-
 <!------------ ORTHOLOGY ------------------------------------>
 
 <?MIBLOCK COND="$(XST,$type_of_genedom)">
  <HR width="80%">
  <a name=orthologue><b>ORTHOLOGY</b></a><br>
- <?MIVAR><a href="/action/marker/$OID/edit#orthology">Edit Orthology</a><?/MIVAR>
+
+ <script src="/javascript/angular/angular.min.js"></script>
+ <script src="/javascript/ortho-edit.js"></script>
+
+ <div ng-app="app">
+     <?MIVAR><div ortho-edit gene="$OID"></div><?/MIVAR>
+ </div>
+
+
 <?/MIBLOCK>
 
 <!-------------- ends ORTHOLOGY ------------------------------------>
@@ -2696,8 +2702,6 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
 
 
 <!----------------- ends PUBLICATION ----------------->
-
-</form> <?MICOMMENT> end form updater1 <?/MICOMMENT>
 
 
 <?/MIBLOCK> <!-- ends cond authorize exists -->

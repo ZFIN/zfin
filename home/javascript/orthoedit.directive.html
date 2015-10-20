@@ -11,8 +11,6 @@
     </tr>
 </table>
 
-<hr>
-
 <div class="error" ng-show="vm.generalError">{{vm.generalError}}</div>
 <table class="summary basicstripes">
     <thead>
@@ -30,7 +28,7 @@
         <td class="no-data" colspan="6">No Orthologs Yet</td>
     </tr>
     <tr ng-repeat="ortholog in vm.orthologs">
-        <td><a href="#" ng-click="vm.confirmDeleteOrtholog(ortholog)">Delete</a></td>
+        <td><a href ng-click="vm.confirmDeleteOrtholog(ortholog)">Delete</a></td>
         <td>{{ortholog.ncbiOtherSpeciesGeneDTO.organism}}</td>
         <td><i>{{ortholog.ncbiOtherSpeciesGeneDTO.abbreviation}}</i></td>
         <td>{{ortholog.ncbiOtherSpeciesGeneDTO.chromosome}}</td>
@@ -49,22 +47,24 @@
                 <a href class="clickable" ng-click="vm.editEvidence(ortholog, ev, $index)"><i class="fa fa-fw fa-pencil"></i></a>
                 <a href class="clickable" ng-click="vm.deleteEvidence(ortholog, ev)"><i class="fa fa-fw fa-trash"></i></a>
             </div>
-            <a href="#" ng-click="vm.addEvidence(ortholog)">Add</a>
+            <a href ng-click="vm.addEvidence(ortholog)">Add</a>
         </td>
     </tr>
 </table>
 
-<h3>Orthology Note</h3>
-<div class="curation-form">
-    <div class="error" ng-show="vm.noteError">{{vm.noteError}}</div>
-    <div ng-click="vm.editNote()" ng-hide="vm.noteEditing" class="inline-edit" title="Click to edit">
-        <div ng-show="vm.note.note" class="keep-breaks">{{vm.note.note}}</div>
-        <div ng-hide="vm.note.note" class="muted">Click to add</div>
-    </div>
-    <div ng-show="vm.noteEditing">
-        <textarea ng-model="vm.noteText" rows="5"></textarea>
-        <button ng-click="vm.saveNoteEdit()" class="zfin-button approve">Save</button>
-        <button ng-click="vm.cancelNoteEdit()" class="zfin-button cancel">Cancel</button>
+<div class="summary">
+    <b>Orthology Note</b>
+    <div class="curation-form">
+        <div class="error" ng-show="vm.noteError">{{vm.noteError}}</div>
+        <div ng-click="vm.editNote()" ng-hide="vm.noteEditing" class="inline-edit" title="Click to edit">
+            <div ng-show="vm.note.note" class="keep-breaks">{{vm.note.note}}</div>
+            <div ng-hide="vm.note.note" class="muted">Click to add</div>
+        </div>
+        <div ng-show="vm.noteEditing">
+            <textarea ng-model="vm.noteText" rows="5"></textarea>
+            <button ng-click="vm.saveNoteEdit()" class="zfin-button approve">Save</button>
+            <button ng-click="vm.cancelNoteEdit()" class="zfin-button cancel">Cancel</button>
+        </div>
     </div>
 </div>
 
