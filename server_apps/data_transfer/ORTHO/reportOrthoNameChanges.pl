@@ -94,7 +94,7 @@ while (<NCBI>) {
         if (ZFINPerlModules->stringStartsWithLetterOrNumber($fieldsNCBI[8])) {
             $NCBIidsAndNamesHuman{$humanNCBIgeneID} = $fieldsNCBI[8];
         } else {
-            print "\nProblematic human orthologue data: $_\n\n";
+            print "\nProblematic human ortholog data: $_\n\n";
         }
     }
     $ctHumanGenes++;
@@ -110,7 +110,7 @@ while (<NCBI>) {
         if (ZFINPerlModules->stringStartsWithLetterOrNumber($fieldsNCBI[8])) {
             $NCBIidsAndNamesMouse{$mouseNCBIgeneID} = $fieldsNCBI[8];
         } else {
-            print "\nProblematic mouse orthologue data: $_\n\n";
+            print "\nProblematic mouse ortholog data: $_\n\n";
         }
     }
     $ctMouseGenes++;
@@ -126,7 +126,7 @@ while (<NCBI>) {
         if (ZFINPerlModules->stringStartsWithLetterOrNumber($fieldsNCBI[8])) {
             $NCBIidsAndNamesFly{$mouseNCBIgeneID} = $flyNCBIgeneID[8];
         } else {
-            print "\nProblematic fly orthologue data: $_\n\n";
+            print "\nProblematic fly ortholog data: $_\n\n";
         }
     }    
     $ctFlyGenes++;
@@ -184,14 +184,14 @@ $cur->bind_columns(\$organism,\$orthoName,\$orthoAbbrev,\$ncbiID,\$zdbGeneId,\$z
 
 # %namesHumanOrthZFIN - for human orthology names stored at ZFIN
 # key: ZF gene ZDB ID
-# value: human orthology name (stored in orthologue)
+# value: human orthology name (stored in ortholog)
 
 %namesHumanOrthZFIN = ();
 
 
 # %symbolsHumanOrthZFIN - for human orthology symbols stored at ZFIN
 # key: ZF gene ZDB ID
-# value: human orthology symbol (stored in orthologue)
+# value: human orthology symbol (stored in ortholog)
 
 %symbolsHumanOrthZFIN = ();
 
@@ -203,13 +203,13 @@ $cur->bind_columns(\$organism,\$orthoName,\$orthoAbbrev,\$ncbiID,\$zdbGeneId,\$z
 
 # %namesMouseOrthZFIN - for mouse orthology names stored at ZFIN
 # key: ZF gene ZDB ID
-# value: mouse orthology name (stored in orthologue)
+# value: mouse orthology name (stored in ortholog)
 
 %namesMouseOrthZFIN = ();
 
 # %symbolsMouseOrthZFIN - for mouse orthology symbols stored at ZFIN
 # key: ZF gene ZDB ID
-# value: mouse orthology symbol (stored in orthologue)
+# value: mouse orthology symbol (stored in ortholog)
 
 %symbolsMouseOrthZFIN = ();
 
@@ -223,13 +223,13 @@ $cur->bind_columns(\$organism,\$orthoName,\$orthoAbbrev,\$ncbiID,\$zdbGeneId,\$z
 
 # %namesFlyOrthZFIN - for fly orthology names stored at ZFIN
 # key: ZF gene ZDB ID
-# value: fly orthology name (stored in orthologue)
+# value: fly orthology name (stored in ortholog)
 
 %namesFlyOrthZFIN = ();
 
 # %symbolsFlyOrthZFIN - for fly orthology symbols stored at ZFIN
 # key: ZF gene ZDB ID
-# value: fly orthology symbol (stored in orthologue)
+# value: fly orthology symbol (stored in ortholog)
 
 %symbolsFlyOrthZFIN = ();
 
@@ -442,7 +442,7 @@ close(LOG);
 #$subject = "Auto from $dbname: " . "update.pl :: updateOrthologyNamePerlLog";
 #ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","logOrthologyUpdateName");
 
-#$subject = "Auto from $dbname: " . "$ctUpdatedOrthNames orthologue names have been updated by the script";
+#$subject = "Auto from $dbname: " . "$ctUpdatedOrthNames ortholog names have been updated by the script";
 #ZFINPerlModules->sendMailWithAttachedReport("<!--|VALIDATION_EMAIL_GENE|-->","$subject","orthNamesUpdatedReport") if $ctUpdatedOrthNames > 0;
 
 #$subject = "Auto from $dbname: " . "$ctDiffrentZFgeneNames zebrafish gene names to be considered for updating";

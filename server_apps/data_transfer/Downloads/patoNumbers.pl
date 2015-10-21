@@ -40,16 +40,16 @@ while ($cur->fetch()) {
    $ctGeneIds++;
 }
 
-# get the ZDB orthologue Id/NCBI Gene Id of the human orthologue pairs
+# get the ZDB ortholog Id/NCBI Gene Id of the human ortholog pairs
 $cur = $dbh->prepare('select distinct dblink_linked_recid, dblink_acc_num from db_link where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-27";');
 $cur->execute();
-my ($ZDBorthologueId, $humanOrthoNCBIgeneId);
-$cur->bind_columns(\$ZDBorthologueId,\$humanOrthoNCBIgeneId);
+my ($ZDBorthologId, $humanOrthoNCBIgeneId);
+$cur->bind_columns(\$ZDBorthologId,\$humanOrthoNCBIgeneId);
 
 $ctHumanGeneIds = 0;
-%ZDBorthologueIdhumanOrthoNCBIgeneIds = ();
+%ZDBorthologIdhumanOrthoNCBIgeneIds = ();
 while ($cur->fetch()) {
-   $ZDBorthologueIdhumanOrthoNCBIgeneIds{$ZDBorthologueId} = $humanOrthoNCBIgeneId;
+   $ZDBorthologIdhumanOrthoNCBIgeneIds{$ZDBorthologId} = $humanOrthoNCBIgeneId;
    $ctHumanGeneIds++;
 }
 
@@ -79,8 +79,8 @@ foreach $prephenoLine (@prephenoLines) {
       $NCBIzfGeneId = " ";
    }
    $humanOrthoZdbId = $prephenoFields[0];
-   if (exists($ZDBorthologueIdhumanOrthoNCBIgeneIds{$humanOrthoZdbId})) {   
-       $NCBIhumanGeneId = $ZDBorthologueIdhumanOrthoNCBIgeneIds{$humanOrthoZdbId};
+   if (exists($ZDBorthologIdhumanOrthoNCBIgeneIds{$humanOrthoZdbId})) {   
+       $NCBIhumanGeneId = $ZDBorthologIdhumanOrthoNCBIgeneIds{$humanOrthoZdbId};
    } else {
        $NCBIhumanGeneId = " ";
    }
@@ -132,8 +132,8 @@ foreach $preorthoLine (@preorthoLines) {
        $NCBIzfGeneId = " ";
    }
    $humanOrthoZdbId = $preorthoFields[0];
-   if (exists($ZDBorthologueIdhumanOrthoNCBIgeneIds{$humanOrthoZdbId})) {   
-        $NCBIhumanGeneId = $ZDBorthologueIdhumanOrthoNCBIgeneIds{$humanOrthoZdbId};
+   if (exists($ZDBorthologIdhumanOrthoNCBIgeneIds{$humanOrthoZdbId})) {   
+        $NCBIhumanGeneId = $ZDBorthologIdhumanOrthoNCBIgeneIds{$humanOrthoZdbId};
    } else {
         $NCBIhumanGeneId = " ";
    }

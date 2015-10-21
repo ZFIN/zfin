@@ -24,8 +24,8 @@ select distinct mrkr_zdb_id, mrkr_abbrev,0 priority
  and  mrkr_abbrev like "%:%"
  and mrkr_abbrev not like 'zmp:%'
  and not exists (
- 	select 1 from orthologue
- 	where mrkr_zdb_id  = c_gene_id
+ 	select 1 from ortholog
+ 	where mrkr_zdb_id  = ortho_zebrafish_gene_zdb_id
  )
  and exists (Select 'x' from feature_marker_relationship, feature
      	    	    where fmrel_mrkr_Zdb_id = mrkr_zdb_id

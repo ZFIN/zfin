@@ -9,7 +9,7 @@
 -- Here are the files:
 --   zfin_genes.txt -- the main file with all ZFIN genes.(mapped and unmapped)
 --   zfin_genes_mutants.txt - this file list known correspondences between genes and mutants
---   zfin_orthos.txt -- all known orthologues, indexed by gene_id
+--   zfin_orthos.txt -- all known orthologs, indexed by gene_id
 --   zfin_refs.txt -- all publications linked to genes, indexed by gene id
 --   zfin_dblinks -- all links from genes to sequence DBs.
 --   zfin_ortholinks -- similar to zfin_dblinks but is links from ortho to
@@ -174,9 +174,10 @@ create temp table meow_exp3 (
 ) with no log;
 
 insert into meow_exp3 
-  select c_gene_id, organism, ortho_name, ortho_abbrev, zdb_id
-    from orthologue 
-   where exists (select 't' from meow_exp1 where zdb_id == c_gene_id);
+  select ortho_zebrafish_gene_zdb_id, organism_common_name, ortho_other_species_name, ortho_other_species_symbol, ortho_zdb_id
+    from ortholog, organism
+   where exists (select 't' from meow_exp1 where zdb_id == ortho_other_species_gene_zdb_id)
+   and organism_taxid = ortho_other_species_taxid;
 
 ! echo "unload zfin_genes_orthos.txt"
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_orthos.txt' 
@@ -188,11 +189,12 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_orthos.txt'
 ! echo "unload zfin_ortholinks.txt"
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_ortholinks.txt'
   DELIMITER "	"
-  select dblink_linked_recid, fdb_db_name, dblink_acc_num 
-    from db_link, foreign_db_contains, foreign_db
-   where exists (select 't' from meow_exp3 where ortho_id == dblink_linked_recid)
-     and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-     and fdbcont_fdb_db_id = fdb_db_pk_id ;
+  select ortho_zebrafish_gene_zdb_id, fdb_db_name, oef_accession_number
+    from ortholog, ortholog_external_reference, foreign_db_contains, foreign_db
+   where exists (select 't' from meow_exp3 where ortho_id == ortho_zdb_id)
+     and oef_fdbcont_zdb_id = fdbcont_zdb_id
+     and fdbcont_fdb_db_id = fdb_db_pk_id 
+     and ortho_zdb_id = oef_ortho_zdb_id;
 
 drop table meow_exp3;
 

@@ -30,8 +30,8 @@ select distinct mrkr_zdb_id, mrkr_abbrev,0 priority
 			  and mrel_type = 'gene produces transcript'
 			  and dblink_Acc_num like 'OTTDART%'))
  and not exists (
- 	select 1 from orthologue
- 	where mrkr_zdb_id  = c_gene_id
+ 	select 1 from ortholog
+ 	where mrkr_zdb_id  = ortho_zebrafish_gene_zdb_id
  )
  and not exists ( select 'x' from feature_marker_Relationship, feature
      	 	  where fmrel_ftr_zdb_id = feature_zdb_id

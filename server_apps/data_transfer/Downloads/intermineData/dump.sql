@@ -403,7 +403,7 @@ select clone_mrkr_zdb_id, replace(clone_comments,'
   where clone_probelib_zdb_id = probelib_zdb_id
   and get_obj_type(clone_mrkr_Zdb_id) != 'GENE';
 
---orthologues
+--ortholog
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_orthos/1orthos.txt"
  select ortho_zdb_id, ortho_zebrafish_gene_zdb_id, organism_common_name, ortho_other_species_symbol, current year to second,
