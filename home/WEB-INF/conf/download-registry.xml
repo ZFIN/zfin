@@ -2151,37 +2151,6 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
         </Download>
         <Download private="true" orderIndex="1">
             <Name>
-                LAMHDI: Link Animal Models to Human Disease
-            </Name>
-            <Category>
-                Unofficial Download Files
-            </Category>
-            <Description>(http://www.lamhdi.org/)</Description>
-            <WikiLink></WikiLink>
-            <FileName>lamhdi</FileName>
-            <FileExtension>unl</FileExtension>
-            <FileFormat>psv</FileFormat>
-            <Query>
-                <![CDATA[
-                    select distinct dblink_acc_num, ortho_name, ortho_abbrev, fmrel_mrkr_zdb_id, mrkr_name,
-                       mrkr_abbrev, genofeat_geno_zdb_id, geno_display_name, feature_name, feature_zdb_id
-                    from lamhdi_tmp
-                   ]]>
-            </Query>
-            <Column id="1" unique="true">OMIM ID</Column>
-            <Column id="2">OMIM Disease Name</Column>
-            <Column id="3">OMIM Disease Symbol</Column>
-            <Column id="4">Gene ID</Column>
-            <Column id="5">Gene Name</Column>
-            <Column id="6">Gene Symbol</Column>
-            <Column id="7">Genotype ID</Column>
-            <Column id="8">Genotype Name</Column>
-            <Column id="9">Genomic Feature Name</Column>
-            <Column id="10">Genomic Feature ID</Column>
-        </Download>
-
-        <Download private="true" orderIndex="1">
-            <Name>
                 Sanger Alleles used in non Sanger pubs
             </Name>
             <Category>
