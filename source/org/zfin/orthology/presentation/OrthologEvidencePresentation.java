@@ -23,7 +23,7 @@ public class OrthologEvidencePresentation {
         return publications;
     }
 
-    public void addPublications(Publication publication) {
+    public void addPublication(Publication publication) {
         if (publications == null) {
             publications = new TreeSet<>();
         }

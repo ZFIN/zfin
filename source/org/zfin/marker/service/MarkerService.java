@@ -41,9 +41,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
-import static org.zfin.repository.RepositoryFactory.getOrthologyRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Sevice Class that deals with Marker related logic.
@@ -767,18 +765,18 @@ public class MarkerService {
             row.setAccessions(ortholog.getExternalReferenceList());
 
             // Collect all the evidence records by code into a map then pull out the values
-            Map<String, OrthologEvidencePresentation> evidenceMap = new HashMap<>();
+            Map<String, OrthologEvidencePresentation> evidenceMap = new TreeMap<>();
             for (OrthologEvidence evidence : ortholog.getEvidenceSet()) {
                 if (publication != null && !publication.equals(evidence.getPublication())) {
                     continue;
                 }
-                String key = evidence.getEvidenceCode().getCode();
+                String key = evidence.getEvidenceCode().getName();
                 if (!evidenceMap.containsKey(key)) {
                     OrthologEvidencePresentation evidencePresentation = new OrthologEvidencePresentation();
                     evidencePresentation.setCode(evidence.getEvidenceCode());
                     evidenceMap.put(key, evidencePresentation);
                 }
-                evidenceMap.get(key).addPublications(evidence.getPublication());
+                evidenceMap.get(key).addPublication(evidence.getPublication());
             }
             // if the evidence map is empty (probably because a publication was provided, and that publication
             // does not support the current ortholog), then just go to the next ortholog; don't add a row with
