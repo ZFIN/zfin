@@ -314,17 +314,21 @@ select count(*), "companies" from company
 
 --Genes w/Human Orthology
 insert into tmp_output(counter, section)
-select count( distinct oevdisp_gene_zdb_id), "Genes with Human Orthology"
- from orthologue_evidence_display
-  where oevdisp_organism_list like "%Human%"
+select count( distinct ortho_zebrafish_gene_zdb_id), "Genes with Human Orthology"
+ from orthologue_evidence, organism, ortholog
+  where organism_common_name like "%Human%"
+ and organism_taxid = ortho_other_species_taxid
+ and ortho_Zdb_id = oev_ortho_Zdb_id
 ;
 
 
 --Genes w/Mouse Orthology
 insert into tmp_output(counter, section)
-select count( distinct oevdisp_gene_zdb_id), "Genes with Mouse Orthology"
- from orthologue_evidence_display
-  where oevdisp_organism_list like "%Mouse%"
+select count( distinct ortho_zebrafish_gene_zdb_id), "Genes with Mouse Orthology"
+ from orthologue_evidence, organism, ortholog
+  where organism_common_name like "%Mouse%"
+ and organism_taxid = ortho_other_species_taxid
+ and ortho_Zdb_id = oev_ortho_Zdb_id
 ;
 
 unload to stats.txt
