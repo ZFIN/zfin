@@ -3847,7 +3847,7 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                           mrkr_zdb_id as xref
                         from record_attribution ra ,  ortholog_evidence ev, marker, ortholog
                         where  ev.oev_ortho_zdb_id = ra.recattrib_data_zdb_id
-			and ortholog.ortho_zdb_id - ev.oev_ortho_Zdb_id
+			and ortholog.ortho_zdb_id = ev.oev_ortho_Zdb_id
                         and  mrkr_zdb_Id = ortho_zebrafish_gene_zdb_id
 
                       UNION
