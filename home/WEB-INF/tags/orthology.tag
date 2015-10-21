@@ -10,7 +10,9 @@
 <%@ attribute name="hideCounts" required="false" type="java.lang.Boolean" %>
 
 <c:if test="${empty title && showTitle}">
-    <c:set var="title" value="ORTHOLOGY"/>
+    <c:set var="title">
+        ORTHOLOGY for <zfin:abbrev entity="${marker}"/> (<zfin2:displayLocation entity="${marker}" hideLink="true"/>)
+    </c:set>
 </c:if>
 
 <c:set var="hideCounts" value="${empty hideCounts ? false : hideCounts}"/>
