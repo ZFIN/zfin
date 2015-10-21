@@ -15,6 +15,7 @@ import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.DiseaseAnnotation;
 import org.zfin.mutant.Fish;
+import org.zfin.orthology.Ortholog;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -102,8 +103,8 @@ public class PublicationViewController {
                     talenCount, crisprCount,
                     antibodyCount, efgCount,
                     cloneProbeCount, expressionCount,
-                    phenotypeCount, phenotypeAlleleCount,featureCount,
-                    fishCount,orthologyCount,new Long( diseaseAnnotationList.size())
+                    phenotypeCount, phenotypeAlleleCount, featureCount,
+                    fishCount, orthologyCount, new Long(diseaseAnnotationList.size())
             ));
         } else {
             model.addAttribute("showAdditionalData", false);
@@ -133,6 +134,36 @@ public class PublicationViewController {
             return "redirect:/" + pubID;
         }
 
+        // assumes that the orthologs are ordered by zebrafish gene
+        List<Ortholog> orthologList = getPublicationRepository().getOrthologListByPub(pubID);
+        Publication publication = getPublicationRepository().getPublication(pubID);
+        List<GeneBean> beanList = new ArrayList<>(orthologList.size() * 4);
+        List<Ortholog> orthologsPerGene = new ArrayList<>(5);
+        for (int index = 0; index < orthologList.size(); index++) {
+            Ortholog ortholog = orthologList.get(index);
+            Marker zebrafishGene = ortholog.getZebrafishGene();
+            Marker nextZebrafishGene = null;
+            // if not last element set next gene
+            if (index != orthologList.size() - 1) {
+                nextZebrafishGene = orthologList.get(index + 1).getZebrafishGene();
+            }
+            orthologsPerGene.add(ortholog);
+
+            // if the last element or the next element is a different gene
+            if (nextZebrafishGene == null || !nextZebrafishGene.equals(zebrafishGene)) {
+                GeneBean orthologyBean = new GeneBean();
+                orthologyBean.setMarker(zebrafishGene);
+                orthologyBean.setOrthologyPresentationBean(MarkerService.getOrthologyPresentationBean(orthologsPerGene, zebrafishGene, publication));
+                beanList.add(orthologyBean);
+            }
+            if (nextZebrafishGene != null && !nextZebrafishGene.equals(zebrafishGene)) {
+                orthologsPerGene = new ArrayList<>(5);
+            }
+
+        }
+        model.addAttribute("orthologyBeanList", beanList);
+        model.addAttribute("publication", publication);
+/*
         List<Marker> list = getPublicationRepository().getOrthologyGeneList(pubID);
         Publication publication = getPublicationRepository().getPublication(pubID);
         List<GeneBean> beanList = new ArrayList<>(list.size());
@@ -144,20 +175,21 @@ public class PublicationViewController {
         }
         model.addAttribute("orthologyBeanList", beanList);
         model.addAttribute("publication", publication);
+*/
         return "publication/publication-orthology-list.page";
     }
 
     @RequestMapping("/{pubID}/feature-list")
     public String showFeatureList(@PathVariable String pubID,
-                                    @ModelAttribute("formBean") GeneBean geneBean,
-                                    Model model) {
+                                  @ModelAttribute("formBean") GeneBean geneBean,
+                                  Model model) {
         logger.info("zdbID: " + pubID);
 
        /* if (StringUtils.equals(pubID, "ZDB-PUB-030905-1")) {
             return "redirect:/" + pubID;
         }*/
 
-       // List<FeatureMarkerRelationship> featureList = getPublicationRepository().getFeatureMarkerRelationshipsByPubID(pubID);
+        // List<FeatureMarkerRelationship> featureList = getPublicationRepository().getFeatureMarkerRelationshipsByPubID(pubID);
         List<Feature> featureList = getPublicationRepository().getFeaturesByPublication(pubID);
         Publication publication = getPublicationRepository().getPublication(pubID);
 
@@ -168,8 +200,8 @@ public class PublicationViewController {
 
     @RequestMapping("/{pubID}/fish-list")
     public String showFishList(@PathVariable String pubID,
-                                  @ModelAttribute("formBean") GeneBean geneBean,
-                                  Model model) {
+                               @ModelAttribute("formBean") GeneBean geneBean,
+                               Model model) {
         logger.info("zdbID: " + pubID);
 
        /* if (StringUtils.equals(pubID, "ZDB-PUB-030905-1")) {

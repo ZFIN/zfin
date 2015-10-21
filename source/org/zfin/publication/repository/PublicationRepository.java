@@ -16,6 +16,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
+import org.zfin.orthology.Ortholog;
 import org.zfin.orthology.Orthology;
 import org.zfin.profile.Person;
 import org.zfin.publication.Journal;
@@ -462,7 +463,7 @@ public interface PublicationRepository extends PaginationParameter {
      */
     List<Genotype> getMutantsAndTgsByPublication(String publicationID);
 
-    List<Marker> getOrthologyGeneList(String pubID);
+    List<Ortholog> getOrthologListByPub(String pubID);
 
     List<Orthology> getOrthologyPublications(Marker marker);
 

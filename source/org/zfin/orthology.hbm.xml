@@ -23,10 +23,10 @@
         <property name="obsolete" column="ortho_other_species_ncbi_gene_is_obsolete"/>
 
         <many-to-one name="zebrafishGene" column="ortho_zebrafish_gene_zdb_id" class="org.zfin.marker.Marker"
-                     not-null="true"/>
+                     not-null="true" />
         <many-to-one name="ncbiOtherSpeciesGene" column="ortho_other_species_ncbi_gene_id" not-null="true"/>
 
-        <set name="externalReferenceList" table="ortholog_external_reference" sort="natural">
+        <set name="externalReferenceList" table="ortholog_external_reference" sort="natural" fetch="join">
             <key column="oef_ortho_zdb_id"/>
             <composite-element class="org.zfin.orthology.OrthologExternalReference">
                 <parent name="ortholog"/>
@@ -35,7 +35,7 @@
             </composite-element>
         </set>
 
-        <set name="evidenceSet" table="ortholog_evidence">
+        <set name="evidenceSet" table="ortholog_evidence" fetch="join">
             <key column="oev_ortho_zdb_id"/>
             <composite-element class="org.zfin.orthology.OrthologEvidence">
                 <parent name="ortholog"/>

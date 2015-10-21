@@ -9,9 +9,9 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
+import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 import org.zfin.antibody.Antibody;
-import org.zfin.curation.Curation;
 import org.zfin.database.SearchUtil;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionExperiment;
@@ -27,13 +27,11 @@ import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.OrthoEvidenceDisplay;
+import org.zfin.orthology.Ortholog;
 import org.zfin.orthology.Orthology;
-import org.zfin.profile.Person;
-import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.DOIAttempt;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
@@ -500,8 +498,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         String hql = "select distinct fmRel from FeatureMarkerRelationship fmRel, PublicationAttribution attr " +
                 "      where attr.publication.zdbID = :pubID " +
-                "      and attr.dataZdbID=fmRel.feature.zdbID " ;
-                // "      and ftr.type=:tg " +
+                "      and attr.dataZdbID=fmRel.feature.zdbID ";
+        // "      and ftr.type=:tg " +
 
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
@@ -1580,23 +1578,29 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @Override
-    public List<Marker> getOrthologyGeneList(String pubID) {
+    public List<Ortholog> getOrthologListByPub(String pubID) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct evidence.gene, evidence.gene.abbreviationOrder" +
-                " from OrthoEvidenceDisplay as evidence, PublicationAttribution attr " +
-                "      where attr.publication.zdbID = :pubID " +
-                "        and attr.dataZdbID = evidence.zdbID " +
-                "order by evidence.gene.abbreviationOrder";
-
+        String hql = "select distinct ortho, ortho.zebrafishGene.abbreviationOrder, ortho.ncbiOtherSpeciesGene.organism.displayOrder " +
+                "from Ortholog as ortho " +
+                "join ortho.evidenceSet as evidence " +
+                "where evidence.publication.zdbID = :pubID " +
+                "order by ortho.zebrafishGene.abbreviationOrder, ortho.ncbiOtherSpeciesGene.organism.displayOrder";
         Query query = session.createQuery(hql);
         query.setString("pubID", pubID);
-        List<Object[]> array = (List<Object[]>) query.list();
-        List<Marker> markerList = new ArrayList<>(array.size());
-        for (Object[] arrayObject : array) {
-            markerList.add((Marker) arrayObject[0]);
-        }
-        return markerList;
+        query.setResultTransformer(new ResultTransformer() {
+            @Override
+            public Object transformTuple(Object[] objects, String[] strings) {
+                return objects[0];
+            }
+
+            @Override
+            public List transformList(List collection) {
+                return collection;
+            }
+        });
+        List<Ortholog> orthologList = (List<Ortholog>) query.list();
+        return orthologList;
     }
 
     @Override
@@ -1999,12 +2003,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     public int deleteExpressionExperimentIDswithNoExpressionResult(Publication publication) {
         String sql = "delete from expression_experiment x " +
-                     " where x.xpatex_source_zdb_id = :pubID " +
-                     "   and not exists ( " +
-                     "                    select 'x' " +
-                     "                      from expression_result ee " +
-                     "                     where ee.xpatres_xpatex_zdb_id = x.xpatex_zdb_id " +
-                     "                   ); ";
+                " where x.xpatex_source_zdb_id = :pubID " +
+                "   and not exists ( " +
+                "                    select 'x' " +
+                "                      from expression_result ee " +
+                "                     where ee.xpatres_xpatex_zdb_id = x.xpatex_zdb_id " +
+                "                   ); ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("pubID", publication.getZdbID());
         return query.executeUpdate();
