@@ -26,7 +26,7 @@ markerview.apg msegselect.apg newmrkrselect.apg nomeneditor.apg \
 nomenview.apg searchform.apg sequence.apg sequence_data_entry.apg snpview.apg
 
 
-STATICS =  dnote_new.apg do-oevdispupdate.apg make_map.apg \
+STATICS =  dnote_new.apg make_map.apg \
 	markerview_placeholder_note.apg snp_note.apg snpids.apg \
 	snp_batch.apg marker_history_correction.apg attrib_check.apg sequence_tools.apg \
 	markerrelationship.apg  \
