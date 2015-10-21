@@ -7,7 +7,6 @@ import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.mutant.DiseaseAnnotation;
 import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.OmimPhenotype;
@@ -158,7 +157,7 @@ public class OntologyService {
                     omimDisplay = map.get(key);
                 }
                 omimDisplay.setOrthology(omimResult.getOrtholog());
-                omimDisplay.setHumanAccession(getSequenceRepository().getDBLinkByData(omimResult.getOrtholog().getZdbID(), sequenceService.getOMIMHumanOrthologue()));
+                omimDisplay.setHumanAccession(getSequenceRepository().getDBLinkByData(omimResult.getOrtholog().getZdbID(), sequenceService.getOMIMHumanOrtholog()));
                 omimDisplay.setName(omimResult.getName());
                 omimDisplay.setOmimNum(omimResult.getOmimNum());
                 omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation()));

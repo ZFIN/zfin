@@ -810,7 +810,7 @@ todo
                     OrthologueDBLink omimoldb = new OrthologueDBLink();
                     omimoldb.setOrtholog(ortholog);
                     omimoldb.setAccessionNumber(omimOrthologue.getOmimAccession().replaceAll("MIM:", ""));
-                    omimoldb.setReferenceDatabase(sequenceService.getOMIMHumanOrthologue());
+                    omimoldb.setReferenceDatabase(sequenceService.getOMIMHumanOrtholog());
                     currentSession().save(omimoldb);
                 }
             }

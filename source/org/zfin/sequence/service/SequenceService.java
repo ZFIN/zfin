@@ -24,7 +24,7 @@ public class SequenceService {
     private ReferenceDatabase entrezGeneMouseRefDB;
     private ReferenceDatabase uniprotDB;
 
-    public ReferenceDatabase getOMIMHumanOrthologue() {
+    public ReferenceDatabase getOMIMHumanOrtholog() {
         if (omimHumanOrthologueDB == null) {
             omimHumanOrthologueDB = sequenceRepository.getReferenceDatabase(
                     ForeignDB.AvailableName.OMIM,
