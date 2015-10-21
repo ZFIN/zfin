@@ -62,7 +62,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
 
                 <entity name="gene_ortholog_organism"
                         datasource="db" query="select organism as ortholog_organism,
-                                      ortho_other_species_gene_zdb_id as gene_zdb_id
+                                      ortho_zebrafish_gene_zdb_id as gene_zdb_id
                                  from ortholog
 				    join organism on organism_taxid = ortho_other_species_taxid;"
                         where="gene_zdb_id=gene.id"
