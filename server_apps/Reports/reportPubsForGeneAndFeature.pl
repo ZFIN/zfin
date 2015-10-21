@@ -127,9 +127,9 @@ my $sqlPubGene = '
               and dblink_linked_recid like "ZDB-GENE-%" 
               and recattrib_source_zdb_id like "ZDB-PUB-%"
            union
-           select oevdisp_gene_zdb_id, recattrib_source_zdb_id 
-	     from record_attribution, orthologue_evidence_display 
-	    where recattrib_data_zdb_id = oevdisp_zdb_id
+           select ortho_zebrafish_gene_zdb_id, recattrib_source_zdb_id 
+	     from record_attribution, ortholog 
+	    where recattrib_data_zdb_id = ortho_zdb_id
               and oevdisp_gene_zdb_id like "ZDB-GENE-%"  
               and recattrib_source_zdb_id like "ZDB-PUB-%"
            union
