@@ -52,59 +52,40 @@ where mrkr_type in ('GENE','GENEP','EFG')
             processor="CachedSqlEntityProcessor"/>
 
 
-
-<!--  commenting out because these are no longer used, probably should be removed...
-
-                <entity name="fly_ortho_chromosomes"
-                        datasource="db" query="select ortho_chromosome as fly_ortho_chromosome, c_gene_id as gene_zdb_id from orthologue where organism = 'Fruit fly' and ortho_chromosome is not null;"
+                <entity name="gene_ortholog"
+                        datasource="db" query="select ortho_other_species_symbol as ortholog_other_species_symbol,
+                                      ortho_other_species_name as ortholog_other_species_name,
+                                      ortho_zebrafish_gene_zdb_id as gene_zdb_id
+                                 from ortholog"
                         where="gene_zdb_id=gene.id"
                         processor="CachedSqlEntityProcessor"/>
 
-                <entity name="human_ortho_chromosomes"
-                        datasource="db" query="select ortho_chromosome as human_ortho_chromosome, c_gene_id as gene_zdb_id from orthologue where organism = 'Human' and ortho_chromosome is not null;"
-                        where="gene_zdb_id=gene.id"
-                        processor="CachedSqlEntityProcessor"/>
-
-                <entity name="mouse_ortho_chromosomes"
-                        datasource="db" query="select ortho_chromosome as mouse_ortho_chromosome, c_gene_id as gene_zdb_id from orthologue where organism = 'Mouse' and ortho_chromosome is not null;"
-                        where="gene_zdb_id=gene.id"
-                        processor="CachedSqlEntityProcessor"/>
-
--->
-
-                <entity name="gene_orthologue"
-                        datasource="db" query="select ortho_abbrev as orthologue_abbrev,
-                                      ortho_name as orthologue_name,
-                                      c_gene_id as gene_zdb_id
-                                 from orthologue"
-                        where="gene_zdb_id=gene.id"
-                        processor="CachedSqlEntityProcessor"/>
-
-                <entity name="gene_orthologue_organism"
-                        datasource="db" query="select organism as orthologue_organism,
-                                      c_gene_id as gene_zdb_id
-                                 from orthologue;"
+                <entity name="gene_ortholog_organism"
+                        datasource="db" query="select organism as ortholog_organism,
+                                      ortho_other_species_gene_zdb_id as gene_zdb_id
+                                 from ortholog
+				    join organism on organism_taxid = ortho_other_species_taxid;"
                         where="gene_zdb_id=gene.id"
                         processor="CachedSqlEntityProcessor"/>
 
                 <entity name="gene_omim"
                         datasource="db" query="select omimp_name as disease,
                                       omimp_omim_id as omim_id,
-                                      c_gene_id as gene_zdb_id
+                                      ortho_zebrafish_gene_zdb_id as gene_zdb_id
                               from omim_phenotype
-                                     join orthologue on omimp_ortho_zdb_id = orthologue.zdb_id"
+                                     join ortholog on omimp_ortho_zdb_id = ortholog.ortho_zdb_id"
                         where="gene_zdb_id=gene.id"
                         processor="CachedSqlEntityProcessor"/>
 
                 <entity name="gene_disease"
                         datasource="db" query="select
                                 term_name as disease,
-                                orthologue.c_gene_id as gene_zdb_id
+                                ortholog.ortho_zebrafish_gene_zdb_id as gene_zdb_id
                                 from term
                                      join term_xref on tx_term_zdb_id = term_zdb_id
                                      join omimp_termxref_mapping on otm_tx_id = tx_pk_id
                                      join omim_phenotype on otm_omimp_id = omimp_pk_id
-                                     join orthologue on omimp_ortho_zdb_id = orthologue.zdb_id
+                                     join ortholog on omimp_ortho_zdb_id = ortho_zdb_id
                                 where term_ontology = 'disease_ontology';"
                         where="gene_zdb_id=gene.id"
                         processor="CachedSqlEntityProcessor"/>
@@ -668,12 +649,12 @@ as phenotype_statement,
                                                     or dblink_linked_recid[1,7] = 'ZDB-EFG')
                                                 and dblink_acc_num not like 'OTTDARG%'
                         union
-                                             select fdb_db_name || ':' || dblink_acc_num as related_accession,
-                                                     c_gene_id as gene_zdb_id
-                                             from db_link, foreign_db_contains, foreign_db, orthologue
+                                             select fdb_db_name || ':' || oef_accession_number as related_accession,
+                                                     ortho_zebrafish_gene_zdb_id as gene_zdb_id
+                                             from ortholog_external_reference, foreign_db_contains, foreign_db, ortholog
                                              where dblink_fdbcont_zdb_id = fdbcont_zdb_id
                                                and fdbcont_fdb_db_id = fdb_db_pk_id
-                                               and orthologue.zdb_id = dblink_linked_recid
+                                               and ortholog.ortho_zdb_id = oef_ortho_Zdb_id
                         union
                           select fdb_db_name || ':' || dblink_acc_num as related_accession,
                                                      mrel_mrkr_1_zdb_id as gene_zdb_id
@@ -3628,8 +3609,8 @@ where feature_zdb_id = ids_data_zdb_id
                                  join term_xref on tx_term_zdb_id = term_zdb_id
                                  join omimp_termxref_mapping on otm_tx_id =	tx_pk_id
                                  join omim_phenotype on otm_omimp_id = omimp_pk_id
-                                 join orthologue on	omimp_ortho_zdb_id = orthologue.zdb_id
-                                 join marker on orthologue.c_gene_id = mrkr_zdb_id
+                                 join ortholog on	omimp_ortho_zdb_id = ortho_zdb_id
+                                 join marker on ortholog.ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
                             where term_ontology = 'disease_ontology';"
                    where="term_zdb_id=term.internal_id"
                    processor="CachedSqlEntityProcessor"/>
@@ -3642,8 +3623,8 @@ where feature_zdb_id = ids_data_zdb_id
                                  join term_xref on tx_term_zdb_id = term_zdb_id
                                  join omimp_termxref_mapping on otm_tx_id = tx_pk_id
                                  join omim_phenotype on otm_omimp_id = omimp_pk_id
-                                 join orthologue on  omimp_ortho_zdb_id = orthologue.zdb_id
-                                 join data_alias on	dalias_data_zdb_id = orthologue.c_gene_id
+                                 join ortholog on  omimp_ortho_zdb_id = ortho_zdb_id
+                                 join data_alias on	dalias_data_zdb_id = ortholog_zebrafish_gene_zdb_id
                             where term_ontology = 'disease_ontology';"
                    where="term_zdb_id=term.internal_id"
                    processor="CachedSqlEntityProcessor"/>
@@ -3864,9 +3845,10 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                           mrkr_abbrev as gene,
                           mrkr_name as gene_full_name,
                           mrkr_zdb_id as xref
-                        from record_attribution ra ,  orthologue_evidence_display ev, marker
-                        where  ev.oevdisp_zdb_id = ra.recattrib_data_zdb_id
-                        and  mrkr_zdb_Id = ev.oevdisp_gene_zdb_id
+                        from record_attribution ra ,  ortholog_evidence ev, marker, ortholog
+                        where  ev.oev_ortho_zdb_id = ra.recattrib_data_zdb_id
+			and ortholog.ortho_zdb_id - ev.oev_ortho_Zdb_id
+                        and  mrkr_zdb_Id = ortho_zebrafish_gene_zdb_id
 
                       UNION
                       select recattrib_source_zdb_id as pub_zdb_id,
@@ -3984,8 +3966,8 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                                    recattrib_source_zdb_id as pub_zdb_id
                             from record_attribution
                             where exists (select 'x'
-                                          from orthologue_evidence_display
-                                          where recattrib_data_zdb_id = oevdisp_zdb_id);"
+                                          from ortholog
+                                          where recattrib_data_zdb_id = ortho_zdb_id);"
                    processor="CachedSqlEntityProcessor"
                    where="pub_zdb_id=publication.id"/>
 

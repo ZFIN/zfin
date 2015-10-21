@@ -323,7 +323,7 @@
              construct_t
 
 
-             orthologue_name
+             ortholog_other_species_name
              disease_model_t
              disease_t
              phenotype_statement_t
@@ -416,7 +416,7 @@
              construct_t
 
 
-             orthologue_name
+             ortholog_other_species_name
              disease_model_t
              disease_t
              phenotype_statement_t
@@ -541,8 +541,8 @@
              alias^4.0
              alias_t^4.0
 
-             orthologue_abbrev^2.0
-             orthologue_abbrev_t^2.0
+             ortholog_other_species_symbol^2.0
+             ortholog_other_species_symbol_t^2.0
              construct_name^2.0
              construct_alias
 
@@ -555,10 +555,10 @@
 
              marker_abbrev^4.0
 
-             orthologue_name
-             orthologue_organism
-             orthologue_name_t
-             orthologue_organism_t
+             ortholog_other_species_name
+             ortholog_organism
+             ortholog_other_species_name_t
+             ortholog_organism_t
              disease_model
              disease_model_t
              disease
@@ -702,8 +702,8 @@
                 name_ac^10
                 full_name_ac^5
                 alias_ac^7
-                orthologue_abbrev_ac^4
-                orthologue_name_ac^3
+                ortholog_other_species_symbol_ac^4
+                ortholog_other_species_name_ac^3
                 name_t
                 alias_t
                 full_name_t
@@ -716,8 +716,8 @@
                 name_ac
                 full_name_ac
                 alias_ac
-                orthologue_abbrev_ac
-                orthologue_name_ac
+                ortholog_other_species_symbol_ac
+                ortholog_other_species_name_ac
                 name_t
                 alias_t
                 full_name_t

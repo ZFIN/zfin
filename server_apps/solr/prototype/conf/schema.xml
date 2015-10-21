@@ -482,9 +482,9 @@
    <field name="full_name" type="text" indexed="true" stored="true" required="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="alias" type="abbrev" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
 
-   <field name="orthologue_abbrev" type="abbrev" indexed="true" stored="true" multiValued="true"   />
-   <field name="orthologue_name" type="text" indexed="true" stored="true" multiValued="true"   />
-   <field name="orthologue_organism" type="keyword" indexed="true" stored="true" multiValued="true"  />
+   <field name="ortholog_other_species_symbol" type="abbrev" indexed="true" stored="true" multiValued="true"   />
+   <field name="ortholog_other_species_name" type="text" indexed="true" stored="true" multiValued="true"   />
+   <field name="ortholog_organism" type="keyword" indexed="true" stored="true" multiValued="true"  />
 
    <field name="disease_model" type="keyword" indexed="true" stored="true" multiValued="true"  />
    <field name="disease" type="keyword" indexed="true" stored="true" multiValued="true"  />
@@ -1006,13 +1006,13 @@
 
     <copyField source="date" dest="tdate"/>
 
-    <copyField source="orthologue_abbrev" dest="text"/>
-    <copyField source="orthologue_name" dest="text"/>
-    <copyField source="orthologue_organism" dest="text"/>
+    <copyField source="ortholog_other_species_symbol" dest="text"/>
+    <copyField source="ortholog_other_species_name" dest="text"/>
+    <copyField source="ortholog_organism" dest="text"/>
 
-    <copyField source="orthologue_abbrev" dest="orthologue_abbrev_t"/>
-    <copyField source="orthologue_name" dest="orthologue_name_t"/>
-    <copyField source="orthologue_organism" dest="orthologue_organism_t"/>
+    <copyField source="ortholog_other_species_symbol" dest="ortholog_other_species_symbol_t"/>
+    <copyField source="ortholog_other_species_name" dest="ortholog_other_species_name_t"/>
+    <copyField source="ortholog_organism" dest="ortholog_organism_t"/>
 
     <copyField source="disease_model" dest="text"/>
     <copyField source="disease" dest="text"/>
@@ -1125,8 +1125,8 @@
 <!--
     <copyField source="disease_model" dest="nomenclature_suggest"/>
 -->
-    <copyField source="orthologue_abbrev" dest="orthologue_abbrev_ac"/>
-    <copyField source="orthologue_name" dest="orthologue_name_ac"/>
+    <copyField source="ortholog_other_species_symbol" dest="ortholog_other_species_symbol_ac"/>
+    <copyField source="ortholog_other_species_name" dest="ortholog_other_species_name_ac"/>
 
 
     <copyField source="coding_sequence" dest="related_gene_symbol"/>
