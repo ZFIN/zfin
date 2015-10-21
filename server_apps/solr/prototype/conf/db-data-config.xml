@@ -3619,13 +3619,13 @@ where feature_zdb_id = ids_data_zdb_id
                    datasource="db" query="select
                             dalias_alias as	gene_previous_name,
                             term_zdb_id as term_zdb_id
-                            from term
-                                 join term_xref on tx_term_zdb_id = term_zdb_id
-                                 join omimp_termxref_mapping on otm_tx_id = tx_pk_id
-                                 join omim_phenotype on otm_omimp_id = omimp_pk_id
-                                 join ortholog on  omimp_ortho_zdb_id = ortho_zdb_id
-                                 join data_alias on	dalias_data_zdb_id = ortholog_zebrafish_gene_zdb_id
-                            where term_ontology = 'disease_ontology';"
+                            from term, term_xref, omim_phenotype, ortholog, data_alias,omimp_termxref_mapping 
+                                 where tx_term_zdb_id = term_zdb_id
+                                  and  otm_tx_id = tx_pk_id
+                                and otm_omimp_id = omimp_pk_id
+                                 and omimp_ortho_zdb_id = ortho_zdb_id
+                                 and dalias_data_zdb_id = ortho_zebrafish_gene_zdb_id
+                            and term_ontology = 'disease_ontology';"
                    where="term_zdb_id=term.internal_id"
                    processor="CachedSqlEntityProcessor"/>
 
