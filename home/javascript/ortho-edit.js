@@ -129,6 +129,7 @@
         vm.noteEditing = false;
 
         vm.codes = [];
+        vm.defaultPub = undefined;
         vm.pubs = [
             {
                 zdbID: 'ZDB-PUB-030905-1'
@@ -167,6 +168,11 @@
         activate();
 
         function activate() {
+            if (vm.pub) {
+                vm.defaultPub = {zdbID: vm.pub};
+                vm.pubs.unshift(vm.defaultPub);
+            }
+
             if (!vm.gene) {
                 fetchGenes();
             } else {
@@ -301,7 +307,12 @@
         }
 
         function addEvidence(ortholog) {
-            openEvidenceModal(ortholog, new EvidenceDisplay(vm.codes));
+            var evDisp = new EvidenceDisplay(vm.codes);
+            if (vm.defaultPub) {
+                evDisp.publication = vm.defaultPub;
+            }
+            openEvidenceModal(ortholog, evDisp);
+            checkPub();
         }
 
         function saveEvidence() {
