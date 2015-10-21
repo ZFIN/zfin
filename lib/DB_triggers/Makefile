@@ -90,10 +90,6 @@ TRIGGERS = \
 	marker_relationship_mrkr_2_update_trigger.sql \
 	marker_relationship_type_update_trigger.sql \
 	marker_relationship_update_trigger.sql \
-	orthologue_evidence_display_insert_trigger.sql \
-	orthologue_evidence_display_update_trigger.sql \
-	orthologue_insert_trigger.sql \
-	orthologue_update_trigger.sql \
 	one_to_one_accession_insert_trigger.sql \
 	one_to_one_accession_update_trigger.sql \
 	person_insert_trigger.sql \
