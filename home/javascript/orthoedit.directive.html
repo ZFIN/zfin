@@ -1,4 +1,14 @@
 <table class="primary-entity-attributes">
+    <tr ng-show="vm.showGenePicker">
+        <th>Zebrafish gene</th>
+        <td>
+            <form class="curation-form">
+                <select ng-model="vm.gene"
+                        ng-options="gene.zdbID as gene.name for gene in vm.genes"
+                        ng-change="vm.fetchOrthology()"></select>
+            </form>
+        </td>
+    </tr>
     <tr>
         <th>Import from NCBI</th>
         <td>
@@ -12,7 +22,8 @@
 </table>
 
 <div class="error" ng-show="vm.generalError">{{vm.generalError}}</div>
-<table class="summary basicstripes">
+<div ng-show="vm.orthologsLoading" class="loading-overlay"><i class="fa fa-spinner fa-spin"></i></div>
+<table class="ortholog-table summary basicstripes">
     <thead>
     <tr>
         <th></th>
@@ -24,7 +35,10 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-show="vm.orthologs.length == 0">
+    <tr ng-show="!vm.gene">
+        <td class="no-data" colspan="6">Select a Zebrafish Gene to Curate Orthology</td>
+    </tr>
+    <tr ng-show="vm.gene && vm.orthologs.length == 0">
         <td class="no-data" colspan="6">No Orthologs Yet</td>
     </tr>
     <tr ng-repeat="ortholog in vm.orthologs">
@@ -52,7 +66,7 @@
     </tr>
 </table>
 
-<div class="summary">
+<div class="summary" ng-show="vm.gene">
     <b>Orthology Note</b>
     <div class="curation-form">
         <div class="error" ng-show="vm.noteError">{{vm.noteError}}</div>

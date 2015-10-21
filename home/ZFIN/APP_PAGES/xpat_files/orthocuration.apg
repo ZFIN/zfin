@@ -1,0 +1,33 @@
+<?MICOMMENT>
+    FILE:     orthocuration.apg
+
+    This page is the Orthology tab.
+<?/MICOMMENT>
+
+<?MIERROR>
+    <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+    <?/MIVAR>
+
+    Code:    $MI_ERRORCODE <br>
+    State:   $MI_ERRORSTATE <br>
+    Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<script src="/javascript/angular/angular.min.js"></script>
+<script src="/javascript/ortho-edit.js"></script>
+
+<?MICOMMENT>Stuff we need to make GWT happy<?/MICOMMENT>
+<?MIVAR>
+<script type="text/javascript">
+    var curationProperties = {
+        zdbID : "$OID",
+        moduleType: "ORTHO_TAB",
+        debug: "false"
+    };
+</script>
+<?/MIVAR>
+
+<div ng-app="app">
+    <?MIVAR><div ortho-edit pub="$OID"></div><?/MIVAR>
+</div>

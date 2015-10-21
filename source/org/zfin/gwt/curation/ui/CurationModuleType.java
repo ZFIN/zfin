@@ -75,6 +75,12 @@ public enum CurationModuleType {
             new FishModule(publicationID);
             return null;
         }
+    },
+    ORTHO_TAB {
+        @Override
+        public ConstructionZone initializeModule(String publicationID) {
+            return null;
+        }
     },;
 
     public static CurationModuleType getType(String type) {

@@ -31,7 +31,7 @@ STATICS = xpatselectquery.apg xpatcuration.apg xpatexdisplayname.apg xpatcurupda
 diseasecuration.apg fishcuration.apg\
 fxfigstgrng.apg fxfigfishlist.apg \
 fxgenestgrng.apg record_web_update.apg attribupdate.apg \
-patocuration.apg xpatcurreset.apg \
+orthocuration.apg patocuration.apg xpatcurreset.apg \
 xpatcurupdatecondition.apg gocuration.apg xpatselect_resultsasimages.apg \
 xpatview.apg fxfiganatlist.apg fxfiggenelist.apg 
 

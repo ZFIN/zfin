@@ -950,7 +950,9 @@ a + .inline-upload {
     margin-bottom: 5px;
     margin-top: 15px;
 }
-.curation-form input, .curation-form textarea {
+.curation-form input,
+.curation-form textarea,
+.curation-form select {
     display: block;
     width: 100%;
     box-sizing: border-box;
@@ -959,7 +961,9 @@ a + .inline-upload {
     margin-bottom: 5px;
     border-radius: 3px;
 }
-.curation-form input:disabled, .curation-form textarea:disabled {
+.curation-form input:disabled,
+.curation-form textarea:disabled,
+.curation-form select:disabled {
     background-color: #FAFAFA;
     color: #909090;
     cursor: not-allowed;
@@ -1039,4 +1043,14 @@ a + .inline-upload {
 .muted {
     font-style: italic;
     color: #9A9A9A;
+}
+
+.loading-overlay {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.5);
+    font-size: 3em;
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    padding: 30px;
+    box-sizing: border-box;
 }

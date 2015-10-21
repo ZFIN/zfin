@@ -98,6 +98,7 @@ EFFECTS
   $(VECAPPEND,$pubcur_category,PHENO)
   $(VECAPPEND,$pubcur_category,GO)
   $(VECAPPEND,$pubcur_category,Disease)
+  $(VECAPPEND,$pubcur_category,Orthology)
 <?/MIVAR>
 
 <style type="text/css">
@@ -957,6 +958,9 @@ and feature_zdb_id=fmrel_ftr_zdb_id
 <?/MIBLOCK>
 <?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,Fish))">
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-fishcuration.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+<?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,Orthology))">
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-orthocuration.apg';">$1<?/MISQL>
 <?/MIBLOCK>
 
 <?MICOMMENT>

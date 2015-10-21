@@ -5,11 +5,11 @@ import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.zfin.feature.Feature;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.service.MarkerService;
@@ -210,4 +210,14 @@ public class PublicationViewController {
         return "publication/publication-disease.page";
     }
 
+    @ResponseBody
+    @RequestMapping(value = "{zdbID}/genes", method = RequestMethod.GET)
+    public List<MarkerDTO> getPublicationGenes(@PathVariable String zdbID) {
+        List<Marker> genes = getPublicationRepository().getGenesByPublication(zdbID);
+        List<MarkerDTO> dtos = new ArrayList<>();
+        for (Marker gene : genes) {
+            dtos.add(DTOConversionService.convertToMarkerDTO(gene));
+        }
+        return dtos;
+    }
 }
