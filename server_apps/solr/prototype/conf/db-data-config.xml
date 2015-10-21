@@ -652,7 +652,7 @@ as phenotype_statement,
                                              select fdb_db_name || ':' || oef_accession_number as related_accession,
                                                      ortho_zebrafish_gene_zdb_id as gene_zdb_id
                                              from ortholog_external_reference, foreign_db_contains, foreign_db, ortholog
-                                             where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                                             where oef_fdbcont_zdb_id = fdbcont_zdb_id
                                                and fdbcont_fdb_db_id = fdb_db_pk_id
                                                and ortholog.ortho_zdb_id = oef_ortho_Zdb_id
                         union
