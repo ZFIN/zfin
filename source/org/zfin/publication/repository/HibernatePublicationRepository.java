@@ -29,9 +29,7 @@ import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
-import org.zfin.orthology.OrthoEvidenceDisplay;
 import org.zfin.orthology.Ortholog;
-import org.zfin.orthology.Orthology;
 import org.zfin.publication.DOIAttempt;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
@@ -1601,34 +1599,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         });
         List<Ortholog> orthologList = (List<Ortholog>) query.list();
         return orthologList;
-    }
-
-    @Override
-    public List<Orthology> getOrthologyPublications(Marker marker) {
-        Session session = HibernateUtil.currentSession();
-
-        String hql = "select attr.publication, evidence, attr.publication.shortAuthorList from OrthoEvidenceDisplay as evidence, PublicationAttribution attr " +
-                "      where evidence.gene= :gene " +
-                "        and attr.dataZdbID = evidence.zdbID " +
-                "order by attr.publication.shortAuthorList";
-
-        Query query = session.createQuery(hql);
-        query.setParameter("gene", marker);
-        List<Object[]> array = (List<Object[]>) query.list();
-        List<Orthology> orthologyList = new ArrayList<>(array.size());
-        for (Object[] arrayObject : array) {
-            Orthology orthology = new Orthology();
-            orthology.setPublication((Publication) arrayObject[0]);
-            OrthoEvidenceDisplay orthoEvidenceDisplay = (OrthoEvidenceDisplay) arrayObject[1];
-            orthology.setEvidenceCode(orthoEvidenceDisplay.getEvidenceCode());
-            orthology.setGene(marker);
-            String[] speciesArray = orthoEvidenceDisplay.getOrganismList().split(":");
-            for (String species : speciesArray) {
-                orthology.addOrthologousSpecies(species);
-            }
-            orthologyList.add(orthology);
-        }
-        return orthologyList;
     }
 
     @Override

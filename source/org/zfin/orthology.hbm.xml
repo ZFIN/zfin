@@ -80,20 +80,6 @@
 
     </class>
 
-    <class name="org.zfin.orthology.OrthoEvidenceDisplay" table="orthologue_evidence_display">
-        <id name="zdbID" type="string">
-            <column name="oevdisp_zdb_id" not-null="true"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">OEVDISP</param>
-                <param name="insertActiveData">true</param>
-            </generator>
-        </id>
-        <property name="organismList" column="oevdisp_organism_list"/>
-        <many-to-one name="gene" column="oevdisp_gene_zdb_id" class="org.zfin.marker.Marker" not-null="true"/>
-        <many-to-one name="evidenceCode" column="oevdisp_evidence_code" not-null="true"/>
-    </class>
-
-
     <class name="org.zfin.orthology.repository.AccessionHelperDBLink" table="db_link">
 
         <id name="zdbID" type="string">

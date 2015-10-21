@@ -465,8 +465,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<Ortholog> getOrthologListByPub(String pubID);
 
-    List<Orthology> getOrthologyPublications(Marker marker);
-
     List<Publication> getPublicationWithPubMedId(Integer maxResult);
 
     SortedSet<Publication> getAllPublicationsForFeature(Feature feature);

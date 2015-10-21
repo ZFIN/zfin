@@ -24,6 +24,7 @@ import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.repository.OntologyRepository;
+import org.zfin.orthology.Ortholog;
 import org.zfin.orthology.Orthology;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -721,15 +722,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getOrthologyList() {
-        List<Marker> list = publicationRepository.getOrthologyGeneList("ZDB-PUB-060313-16");
-        assertNotNull(list);
-        assertTrue(list.size() > 5);
-    }
-
-    @Test
-    public void getPublicationsForOrthology() {
-        Marker marker = getMarkerRepository().getMarkerByID("ZDB-GENE-980526-166 ");
-        List<Orthology> list = publicationRepository.getOrthologyPublications(marker);
+        List<Ortholog> list = publicationRepository.getOrthologListByPub("ZDB-PUB-060313-16");
         assertNotNull(list);
         assertTrue(list.size() > 5);
     }
