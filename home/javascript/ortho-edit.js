@@ -13,7 +13,7 @@
     ];
 
     function zdbIdToDisplay(value) {
-        var out = value;
+        var out = value.toUpperCase();
         namedPubs.forEach(function (namedPub) {
             if (namedPub.zdbID === value) {
                 out = namedPub.display;
@@ -29,7 +29,7 @@
                 out = namedPub.zdbID;
             }
         });
-        return out;
+        return out.toUpperCase();
     }
 
     function pubDisplayDirective() {
@@ -323,6 +323,7 @@
 
             if (!vm.modalEvidence.publication.zdbID.match(/^ZDB-PUB-\d{6}-\d+/)) {
                 vm.evidencePublicationError = 'Enter a valid publication ID';
+                return;
             }
 
             if (!vm.modalEvidence.anySelected()) {
