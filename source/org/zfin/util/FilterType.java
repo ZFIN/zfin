@@ -3,12 +3,6 @@ package org.zfin.util;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * User: giles
- * Date: Aug 3, 2006
- * Time: 4:02:02 PM
- */
-
 public class FilterType {
     private String name;
 

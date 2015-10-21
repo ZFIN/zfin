@@ -1,7 +1,6 @@
 package org.zfin.publication.repository;
 
 import org.zfin.antibody.Antibody;
-import org.zfin.curation.Curation;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
@@ -13,12 +12,9 @@ import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
-import org.zfin.orthology.Orthology;
-import org.zfin.profile.Person;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationParameter;

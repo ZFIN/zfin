@@ -6,7 +6,10 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.zfin.anatomy.AnatomyItemTest;
-import org.zfin.anatomy.presentation.*;
+import org.zfin.anatomy.presentation.AnatomyPresentationTest;
+import org.zfin.anatomy.presentation.RelationshipTypeSortingTest;
+import org.zfin.anatomy.presentation.SortAnatomyResultsTest;
+import org.zfin.anatomy.presentation.StagePresentationTest;
 import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
 import org.zfin.curation.service.CurationDTOConversionServiceSpec;
 import org.zfin.database.DatabaseServiceTest;
@@ -46,8 +49,6 @@ import org.zfin.ontology.OntologyTokenizationTest;
 import org.zfin.ontology.presentation.DiseaseDisplayComparatorTest;
 import org.zfin.ontology.presentation.ExpressionResultPresentationTest;
 import org.zfin.ontology.service.OntologyServiceTest;
-import org.zfin.orthology.OrthologyEvidenceFastSearchTest;
-import org.zfin.orthology.OrthologyEvidenceServiceTest;
 import org.zfin.profile.OrganizationUrlTest;
 import org.zfin.profile.ProfileUnitTests;
 import org.zfin.profile.service.BeanCompareServiceTest;
@@ -117,9 +118,6 @@ import org.zfin.util.*;
         OntologyServiceTest.class,
         OntologyTokenizationTest.class,
         OrganizationUrlTest.class,
-        OrthologyEvidenceFastSearchTest.class,
-        OrthologyEvidenceServiceTest.class,
-        OrthologyValidationTest.class,
         PaginationBeanTest.class,
         PatoPileStructureValidatorTest.class,
         PhenotypeServiceTest.class,

@@ -12,8 +12,8 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.FeaturePrefix;
 import org.zfin.feature.presentation.FeaturePrefixPresentation;
 import org.zfin.feature.presentation.FeaturePresentation;
-import org.zfin.fish.presentation.*;
 import org.zfin.fish.FishAnnotation;
+import org.zfin.fish.presentation.*;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -35,7 +35,6 @@ import org.zfin.ontology.Term;
 import org.zfin.ontology.TermExternalReference;
 import org.zfin.ontology.presentation.*;
 import org.zfin.orthology.OrthologExternalReference;
-import org.zfin.orthology.OrthologySpecies;
 import org.zfin.orthology.presentation.OrthologyPresentation;
 import org.zfin.profile.Organization;
 import org.zfin.profile.Person;
@@ -63,8 +62,9 @@ import javax.servlet.jsp.tagext.Tag;
 import java.io.IOException;
 import java.util.Collection;
 
-/** This tag class needs to be expanded to support a "type" attribute which allows it to be used for any
- bean
+/**
+ * This tag class needs to be expanded to support a "type" attribute which allows it to be used for any
+ * bean
  */
 
 /**
@@ -134,8 +134,6 @@ public class CreateLinkTag extends BodyTagSupport {
             link = ImagePresentation.getLink((Image) o);
         else if (o instanceof Panel)
             link = PanelPresentation.getLink((Panel) o);
-        else if (o instanceof OrthologySpecies)
-            link = OrthologyPresentation.getLink((OrthologySpecies) o);
         else if (o instanceof OrthologExternalReference)
             link = OrthologyPresentation.getLink((OrthologExternalReference) o);
         else if (o instanceof DiseaseAnnotation)

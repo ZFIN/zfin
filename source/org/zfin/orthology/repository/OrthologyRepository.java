@@ -12,17 +12,7 @@ import java.util.Set;
 
 public interface OrthologyRepository extends CachedRepository {
 
-    Object[] getOrthologies(List<SpeciesCriteria> speciesCriteria, ZfinCriteria criteria);
-
     void saveOrthology(Ortholog ortholog, Publication publication);
-
-    /**
-     * Update a fast-search table to hold info about evidence codes. In order
-     * to display them correctly evidence codes have to be stored in a particular way
-     *
-     * @param ortholog
-     */
-    void updateFastSearchEvidenceCodes(Set<Ortholog> ortholog);
 
     List<String> getEvidenceCodes(Marker gene);
 

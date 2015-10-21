@@ -774,52 +774,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return mdb;
     }
 
-    public void addOrthoDBLink(Ortholog ortholog, EntrezProtRelation accession) {
-        if (accession == null)
-            return;
-
-/*
-        if (ortholog.getNcbiGene().getOrganism() == Species.MOUSE) {
-            for (EntrezMGI mgiOrthologue : accession.getEntrezAccession().getRelatedMGIAccessions()) {
-                if (mgiOrthologue != null) {
-                    OrthologueDBLink oldb = new OrthologueDBLink();
-                    oldb.setOrtholog(ortholog);
-                    oldb.setAccessionNumber(accession.getEntrezAccession().getEntrezAccNum());
-                    oldb.setReferenceDatabase(sequenceService.getEntrezGeneMouseRefDB());
-                    currentSession().save(oldb);
-                    OrthologueDBLink mgioldb = new OrthologueDBLink();
-                    mgioldb.setOrtholog(ortholog);
-                    mgioldb.setAccessionNumber(mgiOrthologue.getMgiAccession().replaceAll("MGI:", ""));
-                    mgioldb.setReferenceDatabase(mgiOrthologue.getRefDB());
-                    currentSession().save(mgioldb);
-                }
-            }
-        }
-*/
-/*
-todo
-        if (ortholog.getNcbiGene().getOrganism() == Species.HUMAN) {
-
-            for (EntrezOMIM omimOrthologue : accession.getEntrezAccession().getRelatedOMIMAccessions()) {
-                if (omimOrthologue != null) {
-                    OrthologueDBLink humoldb = new OrthologueDBLink();
-                    humoldb.setOrtholog(ortholog);
-                    humoldb.setAccessionNumber(accession.getEntrezAccession().getEntrezAccNum());
-                    humoldb.setReferenceDatabase(sequenceService.getEntrezGeneHumanRefDB());
-                    currentSession().save(humoldb);
-                    OrthologueDBLink omimoldb = new OrthologueDBLink();
-                    omimoldb.setOrtholog(ortholog);
-                    omimoldb.setAccessionNumber(omimOrthologue.getOmimAccession().replaceAll("MIM:", ""));
-                    omimoldb.setReferenceDatabase(sequenceService.getOMIMHumanOrtholog());
-                    currentSession().save(omimoldb);
-                }
-            }
-        }
-*/
-
-
-    }
-
     public MarkerHistory getLastMarkerHistory(Marker marker, MarkerHistory.Event event) {
         Session session = currentSession();
         //flush here to ensure that triggers for marker inserts and updates are run.

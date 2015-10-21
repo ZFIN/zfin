@@ -6,14 +6,8 @@ import java.io.IOException;
 import java.util.Collection;
 
 /**
- * User: giles
- * Date: Sep 13, 2006
- * Time: 3:50:25 PM
- */
-
-/**
  * This tag class needs to be expanded to support a "type" attribute which allows it to be used for any
- * bean/collection combination.  Right now, it only works for OrthologyItem.  See the logic:iterate
+ * bean/collection combination.  See the logic:iterate
  * source code for an example of how to use the type parameter in the tag class.  Also, the
  * collectionName attribute is currently required for this tag, but it is not used in this class.
  * This attribute will be necessary in the future in order to generalize the tag.

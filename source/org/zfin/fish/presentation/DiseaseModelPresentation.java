@@ -1,6 +1,5 @@
 package org.zfin.fish.presentation;
 
-import org.zfin.expression.presentation.ExperimentPresentation;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.mutant.DiseaseAnnotation;
 import org.zfin.ontology.presentation.TermPresentation;
@@ -14,7 +13,7 @@ public class DiseaseModelPresentation extends EntityPresentation {
     private static final String uri = "/";
 
     /**
-     * Generates a OrthologySpecies link using the name.
+     * Generates a disease model link using the name.
      *
      * @param model disease model
      * @return html for disease model

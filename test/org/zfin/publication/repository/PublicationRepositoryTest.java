@@ -25,16 +25,13 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.orthology.Ortholog;
-import org.zfin.orthology.Orthology;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
