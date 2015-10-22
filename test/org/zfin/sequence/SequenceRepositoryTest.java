@@ -6,11 +6,11 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
+import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.presentation.RelatedMarkerDBLinkDisplay;
-import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.repository.SequenceRepository;
 
@@ -44,7 +44,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
                     ForeignDB.AvailableName.GENBANK,
                     ForeignDBDataType.DataType.GENOMIC,
                     ForeignDBDataType.SuperType.SEQUENCE,
-                    Species.ZEBRAFISH);
+                    Species.Type.ZEBRAFISH);
             accession1.setReferenceDatabase(genBankRefDB);
             session.save(accession1);
             String hsqlString = "from Accession acc where acc.number = :number";
@@ -84,7 +84,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
                 ForeignDB.AvailableName.GENBANK,
                 ForeignDBDataType.DataType.GENOMIC,
                 ForeignDBDataType.SuperType.SEQUENCE,
-                Species.ZEBRAFISH);
+                Species.Type.ZEBRAFISH);
         assertTrue("ReferenceDatabase ZDBid is ZDB-FDBCONT-040412-36", refDb.getZdbID().equals("ZDB-FDBCONT-040412-36"));
     }
 
@@ -95,7 +95,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
                 ForeignDB.AvailableName.GENBANK,
                 ForeignDBDataType.DataType.GENOMIC,
                 ForeignDBDataType.SuperType.SEQUENCE,
-                Species.ZEBRAFISH);
+                Species.Type.ZEBRAFISH);
         assertTrue("ReferenceDatabase ZDBid is ZDB-FDBCONT-040412-36", refDb.getZdbID().equals("ZDB-FDBCONT-040412-36"));
     }
 
@@ -114,7 +114,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
                 ForeignDB.AvailableName.GENBANK,
                 ForeignDBDataType.DataType.GENOMIC,
                 ForeignDBDataType.SuperType.SEQUENCE,
-                Species.ZEBRAFISH);
+                Species.Type.ZEBRAFISH);
         assertTrue("ReferenceDatabase ZDBid is ZDB-FDBCONT-040412-36", refDb.getZdbID().equals("ZDB-FDBCONT-040412-36"));
     }
 
@@ -254,7 +254,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
                 ForeignDB.AvailableName.GENBANK,
                 ForeignDBDataType.DataType.RNA,
                 ForeignDBDataType.SuperType.SEQUENCE,
-                Species.ZEBRAFISH);
+                Species.Type.ZEBRAFISH);
 
         Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-TGCONSTRCT-070117-175");
         assertNotNull(m);

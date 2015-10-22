@@ -53,11 +53,6 @@ public class ExpressionService {
     private Set<String> thissePubs;
 
     public ExpressionService() {
-//    static{
-//        geoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GEO,
-//                ForeignDBDataType.DataType.OTHER, ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
-//        ReferenceDatabase zfEspressoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.ZF_ESPRESSO,
-//                ForeignDBDataType.DataType.OTHER, ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
     }
 
     public Set<String> getThissePublicationZdbIDs() {

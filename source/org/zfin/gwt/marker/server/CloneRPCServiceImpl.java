@@ -6,6 +6,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.marker.ui.CloneRPCService;
 import org.zfin.gwt.root.dto.CloneDTO;
@@ -21,7 +22,6 @@ import org.zfin.marker.ProbeLibrary;
 import org.zfin.marker.Vector;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
@@ -201,14 +201,14 @@ public class CloneRPCServiceImpl extends ZfinRemoteServiceServlet implements Clo
                     ForeignDB.AvailableName.GENBANK,
                     ForeignDBDataType.DataType.GENOMIC,
                     ForeignDBDataType.SuperType.SEQUENCE,
-                    Species.ZEBRAFISH
+                    Species.Type.ZEBRAFISH
             );
         } else if (marker.isInTypeGroup(Marker.TypeGroup.CDNA_AND_EST)) {
             referenceDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
                     ForeignDB.AvailableName.GENBANK,
                     ForeignDBDataType.DataType.RNA,
                     ForeignDBDataType.SuperType.SEQUENCE,
-                    Species.ZEBRAFISH
+                    Species.Type.ZEBRAFISH
             );
         }
 

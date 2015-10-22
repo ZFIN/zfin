@@ -4,15 +4,15 @@
 package org.zfin.sequence.repository;
 
 import org.apache.commons.collections.map.MultiValueMap;
+import org.zfin.Species;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.presentation.RelatedMarkerDBLinkDisplay;
-import org.zfin.orthology.Species;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.*;
 import org.zfin.sequence.presentation.AccessionPresentation;
-import org.springframework.stereotype.Repository;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +25,7 @@ public interface SequenceRepository {
     ReferenceDatabase getReferenceDatabase(ForeignDB.AvailableName foreignDBName,
                                            ForeignDBDataType.DataType type,
                                            ForeignDBDataType.SuperType superType,
-                                           Species organism);
+                                           Species.Type organism);
 
     ReferenceDatabase getZebrafishSequenceReferenceDatabase(ForeignDB.AvailableName foreignDBName,
                                                             ForeignDBDataType.DataType type);

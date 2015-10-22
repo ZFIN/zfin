@@ -322,31 +322,6 @@ public class CandidateBean {
     }
 
 
-    public EntrezProtRelation getTargetAccessionHuman(RunCandidate rc, String accName) {
-        logger.debug("enter getTargetAccessionHuman");
-        Set<EntrezProtRelation> humanAccOrthologs = rc.getHumanOrthologsFromQueries();
-        logger.debug("returned humanAccOrthologs: ");
-        for (EntrezProtRelation humanAccOrtholog : humanAccOrthologs) {
-            logger.debug("for each humanAccOrtholog");
-            if (humanAccOrtholog.getEntrezAccession().getEntrezAccNum().equals(accName)) {
-                return humanAccOrtholog;
-
-            }
-        }
-        return null;
-    }
-
-    public EntrezProtRelation getTargetAccessionMouse(RunCandidate rc, String accName) {
-        Set<EntrezProtRelation> mouseAccOrthologs = rc.getMouseOrthologsFromQueries();
-        for (EntrezProtRelation mouseAccOrtholog : mouseAccOrthologs) {
-            if (mouseAccOrtholog.getEntrezAccession().getEntrezAccNum().equals(accName)) {
-                return mouseAccOrtholog;
-
-            }
-        }
-        return null;
-    }
-
     public Person getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (Person) authentication.getPrincipal();

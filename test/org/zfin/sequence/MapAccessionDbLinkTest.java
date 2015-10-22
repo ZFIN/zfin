@@ -4,13 +4,10 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
+import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.orthology.EvidenceCode;
-import org.zfin.orthology.Ortholog;
-import org.zfin.orthology.OrthologEvidence;
-import org.zfin.orthology.Species;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -23,11 +20,11 @@ import org.zfin.sequence.reno.RunCandidate;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * This class tests setting AccessionLink
@@ -88,13 +85,13 @@ public class MapAccessionDbLinkTest extends AbstractDatabaseTest {
                 ForeignDB.AvailableName.GENBANK,
                 ForeignDBDataType.DataType.GENOMIC,
                 ForeignDBDataType.SuperType.SEQUENCE,
-                Species.ZEBRAFISH);
+                Species.Type.ZEBRAFISH);
 
         refSeqReferenceDatabase = sequenceRepository.getReferenceDatabase(
                 ForeignDB.AvailableName.REFSEQ,
                 ForeignDBDataType.DataType.RNA,
                 ForeignDBDataType.SuperType.SEQUENCE,
-                Species.ZEBRAFISH);
+                Species.Type.ZEBRAFISH);
 
 
         // ADD ACCESSIONS and associated DBLINKS

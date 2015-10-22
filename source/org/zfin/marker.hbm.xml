@@ -334,7 +334,6 @@
         <property name="nonZfinTissue" column="probelib_non_zfin_tissue_name"/>
         <property name="restrictionSites" column="probelib_restriction_sites"/>
         <property name="sex" column="probelib_sex"/>
-        <!--<many-to-one name="species" column="probelib_species" class="org.zfin.Species"/>-->
         <many-to-one name="strain" column="probelib_strain_zdb_id" class="org.zfin.mutant.Genotype"/>
         <property name="species" column="probelib_species"/>
         <many-to-one name="tissue" column="probelib_tissue_zdb_id" class="org.zfin.ontology.GenericTerm"/>

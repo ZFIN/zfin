@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
+import org.zfin.*;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
@@ -199,7 +200,7 @@ public class DTOConversionService {
                     ForeignDB.AvailableName.getType(referenceDatabaseDTO.getName()),
                     ForeignDBDataType.DataType.getType(referenceDatabaseDTO.getType()),
                     ForeignDBDataType.SuperType.getType(referenceDatabaseDTO.getSuperType()),
-                    Species.ZEBRAFISH);
+                    org.zfin.Species.Type.ZEBRAFISH);
         } else {
             referenceDatabase = (ReferenceDatabase) HibernateUtil.currentSession().get(ReferenceDatabase.class, referenceDatabaseDTO.getZdbID());
         }

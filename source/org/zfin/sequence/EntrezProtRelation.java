@@ -1,12 +1,11 @@
 package org.zfin.sequence;
 
-import org.zfin.orthology.Species;
-
+import org.zfin.Species;
 
 public class EntrezProtRelation implements Comparable<EntrezProtRelation> {
 
     private long epID;
-    private Species organism;
+    private Species.Type organism;
     private String proteinAccNum;
     private Entrez entrezAccession;
 
@@ -19,11 +18,11 @@ public class EntrezProtRelation implements Comparable<EntrezProtRelation> {
     }
 
 
-    public Species getOrganism() {
+    public Species.Type getOrganism() {
         return organism;
     }
 
-    public void setOrganism(Species organism) {
+    public void setOrganism(Species.Type organism) {
         this.organism = organism;
     }
 

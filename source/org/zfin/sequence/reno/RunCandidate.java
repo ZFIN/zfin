@@ -3,14 +3,10 @@
  */
 package org.zfin.sequence.reno;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.marker.Marker;
-import org.zfin.orthology.Species;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
-import org.zfin.sequence.Accession;
-import org.zfin.sequence.EntrezProtRelation;
 import org.zfin.sequence.blast.Hit;
 import org.zfin.sequence.blast.Query;
 
@@ -115,43 +111,6 @@ public class RunCandidate {
 
         return markers;
     }
-
-    public Set<EntrezProtRelation> getOrthologsFromQueries(Species organism) {
-        LOG.debug("enter getOrthologsFromQueries");
-        Set<EntrezProtRelation> accessionOrthologs = new TreeSet<>();
-        for (Query q : getCandidateQueries()) {
-            LOG.debug(q.getAccession().getNumber());
-            for (Hit h : q.getBlastHits()) {
-                Accession a = h.getTargetAccession();
-                LOG.debug("accessionFound: " + a.getNumber() + " " + a.getID() + a.getOrganism());
-
-                for (EntrezProtRelation b : a.getRelatedEntrezAccessions()) {
-                    if (b != null) {
-                        if ((b.getOrganism().equals(organism))
-                                && (!accessionOrthologs.contains(b)
-                                && (!StringUtils.isEmpty(b.getEntrezAccession().getAbbreviation()))))
-
-                        {
-                            accessionOrthologs.add(b);
-                        }
-                    }
-                }
-
-
-            }
-        }
-
-        return accessionOrthologs;
-    }
-
-    public Set<EntrezProtRelation> getMouseOrthologsFromQueries() {
-        return getOrthologsFromQueries(Species.MOUSE);
-    }
-
-    public Set<EntrezProtRelation> getHumanOrthologsFromQueries() {
-        return getOrthologsFromQueries(Species.HUMAN);
-    }
-
 
     /**
      * Return an ordered list of blast query objects

@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.zfin.AbstractDatabaseTest;
+import org.zfin.Species;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.presentation.AntibodyAOStatistics;
 import org.zfin.construct.ConstructCuration;
@@ -27,7 +28,6 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
-import org.zfin.orthology.Species;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Publication;
@@ -265,7 +265,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
                     ForeignDB.AvailableName.GENBANK,
                     ForeignDBDataType.DataType.RNA,
                     ForeignDBDataType.SuperType.SEQUENCE,
-                    Species.ZEBRAFISH);
+                    Species.Type.ZEBRAFISH);
 
 
             Accession acc1 = new Accession();

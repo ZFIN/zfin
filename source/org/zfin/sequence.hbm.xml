@@ -22,7 +22,7 @@
     </typedef>
 
     <typedef class="org.zfin.framework.StringEnumValueUserType" name="organism">
-        <param name="enumClassname">org.zfin.orthology.Species</param>
+        <param name="enumClassname">org.zfin.Species$Type</param>
     </typedef>
 
     <class name="org.zfin.sequence.Accession" table="accession_bank">

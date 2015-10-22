@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.zfin.Species;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
@@ -15,7 +16,6 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.MarkerTypeGroup;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.orthology.Species;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -54,7 +54,6 @@ public class MicroarrayTest {
     private Logger logger = Logger.getLogger(MicroarrayTest.class) ;
 
     // get reference DBs
-    PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository() ;
     ProfileRepository personRepository = RepositoryFactory.getProfileRepository() ;
     SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository() ;
@@ -137,7 +136,7 @@ public class MicroarrayTest {
             cleanDBLinks();
             insertGeneMarker() ;
 
-            Set<String> newMicroArrayAccessions= new HashSet<String>() ;
+            Set<String> newMicroArrayAccessions= new HashSet<>() ;
             newMicroArrayAccessions.add( ACCESSION_NUM1 ) ;
 
 //            Map<String,Collection<MarkerDBLink>> microArrayLinks = sequenceRepository.getMarkerDBLinks(geoDatabase ) ;   // 0 - load microarray
@@ -295,10 +294,10 @@ public class MicroarrayTest {
                 ForeignDB.AvailableName.GENBANK,
                 ForeignDBDataType.DataType.GENOMIC,
                 ForeignDBDataType.SuperType.SEQUENCE,
-                Species.ZEBRAFISH);
+                Species.Type.ZEBRAFISH);
 
         geoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GEO,
-                ForeignDBDataType.DataType.OTHER,ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
+                ForeignDBDataType.DataType.OTHER,ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.Type.ZEBRAFISH);
 
     }
 
@@ -385,10 +384,10 @@ public class MicroarrayTest {
         try{
 
             ReferenceDatabase geoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GEO,
-                    ForeignDBDataType.DataType.OTHER,ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
+                    ForeignDBDataType.DataType.OTHER,ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.Type.ZEBRAFISH);
             MicroarrayProcessor microarrayProcessor = new MicroarrayProcessor();
 
-            Map<String,MarkerDBLink> genbankLinks = new HashMap<String,MarkerDBLink>() ;
+            Map<String,MarkerDBLink> genbankLinks = new HashMap<>() ;
             MarkerDBLink markerDBLink = new MarkerDBLink();
             markerDBLink.setAccessionNumber("ABC123");
             Marker m = new Marker();
@@ -399,7 +398,7 @@ public class MicroarrayTest {
 
             MarkerTypeGroup markerTypeGroup = new MarkerTypeGroup();
             markerTypeGroup.setName(Marker.TypeGroup.CDNA_AND_EST.toString());
-            Set<Marker.TypeGroup> markerTypeGroupSet = new HashSet<Marker.TypeGroup>() ;
+            Set<Marker.TypeGroup> markerTypeGroupSet = new HashSet<>() ;
             markerTypeGroupSet.add(Marker.TypeGroup.CDNA_AND_EST) ;
             markerType.setTypeGroups(markerTypeGroupSet);
 

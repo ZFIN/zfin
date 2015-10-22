@@ -9,10 +9,10 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
+import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
-import org.zfin.orthology.Species;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
@@ -433,7 +433,7 @@ public class BlastAccessTest extends AbstractDatabaseTest{
                 ForeignDB.AvailableName.CURATED_MIRNA_MATURE,
                 ForeignDBDataType.DataType.RNA,
                 ForeignDBDataType.SuperType.SEQUENCE,
-                Species.ZEBRAFISH
+                Species.Type.ZEBRAFISH
         );
 
         String hql = "" +
@@ -468,7 +468,7 @@ public class BlastAccessTest extends AbstractDatabaseTest{
                 ForeignDB.AvailableName.PUBPROT,
                 ForeignDBDataType.DataType.POLYPEPTIDE,
                 ForeignDBDataType.SuperType.SEQUENCE,
-                Species.ZEBRAFISH
+                Species.Type.ZEBRAFISH
         );
 
         String hql = "" +

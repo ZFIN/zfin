@@ -1,8 +1,8 @@
 package org.zfin.sequence.service;
 
+import org.zfin.Species;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.SummaryDBLinkDisplay;
-import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.ForeignDB;
@@ -30,7 +30,7 @@ public class SequenceService {
                     ForeignDB.AvailableName.OMIM,
                     ForeignDBDataType.DataType.ORTHOLOG,
                     ForeignDBDataType.SuperType.ORTHOLOG,
-                    Species.HUMAN);
+                    Species.Type.HUMAN);
         }
         return omimHumanOrthologDB;
     }
@@ -41,7 +41,7 @@ public class SequenceService {
                     ForeignDB.AvailableName.GENE,
                     ForeignDBDataType.DataType.ORTHOLOG,
                     ForeignDBDataType.SuperType.ORTHOLOG,
-                    Species.HUMAN);
+                    Species.Type.HUMAN);
         }
 
         return entrezGeneHumarnRefDB;
@@ -53,7 +53,7 @@ public class SequenceService {
                     ForeignDB.AvailableName.GENE,
                     ForeignDBDataType.DataType.ORTHOLOG,
                     ForeignDBDataType.SuperType.ORTHOLOG,
-                    Species.MOUSE);
+                    Species.Type.MOUSE);
         }
 
         return entrezGeneMouseRefDB;
@@ -65,7 +65,7 @@ public class SequenceService {
                     ForeignDB.AvailableName.UNIPROTKB,
                     ForeignDBDataType.DataType.POLYPEPTIDE,
                     ForeignDBDataType.SuperType.SEQUENCE,
-                    Species.ZEBRAFISH);
+                    Species.Type.ZEBRAFISH);
         }
 
         return uniprotDB;

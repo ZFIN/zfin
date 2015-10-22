@@ -1,5 +1,6 @@
 package org.zfin.mutant.presentation;
 
+import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.InferenceCategory;
 import org.zfin.marker.Marker;
@@ -7,7 +8,6 @@ import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
@@ -34,7 +34,7 @@ public class MarkerGoEvidencePresentation {
                     ForeignDB.AvailableName.GENBANK,
                     ForeignDBDataType.DataType.RNA,
                     ForeignDBDataType.SuperType.SEQUENCE,
-                    Species.ZEBRAFISH);
+                    Species.Type.ZEBRAFISH);
         }
         return genbankReferenceDatabase;
     }
@@ -45,7 +45,7 @@ public class MarkerGoEvidencePresentation {
                     ForeignDB.AvailableName.GENPEPT,
                     ForeignDBDataType.DataType.POLYPEPTIDE,
                     ForeignDBDataType.SuperType.SEQUENCE,
-                    Species.ZEBRAFISH);
+                    Species.Type.ZEBRAFISH);
         }
         return genpeptReferenceDatabase;
     }
@@ -56,7 +56,7 @@ public class MarkerGoEvidencePresentation {
                     ForeignDB.AvailableName.REFSEQ,
                     ForeignDBDataType.DataType.RNA,
                     ForeignDBDataType.SuperType.SEQUENCE,
-                    Species.ZEBRAFISH);
+                    Species.Type.ZEBRAFISH);
         }
         return refseqReferenceDatabase;
     }
@@ -67,7 +67,7 @@ public class MarkerGoEvidencePresentation {
                     ForeignDB.AvailableName.UNIPROTKB,
                     ForeignDBDataType.DataType.POLYPEPTIDE,
                     ForeignDBDataType.SuperType.SEQUENCE,
-                    Species.ZEBRAFISH);
+                    Species.Type.ZEBRAFISH);
         }
         return uniprotReferenceDatabase;
     }
@@ -78,7 +78,7 @@ public class MarkerGoEvidencePresentation {
                     ForeignDB.AvailableName.UNIPROTKB_KW,
                     ForeignDBDataType.DataType.GENE_ONTOLOGY,
                     ForeignDBDataType.SuperType.INFERENCE,
-                    Species.ZEBRAFISH);
+                    Species.Type.ZEBRAFISH);
         }
         return spkwReferenceDatabase;
     }
@@ -89,7 +89,7 @@ public class MarkerGoEvidencePresentation {
                     ForeignDB.AvailableName.UNIPATHWAY,
                     ForeignDBDataType.DataType.GENE_ONTOLOGY,
                     ForeignDBDataType.SuperType.INFERENCE,
-                    Species.ZEBRAFISH);
+                    Species.Type.ZEBRAFISH);
         }
         return unipathwayReferenceDatabase;
     }
@@ -100,7 +100,7 @@ public class MarkerGoEvidencePresentation {
                     ForeignDB.AvailableName.EC,
                     ForeignDBDataType.DataType.GENE_ONTOLOGY,
                     ForeignDBDataType.SuperType.INFERENCE,
-                    Species.ZEBRAFISH);
+                    Species.Type.ZEBRAFISH);
         }
         return ecReferenceDatabase;
     }
@@ -127,7 +127,7 @@ public class MarkerGoEvidencePresentation {
                     ForeignDB.AvailableName.INTERPRO,
                     ForeignDBDataType.DataType.GENE_ONTOLOGY,
                     ForeignDBDataType.SuperType.INFERENCE,
-                    Species.ZEBRAFISH);
+                    Species.Type.ZEBRAFISH);
         }
         return interproReferenceDatabase;
     }
@@ -138,7 +138,7 @@ public class MarkerGoEvidencePresentation {
                     ForeignDB.AvailableName.QUICKGO,
                     ForeignDBDataType.DataType.GENE_ONTOLOGY,
                     ForeignDBDataType.SuperType.ONTOLOGY,
-                    Species.ZEBRAFISH);
+                    Species.Type.ZEBRAFISH);
         }
         return goReferenceDatabase;
     }

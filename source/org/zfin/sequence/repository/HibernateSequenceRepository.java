@@ -1,6 +1,3 @@
-/**
- *  Class SequenceRepository.
- */
 package org.zfin.sequence.repository;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -12,19 +9,15 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
-import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
+import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerRelationshipType;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.presentation.RelatedMarkerDBLinkDisplay;
-import org.zfin.orthology.Species;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
@@ -44,7 +37,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return (ForeignDB) criteria.uniqueResult();
     }
 
-    public ReferenceDatabase getReferenceDatabase(ForeignDB.AvailableName foreignDBName, ForeignDBDataType.DataType type, ForeignDBDataType.SuperType superType, Species organism) {
+    public ReferenceDatabase getReferenceDatabase(ForeignDB.AvailableName foreignDBName, ForeignDBDataType.DataType type, ForeignDBDataType.SuperType superType, Species.Type organism) {
 
         String hql = " from ReferenceDatabase referenceDatabase " +
                 " where referenceDatabase.foreignDB.dbName = :dbName " +
@@ -63,7 +56,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
     public ReferenceDatabase getZebrafishSequenceReferenceDatabase(ForeignDB.AvailableName foreignDBName,
                                                                    ForeignDBDataType.DataType type) {
-        return getReferenceDatabase(foreignDBName, type, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
+        return getReferenceDatabase(foreignDBName, type, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
     }
 
     public List<ReferenceDatabase> getSequenceReferenceDatabases(ForeignDB.AvailableName name, ForeignDBDataType.DataType type) {
@@ -78,7 +71,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         query.setString("dbName", name.toString());
         query.setString("type", type.toString());
         query.setString("superType", ForeignDBDataType.SuperType.SEQUENCE.toString());
-        query.setString("organism", Species.ZEBRAFISH.toString());
+        query.setString("organism", Species.Type.ZEBRAFISH.toString());
 
         return (List<ReferenceDatabase>) query.list();
     }
