@@ -49,7 +49,7 @@
 		      </form>
 
 
-		      <form name="orthologue" action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi'
+		      <form name="ortholog" action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi'
 			    method="POST" >
 			<input type=hidden
 			       name="run"

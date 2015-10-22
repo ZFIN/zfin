@@ -78,10 +78,11 @@
       and jrnl_zdb_id = pub_jrnl_zdb_id")
 
   $(VECAPPEND,$citfish_fromwhere,"
-      from record_attribution, publication p, journal, orthologue_evidence_display
-      where recattrib_data_zdb_id = oevdisp_zdb_id
-      and oevdisp_gene_zdb_id = '"$OID"'
+      from record_attribution, publication p, journal, ortholog_evidence, ortholog
+      where recattrib_data_zdb_id = oev_ortho_zdb_id
+      and ortho_zebrafish_gene_zdb_id = '"$OID"'
       and recattrib_source_zdb_id = p.zdb_id 
+      and ortho_zdb_id = oev_ortho_zdb_id
       and jrnl_zdb_id = pub_jrnl_zdb_id")
 
   $(VECAPPEND,$citfish_fromwhere,"

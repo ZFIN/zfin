@@ -5,7 +5,7 @@ public class ForeignDBDataType {
     public enum SuperType{
         INFERENCE("inference"),
         ONTOLOGY("ontology"),
-        ORTHOLOGUE("orthologue"),
+        ORTHOLOG("ortholog"),
         PROTEIN("protein"),
         PUBLICATION("publication"),
         SEQUENCE("sequence"),
@@ -38,7 +38,7 @@ public class ForeignDBDataType {
         GENE_ONTOLOGY("gene ontology"),
         GENOMIC("Genomic"),
         OTHER("other"),
-        ORTHOLOGUE("orthologue"),
+        ORTHOLOG("ortholog"),
         POLYPEPTIDE("Polypeptide"),
         PUBLICATION("publication"),
         //VEGA_TRANSCRIPT("Vega Transcript"),
