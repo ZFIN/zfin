@@ -126,7 +126,7 @@ public enum ForeignKey {
     XPATEX_PROBE(Table.MARKER, Table.EXPRESSION_EXPERIMENT, "xpatex_probe_feature_zdb_id"),
     CLONE_GENE(Table.MARKER, Table.CLONE, "clone_mrkr_zdb_id"),
     ANTIBODY_GENE(Table.MARKER, Table.ANTIBODY, "atb_zdb_id"),
-    ORTHOLOGY_GENE(Table.MARKER, Table.ORTHOLOGUE, "c_gene_id"),
+    ORTHOLOGY_GENE(Table.MARKER, Table.ORTHOLOG, "c_gene_id"),
     GO_EVIDENCE_GENE(Table.MARKER, Table.MARKER_GO_EVIDENCE, "mrkrgoev_mrkr_zdb_id"),
     MODIFIED_GO_EVIDENCE(Table.PERSON, Table.MARKER_GO_EVIDENCE, "mrkrgoev_modified_by"),
     EVIDENCE_CODE_GO_EVIDENCE(Table.GO_EVIDENCE_CODE, Table.MARKER_GO_EVIDENCE, "mrkrgoev_evidence_code"),

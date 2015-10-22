@@ -30,7 +30,7 @@ public class RenoTestData {
     private SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
 
 
-    public void setUpSharedRedundancyAndNomenclatureData()  {
+    public void setUpSharedRedundancyAndNomenclatureData() {
         Session session = currentSession();
 
         Marker gene = new Marker();
@@ -52,14 +52,16 @@ public class RenoTestData {
 
     }
 
-    public String createRedundancyData(){
-       return createRedundancyData("zgc:test") ;
+    public String createRedundancyData() {
+        return createRedundancyData("zgc:test");
     }
+
     /**
      * Returns run candidate ZDB ID for Redundancy.
+     *
      * @return zdb ID
      */
-    public String createRedundancyData(String candidateSuggestedName){
+    public String createRedundancyData(String candidateSuggestedName) {
         Session session = currentSession();
 
         Publication publication = publicationRepository.getPublication("ZDB-PUB-070122-15");
@@ -116,7 +118,7 @@ public class RenoTestData {
         MarkerDBLink queryGene = new MarkerDBLink();
         queryGene.setMarker(markerRepository.getMarkerByAbbreviation("MGC:test"));
         queryGene.setAccessionNumber(accession1.getNumber());
-        queryGene.setAccessionNumberDisplay(accession1.getNumber());  
+        queryGene.setAccessionNumberDisplay(accession1.getNumber());
         queryGene.setLength(1243);
         queryGene.setReferenceDatabase(accession1.getReferenceDatabase());
         session.save(queryGene);
@@ -139,7 +141,6 @@ public class RenoTestData {
         session.save(query);
 
 
-
         // create 5 Hits
         Hit hit1 = new Hit();
         hit1.setQuery(query);
@@ -158,27 +159,16 @@ public class RenoTestData {
         hit1.setPositivesDenominator(1);
         session.save(hit1);
 
-        /*       Hit hit2 = new Hit();
-                hit2.setQuery(query);
-                hit2.setHitNumber(2);
-                hit2.setTargetAccession(accession2);
-                query.getBlastHits().add(hit2);
-        //        hit2.setZfinAccession(markerRepository.getMarkerByAbbreviation("reno"));
-                hit2.setExpectValue(1.3e-56);
-                hit2.setScore(800);
-                hit2.setPositivesNumerator(2);
-                hit2.setPositivesDenominator(4);
-                session.save(hit2);
-        */
         return runCandidate.getZdbID();
 
     }
 
     /**
      * Returns run candidate ZDB ID for Nomenclature.
+     *
      * @return zdb ID
      */
-    public String createNomenclatureData(){
+    public String createNomenclatureData() {
         Session session = currentSession();
         PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
         Publication publication = publicationRepository.getPublication("ZDB-PUB-070122-15");
@@ -259,36 +249,6 @@ public class RenoTestData {
         accessionNomenRelMouse.setReferenceDatabase(refDbNomenRelM);
         session.save(accessionNomenRelMouse);
 
-        //create an accessionRelationship for Human
-
-//        AccessionRelationship arelNomenHuman = new AccessionRelationship();
-//        arelNomenHuman.setAccession(accessionNomenHit2);
-//        arelNomenHuman.setRelatedAccession(accessionNomenRelHuman);
-//        AccessionRelationshipType areltype = new AccessionRelationshipType();
-//        areltype.setAccessionRelationshipType("Human Protein hit to Entrez Ac");
-//        arelNomenHuman.setRelationshipType(areltype);
-//        session.save(arelNomenHuman);
-/*
-        logger.debug("the related human accession number: "+accessionNomenRelHuman.getID()+" "+accessionNomenRelHuman.getNumber());
-        logger.debug("the related accession is not null :" +accessionNomenRelHuman);
-        logger.debug("the related accession zdbID is not null :" +arelNomenHuman.getZdbID());
-        logger.debug("the relatedAccession is null: " +accessionNomenHit2.getRelatedAccessions());
-
-        accessionNomenHit2.getRelatedAccessions().add(accessionNomenRelHuman);*/
-
-        /*
-            //create an accessionRelationship for Mouse
-
-            AccessionRelationship arelNomenMouse = new AccessionRelationship();
-            arelNomenMouse.setAccession(accessionNomenHit1);
-            arelNomenMouse.setRelatedAccession(accessionNomenRelMouse);
-            AccessionRelationshipType areltypeMouse = new AccessionRelationshipType();
-            areltypeMouse.setAccessionRelationshipType("Mouse Protein hit to Entrez Ac");
-            arelNomenMouse.setRelationshipType(areltypeMouse);
-            session.save(arelNomenMouse);
-        */
-
-
         // create Run
         NomenclatureRun nomenRun = new NomenclatureRun();
         nomenRun.setNomenclaturePublication(publication);
@@ -329,21 +289,6 @@ public class RenoTestData {
         runCandidateNomen.getCandidateQueries().add(queryNomen);
         session.save(queryNomen);
 
-        /*       Hit hitNomenWithGene = new Hit();
-                hitNomenWithGene.setQuery(queryNomen);
-                hitNomenWithGene.setHitNumber(6);
-                hitNomenWithGene.setTargetAccession(accessionNomenHit1);
-                Marker geneToAdd = markerRepository.getMarkerByAbbreviation("reno") ;
-                logger.debug(geneToAdd.getZdbID());
-                hitNomenWithGene.setZfinAccession(geneToAdd);
-                hitNomenWithGene.setExpectValue(1.8e-6);
-                hitNomenWithGene.setScore(100);
-                hitNomenWithGene.setPositivesNumerator(6);
-                hitNomenWithGene.setPositivesDenominator(12);
-                queryNomen.getBlastHits().add(hitNomenWithGene);
-                session.save(hitNomenWithGene);
-                logger.debug("apparently saved it" + hitNomenWithGene.getHitNumber());
-        */
         Hit hitNomenWithoutGene = new Hit();
         hitNomenWithoutGene.setQuery(queryNomen);
         hitNomenWithoutGene.setHitNumber(7);
@@ -365,42 +310,7 @@ public class RenoTestData {
         Accession humanAccession = sequenceRepository.getAccessionByAlternateKey("100650", refDBHuman);
         logger.debug("humanAccession: " + humanAccession.getNumber());
 
-        /*       Hit hitHuman = new Hit();
-                hitHuman.setQuery(queryNomen);
-                hitHuman.setHitNumber(9);
-                hitHuman.setTargetAccession(humanAccession);
-                hitHuman.setExpectValue(1.8e-6);
-                hitHuman.setScore(100);
-                hitHuman.setPositivesNumerator(1);
-                hitHuman.setPositivesDenominator(1);
-                queryNomen.getBlastHits().add(hitHuman);
-                session.save(hitHuman);
-
-                //Accession relatedAccession = sequenceRepository.getAccessionByAlternateKey();
-
-
-                ForeignDB foreignDBMouse = sequenceRepository.getForeignDBByName("MGI");
-                ReferenceDatabase refDBMouse = sequenceRepository.getReferenceDatabase(
-                        foreignDBMouse,
-                        ForeignDBDataType.DataType.ORTHOLOGUE,
-                        ForeignDBDataType.SuperType.ORTHOLOGUE,
-                        Species.MOUSE);
-                //copied the acc_num out of the database; maybe this will change??
-                Accession mouseAccession = sequenceRepository.getAccessionByAlternateKey("100002",refDBMouse);
-                logger.debug("mouseAccession: " +mouseAccession);
-
-                Hit hitMouse = new Hit();
-                hitMouse.setQuery(queryNomen);
-                hitMouse.setHitNumber(10);
-                hitMouse.setTargetAccession(mouseAccession);
-                hitMouse.setExpectValue(1.8e-6);
-                hitMouse.setScore(100);
-                hitMouse.setPositivesNumerator(1);
-                hitMouse.setPositivesDenominator(1);
-                queryNomen.getBlastHits().add(hitMouse);
-                session.save(hitMouse);
-        */
-        logger.debug("runCan got created: "+runCandidateNomen.getZdbID());
+        logger.debug("runCan got created: " + runCandidateNomen.getZdbID());
         return runCandidateNomen.getZdbID();
     }
 

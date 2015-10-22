@@ -757,12 +757,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public int getOrthologueRecordAttributions(String zdbID, String pubZdbID) {
         return Integer.parseInt(
-                HibernateUtil.currentSession().createSQLQuery(" " +
-                        " select count(*) from record_attribution, orthologue_evidence_display " +
-                        "      where recattrib_data_zdb_id = oevdisp_zdb_id" +
-                        "      and oevdisp_gene_zdb_id = :zdbID" +
-                        "      and recattrib_source_zdb_id = :pubZdbID" +
-                        " ")
+                HibernateUtil.currentSession().createSQLQuery(
+                        "select count(*) From ortholog as ortho, " +
+                        "              orthologue_evidence as oe " +
+                        "where ortho.ortho_zebrafish_gene_zdb_id = :zdbID " +
+                        "and   ortho.ortho_zdb_id = oe.oev_ortho_zdb_id " +
+                        "and   oe.oev_pub_zdb_id =  :pubZdbID")
                         .setString("zdbID", zdbID)
                         .setString("pubZdbID", pubZdbID)
                         .uniqueResult().toString()

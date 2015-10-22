@@ -890,9 +890,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                     // ortho
                     " union " +
                     " select ra.recattrib_source_zdb_id  " +
-                    " from record_attribution ra ,  orthologue_evidence_display ev " +
-                    " where  ev.oevdisp_zdb_id = ra.recattrib_data_zdb_id " +
-                    " and  :markerZdbID = ev.oevdisp_gene_zdb_id " +
+                    " from record_attribution ra ,  ortholog_evidence oe, ortholog o " +
+                    " where  ra.recattrib_data_zdb_id = oe.oev_ortho_zdb_id " +
+                    " and    oe.oev_ortho_zdb_id = o.ortho_zdb_id " +
+                    " and    :markerZdbID = o.ortho_zebrafish_gene_zdb_id " +
                     // marker_go_term_Evidence
                     " union " +
                     " select ra.recattrib_source_zdb_id  " +
@@ -935,7 +936,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 .list();
 
         if (CollectionUtils.isEmpty(publicationIDs)) {
-            return new ArrayList<Publication>();
+            return new ArrayList<>();
         }
 
         String hql = " select p from Publication p  " +
