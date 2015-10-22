@@ -35,8 +35,8 @@
         <put-attribute name="body" value="/WEB-INF/jsp/construct/construct-update.jsp"/>
     </definition>
 
-    <definition name="orthology/ortholog-publication-list.page" extends="popup_layout">
-        <put-attribute name="body" value="/WEB-INF/jsp/orthology/ortholog-publication-list.jsp"/>
+    <definition name="orthology/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/orthology/{1}.jsp"/>
     </definition>
 
     <definition name="marker/*.ajax" template="/WEB-INF/jsp/marker/{1}.jsp"/>
