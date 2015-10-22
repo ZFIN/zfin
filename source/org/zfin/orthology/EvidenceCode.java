@@ -42,14 +42,17 @@ public class EvidenceCode implements Comparable<EvidenceCode>, Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null)
+            return false;
+
+        if (!(o instanceof EvidenceCode))
+            return false;
 
         EvidenceCode that = (EvidenceCode) o;
+        return !(code != null ? !code.equals(that.getCode()) : that.getCode() != null);
 
-        if (code != null ? !code.equals(that.code) : that.code != null) return false;
-
-        return true;
     }
 
     @Override
