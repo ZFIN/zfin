@@ -61,14 +61,14 @@ public class NomenclatureCandidateValidator extends AbstractRunCandidateValidato
         PublicationValidator.validatePublicationID(
                 candidateBean.getOrthologyPublicationZdbID(), RunBean.ORTHOLOGY_PUBLICATION_ZDB_ID, errors);
 
-        if (!StringUtils.isEmpty(candidateBean.getMouseOrthologueAbbrev().getEntrezAccession().getEntrezAccNum())) {
+        if (!StringUtils.isEmpty(candidateBean.getMouseOrthologAbbrev().getEntrezAccession().getEntrezAccNum())) {
             Set<OrthologEvidence.Code> mouseEvidence = candidateBean.getMouseOrthologyEvidence();
             if (CollectionUtils.isEmpty(mouseEvidence)) {
                 errors.rejectValue(CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE, "code", "At least one Mouse evidence code needs to be selected");
             }
         }
 
-        if (!StringUtils.isEmpty(candidateBean.getHumanOrthologueAbbrev().getEntrezAccession().getEntrezAccNum())) {
+        if (!StringUtils.isEmpty(candidateBean.getHumanOrthologAbbrev().getEntrezAccession().getEntrezAccNum())) {
             Set<OrthologEvidence.Code> humanEvidence = candidateBean.getHumanOrthologyEvidence();
             if (CollectionUtils.isEmpty(humanEvidence)) {
                 errors.rejectValue(CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE, "code", "At least one Human evidence code needs to be selected");
@@ -117,10 +117,10 @@ public class NomenclatureCandidateValidator extends AbstractRunCandidateValidato
             }
         }
 
-        //if orthology is submitted and the gene already has an orthologue for that species
-//if orthology is submitted and the gene already has an orthologue for that species
-        if (!StringUtils.isEmpty(candidateBean.getHumanOrthologueAbbrev().getEntrezAccession().getEntrezAccNum())
-                || !StringUtils.isEmpty(candidateBean.getMouseOrthologueAbbrev().getEntrezAccession().getEntrezAccNum())) {
+        //if orthology is submitted and the gene already has an ortholog for that species
+//if orthology is submitted and the gene already has an ortholog for that species
+        if (!StringUtils.isEmpty(candidateBean.getHumanOrthologAbbrev().getEntrezAccession().getEntrezAccNum())
+                || !StringUtils.isEmpty(candidateBean.getMouseOrthologAbbrev().getEntrezAccession().getEntrezAccNum())) {
             RunCandidate rc = candidateBean.getRunCandidate();
 
             Marker m = rc.getIdentifiedMarker();
@@ -129,11 +129,11 @@ public class NomenclatureCandidateValidator extends AbstractRunCandidateValidato
             for (Ortholog o : m.getOrthologs()) {
 /* todo
                 if (o.getNcbiGene().getOrganism() == Species.HUMAN
-                        && !StringUtils.isEmpty(candidateBean.getHumanOrthologueAbbrev().getEntrezAccession().getEntrezAccNum()))
-                    errors.rejectValue("humanOrthologueAbbrev.entrezAccession.entrezAccNum", "code", m.getAbbreviation() + " already has a human orthologue.");
+                        && !StringUtils.isEmpty(candidateBean.getHumanOrthologAbbrev().getEntrezAccession().getEntrezAccNum()))
+                    errors.rejectValue("humanOrthologAbbrev.entrezAccession.entrezAccNum", "code", m.getAbbreviation() + " already has a human ortholog.");
                 if (o.getNcbiGene().getOrganism() == Species.MOUSE
-                        && !StringUtils.isEmpty(candidateBean.getMouseOrthologueAbbrev().getEntrezAccession().getEntrezAccNum()))
-                    errors.rejectValue("mouseOrthologueAbbrev.entrezAccession.entrezAccNum", "code", m.getAbbreviation() + " already has a mouse orthologue.");
+                        && !StringUtils.isEmpty(candidateBean.getMouseOrthologAbbrev().getEntrezAccession().getEntrezAccNum()))
+                    errors.rejectValue("mouseOrthologAbbrev.entrezAccession.entrezAccNum", "code", m.getAbbreviation() + " already has a mouse ortholog.");
 */
 
             }

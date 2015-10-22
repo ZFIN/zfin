@@ -10,7 +10,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.infrastructure.Updates;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
@@ -151,7 +150,7 @@ public abstract class AbstractCandidateController {
         String zdbID = candidateBean.getOrthologyPublicationZdbID();
         Publication orthologyPub = pr.getPublication(zdbID);
         //first get the human ortholog from the from
-        String humanAccessionNumber = candidateBean.getHumanOrthologueAbbrev().getEntrezAccession().getEntrezAccNum();
+        String humanAccessionNumber = candidateBean.getHumanOrthologAbbrev().getEntrezAccession().getEntrezAccNum();
         if (!StringUtils.isEmpty(humanAccessionNumber)) {
             LOG.info(" Working on Human Orthologs ...: ");
             NcbiOtherSpeciesGene ncbiGene = getOrthologyRepository().getNcbiGene(humanAccessionNumber);
@@ -169,9 +168,9 @@ public abstract class AbstractCandidateController {
         }
 
         //get the mouse ortholog from the form
-        String mouseAccessionNumber = candidateBean.getMouseOrthologueAbbrev().getEntrezAccession().getEntrezAccNum();
+        String mouseAccessionNumber = candidateBean.getMouseOrthologAbbrev().getEntrezAccession().getEntrezAccNum();
         if (!StringUtils.isEmpty(mouseAccessionNumber)) {
-            LOG.info(" Working on Mouse Orthologs ...: " + candidateBean.getMouseOrthologueAbbrev());
+            LOG.info(" Working on Mouse Orthologs ...: " + candidateBean.getMouseOrthologAbbrev());
             NcbiOtherSpeciesGene ncbiGene = getOrthologyRepository().getNcbiGene(mouseAccessionNumber);
             if (ncbiGene == null)
                 throw new NullPointerException("Could not find an NCBI Gene record with accession number " + mouseAccessionNumber);

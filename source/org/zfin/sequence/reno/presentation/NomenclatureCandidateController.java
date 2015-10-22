@@ -91,19 +91,16 @@ public class NomenclatureCandidateController extends AbstractCandidateController
 
         NomenclatureRun nomenclatureRun = (NomenclatureRun) rc.getRun();
 
-//        LOG.debug("instance of NomenclatureRun: " + (nomenclatureRun instanceof NomenclatureRun));
-//        LOG.debug("Run.isNomenclature: " + nomenclatureRun.isNomenclature());
-
         //populate fields as necessary..
         candidateBean.setHumanReferenceDatabase(sequenceRepository.getReferenceDatabase(
                 ForeignDB.AvailableName.GENE,
-                ForeignDBDataType.DataType.ORTHOLOGUE,
-                ForeignDBDataType.SuperType.ORTHOLOGUE,
+                ForeignDBDataType.DataType.ORTHOLOG,
+                ForeignDBDataType.SuperType.ORTHOLOG,
                 Species.HUMAN));
         candidateBean.setMouseReferenceDatabase(sequenceRepository.getReferenceDatabase(
                 ForeignDB.AvailableName.GENE,
-                ForeignDBDataType.DataType.ORTHOLOGUE,
-                ForeignDBDataType.SuperType.ORTHOLOGUE,
+                ForeignDBDataType.DataType.ORTHOLOG,
+                ForeignDBDataType.SuperType.ORTHOLOG,
                 Species.MOUSE));
 
         if (nomenclatureRun.getOrthologyPublication() != null) {

@@ -65,4 +65,23 @@ public class EvidenceCode implements Comparable<EvidenceCode>, Serializable {
                 "code='" + code + '\'' +
                 '}';
     }
+
+    public enum Code {
+        AA,
+        CE,
+        CL,
+        FC,
+        NT,
+        OT,
+        PT;
+
+        public String toString() {
+            return name();
+        }
+
+        public String getString(){
+            return name() ;
+        }
+
+    }
 }

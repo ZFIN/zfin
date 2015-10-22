@@ -14,7 +14,6 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
@@ -234,8 +233,8 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getOrthologueRecordAttributions() {
-        infrastructureRepository.getOrthologueRecordAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
+    public void getOrthologRecordAttributions() {
+        infrastructureRepository.getOrthologRecordAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
 

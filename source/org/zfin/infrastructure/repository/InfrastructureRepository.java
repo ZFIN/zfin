@@ -295,7 +295,7 @@ public interface InfrastructureRepository {
 
     int getDataAliasesAttributions(String zdbID, String pubZdbID);
 
-    int getOrthologueRecordAttributions(String zdbID, String pubZdbID);
+    int getOrthologRecordAttributions(String zdbID, String pubZdbID);
 
     int getMarkerFeatureRelationshipAttributions(String zdbID, String pubZdbID);
 

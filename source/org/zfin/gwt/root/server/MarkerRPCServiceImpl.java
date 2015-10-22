@@ -251,7 +251,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
             return createMessage(marker.getAbbreviation(), "has GO annotations ");
         }
 
-        if (infrastructureRepository.getOrthologueRecordAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
+        if (infrastructureRepository.getOrthologRecordAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
             return createMessage(marker.getAbbreviation(), "has been annotated with orthologs ");
         }
 

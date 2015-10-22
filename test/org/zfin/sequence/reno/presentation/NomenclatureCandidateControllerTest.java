@@ -11,7 +11,7 @@ import org.springframework.validation.BindException;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.orthology.OrthoEvidence;
+import org.zfin.orthology.EvidenceCode;
 import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
@@ -35,7 +35,7 @@ import static org.zfin.framework.HibernateUtil.getSessionFactory;
  */
 public class NomenclatureCandidateControllerTest {
 
-    private final RenoTestData renoTestData = new RenoTestData() ;
+    private final RenoTestData renoTestData = new RenoTestData();
 
     private static final Logger logger = Logger.getLogger(NomenclatureCandidateControllerTest.class);
     private static RenoRepository renoRepository = RepositoryFactory.getRenoRepository();
@@ -70,7 +70,7 @@ public class NomenclatureCandidateControllerTest {
     @Ignore("broken")
     public void testGeneRename() {
         Session session = currentSession();
-        session.beginTransaction() ;
+        session.beginTransaction();
 
 
         try {
@@ -78,19 +78,17 @@ public class NomenclatureCandidateControllerTest {
             NomenclatureCandidateController nomenclatureCandidateController = new NomenclatureCandidateController();
 
             //tell the candidateController to hadle the done nomenBean
-            nomenclatureCandidateController.handleDone(candidateBeanNomen,new BindException(candidateBeanNomen,"targetName"));
+            nomenclatureCandidateController.handleDone(candidateBeanNomen, new BindException(candidateBeanNomen, "targetName"));
 
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             java.lang.StackTraceElement[] elements = e.getStackTrace();
             String errorString = "";
             for (StackTraceElement element : elements) {
                 errorString += element + "\n";
             }
             fail(errorString);
-        }
-        finally {
+        } finally {
             // rollback on success or exception
             session.getTransaction().rollback();
         }
@@ -100,7 +98,7 @@ public class NomenclatureCandidateControllerTest {
     @Ignore("broken")
     public void testNomenBeanSetUp() {
         Session session = currentSession();
-        session.beginTransaction() ;
+        session.beginTransaction();
 
 
         try {
@@ -111,16 +109,14 @@ public class NomenclatureCandidateControllerTest {
             assertNotNull("RunCandidate is not null", runCandidate);
             logger.info("assume we have a nomenclature runType: " + runCandidate.getRun().getClass().getName());
             assertTrue("Candidate is a nomenclature candidate", runCandidate.getRun() instanceof NomenclatureRun);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             java.lang.StackTraceElement[] elements = e.getStackTrace();
             String errorString = "";
             for (StackTraceElement element : elements) {
                 errorString += element + "\n";
             }
             fail(errorString);
-        }
-        finally {
+        } finally {
             // rollback on success or exception
             session.getTransaction().rollback();
         }
@@ -158,8 +154,8 @@ public class NomenclatureCandidateControllerTest {
                 Species.MOUSE);
         //copied the acc_num out of the database, maybe this will change?
 
-        Set<OrthoEvidence.Code> orthoEvidencesMouse = new HashSet<OrthoEvidence.Code>();
-        orthoEvidencesMouse.add(OrthoEvidence.Code.NT);
+        Set<EvidenceCode.Code> orthoEvidencesMouse = new HashSet<>();
+        orthoEvidencesMouse.add(EvidenceCode.Code.NT);
         //candidateBean.setMouseOrthologyEvidence(orthoEvidencesMouse);
 
         candidateBean.setRunCandidate(runCandidate);
@@ -168,7 +164,7 @@ public class NomenclatureCandidateControllerTest {
         //set defaults as true, overrride if neccessary in tests.
         candidateBean.setGeneFamilyName("Acyl-CoA synthetases (ACS)");
         candidateBean.setNomenclaturePublicationZdbID(runCandidate.getRun().getNomenclaturePublication().getZdbID());
-        candidateBean.setOrthologyPublicationZdbID(  ((NomenclatureRun) runCandidate.getRun()).getOrthologyPublication().getZdbID());
+        candidateBean.setOrthologyPublicationZdbID(((NomenclatureRun) runCandidate.getRun()).getOrthologyPublication().getZdbID());
         candidateBean.setCandidateNote(BASIC_NOTE);
 
         //assume that they want to rename for Nomen, then set explicitly to false in the

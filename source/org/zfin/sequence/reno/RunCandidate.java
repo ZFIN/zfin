@@ -1,12 +1,11 @@
 /**
- *  Class RunCandidate.
+ * Class RunCandidate.
  */
 package org.zfin.sequence.reno;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerRelationship;
 import org.zfin.orthology.Species;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
@@ -117,33 +116,23 @@ public class RunCandidate {
         return markers;
     }
 
-
-
-
-    public Set<EntrezProtRelation> getOrthologuesFromQueries(Species organism) {
-        LOG.debug("enter getOrthologuesFromQueries");
-        Set<EntrezProtRelation> accessionOrthologues = new TreeSet<EntrezProtRelation>();
+    public Set<EntrezProtRelation> getOrthologsFromQueries(Species organism) {
+        LOG.debug("enter getOrthologsFromQueries");
+        Set<EntrezProtRelation> accessionOrthologs = new TreeSet<>();
         for (Query q : getCandidateQueries()) {
             LOG.debug(q.getAccession().getNumber());
             for (Hit h : q.getBlastHits()) {
                 Accession a = h.getTargetAccession();
                 LOG.debug("accessionFound: " + a.getNumber() + " " + a.getID() + a.getOrganism());
 
-                /*if (a != null) {
-                if ((a.getReferenceDatabase().getOrganism().equals(organism))
-                        && (!accessionOrthologues.contains(a))) {
-                    accessionOrthologues.add(a);
-
-                }*/
-
                 for (EntrezProtRelation b : a.getRelatedEntrezAccessions()) {
                     if (b != null) {
                         if ((b.getOrganism().equals(organism))
-                                && (!accessionOrthologues.contains(b)
+                                && (!accessionOrthologs.contains(b)
                                 && (!StringUtils.isEmpty(b.getEntrezAccession().getAbbreviation()))))
 
                         {
-                            accessionOrthologues.add(b);
+                            accessionOrthologs.add(b);
                         }
                     }
                 }
@@ -152,16 +141,15 @@ public class RunCandidate {
             }
         }
 
-        //  Collections.sort(accessionOrthologues);
-        return accessionOrthologues;
+        return accessionOrthologs;
     }
 
-    public Set<EntrezProtRelation> getMouseOrthologuesFromQueries() {
-        return getOrthologuesFromQueries(Species.MOUSE);
+    public Set<EntrezProtRelation> getMouseOrthologsFromQueries() {
+        return getOrthologsFromQueries(Species.MOUSE);
     }
 
-    public Set<EntrezProtRelation> getHumanOrthologuesFromQueries() {
-        return getOrthologuesFromQueries(Species.HUMAN);
+    public Set<EntrezProtRelation> getHumanOrthologsFromQueries() {
+        return getOrthologsFromQueries(Species.HUMAN);
     }
 
 

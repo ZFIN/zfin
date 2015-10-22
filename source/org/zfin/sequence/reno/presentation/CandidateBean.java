@@ -54,7 +54,7 @@ public class CandidateBean {
     private String relationPublicationZdbID; // attribute used by redundancy only
 
 
-    private EntrezProtRelation humanOrthologueAbbrev;
+    private EntrezProtRelation humanOrthologAbbrev;
     private ReferenceDatabase humanReferenceDatabase;
     private ReferenceDatabase mouseReferenceDatabase;
     private boolean geneAlias;
@@ -71,7 +71,7 @@ public class CandidateBean {
 
     private Set<OrthologEvidence.Code> humanOrthologyEvidence;
 
-    private EntrezProtRelation mouseOrthologueAbbrev;
+    private EntrezProtRelation mouseOrthologAbbrev;
     private Set<OrthologEvidence.Code> mouseOrthologyEvidence;
 
     public void setCandidateNote(String candidateNote) {
@@ -91,17 +91,17 @@ public class CandidateBean {
         this.candidateProblem = candidateProblem;
     }
 
-    public EntrezProtRelation getHumanOrthologueAbbrev() {
-        if (humanOrthologueAbbrev == null) {
-            humanOrthologueAbbrev = new EntrezProtRelation();
+    public EntrezProtRelation getHumanOrthologAbbrev() {
+        if (humanOrthologAbbrev == null) {
+            humanOrthologAbbrev = new EntrezProtRelation();
             Entrez humanEntrez = new Entrez();
-            humanOrthologueAbbrev.setEntrezAccession(humanEntrez);
+            humanOrthologAbbrev.setEntrezAccession(humanEntrez);
         }
-        return humanOrthologueAbbrev;
+        return humanOrthologAbbrev;
     }
 
-    public void setHumanOrthologueAbbrev(EntrezProtRelation humanOrthologueAbbrev) {
-        this.humanOrthologueAbbrev = humanOrthologueAbbrev;
+    public void setHumanOrthologAbbrev(EntrezProtRelation humanOrthologAbbrev) {
+        this.humanOrthologAbbrev = humanOrthologAbbrev;
     }
 
     public ReferenceDatabase getHumanReferenceDatabase() {
@@ -137,17 +137,17 @@ public class CandidateBean {
         this.mouseOrthologyEvidence = mouseOrthologyEvidence;
     }
 
-    public EntrezProtRelation getMouseOrthologueAbbrev() {
-        if (mouseOrthologueAbbrev == null) {
-            mouseOrthologueAbbrev = new EntrezProtRelation();
+    public EntrezProtRelation getMouseOrthologAbbrev() {
+        if (mouseOrthologAbbrev == null) {
+            mouseOrthologAbbrev = new EntrezProtRelation();
             Entrez mouseEntrez = new Entrez();
-            mouseOrthologueAbbrev.setEntrezAccession(mouseEntrez);
+            mouseOrthologAbbrev.setEntrezAccession(mouseEntrez);
         }
-        return mouseOrthologueAbbrev;
+        return mouseOrthologAbbrev;
     }
 
-    public void setMouseOrthologueAbbrev(EntrezProtRelation mouseOrthologueAbbrev) {
-        this.mouseOrthologueAbbrev = mouseOrthologueAbbrev;
+    public void setMouseOrthologAbbrev(EntrezProtRelation mouseOrthologAbbrev) {
+        this.mouseOrthologAbbrev = mouseOrthologAbbrev;
     }
 
     public String getNomenclaturePublicationZdbID() {
@@ -324,8 +324,8 @@ public class CandidateBean {
 
     public EntrezProtRelation getTargetAccessionHuman(RunCandidate rc, String accName) {
         logger.debug("enter getTargetAccessionHuman");
-        Set<EntrezProtRelation> humanAccOrthologs = rc.getHumanOrthologuesFromQueries();
-        logger.debug("returned humanAccOrthologues: ");
+        Set<EntrezProtRelation> humanAccOrthologs = rc.getHumanOrthologsFromQueries();
+        logger.debug("returned humanAccOrthologs: ");
         for (EntrezProtRelation humanAccOrtholog : humanAccOrthologs) {
             logger.debug("for each humanAccOrtholog");
             if (humanAccOrtholog.getEntrezAccession().getEntrezAccNum().equals(accName)) {
@@ -337,7 +337,7 @@ public class CandidateBean {
     }
 
     public EntrezProtRelation getTargetAccessionMouse(RunCandidate rc, String accName) {
-        Set<EntrezProtRelation> mouseAccOrthologs = rc.getMouseOrthologuesFromQueries();
+        Set<EntrezProtRelation> mouseAccOrthologs = rc.getMouseOrthologsFromQueries();
         for (EntrezProtRelation mouseAccOrtholog : mouseAccOrthologs) {
             if (mouseAccOrtholog.getEntrezAccession().getEntrezAccNum().equals(accName)) {
                 return mouseAccOrtholog;

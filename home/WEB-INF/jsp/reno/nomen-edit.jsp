@@ -1,4 +1,4 @@
-<%@ page import="org.zfin.orthology.OrthoEvidence" %>
+<%@ page import="org.zfin.orthology.EvidenceCode" %>
 <%@ page import="org.zfin.sequence.reno.presentation.CandidateBean" %>
 <%@ page import="org.zfin.sequence.reno.presentation.RunBean" %>
 <!-- called by candidate_view.jsp -->
@@ -32,68 +32,68 @@
     <form:errors path="<%= CandidateBean.NEW_ABBREVIATION%>" cssClass="error indented-error"/>
     <br>
 
-    <label for="humanOrthologueAbbrev" class="indented-label">Human:</label>
+    <label for="humanOrthologAbbrev" class="indented-label">Human:</label>
 
-    <form:select path="humanOrthologueAbbrev.entrezAccession.entrezAccNum">
+    <form:select path="humanOrthologAbbrev.entrezAccession.entrezAccNum">
         <option value="">-</option>
-        <form:options items="${formBean.runCandidate.humanOrthologuesFromQueries}"
+        <form:options items="${formBean.runCandidate.humanOrthologsFromQueries}"
                       itemLabel="entrezAccession.abbreviation" itemValue="entrezAccession.entrezAccNum"/>
     </form:select>
 
 
     <%-- numbering is how spring translates, if we can get the form:label tag to work,
 that would be better --%>
-    <label for="humanOrthologyEvidence1"><%= OrthoEvidence.Code.AA.name()%>
+    <label for="humanOrthologyEvidence1"><%= EvidenceCode.Code.AA.name()%>
     </label>
     <form:checkbox path="<%= CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE %>"
-                   value="<%= OrthoEvidence.Code.AA.name()%>"></form:checkbox>
-    <label for="humanOrthologyEvidence2"><%= OrthoEvidence.Code.CL.name()%>
+                   value="<%= EvidenceCode.Code.AA.name()%>"></form:checkbox>
+    <label for="humanOrthologyEvidence2"><%= EvidenceCode.Code.CL.name()%>
     </label>
     <form:checkbox path="<%= CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE %>"
-                   value="<%= OrthoEvidence.Code.CL.name()%>"></form:checkbox>
-    <label for="humanOrthologyEvidence3"><%= OrthoEvidence.Code.NT.name()%>
+                   value="<%= EvidenceCode.Code.CL.name()%>"></form:checkbox>
+    <label for="humanOrthologyEvidence3"><%= EvidenceCode.Code.NT.name()%>
     </label>
     <form:checkbox path="<%= CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE %>"
-                   value="<%= OrthoEvidence.Code.NT.name()%>"></form:checkbox>
+                   value="<%= EvidenceCode.Code.NT.name()%>"></form:checkbox>
 
-    <label for="humanOrthologyEvidence4"><%= OrthoEvidence.Code.PT.name()%>
+    <label for="humanOrthologyEvidence4"><%= EvidenceCode.Code.PT.name()%>
     </label>
     <form:checkbox path="<%= CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE %>"
-                   value="<%= OrthoEvidence.Code.PT.name()%>"></form:checkbox>
+                   value="<%= EvidenceCode.Code.PT.name()%>"></form:checkbox>
     <form:errors path="<%= CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE %>" cssClass="error indented-error"/>
 
 
-    <form:errors path="humanOrthologueAbbrev.entrezAccession.entrezAccNum" cssClass="error indented-error"/>
+    <form:errors path="humanOrthologAbbrev.entrezAccession.entrezAccNum" cssClass="error indented-error"/>
 
 
     <br>
-    <label for="mouseOrthologueAbbrev" class="indented-label">Mouse:</label>
-    <form:select path="mouseOrthologueAbbrev.entrezAccession.entrezAccNum">
+    <label for="mouseOrthologAbbrev" class="indented-label">Mouse:</label>
+    <form:select path="mouseOrthologAbbrev.entrezAccession.entrezAccNum">
         <option value="">-</option>
-        <form:options items="${formBean.runCandidate.mouseOrthologuesFromQueries}"
+        <form:options items="${formBean.runCandidate.mouseOrthologsFromQueries}"
                       itemLabel="entrezAccession.abbreviation" itemValue="entrezAccession.entrezAccNum"/>
     </form:select>
 
 
-    <label for="mouseOrthologyEvidence1"><%= OrthoEvidence.Code.AA.name()%>
+    <label for="mouseOrthologyEvidence1"><%= EvidenceCode.Code.AA.name()%>
     </label>
     <form:checkbox path="<%= CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE %>"
-                   value="<%= OrthoEvidence.Code.AA.name()%>"></form:checkbox>
-    <label for="mouseOrthologyEvidence2"><%= OrthoEvidence.Code.CL.name()%>
+                   value="<%= EvidenceCode.Code.AA.name()%>"></form:checkbox>
+    <label for="mouseOrthologyEvidence2"><%= EvidenceCode.Code.CL.name()%>
     </label>
     <form:checkbox path="<%= CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE %>"
-                   value="<%= OrthoEvidence.Code.CL.name()%>"></form:checkbox>
-    <label for="mouseOrthologyEvidence3"><%= OrthoEvidence.Code.NT.name()%>
+                   value="<%= EvidenceCode.Code.CL.name()%>"></form:checkbox>
+    <label for="mouseOrthologyEvidence3"><%= EvidenceCode.Code.NT.name()%>
     </label>
     <form:checkbox path="<%= CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE %>"
-                   value="<%= OrthoEvidence.Code.NT.name()%>"></form:checkbox>
-    <label for="mouseOrthologyEvidence4"><%= OrthoEvidence.Code.PT.name()%>
+                   value="<%= EvidenceCode.Code.NT.name()%>"></form:checkbox>
+    <label for="mouseOrthologyEvidence4"><%= EvidenceCode.Code.PT.name()%>
     </label>
     <form:checkbox path="<%= CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE %>"
-                   value="<%= OrthoEvidence.Code.PT.name()%>"></form:checkbox>
+                   value="<%= EvidenceCode.Code.PT.name()%>"></form:checkbox>
 
     <form:errors path="<%= CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE %>" cssClass="error indented-error"/>
-    <form:errors path="mouseOrthologueAbbrev.entrezAccession.entrezAccNum" cssClass="error indented-error"/>
+    <form:errors path="mouseOrthologAbbrev.entrezAccession.entrezAccNum" cssClass="error indented-error"/>
 
     <br>
     <br>

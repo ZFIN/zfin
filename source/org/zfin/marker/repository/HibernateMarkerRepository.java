@@ -2802,13 +2802,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public List<Marker> getZfinOrtholog(String humanAbbrev) {
         Session session = HibernateUtil.currentSession();
-        String sql = "select gene FROM Orthologue orthologue " +
-                "WHERE orthologue.abbreviation = :abbreviation " +
-                "AND orthologue.organism = :organism ";
+        String sql = "select zebrafishGene FROM Ortholog ortholog " +
+                "WHERE ortholog.symbol = :symbol " +
+                "AND ortholog.organism.commonName = :organism ";
 
         Query query = session.createQuery(sql);
-        query.setParameter("abbreviation", humanAbbrev);
-        query.setParameter("organism", Species.HUMAN);
+        query.setParameter("symbol", humanAbbrev);
+        query.setParameter("organism", Species.HUMAN.toString());
         return query.list();
     }
 

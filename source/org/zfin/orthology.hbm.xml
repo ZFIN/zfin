@@ -22,6 +22,7 @@
         <property name="chromosome" column="ortho_other_species_chromosome"/>
         <property name="obsolete" column="ortho_other_species_ncbi_gene_is_obsolete"/>
 
+        <many-to-one name="organism" column="ortho_Other_species_taxid" class="org.zfin.Species"/>
         <many-to-one name="zebrafishGene" column="ortho_zebrafish_gene_zdb_id" class="org.zfin.marker.Marker"
                      not-null="true" />
         <many-to-one name="ncbiOtherSpeciesGene" column="ortho_other_species_ncbi_gene_id" not-null="true"/>

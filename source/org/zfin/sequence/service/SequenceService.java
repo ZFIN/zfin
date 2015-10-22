@@ -19,28 +19,28 @@ public class SequenceService {
 
     private final static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
 
-    private ReferenceDatabase omimHumanOrthologueDB;
+    private ReferenceDatabase omimHumanOrthologDB;
     private ReferenceDatabase entrezGeneHumarnRefDB;
     private ReferenceDatabase entrezGeneMouseRefDB;
     private ReferenceDatabase uniprotDB;
 
     public ReferenceDatabase getOMIMHumanOrtholog() {
-        if (omimHumanOrthologueDB == null) {
-            omimHumanOrthologueDB = sequenceRepository.getReferenceDatabase(
+        if (omimHumanOrthologDB == null) {
+            omimHumanOrthologDB = sequenceRepository.getReferenceDatabase(
                     ForeignDB.AvailableName.OMIM,
-                    ForeignDBDataType.DataType.ORTHOLOGUE,
-                    ForeignDBDataType.SuperType.ORTHOLOGUE,
+                    ForeignDBDataType.DataType.ORTHOLOG,
+                    ForeignDBDataType.SuperType.ORTHOLOG,
                     Species.HUMAN);
         }
-        return omimHumanOrthologueDB;
+        return omimHumanOrthologDB;
     }
 
     public ReferenceDatabase getEntrezGeneHumanRefDB() {
         if (entrezGeneHumarnRefDB == null) {
             entrezGeneHumarnRefDB = sequenceRepository.getReferenceDatabase(
                     ForeignDB.AvailableName.GENE,
-                    ForeignDBDataType.DataType.ORTHOLOGUE,
-                    ForeignDBDataType.SuperType.ORTHOLOGUE,
+                    ForeignDBDataType.DataType.ORTHOLOG,
+                    ForeignDBDataType.SuperType.ORTHOLOG,
                     Species.HUMAN);
         }
 
@@ -51,8 +51,8 @@ public class SequenceService {
         if (entrezGeneMouseRefDB == null) {
             entrezGeneMouseRefDB = sequenceRepository.getReferenceDatabase(
                     ForeignDB.AvailableName.GENE,
-                    ForeignDBDataType.DataType.ORTHOLOGUE,
-                    ForeignDBDataType.SuperType.ORTHOLOGUE,
+                    ForeignDBDataType.DataType.ORTHOLOG,
+                    ForeignDBDataType.SuperType.ORTHOLOG,
                     Species.MOUSE);
         }
 
@@ -82,6 +82,6 @@ public class SequenceService {
         List<DBLink> dbLinkList = sequenceRepository.getDBLinksForMarker(gene.getZdbID(), ForeignDBDataType.SuperType.PROTEIN);
         SummaryDBLinkDisplay summaryDBLinkDisplay = new SummaryDBLinkDisplay();
         summaryDBLinkDisplay.addAllDBlinks(dbLinkList);
-        return summaryDBLinkDisplay ;
+        return summaryDBLinkDisplay;
     }
 }

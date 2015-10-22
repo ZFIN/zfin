@@ -85,9 +85,9 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     public List<OrthologySlimPresentation> getOrthologySlimForGeneId(String geneId) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select ortho.organism, ortho.abbreviation from Orthologue ortho " +
-                "      where ortho.gene.zdbID = :geneID  " +
-                "   order by ortho.organism ";
+        String hql = "select ortho.organism.commonName, ortho.symbol from Ortholog ortho " +
+                "      where ortho.zebrafishGene.zdbID = :geneID  " +
+                "   order by ortho.organism.commonName ";
 
         return HibernateUtil.currentSession().createQuery(hql)
                 .setString("geneID", geneId)

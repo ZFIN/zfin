@@ -755,7 +755,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         );
     }
 
-    public int getOrthologueRecordAttributions(String zdbID, String pubZdbID) {
+    public int getOrthologRecordAttributions(String zdbID, String pubZdbID) {
         return Integer.parseInt(
                 HibernateUtil.currentSession().createSQLQuery(
                         "select count(*) From ortholog as ortho, " +

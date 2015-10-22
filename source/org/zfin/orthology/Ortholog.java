@@ -1,5 +1,7 @@
 package org.zfin.orthology;
 
+import org.zfin.*;
+import org.zfin.Species;
 import org.zfin.marker.Marker;
 
 import java.io.Serializable;
@@ -17,6 +19,7 @@ public class Ortholog implements Comparable, Serializable {
     private String name;
     private String symbol;
     private String chromosome;
+    private org.zfin.Species organism;
     private boolean obsolete;
 
     public NcbiOtherSpeciesGene getNcbiOtherSpeciesGene() {
@@ -82,6 +85,14 @@ public class Ortholog implements Comparable, Serializable {
 
     public void setSymbol(String symbol) {
         this.symbol = symbol;
+    }
+
+    public org.zfin.Species getOrganism() {
+        return organism;
+    }
+
+    public void setOrganism(Species organism) {
+        this.organism = organism;
     }
 
     public int compareTo(Object o) {

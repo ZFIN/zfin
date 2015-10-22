@@ -12,7 +12,7 @@ import org.zfin.gwt.root.dto.*;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.marker.*;
 import org.zfin.mutant.Genotype;
-import org.zfin.orthology.OrthoEvidence;
+import org.zfin.orthology.EvidenceCode;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ForeignDB;
@@ -192,7 +192,7 @@ public class EnumValidationService {
     public void validateOrthoEvidenceCode() throws EnumValidationException {
         String hql = "select code from EvidenceCode";
         List typeList = HibernateUtil.currentSession().createQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList, OrthoEvidence.Code.values());
+        checkEnumVersusDatabaseCollection(typeList, EvidenceCode.Code.values());
     }
 
     @ServiceTest
