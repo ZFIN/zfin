@@ -42,8 +42,8 @@ public class EntrezMGI implements Serializable {
     public ReferenceDatabase getRefDB() {
         return sequenceRepository.getReferenceDatabase(
                 ForeignDB.AvailableName.MGI,
-                ForeignDBDataType.DataType.ORTHOLOGUE,
-                ForeignDBDataType.SuperType.ORTHOLOGUE,
+                ForeignDBDataType.DataType.ORTHOLOG,
+                ForeignDBDataType.SuperType.ORTHOLOG,
                 Species.MOUSE);
     }
 
