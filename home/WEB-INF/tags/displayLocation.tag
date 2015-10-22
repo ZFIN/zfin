@@ -9,11 +9,7 @@
 <c:set var="chromosome" value="${zfn:getChromosomeInfo(entity)}" scope="page"/>
 <c:choose>
     <c:when test="${not empty chromosome}">
-        <c:if test="${chromosome ne 'Ambiguous' && !fn:contains(chromosome,'Zv9' )}">
-            <c:if test="${!hideTitles}">
-                Chr:
-            </c:if>
-        </c:if>
+        <c:if test="${!hideTitles && chromosome ne 'Ambiguous' && !fn:contains(chromosome,'Zv9' )}">Chr:</c:if>
         ${chromosome}
         <c:if test="${!hideTitles && !hideLink}">
             &nbsp <a href="/action/mapping/detail/${entity.zdbID}">
