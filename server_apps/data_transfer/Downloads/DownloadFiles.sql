@@ -265,7 +265,7 @@ select gene.mrkr_zdb_id, a.szm_term_ont_id, gene.mrkr_abbrev, seq.mrkr_zdb_id,  
    and b.szm_object_type = seq.mrkr_type
 ;
 
--- Create the orthologues files - mouse, human, fly and yeast
+-- Create the orthologs files - mouse, human, fly and yeast
 create temp table tmp_ortho_exp (
   gene_id varchar(50),
   ortho_id varchar(50),
