@@ -3,7 +3,7 @@
 </style>
 
 <div class="popup-header">
-    Online Mendelian Inheritance in Man (OMIM) Phenotype for human orthologue
+    Online Mendelian Inheritance in Man (OMIM) Phenotype for human ortholog
 </div>
 <div class="popup-body">
 

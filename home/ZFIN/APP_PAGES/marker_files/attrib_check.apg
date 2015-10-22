@@ -1,7 +1,7 @@
 <?MICOMMENT>
   Check the attribution of a publication on a marker. If the publication
   has attribution only to the marker but not any related data (like db_link
-  data, orthologue data), pop up a suggestion of dropping the pub from the 
+  data, ortholog data), pop up a suggestion of dropping the pub from the
   citation list. per Curator's request, the curation pub for GO term unknown
   is excluded from this check, and is dropped peacefully. 
 
@@ -41,13 +41,10 @@
 				  from db_link 
 				 where dblink_linked_recid = '$OID')
     or
-      recattrib_data_zdb_id in (select oevdisp_zdb_id 
-				  from orthologue_evidence_display 
-			         where oevdisp_gene_zdb_id = '$OID')
-    or 
       recattrib_data_zdb_id in (select mrkrgoev_zdb_id 
 				  from marker_go_term_evidence 
-				 where mrkrgoev_mrkr_zdb_id = '$OID')	
+				 where ortho_zebrafish_gene_zdb_id = '$OID'
+				       and oev_ortho_zdb_id = o.ortho_zdb_id)
   <?/MIVAR>
   
   <?MIVAR NAME=hasAttribOnOID>f<?/MIVAR>

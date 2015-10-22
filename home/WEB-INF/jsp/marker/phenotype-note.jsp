@@ -11,7 +11,7 @@
         <li> annotated figures from the current literature. Images and captions are displayed when copyright permissions
             are available.
         <li> submitted images and annotations that have been electronically derived from older data in ZFIN.
-        <li> OMIM Phenotype names and IDs associated with the human orthologue for the zebrafish gene.
+        <li> OMIM Phenotype names and IDs associated with the human ortholog for the zebrafish gene.
     </ol>
 
     <p>ZFIN began to include published figures in 2004 and to annotate detailed phenotype information in 2006. We are

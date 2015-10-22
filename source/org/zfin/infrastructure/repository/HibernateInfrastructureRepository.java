@@ -759,7 +759,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return Integer.parseInt(
                 HibernateUtil.currentSession().createSQLQuery(
                         "select count(*) From ortholog as ortho, " +
-                        "              orthologue_evidence as oe " +
+                        "              ortholog_evidence as oe " +
                         "where ortho.ortho_zebrafish_gene_zdb_id = :zdbID " +
                         "and   ortho.ortho_zdb_id = oe.oev_ortho_zdb_id " +
                         "and   oe.oev_pub_zdb_id =  :pubZdbID")

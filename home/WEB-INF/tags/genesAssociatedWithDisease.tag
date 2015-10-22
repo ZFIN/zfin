@@ -9,7 +9,7 @@
         <tr>
             <th>Human Gene</th>
             <th>
-                Zebrafish Orthologue
+                Zebrafish Ortholog
             </th>
             <th>
                 OMIM Term

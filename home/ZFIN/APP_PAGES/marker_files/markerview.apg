@@ -2674,7 +2674,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
 
 <?MIBLOCK COND="$(XST,$type_of_genedom)">
  <HR width="80%">
- <a name=orthologue><b>ORTHOLOGY</b></a><br>
+ <a name=ortholog><b>ORTHOLOGY</b></a><br>
 
  <script src="/javascript/angular/angular.min.js"></script>
  <script src="/javascript/ortho-edit.js"></script>
