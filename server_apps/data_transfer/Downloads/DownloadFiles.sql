@@ -265,7 +265,7 @@ select gene.mrkr_zdb_id, a.szm_term_ont_id, gene.mrkr_abbrev, seq.mrkr_zdb_id,  
    and b.szm_object_type = seq.mrkr_type
 ;
 
--- Create the orthologs files - mouse, human, fly and yeast
+
 create temp table tmp_ortho_exp (
   gene_id varchar(50),
   ortho_id varchar(50),
@@ -274,97 +274,73 @@ create temp table tmp_ortho_exp (
   organism varchar(30),
   ortho_name varchar(120),
   ortho_abbrev varchar(15),
-  flybase varchar(50),
   entrez varchar(50),
-  mgi varchar(50),
-  omim varchar(50),
-  hgnc varchar(50)
+hgnc varchar(50)
 ) with no log;
 
 insert into tmp_ortho_exp
 select distinct ortho_zebrafish_gene_zdb_id, ortho_zdb_id, mrkr_name, mrkr_abbrev, organism_common_name, ortho_other_species_name,ortho_other_species_symbol,
-NULL::varchar(50),NULL::varchar(50),NULL::varchar(50),NULL::varchar(50),NULL::varchar(50)
+NULL::varchar(50),NULL::varchar(50)
  from ortholog,marker,organism
  where ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
-  and ortho_other_species_taxid=organism_taxid
-;
-
-update tmp_ortho_exp set flybase = (
-	select distinct oef_accession_number
-	 from ortholog o, ortholog_external_reference,foreign_db_contains, foreign_db
-	 where oef_fdbcont_zdb_id = fdbcont_zdb_id
-	   and fdb_db_name = 'FLYBASE'
-	   and fdbcont_fdb_db_id = fdb_db_pk_id
-	   and o.ortho_zdb_id = oef_ortho_zdb_id
-	   and ortho_id = o.ortho_zdb_id
-);
+  and ortho_other_species_taxid=organism_taxid;
 
 update tmp_ortho_exp set Entrez = (
-	select distinct oef_accession_number
-	 from ortholog o, ortholog_external_reference, foreign_db_contains, foreign_db
-	 where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-	   and fdb_db_name = 'Gene'
-	   and fdbcont_fdb_db_id = fdb_db_pk_id
-	   and o.ortho_zdb_id = oef_ortho_zdb_id
-	   and ortho_id = o.ortho_zdb_id
+        select distinct oef_accession_number
+         from ortholog o, ortholog_external_reference, foreign_db_contains, foreign_db
+         where oef_fdbcont_zdb_id  = fdbcont_zdb_id
+           and fdb_db_name = 'Gene'
+           and fdbcont_fdb_db_id = fdb_db_pk_id
+           and o.ortho_zdb_id = oef_ortho_zdb_id
+           and ortho_id = o.ortho_zdb_id
 );
-
-update tmp_ortho_exp set mgi = (
-	select 'MGI:' ||  oef_accession_number
-	 from ortholog o, ortholog_external_reference, foreign_db_contains, foreign_db
-	 where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-	   and fdbcont_fdb_db_id = fdb_db_pk_id
-	   and fdb_db_name = 'MGI'
-	   and o.ortho_zdb_id = oef_ortho_zdb_id
-	   and ortho_id = o.ortho_zdb_id
-);
-
-update tmp_ortho_exp set omim = (
-	select distinct oef_accession_number
-	 from ortholog o, ortholog_external_reference, foreign_db_contains, foreign_db
-	 where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-	   and fdbcont_fdb_db_id = fdb_db_pk_id
-	   and fdb_db_name = 'OMIM'
-	   and o.ortho_zdb_id = oef_ortho_zdb_id
-	   and ortho_id = o.ortho_zdb_id
-);
-
 update tmp_ortho_exp set hgnc = (
-	select distinct oef_accession_number
-	 from ortholog o, ortholog_external_reference, foreign_db_contains, foreign_db
-	 where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-	   and fdb_db_name = 'SGD'
-	   and fdbcont_fdb_db_id = fdb_db_pk_id
-	   and fdb_db_name = 'HGNC'
-	   and o.ortho_zdb_id = oef_ortho_zdb_id
-	   and ortho_id = o.ortho_zdb_id
+        select distinct oef_accession_number
+         from ortholog o, ortholog_external_reference, foreign_db_contains, foreign_db
+         where oef_fdbcont_zdb_id  = fdbcont_zdb_id
+           and fdb_db_name = 'HGNC'
+           and fdbcont_fdb_db_id = fdb_db_pk_id
+           and o.ortho_zdb_id = oef_ortho_zdb_id
+           and ortho_id = o.ortho_zdb_id
 );
+
 
 
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fly_orthos.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fly_orthos.txt'
  DELIMITER "	"
-select gene_id, zfish_abbrev, zfish_name, ortho_abbrev, ortho_name, flybase
- from tmp_ortho_exp
- where organism = 'Fruit fly'
- order by 1;
+select distinct gene_id,zfish_abbrev,zfish_name,ortho_name,ortho_abbrev, oef_accession_number,entrez,oev_evidence_code,oev_pub_zdb_id         from tmp_ortho_exp o, ortholog_external_reference, foreign_db_contains, foreign_db,ortholog_evidence
+         where oef_fdbcont_zdb_id  = fdbcont_zdb_id
+           and fdbcont_fdb_db_id = fdb_db_pk_id
+           and fdb_db_name = 'FLYBASE'
+           and o.ortho_id = oef_ortho_zdb_id
+          and o.organism='Fruit fly'
+          and o.ortho_id=oev_ortho_zdb_id
+          order by 1;
+
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/human_orthos.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/human_orthos.txt'
  DELIMITER "	"
-select gene_id, zfish_abbrev, zfish_name, ortho_abbrev, ortho_name, omim, entrez
- from tmp_ortho_exp
- where organism = 'Human'
- order by 1;
+ select distinct gene_id,zfish_abbrev,zfish_name,ortho_name,ortho_abbrev, oef_accession_number,entrez,hgnc,oev_evidence_code,oev_pub_zdb_id         from tmp_ortho_exp o, ortholog_external_reference, foreign_db_contains, foreign_db,ortholog_evidence
+         where oef_fdbcont_zdb_id  = fdbcont_zdb_id
+           and fdbcont_fdb_db_id = fdb_db_pk_id
+           and fdb_db_name = 'OMIM'
+           and o.ortho_id = oef_ortho_zdb_id          and o.organism='Human'
+          and o.ortho_id=oev_ortho_zdb_id          order by 1;
+
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mouse_orthos.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mouse_orthos.txt'
  DELIMITER "	"
-select gene_id, zfish_abbrev, zfish_name, ortho_abbrev, ortho_name, mgi, entrez
- from tmp_ortho_exp
- where organism = 'Mouse'
- order by 1;
+ select distinct gene_id,zfish_abbrev,zfish_name,ortho_name,ortho_abbrev, oef_accession_number,entrez,oev_evidence_code,oev_pub_zdb_id         from tmp_ortho_exp o, ortholog_external_reference, foreign_db_contains, foreign_db,ortholog_evidence
+         where oef_fdbcont_zdb_id  = fdbcont_zdb_id
+           and fdbcont_fdb_db_id = fdb_db_pk_id
+           and fdb_db_name = 'MGI'
+           and o.ortho_id = oef_ortho_zdb_id
+          and o.organism='Mouse'          and o.ortho_id=oev_ortho_zdb_id
+          order by 1;
 
 -- going away shortly
 --! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/yeast_orthos.txt'"
