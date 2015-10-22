@@ -164,7 +164,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_pubs.txt'
    )
 ;
 
--- Now the orthologues!
+-- Now the ortholog!
 create temp table meow_exp3 (
   gene_id varchar(50),
   organism varchar(30),

@@ -221,9 +221,9 @@ get_obj_name(zdbId varchar(50))
       from marker_history
       where mhist_zdb_id = zdbId;
   elif (objType = "ORTHO") then
-    select ortho_name 
+    select ortho_other_species_name 
       into objName
-      from orthologue
+      from ortholog
       where zdb_id = zdbId;
   elif (objType = "PNOTE") then
     select pnote_zdb_id

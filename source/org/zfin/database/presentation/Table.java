@@ -102,7 +102,7 @@ public enum Table {
     ONTOLOGY("ONTOLOGY", "ontology", "ont_pk_id", "ont_ontology_name"),
     ONTOLOGY_SUBSET("ONT_SUBSET", "ontology_subset", "osubset_pk_id", "osubset_subset_name"),
     ORGANISM("ORGANISM", "organism", "organism_common_name", "organism_common_name"),
-    ORTHOLOG("ORTHO", "orthologue", "zdb_id"),
+    ORTHOLOG("ORTHO", "ortholog", "zdb_id"),
     PANEL("REFCROSS", "panels", "zdb_id", "name"),
     PANEL_COUNT("PANELCOUNT", "panel_count", "panelcnt_panel_zdb_id,panelcnt_mrkr_type,panelcnt_or_lg,panelcnt_count,panelcnt_chromosome"),
     PANELED_MARKER("MARKER", "paneled_markers", "zdb_id", "map_name"),

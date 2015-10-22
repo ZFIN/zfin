@@ -175,7 +175,7 @@ create dba function "informix".regen_names() returning integer
     --  into 3 separate tables for perfromance reasons, but not today.
     --
     -- Marker names come from marker(and from 
-    -- accession numbers in db_link and orthlogue names/abbrevs in orthologue).
+    -- accession numbers in db_link and orthlogue names/abbrevs in ortholog).
     -- Force the names to lower case.  We don't display out of this table,
     --  we only search it.
     -- 

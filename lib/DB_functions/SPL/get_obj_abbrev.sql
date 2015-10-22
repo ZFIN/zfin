@@ -53,9 +53,9 @@ get_obj_abbrev(zdbId varchar(50))
       from journal
       where jrnl_zdb_id = zdbId;
   elif (objType = "ORTHO") then
-    select ortho_abbrev  -- NULL values 
+    select ortho_other_species_symbol  -- NULL values 
       into objName
-      from orthologue
+      from ortholog
       where zdb_id = zdbId;
   elif (objType = "REFCROSS") then
     select abbrev

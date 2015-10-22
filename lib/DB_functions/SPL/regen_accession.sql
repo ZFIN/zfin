@@ -138,8 +138,8 @@ begin	-- master exception handler
     let mouseEntrezGeneFdbContZdbId = (select fdbcont_zdb_id
 			      	  	  from foreign_db_contains, foreign_db, foreign_db_data_type
 				 	  where fdb_db_name = "Entrez Gene"
-				  	    and fdbdt_super_type = "orthologue"
-				  	    and fdbdt_data_type = "orthologue"
+				  	    and fdbdt_super_type = "ortholog"
+				  	    and fdbdt_data_type = "ortholog"
 				  	    and fdbcont_organism_common_name = "Mouse"
 					    and fdbcont_fdb_db_id = fdb_db_pk_id
 					    and fdbcont_fdbdt_id = fdbdt_pk_id);
@@ -148,8 +148,8 @@ begin	-- master exception handler
     let humanEntrezGeneFdbContZdbId = (select fdbcont_zdb_id
 			      	  	  from foreign_db_contains, foreign_db, foreign_db_data_type
 				 	  where fdb_db_name = "Entrez Gene"
-				 	   and fdbdt_super_type = "orthologue"
-				  	   and fdbdt_data_type = "orthologue"
+				 	   and fdbdt_super_type = "ortholog"
+				  	   and fdbdt_data_type = "ortholog"
 				  	   and fdbcont_organism_common_name = "Human"
  					   and fdbcont_fdb_db_id = fdb_db_pk_id
 					    and fdbcont_fdbdt_id = fdbdt_pk_id);
@@ -160,8 +160,8 @@ begin	-- master exception handler
     let humanOMIMFdbContZdbId = (select fdbcont_zdb_id
 			      	  	  from foreign_db_contains, foreign_db, foreign_db_data_type
 				 	  where fdb_db_name = "OMIM"
-				 	   and fdbdt_super_type = "orthologue"
-				  	   and fdbdt_data_type = "orthologue"
+				 	   and fdbdt_super_type = "ortholog"
+				  	   and fdbdt_data_type = "ortholog"
 				  	   and fdbcont_organism_common_name = "Human"
 					    and fdbcont_fdb_db_id = fdb_db_pk_id
 					    and fdbcont_fdbdt_id = fdbdt_pk_id);
@@ -169,8 +169,8 @@ begin	-- master exception handler
     let mouseMGIFdbContZdbId = (select fdbcont_zdb_id
 			      	  	  from foreign_db_contains
 				 	  where fdb_db_name = "MGI"
-				 	   and fdbdt_super_type = "orthologue"
-				  	   and fdbdt_data_type = "orthologue"
+				 	   and fdbdt_super_type = "ortholog"
+				  	   and fdbdt_data_type = "ortholog"
 				  	   and fdbcont_organism_common_name = "Mouse"
 					    and fdbcont_fdb_db_id = fdb_db_pk_id
 					    and fdbcont_fdbdt_id = fdbdt_pk_id); 

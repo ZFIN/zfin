@@ -94,10 +94,10 @@ create procedure regen_names_marker_list()
   -- -------------------------------------------------------------------
 
   -- -------------------------------------------------------------------
-  --   Get orthologue names for markers into all_m_names_new.
+  --   Get ortholog names for markers into all_m_names_new.
   -- -------------------------------------------------------------------
 
-  let namePrecedence = "Orthologue";
+  let namePrecedence = "Ortholog";
   select nmprec_significance 
     into nameSignificance
     from name_precedence 

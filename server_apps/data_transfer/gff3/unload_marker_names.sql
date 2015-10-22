@@ -9,7 +9,7 @@ from db_link, all_map_names
 where dblink_fdbcont_zdb_id in ('ZDB-FDBCONT-060417-1','ZDB-FDBCONT-040412-14') -- Vega_Trans, VEGA
   and dblink_linked_recid = allmapnm_zdb_id
   and allmapnm_significance <= 6
-  and allmapnm_precedence <> 'Orthologue'
+  and allmapnm_precedence <> 'Ortholog'
 
 union -- add Refseq accessions
 

@@ -227,8 +227,8 @@ public class RenoTestData {
         accessionNomenRelHuman.setLength(12);
         ReferenceDatabase refDbNomenRelHuman = sequenceRepository.getReferenceDatabase(
                 ForeignDB.AvailableName.GENE,
-                ForeignDBDataType.DataType.ORTHOLOGUE,
-                ForeignDBDataType.SuperType.ORTHOLOGUE,
+                ForeignDBDataType.DataType.ORTHOLOG,
+                ForeignDBDataType.SuperType.ORTHOLOG,
                 Species.HUMAN);
         logger.debug("refdbNomenRelHuman is: " + refDbNomenRelHuman.getForeignDB().getDbName());
         accessionNomenRelHuman.setReferenceDatabase(refDbNomenRelHuman);
@@ -242,8 +242,8 @@ public class RenoTestData {
         accessionNomenRelMouse.setLength(12);
         ReferenceDatabase refDbNomenRelM = sequenceRepository.getReferenceDatabase(
                 ForeignDB.AvailableName.GENE,
-                ForeignDBDataType.DataType.ORTHOLOGUE,
-                ForeignDBDataType.SuperType.ORTHOLOGUE,
+                ForeignDBDataType.DataType.ORTHOLOG,
+                ForeignDBDataType.SuperType.ORTHOLOG,
                 Species.MOUSE);
         logger.debug("refdbNomenRelMouse " + refDbNomenRelM.getForeignDB().getDbName());
         accessionNomenRelMouse.setReferenceDatabase(refDbNomenRelM);
@@ -303,8 +303,8 @@ public class RenoTestData {
 
         ReferenceDatabase refDBHuman = sequenceRepository.getReferenceDatabase(
                 ForeignDB.AvailableName.OMIM,
-                ForeignDBDataType.DataType.ORTHOLOGUE,
-                ForeignDBDataType.SuperType.ORTHOLOGUE,
+                ForeignDBDataType.DataType.ORTHOLOG,
+                ForeignDBDataType.SuperType.ORTHOLOG,
                 Species.HUMAN);
         //copied the acc_num out of the database; maybe this will change??
         Accession humanAccession = sequenceRepository.getAccessionByAlternateKey("100650", refDBHuman);
