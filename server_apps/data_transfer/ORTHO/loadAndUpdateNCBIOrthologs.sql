@@ -215,7 +215,7 @@ update tmp_ortho_xref
       		     from foreign_db_contains, foreign_db, foreign_db_data_type
 		     where fdbcont_fdb_db_id = fdb_db_pk_id
 		     and fdbcont_Fdbdt_id = fdbdt_pk_id
-		     and fdbdt_data_type = 'orthologue'
+		     and fdbdt_data_type = 'ortholog'
 		     and fdb_db_name = xrefDbname
 		     and fdbcont_organism_common_name = taxonid)
  where fdbcont_id is null;

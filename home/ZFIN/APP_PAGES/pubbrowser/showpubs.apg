@@ -303,7 +303,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 					where dblink_linked_recid = '$OID')
     or
       recattrib_data_zdb_id in (select ortho_zdb_id
-					from orthologue_evidence, ortholog
+					from ortholog_evidence, ortholog
 					where ortho_zebrafish_gene_zdb_id = '$OID'
 					and oev_ortho_Zdb_id = ortho_Zdb_id)    
     or

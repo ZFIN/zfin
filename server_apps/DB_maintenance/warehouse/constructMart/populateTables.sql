@@ -48,7 +48,7 @@ insert into tmp_ordered_markers (name, construct_id)
     where mrkr_zdb_id = allmapnm_zdb_id
     and allnmend_allmapnm_serial_id = allmapnm_serial_id
     and mrkr_type in ('PTCONSTRCT','ETCONSTRCT','TGCONSTRCT','GTCONSTRCT')
-    and allmapnm_precedence not in ('Accession number','Orthologue','Sequence similarity');
+    and allmapnm_precedence not in ('Accession number','Ortholog','Sequence similarity');
 
 insert into construct_search_temp (cons_construct_zdb_id, cons_abbrev_order, cons_name, cons_abbrev)
   select mrkr_Zdb_id, mrkr_abbrev_order, mrkr_name, mrkr_abbrev from marker where mrkr_type in ('PTCONSTRCT','ETCONSTRCT','TGCONSTRCT','GTCONSTRCT');
@@ -171,7 +171,7 @@ update construct_gene_feature_result_view_temp
 							  from  all_map_names, all_name_ends
 							  where cgfrv_allele_gene_zdb_id = allmapnm_zdb_id
 							  and allnmend_allmapnm_serial_id = allmapnm_serial_id
-							      and allmapnm_precedence not in ('Accession number','Orthologue','Sequence similarity')
+							      and allmapnm_precedence not in ('Accession number','Ortholog','Sequence similarity')
 							  )::lvarchar,11),""),"'}",""),"'","");
 
 
@@ -191,7 +191,7 @@ update construct_component_search_temp
 							  where  ccs_gene_zdb_id = allmapnm_zdb_id
 							  and ccs_relationship_type = 'promoter of'
 							  and allnmend_allmapnm_serial_id = allmapnm_serial_id
-   and allmapnm_precedence not in ('Accession number','Orthologue','Sequence similarity')
+   and allmapnm_precedence not in ('Accession number','Ortholog','Sequence similarity')
 							  order by 1
 							  )::lvarchar,11),""),"'}",""),"'","");
 
@@ -207,7 +207,7 @@ update construct_component_search_temp
 							  where ccs_gene_zdb_id = allmapnm_zdb_id
 							  and ccs_relationship_type = 'coding sequence of'
 							  and allnmend_allmapnm_serial_id = allmapnm_serial_id
-							      and allmapnm_precedence not in ('Accession number','Orthologue','Sequence similarity')
+							      and allmapnm_precedence not in ('Accession number','Ortholog','Sequence similarity')
 							  order by 1
 							  )::lvarchar,11),""),"'}",""),"'","");
 
@@ -221,7 +221,7 @@ update construct_component_search_Temp
 							  where ccs_gene_zdb_id = allmapnm_zdb_id
 							  and ccs_relationship_type = 'contains engineered region'
 							  and allnmend_allmapnm_serial_id = allmapnm_serial_id
-							      and allmapnm_precedence not in ('Accession number','Orthologue','Sequence similarity')
+							      and allmapnm_precedence not in ('Accession number','Ortholog','Sequence similarity')
 							  order by 1
 							  )::lvarchar,11),""),"'}",""),"'","");
 
