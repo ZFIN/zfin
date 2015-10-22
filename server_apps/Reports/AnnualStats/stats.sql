@@ -315,7 +315,7 @@ select count(*), "companies" from company
 --Genes w/Human Orthology
 insert into tmp_output(counter, section)
 select count( distinct ortho_zebrafish_gene_zdb_id), "Genes with Human Orthology"
- from orthologue_evidence, organism, ortholog
+ from ortholog_evidence, organism, ortholog
   where organism_common_name like "%Human%"
  and organism_taxid = ortho_other_species_taxid
  and ortho_Zdb_id = oev_ortho_Zdb_id
@@ -325,7 +325,7 @@ select count( distinct ortho_zebrafish_gene_zdb_id), "Genes with Human Orthology
 --Genes w/Mouse Orthology
 insert into tmp_output(counter, section)
 select count( distinct ortho_zebrafish_gene_zdb_id), "Genes with Mouse Orthology"
- from orthologue_evidence, organism, ortholog
+ from ortholog_evidence, organism, ortholog
   where organism_common_name like "%Mouse%"
  and organism_taxid = ortho_other_species_taxid
  and ortho_Zdb_id = oev_ortho_Zdb_id
