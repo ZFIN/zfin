@@ -302,9 +302,10 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 					from db_link 
 					where dblink_linked_recid = '$OID')
     or
-      recattrib_data_zdb_id in (select oevdisp_zdb_id 
-					from orthologue_evidence_display 
-					where oevdisp_gene_zdb_id = '$OID')    
+      recattrib_data_zdb_id in (select ortho_zdb_id
+					from orthologue_evidence, ortholog
+					where ortho_zebrafish_gene_zdb_id = '$OID'
+					and oev_ortho_Zdb_id = ortho_Zdb_id)    
     or
       recattrib_data_zdb_id in (select mrkrgoev_zdb_id 
 					from marker_go_term_evidence 
