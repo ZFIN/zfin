@@ -2,7 +2,7 @@ SELECT recattrib_data_zdb_id, get_obj_type(recattrib_data_zdb_id),get_obj_name(r
 FROM   record_attribution r1
 WHERE  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
        AND Get_obj_type(recattrib_data_zdb_id) NOT IN (
-           'DBLINK', 'DALIAS', 'OEVDISP', 'MREL' )
+           'DBLINK', 'DALIAS', 'ORTHO', 'MREL' )
        AND NOT EXISTS (
                       -- all nucleotide accession numbers assoc. w/pub via dblink_zdb_id (DBLINK)
                       SELECT recattrib_data_zdb_id

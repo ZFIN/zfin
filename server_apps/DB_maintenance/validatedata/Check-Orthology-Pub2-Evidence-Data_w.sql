@@ -1,11 +1,12 @@
 SELECT recattrib_data_zdb_id,
-       oevdisp_gene_zdb_id,
-       oevdisp_evidence_code,
-       oevdisp_organism_list
+       ortho_zebrafish_gene_zdb_id,
+       oev_evidence_code,
+       ortho_other_species_taxid
 FROM   record_attribution r1,
-       orthologue_evidence_display
-WHERE  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
-       AND recattrib_data_zdb_id = oevdisp_zdb_id
+       ortholog_evidence,ortholog
+WHERE  oev_ortho_Zdb_id=ortho_zdb_id
+       AND recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
+       AND recattrib_data_zdb_id = oev_ortho_zdb_id
        AND NOT EXISTS (
                       -- all nucleotide accession numbers assoc. w/pub via dblink_zdb_id (DBLINK)
                       SELECT recattrib_data_zdb_id
