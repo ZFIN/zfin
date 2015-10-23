@@ -135,14 +135,14 @@ create unique index gene_id_p on tmp_unique
   (gene_id) using btree in idxdbs2;
 
 select distinct s.gene_id, ortho_zdb_id, ortho_other_species_symbol, organism_common_name
-  from tmp_unique s, ortholog o, organism
-  where o.ortho_zebrafish_gene_zdb_id = s.gene_id
+  from tmp_unique s, ortholog, organism
+  where ortho_zebrafish_gene_zdb_id = s.gene_id
   and organism_taxid = ortho_other_species_taxid
-  and organism = 'Human'
+  and organism_common_name = 'Human'
 into temp tmp_o_with_p;
 
 
-select zdb_id, gene_id, mrkr_abbrev, ortho_abbrev, organism,
+select ortho_zdb_id, gene_id, mrkr_abbrev, ortho_other_Species_symbol, organism_common_name,
 	 a.term_ont_id as a_ont_id,a.term_name as e1superName, a.term_ontology as e1superTermOntology,
   	 b.term_ont_id as b_ont_id,b.term_name as e1subName, 
 	 b.term_ontology as e1subTermOntology, c.term_ont_id as c_ont_id,
@@ -175,7 +175,7 @@ select zdb_id, gene_id, mrkr_abbrev, ortho_abbrev, organism,
     and mfs_mrkr_zdb_id = mrkr_zdb_id
     and phenos_tag != 'normal'
 union
-  select zdb_id, gene_id,  mrkr_abbrev, ortho_abbrev, organism,
+  select ortho_zdb_id, gene_id,  mrkr_abbrev, ortho_other_species_symbol, organism_common_name,
 	 a.term_ont_id as a_ont_id,a.term_name as e1superName, a.term_ontology as e1superTermOntology,
   	 b.term_ont_id as b_ont_id,b.term_name as e1subName, 
 	 b.term_ontology as e1subTermOntology, c.term_ont_id as c_ont_id,
@@ -218,7 +218,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 select distinct gene_id,  mrkr_abbrev from tmp_ortho_pheno order by gene_id;
 
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/preprocessed_pheno.txt'
-  select distinct zdb_id, gene_id, mrkr_abbrev,a_ont_id,e1superName, b_ont_id,e1subName, 
+  select distinct ortho_zdb_id, gene_id, mrkr_abbrev,a_ont_id,e1superName, b_ont_id,e1subName, 
   	 c_ont_id,e2superName,d_ont_id,e2subName,e_ont_id,qualityName, phenos_tag,
   	 arelationship_id, arelationship_name, brelationship_id, brelationship_name,quality_id
     from tmp_ortho_pheno, tmp_phenotype_statement
@@ -227,9 +227,9 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 
 
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/preprocessed_ortho.txt'
-  select distinct zdb_id, gene_id, mrkr_abbrev, ortho_abbrev
+  select distinct ortho_zdb_id, gene_id, mrkr_abbrev, ortho_other_species_symbol
      from tmp_ortho_pheno
-    order by gene_id, mrkr_abbrev, ortho_abbrev;
+    order by gene_id, mrkr_abbrev, ortho_other_species_symbol;
 
 commit work;
 --rollback work ;
