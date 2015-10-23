@@ -3,6 +3,7 @@ package org.zfin.gwt.root.server;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zfin.Species;
 import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.framework.HibernateUtil;
@@ -22,7 +23,6 @@ import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.MarkerGoTermEvidenceRepository;
-import org.zfin.orthology.Species;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
@@ -273,7 +273,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
                     ForeignDB.AvailableName.EC,
                     ForeignDBDataType.DataType.DOMAIN,
                     ForeignDBDataType.SuperType.PROTEIN,
-                    Species.ZEBRAFISH
+                    Species.Type.ZEBRAFISH
             );
             inferredFromSet.addAll(getInferencesByDBLink(dto.getMarkerDTO().getZdbID(), referenceDatabase));
         } else if (inferenceCategory.startsWith(InferenceCategory.INTERPRO.prefix())) {
@@ -281,7 +281,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
                     ForeignDB.AvailableName.INTERPRO,
                     ForeignDBDataType.DataType.DOMAIN,
                     ForeignDBDataType.SuperType.PROTEIN,
-                    Species.ZEBRAFISH
+                    Species.Type.ZEBRAFISH
             );
             inferredFromSet.addAll(getInferencesByDBLink(dto.getMarkerDTO().getZdbID(), referenceDatabase));
         }

@@ -5,11 +5,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.CacheMode;
 import org.hibernate.Session;
+import org.zfin.Species;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.marker.Marker;
-import org.zfin.orthology.Species;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
@@ -56,38 +56,28 @@ public final class MicroarrayProcessor {
             sequenceRepository = RepositoryFactory.getSequenceRepository();
 
             geoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GEO,
-                    ForeignDBDataType.DataType.OTHER, ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
+                    ForeignDBDataType.DataType.OTHER, ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.Type.ZEBRAFISH);
             logger.debug("geoDatabase: " + geoDatabase);
 
-            // zfEspressoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.ZF_ESPRESSO.toString(),
-//                    ReferenceDatabase.Type.OTHER,ReferenceDatabase.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
-            //           logger.debug("zfEspressoDatabase: " + zfEspressoDatabase) ;
-
-
-//            arrayExpressDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.ARRAY_EXPRESS.toString(),
-//                    ForeignDBDataType.DataType.OTHER,ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
-//            logger.debug("arrayExpressDatabase: " + arrayExpressDatabase) ;
-
-
             genBankGenomicDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
-                    ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
+                    ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
             logger.debug("genBankGenomicDatabase: " + genBankGenomicDatabase);
 
 
             genBankRNADatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
-                    ForeignDBDataType.DataType.RNA, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
+                    ForeignDBDataType.DataType.RNA, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
             logger.debug("genBankRNADatabase: " + genBankRNADatabase);
 
             refseqRNADatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.REFSEQ,
-                    ForeignDBDataType.DataType.RNA, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
+                    ForeignDBDataType.DataType.RNA, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
             logger.debug("refseqRNADatabase: " + refseqRNADatabase);
 
             mirbaseStemLoopDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.MIRBASE_STEM_LOOP,
-                    ForeignDBDataType.DataType.RNA, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
+                    ForeignDBDataType.DataType.RNA, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
             logger.debug("mirbaseStemLoopDatabase: " + mirbaseStemLoopDatabase);
 
             mirbaseMatureDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.MIRBASE_MATURE,
-                    ForeignDBDataType.DataType.RNA, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
+                    ForeignDBDataType.DataType.RNA, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
             logger.debug("mirbaseMatureDatabase: " + mirbaseMatureDatabase);
 
             refPub = RepositoryFactory.getPublicationRepository().getPublication(referencePubZdbID);
@@ -127,7 +117,7 @@ public final class MicroarrayProcessor {
         microarrayBean.addMessage("CURRENT microarray accession: " + currentMicroarrayLinks.size());
 
 
-        List<String> accessionsToAdd = new ArrayList<String>(CollectionUtils.subtract(accessionsInGenbank, currentMicroarrayLinks.keySet()));
+        List<String> accessionsToAdd = new ArrayList<>(CollectionUtils.subtract(accessionsInGenbank, currentMicroarrayLinks.keySet()));
         Collections.sort(accessionsToAdd);
 
         microarrayBean.addMessage("accessions TO ADD that are in genbank: " + accessionsToAdd.size());
@@ -175,7 +165,7 @@ public final class MicroarrayProcessor {
     }
 
     public MicroarrayBean removeMicroarrayAccessions(Collection<String> accessionsToRemove, MicroarrayBean microarrayBean, Map<String, Collection<MarkerDBLink>> currentMicroarrayLinks) throws IOException {
-        Set<DBLink> dbLinksToRemove = new HashSet<DBLink>();
+        Set<DBLink> dbLinksToRemove = new HashSet<>();
         int numDeleted = 0;
         for (String accession : accessionsToRemove) {
             Collection<MarkerDBLink> dbLinksToRemoveForAccession = currentMicroarrayLinks.get(accession);
@@ -197,7 +187,7 @@ public final class MicroarrayProcessor {
     public MicroarrayBean addMicroarrayAcessions(Collection<String> accessionsToAdd, Map<String, MarkerDBLink> genBankLinks, MicroarrayBean microarrayBean, ReferenceDatabase... referenceDatabases) throws IOException {
         int microarrayAccessionsAdded = 0;
         int cacheSize = 20;
-        Set<MarkerDBLink> dbLinksToAdd = new HashSet<MarkerDBLink>();
+        Set<MarkerDBLink> dbLinksToAdd = new HashSet<>();
         try {
             for (String newMicroarrayAccession : accessionsToAdd) {
                 MarkerDBLink genBankLink = genBankLinks.get(newMicroarrayAccession);
@@ -236,7 +226,7 @@ public final class MicroarrayProcessor {
 
     public Set<String> getGEOAccessions() {
         // Process chipsets for GEO only
-        Set<String> newGEOAccessions = new TreeSet<String>();
+        Set<String> newGEOAccessions = new TreeSet<>();
 
         // will have to be done as part of a blast, just reporting sequence
         // see fogbugz 5116 for more details on these

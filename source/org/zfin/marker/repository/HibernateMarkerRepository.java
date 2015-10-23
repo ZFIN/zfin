@@ -13,29 +13,23 @@ import org.hibernate.transform.ResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 import org.zfin.ExternalNote;
+import org.zfin.Species;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
-
-
-import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructComponent;
+import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.presentation.ConstructComponentPresentation;
-
-
 import org.zfin.database.DbSystemUtil;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureFigure;
 import org.zfin.expression.Image;
 import org.zfin.expression.TextOnlyFigure;
-
 import org.zfin.feature.Feature;
-
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupEntry;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
-
 import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -44,16 +38,13 @@ import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerRelationshipPresentationTransformer;
 import org.zfin.marker.service.MarkerRelationshipSupplierPresentationTransformer;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.OmimPhenotype;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.orthology.Ortholog;
-import org.zfin.orthology.Species;
 import org.zfin.profile.MarkerSupplier;
+import org.zfin.profile.Organization;
 import org.zfin.profile.Person;
-
 import org.zfin.profile.service.ProfileService;
-
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.PaginationResultFactory;
@@ -63,7 +54,6 @@ import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.service.SequenceService;
 import org.zfin.util.NumberAwareStringComparator;
 import org.zfin.util.ZfinStringUtils;
-import org.zfin.profile.Organization;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -2796,7 +2786,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         Query query = session.createQuery(sql);
         query.setParameter("gene", marker);
-        query.setParameter("organism", Species.HUMAN.toString());
+        query.setParameter("organism", Species.Type.HUMAN.toString());
         return query.list();
     }
 
@@ -2808,7 +2798,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         Query query = session.createQuery(sql);
         query.setParameter("symbol", humanAbbrev);
-        query.setParameter("organism", Species.HUMAN.toString());
+        query.setParameter("organism", Species.Type.HUMAN.toString());
         return query.list();
     }
 

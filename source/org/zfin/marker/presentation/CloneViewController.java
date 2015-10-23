@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.zfin.Species;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
@@ -14,7 +15,6 @@ import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.marker.Clone;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
@@ -43,7 +43,7 @@ public class CloneViewController {
                 ForeignDB.AvailableName.ENSEMBL_CLONE
                 ,ForeignDBDataType.DataType.OTHER
                 ,ForeignDBDataType.SuperType.SUMMARY_PAGE
-                , Species.ZEBRAFISH
+                , Species.Type.ZEBRAFISH
         );
     }
 

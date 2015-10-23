@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerFamilyName;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.orthology.Species;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.sequence.ForeignDB;
@@ -28,9 +28,6 @@ import java.util.List;
 import java.util.Set;
 
 
-/**
- * Class CandidateController.
- */
 @Controller
 @RequestMapping(value = "/reno")
 public class NomenclatureCandidateController extends AbstractCandidateController {
@@ -96,12 +93,12 @@ public class NomenclatureCandidateController extends AbstractCandidateController
                 ForeignDB.AvailableName.GENE,
                 ForeignDBDataType.DataType.ORTHOLOG,
                 ForeignDBDataType.SuperType.ORTHOLOG,
-                Species.HUMAN));
+                org.zfin.Species.Type.HUMAN));
         candidateBean.setMouseReferenceDatabase(sequenceRepository.getReferenceDatabase(
                 ForeignDB.AvailableName.GENE,
                 ForeignDBDataType.DataType.ORTHOLOG,
                 ForeignDBDataType.SuperType.ORTHOLOG,
-                Species.MOUSE));
+                Species.Type.MOUSE));
 
         if (nomenclatureRun.getOrthologyPublication() != null) {
             candidateBean.setOrthologyPublicationZdbID(((NomenclatureRun) rc.getRun()).getOrthologyPublication().getZdbID());

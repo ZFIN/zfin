@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.marker.ui.TranscriptRPCService;
 import org.zfin.gwt.marker.ui.TranscriptTypeStatusMismatchException;
@@ -19,7 +20,6 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.BlastDatabaseException;
@@ -269,7 +269,7 @@ public class TranscriptRPCServiceImpl extends ZfinRemoteServiceServlet implement
         ReferenceDatabase referenceDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
                 ForeignDB.AvailableName.getType(refDBName), ForeignDBDataType.DataType.POLYPEPTIDE,
                 ForeignDBDataType.SuperType.SEQUENCE,
-                Species.ZEBRAFISH
+                Species.Type.ZEBRAFISH
         );
 
         List<Sequence> sequences = null;

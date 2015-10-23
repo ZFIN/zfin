@@ -1,6 +1,6 @@
 package org.zfin.sequence;
 
-import org.zfin.orthology.Species;
+import org.zfin.Species;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.repository.SequenceRepository;
 
@@ -44,7 +44,7 @@ public class EntrezMGI implements Serializable {
                 ForeignDB.AvailableName.MGI,
                 ForeignDBDataType.DataType.ORTHOLOG,
                 ForeignDBDataType.SuperType.ORTHOLOG,
-                Species.MOUSE);
+                Species.Type.MOUSE);
     }
 
     public int hashCode() {

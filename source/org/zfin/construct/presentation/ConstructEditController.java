@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.zfin.Species;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.repository.ConstructRepository;
-import org.zfin.database.InformixUtil;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.DataNote;
@@ -18,20 +18,17 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.orthology.Species;
 import org.zfin.profile.Person;
-import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.*;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.ForeignDBDataType;
+import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-
-import static org.zfin.framework.HibernateUtil.currentSession;
 
 @Controller
 @RequestMapping("/construct")
@@ -115,7 +112,7 @@ public class ConstructEditController {
         HibernateUtil.createTransaction();
         Marker m=mr.getMarkerByID(constructID);
         ReferenceDatabase genBankRefDB = sr.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
-                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
+                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
         mr.addDBLink(m, constructSequence, genBankRefDB,pubid);
         ir.insertUpdatesTable(mr.getMarkerByID(constructID),"sequence","added sequence");
         HibernateUtil.flushAndCommitCurrentSession();
@@ -194,7 +191,7 @@ public class ConstructEditController {
         Session session = HibernateUtil.currentSession();
         Marker m=mr.getMarkerByID(constructID);
         ReferenceDatabase genBankRefDB = sr.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
-                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
+                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
         ir.deleteActiveDataByZdbID(sequenceID);
         String hql = "" +
                 "delete from MarkerDBLink dbl where dbl.id = :sequenceID";

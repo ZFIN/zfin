@@ -9,10 +9,10 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
 import org.zfin.AbstractDatabaseTest;
+import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.orthology.Species;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -142,7 +142,7 @@ public class AlignmentsControllerTest extends AbstractDatabaseTest {
                 ForeignDB.AvailableName.GENBANK,
                 ForeignDBDataType.DataType.GENOMIC,
                 ForeignDBDataType.SuperType.SEQUENCE,
-                Species.ZEBRAFISH);
+                Species.Type.ZEBRAFISH);
         accession1.setReferenceDatabase(refDb);
         session.save(accession1);
         //logger.info("accession1 number is:"+accession1.getID());

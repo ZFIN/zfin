@@ -8,6 +8,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+import org.zfin.Species;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.construct.ConstructCuration;
@@ -33,7 +34,6 @@ import org.zfin.mutant.DiseaseAnnotation;
 import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
-import org.zfin.orthology.Species;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Organization;
 import org.zfin.properties.ZfinProperties;
@@ -1095,14 +1095,14 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
                     ForeignDB.AvailableName.GENBANK,
                     ForeignDBDataType.DataType.GENOMIC,
                     ForeignDBDataType.SuperType.SEQUENCE,
-                    Species.ZEBRAFISH
+                    Species.Type.ZEBRAFISH
             ));
 
             referenceDatabases.add(RepositoryFactory.getSequenceRepository().getReferenceDatabase(
                     ForeignDB.AvailableName.GENBANK,
                     ForeignDBDataType.DataType.RNA,
                     ForeignDBDataType.SuperType.SEQUENCE,
-                    Species.ZEBRAFISH
+                    Species.Type.ZEBRAFISH
             ));
 
         }

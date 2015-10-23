@@ -7,9 +7,9 @@ import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
 import org.springframework.validation.BindException;
 import org.zfin.AbstractDatabaseTest;
+import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
-import org.zfin.orthology.Species;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -47,7 +47,7 @@ public class RenoMultiRunTest extends AbstractDatabaseTest {
                 ForeignDB.AvailableName.GENBANK,
                 ForeignDBDataType.DataType.RNA,
                 ForeignDBDataType.SuperType.SEQUENCE,
-                Species.ZEBRAFISH);
+                Species.Type.ZEBRAFISH);
 
         Marker gene = new Marker();
         gene.setAbbreviation("reno");

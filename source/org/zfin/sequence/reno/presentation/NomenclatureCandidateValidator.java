@@ -128,10 +128,10 @@ public class NomenclatureCandidateValidator extends AbstractRunCandidateValidato
             // if(true) throw new RuntimeException("method Candidate.getIdentifiedMarker not supported") ;
             for (Ortholog o : m.getOrthologs()) {
 /* todo
-                if (o.getNcbiGene().getOrganism() == Species.HUMAN
+                if (o.getNcbiGene().getOrganism() == Species.Type.HUMAN
                         && !StringUtils.isEmpty(candidateBean.getHumanOrthologAbbrev().getEntrezAccession().getEntrezAccNum()))
                     errors.rejectValue("humanOrthologAbbrev.entrezAccession.entrezAccNum", "code", m.getAbbreviation() + " already has a human ortholog.");
-                if (o.getNcbiGene().getOrganism() == Species.MOUSE
+                if (o.getNcbiGene().getOrganism() == Species.Type.MOUSE
                         && !StringUtils.isEmpty(candidateBean.getMouseOrthologAbbrev().getEntrezAccession().getEntrezAccNum()))
                     errors.rejectValue("mouseOrthologAbbrev.entrezAccession.entrezAccNum", "code", m.getAbbreviation() + " already has a mouse ortholog.");
 */

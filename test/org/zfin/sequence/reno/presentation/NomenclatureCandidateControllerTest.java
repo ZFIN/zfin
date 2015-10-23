@@ -8,11 +8,11 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.validation.BindException;
+import org.zfin.Species;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.orthology.EvidenceCode;
-import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
@@ -142,7 +142,7 @@ public class NomenclatureCandidateControllerTest {
                 ForeignDB.AvailableName.UNIPROTKB,
                 ForeignDBDataType.DataType.POLYPEPTIDE,
                 ForeignDBDataType.SuperType.SEQUENCE,
-                Species.HUMAN);
+                Species.Type.HUMAN);
         //copied the acc_num out of the database; maybe this will change??
         //have to get the mouse accession number that the curator would have chosen
         //from the pull down menu.
@@ -151,7 +151,7 @@ public class NomenclatureCandidateControllerTest {
                 ForeignDB.AvailableName.UNIPROTKB,
                 ForeignDBDataType.DataType.POLYPEPTIDE,
                 ForeignDBDataType.SuperType.SEQUENCE,
-                Species.MOUSE);
+                Species.Type.MOUSE);
         //copied the acc_num out of the database, maybe this will change?
 
         Set<EvidenceCode.Code> orthoEvidencesMouse = new HashSet<>();

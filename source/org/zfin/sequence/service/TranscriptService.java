@@ -1,6 +1,7 @@
 package org.zfin.sequence.service;
 
 import org.apache.log4j.Logger;
+import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.gbrowse.presentation.GBrowseImage;
@@ -11,8 +12,6 @@ import org.zfin.marker.presentation.*;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.repository.MutantRepository;
-import org.zfin.orthology.Species;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -261,22 +260,21 @@ public class TranscriptService {
 
     public static List<MarkerDBLink> getProteinMarkerDBLinksForAccessionForRefDBName(String accessionString, String dbName) {
         ReferenceDatabase referenceDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(ForeignDB.AvailableName.getType(dbName),
-                ForeignDBDataType.DataType.POLYPEPTIDE, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
+                ForeignDBDataType.DataType.POLYPEPTIDE, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
         return RepositoryFactory.getSequenceRepository().getMarkerDBLinksForAccession(accessionString, referenceDatabase);
     }
 
     public static List<TranscriptDBLink> getProteinTranscriptDBLinksForAccessionForRefDBName(String accessionString, String dbName) {
         ReferenceDatabase referenceDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(ForeignDB.AvailableName.getType(dbName),
-                ForeignDBDataType.DataType.POLYPEPTIDE, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
+                ForeignDBDataType.DataType.POLYPEPTIDE, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
         return RepositoryFactory.getSequenceRepository().getTranscriptDBLinksForAccession(accessionString, referenceDatabase);
     }
 
 
     public static SortedSet<Genotype> getNonReferenceStrainsForTranscript(Transcript transcript) {
-        MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
 
-        SortedSet<Genotype> genotypes = new TreeSet<Genotype>();
+        SortedSet<Genotype> genotypes = new TreeSet<>();
 
         Genotype referenceStrain = getVegaReferenceStrain();
 
@@ -309,7 +307,7 @@ public class TranscriptService {
     }
 
     public static List<TranscriptDBLink> getDBLinksForDisplayGroup(Transcript transcript, DisplayGroup.GroupName groupName) {
-        List<TranscriptDBLink> links = new ArrayList<TranscriptDBLink>();
+        List<TranscriptDBLink> links = new ArrayList<>();
         for (TranscriptDBLink transcriptDBLink : transcript.getTranscriptDBLinks()) {
             if (transcriptDBLink.getReferenceDatabase().isInDisplayGroup(groupName)) {
                 links.add(transcriptDBLink);

@@ -6,9 +6,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.zfin.Species;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
-import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
@@ -35,7 +35,7 @@ public class StemLoopController {
                 ForeignDB.AvailableName.MIRBASE_STEM_LOOP,
                 ForeignDBDataType.DataType.OTHER,
                 ForeignDBDataType.SuperType.SUMMARY_PAGE,
-                Species.ZEBRAFISH
+                Species.Type.ZEBRAFISH
         );
     }
 

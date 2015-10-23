@@ -5,9 +5,9 @@ package org.zfin.sequence;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
-import org.zfin.orthology.Species;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -172,26 +172,26 @@ public class Accession implements Comparable, Serializable {
         this.blastableMarkerDBLinks = blastableMarkerDBLinks;
     }
 
-    public Species getOrganism() {
+    public Species.Type getOrganism() {
         if (CollectionUtils.isEmpty(relatedEntrezAccessions)) {
             if (!this.getReferenceDatabase().getOrganism().isEmpty()){
                     if (referenceDatabase.getOrganism().toString().equalsIgnoreCase("mouse")){
-                            return Species.MOUSE;
+                            return Species.Type.MOUSE;
                     }
                     else if (referenceDatabase.getOrganism().toString().equalsIgnoreCase("human")){
-                        return Species.HUMAN;
+                        return Species.Type.HUMAN;
                     }
                     else if (referenceDatabase.getOrganism().toString().equalsIgnoreCase("zebrafish")){
-                        return Species.ZEBRAFISH;
+                        return Species.Type.ZEBRAFISH;
                     }
             }
             else {
-                return Species.ZEBRAFISH;
+                return Species.Type.ZEBRAFISH;
             }
         }
-        Species species = null;
+        Species.Type species = null;
         for (EntrezProtRelation entrezProtRelation : relatedEntrezAccessions) {
-            Species entrezSpecies = entrezProtRelation.getOrganism();
+            Species.Type entrezSpecies = entrezProtRelation.getOrganism();
             if (species == null) {
                 species = entrezSpecies;
             } else {

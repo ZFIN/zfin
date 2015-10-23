@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.zfin.Species;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.feature.FeatureAssay;
@@ -25,7 +26,6 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.repository.MutantRepository;
-import org.zfin.orthology.Species;
 import org.zfin.profile.FeatureSource;
 import org.zfin.profile.Organization;
 import org.zfin.profile.repository.ProfileRepository;
@@ -480,7 +480,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
         featureDBLink.setAccessionNumberDisplay(sequence);
         ReferenceDatabase genBankRefDB = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
-                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
+                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
         featureDBLink.setReferenceDatabase(genBankRefDB);
 
         currentSession().save(featureDBLink);
