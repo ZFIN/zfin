@@ -134,7 +134,7 @@ select distinct gene_id from tmp_pheno_genes ;
 create unique index gene_id_p on tmp_unique 
   (gene_id) using btree in idxdbs2;
 
-select distinct s.gene_id, zdb_id, ortho_other_species_symbol, organism_common_name
+select distinct s.gene_id, ortho_zdb_id, ortho_other_species_symbol, organism_common_name
   from tmp_unique s, ortholog o, organism
   where o.ortho_zebrafish_gene_zdb_id = s.gene_id
   and organism_taxid = ortho_other_species_taxid
