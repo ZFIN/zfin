@@ -3,7 +3,6 @@ package org.zfin.orthology.repository;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.BasicTransformerAdapter;
-import org.zfin.criteria.ZfinCriteria;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.Updates;
 import org.zfin.marker.Marker;
@@ -12,7 +11,6 @@ import org.zfin.orthology.presentation.OrthologySlimPresentation;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
-import org.zfin.util.FilterType;
 
 import java.util.*;
 
@@ -22,19 +20,11 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 /**
  * This class creates the calls to Hibernate to retrieve the Orthology information.
  */
-// ToDo: SQL query for OR relation is using basic query and thus to real column names.
 public class HibernateOrthologyRepository implements OrthologyRepository {
 
     public static final String AND = " AND ";
     public static final String LIKE = "like";
-    public static final String EQUAL_SIGN = "= ";
-    public static final String CLOSE_BRACKET = ")";
     public static final String IN = "in ";
-    public static final String OPEN_BRACKET = "(";
-
-    private String getSymbolColumn(boolean isOrRelationship) {
-        return ".symbol";
-    }
 
     public void invalidateCachedObjects() {
 
@@ -48,6 +38,9 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
      * @param publication Publication object
      */
     public void saveOrthology(Ortholog ortholog, Publication publication) {
+        // need to be root user for this.
+        if (!isRootUser())
+            throw new RuntimeException("No Authenticated User. Please log in first.");
 
         currentSession().save(ortholog);
 
@@ -75,6 +68,11 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         }
 
         return currentSecurityUser;
+    }
+
+    private boolean isRootUser() {
+        Person currentSecurityUser = ProfileService.getCurrentSecurityUser();
+        return currentSecurityUser != null;
     }
 
     @Override

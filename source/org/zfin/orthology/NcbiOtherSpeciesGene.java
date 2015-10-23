@@ -1,5 +1,7 @@
 package org.zfin.orthology;
 
+import org.zfin.Species;
+
 import java.util.Set;
 
 /**
@@ -11,11 +13,11 @@ public class NcbiOtherSpeciesGene {
     private String name;
     private String abbreviation;
     private String chromosome;
-    private org.zfin.Species organism;
+    private Species organism;
 
-    private Set<NcbiExternalReference> ncbiExternalReferenceList;
+    private Set<NcbiOrthoExternalReference> ncbiExternalReferenceList;
 
-    public org.zfin.Species getOrganism() {
+    public Species getOrganism() {
         return organism;
     }
 
@@ -55,11 +57,11 @@ public class NcbiOtherSpeciesGene {
         this.ID = ID;
     }
 
-    public Set<NcbiExternalReference> getNcbiExternalReferenceList() {
+    public Set<NcbiOrthoExternalReference> getNcbiExternalReferenceList() {
         return ncbiExternalReferenceList;
     }
 
-    public void setNcbiExternalReferenceList(Set<NcbiExternalReference> referenceList) {
+    public void setNcbiExternalReferenceList(Set<NcbiOrthoExternalReference> referenceList) {
         this.ncbiExternalReferenceList = referenceList;
     }
 }

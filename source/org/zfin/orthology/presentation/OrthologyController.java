@@ -103,7 +103,7 @@ public class OrthologyController {
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
-            throw new InvalidWebRequestException("Error while deleting Ortholg: " + orthoID + ":" +
+            throw new InvalidWebRequestException("Error while deleting Ortholog: " + orthoID + ":" +
                     e.getMessage(), null);
         }
         return "Successfully deleted " + orthoID;
@@ -210,7 +210,7 @@ public class OrthologyController {
         return publication;
     }
 
-    private Marker checkValidGene(@PathVariable String geneID) {
+    private Marker checkValidGene(String geneID) {
         if (StringUtils.isEmpty(geneID))
             throw new InvalidWebRequestException("No zebrafish gene ID provided", null);
         // find the gene

@@ -1,6 +1,5 @@
 package org.zfin.orthology;
 
-import org.zfin.*;
 import org.zfin.Species;
 import org.zfin.marker.Marker;
 
