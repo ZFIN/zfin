@@ -57,18 +57,16 @@
 
         <many-to-one name="organism" column="noi_taxid" class="org.zfin.Species"/>
 
-    </class>
+        <set name="ncbiExternalReferenceList" table="ncbi_ortholog_external_reference" sort="natural" fetch="join">
+            <key column="noer_other_species_ncbi_gene_id"/>
+            <composite-element class="org.zfin.orthology.NcbiOrthoExternalReference">
+                <parent name="ncbiOtherSpeciesGene"/>
+                <many-to-one name="referenceDatabase" column="noer_fdbcont_zdb_id"/>
+                <property name="accessionNumber" column="noer_other_species_accession_number"/>
+            </composite-element>
+        </set>
 
-    <class name="org.zfin.orthology.NcbiOrthoExternalReference" table="ncbi_ortholog_external_reference" mutable="false">
-        <id name="ID" type="long">
-            <column name="noer_pk_id" not-null="true"/>
-            <generator class="identity"/>
-        </id>
-        <many-to-one name="referenceDatabase" column="noer_fdbcont_zdb_id"/>
-        <many-to-one name="ncbiOtherSpeciesGene" column="noer_other_species_ncbi_gene_id"/>
-        <property name="accessionNumber" column="noer_other_species_accession_number"/>
     </class>
-
 
     <class name="org.zfin.orthology.EvidenceCode" table="ortholog_evidence_code">
 

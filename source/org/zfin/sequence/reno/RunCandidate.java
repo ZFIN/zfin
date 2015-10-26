@@ -1,12 +1,13 @@
-/**
- * Class RunCandidate.
- */
 package org.zfin.sequence.reno;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zfin.Species;
 import org.zfin.marker.Marker;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.sequence.Accession;
+import org.zfin.sequence.EntrezProtRelation;
 import org.zfin.sequence.blast.Hit;
 import org.zfin.sequence.blast.Query;
 
@@ -17,7 +18,7 @@ public class RunCandidate {
     private String zdbID;
     private Run run;
     private Candidate candidate;
-    private Set<Query> candidateQueries = new HashSet<Query>();
+    private Set<Query> candidateQueries = new HashSet<>();
     private Person lockPerson;
     private boolean done;
     private Hit bestHit;
@@ -98,7 +99,7 @@ public class RunCandidate {
      * @return List of Markers
      */
     public List<Marker> getIdentifiedMarkers() {
-        List<Marker> markers = new ArrayList<Marker>();
+        List<Marker> markers = new ArrayList<>();
         for (Query q : getCandidateQueries()) {
             LOG.debug("I've got a queryIM: " + q.getAccession().getNumber());
             for (Marker m : q.getAccession().getBlastableMarkers()) {
@@ -112,13 +113,46 @@ public class RunCandidate {
         return markers;
     }
 
+
+    public Set<EntrezProtRelation> getOrthologsFromQueries(Species.Type organism) {
+        LOG.debug("enter getOrthologuesFromQueries");
+        Set<EntrezProtRelation> accessionOrthologues = new TreeSet<>();
+        for (Query q : getCandidateQueries()) {
+            LOG.debug(q.getAccession().getNumber());
+            for (Hit h : q.getBlastHits()) {
+                Accession a = h.getTargetAccession();
+                LOG.debug("accessionFound: " + a.getNumber() + " " + a.getID() + a.getOrganism());
+                for (EntrezProtRelation b : a.getRelatedEntrezAccessions()) {
+                    if (b != null) {
+                        if ((b.getOrganism().equals(organism))
+                                && (!accessionOrthologues.contains(b)
+                                && (!StringUtils.isEmpty(b.getEntrezAccession().getAbbreviation())))) {
+                            accessionOrthologues.add(b);
+                        }
+                    }
+                }
+
+            }
+        }
+        return accessionOrthologues;
+    }
+
+    public Set<EntrezProtRelation> getMouseOrthologsFromQueries() {
+        return getOrthologsFromQueries(Species.Type.MOUSE);
+    }
+
+    public Set<EntrezProtRelation> getHumanOrthologsFromQueries() {
+        return getOrthologsFromQueries(Species.Type.HUMAN);
+    }
+
+
     /**
      * Return an ordered list of blast query objects
      *
      * @return list of blast query objects
      */
     public List<Query> getCandidateQueryList() {
-        List<Query> queries = new ArrayList<Query>();
+        List<Query> queries = new ArrayList<>();
 
         for (Query q : getCandidateQueries()) {
             queries.add(q);

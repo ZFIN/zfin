@@ -3,10 +3,7 @@ begin work;
 
 set constraints for foreign_db.foreign_db_primary_key deferred;
 
-UPDATE foreign_db
-SET fdb_db_name = 'Ensembl(GRCz10)'
-WHERE fdb_db_name = 'Ensembl(Zv9)'
-;
+update foreign_db set fdb_db_name = 'Ensembl(GRCz10)', fdb_db_display_name = 'Ensembl(GRCz10)' where fdb_db_pk_id = 7;
 
 UPDATE foreign_db_contains
 SET fdbcont_fdb_db_id = (select fdb_db_pk_id from foreign_db where fdb_db_name = 'Ensembl(GRCz10)')

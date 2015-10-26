@@ -13,6 +13,7 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.OrthologyPresentationBean;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
@@ -46,7 +47,7 @@ public class RelatedDataService {
     private String[] antibodyRelatedDataCategories = {EXPRESSION, Category.PUBLICATION.getName()};
     private String[] anatomyGoRelatedDataCategories = {GENES_WITH_GO, GENES_CAUSING_PHENOTYPE, GENES_EXPRESSED};
     private String[] geneRelatedDataCategories = {EXPRESSION, PHENOTYPE, Category.DISEASE.getName(), Category.MUTANT.getName(), SEQUENCES, GENOME_BROWSER, ORTHOLOGY, Category.PUBLICATION.getName()};
-    private String[] pubRelatedDataCategories = {Category.GENE.getName(), EXPRESSION,PHENOTYPE, Category.DISEASE.getName(), Category.MUTANT.getName(), Category.CONSTRUCT.getName(),Category.SEQUENCE_TARGETING_REAGENT.getName(),Category.ANTIBODY.getName(),ORTHOLOGY};
+    private String[] pubRelatedDataCategories = {Category.GENE.getName(), EXPRESSION, PHENOTYPE, Category.DISEASE.getName(), Category.MUTANT.getName(), Category.CONSTRUCT.getName(), Category.SEQUENCE_TARGETING_REAGENT.getName(), Category.ANTIBODY.getName(), ORTHOLOGY};
     public static final String GENES_WITH_GO = "Genes Annotated with this GO Term";
     public static final String GENES_CAUSING_PHENOTYPE = "Genes Causing Phenotype";
     public static final String GENES_EXPRESSED = "Genes Expressed in this Structure";
@@ -77,16 +78,18 @@ public class RelatedDataService {
         }
 
 
-
         if (!(id.contains("EFG"))) {
 
             if (StringUtils.equals(category, Category.GENE.getName())) {
                 if (!ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
-                    List<OrthologyPresentationRow> markerList = MarkerService
-                            .getOrthologyEvidence(getMarkerRepository().getGeneByID(id))
-                            .getOrthologs();
-                    if (CollectionUtils.isNotEmpty(markerList)) {
-                        links.add(getOrthologyLink(id));
+                    OrthologyPresentationBean orthologyEvidenceBean = MarkerService
+                            .getOrthologyEvidence(getMarkerRepository().getGeneByID(id));
+                    if (orthologyEvidenceBean != null) {
+                        List<OrthologyPresentationRow> markerList = orthologyEvidenceBean
+                                .getOrthologs();
+                        if (CollectionUtils.isNotEmpty(markerList)) {
+                            links.add(getOrthologyLink(id));
+                        }
                     }
                 }
                 String link = "<a href=/action/marker/sequence/view/" + id + ">" + SEQUENCES + "</a>";
@@ -95,11 +98,10 @@ public class RelatedDataService {
         }
 
 
-
         //Special case here, so that the ZFIN orthology pub doesn't get an orthlogy link, because the page will take 10 minutes to load!
         if (StringUtils.equals(category, Category.PUBLICATION.getName())
                 && StringUtils.equals(result.getHasOrthology(), "true")
-                && !StringUtils.equals(result.getId(),"ZDB-PUB-030905-1")) {
+                && !StringUtils.equals(result.getId(), "ZDB-PUB-030905-1")) {
             links.add(getOrtholistLink(id));
         }
 
@@ -148,7 +150,7 @@ public class RelatedDataService {
             links = sortLinks(links, anatomyGoRelatedDataCategories);
         }
         if (StringUtils.equals(category, Category.DISEASE.getName())) {
-            for (int i = 0 ; i < links.size() ; i++) {
+            for (int i = 0; i < links.size(); i++) {
                 String link = links.get(i).replaceAll(Category.FISH.getName() + " \\(", "Models Disease (");
                 links.set(i, link);
             }

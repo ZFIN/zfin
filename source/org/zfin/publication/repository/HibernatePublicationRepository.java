@@ -1847,10 +1847,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public Long getOrthologyCount(Publication publication) {
-        String sql = "\tselect count(recattrib_data_zdb_id)\n" +
-                "\t from  record_attribution\n" +
-                "\t where recattrib_source_zdb_id = :zdbID\n" +
-                "\t  and  recattrib_data_zdb_id like 'ZDB-OEVDISP-%';";
+        String sql = "select count(*) from ortholog "+
+	"where exists ( "+
+	"select 'x' from ortholog_evidence where oev_pub_zdb_id = :zdbID "+
+	"and oev_ortho_zdb_id = ortho_zdb_ID)";
         return getCount(sql, publication.getZdbID());
     }
 

@@ -23,7 +23,6 @@ import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.TermExternalReference;
 import org.zfin.ontology.presentation.DiseaseDisplay;
-import org.zfin.orthology.NcbiOtherSpeciesGene;
 import org.zfin.orthology.Ortholog;
 import org.zfin.orthology.OrthologEvidence;
 import org.zfin.orthology.presentation.OrthologEvidencePresentation;
@@ -765,11 +764,10 @@ public class MarkerService {
         List<OrthologyPresentationRow> rows = new ArrayList<>();
         for (Ortholog ortholog : orthologs) {
             OrthologyPresentationRow row = new OrthologyPresentationRow();
-            NcbiOtherSpeciesGene otherGene = ortholog.getNcbiOtherSpeciesGene();
             row.setOrthoID(ortholog.getZdbID());
-            row.setSpecies(otherGene.getOrganism().getCommonName());
-            row.setAbbreviation(otherGene.getAbbreviation());
-            row.setChromosome(otherGene.getChromosome());
+            row.setSpecies(ortholog.getOrganism().getCommonName());
+            row.setAbbreviation(ortholog.getSymbol());
+            row.setChromosome(ortholog.getChromosome());
             row.setAccessions(ortholog.getExternalReferenceList());
 
             // Collect all the evidence records by code into a map then pull out the values

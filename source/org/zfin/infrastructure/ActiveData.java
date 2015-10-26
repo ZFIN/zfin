@@ -153,7 +153,6 @@ public class ActiveData implements ZdbID {
         MRKRSEQ,
         MRPHLNO(DeleteSTRRule.class),
         NOMEN,
-        OEVDISP,
         ORTHO,
         PAC,
         PAC_END,

@@ -5,9 +5,10 @@ import org.zfin.marker.Marker;
 import org.zfin.orthology.*;
 import org.zfin.publication.Publication;
 
-import java.util.*;
-
-import static org.zfin.repository.RepositoryFactory.getOrthologyRepository;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @Service
 public class OrthologService {
@@ -26,13 +27,27 @@ public class OrthologService {
         existingCodes.addAll(evidenceSet);
     }
 
+    /**
+     * Populate a new Ortholog entity from a zebrafish marker and an NCBI Gene.
+     * It will copy the external reference collection from the NCBI gene onto the
+     * ortholog record. They are not re-used as deletion of the NCBI references
+     * through a load should not delete the references on the ortholog.
+     * It also copies the name, symbol, chromosome number into the Ortholog record.
+     *
+     * @param gene     zebrafish gene
+     * @param ncbiGene NCBI other species gene
+     * @return a new un-persisted Ortholog entity
+     */
     public Ortholog createOrthologEntity(Marker gene, NcbiOtherSpeciesGene ncbiGene) {
         Ortholog ortholog = new Ortholog();
         ortholog.setZebrafishGene(gene);
         ortholog.setNcbiOtherSpeciesGene(ncbiGene);
-        List<NcbiOrthoExternalReference> ncbiOrthoExternalReferenceList = getOrthologyRepository().getNcbiExternalReferenceList(ncbiGene.getID());
+        ortholog.setName(ncbiGene.getName());
+        ortholog.setSymbol(ncbiGene.getAbbreviation());
+        ortholog.setChromosome(ncbiGene.getChromosome());
+        ortholog.setOrganism(ncbiGene.getOrganism());
         SortedSet<OrthologExternalReference> referenceList = new TreeSet<>();
-        for (NcbiOrthoExternalReference ref : ncbiOrthoExternalReferenceList) {
+        for (NcbiOrthoExternalReference ref : ncbiGene.getNcbiExternalReferenceList()) {
             OrthologExternalReference orthoRef = new OrthologExternalReference();
             orthoRef.setAccessionNumber(ref.getAccessionNumber());
             orthoRef.setOrtholog(ortholog);

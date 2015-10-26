@@ -1,5 +1,7 @@
 package org.zfin.marker.presentation;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,11 +17,20 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.orthology.OrthologExternalReference;
+import org.zfin.orthology.presentation.OrthologEvidencePresentation;
+import org.zfin.orthology.presentation.OrthologyPresentationRow;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.service.SequenceService;
 import org.zfin.sequence.service.TranscriptService;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Collections;
 import java.util.List;
 
@@ -143,5 +154,58 @@ public class GeneViewController {
         return "marker/phenotype-summary.page";
     }
 
+    @RequestMapping(value = "/{geneID}/download/orthology")
+    public void getOrthologyCSV(@PathVariable String geneID, HttpServletResponse response) {
+        Marker marker = getMarkerRepository().getMarkerByID(geneID);
+        if (marker == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        response.setContentType("data:text/csv;charset=utf-8");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + marker.getAbbreviation() + "-" + marker.getZdbID() +  "-orthology.csv\"");
+
+
+        try {
+            OutputStream resOs = response.getOutputStream();
+            OutputStream buffOs = new BufferedOutputStream(resOs);
+            OutputStreamWriter outputwriter = new OutputStreamWriter(buffOs);
+            CSVFormat csvFormat = CSVFormat.DEFAULT.withRecordSeparator("\n");
+            CSVPrinter csvPrinter = new CSVPrinter(outputwriter, csvFormat);
+
+            OrthologyPresentationBean orthologyBean = MarkerService.getOrthologyEvidence(marker);
+
+            //print column headers
+            csvPrinter.printRecord("species","symbol","location", "accession", "pub_id", "evidence");
+
+            for (OrthologyPresentationRow row : orthologyBean.getOrthologs()) {
+                for (OrthologExternalReference orthologExternalReference : row.getAccessions()) {
+                   for (OrthologEvidencePresentation orthologEvidencePresentation : row.getEvidence()) {
+                       for (Publication publication : orthologEvidencePresentation.getPublications()) {
+                           csvPrinter.printRecord(
+                                   row.getSpecies(),
+                                   row.getAbbreviation(),
+                                   row.getChromosome(),
+                                   orthologExternalReference.getReferenceDatabase().getForeignDB().getDbName() + ":" + orthologExternalReference.getAccessionNumber(),
+                                   publication.getZdbID(),
+                                   orthologEvidencePresentation.getCode().getName()
+                                   );
+                       }
+
+                    }
+                }
+
+
+            }
+
+            outputwriter.flush();
+            outputwriter.close();
+
+        } catch (IOException e) {
+            logger.error(e);
+        }
+
+
+    }
 
 }
