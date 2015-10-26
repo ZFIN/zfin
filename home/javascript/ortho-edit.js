@@ -13,7 +13,7 @@
     ];
 
     function zdbIdToDisplay(value) {
-        var out = value.toUpperCase();
+        var out = value && value.toUpperCase();
         namedPubs.forEach(function (namedPub) {
             if (namedPub.zdbID === value) {
                 out = namedPub.display;
