@@ -28,6 +28,10 @@
 </script>
 <?/MIVAR>
 
+<div id="directAttributionName"></div>
+
+<hr>
+
 <div ng-app="app">
     <?MIVAR><div ortho-edit pub="$OID"></div><?/MIVAR>
 </div>

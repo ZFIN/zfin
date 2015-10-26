@@ -79,7 +79,8 @@ public enum CurationModuleType {
     ORTHO_TAB {
         @Override
         public ConstructionZone initializeModule(String publicationID) {
-            return null;
+            BaseCurationModule module = new BaseCurationModule(publicationID);
+            return module.getPileConstructionZoneModule();
         }
     },;
 
