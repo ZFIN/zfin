@@ -224,7 +224,7 @@ get_obj_name(zdbId varchar(50))
     select ortho_other_species_name 
       into objName
       from ortholog
-      where zdb_id = zdbId;
+      where ortho_zdb_id = zdbId;
   elif (objType = "PNOTE") then
     select pnote_zdb_id
       into objName
