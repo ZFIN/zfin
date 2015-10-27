@@ -46,6 +46,7 @@ import java.util.*;
 import java.util.Date;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 @Repository
 public class HibernateInfrastructureRepository implements InfrastructureRepository {
@@ -134,13 +135,16 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     //todo: add a getter here, or do some mapping to objects so that we can test the insert in a routine way
 
-    public RecordAttribution insertRecordAttribution(String dataZdbID, String sourceZdbID) {
+    public void insertRecordAttribution(String dataZdbID, String sourceZdbID) {
+        if (hasStandardPublicationAttribution(dataZdbID, sourceZdbID))
+            return;
+
         Session session = HibernateUtil.currentSession();
 
         // need to return null if no valid publication string
         if (null == session.get(Publication.class, sourceZdbID)) {
             logger.warn("try into insert record attribution with bad pub: " + sourceZdbID);
-            return null;
+            return;
         }
 
         RecordAttribution ra = new RecordAttribution();
@@ -149,7 +153,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         ra.setSourceType(RecordAttribution.SourceType.STANDARD);
 
         session.save(ra);
-        return ra;
     }
 
     public PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID) {
@@ -759,10 +762,10 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return Integer.parseInt(
                 HibernateUtil.currentSession().createSQLQuery(
                         "select count(*) From ortholog as ortho, " +
-                        "              ortholog_evidence as oe " +
-                        "where ortho.ortho_zebrafish_gene_zdb_id = :zdbID " +
-                        "and   ortho.ortho_zdb_id = oe.oev_ortho_zdb_id " +
-                        "and   oe.oev_pub_zdb_id =  :pubZdbID")
+                                "              ortholog_evidence as oe " +
+                                "where ortho.ortho_zebrafish_gene_zdb_id = :zdbID " +
+                                "and   ortho.ortho_zdb_id = oe.oev_ortho_zdb_id " +
+                                "and   oe.oev_pub_zdb_id =  :pubZdbID")
                         .setString("zdbID", zdbID)
                         .setString("pubZdbID", pubZdbID)
                         .uniqueResult().toString()

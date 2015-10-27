@@ -93,7 +93,7 @@ public interface InfrastructureRepository {
 
     // TODO: RecordAttribution has a composite primary key, so not needed just yet
 
-    RecordAttribution insertRecordAttribution(String dataZdbID, String sourceZdbID);
+    void insertRecordAttribution(String dataZdbID, String sourceZdbID);
 
     PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID);
 

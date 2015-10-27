@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+
 @Service
 public class OrthologService {
 
@@ -25,6 +27,7 @@ public class OrthologService {
                 it.remove();
         }
         existingCodes.addAll(evidenceSet);
+        getInfrastructureRepository().insertRecordAttribution(ortholog.getZdbID(), publication.getZdbID());
     }
 
     /**
