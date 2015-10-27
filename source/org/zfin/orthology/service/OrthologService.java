@@ -1,5 +1,6 @@
 package org.zfin.orthology.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.zfin.marker.Marker;
 import org.zfin.orthology.*;
@@ -26,8 +27,13 @@ public class OrthologService {
             if (evidence.getPublication().equals(publication))
                 it.remove();
         }
-        existingCodes.addAll(evidenceSet);
-        getInfrastructureRepository().insertRecordAttribution(ortholog.getZdbID(), publication.getZdbID());
+        if (CollectionUtils.isNotEmpty(evidenceSet)) {
+            existingCodes.addAll(evidenceSet);
+            getInfrastructureRepository().insertRecordAttribution(ortholog.getZdbID(), publication.getZdbID());
+        } else {
+            // remove attribution as all evidence codes are removed for this publication
+            getInfrastructureRepository().deleteRecordAttribution(ortholog.getZdbID(), publication.getZdbID());
+        }
     }
 
     /**
