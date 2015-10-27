@@ -8,6 +8,7 @@
 <%@ attribute name="title" required="false" %>
 <%@ attribute name="showTitle" required="false" type="java.lang.Boolean" %>
 <%@ attribute name="hideCounts" required="false" type="java.lang.Boolean" %>
+<%@ attribute name="hideDownloadLink" required="false" type="java.lang.Boolean" %>
 
 <c:if test="${empty title && showTitle}">
     <c:set var="title">
@@ -71,7 +72,9 @@
             </c:forEach>
         </table>
     </c:if>
-    <a href="/action/marker/${marker.zdbID}/download/orthology"><i class="fa fa-download"></i> Download this data</a>
+    <c:if test="${!hideDownloadLink}">
+        <a href="/action/marker/${marker.zdbID}/download/orthology"><i class="fa fa-download"></i> Download this data</a>
+    </c:if>
     <c:if test="${!empty orthologyPresentationBean.note}">
         <div class="summary">
             <b>Orthology Note</b>

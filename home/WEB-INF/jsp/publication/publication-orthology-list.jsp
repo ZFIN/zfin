@@ -16,7 +16,8 @@
     <zfin2:orthology orthologyPresentationBean="${formBean.orthologyPresentationBean}"
                      marker="${formBean.marker}"
                      showTitle="false"
-                     hideCounts="true"/>
+                     hideCounts="true"
+                     hideDownloadLink="true"/>
 
     <hr/>
 </c:forEach>
