@@ -211,13 +211,7 @@
                     vm.orthologs.forEach(function (ortholog) {
                         var evidenceDisplayMap = {};
                         ortholog.evidenceSet.forEach(function (e) {
-                            var pubUsed = vm.pubs.find(function (pub) {
-                                return pub.zdbID === e.publication.zdbID;
-                            });
-
-                            if (!pubUsed) {
-                                vm.pubs.push(e.publication);
-                            }
+                            addToPubList(e.publication);
 
                             if (evidenceDisplayMap[e.publication.zdbID] === undefined) {
                                 var evidenceDisplay = new EvidenceDisplay(vm.codes);
@@ -339,6 +333,7 @@
             };
             $http.post('/action/gene/' + vm.gene + '/ortholog/evidence', payload)
                 .then(function () {
+                    addToPubList(vm.modalEvidence.publication);
                     vm.modalOrtholog.evidenceMap[pubID] = angular.copy(vm.modalEvidence);
                     $.modal.close();
                 })
@@ -450,6 +445,16 @@
                 out = 'ZDB-PUB-' + out;
             }
             return out;
+        }
+
+        function addToPubList(pub) {
+            var pubUsed = vm.pubs.some(function (existingPub) {
+                return existingPub.zdbID === pub.zdbID;
+            });
+
+            if (!pubUsed) {
+                vm.pubs.push(pub);
+            }
         }
 
     }
