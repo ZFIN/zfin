@@ -10,6 +10,7 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.orthology.Ortholog;
 import org.zfin.orthology.presentation.OrthologEvidencePresentation;
 import org.zfin.orthology.presentation.OrthologyPresentationRow;
 import org.zfin.publication.Publication;
@@ -426,5 +427,25 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
             }
         }
 
+    }
+
+    @Test
+    public void getOrthologyPresentationBeanNoOrthologs() {
+        // SETUP -- simulate a gene with an orthology note but no orthologs (yes, this really happens)
+        Marker m = new Marker();
+        String noteText = "What a time to be alive";
+        OrthologyNote note = new OrthologyNote();
+        note.setMarker(m);
+        note.setNote(noteText);
+        m.setOrthologyNotes(new HashSet<OrthologyNote>(Arrays.asList(note)));
+        Collection<Ortholog> orthologs = new ArrayList<>();
+
+        // EXECUTE
+        OrthologyPresentationBean bean = MarkerService.getOrthologyPresentationBean(orthologs, m, null);
+
+        // VERIFY
+        assertThat("OrthologyPresentationBean should not be null", bean, is(notNullValue()));
+        assertThat("Note text should match", bean.getNote(), is(noteText));
+        assertThat("Orthologs should be empty", bean.getOrthologs(), is(empty()));
     }
 }
