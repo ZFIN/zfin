@@ -483,7 +483,7 @@
    <field name="alias" type="abbrev" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
 
    <field name="ortholog_other_species_symbol" type="abbrev" indexed="true" stored="true" multiValued="true"   />
-   <field name="ortholog_other_species_name" type="text" indexed="true" stored="true" multiValued="true"   />
+   <field name="ortholog_other_species_name" type="abbrev" indexed="true" stored="true" multiValued="true"   />
    <field name="ortholog_organism" type="keyword" indexed="true" stored="true" multiValued="true"  />
 
    <field name="disease_model" type="keyword" indexed="true" stored="true" multiValued="true"  />
