@@ -130,11 +130,7 @@
 
         vm.codes = [];
         vm.defaultPub = undefined;
-        vm.pubs = [
-            {
-                zdbID: 'ZDB-PUB-030905-1'
-            }
-        ];
+        vm.pubs = [];
 
         vm.generalError = '';
         vm.evidenceCodeError = '';
@@ -168,11 +164,6 @@
         activate();
 
         function activate() {
-            if (vm.pub) {
-                vm.defaultPub = {zdbID: vm.pub};
-                vm.pubs.unshift(vm.defaultPub);
-            }
-
             if (!vm.gene) {
                 fetchGenes();
             } else {
@@ -207,6 +198,7 @@
             fetchCodes()
                 .then(fetchOrthologs)
                 .then(function (resp) {
+                    resetPubList();
                     vm.orthologs = resp.data;
                     vm.orthologs.forEach(function (ortholog) {
                         var evidenceDisplayMap = {};
@@ -447,6 +439,19 @@
             return out;
         }
 
+        function resetPubList() {
+            vm.pubs = [
+                {
+                    zdbID: 'ZDB-PUB-030905-1'
+                }
+            ];
+
+            if (vm.pub) {
+                vm.defaultPub = {zdbID: vm.pub};
+                addToPubList(vm.defaultPub);
+            }
+        }
+
         function addToPubList(pub) {
             var pubUsed = vm.pubs.some(function (existingPub) {
                 return existingPub.zdbID === pub.zdbID;
@@ -455,6 +460,22 @@
             if (!pubUsed) {
                 vm.pubs.push(pub);
             }
+
+            vm.pubs.sort(pubComparator);
+        }
+
+        function pubComparator(a, b) {
+            // ortho curation pub first...
+            var orthoZdbID = 'ZDB-PUB-030905-1';
+            if (a.zdbID === orthoZdbID) {
+                return -1;
+            }
+            if (b.zdbID === orthoZdbID) {
+                return 1;
+            }
+
+            // ...the rest by zdbID
+            return a.zdbID.localeCompare(b.zdbID);
         }
 
     }
