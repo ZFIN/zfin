@@ -1089,20 +1089,33 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     /**
-     * Retrieve distinct list of genes (GENEDOM_EFG) that are attributed to a given
-     * publication.
+     * Retrieve distinct list of genes (GENEDOM_AND_EFG) that are attributed to a given publication.
      *
      * @param pubID publication id
+     * @return list of markers
+     */
+    @SuppressWarnings("unchecked")
+    public List<Marker> getGenesByPublication(String pubID) {
+        return getGenesByPublication(pubID, true);
+    }
+
+    /**
+     * Retrieve distinct list of genes (GENEDOM_AND_EFG if includeEgfs is true; just GENEDOM otherwise) that are
+     * attributed to a given publication.
+     *
+     * @param pubID publication id
+     * @param includeEfgs boolean
      * @return list of markers
      */
     // ToDo: There must be a better way to retrieve GENEs versus all markers.
     // GENE should be a subclass of Marker
     @SuppressWarnings("unchecked")
-    public List<Marker> getGenesByPublication(String pubID) {
+    public List<Marker> getGenesByPublication(String pubID, boolean includeEFGs) {
         Session session = HibernateUtil.currentSession();
 
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-        List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_EFG);
+        Marker.TypeGroup typeGroup = includeEFGs ? Marker.TypeGroup.GENEDOM_AND_EFG : Marker.TypeGroup.GENEDOM;
+        List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(typeGroup);
 
         String hql = "select distinct marker from Marker marker, PublicationAttribution pub" +
                 "     where pub.dataZdbID = marker.zdbID" +

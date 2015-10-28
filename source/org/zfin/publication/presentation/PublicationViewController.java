@@ -245,7 +245,7 @@ public class PublicationViewController {
     @ResponseBody
     @RequestMapping(value = "{zdbID}/genes", method = RequestMethod.GET)
     public List<MarkerDTO> getPublicationGenes(@PathVariable String zdbID) {
-        List<Marker> genes = getPublicationRepository().getGenesByPublication(zdbID);
+        List<Marker> genes = getPublicationRepository().getGenesByPublication(zdbID, false);
         List<MarkerDTO> dtos = new ArrayList<>();
         for (Marker gene : genes) {
             dtos.add(DTOConversionService.convertToMarkerDTO(gene));

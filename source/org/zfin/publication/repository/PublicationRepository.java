@@ -335,6 +335,7 @@ public interface PublicationRepository extends PaginationParameter {
      * @return list of markers
      */
     List<Marker> getGenesByPublication(String pubID);
+    List<Marker> getGenesByPublication(String pubID, boolean includeEFGs);
     List<Feature> getFeaturesByPublication(String pubID);
     List<Fish> getFishByPublication(String pubID);
 
