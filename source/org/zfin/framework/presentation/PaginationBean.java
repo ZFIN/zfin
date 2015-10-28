@@ -46,7 +46,7 @@ public class PaginationBean {
 
     // preempts the integer attribute 'page' (int) in the super class
     @IntegerValue(message = "The value of the request parameter 'pageString' is not a number")
-    private String page;
+    private String page = "1";
 
 
     // for APG pagination
@@ -207,6 +207,8 @@ public class PaginationBean {
         if (!StringUtils.isEmpty(actionUrl))
             return actionUrl;
         // remove the page=xxx parameter
+        if (queryString == null)
+            queryString = "";
         URLCreator urlCreator = new URLCreator(requestUrl + "?" + queryString);
         urlCreator.removeNameValuePair(PAGE);
         return urlCreator.getFullURLPlusSeparator();
@@ -222,15 +224,15 @@ public class PaginationBean {
     }
 
     public int getLastRecordOnPage() {
-        return (pageInteger) * maxDisplayRecordsInteger ;
+        return (pageInteger) * maxDisplayRecordsInteger;
     }
 
     public int getFirstPageRecord() {
         return firstPageRecord;
     }
 
-    public int getLastPageRecord(){
-        return firstPageRecord + maxDisplayRecordsInteger ;
+    public int getLastPageRecord() {
+        return firstPageRecord + maxDisplayRecordsInteger;
     }
 
     public void setFirstPageRecord(int firstPageRecord) {

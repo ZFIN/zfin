@@ -23,6 +23,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.*;
+import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Fish;
@@ -30,9 +31,11 @@ import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
+import org.zfin.profile.Lab;
 import org.zfin.publication.DOIAttempt;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
+import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
@@ -1613,6 +1616,36 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         });
         List<Ortholog> orthologList = (List<Ortholog>) query.list();
         return orthologList;
+    }
+
+    @Override
+    public PaginationResult<Ortholog> getOrthologPaginationByPub(String pubID, GeneBean searchBean) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct ortho, ortho.zebrafishGene.abbreviationOrder, ortho.ncbiOtherSpeciesGene.organism.displayOrder " +
+                "from Ortholog as ortho " +
+                "join ortho.evidenceSet as evidence " +
+                "where evidence.publication.zdbID = :pubID " +
+                "order by ortho.zebrafishGene.abbreviationOrder, ortho.ncbiOtherSpeciesGene.organism.displayOrder";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+        query.setResultTransformer(new ResultTransformer() {
+            @Override
+            public Object transformTuple(Object[] objects, String[] strings) {
+                return objects[0];
+            }
+
+            @Override
+            public List transformList(List collection) {
+                return collection;
+            }
+        });
+        List<Ortholog> orthologList = (List<Ortholog>) query.list();
+        PaginationResult<Ortholog> paginationResult = PaginationResultFactory.createResultFromScrollableResultAndClose(
+                searchBean.getFirstRecordOnPage() - 1, searchBean.getLastRecordOnPage(), query.scroll());
+        paginationResult.setStart(searchBean.getFirstRecord());
+
+        return paginationResult;
     }
 
     @Override

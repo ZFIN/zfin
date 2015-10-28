@@ -2,6 +2,7 @@ package org.zfin.marker.presentation;
 
 import org.zfin.audit.AuditLogItem;
 import org.zfin.expression.presentation.MarkerExpression;
+import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.presentation.DiseaseDisplay;
@@ -13,7 +14,7 @@ import java.util.Set;
 
 /**
  */
-public class MarkerBean {
+public class MarkerBean extends PaginationBean {
     protected Marker marker ;
     protected String markerTypeDisplay ;
     private String zdbID;
