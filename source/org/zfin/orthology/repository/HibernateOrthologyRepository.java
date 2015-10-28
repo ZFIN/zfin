@@ -170,12 +170,16 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     @Override
     public void deleteOrtholog(Ortholog ortholog) {
         Person currentSecurityUser = getCurrentSecurityUser();
+	
+	// remove attributions for the zebrafish gene
+        for (OrthologEvidence evidence : ortholog.getEvidenceSet())
+            getInfrastructureRepository().deleteRecordAttribution(ortholog.getZebrafishGene().getZdbID(), evidence.getPublication().getZdbID());
 
         Session session = HibernateUtil.currentSession();
         session.delete(ortholog);
         int numOfRecords = getInfrastructureRepository().deleteRecordAttributionsForData(ortholog.getZdbID());
         Updates up = new Updates();
-        up.setRecID(ortholog.getZdbID());
+        up.setRecID(ortholog.getZebrafishGene().getZdbID());
         up.setFieldName("Ortholog");
         up.setOldValue(ortholog.getZdbID());
         up.setComments("Delete Ortholog");

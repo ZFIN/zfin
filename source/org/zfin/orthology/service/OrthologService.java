@@ -30,9 +30,13 @@ public class OrthologService {
         if (CollectionUtils.isNotEmpty(evidenceSet)) {
             existingCodes.addAll(evidenceSet);
             getInfrastructureRepository().insertRecordAttribution(ortholog.getZdbID(), publication.getZdbID());
+            // attribute the gene to the pub as well
+            getInfrastructureRepository().insertRecordAttribution(ortholog.getZebrafishGene().getZdbID(), publication.getZdbID());
         } else {
             // remove attribution as all evidence codes are removed for this publication
             getInfrastructureRepository().deleteRecordAttribution(ortholog.getZdbID(), publication.getZdbID());
+            // remove the gene from the pub too
+            getInfrastructureRepository().deleteRecordAttribution(ortholog.getZebrafishGene().getZdbID(), publication.getZdbID());
         }
     }
 
