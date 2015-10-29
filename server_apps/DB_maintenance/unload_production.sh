@@ -9,7 +9,6 @@ setenv PATH <!--|INFORMIX_DIR|-->/bin:/private/ZfinLinks/Commons/bin:$PATH
 setenv INSTANCE 
 setenv ENVIRONMENT <!--|ENVIRONMENT|-->
 set pth=/research/zunloads/databases/<!--|DB_NAME|-->
-set pthLinux=/research/zunloads/databases/<!--|DB_NAME|-->/linux
 set dirname=`date +"%Y.%m.%d.1"`
 
 # increment until we get name which has not been taken
@@ -34,23 +33,10 @@ if ($ENVIRONMENT != "development") then
     /bin/rm -rf $pth/$dirname
   else
     /bin/cp -pr <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname $pth/$dirname
-    /bin/cp -pr <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname $pthLinux/$dirname
     # sed -i would be easier but does not work on solaris.
-    /bin/sed 's/"bob"/"informix"/g' $pthLinux/$dirname/schemaFile.sql > $pthLinux/$dirname/schemaTempFile.sql
-    /bin/rm $pthLinux/$dirname/schemaFile.sql
-    /bin/mv $pthLinux/$dirname/schemaTempFile.sql $pthLinux/$dirname/schemaFile.sql
-    /bin/sed 's@/research/zprod/www_homes/zfin.org/lib/DB_functions/@/private/lib/c_functions/@g' $pthLinux/$dirname/schemaFile.sql > $pthLinux/$dirname/schemaTempFile.sql
-    /bin/rm $pthLinux/$dirname/schemaFile.sql
-    /bin/mv $pthLinux/$dirname/schemaTempFile.sql $pthLinux/$dirname/schemaFile.sql
-    # Same fix as above, but using the new paths [KLS]
-    /bin/sed 's@/opt/zfin/www_homes/[a-z]*/lib/DB_functions/@/private/lib/c_functions/@g' $pthLinux/$dirname/schemaFile.sql > $pthLinux/$dirname/schemaTempFile.sql
-    /bin/rm $pthLinux/$dirname/schemaFile.sql
-    /bin/mv $pthLinux/$dirname/schemaTempFile.sql $pthLinux/$dirname/schemaFile.sql
     /bin/rm -rf <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname
     chgrp -R fishadmin $pth/$dirname
-    chgrp -R fishadmin $pthLinux/$dirname
     chmod -R g+rw $pth/$dirname
-    chmod -R g+rw $pthLinux/$dirname
   endif
 else 
   /private/ZfinLinks/Commons/bin/unloaddb.pl <!--|DB_NAME|--> $pth/$dirname
@@ -59,19 +45,9 @@ else
   else 
     chgrp -R fishadmin $pth/$dirname
     chmod -R g+rw $pth/$dirname
-    /bin/cp -pr $pth/$dirname $pthLinux/$dirname
-    /bin/sed 's/"bob"/"informix"/g' $pthLinux/$dirname/schemaFile.sql > $pthLinux/$dirname/schemaTempFile.sql   
-    /bin/rm $pthLinux/$dirname/schemaFile.sql
-    /bin/mv $pthLinux/$dirname/schemaTempFile.sql $pthLinux/$dirname/schemaFile.sql
-    /bin/sed 's@/research/zcentral/www_homes/<!--|INSTANCE|-->/lib/DB_functions/@/private/lib/c_functions/@g' $pthLinux/$dirname/schemaFile.sql > $pthLinux/$dirname/schemaTempFile.sql
-    /bin/rm $pthLinux/$dirname/schemaFile.sql
-    /bin/mv $pthLinux/$dirname/schemaTempFile.sql $pthLinux/$dirname/schemaFile.sql
 
     chgrp -R fishadmin $pth/$dirname
-    chgrp -R fishadmin $pthLinux/$dirname
     chmod -R g+rw $pth/$dirname
-    chmod -R g+rw $pthLinux/$dirname
-
 
     echo "unloaddb.pl completed successfully."
   endif
