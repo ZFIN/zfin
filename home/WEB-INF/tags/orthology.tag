@@ -72,7 +72,7 @@
             </c:forEach>
         </table>
         <c:if test="${!hideDownloadLink}">
-            <a href="/action/marker/${marker.zdbID}/download/orthology"><i class="fa fa-download"></i> Download this data</a>
+            <a href="/action/marker/${marker.zdbID}/download/orthology"><i class="fa fa-download"></i> Download Curated Orthology</a>
         </c:if>
     </c:if>
 
