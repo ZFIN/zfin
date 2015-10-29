@@ -10,6 +10,7 @@ public class QueryManipulationService {
         if (query == null)
             return null;
         query = processIdIbd(query);
+        query = processNcbiAccession(query);
         query = processConstructDash(query);
         return query;
     }
@@ -18,6 +19,9 @@ public class QueryManipulationService {
     public String processIdIbd(String query) {
         return query.replaceAll("id:ibd","id\\\\:ibd");
     }
+
+    //Case
+    public String processNcbiAccession(String query) { return query.replaceAll("gene:","gene\\\\:"); }
 
     //Case 12299, '(-' in construct names needs to be scaped
     public String processConstructDash(String query) {
