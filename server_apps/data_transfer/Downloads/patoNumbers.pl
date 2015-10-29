@@ -28,7 +28,7 @@ $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
     or die "Cannot connect to Informix database: $DBI::errstr\n";
 
 # get the ZDB Gene Id/NCBI Gene Id pairs
-$cur = $dbh->prepare('select distinct dblink_linked_recid, dblink_acc_num from db_link where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-1";');
+$cur = $dbh->prepare('select distinct ortho_zebrafish_gene_zdb_id, oef_accession_number from ortholog,ortholog_external_reference where oef_fdbcont_Zdb_id = "ZDB-FDBCONT-040412-1" and ortho_zdb_id = oef_ortho_zdb_id;');
 $cur->execute();
 my ($zdbGeneId, $NCBIgeneId);
 $cur->bind_columns(\$zdbGeneId,\$NCBIgeneId);
@@ -41,7 +41,7 @@ while ($cur->fetch()) {
 }
 
 # get the ZDB ortholog Id/NCBI Gene Id of the human ortholog pairs
-$cur = $dbh->prepare('select distinct dblink_linked_recid, dblink_acc_num from db_link where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-27";');
+$cur = $dbh->prepare('select distinct ortho_zebrafish_gene_zdb_id, oef_accession_number from ortholog,ortholog_external_reference where oef_fdbcont_Zdb_id = "ZDB-FDBCONT-040412-27" and ortho_zdb_id = oef_ortho_zdb_id;');
 $cur->execute();
 my ($ZDBorthologId, $humanOrthoNCBIgeneId);
 $cur->bind_columns(\$ZDBorthologId,\$humanOrthoNCBIgeneId);
