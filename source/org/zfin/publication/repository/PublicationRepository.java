@@ -9,6 +9,7 @@ import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
+import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
@@ -335,6 +336,7 @@ public interface PublicationRepository extends PaginationParameter {
      * @return list of markers
      */
     List<Marker> getGenesByPublication(String pubID);
+    List<Marker> getGenesByPublication(String pubID, boolean includeEFGs);
     List<Feature> getFeaturesByPublication(String pubID);
     List<Fish> getFishByPublication(String pubID);
 
@@ -460,6 +462,8 @@ public interface PublicationRepository extends PaginationParameter {
     List<Genotype> getMutantsAndTgsByPublication(String publicationID);
 
     List<Ortholog> getOrthologListByPub(String pubID);
+
+    PaginationResult<Ortholog> getOrthologPaginationByPub(String pubID, GeneBean searchBean);
 
     List<Publication> getPublicationWithPubMedId(Integer maxResult);
 

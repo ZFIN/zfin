@@ -758,42 +758,42 @@ public class MarkerService {
      * @return
      */
     public static OrthologyPresentationBean getOrthologyPresentationBean(Collection<Ortholog> orthologs, Marker gene, Publication publication) {
-        if (CollectionUtils.isEmpty(orthologs))
-            return null;
         OrthologyPresentationBean orthologyPresentationBean = new OrthologyPresentationBean();
-        List<OrthologyPresentationRow> rows = new ArrayList<>();
-        for (Ortholog ortholog : orthologs) {
-            OrthologyPresentationRow row = new OrthologyPresentationRow();
-            row.setOrthoID(ortholog.getZdbID());
-            row.setSpecies(ortholog.getOrganism().getCommonName());
-            row.setAbbreviation(ortholog.getSymbol());
-            row.setChromosome(ortholog.getChromosome());
-            row.setAccessions(ortholog.getExternalReferenceList());
+        if (CollectionUtils.isNotEmpty(orthologs)) {
+            List<OrthologyPresentationRow> rows = new ArrayList<>();
+            for (Ortholog ortholog : orthologs) {
+                OrthologyPresentationRow row = new OrthologyPresentationRow();
+                row.setOrthoID(ortholog.getZdbID());
+                row.setSpecies(ortholog.getOrganism().getCommonName());
+                row.setAbbreviation(ortholog.getSymbol());
+                row.setChromosome(ortholog.getChromosome());
+                row.setAccessions(ortholog.getExternalReferenceList());
 
-            // Collect all the evidence records by code into a map then pull out the values
-            Map<String, OrthologEvidencePresentation> evidenceMap = new TreeMap<>();
-            for (OrthologEvidence evidence : ortholog.getEvidenceSet()) {
-                if (publication != null && !publication.equals(evidence.getPublication())) {
+                // Collect all the evidence records by code into a map then pull out the values
+                Map<String, OrthologEvidencePresentation> evidenceMap = new TreeMap<>();
+                for (OrthologEvidence evidence : ortholog.getEvidenceSet()) {
+                    if (publication != null && !publication.equals(evidence.getPublication())) {
+                        continue;
+                    }
+                    String key = evidence.getEvidenceCode().getName();
+                    if (!evidenceMap.containsKey(key)) {
+                        OrthologEvidencePresentation evidencePresentation = new OrthologEvidencePresentation();
+                        evidencePresentation.setCode(evidence.getEvidenceCode());
+                        evidenceMap.put(key, evidencePresentation);
+                    }
+                    evidenceMap.get(key).addPublication(evidence.getPublication());
+                }
+                // if the evidence map is empty (probably because a publication was provided, and that publication
+                // does not support the current ortholog), then just go to the next ortholog; don't add a row with
+                // no evidence.
+                if (MapUtils.isEmpty(evidenceMap)) {
                     continue;
                 }
-                String key = evidence.getEvidenceCode().getName();
-                if (!evidenceMap.containsKey(key)) {
-                    OrthologEvidencePresentation evidencePresentation = new OrthologEvidencePresentation();
-                    evidencePresentation.setCode(evidence.getEvidenceCode());
-                    evidenceMap.put(key, evidencePresentation);
-                }
-                evidenceMap.get(key).addPublication(evidence.getPublication());
+                row.setEvidence(evidenceMap.values());
+                rows.add(row);
             }
-            // if the evidence map is empty (probably because a publication was provided, and that publication
-            // does not support the current ortholog), then just go to the next ortholog; don't add a row with
-            // no evidence.
-            if (MapUtils.isEmpty(evidenceMap)) {
-                continue;
-            }
-            row.setEvidence(evidenceMap.values());
-            rows.add(row);
+            orthologyPresentationBean.setOrthologs(rows);
         }
-        orthologyPresentationBean.setOrthologs(rows);
         OrthologyNote note = gene.getOrthologyNote();
         if (note != null) {
             orthologyPresentationBean.setNote(note.getNote());

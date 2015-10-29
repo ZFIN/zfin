@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.feature.Feature;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
@@ -104,7 +105,7 @@ public class PublicationViewController {
                     antibodyCount, efgCount,
                     cloneProbeCount, expressionCount,
                     phenotypeCount, phenotypeAlleleCount, featureCount,
-                    fishCount, orthologyCount, new Long(diseaseAnnotationList.size())
+                    fishCount, orthologyCount, (long) diseaseAnnotationList.size()
             ));
         } else {
             model.addAttribute("showAdditionalData", false);
@@ -135,7 +136,8 @@ public class PublicationViewController {
         }
 
         // assumes that the orthologs are ordered by zebrafish gene
-        List<Ortholog> orthologList = getPublicationRepository().getOrthologListByPub(pubID);
+        PaginationResult<Ortholog> result = getPublicationRepository().getOrthologPaginationByPub(pubID, geneBean);
+        List<Ortholog> orthologList = result.getPopulatedResults();
         Publication publication = getPublicationRepository().getPublication(pubID);
         List<GeneBean> beanList = new ArrayList<>(orthologList.size() * 4);
         List<Ortholog> orthologsPerGene = new ArrayList<>(5);
@@ -161,21 +163,10 @@ public class PublicationViewController {
             }
 
         }
+        geneBean.setRequestUrl(new StringBuffer("orthology-list"));
+        geneBean.setTotalRecords(result.getTotalCount());
         model.addAttribute("orthologyBeanList", beanList);
         model.addAttribute("publication", publication);
-/*
-        List<Marker> list = getPublicationRepository().getOrthologyGeneList(pubID);
-        Publication publication = getPublicationRepository().getPublication(pubID);
-        List<GeneBean> beanList = new ArrayList<>(list.size());
-        for (Marker marker : list) {
-            GeneBean orthologyBean = new GeneBean();
-            orthologyBean.setMarker(marker);
-            orthologyBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(marker, publication));
-            beanList.add(orthologyBean);
-        }
-        model.addAttribute("orthologyBeanList", beanList);
-        model.addAttribute("publication", publication);
-*/
         return "publication/publication-orthology-list.page";
     }
 
@@ -185,11 +176,6 @@ public class PublicationViewController {
                                   Model model) {
         logger.info("zdbID: " + pubID);
 
-       /* if (StringUtils.equals(pubID, "ZDB-PUB-030905-1")) {
-            return "redirect:/" + pubID;
-        }*/
-
-        // List<FeatureMarkerRelationship> featureList = getPublicationRepository().getFeatureMarkerRelationshipsByPubID(pubID);
         List<Feature> featureList = getPublicationRepository().getFeaturesByPublication(pubID);
         Publication publication = getPublicationRepository().getPublication(pubID);
 
@@ -203,10 +189,6 @@ public class PublicationViewController {
                                @ModelAttribute("formBean") GeneBean geneBean,
                                Model model) {
         logger.info("zdbID: " + pubID);
-
-       /* if (StringUtils.equals(pubID, "ZDB-PUB-030905-1")) {
-            return "redirect:/" + pubID;
-        }*/
 
         List<Fish> featureList = getPublicationRepository().getFishByPublication(pubID);
         Publication publication = getPublicationRepository().getPublication(pubID);
@@ -245,7 +227,7 @@ public class PublicationViewController {
     @ResponseBody
     @RequestMapping(value = "{zdbID}/genes", method = RequestMethod.GET)
     public List<MarkerDTO> getPublicationGenes(@PathVariable String zdbID) {
-        List<Marker> genes = getPublicationRepository().getGenesByPublication(zdbID);
+        List<Marker> genes = getPublicationRepository().getGenesByPublication(zdbID, false);
         List<MarkerDTO> dtos = new ArrayList<>();
         for (Marker gene : genes) {
             dtos.add(DTOConversionService.convertToMarkerDTO(gene));

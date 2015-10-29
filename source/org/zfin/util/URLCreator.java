@@ -60,10 +60,14 @@ public class URLCreator {
      * @return full url or query string
      */
     public String getFullURLPlusSeparator() {
+        String url = getURL();
         if (nameValuePairs != null && nameValuePairs.size() >= 1) {
-            return getURL() + AMPERSAND;
+            return url + AMPERSAND;
         } else {
-            return getURL() + QUESTION_MARK;
+            if (url.endsWith(QUESTION_MARK))
+                return url;
+            else
+                return url + QUESTION_MARK;
         }
     }
 
@@ -143,6 +147,7 @@ public class URLCreator {
      * This is a convenience method that might cause trouble, it will blindly return
      * the first value for a given name.  Normally that's all that we want, but
      * in some situations that might cause a surprise.
+     *
      * @param name
      * @return
      */

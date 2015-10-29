@@ -5,7 +5,7 @@
 <table class="primary-entity-attributes">
     <tr>
         <th><span class="name-label">Orthology established by:</span></th>
-        <td><span class="name-value"><zfin:link entity="${publication}"/></span> (${orthologyBeanList.size()} genes)</td>
+        <td><span class="name-value"><zfin:link entity="${publication}"/></span> (${formBean.totalRecords} genes)</td>
     </tr>
 </table>
 
@@ -21,3 +21,6 @@
 
     <hr/>
 </c:forEach>
+<div style="display: inline;">
+    <zfin2:pagination paginationBean="${formBean}"/>
+</div>

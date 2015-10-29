@@ -235,6 +235,7 @@
          <str name="f.curator.facet.limit">50</str>
          <str name="f.stage.facet.limit">50</str>
          <str name="f.type.facet.limit">50</str>
+         <str name="f.chromosome.facet.limit">50</str>
 
 
 
