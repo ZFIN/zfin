@@ -41,7 +41,7 @@ while ($cur->fetch()) {
 }
 
 # get the ZDB ortholog Id/NCBI Gene Id of the human ortholog pairs
-$cur = $dbh->prepare('select distinct ortho_zebrafish_gene_zdb_id, oef_accession_number from ortholog,ortholog_external_reference where oef_fdbcont_Zdb_id = "ZDB-FDBCONT-040412-27" and ortho_zdb_id = oef_ortho_zdb_id;');
+$cur = $dbh->prepare('select distinct oef_ortho_zdb_id, oef_accession_number from ortholog_external_reference where oef_fdbcont_Zdb_id = "ZDB-FDBCONT-040412-27";');
 $cur->execute();
 my ($ZDBorthologId, $humanOrthoNCBIgeneId);
 $cur->bind_columns(\$ZDBorthologId,\$humanOrthoNCBIgeneId);
