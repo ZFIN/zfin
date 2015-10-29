@@ -446,6 +446,6 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         // VERIFY
         assertThat("OrthologyPresentationBean should not be null", bean, is(notNullValue()));
         assertThat("Note text should match", bean.getNote(), is(noteText));
-        assertThat("Orthologs should be empty", bean.getOrthologs(), is(empty()));
+        assertThat("Orthologs should be empty", bean.getOrthologs(), is(nullValue()));
     }
 }
