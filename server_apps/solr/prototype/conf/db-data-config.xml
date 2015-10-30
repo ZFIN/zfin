@@ -3561,6 +3561,14 @@ where feature_zdb_id = ids_data_zdb_id
                <field name="alias" column="dalias_alias"/>
            </entity>
 
+ <entity name="term_replacements"
+                   datasource="db" query="select zrepld_old_zdb_id related_accession, zrepld_new_zdb_id
+                         from zdb_replaced_data
+                         where zrepld_new_zdb_id[1,8] = 'ZDB-TERM'"
+                   where="zrepld_new_zdb_id=term.internal_id"
+                   processor="CachedSqlEntityProcessor" >
+           </entity>
+
            <entity name="term_external_xref"
                    datasource="db" query="select
                             tx_full_accession as related_accession,
