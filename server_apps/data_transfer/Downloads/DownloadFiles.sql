@@ -360,12 +360,11 @@ create temp table tmp_xpat_Fish (gene_zdb_id varchar(50),
 				 probe_zdb_id varchar(50),
 				 probe_abbrev lvarchar(255),
 				 xpatex_assay_name varchar(100),
-				 xpatex_zdb_id varchar(50),
 				 xpat_zdb_id varchar(50),
-				 xpatex_source_zdb_id varchar(50),
-				 fish_zdb_id varchar(50),
 				 source_zdb_id varchar(50),
-				 clone_rating varchar(50))
+				 fish_zdb_id varchar(50),
+                                 xpatex_zdb_id varchar(50),
+                                 clone_rating varchar(50))
 with no log;
 
 insert into tmp_xpat_fish (gene_zdb_id,
@@ -373,10 +372,10 @@ insert into tmp_xpat_fish (gene_zdb_id,
 				probe_zdb_id,
 				probe_abbrev,
 				xpatex_assay_name,
-				xpatex_zdb_id,
+                                xpat_zdb_id,
+                                source_zdb_id,
 				fish_zdb_id,
-				source_zdb_id,
-				xpatex_source_zdb_id)
+				xpatex_zdb_id)
 select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
         probe.mrkr_zdb_id probe_zdb, probe.mrkr_abbrev,
         xpatex_assay_name, xpatex_zdb_id xpat_zdb,
