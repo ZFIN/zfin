@@ -707,7 +707,7 @@ var validateGeneWithOrthology = function(geneIDdelete, geneZdbIdMergedInto, gene
 
 
                         jQuery('#validationOrthologyText').append("<div>"
-                                +data[orthology].organism+"&nbsp;&nbsp;&nbsp;"+data[orthology].orthologySymbol
+                                +data[orthology].organism+"&nbsp;&nbsp;&nbsp;"+data[orthology].orthologySymbol+"&nbsp;&nbsp;&nbsp;"+data[orthology].evidenceCode+"&nbsp;&nbsp;&nbsp;"+data[orthology].publication
                                 + "</div>");
                     }
 
@@ -728,7 +728,7 @@ var validateGeneWithOrthology = function(geneIDdelete, geneZdbIdMergedInto, gene
                                                 jQuery('#validationOrthologyText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following orthology:</h3>');
 
                                             jQuery('#validationOrthologyText').append("<div>"
-                                                    +data[orthology].organism+"&nbsp;&nbsp;&nbsp;"+data[orthology].orthologySymbol
+                                                    +data[orthology].organism+"&nbsp;&nbsp;&nbsp;"+data[orthology].orthologySymbol+"&nbsp;&nbsp;&nbsp;"+data[orthology].evidenceCode+"&nbsp;&nbsp;&nbsp;"+data[orthology].publication
                                                     + "</div>");
                                         }
                                         if (numberOfOrthologyOfMarker2 == 0)
