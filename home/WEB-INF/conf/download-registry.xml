@@ -1078,7 +1078,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="7">Publication ID</Column>
             <Column id="8">Fish ID</Column>
             <Column id="9">Environment ID</Column>
-            <Column id="10">Probe Quality (optiona 0 - 5 rating)</Column>
+            <Column id="10">Probe Quality (optional 0 - 5 rating)</Column>
         </Download>
         <Download orderIndex="4">
             <Name>
