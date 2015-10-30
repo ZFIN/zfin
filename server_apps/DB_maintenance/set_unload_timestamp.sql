@@ -1,1 +1,6 @@
-update database_info set di_date_unloaded = current;
+delete from database_info where di_database_unloaded = "<!--|DB_NAME|-->";
+insert into database_info (di_date_unloaded, di_database_unloaded)
+ select current, "<!--|DB_NAME|-->"
+   from single;
+
+
