@@ -334,7 +334,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mouse_orthos.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mouse_orthos.txt'
  DELIMITER "	"
- select distinct gene_id,zfish_abbrev,zfish_name,ortho_name,ortho_abbrev, oef_accession_number,entrez,oev_evidence_code,oev_pub_zdb_id         from tmp_ortho_exp o, ortholog_external_reference, foreign_db_contains, foreign_db,ortholog_evidence
+ select distinct gene_id,zfish_abbrev,zfish_name,ortho_name,ortho_abbrev, 'MGI:'|| oef_accession_number,entrez,oev_evidence_code,oev_pub_zdb_id         from tmp_ortho_exp o, ortholog_external_reference, foreign_db_contains, foreign_db,ortholog_evidence
          where oef_fdbcont_zdb_id  = fdbcont_zdb_id
            and fdbcont_fdb_db_id = fdb_db_pk_id
            and fdb_db_name = 'MGI'
