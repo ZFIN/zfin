@@ -11,6 +11,8 @@ setenv ENVIRONMENT <!--|ENVIRONMENT|-->
 set pth=/research/zunloads/databases/<!--|DB_NAME|-->
 set dirname=`date +"%Y.%m.%d.1"`
 
+$INFORMIXDIR/bin/dbaccess $DBNAME <!--|ROOT_PATH|-->/server_apps/DB_maintenance/set_unload_timestamp.sql
+
 # increment until we get name which has not been taken
 while ( -d $pth/$dirname )
 	set z=$dirname:e
