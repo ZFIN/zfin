@@ -54,12 +54,12 @@
             </div>
         </td>
         <td>
-            <div ng-repeat="(pubId, ev) in ortholog.evidenceMap">
+            <div ng-repeat="ev in ortholog.evidenceArray">
                 <a ng-href="/{{ev.publication.zdbID}}" ng-attr-title="{{ev.publication.citation}}">
                     {{ev.publication.zdbID | pub}}
                 </a>: {{ev.asList()}}
                 <a href class="clickable" ng-click="vm.editEvidence(ortholog, ev, $index)"><i class="fa fa-fw fa-pencil"></i></a>
-                <a href class="clickable" ng-click="vm.deleteEvidence(ortholog, ev)"><i class="fa fa-fw fa-trash"></i></a>
+                <a href class="clickable" ng-click="vm.deleteEvidence(ortholog, ev, $index)"><i class="fa fa-fw fa-trash"></i></a>
             </div>
             <a href ng-click="vm.addEvidence(ortholog)">Add</a>
         </td>

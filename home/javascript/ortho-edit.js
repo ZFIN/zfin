@@ -22,6 +22,15 @@
         return out;
     }
 
+    function zdbIdToDate(id) {
+        var parts = id.split('-');
+        var date = parts[2];
+        if (!date) { return new Date(0); }
+        // sorry, zfinners in the year 2090 :(
+        var century = date.startsWith('9') ? '19' : '20';
+        return new Date(century + date.substring(0, 2), Number(date.substring(2, 4)) - 1, date.substring(4, 6));
+    }
+
     function displayToZdbId(value) {
         var out = value;
         namedPubs.forEach(function (namedPub) {
@@ -201,19 +210,20 @@
                     resetPubList();
                     vm.orthologs = resp.data;
                     vm.orthologs.forEach(function (ortholog) {
-                        var evidenceDisplayMap = {};
+                        var evidenceArray = [];
                         ortholog.evidenceSet.forEach(function (e) {
                             addToPubList(e.publication);
 
-                            if (evidenceDisplayMap[e.publication.zdbID] === undefined) {
+                            if (!hasEvidenceForPub(evidenceArray, e.publication)) {
                                 var evidenceDisplay = new EvidenceDisplay(vm.codes);
                                 evidenceDisplay.publication = e.publication;
-                                evidenceDisplayMap[e.publication.zdbID] = evidenceDisplay;
+                                evidenceArray.push(evidenceDisplay);
                             }
 
-                            evidenceDisplayMap[e.publication.zdbID].toggleCode(e.evidenceCode);
+                            getEvidenceForPub(evidenceArray, e.publication).toggleCode(e.evidenceCode);
                         });
-                        ortholog.evidenceMap = evidenceDisplayMap;
+                        evidenceArray.sort(evidenceComparator);
+                        ortholog.evidenceArray = evidenceArray;
                     });
                 })
                 .catch(function (error) {
@@ -248,7 +258,7 @@
             $http.post('/action/gene/' + vm.gene + '/ortholog/ncbi/' + vm.ncbiGeneNumber)
                 .then(function (resp) {
                     var newOrtholog = resp.data;
-                    newOrtholog.evidenceMap = {};
+                    newOrtholog.evidenceArray = [];
                     vm.orthologs.push(newOrtholog);
                     vm.ncbiGeneNumber = '';
                     vm.generalError = '';
@@ -295,7 +305,7 @@
         function addEvidence(ortholog) {
             var evDisp = new EvidenceDisplay(vm.codes);
             if (vm.defaultPub) {
-                evDisp.publication = vm.defaultPub;
+                evDisp.publication = angular.copy(vm.defaultPub);
             }
             openEvidenceModal(ortholog, evDisp);
             checkPub();
@@ -326,7 +336,12 @@
             $http.post('/action/gene/' + vm.gene + '/ortholog/evidence', payload)
                 .then(function () {
                     addToPubList(vm.modalEvidence.publication);
-                    vm.modalOrtholog.evidenceMap[pubID] = angular.copy(vm.modalEvidence);
+                    if (vm.modalEvidenceIndex < 0) {
+                        vm.modalOrtholog.evidenceArray.push(angular.copy(vm.modalEvidence));
+                        vm.modalOrtholog.evidenceArray.sort(evidenceComparator);
+                    } else {
+                        vm.modalOrtholog.evidenceArray[vm.modalEvidenceIndex] = angular.copy(vm.modalEvidence);
+                    }
                     $.modal.close();
                 })
                 .catch(function (error) {
@@ -349,7 +364,7 @@
             openEvidenceModal(ortholog, angular.copy(evidence));
         }
 
-        function deleteEvidence(ortholog, evidence) {
+        function deleteEvidence(ortholog, evidence, index) {
             vm.generalError = '';
             var pubID = evidence.publication.zdbID;
             var payload = {
@@ -359,7 +374,7 @@
             };
             $http.post('/action/gene/' + vm.gene + '/ortholog/evidence', payload)
                 .then(function () {
-                    delete ortholog.evidenceMap[pubID];
+                    ortholog.evidenceArray.splice(index, 1);
                 })
                 .catch(function (error) {
                     vm.generalError = 'Couldn\'t delete evidence';
@@ -419,9 +434,8 @@
 
         function checkPub() {
             vm.evidencePublicationError = '';
-            var pubID = makeZdb(vm.modalEvidence.publication.zdbID);
-            vm.modalEvidence.publication.zdbID = pubID;
-            var existingEvidence = vm.modalOrtholog.evidenceMap[pubID];
+            vm.modalEvidence.publication.zdbID = makeZdb(vm.modalEvidence.publication.zdbID);
+            var existingEvidence = getEvidenceForPub(vm.modalOrtholog.evidenceArray, vm.modalEvidence.publication);
             if (existingEvidence) {
                 vm.modalEvidence = angular.copy(existingEvidence);
                 vm.evidencePublicationWarning = true;
@@ -475,7 +489,30 @@
             }
 
             // ...the rest by zdbID
-            return a.zdbID.localeCompare(b.zdbID);
+            var aDate = zdbIdToDate(a.zdbID);
+            var bDate = zdbIdToDate(b.zdbID);
+            return bDate.getTime() - aDate.getTime();
+        }
+
+        function evidenceComparator(a, b) {
+            return pubComparator(a.publication, b.publication);
+        }
+
+        function hasEvidenceForPub(evidenceArray, pub) {
+            for (var idx = 0; idx < evidenceArray.length; idx++) {
+                if (evidenceArray[idx].publication.zdbID === pub.zdbID) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function getEvidenceForPub(evidenceArray, pub) {
+            for (var idx = 0; idx < evidenceArray.length; idx++) {
+                if (evidenceArray[idx].publication.zdbID === pub.zdbID) {
+                    return evidenceArray[idx];
+                }
+            }
         }
 
     }
