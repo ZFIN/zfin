@@ -55,6 +55,7 @@
         <echo message="registry: ${web-inf.dir}/conf/download-registry.xml"/>
         <echo message="registry to: ${download-dir}/${time-stamp}/download-registry.xml"/>
         <copy file="${web-inf.dir}/conf/download-registry.xml" tofile="${download-dir}/${time-stamp}/download-registry.xml" />
+        <copy file="${web-inf.dir}/conf/download-registry.xml" tofile="${download-dir}/current/download-registry.xml" />
         <antcall target="create-download-file-symlink" />
     </target>
 
