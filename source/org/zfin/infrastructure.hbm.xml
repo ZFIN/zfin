@@ -441,6 +441,7 @@
 
         <property name="date" column="di_date_unloaded"/>
         <property name="version" column="di_code_version"/>
+        <property name="databaseName" column="di_database_unloaded"/>
 
     </class>
 

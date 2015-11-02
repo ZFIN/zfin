@@ -1355,6 +1355,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public UnloadInfo getUnloadInfo() {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(UnloadInfo.class);
+        criteria.addOrder(Order.desc("date"));
+        criteria.setFirstResult(0);
+        criteria.setMaxResults(1);
         return (UnloadInfo) criteria.uniqueResult();
     }
 

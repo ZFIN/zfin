@@ -8,6 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.ExternalNote;
+import org.zfin.database.UnloadInfo;
 import org.zfin.datatransfer.microarray.MicroarrayWebserviceJob;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.Figure;
@@ -553,6 +554,13 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         long count = infrastructureRepository.getDistinctPublicationsByData("ZDB-GENO-100511-2");
         assertThat((int) (long) count, greaterThan(1));
     }
+
+    @Test
+    public void getunloadDate() {
+        UnloadInfo info = infrastructureRepository.getUnloadInfo();
+        assertNotNull(info);
+    }
+
 
 }
 
