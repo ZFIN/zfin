@@ -1134,7 +1134,7 @@ function enableMerge() {
     </form>
     <div id="validationOrthologyText"></div>
     <form id="ignoreOrth">
-        <input type="button" value="Ignore Orthology" onclick="ignoreOrthology(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, the orthology data of ${formBean.markerToDeleteViewString} will be associated with the gene retained.">
+        <input type="button" value="Ignore Orthology" onclick="ignoreOrthology(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, orthology data for ${formBean.markerToDeleteViewString} that is different than orthology data for the same human, mouse or fly ortholog in the gene retained will be deleted (you should move it manually); data for different human, mouse or fly orthologs will be associated with the gene retained.">
     </form>
     <div id="validationMapInfoText"></div>
     <form id="ignoreMapping">
