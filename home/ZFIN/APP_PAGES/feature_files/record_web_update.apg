@@ -32,13 +32,26 @@ EFFECTS
 <?/MICOMMENT>
 
 <?MIERROR>
-  <?MIVAR COND=$(XST,$MI_SQL)>
-    SQL: $MI_SQL<br><br>
-  <?/MIVAR>
+<html>
+<script src="/javascript/header.js"></script>
+<p>Looks like we are having trouble processing your request. You can...</p>
+<ul>
+    <li>try reloading the page to see if the problem persists</li>
+    <li>head back to the <a href="/">home page</a></li>
+    <li>send us an <a href="mailto:zfinadmn@zfin.org">email</a> and tell us about it</li>
+</ul>
 
-  Code:    $MI_ERRORCODE <br>
-  State:   $MI_ERRORSTATE <br>
-  Message: $MI_ERRORMSG <br>
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+    <p class="error">ROOT ONLY DEBUGGING</p>
+    <pre><?MIVAR>
+SQL:     $MI_SQL
+Code:    $MI_ERRORCODE
+State:   $MI_ERRORSTATE
+Message: $MI_ERRORMSG
+<?/MIVAR></pre>
+<?/MIBLOCK>
+<script src="/javascript/footer.js"></script>
+</html>
 <?/MIERROR>
 
 

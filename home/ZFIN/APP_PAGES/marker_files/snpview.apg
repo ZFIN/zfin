@@ -13,18 +13,7 @@ function popUp(cloneID) {
   open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-snpids.apg&markerID="+cloneID,"","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=500");
 }
 </script>
-<?MICOMMENT>
-<?MIERROR>
-  <?MIVAR COND=$(XST,$MI_SQL)>
-    SQL: $MI_SQL<br><br>
-  <?/MIVAR>
 
-  Code:    $MI_ERRORCODE <br>
-  State:   $MI_ERRORSTATE <br>
-  Message: $MI_ERRORMSG <br>
-
-<?/MIERROR>
-<?/MICOMMENT>
 <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 <?MIVAR name=$highlighter><!--|HIGHLIGHTER_COLOR|--><?/MIVAR>
 <?MIVAR name=$white>#ffffff<?/MIVAR>
