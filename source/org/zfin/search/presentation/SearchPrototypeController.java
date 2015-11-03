@@ -389,7 +389,7 @@ public class SearchPrototypeController {
 
             for (FacetField.Count count : facetValues) {
                 FacetLookupEntry entry = new FacetLookupEntry();
-                entry.setName(count.getName());
+                entry.setName(SolrService.encode(count.getName()));
                 entry.setLabel(count.getName().replace("\"", "") + " (" + count.getCount() + ") ");
                 String fq = SolrService.encode(facetField.getName() + ":\"" + count.getName() + "\"");
                 entry.setFq(fq);

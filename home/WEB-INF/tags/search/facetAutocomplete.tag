@@ -17,7 +17,7 @@
                     <a href="${baseUrlWithoutPage}fq={{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('include', value.name)"><i class="include-exclude-icon facet-include fa fa-plus-circle"></i></a>
                     <a href="${baseUrlWithoutPage}fq=-{{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('exclude', value.name)"><i class="include-exclude-icon facet-exclude fa fa-minus-circle"></i></a>
                     <%-- the bind html is so that genotype names will have their superscript, requires ngSanitize --%>
-                    <a href="${baseUrlWithoutPage}fq={{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('include', value.name)" ng-bind-html="value.name"></a>
+                    <a href="${baseUrlWithoutPage}fq={{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('include', value.name)" ng-bind-html="value.value"></a>
                       <span style="padding-left: 1em;" class="pull-right">({{value.count}})</span>
                 </li>
             </ul>
