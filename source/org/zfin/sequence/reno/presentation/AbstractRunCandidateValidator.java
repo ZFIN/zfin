@@ -66,13 +66,13 @@ public abstract class AbstractRunCandidateValidator implements Validator {
                 if (m.isInTypeGroup(Marker.TypeGroup.SMALLSEG)) {
 //                    accessionGene = MarkerService.getRelatedGeneFromClone(m);
                     Set<Marker> accessionGenes = MarkerService.getRelatedSmallSegmentGenesFromClone(m);
-                    for(Marker accessionGene: accessionGenes){
-                        validateAccessionGene(accessionGene,candidateGene, errors) ;
+                    for (Marker accessionGene : accessionGenes) {
+                        validateAccessionGene(accessionGene, candidateGene, errors);
                     }
 
                 } else {
 //                    accessionGene = m;
-                    validateAccessionGene(m,candidateGene,errors);
+                    validateAccessionGene(m, candidateGene, errors);
                 }
 
             }
@@ -80,15 +80,10 @@ public abstract class AbstractRunCandidateValidator implements Validator {
         return candidateGene;
     }
 
-    protected void validateAccessionGene(Marker accessionGene,Marker candidateGene,Errors errors){
+    protected void validateAccessionGene(Marker accessionGene, Marker candidateGene, Errors errors) {
         //if this accession hit a gene
         if (accessionGene != null) {
-            //it's the first gene we've hit, hopefully it'll be the only one
-            if (candidateGene == null) {
-                candidateGene = accessionGene;
-            }
-            //uh oh, it's not the first gene, and it's a different gene than the last one
-            else if (!candidateGene.equals(accessionGene)) {
+            if (candidateGene != null && !candidateGene.equals(accessionGene)) {
                 errors.rejectValue("action", "code", "The query accessions are associated with more than one gene.  " +
                         "Either merge the genes and come back, or select ignore.");
             }

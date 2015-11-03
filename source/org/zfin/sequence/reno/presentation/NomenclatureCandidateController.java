@@ -146,7 +146,7 @@ public class NomenclatureCandidateController extends AbstractCandidateController
 
         Marker geneToRename = rc.getIdentifiedMarker();
         //kludge to get nomenclature pipeline to work with OTTDARPs which are strangely on Transcripts instead of genes -- blerg.
-        logger.info("geneToRename - entry: " + geneToRename.getAbbreviation().toString());
+        logger.info("geneToRename - entry: " + geneToRename.getAbbreviation());
         // Only rename gene if a name and an abbreviation is provided
         String newAbbreviation = candidateBean.getGeneAbbreviation();
         String newGeneName = candidateBean.getGeneName();
@@ -177,6 +177,7 @@ public class NomenclatureCandidateController extends AbstractCandidateController
                         // logger.debug("mrel group is not empty" + mrelGroup.size());
                         renamedGene = mrelGroup.iterator().next().getFirstMarker();
                     }
+                    throw new RuntimeException("No related gene found for transcript: "+geneToRename.getZdbID());
                 }
             }
         } else {
