@@ -423,7 +423,7 @@
     <target name="create-jenkins-symlink">
         <mkdir dir="${JENKINS_HOME}/logs"/>
         <symlink link="${jenkins}/jenkins.war" action="single" overwrite="true" failonerror="fail"
-                 resource="${jenkins}/jenkins-533.war"/>
+                 resource="${jenkins}/jenkins-636.war"/>
     </target>
 
     <target name="copy-certificate">
