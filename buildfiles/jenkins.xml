@@ -422,6 +422,9 @@
 
     <target name="create-jenkins-symlink">
         <mkdir dir="${JENKINS_HOME}/logs"/>
+	<exec executable="rm">
+	  <arg value="${jenkins}/jenkins.war" />
+	</exec>
         <symlink link="${jenkins}/jenkins.war" action="single" overwrite="true" failonerror="fail"
                  resource="${jenkins}/jenkins-636.war"/>
     </target>
