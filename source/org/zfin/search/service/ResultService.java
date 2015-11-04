@@ -68,7 +68,7 @@ public class ResultService {
     public static String SEQUENCE = "Sequence:";
     public static String CLONE_PROBLEM_TYPE = "Clone Problem Type:";
     public static String CLONE_CONTAINS_GENES = "Clone Contains Genes:";
-    public static String CLONE_ENCODED_BY_GENES = "Clone Encoded By Genes:";
+    public static String CLONE_ENCODED_BY_GENES = "Clone Encoded By Gene:";
     public static String QUALITY = "Quality:";
     public static String GENOTYPE = "Genotype:";
     public static String STAGE = "Stage:";
