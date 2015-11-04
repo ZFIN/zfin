@@ -2698,7 +2698,7 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                datasource="db" query=" select
                             mrkr_zdb_id as id,
                             mrkrtype_type_display as category,
-                            mrkr_abbrev as name,
+                            mrkr_name as name,
                             mrkr_name as proper_name,
                             mrkr_abbrev as marker_abbrev,
                             mrkr_name as full_name,
