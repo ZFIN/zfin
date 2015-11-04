@@ -151,7 +151,7 @@ public class RelatedDataService {
         }
         if (StringUtils.equals(category, Category.DISEASE.getName())) {
             for (int i = 0; i < links.size(); i++) {
-                String link = links.get(i).replaceAll(Category.FISH.getName() + " \\(", "Models Disease (");
+                String link = links.get(i).replaceAll(Category.FISH.getName() + " \\(", "Disease Models (");
                 links.set(i, link);
             }
 
