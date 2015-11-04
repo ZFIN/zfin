@@ -95,6 +95,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.FISH.name             | "t24412 MO4-tp53"                                | "11415"
         Category.FISH.name             | "Tg(5xUAS:casp3a,5xUAS:Hsa.HIST1H2BJ-Citrine,cryaa:RFP)" | "0"
         Category.FISH.name             | "casper mitfa"                                   | "13079"
+        Category.FISH.name             | "ZDB-GENO-960809-7"                              | "13315"
         Category.PUBLICATION.name      | "kraus 1993"                                     | "11699"
         Category.PUBLICATION.name      | "bohni"                                          | "11699"
         Category.PUBLICATION.name      | "abstract:\"motor control requires circuits\""   | "n/a"
