@@ -18,7 +18,7 @@
         <c:set var="showHover">true</c:set>
     </c:when>
     <c:when test="${value.label == 'Construct'}">
-        <c:set var="specialTitle">includes reporter expression</c:set>
+        <c:set var="specialTitle">Includes reporter expression</c:set>
         <c:set var="showHover">true</c:set>
     </c:when>
     <c:when test="${value.label == 'Expression'}">
