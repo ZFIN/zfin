@@ -94,7 +94,7 @@ public class FeatureDetailController {
             FeatureGenomeLocation featureLocation = locations.iterator().next();
             if (featureMarkerRelationships.size() == 1) {
                 Marker related = featureMarkerRelationships.iterator().next().getMarker();
-                List<MarkerGenomeLocation> markerLocations = linkageRepository.getGenomeLocation(related, GenomeLocation.Source.ZFIN);
+                List<MarkerGenomeLocation> markerLocations = linkageRepository.getGenomeLocation(related, GenomeLocation.Source.ZFIN_Zv9);
                 if (CollectionUtils.isNotEmpty(markerLocations)) {
                     imageBuilder.landmark(markerLocations.get(0))
                             .highlight(feature)
