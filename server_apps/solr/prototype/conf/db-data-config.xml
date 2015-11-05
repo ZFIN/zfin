@@ -4159,7 +4159,26 @@ where xpatex_gene_zdb_id[1,8] != 'ZDB-GENE'
                    where="fig_zdb_id=figure.id"
                    processor="CachedSqlEntityProcessor"/>
 
-
+           <entity name="figure_feature"
+                   datasource="db" query="
+select feature_abbrev as sequence_alteration,
+       phenox_fig_zdb_id as fig_zdb_id
+from phenotype_experiment
+     join fish_experiment on phenox_genox_zdb_id = genox_zdb_id
+     join fish on genox_fish_zdb_id = fish_zdb_id
+     join genotype_feature on genofeat_geno_zdb_id = fish_genotype_zdb_id
+     join feature on genofeat_feature_zdb_id = feature_zdb_id
+UNION
+select feature_abbrev as sequence_alteration,
+     xedg_fig_zdb_id as fig_zdb_id
+from xpat_exp_details_generated
+     join fish_experiment on xedg_genox_zdb_id = genox_zdb_id
+     join fish on genox_fish_zdb_id = fish_zdb_id
+     join genotype_feature on genofeat_geno_zdb_id = fish_genotype_zdb_id
+     join feature on genofeat_feature_zdb_id = feature_zdb_id;
+                   "
+                   processor="CachedSqlEntityProcessor"
+                   where="fig_zdb_id=figure.id"/>
 
            <entity name="figure_expression_anatomy_direct"
                    datasource="db" query="select
