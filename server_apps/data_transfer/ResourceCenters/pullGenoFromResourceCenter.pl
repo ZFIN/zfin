@@ -17,8 +17,8 @@
 #
 # Params
 #  $       DBI Database Handle
-#  $       ZDB **LAB** ID of ZIRC/EZRC/CZRC.
-#  $       name of file downloaded from ZIRC/EZRC/CZRC
+#  $       ZDB **LAB** ID of ZIRC/EZRC/CZRC/Baier.
+#  $       name of file downloaded from ZIRC/EZRC/CZRC/Baier
 #  $       ZDB of the alteration/allele/feature
 #  $       ZDB of the background for the allele/feature
 #  $       zygocity of the allele/feature in the background provided.
@@ -69,7 +69,7 @@ sub geno_available_parse($$){
     my $genoId;
     my $dbh = $_[0];
     my $resourceFile = $_[1];
-
+    print $resourceFile."\n";
    open (RESOURCEFILE,"$resourceFile") || errorExit ("Failed to open $resourceFile");
 
     my $cur = $dbh->prepare("
@@ -165,7 +165,7 @@ sub geno_load($) {
 	"insert into int_data_supplier (idsup_data_zdb_id, 
                                         idsup_supplier_zdb_id, 
                                         idsup_acc_num)
-           select epfz_geno_zdb_id, '$labZdbId', epfz_geno_zdb_id
+           select distinct epfz_geno_zdb_id, '$labZdbId', epfz_geno_zdb_id
              from geno_pulled_From_zirc
              where not exists (select 'x' 
                                  from int_data_supplier
@@ -174,7 +174,8 @@ sub geno_load($) {
                                  and idsup_acc_num = epfz_geno_zdb_id)
              and epfz_geno_zdb_id is not null
              and exists (select 'x' from geno_available
-                             where epfz_geno_zdb_id = geno_zdb_id);");
+                             where epfz_geno_zdb_id = geno_zdb_id)
+             and epfz_geno_zdb_id like 'ZDB-%';");
 
     my $insert_data_from_resource_file = $dbh->prepare(
 	"insert into int_data_supplier (idsup_data_zdb_id, 
@@ -188,7 +189,8 @@ sub geno_load($) {
                                  from int_data_supplier
 		                 where idsup_data_zdb_id = geno_zdb_id
 		                 and idsup_supplier_zdb_id = '$labZdbId'
-                                 and idsup_acc_num = geno_zdb_id);");
+                                 and idsup_acc_num = geno_zdb_id)
+             and geno_zdb_id like 'ZDB-%';");
 
 
     my $delete_existing_where_supplied = $dbh->prepare("delete from geno_pulled_from_zirc
@@ -318,7 +320,7 @@ sub geno_load($) {
     my $to_data_supplier_geno=$dbh->prepare(
 	"insert into int_data_supplier (idsup_data_zdb_id, idsup_acc_num, 
        	    		      			  idsup_supplier_zdb_id)
-           select epfz_geno_zdb_id, epfz_geno_zdb_id, '$labZdbId'
+           select distinct epfz_geno_zdb_id, epfz_geno_zdb_id, '$labZdbId'
              from geno_pulled_from_zirc
              where not exists (Select 'x'
   	    	   	         from int_datA_supplier
@@ -549,7 +551,7 @@ sub geno_altSuppliedByZFIN_count($$) {
 
     my $dbh = $_[0];
     my $labZdbId = $_[1];
-
+    
     my $rowCount = 0;
 
     # count them
@@ -599,7 +601,7 @@ sub geno_GenoSuppliedByZFIN_count($$) {
 
 
 #----------------------------------------------------------------------
-# Report any GENOs/ALTs in the list from ZIRC/EZRC/CZRC that are not valid ZDB IDs
+# Report any GENOs/ALTs in the list from ZIRC/EZRC/CZRC/Baier that are not valid ZDB IDs
 #
 # Params
 #  $       DBI Database Handle
@@ -673,7 +675,7 @@ sub geno_reportSuppliedByZircAlts($) {
     $cur->execute;   
     $cur->bind_columns(\$rowCount);
     $cur->fetch();
-    &writeReport(int($rowCount) . " Features currently supplied by $resourceCenter.\n");
+    &writeReport(int($rowCount) . " Features in $resourceCenter file.\n");
 
     return ();
 }
@@ -681,7 +683,7 @@ sub geno_reportSuppliedByZircAlts($) {
 #----------------------------------------------------------------------
 # geno_main
 #
-# download GENO data from ZIRC/EZRC/CZRC and update ZFIN to reflect what it says.
+# download GENO data from ZIRC/EZRC/CZRC/Baier and update ZFIN to reflect what it says.
 #
 # Params
 #  $       DBI Database Handle
@@ -695,7 +697,8 @@ sub geno_main($$$) {
     
     my $dbh = $_[0];
     my $labZdbId = $_[1];
-    #print $labZdbId;
+    print $labZdbId."\n";
+  
     $resourceCenter = $_[2];
     my $genoFile = "need.txt"; # geno file to download
     my $resourceFile ="resource.txt" ;
@@ -703,7 +706,6 @@ sub geno_main($$$) {
     system("rm -f $genoFile*");    # remove old downloaded files
     system ("rm -f $resourceFile");
    system ("rm -f $resourceFile*"); 
-
 
     if ($resourceCenter eq "ZIRC"){
 	&downloadFiles($genoFile,$resourceCenter);    # get new Geno file
@@ -715,6 +717,10 @@ sub geno_main($$$) {
     }
     elsif ($resourceCenter eq "CZRC"){
 	$resourceFile = "CZRCresource.txt"; # which genos supplied from CZRC
+	&downloadFiles ($resourceFile,$resourceCenter); # get Resource file	
+    }
+    elsif ($resourceCenter eq "Baier"){
+	$resourceFile = "BaierSourceAlleles.txt"; # which genos supplied from Baier
 	&downloadFiles ($resourceFile,$resourceCenter); # get Resource file	
     }
 

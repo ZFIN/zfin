@@ -13,7 +13,7 @@
 #     Returns
 #       0    All data was successfully pulled from ZIRC and EZRC and loaded in the DB.
 #      !0    None or only some of the data was successsfully pulled from
-#            EZRC, CZRC and ZIRC and loaded in the DB.  See output for details.
+#            EZRC, CZRC, Baier and ZIRC and loaded in the DB.  See output for details.
 
 use DBI;
 use MIME::Lite;
@@ -115,6 +115,12 @@ sub downloadFiles($$) {
 	}
 	$labZdbId = "ZDB-LAB-130226-1";
     }
+    elsif ($resourceCenter eq "Baier"){
+	if (system("/local/bin/wget --user=Extranet --password=neuro89mpi https://sp.neuro.mpg.de/extranet/Shared%20Documents/Baier/$filename")) {
+	    &errorExit("Failed to download $filename file from Baier.","  See $wgetStatusFile for details.");
+	}
+	$labZdbId = "ZDB-LAB-990120-1";
+    }
     if (-z $filename) {
 	&errorExit("Downloaded file $filename is empty.  Aborting.",
 		   "  See $wgetStatusFile for details.");
@@ -152,6 +158,7 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 my $zircZdbId = "ZDB-LAB-991005-53";
 my $ezrcZdbId = "ZDB-LAB-130607-1";
 my $czrcZdbId = "ZDB-LAB-130226-1";
+my $baierZdbId = "ZDB-LAB-990120-1";
 my $labZdbId;
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt");
 
@@ -179,6 +186,8 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 #  o Update the database, reporting as it goes
 
        # EST availability ZIRC
+
+&geno_main($dbh, $baierZdbId,"Baier");           # Genotype availability Baier
 &geno_main($dbh, $czrcZdbId,"CZRC");           # Genotype availability CZRC
 
 &geno_main($dbh, $ezrcZdbId,"EZRC");           # Genotype availability EZRC
@@ -195,8 +204,8 @@ $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
   || errorExit("Failed while connecting to <!--|DB_NAME|--> ");
 
 
-&geno_main($dbh, $zircZdbId, "ZIRC");           # Genotype availability ZIRC
-&est_main($dbh, $zircZdbId);	 
+#&geno_main($dbh, $zircZdbId, "ZIRC");           # Genotype availability ZIRC
+#&est_main($dbh, $zircZdbId);	 
 
 $dbh->commit();
 $dbh->disconnect();
