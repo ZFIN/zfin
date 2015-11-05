@@ -1,43 +1,19 @@
 
-
-
-if (navigator.appName == 'Microsoft Internet Explorer') {
-    document.write("<style type='text/css'>");
-
-    /** if (IE version > 7) **/
-    if (!window.XMLHttpRequest) {
-        document.write("#hdr-tabs { margin-left: 95px; } ");
-    }
-    document.write("</style>");
-}
-
 function hdrSetTabs() {
 
-    /** this requires conversion from the apg version of the header,
-     show_motto is always false here, because the home page never
-     calls the js version of the header **/
-    var hdr_showmotto = false;
+    tabCookie = hdrGetCookie("tabCookie");
 
-
-    if (hdr_showmotto) {
+    if (tabCookie === "Motto") {
         showMotto();
-    } else {
-
-        tabCookie = hdrGetCookie("tabCookie");
-
-        if (!tabCookie) {
-            hdrSetCookie("tabCookie","Research","","/");
-            tabCookie = hdrGetCookie("tabCookie");
-        }
-        if (tabCookie == "Research") {
-            showZFINLinks();
-        }
-        if (tabCookie == "Products") {
-            showZIRCLinks();
-        }
-        if (tabCookie == "General") {
-            showGeneralLinks();
-        }
+    }
+    if (!tabCookie || tabCookie === "Research") {
+        showZFINLinks();
+    }
+    if (tabCookie === "Products") {
+        showZIRCLinks();
+    }
+    if (tabCookie === "General") {
+        showGeneralLinks();
     }
 }
 
@@ -47,7 +23,6 @@ function hdrSetCookie(name,value,expires,path,domain,secure) {
             ( (path) ? ";path=" + path : "") +
             ( (domain) ? ";domain=" + domain : "") +
             ( (secure) ? ";secure" : "");
-    var cookieVal = document.cookie;
 }
 
 
@@ -62,114 +37,78 @@ function hdrGetCookie(name) {
     return allcookies.substring(start, end);
 }
 
-function deselectTabs(tab_id) {
-
-    document.getElementById('researchspiffy').className = "spiffy";
-    document.getElementById('researchspiffy1').className = "spiffy1";
-    document.getElementById('researchspiffy2').className = "spiffy2";
-    document.getElementById('researchspiffy3').className = "spiffy3";
-    document.getElementById('researchspiffy4').className = "spiffy4";
-    document.getElementById('researchspiffy5').className = "spiffy5";
-    document.getElementById('researchTabContent').className = "tabContent";
-
-    document.getElementById('generalspiffy').className = "spiffy";
-    document.getElementById('generalspiffy1').className = "spiffy1";
-    document.getElementById('generalspiffy2').className = "spiffy2";
-    document.getElementById('generalspiffy3').className = "spiffy3";
-    document.getElementById('generalspiffy4').className = "spiffy4";
-    document.getElementById('generalspiffy5').className = "spiffy5";
-    document.getElementById('generalTabContent').className = "tabContent";
-
-
-    document.getElementById('productspiffy').className = "spiffy";
-    document.getElementById('productspiffy1').className = "spiffy1";
-    document.getElementById('productspiffy2').className = "spiffy2";
-    document.getElementById('productspiffy3').className = "spiffy3";
-    document.getElementById('productspiffy4').className = "spiffy4";
-    document.getElementById('productspiffy5').className = "spiffy5";
-    document.getElementById('productTabContent').className = "tabContent";
-
-
+function hdrDeleteCookie(name, path, domain) {
+    var today = new Date();
+    var expired = new Date(today.getTime() - 28 * 24 * 60 * 60 * 1000); // less 28 days
+    if (hdrGetCookie(name)) {
+        document.cookie = name + "=" +
+            ((path) ? "; path=" + path : "") +
+            ((domain) ? "; domain=" + domain : "") +
+            "; expires=Thu, 01-Jan-70 00:00:01 GMT";
+    }
 }
 
+function deselectTabs() {
+    $('.header-tab').removeClass('selected');
+}
 
 function showZFINLinks() {
     hdrSetCookie("tabCookie","Research","","/");
 
     deselectTabs();
+    $('.header-tab.research').addClass('selected');
 
-    document.getElementById('researchspiffy').className = "selectedspiffy";
-    document.getElementById('researchspiffy1').className = "selectedspiffy1";
-    document.getElementById('researchspiffy2').className = "selectedspiffy2";
-    document.getElementById('researchspiffy3').className = "selectedspiffy3";
-    document.getElementById('researchspiffy4').className = "selectedspiffy4";
-    document.getElementById('researchspiffy5').className = "selectedspiffy5";
-    document.getElementById('researchTabContent').className = "selectedTabContent";
-
-
-
-    document.getElementById("hdr-zirclinks").style.display = "none";
-    document.getElementById("hdr-generallinks").style.display = "none";
-    document.getElementById("hdr-motto").style.display = "none";
-    document.getElementById("hdr-zfinlinks").style.display = "block";
-
-    document.getElementsByTagName("head")[0].blur();
-
-
+    $("#hdr-zirclinks").hide();
+    $("#hdr-generallinks").hide();
+    $("#hdr-motto").hide();
+    $("#hdr-zfinlinks").show();
 }
 
 function showGeneralLinks() {
     hdrSetCookie("tabCookie","General","","/");
 
     deselectTabs();
+    $('.header-tab.general').addClass('selected');
 
-    document.getElementById('generalspiffy').className = "selectedspiffy";
-    document.getElementById('generalspiffy1').className = "selectedspiffy1";
-    document.getElementById('generalspiffy2').className = "selectedspiffy2";
-    document.getElementById('generalspiffy3').className = "selectedspiffy3";
-    document.getElementById('generalspiffy4').className = "selectedspiffy4";
-    document.getElementById('generalspiffy5').className = "selectedspiffy5";
-    document.getElementById('generalTabContent').className = "selectedTabContent";
-
-
-
-    document.getElementById("hdr-zfinlinks").style.display = "none";
-    document.getElementById("hdr-zirclinks").style.display = "none";
-    document.getElementById("hdr-motto").style.display = "none";
-    document.getElementById("hdr-generallinks").style.display = "block";
-
-    document.getElementsByTagName("head")[0].blur();
+    $("#hdr-zfinlinks").hide();
+    $("#hdr-zirclinks").hide();
+    $("#hdr-motto").hide();
+    $("#hdr-generallinks").show();
 }
 
-
-
-
 function showZIRCLinks() {
-
     hdrSetCookie("tabCookie","Products","","/");
 
     deselectTabs();
+    $('.header-tab.zirc').addClass('selected');
 
-    document.getElementById('productspiffy').className = "selectedspiffy";
-    document.getElementById('productspiffy1').className = "selectedspiffy1";
-    document.getElementById('productspiffy2').className = "selectedspiffy2";
-    document.getElementById('productspiffy3').className = "selectedspiffy3";
-    document.getElementById('productspiffy4').className = "selectedspiffy4";
-    document.getElementById('productspiffy5').className = "selectedspiffy5";
-    document.getElementById('productTabContent').className = "selectedTabContent";
-
-
-    document.getElementById("hdr-zfinlinks").style.display = "none";
-    document.getElementById("hdr-generallinks").style.display = "none";
-    document.getElementById("hdr-motto").style.display = "none";
-    document.getElementById("hdr-zirclinks").style.display = "block";
-
-    document.getElementsByTagName("head")[0].blur();
+    $("#hdr-zfinlinks").hide();
+    $("#hdr-generallinks").hide();
+    $("#hdr-motto").hide();
+    $("#hdr-zirclinks").show();
 }
 
 function showMotto() {
-    document.getElementById("hdr-zfinlinks").style.display = "none";
-    document.getElementById("hdr-zirclinks").style.display = "none";
-        document.getElementById("hdr-generallinks").style.display = "none";
-        document.getElementById("hdr-motto").style.display = "block";
+    $("#hdr-zfinlinks").hide();
+    $("#hdr-zirclinks").hide();
+    $("#hdr-generallinks").hide();
+    $("#hdr-motto").show();
+}
+
+$(function() {
+    $(".header-tab.research").click(showZFINLinks);
+    $(".header-tab.general").click(showGeneralLinks);
+    $(".header-tab.zirc").click(showZIRCLinks);
+    hdrSetTabs();
+
+    var loginCookie = hdrGetCookie('zfin_login');
+    var login = $('#hdr-login-link');
+    var logout = $('#hdr-logout-link');
+    if (!loginCookie || loginCookie.lastIndexOf('GUEST') === 0) {
+        login.show();
+        logout.hide();
+    } else {
+        login.hide();
+        logout.show();
     }
+});

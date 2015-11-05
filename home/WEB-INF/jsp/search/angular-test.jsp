@@ -18,7 +18,6 @@
     <link rel="stylesheet" type="text/css" href="/css/footer.css">
     <link rel=stylesheet type="text/css" href="/css/searchresults.css">
     <link rel=stylesheet type="text/css" href="/css/summary.css">
-    <link rel=stylesheet type="text/css" href="/css/spiffycorners.css">
     <link rel=stylesheet type="text/css" href="/css/Lookup.css">
     <link rel=stylesheet type="text/css" href="/css/datapage.css">
     <link rel=stylesheet type="text/css" href="/css/popup.css">

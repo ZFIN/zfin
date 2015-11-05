@@ -9,16 +9,14 @@ body {
 
 /* don't need the left-right magin fixes from all-content */
 div.allcontent {
-    margin: 0px;
+    margin: 0;
 }
 
 #hdr-navlinks {
     line-height: 15px;
-    /*        position: relative;
-            top: 5px;*/
 }
 
-.tabContent, .selectedTabContent { height: 22px !important; }
+.header-tab { height: 22px !important; }
 
 #feedBox #rss-icon {
     position: absolute;

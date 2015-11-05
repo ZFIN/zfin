@@ -1,24 +1,15 @@
-a { text-decoration: none; }
-
-.sidebar, .content, .header .acknowledgement {
-/*
-    font-family: arial, sans-serif;
-*/
+a {
+    text-decoration: none;
 }
 
 body {
-
-
     font-family: arial, sans-serif;
     min-width: 600px;
     margin-top: 81px;
     margin-left: 0;
     margin-right: 0;
-
     background: @SITE_BACKGROUND@ ;
-
 }
-
 
 hr {
     background-color: #FFFFFF;
@@ -36,13 +27,12 @@ hr {
 }
 
 .staticcontent {
-/* this isn't the best, but it keeps all the static pages behaving properly */
+    /* this isn't the best, but it keeps all the static pages behaving properly */
     font-size: 9pt;
 }
 
 .show_pubs a {
     text-decoration: none;
-
 }
 
 .show_pubs {
@@ -84,21 +74,18 @@ td.titlebar {
     vertical-align: middle;
     text-align: left;
     background-color: #efefef;
-
 }
 
 td.titlebarRight {
     vertical-align: middle;
     text-align: right;
     background-color: #efefef;
-
 }
 
 td.submitbar {
     vertical-align: top;
     text-align: left;
     background-color: #efefef;
-
 }
 
 /** style for auto suggestion **/
@@ -188,7 +175,6 @@ table.data_manager a.root {
     font-style: normal;
 }
 
-
 /*** for pure text, to put it in a column that doesn't stretch
      across the entire display - since that's a pain to read ***/
 
@@ -220,11 +206,12 @@ table.data_manager a.root {
     background-color: lightblue;
 }
 
-input.dirtyField, select.dirtyField, option.dirtyField, textarea.dirtyField {
+input.dirtyField,
+select.dirtyField,
+option.dirtyField,
+textarea.dirtyField {
     background-color: #ffe4e1;
 }
-
-
 
 input.encourageClick {
     color: blue;
@@ -242,7 +229,6 @@ div.auto_complete {
 }
 
 div.auto_complete ul {
-
     margin: 0;
     padding: 0;
     width: 99%;
@@ -354,7 +340,7 @@ span.highlight {
     font-size: 75%;
 }
 
-.showHideLink{
+.showHideLink {
     text-decoration: underline ;
     font-size: 75%;
     color: blue;
@@ -482,22 +468,6 @@ img.clickable {
     font-size: 8pt;
 }
 
-/*.gwt-SuggestBoxPopup {*/
-    /*background: gray;*/
-    /*font-size:8pt;*/
-/*}*/
-
-/*.gwt-SuggestBoxPopup {*/
-    /*border: 1px solid black;*/
-    /*background-color: white;*/
-/*see fogbugz 5183*/
-/*overflow: auto; */
-    /*height: auto;*/
-    /*max-height: 50em ;*/
-    /*min-width: 100px ;*/
-    /*font-size: 8pt;*/
-/*}*/
-
 .gwt-Hyperlink {
     display: inline;
 }
@@ -510,11 +480,11 @@ img.clickable {
     line-height:90%;
 }
 
-.text-changed{
+.text-changed {
     color: red;
 }
 
-.gwt-editbox{
+.gwt-editbox {
     background-color: #eee;
 }
 
@@ -537,24 +507,24 @@ table.gwt-stack-composite gwt-delete-button {
     border-top: thin dotted
 }
 
-.reno-reversed-strand{
+.reno-reversed-strand {
     background-color: #deb887;
     display: inline-block;
 }
 
-.reno-same-strand{
+.reno-same-strand {
     background-color: white;
     display: inline-block;
 }
 
-td.reno-reversed-strand{
+td.reno-reversed-strand {
     background-color: #deb887;
-    display: table-cell; 
+    display: table-cell;
 }
 
-td.reno-same-strand{
+td.reno-same-strand {
     background-color: white;
-    display: table-cell; 
+    display: table-cell;
 }
 
 .entity-header {
@@ -562,21 +532,36 @@ td.reno-same-strand{
     font-weight: bold;
 }
 
+form fieldset {
+    border-width: 0;
+}
 
-    form fieldset { border-width: 0; }
+.namesearchLabel,
+.multisearchLabel,
+.selectLabel {
+    font-weight: bold;
+}
 
-    .namesearchLabel { font-weight: bold;   }
-    .multisearchLabel { font-weight: bold; }
-    .selectLabel { font-weight: bold; }
-    .filterLabel { ; }
-    .accessoryLabel { font-size: .75em; }
-    .termLabel {  font-size: .75em;
-                  float: right;
-                  vertical-align: middle;
-    }
+.accessoryLabel {
+    font-size: .75em;
+}
 
-table.searchform td, table.searchform th { vertical-align: top}
-table.searchform th { text-align: left ; width: 5%; white-space: nowrap}
+.termLabel {
+    font-size: .75em;
+    float: right;
+    vertical-align: middle;
+}
+
+table.searchform td,
+table.searchform th {
+    vertical-align: top;
+}
+
+table.searchform th {
+    text-align: left;
+    width: 5%;
+    white-space: nowrap;
+}
 
 .search-form-top-bar {
     border: 1px solid #ddd;
@@ -614,11 +599,9 @@ table.searchform th { text-align: left ; width: 5%; white-space: nowrap}
     opacity: .6;
 }
 
-.optionalSearch {
-
+.postal-address {
+    white-space: pre-wrap;
 }
-
-.postal-address { white-space: pre-wrap ; }
 
 .no-results-found-message {
     border: 1px solid #EED3D7;
@@ -626,22 +609,47 @@ table.searchform th { text-align: left ; width: 5%; white-space: nowrap}
     background-color: #F2DEDE;
     color: #B94A48;
     text-align: center;
-    margin: 0 auto;
-    margin-top: 1em;
+    margin: 1em auto 0;
     width: 50% ;
     padding: 1em;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
-label.curation-form-label { font-weight: bold; }
+label.curation-form-label {
+    font-weight: bold;
+}
 
-.sequence {display: inline-block; vertical-align: top; font-family: Monaco, "Courier New", monospace;}
+.sequence {
+    display: inline-block;
+    vertical-align: top;
+    font-family: Monaco, "Courier New", monospace;
+}
 
-.figure-image-and-caption { background-color: #eee ; padding: 1em; margin-top: 1em; width: 100%}
-.figure-image-and-caption img.placeholder, .figure-image-and-caption img.medium, .figure-image-and-caption video  { float: left ; margin-right: 1em }
-.figure-image-and-caption img.placeholder { border: 1px solid black }
-.figure-image-and-caption img, video { margin: 2px; }
-.figure-image-and-caption a img { border: 1px solid blue;}
+.figure-image-and-caption {
+    background-color: #eee;
+    padding: 1em;
+    margin-top: 1em;
+    width: 100%;
+}
+.figure-image-and-caption img.placeholder,
+.figure-image-and-caption img.medium,
+.figure-image-and-caption video  {
+    float: left;
+    margin-right: 1em;
+}
+
+.figure-image-and-caption img.placeholder {
+    border: 1px solid black
+}
+
+.figure-image-and-caption img,
+video {
+    margin: 2px;
+}
+
+.figure-image-and-caption a img {
+    border: 1px solid blue;
+}
 
 .pub-abstract-section {
     margin-bottom: 1em;
@@ -694,9 +702,6 @@ label.curation-form-label { font-weight: bold; }
     vertical-align: top;
 }
 
-/*.nomenclature .required {*/
-    /*font-weight: bold;*/
-/*}*/
 .nomenclature .required:after {
     content: ' *';
     color: #cc0000;
@@ -966,4 +971,10 @@ a + .inline-upload {
     text-align: center;
     padding: 30px;
     box-sizing: border-box;
+}
+
+.login-box {
+    border-radius: 5px;
+    background: #e0e7e0;
+    padding: 2em;
 }

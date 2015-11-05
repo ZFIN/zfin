@@ -42,7 +42,7 @@
 
     #hdr-banner { height: 77px; }
 
-    .tabContent, .selectedTabContent { height: 22px !important; }
+    .header-tab { height: 22px !important; }
 
     /* remove parts of the header that we don't need */
 
