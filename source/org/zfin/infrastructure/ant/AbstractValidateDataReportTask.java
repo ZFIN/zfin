@@ -74,6 +74,10 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
 
     }
 
+    public void initDatabase(boolean autocommit) {
+        new HibernateSessionCreator(false, autocommit);
+    }
+
     protected void setReportProperties() {
         reportProperties = new Properties();
         try {

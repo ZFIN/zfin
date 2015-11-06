@@ -3,11 +3,13 @@ package org.zfin.wiki.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Transaction;
 import org.zfin.anatomy.presentation.AnatomyLabel;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.antibody.AntibodyService;
 import org.zfin.antibody.presentation.AntibodyPresentation;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.presentation.MarkerPresentation;
@@ -448,7 +450,7 @@ public class AntibodyWikiWebService extends WikiWebService {
         String pageTitle;
         clearAntibodyTemplate();
         for (Antibody antibody : antibodies) {
-            // containers
+            Transaction tx = HibernateUtil.createTransaction();
             pageTitle = getWikiTitleFromAntibody(antibody);
             zfinAntibodyHashMap.put(pageTitle.toUpperCase(), antibody);
             ReturnStatus returnStatus = synchronizeAntibodyWithWiki(antibody);
@@ -470,6 +472,7 @@ public class AntibodyWikiWebService extends WikiWebService {
                     wikiSynchronizationReport.addErrorPage(pageTitle);
                     break;
             }
+            tx.commit();
         }
         try {
             return validateAntibodiesOnWikiWithZFIN(zfinAntibodyHashMap, wikiSynchronizationReport);

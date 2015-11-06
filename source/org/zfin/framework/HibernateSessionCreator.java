@@ -3,9 +3,7 @@ package org.zfin.framework;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.RootLogger;
 import org.hibernate.InvalidMappingException;
-import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.springframework.beans.factory.FactoryBean;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.FileUtil;
 
@@ -18,20 +16,23 @@ import java.net.URLDecoder;
  * Class HibernateSessionCreator.  Used to handle connections without going through Tomcat explicitly.
  * <p/>
  */
-public class HibernateSessionCreator implements FactoryBean {
+public class HibernateSessionCreator {
 
     public static final Logger LOG = RootLogger.getLogger(HibernateSessionCreator.class);
 
-    private static String FILE_SEP = System.getProperty("file.separator");
-
     private boolean showSql = false;
-    private SessionFactory sessionFactory;
+    private boolean autocommit = false;
 
     public HibernateSessionCreator() {
         this(false);
     }
 
     public HibernateSessionCreator(boolean showSql) {
+        this(showSql, false);
+    }
+
+    public HibernateSessionCreator(boolean showSql, boolean autocommit) {
+        this.autocommit = autocommit;
         LOG.info("Start Hibernate Session Creation");
         this.showSql = showSql;
         String db = ZfinPropertiesEnum.DB_NAME.value();
@@ -102,24 +103,6 @@ public class HibernateSessionCreator implements FactoryBean {
         return hibernateConfigurationFiles;
     }
 
-    @Override
-    public Object getObject
-            () throws Exception {
-        return sessionFactory;
-    }
-
-    @Override
-    public Class getObjectType
-            () {
-        return (this.sessionFactory != null) ? this.sessionFactory.getClass() : SessionFactory.class;
-    }
-
-    @Override
-    public boolean isSingleton
-            () {
-        return true;
-    }
-
     static class HibernateFilenameFilter implements FilenameFilter {
 
         public boolean accept(File dir, String name) {
@@ -143,7 +126,7 @@ public class HibernateSessionCreator implements FactoryBean {
         config.setProperty("hibernate.connection.username", "zfinner");
         config.setProperty("hibernate.connection.password", "Rtwm4ts");
         config.setProperty("hibernate.connection.pool_size", "1");
-        config.setProperty("hibernate.connection.autocommit", "false");
+        config.setProperty("hibernate.connection.autocommit", String.valueOf(autocommit));
 
         // should use the default isolation
 //        config.setProperty("hibernate.connection.isolation", "1");

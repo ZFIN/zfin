@@ -33,7 +33,7 @@ public class AntibodyWikiSynchronizationJob extends AbstractValidateDataReportTa
         String propertyFilePath = args[0];
         String jobDirectoryString = args[1];
         AntibodyWikiSynchronizationJob job = new AntibodyWikiSynchronizationJob(args[2], propertyFilePath, jobDirectoryString);
-        job.initDatabase();
+        job.initDatabase(true);
         System.exit(job.execute());
     }
 
