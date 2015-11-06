@@ -87,7 +87,7 @@ MILIBS = -lsocket -lnsl -L$(LIBDIR)
 include $(TOP)/make.default.rules
 
 $(OBJS) : %.so : %.c
-	$(CC) $(CFLAGS) -I $(INCDIR) $(MICFLAGS) -G $^ -o $@
+	$(CC) $(CFLAGS) -I $(INCDIR) $(MICFLAGS) $^ -o $@
 
 $(TARGETDIR_OBJS) : $(TARGETDIR)/% : %
 	-$(DBACCESS) $(DBNAME) drop_functions.sql > /dev/null 2>&1

@@ -17,7 +17,7 @@ echo PID_FILE    $PID_FILE
 
 start_solr() {
 echo 'Starting Solr...'
-    nohup java $SOLR_GC_LOGGING_OPTS $JVM_OPTS -jar $SOLR_HOME/jetty/start.jar $JETTY_OPTS $SOLR_OPTS > $SOLR_HOME/logs/solr.log 2>&1 & echo $! > $SOLR_HOME/solr.pid
+    nohup java $SOLR_GC_LOGGING_OPTS $JVM_OPTS -jar $SOLR_HOME/jetty/start.jar $JETTY_OPTS $SOLR_OPTS > $SOLR_HOME/solr.log 2>&1 & echo $! > $SOLR_HOME/solr.pid
     echo pid: $(cat $PID_FILE)
 }
 
