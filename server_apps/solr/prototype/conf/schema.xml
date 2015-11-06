@@ -529,7 +529,6 @@
    <!--<field name="screen" type="keyword" indexed="true" stored="true" />-->
    <field name="mutagen" type="keyword" indexed="true" stored="true" />
 
-
    <field name="allele" type="keyword" indexed="true" stored="true" multiValued="true"   />
    <field name="sequence_alteration" type="keyword" indexed="true" stored="true" multiValued="true"   />
      <!-- this means it'll do starts-with matching of feature aliases, but not features, that seems a little odd... -->
@@ -983,6 +982,7 @@
    <copyField source="coding_sequence" dest="coding_sequence_t"/>
    <copyField source="inserted_in_gene" dest="inserted_in_gene_t"/>
    <copyField source="lab" dest="lab_t"/>
+   <copyField source="curator" dest="curator_t"/>
    <copyField source="sequence_alteration" dest="sequence_alteration_t"/>
    <copyField source="background" dest="background_t"/>
 
@@ -1078,7 +1078,7 @@
     <copyField source="clone" dest="clone_t"/>
 
     <copyField source="lab" dest="text"/>
-
+    <copyField source="curator" dest="text"/>
     <copyField source="lab_of_origin" dest="text"/>
     <copyField source="institution" dest="text"/>
     <!--screen used to be here, removed as a result of case 11323-->
