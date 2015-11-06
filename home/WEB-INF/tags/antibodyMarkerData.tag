@@ -13,7 +13,7 @@
         Host Organism:
     </th>
     <td>
-        <span id="host organism">${antibody.hostSpecies}</span>
+        <span id="host-organism">${antibody.hostSpecies}</span>
     </td>
 </tr>
 
@@ -22,7 +22,7 @@
         Immunogen Organism:
     </th>
     <td>
-        <span id="immunogen organism">${antibody.immunogenSpecies}</span>
+        <span id="immunogen-organism">${antibody.immunogenSpecies}</span>
     </td>
 </tr>
 
@@ -33,7 +33,7 @@
     <td>
         ${antibody.heavyChainIsotype}<c:if
                 test="${antibody.heavyChainIsotype != null && antibody.lightChainIsotype != null}">,
-        </c:if><font face="symbol">${antibody.lightChainIsotype}</font>
+        </c:if>${antibody.lightChainIsotype}
     </td>
 </tr>
 <tr>
@@ -41,7 +41,7 @@
         Type:
     </th>
     <td>
-        <span id="clonal type">${antibody.clonalType}</span>
+        <span id="clonal-type">${antibody.clonalType}</span>
     </td>
 </tr>
 <tr>
