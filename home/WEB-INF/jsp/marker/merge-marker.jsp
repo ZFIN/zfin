@@ -102,7 +102,7 @@ jQuery(document).ready(function () {
             jQuery('#intoMarkerAbbrev').val(markerAbbrevToMergeInto);
             jQuery('#into').html('<a target="_blank" class="external" href="/action/marker/view/' + markerZdbIdToBeMergedInto + '">' + markerAbbrevToMergeInto + '</a>');
             <c:if test="${formBean.markerToDelete.markerType.name eq 'GENE' || formBean.markerToDelete.markerType.name eq 'GENEP'}">
-                    validateUnspecifiedAlleles(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
+                    validateGeneWithOrthology(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
             </c:if>
             <c:if test="${formBean.markerToDelete.markerType.name eq 'MRPHLNO' || formBean.markerToDelete.markerType.name eq 'TALEN' || formBean.markerToDelete.markerType.name eq 'CRISPR'}">
                     validateTargetGenesForMergingSRTs(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
@@ -686,83 +686,73 @@ var validateGeneWithTranscript = function(geneIDdelete, geneZdbIdMergedInto, gen
     checkTranscriptsDone = 1;
 
     if (checkTranscriptsDone == 1)
-        validateGeneWithOrthology(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+        validateGeneWithMappingInfo(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
 
 };
 
 var validateGeneWithOrthology = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
+
     var numberOfOrthology = 0;
-    var checkOrthologyDone = 0;
+    var numberOfOrthologyOfMarker2 = 0;
+   // var checkOrthologyDone = 0;
+    var checkOrthologyEvidenceAndPubDone = 0;
+    var blockMergeDueToOrth = "No";
     orthologyIgnored = false;
 
-    jQuery.ajax(
-            {
-                url: "/action/marker/get-orthology-for-geneId?geneZdbId=" + geneIDdelete,
-                type: "GET",
-                success: function(data) {
-                    for (orthology in data) {
-                        numberOfOrthology++;
-                        if (numberOfOrthology == 1)
-                            jQuery('#validationOrthologyText').append('<h3><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following orthology:</h3>');
+    var orthologyData1 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-orthology-for-geneId?geneZdbId=" + geneIDdelete,
+        dataType: "json",
+        async: false
+    }).responseText);
+
+    if (orthologyData1.length > 0) {
+        var orthologyData2 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-orthology-for-geneId?geneZdbId=" + geneZdbIdMergedInto,
+            dataType: "json",
+            async: false
+        }).responseText);
+
+        if (orthologyData2.length > 0) {
+            for (orthology1 in orthologyData1) {
+                numberOfOrthology++;
+                if (numberOfOrthology == 1)
+                    jQuery('#validationOrthologyText').append('<h3><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following orthology:</h3>');
 
 
-                        jQuery('#validationOrthologyText').append("<div>"
-                                +data[orthology].organism+"&nbsp;&nbsp;&nbsp;"+data[orthology].orthologySymbol+"&nbsp;&nbsp;&nbsp;"+data[orthology].evidenceCode+"&nbsp;&nbsp;&nbsp;"+data[orthology].publication
-                                + "</div>");
+                jQuery('#validationOrthologyText').append("<div>"
+                        +orthologyData1[orthology1].organism+"&nbsp;&nbsp;&nbsp;"+orthologyData1[orthology1].orthologySymbol+"&nbsp;&nbsp;&nbsp;"+orthologyData1[orthology1].evidenceCode+"&nbsp;&nbsp;&nbsp;"+orthologyData1[orthology1].publication
+                        + "</div>");
+                for (orthology2 in orthologyData2) {
+                    if (orthologyData1[orthology1].orthologySymbol == orthologyData2[orthology2].orthologySymbol &&
+                            (orthologyData1[orthology1].evidenceCode != orthologyData2[orthology2].evidenceCode || orthologyData1[orthology1].publication != orthologyData2[orthology2].publication)) {
+                        blockMergeDueToOrth = "Yes";
+                        break;
                     }
-
-                    if (numberOfOrthology > 0) {
-                        orthologyIgnored = false;
-
-                        jQuery('#mergedIntoGeneAbbrev').attr("disabled","disabled");
-
-                        jQuery.ajax(
-                                {
-                                    url: "/action/marker/get-orthology-for-geneId?geneZdbId=" + geneZdbIdMergedInto,
-                                    type: "GET",
-                                    success: function(data) {
-                                        var numberOfOrthologyOfMarker2 = 0;
-                                        for (orthology in data) {
-                                            numberOfOrthologyOfMarker2++;
-                                            if (numberOfOrthologyOfMarker2 == 1)
-                                                jQuery('#validationOrthologyText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following orthology:</h3>');
-
-                                            jQuery('#validationOrthologyText').append("<div>"
-                                                    +data[orthology].organism+"&nbsp;&nbsp;&nbsp;"+data[orthology].orthologySymbol+"&nbsp;&nbsp;&nbsp;"+data[orthology].evidenceCode+"&nbsp;&nbsp;&nbsp;"+data[orthology].publication
-                                                    + "</div>");
-                                        }
-                                        if (numberOfOrthologyOfMarker2 == 0)
-                                            jQuery('#validationOrthologyText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto +'">' + geneAbbrevMergedInto + '</a> has no orthology.</h3>');
-
-
-                                        jQuery('#ignoreOrth').show();
-                                    },
-                                    error: function(data) {
-                                        alert('There was a problem with the second ajax call to get orthology data: ' + data);
-                                    }
-                                }
-                        );
-
-                    }   // end of if (numberOfOrthology > 0)
-
-                    else {
-                        orthologyIgnored = true;;
-                    }
-
-
-
-                },
-                error: function(data) {
-                    alert('There was a problem with the first ajax call to get orthology data: ' + data);
                 }
             }
-    );
 
-    checkOrthologyDone = 1;
+            for (orthology2 in orthologyData2) {
+                numberOfOrthologyOfMarker2++;
+                if (numberOfOrthologyOfMarker2 == 1)
+                    jQuery('#validationOrthologyText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following orthology:</h3>');
 
-    if (checkOrthologyDone == 1)
-        validateGeneWithMappingInfo(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+                jQuery('#validationOrthologyText').append("<div>"
+                        +orthologyData2[orthology2].organism+"&nbsp;&nbsp;&nbsp;"+orthologyData2[orthology2].orthologySymbol+"&nbsp;&nbsp;&nbsp;"+orthologyData2[orthology2].evidenceCode+"&nbsp;&nbsp;&nbsp;"+orthologyData2[orthology2].publication
+                        + "</div>");
+            }
+        }
+    }
 
+    checkOrthologyEvidenceAndPubDone = 1;
+
+    if (checkOrthologyEvidenceAndPubDone == 1) {
+
+        if (blockMergeDueToOrth == "Yes") {
+            jQuery('#blockMerge').append('<h3>You can not merge these two genes because they have some same orthology with different evidence code or publication.</h3>');
+            orthologyIgnored = true;
+        } else {
+            validateUnspecifiedAlleles(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+        }
+
+    }
 };
 
 var validateGeneWithMappingInfo = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
@@ -1097,6 +1087,7 @@ function enableMerge() {
         <input type="button" value="Merge these two markers" id="submitMerge" title="Perform the merge action">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <input type="button" value="Cancel" id="cancelMerge" onclick="window.history.back();" title="Cancel the merge and go back to gene page">
     </form>
+    <div id="blockMerge"></div>
     <div id="validationUnspecifiedAllelesText"></div>
     <form id="sameUnspecifiedAllele">
         <input type="button" value="Ignore Unspecified Alleles" onclick="ignoreUnspecifiedAlleles(this);" title="because these two unspecified alleles are the same.">
@@ -1134,7 +1125,7 @@ function enableMerge() {
     </form>
     <div id="validationOrthologyText"></div>
     <form id="ignoreOrth">
-        <input type="button" value="Ignore Orthology" onclick="ignoreOrthology(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, orthology data for ${formBean.markerToDeleteViewString} that is different than orthology data for the same human, mouse or fly ortholog in the gene retained will be deleted (you should move it manually); data for different human, mouse or fly orthologs will be associated with the gene retained.">
+        <input type="button" value="Ignore Orthology" onclick="ignoreOrthology(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, the orthology data of ${formBean.markerToDeleteViewString} will be associated with the gene retained.">
     </form>
     <div id="validationMapInfoText"></div>
     <form id="ignoreMapping">
