@@ -9,10 +9,10 @@
 <c:set var="chromosome" value="${zfn:getChromosomeInfo(entity)}" scope="page"/>
 <c:choose>
     <c:when test="${not empty chromosome}">
-        <c:if test="${!hideTitles && chromosome ne 'Ambiguous' && !fn:contains(chromosome,'Zv9' )}">Chr:</c:if>
+        <c:if test="${!hideTitles && chromosome ne 'Ambiguous' && !fn:contains(chromosome,'Zv9' )}">Chr: </c:if>
         ${chromosome}
         <c:if test="${!hideTitles && !hideLink}">
-            &nbsp <a href="/action/mapping/detail/${entity.zdbID}">
+            <a href="/action/mapping/detail/${entity.zdbID}">
             <c:choose>
                 <c:when test="${longDetail}">
                     Mapping Details/Browsers
