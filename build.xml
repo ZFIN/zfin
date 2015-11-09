@@ -109,6 +109,7 @@
     <import file="${buildfiles.dir}/warehouse.xml"/>
     <import file="${buildfiles.dir}/utilities.xml"/>
     <import file="${buildfiles.dir}/jenkins.xml"/>
+    <import file="${buildfiles.dir}/liquibase.xml"/>
     <import file="${buildfiles.dir}/solr-ant.xml"/>
     <import file="${buildfiles.dir}/shipper.xml"/>
     <import file="${buildfiles.dir}/base-properties.xml"/>
