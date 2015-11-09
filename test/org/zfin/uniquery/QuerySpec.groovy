@@ -144,6 +144,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         category                  | queryString                          | fogbugzCase
         Category.EXPRESSIONS.name | "MGC:56505 zebrafish_gene:[* TO *]"  | "12346"
         Category.EXPRESSIONS.name | "MGC:56505 gcdha"                    | "12346"
+        Category.PUBLICATION.name | "curator:\"David Fashena\" curator:\"Sabrina Toro\" ZDB-PUB-100504-14"  | "13571"
 
     }
 
