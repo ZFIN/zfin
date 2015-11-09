@@ -62,7 +62,7 @@
 <!--|SECURE_HTTP|-->	https://
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
-<!--|SITE_BACKGROUND|-->	#FFFFCC
+<!--|SITE_BACKGROUND|-->	#F9D6FF
 <!--|SOURCEROOT|-->	/opt/zfin/source_roots/moonshine
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	cuboid.zfin.org
