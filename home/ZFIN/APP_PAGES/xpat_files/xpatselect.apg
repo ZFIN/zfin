@@ -1033,7 +1033,7 @@ return false ; "
 
          <br>
          <?MIVAR>
-         <span id="xpatsel_efgOnlySpan" $(IF,$(XST,$xpatsel_highlightEFGOnly),class="highlight")>
+         <span id="xpatsel_efgOnlySpan">
          <?/MIVAR>
 
          <?MICOMMENT> *** EFG Only Checkbox *** <?/MICOMMENT>

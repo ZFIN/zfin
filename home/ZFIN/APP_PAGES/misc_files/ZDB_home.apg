@@ -45,7 +45,7 @@
   <table id="zdbhome-container-inner">
    <tr>
       <td colspan="2" id="zdbhome-search">
-        <div class="centered">
+        <div class="center">
           <form method="GET" action="/search" name="search" accept-charset="utf-8" id="query-form">
             <label for="search-query-input">Search ZFIN</label>
             <input class="search-form-input input"

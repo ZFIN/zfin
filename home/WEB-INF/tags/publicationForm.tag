@@ -78,7 +78,7 @@
     <div id="journal" class="form-group">
         <label for="journal" class="col-sm-3 control-label">Journal Abbreviation</label>
         <div class="col-sm-8">
-            <div id="scrollable-dropdown-menu">
+            <div class="scrollable-dropdown-menu">
                 <form:input path="journal" cssClass="form-control" id="journal-autocomplete"/>
             </div>
             <form:errors path="journal" cssClass="text-danger" htmlEscape="false" />

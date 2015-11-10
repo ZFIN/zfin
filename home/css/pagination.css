@@ -12,50 +12,33 @@ div.pagination {
 
 .pagination a {
     padding: 2px 8px;
-    color: #226;
-/*
-    border: 2px solid #888;
-*/
     border:  1px solid white;
     text-decoration: none;
     color: blue;
-/*
-    background-color: #e8e8ff;
-*/
     font-weight: bold;
     letter-spacing: 0px;
 }
 
 .pagination a:hover,
-    .pagination a:active {
-/*
-    color: #111;
-*/
+.pagination a:active {
     border: 1px solid #5858af;
     border-radius: 7px;
     background-color: #e8e8ff;
     font-weight: bold;
-    letter-spacing: 0px;
+    letter-spacing: 0;
 }
 
 .pagination span.current {
     padding: 2px 8px;
     font-weight: bold;
-/*
-    color: #111;
-*/
     border: 1px solid #aaa;
     border-radius: 7px;
     background-color: #eee;
-    letter-spacing: 0px;
+    letter-spacing: 0;
 }
 
 .pagination span.disabled {
     padding: 2px 8px;
     color: #777;
-/*
-    border: 1px solid #000099;
-*/
     font-weight: bold;
-/*    background-color: #e8e8ff; */
 }

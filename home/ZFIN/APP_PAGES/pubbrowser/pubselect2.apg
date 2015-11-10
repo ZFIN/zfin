@@ -846,7 +846,7 @@ bugzID:12306, not worth fixing since pubmed id searches can be done using facete
 
     <tr>
   <?MIVAR>
-      <TD class=resultcount>
+      <TD class="right-align">
 	Display results in groups of
 	<input type="text" name="WINSIZE" size="3" onChange='document.critform.START.value = "";' $(IF,$(XST,$WINSIZE),value='$WINSIZE',value="10")>
 	<?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">

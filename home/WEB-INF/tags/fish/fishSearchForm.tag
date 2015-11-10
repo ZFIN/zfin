@@ -115,12 +115,6 @@
                     useTermTable:true
                 }
             </script>
-            <style type="text/css">
-                .accessoryLabel {
-                    font-size: .75em;
-                }
-
-            </style>
 
             <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
             <script language="javascript"

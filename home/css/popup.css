@@ -21,37 +21,6 @@ div.popup-actions {
     text-align: right;
 }
 
-div.phenotype-figure-popup-body {
-    max-height: 500px;
-    overflow-y: auto;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-    padding: 5px;
-}
-
-/* Apply padding to td elements that are direct children of the tr element. */
-tr.spaced > td {
-    padding-top: 1em;
-    padding-bottom: 1em;
-}
-
-td.border-black {
-    border-bottom: 1px solid black;
-}
-
-td.bottom-alligned {
-    vertical-align: bottom;
-}
-
-span.left {
-    width: 100px;
-    display: inline-block;
-}
-
-span.right {
-    float:right;
-}
-
 div.phenotype-popup-body {
     padding: 0;
 }
@@ -62,24 +31,6 @@ hr.popup-divider {
     width: 100%;
     padding: 0;
     margin: 0;
-}
-
-.imghover_popup {
-    display: none;
-    border: 2px solid black;
-    color: white;
-    background: black;
-    padding: 5px;
-    box-shadow: 0 0 5px #000;
-    border-radius: 3px;
-}
-
-.imghover_popup img {
-    border-style: none;
-}
-
-.imghover_popup a {
-    color: white;
 }
 
 .figpop_image {
@@ -125,7 +76,6 @@ hr.popup-divider {
     opacity: 0.99 ; /*see case 7376*/
 }
 
-
 .help-popup-link:after {
     content: url(/images/help.gif);
     padding-top: 2px;
@@ -134,25 +84,12 @@ hr.popup-divider {
     opacity: 0.99; /*see case 7376*/
 }
 
-.search-help-popup-link:after {
-    padding-top: 2px;
-    margin-left: 2px;
-    margin-right: 25px;
-    opacity: 0.99 ; /*see case 7376*/
-}
-
-.fig-popup-link:after {
-    padding-top: 2px;
-    margin-left: 3px;
-    margin-right: 5px;
-}
-
 a.gbrowse_hover{
     background-color:#cfc;
     font-weight: bold;
     color:#000;
     text-decoration:none;
-    }
+}
 
 .gbrowse_popup{
     display: none;

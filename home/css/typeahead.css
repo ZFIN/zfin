@@ -1,7 +1,6 @@
-
 /* this is a fix for the input box getting pushed down some of the time */
 input.tt-input {
-    vertical-align:middle !important;
+    vertical-align: middle !important;
 }
 
 .tt-hint {
@@ -13,10 +12,11 @@ input.tt-input {
     background-color: #fff;
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 8px;
-    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
 }
 
-.tt-suggestion, .tt-no-results {
+.tt-suggestion,
+.tt-no-results {
     font-size: 14px;
     padding: 6px 6px;
 }

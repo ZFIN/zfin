@@ -16,22 +16,20 @@ body {
 
 #logo-img,
 #logo-text {
-  border: 0;
-  margin: 0;
+    border: 0;
+    margin: 0;
+    position: absolute;
+    z-index: 5;
 }
 
 #logo-img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 5;
+    top: 0;
+    left: 0;
 }
 
 #logo-text {
-  position: absolute;
-  left: 56px;
-  top: 19px;
-  z-index: 5;
+    left: 56px;
+    top: 19px;
 }
 
 #feedBox {
@@ -63,8 +61,6 @@ body {
     vertical-align: middle;
 }
 
-/*******  prototype section start */
-
 #feedBox label {
     text-decoration: none;
     font-weight: bold;
@@ -75,12 +71,6 @@ body {
     font-size: .9em !important;
     background: #fff;
 }
-.search-result-highlight {
-    font-weight: bold;
-}
-
-/******** prototype section end */
-
 
 #quicksearchBox {
    position: absolute;

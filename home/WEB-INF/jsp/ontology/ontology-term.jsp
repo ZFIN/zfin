@@ -5,7 +5,7 @@
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 <script src="/javascript/table-collapse.js"></script>
-<div class="data-page term-detail-page">
+<div class="data-page">
 
     <zfin2:dataManager oboID="${formBean.term.oboID}"/>
 

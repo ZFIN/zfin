@@ -10,60 +10,27 @@
 <script src="/javascript/angular/angular.min.js"></script>
 <script src="/javascript/angular/angular-sanitize.js"></script>
 
-<link rel=stylesheet type="text/css" href="/css/bootstrap3/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="/css/bootstrap3/css/bootstrap.css">
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
 
-<link rel=stylesheet type="text/css" href="/css/datepicker3.css">
+<link rel="stylesheet" type="text/css" href="/css/datepicker3.css">
 <script type="text/javascript" src="/javascript/bootstrap-datepicker.js"></script>
 
 <script src="/javascript/purl.js"></script>
 <script src="/javascript/jquery.validate.min.js"></script>
 
-<link rel=stylesheet type="text/css" href="/css/faceted-search.css">
+<link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css">
+<link rel="stylesheet" type="text/css" href="/css/faceted-search.css">
 
 <style>
-    .ui-menu-item {
-        font-size: small
-    }
-
-    /* necessary because bootstrap overrides our body margin on top */
-    body {
-        margin-top: 81px;
-    }
-
-    /* don't need the left-right magin fixes from all-content */
-    div.allcontent {
-        margin: 0px;
-    }
-
-    #hdr-navlinks {
-        line-height: 15px;
-    }
-
-    #hdr-banner { height: 77px; }
-
-    .header-tab { height: 22px !important; }
-
     /* remove parts of the header that we don't need */
-
     #quicksearchBox {
         display: none
     }
-
-    #feedBox #rss-icon {
-        position: absolute;
-        top: 1px;
-        right: 64px;
-    }
-
-    html { font-size: 100%; }
-    body { font-size: 16px; }
-    a,a:hover { color: blue }
-    
 </style>
 
 <script>
-    showMotto();
+    hdrSetCookie("tabCookie","Motto","","/");
 </script>
 
 <%-- placed this outside of the search container below so that it won't inherit odd css, content of modal is loaded via remote --%>
