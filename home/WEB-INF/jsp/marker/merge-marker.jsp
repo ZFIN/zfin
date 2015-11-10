@@ -722,7 +722,8 @@ var validateGeneWithOrthology = function(geneIDdelete, geneZdbIdMergedInto, gene
                         + "</div>");
                 for (orthology2 in orthologyData2) {
                     if (orthologyData1[orthology1].orthologySymbol == orthologyData2[orthology2].orthologySymbol &&
-                            (orthologyData1[orthology1].evidenceCode != orthologyData2[orthology2].evidenceCode || orthologyData1[orthology1].publication != orthologyData2[orthology2].publication)) {
+                            (orthologyData1[orthology1].evidenceCode != orthologyData2[orthology2].evidenceCode || orthologyData1[orthology1].publication != orthologyData2[orthology2].publication) &&
+                            !(orthologyData1[orthology1].evidenceCode == orthologyData2[orthology2].evidenceCode && orthologyData1[orthology1].publication == orthologyData2[orthology2].publication)) {
                         blockMergeDueToOrth = "Yes";
                         break;
                     }
@@ -746,9 +747,10 @@ var validateGeneWithOrthology = function(geneIDdelete, geneZdbIdMergedInto, gene
     if (checkOrthologyEvidenceAndPubDone == 1) {
 
         if (blockMergeDueToOrth == "Yes") {
-            jQuery('#blockMerge').append('<h3>You can not merge these two genes because they have some same orthology with different evidence code or publication.</h3>');
-            orthologyIgnored = true;
+            jQuery('#blockMerge').append('<h3>You cannot merge these two zebrafish genes because they have orthology data to the same human, mouse and/or fly gene.<br/>You need to move that human, mouse and/or orthology data manually before merging the zebrafish genes.</h3>');
+
         } else {
+            jQuery('#ignoreOrth').show();
             validateUnspecifiedAlleles(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
         }
 
