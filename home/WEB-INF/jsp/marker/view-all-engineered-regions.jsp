@@ -11,7 +11,7 @@
         <th align="left">Name</th>
         <th align="left">Previous Name</th>
         <th align="left"> Comment</th>
-<authz:authorize ifAnyGranted="root">
+<authz:authorize access="hasRole('root')">
         <th align="left"> Note</th>
 </authz:authorize>
     </tr>
@@ -33,7 +33,7 @@
             <td>
                 ${marker.publicComments}
             </td>
-            <authz:authorize ifAnyGranted="root">
+            <authz:authorize access="hasRole('root')">
             <td>
                 <c:forEach var="note" items="${marker.dataNotes}" varStatus="loop">
                     ${note.note} <br/>

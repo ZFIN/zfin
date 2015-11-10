@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
-<%--<authz:authorize ifAnyGranted="root">--%>
+<%--<authz:authorize access="hasRole('root')">--%>
 <%
     String zdbID = request.getParameter("zdbID");
     if(zdbID==null){

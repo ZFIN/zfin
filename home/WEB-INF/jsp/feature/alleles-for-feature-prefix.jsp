@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<authz:authorize ifAllGranted="root">
+<authz:authorize access="hasRole('root')">
     <a href="/zf_info/zfbook/lab_desig.html">Previous Static Lab Line Designations</a>
     <c:if test="${formBean.hasNonCurrentLabs}">
         Labs that have features using this designation but have an alternate designation:

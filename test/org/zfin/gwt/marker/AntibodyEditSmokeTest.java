@@ -26,7 +26,7 @@ public class AntibodyEditSmokeTest extends AbstractSecureSmokeTest {
         Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(zdbID);
         assertNotNull(antibody);
         webClient.waitForBackgroundJavaScript(5000);
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/marker/marker-edit?zdbID=" + zdbID);
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/marker/marker-edit?zdbID=" + zdbID);
         webClient.waitForBackgroundJavaScriptStartingBefore(2000);
         assertEquals("ZFIN Edit Antibody: zn-5", page.getTitleText());
 

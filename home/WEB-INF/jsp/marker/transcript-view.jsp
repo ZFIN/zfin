@@ -19,7 +19,7 @@
 
 <c:choose>
     <c:when test="${formBean.marker.withdrawn}">
-        <authz:authorize ifAllGranted="root">
+        <authz:authorize access="hasRole('root')">
             <zfin2:sequenceView sequences="${formBean.nucleotideSequences}"/>
         </authz:authorize>
     </c:when>

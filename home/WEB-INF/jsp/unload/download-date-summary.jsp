@@ -7,7 +7,7 @@
         <td>
             <h2>ZFIN Data Reports from:
                 <fmt:formatDate pattern="d MMM yyyy" value="${formBean.archiveDate}"/>
-                <authz:authorize ifAnyGranted="root">
+                <authz:authorize access="hasRole('root')">
                     (${formBean.date})
                 </authz:authorize>
             </h2></td>
@@ -152,7 +152,7 @@ To obtain previous versions you have to check the archive of the external source
 </table>
 
 
-<authz:authorize ifAnyGranted="root">
+<authz:authorize access="hasRole('root')">
 
     <h2>Unofficial Download Files:</h2>
 

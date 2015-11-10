@@ -9,7 +9,7 @@
 <c:choose>
     <c:when test="${!service.downloadArchiveExists}">
         No Root Download archive found. Login for more detail. <p/>
-        <authz:authorize ifAnyGranted="root">
+        <authz:authorize access="hasRole('root')">
 
             No Root Download archive exists: ${service.downloadDirectory}
             <p/>
@@ -24,7 +24,7 @@
             <fmt:formatDate value="${service.unloadInfo.date}" pattern="dd-MM-yyyy"/>
             <br/>
             but no archive before this date is found.
-            <authz:authorize ifAnyGranted="root">
+            <authz:authorize access="hasRole('root')">
                 <c:if test="${service.futureArchivesAvailable}">
                     <p/>
                     Future download archive available:
