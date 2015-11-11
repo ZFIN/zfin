@@ -269,7 +269,7 @@
     <target name="tail-solr-log" description="tail -f on solr.log file">
         <exec executable="tail">
             <arg value="-f"/>
-            <arg value="${SOLR_HOME}/logs/solr.log"/>
+            <arg value="${SOLR_HOME}/server/logs/solr.log"/>
         </exec>
     </target>
 
