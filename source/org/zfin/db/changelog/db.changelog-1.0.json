@@ -1,0 +1,45 @@
+{
+    "databaseChangeLog": [
+        {
+            "preConditions": [
+                {
+                    "runningAs": {
+                        "username": "informix"
+                    }
+                }
+            ]
+        },
+        {
+            "changeSet": {
+                "id": "newXpatTable",
+                "author": "smoxon",
+                "changes": [
+                    { "createTable": {
+                        "tableName": "expression_experiment_new",
+                        "columns": [
+                            {
+                                "column": {
+                                    "name": "xpatex_pk_id",
+                                    "type": "serial8",
+                                    "autoIncrement": true,
+                                    "constraints": {
+                                        "primaryKey": true,
+                                        "nullable": false
+                                    }
+                                },
+                                "column": {
+                                    "name": "xpatex_zdb_id",
+                                    "type": "varchar(50)",
+                                    "constraints": {
+                                        "nullable": false
+                                    }
+                                }
+
+                            },
+                    }
+                 ]
+            }
+        }
+    ]
+}
+			    
