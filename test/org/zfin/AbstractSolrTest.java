@@ -1,7 +1,7 @@
 package org.zfin;
 
 import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 
 import org.zfin.properties.ZfinPropertiesEnum;
 

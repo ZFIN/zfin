@@ -2,7 +2,7 @@ package org.zfin.uniquery
 
 import org.apache.log4j.Logger
 import org.apache.solr.client.solrj.SolrQuery
-import org.apache.solr.client.solrj.SolrServer
+import org.apache.solr.client.solrj.SolrClient
 import org.apache.solr.client.solrj.response.QueryResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
@@ -24,17 +24,17 @@ class QuerySpec extends ZfinIntegrationSpec {
     @Autowired
     QueryManipulationService queryManipulationService
 
-    @Shared SolrServer server
+    @Shared SolrClient client
     @Shared SolrQuery query
     @Shared SolrQuery secondQuery
 
     //sets up for all tests in class
     def setupSpec() {
-        server = SolrService.getSolrServer("prototype")
+        client = SolrService.getSolrClient("prototype")
     }
 
     def cleanSpec() {
-        server = null
+        client = null
     }
 
     //sets up for each test
@@ -57,7 +57,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         QueryResponse response = new QueryResponse()
 
         try {
-            response = server.query(query)
+            response = client.query(query)
         } catch (Exception e) {
             logger.error(e);
         }
@@ -131,7 +131,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         QueryResponse response = new QueryResponse()
 
         try {
-            response = server.query(query)
+            response = client.query(query)
         } catch (Exception e) {
             logger.error(e);
         }
@@ -163,8 +163,8 @@ class QuerySpec extends ZfinIntegrationSpec {
         QueryResponse secondResponse = new QueryResponse()
 
         try {
-            response = server.query(query)
-            secondResponse = server.query(secondQuery)
+            response = client.query(query)
+            secondResponse = client.query(secondQuery)
         } catch (Exception e) {
             logger.error(e);
         }

@@ -2,7 +2,7 @@ package org.zfin.uniquery
 
 import org.apache.log4j.Logger
 import org.apache.solr.client.solrj.SolrQuery
-import org.apache.solr.client.solrj.SolrServer
+import org.apache.solr.client.solrj.SolrClient
 import org.apache.solr.client.solrj.response.FacetField
 import org.apache.solr.client.solrj.response.QueryResponse
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,17 +26,17 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
     FacetBuilderService facetBuilderService
 
     @Shared
-    SolrServer server
+    SolrClient client
     @Shared
     SolrQuery query
 
     //sets up for all tests in class
     def setupSpec() {
-        server = SolrService.getSolrServer("prototype")
+        client = SolrService.getSolrClient("prototype")
     }
 
     def cleanSpec() {
-        server = null
+        client = null
     }
 
     //sets up for each test
@@ -58,7 +58,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         QueryResponse response = new QueryResponse();
 
         try {
-            response = server.query(query);
+            response = client.query(query);
         } catch (Exception e) {
             logger.error(e);
         }
@@ -84,7 +84,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         QueryResponse response = new QueryResponse();
 
         try {
-            response = server.query(query);
+            response = client.query(query);
         } catch (Exception e) {
             logger.error(e);
         }
