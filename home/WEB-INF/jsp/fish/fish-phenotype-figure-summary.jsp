@@ -24,6 +24,12 @@
             <zfin:link entity="${fish}"/>
         </td>
     </tr>
+    <tr>
+        <th>Conditions:</th>
+        <td>
+            All
+        </td>
+    </tr>
     <c:if test="${!empty phenotypeSummaryCriteria.searchCriteriaPhenotype}">
         <tr>
             <th>Matching Terms:</th>

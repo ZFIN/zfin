@@ -23,6 +23,12 @@
             <zfin:link entity="${expressionCriteria.fish}"/>
         </td>
     </tr>
+    <tr>
+        <th>Conditions:</th>
+        <td>
+            All
+        </td>
+    </tr>
 </table>
 
 <div class="summary">
