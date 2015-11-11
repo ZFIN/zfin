@@ -44,6 +44,11 @@
                     <exclude name="**/*.svn"/>
                 </fileset>
             </copy>
+            <chmod perm="ug+x" type="file" verbose="true">
+                <fileset dir="@{to}">
+                    <include name="**/solr"/>
+                </fileset>
+            </chmod>
         </sequential>
     </macrodef>
 

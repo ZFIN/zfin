@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <config>
-
-  <luceneMatchVersion>LUCENE_42</luceneMatchVersion>
+    <luceneMatchVersion>5.2.0</luceneMatchVersion>
 
   <jmx />
 
