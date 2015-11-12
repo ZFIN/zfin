@@ -109,7 +109,7 @@
             </td>
             <td>
 
-                <c:if test="${result.expressionFigureCount > 1}">
+                <c:if test="${result.expressionFigureCount > 0}">
                     <a href="/action/expression/fish-expression-figure-summary?fishID=${result.fish.zdbID}&imagesOnly=false">
                         <zfin:choice choicePattern="0# Figures| 1# Figure| 2# Figures" includeNumber="true"
                                      integerEntity="${result.expressionFigureCount}"/>

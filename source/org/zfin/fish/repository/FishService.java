@@ -228,6 +228,11 @@ public class FishService {
                 fishResult.setImageAvailable(true);
             }
         }
+        for (ZfinFigureEntity figure : expFigures) {
+            if (figure.isHasImage()) {
+                fishResult.setImageAvailable(true);
+            }
+        }
     }
 
     public static List<FigureSummaryDisplay> getPhenotypeSummary(String fishID, FishSearchCriteria criteria) {
