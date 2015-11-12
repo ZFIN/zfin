@@ -184,4 +184,25 @@ class QuerySpec extends ZfinIntegrationSpec {
         ""                          | "znf zmp mouse"                |  "znf zmp Mouse"          //Case 11330
     }
 
+    def "a query for #queryString should bring back #resultName as the first result"() {
+        when: "Solr is queried for this string"
+        query.setQuery(queryManipulationService.processQueryString(queryString))
+        QueryResponse response = new QueryResponse()
+
+        try {
+            response = client.query(query)
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+        then: "the first result matches the specified name"
+        response?.results?.first()?.name == resultName
+
+        where:
+        queryString | resultName
+        "fgf8a"     | "fgf8a"
+        "pax2a"     | "pax2a"
+
+    }
+
 }

@@ -33,7 +33,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
                   from record_attribution
                   where recattrib_data_zdb_id[1,8]='ZDB-GENE'
                      or recattrib_data_zdb_id[1,7]='ZDB-EFG'
-                  group by 1;"
+                  group by 1"
            where="data_zdb_id=gene.id"
            cacheImpl="SortedMapBackedCache"/>
 
@@ -64,7 +64,8 @@ where mrkr_type in ('GENE','GENEP','EFG')
                         datasource="db" query="select organism as ortholog_organism,
                                       ortho_zebrafish_gene_zdb_id as gene_zdb_id
                                  from ortholog
-				    join organism on organism_taxid = ortho_other_species_taxid;"
+				    join organism on organism_taxid = ortho_other_species_taxid
+				    "
                         where="gene_zdb_id=gene.id"
                         cacheImpl="SortedMapBackedCache"/>
 
@@ -73,7 +74,8 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                       omimp_omim_id as omim_id,
                                       ortho_zebrafish_gene_zdb_id as gene_zdb_id
                               from omim_phenotype
-                                     join ortholog on omimp_ortho_zdb_id = ortholog.ortho_zdb_id"
+                                     join ortholog on omimp_ortho_zdb_id = ortholog.ortho_zdb_id
+                                     "
                         where="gene_zdb_id=gene.id"
                         cacheImpl="SortedMapBackedCache"/>
 
@@ -86,21 +88,10 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                      join omimp_termxref_mapping on otm_tx_id = tx_pk_id
                                      join omim_phenotype on otm_omimp_id = omimp_pk_id
                                      join ortholog on omimp_ortho_zdb_id = ortho_zdb_id
-                                where term_ontology = 'disease_ontology';"
+                                where term_ontology = 'disease_ontology'
+                                "
                         where="gene_zdb_id=gene.id"
                         cacheImpl="SortedMapBackedCache"/>
-
-<!-- probably can be deleted, not used as a facet or an xref, probably that means it's not good for text matching either... -->
-<!--                <entity name="gene_authors" datasource="db" query="
-                    select person.full_name as author, person.zdb_id as xref, recattrib_data_zdb_id
-                    from person, int_person_pub, record_attribution
-                    where recattrib_source_zdb_id = int_person_pub.target_id
-                      and int_person_pub.source_id = person.zdb_id
-                      and ( recattrib_data_zdb_id[1,8]='ZDB-GENE'
-                            or recattrib_data_zdb_id[1,7]='ZDB-EFG');"
-                                cacheImpl="SortedMapBackedCache"
-                                where="recattrib_data_zdb_id=gene.id"/>-->
-
 
                 <entity name="gene_expressed_in_direct"
                         datasource="db" query="
@@ -134,7 +125,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                 and ee.xpatex_gene_zdb_id is not null
                                 and term_ontology='zebrafish_anatomy'
 
-                                                        ;"
+                           "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
 
@@ -168,7 +159,8 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                                                                 and er.xpatres_expression_found='t'
                                                                                 and g.geno_is_wildtype='t'
                                                                                 and ee.xpatex_gene_zdb_id is not null
-                                                                                and term_ontology='zebrafish_anatomy';"
+                                                                                and term_ontology='zebrafish_anatomy'
+                                                "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
 
@@ -194,7 +186,8 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                     where er.xpatres_expression_found='t'
                                         and ee.xpatex_gene_zdb_id is not null
                                         and term_ontology='zebrafish_anatomy'
-                                        and xpatex_gene_zdb_id[1,7] == 'ZDB-EFG';"
+                                        and xpatex_gene_zdb_id[1,7] == 'ZDB-EFG'
+                                "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
 
@@ -221,7 +214,8 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                     where er.xpatres_expression_found='t'
                                         and ee.xpatex_gene_zdb_id is not null
                                         and term_ontology='zebrafish_anatomy'
-                                        and xpatex_gene_zdb_id[1,7] == 'ZDB-EFG';"
+                                        and xpatex_gene_zdb_id[1,7] == 'ZDB-EFG'
+                                "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
 
@@ -258,7 +252,8 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                and phenos_phenox_pk_id = phenox_pk_id
                                and phenox_genox_zdb_id = mfs_genox_zdb_id
                                and ps.phenos_tag = 'abnormal'
-                               and term_ontology='zebrafish_anatomy';"
+                               and term_ontology='zebrafish_anatomy'
+                            "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
 
@@ -297,7 +292,8 @@ where mrkr_type in ('GENE','GENEP','EFG')
                            and phenos_phenox_pk_id = phenox_pk_id
                            and phenox_genox_zdb_id = mfs_genox_zdb_id
                            and ps.phenos_tag = 'abnormal'
-                           and term_ontology='zebrafish_anatomy'; "
+                           and term_ontology='zebrafish_anatomy'
+                        "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
 
@@ -332,7 +328,8 @@ where mrkr_type in ('GENE','GENEP','EFG')
                            and phenos_phenox_pk_id = phenox_pk_id
                            and phenox_genox_zdb_id = mfs_genox_zdb_id
                            and ps.phenos_tag = 'abnormal'
-                           and term_ontology='biological_process';"
+                           and term_ontology='biological_process'
+                       "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
                 <entity name="gene_affected_biological_process_parent"
@@ -370,7 +367,8 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                                    and phenos_phenox_pk_id = phenox_pk_id
                                                    and phenox_genox_zdb_id = mfs_genox_zdb_id
                                                    and ps.phenos_tag = 'abnormal'
-                                                   and term_ontology='biological_process'; "
+                                                   and term_ontology='biological_process'
+                                                "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
 
@@ -406,7 +404,8 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                                    and phenos_phenox_pk_id = phenox_pk_id
                                                    and phenox_genox_zdb_id = mfs_genox_zdb_id
                                                    and ps.phenos_tag = 'abnormal'
-                                                   and term_ontology='cellular_component';"
+                                                   and term_ontology='cellular_component'
+                                               "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
                 <entity name="gene_affected_cellular_component_parent"
@@ -444,7 +443,8 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                                                            and phenos_phenox_pk_id = phenox_pk_id
                                                                            and phenox_genox_zdb_id = mfs_genox_zdb_id
                                                                            and ps.phenos_tag = 'abnormal'
-                                                                           and term_ontology='cellular_component';"
+                                                                           and term_ontology='cellular_component'
+                                                                       "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
 
@@ -480,7 +480,8 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                                    and phenos_phenox_pk_id = phenox_pk_id
                                                    and phenox_genox_zdb_id = mfs_genox_zdb_id
                                                    and ps.phenos_tag = 'abnormal'
-                                                   and term_ontology='molecular_function';"
+                                                   and term_ontology='molecular_function'
+                                               "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
                 <entity name="gene_affected_molecular_function_parent"
@@ -518,7 +519,8 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                                                            and phenos_phenox_pk_id = phenox_pk_id
                                                                            and phenox_genox_zdb_id = mfs_genox_zdb_id
                                                                            and ps.phenos_tag = 'abnormal'
-                                                                           and term_ontology='molecular_function';"
+                                                                           and term_ontology='molecular_function'
+                                                                       "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
 
@@ -542,7 +544,8 @@ as phenotype_statement,
 	     join term as quality on phenos_quality_zdb_id = quality.term_zdb_id
 	     left outer join term as super_2 on phenos_entity_2_superterm_zdb_id = super_2.term_zdb_id
 	     left outer join term as sub_2 on phenos_entity_2_subterm_zdb_id = sub_2.term_zdb_id
-    where phenos_tag = 'abnormal';
+    where phenos_tag = 'abnormal'
+
 
                         "
                         cacheImpl="SortedMapBackedCache"
@@ -553,7 +556,8 @@ as phenotype_statement,
                                                        ev.mrkrgoev_mrkr_zdb_id as gene_zdb_id
                                                 from term t
                                                     join marker_go_term_evidence ev on t.term_zdb_id=ev.mrkrgoev_term_zdb_id
-                                                where term_ontology = 'molecular_function';
+                                                where term_ontology = 'molecular_function'
+
                         "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
@@ -564,7 +568,8 @@ as phenotype_statement,
                                                 from term
                                                     join all_term_contains on alltermcon_container_zdb_id = term_zdb_id
                                                     join marker_go_term_evidence on alltermcon_contained_zdb_id = mrkrgoev_term_zdb_id
-                                                where term_ontology = 'molecular_function';
+                                                where term_ontology = 'molecular_function'
+                                                ;
                         "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
@@ -581,7 +586,8 @@ as phenotype_statement,
                                                        ev.mrkrgoev_mrkr_zdb_id as gene_zdb_id
                                                 from term t
                                                     join marker_go_term_evidence ev on t.term_zdb_id=ev.mrkrgoev_term_zdb_id
-                                                where term_ontology = 'biological_process';
+                                                where term_ontology = 'biological_process'
+                                                ;
                         "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
@@ -592,7 +598,8 @@ as phenotype_statement,
                                                 from term
                                                     join all_term_contains on alltermcon_container_zdb_id = term_zdb_id
                                                     join marker_go_term_evidence on alltermcon_contained_zdb_id = mrkrgoev_term_zdb_id
-                                                where term_ontology = 'biological_process';
+                                                where term_ontology = 'biological_process'
+                                                ;
                         "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
@@ -612,7 +619,8 @@ as phenotype_statement,
                                                        ev.mrkrgoev_mrkr_zdb_id as gene_zdb_id
                                                 from term t
                                                     join marker_go_term_evidence ev on t.term_zdb_id=ev.mrkrgoev_term_zdb_id
-                                                where term_ontology = 'cellular_component';
+                                                where term_ontology = 'cellular_component'
+                                                ;
                         "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
@@ -623,7 +631,8 @@ as phenotype_statement,
                                                 from term
                                                     join all_term_contains on alltermcon_container_zdb_id = term_zdb_id
                                                     join marker_go_term_evidence on alltermcon_contained_zdb_id = mrkrgoev_term_zdb_id
-                                                where term_ontology = 'cellular_component';
+                                                where term_ontology = 'cellular_component'
+                                                ;
                         "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
@@ -664,7 +673,8 @@ as phenotype_statement,
                                                and dblink_linked_recid[1,11]='ZDB-TSCRIPT'
                                                and mrel_mrkr_2_zdb_id=dblink_linked_recid
                                                and dblink_acc_num like 'OTTDARG%'
-                                               and mrel_type='gene produces transcript';"
+                                               and mrel_type='gene produces transcript'
+                           ;"
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
 
@@ -675,7 +685,8 @@ as phenotype_statement,
                         datasource="db" query="select feature_zdb_id as xref, feature_abbrev as allele, fmrel_mrkr_zdb_id as gene_zdb_id
                         from feature, feature_marker_relationship
                         where fmrel_ftr_zdb_id = feature_zdb_id
-                          and fmrel_type in ('is allele of');"
+                          and fmrel_type in ('is allele of')
+                          ;"
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
 
@@ -685,7 +696,8 @@ as phenotype_statement,
                                 from unique_location
                                 where ul_data_zdb_id[1,8] = 'ZDB-GENE'
                                    or ul_data_zdb_id[1,7] = 'ZDB-EFG'
-                                   or ul_data_zdb_id[1,11] = 'ZDB-TSCRIPT';"
+                                   or ul_data_zdb_id[1,11] = 'ZDB-TSCRIPT'
+                                   ;"
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
 
@@ -697,7 +709,8 @@ as phenotype_statement,
                                 where sfcl_data_zdb_id not in (select ul_data_Zdb_id from unique_location where ul_data_zdb_id[1,8] = 'ZDB-GENE'
                                                                    or ul_data_zdb_id[1,7] = 'ZDB-EFG'
                                                                                                       or ul_data_zdb_id[1,11] = 'ZDB-TSCRIPT')
-                                                                                                      and sfcl_data_zdb_id like 'ZDB-GENE%' group by sfcl_data_zdb_id,sfcl_chromosome having count(sfcl_Data_zdb_id)>1;"
+                                                                                                      and sfcl_data_zdb_id like 'ZDB-GENE%' group by sfcl_data_zdb_id,sfcl_chromosome having count(sfcl_Data_zdb_id)>1
+                                                                                                      ;"
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
 
@@ -721,28 +734,18 @@ as phenotype_statement,
                         select mrkr_abbrev as clone, mrel_mrkr_2_zdb_id as gene_zdb_id
                                               from marker , marker_relationship
                                              where mrel_mrkr_1_zdb_id = mrkr_zdb_id
-                                             and mrel_type in ('clone contains gene');  "
+                                             and mrel_type in ('clone contains gene')
+                     ;  "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
-<!-- this should probably be replaced by bringing in names of markers that are related and filling xref as a side benefit -->
-<!--                <entity name="gene_related_marker_xref"
-                        datasource="db" query="
-                            select mrel_mrkr_1_zdb_id as xref, mrel_mrkr_2_zdb_id as gene_zdb_id
-                            from marker_relationship
-                            where mrel_mrkr_2_zdb_id[1,8] = 'ZDB-GENE'
-                            union
-                            select mrel_mrkr_2_zdb_id as xref, mrel_mrkr_1_zdb_id as gene_zdb_id
-                            from marker_relationship
-                            where mrel_mrkr_2_zdb_id[1,8] = 'ZDB-GENE';"
-                        cacheImpl="SortedMapBackedCache"
-                        where="gene_zdb_id=gene.id"/>-->
 
                 <entity name="gene_publication_xref"
                         datasource="db" query="select distinct mrkr_zdb_id as gene_zdb_id, recattrib_source_zdb_id as xref
                                 from record_attribution, marker
                                 where recattrib_data_zdb_id = mrkr_zdb_id
                                   and ( mrkr_zdb_id[1,8] == 'ZDB-GENE'
-                                        or mrkr_zdb_id[1,7] == 'ZDB-EFG');"
+                                        or mrkr_zdb_id[1,7] == 'ZDB-EFG')
+                                        ;"
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
 

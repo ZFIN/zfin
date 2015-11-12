@@ -468,7 +468,7 @@
    <field name="url" type="string" indexed="true" stored="true"   />
    <field name="category" type="keyword" indexed="true" stored="true" required="true" />
 
-   <field name="name" type="abbrev" indexed="true" stored="true" required="true"  termVectors="true" termPositions="true" termOffsets="true" />
+   <field name="name" type="text" indexed="true" stored="true" required="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="proper_name" type="abbrev" indexed="true" stored="true" termVectors="true" termPositions="true" termOffsets="true" />
    <field name="full_name" type="text" indexed="true" stored="true" required="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="alias" type="abbrev" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
@@ -799,6 +799,8 @@
 
  <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
  <solrQueryParser defaultOperator="AND"/>
+
+    <copyField source="proper_name" dest="proper_name_k"/>
 
    <copyField source="labeled_anatomy_direct" dest="labeled_anatomy"/>
    <copyField source="labeled_anatomy_parent" dest="labeled_anatomy"/>

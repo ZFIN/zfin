@@ -527,7 +527,9 @@
 -->
          <!--  less indented values are the keyword version of text fields for highlighting when adding fq's to the q -->
 
-         <str name="qf">proper_name^10.0
+         <str name="qf">
+             proper_name_k^50.0
+             proper_name^10.0
              name
              category_t
              type_t
