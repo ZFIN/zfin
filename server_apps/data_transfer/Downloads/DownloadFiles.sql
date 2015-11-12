@@ -1637,8 +1637,9 @@ select zdb_id, accession_no, authors,title,jrnl_name,year(pub_date),pub_volume,p
 ;
 
 create temp table tmp_features (feature_id varchar(50), term_o_id varchar(50), f_abbrev varchar(100),
-       	    	  	       f_name varchar(100),ftypedisp varchar(30), mutagen varchar(50),
-			       mutagee varchar(50), construct_id varchar(50), construct_name varchar(50), construct_so_id varchar(50))
+                               f_name varchar(100),ftypedisp varchar(30), mutagen varchar(50),
+                               mutagee varchar(50), construct_id varchar(50), construct_name varchar(50), construct_so_id varchar(50), 
+                               created_by_zdb_id varchar(50), created_by_name varchar(255))
 with no log;
 
 -- a list of all features ordered by abbreviation (case insensitive)
@@ -1649,6 +1650,20 @@ where feature_type =ftrtype_name
  and szm_object_type = feature_type
  and feature_zdb_id = featassay_feature_zdb_id
 and feature_Type not in ('TRANSGENIC_INSERTION')
+and featassay_mutagen not in ('TALEN', 'CRISPR')
+order by lower(feature_abbrev);
+
+insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, created_by_zdb_id, created_by_name)
+select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee,fmrel_mrkr_zdb_id,mrkr_name
+from feature, feature_type, feature_assay, so_zfin_mapping, feature_marker_relationship, marker
+where feature_type =ftrtype_name
+ and szm_object_type = feature_type
+ and feature_zdb_id = featassay_feature_zdb_id
+and feature_Type not in ('TRANSGENIC_INSERTION')
+and featassay_mutagen in ('TALEN', 'CRISPR')
+and fmrel_type = "created by"
+and feature_zdb_id = fmrel_ftr_zdb_id
+and mrkr_zdb_id = fmrel_mrkr_zdb_id
 order by lower(feature_abbrev);
 
 insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name)
@@ -1662,6 +1677,24 @@ where feature_type =ftrtype_name
  and mrkr_type in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
 and feature_Type in ('TRANSGENIC_INSERTION')
 and fmrel_type != 'is allele of'
+and featassay_mutagen not in ('TALEN', 'CRISPR')
+order by lower(feature_abbrev);
+
+insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name, created_by_zdb_id, created_by_name)
+select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee, construct.mrkr_zdb_id, construct.mrkr_name, createdby.fmrel_mrkr_zdb_id, str.mrkr_name
+from feature, feature_type, feature_assay, so_zfin_mapping, feature_marker_relationship cst, marker construct, feature_marker_relationship createdby, marker str
+where feature_type =ftrtype_name
+ and szm_object_type = feature_type
+ and feature_zdb_id = featassay_feature_zdb_id
+ and feature_zdb_id = cst.fmrel_ftr_zdb_id
+ and cst.fmrel_mrkr_zdb_id = construct.mrkr_zdb_id
+ and construct.mrkr_type in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
+and feature_Type in ('TRANSGENIC_INSERTION')
+and cst.fmrel_type != 'is allele of'
+and featassay_mutagen in ('TALEN', 'CRISPR')
+and createdby.fmrel_type = "created by"
+and feature_zdb_id = createdby.fmrel_ftr_zdb_id
+and str.mrkr_zdb_id = createdby.fmrel_mrkr_zdb_id
 order by lower(feature_abbrev);
 
 insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name)
@@ -1675,6 +1708,24 @@ where feature_type =ftrtype_name
  and mrkr_type  in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
 and feature_Type in ('TRANSGENIC_INSERTION')
 and fmrel_type = 'is allele of'
+and featassay_mutagen not in ('TALEN', 'CRISPR')
+order by lower(feature_abbrev);
+
+insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name, created_by_zdb_id, created_by_name)
+select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee, construct.mrkr_zdb_id, construct.mrkr_name, createdby.fmrel_mrkr_zdb_id, str.mrkr_name 
+from feature, feature_type, feature_assay, so_zfin_mapping, feature_marker_relationship cst, marker construct, feature_marker_relationship createdby, marker str
+where feature_type =ftrtype_name
+ and szm_object_type = feature_type
+ and feature_zdb_id = featassay_feature_zdb_id
+ and feature_zdb_id = cst.fmrel_ftr_zdb_id
+ and cst.fmrel_mrkr_zdb_id = construct.mrkr_zdb_id
+ and construct.mrkr_type  in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
+and feature_Type in ('TRANSGENIC_INSERTION')
+and cst.fmrel_type = 'is allele of'
+and featassay_mutagen in ('TALEN', 'CRISPR')
+and createdby.fmrel_type = "created by"
+and feature_zdb_id = createdby.fmrel_ftr_zdb_id
+and str.mrkr_zdb_id = createdby.fmrel_mrkr_zdb_id
 order by lower(feature_abbrev);
 
 update tmp_features
