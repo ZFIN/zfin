@@ -258,7 +258,7 @@ function ImageBox() {
     this.displayNext = function () {
         var newIndex = this.firstVisibleImage + this.MAX_VISIBLE;
         if (newIndex <= this.getLastImageIndex()) {
-            var pageString =  Math.floor(newIndex / this.MAX_VISIBLE) + ' / ' + this.getLastPageIndex();
+            var pageString =  (newIndex / this.MAX_VISIBLE + 1) + ' / ' + this.getLastPageIndex();
             ga('send', 'event', 'Figure Gallery', 'Paginate', pageString);
             this.jumpToImage(newIndex);
         }
@@ -267,7 +267,7 @@ function ImageBox() {
     this.displayPrev = function () {
         if (this.firstVisibleImage > this.MAX_VISIBLE - 1) {
             var newIndex = this.firstVisibleImage - this.MAX_VISIBLE;
-            var pageString =  Math.floor(newIndex / this.MAX_VISIBLE) + ' / ' + this.getLastPageIndex();
+            var pageString =  (newIndex / this.MAX_VISIBLE + 1) + ' / ' + this.getLastPageIndex();
             ga('send', 'event', 'Figure Gallery', 'Paginate', pageString);
             this.jumpToImage(newIndex);
         }
