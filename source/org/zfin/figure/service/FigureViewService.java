@@ -374,8 +374,12 @@ public class FigureViewService {
         List<Fish> fishList = new ArrayList<>();
 
         for (PhenotypeExperiment phenotypeExperiment : figure.getPhenotypeExperiments()) {
-            if (!fishList.contains(phenotypeExperiment.getFishExperiment().getFish())
+            /*if (!fishList.contains(phenotypeExperiment.getFishExperiment().getFish())
                     && !phenotypeExperiment.getFishExperiment().getFish().isWildtypeWithoutReagents()) {
+                fishList.add(phenotypeExperiment.getFishExperiment().getFish());
+            }*/
+            if (!fishList.contains(phenotypeExperiment.getFishExperiment().getFish()))
+                     {
                 fishList.add(phenotypeExperiment.getFishExperiment().getFish());
             }
         }
