@@ -11,21 +11,22 @@
     height: 620px;
     width: 550px;
     z-index: 2000;
+    padding: 0.5em;
 }
 
-#figpop_top {
+.figpop_top {
     color: #333;
-    padding: .5em;
+    margin-bottom: 0.5em;
     height: 20px;
 }
 
-#figpop_image {
+.figpop_image {
     text-align: center;
     margin: 0;
     padding: 0;
 }
 
-#figpop_image img {
+.figpop_image img {
     margin: 0 auto;
     padding-top: 3px;
     border: 0;
