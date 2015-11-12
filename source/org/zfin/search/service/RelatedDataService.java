@@ -3,8 +3,8 @@ package org.zfin.search.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -217,7 +217,7 @@ public class RelatedDataService {
 
     private QueryResponse getQueryResponse(String ontologyName) {
         String field = "category";
-        SolrServer server = SolrService.getSolrServer("prototype");
+        SolrClient server = SolrService.getSolrClient("prototype");
         SolrQuery query = new SolrQuery();
         //look for the term name in an OR over multiple fields
         query.addFilterQuery(ontologyName + ":\"" + entityName + "\"");

@@ -1,12 +1,8 @@
 #!/bin/bash
 //usr/bin/env groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
 
-import org.apache.solr.client.solrj.SolrQuery
-import org.apache.solr.client.solrj.SolrResponse
-import org.apache.solr.client.solrj.SolrServer
-import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer
-import org.apache.solr.client.solrj.impl.HttpSolrServer
-import org.apache.solr.common.SolrDocument
+import org.apache.solr.client.solrj.SolrClient
+import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrClient
 import org.apache.solr.common.SolrInputDocument
 
 import java.sql.Connection
@@ -37,8 +33,7 @@ connectionProps.put("driver", args.driver)
 conn = DriverManager.getConnection(args.url, connectionProps)
 
 def solrPort = System.env.get("SOLR_PORT")
-//SolrServer server = new HttpSolrServer("http://localhost:$solrPort/solr/prototype")
-SolrServer server = new ConcurrentUpdateSolrServer("http://localhost:$solrPort/solr/prototype", 100, 20)
+SolrClient client = new ConcurrentUpdateSolrClient("http://localhost:$solrPort/solr/prototype", 100, 20)
 
 
 Map<String, String> abstractMap = new HashMap<>()
@@ -64,10 +59,10 @@ while (rs.next()) {
         partialUpdate.put("set", abstractText);
         doc.addField("id", id);
         doc.addField("abstract", partialUpdate);
-        server.add(doc)
+        client.add(doc)
 
         print "."
 
 }
 
-server.commit()
+client.commit()

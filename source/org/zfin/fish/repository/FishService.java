@@ -4,8 +4,8 @@ import com.google.common.base.Joiner;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.Group;
 import org.apache.solr.client.solrj.response.GroupCommand;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -54,10 +54,10 @@ public class FishService {
 
         SolrQuery query = generateFishSearchSolrQuery(criteria);
 
-        SolrServer solrServer = SolrService.getSolrServer("prototype");
+        SolrClient solrClient = SolrService.getSolrClient("prototype");
         QueryResponse response;
         try {
-            response = solrServer.query(query);
+            response = solrClient.query(query);
         } catch (Exception e) {
             logger.error(e);
             throw new RuntimeException(e);
@@ -420,7 +420,7 @@ public class FishService {
         }
 */
 
-        SolrServer server = SolrService.getSolrServer("prototype");
+        SolrClient server = SolrService.getSolrClient("prototype");
 
         SolrQuery query = new SolrQuery();
 

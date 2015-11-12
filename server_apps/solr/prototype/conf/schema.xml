@@ -10,21 +10,20 @@
     <!-- numeric field types that store and index the text
          value verbatim (and hence don't support range queries, since the
          lexicographic ordering isn't equal to the numeric ordering) -->
-    <fieldType name="integer" class="solr.IntField" omitNorms="true"/>
-    <fieldType name="long" class="solr.LongField" omitNorms="true"/>
-    <fieldType name="float" class="solr.FloatField" omitNorms="true"/>
-    <fieldType name="double" class="solr.DoubleField" omitNorms="true"/>
 
+    <fieldType name="integer" class="solr.TrieIntField" omitNorms="true"/>
+    <fieldType name="long" class="solr.TrieLongField" omitNorms="true"/>
+    <fieldType name="float" class="solr.TrieFloatField" omitNorms="true"/>
+    <fieldType name="double" class="solr.TrieDoubleField" omitNorms="true"/>
 
     <!-- Numeric field types that manipulate the value into
          a string value that isn't human-readable in its internal form,
          but with a lexicographic ordering the same as the numeric ordering,
          so that range queries work correctly. -->
-    <fieldType name="sint" class="solr.SortableIntField" sortMissingLast="true" omitNorms="true"/>
-    <fieldType name="slong" class="solr.SortableLongField" sortMissingLast="true" omitNorms="true"/>
-    <fieldType name="sfloat" class="solr.SortableFloatField" sortMissingLast="true" omitNorms="true"/>
-    <fieldType name="sdouble" class="solr.SortableDoubleField" sortMissingLast="true" omitNorms="true"/>
-
+    <fieldType name="sint" class="solr.TrieIntField" sortMissingLast="true" omitNorms="true"/>
+    <fieldType name="slong" class="solr.TrieLongField" sortMissingLast="true" omitNorms="true"/>
+    <fieldType name="sfloat" class="solr.TrieFloatField" sortMissingLast="true" omitNorms="true"/>
+    <fieldType name="sdouble" class="solr.TrieDoubleField" sortMissingLast="true" omitNorms="true"/>
 
 
     <!-- Trie Fields -->
@@ -59,8 +58,8 @@
                       
          Consult the DateField javadocs for more information.
       -->
-    <fieldType name="date" class="solr.DateField" sortMissingLast="true" omitNorms="true"/>
 
+    <fieldType name="date" class="solr.TrieDateField" sortMissingLast="true" omitNorms="true"/>
 
     <!-- A text field that only splits on whitespace for exact matching of words -->
     <fieldType name="text_ws" class="solr.TextField" positionIncrementGap="100">
@@ -127,14 +126,13 @@
               <tokenizer class="solr.WhitespaceTokenizerFactory"/>
               <filter class="solr.LowerCaseFilterFactory"/>
               <filter class="solr.ASCIIFoldingFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" side="front"/>
+              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
               <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
           <analyzer type="query">
               <tokenizer class="solr.WhitespaceTokenizerFactory"/>
               <filter class="solr.LowerCaseFilterFactory"/>
               <filter class="solr.ASCIIFoldingFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" side="front"/>
               <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
       </fieldType>
@@ -143,13 +141,12 @@
           <analyzer type="index">
               <tokenizer class="solr.PatternTokenizerFactory" pattern="-" />
               <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" side="front"/>
               <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
           <analyzer type="query">
               <tokenizer class="solr.PatternTokenizerFactory" pattern="-" />
               <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" side="front"/>
+              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
               <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
       </fieldType>
@@ -159,7 +156,7 @@
               <tokenizer class="solr.StandardTokenizerFactory"/>
               <filter class="solr.WordDelimiterFilterFactory"/>
               <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" side="front"/>
+              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
               <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
       </fieldType>
@@ -168,14 +165,10 @@
           <analyzer type="index">
               <tokenizer class="solr.PatternTokenizerFactory" pattern="," />
               <filter class="solr.LowerCaseFilterFactory"/>
-              <!--<filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" side="front"/>
-              <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>-->
           </analyzer>
           <analyzer type="query">
               <tokenizer class="solr.PatternTokenizerFactory" pattern="," />
               <filter class="solr.LowerCaseFilterFactory"/>
-      <!--        <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" side="front"/>
-              <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>-->
           </analyzer>
       </fieldType>
 
@@ -184,13 +177,12 @@
           <analyzer type="index">
               <tokenizer class="solr.WhitespaceTokenizerFactory"/>
               <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="3" maxGramSize="25" side="front"/>
+              <filter class="solr.EdgeNGramFilterFactory" minGramSize="3" maxGramSize="25" />
               <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
           <analyzer type="query">
               <tokenizer class="solr.WhitespaceTokenizerFactory"/>
               <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="3" maxGramSize="25" side="front"/>
               <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
       </fieldType>
@@ -224,14 +216,13 @@
             <tokenizer class="solr.LetterTokenizerFactory"/>
             <filter class="solr.LowerCaseFilterFactory"/>
             <filter class="solr.ShingleFilterFactory" maxShingleSize="3" outputUnigrams="true" tokenSeparator=""/>
-            <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" side="front"/>
+            <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
             <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
           <analyzer type="query">
             <tokenizer class="solr.LetterTokenizerFactory"/>
             <filter class="solr.LowerCaseFilterFactory"/>
             <filter class="solr.ShingleFilterFactory" maxShingleSize="3" outputUnigrams="true" tokenSeparator=""/>
-            <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" side="front"/>
             <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
         </fieldType>
@@ -477,7 +468,7 @@
    <field name="url" type="string" indexed="true" stored="true"   />
    <field name="category" type="keyword" indexed="true" stored="true" required="true" />
 
-   <field name="name" type="abbrev" indexed="true" stored="true" required="true"  termVectors="true" termPositions="true" termOffsets="true" />
+   <field name="name" type="text" indexed="true" stored="true" required="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="proper_name" type="abbrev" indexed="true" stored="true" termVectors="true" termPositions="true" termOffsets="true" />
    <field name="full_name" type="text" indexed="true" stored="true" required="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="alias" type="abbrev" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
@@ -808,6 +799,8 @@
 
  <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
  <solrQueryParser defaultOperator="AND"/>
+
+    <copyField source="proper_name" dest="proper_name_k"/>
 
    <copyField source="labeled_anatomy_direct" dest="labeled_anatomy"/>
    <copyField source="labeled_anatomy_parent" dest="labeled_anatomy"/>

@@ -2,7 +2,7 @@ package org.zfin.uniquery
 
 import org.apache.log4j.Logger
 import org.apache.solr.client.solrj.SolrQuery
-import org.apache.solr.client.solrj.SolrServer
+import org.apache.solr.client.solrj.SolrClient
 import org.apache.solr.client.solrj.response.QueryResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
@@ -24,17 +24,17 @@ class QuerySpec extends ZfinIntegrationSpec {
     @Autowired
     QueryManipulationService queryManipulationService
 
-    @Shared SolrServer server
+    @Shared SolrClient client
     @Shared SolrQuery query
     @Shared SolrQuery secondQuery
 
     //sets up for all tests in class
     def setupSpec() {
-        server = SolrService.getSolrServer("prototype")
+        client = SolrService.getSolrClient("prototype")
     }
 
     def cleanSpec() {
-        server = null
+        client = null
     }
 
     //sets up for each test
@@ -57,7 +57,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         QueryResponse response = new QueryResponse()
 
         try {
-            response = server.query(query)
+            response = client.query(query)
         } catch (Exception e) {
             logger.error(e);
         }
@@ -131,7 +131,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         QueryResponse response = new QueryResponse()
 
         try {
-            response = server.query(query)
+            response = client.query(query)
         } catch (Exception e) {
             logger.error(e);
         }
@@ -163,8 +163,8 @@ class QuerySpec extends ZfinIntegrationSpec {
         QueryResponse secondResponse = new QueryResponse()
 
         try {
-            response = server.query(query)
-            secondResponse = server.query(secondQuery)
+            response = client.query(query)
+            secondResponse = client.query(secondQuery)
         } catch (Exception e) {
             logger.error(e);
         }
@@ -182,6 +182,27 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.PHENOTYPE.name     | "eye ectopic"                  |  "ectopic eyes"           //Case 11266
         Category.PHENOTYPE.name     | "vasculature torn"             |  "vasculature ruptured"   //Case 11266
         ""                          | "znf zmp mouse"                |  "znf zmp Mouse"          //Case 11330
+    }
+
+    def "a query for #queryString should bring back #resultName as the first result"() {
+        when: "Solr is queried for this string"
+        query.setQuery(queryManipulationService.processQueryString(queryString))
+        QueryResponse response = new QueryResponse()
+
+        try {
+            response = client.query(query)
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+        then: "the first result matches the specified name"
+        response?.results?.first()?.name == resultName
+
+        where:
+        queryString | resultName
+        "fgf8a"     | "fgf8a"
+        "pax2a"     | "pax2a"
+
     }
 
 }
