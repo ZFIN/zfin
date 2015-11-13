@@ -50,7 +50,9 @@ public enum Category {
     ),
     DISEASE("Human Disease",
             FieldName.GENE,
-            FieldName.DISEASE_MODEL),  
+            FieldName.DISEASE_MODEL,
+            FieldName.EXPERIMENTAL_CONDITIONS
+    ),
     MUTANT("Mutation / Tg",
             TYPE,
             AFFECTED_GENE,
