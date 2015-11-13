@@ -117,7 +117,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                              + [[Category.EXPRESSIONS.getName()],["reporter_gene", "zebrafish_gene", FieldName.EXPRESSIONS_ANATOMY_TF.getName(), "assay", "genotype",
                                            "has_image","experimental_conditions","registered_author","sequence_targeting_reagent" ]].combinations() \
                              + [[Category.PHENOTYPE.getName()],["phenotype_statement","anatomy_tf","biological_process_tf","molecular_function_tf",
-                                               "has_image","sequence_targeting_reagent"]].combinations() \
+                                               "has_image","stage","sequence_targeting_reagent"]].combinations() \
                              + [[Category.ANATOMY.getName()],["ontology", "obsolete"]].combinations() \
                              + [[Category.COMMUNITY.getName()],["type"]].combinations() \
                              + [[Category.PUBLICATION.getName()],["gene", "sequence_alteration", "registered_author", "journal", "keyword", "publication_type"]].combinations() \
