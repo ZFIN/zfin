@@ -961,7 +961,7 @@ var validateFishListForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, s
         }
 
         if (fishNamesOfSTR2.length > 0) {
-            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is with the following fish:</h4>');
+            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is associated with the following fish:</h4>');
             for (var i = 0; i < fishNamesOfSTR2.length; i++) {
                 jQuery('#validationSTRText').append('<div>'
                         + '<a target="_blank" href="/' + fishIDsOfSTR2[i] +'">'
@@ -969,9 +969,12 @@ var validateFishListForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, s
                         + '</div>');
             }
         } else {
-            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is with no fish.</h4>');
+            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is associated with no fish.</h4>');
         }
     }
+
+    if (!differentTargets && !differentSequence && !differentFish)
+        jQuery('#submitMerge').removeAttr('disabled');
 
     if (!differentTargets && !differentSequence && differentFish)
         jQuery('#ignoreDifferentFishForSTR').show();
