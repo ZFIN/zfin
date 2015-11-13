@@ -19,7 +19,7 @@
             <tr class=${loop.index%2==0 ? "even" : "odd"}>
                 <td><zfin:link entity="${org}"/></td>
                 <td>
-                    <authz:authorize ifAnyGranted="root">
+                    <authz:authorize access="hasRole('root')">
                         <a class="small-new-link"
                            href='/action/profile/${fn:toLowerCase(type)}/edit/${org.zdbID}'>Edit
                         </a>

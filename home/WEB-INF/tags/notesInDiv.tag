@@ -3,7 +3,7 @@
 <%@ attribute name="hasNotes" type="org.zfin.infrastructure.EntityNotes" rtexprvalue="true" required="true" %>
 
 
-<authz:authorize ifAnyGranted="root">
+<authz:authorize access="hasRole('root')">
     <c:if test="${!empty hasNotes.dataNotes}">
         <tr>
             <th valign="top">Curator Note:</th>

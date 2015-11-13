@@ -108,7 +108,7 @@
         </td>
     </tr>
 
-    <authz:authorize ifAnyGranted="root">
+    <authz:authorize access="hasRole('root')">
 
         <tr>
             <th>File:</th>

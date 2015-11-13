@@ -6,7 +6,7 @@
 <script type="text/javascript" src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
 <script type="text/javascript" src="/javascript/jquery-ui-1.10.4.custom.js"></script>
 
-<authz:authorize ifAnyGranted="root">
+<authz:authorize access="hasRole('root')">
 
 <script type="text/javascript">
 var LookupProperties0 = {

@@ -76,7 +76,7 @@
 
                         <div class="btn-group search-box-buttons">
                             <button type="submit" class="btn btn-default btn-zfin">Go</button>
-                            <authz:authorize ifAnyGranted="root">
+                            <authz:authorize access="hasRole('root')">
                                 <c:if test="${category eq publicationCategoryName}">
                                     <a id="advanced-search-button" class="btn btn-default" href="#" title="Advanced Search Options"
                                        onClick="jQuery('#advanced-container').slideToggle(200);"><i class="fa fa-list"></i></a>
@@ -131,7 +131,7 @@
 
     <div style="display: block; position: absolute; top: 125px; right: 50px; color: #666; font-size: 9px;">
 
-            <authz:authorize ifAnyGranted="root">
+            <authz:authorize access="hasRole('root')">
                 <a href="${baseUrl}&hl=true">highlight</a>
                 <a href="${baseUrl}&explain=true">debug</a>
             </authz:authorize>
@@ -208,7 +208,7 @@
                         </span>
 
                         <div class="pull-right">
-                            <authz:authorize ifAnyGranted="root">
+                            <authz:authorize access="hasRole('root')">
                                 <div class="btn-group">
                                     <button id="boxy-result-button" class="btn btn-default result-action-tooltip" title="Detailed Results">
                                         <i class="fa fa-newspaper-o fa-flip-horizontal"></i>

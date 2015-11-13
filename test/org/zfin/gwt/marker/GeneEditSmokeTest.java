@@ -20,7 +20,6 @@ public class GeneEditSmokeTest extends AbstractSecureSmokeTest {
 
     @Test
     public void testAlternateGeneNote() throws Exception {
-        login(webClient);
         // first we have to guarantee that we always have a note there
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-001103-2");
         String oldNote = gene.getPublicComments();

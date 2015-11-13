@@ -23,15 +23,15 @@
         <% } %><br/>
 
         <div class="login-box">
-            <form id="login" name="login" action="/action/security-check"
+            <form id="login" name="login" action="/action/j_security-check"
                   method="POST" accept-charset="UTF-8">
                 <input type='hidden' name='_spring_security_remember_me' value="true" />
                 <input type="hidden" name="page" value="Main"/>
-                <label for="j_username">Login:</label>
-                <input type="text" size="12" name="j_username" id="j_username">
+                <label for="username">Login:</label>
+                <input type="text" size="12" name="username" id="username">
                 &nbsp;&nbsp;
-                <label for="j_password">Password:</label>
-                <input type="password" size="12" name="j_password" id="j_password">
+                <label for="password">Password:</label>
+                <input type="password" size="12" name="password" id="password">
                 &nbsp;&nbsp; <input type="submit" name="action" value="login"/>
             </form>
         </div>

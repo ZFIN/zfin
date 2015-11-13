@@ -35,13 +35,13 @@
             <tr class=${loop.index%2==0 ? "even" : "odd"}>
                 <td>
                     <zfin:link entity="${person}"/>
-                    <authz:authorize ifAnyGranted="root">
+                    <authz:authorize access="hasRole('root')">
                         ${person.accountInfo.login}
                         ${person.accountInfo.role eq 'root' ? '<div class=error-inline>root</div>' : ''}
                     </authz:authorize>
                 </td>
                 <td>
-                    <authz:authorize ifAnyGranted="root">
+                    <authz:authorize access="hasRole('root')">
                         <a class="small-new-link" href='/action/profile/person/edit/${person.zdbID}'>Edit</a>
                     </authz:authorize>
                 </td>

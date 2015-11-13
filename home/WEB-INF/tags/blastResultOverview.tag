@@ -47,7 +47,7 @@
             <td>
                 <c:if test="${!hit.markerIsHit}">
                     <zfin:link entity="${hit.hitMarker}"/>
-                    <authz:authorize ifAnyGranted="root">
+                    <authz:authorize access="hasRole('root')">
                       <zfin2:gbrowseHoverIcon gbrowseImage="${hit.gbrowseImage}"/>
                     </authz:authorize>
                 </c:if>

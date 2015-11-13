@@ -20,13 +20,13 @@
     </tr>
     <tr>
         <th><span class="name-label">Comment:</span>
-            <authz:authorize ifAnyGranted="root">
+            <authz:authorize access="hasRole('root')">
                 <span> (<a href="#" onclick="jQuery('#editComment').show()">Edit</a>)</span>
             </authz:authorize>
         </th>
         <td><span class="name-value">${linkage.comments}</span></td>
     </tr>
-    <authz:authorize ifAnyGranted="root">
+    <authz:authorize access="hasRole('root')">
         <tr style="display: none" id="editComment">
             <th><span class="name-label">Edit
                 :</span></th>

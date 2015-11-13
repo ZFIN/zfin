@@ -151,7 +151,7 @@
     </div>--%>
 
 
-    <authz:authorize ifAnyGranted="root">
+    <authz:authorize access="hasRole('root')">
         <c:if test="${formBean.term.ontology.ontologyName == 'disease_ontology'}">
             <zfin-ontology:phenogrid doid="${formBean.term.oboID}"/>
         </c:if>
