@@ -71,7 +71,7 @@ geno: $csv.ftr1 ; $csv.ftr2(TL)
 
     Marker gene = RepositoryFactory.markerRepository.getMarkerByName(csv.xpatexgene)
     Publication publication = RepositoryFactory.publicationRepository.getPublication("ZDB-PUB-141007-8")
-    Genotype genotype = RepositoryFactory.mutantRepository.getGenotypeByID("ZDB-GENO-151112-6")
+    Genotype genotype = RepositoryFactory.mutantRepository.getGenotypeByID("ZDB-GENO-150721-4")
 
     Fish burgessFish=getFishByGeno(genotype)
     Experiment experiment = RepositoryFactory.expressionRepository.getExperimentByID("ZDB-EXP-041102-1")
