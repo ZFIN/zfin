@@ -141,12 +141,12 @@
           <analyzer type="index">
               <tokenizer class="solr.PatternTokenizerFactory" pattern="-" />
               <filter class="solr.LowerCaseFilterFactory"/>
+              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
               <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
           <analyzer type="query">
               <tokenizer class="solr.PatternTokenizerFactory" pattern="-" />
               <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
               <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
       </fieldType>
@@ -487,7 +487,8 @@
    <field name="ontology" type="keyword" indexed="true" stored="true"   />
 
    <!-- this field is intended to split STR and antibody names on dashes so that we'll have a starts-with match on the second portion -->
-   <field name="marker_abbrev" type="tokenized_abbrev" indexed="true" stored="false" multiValued="true"/>
+   <field name="marker_abbrev" type="tokenized_abbrev" indexed="true" stored="true" multiValued="true"/>
+
    <field name="related_accession" type="text" indexed="true" stored="true" multiValued="true" />
    <!--adding a field for related markers case 11289-->
      <field name="related_marker" type="text" indexed="true" stored="true" multiValued="true" />
