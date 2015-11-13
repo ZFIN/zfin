@@ -53,5 +53,14 @@
         </groovy>
     </target>
 
+    <target name="loadBurgessExpressionCommit">
+        <groovy src="LoadBurgessExpression.groovy"/>
+    </target>
+
+    <target name="loadBurgessExpressionRollback">
+        <groovy src="LoadBurgessExpression.groovy">
+            <arg value="--rollback"/>
+        </groovy>
+    </target>
 
 </project>
