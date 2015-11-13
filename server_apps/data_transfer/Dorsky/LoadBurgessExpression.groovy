@@ -47,7 +47,7 @@ Person owner = (Person) HibernateUtil.currentSession().createCriteria(Person.cla
         .uniqueResult();
 //Person owner=RepositoryFactory.profileRepository.getPerson("ZDB-PERS-030520-2")
 
-def dorskyVideos = parseCsv(new FileReader("/research/zusers/pm/Projects/releases/HBurgess/burgessExpression.csv"))
+def dorskyVideos = parseCsv(new FileReader("burgessExpression.csv"))
 String mediaDir = "/research/zusers/pm/Projects/releases/HBurgess/images/"
 
 
