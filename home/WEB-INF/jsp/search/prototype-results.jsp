@@ -49,7 +49,7 @@
 
 
     <div class="row">
-        <div class="search-box col-md-offset-1 col-md-11" style="margin-bottom: 10px; margin-top:10px; ">
+        <div class="search-box col-md-offset-1 col-md-11">
             <form id="query-form" class="form-inline" method="get" action="/search">
                 <div class="search-input-container">
 
@@ -195,7 +195,7 @@
                     </div>
                 </c:if>
 
-                <div class="row" style="margin-top: 1em;">
+                <div class="row">
                     <div class="col-md-2 col-sm-3 col-xs-4">
                         <a href="${downloadUrl}" class="btn btn-default">
                             <i class="fa fa-download"></i> Download

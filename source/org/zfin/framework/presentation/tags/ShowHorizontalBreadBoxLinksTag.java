@@ -57,7 +57,7 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
 
         StringBuilder out = new StringBuilder();
         out.append("<div class=\"col-md-12 horizontal-breadbox\">");
-        out.append("<a class=\"btn btn-default\" href=\"");
+        out.append("<a class=\"btn btn-default horizontal-breadbox-label\" href=\"");
         out.append(url);
         out.append("\">Remove All</a>");
         for (String fq : query.getFilterQueries()) {

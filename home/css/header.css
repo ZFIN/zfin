@@ -49,7 +49,8 @@ body {
     color: #066;
 }
 
-.site-link a {
+.site-link a,
+.site-link a:hover {
     text-decoration: none;
     color: #066;
 }

@@ -8,8 +8,6 @@ div.search-result {
     border-top-right-radius: 5px;;
     margin-top: .5em;
     padding: .5em;
-    position: relative;
-    left: -.5em;
 }
 
 .cross-reference-result-container {
@@ -21,8 +19,9 @@ div.search-result {
     left: 0;
     border-width: 2px;
     background: #efefef;
-    margin-bottom: 10px; 
+    margin-bottom: 10px;
 }
+
 .cross-reference-result-container .search-result-category {
     display: none;
 }
@@ -33,6 +32,7 @@ div.search-result {
     margin-left: 1em;
     opacity: .9;
 }
+
 .search-result .fish-result-table th {
     font-weight: bold;
     opacity: .8;
@@ -79,11 +79,11 @@ div.search-result-name {
 }
 
 .result-id {
-    font-weight: normal ;
+    font-weight: normal;
     font-size: smaller;
-    opacity: .75 ;
-    float:right ;
-    position: relative ;
+    opacity: .75;
+    float: right;
+    position: relative;
     top: -7px;
     left: 5px;
 }
@@ -120,8 +120,9 @@ table.search-result-entity-attributes td {
 .btn-pub-actions {
     visibility: hidden;
 }
+
 .search-result:hover .btn-pub-actions {
-    visibility:visible;
+    visibility: visible;
 }
 
 .collapsible-attribute {
@@ -169,8 +170,9 @@ table.search-result-entity-attributes td {
     font-weight: bold;
     opacity: .65;
 }
+
 .search-result-related-links li + li::before {
-    content:" | "
+    content: " | "
 }
 
 .table-results {
@@ -181,6 +183,7 @@ table.search-result-entity-attributes td {
 .search-result-related-links {
     clear: both;
 }
+
 .search-result-thumbnail img {
     border: none;
 }
@@ -223,6 +226,7 @@ table.search-result-snippet {
     font-size: small;
     font-color: #600;
 }
+
 .result-explain {
     white-space: pre-wrap;
     font-size: small;
@@ -238,13 +242,10 @@ table.search-result-snippet {
 .search-result h4 {
     font-size: 14px !important;
     font-weight: 500;
-    display:inline;
+    display: inline;
 }
 
 .result-count {
-    padding-top: 1em;
-    padding-left: 2em;
-    padding-right: 2em;
     font-weight: bold;
     text-align: center
 }
@@ -252,6 +253,7 @@ table.search-result-snippet {
 .sort-controls li {
     text-align: left;
 }
+
 .sort-button .caret {
     margin-left: 1em;
 }
@@ -266,25 +268,26 @@ div.breadbox {
 }
 
 .horizontal-breadbox {
-    margin-bottom: 2px;
+    margin-bottom: 1em;
 }
 
 .horizontal-breadbox-label {
-    background-color: #066;
-    padding: .5em;
-    margin: .25em;
-    margin-top: 0px;
-    margin-bottom: .5em;
+    margin-right: 0.5em;
+    margin-bottom: 0.5em;
 }
+
 .horizontal-breadbox-label .breadbox-field-name {
     opacity: 0.6;
 }
+
 .horizontal-breadbox-label .breadbox-field-value {
     opacity: 1.0;
 }
 
 div.search-box {
     white-space: nowrap;
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 #primary-query-input {
@@ -313,6 +316,7 @@ body.modal-open {
 .phenotype-data-modal {
     width: 100%;
 }
+
 .gene-expression-data-modal td,
 .phenotype-data-modal td {
     font-size: 14px;
@@ -325,10 +329,12 @@ body.modal-open {
 .solr-document-link {
     padding-left: 1em;
 }
+
 .solr-document-link,
 .result-explain-link {
     visibility: hidden;
 }
+
 .search-result:hover .solr-document-link,
 .search-result:hover .result-explain-link {
     visibility: visible;
@@ -355,6 +361,7 @@ body.modal-open {
     border-color: #066;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 }
+
 .btn-zfin:hover,
 .btn-zfin:focus,
 .btn-zfin:active,
@@ -366,7 +373,7 @@ body.modal-open {
 }
 
 .advanced-text-input {
-    width:600px;
+    width: 600px;
 }
 
 .carousel-control {
@@ -383,10 +390,12 @@ body.modal-open {
 li.facet-value {
     line-height: 21px !important;
 }
+
 .tight-on-the-left {
     padding-left: 2px !important;
     margin-left: 0 !important;
 }
+
 .tight-on-the-right {
     padding-right: 2px !important;
     margin-right: 0 !important;
@@ -398,15 +407,18 @@ li.facet-value {
     font-weight: bold;
     cursor: pointer;
 }
+
 .facet-label {
     font-size: 15px;
     font-weight: bold;
     color: #666;
     cursor: pointer;
 }
+
 .category-facet-group-values li.facet-value {
     font-size: 15px;
 }
+
 .root-only-facet-group .facet-group-label-container {
     color: red;
 }
@@ -431,6 +443,7 @@ i.facet-selected,
 .facet-value i.include-exclude-icon {
     visibility: hidden;
 }
+
 .facet-value:hover i.include-exclude-icon {
     visibility: visible;
 }
