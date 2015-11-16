@@ -127,7 +127,9 @@ class QuerySpec extends ZfinIntegrationSpec {
 
         when: "Solr is queried"
         query.setQuery(queryManipulationService.processQueryString(queryString))
-        query.addFilterQuery("category:\"" + category + "\"")
+        if (category) {
+            query.addFilterQuery("category:\"" + category + "\"")
+        }
         QueryResponse response = new QueryResponse()
 
         try {
@@ -145,6 +147,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.EXPRESSIONS.name | "MGC:56505 zebrafish_gene:[* TO *]"  | "12346"
         Category.EXPRESSIONS.name | "MGC:56505 gcdha"                    | "12346"
         Category.PUBLICATION.name | "curator:\"David Fashena\" curator:\"Sabrina Toro\" ZDB-PUB-100504-14"  | "13571"
+        null                      | "sheturnedmeintoanewt"               | "12988"
 
     }
 

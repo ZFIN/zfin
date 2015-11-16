@@ -152,13 +152,20 @@
       </fieldType>
 
       <fieldType name="construct_name" class="solr.TextField" positionIncrementGap="100">
-          <analyzer>
+          <analyzer type="index">
               <tokenizer class="solr.StandardTokenizerFactory"/>
               <filter class="solr.WordDelimiterFilterFactory"/>
               <filter class="solr.LowerCaseFilterFactory"/>
               <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
               <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
+          <analyzer type="query">
+              <tokenizer class="solr.StandardTokenizerFactory"/>
+              <filter class="solr.WordDelimiterFilterFactory"/>
+              <filter class="solr.LowerCaseFilterFactory"/>
+              <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+          </analyzer>
+
       </fieldType>
 
       <fieldType name="tokenized_author" class="solr.TextField" positionIncrementGap="100">
