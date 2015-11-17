@@ -10,6 +10,7 @@ import org.zfin.framework.HibernateUtil
 import org.zfin.marker.Marker
 import org.zfin.mutant.Genotype
 import org.zfin.mutant.Fish
+import org.zfin.feature.Feature
 import org.zfin.mutant.FishExperiment
 import org.zfin.ontology.Ontology
 import org.zfin.ontology.Term
@@ -38,25 +39,27 @@ Term unspecified = RepositoryFactory.ontologyRepository.getTermByOboID("ZFA:0001
 // it can be looked up rather than re-created.  Also, the total number of figures created will be checked
 // at the end as a confirmation that the script didn't add the same figure multiple times.
 def videosAdded = [:]
+def sameFigure = [:]
 
 
 //HibernateProfileRepository brings in ProfileService, which requires a validation library that
 //needs to be excluded from the Classpath for this to load up.  Awkward, but easy enough to get a person this way...
-Person owner = (Person) HibernateUtil.currentSession().createCriteria(Person.class)
+/*Person owner = (Person) HibernateUtil.currentSession().createCriteria(Person.class)
         .add(Restrictions.eq("zdbID", "ZDB-PERS-030612-1"))  //Yvonne
-        .uniqueResult();
+        .uniqueResult();*/
 //Person owner=RepositoryFactory.profileRepository.getPerson("ZDB-PERS-030520-2")
 
-def dorskyVideos = parseCsv(new FileReader("burgessExpression.csv"))
+def dorskyVideos = parseCsv(new FileReader("burgessGenos1.csv"))
 String mediaDir = "/research/zusers/pm/Projects/releases/HBurgess/images/"
 
 
-figureLabelIndex = 1
+figureLabelIndex = 0
 dorskyVideos.each { csv ->
 
     println("""
 ----------------------------------------------------------------
             file:      $csv.file
+            fishid:    $csv.fishid
             gene:      $csv.xpatexgene
             ftr1:   $csv.ftr1
             ftr2:   $csv.ftr2
@@ -70,10 +73,10 @@ geno: $csv.ftr1 ; $csv.ftr2(TL)
     )
 
     Marker gene = RepositoryFactory.markerRepository.getMarkerByName(csv.xpatexgene)
-    Publication publication = RepositoryFactory.publicationRepository.getPublication("ZDB-PUB-141007-8")
-    Genotype genotype = RepositoryFactory.mutantRepository.getGenotypeByID("ZDB-GENO-150721-4")
+    Publication publication = RepositoryFactory.publicationRepository.getPublication("ZDB-PUB-151008-10")
 
-    Fish burgessFish=getFishByGeno(genotype)
+
+    Fish burgessFish=RepositoryFactory.mutantRepository.getFish(csv.fishid)
     Experiment experiment = RepositoryFactory.expressionRepository.getExperimentByID("ZDB-EXP-041102-1")
     FishExperiment fishExperiment = RepositoryFactory.mutantRepository.getFishExperimentByFishAndExperimentID(burgessFish.getZdbID(),experiment.getZdbID() )
 
@@ -97,16 +100,21 @@ geno: $csv.ftr1 ; $csv.ftr2(TL)
     if (!videosAdded[csv.file]) {
         figCaption="";
 //        figureLabelIndex[publication.zdbID] = figureLabelIndex.get(publication.zdbID, 0) + 1;
-        figureLabelIndex ++;
+
         if (!(csv.file.contains("mov")||(csv.file.contains("mp4")))) {
             figPrefix="Fig."
         }
         else{
             figPrefix="Fig. M"
         }
-        figure = createFigure(figureLabelIndex, publication,superTerm,figPrefix)
+        if (!sameFigure[csv.figlegend]) {
+            figureLabelIndex ++;
+            figure = createFigure(figureLabelIndex, publication, superTerm, figPrefix,csv.figlegend)
+            sameFigure.put(csv.figlegend, figure.zdbID)
+        }
+            //image = ImageService.processImage(figure, owner,mediaDir + csv.file.replace(".jpg", ".jpg"), false)
+        image = ImageService.processImage(figure, mediaDir + csv.file.replace(".jpg", ".jpg"), false,csv.orientation)
 
-            image = ImageService.processImage(figure, owner,mediaDir + csv.file.replace(".jpg", ".jpg"), false,orientation)
             videosAdded.put(csv.file, figure.zdbID)
 
 
@@ -119,10 +127,9 @@ geno: $csv.ftr1 ; $csv.ftr2(TL)
 
     assert(gene)
     assert(publication)
-    assert(genotype)
     assert(experiment)
-    assert(genotypeExperiment)
-    assert(genotypeExperiment.zdbID)
+    assert(fishExperiment)
+    assert(fishExperiment.zdbID)
     assert(superTerm)
     //They should either both be not null or both be null
     //assert((csv.subterm_obo_id && subTerm) || (!csv.subterm_obo_id && !subTerm))
@@ -183,15 +190,15 @@ ExpressionExperiment getOrCreateExpressionExperiment(FishExperiment genotypeExpe
 }
 
 
-Figure createFigure(figureLabelIndex, Publication publication, Term superterm, String prefix) {
+Figure createFigure(figureLabelIndex, Publication publication, Term superterm, String prefix,String caption) {
     Figure figure = new FigureFigure()
-    figCaption=figCaption+"" + superterm.termName
+
     figure.label = prefix + figureLabelIndex
     figure.publication = publication
-    figure.caption = "test"
+    figure.caption = caption
     figure.comments = ""
     HibernateUtil.currentSession().save(figure)
-    HibernateUtil.currentSession().flush()
+  //  HibernateUtil.currentSession().flush()
 
     return figure
 }
@@ -218,11 +225,11 @@ ExpressionResult createExpressionResult(ExpressionExperiment expressionExperimen
         expressionResult = results.get(0)
 
     HibernateUtil.currentSession().save(expressionResult)
-    HibernateUtil.currentSession().flush()
+   // HibernateUtil.currentSession().flush()
 
     expressionResult.addFigure(figure)
     figure.expressionResults = [expressionResult]
-    HibernateUtil.currentSession().flush()
+    //HibernateUtil.currentSession().flush()
 
     return expressionResult
 }
@@ -234,7 +241,7 @@ FishExperiment createFishExperiment(Fish fish, Experiment experiment) {
     genotypeExperiment.standard = true
     genotypeExperiment.standardOrGenericControl = true
     HibernateUtil.currentSession().save(genotypeExperiment)
-    HibernateUtil.currentSession().flush()
+    //HibernateUtil.currentSession().flush()
 
     return genotypeExperiment
 }
@@ -250,19 +257,11 @@ ExpressionExperiment createExpressionExperiment(FishExperiment genotypeExperimen
     expressionExperiment.setAssay(assay)
 
     HibernateUtil.currentSession().save(expressionExperiment)
-    HibernateUtil.currentSession().flush()
+  //  HibernateUtil.currentSession().flush()
 
     return expressionExperiment
 }
 
-Fish getFishByGeno(Genotype genotype){
-
-        String hql = "select fish from Fish as fish " +
-                "where fish.genotype = :genotype";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameter("genotype", genotype);
-    return (Fish) query.uniqueResult();
-    }
 
 
 DevelopmentStage getStageByStart(float stage) {
