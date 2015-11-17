@@ -201,12 +201,8 @@
                             <i class="fa fa-download"></i> Download
                         </a>
                     </div>
-                    <div class="col-md-10 col-sm-9 col-xs-8">
-
-                        <span class="result-count">
-                            <fmt:formatNumber value="${numFound}" pattern="##,###"/> results
-                        </span>
-
+                    <div class="result-count col-md-10 col-sm-9 col-xs-8">
+                        <fmt:formatNumber value="${numFound}" pattern="##,###"/> results
                         <div class="pull-right">
                             <authz:authorize access="hasRole('root')">
                                 <div class="btn-group">

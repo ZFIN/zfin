@@ -60,8 +60,9 @@ public class OntologyService {
         List<RelationshipPresentation> list = getRelatedTerms(term);
         List<RelationshipPresentation> newList = new ArrayList<>(list.size());
         for (RelationshipPresentation presentation : list) {
-            if (!presentation.getType().equalsIgnoreCase("start stage") && !presentation.getType().equalsIgnoreCase("end stage"))
+            if (!presentation.getType().equalsIgnoreCase("start stage") && !presentation.getType().equalsIgnoreCase("end stage")) {
                 newList.add(presentation);
+            }
         }
         return newList;
     }
@@ -73,8 +74,9 @@ public class OntologyService {
         if (relatedItems != null) {
             for (TermRelationship rel : relatedItems) {
                 String displayName;
-                if (rel.getTermTwo() == null)
+                if (rel.getTermTwo() == null) {
                     logger.error("No term two found for: " + rel.getZdbId());
+                }
                 if (rel.getTermTwo().equals(term)) {
                     displayName = RelationshipDisplayNames.getRelationshipName(rel.getType(), true);
                 } else {
@@ -107,23 +109,26 @@ public class OntologyService {
      * @return map
      */
     public static Map<OntologyDTO, Integer> getHistogramOfTerms(List<TermDTO> terms) {
-        if (terms == null)
+        if (terms == null) {
             return null;
+        }
         Map<OntologyDTO, Integer> map = new HashMap<>(5);
         for (TermDTO term : terms) {
             Integer count = map.get(term.getOntology());
-            if (count == null)
+            if (count == null) {
                 map.put(term.getOntology(), 0);
+            }
             map.put(term.getOntology(), map.get(term.getOntology()) + 1);
         }
         return map;
     }
 
     public static int getNumberOfDiseaseGenes(GenericTerm term) {
-        for (TermExternalReference xRef : term.getExternalReferences())
+        for (TermExternalReference xRef : term.getExternalReferences()) {
             if (xRef.getOmimPhenotypes() != null) {
                 return xRef.getOmimPhenotypes().size();
             }
+        }
         return 0;
 
 
@@ -133,8 +138,9 @@ public class OntologyService {
     public static List<OmimPhenotypeDisplay> getOmimPhenotypeForTerm(GenericTerm term) {
         SequenceService sequenceService = new SequenceService();
 
-        if (term == null)
+        if (term == null) {
             return null;
+        }
         Map<String, OmimPhenotypeDisplay> map = new HashMap<>();
         Set<TermExternalReference> termXRef = term.getExternalReferences();
         ArrayList<String> hA = new ArrayList<>();
@@ -174,8 +180,9 @@ public class OntologyService {
         // use SortedSet to hold the values of the map so that the data could be displayed in order
         List<OmimPhenotypeDisplay> omimDisplays = new ArrayList<>();
 
-        if (map.values().size() > 0)
+        if (map.values().size() > 0) {
             omimDisplays.addAll(map.values());
+        }
         ////ToDo
         Collections.sort(omimDisplays, new OmimPhenotypeDisplayComparator());
 
@@ -184,31 +191,25 @@ public class OntologyService {
     }
 
     public static List<FishModelDisplay> getDiseaseModelsWithFishModel(GenericTerm disease) {
-        return getDiseaseModels(disease, true);
-    }
-
-    public static List<FishModelDisplay> getDiseaseModels(GenericTerm disease) {
-        return getDiseaseModels(disease, false);
-    }
-
-    public static List<FishModelDisplay> getDiseaseModels(GenericTerm disease, boolean fishModelRequired) {
-      //  List<DiseaseAnnotation> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease);
-        List<DiseaseAnnotationModel> modelList=getPhenotypeRepository().getHumanDiseaseModels(disease);;
-        if (CollectionUtils.isEmpty(modelList))
+        List<DiseaseAnnotationModel> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease);
+        if (CollectionUtils.isEmpty(modelList)) {
             return null;
+        }
         Map<FishExperiment, FishModelDisplay> map = new HashMap<>();
         for (DiseaseAnnotationModel model : modelList) {
             // ignore disease models without fish models
-            if(model ==null)
+            if (model == null) {
                 continue;
+            }
 
             FishModelDisplay display = new FishModelDisplay(model.getFishExperiment());
             display.addPublication(model.getDiseaseAnnotation().getPublication());
             FishModelDisplay mapModel = map.get(model.getFishExperiment());
-            if (mapModel == null)
+            if (mapModel == null) {
                 map.put(model.getFishExperiment(), display);
-            else
+            } else {
                 mapModel.addPublication(model.getDiseaseAnnotation().getPublication());
+            }
         }
         List<FishModelDisplay> displayList = new ArrayList<>(map.values());
         Collections.sort(displayList);
