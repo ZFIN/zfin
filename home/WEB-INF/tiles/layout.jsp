@@ -63,7 +63,7 @@
 
 <tiles:insertAttribute name="footer"/>
 
-<authz:authorize ifAnyGranted="root">
+<authz:authorize access="hasRole('root')">
     <zfin:printDebugInfo>
         <table cellpadding=5 width=100%>
             <tr>

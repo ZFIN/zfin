@@ -1,5 +1,5 @@
 
-<%--<authz:authorize ifAnyGranted="root">--%>
+<%--<authz:authorize access="hasRole('root')">--%>
 <%
 //    String zdbID = request.getParameter("zdbID");
 //    if(zdbID==null){

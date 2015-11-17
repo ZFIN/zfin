@@ -26,7 +26,7 @@
             </span>
             <c:if test="${person.deceased}"> (Deceased) </c:if>
             <table class="primary-entity-attributes">
-                <authz:authorize ifAnyGranted="root">
+                <authz:authorize access="hasRole('root')">
                     <tr style="background-color: #a9a9a9;">
                         <th>Login:</th>
                         <td>${person.accountInfo.login}

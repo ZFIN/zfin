@@ -162,7 +162,7 @@
 </table>
 
 
-<authz:authorize ifAnyGranted="root">
+<authz:authorize access="hasRole('root')">
     <div class="summary">
         <table class="summary">
             <tr>

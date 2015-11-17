@@ -25,14 +25,14 @@
             </td>
         </c:if>
         <c:if test="${!empty termID}">
-            <authz:authorize ifAnyGranted="root">
+            <authz:authorize access="hasRole('root')">
                 <td>
                     <b>Term ID:</b> ${termID}
                 </td>
             </authz:authorize>
         </c:if>
 
-        <authz:authorize ifAnyGranted="root">
+        <authz:authorize access="hasRole('root')">
             <script type="text/javascript">
                 function confirmDelete() {
                     if (confirm('Delete: ${zdbID}')) {

@@ -80,7 +80,7 @@
     </c:choose>
 </div>
 
-<authz:authorize ifAnyGranted="root">
+<authz:authorize access="hasRole('root')">
     <p/>
 
     <div id="toggleMartOn"><a href="javascript:toggleOn('mart','toggleMartOff','toggleMartOn')">Show Chromosome Mart

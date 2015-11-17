@@ -285,6 +285,8 @@ public class FacetBuilderService {
         facetGroups.add(buildSingleFacetGroup("Phenotypic Gene", GENE.getName(), true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Phenotype Statement", PHENOTYPE_STATEMENT.getName(), true, response, filterQuerySelectionMap, baseUrl));
 
+        facetGroups.add(buildSingleFacetGroup("Stage", STAGE.getName(), true, response, filterQuerySelectionMap, baseUrl));
+
         //FacetGroup phenotype = new FacetGroup("Manifests In", false);
         FacetGroup phenotype = new FacetGroup("Manifests In", true);
         phenotype.addFacet(buildFacet(ANATOMY_TF.getName(), true, response, filterQuerySelectionMap, baseUrl));
