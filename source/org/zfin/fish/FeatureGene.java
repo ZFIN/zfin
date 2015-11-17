@@ -19,7 +19,7 @@ public class FeatureGene {
     private String type;
     private String typeDisplay;
     private MutationType mutationTypeDisplay;
-
+    private String parentalZygosityDisplay;
 
     public long getID() {
         return ID;
@@ -77,11 +77,21 @@ public class FeatureGene {
         this.typeDisplay = typeDisplay;
     }
 
+    public String getParentalZygosityDisplay() {
+        return parentalZygosityDisplay;
+    }
+
+    public void setParentalZygosityDisplay(String parentalZygosityDisplay) {
+        this.parentalZygosityDisplay = parentalZygosityDisplay;
+    }
+
     public MutationType getMutationTypeDisplay() {
-        if (mutationTypeDisplay != null)
+        if (mutationTypeDisplay != null) {
             return mutationTypeDisplay;
-        if (typeDisplay == null)
+        }
+        if (typeDisplay == null) {
             return MutationType.UNKNOWN;
+        }
         return MutationType.getMutationType(typeDisplay);
     }
 
@@ -93,8 +103,9 @@ public class FeatureGene {
         FeatureGene that = (FeatureGene) o;
 
         if (!feature.equals(that.feature)) return false;
-        if (sequenceTargetingReagent != null ? !sequenceTargetingReagent.equals(that.sequenceTargetingReagent) : that.sequenceTargetingReagent != null)
+        if (sequenceTargetingReagent != null ? !sequenceTargetingReagent.equals(that.sequenceTargetingReagent) : that.sequenceTargetingReagent != null) {
             return false;
+        }
         if (gene != null ? !gene.equals(that.gene) : that.gene != null) return false;
         return !(construct != null ? !construct.equals(that.construct) : that.construct != null);
 

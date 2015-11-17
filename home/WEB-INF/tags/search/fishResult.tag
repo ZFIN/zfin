@@ -12,6 +12,7 @@
                     <th>Line / Reagent</th>
                     <th>Mutation Type</th>
                     <th>Construct</th>
+                    <th>Parental Zygosity</th>
                 </tr>
                 <c:forEach var="featureGene" items="${result.featureGenes}">
                     <tr>
@@ -33,6 +34,9 @@
                         </td>
                         <td title="Construct">
                             <zfin:link entity="${featureGene.construct}" suppressPopupLink="true"/>
+                        </td>
+                        <td title="Parental Zygosity">
+                            ${featureGene.parentalZygosityDisplay}
                         </td>
                     </tr>
                 </c:forEach>

@@ -27,7 +27,6 @@ import org.zfin.mutant.Fish;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.mutant.presentation.GenotypePresentation;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.presentation.PhenotypePresentation;
@@ -89,8 +88,9 @@ public class ResultService {
 
 
     public void injectAttributes(Collection<SearchResult> results) {
-        for (SearchResult result : results)
+        for (SearchResult result : results) {
             injectAttributes(result);
+        }
     }
 
     public void injectAttributes(SearchResult result) {
@@ -121,12 +121,13 @@ public class ResultService {
             } else if (StringUtils.equals(result.getCategory(), Category.ANTIBODY.getName())) {
                 injectAntibodyAttributes(result);
             } else if (StringUtils.equals(result.getCategory(), Category.COMMUNITY.getName())) {
-                if (StringUtils.equals(result.getType(), "Person"))
+                if (StringUtils.equals(result.getType(), "Person")) {
                     injectPersonAttributes(result);
-                else if (StringUtils.equals(result.getType(), "Lab"))
+                } else if (StringUtils.equals(result.getType(), "Lab")) {
                     injectLabAttributes(result);
-                else if (StringUtils.equals(result.getType(), "Company"))
+                } else if (StringUtils.equals(result.getType(), "Company")) {
                     injectCompanyAttributes(result);
+                }
             }
         } else {
             injectMergedAttributes(result);
@@ -139,23 +140,28 @@ public class ResultService {
     private void injectAntibodyAttributes(SearchResult result) {
         result.setDisplayedID(result.getId());
         Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(result.getId());
-        if (antibody == null)
+        if (antibody == null) {
             return;
+        }
 
-        if (CollectionUtils.isNotEmpty(antibody.getAliases()))
+        if (CollectionUtils.isNotEmpty(antibody.getAliases())) {
             result.addAttribute(SYNONYMS, withCommas(antibody.getAliases(), "alias"));
+        }
 
         List<MarkerRelationshipPresentation> antigenGeneList = getMarkerRepository().getRelatedMarkerDisplayForTypes(antibody,
                 false, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY);
-        if (CollectionUtils.isNotEmpty(antigenGeneList))
+        if (CollectionUtils.isNotEmpty(antigenGeneList)) {
             result.addAttribute("Antigen Gene:", withCommasAndLink(antigenGeneList, "abbreviation", "zdbId"));
+        }
 
-        if (StringUtils.isNotEmpty(antibody.getHostSpecies()))
+        if (StringUtils.isNotEmpty(antibody.getHostSpecies())) {
             result.addAttribute("Host Organism:", antibody.getHostSpecies());
+        }
 
         String type = "";
-        if (StringUtils.isNotEmpty(antibody.getClonalType()))
+        if (StringUtils.isNotEmpty(antibody.getClonalType())) {
             type += antibody.getClonalType() + " ";
+        }
         List<String> isotypeList = new ArrayList<>(2);
         if (StringUtils.isNotEmpty(antibody.getHeavyChainIsotype())) {
             isotypeList.add(antibody.getHeavyChainIsotype());
@@ -169,39 +175,43 @@ public class ResultService {
             type += Joiner.on(", ").join(isotypeList);
             type += "]";
         }
-        if (org.apache.commons.lang.StringUtils.isNotEmpty(type))
+        if (org.apache.commons.lang.StringUtils.isNotEmpty(type)) {
             result.addAttribute("Type:", type);
+        }
 
 
-        if (CollectionUtils.isNotEmpty(antibody.getSuppliers()))
+        if (CollectionUtils.isNotEmpty(antibody.getSuppliers())) {
             result.addAttribute("Source", withCommas(antibody.getSuppliers(), "organization.name"));
+        }
     }
 
     private void injectTermAttributes(SearchResult result) {
         Term term = RepositoryFactory.getOntologyRepository().getTermByOboID(result.getId());
         result.setDisplayedID(result.getId());
-        if (term == null)
+        if (term == null) {
             return;
-        if (term.isObsolete())
+        }
+        if (term.isObsolete()) {
             result.addAttribute("Obsolete", "<span class='red'>Yes</span>");
-        if (CollectionUtils.isNotEmpty(term.getAliases()))
+        }
+        if (CollectionUtils.isNotEmpty(term.getAliases())) {
             result.addAttribute(SYNONYMS, withCommas(term.getAliases(), "alias"));
-        if (StringUtils.isNotEmpty(term.getDefinition()))
+        }
+        if (StringUtils.isNotEmpty(term.getDefinition())) {
             result.addAttribute("Definition", term.getDefinition());
+        }
 
-        if (term.getOntology().equals(Ontology.ANATOMY)) {
-            if (term.getStart() != null && term.getEnd() != null && term.getStart().equals(term.getEnd()))
+        if (term.getOntology() == Ontology.ANATOMY) {
+            if (term.getStart() != null && term.getEnd() != null && term.getStart().equals(term.getEnd())) {
                 result.addAttribute("Exists During:", term.getStart().getNameLong());
-            else if (term.getStart() != null) {
+            } else if (term.getStart() != null) {
                 String message = term.getStart().getNameLong();
                 message += " - ";
                 message += term.getEnd().getNameLong();
                 result.addAttribute("Exists During:", message);
             }
             if (CollectionUtils.isNotEmpty(term.getImages())) {
-                if (term.getImages().size() == 1) {
-
-                } else {
+                if (term.getImages().size() != 1) {
                     result.setUrl("/" + term.getOboID());
                     Set<Image> images = term.getImages();
                     List<String> imageStringList = new ArrayList<>(images.size());
@@ -216,7 +226,7 @@ public class ResultService {
             }
         }
 
-        if (term.getOntology().equals(Ontology.DISEASE_ONTOLOGY)) {
+        if (term.getOntology() == Ontology.DISEASE_ONTOLOGY) {
             //todo:  add disease specific stuff here
         }
 
@@ -243,8 +253,9 @@ public class ResultService {
             result.addAttribute(PUBLICATION, "<a href=\"/" + figure.getPublication().getZdbID()
                     + "\">" + figure.getPublication().getTitle() + "</a>");
 
-            if (StringUtils.isNotEmpty(figure.getCaption()))
+            if (StringUtils.isNotEmpty(figure.getCaption())) {
                 result.addAttribute(CAPTION, collapsible(figure.getCaption()));
+            }
         }
 
     }
@@ -256,16 +267,21 @@ public class ResultService {
 
         if (gene != null) {
 
-            if (gene.getType().equals(Marker.Type.GENE))
+            if (gene.getType() == Marker.Type.GENE) {
                 result.addAttribute(GENE_NAME, "<span class=\"genedom\">" + gene.getName() + "</span>");
-            if (gene.getType().equals(Marker.Type.GENEP))
+            }
+            if (gene.getType() == Marker.Type.GENEP) {
                 result.addAttribute(PSEUDOGENE_NAME, "<span class=\"genedom\">" + gene.getName() + "</span>");
-            if (gene.getType().equals(Marker.Type.EFG))
+            }
+            if (gene.getType() == Marker.Type.EFG) {
                 result.addAttribute(EFG_NAME, "<span class=\"genedom\">" + gene.getName() + "</span>");
-            if (gene.getType().equals(Marker.Type.TSCRIPT))
+            }
+            if (gene.getType() == Marker.Type.TSCRIPT) {
                 result.addAttribute(TRANSCRIPT_NAME, MarkerPresentation.getAbbreviation(gene));
-            if (gene.getAliases() != null && gene.getAliases().size() > 0)
+            }
+            if (gene.getAliases() != null && gene.getAliases().size() > 0) {
                 result.addAttribute(PREVIOUS_NAME, withCommas(gene.getAliases(), "alias"));
+            }
 
             addLocationInfo(result, gene);
         }
@@ -297,13 +313,15 @@ public class ResultService {
             for (Marker gene : feature.getAffectedGenes()) {
                 affectedGenes.add(gene.getAbbreviation());
             }
-            if (CollectionUtils.isNotEmpty(affectedGenes))
+            if (CollectionUtils.isNotEmpty(affectedGenes)) {
                 result.addAttribute(AFFECTED_GENES, withCommas(affectedGenes));
+            }
 
             result.addAttribute(TYPE, feature.getType().getDisplay());
 
-            if (feature.getConstructs() != null && feature.getConstructs().size() > 0)
+            if (feature.getConstructs() != null && feature.getConstructs().size() > 0) {
                 result.addAttribute(CONSTRUCT, withCommas(feature.getConstructs(), "marker.name"));
+            }
 
 //            screen used to be here, removed as a result of case 11323
             /*if (feature.getFeaturePrefix() != null) {
@@ -335,22 +353,25 @@ public class ResultService {
                 result.addAttribute(SEQUENCE, link);
             }
 
-            if (StringUtils.isNotEmpty(construct.getPublicComments()))
+            if (StringUtils.isNotEmpty(construct.getPublicComments())) {
                 result.addAttribute(NOTE, construct.getPublicComments());
+            }
         }
     }
 
-  public void injectMergedAttributes(SearchResult result) {
-    result.addAttribute(NOTE,"This record has been merged or deleted");
-}
+    public void injectMergedAttributes(SearchResult result) {
+        result.addAttribute(NOTE, "This record has been merged or deleted");
+    }
+
     public void injectSTRAttributes(SearchResult result) {
         result.setDisplayedID(result.getId());
 
         SequenceTargetingReagent reagent = RepositoryFactory.getMarkerRepository().getSequenceTargetingReagent(result.getId());
         if (reagent != null) {
 
-            if (CollectionUtils.isNotEmpty(reagent.getAliases()))
+            if (CollectionUtils.isNotEmpty(reagent.getAliases())) {
                 result.addAttribute(SYNONYMS, withCommas(reagent.getAliases(), "alias"));
+            }
 
             result.addAttribute(TYPE, reagent.getMarkerType().getDisplayName());
 
@@ -358,16 +379,20 @@ public class ResultService {
             for (Marker gene : reagent.getTargetGenes()) {
                 affectedGenes.add(MarkerPresentation.getAbbreviation(gene));
             }
-            if (affectedGenes.size() > 0)
+            if (affectedGenes.size() > 0) {
                 result.addAttribute(TARGETED_GENES, withCommas(affectedGenes));
+            }
 
             List<String> sequenceList = new ArrayList<String>();
-            if (StringUtils.isNotEmpty(reagent.getSequence().getSequence()))
+            if (StringUtils.isNotEmpty(reagent.getSequence().getSequence())) {
                 sequenceList.add(reagent.getSequence().getSequence());
-            if (StringUtils.isNotEmpty(reagent.getSequence().getSecondSequence()))
+            }
+            if (StringUtils.isNotEmpty(reagent.getSequence().getSecondSequence())) {
                 sequenceList.add(reagent.getSequence().getSecondSequence());
-            if (sequenceList.size() > 0)
+            }
+            if (sequenceList.size() > 0) {
                 result.addAttribute(SEQUENCE, withBreaks(sequenceList));
+            }
 
         }
 
@@ -377,29 +402,36 @@ public class ResultService {
         String id = result.getId();
         result.setDisplayedID(id);
         Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(id);
-        if (marker == null)
+        if (marker == null) {
             return;
+        }
 
         addSynonyms(result, marker);
         addLocationInfo(result, marker);
         List<Marker> genesContainedInClones = getMarkerRepository().getMarkersContainedIn(marker, MarkerRelationship.Type.CLONE_CONTAINS_GENE);
-        if (CollectionUtils.isNotEmpty(genesContainedInClones))
+        if (CollectionUtils.isNotEmpty(genesContainedInClones)) {
             result.addAttribute(CLONE_CONTAINS_GENES, withCommasAndLink(genesContainedInClones, "abbreviation", "zdbID"));
+        }
 
         List<Marker> genesContainedViaTranscript = getMarkerRepository().getRelatedGenesViaTranscript(marker, MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT, MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
-        if (CollectionUtils.isNotEmpty(genesContainedViaTranscript))
-        result.addAttribute(CLONE_CONTAINS_GENES, withCommasAndLink(genesContainedViaTranscript, "abbreviation", "zdbID"));
+        if (CollectionUtils.isNotEmpty(genesContainedViaTranscript)) {
+            result.addAttribute(CLONE_CONTAINS_GENES, withCommasAndLink(genesContainedViaTranscript, "abbreviation", "zdbID"));
+        }
         List<Marker> cloneEncodesGene = getMarkerRepository().getMarkersContainedIn(marker, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
-        if (CollectionUtils.isNotEmpty(cloneEncodesGene))
+        if (CollectionUtils.isNotEmpty(cloneEncodesGene)) {
             result.addAttribute(CLONE_ENCODED_BY_GENES, withCommasAndLink(cloneEncodesGene, "abbreviation", "zdbID"));
+        }
         if (marker instanceof Clone) {
             Clone clone = (Clone) marker;
-            if (clone.getRating() != null)
+            if (clone.getRating() != null) {
                 result.addAttribute(QUALITY, clone.getRating().toString());
-            if (clone.getProblem() != null)
+            }
+            if (clone.getProblem() != null) {
                 result.addAttribute(CLONE_PROBLEM_TYPE, clone.getProblem().name() + " <img src=\"/images/warning-noborder.gif\" width=\"20\" height=\"20\" align=\"top\"/>");
-            if (clone.getRating() != null)
+            }
+            if (clone.getRating() != null) {
                 result.addAttribute(QUALITY, "<img src='/images/" + clone.getRating() + "0stars.gif'>");
+            }
         }
 
     }
@@ -412,11 +444,13 @@ public class ResultService {
 
         if (person != null) {
 
-            if (StringUtils.isNotEmpty(person.getEmail()))
+            if (StringUtils.isNotEmpty(person.getEmail())) {
                 result.addAttribute(EMAIL, person.getEmail());
+            }
 
-            if (StringUtils.isNotEmpty(person.getAddress()))
+            if (StringUtils.isNotEmpty(person.getAddress())) {
                 result.addAttribute(ADDRESS, "<span class=\"result-street-address\">" + person.getAddress() + "</span>");
+            }
 
 
         }
@@ -429,13 +463,15 @@ public class ResultService {
         Lab lab = RepositoryFactory.getProfileRepository().getLabById(result.getId());
 
         if (lab != null) {
-            if (StringUtils.isNotEmpty(lab.getAddress()))
+            if (StringUtils.isNotEmpty(lab.getAddress())) {
                 result.addAttribute(ADDRESS, "<span class=\"result-street-address\">" + lab.getAddress() + "</span>");
+            }
 
             List<FeaturePrefix> featurePrefixes = RepositoryFactory.getFeatureRepository().getCurrentLabPrefixesById(lab.getZdbID(), false);
 
-            if (CollectionUtils.isNotEmpty(featurePrefixes))
+            if (CollectionUtils.isNotEmpty(featurePrefixes)) {
                 result.addAttribute(LINE_DESIGNATION, withCommas(featurePrefixes, "prefixString"));
+            }
         }
 
     }
@@ -446,15 +482,17 @@ public class ResultService {
         Company company = RepositoryFactory.getProfileRepository().getCompanyById(result.getId());
 
         if (company != null) {
-            if (StringUtils.isNotEmpty(company.getAddress()))
+            if (StringUtils.isNotEmpty(company.getAddress())) {
                 result.addAttribute(ADDRESS, "<span class=\"result-street-address\">" + company.getAddress() + "</span>");
+            }
         }
 
     }
 
     protected void addSynonyms(SearchResult result, Marker marker) {
-        if (CollectionUtils.isNotEmpty(marker.getAliases()))
+        if (CollectionUtils.isNotEmpty(marker.getAliases())) {
             result.addAttribute(SYNONYMS, withCommas(marker.getAliases(), "alias"));
+        }
     }
 
     public void injectExpressionAttributes(SearchResult result) {
@@ -603,32 +641,27 @@ public class ResultService {
 
             if (!StringUtils.contains(ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true), "standard or control")) {
 
-                    StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder();
 
                 sb.append(FishPresentation.getName(phenotypeExperiment.getFishExperiment().getFish()));
 
-                    String experimentText = ExperimentPresentation.getNameForFaceted(phenotypeExperiment.getFishExperiment().getExperiment());
+                String experimentText = ExperimentPresentation.getNameForFaceted(phenotypeExperiment.getFishExperiment().getExperiment());
                 if (StringUtils.isNotBlank(experimentText)) {
-                        sb.append(" + ");
+                    sb.append(" + ");
                     sb.append(experimentText);
-                    }
-
-                    sb.append(" from ");
-
-                    sb.append(phenotypeExperiment.getFigure().getPublication().getShortAuthorList());
-                    sb.append(" ");
-                    sb.append(phenotypeExperiment.getFigure().getLabel());
-
-                    result.setName(sb.toString());
                 }
 
+                sb.append(" from ");
+
+                sb.append(phenotypeExperiment.getFigure().getPublication().getShortAuthorList());
+                sb.append(" ");
+                sb.append(phenotypeExperiment.getFigure().getLabel());
+
+                result.setName(sb.toString());
             }
+
         }
-
-
-
-
-
+    }
 
 
     public void injectPublicationAttributes(SearchResult result) {
@@ -644,8 +677,9 @@ public class ResultService {
                 sb.append(publication.getJournal().getAbbreviation());
                 sb.append(" ");
             }
-            if (publication.getPublicationDate() != null)
+            if (publication.getPublicationDate() != null) {
                 sb.append(publication.getPublicationDate().get(Calendar.YEAR));
+            }
 
             result.addAttribute(JOURNAL, sb.toString());
             String abstractText = publication.getAbstractText();
@@ -662,8 +696,9 @@ public class ResultService {
         //If it's only a line or two, the css applies a gradient that looks very silly, so only apply
         //this class to strings longer than some reasonable length...
 
-        if (StringUtils.isNotEmpty(string) && string.length() < 200)
+        if (StringUtils.isNotEmpty(string) && string.length() < 200) {
             return string;
+        }
 
         return "<div class=\"collapsible-attribute collapsed-attribute\">" + string + "</div>";
     }

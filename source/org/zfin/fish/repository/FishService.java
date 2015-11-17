@@ -155,7 +155,10 @@ public class FishService {
             Set<FeatureGene> featureGeneSet = new HashSet<>();
             for (GenotypeFeature genotypeFeature : fish.getGenotype().getGenotypeFeatures()) {
                 Feature feature = genotypeFeature.getFeature();
-                featureGeneSet.addAll(getFeatureGeneList(feature));
+                for (FeatureGene fg : getFeatureGeneList(feature)) {
+                    fg.setParentalZygosityDisplay(genotypeFeature.getParentalZygosityDisplay());
+                    featureGeneSet.add(fg);
+                }
             }
             featureGenes.addAll(featureGeneSet);
         }
@@ -190,8 +193,9 @@ public class FishService {
                 fg.setConstruct(marker);
                 hasMarkerOrConstruct = true;
             }
-            if (hasMarkerOrConstruct)
+            if (hasMarkerOrConstruct) {
                 featureGeneList.add(fg);
+            }
         }
         // at least have a feature in this list
         if (CollectionUtils.isEmpty(featureGeneList)) {
@@ -431,7 +435,7 @@ public class FishService {
         query.addFilterQuery(FieldName.XREF.getName() + ":" + fishID);
         query.setRows(500);
         query.add("group", "true");
-        query.add("group.field","figure_id");
+        query.add("group.field", "figure_id");
         query.add("group.ngroups", "true");
 
 
@@ -463,7 +467,7 @@ public class FishService {
 
         for (GroupCommand groupCommand : response.getGroupResponse().getValues()) {
 
-            if (CollectionUtils.isNotEmpty(groupCommand.getValues()) ) {
+            if (CollectionUtils.isNotEmpty(groupCommand.getValues())) {
                 for (Group group : groupCommand.getValues()) {
                     for (SolrDocument doc : group.getResult()) {
                         ZfinFigureEntity figure = new ZfinFigureEntity();
@@ -497,10 +501,11 @@ public class FishService {
         for (Figure figure : expressionFigures) {
             figureEntity = new ZfinFigureEntity();
             figureEntity.setID(figure.getZdbID());
-            if (figure.getImages() != null)
+            if (figure.getImages() != null) {
                 figureEntity.setHasImage(true);
-            else
+            } else {
                 figureEntity.setHasImage(false);
+            }
             figureEntities.add(figureEntity);
         }
 

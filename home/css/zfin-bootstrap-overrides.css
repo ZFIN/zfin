@@ -5,6 +5,7 @@
 body {
     font-family: arial, sans-serif;
     margin-top: 81px;
+    background: @SITE_BACKGROUND@;
 }
 
 div.allcontent {
