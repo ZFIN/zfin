@@ -484,8 +484,9 @@ public class ResultService {
             if (xpatex.getProbe() != null) {
                 result.addAttribute(PROBE, MarkerPresentation.getName(xpatex.getProbe()));
             }
-
-            result.addAttribute(GENOTYPE, xpatex.getFishExperiment().getFish().getGenotype().getName());
+            String genoLink=GenotypePresentation.getPopupLink(xpatex.getFishExperiment().getFish().getGenotype());
+            result.addAttribute(GENOTYPE, genoLink);
+            
             String conditions = ExperimentPresentation.getLink(xpatex.getFishExperiment().getExperiment(), true);
             // String conditions = ExperimentPresentation.getNameForFaceted(xpatex.getGenotypeExperiment().getExperiment(), true, false);
             if (StringUtils.isNotBlank(conditions)) {
@@ -577,7 +578,8 @@ public class ResultService {
 
         PhenotypeExperiment phenotypeExperiment = RepositoryFactory.getMutantRepository().getPhenotypeExperiment(id);
         if (phenotypeExperiment != null) {
-            result.addAttribute(GENOTYPE, phenotypeExperiment.getFishExperiment().getFish().getGenotype().getName());
+            String genoLink=GenotypePresentation.getPopupLink(phenotypeExperiment.getFishExperiment().getFish().getGenotype());
+            result.addAttribute(GENOTYPE, genoLink);
 
             String conditionsLink = ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true);
             if (StringUtils.isNotBlank(conditionsLink)) {
