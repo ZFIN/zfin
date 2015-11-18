@@ -2227,6 +2227,36 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @Override
+    public List<SequenceTargetingReagent> getSequenceTargetingReagentBySequence(Marker.Type type, String sequence) {
+        return getSequenceTargetingReagentBySequence(type, sequence, null);
+    }
+
+    @Override
+    public List<SequenceTargetingReagent> getSequenceTargetingReagentBySequence(Marker.Type type, String sequence1, String sequence2) {
+        String hql = "select str from SequenceTargetingReagent str " +
+                "where str.markerType.name = :type ";
+        if (sequence2 == null) {
+            hql += "and str.sequence.sequence = :sequence1 ";
+        } else {
+            hql +=
+                    "and ( " +
+                    "   (str.sequence.sequence = :sequence1 and str.sequence.secondSequence = :sequence2) " +
+                    "   or " +
+                    "   (str.sequence.sequence = :sequence2 and str.sequence.secondSequence = :sequence1) " +
+                    ")";
+        }
+
+        Query query = HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("type", type.toString())
+                .setParameter("sequence1", sequence1);
+        if (sequence2 != null) {
+            query.setParameter("sequence2", sequence2);
+        }
+
+        return query.list();
+    }
+
+    @Override
     public Genotype getStrainForTranscript(String zdbID) {
 
         // TODO: just use where clauses

@@ -17,10 +17,12 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.orthology.Ortholog;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.publication.Publication;
-import org.zfin.sequence.*;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.DisplayGroup;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.blast.Database;
 
 import java.util.List;
@@ -386,6 +388,10 @@ public interface MarkerRepository {
     List<Feature> getFeaturesBySTR(SequenceTargetingReagent sequenceTargetingReagent);
 
     SequenceTargetingReagent getSequenceTargetingReagent(String markerID);
+
+    List<SequenceTargetingReagent> getSequenceTargetingReagentBySequence(Marker.Type type, String sequence);
+
+    List<SequenceTargetingReagent> getSequenceTargetingReagentBySequence(Marker.Type type, String sequence1, String sequence2);
 
     List<Marker> getConstructsForGene(Marker gene);
 
