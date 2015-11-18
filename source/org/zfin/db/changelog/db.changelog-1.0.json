@@ -11,35 +11,19 @@
         },
         {
             "changeSet": {
-                "id": "newXpatTable",
+                "id": "deleteOutdatedALTSuppliers",
                 "author": "smoxon",
                 "changes": [
-                    { "createTable": {
-                        "tableName": "expression_experiment_new",
-                        "columns": [
-                            {
-                                "column": {
-                                    "name": "xpatex_pk_id",
-                                    "type": "serial8",
-                                    "autoIncrement": true,
-                                    "constraints": {
-                                        "primaryKey": true,
-                                        "nullable": false
-                                    }
-                                },
-                                "column": {
-                                    "name": "xpatex_zdb_id",
-                                    "type": "varchar(50)",
-                                    "constraints": {
-                                        "nullable": false
-                                    }
-                                }
-
-                            },
+                    {
+                        "delete": {
+                            "catalogName":"swrdb",
+                            "tableName": "int_data_supplier",
+                            "where": "idsup_supplier_zdb_id not in ('ZDB-LAB-991005-53','ZDB-LAB-130607-1','ZDB-LAB-130226-1') and idsup_data_Zdb_id like 'ZDB-ALT%';"
+                        }
                     }
-                 ]
+
+                ]
             }
         }
     ]
 }
-			    

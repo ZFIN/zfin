@@ -5,6 +5,8 @@
 --changeset staylor:xpatRefactorNewXpatTables
 
 create table expression_experiment2
+
+
   ( xpatex_pk_id serial8 not null constraint xpatx2_pk_id_not_null,
     xpatex_zdb_id varchar(50) not null constraint xpatx2_zdb_id_not_null,
     xpatex_fig_zdb_id varchar(50) not null constraint xpatx2_fig_zdb_id_not_null,
@@ -22,7 +24,7 @@ create table expression_experiment2
   )
   fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
   extent size 4096 next size 4096 lock mode row;
-;
+
 
 
 create table expression_result2
@@ -41,7 +43,7 @@ create table expression_result2
   )
   fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
   extent size 4096 next size 4096 lock mode row;
-;
+
 
 
 insert into expression_experiment2 (xpatex_zdb_id,
@@ -232,39 +234,6 @@ create trigger xpatex_insert_trigger
         execute procedure p_check_efg_wt_expression(new_xpatex.xpatex_genox_zdb_id
     ,new_xpatex.xpatex_gene_zdb_id ));
 
-
-create trigger expression_result_insert_trigger insert
-    on expression_result2 referencing new as new_xpatres
-
-    for each row
-        (
-        execute procedure p_stg_hours_consistent(new_xpatres.xpatres_start_stg_zdb_id
-    ,new_xpatres.xpatres_end_stg_zdb_id ),
-        execute function scrub_char(new_xpatres.xpatres_comments
-    ) into expression_result2.xpatres_comments,
-        execute procedure p_check_fx_postcomposed_terms(new_xpatres.xpatres_superterm_zdb_id
-    ,new_xpatres.xpatres_subterm_zdb_id ),
-        execute procedure p_term_is_not_obsolete_or_secondary(new_xpatres.xpatres_superterm_zdb_id
-    ),
-        execute procedure p_term_is_not_obsolete_or_secondary(new_xpatres.xpatres_subterm_zdb_id
-    ));
-
-create trigger expression_result_update_trigger update
-    of xpatres_start_stg_zdb_id,xpatres_end_stg_zdb_id,xpatres_superterm_zdb_id,
-    xpatres_subterm_zdb_id on expression_result2 referencing
-    new as new_xpatres
-    for each row
-        (
-        execute procedure p_stg_hours_consistent(new_xpatres.xpatres_start_stg_zdb_id
-    ,new_xpatres.xpatres_end_stg_zdb_id ),
-        execute function scrub_char(new_xpatres.xpatres_comments
-    ) into expression_result2.xpatres_comments,
-        execute procedure p_check_fx_postcomposed_terms(new_xpatres.xpatres_superterm_zdb_id
-    ,new_xpatres.xpatres_subterm_zdb_id ),
-        execute procedure p_term_is_not_obsolete_or_secondary(new_xpatres.xpatres_superterm_zdb_id
-    ),
-        execute procedure p_term_is_not_obsolete_or_secondary(new_xpatres.xpatres_subterm_zdb_id
-    ));
 
 UPDATE DATABASECHANGELOG SET TAG = 'xpatRefactor' WHERE DATEEXECUTED = (SELECT MAX(DATEEXECUTED) FROM (SELECT DATEEXECUTED FROM DATABASECHANGELOG) AS X);
 
