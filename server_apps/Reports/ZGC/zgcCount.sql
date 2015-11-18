@@ -311,7 +311,7 @@ select distinct xpatex_source_zdb_id
 from expression_experiment, fish_experiment, genotype_feature, feature_marker_relationship, marker_relationship, fish
 where xpatex_genox_zdb_id = genox_zdb_id
   and genox_fish_Zdb_id = fish_zdb_id
-  and fish_zdb_id = fish_genotype_zdb_id
+  and genofeat_geno_zdb_id = fish_genotype_zdb_id
   and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
   and fmrel_mrkr_zdb_id = mrel_mrkr_1_zdb_id
   and mrel_mrkr_2_zdb_id like "ZDB-EFG%" ;

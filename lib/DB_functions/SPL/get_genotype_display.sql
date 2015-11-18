@@ -168,7 +168,7 @@ create function get_genotype_display( genoZdbId varchar(50) )
           
 	    else
 
-		   let genoDisplayHtml = genoDisplayHtml ||' ; '||  featAbbrevHtml;
+		   let genoDisplayHtml = genoDisplayHtml ||'; '||  featAbbrevHtml;
        
             end if
 
