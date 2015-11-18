@@ -27,7 +27,7 @@
                 <td>
                     <zfin:groupByDisplay loopName="loop" groupBeanCollection="${omimTermDisplay}"
                                          groupByBean="orthology.symbol">
-                        <a href="http://omim.org/entry/${omimGene.humanAccession.accessionNumber}">${omimGene.orthology.symbol}</a>
+                        <a href="http://omim.org/entry/${omimGene.omimAccession}">${omimGene.orthology.symbol}</a>
 
                         <%--${omimGene.orthology.abbreviation}--%>
                     </zfin:groupByDisplay>

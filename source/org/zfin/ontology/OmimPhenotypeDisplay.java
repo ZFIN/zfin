@@ -19,6 +19,15 @@ public class OmimPhenotypeDisplay {
     public DBLink getHumanAccession() {
         return humanAccession;
     }
+    public String omimAccession;
+
+    public String getOmimAccession() {
+        return omimAccession;
+    }
+
+    public void setOmimAccession(String omimAccession) {
+        this.omimAccession = omimAccession;
+    }
 
     public void setHumanAccession(DBLink humanAccession) {
         this.humanAccession = humanAccession;

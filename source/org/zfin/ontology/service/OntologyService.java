@@ -13,7 +13,11 @@ import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.*;
 import org.zfin.ontology.repository.OntologyRepository;
+import org.zfin.orthology.NcbiOrthoExternalReference;
+import org.zfin.orthology.NcbiOtherSpeciesGene;
+import org.zfin.orthology.repository.OrthologyRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.service.SequenceService;
 
 import java.util.*;
@@ -30,6 +34,7 @@ public class OntologyService {
 
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
     private static MarkerRepository mR = RepositoryFactory.getMarkerRepository();
+    private static OrthologyRepository oR = RepositoryFactory.getOrthologyRepository();
 
     /**
      * Get the parent term that has the start stage and return
@@ -149,33 +154,44 @@ public class OntologyService {
 
             for (OmimPhenotype omimResult : omimResults) {
                 // form the key
+               if (omimResult.getOrtholog().getOrganism().getCommonName().startsWith("Hu")) {
+                   String key = omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation() + omimResult.getName();
 
-                String key = omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation() + omimResult.getName();
 
-                OmimPhenotypeDisplay omimDisplay;
+                   OmimPhenotypeDisplay omimDisplay;
 
-                // if the key is not in the map, instantiate a display (OmimPhenotypeDisplay) object and add it to the map
-                // otherwise, just get the display object from the map
-                if (!map.containsKey(key)) {
-                    omimDisplay = new OmimPhenotypeDisplay();
-                    map.put(key, omimDisplay);
-                } else {
-                    omimDisplay = map.get(key);
-                }
-                omimDisplay.setOrthology(omimResult.getOrtholog());
-                omimDisplay.setHumanAccession(getSequenceRepository().getDBLinkByData(omimResult.getOrtholog().getZdbID(), sequenceService.getOMIMHumanOrtholog()));
-                omimDisplay.setName(omimResult.getName());
-                omimDisplay.setOmimNum(omimResult.getOmimNum());
-                omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation()));
-                if (omimResult.getOrtholog() != null) {
+                   // if the key is not in the map, instantiate a display (OmimPhenotypeDisplay) object and add it to the map
+                   // otherwise, just get the display object from the map
+                   if (!map.containsKey(key)) {
+                       omimDisplay = new OmimPhenotypeDisplay();
+                       map.put(key, omimDisplay);
+                   } else {
+                       omimDisplay = map.get(key);
+                   }
+                   omimDisplay.setOrthology(omimResult.getOrtholog());
+                 //  omimDisplay.setHumanAccession(getSequenceRepository().getDBLinkByData(omimResult.getOrtholog().getZdbID(), sequenceService.getOMIMHumanOrtholog()));
+                   NcbiOtherSpeciesGene ncbiOtherGene=omimResult.getOrtholog().getNcbiOtherSpeciesGene();
+                   Set<NcbiOrthoExternalReference> ncbiExternalReferenceList=ncbiOtherGene.getNcbiExternalReferenceList();
+                   List<String> accessions=new ArrayList();
+                   for (NcbiOrthoExternalReference othrRef:ncbiExternalReferenceList){
+                       if (othrRef.getReferenceDatabase().getForeignDB().getDbName()== ForeignDB.AvailableName.OMIM) {
+                           accessions.add(othrRef.getAccessionNumber());
+                       }
+                   }
+                   omimDisplay.setOmimAccession(accessions.get(0));
+                   omimDisplay.setName(omimResult.getName());
+                   omimDisplay.setOmimNum(omimResult.getOmimNum());
+                   omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation()));
+                   if (omimResult.getOrtholog() != null) {
 
-                    hA.add(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation());
-                    omimDisplay.setHumanGene(hA);
-                }
-
+                       hA.add(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation());
+                       omimDisplay.setHumanGene(hA);
+                   }
+               }
+               }
 
             }
-        }
+
 
         // use SortedSet to hold the values of the map so that the data could be displayed in order
         List<OmimPhenotypeDisplay> omimDisplays = new ArrayList<>();
