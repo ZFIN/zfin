@@ -7,18 +7,14 @@ import spock.lang.Unroll
 
 class SequenceTargetingReagentAddBeanValidatorSpec extends AbstractZfinIntegrationSpec {
 
-    SequenceTargetingReagentAddBean form
-    SequenceTargetingReagentAddBeanValidator validator = new SequenceTargetingReagentAddBeanValidator();
-
-    def setup() {
-        form = new SequenceTargetingReagentAddBean(
-                sequenceTargetingReagentType: "CRISPR",
-                sequenceTargetingReagentName: "MO1-Test2b",
-                targetGeneSymbol: "robo1",
-                sequenceTargetingReagentSequence: "AAAAACCCCCGGGGGTTTTT",
-                sequenceTargetingReagentPublicationID: "ZDB-PUB-111111-1"
-        )
-    }
+    SequenceTargetingReagentAddBean form = new SequenceTargetingReagentAddBean(
+            sequenceTargetingReagentType: "CRISPR",
+            sequenceTargetingReagentName: "MO1-Test2b",
+            targetGeneSymbol: "robo1",
+            sequenceTargetingReagentSequence: "AAAAACCCCCGGGGGTTTTT",
+            sequenceTargetingReagentPublicationID: "ZDB-PUB-111111-1"
+    )
+    SequenceTargetingReagentAddBeanValidator validator = new SequenceTargetingReagentAddBeanValidator()
 
     def "validator should support form-backing bean"() {
         when:
