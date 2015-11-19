@@ -10,8 +10,8 @@ import org.zfin.antibody.Antibody;
 import org.zfin.feature.Feature;
 import org.zfin.feature.presentation.SimpleFeaturePresentation;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.LookupEntry;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.gwt.root.dto.FishDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mapping.MappingService;
 import org.zfin.marker.Marker;
@@ -353,20 +353,39 @@ public class MergeMarkerController {
         return antibodyLookupEntries;
     }
 
+    @RequestMapping(value = "/sequenceTargetingReagent-used-in-fish", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    String usedInFish(@RequestParam("sequenceTargetingReagentZdbId") String sequenceTargetingReagentZdbId) {
+        MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
+        SequenceTargetingReagent str = mutantRepository.getSequenceTargetingReagentByID(sequenceTargetingReagentZdbId);
+        if (str == null) {
+            return "No";
+        }
+        List<Fish> fishList = mutantRepository.getFishListBySequenceTargetingReagent(str);
+        if (fishList == null || fishList.size() == 0)
+            return "No";
+        else
+            return "Yes";
+    }
+
     @RequestMapping(value = "/get-fish-for-sequenceTargetingReagentZdbId", method = RequestMethod.GET)
     public
     @ResponseBody
-    List<FishDTO> getFishList(@RequestParam("sequenceTargetingReagentZdbId") String sequenceTargetingReagentZdbId) {
+    List<LookupEntry> getFishList(@RequestParam("sequenceTargetingReagentZdbId") String sequenceTargetingReagentZdbId) {
         MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
         SequenceTargetingReagent str = mutantRepository.getSequenceTargetingReagentByID(sequenceTargetingReagentZdbId);
         if (str == null) {
             return null;
         }
         List<Fish> fishList = mutantRepository.getFishListBySequenceTargetingReagent(str);
-        List<FishDTO> fishDTOs = new ArrayList<>(fishList.size());
+        List<LookupEntry> fishes = new ArrayList<>(fishList.size());
         for (Fish fish : fishList) {
-            fishDTOs.add(DTOConversionService.convertToFishDtoFromFish(fish));
+            LookupEntry fishEntry = new LookupEntry();
+            fishEntry.setId(fish.getZdbID());
+            fishEntry.setName(fish.getName());
+            fishes.add(fishEntry);
         }
-        return fishDTOs;
+        return fishes;
     }
 }
