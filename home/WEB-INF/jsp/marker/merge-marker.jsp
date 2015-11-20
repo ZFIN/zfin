@@ -172,7 +172,7 @@ var validateUnspecifiedAlleles = function(geneIDdelete, geneZdbIdMergedInto, gen
     var unspecifiedAlleleNameOfGene1 = unspecifiedAlleleDataOfGene1.name;
     var unspecifiedAlleleIdOfGene1 = unspecifiedAlleleDataOfGene1.zdbID;
 
-    if (null !== unspecifiedAlleleNameOfGene1) {
+    if (null !== unspecifiedAlleleNameOfGene1 && typeof unspecifiedAlleleNameOfGene1 != 'undefined') {
 
         unspecifiedAllelesIgnored = false;
 
@@ -190,7 +190,7 @@ var validateUnspecifiedAlleles = function(geneIDdelete, geneZdbIdMergedInto, gen
         var unspecifiedAlleleNameOfGene2 = unspecifiedAlleleDataOfGene2.name;
         var unspecifiedAlleleIdOfGene2 = unspecifiedAlleleDataOfGene2.zdbID;
 
-        if (null !== unspecifiedAlleleNameOfGene2) {
+        if (null !== unspecifiedAlleleNameOfGene2 && typeof unspecifiedAlleleNameOfGene2 != 'undefined') {
 
             jQuery('#validationUnspecifiedAllelesText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following unspecified allele:</h3>');
             jQuery('#validationUnspecifiedAllelesText').append('<div>'
