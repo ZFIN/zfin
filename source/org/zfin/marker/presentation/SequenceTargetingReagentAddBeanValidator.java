@@ -27,38 +27,38 @@ public class SequenceTargetingReagentAddBeanValidator implements Validator {
     public void validate(Object command, Errors errors) {
         SequenceTargetingReagentAddBean formBean = (SequenceTargetingReagentAddBean) command;
 
-        String pubId = formBean.getSequenceTargetingReagentPublicationID();
-        PublicationValidator.validatePublicationID(pubId, SequenceTargetingReagentAddBean.STR_PUBLICATION_ZDB_ID, errors);
+        String pubId = formBean.getPublicationID();
+        PublicationValidator.validatePublicationID(pubId, "publicationID", errors);
 
-        String strName = formBean.getSequenceTargetingReagentName();
+        String strName = formBean.getName();
         if (StringUtils.isEmpty(strName)) {
-            errors.rejectValue(SequenceTargetingReagentAddBean.NEW_STR_NAME, "str.name.empty");
+            errors.rejectValue("name", "str.name.empty");
         } else if (mr.isMarkerExists(strName) || mr.getMarkerByName(strName) != null) {
-            errors.rejectValue(SequenceTargetingReagentAddBean.NEW_STR_NAME, "str.name.inuse");
+            errors.rejectValue("name", "str.name.inuse");
         }
 
-        String strSequence = formBean.getSequenceTargetingReagentSequence();
-        validateSequence(errors, SequenceTargetingReagentAddBean.NEW_STR_SEQUENCE, strSequence);
+        String strSequence = formBean.getSequence();
+        validateSequence(errors, "sequence", strSequence);
 
         String targetGeneSymbol = formBean.getTargetGeneSymbol();
         if (StringUtils.isEmpty(targetGeneSymbol)) {
-            errors.rejectValue(SequenceTargetingReagentAddBean.NEW_STR_TARGET, "str.target.empty");
+            errors.rejectValue("targetGeneSymbol", "str.target.empty");
         } else if (mr.getGeneByAbbreviation(targetGeneSymbol) == null) {
-            errors.rejectValue(SequenceTargetingReagentAddBean.NEW_STR_TARGET, "str.target.notfound");
+            errors.rejectValue("targetGeneSymbol", "str.target.notfound");
         }
 
-        String strSupplier = formBean.getSequenceTargetingReagentSupplierName();
+        String strSupplier = formBean.getSupplier();
         if (!StringUtils.isEmpty(strSupplier)) {
             if (pr.getOrganizationByName(strSupplier) == null) {
-                errors.rejectValue(SequenceTargetingReagentAddBean.NEW_STR_SUPPLIER, "str.supplier.notfound");
+                errors.rejectValue("supplier", "str.supplier.notfound");
             }
         }
 
-        String strType = formBean.getSequenceTargetingReagentType();
+        String strType = formBean.getStrType();
         Marker.Type type = strType.equals("Morpholino") ? Marker.Type.MRPHLNO : Marker.Type.getType(strType);
-        String strSecondSequence = formBean.getSequenceTargetingReagentSecondSequence();
+        String strSecondSequence = formBean.getSequence2();
         if (type == Marker.Type.TALEN) {
-            validateSequence(errors, SequenceTargetingReagentAddBean.NEW_STR_SECOND_SEQUENCE, strSecondSequence);
+            validateSequence(errors, "sequence2", strSecondSequence);
         }
 
         List<SequenceTargetingReagent> existingWithSequences;
@@ -73,8 +73,8 @@ public class SequenceTargetingReagentAddBeanValidator implements Validator {
                     ", ");
             Object[] args = new Object[]{existingNames};
             String defaultMessage = "Sequence is already used by another " + strType;
-            errors.rejectValue(SequenceTargetingReagentAddBean.NEW_STR_SEQUENCE, "str.sequence.inuse", args, defaultMessage);
-            errors.rejectValue(SequenceTargetingReagentAddBean.NEW_STR_SECOND_SEQUENCE, "str.sequence.inuse", args, defaultMessage);
+            errors.rejectValue("sequence", "str.sequence.inuse", args, defaultMessage);
+            errors.rejectValue("sequence2", "str.sequence.inuse", args, defaultMessage);
         }
     }
 

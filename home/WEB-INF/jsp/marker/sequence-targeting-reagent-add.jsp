@@ -1,13 +1,12 @@
-<%@ page import="org.zfin.marker.presentation.SequenceTargetingReagentAddBean" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.SequenceTargetingReagentAddBean" scope="request"/>
 
-<h1>New ${formBean.sequenceTargetingReagentType}</h1>
+<h1>New ${formBean.strType}</h1>
 
 <c:choose>
-    <c:when test="${formBean.sequenceTargetingReagentType eq 'Morpholino'}">
+    <c:when test="${formBean.strType eq 'Morpholino'}">
         <c:set var="seqBoxSize">50</c:set>
     </c:when>
     <c:otherwise>
@@ -16,51 +15,51 @@
 </c:choose>
 
 
-<form:form id="str-form" action="sequence-targeting-reagent-add?sequenceTargetingReagentType=${formBean.sequenceTargetingReagentType}" commandName="formBean" method="post">
+<form:form id="str-form" action="sequence-targeting-reagent-add?strType=${formBean.strType}" commandName="formBean" method="post">
     <div>
-        <form:label path="<%= SequenceTargetingReagentAddBean.NEW_STR_NAME%>" class="curation-form-label">${formBean.sequenceTargetingReagentType} name:</form:label>
-        <form:input path="<%= SequenceTargetingReagentAddBean.NEW_STR_NAME%>" size="80" />
-        <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_NAME%>" cssClass="error"/>
+        <form:label path="name" class="curation-form-label">${formBean.strType} name:</form:label>
+        <form:input path="name" size="80" />
+        <form:errors path="name" cssClass="error"/>
     </div>
     <br>
     <div>
-        <form:label path="<%= SequenceTargetingReagentAddBean.NEW_STR_ALLIAS%>" class="curation-form-label">${formBean.sequenceTargetingReagentType} alias:</form:label>
-        <form:input path="<%= SequenceTargetingReagentAddBean.NEW_STR_ALLIAS%>" size="50"/>
-        <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_ALLIAS%>" cssClass="error"/>
+        <form:label path="alias" class="curation-form-label">${formBean.strType} alias:</form:label>
+        <form:input path="alias" size="50"/>
+        <form:errors path="alias" cssClass="error"/>
     </div>
     <br>
     <div>
-        <form:label path="<%= SequenceTargetingReagentAddBean.NEW_STR_COMMENT%>" class="curation-form-label">Note:</form:label>
+        <form:label path="publicNote" class="curation-form-label">Note:</form:label>
     </div>
     <div>
-        <form:textarea path="<%= SequenceTargetingReagentAddBean.NEW_STR_COMMENT%>" rows="5" cols="50" />
-        <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_COMMENT%>" cssClass="error"/>
+        <form:textarea path="publicNote" rows="5" cols="50" />
+        <form:errors path="publicNote" cssClass="error"/>
     </div>
     <br>
     <div>
         <b>Add Target Gene:</b><br/>
-        <form:input path="<%= SequenceTargetingReagentAddBean.NEW_STR_TARGET%>" id="targetGeneSymbol" type="text" size="25"/>
-        <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_TARGET%>" cssClass="error"/>
+        <form:input path="targetGeneSymbol" type="text" size="25"/>
+        <form:errors path="targetGeneSymbol" cssClass="error"/>
     </div>
-    <c:if test="${formBean.sequenceTargetingReagentType eq 'TALEN' || formBean.sequenceTargetingReagentType eq 'CRISPR'}">
+    <c:if test="${formBean.strType eq 'TALEN' || formBean.strType eq 'CRISPR'}">
         <br/>
         <div>
             <b>Add Supplier:</b><br/>
-            <form:input path="<%= SequenceTargetingReagentAddBean.NEW_STR_SUPPLIER%>" id="supplierName" type="text" size="35" />
-            <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_SUPPLIER%>" cssClass="error"/>
+            <form:input path="supplier" type="text" size="35" />
+            <form:errors path="supplier" cssClass="error"/>
         </div>
     </c:if>
     <br>
     <table border=0>
         <tr>
             <td valign=top nowrap>
-                <c:if test="${formBean.sequenceTargetingReagentType eq 'Morpholino'}">
+                <c:if test="${formBean.strType eq 'Morpholino'}">
                     <label class="namesearchLabel">Sequence:</label>
                 </c:if>
-                <c:if test="${formBean.sequenceTargetingReagentType eq 'CRISPR'}">
+                <c:if test="${formBean.strType eq 'CRISPR'}">
                     <label class="namesearchLabel">Target Sequence:</label>
                 </c:if>
-                <c:if test="${formBean.sequenceTargetingReagentType eq 'TALEN'}">
+                <c:if test="${formBean.strType eq 'TALEN'}">
                     <label class="namesearchLabel">Target Sequence 1:</label>
                 </c:if>
                 <input type=button value="Reverse" id="reverse-1">
@@ -68,15 +67,15 @@
                 <input type=button value="Reverse & Complement" id="reverse-complement-1">
             </td>
             <td width=20></td><!-- spacer column -->
-            <td><form:label path="<%= SequenceTargetingReagentAddBean.NEW_STR_CURNOTE%>" class="curation-form-label">Curator Note:</form:label></td>
+            <td><form:label path="curatorNote" class="curation-form-label">Curator Note:</form:label></td>
         </tr>
         <tr>
             <td nowrap>
-                Reported: &nbsp;5'-   <form:input id="reportSeq" path="<%= SequenceTargetingReagentAddBean.NEW_STR_REPORTEDSEQUENCE%>" name="reportSeq" size="${seqBoxSize}" cssClass="force-upper" /> -3'
+                Reported: &nbsp;5'-   <form:input path="reportedSequence" size="${seqBoxSize}" cssClass="force-upper" /> -3'
             </td>
             <td width=20></td><!-- spacer column -->
             <c:choose>
-                <c:when test="${formBean.sequenceTargetingReagentType eq 'TALEN'}">
+                <c:when test="${formBean.strType eq 'TALEN'}">
                     <c:set var="curatorNoteRowspanValue">5</c:set>
                     <c:set var="curatorNoteRowValue">7</c:set>
                 </c:when>
@@ -86,17 +85,17 @@
                 </c:otherwise>
             </c:choose>
             <td valign=top rowspan=${curatorNoteRowspanValue}>
-                <form:textarea id="curatorNote" path="<%= SequenceTargetingReagentAddBean.NEW_STR_CURNOTE%>" rows="${curatorNoteRowValue}" cols="70" />
-                <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_CURNOTE%>" cssClass="error"/>
+                <form:textarea path="curatorNote" rows="${curatorNoteRowValue}" cols="70" />
+                <form:errors path="curatorNote" cssClass="error"/>
             </td>
         </tr>
         <tr>
             <td nowrap>
-                Displayed: 5'- <form:input id="displaySeq" name="displaySeq" path="<%= SequenceTargetingReagentAddBean.NEW_STR_SEQUENCE%>" size="${seqBoxSize}" cssClass="force-upper" /> -3'
-                <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_SEQUENCE%>" cssClass="error"/>
+                Displayed: 5'- <form:input path="sequence" size="${seqBoxSize}" cssClass="force-upper" /> -3'
+                <form:errors path="sequence" cssClass="error"/>
             </td>
         </tr>
-        <c:if test="${formBean.sequenceTargetingReagentType eq 'TALEN'}">
+        <c:if test="${formBean.strType eq 'TALEN'}">
             <tr>
                 <td nowrap>
                     <label class="namesearchLabel">Target Sequence 2:</label>
@@ -108,31 +107,30 @@
             </tr>
             <tr>
                 <td nowrap>
-                    Reported: &nbsp;5'-   <form:input id="reportSeq2" path="<%= SequenceTargetingReagentAddBean.NEW_STR_SECOND_REPORTEDSEQUENCE%>" name="reportSeq2" size="${seqBoxSize}" cssClass="force-upper" /> -3'
+                    Reported: &nbsp;5'-   <form:input path="reportedSequence2" size="${seqBoxSize}" cssClass="force-upper" /> -3'
                 </td>
                 <td width=20></td><!-- spacer column -->
             </tr>
             <tr>
                 <td nowrap>
-                    Displayed:&nbsp;&nbsp;  5'- <form:input id="displaySeq2" name="displaySeq2" path="<%= SequenceTargetingReagentAddBean.NEW_STR_SECOND_SEQUENCE%>" size="${seqBoxSize}" cssClass="force-upper" /> -3'
-                    <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_SECOND_SEQUENCE%>" cssClass="error"/>
+                    Displayed:&nbsp;&nbsp;  5'- <form:input path="sequence2" size="${seqBoxSize}" cssClass="force-upper" /> -3'
+                    <form:errors path="sequence2" cssClass="error"/>
                 </td>
             </tr>
         </c:if>
     </table>
     <br>
     <div>
-        <form:label path="<%= SequenceTargetingReagentAddBean.STR_PUBLICATION_ZDB_ID%>" class="curation-form-label">Publication:</form:label>
-        <form:input path="<%= SequenceTargetingReagentAddBean.STR_PUBLICATION_ZDB_ID%>" size="25" cssClass="force-upper"
-                    value="${formBean.sequenceTargetingReagentPublicationID}" id = "publicationZdbId"/>
-        <form:errors path="<%= SequenceTargetingReagentAddBean.STR_PUBLICATION_ZDB_ID%>" cssClass="error"/>
+        <form:label path="publicationID" class="curation-form-label">Publication:</form:label>
+        <form:input path="publicationID" size="25" cssClass="force-upper" value="${formBean.publicationID}"/>
+        <form:errors path="publicationID" cssClass="error"/>
     </div>
     <br>
-    <c:if test="${formBean.sequenceTargetingReagentType eq 'TALEN'}">
-        <input type=submit name=s_new value="Submit new ${formBean.sequenceTargetingReagentType}" id="talen-submit">
+    <c:if test="${formBean.strType eq 'TALEN'}">
+        <input type=submit name=s_new value="Submit new ${formBean.strType}" id="talen-submit">
     </c:if>
-    <c:if test="${formBean.sequenceTargetingReagentType ne 'TALEN'}">
-        <input type=submit name=s_new value="Submit new ${formBean.sequenceTargetingReagentType}" id="other-submit">
+    <c:if test="${formBean.strType ne 'TALEN'}">
+        <input type=submit name=s_new value="Submit new ${formBean.strType}" id="other-submit">
     </c:if>
 </form:form>
 
@@ -216,16 +214,16 @@
 
         function preSubmit(type) {
 
-            var displayedSeq = document.getElementById('displaySeq');
-            var reportSeq = document.getElementById('reportSeq');
+            var displayedSeq = document.getElementById('sequence');
+            var reportSeq = document.getElementById('reportedSequence');
             if(!displayedSeq.value || displayedSeq.value.length == 0 || !/^[\s]+$/.test(displayedSeq.value)) {
                 if (sequenceManipulated == "no") {
                     displayedSeq.value = reportSeq.value;
                 }
             }
             if (type === 'talen') {
-                var displayedSeq2 = document.getElementById('displaySeq2');
-                var reportSeq2 = document.getElementById('reportSeq2');
+                var displayedSeq2 = document.getElementById('sequence2');
+                var reportSeq2 = document.getElementById('reportedSequence2');
 
                 if(!displayedSeq2.value || displayedSeq2.value.length == 0 || !/^[\s]+$/.test(displayedSeq2.value)) {
                     if (sequence2Manipulated == "no") {
@@ -239,7 +237,7 @@
 
         function completePubId() {
 
-            var pubId = document.getElementById('publicationZdbId');
+            var pubId = document.getElementById('publicationID');
             var shortId = /^(\d){6}-(\d)+/;
             var shortIdStartWithHyphen = /^-(\d){6}-(\d)+/;
             if (shortId.test(pubId.value)) {
@@ -265,33 +263,33 @@
 
         $("#reverse-1").click(function () {
             sequenceManipulated = 'yes';
-            reverseSequence('reportSeq','displaySeq');
+            reverseSequence('reportedSequence','sequence');
         });
         $("#complement-1").click(function () {
             sequenceManipulated = 'yes';
-            complementSequence('reportSeq','displaySeq');
+            complementSequence('reportedSequence','sequence');
         });
         $("#reverse-complement-1").click(function () {
             sequenceManipulated = 'yes';
-            reverseComplementSequence('reportSeq','displaySeq');
+            reverseComplementSequence('reportedSequence','sequence');
         });
         $("#reverse-2").click(function () {
             sequence2Manipulated = 'yes';
-            reverseSequence('reportSeq2','displaySeq2');
+            reverseSequence('reportedSequence2','sequence2');
         });
         $("#complement-2").click(function () {
             sequence2Manipulated = 'yes';
-            complementSequence('reportSeq2','displaySeq2');
+            complementSequence('reportedSequence2','sequence2');
         });
         $("#reverse-complement-2").click(function () {
             sequence2Manipulated = 'yes';
-            reverseComplementSequence('reportSeq2','displaySeq2');
+            reverseComplementSequence('reportedSequence2','sequence2');
         });
 
         $("#talen-submit").click(function() { preSubmit('talen'); });
         $("#other-submit").click(function() { preSubmit('nonTalen'); });
 
-        $('#supplierName').autocompletify('/action/marker/find-suppliers?term=%QUERY');
+        $('#supplier').autocompletify('/action/marker/find-suppliers?term=%QUERY');
         $('#targetGeneSymbol').autocompletify('/action/marker/find-targetGenes?term=%QUERY');
     });
 
