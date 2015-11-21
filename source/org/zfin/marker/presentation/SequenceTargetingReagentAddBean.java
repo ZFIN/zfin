@@ -1,6 +1,8 @@
 package org.zfin.marker.presentation;
 
 
+import java.util.Map;
+
 public class SequenceTargetingReagentAddBean {
 
     private String publicationID;
@@ -15,6 +17,8 @@ public class SequenceTargetingReagentAddBean {
     private String reportedSequence;
     private String reportedSequence2;
     private String supplier;
+
+    private Map<String, String> strTypes;
 
     public String getName() {
         return name;
@@ -112,7 +116,13 @@ public class SequenceTargetingReagentAddBean {
         this.supplier = supplier;
     }
 
+    public Map<String, String> getStrTypes() {
+        return strTypes;
+    }
 
+    public void setStrTypes(Map<String, String> strTypes) {
+        this.strTypes = strTypes;
+    }
 }
 
 

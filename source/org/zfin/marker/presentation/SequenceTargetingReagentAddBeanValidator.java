@@ -55,26 +55,30 @@ public class SequenceTargetingReagentAddBeanValidator implements Validator {
         }
 
         String strType = formBean.getStrType();
-        Marker.Type type = strType.equals("Morpholino") ? Marker.Type.MRPHLNO : Marker.Type.getType(strType);
-        String strSecondSequence = formBean.getSequence2();
-        if (type == Marker.Type.TALEN) {
-            validateSequence(errors, "sequence2", strSecondSequence);
-        }
-
-        List<SequenceTargetingReagent> existingWithSequences;
-        if (type == Marker.Type.TALEN) {
-            existingWithSequences = mr.getSequenceTargetingReagentBySequence(type, strSequence, strSecondSequence);
+        if (StringUtils.isBlank(strType)) {
+            errors.rejectValue("strType", "str.type.empty");
         } else {
-            existingWithSequences = mr.getSequenceTargetingReagentBySequence(type, strSequence);
-        }
-        if (CollectionUtils.isNotEmpty(existingWithSequences)) {
-            String existingNames = StringUtils.join(
-                    CollectionUtils.collect(existingWithSequences, InvokerTransformer.getInstance("getName")),
-                    ", ");
-            Object[] args = new Object[]{existingNames};
-            String defaultMessage = "Sequence is already used by another " + strType;
-            errors.rejectValue("sequence", "str.sequence.inuse", args, defaultMessage);
-            errors.rejectValue("sequence2", "str.sequence.inuse", args, defaultMessage);
+            Marker.Type type = Marker.Type.getType(strType);
+            String strSecondSequence = formBean.getSequence2();
+            if (type == Marker.Type.TALEN) {
+                validateSequence(errors, "sequence2", strSecondSequence);
+            }
+
+            List<SequenceTargetingReagent> existingWithSequences;
+            if (type == Marker.Type.TALEN) {
+                existingWithSequences = mr.getSequenceTargetingReagentBySequence(type, strSequence, strSecondSequence);
+            } else {
+                existingWithSequences = mr.getSequenceTargetingReagentBySequence(type, strSequence);
+            }
+            if (CollectionUtils.isNotEmpty(existingWithSequences)) {
+                String existingNames = StringUtils.join(
+                        CollectionUtils.collect(existingWithSequences, InvokerTransformer.getInstance("getName")),
+                        ", ");
+                Object[] args = new Object[]{existingNames};
+                String defaultMessage = "Sequence is already used";
+                errors.rejectValue("sequence", "str.sequence.inuse", args, defaultMessage);
+                errors.rejectValue("sequence2", "str.sequence.inuse", args, defaultMessage);
+            }
         }
     }
 

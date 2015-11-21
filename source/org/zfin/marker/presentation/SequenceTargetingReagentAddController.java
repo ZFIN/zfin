@@ -19,21 +19,21 @@ import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.profile.Organization;
-import org.zfin.profile.repository.*;
+import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.STRMarkerSequence;
-
 import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/marker")
@@ -51,6 +51,12 @@ public class SequenceTargetingReagentAddController {
     private SequenceTargetingReagentAddBean getDefaultSearchForm(@RequestParam(value = "sequenceTargetingReagentType", required = false) String type,
                                                                  @RequestParam(value = "sequenceTargetingReagentPublicationZdbID", required = false) String pubZdbID) {
         SequenceTargetingReagentAddBean sequenceTargetingReagentBean = new SequenceTargetingReagentAddBean();
+
+        Map<String, String> strTypes = new HashMap<>(3);
+        strTypes.put(Marker.Type.CRISPR.name(), "CRISPR");
+        strTypes.put(Marker.Type.MRPHLNO.name(), "Morpholino");
+        strTypes.put(Marker.Type.TALEN.name(), "TALEN");
+        sequenceTargetingReagentBean.setStrTypes(strTypes);
 
         sequenceTargetingReagentBean.setStrType(type);
 
@@ -110,17 +116,8 @@ public class SequenceTargetingReagentAddController {
         }
         Publication sequenceTargetingReagentPub = pr.getPublication(formBean.getPublicationID());
 
-        MarkerType mt = new MarkerType();
-        if (formBean.getStrType().equalsIgnoreCase("Morpholino")) {
-            mt = mr.getMarkerTypeByName(Marker.Type.MRPHLNO.toString());
-        } else if (formBean.getStrType().equalsIgnoreCase("TALEN")) {
-            mt = mr.getMarkerTypeByName(Marker.Type.TALEN.toString());
-        } else if (formBean.getStrType().equalsIgnoreCase("CRISPR")) {
-            mt = mr.getMarkerTypeByName(Marker.Type.CRISPR.toString());
-        }
+        MarkerType mt = mr.getMarkerTypeByName(formBean.getStrType());
         newSequenceTargetingReagent.setMarkerType(mt);
-        // set marker sequence component
-
 
         try {
             HibernateUtil.createTransaction();
@@ -162,8 +159,7 @@ public class SequenceTargetingReagentAddController {
             throw new RuntimeException("Error during transaction. Rolled back.", e);
         }
 
-        return "redirect:/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() +
-                "?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=" + newSequenceTargetingReagent.getZdbID();
+        return "redirect:/" + newSequenceTargetingReagent.getZdbID();
     }
 
     // looks up suppliers
