@@ -219,7 +219,9 @@ public class FishService {
     private static void setImageAttributeOnFish(FishResult fishResult, Set<ZfinFigureEntity> figures, Set<ZfinFigureEntity> expFigures) {
 
         if (figures == null || figures.size() == 0) {
-            return;
+            if (expFigures == null || expFigures.size() == 0) {
+                return;
+            }
         }
         fishResult.setPhenotypeFigures(figures);
         fishResult.setExpressionFigures(expFigures);
