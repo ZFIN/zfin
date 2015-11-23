@@ -172,7 +172,7 @@ var validateUnspecifiedAlleles = function(geneIDdelete, geneZdbIdMergedInto, gen
     var unspecifiedAlleleNameOfGene1 = unspecifiedAlleleDataOfGene1.name;
     var unspecifiedAlleleIdOfGene1 = unspecifiedAlleleDataOfGene1.zdbID;
 
-    if (null !== unspecifiedAlleleNameOfGene1) {
+    if (null !== unspecifiedAlleleNameOfGene1 && typeof unspecifiedAlleleNameOfGene1 != 'undefined') {
 
         unspecifiedAllelesIgnored = false;
 
@@ -190,7 +190,7 @@ var validateUnspecifiedAlleles = function(geneIDdelete, geneZdbIdMergedInto, gen
         var unspecifiedAlleleNameOfGene2 = unspecifiedAlleleDataOfGene2.name;
         var unspecifiedAlleleIdOfGene2 = unspecifiedAlleleDataOfGene2.zdbID;
 
-        if (null !== unspecifiedAlleleNameOfGene2) {
+        if (null !== unspecifiedAlleleNameOfGene2 && typeof unspecifiedAlleleNameOfGene2 != 'undefined') {
 
             jQuery('#validationUnspecifiedAllelesText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following unspecified allele:</h3>');
             jQuery('#validationUnspecifiedAllelesText').append('<div>'
@@ -911,31 +911,44 @@ var validateSequencesForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, 
 };
 
 var validateFishListForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, strAbbrevMergedInto) {
-    var fishListSTR1 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-fish-for-sequenceTargetingReagentZdbId?sequenceTargetingReagentZdbId=" + strIDdelete,
+
+    var str1UsedInFish = jQuery.ajax({url: "/action/marker/sequenceTargetingReagent-used-in-fish?sequenceTargetingReagentZdbId=" + strIDdelete,
+                                      async: false
+    }).responseText;
+
+    if (str1UsedInFish === "Yes") {
+      var fishListSTR1 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-fish-for-sequenceTargetingReagentZdbId?sequenceTargetingReagentZdbId=" + strIDdelete,
         dataType: "json",
         async: false
-    }).responseText);
+      }).responseText);
 
-    var fishNamesOfSTR1 = new Array();
-    var fishIDsOfSTR1 = new Array();
-    for (fish in fishListSTR1) {
+      var fishNamesOfSTR1 = new Array();
+      var fishIDsOfSTR1 = new Array();
+      for (fish in fishListSTR1) {
         fishNamesOfSTR1.push(fishListSTR1[fish].name);
-        fishIDsOfSTR1.push(fishListSTR1[fish].zdbID);
+        fishIDsOfSTR1.push(fishListSTR1[fish].id);
+      }
     }
 
-    var fishListSTR2 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-fish-for-sequenceTargetingReagentZdbId?sequenceTargetingReagentZdbId=" + strZdbIdMergedInto,
+    var str2UsedInFish = jQuery.ajax({url: "/action/marker/sequenceTargetingReagent-used-in-fish?sequenceTargetingReagentZdbId=" + strZdbIdMergedInto,
+                                      async: false
+    }).responseText;
+
+    if (str2UsedInFish === "Yes") {
+      var fishListSTR2 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-fish-for-sequenceTargetingReagentZdbId?sequenceTargetingReagentZdbId=" + strZdbIdMergedInto,
         dataType: "json",
         async: false
-    }).responseText);
+      }).responseText);
 
-    var fishNamesOfSTR2 = new Array();
-    var fishIDsOfSTR2 = new Array();
-    for (fish in fishListSTR2) {
+      var fishNamesOfSTR2 = new Array();
+      var fishIDsOfSTR2 = new Array();
+      for (fish in fishListSTR2) {
         fishNamesOfSTR2.push(fishListSTR2[fish].name);
-        fishIDsOfSTR2.push(fishListSTR2[fish].zdbID);
+        fishIDsOfSTR2.push(fishListSTR2[fish].id);
+      }
     }
 
-    if(fishIDsOfSTR1.length !== 0 && fishIDsOfSTR2.length !== 0) {
+    if(str1UsedInFish === "Yes" && str2UsedInFish === "Yes") {
         if (fishIDsOfSTR1.length !== fishIDsOfSTR2.length) {
             differentFish = true;
         } else {
@@ -944,12 +957,20 @@ var validateFishListForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, s
                     differentFish = true;
             }
         }
+    } else if (str1UsedInFish === "Yes" && str2UsedInFish === "No") {
+        differentFish = true;
+    } else if (str1UsedInFish === "No" && str2UsedInFish === "Yes") {
+        differentFish = false;
+    } else {
+        differentFish = false;
     }
+
+
 
     if (differentFish) {
         jQuery('#validationSTRText').append('<h4>Merging these two sequence targeting reagents is not allowed because they have been with different fish.</h4>');
-        if (fishNamesOfSTR1.length > 0) {
-            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> is with the following fish:</h4>');
+        if (str1UsedInFish === "Yes") {
+            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> is associated with the following fish:</h4>');
             for (var i = 0; i < fishNamesOfSTR1.length; i++) {
                 jQuery('#validationSTRText').append('<div>'
                         + '<a target="_blank" href="/' + fishIDsOfSTR1[i] +'">'
@@ -957,10 +978,10 @@ var validateFishListForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, s
                         + '</div>');
             }
         } else {
-            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> is with no fish.</h4>');
+            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> is associated with no fish.</h4>');
         }
 
-        if (fishNamesOfSTR2.length > 0) {
+        if (str2UsedInFish === "Yes") {
             jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is associated with the following fish:</h4>');
             for (var i = 0; i < fishNamesOfSTR2.length; i++) {
                 jQuery('#validationSTRText').append('<div>'

@@ -1,6 +1,6 @@
 package org.zfin.publication.presentation;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.validation.Errors;
 import org.zfin.publication.repository.PublicationRepository;
@@ -20,7 +20,7 @@ public class PublicationValidator {
 
     private static Logger LOG = Logger.getLogger(PublicationValidator.class);
     private static final String ZDB_PUB = "ZDB-PUB-";
-    private static final String ZDB_ID_TIME_STAMP_PATTERN = "\\d{6}-\\d*";
+    private static final String ZDB_ID_TIME_STAMP_PATTERN = "\\d{6}-\\d+";
 
     /**
      * Check that a given pub zdb ID is not empty and is found in the database.
@@ -34,24 +34,28 @@ public class PublicationValidator {
      * @param errors        error object
      */
     public static void validatePublicationID(String publicationID, String field, Errors errors) {
-        if (StringUtils.isEmpty(publicationID)) {
-            LOG.debug("------- Failed not-null validation. ---");
-            errors.rejectValue(field, "code", "Publication attribution can not be null. Please enter a valid ZDB ID.");
-            return;
-        }
         // trim off trailing blanks
         publicationID = publicationID.trim();
+
+        if (StringUtils.isEmpty(publicationID)) {
+            LOG.debug("------- Failed not-null validation. ---");
+            errors.rejectValue(field, "pub.empty");
+            return;
+        }
+
         if (!publicationID.startsWith(ZDB_PUB)) {
             if (!isValidTimeStamp(publicationID)) {
-                errors.rejectValue(field, "code", publicationID + " is not a valid publication zdb id.");
+                errors.rejectValue(field, "pub.invalid");
                 return;
-            } else
-            publicationID = ZDB_PUB + publicationID;
+            } else {
+                publicationID = ZDB_PUB + publicationID;
+            }
         }
+
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
         if (pr.getPublication(publicationID) == null) {
             LOG.debug("----------Failed zdb id validation --");
-            errors.rejectValue(field, "code", publicationID + " is not a publication zdb id in ZFIN.");
+            errors.rejectValue(field, "pub.notfound");
         }
     }
 
@@ -79,11 +83,13 @@ public class PublicationValidator {
      * @return completed string or unaltered string
      */
     public static String completeZdbID(String pubZdbID) {
-        pubZdbID = pubZdbID.trim();
-        if (pubZdbID == null)
+        if (pubZdbID == null) {
             return null;
-        if (!pubZdbID.startsWith(ZDB_PUB) && isShortVersion(pubZdbID))
+        }
+        pubZdbID = pubZdbID.trim();
+        if (!pubZdbID.startsWith(ZDB_PUB) && isShortVersion(pubZdbID)) {
             return ZDB_PUB + pubZdbID;
+        }
         return pubZdbID;
     }
 }

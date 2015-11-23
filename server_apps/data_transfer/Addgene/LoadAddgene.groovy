@@ -5,7 +5,7 @@ import groovy.json.JsonSlurper
 import org.hibernate.Session
 import org.zfin.framework.HibernateSessionCreator
 import org.zfin.framework.HibernateUtil
-import org.zfin.orthology.Species
+import org.zfin.Species
 import org.zfin.properties.ZfinProperties
 import org.zfin.repository.RepositoryFactory
 import org.zfin.sequence.ForeignDB
@@ -41,7 +41,7 @@ addgeneDb = RepositoryFactory.sequenceRepository.getReferenceDatabase(
         ForeignDB.AvailableName.ADDGENE,
         ForeignDBDataType.DataType.OTHER,
         ForeignDBDataType.SuperType.SUMMARY_PAGE,
-        Species.ZEBRAFISH)
+        Species.Type.ZEBRAFISH)
 entrezGeneDb = session.get(ReferenceDatabase.class, 'ZDB-FDBCONT-040412-1')
 
 

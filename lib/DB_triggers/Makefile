@@ -80,6 +80,8 @@ TRIGGERS = \
         mrkr_name_update_trigger.sql \
 	marker_go_term_evidence_update_trigger.sql \
 	marker_go_term_evidence_insert_trigger.sql \
+	marker_sequence_insert_trigger.sql \
+	marker_sequence_update_trigger.sql \
 	inference_group_member_insert_trigger.sql \
 	inference_group_member_notes_update_trigger.sql \
 	inference_group_member_inferred_from_update_trigger.sql \

@@ -921,6 +921,58 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void shouldFindMorpholinoWithKnownSequence() {
+        String sequenceForMO1adam8a = "TAAATAGTCCAGTGTATCGCATGGC";
+        List<SequenceTargetingReagent> results = markerRepository.getSequenceTargetingReagentBySequence(Marker.Type.MRPHLNO, sequenceForMO1adam8a);
+        assertThat("Should find MO with sequence" + sequenceForMO1adam8a,
+                results, not(empty()));
+    }
+
+    @Test
+    public void shouldNotFindCrisprWithMorpholinoSequence() {
+        String sequenceForMO1adam8a = "TAAATAGTCCAGTGTATCGCATGGC";
+        List<SequenceTargetingReagent> results = markerRepository.getSequenceTargetingReagentBySequence(Marker.Type.CRISPR, sequenceForMO1adam8a);
+        assertThat("Should not find CRISPR with sequence" + sequenceForMO1adam8a,
+                results, is(empty()));
+    }
+
+    @Test
+    public void shouldNotFindTalenWithCrisprSequence() {
+        String sequenceForCRISPR3th = "GGCGGCGGAGGCTGCAGGAC";
+        List<SequenceTargetingReagent> results = markerRepository.getSequenceTargetingReagentBySequence(Marker.Type.TALEN, sequenceForCRISPR3th);
+        assertThat("Should not find TALEN with sequence" + sequenceForCRISPR3th,
+                results, is(empty()));
+    }
+
+    @Test
+    public void shouldFindTalenWithOneSequence() {
+        String sequence1ForTALEN2ptpmt1 = "TGGTCCAAAATGAAAAAG";
+        List<SequenceTargetingReagent> results = markerRepository.getSequenceTargetingReagentBySequence(Marker.Type.TALEN, sequence1ForTALEN2ptpmt1);
+        assertThat("Should find TALEN with sequence1 " + sequence1ForTALEN2ptpmt1,
+                results, not(empty()));
+    }
+
+    @Test
+    public void shouldFindTalenWithTwoSequences() {
+        String sequence1ForTALEN2ptpmt1 = "TGGTCCAAAATGAAAAAG";
+        String sequence2ForTALEN2ptpmt1 = "TCATATTCTTCATTCATG";
+        List<SequenceTargetingReagent> results = markerRepository.getSequenceTargetingReagentBySequence(
+                Marker.Type.TALEN, sequence1ForTALEN2ptpmt1, sequence2ForTALEN2ptpmt1);
+        assertThat("Should find TALEN with sequence1 = " + sequence1ForTALEN2ptpmt1 + " and sequence2 = " + sequence2ForTALEN2ptpmt1,
+                results, not(empty()));
+    }
+
+    @Test
+    public void shouldFindTalenWithTwoSequencesFlipped() {
+        String sequence1ForTALEN2ptpmt1 = "TGGTCCAAAATGAAAAAG";
+        String sequence2ForTALEN2ptpmt1 = "TCATATTCTTCATTCATG";
+        List<SequenceTargetingReagent> results = markerRepository.getSequenceTargetingReagentBySequence(
+                Marker.Type.TALEN, sequence2ForTALEN2ptpmt1, sequence1ForTALEN2ptpmt1);
+        assertThat("Should find TALEN with sequence1 = " + sequence2ForTALEN2ptpmt1 + " and sequence2 = " + sequence1ForTALEN2ptpmt1,
+                results, not(empty()));
+    }
+
+    @Test
     public void getAllEngineeredRegions() {
         List<Marker> engineeredRegions = markerRepository.getAllEngineeredRegions();
         assertNotNull(engineeredRegions);

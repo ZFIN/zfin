@@ -36,6 +36,7 @@
             source: hound.ttAdapter()
         });
 
+        return this;
     };
 })(jQuery);
 

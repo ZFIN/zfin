@@ -158,6 +158,7 @@ $upload_dir = "";
 $img_jpg_suffix = ".jpg";
 $img_jpeg_suffix = ".jpeg";
 $img_gif_suffix = ".gif";
+$img_png_suffix = ".png";
 $pdf_suffix = ".pdf";
 $suffix = "";
 $pdf_prefix = "ZDB-PUB-";
@@ -807,6 +808,7 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
     if (
 	lc(substr($filename,-4)) eq $img_jpg_suffix || 
 	lc(substr($filename,-4)) eq $pdf_suffix ||
+	lc(substr($filename,-4)) eq $img_png_suffix ||
 	lc(substr($filename,-4)) eq $img_gif_suffix ||
 	lc(substr($filename,-5)) eq $img_jpeg_suffix ) {
 	
@@ -818,7 +820,8 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 	if (
 	    lc(substr($filename,-5)) eq $img_jpeg_suffix ||
 	    lc(substr($filename,-4)) eq $img_gif_suffix ||
-	    lc(substr($filename,-4)) eq $img_jpg_suffix){
+	    lc(substr($filename,-4)) eq $img_jpg_suffix||
+	    lc(substr($filename,-4)) eq $img_png_suffix){
 	    
 	    # while apache recognizes /imageLoadUp and points
 	    # urls to right directory, Perl needs the complete filename.
@@ -1084,7 +1087,7 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 
     else { # if the filename not in .jpg, .jpeg. .gif, .pdf, report an error
     
-	&filename_error($filename.'filename not in .jpg, .jpeg. .gif, .pdf');
+	&filename_error($filename.'filename not in .png, .jpg, .jpeg. .gif, .pdf');
 
     } # ends file suffix error 
 } # ends else filename is not null and redirect isn't do-imageupdate.apg

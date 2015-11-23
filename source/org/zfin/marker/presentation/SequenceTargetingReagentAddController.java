@@ -54,40 +54,41 @@ public class SequenceTargetingReagentAddController {
 
         sequenceTargetingReagentBean.setSequenceTargetingReagentType(type);
 
-        if (StringUtils.isNotEmpty(pubZdbID))
+        if (StringUtils.isNotEmpty(pubZdbID)) {
             sequenceTargetingReagentBean.setSequenceTargetingReagentPublicationID(pubZdbID);
+        }
 
         return sequenceTargetingReagentBean;
-
     }
 
-    @RequestMapping("/sequence-targeting-reagent-add")
-    protected String showForm(Model model) throws Exception {
-
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Sequence Targeting Reagent");
-        return "marker/sequence-targeting-reagent-add.page";
-    }
-
-    private @Autowired
-    HttpServletRequest request;
+    @Autowired
+    private HttpServletRequest request;
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(new SequenceTargetingReagentAddBeanValidator());
     }
 
-    @RequestMapping(value = "/sequence-targeting-reagent-do-submit", method = RequestMethod.POST)
-    public String addSequenceTargetingReagent (Model model,
-                                @Valid @ModelAttribute("formBean") SequenceTargetingReagentAddBean formBean,
-                                BindingResult result) throws Exception {
+    @RequestMapping(value = "/sequence-targeting-reagent-add", method = RequestMethod.GET)
+    protected String showForm(Model model) throws Exception {
 
-        if(result.hasErrors())
-            return "marker/sequence-targeting-reagent-add.page";
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Sequence Targeting Reagent");
+        return "marker/sequence-targeting-reagent-add.page";
+    }
+
+    @RequestMapping(value = "/sequence-targeting-reagent-add", method = RequestMethod.POST)
+    public String addSequenceTargetingReagent(Model model,
+                                              @Valid @ModelAttribute("formBean") SequenceTargetingReagentAddBean formBean,
+                                              BindingResult result) throws Exception {
+
+        if (result.hasErrors()) {
+            return showForm(model);
+        }
 
         String sequenceTargetingReagentName = formBean.getSequenceTargetingReagentName();
 
         STRMarkerSequence newSequenceTargetingReagentSequence = new STRMarkerSequence();
-        SequenceTargetingReagent newSequenceTargetingReagent = new SequenceTargetingReagent() ;
+        SequenceTargetingReagent newSequenceTargetingReagent = new SequenceTargetingReagent();
         newSequenceTargetingReagentSequence.setSequence(formBean.getSequenceTargetingReagentSequence().toUpperCase());
         newSequenceTargetingReagentSequence.setType("Nucleotide");
         newSequenceTargetingReagent.setSequence(newSequenceTargetingReagentSequence);
@@ -102,10 +103,11 @@ public class SequenceTargetingReagentAddController {
         newSequenceTargetingReagent.setPublicComments(formBean.getSequenceTargetingReagentComment());
 
         String pubZdbID = formBean.getSequenceTargetingReagentPublicationID().trim();
-        if (PublicationValidator.isShortVersion(pubZdbID))
+        if (PublicationValidator.isShortVersion(pubZdbID)) {
             formBean.setSequenceTargetingReagentPublicationID(PublicationValidator.completeZdbID(pubZdbID));
-        else
+        } else {
             formBean.setSequenceTargetingReagentPublicationID(pubZdbID);
+        }
         Publication sequenceTargetingReagentPub = pr.getPublication(formBean.getSequenceTargetingReagentPublicationID());
 
         MarkerType mt = new MarkerType();
@@ -120,20 +122,19 @@ public class SequenceTargetingReagentAddController {
         // set marker sequence component
 
 
-
         try {
             HibernateUtil.createTransaction();
             mr.createMarker(newSequenceTargetingReagent, sequenceTargetingReagentPub);
             ir.insertUpdatesTable(newSequenceTargetingReagent, "new " + formBean.getSequenceTargetingReagentType(), "");
-            PublicationService.addRecentPublications(request.getSession().getServletContext(), sequenceTargetingReagentPub, PublicationSessionKey.GENE) ;
+            PublicationService.addRecentPublications(request.getSession().getServletContext(), sequenceTargetingReagentPub, PublicationSessionKey.GENE);
 
             String alias = formBean.getSequenceTargetingReagentAlias();
-            if(!StringUtils.isEmpty(alias)) {
+            if (!StringUtils.isEmpty(alias)) {
                 mr.addMarkerAlias(newSequenceTargetingReagent, alias, sequenceTargetingReagentPub);
             }
 
             String curationNote = formBean.getSequenceTargetingReagentCuratorNote();
-            if(!StringUtils.isEmpty(curationNote)) {
+            if (!StringUtils.isEmpty(curationNote)) {
                 mr.addMarkerDataNote(newSequenceTargetingReagent, curationNote);
             }
 
