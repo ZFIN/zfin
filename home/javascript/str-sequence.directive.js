@@ -10,8 +10,8 @@
             scope: {
                 reportedSequenceName: '@',
                 displayedSequenceName: '@',
-                reportedSequence: '=',
-                sequence: '='
+                reportedSequence: '=?',
+                sequence: '=?'
             },
             controller: STRSequenceController,
             controllerAs: 'vm',
