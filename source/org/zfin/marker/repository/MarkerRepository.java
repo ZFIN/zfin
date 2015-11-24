@@ -389,9 +389,9 @@ public interface MarkerRepository {
 
     SequenceTargetingReagent getSequenceTargetingReagent(String markerID);
 
-    List<SequenceTargetingReagent> getSequenceTargetingReagentBySequence(Marker.Type type, String sequence);
+    SequenceTargetingReagent getSequenceTargetingReagentBySequence(Marker.Type type, String sequence);
 
-    List<SequenceTargetingReagent> getSequenceTargetingReagentBySequence(Marker.Type type, String sequence1, String sequence2);
+    SequenceTargetingReagent getSequenceTargetingReagentBySequence(Marker.Type type, String sequence1, String sequence2);
 
     List<Marker> getConstructsForGene(Marker gene);
 

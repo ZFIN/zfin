@@ -2227,12 +2227,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @Override
-    public List<SequenceTargetingReagent> getSequenceTargetingReagentBySequence(Marker.Type type, String sequence) {
+    public SequenceTargetingReagent getSequenceTargetingReagentBySequence(Marker.Type type, String sequence) {
         return getSequenceTargetingReagentBySequence(type, sequence, null);
     }
 
     @Override
-    public List<SequenceTargetingReagent> getSequenceTargetingReagentBySequence(Marker.Type type, String sequence1, String sequence2) {
+    public SequenceTargetingReagent getSequenceTargetingReagentBySequence(Marker.Type type, String sequence1, String sequence2) {
         String hql = "select str from SequenceTargetingReagent str " +
                 "where str.markerType.name = :type ";
         if (sequence2 == null) {
@@ -2253,7 +2253,14 @@ public class HibernateMarkerRepository implements MarkerRepository {
             query.setParameter("sequence2", sequence2);
         }
 
-        return query.list();
+        // a database constraint should be enforcing that STRs are unique by sequence. So for convenience
+        // just return the first result or null.
+        List results = query.list();
+        if (results.size() > 0) {
+            return (SequenceTargetingReagent) results.get(0);
+        } else {
+            return null;
+        }
     }
 
     @Override

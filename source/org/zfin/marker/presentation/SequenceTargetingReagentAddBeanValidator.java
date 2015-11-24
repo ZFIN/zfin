@@ -1,7 +1,5 @@
 package org.zfin.marker.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.functors.InvokerTransformer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -12,8 +10,6 @@ import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.ZfinStringUtils;
-
-import java.util.List;
 
 public class SequenceTargetingReagentAddBeanValidator implements Validator {
 
@@ -64,17 +60,14 @@ public class SequenceTargetingReagentAddBeanValidator implements Validator {
                 validateSequence(errors, "sequence2", strSecondSequence);
             }
 
-            List<SequenceTargetingReagent> existingWithSequences;
+            SequenceTargetingReagent existingWithSequences;
             if (type == Marker.Type.TALEN) {
                 existingWithSequences = mr.getSequenceTargetingReagentBySequence(type, strSequence, strSecondSequence);
             } else {
                 existingWithSequences = mr.getSequenceTargetingReagentBySequence(type, strSequence);
             }
-            if (CollectionUtils.isNotEmpty(existingWithSequences)) {
-                String existingNames = StringUtils.join(
-                        CollectionUtils.collect(existingWithSequences, InvokerTransformer.getInstance("getName")),
-                        ", ");
-                Object[] args = new Object[]{existingNames};
+            if (existingWithSequences != null) {
+                Object[] args = new Object[]{existingWithSequences.getName()};
                 String defaultMessage = "Sequence is already used";
                 errors.rejectValue("sequence", "str.sequence.inuse", args, defaultMessage);
                 errors.rejectValue("sequence2", "str.sequence.inuse", args, defaultMessage);
