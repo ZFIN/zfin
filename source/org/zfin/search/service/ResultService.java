@@ -84,6 +84,7 @@ public class ResultService {
     public static String SCREEN = "Screen:";
     public static String JOURNAL = "Journal:";
     public static String NOTE = "Note:";
+    public static String COMMENT = "Comment:";
     public static String LINE_DESIGNATION = "Line Designation:";
     public static String TRANSCRIPT_NAME = "Transcript Name:";
 
@@ -408,6 +409,8 @@ public class ResultService {
         }
 
         addSynonyms(result, marker);
+        if (marker.getType().equals(Marker.Type.REGION))
+            addComments(result, marker);
         addLocationInfo(result, marker);
         List<Marker> genesContainedInClones = getMarkerRepository().getMarkersContainedIn(marker, MarkerRelationship.Type.CLONE_CONTAINS_GENE);
         if (CollectionUtils.isNotEmpty(genesContainedInClones)) {
@@ -496,6 +499,12 @@ public class ResultService {
         }
     }
 
+    protected void addComments(SearchResult result, Marker marker) {
+        if (CollectionUtils.isNotEmpty(marker.getAliases())) {
+            result.addAttribute(COMMENT, marker.getPublicComments());
+        }
+    }
+
     public void injectExpressionAttributes(SearchResult result) {
         //this is pretty hacky, sorry.  I have to pull the string prefix off of the would-be integer pk id.
         Long id = Long.valueOf(result.getId().replace("xpatex-", ""));
@@ -523,7 +532,7 @@ public class ResultService {
             if (xpatex.getProbe() != null) {
                 result.addAttribute(PROBE, MarkerPresentation.getName(xpatex.getProbe()));
             }
-            String genoLink=GenotypePresentation.getLink(xpatex.getFishExperiment().getFish().getGenotype(),false);
+            String genoLink = GenotypePresentation.getLink(xpatex.getFishExperiment().getFish().getGenotype(), false);
             result.addAttribute(GENOTYPE, genoLink);
 
             String conditions = ExperimentPresentation.getLink(xpatex.getFishExperiment().getExperiment(), true);
@@ -617,7 +626,7 @@ public class ResultService {
 
         PhenotypeExperiment phenotypeExperiment = RepositoryFactory.getMutantRepository().getPhenotypeExperiment(id);
         if (phenotypeExperiment != null) {
-            String genoLink=GenotypePresentation.getLink(phenotypeExperiment.getFishExperiment().getFish().getGenotype(),false);
+            String genoLink = GenotypePresentation.getLink(phenotypeExperiment.getFishExperiment().getFish().getGenotype(), false);
             result.addAttribute(GENOTYPE, genoLink);
 
             String conditionsLink = ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true);
