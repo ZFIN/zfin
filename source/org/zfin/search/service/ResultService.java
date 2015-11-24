@@ -23,6 +23,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.presentation.MarkerRelationshipPresentation;
+import org.zfin.mutant.presentation.GenotypePresentation;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
