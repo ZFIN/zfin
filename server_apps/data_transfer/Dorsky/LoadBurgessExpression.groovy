@@ -49,7 +49,7 @@ def sameFigure = [:]
         .uniqueResult();*/
 //Person owner=RepositoryFactory.profileRepository.getPerson("ZDB-PERS-030520-2")
 
-def dorskyVideos = parseCsv(new FileReader("burgessGenos1.csv"))
+def dorskyVideos = parseCsv(new FileReader("file2.txt"),separator: '\t')
 String mediaDir = "/research/zusers/pm/Projects/releases/HBurgess/images/"
 
 
