@@ -41,7 +41,7 @@
         function activate() {
             if (vm.type === 'CRISPR') {
                 vm.sequenceLabel = 'Target Sequence';
-            } else if (vm.type = 'TALEN') {
+            } else if (vm.type === 'TALEN') {
                 vm.sequenceLabel = 'Target Sequence 1';
             } else {
                 vm.sequenceLabel = 'Sequence';
