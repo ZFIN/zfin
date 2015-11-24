@@ -1,5 +1,7 @@
 package org.zfin.framework.presentation;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +18,9 @@ import java.util.List;
 @ControllerAdvice
 public class JsonExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @Autowired
+    private MessageSource messageSource;
+
     @ExceptionHandler({InvalidWebRequestException.class})
     protected ResponseEntity<Object> handleInvalidRequest(RuntimeException e, WebRequest request) {
         InvalidWebRequestException ire = (InvalidWebRequestException) e;
@@ -30,7 +35,7 @@ public class JsonExceptionHandler extends ResponseEntityExceptionHandler {
                 fieldErrorResource.setResource(fieldError.getObjectName());
                 fieldErrorResource.setField(fieldError.getField());
                 fieldErrorResource.setCode(fieldError.getCode());
-                fieldErrorResource.setMessage(fieldError.getDefaultMessage());
+                fieldErrorResource.setMessage(messageSource.getMessage(fieldError, null));
                 fieldErrorResources.add(fieldErrorResource);
             }
         }
