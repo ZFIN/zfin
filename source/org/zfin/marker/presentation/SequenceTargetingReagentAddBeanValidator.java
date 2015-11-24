@@ -85,7 +85,7 @@ public class SequenceTargetingReagentAddBeanValidator implements Validator {
     private void validateSequence(Errors errors, String field, String sequence) {
         if (StringUtils.isBlank(sequence)) {
             errors.rejectValue(field, "str.sequence.empty");
-        } else if (ZfinStringUtils.containsWhiteSpaceOrNoneATGC(sequence)) {
+        } else if (!ZfinStringUtils.isValidNucleotideSequence(sequence)) {
             errors.rejectValue(field, "str.sequence.characters");
         }
     }
