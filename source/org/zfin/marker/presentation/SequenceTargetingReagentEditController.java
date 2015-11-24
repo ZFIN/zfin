@@ -1,0 +1,31 @@
+package org.zfin.marker.presentation;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.SequenceTargetingReagent;
+
+@Controller
+@RequestMapping("/str")
+public class SequenceTargetingReagentEditController {
+
+    @Autowired
+    MarkerRepository markerRepository;
+
+    @RequestMapping("/{zdbID}/edit")
+    public String showEditPublicationForm(Model model, @PathVariable String zdbID) {
+        SequenceTargetingReagent str = markerRepository.getSequenceTargetingReagent(zdbID);
+        if (str == null) {
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        model.addAttribute("str", str);
+
+        return "marker/sequence-targeting-reagent-edit.page";
+    }
+
+}

@@ -1,6 +1,6 @@
 ;(function() {
     angular
-        .module('app', [])
+        .module('app')
         .directive('strSequence', strSequence);
 
     function strSequence() {
@@ -9,7 +9,9 @@
             templateUrl: '/javascript/str-sequence.directive.html',
             scope: {
                 reportedSequenceName: '@',
-                displayedSequenceName: '@'
+                displayedSequenceName: '@',
+                reportedSequence: '=',
+                sequence: '='
             },
             controller: STRSequenceController,
             controllerAs: 'vm',
@@ -24,8 +26,6 @@
 
         var vm = this;
 
-        vm.reportedSequence = '';
-        vm.displayedSequence = '';
         vm.isReversed = false;
         vm.isComplemented = false;
 
@@ -33,13 +33,17 @@
 
         function activate() {
             $scope.$watchGroup(['vm.reportedSequence', 'vm.isReversed', 'vm.isComplemented'], function (newValue) {
+                if (!vm.reportedSequence) {
+                    return;
+                }
+
                 vm.reportedSequence = stripBadCharacters(vm.reportedSequence.toUpperCase());
-                vm.displayedSequence = vm.reportedSequence;
+                vm.sequence = vm.reportedSequence;
                 if (vm.isReversed) {
-                    vm.displayedSequence = reverseString(vm.displayedSequence);
+                    vm.sequence = reverseString(vm.sequence);
                 }
                 if (vm.isComplemented) {
-                    vm.displayedSequence = complementString(vm.displayedSequence);
+                    vm.sequence = complementString(vm.sequence);
                 }
             });
         }
