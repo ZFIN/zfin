@@ -1650,7 +1650,7 @@ where feature_type =ftrtype_name
  and szm_object_type = feature_type
  and feature_zdb_id = featassay_feature_zdb_id
 and feature_Type not in ('TRANSGENIC_INSERTION')
-and featassay_mutagen not in ('TALEN', 'CRISPR')
+and featassay_mutagen not in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
 order by lower(feature_abbrev);
 
 insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, created_by_zdb_id, created_by_name)
@@ -1660,7 +1660,7 @@ where feature_type =ftrtype_name
  and szm_object_type = feature_type
  and feature_zdb_id = featassay_feature_zdb_id
 and feature_Type not in ('TRANSGENIC_INSERTION')
-and featassay_mutagen in ('TALEN', 'CRISPR')
+and featassay_mutagen in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
 and fmrel_type = "created by"
 and feature_zdb_id = fmrel_ftr_zdb_id
 and mrkr_zdb_id = fmrel_mrkr_zdb_id
@@ -1677,7 +1677,7 @@ where feature_type =ftrtype_name
  and mrkr_type in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
 and feature_Type in ('TRANSGENIC_INSERTION')
 and fmrel_type != 'is allele of'
-and featassay_mutagen not in ('TALEN', 'CRISPR')
+and featassay_mutagen not in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
 order by lower(feature_abbrev);
 
 insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name, created_by_zdb_id, created_by_name)
@@ -1691,7 +1691,7 @@ where feature_type =ftrtype_name
  and construct.mrkr_type in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
 and feature_Type in ('TRANSGENIC_INSERTION')
 and cst.fmrel_type != 'is allele of'
-and featassay_mutagen in ('TALEN', 'CRISPR')
+and featassay_mutagen in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
 and createdby.fmrel_type = "created by"
 and feature_zdb_id = createdby.fmrel_ftr_zdb_id
 and str.mrkr_zdb_id = createdby.fmrel_mrkr_zdb_id
@@ -1708,7 +1708,7 @@ where feature_type =ftrtype_name
  and mrkr_type  in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
 and feature_Type in ('TRANSGENIC_INSERTION')
 and fmrel_type = 'is allele of'
-and featassay_mutagen not in ('TALEN', 'CRISPR')
+and featassay_mutagen not in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
 order by lower(feature_abbrev);
 
 insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name, created_by_zdb_id, created_by_name)
@@ -1722,7 +1722,7 @@ where feature_type =ftrtype_name
  and construct.mrkr_type  in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
 and feature_Type in ('TRANSGENIC_INSERTION')
 and cst.fmrel_type = 'is allele of'
-and featassay_mutagen in ('TALEN', 'CRISPR')
+and featassay_mutagen in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
 and createdby.fmrel_type = "created by"
 and feature_zdb_id = createdby.fmrel_ftr_zdb_id
 and str.mrkr_zdb_id = createdby.fmrel_mrkr_zdb_id
