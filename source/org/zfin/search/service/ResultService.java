@@ -500,9 +500,7 @@ public class ResultService {
     }
 
     protected void addComments(SearchResult result, Marker marker) {
-        if (CollectionUtils.isNotEmpty(marker.getAliases())) {
             result.addAttribute(COMMENT, marker.getPublicComments());
-        }
     }
 
     public void injectExpressionAttributes(SearchResult result) {
