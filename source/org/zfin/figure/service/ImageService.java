@@ -23,16 +23,16 @@ public class ImageService {
 
     public static Logger log = Logger.getLogger(ImageService.class);
 
-    public static Image processImage(Figure figure, Person owner, String filePath, Boolean isVideoStill) throws IOException {
+    public static Image processImage(Figure figure, String filePath, Boolean isVideoStill,String direction) throws IOException {
 
         File imageLoadUpDir = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), ZfinPropertiesEnum.IMAGE_LOAD.toString());
 
         //create an initial image record, file paths and width/height will be wrong
 
-        /*Person owner = (Person) HibernateUtil.currentSession().createCriteria(Person.class)
-                .add(Restrictions.eq("zdbID", "ZDB-PERS-000912-1"))  //Yvonne
-                .uniqueResult();*/
-        Image image = createPlaceholderImage(figure, owner, isVideoStill);
+        Person owner = (Person) HibernateUtil.currentSession().createCriteria(Person.class)
+                .add(Restrictions.eq("zdbID", "ZDB-PERS-030520-2"))  //Yvonne
+                .uniqueResult();
+        Image image = createPlaceholderImage(figure, owner, isVideoStill,direction);
 
         //get the image file
         File initialFile = new File(filePath);
@@ -68,7 +68,7 @@ public class ImageService {
     /*
 
      */
-    private static Image createPlaceholderImage(Figure figure, Person owner, Boolean isVideoStill) {
+    private static Image createPlaceholderImage(Figure figure, Person owner, Boolean isVideoStill,String direction) {
 
         Image image = new Image();
 
