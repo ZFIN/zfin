@@ -19,8 +19,8 @@
         return directive;
     }
 
-    STRDetailsController.$inject = ['STRService'];
-    function STRDetailsController(STRService) {
+    STRDetailsController.$inject = ['STRService', 'FieldErrorService'];
+    function STRDetailsController(STRService, FieldErrorService) {
 
         var vm = this;
 
@@ -30,8 +30,7 @@
 
         vm.processing = false;
         vm.saved = false;
-        vm.failed = false;
-        vm.errors = {};
+        vm.errors = FieldErrorService.clearErrors();
 
         vm.save = save;
         vm.reset = reset;
@@ -53,14 +52,15 @@
         function save() {
             vm.processing = true;
             vm.saved = false;
-            vm.failed = false;
-            vm.errors = {};
+            vm.errors = FieldErrorService.clearErrors();
             STRService.saveStrDetails(vm.id, vm.str)
                 .then(function (data) {
                     vm.str = data;
                     vm.saved = true;
                 })
-                .catch(processErrors)
+                .catch(function (response) {
+                    vm.errors = FieldErrorService.processErrorResponse(response);
+                })
                 .finally(function() {
                     vm.processing = false;
                 });
@@ -76,18 +76,6 @@
                 .catch(function (error) {
                     console.log(error);
                 });
-        }
-
-        function processErrors(response) {
-            response.data.fieldErrors.forEach(function (error) {
-                if (!vm.errors.hasOwnProperty(error.field)) {
-                    vm.errors[error.field] = [];
-                }
-                vm.errors[error.field].push(error.message);
-            });
-            if (!response.data.fieldErrors.length) {
-                vm.failed = true;
-            }
         }
 
     }
