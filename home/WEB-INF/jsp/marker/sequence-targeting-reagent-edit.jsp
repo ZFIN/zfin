@@ -13,7 +13,11 @@
     }());
 </script>
 
+<script src="/javascript/field-error.service.js"></script>
 <script src="/javascript/str.service.js"></script>
+<script src="/javascript/marker.service.js"></script>
+
+<script src="/javascript/marker-suppliers.directive.js"></script>
 <script src="/javascript/str-details.directive.js"></script>
 <script src="/javascript/str-sequence.directive.js"></script>
 
@@ -53,12 +57,16 @@
         <div class="panel-body">Cats and dogs each hate the other</div>
     </div>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Suppliers</h3>
+    <c:if test="${showSupplier}">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Suppliers</h3>
+            </div>
+            <div class="panel-body">
+                <div marker-suppliers id="${str.zdbID}"></div>
+            </div>
         </div>
-        <div class="panel-body">The pipe began to rust while new</div>
-    </div>
+    </c:if>
 
     <div class="panel panel-default">
         <div class="panel-heading">

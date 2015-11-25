@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.SequenceTargetingReagent;
 
@@ -24,6 +25,7 @@ public class SequenceTargetingReagentEditController {
         }
 
         model.addAttribute("str", str);
+        model.addAttribute("showSupplier", str.getType() == Marker.Type.TALEN || str.getType() == Marker.Type.CRISPR);
 
         return "marker/sequence-targeting-reagent-edit.page";
     }
