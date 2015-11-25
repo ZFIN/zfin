@@ -34,10 +34,24 @@
             </div>
         </div>
         <div class="form-group">
+            <form:label path="publicationID" class="col-sm-2 control-label">Reference</form:label>
+            <div class="col-sm-4">
+                <form:input path="publicationID" class="form-control" placeholder="ZDB-PUB-123456-7"/>
+                <form:errors path="publicationID" cssClass="error"/>
+            </div>
+        </div>
+        <div class="form-group">
             <form:label path="name" class="col-sm-2 control-label">Name</form:label>
             <div class="col-sm-4">
                 <form:input path="name" class="form-control"/>
                 <form:errors path="name" class="error"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <form:label path="alias" class="col-sm-2 control-label">Alias</form:label>
+            <div class="col-sm-4">
+                <form:input path="alias" class="form-control"/>
+                <form:errors path="alias" class="error"/>
             </div>
         </div>
         <div class="form-group">
@@ -68,10 +82,15 @@
             </div>
         </div>
         <div class="form-group">
-            <form:label path="publicationID" class="col-sm-2 control-label">Reference</form:label>
-            <div class="col-sm-4">
-                <form:input path="publicationID" class="form-control" placeholder="ZDB-PUB-123456-7"/>
-                <form:errors path="publicationID" cssClass="error"/>
+            <form:label path="publicNote" class="col-sm-2 control-label">Public Note</form:label>
+            <div class="col-sm-6">
+                <form:textarea path="publicNote" class="form-control" rows="3"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <form:label path="curatorNote" class="col-sm-2 control-label">Curator Note</form:label>
+            <div class="col-sm-6">
+                <form:textarea path="curatorNote" class="form-control" rows="3"/>
             </div>
         </div>
         <div class="form-group">
