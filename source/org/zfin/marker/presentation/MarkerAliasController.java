@@ -6,6 +6,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.repository.MarkerRepository;
@@ -25,6 +26,9 @@ public class MarkerAliasController {
 
     @Autowired
     private PublicationRepository publicationRepository;
+
+    @Autowired
+    private InfrastructureRepository infrastructureRepository;
 
     @ResponseBody
     @RequestMapping(value = "/{markerID}/aliases", method = RequestMethod.GET)
@@ -70,6 +74,17 @@ public class MarkerAliasController {
         HibernateUtil.flushAndCommitCurrentSession();
 
         return MarkerAliasBean.convert(alias);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/alias/{aliasID}/references/{pubID}", method = RequestMethod.DELETE)
+    public String removeAliasReference(@PathVariable String aliasID,
+                                       @PathVariable String pubID) {
+        HibernateUtil.createTransaction();
+        infrastructureRepository.deleteRecordAttribution(aliasID, pubID);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return "OK";
     }
 
 }
