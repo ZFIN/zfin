@@ -1707,39 +1707,36 @@ select
                    cacheImpl="SortedMapBackedCache"/>
 
            <entity name="construct_expressed_in_direct"
-                   datasource="db" query="select term_ont_id as xref, term_name as expressed_in_direct, ftcs_cs_id as construct_pk_id
-                   from figure_term_construct_search, expression_experiment, expression_result, term
-                   where ftcs_genox_zdb_id = xpatex_genox_zdb_id
-                     and xpatres_xpatex_zdb_id = xpatex_zdb_id
-                     and term_zdb_id = xpatres_superterm_zdb_id
-                     and term_ontology='zebrafish_anatomy'
-                   union
-                   select term_ont_id as xref, term_name as expressed_in_direct, ftcs_cs_id as construct_pk_id
-                   from figure_term_construct_search, expression_experiment, expression_result, term
-                   where ftcs_genox_zdb_id = xpatex_genox_zdb_id
-                     and xpatres_xpatex_zdb_id = xpatex_zdb_id
-                     and term_zdb_id = xpatres_subterm_zdb_id
-                     ;"
+                   datasource="db" query="select DISTINCT term_ont_id as xref, term_name as expressed_in_direct, construct_zdb_id as construct_id
+from expression_experiment
+  join marker as efg on xpatex_gene_zdb_id = efg.mrkr_zdb_id
+  join expression_result on xpatres_xpatex_zdb_id = xpatex_zdb_id
+  join term on (xpatres_superterm_zdb_id = term_zdb_id or xpatres_subterm_zdb_id = term_zdb_id)
+  join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id
+  join fish on genox_fish_zdb_id = fish_zdb_id
+  join genotype_feature on genofeat_geno_zdb_id = fish_genotype_zdb_id
+  join feature_marker_relationship on genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+  join construct on fmrel_mrkr_zdb_id = construct_zdb_id
+  join marker_relationship on (mrel_mrkr_1_zdb_id = fmrel_mrkr_zdb_id and mrel_mrkr_2_zdb_id = efg.mrkr_zdb_id and mrel_type = 'coding sequence of')
+;"
                    cacheImpl="SortedMapBackedCache"
-                   where="construct_pk_id=construct.construct_pk_id"/>
+                   where="construct_id=construct.id"/>
 
            <entity name="construct_expressed_in_parent"
-                   datasource="db" query="select term_ont_id as xref, term_name as expressed_in_parent, ftcs_cs_id as construct_pk_id
-                   from figure_term_construct_search, expression_experiment, expression_result, term, all_term_contains
-                   where ftcs_genox_zdb_id = xpatex_genox_zdb_id
-                     and xpatres_xpatex_zdb_id = xpatex_zdb_id
-                     and term_zdb_id = alltermcon_container_zdb_id
-                     and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
-                     and term_ontology='zebrafish_anatomy'
-                   union
-                   select term_ont_id as xref, term_name as expressed_in_parent, ftcs_cs_id as construct_pk_id
-                   from figure_term_construct_search, expression_experiment, expression_result, term, all_term_contains
-                   where ftcs_genox_zdb_id = xpatex_genox_zdb_id
-                     and xpatres_xpatex_zdb_id = xpatex_zdb_id
-                     and term_zdb_id = alltermcon_container_zdb_id
-                     and alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
-                     ;"
-                   where="construct_pk_id=construct.construct_pk_id"
+                   datasource="db" query="select DISTINCT term_ont_id as xref, term_name as expressed_in_parent, construct_zdb_id as construct_id
+from expression_experiment
+  join marker as efg on xpatex_gene_zdb_id = efg.mrkr_zdb_id
+  join expression_result on xpatres_xpatex_zdb_id = xpatex_zdb_id
+  join all_term_contains on (alltermcon_contained_zdb_id = xpatres_superterm_zdb_id  or alltermcon_contained_zdb_id = xpatres_subterm_zdb_id)
+  join term on alltermcon_container_zdb_id = term_zdb_id
+  join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id
+  join fish on genox_fish_zdb_id = fish_zdb_id
+  join genotype_feature on genofeat_geno_zdb_id = fish_genotype_zdb_id
+  join feature_marker_relationship on genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+  join construct on fmrel_mrkr_zdb_id = construct_zdb_id
+  join marker_relationship on (mrel_mrkr_1_zdb_id = construct_zdb_id and mrel_mrkr_2_zdb_id = efg.mrkr_zdb_id and mrel_type = 'coding sequence of')
+;"
+                   where="construct_id=construct.id"
                    cacheImpl="SortedMapBackedCache"/>
 
 
