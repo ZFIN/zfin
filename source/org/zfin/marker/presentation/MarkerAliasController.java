@@ -2,14 +2,17 @@ package org.zfin.marker.presentation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.zfin.infrastructure.PublicationAttribution;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -18,24 +21,41 @@ import java.util.Collection;
 public class MarkerAliasController {
 
     @Autowired
-    MarkerRepository markerRepository;
+    private MarkerRepository markerRepository;
+
+    @Autowired
+    private PublicationRepository publicationRepository;
 
     @ResponseBody
-    @RequestMapping("/{markerID}/aliases")
+    @RequestMapping(value = "/{markerID}/aliases", method = RequestMethod.GET)
     public Collection<MarkerAliasBean> getMarkerAliases(@PathVariable String markerID) {
         Marker marker = markerRepository.getMarkerByID(markerID);
         Collection<MarkerAliasBean> beans = new ArrayList<>();
         for (MarkerAlias markerAlias : marker.getAliases()) {
-            MarkerAliasBean bean = new MarkerAliasBean();
-            bean.setAlias(markerAlias.getAlias());
-            Collection<String> references = new ArrayList<>();
-            for (PublicationAttribution reference : markerAlias.getPublications()) {
-                references.add(reference.getSourceZdbID());
-            }
-            bean.setReferences(references);
-            beans.add(bean);
+            beans.add(MarkerAliasBean.convert(markerAlias));
         }
         return beans;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{markerID}/aliases", method = RequestMethod.POST)
+    public MarkerAliasBean addMarkerAlias(@PathVariable String markerID,
+                                          @Valid @RequestBody MarkerAliasBean newAlias,
+                                          BindingResult errors) {
+        if (errors.hasErrors()) {
+            throw new InvalidWebRequestException("Invalid alias", errors);
+        }
+
+        Marker marker = markerRepository.getMarkerByID(markerID);
+        // when creating a new alias, the assumption is that there is only one reference
+        String pubID = newAlias.getReferences().iterator().next().getZdbID();
+        Publication publication = publicationRepository.getPublication(pubID);
+
+        HibernateUtil.createTransaction();
+        MarkerAlias alias = markerRepository.addMarkerAlias(marker, newAlias.getAlias(), publication);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return MarkerAliasBean.convert(alias);
     }
 
 }
