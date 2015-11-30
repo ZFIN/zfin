@@ -55,20 +55,19 @@ public class FeatureDetailController {
                 if (zdbID.startsWith("ZDB-ALT-120130") || (zdbID.startsWith("ZDB-ALT-120806"))) {
                     return "redirect:/ZDB-PUB-121121-2";
                 } else {
-                    //if (!zdbID.startsWith("ZDB-ALT-120130")||!zdbID.startsWith("ZDB-ALT-120806")){
-                    String repldFtr = infrastructureRepository.getReplacedZdbID(zdbID);
-                    if (repldFtr != null) {
-                        feature = featureRepository.getFeatureByID(repldFtr);
-
-                    } else {
-                        model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-                        return LookupStrings.RECORD_NOT_FOUND_PAGE;
-                    }
+                    model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+                    return LookupStrings.RECORD_NOT_FOUND_PAGE;
                 }
 
             } else {
-                model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-                return LookupStrings.RECORD_NOT_FOUND_PAGE;
+                String repldFtr = infrastructureRepository.getReplacedZdbID(zdbID);
+                if (repldFtr != null) {
+                    feature = featureRepository.getFeatureByID(repldFtr);
+
+                } else {
+                    model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+                    return LookupStrings.RECORD_NOT_FOUND_PAGE;
+                }
             }
 
         }
