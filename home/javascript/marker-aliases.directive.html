@@ -1,4 +1,24 @@
 <div class="row">
+    <div class="col-sm-5">
+
+        <div class="form-group">
+            <label for="aliasName">Alias</label>
+            <input class="form-control" id="aliasName" ng-model="vm.newAlias">
+        </div>
+    </div>
+    <div class="col-sm-5">
+        <div class="form-group">
+            <label for="aliasReference">Reference</label>
+            <input class="form-control" id="aliasReference" ng-model="vm.newReference">
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <button type="button" class="btn btn-primary"
+                ng-disabled="!vm.newAlias || !vm.newReference"
+                ng-click="vm.add()">Add</button>
+    </div>
+</div>
+<div class="row">
     <div class="col-sm-6">
         <p class="text-muted" ng-hide="vm.aliases.length">
             <i>No aliases yet</i>
@@ -6,8 +26,10 @@
         <table class="table" ng-show="vm.aliases.length">
             <tr ng-repeat="alias in vm.aliases">
                 <td>
-                    {{alias.alias}}
-                    <!--<span class="small pull-right"><a href ng-click="vm.remove(supplier, $index)">Remove</a></span>-->
+                    {{alias.alias}} ({{alias.references.length}})
+                    <span class="small pull-right">
+                        <a href ng-click="vm.remove(alias, $index)">Remove</a>
+                    </span>
                 </td>
             </tr>
         </table>
