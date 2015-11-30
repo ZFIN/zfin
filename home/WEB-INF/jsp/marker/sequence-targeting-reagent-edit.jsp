@@ -20,6 +20,7 @@
 <script src="/javascript/marker-suppliers.directive.js"></script>
 <script src="/javascript/str-details.directive.js"></script>
 <script src="/javascript/str-sequence.directive.js"></script>
+<script src="/javascript/marker-aliases.directive.js"></script>
 
 <c:set var="viewURL">/${str.zdbID}</c:set>
 <c:set var="deleteURL">/action/infrastructure/deleteRecord/${str.zdbID}</c:set>
@@ -47,7 +48,9 @@
         <div class="panel-heading">
             <h3 class="panel-title">Previous Names</h3>
         </div>
-        <div class="panel-body">Oak is strong and also gives shade</div>
+        <div class="panel-body">
+            <div marker-aliases id="${str.zdbID}"></div>
+        </div>
     </div>
 
     <div class="panel panel-default">
