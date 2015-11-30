@@ -9,7 +9,11 @@
         return {
             getSuppliers: getSuppliers,
             addSupplier: addSupplier,
-            removeSupplier: removeSupplier
+            removeSupplier: removeSupplier,
+            getAliases: getAliases,
+            addAlias: addAlias,
+            addAliasReference: addAliasRerference,
+            removeAliasReference: removeAliasReference
         };
 
         function returnResponseData(response) {
