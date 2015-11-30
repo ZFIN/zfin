@@ -12,7 +12,7 @@
             removeSupplier: removeSupplier,
             getAliases: getAliases,
             addAlias: addAlias,
-            addAliasReference: addAliasRerference,
+            addAliasReference: addAliasReference,
             removeAliasReference: removeAliasReference
         };
 
@@ -48,7 +48,7 @@
                 .then(returnResponseData);
         }
 
-        function addAliasRerference(alias, pubId) {
+        function addAliasReference(alias, pubId) {
             return $http.post('/action/marker/alias/' + alias.zdbID + '/references', {zdbID: pubId})
                 .then(returnResponseData);
         }
