@@ -48,7 +48,7 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
 
     def "when a new image is created, it should have a zdb_id, zdbID should be part of filename"() {
         when: "a new image is created"
-        Image image = ImageService.processImage(figure, owner, "test/resources/540x1130.jpg", false)
+        Image image = ImageService.processImage(figure, owner, "test/resources/540x1130.jpg", false,Image.NOT_SPECIFIED)
 
         then: "it should have a zdbID generated for it"
         image.zdbID
