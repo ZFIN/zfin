@@ -32,7 +32,7 @@
     <script src="/javascript/autocompletify.js"></script>
 
 
-    <script type="text/javascript" src="/javascript/typeahead.bundle.js"></script>
+    <script type="text/javascript" src="/javascript/typeahead.bundle.min.js"></script>
 
 </head>
 <script type="text/javascript" language="javascript"

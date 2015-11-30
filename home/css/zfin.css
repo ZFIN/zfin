@@ -644,7 +644,7 @@ video {
     display: block !important;
 }
 
-.scrollable-dropdown-menu .tt-dropdown-menu {
+.scrollable-dropdown-menu .tt-menu {
     max-height: 250px;
     overflow-y: auto;
 }

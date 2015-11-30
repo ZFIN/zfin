@@ -7,7 +7,7 @@ input.tt-input {
     opacity: .5 !important;
 }
 
-.tt-dropdown-menu {
+.tt-menu {
     padding: 8px 0;
     background-color: #fff;
     border: 1px solid rgba(0, 0, 0, 0.2);
