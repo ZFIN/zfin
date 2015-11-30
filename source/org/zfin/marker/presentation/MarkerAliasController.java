@@ -58,4 +58,18 @@ public class MarkerAliasController {
         return MarkerAliasBean.convert(alias);
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/alias/{aliasID}/references", method = RequestMethod.POST)
+    public MarkerAliasBean addAliasReference(@PathVariable String aliasID,
+                                             @RequestBody MarkerReferenceBean newReference) {
+        MarkerAlias alias = markerRepository.getMarkerAlias(aliasID);
+        Publication publication = publicationRepository.getPublication(newReference.getZdbID());
+
+        HibernateUtil.createTransaction();
+        markerRepository.addDataAliasAttribution(alias, publication, alias.getMarker());
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return MarkerAliasBean.convert(alias);
+    }
+
 }
