@@ -63,6 +63,18 @@ public class MarkerAliasController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/alias/{aliasID}", method = RequestMethod.DELETE)
+    public String removeMarkerAlias(@PathVariable String aliasID) {
+        MarkerAlias alias = markerRepository.getMarkerAlias(aliasID);
+
+        HibernateUtil.createTransaction();
+        markerRepository.deleteMarkerAlias(alias.getMarker(), alias);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return "OK";
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/alias/{aliasID}/references", method = RequestMethod.POST)
     public MarkerAliasBean addAliasReference(@PathVariable String aliasID,
                                              @RequestBody MarkerReferenceBean newReference) {

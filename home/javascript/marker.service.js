@@ -12,6 +12,7 @@
             removeSupplier: removeSupplier,
             getAliases: getAliases,
             addAlias: addAlias,
+            removeAlias: removeAlias,
             addAliasReference: addAliasReference,
             removeAliasReference: removeAliasReference
         };
@@ -46,6 +47,10 @@
             };
             return $http.post('/action/marker/' + markerId + '/aliases', alias)
                 .then(returnResponseData);
+        }
+
+        function removeAlias(alias) {
+            return $http.delete('/action/marker/alias/' + alias.zdbID);
         }
 
         function addAliasReference(alias, pubId) {
