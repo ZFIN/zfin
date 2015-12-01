@@ -22,7 +22,6 @@ import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.GenotypeDisplay;
 import org.zfin.mutant.GenotypeFeature;
-import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
@@ -35,9 +34,6 @@ public class FeatureDetailController {
 
     @Autowired
     private FeatureRepository featureRepository;
-
-    @Autowired
-    private MutantRepository mutantRepository;
 
     @Autowired
     private InfrastructureRepository infrastructureRepository;
@@ -58,9 +54,9 @@ public class FeatureDetailController {
                 // one of the two Burgess / Linn feature types redirect to pub otherwise display: feature not found.
                 String ftr = featureRepository.getFeatureByIDInTrackingTable(zdbID);
                 if (ftr != null) {
-                  if (zdbID.startsWith("ZDB-ALT-120130") || (zdbID.startsWith("ZDB-ALT-120806"))) {
-                      return "redirect:/ZDB-PUB-121121-2";
-                  }
+                    if (zdbID.startsWith("ZDB-ALT-120130") || (zdbID.startsWith("ZDB-ALT-120806"))) {
+                        return "redirect:/ZDB-PUB-121121-2";
+                    }
                 }
             }
         }
