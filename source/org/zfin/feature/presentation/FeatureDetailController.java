@@ -49,14 +49,21 @@ public class FeatureDetailController {
     protected String getFeatureDetail(@PathVariable String zdbID, Model model) {
         LOG.info("Start Feature Detail Controller");
         Feature feature = featureRepository.getFeatureByID(zdbID);
-        if (null == feature) {
+        if (feature == null) {
             String ftr = featureRepository.getFeatureByIDInTrackingTable(zdbID);
             if (ftr != null) {
                 if (zdbID.startsWith("ZDB-ALT-120130") || (zdbID.startsWith("ZDB-ALT-120806"))) {
                     return "redirect:/ZDB-PUB-121121-2";
                 } else {
-                    model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-                    return LookupStrings.RECORD_NOT_FOUND_PAGE;
+                    //if (!zdbID.startsWith("ZDB-ALT-120130")||!zdbID.startsWith("ZDB-ALT-120806")){
+                    String repldFtr = infrastructureRepository.getReplacedZdbID(zdbID);
+                    if (repldFtr != null) {
+                        feature = featureRepository.getFeatureByID(repldFtr);
+
+                    } else {
+                        model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+                        return LookupStrings.RECORD_NOT_FOUND_PAGE;
+                    }
                 }
 
             } else {
