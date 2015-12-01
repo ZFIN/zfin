@@ -99,16 +99,16 @@ dorskyVideos.each { csv ->
         }
         figure = createFigure(figureLabelIndex, publication,superTerm,figPrefix,feature)
         if (!(csv.file.contains("mov")||(csv.file.contains("mp4")))) {
-            image = ImageService.processImage(figure, owner,mediaDir + csv.file.replace(".jpg", ".jpg"), false)
+            image = ImageService.processImage(figure, mediaDir + csv.file.replace(".jpg", ".jpg"), false, Image.NOT_SPECIFIED)
             videosAdded.put(csv.file, figure.zdbID)
 
         }
         else {
             if (csv.file.contains("mov")) {
-                image = ImageService.processImage(figure, owner,mediaDir + csv.file.replace(".mov", ".png"), true)
+                image = ImageService.processImage(figure, mediaDir + csv.file.replace(".mov", ".png"), true,Image.NOT_SPECIFIED)
             }
             if (csv.file.contains("mp4")) {
-                    image = ImageService.processImage(figure, owner,mediaDir + csv.file.replace(".mp4", ".png"), true)
+                    image = ImageService.processImage(figure, mediaDir + csv.file.replace(".mp4", ".png"), true,Image.NOT_SPECIFIED)
             }
 
             videos = []
