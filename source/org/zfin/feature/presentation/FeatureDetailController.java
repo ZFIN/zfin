@@ -50,35 +50,24 @@ public class FeatureDetailController {
         LOG.info("Start Feature Detail Controller");
         Feature feature = featureRepository.getFeatureByID(zdbID);
         if (feature == null) {
-            String ftr = featureRepository.getFeatureByIDInTrackingTable(zdbID);
-            if (ftr != null) {
-                if (zdbID.startsWith("ZDB-ALT-120130") || (zdbID.startsWith("ZDB-ALT-120806"))) {
-                    return "redirect:/ZDB-PUB-121121-2";
-                } else {
-                    //if (!zdbID.startsWith("ZDB-ALT-120130")||!zdbID.startsWith("ZDB-ALT-120806")){
-                    String repldFtr = infrastructureRepository.getReplacedZdbID(zdbID);
-                    if (repldFtr != null) {
-                        feature = featureRepository.getFeatureByID(repldFtr);
-
-                    } else {
-                        model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-                        return LookupStrings.RECORD_NOT_FOUND_PAGE;
-                    }
-                }
-
+            String repldFtr = infrastructureRepository.getReplacedZdbID(zdbID);
+            if (repldFtr != null) {
+                feature = featureRepository.getFeatureByID(repldFtr);
             } else {
-                String repldFtr = infrastructureRepository.getReplacedZdbID(zdbID);
-                if (repldFtr != null) {
-                    feature = featureRepository.getFeatureByID(repldFtr);
-
-                } else {
-                    model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-                    return LookupStrings.RECORD_NOT_FOUND_PAGE;
+                // check if there exists a feature_tracking record for the given ID and if found and the feature is
+                // one of the two Burgess / Linn feature types redirect to pub otherwise display: feature not found.
+                String ftr = featureRepository.getFeatureByIDInTrackingTable(zdbID);
+                if (ftr != null) {
+                  if (zdbID.startsWith("ZDB-ALT-120130") || (zdbID.startsWith("ZDB-ALT-120806"))) {
+                      return "redirect:/ZDB-PUB-121121-2";
+                  }
                 }
             }
-
         }
-
+        if (feature == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
 
         FeatureBean form = new FeatureBean();
         form.setZdbID(zdbID);
