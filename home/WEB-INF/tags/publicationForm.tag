@@ -141,8 +141,8 @@
                 "/action/quicksearch/autocomplete?q=%QUERY&category=Autocomplete&type=Journal&rows=10000", {
                     templates: {
                         suggestion: function (item) {
-                            return '<p class="journal-abbrev">' + item.value + '</p>' +
-                                    '<p class="journal-name text-muted">' + item.name + '</p>';
+                            return '<div><p class="journal-abbrev">' + item.value + '</p>' +
+                                    '<p class="journal-name text-muted">' + item.name + '</p></div>';
                         },
                         empty: "<p class=\"tt-no-results text-danger\">" +
                                 "Oof. I couldn't find any journals like that.<br>" +
