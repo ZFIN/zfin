@@ -16,7 +16,7 @@
         function link(scope, element) {
             element
                 .autocompletify(scope.url)
-                .on('typeahead:selected', function(event, item) {
+                .on('typeahead:select', function(event, item) {
                     scope.$apply(function (scope) {
                         scope.onSelect({item: item});
                     });

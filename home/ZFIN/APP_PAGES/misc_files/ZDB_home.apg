@@ -60,7 +60,7 @@
                   jQuery(document).ready(function() {
                     jQuery('#search-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
                   });
-                  $('#search-query-input').bind("typeahead:selected", function() {
+                  $('#search-query-input').bind("typeahead:select", function() {
                       $('#query-form').submit();
                   });
           </script>
