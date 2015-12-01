@@ -1,6 +1,22 @@
-<button type="button" class="btn btn-primary" ng-click="vm.openAddModal()">
-    Add Alias
-</button>
+<div class="row">
+    <form class="form-single-row">
+        <div class="form-group col-sm-3">
+            <label>Alias</label>
+            <input ng-model="vm.newAlias" class="form-control">
+        </div>
+        <div class="form-group col-sm-3">
+            <label>Reference</label>
+            <input pub-lookup class="form-control" ng-model="vm.newReference">
+        </div>
+        <div class="form-group col-sm-3">
+            <button type="button" class="btn btn-primary"
+                    ng-click="vm.add()"
+                    ng-disabled="!vm.newAlias || !vm.newReference">
+                Add new alias
+            </button>
+        </div>
+    </form>
+</div>
 
 <div class="row">
     <div class="col-sm-6">
@@ -21,30 +37,7 @@
     </div>
 </div>
 
-<div bootstrap-modal title="New Alias for {{vm.name}}" show="vm.newModalOpen">
-    <form class="form-horizontal">
-        <div class="form-group">
-            <label class="col-sm-2 control-label">Alias</label>
-            <div class="col-sm-8">
-                <input class="form-control" ng-model="vm.newAlias"/>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">Reference</label>
-            <div class="col-sm-8">
-                <input pub-lookup class="form-control" ng-model="vm.newReference"/>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-8">
-                <button type="button" class="btn btn-default" ng-click="vm.closeAddModal()">Cancel</button>
-                <button type="button" class="btn btn-primary" ng-click="vm.add()">Save</button>
-            </div>
-        </div>
-    </form>
-</div>
-
-<div bootstrap-modal title="Edit {{vm.editing.alias}}" show="vm.editModalOpen">
+<div bootstrap-modal title="Edit {{vm.editing.alias}}" show="vm.editing != null">
     <form class="form-horizontal">
         <div class="form-group">
             <label class="col-sm-2 control-label">Alias</label>
@@ -55,11 +48,11 @@
         <div class="form-group">
             <label class="col-sm-2 control-label">References</label>
             <div class="col-sm-8">
-                <input pub-lookup placeholder="Add Reference" class="form-control" ng-model="vm.newReference"/>
+                <input pub-lookup placeholder="Add Reference" class="form-control" ng-model="vm.editReference"/>
                 <table class="table">
                     <tr ng-repeat="reference in vm.editing.references">
                         <td>
-                            <span class="small pull-right">
+                            <span class="small pull-right" ng-show="vm.editing.references.length > 1">
                                 <a href ng-click="vm.removeReference(reference, $index)">Remove</a>
                             </span>
                             {{reference.zdbID}}<br>

@@ -24,35 +24,18 @@
 
         var vm = this;
 
-        vm.newModalOpen = false;
-        vm.editModalOpen = false;
-
         vm.newAlias = '';
         vm.newReference = '';
+        vm.editReference = '';
+
         vm.editing = null;
         vm.aliases = [];
-        vm.defaultPubs = [
-            {
-                zdbID: 'ZDB-PUB-111111-1',
-                title: 'The birch canoe slid on the smooth planks'
-            },
-            {
-                zdbID: 'ZDB-PUB-111111-2',
-                title: 'Glue the sheet to the dark blue background'
-            },
-            {
-                zdbID: 'ZDB-PUB-111111-3',
-                title: 'These days a chicken leg is a rare dish'
-            }
-        ];
 
         vm.remove = remove;
         vm.edit = edit;
         vm.add = add;
         vm.addReference = addReference;
         vm.removeReference = removeReference;
-        vm.openAddModal = openAddModal;
-        vm.closeAddModal = closeAddModal;
         vm.closeEditModal = closeEditModal;
 
         activate();
@@ -71,7 +54,8 @@
             MarkerService.addAlias(vm.id, vm.newAlias, vm.newReference)
                 .then(function(alias) {
                     vm.aliases.unshift(alias);
-                    vm.closeAddModal();
+                    vm.newAlias = '';
+                    vm.newReference = '';
                 })
         }
 
@@ -81,10 +65,10 @@
         }
 
         function addReference() {
-            MarkerService.addAliasReference(vm.editing, vm.newReference)
+            MarkerService.addAliasReference(vm.editing, vm.editReference)
                 .then(function(alias) {
                     vm.editing.references = alias.references;
-                    vm.newReference = '';
+                    vm.editReference = '';
                 })
                 .catch(function(error) {
                     console.error(error);
@@ -111,19 +95,8 @@
                 });
         }
 
-        function openAddModal() {
-            vm.newModalOpen = true;
-        }
-
-        function closeAddModal() {
-            vm.newModalOpen = false;
-            vm.newAlias = '';
-            vm.newReference = '';
-        }
-
         function closeEditModal() {
-            vm.editModalOpen = false;
-            vm.newReference = '';
+            vm.editReference = '';
             vm.editing = null;
         }
 
