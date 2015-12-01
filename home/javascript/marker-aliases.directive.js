@@ -25,9 +25,11 @@
         var vm = this;
 
         vm.newModalOpen = false;
+        vm.editModalOpen = false;
+
         vm.newAlias = '';
         vm.newReference = '';
-
+        vm.editing = null;
         vm.aliases = [];
         vm.defaultPubs = [
             {
@@ -45,9 +47,13 @@
         ];
 
         vm.remove = remove;
+        vm.edit = edit;
         vm.add = add;
+        vm.addReference = addReference;
+        vm.removeReference = removeReference;
         vm.openAddModal = openAddModal;
         vm.closeAddModal = closeAddModal;
+        vm.closeEditModal = closeEditModal;
 
         activate();
 
@@ -64,9 +70,35 @@
         function add() {
             MarkerService.addAlias(vm.id, vm.newAlias, vm.newReference)
                 .then(function(alias) {
-                    vm.aliases.push(alias);
+                    vm.aliases.unshift(alias);
                     vm.closeAddModal();
                 })
+        }
+
+        function edit(alias) {
+            vm.editing = alias;
+            vm.editModalOpen = true;
+        }
+
+        function addReference() {
+            MarkerService.addAliasReference(vm.editing, vm.newReference)
+                .then(function(alias) {
+                    vm.editing.references = alias.references;
+                    vm.newReference = '';
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+        }
+
+        function removeReference(reference, index) {
+            MarkerService.removeAliasReference(vm.editing, reference)
+                .then(function() {
+                    vm.editing.references.splice(index, 1);
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
         }
 
         function remove(alias, index) {
@@ -87,6 +119,12 @@
             vm.newModalOpen = false;
             vm.newAlias = '';
             vm.newReference = '';
+        }
+
+        function closeEditModal() {
+            vm.editModalOpen = false;
+            vm.newReference = '';
+            vm.editing = null;
         }
 
     }
