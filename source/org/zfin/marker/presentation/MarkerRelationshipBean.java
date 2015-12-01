@@ -10,10 +10,19 @@ import java.util.Collection;
 
 public class MarkerRelationshipBean {
 
+    private String zdbID;
     private String relationship;
     private MarkerDTO first;
     private MarkerDTO second;
     private Collection<MarkerReferenceBean> references;
+
+    public String getZdbID() {
+        return zdbID;
+    }
+
+    public void setZdbID(String zdbID) {
+        this.zdbID = zdbID;
+    }
 
     public String getRelationship() {
         return relationship;
@@ -49,6 +58,7 @@ public class MarkerRelationshipBean {
 
     public static MarkerRelationshipBean convert(MarkerRelationship relationship) {
         MarkerRelationshipBean bean = new MarkerRelationshipBean();
+        bean.setZdbID(relationship.getZdbID());
         bean.setRelationship(relationship.getType().toString());
         bean.setFirst(DTOConversionService.convertToMarkerDTO(relationship.getFirstMarker()));
         bean.setSecond(DTOConversionService.convertToMarkerDTO(relationship.getSecondMarker()));

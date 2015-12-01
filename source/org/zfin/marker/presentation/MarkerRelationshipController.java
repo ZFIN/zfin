@@ -49,4 +49,16 @@ public class MarkerRelationshipController {
         return MarkerRelationshipBean.convert(relationship);
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/relationship/{relationshipId}", method = RequestMethod.DELETE)
+    public String removeMarkerRelationship(@PathVariable String relationshipId) {
+        MarkerRelationship relationship = markerRepository.getMarkerRelationshipByID(relationshipId);
+
+        HibernateUtil.createTransaction();
+        markerRepository.deleteMarkerRelationship(relationship);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return "OK";
+    }
+
 }
