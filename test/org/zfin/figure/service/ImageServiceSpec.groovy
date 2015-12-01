@@ -61,7 +61,7 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
 
     def "Regular sized, thumbnail & medium sized files should exist in loadUp"() {
         when: "a new image is created"
-        Image image = ImageService.processImage(figure, owner, "test/resources/540x1130.jpg", false,Image.NOT_SPECIFIED)
+        Image image = ImageService.processImage(figure, "test/resources/540x1130.jpg", false,Image.NOT_SPECIFIED)
         File imageFile = new File(imageLoadUp, image.imageFilename)
         File thumbnailFile = new File(imageLoadUp, image.thumbnail)
         File mediumFile = new File(new File(imageLoadUp.toString(), "medium"), image.imageFilename)
