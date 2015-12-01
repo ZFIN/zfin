@@ -1,7 +1,11 @@
 package org.zfin.marker.presentation;
 
 import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.marker.MarkerRelationship;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class MarkerRelationshipBean {
@@ -41,5 +45,21 @@ public class MarkerRelationshipBean {
 
     public void setReferences(Collection<MarkerReferenceBean> references) {
         this.references = references;
+    }
+
+    public static MarkerRelationshipBean convert(MarkerRelationship relationship) {
+        MarkerRelationshipBean bean = new MarkerRelationshipBean();
+        bean.setRelationship(relationship.getType().toString());
+        bean.setFirst(DTOConversionService.convertToMarkerDTO(relationship.getFirstMarker()));
+        bean.setSecond(DTOConversionService.convertToMarkerDTO(relationship.getSecondMarker()));
+        Collection<MarkerReferenceBean> references = new ArrayList<>();
+        for (PublicationAttribution reference : relationship.getPublications()) {
+            MarkerReferenceBean referenceBean = new MarkerReferenceBean();
+            referenceBean.setZdbID(reference.getSourceZdbID());
+            referenceBean.setTitle(reference.getPublication().getTitle());
+            references.add(referenceBean);
+        }
+        bean.setReferences(references);
+        return bean;
     }
 }

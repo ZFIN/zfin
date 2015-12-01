@@ -2,12 +2,8 @@ package org.zfin.marker.presentation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.zfin.gwt.root.server.DTOConversionService;
-import org.zfin.infrastructure.PublicationAttribution;
+import org.springframework.web.bind.annotation.*;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
@@ -21,9 +17,6 @@ import java.util.Collection;
 public class MarkerRelationshipController {
 
     @Autowired
-    private MarkerService markerService;
-
-    @Autowired
     private MarkerRepository markerRepository;
 
     @ResponseBody
@@ -35,21 +28,25 @@ public class MarkerRelationshipController {
         allRelationships.addAll(marker.getSecondMarkerRelationships());
         Collection<MarkerRelationshipBean> beans = new ArrayList<>();
         for (MarkerRelationship relationship : allRelationships) {
-            MarkerRelationshipBean bean = new MarkerRelationshipBean();
-            bean.setRelationship(relationship.getType().toString());
-            bean.setFirst(DTOConversionService.convertToMarkerDTO(relationship.getFirstMarker()));
-            bean.setSecond(DTOConversionService.convertToMarkerDTO(relationship.getSecondMarker()));
-            Collection<MarkerReferenceBean> references = new ArrayList<>();
-            for (PublicationAttribution reference : relationship.getPublications()) {
-                MarkerReferenceBean referenceBean = new MarkerReferenceBean();
-                referenceBean.setZdbID(reference.getSourceZdbID());
-                referenceBean.setTitle(reference.getPublication().getTitle());
-                references.add(referenceBean);
-            }
-            bean.setReferences(references);
-            beans.add(bean);
+            beans.add(MarkerRelationshipBean.convert(relationship));
         }
         return beans;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/relationship", method = RequestMethod.POST)
+    public MarkerRelationshipBean addMarkerRelationship(@RequestBody MarkerRelationshipBean newRelationship) {
+        Marker first = markerRepository.getMarkerByID(newRelationship.getFirst().getZdbID());
+        Marker second = markerRepository.getMarkerByID(newRelationship.getSecond().getZdbID());
+        MarkerRelationship.Type type = MarkerRelationship.Type.getType(newRelationship.getRelationship());
+        // assume new incoming relationship has only one reference
+        String pubId = newRelationship.getReferences().iterator().next().getZdbID();
+
+        HibernateUtil.createTransaction();
+        MarkerRelationship relationship = MarkerService.addMarkerRelationship(first, second, pubId, type);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return MarkerRelationshipBean.convert(relationship);
     }
 
 }

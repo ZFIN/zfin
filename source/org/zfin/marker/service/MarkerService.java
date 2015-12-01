@@ -529,7 +529,7 @@ public class MarkerService {
      * @param pubZdbID               Attribute Pub ZdbID.
      * @param markerRelationshipType Marker relationship type to create.
      */
-    public static void addMarkerRelationship(Marker marker1, Marker marker2, String pubZdbID,
+    public static MarkerRelationship addMarkerRelationship(Marker marker1, Marker marker2, String pubZdbID,
                                              MarkerRelationship.Type markerRelationshipType) {
         // adds the marker relation and attributes it
 //        MarkerRelationship markerRelationship = RepositoryFactory.getMarkerRepository().getSpecificMarkerRelationship(marker1,marker2,markerRelationshipType) ;
@@ -538,7 +538,7 @@ public class MarkerService {
         markerRelationship.setSecondMarker(marker2);
         markerRelationship.setType(markerRelationshipType);
         // also inserts attribution
-        markerRepository.addMarkerRelationship(markerRelationship, pubZdbID);
+        return markerRepository.addMarkerRelationship(markerRelationship, pubZdbID);
     }
 
 
