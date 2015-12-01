@@ -1,22 +1,7 @@
-<div class="row">
-    <div class="col-sm-5">
-        <div class="form-group">
-            <label for="aliasName">Alias</label>
-            <input class="form-control" id="aliasName" ng-model="vm.newAlias">
-        </div>
-    </div>
-    <div class="col-sm-5">
-        <div class="form-group">
-            <label for="aliasReference">Reference</label>
-            <input pub-lookup default-pubs="vm.defaultPubs" class="form-control" id="aliasReference" ng-model="vm.newReference">
-        </div>
-    </div>
-    <div class="col-sm-2">
-        <button type="button" class="btn btn-primary"
-                ng-disabled="!vm.newAlias || !vm.newReference"
-                ng-click="vm.add()">Add</button>
-    </div>
-</div>
+<button type="button" class="btn btn-primary" ng-click="vm.openAddModal()">
+    Add Alias
+</button>
+
 <div class="row">
     <div class="col-sm-6">
         <p class="text-muted" ng-hide="vm.aliases.length">
@@ -33,4 +18,27 @@
             </tr>
         </table>
     </div>
+</div>
+
+<div bootstrap-modal title="New Alias for {{vm.name}}" show="vm.newModalOpen">
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Alias</label>
+            <div class="col-sm-8">
+                <input class="form-control" ng-model="vm.newAlias"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Reference</label>
+            <div class="col-sm-8">
+                <input pub-lookup class="form-control" ng-model="vm.newReference"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-8">
+                <button type="button" class="btn btn-default" ng-click="vm.closeAddModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" ng-click="vm.add()">Save</button>
+            </div>
+        </div>
+    </form>
 </div>

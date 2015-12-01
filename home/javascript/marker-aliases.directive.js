@@ -8,7 +8,8 @@
             restrict: 'EA',
             templateUrl: '/javascript/marker-aliases.directive.html',
             scope: {
-                id: '@'
+                id: '@',
+                name: '@'
             },
             controller: MarkerAliasesController,
             controllerAs: 'vm',
@@ -23,8 +24,10 @@
 
         var vm = this;
 
+        vm.newModalOpen = false;
         vm.newAlias = '';
         vm.newReference = '';
+
         vm.aliases = [];
         vm.defaultPubs = [
             {
@@ -43,6 +46,8 @@
 
         vm.remove = remove;
         vm.add = add;
+        vm.openAddModal = openAddModal;
+        vm.closeAddModal = closeAddModal;
 
         activate();
 
@@ -60,8 +65,7 @@
             MarkerService.addAlias(vm.id, vm.newAlias, vm.newReference)
                 .then(function(alias) {
                     vm.aliases.push(alias);
-                    vm.newAlias = '';
-                    vm.newReference = '';
+                    vm.closeAddModal();
                 })
         }
 
@@ -73,6 +77,16 @@
                 .catch(function (error) {
                     console.error(error);
                 });
+        }
+
+        function openAddModal() {
+            vm.newModalOpen = true;
+        }
+
+        function closeAddModal() {
+            vm.newModalOpen = false;
+            vm.newAlias = '';
+            vm.newReference = '';
         }
 
     }

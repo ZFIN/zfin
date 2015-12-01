@@ -6,6 +6,8 @@
 <link rel="stylesheet" href="/css/bootstrap3/css/bootstrap.css"/>
 <link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css"/>
 
+<script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
+
 <script src="/javascript/angular/angular.min.js"></script>
 <script>
     ;(function() {
@@ -18,6 +20,7 @@
 <script src="/javascript/marker.service.js"></script>
 
 <script src="/javascript/pub-lookup.directive.js"></script>
+<script src="/javascript/bootstrap-modal.directive.js"></script>
 <script src="/javascript/marker-suppliers.directive.js"></script>
 <script src="/javascript/str-details.directive.js"></script>
 <script src="/javascript/str-sequence.directive.js"></script>
@@ -47,10 +50,10 @@
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">Previous Names</h3>
+            <h3 class="panel-title">Aliases</h3>
         </div>
         <div class="panel-body">
-            <div marker-aliases id="${str.zdbID}"></div>
+            <div marker-aliases id="${str.zdbID}" name="${str.abbreviation}"></div>
         </div>
     </div>
 
