@@ -26,6 +26,20 @@
         vm.newAlias = '';
         vm.newReference = '';
         vm.aliases = [];
+        vm.defaultPubs = [
+            {
+                zdbID: 'ZDB-PUB-111111-1',
+                title: 'The birch canoe slid on the smooth planks'
+            },
+            {
+                zdbID: 'ZDB-PUB-111111-2',
+                title: 'Glue the sheet to the dark blue background'
+            },
+            {
+                zdbID: 'ZDB-PUB-111111-3',
+                title: 'These days a chicken leg is a rare dish'
+            }
+        ];
 
         vm.remove = remove;
         vm.add = add;

@@ -1,5 +1,7 @@
 package org.zfin.marker.presentation;
 
+import org.zfin.publication.Publication;
+
 public class MarkerReferenceBean {
 
     private String zdbID;
@@ -19,5 +21,12 @@ public class MarkerReferenceBean {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public static MarkerReferenceBean convert(Publication publication) {
+        MarkerReferenceBean bean = new MarkerReferenceBean();
+        bean.setZdbID(publication.getZdbID());
+        bean.setTitle(publication.getTitle());
+        return bean;
     }
 }

@@ -1,6 +1,5 @@
 <div class="row">
     <div class="col-sm-5">
-
         <div class="form-group">
             <label for="aliasName">Alias</label>
             <input class="form-control" id="aliasName" ng-model="vm.newAlias">
@@ -9,7 +8,7 @@
     <div class="col-sm-5">
         <div class="form-group">
             <label for="aliasReference">Reference</label>
-            <input class="form-control" id="aliasReference" ng-model="vm.newReference">
+            <input pub-lookup default-pubs="vm.defaultPubs" class="form-control" id="aliasReference" ng-model="vm.newReference">
         </div>
     </div>
     <div class="col-sm-2">

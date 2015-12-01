@@ -17,6 +17,7 @@
 <script src="/javascript/str.service.js"></script>
 <script src="/javascript/marker.service.js"></script>
 
+<script src="/javascript/pub-lookup.directive.js"></script>
 <script src="/javascript/marker-suppliers.directive.js"></script>
 <script src="/javascript/str-details.directive.js"></script>
 <script src="/javascript/str-sequence.directive.js"></script>
