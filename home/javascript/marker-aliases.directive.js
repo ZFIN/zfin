@@ -61,7 +61,6 @@
 
         function edit(alias) {
             vm.editing = alias;
-            vm.editModalOpen = true;
         }
 
         function addReference() {

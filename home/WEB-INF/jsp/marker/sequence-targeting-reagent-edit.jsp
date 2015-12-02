@@ -25,6 +25,7 @@
 <script src="/javascript/str-details.directive.js"></script>
 <script src="/javascript/str-sequence.directive.js"></script>
 <script src="/javascript/marker-aliases.directive.js"></script>
+<script src="/javascript/marker-relationships.directive.js"></script>
 
 <c:set var="viewURL">/${str.zdbID}</c:set>
 <c:set var="deleteURL">/action/infrastructure/deleteRecord/${str.zdbID}</c:set>
@@ -61,7 +62,12 @@
         <div class="panel-heading">
             <h3 class="panel-title">Target Genes</h3>
         </div>
-        <div class="panel-body">Cats and dogs each hate the other</div>
+        <div class="panel-body">
+            <div marker-relationships
+                 id="${str.zdbID}"
+                 relationship="knockdown reagent targets gene"
+                 relative-name="target gene"></div>
+        </div>
     </div>
 
     <c:if test="${showSupplier}">

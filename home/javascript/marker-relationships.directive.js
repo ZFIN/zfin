@@ -1,0 +1,114 @@
+;(function() {
+    angular
+        .module('app')
+        .directive('markerRelationships', markerRelationships);
+
+    function markerRelationships() {
+        var directive = {
+            restrict: 'EA',
+            templateUrl: '/javascript/marker-relationships.directive.html',
+            scope: {
+                id: '@',
+                relationship: '@',
+                relativeName: '@'
+            },
+            controller: MarkerRelationshipsController,
+            controllerAs: 'vm',
+            bindToController: true
+        };
+
+        return directive;
+    }
+
+    MarkerRelationshipsController.$inject = ['MarkerService'];
+    function MarkerRelationshipsController(MarkerService) {
+
+        var vm = this;
+
+        vm.relationships = [];
+
+        vm.geneText = '';
+        vm.newGene = '';
+        vm.newReference = '';
+
+        vm.selectGene = selectGene;
+        vm.add = add;
+        vm.remove = remove;
+        vm.edit = edit;
+        vm.addReference = addReference;
+        vm.removeReference = removeReference;
+        vm.closeEditModal = closeEditModal;
+
+        activate();
+
+        function activate() {
+            MarkerService.getRelationships(vm.id)
+                .then(function (relationships) {
+                    vm.relationships = relationships.filter(function(relationship) {
+                        return relationship.relationship === vm.relationship;
+                    });
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+        }
+
+        function selectGene(item) {
+            vm.newGene = item.id;
+        }
+
+        function add() {
+            MarkerService.addRelationship(vm.id, vm.newGene, vm.relationship, vm.newReference)
+                .then(function(relationship) {
+                    vm.relationships.unshift(relationship);
+                    vm.newGene = '';
+                    vm.geneText = '';
+                    vm.newReference = '';
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+        }
+
+        function remove(relationship, index) {
+            MarkerService.removeRelationship(relationship)
+                .then(function() {
+                    vm.relationships.splice(index, 1);
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+        }
+
+        function edit(relationship) {
+            vm.editing = relationship;
+        }
+
+        function addReference() {
+            MarkerService.addAliasReference(vm.editing, vm.editReference)
+                .then(function(alias) {
+                    vm.editing.references = alias.references;
+                    vm.editReference = '';
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+        }
+
+        function removeReference(reference, index) {
+            MarkerService.removeAliasReference(vm.editing, reference)
+                .then(function() {
+                    vm.editing.references.splice(index, 1);
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+        }
+
+        function closeEditModal() {
+            vm.editReference = '';
+            vm.editing = null;
+        }
+
+    }
+}());
