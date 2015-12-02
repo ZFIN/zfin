@@ -14,12 +14,17 @@
             addAlias: addAlias,
             removeAlias: removeAlias,
             addAliasReference: addAliasReference,
-            removeAliasReference: removeAliasReference
+            removeAliasReference: removeAliasReference,
+            getRelationships: getRelationships,
+            addRelationship: addRelationship,
+            removeRelationship: removeRelationship
         };
 
         function returnResponseData(response) {
             return response.data;
         }
+
+        // === SUPPLIERS ===
 
         function getSuppliers(markerId) {
             return $http.get('/action/marker/' + markerId + '/suppliers')
@@ -34,6 +39,8 @@
         function removeSupplier(markerId, supplier) {
             return $http.delete('/action/marker/' + markerId + '/suppliers/' + supplier.zdbID);
         }
+
+        // === ALIASES ===
 
         function getAliases(markerId) {
             return $http.get('/action/marker/' + markerId + '/aliases')
@@ -60,6 +67,28 @@
 
         function removeAliasReference(alias, reference) {
             return $http.delete('/action/marker/alias/' + alias.zdbID + '/references/' + reference.zdbID);
+        }
+
+        // === RELATIONSHIPS ===
+
+        function getRelationships(markerId) {
+            return $http.get('/action/marker/' + markerId + '/relationships')
+                .then(returnResponseData);
+        }
+
+        function addRelationship(firstMarkerId, secondMarkerId, type, pubId) {
+            var relationship = {
+                "relationship": type,
+                "first": {"zdbID": firstMarkerId},
+                "second": {"zdbID": secondMarkerId},
+                "references": [{"zdbID": pubId}]
+            };
+            return $http.post('/action/marker/relationship', relationship)
+                .then(returnResponseData);
+        }
+
+        function removeRelationship(relationship) {
+            return $http.delete('/action/marker/relationship/' + relationship.zdbID);
         }
     }
 }());
