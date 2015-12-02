@@ -17,7 +17,9 @@
             removeAliasReference: removeAliasReference,
             getRelationships: getRelationships,
             addRelationship: addRelationship,
-            removeRelationship: removeRelationship
+            removeRelationship: removeRelationship,
+            addRelationshipReference: addRelationshipReference,
+            removeRelationshipReference: removeRelationshipReference
         };
 
         function returnResponseData(response) {
@@ -89,6 +91,15 @@
 
         function removeRelationship(relationship) {
             return $http.delete('/action/marker/relationship/' + relationship.zdbID);
+        }
+
+        function addRelationshipReference(alias, pubId) {
+            return $http.post('/action/marker/relationship/' + alias.zdbID + '/references', {zdbID: pubId})
+                .then(returnResponseData);
+        }
+
+        function removeRelationshipReference(alias, reference) {
+            return $http.delete('/action/marker/relationship/' + alias.zdbID + '/references/' + reference.zdbID);
         }
     }
 }());

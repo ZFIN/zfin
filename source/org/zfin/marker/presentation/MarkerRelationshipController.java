@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
@@ -18,6 +19,9 @@ public class MarkerRelationshipController {
 
     @Autowired
     private MarkerRepository markerRepository;
+
+    @Autowired
+    private InfrastructureRepository infrastructureRepository;
 
     @ResponseBody
     @RequestMapping(value = "/{markerId}/relationships", method = RequestMethod.GET)
@@ -56,6 +60,30 @@ public class MarkerRelationshipController {
 
         HibernateUtil.createTransaction();
         markerRepository.deleteMarkerRelationship(relationship);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return "OK";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/relationship/{relationshipId}/references", method = RequestMethod.POST)
+    public MarkerRelationshipBean addMarkerRelationshipReference(@PathVariable String relationshipId,
+                                                                 @RequestBody MarkerReferenceBean newReference) {
+
+        HibernateUtil.createTransaction();
+        infrastructureRepository.insertRecordAttribution(relationshipId, newReference.getZdbID());
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return MarkerRelationshipBean.convert(
+                markerRepository.getMarkerRelationshipByID(relationshipId));
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/relationship/{relationshipId}/references/{pubID}", method = RequestMethod.DELETE)
+    public String removeMarkerRelationshipReference(@PathVariable String relationshipId,
+                                                    @PathVariable String pubID) {
+        HibernateUtil.createTransaction();
+        infrastructureRepository.deleteRecordAttribution(relationshipId, pubID);
         HibernateUtil.flushAndCommitCurrentSession();
 
         return "OK";
