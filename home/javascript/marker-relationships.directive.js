@@ -85,9 +85,9 @@
         }
 
         function addReference() {
-            MarkerService.addAliasReference(vm.editing, vm.editReference)
-                .then(function(alias) {
-                    vm.editing.references = alias.references;
+            MarkerService.addRelationshipReference(vm.editing, vm.editReference)
+                .then(function(relationship) {
+                    vm.editing.references = relationship.references;
                     vm.editReference = '';
                 })
                 .catch(function(error) {
@@ -96,7 +96,7 @@
         }
 
         function removeReference(reference, index) {
-            MarkerService.removeAliasReference(vm.editing, reference)
+            MarkerService.removeRelationshipReference(vm.editing, reference)
                 .then(function() {
                     vm.editing.references.splice(index, 1);
                 })

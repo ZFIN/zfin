@@ -9,6 +9,8 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,6 +21,9 @@ public class MarkerRelationshipController {
 
     @Autowired
     private MarkerRepository markerRepository;
+
+    @Autowired
+    private PublicationRepository publicationRepository;
 
     @Autowired
     private InfrastructureRepository infrastructureRepository;
@@ -69,13 +74,14 @@ public class MarkerRelationshipController {
     @RequestMapping(value = "/relationship/{relationshipId}/references", method = RequestMethod.POST)
     public MarkerRelationshipBean addMarkerRelationshipReference(@PathVariable String relationshipId,
                                                                  @RequestBody MarkerReferenceBean newReference) {
+        MarkerRelationship relationship = markerRepository.getMarkerRelationshipByID(relationshipId);
+        Publication publication = publicationRepository.getPublication(newReference.getZdbID());
 
         HibernateUtil.createTransaction();
-        infrastructureRepository.insertRecordAttribution(relationshipId, newReference.getZdbID());
+        markerRepository.addMarkerRelationshipAttribution(relationship, publication, relationship.getFirstMarker());
         HibernateUtil.flushAndCommitCurrentSession();
 
-        return MarkerRelationshipBean.convert(
-                markerRepository.getMarkerRelationshipByID(relationshipId));
+        return MarkerRelationshipBean.convert(relationship);
     }
 
     @ResponseBody
