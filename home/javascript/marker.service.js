@@ -19,7 +19,8 @@
             addRelationship: addRelationship,
             removeRelationship: removeRelationship,
             addRelationshipReference: addRelationshipReference,
-            removeRelationshipReference: removeRelationshipReference
+            removeRelationshipReference: removeRelationshipReference,
+            getNotes: getNotes
         };
 
         function returnResponseData(response) {
@@ -100,6 +101,13 @@
 
         function removeRelationshipReference(alias, reference) {
             return $http.delete('/action/marker/relationship/' + alias.zdbID + '/references/' + reference.zdbID);
+        }
+
+        // === NOTES ===
+
+        function getNotes(markerId) {
+            return $http.get('/action/marker/' + markerId + '/notes')
+                .then(returnResponseData);
         }
     }
 }());

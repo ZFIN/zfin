@@ -1,0 +1,33 @@
+<form>
+    <div class="form-group">
+        <label>Public Note</label>
+        <textarea class="form-control" rows="3" ng-model="vm.newPublicNote"></textarea>
+    </div>
+    <div class="form-group">
+        <button class="btn btn-default">Reset</button>
+        <button class="btn btn-primary">Save</button>
+    </div>
+</form>
+
+<hr>
+
+<form>
+    <div class="form-group">
+        <label>Curator Notes</label>
+        <textarea class="form-control" rows="3" ng-model="vm.newCuratorNote"></textarea>
+    </div>
+    <div class="form-group">
+        <button class="btn btn-primary">Add</button>
+    </div>
+</form>
+<div class="media" ng-repeat="note in vm.curatorNotes">
+    <div class="media-body">
+        <div class="media-heading">
+            <h4>
+                {{note.curator.firstName}} {{note.curator.lastName}}
+                <small>{{note.date | date:'yyyy-MM-dd'}}</small>
+            </h4>
+            <p ng-bind-html="note.noteData | trusted_html"></p>
+        </div>
+    </div>
+</div>
