@@ -78,11 +78,11 @@
                 .then(returnResponseData);
         }
 
-        function addRelationship(firstMarkerId, secondMarkerId, type, pubId) {
+        function addRelationship(first, second, type, pubId) {
             var relationship = {
                 "relationship": type,
-                "first": {"zdbID": firstMarkerId},
-                "second": {"zdbID": secondMarkerId},
+                "first": first,
+                "second": second,
                 "references": [{"zdbID": pubId}]
             };
             return $http.post('/action/marker/relationship', relationship)

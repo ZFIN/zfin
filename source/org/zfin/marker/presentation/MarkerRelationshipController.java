@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
@@ -45,8 +46,8 @@ public class MarkerRelationshipController {
     @ResponseBody
     @RequestMapping(value = "/relationship", method = RequestMethod.POST)
     public MarkerRelationshipBean addMarkerRelationship(@RequestBody MarkerRelationshipBean newRelationship) {
-        Marker first = markerRepository.getMarkerByID(newRelationship.getFirst().getZdbID());
-        Marker second = markerRepository.getMarkerByID(newRelationship.getSecond().getZdbID());
+        Marker first = getMarkerByIdOrAbbrev(newRelationship.getFirst());
+        Marker second = getMarkerByIdOrAbbrev(newRelationship.getSecond());
         MarkerRelationship.Type type = MarkerRelationship.Type.getType(newRelationship.getRelationship());
         // assume new incoming relationship has only one reference
         String pubId = newRelationship.getReferences().iterator().next().getZdbID();
@@ -93,6 +94,15 @@ public class MarkerRelationshipController {
         HibernateUtil.flushAndCommitCurrentSession();
 
         return "OK";
+    }
+
+    private Marker getMarkerByIdOrAbbrev(MarkerDTO dto) {
+        if (dto.getZdbID() != null) {
+            return markerRepository.getMarkerByID(dto.getZdbID());
+        } else if (dto.getName() != null) {
+            return markerRepository.getMarkerByAbbreviation(dto.getName());
+        }
+        return null;
     }
 
 }

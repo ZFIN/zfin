@@ -27,11 +27,9 @@
 
         vm.relationships = [];
 
-        vm.geneText = '';
         vm.newGene = '';
         vm.newReference = '';
 
-        vm.selectGene = selectGene;
         vm.add = add;
         vm.remove = remove;
         vm.edit = edit;
@@ -53,16 +51,13 @@
                 });
         }
 
-        function selectGene(item) {
-            vm.newGene = item.id;
-        }
-
         function add() {
-            MarkerService.addRelationship(vm.id, vm.newGene, vm.relationship, vm.newReference)
+            var first = {zdbID: vm.id};
+            var second = {name: vm.newGene};
+            MarkerService.addRelationship(first, second, vm.relationship, vm.newReference)
                 .then(function(relationship) {
                     vm.relationships.unshift(relationship);
                     vm.newGene = '';
-                    vm.geneText = '';
                     vm.newReference = '';
                 })
                 .catch(function(error) {
