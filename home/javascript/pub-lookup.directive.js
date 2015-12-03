@@ -45,6 +45,14 @@
                 }
             });
 
+            ngModel.$viewChangeListeners.push(function() {
+                var value = ngModel.$viewValue;
+                if (value && value.match(/^\d/)) {
+                    ngModel.$setViewValue('ZDB-PUB-' + value);
+                    ngModel.$render();
+                }
+            });
+
             ngModel.$render = function() {
                 element.typeahead('val', ngModel.$viewValue);
             };
