@@ -558,9 +558,11 @@
    <field name="reporter_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />
    <field name="reporter_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"   />
 
-     <field name="expressed_gene" type="keyword" indexed="true" stored="true" multiValued="true"  />
-     <field name="expressed_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"  />
-     <field name="expressed_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"  />
+   <field name="expressed_gene" type="keyword" indexed="true" stored="true" multiValued="true"  />
+   <field name="expressed_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"  />
+   <field name="expressed_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"  />
+
+   <field name="misexpressed_gene" type="keyword" indexed="true" stored="true" multiValued="true"  />
 
    <field name="sequence_targeting_reagent" type="keyword" indexed="true" stored="true" multiValued="true"   />
 
@@ -1059,6 +1061,8 @@
     <copyField source="expressed_gene" dest="text"/>
     <copyField source="expressed_gene_full_name" dest="text"/>
     <copyField source="expressed_gene_previous_name" dest="text"/>
+
+    <copyField source="misexpressed_gene" dest="text"/>
 
     <copyField source="expression_observation" dest="text"/>
 

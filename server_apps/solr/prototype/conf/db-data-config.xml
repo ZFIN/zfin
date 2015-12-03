@@ -528,26 +528,33 @@ where mrkr_type in ('GENE','GENEP','EFG')
 
                 <entity name="gene_phenotype_observation_generated"
                         datasource="db" query="
-select distinct
-super_1.term_name
-|| nvl(' ' || sub_1.term_name,'')
-|| ' ' || quality.term_name
-|| nvl(' ' || super_2.term_name,'')
-|| nvl(' ' || sub_2.term_name,'')
-as phenotype_observation_generated,
-                mfs_mrkr_zdb_id as gene_zdb_id
-     from phenotype_observation_generated
-          join phenotype_source_generated on psg_pg_id = pg_id
-          join mutant_fast_search on pg_genox_zdb_id = mfs_genox_zdb_id
-	     join term as super_1 on psg_e1a_zdb_id = super_1.term_zdb_id
-	     left outer join term as sub_1 on psg_e1b_zdb_id = sub_1.term_zdb_id
-	     join term as quality on psg_quality_zdb_id = quality.term_zdb_id
-	     left outer join term as super_2 on psg_e2a_zdb_id = super_2.term_zdb_id
-	     left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id
-    where psg_tag = 'abnormal'
+                             select distinct psg_short_name as phenotype_statement,
+                                        mfs_mrkr_zdb_id as gene_zdb_id
+                             from phenotype_observation_generated
+                                  join phenotype_source_generated on psg_pg_id = pg_id
+                                  join mutant_fast_search on pg_genox_zdb_id = mfs_genox_zdb_id
+                                 join term as super_1 on psg_e1a_zdb_id = super_1.term_zdb_id
+                                 left outer join term as sub_1 on psg_e1b_zdb_id = sub_1.term_zdb_id
+                                 join term as quality on psg_quality_zdb_id = quality.term_zdb_id
+                                 left outer join term as super_2 on psg_e2a_zdb_id = super_2.term_zdb_id
+                                 left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id
+                            where psg_tag = 'abnormal'
 
 
                         "
+                        cacheImpl="SortedMapBackedCache"
+                        where="gene_zdb_id=gene.id"/>
+
+
+                <entity name="gene_misexpressed_gene" datasource="db"
+                        query="select distinct misexpressed_gene.mrkr_abbrev as misexpressed_gene,
+                                       mfs_mrkr_zdb_id as gene_zdb_id
+                                from expression_experiment2
+                                     join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                     join expression_result2 on xpatres_efs_id = efs_pk_id
+                                     join expression_phenotype_term on ept_xpatres_id = xpatres_pk_id
+                                     join marker as misexpressed_gene on xpatex_gene_zdb_id = mrkr_zdb_id
+                                     join mutant_fast_search on mfs_genox_zdb_id = xpatex_genox_zdb_id;"
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
 
@@ -1213,13 +1220,7 @@ WHERE  ( NOT g.geno_is_wildtype
 
 
            <entity name="fish_phenotype_observation_generated"
-                   datasource="db" query="select distinct
-super_1.term_name
-|| nvl(' ' || sub_1.term_name,'')
-|| ' ' || quality.term_name
-|| nvl(' ' || super_2.term_name,'')
-|| nvl(' ' || sub_2.term_name,'')
-as phenotype_observation_generated,
+                   datasource="db" query="select distinct psg_short_name as phenotype_statement,
        genox_fish_zdb_id as fish_zdb_id
 from phenotype_observation_generated
      join phenotype_source_generated on psg_pg_id = pg_id
@@ -1234,6 +1235,18 @@ where psg_tag = 'abnormal'  "
                    cacheImpl="SortedMapBackedCache"/>
 
 
+
+           <entity name="fish_misexpressed_gene" datasource="db"
+                   query="select mrkr_abbrev as misexpressed_gene,
+                                   genox_fish_zdb_id as fish_zdb_id
+                            from expression_experiment2
+                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                 join expression_result2 on xpatres_efs_id = efs_pk_id
+                                 join expression_phenotype_term on ept_xpatres_id = xpatres_pk_id
+                                 join marker as gene on xpatex_gene_zdb_id = mrkr_zdb_id
+                                 join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id;"
+                   where="fish_zdb_id=fish.id"
+                   cacheImpl="SortedMapBackedCache"/>
 
            <entity name="fish_affected_anatomy_direct"
                    datasource="db" query="select term_ont_id as xref, term_name as affected_anatomy_direct, genox_fish_zdb_id as fish_zdb_id
@@ -1959,27 +1972,29 @@ select
                    cacheImpl="SortedMapBackedCache"
                    where="pg_id=phenotype.id"/>
 
-           <entity name="phenotype_phenotype_observation_generated"
+           <entity name="phenotype_statement"
                    datasource="db" query="select
                             distinct
-                            super_1.term_name
-                            || nvl(' ' || sub_1.term_name,'')
-                            || ' ' || quality.term_name
-                            || nvl(' ' || super_2.term_name,'')
-                            || nvl(' ' || sub_2.term_name,'')
-                            as phenotype_observation_generated,
+                            psg_short_name as phenotype_statement,
                             'pg-' || pg_id as pg_id
                             from phenotype_observation_generated
                                  join phenotype_source_generated on psg_pg_id = pg_id
-                                 join term as super_1 on psg_e1a_zdb_id = super_1.term_zdb_id
-                                 left outer join term as sub_1 on psg_e1b_zdb_id = sub_1.term_zdb_id
-                                 join term as quality on psg_quality_zdb_id = quality.term_zdb_id
-                                 left outer join term as super_2 on psg_e2a_zdb_id = super_2.term_zdb_id
-                                 left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id
                             where psg_tag = 'abnormal';"
                    where="pg_id=phenotype.id"
                    cacheImpl="SortedMapBackedCache"/>
 
+           <entity name="phenotype_misexpressed_gene" datasource="db"
+                   query="select mrkr_abbrev as misexpressed_gene,
+                               'phenox-' || phenox_pk_id as phenox_pk_id
+                        from expression_experiment2
+                             join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                             join expression_result2 on xpatres_efs_id = efs_pk_id
+                             join expression_phenotype_term on ept_xpatres_id = xpatres_pk_id
+                             join marker as gene on xpatex_gene_zdb_id = mrkr_zdb_id
+                             join phenotype_experiment on phenox_fig_zdb_id = efs_fig_zdb_id
+                                                      and phenox_genox_zdb_id = xpatex_genox_zdb_id;"
+                   cacheImpl="SortedMapBackedCache"
+                   where="phenox_pk_id=phenotype.id"/>
 
            <entity name="phenotype_image"
                    datasource="db" query="select
@@ -3119,13 +3134,7 @@ where feature_zdb_id = ids_data_zdb_id
 
 
        <entity name="feature_phenotype_observation_generated"
-               datasource="db" query="select distinct
-                        super_1.term_name
-                        || nvl(' ' || sub_1.term_name,'')
-                        || ' ' || quality.term_name
-                        || nvl(' ' || super_2.term_name,'')
-                        || nvl(' ' || sub_2.term_name,'')
-                        as phenotype_observation_generated,
+               datasource="db" query="select distinct psg_short_name as phenotype_statement,
                                         genofeat_feature_zdb_id as feature_zdb_id
                              from phenotype_observation_generated
                                   join phenotype_source_generated on psg_pg_id = pg_id
@@ -3140,6 +3149,39 @@ where feature_zdb_id = ids_data_zdb_id
                                  left outer join term as super_2 on psg_e2a_zdb_id = super_2.term_zdb_id
                                  left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id
                             where psg_tag = 'abnormal';"
+               cacheImpl="SortedMapBackedCache"
+               where="feature_zdb_id=feature.id"/>
+
+       <entity name="feature_eap_statement" datasource="db"
+               query="select distinct mrkr_abbrev || ' expression ' || quality.term_name || ', ' || ept_tag as phenotype_statement,
+                                        genofeat_feature_zdb_id as feature_zdb_id
+                             from expression_experiment2
+                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                  join expression_result2 on xpatres_efs_id = efs_pk_id
+                                  join expression_phenotype_term on ept_xpatres_id = xpatres_pk_id
+                                  join term as quality on ept_quality_term_zdb_id = quality.term_zdb_id
+                                  join marker as gene on xpatex_gene_zdb_id = mrkr_zdb_id
+                                  join mutant_fast_search on xpatex_genox_zdb_id = mfs_genox_zdb_id
+                                  join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
+                                  join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id
+                                  join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id;"
+               cacheImpl="SortedMapBackedCache"
+               where="feature_zdb_id=feature.id"/>
+
+       <entity name="feature_misexpressed_gene" datasource="db"
+               query="select distinct mrkr_abbrev as misexpressed_gene,
+                                        genofeat_feature_zdb_id as feature_zdb_id
+                             from expression_experiment2
+                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                  join expression_result2 on xpatres_efs_id = efs_pk_id
+                                  join expression_phenotype_term on ept_xpatres_id = xpatres_pk_id
+                                  join marker as gene on xpatex_gene_zdb_id = mrkr_zdb_id
+                                  join mutant_fast_search on xpatex_genox_zdb_id = mfs_genox_zdb_id
+                                  join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
+                                  join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id
+                                  join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id;"
                cacheImpl="SortedMapBackedCache"
                where="feature_zdb_id=feature.id"/>
 
@@ -4368,13 +4410,7 @@ from expression_experiment2
 
 
         <entity name="figure_phenotype_observation_generated"
-                         datasource="db" query="select distinct
-super_1.term_name
-|| nvl(' ' || sub_1.term_name,'')
-|| ' ' || quality.term_name
-|| nvl(' ' || super_2.term_name,'')
-|| nvl(' ' || sub_2.term_name,'')
-as phenotype_observation_generated,
+                         datasource="db" query="select distinct psg_short_name as phenotype_statement,
 pg_fig_zdb_id as fig_zdb_id
 from phenotype_observation_generated
      join phenotype_source_generated on psg_pg_id = pg_id
@@ -4388,6 +4424,16 @@ where psg_tag = 'abnormal';
                           cacheImpl="SortedMapBackedCache"
                           where="fig_zdb_id=figure.id"/>
 
+
+           <entity name="figure_misexpressed_gene" datasource="db"
+                   query="select mrkr_abbrev as misexpressed_gene, efs_fig_zdb_id as fig_zdb_id
+                            from expression_experiment2
+                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                 join expression_result2 on xpatres_efs_id = efs_pk_id
+                                 join expression_phenotype_term on ept_xpatres_id = xpatres_pk_id
+                                 join marker as gene on xpatex_gene_zdb_id = mrkr_zdb_id;"
+                   cacheImpl="SortedMapBackedCache"
+                   where="fig_zdb_id=figure.id"/>
 
           <entity name="figure_affected_anatomy_direct"
                 datasource="db" query="select term_ont_id as xref, term_name as affected_anatomy_direct, pg_fig_zdb_id as fig_zdb_id
@@ -4849,40 +4895,19 @@ where fig_zdb_id=xpatfig_fig_zdb_id
 
         <!--  These are 'autocomplete only' results, which will be filtered out of the main query by default -->
 
-       <entity name="phenotype_observation_generated"
+       <entity name="phenotype_statement"
                datasource="db" query="
-                        select distinct
-                        super_1.term_name
-                        || nvl(' ' || sub_1.term_name,'')
-                        || ' ' || quality.term_name
-                        || nvl(' ' || super_2.term_name,'')
-                        || nvl(' ' || sub_2.term_name,'')
-                        as name,
-                        super_1.term_name
-                        || nvl(' ' || sub_1.term_name,'')
-                        || ' ' || quality.term_name
-                        || nvl(' ' || super_2.term_name,'')
-                        || nvl(' ' || sub_2.term_name,'')
-                        as full_name,
-                        super_1.term_ont_id
-                        || nvl('-' || sub_1.term_ont_id,'')
-                        || '-' || quality.term_ont_id
-                        || nvl('-' || super_2.term_ont_id,'')
-                        || nvl('-' || sub_2.term_ont_id,'')
-                        as id,
+                        select distinct 'psg-' || psg_id as id,
+                        psg_short_name as name,
+                        psg_short_name as full_name,
                         'Autocomplete' as category,
                         'Phenotype Statement' as type
-                        from phenotype_observation_generated
-                             join term as super_1 on psg_e1a_zdb_id = super_1.term_zdb_id
-                             left outer join term as sub_1 on psg_e1b_zdb_id = sub_1.term_zdb_id
-                             join term as quality on psg_quality_zdb_id = quality.term_zdb_id
-                             left outer join term as super_2 on psg_e2a_zdb_id = super_2.term_zdb_id
-                             left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id
+                        from phenotype_observation_generated;
                ">
 
-           <entity name="phenotype_observation_generated_alias_statements"
+           <entity name="phenotype_statement_alias_statements"
                    datasource="db" query="select dalias_alias || ' ' || entity1a.term_name as alias,
-entity1a.term_ont_id || '-' || quality.term_ont_id as psg_id
+                                 'psg-' || psg_id as psg_id
                             from phenotype_observation_generated ps, data_alias, term entity1a, term quality
                             where dalias_data_zdb_id = psg_quality_zdb_id
       	      	      	     and entity1a.term_zdb_id = psg_e1a_zdb_id
@@ -4891,9 +4916,9 @@ entity1a.term_ont_id || '-' || quality.term_ont_id as psg_id
                              and psg_e1b_zdb_id is null
                              and psg_e2a_zdb_id is null
                              and psg_e2b_zdb_id is null
-UNION
-select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as alias,
-entity1a.term_ont_id || '-' || quality.term_ont_id as psg_id
+                            UNION
+                            select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as alias,
+                            'psg-' || psg_id as psg_id
                             from phenotype_observation_generated ps, data_alias quality_alias,
                                  data_alias entity_alias, term entity1a, term quality
                             where quality_alias.dalias_data_zdb_id = psg_quality_zdb_id
@@ -4904,7 +4929,7 @@ entity1a.term_ont_id || '-' || quality.term_ont_id as psg_id
                              and psg_e1b_zdb_id is null
                              and psg_e2a_zdb_id is null
                              and psg_e2b_zdb_id is null;"
-                   where="psg_id=phenotype_observation_generatedpg_pk_id.id"
+                   where="psg_id=phenotype_statement.id"
                    cacheImpl="SortedMapBackedCache"/>
        </entity>
 

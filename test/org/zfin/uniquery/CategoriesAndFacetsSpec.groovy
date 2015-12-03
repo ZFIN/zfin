@@ -97,14 +97,14 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         where:
         [category, field] << [[Category.GENE.getName()] , [FieldName.EXPRESSED_IN_TF.getName(), "affected_anatomy_tf", "affected_biological_process_tf",
                                           "affected_molecular_function_tf", "affected_cellular_component_tf",
-                                          "phenotype_statement", "disease", "biological_process_tf",
+                                          "phenotype_statement", FieldName.MISEXPRESSED_GENE.getName(), "disease", "biological_process_tf",
                                           "molecular_function_tf", "cellular_component_tf","chromosome","type"]].combinations() \
                              + [[Category.FISH.getName()],["affected_gene","affected_anatomy_tf", "affected_biological_process_tf",
                                            "affected_molecular_function_tf", "affected_cellular_component_tf",
-                                           "phenotype_statement", FieldName.EXPRESSIONS_ANATOMY_TF.getName(), "sequence_targeting_reagent",
+                                           "phenotype_statement", FieldName.MISEXPRESSED_GENE.getName(), FieldName.EXPRESSIONS_ANATOMY_TF.getName(), "sequence_targeting_reagent",
                                            "construct", "sequence_alteration", "background"]].combinations() \
                              + [[Category.MUTANT.getName()],["type","affected_gene", "affected_anatomy_tf", "affected_biological_process_tf",
-                                           "affected_molecular_function_tf", "affected_cellular_component_tf", "phenotype_statement",
+                                           "affected_molecular_function_tf", "affected_cellular_component_tf", "phenotype_statement", FieldName.MISEXPRESSED_GENE.getName(),
                                            "source", "lab_of_origin", "institution"]].combinations() \
                              + [[Category.CONSTRUCT.getName()],["type","regulatory_region", "coding_sequence","inserted_in_gene",FieldName.EXPRESSED_IN_TF.getName(),
                                            "reporter_color","engineered_region"]].combinations() \
@@ -112,11 +112,11 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                              + [[Category.MARKER.getName()],["type", "chromosome"]].combinations() \
                              + [[Category.FIGURE.getName()],[FieldName.EXPRESSIONS_ANATOMY_TF.getName(), "reporter_gene", "zebrafish_gene", "affected_anatomy_tf",
                                            "affected_biological_process_tf", "affected_molecular_function_tf",
-                                           "affected_cellular_component_tf", "phenotype_statement",
+                                           "affected_cellular_component_tf", "phenotype_statement", FieldName.MISEXPRESSED_GENE.getName(),
                                            "construct", "registered_author"]].combinations() \
                              + [[Category.EXPRESSIONS.getName()],["reporter_gene", "zebrafish_gene", FieldName.EXPRESSIONS_ANATOMY_TF.getName(), "assay", "genotype",
                                            "has_image","experimental_conditions","registered_author","sequence_targeting_reagent" ]].combinations() \
-                             + [[Category.PHENOTYPE.getName()],["phenotype_statement","anatomy_tf","biological_process_tf","molecular_function_tf",
+                             + [[Category.PHENOTYPE.getName()],["phenotype_statement", FieldName.MISEXPRESSED_GENE.getName(),"anatomy_tf","biological_process_tf","molecular_function_tf",
                                                "has_image","stage","sequence_targeting_reagent"]].combinations() \
                              + [[Category.ANATOMY.getName()],["ontology", "term_status"]].combinations() \
                              + [[Category.COMMUNITY.getName()],["type"]].combinations() \

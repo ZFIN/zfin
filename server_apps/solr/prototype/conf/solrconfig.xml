@@ -356,6 +356,7 @@
              expressed_gene_full_name
              expressed_gene_previous_name
                           expressed_gene
+                          misexpressed_gene
                                      insertion_gene_t
              insertion_gene_full_name
              insertion_gene_previous_name
@@ -449,6 +450,7 @@
              expressed_gene_full_name
              expressed_gene_previous_name
                           expressed_gene
+             misexpressed_gene
                                      insertion_gene_t
              insertion_gene_full_name
              insertion_gene_previous_name
@@ -636,6 +638,7 @@
              expressed_gene_full_name^0.8
              expressed_gene_previous_name^0.7
              expressed_gene
+             misexpressed_gene
              inserted_in_gene_full_name^0.8
              inserted_in_gene_previous_name^0.7
              inserted_in_gene_t

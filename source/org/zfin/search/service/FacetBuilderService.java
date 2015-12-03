@@ -278,6 +278,7 @@ public class FacetBuilderService {
         phenotype.addFacet(buildFacet(BIOLOGICAL_PROCESS_TF.getName(), false, response, filterQuerySelectionMap, baseUrl));
         phenotype.addFacet(buildFacet(MOLECULAR_FUNCTION_TF.getName(), false, response, filterQuerySelectionMap, baseUrl));
         phenotype.addFacet(buildFacet(CELLULAR_COMPONENT_TF.getName(), false, response, filterQuerySelectionMap, baseUrl));
+        phenotype.addFacet(buildFacet(MISEXPRESSED_GENE.getName(), false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(phenotype);
         //facetGroups.add(buildSingleFacetGroup("Genes With Altered Expression","genes_with_altered_expression",false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)", SEQUENCE_TARGETING_REAGENT.getName(), false, response, filterQuerySelectionMap, baseUrl));
@@ -394,6 +395,7 @@ public class FacetBuilderService {
         phenotype.addFacet(buildFacet(AFFECTED_MOLECULAR_FUNCTION_TF.getName(), false, response, filterQuerySelectionMap, baseUrl));
         phenotype.addFacet(buildFacet(AFFECTED_CELLULAR_COMPONENT_TF.getName(), false, response, filterQuerySelectionMap, baseUrl));
         phenotype.addFacet(buildFacet(PHENOTYPE_STATEMENT.getName(), false, response, filterQuerySelectionMap, baseUrl));
+        phenotype.addFacet(buildFacet(MISEXPRESSED_GENE.getName(), false, response, filterQuerySelectionMap, baseUrl));
         return phenotype;
     }
 
