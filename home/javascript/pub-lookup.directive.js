@@ -5,13 +5,15 @@
 
     function pubLookup() {
         var directive = {
+            require: 'ngModel',
             scope: {
                 defaultPubs: '='
             },
-            link: link
+            link: link,
+            priority: 10 // make sure ngModel directive gets applied first
         };
 
-        function link(scope, element) {
+        function link(scope, element, attrs, ngModel) {
 
             var pubSearch = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('title'),
@@ -42,6 +44,10 @@
                     empty: '<p class="tt-no-results text-danger">Oof. I couldn\'t find any publications like that.</p>'
                 }
             });
+
+            ngModel.$render = function() {
+                element.typeahead('val', ngModel.$viewValue);
+            };
         }
 
         return directive;

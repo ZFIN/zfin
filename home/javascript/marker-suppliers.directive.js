@@ -18,11 +18,16 @@
             element
                 .autocompletify(scope.url)
                 .on('typeahead:select', function(event, item) {
-                    ngModel.$setViewValue(item.value);
+                    ngModel.$setViewValue(item.value, 'typeahead:select');
                     scope.$apply(function (scope) {
                         scope.onSelect({item: item});
                     });
                 });
+
+            ngModel.$render = function() {
+                element.typeahead('val', ngModel.$viewValue);
+            };
+
         }
 
         return directive;
