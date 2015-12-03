@@ -15,9 +15,18 @@ public class SupplierBeanValidator implements Validator {
     public void validate(Object o, Errors errors) {
         SupplierBean bean = (SupplierBean) o;
 
-        Organization org = RepositoryFactory.getProfileRepository().getOrganizationByZdbID(bean.getZdbID());
-        if (org == null) {
-            errors.rejectValue("name", "marker.supplier.notfound");
+        if (bean.getZdbID() != null) {
+            Organization org = RepositoryFactory.getProfileRepository().getOrganizationByZdbID(bean.getZdbID());
+            if (org == null) {
+                errors.rejectValue("zdbID", "marker.supplier.notfound");
+            }
+        }
+
+        if (bean.getName() != null) {
+            Organization org = RepositoryFactory.getProfileRepository().getOrganizationByName(bean.getName());
+            if (org == null) {
+                errors.rejectValue("name", "marker.supplier.notfound");
+            }
         }
     }
 }

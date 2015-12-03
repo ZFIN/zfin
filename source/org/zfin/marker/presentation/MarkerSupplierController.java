@@ -58,7 +58,7 @@ public class MarkerSupplierController {
         }
 
         Marker marker = markerRepository.getMarkerByID(zdbID);
-        Organization supplier = profileRepository.getOrganizationByZdbID(supplierBean.getZdbID());
+        Organization supplier = profileRepository.getOrganizationByName(supplierBean.getName());
 
         for (MarkerSupplier markerSupplier : marker.getSuppliers()) {
             if (markerSupplier.getOrganization().equals(supplier)) {

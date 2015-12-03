@@ -6,6 +6,7 @@
 
     function autocompletify() {
         var directive = {
+            require: 'ngModel',
             scope: {
                 url: '@',
                 onSelect: '&'
@@ -13,10 +14,11 @@
             link: link
         };
 
-        function link(scope, element) {
+        function link(scope, element, attrs, ngModel) {
             element
                 .autocompletify(scope.url)
                 .on('typeahead:select', function(event, item) {
+                    ngModel.$setViewValue(item.value);
                     scope.$apply(function (scope) {
                         scope.onSelect({item: item});
                     });
@@ -47,12 +49,10 @@
         var vm = this;
 
         vm.suppliers = [];
-        vm.supplier = null;
-        vm.entry = '';
+        vm.supplier = '';
         vm.errors = FieldErrorService.clearErrors();
 
         vm.submit = submit;
-        vm.select = select;
         vm.remove = remove;
 
         activate();
@@ -67,26 +67,18 @@
                 });
         }
 
-        function select(item) {
-            vm.errors = FieldErrorService.clearErrors();
-            var supplier = { zdbID: item.id, name: item.label };
+        function submit() {
             var added = vm.suppliers.some(function (existing) {
-                return existing.zdbID === supplier.zdbID;
+                return existing.name === vm.supplier;
             });
             if (added) {
                 vm.errors.fields.name = ["Supplier has already been added for this marker"];
                 return;
             }
-
-            vm.supplier = item;
-        }
-
-        function submit() {
-            MarkerService.addSupplier(vm.id, { zdbID: vm.supplier.id })
+            MarkerService.addSupplier(vm.id, { name: vm.supplier })
                 .then(function (supplier) {
                     vm.suppliers.push(supplier);
-                    vm.entry = '';
-                    vm.supplier = null;
+                    vm.supplier = '';
                     vm.errors = FieldErrorService.clearErrors();
                 })
                 .catch(function (response) {
