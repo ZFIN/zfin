@@ -1477,9 +1477,9 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                 <![CDATA[
                          ]]>
             </Query>
-            <Column id="1" unique="true">Genotype ID</Column>
-	    <Column id="2">OMIM ID </Column>
-            <Column id="3">Publication ID</Column>
+            <Column id="1" unique="true">Publication ID</Column>
+	    <Column id="2">PubMed ID </Column>
+            <Column id="3">Genotype ID</Column>
         </Download>
         <Download orderIndex="1">
             <Name>
