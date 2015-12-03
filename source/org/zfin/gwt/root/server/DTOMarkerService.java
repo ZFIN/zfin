@@ -42,14 +42,15 @@ public class DTOMarkerService {
 
     public static List<NoteDTO> getCuratorNoteDTOs(Marker marker) {
         // get notes
-        List<NoteDTO> curatorNotes = new ArrayList<NoteDTO>();
+        List<NoteDTO> curatorNotes = new ArrayList<>();
         Set<DataNote> dataNotes = marker.getDataNotes();
         for (DataNote dataNote : dataNotes) {
-            NoteDTO noteDTO = new NoteDTO();
+            CuratorNoteDTO noteDTO = new CuratorNoteDTO();
             noteDTO.setNoteData(DTOConversionService.unescapeString(dataNote.getNote()));
             noteDTO.setZdbID(dataNote.getZdbID());
-//            noteDTO.setDataZdbID(dataNote.getDataZdbID());
             noteDTO.setDataZdbID(marker.getZdbID());
+            noteDTO.setCurator(DTOConversionService.convertToPersonDTO(dataNote.getCurator()));
+            noteDTO.setDate(dataNote.getDate());
             noteDTO.setNoteEditMode(NoteEditMode.PRIVATE);
             curatorNotes.add(noteDTO);
         }

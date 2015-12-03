@@ -3,10 +3,10 @@ package org.zfin.marker.presentation;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.gwt.root.dto.NoteDTO;
+import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.publication.Publication;
@@ -135,6 +135,14 @@ public class MarkerNotesController {
         return "marker/snp-publication-list.page";
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/{markerId}/notes", method = RequestMethod.GET)
+    public List<? super NoteDTO> getMarkerNotes(@PathVariable String markerId) {
+        Marker marker = markerRepository.getMarkerByID(markerId);
+        List<? super NoteDTO> notes = DTOMarkerService.getCuratorNoteDTOs(marker);
+        notes.add(DTOMarkerService.getPublicNoteDTO(marker));
+        return notes;
+    }
 
     private Marker getReplacedMarker(String markerZdbId) {
         String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(markerZdbId);
