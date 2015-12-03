@@ -5,7 +5,6 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.beans.Field;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.util.CollectionUtils;
 import org.zfin.fish.FeatureGene;
 import org.zfin.framework.presentation.ProvidesLink;
