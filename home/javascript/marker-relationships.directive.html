@@ -3,7 +3,7 @@
         <div class="form-group col-sm-3">
             <label>Gene</label>
             <input class="form-control"
-                   url="/action/marker/find-targetGenes?term=%QUERY"
+                   url="/action/quicksearch/autocomplete?q=%QUERY&category=Gene+%2F+Transcript&type=Gene"
                    ng-model="vm.newGene"
                    autocompletify>
         </div>

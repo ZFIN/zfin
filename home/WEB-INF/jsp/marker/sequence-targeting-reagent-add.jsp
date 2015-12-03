@@ -128,7 +128,7 @@
 
         $('#strType').on('change', displaySequenceControls);
         $('#supplier').autocompletify('/action/marker/find-suppliers?term=%QUERY');
-        $('#targetGeneSymbol').autocompletify('/action/marker/find-targetGenes?term=%QUERY');
+        $('#targetGeneSymbol').autocompletify('/action/quicksearch/autocomplete?q=%QUERY&category=Gene+%2F+Transcript&type=Gene');
 
         displaySequenceControls();
     }());
