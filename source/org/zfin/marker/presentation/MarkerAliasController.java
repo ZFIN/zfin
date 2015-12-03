@@ -1,5 +1,6 @@
 package org.zfin.marker.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -35,8 +36,11 @@ public class MarkerAliasController {
     public Collection<MarkerAliasBean> getMarkerAliases(@PathVariable String markerID) {
         Marker marker = markerRepository.getMarkerByID(markerID);
         Collection<MarkerAliasBean> beans = new ArrayList<>();
-        for (MarkerAlias markerAlias : marker.getAliases()) {
-            beans.add(MarkerAliasBean.convert(markerAlias));
+        Collection<MarkerAlias> aliases = marker.getAliases();
+        if (CollectionUtils.isNotEmpty(aliases)) {
+            for (MarkerAlias markerAlias : marker.getAliases()) {
+                beans.add(MarkerAliasBean.convert(markerAlias));
+            }
         }
         return beans;
     }
