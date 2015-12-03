@@ -38,6 +38,9 @@
         vm.publicNote = null;
         vm.curatorNotes = [];
 
+        vm.resetPublicNote = resetPublicNote;
+        vm.savePublicNote = savePublicNote;
+
         activate();
 
         function activate() {
@@ -48,9 +51,26 @@
                             vm.curatorNotes.push(note);
                         } else if (note.noteEditMode === 'PUBLIC') {
                             vm.publicNote = note;
-                            vm.newPublicNote = note.noteData;
+                            resetPublicNote();
                         }
                     });
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+        }
+
+        function resetPublicNote() {
+            vm.newPublicNote = vm.publicNote.noteData;
+        }
+
+        function savePublicNote() {
+            // todo: move this to MarkerService?
+            var newNote = vm.publicNote;
+            newNote.noteData = vm.newPublicNote;
+            MarkerService.updatePublicNote(vm.id, newNote)
+                .then(function(note) {
+                    vm.publicNote = note;
                 })
                 .catch(function(error) {
                     console.error(error);

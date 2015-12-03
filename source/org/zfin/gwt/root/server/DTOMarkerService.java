@@ -40,19 +40,23 @@ public class DTOMarkerService {
         insertMarkerUpdate(marker, fieldname, oldValueString, newValueString);
     }
 
+    public static CuratorNoteDTO convertToCuratorNoteDto(DataNote dataNote, Marker marker) {
+        CuratorNoteDTO noteDTO = new CuratorNoteDTO();
+        noteDTO.setNoteData(DTOConversionService.unescapeString(dataNote.getNote()));
+        noteDTO.setZdbID(dataNote.getZdbID());
+        noteDTO.setDataZdbID(marker.getZdbID());
+        noteDTO.setCurator(DTOConversionService.convertToPersonDTO(dataNote.getCurator()));
+        noteDTO.setDate(dataNote.getDate());
+        noteDTO.setNoteEditMode(NoteEditMode.PRIVATE);
+        return noteDTO;
+    }
+
     public static List<NoteDTO> getCuratorNoteDTOs(Marker marker) {
         // get notes
         List<NoteDTO> curatorNotes = new ArrayList<>();
         Set<DataNote> dataNotes = marker.getDataNotes();
         for (DataNote dataNote : dataNotes) {
-            CuratorNoteDTO noteDTO = new CuratorNoteDTO();
-            noteDTO.setNoteData(DTOConversionService.unescapeString(dataNote.getNote()));
-            noteDTO.setZdbID(dataNote.getZdbID());
-            noteDTO.setDataZdbID(marker.getZdbID());
-            noteDTO.setCurator(DTOConversionService.convertToPersonDTO(dataNote.getCurator()));
-            noteDTO.setDate(dataNote.getDate());
-            noteDTO.setNoteEditMode(NoteEditMode.PRIVATE);
-            curatorNotes.add(noteDTO);
+            curatorNotes.add(convertToCuratorNoteDto(dataNote, marker));
         }
         return curatorNotes;
     }

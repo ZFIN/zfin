@@ -20,7 +20,8 @@
             removeRelationship: removeRelationship,
             addRelationshipReference: addRelationshipReference,
             removeRelationshipReference: removeRelationshipReference,
-            getNotes: getNotes
+            getNotes: getNotes,
+            updatePublicNote: updatePublicNote
         };
 
         function returnResponseData(response) {
@@ -107,6 +108,11 @@
 
         function getNotes(markerId) {
             return $http.get('/action/marker/' + markerId + '/notes')
+                .then(returnResponseData);
+        }
+
+        function updatePublicNote(markerId, note) {
+            return $http.post('/action/marker/' + markerId + '/notes', note)
                 .then(returnResponseData);
         }
     }

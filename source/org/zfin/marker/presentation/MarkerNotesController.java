@@ -4,9 +4,12 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.NoteDTO;
+import org.zfin.gwt.root.dto.NoteEditMode;
 import org.zfin.gwt.root.server.DTOMarkerService;
+import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.publication.Publication;
@@ -142,6 +145,28 @@ public class MarkerNotesController {
         List<? super NoteDTO> notes = DTOMarkerService.getCuratorNoteDTOs(marker);
         notes.add(DTOMarkerService.getPublicNoteDTO(marker));
         return notes;
+    }
+
+    // todo: ehhh, this is kinda weird
+    // either update the note if it's public or add if it's private
+    @ResponseBody
+    @RequestMapping(value = "/{markerId}/notes", method = RequestMethod.POST)
+    public NoteDTO addOrUpdateMarkerNote(@PathVariable String markerId,
+                                         @RequestBody NoteDTO noteDTO) {
+        Marker marker = markerRepository.getMarkerByID(markerId);
+        NoteDTO newNote = null;
+
+        HibernateUtil.createTransaction();
+        if (noteDTO.getNoteEditMode() == NoteEditMode.PUBLIC) {
+            markerRepository.updateMarkerPublicNote(marker, noteDTO.getNoteData());
+            newNote = DTOMarkerService.getPublicNoteDTO(marker);
+        } else if (noteDTO.getNoteEditMode() == NoteEditMode.PRIVATE) {
+            DataNote note = markerRepository.addMarkerDataNote(marker, noteDTO.getNoteData());
+            newNote = DTOMarkerService.convertToCuratorNoteDto(note, marker);
+        }
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return newNote;
     }
 
     private Marker getReplacedMarker(String markerZdbId) {

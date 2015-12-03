@@ -442,6 +442,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
         RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(mrel.getZdbID(), sourceZdbID);
     }
 
+    public void updateMarkerPublicNote(Marker marker, String note) {
+        Session session = currentSession();
+        marker.setPublicComments(note);
+        session.save(marker);
+    }
 
     public DataNote addMarkerDataNote(Marker marker, String note) {
         Person curator = ProfileService.getCurrentSecurityUser();
