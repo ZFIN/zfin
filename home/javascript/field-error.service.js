@@ -17,7 +17,7 @@
         }
 
         function processErrorResponse(response) {
-            var errors = clearErrors;
+            var errors = clearErrors();
             errors.isGeneric = !response.data.fieldErrors.length;
             response.data.fieldErrors.forEach(function (error) {
                 if (!errors.fields.hasOwnProperty(error.field)) {
