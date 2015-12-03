@@ -8,7 +8,7 @@ document.write(
     '    <a href="/zf_info/glossary.html" title="Terms useful in understanding zebrafish development, anatomy, genetics and bioinformatics">Glossary</a>' +
     '    <a href="/zf_info/news/committees.html" title="Committees and working groups">Committees</a>' +
     '    <a href="https://wiki.zfin.org/display/general/ZFIN+db+information" title="Citing ZFIN resources in publications">Citing ZFIN</a>' +
-    '    <a href="/zf_info/contact_us.html" title="ZFIN contact information">Contact</a>' +
+    '    <a href="https://wiki.zfin.org/display/general/ZFIN+Contact+Information" title="ZFIN contact information">Contact</a>' +
     '    <a href="https://wiki.zfin.org/display/general/ZFIN+db+information" title="About ZFIN">About</a>' +
     '    <a href="https://wiki.zfin.org/display/jobs/ZFIN+Jobs" title="Jobs at ZFIN">ZFIN Jobs</a>' + 
     '  </div>' + 
