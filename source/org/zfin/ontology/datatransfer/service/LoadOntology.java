@@ -1042,6 +1042,10 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             for (Dbxref xref : term.getDefDbxrefs()) {
                 // remove non-printable characters
                 String databaseID =xref.getDatabaseID().replaceAll("\\p{C}", "");
+                // replace the en dash '\u2013', –, with a regular hyphen
+                databaseID =databaseID.replace("\u2013", "-");
+                // replace the em dash '\u2014', –, with a regular hyphen
+                databaseID =databaseID.replace("\u2014", "-");
                 appendFormattedRecord(UnloadFile.TERM_REFERENCES, term.getID(), xref.getDatabase(), databaseID);
             }
         }
