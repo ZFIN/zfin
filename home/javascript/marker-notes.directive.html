@@ -5,7 +5,11 @@
     </div>
     <div class="form-group">
         <button class="btn btn-default" ng-click="vm.resetPublicNote()">Reset</button>
-        <button class="btn btn-primary" ng-click="vm.savePublicNote()">Save</button>
+        <button class="btn btn-primary"
+                ng-disabled="vm.newPublicNote === vm.publicNote.noteData"
+                ng-click="vm.savePublicNote()">
+            Save
+        </button>
     </div>
 </form>
 
@@ -17,7 +21,11 @@
         <textarea class="form-control" rows="3" ng-model="vm.newCuratorNote"></textarea>
     </div>
     <div class="form-group">
-        <button class="btn btn-primary">Add</button>
+        <button class="btn btn-primary"
+                ng-disabled="!vm.newCuratorNote"
+                ng-click="vm.addCuratorNote()">
+            Add
+        </button>
     </div>
 </form>
 <div class="media" ng-repeat="note in vm.curatorNotes">

@@ -40,6 +40,7 @@
 
         vm.resetPublicNote = resetPublicNote;
         vm.savePublicNote = savePublicNote;
+        vm.addCuratorNote = addCuratorNote;
 
         activate();
 
@@ -71,6 +72,22 @@
             MarkerService.updatePublicNote(vm.id, newNote)
                 .then(function(note) {
                     vm.publicNote = note;
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+        }
+
+        function addCuratorNote() {
+            // todo: move this to MarkerService?
+            var newNote = {
+                noteData: vm.newCuratorNote,
+                noteEditMode: "PRIVATE"
+            };
+            MarkerService.addCuratorNote(vm.id, newNote)
+                .then(function(note) {
+                    vm.curatorNotes.unshift(note);
+                    vm.newCuratorNote = '';
                 })
                 .catch(function(error) {
                     console.error(error);

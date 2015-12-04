@@ -6,8 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.gwt.root.dto.CuratorNoteDTO;
 import org.zfin.gwt.root.dto.NoteDTO;
-import org.zfin.gwt.root.dto.NoteEditMode;
 import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.Marker;
@@ -147,23 +147,29 @@ public class MarkerNotesController {
         return notes;
     }
 
-    // todo: ehhh, this is kinda weird
-    // either update the note if it's public or add if it's private
     @ResponseBody
-    @RequestMapping(value = "/{markerId}/notes", method = RequestMethod.POST)
-    public NoteDTO addOrUpdateMarkerNote(@PathVariable String markerId,
-                                         @RequestBody NoteDTO noteDTO) {
+    @RequestMapping(value = "/{markerId}/public-note", method = RequestMethod.POST)
+    public NoteDTO updatePublicNote(@PathVariable String markerId,
+                                    @RequestBody NoteDTO noteDTO) {
         Marker marker = markerRepository.getMarkerByID(markerId);
-        NoteDTO newNote = null;
 
         HibernateUtil.createTransaction();
-        if (noteDTO.getNoteEditMode() == NoteEditMode.PUBLIC) {
-            markerRepository.updateMarkerPublicNote(marker, noteDTO.getNoteData());
-            newNote = DTOMarkerService.getPublicNoteDTO(marker);
-        } else if (noteDTO.getNoteEditMode() == NoteEditMode.PRIVATE) {
-            DataNote note = markerRepository.addMarkerDataNote(marker, noteDTO.getNoteData());
-            newNote = DTOMarkerService.convertToCuratorNoteDto(note, marker);
-        }
+        markerRepository.updateMarkerPublicNote(marker, noteDTO.getNoteData());
+        NoteDTO newNote = DTOMarkerService.getPublicNoteDTO(marker);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return newNote;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{markerId}/curator-notes", method = RequestMethod.POST)
+    public CuratorNoteDTO addCuratorNote(@PathVariable String markerId,
+                                         @RequestBody NoteDTO noteDTO) {
+        Marker marker = markerRepository.getMarkerByID(markerId);
+
+        HibernateUtil.createTransaction();
+        DataNote note = markerRepository.addMarkerDataNote(marker, noteDTO.getNoteData());
+        CuratorNoteDTO newNote = DTOMarkerService.convertToCuratorNoteDto(note, marker);
         HibernateUtil.flushAndCommitCurrentSession();
 
         return newNote;

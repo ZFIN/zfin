@@ -21,7 +21,8 @@
             addRelationshipReference: addRelationshipReference,
             removeRelationshipReference: removeRelationshipReference,
             getNotes: getNotes,
-            updatePublicNote: updatePublicNote
+            updatePublicNote: updatePublicNote,
+            addCuratorNote: addCuratorNote
         };
 
         function returnResponseData(response) {
@@ -112,7 +113,12 @@
         }
 
         function updatePublicNote(markerId, note) {
-            return $http.post('/action/marker/' + markerId + '/notes', note)
+            return $http.post('/action/marker/' + markerId + '/public-note', note)
+                .then(returnResponseData);
+        }
+
+        function addCuratorNote(markerId, note) {
+            return $http.post('/action/marker/' + markerId + '/curator-notes', note)
                 .then(returnResponseData);
         }
     }
