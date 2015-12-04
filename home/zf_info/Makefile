@@ -38,7 +38,7 @@ GENERICS = defs.html  zfprbs.html  \
 	syntax_help.html
 
 STATICS = 227.gif fish.gif logo.jpeg citation.html nomen_tutorial.html \
-	translocation.jpeg zfin.gif anatomy.html zebrafish2009.pdf contact_us.html \
+	translocation.jpeg zfin.gif anatomy.html zebrafish2009.pdf \
 	glossary.html GO.html nomen_comm.html blast_info.html \
 	author_guidelines.html author_guide_checklist.html \
 	zfin_stats.html zfin_statistics.jpg nomen.html stars.html
