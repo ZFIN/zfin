@@ -27,6 +27,7 @@
 <script src="/javascript/marker-aliases.directive.js"></script>
 <script src="/javascript/marker-relationships.directive.js"></script>
 <script src="/javascript/marker-notes.directive.js"></script>
+<script src="/javascript/marker-links.directive.js"></script>
 
 <c:set var="viewURL">/${str.zdbID}</c:set>
 <c:set var="deleteURL">/action/infrastructure/deleteRecord/${str.zdbID}</c:set>
@@ -95,6 +96,8 @@
         <div class="panel-heading">
             <h3 class="panel-title">Other ${str.name} Pages</h3>
         </div>
-        <div class="panel-body">Add the sum to the product of these three</div>
+        <div class="panel-body">
+            <div marker-links id="${str.zdbID}" group="summary page"></div>
+        </div>
     </div>
 </div>

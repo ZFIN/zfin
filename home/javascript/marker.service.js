@@ -24,7 +24,8 @@
             updatePublicNote: updatePublicNote,
             addCuratorNote: addCuratorNote,
             updateCuratorNote: updateCuratorNote,
-            deleteCuratorNote: deleteCuratorNote
+            deleteCuratorNote: deleteCuratorNote,
+            getLinks: getLinks
         };
 
         function returnResponseData(response) {
@@ -132,6 +133,13 @@
 
         function deleteCuratorNote(markerId, note) {
             return $http.delete('/action/marker/' + markerId + '/curator-notes/' + note.zdbID);
+        }
+
+        // === LINKS ===
+
+        function getLinks(markerId, group) {
+            return $http.get('/action/marker/' + markerId + '/links?group=' + group)
+                .then(returnResponseData);
         }
     }
 }());
