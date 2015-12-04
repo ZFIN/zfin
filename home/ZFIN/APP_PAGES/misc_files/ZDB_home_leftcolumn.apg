@@ -55,7 +55,7 @@
       <li><a href="/action/ontology/search"
                     title="Search anatomy, gene and disease ontology"><strong>Anatomy / GO / Human Disease</strong></a></li>
       <ul>
-        <li><a href="/zf_info/anatomy/dict/sum.html" title="Atlases, anatomical resources and ontology">Anatomy Atlases and Resources</a></li>
+        <li><a href="https://<!--|WIKI_HOST|-->/display/general/Anatomy+Atlases+and+Resources" title="Atlases, anatomical resources and ontology">Anatomy Atlases and Resources</a></li>
       </ul>
   </ul>
    
