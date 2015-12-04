@@ -1,7 +1,13 @@
 <form>
     <label>Public Note</label>
     <p ng-show="!vm.publicNote.editing">
-        {{vm.publicNote.noteData}} &mdash; <a href ng-click="vm.editPublicNote()">Edit</a>
+        {{vm.publicNote.noteData}}
+        <span ng-show="vm.publicNote.noteData">
+            &mdash; <a href ng-click="vm.editPublicNote()">Edit</a>
+        </span>
+        <span ng-show="!vm.publicNote.noteData">
+            <a href ng-click="vm.editPublicNote()">Add</a>
+        </span>
     </p>
     <div ng-show="vm.publicNote.editing">
         <div class="form-group">
