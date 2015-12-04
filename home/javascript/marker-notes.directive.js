@@ -39,7 +39,8 @@
         vm.publicNote = null;
         vm.curatorNotes = [];
 
-        vm.resetPublicNote = resetPublicNote;
+        vm.editPublicNote = editPublicNote;
+        vm.cancelEditPublicNote = cancelEditPublicNote;
         vm.savePublicNote = savePublicNote;
         vm.addCuratorNote = addCuratorNote;
 
@@ -53,7 +54,7 @@
                             vm.curatorNotes.push(note);
                         } else if (note.noteEditMode === 'PUBLIC') {
                             vm.publicNote = note;
-                            resetPublicNote();
+                            cancelEditPublicNote();
                         }
                     });
                 })
@@ -62,8 +63,13 @@
                 });
         }
 
-        function resetPublicNote() {
+        function editPublicNote() {
+            vm.publicNote.editing = true;
+        }
+
+        function cancelEditPublicNote() {
             vm.newPublicNote = vm.publicNote.noteData;
+            vm.publicNote.editing = false;
         }
 
         function savePublicNote() {

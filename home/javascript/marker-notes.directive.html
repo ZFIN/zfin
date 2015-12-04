@@ -1,19 +1,20 @@
 <form>
-    <div class="form-group">
-        <label>Public Note</label>
-        <textarea class="form-control" rows="3" ng-model="vm.newPublicNote"></textarea>
-    </div>
-    <div class="form-group">
-        <button class="btn btn-default"
-                ng-disabled="vm.newPublicNote === vm.publicNote.noteData"
-                ng-click="vm.resetPublicNote()">
-            Reset
-        </button>
-        <button class="btn btn-primary"
-                ng-disabled="vm.newPublicNote === vm.publicNote.noteData"
-                ng-click="vm.savePublicNote()">
-            Save
-        </button>
+    <label>Public Note</label>
+    <p ng-show="!vm.publicNote.editing">
+        {{vm.publicNote.noteData}} &mdash; <a href ng-click="vm.editPublicNote()">Edit</a>
+    </p>
+    <div ng-show="vm.publicNote.editing">
+        <div class="form-group">
+            <textarea class="form-control" rows="3" ng-model="vm.newPublicNote"></textarea>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-default" ng-click="vm.cancelEditPublicNote()">
+                Cancel
+            </button>
+            <button class="btn btn-primary" ng-click="vm.savePublicNote()">
+                Save
+            </button>
+        </div>
     </div>
 </form>
 
