@@ -1,1 +1,43 @@
-<h1>hi</h1>
+<div class="row">
+    <form class="form-single-row">
+        <div class="form-group col-sm-3">
+            <label>Database</label>
+            <select class="form-control"
+                    ng-model="vm.newDatabase"
+                    ng-options="d as d for d in vm.databases"></select>
+        </div>
+        <div class="form-group col-sm-3">
+            <label>Accession Number</label>
+            <input class="form-control" ng-model="vm.newAccession">
+        </div>
+        <div class="form-group col-sm-3">
+            <label>Reference</label>
+            <input pub-lookup class="form-control" ng-model="vm.newReference">
+        </div>
+        <div class="form-group col-sm-3">
+            <button type="button" class="btn btn-primary">
+                Add
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-sm-6">
+        <p class="text-muted" ng-hide="vm.links.length">
+            <i>No other pages yet</i>
+        </p>
+        <table class="table" ng-show="vm.links.length">
+            <tr ng-repeat="link in vm.links">
+                <td>
+                    <a ng-href="{{link.urlPrefix + link.accession}}">{{link.referenceDatabaseName}}:{{link.accession}}</a>
+                    ({{link.attributionZdbIDs.length}})
+                    <span class="small pull-right">
+                        <a href ng-click="vm.edit(link)">Edit References</a> |
+                        <a href ng-click="vm.remove(link, $index)">Remove</a>
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

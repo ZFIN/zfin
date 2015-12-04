@@ -25,7 +25,8 @@
             addCuratorNote: addCuratorNote,
             updateCuratorNote: updateCuratorNote,
             deleteCuratorNote: deleteCuratorNote,
-            getLinks: getLinks
+            getLinks: getLinks,
+            getLinkDatabases: getLinkDatabases
         };
 
         function returnResponseData(response) {
@@ -140,6 +141,11 @@
         function getLinks(markerId, group) {
             return $http.get('/action/marker/' + markerId + '/links?group=' + group)
                 .then(returnResponseData);
+        }
+
+        function getLinkDatabases(group) {
+            return $http.get('/action/marker/link/databases?group=' + group)
+                .then(returnResponseData)
         }
     }
 }());

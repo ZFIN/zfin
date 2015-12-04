@@ -32,7 +32,15 @@
         function activate() {
             MarkerService.getLinks(vm.id, vm.group)
                 .then(function(links) {
-                    this.links = links;
+                    vm.links = links;
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+
+            MarkerService.getLinkDatabases(vm.group)
+                .then(function(databases) {
+                    vm.databases = databases;
                 })
                 .catch(function(error) {
                     console.error(error);
