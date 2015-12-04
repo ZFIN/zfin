@@ -17,7 +17,8 @@
             restrict: 'EA',
             templateUrl: '/javascript/marker-notes.directive.html',
             scope: {
-                id: '@'
+                id: '@',
+                userId: '@'
             },
             controller: MarkerNotesController,
             controllerAs: 'vm',

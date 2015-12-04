@@ -4,7 +4,11 @@
         <textarea class="form-control" rows="3" ng-model="vm.newPublicNote"></textarea>
     </div>
     <div class="form-group">
-        <button class="btn btn-default" ng-click="vm.resetPublicNote()">Reset</button>
+        <button class="btn btn-default"
+                ng-disabled="vm.newPublicNote === vm.publicNote.noteData"
+                ng-click="vm.resetPublicNote()">
+            Reset
+        </button>
         <button class="btn btn-primary"
                 ng-disabled="vm.newPublicNote === vm.publicNote.noteData"
                 ng-click="vm.savePublicNote()">
@@ -33,7 +37,14 @@
         <div class="media-heading">
             <h4>
                 {{note.curator.firstName}} {{note.curator.lastName}}
-                <small>{{note.date | date:'yyyy-MM-dd'}}</small>
+                <small>
+                    {{note.date | date:'yyyy-MM-dd'}}
+                    <span ng-show="note.curator.zdbID === vm.userId">
+                        &mdash;
+                        <a href>Edit</a> |
+                        <a href>Delete</a>
+                    </span>
+                </small>
             </h4>
             <p ng-bind-html="note.noteData | trusted_html"></p>
         </div>

@@ -87,7 +87,7 @@
             <h3 class="panel-title">Notes</h3>
         </div>
         <div class="panel-body">
-            <div marker-notes id="${str.zdbID}"></div>
+            <div marker-notes id="${str.zdbID}" user-id="${user.zdbID}"></div>
         </div>
     </div>
 

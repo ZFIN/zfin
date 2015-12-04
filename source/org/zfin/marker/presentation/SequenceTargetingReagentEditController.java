@@ -9,6 +9,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.profile.service.ProfileService;
 
 @Controller
 @RequestMapping("/str")
@@ -26,6 +27,7 @@ public class SequenceTargetingReagentEditController {
 
         model.addAttribute("str", str);
         model.addAttribute("showSupplier", str.getType() == Marker.Type.TALEN || str.getType() == Marker.Type.CRISPR);
+        model.addAttribute("user", ProfileService.getCurrentSecurityUser());
 
         return "marker/sequence-targeting-reagent-edit.page";
     }
