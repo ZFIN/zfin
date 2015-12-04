@@ -128,6 +128,8 @@ public interface MarkerRepository {
      */
     void deleteMarkerAlias(Marker marker, MarkerAlias alias);
 
+    void updateCuratorNote(Marker marker, DataNote note, String newNote);
+
     void removeCuratorNote(Marker marker, DataNote note);
 
     /**

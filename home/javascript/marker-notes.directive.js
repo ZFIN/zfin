@@ -43,6 +43,10 @@
         vm.cancelEditPublicNote = cancelEditPublicNote;
         vm.savePublicNote = savePublicNote;
         vm.addCuratorNote = addCuratorNote;
+        vm.editCuratorNote = editCuratorNote;
+        vm.cancelEditCuratorNote = cancelEditCuratorNote;
+        vm.saveCuratorNote = saveCuratorNote;
+        vm.deleteCuratorNote = deleteCuratorNote;
 
         activate();
 
@@ -95,6 +99,35 @@
                 .then(function(note) {
                     vm.curatorNotes.unshift(note);
                     vm.newCuratorNote = '';
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+        }
+
+        function editCuratorNote(note) {
+            note.editing = true;
+            note.editText = note.noteData;
+        }
+
+        function cancelEditCuratorNote(note) {
+            note.editing = false;
+        }
+
+        function saveCuratorNote(note, index) {
+            MarkerService.updateCuratorNote(vm.id, note, note.editText)
+                .then(function(note) {
+                    vm.curatorNotes[index] = note;
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+        }
+
+        function deleteCuratorNote(note, index) {
+            MarkerService.deleteCuratorNote(vm.id, note)
+                .then(function() {
+                    vm.curatorNotes.splice(index, 1);
                 })
                 .catch(function(error) {
                     console.error(error);

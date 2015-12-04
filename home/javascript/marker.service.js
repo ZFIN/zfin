@@ -22,7 +22,9 @@
             removeRelationshipReference: removeRelationshipReference,
             getNotes: getNotes,
             updatePublicNote: updatePublicNote,
-            addCuratorNote: addCuratorNote
+            addCuratorNote: addCuratorNote,
+            updateCuratorNote: updateCuratorNote,
+            deleteCuratorNote: deleteCuratorNote
         };
 
         function returnResponseData(response) {
@@ -120,6 +122,16 @@
         function addCuratorNote(markerId, note) {
             return $http.post('/action/marker/' + markerId + '/curator-notes', note)
                 .then(returnResponseData);
+        }
+
+        function updateCuratorNote(markerId, note, newNote) {
+            note.noteData = newNote;
+            return $http.post('/action/marker/' + markerId + '/curator-notes/' + note.zdbID, note)
+                .then(returnResponseData);
+        }
+
+        function deleteCuratorNote(markerId, note) {
+            return $http.delete('/action/marker/' + markerId + '/curator-notes/' + note.zdbID);
         }
     }
 }());

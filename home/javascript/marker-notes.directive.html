@@ -42,12 +42,25 @@
                     {{note.date | date:'yyyy-MM-dd'}}
                     <span ng-show="note.curator.zdbID === vm.userId">
                         &mdash;
-                        <a href>Edit</a> |
-                        <a href>Delete</a>
+                        <a href ng-click="vm.editCuratorNote(note)">Edit</a> |
+                        <a href ng-click="vm.deleteCuratorNote(note, $index)">Delete</a>
                     </span>
                 </small>
             </h4>
-            <p ng-bind-html="note.noteData | trusted_html"></p>
+            <p ng-bind-html="note.noteData | trusted_html" ng-hide="note.editing"></p>
+            <div ng-show="note.editing">
+                <div class="form-group">
+                    <textarea class="form-control" rows="3" ng-model="note.editText"></textarea>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-default" ng-click="vm.cancelEditCuratorNote(note)">
+                        Cancel
+                    </button>
+                    <button class="btn btn-primary" ng-click="vm.saveCuratorNote(note, $index)">
+                        Save
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
