@@ -26,7 +26,8 @@
             updateCuratorNote: updateCuratorNote,
             deleteCuratorNote: deleteCuratorNote,
             getLinks: getLinks,
-            getLinkDatabases: getLinkDatabases
+            getLinkDatabases: getLinkDatabases,
+            addLink: addLink
         };
 
         function returnResponseData(response) {
@@ -146,6 +147,16 @@
         function getLinkDatabases(group) {
             return $http.get('/action/marker/link/databases?group=' + group)
                 .then(returnResponseData)
+        }
+
+        function addLink(markerId, fdbId, accession, pubId) {
+            var link = {
+                referenceDatabaseZdbID: fdbId,
+                accession: accession,
+                attributionZdbIDs: [pubId]
+            };
+            return $http.post('/action/marker/' + markerId + '/links', link)
+                .then(returnResponseData);
         }
     }
 }());

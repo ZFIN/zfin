@@ -1979,6 +1979,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 linkDisplay.setSignificance(Integer.valueOf(tuple[6].toString()));
             }
             linkDisplay.setDblinkZdbID(tuple[7].toString());
+            linkDisplay.setReferenceDatabaseZdbID(tuple[8].toString());
             return linkDisplay;
         }
 
@@ -2001,9 +2002,25 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
     }
 
+    public List<LinkDisplay> getMarkerDBLink(String dbLinkId) {
+        String sql = "select dbl.dblink_linked_recid, dbl.dblink_acc_num, fdb.fdb_db_display_name,fdb.fdb_db_query,fdb.fdb_url_suffix, " +
+                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id " +
+                "from db_link dbl  " +
+                "join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
+                "join foreign_db fdb on fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id " +
+                "left outer join record_attribution ra on ra.recattrib_data_zdb_id=dbl.dblink_zdb_id " +
+                "where dbl.dblink_zdb_id = :dbLinkId ";
+
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql)
+                .setParameter("dbLinkId", dbLinkId)
+                .setResultTransformer(markerDBLinkTransformer);
+
+        return markerDBLinkTransformer.transformList(query.list());
+    }
+
     public List<LinkDisplay> getMarkerDBLinksFast(Marker marker, DisplayGroup.GroupName groupName) {
         String sql = "select dbl.dblink_linked_recid,dbl.dblink_acc_num,fdb.fdb_db_display_name,fdb.fdb_db_query,fdb.fdb_url_suffix, " +
-                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id " +
+                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id " +
                 "from db_link dbl  " +
                 "join foreign_db_contains_display_group_member m on m.fdbcdgm_fdbcont_zdb_id=dbl.dblink_fdbcont_zdb_id " +
                 "join foreign_db_contains_display_group g on g.fdbcdg_pk_id=m.fdbcdgm_group_id " +

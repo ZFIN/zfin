@@ -22,6 +22,8 @@ public interface SequenceRepository {
 
     ForeignDB getForeignDBByName(ForeignDB.AvailableName dbName);
 
+    ReferenceDatabase getReferenceDatabaseByID(String referenceDatabaseID);
+
     ReferenceDatabase getReferenceDatabase(ForeignDB.AvailableName foreignDBName,
                                            ForeignDBDataType.DataType type,
                                            ForeignDBDataType.SuperType superType,

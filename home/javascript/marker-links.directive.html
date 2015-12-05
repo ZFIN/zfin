@@ -4,7 +4,7 @@
             <label>Database</label>
             <select class="form-control"
                     ng-model="vm.newDatabase"
-                    ng-options="d as d for d in vm.databases"></select>
+                    ng-options="d.zdbID as d.name for d in vm.databases"></select>
         </div>
         <div class="form-group col-sm-3">
             <label>Accession Number</label>
@@ -15,7 +15,9 @@
             <input pub-lookup class="form-control" ng-model="vm.newReference">
         </div>
         <div class="form-group col-sm-3">
-            <button type="button" class="btn btn-primary">
+            <button type="button" class="btn btn-primary"
+                    ng-disabled="!vm.newDatabase || !vm.newAccession || !vm.newReference"
+                    ng-click="vm.add()">
                 Add
             </button>
         </div>

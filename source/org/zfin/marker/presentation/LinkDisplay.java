@@ -9,24 +9,25 @@ import java.util.Set;
 
 /**
  */
-public class LinkDisplay implements ProvidesLink{
+public class LinkDisplay implements ProvidesLink {
 
-    private String referenceDatabaseName ;
-    private String accession ;
-    private String urlPrefix ;
+    private String referenceDatabaseName;
+    private String referenceDatabaseZdbID;
+    private String accession;
+    private String urlPrefix;
     private Set<String> attributionZdbIDs = new HashSet<String>();
     private String markerZdbID;
     private String urlSuffix;
-    private Integer significance ;
-    private String dblinkZdbID ;
+    private Integer significance;
+    private String dblinkZdbID;
 
-    public String getDisplayName(){
-        return referenceDatabaseName + ":" + accession ;
+    public String getDisplayName() {
+        return referenceDatabaseName + ":" + accession;
     }
 
     @Override
-    public String getLink(){
-        return urlPrefix + accession + (urlSuffix!=null ? urlSuffix  : "") ;
+    public String getLink() {
+        return urlPrefix + accession + (urlSuffix != null ? urlSuffix : "");
     }
 
     @Override
@@ -39,16 +40,14 @@ public class LinkDisplay implements ProvidesLink{
         return getLinkWithAttribution();
     }
 
-    public String getAttributionLink(){
+    public String getAttributionLink() {
         StringBuilder sb = new StringBuilder("");
 
-        if (attributionZdbIDs.size()==1) {
+        if (attributionZdbIDs.size() == 1) {
             sb.append(" (");
             sb.append(PublicationPresentation.getLink(attributionZdbIDs.iterator().next(), "1"));
             sb.append(")");
-        }
-        else
-        if (attributionZdbIDs.size() > 1) {
+        } else if (attributionZdbIDs.size() > 1) {
             /* todo: there should be some more infrastructure for the showpubs links */
             StringBuilder uri = new StringBuilder("?MIval=aa-showpubs.apg");
             uri.append("&orgOID=");
@@ -95,14 +94,14 @@ public class LinkDisplay implements ProvidesLink{
     }
 
     public void setAttributionZdbIDs(Set<String> attributionZdbIDs) {
-        this.attributionZdbIDs = attributionZdbIDs ;
+        this.attributionZdbIDs = attributionZdbIDs;
     }
 
     public int getNumPublications() {
-        if(attributionZdbIDs !=null){
+        if (attributionZdbIDs != null) {
             return attributionZdbIDs.size();
         }
-        return 0 ;
+        return 0;
     }
 
     public String getMarkerZdbID() {
@@ -143,5 +142,13 @@ public class LinkDisplay implements ProvidesLink{
 
     public void setDblinkZdbID(String dblinkZdbID) {
         this.dblinkZdbID = dblinkZdbID;
+    }
+
+    public String getReferenceDatabaseZdbID() {
+        return referenceDatabaseZdbID;
+    }
+
+    public void setReferenceDatabaseZdbID(String referenceDatabaseZdbID) {
+        this.referenceDatabaseZdbID = referenceDatabaseZdbID;
     }
 }

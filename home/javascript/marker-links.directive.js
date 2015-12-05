@@ -24,8 +24,14 @@
 
         var vm = this;
 
+        vm.newDatabase = '';
+        vm.newAccession = '';
+        vm.newReference = '';
+
         vm.links = [];
         vm.databases = [];
+
+        vm.add = add;
 
         activate();
 
@@ -41,6 +47,19 @@
             MarkerService.getLinkDatabases(vm.group)
                 .then(function(databases) {
                     vm.databases = databases;
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+        }
+
+        function add() {
+            MarkerService.addLink(vm.id, vm.newDatabase, vm.newAccession, vm.newReference)
+                .then(function(link) {
+                    vm.links.unshift(link);
+                    vm.newDatabase = '';
+                    vm.newAccession = '';
+                    vm.newReference = '';
                 })
                 .catch(function(error) {
                     console.error(error);
