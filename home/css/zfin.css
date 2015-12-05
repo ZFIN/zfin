@@ -146,6 +146,10 @@ table.data_manager a.root {
     text-align: center;
 }
 
+.green-pad {
+    background: #006666;
+}
+
 .left-align {
     text-align: left;
 }

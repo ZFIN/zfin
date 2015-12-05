@@ -342,6 +342,10 @@ public class TermEntry extends HorizontalPanel {
         termTextBox.addOnBlurHandler(blurHandler);
     }
 
+    public List<OntologyDTO> getOntologyList() {
+        return ontologies;
+    }
+
     private class OntologyChangeHandler implements ChangeHandler {
 
         public void onChange(ChangeEvent event) {
@@ -393,6 +397,7 @@ public class TermEntry extends HorizontalPanel {
 
     public void setTermInfoTable(TermInfoComposite termInfoTable) {
         this.termInfoTable = termInfoTable;
+        getTermTextBox().setTermInfoTable(termInfoTable);
         copyFromTerminfoToTextButton.addClickHandler(new CopyTermToEntryFieldClickListener());
     }
 

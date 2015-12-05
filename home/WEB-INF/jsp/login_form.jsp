@@ -38,7 +38,7 @@
 
         <script>
             $(function() {
-                document.login.j_username.focus();
+                document.login.username.focus();
                 var elements = document.getElementsByTagName("a");
                 for (var i = 0 ; i < elements.length ; i++) {
                     var link = elements[i];

@@ -69,6 +69,13 @@ public enum CurationModuleType {
             return null;
         }
     },
+    EXPRESSION_CURATION {
+        @Override
+        public ConstructionZone initializeModule(String publicationID) {
+            new ExpressionModule(publicationID);
+            return null;
+        }
+    },
     FISH_TAB {
         @Override
         public ConstructionZone initializeModule(String publicationID) {
