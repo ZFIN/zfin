@@ -5,7 +5,7 @@ create procedure p_marker_sequence_unique (vseq_mrkr_zdb_id varchar(50), vseq_se
 define ok boolean;
 define objtype varchar(30);
 define foundId varchar(50);
-trace on;
+--trace on;
 let objtype = get_obj_type(vseq_mrkr_zdb_id);
 let foundid = (select seq_mrkr_zdb_id from only(marker_sequence) where seq_sequence = vseq_sequence
    	  	      and seq_sequence_2 = vseq_sequence_2
