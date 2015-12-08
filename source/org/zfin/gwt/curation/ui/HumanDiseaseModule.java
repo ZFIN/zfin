@@ -82,7 +82,6 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
     public void onModuleLoad() {
         FlowPanel outer = uiBinder.createAndBindUi(this);
         RootPanel.get(HUMAN_DISEASE_ZONE).add(outer);
-        termEntry.setTermInfoTable(termInfoBox);
         diseaseModelPresenter = new DiseaseModelPresenter(eventBus, diseaseModelView, publicationID);
         diseaseModelPresenter.go();
 
