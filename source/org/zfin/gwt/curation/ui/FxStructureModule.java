@@ -163,6 +163,11 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
         displayTable.markOverlappingStructures(stageIntersection);
     }
 
+    @Override
+    public void setPileStructureClickListener(ConstructionZone constructionZoneModule) {
+
+    }
+
 
     @SuppressWarnings("unchecked")
     private List<ExpressedTermDTO> createIntersectionOfStructures(Collection<ExpressionFigureStageDTO> figureAnnotations) {
@@ -213,7 +218,7 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
         // ignored as it is not used in this class.
     }
 
-    public void setPileStructureClickListener(ConstructionZone pileStructureClickListener) {
+    public void setPileStructureClickListener(ConstructionZoneModule pileStructureClickListener) {
         displayTable.setPileStructureClickListener(pileStructureClickListener);
     }
 

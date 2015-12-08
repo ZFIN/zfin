@@ -13,7 +13,9 @@
         <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
             <g:VerticalPanel spacing="10" title="Pile">
                 <zfin:TermEntry ui:field="termEntry" listOFOntologies="disease_ontology"
-                                entityPart="ENTITY_SUPERTERM"/>
+                                entityPart="ENTITY_SUPERTERM"
+                                errorHandler="{diseaseErrorLabel}"
+                                termInfoTable="{termInfoBox}"/>
                 <g:HorizontalPanel verticalAlignment="middle" horizontalAlignment="left">
                     <g:Button ui:field="addButton" text="Add"/>
                     <g:Button ui:field="resetButton" text="Reset"/>

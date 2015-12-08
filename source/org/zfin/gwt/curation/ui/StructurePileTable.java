@@ -30,7 +30,7 @@ class StructurePileTable extends ZfinFlexTable {
     protected ErrorHandler errorElement;
 
     private ExpressionSection expressionModule;
-    private ConstructionZone pileStructureClickListener;
+    private ConstructionZoneModule pileStructureClickListener;
 
     private HeaderName[] headerNames;
     // This maps the display table and contains the full object that each
@@ -456,7 +456,7 @@ class StructurePileTable extends ZfinFlexTable {
         suggestionBox.add(hor);
     }
 
-    public void setPileStructureClickListener(ConstructionZone pileStructureClickListener) {
+    public void setPileStructureClickListener(ConstructionZoneModule pileStructureClickListener) {
         this.pileStructureClickListener = pileStructureClickListener;
     }
 
