@@ -30,10 +30,10 @@ public interface PileStructuresRPC extends RemoteService {
     /**
      * Create a new structure for the pile.
      *
-     * @param expressedTerm Expressed Term dto
+     * @param expressedTermList Expressed Term dto
      * @param publicationID pub id
      */
-    ExpressionPileStructureDTO createPileStructure(ExpressedTermDTO expressedTerm, String publicationID)
+    List<ExpressionPileStructureDTO> createPileStructure(List<ExpressedTermDTO>  expressedTermList, String publicationID)
             throws PileStructureExistsException, TermNotFoundException;
 
     /**
@@ -68,6 +68,8 @@ public interface PileStructuresRPC extends RemoteService {
      * @return complete structure pile.
      */
     List<ExpressionPileStructureDTO> recreateExpressionStructurePile(String publicationID);
+
+    List<EapQualityTermDTO> getEapQualityListy();
 
 
     public static class App {

@@ -11,6 +11,7 @@
         <g:HTML>
             <hr/>
         </g:HTML>
+        <zfin-mod:StructurePileModule ui:field="structurePile"/>
         <zfin-mod:ConstructionZoneModule ui:field="constructionZoneModule"/>
     </g:FlowPanel>
 </ui:UiBinder>

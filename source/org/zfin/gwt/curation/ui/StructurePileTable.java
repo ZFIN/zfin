@@ -106,6 +106,11 @@ class StructurePileTable extends ZfinFlexTable {
             postComposedTerm.setTitle(expressedTerm.getUniqueID());
             createStructureElement(postComposedTerm, expressedTerm);
             setWidget(rowIndex, HeaderName.STRUCTURE.getIndex(), postComposedTerm);
+
+            if (structure.getExpressedTerm().getQualityTerm() != null) {
+                Label quality = new Label(structure.getExpressedTerm().getQualityTerm().getTerm().getTermName() + "," + " " + structure.getExpressedTerm().getQualityTerm().getTag());
+                setWidget(rowIndex, HeaderName.QUALITY_TAG.getIndex(), quality);
+            }
             checkBox.addClickHandler(new NotClickHandler(rowIndex, structure));
             add.addClickHandler(new AddActionButtonListener(rowIndex, structure));
             Label stage = new Label(structure.getStageRange());
@@ -416,10 +421,10 @@ class StructurePileTable extends ZfinFlexTable {
             ExpressionPileStructureDTO structure = displayTableMap.get(row);
             if (structure == null)
                 continue;
-            if (stageIntersection.hasOverlapWithAllStageRanges(structure.getStart(), structure.getEnd())){
+            if (stageIntersection.hasOverlapWithAllStageRanges(structure.getStart(), structure.getEnd())) {
                 highlightStructure(row, true);
 
-            }else
+            } else
                 highlightStructure(row, false);
         }
     }
@@ -641,8 +646,9 @@ class StructurePileTable extends ZfinFlexTable {
         ADD(2, ""),
         MODIFIER(3, "not"),
         STRUCTURE(4, "Structure"),
-        STAGE(5, "Stage Range"),
-        REMOVE(6, "Remove");
+        QUALITY_TAG(5, "Quality, Tag"),
+        STAGE(6, "Stage Range"),
+        REMOVE(7, "Remove");
 
         private int index;
         private String value;

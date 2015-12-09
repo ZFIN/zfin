@@ -1082,6 +1082,10 @@ public class DTOConversionService {
         dto.setCreator(es.getPerson().getShortName());
         dto.setDate(es.getDate());
         ExpressedTermDTO expressionTerm = convertToExpressedTermDTO(es);
+        if (es.getEapQualityTerm() != null) {
+
+            expressionTerm.setQualityTerm(convertToEapQualityTermDTO(es));
+        }
         dto.setExpressedTerm(expressionTerm);
         if (es.getSuperterm().getOntology().equals(Ontology.ANATOMY)) {
             GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByZdbID(es.getSuperterm().getZdbID());
@@ -1090,6 +1094,13 @@ public class DTOConversionService {
             dto.setStart(start);
             dto.setEnd(end);
         }
+        return dto;
+    }
+
+    private static EapQualityTermDTO convertToEapQualityTermDTO(ExpressionStructure structure) {
+        EapQualityTermDTO dto = new EapQualityTermDTO();
+        dto.setTerm(convertToTermDTO(structure.getEapQualityTerm()));
+        dto.setTag(structure.getTag());
         return dto;
     }
 

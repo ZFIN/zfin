@@ -18,15 +18,15 @@ import org.zfin.expression.presentation.StageExpressionPresentation;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.server.CurationExperimentRPCImpl;
-import org.zfin.gwt.root.dto.EnvironmentDTO;
-import org.zfin.gwt.root.dto.ExperimentDTO;
-import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
@@ -522,6 +522,27 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         Set<String> expressedTerms = expRep.getAllDistinctPhenotypeTermIDs();
         assertNotNull(expressedTerms);
         assertTrue(expressedTerms.size() > 100);
+    }
+
+    @Test
+    public void pileStructureExists() {
+        ExpressedTermDTO term = new ExpressedTermDTO();
+        EntityDTO entity = new EntityDTO();
+        TermDTO superterm = new TermDTO();
+        superterm.setName("liver");
+        superterm.setOntology(OntologyDTO.ANATOMY);
+        entity.setSuperTerm(superterm);
+        term.setEntity(entity);
+        String publicationID = "ZDB-PUB-990507-16";
+        expRep.pileStructureExists(term, publicationID);
+
+        EapQualityTermDTO eap = new EapQualityTermDTO();
+        eap.setTag("abnormal");
+        TermDTO qual = new TermDTO();
+        qual.setZdbID("PATO:0000462");
+        eap.setTerm(qual);
+        term.setQualityTerm(eap);
+        expRep.pileStructureExists(term, publicationID);
     }
 
     @Test

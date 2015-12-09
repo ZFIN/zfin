@@ -237,6 +237,11 @@ a.small-new-link:hover {
     color: green;
 }
 
+.small {
+    text-decoration: none;
+    font-size: 75%;
+}
+
 a.external {
     background: transparent url(/images/external.png) no-repeat scroll right center;
     padding-right: 13px;

@@ -2,6 +2,8 @@ package org.zfin.gwt.root.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import java.util.List;
+
 /**
  * Data Transfer Object for a composed term with expressed-in boolean.
  */
@@ -12,6 +14,7 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
     protected EntityDTO entity;
 
     private boolean expressionFound;
+    private EapQualityTermDTO qualityTerm;
 
     public long getId() {
         return id;
@@ -103,5 +106,23 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
      */
     public boolean equalsByNameOnly(ExpressedTermDTO expressedTerm) {
         return entity.equalsByNameAndOntologyOnly(expressedTerm.getEntity());
+    }
+
+    public EapQualityTermDTO getQualityTerm() {
+        return qualityTerm;
+    }
+
+    public void setQualityTerm(EapQualityTermDTO qualityTerm) {
+        this.qualityTerm = qualityTerm;
+    }
+
+    public ExpressedTermDTO clone() {
+        ExpressedTermDTO dto = new ExpressedTermDTO();
+        dto.setZdbID(zdbID);
+        dto.setId(id);
+        dto.setExpressionFound(expressionFound);
+        dto.setEntity(entity);
+        dto.setQualityTerm(qualityTerm);
+        return dto;
     }
 }

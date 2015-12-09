@@ -499,8 +499,11 @@ public class PileConstructionZoneModule extends Composite implements Constructio
                 }
                 if (isPhenotype)
                     pileStructureRPCAsync.createPhenotypePileStructure(termDTO, publicationID, new CreatePhenotypePileStructureCallback());
-                else
-                    pileStructureRPCAsync.createPileStructure(termDTO, publicationID, new CreatePileStructureCallback());
+                else {
+                    List<ExpressedTermDTO> list = new ArrayList<>(1);
+                    list.add(termDTO);
+                    pileStructureRPCAsync.createPileStructure(list, publicationID, new CreatePileStructureCallback());
+                }
                 errorElement.clearAllErrors();
             } else {
                 errorElement.setText(structureValidator.getErrorMessage());
@@ -516,7 +519,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
 
     }
 
-    private class CreatePileStructureCallback implements AsyncCallback<ExpressionPileStructureDTO> {
+    private class CreatePileStructureCallback implements AsyncCallback<List<ExpressionPileStructureDTO>> {
 
         public void onFailure(Throwable throwable) {
             errorElement.setText(throwable.getMessage());
@@ -525,14 +528,15 @@ public class PileConstructionZoneModule extends Composite implements Constructio
         /**
          * Returns the pile Structure entity
          *
-         * @param pileStructure pile Structure
+         * @param pileStructureList pile Structure
          */
-        public void onSuccess(ExpressionPileStructureDTO pileStructure) {
+        public void onSuccess(List<ExpressionPileStructureDTO> pileStructureList) {
             //Window.alert("Success");
             // call listeners
-            for (PileStructureListener listener : pileListener) {
-                listener.onPileStructureCreation(pileStructure);
-            }
+            for (ExpressionPileStructureDTO pileStructure : pileStructureList)
+                for (PileStructureListener listener : pileListener) {
+                    listener.onPileStructureCreation(pileStructure);
+                }
             resetButton.click();
             errorElement.clearAllErrors();
         }

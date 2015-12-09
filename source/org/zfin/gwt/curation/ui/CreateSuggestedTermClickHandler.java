@@ -5,6 +5,9 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Click Handler for suggested alternate terms that match a given stage range.
  */
@@ -24,6 +27,8 @@ public class CreateSuggestedTermClickHandler implements ClickHandler {
 
     public void onClick(ClickEvent event) {
         //Window.alert("Create new post-composed term: " + expressedTerm.getDisplayName());
-        pileStructureRPCAsync.createPileStructure(expressedTerm, publicationID, callback);
+        List<ExpressedTermDTO> dtoList = new ArrayList<>(1);
+        dtoList.add(expressedTerm);
+        pileStructureRPCAsync.createPileStructure(dtoList, publicationID, callback);
     }
 }

@@ -37,6 +37,10 @@ public class ExpressionModule implements HandlesError, EntryPoint {
     AttributionModule attributionModule;
     @UiField
     ConstructionZoneModule constructionZoneModule;
+    @UiField
+    StructurePileModule structurePile;
+
+    private FxCurationPresenter fxCurationPresenter;
     FxCurationModule fxCurationModule;
 
     private final HandlerManager eventBus = new HandlerManager(null);
@@ -54,7 +58,10 @@ public class ExpressionModule implements HandlesError, EntryPoint {
         RelatedEntityDTO relatedEntityDTO = new RelatedEntityDTO();
         relatedEntityDTO.setPublicationZdbID(publicationID);
         attributionModule.setDTO(relatedEntityDTO);
-        //constructionZoneModule.onModuleLoad();
+
+        fxCurationPresenter = new FxCurationPresenter(eventBus, constructionZoneModule, publicationID);
+        fxCurationPresenter.go();
+        constructionZoneModule.setFxCurationPresenter(fxCurationPresenter);
         bindEventBusHandler();
         addHandlerEvents();
         

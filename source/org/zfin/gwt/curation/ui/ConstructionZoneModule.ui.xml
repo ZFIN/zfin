@@ -37,11 +37,8 @@
                                 termInfoTable="{termInfoBox}"/>
             </g:HorizontalPanel>
             <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
-                <g:CheckBox text="not" ui:field="notExpressed" styleName="red"/>
-                <g:HTML>&nbsp;</g:HTML>
-                <g:HTML>&nbsp;</g:HTML>
-                <g:HTML>&nbsp;</g:HTML>
-                <g:ScrollPanel ui:field="qualityList"/>
+                <g:VerticalPanel ui:field="qualityListLeft" verticalAlignment="top" horizontalAlignment="left"/>
+                <g:VerticalPanel ui:field="qualityListRight" verticalAlignment="top" horizontalAlignment="left"/>
             </g:HorizontalPanel>
             <g:HorizontalPanel verticalAlignment="middle" horizontalAlignment="left">
                 <g:Button ui:field="addButton" text="Add"/>

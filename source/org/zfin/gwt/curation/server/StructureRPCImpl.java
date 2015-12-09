@@ -80,42 +80,46 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
     /**
      * Create a new structure for the pile.
      *
-     * @param expressedTerm Expressed Term dto
-     * @param publicationID pub id
+     * @param expressedTermList Expressed Term dto
+     * @param publicationID     pub id
      */
-    public ExpressionPileStructureDTO createPileStructure(ExpressedTermDTO expressedTerm, String publicationID)
+    public List<ExpressionPileStructureDTO> createPileStructure(List<ExpressedTermDTO> expressedTermList, String publicationID)
             throws PileStructureExistsException, TermNotFoundException {
-        if (expressedTerm == null || publicationID == null)
+
+        if (expressedTermList == null || publicationID == null)
             throw new TermNotFoundException("No Term or publication provided");
 
-
-        LOG.info("Request: Create Composed term: " + expressedTerm.getDisplayName());
-        if (getExpressionRepository().pileStructureExists(expressedTerm, publicationID)) {
-            PileStructureExistsException exception = new PileStructureExistsException(expressedTerm);
-            LOG.info(exception.getMessage());
-            throw exception;
-        }
-        ExpressionPileStructureDTO pileStructure;
-        Transaction tx = HibernateUtil.currentSession().beginTransaction();
-        try {
-            if (expressedTerm.getEntity().getSubTerm() == null) {
-                ExpressionStructure structure = createSuperterm(expressedTerm, publicationID);
-                pileStructure = populatePileStructureDTOObject(structure);
-            } else {
-                OntologyDTO ontology = expressedTerm.getEntity().getSubTerm().getOntology();
-                if (ontology == null)
-                    throw new RuntimeException("No ontology provided:");
-
-                ExpressionStructure structure = createPostComposedTerm(expressedTerm, publicationID);
-                pileStructure = populatePileStructureDTOObject(structure);
+        List<ExpressionPileStructureDTO> pileStructureList = new ArrayList<>(expressedTermList.size());
+        for (ExpressedTermDTO expressedTerm : expressedTermList) {
+            LOG.info("Request: Create Composed term: " + expressedTerm.getDisplayName());
+            if (getExpressionRepository().pileStructureExists(expressedTerm, publicationID)) {
+                PileStructureExistsException exception = new PileStructureExistsException(expressedTerm);
+                LOG.info(exception.getMessage());
+                throw exception;
             }
-            tx.commit();
-        } catch (HibernateException e) {
-            LOG.error("Could not Add or Delete terms", e);
-            tx.rollback();
-            throw e;
+            ExpressionPileStructureDTO pileStructure;
+            Transaction tx = HibernateUtil.currentSession().beginTransaction();
+            try {
+                if (expressedTerm.getEntity().getSubTerm() == null) {
+                    ExpressionStructure structure = createSuperterm(expressedTerm, publicationID);
+                    pileStructure = populatePileStructureDTOObject(structure);
+                } else {
+                    OntologyDTO ontology = expressedTerm.getEntity().getSubTerm().getOntology();
+                    if (ontology == null)
+                        throw new RuntimeException("No ontology provided:");
+
+                    ExpressionStructure structure = createPostComposedTerm(expressedTerm, publicationID);
+                    pileStructure = populatePileStructureDTOObject(structure);
+                }
+                pileStructureList.add(pileStructure);
+                tx.commit();
+            } catch (HibernateException e) {
+                LOG.error("Could not Add or Delete terms", e);
+                tx.rollback();
+                throw e;
+            }
         }
-        return pileStructure;
+        return pileStructureList;
     }
 
     /**
@@ -216,6 +220,28 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
         return getExpressionPileStructures(publicationID);
     }
 
+    @Override
+    public List<EapQualityTermDTO> getEapQualityListy() {
+        String[] qualIDs = {"PATO:0000462", "PATO:0000628", "PATO:0000140", "PATO:0001672", "PATO:0001671",
+                "PATO:0000060", "PATO:0000060", "PATO:0001997", "PATO:0000470", "PATO:0000070"};
+        String[] qualTags = {"abnormal", "abnormal", "ameliorated", "abnormal", "abnormal",
+                "abnormal", "ameliorated", "abnormal", "abnormal", "ameliorated"};
+        String[] qualNames = {"absent phenotypic", "mislocalized", "position ok", "decreased distribution", "increased distribution",
+                "spatial pattern abnormal", "spatial pattern ok", "decreased amount", "increased amount", "amount ok"};
+        List<EapQualityTermDTO> qualityList = new ArrayList<>();
+        int index = 0;
+        for (String ID : qualIDs) {
+            GenericTerm term = getOntologyRepository().getTermByOboID(ID);
+            TermDTO termDTO = DTOConversionService.convertToTermDTO(term);
+            EapQualityTermDTO qualityTermDTO = new EapQualityTermDTO();
+            qualityTermDTO.setTag(qualTags[index]);
+            qualityTermDTO.setNickName(qualNames[index++]);
+            qualityTermDTO.setTerm(termDTO);
+            qualityList.add(qualityTermDTO);
+        }
+        return qualityList;
+    }
+
     private List<ExpressionPileStructureDTO> getExpressionPileStructures(String publicationID) {
         Collection<ExpressionStructure> structures = getExpressionRepository().retrieveExpressionStructures(publicationID);
         if (structures == null)
@@ -254,8 +280,18 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
         GenericTerm superterm = ontologyRepository.getTermByName(expressedTerm.getEntity().getSuperTerm().getName(), Ontology.ANATOMY);
         if (superterm == null)
             throw new TermNotFoundException("No superterm [" + expressedTerm.getEntity().getSuperTerm().getTermName() + "] found.");
+        GenericTerm eapQuality = null;
+        if (expressedTerm.getQualityTerm().getTerm().getOboID() != null) {
+            eapQuality = ontologyRepository.getTermByOboID(expressedTerm.getQualityTerm().getTerm().getOboID());
+            if (eapQuality == null)
+                throw new TermNotFoundException("No EaP quality [" + expressedTerm.getQualityTerm().getTerm().getTermName() + "] found.");
+
+        }
         ExpressionStructure structure = new ExpressionStructure();
         structure.setSuperterm(superterm);
+        structure.setEapQualityTerm(eapQuality);
+        if (expressedTerm.getQualityTerm().getTag() != null)
+            structure.setTag(expressedTerm.getQualityTerm().getTag());
         Publication pub = getPublicationRepository().getPublication(publicationID);
         structure.setPublication(pub);
         structure.setDate(new Date());

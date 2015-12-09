@@ -17,6 +17,24 @@ public class ExpressionStructure extends PostComposedEntity {
     private Person person;
     private Publication publication;
     private Date date;
+    private GenericTerm eapQualityTerm;
+    private String tag;
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public GenericTerm getEapQualityTerm() {
+        return eapQualityTerm;
+    }
+
+    public void setEapQualityTerm(GenericTerm eapQualityTerm) {
+        this.eapQualityTerm = eapQualityTerm;
+    }
 
     public String getZdbID() {
         return zdbID;

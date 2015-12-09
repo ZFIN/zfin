@@ -7,11 +7,9 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.root.dto.EntityPart;
-import org.zfin.gwt.root.dto.ExpressedTermDTO;
-import org.zfin.gwt.root.dto.OntologyDTO;
-import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.LookupRPCServiceAsync;
@@ -47,14 +45,15 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
     @UiField
     TermEntry superTermEntry;
     @UiField
-    ScrollPanel qualityList;
+    VerticalPanel qualityListLeft;
     @UiField
-    CheckBox notExpressed;
+    VerticalPanel qualityListRight;
 
     private ZfinListBox tagList;
     public static final String TAG_ABNORMAL = "abnormal";
     public static final String TAG_NORMAL = "normal";
-
+    private String publicationID;
+    private FxCurationPresenter fxCurationPresenter;
 
     private Map<EntityPart, TermEntry> termEntryUnitsMap = new HashMap<>(5);
     private Collection<TermEntry> termEntryUnits = new ArrayList<>(3);
@@ -63,11 +62,9 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
 
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
 
-
     public ConstructionZoneModule() {
         initWidget(uiBinder.createAndBindUi(this));
         createTermEntryUnits();
-        createQualityList();
     }
 
     @UiHandler("resetButton")
@@ -79,34 +76,15 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
             termEntry.reset();
         }
         termInfoBox.setToDefault();
+        fxCurationPresenter.clearQualityChecks();
     }
 
-    private void createQualityList() {
-        VerticalPanel panel = new VerticalPanel();
-        panel.add(getQuality("absent phenotypic"));
-        panel.add(getQuality("mislocalized"));
-        panel.add(getQuality("position Ok"));
-        panel.add(new InlineHTML("<p/>"));
-        panel.add(getQuality("decreased distribution"));
-        panel.add(getQuality("increased distribution"));
-        panel.add(getQuality("spatial pattern normal"));
-        panel.add(getQuality("spatial pattern OK"));
-        panel.add(new InlineHTML("<p/>"));
-        panel.add(getQuality("decreased amount"));
-        panel.add(getQuality("increased amount"));
-        panel.add(getQuality("amount OK"));
-        qualityList.add(panel);
-    }
-
-    private Widget getQuality(String name) {
-        CheckBox box = new CheckBox();
-        HorizontalPanel item = new HorizontalPanel();
-        item.add(box);
-        Label label = new Label(name);
-        if (name.equals("NOT"))
-            label.setStyleName("red");
-        item.add(label);
-        return item;
+    private CheckBox getQualityCheckBox(String name) {
+        CheckBox box = new CheckBox(name);
+        box.setStyleName("small");
+        if (name.equals("not"))
+            box.addStyleName("red");
+        return box;
     }
 
 
@@ -119,8 +97,8 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
 
     @UiHandler("addButton")
     void onClickAdd(@SuppressWarnings("unused") ClickEvent event) {
-        TermDTO disease = termInfoBox.getCurrentTermInfoDTO();
-        eventBus.fireEvent(new AddNewDiseaseTermEvent(disease));
+        fxCurationPresenter.submitStructure();
+        //eventBus.fireEvent(new AddNewDiseaseTermEvent(disease));
     }
 
     private void createTermEntryUnits() {
@@ -287,6 +265,51 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
             lookupEntryBox.setOntology(termDTO.getOntology());
             lookupEntryBox.unsetUnValidatedTextMarkup();
         }
+    }
+
+    public SimpleErrorElement getErrorElement() {
+        return errorElement;
+    }
+
+    List<CheckBox> qualityCheckBoxList = new ArrayList<>();
+
+    public void updateEapQualityList(List<EapQualityTermDTO> eapQualityList) {
+        qualityListLeft.clear();
+        qualityListRight.clear();
+        int numOfEntriesFirstCol = eapQualityList.size() / 2;
+        CheckBox not = getQualityCheckBox("not");
+        qualityCheckBoxList.add(not);
+        qualityListLeft.add(not);
+        int index = 0;
+        for (EapQualityTermDTO qualityTerm : eapQualityList) {
+            VerticalPanel panel;
+            if (index++ < numOfEntriesFirstCol)
+                panel = qualityListLeft;
+            else
+                panel = qualityListRight;
+            CheckBox qualityCheckBox = getQualityCheckBox(qualityTerm.getNickName());
+            qualityCheckBoxList.add(qualityCheckBox);
+            panel.add(qualityCheckBox);
+        }
+    }
+
+    public List<CheckBox> getQualityCheckBoxList() {
+        return qualityCheckBoxList;
+    }
+
+    public void setFxCurationPresenter(FxCurationPresenter fxCurationPresenter) {
+        this.fxCurationPresenter = fxCurationPresenter;
+    }
+
+    public Map<EntityPart, TermEntry> getTermEntryUnitsMap() {
+        return termEntryUnitsMap;
+    }
+
+    public Map<EntityPart, List<OntologyDTO>> getTermEntryMap() {
+        Map<EntityPart, List<OntologyDTO>> termEntryMap = new TreeMap<>();
+        termEntryMap.put(EntityPart.ENTITY_SUPERTERM, superTermEntry.getOntologyList());
+        termEntryMap.put(EntityPart.ENTITY_SUBTERM, subTermEntry.getOntologyList());
+        return termEntryMap;
     }
 
 }
