@@ -29,6 +29,7 @@ public class ExpressionSummaryCriteria {
     private boolean withImagesOnly;
     private boolean isStandardEnvironment;
     private boolean isChemicalEnvironment;
+    private boolean isHeatShockEnvironment;
     private boolean showCondition = true;
 
 
@@ -179,5 +180,13 @@ public class ExpressionSummaryCriteria {
 
     public void setFish(Fish fish) {
         this.fish = fish;
+    }
+
+    public boolean isHeatShockEnvironment() {
+        return isHeatShockEnvironment;
+    }
+
+    public void setHeatShockEnvironment(boolean heatShockEnvironment) {
+        isHeatShockEnvironment = heatShockEnvironment;
     }
 }

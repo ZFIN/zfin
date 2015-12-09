@@ -79,6 +79,21 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         return allChemical;
     }
 
+    public boolean isHeatShock() {
+        if (experimentConditions == null || experimentConditions.isEmpty()) {
+            return false;
+        }
+
+        boolean allHeatShock = true;
+        for (ExperimentCondition expCdt : experimentConditions) {
+            if (!expCdt.isHeatShock()) {
+                allHeatShock = false;
+                break;
+            }
+        }
+        return allHeatShock;
+    }
+
     public int compareTo(Experiment o) {
         if (this.isStandard() && !o.isStandard()) {
             return -1;

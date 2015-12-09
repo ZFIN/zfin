@@ -1761,6 +1761,17 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             logger.debug("chemical environments only");
         }
 
+        if (expressionCriteria.isHeatShockEnvironment()) {
+            aliasMap.put("expressionResults", "xpatres");
+            aliasMap.put("xpatres.expressionExperiment", "xpatex");
+            aliasMap.put("xpatex.fishExperiment", "genox");
+            aliasMap.put("genox.experiment", "exp");
+            aliasMap.put("exp.experimentConditions", "cond");
+            aliasMap.put("cond.conditionDataType", "cdt");
+            criteria.add(Restrictions.eq("cdt.name", "heat shock"));
+            logger.debug("chemical environments only");
+        }
+
         //now add all of the aliases that were marked as necessary above
         for (Map.Entry<String, String> entry : aliasMap.entrySet()) {
             criteria.createAlias(entry.getKey(), entry.getValue());
