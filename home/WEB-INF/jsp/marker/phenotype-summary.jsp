@@ -13,6 +13,10 @@
             <th class="genotype-name-label">Marker:</th>
             <td class="genotype-name-value"><zfin:link entity="${marker}"/></td>
         </tr>
+        <tr>
+            <th class="genotype-name-label">Conditions:</th>
+            <td class="genotype-name-value">Standard or Control</td>
+        </tr>
     </c:if>
 </table>
 
