@@ -96,10 +96,11 @@ public class FishExpressionSummaryController {
 
     }
 
-    @RequestMapping("/fish-expression-figure-summary-chemical")
-    protected String getFishExpressionFigureSummaryChemical(@RequestParam String fishZdbID,
+    @RequestMapping("/fish-expression-figure-summary-envgroup")
+    protected String getFishExpressionFigureSummaryEnvGroup(@RequestParam String fishZdbID,
                                                                 @RequestParam String geneZdbID,
                                                                 @RequestParam boolean imagesOnly,
+                                                                @RequestParam String envGroup,
                                                                 Model model) {
         Fish fish = getMutantRepository().getFish(fishZdbID);
 
@@ -115,7 +116,7 @@ public class FishExpressionSummaryController {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
-        ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaChemicalEnvironment(fish, gene, imagesOnly);
+        ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaEnvironmentGroup(fish, gene, imagesOnly, envGroup);
         model.addAttribute("expressionCriteria", expressionCriteria);
         List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createExpressionFigureSummary(expressionCriteria);
         model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
@@ -182,5 +183,4 @@ public class FishExpressionSummaryController {
         return "expression/fish-expression-figure-summary.page";
 
     }
-
 }

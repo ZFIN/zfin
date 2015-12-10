@@ -67,16 +67,20 @@
                     <c:otherwise>
                         <c:choose>
                             <c:when test="${showCondition}">
-                                <c:if test="${(xp.numberOfFigures >1) && !xp.experiment.standard && !xp.experiment.chemical}">
+                                <c:if test="${(xp.numberOfFigures >1) && !xp.experiment.standard && !xp.experiment.chemical && !xp.experiment.heatShock}">
                                     <a href='/action/expression/fish-expression-figure-summary-experiment?fishZdbID=${fishZdbID}&expZdbID=${xp.experiment.zdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
                                             ${xp.numberOfFigures} figures</a>
                                 </c:if>
-                                <c:if test="${(xp.numberOfFigures >1) && xp.experiment.standard && !xp.experiment.chemical}">
+                                <c:if test="${(xp.numberOfFigures >1) && xp.experiment.standard && !xp.experiment.chemical && !xp.experiment.heatShock}">
                                     <a href='/action/expression/fish-expression-figure-summary-standard?fishZdbID=${fishZdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
                                             ${xp.numberOfFigures} figures</a>
                                 </c:if>
                                 <c:if test="${(xp.numberOfFigures >1) && !xp.experiment.standard && xp.experiment.chemical}">
-                                    <a href='/action/expression/fish-expression-figure-summary-chemical?fishZdbID=${fishZdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
+                                    <a href='/action/expression/fish-expression-figure-summary-envgroup?fishZdbID=${fishZdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false&envGroup=chemical'>
+                                            ${xp.numberOfFigures} figures</a>
+                                </c:if>
+                                <c:if test="${(xp.numberOfFigures >1) && !xp.experiment.standard && xp.experiment.heatShock}">
+                                    <a href='/action/expression/fish-expression-figure-summary-envgroup?fishZdbID=${fishZdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false&envGroup=heatshock'>
                                             ${xp.numberOfFigures} figures</a>
                                 </c:if>
                             </c:when>
