@@ -129,12 +129,6 @@ public enum Category {
             FieldName.SEQUENCE_TARGETING_REAGENT,
             IS_WILDTYPE
     ),
-    EXPRESSION2("Expression2",
-            EXPRESSIONS_ANATOMY_TF,
-            STAGE,
-            FieldName.FISH,
-            ASSAY
-            ),
     PHENOTYPE("Phenotype",
             FieldName.GENE,
             SEQUENCE_ALTERATION,
