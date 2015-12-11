@@ -6,12 +6,20 @@
         xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui'
         >
 
-    <g:VerticalPanel spacing="10" title="Pile">
+    <g:VerticalPanel spacing="10" title="Pile" width="100%">
         <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
             <g:Label text="Structures" addStyleNames="bold" horizontalAlignment="left"/>
             <g:Label text=":&nbsp;" addStyleNames="bold"/>
-            <g:Hyperlink text="hide" ui:field="showHidePile"/>
+            <zfin:ShowHideToggle widget="{structurePile}" ui:field="showHideToggle" show="true"/>
         </g:HorizontalPanel>
-        <g:Button text="Update Structures for Expressions" ui:field="UpdateStructuresTop" />
+        <g:VerticalPanel ui:field="structurePile" width="100%">
+            <g:Button text="Update Structures for Expressions" ui:field="UpdateStructuresTop"/>
+            <g:Hyperlink text="Re-Create Structure Pile" ui:field="reCreatePile"/>
+            <zfin-mod:StructureAlternateComposite ui:field="alternateStructurePanel"/>
+            <zfin-mod:StructurePileTable ui:field="structurePileTable" suggestionDiv="{alternateStructurePanel}"
+                                         errorLabel="{errorElement}"/>
+            <g:Button text="Update Structures for Expressions" ui:field="UpdateStructuresBottom"/>
+            <zfin:SimpleErrorElement ui:field="errorElement"/>
+        </g:VerticalPanel>
     </g:VerticalPanel>
 </ui:UiBinder>

@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +42,8 @@ public class ExpressionModule implements HandlesError, EntryPoint {
     StructurePileModule structurePile;
 
     private FxCurationPresenter fxCurationPresenter;
+    private StructurePilePresenter structurePilePresenter;
     FxCurationModule fxCurationModule;
-
-    private final HandlerManager eventBus = new HandlerManager(null);
 
     public ExpressionModule(String publicationID) {
         this.publicationID = publicationID;
@@ -59,9 +59,13 @@ public class ExpressionModule implements HandlesError, EntryPoint {
         relatedEntityDTO.setPublicationZdbID(publicationID);
         attributionModule.setDTO(relatedEntityDTO);
 
-        fxCurationPresenter = new FxCurationPresenter(eventBus, constructionZoneModule, publicationID);
+        fxCurationPresenter = new FxCurationPresenter(constructionZoneModule, publicationID);
         fxCurationPresenter.go();
         constructionZoneModule.setFxCurationPresenter(fxCurationPresenter);
+
+        structurePilePresenter = new StructurePilePresenter(structurePile, publicationID);
+        structurePilePresenter.go();
+
         bindEventBusHandler();
         addHandlerEvents();
         
@@ -85,8 +89,6 @@ public class ExpressionModule implements HandlesError, EntryPoint {
 
             @Override
             public void fireEventSuccess() {
-                Window.alert("Kui");
-                eventBus.fireEvent(new RemoveAttributeEvent());
             }
 
             @Override
@@ -97,24 +99,22 @@ public class ExpressionModule implements HandlesError, EntryPoint {
     }
 
     private void bindEventBusHandler() {
-/*
-        eventBus.addHandler(AddNewDiseaseTermEvent.TYPE,
-                new AddNewDiseaseTermHandler() {
+        AppUtils.EVENT_BUS.addHandler(ExpressionEvent.TYPE,
+                new ExpressionEventHandler() {
                     @Override
-                    public void onAddDiseaseTerm(AddNewDiseaseTermEvent event) {
-                        diseaseModelPresenter.addDiseaseToSelectionBox(event.getDisease());
+                    public void onAddStructures(ExpressionEvent event) {
+                        Window.alert("Event " + AppUtils.EVENT_BUS);
+                        structurePilePresenter.onPileStructureCreation(event.getStructureList());
                     }
                 });
-        eventBus.addHandler(RemoveAttributeEvent.TYPE,
-                new RemoveAttributeEventHandler() {
+        AppUtils.EVENT_BUS.addHandler(ClickStructureOnPileEvent.TYPE,
+                new ClickStructureOnPileHandler() {
                     @Override
-                    public void onRemoveAttribute(RemoveAttributeEvent event) {
-                        attributionModule.populateAttributeRemoval();
-                        diseaseModelPresenter.updateFishList();
+                    public void onEvent(ClickStructureOnPileEvent event) {
+                        Window.alert("Event Pile" + AppUtils.EVENT_BUS);
+                        fxCurationPresenter.prepopulateConstructionZone(event.getExpressedTerm(), event.getPileEntity());
                     }
                 });
-*/
-
     }
 
     @Override
@@ -138,7 +138,6 @@ public class ExpressionModule implements HandlesError, EntryPoint {
     public void addHandlesErrorListener(HandlesError handlesError) {
         handlesErrorListeners.add(handlesError);
     }
-
 
 
 }

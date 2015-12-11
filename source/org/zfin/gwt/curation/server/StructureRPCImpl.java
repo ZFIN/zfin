@@ -222,22 +222,28 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
 
     @Override
     public List<EapQualityTermDTO> getEapQualityListy() {
-        String[] qualIDs = {"PATO:0000462", "PATO:0000628", "PATO:0000140", "PATO:0001672", "PATO:0001671",
+        String[] qualIDs = {"", "PATO:0000462", "PATO:0000628", "PATO:0000140", "PATO:0001672", "PATO:0001671",
                 "PATO:0000060", "PATO:0000060", "PATO:0001997", "PATO:0000470", "PATO:0000070"};
-        String[] qualTags = {"abnormal", "abnormal", "ameliorated", "abnormal", "abnormal",
+        String[] qualTags = {"abnormal", "abnormal", "abnormal", "ameliorated", "abnormal", "abnormal",
                 "abnormal", "ameliorated", "abnormal", "abnormal", "ameliorated"};
-        String[] qualNames = {"absent phenotypic", "mislocalized", "position ok", "decreased distribution", "increased distribution",
+        String[] qualNames = {"not", "absent phenotypic", "mislocalized", "position ok", "decreased distribution", "increased distribution",
                 "spatial pattern abnormal", "spatial pattern ok", "decreased amount", "increased amount", "amount ok"};
         List<EapQualityTermDTO> qualityList = new ArrayList<>();
         int index = 0;
         for (String ID : qualIDs) {
-            GenericTerm term = getOntologyRepository().getTermByOboID(ID);
-            TermDTO termDTO = DTOConversionService.convertToTermDTO(term);
             EapQualityTermDTO qualityTermDTO = new EapQualityTermDTO();
-            qualityTermDTO.setTag(qualTags[index]);
-            qualityTermDTO.setNickName(qualNames[index++]);
-            qualityTermDTO.setTerm(termDTO);
+            if (index == 0) {
+                qualityTermDTO.setTag(qualTags[index]);
+                qualityTermDTO.setNickName(qualNames[index++]);
+            } else {
+                GenericTerm term = getOntologyRepository().getTermByOboID(ID);
+                TermDTO termDTO = DTOConversionService.convertToTermDTO(term);
+                qualityTermDTO.setTag(qualTags[index]);
+                qualityTermDTO.setNickName(qualNames[index++]);
+                qualityTermDTO.setTerm(termDTO);
+            }
             qualityList.add(qualityTermDTO);
+
         }
         return qualityList;
     }
@@ -281,16 +287,17 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
         if (superterm == null)
             throw new TermNotFoundException("No superterm [" + expressedTerm.getEntity().getSuperTerm().getTermName() + "] found.");
         GenericTerm eapQuality = null;
-        if (expressedTerm.getQualityTerm().getTerm().getOboID() != null) {
+        if (expressedTerm.isPhenotype()) {
             eapQuality = ontologyRepository.getTermByOboID(expressedTerm.getQualityTerm().getTerm().getOboID());
             if (eapQuality == null)
                 throw new TermNotFoundException("No EaP quality [" + expressedTerm.getQualityTerm().getTerm().getTermName() + "] found.");
 
         }
+        expressedTerm.checkNotExpressed();
         ExpressionStructure structure = new ExpressionStructure();
         structure.setSuperterm(superterm);
         structure.setEapQualityTerm(eapQuality);
-        if (expressedTerm.getQualityTerm().getTag() != null)
+        if (expressedTerm.isPhenotype())
             structure.setTag(expressedTerm.getQualityTerm().getTag());
         Publication pub = getPublicationRepository().getPublication(publicationID);
         structure.setPublication(pub);
@@ -343,9 +350,20 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
         GenericTerm subterm = ontologyRepository.getTermByName(expressedTerm.getEntity().getSubTerm().getName(), subtermOntology);
         if (subterm == null)
             throw new TermNotFoundException(expressedTerm.getEntity().getSubTerm().getTermName(), OntologyDTO.ANATOMY);
+        GenericTerm eapQuality = null;
+        if (expressedTerm.isPhenotype()) {
+            eapQuality = ontologyRepository.getTermByOboID(expressedTerm.getQualityTerm().getTerm().getOboID());
+            if (eapQuality == null)
+                throw new TermNotFoundException("No EaP quality [" + expressedTerm.getQualityTerm().getTerm().getTermName() + "] found.");
+
+        }
+        expressedTerm.checkNotExpressed();
         ExpressionStructure aoStructure = new ExpressionStructure();
         aoStructure.setSuperterm(superterm);
         aoStructure.setSubterm(subterm);
+        aoStructure.setEapQualityTerm(eapQuality);
+        if (expressedTerm.isPhenotype())
+            aoStructure.setTag(expressedTerm.getQualityTerm().getTag());
         Publication pub = getPublicationRepository().getPublication(publicationID);
         aoStructure.setPublication(pub);
         aoStructure.setDate(new Date());

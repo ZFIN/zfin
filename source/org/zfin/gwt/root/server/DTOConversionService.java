@@ -1083,7 +1083,6 @@ public class DTOConversionService {
         dto.setDate(es.getDate());
         ExpressedTermDTO expressionTerm = convertToExpressedTermDTO(es);
         if (es.getEapQualityTerm() != null) {
-
             expressionTerm.setQualityTerm(convertToEapQualityTermDTO(es));
         }
         dto.setExpressedTerm(expressionTerm);
@@ -1269,9 +1268,20 @@ public class DTOConversionService {
     /**
      * Note that this conversion does not populate the expression found attribute.
      *
-     * @param postComposedEntity ExpressionStructure
+     * @param expressionStructure ExpressionStructure
      * @return ExpressedTermDTO
      */
+    public static ExpressedTermDTO convertToExpressedTermDTO(ExpressionStructure expressionStructure) {
+        ExpressedTermDTO expressedDTO = new ExpressedTermDTO();
+        EntityDTO entity = new EntityDTO();
+        entity.setSuperTerm(DTOConversionService.convertToTermDTO(expressionStructure.getSuperterm()));
+        entity.setSubTerm(DTOConversionService.convertToTermDTO(expressionStructure.getSubterm()));
+        expressedDTO.setEntity(entity);
+        if (expressionStructure.getEapQualityTerm() != null)
+            expressedDTO.setQualityTerm(convertToEapQualityTermDTO(expressionStructure));
+        return expressedDTO;
+    }
+
     public static ExpressedTermDTO convertToExpressedTermDTO(PostComposedEntity postComposedEntity) {
         ExpressedTermDTO expressedDTO = new ExpressedTermDTO();
         EntityDTO entity = new EntityDTO();

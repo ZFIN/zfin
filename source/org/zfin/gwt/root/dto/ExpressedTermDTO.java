@@ -125,4 +125,13 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
         dto.setQualityTerm(qualityTerm);
         return dto;
     }
+
+    public boolean isPhenotype() {
+        return qualityTerm != null && qualityTerm.getTerm() != null;
+    }
+
+    public void checkNotExpressed() {
+        if (qualityTerm != null && qualityTerm.getTerm() == null)
+            expressionFound = false;
+    }
 }

@@ -1,13 +1,12 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.TermEntry;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.ArrayList;
@@ -20,7 +19,6 @@ import java.util.Map;
  */
 public class FxCurationPresenter implements Presenter {
 
-    private final HandlerManager eventBus;
     private PileStructuresRPCAsync pileStructureRPCAsync = PileStructuresRPC.App.getInstance();
     private ConstructionZoneModule view;
     private String publicationID;
@@ -28,43 +26,12 @@ public class FxCurationPresenter implements Presenter {
     private Map<CheckBox, EapQualityTermDTO> checkBoxMap = new HashMap<>();
     private boolean processing = false;
 
-    public FxCurationPresenter(HandlerManager eventBus, ConstructionZoneModule view, String publicationID) {
-        this.eventBus = eventBus;
+    public FxCurationPresenter(ConstructionZoneModule view, String publicationID) {
         this.view = view;
         this.publicationID = publicationID;
     }
 
     public void bind() {
-/*
-        view.getEnvironmentSelectionBox().addChangeHandler(new ChangeHandler() {
-            @Override
-            public void onChange(ChangeEvent changeEvent) {
-                clearErrorMessages();
-            }
-        });
-*/
-/*
-        view.getAddDiseaseModelButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                if (processing)
-                    return;
-                processing = true;
-                DiseaseAnnotationDTO disease = getDiseaseModel();
-
-                if (disease == null) {
-                    processing = false;
-                    return;
-                }
-
-
-                diseaseRpcService.addHumanDiseaseAnnotation(disease, new RetrieveEapQualityListCallBack("Could not add a new disease model", view.getErrorLabel()));
-
-
-                view.getLoadingImage().setVisible(true);
-            }
-        });
-*/
         addDynamicClickHandler();
     }
 
@@ -139,10 +106,12 @@ public class FxCurationPresenter implements Presenter {
                     break;
             }
         }
-        List<ExpressedTermDTO> expressedTermDTOList = new ArrayList<>(eapQualityList.size());
-        if (eapQualityList == null || eapQualityList.size() == 0)
+        List<ExpressedTermDTO> expressedTermDTOList;
+        if (eapQualityList == null || eapQualityList.size() == 0) {
+            expressedTermDTOList = new ArrayList<>(1);
             expressedTermDTOList.add(termDTO);
-        else {
+        } else {
+            expressedTermDTOList = new ArrayList<>(eapQualityList.size());
             for (EapQualityTermDTO eap : eapQualityList) {
                 ExpressedTermDTO dto = termDTO.clone();
                 dto.setQualityTerm(eap);
@@ -170,6 +139,10 @@ public class FxCurationPresenter implements Presenter {
         superterm.setName(termEntry.getTermText());
         superterm.setOntology(termEntry.getSelectedOntology());
         return superterm;
+    }
+
+    public void prepopulateConstructionZone(ExpressedTermDTO expressedTerm, EntityPart pileEntity) {
+        view.prepopulateConstructionZone(expressedTerm, pileEntity);
     }
 
 
@@ -214,13 +187,9 @@ public class FxCurationPresenter implements Presenter {
          * @param pileStructureList pile Structure
          */
         public void onSuccess(List<ExpressionPileStructureDTO> pileStructureList) {
-            Window.alert("Success");
-            // call listeners
-/*
-            for (PileStructureListener listener : pileListener) {
-                listener.onPileStructureCreation(pileStructure);
-            }
-*/
+            ExpressionEvent event = new ExpressionEvent();
+            event.setStructureDTOList(pileStructureList);
+            AppUtils.EVENT_BUS.fireEvent(event);
             view.resetButton.click();
             clearErrorMessages();
         }

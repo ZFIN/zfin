@@ -2,6 +2,7 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
@@ -9,7 +10,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.*;
-import org.zfin.gwt.root.util.StageRangeIntersection;
+import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StageRangeIntersectionService;
 import org.zfin.gwt.root.util.StageRangeUnion;
 import org.zfin.gwt.root.util.WidgetUtil;
@@ -52,6 +53,14 @@ class StructurePileTable extends ZfinFlexTable {
         this.errorElement = errorLabel;
     }
 
+    @UiConstructor
+    StructurePileTable(StructureAlternateComposite suggestionDiv, ErrorHandler errorLabel) {
+        super(HeaderName.values().length, -1);
+        this.suggestionBox = suggestionDiv;
+        this.headerNames = HeaderName.values();
+        this.errorElement = errorLabel;
+    }
+
     public void setHeaderNames(Enum enumeration) {
         headerEnumeration = enumeration;
     }
@@ -71,6 +80,11 @@ class StructurePileTable extends ZfinFlexTable {
 
     public void setPublicationID(String publicationID) {
         this.publicationID = publicationID;
+    }
+
+    public void createStructureTable(List<ExpressionPileStructureDTO> displayedStructures) {
+        this.displayedStructures = displayedStructures;
+        createStructureTable();
     }
 
     public void createStructureTable() {
@@ -465,6 +479,11 @@ class StructurePileTable extends ZfinFlexTable {
         this.pileStructureClickListener = pileStructureClickListener;
     }
 
+    public void removeStructure(ExpressionPileStructureDTO structure) {
+        displayedStructures.remove(structure);
+        createStructureTable();
+    }
+
     // ********* Click Handler, etc
 
     private class NotClickHandler implements ClickHandler {
@@ -634,7 +653,9 @@ class StructurePileTable extends ZfinFlexTable {
 
         public void onClick(ClickEvent event) {
             DOM.eventCancelBubble(Event.getCurrentEvent(), true);
-            pileStructureClickListener.prepopulateConstructionZone(expressedTerm, pileEntity);
+            ClickStructureOnPileEvent expressionEvent = new ClickStructureOnPileEvent();
+            expressionEvent.setTermAndEntity(expressedTerm, pileEntity);
+            AppUtils.EVENT_BUS.fireEvent(expressionEvent);
         }
 
     }

@@ -277,9 +277,6 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
         qualityListLeft.clear();
         qualityListRight.clear();
         int numOfEntriesFirstCol = eapQualityList.size() / 2;
-        CheckBox not = getQualityCheckBox("not");
-        qualityCheckBoxList.add(not);
-        qualityListLeft.add(not);
         int index = 0;
         for (EapQualityTermDTO qualityTerm : eapQualityList) {
             VerticalPanel panel;
