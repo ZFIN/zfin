@@ -7,7 +7,7 @@
 <script src="/javascript/table-collapse.js"></script>
 <div class="data-page">
 
-    <zfin2:dataManager oboID="${formBean.term.oboID}"/>
+    <zfin2:dataManager oboID="${formBean.term.oboID}" termID="${formBean.term.zdbID}" />
 
     <div style="float: right;">
         <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
