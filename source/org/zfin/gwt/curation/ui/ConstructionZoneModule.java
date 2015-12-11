@@ -57,14 +57,15 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
 
     private Map<EntityPart, TermEntry> termEntryUnitsMap = new HashMap<>(5);
     private Collection<TermEntry> termEntryUnits = new ArrayList<>(3);
-
-    private final HandlerManager eventBus = new HandlerManager(null);
+    private List<CheckBox> qualityCheckBoxList = new ArrayList<>(12);
+    private CheckBox notExpressedCheckBox = new CheckBox("not");
 
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
 
     public ConstructionZoneModule() {
         initWidget(uiBinder.createAndBindUi(this));
         createTermEntryUnits();
+        notExpressedCheckBox.setStyleName("small red");
     }
 
     @UiHandler("resetButton")
@@ -82,8 +83,6 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
     private CheckBox getQualityCheckBox(String name) {
         CheckBox box = new CheckBox(name);
         box.setStyleName("small");
-        if (name.equals("not"))
-            box.addStyleName("red");
         return box;
     }
 
@@ -97,6 +96,7 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
 
     @UiHandler("addButton")
     void onClickAdd(@SuppressWarnings("unused") ClickEvent event) {
+        errorElement.clearAllErrors();
         fxCurationPresenter.submitStructure();
         //eventBus.fireEvent(new AddNewDiseaseTermEvent(disease));
     }
@@ -201,8 +201,29 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
                 break;
         }
         populateTermEntryUnits(term);
+        notExpressedCheckBox.setValue(false);
+        populateEapQuality(term);
+        if (!term.isExpressionFound())
+            notExpressedCheckBox.setValue(true);
         errorElement.clearAllErrors();
+    }
 
+    private void populateEapQuality(ExpressedTermDTO term) {
+        EapQualityTermDTO dto = term.getQualityTerm();
+        if (dto == null) {
+            resetCheckBoxes("");
+            return;
+        }
+        resetCheckBoxes(dto.getNickName());
+    }
+
+    private void resetCheckBoxes(String nickname) {
+        for (CheckBox checkBox : qualityCheckBoxList) {
+            if (checkBox.getText().equals(nickname))
+                checkBox.setValue(true);
+            else
+                checkBox.setValue(false);
+        }
     }
 
     private void populateTermEntryUnits(ExpressedTermDTO term) {
@@ -271,11 +292,11 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
         return errorElement;
     }
 
-    List<CheckBox> qualityCheckBoxList = new ArrayList<>();
 
     public void updateEapQualityList(List<EapQualityTermDTO> eapQualityList) {
         qualityListLeft.clear();
         qualityListRight.clear();
+        qualityListLeft.add(notExpressedCheckBox);
         int numOfEntriesFirstCol = eapQualityList.size() / 2;
         int index = 0;
         for (EapQualityTermDTO qualityTerm : eapQualityList) {
@@ -309,4 +330,7 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
         return termEntryMap;
     }
 
+    public CheckBox getNotExpressedCheckBox() {
+        return notExpressedCheckBox;
+    }
 }

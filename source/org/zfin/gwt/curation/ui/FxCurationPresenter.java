@@ -1,5 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import org.zfin.gwt.root.dto.*;
@@ -81,10 +82,15 @@ public class FxCurationPresenter implements Presenter {
                 eapQualityList.add(checkBoxMap.get(checkBox));
             }
         }
-        if (eapQualityList != null && eapQualityList.size() > 0) {
-            ExpressedTermDTO expressedTerm = getExpressedTerm(eapQualityList);
-            //pileStructureRPCAsync.createPileStructure();
+        Window.alert("num of Qualitites " + eapQualityList.get(0).getNickName());
+        // can submit the 'not-expressed' only without any eap selected.
+        if (view.getNotExpressedCheckBox().getValue()) {
+            if (eapQualityList.size() > 0) {
+                setError("Cannot submit a 'not expressed' with one or more qualities");
+                return;
+            }
         }
+        getExpressedTerm(eapQualityList);
     }
 
     private ExpressedTermDTO getExpressedTerm(List<EapQualityTermDTO> eapQualityList) {
@@ -118,14 +124,10 @@ public class FxCurationPresenter implements Presenter {
                 expressedTermDTOList.add(dto);
             }
         }
-        StructureValidator structureValidator = new FxPileStructureValidator(view.getTermEntryMap());
+
+        termDTO.setExpressionFound(!view.getNotExpressedCheckBox().getValue());
+        StructureValidator<ExpressedTermDTO> structureValidator = new FxPileStructureValidator(view.getTermEntryMap());
         if (structureValidator.isValidNewPileStructure(termDTO)) {
-/*
-            if (structurePile.hasStructureOnPile(termDTO)) {
-                setError("Structure [" + termDTO.getDisplayName() + "] already on pile.");
-                return null;
-            }
-*/
             pileStructureRPCAsync.createPileStructure(expressedTermDTOList, publicationID, new CreatePileStructureCallback());
             clearErrorMessages();
         } else {
@@ -158,13 +160,8 @@ public class FxCurationPresenter implements Presenter {
             fullQualityList = qualityTermDTOList;
             view.updateEapQualityList(qualityTermDTOList);
             int index = 0;
-            for (CheckBox box : view.getQualityCheckBoxList()) {
-                if (index == 0)
-                    checkBoxMap.put(box, new EapQualityTermDTO());
-                else
-                    checkBoxMap.put(box, qualityTermDTOList.get(index));
-                index++;
-            }
+            for (CheckBox box : view.getQualityCheckBoxList())
+                checkBoxMap.put(box, qualityTermDTOList.get(index++));
             processing = false;
         }
 

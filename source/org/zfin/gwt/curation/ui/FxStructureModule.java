@@ -2,7 +2,6 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
@@ -11,7 +10,6 @@ import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.CollectionUtils;
-import org.zfin.gwt.root.util.StageRangeIntersection;
 import org.zfin.gwt.root.util.StageRangeIntersectionService;
 import org.zfin.gwt.root.util.StageRangeUnion;
 
@@ -218,10 +216,6 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
         // ignored as it is not used in this class.
     }
 
-    public void setPileStructureClickListener(ConstructionZoneModule pileStructureClickListener) {
-        displayTable.setPileStructureClickListener(pileStructureClickListener);
-    }
-
     /**
      * Check to see if the current structure pile holds a given structure.
      * Can be used for new structure creation to avoid a server request.
@@ -418,12 +412,12 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
         for (Integer row : keys) {
             RadioButton add = displayTable.getAddRadioButton(row);
             RadioButton remove = displayTable.getRemoveRadioButton(row);
-            CheckBox modifier = displayTable.getNotCheckBox(row);
+//            CheckBox modifier = displayTable.getNotCheckBox(row);
             PileStructureAnnotationDTO psa = new PileStructureAnnotationDTO();
             if (add.getValue() || remove.getValue()) {
                 ExpressionPileStructureDTO term = displayTable.getDisplayTableMap().get(row).copy();
                 psa.setExpressedTerm(term.getExpressedTerm());
-                psa.setExpressed(!modifier.getValue());
+                //               psa.setExpressed(!modifier.getValue());
                 psa.setZdbID(term.getZdbID());
             }
             if (add.getValue())

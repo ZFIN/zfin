@@ -1171,18 +1171,16 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         }
 
         Session session = HibernateUtil.currentSession();
-        Criteria crit;
 
+        Criteria crit = session.createCriteria(ExpressionStructure.class);
         if (expressedTerm.getEntity().getSubTerm() != null) {
             OntologyDTO subtermOntology = expressedTerm.getEntity().getSubTerm().getOntology();
             if (subtermOntology == null) {
                 throw new NullPointerException("No subterm ontology provided.");
             }
-            crit = session.createCriteria(ExpressionStructure.class);
             Criteria subterm = crit.createCriteria("subterm");
             subterm.add(Restrictions.eq("termName", expressedTerm.getEntity().getSubTerm().getTermName()));
         } else {
-            crit = session.createCriteria(ExpressionStructure.class);
             crit.add(Restrictions.isNull("subterm"));
         }
         if (expressedTerm.getQualityTerm() != null) {
@@ -1191,6 +1189,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             }
             crit.add(Restrictions.eq("tag", expressedTerm.getQualityTerm().getTag()));
         }
+        crit.add(Restrictions.eq("expressionFound", expressedTerm.isExpressionFound()));
         Criteria publication = crit.createCriteria("publication");
         publication.add(Restrictions.eq("zdbID", publicationID));
         Criteria superterm = crit.createCriteria("superterm");

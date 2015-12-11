@@ -43,10 +43,8 @@
             <g:HorizontalPanel verticalAlignment="middle" horizontalAlignment="left">
                 <g:Button ui:field="addButton" text="Add"/>
                 <g:Button ui:field="resetButton" text="Reset"/>
-                <g:HTML>&nbsp;</g:HTML>
-                <zfin:SimpleErrorElement ui:field="errorElement"/>
             </g:HorizontalPanel>
-
+            <zfin:SimpleErrorElement ui:field="errorElement"/>
         </g:VerticalPanel>
         <zfin:TermInfoComposite ui:field='termInfoBox' styleName="searchresults" cellSpacing='0' cellPadding='5'
                                 ontologyName="zebrafish_anatomy"/>

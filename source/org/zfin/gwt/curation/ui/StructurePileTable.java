@@ -5,7 +5,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
@@ -31,7 +30,6 @@ class StructurePileTable extends ZfinFlexTable {
     protected ErrorHandler errorElement;
 
     private ExpressionSection expressionModule;
-    private ConstructionZoneModule pileStructureClickListener;
 
     private HeaderName[] headerNames;
     // This maps the display table and contains the full object that each
@@ -96,6 +94,7 @@ class StructurePileTable extends ZfinFlexTable {
         //Window.alert("Experiment List Size: " + experiments.size());
         // first element is an odd group element
         int groupIndex = 1;
+
         for (ExpressionPileStructureDTO structure : displayedStructures) {
             // put the object in the map for later retrieval
             displayTableMap.put(rowIndex, structure);
@@ -112,20 +111,20 @@ class StructurePileTable extends ZfinFlexTable {
             getCellFormatter().setWidth(rowIndex, HeaderName.REMOVE_FROM_EXPRESSION.getIndex(), "15");
             setWidget(rowIndex, HeaderName.ADD.getIndex(), add);
             getCellFormatter().setWidth(rowIndex, HeaderName.ADD.getIndex(), "15");
-            CheckBox checkBox = new CheckBox();
-            setWidget(rowIndex, HeaderName.MODIFIER.getIndex(), checkBox);
-            getCellFormatter().setWidth(rowIndex, HeaderName.MODIFIER.getIndex(), "20");
             HorizontalPanel postComposedTerm = new HorizontalPanel();
             ExpressedTermDTO expressedTerm = structure.getExpressedTerm();
             postComposedTerm.setTitle(expressedTerm.getUniqueID());
             createStructureElement(postComposedTerm, expressedTerm);
             setWidget(rowIndex, HeaderName.STRUCTURE.getIndex(), postComposedTerm);
-
             if (structure.getExpressedTerm().getQualityTerm() != null) {
-                Label quality = new Label(structure.getExpressedTerm().getQualityTerm().getTerm().getTermName() + "," + " " + structure.getExpressedTerm().getQualityTerm().getTag());
+                Label quality = new Label(structure.getExpressedTerm().getQualityTerm().getNickName());
                 setWidget(rowIndex, HeaderName.QUALITY_TAG.getIndex(), quality);
             }
-            checkBox.addClickHandler(new NotClickHandler(rowIndex, structure));
+            if (!expressedTerm.isExpressionFound()) {
+                Label not = new Label("not");
+                not.setStyleName("red");
+                setWidget(rowIndex, HeaderName.QUALITY_TAG.getIndex(), not);
+            }
             add.addClickHandler(new AddActionButtonListener(rowIndex, structure));
             Label stage = new Label(structure.getStageRange());
             setWidget(rowIndex, HeaderName.STAGE.getIndex(), stage);
@@ -161,9 +160,6 @@ class StructurePileTable extends ZfinFlexTable {
         // check if the row has a structure
         if (widget == null || !(widget instanceof RadioButton))
             return;
-        // if checkbox is checked or removed do not rotate radio buttons
-        if (cell == HeaderName.MODIFIER.getIndex() || cell == HeaderName.REMOVE.getIndex())
-            return;
         // if a radio button is clicked do not rotate
         if (cell == HeaderName.NOTHING.getIndex() || cell == HeaderName.REMOVE_FROM_EXPRESSION.getIndex() ||
                 cell == HeaderName.ADD.getIndex())
@@ -195,10 +191,6 @@ class StructurePileTable extends ZfinFlexTable {
 
     protected RadioButton getRemoveRadioButton(int row) {
         return (RadioButton) getWidget(row, HeaderName.REMOVE_FROM_EXPRESSION.getIndex());
-    }
-
-    protected CheckBox getNotCheckBox(int row) {
-        return (CheckBox) getWidget(row, HeaderName.MODIFIER.getIndex());
     }
 
     private String createDeleteButtonTitle(ExpressionPileStructureDTO structure) {
@@ -316,17 +308,10 @@ class StructurePileTable extends ZfinFlexTable {
             Widget widget = getWidget(row, HeaderName.STRUCTURE.getIndex());
             if (widget instanceof HorizontalPanel) {
                 HorizontalPanel structurePanel = (HorizontalPanel) widget;
-                CheckBox modifier = (CheckBox) getWidget(row, HeaderName.MODIFIER.getIndex());
                 for (ExpressedTermDTO term : terms) {
                     if (structurePanel.getTitle().equals(term.getUniqueID())) {
                         RadioButton addButton = (RadioButton) getWidget(row, HeaderName.ADD.getIndex());
                         addButton.setValue(true);
-                        // set modifier
-                        if (term.isExpressionFound())
-                            modifier.setValue(false);
-                        else {
-                            modifier.setValue(true);
-                        }
                     }
                 }
             } else
@@ -348,8 +333,6 @@ class StructurePileTable extends ZfinFlexTable {
                 doNothingButton.setValue(true);
             } else
                 break;
-            CheckBox modifier = (CheckBox) getWidget(row, HeaderName.MODIFIER.getIndex());
-            modifier.setValue(false);
             unsetColor(row);
             highlightStructure(row, false);
         }
@@ -367,28 +350,6 @@ class StructurePileTable extends ZfinFlexTable {
         if (numOfWidgets > 1) {
             Hyperlink subTerm = (Hyperlink) structurePanel.getWidget(2);
             WidgetUtil.addOrRemoveCssStyle(subTerm, WidgetUtil.BOLD, highlight);
-        }
-        // make red if structure is not expressed
-        setNotExpressedStyle(row);
-    }
-
-    /**
-     * Mark the post-composed term red if it is not expressed. Otherwise use default style.
-     *
-     * @param row row number
-     */
-    private void setNotExpressedStyle(int row) {
-        CheckBox notExpressedCheckBox = getNotCheckBox(row);
-        Hyperlink superTerm = getSuperterm(row);
-        Hyperlink subTerm = getSubterm(row);
-        if (notExpressedCheckBox.getValue()) {
-            WidgetUtil.addOrRemoveCssStyle(superTerm, WidgetUtil.RED_HYPERLINK, true);
-            if (subTerm != null)
-                WidgetUtil.addOrRemoveCssStyle(subTerm, WidgetUtil.RED_HYPERLINK, true);
-        } else {
-            WidgetUtil.addOrRemoveCssStyle(superTerm, WidgetUtil.RED_HYPERLINK, false);
-            if (subTerm != null)
-                WidgetUtil.addOrRemoveCssStyle(subTerm, WidgetUtil.RED_HYPERLINK, false);
         }
     }
 
@@ -443,16 +404,6 @@ class StructurePileTable extends ZfinFlexTable {
         }
     }
 
-    public void onNotCheckBoxClick(int row) {
-        CheckBox notCheckBox = (CheckBox) getWidget(row, HeaderName.MODIFIER.getIndex());
-        if (notCheckBox.getValue())
-            notCheckBox.setValue(true);
-        else
-            notCheckBox.setValue(false);
-
-        setNotExpressedStyle(row);
-    }
-
     private void noStageOverlapTitle(ExpressedTermDTO expressedTerm, StageRangeIntersectionService intersection) {
         suggestionBox.clear();
         StringBuilder message = new StringBuilder("'");
@@ -475,40 +426,12 @@ class StructurePileTable extends ZfinFlexTable {
         suggestionBox.add(hor);
     }
 
-    public void setPileStructureClickListener(ConstructionZoneModule pileStructureClickListener) {
-        this.pileStructureClickListener = pileStructureClickListener;
-    }
-
     public void removeStructure(ExpressionPileStructureDTO structure) {
         displayedStructures.remove(structure);
         createStructureTable();
     }
 
     // ********* Click Handler, etc
-
-    private class NotClickHandler implements ClickHandler {
-
-        private RadioButton add;
-        private RadioButton nothing;
-        private ExpressionPileStructureDTO pileStructure;
-        private int row;
-
-        private NotClickHandler(int row, ExpressionPileStructureDTO pileStructure) {
-            super();
-            this.row = row;
-            this.pileStructure = pileStructure;
-            add = (RadioButton) getWidget(row, HeaderName.ADD.getIndex());
-            nothing = (RadioButton) getWidget(row, HeaderName.NOTHING.getIndex());
-        }
-
-        public void onClick(ClickEvent event) {
-            onNotCheckBoxClick(row);
-            if (nothing.getValue()) {
-                add.setValue(true);
-                checkNeedForAlternativeStructures(pileStructure, row);
-            }
-        }
-    }
 
     private class AddActionButtonListener implements ClickHandler {
 
@@ -665,11 +588,10 @@ class StructurePileTable extends ZfinFlexTable {
         NOTHING(0, ""),
         REMOVE_FROM_EXPRESSION(1, ""),
         ADD(2, ""),
-        MODIFIER(3, "not"),
-        STRUCTURE(4, "Structure"),
-        QUALITY_TAG(5, "Quality, Tag"),
-        STAGE(6, "Stage Range"),
-        REMOVE(7, "Remove");
+        STRUCTURE(3, "Structure"),
+        QUALITY_TAG(4, "Quality"),
+        STAGE(5, "Stage Range"),
+        REMOVE(6, "Remove");
 
         private int index;
         private String value;

@@ -1,5 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import org.zfin.gwt.root.dto.EapQualityTermDTO;
 import org.zfin.gwt.root.dto.ExpressionPileStructureDTO;

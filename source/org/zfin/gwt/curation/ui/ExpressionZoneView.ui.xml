@@ -1,0 +1,38 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui'
+        >
+
+    <g:VerticalPanel spacing="10" title="Expression Zone" width="100%">
+        <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
+            <g:Label text="Expression" addStyleNames="bold" horizontalAlignment="left"/>
+            <g:Label text=":&nbsp;" addStyleNames="bold"/>
+            <zfin:ShowHideToggle widget="{expressionZone}" ui:field="showHideToggle" show="true"/>
+        </g:HorizontalPanel>
+        <g:VerticalPanel ui:field="expressionZone" width="100%">
+            <g:HTMLPanel>
+                <table>
+                    <tr>
+                        <td colspan="2"></td>
+                        <td class="bold">Stage Range</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <g:Button ui:field="addButton" text="Add"/>
+                            <g:ListBox ui:field="figureList" />
+                        </td>
+                        <td><zfin:StageSelector ui:field="stageSelector"/></td>
+                        <td>
+                            <g:Button ui:field="resetButton" text="Reset"/>
+                        </td>
+                    </tr>
+                </table>
+            </g:HTMLPanel>
+        </g:VerticalPanel>
+        <zfin:SimpleErrorElement ui:field="errorElement"/>
+    </g:VerticalPanel>
+</ui:UiBinder>

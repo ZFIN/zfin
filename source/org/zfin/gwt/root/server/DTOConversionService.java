@@ -1277,8 +1277,10 @@ public class DTOConversionService {
         entity.setSuperTerm(DTOConversionService.convertToTermDTO(expressionStructure.getSuperterm()));
         entity.setSubTerm(DTOConversionService.convertToTermDTO(expressionStructure.getSubterm()));
         expressedDTO.setEntity(entity);
-        if (expressionStructure.getEapQualityTerm() != null)
+        if (expressionStructure.getEapQualityTerm() != null) {
             expressedDTO.setQualityTerm(convertToEapQualityTermDTO(expressionStructure));
+        }
+        expressedDTO.setExpressionFound(expressionStructure.isExpressionFound());
         return expressedDTO;
     }
 

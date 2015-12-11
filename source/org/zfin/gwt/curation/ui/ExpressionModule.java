@@ -40,6 +40,8 @@ public class ExpressionModule implements HandlesError, EntryPoint {
     ConstructionZoneModule constructionZoneModule;
     @UiField
     StructurePileModule structurePile;
+    @UiField
+    ExpressionZoneView expressionZone;
 
     private FxCurationPresenter fxCurationPresenter;
     private StructurePilePresenter structurePilePresenter;
@@ -103,7 +105,6 @@ public class ExpressionModule implements HandlesError, EntryPoint {
                 new ExpressionEventHandler() {
                     @Override
                     public void onAddStructures(ExpressionEvent event) {
-                        Window.alert("Event " + AppUtils.EVENT_BUS);
                         structurePilePresenter.onPileStructureCreation(event.getStructureList());
                     }
                 });
@@ -111,7 +112,6 @@ public class ExpressionModule implements HandlesError, EntryPoint {
                 new ClickStructureOnPileHandler() {
                     @Override
                     public void onEvent(ClickStructureOnPileEvent event) {
-                        Window.alert("Event Pile" + AppUtils.EVENT_BUS);
                         fxCurationPresenter.prepopulateConstructionZone(event.getExpressedTerm(), event.getPileEntity());
                     }
                 });

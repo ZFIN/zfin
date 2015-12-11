@@ -13,7 +13,7 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
     protected String zdbID;
     protected EntityDTO entity;
 
-    private boolean expressionFound;
+    private boolean expressionFound = true;
     private EapQualityTermDTO qualityTerm;
 
     public long getId() {

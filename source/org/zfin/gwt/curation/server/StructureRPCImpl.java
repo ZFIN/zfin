@@ -95,7 +95,7 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
             if (getExpressionRepository().pileStructureExists(expressedTerm, publicationID)) {
                 PileStructureExistsException exception = new PileStructureExistsException(expressedTerm);
                 LOG.info(exception.getMessage());
-                throw exception;
+                continue;
             }
             ExpressionPileStructureDTO pileStructure;
             Transaction tx = HibernateUtil.currentSession().beginTransaction();
@@ -222,31 +222,25 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
 
     @Override
     public List<EapQualityTermDTO> getEapQualityListy() {
-        String[] qualIDs = {"", "PATO:0000462", "PATO:0000628", "PATO:0000140", "PATO:0001672", "PATO:0001671",
-                "PATO:0000060", "PATO:0000060", "PATO:0001997", "PATO:0000470", "PATO:0000070"};
-        String[] qualTags = {"abnormal", "abnormal", "abnormal", "ameliorated", "abnormal", "abnormal",
-                "abnormal", "ameliorated", "abnormal", "abnormal", "ameliorated"};
-        String[] qualNames = {"not", "absent phenotypic", "mislocalized", "position ok", "decreased distribution", "increased distribution",
-                "spatial pattern abnormal", "spatial pattern ok", "decreased amount", "increased amount", "amount ok"};
-        List<EapQualityTermDTO> qualityList = new ArrayList<>();
-        int index = 0;
-        for (String ID : qualIDs) {
-            EapQualityTermDTO qualityTermDTO = new EapQualityTermDTO();
-            if (index == 0) {
-                qualityTermDTO.setTag(qualTags[index]);
-                qualityTermDTO.setNickName(qualNames[index++]);
-            } else {
-                GenericTerm term = getOntologyRepository().getTermByOboID(ID);
-                TermDTO termDTO = DTOConversionService.convertToTermDTO(term);
-                qualityTermDTO.setTag(qualTags[index]);
-                qualityTermDTO.setNickName(qualNames[index++]);
-                qualityTermDTO.setTerm(termDTO);
-            }
-            qualityList.add(qualityTermDTO);
 
+        List<EapQualityTermDTO> qualityList = new ArrayList<>();
+        Map<String, String> nicknameMap = EapQualityTermDTO.nicknameMap;
+        for (String oboIDTag : nicknameMap.keySet()) {
+            String token[] = oboIDTag.split(",");
+            String oboID = token[0];
+            String tag = token[1];
+            EapQualityTermDTO qualityTermDTO = new EapQualityTermDTO();
+            GenericTerm term = getOntologyRepository().getTermByOboID(oboID);
+            TermDTO termDTO = DTOConversionService.convertToTermDTO(term);
+            qualityTermDTO.setTag(tag);
+            qualityTermDTO.setTerm(termDTO);
+            qualityTermDTO.setNickName(nicknameMap.get(oboIDTag));
+            qualityList.add(qualityTermDTO);
         }
+
         return qualityList;
     }
+
 
     private List<ExpressionPileStructureDTO> getExpressionPileStructures(String publicationID) {
         Collection<ExpressionStructure> structures = getExpressionRepository().retrieveExpressionStructures(publicationID);
@@ -297,6 +291,7 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
         ExpressionStructure structure = new ExpressionStructure();
         structure.setSuperterm(superterm);
         structure.setEapQualityTerm(eapQuality);
+        structure.setExpressionFound(expressedTerm.isExpressionFound());
         if (expressedTerm.isPhenotype())
             structure.setTag(expressedTerm.getQualityTerm().getTag());
         Publication pub = getPublicationRepository().getPublication(publicationID);
@@ -362,6 +357,7 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
         aoStructure.setSuperterm(superterm);
         aoStructure.setSubterm(subterm);
         aoStructure.setEapQualityTerm(eapQuality);
+        aoStructure.setExpressionFound(expressedTerm.isExpressionFound());
         if (expressedTerm.isPhenotype())
             aoStructure.setTag(expressedTerm.getQualityTerm().getTag());
         Publication pub = getPublicationRepository().getPublication(publicationID);

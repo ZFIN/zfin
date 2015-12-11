@@ -19,6 +19,7 @@ public class ExpressionStructure extends PostComposedEntity {
     private Date date;
     private GenericTerm eapQualityTerm;
     private String tag;
+    private boolean expressionFound = true;
 
     public String getTag() {
         return tag;
@@ -68,7 +69,15 @@ public class ExpressionStructure extends PostComposedEntity {
         this.date = date;
     }
 
-/*
+    public boolean isExpressionFound() {
+        return expressionFound;
+    }
+
+    public void setExpressionFound(boolean expressionFound) {
+        this.expressionFound = expressionFound;
+    }
+
+    /*
     public int compareTo(ExpressionStructure o) {
         if (!(o instanceof ExpressionStructure))
             throw new RuntimeException("Comparable class not of type PhenotypeStructure");

@@ -56,8 +56,6 @@ public class StructurePileModule extends Composite implements HandlesError {
     private Map<EntityPart, TermEntry> termEntryUnitsMap = new HashMap<>(5);
     private Collection<TermEntry> termEntryUnits = new ArrayList<>(3);
 
-    private final HandlerManager eventBus = new HandlerManager(null);
-
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
 
     public StructurePileModule() {
