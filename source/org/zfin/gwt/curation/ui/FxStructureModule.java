@@ -70,7 +70,7 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
 
     public void setExpressionSection(ExpressionSection expressionSection) {
         this.expressionSection = expressionSection;
-        displayTable.setExpressionSection(expressionSection);
+//        displayTable.setExpressionSection(expressionSection);
     }
 
     private void initGUI() {

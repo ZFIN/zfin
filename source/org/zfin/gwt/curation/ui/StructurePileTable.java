@@ -5,6 +5,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
@@ -29,7 +30,7 @@ class StructurePileTable extends ZfinFlexTable {
     private static final String STRUCTURE_CONSTRUCTION_ZONE = "structure-construction-zone";
     protected ErrorHandler errorElement;
 
-    private ExpressionSection expressionModule;
+    private ExpressionZoneView expressionZoneView;
 
     private HeaderName[] headerNames;
     // This maps the display table and contains the full object that each
@@ -63,9 +64,13 @@ class StructurePileTable extends ZfinFlexTable {
         headerEnumeration = enumeration;
     }
 
-    public void setExpressionSection(ExpressionSection expressionModule) {
-        this.expressionModule = expressionModule;
-        createStructureTable();
+    public void setExpressionSection(ExpressionZoneView expressionModule) {
+        this.expressionZoneView = expressionModule;
+        //createStructureTable();
+    }
+
+    public ExpressionZoneView getExpressionZoneView() {
+        return expressionZoneView;
     }
 
     public void setRemoveStructureCallBack(AsyncCallback removeStructureCallBack) {
@@ -131,7 +136,7 @@ class StructurePileTable extends ZfinFlexTable {
             Button delete = new Button("X");
             String title = createDeleteButtonTitle(structure);
             delete.setTitle(title);
-            delete.addClickHandler(new RemoveExpressionPileStructureClickHandler(structure, errorElement, expressionModule, removeStructureCallBack));
+            delete.addClickHandler(new RemoveExpressionPileStructureClickHandler(structure, errorElement, expressionZoneView, removeStructureCallBack));
             setWidget(rowIndex, HeaderName.REMOVE.getIndex(), delete);
             setRowStyle(rowIndex, groupIndex);
             rowIndex++;
@@ -148,7 +153,8 @@ class StructurePileTable extends ZfinFlexTable {
 
     public void onClick(ClickEvent event) {
         // do not rotate radio button if no expression is selected.
-        if (expressionModule.getSelectedExpressions() == null || expressionModule.getSelectedExpressions().isEmpty())
+        //Window.alert("hello you clicked me.... "+expressionZoneView.getSelectedExpressions().size() );
+        if (expressionZoneView.getSelectedExpressions() == null || expressionZoneView.getSelectedExpressions().isEmpty())
             return;
 
         HTMLTable.Cell htmlCell = getCellForEvent(event);
@@ -203,7 +209,7 @@ class StructurePileTable extends ZfinFlexTable {
     }
 
     private List<ExpressionFigureStageDTO> getSelectedExpressions() {
-        return expressionModule.getSelectedExpressions();
+        return expressionZoneView.getSelectedExpressions();
     }
 
     protected void checkNeedForAlternativeStructures(ExpressionPileStructureDTO selectedPileStructure, int row) {
@@ -216,8 +222,8 @@ class StructurePileTable extends ZfinFlexTable {
             return;
 
         if (!getSelectedExpressions().isEmpty() && add.getValue()) {
-            StageRangeUnion union = new StageRangeUnion(expressionModule.getSelectedExpressions());
-            StageRangeIntersectionService intersection = new StageRangeIntersectionService(expressionModule.getSelectedExpressions());
+            StageRangeUnion union = new StageRangeUnion(expressionZoneView.getSelectedExpressions());
+            StageRangeIntersectionService intersection = new StageRangeIntersectionService(expressionZoneView.getSelectedExpressions());
             if (!intersection.hasOverlapWithAllStageRanges(selectedPileStructure.getStart(), selectedPileStructure.getEnd())) {
                 suggestionBox.setVisible(true);
                 noStageOverlapTitle(selectedPileStructure.getExpressedTerm(), intersection);
@@ -500,9 +506,6 @@ class StructurePileTable extends ZfinFlexTable {
             } else {
                 suggestionBox.add(new Label("No alternate structures on immediate children or parents found."));
             }
-            Hyperlink hideSuggestionBox = new Hyperlink("Hide Suggestions", "HideSuggestionBox");
-            hideSuggestionBox.addClickHandler(new HideSuggestionBox());
-            suggestionBox.add(hideSuggestionBox);
         }
 
         private void setSubterm(RelatedPileStructureDTO structure) {
@@ -596,7 +599,7 @@ class StructurePileTable extends ZfinFlexTable {
         private int index;
         private String value;
 
-        private HeaderName(int index, String value) {
+        HeaderName(int index, String value) {
             this.index = index;
             this.value = value;
         }
@@ -614,10 +617,4 @@ class StructurePileTable extends ZfinFlexTable {
         }
     }
 
-    private class HideSuggestionBox implements ClickHandler {
-
-        public void onClick(ClickEvent clickEvent) {
-            suggestionBox.setVisible(false);
-        }
-    }
 }

@@ -15,13 +15,13 @@ public class RemoveExpressionPileStructureClickHandler implements ClickHandler {
 
     private ExpressionPileStructureDTO structure;
     private ErrorHandler errorHandler;
-    private ExpressionSection expressionModule;
+    private ExpressionZoneView expressionModule;
     private AsyncCallback callback;
 
     // RPC class being used for this section.
     private PileStructuresRPCAsync pileStructureRPCAsync = PileStructuresRPC.App.getInstance();
 
-    public RemoveExpressionPileStructureClickHandler(ExpressionPileStructureDTO structure, ErrorHandler errorMessage, ExpressionSection expressionModule, AsyncCallback callback) {
+    public RemoveExpressionPileStructureClickHandler(ExpressionPileStructureDTO structure, ErrorHandler errorMessage, ExpressionZoneView expressionModule, AsyncCallback callback) {
         this.structure = structure;
         this.errorHandler = errorMessage;
         this.expressionModule = expressionModule;

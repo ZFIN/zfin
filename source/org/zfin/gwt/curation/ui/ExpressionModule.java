@@ -2,11 +2,9 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.root.dto.ExperimentDTO;
@@ -40,7 +38,7 @@ public class ExpressionModule implements HandlesError, EntryPoint {
     @UiField
     ConstructionZoneModule constructionZoneModule;
     @UiField
-    StructurePileModule structurePile;
+    StructurePileView structurePile;
     @UiField
     ExpressionZoneView expressionZone;
 
@@ -69,12 +67,15 @@ public class ExpressionModule implements HandlesError, EntryPoint {
 
         structurePilePresenter = new StructurePilePresenter(structurePile, publicationID);
         structurePilePresenter.go();
+        structurePile.setStructurePilePresenter(structurePilePresenter);
 
         expressionZonePresenter = new ExpressionZonePresenter(expressionZone, publicationID);
         expressionZonePresenter.go();
         ExperimentDTO dto = new ExperimentDTO();
         dto.setPublicationID(publicationID);
         expressionZone.setExperimentFilter(dto);
+
+        structurePile.getStructurePileTable().setExpressionSection(expressionZone);
 
         bindEventBusHandler();
         addHandlerEvents();
@@ -121,6 +122,20 @@ public class ExpressionModule implements HandlesError, EntryPoint {
                     @Override
                     public void onEvent(ClickStructureOnPileEvent event) {
                         fxCurationPresenter.prepopulateConstructionZone(event.getExpressedTerm(), event.getPileEntity());
+                    }
+                });
+        AppUtils.EVENT_BUS.addHandler(SelectExpressionEvent.TYPE,
+                new SelectExpressionEventHandler() {
+                    @Override
+                    public void onEvent(SelectExpressionEvent event) {
+                        structurePilePresenter.updateFigureAnnotations(event.getSelectedExpressions());
+                    }
+                });
+        AppUtils.EVENT_BUS.addHandler(CreateExpressionEvent.TYPE,
+                new CreateExpressionEventHandler() {
+                    @Override
+                    public void onEvent(CreateExpressionEvent event) {
+                        expressionZonePresenter.postUpdateStructuresOnExpression();
                     }
                 });
     }

@@ -13,6 +13,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.*;
+import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.gwt.root.util.WidgetUtil;
 
@@ -72,12 +73,12 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     private ExpressionFlexTable displayTable;
 
     // all annotations that are selected
-    private List<ExpressionFigureStageDTO> selectedExpressions = new ArrayList<ExpressionFigureStageDTO>(5);
+    private List<ExpressionFigureStageDTO> selectedExpressions = new ArrayList<>(5);
     // all expressions displayed on the page (all or a subset defined by the filter elements)
-    private List<ExpressionFigureStageDTO> displayedExpressions = new ArrayList<ExpressionFigureStageDTO>(15);
+    private List<ExpressionFigureStageDTO> displayedExpressions = new ArrayList<>(15);
     // This maps the display table and contains the full objects that each
     // row is made up from
-    private Map<Integer, ExpressionFigureStageDTO> displayTableMap = new HashMap<Integer, ExpressionFigureStageDTO>(15);
+    private Map<Integer, ExpressionFigureStageDTO> displayTableMap = new HashMap<>(15);
 
     // attributes for duplicate row
     private String duplicateRowOriginalStyle;
@@ -293,7 +294,8 @@ public class ExpressionZoneView extends Composite implements HandlesError {
      * This method updates the structure pile with the checked figure annotation.
      */
     protected void sendFigureAnnotationsToStructureSection() {
-        structurePile.updateFigureAnnotations(selectedExpressions);
+        SelectExpressionEvent event = new SelectExpressionEvent(selectedExpressions);
+        AppUtils.EVENT_BUS.fireEvent(event);
     }
 
     private void saveCheckStatusInSession(ExpressionFigureStageDTO checkedExpression, boolean isChecked) {
@@ -395,10 +397,10 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             saveCheckStatusInSession(checkedExpression, checkbox.getValue());
             if (checkbox.getValue()) {
                 selectedExpressions.add(checkedExpression);
-                experimentSection.setSingleExperiment(checkedExpression.getExperiment());
+///                experimentSection.setSingleExperiment(checkedExpression.getExperiment());
             } else {
                 selectedExpressions.remove(checkedExpression);
-                experimentSection.unselectAllExperiments();
+///                experimentSection.unselectAllExperiments();
             }
             //Window.alert("Selected Expressions: "+selectedExpressions.size());
             sendFigureAnnotationsToStructureSection();
@@ -608,7 +610,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
 
     }
 
-    private List<ExpressionFigureStageDTO> expressionFigureStageDTOBuffer = new ArrayList<ExpressionFigureStageDTO>(3);
+    private List<ExpressionFigureStageDTO> expressionFigureStageDTOBuffer = new ArrayList<>(3);
 
     /**
      * Copy selected Expression/Figure/Stage records into buffer
@@ -666,7 +668,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         private List<ExpressionFigureStageDTO> getEfsFromMap(List<Integer> copyFromCheckBoxNumber) {
             if (copyFromCheckBoxNumber == null)
                 return null;
-            List<ExpressionFigureStageDTO> efsList = new ArrayList<ExpressionFigureStageDTO>(copyFromCheckBoxNumber.size());
+            List<ExpressionFigureStageDTO> efsList = new ArrayList<>(copyFromCheckBoxNumber.size());
             for (Integer rowIndex : copyFromCheckBoxNumber) {
                 efsList.add(displayTableMap.get(rowIndex));
             }
@@ -817,7 +819,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         errorElement.clearAllErrors();
         if (duplicateRowIndex > 0)
             displayTable.getRowFormatter().setStyleName(duplicateRowIndex, duplicateRowOriginalStyle);
-        experimentSection.clearErrorMessages();
+///        experimentSection.clearErrorMessages();
     }
 
     class ExpressionFlexTable extends ZfinFlexTable {
@@ -853,7 +855,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
 
             List<ExpressionFigureStageDTO> expressionFigureStageDTOs;
             if (showSelectedExpressionOnly) {
-                expressionFigureStageDTOs = new ArrayList<ExpressionFigureStageDTO>();
+                expressionFigureStageDTOs = new ArrayList<>();
                 expressionFigureStageDTOs.addAll(selectedExpressions);
             } else {
                 expressionFigureStageDTOs = displayedExpressions;
@@ -1112,6 +1114,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     private class SectionVisibilityCallback extends ZfinAsyncCallback<Boolean> {
         // flag that indicates if the experiment section is visible or not.
         private boolean sectionVisible;
+
         public SectionVisibilityCallback(String message) {
             super(message, errorElement);
         }
@@ -1144,7 +1147,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
      * @param deletedExperiment experiment that was deleted
      */
     public void removeFigureAnnotations(ExperimentDTO deletedExperiment) {
-        List<ExpressionFigureStageDTO> toBeDeleted = new ArrayList<ExpressionFigureStageDTO>();
+        List<ExpressionFigureStageDTO> toBeDeleted = new ArrayList<>();
         for (ExpressionFigureStageDTO efs : displayedExpressions) {
             ExperimentDTO expDto = efs.getExperiment();
             if (expDto.getExperimentZdbID().equals(deletedExperiment.getExperimentZdbID()))

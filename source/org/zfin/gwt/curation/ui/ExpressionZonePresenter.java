@@ -98,6 +98,16 @@ public class ExpressionZonePresenter implements Presenter {
         clearErrorMessages();
     }
 
+    public void postUpdateStructuresOnExpression() {
+/*
+        selectedExpressions.clear();
+        showSelectedExpressionOnly = false;
+        view.getDisplayTable().uncheckAllRecords();
+        experimentSection.unselectAllExperiments();
+*/
+        Window.alert("updated....");
+    }
+
     public class RetrieveFiguresCallback extends ZfinAsyncCallback<List<FigureDTO>> {
 
 

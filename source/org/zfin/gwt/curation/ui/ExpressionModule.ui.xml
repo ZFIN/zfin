@@ -12,7 +12,7 @@
             <hr/>
         </g:HTML>
         <zfin-mod:ExpressionZoneView ui:field="expressionZone"/>
-        <zfin-mod:StructurePileModule ui:field="structurePile"/>
+        <zfin-mod:StructurePileView ui:field="structurePile"/>
         <zfin-mod:ConstructionZoneModule ui:field="constructionZoneModule"/>
     </g:FlowPanel>
 </ui:UiBinder>

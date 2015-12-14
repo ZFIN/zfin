@@ -44,6 +44,7 @@ public class FxCurationModule extends Composite implements HandlesError {
 
         experimentFilterModule = new CurationFilterModule(experimentModule, expressionModule, structureModule, publicationID);
 //        structureModule.setPileStructureClickListener(constructionZoneModule);
+        ExpressionModule module = new ExpressionModule(publicationID);
     }
 
     private Map<EntityPart, List<OntologyDTO>> getTermEntryMap() {

@@ -2,15 +2,12 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.EntityPart;
 import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.LookupRPCService;
@@ -21,12 +18,12 @@ import java.util.*;
 /**
  * Entry point for FX curation module.
  */
-public class StructurePileModule extends Composite implements HandlesError {
+public class StructurePileView extends Composite implements HandlesError {
 
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-    @UiTemplate("StructurePileModule.ui.xml")
-    interface MyUiBinder extends UiBinder<VerticalPanel, StructurePileModule> {
+    @UiTemplate("StructurePileView.ui.xml")
+    interface MyUiBinder extends UiBinder<VerticalPanel, StructurePileView> {
     }
 
     // listener
@@ -35,7 +32,7 @@ public class StructurePileModule extends Composite implements HandlesError {
     @UiField
     ShowHideToggle showHideToggle;
     @UiField
-    Button UpdateStructuresTop;
+    Button updateStructuresTop;
     @UiField
     StructureAlternateComposite alternateStructurePanel;
     @UiField
@@ -46,6 +43,12 @@ public class StructurePileModule extends Composite implements HandlesError {
     Hyperlink reCreatePile;
     @UiField
     VerticalPanel structurePile;
+    @UiField
+    Hyperlink hideSuggestions;
+    @UiField
+    Image loadingImage;
+    @UiField
+    Button updateStructuresBottom;
 
     private ZfinListBox tagList;
     public static final String TAG_ABNORMAL = "abnormal";
@@ -58,7 +61,7 @@ public class StructurePileModule extends Composite implements HandlesError {
 
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
 
-    public StructurePileModule() {
+    public StructurePileView() {
         initWidget(uiBinder.createAndBindUi(this));
 
     }
@@ -67,6 +70,24 @@ public class StructurePileModule extends Composite implements HandlesError {
     void onClickShowHide(@SuppressWarnings("unused") ClickEvent event) {
         showHideToggle.toggleVisibility();
         structurePilePresenter.retrieveStructurePile();
+    }
+
+    @UiHandler("hideSuggestions")
+    void onClickHideSuggestion(@SuppressWarnings("unused") ClickEvent event) {
+        hideSuggestions.setVisible(false);
+        alternateStructurePanel.setVisible(false);
+    }
+
+    @UiHandler("updateStructuresTop")
+    void onClickUpdateButton(@SuppressWarnings("unused") ClickEvent event) {
+        hideSuggestions.setVisible(false);
+        alternateStructurePanel.setVisible(false);
+        structurePilePresenter.updateStructures();
+    }
+
+    @UiHandler("updateStructuresBottom")
+    void onClickUpdateButtonBottoms(@SuppressWarnings("unused") ClickEvent event) {
+        onClickUpdateButton(event);
     }
 
     @Override
@@ -109,5 +130,9 @@ public class StructurePileModule extends Composite implements HandlesError {
 
     public StructureAlternateComposite getAlternateStructurePanel() {
         return alternateStructurePanel;
+    }
+
+    public Image getLoadingImage() {
+        return loadingImage;
     }
 }
