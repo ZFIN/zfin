@@ -10,12 +10,9 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.*;
-import org.zfin.gwt.root.util.LookupRPCService;
-import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.gwt.root.util.WidgetUtil;
 
@@ -52,22 +49,18 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     private VerticalPanel experimentSelection = new VerticalPanel();
     private boolean showSelectedExpressionOnly;
 
+    @UiField
+    Image loadingImage;
+    @UiField
+    VerticalPanel expressionPanel;
 
-    private ZfinListBox tagList;
-    public static final String TAG_ABNORMAL = "abnormal";
-    public static final String TAG_NORMAL = "normal";
     private StructurePilePresenter structurePilePresenter;
-
-    private Map<EntityPart, TermEntry> termEntryUnitsMap = new HashMap<>(5);
-    private Collection<TermEntry> termEntryUnits = new ArrayList<>(3);
-
-    private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
 
     public ExpressionZoneView() {
         initWidget(uiBinder.createAndBindUi(this));
         stageSelector.setPublicationID(publicationID);
         displayTable = new ExpressionFlexTable(HeaderName.getHeaderNames());
-        initGUI();
+        expressionPanel.add(displayTable);
     }
 
     // GUI elements
@@ -77,7 +70,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     private VerticalPanel displayPanel = new VerticalPanel();
     private FlexTable constructionRow = new FlexTable();
     private ExpressionFlexTable displayTable;
-    private Image loadingImage = new Image();
 
     // all annotations that are selected
     private List<ExpressionFigureStageDTO> selectedExpressions = new ArrayList<ExpressionFigureStageDTO>(5);
@@ -92,14 +84,11 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     private int duplicateRowIndex;
 
     private String figureID;
-    // flag that indicates if the experiment section is visible or not.
-    private boolean sectionVisible;
     // used to control that this module is loaded only once.
     private boolean initialized;
 
     // RPC class being used for this section.
     private CurationExperimentRPCAsync curationRPCAsync = CurationExperimentRPC.App.getInstance();
-    private SessionSaveServiceAsync sessionRPC = SessionSaveService.App.getInstance();
     public static final String HIDE = "hide";
     public static final String SHOW = "show";
     public static final String PUSH_TO_PATO = "to pato";
@@ -109,12 +98,10 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     // 20 expressed terms is a bit higher than the average
     // number of expressed terms used in a single publication.
     // Contains all distinct expressed terms for this publication
-    private Set<ExpressedTermDTO> expressedTerms = new HashSet<ExpressedTermDTO>(20);
+    private Set<ExpressedTermDTO> expressedTerms = new HashSet<>(20);
     // used for highlighting structures
     private ExpressedTermDTO expressedStructure;
     private boolean markStructures;
-    // Typical number of figures used per publication is less than 5.
-    private List<FigureDTO> allFigureDtos = new ArrayList<FigureDTO>(5);
 
     // injected variables
     private ExperimentSection experimentSection;
@@ -150,25 +137,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         }
     }
 
-    private void initGUI() {
-        initShowHideGUI();
-        experimentSelection.setVisible(false);
-        displayPanel.setWidth("100%");
-        displayPanel.add(constructionRow);
-        displayPanel.add(new HTML("&nbsp;"));
-        displayPanel.add(displayTable);
-    }
-
-    private void initShowHideGUI() {
-        Label experimentLabel = new Label("Expression: ");
-        experimentLabel.setStyleName("bold");
-        panel.add(experimentLabel);
-        showExpressionSection.setStyleName("small");
-        showExpressionSection.setText(SHOW);
-        showExpressionSection.setTargetHistoryToken(SHOW);
-        panel.add(showExpressionSection);
-    }
-
     /**
      * Check curator session if this section should be displayed or hidden.
      */
@@ -177,28 +145,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         curationRPCAsync.readExpressionSectionVisibility(publicationID, new SectionVisibilityCallback(message));
     }
 
-    private void setInitialValues() {
-        retrieveExpressions();
-        retrieveConstructionZoneValues();
-    }
-
-    private void retrieveConstructionZoneValues() {
-        // figure list
-        curationRPCAsync.getFigures(publicationID, new RetrieveFiguresCallback());
-
-        // stage list
-        curationRPCAsync.getStages(new RetrieveStageListCallback());
-
-        // stage selector
-        sessionRPC.isStageSelectorSingleMode(publicationID, new RetrieveStageSelectorCallback(errorElement, stageSelector));
-    }
-
     // Retrieve experiments from the server
-
-    public void retrieveExpressions() {
-        loadingImage.setVisible(true);
-        curationRPCAsync.getExpressionsByFilter(experimentFilter, figureID, new RetrieveExpressionsCallback());
-    }
 
 
     private void recordAllExpressedTerms() {
@@ -339,7 +286,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         selectedExpressions.clear();
         showSelectedExpressionOnly = false;
         displayTable.uncheckAllRecords();
-        retrieveExpressions();
         experimentSection.unselectAllExperiments();
     }
 
@@ -410,7 +356,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             }
         }
         selectedExpressions.clear();
-        retrieveExpressions();
     }
 
     private void uncheckExpressionRecord(ExpressionFigureStageDTO expression) {
@@ -641,37 +586,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         }
     }
 
-    private class RetrieveExpressionsCallback extends ZfinAsyncCallback<List<ExpressionFigureStageDTO>> {
-
-        public RetrieveExpressionsCallback() {
-            super("Error while reading Experiment Filters", errorElement);
-        }
-
-        public void onSuccess(List<ExpressionFigureStageDTO> list) {
-
-            displayedExpressions.clear();
-            if (list == null)
-                return;
-
-            for (ExpressionFigureStageDTO id : list) {
-                ExperimentDTO experiment = id.getExperiment();
-                if (experiment.getEnvironment().getName().startsWith("_"))
-                    experiment.getEnvironment().setName(experiment.getEnvironment().getName().substring(1));
-                displayedExpressions.add(id);
-            }
-            //Window.alert("SIZE: " + experiments.size());
-            if (sectionVisible)
-                displayTable.createExpressionTable();
-            recordAllExpressedTerms();
-            curationRPCAsync.getFigureAnnotationCheckmarkStatus(publicationID, new FigureAnnotationCheckmarkStatusCallback());
-            loadingImage.setVisible(false);
-        }
-
-        public void onFailureCleanup() {
-            loadingImage.setVisible(true);
-        }
-    }
-
 
     /**
      * Push the expression record to Pato, i.e. create a pato expression record.
@@ -844,7 +758,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
      *
      * @param expression expression figure stage DTO
      * @return true if experiment is found in the full list (new experiment) or in the list except itself
-     *         false if experiment is different from all other experiments
+     * false if experiment is different from all other experiments
      */
     public boolean expressionFigureStageExists(ExpressionFigureStageDTO expression) {
         int rowIndex = 1;
@@ -919,6 +833,11 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             setToggleHyperlink(ToggleLink.SHOW_SELECTED_EXPRESSIONS_ONLY.getText(), ToggleLink.SHOW_ALL_EXPRESSIONS.getText());
             addToggleHyperlinkClickHandler(new ShowSelectedExpressionClickHandler(showSelectedRecords));
             initCopyExpressionPanel();
+        }
+
+        protected void createExpressionTable(List<ExpressionFigureStageDTO> list) {
+            displayedExpressions = list;
+            createExpressionTable();
         }
 
         protected void createExpressionTable() {
@@ -1175,14 +1094,14 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     public void setFigureID(String figureID) {
         this.figureID = figureID;
         // update figure list
-        updateFigureListBox();
+        updateFigureListBox(null);
     }
 
     public void setExperimentFilter(ExperimentDTO experimentFilter) {
         this.experimentFilter = experimentFilter;
     }
 
-    private void updateFigureListBox() {
+    public void updateFigureListBox(List<FigureDTO> allFigureDtos) {
         figureList.clear();
         for (FigureDTO figureDTO : allFigureDtos) {
             if (figureID == null || figureDTO.getZdbID().equals(figureID))
@@ -1190,84 +1109,9 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         }
     }
 
-    public class RetrieveFiguresCallback extends ZfinAsyncCallback<List<FigureDTO>> {
-
-
-        public RetrieveFiguresCallback() {
-            super("Error while reading Figure Filters", errorElement);
-        }
-
-        public void onSuccess(List<FigureDTO> list) {
-
-            allFigureDtos = new ArrayList<FigureDTO>(list);
-            updateFigureListBox();
-            //Window.alert("SIZE: " + experiments.size());
-            loadingImage.setVisible(false);
-        }
-
-        public void onFailureCleanup() {
-            loadingImage.setVisible(true);
-        }
-    }
-
-    /**
-     * Callback for reading all stages.
-     */
-    public class RetrieveStageListCallback extends ZfinAsyncCallback<List<StageDTO>> {
-
-        public RetrieveStageListCallback() {
-            super("Error while reading Figure Filters", errorElement);
-        }
-
-        public void onSuccess(List<StageDTO> stages) {
-
-            //Window.alert("SIZE: " + experiments.size());
-            stageSelector.setStageList(stages);
-            loadingImage.setVisible(false);
-        }
-
-        public void onFailureCleanup() {
-            loadingImage.setVisible(true);
-        }
-    }
-
-    private class FigureAnnotationCheckmarkStatusCallback implements AsyncCallback<CheckMarkStatusDTO> {
-        public void onFailure(Throwable throwable) {
-            if (throwable instanceof PublicationNotFoundException) {
-                Window.alert(String.valueOf(throwable));
-            } else {
-                Window.alert("Fatal exception: " + throwable);
-            }
-        }
-
-        public void onSuccess(CheckMarkStatusDTO filterValues) {
-            //Window.alert("brought back: " + filterValues.getFigureAnnotations().size());
-            if (filterValues == null)
-                return;
-
-            int maxRows = displayTable.getRowCount();
-            for (int row = 1; row < maxRows; row++) {
-                if (!displayTable.isCellPresent(row, 0))
-                    continue;
-                Widget widget = displayTable.getWidget(row, 0);
-                if (widget == null || !(widget instanceof CheckBox))
-                    continue;
-
-                CheckBox checkBox = (CheckBox) widget;
-                for (ExpressionFigureStageDTO dto : filterValues.getFigureAnnotations()) {
-                    if (dto.getUniqueID().equals(checkBox.getTitle())) {
-                        checkBox.setValue(true);
-                        ExpressionFigureStageDTO checkedExpression = displayTableMap.get(row);
-                        selectedExpressions.add(checkedExpression);
-                    }
-                }
-            }
-            displayTable.showHideClearAllLink();
-            structurePile.updateFigureAnnotations(selectedExpressions);
-        }
-    }
-
     private class SectionVisibilityCallback extends ZfinAsyncCallback<Boolean> {
+        // flag that indicates if the experiment section is visible or not.
+        private boolean sectionVisible;
         public SectionVisibilityCallback(String message) {
             super(message, errorElement);
         }
@@ -1276,7 +1120,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             sectionVisible = visible;
             //Window.alert("Show: " + sectionVisible);
             if (displayedExpressions == null || displayedExpressions.isEmpty()) {
-                setInitialValues();
+                //todo setInitialValues();
             } else {
                 displayTable.createExpressionTable();
                 displayTable.showHideClearAllLink();
@@ -1393,4 +1237,15 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         this.errorElement = errorElement;
     }
 
+    public StageSelector getStageSelector() {
+        return stageSelector;
+    }
+
+    public void setLoadingImageVisibility(boolean show) {
+        loadingImage.setVisible(show);
+    }
+
+    public ExpressionFlexTable getDisplayTable() {
+        return displayTable;
+    }
 }

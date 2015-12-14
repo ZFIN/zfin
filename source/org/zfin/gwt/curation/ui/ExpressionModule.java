@@ -9,6 +9,7 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.util.AppUtils;
@@ -45,6 +46,7 @@ public class ExpressionModule implements HandlesError, EntryPoint {
 
     private FxCurationPresenter fxCurationPresenter;
     private StructurePilePresenter structurePilePresenter;
+    private ExpressionZonePresenter expressionZonePresenter;
     FxCurationModule fxCurationModule;
 
     public ExpressionModule(String publicationID) {
@@ -67,6 +69,12 @@ public class ExpressionModule implements HandlesError, EntryPoint {
 
         structurePilePresenter = new StructurePilePresenter(structurePile, publicationID);
         structurePilePresenter.go();
+
+        expressionZonePresenter = new ExpressionZonePresenter(expressionZone, publicationID);
+        expressionZonePresenter.go();
+        ExperimentDTO dto = new ExperimentDTO();
+        dto.setPublicationID(publicationID);
+        expressionZone.setExperimentFilter(dto);
 
         bindEventBusHandler();
         addHandlerEvents();

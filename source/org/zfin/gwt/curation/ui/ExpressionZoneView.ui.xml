@@ -8,7 +8,7 @@
 
     <g:VerticalPanel spacing="10" title="Expression Zone" width="100%">
         <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
-            <g:Label text="Expression" addStyleNames="bold" horizontalAlignment="left"/>
+            <g:Label text="Expressions" addStyleNames="bold" horizontalAlignment="left"/>
             <g:Label text=":&nbsp;" addStyleNames="bold"/>
             <zfin:ShowHideToggle widget="{expressionZone}" ui:field="showHideToggle" show="true"/>
         </g:HorizontalPanel>
@@ -16,23 +16,22 @@
             <g:HTMLPanel>
                 <table>
                     <tr>
-                        <td colspan="2"></td>
-                        <td class="bold">Stage Range</td>
-                        <td></td>
-                    </tr>
-                    <tr>
                         <td>
                             <g:Button ui:field="addButton" text="Add"/>
-                            <g:ListBox ui:field="figureList" />
+                            <g:ListBox ui:field="figureList"/>
                         </td>
-                        <td><zfin:StageSelector ui:field="stageSelector"/></td>
+                        <td>
+                            <zfin:StageSelector ui:field="stageSelector"/>
+                        </td>
                         <td>
                             <g:Button ui:field="resetButton" text="Reset"/>
                         </td>
                     </tr>
                 </table>
             </g:HTMLPanel>
+            <g:VerticalPanel ui:field="expressionPanel"/>
+            <zfin:SimpleErrorElement ui:field="errorElement"/>
         </g:VerticalPanel>
-        <zfin:SimpleErrorElement ui:field="errorElement"/>
+        <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="true"/>
     </g:VerticalPanel>
 </ui:UiBinder>
