@@ -7,6 +7,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.zfin.gwt.curation.event.SelectExpressionExperimentEvent;
+import org.zfin.gwt.curation.event.SelectExpressionExperimentEventHandler;
 import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.HandlesError;
@@ -41,10 +43,13 @@ public class ExpressionModule implements HandlesError, EntryPoint {
     StructurePileView structurePile;
     @UiField
     ExpressionZoneView expressionZone;
+    @UiField
+    ExpressionExperimentZoneView expressionExperimentZone;
 
     private FxCurationPresenter fxCurationPresenter;
     private StructurePilePresenter structurePilePresenter;
     private ExpressionZonePresenter expressionZonePresenter;
+    private ExpressionExperimentZonePresenter expressionExperimentZonePresenter;
     FxCurationModule fxCurationModule;
 
     public ExpressionModule(String publicationID) {
@@ -74,8 +79,10 @@ public class ExpressionModule implements HandlesError, EntryPoint {
         ExperimentDTO dto = new ExperimentDTO();
         dto.setPublicationID(publicationID);
         expressionZone.setExperimentFilter(dto);
-
         structurePile.getStructurePileTable().setExpressionSection(expressionZone);
+
+        expressionExperimentZonePresenter = new ExpressionExperimentZonePresenter(expressionExperimentZone, publicationID);
+        expressionExperimentZonePresenter.go();
 
         bindEventBusHandler();
         addHandlerEvents();
@@ -129,6 +136,16 @@ public class ExpressionModule implements HandlesError, EntryPoint {
                     @Override
                     public void onEvent(SelectExpressionEvent event) {
                         structurePilePresenter.updateFigureAnnotations(event.getSelectedExpressions());
+                    }
+                });
+        AppUtils.EVENT_BUS.addHandler(SelectExpressionExperimentEvent.TYPE,
+                new SelectExpressionExperimentEventHandler() {
+                    @Override
+                    public void onEvent(SelectExpressionExperimentEvent event) {
+                        if (!event.isCkecked())
+                            expressionExperimentZonePresenter.unselectAllExperiments();
+                        else
+                            expressionExperimentZonePresenter.setSingleExperiment(event.getExperimentDTO());
                     }
                 });
         AppUtils.EVENT_BUS.addHandler(CreateExpressionEvent.TYPE,

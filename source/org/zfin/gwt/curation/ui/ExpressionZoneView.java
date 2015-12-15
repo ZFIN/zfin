@@ -11,6 +11,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
+import org.zfin.gwt.curation.event.SelectExpressionExperimentEvent;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.AppUtils;
@@ -397,18 +398,16 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             saveCheckStatusInSession(checkedExpression, checkbox.getValue());
             if (checkbox.getValue()) {
                 selectedExpressions.add(checkedExpression);
-///                experimentSection.setSingleExperiment(checkedExpression.getExperiment());
             } else {
                 selectedExpressions.remove(checkedExpression);
-///                experimentSection.unselectAllExperiments();
             }
-            //Window.alert("Selected Expressions: "+selectedExpressions.size());
+            SelectExpressionExperimentEvent selectEvent = new SelectExpressionExperimentEvent(checkbox.getValue(), checkedExpression.getExperiment());
+            AppUtils.EVENT_BUS.fireEvent(selectEvent);
             sendFigureAnnotationsToStructureSection();
             displayTable.showHideClearAllLink();
         }
 
         // select or un-select (checkbox) the figure in the figure list
-
         private void selectUnselectFigure() {
             String figureID = checkedExpression.getFigure().getZdbID();
             int totalFigs = figureList.getItemCount();
@@ -844,7 +843,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
 
         protected void createExpressionTable() {
             clearTable();
-            createConstructionZone();
             // header row index = 0
             createTableHeader();
             int rowIndex = 1;
