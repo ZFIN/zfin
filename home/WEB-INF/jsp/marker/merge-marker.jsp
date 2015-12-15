@@ -694,7 +694,6 @@ var validateGeneWithOrthology = function(geneIDdelete, geneZdbIdMergedInto, gene
 
     var numberOfOrthology = 0;
     var numberOfOrthologyOfMarker2 = 0;
-   // var checkOrthologyDone = 0;
     var checkOrthologyEvidenceAndPubDone = 0;
     var blockMergeDueToOrth = "No";
     orthologyIgnored = false;
@@ -750,7 +749,11 @@ var validateGeneWithOrthology = function(geneIDdelete, geneZdbIdMergedInto, gene
             jQuery('#blockMerge').append('<h3>You cannot merge these two zebrafish genes because they have orthology data to the same human, mouse and/or fly gene.<br/>You need to move that human, mouse and/or orthology data manually before merging the zebrafish genes.</h3>');
 
         } else {
-            jQuery('#ignoreOrth').show();
+            if (orthologyData1.length > 0) {
+                jQuery('#ignoreOrth').show();
+            } else {
+                orthologyIgnored = true;
+            }
             validateUnspecifiedAlleles(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
         }
 
