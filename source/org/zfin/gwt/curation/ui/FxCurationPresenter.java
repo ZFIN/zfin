@@ -82,7 +82,7 @@ public class FxCurationPresenter implements Presenter {
                 eapQualityList.add(checkBoxMap.get(checkBox));
             }
         }
-        Window.alert("num of Qualitites " + eapQualityList.get(0).getNickName());
+        //Window.alert("num of Qualitites " + eapQualityList.get(0).getNickName());
         // can submit the 'not-expressed' only without any eap selected.
         if (view.getNotExpressedCheckBox().getValue()) {
             if (eapQualityList.size() > 0) {

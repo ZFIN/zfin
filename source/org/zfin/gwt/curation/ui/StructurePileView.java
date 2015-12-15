@@ -44,8 +44,6 @@ public class StructurePileView extends Composite implements HandlesError {
     @UiField
     VerticalPanel structurePile;
     @UiField
-    Hyperlink hideSuggestions;
-    @UiField
     Image loadingImage;
     @UiField
     Button updateStructuresBottom;
@@ -72,16 +70,10 @@ public class StructurePileView extends Composite implements HandlesError {
         structurePilePresenter.retrieveStructurePile();
     }
 
-    @UiHandler("hideSuggestions")
-    void onClickHideSuggestion(@SuppressWarnings("unused") ClickEvent event) {
-        hideSuggestions.setVisible(false);
-        alternateStructurePanel.setVisible(false);
-    }
-
     @UiHandler("updateStructuresTop")
     void onClickUpdateButton(@SuppressWarnings("unused") ClickEvent event) {
-        hideSuggestions.setVisible(false);
         alternateStructurePanel.setVisible(false);
+        loadingImage.setVisible(true);
         structurePilePresenter.updateStructures();
     }
 
@@ -134,5 +126,13 @@ public class StructurePileView extends Composite implements HandlesError {
 
     public Image getLoadingImage() {
         return loadingImage;
+    }
+
+    public VerticalPanel getStructurePile() {
+        return structurePile;
+    }
+
+    public Hyperlink getReCreatePile() {
+        return reCreatePile;
     }
 }

@@ -202,7 +202,7 @@ Message: $MI_ERRORMSG
 <script type="text/javascript">
     var curationProperties = {
         zdbID : "<?MIVAR>$OID<?/MIVAR>",
-        moduleType: "FX_CURATION",
+        moduleType: "EXPRESSION_CURATION",
 	debug: "<?MIVAR>$debug<?/MIVAR>"
     } ;
 </script>
@@ -261,6 +261,7 @@ Message: $MI_ERRORMSG
 <div id="display-structure-errors"></div>
 <div id="construction-zone"></div>
 
+<div id="expressionZone"></div>
 
 <?MIVAR NAME="$cs_field">subterm_ontology<?/MIVAR>
 <?MIVAR NAME="$cs_default">AO<?/MIVAR>

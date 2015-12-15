@@ -45,8 +45,18 @@ public class StructurePilePresenter implements Presenter {
 
     @Override
     public void go() {
+        loadSectionVisibility();
         retrieveStructurePile();
         bind();
+    }
+
+    /**
+     * Check curator session if this section should be displayed or hidden.
+     */
+    private void loadSectionVisibility() {
+        String message = "Error while reading Section Visibility";
+        curationRPCAsync.readStructureSectionVisibility(publicationID, false, new SectionVisibilityCallback(message));
+        curationRPCAsync.isReCreatePhenotypePileLinkNeeded(publicationID, new PileReCreationNeedCallback("Error while reading pile-recreation need"));
     }
 
     protected void retrieveStructurePile() {
@@ -240,7 +250,43 @@ public class StructurePilePresenter implements Presenter {
         }
 
         public void onFailureCleanup() {
+            view.getLoadingImage().setVisible(false);
+        }
+    }
+
+    private class SectionVisibilityCallback extends ZfinAsyncCallback<Boolean> {
+        public SectionVisibilityCallback(String message) {
+            super(message, view.errorElement);
+        }
+
+        public void onSuccess(Boolean visible) {
+            view.getStructurePile().setVisible(visible);
+            view.getLoadingImage().setVisible(false);
+        }
+
+        public void onFailureCleanup() {
             view.getLoadingImage().setVisible(true);
+        }
+    }
+
+    private class PileReCreationNeedCallback extends ZfinAsyncCallback<Boolean> {
+
+        public PileReCreationNeedCallback(String message) {
+            super(message, view.getErrorElement());
+        }
+
+        @Override
+        public void onSuccess(Boolean isReCreatePileNeed) {
+            //Window.alert("Show: " + sectionVisible);
+            if (isReCreatePileNeed)
+                view.getReCreatePile().setVisible(true);
+            else
+                view.getReCreatePile().setVisible(false);
+        }
+
+        @Override
+        public void onFailureCleanup() {
+
         }
     }
 }

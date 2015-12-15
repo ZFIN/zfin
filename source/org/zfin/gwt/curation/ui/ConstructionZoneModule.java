@@ -17,7 +17,22 @@ import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 import java.util.*;
 
 /**
- * Entry point for FX curation module.
+ * This class is responsible for the construction zone that creates post-composed structures.
+ * Initially, it's used for FX but should be extended to also create annotations for PATO.
+ * <p/>
+ * Requirements:<br/>
+ * A) Subterm Field: A subterm field in which either AO or GO terms are auto-completed depending on the ontology selector.
+ * This field is optional.<br/>
+ * B) Superterm Field: A superterm field in which an AO term is completed.<br/>
+ * C) Swap Terms: Swapping terms will exchange the superterm's and the subterm's entry. If the subterm is a GO term no swapping is
+ * possible as the superterm has to be an AO term.<br/>
+ * D) Reset Button: Clicking this button will empty both term fields and set the subterm ontology to AO.
+ * <p/>
+ * Usage:<br/>
+ * 1) Constructor with publication ID and termEntryMap that initializes the term parts being used and the Ontologies
+ * used for each term.<br/>
+ * 2) inject PileStructure object which is called after successful addition of new post-composed term.<br/>
+ * 3) inject StructureValidator that validates combinations of post-composed terms.
  */
 public class ConstructionZoneModule extends Composite implements HandlesError {
 

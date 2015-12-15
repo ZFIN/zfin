@@ -21,6 +21,7 @@ import org.zfin.gwt.curation.ui.SessionVariable;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
+import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.gwt.root.util.StageRangeIntersection;
 import org.zfin.gwt.root.util.StageRangeIntersectionService;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -607,7 +608,8 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
     }
 
     @Override
-    public List<ExpressionFigureStageDTO> copyExpressions(List<ExpressionFigureStageDTO> copyFromExpressions, List<ExpressionFigureStageDTO> copyToExpressions) {
+    public List<ExpressionFigureStageDTO> copyExpressions(List<ExpressionFigureStageDTO> copyFromExpressions,
+                                                          List<ExpressionFigureStageDTO> copyToExpressions) throws ValidationException {
         if (copyFromExpressions == null || copyToExpressions == null)
             return null;
 
@@ -943,7 +945,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      * @param updateEntity Update Expression dto
      * @return list of updated expression figure stage dtos
      */
-    public List<ExpressionFigureStageDTO> updateStructuresForExpression(UpdateExpressionDTO updateEntity) {
+    public List<ExpressionFigureStageDTO> updateStructuresForExpression(UpdateExpressionDTO updateEntity) throws ValidationException {
         List<ExpressionFigureStageDTO> figureAnnotations = updateEntity.getFigureAnnotations();
         if (figureAnnotations == null)
             return null;
@@ -986,9 +988,12 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             }
             tx.commit();
         } catch (HibernateException e) {
-            LOG.error("Could not Add or Delete terms", e);
+            String message = "Could not Add or Delete terms";
+            message += "<br/>";
+            message += e.getMessage();
+            LOG.error(message, e);
             tx.rollback();
-            throw e;
+            throw new ValidationException(message);
         }
         for (ExpressionFigureStageDTO dto : figureAnnotations) {
             setFigureAnnotationStatus(dto, false);

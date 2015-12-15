@@ -269,9 +269,6 @@ class StructurePileTable extends ZfinFlexTable {
                 setWidget(rowIndex, name.index, plus);
                 WidgetUtil.addOrRemoveCssStyle(plus, WidgetUtil.GREEN, true);
                 WidgetUtil.addOrRemoveCssStyle(plus, WidgetUtil.BOLD, true);
-            } else if (name.getIndex() == 3) {
-                setText(rowIndex, name.index, name.getName());
-                getCellFormatter().setStyleName(rowIndex, name.index, WidgetUtil.RED_MODIFIER);
             } else {
                 setText(rowIndex, name.index, name.getName());
                 getCellFormatter().setStyleName(rowIndex, name.index, WidgetUtil.BOLD);
@@ -502,10 +499,12 @@ class StructurePileTable extends ZfinFlexTable {
                     ul.add(termList);
                 }
                 verticalPanel.add(ul);
-                suggestionBox.add(verticalPanel);
+                suggestionBox.addToPanel(verticalPanel);
+
             } else {
-                suggestionBox.add(new Label("No alternate structures on immediate children or parents found."));
+                suggestionBox.addToPanel(new Label("No alternate structures on immediate children or parents found."));
             }
+            suggestionBox.getHideSuggestions().setVisible(true);
         }
 
         private void setSubterm(RelatedPileStructureDTO structure) {
