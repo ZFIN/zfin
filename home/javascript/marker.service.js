@@ -27,7 +27,8 @@
             deleteCuratorNote: deleteCuratorNote,
             getLinks: getLinks,
             getLinkDatabases: getLinkDatabases,
-            addLink: addLink
+            addLink: addLink,
+            removeLink: removeLink
         };
 
         function returnResponseData(response) {
@@ -157,6 +158,10 @@
             };
             return $http.post('/action/marker/' + markerId + '/links', link)
                 .then(returnResponseData);
+        }
+
+        function removeLink(link) {
+            return $http.delete('/action/marker/link/' + link.dblinkZdbID);
         }
     }
 }());

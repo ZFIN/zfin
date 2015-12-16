@@ -15,9 +15,7 @@ import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.repository.DisplayGroupRepository;
 import org.zfin.sequence.repository.SequenceRepository;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/marker")
@@ -77,6 +75,14 @@ public class MarkerLinkController {
             LOG.error("too many LinkDisplays returned for " + link.getZdbID());
         }
         return linkDisplays.get(0);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/link/{linkId}", method = RequestMethod.DELETE)
+    public String deleteMarkerLink(@PathVariable String linkId) {
+        DBLink link = sequenceRepository.getDBLinkByID(linkId);
+        sequenceRepository.removeDBLinks(Collections.singletonList(link));
+        return "OK";
     }
 
 }

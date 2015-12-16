@@ -68,7 +68,7 @@ public interface SequenceRepository {
 
     void addDBLinks(Collection<MarkerDBLink> dbLinksToAdd, Publication attributionPub, int commitChunk);
 
-    int removeDBLinks(Set<DBLink> dbLinksToRemove);
+    int removeDBLinks(Collection<DBLink> dbLinksToRemove);
 
     int removeAccessionByNumber(String accessionNumber);
 

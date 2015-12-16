@@ -457,7 +457,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
      *
      * @param dbLinksToRemove DBLinks to remove
      */
-    public int removeDBLinks(Set<DBLink> dbLinksToRemove) {
+    public int removeDBLinks(Collection<DBLink> dbLinksToRemove) {
 
         logger.debug("dbLinksToRemove.size: " + dbLinksToRemove.size());
 

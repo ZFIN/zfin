@@ -32,6 +32,7 @@
         vm.databases = [];
 
         vm.add = add;
+        vm.remove = remove;
 
         activate();
 
@@ -60,6 +61,16 @@
                     vm.newDatabase = '';
                     vm.newAccession = '';
                     vm.newReference = '';
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+        }
+
+        function remove(link, index) {
+            MarkerService.removeLink(link)
+                .then(function() {
+                    vm.links.splice(index, 1);
                 })
                 .catch(function(error) {
                     console.error(error);
