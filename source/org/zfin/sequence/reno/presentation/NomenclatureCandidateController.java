@@ -177,7 +177,7 @@ public class NomenclatureCandidateController extends AbstractCandidateController
                         // logger.debug("mrel group is not empty" + mrelGroup.size());
                         renamedGene = mrelGroup.iterator().next().getFirstMarker();
                     }
-                    throw new RuntimeException("No related gene found for transcript: "+geneToRename.getZdbID());
+                  //  throw new RuntimeException("No related gene found for transcript: "+geneToRename.getZdbID());
                 }
             }
         } else {
