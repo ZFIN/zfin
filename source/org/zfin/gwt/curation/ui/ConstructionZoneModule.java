@@ -90,7 +90,7 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
     }
 
     private void clearQualityChecks() {
-        for(CheckBox checkBox: qualityCheckBoxList)
+        for (CheckBox checkBox : qualityCheckBoxList)
             checkBox.setValue(false);
         notExpressedCheckBox.setValue(false);
     }
@@ -98,6 +98,8 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
     private CheckBox getQualityCheckBox(String name) {
         CheckBox box = new CheckBox(name);
         box.setStyleName("small");
+        if (name.contains("ok"))
+            box.addStyleName("phenotype-normal");
         return box;
     }
 
@@ -306,7 +308,7 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
     }
 
 
-    public void updateEapQualityList(List<EapQualityTermDTO> eapQualityList) {
+    public void initializeEapQualityList(List<EapQualityTermDTO> eapQualityList) {
         qualityListLeft.clear();
         qualityListRight.clear();
         qualityListLeft.add(notExpressedCheckBox);

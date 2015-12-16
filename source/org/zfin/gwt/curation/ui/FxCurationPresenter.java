@@ -1,6 +1,5 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import org.zfin.gwt.root.dto.*;
@@ -154,7 +153,7 @@ public class FxCurationPresenter implements Presenter {
         public void onSuccess(List<EapQualityTermDTO> qualityTermDTOList) {
             fullQualityList.clear();
             fullQualityList = qualityTermDTOList;
-            view.updateEapQualityList(qualityTermDTOList);
+            view.initializeEapQualityList(qualityTermDTOList);
             int index = 0;
             for (CheckBox box : view.getQualityCheckBoxList())
                 checkBoxMap.put(box, qualityTermDTOList.get(index++));
