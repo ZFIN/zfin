@@ -122,7 +122,10 @@ class StructurePileTable extends ZfinFlexTable {
             createStructureElement(postComposedTerm, expressedTerm);
             setWidget(rowIndex, HeaderName.STRUCTURE.getIndex(), postComposedTerm);
             if (structure.getExpressedTerm().getQualityTerm() != null) {
-                Label quality = new Label(structure.getExpressedTerm().getQualityTerm().getNickName());
+                String nickName = structure.getExpressedTerm().getQualityTerm().getNickName();
+                Label quality = new Label(nickName);
+                if(nickName.contains("ok"))
+                    quality.addStyleName("phenotype-normal");
                 setWidget(rowIndex, HeaderName.QUALITY_TAG.getIndex(), quality);
             }
             if (!expressedTerm.isExpressionFound()) {
