@@ -33,7 +33,7 @@
             <tr ng-repeat="link in vm.links">
                 <td>
                     <a ng-href="{{link.urlPrefix + link.accession}}">{{link.referenceDatabaseName}}:{{link.accession}}</a>
-                    ({{link.attributionZdbIDs.length}})
+                    ({{link.references.length}})
                     <span class="small pull-right">
                         <a href ng-click="vm.edit(link)">Edit References</a> |
                         <a href ng-click="vm.remove(link, $index)">Remove</a>

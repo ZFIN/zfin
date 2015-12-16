@@ -4,6 +4,7 @@ import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.publication.presentation.PublicationPresentation;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +16,7 @@ public class LinkDisplay implements ProvidesLink {
     private String referenceDatabaseZdbID;
     private String accession;
     private String urlPrefix;
-    private Set<String> attributionZdbIDs = new HashSet<String>();
+    private Set<MarkerReferenceBean> references;
     private String markerZdbID;
     private String urlSuffix;
     private Integer significance;
@@ -43,18 +44,18 @@ public class LinkDisplay implements ProvidesLink {
     public String getAttributionLink() {
         StringBuilder sb = new StringBuilder("");
 
-        if (attributionZdbIDs.size() == 1) {
+        if (references.size() == 1) {
             sb.append(" (");
-            sb.append(PublicationPresentation.getLink(attributionZdbIDs.iterator().next(), "1"));
+            sb.append(PublicationPresentation.getLink(references.iterator().next().getZdbID(), "1"));
             sb.append(")");
-        } else if (attributionZdbIDs.size() > 1) {
+        } else if (references.size() > 1) {
             /* todo: there should be some more infrastructure for the showpubs links */
             StringBuilder uri = new StringBuilder("?MIval=aa-showpubs.apg");
             uri.append("&orgOID=");
             uri.append(markerZdbID);
             uri.append("&rtype=marker&recattrsrctype=standard");
             uri.append("&OID=");
-            String count = String.valueOf(attributionZdbIDs.size());
+            String count = String.valueOf(references.size());
 
             sb.append(" (");
             sb.append(EntityPresentation.getWebdriverLink(uri.toString(), dblinkZdbID, count));
@@ -89,19 +90,26 @@ public class LinkDisplay implements ProvidesLink {
         this.urlPrefix = urlPrefix;
     }
 
-    public Set<String> getAttributionZdbIDs() {
-        return attributionZdbIDs;
+    public Set<MarkerReferenceBean> getReferences() {
+        return references;
     }
 
-    public void setAttributionZdbIDs(Set<String> attributionZdbIDs) {
-        this.attributionZdbIDs = attributionZdbIDs;
+    public void setReferences(Set<MarkerReferenceBean> references) {
+        this.references = references;
     }
 
-    public int getNumPublications() {
-        if (attributionZdbIDs != null) {
-            return attributionZdbIDs.size();
+    public void addReference(MarkerReferenceBean reference) {
+        if (references == null) {
+            references = new HashSet<>();
         }
-        return 0;
+        references.add(reference);
+    }
+
+    public void addReferences(Collection<MarkerReferenceBean> references) {
+        if (this.references == null) {
+            this.references = new HashSet<>();
+        }
+        this.references.addAll(references);
     }
 
     public String getMarkerZdbID() {
@@ -126,14 +134,6 @@ public class LinkDisplay implements ProvidesLink {
 
     public void setSignificance(Integer significance) {
         this.significance = significance;
-    }
-
-    public void addAttributionZdbIDs(Set<String> publicationZdbIDs) {
-        this.attributionZdbIDs.addAll(publicationZdbIDs);
-    }
-
-    public void addAttributionZdbID(String publicationZdbID) {
-        this.attributionZdbIDs.add(publicationZdbID);
     }
 
     public String getDblinkZdbID() {

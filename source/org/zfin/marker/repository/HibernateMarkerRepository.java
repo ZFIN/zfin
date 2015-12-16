@@ -1973,7 +1973,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 linkDisplay.setUrlSuffix(tuple[4].toString());
             }
             if (tuple[5] != null) {
-                linkDisplay.addAttributionZdbID(tuple[5].toString());
+                MarkerReferenceBean reference = new MarkerReferenceBean();
+                reference.setZdbID(tuple[5].toString());
+                if (tuple[9] != null) {
+                    reference.setTitle(tuple[9].toString());
+                }
+                linkDisplay.addReference(reference);
             }
             if (tuple[6] != null) {
                 linkDisplay.setSignificance(Integer.valueOf(tuple[6].toString()));
@@ -1985,12 +1990,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         @Override
         public List transformList(List list) {
-            Map<String, LinkDisplay> linkMap = new HashMap<String, LinkDisplay>();
+            Map<String, LinkDisplay> linkMap = new HashMap<>();
             for (Object o : list) {
                 LinkDisplay display = (LinkDisplay) o;
                 LinkDisplay displayStored = linkMap.get(display.getAccession());
                 if (displayStored != null) {
-                    displayStored.addAttributionZdbIDs(display.getAttributionZdbIDs());
+                    displayStored.addReferences(display.getReferences());
                     linkMap.put(displayStored.getAccession(), displayStored);
                 } else {
                     linkMap.put(display.getAccession(), display);
@@ -2003,12 +2008,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     public List<LinkDisplay> getMarkerDBLink(String dbLinkId) {
-        String sql = "select dbl.dblink_linked_recid, dbl.dblink_acc_num, fdb.fdb_db_display_name,fdb.fdb_db_query,fdb.fdb_url_suffix, " +
-                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id " +
+        String sql = "select dbl.dblink_linked_recid, dbl.dblink_acc_num, fdb.fdb_db_display_name, fdb.fdb_db_query, fdb.fdb_url_suffix, " +
+                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id, pub.title " +
                 "from db_link dbl  " +
                 "join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
                 "join foreign_db fdb on fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id " +
                 "left outer join record_attribution ra on ra.recattrib_data_zdb_id=dbl.dblink_zdb_id " +
+                "join publication pub on ra.recattrib_source_zdb_id=pub.zdb_id " +
                 "where dbl.dblink_zdb_id = :dbLinkId ";
 
         Query query = HibernateUtil.currentSession().createSQLQuery(sql)
@@ -2020,13 +2026,14 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public List<LinkDisplay> getMarkerDBLinksFast(Marker marker, DisplayGroup.GroupName groupName) {
         String sql = "select dbl.dblink_linked_recid,dbl.dblink_acc_num,fdb.fdb_db_display_name,fdb.fdb_db_query,fdb.fdb_url_suffix, " +
-                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id " +
+                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id, pub.title " +
                 "from db_link dbl  " +
                 "join foreign_db_contains_display_group_member m on m.fdbcdgm_fdbcont_zdb_id=dbl.dblink_fdbcont_zdb_id " +
                 "join foreign_db_contains_display_group g on g.fdbcdg_pk_id=m.fdbcdgm_group_id " +
                 "join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
                 "join foreign_db fdb on fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id " +
                 "left outer join record_attribution ra on ra.recattrib_data_zdb_id=dbl.dblink_zdb_id " +
+                "join publication pub on ra.recattrib_source_zdb_id=pub.zdb_id " +
                 "where g.fdbcdg_name= :displayGroup " +
                 "and " +
                 "dbl.dblink_linked_recid= :markerZdbId ";

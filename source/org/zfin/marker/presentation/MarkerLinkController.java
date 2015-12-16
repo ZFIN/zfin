@@ -63,7 +63,7 @@ public class MarkerLinkController {
         ReferenceDatabase refDB = sequenceRepository.getReferenceDatabaseByID(newLink.getReferenceDatabaseZdbID());
 
         // assume there's only one pub coming in on a new db link
-        String pubId = newLink.getAttributionZdbIDs().iterator().next();
+        String pubId = newLink.getReferences().iterator().next().getZdbID();
 
         HibernateUtil.createTransaction();
         DBLink link = markerRepository.addDBLink(marker, accessionNo, refDB, pubId);
