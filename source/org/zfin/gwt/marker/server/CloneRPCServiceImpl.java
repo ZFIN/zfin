@@ -88,7 +88,8 @@ public class CloneRPCServiceImpl extends ZfinRemoteServiceServlet implements Clo
         cloneDTO.setAliasAttributes(DTOMarkerService.getMarkerAliasDTOs(clone));
 
         // get related genes
-        cloneDTO.setRelatedGeneAttributes(DTOMarkerService.getRelatedGenesMarkerDTOs(clone));
+       // cloneDTO.setRelatedGeneAttributes(DTOMarkerService.getRelatedGenesMarkerDTOs(clone));
+        cloneDTO.setRelatedGeneAttributes(DTOMarkerService.getGenesMarkerDTOs(clone));
 
         // get sequences
         cloneDTO.setSupportingSequenceLinks(DTOMarkerService.getSupportingSequenceDTOs(clone));

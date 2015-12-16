@@ -469,6 +469,7 @@ public interface MarkerRepository {
     List<TargetGenePresentation> getTargetGenesForSequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent);
 
     List<Marker> getSecondMarkersByFirstMarkerAndMarkerRelationshipType(Marker firstMarker, MarkerRelationship.Type relationshipType);
+     List<MarkerRelationship> getMarkerRelationshipBySecondMarker(Marker secondMarker);
 
     PaginationResult<Marker> getRelatedMarker(Marker marker, Set<MarkerRelationship.Type> types, PaginationBean paginationBean);
 

@@ -2774,6 +2774,22 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         return (List<Marker>) query.list();
     }
+    public List<MarkerRelationship> getMarkerRelationshipBySecondMarker(Marker secondMarker) {
+        if (secondMarker == null)
+            return null;
+
+        String hql = "select rel from MarkerRelationship as rel  " +
+                "where rel.secondMarker = :secondMarker " +
+                "order by rel.firstMarker.abbreviationOrder";
+
+        Session session = currentSession();
+        Query query = session.createQuery(hql);
+
+        query.setParameter("secondMarker", secondMarker);
+
+
+        return (List<MarkerRelationship>) query.list();
+    }
 
 
     @Override

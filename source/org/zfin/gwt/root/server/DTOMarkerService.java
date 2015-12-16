@@ -101,6 +101,22 @@ public class DTOMarkerService {
         logger.debug("# of related genes: " + relatedGenes.size());
         return relatedGenes;
     }
+    public static List<MarkerDTO> getGenesMarkerDTOs(Marker marker) {
+
+        List<MarkerRelationship> markerRelationships = RepositoryFactory.getMarkerRepository().getMarkerRelationshipBySecondMarker(marker);
+        List<MarkerDTO> relatedGenes = new ArrayList<MarkerDTO>();
+        for (MarkerRelationship markerRelationship : markerRelationships) {
+            Marker internalGene = markerRelationship.getFirstMarker();
+            relatedGenes.addAll(DTOConversionService.createLinks(DTOConversionService.convertToMarkerDTO(internalGene), markerRelationship.getPublications()));
+            logger.debug("# of related genes: " + relatedGenes.size());
+
+        }
+
+
+        return relatedGenes;
+    }
+
+
 
     /**
      * @param marker Marker
