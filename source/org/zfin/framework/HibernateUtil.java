@@ -43,7 +43,7 @@ public class HibernateUtil {
             // Create the SessionFactory
             Configuration configuration = new AnnotationConfiguration();
             configuration.setInterceptor(new StringCleanInterceptor());
-            sessionFactory = configuration.configure().buildSessionFactory();
+            sessionFactory = configuration.addPackage("org.zfin.expression.*").configure().buildSessionFactory();
         } catch (Throwable ex) {
             log.error("Initial SessionFactory creation failed.", ex);
             throw new ExceptionInInitializerError(ex);

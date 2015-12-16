@@ -20,7 +20,6 @@ import java.util.Set;
 public class ExpressionExperiment2 {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfin")
 /*
     @GenericGenerator(name = "zfin",
             strategy = "org.zfin.database.ZdbIdGenerator",
@@ -28,25 +27,33 @@ public class ExpressionExperiment2 {
                     @Parameter(name = "type",  getName= "XPAT")
             })
 */
-    @Column(name =  "xpatex_zdb_id")
+    @Column(name = "xpatex_zdb_id")
     private String zdbID;
-    @ManyToOne()
-    @Column(name = "xpatex_source_zdb_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xpatex_source_zdb_id")
     private Publication publication;
+    @Transient
     private Set<ExpressionResult> expressionResults;
     @ManyToOne()
-    @Column(name = "xpatex_genox_zdb_id")
+    @JoinColumn(name = "xpatex_genox_zdb_id")
     private FishExperiment fishExperiment;
     @ManyToOne()
-    @Column(name = "xpatex_gene_zdb_id")
+    @JoinColumn(name = "xpatex_gene_zdb_id")
     private Marker gene;
+    @ManyToOne()
+    @JoinColumn(name = "xpatex_probe_feature_zdb_id")
     private Clone probe;
     @ManyToOne()
-    @Column(name = "xpatex_assay_name")
+    @JoinColumn(name = "xpatex_assay_name")
     private ExpressionAssay assay;
+    @ManyToOne()
+    @JoinColumn(name = "xpatex_atb_zdb_id")
     private Antibody antibody;
     // this markerdblink refers to either the probe or the gene as far as I can tell.  Mostly the gene, though.
+    @ManyToOne()
+    @JoinColumn(name = "xpatex_dblink_zdb_id")
     private MarkerDBLink markerDBLink;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "expressionExperiment")
     private Set<ExpressionFigureStage> figureStageSet;
 
     public String getZdbID() {
@@ -203,6 +210,7 @@ public class ExpressionExperiment2 {
 
     /**
      * Retrieve all distinct figures for this expression experiment.
+     *
      * @return set of figures to which expression results are linked
      */
     public Set<Figure> getAllFigures() {
