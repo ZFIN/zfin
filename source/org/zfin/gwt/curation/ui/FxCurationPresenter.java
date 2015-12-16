@@ -70,10 +70,6 @@ public class FxCurationPresenter implements Presenter {
         clearErrorMessages();
     }
 
-    public void clearQualityChecks() {
-        view.updateEapQualityList(fullQualityList);
-    }
-
     public void submitStructure() {
         // expect only 1-2 checked normally
         List<EapQualityTermDTO> eapQualityList = new ArrayList<>(4);
@@ -82,7 +78,7 @@ public class FxCurationPresenter implements Presenter {
                 eapQualityList.add(checkBoxMap.get(checkBox));
             }
         }
-        //Window.alert("num of Qualitites " + eapQualityList.get(0).getNickName());
+        //Window.alert("num of Qualities " + eapQualityList.get(0).getNickName());
         // can submit the 'not-expressed' only without any eap selected.
         if (view.getNotExpressedCheckBox().getValue()) {
             if (eapQualityList.size() > 0) {

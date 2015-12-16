@@ -149,14 +149,12 @@ public interface ExpressionRepository {
      * gene
      * fish
      *
-     * @deprecated Use getExperimentsByGeneAndFish2
-     *
      * @param publicationID publication
      * @param geneZdbID     gene ID
      * @param fishID        genotype ID
      * @return list of expression experiment
      */
-    List<ExpressionExperiment> getExperimentsByGeneAndFish(String publicationID, String geneZdbID, String fishID);
+    List<ExpressionExperiment2> getExperimentsByGeneAndFish(String publicationID, String geneZdbID, String fishID);
 
     /**
      * Retrieves experiment that pertain to a given
@@ -397,4 +395,6 @@ public interface ExpressionRepository {
     List<ExpressionExperiment> getExpressionExperimentByGene(Marker gene);
 
     long getExpressionExperimentByFishAndPublication(Fish fish, String publicationID);
+
+    List<ExpressionExperiment2> getExperiments2(String zdbID);
 }

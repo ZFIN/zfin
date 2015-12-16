@@ -1543,4 +1543,39 @@ public class DTOConversionService {
         dto.setZdbID(person.getZdbID());
         return dto;
     }
+
+    public static ExperimentDTO convertToExperimentDTO(ExpressionExperiment2 experiment) {
+        ExperimentDTO experimentDTO = new ExperimentDTO();
+        experimentDTO.setExperimentZdbID(experiment.getZdbID());
+        Marker gene = experiment.getGene();
+        if (gene != null) {
+            experimentDTO.setGene(convertToMarkerDTO(gene));
+            if (experiment.getMarkerDBLink() != null && experiment.getMarkerDBLink().getAccessionNumber() != null) {
+                String dblink = experiment.getMarkerDBLink().getAccessionNumber();
+                experimentDTO.setGenbankNumber(dblink);
+                experimentDTO.setGenbankID(experiment.getMarkerDBLink().getZdbID());
+            }
+        }
+        if (experiment.getAntibody() != null) {
+            experimentDTO.setAntibodyMarker(convertToMarkerDTO(experiment.getAntibody()));
+        }
+        experimentDTO.setFishName(experiment.getFishExperiment().getFish().getHandle());
+        experimentDTO.setFishID(experiment.getFishExperiment().getFish().getZdbID());
+        experimentDTO.setEnvironment(convertToEnvironmentDTO(experiment.getFishExperiment().getExperiment()));
+        experimentDTO.setAssay(experiment.getAssay().getName());
+        experimentDTO.setAssayAbbreviation(experiment.getAssay().getAbbreviation());
+        experimentDTO.setGenotypeExperimentID(experiment.getFishExperiment().getZdbID());
+        experimentDTO.setPublicationID(experiment.getPublication().getZdbID());
+        // check if there are expressions associated
+        Set<ExpressionResult> expressionResults = experiment.getExpressionResults();
+        if (expressionResults != null) {
+            experimentDTO.setNumberOfExpressions(experiment.getDistinctExpressions());
+        }
+        // check if a clone is available
+        Marker probe = experiment.getProbe();
+        if (probe != null) {
+            experimentDTO.setCloneID(probe.getZdbID());
+            experimentDTO.setCloneName(probe.getAbbreviation() + " [" + probe.getType().toString() + "]");
+        }
+        return experimentDTO;    }
 }

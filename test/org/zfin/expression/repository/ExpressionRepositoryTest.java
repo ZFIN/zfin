@@ -228,6 +228,26 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getExpressionExperimentsNew() {
+        String zdbID = "ZDB-PUB-990507-16";
+
+        List<ExpressionExperiment2> experiments = expRep.getExperiments2(zdbID);
+        assertTrue(experiments != null);
+        // alcam
+        String geneID = "ZDB-GENE-990415-30";
+        experiments = expRep.getExperimentsByGeneAndFish(zdbID, geneID, null);
+        assertTrue(experiments != null);
+
+        // alcam and WT
+//        String fishName = "WT";
+//        experiments = expRep.getExperimentsByGeneAndFish(zdbID, geneID, fishName);
+//        assertTrue(experiments != null);
+        String fishZdbID = "ZDB-GENO-030619-2";
+        experiments = expRep.getExperimentsByGeneAndFish(zdbID, geneID, fishZdbID);
+        assertTrue(experiments != null);
+    }
+
+    @Test
     public void getExpressionExperiments2() {
         String zdbID = "ZDB-PUB-990507-16";
 

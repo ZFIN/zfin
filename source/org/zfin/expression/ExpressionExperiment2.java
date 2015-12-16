@@ -8,24 +8,46 @@ import org.zfin.mutant.FishExperiment;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.MarkerDBLink;
 
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Main Experiment object that contains expression annotations.
  */
+@Entity
+@Table(name = "expression_experiment2")
 public class ExpressionExperiment2 {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfin")
+/*
+    @GenericGenerator(name = "zfin",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @Parameter(name = "type",  getName= "XPAT")
+            })
+*/
+    @Column(name =  "xpatex_zdb_id")
     private String zdbID;
+    @ManyToOne()
+    @Column(name = "xpatex_source_zdb_id")
     private Publication publication;
     private Set<ExpressionResult> expressionResults;
+    @ManyToOne()
+    @Column(name = "xpatex_genox_zdb_id")
     private FishExperiment fishExperiment;
+    @ManyToOne()
+    @Column(name = "xpatex_gene_zdb_id")
     private Marker gene;
     private Clone probe;
+    @ManyToOne()
+    @Column(name = "xpatex_assay_name")
     private ExpressionAssay assay;
     private Antibody antibody;
     // this markerdblink refers to either the probe or the gene as far as I can tell.  Mostly the gene, though.
     private MarkerDBLink markerDBLink;
+    private Set<ExpressionFigureStage> figureStageSet;
 
     public String getZdbID() {
         return zdbID;
@@ -192,5 +214,13 @@ public class ExpressionExperiment2 {
             figures.addAll(result.getFigures());
         }
         return figures;
+    }
+
+    public Set<ExpressionFigureStage> getFigureStageSet() {
+        return figureStageSet;
+    }
+
+    public void setFigureStageSet(Set<ExpressionFigureStage> figureStageSet) {
+        this.figureStageSet = figureStageSet;
     }
 }

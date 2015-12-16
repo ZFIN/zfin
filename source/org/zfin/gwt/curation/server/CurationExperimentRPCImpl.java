@@ -143,14 +143,23 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
     }
 
     public List<ExperimentDTO> getExperimentsByFilter(ExperimentDTO experimentFilter) {
-        List<ExpressionExperiment> experiments =
-                expRepository.getExperimentsByGeneAndFish2(experimentFilter.getPublicationID(),
+        List<ExpressionExperiment2> experiments =
+                expRepository.getExperimentsByGeneAndFish(experimentFilter.getPublicationID(),
                         experimentFilter.getGene() == null ? null : experimentFilter.getGene().getZdbID(),
                         experimentFilter.getFishID());
         if (experiments == null)
             return null;
 
-        return convertExperimentsToDTO(experiments);
+        return convertExperiments2ToDTO(experiments);
+    }
+
+    private List<ExperimentDTO> convertExperiments2ToDTO(List<ExpressionExperiment2> experiments) {
+        List<ExperimentDTO> dtos = new ArrayList<>();
+        for (ExpressionExperiment2 experiment : experiments) {
+            ExperimentDTO dto = DTOConversionService.convertToExperimentDTO(experiment);
+            dtos.add(dto);
+        }
+        return dtos;
     }
 
     public static List<ExperimentDTO> convertExperimentsToDTO(List<ExpressionExperiment> experiments) {

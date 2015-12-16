@@ -2,12 +2,10 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.*;
@@ -64,10 +62,6 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
     @UiField
     VerticalPanel qualityListRight;
 
-    private ZfinListBox tagList;
-    public static final String TAG_ABNORMAL = "abnormal";
-    public static final String TAG_NORMAL = "normal";
-    private String publicationID;
     private FxCurationPresenter fxCurationPresenter;
 
     private Map<EntityPart, TermEntry> termEntryUnitsMap = new HashMap<>(5);
@@ -92,7 +86,13 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
             termEntry.reset();
         }
         termInfoBox.setToDefault();
-        fxCurationPresenter.clearQualityChecks();
+        clearQualityChecks();
+    }
+
+    private void clearQualityChecks() {
+        for(CheckBox checkBox: qualityCheckBoxList)
+            checkBox.setValue(false);
+        notExpressedCheckBox.setValue(false);
     }
 
     private CheckBox getQualityCheckBox(String name) {
@@ -257,8 +257,6 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
             }
         }
 //        setVisibilityForRelatedEntityPanel(false);
-        if (tagList != null)
-            tagList.selectEntryByDisplayName(TAG_ABNORMAL);
     }
 
     public void resetConstructionZone() {
