@@ -71,11 +71,9 @@ run_commit: begin  fetch_vega novel_check withdrawn_check blast_transcripts load
 
 VEGADIR = /research/zprod/data/VEGA
 
-DEST = $(VEGADIR)/2014-11
-FTP  = ftp.sanger.ac.uk/pub/users/st3/vega59/
-PREV = $(VEGADIR)/2013-10
-
-COMMON_BIN = $(TOP)/commons/bin
+DEST = $(VEGADIR)/2015-12
+FTP  = ftp.sanger.ac.uk/pub/users/st3/vega64/
+PREV = $(VEGADIR)/2014-11
 
 ZFIN_DOWNLOADS = http://zfin.org/data_transfer/Downloads
 
@@ -289,7 +287,7 @@ $(DEST)/vega_zfin.nt:  $(DEST)/vega_transcript.nt
 # tricky because this needs to be done as informix, setuid could help
 push_local_blast: $(DEST)/vega_transcript.nt
 	@echo "\n*******************   AS INFORMIX   ************************\n"
-	@echo "$(COMMON_BIN)/push_local_blastdb.sh $<"
+	@echo "/private/bin/push_local_blastdb.sh $<"
 	@echo "\n************************************************************\n"
 
 clean_push_local_blast:
@@ -304,10 +302,10 @@ $(DEST)/vega_reno_gene.nt: vega_transcript.xn%  $(DEST)/ottdarG_toBLAST.txt
 	@grep -c "^>" $@
 
 $(DEST)/vega_reno_gene.out:  $(DEST)/vega_reno_gene.nt
-	$(COMMON_BIN)/blast_reno.sh $<
+	/opt/zfin/bin/blast_reno.sh $<
 
 Vega_%_NEW_.ctx: $(DEST)/vega_reno_gene.out
-	$(COMMON_BIN)/parse-blast-reno.r  $<   Vega_`date +%Y%m%d`_NEW_
+	/opt/zfin/bin/parse-blast-reno.r  $<   Vega_`date +%Y%m%d`_NEW_
 
 blast_transcripts: Vega_%_NEW_.ctx  push_local_blast
 	@echo "\nFeed Vega_%_NEW_.ctx to the reno pipeline"
@@ -395,7 +393,7 @@ ottdarT_length.unl:	$(DEST)/vega_transcript.nt
 # from vega_reno_gene.nt
 
 query_ottdarT.unl: $(DEST)/vega_reno_gene.nt
-	grep "^>" $< |cut -f2 -d\| | $(COMMON_BIN)/tailpipe >  $@
+	grep "^>" $< |cut -f2 -d\| | /private/bin/tailpipe >  $@
 	cp -f $@ $(DEST)/$@
 
 load_novel_transcript.log:
@@ -444,7 +442,7 @@ existing_withdrawn.fa:  $(BLASTFILES)/vega_withdrawn.fa
 	grep -c "^>" $@
 
 fresh_withdrawn.fa: $(DEST)/withdrawn.ottdarT  $(PREV)/vega_transcript.nt
-	$(COMMON_BIN)/fastagrep -f $+ > $@
+	/private/bin/fastagrep -f $+ > $@
 	grep -c "^>" $@
 
 all_withdrawn.fa: existing_withdrawn.fa fresh_withdrawn.fa
@@ -458,12 +456,12 @@ select_withdrawn.lst: select_withdrawn.txt
 	cut -f1 $< > $@
 
 vega_withdrawn.fa: select_withdrawn.lst all_withdrawn.fa
-	$(COMMON_BIN)/fastagrep -f $+ > $@
+	/private/bin/fastagrep -f $+ > $@
 	grep -c "^>" $@
 
 withdrawn_transcripts: vega_withdrawn.fa
 	@echo "\n*******************   AS INFORMIX   ************************\n"
-	@echo "$(COMMON_BIN)/push_local_blastdb.sh $<"
+	@echo "/private/bin/push_local_blastdb.sh $<"
 	@echo "\n************************************************************\n"
 
 # ...should depend on blast database actually being in place
