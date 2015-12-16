@@ -7,7 +7,7 @@
         >
 
     <g:HorizontalPanel>
-        <g:VerticalPanel spacing="10" title="Pile">
+        <g:VerticalPanel spacing="10" title="Construction Zone">
             <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
                 <g:Label text="Anatomy" addStyleNames="bold" width="100" horizontalAlignment="left"/>
                 <g:Label text=":" addStyleNames="bold"/>
@@ -16,7 +16,7 @@
             <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
                 <g:HTML width="10" styleName="green-pad" height="100%">&nbsp;<p/>&nbsp;
                 </g:HTML>
-                <g:VerticalPanel spacing="10" title="Pile">
+                <g:VerticalPanel spacing="10">
                     <zfin:TermEntry ui:field="subTermEntry"
                                     listOFOntologies="zebrafish_anatomy,cellular_component,spatial,mouse_pathology.ontology"
                                     entityPart="ENTITY_SUBTERM"

@@ -46,9 +46,9 @@ public class EapQualityTermDTO implements Serializable {
     }
 
 
-    public static final Map<String, String> nicknameMap = new LinkedHashMap<>(12);
+    public static Map<String, String> nicknameMap = new LinkedHashMap<>(12);
 
-    {
+    static {
         nicknameMap.put("PATO:0000462,abnormal", "absent phenotypic");
         nicknameMap.put("PATO:0000628,abnormal", "mislocalized");
         nicknameMap.put("PATO:0000140,ameliorated", "position ok");

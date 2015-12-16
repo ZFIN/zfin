@@ -1,7 +1,9 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.user.client.Window;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.RadioButton;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
 import org.zfin.gwt.root.dto.*;
@@ -14,7 +16,7 @@ import org.zfin.gwt.root.util.StageRangeUnion;
 import java.util.*;
 
 /**
- * construction zone
+ * Structure pile
  */
 public class StructurePilePresenter implements Presenter {
 
@@ -23,11 +25,13 @@ public class StructurePilePresenter implements Presenter {
     private List<EapQualityTermDTO> fullQualityList = new ArrayList<>();
     private Map<CheckBox, EapQualityTermDTO> checkBoxMap = new HashMap<>();
     private boolean processing = false;
+    private static final String UNSPECIFIED = "unspecified";
 
     // all expressions displayed on the page (all or a subset defined by the filter elements)
     private List<ExpressionPileStructureDTO> displayedStructures = new ArrayList<ExpressionPileStructureDTO>(10);
 
     private CurationExperimentRPCAsync curationRPCAsync = CurationExperimentRPC.App.getInstance();
+    private PileStructuresRPCAsync pileStructureRPCAsync = PileStructuresRPC.App.getInstance();
 
     public StructurePilePresenter(StructurePileView view, String publicationID) {
         this.view = view;
@@ -36,6 +40,9 @@ public class StructurePilePresenter implements Presenter {
 
     public void bind() {
         view.getStructurePileTable().setRemoveStructureCallBack(new RemovePileStructureCallback());
+        view.getReCreatePile().addClickHandler(new CreateExpressionPileHandler(view.getReCreatePile()));
+        //view.getReCreatePile().setVisible(false);
+
         addDynamicClickHandler();
     }
 
@@ -289,4 +296,50 @@ public class StructurePilePresenter implements Presenter {
 
         }
     }
+
+    private class CreateExpressionPileHandler implements ClickHandler {
+
+        private Hyperlink phenotypePile;
+
+        public CreateExpressionPileHandler(Hyperlink createPhenotypePile) {
+            phenotypePile = createPhenotypePile;
+        }
+
+        public void onClick(ClickEvent clickEvent) {
+            view.getLoadingImage().setVisible(true);
+            pileStructureRPCAsync.recreateExpressionStructurePile(publicationID, new RetrieveExpressionPileCallback());
+        }
+    }
+
+    private class RetrieveExpressionPileCallback extends ZfinAsyncCallback<List<ExpressionPileStructureDTO>> {
+
+        public RetrieveExpressionPileCallback() {
+            super("Error while reading Structures", view.errorElement);
+        }
+
+        @Override
+        public void onSuccess(List<ExpressionPileStructureDTO> list) {
+            //Window.alert("List: " + list.size());
+            displayedStructures.clear();
+            if (list == null)
+                return;
+
+            for (ExpressionPileStructureDTO structure : list) {
+                // do not add 'unspecified'
+                if (!structure.getExpressedTerm().getEntity().getSuperTerm().getTermName().equals(UNSPECIFIED))
+                    displayedStructures.add(structure);
+            }
+            view.getReCreatePile().setVisible(false);
+            //Window.alert("SIZE: " + list.size());
+            view.getStructurePileTable().createStructureTable();
+////            updateFigureAnnotations(expressionSection.getSelectedExpressions());
+            view.getLoadingImage().setVisible(false);
+        }
+
+        @Override
+        public void onFailureCleanup() {
+            view.getLoadingImage().setVisible(true);
+        }
+    }
+
 }
