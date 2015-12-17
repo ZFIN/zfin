@@ -15,7 +15,7 @@
     function markerNotes() {
         var directive = {
             restrict: 'EA',
-            templateUrl: '/javascript/marker-notes.directive.html',
+            templateUrl: '/templates/marker-notes.directive.html',
             scope: {
                 id: '@',
                 userId: '@'

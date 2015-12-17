@@ -6,7 +6,7 @@
     function markerLinks() {
         var directive = {
             restrict: 'EA',
-            templateUrl: '/javascript/marker-links.directive.html',
+            templateUrl: '/templates/marker-links.directive.html',
             scope: {
                 id: '@',
                 group: '@'

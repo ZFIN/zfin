@@ -6,7 +6,7 @@
     function strSequence() {
         var directive = {
             restrict: 'EA',
-            templateUrl: '/javascript/str-sequence.directive.html',
+            templateUrl: '/templates/str-sequence.directive.html',
             scope: {
                 reportedSequenceName: '@',
                 displayedSequenceName: '@',

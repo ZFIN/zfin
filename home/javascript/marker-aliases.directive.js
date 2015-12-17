@@ -6,7 +6,7 @@
     function markerAliases() {
         var directive = {
             restrict: 'EA',
-            templateUrl: '/javascript/marker-aliases.directive.html',
+            templateUrl: '/templates/marker-aliases.directive.html',
             scope: {
                 id: '@',
                 name: '@'

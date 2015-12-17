@@ -6,7 +6,7 @@
     function markerRelationships() {
         var directive = {
             restrict: 'EA',
-            templateUrl: '/javascript/marker-relationships.directive.html',
+            templateUrl: '/templates/marker-relationships.directive.html',
             scope: {
                 id: '@',
                 relationship: '@',

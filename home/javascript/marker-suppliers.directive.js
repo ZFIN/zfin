@@ -36,7 +36,7 @@
     function markerSuppliers() {
         var directive = {
             restrict: 'EA',
-            templateUrl: '/javascript/marker-suppliers.directive.html',
+            templateUrl: '/templates/marker-suppliers.directive.html',
             scope: {
                 id: '@'
             },

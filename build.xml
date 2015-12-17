@@ -517,6 +517,7 @@
                     <include name="css/**"/>
                     <include name="fonts/**"/>
                     <include name="javascript/**"/>
+                    <include name="templates/**"/>
                 </fileset>
             </move>
             <move file="@{from}/java-deploy-version.html" todir="@{to}" failonerror="false"/>
@@ -610,6 +611,7 @@
             <delete dir="@{location}/fonts"/>
             <delete dir="@{location}/javascript"/>
             <delete dir="@{location}/images"/>
+            <delete dir="@{location}/templates"/>
             <delete dir="@{location}/WEB-INF"/>
         </sequential>
     </macrodef>
@@ -662,6 +664,7 @@
                     <exclude name="javascript/phenogrid/**"/>
                     <exclude name="fonts/**"/>
                     <exclude name="images/**"/>
+                    <exclude name="templates/**"/>
                     <exclude name="**/*.jar"/>
                     <exclude name="**/*.zip"/>
                     <exclude name="**/*.class"/>
@@ -677,6 +680,7 @@
                     <include name="images/**"/>
                     <include name="css/images/**"/>
                     <include name="fonts/**"/>
+                    <include name="templates/**"/>
                     <include name="WEB-INF/**/*.jar"/>
                     <include name="WEB-INF/**/*.zip"/>
                     <include name="WEB-INF/**/*.class"/>

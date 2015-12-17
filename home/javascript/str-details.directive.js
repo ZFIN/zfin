@@ -6,7 +6,7 @@
     function strDetails() {
         var directive = {
             restrict: 'EA',
-            templateUrl: '/javascript/str-details.directive.html',
+            templateUrl: '/templates/str-details.directive.html',
             scope: {
                 id: '@',
                 type: '@'
