@@ -318,7 +318,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
 
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            ExpressionExperiment expressionExperiment = expRepository.getExpressionExperiment(experimentID);
+            ExpressionExperiment2 expressionExperiment = expRepository.getExpressionExperiment2(experimentID);
             //createAuditRecordsForModifications(expressionExperiment, experimentDTO);
             // update assay: never null
             populateExpressionExperiment(experimentDTO, expressionExperiment);
@@ -378,7 +378,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
 
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            ExpressionExperiment expressionExperiment = new ExpressionExperiment();
+            ExpressionExperiment2 expressionExperiment = new ExpressionExperiment2();
             populateExpressionExperiment(experimentDTO, expressionExperiment);
 
             expRepository.createExpressionExperiment(expressionExperiment);
@@ -459,7 +459,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      * @param experimentDTO        dto
      * @param expressionExperiment expression experiment on which the changes are applied.
      */
-    public static void populateExpressionExperiment(ExperimentDTO experimentDTO, ExpressionExperiment expressionExperiment) {
+    public static void populateExpressionExperiment(ExperimentDTO experimentDTO, ExpressionExperiment2 expressionExperiment) {
         // update assay: never null
         ExpressionAssay newAssay = expRepository.getAssayByName(experimentDTO.getAssay());
         expressionExperiment.setAssay(newAssay);

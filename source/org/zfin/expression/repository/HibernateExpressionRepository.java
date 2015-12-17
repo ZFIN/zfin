@@ -459,6 +459,12 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (ExpressionExperiment) session.get(ExpressionExperiment.class, experimentID);
     }
 
+    @SuppressWarnings("unchecked")
+    public ExpressionExperiment2 getExpressionExperiment2(String experimentID) {
+        Session session = HibernateUtil.currentSession();
+        return (ExpressionExperiment2) session.get(ExpressionExperiment2.class, experimentID);
+    }
+
     public ExpressionDetailsGenerated getExpressionExperiment2(long id) {
         return (ExpressionDetailsGenerated) currentSession().get(ExpressionDetailsGenerated.class, id);
     }
@@ -576,7 +582,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      *
      * @param expressionExperiment expression experiment
      */
-    public void createExpressionExperiment(ExpressionExperiment expressionExperiment) {
+    public void createExpressionExperiment(ExpressionExperiment2 expressionExperiment) {
         Session session = HibernateUtil.currentSession();
         session.save(expressionExperiment);
     }

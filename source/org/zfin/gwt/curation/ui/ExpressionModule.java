@@ -31,6 +31,7 @@ public class ExpressionModule implements HandlesError, EntryPoint {
 
     // data
     private String publicationID;
+    private boolean debug;
 
     // listener
     private List<HandlesError> handlesErrorListeners = new ArrayList<>();
@@ -81,16 +82,12 @@ public class ExpressionModule implements HandlesError, EntryPoint {
         expressionZone.setExperimentFilter(dto);
         structurePile.getStructurePileTable().setExpressionSection(expressionZone);
 
-        expressionExperimentZonePresenter = new ExpressionExperimentZonePresenter(expressionExperimentZone, publicationID);
+        expressionExperimentZonePresenter = new ExpressionExperimentZonePresenter(expressionExperimentZone, publicationID, debug);
         expressionExperimentZonePresenter.go();
 
         bindEventBusHandler();
         addHandlerEvents();
         
-/*
-        fxCurationModule = new FxCurationModule(publicationID);
-        fxCurationModule.getStructureModule().setPileStructureClickListener(constructionZoneModule);
-*/
     }
 
     public void addHandlerEvents() {

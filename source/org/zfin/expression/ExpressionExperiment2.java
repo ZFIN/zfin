@@ -1,5 +1,6 @@
 package org.zfin.expression;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.marker.Clone;
@@ -20,13 +21,13 @@ import java.util.Set;
 public class ExpressionExperiment2 {
 
     @Id
-/*
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfin")
     @GenericGenerator(name = "zfin",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
-                    @Parameter(name = "type",  getName= "XPAT")
+                    @org.hibernate.annotations.Parameter(name = "type", value = "XPAT"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
             })
-*/
     @Column(name = "xpatex_zdb_id")
     private String zdbID;
     @ManyToOne(fetch = FetchType.LAZY)

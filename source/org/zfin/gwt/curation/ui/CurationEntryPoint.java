@@ -6,6 +6,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.root.dto.CuratorSessionDTO;
 import org.zfin.gwt.root.ui.SessionSaveService;
+import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ public class CurationEntryPoint implements EntryPoint {
 
     // Publication in question.
     private String publicationID;
+    private boolean debug;
     private CurationModuleType type;
 
     // a list of CuratorSessionUpdateObjects
@@ -46,6 +48,8 @@ public class CurationEntryPoint implements EntryPoint {
         try {
             Dictionary transcriptDictionary = Dictionary.getDictionary(CURATION_PROPERTIES);
             publicationID = transcriptDictionary.get(LOOKUP_PUBLICATION_ID);
+            if (!StringUtils.isEmpty(transcriptDictionary.get(DEBUG)))
+                debug = Boolean.parseBoolean(transcriptDictionary.get(DEBUG));
             type = CurationModuleType.getType(transcriptDictionary.get(MODULE_TYPE));
             //Window.alert("module Type: " + type.toString());
         } catch (Exception e) {

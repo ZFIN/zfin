@@ -24,6 +24,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     private ExpressionExperimentZoneView view;
     private String publicationID;
+    private boolean debug;
 
     // filter set by the banana bar
     private ExperimentDTO experimentFilter = new ExperimentDTO();
@@ -38,11 +39,13 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     private boolean sectionVisible;
 
 
-    public ExpressionExperimentZonePresenter(ExpressionExperimentZoneView view, String publicationID) {
+    public ExpressionExperimentZonePresenter(ExpressionExperimentZoneView view, String publicationID, boolean debug) {
         this.view = view;
         this.publicationID = publicationID;
+        this.debug = debug;
         experimentFilter = new ExperimentDTO();
         experimentFilter.setPublicationID(publicationID);
+        view.setPresenter(this);
     }
 
     public void bind() {
@@ -310,7 +313,6 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
         public void onChange(ChangeEvent event) {
             String geneID = view.getGeneList().getValue(view.getGeneList().getSelectedIndex());
-            Window.alert(geneID);
             String assayName = view.getAssayList().getItemText(view.getAssayList().getSelectedIndex());
             //Window.alert(itemText);
             // only fetch antibodies if the right assay is selected
@@ -482,8 +484,8 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     }
 
-    private boolean isDebug() {
-        return false;
+    public boolean isDebug() {
+        return debug;
     }
 
     public String getPublicationID() {

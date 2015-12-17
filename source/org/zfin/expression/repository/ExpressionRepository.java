@@ -64,6 +64,7 @@ public interface ExpressionRepository {
      * @return ExpressionExperiment
      */
     ExpressionExperiment getExpressionExperiment(String experimentID);
+    ExpressionExperiment2 getExpressionExperiment2(String experimentID);
 
     ExpressionDetailsGenerated getExpressionExperiment2(long id);
 
@@ -134,7 +135,7 @@ public interface ExpressionRepository {
      *
      * @param expressionExperiment expression experiment
      */
-    void createExpressionExperiment(ExpressionExperiment expressionExperiment);
+    void createExpressionExperiment(ExpressionExperiment2 expressionExperiment);
 
     /**
      * Remove an existing expression experiment and all objects that it is composed of.
