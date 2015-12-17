@@ -19,8 +19,8 @@
         return directive;
     }
 
-    MarkerLinksController.$inject = ['MarkerService'];
-    function MarkerLinksController(MarkerService) {
+    MarkerLinksController.$inject = ['MarkerService', 'FieldErrorService'];
+    function MarkerLinksController(MarkerService, FieldErrorService) {
 
         var vm = this;
 
@@ -30,6 +30,8 @@
 
         vm.links = [];
         vm.databases = [];
+        vm.errors = {};
+        vm.processing = false;
 
         vm.editing = null;
 
@@ -61,16 +63,21 @@
         }
 
         function add() {
+            vm.processing = true;
             MarkerService.addLink(vm.id, vm.newDatabase, vm.newAccession, vm.newReference)
                 .then(function(link) {
                     vm.links.unshift(link);
                     vm.newDatabase = '';
                     vm.newAccession = '';
                     vm.newReference = '';
+                    vm.errors = {};
                 })
                 .catch(function(error) {
-                    console.error(error);
-                });
+                    vm.errors = FieldErrorService.processErrorResponse(error);
+                })
+                .finally(function() {
+                    vm.processing = false;
+                })
         }
 
         function remove(link, index) {

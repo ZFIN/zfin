@@ -3,8 +3,11 @@ package org.zfin.marker.presentation;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -16,7 +19,11 @@ import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.repository.DisplayGroupRepository;
 import org.zfin.sequence.repository.SequenceRepository;
 
-import java.util.*;
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @Controller
 @RequestMapping("/marker")
@@ -35,6 +42,11 @@ public class MarkerLinkController {
 
     @Autowired
     private InfrastructureRepository infrastructureRepository;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setValidator(new LinkDisplayValidator());
+    }
 
     @ResponseBody
     @RequestMapping("/link/databases")
@@ -61,10 +73,28 @@ public class MarkerLinkController {
     @ResponseBody
     @RequestMapping(value = "/{markerId}/links", method = RequestMethod.POST)
     public LinkDisplay addMarkerLink(@PathVariable String markerId,
-                                     @RequestBody LinkDisplay newLink) {
-        Marker marker = markerRepository.getMarkerByID(markerId);
-        String accessionNo = newLink.getAccession();
-        ReferenceDatabase refDB = sequenceRepository.getReferenceDatabaseByID(newLink.getReferenceDatabaseZdbID());
+                                     @Valid @RequestBody LinkDisplay newLink,
+                                     BindingResult errors) {
+        Marker marker = null;
+        String accessionNo = null;
+        ReferenceDatabase refDB = null;
+
+        if (!errors.hasErrors()) {
+            marker = markerRepository.getMarkerByID(markerId);
+            accessionNo = newLink.getAccession();
+            refDB = sequenceRepository.getReferenceDatabaseByID(newLink.getReferenceDatabaseZdbID());
+
+            for (DBLink link : marker.getDbLinks()) {
+                if (link.getReferenceDatabase().equals(refDB) && link.getAccessionNumber().equals(accessionNo)) {
+                    errors.reject("marker.link.duplicate");
+                }
+            }
+        }
+
+        if (errors.hasErrors()) {
+            throw new InvalidWebRequestException("Invalid marker DBLink", errors);
+        }
+
 
         // assume there's only one pub coming in on a new db link
         String pubId = newLink.getReferences().iterator().next().getZdbID();

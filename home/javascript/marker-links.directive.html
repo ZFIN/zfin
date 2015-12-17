@@ -2,27 +2,33 @@
     <form class="form-single-row">
         <div class="form-group col-sm-3">
             <label>Database</label>
+            <p class="text-danger" ng-repeat="error in vm.errors.referenceDatabaseZdbID">{{error}}</p>
             <select class="form-control"
                     ng-model="vm.newDatabase"
                     ng-options="d.zdbID as d.name for d in vm.databases"></select>
         </div>
         <div class="form-group col-sm-3">
             <label>Accession Number</label>
+            <p class="text-danger" ng-repeat="error in vm.errors.accession">{{error}}</p>
             <input class="form-control" ng-model="vm.newAccession">
         </div>
         <div class="form-group col-sm-3">
             <label>Reference</label>
+            <p class="text-danger" ng-repeat="error in vm.errors.references">{{error}}</p>
             <input pub-lookup class="form-control" ng-model="vm.newReference">
         </div>
         <div class="form-group col-sm-3">
             <button type="button" class="btn btn-primary"
-                    ng-disabled="!vm.newDatabase || !vm.newAccession || !vm.newReference"
+                    ng-disabled="vm.processing || !vm.newDatabase || !vm.newAccession || !vm.newReference"
                     ng-click="vm.add()">
-                Add
+                <span ng-hide="vm.processing">Add</span>
+                <i ng-show="vm.processing" class="fa fa-spinner fa-spin"></i>
             </button>
         </div>
     </form>
 </div>
+
+<p class="text-danger" ng-repeat="error in vm.errors.$global">{{error}}</p>
 
 <div class="row">
     <div class="col-sm-6">
