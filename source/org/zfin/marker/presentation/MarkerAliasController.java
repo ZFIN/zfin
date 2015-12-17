@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
@@ -31,6 +32,11 @@ public class MarkerAliasController {
     @Autowired
     private InfrastructureRepository infrastructureRepository;
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setValidator(new MarkerAliasBeanValidator());
+    }
+
     @ResponseBody
     @RequestMapping(value = "/{markerID}/aliases", method = RequestMethod.GET)
     public Collection<MarkerAliasBean> getMarkerAliases(@PathVariable String markerID) {
@@ -50,11 +56,18 @@ public class MarkerAliasController {
     public MarkerAliasBean addMarkerAlias(@PathVariable String markerID,
                                           @Valid @RequestBody MarkerAliasBean newAlias,
                                           BindingResult errors) {
+        Marker marker = markerRepository.getMarkerByID(markerID);
+
+        for (MarkerAlias alias : marker.getAliases()) {
+            if (alias.getAlias().equals(newAlias.getAlias())) {
+                errors.rejectValue("alias", "marker.alias.inuse");
+            }
+        }
+
         if (errors.hasErrors()) {
             throw new InvalidWebRequestException("Invalid alias", errors);
         }
 
-        Marker marker = markerRepository.getMarkerByID(markerID);
         // when creating a new alias, the assumption is that there is only one reference
         String pubID = newAlias.getReferences().iterator().next().getZdbID();
         Publication publication = publicationRepository.getPublication(pubID);

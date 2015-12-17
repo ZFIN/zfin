@@ -19,8 +19,8 @@
         return directive;
     }
 
-    MarkerAliasesController.$inject = ['MarkerService'];
-    function MarkerAliasesController(MarkerService) {
+    MarkerAliasesController.$inject = ['MarkerService', 'FieldErrorService'];
+    function MarkerAliasesController(MarkerService, FieldErrorService) {
 
         var vm = this;
 
@@ -29,6 +29,8 @@
 
         vm.editing = null;
         vm.aliases = [];
+        vm.errors = {};
+        vm.processing = false;
 
         vm.remove = remove;
         vm.edit = edit;
@@ -50,11 +52,19 @@
         }
 
         function add() {
+            vm.processing = true;
             MarkerService.addAlias(vm.id, vm.newAlias, vm.newReference)
                 .then(function(alias) {
                     vm.aliases.unshift(alias);
                     vm.newAlias = '';
                     vm.newReference = '';
+                    vm.errors = {};
+                })
+                .catch(function(error) {
+                    vm.errors = FieldErrorService.processErrorResponse(error);
+                })
+                .finally(function() {
+                    vm.processing = false;
                 })
         }
 
