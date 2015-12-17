@@ -38,6 +38,8 @@
 
         vm.publicNote = null;
         vm.curatorNotes = [];
+        vm.processing = false;
+        vm.errors = {};
 
         vm.editPublicNote = editPublicNote;
         vm.cancelEditPublicNote = cancelEditPublicNote;
@@ -80,12 +82,17 @@
             // todo: move this to MarkerService?
             var newNote = vm.publicNote;
             newNote.noteData = vm.newPublicNote;
+            vm.publicNote.processing = true;
             MarkerService.updatePublicNote(vm.id, newNote)
                 .then(function(note) {
                     vm.publicNote = note;
                 })
                 .catch(function(error) {
                     console.error(error);
+                    vm.publicNote.error = 'Unable to save note. Please try again later.';
+                })
+                .finally(function() {
+                    vm.publicNote.processing = false;
                 });
         }
 
@@ -95,14 +102,20 @@
                 noteData: vm.newCuratorNote,
                 noteEditMode: "PRIVATE"
             };
+            vm.processing = true;
             MarkerService.addCuratorNote(vm.id, newNote)
                 .then(function(note) {
                     vm.curatorNotes.unshift(note);
                     vm.newCuratorNote = '';
+                    vm.errors = {};
                 })
                 .catch(function(error) {
                     console.error(error);
-                });
+                    vm.errors.curator = 'Unable to save note. Please try again later.';
+                })
+                .finally(function() {
+                    vm.processing = false;
+                })
         }
 
         function editCuratorNote(note) {
@@ -115,13 +128,18 @@
         }
 
         function saveCuratorNote(note, index) {
+            note.processing = true;
             MarkerService.updateCuratorNote(vm.id, note, note.editText)
                 .then(function(note) {
                     vm.curatorNotes[index] = note;
                 })
                 .catch(function(error) {
                     console.error(error);
-                });
+                    note.error = 'Unable to save note. Please try again later.';
+                })
+                .finally(function() {
+                    note.processing = false;
+                })
         }
 
         function deleteCuratorNote(note, index) {

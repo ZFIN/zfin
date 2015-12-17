@@ -17,10 +17,12 @@
             <button class="btn btn-default" ng-click="vm.cancelEditPublicNote()">
                 Cancel
             </button>
-            <button class="btn btn-primary" ng-click="vm.savePublicNote()">
-                Save
+            <button class="btn btn-primary" ng-click="vm.savePublicNote()" ng-disabled="vm.publicNote.processing">
+                <span ng-hide="vm.publicNote.processing">Save</span>
+                <i ng-show="vm.publicNote.processing" class="fa fa-spinner fa-spin"></i>
             </button>
         </div>
+        <p class="text-danger" ng-show="vm.publicNote.error">{{vm.publicNote.error}}</p>
     </div>
 </form>
 
@@ -33,12 +35,16 @@
     </div>
     <div class="form-group">
         <button class="btn btn-primary"
-                ng-disabled="!vm.newCuratorNote"
+                ng-disabled="vm.processing || !vm.newCuratorNote"
                 ng-click="vm.addCuratorNote()">
-            Add
+            <span ng-hide="vm.processing">Add</span>
+            <i ng-show="vm.processing" class="fa fa-spinner fa-spin"></i>
         </button>
     </div>
 </form>
+
+<p class="text-danger" ng-show="vm.errors.curator">{{vm.errors.curator}}</p>
+
 <div class="media" ng-repeat="note in vm.curatorNotes">
     <div class="media-body">
         <div class="media-heading">
@@ -62,10 +68,12 @@
                     <button class="btn btn-default" ng-click="vm.cancelEditCuratorNote(note)">
                         Cancel
                     </button>
-                    <button class="btn btn-primary" ng-click="vm.saveCuratorNote(note, $index)">
-                        Save
+                    <button class="btn btn-primary" ng-click="vm.saveCuratorNote(note, $index)" ng-disabled="note.processing">
+                        <span ng-hide="note.processing">Save</span>
+                        <i ng-show="note.processing" class="fa fa-spinner fa-spin"></i>
                     </button>
                 </div>
+                <p class="text-danger" ng-show="note.error">{{note.error}}</p>
             </div>
         </div>
     </div>
