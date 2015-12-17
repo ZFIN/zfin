@@ -55,7 +55,7 @@
 
         vm.suppliers = [];
         vm.supplier = '';
-        vm.errors = FieldErrorService.clearErrors();
+        vm.errors = {};
 
         vm.submit = submit;
         vm.remove = remove;
@@ -84,7 +84,7 @@
                 .then(function (supplier) {
                     vm.suppliers.push(supplier);
                     vm.supplier = '';
-                    vm.errors = FieldErrorService.clearErrors();
+                    vm.errors = {};
                 })
                 .catch(function (response) {
                     vm.errors = FieldErrorService.processErrorResponse(response);

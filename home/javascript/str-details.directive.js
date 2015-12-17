@@ -30,7 +30,7 @@
 
         vm.processing = false;
         vm.saved = false;
-        vm.errors = FieldErrorService.clearErrors();
+        vm.errors = {};
 
         vm.save = save;
         vm.reset = reset;
@@ -52,7 +52,7 @@
         function save() {
             vm.processing = true;
             vm.saved = false;
-            vm.errors = FieldErrorService.clearErrors();
+            vm.errors = {};
             STRService.saveStrDetails(vm.id, vm.str)
                 .then(function (data) {
                     vm.str = data;
