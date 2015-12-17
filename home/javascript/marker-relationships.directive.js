@@ -20,8 +20,8 @@
         return directive;
     }
 
-    MarkerRelationshipsController.$inject = ['MarkerService'];
-    function MarkerRelationshipsController(MarkerService) {
+    MarkerRelationshipsController.$inject = ['MarkerService', 'FieldErrorService'];
+    function MarkerRelationshipsController(MarkerService, FieldErrorService) {
 
         var vm = this;
 
@@ -29,6 +29,8 @@
 
         vm.newGene = '';
         vm.newReference = '';
+        vm.errors = {};
+        vm.processing = false;
 
         vm.add = add;
         vm.remove = remove;
@@ -52,6 +54,7 @@
         }
 
         function add() {
+            vm.processing = true;
             var first = {zdbID: vm.id};
             var second = {name: vm.newGene};
             MarkerService.addRelationship(first, second, vm.relationship, vm.newReference)
@@ -59,9 +62,13 @@
                     vm.relationships.unshift(relationship);
                     vm.newGene = '';
                     vm.newReference = '';
+                    vm.errors = {};
                 })
                 .catch(function(error) {
-                    console.error(error);
+                    vm.errors = FieldErrorService.processErrorResponse(error);
+                })
+                .finally(function() {
+                    vm.processing = false;
                 });
         }
 

@@ -2,8 +2,11 @@ package org.zfin.marker.presentation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
@@ -13,6 +16,7 @@ import org.zfin.marker.service.MarkerService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -28,6 +32,11 @@ public class MarkerRelationshipController {
 
     @Autowired
     private InfrastructureRepository infrastructureRepository;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setValidator(new MarkerRelationshipBeanValidator());
+    }
 
     @ResponseBody
     @RequestMapping(value = "/{markerId}/relationships", method = RequestMethod.GET)
@@ -45,7 +54,12 @@ public class MarkerRelationshipController {
 
     @ResponseBody
     @RequestMapping(value = "/relationship", method = RequestMethod.POST)
-    public MarkerRelationshipBean addMarkerRelationship(@RequestBody MarkerRelationshipBean newRelationship) {
+    public MarkerRelationshipBean addMarkerRelationship(@Valid @RequestBody MarkerRelationshipBean newRelationship,
+                                                        BindingResult errors) {
+        if (errors.hasErrors()) {
+            throw new InvalidWebRequestException("Invalid marker relationship", errors);
+        }
+
         Marker first = getMarkerByIdOrAbbrev(newRelationship.getFirst());
         Marker second = getMarkerByIdOrAbbrev(newRelationship.getSecond());
         MarkerRelationship.Type type = MarkerRelationship.Type.getType(newRelationship.getRelationship());
