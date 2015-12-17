@@ -156,7 +156,7 @@
             var link = {
                 referenceDatabaseZdbID: fdbId,
                 accession: accession,
-                attributionZdbIDs: [pubId]
+                references: [{zdbID: pubId}]
             };
             return $http.post('/action/marker/' + markerId + '/links', link)
                 .then(returnResponseData);
