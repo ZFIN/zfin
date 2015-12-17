@@ -72,6 +72,7 @@
                     vm.reportedSequence1 = data.sequence1;
                     vm.reportedSequence2 = data.sequence2;
                     vm.str = data;
+                    vm.errors = {};
                 })
                 .catch(function (error) {
                     console.log(error);
