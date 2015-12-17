@@ -79,11 +79,10 @@
             vm.editing = relationship;
         }
 
-        function addReference() {
-            MarkerService.addRelationshipReference(vm.editing, vm.editReference)
+        function addReference(pubId) {
+            return MarkerService.addRelationshipReference(vm.editing, pubId)
                 .then(function(relationship) {
                     vm.editing.references = relationship.references;
-                    vm.editReference = '';
                 })
                 .catch(function(error) {
                     console.error(error);
@@ -91,7 +90,7 @@
         }
 
         function removeReference(reference, index) {
-            MarkerService.removeRelationshipReference(vm.editing, reference)
+            return MarkerService.removeRelationshipReference(vm.editing, reference)
                 .then(function() {
                     vm.editing.references.splice(index, 1);
                 })
@@ -101,7 +100,6 @@
         }
 
         function closeEditModal() {
-            vm.editReference = '';
             vm.editing = null;
         }
 

@@ -40,36 +40,11 @@
     </div>
 </div>
 
-<div bootstrap-modal show="vm.editing != null">
-    <div class="modal-header">
-        <button type="button" class="close" ng-click="vm.closeEditModal()">&times;</button>
-        <h4 class="modal-title">References for {{vm.editing.second.name}}</h4>
-    </div>
-    <div class="modal-body">
-        <form class="form-horizontal">
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-8">
-                    <input pub-lookup placeholder="Add Reference" class="form-control" ng-model="vm.editReference"/>
-                </div>
-                <div class="col-sm-2">
-                    <button type="button" class="btn btn-primary" ng-click="vm.addReference()">Add</button>
-                </div>
-            </div>
-        </form>
-        <div class="row">
-            <div class="col-sm-offset-2 col-sm-8">
-                <table class="table">
-                    <tr ng-repeat="reference in vm.editing.references">
-                        <td>
-                            <span class="small pull-right" ng-show="vm.editing.references.length > 1">
-                                <a href ng-click="vm.removeReference(reference, $index)">Remove</a>
-                            </span>
-                            {{reference.zdbID}}<br>
-                            <span class="text-muted">{{reference.title}}</span>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
+<div reference-editor
+     show="vm.editing != null"
+     entity="vm.editing.second.name"
+     references="vm.editing.references"
+     on-add="vm.addReference(pubId)"
+     on-remove="vm.removeReference(reference, index)"
+     on-close="vm.closeEditModal()">
 </div>
