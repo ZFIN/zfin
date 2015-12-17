@@ -35,8 +35,10 @@
             <button type="button" class="btn btn-default"
                     ng-click="vm.reset()" ng-disabled="vm.processing">Reset</button>
             <button type="submit" class="btn btn-primary"
-                    ng-click="vm.save()" ng-disabled="vm.processing">Save</button>
-            <span class="text-muted" ng-show="vm.processing">Saving ...</span>
+                    ng-click="vm.save()" ng-disabled="vm.processing">
+                <span ng-hide="vm.processing">Save</span>
+                <i ng-show="vm.processing" class="fa fa-spinner fa-spin"></i>
+            </button>
             <span class="text-success" ng-show="vm.saved"><i class="fa fa-check"></i> Saved</span>
             <span class="text-danger" ng-show="vm.errors.$isGeneric"><i class="fa fa-warning"></i> Something went wrong</span>
         </div>
