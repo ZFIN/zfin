@@ -41,7 +41,7 @@
                     suggestion: function (item) {
                         return '<div><p class="journal-abbrev">' + item.zdbID + '</p><p class="journal-name text-muted">' + item.title + '</p></div>';
                     },
-                    empty: '<p class="tt-no-results text-danger">Oof. I couldn\'t find any publications like that.</p>'
+                    empty: '<p class="tt-no-results text-danger">Couldn\'t find any publications with that ID.</p>'
                 }
             });
 

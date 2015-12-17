@@ -43,3 +43,12 @@
         </table>
     </div>
 </div>
+
+<div reference-editor
+     show="vm.editing != null"
+     entity="vm.editing.referenceDatabaseName + ':' + vm.editing.accession"
+     references="vm.editing.references"
+     on-add="vm.addReference(pubId)"
+     on-remove="vm.removeReference(reference, index)"
+     on-close="vm.closeEditModal()">
+</div>

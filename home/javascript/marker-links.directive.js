@@ -31,8 +31,14 @@
         vm.links = [];
         vm.databases = [];
 
+        vm.editing = null;
+
         vm.add = add;
         vm.remove = remove;
+        vm.edit = edit;
+        vm.addReference = addReference;
+        vm.removeReference = removeReference;
+        vm.closeEditModal = closeEditModal;
 
         activate();
 
@@ -71,6 +77,34 @@
             MarkerService.removeLink(link)
                 .then(function() {
                     vm.links.splice(index, 1);
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+        }
+
+        function edit(link) {
+            vm.editing = link;
+        }
+
+        function closeEditModal() {
+            vm.editing = null;
+        }
+
+        function addReference(pubId) {
+            return MarkerService.addLinkReference(vm.editing, pubId)
+                .then(function(link) {
+                    vm.editing.references = link.references;
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+        }
+
+        function removeReference(reference, index) {
+            return MarkerService.removeLinkReference(vm.editing, reference)
+                .then(function() {
+                    vm.editing.references.splice(index, 1);
                 })
                 .catch(function(error) {
                     console.error(error);

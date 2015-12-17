@@ -21,6 +21,7 @@
 
 <script src="/javascript/pub-lookup.directive.js"></script>
 <script src="/javascript/bootstrap-modal.directive.js"></script>
+<script src="/javascript/reference-editor.directive.js"></script>
 <script src="/javascript/marker-suppliers.directive.js"></script>
 <script src="/javascript/str-details.directive.js"></script>
 <script src="/javascript/str-sequence.directive.js"></script>

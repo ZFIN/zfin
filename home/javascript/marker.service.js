@@ -28,7 +28,9 @@
             getLinks: getLinks,
             getLinkDatabases: getLinkDatabases,
             addLink: addLink,
-            removeLink: removeLink
+            removeLink: removeLink,
+            addLinkReference: addLinkReference,
+            removeLinkReference: removeLinkReference
         };
 
         function returnResponseData(response) {
@@ -162,6 +164,15 @@
 
         function removeLink(link) {
             return $http.delete('/action/marker/link/' + link.dblinkZdbID);
+        }
+
+        function addLinkReference(link, pubId) {
+            return $http.post('/action/marker/link/' + link.dblinkZdbID + '/references', {zdbID: pubId})
+                .then(returnResponseData);
+        }
+
+        function removeLinkReference(link, reference) {
+            return $http.delete('/action/marker/link/' + link.dblinkZdbID + '/references/' + reference.zdbID);
         }
     }
 }());

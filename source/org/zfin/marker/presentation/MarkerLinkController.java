@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.sequence.DBLink;
@@ -31,6 +32,9 @@ public class MarkerLinkController {
 
     @Autowired
     private SequenceRepository sequenceRepository;
+
+    @Autowired
+    private InfrastructureRepository infrastructureRepository;
 
     @ResponseBody
     @RequestMapping("/link/databases")
@@ -69,12 +73,7 @@ public class MarkerLinkController {
         DBLink link = markerRepository.addDBLink(marker, accessionNo, refDB, pubId);
         HibernateUtil.flushAndCommitCurrentSession();
 
-        // this is kinda weird because LinkDisplay is only produced by a query transformer
-        List<LinkDisplay> linkDisplays = markerRepository.getMarkerDBLink(link.getZdbID());
-        if (linkDisplays.size() > 1) {
-            LOG.error("too many LinkDisplays returned for " + link.getZdbID());
-        }
-        return linkDisplays.get(0);
+        return getLinkDisplayById(link.getZdbID());
     }
 
     @ResponseBody
@@ -83,6 +82,37 @@ public class MarkerLinkController {
         DBLink link = sequenceRepository.getDBLinkByID(linkId);
         sequenceRepository.removeDBLinks(Collections.singletonList(link));
         return "OK";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/link/{linkId}/references", method = RequestMethod.POST)
+    public LinkDisplay addLinkReference(@PathVariable String linkId,
+                                        @RequestBody MarkerReferenceBean newReference) {
+        HibernateUtil.createTransaction();
+        infrastructureRepository.insertPublicAttribution(linkId, newReference.getZdbID());
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return getLinkDisplayById(linkId);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/link/{linkId}/references/{pubID}", method = RequestMethod.DELETE)
+    public String removeLinkReference(@PathVariable String linkId,
+                                      @PathVariable String pubID) {
+        HibernateUtil.createTransaction();
+        infrastructureRepository.deleteRecordAttribution(linkId, pubID);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return "OK";
+    }
+
+    private LinkDisplay getLinkDisplayById(String linkId) {
+        // this is kinda weird because LinkDisplay is only produced by a query transformer
+        List<LinkDisplay> linkDisplays = markerRepository.getMarkerDBLink(linkId);
+        if (linkDisplays.size() > 1) {
+            LOG.error("too many LinkDisplays returned for " + linkId);
+        }
+        return linkDisplays.get(0);
     }
 
 }
