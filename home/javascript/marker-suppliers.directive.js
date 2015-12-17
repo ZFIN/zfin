@@ -56,6 +56,7 @@
         vm.suppliers = [];
         vm.supplier = '';
         vm.errors = {};
+        vm.processing = false;
 
         vm.submit = submit;
         vm.remove = remove;
@@ -80,6 +81,7 @@
                 vm.errors.fields.name = ["Supplier has already been added for this marker"];
                 return;
             }
+            vm.processing = true;
             MarkerService.addSupplier(vm.id, { name: vm.supplier })
                 .then(function (supplier) {
                     vm.suppliers.push(supplier);
@@ -88,6 +90,9 @@
                 })
                 .catch(function (response) {
                     vm.errors = FieldErrorService.processErrorResponse(response);
+                })
+                .finally(function () {
+                    vm.processing = false;
                 });
         }
 
