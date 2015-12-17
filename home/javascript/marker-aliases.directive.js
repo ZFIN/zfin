@@ -26,7 +26,6 @@
 
         vm.newAlias = '';
         vm.newReference = '';
-        vm.editReference = '';
 
         vm.editing = null;
         vm.aliases = [];
@@ -63,11 +62,10 @@
             vm.editing = alias;
         }
 
-        function addReference() {
-            MarkerService.addAliasReference(vm.editing, vm.editReference)
+        function addReference(pubId) {
+            return MarkerService.addAliasReference(vm.editing, pubId)
                 .then(function(alias) {
                     vm.editing.references = alias.references;
-                    vm.editReference = '';
                 })
                 .catch(function(error) {
                     console.error(error);
@@ -75,7 +73,7 @@
         }
 
         function removeReference(reference, index) {
-            MarkerService.removeAliasReference(vm.editing, reference)
+            return MarkerService.removeAliasReference(vm.editing, reference)
                 .then(function() {
                     vm.editing.references.splice(index, 1);
                 })
@@ -95,7 +93,6 @@
         }
 
         function closeEditModal() {
-            vm.editReference = '';
             vm.editing = null;
         }
 
