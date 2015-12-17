@@ -210,12 +210,16 @@
     </class>
 
     <class name="org.zfin.expression.ExpressionResult" table="expression_result">
-        <id name="zdbID" type="string">
+        <!--<id name="zdbID" type="string">
             <column name="xpatres_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
                 <param name="type">XPATRES</param>
                 <param name="insertActiveData">true</param>
             </generator>
+        </id>-->
+        <id name="xpatresID" type="long">
+            <column name="xpatres_zdb_id" not-null="true"/>
+            <generator class="identity"/>
         </id>
 
         <property name="expressionFound" column="xpatres_expression_found"/>
