@@ -32,7 +32,7 @@ public class MarkerAliasController {
     @Autowired
     private InfrastructureRepository infrastructureRepository;
 
-    @InitBinder
+    @InitBinder("markerAliasBean")
     public void initBinder(WebDataBinder binder) {
         binder.setValidator(new MarkerAliasBeanValidator());
     }

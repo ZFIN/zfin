@@ -33,7 +33,7 @@ public class MarkerRelationshipController {
     @Autowired
     private InfrastructureRepository infrastructureRepository;
 
-    @InitBinder
+    @InitBinder("markerRelationshipBean")
     public void initBinder(WebDataBinder binder) {
         binder.setValidator(new MarkerRelationshipBeanValidator());
     }
