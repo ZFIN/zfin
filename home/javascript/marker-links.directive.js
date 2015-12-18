@@ -102,9 +102,6 @@
             return MarkerService.addLinkReference(vm.editing, pubId)
                 .then(function(link) {
                     vm.editing.references = link.references;
-                })
-                .catch(function(error) {
-                    console.error(error);
                 });
         }
 
@@ -112,9 +109,6 @@
             return MarkerService.removeLinkReference(vm.editing, reference)
                 .then(function() {
                     vm.editing.references.splice(index, 1);
-                })
-                .catch(function(error) {
-                    console.error(error);
                 });
         }
 

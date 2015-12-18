@@ -83,15 +83,17 @@ public class DataAlias implements Comparable, EntityAttribution, Serializable, E
     }
 
     public int getSourceCount() {
-        if (sources == null)
+        if (sources == null) {
             return 0;
-        else
+        } else {
             return sources.size();
+        }
     }
 
     public Set<PublicationAttribution> getPublications() {
-        if (publications == null)
+        if (publications == null) {
             return new HashSet<>();
+        }
         return publications;
     }
 
@@ -107,10 +109,11 @@ public class DataAlias implements Comparable, EntityAttribution, Serializable, E
     }
 
     public int getPublicationCount() {
-        if (publications == null)
+        if (publications == null) {
             return 0;
-        else
+        } else {
             return publications.size();
+        }
     }
 
     public Publication getSinglePublication() {

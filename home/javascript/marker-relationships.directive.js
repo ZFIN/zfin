@@ -90,9 +90,6 @@
             return MarkerService.addRelationshipReference(vm.editing, pubId)
                 .then(function(relationship) {
                     vm.editing.references = relationship.references;
-                })
-                .catch(function(error) {
-                    console.error(error);
                 });
         }
 
@@ -100,9 +97,6 @@
             return MarkerService.removeRelationshipReference(vm.editing, reference)
                 .then(function() {
                     vm.editing.references.splice(index, 1);
-                })
-                .catch(function(error) {
-                    console.error(error);
                 });
         }
 

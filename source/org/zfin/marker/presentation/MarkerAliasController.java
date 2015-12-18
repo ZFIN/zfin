@@ -8,6 +8,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
@@ -33,9 +34,15 @@ public class MarkerAliasController {
     private InfrastructureRepository infrastructureRepository;
 
     @InitBinder("markerAliasBean")
-    public void initBinder(WebDataBinder binder) {
+    public void initAliasBinder(WebDataBinder binder) {
         binder.setValidator(new MarkerAliasBeanValidator());
     }
+
+    @InitBinder("markerReferenceBean")
+    public void initReferenceBinder(WebDataBinder binder) {
+        binder.setValidator(new MarkerReferenceBeanValidator());
+    }
+
 
     @ResponseBody
     @RequestMapping(value = "/{markerID}/aliases", method = RequestMethod.GET)
@@ -94,9 +101,21 @@ public class MarkerAliasController {
     @ResponseBody
     @RequestMapping(value = "/alias/{aliasID}/references", method = RequestMethod.POST)
     public MarkerAliasBean addAliasReference(@PathVariable String aliasID,
-                                             @RequestBody MarkerReferenceBean newReference) {
+                                             @Valid @RequestBody MarkerReferenceBean newReference,
+                                             BindingResult errors) {
+        if (errors.hasErrors()) {
+            throw new InvalidWebRequestException("Invalid reference", errors);
+        }
+
         MarkerAlias alias = markerRepository.getMarkerAlias(aliasID);
         Publication publication = publicationRepository.getPublication(newReference.getZdbID());
+
+        for (PublicationAttribution reference : alias.getPublications()) {
+            if (reference.getPublication().equals(publication)) {
+                errors.rejectValue("zdbID", "marker.reference.inuse");
+                throw new InvalidWebRequestException("Invalid reference", errors);
+            }
+        }
 
         HibernateUtil.createTransaction();
         markerRepository.addDataAliasAttribution(alias, publication, alias.getMarker());

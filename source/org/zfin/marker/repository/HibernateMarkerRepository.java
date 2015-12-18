@@ -680,14 +680,14 @@ public class HibernateMarkerRepository implements MarkerRepository {
             pa.setSourceZdbID(attributionZdbID);
             pa.setDataZdbID(aliasZdbID);
             pa.setSourceType(PublicationAttribution.SourceType.STANDARD);
-            Publication publication = RepositoryFactory.getPublicationRepository().getPublication(attributionZdbID);
-            pa.setPublication(publication);
-            Set<PublicationAttribution> pubAttrbs = new HashSet<PublicationAttribution>();
+            pa.setPublication(attribution);
+            Set<PublicationAttribution> pubAttrbs = new HashSet<>();
             pubAttrbs.add(pa);
             MarkerAlias markerAlias = new MarkerAlias();
             markerAlias.setPublications(pubAttrbs);
             currentSession().save(pa);
-            addMarkerPub(marker, publication);
+            currentSession().refresh(alias);
+            addMarkerPub(marker, attribution);
         }
         ir.insertUpdatesTable(marker, "", "new attribution, data alias: " + alias.getAlias() + " with pub: " + attributionZdbID, attributionZdbID, "");
     }
@@ -710,11 +710,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
             pa.setSourceZdbID(attributionZdbID);
             pa.setDataZdbID(relZdbID);
             pa.setSourceType(RecordAttribution.SourceType.STANDARD);
-            Publication publication = RepositoryFactory.getPublicationRepository().getPublication(attributionZdbID);
-            pa.setPublication(publication);
+            pa.setPublication(attribution);
             currentSession().save(pa);
             currentSession().refresh(mrel);
-            addMarkerPub(marker, publication);
+            addMarkerPub(marker, attribution);
         }
         ir.insertUpdatesTable(marker, "", "new attribution, marker relationship: " + mrel.getZdbID() + " with pub: " + attributionZdbID, attributionZdbID, "");
     }
@@ -734,7 +733,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             pa.setDataZdbID(markerZdbID);
             pa.setSourceType(RecordAttribution.SourceType.STANDARD);
             pa.setPublication(publication);
-            Set<PublicationAttribution> pubAttrbs = new HashSet<PublicationAttribution>();
+            Set<PublicationAttribution> pubAttrbs = new HashSet<>();
             pubAttrbs.add(pa);
             Marker mrkr = new Marker();
             mrkr.setPublications(pubAttrbs);
@@ -746,11 +745,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         Set<MarkerDBLink> markerDBLinks = marker.getDbLinks();
         for (MarkerDBLink markerDBLink : markerDBLinks) {
-            if (
-                    markerDBLink.getAccessionNumber().equals(accessionNumber)
-                            &&
-                            markerDBLink.getReferenceDatabase().equals(refdb)
-                    ) {
+            if (markerDBLink.getAccessionNumber().equals(accessionNumber) &&
+                    markerDBLink.getReferenceDatabase().equals(refdb)) {
                 return markerDBLink;
             }
         }

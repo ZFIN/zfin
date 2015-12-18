@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
@@ -34,8 +35,13 @@ public class MarkerRelationshipController {
     private InfrastructureRepository infrastructureRepository;
 
     @InitBinder("markerRelationshipBean")
-    public void initBinder(WebDataBinder binder) {
+    public void initRelationshipBinder(WebDataBinder binder) {
         binder.setValidator(new MarkerRelationshipBeanValidator());
+    }
+
+    @InitBinder("markerReferenceBean")
+    public void initReferenceBinder(WebDataBinder binder) {
+        binder.setValidator(new MarkerReferenceBeanValidator());
     }
 
     @ResponseBody
@@ -88,9 +94,21 @@ public class MarkerRelationshipController {
     @ResponseBody
     @RequestMapping(value = "/relationship/{relationshipId}/references", method = RequestMethod.POST)
     public MarkerRelationshipBean addMarkerRelationshipReference(@PathVariable String relationshipId,
-                                                                 @RequestBody MarkerReferenceBean newReference) {
+                                                                 @Valid @RequestBody MarkerReferenceBean newReference,
+                                                                 BindingResult errors) {
+        if (errors.hasErrors()) {
+            throw new InvalidWebRequestException("Invalid reference", errors);
+        }
+
         MarkerRelationship relationship = markerRepository.getMarkerRelationshipByID(relationshipId);
         Publication publication = publicationRepository.getPublication(newReference.getZdbID());
+
+        for (PublicationAttribution reference : relationship.getPublications()) {
+            if (reference.getPublication().equals(publication)) {
+                errors.rejectValue("zdbID", "marker.reference.inuse");
+                throw new InvalidWebRequestException("Invalid reference", errors);
+            }
+        }
 
         HibernateUtil.createTransaction();
         markerRepository.addMarkerRelationshipAttribution(relationship, publication, relationship.getFirstMarker());

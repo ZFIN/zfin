@@ -10,6 +10,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
@@ -44,9 +45,15 @@ public class MarkerLinkController {
     private InfrastructureRepository infrastructureRepository;
 
     @InitBinder("linkData")
-    public void initBinder(WebDataBinder binder) {
+    public void initLinkBinder(WebDataBinder binder) {
         binder.setValidator(new LinkDisplayValidator());
     }
+
+    @InitBinder("markerReferenceBean")
+    public void initReferenceBinder(WebDataBinder binder) {
+        binder.setValidator(new MarkerReferenceBeanValidator());
+    }
+
 
     @ResponseBody
     @RequestMapping("/link/databases")
@@ -117,7 +124,16 @@ public class MarkerLinkController {
     @ResponseBody
     @RequestMapping(value = "/link/{linkId}/references", method = RequestMethod.POST)
     public LinkDisplay addLinkReference(@PathVariable String linkId,
-                                        @RequestBody MarkerReferenceBean newReference) {
+                                        @Valid @RequestBody MarkerReferenceBean newReference,
+                                        BindingResult errors) {
+        if (infrastructureRepository.getRecordAttribution(linkId, newReference.getZdbID(), RecordAttribution.SourceType.STANDARD) != null) {
+            errors.rejectValue("zdbID", "marker.reference.inuse");
+        }
+
+        if (errors.hasErrors()) {
+            throw new InvalidWebRequestException("Invalid reference", errors);
+        }
+
         HibernateUtil.createTransaction();
         infrastructureRepository.insertPublicAttribution(linkId, newReference.getZdbID());
         HibernateUtil.flushAndCommitCurrentSession();

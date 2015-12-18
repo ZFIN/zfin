@@ -76,9 +76,6 @@
             return MarkerService.addAliasReference(vm.editing, pubId)
                 .then(function(alias) {
                     vm.editing.references = alias.references;
-                })
-                .catch(function(error) {
-                    console.error(error);
                 });
         }
 
@@ -86,9 +83,6 @@
             return MarkerService.removeAliasReference(vm.editing, reference)
                 .then(function() {
                     vm.editing.references.splice(index, 1);
-                })
-                .catch(function(error) {
-                    console.error(error);
                 });
         }
 
