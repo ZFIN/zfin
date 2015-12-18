@@ -880,7 +880,7 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 
   <a class="small-new-link" href="javascript:;" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENE&newmrkrSource=\'$OID\'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Gene</a>
   &nbsp;
-  <a class="small-new-link" href="javascript:;" onClick=open("/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentPublicationZdbID=$OID&sequenceTargetingReagentType=Morpholino","helpwindow","scrollbars=yes,height=900,width=1150,resizable=yes")>Add New Morpholino</a>
+  <a class="small-new-link" href="javascript:;" onClick=open("/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentPublicationZdbID=$OID&sequenceTargetingReagentType=MRPHLNO","helpwindow","scrollbars=yes,height=900,width=1150,resizable=yes")>Add New Morpholino</a>
   &nbsp;
   <a class="small-new-link" href="javascript:;" onClick=open("/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentPublicationZdbID=$OID&sequenceTargetingReagentType=TALEN","helpwindow","scrollbars=yes,height=900,width=1150,resizable=yes")>Add New TALEN</a>
   &nbsp;  
