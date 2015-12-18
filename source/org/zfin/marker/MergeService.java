@@ -228,9 +228,11 @@ public class MergeService {
             // if there is a match then we move the expression result figures
             else {
                 HibernateUtil.currentSession().evict(expressionResultA);
+/* ////TODO
                 expressionResultA = (ExpressionResult) HibernateUtil.currentSession().get(ExpressionResult.class, expressionResultA.getZdbID());
                 HibernateUtil.currentSession().evict(expressionResultB);
                 expressionResultB = (ExpressionResult) HibernateUtil.currentSession().get(ExpressionResult.class, expressionResultB.getZdbID());
+*/
 
                 moveFigures(expressionResultA, expressionResultB);
             }
@@ -253,7 +255,7 @@ public class MergeService {
                                     " where xpatfig_fig_zdb_id= :figureZdbID " +
                                     " and xpatfig_xpatres_zdb_id= :resultZdbID "
                     )
-                            .setString("resultZdbID", expressionResultB.getZdbID())
+//TODO                            .setString("resultZdbID", expressionResultB.getZdbID())
                             .setString("figureZdbID", figureA.getZdbID())
                             .uniqueResult();
 
@@ -264,9 +266,9 @@ public class MergeService {
                                         " where xpatfig_fig_zdb_id= :figureZdbID" +
                                         " and xpatfig_xpatres_zdb_id= :resultAZdbID "
                         )
-                                .setString("resultBZdbID", expressionResultB.getZdbID())
+  //TODO                              .setString("resultBZdbID", expressionResultB.getZdbID())
                                 .setString("figureZdbID", figureA.getZdbID())
-                                .setString("resultAZdbID", expressionResultA.getZdbID())
+                                        //TODO                              .setString("resultAZdbID", expressionResultA.getZdbID())
                                 .executeUpdate();
                         HibernateUtil.currentSession().refresh(figureA);
                         HibernateUtil.currentSession().refresh(expressionResultB);

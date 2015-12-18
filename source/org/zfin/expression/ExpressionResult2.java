@@ -125,6 +125,8 @@ public class ExpressionResult2 implements Comparable<ExpressionResult2> {
     }
 
     public void addPhenotypeTerm(ExpressionStructure expressionStructure) {
+        if (expressionStructure.getEapQualityTerm() == null)
+            return;
         ExpressionPhenotypeTerm term = new ExpressionPhenotypeTerm();
         term.setQualityTerm(expressionStructure.getEapQualityTerm());
         term.setExpressionResult(this);

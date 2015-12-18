@@ -179,19 +179,23 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         List<ExpressedTermDTO> terms = expression.getExpressedTerms();
         StringBuilder text = new StringBuilder();
         int index = 1;
-        for (ExpressedTermDTO term : terms) {
-            String classSpan;
-            if (!term.isExpressionFound()) {
-                classSpan = createSpanElement(term, WidgetUtil.RED);
-            } else if (term.getEntity().isUnspecified()) {
-                classSpan = createSpanElement(term, "term-unspecified");
-            } else {
-                classSpan = createSpanElement(term, null);
+        if (terms == null || terms.size() == 0) {
+            text.append("<span class=\"term-unspecified\">unspecified</span>");
+        } else {
+            for (ExpressedTermDTO term : terms) {
+                String classSpan;
+                if (!term.isExpressionFound()) {
+                    classSpan = createSpanElement(term, WidgetUtil.RED);
+                } else if (term.getEntity().isUnspecified()) {
+                    classSpan = createSpanElement(term, "term-unspecified");
+                } else {
+                    classSpan = createSpanElement(term, null);
+                }
+                text.append(classSpan);
+                if (index < terms.size())
+                    text.append(", ");
+                index++;
             }
-            text.append(classSpan);
-            if (index < terms.size())
-                text.append(", ");
-            index++;
         }
         HTML html = new HTML();
         html.setHTML(text.toString());
@@ -265,7 +269,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         selectedExpressions.clear();
         showSelectedExpressionOnly = false;
         displayTable.uncheckAllRecords();
-        experimentSection.unselectAllExperiments();
+        //experimentSection.unselectAllExperiments();
     }
 
     /**
@@ -1221,5 +1225,9 @@ public class ExpressionZoneView extends Composite implements HandlesError {
 
     public ExpressionFlexTable getDisplayTable() {
         return displayTable;
+    }
+
+    public Image getLoadingImage() {
+        return loadingImage;
     }
 }

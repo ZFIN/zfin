@@ -387,7 +387,7 @@ public interface ExpressionRepository {
      * Deletes a given ExpressionResult record and its associations to all figures.
      * @param expressionResult
      */
-    void deleteExpressionResult(ExpressionResult expressionResult);
+    void deleteExpressionResult(ExpressionResult2 expressionResult);
 
     /**
      * Retrieve list of expression experiment records for a given gene.

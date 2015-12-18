@@ -994,7 +994,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
                     }
                     // remove expression if marked as such
                     if (pileStructure.getAction() == PileStructureAnnotationDTO.Action.REMOVE) {
-                        removeExpressionToAnnotation(experiment, pileStructure.isExpressed(), expressionStructure);
+                        removeExpressionToAnnotation(experiment, expressionStructure);
                     }
                 }
             }
@@ -1158,8 +1158,8 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         return false;
     }
 
-    private void removeExpressionToAnnotation(ExpressionFigureStage experiment, boolean expressed, ExpressionStructure postComposedEntity) {
-        boolean termBeingUsed = experimentHasExpression(experiment, postComposedEntity, expressed);
+    private void removeExpressionToAnnotation(ExpressionFigureStage experiment, ExpressionStructure postComposedEntity) {
+        boolean termBeingUsed = experimentHasExpression(experiment, postComposedEntity, postComposedEntity.isExpressionFound());
         // do nothing term already exists.
         if (!termBeingUsed)
             return;
@@ -1169,8 +1169,11 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         ExpressedTermDTO expressedTerm = DTOConversionService.convertToExpressedTermDTO(postComposedEntity);
         ExpressionResult2 result = getExpressionResult(experiment, postComposedEntity);
         if (result != null) {
-            if (!postComposedEntity.isEap())
+            if (!postComposedEntity.isEap()) {
                 experiment.getExpressionResultSet().remove(result);
+                expRepository.deleteExpressionResult(result);
+            }
+
         }
     }
 

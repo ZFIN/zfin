@@ -70,6 +70,7 @@ public class ExpressionZonePresenter implements Presenter {
     }
 
     public void retrieveExpressions() {
+        view.getLoadingImage().setVisible(true);
         curationRPCAsync.getExpressionsByFilter(experimentFilter, figureID, new RetrieveExpressionsCallback());
     }
 
@@ -99,13 +100,9 @@ public class ExpressionZonePresenter implements Presenter {
     }
 
     public void postUpdateStructuresOnExpression() {
-/*
-        selectedExpressions.clear();
-        showSelectedExpressionOnly = false;
-        view.getDisplayTable().uncheckAllRecords();
-        experimentSection.unselectAllExperiments();
-*/
-        Window.alert("updated....");
+        view.postUpdateStructuresOnExpression();
+        // re-load expression table
+        retrieveExpressions();
     }
 
     public class RetrieveFiguresCallback extends ZfinAsyncCallback<List<FigureDTO>> {

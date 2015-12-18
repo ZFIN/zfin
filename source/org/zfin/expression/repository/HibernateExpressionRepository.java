@@ -766,7 +766,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         // ignore unspecified addition if not the first creation.
         if (result.getSuperTerm().getTermName().equals(Term.UNSPECIFIED)) {
-            if (result.getZdbID() != null) {
+            if (result.isExpressionFound()) {
                 return;
             } else {
                 // new unspecified record
@@ -794,7 +794,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             if (unspecifiedResult != null) {
                 Set<Figure> figures = unspecifiedResult.getFigures();
                 if (figures == null || figures.size() < 2) {
-                    getInfrastructureRepository().deleteActiveDataByZdbID(unspecifiedResult.getZdbID());
+                    ////getInfrastructureRepository().deleteActiveDataByZdbID(unspecifiedResult.getZdbID());
                 } else {
                     // has more than one figure associated
                     unspecifiedResult.removeFigure(singleFigure);
@@ -807,7 +807,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 Set<Figure> figures = unspecifiedResult.getFigures();
                 // has no figures associated
                 if (figures == null || figures.isEmpty()) {
-                    getInfrastructureRepository().deleteActiveDataByZdbID(unspecifiedResult.getZdbID());
+                    ////getInfrastructureRepository().deleteActiveDataByZdbID(unspecifiedResult.getZdbID());
                     session.save(result);
                     result.getExpressionExperiment().addExpressionResult(result);
                 } else if (unspecifiedResult.getFigures().size() == 1) {
@@ -815,7 +815,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                     // check if it is associated to the figure in question.
                     // if yes, remove it.
                     if (figures.contains(singleFigure)) {
-                        getInfrastructureRepository().deleteActiveDataByZdbID(unspecifiedResult.getZdbID());
+///                        getInfrastructureRepository().deleteActiveDataByZdbID(unspecifiedResult.getZdbID());
                         session.flush();
                     }
                     session.save(result);
@@ -876,7 +876,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         String sql = "execute procedure add_ab_ao_fast_search(?)";
         try {
             statement = connection.prepareCall(sql);
-            String zdbID = result.getZdbID();
+            String zdbID = "";
+            ////String zdbID = result.getZdbID();
             statement.setString(1, zdbID);
             statement.execute();
             logger.info("Execute stored procedure: " + sql + " with the argument " + zdbID);
@@ -917,7 +918,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             // if only a single figure is associated to it just remove the record
             Set<Figure> figures = result.getFigures();
             if (figures.size() == 1) {
-                getInfrastructureRepository().deleteActiveDataByZdbID(result.getZdbID());
+                //getInfrastructureRepository().deleteActiveDataByZdbID(result.getZdbID());
             }
             // if more than one is associated we cannot remove the expression_result (shared among figures)
             // but need to remove just the association to the figure.
@@ -1581,9 +1582,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     @Override
-    public void deleteExpressionResult(ExpressionResult expressionResult) {
-        ActiveData activeData = getInfrastructureRepository().getActiveData(expressionResult.getZdbID());
-        getInfrastructureRepository().deleteActiveData(activeData);
+    public void deleteExpressionResult(ExpressionResult2 expressionResult) {
+        HibernateUtil.currentSession().delete(expressionResult);
     }
 
     @SuppressWarnings("unchecked")
