@@ -107,7 +107,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
 
     // injected variables
     private ExperimentSection experimentSection;
-    private StructurePile structurePile;
 
     // Publication in question.
     private String publicationID;
@@ -123,10 +122,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         initGUI();
     }
 */
-
-    public void setPileStructure(StructurePile structurePile) {
-        this.structurePile = structurePile;
-    }
 
     /**
      * The data should only be loaded when the filter bar is initialized.

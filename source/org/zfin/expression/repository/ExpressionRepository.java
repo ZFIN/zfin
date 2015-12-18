@@ -179,7 +179,7 @@ public interface ExpressionRepository {
      * @param figureID      figure ID
      * @return list of experiment figure stages.
      */
-    List<ExperimentFigureStage> getExperimentFigureStagesByGeneAndFish(String publicationID, String geneZdbID, String fishID, String figureID);
+    List<ExpressionFigureStage> getExperimentFigureStagesByGeneAndFish(String publicationID, String geneZdbID, String fishID, String figureID);
 
 
     /**
@@ -218,7 +218,7 @@ public interface ExpressionRepository {
      * @param endStageID      end
      * @return efs object
      */
-    ExperimentFigureStage getExperimentFigureStage(String experimentZdbID, String figureID, String startStageID, String endStageID);
+    ExpressionFigureStage getExperimentFigureStage(String experimentZdbID, String figureID, String startStageID, String endStageID);
 
     /**
      * Retrieve all expression structures for a given publication, which is the same as the
@@ -253,7 +253,7 @@ public interface ExpressionRepository {
      * @param result expression result.
      * @param figure Figure
      */
-    void deleteExpressionResultPerFigure(ExpressionResult result, Figure figure);
+    void deleteExpressionResultPerFigure(ExpressionResult2 result, Figure figure);
 
     /**
      * Check if a pile structure already exists.

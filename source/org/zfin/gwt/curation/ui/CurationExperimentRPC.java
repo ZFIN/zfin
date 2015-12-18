@@ -277,7 +277,7 @@ public interface CurationExperimentRPC extends RemoteService {
      * @param updateEntity Update Expression dto
      * @return list of updated expression figure stage dtos
      */
-    List<ExpressionFigureStageDTO> updateStructuresForExpression(UpdateExpressionDTO updateEntity)
+    List<ExpressionFigureStageDTO> updateStructuresForExpression(UpdateExpressionDTO<PileStructureAnnotationDTO, ExpressionFigureStageDTO> updateEntity)
             throws ValidationException;
 
     /**

@@ -169,7 +169,7 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
 
     @SuppressWarnings("unchecked")
     private List<ExpressedTermDTO> createIntersectionOfStructures(Collection<ExpressionFigureStageDTO> figureAnnotations) {
-        List<ExpressedTermDTO> intersectionOfStructures = new ArrayList<ExpressedTermDTO>(figureAnnotations.size());
+        List<ExpressedTermDTO> intersectionOfStructures = new ArrayList<>(figureAnnotations.size());
         int index = 0;
         for (ExpressionFigureStageDTO figureAnnotation : figureAnnotations) {
             if (index == 0)

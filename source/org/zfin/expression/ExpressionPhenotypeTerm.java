@@ -18,7 +18,7 @@ public class ExpressionPhenotypeTerm {
     @Column(name = "ept_pk_id")
     private long id;
     @ManyToOne()
-    @JoinColumn(name = "ept_xpatres_zdb_id")
+    @JoinColumn(name = "ept_xpatres_id")
     private ExpressionResult2 expressionResult;
     @ManyToOne()
     @JoinColumn(name = "ept_quality_term_zdb_id")
@@ -26,7 +26,7 @@ public class ExpressionPhenotypeTerm {
     @Column(name = "ept_tag")
     private String tag;
     @Column(name = "ept_relational_term")
-    private String relationalTerm;
+    private String relationalTerm = "expressed_in";
 
     public long getId() {
         return id;

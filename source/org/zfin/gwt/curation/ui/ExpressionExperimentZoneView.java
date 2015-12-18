@@ -51,6 +51,8 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
     Image loadingImage;
     @UiField
     VerticalPanel expressionExperimentPanel;
+    @UiField
+    ToggleHyperlink showSelectExperiments;
 
     // RPC class being used for this section.
     private CurationExperimentRPCAsync curationExperimentRPCAsync = CurationExperimentRPC.App.getInstance();
@@ -245,8 +247,10 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
         protected void createTableHeader() {
             super.createTableHeader();
             for (HeaderName name : headerNames) {
-                if (name.index != 0)
+                if (name.index != 0) {
                     setText(selectionCheckBoxColumn, name.index, name.getName());
+                    getRowFormatter().addStyleName(0, "bold");
+                }
             }
         }
 
@@ -842,5 +846,9 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
 
     public Set<ExperimentDTO> getSelectedExperiments() {
         return selectedExperiments;
+    }
+
+    public Image getLoadingImage() {
+        return loadingImage;
     }
 }

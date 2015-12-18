@@ -655,32 +655,30 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * @return list of experiment figure stages.
      */
     @SuppressWarnings("unchecked")
-    public List<ExperimentFigureStage> getExperimentFigureStagesByGeneAndFish(String publicationID,
+    public List<ExpressionFigureStage> getExperimentFigureStagesByGeneAndFish(String publicationID,
                                                                               String geneZdbID,
                                                                               String fishZdbID,
                                                                               String figureZdbID) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select result, fig   from ExpressionResult result"
-                + "       left join result.figures fig "
-                + "       left join result.expressionExperiment.gene as gene "
-                + "       join result.expressionExperiment.fishExperiment.fish as fish "
-                + "       where result.expressionExperiment.publication.zdbID = :pubID "
-                + "       AND fig member of result.figures ";
+        String hql = "select efs from ExpressionFigureStage as efs "
+                + "       left join efs.expressionExperiment.gene as gene "
+                + "       join efs.expressionExperiment.fishExperiment.fish as fish "
+                + "       where efs.expressionExperiment.publication.zdbID = :pubID ";
         if (geneZdbID != null) {
             hql += " and gene.zdbID = :geneZdbID ";
         }
         if (figureZdbID != null) {
-            hql += " and fig.zdbID = :figureZdbID ";
+            hql += " and efs.figure.zdbID = :figureZdbID ";
         }
         if (fishZdbID != null) {
             hql += " and fish.zdbID = :fishZdbID ";
         }
 
-        hql += "       order by fig.orderingLabel, gene.abbreviationOrder "
+        hql += "       order by efs.figure.orderingLabel, gene.abbreviationOrder "
                 + "             , fish.name "
-                + "             , result.expressionExperiment.assay.displayOrder "
-                + "             , result.startStage.abbreviation "
+                + "             , efs.expressionExperiment.assay.displayOrder "
+                + "             , efs.startStage.abbreviation "
                 + " ";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
@@ -695,41 +693,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             query.setString("fishZdbID", fishZdbID);
         }
 
-        query.setResultTransformer(new ResultTransformer() {
-            @Override
-            public Object transformTuple(Object[] tuple, String[] aliases) {
-                ExperimentFigureStage experimentFigureStage = new ExperimentFigureStage();
-                ExpressionResult er = (ExpressionResult) tuple[0];
-                Figure f = (Figure) tuple[1]; // may be null
-                experimentFigureStage.setStart(er.getStartStage());
-                experimentFigureStage.setEnd(er.getEndStage());
-                experimentFigureStage.setFigure(f);
-                experimentFigureStage.setExpressionExperiment(er.getExpressionExperiment());
-                experimentFigureStage.addExpressionResult(er);
-                return experimentFigureStage;  //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public List transformList(List collection) {
-                List<ExperimentFigureStage> fullList = (List<ExperimentFigureStage>) collection;
-                List<ExperimentFigureStage> returnList = new ArrayList<>();
-
-                for (ExperimentFigureStage efs : fullList) {
-                    if (returnList.contains(efs)) {
-                        ExperimentFigureStage oldEFS = returnList.get(returnList.indexOf(efs));
-                        oldEFS.addExpressionResults(efs.getExpressionResults());
-                    } else {
-                        returnList.add(efs);
-                    }
-                }
-
-                return returnList;
-            }
-        });
-
-        //query.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
-
-        return query.list();
+        return (List<ExpressionFigureStage>) query.list();
     }
 
     @SuppressWarnings("unchecked")
@@ -977,7 +941,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * @return efs object
      */
     @SuppressWarnings("unchecked")
-    public ExperimentFigureStage getExperimentFigureStage(String experimentZdbID, String figureID, String startStageID, String endStageID) {
+    public ExpressionFigureStage getExperimentFigureStage(String experimentZdbID, String figureID, String startStageID, String endStageID) {
         if (StringUtils.isEmpty(experimentZdbID)) {
             return null;
         }
@@ -994,34 +958,18 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select result, figure from ExpressionResult result, Figure figure ";
-        hql += "       left join fetch result.expressionExperiment as experiment ";
-        hql += "     where experiment.zdbID = :experimentID ";
-        hql += " AND result.expressionExperiment = experiment ";
-        hql += " AND result.startStage.zdbID = :startID ";
-        hql += " AND result.endStage.zdbID = :endID ";
-        hql += " AND figure.zdbID = :figureID ";
-        hql += " AND figure member of result.figures ";
+        String hql = "select efs from ExpressionFigureStage as efs ";
+        hql += "     where efs.expressionExperiment.zdbID = :experimentID ";
+        hql += " AND efs.startStage.zdbID = :startID ";
+        hql += " AND efs.endStage.zdbID = :endID ";
+        hql += " AND efs.figure.zdbID = :figureID ";
         Query query = session.createQuery(hql);
         query.setString("experimentID", experimentZdbID);
         query.setString("startID", startStageID);
         query.setString("endID", endStageID);
         query.setString("figureID", figureID);
 
-        List<Object[]> objects = query.list();
-        if (objects == null) {
-            return null;
-        }
-
-        List<ExperimentFigureStage> efses = populateExperimentFigureStage(objects);
-        if (efses == null || efses.size() == 0) {
-            return null;
-        }
-
-        if (efses.size() > 1) {
-            throw new RuntimeException("More than one Figure annotation found.");
-        }
-        return efses.get(0);
+        return (ExpressionFigureStage) query.uniqueResult();
     }
 
     /**
@@ -1087,7 +1035,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * @param result expression result.
      * @param figure Figure
      */
-    public void deleteExpressionResultPerFigure(ExpressionResult result, Figure figure) {
+    public void deleteExpressionResultPerFigure(ExpressionResult2 result, Figure figure) {
+/*
         if (result == null) {
             return;
         }
@@ -1138,6 +1087,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             }
             session.refresh(result.getExpressionExperiment());
         }
+*/
     }
 
     private void createUnspecifiedExpressionResult(ExpressionResult result, Figure figure) {

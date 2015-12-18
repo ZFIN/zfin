@@ -1,6 +1,7 @@
 package org.zfin.gwt.root.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import org.zfin.gwt.root.util.CollectionUtils;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
 
     private boolean expressionFound = true;
     private EapQualityTermDTO qualityTerm;
+    private List<EapQualityTermDTO> qualityTermDTOList;
 
     public long getId() {
         return id;
@@ -33,7 +35,17 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
     }
 
     public String getDisplayName() {
-        return entity.getDisplayName();
+        String display = entity.getDisplayName();
+        if (isEap()) {
+            display += "(";
+            for (EapQualityTermDTO term : qualityTermDTOList) {
+                display += term.getNickName();
+                display += ", ";
+            }
+            display = display.substring(0, display.length() - 2);
+            display += ")";
+        }
+        return display;
     }
 
     public EntityDTO getEntity() {
@@ -88,7 +100,14 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
     }
 
     public String getUniqueID() {
-        return entity.getUniqueID();
+        String uniqueID = "";
+        if (!expressionFound)
+            uniqueID += "not:";
+        if (qualityTerm != null) {
+            uniqueID += ":" + qualityTerm.getTerm().getOboID();
+            uniqueID += ":" + qualityTerm.getTag();
+        }
+        return uniqueID + ":" + entity.getUniqueID();
     }
 
     public int compareTo(ExpressedTermDTO o) {
@@ -133,5 +152,17 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
     public void checkNotExpressed() {
         if (qualityTerm != null && qualityTerm.getTerm() == null)
             expressionFound = false;
+    }
+
+    public List<EapQualityTermDTO> getQualityTermDTOList() {
+        return qualityTermDTOList;
+    }
+
+    public void setQualityTermDTOList(List<EapQualityTermDTO> qualityTermDTOList) {
+        this.qualityTermDTOList = qualityTermDTOList;
+    }
+
+    public boolean isEap() {
+        return qualityTermDTOList != null;
     }
 }

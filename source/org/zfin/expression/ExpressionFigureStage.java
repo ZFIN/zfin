@@ -1,15 +1,12 @@
 package org.zfin.expression;
 
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.antibody.Antibody;
-import org.zfin.marker.Clone;
-import org.zfin.marker.Marker;
-import org.zfin.mutant.FishExperiment;
-import org.zfin.publication.Publication;
-import org.zfin.sequence.MarkerDBLink;
+import org.zfin.ontology.ComposedFxTerm;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -31,19 +28,19 @@ public class ExpressionFigureStage {
     private Figure figure;
     @ManyToOne()
     @JoinColumn(name = "efs_start_stg_zdb_id")
-    private DevelopmentStage start;
+    private DevelopmentStage startStage;
     @ManyToOne()
     @JoinColumn(name = "efs_end_stg_zdb_id")
-    private DevelopmentStage end;
+    private DevelopmentStage endStage;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "expressionFigureStage")
     private Set<ExpressionResult2> expressionResultSet;
 
-    public DevelopmentStage getEnd() {
-        return end;
+    public DevelopmentStage getEndStage() {
+        return endStage;
     }
 
-    public void setEnd(DevelopmentStage end) {
-        this.end = end;
+    public void setEndStage(DevelopmentStage end) {
+        this.endStage = end;
     }
 
     public ExpressionExperiment2 getExpressionExperiment() {
@@ -70,12 +67,12 @@ public class ExpressionFigureStage {
         this.id = id;
     }
 
-    public DevelopmentStage getStart() {
-        return start;
+    public DevelopmentStage getStartStage() {
+        return startStage;
     }
 
-    public void setStart(DevelopmentStage start) {
-        this.start = start;
+    public void setStartStage(DevelopmentStage start) {
+        this.startStage = start;
     }
 
     public Set<ExpressionResult2> getExpressionResultSet() {
@@ -84,6 +81,31 @@ public class ExpressionFigureStage {
 
     public void setExpressionResultSet(Set<ExpressionResult2> expressionResultSet) {
         this.expressionResultSet = expressionResultSet;
+    }
+
+    @Transient
+    private List<ComposedFxTerm> terms;
+
+    public List<ComposedFxTerm> getComposedTerms() {
+        if (terms != null)
+            return terms;
+        terms = new ArrayList<>();
+        for (ExpressionResult2 result : expressionResultSet) {
+            ComposedFxTerm term = new ComposedFxTerm();
+            term.setSuperTerm(result.getSuperTerm());
+            term.setSubterm(result.getSubTerm());
+            term.setExpressionFound(result.isExpressionFound());
+            term.setID(result.getID());
+            terms.add(term);
+        }
+        return terms;
+    }
+
+
+    public void addExpressionResult(ExpressionResult2 newExpressionResult) {
+        if(expressionResultSet == null)
+            expressionResultSet = new HashSet<>(1);
+        expressionResultSet.add(newExpressionResult);
     }
 }
 

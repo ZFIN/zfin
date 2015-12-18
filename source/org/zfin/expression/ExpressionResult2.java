@@ -1,9 +1,11 @@
 package org.zfin.expression;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -14,8 +16,8 @@ import java.util.Set;
 public class ExpressionResult2 implements Comparable<ExpressionResult2> {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name =  "xpatres_pk_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "xpatres_pk_id")
     private long ID;
 
     @Column(name = "xpatres_expression_found")
@@ -72,6 +74,7 @@ public class ExpressionResult2 implements Comparable<ExpressionResult2> {
     }
 
     public void setSuperTerm(GenericTerm superTerm) {
+        this.superTerm = superTerm;
         if (entity == null)
             entity = new PostComposedEntity();
         entity.setSuperterm(superTerm);
@@ -87,6 +90,7 @@ public class ExpressionResult2 implements Comparable<ExpressionResult2> {
     }
 
     public void setSubTerm(GenericTerm subTerm) {
+        this.subTerm = subTerm;
         if (entity == null)
             entity = new PostComposedEntity();
         entity.setSubterm(subTerm);
@@ -101,6 +105,12 @@ public class ExpressionResult2 implements Comparable<ExpressionResult2> {
     }
 
     public PostComposedEntity getEntity() {
+        if (entity == null) {
+            entity = new PostComposedEntity();
+            entity.setSuperterm(superTerm);
+            if (subTerm != null)
+                entity.setSubterm(subTerm);
+        }
         return entity;
     }
 
@@ -112,5 +122,19 @@ public class ExpressionResult2 implements Comparable<ExpressionResult2> {
     @Override
     public int compareTo(ExpressionResult2 o) {
         return 0;
+    }
+
+    public void addPhenotypeTerm(ExpressionStructure expressionStructure) {
+        ExpressionPhenotypeTerm term = new ExpressionPhenotypeTerm();
+        term.setQualityTerm(expressionStructure.getEapQualityTerm());
+        term.setExpressionResult(this);
+        term.setTag(expressionStructure.getTag());
+        if (phenotypeTermSet == null)
+            phenotypeTermSet = new HashSet<>(1);
+        phenotypeTermSet.add(term);
+    }
+
+    public boolean isEap() {
+        return CollectionUtils.isNotEmpty(phenotypeTermSet);
     }
 }

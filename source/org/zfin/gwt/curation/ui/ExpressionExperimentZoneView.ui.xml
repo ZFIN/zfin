@@ -12,10 +12,9 @@
             <g:Label text=":&nbsp;" addStyleNames="bold"/>
             <zfin:ShowHideToggle widget="{expressionExperimentPanel}" ui:field="showHideToggle" show="true"/>
         </g:HorizontalPanel>
-        <g:VerticalPanel ui:field="expressionExperimentPanel" width="100%">
-
-        </g:VerticalPanel>
+        <g:VerticalPanel ui:field="expressionExperimentPanel" width="100%"/>
+        <zfin:ToggleHyperlink ui:field="showSelectExperiments" toggleFalse="Show Selected Experiments Only" toggleTrue="Show All Experiments"/>
         <zfin:SimpleErrorElement ui:field="errorElement"/>
-        <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="false"/>
+        <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="true"/>
     </g:VerticalPanel>
 </ui:UiBinder>
