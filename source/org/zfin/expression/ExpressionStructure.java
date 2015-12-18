@@ -116,4 +116,8 @@ public class ExpressionStructure extends PostComposedEntity {
     }
 */
 
+    public boolean isEap() {
+        return eapQualityTerm != null;
+    }
+
 }

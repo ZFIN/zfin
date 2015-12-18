@@ -1158,34 +1158,19 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         return false;
     }
 
-    private void removeExpressionToAnnotation(ExpressionFigureStage experiment, boolean expressed, PostComposedEntity postComposedEntity) {
-        for (ExpressionResult2 result : experiment.getExpressionResultSet()) {
-            if (result.getEntity() == null || result.getEntity().getSuperterm() == null)
-                LOG.error("No entity or super term found for " + result.getID());
-            Term superTerm = result.getEntity().getSuperterm();
-            if (superTerm.equals(postComposedEntity.getSuperterm())) {
-                String subtermID = null;
-                Term term = result.getEntity().getSubterm();
-                if (term != null)
-                    subtermID = term.getZdbID();
-                // check if subterms are equal or both null
-                if (subtermID == null && postComposedEntity.getSubterm() == null && expressed == result.isExpressionFound()) {
-                    expRepository.deleteExpressionResultPerFigure(result, experiment.getFigure());
-                    LOG.info("Removed Expression_Result:  " + superTerm.getTermName());
-                    break;
-                }
-                if (subtermID != null && postComposedEntity.getSubterm() != null && postComposedEntity.getSubterm().getZdbID() != null &&
-                        subtermID.equals(postComposedEntity.getSubterm().getZdbID()) &&
-                        expressed == result.isExpressionFound()) {
-                    expRepository.deleteExpressionResultPerFigure(result, experiment.getFigure());
-                    Term subterm = result.getSubTerm();
-                    if (subterm != null)
-                        LOG.info("Removed Expression_Result:  " + superTerm.getTermName() + " : " + subterm.getTermName());
-                    else
-                        LOG.info("Removed Expression_Result:  " + superTerm.getTermName());
-                    break;
-                }
-            }
+    private void removeExpressionToAnnotation(ExpressionFigureStage experiment, boolean expressed, ExpressionStructure postComposedEntity) {
+        boolean termBeingUsed = experimentHasExpression(experiment, postComposedEntity, expressed);
+        // do nothing term already exists.
+        if (!termBeingUsed)
+            return;
+
+        // create a new ExpressionResult record
+        // create a new ExpressedTermDTO object that is passed back to the RPC caller
+        ExpressedTermDTO expressedTerm = DTOConversionService.convertToExpressedTermDTO(postComposedEntity);
+        ExpressionResult2 result = getExpressionResult(experiment, postComposedEntity);
+        if (result != null) {
+            if (!postComposedEntity.isEap())
+                experiment.getExpressionResultSet().remove(result);
         }
     }
 
