@@ -28,6 +28,7 @@ public class SequenceTargetingReagentEditController {
         model.addAttribute("str", str);
         model.addAttribute("showSupplier", str.getType() == Marker.Type.TALEN || str.getType() == Marker.Type.CRISPR);
         model.addAttribute("user", ProfileService.getCurrentSecurityUser());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit " + str.getAbbreviation());
 
         return "marker/sequence-targeting-reagent-edit.page";
     }
