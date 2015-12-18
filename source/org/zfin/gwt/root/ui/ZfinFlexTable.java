@@ -141,6 +141,15 @@ public class ZfinFlexTable extends FlexTable implements ClickHandler {
     /**
      * Set a toggle hyperlink at the bottom.
      *
+     * @return toggle link
+     */
+    protected void setToggleHyperlink(ToggleHyperlink showSelectedRecords) {
+        this.showSelectedRecords =showSelectedRecords;
+    }
+
+    /**
+     * Set a toggle hyperlink at the bottom.
+     *
      * @param clickHandler click handler
      */
     protected void addToggleHyperlinkClickHandler(ClickHandler clickHandler) {

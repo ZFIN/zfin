@@ -1,5 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.user.client.ui.Composite;
 import org.zfin.gwt.root.dto.EntityPart;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.ui.HandlesError;
@@ -12,16 +13,15 @@ import java.util.TreeMap;
 /**
  * Entry point for FX curation module.
  */
-public class FxCurationModule implements HandlesError {
+public class FxCurationModule extends Composite implements HandlesError {
 
     // data
     private String publicationID;
 
     // gui
-    private PileConstructionZoneModule pileConstructionZoneModule;
     private FxExperimentModule experimentModule;
     private CurationFilterModule experimentFilterModule;
-    private AttributionModule attributionModule = new AttributionModule();
+    FxStructureModule structureModule;
 
     // listener
     private List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
@@ -32,24 +32,19 @@ public class FxCurationModule implements HandlesError {
     }
 
     private void init() {
-        attributionModule.setPublication(publicationID);
-        attributionModule.addHandlesErrorListener(this);
 
         experimentModule = new FxExperimentModule(publicationID);
         experimentModule.addHandlesErrorListener(this);
         ExpressionSection expressionModule = new FxExpressionModule(experimentModule, publicationID);
-        StructurePile structureModule = new FxStructureModule(publicationID);
+        structureModule = new FxStructureModule(publicationID);
         expressionModule.setPileStructure(structureModule);
         structureModule.setExpressionSection(expressionModule);
         experimentModule.setExpressionSection(expressionModule);
         Map<EntityPart, List<OntologyDTO>> termEntryMap = getTermEntryMap();
 
-        PileConstructionZoneModule constructionZoneModule = new PileConstructionZoneModule(publicationID, termEntryMap);
-        constructionZoneModule.setStructureValidator(new FxPileStructureValidator(termEntryMap));
-        constructionZoneModule.setStructurePile(structureModule);
         experimentFilterModule = new CurationFilterModule(experimentModule, expressionModule, structureModule, publicationID);
-        structureModule.setPileStructureClickListener(constructionZoneModule);
-        pileConstructionZoneModule = constructionZoneModule;
+//        structureModule.setPileStructureClickListener(constructionZoneModule);
+        ExpressionModule module = new ExpressionModule(publicationID);
     }
 
     private Map<EntityPart, List<OntologyDTO>> getTermEntryMap() {
@@ -69,7 +64,7 @@ public class FxCurationModule implements HandlesError {
     }
 
     public PileConstructionZoneModule getPileConstructionZoneModule() {
-        return pileConstructionZoneModule;
+        return null;
     }
 
     @Override
@@ -78,13 +73,11 @@ public class FxCurationModule implements HandlesError {
 
     @Override
     public void clearError() {
-        attributionModule.clearError();
         revertGUI();
     }
 
     private void revertGUI() {
         experimentModule.updateGenes();
-        attributionModule.revertGUI();
     }
 
     @Override
@@ -97,5 +90,9 @@ public class FxCurationModule implements HandlesError {
     @Override
     public void addHandlesErrorListener(HandlesError handlesError) {
         handlesErrorListeners.add(handlesError);
+    }
+
+    public FxStructureModule getStructureModule() {
+        return structureModule;
     }
 }

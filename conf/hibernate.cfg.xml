@@ -3,10 +3,10 @@
         "classpath://org/hibernate/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-<!--    in theory this should be using the database default (READ LAST COMMIT or LC)-->
-<!--    or the JDBC default (2), either of which is better than read uncommited-->
-<!--    it could be that since jndi was used anyway, that this was ignored -->
-<!--        <property name="connection.isolation">1</property>-->
+        <!--    in theory this should be using the database default (READ LAST COMMIT or LC)-->
+        <!--    or the JDBC default (2), either of which is better than read uncommited-->
+        <!--    it could be that since jndi was used anyway, that this was ignored -->
+        <!--        <property name="connection.isolation">1</property>-->
 
 
         <property name="hibernate.query.substitutions">true 't', false 'f'</property>
@@ -20,25 +20,24 @@
         <property name="cache.provider_configuration_file_resource_path">ehcache.xml</property>
 
 
-
         <!-- Connection Pooling parameters -->
-<!--
-        <property name="c3p0.initialPoolSize">2</property>
-        <property name="c3p0.minPoolSize">2</property>
-        <property name="c3p0.maxPoolSize">20</property>
-        <property name="c3p0.acquire_increment">1</property>
--->
+        <!--
+                <property name="c3p0.initialPoolSize">2</property>
+                <property name="c3p0.minPoolSize">2</property>
+                <property name="c3p0.maxPoolSize">20</property>
+                <property name="c3p0.acquire_increment">1</property>
+        -->
         <!-- seconds -->
-<!--
-        <property name="c3p0.idle_test_period">100</property>
-        <property name="c3p0.max_size">20</property>
-        <property name="c3p0.max_statements">0</property>
-        <property name="c3p0.min_size">10</property>
--->
+        <!--
+                <property name="c3p0.idle_test_period">100</property>
+                <property name="c3p0.max_size">20</property>
+                <property name="c3p0.max_statements">0</property>
+                <property name="c3p0.min_size">10</property>
+        -->
         <!-- seconds -->
-<!--
-        <property name="c3p0.timeout">100</property>
--->
+        <!--
+                <property name="c3p0.timeout">100</property>
+        -->
 
         <!-- Mappings -->
         <mapping resource="org/zfin/filters.hbm.xml"/>
@@ -58,6 +57,10 @@
         <mapping resource="org/zfin/sequence.hbm.xml"/>
         <mapping resource="org/zfin/reno.hbm.xml"/>
         <mapping resource="org/zfin/curation.hbm.xml"/>
+        <mapping class="org.zfin.expression.ExpressionExperiment2"/>
+        <mapping class="org.zfin.expression.ExpressionFigureStage"/>
+        <mapping class="org.zfin.expression.ExpressionResult2"/>
+        <mapping class="org.zfin.expression.ExpressionPhenotypeTerm"/>
 
 
     </session-factory>

@@ -1082,6 +1082,9 @@ public class DTOConversionService {
         dto.setCreator(es.getPerson().getShortName());
         dto.setDate(es.getDate());
         ExpressedTermDTO expressionTerm = convertToExpressedTermDTO(es);
+        if (es.getEapQualityTerm() != null) {
+            expressionTerm.setQualityTerm(convertToEapQualityTermDTO(es));
+        }
         dto.setExpressedTerm(expressionTerm);
         if (es.getSuperterm().getOntology().equals(Ontology.ANATOMY)) {
             GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByZdbID(es.getSuperterm().getZdbID());
@@ -1090,6 +1093,13 @@ public class DTOConversionService {
             dto.setStart(start);
             dto.setEnd(end);
         }
+        return dto;
+    }
+
+    private static EapQualityTermDTO convertToEapQualityTermDTO(ExpressionStructure structure) {
+        EapQualityTermDTO dto = new EapQualityTermDTO();
+        dto.setTerm(convertToTermDTO(structure.getEapQualityTerm()));
+        dto.setTag(structure.getTag());
         return dto;
     }
 
@@ -1258,9 +1268,22 @@ public class DTOConversionService {
     /**
      * Note that this conversion does not populate the expression found attribute.
      *
-     * @param postComposedEntity ExpressionStructure
+     * @param expressionStructure ExpressionStructure
      * @return ExpressedTermDTO
      */
+    public static ExpressedTermDTO convertToExpressedTermDTO(ExpressionStructure expressionStructure) {
+        ExpressedTermDTO expressedDTO = new ExpressedTermDTO();
+        EntityDTO entity = new EntityDTO();
+        entity.setSuperTerm(DTOConversionService.convertToTermDTO(expressionStructure.getSuperterm()));
+        entity.setSubTerm(DTOConversionService.convertToTermDTO(expressionStructure.getSubterm()));
+        expressedDTO.setEntity(entity);
+        if (expressionStructure.getEapQualityTerm() != null) {
+            expressedDTO.setQualityTerm(convertToEapQualityTermDTO(expressionStructure));
+        }
+        expressedDTO.setExpressionFound(expressionStructure.isExpressionFound());
+        return expressedDTO;
+    }
+
     public static ExpressedTermDTO convertToExpressedTermDTO(PostComposedEntity postComposedEntity) {
         ExpressedTermDTO expressedDTO = new ExpressedTermDTO();
         EntityDTO entity = new EntityDTO();
@@ -1317,6 +1340,25 @@ public class DTOConversionService {
         } catch (TermNotFoundException e) {
             return null;
         }
+        return entity;
+    }
+
+    public static ExpressionFigureStage getExpressionFigureStageFromDTO(ExpressedTermDTO expressedTerm) {
+        if (expressedTerm == null) {
+            return null;
+        }
+        ExpressionFigureStage entity = new ExpressionFigureStage();
+/*
+        try {
+            EntityDTO entityDTO = expressedTerm.getEntity();
+            entity.setSuperterm(convertToTerm(entityDTO.getSuperTerm()));
+            if (entityDTO.getSubTerm() != null) {
+                entity.setSubterm(convertToTerm(entityDTO.getSubTerm()));
+            }
+        } catch (TermNotFoundException e) {
+            return null;
+        }
+*/
         return entity;
     }
 
@@ -1518,6 +1560,70 @@ public class DTOConversionService {
         dto.setLastName(person.getLastName());
         dto.setDisplay(person.getFullName());
         dto.setZdbID(person.getZdbID());
+        return dto;
+    }
+
+    public static ExperimentDTO convertToExperimentDTO(ExpressionExperiment2 experiment) {
+        ExperimentDTO experimentDTO = new ExperimentDTO();
+        experimentDTO.setExperimentZdbID(experiment.getZdbID());
+        Marker gene = experiment.getGene();
+        if (gene != null) {
+            experimentDTO.setGene(convertToMarkerDTO(gene));
+            if (experiment.getMarkerDBLink() != null && experiment.getMarkerDBLink().getAccessionNumber() != null) {
+                String dblink = experiment.getMarkerDBLink().getAccessionNumber();
+                experimentDTO.setGenbankNumber(dblink);
+                experimentDTO.setGenbankID(experiment.getMarkerDBLink().getZdbID());
+            }
+        }
+        if (experiment.getAntibody() != null) {
+            experimentDTO.setAntibodyMarker(convertToMarkerDTO(experiment.getAntibody()));
+        }
+        experimentDTO.setFishName(experiment.getFishExperiment().getFish().getHandle());
+        experimentDTO.setFishID(experiment.getFishExperiment().getFish().getZdbID());
+        experimentDTO.setEnvironment(convertToEnvironmentDTO(experiment.getFishExperiment().getExperiment()));
+        experimentDTO.setAssay(experiment.getAssay().getName());
+        experimentDTO.setAssayAbbreviation(experiment.getAssay().getAbbreviation());
+        experimentDTO.setGenotypeExperimentID(experiment.getFishExperiment().getZdbID());
+        experimentDTO.setPublicationID(experiment.getPublication().getZdbID());
+        // check if there are expressions associated
+        Set<ExpressionResult> expressionResults = experiment.getExpressionResults();
+        if (expressionResults != null) {
+            experimentDTO.setNumberOfExpressions(experiment.getDistinctExpressions());
+        }
+        // check if a clone is available
+        Marker probe = experiment.getProbe();
+        if (probe != null) {
+            experimentDTO.setCloneID(probe.getZdbID());
+            experimentDTO.setCloneName(probe.getAbbreviation() + " [" + probe.getType().toString() + "]");
+        }
+        return experimentDTO;
+    }
+
+    public static ExpressedTermDTO convertToExpressedTermDTO(ExpressionResult2 result) {
+        ExpressedTermDTO dto = new ExpressedTermDTO();
+        dto.setExpressionFound(result.isExpressionFound());
+        dto.setEntity(convertToEntityDTO(result.getEntity()));
+        dto.setId(result.getID());
+        List<EapQualityTermDTO> dtoList = new ArrayList<>();
+        if (result.getPhenotypeTermSet() != null) {
+            for (ExpressionPhenotypeTerm qualTerm : result.getPhenotypeTermSet())
+                dtoList.add(convertToEapQualityTermDTO(qualTerm));
+            dto.setQualityTermDTOList(dtoList);
+        }
+        return dto;
+    }
+
+    private static EapQualityTermDTO convertToEapQualityTermDTO(ExpressionPhenotypeTerm qualTerm) {
+        EapQualityTermDTO dto = new EapQualityTermDTO();
+        dto.setTag(qualTerm.getTag());
+        dto.setTerm(convertToTermDTO(qualTerm.getQualityTerm()));
+        return dto;
+    }
+
+    public static EapQualityTermDTO convertToEapQualityTerm(ExpressionPhenotypeTerm term) {
+        EapQualityTermDTO dto = new EapQualityTermDTO();
+        dto.setTag(term.getTag());
+        dto.setTerm(convertToTermDTO(term.getQualityTerm()));
         return dto;
     }
 }

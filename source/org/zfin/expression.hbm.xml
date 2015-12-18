@@ -298,10 +298,14 @@
         </id>
 
         <property name="date" column="xpatinf_date"/>
+        <property name="tag" column="xpatinf_tag"/>
+        <property name="expressionFound" column="xpatinf_expression_found"/>
+
         <many-to-one name="publication" column="xpatinf_pub_zdb_id"/>
         <many-to-one name="person" column="xpatinf_curator_zdb_id"/>
         <many-to-one name="superterm" column="xpatinf_superterm_zdb_id"/>
         <many-to-one name="subterm" column="xpatinf_subterm_zdb_id"/>
+        <many-to-one name="eapQualityTerm" column="xpatinf_quality_term_zdb_id"/>
     </class>
 
     <class name="org.zfin.expression.presentation.ExpressionTermFastSearch" table="expression_term_fast_search">
