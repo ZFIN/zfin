@@ -1971,7 +1971,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             if (tuple[5] != null) {
                 MarkerReferenceBean reference = new MarkerReferenceBean();
                 reference.setZdbID(tuple[5].toString());
-                if (tuple[9] != null) {
+                if (tuple.length > 9 && tuple[9] != null) {
                     reference.setTitle(tuple[9].toString());
                 }
                 linkDisplay.addReference(reference);
@@ -1980,7 +1980,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 linkDisplay.setSignificance(Integer.valueOf(tuple[6].toString()));
             }
             linkDisplay.setDblinkZdbID(tuple[7].toString());
-            linkDisplay.setReferenceDatabaseZdbID(tuple[8].toString());
+            if (tuple.length > 8) {
+                linkDisplay.setReferenceDatabaseZdbID(tuple[8].toString());
+            }
             return linkDisplay;
         }
 
