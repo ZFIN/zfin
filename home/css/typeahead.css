@@ -19,6 +19,8 @@ input.tt-input {
 .tt-no-results {
     font-size: 14px;
     padding: 6px 6px;
+    margin: 0;
+    text-align: left;
 }
 
 .tt-suggestion.tt-cursor,
