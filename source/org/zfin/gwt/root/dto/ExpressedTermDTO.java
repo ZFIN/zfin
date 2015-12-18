@@ -1,8 +1,8 @@
 package org.zfin.gwt.root.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import org.zfin.gwt.root.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -40,6 +40,24 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
             display += "(";
             for (EapQualityTermDTO term : qualityTermDTOList) {
                 display += term.getNickName();
+                display += ", ";
+            }
+            display = display.substring(0, display.length() - 2);
+            display += ")";
+        }
+        return display;
+    }
+
+    public String getHtmlDisplayName() {
+        String display = entity.getDisplayName();
+        if (isEap()) {
+            display += "(";
+            Collections.sort(qualityTermDTOList);
+            for (EapQualityTermDTO term : qualityTermDTOList) {
+                if (term.getNickName().contains("ok"))
+                    display += "<span class=\"phenotype-normal\">" + term.getNickName() + "</span>";
+                else
+                    display += term.getNickName();
                 display += ", ";
             }
             display = display.substring(0, display.length() - 2);
@@ -113,7 +131,15 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
     public int compareTo(ExpressedTermDTO o) {
         if (o == null)
             return 1;
-        return entity.compareTo(o.getEntity());
+        if (entity.compareTo(o.getEntity()) != 0)
+            return entity.compareTo(o.getEntity());
+        if (qualityTerm == null && o.getQualityTerm() == null)
+            return 0;
+        if (qualityTerm == null)
+            return -1;
+        if (o.getQualityTerm() == null)
+            return 1;
+        return qualityTerm.getNickName().compareToIgnoreCase(o.getQualityTerm().getNickName());
     }
 
     /**
@@ -163,6 +189,22 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
     }
 
     public boolean isEap() {
-        return qualityTermDTOList != null;
+        return qualityTermDTOList != null && qualityTermDTOList.size() > 0;
+    }
+
+    public boolean hasUniqueID(String id) {
+        if (qualityTermDTOList == null || qualityTermDTOList.size() == 0)
+            return getUniqueID().equals(id);
+        for (EapQualityTermDTO dto : qualityTermDTOList) {
+            ExpressedTermDTO newDto = this.clone();
+            newDto.setQualityTerm(dto);
+            if (newDto.getUniqueID().equals(id))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isQualityAmeliorated() {
+        return false;
     }
 }

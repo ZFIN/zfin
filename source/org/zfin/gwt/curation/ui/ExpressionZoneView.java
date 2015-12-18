@@ -145,7 +145,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     // Retrieve experiments from the server
 
 
-    private void recordAllExpressedTerms() {
+    protected void recordAllExpressedTerms() {
         expressedTerms.clear();
         for (ExpressionFigureStageDTO expression : this.displayedExpressions) {
             expressedTerms.addAll(expression.getExpressedTerms());
@@ -154,8 +154,8 @@ public class ExpressionZoneView extends Composite implements HandlesError {
 
     private Widget createTermList(List<ExpressionFigureStageDTO> expressionList) {
         ExpressionFigureStageDTO aggregated = new ExpressionFigureStageDTO();
-        List<ExpressedTermDTO> expressedTermDTOs = new ArrayList<ExpressedTermDTO>(5);
-        Set<ExpressedTermDTO> expressedTermSet = new HashSet<ExpressedTermDTO>(5);
+        List<ExpressedTermDTO> expressedTermDTOs = new ArrayList<>(5);
+        Set<ExpressedTermDTO> expressedTermSet = new HashSet<>(5);
         for (ExpressionFigureStageDTO dto : expressionList) {
             removeUnspecifiedTerm(dto.getExpressedTerms());
             expressedTermSet.addAll(dto.getExpressedTerms());
@@ -209,28 +209,10 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             if (classNamePrefix != null)
                 classSpan.append("<span class='" + classNamePrefix + "'>");
         }
-        classSpan.append(term.getDisplayName());
+        classSpan.append(term.getHtmlDisplayName());
         if (classNamePrefix != null || markStructures)
             classSpan.append("</span>");
         return classSpan.toString();
-    }
-
-    private void createConstructionZone() {
-        addButton.addClickHandler(new AddExpressionClickListener());
-        constructionRow.setWidget(0, 2, stageSelector.getPanelTitle());
-        constructionRow.setWidget(1, 0, addButton);
-        constructionRow.setWidget(1, 1, figureList);
-        HorizontalPanel pan = new HorizontalPanel();
-        pan.add(stageSelector.getStartStagePanel());
-        pan.add(stageSelector.getMultiStagePanel());
-        constructionRow.setWidget(1, 2, pan);
-        resetButton.addClickHandler(new ResetExpressionConstructionClickListener());
-        constructionRow.setWidget(1, 3, resetButton);
-        constructionRow.setWidget(2, 2, stageSelector.getEndStagePanel());
-        constructionRow.setWidget(3, 2, stageSelector.getTogglePanel());
-//        constructionRow.setWidget(4, 0, errorMessage);
-        constructionRow.getFlexCellFormatter().setColSpan(4, 0, 4);
-
     }
 
     public Set<ExpressedTermDTO> getExpressedTermDTOs() {
@@ -997,7 +979,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         }
 
         public List<Integer> getCheckBox(int column) {
-            List<Integer> numbers = new ArrayList<Integer>(5);
+            List<Integer> numbers = new ArrayList<>(5);
             int rowCount = getRowCount();
             for (Integer rowIndex = 1; rowIndex < rowCount; rowIndex++) {
                 Widget widget;
@@ -1193,7 +1175,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     }
 
     private enum Alignment {
-        LEFT, RIGHT, CENTER;
+        LEFT, RIGHT, CENTER
     }
 
 
@@ -1227,10 +1209,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
 
     public SimpleErrorElement getErrorElement() {
         return errorElement;
-    }
-
-    public void setErrorElement(SimpleErrorElement errorElement) {
-        this.errorElement = errorElement;
     }
 
     public StageSelector getStageSelector() {

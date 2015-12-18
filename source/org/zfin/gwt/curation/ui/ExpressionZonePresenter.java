@@ -169,8 +169,8 @@ public class ExpressionZonePresenter implements Presenter {
             }
             //Window.alert("SIZE: " + experiments.size());
 ///            if (sectionVisible)
-                view.getDisplayTable().createExpressionTable();
-////            recordAllExpressedTerms();
+            view.getDisplayTable().createExpressionTable();
+            view.recordAllExpressedTerms();
             curationRPCAsync.getFigureAnnotationCheckmarkStatus(publicationID, new FigureAnnotationCheckmarkStatusCallback());
             view.getDisplayTable().createExpressionTable(displayedExpressions);
             view.setLoadingImageVisibility(false);
@@ -216,7 +216,6 @@ public class ExpressionZonePresenter implements Presenter {
 ///            structurePile.updateFigureAnnotations(selectedExpressions);
         }
     }
-
 
 
 }

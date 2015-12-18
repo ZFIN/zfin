@@ -315,7 +315,7 @@ class StructurePileTable extends ZfinFlexTable {
             if (widget instanceof HorizontalPanel) {
                 HorizontalPanel structurePanel = (HorizontalPanel) widget;
                 for (ExpressedTermDTO term : terms) {
-                    if (structurePanel.getTitle().equals(term.getUniqueID())) {
+                    if (term.hasUniqueID(structurePanel.getTitle())) {
                         RadioButton addButton = (RadioButton) getWidget(row, HeaderName.ADD.getIndex());
                         addButton.setValue(true);
                     }
