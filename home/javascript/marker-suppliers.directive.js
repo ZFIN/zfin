@@ -74,13 +74,6 @@
         }
 
         function submit() {
-            var added = vm.suppliers.some(function (existing) {
-                return existing.name === vm.supplier;
-            });
-            if (added) {
-                vm.errors.fields.name = ["Supplier has already been added for this marker"];
-                return;
-            }
             vm.processing = true;
             MarkerService.addSupplier(vm.id, { name: vm.supplier })
                 .then(function (supplier) {
