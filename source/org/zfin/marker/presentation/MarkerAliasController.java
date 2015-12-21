@@ -65,9 +65,12 @@ public class MarkerAliasController {
                                           BindingResult errors) {
         Marker marker = markerRepository.getMarkerByID(markerID);
 
-        for (MarkerAlias alias : marker.getAliases()) {
-            if (alias.getAlias().equals(newAlias.getAlias())) {
-                errors.rejectValue("alias", "marker.alias.inuse");
+        Collection<MarkerAlias> aliases = marker.getAliases();
+        if (CollectionUtils.isNotEmpty(aliases)) {
+            for (MarkerAlias alias : aliases) {
+                if (alias.getAlias().equals(newAlias.getAlias())) {
+                    errors.rejectValue("alias", "marker.alias.inuse");
+                }
             }
         }
 

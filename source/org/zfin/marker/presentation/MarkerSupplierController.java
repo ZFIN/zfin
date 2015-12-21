@@ -1,5 +1,6 @@
 package org.zfin.marker.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -17,6 +18,7 @@ import org.zfin.profile.repository.ProfileRepository;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Controller
@@ -60,10 +62,13 @@ public class MarkerSupplierController {
         Marker marker = markerRepository.getMarkerByID(zdbID);
         Organization supplier = profileRepository.getOrganizationByName(supplierBean.getName());
 
-        for (MarkerSupplier markerSupplier : marker.getSuppliers()) {
-            if (markerSupplier.getOrganization().equals(supplier)) {
-                errors.rejectValue("name", "marker.supplier.inuse");
-                throw new InvalidWebRequestException("Invalid supplier", errors);
+        Collection<MarkerSupplier> suppliers = marker.getSuppliers();
+        if (CollectionUtils.isNotEmpty(suppliers)) {
+            for (MarkerSupplier markerSupplier : marker.getSuppliers()) {
+                if (markerSupplier.getOrganization().equals(supplier)) {
+                    errors.rejectValue("name", "marker.supplier.inuse");
+                    throw new InvalidWebRequestException("Invalid supplier", errors);
+                }
             }
         }
 

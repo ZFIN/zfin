@@ -1,5 +1,6 @@
 package org.zfin.marker.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -91,9 +92,12 @@ public class MarkerLinkController {
             accessionNo = newLink.getAccession();
             refDB = sequenceRepository.getReferenceDatabaseByID(newLink.getReferenceDatabaseZdbID());
 
-            for (DBLink link : marker.getDbLinks()) {
-                if (link.getReferenceDatabase().equals(refDB) && link.getAccessionNumber().equals(accessionNo)) {
-                    errors.reject("marker.link.duplicate");
+            Collection<? extends DBLink> links = marker.getDbLinks();
+            if (CollectionUtils.isNotEmpty(links)) {
+                for (DBLink link : marker.getDbLinks()) {
+                    if (link.getReferenceDatabase().equals(refDB) && link.getAccessionNumber().equals(accessionNo)) {
+                        errors.reject("marker.link.duplicate");
+                    }
                 }
             }
         }
