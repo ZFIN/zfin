@@ -66,7 +66,9 @@
             <div class="col-sm-6">
                 <div str-sequence
                      reported-sequence-name="reportedSequence"
-                     displayed-sequence-name="sequence">
+                     displayed-sequence-name="sequence"
+                     reversed-name="reversed"
+                     complemented-name="complemented">
                 </div>
                 <form:errors path="sequence" cssClass="error"/>
             </div>
@@ -76,7 +78,9 @@
             <div class="col-sm-6">
                 <div str-sequence
                      reported-sequence-name="reportedSequence2"
-                     displayed-sequence-name="sequence2">
+                     displayed-sequence-name="sequence2"
+                     reversed-name="reversed2"
+                     complemented-name="complemented2">
                 </div>
                 <form:errors path="sequence2" cssClass="error"/>
             </div>

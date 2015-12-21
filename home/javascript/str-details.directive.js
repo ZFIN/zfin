@@ -25,8 +25,6 @@
         var vm = this;
 
         vm.str = {};
-        vm.reportedSequence1 = '';
-        vm.reportedSequence2 = '';
 
         vm.processing = false;
         vm.saved = false;
@@ -69,8 +67,6 @@
         function reset() {
             STRService.getStrDetails(vm.id)
                 .then(function (data) {
-                    vm.reportedSequence1 = data.sequence1;
-                    vm.reportedSequence2 = data.sequence2;
                     vm.str = data;
                     vm.errors = {};
                 })

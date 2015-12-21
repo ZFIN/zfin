@@ -16,6 +16,10 @@ public class SequenceTargetingReagentAddBean {
     private String sequence2;
     private String reportedSequence;
     private String reportedSequence2;
+    private boolean reversed;
+    private boolean reversed2;
+    private boolean complemented;
+    private boolean complemented2;
     private String supplier;
 
     private Map<String, String> strTypes;
@@ -122,6 +126,38 @@ public class SequenceTargetingReagentAddBean {
 
     public void setStrTypes(Map<String, String> strTypes) {
         this.strTypes = strTypes;
+    }
+
+    public boolean isReversed() {
+        return reversed;
+    }
+
+    public void setReversed(boolean reversed) {
+        this.reversed = reversed;
+    }
+
+    public boolean isReversed2() {
+        return reversed2;
+    }
+
+    public void setReversed2(boolean reversed2) {
+        this.reversed2 = reversed2;
+    }
+
+    public boolean isComplemented() {
+        return complemented;
+    }
+
+    public void setComplemented(boolean complemented) {
+        this.complemented = complemented;
+    }
+
+    public boolean isComplemented2() {
+        return complemented2;
+    }
+
+    public void setComplemented2(boolean complemented2) {
+        this.complemented2 = complemented2;
     }
 }
 

@@ -10,10 +10,14 @@
         <label class="col-sm-2 control-label">{{vm.sequenceLabel}}</label>
         <div class="col-sm-6">
             <div str-sequence
-                 reported-sequence="vm.reportedSequence1"
+                 reported-sequence="vm.str.reportedSequence1"
                  sequence="vm.str.sequence1"
-                 reported-sequence-name="reportedSequence"
-                 displayed-sequence-name="sequence1">
+                 is-reversed="vm.str.reversed1"
+                 is-complemented="vm.str.complemented1"
+                 reported-sequence-name="reportedSequence1"
+                 displayed-sequence-name="sequence1"
+                 reversed-name="reversed1"
+                 complemented-name="complemented1">
             </div>
             <p class="text-danger" ng-repeat="error in vm.errors.sequence1">{{error}}</p>
         </div>
@@ -22,10 +26,14 @@
         <label class="col-sm-2 control-label">Target Sequence 2</label>
         <div class="col-sm-6">
             <div str-sequence
-                 reported-sequence="vm.reportedSequence2"
+                 reported-sequence="vm.str.reportedSequence2"
                  sequence="vm.str.sequence2"
+                 is-reversed="vm.str.reversed2"
+                 is-complemented="vm.str.complemented2"
                  reported-sequence-name="reportedSequence2"
-                 displayed-sequence-name="sequence2">
+                 displayed-sequence-name="sequence2"
+                 reversed-name="reversed2"
+                 complemented-name="complemented2">
             </div>
             <p class="text-danger" ng-repeat="error in vm.errors.sequence2">{{error}}</p>
         </div>

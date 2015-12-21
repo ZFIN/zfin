@@ -10,8 +10,12 @@
             scope: {
                 reportedSequenceName: '@',
                 displayedSequenceName: '@',
+                reversedName: '@',
+                complementedName: '@',
                 reportedSequence: '=?',
-                sequence: '=?'
+                sequence: '=?',
+                isReversed: '=?',
+                isComplemented: '=?'
             },
             controller: STRSequenceController,
             controllerAs: 'vm',
@@ -25,9 +29,6 @@
     function STRSequenceController($scope) {
 
         var vm = this;
-
-        vm.isReversed = false;
-        vm.isComplemented = false;
 
         activate();
 

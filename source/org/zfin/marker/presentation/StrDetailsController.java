@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.sequence.STRMarkerSequence;
 
@@ -32,14 +33,7 @@ public class StrDetailsController {
     @RequestMapping(value = "/{zdbID}/details", method = RequestMethod.GET)
     public StrDetailsBean getStrDetails(@PathVariable String zdbID) {
         SequenceTargetingReagent str = markerRepository.getSequenceTargetingReagent(zdbID);
-        STRMarkerSequence sequence = str.getSequence();
-        StrDetailsBean bean = new StrDetailsBean();
-        bean.setZdbID(str.getZdbID());
-        bean.setName(str.getAbbreviation());
-        bean.setType(str.getType().toString());
-        bean.setSequence1(sequence.getSequence());
-        bean.setSequence2(sequence.getSecondSequence());
-        return bean;
+        return StrDetailsBean.convert(str);
     }
 
     @ResponseBody
@@ -62,13 +56,23 @@ public class StrDetailsController {
             sequence.setSequence(bean.getSequence1());
             sequence.setSecondSequence(bean.getSequence2());
 
+            if (bean.getReversed1() || bean.getComplemented1()) {
+                String note = MarkerService.getSTRModificationNote(bean.getReportedSequence1(), bean.getReversed1(), bean.getComplemented1());
+                markerRepository.addMarkerDataNote(str, note);
+            }
+
+            if (bean.getReversed2() || bean.getComplemented2()) {
+                String note = MarkerService.getSTRModificationNote(bean.getReportedSequence2(), bean.getReversed2(), bean.getComplemented2());
+                markerRepository.addMarkerDataNote(str, note);
+            }
+
             session.save(str);
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
             throw e;
         }
-        return bean;
+        return StrDetailsBean.convert(str);
     }
 
 }

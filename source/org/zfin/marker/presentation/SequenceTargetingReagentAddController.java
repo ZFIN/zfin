@@ -148,6 +148,16 @@ public class SequenceTargetingReagentAddController {
                 profileRepository.addSupplier(supplier, newSequenceTargetingReagent);
             }
 
+            if (formBean.isReversed() || formBean.isComplemented()) {
+                String note = MarkerService.getSTRModificationNote(formBean.getReportedSequence(), formBean.isReversed(), formBean.isComplemented());
+                mr.addMarkerDataNote(newSequenceTargetingReagent, note);
+            }
+
+            if (formBean.isReversed2() || formBean.isReversed2()) {
+                String note = MarkerService.getSTRModificationNote(formBean.getReportedSequence2(), formBean.isReversed2(), formBean.isComplemented2());
+                mr.addMarkerDataNote(newSequenceTargetingReagent, note);
+            }
+
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             try {

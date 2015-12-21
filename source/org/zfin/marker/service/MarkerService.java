@@ -947,4 +947,13 @@ public class MarkerService {
         return diseaseDisplays;
     }
 
+    public static String getSTRModificationNote(String sequence, boolean reversed, boolean complemented) {
+        String note = "Reported sequence " + sequence + " was";
+        note += (reversed) ? " reversed" : "";
+        note += (reversed && complemented) ? " and" : "";
+        note += (complemented) ? " complemented" : "";
+        note += ".";
+        return note;
+    }
+
 }
