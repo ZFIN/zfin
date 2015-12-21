@@ -8,7 +8,7 @@
             restrict: 'EA',
             templateUrl: '/templates/marker-relationships.directive.html',
             scope: {
-                id: '@',
+                markerId: '@',
                 relationship: '@',
                 relativeName: '@'
             },
@@ -42,7 +42,7 @@
         activate();
 
         function activate() {
-            MarkerService.getRelationships(vm.id)
+            MarkerService.getRelationships(vm.markerId)
                 .then(function (relationships) {
                     vm.relationships = relationships.filter(function(relationship) {
                         return relationship.relationship === vm.relationship;
@@ -55,7 +55,7 @@
 
         function add() {
             vm.processing = true;
-            var first = {zdbID: vm.id};
+            var first = {zdbID: vm.markerId};
             var second = {name: vm.newGene};
             MarkerService.addRelationship(first, second, vm.relationship, vm.newReference)
                 .then(function(relationship) {

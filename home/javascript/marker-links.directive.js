@@ -8,7 +8,7 @@
             restrict: 'EA',
             templateUrl: '/templates/marker-links.directive.html',
             scope: {
-                id: '@',
+                markerId: '@',
                 group: '@'
             },
             controller: MarkerLinksController,
@@ -45,7 +45,7 @@
         activate();
 
         function activate() {
-            MarkerService.getLinks(vm.id, vm.group)
+            MarkerService.getLinks(vm.markerId, vm.group)
                 .then(function(links) {
                     vm.links = links;
                 })
@@ -64,7 +64,7 @@
 
         function add() {
             vm.processing = true;
-            MarkerService.addLink(vm.id, vm.newDatabase, vm.newAccession, vm.newReference)
+            MarkerService.addLink(vm.markerId, vm.newDatabase, vm.newAccession, vm.newReference)
                 .then(function(link) {
                     vm.links.unshift(link);
                     vm.newDatabase = '';

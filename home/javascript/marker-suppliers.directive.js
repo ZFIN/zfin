@@ -38,7 +38,7 @@
             restrict: 'EA',
             templateUrl: '/templates/marker-suppliers.directive.html',
             scope: {
-                id: '@'
+                markerId: '@'
             },
             controller: MarkerSuppliersController,
             controllerAs: 'vm',
@@ -64,7 +64,7 @@
         activate();
 
         function activate() {
-            MarkerService.getSuppliers(vm.id)
+            MarkerService.getSuppliers(vm.markerId)
                 .then(function (suppliers) {
                     vm.suppliers = suppliers;
                 })
@@ -75,7 +75,7 @@
 
         function submit() {
             vm.processing = true;
-            MarkerService.addSupplier(vm.id, { name: vm.supplier })
+            MarkerService.addSupplier(vm.markerId, { name: vm.supplier })
                 .then(function (supplier) {
                     vm.suppliers.push(supplier);
                     vm.supplier = '';
@@ -90,7 +90,7 @@
         }
 
         function remove(supplier, index) {
-            MarkerService.removeSupplier(vm.id, supplier)
+            MarkerService.removeSupplier(vm.markerId, supplier)
                 .then(function () {
                     vm.suppliers.splice(index, 1);
                 })

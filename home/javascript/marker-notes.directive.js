@@ -17,7 +17,7 @@
             restrict: 'EA',
             templateUrl: '/templates/marker-notes.directive.html',
             scope: {
-                id: '@',
+                markerId: '@',
                 userId: '@'
             },
             controller: MarkerNotesController,
@@ -53,7 +53,7 @@
         activate();
 
         function activate() {
-            MarkerService.getNotes(vm.id)
+            MarkerService.getNotes(vm.markerId)
                 .then(function(notes) {
                     notes.forEach(function(note) {
                         if (note.noteEditMode === 'PRIVATE') {
@@ -83,7 +83,7 @@
             var newNote = vm.publicNote;
             newNote.noteData = vm.newPublicNote;
             vm.publicNote.processing = true;
-            MarkerService.updatePublicNote(vm.id, newNote)
+            MarkerService.updatePublicNote(vm.markerId, newNote)
                 .then(function(note) {
                     vm.publicNote = note;
                 })
@@ -103,7 +103,7 @@
                 noteEditMode: "PRIVATE"
             };
             vm.processing = true;
-            MarkerService.addCuratorNote(vm.id, newNote)
+            MarkerService.addCuratorNote(vm.markerId, newNote)
                 .then(function(note) {
                     vm.curatorNotes.unshift(note);
                     vm.newCuratorNote = '';
@@ -129,7 +129,7 @@
 
         function saveCuratorNote(note, index) {
             note.processing = true;
-            MarkerService.updateCuratorNote(vm.id, note, note.editText)
+            MarkerService.updateCuratorNote(vm.markerId, note, note.editText)
                 .then(function(note) {
                     vm.curatorNotes[index] = note;
                 })
@@ -143,7 +143,7 @@
         }
 
         function deleteCuratorNote(note, index) {
-            MarkerService.deleteCuratorNote(vm.id, note)
+            MarkerService.deleteCuratorNote(vm.markerId, note)
                 .then(function() {
                     vm.curatorNotes.splice(index, 1);
                 })

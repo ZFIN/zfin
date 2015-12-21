@@ -48,7 +48,7 @@
             <h3 class="panel-title">STR Details</h3>
         </div>
         <div class="panel-body">
-            <div str-details id="${str.zdbID}" type="${str.type}"></div>
+            <div str-details marker-id="${str.zdbID}" type="${str.type}"></div>
         </div>
     </div>
 
@@ -57,7 +57,7 @@
             <h3 class="panel-title">Aliases</h3>
         </div>
         <div class="panel-body">
-            <div marker-aliases id="${str.zdbID}" name="${str.abbreviation}"></div>
+            <div marker-aliases marker-id="${str.zdbID}" name="${str.abbreviation}"></div>
         </div>
     </div>
 
@@ -67,7 +67,7 @@
         </div>
         <div class="panel-body">
             <div marker-relationships
-                 id="${str.zdbID}"
+                 marker-id="${str.zdbID}"
                  relationship="knockdown reagent targets gene"
                  relative-name="target gene"></div>
         </div>
@@ -79,7 +79,7 @@
                 <h3 class="panel-title">Suppliers</h3>
             </div>
             <div class="panel-body">
-                <div marker-suppliers id="${str.zdbID}"></div>
+                <div marker-suppliers marker-id="${str.zdbID}"></div>
             </div>
         </div>
     </c:if>
@@ -89,7 +89,7 @@
             <h3 class="panel-title">Notes</h3>
         </div>
         <div class="panel-body">
-            <div marker-notes id="${str.zdbID}" user-id="${user.zdbID}"></div>
+            <div marker-notes marker-id="${str.zdbID}" user-id="${user.zdbID}"></div>
         </div>
     </div>
 
@@ -98,7 +98,7 @@
             <h3 class="panel-title">Other ${str.name} Pages</h3>
         </div>
         <div class="panel-body">
-            <div marker-links id="${str.zdbID}" group="summary page"></div>
+            <div marker-links marker-id="${str.zdbID}" group="summary page"></div>
         </div>
     </div>
 </div>

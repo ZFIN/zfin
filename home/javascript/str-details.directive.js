@@ -8,7 +8,7 @@
             restrict: 'EA',
             templateUrl: '/templates/str-details.directive.html',
             scope: {
-                id: '@',
+                markerId: '@',
                 type: '@'
             },
             controller: STRDetailsController,
@@ -51,7 +51,7 @@
             vm.processing = true;
             vm.saved = false;
             vm.errors = {};
-            STRService.saveStrDetails(vm.id, vm.str)
+            STRService.saveStrDetails(vm.markerId, vm.str)
                 .then(function (data) {
                     vm.str = data;
                     vm.saved = true;
@@ -65,7 +65,7 @@
         }
 
         function reset() {
-            STRService.getStrDetails(vm.id)
+            STRService.getStrDetails(vm.markerId)
                 .then(function (data) {
                     vm.str = data;
                     vm.errors = {};

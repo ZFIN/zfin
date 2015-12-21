@@ -8,7 +8,7 @@
             restrict: 'EA',
             templateUrl: '/templates/marker-aliases.directive.html',
             scope: {
-                id: '@',
+                markerId: '@',
                 name: '@'
             },
             controller: MarkerAliasesController,
@@ -42,7 +42,7 @@
         activate();
 
         function activate() {
-            MarkerService.getAliases(vm.id)
+            MarkerService.getAliases(vm.markerId)
                 .then(function (aliases) {
                     vm.aliases = aliases;
                 })
@@ -53,7 +53,7 @@
 
         function add() {
             vm.processing = true;
-            MarkerService.addAlias(vm.id, vm.newAlias, vm.newReference)
+            MarkerService.addAlias(vm.markerId, vm.newAlias, vm.newReference)
                 .then(function(alias) {
                     vm.aliases.unshift(alias);
                     vm.newAlias = '';
