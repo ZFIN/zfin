@@ -1,7 +1,9 @@
 package org.zfin.gwt.root.dto;
 
 
-public class PersonDTO {
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class PersonDTO implements IsSerializable {
     String firstName;
     String lastName;
     String display;

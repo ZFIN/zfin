@@ -1,0 +1,54 @@
+<form class="form-horizontal">
+    <div class="form-group">
+        <label for="name" class="col-sm-2 control-label">Name</label>
+        <div class="col-sm-4">
+            <input id="name" name="name" class="form-control" ng-model="vm.str.name"/>
+            <p class="text-danger" ng-repeat="error in vm.errors.name">{{error}}</p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{{vm.sequenceLabel}}</label>
+        <div class="col-sm-6">
+            <div str-sequence
+                 reported-sequence="vm.str.reportedSequence1"
+                 sequence="vm.str.sequence1"
+                 is-reversed="vm.str.reversed1"
+                 is-complemented="vm.str.complemented1"
+                 reported-sequence-name="reportedSequence1"
+                 displayed-sequence-name="sequence1"
+                 reversed-name="reversed1"
+                 complemented-name="complemented1">
+            </div>
+            <p class="text-danger" ng-repeat="error in vm.errors.sequence1">{{error}}</p>
+        </div>
+    </div>
+    <div class="form-group" ng-show="vm.type == 'TALEN'">
+        <label class="col-sm-2 control-label">Target Sequence 2</label>
+        <div class="col-sm-6">
+            <div str-sequence
+                 reported-sequence="vm.str.reportedSequence2"
+                 sequence="vm.str.sequence2"
+                 is-reversed="vm.str.reversed2"
+                 is-complemented="vm.str.complemented2"
+                 reported-sequence-name="reportedSequence2"
+                 displayed-sequence-name="sequence2"
+                 reversed-name="reversed2"
+                 complemented-name="complemented2">
+            </div>
+            <p class="text-danger" ng-repeat="error in vm.errors.sequence2">{{error}}</p>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4 col-sm-offset-2">
+            <button type="button" class="btn btn-default"
+                    ng-click="vm.reset()" ng-disabled="vm.processing">Reset</button>
+            <button type="submit" class="btn btn-primary"
+                    ng-click="vm.save()" ng-disabled="vm.processing">
+                <span ng-hide="vm.processing">Save</span>
+                <i ng-show="vm.processing" class="fa fa-spinner fa-spin"></i>
+            </button>
+            <span class="text-success" ng-show="vm.saved"><i class="fa fa-check"></i> Saved</span>
+            <span class="text-danger" ng-show="vm.errors.$isGeneric"><i class="fa fa-warning"></i> Something went wrong</span>
+        </div>
+    </div>
+</form>

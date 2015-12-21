@@ -8,11 +8,11 @@ import spock.lang.Unroll
 class SequenceTargetingReagentAddBeanValidatorSpec extends AbstractZfinIntegrationSpec {
 
     SequenceTargetingReagentAddBean form = new SequenceTargetingReagentAddBean(
-            sequenceTargetingReagentType: "CRISPR",
-            sequenceTargetingReagentName: "MO1-Test2b",
+            strType: "CRISPR",
+            name: "MO1-Test2b",
             targetGeneSymbol: "robo1",
-            sequenceTargetingReagentSequence: "AAAAACCCCCGGGGGTTTTT",
-            sequenceTargetingReagentPublicationID: "ZDB-PUB-111111-1"
+            sequence: "AAAAACCCCCGGGGGTTTTT",
+            publicationID: "ZDB-PUB-111111-1"
     )
     SequenceTargetingReagentAddBeanValidator validator = new SequenceTargetingReagentAddBeanValidator()
 
@@ -49,31 +49,31 @@ class SequenceTargetingReagentAddBeanValidatorSpec extends AbstractZfinIntegrati
         errors.getFieldError(field).getCode() == code
 
         where:
-        description             | field                                   | value                   || code
-        "name not provided"     | "sequenceTargetingReagentName"          | ""                      || "str.name.empty"
-        "name already used"     | "sequenceTargetingReagentName"          | "MO1-pax2a"             || "str.name.inuse"
-        "pub not provided"      | "sequenceTargetingReagentPublicationID" | ""                      || "pub.empty"
-        "pub not valid"         | "sequenceTargetingReagentPublicationID" | "ZDB-PUB-111111-111111" || "pub.notfound"
-        "target not provided"   | "targetGeneSymbol"                      | ""                      || "str.target.empty"
-        "target not valid"      | "targetGeneSymbol"                      | "SomeLousyGene-1"       || "str.target.notfound"
-        "supplier not valid"    | "sequenceTargetingReagentSupplierName"  | "Not a real supplier"   || "str.supplier.notfound"
-        "sequence not provided" | "sequenceTargetingReagentSequence"      | ""                      || "str.sequence.empty"
-        "sequence not ATGC"     | "sequenceTargetingReagentSequence"      | "ACTGQUERTY"            || "str.sequence.characters"
+        description             | field              | value                   || code
+        "name not provided"     | "name"             | ""                      || "str.name.empty"
+        "name already used"     | "name"             | "MO1-pax2a"             || "str.name.inuse"
+        "pub not provided"      | "publicationID"    | ""                      || "pub.empty"
+        "pub not valid"         | "publicationID"    | "ZDB-PUB-111111-111111" || "pub.notfound"
+        "target not provided"   | "targetGeneSymbol" | ""                      || "str.target.empty"
+        "target not valid"      | "targetGeneSymbol" | "SomeLousyGene-1"       || "str.target.notfound"
+        "supplier not valid"    | "supplier"         | "Not a real supplier"   || "str.supplier.notfound"
+        "sequence not provided" | "sequence"         | ""                      || "str.sequence.empty"
+        "sequence not ATGC"     | "sequence"         | "ACTGQUERTY"            || "str.sequence.characters"
     }
 
     @Unroll
     def "validator should reject #type form with sequence already used"(String type, String sequence) {
         given:
-        form.sequenceTargetingReagentType = type
-        form.sequenceTargetingReagentSequence = sequence
+        form.strType = type
+        form.sequence = sequence
         Errors errors = new BeanPropertyBindingResult(form, "form")
 
         when:
         validator.validate(form, errors)
 
         then:
-        errors.hasFieldErrors("sequenceTargetingReagentSequence")
-        errors.getFieldError("sequenceTargetingReagentSequence").getCode() == "str.sequence.inuse"
+        errors.hasFieldErrors("sequence")
+        errors.getFieldError("sequence").getCode() == "str.sequence.inuse"
 
         where:
         type         | sequence
@@ -84,19 +84,19 @@ class SequenceTargetingReagentAddBeanValidatorSpec extends AbstractZfinIntegrati
     @Unroll
     def "validator should reject TALEN form with sequence #description"(String description, String sequence1, String sequence2) {
         given:
-        form.sequenceTargetingReagentType = "TALEN"
-        form.sequenceTargetingReagentSequence = sequence1
-        form.sequenceTargetingReagentSecondSequence = sequence2
+        form.strType = "TALEN"
+        form.sequence = sequence1
+        form.sequence2 = sequence2
         Errors errors = new BeanPropertyBindingResult(form, "form")
 
         when:
         validator.validate(form, errors)
 
         then:
-        errors.hasFieldErrors("sequenceTargetingReagentSequence")
-        errors.getFieldError("sequenceTargetingReagentSequence").getCode() == "str.sequence.inuse"
-        errors.hasFieldErrors("sequenceTargetingReagentSecondSequence")
-        errors.getFieldError("sequenceTargetingReagentSecondSequence").getCode() == "str.sequence.inuse"
+        errors.hasFieldErrors("sequence")
+        errors.getFieldError("sequence").getCode() == "str.sequence.inuse"
+        errors.hasFieldErrors("sequence2")
+        errors.getFieldError("sequence2").getCode() == "str.sequence.inuse"
 
         where:
         description                | sequence1            | sequence2
@@ -107,8 +107,8 @@ class SequenceTargetingReagentAddBeanValidatorSpec extends AbstractZfinIntegrati
     @Unroll
     def "validator should accept #formType form with existing #sequenceType sequence"(String formType, String sequenceType, String sequence) {
         given:
-        form.sequenceTargetingReagentType = formType
-        form.sequenceTargetingReagentSequence = sequence
+        form.strType = formType
+        form.sequence = sequence
         Errors errors = new BeanPropertyBindingResult(form, "form")
 
         when:

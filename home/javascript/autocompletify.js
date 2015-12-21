@@ -24,7 +24,10 @@
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             rateLimitWait: 50,
             limit: options.limit,
-            remote: url
+            remote: {
+                url: url,
+                wildcard: '%QUERY'
+            }
         });
 
         hound.initialize();
@@ -33,7 +36,7 @@
             name: 'search',
             displayKey: 'value',
             templates: options.templates,
-            source: hound.ttAdapter()
+            source: hound
         });
 
         return this;

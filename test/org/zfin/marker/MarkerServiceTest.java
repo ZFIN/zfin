@@ -448,4 +448,17 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         assertThat("Note text should match", bean.getNote(), is(noteText));
         assertThat("Orthologs should be empty", bean.getOrthologs(), is(nullValue()));
     }
+
+    @Test
+    public void getSTRModificationNote() {
+        String sequence = "AATTGGCCTTAAGG";
+        String actual = MarkerService.getSTRModificationNote(sequence, true, false);
+        assertThat(actual, is("Reported sequence " + sequence + " was reversed."));
+
+        actual = MarkerService.getSTRModificationNote(sequence, true, true);
+        assertThat(actual, is("Reported sequence " + sequence + " was reversed and complemented."));
+
+        actual = MarkerService.getSTRModificationNote(sequence, false, true);
+        assertThat(actual, is("Reported sequence " + sequence + " was complemented."));
+    }
 }

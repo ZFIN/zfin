@@ -2721,7 +2721,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
   jQuery(document).ready(function () {
 
      $('#supplier').autocompletify('/action/marker/find-suppliers?term=%QUERY');
-     $('#supplier').bind('typeahead:selected', function(obj, datum, name) {
+     $('#supplier').bind('typeahead:select', function(obj, datum, name) {
           supplierToAddZdbID = datum.id;
       });
 
@@ -2733,7 +2733,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
     });
 
     $('#targetGeneSymbol').autocompletify('/action/marker/find-targetGenes?term=%QUERY');
-    $('#targetGeneSymbol').bind('typeahead:selected', function(obj, datum, name) {
+    $('#targetGeneSymbol').bind('typeahead:select', function(obj, datum, name) {
         $('#targetGeneSymbol').val(datum.id);
     });
 
@@ -2746,7 +2746,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
 
   
     $('#targetGeneSymbol2').autocompletify('/action/marker/find-targetGenes?term=%QUERY');
-    $('#targetGeneSymbol2').bind('typeahead:selected', function(obj, datum, name) {
+    $('#targetGeneSymbol2').bind('typeahead:select', function(obj, datum, name) {
         $('#targetGeneSymbol2').val(datum.id);
     });
 

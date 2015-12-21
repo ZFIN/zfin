@@ -91,6 +91,8 @@ public interface MarkerRepository {
 
     void addSmallSegmentToGene(Marker gene, Marker segment, String attributionZdbID);
 
+    void updateMarkerPublicNote(Marker marker, String note);
+
     DataNote addMarkerDataNote(Marker marker, String note);
 
     AntibodyExternalNote addAntibodyExternalNote(Antibody antibody, String note, String sourcezdbid);
@@ -125,6 +127,8 @@ public interface MarkerRepository {
      * @param alias  Marker alias object
      */
     void deleteMarkerAlias(Marker marker, MarkerAlias alias);
+
+    void updateCuratorNote(Marker marker, DataNote note, String newNote);
 
     void removeCuratorNote(Marker marker, DataNote note);
 
@@ -353,6 +357,8 @@ public interface MarkerRepository {
 
     List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayForTypes(Marker construct, boolean b, MarkerRelationship.Type... types);
 
+    List<LinkDisplay> getMarkerDBLink(String dbLinkId);
+
     List<LinkDisplay> getMarkerDBLinksFast(Marker marker, DisplayGroup.GroupName groupName);
 
     List<MarkerRelationshipPresentation> getRelatedMarkerDisplayForTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... types);
@@ -389,9 +395,9 @@ public interface MarkerRepository {
 
     SequenceTargetingReagent getSequenceTargetingReagent(String markerID);
 
-    List<SequenceTargetingReagent> getSequenceTargetingReagentBySequence(Marker.Type type, String sequence);
+    SequenceTargetingReagent getSequenceTargetingReagentBySequence(Marker.Type type, String sequence);
 
-    List<SequenceTargetingReagent> getSequenceTargetingReagentBySequence(Marker.Type type, String sequence1, String sequence2);
+    SequenceTargetingReagent getSequenceTargetingReagentBySequence(Marker.Type type, String sequence1, String sequence2);
 
     List<Marker> getConstructsForGene(Marker gene);
 

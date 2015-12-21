@@ -129,6 +129,7 @@
         <security:intercept-url pattern="/action/publication/*/addAuthor" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/publication/*/removeAuthor" access="hasRole('root') or ${DISABLE_SECURITY}" />
 
+        <security:intercept-url pattern="/action/str/*/edit" access="hasRole('root') or ${DISABLE_SECURITY}" />
 
         <security:intercept-url pattern="/action/feature/alleleDesig-add-form" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/antibody/add" access="hasRole('root') or ${DISABLE_SECURITY}" />

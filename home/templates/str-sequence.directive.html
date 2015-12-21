@@ -1,0 +1,42 @@
+<label class="control-label" ng-attr-for="{{vm.reportedSequenceName}}">Reported</label>
+<div class="input-group">
+    <div class="input-group-addon">5' -</div>
+    <input class="form-control"
+           ng-attr-name="{{vm.reportedSequenceName}}"
+           ng-attr-id="{{vm.reportedSequenceName}}"
+           ng-model="vm.reportedSequence"/>
+    <div class="input-group-addon"> - 3'</div>
+</div>
+
+<div>
+    <div class="checkbox-inline">
+        <label>
+            <input type="checkbox"
+                   ng-model="vm.isReversed"
+                   ng-attr-name="{{vm.reversedName}}"
+                   ng-attr-id="{{vm.reversedName}}"> Reverse
+        </label>
+    </div>
+    <div class="checkbox-inline">
+        <label>
+            <input type="checkbox"
+                   ng-model="vm.isComplemented"
+                   ng-attr-name="{{vm.complementedName}}"
+                   ng-attr-id="{{vm.complementedName}}"> Complement
+        </label>
+    </div>
+    <p class="text-muted" ng-show="vm.isReversed || vm.isComplemented">
+        A curator note will be added to describe alteration
+    </p>
+</div>
+
+<label class="control-label" ng-attr-for="{{vm.displayedSequenceName}}">Displayed</label>
+<div class="input-group">
+    <div class="input-group-addon">5' -</div>
+    <input class="form-control"
+           ng-attr-name="{{vm.displayedSequenceName}}"
+           ng-attr-id="{{vm.displayedSequenceName}}"
+           ng-model="vm.sequence"
+           readonly/>
+    <div class="input-group-addon"> - 3'</div>
+</div>

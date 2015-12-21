@@ -43,6 +43,8 @@ public interface ProfileRepository {
 
     void addSupplier(Organization organization, Marker marker);
 
+    void removeSupplier(Organization organization, Marker marker);
+
     /**
      * @param curatorZdbID person for whom the session value is being retrieved
      * @param pubZdbID     pub that the session value is associated with [can be null!]
@@ -188,7 +190,7 @@ public interface ProfileRepository {
 
     int removeCompanyMember(String personZdbID, String organizationZdbID);
 
-    Organization getOrganizationByZdbID(String sourceAddressZdbID);
+    Organization getOrganizationByZdbID(String orgZdbID);
 
     List<Lab> getLabs();
 

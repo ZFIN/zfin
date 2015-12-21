@@ -16,7 +16,7 @@
           <a href="/action/marker/clone-add"><em>clone</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
           <a href="/action/antibody/add"><em>antibody</em></a>,
-          <a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=Morpholino"><em>morpholino</em></a>,
+          <a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=MRPHLNO"><em>morpholino</em></a>,
           <a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=TALEN"><em>TALEN</em></a>,
           <a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=CRISPR"><em>CRISPR</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;

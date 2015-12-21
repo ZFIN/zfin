@@ -69,6 +69,14 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     }
 
+    public void removeSupplier(Organization organization, Marker marker) {
+        Session session = HibernateUtil.currentSession();
+        MarkerSupplier supplier = getSpecificSupplier(marker, organization);
+        if (supplier != null) {
+            session.delete(supplier);
+        }
+    }
+
     public void insertLab(Lab lab) {
         Session session = HibernateUtil.currentSession();
         session.save(lab);
@@ -715,9 +723,9 @@ public class HibernateProfileRepository implements ProfileRepository {
     }
 
     @Override
-    public Organization getOrganizationByZdbID(String sourceAddressZdbID) {
+    public Organization getOrganizationByZdbID(String orgZdbID) {
         return (Organization) HibernateUtil.currentSession().createCriteria(Organization.class)
-                .add(Restrictions.eq("zdbID", sourceAddressZdbID))
+                .add(Restrictions.eq("zdbID", orgZdbID))
                 .uniqueResult();
     }
 

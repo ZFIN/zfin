@@ -163,7 +163,7 @@
     $(document).ready(function () {
 
         $('#addMemberBox').autocompletify('/action/profile/find-member?term=%QUERY');
-        $('#addMemberBox').bind('typeahead:selected', function(obj, datum, name) {
+        $('#addMemberBox').bind('typeahead:select', function(obj, datum, name) {
             personToAddZdbID = datum.id;
         });
 

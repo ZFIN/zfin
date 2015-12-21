@@ -318,7 +318,7 @@ $(document).ready(function () {
 
     $('#primary-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
 
-    $('#primary-query-input').bind("typeahead:selected", function() {
+    $('#primary-query-input').bind("typeahead:select", function() {
         $('#query-form').submit();
     });
 

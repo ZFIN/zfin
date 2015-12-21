@@ -1,7 +1,5 @@
 package org.zfin.marker.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.functors.InvokerTransformer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -12,8 +10,6 @@ import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.ZfinStringUtils;
-
-import java.util.List;
 
 public class SequenceTargetingReagentAddBeanValidator implements Validator {
 
@@ -27,61 +23,62 @@ public class SequenceTargetingReagentAddBeanValidator implements Validator {
     public void validate(Object command, Errors errors) {
         SequenceTargetingReagentAddBean formBean = (SequenceTargetingReagentAddBean) command;
 
-        String pubId = formBean.getSequenceTargetingReagentPublicationID();
-        PublicationValidator.validatePublicationID(pubId, SequenceTargetingReagentAddBean.STR_PUBLICATION_ZDB_ID, errors);
+        String pubId = formBean.getPublicationID();
+        PublicationValidator.validatePublicationID(pubId, "publicationID", errors);
 
-        String strName = formBean.getSequenceTargetingReagentName();
+        String strName = formBean.getName();
         if (StringUtils.isEmpty(strName)) {
-            errors.rejectValue(SequenceTargetingReagentAddBean.NEW_STR_NAME, "str.name.empty");
+            errors.rejectValue("name", "str.name.empty");
         } else if (mr.isMarkerExists(strName) || mr.getMarkerByName(strName) != null) {
-            errors.rejectValue(SequenceTargetingReagentAddBean.NEW_STR_NAME, "str.name.inuse");
+            errors.rejectValue("name", "str.name.inuse");
         }
 
-        String strSequence = formBean.getSequenceTargetingReagentSequence();
-        validateSequence(errors, SequenceTargetingReagentAddBean.NEW_STR_SEQUENCE, strSequence);
+        String strSequence = formBean.getSequence();
+        validateSequence(errors, "sequence", strSequence);
 
         String targetGeneSymbol = formBean.getTargetGeneSymbol();
         if (StringUtils.isEmpty(targetGeneSymbol)) {
-            errors.rejectValue(SequenceTargetingReagentAddBean.NEW_STR_TARGET, "str.target.empty");
+            errors.rejectValue("targetGeneSymbol", "str.target.empty");
         } else if (mr.getGeneByAbbreviation(targetGeneSymbol) == null) {
-            errors.rejectValue(SequenceTargetingReagentAddBean.NEW_STR_TARGET, "str.target.notfound");
+            errors.rejectValue("targetGeneSymbol", "str.target.notfound");
         }
 
-        String strSupplier = formBean.getSequenceTargetingReagentSupplierName();
+        String strSupplier = formBean.getSupplier();
         if (!StringUtils.isEmpty(strSupplier)) {
             if (pr.getOrganizationByName(strSupplier) == null) {
-                errors.rejectValue(SequenceTargetingReagentAddBean.NEW_STR_SUPPLIER, "str.supplier.notfound");
+                errors.rejectValue("supplier", "str.supplier.notfound");
             }
         }
 
-        String strType = formBean.getSequenceTargetingReagentType();
-        Marker.Type type = strType.equals("Morpholino") ? Marker.Type.MRPHLNO : Marker.Type.getType(strType);
-        String strSecondSequence = formBean.getSequenceTargetingReagentSecondSequence();
-        if (type == Marker.Type.TALEN) {
-            validateSequence(errors, SequenceTargetingReagentAddBean.NEW_STR_SECOND_SEQUENCE, strSecondSequence);
-        }
-
-        List<SequenceTargetingReagent> existingWithSequences;
-        if (type == Marker.Type.TALEN) {
-            existingWithSequences = mr.getSequenceTargetingReagentBySequence(type, strSequence, strSecondSequence);
+        String strType = formBean.getStrType();
+        if (StringUtils.isBlank(strType)) {
+            errors.rejectValue("strType", "str.type.empty");
         } else {
-            existingWithSequences = mr.getSequenceTargetingReagentBySequence(type, strSequence);
-        }
-        if (CollectionUtils.isNotEmpty(existingWithSequences)) {
-            String existingNames = StringUtils.join(
-                    CollectionUtils.collect(existingWithSequences, InvokerTransformer.getInstance("getName")),
-                    ", ");
-            Object[] args = new Object[]{existingNames};
-            String defaultMessage = "Sequence is already used by another " + strType;
-            errors.rejectValue(SequenceTargetingReagentAddBean.NEW_STR_SEQUENCE, "str.sequence.inuse", args, defaultMessage);
-            errors.rejectValue(SequenceTargetingReagentAddBean.NEW_STR_SECOND_SEQUENCE, "str.sequence.inuse", args, defaultMessage);
+            Marker.Type type = Marker.Type.getType(strType);
+            String strSecondSequence = formBean.getSequence2();
+            if (type == Marker.Type.TALEN) {
+                validateSequence(errors, "sequence2", strSecondSequence);
+            }
+
+            SequenceTargetingReagent existingWithSequences;
+            if (type == Marker.Type.TALEN) {
+                existingWithSequences = mr.getSequenceTargetingReagentBySequence(type, strSequence, strSecondSequence);
+            } else {
+                existingWithSequences = mr.getSequenceTargetingReagentBySequence(type, strSequence);
+            }
+            if (existingWithSequences != null) {
+                Object[] args = new Object[]{existingWithSequences.getName()};
+                String defaultMessage = "Sequence is already used";
+                errors.rejectValue("sequence", "str.sequence.inuse", args, defaultMessage);
+                errors.rejectValue("sequence2", "str.sequence.inuse", args, defaultMessage);
+            }
         }
     }
 
     private void validateSequence(Errors errors, String field, String sequence) {
         if (StringUtils.isBlank(sequence)) {
             errors.rejectValue(field, "str.sequence.empty");
-        } else if (ZfinStringUtils.containsWhiteSpaceOrNoneATGC(sequence)) {
+        } else if (!ZfinStringUtils.isValidNucleotideSequence(sequence)) {
             errors.rejectValue(field, "str.sequence.characters");
         }
     }

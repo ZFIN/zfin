@@ -4,14 +4,14 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ReferenceDatabase;
 
 import java.util.List;
 
-/**
- */
+@Repository
 public class HibernateDisplayGroupRepository implements DisplayGroupRepository {
 
 

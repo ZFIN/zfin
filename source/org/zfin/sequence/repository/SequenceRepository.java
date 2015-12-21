@@ -22,6 +22,8 @@ public interface SequenceRepository {
 
     ForeignDB getForeignDBByName(ForeignDB.AvailableName dbName);
 
+    ReferenceDatabase getReferenceDatabaseByID(String referenceDatabaseID);
+
     ReferenceDatabase getReferenceDatabase(ForeignDB.AvailableName foreignDBName,
                                            ForeignDBDataType.DataType type,
                                            ForeignDBDataType.SuperType superType,
@@ -66,7 +68,7 @@ public interface SequenceRepository {
 
     void addDBLinks(Collection<MarkerDBLink> dbLinksToAdd, Publication attributionPub, int commitChunk);
 
-    int removeDBLinks(Set<DBLink> dbLinksToRemove);
+    int removeDBLinks(Collection<DBLink> dbLinksToRemove);
 
     int removeAccessionByNumber(String accessionNumber);
 

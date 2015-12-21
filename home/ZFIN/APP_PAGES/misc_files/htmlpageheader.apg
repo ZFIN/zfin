@@ -14,7 +14,7 @@ INPUT VARS:
 
 <script type="text/javascript" src="/javascript/jquery.modal.min.js"></script>
 <script src="/javascript/autocompletify.js"></script>
-<script type="text/javascript" src="/javascript/typeahead.bundle.js"></script>
+<script type="text/javascript" src="/javascript/typeahead.bundle.min.js"></script>
 <script src="/javascript/header-menu.js"></script>
 
 <script>
@@ -80,7 +80,7 @@ INPUT VARS:
               jQuery(document).ready(function() {
                 jQuery('#header-search-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
               });
-              $('#header-search-query-input').bind("typeahead:selected", function() {
+              $('#header-search-query-input').bind("typeahead:select", function() {
                   $('#header-query-form').submit();
               });
       </script>

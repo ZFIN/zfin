@@ -37,6 +37,13 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return (ForeignDB) criteria.uniqueResult();
     }
 
+    public ReferenceDatabase getReferenceDatabaseByID(String referenceDatabaseID) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(ReferenceDatabase.class);
+        criteria.add(Restrictions.eq("zdbID", referenceDatabaseID));
+        return (ReferenceDatabase) criteria.uniqueResult();
+    }
+
     public ReferenceDatabase getReferenceDatabase(ForeignDB.AvailableName foreignDBName, ForeignDBDataType.DataType type, ForeignDBDataType.SuperType superType, Species.Type organism) {
 
         String hql = " from ReferenceDatabase referenceDatabase " +
@@ -450,7 +457,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
      *
      * @param dbLinksToRemove DBLinks to remove
      */
-    public int removeDBLinks(Set<DBLink> dbLinksToRemove) {
+    public int removeDBLinks(Collection<DBLink> dbLinksToRemove) {
 
         logger.debug("dbLinksToRemove.size: " + dbLinksToRemove.size());
 

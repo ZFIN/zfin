@@ -89,7 +89,7 @@ public class CloneBean extends MarkerBean {
                 LinkDisplay fakeLinkDisplay = new LinkDisplay();
                 fakeLinkDisplay.setAccession(linkDisplay.getAccession());
                 fakeLinkDisplay.setMarkerZdbID(linkDisplay.getMarkerZdbID());
-                fakeLinkDisplay.setAttributionZdbIDs(linkDisplay.getAttributionZdbIDs());
+                fakeLinkDisplay.setReferences(linkDisplay.getReferences());
                 fakeLinkDisplay.setReferenceDatabaseName(ensemblDatabase.getForeignDB().getDbName().toString());
                 fakeLinkDisplay.setUrlPrefix(ensemblDatabase.getBaseURL());
                 fakeLinks.add(fakeLinkDisplay);

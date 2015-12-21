@@ -13,6 +13,7 @@ import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.GeneBean;
+import org.zfin.marker.presentation.MarkerReferenceBean;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.DiseaseAnnotation;
 import org.zfin.mutant.Fish;
@@ -233,5 +234,16 @@ public class PublicationViewController {
             dtos.add(DTOConversionService.convertToMarkerDTO(gene));
         }
         return dtos;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/lookup", method = RequestMethod.GET)
+    public List<MarkerReferenceBean> publicationLookup(@RequestParam("q") String query) {
+        List<MarkerReferenceBean> results = new ArrayList<>();
+        Publication publication = getPublicationRepository().getPublication(query);
+        if (publication != null) {
+            results.add(MarkerReferenceBean.convert(publication));
+        }
+        return results;
     }
 }

@@ -7,7 +7,7 @@ input.tt-input {
     opacity: .5 !important;
 }
 
-.tt-dropdown-menu {
+.tt-menu {
     padding: 8px 0;
     background-color: #fff;
     border: 1px solid rgba(0, 0, 0, 0.2);
@@ -19,9 +19,12 @@ input.tt-input {
 .tt-no-results {
     font-size: 14px;
     padding: 6px 6px;
+    margin: 0;
+    text-align: left;
 }
 
-.tt-suggestion.tt-cursor {
+.tt-suggestion.tt-cursor,
+.tt-suggestion:hover {
     color: #fff;
     background-color: #0097cf;
 }
@@ -30,7 +33,8 @@ input.tt-input {
     text-align: center;
 }
 
-.tt-suggestion.tt-cursor .text-muted {
+.tt-suggestion.tt-cursor .text-muted
+.tt-suggestion:hover .text-muted {
     color: #a0c8de;
 }
 

@@ -1,0 +1,84 @@
+<form>
+    <label>Public Note</label>
+    <p ng-show="!vm.publicNote.editing">
+        {{vm.publicNote.noteData}}
+        <span ng-show="vm.publicNote.noteData">
+            &mdash; <a href ng-click="vm.editPublicNote()">Edit</a>
+        </span>
+        <span ng-show="!vm.publicNote.noteData">
+            <a href ng-click="vm.editPublicNote()">Add</a>
+        </span>
+    </p>
+    <div ng-show="vm.publicNote.editing">
+        <div class="form-group">
+            <textarea class="form-control" rows="3" ng-model="vm.newPublicNote"></textarea>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-default" ng-click="vm.cancelEditPublicNote()">
+                Cancel
+            </button>
+            <button class="btn btn-primary" ng-click="vm.savePublicNote()" ng-disabled="vm.publicNote.processing">
+                <span ng-hide="vm.publicNote.processing">Save</span>
+                <i ng-show="vm.publicNote.processing" class="fa fa-spinner fa-spin"></i>
+            </button>
+        </div>
+        <p class="text-danger" ng-show="vm.publicNote.error">{{vm.publicNote.error}}</p>
+    </div>
+</form>
+
+<hr>
+
+<div class="row">
+    <form class="form-single-row">
+        <div class="form-group col-sm-9">
+            <label>Curator Notes</label>
+            <textarea class="form-control" rows="3" ng-model="vm.newCuratorNote"></textarea>
+        </div>
+        <div class="form-group col-sm-3">
+            <button class="btn btn-primary"
+                    ng-disabled="vm.processing || !vm.newCuratorNote"
+                    ng-click="vm.addCuratorNote()">
+                <span ng-hide="vm.processing">Add</span>
+                <i ng-show="vm.processing" class="fa fa-spinner fa-spin"></i>
+            </button>
+        </div>
+    </form>
+</div>
+
+<p class="text-danger" ng-show="vm.errors.curator">{{vm.errors.curator}}</p>
+
+<p class="text-muted" ng-show="!vm.curatorNotes.length">No curator notes yet</p>
+
+<div class="media" ng-repeat="note in vm.curatorNotes">
+    <div class="media-body">
+        <div class="media-heading">
+            <h4>
+                {{note.curator.firstName}} {{note.curator.lastName}}
+                <small>
+                    {{note.date | date:'yyyy-MM-dd'}}
+                    <span ng-show="note.curator.zdbID === vm.userId">
+                        &mdash;
+                        <a href ng-click="vm.editCuratorNote(note)">Edit</a> |
+                        <a href ng-click="vm.deleteCuratorNote(note, $index)">Delete</a>
+                    </span>
+                </small>
+            </h4>
+            <p ng-bind-html="note.noteData | trusted_html" ng-hide="note.editing"></p>
+            <div ng-show="note.editing">
+                <div class="form-group">
+                    <textarea class="form-control" rows="3" ng-model="note.editText"></textarea>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-default" ng-click="vm.cancelEditCuratorNote(note)">
+                        Cancel
+                    </button>
+                    <button class="btn btn-primary" ng-click="vm.saveCuratorNote(note, $index)" ng-disabled="note.processing">
+                        <span ng-hide="note.processing">Save</span>
+                        <i ng-show="note.processing" class="fa fa-spinner fa-spin"></i>
+                    </button>
+                </div>
+                <p class="text-danger" ng-show="note.error">{{note.error}}</p>
+            </div>
+        </div>
+    </div>
+</div>
