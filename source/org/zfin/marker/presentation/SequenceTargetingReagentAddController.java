@@ -153,7 +153,7 @@ public class SequenceTargetingReagentAddController {
                 mr.addMarkerDataNote(newSequenceTargetingReagent, note);
             }
 
-            if (formBean.isReversed2() || formBean.isReversed2()) {
+            if (formBean.isReversed2() || formBean.isComplemented2()) {
                 String note = MarkerService.getSTRModificationNote(formBean.getReportedSequence2(), formBean.isReversed2(), formBean.isComplemented2());
                 mr.addMarkerDataNote(newSequenceTargetingReagent, note);
             }
