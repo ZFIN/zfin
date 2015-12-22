@@ -600,7 +600,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             updateComment = "Added alias: '" + markerAlias.getAlias() + " with no attribution";
         }
 
-        // InfrastructureService.insertUpdate(marker, updateComment);
+        InfrastructureService.insertUpdate(marker, updateComment);
         runMarkerNameFastSearchUpdate(marker);
         return markerAlias;
     }
