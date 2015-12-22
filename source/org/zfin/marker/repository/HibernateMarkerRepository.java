@@ -773,6 +773,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
             RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(mdb.getZdbID(), attributionZdbID);
         }
 
+        String updateComment = "Adding dblink " + mdb.getReferenceDatabase().getForeignDB().getDisplayName() + ":" + mdb.getAccessionNumber();
+        updateComment += StringUtils.isNotBlank(attributionZdbID) ? (" with attribution " + attributionZdbID) : " without attribution";
+        InfrastructureService.insertUpdate(marker, updateComment);
+
         //accessions will end up in the fast search table associated with the marker
         runMarkerNameFastSearchUpdate(marker);
 
