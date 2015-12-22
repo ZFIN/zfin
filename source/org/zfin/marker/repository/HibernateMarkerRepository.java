@@ -446,6 +446,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     public void updateMarkerPublicNote(Marker marker, String note) {
+        infrastructureRepository.insertUpdatesTable(marker.getZdbID(), "public note", marker.getPublicComments(), note, "");
+
         Session session = currentSession();
         marker.setPublicComments(note);
         session.save(marker);
