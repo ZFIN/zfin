@@ -1,5 +1,6 @@
 package org.zfin.marker.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -69,6 +70,13 @@ public class MarkerRelationshipController {
         Marker first = getMarkerByIdOrAbbrev(newRelationship.getFirst());
         Marker second = getMarkerByIdOrAbbrev(newRelationship.getSecond());
         MarkerRelationship.Type type = MarkerRelationship.Type.getType(newRelationship.getRelationship());
+
+        Collection<Marker> related = MarkerService.getRelatedMarker(first, type);
+        if (CollectionUtils.isNotEmpty(related) && related.contains(second)) {
+            errors.rejectValue("second", "marker.relationship.duplicate");
+            throw new InvalidWebRequestException("Invalid marker relationship", errors);
+        }
+
         // assume new incoming relationship has only one reference
         String pubId = newRelationship.getReferences().iterator().next().getZdbID();
 
