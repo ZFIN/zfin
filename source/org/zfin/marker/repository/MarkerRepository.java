@@ -145,6 +145,8 @@ public interface MarkerRepository {
 
     void addMarkerRelationshipAttribution(MarkerRelationship mrel, Publication attribution, Marker marker);
 
+    void addDBLinkAttribution(DBLink dbLink, Publication attribution, Marker marker);
+
     /**
      * Add a publication to a given marker: Attribution.
      *
@@ -357,7 +359,9 @@ public interface MarkerRepository {
 
     List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayForTypes(Marker construct, boolean b, MarkerRelationship.Type... types);
 
-    List<LinkDisplay> getMarkerDBLink(String dbLinkId);
+    MarkerDBLink getMarkerDBLink(String linkId);
+
+    List<LinkDisplay> getMarkerLinkDisplay(String dbLinkId);
 
     List<LinkDisplay> getMarkerDBLinksFast(Marker marker, DisplayGroup.GroupName groupName);
 

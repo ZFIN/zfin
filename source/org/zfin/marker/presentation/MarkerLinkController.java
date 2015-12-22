@@ -15,8 +15,11 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.DisplayGroup;
+import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.repository.DisplayGroupRepository;
 import org.zfin.sequence.repository.SequenceRepository;
@@ -44,6 +47,9 @@ public class MarkerLinkController {
 
     @Autowired
     private InfrastructureRepository infrastructureRepository;
+
+    @Autowired
+    private PublicationRepository publicationRepository;
 
     @InitBinder("linkData")
     public void initLinkBinder(WebDataBinder binder) {
@@ -138,8 +144,11 @@ public class MarkerLinkController {
             throw new InvalidWebRequestException("Invalid reference", errors);
         }
 
+        MarkerDBLink dbLink = markerRepository.getMarkerDBLink(linkId);
+        Publication publication = publicationRepository.getPublication(newReference.getZdbID());
+
         HibernateUtil.createTransaction();
-        infrastructureRepository.insertPublicAttribution(linkId, newReference.getZdbID());
+        markerRepository.addDBLinkAttribution(dbLink, publication, dbLink.getMarker());
         HibernateUtil.flushAndCommitCurrentSession();
 
         return getLinkDisplayById(linkId);
@@ -158,7 +167,7 @@ public class MarkerLinkController {
 
     private LinkDisplay getLinkDisplayById(String linkId) {
         // this is kinda weird because LinkDisplay is only produced by a query transformer
-        List<LinkDisplay> linkDisplays = markerRepository.getMarkerDBLink(linkId);
+        List<LinkDisplay> linkDisplays = markerRepository.getMarkerLinkDisplay(linkId);
         if (linkDisplays.size() > 1) {
             LOG.error("too many LinkDisplays returned for " + linkId);
         }
