@@ -9,6 +9,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.SequenceTargetingReagent;
@@ -21,7 +22,10 @@ import javax.validation.Valid;
 public class StrDetailsController {
 
     @Autowired
-    MarkerRepository markerRepository;
+    private MarkerRepository markerRepository;
+
+    @Autowired
+    private InfrastructureRepository infrastructureRepository;
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
@@ -50,28 +54,36 @@ public class StrDetailsController {
 
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
-        try {
+
+        if (!bean.getName().equals(str.getName())) {
+            infrastructureRepository.insertUpdatesTable(str.getZdbID(), "name", str.getName(), bean.getName(), "");
             str.setName(bean.getName());
             str.setAbbreviation(bean.getName());
-            sequence.setSequence(bean.getSequence1());
-            sequence.setSecondSequence(bean.getSequence2());
-
-            if (bean.getReversed1() || bean.getComplemented1()) {
-                String note = MarkerService.getSTRModificationNote(bean.getReportedSequence1(), bean.getReversed1(), bean.getComplemented1());
-                markerRepository.addMarkerDataNote(str, note);
-            }
-
-            if (bean.getReversed2() || bean.getComplemented2()) {
-                String note = MarkerService.getSTRModificationNote(bean.getReportedSequence2(), bean.getReversed2(), bean.getComplemented2());
-                markerRepository.addMarkerDataNote(str, note);
-            }
-
-            session.save(str);
-            tx.commit();
-        } catch (Exception e) {
-            tx.rollback();
-            throw e;
         }
+
+        if (!bean.getSequence1().equals(sequence.getSequence())) {
+            infrastructureRepository.insertUpdatesTable(str.getZdbID(), "sequence", sequence.getSequence(), bean.getSequence1(), "");
+            sequence.setSequence(bean.getSequence1());
+        }
+
+        if (!bean.getSequence2().equals(sequence.getSecondSequence())) {
+            infrastructureRepository.insertUpdatesTable(str.getZdbID(), "second sequence", sequence.getSecondSequence(), bean.getSequence2(), "");
+            sequence.setSecondSequence(bean.getSequence2());
+        }
+
+        if (bean.getReversed1() || bean.getComplemented1()) {
+            String note = MarkerService.getSTRModificationNote(bean.getReportedSequence1(), bean.getReversed1(), bean.getComplemented1());
+            markerRepository.addMarkerDataNote(str, note);
+        }
+
+        if (bean.getReversed2() || bean.getComplemented2()) {
+            String note = MarkerService.getSTRModificationNote(bean.getReportedSequence2(), bean.getReversed2(), bean.getComplemented2());
+            markerRepository.addMarkerDataNote(str, note);
+        }
+
+        session.save(str);
+        tx.commit();
+
         return StrDetailsBean.convert(str);
     }
 
