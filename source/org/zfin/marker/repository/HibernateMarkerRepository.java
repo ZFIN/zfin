@@ -68,12 +68,8 @@ import static org.zfin.framework.HibernateUtil.currentSession;
 public class HibernateMarkerRepository implements MarkerRepository {
 
     private static Logger logger = Logger.getLogger(HibernateMarkerRepository.class);
-
-    @Autowired
-    private InfrastructureRepository infrastructureRepository;
-
-    @Autowired
-    private PublicationRepository pr;
+    private final static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
+    private final static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
 
     // utilities
     private MarkerDBLinksTransformer markerDBLinkTransformer = new MarkerDBLinksTransformer();
