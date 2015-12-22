@@ -41,7 +41,7 @@
                    rtype="marker"/>
 
 <div class="container-fluid" ng-app="app">
-    <h1 class="page-header">Editing ${str.zdbID}</h1>
+    <h2 class="page-header">Editing ${str.zdbID}</h2>
 
     <div class="panel panel-default">
         <div class="panel-heading">
