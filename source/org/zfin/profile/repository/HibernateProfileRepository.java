@@ -11,6 +11,7 @@ import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.infrastructure.InfrastructureService;
 import org.zfin.infrastructure.Updates;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.OrganizationLink;
@@ -67,6 +68,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         supplier.setMarker(marker);
         session.save(supplier);
 
+        InfrastructureService.insertUpdate(marker, "Added supplier " + organization.getName());
     }
 
     public void removeSupplier(Organization organization, Marker marker) {
@@ -74,6 +76,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         MarkerSupplier supplier = getSpecificSupplier(marker, organization);
         if (supplier != null) {
             session.delete(supplier);
+            InfrastructureService.insertUpdate(marker, "Removed supplier " + organization.getName());
         }
     }
 
