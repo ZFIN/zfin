@@ -895,41 +895,15 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     /**
-     * Delete a figure annotation, i.e. all expression result records.
-     * ToDO:
+     * Delete a expressionfigure stage record including all expression result on it
      *
      * @param figureAnnotation experiment figure stage.
      */
-    public void deleteFigureAnnotation(ExperimentFigureStage figureAnnotation) {
+    public void deleteFigureAnnotation(ExpressionFigureStage figureAnnotation) {
         if (figureAnnotation == null) {
             throw new NullPointerException("No Figure Annotation provided");
         }
-        ExpressionExperiment experiment = figureAnnotation.getExpressionExperiment();
-        if (experiment == null || experiment.getZdbID() == null) {
-            throw new NullPointerException("No expression experiment provided");
-        }
-        Set<ExpressionResult> expressionResults = figureAnnotation.getExpressionResults();
-        if (expressionResults == null || expressionResults.size() == 0) {
-            return;
-        }
-
-        // delete all expression result records.
-        for (ExpressionResult result : expressionResults) {
-            // if only a single figure is associated to it just remove the record
-            Set<Figure> figures = result.getFigures();
-            if (figures.size() == 1) {
-                //getInfrastructureRepository().deleteActiveDataByZdbID(result.getZdbID());
-            }
-            // if more than one is associated we cannot remove the expression_result (shared among figures)
-            // but need to remove just the association to the figure.
-            for (Figure figure : figures) {
-                if (figure.equals(figureAnnotation.getFigure())) {
-                    // remove figure from result and get out of the loop.
-                    figures.remove(figure);
-                    break;
-                }
-            }
-        }
+        HibernateUtil.currentSession().delete(figureAnnotation);
     }
 
     /**
@@ -2027,6 +2001,12 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         query.setString("pubID", publicationID);
 
         return (List<ExpressionExperiment2>) query.list();
+    }
+
+    @Override
+    public void createExpressionFigureStage(ExpressionFigureStage expressionFigureStage) {
+        Session session = HibernateUtil.currentSession();
+        session.save(expressionFigureStage);
     }
 
 }

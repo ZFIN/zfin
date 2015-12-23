@@ -5,7 +5,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
@@ -124,7 +123,7 @@ class StructurePileTable extends ZfinFlexTable {
             if (structure.getExpressedTerm().getQualityTerm() != null) {
                 String nickName = structure.getExpressedTerm().getQualityTerm().getNickName();
                 Label quality = new Label(nickName);
-                if(nickName.contains("ok"))
+                if (nickName.contains("ok"))
                     quality.addStyleName("phenotype-normal");
                 setWidget(rowIndex, HeaderName.QUALITY_TAG.getIndex(), quality);
             }

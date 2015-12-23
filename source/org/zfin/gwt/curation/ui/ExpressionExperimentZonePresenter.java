@@ -18,6 +18,7 @@ import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * construction zone
@@ -169,7 +170,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
      */
     public void setSingleExperiment(ExperimentDTO experiment) {
         view.clearSelectedExperiments();
-        view.getSelectedExperiments().add(experiment);
+        view.addSelectedExperiment(experiment);
         view.showExperiments(false);
         if (sectionVisible)
             view.getDisplayTable().createExperimentTable();

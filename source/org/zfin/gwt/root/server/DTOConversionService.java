@@ -1626,4 +1626,19 @@ public class DTOConversionService {
         dto.setTerm(convertToTermDTO(term.getQualityTerm()));
         return dto;
     }
+
+    public static ExpressionFigureStage getExpressionFigureStageFromDTO(ExpressionFigureStageDTO figureAnnotation) {
+        ExpressionFigureStage expressionFigureStage = new ExpressionFigureStage();
+        expressionFigureStage.setStartStage(convertToDevelopmentStage(figureAnnotation.getStart()));
+        expressionFigureStage.setEndStage(convertToDevelopmentStage(figureAnnotation.getEnd()));
+        expressionFigureStage.setFigure(convertToFigure(figureAnnotation.getFigure()));
+        //expressionFigureStage.setExpressionExperiment(convertToExperiment(figureAnnotation.getExperiment()));
+        return expressionFigureStage;
+    }
+
+    private static ExpressionExperiment2 convertToExperiment(ExperimentDTO experiment) {
+        ExpressionExperiment2 expressionExperiment = new ExpressionExperiment2();
+        //expressionExperiment.set
+        return null;
+    }
 }

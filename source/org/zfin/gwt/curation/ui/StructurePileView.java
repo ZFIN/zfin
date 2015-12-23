@@ -54,9 +54,6 @@ public class StructurePileView extends Composite implements HandlesError {
     private String publicationID;
     private StructurePilePresenter structurePilePresenter;
 
-    private Map<EntityPart, TermEntry> termEntryUnitsMap = new HashMap<>(5);
-    private Collection<TermEntry> termEntryUnits = new ArrayList<>(3);
-
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
 
     public StructurePileView() {

@@ -207,7 +207,7 @@ public interface ExpressionRepository {
      *
      * @param efs experiment figure stage.
      */
-    void deleteFigureAnnotation(ExperimentFigureStage efs);
+    void deleteFigureAnnotation(ExpressionFigureStage efs);
 
     /**
      * Retrieve an efs by experiment, figure, start and end stage id.
@@ -398,4 +398,7 @@ public interface ExpressionRepository {
     long getExpressionExperimentByFishAndPublication(Fish fish, String publicationID);
 
     List<ExpressionExperiment2> getExperiments2(String zdbID);
+
+    void createExpressionFigureStage(ExpressionFigureStage experimentFigureStage);
+
 }

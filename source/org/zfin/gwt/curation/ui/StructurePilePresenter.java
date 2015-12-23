@@ -2,6 +2,8 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -36,6 +38,7 @@ public class StructurePilePresenter implements Presenter {
     public StructurePilePresenter(StructurePileView view, String publicationID) {
         this.view = view;
         this.publicationID = publicationID;
+        view.getStructurePileTable().setPublicationID(publicationID);
     }
 
     public void bind() {
@@ -47,7 +50,7 @@ public class StructurePilePresenter implements Presenter {
     }
 
     private void addDynamicClickHandler() {
-
+        view.structurePileTable.setCreateStructureCallback(new CreatePileStructureCallback());
     }
 
     @Override
@@ -238,6 +241,27 @@ public class StructurePilePresenter implements Presenter {
             ///   loadingImage.setVisible(true);
         }
     }
+
+    class CreatePileStructureCallback implements AsyncCallback<ExpressionPileStructureDTO> {
+
+        public void onFailure(Throwable throwable) {
+            if (throwable instanceof PileStructureExistsException) {
+                view.errorElement.setError(throwable.getMessage());
+            }
+            view.errorElement.setError(throwable.getMessage());
+        }
+
+        public void onSuccess(ExpressionPileStructureDTO pileStructure) {
+            //Window.alert("Success");
+            displayedStructures.add(pileStructure);
+            Collections.sort(displayedStructures);
+            view.getStructurePileTable().createStructureTable();
+////            updateFigureAnnotations(expressionSection.getSelectedExpressions());
+            view.alternateStructurePanel.setVisible(false);
+            clearErrorMessages();
+        }
+    }
+
 
     private class UpdateExpressionCallback extends ZfinAsyncCallback<List<ExpressionFigureStageDTO>> {
 

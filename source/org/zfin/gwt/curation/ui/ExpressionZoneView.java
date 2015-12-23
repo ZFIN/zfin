@@ -3,10 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.uibinder.client.*;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
@@ -57,6 +54,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     VerticalPanel expressionPanel;
 
     private StructurePilePresenter structurePilePresenter;
+    private ExpressionZonePresenter expressionZonePresenter;
 
     public ExpressionZoneView() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -82,8 +80,8 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     private Map<Integer, ExpressionFigureStageDTO> displayTableMap = new HashMap<>(15);
 
     // attributes for duplicate row
-    private String duplicateRowOriginalStyle;
-    private int duplicateRowIndex;
+    protected String duplicateRowOriginalStyle;
+    protected int duplicateRowIndex;
 
     private String figureID;
     // used to control that this module is loaded only once.
@@ -106,7 +104,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     private boolean markStructures;
 
     // injected variables
-    private ExperimentSection experimentSection;
+    private ExpressionExperimentZoneView experimentSection;
 
     // Publication in question.
     private String publicationID;
@@ -114,12 +112,10 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     private ExperimentDTO experimentFilter = new ExperimentDTO();
 
 /*
-    public FxExpressionModule(ExperimentSection experimentSection, String publicationID) {
+    @UiConstructor
+    public ExpressionZoneView(ExpressionExperimentZoneView experimentSection) {
         this.experimentSection = experimentSection;
-        this.publicationID = publicationID;
-        stageSelector.setPublicationID(publicationID);
-        displayTable = new ExpressionFlexTable(HeaderName.getHeaderNames());
-        initGUI();
+//        stageSelector.setPublicationID(publicationID);
     }
 */
 
@@ -132,6 +128,15 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             loadSectionVisibility();
             initialized = true;
         }
+    }
+
+    public void setExperimentSection(ExpressionExperimentZoneView experimentSection) {
+        this.experimentSection = experimentSection;
+    }
+
+    @UiHandler("addButton")
+    void onClickAddExpression(@SuppressWarnings("unused") ClickEvent event) {
+        expressionZonePresenter.addExpressions();
     }
 
     /**
@@ -150,6 +155,14 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         for (ExpressionFigureStageDTO expression : this.displayedExpressions) {
             expressedTerms.addAll(expression.getExpressedTerms());
         }
+    }
+
+    public void setExpressionZonePresenter(ExpressionZonePresenter expressionZonePresenter) {
+        this.expressionZonePresenter = expressionZonePresenter;
+    }
+
+    public void setStructurePilePresenter(StructurePilePresenter structurePilePresenter) {
+        this.structurePilePresenter = structurePilePresenter;
     }
 
     private Widget createTermList(List<ExpressionFigureStageDTO> expressionList) {
@@ -269,7 +282,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         selectedExpressions.clear();
         showSelectedExpressionOnly = false;
         displayTable.uncheckAllRecords();
-        //experimentSection.unselectAllExperiments();
+        experimentSection.unselectAllExperiments();
     }
 
     /**
@@ -304,8 +317,8 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         displayTable.createExpressionTable();
     }
 
-    private Set<ExperimentDTO> getSelectedExperiments() {
-        return experimentSection.getSelectedExperiment();
+    protected Set<ExperimentDTO> getSelectedExperiments() {
+        return experimentSection.getSelectedExperiments();
     }
 
     /**
@@ -482,6 +495,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     }
 
     private void deleteExperiment(ExpressionFigureStageDTO figureAnnotation) {
+        loadingImage.setVisible(true);
         curationRPCAsync.deleteFigureAnnotation(figureAnnotation, new DeleteFigureAnnotationCallback(figureAnnotation));
     }
 
@@ -513,7 +527,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         }
 
         public void onSuccess(Void exp) {
-            //Window.alert("Success");
+            Window.alert("Success");
             // remove from the dashboard list
             displayedExpressions.remove(figureAnnotation);
             selectedExpressions.remove(figureAnnotation);
@@ -521,7 +535,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             displayTable.createExpressionTable();
             // update expression list in structure section.
             sendFigureAnnotationsToStructureSection();
-            experimentSection.notifyRemovedExpression(figureAnnotation.getExperiment());
+            ////experimentSection.notifyRemovedExpression(figureAnnotation.getExperiment());
             clearErrorMessages();
         }
 
