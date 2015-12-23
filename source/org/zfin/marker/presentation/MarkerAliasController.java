@@ -13,6 +13,7 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 
@@ -65,13 +66,8 @@ public class MarkerAliasController {
                                           BindingResult errors) {
         Marker marker = markerRepository.getMarkerByID(markerID);
 
-        Collection<MarkerAlias> aliases = marker.getAliases();
-        if (CollectionUtils.isNotEmpty(aliases)) {
-            for (MarkerAlias alias : aliases) {
-                if (alias.getAlias().equals(newAlias.getAlias())) {
-                    errors.rejectValue("alias", "marker.alias.inuse");
-                }
-            }
+        if (MarkerService.markerHasAlias(marker, newAlias.getAlias())) {
+            errors.rejectValue("alias", "marker.alias.inuse");
         }
 
         if (errors.hasErrors()) {

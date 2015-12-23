@@ -710,6 +710,18 @@ public class MarkerService {
         return false;
     }
 
+    public static boolean markerHasAlias(Marker marker, String alias) {
+        Collection<MarkerAlias> aliases = marker.getAliases();
+        if (CollectionUtils.isNotEmpty(aliases)) {
+            for (MarkerAlias markerAlias : aliases) {
+                if (markerAlias.getAlias().equals(alias)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static List<String> getDirectAttributions(Marker marker) {
         // get direct attributions
         ActiveData activeData = new ActiveData();

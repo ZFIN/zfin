@@ -476,4 +476,13 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         assertThat(geneTools.getZdbID() + " should not be a supplier for " + marker.getZdbID(),
                 MarkerService.markerHasSupplier(marker, geneTools), is(false));
     }
+
+    @Test
+    public void markerHasAlias() {
+        Marker marker = getMarkerRepository().getMarkerByID("ZDB-GENE-980526-166");
+        assertThat(marker.getZdbID() + " should have alias sonic you",
+                MarkerService.markerHasAlias(marker, "sonic you"), is(true));
+        assertThat(marker.getZdbID() + " should have not alias sonic youth",
+                MarkerService.markerHasAlias(marker, "sonic youth"), is(false));
+    }
 }
