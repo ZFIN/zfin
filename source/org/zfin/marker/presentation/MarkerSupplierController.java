@@ -41,10 +41,7 @@ public class MarkerSupplierController {
         List<MarkerSupplier> suppliers = markerRepository.getSuppliersForMarker(zdbID);
         List<SupplierBean> beans = new ArrayList<>(suppliers.size());
         for (MarkerSupplier supplier : suppliers) {
-            SupplierBean bean = new SupplierBean();
-            bean.setZdbID(supplier.getOrganization().getZdbID());
-            bean.setName(supplier.getOrganization().getName());
-            beans.add(bean);
+            beans.add(SupplierBean.convert(supplier.getOrganization()));
         }
         return beans;
     }
@@ -70,10 +67,7 @@ public class MarkerSupplierController {
         profileRepository.addSupplier(supplier, marker);
         HibernateUtil.flushAndCommitCurrentSession();
 
-        SupplierBean newBean = new SupplierBean();
-        newBean.setZdbID(supplier.getZdbID());
-        newBean.setName(supplier.getName());
-        return newBean;
+        return SupplierBean.convert(supplier);
     }
 
     @ResponseBody
