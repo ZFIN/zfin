@@ -76,9 +76,9 @@ class SequenceTargetingReagentAddBeanValidatorSpec extends AbstractZfinIntegrati
         errors.getFieldError("sequence").getCode() == "str.sequence.inuse"
 
         where:
-        type         | sequence
-        "Morpholino" | "GGTCTGCTTTGCAGTGAATATCCAT"
-        "CRISPR"     | "GCACCGGACATGGACTCGAG"
+        type      | sequence
+        "MRPHLNO" | "GGTCTGCTTTGCAGTGAATATCCAT"
+        "CRISPR"  | "GCACCGGACATGGACTCGAG"
     }
 
     @Unroll
@@ -118,11 +118,11 @@ class SequenceTargetingReagentAddBeanValidatorSpec extends AbstractZfinIntegrati
         !errors.hasErrors()
 
         where:
-        formType     | sequenceType | sequence
-        "Morpholino" | "CRISPR"     | "GCACCGGACATGGACTCGAG"
-        "CRISPR"     | "Morpholino" | "GGTCTGCTTTGCAGTGAATATCCAT"
-        "Morpholino" | "TALEN"      | "TACAATACTCCCACTGAA"
-        "CRISPR"     | "TALEN"      | "TACAATACTCCCACTGAA"
+        formType  | sequenceType | sequence
+        "MRPHLNO" | "CRISPR"     | "GCACCGGACATGGACTCGAG"
+        "CRISPR"  | "MRPHLNO"    | "GGTCTGCTTTGCAGTGAATATCCAT"
+        "MRPHLNO" | "TALEN"      | "TACAATACTCCCACTGAA"
+        "CRISPR"  | "TALEN"      | "TACAATACTCCCACTGAA"
     }
 
 }
