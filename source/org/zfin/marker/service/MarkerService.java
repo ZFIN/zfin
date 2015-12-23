@@ -28,6 +28,7 @@ import org.zfin.orthology.OrthologEvidence;
 import org.zfin.orthology.presentation.OrthologEvidencePresentation;
 import org.zfin.orthology.presentation.OrthologyPresentationRow;
 import org.zfin.profile.MarkerSupplier;
+import org.zfin.profile.Organization;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -530,7 +531,7 @@ public class MarkerService {
      * @param markerRelationshipType Marker relationship type to create.
      */
     public static MarkerRelationship addMarkerRelationship(Marker marker1, Marker marker2, String pubZdbID,
-                                             MarkerRelationship.Type markerRelationshipType) {
+                                                           MarkerRelationship.Type markerRelationshipType) {
         // adds the marker relation and attributes it
 //        MarkerRelationship markerRelationship = RepositoryFactory.getMarkerRepository().getSpecificMarkerRelationship(marker1,marker2,markerRelationshipType) ;
         MarkerRelationship markerRelationship = new MarkerRelationship();
@@ -695,6 +696,18 @@ public class MarkerService {
             supplierList.add(markerSupplier.getOrganization().getName());
         }
         return supplierList;
+    }
+
+    public static boolean markerHasSupplier(Marker marker, Organization supplier) {
+        Collection<MarkerSupplier> suppliers = marker.getSuppliers();
+        if (CollectionUtils.isNotEmpty(suppliers)) {
+            for (MarkerSupplier markerSupplier : marker.getSuppliers()) {
+                if (markerSupplier.getOrganization().equals(supplier)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static List<String> getDirectAttributions(Marker marker) {
