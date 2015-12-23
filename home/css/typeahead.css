@@ -33,7 +33,6 @@ input.tt-input {
     text-align: center;
 }
 
-.tt-suggestion.tt-cursor .text-muted
 .tt-suggestion:hover .text-muted {
     color: #a0c8de;
 }
