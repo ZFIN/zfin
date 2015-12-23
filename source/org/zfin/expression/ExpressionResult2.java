@@ -37,7 +37,7 @@ public class ExpressionResult2 implements Comparable<ExpressionResult2> {
     @JoinColumn(name = "xpatres_subterm_zdb_id")
     private GenericTerm subTerm;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "expressionResult")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "expressionResult", orphanRemoval = true)
     private Set<ExpressionPhenotypeTerm> phenotypeTermSet;
 
     public long getID() {

@@ -908,7 +908,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         }
 
         private void handleCopyStructureBuffer() {
-            if (expressionFigureStageDTOBuffer != null) {
+            if (expressionFigureStageDTOBuffer != null && expressionFigureStageDTOBuffer.size() > 0) {
                 displayTable.showBufferLastRow(1, createTermList(expressionFigureStageDTOBuffer));
             }
         }

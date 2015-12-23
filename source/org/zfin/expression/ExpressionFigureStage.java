@@ -32,7 +32,7 @@ public class ExpressionFigureStage {
     @ManyToOne()
     @JoinColumn(name = "efs_end_stg_zdb_id")
     private DevelopmentStage endStage;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "expressionFigureStage")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "expressionFigureStage", orphanRemoval = true)
     private Set<ExpressionResult2> expressionResultSet;
 
     public DevelopmentStage getEndStage() {

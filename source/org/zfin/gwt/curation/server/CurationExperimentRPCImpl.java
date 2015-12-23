@@ -164,15 +164,6 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         return dtos;
     }
 
-    public static List<ExperimentDTO> convertExperimentsToDTO(List<ExpressionExperiment> experiments) {
-        List<ExperimentDTO> dtos = new ArrayList<>();
-        for (ExpressionExperiment experiment : experiments) {
-            ExperimentDTO dto = DTOConversionService.convertToExperimentDTO(experiment);
-            dtos.add(dto);
-        }
-        return dtos;
-    }
-
     public List<String> getAssays() {
         InfrastructureRepository infra = RepositoryFactory.getInfrastructureRepository();
         List<ExpressionAssay> assays = infra.getAllAssays();
@@ -331,48 +322,6 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         }
         return experimentDTO;
     }
-
-    // ToDo: This will be done much more elegantly within an interceptor class in Hibernate.
-
-    private void createAuditRecordsForModifications(ExpressionExperiment expressionExperiment, ExperimentDTO experimentDTO) {
-        // check which attributes have changed when updating an experiment
-        String comment = "updated Experiment";
-        // gene
-        Marker oldGene = expressionExperiment.getGene();
-        String oldGeneID = null;
-        if (oldGene != null)
-            oldGeneID = oldGene.getZdbID();
-        String newGeneID = experimentDTO.getGene().getZdbID();
-        createAuditRecord(expressionExperiment, comment, oldGeneID, newGeneID, "Gene");
-
-        // antibody
-        Antibody oldAntibody = expressionExperiment.getAntibody();
-        String oldAntibodyID = null;
-        if (oldAntibody != null)
-            oldAntibodyID = oldAntibody.getZdbID();
-        String newAntibodyID = experimentDTO.getAntibodyMarker().getZdbID();
-        createAuditRecord(expressionExperiment, comment, oldAntibodyID, newAntibodyID, "Antibody");
-
-        String oldAssay = expressionExperiment.getAssay().getName();
-        String newAssay = experimentDTO.getAssay();
-        createAuditRecord(expressionExperiment, comment, oldAssay, newAssay, "Assay");
-
-        String oldEnvironment = expressionExperiment.getFishExperiment().getExperiment().getName();
-        String newEnvironment = experimentDTO.getEnvironment().getName();
-        createAuditRecord(expressionExperiment, comment, oldEnvironment, newEnvironment, "Environment");
-
-        String oldFishID = expressionExperiment.getFishExperiment().getFish().getZdbID();
-        String newFishID = experimentDTO.getFishID();
-        createAuditRecord(expressionExperiment, comment, oldFishID, newFishID, "MartFish");
-
-    }
-
-    private void createAuditRecord(ExpressionExperiment expressionExperiment, String comment, String oldValue, String newValue, String fieldName) {
-        if (!StringUtils.equals(oldValue, newValue)) {
-            infraRep.insertUpdatesTable(expressionExperiment.getZdbID(), fieldName, oldValue, newValue, comment);
-        }
-    }
-
 
     public ExperimentDTO createExpressionExperiment(ExperimentDTO experimentDTO) throws Exception {
         if (experimentDTO == null)
@@ -973,6 +922,9 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
                         dto.getFigure().getZdbID(),
                         dto.getStart().getZdbID(),
                         dto.getEnd().getZdbID());
+                // sort: first deletions then additions. This will allow to remove a non-EaP structure and replace it with an eap.
+                // we do not allow to add an eap to a non-EaP annotation.
+                Collections.sort(pileStructures);
                 for (PileStructureAnnotationDTO pileStructure : pileStructures) {
                     ExpressionStructure expressionStructure;
 /*
@@ -1158,23 +1110,41 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         return false;
     }
 
-    private void removeExpressionToAnnotation(ExpressionFigureStage experiment, ExpressionStructure postComposedEntity) {
-        boolean termBeingUsed = experimentHasExpression(experiment, postComposedEntity, postComposedEntity.isExpressionFound());
+    private void removeExpressionToAnnotation(ExpressionFigureStage expressionFigureStage, ExpressionStructure expressionStructure) {
+        boolean termBeingUsed = experimentHasExpression(expressionFigureStage, expressionStructure, expressionStructure.isExpressionFound());
         // do nothing term already exists.
         if (!termBeingUsed)
             return;
 
         // create a new ExpressionResult record
         // create a new ExpressedTermDTO object that is passed back to the RPC caller
-        ExpressedTermDTO expressedTerm = DTOConversionService.convertToExpressedTermDTO(postComposedEntity);
-        ExpressionResult2 result = getExpressionResult(experiment, postComposedEntity);
+        ExpressedTermDTO expressedTerm = DTOConversionService.convertToExpressedTermDTO(expressionStructure);
+        // get naked structure
+        ExpressionResult2 result = getExpressionResult(expressionFigureStage, expressionStructure);
         if (result != null) {
-            if (!postComposedEntity.isEap()) {
-                experiment.getExpressionResultSet().remove(result);
-                expRepository.deleteExpressionResult(result);
-            }
+            if (!expressionStructure.isEap()) {
+                expressionFigureStage.getExpressionResultSet().remove(result);
+            } else {
+                // remove the whole result as it is an EaP if there is at least one quality on it
+                // and cannot turn into a non-eap
+                if (result.getPhenotypeTermSet().size() == 1) {
+                    expressionFigureStage.getExpressionResultSet().remove(result);
+                } else {
 
+                    ExpressionPhenotypeTerm termToBeRemoved = null;
+                    for (ExpressionPhenotypeTerm term : result.getPhenotypeTermSet())
+                        if (term.getQualityTerm().equals(expressionStructure.getEapQualityTerm()))
+                            termToBeRemoved = term;
+                    if (termToBeRemoved != null) {
+                        result.getPhenotypeTermSet().remove(termToBeRemoved);
+
+                    }
+                }
+            }
         }
+        // Removal queries have to happen before insert queries...
+        // Hibernate may order removal and addition to other criterias
+        HibernateUtil.currentSession().flush();
     }
 
     public Set<ExpressionFigureStageDTO> createExpressionFigureStages(Collection<String> checkMarks) {
