@@ -1,37 +1,7 @@
-;(function() {
+;(function () {
     angular
         .module('app')
-        .directive('autocompletify', autocompletify)
         .directive('markerSuppliers', markerSuppliers);
-
-    function autocompletify() {
-        var directive = {
-            require: 'ngModel',
-            scope: {
-                url: '@',
-                onSelect: '&'
-            },
-            link: link
-        };
-
-        function link(scope, element, attrs, ngModel) {
-            element
-                .autocompletify(scope.url)
-                .on('typeahead:select', function(event, item) {
-                    ngModel.$setViewValue(item.value, 'typeahead:select');
-                    scope.$apply(function (scope) {
-                        scope.onSelect({item: item});
-                    });
-                });
-
-            ngModel.$render = function() {
-                element.typeahead('val', ngModel.$viewValue);
-            };
-
-        }
-
-        return directive;
-    }
 
     function markerSuppliers() {
         var directive = {
@@ -75,7 +45,7 @@
 
         function submit() {
             vm.processing = true;
-            MarkerService.addSupplier(vm.markerId, { name: vm.supplier })
+            MarkerService.addSupplier(vm.markerId, vm.supplier)
                 .then(function (supplier) {
                     vm.suppliers.push(supplier);
                     vm.supplier = '';
@@ -96,7 +66,7 @@
                 })
                 .catch(function (error) {
                     console.log(error);
-                })
+                });
         }
 
     }

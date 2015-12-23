@@ -1,4 +1,4 @@
-;(function() {
+;(function () {
     angular
         .module('app')
         .directive('markerLinks', markerLinks);
@@ -46,18 +46,18 @@
 
         function activate() {
             MarkerService.getLinks(vm.markerId, vm.group)
-                .then(function(links) {
+                .then(function (links) {
                     vm.links = links;
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     console.error(error);
                 });
 
             MarkerService.getLinkDatabases(vm.group)
-                .then(function(databases) {
+                .then(function (databases) {
                     vm.databases = databases;
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     console.error(error);
                 });
         }
@@ -65,27 +65,27 @@
         function add() {
             vm.processing = true;
             MarkerService.addLink(vm.markerId, vm.newDatabase, vm.newAccession, vm.newReference)
-                .then(function(link) {
+                .then(function (link) {
                     vm.links.unshift(link);
                     vm.newDatabase = '';
                     vm.newAccession = '';
                     vm.newReference = '';
                     vm.errors = {};
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     vm.errors = FieldErrorService.processErrorResponse(error);
                 })
-                .finally(function() {
+                .finally(function () {
                     vm.processing = false;
-                })
+                });
         }
 
         function remove(link, index) {
             MarkerService.removeLink(link)
-                .then(function() {
+                .then(function () {
                     vm.links.splice(index, 1);
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     console.error(error);
                 });
         }
@@ -100,14 +100,14 @@
 
         function addReference(pubId) {
             return MarkerService.addLinkReference(vm.editing, pubId)
-                .then(function(link) {
+                .then(function (link) {
                     vm.editing.references = link.references;
                 });
         }
 
         function removeReference(reference, index) {
             return MarkerService.removeLinkReference(vm.editing, reference)
-                .then(function() {
+                .then(function () {
                     vm.editing.references.splice(index, 1);
                 });
         }

@@ -1,4 +1,4 @@
-;(function() {
+;(function () {
     angular
         .module('app')
         .directive('strDetails', strDetails);
@@ -59,7 +59,7 @@
                 .catch(function (response) {
                     vm.errors = FieldErrorService.processErrorResponse(response);
                 })
-                .finally(function() {
+                .finally(function () {
                     vm.processing = false;
                 });
         }

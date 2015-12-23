@@ -1,5 +1,4 @@
-
-;(function() {
+;(function () {
     angular
         .module('app')
         .filter('trusted_html', trustedHtml)
@@ -7,7 +6,7 @@
 
     trustedHtml.$inject = ['$sce'];
     function trustedHtml($sce) {
-        return function(text) {
+        return function (text) {
             return $sce.trustAsHtml(text);
         };
     }
@@ -54,8 +53,8 @@
 
         function activate() {
             MarkerService.getNotes(vm.markerId)
-                .then(function(notes) {
-                    notes.forEach(function(note) {
+                .then(function (notes) {
+                    notes.forEach(function (note) {
                         if (note.noteEditMode === 'PRIVATE') {
                             vm.curatorNotes.push(note);
                         } else if (note.noteEditMode === 'PUBLIC') {
@@ -64,7 +63,7 @@
                         }
                     });
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     console.error(error);
                 });
         }
@@ -84,14 +83,14 @@
             newNote.noteData = vm.newPublicNote;
             vm.publicNote.processing = true;
             MarkerService.updatePublicNote(vm.markerId, newNote)
-                .then(function(note) {
+                .then(function (note) {
                     vm.publicNote = note;
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     console.error(error);
                     vm.publicNote.error = 'Unable to save note. Please try again later.';
                 })
-                .finally(function() {
+                .finally(function () {
                     vm.publicNote.processing = false;
                 });
         }
@@ -104,18 +103,18 @@
             };
             vm.processing = true;
             MarkerService.addCuratorNote(vm.markerId, newNote)
-                .then(function(note) {
+                .then(function (note) {
                     vm.curatorNotes.unshift(note);
                     vm.newCuratorNote = '';
                     vm.errors = {};
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     console.error(error);
                     vm.errors.curator = 'Unable to save note. Please try again later.';
                 })
-                .finally(function() {
+                .finally(function () {
                     vm.processing = false;
-                })
+                });
         }
 
         function editCuratorNote(note) {
@@ -130,24 +129,24 @@
         function saveCuratorNote(note, index) {
             note.processing = true;
             MarkerService.updateCuratorNote(vm.markerId, note, note.editText)
-                .then(function(note) {
+                .then(function (note) {
                     vm.curatorNotes[index] = note;
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     console.error(error);
                     note.error = 'Unable to save note. Please try again later.';
                 })
-                .finally(function() {
+                .finally(function () {
                     note.processing = false;
-                })
+                });
         }
 
         function deleteCuratorNote(note, index) {
             MarkerService.deleteCuratorNote(vm.markerId, note)
-                .then(function() {
+                .then(function () {
                     vm.curatorNotes.splice(index, 1);
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     console.error(error);
                 });
         }

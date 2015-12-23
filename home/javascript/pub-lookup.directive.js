@@ -1,4 +1,4 @@
-;(function() {
+;(function () {
     angular
         .module('app')
         .directive('pubLookup', pubLookup);
@@ -18,7 +18,9 @@
             var pubSearch = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('title'),
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
-                identify: function(obj) { return obj.zdbID; },
+                identify: function (obj) {
+                    return obj.zdbID;
+                },
                 remote: {
                     url: '/action/publication/lookup?q=%QUERY',
                     wildcard: '%QUERY'
@@ -45,7 +47,7 @@
                 }
             });
 
-            ngModel.$viewChangeListeners.push(function() {
+            ngModel.$viewChangeListeners.push(function () {
                 var value = ngModel.$viewValue;
                 if (value && value.match(/^\d/)) {
                     ngModel.$setViewValue('ZDB-PUB-' + value);
@@ -53,7 +55,7 @@
                 }
             });
 
-            ngModel.$render = function() {
+            ngModel.$render = function () {
                 element.typeahead('val', ngModel.$viewValue);
             };
         }

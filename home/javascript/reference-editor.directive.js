@@ -1,4 +1,4 @@
-;(function() {
+;(function () {
     angular
         .module('app')
         .directive('referenceEditor', referenceEditor);
@@ -77,14 +77,14 @@
         function add() {
             vm.processing = true;
             vm.onAdd({pubId: vm.newReference})
-                .then(function() {
+                .then(function () {
                     vm.newReference = '';
                     vm.errors = {};
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     vm.errors = FieldErrorService.processErrorResponse(error);
                 })
-                .finally(function() {
+                .finally(function () {
                     vm.processing = false;
                 });
         }

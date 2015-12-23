@@ -1,4 +1,4 @@
-;(function() {
+;(function () {
     angular
         .module('app')
         .directive('markerAliases', markerAliases);
@@ -54,18 +54,18 @@
         function add() {
             vm.processing = true;
             MarkerService.addAlias(vm.markerId, vm.newAlias, vm.newReference)
-                .then(function(alias) {
+                .then(function (alias) {
                     vm.aliases.unshift(alias);
                     vm.newAlias = '';
                     vm.newReference = '';
                     vm.errors = {};
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     vm.errors = FieldErrorService.processErrorResponse(error);
                 })
-                .finally(function() {
+                .finally(function () {
                     vm.processing = false;
-                })
+                });
         }
 
         function edit(alias) {
@@ -74,21 +74,21 @@
 
         function addReference(pubId) {
             return MarkerService.addAliasReference(vm.editing, pubId)
-                .then(function(alias) {
+                .then(function (alias) {
                     vm.editing.references = alias.references;
                 });
         }
 
         function removeReference(reference, index) {
             return MarkerService.removeAliasReference(vm.editing, reference)
-                .then(function() {
+                .then(function () {
                     vm.editing.references.splice(index, 1);
                 });
         }
 
         function remove(alias, index) {
             MarkerService.removeAlias(alias)
-                .then(function() {
+                .then(function () {
                     vm.aliases.splice(index, 1);
                 })
                 .catch(function (error) {

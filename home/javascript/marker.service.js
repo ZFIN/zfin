@@ -1,5 +1,4 @@
-;
-(function () {
+;(function () {
     angular
         .module('app')
         .factory('MarkerService', MarkerService);
@@ -44,7 +43,8 @@
                 .then(returnResponseData);
         }
 
-        function addSupplier(markerId, supplier) {
+        function addSupplier(markerId, supplierName) {
+            var supplier = {name: supplierName};
             return $http.post('/action/marker/' + markerId + '/suppliers', supplier)
                 .then(returnResponseData);
         }
