@@ -75,8 +75,6 @@ public class ExpressionModule implements HandlesError, EntryPoint {
         structurePilePresenter.go();
         structurePile.setStructurePilePresenter(structurePilePresenter);
 
-        expressionZonePresenter = new ExpressionZonePresenter(expressionZone, publicationID);
-        expressionZonePresenter.go();
         ExperimentDTO dto = new ExperimentDTO();
         dto.setPublicationID(publicationID);
         expressionZone.setExperimentFilter(dto);
@@ -85,9 +83,15 @@ public class ExpressionModule implements HandlesError, EntryPoint {
         expressionExperimentZonePresenter = new ExpressionExperimentZonePresenter(expressionExperimentZone, publicationID, debug);
         expressionExperimentZonePresenter.go();
 
+        expressionZonePresenter = new ExpressionZonePresenter(expressionZone, publicationID);
+        expressionZonePresenter.go();
+        expressionZone.setExpressionZonePresenter(expressionZonePresenter);
+        expressionZone.setStructurePilePresenter(structurePilePresenter);
+        expressionZone.setExperimentSection(expressionExperimentZone);
+
         bindEventBusHandler();
         addHandlerEvents();
-        
+
     }
 
     public void addHandlerEvents() {

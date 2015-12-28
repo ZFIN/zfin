@@ -44,6 +44,7 @@ import org.zfin.sequence.MarkerDBLink;
 
 import java.util.*;
 
+import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
@@ -610,28 +611,12 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         if (figureAnnotation == null)
             return;
 
-        ExperimentFigureStage expressionExperiment = populateExpression(figureAnnotation);
-        ExpressionResult result = new ExpressionResult();
-        result.setEndStage(expressionExperiment.getEnd());
-        result.setStartStage(expressionExperiment.getStart());
-        result.setExpressionExperiment(expressionExperiment.getExpressionExperiment());
-        populateFigureAnnotation(figureAnnotation, expressionExperiment);
-
-        Set<Figure> figures = new HashSet<>(1);
-        figures.add(expressionExperiment.getFigure());
-        result.setFigures(figures);
-
-        GenericTerm unspecified = ontologyRepository.getTermByNameActive(Term.UNSPECIFIED, Ontology.ANATOMY);
-
-        result.setSuperTerm(unspecified);
-        result.setExpressionFound(true);
-        ExpressedTermDTO unspecifiedTerm = DTOConversionService.convertToExpressedTermDTO(unspecified);
-        unspecifiedTerm.setExpressionFound(true);
-        figureAnnotation.addExpressedTerm(unspecifiedTerm);
-        ExpressionRepository expressionRep = RepositoryFactory.getExpressionRepository();
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            expressionRep.createExpressionResult(result, expressionExperiment.getFigure());
+            ExpressionFigureStage expressionFigureStage = DTOConversionService.getExpressionFigureStageFromDTO(figureAnnotation);
+            ExpressionExperiment2 expressionExperiment = getExpressionRepository().getExpressionExperiment2(figureAnnotation.getExperiment().getExperimentZdbID());
+            expressionFigureStage.setExpressionExperiment(expressionExperiment);
+            RepositoryFactory.getExpressionRepository().createExpressionFigureStage(expressionFigureStage);
             tx.commit();
         } catch (ConstraintViolationException e) {
             tx.rollback();
@@ -694,7 +679,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
                 figureAnnotation.getStart().getZdbID(), figureAnnotation.getEnd().getZdbID());
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            ///TODO expRepository.deleteFigureAnnotation(efs);
+            expRepository.deleteFigureAnnotation(efs);
             tx.commit();
         } catch (HibernateException e) {
             tx.rollback();

@@ -11,6 +11,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
+import org.zfin.gwt.curation.event.SelectExpressionExperimentEvent;
 import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.ExpressionAssayDTO;
@@ -18,10 +19,7 @@ import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Expression Experiment zone
@@ -29,10 +27,6 @@ import java.util.Set;
 public class ExpressionExperimentZoneView extends Composite implements HandlesError {
 
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
-
-    public void clearSelectedExperiments() {
-        selectedExperiments.clear();
-    }
 
     @UiTemplate("ExpressionExperimentZoneView.ui.xml")
     interface MyUiBinder extends UiBinder<VerticalPanel, ExpressionExperimentZoneView> {
@@ -95,9 +89,73 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
         presenter.retrieveExperiments();
     }
 
+    // flag that indicates if the experiment section is visible or not.
+    private boolean sectionVisible;
+
+
+    /**
+     * Un-select all experiment check boxes.
+     */
+    public void unselectAllExperiments() {
+        selectedExperiments.clear();
+        showSelectedExperimentsOnly = false;
+        displayTable.uncheckAllRecords();
+    }
+
+    /**
+     * When an expression record is added update the experiment section about it, ie the number
+     * of expression records is incremented by 1.
+     */
+    public void notifyAddedExpression() {
+        for (ExperimentDTO experiment : experiments) {
+            for (ExperimentDTO sourceExperiment : selectedExperiments) {
+                if (experiment.equals(sourceExperiment))
+                    experiment.setNumberOfExpressions(experiment.getNumberOfExpressions() + 1);
+            }
+        }
+        unselectAllExperiments();
+        if (sectionVisible)
+            displayTable.createExperimentTable();
+    }
+
     public void setPresenter(ExpressionExperimentZonePresenter presenter) {
         this.presenter = presenter;
     }
+
+    public void clearSelectedExperiments() {
+        selectedExperiments.clear();
+    }
+
+    /**
+     * Retrieve all selected Experiments.
+     *
+     * @return set of selected experiments
+     */
+    public Set<ExperimentDTO> getSelectedExperiments() {
+        return Collections.unmodifiableSet(selectedExperiments);
+    }
+
+    public void addSelectedExperiment(ExperimentDTO experiment) {
+        selectedExperiments.add(experiment);
+        displayTable.createExperimentTable();
+    }
+
+    /**
+     * When an expression record is removed update the experiment about it, ie the number
+     * of expression records is decremented by 1.
+     *
+     * @param sourceExperiment experiment being removed
+     */
+    public void notifyRemovedExpression(ExperimentDTO sourceExperiment) {
+        for (ExperimentDTO experiment : experiments) {
+            if (experiment.getExperimentZdbID().equals(sourceExperiment.getExperimentZdbID()))
+                experiment.setNumberOfExpressions(experiment.getNumberOfExpressions() - 1);
+        }
+        unselectAllExperiments();
+        if (sectionVisible)
+            displayTable.createExperimentTable();
+    }
+
 
     @Override
     public void setError(String message) {
@@ -842,10 +900,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
 
     public ExperimentDTO getLastAddedExperiment() {
         return lastAddedExperiment;
-    }
-
-    public Set<ExperimentDTO> getSelectedExperiments() {
-        return selectedExperiments;
     }
 
     public Image getLoadingImage() {
