@@ -209,14 +209,14 @@
 
     </class>
 
-    <class name="org.zfin.expression.CleanExpFastSrch" table="clean_expression_fast_search">
+   <!-- <class name="org.zfin.expression.CleanExpFastSrch" table="clean_expression_fast_search">
         <composite-id>
             <key-many-to-one name="gene" column="cefs_mrkr_Zdb_id" class="org.zfin.marker.Marker"/>
             <key-many-to-one name="fishExperiment" column="cefs_genox_zdb_id" class="org.zfin.mutant.FishExperiment"/>
         </composite-id>
 
 
-    </class>
+    </class>-->
 
 
     <class name="org.zfin.expression.ExpressionResult" table="expression_result">
