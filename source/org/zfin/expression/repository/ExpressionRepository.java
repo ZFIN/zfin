@@ -381,7 +381,7 @@ public interface ExpressionRepository {
      */
     List<ExpressionResult> getExpressionResultsByTermAndStage(TermFigureStageRange range);
 
-    ExpressionResult getExpressionResult(String expressionResultID);
+    ExpressionResult getExpressionResult(Long expressionResultID);
 
     /**
      * Deletes a given ExpressionResult record and its associations to all figures.
