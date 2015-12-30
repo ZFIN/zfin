@@ -48,8 +48,8 @@ create function get_genotype_display( genoZdbId varchar(50) )
   define mrkrAbbrev	 like marker.mrkr_abbrev; 
   define featMrkrAbbrev	 varchar(255);
 
-set debug file to '/tmp/debug.txt';
-trace on;
+--set debug file to '/tmp/debug.txt';
+--trace on;
 
 
 
@@ -90,8 +90,8 @@ trace on;
 	      feature_type,
 	     zyg_abbrev, 
 	     mrkr_abbrev, 
-	     gcs_significance,
-	     fmrel_type
+	     gcs_significance--,
+	    -- fmrel_type
 --into featAbbrevHtml, zygAllele, mrkrAbbrev, featAbbrev, featType, zygOrder, featMrkrAbbrev, gcs, fmrelType
          from feature, genotype_feature, zygocity, feature_type, feature_marker_relationship, marker, genotype_component_significance
         where genofeat_geno_zdb_id = genoZdbId
@@ -110,7 +110,7 @@ trace on;
 	select distinct get_feature_abbrev_display(feature_zdb_id) as fad, 
                             zyg_allele_display, 
               case 
-                when fmrel_type in ("contains innocuous sequence feature","created by")
+                when fmrel_type in ("contains innocuous sequence feature","created by","contains phenotypic sequence feature")
                 then mrkr_abbrev
                 else lower(get_feature_abbrev_display(feature_zdb_id)) 
                 end as fad2,
@@ -118,8 +118,13 @@ trace on;
 	      feature_type,
               zyg_abbrev, 
               feature_abbrev, 
-              gcs_significance,
-              fmrel_type
+              case
+	        when fmrel_type = "contains innocuous sequence feature"
+   		then 24
+		else
+		  gcs_significance--,
+	      end
+              --fmrel_type
 		   
          from feature, genotype_feature, zygocity, feature_type,
 	      feature_marker_relationship as fm1, genotype_component_significance, marker
@@ -152,7 +157,7 @@ trace on;
 	select distinct get_feature_abbrev_display(feature_zdb_id) as fad, 
                             zyg_allele_display, 
               case 
-                when fmrel_type in ("contains innocuous sequence feature","created by")
+                when fmrel_type in ("contains innocuous sequence feature","created by","contains phenotypic sequence feature")
                 then mrkr_abbrev
                 else lower(get_feature_abbrev_display(feature_zdb_id)) 
                 end as fad2,
@@ -160,10 +165,15 @@ trace on;
 	      feature_type,
               zyg_abbrev, 
               feature_abbrev, 
-              gcs_significance,
-              fmrel_type
+              case
+	        when fmrel_type = "contains innocuous sequence feature"
+   		then 24
+		else
+		  gcs_significance--,
+	      end
+              --fmrel_type
 		   
-          into featAbbrevHtml, zygAllele, mrkrAbbrev, featAbbrev, featType, zygOrder, featMrkrAbbrev, gcs, fmrelType
+          into featAbbrevHtml, zygAllele, mrkrAbbrev, featAbbrev, featType, zygOrder, featMrkrAbbrev, gcs--, fmrelType
           
          from feature, genotype_feature, zygocity, feature_type,
 	      feature_marker_relationship as fm1, genotype_component_significance, marker
@@ -187,8 +197,11 @@ trace on;
 	                                   "contains phenotypic sequence feature")
 		    and fm2.fmrel_type = "is allele of"
 	       )
+          and not exists (SElect 'x' from feature_marker_relationship
+	      	  	 	 where fmrel_ftr_zdb_id = feature_Zdb_id
+				 and fmrel_type = 'is allele of')
 
-       order by gcs_significance asc, mrkr_abbrev asc , zyg_abbrev , fad2, fad asc
+       order by gcs_significance asc, mrkr_abbrev asc , zyg_abbrev , fad2, fad desc
        
 
   if (fad2 == featAbbrevHtml) then
