@@ -22,6 +22,8 @@ create function get_genotype_display( genoZdbId varchar(50) )
   --     none
   -------------------------------------------------------------------------- 
 
+
+
   define genoDisplayHtml like genotype.geno_display_name;
   define featAbbrev	 like feature.feature_abbrev;
   define gcs	         like genotype_component_significance.gcs_significance;
@@ -45,6 +47,11 @@ create function get_genotype_display( genoZdbId varchar(50) )
   define zygOrder	 like zygocity.zyg_abbrev;
   define mrkrAbbrev	 like marker.mrkr_abbrev; 
   define featMrkrAbbrev	 varchar(255);
+
+set debug file to '/tmp/debug.txt';
+trace on;
+
+
 
   select geno_display_name, geno_is_wildtype 
   into startName, wildtype 
@@ -85,7 +92,7 @@ create function get_genotype_display( genoZdbId varchar(50) )
 	     mrkr_abbrev, 
 	     gcs_significance,
 	     fmrel_type
-
+--into featAbbrevHtml, zygAllele, mrkrAbbrev, featAbbrev, featType, zygOrder, featMrkrAbbrev, gcs, fmrelType
          from feature, genotype_feature, zygocity, feature_type, feature_marker_relationship, marker, genotype_component_significance
         where genofeat_geno_zdb_id = genoZdbId
           and genofeat_feature_zdb_id = feature_zdb_id
@@ -94,9 +101,51 @@ create function get_genotype_display( genoZdbId varchar(50) )
 	  and fmrel_mrkr_zdb_id = mrkr_zdb_id
 	  and fmrel_ftr_zdb_id = feature_zdb_id
 	  and fmrel_type = gcs_fmrel_type
+ and feature_type = ftrtype_name
 	  and gcs_mrkr_type = mrkr_type
 	  and gcs_ftr_type = feature_type
 	  and fmrel_type = "is allele of"
+	  union 
+
+	select distinct get_feature_abbrev_display(feature_zdb_id) as fad, 
+                            zyg_allele_display, 
+              case 
+                when fmrel_type in ("contains innocuous sequence feature","created by")
+                then mrkr_abbrev
+                else lower(get_feature_abbrev_display(feature_zdb_id)) 
+                end as fad2,
+	      feature_Abbrev,
+	      feature_type,
+              zyg_abbrev, 
+              feature_abbrev, 
+              gcs_significance,
+              fmrel_type
+		   
+         from feature, genotype_feature, zygocity, feature_type,
+	      feature_marker_relationship as fm1, genotype_component_significance, marker
+        where genofeat_geno_zdb_id = genoZdbId
+          and genofeat_feature_zdb_id = feature_zdb_id
+          and genofeat_zygocity = zyg_zdb_id
+	  and feature_type = ftrtype_name
+	  and fmrel_ftr_zdb_id = feature_zdb_id
+	  and fmrel_mrkr_zdb_id = mrkr_zdb_id
+ 	  and feature_type = ftrtype_name
+	  and feature_Type = 'DEFICIENCY'
+	  and fmrel_type = gcs_fmrel_type
+	  and gcs_mrkr_type = mrkr_type
+	  and gcs_ftr_type = feature_type
+	  and fmrel_type not in ('is allele of', 'created by','markers present','markers moved')
+          and not exists (SElect 'x' from feature_marker_relationship
+	      	  	 	 where fmrel_ftr_zdb_id = feature_Zdb_id
+				 and fmrel_type = 'is allele of')
+	  and not exists (
+	          select *
+	          from feature_marker_relationship as fm2
+	          where fm2.fmrel_ftr_zdb_id = fm1.fmrel_ftr_zdb_id
+	            and fm1.fmrel_type in ("contains innocuous sequence feature",
+	                                   "contains phenotypic sequence feature")
+		    and fm2.fmrel_type = "is allele of"
+	       )
 
 	  union 
 
@@ -104,7 +153,7 @@ create function get_genotype_display( genoZdbId varchar(50) )
                             zyg_allele_display, 
               case 
                 when fmrel_type in ("contains innocuous sequence feature","created by")
-                then feature_abbrev
+                then mrkr_abbrev
                 else lower(get_feature_abbrev_display(feature_zdb_id)) 
                 end as fad2,
 	      feature_Abbrev,
@@ -124,10 +173,12 @@ create function get_genotype_display( genoZdbId varchar(50) )
 	  and feature_type = ftrtype_name
 	  and fmrel_ftr_zdb_id = feature_zdb_id
 	  and fmrel_mrkr_zdb_id = mrkr_zdb_id
+ 	  and feature_type = ftrtype_name
+	  and feature_Type != 'DEFICIENCY'
 	  and fmrel_type = gcs_fmrel_type
 	  and gcs_mrkr_type = mrkr_type
 	  and gcs_ftr_type = feature_type
-	  and fmrel_type not in ('is allele of', 'created by','markers present')
+	  and fmrel_type not in ('is allele of', 'created by','markers present','markers missing','markers moved')
 	  and not exists (
 	          select *
 	          from feature_marker_relationship as fm2
