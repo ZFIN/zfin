@@ -3,7 +3,12 @@ package org.zfin.framework;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.RootLogger;
 import org.hibernate.InvalidMappingException;
+import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
+import org.zfin.expression.ExpressionExperiment2;
+import org.zfin.expression.ExpressionFigureStage;
+import org.zfin.expression.ExpressionPhenotypeTerm;
+import org.zfin.expression.ExpressionResult2;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.FileUtil;
 
@@ -73,7 +78,10 @@ public class HibernateSessionCreator {
                 }
             }
         }
-        HibernateUtil.init(config.buildSessionFactory());
+        HibernateUtil.init(config.addAnnotatedClass(ExpressionExperiment2.class)
+                .addAnnotatedClass(ExpressionFigureStage.class)
+                .addAnnotatedClass(ExpressionResult2.class)
+                .addAnnotatedClass(ExpressionPhenotypeTerm.class).buildSessionFactory());
     }
 
     public static File[] getHibernateConfigurationFiles() {
@@ -111,7 +119,7 @@ public class HibernateSessionCreator {
     }
 
     private Configuration createConfiguration(String db) {
-        Configuration config = new Configuration();
+        Configuration config = new AnnotationConfiguration();
         config.setInterceptor(new StringCleanInterceptor());
         config.setProperty("hibernate.dialect", "org.zfin.database.ZfinInformixDialect");
         config.setProperty("hibernate.connection.driver_class", "com.informix.jdbc.IfxDriver");

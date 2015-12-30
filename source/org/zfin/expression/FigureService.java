@@ -90,18 +90,18 @@ public class FigureService {
      * @param fish         fish
      * @param gene         gene
      * @param withImgsOnly require that figures joined in have images
+     * @para environmentGroup  environment group
      * @return expressionsummarycriteria object
      */
-    public static ExpressionSummaryCriteria createExpressionCriteriaChemicalEnvironment(Fish fish, Marker gene, boolean withImgsOnly) {
-        //assumed by title, this method is only relevant for getting the chemical environments, not for getting
-        //everything *but* chemical
-        boolean isChemicalEnvironment = true;
-
+    public static ExpressionSummaryCriteria createExpressionCriteriaEnvironmentGroup(Fish fish, Marker gene, boolean withImgsOnly, String environmentGroup) {
         ExpressionSummaryCriteria criteria = new ExpressionSummaryCriteria();
         criteria.setFish(fish);
         criteria.setGene(gene);
         criteria.setWithImagesOnly(withImgsOnly);
-        criteria.setChemicalEnvironment(isChemicalEnvironment);
+        if (environmentGroup.equalsIgnoreCase("chemical"))
+            criteria.setChemicalEnvironment(true);
+        else if (environmentGroup.equalsIgnoreCase("heatshock"))
+            criteria.setHeatShockEnvironment(true);
         criteria.setWildtypeOnly(false);
         return criteria;
     }
@@ -292,4 +292,5 @@ public class FigureService {
         }
         return figures;
     }
+
 }

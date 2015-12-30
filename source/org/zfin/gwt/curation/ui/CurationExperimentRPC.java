@@ -5,6 +5,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.StageRangeIntersectionService;
 
@@ -196,7 +197,9 @@ public interface CurationExperimentRPC extends RemoteService {
      */
     List<ExpressionFigureStageDTO> createFigureAnnotations(List<ExpressionFigureStageDTO> figureAnnotations);
 
-    List<ExpressionFigureStageDTO> copyExpressions(List<ExpressionFigureStageDTO> copyFromExpressions, List<ExpressionFigureStageDTO> copyToExpressions);
+    List<ExpressionFigureStageDTO> copyExpressions(List<ExpressionFigureStageDTO> copyFromExpressions,
+                                                   List<ExpressionFigureStageDTO> copyToExpressions)
+            throws ValidationException;
 
     /**
      * Delete a figure annotation.
@@ -274,7 +277,8 @@ public interface CurationExperimentRPC extends RemoteService {
      * @param updateEntity Update Expression dto
      * @return list of updated expression figure stage dtos
      */
-    List<ExpressionFigureStageDTO> updateStructuresForExpression(UpdateExpressionDTO updateEntity);
+    List<ExpressionFigureStageDTO> updateStructuresForExpression(UpdateExpressionDTO<PileStructureAnnotationDTO, ExpressionFigureStageDTO> updateEntity)
+            throws ValidationException;
 
     /**
      * Retrieve a list of structures that could be used instead of the selected
@@ -286,7 +290,6 @@ public interface CurationExperimentRPC extends RemoteService {
      */
     List<RelatedPileStructureDTO> getTermsWithStageOverlap(ExpressionPileStructureDTO selectedPileStructure,
                                                            StageRangeIntersectionService intersection);
-
 
 
     /**

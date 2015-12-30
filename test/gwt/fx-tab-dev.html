@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <title>
+        GWT Modules</title>
+
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="/css/zfin.css">
+    <link rel="stylesheet" type="text/css" href="/css/header.css">
+    <link rel="stylesheet" type="text/css" href="/css/footer.css">
+    <link rel=stylesheet type="text/css" href="/css/searchresults.css">
+    <link rel=stylesheet type="text/css" href="/css/summary.css">
+    <link rel=stylesheet type="text/css" href="/css/Lookup.css">
+    <link rel=stylesheet type="text/css" href="/css/datapage.css">
+    <link rel=stylesheet type="text/css" href="/css/popup.css">
+    <link rel=stylesheet type="text/css" href="/css/tipsy.css">
+    <link rel=stylesheet type="text/css" href="/css/jquery.modal.css">
+    <link rel=stylesheet type="text/css" href="/css/typeahead.css">
+
+
+    <script src="/javascript/jquery-1.11.1.min.js" type="text/javascript"></script>
+    <script src="/javascript/header.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/javascript/jquery.modal.min.js"></script>
+    <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
+    <script type="text/javascript" src="/javascript/sorttable.js"></script>
+
+    <script src="/javascript/autocompletify.js"></script>
+
+
+    <script type="text/javascript" src="/javascript/typeahead.bundle.js"></script>
+
+</head>
+<script type="text/javascript" language="javascript"
+        src="org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
+
+<h1>FX Curation Application</h1>
+
+<div id="show-hide-all-sections"></div>
+
+<div class="error"> Please use only for developmental purposes as this will make changes to the database!!!
+</div>
+<p></p>
+
+<div title="Hello">
+    Publication:
+    <br>
+    Title: <br>
+</div>
+
+<div id="directAttributionName"></div>
+
+<span id="show-hide-experiments"></span>
+
+<div id="display-experiment"></div>
+<div id="image-loading"></div>
+<div id="display-experiment-errors"></div>
+
+<table width="100%" bgcolor="#33cc99" border="0" cellpadding="0">
+    <tbody>
+    <tr>
+        <td style="font-weight:bold;"> Show:</td>
+        <td>
+            Only Fig:
+            <span id="curation-filter-figure"></span>
+        </td>
+        <td>
+            Only Gene:
+            <span id="curation-filter-genes"></span>
+        </td>
+        <td>
+            Only Fish:
+            <span id="curation-filter-fish"></span>
+        </td>
+        <td>
+            <span id="curation-filter-reset"></span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<p/>
+
+<div id="show-hide-expressions"></div>
+
+<div id="expressionZone"></div>
+
+<script type="text/javascript" src="/javascript/zfin-gwt-autocomplete-helper.js">
+</script>
+
+<script type="text/javascript">
+    var curationProperties = {
+        zdbID: "ZDB-PUB-990507-16",
+        moduleType: "EXPRESSION_CURATION",
+        debug: "false"
+    };
+    var g = "ZDB-PUB-060105-3,ZDB-PUB-090616-53,ZDB-PUB-990507-16";
+</script>
+
+

@@ -2,6 +2,7 @@ package org.zfin.framework;
 
 import org.apache.log4j.Logger;
 import org.hibernate.*;
+import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.proxy.HibernateProxy;
 import org.zfin.infrastructure.DataAliasGroup;
@@ -40,9 +41,9 @@ public class HibernateUtil {
             if (sessionFactory != null)
                 throw new RuntimeException("SessionFactory already instantiated");
             // Create the SessionFactory
-            Configuration configuration = new Configuration();
+            Configuration configuration = new AnnotationConfiguration();
             configuration.setInterceptor(new StringCleanInterceptor());
-            sessionFactory = configuration.configure().buildSessionFactory();
+            sessionFactory = configuration.addPackage("org.zfin.expression.*").configure().buildSessionFactory();
         } catch (Throwable ex) {
             log.error("Initial SessionFactory creation failed.", ex);
             throw new ExceptionInInitializerError(ex);

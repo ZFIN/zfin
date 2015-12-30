@@ -1,10 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.zfin.gwt.root.dto.ExpressedTermDTO;
-import org.zfin.gwt.root.dto.ExpressionPileStructureDTO;
-import org.zfin.gwt.root.dto.PhenotypePileStructureDTO;
-import org.zfin.gwt.root.dto.PhenotypeStatementDTO;
+import org.zfin.gwt.root.dto.*;
 
 import java.util.List;
 
@@ -27,7 +24,7 @@ public interface PileStructuresRPCAsync {
      * @param publicationID Publication
      * @param callback      callback
      */
-    void createPileStructure(ExpressedTermDTO expressedTerm, String publicationID, AsyncCallback<ExpressionPileStructureDTO> callback);
+    void createPileStructure(List<ExpressedTermDTO> expressedTerm, String publicationID, AsyncCallback<List<ExpressionPileStructureDTO>> callback);
 
     /**
      * Create a new phenotype structure on the structure pile.
@@ -48,4 +45,6 @@ public interface PileStructuresRPCAsync {
     void recreatePhenotypeStructurePile(String publicationID, AsyncCallback<List<PhenotypePileStructureDTO>> callback);
 
     void recreateExpressionStructurePile(String publicationID, AsyncCallback<List<ExpressionPileStructureDTO>> callback);
+
+    void getEapQualityListy(AsyncCallback<List<EapQualityTermDTO>> callBack);
 }

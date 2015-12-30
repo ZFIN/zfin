@@ -52,6 +52,9 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
         return (conditionDataType.getGroup().equalsIgnoreCase("chemical"));
     }
 
+    public boolean isHeatShock() {
+        return (conditionDataType.getName().equalsIgnoreCase("heat shock"));
+    }
 
     @Override
     public int compareTo(ExperimentCondition o) {

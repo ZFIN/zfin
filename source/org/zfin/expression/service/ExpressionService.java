@@ -478,7 +478,7 @@ public class ExpressionService {
                     result.setSuperTerm(stageRange.getSuperTerm());
                     result.setStartStage(stageRange.getStart());
                     result.setEndStage(stageRange.getEnd());
-                    result.setComment("Created by a split of " + result.getZdbID());
+                    ///result.setComment("Created by a split of " + result.getZdbID());
                     firstElement = false;
                     splitStatement.setOriginalExpressionResult(result);
                 } else {
@@ -488,7 +488,7 @@ public class ExpressionService {
                     splitResult.setStartStage(stageRange.getStart());
                     splitResult.setEndStage(stageRange.getEnd());
                     splitResult.setExpressionFound(result.isExpressionFound());
-                    splitResult.setComment("Created by a split of " + result.getZdbID());
+                    ///splitResult.setComment("Created by a split of " + result.getZdbID());
                     //splitResult.setFigures(result.getFigures());
                     for (Figure figure : result.getFigures()) {
                         getExpressionRepository().createExpressionResult(splitResult, figure);

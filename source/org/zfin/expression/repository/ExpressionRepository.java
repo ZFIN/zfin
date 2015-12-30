@@ -64,6 +64,7 @@ public interface ExpressionRepository {
      * @return ExpressionExperiment
      */
     ExpressionExperiment getExpressionExperiment(String experimentID);
+    ExpressionExperiment2 getExpressionExperiment2(String experimentID);
 
     ExpressionDetailsGenerated getExpressionExperiment2(long id);
 
@@ -134,7 +135,7 @@ public interface ExpressionRepository {
      *
      * @param expressionExperiment expression experiment
      */
-    void createExpressionExperiment(ExpressionExperiment expressionExperiment);
+    void createExpressionExperiment(ExpressionExperiment2 expressionExperiment);
 
     /**
      * Remove an existing expression experiment and all objects that it is composed of.
@@ -149,14 +150,12 @@ public interface ExpressionRepository {
      * gene
      * fish
      *
-     * @deprecated Use getExperimentsByGeneAndFish2
-     *
      * @param publicationID publication
      * @param geneZdbID     gene ID
      * @param fishID        genotype ID
      * @return list of expression experiment
      */
-    List<ExpressionExperiment> getExperimentsByGeneAndFish(String publicationID, String geneZdbID, String fishID);
+    List<ExpressionExperiment2> getExperimentsByGeneAndFish(String publicationID, String geneZdbID, String fishID);
 
     /**
      * Retrieves experiment that pertain to a given
@@ -180,7 +179,7 @@ public interface ExpressionRepository {
      * @param figureID      figure ID
      * @return list of experiment figure stages.
      */
-    List<ExperimentFigureStage> getExperimentFigureStagesByGeneAndFish(String publicationID, String geneZdbID, String fishID, String figureID);
+    List<ExpressionFigureStage> getExperimentFigureStagesByGeneAndFish(String publicationID, String geneZdbID, String fishID, String figureID);
 
 
     /**
@@ -208,7 +207,7 @@ public interface ExpressionRepository {
      *
      * @param efs experiment figure stage.
      */
-    void deleteFigureAnnotation(ExperimentFigureStage efs);
+    void deleteFigureAnnotation(ExpressionFigureStage efs);
 
     /**
      * Retrieve an efs by experiment, figure, start and end stage id.
@@ -219,7 +218,7 @@ public interface ExpressionRepository {
      * @param endStageID      end
      * @return efs object
      */
-    ExperimentFigureStage getExperimentFigureStage(String experimentZdbID, String figureID, String startStageID, String endStageID);
+    ExpressionFigureStage getExperimentFigureStage(String experimentZdbID, String figureID, String startStageID, String endStageID);
 
     /**
      * Retrieve all expression structures for a given publication, which is the same as the
@@ -254,7 +253,7 @@ public interface ExpressionRepository {
      * @param result expression result.
      * @param figure Figure
      */
-    void deleteExpressionResultPerFigure(ExpressionResult result, Figure figure);
+    void deleteExpressionResultPerFigure(ExpressionResult2 result, Figure figure);
 
     /**
      * Check if a pile structure already exists.
@@ -388,7 +387,7 @@ public interface ExpressionRepository {
      * Deletes a given ExpressionResult record and its associations to all figures.
      * @param expressionResult
      */
-    void deleteExpressionResult(ExpressionResult expressionResult);
+    void deleteExpressionResult(ExpressionResult2 expressionResult);
 
     /**
      * Retrieve list of expression experiment records for a given gene.
@@ -397,4 +396,9 @@ public interface ExpressionRepository {
     List<ExpressionExperiment> getExpressionExperimentByGene(Marker gene);
 
     long getExpressionExperimentByFishAndPublication(Fish fish, String publicationID);
+
+    List<ExpressionExperiment2> getExperiments2(String zdbID);
+
+    void createExpressionFigureStage(ExpressionFigureStage experimentFigureStage);
+
 }
