@@ -79,7 +79,7 @@ create function regen_clean_expression() returning integer
     end if
 
     create table clean_expression_fast_search_new 
-      (
+      ( cefs_pk_id serial8 not null,
         cefs_mrkr_zdb_id varchar(50) not null,
         cefs_genox_zdb_id varchar(50) not null
       )
