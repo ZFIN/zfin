@@ -3,6 +3,9 @@ begin work;
 delete from sequence_feature_chromosome_location
  where sfcl_location_source = 'ZfinGbrowseStartEndLoader';
 
+ delete from sequence_feature_chromosome_location
+ where sfcl_location_source = 'ZfinGbrowseZv9StartEndLoader';
+
 delete from sequence_feature_chromosome_location
  where sfcl_location_source = 'EnsemblStartEndLoader';
 
@@ -151,14 +154,14 @@ select distinct dblink_linked_recid,
 
 insert into sequence_feature_chromosome_location (sfcl_chromosome, sfcl_data_zdb_id,
   sfcl_start, sfcl_end, sfcl_location_source, sfcl_location_subsource)
-select gff3.gff_seqname, feature.feature_zdb_id, gff3.gff_start, gff3.gff_end, 'ZfinGbrowseStartEndLoader', 'ZMP'
+select gff3.gff_seqname, feature.feature_zdb_id, gff3.gff_start, gff3.gff_end, 'ZfinGbrowseZv9StartEndLoader', 'ZMP'
 from gff3
 inner join feature on gff3.gff_name = feature.feature_abbrev
 where gff3.gff_source = 'ZMP';
 
 insert into sequence_feature_chromosome_location (sfcl_chromosome, sfcl_data_zdb_id,
   sfcl_start, sfcl_end, sfcl_location_source, sfcl_location_subsource)
-select gff3.gff_seqname, feature.feature_zdb_id, gff3.gff_start, gff3.gff_end, 'ZfinGbrowseStartEndLoader', 'BurgessLin'
+select gff3.gff_seqname, feature.feature_zdb_id, gff3.gff_start, gff3.gff_end, 'ZfinGbrowseZv9StartEndLoader', 'BurgessLin'
 from gff3
 inner join feature on (gff3.gff_id || 'Tg') = feature.feature_abbrev
 where gff3.gff_source = 'BurgessLin';
@@ -176,7 +179,10 @@ delete from sequence_feature_chromosome_location
 
 delete from sequence_feature_chromosome_location
  where sfcl_chromosome in ('AB','U','0')
- and sfcl_location_source = 'ZfinGbrowseStartEndLoader';
+ and (
+  sfcl_location_source = 'ZfinGbrowseStartEndLoader'
+  OR sfcl_location_source = 'ZfinGbrowseZv9StartEndLoader'
+);
 
 delete from sequence_feature_chromosome_location
  where sfcl_chromosome in ('AB','U','0')
