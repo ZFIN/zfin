@@ -209,6 +209,17 @@
 
     </class>
 
+    <class name="org.zfin.expression.CleanExpFastSrch" table="clean_expression_fast_search">
+        <id name="id" type="long" column="cefs_pk_id"/>
+
+            <many-to-one name="gene" column="cefs_mrkr_Zdb_id" class="org.zfin.marker.Marker"/>
+            <many-to-one name="fishExperiment" column="cefs_genox_zdb_id" class="org.zfin.mutant.FishExperiment"/>
+
+
+
+    </class>
+
+
     <class name="org.zfin.expression.ExpressionResult" table="expression_result">
         <!--<id name="zdbID" type="string">
             <column name="xpatres_zdb_id" not-null="true"/>

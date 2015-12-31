@@ -42,6 +42,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.TermFigureStageRange;
 
+import java.math.BigInteger;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -1410,27 +1411,23 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public List<ExpressionResult> getExpressionResultsBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
         Session session = HibernateUtil.currentSession();
 
-        String sql = "select distinct xpatres_zdb_id " +
-                "  from expression_result, expression_experiment, fish_experiment, clean_expression_fast_search " +
-                " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
-                "   and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
-                "   and xpatex_genox_zdb_id = genox_zdb_id " +
-                "   and cefs_genox_zdb_id = genox_zdb_id " +
-                "   and cefs_mrkr_zdb_id = :str ";
 
-        Query query = session.createSQLQuery(sql);
+        String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox, CleanExpFastSrch cefs " +
+                               "        where fishox = xpExp.fishExperiment " +
+                "        and xpRslt.expressionExperiment = xpExp " +
+                " and xpExp.gene.zdbID like 'ZDB-GENE%'" +
+                " and cefs.fishExperiment=fishox"+
+                " and cefs.gene=:str";
+
+        Query query = session.createQuery(hql);
         query.setParameter("str", sequenceTargetingReagent);
 
-        List<String> expressionResultIDs = (List<String>) query.list();
 
-        List<ExpressionResult> expressionResults = new ArrayList<>(expressionResultIDs.size());
 
-        ExpressionResult expressionResult;
 
-        for (String expressionResultID : expressionResultIDs) {
-            expressionResult = getExpressionResult(expressionResultID);
-            expressionResults.add(expressionResult);
-        }
+        List<ExpressionResult> expressionResults = (List<ExpressionResult>) query.list();
+
+
 
         return expressionResults;
     }
@@ -1551,7 +1548,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     @Override
-    public ExpressionResult getExpressionResult(String expressionResultID) {
+    public ExpressionResult getExpressionResult(Long expressionResultID) {
         return (ExpressionResult) HibernateUtil.currentSession().get(ExpressionResult.class, expressionResultID);
     }
 
