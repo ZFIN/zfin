@@ -1010,8 +1010,7 @@ WHERE  ( NOT g.geno_is_wildtype
                             from fish
                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id
                                  join feature_marker_relationship on fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-                                 join data_alias on dalias_data_zdb_id = fmrel_ftr_zdb_id
-                            where fmrel_type in ('is allele of','markers present', 'markers moved');"
+                                 join data_alias on dalias_data_zdb_id = fmrel_ftr_zdb_id;"
                    where="fish_zdb_id=fish.id"
                    cacheImpl="SortedMapBackedCache"/>
 
@@ -1135,7 +1134,7 @@ WHERE  ( NOT g.geno_is_wildtype
                    where="fish_zdb_id=fish.id"
                    cacheImpl="SortedMapBackedCache"/>
 
-          <!-- <entity name="fish_construct_alias"
+           <entity name="fish_construct_alias"
                    query="select
                             dalias_alias as construct,
                             dalias_alias as construct_name,
@@ -1147,7 +1146,7 @@ WHERE  ( NOT g.geno_is_wildtype
                                  join data_alias on dalias_data_zdb_id = fmrel_mrkr_zdb_id
                             where fmrel_type in ('contains innocuous sequence feature','contains phenotypic sequence feature');"
                    where="fish_zdb_id=fish.id"
-                   cacheImpl="SortedMapBackedCache"/>-->
+                   cacheImpl="SortedMapBackedCache"/>
 
            <entity name="fish_construct_coding_sequence"
                    datasource="db" query="select
