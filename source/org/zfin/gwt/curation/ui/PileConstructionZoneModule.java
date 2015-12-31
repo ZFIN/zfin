@@ -45,6 +45,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
     public static final String RELATED_TERMS_PANEL = "related-terms-panel";
     public static final String TAG_ABNORMAL = "abnormal";
     public static final String TAG_NORMAL = "normal";
+    public static final String TAG_AMELIORATED = "ameliorated";
 
     // GUI elements
     private Map<EntityPart, TermEntry> termEntryUnitsMap = new HashMap<EntityPart, TermEntry>(5);
@@ -133,6 +134,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
             tagList = new ZfinListBox(false);
             tagList.addItem(TAG_ABNORMAL);
             tagList.addItem(TAG_NORMAL);
+            tagList.addItem(TAG_AMELIORATED);
             HorizontalPanel tagPanel = new HorizontalPanel();
             HTML tagHtml = new HTML("Tag: ");
             tagHtml.setStyleName(WidgetUtil.BOLD);
