@@ -1408,13 +1408,12 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * @param sequenceTargetingReagent sequenceTargetingReagent
      * @return list of expression results
      */
-    /*public List<ExpressionResult> getExpressionResultsBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
+    public List<ExpressionResult> getExpressionResultsBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
         Session session = HibernateUtil.currentSession();
 
 
         String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox, CleanExpFastSrch cefs " +
-                "      where fishox.fish.genotype.zdbID = :genotypeID " +
-                "        and fishox = xpExp.fishExperiment " +
+                               "        where fishox = xpExp.fishExperiment " +
                 "        and xpRslt.expressionExperiment = xpExp " +
                 " and xpExp.gene.zdbID like 'ZDB-GENE%'" +
                 " and cefs.fishExperiment=fishox"+
@@ -1429,35 +1428,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         List<ExpressionResult> expressionResults = (List<ExpressionResult>) query.list();
 
 
-
-        return expressionResults;
-    }*/
-
-    public List<ExpressionResult> getExpressionResultsBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
-        Session session = HibernateUtil.currentSession();
-
-        String sql = "select distinct xpatres_zdb_id " +
-                "  from expression_result, expression_experiment, fish_experiment, clean_expression_fast_search " +
-                " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
-                "   and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
-                "   and xpatex_genox_zdb_id = genox_zdb_id " +
-                "   and cefs_genox_zdb_id = genox_zdb_id " +
-                "   and cefs_mrkr_zdb_id = :str ";
-
-
-        Query query = session.createSQLQuery(sql);
-        query.setParameter("str", sequenceTargetingReagent);
-
-        List<Long> expressionResultIDs = (List<Long>) query.list();
-
-        List<ExpressionResult> expressionResults = new ArrayList<>(expressionResultIDs.size());
-
-        ExpressionResult expressionResult;
-
-        for (Long expressionResultID : expressionResultIDs) {
-            expressionResult = getExpressionResult(expressionResultID);
-            expressionResults.add(expressionResult);
-        }
 
         return expressionResults;
     }
