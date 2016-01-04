@@ -134,8 +134,8 @@ create function xpat_annot_adjust (
      let errorHint = "xpatres_to_be_temp";
      create temp table xpatres_to_be_temp
 	(
-	  xrtb_old_xpatres_zdb_id	varchar(50) not null,
-	  xrtb_xpatres_zdb_id 		varchar(50),
+	  xrtb_old_xpatres_zdb_id	int8 not null,
+	  xrtb_xpatres_zdb_id 		int8,
 	  xrtb_xpatex_zdb_id		varchar(50) not null,
           xrtb_start_stg_zdb_id		varchar(50) not null,
 	  xrtb_end_stg_zdb_id		varchar(50) not null,
