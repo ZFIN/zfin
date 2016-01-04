@@ -262,6 +262,12 @@ public class ExpressionZonePresenter implements Presenter {
         return true;
     }
 
+    public void updateExpressionOnCurationFilter(ExperimentDTO experimentFilter, String figureID) {
+        this.experimentFilter = experimentFilter;
+        this.figureID = figureID;
+        retrieveExpressions();
+    }
+
 
     // Handlers
     public class RetrieveFiguresCallback extends ZfinAsyncCallback<List<FigureDTO>> {

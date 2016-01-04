@@ -818,3 +818,11 @@ a + .inline-upload {
     background: #e0e7e0;
     padding: 2em;
 }
+
+.list-box-selected {
+    background: khaki;
+}
+
+.list-box-unselected {
+    background: white;
+}

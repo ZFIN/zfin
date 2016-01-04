@@ -69,6 +69,11 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     private ErrorMessageCleanupListener errorMessageCleanupListener = new ErrorMessageCleanupListener();
 
+    public void updateExperimentOnCurationFilter(ExperimentDTO experimentFilter) {
+        this.experimentFilter = experimentFilter;
+        retrieveExperiments();
+    }
+
     private class ErrorMessageCleanupListener implements ChangeHandler {
 
         public void onChange(ChangeEvent event) {

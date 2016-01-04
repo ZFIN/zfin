@@ -12,6 +12,7 @@
             <hr/>
         </g:HTML>
         <zfin-mod:ExpressionExperimentZoneView ui:field="expressionExperimentZone"/>
+        <zfin-mod:CurationFilterView ui:field="curationFilterZone"  />
         <zfin-mod:ExpressionZoneView ui:field="expressionZone"/>
         <zfin-mod:StructurePileView ui:field="structurePile"/>
         <zfin-mod:ConstructionZoneModule ui:field="constructionZoneModule"/>

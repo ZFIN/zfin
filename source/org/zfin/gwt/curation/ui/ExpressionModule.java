@@ -7,6 +7,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.zfin.gwt.curation.event.ChangeCurationFilterEvent;
+import org.zfin.gwt.curation.event.ChangeCurationFilterEventHandler;
 import org.zfin.gwt.curation.event.SelectExpressionExperimentEvent;
 import org.zfin.gwt.curation.event.SelectExpressionExperimentEventHandler;
 import org.zfin.gwt.root.dto.ExperimentDTO;
@@ -46,12 +48,14 @@ public class ExpressionModule implements HandlesError, EntryPoint {
     ExpressionZoneView expressionZone;
     @UiField
     ExpressionExperimentZoneView expressionExperimentZone;
+    @UiField
+    CurationFilterView curationFilterZone;
 
     private FxCurationPresenter fxCurationPresenter;
     private StructurePilePresenter structurePilePresenter;
     private ExpressionZonePresenter expressionZonePresenter;
     private ExpressionExperimentZonePresenter expressionExperimentZonePresenter;
-    FxCurationModule fxCurationModule;
+    private CurationFilterPresenter curationFilterPresenter;
 
     public ExpressionModule(String publicationID) {
         this.publicationID = publicationID;
@@ -66,6 +70,9 @@ public class ExpressionModule implements HandlesError, EntryPoint {
         RelatedEntityDTO relatedEntityDTO = new RelatedEntityDTO();
         relatedEntityDTO.setPublicationZdbID(publicationID);
         attributionModule.setDTO(relatedEntityDTO);
+        curationFilterPresenter = new CurationFilterPresenter(curationFilterZone, publicationID);
+        curationFilterPresenter.go();
+        curationFilterZone.setCurationFilterPresenter(curationFilterPresenter);
 
         fxCurationPresenter = new FxCurationPresenter(constructionZoneModule, publicationID);
         fxCurationPresenter.go();
@@ -154,6 +161,14 @@ public class ExpressionModule implements HandlesError, EntryPoint {
                     @Override
                     public void onEvent(CreateExpressionEvent event) {
                         expressionZonePresenter.postUpdateStructuresOnExpression();
+                    }
+                });
+        AppUtils.EVENT_BUS.addHandler(ChangeCurationFilterEvent.TYPE,
+                new ChangeCurationFilterEventHandler() {
+                    @Override
+                    public void onChange(ChangeCurationFilterEvent event) {
+                        expressionZonePresenter.updateExpressionOnCurationFilter(event.getExperimentFilter(), event.getFigureID());
+                        expressionExperimentZonePresenter.updateExperimentOnCurationFilter(event.getExperimentFilter());
                     }
                 });
     }
