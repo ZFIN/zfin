@@ -16,7 +16,7 @@
 --		antibodies labeling the ao structure.
 -------------------------------------------------------------
 
-CREATE procedure add_ab_ao_fast_search(xpatresZdbId varchar(50))
+CREATE procedure add_ab_ao_fast_search(xpatresZdbId int8)
 	returning varchar;
 
     define atbZdbId    lvarchar;
@@ -32,14 +32,14 @@ begin
     foreach
 		select atb_zdb_id, alltermcon_container_zdb_id, xpatres_superterm_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id
 			into atbZdbId, supertermZdbId, subtermZdbId, geneZdbId, figureZdbId, pubZdbId
-		from antibody, fish_experiment, expression_experiment, expression_result, 
-			  figure, expression_pattern_figure, genotype, all_term_contains, fish
+		from antibody, fish_experiment, expression_experiment2, expression_result2, 
+			  figure, expression_figure_stage, genotype, all_term_contains, fish
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatex_atb_zdb_id = atb_zdb_id
 		and  xpatres_xpatex_zdb_id = xpatex_zdb_id
-		and fig_zdb_id = xpatfig_fig_zdb_id
-		and xpatfig_xpatres_zdb_id = xpatres_zdb_id
+		and fig_zdb_id = efs_fig_zdb_id
+		and efs_pk_id = xpatres_efs_id
 		and genox_is_std_or_generic_control = 't'
 		and fish_zdb_id = genox_fish_zdb_id
 		and fish_genotype_zdb_id = geno_zdb_id
@@ -65,15 +65,14 @@ begin
 	
 		select atb_zdb_id, alltermcon_container_zdb_id, xpatres_subterm_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id
 			into atbZdbId, supertermZdbId, subtermZdbId, geneZdbId, figureZdbId, pubZdbId
-		from antibody, fish_experiment, expression_experiment, expression_result, 
-			  figure, expression_pattern_figure, genotype, all_term_contains, fish
+		from antibody, fish_experiment, expression_experiment2, expression_result2, 
+			  figure, expression_figure_stage, genotype, all_term_contains, fish
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatex_atb_zdb_id = atb_zdb_id
 		and  xpatres_xpatex_zdb_id = xpatex_zdb_id
-	
-		and fig_zdb_id = xpatfig_fig_zdb_id
-		and xpatfig_xpatres_zdb_id = xpatres_zdb_id
+		and fig_zdb_id = efs_fig_zdb_id
+		and xpatres_efs_id = efs_pk_id
 		and genox_is_std_or_generic_control
 		and fish_genotype_zdb_id = geno_zdb_id
 		and genox_fish_zdb_id = fish_zdb_id

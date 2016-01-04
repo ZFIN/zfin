@@ -1,3 +1,4 @@
 
-delete from xpat_exp_details_generated_temp;
-delete from xpat_results_generated_temp;
+delete from expression_experiment_temp;
+delete from expression_result_temp;
+delete from expression_pattern_figure_temp;
