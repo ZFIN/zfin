@@ -459,3 +459,9 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
  select fp_pk_id, fp_prefix,fp_Institute_display
  from feature_prefix;
 
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/disease/disease-annotation.txt"
+ select dat_zdb_id, dat_term_zdb_id, dat_source_zdb_id, dat_evidence_code, damo_genox_zdb_id, genox_fish_zdb_id
+   from disease_annotation, disease_annotation_model, fish_experiment
+   where dat_zdb_id = damo_dat_Zdb_id
+ and damo_genox_zdb_id = genox_zdb_id;
+
