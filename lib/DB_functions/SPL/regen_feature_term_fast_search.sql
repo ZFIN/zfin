@@ -330,7 +330,7 @@ Create dba function regen_feature_term_fast_search()
 		and  xpatex_atb_zdb_id = atb_zdb_id
 		and fig_zdb_id = efs_fig_zdb_id
 		   and efs_xpatex_zdb_id = xpatex_zdb_id
-		and xpatres_pk_id = efs_pk_id
+		and xpatres_efs_id = efs_pk_id
 		and genox_is_std_or_generic_control = 't'
 		and fish_zdb_id = genox_fish_zdb_id
 		and fish_genotype_zdb_id = geno_zdb_id
