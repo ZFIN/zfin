@@ -29,7 +29,7 @@
                     </tr>
                 </table>
             </g:HTMLPanel>
-            <g:VerticalPanel ui:field="expressionPanel"/>
+            <g:VerticalPanel ui:field="expressionPanel" width="100%"/>
             <zfin:SimpleErrorElement ui:field="errorElement"/>
         </g:VerticalPanel>
         <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="true"/>

@@ -54,20 +54,9 @@ public class ExpressionZonePresenter implements Presenter {
         experimentFilter.setPublicationID(publicationID);
     }
 
-    public void bind() {
-        //view.getStructurePileTable().setRemoveStructureCallBack(new RemovePileStructureCallback());
-        addDynamicClickHandler();
-    }
-
-    private void addDynamicClickHandler() {
-
-    }
-
     @Override
     public void go() {
         retrieveConstructionZoneValues();
-        retrieveExpressions();
-        bind();
     }
 
 
@@ -260,6 +249,12 @@ public class ExpressionZonePresenter implements Presenter {
             }
         }
         return true;
+    }
+
+    public void updateExpressionOnCurationFilter(ExperimentDTO experimentFilter, String figureID) {
+        this.experimentFilter = experimentFilter;
+        this.figureID = figureID;
+        retrieveExpressions();
     }
 
 

@@ -11,14 +11,11 @@ import org.zfin.gwt.root.dto.ExpressionAssayDTO;
 import org.zfin.gwt.root.dto.FishDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.ui.ListBoxWrapper;
-import org.zfin.gwt.root.ui.SessionSaveService;
-import org.zfin.gwt.root.ui.SessionSaveServiceAsync;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * construction zone
@@ -31,16 +28,10 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     // filter set by the banana bar
     private ExperimentDTO experimentFilter = new ExperimentDTO();
-    private String figureID;
 
     private CurationExperimentRPCAsync curationExperimentRPCAsync = CurationExperimentRPC.App.getInstance();
-    private SessionSaveServiceAsync sessionRPC = SessionSaveService.App.getInstance();
 
     private List<ExperimentDTO> experiments = new ArrayList<>(15);
-
-    // flag that indicates if the experiment section is visible or not.
-    private boolean sectionVisible;
-
 
     public ExpressionExperimentZonePresenter(ExpressionExperimentZoneView view, String publicationID, boolean debug) {
         this.view = view;
@@ -68,6 +59,11 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     }
 
     private ErrorMessageCleanupListener errorMessageCleanupListener = new ErrorMessageCleanupListener();
+
+    public void updateExperimentOnCurationFilter(ExperimentDTO experimentFilter) {
+        this.experimentFilter = experimentFilter;
+        retrieveExperiments();
+    }
 
     private class ErrorMessageCleanupListener implements ChangeHandler {
 
@@ -172,7 +168,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         view.clearSelectedExperiments();
         view.addSelectedExperiment(experiment);
         view.showExperiments(false);
-        if (sectionVisible)
+        if (view.getShowHideToggle().isVisible())
             view.getDisplayTable().createExperimentTable();
     }
 
@@ -202,8 +198,17 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(lastAddedMarker));
     }
 
+    public void onShowHideClick(boolean visibility) {
+        String errorMessage = "Error while trying to save experiment visibility";
+        curationExperimentRPCAsync.setExperimentVisibilitySession(publicationID, visibility,
+                new VoidAsyncCallback(errorMessage, view.errorElement, null));
+        retrieveExperiments();
+        if (view.getDisplayTable().getRowCount() == 0)
+            retrieveConstructionZoneValues();
+    }
 
-    // Handler
+
+//////////////////////// Handler
 
     private class RetrieveAssayListCallback extends ZfinAsyncCallback<List<String>> {
         public RetrieveAssayListCallback(String message) {
@@ -250,9 +255,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             }
             Collections.sort(experiments);
             //Window.alert("SIZE: " + experiments.size());
-            if (sectionVisible)
-                view.getDisplayTable().createExperimentTable(experiments);
-            // populate expression section
+            view.getDisplayTable().createExperimentTable(experiments);
         }
 
     }
@@ -290,7 +293,6 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             if (ExpressionAssayDTO.isAntibodyAssay(itemText)) {
                 view.getAntibodyList().setEnabled(true);
                 String geneID = view.getGeneList().getValue(view.getGeneList().getSelectedIndex());
-                // TODO: call gene on change listener: change from anonymous to real inner class
                 curationExperimentRPCAsync.readAntibodiesByGene(publicationID, geneID, new RetrieveAntibodyList());
             } else
                 view.getAntibodyList().setEnabled(false);
@@ -476,14 +478,9 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         public void onSuccess(Boolean visible) {
 
             super.onSuccess(visible);
-            sectionVisible = visible;
-            //Window.alert("Show: " + sectionVisible);
-            if (sectionVisible) {
-                setInitialValues();
-            } else {
-                setInitialValues();
-                view.getDisplayTable().createConstructionZone();
-            }
+            setInitialValues();
+            view.getDisplayTable().createConstructionZone();
+            view.getShowHideToggle().setVisibility(visible);
         }
 
         private void setInitialValues() {
@@ -493,6 +490,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     }
 
+
     public boolean isDebug() {
         return debug;
     }
@@ -501,7 +499,4 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         return publicationID;
     }
 
-    public boolean isSectionVisible() {
-        return sectionVisible;
-    }
 }

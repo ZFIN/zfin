@@ -11,7 +11,6 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.curation.event.SelectExpressionExperimentEvent;
 import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.ExpressionAssayDTO;
@@ -86,12 +85,8 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
     @UiHandler("showHideToggle")
     void onClickShowHide(@SuppressWarnings("unused") ClickEvent event) {
         showHideToggle.toggleVisibility();
-        presenter.retrieveExperiments();
+        presenter.onShowHideClick(showHideToggle.isVisible());
     }
-
-    // flag that indicates if the experiment section is visible or not.
-    private boolean sectionVisible;
-
 
     /**
      * Un-select all experiment check boxes.
@@ -114,7 +109,7 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
             }
         }
         unselectAllExperiments();
-        if (sectionVisible)
+        if (showHideToggle.isVisible())
             displayTable.createExperimentTable();
     }
 
@@ -152,7 +147,7 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
                 experiment.setNumberOfExpressions(experiment.getNumberOfExpressions() - 1);
         }
         unselectAllExperiments();
-        if (sectionVisible)
+        if (showHideToggle.isVisible())
             displayTable.createExperimentTable();
     }
 
@@ -541,7 +536,7 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
                 super.onSuccess(newExperiment);
                 addButtonInProgress = false;
                 presenter.retrieveExperiments();
-                if (!presenter.isSectionVisible()) {
+                if (!showHideToggle.isVisible()) {
                     errorElement.setError("Added new Experiment: " + newExperiment.toString());
                 }
                 // add this experiment to the expression section
@@ -604,7 +599,7 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
         for (ExperimentDTO experiment : experiments) {
             if (experiment.equals(updatedExperiment)) {
                 if (isNewExperiment || (!experiment.getExperimentZdbID().equals(updatedExperiment.getExperimentZdbID()))) {
-                    if (presenter.isSectionVisible()) {
+                    if (showHideToggle.isVisible()) {
                         duplicateRowIndex = rowIndex;
                         duplicateRowOriginalStyle = displayTable.getRowFormatter().getStyleName(rowIndex);
                         displayTable.getRowFormatter().setStyleName(rowIndex, "experiment-duplicate");
@@ -904,5 +899,9 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
 
     public Image getLoadingImage() {
         return loadingImage;
+    }
+
+    public ShowHideToggle getShowHideToggle() {
+        return showHideToggle;
     }
 }
