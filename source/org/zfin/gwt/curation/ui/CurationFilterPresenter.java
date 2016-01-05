@@ -43,12 +43,6 @@ public class CurationFilterPresenter extends Composite {
     public static final String ALL = "ALL";
     private ExperimentDTO experimentFilter = new ExperimentDTO();
 
-    private String geneID;
-    private String fishID;
-    private String figureID;
-    private String featureID;
-
-
     public CurationFilterPresenter(CurationFilterView curationFilterZone, String publicationID) {
         this.publicationID = publicationID;
         this.view = curationFilterZone;
@@ -66,7 +60,7 @@ public class CurationFilterPresenter extends Composite {
 
 
     public void applyFigureListChange(ListBox list) {
-        figureID = applyGeneralChanges(list);
+        String figureID = applyGeneralChanges(list);
         saveFilterInfo(figureID, FilterType.FIG);
         fireFilterEvent();
     }
@@ -84,7 +78,7 @@ public class CurationFilterPresenter extends Composite {
 
 
     public void applyGeneListChange(ListBoxWrapper listBox) {
-        geneID = applyGeneralChanges(listBox);
+        String geneID = applyGeneralChanges(listBox);
         MarkerDTO gene = new MarkerDTO();
         gene.setZdbID(geneID);
         experimentFilter.setGene(gene);
@@ -95,7 +89,7 @@ public class CurationFilterPresenter extends Composite {
     }
 
     public void applyFishListChange(ListBoxWrapper listBox) {
-        fishID = applyGeneralChanges(listBox);
+        String fishID = applyGeneralChanges(listBox);
         saveFilterInfo(fishID, FilterType.FISH);
 
         experimentFilter.setFishID(fishID);
@@ -104,7 +98,7 @@ public class CurationFilterPresenter extends Composite {
     }
 
     private void fireFilterEvent() {
-        ChangeCurationFilterEvent event = new ChangeCurationFilterEvent(experimentFilter, figureID);
+        ChangeCurationFilterEvent event = new ChangeCurationFilterEvent(experimentFilter, view.getFigureID());
         AppUtils.EVENT_BUS.fireEvent(event);
     }
 
@@ -115,9 +109,6 @@ public class CurationFilterPresenter extends Composite {
     }
 
     public void reset() {
-        figureID = null;
-        geneID = null;
-        featureID = null;
         experimentFilter.setGene(null);
         experimentFilter.setFishID(null);
         experimentFilter.setFeatureID(null);
@@ -126,7 +117,6 @@ public class CurationFilterPresenter extends Composite {
         saveFilterInfo(null, FilterType.FIG);
         saveFilterInfo(null, FilterType.GENE);
         saveFilterInfo(null, FilterType.GENO);
-
         fireFilterEvent();
     }
 
@@ -206,13 +196,13 @@ public class CurationFilterPresenter extends Composite {
 
             if (filterValues.getFish() != null) {
                 selectFilterElement(view.getFishList(), filterValues.getFish().getZdbID());
-                fishID = filterValues.getFish().getZdbID();
+                String fishID = filterValues.getFish().getZdbID();
                 experimentFilter.setFishID(fishID);
                 view.setBackgroundColorForListBox(fishID, view.getFishList());
             }
             if (filterValues.getFigure() != null) {
                 selectFilterElement(view.getFigureList(), filterValues.getFigure().getZdbID());
-                figureID = filterValues.getFigure().getZdbID();
+                String figureID = filterValues.getFigure().getZdbID();
                 view.setBackgroundColorForListBox(figureID, view.getFigureList());
             }
             if (filterValues.getMarker() != null) {
@@ -224,7 +214,7 @@ public class CurationFilterPresenter extends Composite {
                 view.setBackgroundColorForListBox(geneID, view.getGeneList());
             }
             if (filterValues.getFeature() != null) {
-                featureID = filterValues.getFeature().getZdbID();
+                String featureID = filterValues.getFeature().getZdbID();
 /*
                 selectFilterElement(view.getFeatureList(), featureID);
                 experimentFilter.setFeatureID(filterValues.getFeature().getZdbID());
