@@ -18,19 +18,38 @@ public class ShowHideToggle extends Hyperlink {
 
     @UiConstructor
     public ShowHideToggle(Widget widget, boolean show) {
-        this.show = show;
         this.widget = widget;
-        setText("Hide");
+        setVisibility(show);
     }
 
     public void toggleVisibility() {
         if (show) {
-            show = false;
-            setText("Show");
+            setVisibilityToHide();
         } else {
-            show = true;
-            setText("Hide");
+            setVisibilityToShow();
         }
+    }
+
+    public void setVisibilityToHide() {
+        show = false;
+        setText("Show");
         widget.setVisible(show);
+    }
+
+    public void setVisibilityToShow() {
+        show = true;
+        setText("Hide");
+        widget.setVisible(show);
+    }
+
+    public void setVisibility(boolean show) {
+        if (show)
+            setVisibilityToShow();
+        else
+            setVisibilityToHide();
+    }
+
+    public boolean isVisible(){
+        return widget.isVisible();
     }
 }

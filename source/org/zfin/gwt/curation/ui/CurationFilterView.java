@@ -82,7 +82,8 @@ public class CurationFilterView extends Composite {
 
     @UiHandler("resetButton")
     void onResetClick(@SuppressWarnings("unused") ClickEvent event) {
-        curationFilterPresenter.reset();
+        if (isOneOrMOreFilterSet())
+            curationFilterPresenter.reset();
         figureList.setSelectedIndex(0);
         geneList.setSelectedIndex(0);
         fishList.setSelectedIndex(0);
@@ -90,6 +91,18 @@ public class CurationFilterView extends Composite {
         setBackgroundColorForListBox(null, geneList);
         setBackgroundColorForListBox(null, figureList);
     }
+
+    private boolean isOneOrMOreFilterSet() {
+        boolean resetNeeded = false;
+        if (figureList.getSelectedIndex() > 0)
+            resetNeeded = true;
+        if (geneList.getSelectedIndex() > 0)
+            resetNeeded = true;
+        if (fishList.getSelectedIndex() > 0)
+            resetNeeded = true;
+        return resetNeeded;
+    }
+
 
     public void setCurationFilterPresenter(CurationFilterPresenter curationFilterPresenter) {
         this.curationFilterPresenter = curationFilterPresenter;

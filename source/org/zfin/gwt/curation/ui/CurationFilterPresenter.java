@@ -68,8 +68,7 @@ public class CurationFilterPresenter extends Composite {
     public void applyFigureListChange(ListBox list) {
         figureID = applyGeneralChanges(list);
         saveFilterInfo(figureID, FilterType.FIG);
-        ChangeCurationFilterEvent event = new ChangeCurationFilterEvent(experimentFilter, figureID);
-        AppUtils.EVENT_BUS.fireEvent(event);
+        fireFilterEvent();
     }
 
     private String applyGeneralChanges(ListBox list) {
@@ -91,8 +90,7 @@ public class CurationFilterPresenter extends Composite {
         experimentFilter.setGene(gene);
         saveFilterInfo(geneID, FilterType.GENE);
 
-        ChangeCurationFilterEvent event = new ChangeCurationFilterEvent(experimentFilter, figureID);
-        AppUtils.EVENT_BUS.fireEvent(event);
+        fireFilterEvent();
 
     }
 
@@ -101,9 +99,13 @@ public class CurationFilterPresenter extends Composite {
         saveFilterInfo(fishID, FilterType.FISH);
 
         experimentFilter.setFishID(fishID);
+        fireFilterEvent();
+
+    }
+
+    private void fireFilterEvent() {
         ChangeCurationFilterEvent event = new ChangeCurationFilterEvent(experimentFilter, figureID);
         AppUtils.EVENT_BUS.fireEvent(event);
-
     }
 
 
@@ -113,9 +115,6 @@ public class CurationFilterPresenter extends Composite {
     }
 
     public void reset() {
-        if (!isOneOrMOreFilterSet())
-            return;
-
         figureID = null;
         geneID = null;
         featureID = null;
@@ -128,20 +127,7 @@ public class CurationFilterPresenter extends Composite {
         saveFilterInfo(null, FilterType.GENE);
         saveFilterInfo(null, FilterType.GENO);
 
-        ChangeCurationFilterEvent event = new ChangeCurationFilterEvent(experimentFilter, figureID);
-        AppUtils.EVENT_BUS.fireEvent(event);
-
-    }
-
-    private boolean isOneOrMOreFilterSet() {
-        boolean resetNeeded = false;
-        if (view.getFigureList().getSelectedIndex() > 0)
-            resetNeeded = true;
-        if (view.getGeneList().getSelectedIndex() > 0)
-            resetNeeded = true;
-        if (view.getFishList().getSelectedIndex() > 0)
-            resetNeeded = true;
-        return resetNeeded;
+        fireFilterEvent();
     }
 
 
@@ -245,8 +231,7 @@ public class CurationFilterPresenter extends Composite {
                 view.setBackgroundColorForListBox(featureID, view.getFeatureList());
 */
             }
-            ChangeCurationFilterEvent event = new ChangeCurationFilterEvent(experimentFilter, figureID);
-            AppUtils.EVENT_BUS.fireEvent(event);
+            fireFilterEvent();
 
         }
 
