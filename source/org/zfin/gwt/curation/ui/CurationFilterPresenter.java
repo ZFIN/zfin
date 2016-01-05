@@ -245,6 +245,9 @@ public class CurationFilterPresenter extends Composite {
                 view.setBackgroundColorForListBox(featureID, view.getFeatureList());
 */
             }
+            ChangeCurationFilterEvent event = new ChangeCurationFilterEvent(experimentFilter, figureID);
+            AppUtils.EVENT_BUS.fireEvent(event);
+
         }
 
         /**
