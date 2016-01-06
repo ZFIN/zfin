@@ -187,7 +187,8 @@ Create dba function regen_expression_term_fast_search()
 	         from expression_result2, all_term_contains, expression_experiment2, fish, fish_Experiment, genotype
 	         where xpatres_expression_found = 't'
 	       	     and alltermcon_contained_zdb_id = xpatres_superterm_Zdb_id 
-	       	     and xpatex_zdb_id = xpatres_xpatex_zdb_id
+	       	     and xpatex_zdb_id = efs_xpatex_zdb_id
+		     and efs_pk_id = xpatres_efs_id
 	       	     and xpatex_atb_zdb_id is not null
 	       	     and genox_zdb_id = xpatex_genox_zdb_id 
 	       	     and genox_is_std_or_generic_control = 't'
@@ -203,7 +204,8 @@ Create dba function regen_expression_term_fast_search()
 	         from expression_result2, all_term_contains, expression_experiment2, fish, fish_Experiment, genotype
 	         where xpatres_expression_found = 't'
 	       	     and alltermcon_contained_zdb_id = xpatres_subterm_Zdb_id
-	       	     and xpatex_zdb_id = xpatres_xpatex_zdb_id
+	       	     and xpatex_zdb_id = efs_xpatex_zdb_id
+		     and efs_pk_id = xpatres_efs_id
 	       	     and xpatex_atb_zdb_id is not null
 	       	     and genox_zdb_id = xpatex_genox_zdb_id
 	       	     and genox_is_std_or_generic_control = 't'

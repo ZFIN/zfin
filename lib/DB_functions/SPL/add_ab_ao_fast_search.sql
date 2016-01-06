@@ -37,7 +37,8 @@ begin
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatex_atb_zdb_id = atb_zdb_id
-		and  xpatres_xpatex_zdb_id = xpatex_zdb_id
+		and  xpatres_efs_id = efs_pk_id
+		and xpatex_zdb_id = efs_xpatex_zdb_id
 		and fig_zdb_id = efs_fig_zdb_id
 		and efs_pk_id = xpatres_efs_id
 		and genox_is_std_or_generic_control = 't'
@@ -45,7 +46,7 @@ begin
 		and fish_genotype_zdb_id = geno_zdb_id
 		and geno_is_wildtype = 't'
 		and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
-		and xpatres_zdb_id = xpatresZdbId
+		and xpatres_pk_id = xpatresZdbId
 		and xpatres_superterm_zdb_id !='ZDB-TERM-100331-1055'
 
 		insert into feature_stats ( fstat_feat_zdb_id,
@@ -70,7 +71,8 @@ begin
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatex_atb_zdb_id = atb_zdb_id
-		and  xpatres_xpatex_zdb_id = xpatex_zdb_id
+		and  xpatres_efs_id = efs_pk_id
+		and xpatex_zdb_id = efs_xpatex_zdb_id
 		and fig_zdb_id = efs_fig_zdb_id
 		and xpatres_efs_id = efs_pk_id
 		and genox_is_std_or_generic_control
@@ -78,7 +80,7 @@ begin
 		and genox_fish_zdb_id = fish_zdb_id
 		and geno_is_wildtype = 't'
 		and alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
-		and xpatres_zdb_id = xpatresZdbId
+		and xpatres_pk_id = xpatresZdbId
 
 		insert into feature_stats ( fstat_feat_zdb_id,
 		       fstat_superterm_zdb_id,
