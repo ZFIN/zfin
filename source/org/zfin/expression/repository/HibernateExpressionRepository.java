@@ -669,7 +669,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         if (geneZdbID != null) {
             hql += " and gene.zdbID = :geneZdbID ";
         }
-        if (figureZdbID != null) {
+        if (StringUtils.isNotEmpty(figureZdbID)) {
             hql += " and efs.figure.zdbID = :figureZdbID ";
         }
         if (fishZdbID != null) {
@@ -687,7 +687,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         if (geneZdbID != null) {
             query.setString("geneZdbID", geneZdbID);
         }
-        if (figureZdbID != null) {
+        if (StringUtils.isNotEmpty(figureZdbID)) {
             query.setString("figureZdbID", figureZdbID);
         }
         if (fishZdbID != null) {
@@ -1413,20 +1413,17 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
 
         String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox, CleanExpFastSrch cefs " +
-                               "        where fishox = xpExp.fishExperiment " +
+                "        where fishox = xpExp.fishExperiment " +
                 "        and xpRslt.expressionExperiment = xpExp " +
                 " and xpExp.gene.zdbID like 'ZDB-GENE%'" +
-                " and cefs.fishExperiment=fishox"+
+                " and cefs.fishExperiment=fishox" +
                 " and cefs.gene=:str";
 
         Query query = session.createQuery(hql);
         query.setParameter("str", sequenceTargetingReagent);
 
 
-
-
         List<ExpressionResult> expressionResults = (List<ExpressionResult>) query.list();
-
 
 
         return expressionResults;

@@ -3,6 +3,8 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.*;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
@@ -44,8 +46,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     StageSelector stageSelector;
     @UiField
     ListBox figureList;
-    // this list is being populated through the DisplayExperimentTable
-    private VerticalPanel experimentSelection = new VerticalPanel();
     private boolean showSelectedExpressionOnly;
 
     @UiField
@@ -58,17 +58,12 @@ public class ExpressionZoneView extends Composite implements HandlesError {
 
     public ExpressionZoneView() {
         initWidget(uiBinder.createAndBindUi(this));
-        stageSelector.setPublicationID(publicationID);
         displayTable = new ExpressionFlexTable(HeaderName.getHeaderNames());
         expressionPanel.add(displayTable);
     }
 
     // GUI elements
-    // this panel holds the Title and the show / hide link
-    private HorizontalPanel panel = new HorizontalPanel();
     private Hyperlink showExpressionSection = new Hyperlink();
-    private VerticalPanel displayPanel = new VerticalPanel();
-    private FlexTable constructionRow = new FlexTable();
     private ExpressionFlexTable displayTable;
 
     // all annotations that are selected
@@ -106,8 +101,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     // injected variables
     private ExpressionExperimentZoneView experimentSection;
 
-    // Publication in question.
-    private String publicationID;
     // filter set by the banana bar
     private ExperimentDTO experimentFilter = new ExperimentDTO();
 
@@ -123,13 +116,14 @@ public class ExpressionZoneView extends Composite implements HandlesError {
      * The data should only be loaded when the filter bar is initialized.
      * So this method is called from the FxFilterTable.
      */
+/*
     public void runModule() {
         if (!initialized) {
             loadSectionVisibility();
             initialized = true;
         }
     }
-
+*/
     public void setExperimentSection(ExpressionExperimentZoneView experimentSection) {
         this.experimentSection = experimentSection;
     }
@@ -142,14 +136,14 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     /**
      * Check curator session if this section should be displayed or hidden.
      */
+/*
     private void loadSectionVisibility() {
         String message = "Error while reading Section Visibility";
         curationRPCAsync.readExpressionSectionVisibility(publicationID, new SectionVisibilityCallback(message));
     }
+*/
 
     // Retrieve experiments from the server
-
-
     protected void recordAllExpressedTerms() {
         expressedTerms.clear();
         for (ExpressionFigureStageDTO expression : this.displayedExpressions) {
@@ -372,7 +366,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
      * 3) Save the check mark status (checked or unchecked) in session.
      * 4) Copy the figure annotation into the structure section.
      */
-    private class ExpressionSelectClickHandler implements ClickHandler {
+    private class ExpressionSelectClickHandler implements ValueChangeHandler {
 
         private ExpressionFigureStageDTO checkedExpression;
         private CheckBox checkbox;
@@ -382,7 +376,8 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             this.checkbox = checkbox;
         }
 
-        public void onClick(ClickEvent event) {
+        @Override
+        public void onValueChange(ValueChangeEvent valueChangeEvent) {
             DOM.eventCancelBubble(Event.getCurrentEvent(), true);
             clearErrorMessages();
             // store selected experiment for update purposes
@@ -866,7 +861,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
                     //Window.alert("Checkbox");
                     //showClearAllLink();
                 }
-                checkBox.addClickHandler(new ExpressionSelectClickHandler(expression, checkBox));
+                checkBox.addValueChangeHandler(new ExpressionSelectClickHandler(expression, checkBox));
                 checkBox.addClickHandler(new ExpressionSelectPasteStructureButtonClickHandler());
                 checkBox.addClickHandler(new ExpressionSelectCopyStructureButtonClickHandler());
                 setWidget(rowIndex, HeaderName.SELECT.getIndex(), checkBox);
@@ -992,6 +987,40 @@ public class ExpressionZoneView extends Composite implements HandlesError {
                     setText(0, name.index, name.getName());
                     String alignment = "bold";
                     getCellFormatter().setStyleName(0, name.index, alignment);
+                } else {
+                    // select all
+                    final CheckBox box = new CheckBox();
+                    setWidget(0, 0, box);
+                    box.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+                        @Override
+                        public void onValueChange(ValueChangeEvent<Boolean> valueChangeEvent) {
+                            if (box.getValue())
+                                checkAll();
+                            else
+                                uncheckAll();
+                        }
+                    });
+                }
+            }
+        }
+
+        private void uncheckAll() {
+            checkUncheckCheckBoxes(false);
+        }
+
+        private void checkAll() {
+            checkUncheckCheckBoxes(true);
+        }
+
+        private void checkUncheckCheckBoxes(boolean checkAll) {
+            int rowCount = getRowCount();
+            for (Integer rowIndex = 1; rowIndex < rowCount; rowIndex++) {
+                CheckBox checkBox = (CheckBox) getWidget(rowIndex, 0);
+                if (checkAll && !checkBox.getValue()) {
+                    checkBox.setValue(true, true);
+                }
+                if (!checkAll && checkBox.getValue()) {
+                    checkBox.setValue(false, true);
                 }
             }
         }
