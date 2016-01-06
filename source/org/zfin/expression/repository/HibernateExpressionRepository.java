@@ -1118,6 +1118,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 crit.add(Restrictions.eq("eapQualityTerm.zdbID", expressedTerm.getQualityTerm().getTerm().getZdbID()));
             }
             crit.add(Restrictions.eq("tag", expressedTerm.getQualityTerm().getTag()));
+        } else {
+            crit.add(Restrictions.isNull(("eapQualityTerm")));
         }
         crit.add(Restrictions.eq("expressionFound", expressedTerm.isExpressionFound()));
         Criteria publication = crit.createCriteria("publication");

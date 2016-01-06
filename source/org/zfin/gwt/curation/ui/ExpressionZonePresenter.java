@@ -22,8 +22,6 @@ public class ExpressionZonePresenter implements Presenter {
     private String publicationID;
     private boolean processing = false;
 
-    // all expressions displayed on the page (all or a subset defined by the filter elements)
-    private List<ExpressionPileStructureDTO> displayedStructures = new ArrayList<>(10);
     // Typical number of figures used per publication is less than 5.
     private List<FigureDTO> allFigureDtos = new ArrayList<>(5);
     // filter set by the banana bar
@@ -185,7 +183,7 @@ public class ExpressionZonePresenter implements Presenter {
         String startStageID = view.stageSelector.getSelectedStartStageID();
         String endStageID = view.stageSelector.getSelectedEndStageID();
 
-        List<ExpressionFigureStageDTO> expressions = new ArrayList<ExpressionFigureStageDTO>();
+        List<ExpressionFigureStageDTO> expressions = new ArrayList<>();
         if (view.stageSelector.isDualStageMode()) {
             addFigureAnnotationsToList(figureID, startStageID, endStageID, expressions);
         } else {
