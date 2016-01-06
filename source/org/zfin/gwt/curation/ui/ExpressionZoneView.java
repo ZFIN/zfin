@@ -5,7 +5,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.uibinder.client.*;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
@@ -528,6 +531,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             // update expression list in structure section.
             sendFigureAnnotationsToStructureSection();
             ////experimentSection.notifyRemovedExpression(figureAnnotation.getExperiment());
+            loadingImage.setVisible(false);
             clearErrorMessages();
         }
 
@@ -567,6 +571,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             //Window.alert("Success copied");
             clearErrorMessages();
             postUpdateStructuresOnExpression();
+            expressionZonePresenter.retrieveExpressions();
         }
 
         public void onFailureCleanup() {
@@ -649,6 +654,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             List<ExpressionFigureStageDTO> copyToExpressions = selectedExpressions;
             curationRPCAsync.copyExpressions(copyFromExpressions, copyToExpressions, new CopyExpressionsCallback());
             displayTable.uncheckAllRecords();
+            loadingImage.setVisible(true);
         }
 
         private List<ExpressionFigureStageDTO> getEfsFromMap(List<Integer> copyFromCheckBoxNumber) {

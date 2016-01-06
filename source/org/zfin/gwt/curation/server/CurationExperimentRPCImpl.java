@@ -918,12 +918,10 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
                 Collections.sort(pileStructures);
                 for (PileStructureAnnotationDTO pileStructure : pileStructures) {
                     ExpressionStructure expressionStructure;
-/*
                     if (pileStructure.getExpressedTerm() != null)
-                        expressionStructure = DTOConversionService.getPostComposedEntityFromDTO(pileStructure.getExpressedTerm());
+                        expressionStructure = DTOConversionService.getExpressionStructureFromDTO(pileStructure.getExpressedTerm());
                     else
-*/
-                    expressionStructure = expRepository.getExpressionStructure(pileStructure.getZdbID());
+                        expressionStructure = expRepository.getExpressionStructure(pileStructure.getZdbID());
                     if (expressionStructure == null)
                         LOG.error("Could not find pile structure " + pileStructure.getZdbID());
                     //TODO need to report back to UI
