@@ -42,7 +42,7 @@ select distinct mrkr_zdb_id, mrkr_abbrev,0 priority
 ! echo "bump expression pattern priority"
 update tmp_xpat_genes set priority = priority + 128
  where exists (
-  select 't' from expression_experiment
+  select 't' from expression_experiment2
   where mrkr_zdb_id = xpatex_gene_zdb_id
 );
 

@@ -1,7 +1,7 @@
 SELECT xpatex_source_zdb_id,
        xpatex_gene_zdb_id,
        mrkr_abbrev
-FROM   expression_experiment,
+FROM   expression_experiment2,
        marker,
        marker_type_group_member
 WHERE  xpatex_gene_zdb_id = mrkr_zdb_id
