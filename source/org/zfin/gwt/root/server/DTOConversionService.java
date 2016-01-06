@@ -930,6 +930,8 @@ public class DTOConversionService {
     public static FigureDTO convertToFigureDTO(Figure figure) {
         FigureDTO dto = new FigureDTO();
         dto.setZdbID(figure.getZdbID());
+        if (figure.getLabel() == null)
+            figure = getPublicationRepository().getFigureByID(figure.getZdbID());
         dto.setLabel(figure.getLabel());
         dto.setOrderingLabel(figure.getOrderingLabel());
         return dto;
@@ -1640,5 +1642,14 @@ public class DTOConversionService {
         ExpressionExperiment2 expressionExperiment = new ExpressionExperiment2();
         //expressionExperiment.set
         return null;
+    }
+
+    public static ExpressionFigureStageDTO convertToExpressionFigureStageDTOShallow(ExpressionFigureStage efs) {
+        ExpressionFigureStageDTO dto = new ExpressionFigureStageDTO();
+        dto.setExperiment(DTOConversionService.convertToExperimentDTO(efs.getExpressionExperiment()));
+        dto.setFigure(DTOConversionService.convertToFigureDTO(efs.getFigure()));
+        dto.setStart(DTOConversionService.convertToStageDTO(efs.getStartStage()));
+        dto.setEnd((DTOConversionService.convertToStageDTO(efs.getEndStage())));
+        return dto;
     }
 }

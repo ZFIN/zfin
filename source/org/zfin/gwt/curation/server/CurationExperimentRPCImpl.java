@@ -33,7 +33,10 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.mutant.repository.PhenotypeRepository;
-import org.zfin.ontology.*;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.Term;
+import org.zfin.ontology.TermRelationship;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.profile.CuratorSession;
 import org.zfin.profile.repository.ProfileRepository;
@@ -44,9 +47,7 @@ import org.zfin.sequence.MarkerDBLink;
 
 import java.util.*;
 
-import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Implementation of RPC calls from the client.
@@ -560,10 +561,11 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
     public List<ExpressionFigureStageDTO> createFigureAnnotations(List<ExpressionFigureStageDTO> figureAnnotations) {
         if (figureAnnotations == null)
             return null;
+        List<ExpressionFigureStageDTO> returnList = new ArrayList<>(figureAnnotations.size());
         for (ExpressionFigureStageDTO figureAnnotation : figureAnnotations) {
-            createFigureAnnotation(figureAnnotation);
+            returnList.add(createFigureAnnotation(figureAnnotation));
         }
-        return figureAnnotations;
+        return returnList;
     }
 
     @Override
@@ -607,16 +609,18 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         updateExpressionDTO.setStructures(newStructureList);
     }
 
-    private void createFigureAnnotation(ExpressionFigureStageDTO figureAnnotation) {
+    private ExpressionFigureStageDTO createFigureAnnotation(ExpressionFigureStageDTO figureAnnotation) {
         if (figureAnnotation == null)
-            return;
+            return null;
 
+        ExpressionFigureStageDTO fullDto = null;
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
             ExpressionFigureStage expressionFigureStage = DTOConversionService.getExpressionFigureStageFromDTO(figureAnnotation);
             ExpressionExperiment2 expressionExperiment = getExpressionRepository().getExpressionExperiment2(figureAnnotation.getExperiment().getExperimentZdbID());
             expressionFigureStage.setExpressionExperiment(expressionExperiment);
             RepositoryFactory.getExpressionRepository().createExpressionFigureStage(expressionFigureStage);
+            fullDto = DTOConversionService.convertToExpressionFigureStageDTOShallow(expressionFigureStage);
             tx.commit();
         } catch (ConstraintViolationException e) {
             tx.rollback();
@@ -625,6 +629,8 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             tx.rollback();
             throw e;
         }
+
+        return fullDto;
     }
 
     private void populateFigureAnnotation(ExpressionFigureStageDTO figureAnnotation, ExperimentFigureStage expressionExperiment) {

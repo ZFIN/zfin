@@ -255,6 +255,7 @@ public class ExpressionZonePresenter implements Presenter {
         this.experimentFilter = experimentFilter;
         this.figureID = figureID;
         retrieveExpressions();
+        view.updateFigureListBox(allFigureDtos, figureID);
     }
 
 
@@ -318,8 +319,6 @@ public class ExpressionZonePresenter implements Presenter {
                     experiment.getEnvironment().setName(experiment.getEnvironment().getName().substring(1));
                 displayedExpressions.add(id);
             }
-            //Window.alert("SIZE: " + experiments.size());
-///            if (sectionVisible)
             view.getDisplayTable().createExpressionTable();
             view.recordAllExpressedTerms();
             curationRPCAsync.getFigureAnnotationCheckmarkStatus(publicationID, new FigureAnnotationCheckmarkStatusCallback());
@@ -334,11 +333,8 @@ public class ExpressionZonePresenter implements Presenter {
 
     private class AddExpressionCallback extends ZfinAsyncCallback<List<ExpressionFigureStageDTO>> {
 
-        private List<ExpressionFigureStageDTO> figureAnnotations;
-
         public AddExpressionCallback(List<ExpressionFigureStageDTO> experiment) {
             super("Error while creating experiment", view.errorElement);
-            this.figureAnnotations = experiment;
         }
 
         public void onSuccess(List<ExpressionFigureStageDTO> newAnnotations) {

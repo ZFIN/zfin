@@ -8,7 +8,7 @@
     <g:HorizontalPanel title="Curation Filter" addStyleNames="curation-filter" width="100%">
         <g:Label text="Show:"/>
         <g:HorizontalPanel title="Figure List">
-            <g:Label text="Only Fig: &nbsp;"/>
+            <g:Label>Only Fig: &nbsp;</g:Label>
             <zfin:ListBoxWrapper ui:field="figureList"/>
         </g:HorizontalPanel>
         <g:HorizontalPanel title="Gene List">

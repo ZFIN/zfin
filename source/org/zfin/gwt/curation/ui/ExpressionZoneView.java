@@ -78,7 +78,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     protected String duplicateRowOriginalStyle;
     protected int duplicateRowIndex;
 
-    private String figureID;
     // used to control that this module is loaded only once.
     private boolean initialized;
 
@@ -325,7 +324,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     }
 
     public void applyFilterElements(String figureID, ExperimentDTO experimentFilter) {
-        setFigureID(figureID);
         // needed for new expression retrieval
         this.experimentFilter = experimentFilter;
         // un-check all checked expressions if any of the filters is set except the ones that are not hidden
@@ -522,7 +520,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         }
 
         public void onSuccess(Void exp) {
-            Window.alert("Success");
             // remove from the dashboard list
             displayedExpressions.remove(figureAnnotation);
             selectedExpressions.remove(figureAnnotation);
@@ -1115,20 +1112,18 @@ public class ExpressionZoneView extends Composite implements HandlesError {
 
     }
 
-    public void setFigureID(String figureID) {
-        this.figureID = figureID;
-        // update figure list
-        updateFigureListBox(null);
-    }
-
     public void setExperimentFilter(ExperimentDTO experimentFilter) {
         this.experimentFilter = experimentFilter;
     }
 
     public void updateFigureListBox(List<FigureDTO> allFigureDtos) {
+        updateFigureListBox(allFigureDtos, null);
+    }
+
+    public void updateFigureListBox(List<FigureDTO> allFigureDtos, String figureID) {
         figureList.clear();
         for (FigureDTO figureDTO : allFigureDtos) {
-            if (figureID == null || figureDTO.getZdbID().equals(figureID))
+            if (StringUtils.isEmpty(figureID) || figureDTO.getZdbID().equals(figureID))
                 figureList.addItem(figureDTO.getLabel(), figureDTO.getZdbID());
         }
     }
