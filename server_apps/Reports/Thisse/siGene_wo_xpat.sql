@@ -25,7 +25,7 @@ select dblink_acc_num
 		)
    and not exists (
 	  select "t"
-            from expression_experiment
+            from expression_experiment2
            where xpatex_gene_zdb_id = mrkr_zdb_id 
              and xpatex_source_zdb_id in ("ZDB-PUB-010810-1",
 				       "ZDB-PUB-040907-1",

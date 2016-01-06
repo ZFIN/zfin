@@ -314,7 +314,7 @@ sub recordResult(@) {
 #
 # For fx interface, we store the source (pub) zdb_id in both the figure
 # table and in the expression_experiment table.
-# We then relate the two, figure and expression, in fx_expression_pattern_figure
+# We then relate the two, figure and expression, in expression_figure_stage
 # We want the two sources to match--otherwise, we'd have figures from 
 # one paper associated with expression_patterns from other papers.  This 
 # would be incorrect. 
@@ -326,11 +326,11 @@ sub checkFigXpatexSourceConsistant ($) {
   my $routineName = "checkFigXpatexSourceConsistant";
 	
   my $sql = 'select xpatfig_fig_zdb_id, xpatfig_xpatres_zdb_id
-               from figure, expression_pattern_figure,
-               expression_result, expression_experiment
-               where xpatfig_fig_zdb_id = fig_zdb_id
-               and xpatfig_xpatres_zdb_id = xpatres_zdb_id
-               and xpatres_xpatex_zdb_id = xpatex_zdb_id
+               from figure, expression_figure_stage,
+               expression_result2, expression_experiment2
+               where efs_fig_zdb_id = fig_zdb_id
+               and xpatres_efs_id = efs_pk_id
+               and efs_xpatex_zdb_id = xpatex_zdb_id
                and xpatex_source_zdb_id != fig_source_zdb_id   
               ';
   	

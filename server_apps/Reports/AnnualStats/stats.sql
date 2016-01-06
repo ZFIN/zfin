@@ -165,14 +165,14 @@ select count(*), "antibodies" from marker
 ------------------------------------------Expression & Phenotypes---------------------------------
 -- Gene expression patterns
 insert into tmp_output(counter, section)
-select count(*), "expression patterns" from expression_experiment
+select count(*), "expression patterns" from expression_experiment2
 --
 where xpatex_zdb_id not like 'ZDB-%-10____-%'
 ;
 
 -- clean Gene expression patterns
 insert into tmp_output(counter, section)
-select count(distinct xpatex_gene_zdb_id), "genes clean expression patterns" from expression_experiment, clean_expression_fast_search
+select count(distinct xpatex_gene_zdb_id), "genes clean expression patterns" from expression_experiment2, clean_expression_fast_search
   where xpatex_genox_zdb_id = cefs_genox_zdb_id;
 
 

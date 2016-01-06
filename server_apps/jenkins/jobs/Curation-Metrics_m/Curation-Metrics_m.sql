@@ -43,9 +43,10 @@ and recattrib_source_zdb_id=pub_zdb
 group by curator_zdb,pub_zdb;
 
 insert into tmp_cur_counts (ccount_curator_zdb,ccount_category,ccount_pub_zdb) 
-select curator_zdb, "Expression",count(xpatfig_xpatres_zdb_id)
-from expression_pattern_figure,figure,tmp_cur_pub
-where xpatfig_fig_zdb_id=fig_zdb_id
+select curator_zdb, "Expression",count(efs_xpatex_zdb_id)
+from expression_figure_stage,figure,expression_result2,tmp_cur_pub
+where efs_fig_zdb_id=fig_zdb_id
+and xpatres_efs_id=efs_pk_id
 and fig_source_zdb_id=pub_zdb
 group by curator_zdb,pub_zdb;
 
