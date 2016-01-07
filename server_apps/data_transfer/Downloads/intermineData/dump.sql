@@ -460,8 +460,9 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
  from feature_prefix;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/disease/disease-annotation.txt"
- select dat_zdb_id, dat_term_zdb_id, dat_source_zdb_id, dat_evidence_code,  genox_fish_zdb_id, genox_exp_zdb_id
-   from disease_annotation, disease_annotation_model, fish_experiment
+ select dat_zdb_id,term_ont_id, dat_source_zdb_id, dat_evidence_code,  genox_fish_zdb_id, genox_exp_zdb_id
+   from disease_annotation, disease_annotation_model, fish_experiment, term
    where dat_zdb_id = damo_dat_Zdb_id
- and damo_genox_zdb_id = genox_zdb_id;
+ and damo_genox_zdb_id = genox_zdb_id
+ and term_zdb_id = dat_term_zdb_id;
 
