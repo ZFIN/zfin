@@ -49,7 +49,7 @@ Step 2: Prepare the delete list (of db_link records) and the list of ZFIN genes 
 
 Prepare a delete list of ZDB Ids for all the above accessions that are attributed to NCBI/EntrezGene load publications (ZDB-PUB-020723-3 and ZDB-PUB-130725-2)
 
-Retain those db_link records that are also in expression_experiment table
+Retain those db_link records that are also in expression_experiment2 table
 
 Retain those db_link accessions which are not related to gene or pseudogene
 

@@ -2,7 +2,6 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
@@ -11,7 +10,6 @@ import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.CollectionUtils;
-import org.zfin.gwt.root.util.StageRangeIntersection;
 import org.zfin.gwt.root.util.StageRangeIntersectionService;
 import org.zfin.gwt.root.util.StageRangeUnion;
 
@@ -72,7 +70,7 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
 
     public void setExpressionSection(ExpressionSection expressionSection) {
         this.expressionSection = expressionSection;
-        displayTable.setExpressionSection(expressionSection);
+//        displayTable.setExpressionSection(expressionSection);
     }
 
     private void initGUI() {
@@ -163,10 +161,15 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
         displayTable.markOverlappingStructures(stageIntersection);
     }
 
+    @Override
+    public void setPileStructureClickListener(ConstructionZone constructionZoneModule) {
+
+    }
+
 
     @SuppressWarnings("unchecked")
     private List<ExpressedTermDTO> createIntersectionOfStructures(Collection<ExpressionFigureStageDTO> figureAnnotations) {
-        List<ExpressedTermDTO> intersectionOfStructures = new ArrayList<ExpressedTermDTO>(figureAnnotations.size());
+        List<ExpressedTermDTO> intersectionOfStructures = new ArrayList<>(figureAnnotations.size());
         int index = 0;
         for (ExpressionFigureStageDTO figureAnnotation : figureAnnotations) {
             if (index == 0)
@@ -211,10 +214,6 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
 
     public void onPileStructureCreation(PhenotypePileStructureDTO pileStructure) {
         // ignored as it is not used in this class.
-    }
-
-    public void setPileStructureClickListener(ConstructionZone pileStructureClickListener) {
-        displayTable.setPileStructureClickListener(pileStructureClickListener);
     }
 
     /**
@@ -413,12 +412,12 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
         for (Integer row : keys) {
             RadioButton add = displayTable.getAddRadioButton(row);
             RadioButton remove = displayTable.getRemoveRadioButton(row);
-            CheckBox modifier = displayTable.getNotCheckBox(row);
+//            CheckBox modifier = displayTable.getNotCheckBox(row);
             PileStructureAnnotationDTO psa = new PileStructureAnnotationDTO();
             if (add.getValue() || remove.getValue()) {
                 ExpressionPileStructureDTO term = displayTable.getDisplayTableMap().get(row).copy();
                 psa.setExpressedTerm(term.getExpressedTerm());
-                psa.setExpressed(!modifier.getValue());
+                //               psa.setExpressed(!modifier.getValue());
                 psa.setZdbID(term.getZdbID());
             }
             if (add.getValue())

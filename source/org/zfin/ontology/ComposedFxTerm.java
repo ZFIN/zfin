@@ -8,6 +8,7 @@ package org.zfin.ontology;
  */
 public class ComposedFxTerm implements Comparable<ComposedFxTerm> {
 
+    private long ID;
     private String zdbID;
     private Term superTerm;
     private Term subterm;
@@ -44,6 +45,14 @@ public class ComposedFxTerm implements Comparable<ComposedFxTerm> {
 
     public void setZdbID(String zdbID) {
         this.zdbID = zdbID;
+    }
+
+    public long getID() {
+        return ID;
+    }
+
+    public void setID(long ID) {
+        this.ID = ID;
     }
 
     public boolean isExpressionFound() {

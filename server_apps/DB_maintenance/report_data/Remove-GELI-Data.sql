@@ -8,7 +8,7 @@ WHERE  fig_source_zdb_id = '$PUBID'
 -- delete expression_experiment records via cascade for GELI records
 DELETE FROM zdb_active_data
 WHERE  zactvd_zdb_id IN (SELECT xpatex_zdb_id
-                         FROM   expression_experiment,
+                         FROM   expression_experiment2,
                                 figure
                          WHERE  xpatex_source_zdb_id = '$PUBID'
                                 AND fig_source_zdb_id = xpatex_source_zdb_id

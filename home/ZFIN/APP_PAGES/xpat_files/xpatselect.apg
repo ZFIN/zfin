@@ -1122,13 +1122,21 @@ return false ; "
       </TR>
 
       <tr>
-	<td colspan=3 bgcolor=<!--|SIDEBAR_COLOR|--> class="submitbar"> 
 
-          <input name="xpatsel_calledBySelf" type="hidden" value="true">
-	
-	  <input accesskey="s" type="button" value="Search" onClick="call_submit();">
-	  <input type="button" value="Reset" onClick="call_reset();">
+        <?MISQL SQL="select zflag_is_on from zdb_flag where zflag_name = 'regen_expressionmart';">
+          <?MIVAR NAME=$regen_is_on>$1<?/MIVAR>
+        <?/MISQL>
 
+	    <td colspan=3 bgcolor=<!--|SIDEBAR_COLOR|--> class="submitbar">
+	      <?MIBLOCK COND="$(EC,$regen_is_on,t)">
+            <span class="error">
+              Gene expression search is temporarily disabled for maintenance. Please check back in a few minutes.
+            </span>
+          <?MIELSE>
+            <input name="xpatsel_calledBySelf" type="hidden" value="true">
+	        <input accesskey="s" type="button" value="Search" onClick="call_submit();">
+	        <input type="button" value="Reset" onClick="call_reset();">
+          <?/MIBLOCK>
         </td>
       </tr>
     </table>

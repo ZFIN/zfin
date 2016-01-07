@@ -146,6 +146,10 @@ table.data_manager a.root {
     text-align: center;
 }
 
+.green-pad {
+    background: #006666;
+}
+
 .left-align {
     text-align: left;
 }
@@ -165,7 +169,7 @@ table.data_manager a.root {
 
 .phenotype-normal {
     color: #33cc99;
-    text-align: center;
+    text-align: left;
 }
 
 .curation-filter {
@@ -231,6 +235,11 @@ a.small-new-link:hover {
     text-decoration: none;
     font-size: 75%;
     color: green;
+}
+
+.small {
+    text-decoration: none;
+    font-size: 75%;
 }
 
 a.external {
@@ -808,4 +817,12 @@ a + .inline-upload {
     border-radius: 5px;
     background: #e0e7e0;
     padding: 2em;
+}
+
+.list-box-selected {
+    background: khaki;
+}
+
+.list-box-unselected {
+    background: white;
 }

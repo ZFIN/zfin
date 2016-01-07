@@ -12,21 +12,20 @@ select vg.gff_seqname,
        'gene_id=' || xpatex_gene_zdb_id ||';Name=' || gene.mrkr_abbrev
        --';Alias=' || clone_abbrev?
        attribute
-from expression_experiment, marker gene,
-  expression_result,expression_pattern_figure,
+from expression_experiment2, marker gene,
+  expression_result2, expression_figure_stage,
   gff3 vt, gff3 vg,  db_link, marker_relationship
  where xpatex_gene_zdb_id is not NULL
    and mrel_mrkr_1_zdb_id = xpatex_gene_zdb_id
    and dblink_linked_recid = mrel_mrkr_2_zdb_id
    and mrkr_zdb_id = xpatex_gene_zdb_id
-   and xpatex_zdb_id = xpatres_xpatex_zdb_id
+   and xpatex_zdb_id = efs_xpatex_zdb_id
    and xpatres_expression_found = 't'
-   and xpatres_zdb_id = xpatfig_xpatres_zdb_id
+   and efs_pk_id = xpatres_efs_id
    and vt.gff_source = 'vega' and vt.gff_feature = 'transcript'
    and vg.gff_source = 'vega' and vg.gff_feature = 'gene'
    and dblink_acc_num = vt.gff_ID
    and vt.gff_Parent = vg.gff_ID
-
  group by 1,3,7,9;
 
 -- to be valid the gff3 requires a header

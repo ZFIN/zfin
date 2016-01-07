@@ -141,9 +141,9 @@
         <security:intercept-url pattern="/action/marker/*-edit" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/database/**" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/gene/*/ortholog/**" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/security-check" requires-channel="https"/>
-        <security:intercept-url pattern="/action/login-redirect" requires-channel="https"/>
-        <security:intercept-url pattern="/action/login-redirect?error=true" requires-channel="https"/>
+        <security:intercept-url pattern="/action/security-check" />
+        <security:intercept-url pattern="/action/login-redirect" />
+        <security:intercept-url pattern="/action/login-redirect?error=true" />
 
 
         <security:intercept-url pattern="/ajax/session-save" access="hasRole('root') or ${DISABLE_SECURITY}" />

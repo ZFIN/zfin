@@ -43,7 +43,7 @@ public class ExpressionResultUpdateParser {
                 if (tokens.length < 4)
                     continue;
                 ExpressionResultUpdateRecord record = new ExpressionResultUpdateRecord();
-                record.setExpressionResultID(tokens[0]);
+                record.setExpressionResultID(Long.parseLong(tokens[0]));
                 record.setStartStageID(tokens[1]);
                 record.setEndStageID(tokens[2]);
                 record.setSuperTermOboID(tokens[3]);

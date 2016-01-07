@@ -2,7 +2,6 @@ package org.zfin.gwt.root.ui;
 
 import com.google.gwt.event.dom.client.*;
 import com.google.gwt.uibinder.client.UiConstructor;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
@@ -13,7 +12,6 @@ import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.dto.TermStatus;
 import org.zfin.gwt.root.event.CheckSubsetEventHandler;
-import org.zfin.gwt.root.event.SingleOntologySelectionEventHandler;
 import org.zfin.gwt.root.util.*;
 
 import java.util.ArrayList;
@@ -30,6 +28,7 @@ public class TermEntry extends HorizontalPanel {
     private LookupComposite termTextBox;
     private Button copyFromTerminfoToTextButton = new Button("&larr;");
     private TermInfoComposite termInfoComposite = null;
+    private ErrorHandler errorHandler;
 
     // ontologies used
     private List<OntologyDTO> ontologies;
@@ -37,12 +36,22 @@ public class TermEntry extends HorizontalPanel {
 
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
 
+    public TermEntry(List<OntologyDTO> ontologies, EntityPart termPart, TermInfoComposite termInfoComposite, ErrorHandler errorHandler) {
+        this(ontologies, termPart, termInfoComposite);
+        this.errorHandler = errorHandler;
+    }
+
     public TermEntry(List<OntologyDTO> ontologies, EntityPart termPart, TermInfoComposite termInfoComposite) {
         this(ontologies, termPart);
         this.termInfoComposite = termInfoComposite;
         termTextBox.markUnValidateText();
         termTextBox.setTermInfoTable(termInfoComposite);
         addInternalListeners();
+    }
+
+    public TermEntry(List<OntologyDTO> ontologies, EntityPart termPart, ErrorHandler errorHandler) {
+        this(ontologies, termPart);
+        this.errorHandler = errorHandler;
     }
 
     public TermEntry(List<OntologyDTO> ontologies, EntityPart termPart) {
@@ -59,8 +68,9 @@ public class TermEntry extends HorizontalPanel {
 
     public
     @UiConstructor
-    TermEntry(String listOFOntologies, String entityPart) {
-        this(getOntologyDTOs(listOFOntologies, entityPart), EntityPart.valueOf(entityPart));
+    TermEntry(String listOFOntologies, String entityPart, ErrorHandler errorHandler, TermInfoComposite termInfoTable) {
+        this(getOntologyDTOs(listOFOntologies, entityPart), EntityPart.valueOf(entityPart), termInfoTable, errorHandler);
+        copyFromTerminfoToTextButton.addClickHandler(new CopyTermToEntryFieldClickListener());
     }
 
     private static List<OntologyDTO> getOntologyDTOs(String listOFOntologies, String entityPart) {
@@ -342,6 +352,10 @@ public class TermEntry extends HorizontalPanel {
         termTextBox.addOnBlurHandler(blurHandler);
     }
 
+    public List<OntologyDTO> getOntologyList() {
+        return ontologies;
+    }
+
     private class OntologyChangeHandler implements ChangeHandler {
 
         public void onChange(ChangeEvent event) {
@@ -390,23 +404,18 @@ public class TermEntry extends HorizontalPanel {
         }
     }
 
-
-    public void setTermInfoTable(TermInfoComposite termInfoTable) {
-        this.termInfoTable = termInfoTable;
-        copyFromTerminfoToTextButton.addClickHandler(new CopyTermToEntryFieldClickListener());
-    }
-
-    private TermInfoComposite termInfoTable;
-
     private class CopyTermToEntryFieldClickListener implements ClickHandler {
         public void onClick(ClickEvent event) {
-            TermDTO termInfo = termInfoTable.getCurrentTermInfoDTO();
-            setTerm(termInfo);
+            TermDTO termInfo = termInfoComposite.getCurrentTermInfoDTO();
+            if (!setTerm(termInfo)) {
+                errorHandler.setError("The " + termPart + " term does not allow terms from the <" +
+                        termInfo.getOntology().getDisplayName() + "> ontology.");
+            }
             // check if the new term name is valid
             if (termInfo.getOntology() == OntologyDTO.QUALITY) {
                 lookupRPC.getTermByName(getSelectedOntology(), termInfo.getTermName(),
                         new ZfinAsyncCallback<TermDTO>(
-                                "Failed to find term: " + termInfo.getTermName() + " for ontology: " + getSelectedOntology(), null) {
+                                "Failed to find term: " + termInfo.getTermName() + " for ontology: " + getSelectedOntology(), errorHandler) {
                             @Override
                             public void onFailure(Throwable throwable) {
                                 getTermTextBox().setValidationStyle(false);

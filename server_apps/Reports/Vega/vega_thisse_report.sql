@@ -33,7 +33,7 @@ select distinct dblink_linked_recid
    and not exists
      (
        select *
-         from expression_experiment
+         from expression_experiment2
         where xpatex_gene_zdb_id = dblink_linked_recid
           and xpatex_source_zdb_id in ("ZDB-PUB-040907-1","ZDB-PUB-010810-1","ZDB-PUB-051025-1")
      )

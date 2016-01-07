@@ -1,7 +1,7 @@
 package org.zfin.ontology.datatransfer.service;
 
 public class ExpressionResultUpdateRecord {
-    private String expressionResultID;
+    private Long expressionResultID;
     private String startStageID;
     private String endStageID;
     private String superTermOboID;
@@ -15,11 +15,11 @@ public class ExpressionResultUpdateRecord {
         this.endStageID = endStageID;
     }
 
-    String getExpressionResultID() {
+    Long getExpressionResultID() {
         return expressionResultID;
     }
 
-    void setExpressionResultID(String expressionResultID) {
+    void setExpressionResultID(Long expressionResultID) {
         this.expressionResultID = expressionResultID;
     }
 

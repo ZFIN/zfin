@@ -1,7 +1,7 @@
 SELECT   first 40 termone.term_name,
          termtwo.term_name,
          count(*) AS frequency
-FROM     expression_result,
+FROM     expression_result2,
          term termone,
          term termtwo
 WHERE    xpatres_superterm_zdb_id IS NOT NULL
