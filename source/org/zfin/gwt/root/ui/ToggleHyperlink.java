@@ -2,6 +2,7 @@ package org.zfin.gwt.root.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.ui.Hyperlink;
 
 /**
@@ -16,6 +17,7 @@ public class ToggleHyperlink extends Hyperlink {
     private String toggleTrue;
     private String toggleFalse;
 
+    @UiConstructor
     public ToggleHyperlink(String toggleTrue, String toggleFalse) {
         super(toggleTrue, toggleTrue);
         this.toggleTrue = toggleTrue;

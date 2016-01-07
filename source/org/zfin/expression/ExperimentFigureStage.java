@@ -72,7 +72,7 @@ public class ExperimentFigureStage {
             term.setSuperTerm(result.getSuperTerm());
             term.setSubterm(result.getSubTerm());
             term.setExpressionFound(result.isExpressionFound());
-            term.setZdbID(result.getZdbID());
+            ////term.setZdbID(result.getZdbID());
             terms.add(term);
             setStart(result.getStartStage());
             setEnd(result.getEndStage());

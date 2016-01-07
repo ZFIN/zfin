@@ -4,7 +4,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
-import org.zfin.*;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
@@ -33,7 +32,10 @@ import org.zfin.mutant.presentation.Construct;
 import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
 import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
-import org.zfin.orthology.*;
+import org.zfin.orthology.NcbiOtherSpeciesGene;
+import org.zfin.orthology.Ortholog;
+import org.zfin.orthology.OrthologEvidence;
+import org.zfin.orthology.OrthologExternalReference;
 import org.zfin.orthology.presentation.OrthologEvidenceDTO;
 import org.zfin.orthology.presentation.OrthologExternalReferenceDTO;
 import org.zfin.profile.CuratorSession;
@@ -930,6 +932,8 @@ public class DTOConversionService {
     public static FigureDTO convertToFigureDTO(Figure figure) {
         FigureDTO dto = new FigureDTO();
         dto.setZdbID(figure.getZdbID());
+        if (figure.getLabel() == null)
+            figure = getPublicationRepository().getFigureByID(figure.getZdbID());
         dto.setLabel(figure.getLabel());
         dto.setOrderingLabel(figure.getOrderingLabel());
         return dto;
@@ -1082,6 +1086,9 @@ public class DTOConversionService {
         dto.setCreator(es.getPerson().getShortName());
         dto.setDate(es.getDate());
         ExpressedTermDTO expressionTerm = convertToExpressedTermDTO(es);
+        if (es.getEapQualityTerm() != null) {
+            expressionTerm.setQualityTerm(convertToEapQualityTermDTO(es));
+        }
         dto.setExpressedTerm(expressionTerm);
         if (es.getSuperterm().getOntology().equals(Ontology.ANATOMY)) {
             GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByZdbID(es.getSuperterm().getZdbID());
@@ -1090,6 +1097,13 @@ public class DTOConversionService {
             dto.setStart(start);
             dto.setEnd(end);
         }
+        return dto;
+    }
+
+    private static EapQualityTermDTO convertToEapQualityTermDTO(ExpressionStructure structure) {
+        EapQualityTermDTO dto = new EapQualityTermDTO();
+        dto.setTerm(convertToTermDTO(structure.getEapQualityTerm()));
+        dto.setTag(structure.getTag());
         return dto;
     }
 
@@ -1258,9 +1272,22 @@ public class DTOConversionService {
     /**
      * Note that this conversion does not populate the expression found attribute.
      *
-     * @param postComposedEntity ExpressionStructure
+     * @param expressionStructure ExpressionStructure
      * @return ExpressedTermDTO
      */
+    public static ExpressedTermDTO convertToExpressedTermDTO(ExpressionStructure expressionStructure) {
+        ExpressedTermDTO expressedDTO = new ExpressedTermDTO();
+        EntityDTO entity = new EntityDTO();
+        entity.setSuperTerm(DTOConversionService.convertToTermDTO(expressionStructure.getSuperterm()));
+        entity.setSubTerm(DTOConversionService.convertToTermDTO(expressionStructure.getSubterm()));
+        expressedDTO.setEntity(entity);
+        if (expressionStructure.getEapQualityTerm() != null) {
+            expressedDTO.setQualityTerm(convertToEapQualityTermDTO(expressionStructure));
+        }
+        expressedDTO.setExpressionFound(expressionStructure.isExpressionFound());
+        return expressedDTO;
+    }
+
     public static ExpressedTermDTO convertToExpressedTermDTO(PostComposedEntity postComposedEntity) {
         ExpressedTermDTO expressedDTO = new ExpressedTermDTO();
         EntityDTO entity = new EntityDTO();
@@ -1292,22 +1319,71 @@ public class DTOConversionService {
 
         List<PileStructureAnnotationDTO> list = new ArrayList<>();
         for (ExpressedTermDTO termDto : expressionFigureStageDTO.getExpressedTerms()) {
-            PileStructureAnnotationDTO annotation = new PileStructureAnnotationDTO();
-            annotation.setAction(action);
-            annotation.setExpressed(termDto.isExpressionFound());
-            annotation.setStart(expressionFigureStageDTO.getStart());
-            annotation.setEnd(expressionFigureStageDTO.getEnd());
-            annotation.setExpressedTerm(termDto);
-            list.add(annotation);
+            // check if there is more than one EaP quality. Each quality needs to
+            // create an independent PileStructureAnnotationDTO object
+            if (termDto.getQualityTermDTOList() != null && termDto.getQualityTermDTOList().size() > 1) {
+                for (EapQualityTermDTO dto : termDto.getQualityTermDTOList()) {
+                    ExpressedTermDTO expressedTermDTO = new ExpressedTermDTO();
+                    expressedTermDTO.setId(termDto.getId());
+                    expressedTermDTO.setEntity(termDto.getEntity());
+                    expressedTermDTO.setExpressionFound(termDto.isExpressionFound());
+                    expressedTermDTO.setZdbID(termDto.getZdbID());
+                    expressedTermDTO.setQualityTerm(dto);
+                    PileStructureAnnotationDTO annotation = getPileStructureAnnotationDTO(expressionFigureStageDTO, action, expressedTermDTO);
+                    list.add(annotation);
+                }
+            } else {
+                PileStructureAnnotationDTO annotation = getPileStructureAnnotationDTO(expressionFigureStageDTO, action, termDto);
+                list.add(annotation);
+            }
         }
         return list;
     }
 
-    public static PostComposedEntity getPostComposedEntityFromDTO(ExpressedTermDTO expressedTerm) {
+    private static PileStructureAnnotationDTO getPileStructureAnnotationDTO(ExpressionFigureStageDTO expressionFigureStageDTO, PileStructureAnnotationDTO.Action action, ExpressedTermDTO termDto) {
+        PileStructureAnnotationDTO annotation = new PileStructureAnnotationDTO();
+        annotation.setAction(action);
+        annotation.setExpressed(termDto.isExpressionFound());
+        annotation.setStart(expressionFigureStageDTO.getStart());
+        annotation.setEnd(expressionFigureStageDTO.getEnd());
+        annotation.setExpressed(termDto.isExpressionFound());
+        annotation.setExpressedTerm(termDto);
+        return annotation;
+    }
+
+    public static ExpressionStructure getExpressionStructureFromDTO(ExpressedTermDTO expressedTerm) {
         if (expressedTerm == null) {
             return null;
         }
-        PostComposedEntity entity = new PostComposedEntity();
+        ExpressionStructure entity = new ExpressionStructure();
+        try {
+            EntityDTO entityDTO = expressedTerm.getEntity();
+            entity.setSuperterm(convertToTerm(entityDTO.getSuperTerm()));
+            if (entityDTO.getSubTerm() != null) {
+                entity.setSubterm(convertToTerm(entityDTO.getSubTerm()));
+            }
+            entity.setExpressionFound(expressedTerm.isExpressionFound());
+            if (expressedTerm.getQualityTerm() != null) {
+                entity.setEapQualityTerm(convertToTerm(expressedTerm.getQualityTerm().getTerm()));
+                entity.setTag(expressedTerm.getQualityTerm().getTag());
+            }
+            if (CollectionUtils.isNotEmpty(expressedTerm.getQualityTermDTOList())) {
+                EapQualityTermDTO qualityTermDTO = expressedTerm.getQualityTermDTOList().get(0);
+                entity.setEapQualityTerm(convertToTerm(qualityTermDTO.getTerm()));
+                entity.setTag(qualityTermDTO.getTag());
+            }
+        } catch (TermNotFoundException e) {
+            return null;
+        }
+        return entity;
+    }
+
+    public static ExpressionFigureStage getExpressionFigureStageFromDTO(ExpressedTermDTO expressedTerm) {
+        if (expressedTerm == null) {
+            return null;
+        }
+        ExpressionFigureStage entity = new ExpressionFigureStage();
+/*
         try {
             EntityDTO entityDTO = expressedTerm.getEntity();
             entity.setSuperterm(convertToTerm(entityDTO.getSuperTerm()));
@@ -1317,6 +1393,7 @@ public class DTOConversionService {
         } catch (TermNotFoundException e) {
             return null;
         }
+*/
         return entity;
     }
 
@@ -1518,6 +1595,94 @@ public class DTOConversionService {
         dto.setLastName(person.getLastName());
         dto.setDisplay(person.getFullName());
         dto.setZdbID(person.getZdbID());
+        return dto;
+    }
+
+    public static ExperimentDTO convertToExperimentDTO(ExpressionExperiment2 experiment) {
+        ExperimentDTO experimentDTO = new ExperimentDTO();
+        experimentDTO.setExperimentZdbID(experiment.getZdbID());
+        Marker gene = experiment.getGene();
+        if (gene != null) {
+            experimentDTO.setGene(convertToMarkerDTO(gene));
+            if (experiment.getMarkerDBLink() != null && experiment.getMarkerDBLink().getAccessionNumber() != null) {
+                String dblink = experiment.getMarkerDBLink().getAccessionNumber();
+                experimentDTO.setGenbankNumber(dblink);
+                experimentDTO.setGenbankID(experiment.getMarkerDBLink().getZdbID());
+            }
+        }
+        if (experiment.getAntibody() != null) {
+            experimentDTO.setAntibodyMarker(convertToMarkerDTO(experiment.getAntibody()));
+        }
+        experimentDTO.setFishName(experiment.getFishExperiment().getFish().getHandle());
+        experimentDTO.setFishID(experiment.getFishExperiment().getFish().getZdbID());
+        experimentDTO.setEnvironment(convertToEnvironmentDTO(experiment.getFishExperiment().getExperiment()));
+        experimentDTO.setAssay(experiment.getAssay().getName());
+        experimentDTO.setAssayAbbreviation(experiment.getAssay().getAbbreviation());
+        experimentDTO.setGenotypeExperimentID(experiment.getFishExperiment().getZdbID());
+        experimentDTO.setPublicationID(experiment.getPublication().getZdbID());
+        // check if there are expressions associated
+        Set<ExpressionResult> expressionResults = experiment.getExpressionResults();
+        if (expressionResults != null) {
+            experimentDTO.setNumberOfExpressions(experiment.getDistinctExpressions());
+        }
+        // check if a clone is available
+        Marker probe = experiment.getProbe();
+        if (probe != null) {
+            experimentDTO.setCloneID(probe.getZdbID());
+            experimentDTO.setCloneName(probe.getAbbreviation() + " [" + probe.getType().toString() + "]");
+        }
+        return experimentDTO;
+    }
+
+    public static ExpressedTermDTO convertToExpressedTermDTO(ExpressionResult2 result) {
+        ExpressedTermDTO dto = new ExpressedTermDTO();
+        dto.setExpressionFound(result.isExpressionFound());
+        dto.setEntity(convertToEntityDTO(result.getEntity()));
+        dto.setId(result.getID());
+        List<EapQualityTermDTO> dtoList = new ArrayList<>();
+        if (result.getPhenotypeTermSet() != null) {
+            for (ExpressionPhenotypeTerm qualTerm : result.getPhenotypeTermSet())
+                dtoList.add(convertToEapQualityTermDTO(qualTerm));
+            dto.setQualityTermDTOList(dtoList);
+        }
+        return dto;
+    }
+
+    private static EapQualityTermDTO convertToEapQualityTermDTO(ExpressionPhenotypeTerm qualTerm) {
+        EapQualityTermDTO dto = new EapQualityTermDTO();
+        dto.setTag(qualTerm.getTag());
+        dto.setTerm(convertToTermDTO(qualTerm.getQualityTerm()));
+        return dto;
+    }
+
+    public static EapQualityTermDTO convertToEapQualityTerm(ExpressionPhenotypeTerm term) {
+        EapQualityTermDTO dto = new EapQualityTermDTO();
+        dto.setTag(term.getTag());
+        dto.setTerm(convertToTermDTO(term.getQualityTerm()));
+        return dto;
+    }
+
+    public static ExpressionFigureStage getExpressionFigureStageFromDTO(ExpressionFigureStageDTO figureAnnotation) {
+        ExpressionFigureStage expressionFigureStage = new ExpressionFigureStage();
+        expressionFigureStage.setStartStage(convertToDevelopmentStage(figureAnnotation.getStart()));
+        expressionFigureStage.setEndStage(convertToDevelopmentStage(figureAnnotation.getEnd()));
+        expressionFigureStage.setFigure(convertToFigure(figureAnnotation.getFigure()));
+        //expressionFigureStage.setExpressionExperiment(convertToExperiment(figureAnnotation.getExperiment()));
+        return expressionFigureStage;
+    }
+
+    private static ExpressionExperiment2 convertToExperiment(ExperimentDTO experiment) {
+        ExpressionExperiment2 expressionExperiment = new ExpressionExperiment2();
+        //expressionExperiment.set
+        return null;
+    }
+
+    public static ExpressionFigureStageDTO convertToExpressionFigureStageDTOShallow(ExpressionFigureStage efs) {
+        ExpressionFigureStageDTO dto = new ExpressionFigureStageDTO();
+        dto.setExperiment(DTOConversionService.convertToExperimentDTO(efs.getExpressionExperiment()));
+        dto.setFigure(DTOConversionService.convertToFigureDTO(efs.getFigure()));
+        dto.setStart(DTOConversionService.convertToStageDTO(efs.getStartStage()));
+        dto.setEnd((DTOConversionService.convertToStageDTO(efs.getEndStage())));
         return dto;
     }
 }

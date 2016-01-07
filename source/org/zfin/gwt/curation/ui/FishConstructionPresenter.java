@@ -11,6 +11,7 @@ import org.zfin.gwt.root.dto.GenotypeDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.*;
 
@@ -160,7 +161,7 @@ public class FishConstructionPresenter implements Presenter {
         public void onSuccess(List<FishDTO> list) {
             view.getLoadingImage().setVisible(false);
             resetGUI();
-            eventBus.fireEvent(new AddNewFishEvent());
+            AppUtils.EVENT_BUS.fireEvent(new AddNewFishEvent());
         }
 
     }

@@ -15,13 +15,13 @@ public class RemoveExpressionPileStructureClickHandler implements ClickHandler {
 
     private ExpressionPileStructureDTO structure;
     private ErrorHandler errorHandler;
-    private ExpressionSection expressionModule;
+    private ExpressionZoneView expressionModule;
     private AsyncCallback callback;
 
     // RPC class being used for this section.
     private PileStructuresRPCAsync pileStructureRPCAsync = PileStructuresRPC.App.getInstance();
 
-    public RemoveExpressionPileStructureClickHandler(ExpressionPileStructureDTO structure, ErrorHandler errorMessage, ExpressionSection expressionModule, AsyncCallback callback) {
+    public RemoveExpressionPileStructureClickHandler(ExpressionPileStructureDTO structure, ErrorHandler errorMessage, ExpressionZoneView expressionModule, AsyncCallback callback) {
         this.structure = structure;
         this.errorHandler = errorMessage;
         this.expressionModule = expressionModule;
@@ -30,6 +30,7 @@ public class RemoveExpressionPileStructureClickHandler implements ClickHandler {
 
     public void onClick(ClickEvent event) {
         ExpressedTermDTO dto = structure.getExpressedTerm();
+/*
         if (expressionModule.getExpressedTermDTOs().contains(dto)) {
             //Window.alert("Please remove the expression records first");
             errorHandler.setError("Please remove the expression records that use this structure first.");
@@ -39,6 +40,10 @@ public class RemoveExpressionPileStructureClickHandler implements ClickHandler {
             if (confirmed)
                 pileStructureRPCAsync.deleteStructure(structure, callback);
         }
+*/
+        boolean confirmed = Window.confirm("Do you really want to delete this structure from the pile");
+        if (confirmed)
+            pileStructureRPCAsync.deleteStructure(structure, callback);
     }
 }
 

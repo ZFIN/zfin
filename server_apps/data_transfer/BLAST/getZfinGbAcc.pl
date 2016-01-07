@@ -47,11 +47,15 @@ my $sql_xpat ="
 create temp table tmp_xpatmrkr_zdb_id_list (t_xgl_mrkr_zdb_id	varchar(50) )with no log;
 
 insert into tmp_xpatmrkr_zdb_id_list 
-     select distinct xpatex_gene_zdb_id 
-       from expression_experiment, marker 
-      where xpatex_gene_zdb_id =  mrkr_zdb_id
-        and mrkr_name[1,8] <> \"microRNA\"
-        and exists (select xpatres_zdb_id from expression_result where xpatres_xpatex_zdb_id = xpatex_zdb_id);
+     select distinct xpatex_gene_zdb_id
+            from expression_experiment2, marker
+           where xpatex_gene_zdb_id =  mrkr_zdb_id
+             and mrkr_name[1,8] <> \"microRNA\"
+             and exists (
+               select xpatres_pk_id from expression_result2, expression_figure_stage
+               where xpatres_efs_id = efs_pk_id
+               and efs_xpatex_zdb_id = xpatex_zdb_id
+             );
 
 insert into tmp_xpatmrkr_zdb_id_list 
      select distinct mrel_mrkr_2_zdb_id 

@@ -14,7 +14,17 @@ import java.util.Set;
  */
 public class ExpressionResult implements Comparable<ExpressionResult> {
 
-    private String zdbID;
+
+    private long xpatresID;
+
+    public long getXpatresID() {
+        return xpatresID;
+    }
+
+    public void setXpatresID(long xpatresID) {
+        this.xpatresID = xpatresID;
+    }
+
     private boolean expressionFound;
     private DevelopmentStage startStage;
     private DevelopmentStage endStage;
@@ -25,13 +35,7 @@ public class ExpressionResult implements Comparable<ExpressionResult> {
     protected PostComposedEntity entity;
     private String comment;
 
-    public String getZdbID() {
-        return zdbID;
-    }
 
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
 
     public boolean isExpressionFound() {
         return expressionFound;

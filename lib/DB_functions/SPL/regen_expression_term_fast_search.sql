@@ -80,7 +80,7 @@ Create dba function regen_expression_term_fast_search()
 
     let errorHint = "create xpatfs_temp";
     create table xpatfs_temp (etfs_pk_id serial8 ,
-    	   	 	      etfs_xpatres_zdb_id varchar(50),
+    	   	 	      etfs_xpatres_zdb_id int8,
 			      etfs_term_zdb_id varchar(50) ,
 			      etfs_created_date datetime year to second default current year to second,
 			      etfs_is_xpatres_term boolean default 'f' 
@@ -184,10 +184,11 @@ Create dba function regen_expression_term_fast_search()
 	
 	insert into xpatfs_working (etfs_xpatres_zdb_id, etfs_term_zdb_id)
 	       select xpatres_zdb_id, alltermcon_container_zdb_id 
-	         from expression_result, all_term_contains, expression_experiment, fish, fish_Experiment, genotype
+	         from expression_result2, all_term_contains, expression_experiment2, fish, fish_Experiment, genotype
 	         where xpatres_expression_found = 't'
 	       	     and alltermcon_contained_zdb_id = xpatres_superterm_Zdb_id 
-	       	     and xpatex_zdb_id = xpatres_xpatex_zdb_id
+	       	     and xpatex_zdb_id = efs_xpatex_zdb_id
+		     and efs_pk_id = xpatres_efs_id
 	       	     and xpatex_atb_zdb_id is not null
 	       	     and genox_zdb_id = xpatex_genox_zdb_id 
 	       	     and genox_is_std_or_generic_control = 't'
@@ -200,10 +201,11 @@ Create dba function regen_expression_term_fast_search()
 
         insert into xpatfs_working (etfs_xpatres_zdb_id, etfs_term_zdb_id)
 	       select xpatres_zdb_id, alltermcon_container_zdb_id
-	         from expression_result, all_term_contains, expression_experiment, fish, fish_Experiment, genotype
+	         from expression_result2, all_term_contains, expression_experiment2, fish, fish_Experiment, genotype
 	         where xpatres_expression_found = 't'
 	       	     and alltermcon_contained_zdb_id = xpatres_subterm_Zdb_id
-	       	     and xpatex_zdb_id = xpatres_xpatex_zdb_id
+	       	     and xpatex_zdb_id = efs_xpatex_zdb_id
+		     and efs_pk_id = xpatres_efs_id
 	       	     and xpatex_atb_zdb_id is not null
 	       	     and genox_zdb_id = xpatex_genox_zdb_id
 	       	     and genox_is_std_or_generic_control = 't'
@@ -215,12 +217,12 @@ Create dba function regen_expression_term_fast_search()
 
     	  update xpatfs_working
   	       set etfs_is_xpatres_term = 't'
- 	       where exists (select 'x' from expression_result where xpatres_superterm_zdb_id = etfs_term_zdb_id
+ 	       where exists (select 'x' from expression_result2 where xpatres_superterm_zdb_id = etfs_term_zdb_id
 	       	     	     and  etfs_xpatres_zdb_id =  xpatres_zdb_id);
 
 	  update xpatfs_working
   	       set etfs_is_xpatres_term = 't'
- 	       where exists (select 'x' from expression_result where xpatres_subterm_zdb_id = etfs_term_zdb_id
+ 	       where exists (select 'x' from expression_result2 where xpatres_subterm_zdb_id = etfs_term_zdb_id
 	       	     	     and  etfs_xpatres_zdb_id =  xpatres_zdb_id);
       
 	 let errorHint = "rename table xpatfs_new";

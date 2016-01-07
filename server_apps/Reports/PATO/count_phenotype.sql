@@ -263,18 +263,18 @@ select distinct fmrel_mrkr_zdb_id
 union
   select distinct fmrel_mrkr_zdb_id
    from feature_marker_relationship, feature, genotype_feature,
-        fish, fish_experiment, expression_experiment,
-        expression_result, expression_pattern_figure,
+        fish, fish_experiment, expression_experiment2,
+        expression_result2, expression_figure_stage,
         figure, image
-        where feature_zdb_id = fmrel_ftr_zdb_id                                                        
+        where feature_zdb_id = fmrel_ftr_zdb_id
         and feature_type = "TRANSGENIC_INSERTION"
         and feature_zdb_id = genofeat_feature_zdb_id
         and fish_genotype_zdb_id = genofeat_geno_zdb_id
         and genox_fish_zdb_id = fish_Zdb_id
         and xpatex_genox_zdb_id = genox_zdb_id
-        and xpatex_zdb_id = xpatres_xpatex_zdb_id
-        and xpatres_zdb_id = xpatfig_xpatres_zdb_id
-        and xpatfig_fig_zdb_id = fig_Zdb_id
+        and xpatex_zdb_id = efs_xpatex_zdb_id
+        and xpatres_efs_id = efs_pk_id
+        and efs_fig_zdb_id = fig_Zdb_id
         and fig_zdb_id = img_fig_zdb_id
         and img_image is not null
 into temp tmp_distinct_genes_with_images_trans;
@@ -324,12 +324,12 @@ select count(phenos_pk_id)
 !echo "number of genes with expression images" ;
 
 select count(distinct xpatex_gene_zdb_id)
-	from expression_Experiment,
-	expression_result,
-	expression_pattern_figure, figure, image
-	where xpatex_zdb_id = xpatres_xpatex_zdb_id
-	and xpatres_zdb_id = xpatfig_xpatres_zdb_id
-	and xpatfig_fig_zdb_id = fig_Zdb_id
+	from expression_experiment2,
+	expression_result2,
+	expression_figure_stage, figure, image
+	where xpatex_zdb_id = efs_xpatex_zdb_id
+	and xpatres_efs_id = efs_pk_id
+	and efs_fig_zdb_id = fig_Zdb_id
 	and fig_zdb_id = img_fig_zdb_id
 	and img_image is not null;
 
@@ -351,11 +351,11 @@ select distinct fmrel_mrkr_zdb_id
  and img_image is not null
 union
   select distinct xpatex_gene_zdb_id
-    from expression_Experiment, expression_result,expression_pattern_figure, figure, image,
+      from expression_experiment2, expression_result2, expression_figure_stage, figure, image,
          fish_experiment,fish, genotype_feature, feature
-      where xpatex_zdb_id = xpatres_xpatex_zdb_id
-        and xpatres_zdb_id = xpatfig_xpatres_zdb_id
-        and xpatfig_fig_zdb_id = fig_Zdb_id
+      where xpatex_zdb_id = efs_xpatex_zdb_id
+        and xpatres_efs_id = efs_pk_id
+        and efs_fig_zdb_id = fig_Zdb_id
         and fig_zdb_id = img_fig_zdb_id
         and img_image is not null
         and xpatex_genox_zdb_id = genox_zdb_id
@@ -365,11 +365,10 @@ union
         and feature_type != "TRANSGENIC_INSERTION"
 union
   select distinct xpatex_gene_zdb_id
-    from expression_Experiment,
-        expression_result,expression_pattern_figure, figure, image
-      where xpatex_zdb_id = xpatres_xpatex_zdb_id
-        and xpatres_zdb_id = xpatfig_xpatres_zdb_id
-        and xpatfig_fig_zdb_id = fig_Zdb_id
+    from expression_experiment2, expression_result2, expression_figure_stage, figure, image
+      where xpatex_zdb_id = efs_xpatex_zdb_id
+        and xpatres_efs_id = efs_pk_id
+        and efs_fig_zdb_id = fig_Zdb_id
         and fig_zdb_id = img_fig_zdb_id
         and img_image is not null
 into temp tmp_distinct_genes_with_images;

@@ -135,7 +135,7 @@ public class OntologyTermFigureStageUpdate extends AbstractScriptWrapper {
 
     private List<String> getStringsPerRow(ExpressionResult result) {
         List<String> row = new ArrayList<String>(10);
-        row.add(result.getZdbID());
+//TODO        row.add(result.getZdbID());
         row.add(result.getSuperTerm().getOboID());
         row.add(result.getSuperTerm().getTermName());
         row.add(result.getStartStage().getAbbreviation());

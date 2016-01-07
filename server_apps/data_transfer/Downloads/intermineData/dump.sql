@@ -146,14 +146,13 @@ select source_id, target_id from int_person_pub;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_expression/2xpatres.txt"
  select res.*, anat.term_ont_id, a.stg_obo_id, b.stg_obo_id,xpatex.*, xpatfig.*,termt.term_ont_id, fish_zdb_id, genox_exp_zdb_id
- 	  
-  from expression_experiment xpatex,expression_pattern_figure xpatfig, expression_result res, stage a, stage b, term anat, outer term termt,fish_experiment,fish
+  from expression_experiment2 xpatex, expression_figure_stage xpatfig, expression_result2 res, stage a, stage b, term anat, outer term termt,fish_experiment,fish
   where res.xpatres_superterm_zdb_id = anat.term_zdb_id
   and res.xpatres_subterm_zdb_id = termt.term_zdb_id
-  and res.xpatres_start_stg_zdb_id = a.stg_zdb_id
-  and res.xpatres_end_stg_zdb_id = b.stg_zdb_id
-  and xpatex.xpatex_zdb_id = res.xpatres_xpatex_zdb_id
-  and res.xpatres_zdb_id = xpatfig.xpatfig_xpatres_zdb_id
+  and xpatfig.efs_start_stg_zdb_id = a.stg_zdb_id
+  and xpatfig.efs_end_stg_zdb_id = b.stg_zdb_id
+  and res.xpatres_efs_id = xpatfig.efs_pk_id
+  and xpatfig.efs_xpatex_zdb_id = xpatex.xpatex_zdb_id
   and genox_zdb_id = xpatex_genox_zdb_id
   and fish_zdb_id = genox_fish_zdb_id;
 

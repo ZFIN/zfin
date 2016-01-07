@@ -209,13 +209,28 @@
 
     </class>
 
+    <class name="org.zfin.expression.CleanExpFastSrch" table="clean_expression_fast_search">
+        <id name="id" type="long" column="cefs_pk_id"/>
+
+            <many-to-one name="gene" column="cefs_mrkr_Zdb_id" class="org.zfin.marker.Marker"/>
+            <many-to-one name="fishExperiment" column="cefs_genox_zdb_id" class="org.zfin.mutant.FishExperiment"/>
+
+
+
+    </class>
+
+
     <class name="org.zfin.expression.ExpressionResult" table="expression_result">
-        <id name="zdbID" type="string">
+        <!--<id name="zdbID" type="string">
             <column name="xpatres_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
                 <param name="type">XPATRES</param>
                 <param name="insertActiveData">true</param>
             </generator>
+        </id>-->
+        <id name="xpatresID" type="long">
+            <column name="xpatres_zdb_id" not-null="true"/>
+            <generator class="identity"/>
         </id>
 
         <property name="expressionFound" column="xpatres_expression_found"/>
@@ -294,10 +309,14 @@
         </id>
 
         <property name="date" column="xpatinf_date"/>
+        <property name="tag" column="xpatinf_tag"/>
+        <property name="expressionFound" column="xpatinf_expression_found"/>
+
         <many-to-one name="publication" column="xpatinf_pub_zdb_id"/>
         <many-to-one name="person" column="xpatinf_curator_zdb_id"/>
         <many-to-one name="superterm" column="xpatinf_superterm_zdb_id"/>
         <many-to-one name="subterm" column="xpatinf_subterm_zdb_id"/>
+        <many-to-one name="eapQualityTerm" column="xpatinf_quality_term_zdb_id"/>
     </class>
 
     <class name="org.zfin.expression.presentation.ExpressionTermFastSearch" table="expression_term_fast_search">

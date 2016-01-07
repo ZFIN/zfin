@@ -116,7 +116,7 @@ STAGE_STATS  = create_stg_name_ext.sql create_stg_name_long.sql \
 	       p_stg_hours_consistent.sql p_fimg_overlaps_stg_window.sql \
 	       p_check_anatrel_stg_consistent.sql \
 	       p_check_anat_anatrel_stg_consistent.sql
-ANAT_STATS = create_anatomy_relationship_list.sql xpat_annot_adjust.sql \
+ANAT_STATS = create_anatomy_relationship_list.sql \
 	get_entity_name_html.sql get_postcomposed_term_html.sql \
 	get_phenotype_link_html.sql get_phenotype_popup_link_html.sql \
 	get_phenotype_statement_text.sql

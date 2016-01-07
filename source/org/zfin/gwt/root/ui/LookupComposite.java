@@ -412,7 +412,7 @@ public class LookupComposite extends Composite implements Revertible {
                 }
             });
         }
-        setToSingleOntologySelection(text);
+        //setToSingleOntologySelection(text);
         unsetUnValidatedTextMarkup();
     }
 

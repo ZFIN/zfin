@@ -17,6 +17,25 @@ public class ExpressionStructure extends PostComposedEntity {
     private Person person;
     private Publication publication;
     private Date date;
+    private GenericTerm eapQualityTerm;
+    private String tag;
+    private boolean expressionFound = true;
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public GenericTerm getEapQualityTerm() {
+        return eapQualityTerm;
+    }
+
+    public void setEapQualityTerm(GenericTerm eapQualityTerm) {
+        this.eapQualityTerm = eapQualityTerm;
+    }
 
     public String getZdbID() {
         return zdbID;
@@ -50,7 +69,15 @@ public class ExpressionStructure extends PostComposedEntity {
         this.date = date;
     }
 
-/*
+    public boolean isExpressionFound() {
+        return expressionFound;
+    }
+
+    public void setExpressionFound(boolean expressionFound) {
+        this.expressionFound = expressionFound;
+    }
+
+    /*
     public int compareTo(ExpressionStructure o) {
         if (!(o instanceof ExpressionStructure))
             throw new RuntimeException("Comparable class not of type PhenotypeStructure");
@@ -88,5 +115,9 @@ public class ExpressionStructure extends PostComposedEntity {
         return result;
     }
 */
+
+    public boolean isEap() {
+        return eapQualityTerm != null;
+    }
 
 }
