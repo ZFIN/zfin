@@ -65,6 +65,10 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         retrieveExperiments();
     }
 
+    public void notifyAddedExpression() {
+        view.notifyAddedExpression();
+    }
+
     private class ErrorMessageCleanupListener implements ChangeHandler {
 
         public void onChange(ChangeEvent event) {

@@ -4,11 +4,13 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Widget;
+import org.zfin.gwt.curation.event.AddExpressionExperimentEvent;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.RetrieveStageSelectorCallback;
 import org.zfin.gwt.root.ui.SessionSaveService;
 import org.zfin.gwt.root.ui.SessionSaveServiceAsync;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.*;
@@ -340,11 +342,11 @@ public class ExpressionZonePresenter implements Presenter {
             Collections.sort(displayedExpressions);
             view.getDisplayTable().createExpressionTable();
             recordAllExpressedTerms();
-////            addButtonInProgress = false;
+            addButtonInProgress = false;
             view.addButton.setEnabled(true);
             clearErrorMessages();
             view.stageSelector.resetGui();
-///            experimentSection.notifyAddedExpression();
+            AppUtils.EVENT_BUS.fireEvent(new AddExpressionExperimentEvent());
             view.loadingImage.setVisible(false);
         }
 
