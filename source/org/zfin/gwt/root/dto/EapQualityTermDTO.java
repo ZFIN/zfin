@@ -69,4 +69,23 @@ public class EapQualityTermDTO implements Serializable, Comparable<EapQualityTer
         List<String> list = new ArrayList<>(nicknameMap.values());
         return list.indexOf(o.getNickName()) - list.indexOf(nickName);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EapQualityTermDTO that = (EapQualityTermDTO) o;
+
+        if (!term.equals(that.term)) return false;
+        return tag.equals(that.tag);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = term.hashCode();
+        result = 31 * result + tag.hashCode();
+        return result;
+    }
 }

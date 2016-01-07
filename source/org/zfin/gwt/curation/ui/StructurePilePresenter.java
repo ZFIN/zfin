@@ -13,7 +13,6 @@ import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.CollectionUtils;
 import org.zfin.gwt.root.util.StageRangeIntersectionService;
-import org.zfin.gwt.root.util.StageRangeUnion;
 
 import java.util.*;
 
@@ -28,6 +27,10 @@ public class StructurePilePresenter implements Presenter {
     private Map<CheckBox, EapQualityTermDTO> checkBoxMap = new HashMap<>();
     private boolean processing = false;
     private static final String UNSPECIFIED = "unspecified";
+    // selected records in the expression zone.
+    // need to keep track of them as we have to re-fresh the pile while
+    // keeping the info about selections...
+    private List<ExpressionFigureStageDTO> selectedExpressions;
 
     // all expressions displayed on the page (all or a subset defined by the filter elements)
     private List<ExpressionPileStructureDTO> displayedStructures = new ArrayList<ExpressionPileStructureDTO>(10);
@@ -96,6 +99,7 @@ public class StructurePilePresenter implements Presenter {
             return;
         for (ExpressionPileStructureDTO dto : pileStructure)
             onPileStructureCreation(dto);
+        refreshFigureAnnotations();
     }
 
     /**
@@ -149,17 +153,26 @@ public class StructurePilePresenter implements Presenter {
         return dto;
     }
 
+    /**
+     * Inject the selected expression records in the expression section to
+     * bold-face and set the configuration in the table of the pile.
+     *
+     * @param selectedExpressions
+     */
     public void updateFigureAnnotations(List<ExpressionFigureStageDTO> selectedExpressions) {
         if (selectedExpressions == null)
             return;
+        this.selectedExpressions = selectedExpressions;
+        refreshFigureAnnotations();
+    }
 
+    public void refreshFigureAnnotations() {
         List<ExpressedTermDTO> intersectionOfStructures = createIntersectionOfStructures(selectedExpressions);
         selectUnselectStructuresOnPile(intersectionOfStructures);
-        StageRangeUnion stageUnion = new StageRangeUnion(selectedExpressions);
         StageRangeIntersectionService stageIntersection = new StageRangeIntersectionService(selectedExpressions);
         view.getStructurePileTable().markOverlappingStructures(stageIntersection);
-
     }
+
 
     /**
      * Select or un-select the structure on the pile.
@@ -175,13 +188,13 @@ public class StructurePilePresenter implements Presenter {
 
 
     private List<ExpressedTermDTO> createIntersectionOfStructures(Collection<ExpressionFigureStageDTO> figureAnnotations) {
-        List<ExpressedTermDTO> intersectionOfStructures = new ArrayList<ExpressedTermDTO>(figureAnnotations.size());
+        List<ExpressedTermDTO> intersectionOfStructures = new ArrayList<>(figureAnnotations.size());
         int index = 0;
         for (ExpressionFigureStageDTO figureAnnotation : figureAnnotations) {
             if (index == 0)
-                intersectionOfStructures.addAll(figureAnnotation.getExpressedTerms());
+                intersectionOfStructures.addAll(figureAnnotation.getUniqueExpressedTerms());
             else {
-                intersectionOfStructures = (List<ExpressedTermDTO>) CollectionUtils.intersection(intersectionOfStructures, figureAnnotation.getExpressedTerms());
+                intersectionOfStructures = (List<ExpressedTermDTO>) CollectionUtils.intersection(intersectionOfStructures, figureAnnotation.getUniqueExpressedTerms());
             }
             index++;
         }
@@ -232,8 +245,8 @@ public class StructurePilePresenter implements Presenter {
             displayedStructures.remove(structure);
             // recreate table to update the correct striping
             view.getStructurePileTable().removeStructure(structure);
-            //updateFigureAnnotations(expressionSection.getSelectedExpressions());
-            ///loadingImage.setVisible(false);
+            refreshFigureAnnotations();
+            view.loadingImage.setVisible(false);
             clearErrorMessages();
         }
 
