@@ -2,6 +2,7 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RadioButton;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
@@ -113,16 +114,38 @@ public class StructurePilePresenter implements Presenter {
     }
 
     protected void updateStructures() {
-        UpdateExpressionDTO updateEntity = getSelectedStructures();
+        UpdateExpressionDTO<PileStructureAnnotationDTO, ExpressionFigureStageDTO> updateEntity = getSelectedStructures();
+/* implementation to be done. For now the server is checking that EaPs cannot be added to wildtype / standard fish...
+        if (addEapToWildType(updateEntity)) {
+            setError("Cannot add an EaP to a wildtype fish");
+            view.getLoadingImage().setVisible(false);
+            return;
+        }
+*/
         List<ExpressionFigureStageDTO> efs = view.getStructurePileTable().getExpressionZoneView().getSelectedExpressions();
         updateEntity.setFigureAnnotations(efs);
         curationRPCAsync.updateStructuresForExpression(updateEntity, new UpdateExpressionCallback());
 
     }
 
-    private UpdateExpressionDTO getSelectedStructures() {
+    private boolean addEapToWildType(UpdateExpressionDTO<PileStructureAnnotationDTO, ExpressionFigureStageDTO> updateEntity) {
+        if (updateEntity == null)
+            return false;
+        for (PileStructureAnnotationDTO dto : updateEntity.getStructures()) {
+            if (dto.getAction() == PileStructureAnnotationDTO.Action.ADD) {
+                for (ExpressionFigureStageDTO figureStage : updateEntity.getFigureAnnotations()) {
+                    if (figureStage.getExperiment().isWildtype())
+                        return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private UpdateExpressionDTO<PileStructureAnnotationDTO, ExpressionFigureStageDTO> getSelectedStructures() {
         Set<Integer> keys = view.getStructurePileTable().getDisplayTableMap().keySet();
-        UpdateExpressionDTO dto = new UpdateExpressionDTO();
+        UpdateExpressionDTO<PileStructureAnnotationDTO, ExpressionFigureStageDTO> dto = new UpdateExpressionDTO<>();
         for (Integer row : keys) {
             RadioButton add = view.getStructurePileTable().getAddRadioButton(row);
             RadioButton remove = view.getStructurePileTable().getRemoveRadioButton(row);

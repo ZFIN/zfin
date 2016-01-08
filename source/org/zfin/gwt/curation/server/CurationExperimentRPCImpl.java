@@ -928,6 +928,8 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
                     // add expression if marked as such
                     if (pileStructure.getAction() == PileStructureAnnotationDTO.Action.ADD) {
                         ExpressedTermDTO expTerm = addExpressionToAnnotation(experiment, expressionStructure, pileStructure.isExpressed());
+                        if(experiment.getExpressionExperiment().isWildtype() && expTerm != null && expTerm.isEap())
+                            throw new ValidationException("Cannot add an EaP annotation to a wildtype / standard fish");
                         if (expTerm != null) {
                             dto.addExpressedTerm(expTerm);
                             updatedAnnotations.add(dto);
