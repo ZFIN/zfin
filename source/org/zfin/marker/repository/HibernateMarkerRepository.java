@@ -3033,6 +3033,18 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
         logger.error("note not found with zdbID: " + note.getZdbID());
     }
+   public int getCrisprCount(String geneAbbrev) {
+        Session session = currentSession();
+        String hql = "select rel.firstMarker from MarkerRelationship as rel  " +
+                "where rel.secondMarker.zdbID = :geneAbbrev and rel.type = :type " +
+                "and rel.firstMarker.markerType like '%CRISPR%'  order by rel.secondMarker.abbreviationOrder";
+        Query query = session.createQuery(hql);
+        query.setParameter("geneAbbrev", geneAbbrev);
+        query.setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+
+        List<Marker> targetGenes = (List<Marker>) query.list();
+        return targetGenes.size();
+    }
 
 }
 

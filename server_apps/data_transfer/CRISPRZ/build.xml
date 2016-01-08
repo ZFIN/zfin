@@ -1,0 +1,49 @@
+<project name="crispr load" basedir=".">
+
+    <property name="root.dir" value="${basedir}/../../../"/>
+    <property name="web.dir" value="${root.dir}/home"/>
+    <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
+    <property name="classbin.dir" value="${web-inf.dir}/classes"/>
+    <property name="lib" value="${root.dir}/lib/Java"/>
+    <property name="web.lib" value="${web-inf.dir}/lib"/>
+    <property name="log.dir" value="${basedir}/logs"/>
+
+    <property environment="env"/>
+
+    <!-- Classpath definitions -->
+    <path id="classpath">
+        <pathelement location="${classbin.dir}"/>
+        <fileset dir="${web.lib}">
+            <exclude name="*validation*.jar"/>
+<!--
+            <exclude name="*commons-validator*.jar"/>
+            <exclude name="*hibernate-validator*.jar"/>
+            <exclude name="*validation-api*.jar"/>
+-->
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${env.SOURCEROOT}/lib/Java">
+            <include name="*jdbc*.jar"/>
+            <include name="*csv*.jar"/>
+        </fileset>
+
+    </path>
+
+    <taskdef name="groovy"
+             classname="org.codehaus.groovy.ant.Groovy"
+             classpathref="classpath"/>
+
+
+
+    <target name="loadCrisprCommit">
+        <groovy src="LoadCRISPRz.groovy"/>
+    </target>
+
+    <target name="loadCrisprRollback">
+        <groovy src="LoadCRISPRz.groovy">
+            <arg value="--rollback"/>
+        </groovy>
+    </target>
+
+
+</project>

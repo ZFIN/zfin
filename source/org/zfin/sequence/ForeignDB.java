@@ -143,7 +143,8 @@ public class ForeignDB implements Comparable<ForeignDB> {
         WIKIPEDIA("Wikipedia"),
         UBERON("UBERON"),
         ISBN("ISBN"),
-        ZMP("ZMP");
+        ZMP("ZMP"),
+        CRISPRZ("CRISPRz");
 
 
         private final String value;
