@@ -24,27 +24,11 @@ public class FxCurationPresenter implements Presenter {
     private String publicationID;
     private List<EapQualityTermDTO> fullQualityList = new ArrayList<>();
     private Map<CheckBox, EapQualityTermDTO> checkBoxMap = new HashMap<>();
-    private boolean processing = false;
 
     public FxCurationPresenter(ConstructionZoneModule view, String publicationID) {
         this.view = view;
         this.publicationID = publicationID;
     }
-
-    public void bind() {
-        addDynamicClickHandler();
-    }
-
-    List<CheckBox> checkBoxList;
-
-    private void addDynamicClickHandler() {
-        checkBoxList = view.getQualityCheckBoxList();
-
-        for (CheckBox checkBox : checkBoxList) {
-        }
-
-    }
-
 
     @Override
     public void go() {
@@ -157,13 +141,11 @@ public class FxCurationPresenter implements Presenter {
             int index = 0;
             for (CheckBox box : view.getQualityCheckBoxList())
                 checkBoxMap.put(box, qualityTermDTOList.get(index++));
-            processing = false;
         }
 
         @Override
         public void onFailure(Throwable throwable) {
             super.onFailure(throwable);
-            processing = false;
         }
     }
 

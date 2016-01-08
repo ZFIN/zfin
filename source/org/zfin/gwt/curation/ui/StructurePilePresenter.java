@@ -2,13 +2,13 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.RadioButton;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
-import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.dto.ExpressedTermDTO;
+import org.zfin.gwt.root.dto.ExpressionFigureStageDTO;
+import org.zfin.gwt.root.dto.ExpressionPileStructureDTO;
+import org.zfin.gwt.root.dto.PileStructureAnnotationDTO;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.CollectionUtils;
@@ -23,9 +23,6 @@ public class StructurePilePresenter implements Presenter {
 
     private StructurePileView view;
     private String publicationID;
-    private List<EapQualityTermDTO> fullQualityList = new ArrayList<>();
-    private Map<CheckBox, EapQualityTermDTO> checkBoxMap = new HashMap<>();
-    private boolean processing = false;
     private static final String UNSPECIFIED = "unspecified";
     // selected records in the expression zone.
     // need to keep track of them as we have to re-fresh the pile while
@@ -33,7 +30,7 @@ public class StructurePilePresenter implements Presenter {
     private List<ExpressionFigureStageDTO> selectedExpressions;
 
     // all expressions displayed on the page (all or a subset defined by the filter elements)
-    private List<ExpressionPileStructureDTO> displayedStructures = new ArrayList<ExpressionPileStructureDTO>(10);
+    private List<ExpressionPileStructureDTO> displayedStructures = new ArrayList<>(10);
 
     private CurationExperimentRPCAsync curationRPCAsync = CurationExperimentRPC.App.getInstance();
     private PileStructuresRPCAsync pileStructureRPCAsync = PileStructuresRPC.App.getInstance();
@@ -46,7 +43,7 @@ public class StructurePilePresenter implements Presenter {
 
     public void bind() {
         view.getStructurePileTable().setRemoveStructureCallBack(new RemovePileStructureCallback());
-        view.getReCreatePile().addClickHandler(new CreateExpressionPileHandler(view.getReCreatePile()));
+        view.getReCreatePile().addClickHandler(new CreateExpressionPileHandler());
         //view.getReCreatePile().setVisible(false);
 
         addDynamicClickHandler();
@@ -90,10 +87,6 @@ public class StructurePilePresenter implements Presenter {
         clearErrorMessages();
     }
 
-    public void submitStructure() {
-        // expect only 1-2 checked normally
-    }
-
     public void onPileStructureCreation(List<ExpressionPileStructureDTO> pileStructure) {
         if (pileStructure == null)
             return;
@@ -117,10 +110,6 @@ public class StructurePilePresenter implements Presenter {
         view.getStructurePileTable().createStructureTable();
         view.getAlternateStructurePanel().setVisible(false);
         clearErrorMessages();
-    }
-
-    public void reloadPile() {
-
     }
 
     protected void updateStructures() {
@@ -157,7 +146,7 @@ public class StructurePilePresenter implements Presenter {
      * Inject the selected expression records in the expression section to
      * bold-face and set the configuration in the table of the pile.
      *
-     * @param selectedExpressions
+     * @param selectedExpressions list of ExpressionFigureStageDTO
      */
     public void updateFigureAnnotations(List<ExpressionFigureStageDTO> selectedExpressions) {
         if (selectedExpressions == null)
@@ -167,6 +156,9 @@ public class StructurePilePresenter implements Presenter {
     }
 
     public void refreshFigureAnnotations() {
+        if (selectedExpressions == null)
+            return;
+
         List<ExpressedTermDTO> intersectionOfStructures = createIntersectionOfStructures(selectedExpressions);
         selectUnselectStructuresOnPile(intersectionOfStructures);
         StageRangeIntersectionService stageIntersection = new StageRangeIntersectionService(selectedExpressions);
@@ -335,12 +327,6 @@ public class StructurePilePresenter implements Presenter {
     }
 
     private class CreateExpressionPileHandler implements ClickHandler {
-
-        private Hyperlink phenotypePile;
-
-        public CreateExpressionPileHandler(Hyperlink createPhenotypePile) {
-            phenotypePile = createPhenotypePile;
-        }
 
         public void onClick(ClickEvent clickEvent) {
             view.getLoadingImage().setVisible(true);

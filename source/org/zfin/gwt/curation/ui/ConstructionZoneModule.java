@@ -189,14 +189,6 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
         return termEntryUnitsMap.get(entityPart);
     }
 
-    private EntityPart getPostComposedPart(TermEntry termEntry) {
-        for (EntityPart part : termEntryUnitsMap.keySet()) {
-            if (termEntryUnitsMap.get(part).equals(termEntry))
-                return part;
-        }
-        return null;
-    }
-
     /**
      * This method takes an ExpressedTermDTO and pre-populates the construction
      * zone with the given entities. The EntityPart defines which part
