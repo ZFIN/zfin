@@ -16,6 +16,7 @@ import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.sequence.STRMarkerSequence;
 
 import javax.validation.Valid;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/str")
@@ -55,18 +56,19 @@ public class StrDetailsController {
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
 
-        if (!bean.getName().equals(str.getName())) {
+        if (!Objects.equals(bean.getName(), str.getName())) {
             infrastructureRepository.insertUpdatesTable(str.getZdbID(), "name", str.getName(), bean.getName(), "");
             str.setName(bean.getName());
             str.setAbbreviation(bean.getName());
         }
 
-        if (!bean.getSequence1().equals(sequence.getSequence())) {
+        if (!Objects.equals(bean.getSequence1(), sequence.getSequence())) {
             infrastructureRepository.insertUpdatesTable(str.getZdbID(), "sequence", sequence.getSequence(), bean.getSequence1(), "");
             sequence.setSequence(bean.getSequence1());
         }
 
-        if (!bean.getSequence2().equals(sequence.getSecondSequence())) {
+        // use Objects.equals here because sequence2 may be null
+        if (!Objects.equals(bean.getSequence2(), sequence.getSecondSequence())) {
             infrastructureRepository.insertUpdatesTable(str.getZdbID(), "second sequence", sequence.getSecondSequence(), bean.getSequence2(), "");
             sequence.setSecondSequence(bean.getSequence2());
         }

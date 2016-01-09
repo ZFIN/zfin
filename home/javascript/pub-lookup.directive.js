@@ -49,8 +49,13 @@
 
             ngModel.$viewChangeListeners.push(function () {
                 var value = ngModel.$viewValue;
+                var zdbPub = /zdb-pub-/i;
                 if (value && value.match(/^\d/)) {
                     ngModel.$setViewValue('ZDB-PUB-' + value);
+                    ngModel.$render();
+                }
+                if (value && value.match(zdbPub)) {
+                    ngModel.$setViewValue(value.replace(zdbPub, 'ZDB-PUB-'));
                     ngModel.$render();
                 }
             });
