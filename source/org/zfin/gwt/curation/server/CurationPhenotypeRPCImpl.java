@@ -5,6 +5,8 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.zfin.expression.ExpressionResult2;
+import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
 import org.zfin.gwt.curation.ui.CurationPhenotypeRPC;
@@ -28,6 +30,14 @@ import static org.zfin.repository.RepositoryFactory.*;
 public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implements CurationPhenotypeRPC {
 
     private static final Logger logger = Logger.getLogger(CurationPhenotypeRPCImpl.class);
+
+    public List<ExpressionPhenotypeExperimentDTO> getPhenotypeFromExpressionsByFilter(ExperimentDTO experimentFilter, String figureID) {
+        List<ExpressionResult2> expressionResultList = getExpressionRepository().getPhenotypeFromExpressionsByFigureFish(experimentFilter.getPublicationID(),
+                figureID, experimentFilter.getFishID(), experimentFilter.getFeatureID());
+        List<ExpressionPhenotypeExperimentDTO> phenotypeList = ExpressionService.createPhenotypeFromExpressions(expressionResultList);
+        Collections.sort(phenotypeList);
+        return phenotypeList;
+    }
 
     public List<PhenotypeExperimentDTO> getExpressionsByFilter(ExperimentDTO experimentFilter, String figureID) {
 
@@ -180,16 +190,16 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
             tx.rollback();
             throw e;
         }
-	// tx = HibernateUtil.currentSession().beginTransaction();
-	//  try{
-	//     for (PhenotypeExperiment phenotypeExperiment : phenotypeExperimentsToRunRegen) {
-	//         getPhenotypeRepository().runRegenGenotypeFigureScript(phenotypeExperiment);
-	//     }
+        // tx = HibernateUtil.currentSession().beginTransaction();
+        //  try{
+        //     for (PhenotypeExperiment phenotypeExperiment : phenotypeExperimentsToRunRegen) {
+        //         getPhenotypeRepository().runRegenGenotypeFigureScript(phenotypeExperiment);
+        //     }
         //    tx.commit();
-	//  } catch (Exception e) {
-	//     logger.warn("Regen function execution failed.", e);
-	//     tx.rollback();
-	//  }
+        //  } catch (Exception e) {
+        //     logger.warn("Regen function execution failed.", e);
+        //     tx.rollback();
+        //  }
         loggingUtil.logDuration("Duration of updateStructuresForExpression() method: ");
         return updatedAnnotations;
     }

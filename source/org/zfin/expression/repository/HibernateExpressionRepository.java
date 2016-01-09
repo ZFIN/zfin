@@ -27,8 +27,8 @@ import org.zfin.marker.Clone;
 import org.zfin.marker.Gene;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.Genotype;
 import org.zfin.mutant.FishExperiment;
+import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -42,16 +42,13 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.TermFigureStageRange;
 
-import java.math.BigInteger;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Repository that is used for curation actions, such as dealing with expression experiments.
@@ -2003,6 +2000,26 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public void createExpressionFigureStage(ExpressionFigureStage expressionFigureStage) {
         Session session = HibernateUtil.currentSession();
         session.save(expressionFigureStage);
+    }
+
+    @Override
+    public List<ExpressionResult2> getPhenotypeFromExpressionsByFigureFish(String publicationID, String figureID, String fishID, String featureID) {
+        String hql = "select result from ExpressionResult2 result " +
+                "     where result.expressionFigureStage.expressionExperiment.publication.zdbID = :pubID " +
+                "     and result.phenotypeTermSet IS NOT EMPTY ";
+        if (StringUtils.isNotEmpty(figureID))
+            hql += "     and result.expressionFigureStage.figure.zdbID = :figID ";
+        if (StringUtils.isNotEmpty(fishID))
+            hql += "     and result.expressionFigureStage.expressionExperiment.fishExperiment.fish.zdbID = :fishID ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setString("pubID", publicationID);
+        if (StringUtils.isNotEmpty(figureID))
+            query.setString("figID", figureID);
+        if (StringUtils.isNotEmpty(fishID))
+            query.setString("fishID", fishID);
+
+        return (List<ExpressionResult2>) query.list();
     }
 
 }
