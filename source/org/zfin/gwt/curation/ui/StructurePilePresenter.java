@@ -76,15 +76,15 @@ public class StructurePilePresenter implements Presenter {
     }
 
     public void setError(String message) {
-        view.getErrorElement().setText(message);
+        view.setError(message);
     }
 
     public void clearErrorMessages() {
-        view.getErrorElement().setError("");
+        view.clearError();
     }
 
     private void resetUI() {
-        view.getErrorElement().clearAllErrors();
+        view.clearErrorMessage();
         clearErrorMessages();
     }
 
@@ -176,6 +176,7 @@ public class StructurePilePresenter implements Presenter {
             return;
         this.selectedExpressions = selectedExpressions;
         refreshFigureAnnotations();
+        view.clearErrorMessage();
     }
 
     public void refreshFigureAnnotations() {
