@@ -39,11 +39,13 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
         String display = entity.getDisplayName();
         if (isEap()) {
             display += "(";
-            for (EapQualityTermDTO term : qualityTermDTOList) {
-                display += term.getNickName();
-                display += ", ";
+            if (qualityTermDTOList != null) {
+                for (EapQualityTermDTO term : qualityTermDTOList) {
+                    display += term.getNickName();
+                    display += ", ";
+                }
+                display = display.substring(0, display.length() - 2);
             }
-            display = display.substring(0, display.length() - 2);
             display += ")";
         }
         return display;
