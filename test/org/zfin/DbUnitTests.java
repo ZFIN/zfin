@@ -115,7 +115,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         MarkerRepositoryTest.class,
         MarkerServiceTest.class,
         MarkerSoapDbTest.class,
-        MergeMarkerDBTest.class,
+//       MergeMarkerDBTest.class,
 //        MicroArrayTest.class,     // Takes 1.5 min to run, but works.
         MutantRepositoryTest.class,
 //        NomenclatureCandidateControllerTest.class, // no tests
