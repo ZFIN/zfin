@@ -174,16 +174,14 @@ public class DatabaseServiceTest {
         ColumnValue columnValue = new ColumnValue(Table.FISH.getPkName(), figZdbID);
         lookup.addColumnValue(columnValue);
 
-        List<ForeignKey> foreignKeyList = createForeignKeyList(ForeignKey.FISHOX_FISH, ForeignKey.XPATEX_GENOX, ForeignKey.XPATRES_XPAT, ForeignKey.RECORD_ATTR_XPATRES);
+        List<ForeignKey> foreignKeyList = createForeignKeyList(ForeignKey.FISHOX_FISH, ForeignKey.XPATEX_GENOX, ForeignKey.XPATRES_XPAT);
         DatabaseJdbcStatement statement = DatabaseService.createJoinJdbcStatement(lookup, foreignKeyList, true);
         assertEquals("SELECT COUNT(*) FROM fish as fish_1, fish_experiment as fish_experiment_1, " +
-                "expression_experiment as expression_experiment_1, expression_result as expression_result_1, " +
-                "record_attribution as record_attribution_1 " +
+                "expression_experiment as expression_experiment_1, expression_result as expression_result_1 " +
                 "WHERE fish_1.fish_zdb_id = 'ZDB-FISH-030619-2' " +
                 "AND fish_1.fish_zdb_id = fish_experiment_1.genox_fish_zdb_id " +
                 "AND fish_experiment_1.genox_zdb_id = expression_experiment_1.xpatex_genox_zdb_id " +
-                "AND expression_experiment_1.xpatex_zdb_id = expression_result_1.xpatres_xpatex_zdb_id " +
-                "AND expression_result_1.xpatres_zdb_id = record_attribution_1.recattrib_data_zdb_id", statement.getQuery());
+                "AND expression_experiment_1.xpatex_zdb_id = expression_result_1.xpatres_xpatex_zdb_id", statement.getQuery());
 
     }
 

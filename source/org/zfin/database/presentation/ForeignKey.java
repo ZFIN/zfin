@@ -164,7 +164,6 @@ public enum ForeignKey {
     RECORD_ATTR_PUB(Table.PUBLICATION, Table.RECORD_ATTRIBUTION, "recattrib_source_zdb_id"),
     RECORD_ATTR_MARKER(Table.MARKER, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
     RECORD_ATTR_GENOX(Table.FISH_EXPERIMENT, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
-    RECORD_ATTR_XPATRES(Table.EXPRESSION_RESULT, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
     RECORD_ATTR_XPAT(Table.EXPRESSION_EXPERIMENT, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
     RECORD_ATTR_FEATURE(Table.FEATURE, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
     RECORD_ATTR_EXT_NOTE(Table.EXTERNAL_NOTE, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
