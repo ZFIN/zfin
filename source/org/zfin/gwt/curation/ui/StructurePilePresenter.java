@@ -2,7 +2,6 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RadioButton;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
@@ -271,7 +270,7 @@ public class StructurePilePresenter implements Presenter {
         }
     }
 
-    class CreatePileStructureCallback implements AsyncCallback<ExpressionPileStructureDTO> {
+    class CreatePileStructureCallback implements AsyncCallback<List<ExpressionPileStructureDTO>> {
 
         public void onFailure(Throwable throwable) {
             if (throwable instanceof PileStructureExistsException) {
@@ -280,12 +279,12 @@ public class StructurePilePresenter implements Presenter {
             view.errorElement.setError(throwable.getMessage());
         }
 
-        public void onSuccess(ExpressionPileStructureDTO pileStructure) {
+        public void onSuccess(List<ExpressionPileStructureDTO> pileStructure) {
             //Window.alert("Success");
-            displayedStructures.add(pileStructure);
+            displayedStructures.addAll(pileStructure);
             Collections.sort(displayedStructures);
             view.getStructurePileTable().createStructureTable();
-////            updateFigureAnnotations(expressionSection.getSelectedExpressions());
+            updateFigureAnnotations(selectedExpressions);
             view.alternateStructurePanel.setVisible(false);
             clearErrorMessages();
         }

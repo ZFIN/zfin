@@ -46,6 +46,9 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
                 }
                 display = display.substring(0, display.length() - 2);
             }
+            if (qualityTerm != null) {
+                display += qualityTerm.getNickName();
+            }
             display += ")";
         }
         return display;

@@ -149,7 +149,7 @@ public class FxCurationPresenter implements Presenter {
         }
     }
 
-    private class CreatePileStructureCallback implements AsyncCallback<List<ExpressionPileStructureDTO>> {
+    class CreatePileStructureCallback implements AsyncCallback<List<ExpressionPileStructureDTO>> {
 
         public void onFailure(Throwable throwable) {
             setError(throwable.getMessage());
