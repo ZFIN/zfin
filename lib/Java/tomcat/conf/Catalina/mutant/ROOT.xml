@@ -13,8 +13,7 @@ preferredTestQuery. If unhealthy, a new connection will be created.-->
  <Resource name="jdbc/zfin" auth="Container" factory="org.apache.naming.factory.BeanFactory"
            description="Database Connections" 
            type="com.mchange.v2.c3p0.ComboPooledDataSource" 
-           user="zfinner" password="Rtwm4ts"
-           driverClass="com.informix.jdbc.IfxDriver" 
+           driverClass="com.informix.jdbc.IfxDriver"
            
 jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=20;IFX_ISOLATION_LEVEL=DR;IFX_DIRTY_WAIT=10"
            maxPoolSize="8" minPoolSize="6"  
@@ -24,8 +23,7 @@ jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSER
  <Resource name="jdbc/sysmaster" auth="Container" factory="org.apache.naming.factory.BeanFactory"
            description="Database Connections" 
            type="com.mchange.v2.c3p0.ComboPooledDataSource" 
-           user="zfinner" password="Rtwm4ts"
-           driverClass="com.informix.jdbc.IfxDriver" 
+           driverClass="com.informix.jdbc.IfxDriver"
            
 jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/sysmaster:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=20;IFX_ISOLATION_LEVEL=DR"
            maxPoolSize="8" minPoolSize="2" />
