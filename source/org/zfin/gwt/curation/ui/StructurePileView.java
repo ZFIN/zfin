@@ -1,19 +1,19 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.root.dto.EntityPart;
-import org.zfin.gwt.root.ui.*;
-import org.zfin.gwt.root.util.LookupRPCService;
-import org.zfin.gwt.root.util.LookupRPCServiceAsync;
+import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.ShowHideToggle;
+import org.zfin.gwt.root.ui.SimpleErrorElement;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entry point for FX curation module.
@@ -47,14 +47,10 @@ public class StructurePileView extends Composite implements HandlesError {
     Image loadingImage;
     @UiField
     Button updateStructuresBottom;
+    @UiField
+    SimpleErrorElement errorElementTop;
 
-    private ZfinListBox tagList;
-    public static final String TAG_ABNORMAL = "abnormal";
-    public static final String TAG_NORMAL = "normal";
-    private String publicationID;
     private StructurePilePresenter structurePilePresenter;
-
-    private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
 
     public StructurePileView() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -72,6 +68,11 @@ public class StructurePileView extends Composite implements HandlesError {
         alternateStructurePanel.setVisible(false);
         loadingImage.setVisible(true);
         structurePilePresenter.updateStructures();
+    }
+
+    @UiHandler("errorElement")
+    void onChangeOfErrorMessage(@SuppressWarnings("unused") ChangeEvent event) {
+        errorElementTop.setError(errorElement.getText());
     }
 
     @UiHandler("updateStructuresBottom")
@@ -105,8 +106,14 @@ public class StructurePileView extends Composite implements HandlesError {
         return errorElement;
     }
 
-    public void setErrorElement(SimpleErrorElement errorElement) {
-        this.errorElement = errorElement;
+    public void addErrorMessage(String message) {
+        errorElement.setError(message);
+        errorElementTop.setError(message);
+    }
+
+    public void clearErrorMessage() {
+        errorElement.clearAllErrors();
+        errorElementTop.clearAllErrors();
     }
 
     public void setStructurePilePresenter(StructurePilePresenter structurePilePresenter) {

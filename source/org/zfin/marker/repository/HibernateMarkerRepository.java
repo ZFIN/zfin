@@ -445,10 +445,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public void updateMarkerPublicNote(Marker marker, String note) {
         infrastructureRepository.insertUpdatesTable(marker.getZdbID(), "public note", marker.getPublicComments(), note, "");
-
-        Session session = currentSession();
         marker.setPublicComments(note);
-        session.save(marker);
     }
 
     public DataNote addMarkerDataNote(Marker marker, String note) {
@@ -3032,6 +3029,18 @@ public class HibernateMarkerRepository implements MarkerRepository {
             }
         }
         logger.error("note not found with zdbID: " + note.getZdbID());
+    }
+   public int getCrisprCount(String geneAbbrev) {
+        Session session = currentSession();
+        String hql = "select rel.firstMarker from MarkerRelationship as rel  " +
+                "where rel.secondMarker.zdbID = :geneAbbrev and rel.type = :type " +
+                "and rel.firstMarker.markerType like '%CRISPR%'  order by rel.secondMarker.abbreviationOrder";
+        Query query = session.createQuery(hql);
+        query.setParameter("geneAbbrev", geneAbbrev);
+        query.setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+
+        List<Marker> targetGenes = (List<Marker>) query.list();
+        return targetGenes.size();
     }
 
 }

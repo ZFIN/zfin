@@ -14,6 +14,7 @@
         </g:HorizontalPanel>
         <g:VerticalPanel ui:field="structurePile" width="100%">
             <g:Button text="Update Structures for Expressions" ui:field="updateStructuresTop"/>
+            <zfin:SimpleErrorElement ui:field="errorElementTop"/>
             <g:Hyperlink text="Re-Create Structure Pile" ui:field="reCreatePile"/>
             <zfin-mod:StructureAlternateComposite ui:field="alternateStructurePanel"/>
             <zfin-mod:StructurePileTable ui:field="structurePileTable" suggestionDiv="{alternateStructurePanel}"

@@ -39,11 +39,16 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
         String display = entity.getDisplayName();
         if (isEap()) {
             display += "(";
-            for (EapQualityTermDTO term : qualityTermDTOList) {
-                display += term.getNickName();
-                display += ", ";
+            if (qualityTermDTOList != null) {
+                for (EapQualityTermDTO term : qualityTermDTOList) {
+                    display += term.getNickName();
+                    display += ", ";
+                }
+                display = display.substring(0, display.length() - 2);
             }
-            display = display.substring(0, display.length() - 2);
+            if (qualityTerm != null) {
+                display += qualityTerm.getNickName();
+            }
             display += ")";
         }
         return display;
@@ -202,7 +207,7 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
     }
 
     public boolean isEap() {
-        return qualityTermDTOList != null && qualityTermDTOList.size() > 0;
+        return (qualityTermDTOList != null && qualityTermDTOList.size() > 0) || (qualityTerm != null);
     }
 
     public boolean hasUniqueID(String id) {

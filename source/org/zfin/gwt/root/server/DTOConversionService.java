@@ -1100,7 +1100,7 @@ public class DTOConversionService {
         return dto;
     }
 
-    private static EapQualityTermDTO convertToEapQualityTermDTO(ExpressionStructure structure) {
+    public static EapQualityTermDTO convertToEapQualityTermDTO(ExpressionStructure structure) {
         EapQualityTermDTO dto = new EapQualityTermDTO();
         dto.setTerm(convertToTermDTO(structure.getEapQualityTerm()));
         dto.setTag(structure.getTag());

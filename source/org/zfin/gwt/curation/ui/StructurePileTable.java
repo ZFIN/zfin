@@ -5,13 +5,13 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StageRangeIntersectionService;
-import org.zfin.gwt.root.util.StageRangeUnion;
 import org.zfin.gwt.root.util.WidgetUtil;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ class StructurePileTable extends ZfinFlexTable {
     private HeaderName[] headerNames;
     // This maps the display table and contains the full object that each
     // row is made up from
-    private Map<Integer, ExpressionPileStructureDTO> displayTableMap = new HashMap<Integer, ExpressionPileStructureDTO>();
+    private Map<Integer, ExpressionPileStructureDTO> displayTableMap = new HashMap<>();
     // RPC class being used for this section.
     private CurationExperimentRPCAsync curationRPCAsync = CurationExperimentRPC.App.getInstance();
     private List<ExpressionPileStructureDTO> displayedStructures;
@@ -42,14 +42,6 @@ class StructurePileTable extends ZfinFlexTable {
     private AsyncCallback createStructureCallback;
     private String publicationID;
     private Enum headerEnumeration;
-
-    StructurePileTable(List<ExpressionPileStructureDTO> displayedStructures, StructureAlternateComposite suggestionDiv, ErrorHandler errorLabel) {
-        super(HeaderName.values().length, -1);
-        this.displayedStructures = displayedStructures;
-        this.suggestionBox = suggestionDiv;
-        this.headerNames = HeaderName.values();
-        this.errorElement = errorLabel;
-    }
 
     @UiConstructor
     StructurePileTable(StructureAlternateComposite suggestionDiv, ErrorHandler errorLabel) {
@@ -223,8 +215,7 @@ class StructurePileTable extends ZfinFlexTable {
         if (!add.getValue())
             return;
 
-        if (!getSelectedExpressions().isEmpty() && add.getValue()) {
-            StageRangeUnion union = new StageRangeUnion(expressionZoneView.getSelectedExpressions());
+        if (!getSelectedExpressions().isEmpty()) {
             StageRangeIntersectionService intersection = new StageRangeIntersectionService(expressionZoneView.getSelectedExpressions());
             if (!intersection.hasOverlapWithAllStageRanges(selectedPileStructure.getStart(), selectedPileStructure.getEnd())) {
                 suggestionBox.setVisible(true);
@@ -259,9 +250,7 @@ class StructurePileTable extends ZfinFlexTable {
     public void setHeaderRow() {
         int rowIndex = 0;
         for (HeaderName name : headerNames) {
-            if (name.getIndex() == 0) {
-                // do nothing
-            } else if (name.getIndex() == 1) {
+            if (name.getIndex() == 1) {
                 HTML cross = new HTML("&otimes;");
                 setWidget(rowIndex, name.index, cross);
                 WidgetUtil.addOrRemoveCssStyle(cross, WidgetUtil.RED, true);
@@ -414,16 +403,6 @@ class StructurePileTable extends ZfinFlexTable {
         StringBuilder message = new StringBuilder("'");
         message.append(expressedTerm.getDisplayName());
         message.append("' has no stage overlap with one or more of the selected expressions: ");
-/*
-        boolean isMultipleStage = intersection.getStartHours() != intersection.getEndHours();
-        message.append("[");
-        message.append(intersection.getStart().getName());
-        if (isMultipleStage) {
-            message.append(",");
-            message.append(intersection.getEnd().getName());
-        }
-        message.append("]");
-*/
         HorizontalPanel hor = new HorizontalPanel();
         Label note = new Label(message.toString());
         note.setStyleName("error");
@@ -482,7 +461,7 @@ class StructurePileTable extends ZfinFlexTable {
                 if (!newStructures.isEmpty()) {
                     ListItem itemTwo = new ListItem();
                     ul.add(itemTwo);
-                    itemTwo.add(new Label("not yet in pile, click to add:"));
+                    itemTwo.add(new Label("not yet on pile, click to add:"));
                     UnorderedList termList = new UnorderedList();
                     for (RelatedPileStructureDTO structure : newStructures) {
                         FlexTable infoTable = new FlexTable();
@@ -520,7 +499,7 @@ class StructurePileTable extends ZfinFlexTable {
         private void createListItems(UnorderedList ul, List<RelatedPileStructureDTO> existingStructures) {
             ListItem itemOne = new ListItem();
             ul.add(itemOne);
-            itemOne.add(new Label("already in  pile:"));
+            itemOne.add(new Label("already on pile:"));
             UnorderedList termList = new UnorderedList();
             for (RelatedPileStructureDTO structure : existingStructures) {
                 FlexTable infoTable = new FlexTable();
@@ -537,7 +516,7 @@ class StructurePileTable extends ZfinFlexTable {
         }
 
         private List<RelatedPileStructureDTO> getExistingStructures(List<RelatedPileStructureDTO> terms) {
-            List<RelatedPileStructureDTO> structures = new ArrayList<RelatedPileStructureDTO>();
+            List<RelatedPileStructureDTO> structures = new ArrayList<>();
             for (RelatedPileStructureDTO term : terms)
                 if (structureExistsInPile(term))
                     structures.add(term);
@@ -545,7 +524,7 @@ class StructurePileTable extends ZfinFlexTable {
         }
 
         private List<RelatedPileStructureDTO> getNewStructures(List<RelatedPileStructureDTO> terms) {
-            List<RelatedPileStructureDTO> structures = new ArrayList<RelatedPileStructureDTO>();
+            List<RelatedPileStructureDTO> structures = new ArrayList<>();
             for (RelatedPileStructureDTO term : terms)
                 if (!structureExistsInPile(term))
                     structures.add(term);
@@ -557,8 +536,9 @@ class StructurePileTable extends ZfinFlexTable {
                 return false;
 
             for (ExpressionPileStructureDTO term : getDisplayTableMap().values()) {
-                if (term.getExpressedTerm().getEntity().getSuperTerm().getTermName().equals(structure.getExpressedTerm().getEntity().getSuperTerm().getTermName()))
+                if (term.getExpressedTerm().equals(structure.getExpressedTerm())) {
                     return true;
+                }
             }
             return false;
         }

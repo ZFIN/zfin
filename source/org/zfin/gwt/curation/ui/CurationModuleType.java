@@ -9,8 +9,7 @@ public enum CurationModuleType {
     FX_CURATION {
         @Override
         public PileConstructionZoneModule initializeModule(String publicationID) {
-            FxCurationModule module = new FxCurationModule(publicationID);
-            return module.getPileConstructionZoneModule();
+            return null;
         }
     },
     PHENOTYPE_CURATION {

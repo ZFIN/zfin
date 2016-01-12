@@ -584,4 +584,15 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(resultList);
     }
 
+    @Test
+    public void getPhenotypeFromExpressions() {
+        String publicationID = "ZDB-PUB-990507-16";
+        String figureID = "ZDB-FIG-081003-3";
+        String fishID = "ZDB-FISH-150901-19447";
+        List<ExpressionResult2> expressionExperiment2s = getExpressionRepository().getPhenotypeFromExpressionsByFigureFish(publicationID, figureID, fishID, null);
+        assertNotNull(expressionExperiment2s);
+        List<ExpressionPhenotypeExperimentDTO> list = ExpressionService.createPhenotypeFromExpressions(expressionExperiment2s);
+        assertNotNull(list);
+    }
+
 }

@@ -401,4 +401,5 @@ public interface ExpressionRepository {
 
     void createExpressionFigureStage(ExpressionFigureStage experimentFigureStage);
 
+    List<ExpressionResult2> getPhenotypeFromExpressionsByFigureFish(String publicationID, String figureID, String fishID, String featureID);
 }

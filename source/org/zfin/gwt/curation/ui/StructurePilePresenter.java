@@ -2,13 +2,13 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.RadioButton;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
-import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.dto.ExpressedTermDTO;
+import org.zfin.gwt.root.dto.ExpressionFigureStageDTO;
+import org.zfin.gwt.root.dto.ExpressionPileStructureDTO;
+import org.zfin.gwt.root.dto.PileStructureAnnotationDTO;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.CollectionUtils;
@@ -23,9 +23,6 @@ public class StructurePilePresenter implements Presenter {
 
     private StructurePileView view;
     private String publicationID;
-    private List<EapQualityTermDTO> fullQualityList = new ArrayList<>();
-    private Map<CheckBox, EapQualityTermDTO> checkBoxMap = new HashMap<>();
-    private boolean processing = false;
     private static final String UNSPECIFIED = "unspecified";
     // selected records in the expression zone.
     // need to keep track of them as we have to re-fresh the pile while
@@ -33,7 +30,7 @@ public class StructurePilePresenter implements Presenter {
     private List<ExpressionFigureStageDTO> selectedExpressions;
 
     // all expressions displayed on the page (all or a subset defined by the filter elements)
-    private List<ExpressionPileStructureDTO> displayedStructures = new ArrayList<ExpressionPileStructureDTO>(10);
+    private List<ExpressionPileStructureDTO> displayedStructures = new ArrayList<>(10);
 
     private CurationExperimentRPCAsync curationRPCAsync = CurationExperimentRPC.App.getInstance();
     private PileStructuresRPCAsync pileStructureRPCAsync = PileStructuresRPC.App.getInstance();
@@ -46,7 +43,7 @@ public class StructurePilePresenter implements Presenter {
 
     public void bind() {
         view.getStructurePileTable().setRemoveStructureCallBack(new RemovePileStructureCallback());
-        view.getReCreatePile().addClickHandler(new CreateExpressionPileHandler(view.getReCreatePile()));
+        view.getReCreatePile().addClickHandler(new CreateExpressionPileHandler());
         //view.getReCreatePile().setVisible(false);
 
         addDynamicClickHandler();
@@ -78,20 +75,16 @@ public class StructurePilePresenter implements Presenter {
     }
 
     public void setError(String message) {
-        view.getErrorElement().setText(message);
+        view.setError(message);
     }
 
     public void clearErrorMessages() {
-        view.getErrorElement().setError("");
+        view.clearError();
     }
 
     private void resetUI() {
-        view.getErrorElement().clearAllErrors();
+        view.clearErrorMessage();
         clearErrorMessages();
-    }
-
-    public void submitStructure() {
-        // expect only 1-2 checked normally
     }
 
     public void onPileStructureCreation(List<ExpressionPileStructureDTO> pileStructure) {
@@ -119,21 +112,39 @@ public class StructurePilePresenter implements Presenter {
         clearErrorMessages();
     }
 
-    public void reloadPile() {
-
-    }
-
     protected void updateStructures() {
-        UpdateExpressionDTO updateEntity = getSelectedStructures();
+        UpdateExpressionDTO<PileStructureAnnotationDTO, ExpressionFigureStageDTO> updateEntity = getSelectedStructures();
+/* implementation to be done. For now the server is checking that EaPs cannot be added to wildtype / standard fish...
+        if (addEapToWildType(updateEntity)) {
+            setError("Cannot add an EaP to a wildtype fish");
+            view.getLoadingImage().setVisible(false);
+            return;
+        }
+*/
         List<ExpressionFigureStageDTO> efs = view.getStructurePileTable().getExpressionZoneView().getSelectedExpressions();
         updateEntity.setFigureAnnotations(efs);
         curationRPCAsync.updateStructuresForExpression(updateEntity, new UpdateExpressionCallback());
 
     }
 
-    private UpdateExpressionDTO getSelectedStructures() {
+    private boolean addEapToWildType(UpdateExpressionDTO<PileStructureAnnotationDTO, ExpressionFigureStageDTO> updateEntity) {
+        if (updateEntity == null)
+            return false;
+        for (PileStructureAnnotationDTO dto : updateEntity.getStructures()) {
+            if (dto.getAction() == PileStructureAnnotationDTO.Action.ADD) {
+                for (ExpressionFigureStageDTO figureStage : updateEntity.getFigureAnnotations()) {
+                    if (figureStage.getExperiment().isWildtype())
+                        return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private UpdateExpressionDTO<PileStructureAnnotationDTO, ExpressionFigureStageDTO> getSelectedStructures() {
         Set<Integer> keys = view.getStructurePileTable().getDisplayTableMap().keySet();
-        UpdateExpressionDTO dto = new UpdateExpressionDTO();
+        UpdateExpressionDTO<PileStructureAnnotationDTO, ExpressionFigureStageDTO> dto = new UpdateExpressionDTO<>();
         for (Integer row : keys) {
             RadioButton add = view.getStructurePileTable().getAddRadioButton(row);
             RadioButton remove = view.getStructurePileTable().getRemoveRadioButton(row);
@@ -157,16 +168,20 @@ public class StructurePilePresenter implements Presenter {
      * Inject the selected expression records in the expression section to
      * bold-face and set the configuration in the table of the pile.
      *
-     * @param selectedExpressions
+     * @param selectedExpressions list of ExpressionFigureStageDTO
      */
     public void updateFigureAnnotations(List<ExpressionFigureStageDTO> selectedExpressions) {
         if (selectedExpressions == null)
             return;
         this.selectedExpressions = selectedExpressions;
         refreshFigureAnnotations();
+        view.clearErrorMessage();
     }
 
     public void refreshFigureAnnotations() {
+        if (selectedExpressions == null)
+            return;
+
         List<ExpressedTermDTO> intersectionOfStructures = createIntersectionOfStructures(selectedExpressions);
         selectUnselectStructuresOnPile(intersectionOfStructures);
         StageRangeIntersectionService stageIntersection = new StageRangeIntersectionService(selectedExpressions);
@@ -255,7 +270,7 @@ public class StructurePilePresenter implements Presenter {
         }
     }
 
-    class CreatePileStructureCallback implements AsyncCallback<ExpressionPileStructureDTO> {
+    class CreatePileStructureCallback implements AsyncCallback<List<ExpressionPileStructureDTO>> {
 
         public void onFailure(Throwable throwable) {
             if (throwable instanceof PileStructureExistsException) {
@@ -264,12 +279,12 @@ public class StructurePilePresenter implements Presenter {
             view.errorElement.setError(throwable.getMessage());
         }
 
-        public void onSuccess(ExpressionPileStructureDTO pileStructure) {
+        public void onSuccess(List<ExpressionPileStructureDTO> pileStructure) {
             //Window.alert("Success");
-            displayedStructures.add(pileStructure);
+            displayedStructures.addAll(pileStructure);
             Collections.sort(displayedStructures);
             view.getStructurePileTable().createStructureTable();
-////            updateFigureAnnotations(expressionSection.getSelectedExpressions());
+            updateFigureAnnotations(selectedExpressions);
             view.alternateStructurePanel.setVisible(false);
             clearErrorMessages();
         }
@@ -335,12 +350,6 @@ public class StructurePilePresenter implements Presenter {
     }
 
     private class CreateExpressionPileHandler implements ClickHandler {
-
-        private Hyperlink phenotypePile;
-
-        public CreateExpressionPileHandler(Hyperlink createPhenotypePile) {
-            phenotypePile = createPhenotypePile;
-        }
 
         public void onClick(ClickEvent clickEvent) {
             view.getLoadingImage().setVisible(true);

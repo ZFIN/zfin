@@ -51,7 +51,7 @@ public class MarkerLinkController {
     @Autowired
     private PublicationRepository publicationRepository;
 
-    @InitBinder("linkData")
+    @InitBinder("linkDisplay")
     public void initLinkBinder(WebDataBinder binder) {
         binder.setValidator(new LinkDisplayValidator());
     }

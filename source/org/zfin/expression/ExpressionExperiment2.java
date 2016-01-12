@@ -232,4 +232,12 @@ public class ExpressionExperiment2 {
     public void setFigureStageSet(Set<ExpressionFigureStage> figureStageSet) {
         this.figureStageSet = figureStageSet;
     }
+
+    /**
+     * Check if the fish uses a wildtype geno without STRs and the environment is standard or generic control.
+     * @return
+     */
+    public boolean isWildtype() {
+        return fishExperiment.isStandardOrGenericControl() && fishExperiment.getFish().isWildtypeWithoutReagents();
+    }
 }

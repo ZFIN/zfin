@@ -19,8 +19,15 @@
             },
             controller: STRSequenceController,
             controllerAs: 'vm',
-            bindToController: true
+            bindToController: true,
+            link: link
         };
+
+        function link(scope, element, attrs) {
+            if (attrs.sequenceText) {
+                scope.vm.reportedSequence = attrs.sequenceText;
+            }
+        }
 
         return directive;
     }
@@ -35,6 +42,7 @@
         function activate() {
             $scope.$watchGroup(['vm.reportedSequence', 'vm.isReversed', 'vm.isComplemented'], function (newValue) {
                 if (!vm.reportedSequence) {
+                    vm.sequence = '';
                     return;
                 }
 

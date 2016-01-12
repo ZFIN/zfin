@@ -928,6 +928,8 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
                     // add expression if marked as such
                     if (pileStructure.getAction() == PileStructureAnnotationDTO.Action.ADD) {
                         ExpressedTermDTO expTerm = addExpressionToAnnotation(experiment, expressionStructure, pileStructure.isExpressed());
+                        if (experiment.getExpressionExperiment().isWildtype() && expTerm != null && expTerm.isEap())
+                            throw new ValidationException("Cannot add an EaP annotation to a wildtype / standard fish");
                         if (expTerm != null) {
                             dto.addExpressedTerm(expTerm);
                             updatedAnnotations.add(dto);
@@ -967,6 +969,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         GenericTerm term = ontologyRepository.getTermByZdbID(selectedPileStructure.getExpressedTerm().getEntity().getSuperTerm().getZdbID());
         List<TermRelationship> terms = term.getAllDirectlyRelatedTerms();
         List<RelatedPileStructureDTO> structures = new ArrayList<>(terms.size());
+        ExpressionStructure expressionStructure = DTOConversionService.getExpressionStructureFromDTO(selectedPileStructure.getExpressedTerm());
         for (TermRelationship rel : terms) {
             Term relatedTerm = rel.getRelatedTerm(term);
             // some terms may be stage terms and should be ignored.
@@ -988,6 +991,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
                 relatedStructure.setRelationship(rel.getRelationshipType().getDbMappedName());
                 relatedStructure.setStart(start);
                 relatedStructure.setEnd(end);
+                relatedStructure.getExpressedTerm().setQualityTerm(DTOConversionService.convertToEapQualityTermDTO(expressionStructure));
                 structures.add(relatedStructure);
             }
         }

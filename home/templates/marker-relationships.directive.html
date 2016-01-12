@@ -34,8 +34,10 @@
                 <td>
                     {{relationship.second.name}} ({{relationship.references.length}})
                     <span class="small pull-right">
-                        <a href ng-click="vm.edit(relationship)">Edit References</a> |
-                        <a href ng-click="vm.remove(relationship, $index)">Remove</a>
+                        <a href ng-click="vm.edit(relationship)">Edit References</a>
+                        <span ng-show="vm.relationships.length > 1">
+                            | <a href ng-click="vm.remove(relationship, $index)">Remove</a>
+                        </span>
                     </span>
                 </td>
             </tr>

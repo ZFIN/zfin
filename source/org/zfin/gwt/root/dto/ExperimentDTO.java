@@ -268,4 +268,8 @@ public class ExperimentDTO implements IsSerializable, Comparable<ExperimentDTO> 
     public void setFeatureID(String featureID) {
         this.featureID = featureID;
     }
+
+    public boolean isWildtype() {
+        return true;
+    }
 }

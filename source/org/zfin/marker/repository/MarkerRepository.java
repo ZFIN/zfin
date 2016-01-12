@@ -485,4 +485,5 @@ public interface MarkerRepository {
 
     List<OmimPhenotype> getOmimPhenotype(Marker marker);
     List<Marker> getZfinOrtholog(String humanAbbrev);
+    int getCrisprCount(String geneAbbrev);
 }
