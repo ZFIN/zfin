@@ -322,7 +322,8 @@ Create dba function regen_feature_term_fast_search()
 		       fstat_pub_zdb_id,
 		       fstat_xpatres_zdb_id,
 		       fstat_type)
-		select atb_zdb_id, alltermcon_container_zdb_id, xpatres_subterm_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id, xpatres_pk_id, 'Antibody' 
+		select atb_zdb_id, alltermcon_container_zdb_id, xpatres_subterm_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, 
+		       xpatex_source_zdb_id, xpatres_pk_id, 'Antibody' 
 		from antibody, fish_experiment, expression_experiment2, expression_result2, 
 			  figure, expression_figure_stage, genotype, all_term_contains, fish
 		where  xpatres_expression_found = 't'

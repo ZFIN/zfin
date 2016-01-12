@@ -183,8 +183,8 @@ Create dba function regen_expression_term_fast_search()
 	let errorHint = "insert superterm and parents into xpatfs_working";
 	
 	insert into xpatfs_working (etfs_xpatres_zdb_id, etfs_term_zdb_id)
-	       select xpatres_zdb_id, alltermcon_container_zdb_id 
-	         from expression_result2, all_term_contains, expression_experiment2, fish, fish_Experiment, genotype
+	       select xpatres_pk_id, alltermcon_container_zdb_id 
+	         from expression_result2, all_term_contains, expression_figure_stage,expression_experiment2, fish, fish_Experiment, genotype
 	         where xpatres_expression_found = 't'
 	       	     and alltermcon_contained_zdb_id = xpatres_superterm_Zdb_id 
 	       	     and xpatex_zdb_id = efs_xpatex_zdb_id
@@ -200,8 +200,8 @@ Create dba function regen_expression_term_fast_search()
 
 
         insert into xpatfs_working (etfs_xpatres_zdb_id, etfs_term_zdb_id)
-	       select xpatres_zdb_id, alltermcon_container_zdb_id
-	         from expression_result2, all_term_contains, expression_experiment2, fish, fish_Experiment, genotype
+	       select xpatres_pk_id, alltermcon_container_zdb_id
+	         from expression_result2, all_term_contains, expression_experiment2, expression_figure_stage,fish, fish_Experiment, genotype
 	         where xpatres_expression_found = 't'
 	       	     and alltermcon_contained_zdb_id = xpatres_subterm_Zdb_id
 	       	     and xpatex_zdb_id = efs_xpatex_zdb_id
@@ -218,12 +218,12 @@ Create dba function regen_expression_term_fast_search()
     	  update xpatfs_working
   	       set etfs_is_xpatres_term = 't'
  	       where exists (select 'x' from expression_result2 where xpatres_superterm_zdb_id = etfs_term_zdb_id
-	       	     	     and  etfs_xpatres_zdb_id =  xpatres_zdb_id);
+	       	     	     and  etfs_xpatres_zdb_id =  xpatres_pk_id);
 
 	  update xpatfs_working
   	       set etfs_is_xpatres_term = 't'
  	       where exists (select 'x' from expression_result2 where xpatres_subterm_zdb_id = etfs_term_zdb_id
-	       	     	     and  etfs_xpatres_zdb_id =  xpatres_zdb_id);
+	       	     	     and  etfs_xpatres_zdb_id =  xpatres_pk_id);
       
 	 let errorHint = "rename table xpatfs_new";
 
