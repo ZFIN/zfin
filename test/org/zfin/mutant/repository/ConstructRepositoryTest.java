@@ -65,22 +65,8 @@ public class ConstructRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(construct);
 
     }
-    @Test
-    public void getExpressionForConstructs() {
-        // brain nucleus
-        String brainNucleus = "ZDB-TERM-100331-8";
-        // eye
-        String eye = "ZDB-TERM-100331-100";
-        // gli2aty17a/ty17a
-        String constructID = "ZDB-TGCONSTRCT-070117-7";
-        List<String> termList = new ArrayList<>(2);
-        termList.add(brainNucleus);
-        termList.add(eye);
-        List<ExpressionResult> expResults= RepositoryFactory.getConstructRepository().getExpressionForConstructs(constructID, termList);
 
-        assertNotNull(expResults);
-        assertTrue(expResults.size() >= 2);
-    }
+
 
     @Test
     public void termTest() {
