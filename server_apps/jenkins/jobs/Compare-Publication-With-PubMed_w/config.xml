@@ -30,7 +30,7 @@ the records at PubMed. Comparison is done on the following attributes:&#xd;
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w/*</artifacts>
+      <artifacts>server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w/Compare-Publication-With-PubMed_w.faulty-PubMed-IDs.txt</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
