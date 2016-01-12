@@ -453,8 +453,6 @@ class StructurePileTable extends ZfinFlexTable {
                 List<RelatedPileStructureDTO> existingStructures = getExistingStructures(terms);
                 List<RelatedPileStructureDTO> newStructures = getNewStructures(terms);
 
-                Window.alert("Exist " + existingStructures.size());
-                Window.alert("newStructures " + newStructures.size());
                 // add existing structures
                 if (!existingStructures.isEmpty()) {
                     createListItems(ul, existingStructures);

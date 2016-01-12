@@ -1,6 +1,5 @@
 package org.zfin.gwt.root.dto;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import java.util.Collections;
@@ -109,10 +108,6 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
         if (o == null || getClass() != o.getClass()) return false;
 
         ExpressedTermDTO termDTO = (ExpressedTermDTO) o;
-/*
-        Window.alert("term: quality: "+entity+": "+qualityTerm);
-        Window.alert("quality to compare: "+entity+": "+termDTO.getQualityTerm());
-*/
         if (expressionFound != termDTO.isExpressionFound())
             return false;
 
