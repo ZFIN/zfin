@@ -278,7 +278,7 @@
     <definition name="no-error.page" template="/WEB-INF/jsp/dev-tools/no-error-page.jsp"/>
 
     <definition name="unload/*.page" extends="main_layout">
-        <put-attribute name="staticTitle" value="Download Archive: "/>
+        <put-attribute name="staticTitle" value="Downloads Archive: "/>
         <put-attribute name="body" value="/WEB-INF/jsp/unload/{1}.jsp"/>
     </definition>
 
