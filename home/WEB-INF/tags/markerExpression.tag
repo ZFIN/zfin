@@ -46,9 +46,17 @@
                                 ${markerExpression.allExpressionData.singleFigure.link}
                             </c:when>
                             <c:otherwise>
+                                <c:choose>
+                                <c:when test="${marker.markerType.type != 'EFG'  }">
                             <a href="/${webdriverRoot}?MIval=aa-xpatselect.apg&query_results=true&gene_name=${marker.abbreviation}&searchtype=equals"
                                     >${markerExpression.allExpressionData.figureCount}
                                 figures
+                                </c:when>
+                                <c:otherwise>
+                                <a href="/${webdriverRoot}?MIval=aa-xpatselect.apg&query_results=true&gene_name=${marker.name}&searchtype=equals"
+                                        >${markerExpression.allExpressionData.figureCount}
+                                </c:otherwise>
+                                    </c:choose>
                                 </c:otherwise>
                                 </c:choose>
                             </a> from
