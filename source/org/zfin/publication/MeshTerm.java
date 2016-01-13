@@ -1,6 +1,6 @@
 package org.zfin.publication;
 
-public class MeshTerm {
+public class MeshTerm implements Comparable<MeshTerm> {
 
     private String id;
     private String name;
@@ -28,6 +28,11 @@ public class MeshTerm {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    @Override
+    public int compareTo(MeshTerm o) {
+        return this.getName().compareTo(o.getName());
     }
 
     public enum Type {
