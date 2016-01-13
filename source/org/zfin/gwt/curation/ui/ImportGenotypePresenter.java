@@ -78,6 +78,7 @@ public class ImportGenotypePresenter implements Presenter {
     }
 
     private void searchForGenotypes() {
+        view.getErrorLabel().clearAllErrors();
         String featureID = getSelectedFeatureID();
         String genotypeID = getSelectedGenotypeID();
         if (featureID == null && genotypeID == null)
