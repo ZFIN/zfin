@@ -106,7 +106,7 @@
 
                 <c:if test="${!empty markerExpression.wildTypeStageExpression.expressedStructures}">
                     <tr>
-                        <th class="data-label"><b>Wild-type Stages, Structures:</b></th>
+                        <td class="data-label"><b>Wild-type Stages, Structures:</b></td>
                         <td align="left">
                             <zfin:link
                                     entity="${markerExpression.wildTypeStageExpression.expressionPresentation.startStage}"
