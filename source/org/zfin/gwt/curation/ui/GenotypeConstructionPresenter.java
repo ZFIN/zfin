@@ -5,6 +5,7 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Image;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.GenotypeDTO;
@@ -12,7 +13,6 @@ import org.zfin.gwt.root.dto.GenotypeFeatureDTO;
 import org.zfin.gwt.root.dto.ZygosityDTO;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
-import org.zfin.gwt.root.util.DeleteImage;
 import org.zfin.gwt.root.util.DeleteLink;
 
 import java.util.ArrayList;
@@ -69,8 +69,8 @@ public class GenotypeConstructionPresenter implements Presenter {
         });
     }
 
-    protected void addRemoveGenotypeFeatureClickHandler(DeleteImage image, GenotypeFeatureDTO genotypeFeatureDTO) {
-        image.addClickHandler(new RemoveGenotypeFeature(genotypeFeatureDTO));
+    protected void addRemoveGenotypeFeatureClickHandler(Anchor deleteAnchor, GenotypeFeatureDTO genotypeFeatureDTO) {
+        deleteAnchor.addClickHandler(new RemoveGenotypeFeature(genotypeFeatureDTO));
     }
 
     private RetrieveRelatedEntityDTOListCallBack<GenotypeDTO> retrieveBackgroundNewGenoCallback;

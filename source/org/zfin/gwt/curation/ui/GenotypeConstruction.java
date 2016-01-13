@@ -169,7 +169,7 @@ public class GenotypeConstruction extends Composite {
             genotypeConstructionTable.setWidget(rowIndex, col++, getHtml(genotypeFeature.getZygosity()));
             genotypeConstructionTable.setWidget(rowIndex, col++, getHtml(genotypeFeature.getMaternalZygosity()));
             genotypeConstructionTable.setWidget(rowIndex, col++, getHtml(genotypeFeature.getPaternalZygosity()));
-            DeleteImage delete = new DeleteImage("Remove Genotype Feature");
+            Anchor delete = new Anchor(" (X)");
             presenter.addRemoveGenotypeFeatureClickHandler(delete, genotypeFeature);
             genotypeConstructionTable.setWidget(rowIndex, col, delete);
             groupIndex = genotypeConstructionTable.setRowStyle(rowIndex++, null, genotypeFeature.getZdbID(), groupIndex);
