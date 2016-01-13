@@ -49,7 +49,7 @@ public interface CurationDiseaseRPCAsync {
 
     void getZygosityLists(AsyncCallback<List<ZygosityDTO>> async);
 
-    void createGenotypeFeature(String publicationID, List<GenotypeFeatureDTO> genotypeFeatureDTOList, List<GenotypeDTO> genotypeBackgroundList, String nickname, AsyncCallback<GenotypeDTO> callBack);
+    void createGenotypeFeature(String publicationID, List<GenotypeFeatureDTO> genotypeFeatureDTOList, List<GenotypeDTO> genotypeBackgroundList, String nickname, AsyncCallback<GenotypeCreationReportDTO> callBack);
 }
 
 

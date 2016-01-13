@@ -73,6 +73,7 @@
                 <g:Button ui:field="resetButton" text="Reset"/>
             </g:HorizontalPanel>
             <zfin:SimpleErrorElement ui:field="errorLabel"/>
+            <g:Label ui:field="messageLabel"/>
             <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="false"/>
         </g:VerticalPanel>
     </g:FlowPanel>

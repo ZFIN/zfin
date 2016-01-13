@@ -13,7 +13,6 @@ import org.zfin.gwt.root.dto.GenotypeFeatureDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
 import org.zfin.gwt.root.ui.ZfinFlexTable;
-import org.zfin.gwt.root.util.DeleteImage;
 import org.zfin.gwt.root.util.DeleteLink;
 import org.zfin.gwt.root.util.ShowHideWidget;
 
@@ -25,6 +24,11 @@ import java.util.List;
 public class GenotypeConstruction extends Composite {
 
     private static MyUiBinder binder = GWT.create(MyUiBinder.class);
+
+    public void setMessage(String reportMessage) {
+        messageLabel.setText(reportMessage);
+        messageLabel.setStyleName("phenotype-normal");
+    }
 
 
     @UiTemplate("GenotypeConstruction.ui.xml")
@@ -70,6 +74,8 @@ public class GenotypeConstruction extends Composite {
     Button button1UU;
     @UiField
     Button button22U;
+    @UiField
+    Label messageLabel;
 
     public GenotypeConstruction() {
         initWidget(binder.createAndBindUi(this));

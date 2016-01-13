@@ -7,10 +7,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Image;
-import org.zfin.gwt.root.dto.FeatureDTO;
-import org.zfin.gwt.root.dto.GenotypeDTO;
-import org.zfin.gwt.root.dto.GenotypeFeatureDTO;
-import org.zfin.gwt.root.dto.ZygosityDTO;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.DeleteLink;
@@ -101,6 +98,7 @@ public class GenotypeConstructionPresenter implements Presenter {
 
     private void resetError() {
         view.getErrorLabel().setError("");
+        view.setMessage("");
     }
 
     public void resetGUI() {
@@ -228,17 +226,18 @@ public class GenotypeConstructionPresenter implements Presenter {
         }
     }
 
-    class CreateGenotypeCallBack extends ZfinAsyncCallback<GenotypeDTO> {
+    class CreateGenotypeCallBack extends ZfinAsyncCallback<GenotypeCreationReportDTO> {
 
         public CreateGenotypeCallBack(String errorMessage, ErrorHandler errorLabel, Image loadingImg) {
             super(errorMessage, errorLabel, loadingImg);
         }
 
         @Override
-        public void onSuccess(GenotypeDTO genotypeDTO) {
+        public void onSuccess(GenotypeCreationReportDTO report) {
+            GenotypeDTO genotypeDTO = report.getGenotypeDTO();
             resetNewGenotypeUI();
             view.getLoadingImage().setVisible(false);
-            errorHandler.setError("Created new Genotype: " + genotypeDTO.getHandle());
+            view.setMessage(report.getReportMessage());
             resetGUI();
             eventBus.fireEvent(new AddNewGenotypeEvent());
         }
