@@ -15,6 +15,7 @@ import org.zfin.util.FileUtil;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingException;
 import java.beans.PropertyVetoException;
 import java.io.File;
@@ -38,19 +39,16 @@ public class HibernateSessionCreator {
     }
 
     public HibernateSessionCreator(String dbName) {
-        createJndi(dbName);
         init(showSql, false, dbName);
     }
 
     public HibernateSessionCreator(boolean showSql) {
         String db = ZfinPropertiesEnum.DB_NAME.value();
-        createJndi(db);
         init(showSql, false, db);
     }
 
     public HibernateSessionCreator(boolean showSql, boolean autocommit) {
         String db = ZfinPropertiesEnum.DB_NAME.value();
-        createJndi(db);
         init(showSql, autocommit, db);
     }
 
@@ -140,12 +138,13 @@ public class HibernateSessionCreator {
         config.setProperty("hibernate.dialect", "org.zfin.database.ZfinInformixDialect");
         config.setProperty("hibernate.connection.driver_class", "com.informix.jdbc.IfxDriver");
 
-        config.setProperty("hibernate.connection.datasource", getJndiAccessName(db));
         config.setProperty("hibernate.connection.autocommit", String.valueOf(autocommit));
+        config.setProperty("hibernate.connection.url", getJdbcUrl(db));
 
 //        config.setProperty("hibernate.cglib.use_reflection_optimizer", "false");
         config.setProperty("hibernate.show_sql", Boolean.toString(showSql));
         config.setProperty("hibernate.format_sql", "true");
+        config.setProperty("hibernate.connection.pool_size", "2");
 //        config.setProperty("hibernate.cglib.use_reflection_optimizer", "false");
 //        config.setProperty("hibernate.cache.provider_class", "net.sf.ehcache.hibernate.EhCacheProvider");
         config.setProperty("hibernate.cache.provider_configuration_file_resource_path", "conf");
@@ -159,12 +158,7 @@ public class HibernateSessionCreator {
         if (db == null) {
             throw new RuntimeException("No DB Name provided ");
         }
-        String informixServer = ZfinPropertiesEnum.INFORMIX_SERVER.value();
-        String informixPort = ZfinPropertiesEnum.INFORMIX_PORT.value();
-        String sqlHostsHost = ZfinPropertiesEnum.SQLHOSTS_HOST.value();
-
-        String jdbcUrl = "jdbc:informix-sqli://" + sqlHostsHost + ":" + informixPort + "/" + db + ":INFORMIXSERVER=" + informixServer;
-        jdbcUrl += ";IFX_LOCK_MODE_WAIT=7;defaultIsolationLevel=1";
+        String jdbcUrl = getJdbcUrl(db);
         try {
             // Create initial context
             System.setProperty(Context.INITIAL_CONTEXT_FACTORY,
@@ -172,7 +166,6 @@ public class HibernateSessionCreator {
             System.setProperty(Context.URL_PKG_PREFIXES,
                     "org.apache.naming");
             InitialContext ic = new InitialContext();
-
             ic.createSubcontext("java:");
             ic.createSubcontext("java:/comp");
             ic.createSubcontext("java:/comp/env");
@@ -187,9 +180,22 @@ public class HibernateSessionCreator {
             cpds.setIdleConnectionTestPeriod(1200);
             ic.bind(getJndiAccessName(db), cpds);
         } catch (NamingException | PropertyVetoException ex) {
-            ex.printStackTrace();
+            if (!(ex instanceof NameAlreadyBoundException))
+                LOG.warn(ex);
+            else
+                LOG.error(ex);
         }
 
+    }
+
+    private String getJdbcUrl(String db) {
+        String informixServer = ZfinPropertiesEnum.INFORMIX_SERVER.value();
+        String informixPort = ZfinPropertiesEnum.INFORMIX_PORT.value();
+        String sqlHostsHost = ZfinPropertiesEnum.SQLHOSTS_HOST.value();
+
+        String jdbcUrl = "jdbc:informix-sqli://" + sqlHostsHost + ":" + informixPort + "/" + db + ":INFORMIXSERVER=" + informixServer;
+        jdbcUrl += ";IFX_LOCK_MODE_WAIT=7;defaultIsolationLevel=1";
+        return jdbcUrl;
     }
 
     private String getJndiAccessName(String db) {
