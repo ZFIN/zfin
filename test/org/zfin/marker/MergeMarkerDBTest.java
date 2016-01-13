@@ -40,7 +40,7 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
         TestConfiguration.setAuthenticatedUser();
     }
 
-    @Test
+    @Test @Ignore
     public void mergeRealAntibodies() {
 
         try {
