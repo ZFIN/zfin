@@ -403,6 +403,7 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
      * B(EEA1,EEB1,EEB2(ERA1,ERB1,ERB2(FA1,FB1,FB2))) // showing merged first
      */
     @Test
+    @Ignore
     public void createAndMergeExpressionResultFiguresOver() {
 
         try {
