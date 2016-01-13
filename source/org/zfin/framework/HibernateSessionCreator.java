@@ -92,10 +92,12 @@ public class HibernateSessionCreator {
                 }
             }
         }
-        HibernateUtil.init(config.addAnnotatedClass(ExpressionExperiment2.class)
-                .addAnnotatedClass(ExpressionFigureStage.class)
-                .addAnnotatedClass(ExpressionResult2.class)
-                .addAnnotatedClass(ExpressionPhenotypeTerm.class).buildSessionFactory());
+        if (!db.equals("sysmaster")) {
+            HibernateUtil.init(config.addAnnotatedClass(ExpressionExperiment2.class)
+                    .addAnnotatedClass(ExpressionFigureStage.class)
+                    .addAnnotatedClass(ExpressionResult2.class)
+                    .addAnnotatedClass(ExpressionPhenotypeTerm.class).buildSessionFactory());
+        }
     }
 
     public static File[] getHibernateConfigurationFiles() {
