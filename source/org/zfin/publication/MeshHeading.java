@@ -1,17 +1,14 @@
 package org.zfin.publication;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.gwt.root.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-public class MeshHeading {
+public class MeshHeading implements Comparable<MeshHeading> {
 
     private Long id;
     private MeshHeadingTerm descriptor;
-    private Set<MeshHeadingTerm> qualifiers;
+    private SortedSet<MeshHeadingTerm> qualifiers;
 
     public Long getId() {
         return id;
@@ -29,11 +26,11 @@ public class MeshHeading {
         this.descriptor = descriptor;
     }
 
-    public Set<MeshHeadingTerm> getQualifiers() {
+    public SortedSet<MeshHeadingTerm> getQualifiers() {
         return qualifiers;
     }
 
-    public void setQualifiers(Set<MeshHeadingTerm> qualifiers) {
+    public void setQualifiers(SortedSet<MeshHeadingTerm> qualifiers) {
         this.qualifiers = qualifiers;
     }
 
@@ -49,16 +46,10 @@ public class MeshHeading {
         }
         return displayList;
     }
-    public String getDisplayListString() {
-        List<String> displayList=getDisplayList();
-        StringBuilder sb = new StringBuilder();
-        for(String str : displayList){
-            sb.append(str);
-        }
 
-        String displayListString = sb.toString();
-        return displayListString;
-
+    @Override
+    public int compareTo(MeshHeading o) {
+        return this.descriptor.compareTo(o.getDescriptor());
     }
 
 }

@@ -11,7 +11,9 @@ $dbname = "<!--|DB_NAME|-->";
 # Download PubMed records that are indexed in MeSH for zebrafish and danio rerio
 
 $db = 'pubmed';
-$query = 'zebrafish[mesh]+OR+zebra fish[mesh]+OR+danio rerio';
+# Use the TW (Text Words) field for zebrafish (to avoid picking up the journal Zebrafish.
+# http://www.ncbi.nlm.nih.gov/books/NBK3827/#_pubmedhelp_Search_Field_Descriptions_and_
+$query = 'zebrafish[TW]+OR+"zebra fish"[TW]+OR+"danio rerio"[ALL]';
 
 #assemble the esearch URL
 $base = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
