@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * ToDo:
@@ -39,7 +40,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private Set<Figure> figures;
     //yes, should be authors, but that conflicts with the string field
     private Set<Person> people;
-    private Set<MeshHeading> meshHeadings;
+    private SortedSet<MeshHeading> meshHeadings;
     private Set<PublicationNote> notes;
     private Set<Correspondence> correspondences;
 
@@ -224,11 +225,11 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         this.keywords = keywords;
     }
 
-    public Set<MeshHeading> getMeshHeadings() {
+    public SortedSet<MeshHeading> getMeshHeadings() {
         return meshHeadings;
     }
 
-    public void setMeshHeadings(Set<MeshHeading> meshHeadings) {
+    public void setMeshHeadings(SortedSet<MeshHeading> meshHeadings) {
         this.meshHeadings = meshHeadings;
     }
 
@@ -263,8 +264,9 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
             sb.append(". ");
         }
         sb.append(volume);
-        if (pages != null)
+        if (pages != null) {
             sb.append(":" + pages);
+        }
 
         return sb.toString();
 
@@ -291,21 +293,25 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     }
 
     public int compareTo(Publication anotherPublication) {
-
-        if (publicationDate == null)
+        if (publicationDate == null) {
             return -1;
-        if (anotherPublication.getPublicationDate() == null)
+        }
+        if (anotherPublication.getPublicationDate() == null) {
             return +1;
-        if (publicationDate.get(GregorianCalendar.YEAR) > anotherPublication.getPublicationDate().get(GregorianCalendar.YEAR))
+        }
+        if (publicationDate.get(GregorianCalendar.YEAR) > anotherPublication.getPublicationDate().get(GregorianCalendar.YEAR)) {
             return -1;
-        if (publicationDate.get(GregorianCalendar.YEAR) < anotherPublication.getPublicationDate().get(GregorianCalendar.YEAR))
+        }
+        if (publicationDate.get(GregorianCalendar.YEAR) < anotherPublication.getPublicationDate().get(GregorianCalendar.YEAR)) {
             return +1;
+        }
 
         // in case the 2 publications have the same publication dates,
         // compare the authors
         int authorComparison = authors.compareToIgnoreCase(anotherPublication.getAuthors());
-        if (authorComparison != 0)
+        if (authorComparison != 0) {
             return authorComparison;
+        }
         // sort by zdbID at last criteria
         return zdbID.compareTo(anotherPublication.getZdbID());
     }
@@ -339,8 +345,9 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     }
 
     public boolean equals(Object otherPublication) {
-        if (!(otherPublication instanceof Publication))
+        if (!(otherPublication instanceof Publication)) {
             return false;
+        }
 
         Publication publication = (Publication) otherPublication;
         return getZdbID().equals(publication.getZdbID());

@@ -1,6 +1,6 @@
 package org.zfin.publication;
 
-public class MeshHeadingTerm {
+public class MeshHeadingTerm implements Comparable<MeshHeadingTerm> {
 
     private MeshTerm term;
     private Boolean majorTopic;
@@ -29,4 +29,10 @@ public class MeshHeadingTerm {
         }
         return str;
     }
+
+    @Override
+    public int compareTo(MeshHeadingTerm o) {
+        return term.compareTo(o.getTerm());
+    }
+
 }
