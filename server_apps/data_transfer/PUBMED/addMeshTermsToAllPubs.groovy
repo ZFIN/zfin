@@ -1,6 +1,11 @@
-#!/usr/bin/env groovy
+#!/bin/bash
+//usr/bin/env groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
 
 import groovy.util.slurpersupport.GPathResult
+import org.zfin.properties.ZfinProperties
+import org.zfin.util.ReportGenerator
+
+ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
 def dbaccess (String dbname, String sql) {
     proc = "dbaccess -a $dbname".execute()
@@ -34,12 +39,13 @@ GPathResult getFromPubmed(List ids) {
 }
 
 DBNAME = System.getenv("DBNAME")
-PUBMED_IDS_TO_CHECK = "pubmedIdList.txt"
+PUB_IDS_TO_CHECK = "pubIdList.txt"
 MESH_TO_LOAD = "meshHeadings.txt"
+PUB_IDS_AFTER_LOAD = "pubIdListPost.txt"
 
 dbaccess DBNAME, """
-  UNLOAD TO $PUBMED_IDS_TO_CHECK
-  SELECT accession_no
+  UNLOAD TO $PUB_IDS_TO_CHECK
+  SELECT accession_no, zdb_id
   FROM publication
   WHERE accession_no IS NOT NULL
   AND zdb_id NOT IN (
@@ -52,7 +58,7 @@ batchSize = 2000
 count = 0
 println("Fetching pubs from PubMed")
 new File(MESH_TO_LOAD).withWriter { output ->
-    new File(PUBMED_IDS_TO_CHECK).withReader { reader ->
+    new File(PUB_IDS_TO_CHECK).withReader { reader ->
         def lines = reader.iterator()
         while (lines.hasNext()) {
             ids = lines.take(batchSize).collect { it.split("\\|")[0] }
@@ -99,8 +105,31 @@ dbaccess DBNAME, """
     INNER JOIN publication ON tmp_mesh.pmid = publication.accession_no AND mesh_heading.mh_pub_zdb_id = publication.zdb_id
     WHERE tmp_mesh.qualifier_id IS NOT NULL;
 
+  UNLOAD TO $PUB_IDS_AFTER_LOAD
+    SELECT accession_no, zdb_id
+    FROM publication
+    WHERE accession_no IS NOT NULL
+    AND zdb_id NOT IN (
+      SELECT DISTINCT mh_pub_zdb_id
+      FROM mesh_heading
+    );
+
   COMMIT WORK;
 """
 
-new File(PUBMED_IDS_TO_CHECK).delete()
+if (args) {
+    // means we're (probably) running from Jenkins, so make a report.
+    preLines = new File(PUB_IDS_TO_CHECK).collect { it.split("\\|") as List }
+    postLines = new File(PUB_IDS_AFTER_LOAD).collect { it.split("\\|") as List }
+    added = preLines - postLines
+    new ReportGenerator().with {
+        setReportTitle("Report for ${args[0]}")
+        includeTimestamp()
+        addDataTable("Added terms to ${added.size()} pubs", ["PubMed ID", "ZDB ID"], added)
+        writeFiles(new File("."), "addMeshTermsReport")
+    }
+}
+
+new File(PUB_IDS_TO_CHECK).delete()
 new File(MESH_TO_LOAD).delete()
+new File(PUB_IDS_AFTER_LOAD).delete()
