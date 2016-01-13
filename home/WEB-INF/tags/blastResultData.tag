@@ -33,11 +33,7 @@
             Strand = ${ ( hsp.queryFrom < hsp.queryTo) ? "+" : "-"}/${ ( hsp.hitFrom < hsp.hitTo ) ? "+" : "-"}
         </span>
         <c:forEach var="alignmentLine" items="${hsp.view}">
-            <pre>
-Query:  ${alignmentLine.startQueryString}  ${alignmentLine.queryStrand}   ${alignmentLine.stopQueryString}
-               ${alignmentLine.midlineStrand}
-  Hit:  ${alignmentLine.startHitString}  ${alignmentLine.hitStrand}   ${alignmentLine.stopHitString}
-            </pre>
+            <pre>${alignmentLine.displayString}</pre>
         </c:forEach>
 
     </c:forEach>
