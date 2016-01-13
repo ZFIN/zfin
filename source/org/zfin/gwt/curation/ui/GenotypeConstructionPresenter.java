@@ -185,6 +185,20 @@ public class GenotypeConstructionPresenter implements Presenter {
         resetError();
     }
 
+    public void on1UUClick() {
+        view.getZygosityListBox().setSelectedIndex(1);
+        view.getZygosityMaternalListBox().setSelectedIndex(3);
+        view.getZygosityPaternalListBox().setSelectedIndex(3);
+        resetError();
+    }
+
+    public void on22UClick() {
+        view.getZygosityListBox().setSelectedIndex(0);
+        view.getZygosityMaternalListBox().setSelectedIndex(0);
+        view.getZygosityPaternalListBox().setSelectedIndex(3);
+        resetError();
+    }
+
     public void addDeleteGenotypeBackgroundClickHandler(DeleteLink deleteLink, final GenotypeDTO genotypeDTO) {
         deleteLink.addClickHandler(new ClickHandler() {
             @Override

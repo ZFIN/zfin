@@ -66,6 +66,10 @@ public class GenotypeConstruction extends Composite {
     Button addBackgroundGenotype;
     @UiField
     HorizontalPanel backgroundGenotypePanel;
+    @UiField
+    Button button1UU;
+    @UiField
+    Button button22U;
 
     public GenotypeConstruction() {
         initWidget(binder.createAndBindUi(this));
@@ -115,6 +119,16 @@ public class GenotypeConstruction extends Composite {
     @UiHandler("button211")
     void on211ButtonClick(@SuppressWarnings("unused") ClickEvent event) {
         presenter.on211Click();
+    }
+
+    @UiHandler("button1UU")
+    void on1UUButtonClick(@SuppressWarnings("unused") ClickEvent event) {
+        presenter.on1UUClick();
+    }
+
+    @UiHandler("button22U")
+    void on22UButtonClick(@SuppressWarnings("unused") ClickEvent event) {
+        presenter.on22UClick();
     }
 
     @UiHandler("addBackgroundGenotype")
