@@ -48,6 +48,12 @@ public class HibernateSessionCreator {
         init(showSql, false, db);
     }
 
+    public HibernateSessionCreator(boolean showSql, boolean autocommit) {
+        String db = ZfinPropertiesEnum.DB_NAME.value();
+        createJndi(db);
+        init(showSql, autocommit, db);
+    }
+
     public void init(boolean showSql, boolean autocommit, String db) {
         this.autocommit = autocommit;
         LOG.info("Start Hibernate Session Creation");
