@@ -679,7 +679,7 @@ as phenotype_statement,
                         where="gene_zdb_id=gene.id"/>
 
 
-
+            
 
                 <entity name="gene_allele"
                         datasource="db" query="select feature_zdb_id as xref, feature_abbrev as allele, fmrel_mrkr_zdb_id as gene_zdb_id
@@ -1818,6 +1818,19 @@ select
                     where="str_zdb_id=str.id"
                     cacheImpl="SortedMapBackedCache"/>
 
+   <entity name="str_accession"
+                        datasource="db" query="select fdb_db_name || ':' || dblink_acc_num as related_accession,
+                                                     dblink_linked_recid as feature_zdb_id
+                                             from db_link, foreign_db_contains, foreign_db
+                                             where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                                               and fdbcont_fdb_db_id = fdb_db_pk_id
+                                               and (dblink_linked_recid[1,12] = 'ZDB-MRPHLNO-'
+                                                    or dblink_linked_recid[1,11] = 'ZDB-CRISPR-'
+                                                    or dblink_linked_recid[1,10] = 'ZDB-TALEN-')
+                           ;"
+                        cacheImpl="SortedMapBackedCache"
+                        where="mrkr_zdb_id=str.id"/>
+
            <entity name="str_targeted_gene"
                    datasource="db" query="select
                             mrkr_abbrev as targeted_gene,
@@ -2733,6 +2746,21 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                    where="dalias_data_zdb_id=antibody.id"
                    cacheImpl="SortedMapBackedCache"/>
 
+
+         
+
+                <entity name="atb_accession"
+                        datasource="db" query="select fdb_db_name || ':' || dblink_acc_num as related_accession,
+                                                     dblink_linked_recid as feature_zdb_id
+                                             from db_link, foreign_db_contains, foreign_db
+                                             where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                                               and fdbcont_fdb_db_id = fdb_db_pk_id
+                                               and (dblink_linked_recid[1,8] = 'ZDB-ATB-')
+                           ;"
+                        cacheImpl="SortedMapBackedCache"
+                        where="mrkr_zdb_id=antibody.id"/>
+
+
            <entity name="antibody_attribution"
                    datasource="db" query="select recattrib_data_zdb_id as atb_zdb_id, count(recattrib_source_zdb_id) as attribution_count
                             from record_attribution, antibody
@@ -2926,6 +2954,17 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                    where="dalias_data_zdb_id=feature.id"
                    cacheImpl="SortedMapBackedCache" >
                <field name="alias" column="dalias_alias"/>
+	    <entity name="feature_accession"
+                        datasource="db" query="select fdb_db_name || ':' || dblink_acc_num as related_accession,
+                                                     dblink_linked_recid as feature_zdb_id
+                                             from db_link, foreign_db_contains, foreign_db
+                                             where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                                               and fdbcont_fdb_db_id = fdb_db_pk_id
+                                               and (dblink_linked_recid[1,8] = 'ZDB-ALT-')
+                           ;"
+                        cacheImpl="SortedMapBackedCache"
+                        where="feature_zdb_id=feature.id"/>
+
            </entity>
            <entity name="feature_aliases_from_feature_tracking"
                    datasource="db" query="select ft_feature_abbrev as alias, ft_feature_zdb_id as feature_zdb_id from feature_tracking
