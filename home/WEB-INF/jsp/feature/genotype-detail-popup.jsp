@@ -128,6 +128,11 @@
                     <th width="20%">
                         Construct
                     </th>
+                    <th width="20%">
+                        Zygosity
+                    </th><th width="20%">
+                    Parental Zygosity
+                </th>
 
 
                 </tr>
@@ -145,7 +150,13 @@
                                 </c:if>
                             </c:forEach>
                         </td>
-
+                        <td>
+                                ${genoFeat.zygosity.name}
+                        </td>
+                        <td>
+                                ${genoFeat.parentalZygosityDisplay}
+                        </td>
+                    </td>
 
                     </zfin:alternating-tr>
                 </c:forEach>
