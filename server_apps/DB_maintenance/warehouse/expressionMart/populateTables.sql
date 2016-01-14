@@ -16,7 +16,7 @@ insert into expression_experiment_temp (xpatex_zdb_id, xpatex_assay_name,
 			  and xpatres_pk_id = ept_xpatres_id);
 
 insert into expression_Result_temp (
-    xpatres_xpatex_zdb_id,
+    efs_xpatex_zdb_id,
     xpatres_start_stg_zdb_id,
     xpatres_end_stg_zdb_id,
     xpatres_expression_found,
