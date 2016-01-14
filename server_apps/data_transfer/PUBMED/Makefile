@@ -20,10 +20,10 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/PUBMED
 GENERICS = updatepubstatus.pl \
            fetchPubsFromPubMed.pl \
            loadNewPubs.sql \
-           updatePublicationDate.pl \
            fixBadCharacterEncoding.pl
-STATICS = loadMeshTerms.groovy \
-          addMeshTermsToAllPubs.groovy
+STATICS = addMeshTermsToAllPubs.groovy \
+          updatePublicationDate.groovy \
+          loadMeshTerms.groovy
 
 # ---------------  Production Rules  ------------------------------------
 
