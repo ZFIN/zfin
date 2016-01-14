@@ -23,7 +23,7 @@
     <tr>
         <th>Location:</th>
         <td>
-            <zfin2:displayLocation entity="${gene}"/>
+            <zfin2:displayLocation entity="${gene}" longDetail="true"/>
         </td>
     </tr>
     <c:if test="${formBean.hasMarkerHistory}">

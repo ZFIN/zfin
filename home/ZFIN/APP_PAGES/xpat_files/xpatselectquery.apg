@@ -381,8 +381,12 @@ Message: $MI_ERRORMSG
    
     <?MIVAR COND="$(EC,$xpatselqry_geneSearchType,begins)" NAME=$xpatselqry_nameCond>
       allmapnm_name_lower like '$(LOWER,$xpatselqry_geneName)%'<?/MIVAR>
+      <?MICOMMENT>
     <?MIVAR COND="$(EC,$xpatselqry_geneSearchType,equals)" NAME=$xpatselqry_nameCond>
-      allmapnm_name_lower = '$(LOWER,$xpatselqry_geneName)'<?/MIVAR>  
+      allmapnm_name_lower = '$(LOWER,$xpatselqry_geneName)'<?/MIVAR>
+        <?/MICOMMENT>
+        <?MIVAR COND="$(EC,$xpatselqry_geneSearchType,equals)" NAME=$xpatselqry_nameCond>
+              allmapnm_name = '$xpatselqry_geneName'<?/MIVAR>
     <?MIVAR COND="$(EC,$xpatselqry_geneSearchType,contains)" NAME=$xpatselqry_nameEndsTable>
       join all_name_ends on allmapnm_serial_id = allnmend_allmapnm_serial_id<?/MIVAR>
     <?MIVAR COND="$(EC,$xpatselqry_geneSearchType,contains)" NAME=$xpatselqry_nameCond>
