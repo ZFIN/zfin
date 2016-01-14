@@ -101,6 +101,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.PUBLICATION.name      | "kraus 1993"                                     | "11699"
         Category.PUBLICATION.name      | "bohni"                                          | "11699"
         Category.PUBLICATION.name      | "abstract:\"motor control requires circuits\""   | "n/a"
+        Category.PUBLICATION.name      | "thesis id:ZDB-PUB-150918-21"                    | "13042"
         Category.CONSTRUCT.name        | "4xnr"                                           | "11810"
         Category.COMMUNITY.name        | "nuss id:ZDB-PERS-960805-412"                    | "11216"
         Category.COMMUNITY.name        | "Nüss id:ZDB-PERS-960805-412"                    | "11216"

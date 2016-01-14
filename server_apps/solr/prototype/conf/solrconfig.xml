@@ -327,6 +327,7 @@
              phenotype_statement_t
              synonym_phenotype_statement_t
              expression_statement_t
+             journal_t
              registered_author_t
                           registered_author
              author_string
@@ -468,7 +469,7 @@
              targeted_gene_previous_name
 
              experimental_conditions
-
+             journal_t
              prefix
              institution
              institution_t
@@ -570,7 +571,7 @@
              synonym_phenotype_statement_t
              synonym_phenotype_statement
 
-
+             journal journal_t
              registered_author_t^0.5
              registered_author^0.5
              author_string

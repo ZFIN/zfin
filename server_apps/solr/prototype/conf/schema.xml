@@ -964,7 +964,7 @@
     <copyField source="quality_alias" dest="term_t"/>
     <copyField source="quality_alias" dest="text"/>
 
-
+   <copyField source="journal" dest="journal_t"/>
    <copyField source="registered_author" dest="registered_author_t"/>
    <copyField source="id" dest="id_t"/>
    <copyField source="name" dest="name_t"/>
@@ -1071,6 +1071,7 @@
 
     <copyField source="caption" dest="text"/>
     <copyField source="biography" dest="text"/>
+
     <copyField source="abstract" dest="text"/>
     <copyField source="definition" dest="text"/>
     <copyField source="note" dest="text"/>
