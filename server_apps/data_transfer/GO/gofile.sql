@@ -23,7 +23,6 @@ update tmp_identifiers
 
 							 )::lvarchar(4000),11),""),"'}",""),"'","");
 
-
 create temp table tmp_go (mv_zdb_id varchar(50),
        	    	  	 m_zdb_id varchar(50),
 			 m_abbrev lvarchar,
