@@ -55,12 +55,14 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
     def  "landmark set to feature #zdbId"() {
         when:
         def f = RepositoryFactory.featureRepository.getFeatureByID(zdbId)
-        def location = linkageRepository.getGenomeLocation(f, GenomeLocation.Source.ZFIN)?.getAt(0)
-        def image = GBrowseImage.builder()
+        def location = linkageRepository.getGenomeLocation(f, GenomeLocation.Source.ZFIN_Zv9)?.getAt(0)
+        def imageBuilder = GBrowseImage.builder()
                 .landmark(location)
-                .build()
+        imageBuilder.setGenomeBuild(GBrowseImage.GenomeBuild.ZV9)
+        def image = imageBuilder.build()
 
         then:
+        image.imageUrl.contains('Zv9')
         image.imageUrl =~ /\d+%3A\d+..\d+/
 
         where:
