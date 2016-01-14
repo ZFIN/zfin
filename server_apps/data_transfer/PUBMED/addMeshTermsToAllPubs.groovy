@@ -1,7 +1,6 @@
 #!/bin/bash
-//usr/bin/env groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
+//usr/bin/env groovy -cp "$GROOVY_CLASSPATH:." "$0" $@; exit $?
 
-import groovy.util.slurpersupport.GPathResult
 import org.zfin.properties.ZfinProperties
 import org.zfin.util.ReportGenerator
 
@@ -19,23 +18,6 @@ def dbaccess (String dbname, String sql) {
         throw new RuntimeException("dbaccess call failed")
     }
     proc
-}
-
-GPathResult getFromPubmed(List ids) {
-    // pubmed doc says "if more than about 200 UIDs are to be provided, the request should be
-    // made using the HTTP POST method" ... okay pubmed, you're such a good guy, we'll play
-    // by your rules
-    def url = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
-    def query = "db=pubmed&id=${ids.join(",")}&retmode=xml"
-    def connection = new URL(url).openConnection()
-    connection.setRequestMethod("POST")
-    connection.setDoOutput(true)
-    def writer = new OutputStreamWriter(connection.outputStream)
-    writer.write(query)
-    writer.flush()
-    writer.close()
-    connection.connect()
-    new XmlSlurper().parse(connection.inputStream)
 }
 
 DBNAME = System.getenv("DBNAME")
@@ -62,7 +44,7 @@ new File(MESH_TO_LOAD).withWriter { output ->
         def lines = reader.iterator()
         while (lines.hasNext()) {
             ids = lines.take(batchSize).collect { it.split("\\|")[0] }
-            articleSet = getFromPubmed(ids)
+            articleSet = PubmedUtils.getFromPubmed(ids)
             count += articleSet.PubmedArticle.size()
             articleSet.PubmedArticle.each { article ->
                 id = article.MedlineCitation.PMID
