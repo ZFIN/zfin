@@ -23,7 +23,7 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/data_transfer/SNP/*.xml,server_apps/data_transfer/SNP/*.unl</artifacts>
+      <artifacts>server_apps/data_transfer/SNP/*.txt,server_apps/data_transfer/SNP/*.unl</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>false</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
