@@ -23,7 +23,8 @@ GENERICS = updatepubstatus.pl \
            fixBadCharacterEncoding.pl
 STATICS = addMeshTermsToAllPubs.groovy \
           updatePublicationDate.groovy \
-          loadMeshTerms.groovy
+          loadMeshTerms.groovy \
+          PubmedUtils.groovy
 
 # ---------------  Production Rules  ------------------------------------
 
