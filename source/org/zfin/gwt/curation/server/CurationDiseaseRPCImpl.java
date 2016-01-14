@@ -256,7 +256,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
                     throw new TermNotFoundException("Genotype already exists.");
                 else {
                     getInfrastructureRepository().insertPublicAttribution(existentGenotype.getZdbID(), publicationID);
-                    report.setReportMessage("Imported Genotype " + genotype.getHandle() + " from different Publication");
+                    report.setReportMessage("Imported Genotype " + genotype.getHandle());
                 }
             } else {
                 getMutantRepository().saveGenotype(genotype, publicationID);
