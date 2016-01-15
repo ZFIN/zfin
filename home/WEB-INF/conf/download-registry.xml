@@ -1447,7 +1447,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                 Fish-Publication relation
             </Name>
             <Category>
-                Fish Data
+                Publications
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
@@ -1466,7 +1466,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                 Genotype-Publication relation
             </Name>
             <Category>
-                Fish Data
+                Publications
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
