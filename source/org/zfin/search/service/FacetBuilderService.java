@@ -18,6 +18,8 @@ import java.net.URLEncoder;
 import java.util.*;
 
 import static org.zfin.search.FieldName.*;
+import static java.util.Arrays.asList;
+
 
 @Service
 public class FacetBuilderService {
@@ -147,6 +149,7 @@ public class FacetBuilderService {
         FacetGroup expressedGene = new FacetGroup("Expressed Gene", true);
         expressedGene.addFacet(buildFacet("zebrafish_gene", true, response, filterQuerySelectionMap, baseUrl));
         expressedGene.addFacet(buildFacet("reporter_gene", false, response, filterQuerySelectionMap, baseUrl));
+        expressedGene.setFacetQueries(buildFacetQueries(asList(FacetQueryEnum.ANY_ZEBRAFISH_GENE, FacetQueryEnum.ANY_REPORTER_GENE), response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(expressedGene);
 
         facetGroups.add(buildSingleFacetGroup("Expressed In Anatomy", EXPRESSIONS_ANATOMY_TF.getName(), true, response, filterQuerySelectionMap, baseUrl));
@@ -330,10 +333,23 @@ public class FacetBuilderService {
 
         //todo: some part of this code should get moved from here to somewhere re-used when we have another facet query section
 
+        publishedDateGroup.setFacetQueries(buildFacetQueries(Category.PUBLICATION.getFacetQueries(), response, filterQuerySelectionMap, baseUrl));
+
+        facetGroups.add(publishedDateGroup);
+
+
+        return facetGroups;
+    }
+
+    public List<FacetQuery> buildFacetQueries(List<FacetQueryEnum> facetQueryEnumList,
+                                              QueryResponse response,
+                                              Map<String, Boolean> filterQuerySelectionMap,
+                                              String baseUrl) {
+
         List<FacetQuery> unselectedFacetQueries = new ArrayList<>();
         List<FacetQuery> selectedFacetQueries = new ArrayList<>();
 
-        for (FacetQueryEnum facetQueryEnum : Category.PUBLICATION.getFacetQueries()) {
+        for (FacetQueryEnum facetQueryEnum : facetQueryEnumList) {
             Integer count = response.getFacetQuery().get(facetQueryEnum.getQuery());
             if (count > 0) {
                 FacetQuery facetQuery = new FacetQuery();
@@ -363,13 +379,11 @@ public class FacetBuilderService {
         List<FacetQuery> facetQueries = new ArrayList<>();
         facetQueries.addAll(selectedFacetQueries);
         facetQueries.addAll(unselectedFacetQueries);
-        publishedDateGroup.setFacetQueries(facetQueries);
 
-        facetGroups.add(publishedDateGroup);
+        return facetQueries;
 
-
-        return facetGroups;
     }
+
 
     public FacetGroup buildSingleFacetGroup(String label, String fieldName,
                                             boolean openByDefault,

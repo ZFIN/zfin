@@ -17,8 +17,9 @@ public enum FacetQueryEnum {
     DATE_THIS_YEAR_MINUS_5(Integer.toString(Calendar.getInstance().get(Calendar.YEAR) - 5), "date:[NOW/YEAR-5YEAR TO NOW/YEAR-4YEAR]"),
     DATE_MORE_THAN_5_YEARS("More than 5 years", "date:[* TO NOW/YEAR-5YEAR]"),
     ANY_WILDTYPE("Any WT", "is_genotype_wildtype:true"),
-    ANY_MUTANT("Any Mutant", "is_genotype_wildtype:false");
-
+    ANY_MUTANT("Any Mutant", "is_genotype_wildtype:false"),
+    ANY_ZEBRAFISH_GENE("Any Zebrafish Gene", "zebrafish_gene:[* TO *]"),
+    ANY_REPORTER_GENE("Any Reporter Gene", "reporter_gene:[* TO *]");
 
     private String query;
     private String label;

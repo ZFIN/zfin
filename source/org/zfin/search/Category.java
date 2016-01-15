@@ -115,7 +115,9 @@ public enum Category {
             TARGETED_GENE
     ),
     EXPRESSIONS("Expression",
-            asList(FacetQueryEnum.ANY_WILDTYPE,
+            asList( FacetQueryEnum.ANY_ZEBRAFISH_GENE,
+                    FacetQueryEnum.ANY_REPORTER_GENE,
+                    FacetQueryEnum.ANY_WILDTYPE,
                     FacetQueryEnum.ANY_MUTANT),
             REPORTER_GENE,
             ZEBRAFISH_GENE,
