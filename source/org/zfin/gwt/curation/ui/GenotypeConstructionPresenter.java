@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Image;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.DeleteLink;
 
 import java.util.ArrayList;
@@ -22,7 +23,6 @@ public class GenotypeConstructionPresenter implements Presenter {
 
     private CurationDiseaseRPCAsync diseaseRpcService = CurationDiseaseRPC.App.getInstance();
     private CurationExperimentRPCAsync curationExperimentRpcService = CurationExperimentRPC.App.getInstance();
-    private final HandlerManager eventBus;
     private GenotypeConstruction view;
     private String publicationID;
 
@@ -30,8 +30,7 @@ public class GenotypeConstructionPresenter implements Presenter {
     private List<ZygosityDTO> zygosityList = new ArrayList<>();
     private List<GenotypeDTO> backgroundGenoList = new ArrayList<>();
 
-    public GenotypeConstructionPresenter(HandlerManager eventBus, GenotypeConstruction view, String publicationID) {
-        this.eventBus = eventBus;
+    public GenotypeConstructionPresenter(GenotypeConstruction view, String publicationID) {
         this.view = view;
         this.view.setPresenter(this);
         this.publicationID = publicationID;
@@ -239,7 +238,7 @@ public class GenotypeConstructionPresenter implements Presenter {
             view.getLoadingImage().setVisible(false);
             view.setMessage(report.getReportMessage());
             resetGUI();
-            eventBus.fireEvent(new AddNewGenotypeEvent());
+            AppUtils.EVENT_BUS.fireEvent(new AddNewGenotypeEvent());
         }
     }
 
