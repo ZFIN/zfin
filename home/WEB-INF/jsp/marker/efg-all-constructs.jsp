@@ -7,7 +7,7 @@
 <c:choose>
     <c:when test="${fromBean.numberOfConstructs < 10}">
         <c:forEach var="hyperlinkEntity" items="${formBean.constructs}" varStatus="loop">
-            <zfin:link entity="${hyperlinkEntity}" suppressPopupLink="${suppressPopupLinks}"/><c:if
+            <i></i><zfin:link entity="${hyperlinkEntity}" suppressPopupLink="${suppressPopupLinks}"/></i><c:if
                 test="${showAttributionLinks}"> <zfin:attribution
                 entity="${hyperlinkEntity.superterm}"/></c:if><c:if test="${!loop.last}">, </c:if>
         </c:forEach>&nbsp;

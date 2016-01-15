@@ -43,7 +43,7 @@
         <zfin:alternating-tr loopName="loop">
             <td class="bold">
 
-                <a href="/${construct.ID}"> ${construct.name}</a>
+                <a href="/${construct.ID}"> <i>${construct.name}</i></a>
             </td>
             <td>
                 <c:if test="${construct.expressionFigureCount != 0}">
