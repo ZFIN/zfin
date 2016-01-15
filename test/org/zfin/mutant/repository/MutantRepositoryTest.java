@@ -367,6 +367,14 @@ public class MutantRepositoryTest {
     }
 
     @Test
+    public void getDiseaseModel() {
+        String publicationID = "ZDB-PUB-990507-16";
+        String fishID = "ZDB-FISH-150901-19447";
+        List<DiseaseAnnotation> reagentList = RepositoryFactory.getMutantRepository().getDiseaseModel(fishID, publicationID);
+        assertThat(reagentList, notNullValue());
+    }
+
+    @Test
     public void gwtFish() {
         String fishID = "ZDB-FISH-150901-1441";
         Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
