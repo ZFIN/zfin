@@ -663,7 +663,6 @@
              related_marker
              allele_t
              background background_t
-             curator curator_t
              sequence_alteration sequence_alteration_t
              probe
              mutagen

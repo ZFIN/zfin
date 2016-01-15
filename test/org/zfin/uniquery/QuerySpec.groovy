@@ -151,7 +151,9 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.EXPRESSIONS.name | "MGC:56505 zebrafish_gene:[* TO *]"  | "12346"
         Category.EXPRESSIONS.name | "MGC:56505 gcdha"                    | "12346"
         Category.PUBLICATION.name | "curator:\"David Fashena\" curator:\"Sabrina Toro\" ZDB-PUB-100504-14"  | "13571"
+        Category.PUBLICATION.name | "Doug Howe id:ZDB-PUB-990119-20"     | "13813"
         null                      | "sheturnedmeintoanewt"               | "12988"
+
 
     }
 
