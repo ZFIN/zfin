@@ -16,7 +16,7 @@ insert into expression_experiment_temp (xpatex_zdb_id, xpatex_assay_name,
 			  and xpatres_pk_id = ept_xpatres_id);
 
 insert into expression_Result_temp (
-    xpatres_xpatex_zdb_id,
+    efs_xpatex_zdb_id,
     xpatres_start_stg_zdb_id,
     xpatres_end_stg_zdb_id,
     xpatres_expression_found,
@@ -39,7 +39,7 @@ insert into expression_Result_temp (
 
 insert into expression_pattern_figure_temp (xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id)
  select distinct xpatres_zdb_id,xpatres_fig_zdb_id
-   from expression_result, expression_figure_stage
+   from expression_result_temp, expression_figure_stage
  where xpatres_xpatex_zdb_id = efs_xpatex_zdb_id
  and xpatres_start_stg_zdb_id = efs_start_stg_zdb_id
  and xpatres_end_stg_zdb_id = efs_end_stg_zdb_id 
