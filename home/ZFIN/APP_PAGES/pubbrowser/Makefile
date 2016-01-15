@@ -27,7 +27,7 @@ GENERICS = citlink.apg journalselect.apg \
 	showpubs.apg showsnppubs.apg
 
 STATICS= REFERinfo.apg pubprintable.apg enterpubs.apg pubtopic_close.apg \
-	pnote_new.apg link_authors_update.apg \
+	pnote_new.apg \
 	citselectlist.apg citfish.apg externallink.apg \
 	citjtypeoption.apg citgeneric.apg cittotalcount.apg pub_rowdisplay.apg \
 
