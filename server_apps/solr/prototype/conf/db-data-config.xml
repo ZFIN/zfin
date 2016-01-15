@@ -1,7 +1,7 @@
 <dataConfig>
 
     <dataSource name="db" driver="com.informix.jdbc.IfxDriver" url="jdbc:informix-sqli://@SQLHOSTS_HOST@:@INFORMIX_PORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@"
-	        user="zfinner" password="Rtwm4ts"  transactionIsolation="TRANSACTION_READ_UNCOMMITTED"/>
+	        transactionIsolation="TRANSACTION_READ_UNCOMMITTED"/>
 
 
     <document>

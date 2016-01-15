@@ -1,19 +1,19 @@
 package org.zfin.gwt.curation.ui;
 
-import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
-import org.apache.commons.collections.CollectionUtils;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
-import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
 import org.zfin.gwt.root.ui.ZfinFlexTable;
-import org.zfin.mutant.DiseaseAnnotationModel;
+import org.zfin.gwt.root.util.DeleteImage;
+import org.zfin.gwt.root.util.WidgetUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +27,7 @@ public class DiseaseModelView extends Composite {
     public static final String IS_A_MODEL_OF = "is a model of";
 
     private static MyUiBinder binder = GWT.create(MyUiBinder.class);
+    private DiseaseModelPresenter presenter;
 
     @UiTemplate("DiseaseModule.ui.xml")
     interface MyUiBinder extends UiBinder<FlowPanel, DiseaseModelView> {
@@ -42,126 +43,108 @@ public class DiseaseModelView extends Composite {
     SimpleErrorElement errorLabel;
     @UiField
     ZfinFlexTable diseaseModelTable;
+    @UiField
+    Grid dataTable;
+    @UiField
+    ListBox fishSelectionBox;
+    @UiField
+    ListBox environmentSelectionBox;
+    @UiField
+    ListBox diseaseSelectionBox;
+    @UiField
+    ListBox evidenceCodeSelectionBox;
+    @UiField
+    Button addDiseaseModelButton;
 
 
-    private ListBox fishSelectionBox = new ListBox();
-    private ListBox environmentSelectionBox = new ListBox();
-    private ListBox diseaseSelectionBox = new ListBox();
-    private ListBox evidenceCodeSelectionBox = new ListBox();
-    private Button addDiseaseModelButton = new Button("Add");
-
-    private void initDiseaseModelTable() {
-        // Initialize the diseaseTable.
-        int index = 0;
-        diseaseModelTable.setText(0, index, "Fish");
-        diseaseModelTable.getCellFormatter().setStyleName(0, index++, "bold");
-        diseaseModelTable.setText(0, index, "Environment");
-        diseaseModelTable.getCellFormatter().setStyleName(0, index++, "bold");
-        diseaseModelTable.setText(0, index++, "");
-        diseaseModelTable.setText(0, index, "Human Disease");
-        diseaseModelTable.getCellFormatter().setStyleName(0, index++, "bold");
-        diseaseModelTable.setText(0, index, "Evidence Code");
-        diseaseModelTable.getCellFormatter().setStyleName(0, index++, "bold");
-        diseaseModelTable.setText(0, index, "Delete");
-        diseaseModelTable.getCellFormatter().setStyleName(0, index, "bold");
-        diseaseModelTable.getCellFormatter().setHorizontalAlignment(0, 2, HasHorizontalAlignment.ALIGN_LEFT);
-        diseaseModelTable.getRowFormatter().setStyleName(0, "table-header");
+    @UiHandler("addDiseaseModelButton")
+    void onAddModel(@SuppressWarnings("unused") ClickEvent event) {
+        presenter.addModelEvent();
     }
 
-    private Map<Button, DiseaseAnnotationDTO> deleteModeMap = new HashMap<>();
-    private Map<Button, DiseaseAnnotationModelDTO> deleteModeMap1 = new HashMap<>();
+    private Map<DeleteImage, DiseaseAnnotationDTO> deleteModeMap = new HashMap<>();
+    private Map<DeleteImage, DiseaseAnnotationModelDTO> deleteModeMap1 = new HashMap<>();
     private Map<Hyperlink, DiseaseAnnotationDTO> termLinkDiseaseModelMap = new HashMap<>();
 
-    public void updateDiseaseModelTableContent(List<DiseaseAnnotationDTO> modelDTOList) {
-        diseaseModelTable.removeAllRows();
-        initDiseaseModelTable();
+    protected void updateDiseaseModelTableContent(List<DiseaseAnnotationDTO> modelDTOList) {
+        if (modelDTOList == null)
+            return;
+        int rows = getNumberOfRows(modelDTOList);
+//        com.google.gwt.user.client.Window.alert("hi " + row);
+        dataTable.resize(rows + 2, 6);
+        // leave the header table row unchanged
+        int row = 1;
+        // responsible for the alternate shading
         int groupIndex = 0;
-        int rowIndex = 1;
-
-
-        if (modelDTOList != null) {
-            for (DiseaseAnnotationDTO diseaseModel : modelDTOList) {
-
-                if (diseaseModel.getDamoDTO() != null) {
-                    for (DiseaseAnnotationModelDTO damo : diseaseModel.getDamoDTO()) {
-                        int colIndex = 0;
-
-                        Anchor fish = new Anchor(SafeHtmlUtils.fromTrustedString(damo.getFish().getHandle()), "/" + damo.getFish().getZdbID());
-
-                        fish.setTitle(damo.getFish().getZdbID());
-                        diseaseModelTable.setWidget(rowIndex, colIndex++, fish);
-
-                        InlineHTML environment = new InlineHTML(damo.getEnvironment().getName());
-
-                        environment.setTitle(damo.getEnvironment().getZdbID());
-                        diseaseModelTable.setWidget(rowIndex, colIndex++, environment);
-
-
-                        diseaseModelTable.setText(rowIndex, colIndex, IS_A_MODEL_OF);
-                        diseaseModelTable.getCellFormatter().setStyleName(rowIndex, colIndex++, "bold");
-                        Hyperlink disease = new Hyperlink(SafeHtmlUtils.fromTrustedString(diseaseModel.getDisease().getTermName()), "diseaseName");
-
-                        disease.setTitle(diseaseModel.getDisease().getOboID());
-                        termLinkDiseaseModelMap.put(disease, diseaseModel);
-                        diseaseModelTable.setWidget(rowIndex, colIndex++, disease);
-                        diseaseModelTable.setText(rowIndex, colIndex++, diseaseModel.getEvidenceCode());
-
-                        Button deleteButton1 = new Button("X");
-
-                        deleteModeMap1.put(deleteButton1, damo);
-                        deleteButton1.setTitle("ID: " + damo.getDamoID());
-                        diseaseModelTable.setWidget(rowIndex, colIndex, deleteButton1);
-                        groupIndex = diseaseModelTable.setRowStyle(rowIndex++, null, diseaseModel.getDisease().getZdbID(), groupIndex);
-
-                    }
-                    addConstructionRow(rowIndex);
-                } else {
-                    int colIndex = 0;
-                    Anchor fish = new Anchor("");
-                    fish.setTitle("");
-                    diseaseModelTable.setWidget(rowIndex, colIndex++, fish);
-                    //  InlineHTML environment = new InlineHTML(diseaseModel.getEnvironment().getName());
-                    InlineHTML environment = new InlineHTML("");
-                    environment.setTitle("");
-
-                    diseaseModelTable.setWidget(rowIndex, colIndex++, environment);
-
-                    diseaseModelTable.setText(rowIndex, colIndex, IS_A_MODEL_OF);
-                    diseaseModelTable.getCellFormatter().setStyleName(rowIndex, colIndex++, "bold");
-                    Hyperlink disease = new Hyperlink(SafeHtmlUtils.fromTrustedString(diseaseModel.getDisease().getTermName()), "diseaseName");
-
-                    disease.setTitle(diseaseModel.getDisease().getOboID());
-                    termLinkDiseaseModelMap.put(disease, diseaseModel);
-                    diseaseModelTable.setWidget(rowIndex, colIndex++, disease);
-                    diseaseModelTable.setText(rowIndex, colIndex++, diseaseModel.getEvidenceCode());
-                    Button deleteButton = new Button("X");
-                    deleteModeMap.put(deleteButton, diseaseModel);
-                    deleteButton.setTitle("ID: " + diseaseModel.getZdbID());
-                    diseaseModelTable.setWidget(rowIndex, colIndex, deleteButton);
-                    groupIndex = diseaseModelTable.setRowStyle(rowIndex++, null, diseaseModel.getDisease().getZdbID(), groupIndex);
+        for (DiseaseAnnotationDTO disease : modelDTOList) {
+            if (disease.getDamoDTO() != null) {
+                for (DiseaseAnnotationModelDTO dto : disease.getDamoDTO()) {
+                    groupIndex = populateRow(row, disease, dto, groupIndex);
+                    row++;
                 }
+            } else {
+                // ensure the old values in these cells are not retained from previous display...
+                dataTable.clearCell(row, 0);
+                dataTable.clearCell(row, 1);
+                dataTable.clearCell(row, 2);
+                groupIndex = populateRow(row, disease, null, groupIndex);
+                row++;
             }
-            addConstructionRow(rowIndex);
         }
+        int lastRow = rows + 1;
+        int col = 0;
+        dataTable.setWidget(lastRow, col++, fishSelectionBox);
+        dataTable.setWidget(lastRow, col++, environmentSelectionBox);
+        dataTable.setText(lastRow, col, IS_A_MODEL_OF);
+        dataTable.getCellFormatter().setStyleName(row, col++, "bold");
+        dataTable.setWidget(lastRow, col++, diseaseSelectionBox);
+        dataTable.setWidget(lastRow, col++, evidenceCodeSelectionBox);
+        dataTable.getRowFormatter().setStyleName(lastRow, "table-header");
+        dataTable.setWidget(lastRow, col, addDiseaseModelButton);
     }
 
-
-    private void addConstructionRow(int rowIndex) {
-
-        int colIndex = 0;
-        diseaseModelTable.setWidget(rowIndex, colIndex++, fishSelectionBox);
-        diseaseModelTable.setWidget(rowIndex, colIndex++, environmentSelectionBox);
-        diseaseModelTable.setText(rowIndex, colIndex++, IS_A_MODEL_OF);
-        diseaseModelTable.setWidget(rowIndex, colIndex++, diseaseSelectionBox);
-        diseaseModelTable.setWidget(rowIndex, colIndex++, evidenceCodeSelectionBox);
-        diseaseModelTable.setWidget(rowIndex, colIndex, addDiseaseModelButton);
-        diseaseModelTable.getRowFormatter().setStyleName(rowIndex, "table-header");
+    // returns new groupIndex
+    private int populateRow(int row, DiseaseAnnotationDTO disease, DiseaseAnnotationModelDTO dto, int groupIndex) {
+        int column = 0;
+        if (dto != null) {
+            Anchor fish = new Anchor(SafeHtmlUtils.fromTrustedString(dto.getFish().getHandle()), "/" + dto.getFish().getZdbID());
+            fish.setTitle(dto.getFish().getZdbID());
+            dataTable.setWidget(row, column++, fish);
+            dataTable.setText(row, column++, dto.getEnvironment().getName());
+            dataTable.setText(row, column, IS_A_MODEL_OF);
+            dataTable.getCellFormatter().setStyleName(row, column++, "bold");
+        } else {
+            column += 3;
+        }
+        Hyperlink diseaseHyperlink = new Hyperlink(SafeHtmlUtils.fromTrustedString(disease.getDisease().getTermName()), "diseaseName");
+        diseaseHyperlink.setTitle(disease.getDisease().getOboID());
+        termLinkDiseaseModelMap.put(diseaseHyperlink, disease);
+        dataTable.setWidget(row, column++, diseaseHyperlink);
+        dataTable.setText(row, column++, disease.getEvidenceCode());
+        DeleteImage deleteImage;
+        if (dto == null) {
+            deleteImage = new DeleteImage("Delete Disease Annotation");
+            deleteModeMap.put(deleteImage, disease);
+        } else {
+            deleteImage = new DeleteImage("Delete Fish Model from Annotation");
+            deleteModeMap1.put(deleteImage, dto);
+        }
+        deleteImage.setTitle(deleteImage.getTitle() + ": " + disease.getZdbID());
+        dataTable.setWidget(row, column, deleteImage);
+        return WidgetUtil.setRowStyle(row, null, disease.getDisease().getZdbID(), groupIndex, dataTable);
     }
 
-
-    public Button getAddDiseaseModelButton() {
-        return addDiseaseModelButton;
+    private int getNumberOfRows(List<DiseaseAnnotationDTO> modelDTOList) {
+        int rows = 0;
+        for (DiseaseAnnotationDTO diseaseModel : modelDTOList) {
+            if (diseaseModel.getDamoDTO() != null)
+                rows += diseaseModel.getDamoDTO().size();
+            else
+                rows += 1;
+        }
+        return rows;
     }
+
 
     public ListBox getDiseaseSelectionBox() {
         return diseaseSelectionBox;
@@ -187,15 +170,24 @@ public class DiseaseModelView extends Composite {
         return loadingImage;
     }
 
-    public Map<Button, DiseaseAnnotationDTO> getDeleteModeMap() {
+    public Map<DeleteImage, DiseaseAnnotationDTO> getDeleteModeMap() {
         return deleteModeMap;
     }
 
-    public Map<Button, DiseaseAnnotationModelDTO> getDeleteModeMap1() {
+    public Map<DeleteImage, DiseaseAnnotationModelDTO> getDeleteModeMap1() {
         return deleteModeMap1;
     }
 
     public Map<Hyperlink, DiseaseAnnotationDTO> getTermLinkDiseaseModelMap() {
         return termLinkDiseaseModelMap;
     }
+
+    public void setPresenter(DiseaseModelPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    public DiseaseModelPresenter getPresenter() {
+        return presenter;
+    }
+
 }

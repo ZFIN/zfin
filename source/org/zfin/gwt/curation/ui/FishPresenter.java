@@ -1,6 +1,5 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.Widget;
 import org.zfin.gwt.root.dto.FishDTO;
 import org.zfin.gwt.root.ui.ErrorHandler;
@@ -15,14 +14,12 @@ import java.util.List;
 public class FishPresenter implements Presenter {
 
     private CurationDiseaseRPCAsync diseaseRpcService = CurationDiseaseRPC.App.getInstance();
-    private final HandlerManager eventBus;
     private FishView view;
     private String publicationID;
 
     private List<FishDTO> fishList = new ArrayList<>(10);
 
-    public FishPresenter(HandlerManager eventBus, FishView view, String publicationID) {
-        this.eventBus = eventBus;
+    public FishPresenter(FishView view, String publicationID) {
         this.view = view;
         this.publicationID = publicationID;
     }

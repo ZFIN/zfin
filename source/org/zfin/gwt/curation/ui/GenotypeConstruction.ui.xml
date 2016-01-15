@@ -23,6 +23,8 @@
                         <g:Button ui:field="buttonUUU">U,U,U</g:Button>
                         <g:Button ui:field="button2UU">2,U,U</g:Button>
                         <g:Button ui:field="button211">2,1,1</g:Button>
+                        <g:Button ui:field="button1UU">1,U,U</g:Button>
+                        <g:Button ui:field="button22U">2,2,U</g:Button>
                     </td>
                 </tr>
                 <tr>
@@ -71,6 +73,7 @@
                 <g:Button ui:field="resetButton" text="Reset"/>
             </g:HorizontalPanel>
             <zfin:SimpleErrorElement ui:field="errorLabel"/>
+            <g:Label ui:field="messageLabel"/>
             <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="false"/>
         </g:VerticalPanel>
     </g:FlowPanel>

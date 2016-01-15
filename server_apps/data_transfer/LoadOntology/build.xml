@@ -3,7 +3,7 @@
 <project name="load ontology" default="load-ontology" basedir=".">
 
     <property name="anatomyOboURL"
-              value="http://berkeleybop.org/ontologies/obo-all/zebrafish_anatomy/zebrafish_anatomy.obo"/>
+              value="http://purl.obolibrary.org/obo/zfa.obo"/>
     <property name="qualityOboURL"
               value="http://purl.obolibrary.org/obo/pato.obo"/>
     <property name="geneOboURL" value="http://purl.obolibrary.org/obo/go.obo"/>

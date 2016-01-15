@@ -89,7 +89,7 @@
         </th>
         <td>
             <c:forEach var="mRel" items="${formBean.sortedConstructRelationships}" varStatus="loop">
-                <a href="/action/marker/view/${mRel.marker.zdbID}">${mRel.marker.name}</a>
+                <a href="/action/marker/view/${mRel.marker.zdbID}"><i>${mRel.marker.name}</i></a>
                 <%--//<zfin:name entity="${mRel.marker}"/>--%>
 
                 <c:if test="${mRel.publicationCount > 0}">

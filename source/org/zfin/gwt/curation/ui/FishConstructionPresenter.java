@@ -2,7 +2,6 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -23,14 +22,12 @@ public class FishConstructionPresenter implements Presenter {
     private CurationDiseaseRPCAsync diseaseRpcService = CurationDiseaseRPC.App.getInstance();
 
     private CurationExperimentRPCAsync curationExperimentRpcService = CurationExperimentRPC.App.getInstance();
-    private final HandlerManager eventBus;
     private FishConstruction view;
     private String publicationID;
 
     private FishPresenter fishPresenter;
 
-    public FishConstructionPresenter(HandlerManager eventBus, FishConstruction view, String publicationID) {
-        this.eventBus = eventBus;
+    public FishConstructionPresenter(FishConstruction view, String publicationID) {
         this.view = view;
         this.publicationID = publicationID;
         this.view.setFishConstructionPresenter(this);

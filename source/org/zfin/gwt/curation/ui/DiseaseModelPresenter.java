@@ -1,25 +1,22 @@
 package org.zfin.gwt.curation.ui;
 
-import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Hyperlink;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
 import org.zfin.gwt.root.dto.*;
-
-import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
-import org.zfin.mutant.DiseaseAnnotationModel;
-import org.zfin.mutant.FishExperiment;
+import org.zfin.gwt.root.util.DeleteImage;
 
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Table of associated genotypes
@@ -31,7 +28,6 @@ public class DiseaseModelPresenter implements Presenter {
     private CurationExperimentRPCAsync curationRPCService = CurationExperimentRPC.App.getInstance();
     private DiseaseModelView view;
     private String publicationID;
-    private List<DiseaseAnnotationModelDTO> damoDTOList = new ArrayList<>();
     private List<FishDTO> fishList = new ArrayList<>();
     private List<EnvironmentDTO> environmentList = new ArrayList<>();
     private List<TermDTO> diseaseList = new ArrayList<>();
@@ -60,27 +56,22 @@ public class DiseaseModelPresenter implements Presenter {
                 clearErrorMessages();
             }
         });
-        view.getAddDiseaseModelButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                if (processing)
-                    return;
-                processing = true;
-                DiseaseAnnotationDTO disease = getDiseaseModel();
-
-                if (disease == null) {
-                    processing = false;
-                    return;
-                }
-
-
-                diseaseRpcService.addHumanDiseaseAnnotation(disease, new RetrieveDiseaseModelListCallBack("Could not add a new disease model", view.getErrorLabel()));
-
-
-                view.getLoadingImage().setVisible(true);
-            }
-        });
         addDynamicClickHandler();
+    }
+
+    protected void addModelEvent() {
+        if (processing)
+            return;
+        processing = true;
+        DiseaseAnnotationDTO disease = getDiseaseModel();
+
+        if (disease == null) {
+            processing = false;
+            return;
+        }
+
+        diseaseRpcService.addHumanDiseaseAnnotation(disease, new RetrieveDiseaseModelListCallBack("Could not add a new disease model", view.getErrorLabel()));
+        view.getLoadingImage().setVisible(true);
     }
 
     private DiseaseAnnotationDTO getDiseaseModel() {
@@ -111,37 +102,14 @@ public class DiseaseModelPresenter implements Presenter {
 
     }
 
-    private DiseaseAnnotationModelDTO getDiseaseAnnotationModel() {
-        DiseaseAnnotationModelDTO dto = new DiseaseAnnotationModelDTO();
-        int selectedIndexFish = view.getFishSelectionBox().getSelectedIndex();
-        int selectedIndexEnv = view.getEnvironmentSelectionBox().getSelectedIndex();
-        if ((selectedIndexFish == 0 && selectedIndexEnv > 0) ||
-                (selectedIndexFish > 0 && selectedIndexEnv == 0)) {
-            setError("You need to select both a Fish and an Environment or none at all.");
-            return null;
-        }
-        if (selectedIndexEnv > 0 && selectedIndexFish > 0) {
-            dto.setFish(fishList.get(selectedIndexFish - 1));
-            dto.setEnvironment(environmentList.get(selectedIndexEnv - 1));
-        }
-        int selectedIndexDis = view.getDiseaseSelectionBox().getSelectedIndex();
-        if (selectedIndexDis == -1) {
-            setError("No Disease available. Please add a new disease below.");
-            return null;
-        }
-
-        return dto;
-
-    }
-
     private void addDynamicClickHandler() {
-        Map<Button, DiseaseAnnotationDTO> map = view.getDeleteModeMap();
-        for (Button deleteButton : map.keySet()) {
+        Map<DeleteImage, DiseaseAnnotationDTO> map = view.getDeleteModeMap();
+        for (DeleteImage deleteButton : map.keySet()) {
             deleteButton.addClickHandler(new HumanDiseaseModelDeleteClickListener(map.get(deleteButton)));
         }
-        Map<Button, DiseaseAnnotationModelDTO> map1 = view.getDeleteModeMap1();
-        for (Button deleteButton1 : map1.keySet()) {
-            deleteButton1.addClickHandler(new HumanDiseaseAnnotationModelDeleteClickListener(map1.get(deleteButton1)));
+        Map<DeleteImage, DiseaseAnnotationModelDTO> map1 = view.getDeleteModeMap1();
+        for (DeleteImage deleteImage : map1.keySet()) {
+            deleteImage.addClickHandler(new HumanDiseaseAnnotationModelDeleteClickListener(map1.get(deleteImage)));
         }
 
         Map<Hyperlink, DiseaseAnnotationDTO> linkMap = view.getTermLinkDiseaseModelMap();
@@ -187,8 +155,18 @@ public class DiseaseModelPresenter implements Presenter {
     }
 
 
-    private void updateDiseaseList(List<TermDTO> termList) {
-        diseaseList = new ArrayList<>(termList);
+    private void updateDiseaseList(List<DiseaseAnnotationDTO> diseaseModelList) {
+        if (diseaseModelList == null)
+            return;
+
+        for (DiseaseAnnotationDTO annotationDTO : diseaseModelList) {
+            if (!diseaseList.contains(annotationDTO.getDisease()))
+                diseaseList.add(annotationDTO.getDisease());
+        }
+        reCreateDiseaseListBox();
+    }
+
+    private void reCreateDiseaseListBox() {
         Collections.sort(diseaseList);
         view.getDiseaseSelectionBox().clear();
         for (TermDTO disease : diseaseList)
@@ -199,24 +177,6 @@ public class DiseaseModelPresenter implements Presenter {
         view.getErrorLabel().setText(message);
     }
 
-    /*
-
-        public void addError(String message) {
-            String mess = errorLabel.getText();
-            if (StringUtils.isEmpty(mess))
-                mess = message;
-            else
-                mess += " || " + message;
-            errorLabel.setText(mess);
-        }
-
-        @Override
-        public void clearError() {
-            attributionModule.clearError();
-            revertGUI();
-        }
-
-    */
     public void clearErrorMessages() {
         view.getErrorLabel().setError("");
     }
@@ -233,12 +193,8 @@ public class DiseaseModelPresenter implements Presenter {
     public void addDiseaseToSelectionBox(TermDTO disease) {
         if (diseaseList.contains(disease))
             return;
-        List<TermDTO> diseaseList = new ArrayList<>(this.diseaseList.size() + 1);
         diseaseList.add(disease);
-        diseaseList.addAll(this.diseaseList);
-        this.diseaseList = diseaseList;
-        view.getDiseaseSelectionBox().insertItem(disease.getTermName(), disease.getZdbID(), 0);
-        view.getDiseaseSelectionBox().setSelectedIndex(0);
+        reCreateDiseaseListBox();
     }
 
     public void updateFishList() {
@@ -249,8 +205,6 @@ public class DiseaseModelPresenter implements Presenter {
     }
 
     public void updateConditions() {
-        String termSel = view.getFishSelectionBox().getItemText(view.getFishSelectionBox().getSelectedIndex());
-        String envSel = view.getEnvironmentSelectionBox().getItemText(1);
         String message = "geting wildtype";
         curationRPCService.getBackgroundGenotypes(publicationID, new RetrieveBackgroundNewGenoCallback(message, view.getErrorLabel()));
 
@@ -300,8 +254,7 @@ public class DiseaseModelPresenter implements Presenter {
                 genos.add(dto.getName());
             }
             genos.add("WT");
-            String strGeno = genos.toString();
-            if (view.getEnvironmentSelectionBox().getSelectedValue() == "ZDB-EXP-041102-1" || view.getEnvironmentSelectionBox().getSelectedValue() == "ZDB-EXP-070511-5") {
+            if (view.getEnvironmentSelectionBox().getSelectedValue().equals("ZDB-EXP-041102-1") || view.getEnvironmentSelectionBox().getSelectedValue().equals("ZDB-EXP-070511-5")) {
                 int selInd = view.getEnvironmentSelectionBox().getSelectedIndex();
                 view.getEnvironmentSelectionBox().getElement().getElementsByTagName("option").getItem(selInd).setAttribute("disabled", "disabled");
             } else {
@@ -350,46 +303,9 @@ public class DiseaseModelPresenter implements Presenter {
                 diseaseModelList.clear();
             } else {
                 diseaseModelList = modelDTOs;
-                Set<TermDTO> diseaseList = new HashSet<>(modelDTOs.size());
-                for (DiseaseAnnotationDTO dto : modelDTOs) {
-                    diseaseList.add(dto.getDisease());
-                }
             }
             view.updateDiseaseModelTableContent(modelDTOs);
-            updateDiseaseList(diseaseList);
-            view.getLoadingImage().setVisible(false);
-            addDynamicClickHandler();
-            processing = false;
-        }
-
-        @Override
-        public void onFailure(Throwable throwable) {
-            super.onFailure(throwable);
-            processing = false;
-        }
-    }
-
-    class RetrieveDiseaseAnnotationModelListCallBack extends ZfinAsyncCallback<List<DiseaseAnnotationDTO>> {
-
-        public RetrieveDiseaseAnnotationModelListCallBack(String errorMessage, ErrorHandler errorLabel) {
-            super(errorMessage, errorLabel, view.loadingImage);
-        }
-
-
-        public void onSuccess(List<DiseaseAnnotationDTO> modelDTOs) {
-
-            if (modelDTOs == null) {
-                diseaseModelList.clear();
-            } else {
-                diseaseModelList = modelDTOs;
-                Set<TermDTO> diseaseList = new HashSet<>(modelDTOs.size());
-                for (DiseaseAnnotationDTO dto : modelDTOs) {
-                    diseaseList.add(dto.getDisease());
-                }
-            }
-
-            view.updateDiseaseModelTableContent(modelDTOs);
-            updateDiseaseList(diseaseList);
+            updateDiseaseList(modelDTOs);
             view.getLoadingImage().setVisible(false);
             addDynamicClickHandler();
             processing = false;
@@ -424,7 +340,7 @@ public class DiseaseModelPresenter implements Presenter {
         }
 
         public void onClick(ClickEvent event) {
-            diseaseRpcService.deleteDiseaseAnnotationModel(diseaseAnnotationModelDTO, new RetrieveDiseaseAnnotationModelListCallBack("Could not delete Disease model", view.getErrorLabel()));
+            diseaseRpcService.deleteDiseaseAnnotationModel(diseaseAnnotationModelDTO, new RetrieveDiseaseModelListCallBack("Could not delete Disease model", view.getErrorLabel()));
         }
     }
 

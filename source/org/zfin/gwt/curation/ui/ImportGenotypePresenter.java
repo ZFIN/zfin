@@ -4,12 +4,12 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.CheckBox;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.GenotypeDTO;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +22,11 @@ public class ImportGenotypePresenter implements Presenter {
 
     private CurationDiseaseRPCAsync diseaseRpcService = CurationDiseaseRPC.App.getInstance();
     private CurationExperimentRPCAsync curationExperimentRpcService = CurationExperimentRPC.App.getInstance();
-    private final HandlerManager eventBus;
     private ImportGenotype view;
     private String publicationID;
     private List<GenotypeDTO> genotypeDTOList = new ArrayList<>();
 
-    public ImportGenotypePresenter(HandlerManager eventBus, ImportGenotype view, String publicationID) {
-        this.eventBus = eventBus;
+    public ImportGenotypePresenter(ImportGenotype view, String publicationID) {
         this.view = view;
         this.publicationID = publicationID;
         view.setPublicationID(publicationID);
@@ -78,6 +76,7 @@ public class ImportGenotypePresenter implements Presenter {
     }
 
     private void searchForGenotypes() {
+        view.getErrorLabel().clearAllErrors();
         String featureID = getSelectedFeatureID();
         String genotypeID = getSelectedGenotypeID();
         if (featureID == null && genotypeID == null)
@@ -162,7 +161,7 @@ public class ImportGenotypePresenter implements Presenter {
                 bindAddGenotypeLinkHandler();
             }
             view.getLoadingImage().setVisible(false);
-            eventBus.fireEvent(new ImportGenotypeEvent());
+            AppUtils.EVENT_BUS.fireEvent(new ImportGenotypeEvent());
         }
     }
 

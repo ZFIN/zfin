@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.nocrala.tools.texttablefmt.Table;
 import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateComparisonSessionFactory;
+import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.ontology.datatransfer.CronJobReport;
 import org.zfin.properties.ZfinPropertiesEnum;

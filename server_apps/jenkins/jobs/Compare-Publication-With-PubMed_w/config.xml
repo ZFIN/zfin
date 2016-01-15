@@ -69,7 +69,7 @@ the records at PubMed. Comparison is done on the following attributes:&#xd;
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w/*</attachmentsPattern>
+            <attachmentsPattern>server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w/Compare-Publication-With-PubMed_w.faulty-PubMed-IDs.txt</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>

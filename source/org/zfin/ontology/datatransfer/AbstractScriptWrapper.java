@@ -1,14 +1,13 @@
 package org.zfin.ontology.datatransfer;
 
 import org.apache.commons.cli.*;
-import org.apache.log4j.*;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.apache.log4j.spi.RootLogger;
 import org.apache.log4j.xml.DOMConfigurator;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
 import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.framework.HibernateSysmasterSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.SysmasterHibernateUtil;
 import org.zfin.properties.ZfinProperties;
@@ -47,7 +46,7 @@ public class AbstractScriptWrapper {
         }
         SessionFactory sessionSysmasterFactory = SysmasterHibernateUtil.getSessionFactory();
         if (sessionSysmasterFactory == null) {
-            new HibernateSysmasterSessionCreator();
+            new HibernateSessionCreator("sysmaster");
         }
     }
 

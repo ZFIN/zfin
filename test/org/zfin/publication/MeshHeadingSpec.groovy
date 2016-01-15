@@ -59,11 +59,11 @@ class MeshHeadingSpec extends AbstractZfinSpec {
                             term: quals.dosage,
                             majorTopic: false
                     )
-                ] as Set
+                ] as SortedSet
         )
 
         then:
-        heading.displayList == ["Yogurt/diet therapy", "Yogurt/administration & dosage"]
+        heading.displayList == ["Yogurt/administration & dosage", "Yogurt/diet therapy"]
     }
 
     def "mesh heading with major topic qualifiers"() {
@@ -82,7 +82,7 @@ class MeshHeadingSpec extends AbstractZfinSpec {
                             term: quals.diet,
                             majorTopic: false
                     )
-                ] as Set
+                ] as SortedSet
         )
 
         then:

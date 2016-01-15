@@ -11,31 +11,26 @@
     <property name="home.target" value="${TARGETROOT}/home"/>
     <property name="pre-home.target" value="${TARGETROOT}/pre-home"/>
     <property name="post-home.target" value="${TARGETROOT}/post-home"/>
-    <property name="archive-home.target" value="${TARGETROOT}/archive${today.DSTAMP}-home"/>
 
     <!-- static-version file targets -->
     <property name="static-java-version.file" value="${home.target}/${java-static-version.file.name}"/>
     <property name="pre.static-java-version.file" value="${pre-home.target}/${java-static-version.file.name}"/>
     <property name="post.static-java-version.file" value="${post-home.target}/${java-static-version.file.name}"/>
-    <property name="archive.static-java-version.file" value="${archive-home.target}/${java-static-version.file.name}"/>
 
     <!-- jsp-version file targets -->
     <property name="jsp-version.file" value="${home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
     <property name="pre.jsp-version.file" value="${pre-home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
     <property name="post.jsp-version.file" value="${post-home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
-    <property name="archive.jsp-version.file" value="${archive-home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
 
     <!-- gwt targets -->
     <property name="gwt.target" value="${home.target}/gwt"/>
     <property name="gwt.pre-target" value="${pre-home.target}/gwt"/>
     <property name="gwt.post-target" value="${post-home.target}/gwt"/>
-    <property name="gwt.archive-target" value="${archive-home.target}/gwt"/>
 
     <!-- web-inf targets -->
     <property name="web-inf.target" value="${home.target}/WEB-INF"/>
     <property name="pre-web-inf" value="${pre-home.target}/WEB-INF"/>
     <property name="post-web-inf" value="${post-home.target}/WEB-INF"/>
-    <property name="archive-web-inf" value="${archive-home.target}/WEB-INF"/>
 
     <property name="tomcat-temp" value="${CATALINA_BASE}/temp"/>
     <property name="tomcat-work" value="${CATALINA_BASE}/work/Catalina/${DOMAIN_NAME}/_"/>

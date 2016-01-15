@@ -150,7 +150,7 @@
                     </c:if>
                 </td>
                 <td>
-                    <zfin:link entity="${featureGene.construct}"/>
+                    <i><zfin:link entity="${featureGene.construct}"/></i>
                 </td>
                 <td>
                     <c:if test="${!empty featureGene.feature}">

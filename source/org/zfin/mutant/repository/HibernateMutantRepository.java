@@ -1571,7 +1571,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
     @Override
     public List<DiseaseAnnotation> getDiseaseModel(String fishID, String pubID) {
-        Query query = HibernateUtil.currentSession().createQuery("select diseaseAnnotation" +
+        Query query = HibernateUtil.currentSession().createQuery("select dm " +
                 "from DiseaseAnnotation dm,DiseaseAnnotationModel dma " +
                 "where dm.publication.zdbID = :pubID " +
                 "AND dma.diseaseAnnotation=dm " +

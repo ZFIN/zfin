@@ -84,13 +84,14 @@
 
 
                 <h3>Registered Authors</h3>
-                <div class="list-unstyled" ng-repeat="author in alCtrl.registeredAuthors">
-                        <button class="btn btn-danger btn-sm btn-marginalized"
-                                ng-click="alCtrl.removeAuthor(author)">
-                            <i class="fa fa-trash-o"> {{author.display}}</i>
+                <ul class="list-unstyled">
+                    <li ng-repeat="author in alCtrl.registeredAuthors">
+                        <a ng-href="/{{author.zdbID}}">{{author.display}}</a>
+                        <button class="btn btn-link" ng-click="alCtrl.removeAuthor(author)">
+                            <i class="fa fa-trash-o"></i>
                         </button>
-
-                </div>
+                    </li>
+                </ul>
             </div>
 
         </div>
