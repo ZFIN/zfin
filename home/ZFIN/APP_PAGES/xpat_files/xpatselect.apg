@@ -144,9 +144,16 @@ function start_tips() {
 
 }
 
-var intervalId = 0 ; 
+var intervalId = 0 ;
+
+<?MISQL SQL="select zflag_is_on from zdb_flag where zflag_name = 'regen_expressionmart';">
+  <?MIVAR NAME=$regen_is_on>$1<?/MIVAR>
+<?/MISQL>
 
 function call_submit() {
+<?MIBLOCK COND="$(EC,$regen_is_on,t)">
+  return false;
+<?MIELSE>
   var pauseIcrement = 500 ;  // wait up to 4 seconds
   var currentTime = new Date() ;  // wait up to 4 seconds
   try{
@@ -177,6 +184,7 @@ function call_submit() {
       // if not defined or some other problem, then go ahead and submit
       document.critform.submit();
   }
+<?/MIBLOCK>
 }
 
 
@@ -1122,11 +1130,6 @@ return false ; "
       </TR>
 
       <tr>
-
-        <?MISQL SQL="select zflag_is_on from zdb_flag where zflag_name = 'regen_expressionmart';">
-          <?MIVAR NAME=$regen_is_on>$1<?/MIVAR>
-        <?/MISQL>
-
 	    <td colspan=3 bgcolor=<!--|SIDEBAR_COLOR|--> class="submitbar">
 	      <?MIBLOCK COND="$(EC,$regen_is_on,t)">
             <span class="error">
