@@ -84,7 +84,7 @@ public class AntibodySearchFormBean extends BasicAnatomyFormBean {
         LinkedHashMap<String, String> antigenList = new LinkedHashMap<String, String>();
         antigenList.put("Any", "Any");
         AntibodyRepository ar = RepositoryFactory.getAntibodyRepository();
-        List<Species> species = ar.getUsedHostSpeciesList();
+        List<Species> species = ar.getHostSpeciesList();
         for (Species spec : species)
             antigenList.put(spec.getCommonName(), spec.getCommonName());
         return antigenList;
