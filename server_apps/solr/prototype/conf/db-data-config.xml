@@ -1797,7 +1797,6 @@ select
                         mrkr_abbrev as proper_name,
                         mrkr_abbrev as marker_abbrev,
                         mrkr_name as full_name,
-                        mrkr_abbrev_order as name_sort,
                         mrkrtype_type_display as type,
                         mrkr_zdb_id as str_zdb_id,
                         '/' || mrkr_zdb_id as url,
@@ -1806,6 +1805,19 @@ select
                              join marker_types on mrkr_type = marker_type
                              join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
                         where mtgrpmem_mrkr_type_group = 'KNOCKDOWN_REAGENT';">
+
+           <entity name="str_name_sort" datasource="db"
+                   query="select nvl(gene.mrkr_abbrev_order,'') || ' ' || str.mrkr_abbrev_order as name_sort,
+                                 str.mrkr_zdb_id as str_zdb_id
+                            from marker str
+                                 left outer join marker_relationship on  mrel_mrkr_1_zdb_id = str.mrkr_zdb_id
+                                                          and mrel_type = 'knockdown reagent targets gene'
+                                 left outer join marker gene on mrel_mrkr_2_zdb_id = gene.mrkr_zdb_id
+                                 join marker_types on str.mrkr_type = marker_type
+                                 join marker_type_group_member on mtgrpmem_mrkr_type = str.mrkr_type
+                                                              and mtgrpmem_mrkr_type_group = 'KNOCKDOWN_REAGENT';"
+                   where="str_zdb_id=str.id"
+                   cacheImpl="SortedMapBackedCache"/>
 
             <entity name="str_alias"
                     datasource="db" query="select
@@ -2930,10 +2942,11 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                         feature_zdb_id as id,
                         'Mutation / Tg' as category,
                         ftrtype_type_display as type,
-                        feature_abbrev as name,
-                        feature_abbrev as proper_name,
+                        feature_name as name,
+                        feature_name as proper_name,
                         feature_name as full_name,
-                        feature_abbrev_order as name_sort,
+                        feature_name_order as name_sort,
+                        feature_abbrev as alias,
                         feature_comments as note,
                         fto_priority as complexity,
                            '/' || feature_zdb_id as url,

@@ -18,17 +18,13 @@ def informixServer = System.getenv('INFORMIXSERVER')
 
 
 args = [driver: 'com.informix.jdbc.IfxDriver',
-        url: "jdbc:informix-sqli://$host:$port/$dbname:INFORMIXSERVER=$informixServer",
-        user: 'zfinner',
-        password: 'Rtwm4ts'
+        url: "jdbc:informix-sqli://$host:$port/$dbname:INFORMIXSERVER=$informixServer"
 ]
 
 Class.forName("com.informix.jdbc.IfxDriver")
 
 Connection conn = null
 Properties connectionProps = new Properties()
-connectionProps.put("user", args.user)
-connectionProps.put("password", args.password)
 connectionProps.put("driver", args.driver)
 
 conn = DriverManager.getConnection(args.url, connectionProps)

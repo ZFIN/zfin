@@ -990,9 +990,10 @@ select distinct  geno_zdb_id, geno_display_name, geno_handle, mrkr_abbrev, mrkr_
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_backgrounds.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_backgrounds.txt'
  DELIMITER "	"
-select distinct geno_zdb_id, geno_display_name, genoback_background_zdb_id
- from genotype, genotype_background
- where geno_Zdb_id = genoback_geno_Zdb_id
+select distinct a.geno_zdb_id, a.geno_display_name, genoback_background_zdb_id,b.geno_display_name
+ from genotype a, genotype_background, genotype b
+ where a.geno_Zdb_id = genoback_geno_Zdb_id
+ and b.geno_zdb_id=genoback_backgound_zdb_id
 ;
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtypes_fish.tx'"

@@ -3,6 +3,7 @@ package org.zfin.ontology.service;
 import org.apache.log4j.Logger;
 import org.springframework.util.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.expression.ExperimentCondition;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -154,43 +155,43 @@ public class OntologyService {
 
             for (OmimPhenotype omimResult : omimResults) {
                 // form the key
-               if (omimResult.getOrtholog().getOrganism().getCommonName().startsWith("Hu")) {
-                   String key = omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation() + omimResult.getName();
+                if (omimResult.getOrtholog().getOrganism().getCommonName().startsWith("Hu")) {
+                    String key = omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation() + omimResult.getName();
 
 
-                   OmimPhenotypeDisplay omimDisplay;
+                    OmimPhenotypeDisplay omimDisplay;
 
-                   // if the key is not in the map, instantiate a display (OmimPhenotypeDisplay) object and add it to the map
-                   // otherwise, just get the display object from the map
-                   if (!map.containsKey(key)) {
-                       omimDisplay = new OmimPhenotypeDisplay();
-                       map.put(key, omimDisplay);
-                   } else {
-                       omimDisplay = map.get(key);
-                   }
-                   omimDisplay.setOrthology(omimResult.getOrtholog());
-                 //  omimDisplay.setHumanAccession(getSequenceRepository().getDBLinkByData(omimResult.getOrtholog().getZdbID(), sequenceService.getOMIMHumanOrtholog()));
-                   NcbiOtherSpeciesGene ncbiOtherGene=omimResult.getOrtholog().getNcbiOtherSpeciesGene();
-                   Set<NcbiOrthoExternalReference> ncbiExternalReferenceList=ncbiOtherGene.getNcbiExternalReferenceList();
-                   List<String> accessions=new ArrayList();
-                   for (NcbiOrthoExternalReference othrRef:ncbiExternalReferenceList){
-                       if (othrRef.getReferenceDatabase().getForeignDB().getDbName()== ForeignDB.AvailableName.OMIM) {
-                           accessions.add(othrRef.getAccessionNumber());
-                       }
-                   }
-                   omimDisplay.setOmimAccession(accessions.get(0));
-                   omimDisplay.setName(omimResult.getName());
-                   omimDisplay.setOmimNum(omimResult.getOmimNum());
-                   omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation()));
-                   if (omimResult.getOrtholog() != null) {
+                    // if the key is not in the map, instantiate a display (OmimPhenotypeDisplay) object and add it to the map
+                    // otherwise, just get the display object from the map
+                    if (!map.containsKey(key)) {
+                        omimDisplay = new OmimPhenotypeDisplay();
+                        map.put(key, omimDisplay);
+                    } else {
+                        omimDisplay = map.get(key);
+                    }
+                    omimDisplay.setOrthology(omimResult.getOrtholog());
+                    //  omimDisplay.setHumanAccession(getSequenceRepository().getDBLinkByData(omimResult.getOrtholog().getZdbID(), sequenceService.getOMIMHumanOrtholog()));
+                    NcbiOtherSpeciesGene ncbiOtherGene = omimResult.getOrtholog().getNcbiOtherSpeciesGene();
+                    Set<NcbiOrthoExternalReference> ncbiExternalReferenceList = ncbiOtherGene.getNcbiExternalReferenceList();
+                    List<String> accessions = new ArrayList();
+                    for (NcbiOrthoExternalReference othrRef : ncbiExternalReferenceList) {
+                        if (othrRef.getReferenceDatabase().getForeignDB().getDbName() == ForeignDB.AvailableName.OMIM) {
+                            accessions.add(othrRef.getAccessionNumber());
+                        }
+                    }
+                    omimDisplay.setOmimAccession(accessions.get(0));
+                    omimDisplay.setName(omimResult.getName());
+                    omimDisplay.setOmimNum(omimResult.getOmimNum());
+                    omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation()));
+                    if (omimResult.getOrtholog() != null) {
 
-                       hA.add(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation());
-                       omimDisplay.setHumanGene(hA);
-                   }
-               }
-               }
-
+                        hA.add(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation());
+                        omimDisplay.setHumanGene(hA);
+                    }
+                }
             }
+
+        }
 
 
         // use SortedSet to hold the values of the map so that the data could be displayed in order
@@ -211,18 +212,21 @@ public class OntologyService {
         if (CollectionUtils.isEmpty(modelList)) {
             return null;
         }
-        Map<FishExperiment, FishModelDisplay> map = new HashMap<>();
+        Map<String, FishModelDisplay> map = new HashMap<>();
         for (DiseaseAnnotationModel model : modelList) {
             // ignore disease models without fish models
             if (model == null) {
                 continue;
             }
 
-            FishModelDisplay display = new FishModelDisplay(model.getFishExperiment());
-            display.addPublication(model.getDiseaseAnnotation().getPublication());
-            FishModelDisplay mapModel = map.get(model.getFishExperiment());
+            String groupingKey = model.getFishExperiment().getFish().getZdbID() + ":";
+            groupingKey += model.getFishExperiment().getExperiment().getConditionKey();
+
+            FishModelDisplay mapModel = map.get(groupingKey);
             if (mapModel == null) {
-                map.put(model.getFishExperiment(), display);
+                FishModelDisplay display = new FishModelDisplay(model.getFishExperiment());
+                display.addPublication(model.getDiseaseAnnotation().getPublication());
+                map.put(groupingKey, display);
             } else {
                 mapModel.addPublication(model.getDiseaseAnnotation().getPublication());
             }
@@ -231,5 +235,6 @@ public class OntologyService {
         Collections.sort(displayList);
         return displayList;
     }
+
 }
 

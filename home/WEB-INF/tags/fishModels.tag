@@ -29,7 +29,7 @@
                     </zfin:groupByDisplay>
                 </td>
                 <td>
-                    <zfin:link entity="${fishModel.fishModel.experiment}"/>
+                    <zfin:name entity="${fishModel.fishModel.experiment}"/>
                 </td>
                 <td>
                     <c:choose>
@@ -37,7 +37,7 @@
                             (<a href="/${fishModel.publication.zdbID}">1</a>)
                         </c:when>
                         <c:otherwise>
-                            (<a href="/action/ontology/fish-model-publication-list/${term.oboID}/${fishModel.fishModel.fish.zdbID}">${fishModel.publications.size()}</a>)
+                            (<a href="/action/ontology/fish-model-publication-list/${term.oboID}/${fishModel.fishModel.fish.zdbID}?environmentKey=${fishModel.fishModel.experiment.conditionKey}">${fishModel.publications.size()}</a>)
                         </c:otherwise>
                     </c:choose>
                 </td>

@@ -1,5 +1,6 @@
 package org.zfin.feature.presentation;
 
+import org.apache.log4j.Logger;
 import org.zfin.feature.Feature;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.marker.Marker;

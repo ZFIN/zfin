@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
     <actions/>
-    <description>Please add a description</description>
+    <description>Flags publications in a Thesis journal with more than one author. See case 13467.</description>
     <keepDependencies>false</keepDependencies>
     <properties/>
     <scm class="hudson.scm.NullSCM"/>
@@ -18,13 +18,13 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>validate-data-report-simple -DJobName=@JOB_NAME@</targets>
+            <targets>validate-data-report-simple -DJobName=Check-Thesis-Author-Count_m</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/DB_maintenance/validatedata/@JOB_NAME@/*</artifacts>
+            <artifacts>server_apps/DB_maintenance/validatedata/Check-Thesis-Author-Count_m/*</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -37,8 +37,8 @@
             <reportTargets>
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Error Report</reportName>
-                    <reportDir>server_apps/DB_maintenance/validatedata/@JOB_NAME@</reportDir>
-                    <reportFiles>@JOB_NAME@.html</reportFiles>
+                    <reportDir>server_apps/DB_maintenance/validatedata/Check-Thesis-Author-Count_m</reportDir>
+                    <reportFiles>Check-Thesis-Author-Count_m.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>false</allowMissing>
                 </htmlpublisher.HtmlPublisherTarget>
@@ -52,7 +52,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/@JOB_NAME@/@JOB_NAME@.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Thesis-Author-Count_m/Check-Thesis-Author-Count_m.html&quot;}
 
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
@@ -72,7 +72,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/@JOB_NAME@/@JOB_NAME@.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Thesis-Author-Count_m/Check-Thesis-Author-Count_m.html&quot;}
 
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
