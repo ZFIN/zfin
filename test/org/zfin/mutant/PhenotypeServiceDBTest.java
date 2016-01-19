@@ -3,12 +3,18 @@ package org.zfin.mutant;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
+import java.util.List;
 import java.util.Set;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.zfin.repository.RepositoryFactory.getFishRepository;
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 /**
  * Tests for service class that deals with Phenotype-related logic
@@ -42,6 +48,18 @@ public class PhenotypeServiceDBTest extends AbstractDatabaseTest {
         Set<PhenotypeStatement> statements = PhenotypeService.getPhenotypeStatements(genox);
         assertNotNull(statements);
         assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    public void getPublicationList() {
+        // fetal alcohol spectrum disorder
+        String diseaseOboID = "DOID:0050696";
+        String environmentCondition = "chemical:Ethanol";
+        GenericTerm disease = getOntologyRepository().getTermByOboID(diseaseOboID);
+        Fish fish = getFishRepository().getFishByName("WT");
+        List<Publication> list = PhenotypeService.getPublicationList(disease, fish, "date", environmentCondition);
+        assertNotNull(list);
+        assertThat(list.size(), greaterThan(1));
     }
 
 }

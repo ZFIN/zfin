@@ -219,15 +219,13 @@ public class OntologyService {
                 continue;
             }
 
-            FishModelDisplay display = new FishModelDisplay(model.getFishExperiment());
-            display.addPublication(model.getDiseaseAnnotation().getPublication());
             String groupingKey = model.getFishExperiment().getFish().getZdbID() + ":";
-            for (ExperimentCondition condition : model.getFishExperiment().getExperiment().getExperimentConditions()) {
-                groupingKey += condition.getConditionDataType().getGroup() + ":" + condition.getConditionDataType().getName() + "&&";
-            }
+            groupingKey += model.getFishExperiment().getExperiment().getConditionKey();
 
             FishModelDisplay mapModel = map.get(groupingKey);
             if (mapModel == null) {
+                FishModelDisplay display = new FishModelDisplay(model.getFishExperiment());
+                display.addPublication(model.getDiseaseAnnotation().getPublication());
                 map.put(groupingKey, display);
             } else {
                 mapModel.addPublication(model.getDiseaseAnnotation().getPublication());
@@ -237,5 +235,6 @@ public class OntologyService {
         Collections.sort(displayList);
         return displayList;
     }
+
 }
 
