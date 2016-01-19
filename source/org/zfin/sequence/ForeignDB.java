@@ -115,6 +115,7 @@ public class ForeignDB implements Comparable<ForeignDB> {
         PUBRNA("PUBRNA"),
         QUICKGO("QuickGO"),
         REFSEQ("RefSeq"),
+        RESOURCE_INITIATIVE("resource initiative"),
         SANGER_CLONE("Sanger_Clone"),
         // FB case 8239
         //SP_KW("SP_KW"),
