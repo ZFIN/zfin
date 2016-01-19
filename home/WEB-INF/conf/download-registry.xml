@@ -1286,14 +1286,17 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                    select distinct geno_zdb_id, geno_display_name, genoback_background_zdb_id
-                     from genotype, genotype_background
-                     where geno_Zdb_id = genoback_geno_Zdb_id
+                   select distinct a.geno_zdb_id, a.geno_display_name, genoback_background_zdb_id,b.geno_display_name
+ from genotype a, genotype_background, genotype b
+ where a.geno_Zdb_id = genoback_geno_Zdb_id
+ and b.geno_zdb_id=genoback_backgound_zdb_id
                   ]]>
             </Query>
             <Column id="1" unique="true">Genotype ID</Column>
             <Column id="2">Genotype Name</Column>
             <Column id="3">Background</Column>
+            <Column id="3">Background Name</Column>
+
         </Download>
        <Download orderIndex="2">
             <Name>
