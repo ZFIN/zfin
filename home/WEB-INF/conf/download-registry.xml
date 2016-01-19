@@ -113,6 +113,26 @@
             <Column id="1">ID</Column>
             <Column id="2">Alternate Identifiers</Column>
         </Download>
+	<Download orderIndex="5">
+            <Name>
+                ZFIN RRIDs and names
+            </Name>
+            <Category>
+                ZFIN RRIDs and names
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>rrid</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+	      ]]>
+            </Query>
+            <Column id="1">ID</Column>
+            <Column id="2">Alternate Identifiers</Column>
+        </Download>
+
         <Download orderIndex="2">
             <Name>
                 Antibody Expressions in wild-type
@@ -1515,6 +1535,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <Column id="11">TALEN/CRISPR ID</Column>
             <Column id="12">TALEN/CRISPR Name</Column>
         </Download>
+
 
         <Download orderIndex="1">
             <Name>

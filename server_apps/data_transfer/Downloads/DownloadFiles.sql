@@ -1965,12 +1965,22 @@ WHERE  genox_zdb_id = damo_genox_zdb_id
 
 !echo "unload feature/STR relations"
 
-  select feature_zdb_id as zdb_id, feature_name as alias
+  select feature_zdb_id as zdb_id, feature_name as alias2
    from feature
   union 
-  select dalias_Data_zdb_id, dalias_alias
+ select mrkr_zdb_id as zdb_id, mrkr_name as alias2
+   from marker
+   where mrkr_type in ('MRPHLNO','ATB')
+ union 
+ select mrkr_zdb_id as zdb_id, mrkr_abbrev as alias2
+   from marker
+where mrkr_type in ('MRPHLNO','ATB')
+union
+  select dalias_Data_zdb_id, dalias_alias as alias2
   	 from data_alias
-	 where dalias_data_zdb_id like 'ZDB-ALT'
+	 where (dalias_data_zdb_id like 'ZDB-ALT%'
+	       	 or dalias_data_zdb_id like 'ZDB-MRPHLNO-%'
+		 or dalias_data_zdb_id like 'ZDB-ATB-%')
 into temp tmp_feature_alias;
 
 drop table tmp_identifiers;
@@ -1981,21 +1991,21 @@ with no log;
 insert into tmp_identifiers (id)
  select distinct zdb_id from tmp_feature_alias;
 
-create index tmp3_index on tmp_feature_alias(id1)
+create index tmp4_index on tmp_feature_alias(zdb_id)
 using btree in idxdbs3;
 
 create index tmpidentifiers_index on tmp_identifiers (id)
 using btree in idxdbs2;
 
 update tmp_identifiers
-  set id2 = replace(replace(replace(substr(multiset (select distinct item id2 from tmp_feature_alias
+  set id2 = replace(replace(replace(substr(multiset (select distinct item alias2 from tmp_feature_alias
 							  where tmp_feature_alias.zdb_id = tmp_identifiers.id
 
 							 )::lvarchar(4000),11),""),"'}",""),"'","");
 
 
 !echo "unload RRID info"
-unload to feature.txt '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/' DELIMITER "	"
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/rrid.txt' DELIMITER "	"
   select id, id2
     from tmp_identifiers;
 	 
