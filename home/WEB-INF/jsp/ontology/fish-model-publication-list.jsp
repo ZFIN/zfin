@@ -1,9 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<zfin2:citationList pubListBean="${citationList}"
-                    url="/action/ontology/fish-model-publication-list/${term.oboID}/${fish.zdbID}?">
-
+<c:set var="url" value="/action/ontology/fish-model-publication-list/${term.oboID}/${fish.zdbID}?"/>
+<c:if test="${environmentKey != null}">
+    <c:set var="url" value="${url}environmentKey=${environmentKey}&"/>
+</c:if>
+<zfin2:citationList pubListBean="${citationList}" url="${url}">
     <table class="primary-entity-attributes">
         <tr>
             <th>Disease Name</th>
