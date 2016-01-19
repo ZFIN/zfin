@@ -66,7 +66,7 @@
 <!--|SOURCEROOT|-->	/opt/zfin/source_roots/crick/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	crick.zfin.org
-<!--|SWISSPROT_EMAIL_CURATOR|-->	ksf\@zfin.org dhowe\@zfin.org
+<!--|SWISSPROT_EMAIL_CURATOR|-->	ksf\@zfin.org dhowe\@zfin.org sabrina\@zfin.org
 <!--|SWISSPROT_EMAIL_ERR|-->	informix\@zfin.org xshao\@zfin.org
 <!--|SWISSPROT_EMAIL_REPORT|-->	ksf\@zfin.org dhowe\@zfin.org smoxon\@zfin.org xshao\@zfin.org sramachandran\@zfin.org
 <!--|TARGETROOT|-->	/opt/zfin/www_homes/crick
