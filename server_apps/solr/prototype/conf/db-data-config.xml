@@ -1936,6 +1936,24 @@ select
                    cacheImpl="SortedMapBackedCache"
                    where="phenox_pk_id=phenotype.id"/>
 
+           <entity name="phenotype_stage_unknown" datasource="db"
+                   query="select start_stage.stg_name as stage, 'phenox-' || phenox_pk_id as phenox_pk_id
+                            from phenotype_experiment
+                                join stage start_stage on phenox_start_stg_zdb_id = start_stage.stg_zdb_id
+                                join stage end_stage on phenox_end_stg_zdb_id = end_stage.stg_zdb_id
+                            where (start_stage.stg_name == 'Unknown'
+                                   OR end_stage.stg_name == 'Unknown')
+                           union
+                           select end_stage.stg_name as stage, 'phenox-' || phenox_pk_id as phenox_pk_id
+                            from phenotype_experiment
+                                join stage start_stage on phenox_start_stg_zdb_id = start_stage.stg_zdb_id
+                                join stage end_stage on phenox_end_stg_zdb_id = end_stage.stg_zdb_id
+                            where (start_stage.stg_name == 'Unknown'
+                                   OR end_stage.stg_name == 'Unknown');"
+                   cacheImpl="SortedMapBackedCache"
+                   where="phenox_pk_id=phenotype.id"/>
+
+
            <entity name="phenotype_publication_xref"
                    datasource="db" query="select fig_source_zdb_id as xref,
                                    'phenox-' || phenox_pk_id as phenox_pk_id
