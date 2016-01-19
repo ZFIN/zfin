@@ -3628,7 +3628,10 @@ where feature_zdb_id = ids_data_zdb_id
                                when term_ontology == 'disease_ontology' then 'Human Disease'
                              end as ontology,
                              '/' || term_ont_id as url,
-                             term_is_obsolete as obsolete,
+                             case
+                                when term_is_obsolete == 't' then 'obsolete'
+                                when term_is_obsolete == 'f' then 'current'
+                             end as obsolete,
                              term_definition as definition
                       from term
                       where term_ontology in ('biological_process', 'cellular_component', 'molecular_function','zebrafish_anatomy','disease_ontology');

@@ -194,7 +194,7 @@ public class ResultService {
             return;
         }
         if (term.isObsolete()) {
-            result.addAttribute("Obsolete", "<span class='red'>Yes</span>");
+            result.addAttribute("Status", "<span class='red'>Yes</span>");
         }
         if (CollectionUtils.isNotEmpty(term.getAliases())) {
             result.addAttribute(SYNONYMS, withCommas(term.getAliases(), "alias"));
