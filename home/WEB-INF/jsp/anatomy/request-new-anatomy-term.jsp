@@ -1,50 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<SCRIPT type="text/javascript">
-    function isBlank(s)
-    {
-        var len = s.length
-        if (len == 0)
-            return true
-
-        var i
-        for (i = 0; i < len; i++)
-        {
-            if (s.charAt(i) != " ") return false
-        }
-
-        return true
-    }
-
-    function valid(fieldname, fieldvalue)
-    {
-        if (isBlank(fieldvalue))
-        {
-            alert(fieldname + " cannot be left blank.")
-            return false
-        }
-        return true
-    }
-
-    function validateForm()
-    {
-        if (!valid("First Name", document.input.firstname.value))
-            return false
-
-        if (!valid("Last Name", document.input.lastname.value))
-            return false
-
-        if (!valid("Email", document.input.email.value))
-            return false
-
-        if (!valid("Comments", document.input.comments.value))
-            return false
-
-        return true;
-    }
-
-</SCRIPT>
-
 <H2>Request an Anatomical Structure</H2>
 
 We welcome your input and comments. Please use this form to submit a new anatomical structure to ZFIN.
@@ -53,7 +8,9 @@ a proposed definition, stage information, what it is part of, what it develops f
 
 Please be sure to include your contact information in the fields below. We will review your comments promptly.
 
-<form:form onsubmit="return validateForm()" action="request-new-anatomy-term-submit">
+<jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.RequestNewAnatomyTermBean" scope="request"/>
+
+<form:form action="request-new-anatomy-term-submit" commandName="formBean" method="post">
 
 
     <input type=hidden name="subject" VALUE="Request a new Anatomical Structure">
@@ -62,24 +19,28 @@ Please be sure to include your contact information in the fields below. We will 
     <TABLE border=0>
         <TR>
             <TD>*First Name</TD>
-            <TD><INPUT TYPE=text NAME="firstname" SIZE=30></TD>
+            <TD><form:input path="firstName" size="30"></form:input></TD>
+            <TD><form:errors path="firstName" cssClass="error indented-error"/></TD>
         </TR>
         <TR>
             <TD>*Last Name</TD>
-            <TD><INPUT TYPE=text NAME="lastname" SIZE=30></TD>
+            <TD><form:input path="lastName" size="30"></form:input></TD>
+            <TD><form:errors path="lastName" cssClass="error indented-error"/></TD>
         </TR>
         <TR>
             <TD><font color="#FFFFFF">*</font>Institution</TD>
-            <TD><INPUT TYPE=text NAME="institution" SIZE=30></TD>
+            <TD><form:input path="institution" size="30"></form:input></TD>
         </TR>
         <TR>
             <TD>*E-mail address</TD>
-            <TD><INPUT TYPE=text NAME="email" SIZE=30></TD>
+            <TD><form:input path="email" size="30"></form:input></TD>
+            <TD><form:errors path="email" cssClass="error indented-error"/></TD>
         </TR>
     </TABLE>
 
     <H3>*Description:</H3>
-    <textarea name="termDetail" cols=60 rows=8 ></textarea>
+    <form:textarea path="termDetail" cols="60" rows="8"></form:textarea>
+    <div><form:errors path="termDetail" cssClass="error indented-error"/></div>
     <hr>
 
     <font size=-1>*Required Fields</font>

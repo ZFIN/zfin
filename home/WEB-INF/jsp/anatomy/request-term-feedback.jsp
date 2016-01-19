@@ -3,7 +3,7 @@
 <table width="50%">
     <tr>
         <td>
-            Dear ${formBean.firstname}:
+            Dear ${formBean.firstName}:
         </td>
     </tr>
     <tr>

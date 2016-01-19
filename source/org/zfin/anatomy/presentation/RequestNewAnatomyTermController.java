@@ -1,8 +1,12 @@
 package org.zfin.anatomy.presentation;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -10,6 +14,8 @@ import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
+
+import javax.validation.Valid;
 
 /**
  * Controller for requesting a new anatomical structure.
@@ -26,28 +32,42 @@ public class RequestNewAnatomyTermController {
         return new RequestNewAnatomyTermBean();
     }
 
+    @Autowired
+    private javax.servlet.http.HttpServletRequest request;
+
+    @InitBinder
+    protected void initBinder(WebDataBinder binder) {
+        binder.setValidator(new RequestNewAnatomyTermBeanValidator());
+    }
+
+
     @RequestMapping("/request-new-anatomy-term")
-    protected String showSearchForm(Model model) throws Exception {
+    protected String showRequestForm(Model model) throws Exception {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Request new anatomy term");
         return "anatomy/request-new-anatomy-term.page";
     }
 
     @RequestMapping(value = "/request-new-anatomy-term-submit", method = RequestMethod.POST)
-    public String doSearch(@ModelAttribute("formBean") RequestNewAnatomyTermBean formBean) throws Exception {
+    public String requestNewTerm (Model model,
+                                  @Valid @ModelAttribute("formBean") RequestNewAnatomyTermBean formBean,
+                                  BindingResult result) throws Exception {
+
+        if(result.hasErrors())
+            return showRequestForm(model);
 
         StringBuilder emailContents = new StringBuilder();
         emailContents.append(formBean.getTermDetail());
         emailContents.append(NEWLINE);
         emailContents.append(" ************* End of description ***************");
         emailContents.append(NEWLINE);
-        if (!StringUtils.isEmpty(formBean.getFirstname())) {
+        if (!StringUtils.isEmpty(formBean.getFirstName())) {
             emailContents.append(" FIRST NAME: ");
-            emailContents.append(formBean.getFirstname());
+            emailContents.append(formBean.getFirstName());
             emailContents.append(NEWLINE);
         }
-        if (!StringUtils.isEmpty(formBean.getLastname())) {
+        if (!StringUtils.isEmpty(formBean.getLastName())) {
             emailContents.append(" LAST NAME: ");
-            emailContents.append(formBean.getLastname());
+            emailContents.append(formBean.getLastName());
             emailContents.append(NEWLINE);
         }
         if (!StringUtils.isEmpty(formBean.getInstitution())) {
