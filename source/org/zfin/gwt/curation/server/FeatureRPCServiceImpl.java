@@ -186,10 +186,13 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 Organization newLabOfOrigin = profileRepository.getOrganizationByZdbID(featureDTO.getLabOfOrigin());
                 featureRepository.setLabOfOriginForFeature(newLabOfOrigin, feature);
             }
-        } else if (featureDTO.getLabOfOrigin() == null && existingLabOfOrigin != null) {
-            featureRepository.deleteLabOfOriginForFeature(feature);
-        } else if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin == null) {
+        } /*else if (featureDTO.getLabOfOrigin() == null && existingLabOfOrigin != null) {
+            featureRepository.deleteLabOfOriginForFeature(feature);*/
+        else if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin == null) {
             featureRepository.addLabOfOriginForFeature(feature, featureDTO.getLabOfOrigin());
+        }
+        else {
+            throw new ValidationException("Feature cannot be saved without lab of origin");
         }
         HibernateUtil.currentSession().update(feature);
         if (!StringUtils.equals(oldFtrName, newFtrName)) {
