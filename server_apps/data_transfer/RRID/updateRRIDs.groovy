@@ -20,9 +20,6 @@ def dbaccess (String dbname, String sql) {
   proc
 }
 
-OUTFILE = "rrid.unl"
-PRE_FILE = "RRID.txt"
-POST_FILE = "newRRIDsGenerated.txt"
 
 
 dbname = System.getenv("DBNAME")

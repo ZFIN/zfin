@@ -8,7 +8,7 @@
               value="http://purl.obolibrary.org/obo/pato.obo"/>
     <property name="geneOboURL" value="http://purl.obolibrary.org/obo/go.obo"/>
     <property name="diseaseOboURL" value="http://www.berkeleybop.org/ontologies/doid.obo"/>
-    <property name="mpathOboURL" value="http://obo.cvs.sourceforge.net/viewvc/obo/obo/ontology/phenotype/mouse_pathology/mouse_pathology.obo"/>
+    <property name="mpathOboURL" value="http://eulep.pdn.cam.ac.uk/Pathology_Ontology/mpath.obo"/>
     <property name="sequenceOboURL" value="http://www.berkeleybop.org/ontologies/obo-all/sequence/sequence.obo"/>
     <property name="spatialOboURL"
               value="http://purl.obolibrary.org/obo/bspo.obo"/>
