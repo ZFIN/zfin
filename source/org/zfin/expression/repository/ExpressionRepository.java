@@ -1,5 +1,6 @@
 package org.zfin.expression.repository;
 
+import org.zfin.antibody.Antibody;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExpressedStructurePresentation;
 import org.zfin.expression.presentation.PublicationExpressionBean;
@@ -402,4 +403,18 @@ public interface ExpressionRepository {
     void createExpressionFigureStage(ExpressionFigureStage experimentFigureStage);
 
     List<ExpressionResult2> getPhenotypeFromExpressionsByFigureFish(String publicationID, String figureID, String fishID, String featureID);
+
+    /**
+     * Retrieve list of expression experiment2 records for a given antibody.
+     * @return list of expression experiment2 records
+     */
+    List<ExpressionExperiment2> getExperiment2sByAntibody(Antibody antibody);
+
+    /**
+     * Retrieve all expression experiment2 records for a given fish
+     *
+     * @param fish Fish
+     * @return list of expression experiment2 records
+     */
+    List<ExpressionExperiment2> getExpressionExperiment2sByFish (Fish fish);
 }

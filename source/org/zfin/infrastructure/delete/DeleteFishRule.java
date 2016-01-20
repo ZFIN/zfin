@@ -2,6 +2,7 @@ package org.zfin.infrastructure.delete;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.mutant.DiseaseAnnotation;
 import org.zfin.mutant.DiseaseAnnotationModel;
@@ -45,16 +46,17 @@ public class DeleteFishRule extends AbstractDeleteEntityRule implements DeleteEn
             }
             addToValidationReport(fish.getAbbreviation() + " has the following phenotype annotation", sortedPhenotypesForFish);
         }
-        List<ExpressionResult> fishExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultsByFish(fish);
+
+        List<ExpressionExperiment2> fishExpressionExperiments = RepositoryFactory.getExpressionRepository().getExpressionExperiment2sByFish(fish);
          //Can't delete a genotype if it has expression data associated
-        if (CollectionUtils.isNotEmpty(fishExpressionResults)) {
-            Set<ExpressionExperiment> expressionExperiments = new HashSet<>();
-            for (ExpressionResult fishExpressionResult : fishExpressionResults) {
-                expressionExperiments.add(fishExpressionResult.getExpressionExperiment());
+        if (CollectionUtils.isNotEmpty(fishExpressionExperiments)) {
+            Set<ExpressionExperiment2> expressionExperiments = new HashSet<>();
+            for (ExpressionExperiment2 fishExpressionExperiment : fishExpressionExperiments) {
+                expressionExperiments.add(fishExpressionExperiment);
             }
             int numExpression = expressionExperiments.size();
             Set<Publication> pubs = new HashSet<>();
-            for (ExpressionExperiment expressionExperiment : expressionExperiments) {
+            for (ExpressionExperiment2 expressionExperiment : expressionExperiments) {
                 pubs.add(expressionExperiment.getPublication());
             }
             addToValidationReport(fish.getAbbreviation() + " is used in " + numExpression +
