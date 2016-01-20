@@ -12,7 +12,7 @@ WHERE  num_auths > (SELECT Count(*)
        AND authors LIKE "%" 
                         || Replace(NAME, "-", ",") 
                         || "%" 
-       AND NOT EXISTS (SELECT 'x' 
+       AND EXISTS (SELECT 'x'
                        FROM   int_person_pub 
                        WHERE  target_id = publication.zdb_id) 
        AND NOT EXISTS (SELECT 'x' 

@@ -1936,6 +1936,24 @@ select
                    cacheImpl="SortedMapBackedCache"
                    where="phenox_pk_id=phenotype.id"/>
 
+           <entity name="phenotype_stage_unknown" datasource="db"
+                   query="select start_stage.stg_name as stage, 'phenox-' || phenox_pk_id as phenox_pk_id
+                            from phenotype_experiment
+                                join stage start_stage on phenox_start_stg_zdb_id = start_stage.stg_zdb_id
+                                join stage end_stage on phenox_end_stg_zdb_id = end_stage.stg_zdb_id
+                            where (start_stage.stg_name == 'Unknown'
+                                   OR end_stage.stg_name == 'Unknown')
+                           union
+                           select end_stage.stg_name as stage, 'phenox-' || phenox_pk_id as phenox_pk_id
+                            from phenotype_experiment
+                                join stage start_stage on phenox_start_stg_zdb_id = start_stage.stg_zdb_id
+                                join stage end_stage on phenox_end_stg_zdb_id = end_stage.stg_zdb_id
+                            where (start_stage.stg_name == 'Unknown'
+                                   OR end_stage.stg_name == 'Unknown');"
+                   cacheImpl="SortedMapBackedCache"
+                   where="phenox_pk_id=phenotype.id"/>
+
+
            <entity name="phenotype_publication_xref"
                    datasource="db" query="select fig_source_zdb_id as xref,
                                    'phenox-' || phenox_pk_id as phenox_pk_id
@@ -3610,7 +3628,10 @@ where feature_zdb_id = ids_data_zdb_id
                                when term_ontology == 'disease_ontology' then 'Human Disease'
                              end as ontology,
                              '/' || term_ont_id as url,
-                             term_is_obsolete as obsolete,
+                             case
+                                when term_is_obsolete == 't' then 'obsolete'
+                                when term_is_obsolete == 'f' then 'current'
+                             end as obsolete,
                              term_definition as definition
                       from term
                       where term_ontology in ('biological_process', 'cellular_component', 'molecular_function','zebrafish_anatomy','disease_ontology');

@@ -19,7 +19,7 @@
 <!--|DB_NAME|-->	eseldb
 <!--|DB_OWNER|-->	cmpich
 <!--|DEFAULT_EMAIL|-->	cmpich\@zfin.org
-<!--|DOMAIN_NAME|-->	schlapp.zfin.org
+<!--|DOMAIN_NAME|-->	eselsohr.zfin.org
 <!--|ENVIRONMENT|-->	development
 <!--|FTP_ROOT|-->	/opt/zfin/ftp/test/eselsohr
 <!--|GBROWSE_DB|-->	ensembl_current

@@ -57,7 +57,7 @@ public class RelatedDataService {
     private String[] diseaseRelatedDataCategories = {DISEASE_MODELS, Category.PUBLICATION.getName()};
 
     public static final String GENES_WITH_GO = "Genes Annotated with this GO Term";
-    public static final String GENES_CAUSING_PHENOTYPE = "Genes Causing Phenotype";
+    public static final String GENES_CAUSING_PHENOTYPE = "Genes With Phenotype";
     public static final String GENES_EXPRESSED = "Genes Expressed in this Structure";
 
 

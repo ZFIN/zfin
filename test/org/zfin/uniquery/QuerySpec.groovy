@@ -99,6 +99,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.FISH.name             | "ZDB-GENO-960809-7"                              | "13315"
         Category.FISH.name             | "sequence_alteration:bw6Tg ZDB-FISH-150901-26882"| "13808"
         Category.PUBLICATION.name      | "kraus 1993"                                     | "11699"
+        Category.PHENOTYPE.name        | "stage:Unknown"                                  | "13741"
         Category.PUBLICATION.name      | "bohni"                                          | "11699"
         Category.PUBLICATION.name      | "abstract:\"motor control requires circuits\""   | "n/a"
         Category.PUBLICATION.name      | "thesis id:ZDB-PUB-150918-21"                    | "13042"
