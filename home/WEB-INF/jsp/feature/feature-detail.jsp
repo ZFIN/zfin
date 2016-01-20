@@ -249,8 +249,7 @@
     </script>
 </td></tr></table>
 
-
-<zfin2:featureSummaryReport feature="${formBean.feature}" links="${formBean.summaryPageDbLinks}" />
+<zfin2:featureSummaryReport feature="${formBean.feature}" links="${formBean.summaryPageDbLinks}"/>
 
 <div id="genotype">
 <zfin2:subsection title="Genotypes" test="${!empty formBean.genotypeDisplays}" showNoData="true">
