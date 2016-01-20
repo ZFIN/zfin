@@ -692,7 +692,7 @@
    <field name="term_usage" type="keyword" indexed="true" stored="true" multiValued="true" default="None"/>
    <field name="term_usage_with_children" type="keyword" indexed="true" stored="true" multiValued="true" default="None"/>
 
-   <field name="obsolete" type="boolean" indexed="true" stored="true" />
+   <field name="term_status" type="keyword" indexed="true" stored="true" />
 
    <field name="abstract" type="text" indexed="true" stored="true"   />
    <field name="keyword" type="publication_keyword" indexed="true" stored="true"  multiValued="true"   />

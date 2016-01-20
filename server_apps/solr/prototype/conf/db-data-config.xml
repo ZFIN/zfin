@@ -3631,7 +3631,7 @@ where feature_zdb_id = ids_data_zdb_id
                              case
                                 when term_is_obsolete == 't' then 'obsolete'
                                 when term_is_obsolete == 'f' then 'current'
-                             end as obsolete,
+                             end as term_status,
                              term_definition as definition
                       from term
                       where term_ontology in ('biological_process', 'cellular_component', 'molecular_function','zebrafish_anatomy','disease_ontology');
