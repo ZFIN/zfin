@@ -18,4 +18,5 @@ WHERE  xpatex_probe_feature_zdb_id IS NOT NULL
        AND xpatres_efs_id = efs_pk_id
        AND efs_xpatex_zdb_id = xpatex_zdb_id
        AND gene.mrkr_zdb_id = xpatex_gene_zdb_id
-       AND probe.mrkr_zdb_id = xpatex_probe_feature_zdb_id;
+       AND probe.mrkr_zdb_id = xpatex_probe_feature_zdb_id
+       AND gene.mrkr_abbrev not like '%WITHDRAWN%';
