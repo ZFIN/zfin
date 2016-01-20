@@ -455,23 +455,21 @@ sub geno_dropDiscontinuedGenos($$) {
     my $cur = $dbh->prepare("
           select idsup_data_zdb_id
             from int_data_supplier
-            where get_obj_type(idsup_data_zdb_id) = 'GENO'
+            where get_obj_type(idsup_data_zdb_id) in ('GENO','ALT','ATB')
               and idsup_supplier_zdb_id = '$zircZdbId'
               and idsup_acc_num = idsup_data_zdb_id
               and not exists (select 'x'
                         from geno_available
-                        where idsup_data_zdb_id = geno_zdb_id
-                        and geno_zdb_id like 'ZDB-GENO%')
+                        where idsup_data_zdb_id = geno_zdb_id)
               and not exists (select 'x' from geno_pulled_from_zirc
-                                where epfz_geno_zdb_id = idsup_Data_zdb_id)
-                    
+                                where epfz_geno_zdb_id = idsup_Data_zdb_id)  
             order by idsup_data_zdb_id
    ;");
 
     my $deleteCur = $dbh->prepare("
            delete from int_data_supplier
              where idsup_supplier_zdb_id = '$zircZdbId'
-               and get_obj_type(idsup_data_zdb_id) = 'GENO'
+               and get_obj_type(idsup_data_zdb_id) in ('GENO','ATB','ALT')
                and idsup_data_zdb_id = ?;");
 
     $cur->execute;
@@ -518,7 +516,7 @@ sub geno_dropDiscontinuedAlts($$) {
              where idsup_supplier_zdb_id = '$zircZdbId'
                and idsup_data_zdb_id = ?
                and idsup_data_zdb_id = idsup_acc_num
-               and get_obj_type(idsup_data_zdb_id) = 'ALT';");
+               and get_obj_type(idsup_data_zdb_id) in ('ALT','ATB');");
 
     $cur->execute;
 
@@ -566,10 +564,10 @@ sub geno_altSuppliedByZFIN_count($$) {
     $cur->fetch();
     &writeReport(int($rowCount) . " Features from $resourceCenter already being 'supplied' at ZFIN.\n");
 
-    if ($rowCount == 0 && $resourceCenter eq "ZIRC" ) {
-	&errorExit("Aborting run!!!!  Something is probably wrong because the",
-		   "  status of EVERY $resourceCenter supplied ALT is changing.");
-    }
+   # if ($rowCount == 0 && $resourceCenter eq "ZIRC" ) {
+#	&errorExit("Aborting run!!!!  Something is probably wrong because the",
+#		   "  status of EVERY $resourceCenter supplied ALT is changing.");
+ #   }
     return ();
 }
 

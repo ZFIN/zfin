@@ -204,7 +204,7 @@ $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
   || errorExit("Failed while connecting to <!--|DB_NAME|--> ");
 
 
-#&geno_main($dbh, $zircZdbId, "ZIRC");           # Genotype availability ZIRC
+&geno_main($dbh, $zircZdbId, "ZIRC");           # Genotype availability ZIRC
 #&est_main($dbh, $zircZdbId);	 
 
 $dbh->commit();
