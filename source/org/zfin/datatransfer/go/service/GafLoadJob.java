@@ -12,6 +12,7 @@ import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.mutant.MarkerGoTermEvidence;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
 import java.io.File;
@@ -75,7 +76,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
         GafOrganization.OrganizationEnum organizationEnum = GafOrganization.OrganizationEnum.getType(organization);
 
         try {
-            localDownloadFile = System.getProperty("java.io.tmpdir") + "/" + "gene_association." + organizationEnum.name();
+            localDownloadFile = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + "Load-GAF-" + organizationEnum.name() + "-gene_association";
             gafService = new GafService(organizationEnum);
 
             // 1. download gzipped GAF file
