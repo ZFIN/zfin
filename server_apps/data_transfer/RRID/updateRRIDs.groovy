@@ -34,7 +34,7 @@ insert into tmp_dblink (dblink_id, data_id, fdbcont_id, acc_num)
   select get_id('DBLINK'), feature_zdb_id, 
   	 (Select fdbcont_zdb_id from foreign_db_contains, foreign_db
 	 	 		where fdbcont_fdb_db_id = fdb_db_pk_id
-				and fdb_db_name ='Resource Initiative'), 
+				and fdb_db_name ='resource initiative'), 
 			'RRID:ZFIN_'||feature_zdb_id
    from feature
  where not exists (Select 'x' from db_link where dblink_acc_num = 'RRID:ZFIN_'||feature_zdb_id
@@ -44,7 +44,7 @@ insert into tmp_dblink (dblink_id, data_id, fdbcont_id, acc_num)
   select get_id('DBLINK'), mrkr_zdb_id, 
   	 (Select fdbcont_zdb_id from foreign_db_contains, foreign_db
 	 	 		where fdbcont_fdb_db_id = fdb_db_pk_id
-				and fdb_db_name ='Resource Initiative'), 
+				and fdb_db_name ='resource initiative'), 
 			'RRID:ZFIN_'||mrkr_zdb_id
    from marker
  where mrkr_type in ('MRPHLNO','ATB')
