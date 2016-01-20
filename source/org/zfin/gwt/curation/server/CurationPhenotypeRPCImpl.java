@@ -13,6 +13,7 @@ import org.zfin.gwt.curation.ui.CurationPhenotypeRPC;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
+import org.zfin.gwt.root.util.NumberAwareStringComparatorDTO;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
@@ -72,7 +73,6 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
             dto.setPublicationID(experimentFilter.getPublicationID());
             dtos.add(dto);
         }
-        Collections.sort(dtos);
         return dtos;
     }
 
