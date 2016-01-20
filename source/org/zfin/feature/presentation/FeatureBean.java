@@ -7,7 +7,6 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.GenotypeDisplay;
-import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.presentation.GenoExpStatistics;
 import org.zfin.sequence.FeatureDBLink;
 

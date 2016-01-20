@@ -248,36 +248,9 @@
         });
     </script>
 </td></tr></table>
-<c:choose>
-    <c:when test="${not empty formBean.summaryPageDbLinks}">
-        <c:forEach var="featureSummaryDblink" items="${formBean.summaryPageDbLinks}">
-            <div class="summary">
-                <table id="other-feature-pages" class="summary">
-                    <caption>OTHER <em>${formBean.feature.name}</em> FEATURE PAGES</caption>
-                    <tr>
-                        <td>
 
-                            <zfin:link entity="${featureSummaryDblink}"/>
-                            <c:if test="${featureSummaryDblink.publicationCount > 0}">
-                                <c:choose>
-                                    <c:when test="${featureSummaryDblink.publicationCount == 1}">
-                                        (<a href="/${featureSummaryDblink.singlePublication.zdbID}">${featureSummaryDblink.publicationCount}</a>)
-                                    </c:when>
-                                    <c:otherwise>
-                                        (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureSummaryDblink.zdbID}&rtype=genotype">${featureSummaryDblink.publicationCount}</a>)
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:if>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </c:forEach>
-    </c:when>
-    <%-- <c:otherwise>
-                <p><strong>OTHER <em>${formBean.feature.name}</em> FEATURE PAGES</strong> <span class="no-data-tag">No links to external sites available</span></p>
-            </c:otherwise>  --%>
-</c:choose>
+
+<zfin2:featureSummaryReport feature="${formBean.feature}" links="${formBean.summaryPageDbLinks}" />
 
 <div id="genotype">
 <zfin2:subsection title="Genotypes" test="${!empty formBean.genotypeDisplays}" showNoData="true">
