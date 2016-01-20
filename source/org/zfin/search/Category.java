@@ -46,7 +46,7 @@ public enum Category {
     ),
     ANATOMY("Anatomy / GO",
             ONTOLOGY,
-            OBSOLETE
+            OBSOLETE_STATUS
     ),
     DISEASE("Human Disease",
             FieldName.GENE,

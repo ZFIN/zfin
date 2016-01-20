@@ -59,7 +59,7 @@ public enum FieldName {
     LABELED_STRUCTURE_TF("labeled_structure_tf"),
     MOLECULAR_FUNCTION("molecular_function"),
     MOLECULAR_FUNCTION_TF("molecular_function_tf"),
-    OBSOLETE("obsolete"),
+    OBSOLETE_STATUS("obsolete_status"),
     ONTOLOGY("ontology"),
     PHENOTYPE_QUALITY_TF("phenotype_quality_tf"),
     PHENOTYPE_STATEMENT("phenotype_statement"),
