@@ -14,6 +14,7 @@ import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.antibody.Antibody;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExpressedStructurePresentation;
 import org.zfin.expression.presentation.PublicationExpressionBean;
@@ -2022,4 +2023,24 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (List<ExpressionResult2>) query.list();
     }
 
+    @Override
+    public List<ExpressionExperiment2> getExperiment2sByAntibody(Antibody antibody) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(ExpressionExperiment2.class);
+        criteria.add(Restrictions.eq("antibody", antibody));
+        return (List<ExpressionExperiment2>) criteria.list();
+    }
+
+    @Override
+    public List<ExpressionExperiment2> getExpressionExperiment2sByFish (Fish fish) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select xpExp from ExpressionExperiment2 xpExp, FishExperiment fishox " +
+                "      where fishox.fish = :fish " +
+                "        and fishox = xpExp.fishExperiment ";
+        Query query = session.createQuery(hql);
+        query.setParameter("fish", fish);
+
+        return (List<ExpressionExperiment2>) query.list();
+    }
 }
