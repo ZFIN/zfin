@@ -1589,7 +1589,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "     where attrib.publication.zdbID = :publicationID AND " +
                 "attrib.dataZdbID = fish.zdbID AND " +
                 "attrib.sourceType = :sourceType " +
-                "order by fish.name";
+                "order by fish.nameOrder";
         Query query = session.createQuery(hql);
         query.setParameter("publicationID", publicationID);
         query.setParameter("sourceType", RecordAttribution.SourceType.STANDARD);

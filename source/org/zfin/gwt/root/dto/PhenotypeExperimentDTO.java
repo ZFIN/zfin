@@ -43,7 +43,7 @@ public class PhenotypeExperimentDTO extends AbstractFigureStageDTO<PhenotypeStat
             }
         }
         if (!fish.equals(efs.getFish()))
-            return fish.getHandle().compareToIgnoreCase(efs.getFish().getHandle());
+            return fish.getNameOrder().compareTo(efs.getFish().getNameOrder());
         if (!environment.equals(efs.getEnvironment()))
             return environment.compareTo(efs.getEnvironment());
         if (!start.getName().equals(efs.getStart().getName()))
