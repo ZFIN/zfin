@@ -95,7 +95,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
     public void deleteExperiment(String experimentZdbID) {
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            ExpressionExperiment experiment = expRepository.getExpressionExperiment(experimentZdbID);
+            ExpressionExperiment2 experiment = expRepository.getExpressionExperiment2(experimentZdbID);
             expRepository.deleteExpressionExperiment(experiment);
             tx.commit();
         } catch (HibernateException e) {

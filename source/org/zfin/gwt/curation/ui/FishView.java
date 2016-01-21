@@ -7,10 +7,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.FishDTO;
-import org.zfin.gwt.root.ui.ZfinFlexTable;
 import org.zfin.gwt.root.util.DeleteImage;
-
-import java.util.List;
+import org.zfin.gwt.root.util.WidgetUtil;
 
 /**
  * Table of associated genotypes
@@ -30,39 +28,35 @@ public class FishView extends Composite {
     @UiField
     Label noneDefined;
     @UiField
-    ZfinFlexTable fishListTable;
+    Grid dataTable;
 
-    public void setData(List<FishDTO> fishList) {
-        if(fishList == null)
+    // elementIndex starts with 0
+    // but the grid starts with 1
+    protected void addFish(FishDTO fish, int elementIndex) {
+        dataTable.resizeRows(elementIndex + 2);
+        int row = elementIndex + 1;
+        setRowStyle(row);
+        if (fish == null) {
+            dataTable.setText(row, 0, "");
             return;
-        initFishListTable();
-        int index = 1;
-        int groupIndex = 0;
-        int rowIndex = 1;
-        for (FishDTO fish : fishList) {
-            int col = 0;
-            Anchor html = new Anchor(SafeHtmlUtils.fromTrustedString(fish.getName()), "/" + fish.getZdbID());
-            fishListTable.setWidget(index, col++, html);
-            InlineHTML handle = new InlineHTML(fish.getHandle());
-            handle.setTitle(fish.getZdbID());
-            fishListTable.setWidget(index, col++, handle);
-            DeleteImage deleteFish = new DeleteImage("/action/infrastructure/deleteRecord/" + fish.getZdbID(), "Delete Fish");
-            fishListTable.getCellFormatter().setHorizontalAlignment(index, col, HasHorizontalAlignment.ALIGN_CENTER);
-            fishListTable.setWidget(index++, col, deleteFish);
-            groupIndex = fishListTable.setRowStyle(rowIndex++, null, fish.getZdbID(), groupIndex);
-
         }
+        Anchor fishAnchor = new Anchor(SafeHtmlUtils.fromTrustedString(fish.getName()), "/" + fish.getZdbID());
+        fishAnchor.setTitle(fish.getZdbID());
+        dataTable.setWidget(row, 0, fishAnchor);
+        InlineHTML handle = new InlineHTML(fish.getHandle());
+        handle.setTitle(fish.getZdbID());
+        dataTable.setWidget(row, 1, handle);
     }
 
-    private void initFishListTable() {
-        int col = 0;
-        fishListTable.getCellFormatter().setStyleName(0, col, "bold");
-        fishListTable.setText(0, col++, "Fish Name");
-        fishListTable.getCellFormatter().setStyleName(0, col, "bold");
-        fishListTable.setText(0, col++, "Display Handle");
-        fishListTable.getCellFormatter().setStyleName(0, col, "bold");
-        fishListTable.setText(0, col, "Delete");
-        fishListTable.getRowFormatter().setStyleName(0, "table-header");
+    public void addDeleteButton(FishDTO fish, int elementIndex) {
+        int row = elementIndex + 1;
+        DeleteImage deleteFish = new DeleteImage("/action/infrastructure/deleteRecord/" + fish.getZdbID(), "Delete Fish");
+        dataTable.setWidget(row, 2, deleteFish);
+    }
+
+
+    private void setRowStyle(int row) {
+        WidgetUtil.setAlternateRowStyle(row, dataTable);
     }
 
     public Label getNoneDefined() {

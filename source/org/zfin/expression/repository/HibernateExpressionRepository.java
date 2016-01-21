@@ -592,7 +592,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      *
      * @param experiment expression experiment
      */
-    public void deleteExpressionExperiment(ExpressionExperiment experiment) {
+    public void deleteExpressionExperiment(ExpressionExperiment2 experiment) {
         InfrastructureRepository infraRep = RepositoryFactory.getInfrastructureRepository();
         infraRep.deleteActiveDataByZdbID(experiment.getZdbID());
     }

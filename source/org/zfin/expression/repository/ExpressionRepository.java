@@ -143,7 +143,7 @@ public interface ExpressionRepository {
      *
      * @param experiment expression experiment
      */
-    void deleteExpressionExperiment(ExpressionExperiment experiment);
+    void deleteExpressionExperiment(ExpressionExperiment2 experiment);
 
     /**
      * Retrieves experiment that pertain to a given

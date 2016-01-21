@@ -3,6 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
 import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.ExpressionPhenotypeExperimentDTO;
 import org.zfin.gwt.root.dto.PhenotypeExperimentDTO;
 import org.zfin.gwt.root.dto.PileStructureAnnotationDTO;
 
@@ -14,6 +15,7 @@ import java.util.List;
 public interface CurationPhenotypeRPCAsync {
 
     void getExpressionsByFilter(ExperimentDTO experimentFilter, String figureID, AsyncCallback<List<PhenotypeExperimentDTO>> async);
+    void  getPhenotypeFromExpressionsByFilter(ExperimentDTO experimentFilter, String figureID,AsyncCallback<List<ExpressionPhenotypeExperimentDTO>> async);
 
     void createPhenotypeExperiments(List<PhenotypeExperimentDTO> newFigureAnnotations, AsyncCallback<List<PhenotypeExperimentDTO>> callback);
 

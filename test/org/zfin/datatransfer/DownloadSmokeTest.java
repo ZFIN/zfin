@@ -23,7 +23,7 @@ public class DownloadSmokeTest extends AbstractSmokeTest {
     @Test
     public void testMainDownloadPage() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/unload/downloads");
-        assertTrue("Download Archive", page.getTitleText().contains("Download Archive"));
+        assertTrue("Downloads Archive", page.getTitleText().contains("Downloads Archive"));
     }
 
     /**
@@ -32,7 +32,7 @@ public class DownloadSmokeTest extends AbstractSmokeTest {
     @Test
     public void testDeveloperDownloadPage() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/unload/downloads/archive");
-        assertTrue("Download Archive", page.getTitleText().contains("Download Archive"));
+        assertTrue("Downloads Archive", page.getTitleText().contains("Downloads Archive"));
     }
 
     /**
@@ -43,7 +43,7 @@ public class DownloadSmokeTest extends AbstractSmokeTest {
         for (WebClient webClient : publicWebClients) {
             try {
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/unload/downloads");
-                assertTrue("Archive:",  page.getTitleText().startsWith("Download Archive:"));
+                assertTrue("Downloads Archive:",  page.getTitleText().startsWith("Downloads Archive:"));
                 List<?> downloadFileLink = page.getByXPath("//a[@id='antibodies.txt']");
                 // exactly one link
                 assertNotNull("could not find antibodies.txt download link", downloadFileLink);
