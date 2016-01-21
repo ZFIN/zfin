@@ -485,6 +485,7 @@ public class DTOConversionService {
         genotypeDTO.setName(genotype.getHandle());
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
+        genotypeDTO.setWildtype(genotype.isWildtype());
 
         if (includePubInfo) {
             List<PublicationDTO> associatedPublications = new ArrayList<>();
@@ -1518,8 +1519,9 @@ public class DTOConversionService {
         if (CollectionUtils.isNotEmpty(dam)) {
             List<DiseaseAnnotationModelDTO> damoDTO = new ArrayList<>(dam.size());
             for (DiseaseAnnotationModel damo : dam) {
-                damoDTO.add(DTOConversionService.convertDamoToDamoDTO(damo));
-
+                DiseaseAnnotationModelDTO annotationModelDTO = DTOConversionService.convertDamoToDamoDTO(damo);
+                annotationModelDTO.setDat(dto);
+                damoDTO.add(annotationModelDTO);
             }
             dto.setDamoDTO(damoDTO);
         } else {

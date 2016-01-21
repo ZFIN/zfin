@@ -35,15 +35,20 @@ public class PhenotypeExperimentDTO extends AbstractFigureStageDTO<PhenotypeStat
         if (figure.getLabel() != null && efs.getFigure().getLabel() == null)
             return 1;
 
-        if ((figure.getLabel() != null )) {
+        if ((figure.getLabel() != null)) {
             if (!figure.getLabel().equals(efs.getFigure().getLabel()) &&
                     (figure.getLabel() != null && efs.getFigure().getLabel() != null)) {
                 NumberAwareStringComparatorDTO comparator = new NumberAwareStringComparatorDTO();
                 return comparator.compare(figure.getLabel(), efs.getFigure().getLabel());
             }
         }
-        if (!fish.equals(efs.getFish()))
+        if (!fish.equals(efs.getFish())) {
+            if (fish.getGenotypeDTO().isWildtype() && !efs.getFish().getGenotypeDTO().isWildtype())
+                return -1;
+            if (!fish.getGenotypeDTO().isWildtype() && efs.getFish().getGenotypeDTO().isWildtype())
+                return 1;
             return fish.getNameOrder().compareTo(efs.getFish().getNameOrder());
+        }
         if (!environment.equals(efs.getEnvironment()))
             return environment.compareTo(efs.getEnvironment());
         if (!start.getName().equals(efs.getStart().getName()))
