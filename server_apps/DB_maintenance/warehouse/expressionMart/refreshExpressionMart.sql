@@ -42,9 +42,9 @@ select xpatres_zdb_id,
 insert into expression_pattern_figure_bkup (xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id)
  select xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id from expression_pattern_figure;
 
-update zdb_flag
- set zflag_is_on = 't' 
- where zflag_name = "regen_expressionmart";
+
+
+!time;
 
 delete from expression_experiment;
 insert into expression_experiment (xpatex_zdb_id, 
@@ -85,6 +85,55 @@ insert into expression_result (xpatres_zdb_id,
 delete from expression_pattern_figure;
  insert into expression_pattern_figure (xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id)
  select xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id from expression_pattern_figure_temp;
+
+
+
+create index expression_experiment_marker_foreign_key_index 
+    on expression_experiment (xpatex_probe_feature_zdb_id) 
+    using btree  in idxdbs2;
+create unique index expression_experiment_primary_key_index 
+    on expression_experiment (xpatex_zdb_id) using 
+    btree  in idxdbs3;
+create index expression_experiment_source_foreign_key_index 
+    on expression_experiment (xpatex_source_zdb_id) 
+    using btree  in idxdbs2;
+create index xpatex_atb_zdb_id_index on expression_experiment 
+    (xpatex_atb_zdb_id) using btree  in idxdbs2;
+create index xpatex_featexp_zdb_id_foreign_key_index 
+    on expression_experiment (xpatex_genox_zdb_id) 
+    using btree  in idxdbs2;
+create index xpatex_gene_zdb_id_foreign_key_index 
+    on expression_experiment (xpatex_gene_zdb_id) using 
+    btree  in idxdbs2;
+
+create index expression_result_end_stg_foreign_key_index 
+    on expression_result (xpatres_end_stg_zdb_id) using 
+    btree  in idxdbs2;
+create unique index expression_result_primary_key_index 
+    on expression_result (xpatres_zdb_id) using btree 
+     in idxdbs2;
+create index expression_result_start_stg_foreign_key_index 
+    on expression_result (xpatres_start_stg_zdb_id) 
+    using btree  in idxdbs2;
+create index expression_result_subterm_foreign_key_index 
+    on expression_result (xpatres_subterm_zdb_id) using 
+    btree  in idxdbs2;
+create index expression_result_superterm_foreign_key_index 
+    on expression_result (xpatres_superterm_zdb_id) 
+    using btree  in idxdbs2;
+create index expression_result_xpatex_foreign_key_index 
+    on expression_result (xpatres_xpatex_zdb_id) using 
+    btree  in idxdbs1;
+
+create index expression_pattern_figure_fig_foreign_key 
+    on expression_pattern_figure (xpatfig_fig_zdb_id) 
+    using btree  in idxdbs1;
+
+create index expression_pattern_figure_xpatres_foreign_key_index 
+    on expression_pattern_figure (xpatfig_xpatres_zdb_id) 
+    using btree  in idxdbs3;
+
+!time;
 
 update zdb_flag
   set (zflag_is_on,zflag_last_modified) = ("f",current year to second)

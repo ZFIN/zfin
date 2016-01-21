@@ -16,9 +16,9 @@ insert into expression_experiment_temp (xpatex_zdb_id, xpatex_assay_name,
 			  and xpatres_pk_id = ept_xpatres_id);
 
 insert into expression_Result_temp (
-    efs_xpatex_zdb_id,
-    xpatres_start_stg_zdb_id,
-    xpatres_end_stg_zdb_id,
+    xpatres_xpatex_zdb_id,
+    xpatres_start_stage_zdb_id,
+    xpatres_end_stage_zdb_id,
     xpatres_expression_found,
     xpatres_superterm_zdb_id,
     xpatres_subterm_zdb_id,
@@ -38,10 +38,29 @@ insert into expression_Result_temp (
 
 
 insert into expression_pattern_figure_temp (xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id)
- select distinct xpatres_zdb_id,xpatres_fig_zdb_id
+ select distinct xpatres_pk_id,xpatres_fig_zdb_id
    from expression_result_temp, expression_figure_stage
  where xpatres_xpatex_zdb_id = efs_xpatex_zdb_id
  and xpatres_start_stage_zdb_id = efs_start_stg_zdb_id
  and xpatres_end_stage_zdb_id = efs_end_stg_zdb_id 
  and not exists (Select 'x' from expression_phenotype_term
      	 		where ept_xpatres_id = xpatres_pk_id);
+
+update zdb_flag
+ set zflag_is_on = 't' 
+ where zflag_name = "regen_expressionmart";
+
+drop index expression_result_end_stg_foreign_key_index ;
+drop index expression_result_primary_key_index;
+drop index expression_result_start_stg_foreign_key_index ;
+drop index expression_result_subterm_foreign_key_index;
+drop index expression_result_superterm_foreign_key_index;
+drop index expression_result_xpatex_foreign_key_index;
+drop index expression_experiment_marker_foreign_key_index;
+drop index expression_experiment_primary_key_index ;
+drop index expression_experiment_source_foreign_key_index ;
+drop index xpatex_atb_zdb_id_index;
+drop index xpatex_featexp_zdb_id_foreign_key_index;
+drop index xpatex_gene_zdb_id_foreign_key_index;
+drop index expression_pattern_figure_fig_foreign_key ;
+drop index expression_pattern_figure_xpatres_foreign_key_index;
