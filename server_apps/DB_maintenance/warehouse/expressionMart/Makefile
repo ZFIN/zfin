@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/warehouse/expressionMart
 GENERICS = runExpressionMart.sh
-STATICS = begin.sql dropTables.sql populateTables.sql  commit.sql expressionMartRegen.sql refreshExpressionMart.sql expressionmart-integrity-tests.sql
+STATICS = begin.sql dropTables.sql populateTables.sql  commit.sql expressionMartRegen.sql refreshExpressionMart.sql expressionmart-integrity-tests.sql addIndexes.sql
 
 
 # ---------------  Production Rules  ------------------------------------

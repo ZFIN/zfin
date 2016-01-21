@@ -23,6 +23,9 @@ set expressionMartScripts=( begin.sql \
 set regenExpressionMartScripts=( begin.sql \
 	     refreshExpressionMart.sql \
 	     commit.sql \
+	     begin.sql \
+	     addIndexes.sql \
+	     commit.sql \
 	     );
 
 touch $FULL_SCRIPT_FILE
