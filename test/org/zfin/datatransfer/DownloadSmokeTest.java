@@ -43,7 +43,7 @@ public class DownloadSmokeTest extends AbstractSmokeTest {
         for (WebClient webClient : publicWebClients) {
             try {
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/unload/downloads");
-                assertTrue("Archive:",  page.getTitleText().startsWith("Download Archive:"));
+                assertTrue("Downloads Archive:",  page.getTitleText().startsWith("Download Archive:"));
                 List<?> downloadFileLink = page.getByXPath("//a[@id='antibodies.txt']");
                 // exactly one link
                 assertNotNull("could not find antibodies.txt download link", downloadFileLink);
