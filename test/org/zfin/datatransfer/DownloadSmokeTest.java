@@ -23,7 +23,7 @@ public class DownloadSmokeTest extends AbstractSmokeTest {
     @Test
     public void testMainDownloadPage() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/unload/downloads");
-        assertTrue("Download Archive", page.getTitleText().contains("Download Archive"));
+        assertTrue("Downloads Archive", page.getTitleText().contains("Download Archive"));
     }
 
     /**
@@ -32,7 +32,7 @@ public class DownloadSmokeTest extends AbstractSmokeTest {
     @Test
     public void testDeveloperDownloadPage() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/unload/downloads/archive");
-        assertTrue("Download Archive", page.getTitleText().contains("Download Archive"));
+        assertTrue("Downloads Archive", page.getTitleText().contains("Download Archive"));
     }
 
     /**
