@@ -1,8 +1,5 @@
 package org.zfin.gwt.root.dto;
 
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 import java.util.List;
 
 /**
@@ -117,5 +114,14 @@ public class FishDTO extends RelatedEntityDTO implements Comparable {
             return compareOrder;
         }
         return nameOrder.compareTo(dto.getNameOrder());
+    }
+
+    public int compareToWildtypeFirst(FishDTO fish) {
+        if (genotypeDTO.isWildtype() && !fish.getGenotypeDTO().isWildtype())
+            return -1;
+        if (!genotypeDTO.isWildtype() && fish.getGenotypeDTO().isWildtype())
+            return 1;
+        return fish.getNameOrder().compareTo(fish.getNameOrder());
+
     }
 }
