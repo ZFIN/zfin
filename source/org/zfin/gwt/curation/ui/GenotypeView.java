@@ -60,7 +60,7 @@ public class GenotypeView extends Composite {
 
     @UiHandler("showHideGenoList")
     void onShowHideClick(@SuppressWarnings("unused") ClickEvent event) {
-        presenter.onShowHideClick();
+        genotypeListToggle.toggleVisibility();
     }
 
     public void setData(List<GenotypeDTO> genotypeDTOList) {
