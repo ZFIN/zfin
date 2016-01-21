@@ -148,7 +148,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         String experimentID = "ZDB-XPAT-090430-4";
 
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
-        ExpressionExperiment experiment = expRep.getExpressionExperiment(experimentID);
+        ExpressionExperiment2 experiment = expRep.getExpressionExperiment2(experimentID);
         try {
             expRep.deleteExpressionExperiment(experiment);
         } finally {
