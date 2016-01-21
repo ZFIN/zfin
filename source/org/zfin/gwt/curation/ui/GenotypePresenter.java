@@ -11,6 +11,7 @@ import org.zfin.gwt.root.dto.GenotypeDTO;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -116,10 +117,6 @@ public class GenotypePresenter implements Presenter {
         });
     }
 
-    public void onShowHideClick() {
-        view.getGenotypeListToggle().toggleVisibility();
-    }
-
     class RetrieveGenotypeListCallBack extends ZfinAsyncCallback<List<GenotypeDTO>> {
 
         public RetrieveGenotypeListCallBack(String errorMessage, ErrorHandler errorLabel) {
@@ -129,6 +126,7 @@ public class GenotypePresenter implements Presenter {
         @Override
         public void onSuccess(List<GenotypeDTO> list) {
             if (list != null && list.size() > 0) {
+                Collections.sort(list);
                 view.getNoneDefinedGenoLabel().setVisible(false);
                 view.setData(list);
             }

@@ -111,7 +111,7 @@ public class ZfinAsyncCallback<T> implements AsyncCallback<T> {
     private boolean checkLogin(Throwable t) {
         String message = t.getMessage();
         if (message != null && message.contains(LOGIN_REQUIRED)) {
-            Window.open("/action/login", "_blank", "status=1,toolbar=1,menubar=1,location=1,resizable=0,height=400,width=600");
+            Window.open("/action/login", "login", "status=1,toolbar=1,menubar=1,location=1,resizable=0,height=400,width=600");
             return true;
         }
         return false;
