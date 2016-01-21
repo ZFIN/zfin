@@ -26,10 +26,6 @@ public class FishPresenter implements Presenter {
         this.publicationID = publicationID;
     }
 
-    public void bind() {
-    }
-
-
     @Override
     public void go() {
         createFishList();
@@ -57,9 +53,13 @@ public class FishPresenter implements Presenter {
                     }
                 });
             }
-            view.setData(list);
+            int elementIndex = 0;
+            for (FishDTO dto : list) {
+                view.addFish(dto, elementIndex);
+                view.addDeleteButton(dto, elementIndex);
+                elementIndex++;
+            }
             fishList = list;
-            bind();
         }
     }
 

@@ -2,8 +2,6 @@
 <ui:UiBinder
         xmlns:ui='urn:ui:com.google.gwt.uibinder'
         xmlns:g='urn:import:com.google.gwt.user.client.ui'
-        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
-        xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui'
         >
 
     <g:FlowPanel>
@@ -11,7 +9,19 @@
             <g:Label text="FISH LIST" styleName="summaryTitle"/>
             <g:Label ui:field="noneDefined" text="&nbsp;None defined" styleName="no-data-tag"/>
         </g:HorizontalPanel>
-        <zfin:ZfinFlexTable ui:field="fishListTable" numberOfColumns="3" styleName="searchresults groupstripes"
-                            cellSpacing="5" cellPadding="5"/>
+        <g:Grid ui:field='dataTable' cellSpacing='10' styleName="searchresults groupstripes">
+            <g:row styleName="table-header">
+                <g:customCell>
+                    <g:Label text="Fish Name" styleName="bold" horizontalAlignment="left"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label text="Display Handle" styleName="bold" horizontalAlignment="left"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label text="Delete" styleName="bold" horizontalAlignment="left"/>
+                </g:customCell>
+            </g:row>
+        </g:Grid>
+
     </g:FlowPanel>
 </ui:UiBinder>
