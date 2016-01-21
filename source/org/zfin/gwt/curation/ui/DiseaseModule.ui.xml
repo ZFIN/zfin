@@ -9,9 +9,6 @@
         <g:HorizontalPanel>
             <g:Label text="Disease Models:" styleName="bold"/>
         </g:HorizontalPanel>
-        <zfin:ZfinFlexTable ui:field="diseaseModelTable" numberOfColumns="6" styleName="searchresults groupstripes"
-                            cellSpacing="5" cellPadding="5"/>
-
         <g:Grid ui:field='dataTable' cellSpacing='10' styleName="searchresults groupstripes">
             <g:row styleName="table-header">
                 <g:customCell>
@@ -21,7 +18,7 @@
                     <g:Label text="Environment" styleName="bold" horizontalAlignment="left"/>
                 </g:customCell>
                 <g:customCell>
-                    <g:Label text=""/>
+                    <g:Label text="is a model of" styleName="bold" horizontalAlignment="left"/>
                 </g:customCell>
                 <g:customCell>
                     <g:Label text="Human Disease" styleName="bold" horizontalAlignment="left"/>
