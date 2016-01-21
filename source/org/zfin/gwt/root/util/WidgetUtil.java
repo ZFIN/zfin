@@ -111,6 +111,17 @@ public final class WidgetUtil {
         return currentGroupIndex;
     }
 
+    public static void setAlternateRowStyle(int row, Grid grid) {
+        StringBuilder sb = new StringBuilder(50);
+        sb.append(CssStyles.NEWGROUP.toString());
+        sb.append(" ");
+        if (row % 2 == 0)
+            sb.append(CssStyles.EVENGROUP.toString());
+        else
+            sb.append(CssStyles.ODDGROUP.toString());
+        grid.getRowFormatter().setStyleName(row, sb.toString());
+    }
+
     public enum CssStyles {
 
         EVEN("even"),
