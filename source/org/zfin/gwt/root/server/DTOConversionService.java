@@ -421,7 +421,7 @@ public class DTOConversionService {
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
         genotypeDTO.setNickName(genotype.getNickname());
-        //genotypeDTO.setWildtype(genotype.isWildtype());
+        genotypeDTO.setWildtype(genotype.isWildtype());
         if (genotype.getAssociatedGenotypes() != null) {
             for (Genotype background : genotype.getAssociatedGenotypes())
                 genotypeDTO.addBackgroundGenotype(convertToPureGenotypeDTOs(background));
