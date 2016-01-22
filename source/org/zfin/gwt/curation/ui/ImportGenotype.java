@@ -13,12 +13,11 @@ import org.zfin.gwt.root.dto.GenotypeDTO;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
 import org.zfin.gwt.root.ui.ZfinFlexTable;
 import org.zfin.gwt.root.util.ShowHideWidget;
-import org.zfin.gwt.root.util.WidgetUtil;
 
 /**
  * Table of associated genotypes
  */
-public class ImportGenotype extends Composite {
+public class ImportGenotype extends SingleGridBaseComposite {
 
     private static MyUiBinder binder = GWT.create(MyUiBinder.class);
 
@@ -27,17 +26,9 @@ public class ImportGenotype extends Composite {
     }
 
     @UiField
-    Hyperlink showHideSection;
-    @UiField
-    SimpleErrorElement errorLabel;
-    @UiField
-    Image loadingImage;
-    @UiField
     VerticalPanel importGenotypePanel;
     @UiField
     ZfinFlexTable genotypeSearchResultTable;
-    @UiField
-    Grid dataTable;
     @UiField
     Button searchExistingGenotypes;
     @UiField
@@ -50,7 +41,6 @@ public class ImportGenotype extends Composite {
     SimpleErrorElement messageLabel;
 
     private ImportGenotypePresenter presenter;
-    private ShowHideWidget sectionVisibilityToggle;
 
     public ImportGenotype() {
         initWidget(binder.createAndBindUi(this));
@@ -86,7 +76,6 @@ public class ImportGenotype extends Composite {
             return;
         }
         InlineHTML genoName = new InlineHTML(genotype.getNamePlusBackground());
-
         dataTable.setWidget(row, 1, genoName);
         dataTable.setText(row, 2, genotype.getHandle());
     }
@@ -99,22 +88,12 @@ public class ImportGenotype extends Composite {
         dataTable.setWidget(row, 0, checkBox);
     }
 
-    private void setRowStyle(int row) {
-        WidgetUtil.setAlternateRowStyle(row, dataTable);
-    }
-
     protected void createLastTableRow() {
-        int rows = dataTable.getRowCount() + 1;
-        dataTable.resizeRows(rows);
-        int lastRow = rows - 1;
+        int lastRow = getLastRow();
         int col = 0;
         dataTable.setWidget(lastRow, col++, searchExistingGenotypes);
         dataTable.setWidget(lastRow, col, featureBackgroundLists);
         dataTable.getRowFormatter().setStyleName(lastRow, "table-header");
-    }
-
-    public void removeAllDataRows() {
-        dataTable.resizeRows(1);
     }
 
     public void setMessage(String message) {
@@ -126,16 +105,8 @@ public class ImportGenotype extends Composite {
         messageLabel.setError("");
     }
 
-    public void setError(String message) {
-        errorLabel.setError(message);
-    }
-
     public SimpleErrorElement getErrorLabel() {
         return errorLabel;
-    }
-
-    public Image getLoadingImage() {
-        return loadingImage;
     }
 
     public ListBox getFeatureListBox() {

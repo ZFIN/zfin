@@ -1,6 +1,8 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Hyperlink;
@@ -23,18 +25,22 @@ public abstract class SingleGridBaseComposite extends Composite {
     @UiField
     Grid dataTable;
 
-    private ShowHideWidget sectionVisibilityToggle;
+    protected ShowHideWidget sectionVisibilityToggle;
 
-    private void setRowStyle(int row) {
+    protected void setRowStyle(int row) {
         WidgetUtil.setAlternateRowStyle(row, dataTable);
     }
 
-    protected void createLastTableRow() {
+    /**
+     * Returns the last row index.
+     * @return
+     */
+    protected int getLastRow() {
         int rows = dataTable.getRowCount() + 1;
         dataTable.resizeRows(rows);
         int lastRow = rows - 1;
-        int col = 0;
         dataTable.getRowFormatter().setStyleName(lastRow, "table-header");
+        return lastRow;
     }
 
     public void removeAllDataRows() {
