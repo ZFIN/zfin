@@ -22,6 +22,6 @@ if (!ids?.empty) {
 new ReportGenerator().with {
     setReportTitle("Report for ${args[0]}")
     includeTimestamp()
-    addDataTable("${ids.size()} TALENS which bowtie couldn't align", ["TALEN ZDB ID"], ids)
+    addDataTable("${ids.size()} TALENs which bowtie couldn't align", ["TALEN ZDB ID"], ids)
     writeFiles(new File("."), "talenBowtieReport")
 }
