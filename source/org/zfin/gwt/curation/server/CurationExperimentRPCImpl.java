@@ -748,7 +748,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      * @param efs figure annotation
      */
     public void createPatoRecord(ExpressionFigureStageDTO efs) {
-        ExpressionExperiment expressionExperiment = expRepository.getExpressionExperiment(efs.getExperiment().getExperimentZdbID());
+        ExpressionExperiment2 expressionExperiment = expRepository.getExpressionExperiment2(efs.getExperiment().getExperimentZdbID());
         Figure figure = pubRepository.getFigureByID(efs.getFigure().getZdbID());
         DevelopmentStage start = anatomyRep.getStageByID(efs.getStart().getZdbID());
         DevelopmentStage end = anatomyRep.getStageByID(efs.getEnd().getZdbID());
