@@ -68,6 +68,7 @@ delete from expression_experiment;
 delete from expression_result;
 delete from expression_pattern_figure;
 
+
 insert into expression_experiment (xpatex_zdb_id, 
        	    xpatex_source_zdb_id,
 	    xpatex_assay_name,
@@ -104,3 +105,4 @@ select xpatres_zdb_id,
 
 insert into expression_pattern_figure (xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id)
  select xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id from expression_pattern_figure_temp;
+

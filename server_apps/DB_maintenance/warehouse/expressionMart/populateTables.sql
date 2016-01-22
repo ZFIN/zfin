@@ -45,3 +45,7 @@ insert into expression_pattern_figure_temp (xpatfig_xpatres_zdb_id, xpatfig_fig_
  and xpatres_end_stg_zdb_id = efs_end_stg_zdb_id 
  and not exists (Select 'x' from expression_phenotype_term
      	 		where ept_xpatres_id = xpatres_zdb_id);
+
+update statistics high for table expression_experiment_temp;
+update statistics high for table expression_result_temp;
+update statistics high for table expression_pattern_figure_temp;
