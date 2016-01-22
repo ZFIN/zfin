@@ -7,38 +7,16 @@
         <hudson.model.ParametersDefinitionProperty>
             <parameterDefinitions>
                 <hudson.model.StringParameterDefinition>
-                    <name>DateVariables</name>
+                    <name>ParameterVariables</name>
                     <description></description>
                     <defaultValue>DATE1__DATE2</defaultValue>
                 </hudson.model.StringParameterDefinition>
                 <hudson.model.StringParameterDefinition>
-                    <name>DateValues</name>
-                    <description></description>
+                    <name>ParameterValues</name>
+                    <description>E.g. 2014-04-25__2014-05-30, or leave blank for the last 30 days</description>
                     <defaultValue></defaultValue>
                 </hudson.model.StringParameterDefinition>
             </parameterDefinitions>
-<!--
-            <com.seitenbau.jenkins.plugins.dynamicparameter.StringParameterDefinition plugin="dynamicparameter@0.2.0">
-                    <name>ParameterValues</name>
-                    <description></description>
-                    <__uuid>b32ebcb1-2189-4a99-8a84-d92645309c29</__uuid>
-                    <__remote>false</__remote>
-                    <__script>(new Date()).format(&apos;yyyy__MM__dd&apos;)
-                    </__script>
-                    <__localBaseDirectory serialization="custom">
-                        <hudson.FilePath>
-                            <default>
-                                <remote>/Users/cmpich/projects/zfin/eselsohr/server_apps/jenkins/jenkins-home/dynamic_parameter/classpath</remote>
-                            </default>
-                            <boolean>true</boolean>
-                        </hudson.FilePath>
-                    </__localBaseDirectory>
-                    <__remoteBaseDirectory>dynamic_parameter_classpath</__remoteBaseDirectory>
-                    <__classPath></__classPath>
-                    <readonlyInputField>false</readonlyInputField>
-                </com.seitenbau.jenkins.plugins.dynamicparameter.StringParameterDefinition>
-            </parameterDefinitions>
--->
         </hudson.model.ParametersDefinitionProperty>
     </properties>
   <scm class="hudson.scm.NullSCM"/>
@@ -55,7 +33,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
       <hudson.tasks.Ant plugin="ant@1.2">
-          <targets>run-data-report-param -DJobName=Curation-Metrics_m</targets>
+          <targets>run-curation-metrics-report -DJobName=Curation-Metrics_m</targets>
           <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
       </hudson.tasks.Ant>
   </builders>
