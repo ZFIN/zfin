@@ -106,3 +106,10 @@ select xpatres_zdb_id,
 insert into expression_pattern_figure (xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id)
  select xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id from expression_pattern_figure_temp;
 
+update zdb_flag
+  set (zflag_is_on,zflag_last_modified) = ("f",current year to second)
+ where zflag_name = "regen_expressionmart" ;
+
+update warehouse_run_tracking
+ set wrt_last_loaded_date = current year to second
+ where wrt_mart_name = "expression mart";
