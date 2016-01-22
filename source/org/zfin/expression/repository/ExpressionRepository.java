@@ -417,4 +417,6 @@ public interface ExpressionRepository {
      * @return list of expression experiment2 records
      */
     List<ExpressionExperiment2> getExpressionExperiment2sByFish (Fish fish);
+
+    List<ExpressionResult2> getExpressionResultList(Marker gene);
 }
