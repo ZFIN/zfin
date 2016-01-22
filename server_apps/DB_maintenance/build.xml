@@ -206,30 +206,11 @@
     </target>
 
     <target name="run-data-report-param" description="">
-        <echo message="Create Report"/>
-        <echo message="Use database: ${DBNAME}"/>
-        <echo message="Use ParameterValues: ${DateValues}"/>
-        <delete dir="${validateData}/report_data/${JobName}"/>
-        <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="no"
-              classpathref="extended.classpath"
-              failonerror="true">
-            <arg value="-jobName"/>
-            <arg value="${JobName}"/>
-            <arg value="-useParameters"/>
-            <arg value="true"/>
-            <arg value="-parameterVariables"/>
-            <arg value="${ParameterVariables}"/>
-            <arg value="-parameterValues"/>
-            <arg value="${ParameterValues}"/>
-            <arg value="-dateVariables"/>
-            <arg value="${DateVariables}"/>
-            <arg value="-dateValues"/>
-            <arg value="${DateValues}"/>
-            <arg value="-dataDir"/>
-            <arg value="${validateData}/report_data"/>
-            <arg value="-propertyDir"/>
-            <arg value="${web-inf.dir}/zfin.properties"/>
-        </java>
+        <data-report-param/>
+    </target>
+
+    <target name="run-curation-metrics-report" description="">
+        <data-report-param task-class-name="org.zfin.infrastructure.ant.CurationMetricsReportTask"/>
     </target>
 
     <target name="run-data-report" description="">
@@ -321,23 +302,34 @@
         </sequential>
     </macrodef>
 
-    <!--
-        <macrodef name="run-db-query">
-            <attribute name="db-query-file"/>
-            <attribute name="instanceName"/>
-            <sequential>
-                <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="yes"
-                      classpathref="extended.classpath"
-                      failonerror="true">
-                    <arg value="@{instanceName}"/>
-                    <arg value="@{db-query-file}"/>
-                    <arg value="${validateData}"/>
-                    <arg value="${web-inf.dir}/zfin.properties"/>
-                </java>
-            </sequential>
-        </macrodef>
+    <macrodef name="data-report-param">
+        <attribute name="task-class-name" default="org.zfin.infrastructure.ant.DataReportTask"/>
+        <sequential>
+            <echo message="Create Report"/>
+            <echo message="Use database: ${DBNAME}"/>
+            <echo message="Use ParameterValues: ${ParameterValues}"/>
+            <delete dir="${validateData}/report_data/${JobName}"/>
+            <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="no"
+                  classpathref="extended.classpath"
+                  failonerror="true">
+                <arg value="-jobName"/>
+                <arg value="${JobName}"/>
+                <arg value="-taskClassName"/>
+                <arg value="@{task-class-name}"/>
+                <arg value="-useParameters"/>
+                <arg value="true"/>
+                <arg value="-parameterVariables"/>
+                <arg value="${ParameterVariables}"/>
+                <arg value="-parameterValues"/>
+                <arg value="${ParameterValues}"/>
+                <arg value="-dataDir"/>
+                <arg value="${validateData}/report_data"/>
+                <arg value="-propertyDir"/>
+                <arg value="${web-inf.dir}/zfin.properties"/>
+            </java>
+        </sequential>
+    </macrodef>
 
-    -->
     <target name="usage">
         <echo>
             TARGETS
