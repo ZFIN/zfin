@@ -64,6 +64,8 @@ public class FishModule extends Composite implements EntryPoint {
         presenter.go();
         importPresenter = new ImportGenotypePresenter(importGenotypeView, publicationID);
         importPresenter.go();
+        importGenotypeView.setPresenter(importPresenter);
+
         fishPresenter = new FishPresenter(fishView, publicationID);
         fishPresenter.go();
         fishConstructionPresenter = new FishConstructionPresenter(fishConstructionView, publicationID);

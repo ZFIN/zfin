@@ -1,10 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.CheckBox;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.GenotypeDTO;
 import org.zfin.gwt.root.ui.ErrorHandler;
@@ -13,10 +10,9 @@ import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Table of associated genotypes
+ * Table of genotypes that are associated to different publications.
  */
 public class ImportGenotypePresenter implements Presenter {
 
@@ -29,53 +25,9 @@ public class ImportGenotypePresenter implements Presenter {
     public ImportGenotypePresenter(ImportGenotype view, String publicationID) {
         this.view = view;
         this.publicationID = publicationID;
-        view.setPublicationID(publicationID);
     }
 
-    public void bind() {
-        view.getShowHideSection().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                view.getSextionVisibilityToggle().toggleVisibility();
-                retrieveInitialEntities();
-            }
-        });
-        view.getSearchExistingGenotypes().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                searchForGenotypes();
-            }
-        });
-        view.getFeatureListBox().addChangeHandler(new ChangeHandler() {
-            @Override
-            public void onChange(ChangeEvent changeEvent) {
-                searchForGenotypes();
-            }
-        });
-        view.getBackgroundListBox().addChangeHandler(new ChangeHandler() {
-            @Override
-            public void onChange(ChangeEvent changeEvent) {
-                searchForGenotypes();
-            }
-        });
-        bindAddGenotypeLinkHandler();
-    }
-
-    private void bindAddGenotypeLinkHandler() {
-        final Map<CheckBox, GenotypeDTO> map = view.getGenotypeCheckboxMap();
-        for (final CheckBox checkBox : map.keySet()) {
-            checkBox.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent clickEvent) {
-                    view.getLoadingImage().setVisible(true);
-                    diseaseRpcService.addGenotypeToPublication(publicationID, map.get(checkBox).getZdbID(),
-                            new ImportGenotypeCallBack("Import Genotype", view.getErrorLabel()));
-                }
-            });
-        }
-    }
-
-    private void searchForGenotypes() {
+    protected void searchForGenotypes() {
         view.getErrorLabel().clearAllErrors();
         String featureID = getSelectedFeatureID();
         String genotypeID = getSelectedGenotypeID();
@@ -100,14 +52,9 @@ public class ImportGenotypePresenter implements Presenter {
     }
 
 
-    public void resetGUI() {
-    }
-
-
     @Override
     public void go() {
-        bind();
-        view.updateExistingGenotypeListTableContent(null);
+        retrieveInitialEntities();
     }
 
     public void retrieveInitialEntities() {
@@ -133,16 +80,27 @@ public class ImportGenotypePresenter implements Presenter {
 
         @Override
         public void onSuccess(List<GenotypeDTO> list) {
-            resetGUI();
-            if (list != null) {
-                genotypeDTOList = list;
-                view.updateExistingGenotypeListTableContent(list);
-            }
+            view.resetGUI();
+            genotypeDTOList = list;
+            populateDataTable();
             view.getLoadingImage().setVisible(false);
-            bindAddGenotypeLinkHandler();
-            if(list == null || list.size() == 0)
-                view.getErrorLabel().setError("No more genotypes found");
+            if (list == null || list.size() == 0)
+                view.setError("No more genotypes found");
         }
+    }
+
+    private void populateDataTable() {
+        if (genotypeDTOList != null && genotypeDTOList.size() > 0) {
+            int elementIndex = 0;
+            for (GenotypeDTO dto : genotypeDTOList) {
+                view.addGenotype(dto, elementIndex);
+                view.addCheckBox(elementIndex, new CheckGenotypeClickHandler(dto));
+                elementIndex++;
+            }
+        } else {
+            view.removeAllDataRows();
+        }
+        view.createLastTableRow();
     }
 
     class ImportGenotypeCallBack extends ZfinAsyncCallback<GenotypeDTO> {
@@ -153,16 +111,29 @@ public class ImportGenotypePresenter implements Presenter {
 
         @Override
         public void onSuccess(GenotypeDTO genotypeDTO) {
-            resetGUI();
+            view.resetGUI();
             if (genotypeDTO != null) {
-                view.getErrorLabel().setText("Imported genotype " + genotypeDTO.getHandle());
+                view.setMessage("Imported genotype " + genotypeDTO.getHandle());
                 genotypeDTOList.remove(genotypeDTO);
-                view.updateExistingGenotypeListTableContent(genotypeDTOList);
-                bindAddGenotypeLinkHandler();
+                populateDataTable();
             }
             view.getLoadingImage().setVisible(false);
             AppUtils.EVENT_BUS.fireEvent(new ImportGenotypeEvent());
         }
     }
 
+    class CheckGenotypeClickHandler implements ClickHandler {
+        private GenotypeDTO genotypeDTO;
+
+        public CheckGenotypeClickHandler(GenotypeDTO genotypeDTO) {
+            this.genotypeDTO = genotypeDTO;
+        }
+
+        @Override
+        public void onClick(ClickEvent clickEvent) {
+            view.getLoadingImage().setVisible(true);
+            diseaseRpcService.addGenotypeToPublication(publicationID, genotypeDTO.getZdbID(),
+                    new ImportGenotypeCallBack("Import Genotype", view.getErrorLabel()));
+        }
+    }
 }

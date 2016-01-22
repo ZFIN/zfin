@@ -1,18 +1,19 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.GenotypeDTO;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
 import org.zfin.gwt.root.ui.ZfinFlexTable;
 import org.zfin.gwt.root.util.ShowHideWidget;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.zfin.gwt.root.util.WidgetUtil;
 
 /**
  * Table of associated genotypes
@@ -20,7 +21,6 @@ import java.util.Map;
 public class ImportGenotype extends Composite {
 
     private static MyUiBinder binder = GWT.create(MyUiBinder.class);
-
 
     @UiTemplate("ImportGenotype.ui.xml")
     interface MyUiBinder extends UiBinder<FlowPanel, ImportGenotype> {
@@ -36,121 +36,117 @@ public class ImportGenotype extends Composite {
     VerticalPanel importGenotypePanel;
     @UiField
     ZfinFlexTable genotypeSearchResultTable;
+    @UiField
+    Grid dataTable;
+    @UiField
+    Button searchExistingGenotypes;
+    @UiField
+    ListBox featureListBox;
+    @UiField
+    ListBox backgroundListBox;
+    @UiField
+    HorizontalPanel featureBackgroundLists;
+    @UiField
+    SimpleErrorElement messageLabel;
 
-    Button searchExistingGenotypes = new Button("Search");
-    ListBox featureListBox = new ListBox();
-    ListBox backgroundListBox = new ListBox();
-
+    private ImportGenotypePresenter presenter;
+    private ShowHideWidget sectionVisibilityToggle;
 
     public ImportGenotype() {
         initWidget(binder.createAndBindUi(this));
-        sextionVisibilityToggle = new ShowHideWidget(showHideSection, importGenotypePanel);
+        sectionVisibilityToggle = new ShowHideWidget(showHideSection, importGenotypePanel);
     }
 
-
-    private void initConstructionGenotypeSearchResultRow(int row) {
-        int col = 0;
-        HorizontalPanel search = new HorizontalPanel();
-        search.add(searchExistingGenotypes);
-        genotypeSearchResultTable.setWidget(row, col, search);
-        HorizontalPanel panel = new HorizontalPanel();
-        InlineHTML featureHtml = new InlineHTML("Feature: ");
-        featureHtml.setStyleName("bold");
-        panel.add(featureHtml);
-        panel.add(featureListBox);
-        InlineHTML backgroundHtml = new InlineHTML("Background: ");
-        backgroundHtml.setStyleName("bold");
-        panel.add(backgroundHtml);
-        panel.add(backgroundListBox);
-        genotypeSearchResultTable.getCellFormatter().setStyleName(row, col++, "bold");
-        genotypeSearchResultTable.setWidget(row, col, panel);
-        genotypeSearchResultTable.getCellFormatter().setStyleName(row, col, "bold");
-        genotypeSearchResultTable.getFlexCellFormatter().setColSpan(row, col, 2);
-        genotypeSearchResultTable.getRowFormatter().setStyleName(row, "table-header");
+    @UiHandler("searchExistingGenotypes")
+    void onSearchEvent(@SuppressWarnings("unused") ClickEvent event) {
+        presenter.searchForGenotypes();
     }
 
-
-    private void initGenotypeSearchResultTable() {
-        int col = 0;
-        genotypeSearchResultTable.getCellFormatter().setStyleName(0, col, "bold");
-        genotypeSearchResultTable.setText(0, col++, "Add");
-        genotypeSearchResultTable.getCellFormatter().setStyleName(0, col, "bold");
-        genotypeSearchResultTable.setText(0, col++, "Display Name");
-        genotypeSearchResultTable.getCellFormatter().setStyleName(0, col, "bold");
-        genotypeSearchResultTable.setText(0, col, "Handle");
-        genotypeSearchResultTable.getRowFormatter().setStyleName(0, "table-header");
+    @UiHandler("featureListBox")
+    void onChangeFeatureSelection(@SuppressWarnings("unused") ChangeEvent event) {
+        presenter.searchForGenotypes();
     }
 
-    private Map<CheckBox, GenotypeDTO> genotypeCheckboxMap = new HashMap<>();
+    @UiHandler("backgroundListBox")
+    void onChangeBackgroundSelection(@SuppressWarnings("unused") ChangeEvent event) {
+        presenter.searchForGenotypes();
+    }
 
-    public void updateExistingGenotypeListTableContent(List<GenotypeDTO> genotypeDTOList) {
-        genotypeSearchResultTable.removeAllRows();
-        if (genotypeDTOList == null || genotypeDTOList.size() == 0) {
-            initGenotypeSearchResultTable();
-            initConstructionGenotypeSearchResultRow(1);
+    @UiHandler("showHideSection")
+    void onShowHideClick(@SuppressWarnings("unused") ClickEvent event) {
+        sectionVisibilityToggle.toggleVisibility();
+    }
+
+    protected void addGenotype(GenotypeDTO genotype, int elementIndex) {
+        dataTable.resizeRows(elementIndex + 2);
+        int row = elementIndex + 1;
+        setRowStyle(row);
+        if (genotype == null) {
+            dataTable.setText(row, 0, "");
             return;
         }
+        InlineHTML genoName = new InlineHTML(genotype.getNamePlusBackground());
 
-        genotypeSearchResultTable.setVisible(true);
-        initGenotypeSearchResultTable();
-
-        int groupIndex = 0;
-        int rowIndex = 1;
-        for (final GenotypeDTO genotype : genotypeDTOList) {
-            int col = 0;
-            CheckBox checkBox = new CheckBox();
-            genotypeCheckboxMap.put(checkBox, genotype);
-            genotypeSearchResultTable.setWidget(rowIndex, col++, checkBox);
-            InlineHTML genoName = new InlineHTML(genotype.getNamePlusBackground());
-            genotypeSearchResultTable.setWidget(rowIndex, col++, genoName);
-            InlineHTML geno = new InlineHTML(genotype.getHandle());
-            geno.setTitle(genotype.getZdbID());
-            genotypeSearchResultTable.setWidget(rowIndex, col, geno);
-            groupIndex = genotypeSearchResultTable.setRowStyle(rowIndex++, null, genotype.getZdbID(), groupIndex);
-        }
-        initConstructionGenotypeSearchResultRow(rowIndex);
+        dataTable.setWidget(row, 1, genoName);
+        dataTable.setText(row, 2, genotype.getHandle());
     }
 
-    private String publicationID;
-    private ShowHideWidget sextionVisibilityToggle;
+    protected void addCheckBox(int elementIndex, ClickHandler event) {
+        int row = elementIndex + 1;
+        CheckBox checkBox = new CheckBox();
+        checkBox.addClickHandler(event);
+        checkBox.setTitle("Import Genotype");
+        dataTable.setWidget(row, 0, checkBox);
+    }
 
-    public void setPublicationID(String publicationID) {
-        this.publicationID = publicationID;
+    private void setRowStyle(int row) {
+        WidgetUtil.setAlternateRowStyle(row, dataTable);
+    }
+
+    protected void createLastTableRow() {
+        int rows = dataTable.getRowCount() + 1;
+        dataTable.resizeRows(rows);
+        int lastRow = rows - 1;
+        int col = 0;
+        dataTable.setWidget(lastRow, col++, searchExistingGenotypes);
+        dataTable.setWidget(lastRow, col, featureBackgroundLists);
+        dataTable.getRowFormatter().setStyleName(lastRow, "table-header");
+    }
+
+    public void removeAllDataRows() {
+        dataTable.resizeRows(1);
+    }
+
+    public void setMessage(String message) {
+        messageLabel.setError(message);
+    }
+
+    public void resetGUI() {
+        errorLabel.setError("");
+        messageLabel.setError("");
+    }
+
+    public void setError(String message) {
+        errorLabel.setError(message);
     }
 
     public SimpleErrorElement getErrorLabel() {
         return errorLabel;
     }
 
-    public String getPublicationID() {
-        return publicationID;
-    }
-
     public Image getLoadingImage() {
         return loadingImage;
-    }
-
-    public ShowHideWidget getSextionVisibilityToggle() {
-        return sextionVisibilityToggle;
-    }
-
-    public Hyperlink getShowHideSection() {
-        return showHideSection;
     }
 
     public ListBox getFeatureListBox() {
         return featureListBox;
     }
 
-    public Button getSearchExistingGenotypes() {
-        return searchExistingGenotypes;
-    }
-
     public ListBox getBackgroundListBox() {
         return backgroundListBox;
     }
 
-    public Map<CheckBox, GenotypeDTO> getGenotypeCheckboxMap() {
-        return genotypeCheckboxMap;
+    public void setPresenter(ImportGenotypePresenter presenter) {
+        this.presenter = presenter;
     }
 }
