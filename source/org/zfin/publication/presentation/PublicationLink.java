@@ -2,9 +2,11 @@ package org.zfin.publication.presentation;
 
 import org.zfin.framework.presentation.ProvidesLink;
 
+import java.io.Serializable;
+
 /**
  */
-public class PublicationLink implements ProvidesLink{
+public class PublicationLink implements ProvidesLink, Serializable {
 
     private String publicationZdbId ;
     private String linkContent ;
