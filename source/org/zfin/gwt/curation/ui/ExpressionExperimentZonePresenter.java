@@ -3,19 +3,22 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.ListBox;
-import org.zfin.gwt.root.dto.ExperimentDTO;
-import org.zfin.gwt.root.dto.ExpressionAssayDTO;
-import org.zfin.gwt.root.dto.FishDTO;
-import org.zfin.gwt.root.dto.MarkerDTO;
+import com.google.gwt.user.client.ui.Widget;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ListBoxWrapper;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * construction zone
@@ -25,13 +28,18 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     private ExpressionExperimentZoneView view;
     private String publicationID;
     private boolean debug;
+    private boolean addButtonInProgress;
+    private ExperimentDTO lastAddedExperiment = new ExperimentDTO();
+    private ExperimentDTO lastSelectedExperiment;
+    private Set<ExperimentDTO> selectedExperiments = new HashSet<>(5);
+
 
     // filter set by the banana bar
     private ExperimentDTO experimentFilter = new ExperimentDTO();
 
     private CurationExperimentRPCAsync curationExperimentRPCAsync = CurationExperimentRPC.App.getInstance();
 
-    private List<ExperimentDTO> experiments = new ArrayList<>(15);
+    private List<ExperimentDTO> experimentList = new ArrayList<>(15);
 
     public ExpressionExperimentZonePresenter(ExpressionExperimentZoneView view, String publicationID, boolean debug) {
         this.view = view;
@@ -68,6 +76,161 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     public void notifyAddedExpression() {
         view.notifyAddedExpression();
     }
+
+    public void addExpressionExperiment() {
+        // do not proceed if it just has been clicked once
+        // and is being worked on
+        if (addButtonInProgress)
+            return;
+        addButtonInProgress = true;
+        final ExperimentDTO zoneExperiment = getExperimentFromConstructionZone(true);
+        if (!isValidExperiment(zoneExperiment)) {
+            view.cleanupOnExit();
+            return;
+        }
+        if (experimentExists(zoneExperiment, true)) {
+            //Window.alert("experiment exists: ");
+            view.setError("Experiment already exists. Experiments have to be unique!");
+            view.cleanupOnExit();
+            return;
+        }
+
+        curationExperimentRPCAsync.createExpressionExperiment(zoneExperiment, new AddExperimentCallback());
+
+    }
+
+    private void populateDataTable() {
+        int elementIndex = 0;
+        for (ExperimentDTO experiment : experimentList) {
+            view.addGene(experiment.getGene(), elementIndex);
+            view.addFish(experiment.getFishName(), elementIndex);
+            view.addEnvironment(experiment.getEnvironment(), elementIndex);
+            view.addAssay(experiment.getAssay(), elementIndex);
+            view.addAntibody(experiment.getAntibodyMarker(), elementIndex);
+            view.addGenBank(experiment.getGenbankNumber(), elementIndex);
+            view.addCheckBox(experiment, new ExperimentSelectClickHandler(experiment), elementIndex);
+            view.addDeleteButton(experiment, new ExperimentSelectClickHandler(experiment), elementIndex);
+            elementIndex++;
+        }
+        view.endTableUpdate(new ExperimentSelectClickHandler(null));
+    }
+
+
+    /**
+     * Check if the experiment already exists in the list.
+     * Experiments have to be unique.
+     *
+     * @param updatedExperiment experiment DTO
+     * @param isNewExperiment   true: the experiment is going to be a new experiment added to the list
+     *                          false: the experiment is an update
+     * @return true if experiment is found in the full list (new experiment) or in the list except itself
+     * false if experiment is different from all other experiments
+     */
+    public boolean experimentExists(ExperimentDTO updatedExperiment, boolean isNewExperiment) {
+        int rowIndex = 1;
+/*
+        Window.alert("Is New: "+isNewExperiment);
+        Window.alert("updated experiment: "+updatedExperiment.getExperimentZdbID());
+*/
+        for (ExperimentDTO experiment : experimentList) {
+            if (experiment.equals(updatedExperiment)) {
+                if (isNewExperiment || (!experiment.getExperimentZdbID().equals(updatedExperiment.getExperimentZdbID()))) {
+/*
+                    if (showHideToggle.isVisible()) {
+                        duplicateRowIndex = rowIndex;
+                        duplicateRowOriginalStyle = displayTable.getRowFormatter().getStyleName(rowIndex);
+                        displayTable.getRowFormatter().setStyleName(rowIndex, "experiment-duplicate");
+                    }
+*/
+                    return true;
+                }
+            }
+            rowIndex++;
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Check that the experiment is valid:
+     * 1) gene or antibody defined
+     * 2) fish defined
+     * 3) environment defined
+     * 4) assay defined
+     *
+     * @param experiment experiment DTO
+     * @return boolean
+     */
+    private boolean isValidExperiment(ExperimentDTO experiment) {
+        if (experiment.getAntibodyMarker() == null && experiment.getGene() == null) {
+            view.setError("You need to select at least a gene or an antibody");
+            return false;
+        }
+        if (StringUtils.isEmpty(experiment.getFishID()) || experiment.getFishID().equals("null")) {
+            view.setError("You need to select a fish (genotype).");
+            return false;
+        }
+        if (experiment.getEnvironment() == null || StringUtils.isEmpty(experiment.getEnvironment().getZdbID())) {
+            view.setError("You need to select an environment (experiment).");
+            return false;
+        }
+        if (StringUtils.isEmpty(experiment.getAssay())) {
+            view.setError("You need to select an assay.");
+            return false;
+        }
+        return true;
+    }
+
+    private ExperimentDTO getExperimentFromConstructionZone(boolean newExperiment) {
+        ExperimentDTO updatedExperiment = new ExperimentDTO();
+        if (!newExperiment)
+            updatedExperiment.setExperimentZdbID(lastSelectedExperiment.getExperimentZdbID());
+        String assay = view.getAssayList().getValue(view.getAssayList().getSelectedIndex());
+        updatedExperiment.setAssay(assay);
+        int index = view.getGenbankList().getSelectedIndex();
+        if (index > -1) {
+            // if none is selected set explicitly to null
+            if (index == 0)
+                updatedExperiment.setGenbankID(null);
+            else {
+                updatedExperiment.setGenbankID(view.getGenbankList().getValue(index));
+                updatedExperiment.setGenbankNumber(view.getGenbankList().getItemText(index));
+            }
+        }
+        EnvironmentDTO env = new EnvironmentDTO();
+        String environmentID = view.getEnvironmentList().getValue(view.getEnvironmentList().getSelectedIndex());
+        String environmentName = view.getEnvironmentList().getItemText(view.getEnvironmentList().getSelectedIndex());
+        env.setZdbID(environmentID);
+        env.setName(environmentName);
+        updatedExperiment.setEnvironment(env);
+        // only use the antibody if the selection box is enabled.
+        if (view.getAntibodyList().isEnabled()) {
+            String antibodyID = view.getAntibodyList().getValue(view.getAntibodyList().getSelectedIndex());
+            String antibodyName = view.getAntibodyList().getItemText(view.getAntibodyList().getSelectedIndex());
+            if (StringUtils.isNotEmpty(antibodyID) && !antibodyID.equals(StringUtils.NULL)) {
+                MarkerDTO antibody = new MarkerDTO();
+                antibody.setZdbID(antibodyID);
+                antibody.setName(antibodyName);
+                updatedExperiment.setAntibodyMarker(antibody);
+            }
+        }
+        String fishID = view.getFishList().getValue(view.getFishList().getSelectedIndex());
+        updatedExperiment.setFishID(fishID);
+        String fishName = view.getFishList().getItemText(view.getFishList().getSelectedIndex());
+        updatedExperiment.setFishName(fishName);
+        String geneID = view.getGeneList().getValue(view.getGeneList().getSelectedIndex());
+        if (StringUtils.isNotEmpty(geneID) && !geneID.equals(StringUtils.NULL)) {
+            MarkerDTO gene = new MarkerDTO();
+            gene.setZdbID(geneID);
+            updatedExperiment.setGene(gene);
+        }
+        updatedExperiment.setPublicationID(publicationID);
+        return updatedExperiment;
+    }
+
+
+    //////////////////////////////// Handler and Listener  ////////////////////////////
 
     private class ErrorMessageCleanupListener implements ChangeHandler {
 
@@ -133,7 +296,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     // Retrieve experiments from the server
 
     protected void retrieveExperiments() {
-        curationExperimentRPCAsync.getExperimentsByFilter(experimentFilter, new RetrieveExperimentsCallback(experiments));
+        curationExperimentRPCAsync.getExperimentsByFilter(experimentFilter, new RetrieveExperimentsCallback());
     }
 
     public void setExperimentFilter(ExperimentDTO experimentFilter) {
@@ -231,6 +394,162 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     }
 
+    /**
+     * This Click Handler is activated upon clicking the selection check box in the
+     * Experiment display section. It should do two things:
+     * 1) copy the values for the experiment into the construction zone
+     * 2) select the experiment in the text area of the expression section
+     */
+    private class ExperimentSelectClickHandler implements ClickHandler {
+
+        private ExperimentDTO selectedExperiment;
+
+
+        public ExperimentSelectClickHandler(ExperimentDTO selectedExperiment) {
+            this.selectedExperiment = selectedExperiment;
+        }
+
+        public void onClick(ClickEvent event) {
+            boolean isCheckBoxClick = false;
+            if (event.getSource() instanceof CheckBox)
+                isCheckBoxClick = true;
+            HTMLTable.Cell cell = view.dataTable.getCellForEvent(event);
+            Widget widget = view.dataTable.getWidget(cell.getRowIndex(), 0);
+            int rowIndex = cell.getRowIndex();
+
+            // only checkboxes are in the first column
+            if (widget == null || !(widget instanceof CheckBox))
+                return;
+            CheckBox checkBox = (CheckBox) widget;
+
+            DOM.eventCancelBubble(Event.getCurrentEvent(), false);
+            selectedExperiment = experimentList.get(rowIndex - 1);
+            // if click came from checkbox event the check has already happened.
+            if (!isCheckBoxClick)
+                checkBox.setValue(!checkBox.getValue());
+            if (checkBox.getValue())
+                selectedExperiments.add(selectedExperiment);
+            else
+                selectedExperiments.remove(selectedExperiment);
+            lastSelectedExperiment = selectedExperiment;
+            //Window.alert("Exp size II: "+selectedExperiments.size());
+
+            DOM.eventCancelBubble(Event.getCurrentEvent(), true);
+            clearErrorMessages();
+            //Window.alert("ExperimentSelectClickListener"+experiment.getExperimentZdbID());
+            // store selected experiment for update purposes
+            selectGene();
+            selectFish();
+            selectEnvironment();
+            selectAssay();
+            setAntibody();
+            selectGenBank();
+            view.getUpdateButton().setEnabled(true);
+            //displayTable.showHideClearAllLink();
+        }
+
+        /**
+         * Copy the value of the fish into the construction zone field
+         */
+        private void selectFish() {
+            int numberOfEntries = view.getFishList().getItemCount();
+            for (int row = 0; row < numberOfEntries; row++) {
+                String fishID = view.getFishList().getValue(row);
+                String fishName = view.getFishList().getItemText(row);
+                //
+                if (selectedExperiment.getFishID() != null) {
+                    if (fishID.equals(selectedExperiment.getFishID())) {
+                        view.getFishList().setSelectedIndex(row);
+                        break;
+                    }
+                } else {
+                    if (fishName.equals(selectedExperiment.getFishName())) {
+                        view.getFishList().setSelectedIndex(row);
+                        break;
+                    }
+                }
+
+            }
+        }
+
+        /**
+         * Copy the value of the environment into the construction zone field
+         */
+        private void selectEnvironment() {
+            int numberOfEntries = view.getEnvironmentList().getItemCount();
+            for (int row = 0; row < numberOfEntries; row++) {
+                String environment = view.getEnvironmentList().getItemText(row);
+                if (environment.equals(selectedExperiment.getEnvironment().getName())) {
+                    view.getEnvironmentList().setSelectedIndex(row);
+                    break;
+                }
+
+            }
+        }
+
+        /**
+         * Copy the value of the assay into the construction zone field
+         */
+        private void selectAssay() {
+            int numberOfEntries = view.getAssayList().getItemCount();
+            for (int row = 0; row < numberOfEntries; row++) {
+                String assay = view.getAssayList().getValue(row);
+                if (assay.equals(selectedExperiment.getAssay())) {
+                    view.getAssayList().setSelectedIndex(row);
+                    break;
+                }
+            }
+        }
+
+        /**
+         * Copy the value of the assay into the construction zone field
+         */
+        private void selectGenBank() {
+            if (selectedExperiment.getGene() != null) {
+                readGenbankAccessions(selectedExperiment);
+            }
+        }
+
+        // create gene list and select the gene of the experiment
+
+        private void selectGene() {
+            // first retrieve the full list of genes and then
+            // select the gene in question.
+            setGene(selectedExperiment);
+        }
+
+        // create antibody list and select the antibody of the experiment
+
+        private void setAntibody() {
+            // first retrieve the full list of genes and then
+            // select the gene in question.
+            // only get antibody list if assay is compatible
+            if (ExpressionAssayDTO.isAntibodyAssay(selectedExperiment.getAssay()) && selectedExperiment.getAntibodyMarker() != null) {
+                selectAntibody(selectedExperiment);
+            } else {
+                view.getAntibodyList().setEnabled(false);
+            }
+        }
+
+    }
+
+    private class AddExperimentCallback extends ZfinAsyncCallback<ExperimentDTO> {
+        public AddExperimentCallback() {
+            super("Error while creating experiment", view.errorElement);
+        }
+
+        @Override
+        public void onSuccess(ExperimentDTO newExperiment) {
+            super.onSuccess(newExperiment);
+            addButtonInProgress = false;
+            retrieveExperiments();
+            // add this experiment to the expression section
+            lastAddedExperiment = newExperiment;
+        }
+
+    }
+
+
     private class AntibodyListChangeListener implements ChangeHandler {
         public void onChange(ChangeEvent event) {
             String antibodyID = view.getAntibodyList().getValue(view.getAntibodyList().getSelectedIndex());
@@ -241,25 +560,22 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     private class RetrieveExperimentsCallback extends ZfinAsyncCallback<List<ExperimentDTO>> {
 
-        private List<ExperimentDTO> experiments = new ArrayList<>(10);
-
-        public RetrieveExperimentsCallback(List<ExperimentDTO> experiments) {
+        public RetrieveExperimentsCallback() {
             super("Error while reading Experiment Filters", view.errorElement, view.loadingImage);
-            this.experiments = experiments;
         }
 
         @Override
         public void onSuccess(List<ExperimentDTO> list) {
             super.onSuccess(list);
-            experiments.clear();
+            experimentList.clear();
             for (ExperimentDTO id : list) {
                 if (id.getEnvironment().getName().startsWith("_"))
                     id.getEnvironment().setName(id.getEnvironment().getName().substring(1));
-                experiments.add(id);
+                experimentList.add(id);
             }
-            Collections.sort(experiments);
+            Collections.sort(experimentList);
             //Window.alert("SIZE: " + experiments.size());
-            view.getDisplayTable().createExperimentTable(experiments);
+            populateDataTable();
         }
 
     }
@@ -315,7 +631,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         @Override
         public void onSuccess(Void exp) {
             //Window.alert("Success");
-            experiments.remove(experiment);
+            experimentList.remove(experiment);
             view.getDisplayTable().createExperimentTable();
             // also remove the figure annotations that were used with this experiments
 ///            expressionSection.removeFigureAnnotations(experiment);
@@ -480,15 +796,12 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
         @Override
         public void onSuccess(Boolean visible) {
-
             super.onSuccess(visible);
             setInitialValues();
-            view.getDisplayTable().createConstructionZone();
             view.getShowHideToggle().setVisibility(visible);
         }
 
         private void setInitialValues() {
-            retrieveExperiments();
             retrieveConstructionZoneValues();
         }
 

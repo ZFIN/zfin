@@ -17,6 +17,7 @@ import org.zfin.gwt.root.dto.ExpressionAssayDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.StringUtils;
+import org.zfin.gwt.root.util.WidgetUtil;
 
 import java.util.*;
 
@@ -46,6 +47,26 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
     VerticalPanel expressionExperimentPanel;
     @UiField
     ToggleHyperlink showSelectExperiments;
+    @UiField
+    Grid dataTable;
+
+    // construction zone
+    @UiField
+    Button addButton;
+    @UiField
+    ListBoxWrapper geneList;
+    @UiField
+    ListBox fishList;
+    @UiField
+    ListBox environmentList;
+    @UiField
+    ListBox assayList;
+    @UiField
+    ListBox antibodyList;
+    @UiField
+    ListBox genbankList;
+    @UiField
+    Button updateButton;
 
     // RPC class being used for this section.
     private CurationExperimentRPCAsync curationExperimentRPCAsync = CurationExperimentRPC.App.getInstance();
@@ -60,15 +81,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
     private boolean updateButtonInProgress;
     private boolean addButtonInProgress;
 
-    // construction zone
-    private Button addButton = new Button("Add");
-    private ListBoxWrapper geneList = new ListBoxWrapper();
-    private ListBox fishList = new ListBox();
-    private ListBox environmentList = new ListBox();
-    private ListBox assayList = new ListBox();
-    private ListBox antibodyList = new ListBox();
-    private ListBox genbankList = new ListBox();
-    private Button updateButton = new Button("update");
 
     // attributes for duplicate row
     private String duplicateRowOriginalStyle;
@@ -87,6 +99,107 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
         showHideToggle.toggleVisibility();
         presenter.onShowHideClick(showHideToggle.isVisible());
     }
+
+    @UiHandler("addButton")
+    void onAddModel(@SuppressWarnings("unused") ClickEvent event) {
+        presenter.addExpressionExperiment();
+    }
+
+/*
+    @UiHandler("fishSelectionBox")
+    void onChangeFishSelection(@SuppressWarnings("unused") ChangeEvent event) {
+        presenter.updateConditions();
+        clearErrorMessage();
+    }
+*/
+
+
+    protected void addGene(MarkerDTO gene, int elementIndex) {
+        dataTable.resizeRows(elementIndex + 2);
+        int row = elementIndex + 1;
+        setRowStyle(row);
+        if (gene == null) {
+            dataTable.setText(row, 0, "");
+            return;
+        }
+        dataTable.setText(elementIndex + 1, 1, gene.getName());
+    }
+
+    public void addEnvironment(EnvironmentDTO environment, int elementIndex) {
+        int row = elementIndex + 1;
+        dataTable.setText(row, 3, environment.getName());
+    }
+
+    protected void addFish(String fishName, int elementIndex) {
+        int row = elementIndex + 1;
+        dataTable.setText(row, 2, fishName);
+    }
+
+    protected void addAssay(String assayName, int elementIndex) {
+        int row = elementIndex + 1;
+        dataTable.setText(row, 4, assayName);
+    }
+
+    protected void addDeleteButton(ExperimentDTO experiment, ClickHandler handler,int elementIndex) {
+        int row = elementIndex + 1;
+        Button delete;
+        if (experiment.isUsedInExpressions())
+            delete = new Button("X :" + experiment.getNumberOfExpressions());
+        else
+            delete = new Button("X");
+        delete.setTitle(experiment.getExperimentZdbID());
+        delete.addClickHandler(handler);
+        dataTable.setWidget(row, 7, delete);
+    }
+
+    protected void addCheckBox(ExperimentDTO experiment, ClickHandler handler, int elementIndex) {
+        int row = elementIndex + 1;
+        CheckBox checkBox = new CheckBox();
+        checkBox.setTitle(experiment.getExperimentZdbID());
+        checkBox.addClickHandler(handler);
+        dataTable.setWidget(row, 0, checkBox);
+    }
+
+    protected void addGenBank(String genbankName, int elementIndex) {
+        int row = elementIndex + 1;
+        if (genbankName != null)
+            dataTable.setText(row, 6, genbankName);
+        else
+            dataTable.setText(row, 6, "");
+    }
+
+    protected void addAntibody(MarkerDTO antibody, int elementIndex) {
+        int row = elementIndex + 1;
+        if (antibody != null)
+            dataTable.setText(row, 5, antibody.getName());
+        else
+            dataTable.setText(row, 5, "");
+    }
+
+    private void setRowStyle(int row) {
+        WidgetUtil.setAlternateRowStyle(row, dataTable);
+    }
+
+    public void removeAllDataRows() {
+        dataTable.resizeRows(1);
+    }
+
+    protected void endTableUpdate(ClickHandler handler) {
+        int rows = dataTable.getRowCount() + 1;
+        dataTable.resizeRows(rows);
+        int lastRow = rows - 1;
+        int col = 0;
+        dataTable.setWidget(lastRow, col++, addButton);
+        dataTable.setWidget(lastRow, col++, geneList);
+        dataTable.setWidget(lastRow, col++, fishList);
+        dataTable.setWidget(lastRow, col++, environmentList);
+        dataTable.setWidget(lastRow, col++, assayList);
+        dataTable.setWidget(lastRow, col++, antibodyList);
+        dataTable.setWidget(lastRow, col++, genbankList);
+        dataTable.setWidget(lastRow, col, updateButton);
+        dataTable.addClickHandler(handler);
+    }
+
 
     /**
      * Un-select all experiment check boxes.
@@ -154,7 +267,7 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
 
     @Override
     public void setError(String message) {
-
+        errorElement.setText(message);
     }
 
     @Override
@@ -167,6 +280,11 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
         for (HandlesError handlesError : handlesErrorListeners) {
             handlesError.clearError();
         }
+    }
+
+    protected void cleanupOnExit() {
+        updateButton.setEnabled(true);
+        updateButtonInProgress = false;
     }
 
     class ExperimentFlexTable extends ZfinFlexTable {
@@ -321,6 +439,7 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
         }
 
         protected void createConstructionZone() {
+/*
             int rowIndex = getRowCount() + 1;
             addButton.addClickHandler(new AddExperimentClickListener());
             setWidget(rowIndex, HeaderName.SELECT.getIndex(), addButton);
@@ -333,6 +452,7 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
             updateButton.setEnabled(false);
             setWidget(rowIndex - 1, HeaderName.getHeaderNames().length - 1, updateButton);
             setWidget(rowIndex, HeaderName.DELETE.getIndex(), updateButton);
+*/
         }
 
 
@@ -476,35 +596,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
 
         }
 
-        private class AddExperimentClickListener implements ClickHandler {
-
-            public void onClick(ClickEvent event) {
-                // do not proceed if it just has been clicked once
-                // and is being worked on
-                if (addButtonInProgress)
-                    return;
-                addButtonInProgress = true;
-                final ExperimentDTO zoneExperiment = getExperimentFromConstructionZone(true);
-                if (!isValidExperiment(zoneExperiment)) {
-                    cleanupOnExit();
-                    return;
-                }
-                if (experimentExists(zoneExperiment, true)) {
-                    //Window.alert("experiment exists: ");
-                    errorElement.setError("Experiment already exists. Experiments have to be unique!");
-                    cleanupOnExit();
-                    return;
-                }
-
-                curationExperimentRPCAsync.createExpressionExperiment(zoneExperiment, new AddExperimentCallback());
-            }
-
-            private void cleanupOnExit() {
-                addButtonInProgress = false;
-            }
-
-        }
-
         private class ExperimentDeleteClickListener implements ClickHandler {
 
             private ExperimentDTO experiment;
@@ -522,26 +613,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
                 if (!Window.confirm(message))
                     return;
                 presenter.deleteExperiment(experiment);
-            }
-
-        }
-
-        private class AddExperimentCallback extends ZfinAsyncCallback<ExperimentDTO> {
-            public AddExperimentCallback() {
-                super("Error while creating experiment", errorElement);
-            }
-
-            @Override
-            public void onSuccess(ExperimentDTO newExperiment) {
-                super.onSuccess(newExperiment);
-                addButtonInProgress = false;
-                presenter.retrieveExperiments();
-                if (!showHideToggle.isVisible()) {
-                    errorElement.setError("Added new Experiment: " + newExperiment.toString());
-                }
-                // add this experiment to the expression section
-                lastAddedExperiment = newExperiment;
-                fireEventSuccess();
             }
 
         }
@@ -795,10 +866,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
             curationExperimentRPCAsync.updateExperiment(updatedExperiment, new UpdateExperimentAsyncCallback());
         }
 
-        private void cleanupOnExit() {
-            updateButton.setEnabled(true);
-            updateButtonInProgress = false;
-        }
     }
 
 
@@ -903,5 +970,9 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
 
     public ShowHideToggle getShowHideToggle() {
         return showHideToggle;
+    }
+
+    public Button getUpdateButton() {
+        return updateButton;
     }
 }
