@@ -300,7 +300,7 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setString("ftr", feat.getName());
         query.setString("type", Marker.Type.GENE.toString());
         return (List<String>) query.list();
-    }*/
+    }
 
     /**
      * Check if for a given figure annotation a pato record (Phenotype)
