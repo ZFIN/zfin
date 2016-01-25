@@ -94,17 +94,22 @@ insert into expression_result (xpatres_zdb_id,
        xpatres_end_stg_zdb_id,
        xpatres_expression_found,
        xpatres_superterm_Zdb_id,
-       xpatres_subterm_Zdb_id)
+       xpatres_subterm_Zdb_id,xpatres_fig_Zdb_id)
 select xpatres_zdb_id,
        xpatres_xpatex_zdb_id,
        xpatres_start_stg_zdb_id,
        xpatres_end_stg_zdb_id,
        xpatres_expression_found,
        xpatres_superterm_Zdb_id,
-       xpatres_subterm_Zdb_id  from expression_result_temp;
+       xpatres_subterm_Zdb_id, xpatres_Fig_zdb_id  from expression_result_temp;
 
 insert into expression_pattern_figure (xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id)
  select xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id from expression_pattern_figure_temp;
+
+
+update statistics high for table expression_experiment;
+update statistics high for table expression_result;
+update statistics high for table expression_pattern_Figure;
 
 update zdb_flag
   set (zflag_is_on,zflag_last_modified) = ("f",current year to second)
