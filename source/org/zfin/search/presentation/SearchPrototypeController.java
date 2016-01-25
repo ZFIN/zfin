@@ -373,9 +373,6 @@ public class SearchPrototypeController {
             if (!StringUtils.equals(facetField.getName(), "stage"))
                 Collections.sort(facetValues, new FacetValueAlphanumComparator());
 
-//            facetBuilderService.sortFacetValues(facetField.getName(), facetValues);
-
-
             for (FacetField.Count count : facetValues) {
                 FacetLookupEntry entry = new FacetLookupEntry();
                 entry.setName(SolrService.encode(count.getName()));

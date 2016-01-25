@@ -177,9 +177,6 @@ public class AntibodyWikiWebService extends WikiWebService {
 
         AntibodyService antibodyService = new AntibodyService(antibody);
 
-        // name
-        // should leave this unchanged to force a constraint
-//        content = content.replace("{page-info:title}",antibody.getName()) ;
         StringBuilder antibodyNameString = new StringBuilder();
         antibodyNameString.append(getHyperlink(antibody.getName(), "http://zfin.org/" + antibody.getZdbID()));
         antibodyNameString.append(" from the ");

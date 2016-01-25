@@ -693,9 +693,6 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         Transaction transaction = session.beginTransaction();
         // need to get the marker for the dblink
         DBLink dbLink = (DBLink) session.get(DBLink.class, dbLinkDTO.getZdbID());
-//                RepositoryFactory.getSequenceRepository().
-//                        getDBLink(dbLinkDTO.getDbLinkZdbID(),
-//                                dbLinkDTO.getName(), dbLinkDTO.getReferenceDatabaseDTO().getName());
 
         dbLinkDTO.setZdbID(dbLink.getZdbID());
         infrastructureRepository.deleteRecordAttribution(dbLink.getZdbID(), dbLinkDTO.getPublicationZdbID());
@@ -967,12 +964,6 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
                 }
             }
         }
-       /* Collections.sort(constructDTOs, new Comparator<MarkerDTO>() {
-            @Override
-            public int compare(MarkerDTO o1, MarkerDTO o2) {
-                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-            }
-        });*/
 
         return constructDTOs;
     }
@@ -1066,7 +1057,6 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
             String oldName = gene.getName();
 
             gene.setAbbreviation(markerDTO.getName());
-//            clone.setName(markerDTO.getName());
 
             InfrastructureService.insertUpdate(gene, "Name", oldName, gene.getName());
             //run regen script

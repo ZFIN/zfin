@@ -61,9 +61,7 @@ public class TermPresentation extends EntityPresentation {
 
 
     /**
-     * Generates a term link using the Abbreviation, outside classes should use the regular
-     * getLink method above.
-     *
+     * Generates a term link using the Abbreviation
      * @param term term
      * @param name name attribute in hyperlink
      * @return html for term link

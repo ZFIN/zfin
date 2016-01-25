@@ -1127,38 +1127,6 @@ public class DTOConversionService {
         return Ontology.valueOf(ontology.name());
     }
 
-//    public static TermInfoDTO convertToTermInfoFromTermInfoDTO(TermDTO term, OntologyDTO ontologyDTO, boolean includeSynonyms) {
-//        TermInfoDTO infoDTO = new TermInfoDTO();
-//        infoDTO.setZdbID(term.getZdbID());
-//        infoDTO.setOboID(term.getOboID());
-//        infoDTO.setName(term.getName());
-//        if (includeSynonyms) {
-//            infoDTO.setAliases(sortSynonyms(term));
-//        }
-//        infoDTO.setDefinition(term.getDefinition());
-//        infoDTO.setComment(term.getComment());
-//
-//        // try to use the terms ontology unless not provided
-//        if (term.getOntology() == null) {
-//            infoDTO.setOntology(ontologyDTO);
-//        } else {
-//            infoDTO.setOntology(term.getOntology());
-//        }
-//        infoDTO.setObsolete(term.isObsolete());
-//        return infoDTO;
-//    }
-//        info.setSubsets(convertToSubsetDTO(term.getSubsets()));
-//        // try to use the provided ontology first as it may be more specific than
-    // the ontology from the term itself.
-    //        if (ontologyDTO != null) {
-    //            info.setOntology(ontologyDTO);/
-    //       } else if (term.getOntology() != null) {
-    //        info.setOntology(DTOConversionService.convertToOntologyDTO(term.getOntology()));
-    //    }
-    //    info.setObsolete(term.isObsolete());
-    //    return info;
-    // }
-
     public static FeatureMarkerRelationshipDTO convertToFeatureMarkerRelationshipDTO(FeatureMarkerRelationship featureMarkerRelationship) {
         FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO = new FeatureMarkerRelationshipDTO();
 

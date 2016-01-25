@@ -35,14 +35,4 @@ public class ConstructPresentation extends EntityPresentation {
         return getTomcatLink(uri, construct.getZdbID(), construct.getName(), construct.getName());
     }
 
-   /* *//**
-     * Generates a Feature link using the Abbreviation
-     *
-     * @param construct
-     * @return html for feature link
-     *//*
-    public static String getLink(FeaturePresentationBean feature) {
-        return getTomcatLink(uri, feature.getFeatureZdbId(), feature.getAbbrevation(), null);
-    }*/
-
 }

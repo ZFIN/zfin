@@ -22,7 +22,7 @@ import org.zfin.gwt.root.util.StringUtils;
  * <p/>
  * Life cycle: The filter values have a certain life cycle, i.e. they are remembered as follows:
  * A) Figure: saved in the database and stored forever
- * B) MartFish and Gene: The values are stored in the user session and thus are lost after session timeout or logging out.
+ * B) Fish and Gene: The values are stored in the user session and thus are lost after session timeout or logging out.
  * Reloading the page or coming back to the FX page will prepopulate the filter with the values that are available
  * at that point in time.
  * <p/>
@@ -30,7 +30,7 @@ import org.zfin.gwt.root.util.StringUtils;
  * The list of figure annotations is reread.
  * 2) Only Gene: Selecting a gene applies to both sections and displays only record with experiments that
  * have the selected gene associated.
- * 3) Only MartFish: Selecting a applies applies to both sections and displays only record with experiments that
+ * 3) Only Fish: Selecting a applies applies to both sections and displays only record with experiments that
  * have the selected fish associated.
  * 4) Reset: Clicking the button will set all three filter elements to their default (='ALL') and re-read both
  * section.

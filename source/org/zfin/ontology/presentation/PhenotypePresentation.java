@@ -39,9 +39,6 @@ public class PhenotypePresentation extends TermPresentation {
     /**
      * In the context of a phenotype statement, this name sounds a little funny,
      * but the idea is to show the names of all the entities in the correct formatting.
-     * <p/>
-     * That means it should look like the getLink method in terms of syntax and order,
-     * and just differ in that nothing is a link.
      *
      * @param phenotypeStatement  PhenotypeStatement
      * @return  name
@@ -57,9 +54,6 @@ public class PhenotypePresentation extends TermPresentation {
     }
 
     /**
-     * Splitting the tag notes out from the rest of the phenotypeStatement allows one part to be linked
-     * and the other not, while still keeping the display consistent between getName and getLink
-     *
      * @param phenotypeStatement
      * @return
      */

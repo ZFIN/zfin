@@ -159,7 +159,6 @@ public class ConstructRelationshipBox extends AbstractComposite<ConstructDTO>{
                     lastStyle  =  (  lastStyle==CssStyles.EVENGROUP ? CssStyles.ODDGROUP : CssStyles.EVENGROUP  ) ;
                     newGroupStyle = CssStyles.NEWGROUP + " " ;
                    constructTable.setWidget(lastRow,0,new HTML(relationshipDTO.getConstructDTO().getLink()));
-                    //constructTable.setWidget(lastRow,0,new HTML(relationshipDTO.getConstructDTO().getName()));
                 }
                 else{
                     newGroupStyle = "" ;

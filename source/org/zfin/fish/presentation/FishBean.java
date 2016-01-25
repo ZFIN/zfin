@@ -15,7 +15,6 @@ import java.util.List;
  */
 public class FishBean extends AbstractFishViewBean {
 
-    private MartFish fish;
     private List<FishExperiment> fishExperimentsList;
     private List<Genotype> genotypes;
     private int totalNumberOfPublications;

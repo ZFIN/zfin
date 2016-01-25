@@ -105,7 +105,6 @@ public class AntibodyHeaderEdit extends AbstractHeaderEdit<AntibodyDTO> {
 
     public boolean isDirty() {
         // check names
-//        if (false == nameBox.getText().equals(dto.getName())) return true ;
         return nameBox.isDirty(dto.getName());
     }
 

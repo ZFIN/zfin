@@ -286,25 +286,6 @@ public class HibernateMutantRepository implements MutantRepository {
         return (Genotype) criteria.uniqueResult();
     }
 
-    /* public List<Marker> getDeletedMarker(Feature feat) {
-        Session session = HibernateUtil.currentSession();
-
-        String hql = "select  mapdel.marker from MappedDeletion mapdel, Marker m, Feature f" +
-                " where f.name =mapdel.allele " +
-                " AND f.name=:ftr" +
-                " AND m.markerType.name =:type" +
-                " AND mapdel.marker =m";
-
-
-        Query query = session.createQuery(hql);
-        query.setString("ftr", feat.getName());
-        query.setString("type", Marker.Type.GENE.toString());
-
-        return (List<Marker>) query.list();
-
-
-    }
-
 
     public List<String> getDeletedMarkerLG(Feature feat) {
         Session session = HibernateUtil.currentSession();

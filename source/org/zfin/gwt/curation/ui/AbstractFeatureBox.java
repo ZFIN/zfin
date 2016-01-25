@@ -333,19 +333,10 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
         featureDTO.setKnownInsertionSite(knownInsertionCheckBox.getValue());
 
         featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
-        /*if (knownInsertionCheckBox.getValue()){
-            featureDTO.setTransgenicSuffix(featureSuffixBox.getSelectedText());
 
-        }*/
         featureDTO.setTransgenicSuffix(featureSuffixBox.getSelectedText());
         featureDTO.setFeatureSequence(featureSequenceBox.getText());
 
-        // we set the name right at the end, once everything has been set
-        // this is the wrong place to do this check
-//        if(false==featureDTO.getName().equals(FeatureValidationService.generateFeatureDisplayName(featureDTO))){
-//            throw new RuntimeException("Display ["+featureDTO.getName()+
-//                    "] and generated names ["+FeatureValidationService.generateFeatureDisplayName(featureDTO)+"]are not equal.") ;
-//        }
         featureDTO.setAbbreviation(FeatureValidationService.getAbbreviationFromName(featureDTO));
 
         return featureDTO;

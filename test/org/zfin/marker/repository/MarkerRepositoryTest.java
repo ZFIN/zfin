@@ -383,9 +383,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
             Set<LinkageGroup> groups = MarkerService.getLinkageGroups(gene);
             assertTrue(groups != null);
             assertTrue(groups.size() > 1);
-            //            assertEquals("linkage groups found", 3, groups.size());
-            //LinkageGroup group = groups.get(0);
-            //assertEquals("First LG", "13", group.getName());
         } finally {
             tx.rollback();
         }

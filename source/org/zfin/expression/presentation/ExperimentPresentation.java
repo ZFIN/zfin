@@ -34,10 +34,6 @@ public class ExperimentPresentation extends EntityPresentation {
     /**
      * @param experiment Experiment
      * @return This method is used to generate conditions in the summary section and the table section (fish column) in a figure view page.
-     * <p/>
-     * Compared to getLink(), getLinkWithChemical Details does not have .isChemical() condition checking, which allows a popup
-     * to show up alongside chemical in a figure view table.
-     * Also, standard or control does not show in a table, so if experiment.isStandard() is true, empty string is returned.
      */
 
     public static String getLinkWithChemicalDetails(Experiment experiment) {
@@ -58,7 +54,6 @@ public class ExperimentPresentation extends EntityPresentation {
     }
 
 
-    //this could share code more elegantly with the getLink method above...
     public static String getName(Experiment experiment, boolean suppressChemicalDetails) {
         if (experiment == null)
             return null;
@@ -111,7 +106,6 @@ public class ExperimentPresentation extends EntityPresentation {
         return sb.toString();
     }
 
-    //this is called by getLinkWithChemicalDetails. needs to be refactored so that it shares code with getName()
     public static String getNameWithChemicalDetails(Experiment experiment) {
         return getName(experiment, false);
     }
