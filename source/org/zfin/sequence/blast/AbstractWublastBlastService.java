@@ -600,7 +600,6 @@ public abstract class AbstractWublastBlastService implements BlastService {
         if (validAccessions.size() == 0) {
             logger.warn("No valid accessions dump from database[" + database.getName() + "]");
             return;
-//            throw new BlastDatabaseException("No valid accessions dump from database["+ database.getName()+"]");
         }
 
         try {

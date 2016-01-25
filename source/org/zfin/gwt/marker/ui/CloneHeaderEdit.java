@@ -129,8 +129,6 @@ public class CloneHeaderEdit extends AbstractHeaderEdit<CloneDTO> {
 
     public void handleChangeSuccess(CloneDTO cloneDTO) {
         this.dto = cloneDTO;
-//        cloneDTO.setName(dto.getName());
-//        cloneDTO.setProblemType(dto.getProblemType());
         DeferredCommand.addCommand(new CompareCommand());
     }
 

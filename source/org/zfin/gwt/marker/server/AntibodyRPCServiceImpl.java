@@ -115,7 +115,6 @@ public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements 
 
 
         List<String> types = new ArrayList<String>();
-//        types.add(AntibodyType.UNSPECIFIED.getName());
         types.add(AntibodyType.MONOCLONAL.getValue());
         types.add(AntibodyType.POLYCLONAL.getValue());
         antibodyTypesDTO.setTypes(types);

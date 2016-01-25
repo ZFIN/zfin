@@ -83,7 +83,7 @@ public class FishPhenotypeController {
     public String getFishPhenotypeFigsPopup(@RequestParam(value = "fishID", required = true) String fishID,
                                             @ModelAttribute("formBean") FishSearchFormBean formBean,
                                             Model model) throws Exception {
-		LOG.info("MartFish phenotype figures");
+		LOG.info("Fish phenotype figures");
 		FishSearchCriteria criteria = new FishSearchCriteria(formBean);
         if (criteria == null)
             criteria = new FishSearchCriteria();

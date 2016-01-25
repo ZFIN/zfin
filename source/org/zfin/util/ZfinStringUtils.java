@@ -95,7 +95,7 @@ public class ZfinStringUtils {
         return whiteSpaceSet;
     }
 
-    // useful for cases such as FB case 8817,MartFish Search: MartFish view page geno/genox id list parser error
+    // useful for cases such as FB case 8817,Fish Search: Fish view page geno/genox id list parser error
     public static String cleanUpConcatenatedZDBIdsDelimitedByComma(String concatenatedZDBIdsDelimitedByComma) {
         if (concatenatedZDBIdsDelimitedByComma == null) {
             return null;

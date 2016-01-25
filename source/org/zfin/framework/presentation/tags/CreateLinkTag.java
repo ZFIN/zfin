@@ -104,7 +104,7 @@ public class CreateLinkTag extends BodyTagSupport {
             link = ((ProvidesLink) o).getLink();
         else if (o instanceof SequenceTargetingReagent)
             link = MarkerPresentation.getLink((SequenceTargetingReagent) o, suppressPopupLink);
-        else if (o instanceof Marker)  //handling of marker subtypes is taken care of in the getLink method
+        else if (o instanceof Marker)
             link = MarkerPresentation.getLink((Marker) o);
         else if (o instanceof RelatedMarker)
             link = MarkerPresentation.getLink(((RelatedMarker) o).getMarker());
@@ -124,8 +124,6 @@ public class CreateLinkTag extends BodyTagSupport {
             link = PublicationPresentation.getLink((Publication) o);
         else if (o instanceof Figure)
             link = FigurePresentation.getLink((Figure) o);
-        else if (o instanceof MartFish)
-            link = FishPresentation.getLink((MartFish) o);
         else if (o instanceof Fish)
             link = FishPresentation.getLink((Fish) o, suppressPopupLink);
         else if (o instanceof FishAnnotation)

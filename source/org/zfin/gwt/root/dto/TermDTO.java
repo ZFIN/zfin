@@ -129,32 +129,8 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
     public int hashCode() {
         int result = zdbID != null ? zdbID.hashCode() : 0;
         result = 31 * result + (getName() != null ? getName().hashCode() : 0);
-//        result = 31 * result + (comment != null ? comment.hashCode() : 0);
-//        result = 31 * result + (obsolete ? 1 : 0);
-//        result = 31 * result + (ontology != null ? ontology.hashCode() : 0);
-//        result = 31 * result + (childrenTerms != null ? childrenTerms.hashCode() : 0);
-//        result = 31 * result + (parentTerms != null ? parentTerms.hashCode() : 0);
-//        result = 31 * result + (aliases != null ? aliases.hashCode() : 0);
-//        result = 31 * result + (startStage != null ? startStage.hashCode() : 0);
-//        result = 31 * result + (endStage != null ? endStage.hashCode() : 0);
-//        result = 31 * result + (relationshipType != null ? relationshipType.hashCode() : 0);
-//        result = 31 * result + significance;
         return result;
     }
-
-
-//    @Override
-//    public int compareTo(Object o) {
-//        if (o == null){
-//            return 1;
-//        }
-//        if (!(o instanceof TermInfoDTO)){
-//            return 1;
-//        }
-//        TermInfoDTO termInfoDTO = (TermInfoDTO) o ;
-//        NumberAwareStringComparatorDTO comparator = new NumberAwareStringComparatorDTO();
-//        return comparator.compare(getName(), termInfoDTO.getName());
-//    }
 
     /**
      * Checks equality based on term name and Ontology only. This is needed for checking if a
@@ -316,16 +292,6 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
 
     }
 
-//    @Override
-//    public int compareTo(Object object) {
-//        if(object instanceof TermDTO){
-//            return comparator.compare(getName(),((TermDTO) object).getName());
-//        }
-//        else{
-//            return comparator.compare(getName(),object.toString()) ;
-//        }
-//    }
-
     @Override
     public int compareTo(Object o) {
         if (o == null)
@@ -333,7 +299,6 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
         if (!(o instanceof TermDTO))
             return 1;
         TermDTO term = (TermDTO) o;
-//        return comparator.compare(getName(),term.getName());
         return getName().compareToIgnoreCase(term.getName());
 
     }

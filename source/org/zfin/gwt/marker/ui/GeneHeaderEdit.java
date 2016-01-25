@@ -102,8 +102,6 @@ public class GeneHeaderEdit extends AbstractHeaderEdit<MarkerDTO> {
 
     public void handleChangeSuccess(MarkerDTO markerDTO) {
         dto = markerDTO;
-//        dto.setName(dto.getName());
-//        dto.setProblemType(dto.getProblemType());
         DeferredCommand.addCommand(new CompareCommand());
     }
 

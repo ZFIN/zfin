@@ -120,7 +120,6 @@ public class FishSearchController {
             LOG.error("Errors found during form binding: " + result);
         }
         if (formBean.getFishID().contains("GENO")){
-         //  MartFish fish = FishService.getFish(formBean.getFishID());
             Fish fish=RepositoryFactory.getMutantRepository().getFish(formBean.getFishID());
             FishSearchCriteria criteria = new FishSearchCriteria(formBean);
             FishMatchingService service = new FishMatchingService(fish);
@@ -133,7 +132,6 @@ public class FishSearchController {
         }
         else
         {
-            //MartFish fish = RepositoryFactory.getFishRepository().getFish(Long.valueOf(formBean.getFishID()).longValue());
             Fish fish=RepositoryFactory.getMutantRepository().getFish(formBean.getFishID());
             FishSearchCriteria criteria = new FishSearchCriteria(formBean);
             FishMatchingService service = new FishMatchingService(fish);

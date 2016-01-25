@@ -22,7 +22,6 @@ public class DiseaseModelPresentation extends EntityPresentation {
         String linkDisplayText = TermPresentation.getLink(model.getDisease(), false);
         linkDisplayText += ", " + PublicationPresentation.getLink(model.getPublication());
         linkDisplayText += ", " + model.getEvidenceCode();
-    //    linkDisplayText += ", " + ExperimentPresentation.getLink(model.getFishExperiment().getExperiment(), false);
         return linkDisplayText;
     }
 

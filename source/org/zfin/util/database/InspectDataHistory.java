@@ -245,30 +245,6 @@ public class InspectDataHistory extends AbstractScriptWrapper {
             getEntityTraceFromIndexFile(entityId);
             return;
         }
-
-
-/*
-        boolean firstOccurrenceFound = false;
-        Match lastMatch = null;
-        for (File file : unloadFiles) {
-            LOG.info("Check unload: " + file.getName());
-            Grep grep = new Grep(entityId, getSearchFiles(file));
-            if (grep.foundMatch()) {
-                if (!firstOccurrenceFound) {
-                    Match match = new Match(grep.getLineMatched(), grep.getMatchingFile().getName(), grep.getLineNumber(), file.getName());
-                    occurrences.add(match);
-                    firstOccurrenceFound = true;
-                } else {
-                    lastMatch = new Match(grep.getLineMatched(), grep.getMatchingFile().getName(), grep.getLineNumber(), file.getName());
-                }
-            } else {
-                if (firstOccurrenceFound) {
-                    occurrences.add(lastMatch);
-                    firstOccurrenceFound = false;
-                }
-            }
-        }
-*/
     }
 
     private static Analyzer analyzer = new KeywordAnalyzer();

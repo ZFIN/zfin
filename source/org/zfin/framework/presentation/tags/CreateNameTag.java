@@ -9,7 +9,6 @@ import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.presentation.ExperimentConditionPresentation;
 import org.zfin.expression.presentation.ExperimentPresentation;
 import org.zfin.expression.presentation.ExpressionStatementPresentation;
-import org.zfin.fish.presentation.MartFish;
 import org.zfin.fish.presentation.FishPresentation;
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.marker.Marker;
@@ -66,8 +65,6 @@ public class CreateNameTag extends TagSupport {
             link = TermPresentation.getName((Term) o);
         else if (o instanceof PostComposedEntity)
             link = TermPresentation.getName((PostComposedEntity) o);
-        else if (o instanceof MartFish)
-            link = FishPresentation.getName((MartFish) o);
         else if (o instanceof Fish)
             link = FishPresentation.getName((Fish) o);
         else

@@ -22,10 +22,7 @@ public class FishAnnotation {
     private String geneOrFeatureText;
     private String scoringText;
 
-    // generates the same thing as what MartFish.getFishID() generates
     public String getFishID() {
-//        if (getGenotypeID() == null)
-//            throw new NullPointerException("No GENO id found for fish ID: " + ID);
         String fishID = getGenotypeID();
         if (getGenotypeExperimentIds() != null)
             return fishID + "," + getGenotypeExperimentIds();

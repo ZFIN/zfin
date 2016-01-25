@@ -61,7 +61,6 @@ public class FeatureEditBox extends AbstractFeatureBox {
                             result.setPublicationZdbID(dto.getPublicationZdbID());
                             setDTO(result);
                             updateForFeatureType();
-//                            setNote("Feature loaded: "+ result.getName() + " ["+result.getZdbID()+"]");
                         }
                     });
                 }

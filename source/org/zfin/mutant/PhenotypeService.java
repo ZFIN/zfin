@@ -58,14 +58,6 @@ public class PhenotypeService {
                         Term anatomyTerm = phenoStatement.getEntity().getSuperterm();
                         keyBuilder.append(":");
                         keyBuilder.append(anatomyTerm.getTermName());
-                        ////TODO
-/*
-                    if (anatomyTerm.isCellTerm()) {
-                        keyBuilder.append(anatomyTerm.getName());
-                    } else {
-                        keyBuilder.append(ANATOMY);
-                    }
-*/
                     } else {
                         keyBuilder.append(ANATOMY);
                     }
