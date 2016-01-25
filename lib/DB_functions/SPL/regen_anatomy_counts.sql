@@ -162,12 +162,13 @@ create function regen_anatomy_counts()
 
       insert into genes_with_xpats
 	  select distinct xpatex_gene_zdb_id,term_zdb_id,'p'
-	    from expression_experiment, outer marker probe, marker gene, expression_result,
+	    from expression_experiment2, outer marker probe, marker gene, expression_result2,expression_figure_stage,
 	    	 fish_experiment, genotype, term,fish   	 
 	    where xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id
               and xpatex_gene_zdb_id = gene.mrkr_zdb_id
               and (xpatres_superterm_zdb_id = term_zdb_id OR xpatres_subterm_zdb_id = term_zdb_id)
-	      and xpatres_xpatex_zdb_id = xpatex_zdb_id
+	      and xpatres_efs_id = efs_pk_id
+	      and efs_xpatex_Zdb_id = xpatex_Zdb_id
 	      and xpatres_expression_found = 't'
               and xpatex_genox_zdb_id = genox_zdb_id
               and genox_fish_zdb_id = fish_zdb_id
@@ -202,14 +203,15 @@ create function regen_anatomy_counts()
 	insert into genes_with_xpats
 	  select distinct xpatex_gene_zdb_id,term_zdb_id,'c'
 	    from all_term_contains,
-		 expression_experiment, outer marker probe, marker gene, expression_result,
+		 expression_experiment2, outer marker probe, marker gene, expression_result2,expression_figure_stage,
 		 fish_experiment, genotype, term, fish		
 	    where xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id
               and xpatex_gene_zdb_id = gene.mrkr_zdb_id
               and (alltermcon_contained_zdb_id = xpatres_superterm_zdb_id OR 
 	              alltermcon_contained_zdb_id = xpatres_subterm_zdb_id)
 	      and alltermcon_container_zdb_id = term_Zdb_id
-	      and xpatres_xpatex_zdb_id = xpatex_zdb_id
+	      and xpatres_efs_id = efs_pk_id
+	      and efs_xpatex_zdb_id = xpatex_zdb_id
 	      and xpatres_expression_found = 't'
               and xpatex_genox_zdb_id = genox_zdb_id
               and genox_fish_zdb_id = fish_zdb_id
