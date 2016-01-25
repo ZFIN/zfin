@@ -21,6 +21,7 @@ import org.zfin.gwt.curation.server.CurationExperimentRPCImpl;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
@@ -154,6 +155,17 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         } finally {
             tx.rollback();
         }
+    }
+
+    @Test
+    public void getExpressionResultwithEaPForGene() {
+        String geneSymbol = "alcama";
+
+        Marker gene = getMarkerRepository().getMarkerByAbbreviation(geneSymbol);
+        List<ExpressionResult2> list = getExpressionRepository().getExpressionResultList(gene);
+
+        //// TODO: uncomment this once we have a stable EaP annotation.
+        //assertNotNull(list);
     }
 
     @Test
