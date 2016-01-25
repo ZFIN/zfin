@@ -13,9 +13,11 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
+import org.zfin.gwt.curation.event.SelectExperimentEvent;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ListBoxWrapper;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.*;
@@ -32,7 +34,9 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     private ExperimentDTO lastAddedExperiment = new ExperimentDTO();
     private ExperimentDTO lastSelectedExperiment;
     private Set<ExperimentDTO> selectedExperiments = new HashSet<>(5);
-
+    // avoid double updates
+    private boolean updateButtonInProgress;
+    private boolean showSelectedExperimentsOnly;
 
     // filter set by the banana bar
     private ExperimentDTO experimentFilter = new ExperimentDTO();
@@ -55,14 +59,10 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     }
 
     private void addDynamicClickHandler() {
-        // assay changes
-        view.getAssayList().addChangeHandler(new AssayListChangeListener());
 
         // gene changes
         view.getGeneList().addChangeHandler(new GeneListChangeListener());
 
-        // antibody changes
-        view.getAntibodyList().addChangeHandler(new AntibodyListChangeListener());
         addChangeListenersToConstructionZoneElements();
     }
 
@@ -108,12 +108,45 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             view.addAssay(experiment.getAssay(), elementIndex);
             view.addAntibody(experiment.getAntibodyMarker(), elementIndex);
             view.addGenBank(experiment.getGenbankNumber(), elementIndex);
-            view.addCheckBox(experiment, new ExperimentSelectClickHandler(experiment), elementIndex);
-            view.addDeleteButton(experiment, new ExperimentSelectClickHandler(experiment), elementIndex);
+            CheckBox checkBox = view.addCheckBox(experiment, new ExperimentSelectClickHandler(experiment), elementIndex);
+            view.addDeleteButton(experiment, new ExperimentDeleteClickListener(experiment), elementIndex);
             elementIndex++;
+            if (selectedExperiments.contains(experiment))
+                checkBox.setValue(true);
+            else
+                checkBox.setValue(false);
         }
         view.endTableUpdate(new ExperimentSelectClickHandler(null));
     }
+
+    protected void onAssayChange() {
+        String itemText = view.getAssayList().getItemText(view.getAssayList().getSelectedIndex());
+        //Window.alert(itemText);
+        if (ExpressionAssayDTO.isAntibodyAssay(itemText)) {
+            view.getAntibodyList().setEnabled(true);
+            String geneID = view.getGeneList().getValue(view.getGeneList().getSelectedIndex());
+            curationExperimentRPCAsync.readAntibodiesByGene(publicationID, geneID, new RetrieveAntibodyList());
+        } else
+            view.getAntibodyList().setEnabled(false);
+    }
+
+    public void onAntibodyChange() {
+        String antibodyID = view.getAntibodyList().getValue(view.getAntibodyList().getSelectedIndex());
+        //Window.alert(antibodyID);
+        curationExperimentRPCAsync.readGenesByAntibody(publicationID, antibodyID, new RetrieveGeneListByAntibodyCallBack());
+    }
+
+    public void onGeneChange() {
+        String geneID = view.getGeneList().getValue(view.getGeneList().getSelectedIndex());
+        String assayName = view.getAssayList().getItemText(view.getAssayList().getSelectedIndex());
+        //Window.alert(itemText);
+        // only fetch antibodies if the right assay is selected
+        if (ExpressionAssayDTO.isAntibodyAssay(assayName)) {
+            curationExperimentRPCAsync.readAntibodiesByGene(publicationID, geneID, new RetrieveAntibodyList());
+        }
+        curationExperimentRPCAsync.readGenbankAccessions(publicationID, geneID, new GenbankSelectionListAsyncCallback(null));
+    }
+
 
 
     /**
@@ -229,6 +262,42 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         return updatedExperiment;
     }
 
+    public void updateExperiment() {
+        // do not proceed if it just has been clicked once
+        // and is being worked on. It probably is a double-submit from GWT!
+        if (updateButtonInProgress)
+            return;
+        updateButtonInProgress = true;
+        view.updateButton.setEnabled(false);
+        //Window.alert(itemText);
+        ExperimentDTO updatedExperiment = getExperimentFromConstructionZone(false);
+        if (!isValidExperiment(updatedExperiment)) {
+            cleanupOnExit();
+            return;
+        }
+
+        // check if the experiment already exists
+        if (experimentExists(updatedExperiment, false)) {
+            view.setError("Another experiment with these attributes exists. " +
+                    "Experiments have to be unique!");
+            cleanupOnExit();
+            return;
+        }
+
+        if (!Window.confirm("Do you really want to update this record")) {
+            cleanupOnExit();
+            return;
+        }
+
+        curationExperimentRPCAsync.updateExperiment(updatedExperiment, new UpdateExperimentAsyncCallback());
+
+    }
+
+    protected void cleanupOnExit() {
+        view.updateButton.setEnabled(true);
+        updateButtonInProgress = false;
+    }
+
 
     //////////////////////////////// Handler and Listener  ////////////////////////////
 
@@ -241,12 +310,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
 
     private void addChangeListenersToConstructionZoneElements() {
-        view.getAssayList().addChangeHandler(errorMessageCleanupListener);
         view.getGeneList().addChangeHandler(errorMessageCleanupListener);
-        view.getAntibodyList().addChangeHandler(errorMessageCleanupListener);
-        view.getFishList().addChangeHandler(errorMessageCleanupListener);
-        view.getEnvironmentList().addChangeHandler(errorMessageCleanupListener);
-        view.getGenbankList().addChangeHandler(errorMessageCleanupListener);
     }
 
 
@@ -308,7 +372,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     }
 
     public void clearErrorMessages() {
-        view.getErrorElement().setError("");
+        view.clearError();
     }
 
     private void resetUI() {
@@ -319,10 +383,9 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     /**
      * Un-select all experiment check boxes.
      */
-    public void unselectAllExperiments() {
-        view.clearSelectedExperiments();
-        view.showExperiments(false);
-        view.getDisplayTable().uncheckAllRecords();
+    public void unselectExperiment(ExperimentDTO experiment) {
+        selectedExperiments.remove(experiment);
+        populateDataTable();
     }
 
     /**
@@ -332,11 +395,9 @@ public class ExpressionExperimentZonePresenter implements Presenter {
      * @param experiment Experiment DTO
      */
     public void setSingleExperiment(ExperimentDTO experiment) {
-        view.clearSelectedExperiments();
-        view.addSelectedExperiment(experiment);
-        view.showExperiments(false);
-        if (view.getShowHideToggle().isVisible())
-            view.getDisplayTable().createExperimentTable();
+        selectedExperiments.add(experiment);
+        populateDataTable();
+        showSelectedExperimentsOnly = false;
     }
 
 
@@ -370,8 +431,8 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         curationExperimentRPCAsync.setExperimentVisibilitySession(publicationID, visibility,
                 new VoidAsyncCallback(errorMessage, view.errorElement, null));
         retrieveExperiments();
-        if (view.getDisplayTable().getRowCount() == 0)
-            retrieveConstructionZoneValues();
+/////TODO         if (view.getDisplayTable().getRowCount() == 0)
+        ///  retrieveConstructionZoneValues();
     }
 
 
@@ -444,7 +505,9 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             selectAssay();
             setAntibody();
             selectGenBank();
-            view.getUpdateButton().setEnabled(true);
+            view.updateButton.setEnabled(true);
+            SelectExperimentEvent selectExperimentEvent = new SelectExperimentEvent(selectedExperiment);
+            AppUtils.EVENT_BUS.fireEvent(selectExperimentEvent);
             //displayTable.showHideClearAllLink();
         }
 
@@ -605,20 +668,6 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     }
 
-    private class AssayListChangeListener implements ChangeHandler {
-
-        public void onChange(ChangeEvent event) {
-            String itemText = view.getAssayList().getItemText(view.getAssayList().getSelectedIndex());
-            //Window.alert(itemText);
-            if (ExpressionAssayDTO.isAntibodyAssay(itemText)) {
-                view.getAntibodyList().setEnabled(true);
-                String geneID = view.getGeneList().getValue(view.getGeneList().getSelectedIndex());
-                curationExperimentRPCAsync.readAntibodiesByGene(publicationID, geneID, new RetrieveAntibodyList());
-            } else
-                view.getAntibodyList().setEnabled(false);
-        }
-    }
-
     private class DeleteExperimentCallback extends ZfinAsyncCallback<Void> {
 
         private ExperimentDTO experiment;
@@ -630,9 +679,9 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
         @Override
         public void onSuccess(Void exp) {
-            //Window.alert("Success");
+            Window.alert("Success");
             experimentList.remove(experiment);
-            view.getDisplayTable().createExperimentTable();
+            populateDataTable();
             // also remove the figure annotations that were used with this experiments
 ///            expressionSection.removeFigureAnnotations(experiment);
 ///            fireEventSuccess();
@@ -807,6 +856,53 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     }
 
+    private class ExperimentDeleteClickListener implements ClickHandler {
+
+        private ExperimentDTO experiment;
+
+        public ExperimentDeleteClickListener(ExperimentDTO experiment) {
+            this.experiment = experiment;
+        }
+
+        public void onClick(ClickEvent event) {
+            String message;
+            if (experiment.isUsedInExpressions())
+                message = "Are you sure you want to delete this experiment and its " + experiment.getNumberOfExpressions() + " expressions?";
+            else
+                message = "Are you sure you want to delete this experiment?";
+            if (!Window.confirm(message))
+                return;
+            deleteExperiment(experiment);
+        }
+
+    }
+
+    private class UpdateExperimentAsyncCallback extends ZfinAsyncCallback<ExperimentDTO> {
+
+        private UpdateExperimentAsyncCallback() {
+            super("Error while updating experiment", view.errorElement);
+        }
+
+        @Override
+        public void onFailure(Throwable throwable) {
+            super.onFailure(throwable);
+            view.updateButton.setEnabled(true);
+            updateButtonInProgress = false;
+        }
+
+        @Override
+        public void onSuccess(ExperimentDTO updatedExperiment) {
+            super.onSuccess(updatedExperiment);
+            /////fireEventSuccess();
+            // update inline without reading all experiments again
+            retrieveExperiments();
+            view.updateButton.setEnabled(true);
+            updateButtonInProgress = false;
+            // update expression section with new experiment attributes
+//            expressionSection.retrieveExpressions();
+        }
+
+    }
 
     public boolean isDebug() {
         return debug;

@@ -5,6 +5,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.curation.event.*;
@@ -148,7 +149,7 @@ public class ExpressionModule implements HandlesError, EntryPoint {
                     @Override
                     public void onEvent(SelectExpressionExperimentEvent event) {
                         if (!event.isCkecked())
-                            expressionExperimentZonePresenter.unselectAllExperiments();
+                            expressionExperimentZonePresenter.unselectExperiment(event.getExperimentDTO());
                         else
                             expressionExperimentZonePresenter.setSingleExperiment(event.getExperimentDTO());
                     }

@@ -1,6 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -9,7 +10,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.dto.ExperimentDTO;
@@ -90,7 +90,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
     public ExpressionExperimentZoneView() {
         initWidget(uiBinder.createAndBindUi(this));
         displayTable = new ExperimentFlexTable(HeaderName.getHeaderNames());
-        updateButton.addClickHandler(new UpdateExperimentClickListener());
         expressionExperimentPanel.add(displayTable);
     }
 
@@ -105,13 +104,44 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
         presenter.addExpressionExperiment();
     }
 
-/*
-    @UiHandler("fishSelectionBox")
-    void onChangeFishSelection(@SuppressWarnings("unused") ChangeEvent event) {
-        presenter.updateConditions();
-        clearErrorMessage();
+    @UiHandler("updateButton")
+    void onClickUpdateButton(@SuppressWarnings("unused") ClickEvent event) {
+        clearError();
+        presenter.updateExperiment();
     }
-*/
+
+    @UiHandler("assayList")
+    void onAssayChange(@SuppressWarnings("unused") ChangeEvent event) {
+        clearError();
+        presenter.onAssayChange();
+    }
+
+    @UiHandler("environmentList")
+    void onEnvironmentChange(@SuppressWarnings("unused") ChangeEvent event) {
+        clearError();
+    }
+
+    @UiHandler("genbankList")
+    void onGenbankChange(@SuppressWarnings("unused") ChangeEvent event) {
+        clearError();
+    }
+
+    @UiHandler("fishList")
+    void onfishChange(@SuppressWarnings("unused") ChangeEvent event) {
+        clearError();
+    }
+
+    @UiHandler("antibodyList")
+    void onAntibodyChange(@SuppressWarnings("unused") ChangeEvent event) {
+        clearError();
+        presenter.onAntibodyChange();
+    }
+
+    @UiHandler("geneList")
+    void onGeneChange(@SuppressWarnings("unused") ChangeEvent event) {
+        clearError();
+        presenter.onGeneChange();
+    }
 
 
     protected void addGene(MarkerDTO gene, int elementIndex) {
@@ -140,7 +170,7 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
         dataTable.setText(row, 4, assayName);
     }
 
-    protected void addDeleteButton(ExperimentDTO experiment, ClickHandler handler,int elementIndex) {
+    protected void addDeleteButton(ExperimentDTO experiment, ClickHandler handler, int elementIndex) {
         int row = elementIndex + 1;
         Button delete;
         if (experiment.isUsedInExpressions())
@@ -149,15 +179,17 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
             delete = new Button("X");
         delete.setTitle(experiment.getExperimentZdbID());
         delete.addClickHandler(handler);
+
         dataTable.setWidget(row, 7, delete);
     }
 
-    protected void addCheckBox(ExperimentDTO experiment, ClickHandler handler, int elementIndex) {
+    protected CheckBox addCheckBox(ExperimentDTO experiment, ClickHandler handler, int elementIndex) {
         int row = elementIndex + 1;
         CheckBox checkBox = new CheckBox();
         checkBox.setTitle(experiment.getExperimentZdbID());
         checkBox.addClickHandler(handler);
         dataTable.setWidget(row, 0, checkBox);
+        return checkBox;
     }
 
     protected void addGenBank(String genbankName, int elementIndex) {
@@ -230,10 +262,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
         this.presenter = presenter;
     }
 
-    public void clearSelectedExperiments() {
-        selectedExperiments.clear();
-    }
-
     /**
      * Retrieve all selected Experiments.
      *
@@ -241,11 +269,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
      */
     public Set<ExperimentDTO> getSelectedExperiments() {
         return Collections.unmodifiableSet(selectedExperiments);
-    }
-
-    public void addSelectedExperiment(ExperimentDTO experiment) {
-        selectedExperiments.add(experiment);
-        displayTable.createExperimentTable();
     }
 
     /**
@@ -272,7 +295,7 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
 
     @Override
     public void clearError() {
-
+        errorElement.setError("");
     }
 
     @Override
@@ -302,11 +325,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
             addClickListenerToClearAllEvent(new UpdateExperimentsOnExpressionClickHandler());
             setToggleHyperlink(ToggleLink.SHOW_SELECTED_EXPERIMENTS_ONLY.getText(), ToggleLink.SHOW_ALL_EXPERIMENTS.getText());
             addToggleHyperlinkClickHandler(new ShowSelectedExperimentsClickHandler(showSelectedRecords));
-        }
-
-        public void createExperimentTable(List<ExperimentDTO> experimentDTOs) {
-            experiments = experimentDTOs;
-            createExperimentTable();
         }
 
         public void createExperimentTable() {
@@ -364,7 +382,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
                 else
                     delete = new Button("X");
                 delete.setTitle(experiment.getExperimentZdbID());
-                delete.addClickHandler(new ExperimentDeleteClickListener(experiment));
                 setWidget(rowIndex, HeaderName.DELETE.getIndex(), delete);
                 String previousID = null;
                 if (previousExperiment != null) {
@@ -383,7 +400,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
             // add horizontal line
             getFlexCellFormatter().setColSpan(rowIndex, 0, HeaderName.getHeaderNames().length);
             createBottomClearAllLinkRow(rowIndex);
-            createConstructionZone();
             showHideClearAllLink();
         }
 
@@ -437,24 +453,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
                 removeRow(i);
             }
         }
-
-        protected void createConstructionZone() {
-/*
-            int rowIndex = getRowCount() + 1;
-            addButton.addClickHandler(new AddExperimentClickListener());
-            setWidget(rowIndex, HeaderName.SELECT.getIndex(), addButton);
-            setWidget(rowIndex, HeaderName.GENE.getIndex(), geneList);
-            setWidget(rowIndex, HeaderName.FISH.getIndex(), fishList);
-            setWidget(rowIndex, HeaderName.ENVIRONMENT.getIndex(), environmentList);
-            setWidget(rowIndex, HeaderName.ASSAY.getIndex(), assayList);
-            setWidget(rowIndex, HeaderName.ANTIBODY.getIndex(), antibodyList);
-            setWidget(rowIndex, HeaderName.GENBANK.getIndex(), genbankList);
-            updateButton.setEnabled(false);
-            setWidget(rowIndex - 1, HeaderName.getHeaderNames().length - 1, updateButton);
-            setWidget(rowIndex, HeaderName.DELETE.getIndex(), updateButton);
-*/
-        }
-
 
         /**
          * Remove error messages
@@ -596,27 +594,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
 
         }
 
-        private class ExperimentDeleteClickListener implements ClickHandler {
-
-            private ExperimentDTO experiment;
-
-            public ExperimentDeleteClickListener(ExperimentDTO experiment) {
-                this.experiment = experiment;
-            }
-
-            public void onClick(ClickEvent event) {
-                String message;
-                if (experiment.isUsedInExpressions())
-                    message = "Are you sure you want to delete this experiment and its " + experiment.getNumberOfExpressions() + " expressions?";
-                else
-                    message = "Are you sure you want to delete this experiment?";
-                if (!Window.confirm(message))
-                    return;
-                presenter.deleteExperiment(experiment);
-            }
-
-        }
-
         /**
          * Show or hide expression section
          */
@@ -650,224 +627,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
             }
         }
     }
-
-    /**
-     * Check if the experiment already exists in the list.
-     * Experiments have to be unique.
-     *
-     * @param updatedExperiment experiment DTO
-     * @param isNewExperiment   true: the experiment is going to be a new experiment added to the list
-     *                          false: the experiment is an update
-     * @return true if experiment is found in the full list (new experiment) or in the list except itself
-     * false if experiment is different from all other experiments
-     */
-    public boolean experimentExists(ExperimentDTO updatedExperiment, boolean isNewExperiment) {
-        int rowIndex = 1;
-/*
-        Window.alert("Is New: "+isNewExperiment);
-        Window.alert("updated experiment: "+updatedExperiment.getExperimentZdbID());
-*/
-        for (ExperimentDTO experiment : experiments) {
-            if (experiment.equals(updatedExperiment)) {
-                if (isNewExperiment || (!experiment.getExperimentZdbID().equals(updatedExperiment.getExperimentZdbID()))) {
-                    if (showHideToggle.isVisible()) {
-                        duplicateRowIndex = rowIndex;
-                        duplicateRowOriginalStyle = displayTable.getRowFormatter().getStyleName(rowIndex);
-                        displayTable.getRowFormatter().setStyleName(rowIndex, "experiment-duplicate");
-                    }
-                    return true;
-                }
-            }
-            rowIndex++;
-        }
-
-        return false;
-    }
-
-
-    private ExperimentDTO getExperimentFromConstructionZone(boolean newExperiment) {
-        ExperimentDTO updatedExperiment = new ExperimentDTO();
-        if (!newExperiment)
-            updatedExperiment.setExperimentZdbID(lastSelectedExperiment.getExperimentZdbID());
-        String assay = assayList.getValue(assayList.getSelectedIndex());
-        updatedExperiment.setAssay(assay);
-        int index = genbankList.getSelectedIndex();
-        if (index > -1) {
-            // if none is selected set explicitly to null
-            if (index == 0)
-                updatedExperiment.setGenbankID(null);
-            else {
-                updatedExperiment.setGenbankID(genbankList.getValue(index));
-                updatedExperiment.setGenbankNumber(genbankList.getItemText(index));
-            }
-        }
-        EnvironmentDTO env = new EnvironmentDTO();
-        String environmentID = environmentList.getValue(environmentList.getSelectedIndex());
-        String environmentName = environmentList.getItemText(environmentList.getSelectedIndex());
-        env.setZdbID(environmentID);
-        env.setName(environmentName);
-        updatedExperiment.setEnvironment(env);
-        // only use the antibody if the selection box is enabled.
-        if (antibodyList.isEnabled()) {
-            String antibodyID = antibodyList.getValue(antibodyList.getSelectedIndex());
-            String antibodyName = antibodyList.getItemText(antibodyList.getSelectedIndex());
-            if (StringUtils.isNotEmpty(antibodyID) && !antibodyID.equals(StringUtils.NULL)) {
-                MarkerDTO antibody = new MarkerDTO();
-                antibody.setZdbID(antibodyID);
-                antibody.setName(antibodyName);
-                updatedExperiment.setAntibodyMarker(antibody);
-            }
-        }
-        String fishID = fishList.getValue(fishList.getSelectedIndex());
-        updatedExperiment.setFishID(fishID);
-        String fishName = fishList.getItemText(fishList.getSelectedIndex());
-        updatedExperiment.setFishName(fishName);
-        String geneID = geneList.getValue(geneList.getSelectedIndex());
-        if (StringUtils.isNotEmpty(geneID) && !geneID.equals(StringUtils.NULL)) {
-            MarkerDTO gene = new MarkerDTO();
-            gene.setZdbID(geneID);
-            updatedExperiment.setGene(gene);
-        }
-        updatedExperiment.setPublicationID(presenter.getPublicationID());
-        return updatedExperiment;
-    }
-
-    /**
-     * Check that the experiment is valid:
-     * 1) gene or antibody defined
-     * 2) fish defined
-     * 3) environment defined
-     * 4) assay defined
-     *
-     * @param experiment experiment DTO
-     * @return boolean
-     */
-    private boolean isValidExperiment(ExperimentDTO experiment) {
-        if (experiment.getAntibodyMarker() == null && experiment.getGene() == null) {
-            errorElement.setError("You need to select at least a gene or an antibody");
-            return false;
-        }
-        if (StringUtils.isEmpty(experiment.getFishID()) || experiment.getFishID().equals("null")) {
-            errorElement.setError("You need to select a fish (genotype).");
-            return false;
-        }
-        if (experiment.getEnvironment() == null || StringUtils.isEmpty(experiment.getEnvironment().getZdbID())) {
-            errorElement.setError("You need to select an environment (experiment).");
-            return false;
-        }
-        if (StringUtils.isEmpty(experiment.getAssay())) {
-            errorElement.setError("You need to select an assay.");
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * This method updates the values in a given row with the provided
-     * experiment. Neither the selection box nor the delete button are changed.
-     *
-     * @param row        row index
-     * @param experiment experiment
-     */
-    private void updateTextInUpdatedRow(int row, ExperimentDTO experiment) {
-        if (experiment.getGene() != null)
-            displayTable.setText(row, HeaderName.GENE.getIndex(), experiment.getGene().getName());
-        displayTable.setText(row, HeaderName.FISH.getIndex(), experiment.getFishName());
-        Widget environment = new Label(experiment.getEnvironment().getName());
-        environment.setTitle(experiment.getEnvironment().getZdbID());
-        displayTable.setWidget(row, HeaderName.ENVIRONMENT.getIndex(), environment);
-        displayTable.setText(row, HeaderName.ASSAY.getIndex(), experiment.getAssay());
-        if (experiment.getAntibodyMarker() != null) {
-            displayTable.setText(row, HeaderName.ANTIBODY.getIndex(), experiment.getAntibodyMarker().getName());
-        }
-        displayTable.setText(row, HeaderName.GENBANK.getIndex(), experiment.getGenbankNumber());
-        // update experiment in list
-        int index = 0;
-        for (ExperimentDTO currentExperiment : experiments) {
-            if (currentExperiment.getExperimentZdbID().equals(experiment.getExperimentZdbID()))
-                experiments.set(index, experiment);
-            index++;
-        }
-        lastSelectedExperiment = experiment;
-    }
-
-
-    private class UpdateExperimentAsyncCallback extends ZfinAsyncCallback<ExperimentDTO> {
-
-        private UpdateExperimentAsyncCallback() {
-            super("Error while updating experiment", errorElement);
-        }
-
-        @Override
-        public void onFailure(Throwable throwable) {
-            super.onFailure(throwable);
-            updateButton.setEnabled(true);
-            updateButtonInProgress = false;
-        }
-
-        @Override
-        public void onSuccess(ExperimentDTO updatedExperiment) {
-            super.onSuccess(updatedExperiment);
-            fireEventSuccess();
-            // update inline without reading all experiments again
-            //retrieveExperiments();
-            int rowCount = displayTable.getRowCount();
-            for (int row = 1; row < rowCount; row++) {
-                Widget widget = displayTable.getWidget(row, HeaderName.SELECT.getIndex());
-                if (widget != null) {
-                    if (widget instanceof CheckBox) {
-                        CheckBox selectButton = (CheckBox) widget;
-                        if (selectButton.getTitle().equals(updatedExperiment.getExperimentZdbID())) {
-                            //selectButton.setChecked(true);
-                            if (presenter.isDebug())
-                                Window.alert(updatedExperiment.toString());
-                            updateTextInUpdatedRow(row, updatedExperiment);
-                        }
-                    }
-                }
-            }
-
-            updateButton.setEnabled(true);
-            updateButtonInProgress = false;
-            // update expression section with new experiment attributes
-//            expressionSection.retrieveExpressions();
-        }
-
-    }
-
-    private class UpdateExperimentClickListener implements ClickHandler {
-        public void onClick(ClickEvent event) {
-            // do not proceed if it just has been clicked once
-            // and is being worked on. It probably is a double-submit from GWT!
-            if (updateButtonInProgress)
-                return;
-            updateButtonInProgress = true;
-            updateButton.setEnabled(false);
-            //Window.alert(itemText);
-            ExperimentDTO updatedExperiment = getExperimentFromConstructionZone(false);
-            if (!isValidExperiment(updatedExperiment)) {
-                cleanupOnExit();
-                return;
-            }
-
-            // check if the experiment already exists
-            if (experimentExists(updatedExperiment, false)) {
-                errorElement.setError("Another experiment with these attributes exists. " +
-                        "Experiments have to be unique!");
-                cleanupOnExit();
-                return;
-            }
-
-            if (!Window.confirm("Do you really want to update this record")) {
-                cleanupOnExit();
-                return;
-            }
-
-            curationExperimentRPCAsync.updateExperiment(updatedExperiment, new UpdateExperimentAsyncCallback());
-        }
-
-    }
-
 
     public void showExperiments(boolean selectedExperimentsOnly) {
         this.showSelectedExperimentsOnly = selectedExperimentsOnly;
@@ -930,10 +689,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
 
     public SimpleErrorElement getErrorElement() {
         return errorElement;
-    }
-
-    public ExperimentFlexTable getDisplayTable() {
-        return displayTable;
     }
 
     public ListBoxWrapper getGeneList() {

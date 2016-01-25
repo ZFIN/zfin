@@ -64,7 +64,7 @@
                     <g:ListBox ui:field="genbankList"/>
                 </g:customCell>
                 <g:customCell>
-                    <g:Button ui:field="updateButton" text="Update"/>
+                    <g:Button ui:field="updateButton" text="Update" enabled="false"/>
                 </g:customCell>
             </g:row>
         </g:Grid>
