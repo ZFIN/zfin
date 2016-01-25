@@ -1147,19 +1147,25 @@ public class HibernateMutantRepository implements MutantRepository {
         if (CollectionUtils.isEmpty(fishOx) || StringUtils.isEmpty(genotypeID)) {
             return false;
         }
+        List fishOxList = new ArrayList (fishOx);
 
-        String hql = " select count(figure) from Figure figure, ExpressionResult expressionResult where " +
-                " expressionResult.expressionExperiment.fishExperiment.fish.genotype.zdbID = :genotypeID AND " +
-                " expressionResult.expressionExperiment.fishExperiment in (:fishOx) AND " +
-                " expressionResult.expressionExperiment.gene is not null AND " +
-                " figure member of expressionResult.figures AND " +
-                " figure.images is not empty ";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameter("genotypeID", genotypeID);
-        query.setParameterList("fishOx", fishOx);
-        long numOfImages = (Long) query.uniqueResult();
-        return numOfImages > 0;
+        String sql ="select count(*) from figure, expression_experiment, expression_result, expression_pattern_figure, fish_experiment,fish" +
+                "  where fig_zdb_id = xpatfig_fig_zdb_id" +
+                " and xpatex_zdb_id = xpatres_xpatex_zdb_id" +
+                " and xpatres_zdb_id = xpatfig_xpatres_zdb_id" +
+                " and genox_fish_zdb_id = fish_zdb_id"+
+                " and fish_genotype_zdb_id = :genotypeID" +
+                " and xpatex_genox_zdb_id = genox_zdb_id" +
+                " and genox_zdb_id in (:fishOxList)" +
+                " and exists (Select 'x' from image where img_fig_Zdb_id = fig_zdb_id)";
+
+        Query query = currentSession().createSQLQuery(sql);
+        query.setString("genotypeID", genotypeID);
+        query.setParameterList("fishOxList",fishOxList);
+
+        return (((Number) query.uniqueResult()).longValue() > 0);
     }
+
 
     /**
      * Retrieve figures for phenotypes for a given genotype and structure.
