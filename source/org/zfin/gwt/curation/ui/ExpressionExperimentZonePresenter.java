@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 import org.zfin.gwt.curation.event.SelectExperimentEvent;
+import org.zfin.gwt.curation.event.UpdateExpressionExperimentEvent;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ListBoxWrapper;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
@@ -29,7 +30,6 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     private String publicationID;
     private boolean debug;
     private boolean addButtonInProgress;
-    private ExperimentDTO lastAddedExperiment = new ExperimentDTO();
     private ExperimentDTO lastSelectedExperiment;
     private Set<ExperimentDTO> selectedExperiments = new HashSet<>(5);
     // avoid double updates
@@ -626,8 +626,6 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             super.onSuccess(newExperiment);
             addButtonInProgress = false;
             retrieveExperiments();
-            // add this experiment to the expression section
-            lastAddedExperiment = newExperiment;
         }
 
     }
@@ -869,6 +867,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             if (!Window.confirm(message))
                 return;
             deleteExperiment(experiment);
+            event.stopPropagation();
         }
 
     }
@@ -889,13 +888,13 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         @Override
         public void onSuccess(ExperimentDTO updatedExperiment) {
             super.onSuccess(updatedExperiment);
-            /////fireEventSuccess();
             // update inline without reading all experiments again
             retrieveExperiments();
-            view.updateButton.setEnabled(true);
+            //view.updateButton.setEnabled(true);
             updateButtonInProgress = false;
             // update expression section with new experiment attributes
-//            expressionSection.retrieveExpressions();
+            UpdateExpressionExperimentEvent event = new UpdateExpressionExperimentEvent(updatedExperiment);
+            AppUtils.EVENT_BUS.fireEvent(event);
         }
 
     }
