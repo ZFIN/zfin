@@ -200,7 +200,7 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
     }
 */
 
-    protected void endTableUpdate(ClickHandler handler) {
+    protected void endTableUpdate() {
         int rows = dataTable.getRowCount() + 1;
         dataTable.resizeRows(rows);
         int lastRow = rows - 1;
@@ -213,7 +213,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
         dataTable.setWidget(lastRow, col++, antibodyList);
         dataTable.setWidget(lastRow, col++, genbankList);
         dataTable.setWidget(lastRow, col, updateButton);
-        dataTable.addClickHandler(handler);
     }
 
 

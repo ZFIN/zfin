@@ -119,6 +119,8 @@ public final class WidgetUtil {
             sb.append(CssStyles.EVENGROUP.toString());
         else
             sb.append(CssStyles.ODDGROUP.toString());
+        sb.append(" ");
+        sb.append(CssStyles.EXPERIMENT_ROW.toString());
         grid.getRowFormatter().setStyleName(row, sb.toString());
     }
 

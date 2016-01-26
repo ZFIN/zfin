@@ -4,8 +4,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLTable;
@@ -135,7 +133,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             else
                 checkBox.setValue(false);
         }
-        view.endTableUpdate(new ExperimentSelectClickHandler(null));
+        view.endTableUpdate();
     }
 
     protected void onAssayChange() {
@@ -329,6 +327,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
                 view.showToggleLinks(false);
             }
         });
+        view.dataTable.addClickHandler(new ExperimentSelectClickHandler(null));
         loadSectionVisibility();
     }
 
@@ -491,6 +490,8 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         }
 
         public void onClick(ClickEvent event) {
+            event.stopPropagation();
+
             boolean isCheckBoxClick = false;
             if (event.getSource() instanceof CheckBox)
                 isCheckBoxClick = true;
@@ -503,7 +504,6 @@ public class ExpressionExperimentZonePresenter implements Presenter {
                 return;
             CheckBox checkBox = (CheckBox) widget;
 
-            DOM.eventCancelBubble(Event.getCurrentEvent(), false);
             selectedExperiment = experimentList.get(rowIndex - 1);
             // if click came from checkbox event the check has already happened.
             if (!isCheckBoxClick)
@@ -515,9 +515,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             lastSelectedExperiment = selectedExperiment;
             //Window.alert("Exp size II: "+selectedExperiments.size());
 
-            DOM.eventCancelBubble(Event.getCurrentEvent(), true);
             clearErrorMessages();
-            //Window.alert("ExperimentSelectClickListener"+experiment.getExperimentZdbID());
             // store selected experiment for update purposes
             selectGene();
             selectFish();

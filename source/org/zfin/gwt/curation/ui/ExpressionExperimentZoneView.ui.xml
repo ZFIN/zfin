@@ -14,7 +14,7 @@
         <g:VerticalPanel ui:field="expressionExperimentPanel" width="100%">
             <zfin:ToggleHyperlink ui:field="showSelectExperiments" toggleFalse="Show Selected Experiments Only"
                                   toggleTrue="Show All Experiments"/>
-            <g:Grid ui:field='dataTable' cellSpacing='10' styleName="searchresults groupstripes">
+            <g:Grid ui:field='dataTable' cellSpacing='10' styleName="searchresults groupstripes-hover">
                 <g:row styleName="table-header">
                     <g:customCell>
                         <g:Label text=""/>
