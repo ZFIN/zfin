@@ -14,6 +14,7 @@ INPUT VARS:
 
 <script type="text/javascript" src="/javascript/jquery.modal.min.js"></script>
 <script src="/javascript/autocompletify.js"></script>
+<script type="text/javascript" src="/javascript/typeahead.bundle.min.js"></script>
 <script src="/javascript/header-menu.js"></script>
 
 <script>

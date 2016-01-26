@@ -9,6 +9,7 @@ document.write(
     '<link rel="stylesheet" type="text/css" href="/css/footer.css">' +
     '<link rel="stylesheet" type="text/css" href="/css/typeahead.css">' +
     '<script type="text/javascript" src="/javascript/jquery-1.11.1.min.js"></script>' +
+    '<script type="text/javascript" src="/javascript/typeahead.bundle.min.js"></script>' +
     '<script type="text/javascript" src="/javascript/autocompletify.js"></script>' +
     '<script src="/javascript/header-menu.js" type="text/javascript"></script>'
 );
