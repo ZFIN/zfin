@@ -245,11 +245,6 @@ select.blueselect {
     color: blue;
 }
 
-#knockdownselection {
-    overflow:hidden;
-    background: url(�/images/ARROWS/arrowplan.down.gif�);
-}
-
 </style>
 
 <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
