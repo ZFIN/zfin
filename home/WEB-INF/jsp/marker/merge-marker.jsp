@@ -773,7 +773,7 @@ var validateEap = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedIn
         for (eapPub in eapPubs) {
             numberOfEapPubs++;
             if (numberOfEapPubs == 1)
-                jQuery('#blockMerge').append('<h3>You cannot merge the gene with expression as phenotype data to another gene; you have to do some munal work first. <br/><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has been in the following publication(s) with expression as phenotype:</h3>');
+                jQuery('#blockMerge').append('<h3>You cannot merge the gene with expression as phenotype data to another gene; you have to do some manual work first. <br/><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has been in the following publication(s) with expression as phenotype data:</h3>');
 
 
             jQuery('#blockMerge').append("<div>"
