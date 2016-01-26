@@ -2,11 +2,10 @@ package org.zfin.anatomy.repository;
 
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.anatomy.*;
+import org.zfin.anatomy.AnatomyStatistics;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.framework.presentation.PaginationBean;
-import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.DataAliasGroup;
-import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.*;
 
 import java.util.List;
