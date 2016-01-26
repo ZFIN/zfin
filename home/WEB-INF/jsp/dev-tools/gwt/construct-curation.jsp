@@ -39,8 +39,6 @@
   <script src="/javascript/autocompletify.js"></script>
 
 
-  <script type="text/javascript" src="/javascript/typeahead.bundle.min.js"></script>
-
 </head>
 <%--<script type="text/javascript" language="javascript"
         src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>--%>
