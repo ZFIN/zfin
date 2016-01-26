@@ -22,7 +22,7 @@ public interface CurationFilterRPC extends RemoteService {
      * Retrieve the fish if for the fx filter bar
      *
      * @param publicationID publication
-     * @return MartFish dto
+     * @return FilterValuesDTO dto
      */
     FilterValuesDTO getFilterValues(String publicationID);
 

@@ -296,7 +296,7 @@ public class ResultService {
 
         String locationDisplay = MappingService.getChromosomeLocationDisplay(gene);
         if (StringUtils.isNotEmpty(locationDisplay)) {
-            String mappingDetailsLink = " <a href=\"/action/mapping/detail/" + gene.getZdbID() + "\">Details</a>";
+            String mappingDetailsLink = " <a href=\"/action/mapping/detail/" + gene.getZdbID() + "\">Mapping Details/Browsers</a>";
             result.addAttribute(LOCATION, locationDisplay + mappingDetailsLink);
         }
     }

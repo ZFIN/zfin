@@ -112,7 +112,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
     public void matchingOnGeneAbbreviation() {
         String fishID = "ZDB-FISH-150901-19155";
         Fish fish = getMutantRepository().getFish(fishID);
-        Assert.assertNotNull("Could not find MartFish with fishID: " + fishID, fish);
+        Assert.assertNotNull("Could not find fish with fishID: " + fishID, fish);
         FishMatchingService service = new FishMatchingService(fish);
         criteria.getGeneOrFeatureNameCriteria().setValue("Shha");
         Set<MatchingText> matchingTexts = service.getMatchingText(criteria);

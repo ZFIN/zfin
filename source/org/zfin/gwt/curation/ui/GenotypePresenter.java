@@ -11,6 +11,7 @@ import org.zfin.gwt.root.dto.GenotypeDTO;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -44,7 +45,7 @@ public class GenotypePresenter implements Presenter {
                 widget.getDeleteImage().addClickHandler(new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent clickEvent) {
-                        diseaseRpcService.deleteCuratorNote(publicationID, widget.getCuratorNote(), new RetrieveGenotypeListCallBack("delete note", view.getErrorElement()));
+                        diseaseRpcService.deleteCuratorNote(publicationID, widget.getCuratorNote(), new RetrieveGenotypeListCallBack("delete note", view.getErrorLabel()));
                     }
                 });
             }
@@ -61,7 +62,7 @@ public class GenotypePresenter implements Presenter {
                 widget.getDeleteImage().addClickHandler(new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent clickEvent) {
-                        diseaseRpcService.deletePublicNote(publicationID, widget.getNote(), new RetrieveGenotypeListCallBack("delete note", view.getErrorElement()));
+                        diseaseRpcService.deletePublicNote(publicationID, widget.getNote(), new RetrieveGenotypeListCallBack("delete note", view.getErrorLabel()));
                     }
                 });
             }
@@ -82,7 +83,7 @@ public class GenotypePresenter implements Presenter {
         saveButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                diseaseRpcService.createPublicNote(publicationID, genotypeDTO, textArea.getText(), new RetrieveGenotypeListCallBack("Genotype List", view.getErrorElement()));
+                diseaseRpcService.createPublicNote(publicationID, genotypeDTO, textArea.getText(), new RetrieveGenotypeListCallBack("Genotype List", view.getErrorLabel()));
             }
         });
     }
@@ -91,7 +92,7 @@ public class GenotypePresenter implements Presenter {
         saveButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                diseaseRpcService.createCuratorNote(publicationID, genotypeDTO, textArea.getText(), new RetrieveGenotypeListCallBack("Genotype List", view.getErrorElement()));
+                diseaseRpcService.createCuratorNote(publicationID, genotypeDTO, textArea.getText(), new RetrieveGenotypeListCallBack("Genotype List", view.getErrorLabel()));
             }
         });
     }
@@ -101,7 +102,7 @@ public class GenotypePresenter implements Presenter {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 noteDTO.setNoteData(textArea.getText());
-                diseaseRpcService.savePublicNote(publicationID, noteDTO, new RetrieveGenotypeListCallBack("Genotype List", view.getErrorElement()));
+                diseaseRpcService.savePublicNote(publicationID, noteDTO, new RetrieveGenotypeListCallBack("Genotype List", view.getErrorLabel()));
             }
         });
     }
@@ -111,13 +112,9 @@ public class GenotypePresenter implements Presenter {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 noteDTO.setNoteData(textArea.getText());
-                diseaseRpcService.saveCuratorNote(publicationID, noteDTO, new RetrieveGenotypeListCallBack("Genotype List", view.getErrorElement()));
+                diseaseRpcService.saveCuratorNote(publicationID, noteDTO, new RetrieveGenotypeListCallBack("Genotype List", view.getErrorLabel()));
             }
         });
-    }
-
-    public void onShowHideClick() {
-        view.getGenotypeListToggle().toggleVisibility();
     }
 
     class RetrieveGenotypeListCallBack extends ZfinAsyncCallback<List<GenotypeDTO>> {
@@ -129,6 +126,7 @@ public class GenotypePresenter implements Presenter {
         @Override
         public void onSuccess(List<GenotypeDTO> list) {
             if (list != null && list.size() > 0) {
+                Collections.sort(list);
                 view.getNoneDefinedGenoLabel().setVisible(false);
                 view.setData(list);
             }

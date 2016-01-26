@@ -3847,7 +3847,7 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                              pub_date as date,
                              pub_arrival_date as pet_date,
                              jtype as publication_type,
-                             accession_no as related_accession,
+                             'PMID:' || accession_no as related_accession,
                              case when pub_is_indexed = 't' then 'Indexed'
                                   else 'Not Indexed' end as indexing_status,
                              case when status = 'active' then 'Active'

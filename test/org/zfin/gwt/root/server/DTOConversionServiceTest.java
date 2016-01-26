@@ -66,8 +66,6 @@ public class DTOConversionServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void convertTermDTO() {
-//        Term t = ontologyRepository.getTermByZdbID("ZDB-TERM-070117-118") ;
-        // a GO term
         Term term = ontologyRepository.getTermByZdbID("ZDB-TERM-091209-10003");
         TermDTO termDTO = DTOConversionService.convertToTermDTO(term);
         assertEquals(term.getAliases().size(), termDTO.getAliases().size());
@@ -84,8 +82,6 @@ public class DTOConversionServiceTest extends AbstractDatabaseTest {
         assertEquals(term.getOntology().getOntologyName(), termDTO.getOntology().getOntologyName());
         assertEquals(term.getZdbID(), termDTO.getZdbID());
 
-//        assertEquals(term.getEnd().getName(),termDTO.getStartStage().getName()) ;
-//        assertEquals(term.getEnd().getName(),termDTO.getStartStage().getName()) ;
     }
 
 
@@ -112,8 +108,6 @@ public class DTOConversionServiceTest extends AbstractDatabaseTest {
         assertEquals(term.getOntology().getOntologyName(), termDTO.getOntology().getOntologyName());
         assertEquals(term.getZdbID(), termDTO.getZdbID());
 
-//        assertEquals(term.getEnd().getName(),termDTO.getStartStage().getName()) ;
-//        assertEquals(term.getEnd().getName(),termDTO.getStartStage().getName()) ;
     }
 
 

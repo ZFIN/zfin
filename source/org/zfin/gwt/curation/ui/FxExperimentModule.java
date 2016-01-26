@@ -60,7 +60,7 @@ import java.util.*;
  * as a related marker are listed.
  * II)GenBank-Selection-Box: Selecting a gene updates the GenBank-Selection-Box: GenBank accession numbers that
  * belong the given gene or clones that are related to the gene (EST or cDNA) are listed.
- * C) MartFish-Selection-Box: It list first WT then the list of non-wildtype genotypes attributes to this publication
+ * C) Fish-Selection-Box: It list first WT then the list of non-wildtype genotypes attributes to this publication
  * and then all other wild-type genotypes. No cross-interaction upon selection.
  * D) Environment-Selection-Box: This lists first: Standard, Generic-control and the all environments defined in
  * the environment tab. No cross-interaction upon selection.
@@ -75,7 +75,7 @@ import java.util.*;
  * I)   Adding an experiment requires to either selecting a gene or an antibody or both and all other
  * attributes except the GenBank accession number which is optional.
  * II) Experiments have to be unique according to the combination
- * Gene/MartFish/Environment/Assay/Antibody/GenBank, i.e. you cannot create two experiments with the same
+ * Gene/Fish/Environment/Assay/Antibody/GenBank, i.e. you cannot create two experiments with the same
  * values for these attributes. An error message is displayed below the construction zone if a new
  * experiment equals an existing one while highlighting the existing experiment in the list purple that
  * that the new experiment is conflicting with.

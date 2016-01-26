@@ -7,6 +7,7 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.antibody.Antibody;
+import org.zfin.expression.ExpressionResult2;
 import org.zfin.feature.Feature;
 import org.zfin.feature.presentation.SimpleFeaturePresentation;
 import org.zfin.framework.HibernateUtil;
@@ -23,6 +24,9 @@ import org.zfin.mutant.Fish;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.orthology.presentation.OrthologySlimPresentation;
+import org.zfin.publication.Publication;
+import org.zfin.publication.presentation.PublicationLink;
+import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.presentation.AccessionPresentation;
@@ -204,6 +208,27 @@ public class MergeMarkerController {
     @ResponseBody
     List<TranscriptPresentation> getTranscriptsForGene(@RequestParam("geneZdbId") String geneZdbId) {
         return RepositoryFactory.getMarkerRepository().getTranscriptsForGeneId(geneZdbId);
+    }
+
+    @RequestMapping(value = "/get-eap-publication-for-geneId", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<PublicationLink> getEapPublicationForGene(@RequestParam("geneZdbId") String geneZdbId) {
+        Marker gene = RepositoryFactory.getMarkerRepository().getGeneByID(geneZdbId);
+        if (gene == null)
+            return null;
+        List<ExpressionResult2> eapExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultList(gene);
+        List<PublicationLink> eapPublications = new ArrayList<>();
+        if (eapExpressionResults != null && eapExpressionResults.size() > 0) {
+          for (ExpressionResult2 eapExpressionResult : eapExpressionResults) {
+            Publication eapPublication = eapExpressionResult.getExpressionFigureStage().getFigure().getPublication();
+            PublicationLink publicationLink = new PublicationLink();
+            publicationLink.setPublicationZdbId(eapPublication.getZdbID());
+            publicationLink.setLinkContent(eapPublication.getShortAuthorList());
+            eapPublications.add(publicationLink);
+          }
+        }
+        return eapPublications;
     }
 
     @RequestMapping(value = "/get-orthology-for-geneId", method = RequestMethod.GET)

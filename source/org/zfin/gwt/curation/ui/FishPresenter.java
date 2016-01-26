@@ -6,6 +6,8 @@ import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -23,10 +25,6 @@ public class FishPresenter implements Presenter {
         this.view = view;
         this.publicationID = publicationID;
     }
-
-    public void bind() {
-    }
-
 
     @Override
     public void go() {
@@ -46,11 +44,22 @@ public class FishPresenter implements Presenter {
 
         @Override
         public void onSuccess(List<FishDTO> list) {
-            if (list != null && list.size() > 0)
+            if (list != null && list.size() > 0) {
                 view.getNoneDefined().setVisible(false);
-            view.setData(list);
+                Collections.sort(list, new Comparator<FishDTO>() {
+                    @Override
+                    public int compare(FishDTO o1, FishDTO o2) {
+                        return o1.compareToWildtypeFirst(o2);
+                    }
+                });
+            }
+            int elementIndex = 0;
+            for (FishDTO dto : list) {
+                view.addFish(dto, elementIndex);
+                view.addDeleteButton(dto, elementIndex);
+                elementIndex++;
+            }
             fishList = list;
-            bind();
         }
     }
 

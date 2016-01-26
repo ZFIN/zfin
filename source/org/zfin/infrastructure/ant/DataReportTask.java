@@ -8,8 +8,8 @@ import org.apache.log4j.Level;
 import org.zfin.framework.HibernateUtil;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -18,45 +18,27 @@ import java.util.Map;
  */
 public class DataReportTask extends AbstractValidateDataReportTask {
 
-    private String delimiter = "__";
-    private String delimiter2 = "__";
-
-    private String variableNames;
-    private String valueNames;
-    private String variableNames2;
-    private String valueNames2;
+    protected String delimiter = "__";
+    protected String variableNames;
+    protected String valueNames;
     private boolean useParameterMap;
 
-    protected DataReportTask(String jobName, String propertyFilePath, String dataDirectoryString) {
+    public DataReportTask(String jobName, String propertyFilePath, String dataDirectoryString) {
         super(jobName, propertyFilePath, dataDirectoryString);
     }
 
     public int execute() {
-
+        LOG.info("Job Name: " + jobName);
         if (useParameterMap) {
             String[] variables = variableNames.split(delimiter);
-            if(variables.length!=1) {
-                String[] values = valueNames.split(delimiter);
-                LOG.info("Job Name: " + variables.length);
-                if (variables.length != values.length)
-                    throw new RuntimeException("The number of variables need to match the number of values" + variableNames + valueNames);
-                for (int index = 0; index < values.length; index++) {
-                    dataMap.put(variables[index], values[index]);
-                }
+            String[] values = valueNames.split(delimiter);
+            if (variables.length != values.length) {
+                throw new RuntimeException("The number of variables need to match the number of values" + variableNames + valueNames);
             }
-            else{
-                LOG.info("Job Name: " + jobName);
-
-                String[] variables2 = variableNames2.split(delimiter2);
-                String[] values2 = valueNames2.split(delimiter2);
-                LOG.info("Job Name: " + values2[0]);
-                if (variables2.length != values2.length)
-                    throw new RuntimeException("The number of variables need to match the number of values" + variableNames2 + valueNames2);
-                for (int index = 0; index < values2.length; index++) {
-                    dataMap.put(variables2[index], values2[index]);
-                }
+            for (int index = 0; index < values.length; index++) {
+                dataMap.put(variables[index], values[index]);
             }
-            }
+        }
 
         queryFile = new File(dataDirectory, jobName + ".sql");
         if (!queryFile.exists()) {
@@ -105,9 +87,7 @@ public class DataReportTask extends AbstractValidateDataReportTask {
     public static final Option parameterVariablesOpt = OptionBuilder.withArgName("parameterVariables").hasArg().withDescription("List of parameter variable names").create("parameterVariables");
     public static final Option parameterValuesOpt = OptionBuilder.withArgName("parameterValues").hasArg().withDescription("List of parameter values").create("parameterValues");
     public static final Option delimiterOpt = OptionBuilder.withArgName("delimiter").hasArg().withDescription("delimiter used to separate individual parameters").create("delimiter");
-    public static final Option dateVariablesOpt = OptionBuilder.withArgName("dateVariables").hasArg().withDescription("List of parameter variable names").create("dateVariables");
-    public static final Option dateValuesOpt = OptionBuilder.withArgName("dateValues").hasArg().withDescription("List of parameter values").create("dateValues");
-
+    public static final Option taskClassNameOpt = OptionBuilder.withArgName("taskClassName").hasArg().withDescription("Name of the class (inheriting from DataReportTask) to instantiate").create("taskClassName");
     public static final Option dataDirOpt = OptionBuilder.withArgName("dataDir").hasArg().withDescription("Base Data directory").create("dataDir");
     public static final Option propertyDirOpt = OptionBuilder.withArgName("propertyDir").hasArg().withDescription("Property File directory").create("propertyDir");
     public static final Option useParametersOpt = OptionBuilder.withArgName("useParameters").hasArg().withDescription("Boolean that indicates if the command line options contain a parameter map").create("useParameters");
@@ -118,70 +98,57 @@ public class DataReportTask extends AbstractValidateDataReportTask {
         options.addOption(jobNameOpt);
         options.addOption(parameterVariablesOpt);
         options.addOption(parameterValuesOpt);
-        options.addOption(dateVariablesOpt);
-        options.addOption(dateValuesOpt);
         options.addOption(delimiterOpt);
+        options.addOption(taskClassNameOpt);
         options.addOption(dataDirOpt);
         options.addOption(propertyDirOpt);
         options.addOption(useParametersOpt);
     }
 
     public static void main(String[] args) {
+        LOG.getRootLogger().setLevel(Level.INFO);
         CommandLine commandLine = parseArguments(args, "???");
+        String taskClassName = commandLine.getOptionValue(taskClassNameOpt.getOpt());
         String jobName = commandLine.getOptionValue(jobNameOpt.getOpt());
         String useParameterMap = commandLine.getOptionValue(useParametersOpt.getOpt());
-        DataReportTask task = new DataReportTask(jobName, commandLine.getOptionValue(propertyDirOpt.getOpt()),
-                commandLine.getOptionValue(dataDirOpt.getOpt()));
+        String propertyDir = commandLine.getOptionValue(propertyDirOpt.getOpt());
+        String dataDir = commandLine.getOptionValue(dataDirOpt.getOpt());
+        DataReportTask task = null;
+        try {
+            task = (DataReportTask) (Class.forName(taskClassName)
+                    .getConstructor(String.class, String.class, String.class)
+                    .newInstance(jobName, propertyDir, dataDir));
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | ClassNotFoundException | InvocationTargetException e) {
+            LOG.error("Could not create instance of class " + taskClassName + ".");
+            System.exit(1);
+        }
         if (StringUtils.isNotEmpty(useParameterMap) && useParameterMap.equals("true")) {
             task.useParameterMap = true;
-            handleParameterMap(commandLine, task);
+            task.handleParameterMap(commandLine);
         }
         task.initLogger();
         task.initDatabase();
-        LOG.getRootLogger().setLevel(Level.INFO);
         System.exit(task.execute());
     }
 
-    private static void handleParameterMap(CommandLine commandLine, DataReportTask task) {
+    protected void handleParameterMap(CommandLine commandLine) {
+        variableNames = commandLine.getOptionValue(parameterVariablesOpt.getOpt());
+        String values = commandLine.getOptionValue(parameterValuesOpt.getOpt());
+        String delimiter = commandLine.getOptionValue(delimiterOpt.getOpt());
 
-        task.variableNames = commandLine.getOptionValue(parameterVariablesOpt.getOpt());
-        task.variableNames2 = commandLine.getOptionValue(dateVariablesOpt.getOpt());
-
-            String values = commandLine.getOptionValue(parameterValuesOpt.getOpt());
-        String values2 = commandLine.getOptionValue(dateValuesOpt.getOpt());
-
-            String delimiter = commandLine.getOptionValue(delimiterOpt.getOpt());
-            if (StringUtils.isNotEmpty(delimiter)) {
-                task.delimiter = delimiter;
-            }
-            if (StringUtils.isBlank(values)) {
-                SimpleDateFormat df = new SimpleDateFormat("yyyy__MM__dd");
-                values = df.format(new Date());
-            }
-            task.valueNames = values;
-
-
-
-
-            String delimiter2 = commandLine.getOptionValue(delimiterOpt.getOpt());
-            if (StringUtils.isNotEmpty(delimiter2)) {
-                task.delimiter = delimiter2;
-            }
-
-            if (StringUtils.isBlank(values2)){
-                SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-                Calendar c = Calendar.getInstance();
-                c.setTime(new Date()); // Now use today date.
-                c.add(Calendar.DATE, -30); // Adding 5 days
-                SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-                Calendar c1 = Calendar.getInstance();
-                c1.setTime(new Date()); // Now use today date.
-
-                values2 = sdf1.format(c.getTime())+"__"+sdf2.format(c1.getTime());
-
-            }
-            task.valueNames2 = values2;
+        if (StringUtils.isNotEmpty(delimiter)) {
+            this.delimiter = delimiter;
         }
+        if (StringUtils.isBlank(values)) {
+            values = handleBlankParameterValue();
+        }
+        valueNames = values;
+    }
+
+    protected String handleBlankParameterValue() {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy__MM__dd");
+        return df.format(new Date());
+    }
 
 }
 

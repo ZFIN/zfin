@@ -3,7 +3,6 @@ package org.zfin.ontology.service;
 import org.apache.log4j.Logger;
 import org.springframework.util.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.expression.ExperimentCondition;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -24,7 +23,6 @@ import org.zfin.sequence.service.SequenceService;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
-import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 /**
  * This service provides a bridge between the OntologyRepository and business logic.
@@ -212,21 +210,19 @@ public class OntologyService {
         if (CollectionUtils.isEmpty(modelList)) {
             return null;
         }
-        Map<String, FishModelDisplay> map = new HashMap<>();
+        Map<FishExperiment, FishModelDisplay> map = new HashMap<>();
         for (DiseaseAnnotationModel model : modelList) {
             // ignore disease models without fish models
             if (model == null) {
                 continue;
             }
 
-            String groupingKey = model.getFishExperiment().getFish().getZdbID() + ":";
-            groupingKey += model.getFishExperiment().getExperiment().getConditionKey();
+            FishModelDisplay display = new FishModelDisplay(model.getFishExperiment());
+            display.addPublication(model.getDiseaseAnnotation().getPublication());
 
-            FishModelDisplay mapModel = map.get(groupingKey);
+            FishModelDisplay mapModel = map.get(model.getFishExperiment());
             if (mapModel == null) {
-                FishModelDisplay display = new FishModelDisplay(model.getFishExperiment());
-                display.addPublication(model.getDiseaseAnnotation().getPublication());
-                map.put(groupingKey, display);
+                map.put(model.getFishExperiment(), display);
             } else {
                 mapModel.addPublication(model.getDiseaseAnnotation().getPublication());
             }

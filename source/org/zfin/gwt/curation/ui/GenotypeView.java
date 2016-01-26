@@ -13,7 +13,6 @@ import org.zfin.gwt.root.dto.CuratorNoteDTO;
 import org.zfin.gwt.root.dto.ExternalNoteDTO;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.GenotypeDTO;
-import org.zfin.gwt.root.ui.SimpleErrorElement;
 import org.zfin.gwt.root.ui.ZfinFlexTable;
 import org.zfin.gwt.root.util.DeleteImage;
 import org.zfin.gwt.root.util.ShowHideWidget;
@@ -24,7 +23,7 @@ import java.util.List;
 /**
  * Table of associated genotypes
  */
-public class GenotypeView extends Composite {
+public class GenotypeView extends SingleGridBaseComposite {
 
     private static MyUiBinder binder = GWT.create(MyUiBinder.class);
     private GenotypePresenter presenter;
@@ -43,24 +42,19 @@ public class GenotypeView extends Composite {
 
     public GenotypeView() {
         initWidget(binder.createAndBindUi(this));
-        genotypeListToggle = new ShowHideWidget(showHideGenoList, genotypeListTable, true);
+        sectionVisibilityToggle = new ShowHideWidget(showHideSection, genotypeListTable, true);
     }
 
     @UiField
     ZfinFlexTable genotypeListTable;
     @UiField
-    Hyperlink showHideGenoList;
-    @UiField
     Label noneDefinedGenoLabel;
-    @UiField
-    SimpleErrorElement errorElement;
 
-    private ShowHideWidget genotypeListToggle;
     private String publicationID;
 
-    @UiHandler("showHideGenoList")
+    @UiHandler("showHideSection")
     void onShowHideClick(@SuppressWarnings("unused") ClickEvent event) {
-        presenter.onShowHideClick();
+        sectionVisibilityToggle.toggleVisibility();
     }
 
     public void setData(List<GenotypeDTO> genotypeDTOList) {
@@ -216,16 +210,8 @@ public class GenotypeView extends Composite {
         return noneDefinedGenoLabel;
     }
 
-    public ShowHideWidget getGenotypeListToggle() {
-        return genotypeListToggle;
-    }
-
     public void setPublicationID(String publicationID) {
         this.publicationID = publicationID;
-    }
-
-    public SimpleErrorElement getErrorElement() {
-        return errorElement;
     }
 
     public List<PublicNoteWidgets> getPublicNoteWidgetsList() {

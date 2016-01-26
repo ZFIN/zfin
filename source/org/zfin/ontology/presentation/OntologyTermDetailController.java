@@ -334,7 +334,6 @@ public class OntologyTermDetailController {
     public String fishModelPublicationList(@PathVariable String termID,
                                            @PathVariable String id,
                                            @RequestParam(required = false) String orderBy,
-                                           @RequestParam(required = false) String environmentKey,
                                            Model model) throws Exception {
 
         if (id == null) {
@@ -353,7 +352,7 @@ public class OntologyTermDetailController {
         switch (type) {
             case FISH:
                 fish = getMutantRepository().getFish(id);
-                citationList = PhenotypeService.getPublicationList(disease, fish, orderBy, environmentKey);
+                citationList = PhenotypeService.getPublicationList(disease, fish, orderBy);
                 break;
 
             case GENOX:
@@ -371,8 +370,6 @@ public class OntologyTermDetailController {
         PublicationListBean citationBean = new PublicationListAdapter(citationList);
         citationBean.setOrderBy(orderBy);
         model.addAttribute("citationList", citationBean);
-        if (StringUtils.isNotEmpty(environmentKey))
-            model.addAttribute("environmentKey", environmentKey);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
         return "ontology/fish-model-publication-list.page";
     }

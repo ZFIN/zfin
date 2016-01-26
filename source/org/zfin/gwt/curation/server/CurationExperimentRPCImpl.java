@@ -95,7 +95,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
     public void deleteExperiment(String experimentZdbID) {
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            ExpressionExperiment experiment = expRepository.getExpressionExperiment(experimentZdbID);
+            ExpressionExperiment2 experiment = expRepository.getExpressionExperiment2(experimentZdbID);
             expRepository.deleteExpressionExperiment(experiment);
             tx.commit();
         } catch (HibernateException e) {
@@ -161,6 +161,8 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         List<ExperimentDTO> dtos = new ArrayList<>();
         for (ExpressionExperiment2 experiment : experiments) {
             ExperimentDTO dto = DTOConversionService.convertToExperimentDTO(experiment);
+            if (experiment.getFigureStageSet() != null)
+                dto.setNumberOfExpressions(experiment.getFigureStageSet().size());
             dtos.add(dto);
         }
         return dtos;
@@ -748,7 +750,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      * @param efs figure annotation
      */
     public void createPatoRecord(ExpressionFigureStageDTO efs) {
-        ExpressionExperiment expressionExperiment = expRepository.getExpressionExperiment(efs.getExperiment().getExperimentZdbID());
+        ExpressionExperiment2 expressionExperiment = expRepository.getExpressionExperiment2(efs.getExperiment().getExperimentZdbID());
         Figure figure = pubRepository.getFigureByID(efs.getFigure().getZdbID());
         DevelopmentStage start = anatomyRep.getStageByID(efs.getStart().getZdbID());
         DevelopmentStage end = anatomyRep.getStageByID(efs.getEnd().getZdbID());

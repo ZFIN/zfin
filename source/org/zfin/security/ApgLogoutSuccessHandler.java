@@ -38,8 +38,6 @@ public class ApgLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
                     response.addCookie(cookie);
                 }
             }
-//            if (cookie.getName().equals(ServletService.JSESSIONID)) {
-//            }
         }
         super.onLogoutSuccess(request,response,authentication);
 

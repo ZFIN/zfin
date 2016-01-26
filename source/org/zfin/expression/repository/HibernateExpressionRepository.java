@@ -592,7 +592,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      *
      * @param experiment expression experiment
      */
-    public void deleteExpressionExperiment(ExpressionExperiment experiment) {
+    public void deleteExpressionExperiment(ExpressionExperiment2 experiment) {
         InfrastructureRepository infraRep = RepositoryFactory.getInfrastructureRepository();
         infraRep.deleteActiveDataByZdbID(experiment.getZdbID());
     }
@@ -2032,7 +2032,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     @Override
-    public List<ExpressionExperiment2> getExpressionExperiment2sByFish (Fish fish) {
+    public List<ExpressionExperiment2> getExpressionExperiment2sByFish(Fish fish) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select xpExp from ExpressionExperiment2 xpExp, FishExperiment fishox " +
@@ -2042,5 +2042,18 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         query.setParameter("fish", fish);
 
         return (List<ExpressionExperiment2>) query.list();
+    }
+
+    @Override
+    public List<ExpressionResult2> getExpressionResultList(Marker gene) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select result from ExpressionResult2 as result " +
+                "      where expressionFigureStage.expressionExperiment.gene = :gene " +
+                "AND result.phenotypeTermSet is not empty ";
+        Query query = session.createQuery(hql);
+        query.setParameter("gene", gene);
+
+        return (List<ExpressionResult2>) query.list();
     }
 }

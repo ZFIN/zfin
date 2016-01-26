@@ -102,7 +102,7 @@ jQuery(document).ready(function () {
             jQuery('#intoMarkerAbbrev').val(markerAbbrevToMergeInto);
             jQuery('#into').html('<a target="_blank" class="external" href="/action/marker/view/' + markerZdbIdToBeMergedInto + '">' + markerAbbrevToMergeInto + '</a>');
             <c:if test="${formBean.markerToDelete.markerType.name eq 'GENE' || formBean.markerToDelete.markerType.name eq 'GENEP'}">
-                    validateGeneWithOrthology(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
+                    validateEap(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
             </c:if>
             <c:if test="${formBean.markerToDelete.markerType.name eq 'MRPHLNO' || formBean.markerToDelete.markerType.name eq 'TALEN' || formBean.markerToDelete.markerType.name eq 'CRISPR'}">
                     validateTargetGenesForMergingSRTs(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
@@ -759,6 +759,32 @@ var validateGeneWithOrthology = function(geneIDdelete, geneZdbIdMergedInto, gene
 
     }
 };
+
+var validateEap = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
+
+    var numberOfEapPubs = 0;
+
+    var eapPubs = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-eap-publication-for-geneId?geneZdbId=" + geneIDdelete,
+        dataType: "json",
+        async: false
+    }).responseText);
+
+    if (eapPubs.length > 0) {
+        for (eapPub in eapPubs) {
+            numberOfEapPubs++;
+            if (numberOfEapPubs == 1)
+                jQuery('#blockMerge').append('<h3>You cannot merge the gene with expression as phenotype data to another gene; you have to do some munal work first. <br/><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has been in the following publication(s) with expression as phenotype:</h3>');
+
+
+            jQuery('#blockMerge').append("<div>"
+                    + '<a target="_blank" href="/' + eapPubs[eapPub].publicationZdbId +'">'
+                    + eapPubs[eapPub].linkContent + '</a>'
+                    + '</div>');
+        }
+    } else {
+        validateGeneWithOrthology(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+    }
+}
 
 var validateGeneWithMappingInfo = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
     var chromosomeGeneDelete = "Chr: ";

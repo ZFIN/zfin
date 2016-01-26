@@ -78,7 +78,6 @@ public class OntologyTokenizer {
     }
 
     public int tokenizeTerm(TermDTO term, PatriciaTrieMultiMap<TermDTO> termMap) {
-        //String exactTerm = term.getName().toLowerCase();
         String exactTerm = term.getName().toLowerCase();
 
         int count = 0;

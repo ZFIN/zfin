@@ -143,7 +143,7 @@ public interface ExpressionRepository {
      *
      * @param experiment expression experiment
      */
-    void deleteExpressionExperiment(ExpressionExperiment experiment);
+    void deleteExpressionExperiment(ExpressionExperiment2 experiment);
 
     /**
      * Retrieves experiment that pertain to a given
@@ -417,4 +417,6 @@ public interface ExpressionRepository {
      * @return list of expression experiment2 records
      */
     List<ExpressionExperiment2> getExpressionExperiment2sByFish (Fish fish);
+
+    List<ExpressionResult2> getExpressionResultList(Marker gene);
 }

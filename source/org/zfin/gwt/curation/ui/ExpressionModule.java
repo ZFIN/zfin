@@ -91,7 +91,7 @@ public class ExpressionModule implements HandlesError, EntryPoint {
         expressionZonePresenter.go();
         expressionZone.setExpressionZonePresenter(expressionZonePresenter);
         expressionZone.setStructurePilePresenter(structurePilePresenter);
-        expressionZone.setExperimentSection(expressionExperimentZone);
+        expressionZone.setExpressionExperimentZonePresenter(expressionExperimentZonePresenter);
 
         bindEventBusHandler();
         addHandlerEvents();
@@ -148,7 +148,7 @@ public class ExpressionModule implements HandlesError, EntryPoint {
                     @Override
                     public void onEvent(SelectExpressionExperimentEvent event) {
                         if (!event.isCkecked())
-                            expressionExperimentZonePresenter.unselectAllExperiments();
+                            expressionExperimentZonePresenter.unselectExperiment(event.getExperimentDTO());
                         else
                             expressionExperimentZonePresenter.setSingleExperiment(event.getExperimentDTO());
                     }
@@ -173,6 +173,20 @@ public class ExpressionModule implements HandlesError, EntryPoint {
                     @Override
                     public void onEvent(AddExpressionExperimentEvent event) {
                         expressionExperimentZonePresenter.notifyAddedExpression();
+                    }
+                });
+        AppUtils.EVENT_BUS.addHandler(RemoveExpressionEvent.TYPE,
+                new RemoveExpressionEventHandler() {
+                    @Override
+                    public void onEvent(RemoveExpressionEvent event) {
+                        expressionExperimentZonePresenter.notifyRemovedExpression(event.getExperimentDTO());
+                    }
+                });
+        AppUtils.EVENT_BUS.addHandler(UpdateExpressionExperimentEvent.TYPE,
+                new UpdateExpressionExperimentEventHandler() {
+                    @Override
+                    public void onEvent(UpdateExpressionExperimentEvent event) {
+                        expressionZonePresenter.retrieveExpressions();
                     }
                 });
     }

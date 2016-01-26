@@ -3,7 +3,6 @@
         xmlns:ui='urn:ui:com.google.gwt.uibinder'
         xmlns:g='urn:import:com.google.gwt.user.client.ui'
         xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
-        xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui'
         >
 
     <g:VerticalPanel spacing="10" title="Expression Experiment Zone" width="100%">
@@ -12,9 +11,68 @@
             <g:Label text=":&nbsp;" addStyleNames="bold"/>
             <zfin:ShowHideToggle widget="{expressionExperimentPanel}" ui:field="showHideToggle" show="true"/>
         </g:HorizontalPanel>
-        <g:VerticalPanel ui:field="expressionExperimentPanel" width="100%"/>
-        <zfin:ToggleHyperlink ui:field="showSelectExperiments" toggleFalse="Show Selected Experiments Only" toggleTrue="Show All Experiments"/>
-        <zfin:SimpleErrorElement ui:field="errorElement"/>
-        <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="true"/>
+        <g:VerticalPanel ui:field="expressionExperimentPanel" width="100%">
+            <zfin:ToggleHyperlink ui:field="showSelectExperiments" toggleFalse="Show Selected Experiments Only"
+                                  toggleTrue="Show All Experiments"/>
+            <g:Grid ui:field='dataTable' cellSpacing='10' styleName="searchresults groupstripes">
+                <g:row styleName="table-header">
+                    <g:customCell>
+                        <g:Label text=""/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label text="Gene" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label text="Fish" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label text="Environment" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label text="Assay" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label text="Antibody" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label text="GenBank" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label text="Delete" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                </g:row>
+                <g:row>
+                    <g:customCell>
+                        <g:Button ui:field="addButton" text="Add"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <zfin:ListBoxWrapper ui:field="geneList"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:ListBox ui:field="fishList"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:ListBox ui:field="environmentList"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:ListBox ui:field="assayList"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:ListBox ui:field="antibodyList"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:ListBox ui:field="genbankList"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Button ui:field="updateButton" text="Update" enabled="false"/>
+                    </g:customCell>
+                </g:row>
+            </g:Grid>
+            <zfin:ToggleHyperlink ui:field="showSelectedAllLink" toggleTrue="Show Selected Experiment Only"
+                                  toggleFalse="Show All"/>
+            <g:Hyperlink ui:field="clearLink" text="Clear" visible="false"/>
+            <zfin:SimpleErrorElement ui:field="errorElement"/>
+            <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="true"/>
+        </g:VerticalPanel>
     </g:VerticalPanel>
 </ui:UiBinder>

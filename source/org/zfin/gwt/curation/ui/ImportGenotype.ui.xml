@@ -15,7 +15,35 @@
             <zfin:ZfinFlexTable ui:field="genotypeSearchResultTable" numberOfColumns="3"
                                 styleName="searchresults groupstripes"
                                 cellSpacing="5" cellPadding="5"/>
+            <g:Grid ui:field='dataTable' cellSpacing='10' styleName="searchresults groupstripes">
+                <g:row styleName="table-header">
+                    <g:customCell>
+                        <g:Label text="Import" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label text="Display Name" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label text="Handle" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                </g:row>
+                <g:row>
+                    <g:customCell>
+                        <g:Button ui:field="searchExistingGenotypes" text="Search"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:HorizontalPanel ui:field="featureBackgroundLists">
+                            <g:Label text="Feature:" styleName="bold"/>
+                            <g:ListBox ui:field="featureListBox"/>
+                            <g:Label text="Background:" styleName="bold"/>
+                            <g:ListBox ui:field="backgroundListBox"/>
+                        </g:HorizontalPanel>
+                    </g:customCell>
+                </g:row>
+            </g:Grid>
+
             <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="false"/>
+            <zfin:SimpleErrorElement ui:field="messageLabel" styleName="phenotype-normal"/>
             <zfin:SimpleErrorElement ui:field="errorLabel"/>
         </g:VerticalPanel>
     </g:FlowPanel>

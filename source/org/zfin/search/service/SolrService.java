@@ -466,7 +466,6 @@ public class SolrService {
         urlCreator.removeNameValuePair("page");
         if (StringUtils.equals("category", facetField.getName())) {
             urlCreator.removeNameValuePair("category");
-            /*urlCreator.addNamevaluePair("category", count.getName());*/
         }
         logger.debug("exclude URL for " + count.getName() + ": " + urlCreator.getURL());
         return urlCreator.getURL();

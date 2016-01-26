@@ -5,6 +5,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
 import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.ExpressionPhenotypeExperimentDTO;
 import org.zfin.gwt.root.dto.PhenotypeExperimentDTO;
 import org.zfin.gwt.root.dto.PileStructureAnnotationDTO;
 
@@ -35,6 +36,7 @@ public interface CurationPhenotypeRPC extends RemoteService {
     void deleteFigureAnnotation(PhenotypeExperimentDTO figureAnnotation);
 
     List<PhenotypeExperimentDTO> updateStructuresForExpression(UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeExperimentDTO> updateEntity);
+    List<ExpressionPhenotypeExperimentDTO> getPhenotypeFromExpressionsByFilter(ExperimentDTO experimentFilter, String figureID);
 
     /**
      * Checks if the phenotype structure pile needs to be recreated.

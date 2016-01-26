@@ -43,11 +43,7 @@ public class PhenotypeExperimentDTO extends AbstractFigureStageDTO<PhenotypeStat
             }
         }
         if (!fish.equals(efs.getFish())) {
-            if (fish.getGenotypeDTO().isWildtype() && !efs.getFish().getGenotypeDTO().isWildtype())
-                return -1;
-            if (!fish.getGenotypeDTO().isWildtype() && efs.getFish().getGenotypeDTO().isWildtype())
-                return 1;
-            return fish.getNameOrder().compareTo(efs.getFish().getNameOrder());
+            return fish.compareToWildtypeFirst(efs.getFish());
         }
         if (!environment.equals(efs.getEnvironment()))
             return environment.compareTo(efs.getEnvironment());

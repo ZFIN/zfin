@@ -1,5 +1,6 @@
 package org.zfin.anatomy.repository;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.AnatomyStatistics;
@@ -86,6 +87,7 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @Ignore
     public void getSubstructureAntibodies() {
         String aoTermName = "cranium";
         GenericTerm term = new GenericTerm();

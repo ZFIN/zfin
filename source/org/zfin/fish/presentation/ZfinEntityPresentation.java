@@ -36,7 +36,6 @@ public class ZfinEntityPresentation extends EntityPresentation {
      * @param marker ZfinEntity
      * @return html for marker link
      */
-    // ToDo: needs to be implemented like the getLink() method.
     public static String getName(ZfinEntity marker) {
         return getSpanTag(null, marker.getName(), marker.getID());
     }

@@ -13,6 +13,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
+import org.zfin.gwt.curation.event.RemoveExpressionEvent;
 import org.zfin.gwt.curation.event.SelectExpressionExperimentEvent;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.*;
@@ -101,7 +102,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     private boolean markStructures;
 
     // injected variables
-    private ExpressionExperimentZoneView experimentSection;
+    private ExpressionExperimentZonePresenter expressionExperimentZonePresenter;
 
     // filter set by the banana bar
     private ExperimentDTO experimentFilter = new ExperimentDTO();
@@ -113,6 +114,10 @@ public class ExpressionZoneView extends Composite implements HandlesError {
 //        stageSelector.setPublicationID(publicationID);
     }
 */
+
+    public void setExpressionExperimentZonePresenter(ExpressionExperimentZonePresenter expressionExperimentZonePresenter) {
+        this.expressionExperimentZonePresenter = expressionExperimentZonePresenter;
+    }
 
     /**
      * The data should only be loaded when the filter bar is initialized.
@@ -126,10 +131,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         }
     }
 */
-    public void setExperimentSection(ExpressionExperimentZoneView experimentSection) {
-        this.experimentSection = experimentSection;
-    }
-
     @UiHandler("addButton")
     void onClickAddExpression(@SuppressWarnings("unused") ClickEvent event) {
         expressionZonePresenter.addExpressions();
@@ -278,7 +279,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         selectedExpressions.clear();
         showSelectedExpressionOnly = false;
         displayTable.uncheckAllRecords();
-        experimentSection.unselectAllExperiments();
+        expressionExperimentZonePresenter.unselectAllExperiments();
     }
 
     /**
@@ -314,7 +315,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     }
 
     protected Set<ExperimentDTO> getSelectedExperiments() {
-        return experimentSection.getSelectedExperiments();
+        return expressionExperimentZonePresenter.getSelectedExperiments();
     }
 
     /**
@@ -530,7 +531,8 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             displayTable.createExpressionTable();
             // update expression list in structure section.
             sendFigureAnnotationsToStructureSection();
-            ////experimentSection.notifyRemovedExpression(figureAnnotation.getExperiment());
+            RemoveExpressionEvent event = new RemoveExpressionEvent(figureAnnotation.getExperiment());
+            AppUtils.EVENT_BUS.fireEvent(event);
             loadingImage.setVisible(false);
             clearErrorMessages();
         }
@@ -1108,7 +1110,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             loadingImage.setVisible(false);
             clearErrorMessages();
             stageSelector.resetGui();
-            experimentSection.notifyAddedExpression();
+            expressionExperimentZonePresenter.notifyAddedExpression();
             loadingImage.setVisible(false);
         }
 
@@ -1131,36 +1133,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         for (FigureDTO figureDTO : allFigureDtos) {
             if (StringUtils.isEmpty(figureID) || figureDTO.getZdbID().equals(figureID))
                 figureList.addItem(figureDTO.getLabel(), figureDTO.getZdbID());
-        }
-    }
-
-    private class SectionVisibilityCallback extends ZfinAsyncCallback<Boolean> {
-        // flag that indicates if the experiment section is visible or not.
-        private boolean sectionVisible;
-
-        public SectionVisibilityCallback(String message) {
-            super(message, errorElement);
-        }
-
-        public void onSuccess(Boolean visible) {
-            sectionVisible = visible;
-            //Window.alert("Show: " + sectionVisible);
-            if (displayedExpressions == null || displayedExpressions.isEmpty()) {
-                //todo setInitialValues();
-            } else {
-                displayTable.createExpressionTable();
-                displayTable.showHideClearAllLink();
-            }
-            if (sectionVisible) {
-                showExpressionSection.setText(HIDE);
-            } else {
-                showExpressionSection.setText(SHOW);
-            }
-            loadingImage.setVisible(false);
-        }
-
-        public void onFailureCleanup() {
-            loadingImage.setVisible(true);
         }
     }
 
