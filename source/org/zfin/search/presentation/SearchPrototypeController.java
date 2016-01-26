@@ -18,6 +18,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.infrastructure.service.ZdbIDService;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
@@ -26,6 +27,7 @@ import org.zfin.search.FacetCategoryComparator;
 import org.zfin.search.FacetValueAlphanumComparator;
 import org.zfin.search.service.*;
 import org.zfin.util.URLCreator;
+import org.zfin.util.ZfinStringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,6 +55,9 @@ public class SearchPrototypeController {
 
     @Autowired
     private ResultService resultService;
+
+    @Autowired
+    private ZdbIDService zdbIDService;
 
     public Logger logger = Logger.getLogger(SearchPrototypeController.class);
 
@@ -82,15 +87,27 @@ public class SearchPrototypeController {
             }
         }
 
+        if (StringUtils.isNotEmpty(q)) {
+            q = q.trim();
+        }
+
+
         Boolean redirectToFirstResult = false;
         if (StringUtils.startsWith(q,"!!")) {
             redirectToFirstResult = true;
             q = q.substring(2);
         }
 
-        if (StringUtils.isNotEmpty(q) && q.trim().startsWith("-")) {
+
+        if (StringUtils.isNotEmpty(q) && ZfinStringUtils.isZdbId(q) && zdbIDService.isActiveZdbID(q)) {
+	        logger.debug("Redirecting to /" + q);
+	        return "redirect:/" + q;
+        }
+
+
+        if (StringUtils.isNotEmpty(q) && q.startsWith("-")) {
             model.addAttribute("isDashQuery", true);
-            model.addAttribute("newQuery", q.trim().substring(1));
+            model.addAttribute("newQuery", q.substring(1));
         }
 
         SolrClient client = SolrService.getSolrClient("prototype");
