@@ -5,7 +5,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.curation.event.*;
@@ -92,7 +91,7 @@ public class ExpressionModule implements HandlesError, EntryPoint {
         expressionZonePresenter.go();
         expressionZone.setExpressionZonePresenter(expressionZonePresenter);
         expressionZone.setStructurePilePresenter(structurePilePresenter);
-        expressionZone.setExperimentSection(expressionExperimentZone);
+        expressionZone.setExpressionExperimentZonePresenter(expressionExperimentZonePresenter);
 
         bindEventBusHandler();
         addHandlerEvents();
@@ -174,6 +173,13 @@ public class ExpressionModule implements HandlesError, EntryPoint {
                     @Override
                     public void onEvent(AddExpressionExperimentEvent event) {
                         expressionExperimentZonePresenter.notifyAddedExpression();
+                    }
+                });
+        AppUtils.EVENT_BUS.addHandler(RemoveExpressionEvent.TYPE,
+                new RemoveExpressionEventHandler() {
+                    @Override
+                    public void onEvent(RemoveExpressionEvent event) {
+                        expressionExperimentZonePresenter.notifyRemovedExpression(event.getExperimentDTO());
                     }
                 });
     }

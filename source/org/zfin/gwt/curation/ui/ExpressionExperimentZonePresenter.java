@@ -1,8 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
@@ -37,6 +35,8 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     // avoid double updates
     private boolean updateButtonInProgress;
     private boolean showSelectedExperimentsOnly;
+    private int duplicateRowIndex;
+    private String duplicateRowOriginalStyle;
 
     // filter set by the banana bar
     private ExperimentDTO experimentFilter = new ExperimentDTO();
@@ -54,28 +54,45 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         view.setPresenter(this);
     }
 
-    public void bind() {
-        addDynamicClickHandler();
-    }
-
-    private void addDynamicClickHandler() {
-
-        // gene changes
-        view.getGeneList().addChangeHandler(new GeneListChangeListener());
-
-        addChangeListenersToConstructionZoneElements();
-    }
-
-    private ErrorMessageCleanupListener errorMessageCleanupListener = new ErrorMessageCleanupListener();
-
     public void updateExperimentOnCurationFilter(ExperimentDTO experimentFilter) {
         this.experimentFilter = experimentFilter;
         retrieveExperiments();
     }
 
+    /**
+     * When an expression record is added update the experiment section about it, ie the number
+     * of expression records is incremented by 1.
+     */
     public void notifyAddedExpression() {
-        view.notifyAddedExpression();
+        for (ExperimentDTO experiment : experimentList) {
+            for (ExperimentDTO sourceExperiment : selectedExperiments) {
+                if (experiment.equals(sourceExperiment))
+                    experiment.setNumberOfExpressions(experiment.getNumberOfExpressions() + 1);
+            }
+        }
+        finishExpressionNotification();
     }
+
+    private void finishExpressionNotification() {
+        unselectAllExperiments();
+        if (view.showHideToggle.isVisible())
+            populateDataTable();
+    }
+
+    /**
+     * When an expression record is removed update the experiment about it, ie the number
+     * of expression records is decremented by 1.
+     *
+     * @param sourceExperiment experiment being removed
+     */
+    public void notifyRemovedExpression(ExperimentDTO sourceExperiment) {
+        for (ExperimentDTO experiment : experimentList) {
+            if (experiment.getExperimentZdbID().equals(sourceExperiment.getExperimentZdbID()))
+                experiment.setNumberOfExpressions(experiment.getNumberOfExpressions() - 1);
+        }
+        finishExpressionNotification();
+    }
+
 
     public void addExpressionExperiment() {
         // do not proceed if it just has been clicked once
@@ -99,9 +116,11 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     }
 
-    private void populateDataTable() {
+    protected void populateDataTable() {
         int elementIndex = 0;
         for (ExperimentDTO experiment : experimentList) {
+            if (showSelectedExperimentsOnly && !selectedExperiments.contains(experiment))
+                continue;
             view.addGene(experiment.getGene(), elementIndex);
             view.addFish(experiment.getFishName(), elementIndex);
             view.addEnvironment(experiment.getEnvironment(), elementIndex);
@@ -148,7 +167,6 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     }
 
 
-
     /**
      * Check if the experiment already exists in the list.
      * Experiments have to be unique.
@@ -168,13 +186,11 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         for (ExperimentDTO experiment : experimentList) {
             if (experiment.equals(updatedExperiment)) {
                 if (isNewExperiment || (!experiment.getExperimentZdbID().equals(updatedExperiment.getExperimentZdbID()))) {
-/*
-                    if (showHideToggle.isVisible()) {
+                    if (view.showHideToggle.isVisible()) {
                         duplicateRowIndex = rowIndex;
-                        duplicateRowOriginalStyle = displayTable.getRowFormatter().getStyleName(rowIndex);
-                        displayTable.getRowFormatter().setStyleName(rowIndex, "experiment-duplicate");
+                        duplicateRowOriginalStyle = view.dataTable.getRowFormatter().getStyleName(rowIndex);
+                        view.dataTable.getRowFormatter().setStyleName(rowIndex, "experiment-duplicate");
                     }
-*/
                     return true;
                 }
             }
@@ -301,22 +317,18 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     //////////////////////////////// Handler and Listener  ////////////////////////////
 
-    private class ErrorMessageCleanupListener implements ChangeHandler {
-
-        public void onChange(ChangeEvent event) {
-            clearErrorMessages();
-        }
-    }
-
-
-    private void addChangeListenersToConstructionZoneElements() {
-        view.getGeneList().addChangeHandler(errorMessageCleanupListener);
-    }
-
-
     @Override
     public void go() {
-        bind();
+        view.showSelectedAllLink.addClickHandler(new ShowSelectedExperimentsClickHandler());
+        view.clearLink.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                showSelectedExperimentsOnly = false;
+                selectedExperiments.clear();
+                populateDataTable();
+                view.showToggleLinks(false);
+            }
+        });
         loadSectionVisibility();
     }
 
@@ -367,17 +379,8 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         this.experimentFilter = experimentFilter;
     }
 
-    public void setError(String message) {
-        view.getErrorElement().setText(message);
-    }
-
     public void clearErrorMessages() {
         view.clearError();
-    }
-
-    private void resetUI() {
-        view.getErrorElement().clearAllErrors();
-        clearErrorMessages();
     }
 
     /**
@@ -433,6 +436,23 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         retrieveExperiments();
 /////TODO         if (view.getDisplayTable().getRowCount() == 0)
         ///  retrieveConstructionZoneValues();
+    }
+
+    private void showHideClearAllLink() {
+        if (selectedExperiments.size() > 0) {
+            view.showToggleLinks(true);
+        } else {
+            view.showToggleLinks(false);
+        }
+    }
+
+    public Set<ExperimentDTO> getSelectedExperiments() {
+        return selectedExperiments;
+    }
+
+    public void unselectAllExperiments() {
+        selectedExperiments.clear();
+        view.showToggleLinks(false);
     }
 
 
@@ -508,7 +528,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             view.updateButton.setEnabled(true);
             SelectExperimentEvent selectExperimentEvent = new SelectExperimentEvent(selectedExperiment);
             AppUtils.EVENT_BUS.fireEvent(selectExperimentEvent);
-            //displayTable.showHideClearAllLink();
+            showHideClearAllLink();
         }
 
         /**
@@ -613,14 +633,6 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     }
 
 
-    private class AntibodyListChangeListener implements ChangeHandler {
-        public void onChange(ChangeEvent event) {
-            String antibodyID = view.getAntibodyList().getValue(view.getAntibodyList().getSelectedIndex());
-            //Window.alert(antibodyID);
-            curationExperimentRPCAsync.readGenesByAntibody(publicationID, antibodyID, new RetrieveGeneListByAntibodyCallBack());
-        }
-    }
-
     private class RetrieveExperimentsCallback extends ZfinAsyncCallback<List<ExperimentDTO>> {
 
         public RetrieveExperimentsCallback() {
@@ -679,7 +691,6 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
         @Override
         public void onSuccess(Void exp) {
-            Window.alert("Success");
             experimentList.remove(experiment);
             populateDataTable();
             // also remove the figure annotations that were used with this experiments
@@ -688,21 +699,6 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         }
 
     }
-
-    private class GeneListChangeListener implements ChangeHandler {
-
-        public void onChange(ChangeEvent event) {
-            String geneID = view.getGeneList().getValue(view.getGeneList().getSelectedIndex());
-            String assayName = view.getAssayList().getItemText(view.getAssayList().getSelectedIndex());
-            //Window.alert(itemText);
-            // only fetch antibodies if the right assay is selected
-            if (ExpressionAssayDTO.isAntibodyAssay(assayName)) {
-                curationExperimentRPCAsync.readAntibodiesByGene(publicationID, geneID, new RetrieveAntibodyList());
-            }
-            curationExperimentRPCAsync.readGenbankAccessions(publicationID, geneID, new GenbankSelectionListAsyncCallback(null));
-        }
-    }
-
 
     private class GenbankSelectionListAsyncCallback extends ZfinAsyncCallback<List<ExperimentDTO>> {
 
@@ -816,7 +812,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         private MarkerDTO selectedGene;
 
         private GeneSelectionListAsyncCallback(MarkerDTO selectedGene) {
-            super("Error retrieving gene selection list", view.getErrorElement());
+            super("Error retrieving gene selection list", view.errorElement);
             this.selectedGene = selectedGene;
         }
 
@@ -904,12 +900,26 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     }
 
-    public boolean isDebug() {
-        return debug;
+    /**
+     * Show or hide expression section
+     */
+    private class ShowSelectedExperimentsClickHandler implements ClickHandler {
+
+        /**
+         * This onclick handler is called after the intrinsic handler of the ToggleHyperlink
+         * has set the text already.
+         *
+         * @param event click event
+         */
+        public void onClick(ClickEvent event) {
+            showSelectedExperimentsOnly = !view.showSelectedAllLink.getToggleStatus();
+            populateDataTable();
+        }
+
     }
 
-    public String getPublicationID() {
-        return publicationID;
+    public boolean isDebug() {
+        return debug;
     }
 
 }
