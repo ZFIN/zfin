@@ -142,6 +142,10 @@ public class GenotypeConstruction extends Composite {
         presenter.onBackgroundClick();
     }
 
+    public void resetGUI() {
+        errorLabel.clearAllErrors();
+    }
+
     private void initGenotypeConstructionTableHeader() {
         int column = 0;
         genotypeConstructionTable.setText(0, column, "Feature");

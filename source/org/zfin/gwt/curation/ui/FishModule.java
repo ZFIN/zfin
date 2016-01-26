@@ -84,6 +84,8 @@ public class FishModule extends Composite implements EntryPoint {
                     public void onAddFish(AddNewFishEvent event) {
                         fishPresenter.go();
                         attributionModule.populateAttributeRemoval();
+                        importGenotypeView.resetGUI();
+                        genotypeConstructionView.resetGUI();
                     }
                 });
         AppUtils.EVENT_BUS.addHandler(AddNewGenotypeEvent.TYPE,
