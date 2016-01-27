@@ -123,7 +123,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.DISEASE.name          | "DOID:10609 UMLS_CUI:C0221468"                      | "12560"
         Category.DISEASE.name          | "DOID:10609 MSH:D012279"                            | "12560"
         Category.DISEASE.name          | "DOID:10609 NCI:C26878"                             | "12560"
-        Category.MUTANT.name           | "ZMP:sa2801 sa2801"                                 | "1384"
+        Category.MUTANT.name           | "ZMP:sa28 sa28"                                 | "13840"
     }
 
 
