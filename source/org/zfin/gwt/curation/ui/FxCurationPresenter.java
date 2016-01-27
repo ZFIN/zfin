@@ -94,17 +94,20 @@ public class FxCurationPresenter implements Presenter {
         List<ExpressedTermDTO> expressedTermDTOList;
         if (eapQualityList == null || eapQualityList.size() == 0) {
             expressedTermDTOList = new ArrayList<>(1);
+            termDTO.setExpressionFound(view.getNotExpressedCheckBox().getValue());
             expressedTermDTOList.add(termDTO);
         } else {
             expressedTermDTOList = new ArrayList<>(eapQualityList.size());
             for (EapQualityTermDTO eap : eapQualityList) {
                 ExpressedTermDTO dto = termDTO.clone();
                 dto.setQualityTerm(eap);
+                dto.setExpressionFound(true);
+                if (eap.getNickName().equals(EapQualityTermDTO.ABSENT_PHENOTYPIC))
+                    dto.setExpressionFound(false);
                 expressedTermDTOList.add(dto);
             }
         }
 
-        termDTO.setExpressionFound(!view.getNotExpressedCheckBox().getValue());
         StructureValidator<ExpressedTermDTO> structureValidator = new FxPileStructureValidator(view.getTermEntryMap());
         if (structureValidator.isValidNewPileStructure(termDTO)) {
             pileStructureRPCAsync.createPileStructure(expressedTermDTOList, publicationID, new CreatePileStructureCallback());
