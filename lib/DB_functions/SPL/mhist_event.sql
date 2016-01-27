@@ -37,12 +37,7 @@ IF (new_value != old_value or event = "assigned") THEN
   WHERE mrkr_zdb_id = active_marker
     AND mrkr_type in (select mtgrpmem_mrkr_type from marker_type_group_member
                        where mtgrpmem_mrkr_type_group in ("GENEDOM",
-		       	      "CONSTRUCT", 
-			      "TRANSCRIPT", 
-			      "REGION",  
-			      "CRISPR",
-			       "MRPHLNO",
-			         "TALEN"));
+		       	      "ABBREV_EQ_NAME"));
 
 
 
