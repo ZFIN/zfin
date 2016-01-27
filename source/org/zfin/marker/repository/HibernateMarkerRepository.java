@@ -1793,7 +1793,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                             previousNameLight.setAlias("<i>" + tuple[0].toString() + "</i>");
                         }
                         else {
-                            if (gene.getZdbID().startsWith("ZDB-CONSTRCT")) {
+                            if (gene.getZdbID().contains("CONSTRCT")) {
                                 previousNameLight.setAlias("<i>" + tuple[0].toString() + "</i>");
                             } else {
                                 previousNameLight.setAlias(tuple[0].toString());

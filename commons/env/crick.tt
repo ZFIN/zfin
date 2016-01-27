@@ -30,6 +30,7 @@
 <!--|GOOGLE_ANALYTICS_ID|-->	UA-2417927-1
 <!--|GO_EMAIL_CURATOR|-->	dhowe\@zfin.org smoxon\@zfin.org xshao\@zfin.org
 <!--|GO_EMAIL_ERR|-->	smoxon\@zfin.org xshao\@zfin.org dhowe\@zfin.org
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/source_roots/crick/ZFIN_WWW/home/WEB-INF/lib*:/opt/zfin/source_roots/crick/ZFIN_WWW/lib/Java/*:/opt/zfin/source_roots/crick/ZFIN_WWW/home/WEB-INF/classes:/private/apps/tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4

@@ -30,6 +30,7 @@
 <!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	dhowe\@zfin.org xshao\@zfin.org
 <!--|GO_EMAIL_ERR|-->	dhowe\@zfin.org informix\@cs.uroegon.edu
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/source_roots/sandbox/ZFIN_WWW/home/WEB-INF/lib*:/opt/zfin/source_roots/sandbox/ZFIN_WWW/lib/Java/*:/opt/zfin/source_roots/sandbox/ZFIN_WWW/home/WEB-INF/classes:/private/apps/tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
