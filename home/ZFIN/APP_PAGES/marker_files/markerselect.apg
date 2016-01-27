@@ -155,6 +155,7 @@ Message: $MI_ERRORMSG
     when gene is involved, two more columns expression and mutant
    <?/MICOMMENT>
    <?MIVAR NAME=type_of_genedom>f<?/MIVAR>
+   <?MIVAR NAME=constrct>f<?/MIVAR>
 
    <?MIVAR NAME=type_of_knockdown_reagent>f<?/MIVAR>
 
@@ -205,7 +206,10 @@ Message: $MI_ERRORMSG
 	<?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=type_of_knockdown_reagent>t<?/MIVAR>
     <?MIELSE>
 	<?MIVAR NAME=$constraint> mrkr_type not in (select mtgrpmem_mrkr_type from marker_type_group_member where mtgrpmem_mrkr_type_group ='SEARCH_SEG')<?/MIVAR>
+
+
     <?/MIBLOCK>
+
 
     <?MICOMMENT>---------------------------------------------------------------
       Create markerselect_temp_match temp table if it does not already exist.
@@ -863,6 +867,7 @@ Message: $MI_ERRORMSG
            <?MIVAR NAME=mksel_map_col>t<?/MIVAR>
            <?MIVAR COND="$(AND,$(XST,$marker_type),$(>,$(POSITION,$marker_type,CONSTRCT),0))">
 		$(SETVAR,$mksel_map_col,f)
+		<?MIVAR NAME=$constrct>t<?/MIVAR>
            <?/MIVAR>
            <?MIVAR COND="$(AND,$(EC,$type_of_knockdown_reagent,f),$(EC,$mksel_map_col,t),$(AND,$(XST,$marker_type),$(NE,$marker_type,TSCRIPT),$(NE,$marker_type,REGION),$(NE,$marker_type,EFG)))">
        	     <th align-left><b>Location</b></th>
@@ -935,7 +940,11 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
      <?/MISQL>
       <?MIVAR><a href=/action/feature/view/$OID>$ftrname</a><?/MIVAR>
      <?MIELSE>
+     <?MIBLOCK COND=$(EC,$constrct,t)>
+      <?MIVAR><i>$mrkrsel_mrkr_link</i><?/MIVAR>
+      <?MIELSE>
       <?MIVAR>$mrkrsel_mrkr_link<?/MIVAR>
+      <?/MIBLOCK>
       <?/MIBLOCK>
 	  <?MIELSE> <?MICOMMENT> ** IS A GENE ** <?/MICOMMENT>
 	     <?MIVAR>
