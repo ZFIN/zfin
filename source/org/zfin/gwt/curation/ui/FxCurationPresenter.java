@@ -94,7 +94,7 @@ public class FxCurationPresenter implements Presenter {
         List<ExpressedTermDTO> expressedTermDTOList;
         if (eapQualityList == null || eapQualityList.size() == 0) {
             expressedTermDTOList = new ArrayList<>(1);
-            termDTO.setExpressionFound(view.getNotExpressedCheckBox().getValue());
+            termDTO.setExpressionFound(!view.getNotExpressedCheckBox().getValue());
             expressedTermDTOList.add(termDTO);
         } else {
             expressedTermDTOList = new ArrayList<>(eapQualityList.size());
