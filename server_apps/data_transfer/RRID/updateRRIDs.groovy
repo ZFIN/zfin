@@ -57,7 +57,10 @@ insert into zdb_active_data
 insert into db_link (dblink_zdb_id, dblink_linked_recid, dblink_fdbcont_zdb_id,
        	    	    		    dblink_acc_num)  
   select dblink_id, data_id, fdbcont_id, acc_num
-    from tmp_dblink;
+    from tmp_dblink
+    where not exists (Select 'x' from db_link where dblink_linked_Recid = data_id
+                              and dblink_fdbcont_zdb_id = fdbcont_id
+                             and acc_num = dblink_Acc_num) ;
 
 """
 
