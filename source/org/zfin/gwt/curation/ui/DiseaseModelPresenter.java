@@ -60,7 +60,7 @@ public class DiseaseModelPresenter implements Presenter {
         if (selectedIndexEnv > 0 && selectedIndexFish > 0) {
             FishDTO fish = fishList.get(selectedIndexFish - 1);
             EnvironmentDTO environment = environmentList.get(selectedIndexEnv - 1);
-            if (fish.getGenotypeDTO().isWildtype() && environment.isStandard()) {
+            if (fish.isWildtype() && environment.isStandard()) {
                 setError("You cannot use a wildtype fish with Standard or Generic Control environment");
                 return null;
             }

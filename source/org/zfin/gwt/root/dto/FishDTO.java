@@ -124,4 +124,8 @@ public class FishDTO extends RelatedEntityDTO implements Comparable {
         return fish.getNameOrder().compareTo(fish.getNameOrder());
 
     }
+
+    public boolean isWildtype() {
+        return genotypeDTO.isWildtype() && (strList == null || strList.size() == 0);
+    }
 }

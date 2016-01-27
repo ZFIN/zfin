@@ -126,7 +126,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     // This maps the display table and contains the full objects that each
     // row is made up from
     private Map<Integer, PhenotypeExperimentDTO> displayTableMap = new HashMap<>(20);
-    private Map<Integer, ExpressionPhenotypeExperimentDTO> eapTableMap = new HashMap<>(20);
 
     // attributes for duplicate row
     private String duplicateRowOriginalStyle;
@@ -192,8 +191,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         RootPanel.get(EXPRESSIONS_DISPLAY).add(displayTable);
 
         RootPanel.get(MUTANTS_CONSTRUCTION_ZONE).add(constructionRow);
-       // initShowHideEapGUI();
-
         RootPanel.get(SHOW_HIDE_EXPRESSIONS).add(panel);
         RootPanel.get(SHOW_HIDE_EAP).add(eapPanel);
 
@@ -232,18 +229,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         Label experimentLabel = new Label("Anatomy/GO Phenotypes: ");
         experimentLabel.setStyleName(WidgetUtil.BOLD);
         panel.add(experimentLabel);
-    }
-    private void initShowHideEapGUI(){
-        RootPanel.get(SHOW_HIDE_EAP).add(panel);
-        RootPanel.get(SHOW_HIDE_EAP).add(panel);
-
-        Label eapLabel= new Label("Expression Phenotypes: ");
-        eapLabel.setStyleName("bold");
-        panel.add(eapLabel);
-
-        showEapSection.setStyleName("small");
-        showEapSection.setText(HIDE);
-        showEapSection.setTargetHistoryToken(HIDE);
     }
 
     private void setInitialValues() {
@@ -324,25 +309,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         return classSpan.toString();
     }
 
-    private String createSpanElement(ExpressionPhenotypeStatementDTO pheno, String classNamePrefix) {
-        if (pheno == null)
-            return null;
-
-        StringBuilder classSpan = new StringBuilder(50);
-        if (markStructures && (pheno.equals(expressedStructure))) {
-            if (classNamePrefix == null)
-                classSpan.append("<span class='bold'>");
-            else
-                classSpan.append("<span class='" + classNamePrefix + " bold'>");
-        } else {
-            if (classNamePrefix != null)
-                classSpan.append("<span class='" + classNamePrefix + "'>");
-        }
-        classSpan.append(pheno.getDisplayName());
-        if (classNamePrefix != null || markStructures)
-            classSpan.append("</span>");
-        return classSpan.toString();
-    }
 
 
     public Set<PhenotypeStatementDTO> getExpressedTermDTOs() {
@@ -689,8 +655,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
                     eapTable.setVisible(true);
                 } else {
                     retrieveEaps();
-                    /*if (eapTable.getRowCount() == 0)
-                        retrieveConstructionZoneValues();*/
                 }
                 showEapSection.setText(HIDE);
                 sectionVisible = true;
@@ -945,9 +909,8 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             }
 
            createBottomClearAllLinkRow(rowIndex);
-            //Window.alert("HIO");
+
               showHideClearAllLink();
-            //Window.alert("HIO II");
 
 
         }
@@ -975,9 +938,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             for (ExpressionPhenotypeExperimentDTO eapexpression : eapexpressionFigureStageDTOs) {
 
                 // row index minus the header row
-                eapTableMap.put(eapRowIndex, eapexpression);
-
-
 
                 Label figure = new Label(eapexpression.getFigure().getLabel());
                 figure.setTitle(eapexpression.getFigure().getZdbID());
@@ -1023,8 +983,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             }
             for (ExpressionPhenotypeStatementDTO eap : terms) {
                 StringBuilder eapText = new StringBuilder(50);
-                String classSpan;
-
 
                 HTML eapPhenotype = new HTML(eap.getDisplayName() + ""  + eapText.toString());
                 eapPhenotype.setTitle(eap.getId() + "");
