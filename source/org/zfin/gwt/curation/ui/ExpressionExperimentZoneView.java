@@ -12,25 +12,22 @@ import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
-import org.zfin.gwt.root.ui.*;
+import org.zfin.gwt.root.ui.ListBoxWrapper;
+import org.zfin.gwt.root.ui.ShowHideToggle;
+import org.zfin.gwt.root.ui.SimpleErrorElement;
+import org.zfin.gwt.root.ui.ToggleHyperlink;
 import org.zfin.gwt.root.util.WidgetUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Expression Experiment zone
  */
-public class ExpressionExperimentZoneView extends Composite implements HandlesError {
+public class ExpressionExperimentZoneView extends Composite {
 
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @UiTemplate("ExpressionExperimentZoneView.ui.xml")
     interface MyUiBinder extends UiBinder<VerticalPanel, ExpressionExperimentZoneView> {
     }
-
-    // listener
-    private List<HandlesError> handlesErrorListeners = new ArrayList<>();
 
     private ExpressionExperimentZonePresenter presenter;
     @UiField
@@ -68,8 +65,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
     ToggleHyperlink showSelectedAllLink;
     @UiField
     Hyperlink clearLink;
-
-    private ExperimentDTO lastAddedExperiment = new ExperimentDTO();
 
     public ExpressionExperimentZoneView() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -194,12 +189,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
         WidgetUtil.setAlternateRowStyle(row, dataTable);
     }
 
-/*
-    public void removeAllDataRows() {
-        dataTable.resizeRows(1);
-    }
-*/
-
     protected void endTableUpdate() {
         int rows = dataTable.getRowCount() + 1;
         dataTable.resizeRows(rows);
@@ -220,12 +209,10 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
         this.presenter = presenter;
     }
 
-    @Override
     public void setError(String message) {
         errorElement.setText(message);
     }
 
-    @Override
     public void clearError() {
         errorElement.setError("");
     }
@@ -237,20 +224,8 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
     }
 
 
-    @Override
-    public void fireEventSuccess() {
-        for (HandlesError handlesError : handlesErrorListeners) {
-            handlesError.clearError();
-        }
-    }
-
     protected void cleanupOnExit() {
         updateButton.setEnabled(true);
-    }
-
-    @Override
-    public void addHandlesErrorListener(HandlesError handlesError) {
-        handlesErrorListeners.add(handlesError);
     }
 
     public ListBoxWrapper getGeneList() {
@@ -275,10 +250,6 @@ public class ExpressionExperimentZoneView extends Composite implements HandlesEr
 
     public ListBox getGenbankList() {
         return genbankList;
-    }
-
-    public ExperimentDTO getLastAddedExperiment() {
-        return lastAddedExperiment;
     }
 
     public Image getLoadingImage() {

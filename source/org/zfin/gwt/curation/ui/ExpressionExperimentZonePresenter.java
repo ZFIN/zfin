@@ -33,8 +33,6 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     // avoid double updates
     private boolean updateButtonInProgress;
     private boolean showSelectedExperimentsOnly;
-    private int duplicateRowIndex;
-    private String duplicateRowOriginalStyle;
 
     // filter set by the banana bar
     private ExperimentDTO experimentFilter = new ExperimentDTO();
@@ -177,16 +175,10 @@ public class ExpressionExperimentZonePresenter implements Presenter {
      */
     public boolean experimentExists(ExperimentDTO updatedExperiment, boolean isNewExperiment) {
         int rowIndex = 1;
-/*
-        Window.alert("Is New: "+isNewExperiment);
-        Window.alert("updated experiment: "+updatedExperiment.getExperimentZdbID());
-*/
         for (ExperimentDTO experiment : experimentList) {
             if (experiment.equals(updatedExperiment)) {
                 if (isNewExperiment || (!experiment.getExperimentZdbID().equals(updatedExperiment.getExperimentZdbID()))) {
                     if (view.showHideToggle.isVisible()) {
-                        duplicateRowIndex = rowIndex;
-                        duplicateRowOriginalStyle = view.dataTable.getRowFormatter().getStyleName(rowIndex);
                         view.dataTable.getRowFormatter().setStyleName(rowIndex, "experiment-duplicate");
                     }
                     return true;
@@ -424,8 +416,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
 
     public void updateGenes() {
-        MarkerDTO lastAddedMarker = view.getLastAddedExperiment().getGene();
-        curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(lastAddedMarker));
+        curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(lastSelectedExperiment.getGene()));
     }
 
     public void onShowHideClick(boolean visibility) {
@@ -433,8 +424,6 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         curationExperimentRPCAsync.setExperimentVisibilitySession(publicationID, visibility,
                 new VoidAsyncCallback(errorMessage, view.errorElement, null));
         retrieveExperiments();
-/////TODO         if (view.getDisplayTable().getRowCount() == 0)
-        ///  retrieveConstructionZoneValues();
     }
 
     private void showHideClearAllLink() {
