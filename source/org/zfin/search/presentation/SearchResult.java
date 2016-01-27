@@ -78,7 +78,7 @@ public class SearchResult implements ProvidesLink {
             cssClass = " class = \"genedom\" ";
         if (id.contains("CONSTRCT"))
             cssClass = " class = \"construct\" ";
-        return "<a " + cssClass + " href=\"" + url + "\">" + "<i>"+ name +"</i>"+  "</a>";
+        return "<a " + cssClass + " href=\"" + url + "\">" +  name +  "</a>";
     }
 
     public String getLinkWithAttribution() {
