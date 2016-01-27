@@ -1,5 +1,5 @@
 #!/bin/bash
-//usr/bin/env groovy -cp "$GROOVY_CLASSPATH:." "$0" $@; exit $?
+//usr/bin/env groovy -cp "<!--|GROOVY_CLASSPATH|-->:." "$0" $@; exit $?
 
 import groovy.sql.Sql
 import org.zfin.properties.ZfinProperties
