@@ -28,7 +28,7 @@
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
-            <recipientList>smoxon@zfin.org</recipientList>
+            <recipientList>$DEFAULT_RECIPIENTS</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>MeSH term load failed. Check the job&apos;s console output for details: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
             </body>
@@ -45,7 +45,7 @@
         </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
         <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
           <email>
-            <recipientList>smoxon@zfin.org</recipientList>
+            <recipientList>$DEFAULT_RECIPIENTS</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
