@@ -1791,8 +1791,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
                         previousNameLight.setMarkerZdbID(gene.getZdbID());
                         if (gene.getZdbID().startsWith("ZDB-GENE")) {
                             previousNameLight.setAlias("<i>" + tuple[0].toString() + "</i>");
-                        } else {
-                            previousNameLight.setAlias(tuple[0].toString());
+                        }
+                        else {
+                            if (gene.getZdbID().startsWith("ZDB-CONSTRCT")) {
+                                previousNameLight.setAlias("<i>" + tuple[0].toString() + "</i>");
+                            } else {
+                                previousNameLight.setAlias(tuple[0].toString());
+                            }
                         }
                         previousNameLight.setAliasZdbID(tuple[2].toString());
                         if (tuple[1] != null) {
