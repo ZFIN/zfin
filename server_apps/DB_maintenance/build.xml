@@ -226,6 +226,8 @@
             <arg value="${validateData}/report_data"/>
             <arg value="-propertyDir"/>
             <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="-taskClassName"/>
+            <arg value="org.zfin.infrastructure.ant.DataReportTask"/>
         </java>
     </target>
 
