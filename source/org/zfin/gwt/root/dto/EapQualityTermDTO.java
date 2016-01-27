@@ -16,6 +16,8 @@ public class EapQualityTermDTO implements Serializable, Comparable<EapQualityTer
     private TermDTO term;
     private String tag;
     private String nickName;
+    public static final String ABSENT_PHENOTYPIC = "absent phenotypic";
+
 
     public String getTag() {
         return tag;
@@ -51,7 +53,7 @@ public class EapQualityTermDTO implements Serializable, Comparable<EapQualityTer
     public static Map<String, String> nicknameMap = new LinkedHashMap<>(12);
 
     static {
-        nicknameMap.put("PATO:0000462,abnormal", "absent phenotypic");
+        nicknameMap.put("PATO:0000462,abnormal", ABSENT_PHENOTYPIC);
         nicknameMap.put("PATO:0000628,abnormal", "mislocalized");
         nicknameMap.put("PATO:0000140,ameliorated", "position ok");
         nicknameMap.put("PATO:0001672,abnormal", "decreased distribution");

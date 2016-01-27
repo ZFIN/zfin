@@ -68,6 +68,7 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
     private Collection<TermEntry> termEntryUnits = new ArrayList<>(3);
     private List<CheckBox> qualityCheckBoxList = new ArrayList<>(12);
     private CheckBox notExpressedCheckBox = new CheckBox("not");
+    private CheckBox absentPhenotypicCheckBox;
 
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
 
@@ -115,7 +116,6 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
     void onClickAdd(@SuppressWarnings("unused") ClickEvent event) {
         errorElement.clearAllErrors();
         fxCurationPresenter.submitStructure();
-        //eventBus.fireEvent(new AddNewDiseaseTermEvent(disease));
     }
 
     private void createTermEntryUnits() {
@@ -212,7 +212,7 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
         populateTermEntryUnits(term);
         notExpressedCheckBox.setValue(false);
         populateEapQuality(term);
-        if (!term.isExpressionFound())
+        if (!term.isExpressionFound() && !term.isEap())
             notExpressedCheckBox.setValue(true);
         errorElement.clearAllErrors();
     }
@@ -314,12 +314,18 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
                 panel = qualityListRight;
             CheckBox qualityCheckBox = getQualityCheckBox(qualityTerm.getNickName());
             qualityCheckBoxList.add(qualityCheckBox);
+            if (qualityTerm.getNickName().equals(EapQualityTermDTO.ABSENT_PHENOTYPIC))
+                absentPhenotypicCheckBox = qualityCheckBox;
             panel.add(qualityCheckBox);
         }
     }
 
     public List<CheckBox> getQualityCheckBoxList() {
         return qualityCheckBoxList;
+    }
+
+    public CheckBox getAbsentPhenotypicCheckBox() {
+        return absentPhenotypicCheckBox;
     }
 
     public void setFxCurationPresenter(FxCurationPresenter fxCurationPresenter) {

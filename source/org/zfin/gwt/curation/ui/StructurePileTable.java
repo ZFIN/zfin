@@ -117,9 +117,12 @@ class StructurePileTable extends ZfinFlexTable {
                 Label quality = new Label(nickName);
                 if (nickName.contains("ok"))
                     quality.addStyleName("phenotype-normal");
+                if (!structure.getExpressedTerm().isExpressionFound()){
+                    quality.addStyleName("red");
+                }
                 setWidget(rowIndex, HeaderName.QUALITY_TAG.getIndex(), quality);
             }
-            if (!expressedTerm.isExpressionFound()) {
+            if (structure.getExpressedTerm().getQualityTerm() == null && !expressedTerm.isExpressionFound()) {
                 Label not = new Label("not");
                 not.setStyleName("red");
                 setWidget(rowIndex, HeaderName.QUALITY_TAG.getIndex(), not);
