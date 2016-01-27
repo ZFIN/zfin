@@ -996,8 +996,7 @@ WHERE  ( NOT g.geno_is_wildtype
                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id
                                  join feature on genofeat_feature_zdb_id = feature_zdb_id
                                  join feature_marker_relationship on fmrel_ftr_zdb_id = feature_zdb_id
-                                 join feature_type on ftrtype_name = feature_type
-                            where fmrel_type in ('is allele of','markers present', 'markers moved','contains innocuous sequence feature');"
+                                 join feature_type on ftrtype_name = feature_type;"
                    where="fish_zdb_id=fish.id"
                    cacheImpl="SortedMapBackedCache"/>
 
@@ -1024,8 +1023,7 @@ WHERE  ( NOT g.geno_is_wildtype
                                  join feature on genofeat_feature_zdb_id = feature_zdb_id
                                  join feature_marker_relationship on fmrel_ftr_zdb_id = feature_zdb_id
                                  join marker on fmrel_mrkr_zdb_id = mrkr_zdb_id
-                            where fmrel_type in ('is allele of','markers present', 'markers moved','markers missing','contains innocuous sequence feature')
-                                  and mrkr_type in ('GENE','GENEP');"
+                            where mrkr_type in ('GENE','GENEP');"
                    where="fish_zdb_id=fish.id"
                    cacheImpl="SortedMapBackedCache"/>
 
@@ -1039,8 +1037,7 @@ WHERE  ( NOT g.geno_is_wildtype
                                  join feature_marker_relationship on fmrel_ftr_zdb_id = feature_zdb_id
                                  join marker on fmrel_mrkr_zdb_id = mrkr_zdb_id
                                  join data_alias on dalias_data_zdb_id = mrkr_zdb_id
-                            where fmrel_type in ('is allele of','markers present', 'markers moved','contains innocuous sequence feature')
-                                  and mrkr_type in ('GENE','GENEP');"
+                            where mrkr_type in ('GENE','GENEP');"
                    where="fish_zdb_id=fish.id"
                    cacheImpl="SortedMapBackedCache"/>
 
