@@ -296,7 +296,7 @@ public class ResultService {
 
         String locationDisplay = MappingService.getChromosomeLocationDisplay(gene);
         if (StringUtils.isNotEmpty(locationDisplay)) {
-            String mappingDetailsLink = " <a href=\"/action/mapping/detail/" + gene.getZdbID() + "\">Details</a>";
+            String mappingDetailsLink = " <a href=\"/action/mapping/detail/" + gene.getZdbID() + "\">Mapping Details/Browsers</a>";
             result.addAttribute(LOCATION, locationDisplay + mappingDetailsLink);
         }
     }
@@ -495,7 +495,7 @@ public class ResultService {
 
     protected void addSynonyms(SearchResult result, Marker marker) {
         if (CollectionUtils.isNotEmpty(marker.getAliases())) {
-            result.addAttribute(SYNONYMS, withCommas(marker.getAliases(), "alias"));
+            result.addAttribute(SYNONYMS, withCommasAndItalics(marker.getAliases(), "alias"));
         }
     }
 
@@ -730,7 +730,15 @@ public class ResultService {
         //comma separate it
         return Joiner.on(", ").join(stringList);
     }
+    public String withCommasAndItalics(Collection collection, String property) {
 
+        //get the named property out as a list of strings
+        List<String> stringList = (List<String>) CollectionUtils.collect(collection,
+                new BeanToPropertyValueTransformer(property));
+
+        //comma separate it
+        return "<i>"+Joiner.on(", ").join(stringList)+"</i>";
+    }
     /**
      * Create a comma separated list from a property of each member of a collection
      * including a hyperlink to the zdbID

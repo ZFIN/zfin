@@ -8,6 +8,8 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import org.zfin.gwt.curation.event.AddAttributeEvent;
+import org.zfin.gwt.curation.event.AddAttributeEventHandler;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.util.AppUtils;
@@ -82,6 +84,8 @@ public class FishModule extends Composite implements EntryPoint {
                     public void onAddFish(AddNewFishEvent event) {
                         fishPresenter.go();
                         attributionModule.populateAttributeRemoval();
+                        importGenotypeView.resetGUI();
+                        genotypeConstructionView.resetGUI();
                     }
                 });
         AppUtils.EVENT_BUS.addHandler(AddNewGenotypeEvent.TYPE,
@@ -114,6 +118,27 @@ public class FishModule extends Composite implements EntryPoint {
                         attributionModule.populateAttributeRemoval();
                     }
                 });
+        AppUtils.EVENT_BUS.addHandler(RemoveAttributeEvent.TYPE,
+                new RemoveAttributeEventHandler() {
+                    @Override
+                    public void onRemoveAttribute(RemoveAttributeEvent event) {
+                        attributionModule.populateAttributeRemoval();
+                        importPresenter.updateFeatureList();
+                        genotypeConstructionPresenter.updateFeatureList();
+                        fishConstructionPresenter.updateSTRListBox();
+                    }
+                });
+        AppUtils.EVENT_BUS.addHandler(AddAttributeEvent.TYPE,
+                new AddAttributeEventHandler() {
+                    @Override
+                    public void onEvent(AddAttributeEvent event) {
+                        attributionModule.populateAttributeRemoval();
+                        importPresenter.updateFeatureList();
+                        genotypeConstructionPresenter.updateFeatureList();
+                        fishConstructionPresenter.updateSTRListBox();
+                    }
+                });
+
     }
 
     private void addHandlers() {

@@ -161,6 +161,8 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         List<ExperimentDTO> dtos = new ArrayList<>();
         for (ExpressionExperiment2 experiment : experiments) {
             ExperimentDTO dto = DTOConversionService.convertToExperimentDTO(experiment);
+            if (experiment.getFigureStageSet() != null)
+                dto.setNumberOfExpressions(experiment.getFigureStageSet().size());
             dtos.add(dto);
         }
         return dtos;

@@ -10,6 +10,8 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.zfin.gwt.curation.event.AddAttributeEvent;
+import org.zfin.gwt.curation.event.AddAttributeEventHandler;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.ui.HandlesError;
@@ -104,7 +106,7 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
 
             @Override
             public void fireEventSuccess() {
-                AppUtils.EVENT_BUS.fireEvent(new RemoveAttributeEvent());
+
             }
 
             @Override
@@ -135,10 +137,15 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
                     @Override
                     public void onRemoveAttribute(RemoveAttributeEvent event) {
                         attributionModule.populateAttributeRemoval();
-                        diseaseModelPresenter.retrieveFishList();
                     }
                 });
-
+        AppUtils.EVENT_BUS.addHandler(AddAttributeEvent.TYPE,
+                new AddAttributeEventHandler() {
+                    @Override
+                    public void onEvent(AddAttributeEvent event) {
+                        attributionModule.populateAttributeRemoval();
+                    }
+                });
     }
 
     @Override

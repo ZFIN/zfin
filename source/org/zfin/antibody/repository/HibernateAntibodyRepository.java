@@ -246,14 +246,13 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Session session = HibernateUtil.currentSession();
         StringBuffer hql = new StringBuffer();
         hql.append("select distinct antibody from Antibody antibody, ExpressionExperiment expExp,  ");
-        hql.append("                ExpressionResult res, FishExperiment fishox, Genotype geno, ");
+        hql.append("                ExpressionResult res, FishExperiment fishox, ");
         hql.append("                Experiment exp ");
         hql.append("where ");
         hql.append("       expExp.antibody = antibody ");
         hql.append("       and res.expressionExperiment = expExp ");
         hql.append("       and fishox = expExp.fishExperiment ");
-        hql.append("       and geno = fishox.fish.genotype ");
-        hql.append("       and geno.wildtype = :wildType ");
+        hql.append("       and fish.wildtype = :wildType ");
         if (includeSubstructures) {
             hql.append("   and ( res.entity.superterm = :aoTerm  OR res.entity.subterm = :aoTerm" +
                     "                                       OR exists ( select 1 from TransitiveClosure child " +

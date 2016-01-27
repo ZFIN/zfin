@@ -76,7 +76,9 @@ public class SearchResult implements ProvidesLink {
         String cssClass = "";
         if (id.startsWith("ZDB-GENE"))
             cssClass = " class = \"genedom\" ";
-        return "<a " + cssClass + " href=\"" + url + "\">" + name + "</a>";
+        if (id.contains("CONSTRCT"))
+            cssClass = " class = \"construct\" ";
+        return "<a " + cssClass + " href=\"" + url + "\">" + "<i>"+ name +"</i>"+  "</a>";
     }
 
     public String getLinkWithAttribution() {
