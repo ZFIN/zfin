@@ -20,12 +20,12 @@ Please be sure to include your contact information in the fields below. We will 
         <TR>
             <TD>*First Name</TD>
             <TD><form:input path="firstName" size="30"></form:input></TD>
-            <TD><form:errors path="firstName" cssClass="error indented-error"/></TD>
+            <TD><form:errors path="firstName" style="color:red;" /></TD>
         </TR>
         <TR>
             <TD>*Last Name</TD>
             <TD><form:input path="lastName" size="30"></form:input></TD>
-            <TD><form:errors path="lastName" cssClass="error indented-error"/></TD>
+            <TD><form:errors path="lastName" style="color:red;" /></TD>
         </TR>
         <TR>
             <TD><font color="#FFFFFF">*</font>Institution</TD>
@@ -34,13 +34,13 @@ Please be sure to include your contact information in the fields below. We will 
         <TR>
             <TD>*E-mail address</TD>
             <TD><form:input path="email" size="30"></form:input></TD>
-            <TD><form:errors path="email" cssClass="error indented-error"/></TD>
+            <TD><form:errors path="email" style="color:red;" /></TD>
         </TR>
     </TABLE>
 
     <H3>*Description:</H3>
     <form:textarea path="termDetail" cols="60" rows="8"></form:textarea>
-    <div><form:errors path="termDetail" cssClass="error indented-error"/></div>
+    <div><form:errors path="termDetail" style="color:red;"/></div>
     <hr>
 
     <font size=-1>*Required Fields</font>
