@@ -3,6 +3,7 @@ package org.zfin.publication.presentation;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,22 +12,21 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.MarkerReferenceBean;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.DiseaseAnnotation;
 import org.zfin.mutant.Fish;
+import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.orthology.Ortholog;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.zfin.repository.RepositoryFactory.*;
 
 @Controller
 @RequestMapping("/publication")
@@ -34,22 +34,49 @@ public class PublicationViewController {
 
     private Logger logger = Logger.getLogger(PublicationViewController.class);
 
+    @Autowired
+    private PublicationRepository publicationRepository;
+
+    @Autowired
+    private InfrastructureRepository infrastructureRepository;
+
+    @Autowired
+    private PhenotypeRepository phenotypeRepository;
+
     @RequestMapping("/view/{zdbID}")
     public String view(@PathVariable String zdbID, Model model, HttpServletResponse response) {
-
-        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-
-
         Publication publication = publicationRepository.getPublication(zdbID);
+
         //try zdb_replaced data if necessary
         if (publication == null) {
-            String replacedZdbID = getInfrastructureRepository().getReplacedZdbID(zdbID);
+            String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
             if (replacedZdbID != null) {
                 publication = publicationRepository.getPublication(replacedZdbID);
             }
         }
 
-        //give up
+        return getPublicationViewResponse(publication, model, response);
+    }
+
+    @RequestMapping("/view")
+    public String viewByAccessuib(@RequestParam(value = "accession", required = false) String accession,
+                                  Model model,
+                                  HttpServletResponse response) {
+        Publication publication = null;
+
+        if (StringUtils.isNotBlank(accession)) {
+            // not totally sure why this returns a list, but if it returns something non-empty let's assume
+            // that we just want the first one
+            List<Publication> pubMedPubs = publicationRepository.getPublicationByPmid(accession);
+            if (pubMedPubs.size() > 0) {
+                publication = pubMedPubs.get(0);
+            }
+        }
+
+        return getPublicationViewResponse(publication, model, response);
+    }
+
+    private String getPublicationViewResponse(Publication publication, Model model, HttpServletResponse response) {
         if (publication == null) {
             response.setStatus(HttpStatus.SC_NOT_FOUND);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
@@ -92,7 +119,7 @@ public class PublicationViewController {
         model.addAttribute("orthologyCount", orthologyCount);
         model.addAttribute("mappingDetailsCount", mappingDetailsCount);
 
-        List<DiseaseAnnotation> diseaseAnnotationList = getPhenotypeRepository().getHumanDiseaseModels(zdbID);
+        List<DiseaseAnnotation> diseaseAnnotationList = phenotypeRepository.getHumanDiseaseModels(publication.getZdbID());
         model.addAttribute("diseaseCount", diseaseAnnotationList.size());
 
         model.addAttribute("expressionAndPhenotypeLabel", PublicationService.getExpressionAndPhenotypeLabel(expressionCount, phenotypeCount));
@@ -137,9 +164,9 @@ public class PublicationViewController {
         }
 
         // assumes that the orthologs are ordered by zebrafish gene
-        PaginationResult<Ortholog> result = getPublicationRepository().getOrthologPaginationByPub(pubID, geneBean);
+        PaginationResult<Ortholog> result = publicationRepository.getOrthologPaginationByPub(pubID, geneBean);
         List<Ortholog> orthologList = result.getPopulatedResults();
-        Publication publication = getPublicationRepository().getPublication(pubID);
+        Publication publication = publicationRepository.getPublication(pubID);
         List<GeneBean> beanList = new ArrayList<>(orthologList.size() * 4);
         List<Ortholog> orthologsPerGene = new ArrayList<>(5);
         for (int index = 0; index < orthologList.size(); index++) {
@@ -177,8 +204,8 @@ public class PublicationViewController {
                                   Model model) {
         logger.info("zdbID: " + pubID);
 
-        List<Feature> featureList = getPublicationRepository().getFeaturesByPublication(pubID);
-        Publication publication = getPublicationRepository().getPublication(pubID);
+        List<Feature> featureList = publicationRepository.getFeaturesByPublication(pubID);
+        Publication publication = publicationRepository.getPublication(pubID);
 
         model.addAttribute("featureList", featureList);
         model.addAttribute("publication", publication);
@@ -191,8 +218,8 @@ public class PublicationViewController {
                                Model model) {
         logger.info("zdbID: " + pubID);
 
-        List<Fish> featureList = getPublicationRepository().getFishByPublication(pubID);
-        Publication publication = getPublicationRepository().getPublication(pubID);
+        List<Fish> featureList = publicationRepository.getFishByPublication(pubID);
+        Publication publication = publicationRepository.getPublication(pubID);
 
         model.addAttribute("fishList", featureList);
         model.addAttribute("publication", publication);
@@ -203,12 +230,12 @@ public class PublicationViewController {
     @RequestMapping("/{zdbID}/disease")
     public String disease(@PathVariable String zdbID, Model model, HttpServletResponse response) {
 
-        Publication publication = getPublicationRepository().getPublication(zdbID);
+        Publication publication = publicationRepository.getPublication(zdbID);
         //try zdb_replaced data if necessary
         if (publication == null) {
-            String replacedZdbID = getInfrastructureRepository().getReplacedZdbID(zdbID);
+            String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
             if (replacedZdbID != null) {
-                publication = getPublicationRepository().getPublication(replacedZdbID);
+                publication = publicationRepository.getPublication(replacedZdbID);
             }
         }
 
@@ -219,7 +246,7 @@ public class PublicationViewController {
         }
 
         model.addAttribute("publication", publication);
-        model.addAttribute("diseases", getPhenotypeRepository().getHumanDiseaseModels(publication.getZdbID()));
+        model.addAttribute("diseases", phenotypeRepository.getHumanDiseaseModels(publication.getZdbID()));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication: " + publication.getShortAuthorList().replace("<i>", "").replace("</i> Disease", ""));
 
         return "publication/publication-disease.page";
@@ -228,7 +255,7 @@ public class PublicationViewController {
     @ResponseBody
     @RequestMapping(value = "{zdbID}/genes", method = RequestMethod.GET)
     public List<MarkerDTO> getPublicationGenes(@PathVariable String zdbID) {
-        List<Marker> genes = getPublicationRepository().getGenesByPublication(zdbID, false);
+        List<Marker> genes = publicationRepository.getGenesByPublication(zdbID, false);
         List<MarkerDTO> dtos = new ArrayList<>();
         for (Marker gene : genes) {
             dtos.add(DTOConversionService.convertToMarkerDTO(gene));
@@ -240,7 +267,7 @@ public class PublicationViewController {
     @RequestMapping(value = "/lookup", method = RequestMethod.GET)
     public List<MarkerReferenceBean> publicationLookup(@RequestParam("q") String query) {
         List<MarkerReferenceBean> results = new ArrayList<>();
-        Publication publication = getPublicationRepository().getPublication(query);
+        Publication publication = publicationRepository.getPublication(query);
         if (publication != null) {
             results.add(MarkerReferenceBean.convert(publication));
         }
