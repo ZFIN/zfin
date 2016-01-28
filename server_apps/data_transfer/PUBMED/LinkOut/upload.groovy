@@ -12,15 +12,15 @@ def db = [
 ]
 
 Sql.withInstance(db) { sql ->
-  new File("publication.uid").withWriter { out ->
-    sql.eachRow("SELECT accession_no FROM publication WHERE accession_no IS NOT NULL") { row ->
-      out.writeLine(row.accession_no as String)
+    new File("publication.uid").withWriter { out ->
+        sql.eachRow("SELECT accession_no FROM publication WHERE accession_no IS NOT NULL") { row ->
+            out.writeLine(row.accession_no as String)
+        }
     }
-  }
-
+}
 
 client = new FTPClient()
-client.connect("ftp-private.ncbi.nlm.nih.gov")
-client.enterLocalPassiveMode()
-client.login("zfin", "TeDZUG3E")
-println(client.listFiles())
+//client.connect("ftp-private.ncbi.nlm.nih.gov")
+//client.enterLocalPassiveMode()
+//client.login("zfin", "TeDZUG3E")
+//println(client.listFiles())
