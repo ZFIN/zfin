@@ -1,5 +1,6 @@
 package org.zfin.publication.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
@@ -46,7 +47,6 @@ public class PublicationViewController {
     @RequestMapping("/view/{zdbID}")
     public String view(@PathVariable String zdbID, Model model, HttpServletResponse response) {
         Publication publication = publicationRepository.getPublication(zdbID);
-
         //try zdb_replaced data if necessary
         if (publication == null) {
             String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
@@ -55,28 +55,7 @@ public class PublicationViewController {
             }
         }
 
-        return getPublicationViewResponse(publication, model, response);
-    }
-
-    @RequestMapping("/view")
-    public String viewByAccessuib(@RequestParam(value = "accession", required = false) String accession,
-                                  Model model,
-                                  HttpServletResponse response) {
-        Publication publication = null;
-
-        if (StringUtils.isNotBlank(accession)) {
-            // not totally sure why this returns a list, but if it returns something non-empty let's assume
-            // that we just want the first one
-            List<Publication> pubMedPubs = publicationRepository.getPublicationByPmid(accession);
-            if (pubMedPubs.size() > 0) {
-                publication = pubMedPubs.get(0);
-            }
-        }
-
-        return getPublicationViewResponse(publication, model, response);
-    }
-
-    private String getPublicationViewResponse(Publication publication, Model model, HttpServletResponse response) {
+        //give up
         if (publication == null) {
             response.setStatus(HttpStatus.SC_NOT_FOUND);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
@@ -119,7 +98,7 @@ public class PublicationViewController {
         model.addAttribute("orthologyCount", orthologyCount);
         model.addAttribute("mappingDetailsCount", mappingDetailsCount);
 
-        List<DiseaseAnnotation> diseaseAnnotationList = phenotypeRepository.getHumanDiseaseModels(publication.getZdbID());
+        List<DiseaseAnnotation> diseaseAnnotationList = phenotypeRepository.getHumanDiseaseModels(zdbID);
         model.addAttribute("diseaseCount", diseaseAnnotationList.size());
 
         model.addAttribute("expressionAndPhenotypeLabel", PublicationService.getExpressionAndPhenotypeLabel(expressionCount, phenotypeCount));
@@ -152,6 +131,25 @@ public class PublicationViewController {
         return "publication/publication-view.page";
     }
 
+    @RequestMapping("/view")
+    public String viewByAccession(@RequestParam(value = "accession", required = false) String accession,
+                                  HttpServletResponse response) {
+        Publication publication = null;
+
+        if (StringUtils.isNotBlank(accession)) {
+            List<Publication> pubMedPubs = publicationRepository.getPublicationByPmid(accession);
+            if (CollectionUtils.isNotEmpty(pubMedPubs)) {
+                publication = pubMedPubs.get(0);
+            }
+        }
+
+        if (publication == null) {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        return "redirect:/" + publication.getZdbID();
+    }
 
     @RequestMapping("/{pubID}/orthology-list")
     public String showOrthologyList(@PathVariable String pubID,
