@@ -9,8 +9,6 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.*;
-import org.zfin.gwt.root.util.LookupRPCService;
-import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 
 import java.util.*;
 
@@ -67,10 +65,7 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
     private Map<EntityPart, TermEntry> termEntryUnitsMap = new HashMap<>(5);
     private Collection<TermEntry> termEntryUnits = new ArrayList<>(3);
     private List<CheckBox> qualityCheckBoxList = new ArrayList<>(12);
-    private CheckBox notExpressedCheckBox = new CheckBox("not");
-    private CheckBox absentPhenotypicCheckBox;
-
-    private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
+    protected CheckBox notExpressedCheckBox = new CheckBox("not");
 
     public ConstructionZoneModule() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -101,6 +96,8 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
         box.setStyleName("small");
         if (name.contains("ok"))
             box.addStyleName("phenotype-normal");
+        if (name.equals(EapQualityTermDTO.ABSENT_PHENOTYPIC))
+            box.addStyleName("red");
         return box;
     }
 
@@ -189,34 +186,6 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
         return termEntryUnitsMap.get(entityPart);
     }
 
-    /**
-     * This method takes an ExpressedTermDTO and pre-populates the construction
-     * zone with the given entities. The EntityPart defines which part
-     * should be displayed in the term info box.
-     * A pile structure consists (currently) of Superterm : Subterm : Quality
-     *
-     * @param term           full post-composed structure
-     * @param selectedEntity entity
-     */
-    void prepopulateConstructionZone(ExpressedTermDTO term, EntityPart selectedEntity) {
-        switch (selectedEntity) {
-            case ENTITY_SUPERTERM:
-                lookupRPC.getTermInfo(term.getEntity().getSuperTerm().getOntology(), term.getEntity().getSuperTerm().getZdbID(),
-                        new TermInfoCallBack(termInfoBox, term.getEntity().getSuperTerm().getZdbID()));
-                break;
-            case ENTITY_SUBTERM:
-                lookupRPC.getTermInfo(term.getEntity().getSubTerm().getOntology(), term.getEntity().getSubTerm().getZdbID(),
-                        new TermInfoCallBack(termInfoBox, term.getEntity().getSubTerm().getZdbID()));
-                break;
-        }
-        populateTermEntryUnits(term);
-        notExpressedCheckBox.setValue(false);
-        populateEapQuality(term);
-        if (!term.isExpressionFound() && !term.isEap())
-            notExpressedCheckBox.setValue(true);
-        errorElement.clearAllErrors();
-    }
-
     private void populateEapQuality(ExpressedTermDTO term) {
         EapQualityTermDTO dto = term.getQualityTerm();
         if (dto == null) {
@@ -235,7 +204,16 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
         }
     }
 
-    private void populateTermEntryUnits(ExpressedTermDTO term) {
+    protected void populateFullTerm(ExpressedTermDTO term) {
+        populateTermEntryUnits(term);
+        notExpressedCheckBox.setValue(false);
+        populateEapQuality(term);
+        if (!term.isExpressionFound() && !term.isEap())
+            notExpressedCheckBox.setValue(true);
+        errorElement.clearAllErrors();
+    }
+
+    protected void populateTermEntryUnits(ExpressedTermDTO term) {
         resetConstructionValuesZone();
         for (EntityPart entityPart : EntityPart.values())
             populateSingleTermEntry(term, entityPart);
@@ -314,18 +292,12 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
                 panel = qualityListRight;
             CheckBox qualityCheckBox = getQualityCheckBox(qualityTerm.getNickName());
             qualityCheckBoxList.add(qualityCheckBox);
-            if (qualityTerm.getNickName().equals(EapQualityTermDTO.ABSENT_PHENOTYPIC))
-                absentPhenotypicCheckBox = qualityCheckBox;
             panel.add(qualityCheckBox);
         }
     }
 
     public List<CheckBox> getQualityCheckBoxList() {
         return qualityCheckBoxList;
-    }
-
-    public CheckBox getAbsentPhenotypicCheckBox() {
-        return absentPhenotypicCheckBox;
     }
 
     public void setFxCurationPresenter(FxCurationPresenter fxCurationPresenter) {

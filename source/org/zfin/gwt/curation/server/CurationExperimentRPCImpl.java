@@ -993,6 +993,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
                 relatedStructure.setRelationship(rel.getRelationshipType().getDbMappedName());
                 relatedStructure.setStart(start);
                 relatedStructure.setEnd(end);
+                relatedStructure.getExpressedTerm().setExpressionFound(selectedPileStructure.getExpressedTerm().isExpressionFound());
                 EapQualityTermDTO qualityTerm = DTOConversionService.convertToEapQualityTermDTO(expressionStructure);
                 if (qualityTerm != null)
                     relatedStructure.getExpressedTerm().setQualityTerm(qualityTerm);
