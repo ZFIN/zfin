@@ -100,6 +100,7 @@
         <property name="nameOrder" column="fish_name_order"/>
         <property name="handle" column="fish_handle"/>
         <property name="order" column="fish_order"/>
+        <property name="wildtype" column="fish_is_wildtype"/>
         <property name="fishFunctionalAffectedGeneCount" column="fish_functional_affected_gene_count"/>
         <many-to-one name="genotype" column="fish_genotype_zdb_id" not-null="true"/>
 
