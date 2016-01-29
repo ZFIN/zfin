@@ -18,6 +18,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.infrastructure.ReplacementZdbID;
 import org.zfin.infrastructure.service.ZdbIDService;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
@@ -99,9 +100,20 @@ public class SearchPrototypeController {
         }
 
 
-        if (StringUtils.isNotEmpty(q) && ZfinStringUtils.isZdbId(q) && zdbIDService.isActiveZdbID(q)) {
-	        logger.debug("Redirecting to /" + q);
-	        return "redirect:/" + q;
+        if (StringUtils.isNotEmpty(q)) {
+            String url = null;
+
+            String replacementZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(q);
+
+            if (zdbIDService.isActiveZdbID(q)) {
+                url = "/" + q;
+            } else if (StringUtils.isNotEmpty(replacementZdbID)) {
+                url = "/" + replacementZdbID;
+            }
+
+            if (StringUtils.isNotEmpty(url)) {
+                return "redirect:" + url;
+            }
         }
 
 
