@@ -110,7 +110,7 @@
                 <br/>
 
                 <div align="left">
-                    <a href="http://zfin.org/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
+                    <a href="/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
                 </div>
             </td>
         </tr>
