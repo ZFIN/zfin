@@ -70,7 +70,7 @@
 	<security:headers>
 			<security:hsts
 			include-subdomains="false"
-			max-age-seconds="60" />
+			max-age-seconds="7200" />
 	</security:headers>
         <security:csrf disabled="true"/>
         <security:form-login login-page="/action/login"
