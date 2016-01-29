@@ -5,9 +5,11 @@
     <div>
       <h3>Curation</h3>
       <ul>
+      <?MICOMMENT>
         <?MIVAR>
         <li>View <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&query_results=exist&curator=$ZDB_ident&cur_status=is "><em>my open pubs</em></a></li>
         <?/MIVAR>
+        <?/MICOMMENT>
         <li>
           Add
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENE"><em>gene</em></a>,
