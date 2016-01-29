@@ -252,7 +252,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         hql.append("       expExp.antibody = antibody ");
         hql.append("       and res.expressionExperiment = expExp ");
         hql.append("       and fishox = expExp.fishExperiment ");
-        hql.append("       and fish.wildtype = :wildType ");
+        hql.append("       and fishox.fish.wildtype = :wildType ");
         if (includeSubstructures) {
             hql.append("   and ( res.entity.superterm = :aoTerm  OR res.entity.subterm = :aoTerm" +
                     "                                       OR exists ( select 1 from TransitiveClosure child " +

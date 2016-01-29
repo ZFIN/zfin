@@ -5,8 +5,11 @@ import com.google.gwt.user.client.ui.CheckBox;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.TermEntry;
+import org.zfin.gwt.root.ui.TermInfoCallBack;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
+import org.zfin.gwt.root.util.LookupRPCService;
+import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.ArrayList;
@@ -20,6 +23,8 @@ import java.util.Map;
 public class FxCurationPresenter implements Presenter {
 
     private PileStructuresRPCAsync pileStructureRPCAsync = PileStructuresRPC.App.getInstance();
+    private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
+
     private ConstructionZoneModule view;
     private String publicationID;
     private List<EapQualityTermDTO> fullQualityList = new ArrayList<>();
@@ -46,11 +51,6 @@ public class FxCurationPresenter implements Presenter {
 
     public void clearErrorMessages() {
         view.getErrorElement().setError("");
-    }
-
-    private void resetUI() {
-        view.getErrorElement().clearAllErrors();
-        clearErrorMessages();
     }
 
     public void submitStructure() {
@@ -125,8 +125,28 @@ public class FxCurationPresenter implements Presenter {
         return superterm;
     }
 
-    public void prepopulateConstructionZone(ExpressedTermDTO expressedTerm, EntityPart pileEntity) {
-        view.prepopulateConstructionZone(expressedTerm, pileEntity);
+    /**
+     * This method takes an ExpressedTermDTO and pre-populates the construction
+     * zone with the given entities. The EntityPart defines which part
+     * should be displayed in the term info box.
+     * A pile structure consists (currently) of Superterm : Subterm : Quality
+     *
+     * @param term           full post-composed structure
+     * @param selectedEntity entity
+     */
+    public void prepopulateConstructionZone(ExpressedTermDTO term, EntityPart selectedEntity) {
+        switch (selectedEntity) {
+            case ENTITY_SUPERTERM:
+                lookupRPC.getTermInfo(term.getEntity().getSuperTerm().getOntology(), term.getEntity().getSuperTerm().getZdbID(),
+                        new TermInfoCallBack(view.termInfoBox, term.getEntity().getSuperTerm().getZdbID()));
+                break;
+            case ENTITY_SUBTERM:
+                lookupRPC.getTermInfo(term.getEntity().getSubTerm().getOntology(), term.getEntity().getSubTerm().getZdbID(),
+                        new TermInfoCallBack(view.termInfoBox, term.getEntity().getSubTerm().getZdbID()));
+                break;
+        }
+        view.populateFullTerm(term);
+
     }
 
 

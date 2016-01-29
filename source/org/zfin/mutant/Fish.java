@@ -20,6 +20,7 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
     private String nameOrder;
     private String handle;
     private long order;
+    private boolean wildtype;
 
     private Set<FishExperiment> fishExperiments;
 
@@ -40,6 +41,14 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
 
     public void setGenotype(Genotype genotype) {
         this.genotype = genotype;
+    }
+
+    public boolean isWildtype() {
+        return wildtype;
+    }
+
+    public void setWildtype(boolean wildtype) {
+        this.wildtype = wildtype;
     }
 
     public String getHandle() {
