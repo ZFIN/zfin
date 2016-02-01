@@ -25,7 +25,7 @@
 				and mrkr_Zdb_id = construct_zdb_id);
 
        update marker
-    	   set mrkr_abbrev = (Select lower(construct_name) 
+    	   set mrkr_abbrev = (Select construct_name
 	       		     	from construct 
 				      where construct_Zdb_id = mrkr_zdb_id
       		  	     	       and construct_zdb_id = constructZdbId)
