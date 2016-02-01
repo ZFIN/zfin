@@ -215,12 +215,12 @@ Create dba function regen_expression_term_fast_search()
 
     	  update xpatfs_working
   	       set etfs_is_xpatres_term = 't'
- 	       where exists (select 'x' from expression_result2 where xpatres_superterm_zdb_id = etfs_term_zdb_id
+ 	       where exists (select 'x' from expression_result where xpatres_superterm_zdb_id = etfs_term_zdb_id
 	       	     	     and  etfs_xpatres_zdb_id =  xpatres_pk_id);
 
 	  update xpatfs_working
   	       set etfs_is_xpatres_term = 't'
- 	       where exists (select 'x' from expression_result2 where xpatres_subterm_zdb_id = etfs_term_zdb_id
+ 	       where exists (select 'x' from expression_result where xpatres_subterm_zdb_id = etfs_term_zdb_id
 	       	     	     and  etfs_xpatres_zdb_id =  xpatres_pk_id);
       
 	 let errorHint = "rename table xpatfs_new";
