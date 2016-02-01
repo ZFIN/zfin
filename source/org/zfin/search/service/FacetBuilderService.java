@@ -149,7 +149,7 @@ public class FacetBuilderService {
         FacetGroup expressedGene = new FacetGroup("Expressed Gene", true);
         expressedGene.addFacet(buildFacet("zebrafish_gene", true, response, filterQuerySelectionMap, baseUrl));
         expressedGene.addFacet(buildFacet("reporter_gene", false, response, filterQuerySelectionMap, baseUrl));
-        expressedGene.setFacetQueries(buildFacetQueries(asList(FacetQueryEnum.ANY_ZEBRAFISH_GENE, FacetQueryEnum.ANY_REPORTER_GENE), response, filterQuerySelectionMap, baseUrl));
+        //expressedGene.setFacetQueries(buildFacetQueries(asList(FacetQueryEnum.ANY_ZEBRAFISH_GENE, FacetQueryEnum.ANY_REPORTER_GENE), response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(expressedGene);
 
         facetGroups.add(buildSingleFacetGroup("Expressed In Anatomy", EXPRESSIONS_ANATOMY_TF.getName(), true, response, filterQuerySelectionMap, baseUrl));
@@ -160,8 +160,8 @@ public class FacetBuilderService {
         wildtypeGroup.setRootOnly(true);
         facetGroups.add(wildtypeGroup);
         facetGroups.add(buildSingleFacetGroup("Assay", "assay", false, response, filterQuerySelectionMap, baseUrl));
-        FacetGroup e = buildSingleFacetGroup("Genotype", "genotype", false, response, filterQuerySelectionMap, baseUrl);
-        facetGroups.add(e);
+        FacetGroup genotype = buildSingleFacetGroup("Genotype", "genotype", false, response, filterQuerySelectionMap, baseUrl);
+        facetGroups.add(genotype);
         List<FacetQuery> facetQueryList = new ArrayList<>();
         for (FacetQueryEnum facetQueryEnum : Category.EXPRESSIONS.getFacetQueries()) {
             Integer count = response.getFacetQuery().get(facetQueryEnum.getQuery());
@@ -187,7 +187,7 @@ public class FacetBuilderService {
                 facetQueryList.add(facetQuery);
             }
         }
-        e.setFacetQueries(facetQueryList);
+        genotype.setFacetQueries(facetQueryList);
 
         facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)", "sequence_targeting_reagent", false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Experimental Conditions", "experimental_conditions", false, response, filterQuerySelectionMap, baseUrl));
