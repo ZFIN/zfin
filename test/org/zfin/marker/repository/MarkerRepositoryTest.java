@@ -425,38 +425,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
 
-
-    @Test
-    public void getMarkersByAbbreviationGroupAndAttribution() {
-        // note, that is an lower-case 'L' not the number one.
-        String markerAbbreviation = "tg(kdrl:grcfp)";
-        String pub = "ZDB-PUB-030527-16";
-        List<Marker> markers = null;
-        markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution("Tg(", Marker.TypeGroup.CONSTRUCT, pub);
-        assertTrue(containsMarkerName(markerAbbreviation, markers));
-        markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution("GRCFP", Marker.TypeGroup.CONSTRUCT, pub);
-        assertTrue(containsMarkerName(markerAbbreviation, markers));
-        markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution("CFP", Marker.TypeGroup.CONSTRUCT, pub);
-        assertTrue(containsMarkerName(markerAbbreviation, markers));
-        markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution("drl:G", Marker.TypeGroup.CONSTRUCT, pub);
-        assertTrue(containsMarkerName(markerAbbreviation, markers));
-
-    }
-
-
-    private boolean containsMarkerName(String markerName, List<Marker> markers) {
-        if (markers == null || markers.size() == 0) {
-            return false;
-        }
-        for (Marker marker : markers) {
-            if (marker.getAbbreviation().equals(markerName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
     @Test
     public void testClone() {
         Session session = HibernateUtil.currentSession();
