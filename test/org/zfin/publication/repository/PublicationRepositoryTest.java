@@ -195,19 +195,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getFiguresForProbesAndPublication() {
-        //  probe eu815
-        String probeZdbID = "ZDB-EST-060130-371";
-        // publication
-        String pubZdbID = "ZDB-PUB-051025-1";
-        List<Figure> figs = publicationRepository.getFiguresByProbeAndPublication(probeZdbID, pubZdbID);
-        assertTrue(figs != null);
-//        assertEquals("6 figures", 6, figs.size());
-
-    }
-
-
-    @Test
     public void getFigurePublicationsForProbes() {
         //  probe eu815
         String probeZdbID = "ZDB-EST-051103-38";
