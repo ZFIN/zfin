@@ -207,26 +207,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getFiguresForProbes() {
-        //  probe eu815
-        String probeZdbID = "ZDB-EST-051103-38";
-        Marker probe = new Marker();
-        probe.setZdbID(probeZdbID);
-        //  gene ascl1b
-        String geneZdbID = "ZDB-GENE-980526-174";
-        Marker gene = new Marker();
-        gene.setZdbID(geneZdbID);
-        // neural rod
-        String aoZdbID = "ZDB-ANAT-010921-561";
-        GenericTerm item = new GenericTerm();
-        item.setZdbID(aoZdbID);
-        List<Figure> figs = publicationRepository.getFiguresPerProbeAndAnatomy(gene, probe, item);
-        assertTrue(figs != null);
-//        assertEquals("1 figures", 1, figs.size());
-
-    }
-
-    @Test
     public void getFigurePublicationsForProbes() {
         //  probe eu815
         String probeZdbID = "ZDB-EST-051103-38";
