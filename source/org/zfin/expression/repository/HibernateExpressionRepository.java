@@ -1152,28 +1152,45 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      */
     @Override
     public void createExpressionPile(String publicationID) {
-        List<ExpressionResult> expressionResults = getAllExpressionResults(publicationID);
+        List<ExpressionResult2> expressionResults = getAllExpressionResults(publicationID);
         if (expressionResults == null || expressionResults.isEmpty()) {
             return;
         }
         Publication publication = getPublicationRepository().getPublication(publicationID);
-        Set<ExpressionStructure> distinctStructures = new HashSet<ExpressionStructure>();
-        for (ExpressionResult expressionResult : expressionResults) {
-            ExpressionStructure expressionStructure = instantiateExpressionStructure(expressionResult, publication);
-            // only create structures that are not already on the pile.
-            if (distinctStructures.add(expressionStructure)) {
-                createPileStructure(expressionStructure);
+        Set<ExpressionStructure> distinctStructures = new HashSet<>();
+        for (ExpressionResult2 expressionResult : expressionResults) {
+            Set<ExpressionStructure> expressionStructureSet = instantiateExpressionStructure(expressionResult, publication);
+            for (ExpressionStructure structure : expressionStructureSet) {
+                // only create structures that are not already on the pile.
+                if (distinctStructures.add(structure))
+                    createPileStructure(structure);
             }
         }
 
     }
 
-    private ExpressionStructure instantiateExpressionStructure(ExpressionResult expressionResult, Publication publication) {
+    private Set<ExpressionStructure> instantiateExpressionStructure(ExpressionResult2 expressionResult, Publication publication) {
+        Set<ExpressionStructure> structureList = new HashSet<>();
+        if (expressionResult.isEap()) {
+            for (ExpressionPhenotypeTerm quality : expressionResult.getPhenotypeTermSet()) {
+                ExpressionStructure structure = getExpressionStructure(expressionResult, publication);
+                structure.setEapQualityTerm(quality.getQualityTerm());
+                structure.setTag(quality.getTag());
+                structureList.add(structure);
+            }
+        } else {
+            structureList.add(getExpressionStructure(expressionResult, publication));
+        }
+        return structureList;
+    }
+
+    private ExpressionStructure getExpressionStructure(ExpressionResult2 expressionResult, Publication publication) {
         ExpressionStructure structure = new ExpressionStructure();
         structure.setDate(new Date());
         structure.setPerson(ProfileService.getCurrentSecurityUser());
         structure.setPublication(publication);
         structure.setSuperterm(expressionResult.getSuperTerm());
+        structure.setExpressionFound(expressionResult.isExpressionFound());
         GenericTerm subTerm = expressionResult.getSubTerm();
         if (subTerm != null) {
             structure.setSubterm(subTerm);
@@ -1181,13 +1198,13 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return structure;
     }
 
-    private List<ExpressionResult> getAllExpressionResults(String publicationID) {
+    private List<ExpressionResult2> getAllExpressionResults(String publicationID) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select distinct expression from ExpressionResult expression where" +
-                "          expression.expressionExperiment.publication.id= :publicationID";
+        String hql = "select distinct expression from ExpressionResult2 expression where" +
+                "          expression.expressionFigureStage.expressionExperiment.publication.id= :publicationID";
         Query query = session.createQuery(hql);
         query.setParameter("publicationID", publicationID);
-        return (List<ExpressionResult>) query.list();
+        return (List<ExpressionResult2>) query.list();
 
     }
 

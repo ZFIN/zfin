@@ -67,5 +67,14 @@ public class ExpressionPhenotypeTerm {
     public void setTag(String tag) {
         this.tag = tag;
     }
+
+    public boolean isAbsentPhenotypic() {
+        return qualityTerm.getOboID().equals("PATO:0000462");
+    }
+
+    @Override
+    public String toString() {
+        return qualityTerm +": "+tag;
+    }
 }
 

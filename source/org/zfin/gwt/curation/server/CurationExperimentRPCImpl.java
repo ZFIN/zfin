@@ -925,13 +925,15 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
                     else
                         expressionStructure = expRepository.getExpressionStructure(pileStructure.getZdbID());
                     if (expressionStructure == null)
-                        LOG.error("Could not find pile structure " + pileStructure.getZdbID());
-                    //TODO need to report back to UI
+                        throw new ValidationException("Could not find pile structure " + pileStructure.getZdbID());
+
                     // add expression if marked as such
                     if (pileStructure.getAction() == PileStructureAnnotationDTO.Action.ADD) {
                         ExpressedTermDTO expTerm = addExpressionToAnnotation(experiment, expressionStructure, pileStructure.isExpressed());
                         if (experiment.getExpressionExperiment().isWildtype() && expTerm != null && expTerm.isEap())
                             throw new ValidationException("Cannot add an EaP annotation to a wildtype / standard fish");
+                        if (experiment.hasInvalidCombination())
+                            throw new ValidationException("Cannot add 'absent phenotypic with a non-absent phenotypic term");
                         if (expTerm != null) {
                             dto.addExpressedTerm(expTerm);
                             updatedAnnotations.add(dto);
@@ -1075,37 +1077,46 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
 
     private boolean experimentHasExpression(ExpressionFigureStage experiment, ExpressionStructure expressionStructure, boolean expressed) {
         for (ExpressionResult2 result : experiment.getExpressionResultSet()) {
-            if (result.getSuperTerm().equals(expressionStructure.getSuperterm())) {
-                String subtermID = null;
-                Term term = result.getSubTerm();
-                if (term != null)
-                    subtermID = term.getZdbID();
-                // check if subterms are equal or both null
-                if ((term == null && expressionStructure.getSubterm() == null) ||
-                        (term != null && expressionStructure.getSubterm() != null)) {
-                    // check not-expressed
-                    if (result.isExpressionFound() == expressionStructure.isExpressionFound()) {
-                        // check qualities
-                        if (CollectionUtils.isEmpty(result.getPhenotypeTermSet()) && expressionStructure.getEapQualityTerm() == null)
-                            return true;
-                        if (CollectionUtils.isNotEmpty(result.getPhenotypeTermSet()) && expressionStructure.getEapQualityTerm() != null) {
-                            for (ExpressionPhenotypeTerm qualityTerm : result.getPhenotypeTermSet()) {
-                                if (qualityTerm.getQualityTerm().equals(expressionStructure.getEapQualityTerm()) &&
-                                        qualityTerm.getTag().equals(expressionStructure.getTag())) {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (subtermID != null && expressionStructure.getSubterm() != null &&
-                        subtermID.equals(expressionStructure.getSubterm().getZdbID()) &&
-                        expressed == result.isExpressionFound()) {
-                    return true;
-                }
-            }
+            if (expressionResultHasExpressionStructure(expressionStructure, result))
+                return true;
         }
         return false;
+    }
+
+    private boolean expressionResultHasExpressionStructure(ExpressionStructure expressionStructure, ExpressionResult2 result) {
+        if (!result.getSuperTerm().equals(expressionStructure.getSuperterm()))
+            return false;
+        String subtermID = null;
+        Term term = result.getSubTerm();
+        if (term != null)
+            subtermID = term.getZdbID();
+        if (subtermID == null && expressionStructure.getSubterm() != null ||
+                subtermID != null && expressionStructure.getSubterm() == null)
+            return false;
+        if (subtermID != null && !subtermID.equals(expressionStructure.getSubterm().getZdbID()))
+            return false;
+        // check expressed_in
+        if (result.isExpressionFound() != expressionStructure.isExpressionFound())
+            return false;
+        // check qualities
+        if ((CollectionUtils.isEmpty(result.getPhenotypeTermSet()) && expressionStructure.getEapQualityTerm() != null) ||
+                (CollectionUtils.isNotEmpty(result.getPhenotypeTermSet()) && expressionStructure.getEapQualityTerm() == null))
+            return false;
+        // if no EaP is found then they must equal
+        if (CollectionUtils.isEmpty(result.getPhenotypeTermSet()))
+            return true;
+
+        // check if a matching quality is found
+        boolean isMatchingQuality = false;
+        boolean isMatchingTag = false;
+        for (ExpressionPhenotypeTerm qualityTerm : result.getPhenotypeTermSet()) {
+            if (qualityTerm.getQualityTerm().equals(expressionStructure.getEapQualityTerm())) {
+                isMatchingQuality = true;
+            }
+            if (qualityTerm.getTag().equals(expressionStructure.getTag()))
+                isMatchingTag = true;
+        }
+        return isMatchingQuality && isMatchingTag;
     }
 
     private void removeExpressionToAnnotation(ExpressionFigureStage expressionFigureStage, ExpressionStructure expressionStructure) {

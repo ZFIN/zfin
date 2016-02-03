@@ -1,7 +1,5 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RadioButton;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
@@ -43,9 +41,6 @@ public class StructurePilePresenter implements Presenter {
 
     public void bind() {
         view.getStructurePileTable().setRemoveStructureCallBack(new RemovePileStructureCallback());
-        view.getReCreatePile().addClickHandler(new CreateExpressionPileHandler());
-        //view.getReCreatePile().setVisible(false);
-
         addDynamicClickHandler();
     }
 
@@ -216,6 +211,11 @@ public class StructurePilePresenter implements Presenter {
         return intersectionOfStructures;
     }
 
+    public void reCreatePile() {
+        pileStructureRPCAsync.recreateExpressionStructurePile(publicationID, new RetrieveExpressionPileCallback());
+
+    }
+
     private class RetrieveStructuresCallback extends ZfinAsyncCallback<List<ExpressionPileStructureDTO>> {
 
         private static final String UNSPECIFIED = "unspecified";
@@ -346,14 +346,6 @@ public class StructurePilePresenter implements Presenter {
         @Override
         public void onFailureCleanup() {
 
-        }
-    }
-
-    private class CreateExpressionPileHandler implements ClickHandler {
-
-        public void onClick(ClickEvent clickEvent) {
-            view.getLoadingImage().setVisible(true);
-            pileStructureRPCAsync.recreateExpressionStructurePile(publicationID, new RetrieveExpressionPileCallback());
         }
     }
 
