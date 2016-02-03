@@ -995,37 +995,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
 //        return markerList;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Marker> getMarkersByAbbreviationGroupAndAttribution(String name, Marker.TypeGroup markerType, String pubZdbId) {
-        List<Marker> markerList = new ArrayList<Marker>();
-
-        MarkerTypeGroup group = getMarkerTypeGroupByName(markerType.name());
-        if (group == null) {
-            return null;
-        }
-        MarkerType[] types = new MarkerType[group.getTypeStrings().size()];
-        int index = 0;
-        for (String type : group.getTypeStrings()) {
-            types[index++] = getMarkerTypeByName(type);
-        }
-
-        String hql = " select distinct m from Marker m , PublicationAttribution pa "
-                + " where lower(m.abbreviation) like lower(:name)  "
-                + " and pa.dataZdbID = m.zdbID  "
-                + " and pa.sourceZdbID = :publicationZdbId "
-                + " and m.markerType in (:types)  ";
-//                + " order by m.abbreviationOrder asc " ;
-        markerList.addAll(HibernateUtil.currentSession()
-                .createQuery(hql)
-                .setString("name", "%" + name + "%")
-                .setString("publicationZdbId", pubZdbId)
-                .setParameterList("types", types)
-                .list());
-
-        Collections.sort(markerList, new MarkerAbbreviationComparator(name));
-
-        return markerList;
-    }
 
     public List<Marker> getConstructsByAttribution(String name) {
         List<Marker> markerList = new ArrayList<Marker>();
