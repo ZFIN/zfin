@@ -77,6 +77,15 @@ public class ExpressionStructure extends PostComposedEntity {
         this.expressionFound = expressionFound;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(getSuperterm().getTermName());
+        if(getSubterm() != null)
+            builder.append(": "+getSubterm().getTermName());
+        builder.append(": "+eapQualityTerm.getTermName() +": "+tag);
+        return builder.toString();
+    }
+
     /*
     public int compareTo(ExpressionStructure o) {
         if (!(o instanceof ExpressionStructure))

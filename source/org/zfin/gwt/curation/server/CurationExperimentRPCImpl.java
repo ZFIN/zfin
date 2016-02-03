@@ -1077,13 +1077,13 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
 
     private boolean experimentHasExpression(ExpressionFigureStage experiment, ExpressionStructure expressionStructure, boolean expressed) {
         for (ExpressionResult2 result : experiment.getExpressionResultSet()) {
-            if (isEquals(expressionStructure, result))
+            if (expressionResultHasExpressionStructure(expressionStructure, result))
                 return true;
         }
         return false;
     }
 
-    private boolean isEquals(ExpressionStructure expressionStructure, ExpressionResult2 result) {
+    private boolean expressionResultHasExpressionStructure(ExpressionStructure expressionStructure, ExpressionResult2 result) {
         if (!result.getSuperTerm().equals(expressionStructure.getSuperterm()))
             return false;
         String subtermID = null;
@@ -1102,16 +1102,21 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         if ((CollectionUtils.isEmpty(result.getPhenotypeTermSet()) && expressionStructure.getEapQualityTerm() != null) ||
                 (CollectionUtils.isNotEmpty(result.getPhenotypeTermSet()) && expressionStructure.getEapQualityTerm() == null))
             return false;
-        if (CollectionUtils.isNotEmpty(result.getPhenotypeTermSet())) {
-            for (ExpressionPhenotypeTerm qualityTerm : result.getPhenotypeTermSet()) {
-                if (!qualityTerm.getQualityTerm().equals(expressionStructure.getEapQualityTerm())) {
-                    return false;
-                }
-                if (!qualityTerm.getTag().equals(expressionStructure.getTag()))
-                    return false;
+        // if no EaP is found then they must equal
+        if (CollectionUtils.isEmpty(result.getPhenotypeTermSet()))
+            return true;
+
+        // check if a matching quality is found
+        boolean isMatchingQuality = false;
+        boolean isMatchingTag = false;
+        for (ExpressionPhenotypeTerm qualityTerm : result.getPhenotypeTermSet()) {
+            if (qualityTerm.getQualityTerm().equals(expressionStructure.getEapQualityTerm())) {
+                isMatchingQuality = true;
             }
+            if (qualityTerm.getTag().equals(expressionStructure.getTag()))
+                isMatchingTag = true;
         }
-        return true;
+        return isMatchingQuality && isMatchingTag;
     }
 
     private void removeExpressionToAnnotation(ExpressionFigureStage expressionFigureStage, ExpressionStructure expressionStructure) {
