@@ -2401,52 +2401,6 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
 
        </entity>
 
-        <!---  Nested expression example. demo, prorotype kind of thing.  I apologize for committing it commented out.
-
-        <entity name="expression2"
-                datasource="db" query="select
-                    'Expression2' as category,
-                    'xpatex' as block_join_type,
-                    xpatex_zdb_id as id,
-                    xpatex_assay_name as assay,
-                    '/' ||  xpatex_source_zdb_id as url,
-                    'Name for ' || xpatex_zdb_id as name,
-                    'Name for ' || xpatex_zdb_id as full_name,
-                    'Name for ' || xpatex_zdb_id as name_sort,
-                    pub_date as date,
-                    fish_name as fish,
-                    pub_mini_ref as publication
-                    from expression_experiment2
-                         join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
-                         join fish on genox_fish_zdb_id = fish_zdb_id
-                         join publication on publication.zdb_id = xpatex_source_zdb_id;">
-
-            <entity name="expression_result"
-                    datasource="db" query="select
-                        xpatres_zdb_id as id,
-                        xpatres_zdb_id as name,
-                        xpatres_zdb_id as full_name,
-                        xpatres_zdb_id as name_sort,
-                        'xpatres' as block_join_type,
-                        'Expression2' as category,
-                        term_name as expression_anatomy_direct,
-                        this_stage.stg_name as stage,
-                        efs_xpatex_zdb_id as xpatex_zdb_id
-                        from expression_figure_stage
-                             join expression_result2 on xpatres_efs_id = efs_pk_id
-                             join term on (xpatres_superterm_zdb_id = term_zdb_id or xpatres_subterm_zdb_id = term_zdb_id)
-                             join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
-                             join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
-                             join stage this_stage on this_stage.stg_hours_start &gt;= start_stage.stg_hours_start
-                                                      and this_stage.stg_hours_end &lt;= end_stage.stg_hours_end
-                             ;"
-                    child="true"
-                    cacheImpl="SortedMapBackedCache"
-                    where="xpatex_zdb_id=expression2.id"
-                    />
-
-        </entity>
-      -->
        <entity name="expression"
                datasource="db" query="select
                         'Expression' as category,

@@ -468,9 +468,6 @@
        When using MoreLikeThis, fields used for similarity should be stored for 
        best performance.
    -->
-   <field name="_root_" type="string" indexed="true" stored="false"/>
-   <field name="block_join_type" type="string" indexed="true" stored="false"/>
-
    <field name="id" type="string" indexed="true" stored="true" required="true" />
    <field name="popularity" type="file" default="1.0"/>
 
