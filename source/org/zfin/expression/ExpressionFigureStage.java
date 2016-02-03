@@ -17,7 +17,7 @@ import java.util.Set;
 public class ExpressionFigureStage {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "efs_pk_id")
     private long id;
     @ManyToOne()
@@ -103,9 +103,28 @@ public class ExpressionFigureStage {
 
 
     public void addExpressionResult(ExpressionResult2 newExpressionResult) {
-        if(expressionResultSet == null)
+        if (expressionResultSet == null)
             expressionResultSet = new HashSet<>(1);
         expressionResultSet.add(newExpressionResult);
+    }
+
+    public boolean hasInvalidCombination() {
+        if (expressionResultSet == null)
+            return false;
+        for (ExpressionResult2 result : expressionResultSet) {
+            boolean absentPhenotypic = false;
+            boolean eapNotAbsentPhenotypic = false;
+            if (result.isEap()) {
+                for (ExpressionPhenotypeTerm quality : result.getPhenotypeTermSet()) {
+                    if (quality.isAbsentPhenotypic())
+                        absentPhenotypic = true;
+                    else
+                        eapNotAbsentPhenotypic = true;
+                }
+            }
+            return absentPhenotypic && eapNotAbsentPhenotypic;
+        }
+        return false;
     }
 }
 
