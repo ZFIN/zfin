@@ -80,13 +80,14 @@ public class ExpressionStructure extends PostComposedEntity {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder(getSuperterm().getTermName());
-        if(getSubterm() != null)
-            builder.append(": "+getSubterm().getTermName());
-        builder.append(": "+eapQualityTerm.getTermName() +": "+tag);
+        if (getSubterm() != null)
+            builder.append(": " + getSubterm().getTermName());
+        if (eapQualityTerm != null)
+            builder.append(": " + eapQualityTerm.getTermName() + ": " + tag);
         return builder.toString();
     }
 
-    /*
+/*
     public int compareTo(ExpressionStructure o) {
         if (!(o instanceof ExpressionStructure))
             throw new RuntimeException("Comparable class not of type PhenotypeStructure");
@@ -102,6 +103,7 @@ public class ExpressionStructure extends PostComposedEntity {
         return 0;
 
     }
+*/
 
     @Override
     public boolean equals(Object o) {
@@ -113,17 +115,24 @@ public class ExpressionStructure extends PostComposedEntity {
         if (publication != null ? !publication.equals(that.publication) : that.publication != null) return false;
         if (subterm != null ? !subterm.equals(that.subterm) : that.subterm != null) return false;
         if (superterm != null ? !superterm.equals(that.superterm) : that.superterm != null) return false;
+        if (eapQualityTerm != null ? !eapQualityTerm.equals(that.eapQualityTerm) : that.eapQualityTerm != null)
+            return false;
+        if (tag != null ? !tag.equals(that.tag) : that.tag != null) return false;
+        if (expressionFound != that.isExpressionFound()) return false;
 
         return true;
     }
+
     @Override
     public int hashCode() {
         int result = superterm != null ? superterm.hashCode() : 0;
         result = 31 * result + (subterm != null ? subterm.hashCode() : 0);
         result = 31 * result + (publication != null ? publication.hashCode() : 0);
+        result = 29 * result + (eapQualityTerm != null ? eapQualityTerm.hashCode() : 0);
+        result = 29 * result + (tag != null ? tag.hashCode() : 0);
+        result = 29 * result + (expressionFound ? 51 : 0);
         return result;
     }
-*/
 
     public boolean isEap() {
         return eapQualityTerm != null;
