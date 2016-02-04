@@ -689,6 +689,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
     /**
      * Retrieve phenotype statement for a given figure and fish.
+     *
      * @param figure figure
      * @param fishID fish ID
      * @return list of phenotype statements
@@ -696,9 +697,11 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     public List<PhenotypeStatement> getPhenotypeStatements(Figure figure, String fishID) {
         Fish fish = getMutantRepository().getFish(fishID);
 
-        if (fish == null ) { return null; }
+        if (fish == null) {
+            return null;
+        }
 
-        List<String>fishoxID=new ArrayList<>();
+        List<String> fishoxID = new ArrayList<>();
         for (FishExperiment genoID : fish.getFishExperiments()) {
             fishoxID.add(genoID.getZdbID());
         }
@@ -716,6 +719,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
     /**
      * Retrieve phenotype figures for a given genotype.
+     *
      * @param genotype genotype
      * @return list of figures
      */
@@ -733,6 +737,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
     /**
      * Retrieve phenotype figures for a given genotype.
+     *
      * @param fish fish
      * @return list of figures
      */
@@ -750,7 +755,8 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
     /**
      * Retrieve phenotype statement for a given figure and genotype.
-     * @param figure figure
+     *
+     * @param figure   figure
      * @param genotype genotype
      * @return list of phenotype statements
      */
@@ -819,14 +825,14 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
     public List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease) {
         String hql = "select damo  from DiseaseAnnotationModel damo  where " +
-                     "damo.diseaseAnnotation.disease = :disease";
+                "damo.diseaseAnnotation.disease = :disease";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("disease", disease);
         return (List<DiseaseAnnotationModel>) query.list();
     }
 
     @Override
-    public List<PhenotypeStatement> getAllPhenotypeStatementsForSTR (SequenceTargetingReagent sequenceTargetingReagent) {
+    public List<PhenotypeStatement> getAllPhenotypeStatementsForSTR(SequenceTargetingReagent sequenceTargetingReagent) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct pheno from PhenotypeStatement pheno, PhenotypeExperiment phenoExp, FishExperiment fishExp, Fish fish  " +
@@ -841,13 +847,13 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         List<PhenotypeStatement> strPhenotypeStatementsFish = (List<PhenotypeStatement>) query.list();
 
         hql = "select distinct pheno from PhenotypeStatement pheno, PhenotypeExperiment phenoExp, FishExperiment fishExp, Fish fish, GenotypeFeature genoFeat, FeatureMarkerRelationship featMrkr  " +
-              " where pheno.phenotypeExperiment = phenoExp " +
-              "   and phenoExp.fishExperiment = fishExp " +
-              "   and fishExp.fish = fish" +
-              "   and fish.genotype = genoFeat.genotype " +
-              "   and genoFeat.feature = featMrkr.feature" +
-              "   and featMrkr.marker = :str " +
-              "   and featMrkr.featureMarkerRelationshipType.name = :createdBy ";
+                " where pheno.phenotypeExperiment = phenoExp " +
+                "   and phenoExp.fishExperiment = fishExp " +
+                "   and fishExp.fish = fish" +
+                "   and fish.genotype = genoFeat.genotype " +
+                "   and genoFeat.feature = featMrkr.feature" +
+                "   and featMrkr.marker = :str " +
+                "   and featMrkr.featureMarkerRelationshipType.name = :createdBy ";
 
         query = session.createQuery(hql);
         query.setParameter("str", sequenceTargetingReagent);
@@ -856,7 +862,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         List<PhenotypeStatement> strPhenotypeStatementsCreatedBy = (List<PhenotypeStatement>) query.list();
 
         if (strPhenotypeStatementsCreatedBy != null && strPhenotypeStatementsCreatedBy.size() > 0)
-             strPhenotypeStatementsFish.addAll(strPhenotypeStatementsCreatedBy);
+            strPhenotypeStatementsFish.addAll(strPhenotypeStatementsCreatedBy);
 
         List<PhenotypeStatement> notNormalPhenotypeStatements = new ArrayList<>();
         for (PhenotypeStatement phenotypeStatement : strPhenotypeStatementsFish) {
@@ -865,5 +871,14 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         }
 
         return notNormalPhenotypeStatements;
+    }
+
+    @Override
+    public List<PhenotypeWarehouse> getPhenotypeWarehouse(String figureID) {
+        String hql = "from PhenotypeWarehouse where " +
+                " figure.zdbID = :figureID";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("figureID", figureID);
+        return (List<PhenotypeWarehouse>) query.list();
     }
 }

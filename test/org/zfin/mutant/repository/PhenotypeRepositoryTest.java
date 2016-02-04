@@ -432,8 +432,8 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
     @Test
     public void getPhenotypeStatementsByGenoxID() {
         //have to provide fishexperiment
-        FishExperiment fishExp=getMutantRepository().getGenotypeExperiment("ZDB-GENOX-100402-4");
-       List<PhenotypeStatement> phenotypeStatementList = getPhenotypeRepository().getPhenotypeStatements(fishExp);
+        FishExperiment fishExp = getMutantRepository().getGenotypeExperiment("ZDB-GENOX-100402-4");
+        List<PhenotypeStatement> phenotypeStatementList = getPhenotypeRepository().getPhenotypeStatements(fishExp);
         assertNotNull(phenotypeStatementList);
     }
 
@@ -462,5 +462,15 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         GenericTerm disease = getOntologyRepository().getTermByOboID("DOID:0050600");
         List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModels(disease);
         assertNotNull(diseaseAnnotations);
+    }
+
+    @Test
+    public void getPhenotypeWarehouse() {
+        String figureID = "ZDB-FIG-150416-9";
+        List<PhenotypeWarehouse> list = getPhenotypeRepository().getPhenotypeWarehouse(figureID);
+        for (PhenotypeWarehouse warehous : list)
+            for (PhenotypeStatementWarehouse st : warehous.getStatementWarehouseSet())
+                assertNotNull(st);
+        assertNotNull(list);
     }
 }
