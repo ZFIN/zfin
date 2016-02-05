@@ -265,7 +265,7 @@ public class MutantRepositoryTest {
     public void getPhenotypeStatementsByGenotype() {
         String genotypeID = "ZDB-GENO-070215-11";
         Genotype genotype = mutantRepository.getGenotypeByID(genotypeID);
-        List<PhenotypeStatement> statements = mutantRepository.getPhenotypeStatementsByGenotype(genotype);
+        List<PhenotypeStatementWarehouse> statements = mutantRepository.getPhenotypeStatementsByGenotype(genotype);
         assertThat(statements, notNullValue());
     }
 
