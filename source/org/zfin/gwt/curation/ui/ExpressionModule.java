@@ -205,6 +205,13 @@ public class ExpressionModule implements HandlesError, EntryPoint {
                         expressionExperimentZonePresenter.updateGenes();
                     }
                 });
+        AppUtils.EVENT_BUS.addHandler(RemoveExpressionExperimentEvent.TYPE,
+                new RemoveExpressionExperimentEventHandler() {
+                    @Override
+                    public void onEvent(RemoveExpressionExperimentEvent event) {
+                        expressionZonePresenter.retrieveExpressions();
+                    }
+                });
     }
 
     @Override

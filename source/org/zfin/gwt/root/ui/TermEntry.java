@@ -7,7 +7,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.web.bindery.event.shared.HandlerRegistration;
 import org.zfin.gwt.root.dto.EntityPart;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -22,7 +21,7 @@ import java.util.List;
  * This composite comprises a term entry field that has auto-complete and a button that allows to add
  * a term from the term info box.
  */
-public class TermEntry extends HorizontalPanel  {
+public class TermEntry extends HorizontalPanel {
 
     // GUI elements
     private ZfinListBox ontologySelector = new ZfinListBox();
@@ -70,11 +69,11 @@ public class TermEntry extends HorizontalPanel  {
     public
     @UiConstructor
     TermEntry(String listOFOntologies, String entityPart, ErrorHandler errorHandler, TermInfoComposite termInfoTable) {
-        this(getOntologyDTOs(listOFOntologies, entityPart), EntityPart.valueOf(entityPart), termInfoTable, errorHandler);
+        this(getOntologyDTOs(listOFOntologies), EntityPart.valueOf(entityPart), termInfoTable, errorHandler);
         copyFromTerminfoToTextButton.addClickHandler(new CopyTermToEntryFieldClickListener());
     }
 
-    private static List<OntologyDTO> getOntologyDTOs(String listOFOntologies, String entityPart) {
+    private static List<OntologyDTO> getOntologyDTOs(String listOFOntologies) {
         String[] ontologyArray = listOFOntologies.split(",");
         List<OntologyDTO> ontologies = new ArrayList<>(ontologyArray.length);
         for (String ontologyName : ontologyArray)
@@ -123,7 +122,6 @@ public class TermEntry extends HorizontalPanel  {
         addOntologySelector();
         addLookupTermBox();
         addCopyFromTermInfoButton();
-        //termTextBox.setSingleOntologySelectionEventHandler(new SingleOntologySelectionEventHandler(new SingleOntologySelectionCallBack()));
     }
 
     private void addCopyFromTermInfoButton() {
@@ -399,22 +397,6 @@ public class TermEntry extends HorizontalPanel  {
 
     public EntityPart getTermPart() {
         return termPart;
-    }
-
-    private class SingleOntologySelectionCallBack implements AsyncCallback<OntologyDTO> {
-
-        public void onFailure(Throwable throwable) {
-        }
-
-        /**
-         * Returns the ontology for a given term ID
-         *
-         * @param ontologyDTO ontology
-         */
-        public void onSuccess(OntologyDTO ontologyDTO) {
-            //Window.alert("Success");
-            setOntologySelector(ontologyDTO);
-        }
     }
 
     private class CopyTermToEntryFieldClickListener implements ClickHandler {
