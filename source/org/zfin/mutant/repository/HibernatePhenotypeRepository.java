@@ -448,14 +448,14 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     @Override
     public int getNumPhenotypeFigures(Marker gene) {
         String sql = " select count(*) from ( " +
-                "     select distinct phenox_fig_zdb_id  " +
-                "      from phenotype_experiment, mutant_fast_search  " +
+                "     select distinct pg_fig_zdb_id  " +
+                "      from phenotype_generated, mutant_fast_search  " +
                 "     where mfs_mrkr_zdb_id =  :markerZdbId " +
-                "       and phenox_genox_zdb_id = mfs_genox_zdb_id  " +
-                "       and exists (select NOTnormal.phenos_pk_id  " +
-                "                     from phenotype_statement NOTnormal  " +
-                "                    where NOTnormal.phenos_phenox_pk_id = phenox_pk_id  " +
-                "                      and NOTnormal.phenos_tag != \"normal\") " +
+                "       and pg_genox_zdb_id = mfs_genox_zdb_id  " +
+                "       and exists (select NOTnormal.psg_id  " +
+                "                     from phenotype_statement_generated NOTnormal  " +
+                "                    where NOTnormal.psg_pg_id = pg_id  " +
+                "                      and NOTnormal.psg_tag != \"normal\") " +
                 " ) " +
                 " ";
         return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery(sql)
@@ -467,18 +467,18 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     public FigureLink getPhenotypeFirstFigure(Marker gene) {
         String sql = "  " +
                 "     select " +
-                "phenox_fig_zdb_id, f.fig_label " +
-                "from phenotype_experiment, mutant_fast_search, figure f " +
+                "pg_fig_zdb_id, f.fig_label " +
+                "from phenotype_generated, mutant_fast_search, figure f " +
                 "where mfs_mrkr_zdb_id = :markerZdbId " +
-                "and f.fig_zdb_id= phenox_fig_zdb_id " +
-                "and phenox_genox_zdb_id = mfs_genox_zdb_id " +
+                "and f.fig_zdb_id= pg_fig_zdb_id " +
+                "and pg_genox_zdb_id = mfs_genox_zdb_id " +
                 "and exists " +
                 "( " +
                 "   select " +
-                "   NOTnormal.phenos_pk_id " +
-                "   from phenotype_statement NOTnormal " +
-                "   where NOTnormal.phenos_phenox_pk_id = phenox_pk_id " +
-                "   and NOTnormal.phenos_tag != \"normal\" " +
+                "   NOTnormal.psg_id " +
+                "   from phenotype_statement_generated NOTnormal " +
+                "   where NOTnormal.psg_pg_id = pg_id " +
+                "   and NOTnormal.psg_tag != \"normal\" " +
                 ") ";
         return (FigureLink) HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("markerZdbId", gene.getZdbID())
@@ -502,6 +502,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                 })
                 .uniqueResult();
     }
+
 
     /**
      * Retrieve all phenotype statements for a given figure.
@@ -552,15 +553,15 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     public PublicationLink getPhenotypeFirstPublication(Marker gene) {
         String sql = " " +
                 "   select p.zdb_id , p.pub_mini_ref " +
-                "        from phenotype_experiment, figure, publication p, mutant_fast_search  " +
+                "        from phenotype_generated, figure, publication p, mutant_fast_search  " +
                 "       where mfs_mrkr_zdb_id = :markerZdbId  " +
-                "         and mfs_genox_zdb_id = phenox_genox_zdb_id  " +
-                "         and phenox_fig_zdb_id = fig_zdb_id  " +
+                "         and mfs_genox_zdb_id = pg_genox_zdb_id  " +
+                "         and pg_fig_zdb_id = fig_zdb_id  " +
                 "         and fig_source_zdb_id = zdb_id  " +
-                "         and exists (select NOTnormal.phenos_pk_id  " +
-                "                     from phenotype_statement NOTnormal  " +
-                "                    where NOTnormal.phenos_phenox_pk_id = phenox_pk_id  " +
-                "                      and NOTnormal.phenos_tag != \"normal\")     " +
+                "         and exists (select NOTnormal.psg_id  " +
+                "                     from phenotype_statement_generated NOTnormal  " +
+                "                    where NOTnormal.psg_pg_id = pg_id  " +
+                "                      and NOTnormal.psg_tag != \"normal\")     " +
                 "        order by p.pub_date asc " +
                 "  " +
                 " ";
@@ -583,15 +584,15 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     public int getNumPhenotypePublications(Marker gene) {
         String sql = " select count(*) from ( " +
                 "   select distinct pub_mini_ref, zdb_id  " +
-                "        from phenotype_experiment, figure, publication, mutant_fast_search  " +
+                "        from phenotype_generated, figure, publication, mutant_fast_search  " +
                 "       where mfs_mrkr_zdb_id = :markerZdbId  " +
-                "         and mfs_genox_zdb_id = phenox_genox_zdb_id  " +
-                "         and phenox_fig_zdb_id = fig_zdb_id  " +
+                "         and mfs_genox_zdb_id = pg_genox_zdb_id  " +
+                "         and pg_fig_zdb_id = fig_zdb_id  " +
                 "         and fig_source_zdb_id = zdb_id  " +
-                "         and exists (select NOTnormal.phenos_pk_id  " +
-                "                     from phenotype_statement NOTnormal  " +
-                "                    where NOTnormal.phenos_phenox_pk_id = phenox_pk_id  " +
-                "                      and NOTnormal.phenos_tag != \"normal\")     " +
+                "         and exists (select NOTnormal.psg_id  " +
+                "                     from phenotype_statement_generated NOTnormal  " +
+                "                    where NOTnormal.psg_pg_id = pg_id  " +
+                "                      and NOTnormal.psg_tag != \"normal\")     " +
                 " ) " +
                 " ";
         return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery(sql)
