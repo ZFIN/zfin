@@ -755,16 +755,16 @@ public class HibernateMutantRepository implements MutantRepository {
      * @param genotype Genotype
      * @return list of phenotype statement objects
      */
-    public List<PhenotypeStatement> getPhenotypeStatementsByGenotype(Genotype genotype) {
+    public List<PhenotypeStatementWarehouse> getPhenotypeStatementsByGenotype(Genotype genotype) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct phenoStatement from PhenotypeStatement phenoStatement " +
-                "WHERE phenoStatement.phenotypeExperiment.fishExperiment.fish.genotype = :genotype";
+        String hql = "select distinct phenoStatement from PhenotypeStatementWarehouse phenoStatement " +
+                "WHERE phenoStatement.phenotypeWarehouse.fishExperiment.fish.genotype = :genotype";
 
         Query query = session.createQuery(hql);
         query.setParameter("genotype", genotype);
 
-        return (List<PhenotypeStatement>) query.list();
+        return (List<PhenotypeStatementWarehouse>) query.list();
     }
 
 
@@ -996,6 +996,15 @@ public class HibernateMutantRepository implements MutantRepository {
     public List<PhenotypeStatement> getPhenotypeStatementsByFish(Fish fish) {
         String hql = " from PhenotypeStatement where " +
                 "phenotypeExperiment.fishExperiment.fish.zdbID = :fishZdbId";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("fishZdbId", fish.getZdbID());
+        return query.list();
+    }
+
+    public List<PhenotypeStatementWarehouse> getPhenotypeStatementWarehousesByFish(Fish fish) {
+        String hql = " from PhenotypeStatementWarehouse where " +
+                "phenotypeWarehouse.fishExperiment.fish.zdbID = :fishZdbId";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("fishZdbId", fish.getZdbID());

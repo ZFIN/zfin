@@ -25,7 +25,7 @@ public class GenotypeExperimentBean {
     private FishStatistics fishStatistics;
     private List<GenotypeFeature> genotypeFeatures;
     private List<GenotypeFigure> genotypeFigures;
-    private List<PhenotypeStatement> phenoStatements;
+    private List<PhenotypeStatementWarehouse> phenoStatements;
     private List<PhenotypeDisplay> phenoDisplays;
     private List<ExpressionDisplay> expressionDisplays;
     private List<ExpressionResult> expressionResults;
@@ -85,11 +85,11 @@ public class GenotypeExperimentBean {
         this.genotypeFigures = genotypeFigures;
     }
 
-    public List<PhenotypeStatement> getPhenoStatements() {
+    public List<PhenotypeStatementWarehouse> getPhenoStatements() {
         return phenoStatements;
     }
 
-    public void setPhenoStatements(List<PhenotypeStatement> phenoStatements) {
+    public void setPhenoStatements(List<PhenotypeStatementWarehouse> phenoStatements) {
         this.phenoStatements = phenoStatements;
     }
 
@@ -251,7 +251,7 @@ public class GenotypeExperimentBean {
             // a map of phenotypeStatement-experiment-publication-concatenated-Ids as keys and display objects as values
             Map<String, PhenotypeDisplay> phenoMap = new HashMap<>();
 
-            for (PhenotypeStatement pheno : phenoStatements) {
+            for (PhenotypeStatementWarehouse pheno : phenoStatements) {
 
                 Figure fig = pheno.getPhenotypeExperiment().getFigure();
                 Publication pub = fig.getPublication();

@@ -73,7 +73,7 @@ public class FishDetailController {
 
 
         // phenotype
-        List<PhenotypeStatement> phenotypeStatements = getMutantRepository().getPhenotypeStatementsByFish(fish);
+        List<PhenotypeStatementWarehouse> phenotypeStatements = getMutantRepository().getPhenotypeStatementWarehousesByFish(fish);
         model.addAttribute("phenotypeStatements", phenotypeStatements);
         model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition", "phenotypeStatement"));
 

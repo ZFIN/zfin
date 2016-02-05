@@ -3,6 +3,7 @@ package org.zfin.mutant.presentation;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.publication.Publication;
 
 import java.util.SortedMap;
@@ -10,23 +11,23 @@ import java.util.SortedSet;
 
 
 public class PhenotypeDisplay implements Comparable<PhenotypeDisplay> {
-    private PhenotypeStatement phenoStatement;
+    private PhenotypeStatementWarehouse phenoStatement;
 
     private SortedMap<Publication, SortedSet<Figure>> figuresPerPub;
 
-    public PhenotypeDisplay(PhenotypeStatement phenoStatement)  {
+    public PhenotypeDisplay(PhenotypeStatementWarehouse phenoStatement)  {
         this.phenoStatement = phenoStatement;
     }
 
     public Experiment getExperiment() {
-        return phenoStatement.getPhenotypeExperiment().getFishExperiment().getExperiment();
+        return phenoStatement.getPhenotypeWarehouse().getFishExperiment().getExperiment();
     }
 
     public int compareTo(PhenotypeDisplay o) {
         if (phenoStatement.equals(o.getPhenoStatement())) {
             return getExperiment().compareTo(o.getExperiment());
         }  else {
-            if (phenoStatement.getEntity().compareTo(o.getPhenoStatement().getEntity()) == 0) {
+            if (phenoStatement.getQuality() != null && phenoStatement.getEntity().compareTo(o.getPhenoStatement().getEntity()) == 0) {
                 if (phenoStatement.getQuality().compareTo(o.getPhenoStatement().getQuality()) == 0)
                     return phenoStatement.getTag().compareTo(o.getPhenoStatement().getTag());
                 else
@@ -38,11 +39,11 @@ public class PhenotypeDisplay implements Comparable<PhenotypeDisplay> {
     }
 
 
-    public PhenotypeStatement getPhenoStatement() {
+    public PhenotypeStatementWarehouse getPhenoStatement() {
         return phenoStatement;
     }
 
-    public void setPhenoStatement(PhenotypeStatement phenoStatement) {
+    public void setPhenoStatement(PhenotypeStatementWarehouse phenoStatement) {
         this.phenoStatement = phenoStatement;
     }
 

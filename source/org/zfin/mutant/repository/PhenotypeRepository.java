@@ -265,7 +265,7 @@ public interface PhenotypeRepository {
      * @param sequenceTargetingReagent
      * @return list of phenotype statements
      */
-    List<PhenotypeStatement> getAllPhenotypeStatementsForSTR (SequenceTargetingReagent sequenceTargetingReagent);
+    List<PhenotypeStatementWarehouse> getAllPhenotypeStatementsForSTR (SequenceTargetingReagent sequenceTargetingReagent);
 
     List<PhenotypeWarehouse> getPhenotypeWarehouse(String figureID);
 }

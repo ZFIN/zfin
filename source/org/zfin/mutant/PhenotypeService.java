@@ -454,22 +454,23 @@ public class PhenotypeService {
      * Create a list of phenotypeDisplay objects organized by phenotype statement first,
      * then by the associated experiment.
      */
-    public static List<PhenotypeDisplay> getPhenotypeDisplays(List<PhenotypeStatement> phenotypeStatements, String groupBy, String sortBy) {
+    public static List<PhenotypeDisplay> getPhenotypeDisplays(List<PhenotypeStatementWarehouse> phenotypeStatements, String groupBy, String sortBy) {
         if (phenotypeStatements != null && phenotypeStatements.size() > 0) {
 
             // a map of phenotypeStatement-experiment-publication-concatenated-Ids as keys and display objects as values
             Map<String, PhenotypeDisplay> phenoMap = new HashMap<>();
 
-            for (PhenotypeStatement pheno : phenotypeStatements) {
+            for (PhenotypeStatementWarehouse pheno : phenotypeStatements) {
 
-                Figure fig = pheno.getPhenotypeExperiment().getFigure();
+
+                Figure fig = pheno.getPhenotypeWarehouse().getFigure();
                 Publication pub = fig.getPublication();
 
-                FishExperiment fishExp = pheno.getPhenotypeExperiment().getFishExperiment();
+                FishExperiment fishExp = pheno.getPhenotypeWarehouse().getFishExperiment();
                 Experiment exp = fishExp.getExperiment();
 
                 String key;
-                String keyPheno = pheno.getPhenoStatementString();
+                String keyPheno = pheno.getShortName();
                 if (groupBy.equals("condition")) {
                     if (fishExp.isStandardOrGenericControl()) {
                         key = keyPheno + "standard";
@@ -479,7 +480,7 @@ public class PhenotypeService {
                         key = keyPheno + exp.getZdbID();
                     }
                 } else {
-                    key = keyPheno + pheno.getPhenotypeExperiment().getFishExperiment().getFish().getZdbID();
+                    key = keyPheno + pheno.getPhenotypeWarehouse().getFishExperiment().getFish().getZdbID();
                 }
 
                 PhenotypeDisplay phenoDisplay;

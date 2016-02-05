@@ -16,7 +16,7 @@ public class GenotypeFigure implements Serializable {
     private String tag;
     private Marker sequenceTargetingReagent;
     private PhenotypeExperiment phenotypeExperiment;
-    private PhenotypeStatement phenotypeStatement;
+    private PhenotypeStatementWarehouse phenotypeStatement;
     private FishExperiment fishExperiment;
 
     public int getId() {
@@ -75,11 +75,11 @@ public class GenotypeFigure implements Serializable {
         this.fish = fish;
     }
 
-    public PhenotypeStatement getPhenotypeStatement() {
+    public PhenotypeStatementWarehouse getPhenotypeStatement() {
         return phenotypeStatement;
     }
 
-    public void setPhenotypeStatement(PhenotypeStatement phenotypeStatement) {
+    public void setPhenotypeStatement(PhenotypeStatementWarehouse phenotypeStatement) {
         this.phenotypeStatement = phenotypeStatement;
     }
 

@@ -832,11 +832,11 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     }
 
     @Override
-    public List<PhenotypeStatement> getAllPhenotypeStatementsForSTR(SequenceTargetingReagent sequenceTargetingReagent) {
+    public List<PhenotypeStatementWarehouse> getAllPhenotypeStatementsForSTR(SequenceTargetingReagent sequenceTargetingReagent) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct pheno from PhenotypeStatement pheno, PhenotypeExperiment phenoExp, FishExperiment fishExp, Fish fish  " +
-                "      where pheno.phenotypeExperiment = phenoExp " +
+        String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno, PhenotypeWarehouse phenoExp, FishExperiment fishExp, Fish fish  " +
+                "      where pheno.phenotypeWarehouse = phenoExp " +
                 "        and phenoExp.fishExperiment = fishExp " +
                 "        and fishExp.fish = fish" +
                 "        and :str member of fish.strList ";
@@ -844,10 +844,10 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         Query query = session.createQuery(hql);
         query.setParameter("str", sequenceTargetingReagent);
 
-        List<PhenotypeStatement> strPhenotypeStatementsFish = (List<PhenotypeStatement>) query.list();
+        List<PhenotypeStatementWarehouse> strPhenotypeStatementsFish = (List<PhenotypeStatementWarehouse>) query.list();
 
-        hql = "select distinct pheno from PhenotypeStatement pheno, PhenotypeExperiment phenoExp, FishExperiment fishExp, Fish fish, GenotypeFeature genoFeat, FeatureMarkerRelationship featMrkr  " +
-                " where pheno.phenotypeExperiment = phenoExp " +
+        hql = "select distinct pheno from PhenotypeStatementWarehouse pheno, PhenotypeWarehouse phenoExp, FishExperiment fishExp, Fish fish, GenotypeFeature genoFeat, FeatureMarkerRelationship featMrkr  " +
+                " where pheno.phenotypeWarehouse = phenoExp " +
                 "   and phenoExp.fishExperiment = fishExp " +
                 "   and fishExp.fish = fish" +
                 "   and fish.genotype = genoFeat.genotype " +
@@ -859,15 +859,16 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         query.setParameter("str", sequenceTargetingReagent);
         query.setString("createdBy", "created by");
 
-        List<PhenotypeStatement> strPhenotypeStatementsCreatedBy = (List<PhenotypeStatement>) query.list();
+        List<PhenotypeStatementWarehouse> strPhenotypeStatementsCreatedBy = (List<PhenotypeStatementWarehouse>) query.list();
 
         if (strPhenotypeStatementsCreatedBy != null && strPhenotypeStatementsCreatedBy.size() > 0)
             strPhenotypeStatementsFish.addAll(strPhenotypeStatementsCreatedBy);
 
-        List<PhenotypeStatement> notNormalPhenotypeStatements = new ArrayList<>();
-        for (PhenotypeStatement phenotypeStatement : strPhenotypeStatementsFish) {
-            if (phenotypeStatement.isNotNormal())
+        List<PhenotypeStatementWarehouse> notNormalPhenotypeStatements = new ArrayList<>();
+        for (PhenotypeStatementWarehouse phenotypeStatement : strPhenotypeStatementsFish) {
+            if (phenotypeStatement.isNotNormal()) {
                 notNormalPhenotypeStatements.add(phenotypeStatement);
+            }
         }
 
         return notNormalPhenotypeStatements;
