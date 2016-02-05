@@ -149,6 +149,34 @@ public class FxCurationPresenter implements Presenter {
 
     }
 
+    public void populateTermInfo(final TermEntry termEntry) {
+        view.errorElement.clearAllErrors();
+        final OntologyDTO ontology = termEntry.getSelectedOntology();
+        String termName = termEntry.getTermText();
+        if (!termEntry.isSuggestionListShowing() && StringUtils.isNotEmpty(termName)) {
+            lookupRPC.getTermByName(ontology, termName, new ZfinAsyncCallback<TermDTO>(
+                    "Failed to find term: " + termName + " for ontology: " + ontology.getDisplayName(), null) {
+                @Override
+                public void onFailure(Throwable throwable) {
+                    if (throwable instanceof TermNotFoundException) {
+                        TermNotFoundException exception = (TermNotFoundException) throwable;
+                        view.errorElement.setError(exception.getMessage());
+                        termEntry.getTermTextBox().setValidationStyle(false);
+                    } else
+                        super.onFailure(throwable);
+                }
+
+                @Override
+                public void onSuccess(TermDTO termDTO) {
+                    if (termDTO != null) {
+                        lookupRPC.getTermInfo(ontology, termDTO.getZdbID(), new TermInfoCallBack(view.termInfoBox, termDTO.getZdbID()));
+                    }
+                }
+            });
+        }
+
+    }
+
 
     class RetrieveEapQualityListCallBack extends ZfinAsyncCallback<List<EapQualityTermDTO>> {
 
