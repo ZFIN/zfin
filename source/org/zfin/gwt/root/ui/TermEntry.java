@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.event.shared.HandlerRegistration;
 import org.zfin.gwt.root.dto.EntityPart;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -21,7 +22,7 @@ import java.util.List;
  * This composite comprises a term entry field that has auto-complete and a button that allows to add
  * a term from the term info box.
  */
-public class TermEntry extends HorizontalPanel {
+public class TermEntry extends HorizontalPanel  {
 
     // GUI elements
     private ZfinListBox ontologySelector = new ZfinListBox();
@@ -323,6 +324,18 @@ public class TermEntry extends HorizontalPanel {
 
     public void addOnFocusHandler(FocusHandler autocompleteFocusHandler) {
         termTextBox.addOnFocusHandler(autocompleteFocusHandler);
+    }
+
+/*
+    public HandlerRegistration addClickHandler(ClickHandler clickHandler) {
+        termTextBox.addOnClickHandler(clickHandler);
+        return null;
+    }
+*/
+
+    public com.google.gwt.event.shared.HandlerRegistration addClickHandler(ClickHandler clickHandler) {
+        termTextBox.addOnClickHandler(clickHandler);
+        return null;
     }
 
     public void addOnOntologyChangeHandler(ChangeHandler handler) {
