@@ -183,33 +183,47 @@ Create dba function regen_expression_term_fast_search()
 	let errorHint = "insert superterm and parents into xpatfs_working";
 	
 	insert into xpatfs_working (etfs_xpatres_zdb_id, etfs_term_zdb_id)
-	       select xpatres_zdb_id, alltermcon_container_zdb_id 
-	         from expression_result, all_term_contains, expression_experiment, fish, fish_Experiment, genotype
-	         where xpatres_expression_found = 't'
-	       	     and alltermcon_contained_zdb_id = xpatres_superterm_Zdb_id 
-	       	     and xpatex_zdb_id = xpatres_xpatex_zdb_id
-	       	     and xpatex_atb_zdb_id is not null
-	       	     and genox_zdb_id = xpatex_genox_zdb_id 
-	       	     and genox_is_std_or_generic_control = 't'
-	       	     and genox_fish_zdb_id = fish_zdb_id
-		     and fish_genotype_zdb_id = geno_Zdb_id
- 	       	     and geno_is_wildtype = 't';
+		SELECT xpatres_zdb_id,
+					 alltermcon_container_zdb_id
+		FROM   expression_result,
+					 all_term_contains,
+					 expression_experiment,
+					 fish,
+					 fish_experiment,
+					 genotype
+		WHERE  xpatres_expression_found = 't'
+					 AND alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
+					 AND xpatex_zdb_id = xpatres_xpatex_zdb_id
+					 AND xpatex_atb_zdb_id IS NOT NULL
+					 AND genox_zdb_id = xpatex_genox_zdb_id
+					 AND genox_is_std_or_generic_control = 't'
+					 AND genox_fish_zdb_id = fish_zdb_id
+					 AND fish.fish_is_wildtype = 't'
+					 AND fish_genotype_zdb_id = geno_zdb_id
+					 AND geno_is_wildtype = 't';
 
 	let errorHint = "insert subterm and parents into xpatfs_working";
 
 
         insert into xpatfs_working (etfs_xpatres_zdb_id, etfs_term_zdb_id)
-	       select xpatres_zdb_id, alltermcon_container_zdb_id
-	         from expression_result, all_term_contains, expression_experiment, fish, fish_Experiment, genotype
-	         where xpatres_expression_found = 't'
-	       	     and alltermcon_contained_zdb_id = xpatres_subterm_Zdb_id
-	       	     and xpatex_zdb_id = xpatres_xpatex_zdb_id
-	       	     and xpatex_atb_zdb_id is not null
-	       	     and genox_zdb_id = xpatex_genox_zdb_id
-	       	     and genox_is_std_or_generic_control = 't'
-	       	     and genox_fish_zdb_id = fish_zdb_id
-		     and fish_genotype_zdb_id = geno_Zdb_id
- 	       	     and geno_is_wildtype = 't';
+					SELECT xpatres_zdb_id,
+								 alltermcon_container_zdb_id
+					FROM   expression_result,
+								 all_term_contains,
+								 expression_experiment,
+								 fish,
+								 fish_experiment,
+								 genotype
+					WHERE  xpatres_expression_found = 't'
+								 AND alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
+								 AND xpatex_zdb_id = xpatres_xpatex_zdb_id
+								 AND xpatex_atb_zdb_id IS NOT NULL
+								 AND genox_zdb_id = xpatex_genox_zdb_id
+								 AND genox_is_std_or_generic_control = 't'
+								 AND genox_fish_zdb_id = fish_zdb_id
+								 AND fish.fish_is_wildtype = 't'
+								 AND fish_genotype_zdb_id = geno_zdb_id
+								 AND geno_is_wildtype = 't';
 
         let errorHint = "update exact match terms" ;
 
