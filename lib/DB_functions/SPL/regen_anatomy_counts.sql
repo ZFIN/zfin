@@ -5,7 +5,7 @@ create function regen_anatomy_counts()
   --  anatomy_display: term's position in a dag display of a certain stage
   --  anatomy_stats: term's gene count and synonyms for gene count for
 			--expression patterns and term's genotype count
-			--and synonyms count for phenotype.
+			--.
   --  anatomy_stage_stats: terms gene count and synonyms count of a certain stage
   --  all_term_contains: each and every ancestor and descendant
 
@@ -246,27 +246,27 @@ create function regen_anatomy_counts()
 	     			     	      	      where anatstat_term_zdb_id = term_zdb_id)
          where anatstat_object_type ='GENE';
 
-     let errorhint = "Create fish_with_phenos";
+     let errorhint = "Create fish_with_phnos";
 
-      -- a temp table to hold fish that have phenotype in an anatomy term
+      -- a temp table to hold fish that have ptype in an anatomy term
       -- and all its child terms, and to count the distinct number.
 
-      create temp table fish_with_phenos
+      create temp table fish_with_phnos
 	(
 	  fish_zdb_id	varchar(50), term_zdb_id varchar(50), type varchar(2)
 	)
       with no log;
       
-    let errorhint = "Create fish_with_phenos tmp index tmp_term_fish_zdb_id_index";
+    let errorhint = "Create fish_with_phnos tmp index tmp_term_fish_zdb_id_index";
 
       create index tmp_term_fish_zdb_id_index
-        on fish_with_phenos(term_zdb_id)
+        on fish_with_phnos(term_zdb_id)
        using btree in idxdbs1;
 
-    let errorhint = "Create fish_with_phenos tmp index tmp_term_fish_genos_zdb_id_index";
+    let errorhint = "Create fish_with_phnos tmp index tmp_term_fish_genos_zdb_id_index";
 
      create index tmp_fish_genos_zdb_id_index
-        on fish_with_phenos(fish_zdb_id)
+        on fish_with_phnos(fish_zdb_id)
        using btree in idxdbs1;
 
     let errorhint = "Create base records for GENO objects in anatomy_stats_new";
@@ -294,87 +294,87 @@ create function regen_anatomy_counts()
 	-- get list of genes that have expression patterns for this
 	-- anatomy item. Suppress wildtype fish in this list.
 
-    let errorhint = "first fish_with_phenos insert";
+    let errorhint = "first fish_with_phnos insert";
 
-     insert into fish_with_phenos
+     insert into fish_with_phnos
 SELECT DISTINCT fish_zdb_id, 
-                phenos_entity_1_superterm_zdb_id, 'p' 
+                psg_e1a_zdb_id, 'p' 
 FROM   fish, 
        fish_experiment, 
-       phenotype_experiment, 
-       phenotype_statement,
+       phenotype_source_generated, 
+       phenotype_observation_generated,
        term 
 WHERE  genox_fish_zdb_id = fish_zdb_id 
-       AND phenox_genox_zdb_id = genox_zdb_id 
-       AND phenos_phenox_pk_id = phenox_pk_id 
-       AND phenos_entity_1_superterm_zdb_id = term_zdb_id 
-       AND phenos_tag != 'normal' 
+       AND pg_genox_id = genox_zdb_id 
+       AND psg_pg_id = pg_id 
+       AND psg_e1a_zdb_id = term_zdb_id 
+       AND psg_tag != 'normal' 
        AND EXISTS (SELECT 'x' 
                    FROM   mutant_fast_search 
                    WHERE  mfs_genox_zdb_id = genox_zdb_id); 
 
-     insert into fish_with_phenos
+     insert into fish_with_phnos
 SELECT DISTINCT fish_zdb_id, 
-                phenos_entity_1_subterm_zdb_id, 'p' 
+                psg_e1b_zdb_id, 'p' 
 FROM   fish, 
        fish_experiment, 
-       phenotype_experiment, 
-       phenotype_statement,
+       phenotype_source_generated, 
+       phenotype_observation_generated,
        term 
 WHERE  genox_fish_zdb_id = fish_zdb_id 
-       AND phenox_genox_zdb_id = genox_zdb_id 
-       AND phenos_phenox_pk_id = phenox_pk_id 
-       AND phenos_entity_1_subterm_zdb_id = term_zdb_id 
-       AND phenos_tag != 'normal' 
+       AND pg_genox_id = genox_zdb_id 
+       AND psg_pg_id = pg_id 
+       AND psg_e1b_zdb_id = term_zdb_id 
+       AND psg_tag != 'normal' 
        AND EXISTS (SELECT 'x' 
                    FROM   mutant_fast_search 
                    WHERE  mfs_genox_zdb_id = genox_zdb_id); 
 
-     insert into fish_with_phenos
+     insert into fish_with_phnos
 SELECT DISTINCT fish_zdb_id, 
-                phenos_entity_2_superterm_zdb_id, 'p' 
+                psg_e2a_zdb_id, 'p' 
 FROM   fish, 
        fish_experiment, 
-       phenotype_experiment, 
-       phenotype_statement,
+       phenotype_source_generated, 
+       phenotype_observation_generated,
        term 
 WHERE  genox_fish_zdb_id = fish_zdb_id 
-       AND phenox_genox_zdb_id = genox_zdb_id 
-       AND phenos_phenox_pk_id = phenox_pk_id 
-       AND phenos_entity_2_superterm_zdb_id = term_zdb_id 
-       AND phenos_tag != 'normal' 
-       AND EXISTS (SELECT 'x' 
-                   FROM   mutant_fast_search 
-                   WHERE  mfs_genox_zdb_id = genox_zdb_id); 
-
-
-     insert into fish_with_phenos
-SELECT DISTINCT fish_zdb_id, 
-                phenos_entity_2_subterm_zdb_id, 'p' 
-FROM   fish, 
-       fish_experiment, 
-       phenotype_experiment, 
-       phenotype_statement,
-       term 
-WHERE  genox_fish_zdb_id = fish_zdb_id 
-       AND phenox_genox_zdb_id = genox_zdb_id 
-       AND phenos_phenox_pk_id = phenox_pk_id 
-       AND phenos_entity_2_subterm_zdb_id = term_zdb_id 
-       AND phenos_tag != 'normal' 
+       AND pg_genox_zdb_id = genox_zdb_id 
+       AND psg_pg_id = pg_id 
+       AND psg_e2a_zdb_id = term_zdb_id 
+       AND psg_tag != 'normal' 
        AND EXISTS (SELECT 'x' 
                    FROM   mutant_fast_search 
                    WHERE  mfs_genox_zdb_id = genox_zdb_id); 
 
 
-    let errorhint = "update stats for fish_with_phenos";
+     insert into fish_with_phnos
+SELECT DISTINCT fish_zdb_id, 
+                psg_e2b_zdb_id, 'p' 
+FROM   fish, 
+       fish_experiment, 
+       phenotype_source_generated, 
+       phenotype_observation_generated,
+       term 
+WHERE  genox_fish_zdb_id = fish_zdb_id 
+       AND pg_genox_zdb_id = genox_zdb_id 
+       AND psg_ps_pk_id = pg_id 
+       AND psg_e2b_zdb_id = term_zdb_id 
+       AND psg_tag != 'normal' 
+       AND EXISTS (SELECT 'x' 
+                   FROM   mutant_fast_search 
+                   WHERE  mfs_genox_zdb_id = genox_zdb_id); 
 
-    update statistics high for table fish_with_phenos;
+
+    let errorhint = "update stats for fish_with_phnos";
+
+    update statistics high for table fish_with_phnos;
 
     let errorhint = "update object count for anatstat with GENOs";
 
     update anatomy_stats_new
          set anatstat_object_count = (select count(distinct fish_zdb_id) 
-	     			     	     from fish_with_phenos
+	     			     	     from fish_with_phnos
 	     			     	     where anatstat_term_zdb_id = term_zdb_id
 					     and type = 'p'
 					     )
@@ -383,81 +383,81 @@ WHERE  genox_fish_zdb_id = fish_zdb_id
 	-- get list of genes that have expression patterns for this
 	-- anatomy item's children. Suppress wildtype fish.
 
-    let errorhint = "third fish with phenos insert";
+    let errorhint = "third fish with phnos insert";
 
-     insert into fish_with_phenos
+     insert into fish_with_phnos
 SELECT DISTINCT fish_zdb_id, 
                 term_zdb_id, 'c' 
 FROM   fish, 
        fish_experiment, 
-       phenotype_experiment, 
-       phenotype_statement,
+       phenotype_source_generated, 
+       phenotype_observation_generated,
        term,
        all_term_contains
 WHERE  genox_fish_zdb_id = fish_zdb_id 
-       AND phenox_genox_zdb_id = genox_zdb_id 
-       AND phenos_phenox_pk_id = phenox_pk_id 
+       AND pg_genox_zdb_id = genox_zdb_id 
+       AND psg_pg_pk_id = pg_id 
        AND alltermcon_container_zdb_id = term_zdb_id
-       AND phenos_entity_1_superterm_zdb_id =alltermcon_contained_zdb_id 
-       AND phenos_tag != 'normal' 
+       AND psg_e1a_zdb_id =alltermcon_contained_zdb_id 
+       AND psg_tag != 'normal' 
        AND EXISTS (SELECT 'x' 
                    FROM   mutant_fast_search 
                    WHERE  mfs_genox_zdb_id = genox_zdb_id); 
 
-     insert into fish_with_phenos
+     insert into fish_with_phnos
 SELECT DISTINCT fish_zdb_id, 
                 term_zdb_id, 'c' 
 FROM   fish, 
        fish_experiment, 
-       phenotype_experiment, 
-       phenotype_statement,
+       phenotype_source_generated, 
+       phenotype_observation_generated,
        term,
        all_term_contains
 WHERE  genox_fish_zdb_id = fish_zdb_id 
-       AND phenox_genox_zdb_id = genox_zdb_id 
-       AND phenos_phenox_pk_id = phenox_pk_id 
+       AND pg_genox_zdb_id = genox_zdb_id 
+       AND psg_pg_id = pg_id 
        AND alltermcon_container_zdb_id = term_zdb_id
-       AND phenos_entity_1_subterm_zdb_id =alltermcon_contained_zdb_id 
-       AND phenos_tag != 'normal' 
+       AND psg_e1b_zdb_id =alltermcon_contained_zdb_id 
+       AND psg_tag != 'normal' 
        AND EXISTS (SELECT 'x' 
                    FROM   mutant_fast_search 
                    WHERE  mfs_genox_zdb_id = genox_zdb_id); 
 
-     insert into fish_with_phenos
+     insert into fish_with_phnos
 SELECT DISTINCT fish_zdb_id, 
                 term_zdb_id, 'c' 
 FROM   fish, 
        fish_experiment, 
-       phenotype_experiment, 
-       phenotype_statement,
+       phenotype_source_generated, 
+       phenotype_observation_generated,
        term,
        all_term_contains
 WHERE  genox_fish_zdb_id = fish_zdb_id 
-       AND phenox_genox_zdb_id = genox_zdb_id 
-       AND phenos_phenox_pk_id = phenox_pk_id 
+       AND pg_genox_zdb_id = genox_zdb_id 
+       AND psg_pg_id = pg_id 
        AND alltermcon_container_zdb_id = term_zdb_id
-       AND phenos_entity_2_superterm_zdb_id =alltermcon_contained_zdb_id 
-       AND phenos_tag != 'normal' 
+       AND psg_e2a_zdb_id =alltermcon_contained_zdb_id 
+       AND psg_tag != 'normal' 
        AND EXISTS (SELECT 'x' 
                    FROM   mutant_fast_search 
                    WHERE  mfs_genox_zdb_id = genox_zdb_id); 
 
 
-     insert into fish_with_phenos
+     insert into fish_with_phnos
 SELECT DISTINCT fish_zdb_id, 
                 term_zdb_id, 'c' 
 FROM   fish, 
        fish_experiment, 
-       phenotype_experiment, 
-       phenotype_statement,
+       phenotype_source_generated, 
+       phenotype_observation_generated,
        term,
        all_term_contains 
 WHERE  genox_fish_zdb_id = fish_zdb_id 
-       AND phenox_genox_zdb_id = genox_zdb_id 
-       AND phenos_phenox_pk_id = phenox_pk_id 
+       AND psg_genox_zdb_id = genox_zdb_id 
+       AND psg_pg_id = pg_id 
        AND alltermcon_container_zdb_id = term_zdb_id
-       AND phenos_entity_2_subterm_zdb_id =alltermcon_contained_zdb_id 
-       AND phenos_tag != 'normal' 
+       AND psg_e2b_zdb_id =alltermcon_contained_zdb_id 
+       AND psg_tag != 'normal' 
        AND EXISTS (SELECT 'x' 
                    FROM   mutant_fast_search 
                    WHERE  mfs_genox_zdb_id = genox_zdb_id); 
@@ -466,7 +466,7 @@ WHERE  genox_fish_zdb_id = fish_zdb_id
  
     update anatomy_stats_new
          set anatstat_contains_object_count = (select count(distinct fish_zdb_id) 
-	     				      	      from fish_with_phenos
+	     				      	      from fish_with_phnos
 	     			     	      	      where anatstat_term_zdb_id = term_zdb_id
 					      	      and type = 'c')
          where anatstat_object_type = 'GENO';
@@ -475,7 +475,7 @@ WHERE  genox_fish_zdb_id = fish_zdb_id
 
     update anatomy_stats_new
          	set anatstat_total_distinct_count = (select count(distinct fish_zdb_id) 
-	     				      	      from fish_with_phenos
+	     				      	      from fish_with_phnos
 	     			     	      	      where anatstat_term_zdb_id = term_zdb_id)
 		where anatstat_object_type = 'GENO';
 

@@ -17,8 +17,8 @@ TOP = ../../..
 include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/warehouse
-SUBDIRS = constructMart chromosomeMart expressionMart
-GENERICS = who_is.sh who_is_not.sh switch.sh regenConstructMart.sh regenChromosomeMart.sh regenExpressionMart.sh
+SUBDIRS = constructMart chromosomeMart expressionMart phenotypeMart
+GENERICS = who_is.sh who_is_not.sh switch.sh regenConstructMart.sh regenChromosomeMart.sh regenExpressionMart.sh regenPhenotypeMart.sh
 STATICS = getUnloadDir.sh regenConstructMartReport.txt runConstructMartReport.txt char regenChromosomeMartReport.txt runChromosomeMartReport.txt regenExpressionMartReport.txt runExpressionMartReport.txt
 
 

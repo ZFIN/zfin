@@ -44,10 +44,10 @@ create procedure regen_genofig_create_temp_tables()
         gffs_geno_zdb_id  varchar(50) not null,
         gffs_fig_zdb_id varchar(50) not null,
         gffs_morph_zdb_id varchar(50),
-        gffs_phenox_pk_id int8 not null,
+        gffs_pg_id int8 not null,
 	gffs_date_created DATETIME YEAR TO SECOND 
 			  DEFAULT CURRENT YEAR TO SECOND NOT NULL,         
-        gffs_phenos_id int8,
+        gffs_psg_id int8,
 	gffs_fish_zdb_id varchar(50) not null,
 	gffs_genox_zdb_id varchar(50),
 primary key (gffs_serial_id)	
@@ -80,9 +80,9 @@ primary key (gffs_serial_id)
 	rgf_geno_zdb_id		varchar(50) not null,
 	rgf_fig_zdb_id		varchar(50) not null,
 	rgf_morph_zdb_id	varchar(50),
-	rgf_phenox_pk_id	int8,
+	rgf_pg_id	int8,
 	rgf_fish_zdb_id		varchar(50) not null,
-	rgf_phenos_id 		int8,
+	rgf_psg_id 		int8,
 	rgf_genox_zdb_id	varchar(50)
       ) 
 ;
