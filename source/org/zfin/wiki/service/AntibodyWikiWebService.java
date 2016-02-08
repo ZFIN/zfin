@@ -253,9 +253,13 @@ public class AntibodyWikiWebService extends WikiWebService {
         }
         for (String antibodyLink : antibodyLinks) {
             anatomyStringBuilder.append(antibodyLink);
-            anatomyStringBuilder.append("; &nbsp;");
+            anatomyStringBuilder.append("; ");
         }
-        content = content.replace("{text-data:AnatomicalStructuresRecognized}{text-data}", anatomyStringBuilder.toString());
+        String anatomyLink = "";
+        if (anatomyStringBuilder.length() > 1) {
+            anatomyLink = anatomyStringBuilder.substring(0, anatomyStringBuilder.length() -2);
+        }
+        content = content.replace("{text-data:AnatomicalStructuresRecognized}{text-data}", anatomyLink);
 
         // target molecules: we don't do these, only user input
 //        content = content.replace("{text-data:RecognizedTargetMolecules}{text-data}",antibody.getHostSpecies()) ;
