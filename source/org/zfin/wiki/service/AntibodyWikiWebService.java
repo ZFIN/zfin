@@ -247,6 +247,8 @@ public class AntibodyWikiWebService extends WikiWebService {
         for (AnatomyLabel anatomyLabel : anatomyLabelSet) {
             if (anatomyLabel.getSuperterm() != null && TermPresentation.getWikiLink(anatomyLabel.getSuperterm()) != null) {
                 antibodyLinks.add(TermPresentation.getWikiLink(anatomyLabel.getSuperterm()));
+                if (anatomyLabel.getSubterm() != null)
+                    antibodyLinks.add(TermPresentation.getWikiLink(anatomyLabel.getSubterm()));
             }
         }
         for (String antibodyLink : antibodyLinks) {
