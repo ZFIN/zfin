@@ -39,9 +39,11 @@ public class PhenotypeStatementWarehouse {
     @ManyToOne()
     @JoinColumn(name = "psg_e2b_zdb_id")
     private GenericTerm e2b;
-
     @Column(name = "psg_tag")
     private String tag;
+    @ManyToOne()
+    @JoinColumn(name = "psg_quality_zdb_id")
+    private GenericTerm quality;
 
     public Marker getGene() {
         return gene;
@@ -110,7 +112,7 @@ public class PhenotypeStatementWarehouse {
     }
 
     public GenericTerm getQuality() {
-        return null;
+        return quality;
     }
 
     public PostComposedEntity getRelatedEntity() {
