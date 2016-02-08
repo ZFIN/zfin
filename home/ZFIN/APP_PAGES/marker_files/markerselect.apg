@@ -1041,7 +1041,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
               <?MIVAR NAME=mrkrsel_MO_flag>0<?/MIVAR>
 
                 <?MISQL SQL="select distinct pg_fig_zdb_id
-                                             from phenotype_generated, phenotype_experiment,phenotype_statement_generated
+                                             from phenotype_generated, phenotype_experiment,phenotype_observation_generated
                                             where psg_mrkr_zdb_id ='$OID'
                                             and psg_pg_id=pg_id;">
 

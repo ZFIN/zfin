@@ -12,7 +12,7 @@ import java.util.Set;
  * Main Experiment object that contains expression annotations.
  */
 @Entity
-@Table(name = "PHENOTYPE_GENERATED")
+@Table(name = "PHENOTYPE_SOURCE_GENERATED")
 public class PhenotypeWarehouse {
 
     @Id

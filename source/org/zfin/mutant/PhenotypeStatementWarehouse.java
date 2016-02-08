@@ -10,7 +10,7 @@ import javax.persistence.*;
  * Main Experiment object that contains expression annotations.
  */
 @Entity
-@Table(name = "PHENOTYPE_STATEMENT_GENERATED")
+@Table(name = "PHENOTYPE_OBSERVATION_GENERATED")
 public class PhenotypeStatementWarehouse {
 
     @Id
