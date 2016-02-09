@@ -1040,10 +1040,15 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
               <?MIVAR NAME=mrkrsel_pheno_img_count>0<?/MIVAR>
               <?MIVAR NAME=mrkrsel_MO_flag>0<?/MIVAR>
 
-                <?MISQL SQL="select distinct pg_fig_zdb_id
-                                             from phenotype_generated, phenotype_experiment,phenotype_observation_generated
-                                            where psg_mrkr_zdb_id ='$OID'
-                                            and psg_pg_id=pg_id;">
+                <?MISQL SQL=" select distinct pg_fig_zdb_id
+                                                  from phenotype_source_generated, mutant_fast_search  
+                                                 where mfs_mrkr_zdb_id = '$OID'
+                                                   and pg_genox_zdb_id = mfs_genox_zdb_id  
+                                                   and exists (select NOTnormal.psg_id  
+                                                                 from phenotype_observation_generated NOTnormal  
+                                                                where NOTnormal.psg_pg_id = pg_id  
+                                                                  and NOTnormal.psg_tag != 'normal')
+                                              ;">
 
                                 <?MIVAR NAME=mrkrsel_pheno_fig_zdb_id>$1<?/MIVAR>
 
