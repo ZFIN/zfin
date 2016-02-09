@@ -36,7 +36,7 @@ insert into pheno_term_fast_search_tmp
 select 
    psg_id,
    psg_e1b_zdb_id,
-   phenos_tag,
+   psg_tag,
    't',
    current year to second
 from
@@ -58,7 +58,7 @@ insert into pheno_term_fast_search_tmp
 select 
    psg_id,
    psg_e2a_zdb_id,
-   phenos_tag,
+   psg_tag,
    't',
    current year to second
 from
@@ -79,7 +79,7 @@ insert into pheno_term_fast_search_tmp
 select 
    psg_id,
    psg_e2b_zdb_id,
-   phenos_tag,
+   psg_tag,
    't',
    current year to second
 from
@@ -100,7 +100,7 @@ insert into pheno_term_fast_search_tmp
 select 
   psg_id,
   alltermcon_container_zdb_id,
-  phenos_tag,
+  psg_tag,
   current year to second
 from
   phenotype_observation_generated, all_term_contains
@@ -120,7 +120,7 @@ insert into pheno_term_fast_search_tmp
 select 
   psg_id,
   alltermcon_container_zdb_id,
-  phenos_tag,
+  psg_tag,
   current year to second
 from
   phenotype_observation_generated, all_term_contains
@@ -140,7 +140,7 @@ insert into pheno_term_fast_search_tmp
 select 
   psg_id,
   alltermcon_container_zdb_id,
-  phenos_tag,
+  psg_tag,
   current year to second
 from
   phenotype_observation_generated, all_term_contains
@@ -159,7 +159,7 @@ insert into pheno_term_fast_search_tmp
 select 
   psg_id,
   alltermcon_container_zdb_id,
-  phenos_tag,
+  psg_tag,
   current year to second
 from
   phenotype_observation_generated, all_term_contains
@@ -175,13 +175,13 @@ insert into pheno_term_fast_search (
 	ptfs_term_zdb_id ,
 	ptfs_tag ,
 	ptfs_is_direct_annotation ,
-	ptfs_created_date )
+	ptfs_phenos_created_date )
 select 
 	ptfs_psg_id , 
 	ptfs_term_zdb_id ,
 	ptfs_tag ,
 	ptfs_is_direct_annotation ,
-	current year to second 
+	ptfs_phenos_created_date
 from pheno_term_fast_search_tmp;	
 
 

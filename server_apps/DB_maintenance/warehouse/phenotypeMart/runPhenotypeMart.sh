@@ -3,16 +3,16 @@
 #$1 db name
 setenv INFORMIXSERVER <!--|INFORMIX_SERVER|-->
 setenv INFROMIXDIR <!--|INFORMIX_DIR|-->
-set EXPRESSIONMARTDIR=<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMart 
-set FULL_SCRIPT_FILE=$EXPRESSIONMARTDIR/expressionMartAutomated.sql 
-set CONVERT_EXPRESSIONMART_FILE=$EXPRESSIONMARTDIR/expressionMartRegen.sql
-set ALL_EXPRESSIONMART_SCRIPTS=$EXPRESSIONMARTDIR/allExpressionMart.sql
+set PHENOTYPEMARTDIR=<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart 
+set FULL_SCRIPT_FILE=$PHENOTYPEMARTDIR/phenotypeMartAutomated.sql 
+set CONVERT_PHENOTYPEMART_FILE=$PHENOTYPEMARTDIR/phenotypeMartRegen.sql
+set ALL_PHENOTYPEMART_SCRIPTS=$PHENOTYPEMARTDIR/allPhenotypeMart.sql
 
 /bin/rm -rf $FULL_SCRIPT_FILE 
-/bin/rm -rf $CONVERT_EXPRESSIONMART_FILE 
-/bin/rm -rf $ALL_EXPRESSIONMART_SCRIPTS
+/bin/rm -rf $CONVERT_PHENOTYPEMART_FILE 
+/bin/rm -rf $ALL_PHENOTYPEMART_SCRIPTS
 
-set expressionMartScripts=( begin.sql \
+set phenotypeMartScripts=( begin.sql \
 	     dropTables.sql \
 	     commit.sql \
 	     begin.sql \
@@ -20,8 +20,8 @@ set expressionMartScripts=( begin.sql \
 	     commit.sql \
 	    );
  
-set regenExpressionMartScripts=( begin.sql \
-	     refreshExpressionMart.sql \
+set regenPhenotypeMartScripts=( begin.sql \
+	     refreshPhenotypeMart.sql \
 	     commit.sql \
 	    # begin.sql \
 	    # addIndexes.sql \
@@ -29,17 +29,17 @@ set regenExpressionMartScripts=( begin.sql \
 	     );
 
 touch $FULL_SCRIPT_FILE
-touch $CONVERT_EXPRESSIONMART_FILE
-touch $ALL_EXPRESSIONMART_SCRIPTS
+touch $CONVERT_PHENOTYPEMART_FILE
+touch $ALL_PHENOTYPEMART_SCRIPTS
 
-foreach name ($expressionMartScripts)
-   #echo $EXPRESSIONMARTDIR$name
-   cat $EXPRESSIONMARTDIR/$name >> $FULL_SCRIPT_FILE
+foreach name ($phenotypeMartScripts)
+   #echo $PHENOTYPEMARTDIR$name
+   cat $PHENOTYPEMARTDIR/$name >> $FULL_SCRIPT_FILE
 end
 
-foreach name ($regenExpressionMartScripts)
+foreach name ($regenPhenotypeMartScripts)
    #echo $FISHMARTDIR$name
-   cat $EXPRESSIONMARTDIR/$name >> $CONVERT_EXPRESSIONMART_FILE
+   cat $PHENOTYPEMARTDIR/$name >> $CONVERT_PHENOTYPEMART_FILE
 end
 
 if ("X$1" == "X") then
