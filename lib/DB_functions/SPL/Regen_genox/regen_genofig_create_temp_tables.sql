@@ -63,8 +63,7 @@ primary key (gffs_serial_id)
 
     create temp table regen_genofig_input_zdb_id_temp  
       (
-	rgfg_id		int8,
-        primary key (rgfg_id)
+	rgfg_id		int8
       ) with NO LOG
 ;
 
