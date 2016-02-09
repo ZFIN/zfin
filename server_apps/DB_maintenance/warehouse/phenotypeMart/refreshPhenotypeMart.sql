@@ -78,38 +78,7 @@ select psg_id, psg_pg_id,psg_mrkr_zdb_id, psg_mrkr_abbrev,psg_mrkr_relation,psg_
 	psg_e2b_name,psg_tag,psg_quality_zdb_id, psg_quality_name, psg_short_name
   from phenotype_observation_generated_temp;
 
-create unique index phenotype_source_generated_pk_index (pg_id)
- using btree in idxdbs2;
 
-create index phenotype_source_generated_fig_index (pg_fig_zdb_id)
- using btree in idxdbs2;
-
-create index phenotype_source_generated_genox_index (pg_genox_zdb_id)
- using btree in idxdbs3;
-
-create unique index phenotype_observation_generated_pk_id_index (psg_id)
-using btree in idxdbs1;
-
-create index phenotype_observation_generated_psg_pg_id_index (psg_pg_id)
-using btree in idxdbs3;
-
-create index phenotype_observation_generated_mrkr_zdb_index (psg_mrkr_zdb_id)
-using btree in idxdbs3;
-
-create index phenotype_observation_generated_e1a_zdb_index (psg_e1a_zdb_id)
-using btree in idxdbs2;
-
-create index phenotype_observation_generated_e1b_zdb_index (psg_e1b_zdb_id)
-using btree in idxdbs2;
-
-create index phenotype_observation_generated_e1b_zdb_index (psg_e2a_zdb_id)
-using btree in idxdbs1;
-
-create index phenotype_observation_generated_e1b_zdb_index (psg_e2b_zdb_id)
-using btree in idxdbs1;
-
-create index phenotype_observation_generated_quality_zdb_index (psg_quality_zdb_id)
-using btree in idxdbs3;
 
 update zdb_flag
   set (zflag_is_on,zflag_last_modified) = ("f",current year to second)
