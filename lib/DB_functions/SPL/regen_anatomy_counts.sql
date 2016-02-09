@@ -305,7 +305,7 @@ FROM   fish,
        phenotype_observation_generated,
        term 
 WHERE  genox_fish_zdb_id = fish_zdb_id 
-       AND pg_genox_id = genox_zdb_id 
+       AND pg_genox_zdb_id = genox_zdb_id 
        AND psg_pg_id = pg_id 
        AND psg_e1a_zdb_id = term_zdb_id 
        AND psg_tag != 'normal' 
@@ -322,7 +322,7 @@ FROM   fish,
        phenotype_observation_generated,
        term 
 WHERE  genox_fish_zdb_id = fish_zdb_id 
-       AND pg_genox_id = genox_zdb_id 
+       AND pg_genox_zdb_id = genox_zdb_id 
        AND psg_pg_id = pg_id 
        AND psg_e1b_zdb_id = term_zdb_id 
        AND psg_tag != 'normal' 
