@@ -61,6 +61,10 @@
 
            <div class="single-facet-value-container" id="${name}-facet-value-container">
 
+               <c:forEach var="facetQuery" items="${facet.facetQueries}" varStatus="loop">
+                   <li><zfin-search:showFacetQuery open="true" gaCategory="${zfn:buildFacetedSearchGACategory(category, facet.label)}" facetQuery="${facetQuery}"/></li>
+               </c:forEach>
+
             <c:forEach var="facetValue" items="${facet.selectedFacetValues}">
                 <zfin2:showSelectedFacetValue value="${facetValue}"/>
             </c:forEach>

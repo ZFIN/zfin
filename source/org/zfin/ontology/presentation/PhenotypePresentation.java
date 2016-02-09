@@ -15,7 +15,6 @@ public class PhenotypePresentation extends TermPresentation {
     private static final String uri = "phenotype/phenotype-statement?id=";
     private static final String popupUri = "phenotype/phenotype-statement-popup?id=";
 
-
     public static String getLink(PhenotypeStatement phenotypeStatement, boolean suppressPopupLink, boolean curationLink) {
         if (phenotypeStatement == null)
             return null;

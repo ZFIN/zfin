@@ -225,6 +225,17 @@ public enum Category {
         return fields.toArray(new String[fields.size()]);
     }
 
+    public List<FacetQueryEnum> getFacetQueriesForField(FieldName fieldName) {
+        List<FacetQueryEnum> matchingFacetQueries = new ArrayList<FacetQueryEnum>();
+
+        for (FacetQueryEnum facetQueryEnum : facetQueries) {
+            if (facetQueryEnum.getFieldName() == fieldName) {
+                matchingFacetQueries.add(facetQueryEnum);
+            }
+        }
+        return matchingFacetQueries;
+    }
+
     private static Map<String, String> facetMap = new HashMap<>();
 
     /*  This is mostly legacy code that the methods below are replacing, but it still used for telling SOLR which facets

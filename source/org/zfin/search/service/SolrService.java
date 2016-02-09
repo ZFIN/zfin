@@ -579,6 +579,19 @@ public class SolrService {
         return new BasicNameValuePair(field, value);
     }
 
+    public static List<String> getFacetQueryValues(List<FacetQueryEnum> facetQueryEnumList) {
+        List<String> values = new ArrayList<>();
+
+        for (FacetQueryEnum facetQueryEnum : facetQueryEnumList) {
+            String value = splitFilterQuery(facetQueryEnum.getQuery()).getValue();
+            if (!values.contains(value)) {
+                values.add(value);
+            }
+        }
+
+        return values;
+    }
+
     public static String decode(String value) {
         if (value == null)
             return null;
