@@ -8,180 +8,180 @@ begin work ;
 
 insert into pheno_term_fast_search_tmp
 (
-   ptfs_phenos_pk_id,
+   ptfs_psg_id,
    ptfs_term_zdb_id,
    ptfs_tag,
    ptfs_is_direct_annotation,
    ptfs_phenos_created_date
 )
 select 
-   phenos_pk_id,
-   phenos_entity_1_superterm_zdb_id,
+   psg_id,
+   psg_e1a_zdb_id,
    phenos_tag,
    't',
-   phenos_created_date
+   current year to second
 from
-   phenotype_statement
+   phenotype_observation_generated
 ;
 
 
 insert into pheno_term_fast_search_tmp
 (
-   ptfs_phenos_pk_id,
+   ptfs_psg_id,
    ptfs_term_zdb_id,
    ptfs_tag,
    ptfs_is_direct_annotation,
-   ptfs_phenos_created_date
+   current year to second
 )
 select 
-   phenos_pk_id,
-   phenos_entity_1_subterm_zdb_id,
+   psg_id,
+   psg_e1b_zdb_id,
    phenos_tag,
    't',
    phenos_created_date
 from
-   phenotype_statement
+   phenotype_observation_generated
 where
-   phenos_entity_1_subterm_zdb_id is not null
+   psg_e1b_zdb_id is not null
 ;
 
 
 insert into pheno_term_fast_search_tmp
 (
-   ptfs_phenos_pk_id,
+   ptfs_psg_id,
    ptfs_term_zdb_id,
    ptfs_tag,
    ptfs_is_direct_annotation,
-   ptfs_phenos_created_date
+   current year to second
 )
 select 
-   phenos_pk_id,
-   phenos_entity_2_superterm_zdb_id,
+   psg_id,
+   psg_e2a_zdb_id,
    phenos_tag,
    't',
    phenos_created_date
 from
-   phenotype_statement
+   phenotype_observation_generated
 where
-   phenos_entity_2_superterm_zdb_id is not null
+   psg_e2a_zdb_id is not null
 ;
 
 
 insert into pheno_term_fast_search_tmp
 (
-   ptfs_phenos_pk_id,
+   ptfs_psg_id,
    ptfs_term_zdb_id,
    ptfs_tag,
    ptfs_is_direct_annotation,
-   ptfs_phenos_created_date
+   current year to second
 )
 select 
-   phenos_pk_id,
-   phenos_entity_2_subterm_zdb_id,
+   psg_id,
+   psg_e2b_zdb_id,
    phenos_tag,
    't',
    phenos_created_date
 from
-   phenotype_statement
+   phenotype_observation_generated
 where
-   phenos_entity_2_subterm_zdb_id is not null
+   psg_e2b_zdb_id is not null
 ;
 
 
 
 insert into pheno_term_fast_search_tmp
 (
-  ptfs_phenos_pk_id,
+  ptfs_psg_id,
   ptfs_term_zdb_id,
   ptfs_tag,
-  ptfs_phenos_created_date
+  current year to second
 )
 select 
-  phenos_pk_id,
+  psg_id,
   alltermcon_container_zdb_id,
   phenos_tag,
   phenos_created_date
 from
-  phenotype_statement, all_term_contains
+  phenotype_observation_generated, all_term_contains
 where
-  phenos_entity_1_superterm_zdb_id = alltermcon_contained_zdb_id  
+  psg_e1a_zdb_id = alltermcon_contained_zdb_id  
 ;
 
 
 
 insert into pheno_term_fast_search_tmp
 (
-  ptfs_phenos_pk_id,
+  ptfs_psg_id,
   ptfs_term_zdb_id,
   ptfs_tag,
-  ptfs_phenos_created_date
+  current year to second
 )
 select 
-  phenos_pk_id,
+  psg_id,
   alltermcon_container_zdb_id,
   phenos_tag,
   phenos_created_date
 from
-  phenotype_statement, all_term_contains
+  phenotype_observation_generated, all_term_contains
 where
-  phenos_entity_1_subterm_zdb_id = alltermcon_contained_zdb_id  
+  psg_e1b_zdb_id = alltermcon_contained_zdb_id  
 ;
 
 
 
 insert into pheno_term_fast_search_tmp
 (
-  ptfs_phenos_pk_id,
+  ptfs_psg_id,
   ptfs_term_zdb_id,
   ptfs_tag,
-  ptfs_phenos_created_date
+  current year to second
 )
 select 
-  phenos_pk_id,
+  psg_id,
   alltermcon_container_zdb_id,
   phenos_tag,
   phenos_created_date
 from
-  phenotype_statement, all_term_contains
+  phenotype_observation_generated, all_term_contains
 where
-  phenos_entity_2_superterm_zdb_id = alltermcon_contained_zdb_id
+  psg_e2a_zdb_id = alltermcon_contained_zdb_id
 ;
 
 
 insert into pheno_term_fast_search_tmp
 (
-  ptfs_phenos_pk_id,
+  ptfs_psg_id,
   ptfs_term_zdb_id,
   ptfs_tag,
-  ptfs_phenos_created_date
+  current year to second
 )
 select 
-  phenos_pk_id,
+  psg_id,
   alltermcon_container_zdb_id,
   phenos_tag,
   phenos_created_date
 from
-  phenotype_statement, all_term_contains
+  phenotype_observation_generated, all_term_contains
 where
-  phenos_entity_2_subterm_zdb_id = alltermcon_contained_zdb_id  
+  psg_e2b_zdb_id = alltermcon_contained_zdb_id  
 ;
 
 
 delete from pheno_term_fast_search;
 
 insert into pheno_term_fast_search (
-	ptfs_phenos_pk_id , 
+	ptfs_psg_id , 
 	ptfs_term_zdb_id ,
 	ptfs_tag ,
 	ptfs_is_direct_annotation ,
-	ptfs_phenos_created_date ,
+	current year to second ,
 	ptfs_created_date )
 select 
-	ptfs_phenos_pk_id , 
+	ptfs_psg_id , 
 	ptfs_term_zdb_id ,
 	ptfs_tag ,
 	ptfs_is_direct_annotation ,
-	ptfs_phenos_created_date ,
+	current year to second ,
 	ptfs_created_date 
 from pheno_term_fast_search_tmp;	
 
