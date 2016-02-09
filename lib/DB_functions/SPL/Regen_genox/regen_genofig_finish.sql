@@ -22,7 +22,7 @@ if (vUpdate != 't') then
 
     delete from genotype_figure_fast_search_new
       where exists (Select 'x' from regen_genofig_input_zdb_id_temp
-   	 		where gffs_pg_pk_id = rgfg_id);
+   	 		where gffs_pg_id = rgfg_id);
 
  
     insert into genotype_figure_fast_search_new
