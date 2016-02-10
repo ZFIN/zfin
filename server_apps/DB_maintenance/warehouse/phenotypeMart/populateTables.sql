@@ -134,7 +134,7 @@ insert into phenotype_generated_curated_mapping_temp (pgcm_pg_id, pgcm_source_id
  and pg_end_stg_Zdb_id = efs_end_stg_zdb_id
  and xpatex_zdb_id = efs_xpatex_zdb_id
  and xpatres_efs_id = efs_pk_id
- and xpatres_zdb_id = ept_xpatres_zdb_id
+ and xpatres_pk_id = ept_xpatres_id
  ;
 
 insert into phenotype_generated_curated_mapping_temp (pgcm_pg_id, pgcm_source_id, pgcm_id_type)
