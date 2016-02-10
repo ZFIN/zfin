@@ -20,6 +20,7 @@ set phenotypeMartScripts=( begin.sql \
 	     commit.sql \
 	     begin.sql \
 	     truncateTempMappingTable.sql \
+	     commit.sql \
 	     begin.sql \
 	     populateTables.sql \
 	     commit.sql \
