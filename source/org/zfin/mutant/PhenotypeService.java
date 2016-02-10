@@ -370,6 +370,30 @@ public class PhenotypeService {
         return publicationList;
     }
 
+    public static Set<PhenotypeStatementWarehouse> getPhenotypeObserved(Fish fish, GenericTerm term, boolean includeSubstructures) {
+        if (fish == null) {
+            return null;
+        }
+
+        List<PhenotypeStatementWarehouse> phenotypeStatementList = getMutantRepository().getPhenotypeObserved(term, fish, includeSubstructures);
+        // since I do not want to change the equals() method to ignore the PK id
+        // I have to create a distinct list myself.
+        Set<PhenotypeStatementWarehouse> distinctPhenoStatements = new HashSet<>(phenotypeStatementList.size());
+        for (PhenotypeStatementWarehouse statement : phenotypeStatementList) {
+            boolean recordFound = false;
+            for (PhenotypeStatementWarehouse distinctStatement : distinctPhenoStatements) {
+                if (distinctStatement.equalsByPhenotype(statement)) {
+                    recordFound = true;
+                    break;
+                }
+            }
+            if (!recordFound) {
+                distinctPhenoStatements.add(statement);
+            }
+        }
+        return distinctPhenoStatements;
+    }
+
     private static class PhenotypeComparator implements Comparator<String> {
         public int compare(String o1, String o2) {
             if (o1 == null) {

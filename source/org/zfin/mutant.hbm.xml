@@ -522,20 +522,6 @@
 
     </class>
 
-    <class name="org.zfin.mutant.PhenotypeTermFastSearch" table="pheno_term_fast_search">
-        <id name="id" type="long">
-            <column name="ptfs_pk_id" not-null="true"/>
-            <generator class="identity"/>
-        </id>
-        <many-to-one name="phenotypeStatement" column="ptfs_phenos_pk_id"/>
-        <many-to-one name="term" column="ptfs_term_zdb_id"/>
-        <property name="tag" column="ptfs_tag"/>
-        <property name="directAnnotation" column="ptfs_is_direct_annotation"/>
-        <property name="dateCreated" column="ptfs_phenos_created_date"/>
-
-    </class>
-
-
     <!--This is here solely for the purpose of hql query to allow ordering by significane.-->
     <!--This is also mapped by FeatureTypeEnum, which should be used primarily.-->
     <class name="org.zfin.feature.FeatureType" table="feature_type">

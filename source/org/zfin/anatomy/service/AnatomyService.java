@@ -29,20 +29,20 @@ public class AnatomyService {
         int totalCount = RepositoryFactory.getAntibodyRepository().getAntibodyCount(aoTerm, includeSubstructures);
         // if no antibodies found return here
         if (totalCount == 0)
-            return new PaginationResult<AntibodyStatistics>(0, null);
+            return new PaginationResult<>(0, null);
 
         if (includeSubstructures)
-            return new PaginationResult<AntibodyStatistics>(totalCount, null);
+            return new PaginationResult<>(totalCount, null);
 
 
         List<AntibodyStatistics> list = RepositoryFactory.getAntibodyRepository().getAntibodyStatistics(aoTerm, pagination, includeSubstructures);
 
-        return new PaginationResult<AntibodyStatistics>(totalCount, list);
+        return new PaginationResult<>(totalCount, list);
     }
 
     public static Map<String, String> getDisplayStages() {
         List<DevelopmentStage> stages = getAnatomyRepository().getAllStagesWithoutUnknown();
-        LinkedHashMap<String, String> stageListDisplay = new LinkedHashMap<String, String>(stages.size());
+        LinkedHashMap<String, String> stageListDisplay = new LinkedHashMap<>(stages.size());
         for (DevelopmentStage stage : stages) {
             String labelString = StagePresentation.createDisplayEntry(stage);
             stageListDisplay.put(stage.getZdbID(), labelString);

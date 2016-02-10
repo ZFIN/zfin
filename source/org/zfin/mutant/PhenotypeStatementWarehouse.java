@@ -11,7 +11,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "PHENOTYPE_OBSERVATION_GENERATED")
-public class PhenotypeStatementWarehouse {
+public class PhenotypeStatementWarehouse implements Comparable<PhenotypeStatementWarehouse> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -154,5 +154,29 @@ public class PhenotypeStatementWarehouse {
     }
 
 
+    public boolean equalsByPhenotype(PhenotypeStatementWarehouse statement) {
+        return false;
+    }
+
+    public String getDisplayNameWithoutTag() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(getEntity());
+        builder.append(" - ");
+        builder.append(quality.getTermName());
+        if (getRelatedEntity() != null) {
+            builder.append(" - ");
+            builder.append(getRelatedEntity());
+        }
+        return builder.toString();
+
+    }
+
+    @Override
+    public int compareTo(PhenotypeStatementWarehouse phenotypeObserved) {
+        if (phenotypeObserved == null)
+            return -1;
+        return getDisplayNameWithoutTag().compareToIgnoreCase(phenotypeObserved.getDisplayNameWithoutTag());
+
+    }
 }
 

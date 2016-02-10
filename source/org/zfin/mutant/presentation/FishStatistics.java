@@ -7,10 +7,7 @@ import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.Fish;
-import org.zfin.mutant.GenotypeFeature;
-import org.zfin.mutant.PhenotypeService;
-import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -109,6 +106,12 @@ public class FishStatistics extends EntityStatistics {
         Set<PhenotypeStatement> phenotypeStatements = new TreeSet<>();
         phenotypeStatements.addAll(PhenotypeService.getPhenotypeStatements(fish, anatomyItem, includeSubstructures));
         return phenotypeStatements;
+    }
+
+    public Set<PhenotypeStatementWarehouse> getPhenotypeObserved() {
+        Set<PhenotypeStatementWarehouse> phenotypeObserved = new TreeSet<>();
+        phenotypeObserved.addAll(PhenotypeService.getPhenotypeObserved(fish, anatomyItem, includeSubstructures));
+        return phenotypeObserved;
     }
 
 

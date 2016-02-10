@@ -32,7 +32,7 @@
                         <zfin:link entity="${genoStat.fish}"/>
                     </td>
                     <td>
-                        <c:forEach var="statement" items="${genoStat.phenotypeStatements}" varStatus="loop">
+                        <c:forEach var="statement" items="${genoStat.phenotypeObserved}" varStatus="loop">
                             <zfin:link entity="${statement}"/> <c:if test="${!loop.last}"><br/></c:if>
                         </c:forEach>
                     </td>

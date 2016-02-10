@@ -232,5 +232,16 @@ public class OntologyService {
         return displayList;
     }
 
+
+    public static String getDisplayName(GenericTerm superterm, GenericTerm subterm) {
+        StringBuilder builder = new StringBuilder();
+        if (superterm != null)
+            builder.append(superterm.getTermName());
+        if (subterm != null) {
+            builder.append(" : ");
+            builder.append(subterm.getTermName());
+        }
+        return builder.toString();
+    }
 }
 

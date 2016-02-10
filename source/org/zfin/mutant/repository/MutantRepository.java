@@ -532,5 +532,7 @@ public interface MutantRepository {
     long getInferredFromCountByGenotype(String genotypeID, String publicationID);
 
     long getFishExperimentCountByGenotype(Fish fish, String publicationID);
+
+    List<PhenotypeStatementWarehouse> getPhenotypeObserved(GenericTerm term, Fish fish, boolean includeSubstructures);
 }
 

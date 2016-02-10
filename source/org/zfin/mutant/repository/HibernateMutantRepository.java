@@ -67,14 +67,14 @@ public class HibernateMutantRepository implements MutantRepository {
 
         String hql =
                 "select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
-                        "PhenotypeExperiment phenox, PhenotypeStatement phenoeq " +
-                        "WHERE phenox.fishExperiment = fishox " +
-                        "AND phenoeq.phenotypeExperiment = phenox " +
-                        "AND (phenoeq.entity.superterm = :aoTerm " +
-                        "     or phenoeq.entity.subterm = :aoTerm " +
-                        "     or phenoeq.relatedEntity.superterm = :aoTerm " +
-                        "     or phenoeq.relatedEntity.subterm = :aoTerm) " +
-                        "AND phenoeq.tag != :tag " +
+                        "PhenotypeWarehouse phenoSource, PhenotypeStatementWarehouse phenoObserved " +
+                        "WHERE phenoSource.fishExperiment = fishox " +
+                        "AND phenoObserved.phenotypeWarehouse = phenoSource " +
+                        "AND (phenoObserved.e1a = :aoTerm " +
+                        "     or phenoObserved.e1b = :aoTerm " +
+                        "     or phenoObserved.e2a = :aoTerm " +
+                        "     or phenoObserved.e2b = :aoTerm) " +
+                        "AND phenoObserved.tag != :tag " +
                         "AND exists (select 'x' from GeneGenotypeExperiment where fishExperiment = fishox) " +
                         "ORDER BY fishox.fish.order, fishox.fish.nameOrder ";
 
@@ -144,14 +144,14 @@ public class HibernateMutantRepository implements MutantRepository {
 
         String hql =
                 "select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
-                        "PhenotypeExperiment phenox, PhenotypeStatement phenoeq," +
+                        "PhenotypeWarehouse phenoSource, PhenotypeStatementWarehouse phenoObserved," +
                         "TransitiveClosure transitiveClosure " +
-                        "WHERE phenox.fishExperiment = fishox " +
-                        "AND phenoeq.phenotypeExperiment = phenox " +
+                        "WHERE phenoSource.fishExperiment = fishox " +
+                        "AND phenoObserved.phenotypeWarehouse = phenoSource " +
                         "AND transitiveClosure.root = :aoTerm and " +
-                        "(phenoeq.entity.superterm = transitiveClosure.child OR phenoeq.entity.subterm = transitiveClosure.child OR " +
-                        " phenoeq.relatedEntity.superterm = transitiveClosure.child OR phenoeq.relatedEntity.subterm = transitiveClosure.child) " +
-                        "AND phenoeq.tag != :tag " +
+                        "(phenoObserved.e1a = transitiveClosure.child OR phenoObserved.e1b = transitiveClosure.child OR " +
+                        " phenoObserved.e2a = transitiveClosure.child OR phenoObserved.e2b = transitiveClosure.child ) " +
+                        "AND phenoObserved.tag != :tag " +
                         "AND exists (select 'x' from GeneGenotypeExperiment where fishExperiment = fishox) ";
         hql += "ORDER BY fishox.fish.order, fishox.fish.nameOrder ";
 
@@ -1176,7 +1176,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         Query query = currentSession().createSQLQuery(sql);
         query.setString("genotypeID", genotypeID);
-        query.setParameterList("fishOxList",fishOxList);
+        query.setParameterList("fishOxList", fishOxList);
 
         return (((Number) query.uniqueResult()).longValue() > 0);
     }
@@ -1824,5 +1824,25 @@ public class HibernateMutantRepository implements MutantRepository {
             return 0;
         }
         return (long) fishList.size();
+    }
+
+    @Override
+    public List<PhenotypeStatementWarehouse> getPhenotypeObserved(GenericTerm term, Fish fish, boolean includeSubstructures) {
+        String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno, PhenotypeTermFastSearch fastSearch " +
+                "where fastSearch.phenotypeObserved = pheno and " +
+                "pheno.phenotypeWarehouse.fishExperiment.fish = :fish and " +
+                "fastSearch.directAnnotation = :directAnnotation ";
+
+        if (term != null) {
+            hql += " and fastSearch.term = :term ";
+        }
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        if (term != null) {
+            query.setParameter("term", term);
+        }
+        query.setParameter("fish", fish);
+        query.setBoolean("directAnnotation", !includeSubstructures);
+        return (List<PhenotypeStatementWarehouse>) query.list();
     }
 }

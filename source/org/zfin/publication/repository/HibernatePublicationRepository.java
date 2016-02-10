@@ -280,6 +280,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "       genox.genox_fish_zdb_id=fish.fish_zdb_id AND " +
                 "       fish.fish_genotype_zdb_id=geno.geno_zdb_id AND " +
                 "       geno.geno_is_wildtype = :isWildtype AND " +
+                "       fish.fish_is_wildtype = :isWildtype AND " +
                 "       exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND " +
                 "       genox.genox_is_std_or_generic_control = :condition AND " +
                 "       gene.mrkr_abbrev[1,10] <> :withdrawn  AND   " +
