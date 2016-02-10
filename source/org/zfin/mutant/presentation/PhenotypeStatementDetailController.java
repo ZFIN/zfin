@@ -53,18 +53,26 @@ public class PhenotypeStatementDetailController {
     }
 
     @RequestMapping("/phenotype-statement-popup")
-    protected String getPhenotypeStatementPopup(@RequestParam Long id, Model model) {
+    protected String getPhenotypeStatementPopup(@RequestParam Long id,
+                                                Model model,
+                                                HttpServletResponse response) {
         PhenotypeStatementWarehouse phenotypeStatement = mutantRepository.getPhenotypeStatementWarehouseById(id);
 
         if (phenotypeStatement == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             model.addAttribute(LookupStrings.ZDB_ID, id);
             return "record-not-found.popup";
         }
 
         model.addAttribute("phenotypeStatement", phenotypeStatement);
-        model.addAttribute("uniqueTerms", getUniqueTerms(phenotypeStatement));
 
-        return "phenotype/phenotype-statement-popup.popup";
+        if (phenotypeStatement.isMorphologicalPhenotype()) {
+            model.addAttribute("uniqueTerms", getUniqueTerms(phenotypeStatement));
+            return "phenotype/phenotype-statement-popup.popup";
+        } else {
+            model.addAttribute("genePreviousNames", markerRepository.getPreviousNamesLight(phenotypeStatement.getGene()));
+            return "phenotype/phenotypic-expression-statement-popup.popup";
+        }
     }
 
     protected Collection<Term> getUniqueTerms(PhenotypeStatementWarehouse phenotypeStatement) {

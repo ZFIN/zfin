@@ -12,6 +12,7 @@ import org.zfin.mutant.PhenotypeStatementWarehouse;
 public class PhenotypeStatementWarehousePresentation extends TermPresentation {
 
     private static final String PHENOTYPE_STATEMENT_SEPARATOR = " ";
+    private static final String COMMA = ", ";
     //todo: replace with non popup link
     private static final String uri = "phenotype/phenotype-statement?id=";
     private static final String popupUri = "phenotype/phenotype-statement-popup?id=";
@@ -22,24 +23,21 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
         if (phenotypeStatement == null) {
             return null;
         }
-/*
-        if (curationLink)
-            return getCurationLink(phenotypeStatement);
-*/
-        StringBuilder phenotypeLink = new StringBuilder(100);
-//        phenotypeLink.append(getNormalTagNote(phenotypeStatement));
 
-//        phenotypeLink.append(getNameWithoutNormalText(phenotypeStatement));
+        if (curationLink) {
+            return getCurationLink(phenotypeStatement);
+        }
+
+        StringBuilder phenotypeLink = new StringBuilder(100);
         phenotypeLink.append(getTomcatLink(uri, String.valueOf(phenotypeStatement.getId()), getNameWithoutNormalText(phenotypeStatement)));
-/*
         if (!suppressPopupLink) {
             phenotypeLink.append(getPopupLink(phenotypeStatement));
         }
-*/
+
         return phenotypeLink.toString();
     }
 
-    private static String getCurationLink(PhenotypeStatement phenotypeStatement) {
+    private static String getCurationLink(PhenotypeStatementWarehouse phenotypeStatement) {
         return getWebdriverLink(CURATION_URI + "&pubcur_c_tab=PHENO&OID=", phenotypeStatement.getPhenotypeExperiment().getFigure().getPublication().getZdbID(),
                 "edit");
     }
@@ -110,9 +108,12 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
             phenotypeName.append(phenotypeStatement.getGene().getAbbreviation());
             phenotypeName.append(PHENOTYPE_STATEMENT_SEPARATOR);
             phenotypeName.append(EXPRESSION);
+            phenotypeName.append(COMMA);
+            phenotypeName.append(phenotypeStatement.getQuality().getTermName());
         }
         if (phenotypeStatement.getTag().equals(PhenotypeStatement.Tag.ABNORMAL.toString())) {
-            phenotypeName.append(",&nbsp;abnormal");
+            phenotypeName.append(COMMA);
+            phenotypeName.append("abnormal");
         }
         return phenotypeName.toString();
     }
@@ -126,7 +127,7 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
      * @param phenotypeStatement
      * @return
      */
-    public static String getPopupLink(PhenotypeStatement phenotypeStatement) {
+    public static String getPopupLink(PhenotypeStatementWarehouse phenotypeStatement) {
         StringBuilder sb = new StringBuilder(100);
         sb.append(getTomcatPopupLink(popupUri, String.valueOf(phenotypeStatement.getId()),
                 "Phenotype definitions and synonyms"));
