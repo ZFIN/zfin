@@ -13,7 +13,10 @@ set ALL_PHENOTYPEMART_SCRIPTS=$PHENOTYPEMARTDIR/allPhenotypeMart.sql
 /bin/rm -rf $ALL_PHENOTYPEMART_SCRIPTS
 
 set phenotypeMartScripts=( begin.sql \
-	     dropTables.sql \
+	     truncatePGTable.sql \
+	     commit.sql \
+	     begin.sql \
+	     truncatePGSTable.sql \
 	     commit.sql \
 	     begin.sql \
 	     populateTables.sql \

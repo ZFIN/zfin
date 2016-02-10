@@ -57,7 +57,12 @@ if ($? != 0) then
 exit 1;
 endif
 
-echo "execute procedure regen_phenotype_term_fast_search()" | /private/apps/Informix/informix/bin/dbaccess $DBNAME;
+echo "execute procedure regen_genox()" | /private/apps/Informix/informix/bin/dbaccess $DBNAME;
+echo "execute procedure regen_anatomy_counts()" | /private/apps/Informix/informix/bin/dbaccess $DBNAME;
+
+echo "execute procedure regen_pheno_term()" | /private/apps/Informix/informix/bin/dbaccess $DBNAME;
+
+echo "$TARGETROOT/server_apps/DB_maintenance/pheno/pheno_term_regen.sql" | dbaccess $DBNAME
 
 echo "success" ;
 

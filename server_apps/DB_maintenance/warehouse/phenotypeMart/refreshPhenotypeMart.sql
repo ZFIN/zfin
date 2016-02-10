@@ -2,17 +2,20 @@
 
 
 truncate phenotype_source_generated_bkup;
+commit work;
+begin work;
 truncate phenotype_observation_generated_bkup;
-
+commit work;
+begin work;
 insert into phenotype_source_generated_bkup (pg_id,
        	     			 pg_genox_zdb_id,
 				 pg_fig_zdb_id,
 				 pg_start_stg_zdb_id,
 				 pg_end_stg_zdb_id)
 select pg_id, pg_genox_zdb_id, pg_fig_zdb_id, pg_start_stg_zdb_id, pg_end_stg_zdb_id
-  from phenotype_source_genearted;
+  from phenotype_source_generated;
 
-insert into phenotype_observation_generted_bkup (psg_id,
+insert into phenotype_observation_generated_bkup (psg_id,
        	     				   psg_pg_id,
        	     				   psg_mrkr_zdb_id,	
 					   psg_mrkr_abbrev,
@@ -42,8 +45,14 @@ update zdb_flag
   set (zflag_is_on,zflag_last_modified) = ("t",current year to second)
  where zflag_name = "regen_phenotypemart" ;
 
+commit work;
+begin work;
 truncate phenotype_source_generated;
+commit work;
+begin work;
 truncate phenotype_observation_generated;
+commit work;
+begin work;
 
 insert into phenotype_source_generated (pg_id,
        	     			 pg_genox_zdb_id,
@@ -51,9 +60,9 @@ insert into phenotype_source_generated (pg_id,
 				 pg_start_stg_zdb_id,
 				 pg_end_stg_zdb_id)
 select pg_id, pg_genox_zdb_id, pg_fig_zdb_id, pg_start_stg_zdb_id, pg_end_stg_zdb_id
-  from phenotype_source_genearted_temp;
+  from phenotype_source_generated_temp;
 
-insert into phenotype_observation_generted (psg_id,
+insert into phenotype_observation_generated (psg_id,
        	     				   psg_pg_id,
        	     				   psg_mrkr_zdb_id,	
 					   psg_mrkr_abbrev,
