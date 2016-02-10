@@ -66,6 +66,9 @@ primary key (gffs_serial_id)
 	rgfg_id		int8
       ) with NO LOG
 ;
+  create index rgfg_id_index 
+    on regen_genofig_input_zdb_id_temp (rgfg_id)
+ using btree in idxdbs2;
 
   if (exists (select * from systables where tabname = "regen_genofig_temp")) then
       drop table regen_genofig_temp;

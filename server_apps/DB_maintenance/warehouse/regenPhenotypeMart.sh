@@ -1,7 +1,7 @@
 #!/bin/tcsh
 
 # rm old reports
-
+date;
 setenv INSTANCE <!--|INSTANCE|-->;
 
 if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMartReport.txt) then
@@ -32,9 +32,9 @@ if ($? != 0) then
 exit 1;
 endif
 
-echo "done with runphenotypemart on <!--|DB_NAME|-->";
+echo "done with runphenotypemart on temp tables <!--|DB_NAME|-->";
 # run the validation tests via ant.
-
+date;
 cd <!--|SOURCEROOT|-->
 echo "cd'd to <!--|SOURCEROOT|-->" ;
 
@@ -46,7 +46,9 @@ if ($? != 0) then
 exit 1;
 endif
 
-#echo "done with ant tests" ;
+date;
+echo "done with phenotype mart building public" ;
+
 
 # move the current table data to backup, move the new data to current.
 
@@ -57,12 +59,33 @@ if ($? != 0) then
 exit 1;
 endif
 
+echo "done regen public phenotype tables" ;
+date;
+
+echo "start regen_genox()";
+
 echo "execute procedure regen_genox()" | /private/apps/Informix/informix/bin/dbaccess $DBNAME;
+
+date;
+echo "done with regen_genox()";
+
+echo "start regen_anatomy_counts()";
 echo "execute procedure regen_anatomy_counts()" | /private/apps/Informix/informix/bin/dbaccess $DBNAME;
+date;
+echo "done with regen_anatomy_counts()";
 
+echo "start regen_pheno_term()";
 echo "execute procedure regen_pheno_term()" | /private/apps/Informix/informix/bin/dbaccess $DBNAME;
+date;
+echo "done with regen_pheno_term()";
 
+echo "start regen_pheno_term_regen()";
 echo "$TARGETROOT/server_apps/DB_maintenance/pheno/pheno_term_regen.sql" | dbaccess $DBNAME
+date;
+echo "done with pheno_term_regen()";
+
+
+
 
 echo "success" ;
 
