@@ -80,6 +80,12 @@ public class StructurePileView extends Composite implements HandlesError {
         onClickUpdateButton(event);
     }
 
+    @UiHandler("reCreatePile")
+    void onClickReCreatePile(@SuppressWarnings("unused") ClickEvent event) {
+        loadingImage.setVisible(true);
+        structurePilePresenter.reCreatePile();
+    }
+
     @Override
     public void setError(String message) {
 

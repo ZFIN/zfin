@@ -57,6 +57,8 @@ if ($? != 0) then
 exit 1;
 endif
 
+echo "execute procedure regen_expression_term_fast_search()" | /private/apps/Informix/informix/bin/dbaccess $DBNAME;
+
 echo "success" ;
 
 exit 0;

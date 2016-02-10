@@ -146,8 +146,9 @@ insert into tmp_zgcCount_real_gene_img
         from marker
         join expression_experiment2 on xpatex_gene_zdb_id = mrkr_zdb_id
        	join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+       	join image on efs_fig_zdb_id = img_fig_zdb_id
        	join expression_result2 on xpatres_efs_id = efs_pk_id
-       	join image on xpatfig_fig_zdb_id = img_fig_zdb_id
+
       where mrkr_abbrev not like "%:%";
 
 !echo '----------------------------------------------------------------------------'
@@ -192,8 +193,9 @@ select  tzg_gene_zdb_id as zgc_genes,
   from tmp_zgcCount_zgc_gene
   join expression_experiment2 on tzg_gene_zdb_id = xpatex_gene_zdb_id
   join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+  join image on efs_fig_zdb_id = img_fig_zdb_id
   join expression_result2 on xpatres_efs_id = efs_pk_id
-  join image on xpatfig_fig_zdb_id = img_fig_zdb_id
+
  where xpatex_source_zdb_id in ("ZDB-PUB-040907-1","ZDB-PUB-051025-1")
  into temp tmp_zgcCount_zgc_fr with no log;
 
@@ -310,7 +312,7 @@ create temp table fig_count
 )with no log;
 
 insert into fig_count
-select distinct xpatfig_fig_zdb_id
+select distinct efs_fig_zdb_id
 from expression_experiment2, fish, fish_experiment, genotype_feature, feature_marker_relationship,
      marker_relationship, expression_figure_stage, expression_result2
 where xpatex_genox_zdb_id = genox_zdb_id
@@ -339,7 +341,7 @@ create temp table figimg_count
 )with no log;
 
 insert into figimg_count
-select distinct xpatfig_fig_zdb_id
+select distinct efs_fig_zdb_id
 from expression_experiment2, fish, fish_experiment, genotype_feature, feature_marker_relationship,
      marker_relationship, expression_figure_stage, expression_result2, image
 where xpatex_genox_zdb_id = genox_zdb_id
@@ -353,7 +355,7 @@ where xpatex_genox_zdb_id = genox_zdb_id
   and efs_fig_zdb_id=img_fig_zdb_id;
 
 insert into figimg_count
-select distinct xpatfig_fig_zdb_id
+select distinct efs_fig_zdb_id
 from expression_experiment2, expression_figure_stage, expression_result2, image
   where xpatex_gene_zdb_id like 'ZDB-EFG%'
   and xpatex_zdb_id=efs_xpatex_zdb_id

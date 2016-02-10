@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
+import org.zfin.gwt.curation.event.RemoveExpressionExperimentEvent;
 import org.zfin.gwt.curation.event.SelectExperimentEvent;
 import org.zfin.gwt.curation.event.UpdateExpressionExperimentEvent;
 import org.zfin.gwt.root.dto.*;
@@ -679,8 +680,8 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             experimentList.remove(experiment);
             populateDataTable();
             // also remove the figure annotations that were used with this experiments
-///            expressionSection.removeFigureAnnotations(experiment);
-///            fireEventSuccess();
+            RemoveExpressionExperimentEvent event = new RemoveExpressionExperimentEvent(experiment);
+            AppUtils.EVENT_BUS.fireEvent(event);
         }
 
     }

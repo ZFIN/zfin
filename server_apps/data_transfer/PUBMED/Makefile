@@ -17,6 +17,7 @@ TOP = ../../..
 include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/PUBMED
+SUBDIRS   = LinkOut
 GENERICS  = addMeshTermsToAllPubs.groovy \
             fetchPubsFromPubMed.pl \
             fixBadCharacterEncoding.pl \

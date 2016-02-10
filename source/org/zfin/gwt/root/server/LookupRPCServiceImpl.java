@@ -300,7 +300,6 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 0) {
             MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-           // List<Marker> markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution(query, Marker.TypeGroup.CONSTRUCT, pubZdbID);
             List<Marker> markers = markerRepository.getConstructsByAttribution(query);
             for (Marker marker : markers) {
                 StringBuilder builder = highlighter.hidePureTermNameHtml(marker.getAbbreviation());

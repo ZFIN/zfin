@@ -10,6 +10,8 @@ import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.expression.ExpressionPhenotypeTerm;
 import org.zfin.expression.ExpressionResult2;
+import org.zfin.mutant.PhenotypeStatementWarehouse;
+import org.zfin.mutant.PhenotypeWarehouse;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.FileUtil;
 
@@ -96,6 +98,8 @@ public class HibernateSessionCreator {
             HibernateUtil.init(config.addAnnotatedClass(ExpressionExperiment2.class)
                     .addAnnotatedClass(ExpressionFigureStage.class)
                     .addAnnotatedClass(ExpressionResult2.class)
+                    .addAnnotatedClass(PhenotypeWarehouse.class)
+                    .addAnnotatedClass(PhenotypeStatementWarehouse.class)
                     .addAnnotatedClass(ExpressionPhenotypeTerm.class).buildSessionFactory());
         }
     }

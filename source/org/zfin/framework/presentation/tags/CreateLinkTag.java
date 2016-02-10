@@ -172,6 +172,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = ExpressionStatementPresentation.getLink((ExpressionStatement) o, suppressPopupLink);
         else if (o instanceof PhenotypeStatement)
             link = PhenotypePresentation.getLink((PhenotypeStatement) o, suppressPopupLink, curationLink);
+        else if (o instanceof PhenotypeStatementWarehouse)
+            link = PhenotypeStatementWarehousePresentation.getLink((PhenotypeStatementWarehouse) o, suppressPopupLink, curationLink);
         else if (o instanceof ZfinEntity)
             link = ZfinEntityPresentation.getLink((ZfinEntity) o);
         else if (o instanceof EntityZdbID)

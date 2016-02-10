@@ -2401,90 +2401,91 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
 
        </entity>
 
-
        <entity name="expression"
                datasource="db" query="select
                         'Expression' as category,
-                        'xpatex-' || xedg_pk_id as id,
-                        xedg_zdb_id as xpat_zdb_id,
+                        'xpatex-' || efs_pk_id as id,
+                        efs_xpatex_zdb_id as xpat_zdb_id,
                         fig_zdb_id as fig_zdb_id,
-                        geno_display_name as genotype,
                         fish_name as fish,
-                        xedg_assay_name as assay,
+                        xpatex_assay_name as assay,
                         fig_label as figure,
                         '/' || fig_zdb_id as url,
                         pub_date as date,
                         fig_zdb_id as xref,
                         pub_mini_ref as publication,
                         case
-                             when exists (select 'x' from clone where clone_problem_type = 'Chimeric' and xedg_probe_feature_zdb_id = clone_mrkr_zdb_id)
-                             then (select mrkr_abbrev || ' expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_probe_feature_zdb_id)
-                             when xedg_gene_zdb_id is not null and xedg_gene_zdb_id[1,8] = 'ZDB-GENE'
-                             then (select '&lt;i&gt;' || mrkr_abbrev || '&lt;/i&gt; expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_gene_zdb_id)
-                             when xedg_gene_zdb_id is not null and xedg_gene_zdb_id[1,8] != 'ZDB-GENE'
-                             then (select mrkr_abbrev || ' expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_gene_zdb_id)
-                             else (select mrkr_abbrev || ' expression in ' || fish_name || ' from ' || pub_mini_ref|| ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_atb_zdb_id)
+                             when exists (select 'x' from clone where clone_problem_type = 'Chimeric' and xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id)
+                             then (select mrkr_abbrev || ' expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_probe_feature_zdb_id)
+                             when xpatex_gene_zdb_id is not null and xpatex_gene_zdb_id[1,8] = 'ZDB-GENE'
+                             then (select '&lt;i&gt;' || mrkr_abbrev || '&lt;/i&gt; expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_gene_zdb_id)
+                             when xpatex_gene_zdb_id is not null and xpatex_gene_zdb_id[1,8] != 'ZDB-GENE'
+                             then (select mrkr_abbrev || ' expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_gene_zdb_id)
+                             else (select mrkr_abbrev || ' expression in ' || fish_name || ' from ' || pub_mini_ref|| ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_atb_zdb_id)
                          end as name,
                          case
-                             when exists (select 'x' from clone where clone_problem_type = 'Chimeric' and xedg_probe_feature_zdb_id = clone_mrkr_zdb_id)
-                             then (select mrkr_abbrev || ' expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_probe_feature_zdb_id)
-                             when xedg_gene_zdb_id is not null and xedg_gene_zdb_id[1,8] = 'ZDB-GENE'
-                             then (select '&lt;i&gt;' || mrkr_abbrev || '&lt;/i&gt; expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_gene_zdb_id)
-                             when xedg_gene_zdb_id is not null and xedg_gene_zdb_id[1,8] != 'ZDB-GENE'
-                             then (select mrkr_abbrev || ' expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_gene_zdb_id)
-                             else (select mrkr_abbrev || ' expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_atb_zdb_id)
+                             when exists (select 'x' from clone where clone_problem_type = 'Chimeric' and xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id)
+                             then (select mrkr_abbrev || ' expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_probe_feature_zdb_id)
+                             when xpatex_gene_zdb_id is not null and xpatex_gene_zdb_id[1,8] = 'ZDB-GENE'
+                             then (select '&lt;i&gt;' || mrkr_abbrev || '&lt;/i&gt; expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_gene_zdb_id)
+                             when xpatex_gene_zdb_id is not null and xpatex_gene_zdb_id[1,8] != 'ZDB-GENE'
+                             then (select mrkr_abbrev || ' expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_gene_zdb_id)
+                             else (select mrkr_abbrev || ' expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_atb_zdb_id)
                          end as full_name,
                          case
-                             when exists (select 'x' from clone where clone_problem_type = 'Chimeric' and xedg_probe_feature_zdb_id = clone_mrkr_zdb_id)
-                             then (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_probe_feature_zdb_id)
-                             when xedg_gene_zdb_id is not null and xedg_gene_zdb_id[1,8] = 'ZDB-GENE'
-                             then (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_gene_zdb_id)
-                             when xedg_gene_zdb_id is not null and xedg_gene_zdb_id[1,8] != 'ZDB-GENE'
-                             then (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_gene_zdb_id)
-                             else (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref|| ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_atb_zdb_id)
+                             when exists (select 'x' from clone where clone_problem_type = 'Chimeric' and xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id)
+                             then (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_probe_feature_zdb_id)
+                             when xpatex_gene_zdb_id is not null and xpatex_gene_zdb_id[1,8] = 'ZDB-GENE'
+                             then (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_gene_zdb_id)
+                             when xpatex_gene_zdb_id is not null and xpatex_gene_zdb_id[1,8] != 'ZDB-GENE'
+                             then (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_gene_zdb_id)
+                             else (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref|| ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_atb_zdb_id)
                          end as name_sort
-                        from xpat_exp_details_generated
-                             join fish_experiment on xedg_genox_zdb_id = genox_zdb_id
+                        from expression_experiment2
+                             join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                             join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id
                              join fish on genox_fish_zdb_id = fish_zdb_id
-                             join genotype on fish_genotype_zdb_id = geno_zdb_id
-                             join figure on xedg_fig_zdb_id = fig_zdb_id
+                             join figure on efs_fig_zdb_id = fig_zdb_id
                              join publication on fig_source_zdb_id = publication.zdb_id
                         ;
       ">
 
            <entity name="expression_clone"
                    datasource="db" query="select
-                            'xpatex-' || xedg_pk_id as xedg_pk_id,
-                            xedg_probe_feature_zdb_id as xref,
+                            'xpatex-' || efs_pk_id as efs_pk_id,
+                            xpatex_probe_feature_zdb_id as xref,
                             mrkr_abbrev as probe
-                            from xpat_exp_details_generated, marker
-                            where xedg_probe_feature_zdb_id is not null
-                              and xedg_probe_feature_zdb_id = mrkr_zdb_id;"
-                   where="xedg_pk_id=expression.id"
+                            from expression_experiment2, expression_figure_stage, marker
+                            where xpatex_probe_feature_zdb_id is not null
+                              and xpatex_probe_feature_zdb_id = mrkr_zdb_id
+                              and efs_xpatex_zdb_id = xpatex_zdb_id;"
+                   where="efs_pk_id=expression.id"
                    cacheImpl="SortedMapBackedCache"/>
 
            <entity name="expression_previous_name_genes"
                    datasource="db" query="select
-                            'xpatex-' || xedg_pk_id as xedg_pk_id,
+                            'xpatex-' || efs_pk_id as efs_pk_id,
                                              dalias_alias as expressed_gene_previous_name
-                                      from xpat_exp_details_generated, data_alias
-                                      where xedg_gene_zdb_id = dalias_data_zdb_id
+                                      from expression_experiment2, expression_figure_stage, data_alias
+                                      where xpatex_zdb_id = efs_xpatex_zdb_id
+                                          and xpatex_gene_zdb_id = dalias_data_zdb_id
                                           and not exists (
                                            select 'x'
                                            from clone
-                                           where xedg_probe_feature_zdb_id = clone_mrkr_zdb_id
+                                           where xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id
                                            and clone_problem_type = 'Chimeric' );"
-                   where="xedg_pk_id=expression.id"
+                   where="efs_pk_id=expression.id"
                    cacheImpl="SortedMapBackedCache"/>
 
            <entity name="expression_antibody_xref"
                    datasource="db" query="select
-                            'xpatex-' || xedg_pk_id as xedg_pk_id,
-                            xedg_atb_zdb_id as xref
-                            from xpat_exp_details_generated
-                            where xedg_atb_zdb_id is not null
+                            'xpatex-' || efs_pk_id as efs_pk_id,
+                            xpatex_atb_zdb_id as xref
+                            from expression_experiment2
+                                 join expression_figure_stage on xpatex_zdb_id = efs_xpatex_zdb_id
+                            where xpatex_atb_zdb_id is not null
                                                      ;"
-                   where="xedg_pk_id=expression.id"
+                   where="efs_pk_id=expression.id"
                    cacheImpl="SortedMapBackedCache"/>
 
            <entity name="expression_zebrafish_gene"
@@ -2492,33 +2493,35 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                             mrkr_abbrev as zebrafish_gene,
                             mrkr_name as zebrafish_gene_full_name,
                             mrkr_zdb_id as xref,
-                            'xpatex-' || xedg_pk_id as xedg_pk_id
-                            from xpat_exp_details_generated
-                                 join marker on xedg_gene_zdb_id = mrkr_zdb_id
-                            where xedg_gene_zdb_id[1,8] = 'ZDB-GENE'
+                            'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                 join marker on xpatex_gene_zdb_id = mrkr_zdb_id
+                            where xpatex_gene_zdb_id[1,8] = 'ZDB-GENE'
                               and not exists (
                                            select 'x'
                                            from clone
-                                           where xedg_probe_feature_zdb_id = clone_mrkr_zdb_id
+                                           where xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id
                                            and clone_problem_type = 'Chimeric' )
                     ;"
-                   where="xedg_pk_id=expression.id"
+                   where="efs_pk_id=expression.id"
                    cacheImpl="SortedMapBackedCache"/>
 
            <entity name="expression_zebrafish_gene_alias"
                    datasource="db" query="select
                             dalias_alias as zebrafish_gene_alias,
-                            'xpatex-' || xedg_pk_id as xedg_pk_id
-                            from xpat_exp_details_generated
-                                 join data_alias on xedg_gene_zdb_id = dalias_data_zdb_id
-                            where xedg_gene_zdb_id[1,8] = 'ZDB-GENE'
+                            'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                 join data_alias on xpatex_gene_zdb_id = dalias_data_zdb_id
+                            where xpatex_gene_zdb_id[1,8] = 'ZDB-GENE'
                               and not exists (
                                            select 'x'
                                            from clone
-                                           where xedg_probe_feature_zdb_id = clone_mrkr_zdb_id
+                                           where xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id
                                            and clone_problem_type = 'Chimeric' )
                             ;"
-                   where="xedg_pk_id=expression.id"
+                   where="efs_pk_id=expression.id"
                    cacheImpl="SortedMapBackedCache"/>
 
 
@@ -2526,14 +2529,14 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                    datasource="db" query="select
                             mrkr_abbrev as reporter_gene,
                             mrkr_zdb_id as xref,
-                            'xpatex-' || xedg_pk_id as xedg_pk_id
-                            from xpat_results_generated
-                                 join xpat_exp_details_generated on xrg_xedg_id = xedg_pk_id
-                                 join marker on xedg_gene_zdb_id = mrkr_zdb_id
-                            where xedg_gene_zdb_id[1,8] != 'ZDB-GENE'
+                            'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                join marker on xpatex_gene_zdb_id = mrkr_zdb_id
+                            where xpatex_gene_zdb_id[1,8] != 'ZDB-GENE'
                             ;
                    "
-                   where="xedg_pk_id=expression.id"
+                   where="efs_pk_id=expression.id"
                    cacheImpl="SortedMapBackedCache"/>
 
 
@@ -2541,44 +2544,27 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                    datasource="db" query="select
                             term_name as expression_anatomy_direct,
                             term_ont_id as xref,
-                            'xpatex-' || xedg_pk_id as xedg_pk_id
-                            from xpat_exp_details_generated
-                                 join xpat_results_generated on xrg_xedg_id = xedg_pk_id
-                                 join term on xrg_superterm_zdb_id = term_zdb_id
-                            union
-                            select
-                            term_name as expression_anatomy_direct,
-                            term_ont_id as xref,
-                            'xpatex-' || xedg_pk_id as xedg_pk_id
-                            from xpat_exp_details_generated
-                                 join xpat_results_generated on xrg_xedg_id = xedg_pk_id
-                                 join term on xrg_subterm_zdb_id = term_zdb_id
+                            'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                 join expression_result2 on xpatres_efs_id = efs_pk_id
+                                 join term on (xpatres_superterm_zdb_id = term_zdb_id OR xpatres_subterm_zdb_id = term_zdb_id)
                             ;"
-                   where="xedg_pk_id=expression.id"
+                   where="efs_pk_id=expression.id"
                    cacheImpl="SortedMapBackedCache"/>
 
            <entity name="expression_expression_anatomy_parent"
                    datasource="db" query="select
-                            term_name as expression_anatomy_parent,
+term_name as expression_anatomy_direct,
                             term_ont_id as xref,
-                            'xpatex-' || xedg_pk_id as xedg_pk_id
-                            from xpat_exp_details_generated
-                                 join xpat_results_generated on xrg_xedg_id = xedg_pk_id
-                                 join all_term_contains on alltermcon_contained_zdb_id = xrg_superterm_zdb_id
+                            'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                 join expression_result2 on xpatres_efs_id = efs_pk_id
+                                 join all_term_contains on (xpatres_superterm_zdb_id = alltermcon_contained_zdb_id OR xpatres_subterm_zdb_id = alltermcon_contained_zdb_id)
                                  join term on alltermcon_container_zdb_id = term_zdb_id
-                            where alltermcon_container_zdb_id != alltermcon_contained_zdb_id
-                            union
-                            select
-                            term_name as expression_anatomy_parent,
-                            term_ont_id as xref,
-                            'xpatex-' || xedg_pk_id as xedg_pk_id
-                            from xpat_exp_details_generated
-                                 join xpat_results_generated on xrg_xedg_id = xedg_pk_id
-                                 join all_term_contains on alltermcon_contained_zdb_id = xrg_subterm_zdb_id
-                                 join term on alltermcon_container_zdb_id = term_zdb_id
-                            where alltermcon_container_zdb_id != alltermcon_contained_zdb_id
                             ;"
-                   where="xedg_pk_id=expression.id"
+                   where="efs_pk_id=expression.id"
                    cacheImpl="SortedMapBackedCache"/>
 
            <entity name="expression_image"
@@ -2589,11 +2575,12 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                        else img_image end as image,
                        img_thumbnail as thumbnail,
                        'true' as has_image,
-                       'xpatex-' || xedg_pk_id as xedg_pk_id
-                       from xpat_exp_details_generated
-                            join image on img_fig_zdb_id = xedg_fig_zdb_id;"
+                       'xpatex-' || efs_pk_id as efs_pk_id
+                       from expression_experiment2
+                            join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                            join image on img_fig_zdb_id = efs_fig_zdb_id;"
                    cacheImpl="SortedMapBackedCache"
-                   where="xedg_pk_id=expression.id"/>
+                   where="efs_pk_id=expression.id"/>
 
            <entity name="expression_is_wildtype"
                    datasource="db" query="select
@@ -2602,66 +2589,68 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                            else TRIM('false') end
                            as is_wildtype,
                            geno_is_wildtype as is_genotype_wildtype,
-                                   'xpatex-' || xedg_pk_id as xedg_pk_id
-                            from xpat_exp_details_generated
-                                 join fish_experiment on genox_zdb_id = xedg_genox_zdb_id
+                                   'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                 join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
                                  join fish on genox_fish_zdb_id = fish_zdb_id
                                  join genotype on geno_zdb_id = fish_genotype_zdb_id;"
                    cacheImpl="SortedMapBackedCache"
-                   where="xedg_pk_id=expression.id"/>
+                   where="efs_pk_id=expression.id"/>
 
 
            <entity name="expression_author"
-                   datasource="db" query="select person.full_name as registered_author, 'xpatex-' || xedg_pk_id as xedg_pk_id
-                       from xpat_exp_details_generated
-                            join figure on xedg_fig_zdb_id = fig_zdb_id
-                            join int_person_pub on fig_source_zdb_id = int_person_pub.target_id
+                   datasource="db" query="select person.full_name as registered_author, 'xpatex-' || efs_pk_id as efs_pk_id
+                       from expression_experiment2
+                            join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                            join int_person_pub on xpatex_source_zdb_id = int_person_pub.target_id
                             join person on person.zdb_id = int_person_pub.source_id;"
                    cacheImpl="SortedMapBackedCache"
                    where="xpatex_zdb_id=expression.id"/>
 
            <entity name="expression_stage"
-                   datasource="db" query="select this_stage.stg_name as stage, 'xpatex-' || xedg_pk_id as xedg_pk_id
-                            from xpat_exp_details_generated
-                                join xpat_results_generated on xrg_xedg_id = xedg_pk_id
-                                join stage start_stage on xrg_start_stg_zdb_id = start_stage.stg_zdb_id
-                                join stage end_stage on xrg_end_stg_zdb_id = end_stage.stg_zdb_id
+                   datasource="db" query="select this_stage.stg_name as stage, 'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
+                                join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
                                 join stage this_stage on this_stage.stg_hours_start &gt;= start_stage.stg_hours_start
                                                          and this_stage.stg_hours_end &lt;= end_stage.stg_hours_end
                             where start_stage.stg_name != 'Unknown'
                               and end_stage.stg_name != 'Unknown'
                               and this_stage.stg_name != 'Unknown';"
                    cacheImpl="SortedMapBackedCache"
-                   where="xedg_pk_id=expression.id"/>
+                   where="efs_pk_id=expression.id"/>
 
            <entity name="expression_stage_unknowns"
-                   datasource="db" query="select start_stage.stg_name as stage, 'xpatex-' || xedg_pk_id as xedg_pk_id
-                            from xpat_exp_details_generated
-                                join xpat_results_generated on xrg_xedg_id = xedg_pk_id
-                                join stage start_stage on xrg_start_stg_zdb_id = start_stage.stg_zdb_id
-                                join stage end_stage on xrg_end_stg_zdb_id = end_stage.stg_zdb_id
+                   datasource="db" query="select start_stage.stg_name as stage, 'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
+                                join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
                             where (start_stage.stg_name == 'Unknown'
                                    OR end_stage.stg_name == 'Unknown')
                            union
-                           select end_stage.stg_name as stage, 'xpatex-' || xedg_pk_id as xedg_pk_id
-                            from xpat_exp_details_generated
-                                join xpat_results_generated on xrg_xedg_id = xedg_pk_id
-                                join stage start_stage on xrg_start_stg_zdb_id = start_stage.stg_zdb_id
-                                join stage end_stage on xrg_end_stg_zdb_id = end_stage.stg_zdb_id
+                           select end_stage.stg_name as stage, 'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
+                                join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
                             where (start_stage.stg_name == 'Unknown'
                                    OR end_stage.stg_name == 'Unknown');"
                    cacheImpl="SortedMapBackedCache"
-                   where="xedg_pk_id=expression.id"/>
+                   where="efs_pk_id=expression.id"/>
 
            <entity name="expression_str"
                    datasource="db" query="select mrkr_abbrev as sequence_targeting_reagent,
-                                   'xpatex-' || xedg_pk_id as xedg_pk_id
-                            from xpat_exp_details_generated
-                                 join fish_experiment on xedg_genox_zdb_id = genox_zdb_id
+                                   'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                 join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id
                                  join fish_str on fishstr_fish_zdb_id = genox_fish_zdb_id
                                  join marker on fishstr_str_zdb_id = mrkr_zdb_id;"
                    cacheImpl="SortedMapBackedCache"
-                   where="xedg_pk_id=expression.id"/>
+                   where="efs_pk_id=expression.id"/>
 
            <entity name="expression_conditions"
                    datasource="db" query="select
@@ -2680,23 +2669,25 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                                   when cdt_name = 'Rapamycin (CAS: 53123-88-9)' then 'Rapamycin'
                                   when cdt_group in ('physical','chemical','physiological') then cdt_name
                                   else cdt_group || ':' || cdt_name end as experimental_conditions,
-                                  'xpatex-' || xedg_pk_id as xedg_pk_id
+                                  'xpatex-' || efs_pk_id as efs_pk_id
                         from condition_data_type
                              join experiment_condition on expcond_cdt_zdb_id = cdt_zdb_id
                              join fish_experiment on genox_exp_zdb_id = expcond_exp_zdb_id and genox_is_std_or_generic_control = 'f'
-                             join xpat_exp_details_generated on xedg_genox_zdb_id = genox_zdb_id
+                             join expression_experiment2 on xpatex_genox_zdb_id = genox_zdb_id
+                             join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                         where cdt_group || ':' || cdt_name not in ('chemical:other','morpholino:morpholino','TALEN:TALEN','CRISPR:CRISPR');"
                    cacheImpl="SortedMapBackedCache"
-                   where="xedg_pk_id=expression.id"/>
+                   where="efs_pk_id=expression.id"/>
 
            <entity name="expression_standard_conditions"
                    datasource="db" query="select 'standard or control' as experimental_conditions,
-                                   'xpatex-' || xedg_pk_id as xedg_pk_id
-                            from xpat_exp_details_generated
-                                 join fish_experiment on genox_zdb_id = xedg_genox_zdb_id
+                                   'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                 join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
                                       and genox_is_std_or_generic_control = 't';"
                    cacheImpl="SortedMapBackedCache"
-                   where="xedg_pk_id=expression.id"/>
+                   where="efs_pk_id=expression.id"/>
 
 
 
@@ -2704,42 +2695,47 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
            <entity name="expression_fish_xref"
                    datasource="db" query="select
                               genox_fish_zdb_id as xref,
-                              'xpatex-' || xedg_pk_id as xedg_pk_id
+                              'xpatex-' || efs_pk_id as efs_pk_id
                             from fish_experiment
-                                 join xpat_exp_details_generated on genox_zdb_id = xedg_genox_zdb_id;"
+                                 join expression_experiment2 on genox_zdb_id = xpatex_genox_zdb_id
+                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id;"
                    cacheImpl="SortedMapBackedCache"
-                   where="xedg_pk_id=expression.id"/>
+                   where="efs_pk_id=expression.id"/>
 
            <entity name="expression_publication_xref"
                    datasource="db" query="select fig_source_zdb_id as xref,
-                                   'xpatex-' || xedg_pk_id as xedg_pk_id
-                            from xpat_exp_details_generated
-                                 join figure on fig_zdb_id = xedg_fig_zdb_id;"
+                                   'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                 join figure on fig_zdb_id = efs_fig_zdb_id;"
                    cacheImpl="SortedMapBackedCache"
-                   where="xedg_pk_id=expression.id"/>
+                   where="efs_pk_id=expression.id"/>
 
            <entity name="expression_fig_xref"
-                   datasource="db" query="select xedg_fig_zdb_id as xref,
-                                   'xpatex-' || xedg_pk_id as xedg_pk_id
-                            from xpat_exp_details_generated;"
+                   datasource="db" query="select efs_fig_zdb_id as xref,
+                                   'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                              join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id;"
                    cacheImpl="SortedMapBackedCache"
-                   where="xedg_pk_id=expression.id"/>
+                   where="efs_pk_id=expression.id"/>
 
            <entity name="expression_clone_xref"
-                   datasource="db" query="select xedg_probe_feature_zdb_id as xref,
-                                   'xpatex-' || xedg_pk_id as xedg_pk_id
-                            from xpat_exp_details_generated
-                            where xedg_probe_feature_zdb_id is not null;"
+                   datasource="db" query="select xpatex_probe_feature_zdb_id as xref,
+                                   'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                            where xpatex_probe_feature_zdb_id is not null;"
                    cacheImpl="SortedMapBackedCache"
-                   where="xedg_pk_id=expression.id"/>
+                   where="efs_pk_id=expression.id"/>
 
            <entity name="expression_antibody_xref"
-                   datasource="db" query="select xedg_atb_zdb_id as xref,
-                                   'xpatex-' || xedg_pk_id as xedg_pk_id
-                            from xpat_exp_details_generated
-                            where xedg_atb_zdb_id is not null;"
+                   datasource="db" query="select xpatex_atb_zdb_id as xref,
+                                   'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                            where xpatex_atb_zdb_id is not null;"
                    cacheImpl="SortedMapBackedCache"
-                   where="xedg_pk_id=expression.id"/>
+                   where="efs_pk_id=expression.id"/>
 
 
 
@@ -4236,9 +4232,10 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
            <entity name="figure_fish_from_expression"
                    datasource="db" query="select
                       fish_name as fish,
-                      xedg_fig_zdb_id as fish_zdb_d
-                    from xpat_exp_details_generated
-                         join fish_experiment on genox_zdb_id = xedg_genox_zdb_id
+                      efs_fig_zdb_id as fig_zdb_d
+                    from expression_experiment2
+                         join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                         join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
                          join fish on genox_fish_zdb_id = fish_zdb_id;"
                    cacheImpl="SortedMapBackedCache"
                    where="fig_zdb_id=figure.id"/>
@@ -4307,9 +4304,10 @@ from phenotype_experiment
      join feature on genofeat_feature_zdb_id = feature_zdb_id
 UNION
 select feature_abbrev as sequence_alteration,
-     xedg_fig_zdb_id as fig_zdb_id
-from xpat_exp_details_generated
-     join fish_experiment on xedg_genox_zdb_id = genox_zdb_id
+     efs_fig_zdb_id as fig_zdb_id
+from expression_experiment2
+     join expression_figure_stage on xpatex_zdb_id = efs_xpatex_zdb_id
+     join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id
      join fish on genox_fish_zdb_id = fish_zdb_id
      join genotype_feature on genofeat_geno_zdb_id = fish_genotype_zdb_id
      join feature on genofeat_feature_zdb_id = feature_zdb_id;

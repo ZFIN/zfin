@@ -72,6 +72,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.ANTIBODY.name         | "actin ab1-act"                                  | "11329"
         Category.ANTIBODY.name         | "fgf Ab1-fgfbp1"                                 | "11209"
         Category.ANTIBODY.name         | "prk Ab2-prkcz"                                  | "11209"
+        Category.EXPRESSIONS.name      | "xref:ZDB-PUB-150919-1"                          | "13882"
         Category.MUTANT.name           | "gz12 ZDB-ALT-090424-3"                          | "11228"
         Category.MUTANT.name           | "b566 hox"                                       | "11208"
         Category.MARKER.name           | "hoxa2b DKEY-45E15"                              | "11289"

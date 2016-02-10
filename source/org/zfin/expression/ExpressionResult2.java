@@ -139,4 +139,12 @@ public class ExpressionResult2 implements Comparable<ExpressionResult2> {
     public boolean isEap() {
         return CollectionUtils.isNotEmpty(phenotypeTermSet);
     }
+
+    @Override
+    public String toString() {
+        String termName = superTerm.getTermName();
+        if(subTerm!= null)
+            termName += ": "+subTerm.getTermName();
+        return termName + ": " + expressionFound;
+    }
 }

@@ -47,6 +47,7 @@ begin
 		and geno_is_wildtype = 't'
 		and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
 		and xpatres_pk_id = xpatresZdbId
+		-- not unspecified
 		and xpatres_superterm_zdb_id !='ZDB-TERM-100331-1055'
 
 		insert into feature_stats ( fstat_feat_zdb_id,

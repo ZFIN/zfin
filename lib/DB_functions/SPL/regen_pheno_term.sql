@@ -229,147 +229,147 @@ create dba function regen_pheno_term()
  
     insert into pheno_term_working (pt_genox_zdb_id, pt_start_stg_zdb_id, pt_end_stg_zdb_id, pt_fig_Zdb_id, pt_geno_zdb_id,
     	   		   		     pt_pub_zdb_id, pt_tag, pt_geno_is_wildtype, pt_pheno_entity)
-   	   select phenox_genox_zdb_id,
-	   	  phenox_start_stg_zdb_id,
-		  phenox_end_stg_zdb_id,
-		  phenox_fig_zdb_id,
+   	   select pg_genox_zdb_id,
+	   	  pg_start_stg_zdb_id,
+		  pg_end_stg_zdb_id,
+		  pg_fig_zdb_id,
 		  geno_zdb_id,
 		  fig_source_zdb_id,
-		  phenos_tag,
+		  psg_tag,
 		  geno_is_wildtype,
-		  phenos_entity_1_superterm_zdb_id
-	      from phenotype_statement, 
-	      	   phenotype_experiment, 
+		  psg_e1a_zdb_id
+	      from phenotype_source_generated, 
+	      	   phenotype_observation_generated, 
 		   figure, 
 		   genotype,
 		   fish_experiment, fish
 	      where geno_zdb_id = fish_genotype_zdb_id
 	      and genox_fish_Zdb_id = fish_Zdb_id
-	      and genox_zdb_id = phenox_genox_zdb_id
-	      and fig_zdb_id = phenox_fig_Zdb_id
-	      and phenox_pk_id = phenos_phenox_pk_id
- 	      and phenos_entity_1_superterm_zdb_id is not null
+	      and genox_zdb_id = pg_genox_zdb_id
+	      and fig_zdb_id = pg_fig_Zdb_id
+	      and pg_id = psg_pg_id
+ 	      and psg_e1a_zdb_id is not null
               and not exists (Select 'x' from
 	      	      	     	     pheno_term_working q
-				     where q.pt_genox_zdb_id = phenox_genox_zdb_id
+				     where q.pt_genox_zdb_id = pg_genox_zdb_id
 				     and q.pt_geno_zdb_id = geno_Zdb_id
 				     and q.pt_start_stg_zdb_id =
-				     	 	phenox_start_stg_zdb_id
+				     	 	pg_start_stg_zdb_id
 				     and q.pt_end_stg_zdb_id = 
-				     	 	phenox_end_stg_zdb_id
+				     	 	pg_end_stg_zdb_id
 				     and q.pt_fig_zdb_id =
-				     	 	phenox_fig_zdb_id
-				     and q.pt_tag = phenos_tag
+				     	 	pg_fig_zdb_id
+				     and q.pt_tag = psg_tag
 				     and q.pt_geno_is_wildtype = geno_is_wildtype
-				     and q.pt_pheno_entity = phenos_entity_1_superterm_zdb_id);
+				     and q.pt_pheno_entity = psg_e1a_zdb_id);
 
     insert into pheno_term_working (pt_genox_zdb_id, pt_start_stg_zdb_id, pt_end_stg_zdb_id, pt_fig_Zdb_id, pt_geno_zdb_id,
     	   		   		     pt_pub_zdb_id, pt_tag, pt_geno_is_wildtype, pt_pheno_entity)
-	      select phenox_genox_zdb_id,
-	   	  phenox_start_stg_zdb_id,
-		  phenox_end_stg_zdb_id,
-		  phenox_fig_zdb_id,
+	      select pg_genox_zdb_id,
+	   	  pg_start_stg_zdb_id,
+		  pg_end_stg_zdb_id,
+		  pg_fig_zdb_id,
 		  geno_zdb_id,
 		  fig_source_zdb_id,
-		  phenos_tag,
+		  psg_tag,
 		  geno_is_wildtype,
-		  phenos_entity_1_subterm_zdb_id
-	      from phenotype_statement, 
-	      	   phenotype_experiment, 
+		  psg_e1b_zdb_id
+	      from phenotype_source_generated, 
+	      	   phenotype_observation_generated, 
 		   figure, 
 		   genotype,
 		   fish_experiment,fish
 	      where geno_zdb_id = fish_genotype_zdb_id
 	      and genox_fish_zdb_id = fish_zdb_id
-	      and genox_zdb_id = phenox_genox_zdb_id
-	      and fig_zdb_id = phenox_fig_Zdb_id
-	      and phenox_pk_id = phenos_phenox_pk_id
-	      and phenos_entity_1_subterm_zdb_id is not null
+	      and genox_zdb_id = pg_genox_zdb_id
+	      and fig_zdb_id = pg_fig_Zdb_id
+	      and pg_id = psg_pg_id
+	      and psg_e1b_zdb_id is not null
               and not exists (Select 'x' from
 	      	      	     	     pheno_term_working q
-				     where q.pt_genox_zdb_id = phenox_genox_zdb_id
+				     where q.pt_genox_zdb_id = pg_genox_zdb_id
 				     and q.pt_geno_zdb_id = geno_Zdb_id
 				     and q.pt_start_stg_zdb_id =
-				     	 	phenox_start_stg_zdb_id
+				     	 	pg_start_stg_zdb_id
 				     and q.pt_end_stg_zdb_id = 
-				     	 	phenox_end_stg_zdb_id
+				     	 	pg_end_stg_zdb_id
 				     and q.pt_fig_zdb_id =
-				     	 	phenox_fig_zdb_id
-				     and q.pt_tag = phenos_tag
+				     	 	pg_fig_zdb_id
+				     and q.pt_tag = psg_tag
 				     and q.pt_geno_is_wildtype = geno_is_wildtype
-				     and q.pt_pheno_entity = phenos_entity_1_subterm_zdb_id);
+				     and q.pt_pheno_entity = psg_e1b_zdb_id);
 
     insert into pheno_term_working (pt_genox_zdb_id, pt_start_stg_zdb_id, pt_end_stg_zdb_id, pt_fig_Zdb_id, pt_geno_zdb_id,
     	   		   		     pt_pub_zdb_id, pt_tag, pt_geno_is_wildtype, pt_pheno_entity)
-    	   select phenox_genox_zdb_id,
-	   	  phenox_start_stg_zdb_id,
-		  phenox_end_stg_zdb_id,
-		  phenox_fig_zdb_id,
+    	   select pg_genox_zdb_id,
+	   	  pg_start_stg_zdb_id,
+		  pg_end_stg_zdb_id,
+		  pg_fig_zdb_id,
 		  geno_zdb_id,
 		  fig_source_zdb_id,
-		  phenos_tag,
+		  psg_tag,
 		  geno_is_wildtype,
-		  phenos_entity_2_superterm_zdb_id
-	      from phenotype_statement, 
-	      	   phenotype_experiment, 
+		  psg_e2a_zdb_id
+	      from phenotype_source_generated, 
+	      	   phenotype_observation_generated, 
 		   figure, 
 		   genotype,
 		   fish_experiment, fish
 	      where fish_zdb_id = genox_fish_zdb_id
 	      and fish_genotype_zdb_id = geno_zdb_id
-	      and genox_zdb_id = phenox_genox_zdb_id
-	      and fig_zdb_id = phenox_fig_Zdb_id
-	      and phenox_pk_id = phenos_phenox_pk_id
-	      and phenos_entity_2_superterm_zdb_id is not null
+	      and genox_zdb_id = pg_genox_zdb_id
+	      and fig_zdb_id = pg_fig_Zdb_id
+	      and pg_id = psg_pg_id
+	      and psg_e2a_zdb_id is not null
               and not exists (Select 'x' from
 	      	      	     	     pheno_term_working q
-				     where q.pt_genox_zdb_id = phenox_genox_zdb_id
+				     where q.pt_genox_zdb_id = pg_genox_zdb_id
 				     and q.pt_geno_zdb_id = geno_Zdb_id
 				     and q.pt_start_stg_zdb_id =
-				     	 	phenox_start_stg_zdb_id
+				     	 	pg_start_stg_zdb_id
 				     and q.pt_end_stg_zdb_id = 
-				     	 	phenox_end_stg_zdb_id
+				     	 	pg_end_stg_zdb_id
 				     and q.pt_fig_zdb_id =
-				     	 	phenox_fig_zdb_id
-				     and q.pt_tag = phenos_tag
+				     	 	pg_fig_zdb_id
+				     and q.pt_tag = psg_tag
 				     and q.pt_geno_is_wildtype = geno_is_wildtype
-				     and q.pt_pheno_entity = phenos_entity_2_superterm_zdb_id);
+				     and q.pt_pheno_entity = psg_e2a_zdb_id);
 
     insert into pheno_term_working (pt_genox_zdb_id, pt_start_stg_zdb_id, pt_end_stg_zdb_id, pt_fig_Zdb_id, pt_geno_zdb_id,
     	   		   		     pt_pub_zdb_id, pt_tag, pt_geno_is_wildtype, pt_pheno_entity)
-    	   select phenox_genox_zdb_id,
-	   	  phenox_start_stg_zdb_id,
-		  phenox_end_stg_zdb_id,
-		  phenox_fig_zdb_id,
+    	   select pg_genox_zdb_id,
+	   	  pg_start_stg_zdb_id,
+		  pg_end_stg_zdb_id,
+		  pg_fig_zdb_id,
 		  geno_zdb_id,
 		  fig_source_zdb_id,
-		  phenos_tag,
+		  psg_tag,
 		  geno_is_wildtype,
-		  phenos_entity_2_subterm_zdb_id
-	      from phenotype_statement, 
-	      	   phenotype_experiment, 
+		  psg_e2b_zdb_id
+	      from phenotype_source_generated, 
+	      	   phenotype_observation_generated, 
 		   figure, 
 		   genotype,
 		   fish_experiment, fish
 	      where fish_zdb_id = genox_fish_zdb_id
 	      and fish_genotype_zdb_id = geno_zdb_id
-	      and genox_zdb_id = phenox_genox_zdb_id
-	      and fig_zdb_id = phenox_fig_Zdb_id
-	      and phenox_pk_id = phenos_phenox_pk_id
-	      and phenos_entity_2_subterm_zdb_id is not null
+	      and genox_zdb_id = pg_genox_zdb_id
+	      and fig_zdb_id = pg_fig_Zdb_id
+	      and pg_id = psg_pg_id
+	      and psg_e2b_zdb_id is not null
               and not exists (Select 'x' from
 	      	      	     	     pheno_term_working q
-				     where q.pt_genox_zdb_id = phenox_genox_zdb_id
+				     where q.pt_genox_zdb_id = pg_genox_zdb_id
 				     and q.pt_geno_zdb_id = geno_Zdb_id
 				     and q.pt_start_stg_zdb_id =
-				     	 	phenox_start_stg_zdb_id
+				     	 	pg_start_stg_zdb_id
 				     and q.pt_end_stg_zdb_id = 
-				     	 	phenox_end_stg_zdb_id
+				     	 	pg_end_stg_zdb_id
 				     and q.pt_fig_zdb_id =
-				     	 	phenox_fig_zdb_id
-				     and q.pt_tag = phenos_tag
+				     	 	pg_fig_zdb_id
+				     and q.pt_tag = psg_tag
 				     and q.pt_geno_is_wildtype = geno_is_wildtype
-				     and q.pt_pheno_entity = phenos_entity_2_subterm_zdb_id);
+				     and q.pt_pheno_entity = psg_e2b_zdb_id);
 
 
          let errorHint = "rename table pheno_term_new";

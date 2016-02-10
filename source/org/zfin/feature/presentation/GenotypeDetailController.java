@@ -189,7 +189,7 @@ public class GenotypeDetailController {
     }
 
     public void retrievePhenotypeData(GenotypeBean form, Genotype genotype) {
-        List<PhenotypeStatement> phenoStatements = mutantRepository.getPhenotypeStatementsByGenotype(genotype);
+        List<PhenotypeStatementWarehouse> phenoStatements = mutantRepository.getPhenotypeStatementsByGenotype(genotype);
         form.setPhenoStatements(phenoStatements);
     }
 

@@ -61,6 +61,8 @@
         <mapping class="org.zfin.expression.ExpressionFigureStage"/>
         <mapping class="org.zfin.expression.ExpressionResult2"/>
         <mapping class="org.zfin.expression.ExpressionPhenotypeTerm"/>
+        <mapping class="org.zfin.mutant.PhenotypeWarehouse"/>
+        <mapping class="org.zfin.mutant.PhenotypeStatementWarehouse"/>
 
 
     </session-factory>

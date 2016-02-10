@@ -15,6 +15,6 @@ public class PhenotypeDisplayFishComparator implements Comparator<PhenotypeDispl
         else if (pheno2 == null)
             return 1;
 
-        return pheno1.getPhenoStatement().getPhenotypeExperiment().getFishExperiment().getFish().compareTo(pheno2.getPhenoStatement().getPhenotypeExperiment().getFishExperiment().getFish());
+        return pheno1.getPhenoStatement().getPhenotypeWarehouse().getFishExperiment().getFish().compareTo(pheno2.getPhenoStatement().getPhenotypeExperiment().getFishExperiment().getFish());
     }
 }

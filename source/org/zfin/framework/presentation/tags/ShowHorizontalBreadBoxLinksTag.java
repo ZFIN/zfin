@@ -80,9 +80,9 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
 
         //see if it's a query that's recognized and replace it with a nicer label
         FacetQueryEnum facetQueryEnum = FacetQueryEnum.getFacetQueryEnum(fq);
-        if (facetQueryEnum != null)
-            nameValuePair = new BasicNameValuePair(nameValuePair.getName(),facetQueryEnum.getLabel());
-
+        if (facetQueryEnum != null) {
+            nameValuePair = new BasicNameValuePair(nameValuePair.getName(), facetQueryEnum.getLabel());
+        }
 
         if (!StringUtils.equals(nameValuePair.getName(), "category")) {
             out.append("<span title=\"click to remove this filter\" class=\"breadbox-field-name\">");

@@ -468,7 +468,6 @@
        When using MoreLikeThis, fields used for similarity should be stored for 
        best performance.
    -->
-
    <field name="id" type="string" indexed="true" stored="true" required="true" />
    <field name="popularity" type="file" default="1.0"/>
 

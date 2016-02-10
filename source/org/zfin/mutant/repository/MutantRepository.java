@@ -202,7 +202,7 @@ public interface MutantRepository {
      * @param genotype Genotype
      * @return list of phenotype statement objects
      */
-    List<PhenotypeStatement> getPhenotypeStatementsByGenotype(Genotype genotype);
+    List<PhenotypeStatementWarehouse> getPhenotypeStatementsByGenotype(Genotype genotype);
 
     void runFeatureNameFastSearchUpdate(Feature feature);
 
@@ -248,6 +248,8 @@ public interface MutantRepository {
     List<PhenotypeStatement> getPhenotypeStatementsByGenotypeExperiments(List<String> genotypeExperimentIDs);
 
     List<PhenotypeStatement> getPhenotypeStatementsByFish(Fish fish);
+
+    List<PhenotypeStatementWarehouse> getPhenotypeStatementWarehousesByFish(Fish fish);
 
     /**
      * Retrieve phenotype statements by genotype experiment ids

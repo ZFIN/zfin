@@ -147,12 +147,14 @@ public class FacetBuilderService {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
         FacetGroup expressedGene = new FacetGroup("Expressed Gene", true);
+
         expressedGene.addFacet(buildFacet(FieldName.ZEBRAFISH_GENE.getName(),
                 Category.EXPRESSIONS.getFacetQueriesForField(FieldName.ZEBRAFISH_GENE),
                 true, response, filterQuerySelectionMap, baseUrl));
         expressedGene.addFacet(buildFacet(FieldName.REPORTER_GENE.getName(),
                 Category.EXPRESSIONS.getFacetQueriesForField(FieldName.REPORTER_GENE),
                 false, response, filterQuerySelectionMap, baseUrl));
+        
         facetGroups.add(expressedGene);
 
         facetGroups.add(buildSingleFacetGroup("Expressed In Anatomy", EXPRESSIONS_ANATOMY_TF.getName(), true, response, filterQuerySelectionMap, baseUrl));
@@ -162,38 +164,12 @@ public class FacetBuilderService {
         wildtypeGroup.setRootOnly(true);
         facetGroups.add(wildtypeGroup);
         facetGroups.add(buildSingleFacetGroup("Assay", "assay", false, response, filterQuerySelectionMap, baseUrl));
+
         FacetGroup genotype = buildSingleFacetGroup("Genotype", "genotype",
                                                     Category.EXPRESSIONS.getFacetQueriesForField(FieldName.GENOTYPE),
                                                     false, response, filterQuerySelectionMap, baseUrl);
 
         facetGroups.add(genotype);
-
-/*        List<FacetQuery> facetQueryList = new ArrayList<>();
-        for (FacetQueryEnum facetQueryEnum : Category.EXPRESSIONS.getFacetQueries()) {
-            Integer count = response.getFacetQuery().get(facetQueryEnum.getQuery());
-            if (count > 0) {
-                FacetQuery facetQuery = new FacetQuery();
-                facetQuery.setLabel(facetQueryEnum.getLabel());
-                facetQuery.setCount(count);
-                //the map tells us if it's a selected value or not
-                if (filterQuerySelectionMap.containsKey(facetQueryEnum.getQuery()) && filterQuerySelectionMap.get(facetQueryEnum.getQuery()))
-                    facetQuery.setSelected(true);
-                else
-                    facetQuery.setSelected(false);
-
-                if (facetQuery.getSelected()) {
-                    facetQuery.setUrl(SolrService.getBreadBoxUrl(facetQueryEnum.getQuery(), baseUrl));
-                } else {
-                    try {
-                        facetQuery.setUrl(baseUrl + "&fq=" + URLEncoder.encode(facetQueryEnum.getQuery(), "UTF-8"));
-                    } catch (UnsupportedEncodingException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-                facetQueryList.add(facetQuery);
-            }
-        }
-        genotype.setFacetQueries(facetQueryList);*/
 
         facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)", "sequence_targeting_reagent", false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Experimental Conditions", "experimental_conditions", false, response, filterQuerySelectionMap, baseUrl));
