@@ -127,7 +127,7 @@ update statistics high for table phenotype_observation_generated_temp;
 
 insert into phenotype_generated_curated_mapping_temp (pgcm_pg_id, pgcm_source_id, pgcm_id_type)
  select distinct pg_id, xpatex_zdb_id, "expression"
-   from phenotype_source_generated_temp, expression_figure_stage, expression_experiment, expression_result, expression_phenotype_term
+   from phenotype_source_generated_temp, expression_figure_stage, expression_experiment2, expression_result2, expression_phenotype_term
    where pg_genox_zdb_id = xpatex_genox_Zdb_id
    and pg_fig_zdb_id = efs_fig_zdb_id
    and pg_start_stg_zdb_id = efs_start_stg_zdb_id
