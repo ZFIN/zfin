@@ -47,7 +47,8 @@
         <c:when test="${empty locations && empty mappedClones}"><span
                 class="no-data-tag">No data available</span></c:when>
         <c:otherwise>
-            <zfin2:PhysicalMapAndBrowserSection marker="${marker}" locations="${locations}" gbrowseImage="${gbrowseImage}"/>
+            <zfin2:PhysicalMapAndBrowserSection marker="${marker}" locations="${locations}"
+                                                gbrowseImage="${gbrowseImage}"/>
         </c:otherwise>
     </c:choose>
 </div>
@@ -79,6 +80,16 @@
         </c:otherwise>
     </c:choose>
 </div>
+
+<c:if test="${not empty feature}">
+    <table class="primary-entity-attributes">
+        <tr>
+            <td><span class="name-value">Genomic Feature <zfin:link entity="${feature}"/>
+        is an allele of <zfin:link entity="${marker}"/>
+        </span></td>
+        </tr>
+    </table>
+</c:if>
 
 <authz:authorize access="hasRole('root')">
     <p/>
