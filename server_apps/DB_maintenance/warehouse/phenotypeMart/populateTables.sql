@@ -56,6 +56,7 @@ insert into phenotype_Observation_generated_temp (psg_pg_id,  psg_e1a_zdb_id, ps
     and phenox_end_Stg_zdb_id = pg_end_stg_zdb_id
     and phenos_phenox_pk_id = phenox_pk_id
 ;
+
 update phenotype_observation_generated_temp
   set psg_mrkr_abbrev = (select "<i>"||mrkr_abbrev||"</i>" from marker where psg_mrkr_zdb_id = mrkr_zdb_id);
 
@@ -106,20 +107,22 @@ update phenotype_observation_generated_temp
  and psg_e2b_zdb_id is not null; 
 
 
-update phenotype_observation_generated_temp 
-  set psg_short_name =  psg_e1a_name||nvl(" "||psg_e1b_name,'')||nvl(" "||psg_quality_name,'')||","||psg_tag    		       	      
+
+update phenotype_observation_generated_temp  
+  set psg_short_name =  psg_e1a_name||nvl(" "||psg_e1b_name,'')||nvl(" "||psg_quality_name,'')||", "||psg_tag    		       	      
   where psg_mrkr_Zdb_id is null
  and psg_e2a_name is null;
 
 update phenotype_observation_generated_temp  
-  set psg_short_name =  psg_e1a_name||nvl(" "||psg_e1b_name,'')||nvl(" "||psg_quality_name,'')||nvl(" "||psg_e2a_name,'')||nvl(" "||psg_e2b_name,'')||","||psg_tag    		       	      
+  set psg_short_name =  psg_e1a_name||nvl(" "||psg_e1b_name,'')||nvl(" "||psg_quality_name,'')||nvl(" "||psg_e2a_name,'')||nvl(" "||psg_e2b_name,'')||", "||psg_tag    		       	      
   where psg_mrkr_Zdb_id is null
  and psg_e2a_name is not null;
 
 
 update phenotype_observation_generated_temp  
-  set psg_short_name = nvl(" "||psg_e1a_name,"")||nvl(" "||psg_e1b_name,'')||psg_mrkr_Abbrev||nvl(" "||psg_mrkr_relation,'')||nvl(" "||psg_quality_name,'')||","||psg_tag    
+  set psg_short_name = nvl(" "||psg_e1a_name,"")||nvl(" "||psg_e1b_name,'')||" "||psg_mrkr_Abbrev||nvl(" "||psg_mrkr_relation,'')||nvl(" "||psg_quality_name,'')||", "||psg_tag    
   where psg_mrkr_Zdb_id is not null;
+
 
 update statistics high for table phenotype_source_generated_temp;
 update statistics high for table phenotype_observation_generated_temp;
