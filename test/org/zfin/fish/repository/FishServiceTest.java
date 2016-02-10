@@ -26,6 +26,7 @@ import org.zfin.marker.ExpressedGene;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.MatchType;
 
@@ -74,7 +75,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         // Fig S11
         String figureID = "ZDB-FIG-080512-1";
         Figure figure = RepositoryFactory.getPublicationRepository().getFigure(figureID);
-        List<PhenotypeStatement> phenotypeStatements = FishService.getPhenotypeStatements(figure, fishID);
+        List<PhenotypeStatementWarehouse> phenotypeStatements = FishService.getPhenotypeStatements(figure, fishID);
         assertNotNull(phenotypeStatements);
         assertTrue(phenotypeStatements.size() > 3);
     }
