@@ -96,3 +96,6 @@ update zdb_flag
 update warehouse_run_tracking
  set wrt_last_loaded_date = current year to second
  where wrt_mart_name = "phenotype mart";
+
+update statistics high for table phenotype_source_generated;
+update statistics high for table phenotype_observation_generated;
