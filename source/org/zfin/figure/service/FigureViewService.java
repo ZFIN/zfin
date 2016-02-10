@@ -104,7 +104,7 @@ public class FigureViewService {
         }
 
         //taking advantage of domain objects having their own comparators, though, in the case of genotype, we don't want it!
-        Collections.sort(rows, ComparatorCreator.orderBy("fishNameOrder", "experiment", "start", "end"));
+        Collections.sort(rows, ComparatorCreator.orderBy("fishNameOrder", "experiment", "start", "end", "phenotypeStatement"));
         return rows;
     }
 
