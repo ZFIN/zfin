@@ -57,6 +57,7 @@ table.ontology-term-mini-summary th {
     text-align: left;
     vertical-align: top;
     padding-right: 1em;
+    white-space: nowrap;
 }
 
 table.ontology-term-mini-summary td {

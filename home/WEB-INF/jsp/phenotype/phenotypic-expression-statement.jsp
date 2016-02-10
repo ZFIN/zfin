@@ -15,15 +15,15 @@
     </tr>
 </table>
 
-<zfin2:subsection title="EXPRESSED GENE:">
-    <zfin2:geneSummary gene="${phenotypeStatement.gene}" previousNames="${genePreviousNames}"/>
-</zfin2:subsection>
-
 <zfin2:subsection title="EXPRESSION ANATOMY:">
     <zfin2:termMiniSummary term="${phenotypeStatement.e1a}"/>
     <c:if test="${not empty phenotypeStatement.e1b}">
         <zfin2:termMiniSummary term="${phenotypeStatement.e1b}"/>
     </c:if>
+</zfin2:subsection>
+
+<zfin2:subsection title="EXPRESSED GENE:">
+    <zfin2:geneSummary gene="${phenotypeStatement.gene}" previousNames="${genePreviousNames}"/>
 </zfin2:subsection>
 
 <zfin2:subsection title="EXPRESSION QUALITY:">
