@@ -58,7 +58,9 @@ public class PhenotypeStatementWarehouse {
     }
 
     //this is a convenience method, for example to get to Fish from PhenotypeStatement, this method is often called
-    public PhenotypeWarehouse getPhenotypeExperiment() { return phenotypeWarehouse; }
+    public PhenotypeWarehouse getPhenotypeExperiment() {
+        return phenotypeWarehouse;
+    }
 
     public GenericTerm getE1a() {
         return e1a;
@@ -76,9 +78,13 @@ public class PhenotypeStatementWarehouse {
         return e2b;
     }
 
-    public String getShortName() { return shortName; }
+    public String getShortName() {
+        return shortName;
+    }
 
-    public String getPhenoStatementString() { return getShortName(); }
+    public String getPhenoStatementString() {
+        return getShortName();
+    }
 
     public String getMarkerRelationship() {
         return markerRelationship;
@@ -91,8 +97,9 @@ public class PhenotypeStatementWarehouse {
     @Override
     public String toString() {
         String message = "";
-        if (gene != null)
+        if (gene != null) {
             message += gene.getAbbreviation();
+        }
         return message;
     }
 
@@ -105,8 +112,9 @@ public class PhenotypeStatementWarehouse {
         if (entity == null) {
             entity = new PostComposedEntity();
             entity.setSuperterm(e1a);
-            if (e1b != null)
+            if (e1b != null) {
                 entity.setSubterm(e1b);
+            }
         }
         return entity;
     }
@@ -121,8 +129,9 @@ public class PhenotypeStatementWarehouse {
             if (e2a != null) {
                 relatedEntity = new PostComposedEntity();
                 relatedEntity.setSuperterm(e2a);
-                if (e2b != null)
+                if (e2b != null) {
                     relatedEntity.setSubterm(e2b);
+                }
             }
         }
         return relatedEntity;
@@ -137,12 +146,10 @@ public class PhenotypeStatementWarehouse {
     }
 
     public boolean isNormal() {
-
         return tag.equals(PhenotypeStatement.Tag.NORMAL.toString());
     }
 
     public boolean isNotNormal() {
-
         return !isNormal();
     }
 

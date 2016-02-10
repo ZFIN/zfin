@@ -1,6 +1,5 @@
 package org.zfin.ontology.presentation;
 
-import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.PhenotypeStatementWarehouse;
 
@@ -20,8 +19,9 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
 
 
     public static String getLink(PhenotypeStatementWarehouse phenotypeStatement, boolean suppressPopupLink, boolean curationLink) {
-        if (phenotypeStatement == null)
+        if (phenotypeStatement == null) {
             return null;
+        }
 /*
         if (curationLink)
             return getCurationLink(phenotypeStatement);
@@ -29,9 +29,8 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
         StringBuilder phenotypeLink = new StringBuilder(100);
 //        phenotypeLink.append(getNormalTagNote(phenotypeStatement));
 
-        phenotypeLink.append(getNameWithoutNormalText(phenotypeStatement));
-        //phenotypeLink.append(getTomcatLink(uri, String.valueOf(phenotypeStatement.getId()),
-        //        getNameWithoutNormalText(phenotypeStatement)));
+//        phenotypeLink.append(getNameWithoutNormalText(phenotypeStatement));
+        phenotypeLink.append(getTomcatLink(uri, String.valueOf(phenotypeStatement.getId()), getNameWithoutNormalText(phenotypeStatement)));
 /*
         if (!suppressPopupLink) {
             phenotypeLink.append(getPopupLink(phenotypeStatement));
@@ -55,12 +54,13 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
      * @param phenotypeStatement PhenotypeStatement
      * @return name
      */
-    public static String getName(PhenotypeStatement phenotypeStatement) {
-        if (phenotypeStatement == null)
+    public static String getName(PhenotypeStatementWarehouse phenotypeStatement) {
+        if (phenotypeStatement == null) {
             return null;
+        }
         StringBuilder phenotypeName = new StringBuilder(100);
         phenotypeName.append(getNormalTagNote(phenotypeStatement));
-        ///phenotypeName.append(getNameWithoutNormalText(phenotypeStatement));
+        phenotypeName.append(getNameWithoutNormalText(phenotypeStatement));
 
         return phenotypeName.toString();
     }
@@ -72,12 +72,14 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
      * @param phenotypeStatement
      * @return
      */
-    private static String getNormalTagNote(PhenotypeStatement phenotypeStatement) {
-        if (phenotypeStatement == null)
+    private static String getNormalTagNote(PhenotypeStatementWarehouse phenotypeStatement) {
+        if (phenotypeStatement == null) {
             return null;
+        }
         StringBuilder phenotypeName = new StringBuilder(100);
-        if (phenotypeStatement.getTag().equals(PhenotypeStatement.Tag.NORMAL.toString()))
+        if (phenotypeStatement.getTag().equals(PhenotypeStatement.Tag.NORMAL.toString())) {
             phenotypeName.append("(normal&nbsp;or&nbsp;recovered) ");
+        }
         return phenotypeName.toString();
     }
 
@@ -89,9 +91,10 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
      * @param phenotypeStatement
      * @return
      */
-    private static String getNameWithoutNormalText(PhenotypeStatementWarehouse phenotypeStatement) {
-        if (phenotypeStatement == null)
+    public static String getNameWithoutNormalText(PhenotypeStatementWarehouse phenotypeStatement) {
+        if (phenotypeStatement == null) {
             return null;
+        }
         StringBuilder phenotypeName = new StringBuilder(100);
         if (phenotypeStatement.isMorphologicalPhenotype()) {
             phenotypeName.append(getName(phenotypeStatement.getEntity()));
@@ -104,12 +107,13 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
         } else {
             phenotypeName.append(getName(phenotypeStatement.getEntity()));
             phenotypeName.append(PHENOTYPE_STATEMENT_SEPARATOR);
-            phenotypeName.append(MarkerPresentation.getLink(phenotypeStatement.getGene()));
+            phenotypeName.append(phenotypeStatement.getGene().getAbbreviation());
             phenotypeName.append(PHENOTYPE_STATEMENT_SEPARATOR);
             phenotypeName.append(EXPRESSION);
         }
-        if (phenotypeStatement.getTag().equals(PhenotypeStatement.Tag.ABNORMAL.toString()))
+        if (phenotypeStatement.getTag().equals(PhenotypeStatement.Tag.ABNORMAL.toString())) {
             phenotypeName.append(",&nbsp;abnormal");
+        }
         return phenotypeName.toString();
     }
 
