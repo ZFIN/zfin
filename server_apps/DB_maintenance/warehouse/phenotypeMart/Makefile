@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/warehouse/phenotypeMart
 GENERICS = runPhenotypeMart.sh
-STATICS = begin.sql dropTables.sql populateTables.sql  commit.sql phenotypeMartRegen.sql refreshPhenotypeMart.sql phenotypemart-integrity-tests.sql truncatePGTable.sql truncatePGSTable.sql
+STATICS = begin.sql dropTables.sql populateTables.sql  commit.sql phenotypeMartRegen.sql refreshPhenotypeMart.sql phenotypemart-integrity-tests.sql truncatePGTable.sql truncatePGSTable.sql truncateTempMappingTable.sql 
 
 
 # ---------------  Production Rules  ------------------------------------

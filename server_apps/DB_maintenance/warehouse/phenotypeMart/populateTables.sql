@@ -1,6 +1,4 @@
 
-
-
  select xpatex_genox_zdb_id as genox_id, efs_fig_zdb_id as fig_id, efs_start_stg_zdb_id as start_id, efs_end_stg_zdb_id as end_id
   from expression_experiment2, expression_figure_stage
  where xpatex_zdb_id = efs_xpatex_zdb_id
@@ -126,3 +124,23 @@ update phenotype_observation_generated_temp
 
 update statistics high for table phenotype_source_generated_temp;
 update statistics high for table phenotype_observation_generated_temp;
+
+insert into phenotype_generated_curated_mapping_temp (pgcm_pg_id, pgcm_source_id, pgcm_id_type)
+ select distinct pg_id, xpatex_zdb_id, "expression"
+   from phenotype_source_generated_temp, expression_figure_stage, expression_experiment, expression_result, expression_phenotype_term
+   where pg_genox_zdb_id = xpatex_genox_Zdb_id
+   and pg_fig_zdb_id = efs_fig_zdb_id
+   and pg_start_stg_zdb_id = efs_start_stg_zdb_id
+ and pg_end_stg_Zdb_id = efs_end_stg_zdb_id
+ and xpatex_zdb_id = efs_xpatex_zdb_id
+ and xpatres_efs_id = efs_pk_id
+ and xpatres_zdb_id = ept_xpatres_zdb_id
+ ;
+
+insert into phenotype_generated_curated_mapping_temp (pgcm_pg_id, pgcm_source_id, pgcm_id_type)
+ select distinct pg_id, phenox_pk_id, "phenotype"
+   from phenotype_source_generated_temp, phenotype_experiment
+   where pg_genox_zdb_id = phenox_genox_zdb_id
+   and pg_fig_zdb_id = phenox_fig_zdb_id
+ and pg_start_stg_zdb_id = phenox_start_stg_zdb_id
+ and pg_end_stg_zdb_id = phenox_end_stg_zdb_id;

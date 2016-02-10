@@ -19,6 +19,8 @@ set phenotypeMartScripts=( begin.sql \
 	     truncatePGSTable.sql \
 	     commit.sql \
 	     begin.sql \
+	     truncateTempMappingTable.sql \
+	     begin.sql \
 	     populateTables.sql \
 	     commit.sql \
 	    );
