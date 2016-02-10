@@ -621,7 +621,7 @@ public class ResultService {
     * */
     public void injectPhenotypeAttributes(SearchResult result) {
         //this is pretty hacky, sorry.  I have to pull the string prefix off of the would-be integer pk id.
-        Long id = Long.valueOf(result.getId().replace("phenox-", ""));
+        Long id = Long.valueOf(result.getId().replace("pg-", ""));
 
         PhenotypeExperiment phenotypeExperiment = RepositoryFactory.getMutantRepository().getPhenotypeExperiment(id);
         if (phenotypeExperiment != null) {
