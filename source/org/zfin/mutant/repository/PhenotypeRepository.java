@@ -209,7 +209,7 @@ public interface PhenotypeRepository {
      * @param fishID fish ID
      * @return list of phenotype statements
      */
-    List<PhenotypeStatement> getPhenotypeStatements(Figure figure, String fishID);
+    List<PhenotypeStatementWarehouse> getPhenotypeStatements(Figure figure, String fishID);
 
     /**
      * Retrieve phenotype figures for a given genotype.
@@ -231,7 +231,7 @@ public interface PhenotypeRepository {
      * @param genotype genotype
      * @return list of phenotype statements
      */
-    List<PhenotypeStatement> getPhenotypeStatementsForFigureAndGenotype(Figure figure, Genotype genotype);
+    List<PhenotypeStatementWarehouse> getPhenotypeStatementsForFigureAndGenotype(Figure figure, Genotype genotype);
 
     List<PhenotypeStatement> getPhenotypeStatementsForFigureAndFish(Figure figure, Fish fish);
 

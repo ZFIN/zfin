@@ -259,7 +259,7 @@ public class FishService {
             if (figures.add(figure)) {
                 figureSummaryDisplay.setFigure(figure);
                 figureSummaryDisplay.setPublication(figure.getPublication());
-                List<PhenotypeStatement> phenotypeStatements = FishService.getPhenotypeStatements(figure, fishID);
+                List<PhenotypeStatementWarehouse> phenotypeStatements = FishService.getPhenotypeStatements(figure, fishID);
                 figureSummaryDisplay.setPhenotypeStatementList(FishService.getDistinctPhenotypeStatements(phenotypeStatements));
                 figureSummaryDisplays.add(figureSummaryDisplay);
                 if (!figure.isImgless()) {
@@ -289,13 +289,13 @@ public class FishService {
      * @param phenotypeStatementList phenotypeStatementList
      * @return list of phenotype statements
      */
-    public static List<PhenotypeStatement> getDistinctPhenotypeStatements(List<PhenotypeStatement> phenotypeStatementList) {
+    public static List<PhenotypeStatementWarehouse> getDistinctPhenotypeStatements(List<PhenotypeStatementWarehouse> phenotypeStatementList) {
         if (phenotypeStatementList == null) {
             return null;
         }
 
-        List<PhenotypeStatement> phenotypeStatements = new ArrayList<>(phenotypeStatementList.size());
-        for (PhenotypeStatement phenotypeStatement : phenotypeStatementList) {
+        List<PhenotypeStatementWarehouse> phenotypeStatements = new ArrayList<>(phenotypeStatementList.size());
+        for (PhenotypeStatementWarehouse phenotypeStatement : phenotypeStatementList) {
             if (isDistinctPhenotype(phenotypeStatement, phenotypeStatements)) {
                 phenotypeStatements.add(phenotypeStatement);
             }
@@ -304,11 +304,11 @@ public class FishService {
         return phenotypeStatements;
     }
 
-    private static boolean isDistinctPhenotype(PhenotypeStatement phenotypeStatement, List<PhenotypeStatement> phenotypeStatements) {
+    private static boolean isDistinctPhenotype(PhenotypeStatementWarehouse phenotypeStatement, List<PhenotypeStatementWarehouse> phenotypeStatements) {
         if (phenotypeStatements == null) {
             return true;
         }
-        for (PhenotypeStatement phenoStatement : phenotypeStatements) {
+        for (PhenotypeStatementWarehouse phenoStatement : phenotypeStatements) {
             if (phenoStatement.equalsByName(phenotypeStatement)) {
                 return false;
             }
@@ -339,7 +339,7 @@ public class FishService {
         return returnId;
     }
 
-    public static List<PhenotypeStatement> getPhenotypeStatements(Figure figure, String fishID) {
+    public static List<PhenotypeStatementWarehouse> getPhenotypeStatements(Figure figure, String fishID) {
         return RepositoryFactory.getPhenotypeRepository().getPhenotypeStatements(figure, fishID);
     }
 

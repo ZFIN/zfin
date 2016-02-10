@@ -178,5 +178,19 @@ public class PhenotypeStatementWarehouse implements Comparable<PhenotypeStatemen
         return getDisplayNameWithoutTag().compareToIgnoreCase(phenotypeObserved.getDisplayNameWithoutTag());
 
     }
+
+    public boolean equalsByName(PhenotypeStatementWarehouse phenotypeStatement) {
+        if (getEntity() != null ? !getEntity().equals(phenotypeStatement.getEntity()) : phenotypeStatement.getEntity() != null)
+            return false;
+        if (quality != null ? !quality.equals(phenotypeStatement.getQuality()) : phenotypeStatement.getQuality() != null)
+            return false;
+        if (getRelatedEntity() != null ? !getRelatedEntity().equals(phenotypeStatement.getRelatedEntity()) : phenotypeStatement.getRelatedEntity() != null)
+            return false;
+        if (!tag.equals(phenotypeStatement.getTag())) return false;
+
+        return true;
+    }
+
+
 }
 

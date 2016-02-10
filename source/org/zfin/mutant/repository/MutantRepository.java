@@ -329,7 +329,7 @@ public interface MutantRepository {
      */
     List<PhenotypeStatement> getPhenotypeStatement(GenericTerm term, Fish fish, boolean includeSubstructures);
 
-    List<PhenotypeStatement> getPhenotypeStatementForMutantSummary(GenericTerm term, Genotype genotype, boolean includeSubstructures);
+    List<PhenotypeStatementWarehouse> getPhenotypeStatementForMutantSummary(GenericTerm term, Genotype genotype, boolean includeSubstructures);
 
     List<PhenotypeStatement> getPhenotypeStatementForMutantSummary(GenericTerm term, Fish fish, boolean includeSubstructures);
 
@@ -510,7 +510,7 @@ public interface MutantRepository {
 
     void updateGenotypeNicknameWithHandleForPublication(Publication publication);
 
-    List<PhenotypeStatement> getPhenotypeStatementForMarker(Marker marker);
+    List<PhenotypeStatementWarehouse> getPhenotypeStatementForMarker(Marker marker);
 
     /**
      * Retrieve FishExperiment by Fish ID and Experiment ID
@@ -534,5 +534,7 @@ public interface MutantRepository {
     long getFishExperimentCountByGenotype(Fish fish, String publicationID);
 
     List<PhenotypeStatementWarehouse> getPhenotypeObserved(GenericTerm term, Fish fish, boolean includeSubstructures);
+
+    List<PhenotypeStatementWarehouse> getPhenotypeStatementObservedForMutantSummary(GenericTerm term, Fish fish, boolean includeSubstructures);
 }
 

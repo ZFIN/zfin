@@ -11,10 +11,7 @@ import org.zfin.framework.search.SearchCriterion;
 import org.zfin.framework.search.SearchCriterionType;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.ConstructSearchCriteria;
-import org.zfin.mutant.ConstructSearchResult;
-import org.zfin.mutant.Fish;
-import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.Construct;
 import org.zfin.mutant.presentation.ConstructSearchFormBean;
 import org.zfin.publication.Publication;
@@ -88,7 +85,7 @@ public class ConstructService {
      * @return genox ids and geno id
      */
 
-    public static List<PhenotypeStatement> getPhenotypeStatements(Figure figure, String fishID) {
+    public static List<PhenotypeStatementWarehouse> getPhenotypeStatements(Figure figure, String fishID) {
         return RepositoryFactory.getPhenotypeRepository().getPhenotypeStatements(figure, fishID);
     }
 

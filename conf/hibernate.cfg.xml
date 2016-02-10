@@ -64,6 +64,7 @@
         <mapping class="org.zfin.mutant.PhenotypeWarehouse"/>
         <mapping class="org.zfin.mutant.PhenotypeStatementWarehouse"/>
         <mapping class="org.zfin.mutant.PhenotypeTermFastSearch"/>
+        <mapping class="org.zfin.mutant.GenotypeFigure"/>
 
 
     </session-factory>

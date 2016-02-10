@@ -1156,19 +1156,18 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return
      */
     //sierra do this one
-
     @Override
     public boolean hasImagesOnExpressionFigures(String genotypeID, Set<FishExperiment> fishOx) {
         if (CollectionUtils.isEmpty(fishOx) || StringUtils.isEmpty(genotypeID)) {
             return false;
         }
-        List fishOxList = new ArrayList (fishOx);
+        List fishOxList = new ArrayList(fishOx);
 
-        String sql ="select count(*) from figure, expression_experiment, expression_result, expression_pattern_figure, fish_experiment,fish" +
+        String sql = "select count(*) from figure, expression_experiment, expression_result, expression_pattern_figure, fish_experiment,fish" +
                 "  where fig_zdb_id = xpatfig_fig_zdb_id" +
                 " and xpatex_zdb_id = xpatres_xpatex_zdb_id" +
                 " and xpatres_zdb_id = xpatfig_xpatres_zdb_id" +
-                " and genox_fish_zdb_id = fish_zdb_id"+
+                " and genox_fish_zdb_id = fish_zdb_id" +
                 " and fish_genotype_zdb_id = :genotypeID" +
                 " and xpatex_genox_zdb_id = genox_zdb_id" +
                 " and genox_zdb_id in (:fishOxList)" +
@@ -1231,16 +1230,13 @@ public class HibernateMutantRepository implements MutantRepository {
         return (List<PhenotypeStatement>) query.list();
     }
 
-    public List<PhenotypeStatement> getPhenotypeStatementForMutantSummary(GenericTerm term, Genotype genotype, boolean includeSubstructures) {
-        String hql = "select distinct pheno from PhenotypeStatement pheno, PhenotypeTermFastSearch fastSearch, " +
-                "PhenotypeExperiment phenox, FishExperiment genox " +
+    public List<PhenotypeStatementWarehouse> getPhenotypeStatementForMutantSummary(GenericTerm term, Genotype genotype, boolean includeSubstructures) {
+        String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno, PhenotypeTermFastSearch fastSearch " +
                 "where fastSearch.phenotypeStatement = pheno and " +
-                "pheno.phenotypeExperiment.fishExperiment.fish.genotype = :genotype and " +
+                "pheno.phenotypeWarehouse.fishExperiment.fish.genotype = :genotype and " +
                 "fastSearch.directAnnotation = :directAnnotation " +
-                "AND pheno.phenotypeExperiment = phenox " +
-                "AND phenox.fishExperiment = genox " +
                 "AND not exists (select 1 from ExperimentCondition cond where" +
-                " cond.experiment = genox.experiment " +
+                " cond.experiment = pheno.phenotypeWarehouse.fishExperiment.experiment " +
                 " AND cond.sequenceTargetingReagent is not null ) ";
 
         if (term != null) {
@@ -1253,7 +1249,7 @@ public class HibernateMutantRepository implements MutantRepository {
         }
         query.setParameter("genotype", genotype);
         query.setBoolean("directAnnotation", !includeSubstructures);
-        return (List<PhenotypeStatement>) query.list();
+        return (List<PhenotypeStatementWarehouse>) query.list();
     }
 
     @Override
@@ -1277,6 +1273,26 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameter("fish", fish);
         query.setBoolean("directAnnotation", !includeSubstructures);
         return (List<PhenotypeStatement>) query.list();
+    }
+
+    @Override
+    public List<PhenotypeStatementWarehouse> getPhenotypeStatementObservedForMutantSummary(GenericTerm term, Fish fish, boolean includeSubstructures) {
+        String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno, PhenotypeTermFastSearch fastSearch " +
+                "where fastSearch.phenotypeObserved = pheno and " +
+                "pheno.phenotypeWarehouse.fishExperiment.fish = :fish and " +
+                "fastSearch.directAnnotation = :directAnnotation ";
+
+        if (term != null) {
+            hql += " and fastSearch.term = :term ";
+        }
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        if (term != null) {
+            query.setParameter("term", term);
+        }
+        query.setParameter("fish", fish);
+        query.setBoolean("directAnnotation", !includeSubstructures);
+        return (List<PhenotypeStatementWarehouse>) query.list();
     }
 
     /**
@@ -1728,16 +1744,16 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
-    public List<PhenotypeStatement> getPhenotypeStatementForMarker(Marker marker) {
-        String hql = "select distinct pheno from PhenotypeStatement pheno, GeneGenotypeExperiment gge " +
-                "where pheno.phenotypeExperiment.fishExperiment = gge.fishExperiment " +
+    public List<PhenotypeStatementWarehouse> getPhenotypeStatementForMarker(Marker marker) {
+        String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno, GeneGenotypeExperiment gge " +
+                "where pheno.phenotypeWarehouse.fishExperiment = gge.fishExperiment " +
                 "AND gge.gene = :gene " +
                 "AND pheno.tag != :tag";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("gene", marker);
         query.setParameter("tag", "normal");
-        return (List<PhenotypeStatement>) query.list();
+        return (List<PhenotypeStatementWarehouse>) query.list();
     }
 
     @Override

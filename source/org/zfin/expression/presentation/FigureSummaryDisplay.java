@@ -6,7 +6,7 @@ import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.publication.Publication;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
     private List<Experiment> exp;
 
     // for phenotype summary page
-    private Set<PhenotypeStatement> phenotypeStatementList;
+    private Set<PhenotypeStatementWarehouse> phenotypeStatementList;
     public List<String> geno;
 
     public List<String> getGeno() {
@@ -86,14 +86,14 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
     }
 
     public List<Fish> getFishList() {
-        if(fishList == null)
+        if (fishList == null)
             return null;
         return new ArrayList<>(fishList);
     }
 
     public void setFishList(List<Fish> fish) {
-        if(fish != null)
-        fishList = new HashSet<>(fish);
+        if (fish != null)
+            fishList = new HashSet<>(fish);
     }
 
     public void addFish(Fish fish) {
@@ -110,13 +110,13 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
         this.expressionStatementList = expressionStatementList;
     }
 
-    public List<PhenotypeStatement> getPhenotypeStatementList() {
+    public List<PhenotypeStatementWarehouse> getPhenotypeStatementList() {
         if (phenotypeStatementList == null)
             return null;
         return new ArrayList<>(phenotypeStatementList);
     }
 
-    public void setPhenotypeStatementList(List<PhenotypeStatement> phenotypeStatementList) {
+    public void setPhenotypeStatementList(List<PhenotypeStatementWarehouse> phenotypeStatementList) {
         if (this.phenotypeStatementList == null)
             this.phenotypeStatementList = new HashSet<>();
         this.phenotypeStatementList.addAll(phenotypeStatementList);
@@ -168,7 +168,7 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
         this.imgCount = imgCount;
     }
 
-    public void addPhenotypeStatement(PhenotypeStatement statement) {
+    public void addPhenotypeStatement(PhenotypeStatementWarehouse statement) {
         if (phenotypeStatementList == null)
             phenotypeStatementList = new HashSet<>();
         phenotypeStatementList.add(statement);

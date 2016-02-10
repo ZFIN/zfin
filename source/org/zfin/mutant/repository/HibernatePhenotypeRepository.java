@@ -695,7 +695,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
      * @param fishID fish ID
      * @return list of phenotype statements
      */
-    public List<PhenotypeStatement> getPhenotypeStatements(Figure figure, String fishID) {
+    public List<PhenotypeStatementWarehouse> getPhenotypeStatements(Figure figure, String fishID) {
         Fish fish = getMutantRepository().getFish(fishID);
 
         if (fish == null) {
@@ -708,14 +708,14 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         }
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct pheno from PhenotypeStatement pheno  " +
-                "      where pheno.phenotypeExperiment.figure = :figure " +
-                "        and pheno.phenotypeExperiment.fishExperiment.zdbID in (:genoxIDs)";
+        String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno  " +
+                "      where pheno.phenotypeWarehouse.figure = :figure " +
+                "        and pheno.phenotypeWarehouse.fishExperiment.zdbID in (:genoxIDs)";
 
         Query query = session.createQuery(hql);
         query.setParameter("figure", figure);
         query.setParameterList("genoxIDs", fishoxID);
-        return (List<PhenotypeStatement>) query.list();
+        return (List<PhenotypeStatementWarehouse>) query.list();
     }
 
     /**
@@ -761,19 +761,18 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
      * @param genotype genotype
      * @return list of phenotype statements
      */
-    public List<PhenotypeStatement> getPhenotypeStatementsForFigureAndGenotype(Figure figure, Genotype genotype) {
+    public List<PhenotypeStatementWarehouse> getPhenotypeStatementsForFigureAndGenotype(Figure figure, Genotype genotype) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct pheno from PhenotypeStatement pheno, PhenotypeExperiment phenoExp, GenotypeFigure genoFig  " +
-                "      where pheno.phenotypeExperiment = phenoExp " +
-                "        and genoFig.phenotypeExperiment = phenoExp " +
+        String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno, GenotypeFigure genoFig  " +
+                "      where genoFig.phenotypeWarehouse = pheno.phenotypeWarehouse " +
                 "        and genoFig.genotype = :genotype " +
                 "        and genoFig.figure = :figure";
 
         Query query = session.createQuery(hql);
         query.setParameter("figure", figure);
         query.setParameter("genotype", genotype);
-        return (List<PhenotypeStatement>) query.list();
+        return (List<PhenotypeStatementWarehouse>) query.list();
     }
 
     public List<PhenotypeStatement> getPhenotypeStatementsForFigureAndFish(Figure figure, Fish fish) {

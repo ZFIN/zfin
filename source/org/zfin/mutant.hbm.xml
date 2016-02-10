@@ -573,36 +573,6 @@
     </class>
 
 
-    <class name="org.zfin.mutant.GenotypeFigure" table="genotype_figure_fast_search">
-        <id name="id" type="int">
-            <column name="gffs_serial_id" not-null="true"/>
-            <generator class="identity"/>
-        </id>
-        <many-to-one name="genotype" class="org.zfin.mutant.Genotype">
-            <column name="gffs_geno_zdb_id" not-null="true"/>
-        </many-to-one>
-        <many-to-one name="fish" class="Fish">
-            <column name="gffs_fish_zdb_id" not-null="true"/>
-        </many-to-one>
-        <many-to-one name="figure" class="org.zfin.expression.Figure">
-            <column name="gffs_fig_zdb_id" not-null="true"/>
-        </many-to-one>
-
-        <many-to-one name="sequenceTargetingReagent" class="org.zfin.marker.Marker">
-            <column name="gffs_morph_zdb_id" not-null="false"/>
-        </many-to-one>
-        <many-to-one name="phenotypeExperiment" class="org.zfin.mutant.PhenotypeExperiment">
-            <column name="gffs_phenox_pk_id" not-null="true"/>
-        </many-to-one>
-        <many-to-one name="phenotypeStatement" class="org.zfin.mutant.PhenotypeStatement">
-            <column name="gffs_phenos_id" not-null="true"/>
-        </many-to-one>
-        <many-to-one name="fishExperiment" class="org.zfin.mutant.FishExperiment">
-            <column name="gffs_genox_zdb_id" not-null="true"/>
-        </many-to-one>
-
-    </class>
-
     <class name="org.zfin.mutant.Zygosity" table="zygocity">
         <id name="zdbID" type="string">
             <column name="zyg_zdb_id" not-null="true"/>

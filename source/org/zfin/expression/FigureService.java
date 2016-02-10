@@ -184,10 +184,10 @@ public class FigureService {
 
     public static List<FigureSummaryDisplay> createPhenotypeFigureSummary(GenericTerm term, Genotype geno, boolean includeSubstructures) {
 
-        List<PhenotypeStatement> statements = getMutantRepository().getPhenotypeStatementForMutantSummary(term, geno, includeSubstructures);
+        List<PhenotypeStatementWarehouse> statements = getMutantRepository().getPhenotypeStatementForMutantSummary(term, geno, includeSubstructures);
         // a map of publicationID-FigureID as keys and figure summary display objects as values
         Map<String, FigureSummaryDisplay> map = new HashMap<String, FigureSummaryDisplay>();
-        for (PhenotypeStatement statement : statements) {
+        for (PhenotypeStatementWarehouse statement : statements) {
             Figure figure = statement.getPhenotypeExperiment().getFigure();
             Publication pub = figure.getPublication();
             String key = pub.getZdbID() + figure.getZdbID();
@@ -218,10 +218,10 @@ public class FigureService {
 
     public static List<FigureSummaryDisplay> createPhenotypeFigureSummary(GenericTerm term, Fish fish, boolean includeSubstructures) {
 
-        List<PhenotypeStatement> statements = getMutantRepository().getPhenotypeStatementForMutantSummary(term, fish, includeSubstructures);
+        List<PhenotypeStatementWarehouse> statements = getMutantRepository().getPhenotypeStatementObservedForMutantSummary(term, fish, includeSubstructures);
         // a map of publicationID-FigureID as keys and figure summary display objects as values
         Map<String, FigureSummaryDisplay> map = new HashMap<>();
-        for (PhenotypeStatement statement : statements) {
+        for (PhenotypeStatementWarehouse statement : statements) {
             Figure figure = statement.getPhenotypeExperiment().getFigure();
             Publication pub = figure.getPublication();
             String key = pub.getZdbID() + figure.getZdbID();
@@ -252,10 +252,10 @@ public class FigureService {
 
     public static List<FigureSummaryDisplay> createPhenotypeFigureSummary(Marker marker) {
 
-        List<PhenotypeStatement> statements = getMutantRepository().getPhenotypeStatementForMarker(marker);
+        List<PhenotypeStatementWarehouse> statements = getMutantRepository().getPhenotypeStatementForMarker(marker);
         // a map of publicationID-FigureID as keys and figure summary display objects as values
         Map<String, FigureSummaryDisplay> map = new HashMap<>();
-        for (PhenotypeStatement statement : statements) {
+        for (PhenotypeStatementWarehouse statement : statements) {
             Figure figure = statement.getPhenotypeExperiment().getFigure();
             Publication pub = figure.getPublication();
             String key = pub.getZdbID() + figure.getZdbID();
