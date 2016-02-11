@@ -68,7 +68,7 @@
 <%-- todo: need a class name for this --%>
 (${formBean.constructService.numberOfFiguresDisplay} from ${formBean.constructService.numberOfPublicationsDisplay})
 
-<zfin2:figureSummary figureExpressionSummaryList="${formBean.constructService.figureSummary}" showMarker="false" showGenotype="true"
+<zfin2:figureSummary figureSummaryList="${formBean.constructService.figureSummary}" showMarker="false" showGenotype="true"
                      expressionGenotypeData="true"/>
 </div>
 

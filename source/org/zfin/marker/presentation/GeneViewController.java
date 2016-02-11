@@ -137,7 +137,7 @@ public class GeneViewController {
 
 
     @RequestMapping(value = "/{geneID}/phenotype-summary")
-    public String genotypeSummary(Model model
+    public String phenotypeSummary(Model model
             , @PathVariable("geneID") String geneID) throws Exception {
 
         Marker marker = getMarkerRepository().getMarkerByID(geneID);
