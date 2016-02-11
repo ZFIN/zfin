@@ -345,7 +345,7 @@
         </taskdef>
 
         <instrument verbose="true">
-            <fileset dir="${classbin.dir}">
+            <fileset dir="${TARGETROOT}/home/WEB-INF/classes">
                 <include name="org/zfin/profile/Person.class"/>
                 <include name="org/zfin/expression/Figure.class"/>
                 <include name="org/zfin/expression/TextOnlyFigure.class"/>
