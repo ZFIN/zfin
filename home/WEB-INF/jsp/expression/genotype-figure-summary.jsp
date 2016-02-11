@@ -28,5 +28,5 @@
 <div class="summary">
     <c:if test="${!empty expressionCriteria.fish}"><span class="summaryTitle">Fish Expression</span></c:if>
     <c:if test="${!empty expressionCriteria.sequenceTargetingReagent}"><span class="summaryTitle">Expression</span></c:if>
-    <zfin2:figureSummary figureExpressionSummaryList="${figureSummaryDisplayList}" expressionGenotypeData="true"/>
+    <zfin2:figureSummary figureSummaryList="${figureSummaryDisplayList}" expressionGenotypeData="true"/>
 </div>

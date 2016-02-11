@@ -11,7 +11,11 @@
     </tr>
     <tr>
         <th>Note:</th>
-        <td style="color: red; font-weight: bold;">This is an EaP-y thing. Get real text from a curator!</td>
+        <td>
+            This phenotype statement describes a gene expression or antibody
+            labeling pattern. Anatomy terms are combined with a gene or antibody
+            and phenotype quality.
+        </td>
     </tr>
 </table>
 

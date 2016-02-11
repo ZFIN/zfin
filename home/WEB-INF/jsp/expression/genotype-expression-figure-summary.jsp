@@ -32,5 +32,5 @@
     (<zfin:choice choicePattern="0# Figures| 1# Figure| 2# Figures" includeNumber="true"
                   integerEntity="${figureCount}"/>)
 
-    <zfin2:figureSummary figureExpressionSummaryList="${figureSummaryDisplayList}" expressionData="true" showMarker="true"/>
+    <zfin2:figureSummary figureSummaryList="${figureSummaryDisplayList}" expressionData="true" showMarker="true"/>
 </div>

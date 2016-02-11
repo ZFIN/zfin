@@ -32,6 +32,6 @@
             </c:otherwise>
         </c:choose>
     </span>
-    <zfin2:figureSummary figureExpressionSummaryList="${formBean.antibodyStat.figureSummary}" showMarker="false" 
+    <zfin2:figureSummary figureSummaryList="${formBean.antibodyStat.figureSummary}" showMarker="false"
 expressionGenotypeData="true"/>
 </div>

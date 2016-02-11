@@ -60,5 +60,5 @@
             </c:if>
         </span>
     --%>
-    <zfin2:figureSummary figureExpressionSummaryList="${figureExpressionSummaryDisplayList}" expressionData="true" showMarker="true"/>
+    <zfin2:figureSummary figureSummaryList="${figureExpressionSummaryDisplayList}" expressionData="true" showMarker="true"/>
 </div>

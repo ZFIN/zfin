@@ -33,6 +33,6 @@
 
 <div class="summary">
     <span class="summaryTitle">Expressions</span>
-    <zfin2:figureSummary figureExpressionSummaryList="${figureSummaryDisplayList}" expressionData="true"
+    <zfin2:figureSummary figureSummaryList="${figureSummaryDisplayList}" expressionData="true"
                          showMarker="true"/>
 </div>
