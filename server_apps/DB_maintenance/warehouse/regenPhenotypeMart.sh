@@ -74,10 +74,6 @@ echo "execute procedure regen_anatomy_counts()" | /private/apps/Informix/informi
 date;
 echo "done with regen_anatomy_counts()";
 
-echo "start regen_pheno_term()";
-echo "execute procedure regen_pheno_term()" | /private/apps/Informix/informix/bin/dbaccess $DBNAME;
-date;
-echo "done with regen_pheno_term()";
 
 echo "start regen_pheno_term_regen()";
 echo "$TARGETROOT/server_apps/DB_maintenance/pheno/pheno_term_regen.sql" | dbaccess $DBNAME
