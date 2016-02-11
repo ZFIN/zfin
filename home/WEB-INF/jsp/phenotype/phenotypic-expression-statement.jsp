@@ -26,8 +26,8 @@
     </c:if>
 </zfin2:subsection>
 
-<zfin2:subsection title="EXPRESSED GENE:">
-    <zfin2:geneSummary gene="${phenotypeStatement.gene}" previousNames="${genePreviousNames}"/>
+<zfin2:subsection title="${phenotypeStatement.gene.type == 'GENE' ? 'EXPRESSED GENE:' : 'ANTIBODY LABELING:'}">
+    <zfin2:markerSummary marker="${phenotypeStatement.gene}" previousNames="${genePreviousNames}"/>
 </zfin2:subsection>
 
 <zfin2:subsection title="EXPRESSION QUALITY:">

@@ -1,5 +1,6 @@
 package org.zfin.ontology.presentation;
 
+import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.PhenotypeStatementWarehouse;
 
@@ -16,7 +17,6 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
     //todo: replace with non popup link
     private static final String uri = "phenotype/phenotype-statement?id=";
     private static final String popupUri = "phenotype/phenotype-statement-popup?id=";
-    public static final String EXPRESSION = "expression";
 
 
     public static String getLink(PhenotypeStatementWarehouse phenotypeStatement, boolean suppressPopupLink, boolean curationLink) {
@@ -105,9 +105,9 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
         } else {
             phenotypeName.append(getName(phenotypeStatement.getEntity()));
             phenotypeName.append(PHENOTYPE_STATEMENT_SEPARATOR);
-            phenotypeName.append(phenotypeStatement.getGene().getAbbreviation());
+            phenotypeName.append(MarkerPresentation.getAbbreviation(phenotypeStatement.getGene()));
             phenotypeName.append(PHENOTYPE_STATEMENT_SEPARATOR);
-            phenotypeName.append(EXPRESSION);
+            phenotypeName.append(phenotypeStatement.getMarkerRelationship());
             phenotypeName.append(COMMA);
             phenotypeName.append(phenotypeStatement.getQuality().getTermName());
         }

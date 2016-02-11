@@ -13,7 +13,7 @@
             <zfin2:termMiniSummary term="${phenotypeStatement.e1b}"/>
             <hr class="popup-divider"/>
         </c:if>
-        <zfin2:geneSummary gene="${phenotypeStatement.gene}" previousNames="${genePreviousNames}"/>
+        <zfin2:markerSummary marker="${phenotypeStatement.gene}" previousNames="${genePreviousNames}"/>
         <hr class="popup-divider"/>
         <zfin2:termMiniSummary term="${phenotypeStatement.quality}"/>
 
