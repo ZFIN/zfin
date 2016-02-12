@@ -442,14 +442,6 @@ public class MutantRepositoryTest {
     }
 
     @Test
-    public void getPhenotypeStatementForMutantSummary() {
-        Fish genotype = getMutantRepository().getFish("ZDB-FISH-150901-21301");
-        GenericTerm term = getOntologyRepository().getTermByOboID("ZFA:0000386/");
-        List<PhenotypeStatement> fishList = mutantRepository.getPhenotypeStatementForMutantSummary(term, genotype, false);
-        assertThat(fishList, notNullValue());
-    }
-
-    @Test
     public void getPhenotypeStatementForMarker() {
         Marker marker = getMarkerRepository().getMarkerByID("ZDB-GENE-000627-2");
         List<PhenotypeStatementWarehouse> fishList = mutantRepository.getPhenotypeStatementForMarker(marker);
