@@ -1182,27 +1182,6 @@ public class HibernateMutantRepository implements MutantRepository {
 
 
     /**
-     * Retrieve figures for phenotypes for a given genotype and structure.
-     *
-     * @param term                 structure
-     * @param genotype             genotype
-     * @param includeSubstructures true or false
-     * @return list of figures
-     */
-    @Override
-    public List<Figure> getPhenotypeFigures(GenericTerm term, Genotype genotype, boolean includeSubstructures) {
-        String hql = "select phenox.figure from PhenotypeExperiment phenox, PhenotypeTermFastSearch fastSearch " +
-                "where fastSearch.term = :term and " +
-                "fastSearch.phenotypeStatement.phenotypeExperiment = phenox and " +
-                "phenox.fishExperiment.fish.genotype = :genotype";
-
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameter("term", term);
-        query.setParameter("genotype", genotype);
-        return (List<Figure>) query.list();
-    }
-
-    /**
      * Retrieve phenotype statements for given structure and genotype.
      *
      * @param term

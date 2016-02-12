@@ -310,16 +310,6 @@ public interface MutantRepository {
     boolean hasImagesOnExpressionFigures(String genotypeID, Set<FishExperiment> fishOx);
 
     /**
-     * Retrieve figures for phenotypes for a given genotype and structure.
-     *
-     * @param term                 structure
-     * @param genotype             genotype
-     * @param includeSubstructures true or false
-     * @return list of figures
-     */
-    List<Figure> getPhenotypeFigures(GenericTerm term, Genotype genotype, boolean includeSubstructures);
-
-    /**
      * Retrieve phenotype statements for given structure and genotype.
      *
      * @param term

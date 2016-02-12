@@ -331,17 +331,6 @@ public class MutantRepositoryTest {
     }
 
     @Test
-    public void getPhenotypeFigures() {
-        // fin fold actinotrichium
-        String oboID = "ZFA:0000089";
-        String genotypeID = "ZDB-GENO-090827-1";
-        GenericTerm term = getOntologyRepository().getTermByOboID(oboID);
-        Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(genotypeID);
-        List<Figure> figures = getMutantRepository().getPhenotypeFigures(term, genotype, true);
-        assertThat(figures, notNullValue());
-    }
-
-    @Test
     public void getPhenotypeStatementsForGenoAndStructure() {
         // fin fold actinotrichium
         String oboID = "ZFA:0000089";
