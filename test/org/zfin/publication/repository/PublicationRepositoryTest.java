@@ -34,6 +34,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 
 public class PublicationRepositoryTest extends AbstractDatabaseTest {
@@ -279,36 +280,20 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore("Provide valid FISH id instead of geno ID.")
     public void getFiguresForGenotypeAndAoPlusSubstructures() {
-        //  genotype Df(Chr03:sox8,sox9b)b971/b971
-        //String genoZdbID = "ZDB-GENO-050322-1";
-        //chnage to FishID
-        String fishName = "";
-        Fish fish = mutantRepository.getFish("ZDB-FISH-150624-4247");
-
-        Fish geno = new Fish();
-//        geno.setZdbID(genoZdbID);
-        // actinotrichium
-        String aoZdbID = "ZDB-TERM-100331-1421";
-        GenericTerm item = new GenericTerm();
-        item.setZdbID(aoZdbID);
+        Fish fish = mutantRepository.getFish("ZDB-FISH-150901-25831");
+        GenericTerm item = getOntologyRepository().getTermByOboID("ZFA:0005435");
         PaginationResult<Figure> figs = publicationRepository.getFiguresByFishAndAnatomy(fish, item, true);
         assertNotNull(figs.getPopulatedResults());
         assertTrue(figs.getPopulatedResults().size() > 0);
     }
 
     @Test
-    @Ignore("Provide valid FISH id instead of geno ID.")
     public void getPublicationsForGenoAndAoIncludingSubstructures() {
-        //  genotype Df(Chr03:sox8,sox9b)b971/b971
-        String genoZdbID = "ZDB-GENO-050322-1";
         Fish geno = new Fish();
-        geno.setZdbID("ZDB-FISH-150624-12564");
+        geno.setZdbID("ZDB-FISH-150901-25831");
         // actinotrichium
-        String aoZdbID = "ZDB-TERM-100331-1421";
-        GenericTerm item = new GenericTerm();
-        item.setZdbID(aoZdbID);
+        GenericTerm item = getOntologyRepository().getTermByOboID("ZFA:0005435");
         PaginationResult<Publication> publications = publicationRepository.getPublicationsWithFigures(geno, item, true);
         assertNotNull(publications.getPopulatedResults());
         assertTrue(publications.getPopulatedResults().size() > 0);
@@ -321,11 +306,8 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         Genotype geno = new Genotype();
         geno.setZdbID(genoZdbID);
         // brain
-
         PaginationResult<Figure> figs = publicationRepository.getFiguresByGeno(geno);
         assertTrue(figs.getPopulatedResults() != null);
-//        assertEquals("1 figure", 1, figs.size());
-
     }
 
 
