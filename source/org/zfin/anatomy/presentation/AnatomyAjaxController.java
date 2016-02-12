@@ -222,30 +222,6 @@ public class AnatomyAjaxController {
         return "anatomy/phenotype-summary.page";
     }
 
-    @RequestMapping(value = "/{genoypteID}/phenotype-summary")
-    public String genotypeSummary(Model model
-            , @PathVariable("genoypteID") String genotypeID
-    ) throws Exception {
-
-        Genotype geno = RepositoryFactory.getMutantRepository().getGenotypeByID(genotypeID);
-        if (geno == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, genotypeID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-
-
-        AnatomySearchBean form = new AnatomySearchBean();
-
-        List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createPhenotypeFigureSummary(null, geno, true);
-        model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
-
-        retrieveMutantData(null, form, true);
-        model.addAttribute(LookupStrings.FORM_BEAN, form);
-        model.addAttribute("includingSubstructures", true);
-        model.addAttribute("genotype", geno);
-        return "anatomy/phenotype-summary.page";
-    }
-
     private void retrieveAntibodyData(GenericTerm aoTerm, AnatomySearchBean form) {
 
         PaginationBean pagination = new PaginationBean();

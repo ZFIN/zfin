@@ -182,40 +182,6 @@ public class FigureService {
 
     }
 
-    public static List<FigureSummaryDisplay> createPhenotypeFigureSummary(GenericTerm term, Genotype geno, boolean includeSubstructures) {
-
-        List<PhenotypeStatementWarehouse> statements = getMutantRepository().getPhenotypeStatementForMutantSummary(term, geno, includeSubstructures);
-        // a map of publicationID-FigureID as keys and figure summary display objects as values
-        Map<String, FigureSummaryDisplay> map = new HashMap<String, FigureSummaryDisplay>();
-        for (PhenotypeStatementWarehouse statement : statements) {
-            Figure figure = statement.getPhenotypeExperiment().getFigure();
-            Publication pub = figure.getPublication();
-            String key = pub.getZdbID() + figure.getZdbID();
-
-            // if the key is not in the map, instantiate a display object and add it to the map
-            // otherwise, get the display object from the map
-            if (!map.containsKey(key)) {
-                FigureSummaryDisplay figureData = new FigureSummaryDisplay();
-                figureData.setPublication(pub);
-                figureData.setFigure(figure);
-                figureData.addPhenotypeStatement(statement);
-                for (Image img : figure.getImages()) {
-                    if (figureData.getThumbnail() == null)
-                        figureData.setThumbnail(img.getThumbnail());
-                }
-                map.put(key, figureData);
-            } else {
-                map.get(key).addPhenotypeStatement(statement);
-            }
-        }
-        List<FigureSummaryDisplay> summaryRows = new ArrayList<FigureSummaryDisplay>();
-        if (map.values().size() > 0) {
-            summaryRows.addAll(map.values());
-        }
-        Collections.sort(summaryRows);
-        return summaryRows;
-    }
-
     public static List<FigureSummaryDisplay> createPhenotypeFigureSummary(GenericTerm term, Fish fish, boolean includeSubstructures) {
 
         List<PhenotypeStatementWarehouse> statements = getMutantRepository().getPhenotypeStatementObservedForMutantSummary(term, fish, includeSubstructures);
