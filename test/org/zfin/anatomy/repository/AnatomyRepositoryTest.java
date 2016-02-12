@@ -1,6 +1,5 @@
 package org.zfin.anatomy.repository;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.AnatomyStatistics;
@@ -77,7 +76,6 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void stageOverlapTermsDevelopsInto() {
         // adaxial cell
-        String oboID = "ZFA:0000003";
         String termID = "ZDB-TERM-100331-3";
         double startHours = 10;
         double endHours = 144;
@@ -87,7 +85,6 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
     public void getSubstructureAntibodies() {
         String aoTermName = "cranium";
         GenericTerm term = new GenericTerm();
@@ -97,13 +94,9 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
 
         // only primary ao term
         getAntibodyRepository().getAntibodiesByAOTerm(term, new PaginationBean(), false);
-//        assertEquals("no antibodies annotated against cranium", 0, antibodies.getPopulatedResults().size());
 
         // include annotation to substructures
         getAntibodyRepository().getAntibodiesByAOTerm(term, new PaginationBean(), true);
-//        assertTrue("no antibodies annotated against cranium", antibodies.getPopulatedResults().size() > 0);
-
-
     }
 
     @Test

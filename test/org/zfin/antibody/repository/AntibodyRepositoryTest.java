@@ -154,11 +154,10 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     }
 
     // Test search by a single ao term only
-
     @Test
     public void getAntibodyByAnatomyTerm() {
 
-        // cranial nerve
+        // cranial nerve V
         String aoTermCN = "ZDB-TERM-100331-666";
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();

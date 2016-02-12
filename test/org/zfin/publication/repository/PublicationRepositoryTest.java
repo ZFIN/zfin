@@ -1,7 +1,6 @@
 package org.zfin.publication.repository;
 
 import org.hibernate.Session;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.DevelopmentStage;
