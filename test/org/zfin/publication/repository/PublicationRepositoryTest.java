@@ -127,7 +127,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getAllExpressedMutants() {
-        // lateral floor plate
+        // liver
         String aoZdbID = "ZDB-TERM-100331-116";
         GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
