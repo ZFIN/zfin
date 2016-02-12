@@ -309,16 +309,6 @@ public interface MutantRepository {
      */
     boolean hasImagesOnExpressionFigures(String genotypeID, Set<FishExperiment> fishOx);
 
-    /**
-     * Retrieve phenotype statements for given structure and genotype.
-     *
-     * @param term
-     * @param fish
-     * @param includeSubstructures
-     * @return
-     */
-    List<PhenotypeStatement> getPhenotypeStatement(GenericTerm term, Fish fish, boolean includeSubstructures);
-
     List<PhenotypeStatementWarehouse> getPhenotypeStatementForMutantSummary(GenericTerm term, Genotype genotype, boolean includeSubstructures);
 
     List<PhenotypeStatement> getPhenotypeStatementForMutantSummary(GenericTerm term, Fish fish, boolean includeSubstructures);

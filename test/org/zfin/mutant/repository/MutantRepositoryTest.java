@@ -331,17 +331,6 @@ public class MutantRepositoryTest {
     }
 
     @Test
-    public void getPhenotypeStatementsForGenoAndStructure() {
-        // fin fold actinotrichium
-        String oboID = "ZFA:0000089";
-        String fishID = "ZDB-FISH-090827-1";
-        GenericTerm term = getOntologyRepository().getTermByOboID(oboID);
-        Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
-        List<PhenotypeStatement> statements = getMutantRepository().getPhenotypeStatement(term, fish, true);
-        assertThat(statements, notNullValue());
-    }
-
-    @Test
     public void gwtStrList() {
         String publicationID = "ZDB-PUB-130403-23";
         List<SequenceTargetingReagent> reagentList = RepositoryFactory.getMutantRepository().getStrList(publicationID);
