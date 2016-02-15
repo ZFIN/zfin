@@ -742,6 +742,10 @@ public class HibernateMutantRepository implements MutantRepository {
         return (PhenotypeStatementWarehouse) currentSession().get(PhenotypeStatementWarehouse.class, id);
     }
 
+
+    public PhenotypeWarehouse getPhenotypeWarehouseById(Long id) {
+        return (PhenotypeWarehouse) currentSession().get(PhenotypeWarehouse.class, id);
+    }
     /**
      * Retrieve the phenotypes that are annotated with obsoleted terms.
      *
