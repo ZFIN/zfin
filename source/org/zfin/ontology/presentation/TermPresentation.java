@@ -217,10 +217,7 @@ public class TermPresentation extends EntityPresentation {
             return getWikiLink("", term.getOboID(), term.getTermName());
         else if (Ontology.isGoOntology(term.getOntology()))
             return getExternalWikiLink(GO_URI + term.getOboID(), term.getTermName());
-        else {
-            logger.error("unable to process term: " + term + " while generating wiki link");
-            return null;
-        }
+        return null;
     }
 
     public static String getLinkStartTag(Term term) {

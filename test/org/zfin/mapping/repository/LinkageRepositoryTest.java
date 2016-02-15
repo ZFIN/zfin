@@ -1,14 +1,11 @@
 package org.zfin.mapping.repository;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
 import org.zfin.feature.Feature;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.mapping.*;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -99,7 +96,7 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
     public void testGetLG() {
         // when the gene has method of creating/adding linkage group information and
         // adding relationship, it would be better to create the test cases rather
-        // than using the exisiting genes which might be merged
+        // than using the existing genes which might be merged
         LinkageRepository linkageRepository = getLinkageRepository();
         Marker marker1 = (Marker) currentSession().get(Marker.class, "ZDB-EST-000426-1181");
         assertTrue("marker lg list contains all self panel mappings", linkageRepository.getChromosomeLocations(marker1).contains("13") && linkageRepository.getChromosomeLocations(marker1).contains("23"));
