@@ -590,7 +590,7 @@
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
     <target name="deploy-without-tests"
-            depends="pre-deploy,build-properties,advance-build,unittests-quiet,notify-restart,restart,notify-up,deploy-solr"/>
+            depends="pre-deploy,build-properties,advance-build,unittests-quiet,notify-restart,instrument,restart,notify-up,deploy-solr"/>
 
     <target name="deploy-without-tests-and-tomcat-restart"
             depends="pre-deploy,build-properties,advance-build,unittests-quiet,deploy-solr"/>
