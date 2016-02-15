@@ -526,7 +526,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
 
 
 
-                <entity name="gene_phenotype_observation_generated"
+                <entity name="gene_phenotype_statement"
                         datasource="db" query="
 select distinct
 super_1.term_name
@@ -534,7 +534,7 @@ super_1.term_name
 || ' ' || quality.term_name
 || nvl(' ' || super_2.term_name,'')
 || nvl(' ' || sub_2.term_name,'')
-as phenotype_observation_generated,
+as phenotype_statement,
                 mfs_mrkr_zdb_id as gene_zdb_id
      from phenotype_observation_generated
           join phenotype_source_generated on psg_pg_id = pg_id
@@ -1212,14 +1212,14 @@ WHERE  ( NOT g.geno_is_wildtype
 
 
 
-           <entity name="fish_phenotype_observation_generated"
+           <entity name="fish_phenotype_statement"
                    datasource="db" query="select distinct
 super_1.term_name
 || nvl(' ' || sub_1.term_name,'')
 || ' ' || quality.term_name
 || nvl(' ' || super_2.term_name,'')
 || nvl(' ' || sub_2.term_name,'')
-as phenotype_observation_generated,
+as phenotype_statement,
        genox_fish_zdb_id as fish_zdb_id
 from phenotype_observation_generated
      join phenotype_source_generated on psg_pg_id = pg_id
@@ -1959,7 +1959,7 @@ select
                    cacheImpl="SortedMapBackedCache"
                    where="pg_id=phenotype.id"/>
 
-           <entity name="phenotype_phenotype_observation_generated"
+           <entity name="phenotype_phenotype_statement"
                    datasource="db" query="select
                             distinct
                             super_1.term_name
@@ -1967,7 +1967,7 @@ select
                             || ' ' || quality.term_name
                             || nvl(' ' || super_2.term_name,'')
                             || nvl(' ' || sub_2.term_name,'')
-                            as phenotype_observation_generated,
+                            as phenotype_statement,
                             'pg-' || pg_id as pg_id
                             from phenotype_observation_generated
                                  join phenotype_source_generated on psg_pg_id = pg_id
@@ -3118,14 +3118,14 @@ where feature_zdb_id = ids_data_zdb_id
                where="feature_zdb_id=feature.id"/>
 
 
-       <entity name="feature_phenotype_observation_generated"
+       <entity name="feature_phenotype_statement"
                datasource="db" query="select distinct
                         super_1.term_name
                         || nvl(' ' || sub_1.term_name,'')
                         || ' ' || quality.term_name
                         || nvl(' ' || super_2.term_name,'')
                         || nvl(' ' || sub_2.term_name,'')
-                        as phenotype_observation_generated,
+                        as phenotype_statement,
                                         genofeat_feature_zdb_id as feature_zdb_id
                              from phenotype_observation_generated
                                   join phenotype_source_generated on psg_pg_id = pg_id
@@ -4367,14 +4367,14 @@ from expression_experiment2
                    where="fig_zdb_id=figure.id"/>
 
 
-        <entity name="figure_phenotype_observation_generated"
+        <entity name="figure_phenotype_statement"
                          datasource="db" query="select distinct
 super_1.term_name
 || nvl(' ' || sub_1.term_name,'')
 || ' ' || quality.term_name
 || nvl(' ' || super_2.term_name,'')
 || nvl(' ' || sub_2.term_name,'')
-as phenotype_observation_generated,
+as phenotype_statement,
 pg_fig_zdb_id as fig_zdb_id
 from phenotype_observation_generated
      join phenotype_source_generated on psg_pg_id = pg_id
