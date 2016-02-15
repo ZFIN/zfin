@@ -125,23 +125,6 @@ public class AnatomyAjaxController {
         return "anatomy/show-clean-fish.ajax";
     }
 
-    @RequestMapping(value = "/show-dirty-fish/{zdbID}")
-    public String showPhenotypeDirtyFish(Model model,
-                                         @PathVariable("zdbID") String termID
-    ) throws Exception {
-
-        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
-        if (term == null)
-            return "";
-
-        AnatomySearchBean form = new AnatomySearchBean();
-        form.setMaxDisplayRecords(AnatomySearchBean.MAX_NUMBER_GENOTYPES);
-        form.setAoTerm(term);
-        retrieveDirtyFishData(term, form, false);
-        model.addAttribute(LookupStrings.FORM_BEAN, form);
-        return "anatomy/show-dirty-fish.ajax";
-    }
-
     @RequestMapping(value = "/show-all-clean-fish/{zdbID}")
     public String showAllPhenotypeCleanFish(Model model,
                                             @ModelAttribute("formBean") AnatomySearchBean form,
@@ -171,22 +154,6 @@ public class AnatomyAjaxController {
         retrieveMutantData(term, form, true);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         return "anatomy/show-all-clean-fish.page";
-    }
-
-    @RequestMapping(value = "/show-all-dirty-fish/{zdbID}")
-    public String showAllPhenotypeDirtyFish(Model model
-            , @ModelAttribute("formBean") AnatomySearchBean form
-            , @PathVariable("zdbID") String termID
-    ) throws Exception {
-
-        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
-        if (term == null)
-            return "";
-
-        form.setAoTerm(term);
-        retrieveDirtyFishData(term, form, false);
-        model.addAttribute(LookupStrings.FORM_BEAN, form);
-        return "anatomy/show-all-dirty-fish.page";
     }
 
     @RequestMapping(value = "/show-all-in-situ-probes/{zdbID}")
@@ -252,30 +219,6 @@ public class AnatomyAjaxController {
         model.addAttribute("includingSubstructures", true);
         model.addAttribute("fish", fish);
         model.addAttribute("entity", term);
-        return "anatomy/phenotype-summary.page";
-    }
-
-    @RequestMapping(value = "/{genoypteID}/phenotype-summary")
-    public String genotypeSummary(Model model
-            , @PathVariable("genoypteID") String genotypeID
-    ) throws Exception {
-
-        Genotype geno = RepositoryFactory.getMutantRepository().getGenotypeByID(genotypeID);
-        if (geno == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, genotypeID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-
-
-        AnatomySearchBean form = new AnatomySearchBean();
-
-        List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createPhenotypeFigureSummary(null, geno, true);
-        model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
-
-        retrieveMutantData(null, form, true);
-        model.addAttribute(LookupStrings.FORM_BEAN, form);
-        model.addAttribute("includingSubstructures", true);
-        model.addAttribute("genotype", geno);
         return "anatomy/phenotype-summary.page";
     }
 
@@ -350,15 +293,6 @@ public class AnatomyAjaxController {
             genotypeResult = mutantRepository.getFishByAnatomyTermIncludingSubstructures(ai, false, form);
         else
             genotypeResult = mutantRepository.getFishByAnatomyTerm(ai, false, form);
-        populateFormBeanForMutantList(ai, form, genotypeResult, includeSubstructures);
-    }
-
-    private void retrieveDirtyFishData(GenericTerm ai, AnatomySearchBean form, boolean includeSubstructures) {
-        PaginationResult<Fish> genotypeResult;
-        if (includeSubstructures)
-            genotypeResult = mutantRepository.getFishByAnatomyTermIncludingSubstructures(ai, false, form);
-        else
-            genotypeResult = mutantRepository.getDirtyFishByAnatomyTerm(ai, false, form);
         populateFormBeanForMutantList(ai, form, genotypeResult, includeSubstructures);
     }
 

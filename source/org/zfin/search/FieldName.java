@@ -57,6 +57,7 @@ public enum FieldName {
     KEYWORD("keyword"),
     LAB_OF_ORIGIN("lab_of_origin"),
     LABELED_STRUCTURE_TF("labeled_structure_tf"),
+    MISEXPRESSED_GENE("misexpressed_gene"),
     MOLECULAR_FUNCTION("molecular_function"),
     MOLECULAR_FUNCTION_TF("molecular_function_tf"),
     TERM_STATUS("term_status"),

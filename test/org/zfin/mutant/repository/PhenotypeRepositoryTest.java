@@ -478,6 +478,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
     public void getPhenotypeStatementWarehouse() {
         String ID = "68641";
         PhenotypeStatementWarehouse psw = (PhenotypeStatementWarehouse) HibernateUtil.currentSession().get(PhenotypeStatementWarehouse.class, 68641L);
-        assertNotNull(psw);
+        // no assertion as this may or may not return an object. These objects are regenerated regularly and thus the id's
+        // are not stable. Still want to test that this method does not throw an exception
     }
 }

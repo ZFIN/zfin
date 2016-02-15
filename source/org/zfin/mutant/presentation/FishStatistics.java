@@ -102,12 +102,6 @@ public class FishStatistics extends EntityStatistics {
     }
 
 
-    public Set<PhenotypeStatement> getPhenotypeStatements() {
-        Set<PhenotypeStatement> phenotypeStatements = new TreeSet<>();
-        phenotypeStatements.addAll(PhenotypeService.getPhenotypeStatements(fish, anatomyItem, includeSubstructures));
-        return phenotypeStatements;
-    }
-
     public Set<PhenotypeStatementWarehouse> getPhenotypeObserved() {
         Set<PhenotypeStatementWarehouse> phenotypeObserved = new TreeSet<>();
         phenotypeObserved.addAll(PhenotypeService.getPhenotypeObserved(fish, anatomyItem, includeSubstructures));

@@ -3,8 +3,8 @@ package org.zfin.mutant.presentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.PhenotypeStatementWarehouse;
@@ -27,8 +27,8 @@ public class PhenotypeStatementDetailController {
     @Autowired
     private MarkerRepository markerRepository;
 
-    @RequestMapping("/phenotype-statement")
-    protected String getPhenotypeStatementPage(@RequestParam Long id,
+    @RequestMapping("/statement/{id}")
+    protected String getPhenotypeStatementPage(@PathVariable Long id,
                                                Model model,
                                                HttpServletResponse response) {
         PhenotypeStatementWarehouse phenotypeStatement = mutantRepository.getPhenotypeStatementWarehouseById(id);
@@ -52,8 +52,8 @@ public class PhenotypeStatementDetailController {
         }
     }
 
-    @RequestMapping("/phenotype-statement-popup")
-    protected String getPhenotypeStatementPopup(@RequestParam Long id,
+    @RequestMapping("/statement-popup/{id}")
+    protected String getPhenotypeStatementPopup(@PathVariable Long id,
                                                 Model model,
                                                 HttpServletResponse response) {
         PhenotypeStatementWarehouse phenotypeStatement = mutantRepository.getPhenotypeStatementWarehouseById(id);

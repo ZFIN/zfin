@@ -15,8 +15,8 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
     private static final String PHENOTYPE_STATEMENT_SEPARATOR = " ";
     private static final String COMMA = ", ";
     //todo: replace with non popup link
-    private static final String uri = "phenotype/phenotype-statement?id=";
-    private static final String popupUri = "phenotype/phenotype-statement-popup?id=";
+    private static final String uri = "phenotype/statement/";
+    private static final String popupUri = "phenotype/statement-popup/";
 
 
     public static String getLink(PhenotypeStatementWarehouse phenotypeStatement, boolean suppressPopupLink, boolean curationLink) {

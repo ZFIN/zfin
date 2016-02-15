@@ -311,38 +311,7 @@ public interface MutantRepository {
      */
     boolean hasImagesOnExpressionFigures(String genotypeID, Set<FishExperiment> fishOx);
 
-    /**
-     * Retrieve figures for phenotypes for a given genotype and structure.
-     *
-     * @param term                 structure
-     * @param genotype             genotype
-     * @param includeSubstructures true or false
-     * @return list of figures
-     */
-    List<Figure> getPhenotypeFigures(GenericTerm term, Genotype genotype, boolean includeSubstructures);
-
-    /**
-     * Retrieve phenotype statements for given structure and genotype.
-     *
-     * @param term
-     * @param fish
-     * @param includeSubstructures
-     * @return
-     */
-    List<PhenotypeStatement> getPhenotypeStatement(GenericTerm term, Fish fish, boolean includeSubstructures);
-
     List<PhenotypeStatementWarehouse> getPhenotypeStatementForMutantSummary(GenericTerm term, Genotype genotype, boolean includeSubstructures);
-
-    List<PhenotypeStatement> getPhenotypeStatementForMutantSummary(GenericTerm term, Fish fish, boolean includeSubstructures);
-
-    /**
-     * Retrieve phenotype statements for given structure and genotype.
-     *
-     * @param fish
-     * @param includeSubstructures
-     * @return
-     */
-    List<PhenotypeStatement> getPhenotypeStatement(Fish fish, boolean includeSubstructures);
 
     PaginationResult<Fish> getFishByAnatomyTermIncludingSubstructures(GenericTerm item, boolean wildtype, PaginationBean bean);
 

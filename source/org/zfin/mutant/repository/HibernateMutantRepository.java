@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 import org.zfin.database.DbSystemUtil;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionStatement;
-import org.zfin.expression.Figure;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.HibernateUtil;
@@ -1185,55 +1184,6 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
 
-    /**
-     * Retrieve figures for phenotypes for a given genotype and structure.
-     *
-     * @param term                 structure
-     * @param genotype             genotype
-     * @param includeSubstructures true or false
-     * @return list of figures
-     */
-    @Override
-    public List<Figure> getPhenotypeFigures(GenericTerm term, Genotype genotype, boolean includeSubstructures) {
-        String hql = "select phenox.figure from PhenotypeExperiment phenox, PhenotypeTermFastSearch fastSearch " +
-                "where fastSearch.term = :term and " +
-                "fastSearch.phenotypeStatement.phenotypeExperiment = phenox and " +
-                "phenox.fishExperiment.fish.genotype = :genotype";
-
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameter("term", term);
-        query.setParameter("genotype", genotype);
-        return (List<Figure>) query.list();
-    }
-
-    /**
-     * Retrieve phenotype statements for given structure and genotype.
-     *
-     * @param term
-     * @param fish
-     * @param includeSubstructures
-     * @return
-     */
-    @Override
-    public List<PhenotypeStatement> getPhenotypeStatement(GenericTerm term, Fish fish, boolean includeSubstructures) {
-        String hql = "select distinct pheno from PhenotypeStatement pheno, PhenotypeTermFastSearch fastSearch " +
-                "where fastSearch.phenotypeStatement = pheno and " +
-                "pheno.phenotypeExperiment.fishExperiment.fish = :fish and " +
-                "fastSearch.directAnnotation = :directAnnotation ";
-
-        if (term != null) {
-            hql += " and fastSearch.term = :term ";
-        }
-
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        if (term != null) {
-            query.setParameter("term", term);
-        }
-        query.setParameter("fish", fish);
-        query.setBoolean("directAnnotation", !includeSubstructures);
-        return (List<PhenotypeStatement>) query.list();
-    }
-
     public List<PhenotypeStatementWarehouse> getPhenotypeStatementForMutantSummary(GenericTerm term, Genotype genotype, boolean includeSubstructures) {
         String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno, PhenotypeTermFastSearch fastSearch " +
                 "where fastSearch.phenotypeStatement = pheno and " +
@@ -1257,29 +1207,6 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
-    public List<PhenotypeStatement> getPhenotypeStatementForMutantSummary(GenericTerm term, Fish fish, boolean includeSubstructures) {
-        String hql = "select distinct pheno from PhenotypeStatement pheno, PhenotypeTermFastSearch fastSearch, " +
-                "PhenotypeExperiment phenox, FishExperiment fishox " +
-                "where fastSearch.phenotypeStatement = pheno and " +
-                "pheno.phenotypeExperiment.fishExperiment.fish = :fish and " +
-                "fastSearch.directAnnotation = :directAnnotation " +
-                "AND pheno.phenotypeExperiment = phenox " +
-                "AND phenox.fishExperiment = fishox ";
-
-        if (term != null) {
-            hql += " and fastSearch.term = :term ";
-        }
-
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        if (term != null) {
-            query.setParameter("term", term);
-        }
-        query.setParameter("fish", fish);
-        query.setBoolean("directAnnotation", !includeSubstructures);
-        return (List<PhenotypeStatement>) query.list();
-    }
-
-    @Override
     public List<PhenotypeStatementWarehouse> getPhenotypeStatementObservedForMutantSummary(GenericTerm term, Fish fish, boolean includeSubstructures) {
         String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno, PhenotypeTermFastSearch fastSearch " +
                 "where fastSearch.phenotypeObserved = pheno and " +
@@ -1297,18 +1224,6 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameter("fish", fish);
         query.setBoolean("directAnnotation", !includeSubstructures);
         return (List<PhenotypeStatementWarehouse>) query.list();
-    }
-
-    /**
-     * Retrieve phenotype statements for given structure and genotype.
-     *
-     * @param fish
-     * @param includeSubstructures
-     * @return
-     */
-    @Override
-    public List<PhenotypeStatement> getPhenotypeStatement(Fish fish, boolean includeSubstructures) {
-        return getPhenotypeStatement(null, fish, includeSubstructures);
     }
 
     public List<Genotype> getGenotypes(List<String> genotypeExperimentIDs) {

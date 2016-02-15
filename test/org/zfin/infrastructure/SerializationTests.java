@@ -146,7 +146,6 @@ public class SerializationTests {
      * @throws Exception
      */
     @Test
-    @Ignore("for memory testing; performs no assertions")
     public void serializationStringSizeTest() throws Exception {
         TrieMultiMap<Set<String>> termMap = new TrieMultiMap<>();
         int numberOfTerms = 1000;
@@ -175,7 +174,6 @@ public class SerializationTests {
     }
 
     @Test
-    @Ignore("for memory testing; performs no assertions")
     public void trieSetSizeTest() throws Exception {
         Trie trie = new Trie();
         int numberOfTerms = 100;
@@ -192,7 +190,6 @@ public class SerializationTests {
     }
 
     @Test
-    @Ignore("for memory testing; performs no assertions")
     public void trieMapSizeTest() throws Exception{
         int numberOfTerms = 100;
         TrieMap<String> trieMap = new TrieMap<>();

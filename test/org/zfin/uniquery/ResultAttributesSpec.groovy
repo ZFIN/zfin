@@ -7,6 +7,9 @@ import org.zfin.search.presentation.SearchResult
 import org.zfin.search.Category
 import spock.lang.Unroll
 
+import static org.junit.Assume.assumeThat
+import static org.hamcrest.Matchers.*
+
 
 class ResultAttributesSpec extends ZfinIntegrationSpec {
 
@@ -18,6 +21,10 @@ class ResultAttributesSpec extends ZfinIntegrationSpec {
     @Unroll
     def "Result attributes for #category #id #fieldLabel should contain #partialValue "() {
         when: "result is created and injected with attributes"
+
+        assumeThat("phenox ids are transient", id, not(startsWith("phenox-")))
+        assumeThat("xpatex ids are transient", id, not(startsWith("xpatex-")))
+
         SearchResult result = new SearchResult()
         result.setId(id)
         result.setCategory(category)
@@ -43,7 +50,7 @@ class ResultAttributesSpec extends ZfinIntegrationSpec {
         Category.CONSTRUCT.name | "ZDB-TGCONSTRCT-070117-24" | ResultService.SYNONYMS         | "NICD"
         Category.CONSTRUCT.name | "ZDB-TGCONSTRCT-070117-24" | ResultService.NOTE             | "This construct utilizes five copies of an optimized UAS from yeast and the minimal E1b promoter to drive the expression of a protein in which six myc epitopes are fused to the intracellular domain of the zebrafish notch1a protein."
         //todo: sequence attribute test goes here
-        
+
         Category.SEQUENCE_TARGETING_REAGENT.name | "ZDB-MRPHLNO-051220-2"    | ResultService.SYNONYMS       | "six3-AMO"
         Category.SEQUENCE_TARGETING_REAGENT.name | "ZDB-MRPHLNO-051220-2"    | ResultService.TYPE           | "Morpholino"
         Category.SEQUENCE_TARGETING_REAGENT.name | "ZDB-MRPHLNO-051220-2"    | ResultService.TARGETED_GENES | "six3a"
@@ -62,16 +69,14 @@ class ResultAttributesSpec extends ZfinIntegrationSpec {
         Category.PHENOTYPE.name | "phenox-25276" | ResultService.PHENOTYPE     | "axis elongation"
         Category.PHENOTYPE.name | "phenox-25276" | ResultService.PHENOTYPE     | "embryo development"
 
-//todo: since these ids are transient, there might need to be another way to test this..
-/*
-        "Expression" | "xpatex-472" | ResultService.GENE          | "fgf8a"
+        "Expression" | "xpatex-472"   | ResultService.GENE        | "fgf8a"
         "Expression" | "xpatex-93955" | ResultService.ANTIBODY    | "Ab1-isl"
-        "Expression" | "xpatex-472" | ResultService.PROBE         | "cb110"
-        "Expression" | "xpatex-472" | ResultService.GENOTYPE      | "AB/Tuebingen"
-        "Expression" | "xpatex-472" | ResultService.CONDITIONS    | "standard or control"
-        "Expression" | "xpatex-472" | ResultService.EXPRESSION    | "axis"
-        "Expression" | "xpatex-472" | ResultService.EXPRESSION    | "1-4 somites"
-*/
+        "Expression" | "xpatex-472"   | ResultService.PROBE       | "cb110"
+        "Expression" | "xpatex-472"   | ResultService.GENOTYPE    | "AB/Tuebingen"
+        "Expression" | "xpatex-472"   | ResultService.CONDITIONS  | "standard or control"
+        "Expression" | "xpatex-472"   | ResultService.EXPRESSION  | "axis"
+        "Expression" | "xpatex-472"   | ResultService.EXPRESSION  | "1-4 somites"
+
 /*
         "Marker / Clone" | "" | ResultService.CLONE_PROBLEM_TYPE | ""
         "Marker / Clone" | "" | ResultService.SYNONYMS | ""

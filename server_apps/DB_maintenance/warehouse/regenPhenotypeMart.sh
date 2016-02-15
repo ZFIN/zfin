@@ -76,7 +76,7 @@ echo "done with regen_anatomy_counts()";
 
 
 echo "start regen_pheno_term_regen()";
-echo "$TARGETROOT/server_apps/DB_maintenance/pheno/pheno_term_regen.sql" | dbaccess $DBNAME
+$INFORMIXDIR/bin/dbaccess $DBNAME $TARGETROOT/server_apps/DB_maintenance/pheno/pheno_term_regen.sql
 date;
 echo "done with pheno_term_regen()";
 

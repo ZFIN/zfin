@@ -628,18 +628,18 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         String sql1 = " select distinct super.term_zdb_id as sup_zdbid, super.term_ont_id as sup_ontid, " +
                 " sub.term_zdb_id as sub_zdbid, sub.term_ont_id as sub_ontid, " +
                 " super.term_name as super_name , sub.term_name as sub_name " +
-                "               from phenotype_statement ps  " +
-                " join term super on ps.phenos_entity_1_superterm_zdb_id = super.term_zdb_id   " +
-                " left OUTER join term sub on ps.phenos_entity_1_subterm_zdb_id = sub.term_zdb_id " +
-                "	  where ps.phenos_tag != 'normal' " +
-                "     and ps.phenos_phenox_pk_id in ( " +
-                "           select px.phenox_pk_id " +
+                "               from phenotype_observation_generated pog  " +
+                " join term super on pog.psg_e1a_zdb_id = super.term_zdb_id   " +
+                " left OUTER join term sub on pog.psg_e1b_zdb_id = sub.term_zdb_id " +
+                "	  where pog.psg_tag != 'normal' " +
+                "     and pog.psg_pg_id in ( " +
+                "           select psg.pg_id " +
                 "             from " +
                 "                mutant_fast_search mfs , " +
-                "                phenotype_experiment px               " +
+                "                phenotype_source_generated psg               " +
                 "            where " +
                 "                mfs.mfs_mrkr_Zdb_id = :markerZdbId               " +
-                "                and mfs.mfs_genox_zdb_id = px.phenox_genox_zdb_id     " +
+                "                and mfs.mfs_genox_zdb_id = psg.pg_genox_zdb_id     " +
                 "     ) " +
                 " ";
         phenotypes.addAll(HibernateUtil.currentSession().createSQLQuery(sql1)
@@ -651,18 +651,18 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         String sql2 = " select distinct super.term_zdb_id as sup_zdbid, super.term_ont_id as sup_ontid, " +
                 " sub.term_zdb_id as sub_zdbid, sub.term_ont_id as sub_ontid, " +
                 " super.term_name as super_name , sub.term_name as sub_name " +
-                "               from  phenotype_statement ps  " +
-                "              join term super on ps.phenos_entity_2_superterm_zdb_id = super.term_zdb_id " +
-                "              left OUTER join term sub  on ps.phenos_entity_2_subterm_zdb_id = sub.term_zdb_id " +
-                "     where ps.phenos_tag != 'normal'   " +
-                "     and ps.phenos_phenox_pk_id in ( " +
-                "           select px.phenox_pk_id " +
+                "               from  phenotype_observation_generated pog   " +
+                "              join term super on pog.psg_e2a_zdb_id = super.term_zdb_id " +
+                "              left OUTER join term sub  on pog.psg_e2b_zdb_id = sub.term_zdb_id " +
+                "     where pog.psg_tag != 'normal'   " +
+                "     and pog.psg_pg_id in ( " +
+                "           select psg.pg_id " +
                 "             from " +
                 "                mutant_fast_search mfs , " +
-                "                phenotype_experiment px               " +
+                "                phenotype_source_generated psg               " +
                 "            where " +
                 "                mfs.mfs_mrkr_Zdb_id = :markerZdbId               " +
-                "                and mfs.mfs_genox_zdb_id = px.phenox_genox_zdb_id     " +
+                "                and mfs.mfs_genox_zdb_id = psg.pg_genox_zdb_id    " +
                 "     ) " +
                 " ";
 
