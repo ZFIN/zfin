@@ -8,7 +8,7 @@
               value="http://purl.obolibrary.org/obo/pato.obo"/>
     <property name="geneOboURL" value="http://purl.obolibrary.org/obo/go.obo"/>
     <property name="diseaseOboURL" value="http://www.berkeleybop.org/ontologies/doid.obo"/>
-    <property name="mpathOboURL" value="http://eulep.pdn.cam.ac.uk/Pathology_Ontology/mpath.obo"/>
+    <property name="mpathOboURL" value="https://raw.githubusercontent.com/PaulNSchofield/mpath/master/mpath.obo"/>
     <property name="sequenceOboURL" value="http://www.berkeleybop.org/ontologies/obo-all/sequence/sequence.obo"/>
     <property name="spatialOboURL"
               value="http://purl.obolibrary.org/obo/bspo.obo"/>
@@ -21,6 +21,7 @@
     <property name="lib" value="${root.dir}/lib/Java"/>
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="log.dir" value="${basedir}/logs"/>
+    <property name="jvm.args" value="-XX-UseSplitVerifier"/>
 
     <property environment="env"/>
 
@@ -181,7 +182,7 @@
             <echo>OBO dir : @{oboFileName}</echo>
             <echo>OBO file: @{oboDirectory}</echo>
             <antcall target="clear-output-directory"/>
-            <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="2024m"
+            <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="no" maxmemory="2024m"
                   failonerror="true">
                 <classpath refid="classpath"/>
                 <arg value="-localOboFileName"/>
@@ -196,7 +197,7 @@
                 <arg value="${basedir}"/>
                 <arg value="-jobName"/>
                 <arg value="${JobName}"/>
-               <!-- <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5555"/>-->
+                <jvmarg value="{jvm.args}"/>
             </java>
         </sequential>
     </macrodef>
@@ -226,7 +227,7 @@
             <arg value="${basedir}"/>
             <arg value="-jobName"/>
             <arg value="${JobName}"/>
-
+            <jvmarg value="{jvm.args}"/>
         </java>
 
     </target>
@@ -242,7 +243,7 @@
             <arg value="term-stage-updates.txt"/>
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
-
+            <jvmarg value="{jvm.args}"/>
         </java>
     </target>
 
@@ -255,7 +256,7 @@
             <arg value="expression-result-update.txt"/>
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
-
+            <jvmarg value="{jvm.args}"/>
         </java>
     </target>
 
@@ -267,6 +268,7 @@
             <arg value="anatomy.obo"/>
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
+            <jvmarg value="{jvm.args}"/>
         </java>
 
     </target>
@@ -288,6 +290,7 @@
                 <arg value="@{db-query-file}"/>
                 <arg value="${basedir}"/>
                 <arg value="${basedir}/../../../home/"/>
+                <jvmarg value="{jvm.args}"/>
             </java>
         </sequential>
     </macrodef>
@@ -304,6 +307,7 @@
             <arg value="${run-directory}/${localOboFile}"/>
             <arg value="-oboFileURL"/>
             <arg value="${oboFileURL}"/>
+            <jvmarg value="{jvm.args}"/>
         </java>
 
     </target>
