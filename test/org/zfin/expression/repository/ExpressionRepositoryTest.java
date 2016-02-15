@@ -320,42 +320,6 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         assertTrue(structures.size() < 40);
     }
 
-    // Excluded until we have the ontologyManager loaded into memory for the unit tests.
-    // right now it would load all ontologies when trying to create an expression result record.
-    @Test
-    @Ignore("need ontologyManager loaded into memory for the unit tests")
-    public void createExpressionResult() {
-        String xpatexID = "ZDB-XPAT-050128-4";
-
-        Transaction tx = HibernateUtil.currentSession().beginTransaction();
-        try {
-            ExpressionExperiment experiment = expRep.getExpressionExperiment(xpatexID);
-            assertNotNull(experiment);
-            ExpressionResult result = new ExpressionResult();
-            result.setExpressionExperiment(experiment);
-
-            DevelopmentStage start = anatomyRep.getStageByID("ZDB-STAGE-010723-35");
-            result.setStartStage(start);
-            DevelopmentStage end = anatomyRep.getStageByID("ZDB-STAGE-010723-36");
-            result.setEndStage(end);
-            GenericTerm term = new GenericTerm();
-            term.setTermName(Term.UNSPECIFIED);
-            term.setZdbID("ZDB-TERM-100331-1055");
-
-            result.setSuperTerm(term);
-
-            Figure figure = pubRep.getFigureByID("ZDB-FIG-041119-3");
-            result.addFigure(figure);
-            result.setExpressionFound(true);
-            expRep.createExpressionResult(result, null);
-            //tx.commit();
-        } finally {
-            tx.rollback();
-        }
-        assertTrue("yipie", true);
-    }
-
-
     @Test
     public void testDirectlySubmittedExpression() {
         Session session = HibernateUtil.currentSession();

@@ -239,12 +239,11 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore("Test performs no assertions")
     public void blastDatabasesProteins() {
         List<DBLink> dbLinkList = RepositoryFactory.getSequenceRepository().getDBLinksForAccession("NP_001071049");
         for (DBLink dbLink : dbLinkList) {
             if (dbLink.getReferenceDatabase().getForeignDB().getDbName().equals(ForeignDB.AvailableName.REFSEQ)) {
-                List<Database> blastDatabases = dbLink.getBlastableDatabases();
+                dbLink.getBlastableDatabases();
 
             }
         }
