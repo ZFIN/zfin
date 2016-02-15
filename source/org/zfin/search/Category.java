@@ -62,6 +62,7 @@ public enum Category {
             AFFECTED_BIOLOGICAL_PROCESS_TF,
             AFFECTED_MOLECULAR_FUNCTION_TF,
             AFFECTED_CELLULAR_COMPONENT_TF,
+            MISEXPRESSED_GENE,
             SOURCE,
             LAB_OF_ORIGIN,
             INSTITUTION,

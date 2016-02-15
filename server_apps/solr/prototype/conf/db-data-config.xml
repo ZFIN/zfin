@@ -3132,8 +3132,6 @@ where feature_zdb_id = ids_data_zdb_id
                cacheImpl="SortedMapBackedCache"
                where="feature_zdb_id=feature.id"/>
 
-
-
        <entity name="feature_phenotype_statement"
                datasource="db" query="select distinct psg_short_name as phenotype_statement,
 
@@ -3151,23 +3149,6 @@ where feature_zdb_id = ids_data_zdb_id
                                  left outer join term as super_2 on psg_e2a_zdb_id = super_2.term_zdb_id
                                  left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id
                             where psg_tag = 'abnormal';"
-               cacheImpl="SortedMapBackedCache"
-               where="feature_zdb_id=feature.id"/>
-
-       <entity name="feature_eap_statement" datasource="db"
-               query="select distinct mrkr_abbrev || ' expression ' || quality.term_name || ', ' || ept_tag as phenotype_statement,
-                                        genofeat_feature_zdb_id as feature_zdb_id
-                             from expression_experiment2
-                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
-                                  join expression_result2 on xpatres_efs_id = efs_pk_id
-                                  join expression_phenotype_term on ept_xpatres_id = xpatres_pk_id
-                                  join term as quality on ept_quality_term_zdb_id = quality.term_zdb_id
-                                  join marker as gene on xpatex_gene_zdb_id = mrkr_zdb_id
-                                  join mutant_fast_search on xpatex_genox_zdb_id = mfs_genox_zdb_id
-                                  join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id
-                                  join fish on genox_fish_zdb_id = fish_zdb_id
-                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id;"
                cacheImpl="SortedMapBackedCache"
                where="feature_zdb_id=feature.id"/>
 
