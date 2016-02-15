@@ -1037,7 +1037,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      */
     private ExpressedTermDTO addExpressionToAnnotation(ExpressionFigureStage expressionFigureStage,
                                                        ExpressionStructure expressionStructure,
-                                                       boolean expressed) {
+                                                       boolean expressed) throws ValidationException {
         boolean termBeingUsed = experimentHasExpression(expressionFigureStage, expressionStructure, expressed);
         // do nothing term already exists.
         if (termBeingUsed)
@@ -1049,6 +1049,11 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         // see if an expressionResult2 record exists.
         ExpressionResult2 result = getExpressionResult(expressionFigureStage, expressionStructure);
         if (result != null) {
+            // cannot add EaP to non-EaP and vice versa
+            if ((result.isEap() && !expressionStructure.isEap()) ||
+                    (!result.isEap() && expressionStructure.isEap())) {
+                throw new ValidationException("Cannot add a phenotypic term to a non-phenotypic one");
+            }
             result.addPhenotypeTerm(expressionStructure);
         } else {
             ExpressionResult2 newExpressionResult = new ExpressionResult2();
