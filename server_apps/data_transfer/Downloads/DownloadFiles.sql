@@ -2017,7 +2017,8 @@ update tmp_identifiers
 
 							 )::lvarchar(4000),11),""),"'}",""),"'","");
 
---commenting out on purpose -- need more time on this to sort it out with greater community, but don;t want to lose work in case this becomes real again.
+
+--commenting out on purpose, we are not quite ready to release this.
 --!echo "unload RRID info"
 --unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/rrid.txt' DELIMITER "	"
 --  select id, id2
