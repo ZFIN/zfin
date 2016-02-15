@@ -190,6 +190,8 @@ public interface MutantRepository {
 
     PhenotypeStatementWarehouse getPhenotypeStatementWarehouseById(Long id);
 
+    PhenotypeWarehouse getPhenotypeWarehouseById(Long id);
+
     /**
      * Retrieve the phenotypes that are annotated with obsoleted terms.
      *
