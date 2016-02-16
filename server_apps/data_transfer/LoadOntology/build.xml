@@ -197,7 +197,7 @@
                 <arg value="${basedir}"/>
                 <arg value="-jobName"/>
                 <arg value="${JobName}"/>
-                <jvmarg value="{jvm.args}"/>
+                <jvmarg value="${jvm.args}"/>
             </java>
         </sequential>
     </macrodef>
@@ -227,7 +227,7 @@
             <arg value="${basedir}"/>
             <arg value="-jobName"/>
             <arg value="${JobName}"/>
-            <jvmarg value="{jvm.args}"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
 
     </target>
@@ -243,7 +243,7 @@
             <arg value="term-stage-updates.txt"/>
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
-            <jvmarg value="{jvm.args}"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -256,7 +256,7 @@
             <arg value="expression-result-update.txt"/>
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
-            <jvmarg value="{jvm.args}"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -268,7 +268,7 @@
             <arg value="anatomy.obo"/>
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
-            <jvmarg value="{jvm.args}"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
 
     </target>
@@ -290,7 +290,7 @@
                 <arg value="@{db-query-file}"/>
                 <arg value="${basedir}"/>
                 <arg value="${basedir}/../../../home/"/>
-                <jvmarg value="{jvm.args}"/>
+                <jvmarg value="${jvm.args}"/>
             </java>
         </sequential>
     </macrodef>
@@ -307,7 +307,7 @@
             <arg value="${run-directory}/${localOboFile}"/>
             <arg value="-oboFileURL"/>
             <arg value="${oboFileURL}"/>
-            <jvmarg value="{jvm.args}"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
 
     </target>
