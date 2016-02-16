@@ -21,7 +21,7 @@
     <property name="lib" value="${root.dir}/lib/Java"/>
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="log.dir" value="${basedir}/logs"/>
-    <property name="jvm.args" value="-XX-UseSplitVerifier"/>
+    <property name="jvm.args" value="-XX:-UseSplitVerifier"/>
 
     <property environment="env"/>
 
