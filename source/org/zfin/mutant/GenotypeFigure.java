@@ -25,7 +25,6 @@ public class GenotypeFigure implements Serializable {
     @ManyToOne()
     @JoinColumn(name = "gffs_fig_zdb_id")
     private Figure figure;
-    private String tag;
     @ManyToOne()
     @JoinColumn(name = "gffs_morph_zdb_id")
     private Marker sequenceTargetingReagent;
@@ -69,14 +68,6 @@ public class GenotypeFigure implements Serializable {
 
     public void setSequenceTargetingReagent(Marker sequenceTargetingReagent) {
         this.sequenceTargetingReagent = sequenceTargetingReagent;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
     }
 
     public PhenotypeWarehouse getPhenotypeWarehouse() {
