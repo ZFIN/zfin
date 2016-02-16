@@ -46,7 +46,7 @@ public class ExpressionPhenotypeStatementDTO extends ExpressedTermDTO {
     public String getDisplayName() {
         StringBuilder composedTerm = new StringBuilder(entity.getDisplayName());
         if (geneName != null) {
-            composedTerm.append(" " + geneName + " ");
+            composedTerm.append(" " + "<i>" + geneName + "</i>"+" ");
             composedTerm.append(" expression ");
         } else {
             composedTerm.append(" " + antibodyName + " ");

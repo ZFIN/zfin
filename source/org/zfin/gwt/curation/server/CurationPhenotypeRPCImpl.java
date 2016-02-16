@@ -36,7 +36,7 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
         List<ExpressionResult2> expressionResultList = getExpressionRepository().getPhenotypeFromExpressionsByFigureFish(experimentFilter.getPublicationID(),
                 figureID, experimentFilter.getFishID(), experimentFilter.getFeatureID());
         List<ExpressionPhenotypeExperimentDTO> phenotypeList = ExpressionService.createPhenotypeFromExpressions(expressionResultList);
-        Collections.sort(phenotypeList);
+       Collections.sort(phenotypeList);
         return phenotypeList;
     }
 

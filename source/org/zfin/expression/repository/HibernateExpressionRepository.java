@@ -2029,7 +2029,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             hql += "     and result.expressionFigureStage.figure.zdbID = :figID ";
         if (StringUtils.isNotEmpty(fishID))
             hql += "     and result.expressionFigureStage.expressionExperiment.fishExperiment.fish.zdbID = :fishID ";
-
+        hql += "    order by result.expressionFigureStage.figure.orderingLabel, " +
+                "             result.expressionFigureStage.expressionExperiment.fishExperiment.fish.nameOrder, " +
+                "             result.expressionFigureStage.startStage.abbreviation ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setString("pubID", publicationID);
         if (StringUtils.isNotEmpty(figureID))
