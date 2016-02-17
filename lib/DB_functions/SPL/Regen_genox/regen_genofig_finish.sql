@@ -124,6 +124,9 @@ else
 
 delete from genotype_figure_fast_search
  where gffs_pg_id = pgId;
+
+delete from genotype_figure_fast_search
+ where gffs_psg_id not in (select psg_id from phenotype_observation_generated);
  
     insert into genotype_figure_fast_search
       (gffs_geno_zdb_id,
@@ -148,6 +151,7 @@ end if;
 
 delete from regen_genofig_temp;
 delete from regen_genofig_input_zdb_id_temp;
+
 
 
 end procedure;
