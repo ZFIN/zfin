@@ -110,7 +110,7 @@ sub downloadFiles($$) {
 	$labZdbId = "ZDB-LAB-130607-1";
     }
     elsif ($resourceCenter eq "CZRC"){
-	if (system("/local/bin/wget http://zfish.cn/$filename")) {
+	if (system("/local/bin/wget http://www.zfish.cn/$filename")) {
 	    &errorExit("Failed to download $filename file from CZRC.","  See $wgetStatusFile for details.");
 	}
 	$labZdbId = "ZDB-LAB-130226-1";
