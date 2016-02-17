@@ -7,7 +7,7 @@
 <div class="ontology-term-mini-summary">
     <table class="ontology-term-mini-summary <c:if test="${!empty additionalCssClasses}">${additionalCssClasses}</c:if>">
         <c:choose>
-            <c:when test="${marker.type == 'GENE'}">
+            <c:when test="${marker.type == 'GENE' || marker.type == 'EFG'}">
                 <tr>
                     <th class="name">Symbol:</th>
                     <td class="name"><zfin:link entity="${marker}" suppressPopupLink="true"/></td>
