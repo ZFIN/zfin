@@ -25,7 +25,8 @@ insert into phenotype_observation_generated_temp (psg_pg_id, psg_mrkr_Zdb_id, ps
     and pg_genox_zdb_id = xpatex_genox_Zdb_id
     and pg_fig_zdb_id = efs_fig_Zdb_id
     and pg_start_Stg_zdb_id = efs_start_Stg_zdb_id
-   and pg_end_stg_zdb_id = efs_end_stg_Zdb_id;
+   and pg_end_stg_zdb_id = efs_end_stg_Zdb_id
+ and xpatex_gene_zdb_id is not null;
 
 insert into phenotype_observation_generated_temp (psg_pg_id, psg_mrkr_Zdb_id,  psg_mrkr_Relation,psg_e1a_zdb_id, psg_e1_relation_name,
        	    				  	      psg_e1b_zdb_id, psg_e2a_zdb_id, psg_e2_relation_name,
