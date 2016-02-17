@@ -24,7 +24,9 @@ if (vUpdate != 't') then
       where exists (Select 'x' from regen_genofig_input_zdb_id_temp
    	 		where gffs_pg_id = rgfg_id);
 
- 
+ delete from genotype_figure_fast_search_new
+ where gffs_psg_id not in (select psg_id from phenotype_observation_generated);
+
     insert into genotype_figure_fast_search_new
       (gffs_geno_zdb_id,
 	gffs_fig_zdb_id,
