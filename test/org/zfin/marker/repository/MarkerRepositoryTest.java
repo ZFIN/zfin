@@ -503,8 +503,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         query = session.createQuery(hql);
         query.setParameter("aoterm", term);
         List<AntibodyAOStatistics> listStat = query.list();
-        assertTrue(list != null);
-        assertTrue(list.size() > 0);
+        assertTrue(listStat != null);
+        assertTrue(listStat.size() > 0);
 
     }
 
@@ -552,7 +552,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         query.setFirstResult(0);
         query.setMaxResults(5);
         ScrollableResults results = query.scroll();
-        List<HighQualityProbe> probes = new ArrayList<HighQualityProbe>();
+        List<HighQualityProbe> probes = new ArrayList<>();
         while (results.next()) {
             Marker probe = new Marker();
             Object[] objects = results.get();

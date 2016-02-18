@@ -178,9 +178,9 @@ public interface MutantRepository {
      * @param term Term
      * @return list of phenotypes
      */
-    List<PhenotypeStatement> getPhenotypeWithEntity(GenericTerm term);
+    List<PhenotypeStatementWarehouse> getPhenotypeWithEntity(GenericTerm term);
 
-    List<PhenotypeStatement> getPhenotypeWithEntity(List<GenericTerm> terms);
+    List<PhenotypeStatementWarehouse> getPhenotypeWithEntity(List<GenericTerm> terms);
 
     List<MarkerGoTermEvidence> getMarkerGoEvidence(List<GenericTerm> terms);
 

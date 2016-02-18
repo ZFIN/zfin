@@ -650,15 +650,15 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return list of phenotypes
      */
     @Override
-    public List<PhenotypeStatement> getPhenotypeWithEntity(GenericTerm term) {
-        String hql = "select distinct pheno from PhenotypeStatement pheno where " +
-                "(pheno.entity.superterm = :term OR pheno.entity.subterm = :term OR " +
-                "pheno.relatedEntity.superterm = :term OR pheno.relatedEntity.subterm = :term ) " +
+    public List<PhenotypeStatementWarehouse> getPhenotypeWithEntity(GenericTerm term) {
+        String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno where " +
+                "(pheno.e1a = :term OR pheno.e1b = :term OR " +
+                "pheno.e2a = :term OR pheno.e2b = :term ) " +
                 "AND tag = :tag";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("term", term);
         query.setString("tag", PhenotypeStatement.Tag.ABNORMAL.toString());
-        return (List<PhenotypeStatement>) query.list();
+        return (List<PhenotypeStatementWarehouse>) query.list();
     }
 
     /**
@@ -677,13 +677,13 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
-    public List<PhenotypeStatement> getPhenotypeWithEntity(List<GenericTerm> terms) {
-        List<PhenotypeStatement> allPhenotypes = new ArrayList<PhenotypeStatement>(50);
+    public List<PhenotypeStatementWarehouse> getPhenotypeWithEntity(List<GenericTerm> terms) {
+        List<PhenotypeStatementWarehouse> allPhenotypes = new ArrayList<>(50);
         for (GenericTerm term : terms) {
-            List<PhenotypeStatement> phenotypes = getPhenotypeWithEntity(term);
+            List<PhenotypeStatementWarehouse> phenotypes = getPhenotypeWithEntity(term);
             allPhenotypes.addAll(phenotypes);
         }
-        List<PhenotypeStatement> nonDuplicateExpressions = removeDuplicates(allPhenotypes);
+        List<PhenotypeStatementWarehouse> nonDuplicateExpressions = removeDuplicates(allPhenotypes);
         Collections.sort(nonDuplicateExpressions);
         return nonDuplicateExpressions;
 
@@ -715,12 +715,12 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
 
-    private List<PhenotypeStatement> removeDuplicates(List<PhenotypeStatement> allPhenotypes) {
-        Set<PhenotypeStatement> phenos = new HashSet<PhenotypeStatement>();
-        for (PhenotypeStatement pheno : allPhenotypes) {
+    private List<PhenotypeStatementWarehouse> removeDuplicates(List<PhenotypeStatementWarehouse> allPhenotypes) {
+        Set<PhenotypeStatementWarehouse> phenos = new HashSet<>();
+        for (PhenotypeStatementWarehouse pheno : allPhenotypes) {
             phenos.add(pheno);
         }
-        ArrayList<PhenotypeStatement> phenotypeArrayList = new ArrayList<PhenotypeStatement>(phenos.size());
+        ArrayList<PhenotypeStatementWarehouse> phenotypeArrayList = new ArrayList<>(phenos.size());
         phenotypeArrayList.addAll(phenos);
         return phenotypeArrayList;
     }
@@ -745,6 +745,7 @@ public class HibernateMutantRepository implements MutantRepository {
     public PhenotypeWarehouse getPhenotypeWarehouseById(Long id) {
         return (PhenotypeWarehouse) currentSession().get(PhenotypeWarehouse.class, id);
     }
+
     /**
      * Retrieve the phenotypes that are annotated with obsoleted terms.
      *

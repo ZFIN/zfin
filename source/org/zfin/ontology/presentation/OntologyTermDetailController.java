@@ -301,7 +301,7 @@ public class OntologyTermDetailController {
 
     private boolean hasPhenotypeData(Term anatomyTerm) {
         GenericTerm term = getOntologyRepository().getTermByOboID(anatomyTerm.getOboID());
-        List<PhenotypeStatement> phenotypes = getMutantRepository().getPhenotypeWithEntity(term);
+        List<PhenotypeStatementWarehouse> phenotypes = getMutantRepository().getPhenotypeWithEntity(term);
         if (phenotypes != null && phenotypes.size() > 0) {
             return true;
         }
