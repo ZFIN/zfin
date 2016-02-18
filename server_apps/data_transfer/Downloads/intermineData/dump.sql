@@ -145,7 +145,7 @@ select source_id, target_id from int_person_pub;
 --   where exists (select 'x' from expression_result where xpatres_xpatex_zdb_id =xpatex_zdb_id) ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_expression/2xpatres.txt"
- select res.*, anat.term_ont_id, a.stg_obo_id, b.stg_obo_id,xpatex.*, xpatfig.*,termt.term_ont_id, fish_zdb_id, genox_exp_zdb_id
+ select res.xpatres_pk_id, res.xpatres_expression_found, anat.term_ont_id, a.stg_obo_id, b.stg_obo_id,xpatex.xpatex_source_zdb_id,xpatex.xpatex_assay,xpatex.xpatex_probe_feature_zdb_id, xpatex.xpatex_gene_zdb_id, xpatex.xpatex_dblink_zdb_id, xpatex.xpatex_genox_zdb_id, xpatex.xpatex_atb_zdb_id, xpatfig.efs_fig_Zdb_id, termt.term_ont_id, fish_zdb_id, genox_exp_zdb_id
   from expression_experiment2 xpatex, expression_figure_stage xpatfig, expression_result2 res, stage a, stage b, term anat, outer term termt,fish_experiment,fish
   where res.xpatres_superterm_zdb_id = anat.term_zdb_id
   and res.xpatres_subterm_zdb_id = termt.term_zdb_id
