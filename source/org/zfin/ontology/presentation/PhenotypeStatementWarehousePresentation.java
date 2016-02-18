@@ -29,6 +29,7 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
         }
 
         StringBuilder phenotypeLink = new StringBuilder(100);
+        phenotypeLink.append(getNormalTagNote(phenotypeStatement));
         phenotypeLink.append(getTomcatLink(uri, String.valueOf(phenotypeStatement.getId()), getNameWithoutNormalText(phenotypeStatement)));
         if (!suppressPopupLink) {
             phenotypeLink.append(getPopupLink(phenotypeStatement));
