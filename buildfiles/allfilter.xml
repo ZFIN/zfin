@@ -109,6 +109,7 @@
 <filter token="MICROARRAY_EMAIL" value="${MICROARRAY_EMAIL}"/>
 <filter token="MOVE_BLAST_FILES_TO_DEVELOPMENT" value="${MOVE_BLAST_FILES_TO_DEVELOPMENT}"/>
 <filter token="MUTANT_NAME" value="${MUTANT_NAME}"/>
+<filter token="NCBI_LINKOUT_UPLOAD" value="${NCBI_LINKOUT_UPLOAD}"/>
 <filter token="NEW_PUBLICATION_REPORT" value="${NEW_PUBLICATION_REPORT}"/>
 <filter token="NOMEN_COORDINATOR" value="${NOMEN_COORDINATOR}"/>
 <filter token="NON_SECUREPORT" value="${NON_SECUREPORT}"/>

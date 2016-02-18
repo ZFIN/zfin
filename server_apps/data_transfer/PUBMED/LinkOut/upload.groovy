@@ -4,6 +4,8 @@
 import groovy.sql.Sql
 import org.apache.commons.net.ftp.FTPClient
 import org.apache.commons.net.ftp.FTPReply
+import org.zfin.properties.ZfinProperties
+import org.zfin.properties.ZfinPropertiesEnum
 
 def PUB_FILE = "publications.uid"
 def INFO_FILE = "providerinfo.xml"
@@ -32,10 +34,11 @@ AND (
 ORDER BY accession_no
 """
 
-def env = System.getenv()
+ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+
 def client = new FTPClient()
 def db = [
-        url: "jdbc:informix-sqli://${env.SQLHOSTS_HOST}:${env.INFORMIX_PORT}/${env.DBNAME}:INFORMIXSERVER=${env.INFORMIXSERVER}",
+        url: "jdbc:informix-sqli://${ZfinPropertiesEnum.SQLHOSTS_HOST}:${ZfinPropertiesEnum.INFORMIX_PORT}/${ZfinPropertiesEnum.DBNAME}:INFORMIXSERVER=${ZfinPropertiesEnum.INFORMIXSERVER}",
         driver: 'com.informix.jdbc.IfxDriver'
 ]
 
@@ -54,6 +57,20 @@ def upload = { String filename ->
     }
 }
 
+// do the pub query and write to file
+new File(PUB_FILE).withWriter { out ->
+    Sql.withInstance(db) { sql ->
+        sql.eachRow(PUB_QUERY) { row ->
+            out.writeLine(row.accession_no as String)
+        }
+    }
+}
+
+if (!Boolean.valueOf(ZfinPropertiesEnum.NCBI_LINKOUT_UPLOAD.toString())) {
+    println("Not uploading to NCBI FTP because NCBI_LINKOUT_UPLOAD not set")
+    System.exit(0)
+}
+
 // connect to NCBI FTP site and get into "holdings" directory
 client.connect("ftp-private.ncbi.nlm.nih.gov")
 if (!FTPReply.isPositiveCompletion(client.getReplyCode())) {
@@ -63,17 +80,8 @@ client.enterLocalPassiveMode()
 client.login("zfin", "TeDZUG3E") || fail("unable to login to NCBI FTP server")
 client.changeWorkingDirectory("holdings") || fail("unable to change directories")
 
-// do the pub query and upload results
-def pubList = client.storeFileStream(PUB_FILE)
-Sql.withInstance(db) { sql ->
-    sql.eachRow(PUB_QUERY) { row ->
-        pubList.write((row.getString("accession_no") + "\n").bytes)
-    }
-}
-pubList.close()
-client.completePendingCommand() || fail("unable to upload " + PUB_FILE)
-
-// upload static files
+// upload files
+upload(PUB_FILE)
 upload(INFO_FILE)
 upload(RESOURCES_FILE)
 
