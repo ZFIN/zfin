@@ -400,7 +400,7 @@ public class FigureViewService {
     public List<SequenceTargetingReagent> getPhenotypeSTR(Figure figure) {
         List<SequenceTargetingReagent> strs = new ArrayList<>();
 
-        for (PhenotypeExperiment phenotypeExperiment : figure.getPhenotypeExperiments()) {
+        for (PhenotypeWarehouse phenotypeExperiment : getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID())) {
             for (SequenceTargetingReagent str : phenotypeExperiment.getFishExperiment().getFish().getStrList()) {
                 if (str != null && !strs.contains(str)) {
                     strs.add(str);
@@ -431,7 +431,7 @@ public class FigureViewService {
     public List<Experiment> getPhenotypeCondition(Figure figure) {
         List<Experiment> conditions = new ArrayList<>();
 
-        for (PhenotypeExperiment phenotypeExperiment : figure.getPhenotypeExperiments()) {
+        for (PhenotypeWarehouse phenotypeExperiment : getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID())) {
             if (canAddExperimentToConditionsList(phenotypeExperiment.getFishExperiment(), conditions)) {
                 conditions.add(phenotypeExperiment.getFishExperiment().getExperiment());
             }
@@ -509,8 +509,8 @@ public class FigureViewService {
 
         List<DevelopmentStage> stages = new ArrayList<>();
 
-        for (PhenotypeExperiment phenotypeExperiment : figure.getPhenotypeExperiments()) {
-            stages.add(phenotypeExperiment.getStartStage());
+        for (PhenotypeWarehouse phenotypeExperiment : getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID())) {
+            stages.add(phenotypeExperiment.getStart());
         }
 
         if (stages.size() == 0) {
@@ -518,7 +518,6 @@ public class FigureViewService {
         }
 
         return Collections.min(stages);
-
     }
 
     /**
@@ -542,8 +541,8 @@ public class FigureViewService {
 
         List<DevelopmentStage> stages = new ArrayList<>();
 
-        for (PhenotypeExperiment phenotypeExperiment : figure.getPhenotypeExperiments()) {
-            stages.add(phenotypeExperiment.getEndStage());
+        for (PhenotypeWarehouse phenotypeExperiment : getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID())) {
+            stages.add(phenotypeExperiment.getEnd());
         }
 
         if (stages.size() == 0) {
