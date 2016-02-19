@@ -1861,10 +1861,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public Long getPhenotypeCount(Publication publication) {
-        String sql = "\tselect count(distinct phenox_fig_zdb_id)\n" +
-                " \t  from figure, phenotype_experiment\n" +
+        String sql = "\tselect count(distinct pg_fig_zdb_id)\n" +
+                " \t  from figure, phenotype_source_generated\n" +
                 " \t where fig_source_zdb_id = :zdbID\n" +
-                "         and phenox_fig_zdb_id = fig_zdb_id";
+                "         and pg_fig_zdb_id = fig_zdb_id";
         return getCount(sql, publication.getZdbID());
     }
 
