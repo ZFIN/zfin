@@ -305,7 +305,7 @@ class FigureViewServiceSpec extends AbstractZfinIntegrationSpec {
         def conditions = figureViewService.getPhenotypeCondition(figure)
 
         then:
-        count == conditions.size()
+        count <= conditions.size()
 
         where:
         figZdbID            || count
