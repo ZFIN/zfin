@@ -545,8 +545,8 @@ where mrkr_type in ('GENE','GENEP','EFG')
                         where="gene_zdb_id=gene.id"/>
 
 
-                <entity name="gene_misexpressed_gene" datasource="db"
-                        query="select distinct misexpressed_gene.mrkr_abbrev as misexpressed_gene,
+                <entity name="gene_misexpressed_gene" datasource="db" transformer="RegexTransformer"
+                        query="select distinct misexpressed_gene.mrkr_abbrev || ',Any' as misexpressed_gene,
                                        mfs_mrkr_zdb_id as gene_zdb_id
                                 from expression_experiment2
                                      join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
@@ -555,7 +555,9 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                      join marker as misexpressed_gene on xpatex_gene_zdb_id = mrkr_zdb_id
                                      join mutant_fast_search on mfs_genox_zdb_id = xpatex_genox_zdb_id;"
                         cacheImpl="SortedMapBackedCache"
-                        where="gene_zdb_id=gene.id"/>
+                        where="gene_zdb_id=gene.id">
+                    <field name="misexpressed_gene" column="misexpressed_gene" splitBy=","/>
+                </entity>
 
                 <entity name="gene_molecular_function_direct"
                         datasource="db" query="select term_ont_id as xref, term_name as molecular_function_direct,
@@ -1235,8 +1237,8 @@ where psg_tag = 'abnormal'  "
 
 
 
-           <entity name="fish_misexpressed_gene" datasource="db"
-                   query="select mrkr_abbrev as misexpressed_gene,
+           <entity name="fish_misexpressed_gene" datasource="db" transformer="RegexTransformer"
+                   query="select mrkr_abbrev || ',Any' as misexpressed_gene,
                                    genox_fish_zdb_id as fish_zdb_id
                             from expression_experiment2
                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
@@ -1245,7 +1247,9 @@ where psg_tag = 'abnormal'  "
                                  join marker as gene on xpatex_gene_zdb_id = mrkr_zdb_id
                                  join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id;"
                    where="fish_zdb_id=fish.id"
-                   cacheImpl="SortedMapBackedCache"/>
+                   cacheImpl="SortedMapBackedCache">
+               <field name="misexpressed_gene" column="misexpressed_gene" splitBy=","/>
+           </entity>
 
            <entity name="fish_affected_anatomy_direct"
                    datasource="db" query="select term_ont_id as xref, term_name as affected_anatomy_direct, genox_fish_zdb_id as fish_zdb_id
@@ -1983,8 +1987,8 @@ select
                    where="pg_id=phenotype.id"
                    cacheImpl="SortedMapBackedCache"/>
 
-           <entity name="phenotype_misexpressed_gene" datasource="db"
-                   query="select mrkr_abbrev as misexpressed_gene,
+           <entity name="phenotype_misexpressed_gene" datasource="db" transformer="RegexTransformer"
+                   query="select mrkr_abbrev || ',Any' as misexpressed_gene,
                                'phenox-' || phenox_pk_id as phenox_pk_id
                         from expression_experiment2
                              join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
@@ -1994,7 +1998,9 @@ select
                              join phenotype_experiment on phenox_fig_zdb_id = efs_fig_zdb_id
                                                       and phenox_genox_zdb_id = xpatex_genox_zdb_id;"
                    cacheImpl="SortedMapBackedCache"
-                   where="phenox_pk_id=phenotype.id"/>
+                   where="phenox_pk_id=phenotype.id">
+               <field name="misexpressed_gene" column="misexpressed_gene" splitBy=","/>
+           </entity>
 
            <entity name="phenotype_image"
                    datasource="db" query="select
@@ -3152,8 +3158,8 @@ where feature_zdb_id = ids_data_zdb_id
                cacheImpl="SortedMapBackedCache"
                where="feature_zdb_id=feature.id"/>
 
-       <entity name="feature_misexpressed_gene" datasource="db"
-               query="select distinct mrkr_abbrev as misexpressed_gene,
+       <entity name="feature_misexpressed_gene" datasource="db" transformer="RegexTransformer"
+               query="select distinct mrkr_abbrev || ',Any' as misexpressed_gene,
                                         genofeat_feature_zdb_id as feature_zdb_id
                              from expression_experiment2
                                   join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
@@ -3166,7 +3172,9 @@ where feature_zdb_id = ids_data_zdb_id
                                   join fish on genox_fish_zdb_id = fish_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id;"
                cacheImpl="SortedMapBackedCache"
-               where="feature_zdb_id=feature.id"/>
+               where="feature_zdb_id=feature.id">
+           <field name="misexpressed_gene" column="misexpressed_gene" splitBy=","/>
+       </entity>
 
        <entity name="feature_affected_anatomy_direct"
                datasource="db" query="select distinct
@@ -4409,15 +4417,17 @@ where psg_tag = 'abnormal';
                           where="fig_zdb_id=figure.id"/>
 
 
-           <entity name="figure_misexpressed_gene" datasource="db"
-                   query="select mrkr_abbrev as misexpressed_gene, efs_fig_zdb_id as fig_zdb_id
+           <entity name="figure_misexpressed_gene" datasource="db" transformer="RegexTransformer"
+                   query="select mrkr_abbrev || ',Any' as misexpressed_gene, efs_fig_zdb_id as fig_zdb_id
                             from expression_experiment2
                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                  join expression_result2 on xpatres_efs_id = efs_pk_id
                                  join expression_phenotype_term on ept_xpatres_id = xpatres_pk_id
                                  join marker as gene on xpatex_gene_zdb_id = mrkr_zdb_id;"
                    cacheImpl="SortedMapBackedCache"
-                   where="fig_zdb_id=figure.id"/>
+                   where="fig_zdb_id=figure.id">
+               <field name="misexpressed_gene" column="misexpressed_gene" splitBy=","/>
+           </entity>
 
           <entity name="figure_affected_anatomy_direct"
                 datasource="db" query="select term_ont_id as xref, term_name as affected_anatomy_direct, pg_fig_zdb_id as fig_zdb_id

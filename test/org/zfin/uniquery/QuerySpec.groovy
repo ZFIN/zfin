@@ -93,6 +93,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.GENE.name             | "expressed_in_tf:\"medulla oblongata\" type:Gene id:ZDB-GENE-000616-13"      | "0"
         Category.GENE.name             | "expressed_in_tf:\"enteric nervous system\" type:Gene id:ZDB-GENE-980526-90" | "0"
         Category.GENE.name             | "gene:13"                                        | "12504"
+        Category.GENE.name             | "misexpressed_gene:Any"                          | "12775"
         Category.FIGURE.name           | "sa365"                                          | "12028"
         Category.FISH.name             | "t24412 MO4-tp53"                                | "11415"
         Category.FISH.name             | "Tg(5xUAS:casp3a,5xUAS:Hsa.HIST1H2BJ-Citrine,cryaa:RFP)" | "0"
