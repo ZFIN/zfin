@@ -474,6 +474,13 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         assertNotNull(list);
     }
 
+   @Test
+    public void getAllPhenotypeStatementsForSTR() {
+       SequenceTargetingReagent reagent = getMarkerRepository().getSequenceTargetingReagent("ZDB-TALEN-160209-1");
+        List<PhenotypeStatementWarehouse> list = getPhenotypeRepository().getAllPhenotypeStatementsForSTR(reagent);
+        assertNotNull(list);
+    }
+
     @Test
     @Ignore("Needs to run with -XX:useSplitVerifier until we switch over to Java 8. Ignoring for now.")
     public void getPhenotypeStatementWarehouse() {

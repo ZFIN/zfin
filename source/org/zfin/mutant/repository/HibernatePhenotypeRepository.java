@@ -835,14 +835,12 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     public List<PhenotypeStatementWarehouse> getAllPhenotypeStatementsForSTR(SequenceTargetingReagent sequenceTargetingReagent) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno, PhenotypeWarehouse phenoExp, FishExperiment fishExp, Fish fish  " +
-                "      where pheno.phenotypeWarehouse = phenoExp " +
-                "        and phenoExp.fishExperiment = fishExp " +
-                "        and fishExp.fish = fish" +
-                "        and :str member of fish.strList ";
+        String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno, GenotypeFigure genoFigure  " +
+                "      where pheno.phenotypeWarehouse.fishExperiment = genoFigure.fishExperiment " +
+                "        and genoFigure.sequenceTargetingReagent.zdbID = :strID ";
 
         Query query = session.createQuery(hql);
-        query.setParameter("str", sequenceTargetingReagent);
+        query.setParameter("strID", sequenceTargetingReagent.getZdbID());
 
         List<PhenotypeStatementWarehouse> strPhenotypeStatementsFish = (List<PhenotypeStatementWarehouse>) query.list();
 
