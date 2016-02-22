@@ -31,7 +31,7 @@ insert into phenotype_observation_generated_temp (psg_pg_id, psg_mrkr_Zdb_id, ps
 insert into phenotype_observation_generated_temp (psg_pg_id, psg_mrkr_Zdb_id,  psg_mrkr_Relation,psg_e1a_zdb_id, psg_e1_relation_name,
        	    				  	      psg_e1b_zdb_id, psg_e2a_zdb_id, psg_e2_relation_name,
 						      psg_e2b_zdb_id, psg_tag, psg_quality_zdb_id)
-  select pg_id, xpatex_atb_zdb_id, "labeling in",xpatres_superterm_zdb_id, ept_relational_term, xpatres_subterm_zdb_id, "","","",ept_tag,ept_quality_term_zdb_id
+  select pg_id, xpatex_atb_zdb_id, "labeling",xpatres_superterm_zdb_id, ept_relational_term, xpatres_subterm_zdb_id, "","","",ept_tag,ept_quality_term_zdb_id
     from expression_experiment2, expression_figure_stage, expression_result2, expression_phenotype_term, phenotype_source_generated_temp
     where xpatex_zdb_id = efs_xpatex_zdb_id
     and efs_pk_id = xpatres_efs_id
