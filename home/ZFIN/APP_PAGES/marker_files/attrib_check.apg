@@ -43,8 +43,8 @@
     or
       recattrib_data_zdb_id in (select mrkrgoev_zdb_id 
 				  from marker_go_term_evidence 
-				 where ortho_zebrafish_gene_zdb_id = '$OID'
-				       and oev_ortho_zdb_id = o.ortho_zdb_id)
+				 where mrkrgoev_mrkr_zdb_id = '$OID')
+
   <?/MIVAR>
   
   <?MIVAR NAME=hasAttribOnOID>f<?/MIVAR>
