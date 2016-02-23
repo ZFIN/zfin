@@ -10,10 +10,7 @@ import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.expression.ExpressionPhenotypeTerm;
 import org.zfin.expression.ExpressionResult2;
-import org.zfin.mutant.GenotypeFigure;
-import org.zfin.mutant.PhenotypeStatementWarehouse;
-import org.zfin.mutant.PhenotypeTermFastSearch;
-import org.zfin.mutant.PhenotypeWarehouse;
+import org.zfin.mutant.*;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.FileUtil;
 
@@ -104,7 +101,9 @@ public class HibernateSessionCreator {
                     .addAnnotatedClass(PhenotypeStatementWarehouse.class)
                     .addAnnotatedClass(PhenotypeTermFastSearch.class)
                     .addAnnotatedClass(GenotypeFigure.class)
-                    .addAnnotatedClass(ExpressionPhenotypeTerm.class).buildSessionFactory());
+                    .addAnnotatedClass(ExpressionPhenotypeTerm.class)
+                    .addAnnotatedClass(FishStr.class)
+                    .buildSessionFactory());
         }
     }
 

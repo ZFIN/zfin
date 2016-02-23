@@ -225,7 +225,7 @@
 
         </joined-subclass>
 
-        <joined-subclass name="org.zfin.mutant.SequenceTargetingReagent" table="marker_sequence">
+        <joined-subclass name="org.zfin.mutant.SequenceTargetingReagent" table="marker_sequence" >
             <key column="seq_mrkr_zdb_id"/>
             <component name="sequence">
                 <property name="sequence" not-null="true" column="seq_sequence"/>

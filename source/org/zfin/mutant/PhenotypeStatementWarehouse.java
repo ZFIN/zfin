@@ -97,7 +97,9 @@ public class PhenotypeStatementWarehouse implements Comparable<PhenotypeStatemen
     @Override
     public String toString() {
         String message = "";
+        message += getDisplayNameWithoutTag();
         if (gene != null) {
+            message += ": ";
             message += gene.getAbbreviation();
         }
         return message;
