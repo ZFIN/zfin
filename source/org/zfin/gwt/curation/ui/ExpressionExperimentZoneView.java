@@ -126,10 +126,10 @@ public class ExpressionExperimentZoneView extends Composite {
         int row = elementIndex + 1;
         setRowStyle(row);
         if (gene == null) {
-            dataTable.setText(row, 0, "");
+            dataTable.setText(row, 1, "");
             return;
         }
-        dataTable.setText(elementIndex + 1, 1, gene.getName());
+        dataTable.setText(row, 1, gene.getName());
     }
 
     public void addEnvironment(EnvironmentDTO environment, int elementIndex) {
