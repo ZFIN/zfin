@@ -9,42 +9,17 @@ import org.zfin.mutant.Fish;
 import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.publication.Publication;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
 
     private Publication publication;
     private Figure figure;
     private int imgCount;
-
-    public List<Experiment> getExp() {
-        return exp;
-    }
-
-    public void setExp(List<Experiment> exp) {
-        this.exp = exp;
-    }
-
     private String thumbnail;
     private List<Experiment> exp;
-
-    // for phenotype summary page
-    private Set<PhenotypeStatementWarehouse> phenotypeStatementList;
+    private SortedSet<PhenotypeStatementWarehouse> phenotypeStatementList;
     public List<String> geno;
-
-    public List<String> getGeno() {
-        return geno;
-    }
-
-    public void setGeno(List<String> geno) {
-        this.geno = geno;
-    }
-    // for expression summary page
-
-
     private List<ExpressionStatement> expressionStatementList;
     private DevelopmentStage earliestStartStage;
     private DevelopmentStage latestEndStage;
@@ -77,6 +52,22 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
         this.thumbnail = thumbnail;
     }
 
+    public List<Experiment> getExp() {
+        return exp;
+    }
+
+    public void setExp(List<Experiment> exp) {
+        this.exp = exp;
+    }
+
+    public List<String> getGeno() {
+        return geno;
+    }
+
+    public void setGeno(List<String> geno) {
+        this.geno = geno;
+    }
+
     public boolean isPublicationDisplayed() {
         return publicationDisplayed;
     }
@@ -86,19 +77,22 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
     }
 
     public List<Fish> getFishList() {
-        if (fishList == null)
+        if (fishList == null) {
             return null;
+        }
         return new ArrayList<>(fishList);
     }
 
     public void setFishList(List<Fish> fish) {
-        if (fish != null)
+        if (fish != null) {
             fishList = new HashSet<>(fish);
+        }
     }
 
     public void addFish(Fish fish) {
-        if (fishList == null)
+        if (fishList == null) {
             fishList = new HashSet<>();
+        }
         fishList.add(fish);
     }
 
@@ -111,14 +105,16 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
     }
 
     public List<PhenotypeStatementWarehouse> getPhenotypeStatementList() {
-        if (phenotypeStatementList == null)
+        if (phenotypeStatementList == null) {
             return null;
+        }
         return new ArrayList<>(phenotypeStatementList);
     }
 
     public void setPhenotypeStatementList(List<PhenotypeStatementWarehouse> phenotypeStatementList) {
-        if (this.phenotypeStatementList == null)
-            this.phenotypeStatementList = new HashSet<>();
+        if (this.phenotypeStatementList == null) {
+            this.phenotypeStatementList = new TreeSet<>();
+        }
         this.phenotypeStatementList.addAll(phenotypeStatementList);
     }
 
@@ -148,8 +144,9 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
 
 
     public int compareTo(FigureSummaryDisplay anotherFigureSummary) {
-        if (anotherFigureSummary.publication == null)
+        if (anotherFigureSummary.publication == null) {
             return 1;
+        }
         int compareResult = publication.compareTo(anotherFigureSummary.getPublication());
         if (compareResult == 0) {
             return figure.getLabel().compareTo(anotherFigureSummary.getFigure().getLabel());
@@ -159,8 +156,9 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
     }
 
     public int getImgCount() {
-        if (figure == null)
+        if (figure == null) {
             return 0;
+        }
         return figure.getImages().size();
     }
 
@@ -169,8 +167,9 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
     }
 
     public void addPhenotypeStatement(PhenotypeStatementWarehouse statement) {
-        if (phenotypeStatementList == null)
-            phenotypeStatementList = new HashSet<>();
+        if (phenotypeStatementList == null) {
+            phenotypeStatementList = new TreeSet<>();
+        }
         phenotypeStatementList.add(statement);
     }
 
