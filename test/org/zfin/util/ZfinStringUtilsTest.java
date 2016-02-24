@@ -115,4 +115,11 @@ public class ZfinStringUtilsTest {
                 output, is(false));
     }
 
+    @Test
+    public void removeHtmlTagsShouldRemoveTagsFromAroundGeneName() {
+        String input = "regenerating fin <i>lamb1a</i> expression decreased amount, abnormal";
+        String expected = "regenerating fin lamb1a expression decreased amount, abnormal";
+        assertThat(ZfinStringUtils.removeHtmlTags(input), is(expected));
+    }
+
 }

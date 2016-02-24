@@ -170,6 +170,10 @@ public class ZfinStringUtils {
         return m.find();
     }
 
+    public static String removeHtmlTags(final String string) {
+        return string.replaceAll("<.*?>", "");
+    }
+
 }
 
 

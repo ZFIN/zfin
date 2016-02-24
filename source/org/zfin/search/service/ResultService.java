@@ -20,12 +20,13 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.presentation.MarkerRelationshipPresentation;
-import org.zfin.mutant.*;
+import org.zfin.mutant.Fish;
+import org.zfin.mutant.PhenotypeStatementWarehouse;
+import org.zfin.mutant.PhenotypeWarehouse;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.presentation.GenotypePresentation;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
-import org.zfin.ontology.presentation.PhenotypePresentation;
-import org.zfin.ontology.presentation.PhenotypeStatementWarehousePresentation;
 import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.profile.Company;
 import org.zfin.profile.Lab;
@@ -640,7 +641,7 @@ public class ResultService {
 
                 List<String> statements = new ArrayList<>();
                 for (PhenotypeStatementWarehouse statement : phenotypeExperiment.getStatementWarehouseSet()) {
-                    statements.add(PhenotypeStatementWarehousePresentation.getNameWithoutNormalText(statement));
+                    statements.add(statement.getShortName());
                 }
                 if (CollectionUtils.isNotEmpty(statements)) {
                     result.addAttribute(PHENOTYPE, withBreaks(statements));

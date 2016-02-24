@@ -10,7 +10,7 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.Term;
-import org.zfin.ontology.presentation.PhenotypeStatementWarehousePresentation;
+import org.zfin.util.ZfinStringUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -32,7 +32,6 @@ public class PhenotypeStatementDetailController {
                                                Model model,
                                                HttpServletResponse response) {
         PhenotypeStatementWarehouse phenotypeStatement = mutantRepository.getPhenotypeStatementWarehouseById(id);
-        String statementName = PhenotypeStatementWarehousePresentation.getNameWithoutNormalText(phenotypeStatement);
 
         if (phenotypeStatement == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -41,7 +40,7 @@ public class PhenotypeStatementDetailController {
         }
 
         model.addAttribute("phenotypeStatement", phenotypeStatement);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Phenotype Statement: " + statementName);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Phenotype Statement: " + ZfinStringUtils.removeHtmlTags(phenotypeStatement.getShortName()));
 
         if (phenotypeStatement.isMorphologicalPhenotype()) {
             model.addAttribute("uniqueTerms", getUniqueTerms(phenotypeStatement));

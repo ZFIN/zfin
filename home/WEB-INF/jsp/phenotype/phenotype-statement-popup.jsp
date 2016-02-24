@@ -9,7 +9,7 @@
 
         <c:if test="${phenotypeStatement.tag eq 'normal'}">
             <div style="margin: 1em;">
-                The "(normal or recovered)" tag is used when the annotation of a normal phenotype is notable
+                The "normal or recovered" tag is used when the annotation of a normal phenotype is notable
                 or when the annotation represents a recovered normal phenotype, such as that
                 resulting from the addition of a sequence targeting reagent or the creation of a complex
                 mutant genotype.
