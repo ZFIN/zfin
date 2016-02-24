@@ -22,7 +22,7 @@ select
     mrkr_name as gene_full_name,
     mrkr_abbrev_order as name_sort,
        '/' || mrkr_zdb_id as url,
-       (select max(when) from updates where rec_id = mrkr_zdb_id) as date
+    to_date(get_date_from_id(mrkr_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
 from marker, marker_types
 where mrkr_type in ('GENE','GENEP','EFG')
   and mrkr_type = marker_type
@@ -785,7 +785,7 @@ select
     mrkr_name as full_name,
     mrkr_abbrev_order as name_sort,
        '/' || mrkr_zdb_id as url,
-       (select max(when) from updates where rec_id = mrkr_zdb_id) as date
+       (select min(when) from updates where rec_id = mrkr_zdb_id) as date
 from marker, marker_types
 where mrkr_type != 'GENE'
   and mrkr_type != 'GENEP'
@@ -954,7 +954,8 @@ SELECT fish_zdb_id     AS id,
        fish_name_order AS name_sort, 
        'Fish'          AS category,
        geno_zdb_id     AS related_accession,
-       fish_order      AS complexity 
+       fish_order      AS complexity,
+       to_date(get_date_from_id(fish_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
 FROM   fish 
        JOIN genotype 
          ON fish_genotype_zdb_id = geno_zdb_id 
@@ -979,7 +980,8 @@ SELECT fish_zdb_id     AS id,
        fish_name_order AS name_sort, 
        'Fish'          AS category,
        g.geno_zdb_id     AS related_accession,
-       fish_order      AS complexity 
+       fish_order      AS complexity,
+       to_date(get_date_from_id(fish_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date 
 FROM   fish, 
        genotype AS g, 
        genotype AS bg, 
@@ -1668,8 +1670,8 @@ select
                         mrkr_abbrev_order as name_sort,
                         cons_name as organism,
                         cons_name as reporter_color,
-                         '/' || cons_construct_zdb_id as url,
-                                (select max(when) from updates where rec_id = mrkr_zdb_id) as date
+                        '/' || cons_construct_zdb_id as url,
+                        to_date(get_date_from_id(cons_construct_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
                       from construct_search, marker, marker_types
                       where cons_construct_zdb_id = mrkr_zdb_id
                         and mrkr_type = marker_type
@@ -1813,7 +1815,7 @@ select
                         mrkrtype_type_display as type,
                         mrkr_zdb_id as str_zdb_id,
                         '/' || mrkr_zdb_id as url,
-                        (select max(when) from updates where rec_id = mrkr_zdb_id) as date
+                        to_date(get_date_from_id(mrkr_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
                         from marker
                              join marker_types on mrkr_type = marker_type
                              join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
@@ -2461,7 +2463,8 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                              when xpatex_gene_zdb_id is not null and xpatex_gene_zdb_id[1,8] != 'ZDB-GENE'
                              then (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_gene_zdb_id)
                              else (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref|| ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_atb_zdb_id)
-                         end as name_sort
+                         end as name_sort,
+                         to_date(get_date_from_id(efs_xpatex_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
                         from expression_experiment2
                              join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                              join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id
@@ -2776,7 +2779,7 @@ term_name as expression_anatomy_direct,
                                '/' || mrkr_zdb_id as url,
                             atb_type as type,
                             atb_host_organism as host_organism,
-                                   (select max(when) from updates where rec_id = mrkr_zdb_id) as date
+                            to_date(get_date_from_id(mrkr_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
 
                         from marker, marker_types,antibody
                         where mrkr_type = 'ATB'
@@ -2986,7 +2989,7 @@ term_name as expression_anatomy_direct,
                            when fp_prefix = 'sa' then 'Sanger'
                            when fp_prefix = 'mn' then 'Zfishbook'
                         end as screen from feature_prefix where feature_lab_prefix_id = fp_pk_id) as screen,
-                           (select max(when) from updates where rec_id = feature_zdb_id) as date,
+                           to_date(get_date_from_id(feature_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
                            (select featassay_mutagen from feature_assay where featassay_feature_zdb_id=feature_zdb_id) as mutagen
                     from feature, feature_type, feature_type_ordering
                     where feature_type = ftrtype_name
@@ -3644,6 +3647,7 @@ where feature_zdb_id = ids_data_zdb_id
                              term_name as proper_name,
                              term_name as full_name,
                              zero_pad(term_name) as name_sort,
+                             to_date(get_date_from_id(term_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
                              case when term_ontology = 'disease_ontology' then TRIM('Human Disease')
                                   else TRIM('Anatomy / GO') end as category,
                              case
@@ -4222,7 +4226,7 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                              nvl(pub_mini_ref,'') || ' ' || nvl(fig_label,'') as full_name,
                              zero_pad(nvl(pub_mini_ref,'') || ' ' || nvl(fig_label,'')) as name_sort,
                              'Figure' as category,
-                             pub_date as date,
+                             to_date(get_date_from_id(fig_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
                              '/' || fig_zdb_id as url,
                              fig_caption as caption
                       from figure, publication
@@ -4799,7 +4803,7 @@ where fig_zdb_id=xpatfig_fig_zdb_id
                               lower(full_name) as name_sort,
                               'Community' as category,
                               'Person' as type,
-                              (select max(when) from updates where rec_id = zdb_id) as date,
+                              to_date(get_date_from_id(zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
                               '/' || zdb_id as url,
                               case when snapshot is null
                                    then null
@@ -4833,7 +4837,7 @@ where fig_zdb_id=xpatfig_fig_zdb_id
                                              'Community' as category,
                                              'Lab' as type,
                                              '/' || zdb_id as url,
-                                             (select max(when) from updates where rec_id = zdb_id) as date,
+                                             to_date(get_date_from_id(zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
                                              case when snapshot is null
                                                   then null
                                                   else zdb_id end  as snapshot,
@@ -4873,7 +4877,7 @@ where fig_zdb_id=xpatfig_fig_zdb_id
                                                             'Community' as category,
                                                             'Company' as type,
                                                             '/' || zdb_id as url,
-                                                            (select max(when) from updates where rec_id = zdb_id) as date,
+                                                            to_date(get_date_from_id(zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
                                                             case when snapshot is null
                                                                  then null
                                                                  else zdb_id end  as snapshot,
