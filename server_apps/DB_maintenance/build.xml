@@ -8,6 +8,7 @@
     <property name="lib" value="${basedir}/lib/Java"/>
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="validateData" value="${basedir}/server_apps/DB_maintenance"/>
+    <property name="jvm.args" value="-XX:-UseSplitVerifier"/>
 
     <property environment="env"/>
 
@@ -300,6 +301,7 @@
                 <arg value="@{instanceName}"/>
                 <arg value="@{db-query-file}"/>
                 <arg value="${unloadDir}"/>
+		<jvmarg value="${jvm.args}"/>
             </java>
         </sequential>
     </macrodef>
