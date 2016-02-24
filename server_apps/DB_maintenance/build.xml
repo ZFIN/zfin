@@ -61,6 +61,7 @@
             <arg value="PAINT"/>
             <arg value="http://www.geneontology.org/gene-associations/submission/paint/pre-submission/gene_association.paint_zfin.gz"/>
             <arg value="org.zfin.datatransfer.go.PaintGafParser"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -75,6 +76,7 @@
             <arg value="GOA"/>
             <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/gene_association.goa_zebrafish.gz"/>
             <arg value="org.zfin.datatransfer.go.GoaGafParser"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -89,6 +91,7 @@
             <arg value="FP Inferences"/>
             <arg value="http://build.berkeleybop.org/view/GAF/job/gaf-check-zfin/lastSuccessfulBuild/artifact/gene_association.zfin.inf.gaf"/>
             <arg value="org.zfin.datatransfer.go.FpInferenceGafParser"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -100,6 +103,7 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
             <arg value="Synchronize-Antibodies-Zfin-Wiki_w"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -111,6 +115,7 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/validatedata"/>
             <arg value="Set-Permissions-Zebrafish-Book-Wiki_d"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
         <echo message="Check file: ${validateData}/validatedata/${JobName}/${JobName}.faulty-pages.txt"/>
     </target>
@@ -123,6 +128,7 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/validatedata"/>
             <arg value="Clean-Wiki-Sandbox_w"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -133,6 +139,7 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
             <arg value="${jobName}"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -144,6 +151,7 @@
             <arg value="${validateData}/report_data"/>
             <arg value="${jobName}"/>
             <arg value="10"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -154,6 +162,7 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
             <arg value="${jobName}"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -164,6 +173,7 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
             <arg value="${jobName}"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -174,6 +184,7 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
             <arg value="${jobName}"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -184,6 +195,7 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
             <arg value="${jobName}"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
 
         <fail message="Error in microarray update">
@@ -203,6 +215,7 @@
             <arg value="${JobName}"/>
             <arg value="${validateData}/validatedata"/>
             <arg value="${web-inf.dir}/zfin.properties"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -229,6 +242,7 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="-taskClassName"/>
             <arg value="org.zfin.infrastructure.ant.DataReportTask"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -243,6 +257,7 @@
             <arg value="${validateData}/validatedata"/>
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="true"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -259,6 +274,7 @@
             <arg value="${validateData}/validatedata"/>
             <arg value="-propertyFilePath"/>
             <arg value="${web-inf.dir}/zfin.properties"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -278,6 +294,7 @@
             <arg value="-threads"/>
             <arg value="40"/>
             <arg value=""/>
+            <jvmarg value="${jvm.args}"/>
         </java>
 
         <echo message="${validateData}/validatedata/${JobName}.txt"/>
@@ -301,7 +318,7 @@
                 <arg value="@{instanceName}"/>
                 <arg value="@{db-query-file}"/>
                 <arg value="${unloadDir}"/>
-		<jvmarg value="${jvm.args}"/>
+		        <jvmarg value="${jvm.args}"/>
             </java>
         </sequential>
     </macrodef>
@@ -330,6 +347,7 @@
                 <arg value="${validateData}/report_data"/>
                 <arg value="-propertyDir"/>
                 <arg value="${web-inf.dir}/zfin.properties"/>
+                <jvmarg value="${jvm.args}"/>
             </java>
         </sequential>
     </macrodef>
