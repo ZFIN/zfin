@@ -142,8 +142,10 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             view.getAntibodyList().setEnabled(true);
             String geneID = view.getGeneList().getValue(view.getGeneList().getSelectedIndex());
             curationExperimentRPCAsync.readAntibodiesByGene(publicationID, geneID, new RetrieveAntibodyList());
-        } else
+        } else {
             view.getAntibodyList().setEnabled(false);
+            updateGenes();
+        }
     }
 
     public void onAntibodyChange() {
@@ -417,7 +419,10 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
 
     public void updateGenes() {
-        curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(lastSelectedExperiment.getGene()));
+        if (lastSelectedExperiment != null)
+            curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(lastSelectedExperiment.getGene()));
+        else
+            curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(null));
     }
 
     public void onShowHideClick(boolean visibility) {
@@ -766,18 +771,18 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         }
 
         @Override
-        public void onSuccess(List<MarkerDTO> genes) {
-//                Window.alert("brought back: " + genes.size() );
+        public void onSuccess(List<MarkerDTO> antibodies) {
+//                Window.alert("brought back: " + antibodies.size() );
             ListBox antibodyList = view.getAntibodyList();
             String selectedAntibodyID = antibodyList.getValue(antibodyList.getSelectedIndex());
             //Window.alert("Selected Antibody: " + selectedAntibodyID);
             antibodyList.clear();
             antibodyList.addItem("");
             int rowIndex = 1;
-            for (MarkerDTO gene : genes) {
-                antibodyList.addItem(gene.getName(), gene.getZdbID());
+            for (MarkerDTO antibody : antibodies) {
+                antibodyList.addItem(antibody.getName(), antibody.getZdbID());
                 // make sure the selected antibody is still selected
-                if (gene.getZdbID().equals(selectedAntibodyID))
+                if (antibody.getZdbID().equals(selectedAntibodyID))
                     antibodyList.setItemSelected(rowIndex, true);
                 rowIndex++;
             }
@@ -804,7 +809,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
         @Override
         public void onSuccess(List<MarkerDTO> genes) {
-            //Window.alert("brought back: " + experiments.size());
+            //Window.alert("brought back genes: " + genes.size());
             ListBoxWrapper geneList = view.getGeneList();
             geneList.clear();
             geneList.addItem("");
