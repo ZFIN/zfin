@@ -2398,7 +2398,7 @@ select
                    where="pg_id=phenotype.id"/>
 
            <entity name="phenotype_synonym_phenotype_observation_generated"
-                   datasource="db" query="select dalias_alias || ' ' || entity1a.term_name as synonym_phenotype_observation_generated, 'pg-' || pg_id as pg_id
+                   datasource="db" query="select dalias_alias || ' ' || entity1a.term_name as synonym_phenotype_statement, 'pg-' || pg_id as pg_id
                             from phenotype_observation_generated ps, phenotype_source_generated, data_alias, term entity1a
                             where dalias_data_zdb_id = psg_quality_zdb_id
                              and term_zdb_id = psg_e1a_zdb_id
@@ -2408,7 +2408,7 @@ select
                              and psg_e2a_zdb_id is null
                              and psg_e2b_zdb_id is null
 UNION
-select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym_phenotype_observation_generated,
+select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym_phenotype_statement,
 'pg-' || pg_id as pg_id
                             from phenotype_observation_generated ps, phenotype_source_generated, data_alias quality_alias,
                                  data_alias entity_alias
