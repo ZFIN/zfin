@@ -1,7 +1,15 @@
 package org.zfin.anatomy;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Parameter;
+
+import javax.persistence.*;
 import java.io.Serializable;
 
+@Entity
+@Table(name = "STAGE")
+@Immutable
 public class DevelopmentStage implements Serializable, Comparable<DevelopmentStage> {
 
     public static final String ZYGOTE_STAGE = "Zygote:1-cell";
@@ -10,16 +18,33 @@ public class DevelopmentStage implements Serializable, Comparable<DevelopmentSta
     public static final String ADULT_STAGE_ZDB_ID = "ZDB-STAGE-010723-39";
     public static final String UNKNOWN = "Unknown";
 
-    private long stageID;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @Parameter(name = "type", value = "STAGE")
+            })
+    @Column(name = "stg_zdb_id")
     private String zdbID;
+    @Column(name = "stg_obo_id")
     private String oboID;
+    @Column(name = "stg_name")
     private String name;
+    @Column(name = "stg_name_long")
     private String nameLong;
+    @Column(name = "stg_hours_start")
     private float hoursStart;
+    @Column(name = "stg_hours_end")
     private float hoursEnd;
+    @Column(name = "stg_other_features")
     private String otherFeature;
+    @Column(name = "stg_abbrev")
     private String abbreviation;
+    @Column(name = "stg_name_ext")
     private String timeString;
+    @Transient
+    private long stageID;
     public static final String NEWLINE_PLUS_INDENT = System.getProperty("line.separator") + "    ";
 
 

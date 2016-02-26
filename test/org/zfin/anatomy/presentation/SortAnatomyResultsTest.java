@@ -19,18 +19,18 @@ public class SortAnatomyResultsTest {
     @Test
     public void oneObsoleteBothSearchTerm() {
         AnatomyStatistics statOne = new AnatomyStatistics();
-        Term itemOne = new GenericTerm();
+        GenericTerm itemOne = new GenericTerm();
         itemOne.setTermName("Flycatcher");
         itemOne.setObsolete(false);
         statOne.setTerm(itemOne);
 
         AnatomyStatistics statTwo = new AnatomyStatistics();
-        Term itemTwo = new GenericTerm();
+        GenericTerm itemTwo = new GenericTerm();
         itemTwo.setTermName("Flyaborigines");
         itemTwo.setObsolete(true);
         statTwo.setTerm(itemTwo);
 
-        List<AnatomyStatistics> list = new ArrayList<AnatomyStatistics>();
+        List<AnatomyStatistics> list = new ArrayList<>();
         list.add(statOne);
         list.add(statTwo);
 
@@ -56,7 +56,7 @@ public class SortAnatomyResultsTest {
         itemTwo.setTermName("Flyaborigines");
         itemTwo.setObsolete(true);
 
-        List<Term> list = new ArrayList<Term>();
+        List<Term> list = new ArrayList<>();
         list.add(itemOne);
         list.add(itemTwo);
 
@@ -75,18 +75,18 @@ public class SortAnatomyResultsTest {
     @Test
     public void oneObsoleteOneSearchTerm() {
         AnatomyStatistics statOne = new AnatomyStatistics();
-        Term itemOne = new GenericTerm();
+        GenericTerm itemOne = new GenericTerm();
         itemOne.setTermName("MyFlycatcher");
         itemOne.setObsolete(false);
         statOne.setTerm(itemOne);
 
         AnatomyStatistics statTwo = new AnatomyStatistics();
-        Term itemTwo = new GenericTerm();
+        GenericTerm itemTwo = new GenericTerm();
         itemTwo.setTermName("Flyaborigines");
         itemTwo.setObsolete(true);
         statTwo.setTerm(itemTwo);
 
-        List<AnatomyStatistics> list = new ArrayList<AnatomyStatistics>();
+        List<AnatomyStatistics> list = new ArrayList<>();
         list.add(statOne);
         list.add(statTwo);
 
@@ -105,18 +105,18 @@ public class SortAnatomyResultsTest {
     @Test
     public void oneObsoleteOneSearchTermOther() {
         AnatomyStatistics statOne = new AnatomyStatistics();
-        Term itemOne = new GenericTerm();
+        GenericTerm itemOne = new GenericTerm();
         itemOne.setTermName("Flycatcher");
         itemOne.setObsolete(false);
         statOne.setTerm(itemOne);
 
         AnatomyStatistics statTwo = new AnatomyStatistics();
-        Term itemTwo = new GenericTerm();
+        GenericTerm itemTwo = new GenericTerm();
         itemTwo.setTermName("MyFlyaborigines");
         itemTwo.setObsolete(true);
         statTwo.setTerm(itemTwo);
 
-        List<AnatomyStatistics> list = new ArrayList<AnatomyStatistics>();
+        List<AnatomyStatistics> list = new ArrayList<>();
         list.add(statOne);
         list.add(statTwo);
 
@@ -135,18 +135,18 @@ public class SortAnatomyResultsTest {
     @Test
     public void twoObsolete() {
         AnatomyStatistics statOne = new AnatomyStatistics();
-        Term itemOne = new GenericTerm();
+        GenericTerm itemOne = new GenericTerm();
         itemOne.setTermName("Flycatcher");
         itemOne.setObsolete(true);
         statOne.setTerm(itemOne);
 
         AnatomyStatistics statTwo = new AnatomyStatistics();
-        Term itemTwo = new GenericTerm();
+        GenericTerm itemTwo = new GenericTerm();
         itemTwo.setTermName("Flyaborigines");
         itemTwo.setObsolete(true);
         statTwo.setTerm(itemTwo);
 
-        List<AnatomyStatistics> list = new ArrayList<AnatomyStatistics>();
+        List<AnatomyStatistics> list = new ArrayList<>();
         list.add(statOne);
         list.add(statTwo);
 

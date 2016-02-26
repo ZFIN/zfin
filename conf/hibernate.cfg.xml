@@ -41,7 +41,6 @@
 
         <!-- Mappings -->
         <mapping resource="org/zfin/filters.hbm.xml"/>
-        <mapping resource="org/zfin/anatomy.hbm.xml"/>
         <mapping resource="org/zfin/construct.hbm.xml"/>
         <mapping resource="org/zfin/blast.hbm.xml"/>
         <mapping resource="org/zfin/expression.hbm.xml"/>
@@ -66,6 +65,13 @@
         <mapping class="org.zfin.mutant.PhenotypeTermFastSearch"/>
         <mapping class="org.zfin.mutant.GenotypeFigure"/>
         <mapping class="org.zfin.mutant.FishStr"/>
+        <mapping class="org.zfin.framework.presentation.AnatomyFact"/>
+        <mapping class="org.zfin.antibody.presentation.AntibodyAOStatistics"/>
+        <mapping class="org.zfin.marker.presentation.HighQualityProbeAOStatistics"/>
+        <mapping class="org.zfin.anatomy.DevelopmentStage"/>
+        <mapping class="org.zfin.audit.AuditLogItem"/>
+        <mapping class="org.zfin.anatomy.AnatomyStatistics"/>
+        <mapping class="org.zfin.anatomy.AnatomyTreeInfo"/>
 
 
     </session-factory>

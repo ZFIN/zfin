@@ -6,10 +6,17 @@ import org.apache.log4j.spi.RootLogger;
 import org.hibernate.InvalidMappingException;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
+import org.zfin.anatomy.AnatomyStatistics;
+import org.zfin.anatomy.AnatomyTreeInfo;
+import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.antibody.presentation.AntibodyAOStatistics;
+import org.zfin.audit.AuditLogItem;
 import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.expression.ExpressionPhenotypeTerm;
 import org.zfin.expression.ExpressionResult2;
+import org.zfin.framework.presentation.AnatomyFact;
+import org.zfin.marker.presentation.HighQualityProbeAOStatistics;
 import org.zfin.mutant.*;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.FileUtil;
@@ -103,6 +110,13 @@ public class HibernateSessionCreator {
                     .addAnnotatedClass(GenotypeFigure.class)
                     .addAnnotatedClass(ExpressionPhenotypeTerm.class)
                     .addAnnotatedClass(FishStr.class)
+                    .addAnnotatedClass(AnatomyFact.class)
+                    .addAnnotatedClass(AntibodyAOStatistics.class)
+                    .addAnnotatedClass(HighQualityProbeAOStatistics.class)
+                    .addAnnotatedClass(DevelopmentStage.class)
+                    .addAnnotatedClass(AuditLogItem.class)
+                    .addAnnotatedClass(AnatomyStatistics.class)
+                    .addAnnotatedClass(AnatomyTreeInfo.class)
                     .buildSessionFactory());
         }
     }

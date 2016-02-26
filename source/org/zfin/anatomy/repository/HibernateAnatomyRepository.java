@@ -243,7 +243,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
             AnatomyTreeInfo treeInfo = (AnatomyTreeInfo) object[1];
             stat.setTreeInfo(treeInfo);
             stats.add(stat);
-            Term item = RepositoryFactory.getOntologyRepository().getTermByOboID(stat.getTerm().getOboID());
+            GenericTerm item = RepositoryFactory.getOntologyRepository().getTermByOboID(stat.getTerm().getOboID());
             stat.setTerm(item);
         }
         return stats;
