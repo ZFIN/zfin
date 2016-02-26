@@ -21,7 +21,13 @@ public class QueryManipulationService {
     }
 
     //Case
-    public String processNcbiAccession(String query) { return query.replaceAll("gene:","gene\\\\:"); }
+    public String processNcbiAccession(String query) {
+
+        //this allows field specific searching on gene fields like affected_gene or misexpressed_gene
+        if (query.contains("_gene")) { return query; }
+
+        return query.replaceAll("gene:"," gene\\\\:");
+    }
 
     //Case 12299, '(-' in construct names needs to be scaped
     public String processConstructDash(String query) {
