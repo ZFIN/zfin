@@ -24,7 +24,7 @@ public class AuditLogItem {
     private String newValue;
     @Column(name = "old_value")
     private String oldValue;
-    @Column(name = "comment")
+    @Column(name = "comments")
     private String comment;
     @Column(name = "when")
     private Date dateUpdated;
