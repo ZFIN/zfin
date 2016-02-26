@@ -13,6 +13,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.sequence.MarkerDBLink;
@@ -419,4 +420,7 @@ public interface ExpressionRepository {
     List<ExpressionExperiment2> getExpressionExperiment2sByFish (Fish fish);
 
     List<ExpressionResult2> getExpressionResultList(Marker gene);
+
+    List<String> getExpressionFigureIDsByAntibodyLabeling (String antibodyID, PostComposedEntity postComposedEntity, String startStageID, String endStageID);
+
 }
