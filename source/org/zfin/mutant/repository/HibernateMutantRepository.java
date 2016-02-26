@@ -416,10 +416,10 @@ public class HibernateMutantRepository implements MutantRepository {
             session.delete(fishExperiment);
         }
 
-        String hql = "delete GenotypeFigure where phenotypeExperiment = :phenoExp ";
+       /* String hql = "delete GenotypeFigure where phenotypeExperiment = :phenoExp ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("phenoExp", phenoExperiment);
-        query.executeUpdate();
+        query.executeUpdate();*/
     }
 
 
