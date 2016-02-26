@@ -46,11 +46,6 @@ function ImageBox() {
         img.src = this.IMG_URL + image.imgThumb;
         img.className = "xpresimg_img";
         anchor.appendChild(img);
-
-        $(anchor).on('click', function () {
-            ga('send', 'event', 'Figure Gallery', 'Click Thumbnail', this.id);
-        });
-
         return anchor;
     };
 
@@ -113,7 +108,6 @@ function ImageBox() {
                 }
 
                 document.getElementById('xpatsel_thumbnail_page_hidden_field').value = countField.value;
-                ga('send', 'event', 'Figure Gallery', 'Jump to Page', countField.value + ' / ' + instance.getLastPageIndex());
                 instance.jumpToPage(countField.value);
             };
 
@@ -172,7 +166,6 @@ function ImageBox() {
 
             $(anchor).hover(
                 function () {
-                    ga('send', 'event', 'Figure Gallery', 'Hover', this.id);
                     $('.imagebox-popup').hide();
                     clearTimeout(instance.popupTimeout);
                     $($(this).siblings('.imagebox-popup'))
@@ -259,7 +252,6 @@ function ImageBox() {
         var newIndex = this.firstVisibleImage + this.MAX_VISIBLE;
         if (newIndex <= this.getLastImageIndex()) {
             var pageString =  (newIndex / this.MAX_VISIBLE + 1) + ' / ' + this.getLastPageIndex();
-            ga('send', 'event', 'Figure Gallery', 'Paginate', pageString);
             this.jumpToImage(newIndex);
         }
     };
@@ -268,7 +260,6 @@ function ImageBox() {
         if (this.firstVisibleImage > this.MAX_VISIBLE - 1) {
             var newIndex = this.firstVisibleImage - this.MAX_VISIBLE;
             var pageString =  (newIndex / this.MAX_VISIBLE + 1) + ' / ' + this.getLastPageIndex();
-            ga('send', 'event', 'Figure Gallery', 'Paginate', pageString);
             this.jumpToImage(newIndex);
         }
     };

@@ -93,7 +93,6 @@ Message: $MI_ERRORMSG
 
      function loadImages() {
        storedpage = imageBox.getHiddenCountInput().value;
-       ga('send', 'event', 'Figure Gallery', 'Initialize');
        if ((storedpage != null) && (storedpage != "")) {
          imageBox.jumpToPage(storedpage);
        } else {
@@ -102,18 +101,6 @@ Message: $MI_ERRORMSG
      }
 
      document.hasImages = true;
-
-     jQuery('#xpresimg_box')
-        .on('click', '.figpop_top a', function () {
-            ga('send', 'event', 'Figure Gallery', 'Click Figure Link', jQuery(this).attr('href').substring(1));
-        })
-        .on('click', '.gene-links a', function () {
-            ga('send', 'event', 'Figure Gallery', 'Click Gene Link', this.id);
-        })
-        .on('click', '.figpop_image a', function () {
-            var zdbMatch = jQuery(this).attr('href').match(/ZDB-IMAGE-\d+-\d+/);
-            ga('send', 'event', 'Figure Gallery', 'Click Image', zdbMatch.length ? zdbMatch[0] : '');
-        });
     </script>
    <?/MIVAR>
 
