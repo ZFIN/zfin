@@ -33,6 +33,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.profile.service.ProfileService;
@@ -2091,5 +2092,44 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         query.setParameter("gene", gene);
 
         return (List<ExpressionResult2>) query.list();
+    }
+
+    @Override
+    public List<String> getExpressionFigureIDsByAntibodyLabeling (String antibodyID, PostComposedEntity postComposedEntity, String startStageID, String endStageID) {
+        String sql = "select distinct xpatfig_fig_zdb_id  " +
+                "  from expression_pattern_figure, expression_experiment, expression_result, fish_experiment, fish " +
+                " where xpatfig_xpatres_zdb_id = xpatres_zdb_id" +
+                "   and xpatres_expression_found = :expression_found " +
+                "   and xpatres_start_stg_zdb_id = :startStageID " +
+                "   and xpatres_end_stg_zdb_id = :endStageID " +
+                "   and xpatres_superterm_zdb_id = :superTermID ";
+
+        if (postComposedEntity.getSubterm() != null)
+            sql += " and xpatres_subterm_zdb_id = :subTermID ";
+        else
+            sql += " and xpatres_subterm_zdb_id is null ";
+
+        sql +=  "   and xpatres_xpatex_zdb_id = xpatex_zdb_id " +
+                "   and xpatex_atb_zdb_id = :antibodyID " +
+                "   and xpatex_genox_zdb_id = genox_zdb_id " +
+                "   and genox_is_std_or_generic_control = :std_or_generic_control " +
+                "   and genox_fish_zdb_id = fish_zdb_id " +
+                "   and fish_is_wildtype =  :wildtype ";
+
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("expression_found", "t");
+        query.setString("startStageID", startStageID);
+        query.setString("endStageID", endStageID);
+        query.setString("superTermID", postComposedEntity.getSuperterm().getZdbID());
+
+        if (postComposedEntity.getSubterm() != null)
+            query.setString("subTermID", postComposedEntity.getSubterm().getZdbID());
+
+
+        query.setString("antibodyID", antibodyID);
+        query.setString("std_or_generic_control", "t");
+        query.setString("wildtype", "t");
+
+        return (List<String>) query.list();
     }
 }

@@ -388,10 +388,8 @@ public class AntibodyMarkerService {
 
         // loop thru the set of ExpressionExperiment objects to get the related data
         for (ExpressionExperiment exp : experiments) {
-            // need to get a Genotype object to check for wildtype; do nothing if not wildtype
-            Genotype geno = exp.getFishExperiment().getFish().getGenotype();
 
-            if (geno.isWildtype() && exp.getFishExperiment().isStandardOrGenericControl() && exp.getFishExperiment().getFish().isClean()) {
+            if (exp.getFishExperiment().isStandardOrGenericControl() && exp.getFishExperiment().getFish().isWildtype()) {
                 ExpressionAssay assay = exp.getAssay();
                 Marker gene = exp.getGene();
 
@@ -423,9 +421,11 @@ public class AntibodyMarkerService {
                         }
 
                         // form the key
-                        String key = superterm.getZdbID() + startStageName + endStageName;
+                        String key;
                         if (subterm != null) {
-                            key += subterm.getZdbID();
+                            key = superterm.getZdbID() + subterm.getZdbID() + startStageName + endStageName;
+                        } else {
+                            key = superterm.getZdbID() + "no_subterm" + startStageName + endStageName;
                         }
 
                         AnatomyLabel labeling;
