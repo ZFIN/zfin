@@ -865,6 +865,23 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         criteria.add(Restrictions.eq("expressionFound", result.isExpressionFound()));
         return (List<ExpressionResult>) criteria.list();
     }
+    public List<ExpressionResult2> checkForExpressionResultRecord2(ExpressionResult2 result) {
+        // first check if an expression result record already exists
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria;
+        criteria = session.createCriteria(ExpressionResult2.class);
+        Term subTerm = result.getSubTerm();
+        if (subTerm == null) {
+            criteria.add(Restrictions.isNull("subTerm"));
+        } else {
+            criteria.add(Restrictions.eq("subTerm", result.getSubTerm()));
+        }
+        criteria.add(Restrictions.eq("expressionFigureStage", result.getExpressionFigureStage()));
+
+        criteria.add(Restrictions.eq("superTerm", result.getSuperTerm()));
+        criteria.add(Restrictions.eq("expressionFound", result.isExpressionFound()));
+        return (List<ExpressionResult2>) criteria.list();
+    }
 
     // run the script to update the fast search table for antibodies-anatomy
 
