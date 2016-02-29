@@ -243,21 +243,20 @@ public class AntibodyWikiWebService extends WikiWebService {
             }
         });
         anatomyLabelSet.addAll(anatomyLabelList);
-        List<String> antibodyLinks = new ArrayList<>(anatomyLabelSet.size());
         for (AnatomyLabel anatomyLabel : anatomyLabelSet) {
             if (anatomyLabel.getSuperterm() != null && TermPresentation.getWikiLink(anatomyLabel.getSuperterm()) != null) {
-                antibodyLinks.add(TermPresentation.getWikiLink(anatomyLabel.getSuperterm()));
-                if (anatomyLabel.getSubterm() != null)
-                    antibodyLinks.add(TermPresentation.getWikiLink(anatomyLabel.getSubterm()));
+
+                anatomyStringBuilder.append(TermPresentation.getWikiLink(anatomyLabel.getSuperterm()));
+                if (anatomyLabel.getSubterm() != null) {
+                    anatomyStringBuilder.append(" ");
+                    anatomyStringBuilder.append(TermPresentation.getWikiLink(anatomyLabel.getSubterm()));
+                }
+                anatomyStringBuilder.append("; ");
             }
-        }
-        for (String antibodyLink : antibodyLinks) {
-            anatomyStringBuilder.append(antibodyLink);
-            anatomyStringBuilder.append("; ");
         }
         String anatomyLink = "";
         if (anatomyStringBuilder.length() > 1) {
-            anatomyLink = anatomyStringBuilder.substring(0, anatomyStringBuilder.length() -2);
+            anatomyLink = anatomyStringBuilder.substring(0, anatomyStringBuilder.length() - 2);
         }
         content = content.replace("{text-data:AnatomicalStructuresRecognized}{text-data}", anatomyLink);
 
@@ -451,19 +450,21 @@ public class AntibodyWikiWebService extends WikiWebService {
         String pageTitle;
         clearAntibodyTemplate();
         for (Antibody antibody : antibodies) {
+            if (!antibody.getAbbreviation().equals("ab8-prox1"))
+                continue;
             // containers
             pageTitle = getWikiTitleFromAntibody(antibody);
             zfinAntibodyHashMap.put(pageTitle.toUpperCase(), antibody);
             ReturnStatus returnStatus = synchronizeAntibodyWithWiki(antibody);
             switch (returnStatus) {
                 case CREATE:
-                    wikiSynchronizationReport.addCreatedPage(pageTitle);
+                    //wikiSynchronizationReport.addCreatedPage(pageTitle);
                     break;
                 case UPDATE:
                     wikiSynchronizationReport.addUpdatedPage(pageTitle);
                     break;
                 case ERROR:
-                    wikiSynchronizationReport.addErrorPage(pageTitle);
+                    //wikiSynchronizationReport.addErrorPage(pageTitle);
                     break;
                 case NOCHANGE:
                     wikiSynchronizationReport.addNoChangePage(pageTitle);

@@ -6,7 +6,6 @@ import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.mutant.presentation.PostComposedPresentationBean;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 
@@ -213,11 +212,7 @@ public class TermPresentation extends EntityPresentation {
     }
 
     public static String getWikiLink(Term term) {
-        if (term.getOntology().equals(Ontology.ANATOMY))
-            return getWikiLink("", term.getOboID(), term.getTermName());
-        else if (Ontology.isGoOntology(term.getOntology()))
-            return getExternalWikiLink(GO_URI + term.getOboID(), term.getTermName());
-        return null;
+        return getWikiLink("", term.getOboID(), term.getTermName());
     }
 
     public static String getLinkStartTag(Term term) {
