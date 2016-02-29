@@ -450,21 +450,19 @@ public class AntibodyWikiWebService extends WikiWebService {
         String pageTitle;
         clearAntibodyTemplate();
         for (Antibody antibody : antibodies) {
-            if (!antibody.getAbbreviation().equals("ab8-prox1"))
-                continue;
             // containers
             pageTitle = getWikiTitleFromAntibody(antibody);
             zfinAntibodyHashMap.put(pageTitle.toUpperCase(), antibody);
             ReturnStatus returnStatus = synchronizeAntibodyWithWiki(antibody);
             switch (returnStatus) {
                 case CREATE:
-                    //wikiSynchronizationReport.addCreatedPage(pageTitle);
+                    wikiSynchronizationReport.addCreatedPage(pageTitle);
                     break;
                 case UPDATE:
                     wikiSynchronizationReport.addUpdatedPage(pageTitle);
                     break;
                 case ERROR:
-                    //wikiSynchronizationReport.addErrorPage(pageTitle);
+                    wikiSynchronizationReport.addErrorPage(pageTitle);
                     break;
                 case NOCHANGE:
                     wikiSynchronizationReport.addNoChangePage(pageTitle);
