@@ -8,6 +8,7 @@ public class PersonDTO implements IsSerializable {
     String lastName;
     String display;
     String zdbID;
+    String email;
 
     public String getFirstName() {
         return firstName;
@@ -39,5 +40,13 @@ public class PersonDTO implements IsSerializable {
 
     public void setZdbID(String zdbID) {
         this.zdbID = zdbID;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
