@@ -25,6 +25,8 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.*;
+import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 /**
  * Tests AntibodyService class.
@@ -409,19 +411,22 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
 
 
     /**
-     * From the anatomy page, the call passes in a single term and an antibody, but no stages
+     * From the anatomy page, the call passes in a single term and an antibody
      */
     @Test
     public void figureSummaryTestFromAnatomyPage() {
         Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID("ZDB-ATB-081002-10");
         assertNotNull(antibody);
 
-        GenericTerm neuron = RepositoryFactory.getOntologyRepository().getTermByOboID("ZFA:0009248 ");
+        GenericTerm neuron = getOntologyRepository().getTermByOboID("ZFA:0009248");
         assertNotNull(neuron);
+
+        DevelopmentStage start = getAnatomyRepository().getStageByID("ZDB-STAGE-010723-30");
+        DevelopmentStage end = getAnatomyRepository().getStageByID("ZDB-STAGE-010723-39");
 
         Figure fig2 = RepositoryFactory.getPublicationRepository().getFigure("ZDB-FIG-081002-2");
         AntibodyService antibodyService = new AntibodyService(antibody);
-        ExpressionSummaryCriteria criteria = antibodyService.createExpressionSummaryCriteria(neuron, null, null, null, false);
+        ExpressionSummaryCriteria criteria = antibodyService.createExpressionSummaryCriteria(neuron, null, start, end, false);
         antibodyService.createFigureSummary(criteria);
 
         List<FigureSummaryDisplay> figureSummaryList = antibodyService.getFigureSummary();
@@ -445,7 +450,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID("ZDB-ATB-081003-1");
         assertNotNull(antibody);
 
-        GenericTerm slowMuscleCell = RepositoryFactory.getOntologyRepository().getTermByOboID("ZFA:0009116");
+        GenericTerm slowMuscleCell = getOntologyRepository().getTermByOboID("ZFA:0009116");
         assertNotNull(slowMuscleCell);
         PostComposedEntity slowMuscleCellEntity = new PostComposedEntity();
         slowMuscleCellEntity.setSuperterm(slowMuscleCell);
@@ -454,7 +459,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         slowMuscleCellStatement.setExpressionFound(true);
 
 
-        GenericTerm myotome = RepositoryFactory.getOntologyRepository().getTermByOboID("ZFA:0001056");
+        GenericTerm myotome = getOntologyRepository().getTermByOboID("ZFA:0001056");
         assertNotNull(myotome);
         PostComposedEntity myotomeEntity = new PostComposedEntity();
         myotomeEntity.setSuperterm(myotome);

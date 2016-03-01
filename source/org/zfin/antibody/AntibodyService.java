@@ -681,25 +681,18 @@ public class AntibodyService {
         //set the antibody
         criteria.setAntibody(antibody);
 
-        //decide which parameter set we're using to figure out which kind of term to fill in the criteria object
-
-        boolean superOrSubTerm = false;
-        if (subterm == null && startStage == null && endStage == null) {
-            superOrSubTerm = true;
-        }
-
         //values used when called from the antibody page
-        if (!superOrSubTerm) {
-            PostComposedEntity entity = new PostComposedEntity();
+        PostComposedEntity entity = new PostComposedEntity();
+        entity.setSuperterm(superterm);
+        criteria.setEntity(entity);
+        if (subterm != null)
             entity.setSubterm(subterm);
-            entity.setSuperterm(superterm);
-            criteria.setEntity(entity);
-            criteria.setStart(startStage);
-            criteria.setEnd(endStage);
-        } else { //values used when called from the figure page
-            criteria.setSingleTermEitherPosition(superterm);
-        }
 
+        if (startStage != null)
+            criteria.setStart(startStage);
+        if (endStage != null)
+            criteria.setEnd(endStage);
+        criteria.setSingleTermEitherPosition(superterm);
         criteria.setWithImagesOnly(withImgOnly);
 
         //set the "assumed values"
