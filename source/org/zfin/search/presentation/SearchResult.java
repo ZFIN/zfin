@@ -25,7 +25,11 @@ public class SearchResult implements ProvidesLink {
     String category;
     @Field
     String type;
+
+
+
     @Field
+
     String url;
     @Field
     String screen;
@@ -50,6 +54,8 @@ public class SearchResult implements ProvidesLink {
     String xpatZdbId;
     @Field("fig_zdb_id")
     String figZdbId;
+    @Field
+    String pgcmid;
 
 
     @Field("[explain]")
@@ -81,6 +87,13 @@ public class SearchResult implements ProvidesLink {
         return "<a " + cssClass + " href=\"" + url + "\">" +  name +  "</a>";
     }
 
+    public String getPgcmid() {
+        return pgcmid;
+    }
+
+    public void setPgcmid(String pgcmid) {
+        this.pgcmid = pgcmid;
+    }
     public String getLinkWithAttribution() {
         return getLink();
     }

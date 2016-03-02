@@ -596,6 +596,7 @@
 
 
    <field name="phenotype_statement" type="keyword" indexed="true" stored="true" multiValued="true"   />
+     <field name="pgcmid" type="keyword" indexed="true" stored="true"  />
    <field name="synonym_phenotype_statement" type="keyword" indexed="true" stored="true" multiValued="true"   />
 
 

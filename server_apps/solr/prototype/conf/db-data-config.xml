@@ -1928,8 +1928,10 @@ select
                         fig_zdb_id as xref,
                         pub_date as date,
                         fish_name as fish,
+                        pgcm_source_id as pgcmid,
                         'pg-' || pg_id as id
                         from phenotype_source_generated
+                        join phenotype_generated_curated_mapping on pg_id=pgcm_pg_id
                              join fish_experiment on pg_genox_zdb_id = genox_zdb_id
                              join fish on fish_zdb_id = genox_fish_zdb_id
                              join figure on pg_fig_zdb_id = fig_zdb_id

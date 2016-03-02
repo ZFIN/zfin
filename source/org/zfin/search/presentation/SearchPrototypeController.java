@@ -134,7 +134,7 @@ public class SearchPrototypeController {
         model.addAttribute("request", request);
 
         if (explain) {
-            query.set("fl", "name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count, screen, has_orthology, score, xpat_zdb_id, fig_zdb_id, [explain]");
+            query.set("fl", "name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count, screen, has_orthology, score, xpat_zdb_id, fig_zdb_id, [explain]","pgcmid");
         }
 
 
