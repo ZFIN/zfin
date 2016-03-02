@@ -17,34 +17,36 @@
         <property name="sessionRegistry" ref="sessionRegistry"/>
     </bean>
 
-    <bean id="userDetailsService" class="org.zfin.security.UserDetailServiceImpl" />
+    <bean id="userDetailsService" class="org.zfin.security.UserDetailServiceImpl"/>
 
-    <bean id="cachingUserDetailService" class="org.springframework.security.config.authentication.CachingUserDetailsService">
+    <bean id="cachingUserDetailService"
+          class="org.springframework.security.config.authentication.CachingUserDetailsService">
         <constructor-arg ref="userDetailsService"/>
     </bean>
 
-    <bean id="zfinGlobalSessionBean" class="org.zfin.framework.presentation.GlobalSessionBean"  >
+    <bean id="zfinGlobalSessionBean" class="org.zfin.framework.presentation.GlobalSessionBean">
         <property name="sessionRegistry" ref="sessionRegistry"/>
     </bean>
 
-    <bean id="ipRememberMeService" class="org.zfin.security.IpTokenRememberMeServices" >
-        <constructor-arg value="ZFIN_KEY" />
-        <constructor-arg ref="userDetailsService" />
+    <bean id="ipRememberMeService" class="org.zfin.security.IpTokenRememberMeServices">
+        <constructor-arg value="ZFIN_KEY"/>
+        <constructor-arg ref="userDetailsService"/>
         <property name="cookieName" value="ZFIN_REMEMBER_ME"/>
         <property name="tokenValiditySeconds" value="${VALID_SESSION_TIMEOUT_SECONDS}"/>
         <!--want a parentColumn that is rated strong to reduce likelihood of reverse engineering-->
         <property name="useSecureCookie" value="false"/>
     </bean>
 
-    <security:authentication-manager  alias="authenticationManager">
+    <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider user-service-ref="userDetailsService">
-            <security:password-encoder hash="md5" >
+            <security:password-encoder hash="md5">
                 <security:salt-source system-wide="dedicated to George Streisinger"/>
             </security:password-encoder>
         </security:authentication-provider>
     </security:authentication-manager>
 
-    <bean id="securityContextLogoutHandler" class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
+    <bean id="securityContextLogoutHandler"
+          class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
 
     <bean id="checkUpdates" class="org.zfin.framework.filter.UpdatesCheckFilter">
         <property name="logoutSuccessHandler" ref="apgLogoutHandler"/>
@@ -56,8 +58,8 @@
         </property>
     </bean>
 
-    <bean id="sessionRegistry"  class="org.springframework.security.core.session.SessionRegistryImpl"/>
-    <bean id="defaultRolesPrefixPostProcessor"  class="org.zfin.framework.DefaultRolesPrefixPostProcessor"/>
+    <bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl"/>
+    <bean id="defaultRolesPrefixPostProcessor" class="org.zfin.framework.DefaultRolesPrefixPostProcessor"/>
 
     <!--maps action-->
     <!--filter action should correspond to this:-->
@@ -67,11 +69,13 @@
             use-expressions="true"
             create-session="ifRequired"
             >
-	<security:headers>
-			<security:hsts
-			include-subdomains="false"
-			max-age-seconds="43200" />
-	</security:headers>
+        <security:headers>
+            <security:hsts
+                    include-subdomains="false"
+                    max-age-seconds="43200"/>
+            <security:frame-options
+                    policy="SAMEORIGIN"/>
+        </security:headers>
         <security:csrf disabled="true"/>
         <security:form-login login-page="/action/login"
                              default-target-url="/"
@@ -93,67 +97,80 @@
         </security:port-mappings>
 
         <security:session-management>
-            <security:concurrency-control max-sessions="1" expired-url="/action/login" session-registry-ref="sessionRegistry"/>
+            <security:concurrency-control max-sessions="1" expired-url="/action/login"
+                                          session-registry-ref="sessionRegistry"/>
         </security:session-management>
 
         <!--for some reason you have to establish the parentColumn here again, or it uses the default springSecurity -->
         <security:remember-me services-ref="ipRememberMeService" key="ZFIN_KEY"/>
 
-        <security:custom-filter after="LAST"  ref="checkUpdates"/>
+        <security:custom-filter after="LAST" ref="checkUpdates"/>
 
 
+        <security:intercept-url pattern="/action/login" access="permitAll"/>
+        <security:intercept-url pattern="/action/audit-log/**" access="hasRole('root') or ${DISABLE_SECURITY}"
+                                requires-channel="https"/>
+        <security:intercept-url pattern="/action/reno/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/marker/transcript-add"
+                                access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/marker/clone-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/marker/region-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/marker/sequence-targeting-reagent-add"
+                                access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/construct/construct-add"
+                                access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/construct/construct-update"
+                                access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/people/edit-user*"
+                                access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}" requires-channel="https"/>
 
-        <security:intercept-url pattern="/action/login" access="permitAll"  />
-        <security:intercept-url pattern="/action/audit-log/**" access="hasRole('root') or ${DISABLE_SECURITY}"  requires-channel="https"/>
-        <security:intercept-url pattern="/action/reno/*" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/marker/transcript-add" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/marker/clone-add" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/marker/region-add" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/marker/sequence-targeting-reagent-add" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/construct/construct-add" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/construct/construct-update" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/people/edit-user*" access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}" requires-channel="https"/>
+        <security:intercept-url pattern="/action/publication/new" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/publication/correspondences/*"
+                                access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/publication/notes/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/publication/topics/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/publication/*/correspondences"
+                                access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/publication/*/edit" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/publication/*/notes" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/publication/*/status" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/publication/*/topics" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/publication/*/track" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/publication/*/validate"
+                                access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/publication/*/link" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/publication/*/addAuthor"
+                                access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/publication/*/removeAuthor"
+                                access="hasRole('root') or ${DISABLE_SECURITY}"/>
 
-        <security:intercept-url pattern="/action/publication/new" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/publication/correspondences/*" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/publication/notes/*" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/publication/topics/*" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/publication/*/correspondences" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/publication/*/edit" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/publication/*/notes" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/publication/*/status" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/publication/*/topics" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/publication/*/track" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/publication/*/validate" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/publication/*/link" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/publication/*/addAuthor" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/publication/*/removeAuthor" access="hasRole('root') or ${DISABLE_SECURITY}" />
+        <security:intercept-url pattern="/action/str/*/edit" access="hasRole('root') or ${DISABLE_SECURITY}"/>
 
-        <security:intercept-url pattern="/action/str/*/edit" access="hasRole('root') or ${DISABLE_SECURITY}" />
-
-        <security:intercept-url pattern="/action/feature/alleleDesig-add-form" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/antibody/add" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/antibody/antibody-citation-disassociate-publication" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/devtool/**" access="hasRole('root')" />
-        <security:intercept-url pattern="/action/devtool/view-global-session-info" access="permitAll" />
-        <security:intercept-url pattern="/action/devtool/view-session-info" access="permitAll" />
-        <security:intercept-url pattern="/WEB-INF/jsp/devtool/gwt" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/marker/*-edit" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/database/**" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/gene/*/ortholog/**" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/security-check" />
-        <security:intercept-url pattern="/action/login-redirect" />
-        <security:intercept-url pattern="/action/login-redirect?error=true" />
+        <security:intercept-url pattern="/action/feature/alleleDesig-add-form"
+                                access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/antibody/add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/antibody/antibody-citation-disassociate-publication"
+                                access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/devtool/**" access="hasRole('root')"/>
+        <security:intercept-url pattern="/action/devtool/view-global-session-info" access="permitAll"/>
+        <security:intercept-url pattern="/action/devtool/view-session-info" access="permitAll"/>
+        <security:intercept-url pattern="/WEB-INF/jsp/devtool/gwt" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/marker/*-edit" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/database/**" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/gene/*/ortholog/**" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/security-check"/>
+        <security:intercept-url pattern="/action/login-redirect"/>
+        <security:intercept-url pattern="/action/login-redirect?error=true"/>
 
 
-        <security:intercept-url pattern="/ajax/session-save" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/ajax/transcriptservice" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/ajax/markerservice" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/ajax/termservice" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/ajax/imageservice" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/ajax/cloneservice" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/ajax/antibodyservice" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/ajax/curation*" access="hasRole('root') or ${DISABLE_SECURITY}" />
+        <security:intercept-url pattern="/ajax/session-save" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/ajax/transcriptservice" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/ajax/markerservice" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/ajax/termservice" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/ajax/imageservice" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/ajax/cloneservice" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/ajax/antibodyservice" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/ajax/curation*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
 
     </security:http>
 
