@@ -1,5 +1,11 @@
 create procedure regen_expression_mart_per_pub (vPubZdbId varchar(50))
 
+define vResid int8;
+define vXpatex, vStart, vEnd, vSuper, vSub, vFig varchar(50);
+define vFound boolean;
+
+let vResid = (Select max(xpatres_zdb_id) from expression_result);
+
 delete from expression_pattern_figure
  where exists (Select 'x' from expression_result, expression_experiment
        	      	      where xpatfig_xpatres_zdb_id = xpatres_zdb_id
@@ -10,6 +16,7 @@ delete from expression_result
  where exists (select 'x' from expression_experiment
        	      	      where xpatres_xpateX_zdb_id = xpatex_zdb_id
 		      and xpatex_source_zdb_id = vPubZdbId);
+
 
 delete from expression_experiment
  where xpatex_source_zdb_id = vPubZdbId;
@@ -30,26 +37,32 @@ insert into expression_experiment (xpatex_zdb_id,
    from expression_Experiment2
    where xpatex_source_zdb_id = vPubZdbId;
 
-insert into expression_result (xpatres_zdb_id,
-				xpatres_xpatex_zdb_id,
-				xpatres_start_stg_zdb_id,
-				xpatres_end_Stg_zdb_id,
-				xpatres_expression_found,
-    				xpatres_superterm_zdb_id,
-    				xpatres_subterm_zdb_id,
-    				xpatres_fig_zdb_id)
-  select xpatres_pk_id,
-  		   efs_xpatex_zdb_id, 
+foreach 
+   select distinct efs_xpatex_zdb_id, 
   	  	  efs_start_stg_zdb_id, 
 	  	  efs_end_stg_zdb_id, 
 		  xpatres_expression_found, 
     		  xpatres_superterm_zdb_id,
 		  xpatres_subterm_zdb_id,
 		  efs_fig_zdb_id
+		  into vXpatex,vStart,vEnd,vFound,vSuper,vSub,vFig
   from expression_result2, expression_figure_stage,expression_experiment2
   where xpatres_efs_id = efs_pk_id
     and xpatex_zdb_id = efs_xpatex_Zdb_id
-    and xpatex_source_zdb_id = vPubZdbId;
+    and xpatex_source_zdb_id = vPubZdbId
+
+  let vResid = vResid +1;
+
+  insert into expression_result (xpatres_zdb_id,
+				xpatres_xpatex_zdb_id,
+				xpatres_start_stg_zdb_id,
+				xpatres_end_stg_zdb_id,
+				xpatres_expression_found,
+				xpatres_superterm_zdb_id,
+    				xpatres_subterm_zdb_id,
+    				xpatres_fig_zdb_id)
+     values (vResid,vXpatex,vStart,vEnd,vFound,vSuper,vSub,vFig);
+end foreach
 
 insert into expression_pattern_figure (xpatfig_xpatres_zdb_id, 
        	    			       xpatfig_fig_zdb_id)
