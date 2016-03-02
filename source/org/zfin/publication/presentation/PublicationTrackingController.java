@@ -19,17 +19,31 @@ import org.zfin.curation.presentation.CurationStatusDTO;
 import org.zfin.curation.presentation.PublicationNoteDTO;
 import org.zfin.curation.repository.CurationRepository;
 import org.zfin.curation.service.CurationDTOConversionService;
+import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.mail.AbstractZfinMailSender;
+import org.zfin.framework.mail.MailSender;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.gwt.root.dto.EntityZdbIdDTO;
+import org.zfin.gwt.root.dto.PublicationDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.presentation.JSONMessageList;
+import org.zfin.marker.Marker;
+import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.Genotype;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.mutant.repository.PhenotypeRepository;
+import org.zfin.profile.AccountInfo;
+import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.publication.NotificationLetter;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 @Controller
@@ -37,6 +51,9 @@ import java.util.*;
 public class PublicationTrackingController {
 
     private final static Logger LOG = Logger.getLogger(PublicationTrackingController.class);
+
+    @Autowired
+    private MarkerRepository markerRepository;
 
     @Autowired
     private PublicationRepository publicationRepository;
@@ -295,6 +312,77 @@ public class PublicationTrackingController {
         tx.commit();
 
         return "";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "{id}/details", method = RequestMethod.GET)
+    public PublicationDTO getPublicationDetails(@PathVariable String id) {
+        Publication publication = publicationRepository.getPublication(id);
+        return DTOConversionService.convertToPublicationDTO(publication);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "{id}/curatedEntities", method = RequestMethod.GET)
+    public Map<String, Set<EntityZdbIdDTO>> getCuratedData(@PathVariable String id) {
+        Map<String, Set<EntityZdbIdDTO>> data = new HashMap<>();
+
+        Set<EntityZdbIdDTO> markers = new TreeSet<>();
+        for (Marker marker : markerRepository.getMarkersForAttribution(id)) {
+            markers.add(DTOConversionService.convertToEntityZdbIdDTO(marker));
+        }
+        data.put("markers", markers);
+
+        Set<EntityZdbIdDTO> expressionGenes = new TreeSet<>();
+        for (ExpressionExperiment2 experiment : expressionRepository.getExperiments2(id)) {
+            Marker gene = experiment.getGene();
+            if (gene != null) {
+                expressionGenes.add(DTOConversionService.convertToEntityZdbIdDTO(experiment.getGene()));
+            }
+        }
+        data.put("expressionGenes", expressionGenes);
+
+        Set<EntityZdbIdDTO> genotypes = new TreeSet<>();
+        for (Genotype genotype : mutantRepository.getGenotypesForAttribution(id)) {
+            if (!genotype.isWildtype()) {
+                genotypes.add(DTOConversionService.convertToEntityZdbIdDTO(genotype));
+            }
+        }
+        data.put("genotypes", genotypes);
+
+        return data;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/notification", method = RequestMethod.POST)
+    public String sendNotificationLetter(@RequestBody NotificationLetter letter, HttpServletResponse response) {
+        Person sender = ProfileService.getCurrentSecurityUser();
+        if (sender == null || !sender.getAccountInfo().getRole().equals(AccountInfo.Role.ROOT.toString())) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return "Unauthorized";
+        }
+
+        MailSender mailer = AbstractZfinMailSender.getInstance();
+        if (mailer == null) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return "No mail sender";
+        }
+
+        // don't send to the real recipients unless we're on production
+        if (!ZfinPropertiesEnum.DOMAIN_NAME.toString().equals("zfin.org")) {
+            letter.setRecipients(new String[] { sender.getEmail() });
+        }
+
+        boolean sent = mailer.sendMail(
+                "ZFIN Author Notification",
+                letter.getMessage(),
+                false,
+                sender.getFirstName() + " " + sender.getLastName() + " <" + sender.getEmail() + ">",
+                letter.getRecipients());
+        if (!sent) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return "Not sent";
+        }
+        return "OK";
     }
 
 }

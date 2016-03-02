@@ -826,3 +826,23 @@ a + .inline-upload {
 .list-box-unselected {
     background: white;
 }
+
+.notif-letter {
+    white-space: pre-line;
+    padding: 1em;
+    border: 1px solid #CCCCCC;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.notif-letter-list {
+    margin: 15px 0;
+}
+
+.notif-letter-list .checkbox {
+    margin: 5px 0;
+}
+
+.notif-letter-alert {
+    margin: 15px 0;
+}

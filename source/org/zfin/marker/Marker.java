@@ -138,7 +138,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
 
     @Override
     public String getEntityName() {
-        return getAbbreviation();
+        return name;
     }
 
     /**

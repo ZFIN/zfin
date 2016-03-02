@@ -22,6 +22,7 @@ import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.DataNote;
+import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
@@ -500,6 +501,11 @@ public class DTOConversionService {
     public static PublicationDTO convertToPublicationDTO(Publication publication) {
         PublicationDTO publicationDTO = new PublicationDTO(publication.getTitle(), publication.getZdbID());
         publicationDTO.setAuthors(publication.getAuthors());
+        List<PersonDTO> registeredAuthors = new ArrayList<>();
+        for (Person author : publication.getPeople()) {
+            registeredAuthors.add(convertToPersonDTO(author));
+        }
+        publicationDTO.setRegisteredAuthors(registeredAuthors);
         publicationDTO.setAbstractText(publication.getAbstractText());
         publicationDTO.setDoi(publication.getDoi());
         publicationDTO.setAccession(publication.getAccessionNumber());
@@ -1567,6 +1573,7 @@ public class DTOConversionService {
         dto.setLastName(person.getLastName());
         dto.setDisplay(person.getFullName());
         dto.setZdbID(person.getZdbID());
+        dto.setEmail(person.getEmail());
         return dto;
     }
 
@@ -1655,6 +1662,15 @@ public class DTOConversionService {
         dto.setFigure(DTOConversionService.convertToFigureDTO(efs.getFigure()));
         dto.setStart(DTOConversionService.convertToStageDTO(efs.getStartStage()));
         dto.setEnd((DTOConversionService.convertToStageDTO(efs.getEndStage())));
+        return dto;
+    }
+
+    public static EntityZdbIdDTO convertToEntityZdbIdDTO(EntityZdbID entity) {
+        EntityZdbIdDTO dto = new EntityZdbIdDTO();
+        dto.setZdbID(entity.getZdbID());
+        dto.setName(entity.getEntityName());
+        dto.setAbbreviation(entity.getAbbreviation());
+        dto.setType(entity.getEntityType());
         return dto;
     }
 }
