@@ -75,7 +75,8 @@ FISH_STATS   = get_image_stats.sql \
 		update_construct_name_component.sql \
 		updateAbbrevEqualName.sql \
 		regen_construct_marker.sql \
-		regen_construct.sql
+		regen_construct.sql \
+		regen_expression_mart_per_pub.sql 
 LOAD_STATS   = p_zgc_load.sql 
 XPAT_STATS   = populate_direct_submission_date.sql p_check_EFG_WT_expression.sql
 MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
