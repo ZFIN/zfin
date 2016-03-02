@@ -19,7 +19,7 @@ import org.zfin.curation.presentation.CurationStatusDTO;
 import org.zfin.curation.presentation.PublicationNoteDTO;
 import org.zfin.curation.repository.CurationRepository;
 import org.zfin.curation.service.CurationDTOConversionService;
-import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.mail.AbstractZfinMailSender;
@@ -333,7 +333,7 @@ public class PublicationTrackingController {
         data.put("markers", markers);
 
         Set<EntityZdbIdDTO> expressionGenes = new TreeSet<>();
-        for (ExpressionExperiment experiment : expressionRepository.getExperiments(id)) {
+        for (ExpressionExperiment2 experiment : expressionRepository.getExperiments2(id)) {
             Marker gene = experiment.getGene();
             if (gene != null) {
                 expressionGenes.add(DTOConversionService.convertToEntityZdbIdDTO(experiment.getGene()));
