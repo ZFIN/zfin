@@ -107,7 +107,7 @@ angular.module('pubTrackingApp', [])
             '    <div class="checkbox">' +
             '      <label>' +
             '        <input type="checkbox" ng-model="item.selected" ng-change="vm.updateAllSelected()">' +
-            '        {{ item.name }} ({{ item.abbreviation }})' +
+            '        {{ vm.itemLabel({item: item}) }}' +
             '      </label>' +
             '    </div>' +
             '  </li>' +
@@ -118,7 +118,8 @@ angular.module('pubTrackingApp', [])
             template: template,
             scope: {
                 items: '=',
-                allLabel: '@'
+                allLabel: '@',
+                itemLabel: '&'
             },
             controller: SelectAllListController,
             controllerAs: 'vm',

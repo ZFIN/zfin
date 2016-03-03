@@ -278,30 +278,35 @@
           <div select-all-list
                   items="trackCtrl.notification.curatedData.genes"
                   all-label="All Genes"
+                  item-label="item.name + ' (' + item.abbreviation + ')'"
                   class="notif-letter-list">
           </div>
 
           <div select-all-list
                items="trackCtrl.notification.curatedData.strs"
                all-label="All STRs"
+               item-label="item.name + ' (' + item.abbreviation + ')'"
                class="notif-letter-list">
           </div>
 
           <div select-all-list
                items="trackCtrl.notification.curatedData.antibodies"
                all-label="All Antibodies"
+               item-label="item.name + ' (' + item.abbreviation + ')'"
                class="notif-letter-list">
           </div>
 
           <div select-all-list
                items="trackCtrl.notification.curatedData.expressionGenes"
                all-label="All Gene Expression"
+               item-label="item.name + ' (' + item.abbreviation + ')'"
                class="notif-letter-list">
           </div>
 
           <div select-all-list
                items="trackCtrl.notification.curatedData.genotypes"
                all-label="All Genotypes"
+               item-label="item.name"
                class="notif-letter-list">
           </div>
 
