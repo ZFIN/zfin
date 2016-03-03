@@ -182,8 +182,8 @@ angular.module('pubTrackingApp', [])
 
         // TODO: more graceful error handling would be nice
         var genericFailure = function () {
-            alert("Oops! There was a problem communicating with the server. Please try again later. If the problem " +
-                "persists, get in touch with a developer.")
+            alert('Oops! There was a problem communicating with the server. Please try again later. If the problem ' +
+                'persists, get in touch with a developer.')
         };
 
         var getTopics = function() {
@@ -270,7 +270,7 @@ angular.module('pubTrackingApp', [])
 
                     pubTrack.notification.authors = data.registeredAuthors;
                     pubTrack.notification.pubReference = data.citation;
-                    pubTrack.notification.pubLink = "ZFIN publication page: http://zfin.org/" + data.zdbID;
+                    pubTrack.notification.pubLink = 'ZFIN publication page: http://zfin.org/' + data.zdbID;
                 })
                 .error(genericFailure);
         };
@@ -477,7 +477,7 @@ angular.module('pubTrackingApp', [])
             var recip = pubTrack.notification.authors
                 .filter(function (a) { return a.send; })
                 .map(function(a) { return a.email; });
-            pubTrack.notification.recipients = recip.concat(pubTrack.notification.additionalRecipients.split(","));
+            pubTrack.notification.recipients = recip.concat(pubTrack.notification.additionalRecipients.split(/[,\s]+/));
             getCuratedEntities()
                 .then(function () {
                     pubTrack.notification.editing = true;
@@ -513,55 +513,56 @@ angular.module('pubTrackingApp', [])
 
             function appendSection(entities, label) {
                 if (entities && entities.some(isSelected)) {
-                    notif += label + "\n---------------------------\n";
+                    notif += label + '\n---------------------------\n';
                     entities.forEach(appendEntityLink);
                 }
-                notif += "\n";
+                notif += '\n';
             }
 
             function appendEntityLink(e) {
                 if (e.selected) {
-                    notif += e.name + " (" + e.abbreviation + ") [http://zfin.org/" + e.zdbID + "]\n";
+                    notif += e.name + ' (' + e.abbreviation + ') [http://zfin.org/' + e.zdbID + ']\n';
                 }
             }
 
-            var notif = pubTrack.notification.salutation + " " + pubTrack.notification.names + ",\n\n" +
-                pubTrack.notification.intro + "\n\n" +
-                pubTrack.notification.pubReference + "\n\n" +
-                pubTrack.notification.pubLink + "\n\n" +
-                pubTrack.notification.dataNote + "\n\n";
+            var notif = pubTrack.notification.salutation + ' ' + pubTrack.notification.names + ',\n\n' +
+                pubTrack.notification.intro + '\n\n' +
+                pubTrack.notification.pubReference + '\n\n' +
+                pubTrack.notification.pubLink + '\n\n' +
+                pubTrack.notification.dataNote + '\n\n';
             if (pubTrack.notification.customNote) {
-                notif += pubTrack.notification.customNote + "\n\n";
+                notif += pubTrack.notification.customNote + '\n\n';
             }
-            notif += pubTrack.notification.zfinDescription + "\n\n" +
-                pubTrack.notification.signOff + ",\n\n" +
-                pubTrack.notification.sender.name + "\n" +
-                pubTrack.notification.sender.group + "\n" +
-                pubTrack.notification.sender.email + "\n\n" +
-                pubTrack.notification.address[0] + "\n" +
-                pubTrack.notification.address[1] + "\n" +
-                pubTrack.notification.address[2] + "\n\n";
+            notif += pubTrack.notification.zfinDescription + '\n\n' +
+                pubTrack.notification.signOff + ',\n\n' +
+                pubTrack.notification.sender.name + '\n' +
+                pubTrack.notification.sender.group + '\n' +
+                pubTrack.notification.sender.email + '\n\n' +
+                pubTrack.notification.address[0] + '\n' +
+                pubTrack.notification.address[1] + '\n' +
+                pubTrack.notification.address[2] + '\n\n';
 
-            appendSection(pubTrack.notification.curatedData.genes, "Genes");
-            appendSection(pubTrack.notification.curatedData.strs, "Sequence Targeting Reagents");
-            appendSection(pubTrack.notification.curatedData.antibodies, "Antibodies");
-            appendSection(pubTrack.notification.curatedData.genotypes, "Genotypes");
+            appendSection(pubTrack.notification.curatedData.genes, 'Genes');
+            appendSection(pubTrack.notification.curatedData.strs, 'Sequence Targeting Reagents');
+            appendSection(pubTrack.notification.curatedData.antibodies, 'Antibodies');
+            appendSection(pubTrack.notification.curatedData.genotypes, 'Genotypes');
 
             if (pubTrack.notification.curatedData.expressionGenes && pubTrack.notification.curatedData.expressionGenes.some(isSelected)) {
-                notif += "Curated Gene Expression [http://zfin.org/action/figure/all-figure-view/" + pubId + "]\n---------------------------\n";
+                notif += 'Curated Gene Expression [http://zfin.org/action/figure/all-figure-view/' + pubId + ']\n---------------------------\n';
                 pubTrack.notification.curatedData.expressionGenes.forEach(function (g) {
                     if (g.selected) {
-                        notif += g.name + " (" + g.abbreviation + ")\n"
+                        notif += g.name + ' (' + g.abbreviation + ')\n'
                     }
                 });
-                notif += "\n";
+                notif += '\n';
             }
 
             return notif;
         };
 
         pubTrack.sendNotification = function () {
-            $http.post("/action/publication/notification", {
+            pubTrack.notification.loading = true;
+            $http.post('/action/publication/' + pubId + '/notification', {
                 recipients: pubTrack.notification.recipients,
                 message: pubTrack.generateNotification()
             }).then(function () {
@@ -572,6 +573,8 @@ angular.module('pubTrackingApp', [])
             }).catch(function () {
                 pubTrack.notification.sendSuccess = false;
                 pubTrack.notification.sendError = true;
+            }).finally(function () {
+                pubTrack.notification.loading = false;
             });
         };
 

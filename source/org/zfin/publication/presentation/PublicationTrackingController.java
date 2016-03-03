@@ -19,6 +19,7 @@ import org.zfin.curation.presentation.CurationStatusDTO;
 import org.zfin.curation.presentation.PublicationNoteDTO;
 import org.zfin.curation.repository.CurationRepository;
 import org.zfin.curation.service.CurationDTOConversionService;
+import org.zfin.database.InformixUtil;
 import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
@@ -353,8 +354,10 @@ public class PublicationTrackingController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/notification", method = RequestMethod.POST)
-    public String sendNotificationLetter(@RequestBody NotificationLetter letter, HttpServletResponse response) {
+    @RequestMapping(value = "{id}/notification", method = RequestMethod.POST)
+    public String sendNotificationLetter(@PathVariable String id,
+                                         @RequestBody NotificationLetter letter,
+                                         HttpServletResponse response) {
         Person sender = ProfileService.getCurrentSecurityUser();
         if (sender == null || !sender.getAccountInfo().getRole().equals(AccountInfo.Role.ROOT.toString())) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -372,16 +375,22 @@ public class PublicationTrackingController {
             letter.setRecipients(new String[] { sender.getEmail() });
         }
 
+        // make sure all the expression data will appear on the all-figure-view page we
+        // link to in the email
+        InformixUtil.runInformixProcedure("regen_expression_mart_per_pub", id);
+
         boolean sent = mailer.sendMail(
                 "ZFIN Author Notification",
                 letter.getMessage(),
                 false,
                 sender.getFirstName() + " " + sender.getLastName() + " <" + sender.getEmail() + ">",
                 letter.getRecipients());
+
         if (!sent) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "Not sent";
         }
+
         return "OK";
     }
 

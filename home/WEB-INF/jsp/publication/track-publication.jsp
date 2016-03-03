@@ -236,7 +236,7 @@
           </div>
 
           <button class="btn btn-primary" type="button"
-                  ng-disabled="trackCtrl.hasNoRecipients()"
+                  ng-disabled="trackCtrl.hasNoRecipients() || trackCtrl.notification.loading"
                   ng-click="trackCtrl.editNotification()">
             <span ng-show="!trackCtrl.notification.loading">Edit Notification</span>
             <i ng-show="trackCtrl.notification.loading" class="fa fa-spinner fa-spin"></i>
@@ -313,7 +313,10 @@
           <div class="notif-letter">
             {{ trackCtrl.generateNotification() }}
           </div>
-          <button class="btn btn-primary" type="button" ng-click="trackCtrl.sendNotification()">Send Notification</button>
+          <button class="btn btn-primary" type="button" ng-click="trackCtrl.sendNotification()" ng-disabled="trackCtrl.notification.loading">
+            <span ng-show="!trackCtrl.notification.loading">Send Notification</span>
+            <i ng-show="trackCtrl.notification.loading" class="fa fa-spinner fa-spin"></i>
+          </button>
           <button class="btn btn-default" type="button" ng-click="trackCtrl.cancelNotificationPreview()">Cancel</button>
         </div>
 
