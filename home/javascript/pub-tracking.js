@@ -63,13 +63,14 @@ angular.module('pubTrackingApp', [])
         }
     })
 
-    .directive('selectAllList', function () {
+    .directive('selectAllList', ['$sce', function ($sce) {
 
         function SelectAllListController() {
             var vm = this;
 
             vm.toggleAll = toggleAll;
             vm.updateAllSelected = updateAllSelected;
+            vm.safeItemLabel = safeItemLabel;
 
             function toggleAll() {
                 vm.items.forEach(function (i) {
@@ -81,6 +82,10 @@ angular.module('pubTrackingApp', [])
                 vm.allSelected = vm.items.every(function(i) {
                     return i.selected;
                 });
+            }
+
+            function safeItemLabel(locals) {
+                return $sce.trustAsHtml(vm.itemLabel(locals));
             }
         }
 
@@ -107,7 +112,7 @@ angular.module('pubTrackingApp', [])
             '    <div class="checkbox">' +
             '      <label>' +
             '        <input type="checkbox" ng-model="item.selected" ng-change="vm.updateAllSelected()">' +
-            '        {{ vm.itemLabel({item: item}) }}' +
+            '        <span ng-bind-html="vm.safeItemLabel({item: item})">' +
             '      </label>' +
             '    </div>' +
             '  </li>' +
@@ -128,9 +133,9 @@ angular.module('pubTrackingApp', [])
         };
 
         return directive;
-    })
+    }])
 
-    .controller('PubTrackingController', ['$http', '$filter', '$attrs', function ($http, $filter, $attrs) {
+    .controller('PubTrackingController', ['$http', '$filter', '$attrs', '$sce', '$location', function ($http, $filter, $attrs, $sce, $location) {
         var pubTrack = this;
         var previousNote = '';
         var pubId = $attrs.zdbId;
@@ -157,7 +162,6 @@ angular.module('pubTrackingApp', [])
             intro: 'I am pleased to report that information about your paper has been entered ' +
                    'into ZFIN, the Zebrafish Model Organism Database.',
             pubReference: '',
-            pubLink: '',
             dataNote: 'Genes and mutants associated with your paper are listed on the publication ' +
                       'page and are also appended at the end of this message.',
             customNote: '',
@@ -275,7 +279,6 @@ angular.module('pubTrackingApp', [])
 
                     pubTrack.notification.authors = data.registeredAuthors.filter(hasEmail);
                     pubTrack.notification.pubReference = data.citation;
-                    pubTrack.notification.pubLink = 'ZFIN publication page: http://zfin.org/' + data.zdbID;
                 })
                 .error(genericFailure);
         };
@@ -289,15 +292,12 @@ angular.module('pubTrackingApp', [])
                             return typeArray.indexOf(val.type) >= 0;
                         }
                     }
-                    function selectAll(items) {
-                        items.forEach(function (item) {
-                            item.selected = true;
-                        });
-                    }
 
-                    selectAll(resp.data.expressionGenes);
-                    selectAll(resp.data.markers);
-                    selectAll(resp.data.genotypes);
+                    angular.forEach(resp.data, function(data) {
+                        angular.forEach(data, function(datum) {
+                            datum.selected = true;
+                        })
+                    });
 
                     pubTrack.notification.curatedData = resp.data;
                     pubTrack.notification.curatedData.genes = resp.data.markers.filter(byType('GENE'));
@@ -519,60 +519,76 @@ angular.module('pubTrackingApp', [])
                 return e.selected;
             }
 
-            function appendSection(entities, label) {
+            function appendSection(entities, label, formatter) {
                 if (entities && entities.some(isSelected)) {
-                    notif += label + '\n---------------------------\n';
-                    entities.forEach(appendEntityLink);
+                    notif += '<p><b>' + label + '</b><br>';
+                    entities.forEach(function (e) {
+                        appendEntityLink(e, formatter);
+                    });
+                    notif += '</p>'
                 }
-                notif += '\n';
             }
 
-            function appendEntityLink(e) {
+            function nameOnly(e) {
+                return e.name;
+            }
+
+            function genoName(e) {
+                return '<i>' + e.name + '</i>';
+            }
+
+            function nameAndAbbrev(e) {
+                return e.name + '(<i>' + e.abbreviation + '</i>)';
+            }
+
+            function appendEntityLink(e, formatter) {
                 if (e.selected) {
-                    notif += e.name + ' (' + e.abbreviation + ') [http://zfin.org/' + e.zdbID + ']\n';
+                    notif += '<a href="http://' + $location.host() + '/' + e.zdbID + '">' + formatter(e) + '</a><br>';
                 }
             }
 
-            var notif = pubTrack.notification.salutation + ' ' + pubTrack.notification.names + ',\n\n' +
-                pubTrack.notification.intro + '\n\n' +
-                pubTrack.notification.pubReference + '\n\n' +
-                pubTrack.notification.pubLink + '\n\n' +
-                pubTrack.notification.dataNote + '\n\n';
+            var notif =
+                '<p>' + pubTrack.notification.salutation + ' ' + pubTrack.notification.names + ',</p>' +
+                '<p>' + pubTrack.notification.intro + '</p>' +
+                '<p><a href="http://' + $location.host() + '/' + pubTrack.publication.zdbID + '">' + pubTrack.notification.pubReference + '</a></p>' +
+                '<p>' + pubTrack.notification.dataNote + '</p>';
             if (pubTrack.notification.customNote) {
-                notif += pubTrack.notification.customNote + '\n\n';
+                notif += '<p>' + pubTrack.notification.customNote + '</p>';
             }
-            notif += pubTrack.notification.zfinDescription + '\n\n' +
-                pubTrack.notification.signOff + ',\n\n' +
-                pubTrack.notification.sender.name + '\n' +
-                pubTrack.notification.sender.group + '\n' +
-                pubTrack.notification.sender.email + '\n\n' +
-                pubTrack.notification.address[0] + '\n' +
-                pubTrack.notification.address[1] + '\n' +
-                pubTrack.notification.address[2] + '\n\n';
+            notif +=
+                '<p>' + pubTrack.notification.zfinDescription + '</p>' +
+                '<p>' + pubTrack.notification.signOff + ',</p>' +
+                '<p>' + pubTrack.notification.sender.name + '<br>' +
+                pubTrack.notification.sender.group + '<br>' +
+                pubTrack.notification.sender.email + '</p>' +
+                '<p>' + pubTrack.notification.address[0] + '<br>' +
+                pubTrack.notification.address[1] + '<br>' +
+                pubTrack.notification.address[2] + '</p>';
 
-            appendSection(pubTrack.notification.curatedData.genes, 'Genes');
-            appendSection(pubTrack.notification.curatedData.strs, 'Sequence Targeting Reagents');
-            appendSection(pubTrack.notification.curatedData.antibodies, 'Antibodies');
-            appendSection(pubTrack.notification.curatedData.genotypes, 'Genotypes');
+            appendSection(pubTrack.notification.curatedData.genes, 'Genes', nameAndAbbrev);
+            appendSection(pubTrack.notification.curatedData.strs, 'Sequence Targeting Reagents', nameOnly);
+            appendSection(pubTrack.notification.curatedData.antibodies, 'Antibodies', nameOnly);
 
             if (pubTrack.notification.curatedData.expressionGenes && pubTrack.notification.curatedData.expressionGenes.some(isSelected)) {
-                notif += 'Curated Gene Expression [http://zfin.org/action/figure/all-figure-view/' + pubId + ']\n---------------------------\n';
+                notif += '<p><a href="http://' + $location.host() + '/action/figure/all-figure-view/' + pubId + '"><b>Curated Gene Expression</b></a><br>';
                 pubTrack.notification.curatedData.expressionGenes.forEach(function (g) {
                     if (g.selected) {
-                        notif += g.name + ' (' + g.abbreviation + ')\n'
+                        notif += nameAndAbbrev(g) + '<br>';
                     }
                 });
-                notif += '\n';
+                notif += '</p>';
             }
 
-            return notif;
+            appendSection(pubTrack.notification.curatedData.genotypes, 'Genotypes', genoName);
+
+            return $sce.trustAsHtml(notif);
         };
 
         pubTrack.sendNotification = function () {
             pubTrack.notification.loading = true;
             $http.post('/action/publication/' + pubId + '/notification', {
                 recipients: pubTrack.notification.recipients,
-                message: pubTrack.generateNotification()
+                message: $sce.valueOf(pubTrack.generateNotification())
             }).then(function () {
                 pubTrack.notification.editing = false;
                 pubTrack.notification.previewing = false;

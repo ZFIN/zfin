@@ -250,29 +250,19 @@
 
         <div ng-show="trackCtrl.notification.editing">
           <div class="form-inline notif-letter">
-            {{trackCtrl.notification.salutation}} <input class="form-control" ng-model="trackCtrl.notification.names">,
-
-            {{trackCtrl.notification.intro}}
-
-            {{trackCtrl.notification.pubReference}}
-
-            {{trackCtrl.notification.pubLink}}
-
-            {{trackCtrl.notification.dataNote}}
-
-            <textarea class="form-control" ng-model="trackCtrl.notification.customNote" cols="80" rows="4"></textarea>
-
-            {{trackCtrl.notification.zfinDescription}}
-
-            {{trackCtrl.notification.signOff}},
-
-            {{trackCtrl.notification.sender.name}}
-            {{trackCtrl.notification.sender.group}}
-            {{trackCtrl.notification.sender.email}}
-
-            {{trackCtrl.notification.address[0]}}
-            {{trackCtrl.notification.address[1]}}
-            {{trackCtrl.notification.address[2]}}
+            <p>{{trackCtrl.notification.salutation}} <input class="form-control" ng-model="trackCtrl.notification.names">,</p>
+            <p>{{trackCtrl.notification.intro}}</p>
+            <p><a ng-href="/{{trackCtrl.publication.zdbID}}">{{trackCtrl.notification.pubReference}}</a></p>
+            <p>{{trackCtrl.notification.dataNote}}</p>
+            <p><textarea class="form-control" ng-model="trackCtrl.notification.customNote" cols="80" rows="4"></textarea></p>
+            <p>{{trackCtrl.notification.zfinDescription}}</p>
+            <p>{{trackCtrl.notification.signOff}},</p>
+            <p>{{trackCtrl.notification.sender.name}}<br>
+            {{trackCtrl.notification.sender.group}}<br>
+            {{trackCtrl.notification.sender.email}}</p>
+            <p>{{trackCtrl.notification.address[0]}}<br>
+            {{trackCtrl.notification.address[1]}}<br>
+            {{trackCtrl.notification.address[2]}}</p>
           </div>
 
           <div select-all-list
@@ -285,14 +275,14 @@
           <div select-all-list
                items="trackCtrl.notification.curatedData.strs"
                all-label="All STRs"
-               item-label="item.name + ' (' + item.abbreviation + ')'"
+               item-label="item.name"
                class="notif-letter-list">
           </div>
 
           <div select-all-list
                items="trackCtrl.notification.curatedData.antibodies"
                all-label="All Antibodies"
-               item-label="item.name + ' (' + item.abbreviation + ')'"
+               item-label="item.name"
                class="notif-letter-list">
           </div>
 
@@ -315,8 +305,7 @@
         </div>
 
         <div ng-show="trackCtrl.notification.previewing">
-          <div class="notif-letter">
-            {{ trackCtrl.generateNotification() }}
+          <div class="notif-letter" ng-bind-html="trackCtrl.generateNotification()">
           </div>
           <button class="btn btn-primary" type="button" ng-click="trackCtrl.sendNotification()" ng-disabled="trackCtrl.notification.loading">
             <span ng-show="!trackCtrl.notification.loading">Send Notification</span>

@@ -379,7 +379,7 @@ public class PublicationTrackingController {
         // link to in the email
         InformixUtil.runInformixProcedure("regen_expression_mart_per_pub", id);
 
-        boolean sent = mailer.sendMail(
+        boolean sent = mailer.sendHtmlMail(
                 "ZFIN Author Notification",
                 letter.getMessage(),
                 false,

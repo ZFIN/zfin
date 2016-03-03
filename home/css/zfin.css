@@ -828,7 +828,6 @@ a + .inline-upload {
 }
 
 .notif-letter {
-    white-space: pre-line;
     padding: 1em;
     border: 1px solid #CCCCCC;
     border-radius: 5px;
