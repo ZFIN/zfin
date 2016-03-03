@@ -264,12 +264,16 @@ angular.module('pubTrackingApp', [])
         var getPublicationDetails = function () {
             $http.get('/action/publication/' + pubId + '/details')
                 .success(function (data) {
+                    function hasEmail(author) {
+                        return author.email;
+                    }
+
                     data.registeredAuthors.forEach(function (author) {
                         author.send = true;
                     });
                     pubTrack.publication = data;
 
-                    pubTrack.notification.authors = data.registeredAuthors;
+                    pubTrack.notification.authors = data.registeredAuthors.filter(hasEmail);
                     pubTrack.notification.pubReference = data.citation;
                     pubTrack.notification.pubLink = 'ZFIN publication page: http://zfin.org/' + data.zdbID;
                 })
@@ -475,10 +479,13 @@ angular.module('pubTrackingApp', [])
             pubTrack.notification.loading = true;
             pubTrack.notification.sendSuccess = false;
             pubTrack.notification.sendError = false;
-            var recip = pubTrack.notification.authors
+            pubTrack.notification.recipients = pubTrack.notification.authors
                 .filter(function (a) { return a.send; })
                 .map(function(a) { return a.email; });
-            pubTrack.notification.recipients = recip.concat(pubTrack.notification.additionalRecipients.split(/[,\s]+/));
+            var additional = pubTrack.notification.additionalRecipients.split(/[,\s]+/);
+            if (additional.length > 0 && additional[0]) {
+                pubTrack.notification.recipients = pubTrack.notification.recipients.concat(additional);
+            }
             getCuratedEntities()
                 .then(function () {
                     pubTrack.notification.editing = true;
