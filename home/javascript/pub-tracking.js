@@ -255,8 +255,7 @@ angular.module('pubTrackingApp', [])
             return post;
         };
 
-        // not private because it gets called from notif_frame.apg
-        pubTrack._addNote = function (txt) {
+        var addNote = function (txt) {
             var post = $http.post('/action/publication/' + pubId + '/notes', { text: txt });
             post.success(function (data) {
                 pubTrack.notes.unshift(data);
@@ -479,13 +478,22 @@ angular.module('pubTrackingApp', [])
             pubTrack.notification.loading = true;
             pubTrack.notification.sendSuccess = false;
             pubTrack.notification.sendError = false;
-            pubTrack.notification.recipients = pubTrack.notification.authors
-                .filter(function (a) { return a.send; })
-                .map(function(a) { return a.email; });
+
+            var sendAuthors = pubTrack.notification.recipients = pubTrack.notification.authors
+                .filter(function (a) { return a.send; });
+
+            pubTrack.notification.recipients = sendAuthors.map(function(a) { return a.email; });
+            pubTrack.notification.noteText = 'Notified authors: ' + sendAuthors.map(function (a) { return a.display; }).join(', ');
+
             var additional = pubTrack.notification.additionalRecipients.split(/[,\s]+/);
             if (additional.length > 0 && additional[0]) {
                 pubTrack.notification.recipients = pubTrack.notification.recipients.concat(additional);
+                if (sendAuthors.length > 0) {
+                    pubTrack.notification.noteText += ', ';
+                }
+                pubTrack.notification.noteText += additional.join(', ');
             }
+
             getCuratedEntities()
                 .then(function () {
                     pubTrack.notification.editing = true;
@@ -594,6 +602,7 @@ angular.module('pubTrackingApp', [])
                 pubTrack.notification.previewing = false;
                 pubTrack.notification.sendSuccess = true;
                 pubTrack.notification.sendError = false;
+                addNote(pubTrack.notification.noteText);
             }).catch(function () {
                 pubTrack.notification.sendSuccess = false;
                 pubTrack.notification.sendError = true;
