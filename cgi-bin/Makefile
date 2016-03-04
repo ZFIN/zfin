@@ -19,9 +19,6 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/$(TARGETCGIBIN)
 
-
-STATICS = favicon.ico weekly_report_reminder.txt send_notification.cgi 
-
 GENERICS = map-options.pl print_map.cgi runSPL.cgi \
 	   searchwww.cgi send_request.perl \
 	   mapper_select.cgi mapper_select.pl \
