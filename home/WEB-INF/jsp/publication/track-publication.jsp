@@ -6,7 +6,6 @@
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
 
 <script src="/javascript/angular/angular.min.js"></script>
-<script src="/javascript/angular/angular-route.min.js"></script>
 <script src="/javascript/pub-tracking.js"></script>
 
 <c:set var="editURL">/action/publication/${publication.zdbID}/edit</c:set>
@@ -24,7 +23,6 @@
                      curateURL="${curateURL}"
                      rtype="publication"/>
 
-  <%--<h2>Track ${publication.zdbID}</h2>--%>
   <p class="lead">
     <a href="/${publication.zdbID}">${publication.title}</a>
     <c:if test="${!empty publication.fileName}"> <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}" target="_blank"><i class="fa fa-file-pdf-o"></i></a></c:if>
@@ -252,7 +250,7 @@
           <div class="form-inline notif-letter">
             <p>{{trackCtrl.notification.salutation}} <input class="form-control" style="width: 500px;" ng-model="trackCtrl.notification.names">,</p>
             <p>{{trackCtrl.notification.intro}}</p>
-            <p><a ng-href="/{{trackCtrl.publication.zdbID}}">{{trackCtrl.notification.pubReference}}</a></p>
+            <p><a ng-href="{{trackCtrl.notification.pubLink}}">{{trackCtrl.notification.pubReference}}</a></p>
             <p>{{trackCtrl.notification.dataNote}}</p>
             <p><textarea class="form-control" ng-model="trackCtrl.notification.customNote" cols="80" rows="4"></textarea></p>
             <p>{{trackCtrl.notification.zfinDescription}}</p>

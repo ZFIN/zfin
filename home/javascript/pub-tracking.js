@@ -140,7 +140,6 @@ angular.module('pubTrackingApp', [])
         var previousNote = '';
         var pubId = $attrs.zdbId;
 
-        pubTrack.publication = null;
         pubTrack.topics = [];
         pubTrack.status = null;
         pubTrack.notes = [];
@@ -162,6 +161,7 @@ angular.module('pubTrackingApp', [])
             intro: 'I am pleased to report that information about your paper has been entered ' +
                    'into ZFIN, the Zebrafish Model Organism Database.',
             pubReference: '',
+            pubLink: '',
             dataNote: 'Genes and mutants associated with your paper are listed on the publication ' +
                       'page and are also appended at the end of this message.',
             customNote: '',
@@ -274,10 +274,10 @@ angular.module('pubTrackingApp', [])
                     data.registeredAuthors.forEach(function (author) {
                         author.send = true;
                     });
-                    pubTrack.publication = data;
 
                     pubTrack.notification.authors = data.registeredAuthors.filter(hasEmail);
                     pubTrack.notification.pubReference = data.citation;
+                    pubTrack.notification.pubLink = '/' + data.zdbID;
                 })
                 .error(genericFailure);
         };
@@ -346,7 +346,7 @@ angular.module('pubTrackingApp', [])
             pubTrack.status.indexedDate = Date.now();
             updateStatus()
                 .success(function () {
-                    pubTrack._addNote('Indexed paper');
+                    addNote('Indexed paper');
                 });
         };
 
@@ -355,7 +355,7 @@ angular.module('pubTrackingApp', [])
             pubTrack.status.indexedDate = null;
             updateStatus()
                 .success(function () {
-                    pubTrack._addNote('Un-indexed paper');
+                    addNote('Un-indexed paper');
                 });
         };
 
@@ -378,7 +378,7 @@ angular.module('pubTrackingApp', [])
             updateStatus()
                 .success(function () {
                     pubTrack.hideWarnings();
-                    pubTrack._addNote(noteToAdd);
+                    addNote(noteToAdd);
                     getTopics();
                 });
         };
@@ -387,7 +387,7 @@ angular.module('pubTrackingApp', [])
             pubTrack.status.closedDate = null;
             updateStatus()
                 .success(function () {
-                    pubTrack._addNote('Reopened paper')
+                    addNote('Reopened paper')
                 });
         };
 
@@ -406,7 +406,7 @@ angular.module('pubTrackingApp', [])
         };
 
         pubTrack.addNote = function () {
-            pubTrack._addNote(pubTrack.newNote)
+            addNote(pubTrack.newNote)
                 .success(function () {
                     pubTrack.newNote = '';
                 });
@@ -558,7 +558,7 @@ angular.module('pubTrackingApp', [])
             var notif =
                 '<p>' + pubTrack.notification.salutation + ' ' + pubTrack.notification.names + ',</p>' +
                 '<p>' + pubTrack.notification.intro + '</p>' +
-                '<p><a href="http://' + $location.host() + '/' + pubTrack.publication.zdbID + '">' + pubTrack.notification.pubReference + '</a></p>' +
+                '<p><a href="http://' + $location.host() + pubTrack.notification.pubLink + '">' + pubTrack.notification.pubReference + '</a></p>' +
                 '<p>' + pubTrack.notification.dataNote + '</p>';
             if (pubTrack.notification.customNote) {
                 notif += '<p>' + pubTrack.notification.customNote + '</p>';
