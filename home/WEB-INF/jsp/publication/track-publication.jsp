@@ -242,7 +242,7 @@
         </div>
 
         <div ng-show="trackCtrl.notification.editing || trackCtrl.notification.previewing">
-          <label for="additional-emails">Recipients</label>
+          <b>Recipients: </b>
           {{ trackCtrl.notification.recipients.join(", ") }}
         </div>
 

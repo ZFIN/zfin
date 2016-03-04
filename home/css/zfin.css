@@ -831,7 +831,7 @@ a + .inline-upload {
     padding: 1em;
     border: 1px solid #CCCCCC;
     border-radius: 5px;
-    margin-bottom: 15px;
+    margin: 15px 0;
 }
 
 .notif-letter-list {
