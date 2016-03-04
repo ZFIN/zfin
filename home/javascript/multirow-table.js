@@ -1,7 +1,7 @@
 /* Duplicates form elements
  */
 (function ($) {
-    $.fn.multirowTable = function (rowSelector, buttonLabel) {
+    $.fn.multirowTable = function (rowSelector, buttonLabel, callback) {
 
         var parent = this;
 
@@ -22,6 +22,10 @@
             var separator = $('<hr>');
             rows.last().after(separator);
             separator.after(newRow);
+            if (typeof callback === 'function') {
+                // evaluate callback with new row as `this`
+                callback.call(newRow);
+            }
         }
 
         $(function() {

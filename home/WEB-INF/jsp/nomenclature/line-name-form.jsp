@@ -27,6 +27,9 @@
                 <div class="col-sm-6">
                     <form:input path="lineDetails[${status.index}].geneName" class="form-control"/>
                 </div>
+                <div class="input-addon col-sm-1">
+                    <a href="https://<%= ZfinPropertiesEnum.WIKI_HOST.value() %>/display/general/ZFIN+Zebrafish+Nomenclature+Guidelines#ZFINZebrafishNomenclatureGuidelines-4.3.1" target="_blank"><i class="fa fa-question-circle"></i></a>
+                </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">Gene Symbol</label>
@@ -63,6 +66,15 @@
                 <div class="col-sm-6">
                     <form:input path="lineDetails[${status.index}].mutationDetails" class="form-control"/>
                 </div>
+                <div class="input-addon col-sm-1">
+                    <a class="clickable" tabindex="-1" role="button" data-toggle="popover" data-trigger="focus" data-placement="right"
+                            data-content="Please include any additional details about the mutation including an accession number of
+                            the WT gene that was used to compare the mutation or an accession number of the mutant sequence, genomic
+                            location (Chromosome, genome coordinates, cM) and molecular details about this allele (exon 1 deletion,
+                            insertion of GATG at 1402bp, A->G substitution a 372bp, premature stop codon at amino acid 79, etc.).">
+                        <i class="fa fa-question-circle"></i>
+                    </a>
+                </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">CRISPR or TALEN Sequence</label>
@@ -76,8 +88,11 @@
 
 <script>
     $(function() {
+        $('[data-toggle="popover"]').popover({container: 'body'});
         $("#line-details")
-                .multirowTable(".line-form-row", "Add another line")
+                .multirowTable(".line-form-row", "Add another line", function() {
+                    this.find('[data-toggle="popover"]').popover({container: 'body'});
+                })
                 .on('click', '.gene-search a', function (evt) {
                     var gene = $(this).closest('.form-group').find(':input').val();
                     $(this).attr('href', '/search?q=' + gene + '&fq=category%3A"Gene+%2F+Transcript"&category=Gene+%2F+Transcript');
