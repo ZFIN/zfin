@@ -142,11 +142,11 @@
                         Occurrence
                         <c:choose>
                             <c:when test='${formBean.comparator == "occurrenceAsc"}'>
-                                <img src="/images/ARROWS/arrow.plain.up.gif" height="15" border="0" alt="ascendig">
+                                <img src="/images/sort-arrow-up-selected.png" height="15" border="0" alt="ascendig">
                             </c:when>
                             <c:otherwise>
                                 <c:if test='${formBean.comparator == "occurrenceDsc"}'>
-                                    <img src="/images/ARROWS/arrow.plain.down.gif" height="15" border="0"
+                                    <img src="/images/sort-arrow-down-selected.png" height="15" border="0"
                                          alt="ascending">
                                 </c:if>
                             </c:otherwise>
