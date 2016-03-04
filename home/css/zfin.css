@@ -544,20 +544,6 @@ video {
     background-color: #FFEEEE;
 }
 
-.nomenclature-submission {
-    padding: 1em;
-}
-
-.nomenclature-submission dt {
-    font-weight: bold;
-    float: left;
-    min-width: 15em;
-}
-
-.nomenclature input[type=text] {
-    width: 200px;
-}
-
 .two-column-info {
     clear: both;
     width: 100%;
