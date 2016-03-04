@@ -229,7 +229,7 @@
             </li>
           </ul>
           <div class="form-group">
-            <label for="additional-emails">Additional recipients</label>
+            <label for="additional-emails">Additional Recipients</label>
             <input ng-model="trackCtrl.notification.additionalRecipients"
                     class="form-control" id="additional-emails"
                     type="text" placeholder="alice@example.com, bob@example.net"/>
@@ -250,7 +250,7 @@
 
         <div ng-show="trackCtrl.notification.editing">
           <div class="form-inline notif-letter">
-            <p>{{trackCtrl.notification.salutation}} <input class="form-control" ng-model="trackCtrl.notification.names">,</p>
+            <p>{{trackCtrl.notification.salutation}} <input class="form-control" style="width: 500px;" ng-model="trackCtrl.notification.names">,</p>
             <p>{{trackCtrl.notification.intro}}</p>
             <p><a ng-href="/{{trackCtrl.publication.zdbID}}">{{trackCtrl.notification.pubReference}}</a></p>
             <p>{{trackCtrl.notification.dataNote}}</p>
