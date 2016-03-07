@@ -617,63 +617,65 @@ public class ResultService {
     public void injectPhenotypeAttributes(SearchResult result) {
         //this is pretty hacky, sorry.  I have to pull the string prefix off of the would-be integer pk id.
         Long id = Long.valueOf(result.getId().replace("pg-", ""));
-        String psgID=result.getPgcmid();
+        String psgID = result.getPgcmid();
+        List<PhenotypeWarehouse> pWarehouse = RepositoryFactory.getPhenotypeRepository().getPhenotypeWarehouseBySourceID(psgID);
+        for (PhenotypeWarehouse phenotypeExperiment : pWarehouse) {
 
+            if (phenotypeExperiment != null) {
 
-        if (!psgID.startsWith("ZDB-XPAT")){
+                String genoLink = GenotypePresentation.getLink(phenotypeExperiment.getFishExperiment().getFish().getGenotype());
+                result.addAttribute(GENOTYPE, genoLink);
 
-            PhenotypeExperiment phenotypeExperiment = RepositoryFactory.getMutantRepository().getPhenotypeExperiment(Long.valueOf(psgID));
-            String genoLink=GenotypePresentation.getLink(phenotypeExperiment.getFishExperiment().getFish().getGenotype());
-            result.addAttribute(GENOTYPE, genoLink);
-
-            String conditionsLink = ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true);
-            if (StringUtils.isNotBlank(conditionsLink)) {
-                result.addAttribute(CONDITIONS, conditionsLink);
-            }
-
-
-            if (phenotypeExperiment.getStartStage().equals(phenotypeExperiment.getEndStage())) {
-                result.addAttribute(STAGE, phenotypeExperiment.getStartStage().getName());
-            } else {
-                result.addAttribute(STAGE, phenotypeExperiment.getStartStage().getName() + " to " + phenotypeExperiment.getEndStage().getName());
-            }
-
-            List<String> statements = new ArrayList<>();
-            for (PhenotypeStatement statement : phenotypeExperiment.getPhenotypeStatements()) {
-                statements.add(PhenotypePresentation.getName(statement));
-            }
-            if (CollectionUtils.isNotEmpty(statements)) {
-                result.addAttribute(PHENOTYPE, withBreaks(statements));
-            }
-
-            if (!StringUtils.contains(ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true), "standard or control")) {
-
-                StringBuilder sb = new StringBuilder();
-
-                sb.append(FishPresentation.getName(phenotypeExperiment.getFishExperiment().getFish()));
-
-                String experimentText = ExperimentPresentation.getNameForFaceted(phenotypeExperiment.getFishExperiment().getExperiment());
-                if (StringUtils.isNotBlank(experimentText)) {
-                    sb.append(" + ");
-                    sb.append(experimentText);
+                String conditionsLink = ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true);
+                if (StringUtils.isNotBlank(conditionsLink)) {
+                    result.addAttribute(CONDITIONS, conditionsLink);
                 }
 
-                sb.append(" from ");
 
-                sb.append(phenotypeExperiment.getFigure().getPublication().getShortAuthorList());
-                sb.append(" ");
-                sb.append(phenotypeExperiment.getFigure().getLabel());
+                if (phenotypeExperiment.getStart().equals(phenotypeExperiment.getEnd())) {
+                    result.addAttribute(STAGE, phenotypeExperiment.getStart().getName());
+                } else {
+                    result.addAttribute(STAGE, phenotypeExperiment.getStart().getName() + " to " + phenotypeExperiment.getEnd().getName());
+                }
 
-                result.setName(sb.toString());
+                List<String> statements = new ArrayList<>();
+                for (PhenotypeStatementWarehouse statement : phenotypeExperiment.getStatementWarehouseSet()) {
+                    statements.add(PhenotypeStatementWarehousePresentation.getNameWithoutNormalText(statement));
+                }
+                if (CollectionUtils.isNotEmpty(statements)) {
+                    result.addAttribute(PHENOTYPE, withBreaks(statements));
+                }
+
+                if (!StringUtils.contains(ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true), "standard or control")) {
+
+                    StringBuilder sb = new StringBuilder();
+
+                    sb.append(FishPresentation.getName(phenotypeExperiment.getFishExperiment().getFish()));
+
+                    String experimentText = ExperimentPresentation.getNameForFaceted(phenotypeExperiment.getFishExperiment().getExperiment());
+                    if (StringUtils.isNotBlank(experimentText)) {
+                        sb.append(" + ");
+                        sb.append(experimentText);
+                    }
+
+                    sb.append(" from ");
+
+                    sb.append(phenotypeExperiment.getFigure().getPublication().getShortAuthorList());
+                    sb.append(" ");
+                    sb.append(phenotypeExperiment.getFigure().getLabel());
+
+                    result.setName(sb.toString());
+                }
+
             }
         }
-
-        
-
-
-
-
     }
+
+
+
+
+
+
 
 
     public void injectPublicationAttributes(SearchResult result) {
