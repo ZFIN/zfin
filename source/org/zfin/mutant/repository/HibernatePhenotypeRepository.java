@@ -618,6 +618,18 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     }
 
     @Override
+    public List<PhenotypeWarehouse> getPhenotypeWarehouseBySourceID(String psgID){
+        Session session = HibernateUtil.currentSession();
+        String sql=" select distinct phenoWarehouse " +
+                 "               from PhenotypeCurationSearch pgcm  " +
+                      "                where pgcm.phenoOrExpID=:psgID ";
+
+        Query query = session.createQuery(sql);
+        query.setParameter("psgID", psgID);
+        return  query.list();
+
+
+    }
     public List<PostComposedPresentationBean> getPhenotypeAnatomy(Marker gene) {
 
         PostComposedResultTransformer postComposedResultTransformer = new PostComposedResultTransformer();
