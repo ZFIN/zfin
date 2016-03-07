@@ -1,114 +1,128 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
-<h1><tiles:getAsString name="headerText"/></h1>
+<link rel="stylesheet" href="/css/bootstrap3/css/bootstrap.css"/>
+<link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css"/>
 
-<h3>Nomenclature Resources</h3>
-<p>
-    Before proposing and reserving a name, review the current guidelines and search existing records in ZFIN for
-    possible naming conflicts.
-</p>
-<ul>
-    <tiles:insertAttribute name="resources-list"/>
-</ul>
+<div class="container-fluid">
+    <h1><tiles:getAsString name="headerText"/></h1>
 
-<hr>
+    <h3>Nomenclature Resources</h3>
+    <p>
+        Before proposing and reserving a name, review the current guidelines and search existing records in ZFIN for
+        possible naming conflicts.
+    </p>
+    <ul>
+        <tiles:insertAttribute name="resources-list"/>
+    </ul>
+    <p>
+        <b>Need additional assistance? <a href="mailto:<%= ZfinPropertiesEnum.NOMEN_COORDINATOR.value()%>">Contact the
+        Nomenclature Coordinator</a></b>
+    </p>
 
-<form:form action="" method="POST" commandName="submission" cssClass="nomenclature">
+    <hr>
 
-    <h3>Contact Information</h3>
+    <form:form action="" method="POST" commandName="submission" cssClass="form-horizontal" id="nomenclature">
 
-    <div>
-        <form:label path="name" cssClass="required">Name</form:label>
-        <form:input path="name"/>
-    </div>
+        <h3>Contact Information</h3>
 
-    <%--hidden email field, used for spam prevention--%>
-    <div class="alternate-email">
-        <form:label path="email">Please leave blank</form:label>
-        <form:input path="email"/>
-    </div>
+        <div class="form-group">
+            <form:label path="name" cssClass="col-sm-2 control-label required">Name</form:label>
+            <div class="col-sm-4">
+                <form:input path="name" cssClass="form-control"/>
+            </div>
+        </div>
 
-    <div>
-        <form:label path="email2" cssClass="required">Email</form:label>
-        <form:input path="email2"/>
-    </div>
+        <%--hidden email field, used for spam prevention--%>
+        <div class="alternate-email">
+            <form:label path="email" cssClass="col-sm-2 control-label">Please leave blank</form:label>
+            <div class="col-sm-4">
+                <form:input path="email" cssClass="form-control"/>
+            </div>
+        </div>
 
-    <div>
-        <form:label path="laboratory" cssClass="required">Laboratory</form:label>
-        <form:input path="laboratory"/>
-    </div>
+        <div class="form-group">
+            <form:label path="email2" cssClass="col-sm-2 control-label required">Email</form:label>
+            <div class="col-sm-4">
+                <form:input path="email2" cssClass="form-control"/>
+            </div>
+        </div>
 
-    <tiles:insertAttribute name="submission-form"/>
+        <div class="form-group">
+            <form:label path="laboratory" cssClass="col-sm-2 control-label required">Laboratory</form:label>
+            <div class="col-sm-4">
+                <form:input path="laboratory" cssClass="form-control"/>
+            </div>
+        </div>
 
-    <h3>Publication Status</h3>
+        <tiles:insertAttribute name="submission-form"/>
 
-    <div>
-        <form:radiobuttons path="pubStatus" items="${pubStatusOptions}" cssClass="pub-status"/>
-        <%--get the validation message to show up in the right place--%>
-        <form:label path="pubStatus" cssClass="error"></form:label>
-    </div>
+        <h3>Publication Status</h3>
 
-    <div class="citations-group">
-        <form:label path="citations">Citations</form:label>
-        <form:input path="citations"/>
-    </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <c:forEach items="${pubStatusOptions}" var="option">
+                    <div class="radio">
+                        <label>
+                            <form:radiobutton path="pubStatus" value="${option}"/>
+                            ${option}
+                        </label>
+                    </div>
+                </c:forEach>
+            </div>
+        </div>
 
-    <div class="reserve-group">
-        <span class="required">Reserve gene in ZFIN: </span>
-        <form:radiobuttons path="reserveType" items="${reserveTypeOptions}"/>
-        <%--get the validation message to show up in the right place--%>
-        <form:label path="reserveType" cssClass="error"></form:label>
-    </div>
+        <div class="form-group citations-group">
+            <form:label path="citations" cssClass="col-sm-2 control-label">Citations</form:label>
+            <div class="col-sm-6">
+                <form:input path="citations" cssClass="form-control"/>
+            </div>
+        </div>
 
-    <h3>Additional Comments</h3>
+        <div class="form-group reserve-group">
+            <label class="col-sm-2 control-label required">Reserve name</label>
+            <div class="col-sm-6">
+                <c:forEach items="${reserveTypeOptions}" var="option">
+                    <label class="radio-inline">
+                        <form:radiobutton path="reserveType" value="${option}"/> ${option}
+                    </label>
+                </c:forEach>
+            </div>
+        </div>
 
-    <form:textarea path="comments" cols="80" rows="5"/>
+        <h3>Additional Comments</h3>
 
-    <div>
-        <input type="submit" value="Submit" />
-    </div>
+        <div class="form-group">
+            <div class="col-sm-8">
+                <form:textarea path="comments" cols="80" rows="5" cssClass="form-control"/>
+            </div>
+        </div>
 
-</form:form>
+        <button type="submit" class="btn btn-default">Submit</button>
+    </form:form>
+</div>
 
+<script src="/css/bootstrap3/js/bootstrap.min.js"></script>
 <script src="/javascript/jquery.validate.min.js"></script>
+<script src="/javascript/multirow-table.js"></script>
 <script>
-    function makeDynamicTable(selector, rowCount, namePrefix, properties) {
+    $(function() {
 
-        function addRow() {
-            var row = jQuery("<tr>").appendTo(selector);
-            properties.forEach(function (prop) {
-                jQuery("<td><input name=\"" + namePrefix + "[" + rowCount + "]." + prop + "\" type=\"text\" /></td>")
-                        .appendTo(row);
-            });
-            rowCount += 1;
-        }
-
-        addRow();
-        jQuery(selector).after(
-                jQuery("<div>").append(
-                        jQuery("<a class=\"add-row\">").click(function () { addRow() })
-                                .append("<i class=\"fa fa-plus-circle fa-lg\"></i>")
-                )
-        );
-    }
-
-    jQuery(function() {
-
-        jQuery(".citations-group").hide();
-        jQuery(".reserve-group").hide();
-        jQuery("input[type=radio][name=pubStatus]").change(function () {
+        $(".citations-group").hide();
+        $(".reserve-group").hide();
+        $("input[type=radio][name=pubStatus]").change(function () {
             if (this.value == 'Published') {
-                jQuery(".citations-group label").addClass("required");
-                jQuery(".citations-group").show();
-                jQuery(".reserve-group").hide();
+                $(".citations-group label").addClass("required");
+                $(".citations-group").show();
+                $(".reserve-group").hide();
             } else {
-                jQuery(".citations-group label").removeClass("required");
-                jQuery(".citations-group").show();
-                jQuery(".reserve-group").show();
+                $(".citations-group label").removeClass("required");
+                $(".citations-group").show();
+                $(".reserve-group").show();
             }
         });
 
-        jQuery(".nomenclature").validate({
+        $("#nomenclature").validate({
             rules: {
                 name: { required: true },
                 email2: {
@@ -122,14 +136,14 @@
                 citations: {
                     required: {
                         depends: function () {
-                            return jQuery('input[name=pubStatus]:checked').val() === 'Published';
+                            return $('input[name=pubStatus]:checked').val() === 'Published';
                         }
                     }
                 },
                 reserveType: {
                     required: {
                         depends: function () {
-                            return jQuery('input[name=pubStatus]:checked').val() !== 'Published';
+                            return $('input[name=pubStatus]:checked').val() !== 'Published';
                         }
                     }
                 }
@@ -137,10 +151,25 @@
             messages: {
                 pubStatus: "Please select an option",
                 reserveType: "Please select an option"
+            },
+            highlight: function(el) {
+                $(el).closest('.form-group').addClass('has-error');
+            },
+            unhighlight: function(el) {
+                $(el).closest('.form-group').removeClass('has-error');
+            },
+            errorElement: 'span',
+            errorClass: 'help-block',
+            errorPlacement: function (error, element) {
+                if (element.is(':radio')) {
+                    error.prependTo(element.closest('.radio').parent());
+                } else {
+                    error.insertAfter(element);
+                }
             }
         });
 
         <%-- hide as a spam prevention tactic --%>
-        jQuery(".alternate-email").hide();
+        $(".alternate-email").hide();
     });
 </script>

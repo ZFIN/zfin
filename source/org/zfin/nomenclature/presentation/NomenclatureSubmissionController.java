@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.MailSender;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.nomenclature.EmptyTestable;
-import org.zfin.nomenclature.GeneNameSubmission;
-import org.zfin.nomenclature.LineInfo;
-import org.zfin.nomenclature.LineNameSubmission;
+import org.zfin.nomenclature.*;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.util.Arrays;
@@ -27,8 +24,9 @@ public class NomenclatureSubmissionController {
 
     @RequestMapping(value = "/gene-name", method = RequestMethod.GET)
     public String newGeneNameForm(Model model) {
-        model.addAttribute("submission", new GeneNameSubmission());
-        addOptions(model);
+        GeneNameSubmission submission = new GeneNameSubmission();
+        submission.setHomologyInfoList(Arrays.asList(new HomologyInfo()));
+        model.addAttribute("submission", submission);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Submit a Proposed Gene Name");
         return "nomenclature/gene-name-form.page";
     }
@@ -57,8 +55,9 @@ public class NomenclatureSubmissionController {
 
     @RequestMapping(value = "/line-name", method = RequestMethod.GET)
     public String newLineNameForm(Model model) {
-        model.addAttribute("submission", new LineNameSubmission());
-        addOptions(model);
+        LineNameSubmission submission = new LineNameSubmission();
+        submission.setLineDetails(Arrays.asList(new LineInfo()));
+        model.addAttribute("submission", submission);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Submit a Proposed Mutant/Transgenic Line Name");
         return "nomenclature/line-name-form.page";
     }
@@ -87,11 +86,14 @@ public class NomenclatureSubmissionController {
         return "nomenclature/line-name-submit.page";
     }
 
-    private static void addOptions(Model model) {
-        model.addAttribute("pubStatusOptions",
-                Arrays.asList("Published", "In Press", "Submitted", "In Preparation", "Unpublished"));
-        model.addAttribute("reserveTypeOptions",
-                Arrays.asList("in my name", "as an anonymous submission"));
+    @ModelAttribute("pubStatusOptions")
+    public List<String> getPubStatusOptions() {
+        return Arrays.asList("Published", "In Press", "Submitted", "In Preparation", "Unpublished");
+    }
+
+    @ModelAttribute("reserveTypeOptions")
+    public List<String> getReserveTypeOptions() {
+        return Arrays.asList("in my name", "as an anonymous submission");
     }
 
     private static void removeEmptyRows(Collection<? extends EmptyTestable> collection) {

@@ -518,49 +518,13 @@ video {
     margin: 0 auto;
 }
 
-.nomenclature label {
-    min-width: 10em;
-    display: inline-block;
-    margin: 5px 0;
-    white-space: nowrap;
-}
-
-.nomenclature textarea {
-    vertical-align: top;
-}
-
-.nomenclature .required:after {
+.required:after {
     content: ' *';
     color: #cc0000;
 }
 
-.nomenclature th {
-    text-align: left;
-    font-weight: normal;
-}
-
-.nomenclature small {
-    font-weight: normal;
-    font-size: 0.9em;
-}
-
-.nomenclature .add-row {
-    color: #006666;
-    cursor: pointer;
-}
-
-.nomenclature input[type="submit"] {
-    margin: 30px 0;
-}
-
-.nomenclature label.error {
-    color: #cc0000;
-    margin-left: 10px;
-}
-
-.nomenclature input.error {
-    color: #000000;
-    display: inline-block;
+.line-form-row .input-addon {
+    padding: 7px 0 0 0;
 }
 
 .message {
@@ -578,20 +542,6 @@ video {
 .message.error {
     color: #800000;
     background-color: #FFEEEE;
-}
-
-.nomenclature-submission {
-    padding: 1em;
-}
-
-.nomenclature-submission dt {
-    font-weight: bold;
-    float: left;
-    min-width: 15em;
-}
-
-.nomenclature input[type=text] {
-    width: 200px;
 }
 
 .two-column-info {
