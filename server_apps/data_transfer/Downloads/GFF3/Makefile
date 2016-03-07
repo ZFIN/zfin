@@ -113,7 +113,6 @@ $(TARGETDIR)/unload_pheno_gff.sql         $(TARGETDIR)/E_unload_pheno_gff.sql \
 $(TARGETDIR)/unload_xpat_gff.sql          $(TARGETDIR)/E_unload_xpat_gff.sql  \
 $(TARGETDIR)/unload_antibody_gff.sql      $(TARGETDIR)/E_unload_antibody_gff.sql \
 $(TARGETDIR)/unload_vega_transcripts.sql  $(TARGETDIR)/E_unload_transcript_gff.sql \
-$(TARGETDIR)/unload_zfin_morpholino.sql   $(TARGETDIR)/E_unload_zfin_morpholino.sql \
 $(TARGETDIR)/update_vega_nomenclature.sql $(TARGETDIR)/unload_ZMP.sql \
 $(TARGETDIR)/gather_alias.awk
 
