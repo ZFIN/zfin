@@ -53,7 +53,7 @@
             </c:choose>
         </c:when>
         <c:otherwise>
-            <span class="summaryTitle" style="vertical-align:top"> ${displaySectionName}</span>: (No data available)
+            <span class="summaryTitle" style="vertical-align:top"> ${displaySectionName}</span>: <span id="phenotype-no-data-tag" class="no-data-tag">No data available</span>
         </c:otherwise>
     </c:choose>
 </span>

@@ -1,6 +1,6 @@
 package org.zfin.ontology.presentation;
 
-import com.ctc.wstx.util.StringUtil;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +24,7 @@ import org.zfin.publication.presentation.PublicationListAdapter;
 import org.zfin.publication.presentation.PublicationListBean;
 import org.zfin.repository.RepositoryFactory;
 
+import java.net.URL;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.*;
@@ -404,5 +405,5 @@ public class OntologyTermDetailController {
     public String getOntologyRelationshipNote() {
         return "ontology/ontology-relationship-note.insert";
     }
-
+    
 }
