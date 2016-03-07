@@ -107,6 +107,7 @@ public class HibernateSessionCreator {
                     .addAnnotatedClass(PhenotypeWarehouse.class)
                     .addAnnotatedClass(PhenotypeStatementWarehouse.class)
                     .addAnnotatedClass(PhenotypeTermFastSearch.class)
+                    .addAnnotatedClass(PhenotypeCurationSearch.class)
                     .addAnnotatedClass(GenotypeFigure.class)
                     .addAnnotatedClass(ExpressionPhenotypeTerm.class)
                     .addAnnotatedClass(FishStr.class)

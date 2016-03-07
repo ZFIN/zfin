@@ -63,6 +63,7 @@
         <mapping class="org.zfin.mutant.PhenotypeWarehouse"/>
         <mapping class="org.zfin.mutant.PhenotypeStatementWarehouse"/>
         <mapping class="org.zfin.mutant.PhenotypeTermFastSearch"/>
+        <mapping class="org.zfin.mutant.PhenotypeCurationSearch"/>
         <mapping class="org.zfin.mutant.GenotypeFigure"/>
         <mapping class="org.zfin.mutant.FishStr"/>
         <mapping class="org.zfin.framework.presentation.AnatomyFact"/>
