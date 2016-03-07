@@ -4,6 +4,7 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Figure;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -11,7 +12,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "PHENOTYPE_GENERATED_CURATED_MAPPING")
-public class PhenotypeCurationSearch {
+public class PhenotypeCurationSearch implements Serializable {
 
 
     @Id
