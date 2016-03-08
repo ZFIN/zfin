@@ -20,6 +20,9 @@ import org.zfin.publication.Publication
 import org.zfin.repository.RepositoryFactory
 
 import static com.xlson.groovycsv.CsvParser.parseCsv
+import static org.zfin.repository.RepositoryFactory.getFeatureRepository
+import static org.zfin.repository.RepositoryFactory.getMutantRepository
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository
 
 Logger log = Logger.getLogger(getClass());
 
@@ -35,13 +38,12 @@ session.beginTransaction()
 
 
 Term unspecified = RepositoryFactory.ontologyRepository.getTermByOboID("ZFA:0001093")
-Term subTerm1=RepositoryFactory.ontologyRepository.getTermByName("neural rod",Ontology.ANATOMY)
+Term subTerm1 = RepositoryFactory.ontologyRepository.getTermByName("neural rod", Ontology.ANATOMY)
 //this map is used to map file name to figure, so that if it's a second expression result for a given figure,
 // it can be looked up rather than re-created.  Also, the total number of figures created will be checked
 // at the end as a confirmation that the script didn't add the same figure multiple times.
 def videosAdded = [:]
 def sameFigure = [:]
-
 
 //HibernateProfileRepository brings in ProfileService, which requires a validation library that
 //needs to be excluded from the Classpath for this to load up.  Awkward, but easy enough to get a person this way...
@@ -50,7 +52,7 @@ def sameFigure = [:]
         .uniqueResult();*/
 //Person owner=RepositoryFactory.profileRepository.getPerson("ZDB-PERS-030520-2")
 
-def burgessImages = parseCsv(new FileReader("/research/zusers/pm/Projects/releases/HBurgess/hburgessexp23Feb.txt"),separator: '\t')
+def burgessImages = parseCsv(new FileReader("/research/zusers/pm/Projects/releases/HBurgess/hburgessexp23Feb.txt"), separator: '\t')
 //def burgessImages = parseCsv(new FileReader("/research/zusers/pm/Projects/releases/HBurgess/234.txt"),separator: '\t')
 String mediaDir = "/research/zusers/pm/Projects/releases/HBurgess/images2/"
 
@@ -78,120 +80,96 @@ geno: $csv.ftr2; $csv.ftr1(TL)
     Marker gene = RepositoryFactory.markerRepository.getMarkerByName(csv.xpatexgene)
     Publication publication = RepositoryFactory.publicationRepository.getPublication("ZDB-PUB-151008-10")
 
-
-  //  Fish burgessFish=RepositoryFactory.mutantRepository.getFish(csv.fishid)
-    genoStr=csv.ftr2+"; "+ csv.ftr1
+    //  Fish burgessFish=RepositoryFactory.mutantRepository.getFish(csv.fishid)
+    genoStr = csv.ftr2 + "; " + csv.ftr1
     print genoStr
 
-    Genotype burgessGeno=RepositoryFactory.mutantRepository.getGenotypeByName(genoStr)
-    if (burgessGeno==null){
-        burgessGeno=RepositoryFactory.mutantRepository.getGenotypesByFeature(RepositoryFactory.featureRepository.getFeatureByAbbreviation(csv.ftr1)).first()
+    Genotype burgessGeno = RepositoryFactory.mutantRepository.getGenotypeByName(genoStr)
+    if (burgessGeno == null) {
+        List<Genotype> bGenos = RepositoryFactory.mutantRepository.getGenotypesByFeature(RepositoryFactory.featureRepository.getFeatureByAbbreviation(csv.ftr1))
+        for (Genotype item : bGenos) {
+            if (item.zdbID.contains("ZDB-GENO-151216")) {
+
+                print(item.name)
+                burgessGeno = item
+            }
+        }
     }
-    Fish burgessFish=RepositoryFactory.mutantRepository.getFishByGenotype(burgessGeno).first()
+
+    /*if (burgessGeno==null){
+        genoStr=csv.ftr2+"; "+ csv.ftr1
+        print genoStr
+
+        Feature feature = RepositoryFactory.getFeatureRepository().getFeatureByAbbreviation(csv.ftr1);
+        Publication pub = getPublicationRepository().getPublication("ZDB-PUB-151205-4");
+        Genotype background = getMutantRepository().getGenotypeByID("ZDB-GENO-990623-2");
+        burgessGeno=RepositoryFactory.mutantRepository.getGenotypesByFeatureAndBackground(feature,background,pub).first()
+    }*/
+    Fish burgessFish = RepositoryFactory.mutantRepository.getFishByGenotype(burgessGeno).first()
     print burgessFish.zdbID
 
     Experiment experiment = RepositoryFactory.expressionRepository.getExperimentByID("ZDB-EXP-041102-1")
-    FishExperiment fishExperiment = RepositoryFactory.mutantRepository.getFishExperimentByFishAndExperimentID(burgessFish.getZdbID(),experiment.getZdbID() )
-
+    FishExperiment fishExperiment = RepositoryFactory.mutantRepository.getFishExperimentByFishAndExperimentID(burgessFish.getZdbID(), experiment.getZdbID())
 
     //create a genox if we need one
     if (!fishExperiment) {
         fishExperiment = createFishExperiment(burgessFish, experiment)
     }
 
-    Term superTerm = RepositoryFactory.ontologyRepository.getTermByName(csv.superterm,Ontology.ANATOMY)
-
-    if (csv.subterm.length()!=0) {
-        print "yes"
-        List<Ontology> ontologies = new ArrayList<Ontology>(2);
-        ontologies.add(Ontology.QUALITY);
-                ontologies.add(Ontology.ANATOMY);
-        Term subTerm = RepositoryFactory.ontologyRepository.getTermByName(csv.subterm, ontologies)
-    }
-
-
-
+    Term superTerm = RepositoryFactory.ontologyRepository.getTermByName(csv.superterm, Ontology.ANATOMY)
 
     DevelopmentStage stage = RepositoryFactory.anatomyRepository.getStageByID("ZDB-STAGE-010723-35")
 
 
     ExpressionAssay assay = RepositoryFactory.expressionRepository.getAssayByName("Intrinsic fluorescence")
 
-
     //conditional, don't want to create entities again if they were already created...
+    figCaption = "";
+    figPrefix = "Fig."
+
+    if (!sameFigure[csv.figlegend]) {
+        figureLabelIndex++;
+        figure = createFigure(figureLabelIndex, publication, superTerm, figPrefix, csv.figlegend)
+        sameFigure.put(csv.figlegend, figure.zdbID)
+    }
     if (!videosAdded[csv.file]) {
-        figCaption="";
-//        figureLabelIndex[publication.zdbID] = figureLabelIndex.get(publication.zdbID, 0) + 1;
+            Figure figure = RepositoryFactory.figureRepository.getFigure(sameFigure[csv.figlegend])
+            image = ImageService.processImage(figure, mediaDir + csv.file.replace(".jpg", ".jpg"), false, csv.orientation)
+            HibernateUtil.currentSession().flush()
+            videosAdded.put(csv.file, image.zdbID)
+            print figure.zdbID
+            print image.zdbID
+     }
 
-        if (!(csv.file.contains("mov")||(csv.file.contains("mp4")))) {
-            figPrefix="Fig."
-        }
-        else{
-            figPrefix="Fig. M"
-        }
-        if (!sameFigure[csv.figlegend]) {
-            figureLabelIndex ++;
-            figure = createFigure(figureLabelIndex, publication, superTerm, figPrefix,csv.figlegend)
-            sameFigure.put(csv.figlegend, figure.zdbID)
-        }
-            //image = ImageService.processImage(figure, owner,mediaDir + csv.file.replace(".jpg", ".jpg"), false)
-        image = ImageService.processImage(figure, mediaDir + csv.file.replace(".jpg", ".jpg"), false,csv.orientation)
+        ExpressionExperiment2 expressionExperiment = getOrCreateExpressionExperiment(fishExperiment, gene, publication, assay)
+        ExpressionResult2 expressionResult = createExpressionResult(expressionExperiment, superTerm, csv.subterm, stage, figure)
 
-            videosAdded.put(csv.file, figure.zdbID)
+        assert (gene)
+        assert (publication)
+        assert (experiment)
+        assert (fishExperiment)
+        assert (fishExperiment.zdbID)
+        assert (superTerm)
+        assert (stage)
+        assert (assay)
+        assert (figure)
+        assert (figure.zdbID)
+        assert (expressionResult.ID)
+        assert (image)
+        assert (image.zdbID)
 
-
-        HibernateUtil.currentSession().flush()
-}
-   /* ExpressionExperiment2 expressionExperiment = getOrCreateExpressionExperiment(fishExperiment, gene, publication, assay)
-    ExpressionResult2 expressionResult = createExpressionResult(expressionExperiment, superTerm,stage, figure)*/
-  /*  ExpressionExperiment2 expressionExperiment = getOrCreateExpressionExperiment(fishExperiment, gene, publication, assay)
-    ExpressionResult2 expressionResult = createExpressionResult(expressionExperiment, superTerm,stage, figure)*/
-
-    ExpressionExperiment2 expressionExperiment = getOrCreateExpressionExperiment(fishExperiment, gene, publication, assay)
-    ExpressionResult2 expressionResult = createExpressionResult(expressionExperiment, superTerm,csv.subterm,stage, figure)
-
-    assert(gene)
-    assert(publication)
-    assert(experiment)
-    assert(fishExperiment)
-    assert(fishExperiment.zdbID)
-    assert(superTerm)
- //   assert(subTerm)
-    //They should either both be not null or both be null
-    //assert((csv.subterm_obo_id && subTerm) || (!csv.subterm_obo_id && !subTerm))
-
-    assert(stage)
-    assert(assay)
-    assert(figure)
-    assert(figure.zdbID)
-    //assert(expressionResult.ID)
-   /* assert(figure.expressionResults)
-    assert(figure.expressionResults.contains(expressionResult))*/
-    assert(image)
-    assert(image.zdbID)
-    /*assert(videos.size() == 2)
-    videos.each { video -> assert(video.id) }*/
-   /* assert(expressionExperiment)
-    assert(expressionExperiment.zdbID)
-    assert(expressionResult)
-    assert(expressionResult.ID)*/
-
-
-
-
-
-println """
+        println """
 ----------------------------------------------------------------
 """
-}
+    }
 
 //assert(videosAdded.values().size() == 31)
 
 
-if ("--rollback" in args)
-    session.getTransaction().rollback()
-else
-    session.getTransaction().commit()
+    if ("--rollback" in args)
+        session.getTransaction().rollback()
+    else
+        session.getTransaction().commit()
 
 
 
@@ -199,90 +177,92 @@ else
 
 
 
-ExpressionExperiment2 getOrCreateExpressionExperiment(FishExperiment genotypeExperiment,
-                                                     Marker gene,
-                                                     Publication publication,
-                                                     ExpressionAssay assay) {
-    List<ExpressionExperiment2> expressionExperimentList = RepositoryFactory.expressionRepository.getExperimentsByGeneAndFish(publication.zdbID,gene.zdbID,genotypeExperiment.fish.zdbID)
+    ExpressionExperiment2 getOrCreateExpressionExperiment(FishExperiment genotypeExperiment,
+                                                          Marker gene,
+                                                          Publication publication,
+                                                          ExpressionAssay assay) {
+        List<ExpressionExperiment2> expressionExperimentList = RepositoryFactory.expressionRepository.getExperimentsByGeneAndFish(publication.zdbID, gene.zdbID, genotypeExperiment.fish.zdbID)
 
-    assert(expressionExperimentList.size() == 0 || expressionExperimentList.size() == 1)
-    ExpressionExperiment2 expressionExperiment = null
-    if (expressionExperimentList.size() == 1)
-        expressionExperiment = expressionExperimentList.first()
+        assert (expressionExperimentList.size() == 0 || expressionExperimentList.size() == 1)
+        ExpressionExperiment2 expressionExperiment = null
+        if (expressionExperimentList.size() == 1)
+            expressionExperiment = expressionExperimentList.first()
 
-    if (expressionExperimentList.size() == 0)
-        expressionExperiment = createExpressionExperiment(genotypeExperiment, gene, publication, assay)
+        if (expressionExperimentList.size() == 0)
+            expressionExperiment = createExpressionExperiment(genotypeExperiment, gene, publication, assay)
 
-    return expressionExperiment
-}
-
-
-Figure createFigure(figureLabelIndex, Publication publication, Term superterm, String prefix,String caption) {
-    Figure figure = new FigureFigure()
-
-    figure.label = prefix + figureLabelIndex
-    figure.publication = publication
-    figure.caption = caption
-    figure.comments = ""
-    HibernateUtil.currentSession().save(figure)
-  //  HibernateUtil.currentSession().flush()
-
-    return figure
-}
-
-ExpressionResult2 createExpressionResult(ExpressionExperiment2 expressionExperiment,
-                                        Term superTerm,
-        String subterm,
-                                        DevelopmentStage stage,
-                                        Figure figure) {
-
-    // HibernateUtil.currentSession().flush()
-    ExpressionFigureStage expFigStage = RepositoryFactory.expressionRepository.getExperimentFigureStage(expressionExperiment.zdbID, figure.zdbID, stage.zdbID, stage.zdbID)
-
-    if (expFigStage == null) {
-
-        ExpressionFigureStage expFigStage1 = new ExpressionFigureStage()
-        expFigStage1.with {
-            setExpressionExperiment(expressionExperiment)
-            setStartStage(stage)
-            setEndStage(stage)
-        }
-
-
-        expFigStage1.setFigure(figure)
-        HibernateUtil.currentSession().save(expFigStage1)
-
-
-        ExpressionResult2 expressionResult = new ExpressionResult2()
-        expressionResult.with {
-
-            setSuperTerm(superTerm)
-
-            setExpressionFigureStage(expFigStage1)
-            setExpressionFound(true)
-        }
-
-        List<ExpressionResult2> results = RepositoryFactory.expressionRepository.checkForExpressionResultRecord2(expressionResult)
-        if (results.size() == 1)
-            expressionResult = results.get(0)
-
-        HibernateUtil.currentSession().save(expressionResult)
-        // HibernateUtil.currentSession().flush()
-
-
-        return expressionResult
+        return expressionExperiment
     }
-        else{
+
+
+    Figure createFigure(figureLabelIndex, Publication publication, Term superterm, String prefix, String caption) {
+        Figure figure = new FigureFigure()
+
+        figure.label = prefix + figureLabelIndex
+        figure.publication = publication
+        figure.caption = caption
+        figure.comments = ""
+        HibernateUtil.currentSession().save(figure)
+        HibernateUtil.currentSession().flush()
+        return figure
+    }
+
+    ExpressionResult2 createExpressionResult(ExpressionExperiment2 expressionExperiment,
+                                             Term superTerm, String subterm,
+                                             DevelopmentStage stage,
+                                             Figure figure) {
+
+
+        ExpressionFigureStage expFigStage = RepositoryFactory.expressionRepository.getExperimentFigureStage(expressionExperiment.zdbID, figure.zdbID, stage.zdbID, stage.zdbID)
+
+        if (expFigStage == null) {
+
+            ExpressionFigureStage expFigStage1 = new ExpressionFigureStage()
+            expFigStage1.with {
+                setExpressionExperiment(expressionExperiment)
+                setStartStage(stage)
+                setEndStage(stage)
+            }
+
+
+            expFigStage1.setFigure(figure)
+            HibernateUtil.currentSession().save(expFigStage1)
+            ExpressionResult2 expressionResult = new ExpressionResult2()
+            expressionResult.with {
+
+                setSuperTerm(superTerm)
+                if (superTerm.termName == "sensory system") {
+                    print "subterm"
+                    setSubTerm(RepositoryFactory.ontologyRepository.getTermByName("cranial ganglion", Ontology.ANATOMY))
+                }
+                if (subterm == "anterior region") {
+                    print "ant"
+                    setSubTerm(RepositoryFactory.ontologyRepository.getTermByOboID("BSPO:0000071"))
+                }
+                setExpressionFigureStage(expFigStage1)
+                setExpressionFound(true)
+            }
+
+            List<ExpressionResult2> results = RepositoryFactory.expressionRepository.checkForExpressionResultRecord2(expressionResult)
+            if (results.size() == 1)
+                expressionResult = results.get(0)
+
+            HibernateUtil.currentSession().save(expressionResult)
+            // HibernateUtil.currentSession().flush()
+
+
+            return expressionResult
+        } else {
 
             ExpressionResult2 expressionResult = new ExpressionResult2()
             expressionResult.with {
 
                 setSuperTerm(superTerm)
-                if (superTerm.termName=="sensory system"){
+                if (superTerm.termName == "sensory system") {
                     print "subterm"
-                    setSubTerm(RepositoryFactory.ontologyRepository.getTermByName("cranial ganglion",Ontology.ANATOMY))
+                    setSubTerm(RepositoryFactory.ontologyRepository.getTermByName("cranial ganglion", Ontology.ANATOMY))
                 }
-                if (subterm=="anterior region"){
+                if (subterm == "anterior region") {
                     print "ant"
                     setSubTerm(RepositoryFactory.ontologyRepository.getTermByOboID("BSPO:0000071"))
                 }
@@ -298,11 +278,9 @@ ExpressionResult2 createExpressionResult(ExpressionExperiment2 expressionExperim
             // HibernateUtil.currentSession().flush()
 
 
-
             return expressionResult
 
         }
-
 
 
     }
@@ -313,41 +291,41 @@ ExpressionResult2 createExpressionResult(ExpressionExperiment2 expressionExperim
 
 
 
-FishExperiment createFishExperiment(Fish fish, Experiment experiment) {
-    FishExperiment genotypeExperiment = new FishExperiment()
-    genotypeExperiment.experiment = experiment
-    genotypeExperiment.fish = fish
-    genotypeExperiment.standard = true
-    genotypeExperiment.standardOrGenericControl = true
-    HibernateUtil.currentSession().save(genotypeExperiment)
+    FishExperiment createFishExperiment(Fish fish, Experiment experiment) {
+        FishExperiment genotypeExperiment = new FishExperiment()
+        genotypeExperiment.experiment = experiment
+        genotypeExperiment.fish = fish
+        genotypeExperiment.standard = true
+        genotypeExperiment.standardOrGenericControl = true
+        HibernateUtil.currentSession().save(genotypeExperiment)
 //   HibernateUtil.currentSession().flush()
 
-    return genotypeExperiment
-}
+        return genotypeExperiment
+    }
 
-ExpressionExperiment2 createExpressionExperiment(FishExperiment genotypeExperiment,
-                                                Marker gene,
-                                                Publication publication,
-                                                ExpressionAssay assay) {
-    ExpressionExperiment2 expressionExperiment = new ExpressionExperiment2()
-    expressionExperiment.setGene(gene)
-    expressionExperiment.setFishExperiment(genotypeExperiment)
-    expressionExperiment.setPublication(publication)
-    expressionExperiment.setAssay(assay)
-    HibernateUtil.currentSession().save(expressionExperiment)
-  //  HibernateUtil.currentSession().flush()
+    ExpressionExperiment2 createExpressionExperiment(FishExperiment genotypeExperiment,
+                                                     Marker gene,
+                                                     Publication publication,
+                                                     ExpressionAssay assay) {
+        ExpressionExperiment2 expressionExperiment = new ExpressionExperiment2()
+        expressionExperiment.setGene(gene)
+        expressionExperiment.setFishExperiment(genotypeExperiment)
+        expressionExperiment.setPublication(publication)
+        expressionExperiment.setAssay(assay)
+        HibernateUtil.currentSession().save(expressionExperiment)
+        //  HibernateUtil.currentSession().flush()
 
-    return expressionExperiment
-}
+        return expressionExperiment
+    }
 
 
 
-DevelopmentStage getStageByStart(float stage) {
-    if (stage == null)
-        return null;
+    DevelopmentStage getStageByStart(float stage) {
+        if (stage == null)
+            return null;
 
-    return (DevelopmentStage) session.get(DevelopmentStage.class, stage);
-}
+        return (DevelopmentStage) session.get(DevelopmentStage.class, stage);
+    }
 
 
 
