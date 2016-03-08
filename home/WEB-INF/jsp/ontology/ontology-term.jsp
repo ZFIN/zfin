@@ -151,12 +151,10 @@
     </div>--%>
 
 
-    <authz:authorize access="hasRole('root')">
-        <c:if test="${formBean.term.ontology.ontologyName == 'disease_ontology'}">
-            <zfin-ontology:phenogrid doid="${formBean.term.oboID}"/>
-        </c:if>
-    </authz:authorize>
 
+    <c:if test="${isDiseaseTerm}">
+        <zfin-ontology:phenogrid doid="${formBean.term.oboID}"/>
+    </c:if>
 
     <c:choose>
         <c:when test="${numberOfCitations == 0}"><span class="name-label"> CITATIONS:</span> None</c:when>
