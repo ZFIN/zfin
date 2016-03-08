@@ -1993,16 +1993,12 @@ select
 
            <entity name="phenotype_misexpressed_gene" datasource="db" transformer="RegexTransformer"
                    query="select mrkr_abbrev || ',Any' as misexpressed_gene,
-                               'phenox-' || phenox_pk_id as phenox_pk_id
-                        from expression_experiment2
-                             join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
-                             join expression_result2 on xpatres_efs_id = efs_pk_id
-                             join expression_phenotype_term on ept_xpatres_id = xpatres_pk_id
-                             join marker as gene on xpatex_gene_zdb_id = mrkr_zdb_id
-                             join phenotype_experiment on phenox_fig_zdb_id = efs_fig_zdb_id
-                                                      and phenox_genox_zdb_id = xpatex_genox_zdb_id;"
+                                        'pg-' || pg_id as pg_id
+                            from phenotype_source_generated
+                                 join phenotype_observation_generated on psg_pg_id = pg_id
+                                 join marker on mrkr_zdb_id = psg_mrkr_zdb_id;"
                    cacheImpl="SortedMapBackedCache"
-                   where="phenox_pk_id=phenotype.id">
+                   where="pg_id=phenotype.id">
                <field name="misexpressed_gene" column="misexpressed_gene" splitBy=","/>
            </entity>
 
