@@ -1916,7 +1916,7 @@ select
        </entity>
 
        <entity name="phenotype"
-               datasource="db" query="select
+               datasource="db" query="select distinct
                         'Phenotype' as category,
                         '/' || pg_fig_zdb_id as url,
                         pg_fig_zdb_id as figure_id,
