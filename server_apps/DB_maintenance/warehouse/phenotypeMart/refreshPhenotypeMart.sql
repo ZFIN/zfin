@@ -13,8 +13,8 @@ insert into phenotype_source_generated_bkup (pg_id,
        	     			 pg_genox_zdb_id,
 				 pg_fig_zdb_id,
 				 pg_start_stg_zdb_id,
-				 pg_end_stg_zdb_id)
-select pg_id, pg_genox_zdb_id, pg_fig_zdb_id, pg_start_stg_zdb_id, pg_end_stg_zdb_id
+				 pg_end_stg_zdb_id, pg_pre_eap_phenotype)
+select pg_id, pg_genox_zdb_id, pg_fig_zdb_id, pg_start_stg_zdb_id, pg_end_stg_zdb_id, pg_pre_eap_phenotype
   from phenotype_source_generated;
 
 insert into phenotype_observation_generated_bkup (psg_id,
@@ -67,8 +67,8 @@ insert into phenotype_source_generated (pg_id,
        	     			 pg_genox_zdb_id,
 				 pg_fig_zdb_id,
 				 pg_start_stg_zdb_id,
-				 pg_end_stg_zdb_id)
-select pg_id, pg_genox_zdb_id, pg_fig_zdb_id, pg_start_stg_zdb_id, pg_end_stg_zdb_id
+				 pg_end_stg_zdb_id, pg_pre_eap_phenotype)
+select pg_id, pg_genox_zdb_id, pg_fig_zdb_id, pg_start_stg_zdb_id, pg_end_stg_zdb_id, pg_pre_eap_phenotype
   from phenotype_source_generated_temp;
 
 insert into phenotype_observation_generated (psg_id,

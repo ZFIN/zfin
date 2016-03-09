@@ -10,9 +10,12 @@ union
      case 
       when phenox_created_date < '2016-02-15 00:00:00' then 't'
       else 'f'
-     end
+     end as old_data
    from phenotype_experiment
 into temp tmp_pheno;
+
+select count(*) from tmp_pheno
+ where old_data = 't';
 
 insert into phenotype_source_generated_temp (pg_genox_zdb_id, pg_fig_zdb_id, pg_start_stg_zdb_id, pg_end_stg_zdb_id, pg_pre_eap_phenotype)
 select genox_id, fig_id, starT_id, end_id, old_data
