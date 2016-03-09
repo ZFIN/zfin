@@ -65,4 +65,19 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
                 "Phenotype definitions and synonyms");
     }
 
+    public static String getTagNote(PhenotypeStatementWarehouse statement) {
+        switch (statement.getTag()) {
+            case "normal":
+                return "The \"normal\" tag is used when the annotation of a normal phenotype is notable. " +
+                        "For annotations curated prior to March 2016, it could alternatively indicate a recovered " +
+                        "normal phenotype, such as that resulting from the addition of a sequence targeting reagent " +
+                        "or the creation of a complex mutant genotype.";
+            case "ameliorated":
+                return "The \"ameliorated\" tag is used to describe a partially- or fully-rescued phenotype " +
+                        "resulting from the addition of a reagent or additional mutation to a mutant genotype.";
+            default:
+                return "";
+        }
+    }
+
 }

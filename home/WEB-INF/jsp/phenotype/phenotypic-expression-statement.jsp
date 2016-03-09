@@ -33,3 +33,18 @@
 <zfin2:subsection title="EXPRESSION QUALITY:">
     <zfin2:termMiniSummary term="${phenotypeStatement.quality}"/>
 </zfin2:subsection>
+
+<c:if test="${!empty tagNote}">
+    <div class="ontology-term-mini-summary">
+        <table class="ontology-term-mini-summary">
+            <tr>
+                <th class="name">Tag:</th>
+                <td class="name">${phenotypeStatement.tag}</td>
+            </tr>
+            <tr>
+                <th>Definition:</th>
+                <td>${tagNote}</td>
+            </tr>
+        </table>
+    </div>
+</c:if>

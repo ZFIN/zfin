@@ -7,6 +7,13 @@
 <div class="popup-body phenotype-popup-body">
     <div>
 
+        <c:if test="${!empty tagNote}">
+            <div style="margin: 1em;">
+                ${tagNote}
+            </div>
+            <hr class="popup-divider"/>
+        </c:if>
+
         <zfin2:termMiniSummary term="${phenotypeStatement.e1a}"/>
         <hr class="popup-divider"/>
         <c:if test="${not empty phenotypeStatement.e1b}">
