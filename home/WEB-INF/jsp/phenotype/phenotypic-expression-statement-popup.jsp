@@ -6,14 +6,6 @@
 
 <div class="popup-body phenotype-popup-body">
     <div>
-
-        <c:if test="${!empty tagNote}">
-            <div style="margin: 1em;">
-                ${tagNote}
-            </div>
-            <hr class="popup-divider"/>
-        </c:if>
-
         <zfin2:termMiniSummary term="${phenotypeStatement.e1a}"/>
         <hr class="popup-divider"/>
         <c:if test="${not empty phenotypeStatement.e1b}">
@@ -24,5 +16,20 @@
         <hr class="popup-divider"/>
         <zfin2:termMiniSummary term="${phenotypeStatement.quality}"/>
 
+        <c:if test="${!empty tagNote}">
+            <hr class="popup-divider"/>
+            <div class="ontology-term-mini-summary">
+                <table class="ontology-term-mini-summary">
+                    <tr>
+                        <th class="name">Tag:</th>
+                        <td class="name">${phenotypeStatement.tag}</td>
+                    </tr>
+                    <tr>
+                        <td>Definition:</td>
+                        <td>${tagNote}</td>
+                    </tr>
+                </table>
+            </div>
+        </c:if>
     </div>
 </div>

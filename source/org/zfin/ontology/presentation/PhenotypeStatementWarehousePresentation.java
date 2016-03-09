@@ -69,7 +69,7 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
         if (statement.getTag().equals("normal")) {
             if (statement.getPhenotypeWarehouse().isPreEap()) {
                 // "old normal"
-                return "The \"normal or recovered\" tag is used when the annotation of a normal phenotype is notable " +
+                return "The \"normal\" tag indicates the annotation of a normal phenotype is notable " +
                         "or when the annotation represents a recovered normal phenotype, such as that resulting from " +
                         "the addition of a sequence targeting reagent or the creation of a complex mutant genotype.";
             } else {
