@@ -66,17 +66,22 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
     }
 
     public static String getTagNote(PhenotypeStatementWarehouse statement) {
-        switch (statement.getTag()) {
-            case "normal":
-                return "The \"normal\" tag is used when the annotation of a normal phenotype is notable. " +
-                        "For annotations curated prior to March 2016, it could alternatively indicate a recovered " +
-                        "normal phenotype, such as that resulting from the addition of a sequence targeting reagent " +
-                        "or the creation of a complex mutant genotype.";
-            case "ameliorated":
-                return "The \"ameliorated\" tag is used to describe a partially- or fully-rescued phenotype " +
-                        "resulting from the addition of a reagent or additional mutation to a mutant genotype.";
-            default:
-                return "";
+        if (statement.getTag().equals("normal")) {
+            if (statement.getPhenotypeWarehouse().isPreEap()) {
+                // "old normal"
+                return "The \"normal or recovered\" tag is used when the annotation of a normal phenotype is notable " +
+                        "or when the annotation represents a recovered normal phenotype, such as that resulting from " +
+                        "the addition of a sequence targeting reagent or the creation of a complex mutant genotype.";
+            } else {
+                // "new normal"
+                return "The \"normal\" tag is applied to phenotypes that are normal compared to WT fish under " +
+                        "standard conditions.";
+            }
+        } else if (statement.getTag().equals("ameliorated")) {
+            return "The \"ameliorated\" tag is used to describe a partially- or fully-rescued phenotype " +
+                    "resulting from the addition of a reagent or additional mutation to a mutant genotype.";
+        } else {
+            return "";
         }
     }
 
