@@ -52,9 +52,9 @@ def sameFigure = [:]
         .uniqueResult();*/
 //Person owner=RepositoryFactory.profileRepository.getPerson("ZDB-PERS-030520-2")
 
-def burgessImages = parseCsv(new FileReader("/research/zusers/pm/Projects/releases/HBurgess/hburgessexp23Feb.txt"), separator: '\t')
+def burgessImages = parseCsv(new FileReader("/research/zunloads/projects/HBurgess/hburgessexp23Feb.txt"), separator: '\t')
 //def burgessImages = parseCsv(new FileReader("/research/zusers/pm/Projects/releases/HBurgess/234.txt"),separator: '\t')
-String mediaDir = "/research/zusers/pm/Projects/releases/HBurgess/images2/"
+String mediaDir = "/research/zunloads/projects/HBurgess/images2/"
 
 
 figureLabelIndex = 0
@@ -105,7 +105,14 @@ geno: $csv.ftr2; $csv.ftr1(TL)
         Genotype background = getMutantRepository().getGenotypeByID("ZDB-GENO-990623-2");
         burgessGeno=RepositoryFactory.mutantRepository.getGenotypesByFeatureAndBackground(feature,background,pub).first()
     }*/
-    Fish burgessFish = RepositoryFactory.mutantRepository.getFishByGenotype(burgessGeno).first()
+    Fish burgessFish=new Fish()
+    List<Fish> bFish = RepositoryFactory.mutantRepository.getFishByGenotype(burgessGeno)
+    for (Fish fishItem : bFish ){
+        if (!(fishItem.name.contains("MO"))){
+            burgessFish=fishItem
+        }
+
+    }
     print burgessFish.zdbID
 
     Experiment experiment = RepositoryFactory.expressionRepository.getExperimentByID("ZDB-EXP-041102-1")
