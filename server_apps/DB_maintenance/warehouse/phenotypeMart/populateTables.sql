@@ -114,19 +114,10 @@ update phenotype_observation_generated_temp
                 and term_ontology = 'biological_process')
   and psg_e2b_zdb_id is not null;
 
--- morphological without normal tag
 update phenotype_observation_generated_temp  
   set psg_short_name =  psg_e1a_name||nvl(" "||psg_e1b_name,'')||nvl(" "||psg_quality_name,'')||nvl(" "||psg_e2a_name,'')||nvl(" "||psg_e2b_name,'')||", "||psg_tag
-  where psg_mrkr_zdb_id is null
-  and psg_tag != 'normal';
+  where psg_mrkr_zdb_id is null;
 
--- morphological without normal tag
-update phenotype_observation_generated_temp
-  set psg_short_name =  psg_e1a_name||nvl(" "||psg_e1b_name,'')||nvl(" "||psg_quality_name,'')||nvl(" "||psg_e2a_name,'')||nvl(" "||psg_e2b_name,'')||", normal or recovered"
-  where psg_mrkr_zdb_id is null
-  and psg_tag = 'normal';
-
--- EaP with any tag
 update phenotype_observation_generated_temp  
   set psg_short_name = psg_e1a_name||nvl(" "||psg_e1b_name,'')||" "||psg_mrkr_Abbrev||nvl(" "||psg_mrkr_relation,'')||nvl(" "||psg_quality_name,'')||", "||psg_tag
   where psg_mrkr_zdb_id is not null;
