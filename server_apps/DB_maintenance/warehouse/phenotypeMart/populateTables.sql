@@ -14,8 +14,8 @@ union
    from phenotype_experiment
 into temp tmp_pheno;
 
-insert into phenotype_source_generated_temp (pg_genox_zdb_id, pg_fig_zdb_id, pg_start_stg_zdb_id, pg_end_stg_zdb_id)
-select genox_id, fig_id, starT_id, end_id
+insert into phenotype_source_generated_temp (pg_genox_zdb_id, pg_fig_zdb_id, pg_start_stg_zdb_id, pg_end_stg_zdb_id, pg_pre_eap_phenotype)
+select genox_id, fig_id, starT_id, end_id, old_data
   from tmp_pheno;
 
 insert into phenotype_observation_generated_temp (psg_pg_id, psg_mrkr_Zdb_id, psg_mrkr_Relation, psg_e1a_zdb_id, psg_e1_relation_name,
