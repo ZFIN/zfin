@@ -465,3 +465,27 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
  and damo_genox_zdb_id = genox_zdb_id
  and term_zdb_id = dat_term_zdb_id;
 
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/eap/eap.txt"
+  select ept_pk_id, ept_relational_term, ept_quality_term_zdb_id, ept_tag, ept_xpatres_id
+    from expression_phenotype_term;
+
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/phenoWarehouse/phenoWarehouse.txt"
+  select pg_id, pg_genox_zdb_id, pg_fig_zdb_id, pg_start_stg_zdb_id, pg_end_stg_zdb_id, psg_id, psg_mrkr_zdb_id,
+    psg_mrkr_abbrev,
+    psg_mrkr_relation,
+    psg_e1a_zdb_id,
+    psg_e1a_name,
+    psg_e1_relation_name,
+    psg_e1b_zdb_id,
+    psg_e1b_name,
+    psg_e2a_zdb_id,
+    psg_e2a_name,
+    psg_e2_relation_name,
+    psg_e2b_zdb_id,
+    psg_e2b_name,
+    psg_tag ,
+    psg_quality_zdb_id,
+    psg_quality_name,
+    psg_short_name
+from phenotype_source_generated, phenotype_observation_generated
+where pg_id = psg_id;
