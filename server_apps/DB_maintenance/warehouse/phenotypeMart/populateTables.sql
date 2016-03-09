@@ -1,12 +1,16 @@
 
- select xpatex_genox_zdb_id as genox_id, efs_fig_zdb_id as fig_id, efs_start_stg_zdb_id as start_id, efs_end_stg_zdb_id as end_id
+ select xpatex_genox_zdb_id as genox_id, efs_fig_zdb_id as fig_id, efs_start_stg_zdb_id as start_id, efs_end_stg_zdb_id as end_id, 'f'
   from expression_experiment2, expression_figure_stage
  where xpatex_zdb_id = efs_xpatex_zdb_id
  and exists (Select 'x' from expression_phenotype_term, expression_result2
      	    	    where xpatres_efs_id = efs_pk_id
 		    and xpatres_pk_id = ept_xpatres_id)
 union
- select phenox_genox_zdb_id, phenox_fig_zdb_id, phenox_start_Stg_zdb_id, phenox_end_stg_zdb_id
+ select phenox_genox_zdb_id, phenox_fig_zdb_id, phenox_start_Stg_zdb_id, phenox_end_stg_zdb_id,
+     case 
+      when phenox_created_date < '2016-02-15 00:00:00' then 't'
+      else 'f'
+     end
    from phenotype_experiment
 into temp tmp_pheno;
 
