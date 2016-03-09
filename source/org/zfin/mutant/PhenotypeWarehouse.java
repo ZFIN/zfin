@@ -1,9 +1,7 @@
 package org.zfin.mutant;
 
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.expression.ExpressionPhenotypeTerm;
 import org.zfin.expression.Figure;
-import org.zfin.mutant.Genotype;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -31,6 +29,8 @@ public class PhenotypeWarehouse {
     @ManyToOne()
     @JoinColumn(name = "pg_end_stg_zdb_id")
     private DevelopmentStage end;
+    @Column(name = "pg_pre_eap_phenotype")
+    private boolean isPreEap;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "phenotypeWarehouse", orphanRemoval = true)
     private Set<PhenotypeStatementWarehouse> statementWarehouseSet;
@@ -73,6 +73,14 @@ public class PhenotypeWarehouse {
 
     public void setStart(DevelopmentStage start) {
         this.start = start;
+    }
+
+    public boolean isPreEap() {
+        return isPreEap;
+    }
+
+    public void setIsPreEap(boolean isPreEap) {
+        this.isPreEap = isPreEap;
     }
 
     public Set<PhenotypeStatementWarehouse> getStatementWarehouseSet() {
