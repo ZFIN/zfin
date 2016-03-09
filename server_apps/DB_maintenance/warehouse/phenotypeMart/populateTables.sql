@@ -1,5 +1,5 @@
 
- select xpatex_genox_zdb_id as genox_id, efs_fig_zdb_id as fig_id, efs_start_stg_zdb_id as start_id, efs_end_stg_zdb_id as end_id, 'f'
+ select xpatex_genox_zdb_id as genox_id, efs_fig_zdb_id as fig_id, efs_start_stg_zdb_id as start_id, efs_end_stg_zdb_id as end_id, 'f' as old_data
   from expression_experiment2, expression_figure_stage
  where xpatex_zdb_id = efs_xpatex_zdb_id
  and exists (Select 'x' from expression_phenotype_term, expression_result2
