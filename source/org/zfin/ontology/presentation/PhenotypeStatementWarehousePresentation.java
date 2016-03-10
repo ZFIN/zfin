@@ -69,17 +69,14 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
         if (statement.getTag().equals("normal")) {
             if (statement.getPhenotypeWarehouse().isPreEap()) {
                 // "old normal"
-                return "The \"normal\" tag indicates the annotation of a normal phenotype is notable " +
-                        "or when the annotation represents a recovered normal phenotype, such as that resulting from " +
-                        "the addition of a sequence targeting reagent or the creation of a complex mutant genotype.";
+                return "This annotation denotes a phenotype that is wild-type or significantly rescued.";
             } else {
                 // "new normal"
-                return "The \"normal\" tag is applied to phenotypes that are normal compared to WT fish under " +
-                        "standard conditions.";
+                return "This annotation denotes a phenotype that is normal compared to WT fish under standard conditions.";
             }
         } else if (statement.getTag().equals("ameliorated")) {
-            return "The \"ameliorated\" tag is used to describe a partially- or fully-rescued phenotype " +
-                    "resulting from the addition of a reagent or additional mutation to a mutant genotype.";
+            return "This annotation denotes a significantly rescued phenotype resulting from an additional reagent " +
+                    "or mutation.";
         } else {
             return "";
         }
