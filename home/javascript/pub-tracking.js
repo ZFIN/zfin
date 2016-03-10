@@ -121,6 +121,8 @@ angular.module('pubTrackingApp', [])
         var directive = {
             restrict: 'EA',
             template: template,
+            // for details on directive scopes:
+            // http://www.undefinednull.com/2014/02/11/mastering-the-scope-of-a-directive-in-angularjs/
             scope: {
                 items: '=',
                 allLabel: '@',
