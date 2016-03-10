@@ -481,7 +481,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getExpressionSinglePub() {
-        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-060130-9");
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-030131-4357");
         assertNotNull(m);
         Publication p = expRep.getExpressionSinglePub(m);
         assertNotNull(p);
@@ -490,7 +490,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getExpressionPub() {
-        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-060130-9");
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-030131-4357");
         assertNotNull(m);
         List<Publication> p = expRep.getExpressionPub(m);
         assertNotNull(p);
