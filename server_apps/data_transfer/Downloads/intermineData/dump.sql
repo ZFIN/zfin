@@ -178,12 +178,14 @@ create temp table tmp_pato (id int8,
        quality varchar(50),
        geno_id varchar(50),
        exp_id varchar(50),
-       clean boolean)
+       clean boolean,
+       mrkr_id varchar(50),
+       short_name varchar(255))
 with no log;
 
 insert into tmp_pato (id, genox_id, superterm, subterm, superterm2, subterm2, quality, startstg, endstg, fig, tag, geno_id, exp_id)
-  select phenos_pk_id,
-  	 phenox_genox_zdb_id,
+  select psg_id,
+  	 pg_genox_zdb_id,
 	 a.term_ont_id,
 	 b.term_ont_id,
 	 c.term_ont_id,
@@ -191,20 +193,22 @@ insert into tmp_pato (id, genox_id, superterm, subterm, superterm2, subterm2, qu
 	 e.term_ont_id,
 	 f.stg_obo_id,
 	 g.stg_obo_id,
-	 phenox_fig_zdb_id, 
-          phenos_tag,
+	 pg_fig_zdb_id, 
+          psg_tag,
 	  fish_zdb_id,
-	  genox_exp_zdb_id
-   from phenotype_experiment, phenotype_statement, stage f, stage g,term a, outer term b, outer term c, outer term d, term e, fish_experiment, fish
-   where phenox_start_Stg_zdb_id = f.stg_zdb_id
-   and phenox_end_stg_zdb_id = g.stg_zdb_id
-   and phenos_entity_1_superterm_Zdb_id = a.term_Zdb_id
-   and phenos_entity_1_subterm_zdb_id = b.term_zdb_id
-   and phenos_entity_2_superterm_zdb_id = c.term_Zdb_id
-   and phenos_entity_2_subterm_zdb_id = d.term_zdb_id
-   and phenos_quality_Zdb_id = e.term_zdb_id
-   and phenox_pk_id = phenos_phenox_pk_id
-   and genox_zdb_id = phenox_genox_zdb_id
+	  genox_exp_zdb_id,
+	  psg_mrkr_Zdb_id,
+	  psg_short_name
+   from phenotype_source_generated, phenotype_observation_generated, stage f, stage g,term a, outer term b, outer term c, outer term d, term e, fish_experiment, fish
+   where pg_start_Stg_zdb_id = f.stg_zdb_id
+   and pg_end_stg_zdb_id = g.stg_zdb_id
+   and psg_e1a_Zdb_id = a.term_Zdb_id
+   and psg_e1b_zdb_id = b.term_zdb_id
+   and psg_e2a_zdb_id = c.term_Zdb_id
+   and psg_e2b_zdb_id = d.term_zdb_id
+   and psg_quality_Zdb_id = e.term_zdb_id
+   and pg_id = psg_pg_id
+   and genox_zdb_id = pg_genox_zdb_id
    and genox_fish_zdb_id = fish_zdb_id
 ;
 
