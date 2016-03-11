@@ -107,6 +107,18 @@
         </java>
     </target>
 
+    <target name="check-eap-pato-terms" description="">
+        <echo message="Check EaP terms with the latest PATO ontology"/>
+        <java classname="org.zfin.ontology.jobs.CheckEapPatoTermsJob" fork="no"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="Check-Eap-Pato-Terms_d"/>
+            <jvmarg value="${jvm.args}"/>
+        </java>
+    </target>
+
     <target name="validate-Zebrafish-Book-permissions" description="">
         <echo message="Set correct permission on Zebrafish bokk in ZFIN with Community Wiki"/>
         <java classname="org.zfin.wiki.jobs.ValidatePermissionsForZebrafishBookJob" fork="no"
