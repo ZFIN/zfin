@@ -254,7 +254,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         sb.append(authors);
         if (publicationDate != null) {
             sb.append(" (");
-            sb.append(publicationDate.get(GregorianCalendar.YEAR));
+            sb.append(getYear());
             sb.append(") ");
         }
         sb.append(title);
@@ -265,11 +265,9 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         }
         sb.append(volume);
         if (pages != null) {
-            sb.append(":" + pages);
+            sb.append(":").append(pages);
         }
-
         return sb.toString();
-
     }
 
     public int getYear() {
