@@ -183,7 +183,7 @@ create temp table tmp_pato (id int8,
        short_name varchar(255))
 with no log;
 
-insert into tmp_pato (id, genox_id, superterm, subterm, superterm2, subterm2, quality, startstg, endstg, fig, tag, geno_id, exp_id)
+insert into tmp_pato (id, genox_id, superterm, subterm, superterm2, subterm2, quality, startstg, endstg, fig, tag, geno_id, exp_id, mrkr_id, short_name)
   select psg_id,
   	 pg_genox_zdb_id,
 	 a.term_ont_id,
