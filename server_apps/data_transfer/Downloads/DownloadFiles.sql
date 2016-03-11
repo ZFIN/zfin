@@ -580,7 +580,7 @@ select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb
                 fig_source_zdb_id,
                 pub.accession_no
 from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, fish_experiment, figure, publication pub
-where psg_mrkr_zdb_id[1,8] = "ZDB-GENE"
+where psg_mrkr_zdb_id[1,8] in ("ZDB-GENE", "ZDB-EFG-")
   and psg_pg_id = pg_id
   and xpatex_genox_zdb_id = pg_genox_zdb_id
   and xpatex_gene_zdb_id = psg_mrkr_zdb_id
