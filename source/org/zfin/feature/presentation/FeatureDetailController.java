@@ -72,7 +72,7 @@ public class FeatureDetailController {
         form.setFeature(feature);
 
         Set<FeatureMarkerRelationship> featureMarkerRelationships = feature.getFeatureMarkerRelations();
-        Collection<FeatureGenomeLocation> locations = FeatureService.getFeatureGenomeLocations(feature, GenomeLocation.Source.ZFIN);
+        Collection<FeatureGenomeLocation> locations = FeatureService.getFeatureGenomeLocations(feature, GenomeLocation.Source.ZFIN_Zv9);
         if (CollectionUtils.isNotEmpty(locations)) {
             // gbrowse has a location for this feature. if there is a feature marker relationship AND we know where
             // that marker is, show the feature in the context of the marker. Otherwise just show the feature with
