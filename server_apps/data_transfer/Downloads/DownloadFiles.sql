@@ -555,6 +555,7 @@ select exp_zdb_id, exp_name, exp_name,"This environment is used for non-standard
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt'
+  DELIMITER "    "
 select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb_id),
                 psg_mrkr_zdb_id, 
                 "expressed in",
@@ -590,6 +591,7 @@ where psg_mrkr_zdb_id[1,8] in ("ZDB-GENE", "ZDB-EFG-")
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_labeling_phenotype.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_labeling_phenotype.txt'
+  DELIMITER "    "
 select distinct (select mrkr_name from marker where mrkr_zdb_id = psg_mrkr_zdb_id),
                 psg_mrkr_zdb_id, 
                 "eptitope",
