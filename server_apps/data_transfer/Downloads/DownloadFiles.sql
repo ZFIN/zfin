@@ -74,16 +74,16 @@ with no log;
 ! echo "Insert all phenotype data with term_ont_ids "
 insert into tmp_phenotype_statement (phenos_Pk_id,asubterm_ont_id, asubterm_name,asuperterm_ont_id, asuperterm_name,
 bsubterm_ont_id, bsubterm_name,bsuperterm_ont_id, bsuperterm_name, quality_id, quality_name, a_ontology_name,b_ontology_name,quality_tag)
-  select phenos_Pk_id, asubterm.term_ont_id, asubterm.term_name, asuperterm.term_ont_id, asuperterm.term_name,
+  select psg_id, asubterm.term_ont_id, asubterm.term_name, asuperterm.term_ont_id, asuperterm.term_name,
          bsubterm.term_ont_id, bsubterm.term_name, bsuperterm.term_ont_id, bsuperterm.term_name,
-         quality.term_ont_id, quality.term_name,  asubterm.term_ontology, bsubterm.term_ontology, phenos_tag
-    from phenotype_statement, OUTER term as asubterm, term as asuperterm, OUTER term as bsubterm, OUTER term as bsuperterm,
+         quality.term_ont_id, quality.term_name,  asubterm.term_ontology, bsubterm.term_ontology, psg_tag
+    from phenotype_observation_generated, OUTER term as asubterm, OUTER term as asuperterm, OUTER term as bsubterm, OUTER term as bsuperterm, 
          term as quality
-    where asubterm.term_zdb_id = phenos_entity_1_subterm_zdb_id AND
-          asuperterm.term_zdb_id = phenos_entity_1_superterm_zdb_id AND
-          bsubterm.term_zdb_id = phenos_entity_2_subterm_zdb_id AND
-          bsuperterm.term_zdb_id = phenos_entity_2_superterm_zdb_id AND
-          quality.term_zdb_id = phenos_quality_zdb_id;
+    where asubterm.term_zdb_id = psg_e1b_zdb_id AND
+          asuperterm.term_zdb_id = psg_e1a_zdb_id AND
+          bsubterm.term_zdb_id = psg_e2b_zdb_id AND
+          bsuperterm.term_zdb_id = psg_e2a_zdb_id AND
+          quality.term_zdb_id = psg_quality_zdb_id;
 
 ! echo "update a relationship name"
 update tmp_phenotype_statement
@@ -478,12 +478,12 @@ and not exists (Select 'x' from clone
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish.txt'
  DELIMITER "	"
  select distinct f.fish_zdb_id, f.fish_name,
-            phenox_start_stg_zdb_id,
+            pg_start_stg_zdb_id,
             (select stg_name
                 from stage
-                where stg_zdb_id = phenox_start_stg_zdb_id),
-            phenox_end_stg_zdb_id,
-            (select stg_name from stage where stg_zdb_id = phenox_end_stg_zdb_id),
+                where stg_zdb_id = pg_start_stg_zdb_id),
+            pg_end_stg_zdb_id,
+            (select stg_name from stage where stg_zdb_id = pg_end_stg_zdb_id),
               tps.asubterm_ont_id,
               tps.asubterm_name,
               tps.arelationship_id,
@@ -492,7 +492,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
               tps.asuperterm_name,
               tps.quality_id,
               tps.quality_name,
-              phenos_tag,
+              psg_tag,
               tps.bsubterm_ont_id,
               tps.bsubterm_name,
               tps.brelationship_id,
@@ -501,13 +501,12 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
               tps.bsuperterm_name,
               fig_source_zdb_id,
               gx.genox_exp_zdb_id
-  from phenotype_experiment, phenotype_statement ps, figure, genotype g, fish f, fish_experiment gx, tmp_phenotype_statement tps
- where ps.phenos_phenox_pk_id = phenox_pk_id
-   and phenox_genox_zdb_id = gx.genox_zdb_id
-   and f.fish_genotype_zdb_id = g.geno_zdb_id
+  from phenotype_source_generated, phenotype_observation_generated ps, figure, fish f, fish_experiment gx, tmp_phenotype_statement tps
+ where ps.psg_pg_id = pg_id
+   and pg_genox_zdb_id = gx.genox_zdb_id
    and f.fish_zdb_id = gx.genox_fish_zdb_id
-   and phenox_fig_zdb_id = fig_zdb_id
-   and ps.phenos_pk_Id = tps.phenos_pk_id
+   and pg_fig_zdb_id = fig_zdb_id
+   and ps.psg_id = tps.phenos_pk_id
  order by fish_zdb_id, fig_source_zdb_id;
 
 -- generate a file with xpatex and associated figure zdbid's
@@ -528,12 +527,10 @@ select distinct xpatex_zdb_id, xpatres_zdb_id, xpatfig_fig_zdb_id
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genofig_fish.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genofig_fish.txt'
  DELIMITER "	"
- select distinct fish_zdb_id, phenox_fig_zdb_id
- from fish_experiment, phenotype_experiment, fish
- where genox_zdb_id = phenox_genox_zdb_id
- and genox_fish_zdb_id = fish_zdb_id
- order by fish_zdb_id;
-
+ select distinct genox_fish_zdb_id, pg_fig_zdb_id
+ from fish_experiment, phenotype_source_generated
+ where genox_zdb_id = pg_genox_zdb_id
+ order by genox_fish_zdb_id;
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment_fish.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment_fish.txt'
@@ -543,10 +540,10 @@ select exp_zdb_id, cdt_group, cdt_name, expcond_comments
  where exp_zdb_id = expcond_exp_zdb_id
    and expcond_cdt_zdb_id = cdt_zdb_id
    and exists (
-	select 't'
-	 from fish_experiment, phenotype_experiment
-	 where exp_zdb_id = genox_exp_zdb_id
-	   and genox_zdb_id = phenox_genox_zdb_id
+        select 't'
+         from fish_experiment, phenotype_source_generated
+         where exp_zdb_id = genox_exp_zdb_id
+           and genox_zdb_id = pg_genox_zdb_id
 )
 union
 -- special handling for _Generic-control--insert into tmp_env
@@ -555,6 +552,76 @@ select exp_zdb_id, exp_name, exp_name,"This environment is used for non-standard
  where exp_name = "_Generic-control"
  order by 1,2
 ;
+
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt'
+select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb_id),
+                psg_mrkr_zdb_id, 
+                "expressed in",
+                "RO:0002206",
+                psg_e1a_name,
+                psg_e1a_zdb_id,
+                psg_e1b_name,
+                psg_e1b_zdb_id,
+                psg_quality_name,
+                psg_quality_zdb_id,
+                psg_tag,
+                (select stg_name from stage where stg_zdb_id = pg_start_stg_zdb_id),
+                pg_start_stg_zdb_id,
+                (select stg_name from stage where stg_zdb_id = pg_end_stg_zdb_id),
+                pg_end_stg_zdb_id,
+                xpatex_assay_name,
+                xpatex_probe_feature_zdb_id,
+                (select mrkr_abbrev from marker where mrkr_zdb_id = xpatex_atb_zdb_id),
+                xpatex_atb_zdb_id,
+                genox_fish_zdb_id,
+                genox_exp_zdb_id,
+                pg_fig_zdb_id,
+                fig_source_zdb_id,
+                pub.accession_no
+from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, fish_experiment, figure, publication pub
+where psg_mrkr_zdb_id[1,8] = "ZDB-GENE"
+  and psg_pg_id = pg_id
+  and xpatex_genox_zdb_id = pg_genox_zdb_id
+  and xpatex_gene_zdb_id = psg_mrkr_zdb_id
+  and genox_zdb_id = pg_genox_zdb_id
+  and fig_zdb_id = pg_fig_zdb_id
+  and pub.zdb_id = fig_source_zdb_id;
+
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_labeling_phenotype.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_labeling_phenotype.txt'
+select distinct (select mrkr_name from marker where mrkr_zdb_id = psg_mrkr_zdb_id),
+                psg_mrkr_zdb_id, 
+                "eptitope",
+                "SO:0001018",
+                "expressed in",
+                "RO:0002206",
+                psg_e1a_name,
+                psg_e1a_zdb_id,
+                psg_e1b_name,
+                psg_e1b_zdb_id,
+                psg_quality_name,
+                psg_quality_zdb_id,
+                psg_tag,
+                (select stg_name from stage where stg_zdb_id = pg_start_stg_zdb_id),
+                pg_start_stg_zdb_id,
+                (select stg_name from stage where stg_zdb_id = pg_end_stg_zdb_id),
+                pg_end_stg_zdb_id,
+                xpatex_assay_name,
+                genox_fish_zdb_id,
+                genox_exp_zdb_id,
+                pg_fig_zdb_id,
+                fig_source_zdb_id,
+                pub.accession_no
+from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, fish_experiment, figure, publication pub
+where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
+  and psg_pg_id = pg_id
+  and xpatex_genox_zdb_id = pg_genox_zdb_id
+  and xpatex_atb_zdb_id = psg_mrkr_zdb_id
+  and genox_zdb_id = pg_genox_zdb_id
+  and fig_zdb_id = pg_fig_zdb_id
+  and pub.zdb_id = fig_source_zdb_id;
+
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fishPub.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fishPub.txt'

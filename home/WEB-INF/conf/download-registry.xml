@@ -1122,6 +1122,150 @@
             <Column id="1" unique="true">Fish ID</Column>
             <Column id="2" unique="true">Figure ID</Column>
         </Download>
+        <Download orderIndex="7">
+            <Name>
+                Gene Expression Phenotypes
+            </Name>
+            <Category>
+                Phenotype Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>gene_expression_phenotype</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb_id),
+                psg_mrkr_zdb_id, 
+                "expressed in",
+                "RO:0002206",
+                psg_e1a_name,
+                psg_e1a_zdb_id,
+                psg_e1b_name,
+                psg_e1b_zdb_id,
+                psg_quality_name,
+                psg_quality_zdb_id,
+                psg_tag,
+                (select stg_name from stage where stg_zdb_id = pg_start_stg_zdb_id),
+                pg_start_stg_zdb_id,
+                (select stg_name from stage where stg_zdb_id = pg_end_stg_zdb_id),
+                pg_end_stg_zdb_id,
+                xpatex_assay_name,
+                xpatex_probe_feature_zdb_id,
+                (select mrkr_abbrev from marker where mrkr_zdb_id = xpatex_atb_zdb_id),
+                xpatex_atb_zdb_id,
+                genox_fish_zdb_id,
+                genox_exp_zdb_id,
+                pg_fig_zdb_id,
+                fig_source_zdb_id,
+                pub.accession_no
+from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, fish_experiment, figure, publication pub
+where psg_mrkr_zdb_id[1,8] = "ZDB-GENE"
+  and psg_pg_id = pg_id
+  and xpatex_genox_zdb_id = pg_genox_zdb_id
+  and xpatex_gene_zdb_id = psg_mrkr_zdb_id
+  and genox_zdb_id = pg_genox_zdb_id
+  and fig_zdb_id = pg_fig_zdb_id
+  and pub.zdb_id = fig_source_zdb_id
+                ]]>
+            </Query>
+            <Column id="1">Gene Symbol</Column>
+            <Column id="2">Gene ID</Column>
+            <Column id="3">RO Term</Column>
+            <Column id="4">RO ID</Column>
+            <Column id="5">Superstructure Name</Column>
+            <Column id="6">Superstructure ID</Column>
+            <Column id="7">Substructure Name</Column>
+            <Column id="8">Substructure ID</Column>
+            <Column id="9">Phenotype Keyword Name</Column>
+            <Column id="10">Phenotype Keyword ID</Column>
+            <Column id="11">Phenotype Tag</Column>
+            <Column id="12">Start Stage Name</Column>
+            <Column id="13">Start Stage ID</Column>
+            <Column id="14">End Stage Name</Column>
+            <Column id="15">End Stage ID</Column>
+            <Column id="16">Assay</Column>
+            <Column id="17">Probe ID</Column>
+            <Column id="18">Antibody Name</Column>
+            <Column id="19">Antibody ID</Column>
+            <Column id="20">Fish ID</Column>
+            <Column id="21">Environment ID</Column>
+            <Column id="22">Figure ID</Column>
+            <Column id="23">Publication ID</Column>
+            <Column id="24">PubMed ID</Column>
+        </Download>
+        <Download orderIndex="8">
+            <Name>
+                Antibody Labeling Phenotypes
+            </Name>
+            <Category>
+                Phenotype Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>antibody_labeling_phenotype</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+select distinct (select mrkr_name from marker where mrkr_zdb_id = psg_mrkr_zdb_id),
+                psg_mrkr_zdb_id, 
+                "eptitope",
+                "SO:0001018",
+                "expressed in",
+                "RO:0002206",
+                psg_e1a_name,
+                psg_e1a_zdb_id,
+                psg_e1b_name,
+                psg_e1b_zdb_id,
+                psg_quality_name,
+                psg_quality_zdb_id,
+                psg_tag,
+                (select stg_name from stage where stg_zdb_id = pg_start_stg_zdb_id),
+                pg_start_stg_zdb_id,
+                (select stg_name from stage where stg_zdb_id = pg_end_stg_zdb_id),
+                pg_end_stg_zdb_id,
+                xpatex_assay_name,
+                genox_fish_zdb_id,
+                genox_exp_zdb_id,
+                pg_fig_zdb_id,
+                fig_source_zdb_id,
+                pub.accession_no
+from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, fish_experiment, figure, publication pub
+where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
+  and psg_pg_id = pg_id
+  and xpatex_genox_zdb_id = pg_genox_zdb_id
+  and xpatex_atb_zdb_id = psg_mrkr_zdb_id
+  and genox_zdb_id = pg_genox_zdb_id
+  and fig_zdb_id = pg_fig_zdb_id
+  and pub.zdb_id = fig_source_zdb_id
+                ]]>
+            </Query>
+            <Column id="1">Antibody Name</Column>
+            <Column id="2">Antibody ID</Column>
+            <Column id="3">SO Term</Column>
+            <Column id="4">SO ID</Column>
+            <Column id="5">RO Term</Column>
+            <Column id="6">RO ID</Column>
+            <Column id="7">Superstructure Name</Column>
+            <Column id="8">Superstructure ID</Column>
+            <Column id="9">Substructure Name</Column>
+            <Column id="10">Substructure ID</Column>
+            <Column id="11">Phenotype Keyword Name</Column>
+            <Column id="12">Phenotype Keyword ID</Column>
+            <Column id="13">Phenotype Tag</Column>
+            <Column id="14">Start Stage Name</Column>
+            <Column id="15">Start Stage ID</Column>
+            <Column id="16">End Stage Name</Column>
+            <Column id="17">End Stage ID</Column>
+            <Column id="18">Assay</Column>
+            <Column id="19">Fish ID</Column>
+            <Column id="20">Environment ID</Column>
+            <Column id="21">Figure ID</Column>
+            <Column id="22">Publication ID</Column>
+            <Column id="23">PubMed ID</Column>
+        </Download>        
         <Download orderIndex="1">
             <Name>
                 Fish with Phenotypes
