@@ -555,7 +555,7 @@ select exp_zdb_id, exp_name, exp_name,"This environment is used for non-standard
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt'
-  DELIMITER "    "
+  DELIMITER "	"
 select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb_id),
                 psg_mrkr_zdb_id, 
                 "expressed in",
@@ -580,18 +580,22 @@ select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb
                 pg_fig_zdb_id,
                 fig_source_zdb_id,
                 pub.accession_no
-from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, fish_experiment, figure, publication pub
+from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, expression_figure_stage, fish_experiment, figure, publication pub
 where psg_mrkr_zdb_id[1,8] in ("ZDB-GENE", "ZDB-EFG-")
   and psg_pg_id = pg_id
   and xpatex_genox_zdb_id = pg_genox_zdb_id
   and xpatex_gene_zdb_id = psg_mrkr_zdb_id
+  and efs_xpatex_zdb_id = xpatex_zdb_id
+  and efs_fig_zdb_id = pg_fig_zdb_id
+  and efs_start_stg_zdb_id = pg_start_stg_zdb_id
+  and efs_end_stg_zdb_id = pg_end_stg_zdb_id
   and genox_zdb_id = pg_genox_zdb_id
   and fig_zdb_id = pg_fig_zdb_id
   and pub.zdb_id = fig_source_zdb_id;
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_labeling_phenotype.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_labeling_phenotype.txt'
-  DELIMITER "    "
+  DELIMITER "	"
 select distinct (select mrkr_name from marker where mrkr_zdb_id = psg_mrkr_zdb_id),
                 psg_mrkr_zdb_id, 
                 "eptitope",
@@ -615,11 +619,15 @@ select distinct (select mrkr_name from marker where mrkr_zdb_id = psg_mrkr_zdb_i
                 pg_fig_zdb_id,
                 fig_source_zdb_id,
                 pub.accession_no
-from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, fish_experiment, figure, publication pub
+from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, expression_figure_stage, fish_experiment, figure, publication pub
 where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
   and psg_pg_id = pg_id
   and xpatex_genox_zdb_id = pg_genox_zdb_id
   and xpatex_atb_zdb_id = psg_mrkr_zdb_id
+  and efs_xpatex_zdb_id = xpatex_zdb_id
+  and efs_fig_zdb_id = pg_fig_zdb_id
+  and efs_start_stg_zdb_id = pg_start_stg_zdb_id
+  and efs_end_stg_zdb_id = pg_end_stg_zdb_id
   and genox_zdb_id = pg_genox_zdb_id
   and fig_zdb_id = pg_fig_zdb_id
   and pub.zdb_id = fig_source_zdb_id;
