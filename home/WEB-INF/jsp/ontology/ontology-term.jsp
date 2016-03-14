@@ -156,12 +156,14 @@
         <zfin-ontology:phenogrid doid="${formBean.term.oboID}"/>
     </c:if>
 
-    <c:choose>
-        <c:when test="${numberOfCitations == 0}"><span class="name-label"> CITATIONS:</span> None</c:when>
-        <c:otherwise>
-            <a href="/action/ontology/disease-publication-list/${term.oboID}">CITATIONS</a> (${numberOfCitations})
-        </c:otherwise>
-    </c:choose>
+    <div class="summary">
+        <c:choose>
+            <c:when test="${numberOfCitations == 0}"><span class="name-label"> CITATIONS:</span> None</c:when>
+            <c:otherwise>
+                <a href="/action/ontology/disease-publication-list/${term.oboID}">CITATIONS</a> (${numberOfCitations})
+            </c:otherwise>
+        </c:choose>
+    </div>
 
 </div>
 <script>

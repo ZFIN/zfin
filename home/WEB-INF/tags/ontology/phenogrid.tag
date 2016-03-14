@@ -21,31 +21,27 @@
             url: "https://beta.monarchinitiative.org/disease/${doid}/phenotype_list.json",
             success: function(data) {
 
-                $('#phenotype-no-data-tag').hide();
-                $('#phenogrid-title').show();
-
-                var phenotypes = [];
+                $('#disease-phenotype-spinner').hide();
 
                 if (data.phenotype_list.length == 0) {
-                    $('disease-phenotype-no-data-tag').show();
+                    $('#phen_vis').hide();
+                    $('#disease-phenotype-no-data-tag').show();
+
+                } else {
+                    var phenotypes = data.phenotype_list.map(function (p) { return p.id; });
+
+                    Phenogrid.createPhenogridForElement(document.getElementById('phen_vis'), {
+                        serverURL : "https://beta.monarchinitiative.org",
+                        phenotypeData: phenotypes,
+                        targetGroupList: [
+                            {name: "Danio rerio", taxon: "7955", crossComparisonView: true, active: true},
+                            {name: "Homo sapiens", taxon: "9606", crossComparisonView: true, active: true},
+                            {name: "Mus musculus", taxon: "10090", crossComparisonView: true, active: true}
+                        ]
+                    });
                 }
 
-                $.each(data.phenotype_list, function() {
-                    phenotypes.push(this.id);
-                });
 
-                document.phenotypes = phenotypes;
-                console.log(phenotypes);
-
-                Phenogrid.createPhenogridForElement(document.getElementById('phen_vis'), {
-                    serverURL : "https://beta.monarchinitiative.org",
-                    phenotypeData: phenotypes,
-                    targetGroupList: [
-                        {name: "Danio rerio", taxon: "7955", crossComparisonView: true, active: true},
-                        {name: "Homo sapiens", taxon: "9606", crossComparisonView: true, active: true},
-                        {name: "Mus musculus", taxon: "10090", crossComparisonView: true, active: true}
-                    ]
-                });
 
             }
         });
@@ -60,6 +56,7 @@
 <div class="summary">
 
     <span class="summaryTitle" id="phenogrid-title">DISEASE PHENOTYPE</span>
+    <img id="disease-phenotype-spinner" src="/images/ajax-loader.gif" alt="loading...">
     <span  class="no-data-tag" id="disease-phenotype-no-data-tag" style="display:none">No data available</span>
     <div id="phen_vis" class="clearfix"></div>
 </div>
