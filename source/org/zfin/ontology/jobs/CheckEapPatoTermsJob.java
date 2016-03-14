@@ -46,7 +46,7 @@ public class CheckEapPatoTermsJob extends AbstractValidateDataReportTask {
             String id = patoString.split(",")[0];
             Term patoTerm = getOntologyRepository().getTermByOboID(id);
             List<String> list = new ArrayList<>(2);
-            if (patoTerm == null) {
+            if (patoTerm == null || patoTerm.isSecondary()) {
                 list.add(patoString);
                 mergedTermList.add(list);
                 continue;
@@ -54,8 +54,8 @@ public class CheckEapPatoTermsJob extends AbstractValidateDataReportTask {
             if (patoTerm.isObsolete()) {
                 list.add(patoTerm.getOboID());
                 list.add(patoTerm.getTermName());
+                obsoleteTermList.add(list);
             }
-            obsoleteTermList.add(list);
         }
 
         String reportName = jobName + ".obsoleted-eap-term";
