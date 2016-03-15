@@ -124,13 +124,6 @@ public class FigureService {
                 Figure fig = RepositoryFactory.getPublicationRepository().getFigureByID(figId);
                 figures.add(fig);
             }
-        } else if (expressionCriteria.getAntibody() != null) {
-            List<String> expressionFigureIDs = RepositoryFactory.getExpressionRepository().getExpressionFigureIDsByAntibodyLabeling(expressionCriteria.getAntibody().getZdbID(), expressionCriteria.getEntity(), expressionCriteria.getStart().getZdbID(), expressionCriteria.getEnd().getZdbID());
-            figures = new ArrayList<>();
-            for (String figId : expressionFigureIDs) {
-                Figure fig = RepositoryFactory.getPublicationRepository().getFigureByID(figId);
-                figures.add(fig);
-            }
         } else {
             figures = expressionRepository.getFigures(expressionCriteria);
         }

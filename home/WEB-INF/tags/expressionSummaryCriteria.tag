@@ -48,7 +48,7 @@
         </tr>
     </c:if>
 
-    <c:if test="${!empty criteria.singleTermEitherPosition}">
+    <c:if test="${empty criteria.entity && !empty criteria.singleTermEitherPosition}">
         <tr>
             <th>Term:</th>
             <td><zfin:link entity="${criteria.singleTermEitherPosition}" suppressPopupLink="true"/></td>

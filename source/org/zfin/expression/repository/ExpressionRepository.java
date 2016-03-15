@@ -421,7 +421,4 @@ public interface ExpressionRepository {
     List<ExpressionExperiment2> getExpressionExperiment2sByFish (Fish fish);
 
     List<ExpressionResult2> getExpressionResultList(Marker gene);
-
-    List<String> getExpressionFigureIDsByAntibodyLabeling (String antibodyID, PostComposedEntity postComposedEntity, String startStageID, String endStageID);
-
 }
