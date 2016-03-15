@@ -3,6 +3,7 @@
  */
 package org.zfin.infrastructure.repository;
 
+import org.zfin.util.ZfinStringUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -1112,8 +1113,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                     } else if (columnType.equals("java.lang.Long")) {
                         long number = Long.valueOf(column);
                         statement.setLong(index++, number);
-                    } else
-                        statement.setString(index++, column);
+                    } else {
+                        String unicoded = column;
+                        if (column != null)
+                            unicoded = ZfinStringUtils.escapeHighUnicode(column);;
+                        statement.setString(index++, unicoded);
+                    }
                 }
                 statement.addBatch();
                 currentBatchSize++;
