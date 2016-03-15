@@ -539,7 +539,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                  join term as quality on psg_quality_zdb_id = quality.term_zdb_id
                                  left outer join term as super_2 on psg_e2a_zdb_id = super_2.term_zdb_id
                                  left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                         "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
@@ -1233,7 +1233,7 @@ from phenotype_observation_generated
      join term as quality on psg_quality_zdb_id = quality.term_zdb_id
      left outer join term as super_2 on psg_e2a_zdb_id = super_2.term_zdb_id
      left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id
-where psg_tag = 'abnormal'  "
+where psg_tag != 'normal'  "
                    where="fish_zdb_id=fish.id"
                    cacheImpl="SortedMapBackedCache"/>
 
@@ -1987,7 +1987,7 @@ select
                             'pg-' || pg_id as pg_id
                             from phenotype_observation_generated
                                  join phenotype_source_generated on psg_pg_id = pg_id
-                            where psg_tag = 'abnormal';"
+                            where psg_tag != 'normal';"
                    where="pg_id=phenotype.id"
                    cacheImpl="SortedMapBackedCache"/>
 
@@ -3155,7 +3155,7 @@ where feature_zdb_id = ids_data_zdb_id
                                  join term as quality on psg_quality_zdb_id = quality.term_zdb_id
                                  left outer join term as super_2 on psg_e2a_zdb_id = super_2.term_zdb_id
                                  left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id
-                            where psg_tag = 'abnormal';"
+                            where psg_tag != 'normal';"
                cacheImpl="SortedMapBackedCache"
                where="feature_zdb_id=feature.id"/>
 
@@ -3188,7 +3188,7 @@ where feature_zdb_id = ids_data_zdb_id
                                    join fish_experiment on pg_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on psg_e1a_zdb_id = term.term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'zebrafish_anatomy'
                         UNION
                         select distinct
@@ -3201,7 +3201,7 @@ where feature_zdb_id = ids_data_zdb_id
                                    join fish_experiment on pg_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on psg_e1b_zdb_id = term.term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'zebrafish_anatomy'
                         UNION
                         select distinct
@@ -3214,7 +3214,7 @@ where feature_zdb_id = ids_data_zdb_id
                                    join fish_experiment on pg_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on psg_e2a_zdb_id = term.term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'zebrafish_anatomy'
                         UNION
                         select distinct
@@ -3227,7 +3227,7 @@ where feature_zdb_id = ids_data_zdb_id
                                    join fish_experiment on pg_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on psg_e2b_zdb_id = term.term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'zebrafish_anatomy' "
                cacheImpl="SortedMapBackedCache"
                where="feature_zdb_id=feature.id"/>
@@ -3244,7 +3244,7 @@ where feature_zdb_id = ids_data_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = psg_e1a_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'zebrafish_anatomy'
                         UNION
                         select distinct
@@ -3258,7 +3258,7 @@ where feature_zdb_id = ids_data_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = psg_e1b_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'zebrafish_anatomy'
                         UNION
                         select distinct
@@ -3272,7 +3272,7 @@ where feature_zdb_id = ids_data_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = psg_e2a_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'zebrafish_anatomy'
                         UNION
                         select distinct
@@ -3286,7 +3286,7 @@ where feature_zdb_id = ids_data_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = psg_e2b_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'zebrafish_anatomy' "
                cacheImpl="SortedMapBackedCache"
                where="feature_zdb_id=feature.id"/>
@@ -3303,7 +3303,7 @@ where feature_zdb_id = ids_data_zdb_id
                                    join fish_experiment on pg_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on psg_e1a_zdb_id = term.term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'biological_process'
                         UNION
                         select distinct
@@ -3316,7 +3316,7 @@ where feature_zdb_id = ids_data_zdb_id
                                    join fish_experiment on pg_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on psg_e1b_zdb_id = term.term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'biological_process'
                         UNION
                         select distinct
@@ -3329,7 +3329,7 @@ where feature_zdb_id = ids_data_zdb_id
                                    join fish_experiment on pg_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on psg_e2a_zdb_id = term.term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'biological_process'
                         UNION
                         select distinct
@@ -3342,7 +3342,7 @@ where feature_zdb_id = ids_data_zdb_id
                                    join fish_experiment on pg_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on psg_e2b_zdb_id = term.term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'biological_process'; "
                    cacheImpl="SortedMapBackedCache"
                    where="feature_zdb_id=feature.id"/>
@@ -3359,7 +3359,7 @@ where feature_zdb_id = ids_data_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = psg_e1a_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'biological_process'
                         UNION
                         select distinct
@@ -3373,7 +3373,7 @@ where feature_zdb_id = ids_data_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = psg_e1b_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'biological_process'
                         UNION
                         select distinct
@@ -3387,7 +3387,7 @@ where feature_zdb_id = ids_data_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = psg_e2a_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'biological_process'
                         UNION
                         select distinct
@@ -3401,7 +3401,7 @@ where feature_zdb_id = ids_data_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = psg_e2b_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'biological_process'; "
                    cacheImpl="SortedMapBackedCache"
                    where="feature_zdb_id=feature.id"/>
@@ -3418,7 +3418,7 @@ where feature_zdb_id = ids_data_zdb_id
                                    join fish_experiment on pg_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on psg_e1a_zdb_id = term.term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'cellular_component'
                         UNION
                         select distinct
@@ -3431,7 +3431,7 @@ where feature_zdb_id = ids_data_zdb_id
                                    join fish_experiment on pg_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on psg_e1b_zdb_id = term.term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'cellular_component'
                         UNION
                         select distinct
@@ -3444,7 +3444,7 @@ where feature_zdb_id = ids_data_zdb_id
                                    join fish_experiment on pg_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on psg_e2a_zdb_id = term.term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'cellular_component'
                         UNION
                         select distinct
@@ -3457,7 +3457,7 @@ where feature_zdb_id = ids_data_zdb_id
                                    join fish_experiment on pg_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on psg_e2b_zdb_id = term.term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'cellular_component'; "
                    cacheImpl="SortedMapBackedCache"
                    where="feature_zdb_id=feature.id"/>
@@ -3474,7 +3474,7 @@ where feature_zdb_id = ids_data_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = psg_e1a_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'cellular_component'
                         UNION
                         select distinct
@@ -3488,7 +3488,7 @@ where feature_zdb_id = ids_data_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = psg_e1b_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'cellular_component'
                         UNION
                         select distinct
@@ -3502,7 +3502,7 @@ where feature_zdb_id = ids_data_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = psg_e2a_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'cellular_component'
                         UNION
                         select distinct
@@ -3516,7 +3516,7 @@ where feature_zdb_id = ids_data_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = psg_e2b_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'cellular_component'; "
                    cacheImpl="SortedMapBackedCache"
                    where="feature_zdb_id=feature.id"/>
@@ -3532,7 +3532,7 @@ where feature_zdb_id = ids_data_zdb_id
                                    join fish_experiment on pg_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on psg_e1a_zdb_id = term.term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'molecular_function'
                         UNION
                         select distinct
@@ -3545,7 +3545,7 @@ where feature_zdb_id = ids_data_zdb_id
                                    join fish_experiment on pg_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on psg_e1b_zdb_id = term.term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'molecular_function'
                         UNION
                         select distinct
@@ -3558,7 +3558,7 @@ where feature_zdb_id = ids_data_zdb_id
                                    join fish_experiment on pg_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on psg_e2a_zdb_id = term.term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'molecular_function'
                         UNION
                         select distinct
@@ -3571,7 +3571,7 @@ where feature_zdb_id = ids_data_zdb_id
                                    join fish_experiment on pg_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on psg_e2b_zdb_id = term.term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'molecular_function'; "
                    cacheImpl="SortedMapBackedCache"
                    where="feature_zdb_id=feature.id"/>
@@ -3588,7 +3588,7 @@ where feature_zdb_id = ids_data_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = psg_e1a_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'molecular_function'
                         UNION
                         select distinct
@@ -3602,7 +3602,7 @@ where feature_zdb_id = ids_data_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = psg_e1b_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'molecular_function'
                         UNION
                         select distinct
@@ -3616,7 +3616,7 @@ where feature_zdb_id = ids_data_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = psg_e2a_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'molecular_function'
                         UNION
                         select distinct
@@ -3630,7 +3630,7 @@ where feature_zdb_id = ids_data_zdb_id
                                   join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = psg_e2b_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
-                            where psg_tag = 'abnormal'
+                            where psg_tag != 'normal'
                               and term.term_ontology = 'molecular_function'; "
                    cacheImpl="SortedMapBackedCache"
                    where="feature_zdb_id=feature.id"/>
@@ -4413,7 +4413,7 @@ from phenotype_observation_generated
      join term as quality on psg_quality_zdb_id = quality.term_zdb_id
      left outer join term as super_2 on psg_e2a_zdb_id = super_2.term_zdb_id
      left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id
-where psg_tag = 'abnormal';
+where psg_tag != 'normal';
  "
                           cacheImpl="SortedMapBackedCache"
                           where="fig_zdb_id=figure.id"/>
