@@ -152,9 +152,11 @@
 
 
 
-    <c:if test="${isDiseaseTerm}">
-        <zfin-ontology:phenogrid doid="${formBean.term.oboID}"/>
-    </c:if>
+    <authz:authorize access="hasRole('root')">
+        <c:if test="${isDiseaseTerm}">
+            <zfin-ontology:phenogrid doid="${formBean.term.oboID}"/>
+        </c:if>
+    </authz:authorize>
 
     <div class="summary">
         <c:choose>
