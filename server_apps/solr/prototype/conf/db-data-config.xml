@@ -547,7 +547,8 @@ where mrkr_type in ('GENE','GENEP','EFG')
 
                 <entity name="gene_misexpressed_gene" datasource="db" transformer="RegexTransformer"
                         query="select distinct misexpressed_gene.mrkr_abbrev || ',Any' as misexpressed_gene,
-                                       mfs_mrkr_zdb_id as gene_zdb_id
+                                               mrkr_abbrev || ' misexpression' as expression_observation,
+                                               mfs_mrkr_zdb_id as gene_zdb_id
                                 from expression_experiment2
                                      join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                      join expression_result2 on xpatres_efs_id = efs_pk_id
@@ -1241,6 +1242,7 @@ where psg_tag != 'normal'  "
 
            <entity name="fish_misexpressed_gene" datasource="db" transformer="RegexTransformer"
                    query="select mrkr_abbrev || ',Any' as misexpressed_gene,
+                                 mrkr_abbrev || ' misexpression' as expression_observation,
                                    genox_fish_zdb_id as fish_zdb_id
                             from expression_experiment2
                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
@@ -1993,6 +1995,7 @@ select
 
            <entity name="phenotype_misexpressed_gene" datasource="db" transformer="RegexTransformer"
                    query="select mrkr_abbrev || ',Any' as misexpressed_gene,
+                                 mrkr_abbrev || ' misexpression' as expression_observation,
                                         'pg-' || pg_id as pg_id
                             from phenotype_source_generated
                                  join phenotype_observation_generated on psg_pg_id = pg_id
@@ -3161,6 +3164,7 @@ where feature_zdb_id = ids_data_zdb_id
 
        <entity name="feature_misexpressed_gene" datasource="db" transformer="RegexTransformer"
                query="select distinct mrkr_abbrev || ',Any' as misexpressed_gene,
+                                      mrkr_abbrev || ' misexpression' as expression_observation,
                                         genofeat_feature_zdb_id as feature_zdb_id
                              from expression_experiment2
                                   join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
@@ -4420,7 +4424,9 @@ where psg_tag != 'normal';
 
 
            <entity name="figure_misexpressed_gene" datasource="db" transformer="RegexTransformer"
-                   query="select mrkr_abbrev || ',Any' as misexpressed_gene, efs_fig_zdb_id as fig_zdb_id
+                   query="select mrkr_abbrev || ',Any' as misexpressed_gene,
+                                 mrkr_abbrev || ' misexpression' as expression_observation,
+                                 efs_fig_zdb_id as fig_zdb_id
                             from expression_experiment2
                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                  join expression_result2 on xpatres_efs_id = efs_pk_id
