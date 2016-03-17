@@ -1594,6 +1594,7 @@ public class DTOConversionService {
         }
         experimentDTO.setFishName(experiment.getFishExperiment().getFish().getHandle());
         experimentDTO.setFishID(experiment.getFishExperiment().getFish().getZdbID());
+        experimentDTO.setFishDTO(convertToFishDtoFromFish(experiment.getFishExperiment().getFish()));
         experimentDTO.setEnvironment(convertToEnvironmentDTO(experiment.getFishExperiment().getExperiment()));
         experimentDTO.setAssay(experiment.getAssay().getName());
         experimentDTO.setAssayAbbreviation(experiment.getAssay().getAbbreviation());

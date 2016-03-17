@@ -34,7 +34,8 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     // avoid double updates
     private boolean updateButtonInProgress;
     private boolean showSelectedExperimentsOnly;
-
+    private Map<String, MarkerDTO> geneMap = new HashMap<>();
+    private Map<String, FishDTO> fishMap = new HashMap<>();
     // filter set by the banana bar
     private ExperimentDTO experimentFilter = new ExperimentDTO();
 
@@ -102,6 +103,12 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             view.cleanupOnExit();
             return;
         }
+        if (isEfgWildtypeCombo(zoneExperiment)) {
+            //Window.alert("experiment exists: ");
+            view.setError("Cannot create an experiment with an EFG and a wildtype fish!");
+            view.cleanupOnExit();
+            return;
+        }
         if (experimentExists(zoneExperiment, true)) {
             //Window.alert("experiment exists: ");
             view.setError("Experiment already exists. Experiments have to be unique!");
@@ -113,12 +120,26 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     }
 
+    private boolean isEfgWildtypeCombo(ExperimentDTO experimentDTO) {
+        Window.alert("Type: " + experimentDTO.getGene().getMarkerType());
+        if (experimentDTO.getGene().getMarkerType().equals("Engineered Foreign Gene"))
+            Window.alert("WT: " + experimentDTO.getFishDTO().isWildtype());
+            if (experimentDTO.getFishDTO().isWildtype())
+                return true;
+        return false;
+    }
+
     protected void populateDataTable() {
         int elementIndex = 0;
+        geneMap.clear();
+        fishMap.clear();
         for (ExperimentDTO experiment : experimentList) {
             if (showSelectedExperimentsOnly && !selectedExperiments.contains(experiment))
                 continue;
-            view.addGene(experiment.getGene(), elementIndex);
+            MarkerDTO gene = experiment.getGene();
+            geneMap.put(gene.getZdbID(), gene);
+            fishMap.put(experiment.getFishID(), experiment.getFishDTO());
+            view.addGene(gene, elementIndex);
             view.addFish(experiment.getFishName(), elementIndex);
             view.addEnvironment(experiment.getEnvironment(), elementIndex);
             view.addAssay(experiment.getAssay(), elementIndex);
@@ -261,11 +282,10 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         updatedExperiment.setFishID(fishID);
         String fishName = view.getFishList().getItemText(view.getFishList().getSelectedIndex());
         updatedExperiment.setFishName(fishName);
+        updatedExperiment.setFishDTO(fishMap.get(fishID));
         String geneID = view.getGeneList().getValue(view.getGeneList().getSelectedIndex());
         if (StringUtils.isNotEmpty(geneID) && !geneID.equals(StringUtils.NULL)) {
-            MarkerDTO gene = new MarkerDTO();
-            gene.setZdbID(geneID);
-            updatedExperiment.setGene(gene);
+            updatedExperiment.setGene(geneMap.get(geneID));
         }
         updatedExperiment.setPublicationID(publicationID);
         return updatedExperiment;
@@ -634,10 +654,10 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         public void onSuccess(List<ExperimentDTO> list) {
             super.onSuccess(list);
             experimentList.clear();
-            for (ExperimentDTO id : list) {
-                if (id.getEnvironment().getName().startsWith("_"))
-                    id.getEnvironment().setName(id.getEnvironment().getName().substring(1));
-                experimentList.add(id);
+            for (ExperimentDTO experiment : list) {
+                if (experiment.getEnvironment().getName().startsWith("_"))
+                    experiment.getEnvironment().setName(experiment.getEnvironment().getName().substring(1));
+                experimentList.add(experiment);
             }
             Collections.sort(experimentList);
             //Window.alert("SIZE: " + experiments.size());
