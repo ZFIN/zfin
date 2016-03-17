@@ -556,7 +556,7 @@ select exp_zdb_id, exp_name, exp_name,"This environment is used for non-standard
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt'
   DELIMITER "	"
-select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb_id),
+select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb_id) as gene,
                 psg_mrkr_zdb_id, 
                 "expressed in",
                 "RO:0002206",
@@ -577,10 +577,10 @@ select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb
                 xpatex_atb_zdb_id,
                 genox_fish_zdb_id,
                 genox_exp_zdb_id,
-                pg_fig_zdb_id,
-                fig_source_zdb_id,
+                pg_fig_zdb_id as figure,
+                fig_source_zdb_id as publication,
                 pub.accession_no
-from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, expression_figure_stage, fish_experiment, figure, publication pub
+from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, expression_figure_stage, expression_result2, fish_experiment, figure, publication pub
 where psg_mrkr_zdb_id[1,8] in ("ZDB-GENE", "ZDB-EFG-")
   and psg_pg_id = pg_id
   and xpatex_genox_zdb_id = pg_genox_zdb_id
@@ -589,14 +589,17 @@ where psg_mrkr_zdb_id[1,8] in ("ZDB-GENE", "ZDB-EFG-")
   and efs_fig_zdb_id = pg_fig_zdb_id
   and efs_start_stg_zdb_id = pg_start_stg_zdb_id
   and efs_end_stg_zdb_id = pg_end_stg_zdb_id
+  and xpatres_efs_id = efs_pk_id
+  and xpatres_superterm_zdb_id = psg_e1a_zdb_id
   and genox_zdb_id = pg_genox_zdb_id
   and fig_zdb_id = pg_fig_zdb_id
-  and pub.zdb_id = fig_source_zdb_id;
+  and pub.zdb_id = fig_source_zdb_id 
+ order by gene, publication, figure;
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_labeling_phenotype.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_labeling_phenotype.txt'
   DELIMITER "	"
-select distinct (select mrkr_name from marker where mrkr_zdb_id = psg_mrkr_zdb_id),
+select distinct (select mrkr_name from marker where mrkr_zdb_id = psg_mrkr_zdb_id) as antibody,
                 psg_mrkr_zdb_id, 
                 "eptitope",
                 "SO:0001018",
@@ -616,10 +619,10 @@ select distinct (select mrkr_name from marker where mrkr_zdb_id = psg_mrkr_zdb_i
                 xpatex_assay_name,
                 genox_fish_zdb_id,
                 genox_exp_zdb_id,
-                pg_fig_zdb_id,
-                fig_source_zdb_id,
-                pub.accession_no
-from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, expression_figure_stage, fish_experiment, figure, publication pub
+                pg_fig_zdb_id as figure,
+                fig_source_zdb_id as publication,
+                pub.accession_no 
+from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, expression_figure_stage, expression_result2, fish_experiment, figure, publication pub
 where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
   and psg_pg_id = pg_id
   and xpatex_genox_zdb_id = pg_genox_zdb_id
@@ -628,9 +631,12 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
   and efs_fig_zdb_id = pg_fig_zdb_id
   and efs_start_stg_zdb_id = pg_start_stg_zdb_id
   and efs_end_stg_zdb_id = pg_end_stg_zdb_id
+  and xpatres_efs_id = efs_pk_id
+  and xpatres_superterm_zdb_id = psg_e1a_zdb_id
   and genox_zdb_id = pg_genox_zdb_id
   and fig_zdb_id = pg_fig_zdb_id
-  and pub.zdb_id = fig_source_zdb_id;
+  and pub.zdb_id = fig_source_zdb_id
+ order by antibody, publication, figure;
 
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fishPub.txt'"

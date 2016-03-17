@@ -590,6 +590,13 @@ video {
     border: 0;
 }
 
+.gbrowse-source-label {
+    margin: 5px;
+    display: block;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
 .table-collapse-link {
     color: #0000ff;
 }

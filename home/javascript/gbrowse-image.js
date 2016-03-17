@@ -83,7 +83,18 @@
                 success = this.options.success,
                 link, img;
 
+            if (!this.options.imageUrl) {
+                return;
+            }
+
             host.hide();
+
+            if (this.options.build) {
+                $('<span>')
+                    .addClass('gbrowse-source-label')
+                    .text('Data Source: ' + this.options.build)
+                    .appendTo(target);
+            }
 
             link = $('<a>')
                 .attr('href', this.options.linkUrl)
@@ -98,7 +109,9 @@
                 if (wasDisplayed) {
                     host.show();
                 }
-                success();
+                if (typeof success === 'function') {
+                    success();
+                }
             });
 
             // if the image was already loaded (e.g. due to caching), manually trigger the load event
