@@ -244,7 +244,8 @@
         jQuery(".gbrowse-image").gbrowseImage({
             width: 400,
             imageUrl: "${formBean.gBrowseImage.imageUrl}",
-            linkUrl: "${formBean.gBrowseImage.linkUrl}"
+            linkUrl: "${formBean.gBrowseImage.linkUrl}",
+            build: "${formBean.gBrowseImage.build}"
         });
     </script>
 </td></tr></table>
