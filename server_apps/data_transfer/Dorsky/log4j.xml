@@ -15,11 +15,11 @@
     <category name="org.zfin" additivity="true">
         <priority value="info"/>
     </category>
+<!--
     <category name="org.hibernate.SQL" additivity="true">
         <priority value="debug"/>
     </category>
 
-<!--
 
     <category name="org.hibernate.SQL" additivity="true">
         <priority value="trace"/>
