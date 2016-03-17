@@ -3,12 +3,12 @@
 
 <script src="/javascript/gbrowse-image.js"></script>
 
-<div class="summaryTitle">Target Locations for <a href="/${formBean.marker.zdbID}">${formBean.marker.abbreviation}</div>
+<div class="summaryTitle">Target Locations for <zfin:link entity="${formBean.marker}"/></div>
 
 <c:forEach items="${formBean.gbrowseImages}" var="image">
     <div>
         <div class="gbrowse-image"
-             data-gbrowse-image='{"imageUrl": "${image.imageUrl}", "linkUrl": "${image.linkUrl}"}'>
+             data-gbrowse-image='{"imageUrl": "${image.imageUrl}", "linkUrl": "${image.linkUrl}", "build": "${image.build}"}'>
         </div>
     </div>
 </c:forEach>

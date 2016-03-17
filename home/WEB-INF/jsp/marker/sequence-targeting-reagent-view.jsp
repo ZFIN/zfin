@@ -42,7 +42,7 @@
 
     <c:forEach items="${formBean.gbrowseImages}" var="image" end="1">
         <div class="gbrowse-image"
-             data-gbrowse-image='{"imageUrl": "${image.imageUrl}", "linkUrl": "${image.linkUrl}"}'>
+             data-gbrowse-image='{"imageUrl": "${image.imageUrl}", "linkUrl": "${image.linkUrl}", "build": "${image.build}"}'>
         </div>
     </c:forEach>
 
