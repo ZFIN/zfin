@@ -39,6 +39,7 @@
 </div>
 
 <%--// PHENOTYPE --%>
+
 <zfin2:phenotype phenotypeOnMarkerBean="${formBean.phenotypeOnMarkerBeans}" marker="${formBean.marker}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
 
 <%--// DISEASE --%>
@@ -58,6 +59,18 @@
 
 <zfin2:geneProductsDescription geneBean="${formBean}"/>
 
+
+<zfin2:subsection title="INTERACTIONS AND PATHWAYS" anchor="pathway_links"
+                  test="${!empty formBean.pathwayDBLinks}" showNoData="true" noDataText="No data available">
+    <table class="summary">
+        <c:forEach var="link" items="${formBean.pathwayDBLinks}" varStatus="loop">
+            <tr>
+                <td><a href="${link.link}">${link.referenceDatabaseName}</a></td>
+            </tr>
+        </c:forEach>
+    </table>
+</zfin2:subsection>
+
 <%--Antibodies--%>
 <zfin2:markerRelationshipsLightSingleType relationships="${formBean.relatedAntibodies}" marker="${formBean.marker}" title="ANTIBODIES" maxNumber="5"/>
 
@@ -72,6 +85,8 @@
         </c:forEach>
     </table>
 </zfin2:subsection>
+
+
 
 <%--Constructs--%>
 <zfin2:constructsWithSequences formBean="${formBean}"/>
