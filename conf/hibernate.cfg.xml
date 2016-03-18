@@ -77,6 +77,8 @@
         <mapping class="org.zfin.mutant.Genotype"/>
         <mapping class="org.zfin.feature.FeatureAssay"/>
         <mapping class="org.zfin.feature.MutationDetail"/>
+        <mapping class="org.zfin.feature.FeatureHistory"/>
+        <mapping class="org.zfin.feature.FeaturePrefix"/>
 
 
     </session-factory>

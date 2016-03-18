@@ -15,9 +15,7 @@ import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.expression.ExpressionPhenotypeTerm;
 import org.zfin.expression.ExpressionResult2;
-import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureAssay;
-import org.zfin.feature.MutationDetail;
+import org.zfin.feature.*;
 import org.zfin.framework.presentation.AnatomyFact;
 import org.zfin.marker.presentation.HighQualityProbeAOStatistics;
 import org.zfin.mutant.*;
@@ -125,6 +123,8 @@ public class HibernateSessionCreator {
                     .addAnnotatedClass(FeatureAssay.class)
                     .addAnnotatedClass(MutationDetail.class)
                     .addAnnotatedClass(Genotype.class)
+                    .addAnnotatedClass(FeatureHistory.class)
+                    .addAnnotatedClass(FeaturePrefix.class)
                     .buildSessionFactory());
         }
     }

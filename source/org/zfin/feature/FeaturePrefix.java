@@ -3,12 +3,22 @@ package org.zfin.feature;
 
 import org.zfin.infrastructure.EntityZdbID;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "feature_prefix")
 public class FeaturePrefix implements EntityZdbID {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "fp_pk_id")
     private int featurePkID;
+    @Column(name = "fp_prefix")
     private String prefixString;
     // this is a convenience method that says, is this the active prefix of a given set of prefixes
+    @Transient
     private boolean activeForSet;
+    @Column(name = "fp_institute_display")
     private String institute;
 
     public int getFeaturePkID() {

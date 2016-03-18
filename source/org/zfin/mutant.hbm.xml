@@ -323,29 +323,6 @@
 
     </class>
 
-    <!--This is here solely for the purpose of hql query to allow ordering by significane.-->
-    <!--This is also mapped by FeatureTypeEnum, which should be used primarily.-->
-    <class name="org.zfin.feature.FeatureType" table="feature_type">
-        <id name="name">
-            <column name="ftrtype_name"/>
-        </id>
-        <property name="significance">
-            <column name="ftrtype_significance"/>
-        </property>
-        <property name="dispName">
-            <column name="ftrtype_type_display"/>
-        </property>
-    </class>
-
-    <class name="org.zfin.feature.FeaturePrefix" table="feature_prefix">
-        <id name="featurePkID" type="integer">
-            <column name="fp_pk_id"/>
-        </id>
-        <property name="prefixString" column="fp_prefix"/>
-        <property name="institute" column="fp_institute_display"/>
-    </class>
-
-
     <class name="org.zfin.feature.FeatureTypeGroup" mutable="false" table="feature_type_group">
         <cache usage="read-only"/>
         <id name="name">
