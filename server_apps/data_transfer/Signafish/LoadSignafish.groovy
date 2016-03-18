@@ -88,7 +88,7 @@ linksToDelete.each { link ->
 }
 
 
-println "Adding new Addgene db links "
+println "Adding new Signafish db links "
 hql = """from Marker
          where zdbID in (:accNums)
           """
@@ -96,46 +96,28 @@ query = session.createQuery(hql)
 
 query.setParameterList("accNums", array)
 addedLinks = query.list().collect { genes ->
-    addgeneLink = new MarkerDBLink()
-    addgeneLink.with {
+    signafishLink = new MarkerDBLink()
+    signafishLink.with {
         marker = genes
         accessionNumber = genes.zdbID
         accessionNumberDisplay = genes.zdbID
         linkInfo = String.format("Uncurated: signafish load for %tF", new Date())
         referenceDatabase = signafishDb
     }
-    session.save(addgeneLink)
-    println "  $addgeneLink.zdbID"
-    addgeneLink
+    session.save(signafishLink)
+    println "  $signafishLink.zdbID"
+    signafishLink
     println "Adding new attributions test "
     recAttr = new RecordAttribution()
     recAttr.with {
 
-        dataZdbID = addgeneLink.zdbID
+        dataZdbID = signafishLink.zdbID
         sourceZdbID = "ZDB-PUB-160316-7"
         sourceType=RecordAttribution.SourceType.STANDARD
     }
     session.save(recAttr)
     recAttr
 }
-/*println "Adding new attributions "
-hql = """from MarkerDBLink dbl
-         where dbl.referenceDatabase = :refDb
-         and dbl.accessionNumber  in (:accNums)"""
-query = session.createQuery(hql)
-query.setParameter("refDb", signafishDb)
-query.setParameterList("accNums", array)
-attrToCreate=query.list().collect { attrLinks ->
-    recAttr = new RecordAttribution()
-    recAttr.with {
-        println "  $attrLinks.zdbID"
-        dataZdbID = attrLinks.zdbID
-        sourceZdbID = "ZDB-PUB-160316-7"
-        sourceType=RecordAttribution.SourceType.STANDARD
-    }
-    session.save(recAttr)
-    recAttr
-}*/
 
 
 if (options.report) {
@@ -154,7 +136,7 @@ if (options.report) {
     rg.addIntroParagraph("With this load there are now $count Signafish links in total.")
     rg.addDataTable("${linksToDelete.size()} Links Removed", ["Gene", "Accession Number"], linksToDelete.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
     rg.addDataTable("${addedLinks.size()} Links Added", ["Gene", "Accession Number"], addedLinks.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
-    new File("addgene-report.html").withWriter { writer ->
+    new File("signafish-report.html").withWriter { writer ->
         rg.write(writer, ReportGenerator.Format.HTML)
     }
     println "done"
