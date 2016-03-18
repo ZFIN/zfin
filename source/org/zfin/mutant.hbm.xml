@@ -335,21 +335,6 @@
         </set>
 
     </class>
-    <class name="org.zfin.feature.FeatureMarkerRelationshipType" table="feature_marker_relationship_type">
-        <id name="name">
-            <column name="fmreltype_name"/>
-        </id>
-        <many-to-one name="featureTypeGroup" column="fmreltype_ftr_type_group"
-                     foreign-key="fmreltype_ftr_type_group" class="org.zfin.feature.FeatureTypeGroup"/>
-        <many-to-one name="markerTypeGroup" column="fmreltype_mrkr_type_group"
-                     foreign-key="fmreltype_mrkr_type_group" class="org.zfin.marker.MarkerTypeGroup"/>
-        <property name="affectedMarkerFlag" type="boolean">
-            <column name="fmreltype_produces_affected_marker"/>
-        </property>
-        <property name="firstToSecondLabel" column="fmreltype_1_to_2_comments"/>
-        <property name="secondToFirstLabel" column="fmreltype_2_to_1_comments"/>
-    </class>
-
 
     <class name="org.zfin.mutant.Zygosity" table="zygocity">
         <id name="zdbID" type="string">

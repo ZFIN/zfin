@@ -79,6 +79,7 @@
         <mapping class="org.zfin.feature.MutationDetail"/>
         <mapping class="org.zfin.feature.FeatureHistory"/>
         <mapping class="org.zfin.feature.FeaturePrefix"/>
+        <mapping class="org.zfin.feature.FeatureMarkerRelationshipType"/>
 
 
     </session-factory>
