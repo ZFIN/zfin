@@ -119,6 +119,7 @@ public class ForeignDB implements Comparable<ForeignDB> {
         SANGER_CLONE("Sanger_Clone"),
         // FB case 8239
         //SP_KW("SP_KW"),
+        SIGNAFISH("SignaFish"),
         UNIPROTKB_KW("UniProtKB-KW"),
         //SP_SL("SP_SL"),
         UNIPROTKB_SUBCELL("UniProtKB-SubCell"),
