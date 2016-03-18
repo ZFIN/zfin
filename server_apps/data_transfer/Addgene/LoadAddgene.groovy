@@ -6,6 +6,7 @@ import org.hibernate.Session
 import org.zfin.framework.HibernateSessionCreator
 import org.zfin.framework.HibernateUtil
 import org.zfin.Species
+import org.zfin.infrastructure.RecordAttribution
 import org.zfin.properties.ZfinProperties
 import org.zfin.repository.RepositoryFactory
 import org.zfin.sequence.ForeignDB
@@ -123,6 +124,16 @@ addedLinks = query.list().collect { entrezLink ->
     session.save(addgeneLink)
     println "  $addgeneLink.zdbID"
     addgeneLink
+    println "Adding new attributions test "
+    recAttr = new RecordAttribution()
+    recAttr.with {
+
+        dataZdbID = addgeneLink.zdbID
+        sourceZdbID = "ZDB-PUB-160316-6"
+        sourceType=RecordAttribution.SourceType.STANDARD
+    }
+    session.save(recAttr)
+    recAttr
 }
 
 
