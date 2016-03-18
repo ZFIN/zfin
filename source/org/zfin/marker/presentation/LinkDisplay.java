@@ -44,7 +44,10 @@ public class LinkDisplay implements ProvidesLink {
     public String getAttributionLink() {
         StringBuilder sb = new StringBuilder("");
 
-        if (references.size() == 1) {
+        if (references == null) {
+            return "";
+        }
+        else if (references.size() == 1) {
             sb.append(" (");
             sb.append(PublicationPresentation.getLink(references.iterator().next().getZdbID(), "1"));
             sb.append(")");
