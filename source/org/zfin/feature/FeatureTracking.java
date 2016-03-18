@@ -1,10 +1,20 @@
 package org.zfin.feature;
 
-/**ture
- */
+import javax.persistence.*;
+
+@Entity
+@Table(name = "feature_tracking")
 public class FeatureTracking {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ft_pk_id")
     private int pkid;
+    @ManyToOne
+    @JoinColumn(name = "ft_feature_zdb_id")
+    private Feature feature;
+    @Column(name = "ft_feature_abbrev")
+    private String featTrackingFeatAbbrev;
 
     public int getPkid() {
         return pkid;
@@ -14,12 +24,12 @@ public class FeatureTracking {
         this.pkid = pkid;
     }
 
-    public String getFeatTrackingFeatZdbID() {
-        return featTrackingFeatZdbID;
+    public Feature getFeature() {
+        return feature;
     }
 
-    public void setFeatTrackingFeatZdbID(String featTrackingFeatZdbID) {
-        this.featTrackingFeatZdbID = featTrackingFeatZdbID;
+    public void setFeature(Feature feature) {
+        this.feature = feature;
     }
 
     public String getFeatTrackingFeatAbbrev() {
@@ -29,10 +39,5 @@ public class FeatureTracking {
     public void setFeatTrackingFeatAbbrev(String featTrackingFeatAbbrev) {
         this.featTrackingFeatAbbrev = featTrackingFeatAbbrev;
     }
-
-    private String featTrackingFeatZdbID;
-    private String featTrackingFeatAbbrev;
-
-
 
 }

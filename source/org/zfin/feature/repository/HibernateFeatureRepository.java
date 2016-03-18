@@ -589,7 +589,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     @Override
     public String getFeatureByAbbreviationInTrackingTable(String featTrackingFeatAbbrev) {
         Session session = HibernateUtil.currentSession();
-        String hqlFtrTrack = " select ft.featTrackingFeatAbbrev from  FeatureTracking ft where ft.featTrackingFeatAbbrev =:featTrackingFeatAbbrev ";
+        String hqlFtrTrack = " select ft.featTrackingFeatAbbrev from  FeatureTracking ft where ft.feature.zdbID =:featTrackingFeatAbbrev ";
         Query queryTracker = session.createQuery(hqlFtrTrack);
         queryTracker.setParameter("featTrackingFeatAbbrev", featTrackingFeatAbbrev);
         return (String) queryTracker.uniqueResult();
@@ -597,7 +597,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     public String getFeatureByIDInTrackingTable(String featTrackingFeatZdbID) {
         Session session = HibernateUtil.currentSession();
-        String hqlFtrTrack = " select ft.featTrackingFeatAbbrev from  FeatureTracking ft where ft.featTrackingFeatZdbID =:featTrackingFeatZdbID ";
+        String hqlFtrTrack = " select ft.featTrackingFeatAbbrev from  FeatureTracking ft where ft.feature.zdbID =:featTrackingFeatZdbID ";
         Query queryTracker = session.createQuery(hqlFtrTrack);
         queryTracker.setParameter("featTrackingFeatZdbID", featTrackingFeatZdbID);
         return (String) queryTracker.uniqueResult();
@@ -993,7 +993,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     public int deleteFeatureFromTracking(String featureZdbId) {
         Session session = HibernateUtil.currentSession();
-        Query query = session.createQuery("delete from FeatureTracking ft where ft.featTrackingFeatZdbID=:featureZdbId");
+        Query query = session.createQuery("delete from FeatureTracking ft where ft.feature.zdbID=:featureZdbId");
         query.setParameter("featureZdbId", featureZdbId);
         return query.executeUpdate();
     }
