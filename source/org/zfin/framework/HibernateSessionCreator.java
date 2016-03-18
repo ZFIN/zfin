@@ -124,6 +124,7 @@ public class HibernateSessionCreator {
                     .addAnnotatedClass(Feature.class)
                     .addAnnotatedClass(FeatureAssay.class)
                     .addAnnotatedClass(MutationDetail.class)
+                    .addAnnotatedClass(Genotype.class)
                     .buildSessionFactory());
         }
     }

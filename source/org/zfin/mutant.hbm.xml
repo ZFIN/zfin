@@ -31,55 +31,6 @@
         <param name="enumClassname">org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum</param>
     </typedef>
 
-    <class name="org.zfin.mutant.Genotype" table="genotype">
-        <id name="zdbID" type="string">
-            <column name="geno_zdb_id" not-null="true"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">GENO</param>
-                <param name="insertActiveData">true</param>
-            </generator>
-        </id>
-
-        <property name="name" column="geno_display_name"/>
-        <property name="nameOrder" column="geno_name_order"/>
-        <property name="handle" column="geno_handle"/>
-        <property name="wildtype" column="geno_is_wildtype"/>
-        <property name="extinct" column="geno_is_extinct"/>
-        <property name="nickname" column="geno_nickname"/>
-        <property name="complexity" column="geno_complexity_order"/>
-
-        <set name="associatedGenotypes" lazy="true" table="genotype_background" access="field">
-            <key column="genoback_geno_zdb_id"/>
-            <many-to-many class="org.zfin.mutant.Genotype" column="genoback_background_zdb_id"/>
-        </set>
-
-        <set name="genotypeFeatures" lazy="true" cascade="save-update">
-            <key column="genofeat_geno_zdb_id"/>
-            <one-to-many class="org.zfin.mutant.GenotypeFeature"/>
-        </set>
-
-        <set name="externalNotes" lazy="true">
-            <key column="extnote_data_zdb_id"/>
-            <one-to-many class="org.zfin.mutant.GenotypeExternalNote"/>
-        </set>
-
-        <set name="dataNotes" lazy="true">
-            <key column="dnote_data_zdb_id"/>
-            <one-to-many class="org.zfin.infrastructure.DataNote"/>
-        </set>
-
-        <set name="suppliers">
-            <key column="idsup_data_zdb_id" update="false"/>
-            <one-to-many class="org.zfin.profile.GenotypeSupplier"/>
-        </set>
-
-        <set name="aliases" lazy="true" table="data_alias" order-by="dalias_alias_lower" inverse="false">
-            <key column="dalias_data_zdb_id"/>
-            <one-to-many class="org.zfin.mutant.GenotypeAlias"/>
-        </set>
-
-    </class>
-
     <class name="Fish" table="fish">
         <id name="zdbID" type="string">
             <column name="fish_zdb_id" not-null="true"/>

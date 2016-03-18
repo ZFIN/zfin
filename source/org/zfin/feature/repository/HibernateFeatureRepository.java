@@ -463,7 +463,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     public FeatureAssay addFeatureAssay(Feature ftr, Mutagen mutagen, Mutagee mutagee) {
         FeatureAssay ftrAss = new FeatureAssay();
-        ftrAss.setFeatAssayFeature(ftr);
+        ftrAss.setFeature(ftr);
         ftrAss.setMutagen(mutagen);
         ftrAss.setMutagee(mutagee);
         HibernateUtil.currentSession().save(ftrAss);
