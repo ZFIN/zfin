@@ -46,22 +46,22 @@
                         <g:Button ui:field="addButton" text="Add"/>
                     </g:customCell>
                     <g:customCell>
-                        <zfin:ListBoxWrapper ui:field="geneList"/>
+                        <zfin:StringListBox ui:field="geneList"/>
                     </g:customCell>
                     <g:customCell>
-                        <g:ListBox ui:field="fishList"/>
+                        <zfin:StringListBox ui:field="fishList"/>
                     </g:customCell>
                     <g:customCell>
-                        <g:ListBox ui:field="environmentList"/>
+                        <zfin:StringListBox ui:field="environmentList"/>
                     </g:customCell>
                     <g:customCell>
-                        <g:ListBox ui:field="assayList"/>
+                        <zfin:StringListBox ui:field="assayList"/>
                     </g:customCell>
                     <g:customCell>
-                        <g:ListBox ui:field="antibodyList"/>
+                        <zfin:StringListBox ui:field="antibodyList"/>
                     </g:customCell>
                     <g:customCell>
-                        <g:ListBox ui:field="genbankList"/>
+                        <zfin:StringListBox ui:field="genbankList"/>
                     </g:customCell>
                     <g:customCell>
                         <g:Button ui:field="updateButton" text="Update" enabled="false"/>
