@@ -4,20 +4,27 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.Mutagen;
 
+import javax.persistence.*;
 
+@Entity
+@Table(name = "feature_assay")
 public class FeatureAssay implements IsSerializable {
 
-    private Feature featAssayFeature;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "featassay_pk_id")
+    private int pkid;
+    @Column(name = "featassay_mutagen")
+    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.gwt.root.dto.Mutagen")})
     private Mutagen mutagen;
-    private String featzdbID;
-
-    public String getFeatzdbID() {
-        return featzdbID;
-    }
-
-    public void setFeatzdbID(String featzdbID) {
-        this.featzdbID = featzdbID;
-    }
+    @Column(name = "featassay_mutagee")
+    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.gwt.root.dto.Mutagee")})
+    private Mutagee mutagee;
+    @ManyToOne
+    @JoinColumn(name = "featassay_feature_zdb_id")
+    private Feature feature;
 
     public int getPkid() {
         return pkid;
@@ -26,9 +33,6 @@ public class FeatureAssay implements IsSerializable {
     public void setPkid(int pkid) {
         this.pkid = pkid;
     }
-
-    private int pkid;
-
 
     public Mutagen getMutagen() {
         return mutagen;
@@ -46,14 +50,11 @@ public class FeatureAssay implements IsSerializable {
         this.mutagee = mutagee;
     }
 
-    private Mutagee mutagee;
-
-    public Feature getFeatAssayFeature() {
-        return featAssayFeature;
+    public Feature getFeature() {
+        return feature;
     }
 
-    public void setFeatAssayFeature(Feature featAssayFeature) {
-        this.featAssayFeature = featAssayFeature;
+    public void setFeature(Feature feature) {
+        this.feature = feature;
     }
-
 }

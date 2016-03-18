@@ -1,12 +1,14 @@
 package org.zfin.feature;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.EntityNotes;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.mapping.MappedDeletion;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
@@ -14,6 +16,7 @@ import org.zfin.profile.FeatureSource;
 import org.zfin.profile.FeatureSupplier;
 import org.zfin.sequence.FeatureDBLink;
 
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -22,34 +25,72 @@ import java.util.TreeSet;
 /**
  * Feature business entity.
  */
+@Entity
+@Table(name = "feature")
 public class Feature implements EntityNotes, EntityZdbID {
 
     public static final String MUTANT = "Mutant";
     public static final String UNRECOGNIZED = "unrecognized";
     public static final String UNSPECIFIED = "unspecified";
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "ALT"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "feature_zdb_id")
     private String zdbID;
+    @Column(name = "feature_name", nullable = false)
     private String name;
+    @Column(name = "feature_comments")
     private String publicComments;
+    @Column(name = "feature_line_number")
     private String lineNumber;
+    @ManyToOne()
+    @JoinColumn(name = "feature_lab_prefix_id")
     private FeaturePrefix featurePrefix;
+    @Column(name = "feature_abbrev", nullable = false)
     private String abbreviation;
+    @Column(name = "feature_tg_suffix")
     private String transgenicSuffix;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dnote_data_zdb_id")
     private Set<DataNote> dataNotes;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "recattrib_data_zdb_id")
     private Set<PublicationAttribution> publications;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<GenotypeFeature> genotypeFeatures;
+    @Column(name = "feature_abbrev_order", nullable = false)
     private String abbreviationOrder;
+    @Column(name = "feature_name_order", nullable = false)
     private String nameOrder;
+    @Column(name = "feature_known_insertion_site")
     private Boolean isKnownInsertionSite;
+    @Column(name = "feature_dominant")
     private Boolean isDominantFeature;
+    @Column(name = "feature_unspecified")
     private Boolean isUnspecifiedFeature;
-    private Set<MappedDeletion> mappedDeletions;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature", fetch = FetchType.LAZY)
+    @Sort(type = SortType.NATURAL)
     private Set<FeatureMarkerRelationship> featureMarkerRelations;
+    @Column(name = "feature_type")
     private FeatureTypeEnum type;
+    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<FeatureSupplier> suppliers;
+    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<FeatureSource> sources;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature", fetch = FetchType.LAZY)
+    @org.hibernate.annotations.OrderBy(clause = "dalias_alias_lower")
     private Set<FeatureAlias> aliases;
+    @OneToOne(mappedBy = "feature")
     private FeatureAssay featureAssay;
+    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<FeatureDBLink> dbLinks;
+    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
+    private Set<MutationDetail> mutationDetailSet;
 
     public String getTransgenicSuffix() {
         return transgenicSuffix;
@@ -126,14 +167,6 @@ public class Feature implements EntityNotes, EntityZdbID {
 
     public void setNameOrder(String nameOrder) {
         this.nameOrder = nameOrder;
-    }
-
-    public Set<MappedDeletion> getMappedDeletions() {
-        return mappedDeletions;
-    }
-
-    public void setMappedDeletions(Set<MappedDeletion> mappedDeletions) {
-        this.mappedDeletions = mappedDeletions;
     }
 
     public FeatureTypeEnum getType() {
@@ -261,6 +294,13 @@ public class Feature implements EntityNotes, EntityZdbID {
         return null;
     }
 
+    public Set<MutationDetail> getMutationDetailSet() {
+        return mutationDetailSet;
+    }
+
+    public void setMutationDetailSet(Set<MutationDetail> mutationDetailSet) {
+        this.mutationDetailSet = mutationDetailSet;
+    }
 
     public Genotype getSingleRelatedGenotype() {
         if (genotypeFeatures != null && genotypeFeatures.size() == 1) {

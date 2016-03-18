@@ -73,6 +73,9 @@
         <mapping class="org.zfin.audit.AuditLogItem"/>
         <mapping class="org.zfin.anatomy.AnatomyStatistics"/>
         <mapping class="org.zfin.anatomy.AnatomyTreeInfo"/>
+        <mapping class="org.zfin.feature.Feature"/>
+        <mapping class="org.zfin.feature.FeatureAssay"/>
+        <mapping class="org.zfin.feature.MutationDetail"/>
 
 
     </session-factory>

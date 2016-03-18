@@ -16,13 +16,6 @@
     <typedef class="org.zfin.framework.StringEnumValueUserType" name="featureHistoryReason">
         <param name="enumClassname">org.zfin.feature.FeatureHistory$Reason</param>
     </typedef>
-    <typedef class="org.zfin.framework.StringEnumValueUserType" name="featAssayMutagen">
-        <param name="enumClassname">org.zfin.gwt.root.dto.Mutagen</param>
-    </typedef>
-    <typedef class="org.zfin.framework.StringEnumValueUserType" name="featAssayMutagee">
-        <param name="enumClassname">org.zfin.gwt.root.dto.Mutagee</param>
-    </typedef>
-
     <typedef class="org.zfin.framework.StringEnumValueUserType" name="goEvidenceCode">
         <param name="enumClassname">org.zfin.gwt.root.dto.GoEvidenceCodeEnum</param>
     </typedef>
@@ -317,81 +310,6 @@
 
     </class>
 
-    <class name="org.zfin.feature.Feature" table="feature" dynamic-update="true">
-        <id name="zdbID" type="string">
-            <column name="feature_zdb_id" not-null="true"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">ALT</param>
-                <param name="insertActiveData">true</param>
-            </generator>
-        </id>
-        <property name="name" column="feature_name" not-null="true"/>
-        <property name="abbreviation" column="feature_abbrev" not-null="true"/>
-        <property name="abbreviationOrder" column="feature_abbrev_order" not-null="true"/>
-        <property name="nameOrder" column="feature_name_order" not-null="true"/>
-        <!--<property name="ftrTypeString" column="feature_type" not-null="true"/>-->
-        <property name="transgenicSuffix" column="feature_tg_suffix"/>
-        <property name="lineNumber" column="feature_line_number"/>
-        <property name="dominantFeature" column="feature_dominant" type="boolean"/>
-        <property name="unspecifiedFeature" column="feature_unspecified" type="boolean"/>
-        <property name="knownInsertionSite" column="feature_known_insertion_site" type="boolean"/>
-        <property name="publicComments" column="feature_comments"/>
-
-
-        <!--<property name="labPrefix" column="feature_lab_prefix_id" type="integer"/>-->
-        <many-to-one name="featurePrefix" column="feature_lab_prefix_id" class="org.zfin.feature.FeaturePrefix"/>
-
-        <set name="featureMarkerRelations" sort="natural" lazy="true">
-            <key column="fmrel_ftr_zdb_id"/>
-            <one-to-many class="org.zfin.feature.FeatureMarkerRelationship"/>
-        </set>
-        <set name="genotypeFeatures" lazy="true">
-            <key column="genofeat_feature_zdb_id"/>
-            <one-to-many class="org.zfin.mutant.GenotypeFeature"/>
-        </set>
-        <set name="sources">
-            <key column="ids_data_zdb_id" update="false"/>
-            <one-to-many class="org.zfin.profile.FeatureSource"/>
-        </set>
-        <property name="type" column="feature_type" type="featureType" not-null="true"/>
-
-        <set name="aliases" lazy="true" table="data_alias" order-by="dalias_alias_lower" cascade="all">
-            <key column="dalias_data_zdb_id"/>
-            <one-to-many class="org.zfin.feature.FeatureAlias"/>
-        </set>
-
-
-        <set name="suppliers">
-            <key column="idsup_data_zdb_id" update="false"/>
-            <one-to-many class="org.zfin.profile.FeatureSupplier"/>
-        </set>
-
-        <set name="dataNotes" lazy="true">
-            <key column="dnote_data_zdb_id"/>
-            <one-to-many class="org.zfin.infrastructure.DataNote"/>
-        </set>
-        <set name="publications" lazy="true" cascade="all">
-            <key column="recattrib_data_zdb_id"/>
-            <one-to-many class="org.zfin.infrastructure.PublicationAttribution"/>
-        </set>
-        <set name="dbLinks" lazy="true">
-            <key column="dblink_linked_recid"/>
-            <one-to-many class="org.zfin.sequence.FeatureDBLink"/>
-        </set>
-        <join table="feature_assay" optional="true" inverse="true">
-            <key column="featassay_feature_zdb_id"/>
-            <component name="featureAssay">
-                <property name="mutagen" type="featAssayMutagen">
-                    <column name="featassay_mutagen"/>
-                </property>
-                <property name="mutagee" type="featAssayMutagee">
-                    <column name="featassay_mutagee"/>
-                </property>
-            </component>
-        </join>
-
-    </class>
-
     <class name="org.zfin.feature.FeatureTracking" table="feature_tracking">
         <id name="pkid" type="int">
             <column name="ft_pk_id" not-null="true"/>
@@ -501,25 +419,6 @@
         <many-to-one name="featureAlias" column="fhist_dalias_zdb_id" class="org.zfin.feature.FeatureAlias"/>
 
         <many-to-one name="feature" column="fhist_ftr_zdb_id" class="org.zfin.feature.Feature"/>
-    </class>
-
-    <class name="org.zfin.feature.FeatureAssay" table="feature_assay">
-
-        <id name="pkid" type="int">
-            <column name="featassay_pk_id" not-null="true"/>
-            <generator class="native"/>
-        </id>
-        <property name="featzdbID">
-            <column name="featassay_feature_zdb_id"/>
-        </property>
-
-        <property name="mutagen" type="featAssayMutagen">
-            <column name="featassay_mutagen"/>
-        </property>
-        <property name="mutagee" type="featAssayMutagee">
-            <column name="featassay_mutagee"/>
-        </property>
-
     </class>
 
     <!--This is here solely for the purpose of hql query to allow ordering by significane.-->
