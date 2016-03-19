@@ -81,6 +81,7 @@
         <mapping class="org.zfin.feature.FeaturePrefix"/>
         <mapping class="org.zfin.feature.FeatureMarkerRelationshipType"/>
         <mapping class="org.zfin.feature.FeatureTypeGroup"/>
+        <mapping class="org.zfin.feature.FeatureMarkerRelationship"/>
 
 
     </session-factory>

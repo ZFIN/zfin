@@ -127,6 +127,7 @@ public class HibernateSessionCreator {
                     .addAnnotatedClass(FeaturePrefix.class)
                     .addAnnotatedClass(FeatureMarkerRelationshipType.class)
                     .addAnnotatedClass(FeatureTypeGroup.class)
+                    .addAnnotatedClass(FeatureMarkerRelationship.class)
                     .buildSessionFactory());
         }
     }
