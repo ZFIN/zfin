@@ -323,19 +323,6 @@
 
     </class>
 
-    <class name="org.zfin.feature.FeatureTypeGroup" mutable="false" table="feature_type_group">
-        <cache usage="read-only"/>
-        <id name="name">
-            <column name="ftrgrp_name"/>
-        </id>
-        <property name="comment" column="ftrgrp_comments"/>
-        <set name="typeStrings" table="feature_type_group_member">
-            <key column="ftrgrpmem_ftr_type_group"/>
-            <element column="ftrgrpmem_ftr_type" type="string"/>
-        </set>
-
-    </class>
-
     <class name="org.zfin.mutant.Zygosity" table="zygocity">
         <id name="zdbID" type="string">
             <column name="zyg_zdb_id" not-null="true"/>

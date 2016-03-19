@@ -171,16 +171,13 @@ public class HibernateMutantRepository implements MutantRepository {
     public List<Genotype> getGenotypesByFeature(Feature feature) {
         Session session = HibernateUtil.currentSession();
 
-        String hql =
-                "select  geno from Genotype geno, GenotypeFeature genofeat, Feature feat, FeatureType type " +
-                        "WHERE  genofeat.feature.zdbID= :zdbID " +
-                        "AND genofeat.genotype =geno " +
-                        "AND genofeat.feature =feat " +
-                        "AND type.name=feat.type " +
-                        "ORDER by type.significance, geno.nameOrder ";
+        String hql = "select  geno from Genotype geno, GenotypeFeature genofeat " +
+                "WHERE  genofeat.feature = :feature " +
+                "AND genofeat.genotype =geno " +
+                "ORDER BY geno.nameOrder";
 
         Query query = session.createQuery(hql);
-        query.setString("zdbID", feature.getZdbID());
+        query.setParameter("feature", feature);
         return (List<Genotype>) query.list();
     }
 
