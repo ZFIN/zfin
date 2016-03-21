@@ -18,7 +18,7 @@
 
         $.ajax({
             dataType: "json",
-            url: "https://beta.monarchinitiative.org/disease/${doid}/phenotype_list.json",
+            url: "https://monarchinitiative.org/disease/${doid}/phenotype_list.json",
             success: function(data) {
 
                 $('#disease-phenotype-spinner').hide();
@@ -31,7 +31,7 @@
                     var phenotypes = data.phenotype_list.map(function (p) { return p.id; });
 
                     Phenogrid.createPhenogridForElement(document.getElementById('phen_vis'), {
-                        serverURL : "https://beta.monarchinitiative.org",
+                        serverURL : "https://monarchinitiative.org",
                         phenotypeData: phenotypes,
                         targetGroupList: [
                             {name: "Danio rerio", taxon: "7955", crossComparisonView: true, active: true},
