@@ -516,6 +516,12 @@ $curUpdateInferenceGroupMembe->finish();
 
 ## close LOG2;
 
+### FB case 14015
+
+$sqlDeletePossibleRedundant = "delete from clean_expression_fast_search where cefs_mrkr_zdb_id = ? ;";
+$curDeletePossibleRedundant = $dbh->prepare_cached($sqlDeletePossibleRedundant);
+$curDeletePossibleRedundant->execute($intoId);
+$curDeletePossibleRedundant->finish();
 
 ### FB case 10333
 
