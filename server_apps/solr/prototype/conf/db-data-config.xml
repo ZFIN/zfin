@@ -1951,8 +1951,8 @@ select
                           from phenotype_source_generated
                                 join stage start_stage on pg_start_stg_zdb_id = start_stage.stg_zdb_id
                                 join stage end_stage on pg_end_stg_zdb_id = end_stage.stg_zdb_id
-                                join stage this_stage on this_stage.stg_hours_start = start_stage.stg_hours_start
-                                                         and this_stage.stg_hours_end = end_stage.stg_hours_end
+                                join stage this_stage on this_stage.stg_hours_start &gt;= start_stage.stg_hours_start
+                                                         and this_stage.stg_hours_end &lt;= end_stage.stg_hours_end
                             where start_stage.stg_name != 'Unknown'
                               and end_stage.stg_name != 'Unknown'
                               and this_stage.stg_name != 'Unknown';"
