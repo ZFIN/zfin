@@ -526,7 +526,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
 
 
 
-                <entity name="gene_phenotype_statement"
+                <entity name="gene_phenotype_statement" transformer="HTMLStripTransformer"
                         datasource="db" query="
 
                              select distinct psg_short_name as phenotype_statement,
@@ -542,7 +542,9 @@ where mrkr_type in ('GENE','GENEP','EFG')
                             where psg_tag != 'normal'
                         "
                         cacheImpl="SortedMapBackedCache"
-                        where="gene_zdb_id=gene.id"/>
+                        where="gene_zdb_id=gene.id">
+                    <field column="phenotype_statement" stripHTML="true"/>
+                </entity>
 
 
                 <entity name="gene_misexpressed_gene" datasource="db" transformer="RegexTransformer"
@@ -1223,7 +1225,7 @@ WHERE  ( NOT g.geno_is_wildtype
 
 
 
-           <entity name="fish_phenotype_observation_generated"
+           <entity name="fish_phenotype_observation_generated" transformer="HTMLStripTransformer"
                    datasource="db" query="select distinct psg_short_name as phenotype_statement,
        genox_fish_zdb_id as fish_zdb_id
 from phenotype_observation_generated
@@ -1236,7 +1238,9 @@ from phenotype_observation_generated
      left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id
 where psg_tag != 'normal'  "
                    where="fish_zdb_id=fish.id"
-                   cacheImpl="SortedMapBackedCache"/>
+                   cacheImpl="SortedMapBackedCache">
+               <field column="phenotype_statement" stripHTML="true"/>
+           </entity>
 
 
 
@@ -1982,7 +1986,7 @@ select
                    where="pg_id=phenotype.id"/>
 
 
-           <entity name="phenotype_statement"
+           <entity name="phenotype_statement" transformer="HTMLStripTransformer"
                    datasource="db" query="select
                             distinct
                             psg_short_name as phenotype_statement,
@@ -1991,7 +1995,9 @@ select
                                  join phenotype_source_generated on psg_pg_id = pg_id
                             where psg_tag != 'normal';"
                    where="pg_id=phenotype.id"
-                   cacheImpl="SortedMapBackedCache"/>
+                   cacheImpl="SortedMapBackedCache">
+               <field column="phenotype_statement" stripHTML="true"/>
+           </entity>
 
            <entity name="phenotype_misexpressed_gene" datasource="db" transformer="RegexTransformer"
                    query="select mrkr_abbrev || ',Any' as misexpressed_gene,
@@ -3160,7 +3166,9 @@ where feature_zdb_id = ids_data_zdb_id
                                  left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id
                             where psg_tag != 'normal';"
                cacheImpl="SortedMapBackedCache"
-               where="feature_zdb_id=feature.id"/>
+               where="feature_zdb_id=feature.id">
+           <field column="phenotype_statement" stripHTML="true"/>
+       </entity>
 
        <entity name="feature_misexpressed_gene" datasource="db" transformer="RegexTransformer"
                query="select distinct mrkr_abbrev || ',Any' as misexpressed_gene,
@@ -4420,7 +4428,9 @@ from phenotype_observation_generated
 where psg_tag != 'normal';
  "
                           cacheImpl="SortedMapBackedCache"
-                          where="fig_zdb_id=figure.id"/>
+                          where="fig_zdb_id=figure.id">
+            <field column="phenotype_statement" stripHTML="true"/>
+        </entity>
 
 
            <entity name="figure_misexpressed_gene" datasource="db" transformer="RegexTransformer"
