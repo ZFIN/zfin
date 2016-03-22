@@ -17,17 +17,17 @@ create index tmp_vega_ottdarg_index
   on tmp_vega(ottdarg)
  using btree in idxdbs1;
 
-delete from sequence_feature_chromosome_location
- where sfcl_location_source = 'VegaStartEndLoader';
+delete from sequence_feature_chromosome_location_generated
+ where sfclg_location_source = 'VegaStartEndLoader';
 
-insert into sequence_feature_chromosome_location (sfcl_data_Zdb_id, 
-       	    			       sfcl_chromosome,
-				       sfcl_start,
-				       sfcl_end,
-				       sfcl_acc_num,
-				       sfcl_location_source,
-				       sfcl_location_Subsource,
-				       sfcl_fdb_db_id)
+insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id, 
+       	    			       sfclg_chromosome,
+				       sfclg_start,
+				       sfclg_end,
+				       sfclg_acc_num,
+				       sfclg_location_source,
+				       sfclg_location_Subsource,
+				       sfclg_fdb_db_id)
 select distinct dblink_linked_recid,
        		chrom,
 		start,
@@ -42,14 +42,14 @@ select distinct dblink_linked_recid,
   and fdb_db_pk_id = fdbcont_fdb_db_id
  and ottdarg like 'OTTDARG%';
 
-insert into sequence_feature_chromosome_location (sfcl_data_Zdb_id, 
-       	    			       sfcl_chromosome,
-				       sfcl_start,
-				       sfcl_end,
-				       sfcl_acc_num,
-				       sfcl_location_source,
-				       sfcl_location_Subsource,
-				       sfcl_fdb_db_id)
+insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id, 
+       	    			       sfclg_chromosome,
+				       sfclg_start,
+				       sfclg_end,
+				       sfclg_acc_num,
+				       sfclg_location_source,
+				       sfclg_location_Subsource,
+				       sfclg_fdb_db_id)
 select distinct mrel_mrkr_1_zdb_id,
        		chrom,
 		start,
@@ -68,9 +68,9 @@ select distinct mrel_mrkr_1_zdb_id,
  and mrel_mrkr_2_zdb_id like 'ZDB-TSCRIPT%'
 ;
 
-delete from sequence_feature_chromosome_location
- where sfcl_chromosome in ('AB','U','0')
- and sfcl_location_source = 'VegaStartEndLoader';
+delete from sequence_feature_chromosome_location_generated
+ where sfclg_chromosome in ('AB','U','0')
+ and sfclg_location_source = 'VegaStartEndLoader';
 				  
 commit work;
 

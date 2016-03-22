@@ -713,12 +713,12 @@ where mrkr_type in ('GENE','GENEP','EFG')
 
                 <entity name="gene_ambig_chromosome"
                         datasource="db" query="select distinct 'ambiguous' as chromosome,
-                                       sfcl_data_Zdb_id as gene_zdb_id
-                                from sequence_feature_chromosome_location
-                                where sfcl_data_zdb_id not in (select ul_data_Zdb_id from unique_location where ul_data_zdb_id[1,8] = 'ZDB-GENE'
+                                       sfclg_data_Zdb_id as gene_zdb_id
+                                from sequence_feature_chromosome_location_generated
+                                where sfclg_data_zdb_id not in (select ul_data_Zdb_id from unique_location where ul_data_zdb_id[1,8] = 'ZDB-GENE'
                                                                    or ul_data_zdb_id[1,7] = 'ZDB-EFG'
                                                                                                       or ul_data_zdb_id[1,11] = 'ZDB-TSCRIPT')
-                                                                                                      and sfcl_data_zdb_id like 'ZDB-GENE%' group by sfcl_data_zdb_id,sfcl_chromosome having count(sfcl_Data_zdb_id)>1
+                                                                                                      and sfclg_data_zdb_id like 'ZDB-GENE%' group by sfclg_data_zdb_id,sfclg_chromosome having count(sfclg_Data_zdb_id)>1
                                                                                                       ;"
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
@@ -885,13 +885,13 @@ where ul_data_zdb_id[1,8] != 'ZDB-GENE'
        
        <entity name="marker_ambig_chromosome"
                datasource="db" query="select distinct 'ambiguous' as chromosome,
-                                       sfcl_data_Zdb_id as marker_zdb_id
-                                from sequence_feature_chromosome_location
-                                where sfcl_data_zdb_id not in (select ul_data_Zdb_id from unique_location where ul_data_zdb_id[1,8] != 'ZDB-GENE'
+                                       sfclg_data_Zdb_id as marker_zdb_id
+                                from sequence_feature_chromosome_location_generated
+                                where sfclg_data_zdb_id not in (select ul_data_Zdb_id from unique_location where ul_data_zdb_id[1,8] != 'ZDB-GENE'
                                                                    or ul_data_zdb_id[1,7] != 'ZDB-EFG')
 
-                                                                                                      and sfcl_data_zdb_id[1,8] != 'ZDB-GENE'
-  and sfcl_data_zdb_id[1,7] != 'ZDB-EFG' group by sfcl_data_zdb_id,sfcl_chromosome having count(sfcl_Data_zdb_id)>1;"
+                                                                                                      and sfclg_data_zdb_id[1,8] != 'ZDB-GENE'
+  and sfclg_data_zdb_id[1,7] != 'ZDB-EFG' group by sfclg_data_zdb_id,sfclg_chromosome having count(sfclg_Data_zdb_id)>1;"
                cacheImpl="SortedMapBackedCache"
                where="marker_zdb_id=marker.id"/>
 
