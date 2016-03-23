@@ -42,7 +42,8 @@
         <td>
             <c:forEach var="featureAlias" items="${formBean.feature.aliases}" varStatus="loop">
                 ${featureAlias.alias}
-                <c:if test="${featureAlias.publicationCount > 0}">
+                <c:choose>
+                  <c:when test="${featureAlias.publicationCount > 0}">
                     <c:choose>
                         <c:when test="${featureAlias.publicationCount == 1}">
                             (<a href="/${featureAlias.singlePublication.zdbID}">${featureAlias.publicationCount}</a>)<c:if test="${!loop.last}">, </c:if>
@@ -51,7 +52,10 @@
                             (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureAlias.zdbID}&rtype=genotype">${featureAlias.publicationCount}</a>)<c:if test="${!loop.last}">, </c:if>
                         </c:otherwise>
                     </c:choose>
-                </c:if>
+                  </c:when>
+                  <c:otherwise><c:if test="${!loop.last}">, </c:if>
+                  </c:otherwise>
+                </c:choose>
 
             </c:forEach>
         </td>
