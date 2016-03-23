@@ -545,24 +545,24 @@ while ($curGetUnspecifiedAllele->fetch()) {
 
 $curGetUnspecifiedAllele->finish();
 
-if ($thereIsUnspecifiedAlleleWithGeneRetained == 0 && $thereIsUnspecifiedAlleleWithGeneToBeDeleted > 0) {
-    $sqlGetGeneAbbrev = "select mrkr_abbrev from marker where mrkr_zdb_id = ? ;";
-    $curGetGeneSymbol = $dbh->prepare_cached($sqlGetGeneAbbrev);
-    $curGetGeneSymbol->execute($mergeId);
-    $curGetGeneSymbol->bind_columns(\$geneSymbolToBeDeleted);
-    while ($curGetGeneSymbol->fetch()) {
-       $unspecifiedAllele1Gene1 = $geneSymbolToBeDeleted . '_unspecified';
-    }
+$sqlGetGeneAbbrev = "select mrkr_abbrev from marker where mrkr_zdb_id = ? ;";
+$curGetGeneSymbol = $dbh->prepare_cached($sqlGetGeneAbbrev);
+$curGetGeneSymbol->execute($mergeId);
+$curGetGeneSymbol->bind_columns(\$geneSymbolToBeDeleted);
+while ($curGetGeneSymbol->fetch()) {
+   $unspecifiedAllele1Gene1 = $geneSymbolToBeDeleted . '_unspecified';
+}
  
-    $curGetGeneSymbol->execute($intoId);
-    $curGetGeneSymbol->bind_columns(\$geneSymbolRetained);
-    
-    while ($curGetGeneSymbol->fetch()) {
-       $unspecifiedAllele1Gene2 = $geneSymbolRetained . '_unspecified';
-    }
-   
-    $curGetGeneSymbol->finish();
+$curGetGeneSymbol->execute($intoId);
+$curGetGeneSymbol->bind_columns(\$geneSymbolRetained);
 
+while ($curGetGeneSymbol->fetch()) {
+   $unspecifiedAllele1Gene2 = $geneSymbolRetained . '_unspecified';
+}
+   
+$curGetGeneSymbol->finish();
+
+if ($thereIsUnspecifiedAlleleWithGeneRetained == 0 && $thereIsUnspecifiedAlleleWithGeneToBeDeleted > 0) {
 
 ### print DBG "intoId: $intoId  geneSymbolToBeDeleted: $geneSymbolToBeDeleted  geneSymbolRetained: $geneSymbolRetained   \n   unspecifiedAllele1Gene2: $unspecifiedAllele1Gene2    unspecifiedAlleleWithGeneToBeDeleted: $unspecifiedAlleleWithGeneToBeDeleted \n\n";
 
@@ -594,6 +594,49 @@ if ($thereIsUnspecifiedAlleleWithGeneRetained == 0 && $thereIsUnspecifiedAlleleW
    $curRenameGenotypes->finish();
 
 }
+
+
+### FB case 13983, update genotype display names and fish names when merging genes
+
+$sqlGetGenotypeDisplayName = "select geno_zdb_id, geno_display_name from feature_marker_relationship, genotype_feature, genotype where fmrel_mrkr_zdb_id  = ? and fmrel_ftr_zdb_id= genofeat_feature_zdb_id and genofeat_geno_zdb_id = geno_zdb_id;";
+
+$curGetGenotypeDisplayName = $dbh->prepare_cached($sqlGetGenotypeDisplayName);
+
+$sqlUpdtateGenotypeDislayName = "update genotype set geno_display_name = ? where geno_zdb_id = ?;";
+
+$curUpdtateGenotypeDislayName = $dbh->prepare_cached($sqlUpdtateGenotypeDislayName);
+
+$curGetGenotypeDisplayName->execute($mergeId);
+
+$curGetGenotypeDisplayName->bind_columns(\$genotypeId,\$genotypeDisplayName);
+
+while ($curGetGenotypeDisplayName->fetch()) {
+   $genotypeDisplayName =~ s/$geneSymbolToBeDeleted/$geneSymbolRetained/;
+   $curUpdtateGenotypeDislayName->execute($genotypeDisplayName,$genotypeId);
+}
+
+$curGetGenotypeDisplayName->finish();
+$curUpdtateGenotypeDislayName->finish();
+
+$sqlGetFishName = "select fish_zdb_id, fish_name from feature_marker_relationship, genotype_feature, fish where fmrel_mrkr_zdb_id  = ? and fmrel_ftr_zdb_id= genofeat_feature_zdb_id and genofeat_geno_zdb_id = fish_genotype_zdb_id;";
+
+$curGetFishName = $dbh->prepare_cached($sqlGetFishName);
+
+$sqlUpdtateFishName = "update fish set fish_name = ? where fish_zdb_id = ?;";
+
+$curUpdateFishName = $dbh->prepare_cached($sqlUpdtateFishName);
+
+$curGetFishName->execute($mergeId);
+
+$curGetFishName->bind_columns(\$fishId,\$fishName);
+
+while ($curGetFishName->fetch()) {
+   $fishName =~ s/$geneSymbolToBeDeleted/$geneSymbolRetained/;
+   $curUpdateFishName->execute($fishName,$fishId);
+}
+
+$curGetFishName->finish();
+$curUpdateFishName->finish();
 
 ##close DBG;
 
