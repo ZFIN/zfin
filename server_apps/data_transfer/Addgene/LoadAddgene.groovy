@@ -135,7 +135,18 @@ addedLinks = query.list().collect { entrezLink ->
     session.save(recAttr)
     recAttr
 }
+println "getting db links for IDs  "
+hql = """from MarkerDBLink dbl
+         where referenceDatabase = :addgeneDb"""
 
+query = session.createQuery(hql)
+query.setParameter("addgeneDb", addgeneDb)
+
+linksAdded = query.list()
+linksAdded.each { link ->
+    println "  $link.zdbID"
+    session.delete(link)
+}
 
 if (options.report) {
     // one more query that only matters if we're doing a report
@@ -152,7 +163,7 @@ if (options.report) {
     rg.includeTimestamp();
     rg.addIntroParagraph("With this load there are now $count Addgene links in total.")
     rg.addDataTable("${linksToDelete.size()} Links Removed", ["Gene", "Accession Number"], linksToDelete.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
-    rg.addDataTable("${addedLinks.size()} Links Added", ["Gene", "Accession Number"], addedLinks.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
+    rg.addDataTable("${linksAdded.size()} Links Added", ["Gene", "Accession Number"], linksAdded.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
     new File("addgene-report.html").withWriter { writer ->
         rg.write(writer, ReportGenerator.Format.HTML)
     }
