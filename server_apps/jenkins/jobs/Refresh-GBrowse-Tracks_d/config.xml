@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>&lt;ul&gt;&#xd;
+  <description>&lt;ul&gt;#xd;
   &lt;li&gt;Merges static Burgess-Lin and ZMP data with active ZFIN data and loads that information into gff3 table.&lt;/li&gt;&#xd;
   &lt;li&gt;Runs Bowtie alignment on STRs and loads that information into gff3 table.&lt;/li&gt;&#xd;
-  &lt;li&gt;Pulls info from gff3 table into sequence_feature_chromosome_location table&lt;/li&gt;&#xd;
+  &lt;li&gt;Pulls info from gff3 table into sequence_feature_chromosome_location_generated table&lt;/li&gt;&#xd;
 &lt;/ul&gt;</description>
   <keepDependencies>false</keepDependencies>
   <properties/>

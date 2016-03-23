@@ -337,8 +337,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Session session = currentSession();
         TreeSet<String> lgList = new TreeSet<String>();
 
-        Query query = session.createSQLQuery("select sfcl_chromosome from sequence_feature_chromosome_location " +
-                "where sfcl_data_zdb_id = :mrkrZdbId order by 1");
+        Query query = session.createSQLQuery("select sfclg_chromosome from sequence_feature_chromosome_location_generated " +
+                "where sfclg_data_zdb_id = :mrkrZdbId order by 1");
         query.setParameter("mrkrZdbId", marker.getZdbID());
 
         lgList.addAll(query.list());

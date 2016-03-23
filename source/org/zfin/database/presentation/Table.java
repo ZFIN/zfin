@@ -161,8 +161,8 @@ public enum Table {
     FEATURE_GENOTYPE("FEATURE_GENOTYPE", "genotype_feature", "genofeat_feature_zdb_id,genofeat_geno_zdb_id", FEATURE, GENOTYPE),
 
     // warehouse tables
-    SEQUENCE_FEATURE_CHROMSOME_LOCATION("CHROMOSOME", "sequence_feature_chromosome_location", "sfcl_data_zdb_id,sfcl_chromosome,sfcl_location_source,sfcl_location_subsource,\n" +
-            "    sfcl_start,sfcl_end"),
+    SEQUENCE_FEATURE_CHROMSOME_LOCATION("CHROMOSOME", "sequence_feature_chromosome_location_generated", "sfclg_data_zdb_id,sfclg_chromosome,sfclg_location_source,sfclg_location_subsource,\n" +
+            "    sfclg_start,sfclg_end"),
 
     WH_STR_GROUP("WHSTRGG", "str_group", "strg_group_pk_id"),
     WH_STR_GROUP_MEMBER("WHSTRGM", "str_group_member", "strgm_pk_id"),

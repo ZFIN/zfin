@@ -147,13 +147,13 @@ WHERE  mrel_type = 'clone contains small segment'
 into temp tmp_full;
 
 
-insert into sequence_feature_chromosome_location_temp (sfcl_chromosome, sfcl_data_zdb_id, sfcl_location_source, sfcl_location_subsource)
+insert into sequence_feature_chromosome_location_generated_temp (sfclg_chromosome, sfclg_data_zdb_id, sfclg_location_source, sfclg_location_subsource)
 select distinct * from tmp_full;
 
 !echo "Remove AB, U and 0 from chrromosome mart";
  
-delete from sequence_feature_chromosome_location_temp
- where sfcl_chromosome in ('AB','U','0');
+delete from sequence_feature_chromosome_location_generated_temp
+ where sfclg_chromosome in ('AB','U','0');
 
 
 insert into linkage_membership_search_temp (lms_member_1_zdb_id, lms_member_2_zdb_id, lms_lnkgmem_id, lms_distance, lms_units, lms_lod, lms_lnkg_zdb_Id)
