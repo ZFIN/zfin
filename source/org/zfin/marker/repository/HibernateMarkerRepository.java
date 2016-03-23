@@ -2052,6 +2052,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
 
+
     @Override
     public List<MarkerRelationshipPresentation> getRelatedMarkerDisplayForTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... types) {
         String sql1To2 = " 	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
