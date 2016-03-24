@@ -18,6 +18,7 @@ import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.expression.ExpressionPhenotypeTerm;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.feature.*;
+import org.zfin.fish.WarehouseSummary;
 import org.zfin.framework.presentation.AnatomyFact;
 import org.zfin.marker.OrthologyNote;
 import org.zfin.marker.presentation.HighQualityProbeAOStatistics;
@@ -137,6 +138,7 @@ public class HibernateSessionCreator {
                     .addAnnotatedClass(FeatureNote.class)
                     .addAnnotatedClass(GenotypeExternalNote.class)
                     .addAnnotatedClass(OrthologyNote.class)
+                    .addAnnotatedClass(WarehouseSummary.class)
                     .buildSessionFactory());
         }
     }

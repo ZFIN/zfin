@@ -44,7 +44,6 @@
         <mapping resource="org/zfin/construct.hbm.xml"/>
         <mapping resource="org/zfin/blast.hbm.xml"/>
         <mapping resource="org/zfin/expression.hbm.xml"/>
-        <mapping resource="org/zfin/fish.hbm.xml"/>
         <mapping resource="org/zfin/general.hbm.xml"/>
         <mapping resource="org/zfin/infrastructure.hbm.xml"/>
         <mapping resource="org/zfin/marker.hbm.xml"/>
@@ -82,6 +81,7 @@
         <mapping class="org.zfin.feature.FeatureMarkerRelationshipType"/>
         <mapping class="org.zfin.feature.FeatureTypeGroup"/>
         <mapping class="org.zfin.feature.FeatureMarkerRelationship"/>
+        <mapping class="org.zfin.fish.WarehouseSummary"/>
 
 
     </session-factory>
