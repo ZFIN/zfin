@@ -44,7 +44,9 @@ public class Feature implements EntityNotes, EntityZdbID {
     private String zdbID;
     @Column(name = "feature_name", nullable = false)
     private String name;
-    @Column(name = "feature_comments")
+    @OneToMany(mappedBy = "feature")
+    private Set<FeatureNote> featureNoteSet;
+    @Transient
     private String publicComments;
     @Column(name = "feature_line_number")
     private String lineNumber;
@@ -90,7 +92,13 @@ public class Feature implements EntityNotes, EntityZdbID {
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<FeatureDBLink> dbLinks;
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
-    private Set<MutationDetail> mutationDetailSet;
+    private Set<FeatureRnaMutationDetail> featureRnaMutationDetailSet;
+    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
+    private Set<FeatureProteinMutationDetail> featureProteinMutationDetailSet;
+    @Column(name = "feature_number_additional_bps", nullable = true)
+    private Integer numberOfAdditionalBps;
+    @Column(name = "feature_number_removed_bps", nullable = true)
+    private Integer numberOfremovedBps;
 
     public String getTransgenicSuffix() {
         return transgenicSuffix;
@@ -269,6 +277,22 @@ public class Feature implements EntityNotes, EntityZdbID {
         this.genotypeFeatures = genotypeFeatures;
     }
 
+    public Integer getNumberOfAdditionalBps() {
+        return numberOfAdditionalBps;
+    }
+
+    public void setNumberOfAdditionalBps(Integer numberOfAdditionalBps) {
+        this.numberOfAdditionalBps = numberOfAdditionalBps;
+    }
+
+    public Integer getNumberOfremovedBps() {
+        return numberOfremovedBps;
+    }
+
+    public void setNumberOfremovedBps(Integer numberOfremovedBps) {
+        this.numberOfremovedBps = numberOfremovedBps;
+    }
+
     public int compareTo(Object otherFeature) {
         return getAbbreviationOrder().compareTo(((Feature) otherFeature).getAbbreviationOrder());
     }
@@ -294,12 +318,20 @@ public class Feature implements EntityNotes, EntityZdbID {
         return null;
     }
 
-    public Set<MutationDetail> getMutationDetailSet() {
-        return mutationDetailSet;
+    public Set<FeatureRnaMutationDetail> getFeatureRnaMutationDetailSet() {
+        return featureRnaMutationDetailSet;
     }
 
-    public void setMutationDetailSet(Set<MutationDetail> mutationDetailSet) {
-        this.mutationDetailSet = mutationDetailSet;
+    public void setFeatureRnaMutationDetailSet(Set<FeatureRnaMutationDetail> mutationDetailSet) {
+        this.featureRnaMutationDetailSet = mutationDetailSet;
+    }
+
+    public Set<FeatureProteinMutationDetail> getFeatureProteinMutationDetailSet() {
+        return featureProteinMutationDetailSet;
+    }
+
+    public void setFeatureProteinMutationDetailSet(Set<FeatureProteinMutationDetail> featureProteinMutationDetailSet) {
+        this.featureProteinMutationDetailSet = featureProteinMutationDetailSet;
     }
 
     public Genotype getSingleRelatedGenotype() {

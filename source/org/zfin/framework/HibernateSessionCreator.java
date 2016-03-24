@@ -6,9 +6,11 @@ import org.apache.log4j.spi.RootLogger;
 import org.hibernate.InvalidMappingException;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
+import org.zfin.ExternalNote;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.AnatomyTreeInfo;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.antibody.presentation.AntibodyAOStatistics;
 import org.zfin.audit.AuditLogItem;
 import org.zfin.expression.ExpressionExperiment2;
@@ -17,6 +19,7 @@ import org.zfin.expression.ExpressionPhenotypeTerm;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.feature.*;
 import org.zfin.framework.presentation.AnatomyFact;
+import org.zfin.marker.OrthologyNote;
 import org.zfin.marker.presentation.HighQualityProbeAOStatistics;
 import org.zfin.mutant.*;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -121,13 +124,19 @@ public class HibernateSessionCreator {
                     .addAnnotatedClass(AnatomyTreeInfo.class)
                     .addAnnotatedClass(Feature.class)
                     .addAnnotatedClass(FeatureAssay.class)
-                    .addAnnotatedClass(MutationDetail.class)
+                    .addAnnotatedClass(FeatureRnaMutationDetail.class)
+                    .addAnnotatedClass(FeatureProteinMutationDetail.class)
                     .addAnnotatedClass(Genotype.class)
                     .addAnnotatedClass(FeatureHistory.class)
                     .addAnnotatedClass(FeaturePrefix.class)
                     .addAnnotatedClass(FeatureMarkerRelationshipType.class)
                     .addAnnotatedClass(FeatureTypeGroup.class)
                     .addAnnotatedClass(FeatureMarkerRelationship.class)
+                    .addAnnotatedClass(ExternalNote.class)
+                    .addAnnotatedClass(AntibodyExternalNote.class)
+                    .addAnnotatedClass(FeatureNote.class)
+                    .addAnnotatedClass(GenotypeExternalNote.class)
+                    .addAnnotatedClass(OrthologyNote.class)
                     .buildSessionFactory());
         }
     }

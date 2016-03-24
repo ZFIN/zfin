@@ -22,7 +22,7 @@ public class FeatureAssay implements IsSerializable {
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.gwt.root.dto.Mutagee")})
     private Mutagee mutagee;
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "featassay_feature_zdb_id")
     private Feature feature;
 
