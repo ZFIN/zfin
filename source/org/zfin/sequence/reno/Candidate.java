@@ -2,6 +2,7 @@ package org.zfin.sequence.reno;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import javax.annotation.Generated;
 import javax.persistence.*;
 import java.util.Date;
 
@@ -26,7 +27,8 @@ public class Candidate {
     private String note;
     @Column(name = "cnd_is_problem")
     private boolean problem;
-    @Column(name = "cnd_run_count")
+    @Generated(value = "GenerationTime.ALWAYS")
+    @Column(name = "cnd_run_count", insertable = false, updatable = false)
     private Integer runCount;
     @Column(name = "cnd_last_done_date")
     private Date lastFinishedDate;
