@@ -6,23 +6,10 @@ import org.apache.log4j.spi.RootLogger;
 import org.hibernate.InvalidMappingException;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
-import org.zfin.ExternalNote;
-import org.zfin.anatomy.AnatomyStatistics;
-import org.zfin.anatomy.AnatomyTreeInfo;
-import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.antibody.AntibodyExternalNote;
-import org.zfin.antibody.presentation.AntibodyAOStatistics;
-import org.zfin.audit.AuditLogItem;
-import org.zfin.expression.ExpressionExperiment2;
-import org.zfin.expression.ExpressionFigureStage;
-import org.zfin.expression.ExpressionPhenotypeTerm;
-import org.zfin.expression.ExpressionResult2;
-import org.zfin.feature.*;
-import org.zfin.fish.WarehouseSummary;
-import org.zfin.framework.presentation.AnatomyFact;
-import org.zfin.marker.OrthologyNote;
-import org.zfin.marker.presentation.HighQualityProbeAOStatistics;
-import org.zfin.mutant.*;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.context.annotation.ScannedGenericBeanDefinition;
+import org.springframework.core.type.filter.RegexPatternTypeFilter;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.FileUtil;
 
@@ -35,6 +22,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Class HibernateSessionCreator.  Used to handle connections without going through Tomcat explicitly.
@@ -106,40 +95,25 @@ public class HibernateSessionCreator {
             }
         }
         if (!db.equals("sysmaster")) {
-            HibernateUtil.init(config.addAnnotatedClass(ExpressionExperiment2.class)
-                    .addAnnotatedClass(ExpressionFigureStage.class)
-                    .addAnnotatedClass(ExpressionResult2.class)
-                    .addAnnotatedClass(PhenotypeWarehouse.class)
-                    .addAnnotatedClass(PhenotypeStatementWarehouse.class)
-                    .addAnnotatedClass(PhenotypeTermFastSearch.class)
-                    .addAnnotatedClass(PhenotypeCurationSearch.class)
-                    .addAnnotatedClass(GenotypeFigure.class)
-                    .addAnnotatedClass(ExpressionPhenotypeTerm.class)
-                    .addAnnotatedClass(FishStr.class)
-                    .addAnnotatedClass(AnatomyFact.class)
-                    .addAnnotatedClass(AntibodyAOStatistics.class)
-                    .addAnnotatedClass(HighQualityProbeAOStatistics.class)
-                    .addAnnotatedClass(DevelopmentStage.class)
-                    .addAnnotatedClass(AuditLogItem.class)
-                    .addAnnotatedClass(AnatomyStatistics.class)
-                    .addAnnotatedClass(AnatomyTreeInfo.class)
-                    .addAnnotatedClass(Feature.class)
-                    .addAnnotatedClass(FeatureAssay.class)
-                    .addAnnotatedClass(FeatureRnaMutationDetail.class)
-                    .addAnnotatedClass(FeatureProteinMutationDetail.class)
-                    .addAnnotatedClass(Genotype.class)
-                    .addAnnotatedClass(FeatureHistory.class)
-                    .addAnnotatedClass(FeaturePrefix.class)
-                    .addAnnotatedClass(FeatureMarkerRelationshipType.class)
-                    .addAnnotatedClass(FeatureTypeGroup.class)
-                    .addAnnotatedClass(FeatureMarkerRelationship.class)
-                    .addAnnotatedClass(ExternalNote.class)
-                    .addAnnotatedClass(AntibodyExternalNote.class)
-                    .addAnnotatedClass(FeatureNote.class)
-                    .addAnnotatedClass(GenotypeExternalNote.class)
-                    .addAnnotatedClass(OrthologyNote.class)
-                    .addAnnotatedClass(WarehouseSummary.class)
-                    .buildSessionFactory());
+
+            ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
+            provider.addIncludeFilter(new RegexPatternTypeFilter(Pattern.compile(".*")));
+            final Set<BeanDefinition> classes = provider.findCandidateComponents("org.zfin");
+            for (BeanDefinition bbean : classes) {
+                try {
+                    ScannedGenericBeanDefinition bean = (ScannedGenericBeanDefinition) bbean;
+                    Set<String> annotationSet = bean.getMetadata().getAnnotationTypes();
+                    if (annotationSet.contains("javax.persistence.Entity")) {
+                        Class<?> clazz = Class.forName(bean.getBeanClassName());
+                        config.addAnnotatedClass(clazz);
+                        LOG.info("Loaded Annotated Class: " + clazz.getName());
+                    }
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            HibernateUtil.init(config.buildSessionFactory());
         }
     }
 
