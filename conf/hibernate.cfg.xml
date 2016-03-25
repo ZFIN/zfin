@@ -52,7 +52,6 @@
         <mapping resource="org/zfin/profile.hbm.xml"/>
         <mapping resource="org/zfin/publication.hbm.xml"/>
         <mapping resource="org/zfin/sequence.hbm.xml"/>
-        <mapping resource="org/zfin/reno.hbm.xml"/>
         <mapping resource="org/zfin/curation.hbm.xml"/>
         <mapping class="org.zfin.expression.ExpressionExperiment2"/>
         <mapping class="org.zfin.expression.ExpressionFigureStage"/>

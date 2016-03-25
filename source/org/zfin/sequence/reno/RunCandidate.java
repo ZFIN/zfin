@@ -2,6 +2,7 @@ package org.zfin.sequence.reno;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.GenericGenerator;
 import org.zfin.Species;
 import org.zfin.marker.Marker;
 import org.zfin.profile.Person;
@@ -11,20 +12,41 @@ import org.zfin.sequence.EntrezProtRelation;
 import org.zfin.sequence.blast.Hit;
 import org.zfin.sequence.blast.Query;
 
+import javax.persistence.*;
 import java.util.*;
 
+@Entity
+@Table(name = "run_candidate")
 public class RunCandidate {
-    private static final Logger LOG = Logger.getLogger(RunCandidate.class);
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "RUNCAN")
+            })
+    @Column(name = "runcan_zdb_id")
     private String zdbID;
+    @ManyToOne
+    @JoinColumn(name = "runcan_run_zdb_id")
     private Run run;
+    @ManyToOne
+    @JoinColumn(name = "runcan_cnd_zdb_id")
     private Candidate candidate;
+    @OneToMany(mappedBy = "runCandidate")
     private Set<Query> candidateQueries = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "runcan_locked_by")
     private Person lockPerson;
+    @Column(name = "runcan_done")
     private boolean done;
+    @Transient
     private Hit bestHit;
-
-
+    @Column(name = "runcan_occurrence_order")
     private int occurrenceOrder;
+    @Transient
+    private static final Logger LOG = Logger.getLogger(RunCandidate.class);
 
     /**
      * Is this record locked?

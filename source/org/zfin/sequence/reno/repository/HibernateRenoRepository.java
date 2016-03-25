@@ -1,5 +1,5 @@
 /**
- *  Class HibernateRenoRepository.
+ * Class HibernateRenoRepository.
  */
 package org.zfin.sequence.reno.repository;
 
@@ -31,16 +31,8 @@ public class HibernateRenoRepository implements RenoRepository {
 
 
     public List<RedundancyRun> getRedundancyRuns() {
-//        Session session = HibernateUtil.currentSession();
-
-//        Query query = session.createQuery(" from Run r where r.type = :type " +
-//                " order by r.date desc");
-//        query.setParameter("type", Run.Type.REDUNDANCY);
-//        return query.list();
-
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(RedundancyRun.class);
-//        criteria.add(Restrictions.eq("type", Run.Type.REDUNDANCY));
         return criteria.list();
 
     }
@@ -217,9 +209,9 @@ public class HibernateRenoRepository implements RenoRepository {
                 " and hit.query = query " +
                 " and hit.targetAccession  = accession " +
                 " and hit.expectValue = (select min(bh.expectValue)" +
-                "                            from Hit bh,Accession ab"+
+                "                            from Hit bh,Accession ab" +
                 "                          where bh.query = query " +
-                "                            and bh.targetAccession.ID  =ab.ID "+
+                "                            and bh.targetAccession.ID  =ab.ID " +
                 "                        ) " +
                 "GROUP BY runCandidate.zdbID , runCandidate.candidate.problem,hit.expectValue , runCandidate.candidate.lastFinishedDate , runCandidate.occurrenceOrder " +
                 "ORDER BY ";
