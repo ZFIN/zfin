@@ -255,7 +255,7 @@
                             ${detail.rnaConsequence.termName}
 
                         </c:forEach>
-                        ${formBean.feature.dna}
+                        ${formBean.feature.dnaMutationName}
                     </td>
                 </tr>
                 <zfin2:notesInDiv hasNotes="${formBean.feature}"/>

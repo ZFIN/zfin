@@ -88,6 +88,12 @@
         <mapping class="org.zfin.feature.FeatureRnaMutationDetail"/>
         <mapping class="org.zfin.feature.FeatureProteinMutationDetail"/>
         <mapping class="org.zfin.Species"/>
+        <mapping class="org.zfin.sequence.reno.Candidate"/>
+        <mapping class="org.zfin.sequence.reno.RunCandidate"/>
+        <mapping class="org.zfin.sequence.reno.Run"/>
+        <mapping class="org.zfin.sequence.reno.NomenclatureRun"/>
+        <mapping class="org.zfin.sequence.reno.RedundancyRun"/>
+        <mapping class="org.zfin.feature.DnaMutationTerm"/>
 
 
     </session-factory>
