@@ -1,16 +1,26 @@
 package org.zfin;
 
-/**
- * Main domain object.
- */
+import javax.persistence.*;
+
+@Entity
+@Table(name = "organism")
 public class Species {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "organism_taxid")
     private int taxonomyID;
+    @Column(name = "organism_species")
     private String speciesName;
+    @Column(name = "organism_common_name")
     private String commonName;
+    @Column(name = "organism_display_order")
     int displayOrder;
+    @Column(name = "organism_is_ab_immun")
     boolean antibodyImmunogen;
+    @Column(name = "organism_is_ab_host")
     boolean antibodyHost;
+    @Transient
     private Type organism;
 
     public int getTaxonomyID() {
