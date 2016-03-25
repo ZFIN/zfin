@@ -82,6 +82,13 @@
         <mapping class="org.zfin.feature.FeatureTypeGroup"/>
         <mapping class="org.zfin.feature.FeatureMarkerRelationship"/>
         <mapping class="org.zfin.fish.WarehouseSummary"/>
+        <mapping class="org.zfin.ExternalNote"/>
+        <mapping class="org.zfin.feature.FeatureNote"/>
+        <mapping class="org.zfin.marker.OrthologyNote"/>
+        <mapping class="org.zfin.mutant.GenotypeExternalNote"/>
+        <mapping class="org.zfin.antibody.AntibodyExternalNote"/>
+        <mapping class="org.zfin.feature.FeatureRnaMutationDetail"/>
+        <mapping class="org.zfin.feature.FeatureProteinMutationDetail"/>
 
 
     </session-factory>

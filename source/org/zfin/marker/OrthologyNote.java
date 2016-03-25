@@ -11,7 +11,7 @@ import javax.persistence.ManyToOne;
  * Note entered by Curators concerning the existence or absence of orthology.
  */
 @Entity
-@DiscriminatorValue("antibody")
+@DiscriminatorValue("orthology")
 public class OrthologyNote extends ExternalNote {
 
     @ManyToOne
