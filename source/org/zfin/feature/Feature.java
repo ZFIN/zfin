@@ -27,6 +27,13 @@ import java.util.TreeSet;
  */
 @Entity
 @Table(name = "feature")
+/*
+@SecondaryTables({
+        @SecondaryTable(name = "dna_mutation_term", pkJoinColumns = {
+                @PrimaryKeyJoinColumn(name = "dmt_term_zdb_id", referencedColumnName = "feature_dna_mutation_term_zdb_id")}
+        )
+})
+*/
 public class Feature implements EntityNotes, EntityZdbID {
 
     public static final String MUTANT = "Mutant";
@@ -99,6 +106,13 @@ public class Feature implements EntityNotes, EntityZdbID {
     private Integer numberOfAdditionalBps;
     @Column(name = "feature_number_removed_bps", nullable = true)
     private Integer numberOfremovedBps;
+    /*
+        @Column(table = "dna_mutation_term", name = "dmt_term_display_name")
+        private String dnaMutationDetail;
+    */
+    @OneToOne
+    @JoinColumn(name = "feature_dna_mutation_term_zdb_id")
+    private DnaMutationTerm dnaMutationTerm;
 
     public String getTransgenicSuffix() {
         return transgenicSuffix;
@@ -216,6 +230,12 @@ public class Feature implements EntityNotes, EntityZdbID {
 
     public void setAliases(Set<FeatureAlias> aliases) {
         this.aliases = aliases;
+    }
+
+    public String getDnaMutationName() {
+        if (dnaMutationTerm == null)
+            return null;
+        return dnaMutationTerm.getDisplayName();
     }
 
     public String getZdbID() {
