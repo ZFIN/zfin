@@ -264,7 +264,7 @@
 </table>
 
 <authz:authorize access="hasRole('root')">
-    <zfin2:subsection title="MUTATION DETAILS">
+    <zfin2:subsection title="MUTATION DETAILS -- ROOT ONLY" additionalCssClass="red">
         <table class="primary-entity-attributes">
             <tr>
                 <th>type</th>
