@@ -33,29 +33,45 @@
 
 
 </head>
-<body>
+<script type="text/javascript" language="javascript"
+        src="org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
 
-<table>
-    <tr>
-        <td><a href="human-disease-tab-dev.html">Human Disease Module</a></td>
-    </tr>
-    <tr>
-        <td><a href="fx-tab-dev.html">FX Module</a></td>
-    </tr>
-    <tr>
-        <td><a href="pheno-tab-dev.html">PHENO Module</a></td>
-    </tr>
-    <tr>
-        <td><a href="fish-tab-dev.html">Fish Module</a></td>
-    </tr>
-    <tr>
-        <td><a href="feature-tab-dev.html">Feature Module</a></td>
-    </tr>
-    <tr>
-        <td><a href="lookup.html">FX Lookup Module</a></td>
-    </tr>
-</table>
+<h1>FX Curation Application</h1>
 
-</body>
+<div id="show-hide-all-sections"></div>
 
-</html>
+<div class="error"> Please use only for developmental purposes as this will make changes to the database!!!
+</div>
+<p></p>
+
+<div title="Hello">
+    Publication:
+    <br>
+    Title: <br>
+</div>
+
+<div id="directAttributionName"></div>
+
+<span id="show-hide-experiments"></span>
+
+<div id="display-experiment"></div>
+<div id="image-loading"></div>
+<div id="display-experiment-errors"></div>
+
+<div id="show-hide-expressions"></div>
+
+<div id="expressionZone"></div>
+
+<script type="text/javascript" src="/javascript/zfin-gwt-autocomplete-helper.js">
+</script>
+
+<script type="text/javascript">
+    var curationProperties = {
+        zdbID: "ZDB-PUB-990507-16",
+        moduleType: "EXPRESSION_CURATION",
+        debug: "false"
+    };
+    var g = "ZDB-PUB-060105-3,ZDB-PUB-090616-53,ZDB-PUB-990507-16";
+</script>
+
+

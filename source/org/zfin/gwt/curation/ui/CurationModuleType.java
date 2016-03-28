@@ -6,12 +6,6 @@ package org.zfin.gwt.curation.ui;
  */
 public enum CurationModuleType {
 
-    FX_CURATION {
-        @Override
-        public PileConstructionZoneModule initializeModule(String publicationID) {
-            return null;
-        }
-    },
     PHENOTYPE_CURATION {
         @Override
         public PileConstructionZoneModule initializeModule(String publicationID) {
@@ -50,8 +44,8 @@ public enum CurationModuleType {
     FEATURE_CURATION {
         @Override
         public ConstructionZone initializeModule(String publicationID) {
-            FeatureCurationModule module = new FeatureCurationModule(publicationID);
-            return module.getPileConstructionZoneModule();
+            FeatureModule module = new FeatureModule(publicationID);
+            return null;
         }
     },
     CONSTRUCT_CURATION {
