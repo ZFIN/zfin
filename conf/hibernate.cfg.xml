@@ -87,6 +87,7 @@
         <mapping class="org.zfin.antibody.AntibodyExternalNote"/>
         <mapping class="org.zfin.feature.FeatureRnaMutationDetail"/>
         <mapping class="org.zfin.feature.FeatureProteinMutationDetail"/>
+        <mapping class="org.zfin.feature.FeatureTracking"/>
         <mapping class="org.zfin.Species"/>
         <mapping class="org.zfin.sequence.reno.Candidate"/>
         <mapping class="org.zfin.sequence.reno.RunCandidate"/>
