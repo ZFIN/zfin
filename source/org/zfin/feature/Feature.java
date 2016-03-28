@@ -86,6 +86,8 @@ public class Feature implements EntityNotes, EntityZdbID {
     @Sort(type = SortType.NATURAL)
     private Set<FeatureMarkerRelationship> featureMarkerRelations;
     @Column(name = "feature_type")
+    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.gwt.root.dto.FeatureTypeEnum")})
     private FeatureTypeEnum type;
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<FeatureSupplier> suppliers;
