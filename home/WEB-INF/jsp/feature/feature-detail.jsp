@@ -246,20 +246,7 @@
                         </c:choose>
                     </td>
                 </tr>
-                <tr>
-                    <th>
-                        Mutation Details:
-                    </th>
-                    <td>
-                        <c:forEach var="detail" items="${formBean.feature.featureRnaMutationDetailSet}">
-                            ${detail.rnaConsequence.termName}
-
-                        </c:forEach>
-                        ${formBean.feature.dnaMutationName}
-                    </td>
-                </tr>
                 <zfin2:notesInDiv hasNotes="${formBean.feature}"/>
-
             </table>
         </td>
         <td>
@@ -275,6 +262,61 @@
         </td>
     </tr>
 </table>
+
+<authz:authorize access="hasRole('root')">
+    <zfin2:subsection title="MUTATION DETAILS">
+        <table class="primary-entity-attributes">
+            <tr>
+                <th>type</th>
+                <td>${formBean.feature.type.name}</td>
+            </tr>
+            <tr>
+                <th>dnaMutationName</th>
+                <td>${formBean.feature.dnaMutationName}</td>
+            </tr>
+            <tr>
+                <th>numberOfAdditionalBps</th>
+                <td>${formBean.feature.numberOfAdditionalBps}</td>
+            </tr>
+            <tr>
+                <th>numberOfremovedBps</th>
+                <td>${formBean.feature.numberOfremovedBps}</td>
+            </tr>
+            <c:choose>
+                <c:when test="${!empty formBean.feature.featureRnaMutationDetailSet}">
+                    <c:forEach items="${formBean.feature.featureRnaMutationDetailSet}" var="rna" varStatus="rnaLoop">
+                        <tr>
+                            <th>featureRnaMutationDetailSet[${rnaLoop.index}].rnaConsequence</th>
+                            <td>${rna.rnaConsequence.termName}</td>
+                        </tr>
+                    </c:forEach>
+                </c:when>
+                <c:otherwise>
+                    <tr>
+                        <th>featureRnaMutationDetailSet</th>
+                        <td>empty</td>
+                    </tr>
+                </c:otherwise>
+            </c:choose>
+            <c:choose>
+                <c:when test="${!empty formBean.feature.featureProteinMutationDetailSet}">
+                    <c:forEach items="${formBean.feature.featureProteinMutationDetailSet}" var="protein" varStatus="proteinLoop">
+                        <tr>
+                            <th>featureProteinMutationDetailSet[${proteinLoop.index}].proteinConsequence</th>
+                            <td>${protein.proteinConsequence.termName}</td>
+                        </tr>
+                    </c:forEach>
+                </c:when>
+                <c:otherwise>
+                    <tr>
+                        <th>featureProteinMutationDetailSet</th>
+                        <td>empty</td>
+                    </tr>
+                </c:otherwise>
+            </c:choose>
+        </table>
+    </zfin2:subsection>
+</authz:authorize>
 
 <div id="other-pages">
     <zfin2:featureSummaryReport feature="${formBean.feature}" links="${formBean.summaryPageDbLinks}"/>
