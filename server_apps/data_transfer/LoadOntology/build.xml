@@ -14,6 +14,7 @@
               value="http://purl.obolibrary.org/obo/bspo.obo"/>
     <property name="chebiOboURL" value="http://www.berkeleybop.org/ontologies/chebi.obo"/>
     <property name="zecoOboURL" value="http://swirl.zfin.org/zeco.obo"/>
+    <property name="soOboURL" value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/so-xp-simple.obo"/>
     <property name="root.dir" value="${basedir}/../../../"/>
     <property name="web.dir" value="${root.dir}/home"/>
     <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
@@ -80,6 +81,11 @@
         <load-ontology oboDirectory="${run-directory}" oboFileName="zeco.obo" />
     </target>
 
+
+    <target name="load-so-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="so-xp-simple.obo" />
+    </target>
+
     <target name="load-gene-ontology" depends="init">
         <load-ontology oboDirectory="${run-directory}" oboFileName="gene-ontology.obo" />
     </target>
@@ -114,6 +120,12 @@
         <antcall target="download-ontology"/>
     </target>
 
+ <target name="download-so-ontology">
+        <property name="localOboFile" value="so-xp-simple.obo"/>
+        <property name="oboFileURL" value="${soOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
     <target name="download-disease-ontology">
         <property name="localOboFile" value="disease-ontology.obo"/>
         <property name="oboFileURL" value="${diseaseOboURL}"/>
@@ -137,6 +149,8 @@
     </target>
 
     <target name="load-zeco" depends="download-zeco-ontology,load-zeco-ontology"/>
+
+    <target name="load-so" depends="download-so-ontology,load-so-ontology"/>
 
     <target name="load-quality" depends="download-quality-ontology,load-quality-ontology"/>
 
@@ -339,6 +353,7 @@
             download-sequence-ontology
             download-chebi-ontology
             download-zeco-ontology
+	    download-so-ontology
 
             load-zeco-ontology
             load-chebi-ontology
@@ -348,8 +363,10 @@
             load-spatial-ontology
             load-mpath-ontology
             load-sequence-ontology
+	    load-so-ontology
 
             load-zeco
+	    load-so
             load-chebi
             load-quality
             load-gene
