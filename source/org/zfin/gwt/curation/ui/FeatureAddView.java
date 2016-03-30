@@ -84,6 +84,16 @@ public class FeatureAddView extends Composite implements Revertible {
         presenter.createFeature();
     }
 
+    @UiHandler("errorLabel")
+    void onClickErrorLabel(@SuppressWarnings("unused") ClickEvent event) {
+        clearErrors();
+    }
+
+    @UiHandler("message")
+    void onClickMessage(@SuppressWarnings("unused") ClickEvent event) {
+        message.setText("");
+    }
+
     @UiHandler("showHideToggle")
     void onClickShowHide(@SuppressWarnings("unused") ClickEvent event) {
         showHideToggle.toggleVisibility();
@@ -96,16 +106,11 @@ public class FeatureAddView extends Composite implements Revertible {
             featureNameBox.setEnabled(false);
             featureSuffixBox.setVisible(true);
             featureSuffixPanel.setVisible(true);
-///            constructTextBox.setVisible(false);
             saveButton.setEnabled(true);
         } else {
             featureNameBox.setVisible(false);
-///            constructTextBox.setVisible(true);
             featureNameBox.setEnabled(false);
             featureSuffixPanel.setVisible(true);
-/*
-            constructTextBox.setEnabled(false);
-*/
         }
     }
 
@@ -118,42 +123,47 @@ public class FeatureAddView extends Composite implements Revertible {
 
     @UiHandler("labDesignationBox")
     void onChangeLabOfDesignation(@SuppressWarnings("unused") ChangeEvent event) {
-        presenter.handleDirty();
+        handleChanges();
     }
 
     @UiHandler("mutageeBox")
     void onChangeMutagee(@SuppressWarnings("unused") ChangeEvent event) {
-        presenter.handleDirty();
+        handleChanges();
     }
 
     @UiHandler("mutagenBox")
     void onChangeMutagen(@SuppressWarnings("unused") ChangeEvent event) {
-        presenter.handleDirty();
+        handleChanges();
     }
 
     @UiHandler("featureSuffixBox")
     void onChangeFeatureSuffix(@SuppressWarnings("unused") ChangeEvent event) {
-        presenter.handleDirty();
+        handleChanges();
     }
 
     @UiHandler("dominantCheckBox")
     void onClickDominantSite(@SuppressWarnings("unused") ClickEvent event) {
-        presenter.handleDirty();
+        handleChanges();
     }
 
     @UiHandler("lineNumberBox")
     void onKeyUpLineNumber(@SuppressWarnings("unused") KeyUpEvent event) {
+        handleChanges();
+    }
+
+    private void handleChanges() {
+        clearErrors();
         presenter.handleDirty();
     }
 
     @UiHandler("featureNameBox")
     void onKeyUpFeatureName(@SuppressWarnings("unused") KeyUpEvent event) {
-        presenter.handleDirty();
+        handleChanges();
     }
 
     @UiHandler("featureNameBox")
     void onChangeFeatureName(@SuppressWarnings("unused") ChangeEvent event) {
-        presenter.handleDirty();
+        handleChanges();
     }
 
     @UiHandler("knownInsertionCheckBox")
@@ -163,22 +173,24 @@ public class FeatureAddView extends Composite implements Revertible {
             featureNameBox.setEnabled(false);
             featureSuffixBox.setVisible(true);
             featureSuffixPanel.setVisible(true);
-///            constructTextBox.setVisible(false);
             saveButton.setEnabled(true);
         } else {
             featureNameBox.setVisible(false);
-///            constructTextBox.setVisible(true);
             featureNameBox.setEnabled(false);
             featureSuffixBox.setVisible(true);
             featureSuffixPanel.setVisible(true);
-///            constructTextBox.setEnabled(false);
         }
-        presenter.handleDirty();
+        handleChanges();
     }
 
     @UiHandler("featureTypeBox")
     void onChangeFeatureType(@SuppressWarnings("unused") ChangeEvent event) {
         errorLabel.clearAllErrors();
+        message.setText("");
+        onChangeFeatureType();
+    }
+
+    void onChangeFeatureType() {
         final FeatureTypeEnum featureTypeSelected = FeatureTypeEnum.getTypeForDisplay(featureTypeBox.getSelectedText());
         if (featureTypeSelected == null) {
             resetInterface();
@@ -186,12 +198,12 @@ public class FeatureAddView extends Composite implements Revertible {
             return;
         }
 
-        knownInsertionCheckBox.setEnabled(false);
-        labOfOriginBox.setEnabled(true);
         publicNoteBox.setEnabled(true);
         curatorNoteBox.setEnabled(true);
         lineNumberBox.setEnabled(true);
+        knownInsertionCheckBox.setEnabled(false);
         dominantCheckBox.setEnabled(true);
+        labOfOriginBox.setEnabled(true);
         labDesignationBox.setEnabled(true);
         mutageeBox.setEnabled(true);
         mutagenBox.setEnabled(false);
@@ -201,7 +213,6 @@ public class FeatureAddView extends Composite implements Revertible {
         featureSequenceBox.setEnabled(true);
         featureNameBox.setVisible(true);
         featureNameBox.setEnabled(false);
-//        constructTextBox.setVisible(false);
 
         switch (featureTypeSelected) {
             case TRANSGENIC_INSERTION:
@@ -235,14 +246,11 @@ public class FeatureAddView extends Composite implements Revertible {
                 mutageeBox.setEnabled(false);
                 mutagenBox.setEnabled(false);
                 lineNumberBox.setText("");
-//                constructTextBox.setVisible(false);
                 featureNameBox.setVisible(true);
                 featureNameBox.setEnabled(true);
                 break;
 
         }
-
-        mutagenBox.clear();
 
         presenter.onFeatureTypeChange(featureTypeSelected);
     }
@@ -260,17 +268,10 @@ public class FeatureAddView extends Composite implements Revertible {
         dominantCheckBox.setValue(false);
         featureNameBox.setEnabled(false);
         featureNameBox.clear();
-///        constructTextBox.setText("");
         featureAliasBox.setEnabled(false);
         featureAliasBox.clear();
         featureSequenceBox.setEnabled(false);
         featureSequenceBox.clear();
-/*
-        featureAliasList.working();
-        featureAliasList.resetInput();
-        featureSequenceList.working();
-        featureSequenceList.resetInput();
-*/
         mutageeBox.setEnabled(false);
         mutageeBox.setSelectedIndex(0);
         mutagenBox.setEnabled(false);
@@ -279,7 +280,6 @@ public class FeatureAddView extends Composite implements Revertible {
         publicNoteBox.setText("");
         curatorNoteBox.setEnabled(false);
         curatorNoteBox.setText("");
-//        featureNoteBox.revertGUI();
         knownInsertionCheckBox.setEnabled(false);
         knownInsertionCheckBox.setValue(false);
         featureDisplayName.clear();
@@ -292,7 +292,7 @@ public class FeatureAddView extends Composite implements Revertible {
 
     @Override
     public boolean handleDirty() {
-        return false;
+        return presenter.handleDirty();
     }
 
     public void working() {
@@ -317,9 +317,7 @@ public class FeatureAddView extends Composite implements Revertible {
         saveButton.setText(TEXT_SAVE);
         saveButton.setEnabled(true);
         featureTypeBox.setEnabled(true);
-/*
-        updateForFeatureType();
-*/
+        onChangeFeatureType();
     }
 
 

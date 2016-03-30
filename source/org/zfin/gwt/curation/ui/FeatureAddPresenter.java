@@ -1,12 +1,12 @@
 package org.zfin.gwt.curation.ui;
 
-import org.zfin.gwt.root.dto.FeatureDTO;
-import org.zfin.gwt.root.dto.FeaturePrefixDTO;
-import org.zfin.gwt.root.dto.FeatureTypeEnum;
-import org.zfin.gwt.root.dto.OrganizationDTO;
+import com.google.gwt.user.client.Window;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FeatureAddPresenter implements HandlesError {
@@ -14,8 +14,10 @@ public class FeatureAddPresenter implements HandlesError {
     private FeatureAddView view;
     protected final String ZF_PREFIX = "zf";
     private FeatureDTO dto;
+    private String publicationID;
 
     public FeatureAddPresenter(FeatureAddView featureAddBox, String publicationID) {
+        this.publicationID = publicationID;
         this.view = featureAddBox;
         dto = new FeatureDTO();
         dto.setPublicationZdbID(publicationID);
@@ -46,6 +48,7 @@ public class FeatureAddPresenter implements HandlesError {
                     public void onSuccess(List<String> result) {
                         if (featureTypeSelected != FeatureTypeEnum.UNSPECIFIED) {
                             if (result != null && result.size() > 0) {
+                                view.mutagenBox.clear();
                                 if (result.size() == 1) {
                                     view.mutagenBox.addItem(result.get(0));
                                 } else {
@@ -64,7 +67,7 @@ public class FeatureAddPresenter implements HandlesError {
                 }
 
         );
-
+        handleDirty();
     }
 
     @Override
@@ -74,7 +77,8 @@ public class FeatureAddPresenter implements HandlesError {
 
     @Override
     public void clearError() {
-
+        view.message.setText("");
+        view.errorLabel.setError("");
     }
 
     @Override
@@ -126,13 +130,7 @@ public class FeatureAddPresenter implements HandlesError {
         featureDTO.setName(view.featureDisplayName.getText());
         if (view.featureNameBox.isVisible()) {
             featureDTO.setOptionalName(view.featureNameBox.getText());
-        } ///else
-/*
-        if(view.constructTextBox.isVisible()){
-            featureDTO.setOptionalName(view.constructSuggestBox.getText());
         }
-*/
-
 
         FeatureTypeEnum featureTypeEnum = FeatureTypeEnum.getTypeForName(view.featureTypeBox.getSelected());
         if (featureTypeEnum != null) {
@@ -151,6 +149,24 @@ public class FeatureAddPresenter implements HandlesError {
         featureDTO.setTransgenicSuffix(view.featureSuffixBox.getSelectedText());
         featureDTO.setFeatureSequence(view.featureSequenceBox.getText());
         featureDTO.setAbbreviation(FeatureValidationService.getAbbreviationFromName(featureDTO));
+
+        if (StringUtils.isNotEmptyTrim(view.featureAliasBox.getText())) {
+            featureDTO.setAlias(view.featureAliasBox.getText());
+        }
+        if (StringUtils.isNotEmptyTrim(view.publicNoteBox.getText())) {
+            NoteDTO publicNoteDTO = new NoteDTO();
+            publicNoteDTO.setNoteData(view.publicNoteBox.getText());
+            publicNoteDTO.setPublicationZdbID(publicationID);
+            featureDTO.addPublicNote(publicNoteDTO);
+        }
+
+        if (StringUtils.isNotEmptyTrim(view.curatorNoteBox.getText())) {
+            List<NoteDTO> curatorNoteDTOs = new ArrayList<>();
+            NoteDTO noteDTO = new NoteDTO();
+            noteDTO.setNoteData(view.curatorNoteBox.getText());
+            curatorNoteDTOs.add(noteDTO);
+            featureDTO.setCuratorNotes(curatorNoteDTOs);
+        }
 
         return featureDTO;
     }
@@ -176,6 +192,7 @@ public class FeatureAddPresenter implements HandlesError {
             public void onFailure(Throwable throwable) {
                 super.onFailure(throwable);
                 view.notWorking();
+                handleDirty();
             }
 
             @Override

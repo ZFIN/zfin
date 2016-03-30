@@ -51,7 +51,8 @@ public class Feature implements EntityNotes, EntityZdbID {
     private String zdbID;
     @Column(name = "feature_name", nullable = false)
     private String name;
-    @OneToMany(mappedBy = "feature")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "extnote_data_zdb_id")
     private Set<FeatureNote> featureNoteSet;
     @Transient
     private String publicComments;
@@ -217,6 +218,13 @@ public class Feature implements EntityNotes, EntityZdbID {
         this.sources = sources;
     }
 
+    public Set<FeatureNote> getFeatureNoteSet() {
+        return featureNoteSet;
+    }
+
+    public void setFeatureNoteSet(Set<FeatureNote> featureNoteSet) {
+        this.featureNoteSet = featureNoteSet;
+    }
 
     public FeatureAssay getFeatureAssay() {
         return featureAssay;

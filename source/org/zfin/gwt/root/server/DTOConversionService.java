@@ -9,10 +9,7 @@ import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
 import org.zfin.construct.presentation.ConstructPresentation;
 import org.zfin.expression.*;
-import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureAssay;
-import org.zfin.feature.FeatureMarkerRelationship;
-import org.zfin.feature.FeaturePrefix;
+import org.zfin.feature.*;
 import org.zfin.feature.presentation.FeaturePresentation;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.HibernateUtil;
@@ -577,13 +574,17 @@ public class DTOConversionService {
             feature.setUnspecifiedFeature(true);
         }
 
-       /* if (featureDTO.getKnownInsertionSite()) {
-            feature.setTransgenicSuffix(featureDTO.getTransgenicSuffix());
-        }*/
         feature.setTransgenicSuffix(featureDTO.getTransgenicSuffix());
 
-        if (featureDTO.getPublicNote() != null) {
-            feature.setPublicComments(escapeString(featureDTO.getPublicNote().getNoteData()));
+        if (CollectionUtils.isNotEmpty(featureDTO.getPublicNoteList())) {
+            HashSet<FeatureNote> featureNoteSet = new HashSet<>(featureDTO.getPublicNoteList().size());
+            feature.setFeatureNoteSet(featureNoteSet);
+            for (NoteDTO note : featureDTO.getPublicNoteList()) {
+                FeatureNote featureNote = new FeatureNote();
+                featureNote.setFeature(feature);
+                featureNote.setNote(note.getNoteData());
+                feature.getFeatureNoteSet().add(featureNote);
+            }
         }
 
         return feature;

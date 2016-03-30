@@ -3,10 +3,7 @@ package org.zfin.feature;
 import org.zfin.ExternalNote;
 import org.zfin.marker.Marker;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
  * Note entered by Curators concerning the existence or absence of orthology.
@@ -15,7 +12,7 @@ import javax.persistence.ManyToOne;
 @DiscriminatorValue("feature")
 public class FeatureNote extends ExternalNote {
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "extnote_data_zdb_id")
     private Feature feature;
 

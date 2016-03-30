@@ -40,6 +40,7 @@ import org.zfin.sequence.DBLink;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 
 /**
@@ -1058,6 +1059,16 @@ public class HibernateFeatureRepository implements FeatureRepository {
             }
         }
 
+        // add another for the external notes
+        for(FeatureNote note : feature.getFeatureNoteSet()) {
+            PublicationAttribution pa = new PublicationAttribution();
+            pa.setPublication(publication);
+            pa.setDataZdbID(note.getZdbID());
+            pa.setSourceType(RecordAttribution.SourceType.STANDARD);
+            Set<PublicationAttribution> pubSetter = new HashSet<>();
+            pubSetter.add(pa);
+            note.setPubAttributions(pubSetter);
+        }
     }
 
     @Override

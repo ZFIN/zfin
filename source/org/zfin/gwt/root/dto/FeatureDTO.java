@@ -1,6 +1,7 @@
 package org.zfin.gwt.root.dto;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -20,6 +21,7 @@ public class FeatureDTO extends RelatedEntityDTO {
     private String featureAssay;
     private Boolean knownInsertionSite = false ;
     private NoteDTO publicNote;
+    private List<NoteDTO> publicNoteList;
     private List<NoteDTO> curatorNotes;
     protected String alias;
     protected FeatureTypeEnum featureType;
@@ -203,12 +205,18 @@ public class FeatureDTO extends RelatedEntityDTO {
     }
 
 
+    public List<NoteDTO> getPublicNoteList() {
+        return publicNoteList;
+    }
 
+    public void setPublicNoteList(List<NoteDTO> publicNoteList) {
+        this.publicNoteList = publicNoteList;
+    }
 
     /**
      * Only returning the shallow values.
      *
-     * @return A MarkerDTO object that has a valid link assoicated with it.
+     * @return A FeatureDTO object that has a valid link associated with it.
      */
     public FeatureDTO deepCopy() {
         FeatureDTO featureDTO = new FeatureDTO();
@@ -263,4 +271,9 @@ public class FeatureDTO extends RelatedEntityDTO {
     }
 
 
+    public void addPublicNote(NoteDTO publicNoteDTO) {
+        if(publicNoteList == null)
+            publicNoteList = new ArrayList<>(2);
+        publicNoteList.add(publicNoteDTO);
+    }
 }

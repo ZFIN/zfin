@@ -117,7 +117,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         String newFtrName = featureDTO.getName();
         HibernateUtil.createTransaction();
         feature.setType(featureDTO.getFeatureType());
-        if (featureDTO.getFeatureType()!=FeatureTypeEnum.UNSPECIFIED){
+        if (featureDTO.getFeatureType() != FeatureTypeEnum.UNSPECIFIED) {
             feature.setUnspecifiedFeature(false);
         }
         if (featureDTO.getPublicNote() != null) {
@@ -187,11 +187,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 featureRepository.setLabOfOriginForFeature(newLabOfOrigin, feature);
             }
         } /*else if (featureDTO.getLabOfOrigin() == null && existingLabOfOrigin != null) {
-            featureRepository.deleteLabOfOriginForFeature(feature);*/
-        else if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin == null) {
+            featureRepository.deleteLabOfOriginForFeature(feature);*/ else if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin == null) {
             featureRepository.addLabOfOriginForFeature(feature, featureDTO.getLabOfOrigin());
-        }
-        else {
+        } else {
             throw new ValidationException("Feature cannot be saved without lab of origin");
         }
         HibernateUtil.currentSession().update(feature);
@@ -307,10 +305,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             if (feature == null)
                 throw new ValidationException("no feature found");
             FeatureAlias featureAlias = mutantRepository.getSpecificDataAlias(feature, name);
-            featureRepository.deleteFeatureAlias(feature,featureAlias);
-           // infrastructureRepository.deleteRecordAttributionsForData(featureDBLink.getZdbID());
+            featureRepository.deleteFeatureAlias(feature, featureAlias);
+            // infrastructureRepository.deleteRecordAttributionsForData(featureDBLink.getZdbID());
             //session.delete(featureAlias);
-           HibernateUtil.flushAndCommitCurrentSession();
+            HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             logger.error(e);
             HibernateUtil.rollbackTransaction();
@@ -374,7 +372,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         checkDupesinTrackingTable(featureDTO);
         validateUnspecified(featureDTO);
 
-        FeatureDTO newFeatureDTO = null;
+        FeatureDTO newFeatureDTO;
         HibernateUtil.createTransaction();
         try {
             Publication publication = getPublicationRepository().getPublication(featureDTO.getPublicationZdbID());
@@ -393,10 +391,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 featureAlias.setAliasLowerCase(featureDTO.getAlias().toLowerCase());
                 if (feature.getAliases() == null) {
                     Set<FeatureAlias> featureAliases = new HashSet<>();
-                    featureAliases.add(featureAlias);
                     feature.setAliases(featureAliases);
-                } else
-                    feature.getAliases().add(featureAlias);
+                }
+                feature.getAliases().add(featureAlias);
             }
             getFeatureRepository().saveFeature(feature, publication);
 
@@ -441,11 +438,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             if (featureDTO.getMutagen() == null) {
                 featureAssay.setMutagen(Mutagen.NOT_SPECIFIED);
             } else {
-                List<String> allowedMutagens=featureRepository.getMutagensForFeatureType(feature.getType());
-                if(allowedMutagens.indexOf(featureDTO.getMutagen())==-1){
-                    throw new ValidationException("Invalid mutagen for feature type"+ feature.getType().getDisplay());
-                }
-                else {
+                List<String> allowedMutagens = featureRepository.getMutagensForFeatureType(feature.getType());
+                if (allowedMutagens.indexOf(featureDTO.getMutagen()) == -1) {
+                    throw new ValidationException("Invalid mutagen for feature type" + feature.getType().getDisplay());
+                } else {
                     featureAssay.setMutagen(Mutagen.getType(featureDTO.getMutagen()));
                 }
             }
