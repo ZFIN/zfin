@@ -5,6 +5,7 @@ import org.apache.commons.collections.Predicate;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.feature.FeatureNote;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -201,5 +202,13 @@ public class FeatureService {
         }
         Collections.sort(featureMarkerList);
         return featureMarkerList;
+    }
+
+    public static List<FeatureNote> getSortedExternalNotes(Feature feature) {
+        List<FeatureNote> notes = new ArrayList<FeatureNote>();
+        notes.addAll(feature.getExternalNotes());
+        Collections.sort(notes);
+
+        return notes;
     }
 }

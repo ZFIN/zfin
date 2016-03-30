@@ -11,13 +11,18 @@
             <td width="30%"><b>Reference</b></td>
             <td><b>Comment</b></td>
         </tr>
-        <c:forEach var="extnote" items="${notes}" varStatus="loop">
+        <c:forEach var="note" items="${notes}" varStatus="loop">
             <zfin:alternating-tr loopName="loop">
                 <td valign="top">
-                    <zfin:link entity="${extnote.singlePubAttribution.publication}"/>
+                    <c:forEach var="attribution" items="${note.pubAttributions}">
+                        <zfin:link entity="${attribution.publication}"/>
+                    </c:forEach>
+<%--                    <c:forEach var="attribution" items="${note.personAttributions}">
+                        <zfin:link entity="${attribution.person}"/>
+                    </c:forEach>--%>
                 </td>
                 <td>
-                    <zfin2:toggleTextLength text="${extnote.note}" idName="${zfn:generateRandomDomID()}" shortLength="80"/>
+                    <zfin2:toggleTextLength text="${note.note}" idName="${zfn:generateRandomDomID()}" shortLength="80"/>
                 </td>
             </zfin:alternating-tr>
         </c:forEach>

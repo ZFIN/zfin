@@ -318,6 +318,9 @@
     </zfin2:subsection>
 </authz:authorize>
 
+
+<zfin2:externalNotes notes="${externalNotes}" />
+
 <div id="other-pages">
     <zfin2:featureSummaryReport feature="${formBean.feature}" links="${formBean.summaryPageDbLinks}"/>
 </div>

@@ -52,7 +52,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     @Column(name = "feature_name", nullable = false)
     private String name;
     @OneToMany(mappedBy = "feature")
-    private Set<FeatureNote> featureNoteSet;
+    private Set<FeatureNote> externalNotes;
     @Transient
     private String publicComments;
     @Column(name = "feature_line_number")
@@ -142,6 +142,14 @@ public class Feature implements EntityNotes, EntityZdbID {
 
     public SortedSet<DataNote> getSortedDataNotes() {
         return new TreeSet(this.getDataNotes());
+    }
+
+    public Set<FeatureNote> getExternalNotes() {
+        return externalNotes;
+    }
+
+    public void setExternalNotes(Set<FeatureNote> externalNotes) {
+        this.externalNotes = externalNotes;
     }
 
     public Boolean getKnownInsertionSite() {
