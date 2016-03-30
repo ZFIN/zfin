@@ -1060,14 +1060,16 @@ public class HibernateFeatureRepository implements FeatureRepository {
         }
 
         // add another for the external notes
-        for(FeatureNote note : feature.getFeatureNoteSet()) {
-            PublicationAttribution pa = new PublicationAttribution();
-            pa.setPublication(publication);
-            pa.setDataZdbID(note.getZdbID());
-            pa.setSourceType(RecordAttribution.SourceType.STANDARD);
-            Set<PublicationAttribution> pubSetter = new HashSet<>();
-            pubSetter.add(pa);
-            note.setPubAttributions(pubSetter);
+        if(feature.getFeatureNoteSet() != null) {
+            for (FeatureNote note : feature.getFeatureNoteSet()) {
+                PublicationAttribution pa = new PublicationAttribution();
+                pa.setPublication(publication);
+                pa.setDataZdbID(note.getZdbID());
+                pa.setSourceType(RecordAttribution.SourceType.STANDARD);
+                Set<PublicationAttribution> pubSetter = new HashSet<>();
+                pubSetter.add(pa);
+                note.setPubAttributions(pubSetter);
+            }
         }
     }
 

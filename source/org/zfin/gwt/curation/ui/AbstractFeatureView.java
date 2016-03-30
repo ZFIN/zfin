@@ -1,0 +1,243 @@
+package org.zfin.gwt.curation.ui;
+
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.*;
+import org.zfin.gwt.root.dto.FeatureTypeEnum;
+import org.zfin.gwt.root.ui.ShowHideToggle;
+import org.zfin.gwt.root.ui.SimpleErrorElement;
+import org.zfin.gwt.root.ui.StringListBox;
+import org.zfin.gwt.root.ui.StringTextBox;
+
+public class AbstractFeatureView extends Composite {
+
+    AbstractFeaturePresenter presenter;
+
+    @UiField
+    ShowHideToggle showHideToggle;
+    @UiField
+    StringListBox featureTypeBox;
+    @UiField
+    CheckBox knownInsertionCheckBox;
+    @UiField
+    HorizontalPanel knownInsertionSite;
+    @UiField
+    StringListBox featureSuffixBox;
+    @UiField
+    HorizontalPanel featureSuffixPanel;
+    @UiField
+    StringTextBox featureNameBox;
+    @UiField
+    StringTextBox featureDisplayName;
+    @UiField
+    SimpleErrorElement errorLabel;
+    @UiField
+    Label message;
+    @UiField
+    StringListBox mutageeBox;
+    @UiField
+    StringListBox mutagenBox;
+    @UiField
+    StringListBox labOfOriginBox;
+    @UiField
+    StringTextBox lineNumberBox;
+    @UiField
+    StringListBox labDesignationBox;
+    @UiField
+    CheckBox dominantCheckBox;
+    @UiField
+    Button saveButton;
+
+    @UiHandler("showHideToggle")
+    void onClickShowHide(@SuppressWarnings("unused") ClickEvent event) {
+        showHideToggle.toggleVisibility();
+    }
+
+    @UiHandler("errorLabel")
+    void onClickErrorLabel(@SuppressWarnings("unused") ClickEvent event) {
+        clearErrors();
+    }
+
+    @UiHandler("message")
+    void onClickMessage(@SuppressWarnings("unused") ClickEvent event) {
+        message.setText("");
+    }
+
+    @UiHandler("knownInsertionCheckBox")
+    void onClickKnownInsertionSite(@SuppressWarnings("unused") ClickEvent event) {
+        if (knownInsertionCheckBox.getValue()) {
+            featureNameBox.setVisible(true);
+            featureNameBox.setEnabled(false);
+            featureSuffixBox.setVisible(true);
+            featureSuffixPanel.setVisible(true);
+///            saveButton.setEnabled(true);
+        } else {
+            featureNameBox.setVisible(false);
+            featureNameBox.setEnabled(false);
+            featureSuffixPanel.setVisible(true);
+        }
+    }
+
+    @UiHandler("labOfOriginBox")
+    void onChangeLabOfOrigin(@SuppressWarnings("unused") ChangeEvent event) {
+        if (labOfOriginBox.isSelectedNull()) return;
+        final String labOfOriginSelected = labOfOriginBox.getSelectedText();
+        presenter.onLabOfOriginChange(labOfOriginSelected);
+    }
+
+    @UiHandler("labDesignationBox")
+    void onChangeLabOfDesignation(@SuppressWarnings("unused") ChangeEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("mutageeBox")
+    void onChangeMutagee(@SuppressWarnings("unused") ChangeEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("mutagenBox")
+    void onChangeMutagen(@SuppressWarnings("unused") ChangeEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("featureSuffixBox")
+    void onChangeFeatureSuffix(@SuppressWarnings("unused") ChangeEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("dominantCheckBox")
+    void onClickDominantSite(@SuppressWarnings("unused") ClickEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("lineNumberBox")
+    void onKeyUpLineNumber(@SuppressWarnings("unused") KeyUpEvent event) {
+        handleChanges();
+    }
+
+    private void handleChanges() {
+        clearErrors();
+        presenter.handleDirty();
+    }
+
+    @UiHandler("featureNameBox")
+    void onKeyUpFeatureName(@SuppressWarnings("unused") KeyUpEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("featureNameBox")
+    void onChangeFeatureName(@SuppressWarnings("unused") ChangeEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("knownInsertionCheckBox")
+    void onClickKnownInsertion(@SuppressWarnings("unused") ClickEvent event) {
+        if (knownInsertionCheckBox.getValue()) {
+            featureNameBox.setVisible(true);
+            featureNameBox.setEnabled(false);
+            featureSuffixBox.setVisible(true);
+            featureSuffixPanel.setVisible(true);
+            saveButton.setEnabled(true);
+        } else {
+            featureNameBox.setVisible(false);
+            featureNameBox.setEnabled(false);
+            featureSuffixBox.setVisible(true);
+            featureSuffixPanel.setVisible(true);
+        }
+        handleChanges();
+    }
+
+    @UiHandler("featureTypeBox")
+    void onChangeFeatureType(@SuppressWarnings("unused") ChangeEvent event) {
+        errorLabel.clearAllErrors();
+        message.setText("");
+        onChangeFeatureType();
+    }
+
+    void onChangeFeatureType() {
+        final FeatureTypeEnum featureTypeSelected = FeatureTypeEnum.getTypeForDisplay(featureTypeBox.getSelectedText());
+        if (featureTypeSelected == null) {
+/*
+            resetInterface();
+*/
+            saveButton.setEnabled(false);
+            return;
+        }
+
+/*
+        publicNoteBox.setEnabled(true);
+        curatorNoteBox.setEnabled(true);
+*/
+        lineNumberBox.setEnabled(true);
+        knownInsertionCheckBox.setEnabled(false);
+        dominantCheckBox.setEnabled(true);
+        labOfOriginBox.setEnabled(true);
+        labDesignationBox.setEnabled(true);
+        mutageeBox.setEnabled(true);
+        mutagenBox.setEnabled(false);
+        featureSuffixPanel.setVisible(false);
+        featureSuffixBox.setVisible(false);
+/*
+        featureAliasBox.setEnabled(true);
+        featureSequenceBox.setEnabled(true);
+*/
+        featureNameBox.setVisible(true);
+        featureNameBox.setEnabled(false);
+
+        switch (featureTypeSelected) {
+            case TRANSGENIC_INSERTION:
+                knownInsertionCheckBox.setEnabled(true);
+                featureSuffixBox.setVisible(true);
+                featureSuffixBox.setEnabled(true);
+                featureSuffixPanel.setVisible(true);
+                saveButton.setEnabled(true);
+                break;
+            case POINT_MUTATION:
+            case DELETION:
+            case SEQUENCE_VARIANT:
+            case INSERTION:
+                // just uses the defaults
+                featureNameBox.setText("");
+                break;
+            case INVERSION:
+            case TRANSLOC:
+            case DEFICIENCY:
+            case COMPLEX_SUBSTITUTION:
+                // enable feature names
+                featureNameBox.setEnabled(true);
+                break;
+            case UNSPECIFIED:
+                dominantCheckBox.setEnabled(false);
+                labDesignationBox.setEnabled(false);
+                lineNumberBox.setEnabled(false);
+                labOfOriginBox.setEnabled(false);
+/*
+                featureAliasBox.setEnabled(false);
+                featureSequenceBox.setEnabled(false);
+*/
+                mutageeBox.setEnabled(false);
+                mutagenBox.setEnabled(false);
+                lineNumberBox.setText("");
+                featureNameBox.setVisible(true);
+                featureNameBox.setEnabled(true);
+                break;
+
+        }
+
+        presenter.updateMutagenOnFeatureTypeChange(featureTypeSelected);
+    }
+
+    public void clearErrors() {
+        errorLabel.clearAllErrors();
+    }
+
+    public void setError(String message) {
+        errorLabel.setStyleName("clickable-error");
+        errorLabel.setError(message + "[close]");
+    }
+
+
+}

@@ -29,11 +29,12 @@ public class FeatureModule implements EntryPoint {
     @UiField
     FeatureAddView featureAddBox;
     @UiField
-    FeatureEditBox featureEditBox;
+    FeatureEditView featureEditView;
     @UiField
     FeatureRelationshipBox featureRelationshipBox;
 
     private FeatureAddPresenter addFeaturePresenter;
+    private FeatureEditPresenter featureEditPresenter;
 /*
 
     private StructurePilePresenter structurePilePresenter;
@@ -58,6 +59,10 @@ public class FeatureModule implements EntryPoint {
         addFeaturePresenter = new FeatureAddPresenter(featureAddBox, publicationID);
         featureAddBox.setPresenter(addFeaturePresenter);
         addFeaturePresenter.go();
+
+        featureEditPresenter = new FeatureEditPresenter(featureEditView, publicationID);
+        featureEditView.setPresenter(featureEditPresenter);
+        featureEditPresenter.go();
 
 /*
         curationFilterPresenter = new CurationFilterPresenter(curationFilterZone, publicationID);

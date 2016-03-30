@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * A generic listbox that is easier to work with and handles isDirty.
  */
-public abstract class AbstractListBox<T extends Object> extends ListBox implements IsDirty<T>{
+public abstract class AbstractListBox<T extends Object> extends ListBox implements IsDirty<T> {
 
     public static final String EMPTY_CHOICE = "---";
     public static final String NONE = "none";
@@ -20,29 +20,31 @@ public abstract class AbstractListBox<T extends Object> extends ListBox implemen
         super();
     }
 
-    public abstract T getSelected() ;
+    public abstract T getSelected();
 
-    public abstract boolean isFieldEqual(T value) ;
+    public abstract boolean isFieldEqual(T value);
 
-    public abstract int setIndexForText(T value) ;
+    public abstract int setIndexForText(T value);
 
-    public abstract int setIndexForValue(T value) ;
+    public abstract int setIndexForValue(T value);
 
     public String getSelectedText() {
-        String value = getItemText(getSelectedIndex());
-        if (value.equals(NULL_STRING)) {
+        int selectedIndex = getSelectedIndex();
+        String value = getItemText(selectedIndex);
+        if (value == null || value.equals(NULL_STRING)) {
             return null;
         } else {
             return value;
         }
     }
 
-    public void addNull(){
-        addItem(EMPTY_CHOICE,NULL_STRING);
+    public void addNull() {
+        addItem(EMPTY_CHOICE, NULL_STRING);
     }
 
     /**
      * These assume that the display is the value and the actual value is the name.
+     *
      * @param items
      * @return
      */
@@ -54,12 +56,13 @@ public abstract class AbstractListBox<T extends Object> extends ListBox implemen
                 addItem(item.toString(), item.toString());
             }
         }
-        return items.length ;
+        return items.length;
     }
 
 
     /**
      * These assume that the display is the value and the actual value is the name.
+     *
      * @param items
      * @return
      */
@@ -73,7 +76,7 @@ public abstract class AbstractListBox<T extends Object> extends ListBox implemen
                 addItem(item.toString(), item.name());
             }
         }
-        return items.length ;
+        return items.length;
     }
 
     public int addNullAndItems(List<String> items) {
@@ -90,6 +93,7 @@ public abstract class AbstractListBox<T extends Object> extends ListBox implemen
 
     /**
      * These assume that the display is the value and the actual value is the name.
+     *
      * @param items
      * @return
      */
@@ -116,9 +120,9 @@ public abstract class AbstractListBox<T extends Object> extends ListBox implemen
 
     public boolean containsValue(String value) {
         int size = getItemCount();
-        for(int i = 0 ; i < size; i++){
-            if(getValue(i).equals(value)){
-                return true ;
+        for (int i = 0; i < size; i++) {
+            if (getValue(i).equals(value)) {
+                return true;
             }
         }
 
@@ -126,14 +130,13 @@ public abstract class AbstractListBox<T extends Object> extends ListBox implemen
     }
 
 
-    public boolean setDirty(boolean dirty){
-        if(dirty){
+    public boolean setDirty(boolean dirty) {
+        if (dirty) {
             setStyleName(DIRTY_STYLE);
-        }
-        else{
+        } else {
             setStyleName(CLEAN_STYLE);
         }
-        return dirty ;
+        return dirty;
     }
 
 }

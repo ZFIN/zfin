@@ -9,7 +9,7 @@
     <g:FlowPanel>
         <zfin-mod:AttributionModule ui:field="attributionModule"/>
         <zfin-mod:FeatureAddView ui:field="featureAddBox"/>
-        <zfin-mod:FeatureEditBox ui:field="featureEditBox"/>
+        <zfin-mod:FeatureEditView ui:field="featureEditView"/>
         <zfin-mod:FeatureRelationshipBox ui:field="featureRelationshipBox"/>
     </g:FlowPanel>
 </ui:UiBinder>

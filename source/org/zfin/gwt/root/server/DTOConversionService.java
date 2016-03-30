@@ -613,9 +613,14 @@ public class DTOConversionService {
             }
         }
 
-        if (feature.getPublicComments() != null) {
-            PublicNoteDTO noteDTO = new PublicNoteDTO(feature.getZdbID(), DTOConversionService.unescapeString(feature.getPublicComments()));
-            featureDTO.setPublicNote(noteDTO);
+        Set<FeatureNote> featureNotes = feature.getFeatureNoteSet();
+        if (CollectionUtils.isNotEmpty(featureNotes)) {
+            List<NoteDTO> curatorNoteDTOs = new ArrayList<>();
+            for (FeatureNote dataNote : featureNotes) {
+                NoteDTO noteDTO = new NoteDTO(dataNote.getZdbID(), NoteEditMode.PUBLIC, DTOConversionService.unescapeString(dataNote.getNote()));
+                curatorNoteDTOs.add(noteDTO);
+            }
+            featureDTO.setPublicNoteList(curatorNoteDTOs);
         }
 
         Set<DataNote> curatorNotes = feature.getDataNotes();
