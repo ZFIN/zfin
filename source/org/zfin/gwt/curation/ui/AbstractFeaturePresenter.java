@@ -3,22 +3,20 @@ package org.zfin.gwt.curation.ui;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.FeaturePrefixDTO;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
-import org.zfin.gwt.root.dto.NoteDTO;
+import org.zfin.gwt.root.dto.OrganizationDTO;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
-import org.zfin.gwt.root.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class FeatureAddPresenter extends AbstractFeaturePresenter implements HandlesError {
+public abstract class AbstractFeaturePresenter implements HandlesError {
 
-    private FeatureAddView view;
+    private AbstractFeatureView view;
     protected final String ZF_PREFIX = "zf";
-    private String publicationID;
+    protected FeatureDTO dto;
+    String publicationID;
 
-    public FeatureAddPresenter(FeatureAddView view, String publicationID) {
-        super(view, publicationID);
+    public AbstractFeaturePresenter(AbstractFeatureView view, String publicationID) {
         this.publicationID = publicationID;
         this.view = view;
         dto = new FeatureDTO();
@@ -27,10 +25,28 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
 
 
     public void go() {
-        super.go();
+        setLabOfOriginsValues();
     }
 
-    public void onFeatureTypeChange(final FeatureTypeEnum featureTypeSelected) {
+    private void setLabOfOriginsValues() {
+        FeatureRPCService.App.getInstance().getLabsOfOriginWithPrefix(new FeatureEditCallBack<List<OrganizationDTO>>("Failed to load labs", this) {
+            public void onSuccess(List<OrganizationDTO> list) {
+                view.labOfOriginBox.clear();
+                view.labOfOriginBox.addNull();
+                for (OrganizationDTO labDTO : list) {
+                    view.labOfOriginBox.addItem(labDTO.getName(), labDTO.getZdbID());
+                }
+            }
+        });
+
+    }
+
+    protected void updateMutagenOnFeatureTypeChange() {
+        final FeatureTypeEnum featureTypeSelected = FeatureTypeEnum.getTypeForDisplay(view.featureTypeBox.getSelectedText());
+        updateMutagenOnFeatureTypeChange(featureTypeSelected);
+    }
+
+    public void updateMutagenOnFeatureTypeChange(final FeatureTypeEnum featureTypeSelected) {
         FeatureRPCService.App.getInstance().getMutagensForFeatureType(featureTypeSelected,
                 new FeatureEditCallBack<List<String>>("Failed to return mutagen for feature type: " + featureTypeSelected.getName(), this) {
                     @Override
@@ -51,7 +67,7 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
                                 view.mutagenBox.setEnabled(true);
                             }
                         }
-
+                        view.mutagenBox.setIndexForText(dto.getMutagen());
                     }
                 }
 
@@ -75,12 +91,20 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
 
     }
 
+    public abstract boolean handleDirty();
+
     @Override
     public void addHandlesErrorListener(HandlesError handlesError) {
 
     }
 
     public void onLabOfOriginChange(String labOfOriginSelected) {
+        onLabOfOriginChange(labOfOriginSelected, null);
+    }
+
+    public void onLabOfOriginChange(String labOfOriginSelected, final String labPrefix) {
+        if (view.labOfOriginBox.isSelectedNull())
+            return;
         FeatureRPCService.App.getInstance().getPrefix(labOfOriginSelected,
                 new FeatureEditCallBack<List<FeaturePrefixDTO>>("Failed to load lab prefixes", this) {
 
@@ -103,7 +127,8 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
                         if (!hasZf) {
                             view.labDesignationBox.addItem(ZF_PREFIX);
                         }
-                        view.labDesignationBox.setIndexForValue(dto.getLabPrefix());
+                        if (labPrefix != null)
+                            view.labDesignationBox.setIndexForValue(dto.getLabPrefix());
                         handleDirty();
                         clearError();
 
@@ -136,67 +161,9 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
         featureDTO.setKnownInsertionSite(view.knownInsertionCheckBox.getValue());
         featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
         featureDTO.setTransgenicSuffix(view.featureSuffixBox.getSelectedText());
-        featureDTO.setFeatureSequence(view.featureSequenceBox.getText());
         featureDTO.setAbbreviation(FeatureValidationService.getAbbreviationFromName(featureDTO));
-
-        if (StringUtils.isNotEmptyTrim(view.featureAliasBox.getText())) {
-            featureDTO.setAlias(view.featureAliasBox.getText());
-        }
-        if (StringUtils.isNotEmptyTrim(view.publicNoteBox.getText())) {
-            NoteDTO publicNoteDTO = new NoteDTO();
-            publicNoteDTO.setNoteData(view.publicNoteBox.getText());
-            publicNoteDTO.setPublicationZdbID(publicationID);
-            featureDTO.addPublicNote(publicNoteDTO);
-        }
-
-        if (StringUtils.isNotEmptyTrim(view.curatorNoteBox.getText())) {
-            List<NoteDTO> curatorNoteDTOs = new ArrayList<>();
-            NoteDTO noteDTO = new NoteDTO();
-            noteDTO.setNoteData(view.curatorNoteBox.getText());
-            curatorNoteDTOs.add(noteDTO);
-            featureDTO.setCuratorNotes(curatorNoteDTOs);
-        }
 
         return featureDTO;
     }
-
-    public boolean handleDirty() {
-        view.featureDisplayName.setText(FeatureValidationService.generateFeatureDisplayName(createDTOFromGUI()));
-        view.saveButton.setEnabled(FeatureValidationService.isFeatureSaveable(createDTOFromGUI()));
-        return true;
-    }
-
-    public void createFeature() {
-        FeatureDTO featureDTO = createDTOFromGUI();
-
-        String errorMessage = FeatureValidationService.isValidToSave(featureDTO);
-        if (errorMessage != null) {
-            setError(errorMessage);
-            return;
-        }
-        view.working();
-        FeatureRPCService.App.getInstance().createFeature(featureDTO, new FeatureEditCallBack<FeatureDTO>("Failed to create feature:", this) {
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                super.onFailure(throwable);
-                view.notWorking();
-                handleDirty();
-            }
-
-            @Override
-            public void onSuccess(final FeatureDTO result) {
-                fireEventSuccess();
-//                    Window.alert("Feature successfully created");
-                view.featureTypeBox.setSelectedIndex(0);
-                view.message.setText("Feature created: " + result.getName() + " [" + result.getZdbID() + "]");
-                view.notWorking();
-                view.saveButton.setEnabled(false);
-                view.clearErrors();
-            }
-        });
-
-    }
-
 
 }

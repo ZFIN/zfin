@@ -538,7 +538,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         int removed = query.executeUpdate();
 
 
-      //  infrastructureRepository.deleteActiveDataByZdbID(alias.getZdbID());
+        //  infrastructureRepository.deleteActiveDataByZdbID(alias.getZdbID());
         currentSession().flush();
 
         hql = "delete from FeatureAlias ma " +
@@ -550,7 +550,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         infrastructureRepository.deleteActiveDataByZdbID(alias.getZdbID());
         currentSession().flush();
 
-     //   currentSession().refresh(feature);
+        //   currentSession().refresh(feature);
 
         // run the fast search table script so the alias is not showing up any more.
         //runFeatureNameFastSearchUpdate(feature);
@@ -1060,14 +1060,16 @@ public class HibernateFeatureRepository implements FeatureRepository {
         }
 
         // add another for the external notes
-        for(FeatureNote note : feature.getExternalNotes()) {
-            PublicationAttribution pa = new PublicationAttribution();
-            pa.setPublication(publication);
-            pa.setDataZdbID(note.getZdbID());
-            pa.setSourceType(RecordAttribution.SourceType.STANDARD);
-            Set<PublicationAttribution> pubSetter = new HashSet<>();
-            pubSetter.add(pa);
-            note.setPubAttributions(pubSetter);
+        if (feature.getExternalNotes() != null) {
+            for (FeatureNote note : feature.getExternalNotes()) {
+                PublicationAttribution pa = new PublicationAttribution();
+                pa.setPublication(publication);
+                pa.setDataZdbID(note.getZdbID());
+                pa.setSourceType(RecordAttribution.SourceType.STANDARD);
+                Set<PublicationAttribution> pubSetter = new HashSet<>();
+                pubSetter.add(pa);
+                note.setPubAttributions(pubSetter);
+            }
         }
     }
 
