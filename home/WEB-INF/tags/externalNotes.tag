@@ -17,9 +17,6 @@
                     <c:forEach var="attribution" items="${note.pubAttributions}">
                         <zfin:link entity="${attribution.publication}"/>
                     </c:forEach>
-<%--                    <c:forEach var="attribution" items="${note.personAttributions}">
-                        <zfin:link entity="${attribution.person}"/>
-                    </c:forEach>--%>
                 </td>
                 <td>
                     <zfin2:toggleTextLength text="${note.note}" idName="${zfn:generateRandomDomID()}" shortLength="80"/>
