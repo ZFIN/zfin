@@ -35,7 +35,7 @@ public abstract class ExternalNote {
     protected String note;
     @Column(name = "extnote_note_type", insertable = false, updatable = false)
     private String type;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "recattrib_data_zdb_id")
     protected Set<PublicationAttribution> pubAttributions;
     @OneToMany

@@ -117,16 +117,11 @@
                 </g:customCell>
 
             </g:row>
-            <g:row>
-                <g:customCell>
-                    <g:HorizontalPanel>
-                        <zfin:SimpleErrorElement ui:field="errorLabel" styleName="clickable-error"/>
-                        <g:Label ui:field="message" styleName="clickable"/>
-                    </g:HorizontalPanel>
-                </g:customCell>
-            </g:row>
         </g:Grid>
-
+        <g:VerticalPanel>
+            <zfin:SimpleErrorElement ui:field="errorLabel" styleName="clickable-error"/>
+            <g:Label ui:field="message" styleName="clickable"/>
+        </g:VerticalPanel>
 
     </g:FlowPanel>
 </ui:UiBinder>
