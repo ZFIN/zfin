@@ -54,7 +54,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
 
     private final static String MESSAGE_UNSPECIFIED_FEATURE = "An unspecified feature name must have a valid gene abbreviation.";
-    private ProfileService profileService = new ProfileService();
 
     public FeatureDTO getFeature(String featureZdbID) {
         Feature feature = (Feature) HibernateUtil.currentSession().get(Feature.class, featureZdbID);
@@ -99,8 +98,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     /**
      * Here, we edit everything but the notes (done in-line) and the alias (also done in-line).
      *
-     * @param featureDTO
-     * @return
+     * @param featureDTO  FeatureDTO
+     * @return  updated FeatureDTO
      * @throws DuplicateEntryException
      */
     public FeatureDTO editFeatureDTO(FeatureDTO featureDTO) throws DuplicateEntryException, ValidationException {
@@ -116,9 +115,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         feature.setType(featureDTO.getFeatureType());
         if (featureDTO.getFeatureType() != FeatureTypeEnum.UNSPECIFIED) {
             feature.setUnspecifiedFeature(false);
-        }
-        if (featureDTO.getPublicNote() != null) {
-            feature.setPublicComments(featureDTO.getPublicNote().getNoteData());
         }
         if (oldFeatureType == featureDTO.getFeatureType()) {
             List<RecordAttribution> recordAttributions = infrastructureRepository.getRecAttribforFtrType(feature.getZdbID());

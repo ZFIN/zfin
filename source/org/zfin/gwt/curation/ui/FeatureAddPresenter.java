@@ -133,10 +133,9 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
         return featureDTO;
     }
 
-    public boolean handleDirty() {
+    public void handleDirty() {
         view.featureDisplayName.setText(FeatureValidationService.generateFeatureDisplayName(createDTOFromGUI()));
         view.saveButton.setEnabled(FeatureValidationService.isFeatureSaveable(createDTOFromGUI()));
-        return true;
     }
 
     public void createFeature() {

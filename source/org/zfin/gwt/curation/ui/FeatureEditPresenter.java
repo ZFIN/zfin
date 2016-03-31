@@ -48,6 +48,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                         view.featureAliasList.setDTO(dto);
                         view.featureSequenceList.setDTO(dto);
                         revertGUI();
+                        view.onChangeFeatureType();
                     }
                 });
     }
@@ -61,23 +62,17 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                 loadFeaturesForPub();
                 view.removeFeatureLink.setUrl("/action/infrastructure/deleteRecord/" + dto.getZdbID());
                 view.removeFeatureLink.setTitle("Delete Feature " + dto.getZdbID());
-
-
-/*
-                updateForFeatureType();
-*/
             }
         });
 
     }
 
 
-    public boolean handleDirty() {
+    public void handleDirty() {
         view.featureDisplayName.setText(FeatureValidationService.generateFeatureDisplayName(createDTOFromGUI()));
         boolean isDirty = isDirty();
         view.saveButton.setEnabled(isDirty && FeatureValidationService.isFeatureSaveable(createDTOFromGUI()));
-////        revertButton.setEnabled(isDirty);
-        return true;
+        view.revertButton.setEnabled(isDirty);
     }
 
     public boolean isDirty() {

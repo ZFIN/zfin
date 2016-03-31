@@ -530,28 +530,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 " where mh.featureAlias = :zdbID ";
         Query query = currentSession().createQuery(hql);
         query.setString("zdbID", alias.getZdbID());
+        query.executeUpdate();
 
-        currentSession().flush();
-
-        int removed = query.executeUpdate();
-
-
-        //  infrastructureRepository.deleteActiveDataByZdbID(alias.getZdbID());
-        currentSession().flush();
-
-        hql = "delete from FeatureAlias ma " +
-                " where ma.dataZdbID = :zdbID ";
-        query = currentSession().createQuery(hql);
-        query.setString("zdbID", feature.getZdbID());
-
-        removed = query.executeUpdate();
+        feature.getAliases().remove(alias);
         infrastructureRepository.deleteActiveDataByZdbID(alias.getZdbID());
-        currentSession().flush();
-
-        //   currentSession().refresh(feature);
-
-        // run the fast search table script so the alias is not showing up any more.
-        //runFeatureNameFastSearchUpdate(feature);
     }
 
 

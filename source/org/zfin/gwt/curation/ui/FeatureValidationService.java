@@ -10,21 +10,21 @@ import org.zfin.gwt.root.util.StringUtils;
 public class FeatureValidationService {
     public static final String UNSPECIFIED_FEATURE_NAME = "_unspecified";
 
-    public static String isValidToSave(FeatureDTO dtoFromGUI) {
+    public static String isValidToSave(FeatureDTO featureDTO) {
 
         // should never get here
-        if (!isFeatureSaveable(dtoFromGUI))
+        if (!isFeatureSaveable(featureDTO))
             return "You must specify a lab prefix, feature type, and feature line number.";
 
-        FeatureTypeEnum featureTypeEnum = dtoFromGUI.getFeatureType();
+        FeatureTypeEnum featureTypeEnum = featureDTO.getFeatureType();
         switch (featureTypeEnum) {
             case INDEL:
             case INSERTION:
             case DELETION:
             case COMPLEX_SUBSTITUTION:
-                if (dtoFromGUI.getPublicNote() == null || StringUtils.isEmptyTrim(dtoFromGUI.getPublicNote().getNoteData())) {
+                if (featureDTO.getPublicNoteList() == null) {
                     boolean yes = Window.confirm("Do you want to briefly summarize authors statement about " + featureTypeEnum.getDisplay() + "?");
-                    return (yes ? "Briefly summarize authors' statement about " + featureTypeEnum.getDisplay() + "." : null);
+                    return (yes ? "Briefly summarize authors' statement about " + featureTypeEnum.getDisplay() + " in a public note." : null);
                 }
                 break;
         }
@@ -141,14 +141,14 @@ public class FeatureValidationService {
         switch (featureType) {
             case TRANSGENIC_INSERTION:
                 /*if(isKnownInSite){
-                    returnString += dtoFromGUI.getLabPrefix()
-                            + dtoFromGUI.getLineNumber()
-                            + dtoFromGUI.getTransgenicSuffix() ;
+                    returnString += featureDTO.getLabPrefix()
+                            + featureDTO.getLineNumber()
+                            + featureDTO.getTransgenicSuffix() ;
                 }
                 else{
-                    returnString += dtoFromGUI.getOptionalName()
-                            + dtoFromGUI.getLabPrefix()
-                            + dtoFromGUI.getLineNumber()  ;
+                    returnString += featureDTO.getOptionalName()
+                            + featureDTO.getLabPrefix()
+                            + featureDTO.getLineNumber()  ;
                 }*/
                 returnString += dtoFromGUI.getLabPrefix()
                         + dtoFromGUI.getLineNumber()

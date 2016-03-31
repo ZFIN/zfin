@@ -7,6 +7,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.Mutagee;
@@ -35,6 +36,8 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
     DeleteImage removeFeatureLink;
     @UiField
     FeatureNoteBox featureNoteBox;
+    @UiField
+    Button revertButton;
 
     public FeatureEditView() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -59,11 +62,22 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
         }
     }
 
+    @UiHandler("featureTypeBox")
+    void onChangeFeatureType(@SuppressWarnings("unused") ChangeEvent event) {
+        super.onChangeFeatureType(event);
+        handleDirty();
+    }
+
     @UiHandler("saveButton")
     void onClickSaveButton(@SuppressWarnings("unused") ClickEvent event) {
         editPresenter.updateFeature();
     }
 
+    @UiHandler("revertButton")
+    void onClickRevertButton(@SuppressWarnings("unused") ClickEvent event) {
+        editPresenter.revertGUI();
+        editPresenter.handleDirty();
+    }
 
     public void setPresenter(FeatureEditPresenter presenter) {
         this.presenter = presenter;
@@ -95,7 +109,7 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
 
     public void working() {
         ///super.working();
-        ////revertButton.setEnabled(false);
+        revertButton.setEnabled(false);
         featureEditList.setEnabled(false);
         removeFeatureLink.setVisible(false);
     }

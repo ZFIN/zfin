@@ -13,6 +13,10 @@
         .blue {
             color: #0000FF;
         }
+
+        .valign-top{
+            vertical-align: top;
+        }
     </ui:style>
 
     <g:FlowPanel>
@@ -85,7 +89,7 @@
                 </g:customCell>
             </g:row>
             <g:row>
-                <g:cell>Notes</g:cell>
+                <g:cell styleName="{style.valign-top}">Notes</g:cell>
                 <g:customCell>
                     <g:Grid>
                         <g:row>

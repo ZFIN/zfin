@@ -5,6 +5,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.ui.*;
@@ -163,11 +164,6 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
             saveButton.setEnabled(false);
             return;
         }
-
-/*
-        publicNoteBox.setEnabled(true);
-        curatorNoteBox.setEnabled(true);
-*/
         lineNumberBox.setEnabled(true);
         knownInsertionCheckBox.setEnabled(false);
         dominantCheckBox.setEnabled(true);
@@ -177,10 +173,6 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         mutagenBox.setEnabled(false);
         featureSuffixPanel.setVisible(false);
         featureSuffixBox.setVisible(false);
-/*
-        featureAliasBox.setEnabled(true);
-        featureSequenceBox.setEnabled(true);
-*/
         featureNameBox.setVisible(true);
         featureNameBox.setEnabled(false);
 

@@ -15,6 +15,11 @@
         .blue {
             color: #0000FF;
         }
+
+        .valign-top{
+            vertical-align: top;
+        }
+
     </ui:style>
 
     <g:FlowPanel>
@@ -74,13 +79,13 @@
                 </g:customCell>
             </g:row>
             <g:row>
-                <g:cell>Alias</g:cell>
+                <g:cell styleName="{style.valign-top}">Alias</g:cell>
                 <g:customCell>
                     <zfin-mod:FeatureAliasList ui:field="featureAliasList"/>
                 </g:customCell>
             </g:row>
             <g:row>
-                <g:cell>Sequence</g:cell>
+                <g:cell styleName="{style.valign-top}">Sequence</g:cell>
                 <g:customCell>
                     <zfin-mod:FeatureSequenceList ui:field="featureSequenceList"/>
                 </g:customCell>
@@ -96,7 +101,7 @@
                 </g:customCell>
             </g:row>
             <g:row>
-                <g:cell>Notes</g:cell>
+                <g:cell styleName="{style.valign-top}">Notes</g:cell>
                 <g:customCell>
                     <zfin-mod:FeatureNoteBox ui:field="featureNoteBox" />
                 </g:customCell>
@@ -111,6 +116,7 @@
                 <g:customCell>
                     <g:HorizontalPanel>
                         <g:Button ui:field="saveButton" text="Save" enabled="false"/>
+                        <g:Button ui:field="revertButton" text="Revert" enabled="false"/>
                     </g:HorizontalPanel>
                 </g:customCell>
 

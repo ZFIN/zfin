@@ -1,5 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.user.client.Window;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.FeaturePrefixDTO;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
@@ -91,11 +92,11 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
 
     }
 
-    public abstract boolean handleDirty();
+    public abstract void handleDirty();
 
     @Override
     public void addHandlesErrorListener(HandlesError handlesError) {
-
+        Window.alert("Hello");
     }
 
     public void onLabOfOriginChange(String labOfOriginSelected) {

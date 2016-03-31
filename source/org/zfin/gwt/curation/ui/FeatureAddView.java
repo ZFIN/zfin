@@ -59,6 +59,11 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
     @UiHandler("featureTypeBox")
     void onChangeFeatureType(@SuppressWarnings("unused") ChangeEvent event) {
         super.onChangeFeatureType(event);
+        publicNoteBox.setEnabled(true);
+        curatorNoteBox.setEnabled(true);
+        featureAliasBox.setEnabled(true);
+        featureSequenceBox.setEnabled(true);
+
         handleDirty();
     }
 
@@ -98,7 +103,8 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
 
     @Override
     public boolean handleDirty() {
-        return editPresenter.handleDirty();
+        editPresenter.handleDirty();
+        return true;
     }
 
 

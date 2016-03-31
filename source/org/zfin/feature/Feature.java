@@ -34,6 +34,8 @@ import java.util.TreeSet;
         )
 })
 */
+// Only update attributes that have changed.
+@org.hibernate.annotations.Entity(dynamicUpdate = true)
 public class Feature implements EntityNotes, EntityZdbID {
 
     public static final String MUTANT = "Mutant";
