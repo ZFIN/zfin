@@ -579,9 +579,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             FeatureNote note = new FeatureNote();
             note.setNote(noteDTO.getNoteData());
             note.setFeature(feature);
-            feature.getFeatureNoteSet().add(note);
+            feature.getExternalNotes().add(note);
         } else {
-            for (FeatureNote note : feature.getFeatureNoteSet()) {
+            for (FeatureNote note : feature.getExternalNotes()) {
                 if (note.getZdbID().equals(noteDTO.getZdbID())) {
                     String oldNote = note.getNote();
                     String newNote = noteDTO.getNoteData();

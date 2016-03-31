@@ -613,7 +613,7 @@ public class DTOConversionService {
             }
         }
 
-        Set<FeatureNote> featureNotes = feature.getFeatureNoteSet();
+        Set<FeatureNote> featureNotes = feature.getExternalNotes();
         if (CollectionUtils.isNotEmpty(featureNotes)) {
             List<NoteDTO> curatorNoteDTOs = new ArrayList<>();
             for (FeatureNote dataNote : featureNotes) {
