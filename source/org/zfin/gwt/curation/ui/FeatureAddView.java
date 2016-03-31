@@ -101,30 +101,6 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         return editPresenter.handleDirty();
     }
 
-    public void working() {
-        saveButton.setText(TEXT_WORKING);
-        saveButton.setEnabled(false);
-        featureTypeBox.setEnabled(false);
-        labOfOriginBox.setEnabled(false);
-        labDesignationBox.setEnabled(false);
-        lineNumberBox.setEnabled(false);
-        dominantCheckBox.setEnabled(false);
-        featureNameBox.setEnabled(false);
-        featureAliasBox.setEnabled(false);
-        featureSequenceBox.setEnabled(false);
-        mutageeBox.setEnabled(false);
-        mutagenBox.setEnabled(false);
-        publicNoteBox.setEnabled(false);
-        curatorNoteBox.setEnabled(false);
-        knownInsertionCheckBox.setEnabled(false);
-    }
-
-    public void notWorking() {
-        saveButton.setText(TEXT_SAVE);
-        saveButton.setEnabled(true);
-        featureTypeBox.setEnabled(true);
-        onChangeFeatureType();
-    }
 
 
     public void setPresenter(FeatureAddPresenter presenter) {
@@ -134,6 +110,14 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
 
     public void clearErrors() {
         errorLabel.clearAllErrors();
+    }
+
+    public void working() {
+        super.working();
+        featureAliasBox.setEnabled(false);
+        featureSequenceBox.setEnabled(false);
+        publicNoteBox.setEnabled(false);
+        curatorNoteBox.setEnabled(false);
     }
 
 }

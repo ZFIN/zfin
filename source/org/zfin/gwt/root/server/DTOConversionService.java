@@ -617,7 +617,7 @@ public class DTOConversionService {
         if (CollectionUtils.isNotEmpty(featureNotes)) {
             List<NoteDTO> curatorNoteDTOs = new ArrayList<>();
             for (FeatureNote dataNote : featureNotes) {
-                NoteDTO noteDTO = new NoteDTO(dataNote.getZdbID(), NoteEditMode.PUBLIC, DTOConversionService.unescapeString(dataNote.getNote()));
+                NoteDTO noteDTO = new NoteDTO(dataNote.getZdbID(), feature.getZdbID(), NoteEditMode.PUBLIC, DTOConversionService.unescapeString(dataNote.getNote()));
                 curatorNoteDTOs.add(noteDTO);
             }
             featureDTO.setPublicNoteList(curatorNoteDTOs);

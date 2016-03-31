@@ -79,7 +79,7 @@ public interface FeatureRepository {
 
     FeatureAssay addFeatureAssay(Feature feature, Mutagen mutagen, Mutagee mutagee);
 
-    FeatureAssay getFeatureAssay(String zdbID);
+    FeatureAssay getFeatureAssay(Feature feature);
 
     List<Marker> getMarkersByFeature(Feature feature);
 

@@ -7,12 +7,9 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
-import org.zfin.gwt.root.ui.ShowHideToggle;
-import org.zfin.gwt.root.ui.SimpleErrorElement;
-import org.zfin.gwt.root.ui.StringListBox;
-import org.zfin.gwt.root.ui.StringTextBox;
+import org.zfin.gwt.root.ui.*;
 
-public class AbstractFeatureView extends Composite {
+public abstract class AbstractFeatureView extends Composite implements Revertible{
 
     AbstractFeaturePresenter presenter;
 
@@ -239,5 +236,29 @@ public class AbstractFeatureView extends Composite {
         errorLabel.setError(message + "[close]");
     }
 
+    public void working() {
+        saveButton.setText(TEXT_WORKING);
+        saveButton.setEnabled(false);
+        featureTypeBox.setEnabled(false);
+        labOfOriginBox.setEnabled(false);
+        labDesignationBox.setEnabled(false);
+        lineNumberBox.setEnabled(false);
+        dominantCheckBox.setEnabled(false);
+        featureNameBox.setEnabled(false);
+        mutageeBox.setEnabled(false);
+        mutagenBox.setEnabled(false);
+        knownInsertionCheckBox.setEnabled(false);
+    }
 
+    public void notWorking() {
+        saveButton.setText(TEXT_SAVE);
+        saveButton.setEnabled(true);
+        featureTypeBox.setEnabled(true);
+        onChangeFeatureType();
+    }
+
+    public void setNote(String message) {
+        errorLabel.setStyleName("clickable");
+        setError(message + "[close]");
+    }
 }

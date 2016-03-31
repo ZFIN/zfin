@@ -7,10 +7,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.zfin.Species;
-import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureAlias;
-import org.zfin.feature.FeatureAssay;
-import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.feature.*;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
@@ -171,7 +168,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         if (StringUtils.isNotEmpty(featureDTO.getLabPrefix())) {
             feature.setFeaturePrefix(featureRepository.getFeatureLabPrefixID(featureDTO.getLabPrefix()));
         }
-        FeatureAssay featureAssay = featureRepository.getFeatureAssay(featureDTO.getZdbID());
+        FeatureAssay featureAssay = featureRepository.getFeatureAssay(feature);
         if (featureDTO.getMutagen() != null) {
             featureAssay.setMutagen(Mutagen.getType(featureDTO.getMutagen()));
         }
@@ -577,14 +574,25 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     public void editPublicNote(NoteDTO noteDTO) {
         HibernateUtil.createTransaction();
         Feature feature = featureRepository.getFeatureByID(noteDTO.getDataZdbID());
-        String oldNote = feature.getPublicComments();
-        String newNote = noteDTO.getNoteData();
-        if (!StringUtils.equals(newNote, oldNote)) {
-            feature.setPublicComments(noteDTO.getNoteData());
-            infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Public Note", oldNote, newNote);
-            HibernateUtil.currentSession().update(feature);
-            HibernateUtil.flushAndCommitCurrentSession();
+        // new note
+        if (noteDTO.getZdbID() == null) {
+            FeatureNote note = new FeatureNote();
+            note.setNote(noteDTO.getNoteData());
+            note.setFeature(feature);
+            feature.getFeatureNoteSet().add(note);
+        } else {
+            for (FeatureNote note : feature.getFeatureNoteSet()) {
+                if (note.getZdbID().equals(noteDTO.getZdbID())) {
+                    String oldNote = note.getNote();
+                    String newNote = noteDTO.getNoteData();
+                    if (!StringUtils.equals(newNote, oldNote)) {
+                        note.setNote(newNote);
+                        infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Public Note", oldNote, newNote);
+                    }
+                }
+            }
         }
+        HibernateUtil.flushAndCommitCurrentSession();
     }
 
     @Override

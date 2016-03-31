@@ -31,7 +31,6 @@ import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.profile.FeatureSource;
 import org.zfin.profile.Organization;
 import org.zfin.profile.OrganizationFeaturePrefix;
-import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -40,7 +39,6 @@ import org.zfin.sequence.DBLink;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 
 /**
@@ -472,9 +470,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
 
-    public FeatureAssay getFeatureAssay(String ftrZdbID) {
+    public FeatureAssay getFeatureAssay(Feature feature) {
         Criteria criteria = HibernateUtil.currentSession().createCriteria(FeatureAssay.class);
-        criteria.add(Restrictions.eq("featzdbID", ftrZdbID));
+        criteria.add(Restrictions.eq("feature", feature));
         criteria.setMaxResults(1);
         FeatureAssay ftrAss = (FeatureAssay) criteria.uniqueResult();
         return ftrAss;

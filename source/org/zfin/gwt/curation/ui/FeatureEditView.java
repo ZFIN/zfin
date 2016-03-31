@@ -2,6 +2,7 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -10,11 +11,12 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.TransgenicSuffix;
+import org.zfin.gwt.root.ui.Revertible;
 import org.zfin.gwt.root.ui.StringListBox;
 import org.zfin.gwt.root.util.DeleteImage;
 import org.zfin.gwt.root.util.StringUtils;
 
-public class FeatureEditView extends AbstractFeatureView {
+public class FeatureEditView extends AbstractFeatureView implements Revertible {
 
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
@@ -57,13 +59,18 @@ public class FeatureEditView extends AbstractFeatureView {
         }
     }
 
+    @UiHandler("saveButton")
+    void onClickSaveButton(@SuppressWarnings("unused") ClickEvent event) {
+        editPresenter.updateFeature();
+    }
+
+
     public void setPresenter(FeatureEditPresenter presenter) {
         this.presenter = presenter;
         this.editPresenter = presenter;
     }
 
     public void resetGUI() {
-///        removeRelatedEntityButton.setVisible(false);
         featureEditList.setSelectedIndex(0);
         featureTypeBox.setSelectedIndex(0);
         labOfOriginBox.setSelectedIndex(0);
@@ -74,8 +81,31 @@ public class FeatureEditView extends AbstractFeatureView {
         mutagenBox.setDirty(false);
         lineNumberBox.setDirty(false);
         featureDisplayName.setDirty(false);
-
-//        revertGUI();
     }
+
+    @Override
+    public boolean isDirty() {
+        return false;
+    }
+
+    @Override
+    public boolean handleDirty() {
+        return false;
+    }
+
+    public void working() {
+        ///super.working();
+        ////revertButton.setEnabled(false);
+        featureEditList.setEnabled(false);
+        removeFeatureLink.setVisible(false);
+    }
+
+    public void notWorking() {
+//        super.notWorking();
+        saveButton.setText(TEXT_SAVE);
+        featureEditList.setEnabled(true);
+        removeFeatureLink.setVisible(true);
+    }
+
 
 }
