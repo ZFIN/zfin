@@ -59,11 +59,11 @@
                 <g:cell>Lab Designation</g:cell>
                 <g:customCell>
                     <g:HorizontalPanel>
-                        <zfin:StringListBox ui:field="labDesignationBox" enabled="false"/>
+                        <zfin:StringListBox ui:field="labDesignationBox"/>
                         <g:Label text="&nbsp;&nbsp;&nbsp;&nbsp;Line Number:"/>
-                        <zfin:StringTextBox ui:field="lineNumberBox" enabled="false"/>
+                        <zfin:StringTextBox ui:field="lineNumberBox"/>
                         <g:Label text="&nbsp;&nbsp;&nbsp;&nbsp;Dominant:"/>
-                        <g:CheckBox ui:field="dominantCheckBox" enabled="false"/>
+                        <g:CheckBox ui:field="dominantCheckBox"/>
                     </g:HorizontalPanel>
                 </g:customCell>
             </g:row>
@@ -89,9 +89,9 @@
                 <g:cell>Mutagenesis</g:cell>
                 <g:customCell>
                     <g:HorizontalPanel>
-                        <zfin:StringListBox ui:field="mutageeBox" enabled="false"/>
+                        <zfin:StringListBox ui:field="mutageeBox"/>
                         <g:Label text="&nbsp;Treated with:"/>
-                        <zfin:StringListBox ui:field="mutagenBox" enabled="false"/>
+                        <zfin:StringListBox ui:field="mutagenBox"/>
                     </g:HorizontalPanel>
                 </g:customCell>
             </g:row>

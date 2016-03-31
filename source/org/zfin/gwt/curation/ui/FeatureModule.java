@@ -7,7 +7,10 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.zfin.gwt.curation.event.AddNewFeatureEvent;
+import org.zfin.gwt.curation.event.AddNewFeatureEventHandler;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.util.AppUtils;
 
 /**
  * Entry point for FX curation module.
@@ -35,13 +38,6 @@ public class FeatureModule implements EntryPoint {
 
     private FeatureAddPresenter addFeaturePresenter;
     private FeatureEditPresenter featureEditPresenter;
-/*
-
-    private StructurePilePresenter structurePilePresenter;
-    private ExpressionZonePresenter expressionZonePresenter;
-    private ExpressionExperimentZonePresenter expressionExperimentZonePresenter;
-    private CurationFilterPresenter curationFilterPresenter;
-*/
 
     public FeatureModule(String publicationID) {
         this.publicationID = publicationID;
@@ -97,14 +93,14 @@ public class FeatureModule implements EntryPoint {
     }
 
     private void bindEventBusHandler() {
-/*
-        AppUtils.EVENT_BUS.addHandler(ExpressionEvent.TYPE,
-                new ExpressionEventHandler() {
+        AppUtils.EVENT_BUS.addHandler(AddNewFeatureEvent.TYPE,
+                new AddNewFeatureEventHandler() {
                     @Override
-                    public void onAddStructures(ExpressionEvent event) {
-                        structurePilePresenter.onPileStructureCreation(event.getStructureList());
+                    public void onAdd(AddNewFeatureEvent event) {
+                        featureEditPresenter.loadFeaturesForPub();
                     }
                 });
+/*
         AppUtils.EVENT_BUS.addHandler(ClickStructureOnPileEvent.TYPE,
                 new ClickStructureOnPileHandler() {
                     @Override

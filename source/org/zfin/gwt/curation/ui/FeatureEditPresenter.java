@@ -1,6 +1,5 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.user.client.Window;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 
@@ -117,15 +116,12 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
     }
 
     protected void revertGUI() {
-/*
-        if(dto.getZdbID()==null){
-            resetGUI();
+        if (dto.getZdbID() == null) {
+            view.resetGUI();
+        } else {
+            view.removeFeatureLink.setVisible(true);
+            view.featureEditList.setIndexForValue(dto.getZdbID());
         }
-        else{
-            removeRelatedEntityButton.setVisible(true);
-            featureEditList.setIndexForValue(dto.getZdbID()) ;
-        }
-*/
         if (dto.getFeatureType() != null) {
             view.featureTypeBox.setIndexForText(dto.getFeatureType().getDisplay());
             updateMutagenOnFeatureTypeChange();
@@ -148,4 +144,41 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
 
     }
 
+
+    public void updateFeature() {
+        FeatureDTO featureDTO = createDTOFromGUI();
+
+        String errorMessage = FeatureValidationService.isValidToSave(featureDTO);
+        if (errorMessage != null) {
+            setError(errorMessage);
+            return;
+        }
+
+        featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
+        if (isDirty() && FeatureValidationService.isFeatureSaveable(featureDTO)) {
+            view.working();
+            FeatureRPCService.App.getInstance().editFeatureDTO(featureDTO,
+                    new FeatureEditCallBack<FeatureDTO>("Failed to create feature:", this) {
+
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            super.onFailure(throwable);
+                            // TODO: we need to use the FeatureAddBox function and the isDirty() to enable this
+                            view.notWorking();
+                        }
+
+                        @Override
+                        public void onSuccess(final FeatureDTO result) {
+                            result.setPublicationZdbID(dto.getPublicationZdbID());
+                            dto = result;
+                            // TODO: we need to use the FeatureAddBox function and the isDirty() to enable this
+                            view.notWorking();
+                            view.setNote("Saved Feature [" + result.getName() + "]");
+                            loadFeaturesForPub();
+                        }
+                    });
+
+        }
+
+    }
 }

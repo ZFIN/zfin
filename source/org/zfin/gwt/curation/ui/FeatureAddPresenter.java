@@ -1,11 +1,13 @@
 package org.zfin.gwt.curation.ui;
 
+import org.zfin.gwt.curation.event.AddNewFeatureEvent;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.FeaturePrefixDTO;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.NoteDTO;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.ArrayList;
@@ -28,35 +30,6 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
 
     public void go() {
         super.go();
-    }
-
-    public void onFeatureTypeChange(final FeatureTypeEnum featureTypeSelected) {
-        FeatureRPCService.App.getInstance().getMutagensForFeatureType(featureTypeSelected,
-                new FeatureEditCallBack<List<String>>("Failed to return mutagen for feature type: " + featureTypeSelected.getName(), this) {
-                    @Override
-                    public void onSuccess(List<String> result) {
-                        if (featureTypeSelected != FeatureTypeEnum.UNSPECIFIED) {
-                            if (result != null && result.size() > 0) {
-                                view.mutagenBox.clear();
-                                if (result.size() == 1) {
-                                    view.mutagenBox.addItem(result.get(0));
-                                } else {
-                                    view.mutagenBox.addItem("not specified");
-                                    for (String mut : result) {
-                                        if (!view.mutagenBox.containsValue(mut)) {
-                                            view.mutagenBox.addItem(mut);
-                                        }
-                                    }
-                                }
-                                view.mutagenBox.setEnabled(true);
-                            }
-                        }
-
-                    }
-                }
-
-        );
-        handleDirty();
     }
 
     @Override
@@ -167,7 +140,7 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
     }
 
     public void createFeature() {
-        FeatureDTO featureDTO = createDTOFromGUI();
+        final FeatureDTO featureDTO = createDTOFromGUI();
 
         String errorMessage = FeatureValidationService.isValidToSave(featureDTO);
         if (errorMessage != null) {
@@ -193,6 +166,8 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
                 view.notWorking();
                 view.saveButton.setEnabled(false);
                 view.clearErrors();
+                AddNewFeatureEvent event = new AddNewFeatureEvent(result);
+                AppUtils.EVENT_BUS.fireEvent(event);
             }
         });
 
