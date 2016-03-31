@@ -17,7 +17,6 @@ import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.Genotype;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.profile.CuratorSession;
 import org.zfin.profile.repository.ProfileRepository;
@@ -149,9 +148,7 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
     public List<FishDTO> createFishList(String publicationID) {
         List<FishDTO> fishDTOList = new ArrayList<>();
         Fish wtFish = pubRepository.getFishByHandle("WT");
-        FishDTO fish = new FishDTO();
-        fish.setZdbID(wtFish.getZdbID());
-        fish.setName(wtFish.getHandle());
+        FishDTO fish = DTOConversionService.convertToFishDtoFromFish(wtFish);
         fishDTOList.add(fish);
         fish = new FishDTO();
         fish.setZdbID(null);
@@ -159,11 +156,9 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
         fishDTOList.add(fish);
         List<Fish> fishList = pubRepository.getNonWTFishByPublication(publicationID);
         for (Fish nonWTFish : fishList) {
-            if(nonWTFish.getHandle().equals("WT"))
+            if (nonWTFish.getHandle().equals("WT"))
                 continue;
-            FishDTO fishy = new FishDTO();
-            fishy.setZdbID(nonWTFish.getZdbID());
-            fishy.setName(nonWTFish.getHandle());
+            FishDTO fishy = DTOConversionService.convertToFishDtoFromFish(nonWTFish);
             fishDTOList.add(fishy);
         }
         FishDTO separator = new FishDTO();
@@ -172,9 +167,7 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
         fishDTOList.add(separator);
         List<Fish> wildtypeList = pubRepository.getWildtypeFish();
         for (Fish wFish : wildtypeList) {
-            FishDTO fishy = new FishDTO();
-            fishy.setZdbID(wFish.getZdbID());
-            fishy.setName(wFish.getHandle());
+            FishDTO fishy = DTOConversionService.convertToFishDtoFromFish(wFish);
             fishDTOList.add(fishy);
         }
         return fishDTOList;

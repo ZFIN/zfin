@@ -1,22 +1,47 @@
 package org.zfin;
 
-import org.zfin.gwt.root.server.DTOConversionService;
+import org.hibernate.annotations.DiscriminatorFormula;
+import org.hibernate.annotations.GenericGenerator;
 import org.zfin.infrastructure.PersonAttribution;
 import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.gwt.root.server.DTOConversionService;
 
+import javax.persistence.*;
 import java.util.Set;
 
 /**
  * Domain object for ZFIN.
  */
+
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(
+        name = "extnote_note_type",
+        discriminatorType = DiscriminatorType.STRING
+)
+@Table(name = "external_note")
 public abstract class ExternalNote {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "EXTNOTE"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "extnote_zdb_id")
     private String zdbID;
+    @Column(name = "extnote_note")
     protected String note;
+    @Column(name = "extnote_note_type", insertable = false, updatable = false)
     private String type;
+    @OneToMany
+    @JoinColumn(name = "recattrib_data_zdb_id")
     protected Set<PublicationAttribution> pubAttributions;
+    @OneToMany
+    @JoinColumn(name = "recattrib_data_zdb_id")
     protected Set<PersonAttribution> personAttributions;
+    @Column(name = "extnote_data_zdb_id", insertable = false, updatable = false)
     private String externalDataZdbID;
 
     public String getExternalDataZdbID() {
@@ -70,6 +95,10 @@ public abstract class ExternalNote {
 
     public enum Type {
         ORTHOLOGY("orthology"),
+        FEATURE("feature"),
+        GENOTYPE("genotype"),
+        CURATOR_NOTE("curator note"),
+        ORIGINAL_SUBMITTER_COMMENTS("original submitter comments"),
         ANTIBODY("antibody");
 
         private String value;

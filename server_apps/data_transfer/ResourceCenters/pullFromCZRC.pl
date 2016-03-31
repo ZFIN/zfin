@@ -97,25 +97,7 @@ sub downloadFiles($$) {
    system("rm -f $filename");
     my $resourceCenter = $_[1];
 
-    if ($resourceCenter eq "ZIRC"){
-	if (system("/local/bin/wget http://zebrafish.org/zirc/zfin/$filename")) {
-	    &errorExit("Failed to download $filename file from ZIRC.","  See $wgetStatusFile for details.");
-	}
-	$labZdbId = "ZDB-LAB-991005-53";
-    }
-    elsif ($resourceCenter eq "EZRC"){
-	if (system("/local/bin/wget http://www.ezrc.kit.edu/downloads/$filename")) {
-	    &errorExit("Failed to download $filename file from EZRC.","  See $wgetStatusFile for details.");
-	}
-	$labZdbId = "ZDB-LAB-130607-1";
-    }
-    elsif ($resourceCenter eq "Baier"){
-	if (system("/local/bin/wget --user=Extranet --password=neuro89mpi https://sp.neuro.mpg.de/extranet/Shared%20Documents/Baier/$filename")) {
-	    &errorExit("Failed to download $filename file from Baier.","  See $wgetStatusFile for details.");
-	}
-	$labZdbId = "ZDB-LAB-990120-1";
-    }
-    elsif ($resourceCenter eq "CZRC"){
+    if ($resourceCenter eq "CZRC"){
 	if (system("/local/bin/wget http://www.zfish.cn/$filename")) {
 	    &errorExit("Failed to download $filename file from CZRC.","  See $wgetStatusFile for details.");
 	}
@@ -155,10 +137,8 @@ $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 # Hard code the ZDB ID of ZIRC
-my $zircZdbId = "ZDB-LAB-991005-53";
-my $ezrcZdbId = "ZDB-LAB-130607-1";
+
 my $czrcZdbId = "ZDB-LAB-130226-1";
-my $baierZdbId = "ZDB-LAB-990120-1";
 my $labZdbId;
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt");
 
@@ -187,9 +167,6 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 
        # EST availability ZIRC
 
-&geno_main($dbh, $baierZdbId,"Baier");           # Genotype availability Baier
-&geno_main($dbh, $ezrcZdbId,"EZRC");           # Genotype availability EZRC
-# &atb_main($dbh, $zircZdbId);	        # Antibody availability
 
 $dbh->commit();
 $dbh->disconnect();
@@ -202,7 +179,6 @@ $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
   || errorExit("Failed while connecting to <!--|DB_NAME|--> ");
 
 
-&geno_main($dbh, $zircZdbId, "ZIRC");           # Genotype availability ZIRC
 &geno_main($dbh, $czrcZdbId,"CZRC");           # Genotype availability CZRC
 #&est_main($dbh, $zircZdbId);	 
 

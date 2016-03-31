@@ -44,8 +44,6 @@
         <mapping resource="org/zfin/construct.hbm.xml"/>
         <mapping resource="org/zfin/blast.hbm.xml"/>
         <mapping resource="org/zfin/expression.hbm.xml"/>
-        <mapping resource="org/zfin/fish.hbm.xml"/>
-        <mapping resource="org/zfin/general.hbm.xml"/>
         <mapping resource="org/zfin/infrastructure.hbm.xml"/>
         <mapping resource="org/zfin/marker.hbm.xml"/>
         <mapping resource="org/zfin/mapping.hbm.xml"/>
@@ -54,7 +52,6 @@
         <mapping resource="org/zfin/profile.hbm.xml"/>
         <mapping resource="org/zfin/publication.hbm.xml"/>
         <mapping resource="org/zfin/sequence.hbm.xml"/>
-        <mapping resource="org/zfin/reno.hbm.xml"/>
         <mapping resource="org/zfin/curation.hbm.xml"/>
         <mapping class="org.zfin.expression.ExpressionExperiment2"/>
         <mapping class="org.zfin.expression.ExpressionFigureStage"/>
@@ -73,6 +70,31 @@
         <mapping class="org.zfin.audit.AuditLogItem"/>
         <mapping class="org.zfin.anatomy.AnatomyStatistics"/>
         <mapping class="org.zfin.anatomy.AnatomyTreeInfo"/>
+        <mapping class="org.zfin.feature.Feature"/>
+        <mapping class="org.zfin.mutant.Genotype"/>
+        <mapping class="org.zfin.feature.FeatureAssay"/>
+        <mapping class="org.zfin.feature.FeatureRnaMutationDetail"/>
+        <mapping class="org.zfin.feature.FeatureHistory"/>
+        <mapping class="org.zfin.feature.FeaturePrefix"/>
+        <mapping class="org.zfin.feature.FeatureMarkerRelationshipType"/>
+        <mapping class="org.zfin.feature.FeatureTypeGroup"/>
+        <mapping class="org.zfin.feature.FeatureMarkerRelationship"/>
+        <mapping class="org.zfin.fish.WarehouseSummary"/>
+        <mapping class="org.zfin.ExternalNote"/>
+        <mapping class="org.zfin.feature.FeatureNote"/>
+        <mapping class="org.zfin.marker.OrthologyNote"/>
+        <mapping class="org.zfin.mutant.GenotypeExternalNote"/>
+        <mapping class="org.zfin.antibody.AntibodyExternalNote"/>
+        <mapping class="org.zfin.feature.FeatureRnaMutationDetail"/>
+        <mapping class="org.zfin.feature.FeatureProteinMutationDetail"/>
+        <mapping class="org.zfin.feature.FeatureTracking"/>
+        <mapping class="org.zfin.Species"/>
+        <mapping class="org.zfin.sequence.reno.Candidate"/>
+        <mapping class="org.zfin.sequence.reno.RunCandidate"/>
+        <mapping class="org.zfin.sequence.reno.Run"/>
+        <mapping class="org.zfin.sequence.reno.NomenclatureRun"/>
+        <mapping class="org.zfin.sequence.reno.RedundancyRun"/>
+        <mapping class="org.zfin.feature.DnaMutationTerm"/>
 
 
     </session-factory>

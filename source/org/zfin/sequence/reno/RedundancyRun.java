@@ -2,12 +2,21 @@ package org.zfin.sequence.reno;
 
 import org.zfin.publication.Publication;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 /**
  * This class represents a Reno Redundancy run,
  * which is unique from a general run in that it has a relation publication.
  */
-public class RedundancyRun extends Run{
+@Entity
+@DiscriminatorValue("Redundancy")
+public class RedundancyRun extends Run {
 
+    @ManyToOne
+    @JoinColumn(name = "run_relation_pub_zdb_id")
     private Publication relationPublication;
 
 

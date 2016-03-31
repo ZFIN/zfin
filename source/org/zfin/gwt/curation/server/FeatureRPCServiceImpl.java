@@ -437,7 +437,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
 
             FeatureAssay featureAssay = new FeatureAssay();
-            featureAssay.setFeatzdbID(feature.getZdbID());
+            featureAssay.setFeature(feature);
             if (featureDTO.getMutagen() == null) {
                 featureAssay.setMutagen(Mutagen.NOT_SPECIFIED);
             } else {

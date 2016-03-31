@@ -3,11 +3,20 @@ package org.zfin.antibody;
 import org.zfin.ExternalNote;
 import org.zfin.infrastructure.PublicationAttribution;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 /**
  * Antibody specific external note.
  */
+@Entity
+@DiscriminatorValue("antibody")
 public class AntibodyExternalNote extends ExternalNote implements Comparable<AntibodyExternalNote> {
 
+    @ManyToOne
+    @JoinColumn(name = "extnote_data_zdb_id")
     private Antibody antibody;
 
     public Antibody getAntibody() {

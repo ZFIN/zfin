@@ -12,9 +12,9 @@ import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
-import org.zfin.gwt.root.ui.ListBoxWrapper;
 import org.zfin.gwt.root.ui.ShowHideToggle;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
+import org.zfin.gwt.root.ui.StringListBox;
 import org.zfin.gwt.root.ui.ToggleHyperlink;
 import org.zfin.gwt.root.util.WidgetUtil;
 
@@ -48,17 +48,17 @@ public class ExpressionExperimentZoneView extends Composite {
     @UiField
     Button addButton;
     @UiField
-    ListBoxWrapper geneList;
+    StringListBox geneList;
     @UiField
-    ListBox fishList;
+    StringListBox fishList;
     @UiField
-    ListBox environmentList;
+    StringListBox environmentList;
     @UiField
-    ListBox assayList;
+    StringListBox assayList;
     @UiField
-    ListBox antibodyList;
+    StringListBox antibodyList;
     @UiField
-    ListBox genbankList;
+    StringListBox genbankList;
     @UiField
     Button updateButton;
     @UiField
@@ -228,27 +228,27 @@ public class ExpressionExperimentZoneView extends Composite {
         updateButton.setEnabled(true);
     }
 
-    public ListBoxWrapper getGeneList() {
+    public StringListBox getGeneList() {
         return geneList;
     }
 
-    public ListBox getAntibodyList() {
+    public StringListBox getAntibodyList() {
         return antibodyList;
     }
 
-    public ListBox getAssayList() {
+    public StringListBox getAssayList() {
         return assayList;
     }
 
-    public ListBox getEnvironmentList() {
+    public StringListBox getEnvironmentList() {
         return environmentList;
     }
 
-    public ListBox getFishList() {
+    public StringListBox getFishList() {
         return fishList;
     }
 
-    public ListBox getGenbankList() {
+    public StringListBox getGenbankList() {
         return genbankList;
     }
 

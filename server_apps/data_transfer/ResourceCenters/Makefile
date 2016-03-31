@@ -21,7 +21,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/ResourceCenters
 
-GENERICS = pushToZirc.pl pushToZirc.sql pullFromResourceCenter.pl
+GENERICS = pushToZirc.pl pushToZirc.sql pullFromResourceCenter.pl pullFromZIRC.pl pullFromEZRC.pl pullFromCZRC.pl pullFromBaier.pl
 
 STATICS = pullEstsFromZirc.pl pullGenoFromResourceCenter.pl pullAtbFromZirc.pl syncFishOrderThisLinks.sh
 

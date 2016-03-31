@@ -81,6 +81,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             MarkerDTO gene = new MarkerDTO();
             gene.setName(marker.getAbbreviation());
             gene.setZdbID(marker.getZdbID());
+            gene.setMarkerType(marker.getMarkerType().getDisplayName());
             genes.add(gene);
         }
 

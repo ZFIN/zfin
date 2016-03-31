@@ -1913,52 +1913,53 @@ where fmrel_ftr_zdb_id = feature_zdb_id
 ! echo "Create tmp_dumpPheno temp table"
 
 
- select  phenos_pk_id as phenos_id,
- 	 phenox_pk_id as phenox_id,
-	 mfs_mrkr_zdb_id as gene_Zdb_id,
- 	 "                                                                     " as fish_name,
- 	 	 phenox_fig_zdb_id as fig_id,
-		 fig_source_zdb_id as pub_id,
- 		 genox_zdb_id as id,
-		 genox_fish_zdb_id as fish_id,
-		 "" as mo_id,
-		 phenox_start_stg_zdb_id as stage_start_id,
-		 phenox_end_stg_Zdb_id as stage_end_id,
-		 genox_Zdb_id as genox_id
+ select  psg_id as phenos_id,
+         pg_id as phenox_id,
+         mfs_mrkr_zdb_id as gene_Zdb_id,
+         "                                                                     " as fish_name,
+                 pg_fig_zdb_id as fig_id,
+                 fig_source_zdb_id as pub_id,
+                 genox_zdb_id as id,
+                 genox_fish_zdb_id as fish_id,
+                 "" as mo_id,
+                 pg_start_stg_zdb_id as stage_start_id,
+                 pg_end_stg_zdb_id as stage_end_id,
+                 genox_Zdb_id as genox_id
    from fish_Experiment,
-	phenotype_experiment,
-	phenotype_statement,
-	mutant_fasT_search, figure
-    where phenox_genox_zdb_id = genox_zdb_id
-    and phenox_pk_id = phenos_phenox_pk_id
+        phenotype_source_generated,
+        phenotype_observation_generated,
+        mutant_fasT_search, figure
+    where pg_genox_zdb_id = genox_zdb_id
+    and psg_pg_id = pg_id
     and mfs_genox_zdb_id = genox_zdb_id
-    and fig_zdb_id = phenox_fig_zdb_id
+    and fig_zdb_id = pg_fig_zdb_id
     and mfs_mrkr_zdb_id like 'ZDB-GENE%'
     and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = genox_fish_Zdb_id)
 union
- select  phenos_pk_id,
- 	 phenox_pk_id as phenox_id,
-	 mfs_mrkr_zdb_id as gene_Zdb_id,
- 	 "                                                                     " as fish_name,
-	 phenox_fig_zdb_id,
-	 fig_source_zdb_id,
- 		 genox_zdb_id,
-		 genox_fish_zdb_id,
-		 fishstr_str_zdb_id,
-		 phenox_start_stg_zdb_id,
-		 phenox_end_stg_Zdb_id,
-		 genox_zdb_id
+ select  psg_id,
+         pg_id as phenox_id,
+         mfs_mrkr_zdb_id as gene_Zdb_id,
+         "                                                                     " as fish_name,
+         pg_fig_zdb_id as fig_id,
+         fig_source_zdb_id,
+                 genox_zdb_id,
+                 genox_fish_zdb_id,
+                 fishstr_str_zdb_id,
+                 pg_start_stg_zdb_id as stage_start_id,
+                 pg_end_stg_zdb_id as stage_end_id,
+                 genox_zdb_id
    from fish_Experiment,
-	phenotype_experiment,
-	phenotype_statement, 
-	fish_str, 
-	mutant_fast_Search, figure
-    where phenox_genox_zdb_id = genox_zdb_id
-    and phenox_fig_zdb_id = fig_zdb_id
-    and phenox_pk_id = phenos_phenox_pk_id
+        phenotype_source_generated,
+        phenotype_observation_generated, 
+        fish_str, 
+        mutant_fast_Search, figure
+    where pg_genox_zdb_id = genox_zdb_id
+    and pg_fig_zdb_id = fig_zdb_id
+    and psg_pg_id = pg_id
     and genox_fish_zdb_id = fishstr_fish_Zdb_id
     and mfs_genox_zdb_id = genox_zdb_id
     and mfs_mrkr_zdb_id like 'ZDB-GENE%'
+
 
 into temp tmp_dumpCleanPheno;
 

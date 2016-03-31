@@ -7,13 +7,12 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 import org.zfin.gwt.curation.event.RemoveExpressionExperimentEvent;
 import org.zfin.gwt.curation.event.SelectExperimentEvent;
 import org.zfin.gwt.curation.event.UpdateExpressionExperimentEvent;
 import org.zfin.gwt.root.dto.*;
-import org.zfin.gwt.root.ui.ListBoxWrapper;
+import org.zfin.gwt.root.ui.StringListBox;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StringUtils;
@@ -101,18 +100,21 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         final ExperimentDTO zoneExperiment = getExperimentFromConstructionZone(true);
         if (!isValidExperiment(zoneExperiment)) {
             view.cleanupOnExit();
+            addButtonInProgress = false;
             return;
         }
         if (isEfgWildtypeCombo(zoneExperiment)) {
             //Window.alert("experiment exists: ");
             view.setError("Cannot create an experiment with an EFG and a wildtype fish!");
             view.cleanupOnExit();
+            addButtonInProgress = false;
             return;
         }
         if (experimentExists(zoneExperiment, true)) {
             //Window.alert("experiment exists: ");
             view.setError("Experiment already exists. Experiments have to be unique!");
             view.cleanupOnExit();
+            addButtonInProgress = false;
             return;
         }
 
@@ -121,24 +123,17 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     }
 
     private boolean isEfgWildtypeCombo(ExperimentDTO experimentDTO) {
-        Window.alert("Type: " + experimentDTO.getGene().getMarkerType());
-        if (experimentDTO.getGene().getMarkerType().equals("Engineered Foreign Gene"))
-            Window.alert("WT: " + experimentDTO.getFishDTO().isWildtype());
-            if (experimentDTO.getFishDTO().isWildtype())
-                return true;
+        if (experimentDTO.getFishDTO().isWildtype() && experimentDTO.getGene().getMarkerType().equals("Engineered Foreign Gene"))
+            return true;
         return false;
     }
 
     protected void populateDataTable() {
         int elementIndex = 0;
-        geneMap.clear();
-        fishMap.clear();
         for (ExperimentDTO experiment : experimentList) {
             if (showSelectedExperimentsOnly && !selectedExperiments.contains(experiment))
                 continue;
             MarkerDTO gene = experiment.getGene();
-            geneMap.put(gene.getZdbID(), gene);
-            fishMap.put(experiment.getFishID(), experiment.getFishDTO());
             view.addGene(gene, elementIndex);
             view.addFish(experiment.getFishName(), elementIndex);
             view.addEnvironment(experiment.getEnvironment(), elementIndex);
@@ -257,20 +252,20 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             if (index == 0)
                 updatedExperiment.setGenbankID(null);
             else {
-                updatedExperiment.setGenbankID(view.getGenbankList().getValue(index));
-                updatedExperiment.setGenbankNumber(view.getGenbankList().getItemText(index));
+                updatedExperiment.setGenbankID(view.getGenbankList().getSelected());
+                updatedExperiment.setGenbankNumber(view.getGenbankList().getSelectedText());
             }
         }
         EnvironmentDTO env = new EnvironmentDTO();
-        String environmentID = view.getEnvironmentList().getValue(view.getEnvironmentList().getSelectedIndex());
-        String environmentName = view.getEnvironmentList().getItemText(view.getEnvironmentList().getSelectedIndex());
+        String environmentID = view.getEnvironmentList().getSelected();
+        String environmentName = view.getEnvironmentList().getSelectedText();
         env.setZdbID(environmentID);
         env.setName(environmentName);
         updatedExperiment.setEnvironment(env);
         // only use the antibody if the selection box is enabled.
         if (view.getAntibodyList().isEnabled()) {
-            String antibodyID = view.getAntibodyList().getValue(view.getAntibodyList().getSelectedIndex());
-            String antibodyName = view.getAntibodyList().getItemText(view.getAntibodyList().getSelectedIndex());
+            String antibodyID = view.getAntibodyList().getSelected();
+            String antibodyName = view.getAntibodyList().getSelectedText();
             if (StringUtils.isNotEmpty(antibodyID) && !antibodyID.equals(StringUtils.NULL)) {
                 MarkerDTO antibody = new MarkerDTO();
                 antibody.setZdbID(antibodyID);
@@ -278,12 +273,12 @@ public class ExpressionExperimentZonePresenter implements Presenter {
                 updatedExperiment.setAntibodyMarker(antibody);
             }
         }
-        String fishID = view.getFishList().getValue(view.getFishList().getSelectedIndex());
+        String fishID = view.getFishList().getSelected();
         updatedExperiment.setFishID(fishID);
-        String fishName = view.getFishList().getItemText(view.getFishList().getSelectedIndex());
+        String fishName = view.getFishList().getSelectedText();
         updatedExperiment.setFishName(fishName);
         updatedExperiment.setFishDTO(fishMap.get(fishID));
-        String geneID = view.getGeneList().getValue(view.getGeneList().getSelectedIndex());
+        String geneID = view.getGeneList().getSelected();
         if (StringUtils.isNotEmpty(geneID) && !geneID.equals(StringUtils.NULL)) {
             updatedExperiment.setGene(geneMap.get(geneID));
         }
@@ -360,12 +355,10 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(null));
 
         // fish (genotype) list
-        String message = "Error while reading Fish";
-        curationExperimentRPCAsync.getFishList(publicationID,
-                new RetrieveDTOListCallBack<FishDTO>(view.getFishList(), message, view.errorElement));
+        curationExperimentRPCAsync.getFishList(publicationID, new FishSelectionListAsyncCallback());
 
         // environment list
-        message = "Error while reading the environment";
+        String message = "Error while reading the environment";
         curationExperimentRPCAsync.getEnvironments(publicationID,
                 new RetrieveEnvironmentListCallBack(view.getEnvironmentList(), message, view.errorElement));
 
@@ -480,7 +473,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         @Override
         public void onSuccess(List<String> assays) {
             //Window.alert("brought back: " + experiments.size() );
-            ListBox assayList = view.getAssayList();
+            StringListBox assayList = view.getAssayList();
             assayList.clear();
             for (String assay : assays) {
                 assayList.addItem(assay);
@@ -674,7 +667,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         @Override
         public void onSuccess(List<MarkerDTO> genes) {
             //                Window.alert("brought back: " + genes.size() );
-            ListBox geneList = view.getGeneList();
+            StringListBox geneList = view.getGeneList();
             String selectedGeneID = geneList.getValue(geneList.getSelectedIndex());
             //Window.alert("Selected Gene: " + selectedGeneID);
             geneList.clear();
@@ -722,7 +715,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
         @Override
         public void onSuccess(List<ExperimentDTO> accessions) {
-            ListBox genbankList = view.getGenbankList();
+            StringListBox genbankList = view.getGenbankList();
             genbankList.clear();
             genbankList.addItem("");
             int rowIndex = 1;
@@ -758,8 +751,8 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         @Override
         public void onSuccess(List<MarkerDTO> antibodies) {
             //Window.alert("brought back: " + experiments.size() );
-            ListBox antibodyList = view.getAntibodyList();
-            ListBox assayList = view.getAssayList();
+            StringListBox antibodyList = view.getAntibodyList();
+            StringListBox assayList = view.getAssayList();
             antibodyList.clear();
             antibodyList.addItem("");
             int rowIndex = 1;
@@ -793,7 +786,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         @Override
         public void onSuccess(List<MarkerDTO> antibodies) {
 //                Window.alert("brought back: " + antibodies.size() );
-            ListBox antibodyList = view.getAntibodyList();
+            StringListBox antibodyList = view.getAntibodyList();
             String selectedAntibodyID = antibodyList.getValue(antibodyList.getSelectedIndex());
             //Window.alert("Selected Antibody: " + selectedAntibodyID);
             antibodyList.clear();
@@ -830,8 +823,9 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         @Override
         public void onSuccess(List<MarkerDTO> genes) {
             //Window.alert("brought back genes: " + genes.size());
-            ListBoxWrapper geneList = view.getGeneList();
+            StringListBox geneList = view.getGeneList();
             geneList.clear();
+            geneMap.clear();
             geneList.addItem("");
             int rowIndex = 1;
             for (MarkerDTO gene : genes) {
@@ -839,7 +833,33 @@ public class ExpressionExperimentZonePresenter implements Presenter {
                 if (selectedGene != null && selectedGene.getZdbID() != null && gene.getZdbID().equals(selectedGene.getZdbID())) {
                     geneList.setSelectedIndex(rowIndex);
                 }
+                geneMap.put(gene.getZdbID(), gene);
                 rowIndex++;
+            }
+        }
+    }
+
+    private class FishSelectionListAsyncCallback extends ZfinAsyncCallback<List<FishDTO>> {
+
+        private FishSelectionListAsyncCallback() {
+            super("Error retrieving fish selection list", view.errorElement);
+        }
+
+        @Override
+        public void onSuccess(List<FishDTO> fishDTOList) {
+            //Window.alert("brought back genes: " + genes.size());
+            fishMap.clear();
+            int index = 0;
+            StringListBox listBox = view.getFishList();
+            listBox.clear();
+            for (FishDTO fish : fishDTOList) {
+                if (fish.getName().startsWith("---")) {
+                    listBox.addItem(fish.getName(), fish.getZdbID());
+                    listBox.getElement().getElementsByTagName("option").getItem(index).setAttribute("disabled", "disabled");
+                } else
+                    listBox.addItem(fish.getName(), fish.getZdbID());
+                index++;
+                fishMap.put(fish.getZdbID(), fish);
             }
         }
     }
