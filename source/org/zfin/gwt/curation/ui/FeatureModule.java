@@ -30,14 +30,15 @@ public class FeatureModule implements EntryPoint {
     @UiField
     AttributionModule attributionModule;
     @UiField
-    FeatureAddView featureAddBox;
+    FeatureAddView featureAddView;
     @UiField
     FeatureEditView featureEditView;
     @UiField
-    FeatureRelationshipBox featureRelationshipBox;
+    FeatureRelationshipView featureRelationshipView;
 
     private FeatureAddPresenter addFeaturePresenter;
     private FeatureEditPresenter featureEditPresenter;
+    private FeatureRelationshipPresenter featureRelationshipPresenter;
 
     public FeatureModule(String publicationID) {
         this.publicationID = publicationID;
@@ -52,13 +53,17 @@ public class FeatureModule implements EntryPoint {
         RelatedEntityDTO relatedEntityDTO = new RelatedEntityDTO();
         relatedEntityDTO.setPublicationZdbID(publicationID);
         attributionModule.setDTO(relatedEntityDTO);
-        addFeaturePresenter = new FeatureAddPresenter(featureAddBox, publicationID);
-        featureAddBox.setPresenter(addFeaturePresenter);
+        addFeaturePresenter = new FeatureAddPresenter(featureAddView, publicationID);
+        featureAddView.setPresenter(addFeaturePresenter);
         addFeaturePresenter.go();
 
         featureEditPresenter = new FeatureEditPresenter(featureEditView, publicationID);
         featureEditView.setPresenter(featureEditPresenter);
         featureEditPresenter.go();
+
+        featureRelationshipPresenter = new FeatureRelationshipPresenter(featureRelationshipView, publicationID);
+        featureRelationshipView.setPresenter(featureRelationshipPresenter);
+        featureRelationshipPresenter.go();
 
         bindEventBusHandler();
 
@@ -70,6 +75,7 @@ public class FeatureModule implements EntryPoint {
                     @Override
                     public void onAdd(AddNewFeatureEvent event) {
                         featureEditPresenter.loadFeaturesForPub();
+                        featureRelationshipPresenter.onFeatureAddEvent();
                     }
                 });
     }

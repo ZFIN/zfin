@@ -25,7 +25,7 @@
             <g:Label text=":&nbsp;" addStyleNames="bold"/>
             <zfin:ShowHideToggle widget="{featureConstructionPanel}" ui:field="showHideToggle" show="true"/>
         </g:HorizontalPanel>
-        <g:Grid ui:field="featureConstructionPanel" styleName="{style.grey-background}">
+        <g:Grid ui:field="featureConstructionPanel" styleName="{style.grey-background}" visible="false">
             <g:row>
                 <g:cell>Feature Type</g:cell>
                 <g:customCell>

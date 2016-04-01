@@ -123,12 +123,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 "   ftrgrpmem_ftr_type= :featureType " +
                 "   and ftrgrpmem_ftr_type_group=fmreltype_ftr_type_group";
 
-//                     " --                      $(IF,$(NE,$featcur_reln_add_type,Transgenic Insertion),and fmreltype_name not like 'contains%')" +
-        // this line is not necessary, since this is what is already mapped in the database
-//        if(!featureType.equals(Feature.Type.TRANSGENIC_INSERTION.toString())){
-//            sql += " and fmreltype_name not like 'contains%' ";
-//        }
-
         sql += "   union" +
                 "   select distinct mreltype_name " +
                 "   from" +

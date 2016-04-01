@@ -2,14 +2,13 @@
 <ui:UiBinder
         xmlns:ui='urn:ui:com.google.gwt.uibinder'
         xmlns:g='urn:import:com.google.gwt.user.client.ui'
-        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
         xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui'
         >
 
     <g:FlowPanel>
         <zfin-mod:AttributionModule ui:field="attributionModule"/>
-        <zfin-mod:FeatureAddView ui:field="featureAddBox"/>
+        <zfin-mod:FeatureAddView ui:field="featureAddView"/>
         <zfin-mod:FeatureEditView ui:field="featureEditView"/>
-        <zfin-mod:FeatureRelationshipBox ui:field="featureRelationshipBox"/>
+        <zfin-mod:FeatureRelationshipView ui:field="featureRelationshipView"/>
     </g:FlowPanel>
 </ui:UiBinder>
