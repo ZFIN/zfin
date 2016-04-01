@@ -74,7 +74,8 @@ where mrkr_Zdb_id = seq_mrkr_zdb_id
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/omimPhenotype/1omimphenotype.txt"
  select ortho_zebrafish_gene_zdb_id,omimp_name,omimp_omim_id from omim_phenotype, ortholog
- where omimp_ortho_zdb_id = ortho_Zdb_id;
+ where omimp_ortho_zdb_id = ortho_Zdb_id
+ and ortho_zebrafish_gene_zdb_id not like 'ZDB-GENEP%';
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/featureCrossReferences/1featureCrossReferences.txt"
  select feature_zdb_id, feature_type, dblink_acc_num, fdb_db_name, fdb_db_query from feature, db_link, foreign_db, foreign_db_contains
@@ -85,7 +86,7 @@ and fdbcont_zdb_id = dblink_fdbcont_zdb_id;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/chromosome/1chromosome.txt"
 select distinct sfclg_chromosome, sfclg_data_zdb_id from sequence_feature_chromosome_location_generated
- where sfclg_data_zdb_id like 'ZDB-GENE%';
+ where sfclg_data_zdb_id like 'ZDB-GENE-%';
 
 --all identifiers;
 
