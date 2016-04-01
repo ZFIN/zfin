@@ -1,5 +1,5 @@
 #!/bin/bash
-//private/apps/groovy/bin/groovy -cp "<!--|GROOVY_CLASSPATH|-->" "$0" $@; exit $?
+//private/apps/groovy/bin/groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
 
 import org.zfin.properties.ZfinProperties
 import org.zfin.util.ReportGenerator

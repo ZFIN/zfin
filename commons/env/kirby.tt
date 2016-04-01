@@ -30,7 +30,7 @@
 <!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	pm\@zfin.org
 <!--|GO_EMAIL_ERR|-->	pm\@zfin.org
-<!--|GROOVY_CLASSPATH|-->	/research/zusers/pm/Projects/releases/Constructs/ConstructCreationbranch//home/WEB-INF/lib*:/research/zusers/pm/Projects/releases/Constructs/ConstructCreationbranch//lib/Java/*:/research/zusers/pm/Projects/releases/Constructs/ConstructCreationbranch//home/WEB-INF/classes:/private/apps/tomcat/endorsed/*
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/kirby/home/WEB-INF/lib*:/research/zusers/pm/Projects/releases/Constructs/ConstructCreationbranch//lib/Java/*:/opt/zfin/www_homes/kirby/home/WEB-INF/classes:/private/apps/tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4

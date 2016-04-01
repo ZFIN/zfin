@@ -30,7 +30,7 @@
 <!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	dhowe\@zfin.org xshao\@zfin.org
 <!--|GO_EMAIL_ERR|-->	dhowe\@zfin.org informix\@zfin.org
-<!--|GROOVY_CLASSPATH|-->	/opt/zfin/source_roots/test/ZFIN_WWW/home/WEB-INF/lib*:/opt/zfin/source_roots/test/ZFIN_WWW/lib/Java/*:/opt/zfin/source_roots/test/ZFIN_WWW/home/WEB-INF/classes:/private/apps/tomcat/endorsed/*
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/test/home/WEB-INF/lib*:/opt/zfin/source_roots/test/ZFIN_WWW/lib/Java/*:/opt/zfin/www_homes/test/home/WEB-INF/classes:/private/apps/tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4

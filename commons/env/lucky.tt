@@ -30,7 +30,7 @@
 <!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	annee\@zfin.org
 <!--|GO_EMAIL_ERR|-->	annee\@zfin.org
-<!--|GROOVY_CLASSPATH|-->	/research/zusers/mochla/projects/ZFIN_WWW_this/home/WEB-INF/lib*:/research/zusers/mochla/projects/ZFIN_WWW_this/lib/Java/*:/research/zusers/mochla/projects/ZFIN_WWW_this/home/WEB-INF/classes:/private/apps/tomcat/endorsed/*
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/lucky/home/WEB-INF/lib*:/research/zusers/mochla/projects/ZFIN_WWW_this/lib/Java/*:/opt/zfin/www_homes/lucky/home/WEB-INF/classes:/private/apps/tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
 <!--|HEADER_COLOR|-->	#9999E6
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
