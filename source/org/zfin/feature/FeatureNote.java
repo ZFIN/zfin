@@ -11,7 +11,7 @@ import javax.persistence.*;
 @DiscriminatorValue("feature")
 public class FeatureNote extends ExternalNote implements Comparable<FeatureNote> {
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "extnote_data_zdb_id")
     private Feature feature;
 

@@ -26,7 +26,6 @@ import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.profile.FeatureSource;
 import org.zfin.profile.Organization;
 import org.zfin.profile.repository.ProfileRepository;
-import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -98,8 +97,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     /**
      * Here, we edit everything but the notes (done in-line) and the alias (also done in-line).
      *
-     * @param featureDTO  FeatureDTO
-     * @return  updated FeatureDTO
+     * @param featureDTO FeatureDTO
+     * @return updated FeatureDTO
      * @throws DuplicateEntryException
      */
     public FeatureDTO editFeatureDTO(FeatureDTO featureDTO) throws DuplicateEntryException, ValidationException {
@@ -646,5 +645,23 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
     public List<String> getMutagensForFeatureType(FeatureTypeEnum ftrType) {
         return featureRepository.getMutagensForFeatureType(ftrType);
+    }
+
+    @Override
+    public void removePublicNote(NoteDTO noteDTO) {
+        logger.info("remove public note: " + noteDTO.getNoteData() + " - " + noteDTO.getZdbID());
+        HibernateUtil.createTransaction();
+        Feature feature = featureRepository.getFeatureByID(noteDTO.getDataZdbID());
+        Set<FeatureNote> featureNotes = feature.getExternalNotes();
+        for (FeatureNote featureNote : featureNotes) {
+            if (featureNote.getZdbID().equals(noteDTO.getZdbID())) {
+                infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "removed public note", featureNote.getNote(), noteDTO.getNoteData());
+                feature.getExternalNotes().remove(featureNote);
+                HibernateUtil.flushAndCommitCurrentSession();
+                return;
+            }
+        }
+        HibernateUtil.rollbackTransaction();
+        logger.error("note not found with zdbID: " + noteDTO.getZdbID());
     }
 }

@@ -28,7 +28,7 @@ public class FeaturePublicNoteEntry extends AbstractNoteEntry {
             public void onClick(ClickEvent event) {
                 NoteDTO updatedNoteDTO = noteDTO.clone();
                 updatedNoteDTO.setNoteData("");
-                FeatureRPCService.App.getInstance().editPublicNote(updatedNoteDTO, new FeatureEditCallBack<Void>("Failed to remove public note: ") {
+                FeatureRPCService.App.getInstance().removePublicNote(updatedNoteDTO, new FeatureEditCallBack<Void>("Failed to remove public note: ") {
                     @Override
                     public void onSuccess(Void result) {
                         noteDTO.setNoteData("");

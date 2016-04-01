@@ -53,8 +53,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     private String zdbID;
     @Column(name = "feature_name", nullable = false)
     private String name;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "extnote_data_zdb_id")
+    @OneToMany(mappedBy = "feature", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<FeatureNote> externalNotes;
     @Transient
     private String publicComments;
