@@ -495,7 +495,7 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 from phenotype_source_generated, phenotype_observation_generated
 where pg_id = psg_id;
 
-unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/allele/allele.txt
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/allele/allele.txt"
 select feature_zdb_id, feature_name, feature_Type, feature_abbrev, fmrel_mrkr_zdb_id, mrkr_type
   from feature, feature_marker_relationship, marker
   where feature_zdb_id =fmrel_ftr_zdb_id
