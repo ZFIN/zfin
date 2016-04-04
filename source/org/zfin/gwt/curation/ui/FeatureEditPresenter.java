@@ -16,6 +16,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         this.view = view;
         dto = new FeatureDTO();
         dto.setPublicationZdbID(publicationID);
+        view.featureNoteBox.setPublicationID(publicationID);
     }
 
     public void go() {
@@ -49,6 +50,9 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                         view.featureSequenceList.setDTO(dto);
                         revertGUI();
                         view.onChangeFeatureType();
+                        if (results == null || results.size() == 0) {
+                            view.showHideToggle.setVisibility(false);
+                        }
                     }
                 });
     }

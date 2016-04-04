@@ -167,6 +167,7 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
                 view.clearErrors();
                 AddNewFeatureEvent event = new AddNewFeatureEvent(result);
                 AppUtils.EVENT_BUS.fireEvent(event);
+                view.resetInterface();
             }
         });
 

@@ -142,4 +142,7 @@ public abstract class AbstractNoteBox<T extends RelatedEntityDTO>
         this.defaultNoteEditMode = noteEditMode;
     }
 
+    public void setPublicationID(String publicationID) {
+        this.publicationZdbID = publicationID;
+    }
 }

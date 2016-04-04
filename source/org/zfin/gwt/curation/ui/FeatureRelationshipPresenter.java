@@ -69,7 +69,6 @@ public class FeatureRelationshipPresenter implements HandlesError {
                     public void onSuccess(List<FeatureMarkerRelationshipDTO> featureMarkerRelationshipDTOList) {
                         featureMarkerRelationshipDTOs = featureMarkerRelationshipDTOList;
                         populateDataTable();
-//                        redrawTable();
                     }
                 });
 
@@ -301,7 +300,7 @@ public class FeatureRelationshipPresenter implements HandlesError {
 
     public void onFeatureAddEvent() {
         loadFilterValues();
-        loadFeatureList();
+        loadValues();
     }
 
     public void onFeatureNameFilterChange(String featureName) {

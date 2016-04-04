@@ -7,7 +7,7 @@
 
     <ui:style>
         .grey-background {
-            background-color: #9EDAFF;
+            background-color: lightgrey;
         }
 
         .blue {

@@ -7,8 +7,17 @@
 
     <g:FlowPanel>
         <zfin-mod:AttributionModule ui:field="attributionModule"/>
+        <g:HTML>
+            <p/>
+        </g:HTML>
         <zfin-mod:FeatureAddView ui:field="featureAddView"/>
+        <g:HTML>
+            <p/>
+        </g:HTML>
         <zfin-mod:FeatureEditView ui:field="featureEditView"/>
+        <g:HTML>
+            <p/>
+        </g:HTML>
         <zfin-mod:FeatureRelationshipView ui:field="featureRelationshipView"/>
     </g:FlowPanel>
 </ui:UiBinder>

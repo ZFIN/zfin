@@ -7,6 +7,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.zfin.gwt.curation.event.AddAttributeEvent;
+import org.zfin.gwt.curation.event.AddAttributeEventHandler;
 import org.zfin.gwt.curation.event.AddNewFeatureEvent;
 import org.zfin.gwt.curation.event.AddNewFeatureEventHandler;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
@@ -36,7 +38,6 @@ public class FeatureModule implements EntryPoint {
     @UiField
     FeatureRelationshipView featureRelationshipView;
 
-    private FeatureAddPresenter addFeaturePresenter;
     private FeatureEditPresenter featureEditPresenter;
     private FeatureRelationshipPresenter featureRelationshipPresenter;
 
@@ -53,7 +54,7 @@ public class FeatureModule implements EntryPoint {
         RelatedEntityDTO relatedEntityDTO = new RelatedEntityDTO();
         relatedEntityDTO.setPublicationZdbID(publicationID);
         attributionModule.setDTO(relatedEntityDTO);
-        addFeaturePresenter = new FeatureAddPresenter(featureAddView, publicationID);
+        FeatureAddPresenter addFeaturePresenter = new FeatureAddPresenter(featureAddView, publicationID);
         featureAddView.setPresenter(addFeaturePresenter);
         addFeaturePresenter.go();
 
@@ -78,6 +79,25 @@ public class FeatureModule implements EntryPoint {
                         featureRelationshipPresenter.onFeatureAddEvent();
                     }
                 });
+        AppUtils.EVENT_BUS.addHandler(AddAttributeEvent.TYPE,
+                new AddAttributeEventHandler() {
+                    @Override
+                    public void onEvent(AddAttributeEvent event) {
+                        attributionModule.populateAttributeRemoval();
+                        featureEditPresenter.loadFeaturesForPub();
+                        featureRelationshipPresenter.onFeatureAddEvent();
+                    }
+                });
+        AppUtils.EVENT_BUS.addHandler(RemoveAttributeEvent.TYPE,
+                new RemoveAttributeEventHandler() {
+                    @Override
+                    public void onRemoveAttribute(RemoveAttributeEvent event) {
+                        attributionModule.populateAttributeRemoval();
+                        featureEditPresenter.loadFeaturesForPub();
+                        featureRelationshipPresenter.onFeatureAddEvent();
+                    }
+                });
+
     }
 
 
