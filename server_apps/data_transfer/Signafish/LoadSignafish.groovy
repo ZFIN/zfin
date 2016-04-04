@@ -128,7 +128,7 @@ query.setParameter("signafishDb", signafishDb)
 linksAdded = query.list()
 linksAdded.each { link ->
     println "  $link.zdbID"
-    session.delete(link)
+
 }
 
 if (options.report) {
