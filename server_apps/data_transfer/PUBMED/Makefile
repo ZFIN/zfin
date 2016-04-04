@@ -21,11 +21,10 @@ SUBDIRS   = LinkOut
 GENERICS  = addMeshTermsToAllPubs.groovy \
             fetchPubsFromPubMed.pl \
             fixBadCharacterEncoding.pl \
-            loadMeshTerms.groovy \
             loadNewPubs.sql \
             updatePublicationDate.groovy \
             updatepubstatus.pl
-STATICS  =  PubmedUtils.groovy
+STATICS  =  PubmedUtils.groovy loadMeshTerms.groovy 
 
 # ---------------  Production Rules  ------------------------------------
 

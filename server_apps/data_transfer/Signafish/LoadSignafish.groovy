@@ -1,5 +1,5 @@
-#!/bin/bash
-//usr/bin/env groovy -cp "$SOURCEROOT/home/WEB-INF/lib*:$SOURCEROOT/lib/Java/*:$SOURCEROOT/home/WEB-INF/classes:$CATALINA_HOME/endorsed/*" "$0" $@; exit $?
+#!/bin/bash 
+//usr/bin/env groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
 
 import groovy.json.JsonSlurper
 import org.hibernate.Session
