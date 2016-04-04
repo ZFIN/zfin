@@ -1040,9 +1040,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 pa.setPublication(publication);
                 pa.setDataZdbID(note.getZdbID());
                 pa.setSourceType(RecordAttribution.SourceType.STANDARD);
-                Set<PublicationAttribution> pubSetter = new HashSet<>();
-                pubSetter.add(pa);
-                note.setPubAttributions(pubSetter);
+                note.addPublicationAttribution(pa);
             }
         }
     }

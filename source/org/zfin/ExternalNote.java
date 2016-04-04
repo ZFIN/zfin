@@ -6,6 +6,7 @@ import org.zfin.infrastructure.PersonAttribution;
 import org.zfin.infrastructure.PublicationAttribution;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -90,6 +91,12 @@ public abstract class ExternalNote {
 
     public void setPersonAttributions(Set<PersonAttribution> personAttributions) {
         this.personAttributions = personAttributions;
+    }
+
+    public void addPublicationAttribution(PublicationAttribution attribution) {
+        if (pubAttributions == null)
+            pubAttributions = new HashSet<>();
+        pubAttributions.add(attribution);
     }
 
 
