@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 //usr/bin/env groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
 
 import groovy.json.JsonSlurper
