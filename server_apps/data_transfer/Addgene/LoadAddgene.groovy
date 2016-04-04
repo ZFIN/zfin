@@ -145,7 +145,7 @@ query.setParameter("addgeneDb", addgeneDb)
 linksAdded = query.list()
 linksAdded.each { link ->
     println "  $link.zdbID"
-    session.delete(link)
+    
 }
 
 if (options.report) {
