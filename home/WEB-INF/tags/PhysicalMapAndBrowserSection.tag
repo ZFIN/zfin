@@ -17,9 +17,6 @@
 <c:if test="${not empty locations && not isClone}">
     <table id="meioticPanel" class="summary">
         <tr>
-            <th colspan="3"><a href="/<%= ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT.value() %>">ZFIN GBrowse (GRCz10)</a></th>
-        </tr>
-        <tr>
             <td>
                 <div class="gbrowse-image" />
             </td>
@@ -63,7 +60,8 @@
         jQuery(".gbrowse-image").gbrowseImage({
             width: 700,
             imageUrl: "${gbrowseImage.imageUrl}",
-            linkUrl: "${gbrowseImage.linkUrl}"
+            linkUrl: "${gbrowseImage.linkUrl}",
+            build: "${gbrowseImage.build}"
         });
     </script>
 </c:if>
