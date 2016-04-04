@@ -11,7 +11,6 @@ import org.zfin.anatomy.presentation.RelationshipTypeSortingTest;
 import org.zfin.anatomy.presentation.SortAnatomyResultsTest;
 import org.zfin.anatomy.presentation.StagePresentationTest;
 import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
-import org.zfin.curation.service.CurationDTOConversionServiceSpec;
 import org.zfin.database.DatabaseServiceTest;
 import org.zfin.database.presentation.TableTest;
 import org.zfin.datatransfer.microarray.MicroarrayParseTest;
@@ -84,7 +83,6 @@ import org.zfin.util.*;
         BlastNonDBTest.class,
         BlastPresentationServiceTest.class,
 //        BtsContainsServiceTest.class,
-        CurationDTOConversionServiceSpec.class,
         CurationExperimentTest.class,
         DatabaseServiceTest.class,
         DbLinkDisplayComparatorTest.class,

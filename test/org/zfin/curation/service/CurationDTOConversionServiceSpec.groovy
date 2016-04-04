@@ -1,6 +1,5 @@
 package org.zfin.curation.service
-
-import org.zfin.AbstractZfinSpec
+import org.zfin.AbstractZfinIntegrationSpec
 import org.zfin.TestConfiguration
 import org.zfin.curation.Correspondence
 import org.zfin.curation.Curation
@@ -12,47 +11,44 @@ import spock.lang.Unroll
 
 import javax.sql.rowset.serial.SerialBlob
 
-class CurationDTOConversionServiceSpec extends AbstractZfinSpec {
+class CurationDTOConversionServiceSpec extends AbstractZfinIntegrationSpec {
 
     @Shared person = [
-            patrick: new Person().with {
-                zdbID = "ZDB-PERS-140612-1"
-                firstName = "Patrick"
-                lastName = "Kalita"
-                shortName = "Kalita-P."
-                return it
-            },
-            monte: new Person().with {
-                zdbID = "ZDB-PERS-960805-676"
-                firstName = "Monte"
-                lastName = "Westerfield"
-                shortName = "Westerfield-M."
-                snapshot = new SerialBlob(new byte[0])
-                return it
-            }
+            patrick: new Person(
+                zdbID: "ZDB-PERS-140612-1",
+                firstName: "Patrick",
+                lastName: "Kalita",
+                shortName: "Kalita-P."
+            ),
+            monte: new Person(
+                zdbID: "ZDB-PERS-960805-676",
+                firstName: "Monte",
+                lastName: "Westerfield",
+                shortName: "Westerfield-M.",
+                snapshot: new SerialBlob(new byte[0])
+            )
     ]
 
     @Shared curation = [
-            open: new Curation().with {
-                zdbID = "ZDB-CUR-030804-31"
-                topic = Curation.Topic.GO
-                curator = person.patrick
-                dataFound = true
-                entryDate = new Date(2003, 8, 4, 10, 30, 30)
-                openedDate = new Date(2003, 8, 10, 9, 49, 8)
-                closedDate = null
-                return it
-            },
-            closed: new Curation().with {
-                zdbID = "ZDB-CUR-030804-32"
-                topic = Curation.Topic.NOMENCLATURE
-                curator = person.monte
-                dataFound = true
-                entryDate = new Date(2003, 8, 5, 10, 31, 30)
-                openedDate = null
-                closedDate = new Date(2003, 8, 11, 14, 51, 10)
-                return it
-            }]
+            open: new Curation(
+                zdbID: "ZDB-CUR-030804-31",
+                topic: Curation.Topic.GO,
+                curator: person.patrick,
+                dataFound: true,
+                entryDate: new Date(2003, 8, 4, 10, 30, 30),
+                openedDate: new Date(2003, 8, 10, 9, 49, 8),
+                closedDate: null
+            ),
+            closed: new Curation(
+                zdbID: "ZDB-CUR-030804-32",
+                topic: Curation.Topic.NOMENCLATURE,
+                curator: person.monte,
+                dataFound: true,
+                entryDate: new Date(2003, 8, 5, 10, 31, 30),
+                openedDate: null,
+                closedDate: new Date(2003, 8, 11, 14, 51, 10)
+            )
+    ]
 
     def setupSpec() {
         TestConfiguration.setAuthenticatedUser(person.patrick);
@@ -60,22 +56,17 @@ class CurationDTOConversionServiceSpec extends AbstractZfinSpec {
 
     def converter = new CurationDTOConversionService();
 
-    def note = new PublicationNote().with {
-        zdbID = "ZDB-PNOTE-030801-6"
-        text = "Hahaha! Great paper!"
-        date = new Date(2003, 8, 1, 9, 16, 30)
-        return it
-    }
+    def note = new PublicationNote(
+        zdbID: "ZDB-PNOTE-030801-6",
+        text: "Hahaha! Great paper!",
+        date: new Date(2003, 8, 1, 9, 16, 30)
+    )
 
-    def correspondence = new Correspondence().with {
-        publication = new Publication().with {
-            zdbID = "ZDB-PUB-030527-22"
-            return it
-        }
-        id = 5
-        contactedDate = new Date(2003, 6, 12, 14, 11, 2)
-        return it
-    }
+    def correspondence = new Correspondence(
+        publication: new Publication(zdbID: "ZDB-PUB-030527-22"),
+        id: 5,
+        contactedDate: new Date(2003, 6, 12, 14, 11, 2)
+    )
 
     def "convert PublicationNote to DTO for current logged-in user"() {
         setup:
@@ -206,14 +197,13 @@ class CurationDTOConversionServiceSpec extends AbstractZfinSpec {
 
     def "convert Publication to Status DTO"() {
         setup:
-        def pub = new Publication().with {
-            closeDate = new GregorianCalendar()
-            indexed = true
-            indexedDate = new GregorianCalendar()
-            zdbID = "ZDB-PUB-122334-1"
-            type = Publication.Type.JOURNAL
-            return it
-        }
+        def pub = new Publication(
+            closeDate: new GregorianCalendar(),
+            indexed: true,
+            indexedDate: new GregorianCalendar(),
+            zdbID: "ZDB-PUB-122334-1",
+            type: Publication.Type.JOURNAL
+        )
 
         when:
         def dto = converter.toCurationStatusDTO(pub)

@@ -6,6 +6,7 @@ import org.zfin.anatomy.repository.AnatomyRepositoryTest;
 import org.zfin.antibody.AntibodyServiceTest;
 import org.zfin.antibody.repository.AntibodyRepositoryTest;
 import org.zfin.curation.repository.CurationRepositoryTest;
+import org.zfin.curation.service.CurationDTOConversionServiceSpec;
 import org.zfin.database.presentation.DatabaseServiceDbTest;
 import org.zfin.datatransfer.go.GafParserUnitTest;
 import org.zfin.datatransfer.go.service.FpInferenceGafServiceTest;
@@ -83,6 +84,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         BlastRepositoryTest.class,
         ConstructRepositoryTest.class,
         ConstructServiceTest.class,
+        CurationDTOConversionServiceSpec.class,
         CurationRepositoryTest.class,
         CurationRPCTest.class,
         DatabaseServiceDbTest.class,
