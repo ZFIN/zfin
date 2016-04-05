@@ -660,8 +660,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         Set<FeatureNote> featureNotes = feature.getExternalNotes();
         for (FeatureNote featureNote : featureNotes) {
             if (featureNote.getZdbID().equals(noteDTO.getZdbID())) {
+                infrastructureRepository.deleteActiveDataByZdbID(featureNote.getZdbID());
                 infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "removed public note", featureNote.getNote(), noteDTO.getNoteData());
-                feature.getExternalNotes().remove(featureNote);
                 HibernateUtil.flushAndCommitCurrentSession();
                 return;
             }

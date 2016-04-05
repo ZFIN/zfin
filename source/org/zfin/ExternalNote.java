@@ -1,6 +1,5 @@
 package org.zfin;
 
-import org.hibernate.annotations.DiscriminatorFormula;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.infrastructure.PersonAttribution;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -36,8 +35,7 @@ public abstract class ExternalNote {
     protected String note;
     @Column(name = "extnote_note_type", insertable = false, updatable = false)
     private String type;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "recattrib_data_zdb_id")
+    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL, orphanRemoval = true)
     protected Set<PublicationAttribution> pubAttributions;
     @OneToMany
     @JoinColumn(name = "recattrib_data_zdb_id")
