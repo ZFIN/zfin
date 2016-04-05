@@ -371,9 +371,12 @@ public class PublicationTrackingController {
         }
 
         // don't send to the real recipients unless we're on production
-        if (!ZfinPropertiesEnum.DOMAIN_NAME.toString().equals("zfin.org")) {
-            letter.setRecipients(new String[] { sender.getEmail() });
+        if (!Boolean.valueOf(ZfinPropertiesEnum.SEND_AUTHOR_NOTIF_EMAIL.value())) {
+            letter.getRecipients().clear();
         }
+
+        // always send to the curator
+        letter.getRecipients().add(sender.getEmail());
 
         // make sure all the expression data will appear on the all-figure-view page we
         // link to in the email
@@ -384,7 +387,7 @@ public class PublicationTrackingController {
                 letter.getMessage(),
                 false,
                 sender.getFirstName() + " " + sender.getLastName() + " <" + sender.getEmail() + ">",
-                letter.getRecipients());
+                letter.getRecipients().toArray(new String[] {}));
 
         if (!sent) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

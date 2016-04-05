@@ -1,15 +1,17 @@
 package org.zfin.publication;
 
+import java.util.Collection;
+
 public class NotificationLetter {
 
-    private String[] recipients;
+    private Collection<String> recipients;
     private String message;
 
-    public String[] getRecipients() {
+    public Collection<String> getRecipients() {
         return recipients;
     }
 
-    public void setRecipients(String[] recipients) {
+    public void setRecipients(Collection<String> recipients) {
         this.recipients = recipients;
     }
 

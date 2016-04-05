@@ -131,6 +131,7 @@
 <filter token="SECUREPORT" value="${SECUREPORT}"/>
 <filter token="SECURE_HTTP" value="${SECURE_HTTP}"/>
 <filter token="SECURE_SERVER" value="${SECURE_SERVER}"/>
+<filter token="SEND_AUTHOR_NOTIF_EMAIL" value="${SEND_AUTHOR_NOTIF_EMAIL}"/>
 <filter token="SHARED_DOMAIN_NAME" value="${SHARED_DOMAIN_NAME}"/>
 <filter token="SHOW_SQL" value="${SHOW_SQL}"/>
 <filter token="SHUTDOWNPORT" value="${SHUTDOWNPORT}"/>
