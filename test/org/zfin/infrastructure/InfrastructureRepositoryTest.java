@@ -14,7 +14,6 @@ import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.Figure;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureNote;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
@@ -39,7 +38,6 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
-import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
 
 /**
  * Class InfrastructureRepositoryTest.
@@ -516,26 +514,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     public void getPublicationAttributionsForPub() {
         List<String> markersForPub = infrastructureRepository.getPublicationAttributionsForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
         assertNotNull(markersForPub);
-    }
-
-    @Test
-    public void removeFeatureNote() {
-        HibernateUtil.createTransaction();
-        Feature feature = getFeatureRepository().getFeatureByID("ZDB-ALT-160404-12");
-        for (FeatureNote note : feature.getExternalNotes()) {
-                for (PublicationAttribution attribution : note.getPubAttributions()) {
-                    System.out.println(attribution.getPublication().getAbbreviation());
-                    note.getPubAttributions().remove(attribution);
-                    //    HibernateUtil.currentSession().delete(attribution);
-                }
-/*
-                feature.getExternalNotes().remove(note);
-                HibernateUtil.currentSession().delete(note);
-                break;
-*/
-        }
-        HibernateUtil.rollbackTransaction();
-        assertNotNull(feature);
     }
 
     @Test
