@@ -20,7 +20,7 @@
   <builders>
     <hudson.tasks.Shell>
       <command>cd $TARGETROOT/server_apps/DB_maintenance &amp;&amp; regen.sh </command>
-    </hudson.tasks.Shell>
+ </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
