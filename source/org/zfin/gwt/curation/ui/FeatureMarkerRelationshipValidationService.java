@@ -15,7 +15,7 @@ public class FeatureMarkerRelationshipValidationService {
     public static boolean validateFeatureMarkerRelationshipToAdd(FeatureMarkerRelationshipDTO newFeatureMarkerRelationshipDTO,List<FeatureMarkerRelationshipDTO> existingFeatureMarkerRelationshipDTOs)
             throws ValidationException{
 
-        List<FeatureMarkerRelationshipDTO> relationshipsForFeatureDTOList = new ArrayList<FeatureMarkerRelationshipDTO>();
+        List<FeatureMarkerRelationshipDTO> relationshipsForFeatureDTOList = new ArrayList<>();
 
         for(FeatureMarkerRelationshipDTO compareDto : existingFeatureMarkerRelationshipDTOs){
             if(compareDto.equals(newFeatureMarkerRelationshipDTO)){
@@ -103,7 +103,7 @@ public class FeatureMarkerRelationshipValidationService {
 
 
     private static Map<String, Set<String>> generateFeatureMarkerTypes(List<FeatureMarkerRelationshipDTO> relationshipsForMarkerDTOList) {
-        Map<String,Set<String>> markerTypeDTOs = new HashMap<String,Set<String>>();
+        Map<String,Set<String>> markerTypeDTOs = new HashMap<>();
         for(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO: relationshipsForMarkerDTOList){
             String markerName = featureMarkerRelationshipDTO.getMarkerDTO().getName() ;
             String currentRelationshipType = featureMarkerRelationshipDTO.getRelationshipType();
@@ -116,7 +116,7 @@ public class FeatureMarkerRelationshipValidationService {
                 // else add relationshp
             }
             else{
-                Set<String> types = new HashSet<String>() ;
+                Set<String> types = new HashSet<>() ;
                 types.add(currentRelationshipType) ;
                 markerTypeDTOs.put(markerName, types) ;
             }

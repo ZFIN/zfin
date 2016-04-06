@@ -9,10 +9,7 @@ import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
 import org.zfin.construct.presentation.ConstructPresentation;
 import org.zfin.expression.*;
-import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureAssay;
-import org.zfin.feature.FeatureMarkerRelationship;
-import org.zfin.feature.FeaturePrefix;
+import org.zfin.feature.*;
 import org.zfin.feature.presentation.FeaturePresentation;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.HibernateUtil;
@@ -24,6 +21,7 @@ import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
@@ -577,13 +575,17 @@ public class DTOConversionService {
             feature.setUnspecifiedFeature(true);
         }
 
-       /* if (featureDTO.getKnownInsertionSite()) {
-            feature.setTransgenicSuffix(featureDTO.getTransgenicSuffix());
-        }*/
         feature.setTransgenicSuffix(featureDTO.getTransgenicSuffix());
 
-        if (featureDTO.getPublicNote() != null) {
-            feature.setPublicComments(escapeString(featureDTO.getPublicNote().getNoteData()));
+        if (CollectionUtils.isNotEmpty(featureDTO.getPublicNoteList())) {
+            HashSet<FeatureNote> featureNoteSet = new HashSet<>(featureDTO.getPublicNoteList().size());
+            feature.setExternalNotes(featureNoteSet);
+            for (NoteDTO note : featureDTO.getPublicNoteList()) {
+                FeatureNote featureNote = new FeatureNote();
+                featureNote.setFeature(feature);
+                featureNote.setNote(note.getNoteData());
+                feature.getExternalNotes().add(featureNote);
+            }
         }
 
         return feature;
@@ -612,9 +614,14 @@ public class DTOConversionService {
             }
         }
 
-        if (feature.getPublicComments() != null) {
-            PublicNoteDTO noteDTO = new PublicNoteDTO(feature.getZdbID(), DTOConversionService.unescapeString(feature.getPublicComments()));
-            featureDTO.setPublicNote(noteDTO);
+        Set<FeatureNote> featureNotes = feature.getExternalNotes();
+        if (CollectionUtils.isNotEmpty(featureNotes)) {
+            List<NoteDTO> curatorNoteDTOs = new ArrayList<>();
+            for (FeatureNote dataNote : featureNotes) {
+                NoteDTO noteDTO = new NoteDTO(dataNote.getZdbID(), feature.getZdbID(), NoteEditMode.PUBLIC, DTOConversionService.unescapeString(dataNote.getNote()));
+                curatorNoteDTOs.add(noteDTO);
+            }
+            featureDTO.setPublicNoteList(curatorNoteDTOs);
         }
 
         Set<DataNote> curatorNotes = feature.getDataNotes();

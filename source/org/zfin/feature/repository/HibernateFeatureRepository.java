@@ -31,7 +31,6 @@ import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.profile.FeatureSource;
 import org.zfin.profile.Organization;
 import org.zfin.profile.OrganizationFeaturePrefix;
-import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -123,12 +122,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 "   where" +
                 "   ftrgrpmem_ftr_type= :featureType " +
                 "   and ftrgrpmem_ftr_type_group=fmreltype_ftr_type_group";
-
-//                     " --                      $(IF,$(NE,$featcur_reln_add_type,Transgenic Insertion),and fmreltype_name not like 'contains%')" +
-        // this line is not necessary, since this is what is already mapped in the database
-//        if(!featureType.equals(Feature.Type.TRANSGENIC_INSERTION.toString())){
-//            sql += " and fmreltype_name not like 'contains%' ";
-//        }
 
         sql += "   union" +
                 "   select distinct mreltype_name " +
@@ -471,9 +464,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
 
-    public FeatureAssay getFeatureAssay(String ftrZdbID) {
+    public FeatureAssay getFeatureAssay(Feature feature) {
         Criteria criteria = HibernateUtil.currentSession().createCriteria(FeatureAssay.class);
-        criteria.add(Restrictions.eq("featzdbID", ftrZdbID));
+        criteria.add(Restrictions.eq("feature", feature));
         criteria.setMaxResults(1);
         FeatureAssay ftrAss = (FeatureAssay) criteria.uniqueResult();
         return ftrAss;
@@ -531,28 +524,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 " where mh.featureAlias = :zdbID ";
         Query query = currentSession().createQuery(hql);
         query.setString("zdbID", alias.getZdbID());
+        query.executeUpdate();
 
-        currentSession().flush();
-
-        int removed = query.executeUpdate();
-
-
-      //  infrastructureRepository.deleteActiveDataByZdbID(alias.getZdbID());
-        currentSession().flush();
-
-        hql = "delete from FeatureAlias ma " +
-                " where ma.dataZdbID = :zdbID ";
-        query = currentSession().createQuery(hql);
-        query.setString("zdbID", feature.getZdbID());
-
-        removed = query.executeUpdate();
+        feature.getAliases().remove(alias);
         infrastructureRepository.deleteActiveDataByZdbID(alias.getZdbID());
-        currentSession().flush();
-
-     //   currentSession().refresh(feature);
-
-        // run the fast search table script so the alias is not showing up any more.
-        //runFeatureNameFastSearchUpdate(feature);
     }
 
 
@@ -1058,6 +1033,16 @@ public class HibernateFeatureRepository implements FeatureRepository {
             }
         }
 
+        // add another for the external notes
+        if (feature.getExternalNotes() != null) {
+            for (FeatureNote note : feature.getExternalNotes()) {
+                PublicationAttribution pa = new PublicationAttribution();
+                pa.setPublication(publication);
+                pa.setDataZdbID(note.getZdbID());
+                pa.setSourceType(RecordAttribution.SourceType.STANDARD);
+                note.addPublicationAttribution(pa);
+            }
+        }
     }
 
     @Override

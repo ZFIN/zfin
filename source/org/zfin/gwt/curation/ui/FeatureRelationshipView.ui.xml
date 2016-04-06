@@ -1,0 +1,82 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        >
+
+    <ui:style>
+        .grey-background {
+            background-color: #9EDAFF;
+        }
+
+        .blue {
+            color: #0000FF;
+        }
+
+        .valign-top {
+            vertical-align: top;
+        }
+    </ui:style>
+
+    <g:FlowPanel>
+        <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
+            <g:Label text="Feature Relationship" addStyleNames="bold" horizontalAlignment="left"/>
+            <g:Label text=":&nbsp;" addStyleNames="bold"/>
+            <zfin:ShowHideToggle widget="{featureRelationshipPanel}" ui:field="showHideToggle" show="true"/>
+        </g:HorizontalPanel>
+        <g:VerticalPanel ui:field="featureRelationshipPanel" width="100%">
+            <g:HorizontalPanel title="Filter" addStyleNames="curation-filter" width="100%">
+                <g:Label text="Show:" horizontalAlignment="ALIGN_LEFT"/>
+                <g:HorizontalPanel title="Figure List">
+                    <g:Label>Feature Name: &nbsp;</g:Label>
+                    <zfin:StringListBox ui:field="featureNameList"/>
+                </g:HorizontalPanel>
+                <g:HorizontalPanel title="Gene List">
+                    <g:Label text="Feature Type: &nbsp;"/>
+                    <zfin:StringListBox ui:field="featureTypeList"/>
+                </g:HorizontalPanel>
+            </g:HorizontalPanel>
+            <g:Grid ui:field='dataTable' cellSpacing='10' styleName="searchresults groupstripes-hover">
+                <g:row styleName="table-header">
+                    <g:customCell>
+                        <g:Label text="Feature / Marker" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label text="Type" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label text="Relationship" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label text="Target" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label text="Delete" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                </g:row>
+                <g:row>
+                    <g:customCell>
+                        <zfin:StringListBox ui:field="featureToAddList"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label ui:field="featureToAddType"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <zfin:StringListBox ui:field="featureToAddRelationship"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <zfin:StringListBox ui:field="featureToAddTarget"/>
+                    </g:customCell>
+                    <g:cell/>
+                </g:row>
+            </g:Grid>
+            <g:VerticalPanel>
+                <g:Button ui:field="addButton" text="Add"/>
+                <zfin:SimpleErrorElement ui:field="errorLabel" styleName="clickable-error"/>
+                <g:Label ui:field="message" styleName="clickable"/>
+            </g:VerticalPanel>
+        </g:VerticalPanel>
+
+    </g:FlowPanel>
+</ui:UiBinder>

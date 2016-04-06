@@ -1,0 +1,131 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        xmlns:zfin-root='urn:import:org.zfin.gwt.root.util'
+        xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui'
+        >
+
+    <ui:style>
+        .grey-background {
+            background-color: lightgrey;
+        }
+
+        .blue {
+            color: #0000FF;
+        }
+
+        .valign-top{
+            vertical-align: top;
+        }
+
+    </ui:style>
+
+    <g:FlowPanel>
+        <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
+            <g:Label text="Edit Feature" addStyleNames="bold" horizontalAlignment="left"/>
+            <g:Label text=":&nbsp;" addStyleNames="bold"/>
+            <zfin:ShowHideToggle widget="{featureConstructionPanel}" ui:field="showHideToggle" show="true"/>
+        </g:HorizontalPanel>
+        <g:Grid ui:field="featureConstructionPanel" styleName="{style.grey-background}">
+            <g:row>
+                <g:cell>Feature Name/Abbrev</g:cell>
+                <g:customCell>
+                    <g:HorizontalPanel>
+                        <zfin:StringListBox ui:field="featureEditList"/>
+                        <zfin-root:DeleteImage ui:field="removeFeatureLink" title="Delete Feature" visible="false"/>
+                    </g:HorizontalPanel>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:cell>Feature Type</g:cell>
+                <g:customCell>
+                    <g:HorizontalPanel>
+                        <zfin:StringListBox ui:field="featureTypeBox"/>
+                        <g:HorizontalPanel ui:field="knownInsertionSite">
+                            <g:Label text="&nbsp;Known Insertion Site:"/>
+                            <g:CheckBox ui:field="knownInsertionCheckBox" enabled="false"/>
+                        </g:HorizontalPanel>
+                        <g:HorizontalPanel ui:field="featureSuffixPanel" visible="false">
+                            <g:Label text="Type:"/>
+                            <zfin:StringListBox ui:field="featureSuffixBox"/>
+                        </g:HorizontalPanel>
+                    </g:HorizontalPanel>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:cell>Lab Of Origin</g:cell>
+                <g:customCell>
+                    <zfin:StringListBox ui:field="labOfOriginBox"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:cell>Lab Designation</g:cell>
+                <g:customCell>
+                    <g:HorizontalPanel>
+                        <zfin:StringListBox ui:field="labDesignationBox"/>
+                        <g:Label text="&nbsp;&nbsp;&nbsp;&nbsp;Line Number:"/>
+                        <zfin:StringTextBox ui:field="lineNumberBox"/>
+                        <g:Label text="&nbsp;&nbsp;&nbsp;&nbsp;Dominant:"/>
+                        <g:CheckBox ui:field="dominantCheckBox"/>
+                    </g:HorizontalPanel>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:cell>Feature Name</g:cell>
+                <g:customCell>
+                    <zfin:StringTextBox ui:field="featureNameBox"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:cell styleName="{style.valign-top}">Alias</g:cell>
+                <g:customCell>
+                    <zfin-mod:FeatureAliasList ui:field="featureAliasList"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:cell styleName="{style.valign-top}">Sequence</g:cell>
+                <g:customCell>
+                    <zfin-mod:FeatureSequenceList ui:field="featureSequenceList"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:cell>Mutagenesis</g:cell>
+                <g:customCell>
+                    <g:HorizontalPanel>
+                        <zfin:StringListBox ui:field="mutageeBox"/>
+                        <g:Label text="&nbsp;Treated with:"/>
+                        <zfin:StringListBox ui:field="mutagenBox"/>
+                    </g:HorizontalPanel>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:cell styleName="{style.valign-top}">Notes</g:cell>
+                <g:customCell>
+                    <zfin-mod:FeatureNoteBox ui:field="featureNoteBox" />
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:cell>Feature Display Name</g:cell>
+                <g:customCell>
+                    <zfin:StringTextBox ui:field="featureDisplayName" width="500px" enabled="false"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell>
+                    <g:HorizontalPanel>
+                        <g:Button ui:field="saveButton" text="Save" enabled="false"/>
+                        <g:Button ui:field="revertButton" text="Revert" enabled="false"/>
+                    </g:HorizontalPanel>
+                </g:customCell>
+
+            </g:row>
+        </g:Grid>
+        <g:VerticalPanel>
+            <zfin:SimpleErrorElement ui:field="errorLabel" styleName="clickable-error"/>
+            <g:Label ui:field="message" styleName="clickable"/>
+        </g:VerticalPanel>
+
+    </g:FlowPanel>
+</ui:UiBinder>

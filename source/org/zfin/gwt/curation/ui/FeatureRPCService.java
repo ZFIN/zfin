@@ -5,6 +5,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.DuplicateEntryException;
+import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.ValidationException;
 
 import java.util.List;
@@ -71,5 +72,7 @@ public interface FeatureRPCService extends RemoteService {
     void removeCuratorNote(NoteDTO noteDTO);
 
     List<String> getMutagensForFeatureType(FeatureTypeEnum ftrType);
+
+    void removePublicNote(NoteDTO updatedNoteDTO);
 
 }

@@ -289,6 +289,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
                     public void onSuccess(Void result) {
                         notWorking();
                         fireEventSuccess();
+                        AppUtils.EVENT_BUS.fireEvent(new AddAttributeEvent());
                         clearError();
                         setMessage("Feature attribution added:" + value);
                         resetInput();

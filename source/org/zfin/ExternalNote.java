@@ -1,11 +1,11 @@
 package org.zfin;
 
-import org.hibernate.annotations.DiscriminatorFormula;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.infrastructure.PersonAttribution;
 import org.zfin.infrastructure.PublicationAttribution;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -35,8 +35,7 @@ public abstract class ExternalNote {
     protected String note;
     @Column(name = "extnote_note_type", insertable = false, updatable = false)
     private String type;
-    @OneToMany
-    @JoinColumn(name = "recattrib_data_zdb_id")
+    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL, orphanRemoval = true)
     protected Set<PublicationAttribution> pubAttributions;
     @OneToMany
     @JoinColumn(name = "recattrib_data_zdb_id")
@@ -90,6 +89,12 @@ public abstract class ExternalNote {
 
     public void setPersonAttributions(Set<PersonAttribution> personAttributions) {
         this.personAttributions = personAttributions;
+    }
+
+    public void addPublicationAttribution(PublicationAttribution attribution) {
+        if (pubAttributions == null)
+            pubAttributions = new HashSet<>();
+        pubAttributions.add(attribution);
     }
 
 

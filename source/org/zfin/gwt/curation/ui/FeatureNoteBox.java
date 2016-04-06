@@ -41,13 +41,11 @@ public class FeatureNoteBox<T extends FeatureDTO> extends AbstractNoteBox<T> imp
 
     public void setValues() {
         typeListBox.clear();
-        List<String> items = new ArrayList<String>();
+        List<String> items = new ArrayList<>();
         for (NoteEditMode noteEditMode : noteEditModes) {
             if (noteEditMode == NoteEditMode.PUBLIC && false == containsPublicNote()) {
                 items.add(noteEditMode.name());
-            }
-            else
-            if (noteEditMode != NoteEditMode.PUBLIC && noteEditMode != NoteEditMode.EXTERNAL) {
+            } else if (noteEditMode != NoteEditMode.PUBLIC && noteEditMode != NoteEditMode.EXTERNAL) {
                 items.add(noteEditMode.name());
             }
         }
@@ -105,7 +103,7 @@ public class FeatureNoteBox<T extends FeatureDTO> extends AbstractNoteBox<T> imp
                     FeatureRPCService.App.getInstance().addCuratorNote(noteDTO, new FeatureEditCallBack<NoteDTO>("Failed to update curator note") {
                         @Override
                         public void onSuccess(NoteDTO returnNoteDTO) {
-                            if(dto.getCuratorNotes()==null){
+                            if (dto.getCuratorNotes() == null) {
                                 dto.setCuratorNotes(new ArrayList<NoteDTO>());
                             }
                             dto.getCuratorNotes().add(returnNoteDTO);
@@ -152,12 +150,14 @@ public class FeatureNoteBox<T extends FeatureDTO> extends AbstractNoteBox<T> imp
     @Override
     protected void revertGUI() {
         // have to remove all removes
-        removeAllRows() ;
-        if(dto!=null){
-            if (dto.getPublicNote() != null && false == dto.getPublicNote().isEmpty()) {
-                addNoteToGUI(dto.getPublicNote());
+        removeAllRows();
+        if (dto != null) {
+            if (dto.getPublicNoteList() != null) {
+                for (NoteDTO note : dto.getPublicNoteList()) {
+                    addNoteToGUI(note);
+                }
             }
-            if(dto.getCuratorNotes()!=null){
+            if (dto.getCuratorNotes() != null) {
                 for (NoteDTO noteDTO : dto.getCuratorNotes()) {
                     addNoteToGUI(noteDTO);
                 }
@@ -169,7 +169,7 @@ public class FeatureNoteBox<T extends FeatureDTO> extends AbstractNoteBox<T> imp
 
     private void removeAllRows() {
         table.clear();
-        while(table.getRowCount()>0){
+        while (table.getRowCount() > 0) {
             table.removeRow(0);
         }
     }
