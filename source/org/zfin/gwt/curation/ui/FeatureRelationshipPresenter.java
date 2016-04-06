@@ -41,17 +41,20 @@ public class FeatureRelationshipPresenter implements HandlesError {
 
     protected void populateDataTable() {
         int elementIndex = 0;
+        FeatureDTO pastFeature = null;
         for (FeatureMarkerRelationshipDTO relationshipDTO : featureMarkerRelationshipDTOs) {
             if (featureNameFilter != null && !relationshipDTO.getFeatureDTO().getAbbreviation().equals(featureNameFilter))
                 continue;
             if (featureTypeFilter != null && !relationshipDTO.getFeatureDTO().getFeatureType().getDisplay().equals(featureTypeFilter))
                 continue;
-            view.addFeatureCell(relationshipDTO.getFeatureDTO(), elementIndex);
+            FeatureDTO feature = relationshipDTO.getFeatureDTO();
+            view.addFeatureCell(feature, pastFeature, elementIndex);
             view.addFeatureTypeCell(relationshipDTO.getFeatureDTO(), elementIndex);
             view.addFeatureRelationshipCell(relationshipDTO.getRelationshipType(), elementIndex);
             view.addTargetMarker(relationshipDTO.getMarkerDTO(), elementIndex);
             view.addDeletButton(new DeleteFeatureMarkerRelationshipButton(relationshipDTO, this), elementIndex);
             elementIndex++;
+            pastFeature = feature;
         }
         view.endTableUpdate();
     }

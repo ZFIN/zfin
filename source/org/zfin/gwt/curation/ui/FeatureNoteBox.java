@@ -42,9 +42,7 @@ public class FeatureNoteBox<T extends FeatureDTO> extends AbstractNoteBox<T> imp
         typeListBox.clear();
         List<String> items = new ArrayList<>();
         for (NoteEditMode noteEditMode : noteEditModes) {
-            if (noteEditMode == NoteEditMode.PUBLIC && false == containsPublicNote()) {
-                items.add(noteEditMode.name());
-            } else if (noteEditMode != NoteEditMode.PUBLIC && noteEditMode != NoteEditMode.EXTERNAL) {
+            if (noteEditMode == NoteEditMode.PUBLIC || noteEditMode == NoteEditMode.PRIVATE) {
                 items.add(noteEditMode.name());
             }
         }
