@@ -35,7 +35,6 @@ public class FeatureNoteBox<T extends FeatureDTO> extends AbstractNoteBox<T> imp
         setValues();
         initWidget(panel);
         addInternalListeners(this);
-//        RootPanel.get(StandardDivNames.noteDiv).add(this);
     }
 
 
