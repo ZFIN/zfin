@@ -4,8 +4,10 @@ import org.apache.log4j.Logger
 import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.SolrClient
 import org.apache.solr.client.solrj.response.QueryResponse
+import org.apache.solr.common.SolrDocument
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
+import org.zfin.search.presentation.SearchResult
 import org.zfin.search.service.QueryManipulationService
 import spock.lang.Shared
 import spock.lang.Unroll
@@ -29,21 +31,21 @@ class QuerySpec extends ZfinIntegrationSpec {
     @Shared SolrQuery secondQuery
 
     //sets up for all tests in class
-    def setupSpec() {
+    public def setupSpec() {
         client = SolrService.getSolrClient("prototype")
     }
 
-    def cleanSpec() {
+    public def cleanSpec() {
         client = null
     }
 
     //sets up for each test
-    def setup() {
+    public void setup() {
         query = new SolrQuery()
         secondQuery = new SolrQuery()
     }
 
-    def clean() {
+    public void clean() {
         query = null
         secondQuery = null
     }
@@ -220,6 +222,39 @@ class QuerySpec extends ZfinIntegrationSpec {
         "pax2a"     | "pax2a"
 
     }
+
+    @Unroll
+    def "an expression search for #symbol should return wildtype results first"() {
+        when: "Solr is queried"
+        query.setQuery(queryManipulationService.processQueryString(symbol))
+        query.addFilterQuery("category:\"" + Category.EXPRESSIONS.name + "\"")
+        query.set('fl','name, id, is_wildtype')
+        QueryResponse response = new QueryResponse()
+
+        try {
+            response = client.query(query)
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+        SolrDocument firstDoc = response?.getResults()?.first()
+
+
+        then: "confirm that the first result has a wildtype fish"
+        response
+        response.getResults()
+        firstDoc
+        firstDoc.get("is_wildtype") == "true"
+
+        where:
+        symbol << ["fgf8a","pax2a","fgf3","bmp2a"]
+
+
+    }
+
+/*    def "the first feature returned when searching for #symbol should not be the unspecified feature"() {
+
+    }*/
 
 
 }
