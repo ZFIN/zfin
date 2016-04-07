@@ -72,11 +72,28 @@
                     <c:choose>
                         <c:when test="${fn:length(formBean.feature.affectedGenes) > 0 }">
                             <td>
-                                <c:forEach var="affectedGene" items="${formBean.feature.affectedGenes}"
+                                <%--<c:forEach var="affectedGene" items="${formBean.feature.affectedGenes}"
                                            varStatus="loop">
-                                    <zfin:link entity="${affectedGene}"/>
-                                    <c:if test="${!loop.last}">,&nbsp;</c:if>
-                                </c:forEach>
+                                    <zfin:link entity="${affectedGene}"/>--%>
+                                    <c:forEach var="mRel" items="${formBean.feature.affectedGenesReln}" varStatus="loop">
+                                        <a href="/action/marker/view/${mRel.marker.zdbID}"><i>${mRel.marker.name}</i></a>
+                                        <%--//<zfin:name entity="${mRel.marker}"/>--%>
+
+                                        <c:if test="${mRel.publicationCount > 0}">
+                                            <c:choose>
+                                                <c:when test="${mRel.publicationCount == 1}">
+                                                    (<a href="/${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)<c:if
+                                                        test="${!loop.last}">, </c:if>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${mRel.zdbID}&rtype=genotype">${mRel.publicationCount}</a>)<c:if
+                                                        test="${!loop.last}">, </c:if>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:if>
+                                    </c:forEach>
+                                    
+                                <%--</c:forEach>--%>
                             </td>
                         </c:when>
                         <c:otherwise>
