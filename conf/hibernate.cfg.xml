@@ -95,6 +95,10 @@
         <mapping class="org.zfin.sequence.reno.NomenclatureRun"/>
         <mapping class="org.zfin.sequence.reno.RedundancyRun"/>
         <mapping class="org.zfin.feature.DnaMutationTerm"/>
+        <mapping class="org.zfin.infrastructure.RecordAttribution"/>
+        <mapping class="org.zfin.infrastructure.PublicationAttribution"/>
+        <mapping class="org.zfin.infrastructure.TermAttribution"/>
+        <mapping class="org.zfin.infrastructure.PersonAttribution"/>
 
 
     </session-factory>

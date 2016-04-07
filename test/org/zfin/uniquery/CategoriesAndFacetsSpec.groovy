@@ -31,11 +31,11 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
     SolrQuery query
 
     //sets up for all tests in class
-    def setupSpec() {
+    public def setupSpec() {
         client = SolrService.getSolrClient("prototype")
     }
 
-    def cleanSpec() {
+    public def cleanSpec() {
         client = null
     }
 

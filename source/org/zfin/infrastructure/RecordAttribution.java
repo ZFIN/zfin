@@ -1,14 +1,37 @@
 package org.zfin.infrastructure;
 
+import org.hibernate.annotations.DiscriminatorFormula;
+
+import javax.persistence.*;
 import java.io.Serializable;
 
 
-/**
- */
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorFormula(
+        "CASE get_obj_type(recattrib_source_zdb_id)" +
+                "     WHEN 'PUB' then  " +
+                "           CASE get_obj_type(recattrib_data_zdb_id)" +
+                "                WHEN 'TERM' then 'Term   '" +
+                "                ELSE             'Pub    '" +
+                "           END " +
+                "     WHEN 'PERS' THEN 'Person '" +
+                "     ELSE             'Pub    '" +
+                "END")
+@Table(name = "record_attribution")
 public class RecordAttribution implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "recattrib_pk_id")
     private long id;
+    @Column(name = "recattrib_data_zdb_id")
     private String dataZdbID;
+    @Column(name = "recattrib_source_zdb_id")
     private String sourceZdbID;
+    @Column(name = "recattrib_source_type")
+    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.infrastructure.RecordAttribution$SourceType")})
     private SourceType sourceType;
 
     public long getId() {

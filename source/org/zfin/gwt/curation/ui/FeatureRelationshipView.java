@@ -82,13 +82,19 @@ public class FeatureRelationshipView extends Composite {
         presenter.updateTargetGeneList(featureToAddList.getSelectedText(), featureToAddRelationship.getSelectedText());
     }
 
-    public void addFeatureCell(FeatureDTO feature, int elementIndex) {
+    private int currentGroupIndex;
+
+    public void addFeatureCell(FeatureDTO feature, FeatureDTO lastFeature, int elementIndex) {
         dataTable.resizeRows(elementIndex + 2);
         int row = elementIndex + 1;
-        setRowStyle(row);
+        String lastID = null;
+        if (lastFeature != null)
+            lastID = lastFeature.getZdbID();
+        currentGroupIndex = WidgetUtil.setRowStyle(row, feature.getZdbID(), lastID, currentGroupIndex, dataTable);
         Anchor fishAnchor = new Anchor(SafeHtmlUtils.fromTrustedString(feature.getAbbreviation()), "/" + feature.getZdbID());
         fishAnchor.setTitle(feature.getZdbID());
-        dataTable.setWidget(row, 0, fishAnchor);
+        if (lastID == null || !feature.getZdbID().equals(lastID))
+            dataTable.setWidget(row, 0, fishAnchor);
     }
 
     public void addFeatureTypeCell(FeatureDTO feature, int elementIndex) {
@@ -117,6 +123,7 @@ public class FeatureRelationshipView extends Composite {
     private void setRowStyle(int row) {
         WidgetUtil.setAlternateRowStyle(row, dataTable);
     }
+
 
     protected void endTableUpdate() {
         int rows = dataTable.getRowCount() + 1;

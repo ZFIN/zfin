@@ -111,6 +111,8 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         // are added / removed from the feature via independent Ajax call.
         featureDTO.setZdbID(dto.getZdbID());
         featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
+        featureDTO.setPublicNoteList(dto.getPublicNoteList());
+        featureDTO.setCuratorNotes(dto.getCuratorNotes());
         return featureDTO;
     }
 

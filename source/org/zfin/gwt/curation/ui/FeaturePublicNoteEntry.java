@@ -4,6 +4,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.Window;
 import org.zfin.gwt.root.dto.NoteDTO;
 import org.zfin.gwt.root.dto.NoteEditMode;
 import org.zfin.gwt.root.event.NoteEvent;
@@ -26,6 +27,10 @@ public class FeaturePublicNoteEntry extends AbstractNoteEntry {
 
         removeNoteButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
+                if (!Window.confirm("Do you really want to delete this note?")) {
+                    return;
+                }
+
                 NoteDTO updatedNoteDTO = noteDTO.clone();
                 updatedNoteDTO.setNoteData("");
                 FeatureRPCService.App.getInstance().removePublicNote(updatedNoteDTO, new FeatureEditCallBack<Void>("Failed to remove public note: ") {
