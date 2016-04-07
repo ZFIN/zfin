@@ -1,5 +1,6 @@
 package org.zfin.uniquery
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.log4j.Logger
 import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.SolrClient
@@ -248,8 +249,35 @@ class QuerySpec extends ZfinIntegrationSpec {
 
         where:
         symbol << ["fgf8a","pax2a","fgf3","bmp2a"]
+    }
+
+    @Unroll
+    def "a feature search for #symbol should return the unspecified feature last"() {
+        when: "Solr is queried"
+        query.setQuery(queryManipulationService.processQueryString(symbol))
+        query.addFilterQuery("category:\"" + Category.MUTANT.name + "\"")
+        query.setRows(500)
+        QueryResponse response = new QueryResponse()
+
+        try {
+            response = client.query(query)
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+        SolrDocument lastDoc = response?.getResults()?.last()
 
 
+        then: "confirm that the last result is an unspecified feature"
+        response
+        response.getResults()
+        lastDoc
+        lastDoc.get("name")
+        StringUtils.contains((String) lastDoc.get("name"),"unspecified")
+
+
+        where:
+        symbol << ["fgf3","kita","lamb1a","csf1ra"]
     }
 
 /*    def "the first feature returned when searching for #symbol should not be the unspecified feature"() {

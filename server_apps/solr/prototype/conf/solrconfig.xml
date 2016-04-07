@@ -504,20 +504,12 @@
          </str>
 
 
-<!--         <str name="complexity_boost">mul(recip(complexity,1,1,1),500000000000000)</str>-->
          <str name="complexity_boost">mul(recip(complexity,1,1,1),1000000)</str>
          <str name="popularity_boost">mul(sqrt(popularity),0.00001)</str>
          <str name="recency_boost">mul(recip(ms(NOW/HOUR,tdate),3.16e-11,1,1),0.001)</str>
          <str name="images_boost">mul(exists(has_image),0.1)</str>
          <str name="jtype_boost">mul(exists(query({!v='publication_type:Journal'})),0.001)</str>
-         <str name="bq">(*:* -is_wildtype:false)^1000</str>
-<!--
-        //todo: this is an attempt at de-boosting unspecified transgenics, not working yet
-        <str name="bq">
-         (*:* -name_t:unspecified)^1000
-        </str>
--->
-
+         <str name="bq">(*:* -is_wildtype:false)^1000 (*:* -name_t:unspecified)^10000 </str>
 
          <str name="qf">
              proper_name_k^50.0
