@@ -792,14 +792,16 @@
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                    select distinct gene_id,zfish_abbrev,zfish_name,ortho_name,ortho_abbrev, oef_accession_number,entrez,oev_evidence_code,oev_pub_zdb_id         from tmp_ortho_exp o, ortholog_external_reference, foreign_db_contains, foreign_db,ortholog_evidence
-                    where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-                      and fdbcont_fdb_db_id = fdb_db_pk_id
-                      and fdb_db_name = 'FLYBASE'
-                      and o.ortho_id = oef_ortho_zdb_id
-                      and o.organism='Fruit fly'
-                      and o.ortho_id=oev_ortho_zdb_id
-                      order by 1
+                    SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
+                                    tmp_flybase.accession, tmp_gene.accession, oev_evidence_code, oev_pub_zdb_id
+                        FROM ortholog
+                        INNER JOIN marker on ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+                        INNER JOIN ortholog_evidence on ortho_zdb_id = oev_ortho_zdb_id
+                        INNER JOIN organism on ortho_other_species_taxid = organism_taxid
+                        LEFT OUTER JOIN tmp_flybase on ortho_zdb_id = tmp_flybase.ortho_id
+                        LEFT OUTER JOIN tmp_gene on ortho_zdb_id = tmp_gene.ortho_id
+                        WHERE organism_common_name = 'Fruit fly'
+                        ORDER BY mrkr_zdb_id;
                 ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
@@ -826,14 +828,17 @@
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                     select distinct gene_id,zfish_abbrev,zfish_name,ortho_name,ortho_abbrev, oef_accession_number,entrez,hgnc,oev_evidence_code,oev_pub_zdb_id         from tmp_ortho_exp o, ortholog_external_reference, foreign_db_contains, foreign_db,ortholog_evidence
-                     where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-                       and fdbcont_fdb_db_id = fdb_db_pk_id
-                       and fdb_db_name = 'OMIM'
-                       and o.ortho_id = oef_ortho_zdb_id
-                       and o.organism='Human'
-                       and o.ortho_id=oev_ortho_zdb_id
-                       order by 1
+                    SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
+                                    tmp_omim.accession, tmp_gene.accession, tmp_hgnc.accession, oev_evidence_code, oev_pub_zdb_id
+                        FROM ortholog
+                        INNER JOIN marker ON ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+                        INNER JOIN ortholog_evidence ON ortho_zdb_id = oev_ortho_zdb_id
+                        INNER JOIN organism ON ortho_other_species_taxid = organism_taxid
+                        LEFT OUTER JOIN tmp_omim ON ortho_zdb_id = tmp_omim.ortho_id
+                        LEFT OUTER JOIN tmp_gene ON ortho_zdb_id = tmp_gene.ortho_id
+                        LEFT OUTER JOIN tmp_hgnc ON ortho_zdb_id = tmp_hgnc.ortho_id
+                        WHERE organism_common_name = 'Human'
+                        ORDER BY mrkr_zdb_id;
                 ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
@@ -861,14 +866,16 @@
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                   select distinct gene_id,zfish_abbrev,zfish_name,ortho_name,ortho_abbrev, oef_accession_number,entrez,oev_evidence_code,oev_pub_zdb_id         from tmp_ortho_exp o, ortholog_external_reference, foreign_db_contains, foreign_db,ortholog_evidence
-                   where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-                     and fdbcont_fdb_db_id = fdb_db_pk_id
-                     and fdb_db_name = 'MGI'
-                     and o.ortho_id = oef_ortho_zdb_id
-                     and o.organism='Mouse'
-                     and o.ortho_id=oev_ortho_zdb_id
-                     order by 1
+                    SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
+                                    'MGI:' || tmp_mgi.accession, tmp_gene.accession, oev_evidence_code, oev_pub_zdb_id
+                      FROM ortholog
+                      INNER JOIN marker on ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+                      INNER JOIN ortholog_evidence on ortho_zdb_id = oev_ortho_zdb_id
+                      INNER JOIN organism on ortho_other_species_taxid = organism_taxid
+                      LEFT OUTER JOIN tmp_mgi on ortho_zdb_id = tmp_mgi.ortho_id
+                      LEFT OUTER JOIN tmp_gene on ortho_zdb_id = tmp_gene.ortho_id
+                      WHERE organism_common_name = 'Mouse'
+                      ORDER BY mrkr_zdb_id;
                 ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>

@@ -265,94 +265,111 @@ select gene.mrkr_zdb_id, a.szm_term_ont_id, gene.mrkr_abbrev, seq.mrkr_zdb_id,  
    and b.szm_object_type = seq.mrkr_type
 ;
 
-
-create temp table tmp_ortho_exp (
-  gene_id varchar(50),
-  ortho_id varchar(50),
-  zfish_name varchar(120),
-  zfish_abbrev varchar(40),
-  organism varchar(30),
-  ortho_name varchar(120),
-  ortho_abbrev varchar(15),
-  entrez varchar(50),
-hgnc varchar(50)
-) with no log;
-
-insert into tmp_ortho_exp
-select distinct ortho_zebrafish_gene_zdb_id, ortho_zdb_id, mrkr_name, mrkr_abbrev, organism_common_name, ortho_other_species_name,ortho_other_species_symbol,
-NULL::varchar(50),NULL::varchar(50)
- from ortholog,marker,organism
- where ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
-  and ortho_other_species_taxid=organism_taxid;
-
-update tmp_ortho_exp set Entrez = (
-        select distinct oef_accession_number
-         from ortholog o, ortholog_external_reference, foreign_db_contains, foreign_db
-         where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-           and fdb_db_name = 'Gene'
-           and fdbcont_fdb_db_id = fdb_db_pk_id
-           and o.ortho_zdb_id = oef_ortho_zdb_id
-           and ortho_id = o.ortho_zdb_id
+-- ==== BEGIN ORTHOLOGY QUERIES ====
+CREATE TEMP TABLE tmp_hgnc (
+  ortho_id VARCHAR(50),
+  accession VARCHAR(200)
 );
-update tmp_ortho_exp set hgnc = (
-        select distinct oef_accession_number
-         from ortholog o, ortholog_external_reference, foreign_db_contains, foreign_db
-         where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-           and fdb_db_name = 'HGNC'
-           and fdbcont_fdb_db_id = fdb_db_pk_id
-           and o.ortho_zdb_id = oef_ortho_zdb_id
-           and ortho_id = o.ortho_zdb_id
+INSERT INTO tmp_hgnc
+  SELECT oef_ortho_zdb_id, oef_accession_number
+  FROM ortholog_external_reference
+  INNER JOIN foreign_db_contains ON oef_fdbcont_zdb_id = fdbcont_zdb_id
+  INNER JOIN foreign_db ON fdb_db_pk_id = fdbcont_fdb_db_id
+  WHERE fdb_db_name = 'HGNC';
+
+CREATE TEMP TABLE tmp_omim (
+  ortho_id VARCHAR(50),
+  accession VARCHAR(200)
 );
+INSERT INTO tmp_omim
+  SELECT oef_ortho_zdb_id, oef_accession_number
+  FROM ortholog_external_reference
+  INNER JOIN foreign_db_contains ON oef_fdbcont_zdb_id = fdbcont_zdb_id
+  INNER JOIN foreign_db ON fdb_db_pk_id = fdbcont_fdb_db_id
+  WHERE fdb_db_name = 'OMIM';
 
+CREATE TEMP TABLE tmp_gene (
+  ortho_id VARCHAR(50),
+  accession VARCHAR(200)
+);
+INSERT INTO tmp_gene
+  SELECT oef_ortho_zdb_id, oef_accession_number
+  FROM ortholog_external_reference
+  INNER JOIN foreign_db_contains ON oef_fdbcont_zdb_id = fdbcont_zdb_id
+  INNER JOIN foreign_db ON fdb_db_pk_id = fdbcont_fdb_db_id
+  WHERE fdb_db_name = 'Gene';
 
+CREATE TEMP TABLE tmp_mgi (
+  ortho_id VARCHAR(50),
+  accession VARCHAR(200)
+);
+INSERT INTO tmp_mgi
+  SELECT oef_ortho_zdb_id, oef_accession_number
+  FROM ortholog_external_reference
+  INNER JOIN foreign_db_contains ON oef_fdbcont_zdb_id = fdbcont_zdb_id
+  INNER JOIN foreign_db ON fdb_db_pk_id = fdbcont_fdb_db_id
+  WHERE fdb_db_name = 'MGI';
 
-
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fly_orthos.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fly_orthos.txt'
- DELIMITER "	"
-select distinct gene_id,zfish_abbrev,zfish_name,ortho_name,ortho_abbrev, oef_accession_number,entrez,oev_evidence_code,oev_pub_zdb_id         from tmp_ortho_exp o, ortholog_external_reference, foreign_db_contains, foreign_db,ortholog_evidence
-         where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-           and fdbcont_fdb_db_id = fdb_db_pk_id
-           and fdb_db_name = 'FLYBASE'
-           and o.ortho_id = oef_ortho_zdb_id
-          and o.organism='Fruit fly'
-          and o.ortho_id=oev_ortho_zdb_id
-          order by 1;
-
+CREATE TEMP TABLE tmp_flybase (
+  ortho_id VARCHAR(50),
+  accession VARCHAR(200)
+);
+INSERT INTO tmp_flybase
+  SELECT oef_ortho_zdb_id, oef_accession_number
+  FROM ortholog_external_reference
+  INNER JOIN foreign_db_contains ON oef_fdbcont_zdb_id = fdbcont_zdb_id
+  INNER JOIN foreign_db ON fdb_db_pk_id = fdbcont_fdb_db_id
+  WHERE fdb_db_name = 'FLYBASE';
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/human_orthos.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/human_orthos.txt'
- DELIMITER "	"
- select distinct gene_id,zfish_abbrev,zfish_name,ortho_name,ortho_abbrev, oef_accession_number,entrez,hgnc,oev_evidence_code,oev_pub_zdb_id         from tmp_ortho_exp o, ortholog_external_reference, foreign_db_contains, foreign_db,ortholog_evidence
-         where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-           and fdbcont_fdb_db_id = fdb_db_pk_id
-           and fdb_db_name = 'OMIM'
-           and o.ortho_id = oef_ortho_zdb_id          and o.organism='Human'
-          and o.ortho_id=oev_ortho_zdb_id          order by 1;
+UNLOAD TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/human_orthos.txt'
+  DELIMITER "	"
+  SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
+                  tmp_omim.accession, tmp_gene.accession, tmp_hgnc.accession, oev_evidence_code, oev_pub_zdb_id
+    FROM ortholog
+    INNER JOIN marker ON ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+    INNER JOIN ortholog_evidence ON ortho_zdb_id = oev_ortho_zdb_id
+    INNER JOIN organism ON ortho_other_species_taxid = organism_taxid
+    LEFT OUTER JOIN tmp_omim ON ortho_zdb_id = tmp_omim.ortho_id
+    LEFT OUTER JOIN tmp_gene ON ortho_zdb_id = tmp_gene.ortho_id
+    LEFT OUTER JOIN tmp_hgnc ON ortho_zdb_id = tmp_hgnc.ortho_id
+    WHERE organism_common_name = 'Human'
+    ORDER BY mrkr_zdb_id;
 
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fly_orthos.txt'"
+UNLOAD TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fly_orthos.txt'
+  DELIMITER "	"
+  SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
+                  tmp_flybase.accession, tmp_gene.accession, oev_evidence_code, oev_pub_zdb_id
+    FROM ortholog
+    INNER JOIN marker ON ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+    INNER JOIN ortholog_evidence ON ortho_zdb_id = oev_ortho_zdb_id
+    INNER JOIN organism ON ortho_other_species_taxid = organism_taxid
+    LEFT OUTER JOIN tmp_flybase ON ortho_zdb_id = tmp_flybase.ortho_id
+    LEFT OUTER JOIN tmp_gene ON ortho_zdb_id = tmp_gene.ortho_id
+    WHERE organism_common_name = 'Fruit fly'
+    ORDER BY mrkr_zdb_id;
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mouse_orthos.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mouse_orthos.txt'
- DELIMITER "	"
- select distinct gene_id,zfish_abbrev,zfish_name,ortho_name,ortho_abbrev, 'MGI:'|| oef_accession_number,entrez,oev_evidence_code,oev_pub_zdb_id         from tmp_ortho_exp o, ortholog_external_reference, foreign_db_contains, foreign_db,ortholog_evidence
-         where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-           and fdbcont_fdb_db_id = fdb_db_pk_id
-           and fdb_db_name = 'MGI'
-           and o.ortho_id = oef_ortho_zdb_id
-          and o.organism='Mouse'          and o.ortho_id=oev_ortho_zdb_id
-          order by 1;
+UNLOAD TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mouse_orthos.txt'
+  DELIMITER "	"
+  SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
+                  'MGI:' || tmp_mgi.accession, tmp_gene.accession, oev_evidence_code, oev_pub_zdb_id
+    FROM ortholog
+    INNER JOIN marker ON ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+    INNER JOIN ortholog_evidence ON ortho_zdb_id = oev_ortho_zdb_id
+    INNER JOIN organism ON ortho_other_species_taxid = organism_taxid
+    LEFT OUTER JOIN tmp_mgi ON ortho_zdb_id = tmp_mgi.ortho_id
+    LEFT OUTER JOIN tmp_gene ON ortho_zdb_id = tmp_gene.ortho_id
+    WHERE organism_common_name = 'Mouse'
+    ORDER BY mrkr_zdb_id;
 
--- going away shortly
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/yeast_orthos.txt'"
---UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/yeast_orthos.txt'
---  DELIMITER "	"
---select gene_id, zfish_abbrev, zfish_name, ortho_abbrev, ortho_name, sgd
--- from tmp_ortho_exp
--- where organism = 'Yeast'
--- order by 1;
-
-drop table tmp_ortho_exp;
-
+DROP TABLE tmp_omim;
+DROP TABLE tmp_gene;
+DROP TABLE tmp_hgnc;
+DROP TABLE tmp_mgi;
+DROP TABLE tmp_flybase;
+-- ==== END ORTHOLOGY QUERIES ====
 
 -- generate a file with genes and associated expression experiment
 create temp table tmp_xpat_Fish (gene_zdb_id varchar(50),
