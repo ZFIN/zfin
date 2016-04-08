@@ -435,7 +435,15 @@ public class Feature implements EntityNotes, EntityZdbID {
         }
         return affectedGenes;
     }
-
+    public SortedSet<FeatureMarkerRelationship> getAffectedGenesReln() {
+        SortedSet<FeatureMarkerRelationship> affectedGenesReln = new TreeSet<FeatureMarkerRelationship>();
+        for (FeatureMarkerRelationship featureMarkerRelationship : featureMarkerRelations) {
+            if (featureMarkerRelationship.isMarkerIsGene() && featureMarkerRelationship.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
+                affectedGenesReln.add(featureMarkerRelationship);
+            }
+        }
+        return affectedGenesReln;
+    }
     public SortedSet<Marker> getTgConstructs() {
         SortedSet<Marker> tgConstructs = new TreeSet<Marker>();
         for (FeatureMarkerRelationship ftrmarkrel : featureMarkerRelations) {
