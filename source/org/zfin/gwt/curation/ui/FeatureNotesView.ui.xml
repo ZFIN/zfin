@@ -1,0 +1,32 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        >
+
+    <g:VerticalPanel spacing="10" title="Feature Notes" width="100%">
+        <g:Grid ui:field='dataTable' cellSpacing='10' styleName="searchresults groupstripes-hover">
+            <g:row>
+                <g:customCell>
+                    <zfin:StringListBox ui:field="typeListBox">
+                        <g:item value="----">----</g:item>
+                        <g:item value="Public">Public</g:item>
+                        <g:item value="Private">Private</g:item>
+                    </zfin:StringListBox>
+                </g:customCell>
+                <g:customCell>
+                    <g:TextArea ui:field="newNoteTextArea" width="600"/>
+                </g:customCell>
+                <g:cell/>
+                <g:customCell>
+                    <g:Button ui:field="addButton" text="Add Note"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Button ui:field="cancelButton" text="Cancel"/>
+                </g:customCell>
+            </g:row>
+        </g:Grid>
+        <zfin:SimpleErrorElement ui:field="errorLabel" styleName="clickable-error"/>
+    </g:VerticalPanel>
+</ui:UiBinder>

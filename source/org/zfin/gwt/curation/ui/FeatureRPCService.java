@@ -63,7 +63,7 @@ public interface FeatureRPCService extends RemoteService {
     void addFeatureMarkerRelationShip(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO);
 
     // note stuff
-    void editPublicNote(NoteDTO noteDTO);
+    FeatureDTO editPublicNote(NoteDTO noteDTO);
 
     NoteDTO addCuratorNote(NoteDTO noteDTO);
 

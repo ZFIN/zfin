@@ -566,7 +566,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
     @Override
-    public void editPublicNote(NoteDTO noteDTO) {
+    public FeatureDTO editPublicNote(NoteDTO noteDTO) {
         HibernateUtil.createTransaction();
         Feature feature = featureRepository.getFeatureByID(noteDTO.getDataZdbID());
         // new note
@@ -593,6 +593,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
         }
         HibernateUtil.flushAndCommitCurrentSession();
+        return DTOConversionService.convertToFeatureDTO(feature);
     }
 
     @Override

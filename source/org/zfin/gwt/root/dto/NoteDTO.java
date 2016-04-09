@@ -12,6 +12,7 @@ public class NoteDTO implements IsSerializable {
     protected String dataZdbID ;
     protected String noteData ;
     protected String publicationZdbID;
+    protected PublicationDTO publicationDTO;
     protected NoteEditMode noteEditMode;
 
     public NoteDTO(){}
@@ -74,6 +75,14 @@ public class NoteDTO implements IsSerializable {
 
     public void setPublicationZdbID(String publicationZdbID) {
         this.publicationZdbID = publicationZdbID;
+    }
+
+    public PublicationDTO getPublicationDTO() {
+        return publicationDTO;
+    }
+
+    public void setPublicationDTO(PublicationDTO publicationDTO) {
+        this.publicationDTO = publicationDTO;
     }
 
     public NoteEditMode getNoteEditMode() {

@@ -21,7 +21,6 @@ import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
@@ -619,6 +618,8 @@ public class DTOConversionService {
             List<NoteDTO> curatorNoteDTOs = new ArrayList<>();
             for (FeatureNote dataNote : featureNotes) {
                 NoteDTO noteDTO = new NoteDTO(dataNote.getZdbID(), feature.getZdbID(), NoteEditMode.PUBLIC, DTOConversionService.unescapeString(dataNote.getNote()));
+                if (dataNote.getPubAttributions().size() > 0)
+                    noteDTO.setPublicationDTO(convertToPublicationDTO(dataNote.getPubAttributions().iterator().next().getPublication()));
                 curatorNoteDTOs.add(noteDTO);
             }
             featureDTO.setPublicNoteList(curatorNoteDTOs);

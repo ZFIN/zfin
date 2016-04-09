@@ -35,9 +35,9 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
     @UiField
     DeleteImage removeFeatureLink;
     @UiField
-    FeatureNoteBox featureNoteBox;
-    @UiField
     Button revertButton;
+    @UiField
+    FeatureNotesView featureNotesView;
 
     public FeatureEditView() {
         initWidget(uiBinder.createAndBindUi(this));

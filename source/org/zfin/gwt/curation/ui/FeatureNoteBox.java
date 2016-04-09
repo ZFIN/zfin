@@ -83,9 +83,9 @@ public class FeatureNoteBox<T extends FeatureDTO> extends AbstractNoteBox<T> imp
                 noteDTO.setNoteEditMode(noteEditMode);
 
                 if (noteEditMode == NoteEditMode.PUBLIC) {
-                    FeatureRPCService.App.getInstance().editPublicNote(noteDTO, new FeatureEditCallBack<Void>("Failed to update public note") {
+                    FeatureRPCService.App.getInstance().editPublicNote(noteDTO, new FeatureEditCallBack<FeatureDTO>("Failed to update public note") {
                         @Override
-                        public void onSuccess(Void v) {
+                        public void onSuccess(FeatureDTO v) {
                             dto.setPublicNote(noteDTO);
                             addNoteToGUI(noteDTO);
                             DeferredCommand.addCommand(new Command() {

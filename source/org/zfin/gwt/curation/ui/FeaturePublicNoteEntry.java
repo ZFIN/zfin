@@ -2,13 +2,11 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
+import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.NoteDTO;
 import org.zfin.gwt.root.dto.NoteEditMode;
 import org.zfin.gwt.root.event.NoteEvent;
-import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.ui.AbstractNoteEntry;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
@@ -49,17 +47,16 @@ public class FeaturePublicNoteEntry extends AbstractNoteEntry {
             public void onClick(ClickEvent event) {
                 final NoteDTO noteDTO = getNoteDTO().clone();
                 noteDTO.setNoteData(noteText.getText());
-                FeatureRPCService.App.getInstance().editPublicNote(noteDTO, new FeatureEditCallBack<Void>("Failed to update note: ") {
+                FeatureRPCService.App.getInstance().editPublicNote(noteDTO, new FeatureEditCallBack<FeatureDTO>("Failed to update note: ") {
                     @Override
-                    public void onSuccess(Void result) {
+                    public void onSuccess(FeatureDTO result) {
 
 
-
-                                    getNoteDTO().setNoteData(noteText.getText());
-                                    revertGUI();
-                                    parent.fireEventSuccess();
-                                }
-                            });
+                        getNoteDTO().setNoteData(noteText.getText());
+                        revertGUI();
+                        parent.fireEventSuccess();
+                    }
+                });
             }
         });
 

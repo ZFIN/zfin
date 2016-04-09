@@ -8,6 +8,7 @@ import java.util.List;
 public class FeatureEditPresenter extends AbstractFeaturePresenter {
 
     private FeatureEditView view;
+    private FeatureNotesPresenter featureNotesPresenter;
 
     public FeatureEditPresenter(FeatureEditView view, String publicationID) {
         super(view, publicationID);
@@ -16,12 +17,14 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         this.view = view;
         dto = new FeatureDTO();
         dto.setPublicationZdbID(publicationID);
-        view.featureNoteBox.setPublicationID(publicationID);
+        featureNotesPresenter = new FeatureNotesPresenter(publicationID, view.featureNotesView);
+        view.featureNotesView.setPresenter(featureNotesPresenter);
     }
 
     public void go() {
         super.go();
         loadFeaturesForPub();
+        featureNotesPresenter.go();
     }
 
     public void loadFeaturesForPub() {
@@ -131,8 +134,8 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         view.featureSequenceList.setDTO(dto);
         view.lineNumberBox.setValue(dto.getLineNumber());
         view.mutageeBox.setIndexForText(dto.getMutagee());
-        view.featureNoteBox.setDTO(dto);
-        view.featureNoteBox.revertGUI();
+        featureNotesPresenter.setFeatureDTO(dto);
+        featureNotesPresenter.rebuildGUI();
         view.featureNameBox.setText(FeatureValidationService.getNameFromFullName(dto));
         view.labOfOriginBox.setIndexForValue(dto.getLabOfOrigin());
         String selectedLab = view.labOfOriginBox.getSelectedText();

@@ -10,7 +10,7 @@ import java.util.List;
 
  */
 
-public class FeatureDTO extends RelatedEntityDTO {
+public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes {
 
 
     private String optionalName ; // this is the name entered from the GUI, not stored in the database

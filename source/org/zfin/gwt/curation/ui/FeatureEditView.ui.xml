@@ -16,7 +16,7 @@
             color: #0000FF;
         }
 
-        .valign-top{
+        .valign-top {
             vertical-align: top;
         }
 
@@ -103,7 +103,7 @@
             <g:row>
                 <g:cell styleName="{style.valign-top}">Notes</g:cell>
                 <g:customCell>
-                    <zfin-mod:FeatureNoteBox ui:field="featureNoteBox" />
+                    <zfin-mod:FeatureNotesView ui:field="featureNotesView"/>
                 </g:customCell>
             </g:row>
             <g:row>
