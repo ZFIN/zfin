@@ -286,18 +286,18 @@ select count(*) from tmp_distinct_genes_with_images_trans;
 !echo "Number of direct submission phenotype papers" ;
 
 select count(distinct fig_source_zdb_id)
-    from figure, phenotype_experiment, publication                      
-    where fig_zdb_id = phenox_fig_zdb_id                          
+    from figure, phenotype_source_generated, publication
+    where fig_zdb_id = pg_fig_zdb_id
       and fig_source_zdb_id = zdb_id
       and jtype in ("Curation", "Active Curation", "Unpublished");
         
 -- ct16        
 !echo "Number of direct submission phenotype records" ;
 
-select count(distinct phenos_pk_id)
-  from phenotype_statement, phenotype_experiment, figure, publication                              
-    where phenox_pk_id = phenos_phenox_pk_id
-      and fig_zdb_id = phenox_fig_zdb_id
+select count(distinct pg_id)
+  from phenotype_observation_generated, phenotype_source_generated, figure, publication
+    where psg_pg_id = pg_id
+      and fig_zdb_id = pg_fig_zdb_id
       and fig_source_zdb_id = zdb_id
       and jtype in ("Curation", "Active Curation", "Unpublished");
 
@@ -305,8 +305,8 @@ select count(distinct phenos_pk_id)
 !echo "number of non-curation, published papers with phenotypes";
 
 select count(distinct fig_source_zdb_id)
-  from figure, phenotype_experiment, publication        
-    where phenox_fig_zdb_id  = fig_zdb_id
+  from figure, phenotype_source_generated, publication
+    where pg_fig_zdb_id  = fig_zdb_id
       and fig_source_zdb_id = zdb_id
       and jtype != "Curation"      
       and jtype != "Unpublished";
