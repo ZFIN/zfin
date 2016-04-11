@@ -76,8 +76,8 @@
                                            varStatus="loop">
                                     <zfin:link entity="${affectedGene}"/>--%>
                                     <c:forEach var="mRel" items="${formBean.feature.affectedGenesReln}" varStatus="loop">
-                                        <a href="/action/marker/view/${mRel.marker.zdbID}"><i>${mRel.marker.name}</i></a>
-                                        <%--//<zfin:name entity="${mRel.marker}"/>--%>
+                                        <a href="/action/marker/view/${mRel.marker.zdbID}"><i>${mRel.marker.abbreviation}</i></a>
+                                        
 
                                         <c:if test="${mRel.publicationCount > 0}">
                                             <c:choose>
@@ -92,7 +92,7 @@
                                             </c:choose>
                                         </c:if>
                                     </c:forEach>
-                                    
+
                                 <%--</c:forEach>--%>
                             </td>
                         </c:when>
