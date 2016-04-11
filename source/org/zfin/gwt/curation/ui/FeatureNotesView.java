@@ -8,6 +8,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
+import org.zfin.gwt.root.dto.CuratorNoteDTO;
 import org.zfin.gwt.root.dto.NoteDTO;
 import org.zfin.gwt.root.ui.StringListBox;
 import org.zfin.gwt.root.util.DeleteImage;
@@ -46,7 +47,7 @@ public class FeatureNotesView extends AbstractViewComposite {
         resetGUI();
     }
 
-    public void addNoteTypeCell(NoteDTO noteDTO, int rowindex) {
+    public void addNoteReferenceCell(NoteDTO noteDTO, int rowindex) {
         dataTable.resizeRows(rowindex + 1);
         Anchor pubAnchor = new Anchor(SafeHtmlUtils.fromTrustedString(noteDTO.getPublicationDTO().getMiniRef()), "/" +
                 noteDTO.getPublicationDTO().getZdbID());
@@ -54,21 +55,28 @@ public class FeatureNotesView extends AbstractViewComposite {
         dataTable.setWidget(rowindex, 0, pubAnchor);
     }
 
+    public void addNoteCuratorReferenceCell(CuratorNoteDTO noteDTO, int rowindex) {
+        dataTable.resizeRows(rowindex + 1);
+        dataTable.setText(rowindex, 0, noteDTO.getCurator().getDisplay());
+    }
+
     public void addNoteTextAreaCell(TextArea textArea, int rowindex) {
         textArea.setWidth("600");
         dataTable.setWidget(rowindex, 1, textArea);
     }
 
-    public void addDeleteNoteImageCell(DeleteImage deleteImage, int rowindex) {
-        dataTable.setWidget(rowindex, 2, deleteImage);
+    public void addControlCell(Button saveButton, Button revertButton, DeleteImage deleteImage, int rowindex) {
+        HorizontalPanel panel = getControllPanel(saveButton, revertButton, deleteImage);
+        dataTable.setWidget(rowindex, 2, panel);
     }
 
-    public void addSaveButtonCell(Button saveButton, int rowindex) {
-        dataTable.setWidget(rowindex, 3, saveButton);
-    }
-
-    public void addRevertButtonCell(Button revertButton, int rowindex) {
-        dataTable.setWidget(rowindex, 4, revertButton);
+    private HorizontalPanel getControllPanel(Button saveButton, Button revertButton, DeleteImage deleteImage) {
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.add(saveButton);
+        panel.add(revertButton);
+        if (deleteImage != null)
+            panel.add(deleteImage);
+        return panel;
     }
 
     protected void endTableUpdate() {
@@ -78,8 +86,7 @@ public class FeatureNotesView extends AbstractViewComposite {
         int col = 0;
         dataTable.setWidget(lastRow, col++, typeListBox);
         dataTable.setWidget(lastRow, col++, newNoteTextArea);
-        dataTable.setWidget(lastRow, col++, addButton);
-        dataTable.setWidget(lastRow, col++, cancelButton);
+        dataTable.setWidget(lastRow, col++, getControllPanel(addButton, cancelButton, null));
     }
 
 

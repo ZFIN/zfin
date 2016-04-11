@@ -65,7 +65,7 @@ public interface FeatureRPCService extends RemoteService {
     // note stuff
     FeatureDTO editPublicNote(NoteDTO noteDTO);
 
-    NoteDTO addCuratorNote(NoteDTO noteDTO);
+    CuratorNoteDTO addCuratorNote(CuratorNoteDTO noteDTO);
 
     void editCuratorNote(NoteDTO noteDTO);
 
@@ -74,5 +74,7 @@ public interface FeatureRPCService extends RemoteService {
     List<String> getMutagensForFeatureType(FeatureTypeEnum ftrType);
 
     void removePublicNote(NoteDTO updatedNoteDTO);
+
+    PersonDTO getCuratorInfo();
 
 }

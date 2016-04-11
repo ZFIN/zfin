@@ -167,7 +167,6 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                         @Override
                         public void onFailure(Throwable throwable) {
                             super.onFailure(throwable);
-                            // TODO: we need to use the FeatureAddBox function and the isDirty() to enable this
                             view.notWorking();
                         }
 
@@ -175,7 +174,6 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                         public void onSuccess(final FeatureDTO result) {
                             result.setPublicationZdbID(dto.getPublicationZdbID());
                             dto = result;
-                            // TODO: we need to use the FeatureAddBox function and the isDirty() to enable this
                             view.notWorking();
                             view.setNote("Saved Feature [" + result.getName() + "]");
                             loadFeaturesForPub();

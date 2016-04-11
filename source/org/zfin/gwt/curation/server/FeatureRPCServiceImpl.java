@@ -26,6 +26,7 @@ import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.profile.FeatureSource;
 import org.zfin.profile.Organization;
 import org.zfin.profile.repository.ProfileRepository;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -597,12 +598,13 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
     @Override
-    public NoteDTO addCuratorNote(NoteDTO noteDTO) {
+    public CuratorNoteDTO addCuratorNote(CuratorNoteDTO noteDTO) {
         logger.info("adding curator note: " + noteDTO.getDataZdbID() + " - " + noteDTO.getNoteData());
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
         Feature feature = featureRepository.getFeatureByID(noteDTO.getDataZdbID());
         DataNote dataNote = featureRepository.addFeatureDataNote(feature, noteDTO.getNoteData());
+        noteDTO.setCurator(DTOConversionService.convertToPersonDTO(dataNote.getCurator()));
         infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "curator note", dataNote.getNote(), "added note");
         transaction.commit();
         noteDTO.setZdbID(dataNote.getZdbID());
@@ -669,5 +671,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
         HibernateUtil.rollbackTransaction();
         logger.error("note not found with zdbID: " + noteDTO.getZdbID());
+    }
+
+    @Override
+    public PersonDTO getCuratorInfo() {
+        return DTOConversionService.convertToPersonDTO(ProfileService.getCurrentSecurityUser());
     }
 }

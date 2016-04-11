@@ -22,7 +22,7 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes {
     private Boolean knownInsertionSite = false ;
     private NoteDTO publicNote;
     private List<NoteDTO> publicNoteList;
-    private List<NoteDTO> curatorNotes;
+    private List<CuratorNoteDTO> curatorNotes;
     protected String alias;
     protected FeatureTypeEnum featureType;
     protected String lineNumber;
@@ -99,11 +99,11 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes {
         this.featureAssay = featureAssay;
     }
 
-    public List<NoteDTO> getCuratorNotes() {
+    public List<CuratorNoteDTO> getCuratorNotes() {
         return curatorNotes;
     }
 
-    public void setCuratorNotes(List<NoteDTO> curatorNotes) {
+    public void setCuratorNotes(List<CuratorNoteDTO> curatorNotes) {
         this.curatorNotes = curatorNotes;
     }
 

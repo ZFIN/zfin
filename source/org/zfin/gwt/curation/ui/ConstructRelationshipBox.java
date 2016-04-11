@@ -22,7 +22,6 @@ public class ConstructRelationshipBox extends AbstractComposite<ConstructDTO>{
     private VerticalPanel panel = new VerticalPanel();
     private FlexTable constructTable = new FlexTable() ;
     private HTMLTable.RowFormatter rowFormatter = constructTable.getRowFormatter() ;
-   // private FeatureFilterModule constructFilterModule = new MarkerFilterModule();
     private Button addButton = new Button("Add") ;
 
     // for add row
@@ -204,24 +203,6 @@ public class ConstructRelationshipBox extends AbstractComposite<ConstructDTO>{
 
     @Override
     protected void addInternalListeners(final HandlesError handlesError) {
-       /* constructFilterModule.addFilterChangeListener(new FilterChangeListener(){
-            @Override
-            public void changed(FilterChangeEvent event) {
-
-                showAllRows();
-
-                if(event.isEmpty()) return ;
-
-                if(event.containsKey(FeatureFilterModule.FILTER_FEATURE_NAME)){
-                    filterRowsByText(event.get(FeatureFilterModule.FILTER_FEATURE_NAME),0);
-                }
-
-                if(event.containsKey(FeatureFilterModule.FILTER_FEATURE_TYPE)){
-                    filterRowsByText(event.get(FeatureFilterModule.FILTER_FEATURE_TYPE),1);
-                }
-
-            }
-        });*/
 
         constructToAddList.addChangeHandler(new ChangeHandler(){
             @Override

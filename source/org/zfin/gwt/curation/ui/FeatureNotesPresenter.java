@@ -5,12 +5,10 @@ import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextArea;
-import org.zfin.gwt.root.dto.FeatureDTO;
-import org.zfin.gwt.root.dto.NoteDTO;
-import org.zfin.gwt.root.dto.NoteEditMode;
-import org.zfin.gwt.root.dto.PublicNoteDTO;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.IsDirty;
+import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.DeleteImage;
 
 import java.util.ArrayList;
@@ -20,6 +18,7 @@ public class FeatureNotesPresenter {
     private FeatureNotesView view;
     private String publicationID;
     private FeatureDTO featureDTO;
+    private PersonDTO curator;
 
     public FeatureNotesPresenter(String publicationID, FeatureNotesView view) {
         this.publicationID = publicationID;
@@ -27,7 +26,12 @@ public class FeatureNotesPresenter {
     }
 
     public void go() {
-
+        FeatureRPCService.App.getInstance().getCuratorInfo(new ZfinAsyncCallback<PersonDTO>("Failed to read Curator info", view.errorLabel) {
+            @Override
+            public void onSuccess(PersonDTO person) {
+                curator = person;
+            }
+        });
     }
 
     private void populateDataTable() {
@@ -37,23 +41,40 @@ public class FeatureNotesPresenter {
             return;
         }
         for (NoteDTO noteDTO : featureDTO.getPublicNoteList()) {
-            view.addNoteTypeCell(noteDTO, elementIndex);
-            TextArea noteText = new TextArea();
-            noteText.setText(noteDTO.getNoteData());
-            view.addNoteTextAreaCell(noteText, elementIndex);
-            DeleteImage deleteImage = new DeleteImage("Delete Note " + noteDTO.getZdbID());
-            deleteImage.addClickHandler(new DeleteExternalFeatureNote(noteDTO));
-            view.addDeleteNoteImageCell(deleteImage, elementIndex);
-            Button saveButton = new Button("Save");
-            view.addSaveButtonCell(saveButton, elementIndex);
-            Button revertButton = new Button("Revert");
-            view.addRevertButtonCell(revertButton, elementIndex);
-            // wire-up the field's dependencies....
-            new SingleFeatureNoteControlls(noteDTO, noteText, saveButton, revertButton);
+            view.addNoteReferenceCell(noteDTO, elementIndex);
+            addCommonNoteInfo(elementIndex, noteDTO);
+            elementIndex++;
+        }
+        for (CuratorNoteDTO noteDTO : featureDTO.getCuratorNotes()) {
+            view.addNoteCuratorReferenceCell(noteDTO, elementIndex);
+            addCommonNoteInfo(elementIndex, noteDTO);
             elementIndex++;
         }
         view.endTableUpdate();
 
+    }
+
+    private void addCommonNoteInfo(int elementIndex, NoteDTO noteDTO) {
+        TextArea noteText = new TextArea();
+        noteText.setText(noteDTO.getNoteData());
+        view.addNoteTextAreaCell(noteText, elementIndex);
+        if (noteDTO.getNoteEditMode().equals(NoteEditMode.PRIVATE) && !isMyCuratorNote(noteDTO)) {
+            noteText.setEnabled(false);
+        }
+        DeleteImage deleteImage = new DeleteImage("Delete Note " + noteDTO.getZdbID());
+        deleteImage.addClickHandler(new DeleteExternalFeatureNote(noteDTO));
+        Button saveButton = new Button("Save");
+        Button revertButton = new Button("Revert");
+        // only show controlls for public notes and curator notes you do own.
+        if (noteDTO.getNoteEditMode().equals(NoteEditMode.PUBLIC) || isMyCuratorNote(noteDTO))
+            view.addControlCell(saveButton, revertButton, deleteImage, elementIndex);
+        // wire-up the field's dependencies....
+        new SingleFeatureNoteControlls(noteDTO, noteText, saveButton, revertButton);
+    }
+
+    private boolean isMyCuratorNote(NoteDTO noteDTO) {
+        return noteDTO.getNoteEditMode().equals(NoteEditMode.PRIVATE)
+                && curator.getZdbID().equals(((CuratorNoteDTO) noteDTO).getCurator().getZdbID());
     }
 
     public void addNote() {
@@ -68,13 +89,13 @@ public class FeatureNotesPresenter {
         }
 
         NoteEditMode noteEditMode = NoteEditMode.valueOf(view.typeListBox.getSelected().toUpperCase());
-        final NoteDTO noteDTO = new PublicNoteDTO();
-        noteDTO.setDataZdbID(featureDTO.getZdbID());
-        noteDTO.setNoteData(view.newNoteTextArea.getText());
-        noteDTO.setPublicationZdbID(publicationID);
-        noteDTO.setNoteEditMode(noteEditMode);
 
         if (noteEditMode == NoteEditMode.PUBLIC) {
+            final NoteDTO noteDTO = new PublicNoteDTO();
+            noteDTO.setDataZdbID(featureDTO.getZdbID());
+            noteDTO.setNoteData(view.newNoteTextArea.getText());
+            noteDTO.setPublicationZdbID(publicationID);
+            noteDTO.setNoteEditMode(noteEditMode);
             FeatureRPCService.App.getInstance().editPublicNote(noteDTO, new FeatureEditCallBack<FeatureDTO>("Failed to update public note") {
                 @Override
                 public void onSuccess(FeatureDTO featureDTOReturn) {
@@ -89,17 +110,25 @@ public class FeatureNotesPresenter {
                 }
             });
         } else if (noteEditMode == NoteEditMode.PRIVATE) {
-            FeatureRPCService.App.getInstance().addCuratorNote(noteDTO, new FeatureEditCallBack<NoteDTO>("Failed to update curator note") {
+            final CuratorNoteDTO noteDTO = new CuratorNoteDTO();
+            noteDTO.setDataZdbID(featureDTO.getZdbID());
+            noteDTO.setNoteData(view.newNoteTextArea.getText());
+            noteDTO.setPublicationZdbID(publicationID);
+            noteDTO.setNoteEditMode(noteEditMode);
+            FeatureRPCService.App.getInstance().addCuratorNote(noteDTO, new FeatureEditCallBack<CuratorNoteDTO>("Failed to update curator note") {
                 @Override
-                public void onSuccess(NoteDTO returnNoteDTO) {
+                public void onSuccess(CuratorNoteDTO returnNoteDTO) {
                     if (featureDTO.getCuratorNotes() == null) {
-                        featureDTO.setCuratorNotes(new ArrayList<NoteDTO>());
+                        featureDTO.setCuratorNotes(new ArrayList<CuratorNoteDTO>());
                     }
                     featureDTO.getCuratorNotes().add(returnNoteDTO);
-/*
-                    addNoteToGUI(returnNoteDTO);
-                    resetAddNote();
-*/
+                    populateDataTable();
+                    Scheduler.get().scheduleDeferred(new Command() {
+                        @Override
+                        public void execute() {
+                            view.resetGUI();
+                        }
+                    });
                 }
             });
         }
@@ -135,47 +164,30 @@ public class FeatureNotesPresenter {
 
         @Override
         public void onClick(ClickEvent clickEvent) {
-            FeatureRPCService.App.getInstance().removePublicNote(noteDTO, new FeatureEditCallBack<Void>("Failed to remove public note: ") {
-                @Override
-                public void onSuccess(Void result) {
-                    noteDTO.setNoteData("");
-                    featureDTO.getPublicNoteList().remove(noteDTO);
-                    populateDataTable();
-                }
-            });
+            if (noteDTO.getNoteEditMode().equals(NoteEditMode.PUBLIC)) {
+                FeatureRPCService.App.getInstance().removePublicNote(noteDTO, new FeatureEditCallBack<Void>("Failed to remove public note: ") {
+                    @Override
+                    public void onSuccess(Void result) {
+                        noteDTO.setNoteData("");
+                        featureDTO.getPublicNoteList().remove(noteDTO);
+                        populateDataTable();
+                    }
+                });
+            }
+            if (noteDTO.getNoteEditMode().equals(NoteEditMode.PRIVATE)) {
+                FeatureRPCService.App.getInstance().removeCuratorNote(noteDTO, new FeatureEditCallBack<Void>("Failed to remove curator note: ") {
+                    @Override
+                    public void onSuccess(Void result) {
+                        noteDTO.setNoteData("");
+                        featureDTO.getCuratorNotes().remove((CuratorNoteDTO) noteDTO);
+                        populateDataTable();
+                    }
+                });
+            }
         }
     }
 
-    private class SaveExternalFeatureNote implements ClickHandler {
-
-        private NoteDTO noteDTO;
-
-
-        public SaveExternalFeatureNote(NoteDTO noteDTO) {
-            this.noteDTO = noteDTO;
-        }
-
-        @Override
-        public void onClick(ClickEvent clickEvent) {
-            FeatureRPCService.App.getInstance().editPublicNote(noteDTO, new FeatureEditCallBack<FeatureDTO>("Failed to update public note") {
-                @Override
-                public void onSuccess(FeatureDTO dto) {
-                    featureDTO = dto;
-                    populateDataTable();
-/*
-                    Scheduler.get().scheduleDeferred(new Command() {
-                        @Override
-                        public void execute() {
-                            view.resetGUI();
-                        }
-                    });
-*/
-                }
-            });
-        }
-    }
-
-    private class SingleFeatureNoteControlls{
+    private class SingleFeatureNoteControlls {
         private TextArea noteTextArea;
         private Button saveButton;
         private Button revertButton;
@@ -229,13 +241,21 @@ public class FeatureNotesPresenter {
                 @Override
                 public void onClick(ClickEvent clickEvent) {
                     noteDTO.setNoteData(noteTextArea.getText());
-                    FeatureRPCService.App.getInstance().editPublicNote(noteDTO, new FeatureEditCallBack<FeatureDTO>("Failed to update public note") {
-                        @Override
-                        public void onSuccess(FeatureDTO dto) {
-                            revertGUI();
-                        }
-                    });
-
+                    if (noteDTO.getNoteEditMode().equals(NoteEditMode.PUBLIC)) {
+                        FeatureRPCService.App.getInstance().editPublicNote(noteDTO, new FeatureEditCallBack<FeatureDTO>("Failed to update public note") {
+                            @Override
+                            public void onSuccess(FeatureDTO dto) {
+                                revertGUI();
+                            }
+                        });
+                    } else if (noteDTO.getNoteEditMode().equals(NoteEditMode.PRIVATE)) {
+                        FeatureRPCService.App.getInstance().editCuratorNote(noteDTO, new FeatureEditCallBack<Void>("Failed to update note: ") {
+                            @Override
+                            public void onSuccess(Void result) {
+                                revertGUI();
+                            }
+                        });
+                    }
                 }
             });
         }

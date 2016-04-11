@@ -1,10 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
 import org.zfin.gwt.curation.event.AddNewFeatureEvent;
-import org.zfin.gwt.root.dto.FeatureDTO;
-import org.zfin.gwt.root.dto.FeaturePrefixDTO;
-import org.zfin.gwt.root.dto.FeatureTypeEnum;
-import org.zfin.gwt.root.dto.NoteDTO;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.util.AppUtils;
@@ -123,8 +120,8 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
         }
 
         if (StringUtils.isNotEmptyTrim(view.curatorNoteBox.getText())) {
-            List<NoteDTO> curatorNoteDTOs = new ArrayList<>();
-            NoteDTO noteDTO = new NoteDTO();
+            List<CuratorNoteDTO> curatorNoteDTOs = new ArrayList<>();
+            CuratorNoteDTO noteDTO = new CuratorNoteDTO();
             noteDTO.setNoteData(view.curatorNoteBox.getText());
             curatorNoteDTOs.add(noteDTO);
             featureDTO.setCuratorNotes(curatorNoteDTOs);

@@ -1,5 +1,4 @@
 
-<%@ page import="org.zfin.gwt.curation.ui.FeatureCurationModule" %>
 <%@ page import="org.zfin.gwt.root.ui.StandardDivNames" %>
 
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
@@ -27,21 +26,6 @@
 
 <%--define the lookups up here--%>
 <div id="<%=StandardDivNames.directAttributionDiv%>"></div>
-
-<br>
-<div id="<%=FeatureCurationModule.FEATURE_ADD_LINK%>"></div>
-<div id="<%=FeatureCurationModule.FEATURE_ADD%>"></div>
-<br>
-<div id="<%=FeatureCurationModule.FEATURE_EDIT_LINK%>"></div>
-<div id="<%=FeatureCurationModule.FEATURE_EDIT%>"></div>
-
-<br>
-<div id="<%=FeatureCurationModule.FEATURE_RELATIONSHIP_LINK%>"></div>
-<div id="<%=FeatureCurationModule.FEATURE_RELATIONSHIP%>"></div>
-
-<br>
-<br>
-
 
 
 <%--</authz:authorize>--%>

@@ -627,9 +627,10 @@ public class DTOConversionService {
 
         Set<DataNote> curatorNotes = feature.getDataNotes();
         if (CollectionUtils.isNotEmpty(curatorNotes)) {
-            List<NoteDTO> curatorNoteDTOs = new ArrayList<>();
+            List<CuratorNoteDTO> curatorNoteDTOs = new ArrayList<>();
             for (DataNote dataNote : curatorNotes) {
-                NoteDTO noteDTO = new CuratorNoteDTO(dataNote.getZdbID(), dataNote.getDataZdbID(), DTOConversionService.unescapeString(dataNote.getNote()));
+                CuratorNoteDTO noteDTO = new CuratorNoteDTO(dataNote.getZdbID(), dataNote.getDataZdbID(), DTOConversionService.unescapeString(dataNote.getNote()));
+                noteDTO.setCurator(convertToPersonDTO(dataNote.getCurator()));
                 curatorNoteDTOs.add(noteDTO);
             }
             featureDTO.setCuratorNotes(curatorNoteDTOs);

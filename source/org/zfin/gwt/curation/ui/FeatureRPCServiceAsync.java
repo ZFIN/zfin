@@ -2,6 +2,7 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
 import java.util.List;
 
@@ -39,7 +40,7 @@ public interface FeatureRPCServiceAsync {
 
     void editPublicNote(NoteDTO noteDTO, AsyncCallback<FeatureDTO> async);
 
-    void addCuratorNote(NoteDTO noteDTO, AsyncCallback<NoteDTO> markerEditCallBack);
+    void addCuratorNote(CuratorNoteDTO noteDTO, AsyncCallback<CuratorNoteDTO> markerEditCallBack);
 
     void editCuratorNote(NoteDTO noteDTO, AsyncCallback<Void> async);
 
@@ -52,5 +53,7 @@ public interface FeatureRPCServiceAsync {
     void getMutagensForFeatureType(FeatureTypeEnum ftrType, AsyncCallback<List<String>> featureEditCallBack);
 
     void removePublicNote(NoteDTO updatedNoteDTO, AsyncCallback<Void> featureEditCallBack);
+
+    void getCuratorInfo(AsyncCallback<PersonDTO> personDTOZfinAsyncCallback);
 }
 
