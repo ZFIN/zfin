@@ -4,9 +4,9 @@ import org.zfin.feature.Feature
 import org.zfin.gwt.root.dto.FeatureTypeEnum
 import spock.lang.Shared
 
-class MutationDetailConversionServiceSpec extends AbstractZfinSpec {
+class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
 
-    @Shared MutationDetailConversionService converter = new MutationDetailConversionService()
+    @Shared MutationDetailsConversionService converter = new MutationDetailsConversionService()
 
     def "mutation type field should be populated"() {
         setup:

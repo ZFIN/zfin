@@ -5,7 +5,7 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.presentation.MutationDetailsPresentation;
 
 @Service
-public class MutationDetailConversionService {
+public class MutationDetailsConversionService {
 
     public MutationDetailsPresentation convert(Feature feature) {
         MutationDetailsPresentation details = new MutationDetailsPresentation();
