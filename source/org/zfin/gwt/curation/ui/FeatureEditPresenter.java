@@ -39,6 +39,10 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
 
                     @Override
                     public void onSuccess(List<FeatureDTO> results) {
+                        if (results == null || results.size() == 0) {
+                            view.showHideToggle.setVisibility(false);
+                            return;
+                        }
                         view.featureEditList.clear();
                         view.featureEditList.addItem("");
                         for (FeatureDTO dto : results) {
@@ -53,9 +57,6 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                         view.featureSequenceList.setDTO(dto);
                         revertGUI();
                         view.onChangeFeatureType();
-                        if (results == null || results.size() == 0) {
-                            view.showHideToggle.setVisibility(false);
-                        }
                     }
                 });
     }
@@ -64,7 +65,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
     public void onFeatureSelectionChange(String featureID) {
         FeatureRPCService.App.getInstance().getFeature(featureID, new FeatureEditCallBack<FeatureDTO>("Failed to remove attribution: ", this) {
             public void onSuccess(FeatureDTO featureDTO) {
-                featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
+                featureDTO.setPublicationZdbID(publicationID);
                 dto = featureDTO;
                 loadFeaturesForPub();
                 view.removeFeatureLink.setUrl("/action/infrastructure/deleteRecord/" + dto.getZdbID());
@@ -120,12 +121,15 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
     }
 
     protected void revertGUI() {
-        if (dto.getZdbID() == null) {
+        if (dto == null || dto.getZdbID() == null || dto.getZdbID().trim().isEmpty()) {
             view.resetGUI();
-        } else {
-            view.removeFeatureLink.setVisible(true);
-            view.featureEditList.setIndexForValue(dto.getZdbID());
+            featureNotesPresenter.setFeatureDTO(null);
+            featureNotesPresenter.rebuildGUI();
+            return;
         }
+
+        view.removeFeatureLink.setVisible(true);
+        view.featureEditList.setIndexForValue(dto.getZdbID());
         if (dto.getFeatureType() != null) {
             view.featureTypeBox.setIndexForText(dto.getFeatureType().getDisplay());
             updateMutagenOnFeatureTypeChange();

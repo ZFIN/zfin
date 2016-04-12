@@ -3,6 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextArea;
 import org.zfin.gwt.root.dto.*;
@@ -35,20 +36,27 @@ public class FeatureNotesPresenter {
     }
 
     private void populateDataTable() {
-        int elementIndex = 0;
 
-        if (featureDTO == null || featureDTO.getPublicNoteList() == null) {
+        if (featureDTO == null) {
+            view.dataTable.resizeRows(0);
+            view.endTableUpdate();
             return;
         }
-        for (NoteDTO noteDTO : featureDTO.getPublicNoteList()) {
-            view.addNoteReferenceCell(noteDTO, elementIndex);
-            addCommonNoteInfo(elementIndex, noteDTO);
-            elementIndex++;
+
+        int elementIndex = 0;
+        if (featureDTO.getPublicNoteList() != null) {
+            for (NoteDTO noteDTO : featureDTO.getPublicNoteList()) {
+                view.addNoteReferenceCell(noteDTO, elementIndex);
+                addCommonNoteInfo(elementIndex, noteDTO);
+                elementIndex++;
+            }
         }
-        for (CuratorNoteDTO noteDTO : featureDTO.getCuratorNotes()) {
-            view.addNoteCuratorReferenceCell(noteDTO, elementIndex);
-            addCommonNoteInfo(elementIndex, noteDTO);
-            elementIndex++;
+        if (featureDTO.getCuratorNotes() != null) {
+            for (CuratorNoteDTO noteDTO : featureDTO.getCuratorNotes()) {
+                view.addNoteCuratorReferenceCell(noteDTO, elementIndex);
+                addCommonNoteInfo(elementIndex, noteDTO);
+                elementIndex++;
+            }
         }
         view.endTableUpdate();
 
@@ -164,6 +172,10 @@ public class FeatureNotesPresenter {
 
         @Override
         public void onClick(ClickEvent clickEvent) {
+            String message = "Are you sure you want to delete this note?";
+            if (!Window.confirm(message))
+                return;
+
             if (noteDTO.getNoteEditMode().equals(NoteEditMode.PUBLIC)) {
                 FeatureRPCService.App.getInstance().removePublicNote(noteDTO, new FeatureEditCallBack<Void>("Failed to remove public note: ") {
                     @Override

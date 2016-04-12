@@ -56,6 +56,8 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
             setError("Empty ID");
             resetGUI();
             removeFeatureLink.setVisible(false);
+            editPresenter.dto = null;
+            editPresenter.revertGUI();
         } else {
             editPresenter.onFeatureSelectionChange(featureEditList.getSelected());
             removeFeatureLink.setVisible(true);
@@ -95,6 +97,8 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
         mutagenBox.setDirty(false);
         lineNumberBox.setDirty(false);
         featureDisplayName.setDirty(false);
+        featureAliasList.revertGUI();
+        featureNotesView.resetGUI();
     }
 
     @Override
