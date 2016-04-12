@@ -41,24 +41,37 @@ public class FacetBuilderService {
             }
         }
 
-        if (StringUtils.isEmpty(category) || StringUtils.equals(category, "Any"))
+        if (StringUtils.isEmpty(category) || StringUtils.equals(category, "Any")) {
             return buildCategoryFacetGroup(response, filterQuerySelectionMap, baseUrl);
-        else if (StringUtils.equals(category, Category.GENE.getName()))
+        }
+        else if (StringUtils.equals(category, Category.GENE.getName())) {
             return buildGeneFacetGroup(response, filterQuerySelectionMap, baseUrl);
-        else if (StringUtils.equals(category, Category.MUTANT.getName()))
+        }
+        else if (StringUtils.equals(category, Category.MUTANT.getName())) {
             return buildFeatureFacetGroup(response, filterQuerySelectionMap, baseUrl);
-        else if (StringUtils.equals(category, Category.FISH.getName()))
+        }
+        else if (StringUtils.equals(category, Category.FISH.getName())) {
             return buildFishFacetGroup(response, filterQuerySelectionMap, baseUrl);
-        else if (StringUtils.equals(category, Category.FIGURE.getName()))
+        }
+        else if (StringUtils.equals(category, Category.FIGURE.getName())) {
             return buildFigureFacetGroup(response, filterQuerySelectionMap, baseUrl);
-        else if (StringUtils.equals(category, Category.EXPRESSIONS.getName()))
+        }
+        else if (StringUtils.equals(category, Category.EXPRESSIONS.getName())) {
             return buildExpressionFacetGroup(response, filterQuerySelectionMap, baseUrl);
-        else if (StringUtils.equals(category, Category.PHENOTYPE.getName()))
+        }
+        else if (StringUtils.equals(category, Category.PHENOTYPE.getName())) {
             return buildPhenotypeFacetGroup(response, filterQuerySelectionMap, baseUrl);
-        else if (StringUtils.equals(category, Category.PUBLICATION.getName()))
+        }
+        else if (StringUtils.equals(category, Category.PUBLICATION.getName())) {
             return buildPublicationFacetGroup(response, filterQuerySelectionMap, baseUrl);
-        else
+        }
+        else if (StringUtils.equals(category,Category.DISEASE.getName())) {
+            return buildDiseaseFacetGroup(response, filterQuerySelectionMap, baseUrl);
+        }
+        else {
             return buildFlatFacetGroup(category, response, filterQuerySelectionMap, baseUrl);
+        }
+
 
     }
 
@@ -105,6 +118,20 @@ public class FacetBuilderService {
 
         return facetGroups;
     }
+
+    public List<FacetGroup> buildDiseaseFacetGroup(QueryResponse response, Map<String, Boolean> filterQuerySelectionMap, String baseUrl) {
+        List<FacetGroup> facetGroups = new ArrayList<>();
+
+        facetGroups.add(buildSingleFacetGroup("Gene",FieldName.GENE.getName(), true, response, filterQuerySelectionMap, baseUrl ));
+
+        FacetGroup diseaseModel = new FacetGroup("Disease Model", true);
+        diseaseModel.addFacet(buildFacet(FieldName.FISH.getName(), true,response, filterQuerySelectionMap, baseUrl));
+        diseaseModel.addFacet(buildFacet(FieldName.EXPERIMENTAL_CONDITIONS.getName(), true,response, filterQuerySelectionMap, baseUrl));
+        facetGroups.add(diseaseModel);
+
+        return facetGroups;
+    }
+
 
     /*  This is just a temporary method, should be replaced by further configuration */
     public List<FacetGroup> buildGeneFacetGroup(QueryResponse response, Map<String, Boolean> filterQuerySelectionMap, String baseUrl) {

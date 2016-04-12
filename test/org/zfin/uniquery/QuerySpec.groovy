@@ -251,6 +251,33 @@ class QuerySpec extends ZfinIntegrationSpec {
         symbol << ["fgf8a","pax2a","fgf3","bmp2a"]
     }
 
+    def "an expression search for #symbol should have first results with #symbol as an expressed gene"() {
+        when: "Solr is queried"
+        query.setQuery(queryManipulationService.processQueryString(symbol))
+        query.addFilterQuery("category:\"" + Category.EXPRESSIONS.name + "\"")
+        query.set('fl','name, id, zebrafish_gene')
+        QueryResponse response = new QueryResponse()
+
+        try {
+            response = client.query(query)
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+        SolrDocument firstDoc = response?.getResults()?.first()
+
+
+        then: "confirm that the first result has a wildtype fish"
+        response
+        response.getResults()
+        firstDoc
+        firstDoc.get("zebrafish_gene") == [symbol]
+
+        where:
+        symbol << ["fgf8a","pax2a","fgf3","bmp2a"]
+
+    }
+
     @Unroll
     def "a feature search for #symbol should return the unspecified feature last"() {
         when: "Solr is queried"

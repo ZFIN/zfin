@@ -3703,9 +3703,9 @@ where feature_zdb_id = ids_data_zdb_id
                    cacheImpl="SortedMapBackedCache"/>
 
 
-           <entity name="disease_disease_model"
+           <entity name="disease_disease_model_fish"
                    datasource="db" query="select distinct
-                                          fish_name as disease_model,
+                                          fish_name as fish,
                                           genox_fish_zdb_id as xref,
                                           term_zdb_id
                                           from term
