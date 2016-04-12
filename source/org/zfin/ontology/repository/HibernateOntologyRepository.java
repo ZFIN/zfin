@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.RelationshipSorting;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionResult2;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -840,22 +841,22 @@ public class HibernateOntologyRepository implements OntologyRepository {
      * @return expressions
      */
     @Override
-    public List<ExpressionResult> getExpressionsOnSecondaryTerms() {
+    public List<ExpressionResult2> getExpressionsOnSecondaryTerms() {
         Session session = HibernateUtil.currentSession();
-        List<ExpressionResult> allExpressions = new ArrayList<ExpressionResult>();
+        List<ExpressionResult2> allExpressions = new ArrayList<>();
 
-        String hql = "select result from ExpressionResult result " +
-                "     where result.entity is not null AND result.entity.superterm is not null AND result.entity.superterm.secondary = :secondary";
+        String hql = "from ExpressionResult2 " +
+                "     where superterm is not null AND superterm.secondary = :secondary";
         Query query = session.createQuery(hql);
         query.setBoolean("secondary", true);
 
-        allExpressions.addAll((List<ExpressionResult>) query.list());
+        allExpressions.addAll((List<ExpressionResult2>) query.list());
 
-        hql = "select result from ExpressionResult result " +
-                "     where result.entity is not null AND result.entity.subterm is not null AND result.entity.subterm.secondary = :secondary";
+        hql = "from ExpressionResult2 " +
+                "     where subterm is not null AND subterm.secondary = :secondary";
         Query queryEntitySub = session.createQuery(hql);
         queryEntitySub.setBoolean("secondary", true);
-        allExpressions.addAll((List<ExpressionResult>) queryEntitySub.list());
+        allExpressions.addAll((List<ExpressionResult2>) queryEntitySub.list());
 
         return allExpressions;
     }

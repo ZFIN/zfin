@@ -373,9 +373,9 @@ public class ExpressionService {
      * Could be one or both terms.
      *
      * @param expressionResult expression
-     * @return set of obsolseted terms
+     * @return set of obsoleted terms
      */
-    public Set<GenericTerm> getObsoleteTerm(ExpressionResult expressionResult) {
+    public Set<GenericTerm> getObsoleteTerm(ExpressionResult2 expressionResult) {
         Set<GenericTerm> obsoletedTerms = new HashSet<>(2);
         if (expressionResult.getEntity().getSuperterm().isObsolete()) {
             obsoletedTerms.add(expressionResult.getEntity().getSuperterm());
@@ -390,14 +390,14 @@ public class ExpressionService {
      * Could be one or both terms.
      *
      * @param expressionResult expression
-     * @return set of obsolseted terms
+     * @return set of obsoleted terms
      */
-    public Set<GenericTerm> getSecondaryTerm(ExpressionResult expressionResult) {
+    public Set<GenericTerm> getSecondaryTerm(ExpressionResult2 expressionResult) {
         Set<GenericTerm> obsoletedTerms = new HashSet<>(2);
-        if (expressionResult.getEntity().getSuperterm().isSecondary()) {
-            obsoletedTerms.add(expressionResult.getEntity().getSuperterm());
-        } else if (expressionResult.getEntity().getSubterm() != null && expressionResult.getEntity().getSubterm().isSecondary()) {
-            obsoletedTerms.add(expressionResult.getEntity().getSubterm());
+        if (expressionResult.getSuperTerm().isSecondary()) {
+            obsoletedTerms.add(expressionResult.getSuperTerm());
+        } else if (expressionResult.getSubTerm() != null && expressionResult.getSubTerm().isSecondary()) {
+            obsoletedTerms.add(expressionResult.getSubTerm());
         }
         return obsoletedTerms;
     }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.PhenotypeService;
@@ -53,10 +54,10 @@ public class OntologyReportsController {
             model.addAttribute("phenotypeSecondaryTermReports", phenotypeSecondaryTermReports);
             model.addAttribute("numberOfPhenotypesOnSecondaryTerms", phenotypesWithSecondaryTerms.size());
         }
-        List<ExpressionResult> expressionsWithSecondaryTerms = RepositoryFactory.getOntologyRepository().getExpressionsOnSecondaryTerms();
+        List<ExpressionResult2> expressionsWithSecondaryTerms = RepositoryFactory.getOntologyRepository().getExpressionsOnSecondaryTerms();
         if (expressionsWithSecondaryTerms != null) {
             List<ExpressionObsoleteTermReport> expressionSecondaryTermReports = new ArrayList<>(expressionsWithSecondaryTerms.size());
-            for (ExpressionResult phenotypeStatement : expressionsWithSecondaryTerms) {
+            for (ExpressionResult2 phenotypeStatement : expressionsWithSecondaryTerms) {
                 ExpressionObsoleteTermReport report = new ExpressionObsoleteTermReport(phenotypeStatement);
                 Set<GenericTerm> obsoletedTermSet = expressionService.getSecondaryTerm(phenotypeStatement);
                 report.setObsoletedTermList(obsoletedTermSet);

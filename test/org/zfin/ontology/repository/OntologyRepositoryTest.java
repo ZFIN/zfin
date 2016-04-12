@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionResult2;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.PhenotypeStatement;
@@ -353,7 +354,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
             fail("An error occurred");
 
         }
-        List<Ontology> ontologies = new ArrayList<Ontology>(2);
+        List<Ontology> ontologies = new ArrayList<>(2);
         ontologies.add(Ontology.QUALITY);
         ontologies.add(Ontology.GO);
         try {
@@ -390,7 +391,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getExpressionsOnSecondaryTerms() {
-        List<ExpressionResult> term = ontologyRepository.getExpressionsOnSecondaryTerms();
+        List<ExpressionResult2> term = ontologyRepository.getExpressionsOnSecondaryTerms();
         assertEquals(0, term.size());
     }
 
