@@ -846,14 +846,14 @@ public class HibernateOntologyRepository implements OntologyRepository {
         List<ExpressionResult2> allExpressions = new ArrayList<>();
 
         String hql = "from ExpressionResult2 " +
-                "     where superterm is not null AND superterm.secondary = :secondary";
+                "     where superTerm is not null AND superTerm.secondary = :secondary";
         Query query = session.createQuery(hql);
         query.setBoolean("secondary", true);
 
         allExpressions.addAll((List<ExpressionResult2>) query.list());
 
         hql = "from ExpressionResult2 " +
-                "     where subterm is not null AND subterm.secondary = :secondary";
+                "     where subTerm is not null AND subTerm.secondary = :secondary";
         Query queryEntitySub = session.createQuery(hql);
         queryEntitySub.setBoolean("secondary", true);
         allExpressions.addAll((List<ExpressionResult2>) queryEntitySub.list());
