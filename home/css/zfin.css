@@ -171,6 +171,10 @@ table.data_manager a.root {
     color: #33cc99;
     text-align: left;
 }
+.phenotype-ameliorated {
+    color: #A461E8;
+    text-align: left;
+}
 
 .curation-filter {
     background-color: #33CC99;
