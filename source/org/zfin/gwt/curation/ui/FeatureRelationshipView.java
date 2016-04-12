@@ -91,7 +91,7 @@ public class FeatureRelationshipView extends Composite {
         if (lastFeature != null)
             lastID = lastFeature.getZdbID();
         currentGroupIndex = WidgetUtil.setRowStyle(row, feature.getZdbID(), lastID, currentGroupIndex, dataTable);
-        Anchor fishAnchor = new Anchor(SafeHtmlUtils.fromTrustedString(feature.getAbbreviation()), "/" + feature.getZdbID());
+        Anchor fishAnchor = new Anchor(SafeHtmlUtils.fromTrustedString(feature.getName()), "/" + feature.getZdbID());
         fishAnchor.setTitle(feature.getZdbID());
         if (lastID == null || !feature.getZdbID().equals(lastID))
             dataTable.setWidget(row, 0, fishAnchor);

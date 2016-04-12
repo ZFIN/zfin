@@ -240,17 +240,15 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
 
-    public List<FeatureMarkerRelationshipDTO> getFeaturesMarkerRelationshipsForPub(String publicationZdbID) {
+    public List<FeatureMarkerRelationshipDTO> getFeatureMarkerRelationshipsForPub(String publicationZdbID) {
 
-        List<FeatureMarkerRelationshipDTO> featureDTOs = new ArrayList<FeatureMarkerRelationshipDTO>();
+        List<FeatureMarkerRelationshipDTO> featureDTOs = new ArrayList<>();
         List<FeatureMarkerRelationship> featureMarkerRelationships = featureRepository.getFeatureRelationshipsByPublication(publicationZdbID);
         if (CollectionUtils.isNotEmpty(featureMarkerRelationships)) {
             for (FeatureMarkerRelationship featureMarkerRelationship : featureMarkerRelationships) {
                 featureDTOs.add(DTOConversionService.convertToFeatureMarkerRelationshipDTO(featureMarkerRelationship));
             }
         }
-
-
         return featureDTOs;
     }
 

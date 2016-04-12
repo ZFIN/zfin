@@ -64,7 +64,7 @@ public class FeatureRelationshipPresenter implements HandlesError {
         loadFilterValues();
 
         // get Feature-Marker-Relationships
-        FeatureRPCService.App.getInstance().getFeaturesMarkerRelationshipsForPub(publicationID,
+        FeatureRPCService.App.getInstance().getFeatureMarkerRelationshipsForPub(publicationID,
                 new FeatureEditCallBack<List<FeatureMarkerRelationshipDTO>>(
                         "Failed to find feature marker relationships for this pub: "
                                 + publicationID, this) {
@@ -105,7 +105,6 @@ public class FeatureRelationshipPresenter implements HandlesError {
                         if (lastSelectedFeatureZdbId != null) {
                             view.featureToAddList.setIndexForValue(lastSelectedFeatureZdbId);
                             lastSelectedFeatureZdbId = null;
-///                            featureAddListChanged();
                         }
                     }
                 });
@@ -130,8 +129,6 @@ public class FeatureRelationshipPresenter implements HandlesError {
                             for (String type : featureTypes.keySet()) {
                                 view.featureTypeList.addItem(type, type);
                             }
-                            ///refilter();
-                            ///clearError();
                         }
                     }
                 });
@@ -193,7 +190,6 @@ public class FeatureRelationshipPresenter implements HandlesError {
                             }
                             view.featureToAddRelationship.setEnabled(true);
                         }
-///                        updateTargets();
                     }
                 }
         );
@@ -211,7 +207,7 @@ public class FeatureRelationshipPresenter implements HandlesError {
                     public void onSuccess(List<MarkerDTO> markers) {
                         view.featureToAddTarget.clear();
                         Collections.sort(markers);
-                        if (markers != null & markers.size() > 0) {
+                        if (markers.size() > 0) {
                             for (MarkerDTO m : markers) {
                                 if (mutagenForFeature != null) {
                                     if (selectedRelationship.equalsIgnoreCase("created by")) {
@@ -277,7 +273,6 @@ public class FeatureRelationshipPresenter implements HandlesError {
     protected void revertGUI() {
         view.revertGUI();
         loadValues();
-//        featureFilterModule.refilter();
     }
 
 

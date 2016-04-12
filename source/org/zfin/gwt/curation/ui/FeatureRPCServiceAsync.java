@@ -24,7 +24,7 @@ public interface FeatureRPCServiceAsync {
 
     void getFeaturesForPub(String pubZdbID, AsyncCallback<List<FeatureDTO>> async);
 
-    void getFeaturesMarkerRelationshipsForPub(String publicationZdbID, AsyncCallback<List<FeatureMarkerRelationshipDTO>> featureEditCallBack);
+    void getFeatureMarkerRelationshipsForPub(String publicationZdbID, AsyncCallback<List<FeatureMarkerRelationshipDTO>> featureEditCallBack);
 
     void deleteFeatureMarkerRelationship(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO, AsyncCallback<Void> featureEditCallBack);
 
