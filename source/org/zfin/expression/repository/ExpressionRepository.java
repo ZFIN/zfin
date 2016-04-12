@@ -357,7 +357,7 @@ public interface ExpressionRepository {
      * Retrieve list of expression result records that use obsoleted terms in the annotation.
      * @return list of expression results records
      */
-    List<ExpressionResult> getExpressionOnObsoletedTerms();
+    List<ExpressionResult2> getExpressionOnObsoletedTerms();
     int getImagesFromPubAndClone(PublicationExpressionBean publicationExpressionBean);
     int getImagesForEfg(PublicationExpressionBean publicationExpressionBean);
 

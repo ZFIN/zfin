@@ -353,7 +353,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getExpressionOnObsoletedTerms() {
-        List<ExpressionResult> expressionResults = expRep.getExpressionOnObsoletedTerms();
+        List<ExpressionResult2> expressionResults = expRep.getExpressionOnObsoletedTerms();
         assertNotNull(expressionResults);
         Assert.assertEquals(0, expressionResults.size());
     }

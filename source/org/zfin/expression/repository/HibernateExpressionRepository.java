@@ -866,6 +866,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         criteria.add(Restrictions.eq("expressionFound", result.isExpressionFound()));
         return (List<ExpressionResult>) criteria.list();
     }
+
     public List<ExpressionResult2> checkForExpressionResultRecord2(ExpressionResult2 result) {
         // first check if an expression result record already exists
         Session session = HibernateUtil.currentSession();
@@ -1884,22 +1885,22 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * @return
      */
     @Override
-    public List<ExpressionResult> getExpressionOnObsoletedTerms() {
+    public List<ExpressionResult2> getExpressionOnObsoletedTerms() {
         Session session = HibernateUtil.currentSession();
-        List<ExpressionResult> allExpressions = new ArrayList<>();
+        List<ExpressionResult2> allExpressions = new ArrayList<>();
 
-        String hql = "select result from ExpressionResult result " +
-                "     where result.entity is not null AND result.entity.superterm is not null AND result.entity.superterm.obsolete = :obsolete";
+        String hql = "from ExpressionResult2 " +
+                "     where superTerm is not null AND superTerm.obsolete = :obsolete";
         Query query = session.createQuery(hql);
         query.setBoolean("obsolete", true);
 
-        allExpressions.addAll((List<ExpressionResult>) query.list());
+        allExpressions.addAll((List<ExpressionResult2>) query.list());
 
-        hql = "select result from ExpressionResult result " +
-                "     where result.entity is not null AND result.entity.subterm is not null AND result.entity.subterm.obsolete = :obsolete";
+        hql = "from ExpressionResult2 " +
+                "     where subTerm is not null AND subTerm.obsolete = :obsolete";
         Query queryEntitySub = session.createQuery(hql);
         queryEntitySub.setBoolean("obsolete", true);
-        allExpressions.addAll((List<ExpressionResult>) queryEntitySub.list());
+        allExpressions.addAll((List<ExpressionResult2>) queryEntitySub.list());
 
         return allExpressions;
     }
