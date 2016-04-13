@@ -101,6 +101,10 @@
         <mapping class="org.zfin.curation.PublicationNote"/>
         <mapping class="org.zfin.curation.Curation"/>
         <mapping class="org.zfin.curation.Correspondence"/>
+        <mapping class="org.zfin.infrastructure.ActiveData"/>
+        <mapping class="org.zfin.infrastructure.ActiveSource"/>
+        <mapping class="org.zfin.infrastructure.Updates"/>
+        <mapping class="org.zfin.infrastructure.DataNote"/>
 
 
     </session-factory>

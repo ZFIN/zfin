@@ -2,13 +2,20 @@ package org.zfin.infrastructure;
 
 import org.zfin.infrastructure.delete.*;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-/**
- */
+@Entity
+@Table(name = "zdb_active_source")
 public class ActiveSource implements ZdbID, Serializable {
+
+    @Id
+    @Column(name = "zactvs_zdb_id")
     private String zdbID;
     public static final String ZDB = "ZDB-";
 

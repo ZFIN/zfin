@@ -21,55 +21,6 @@
         <param name="enumClassname">org.zfin.ontology.Ontology</param>
     </typedef>
 
-    <class name="org.zfin.infrastructure.ActiveData" table="zdb_active_data">
-        <id name="zdbID" type="string">
-            <column name="zactvd_zdb_id" not-null="true"/>
-        </id>
-    </class>
-
-    <class name="org.zfin.infrastructure.ActiveSource" table="zdb_active_source">
-        <id name="zdbID" type="string">
-            <column name="zactvs_zdb_id" not-null="true"/>
-        </id>
-    </class>
-
-    <class name="org.zfin.infrastructure.Updates" mutable="false" table="updates">
-        <cache usage="read-only"/>
-        <id name="ID" type="long">
-            <column name="upd_pk_id" not-null="true"/>
-            <generator class="identity"/>
-        </id>
-        <property name="submitterID" column="submitter_id" type="string"/>
-        <property name="recID" column="rec_id" type="string"/>
-        <property name="fieldName" column="field_name" type="string"/>
-        <property name="newValue" column="new_value" type="string"/>
-        <property name="oldValue" column="old_value" type="string"/>
-        <property name="comments" column="comments" type="string"/>
-        <property name="submitterName" column="submitter_name" type="string"/>
-        <property name="whenUpdated" column="when" type="date"/>
-    </class>
-
-    <class name="org.zfin.infrastructure.DataNote" table="data_note">
-        <id name="zdbID">
-            <column name="dnote_zdb_id"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">DNOTE</param>
-                <param name="insertActiveData">true</param>
-            </generator>
-        </id>
-        <property name="dataZdbID">
-            <column name="dnote_data_zdb_id"/>
-        </property>
-        <property name="note">
-            <column name="dnote_text"/>
-        </property>
-        <property name="date">
-            <column name="dnote_date"/>
-        </property>
-        <many-to-one name="curator" column="dnote_curator_zdb_id"
-                     class="org.zfin.profile.Person"/>
-    </class>
-
     <class name="org.zfin.infrastructure.DataAliasGroup" mutable="false" table="alias_group">
         <cache usage="read-only"/>
         <id name="id" access="field">
