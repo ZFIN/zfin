@@ -52,7 +52,6 @@
         <mapping resource="org/zfin/profile.hbm.xml"/>
         <mapping resource="org/zfin/publication.hbm.xml"/>
         <mapping resource="org/zfin/sequence.hbm.xml"/>
-        <mapping resource="org/zfin/curation.hbm.xml"/>
         <mapping class="org.zfin.expression.ExpressionExperiment2"/>
         <mapping class="org.zfin.expression.ExpressionFigureStage"/>
         <mapping class="org.zfin.expression.ExpressionResult2"/>
@@ -99,6 +98,9 @@
         <mapping class="org.zfin.infrastructure.PublicationAttribution"/>
         <mapping class="org.zfin.infrastructure.TermAttribution"/>
         <mapping class="org.zfin.infrastructure.PersonAttribution"/>
+        <mapping class="org.zfin.curation.PublicationNote"/>
+        <mapping class="org.zfin.curation.Curation"/>
+        <mapping class="org.zfin.curation.Correspondence"/>
 
 
     </session-factory>

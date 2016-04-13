@@ -8,9 +8,6 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Expression ExpressionExperiment.
- */
 @Entity
 @Table(name = "expression_result2")
 public class ExpressionResult2 implements Comparable<ExpressionResult2> {

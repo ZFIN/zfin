@@ -1,19 +1,43 @@
 package org.zfin.curation;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "curation")
 public class Curation {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "CUR"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "cur_zdb_id")
     private String zdbID;
+    @ManyToOne
+    @JoinColumn(name = "cur_pub_zdb_id")
     private Publication publication;
+    @ManyToOne
+    @JoinColumn(name = "cur_curator_zdb_id")
     private Person curator;
+    @Column(name = "cur_topic")
+    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.curation.Curation$Topic")})
     private Topic topic;
+    @Column(name = "cur_data_found")
     private boolean dataFound;
+    @Column(name = "cur_entry_date")
     private Date entryDate;
+    @Column(name = "cur_closed_date")
     private Date closedDate;
+    @Column(name = "cur_opened_date")
     private Date openedDate;
 
     public Date getClosedDate() {
