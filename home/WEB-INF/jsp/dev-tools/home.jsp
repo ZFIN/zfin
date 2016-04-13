@@ -29,7 +29,6 @@
 </tr>
 <tr>
     <td>
-        <a href="/action/devtool/view-user-request-tracks">User Request Tracking (Clickstream)</a>
     </td>
     <td>
         <a href="/action/blast/blast-files">Downloadable Blast Files</a>

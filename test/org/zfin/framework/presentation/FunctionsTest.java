@@ -1,8 +1,6 @@
 package org.zfin.framework.presentation;
 
-import com.opensymphony.clickstream.Clickstream;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.ontology.presentation.OntologyBean;
 
@@ -10,9 +8,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -86,15 +83,6 @@ public class FunctionsTest {
         assertEquals("ID=ZDB-TERM-050915-94", modifiedQueryString);
 
 
-    }
-
-    @Test
-    public void getTimeDurationToNextElement() {
-        Clickstream stream = new Clickstream();
-        stream.addRequest(new MockHttpServletRequest("GET", "action"));
-        stream.addRequest(new MockHttpServletRequest("GET", "action zwei"));
-        String durationString = ZfinJSPFunctions.getTimeBetweenRequests(stream.getStream(), 0);
-        assertNotNull(durationString);
     }
 
     @Test

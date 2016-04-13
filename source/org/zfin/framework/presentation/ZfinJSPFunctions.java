@@ -1,6 +1,5 @@
 package org.zfin.framework.presentation;
 
-import com.opensymphony.clickstream.ClickstreamRequest;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContext;
@@ -253,20 +252,6 @@ public class ZfinJSPFunctions {
             return null;
         }
         return DateUtil.getTimeDuration(start, new Date());
-    }
-
-    public static String getTimeBetweenRequests(List<ClickstreamRequest> list, int loopIndex) {
-        if (loopIndex < 0 || list == null) {
-            return "";
-        }
-
-        if (list.size() <= loopIndex + 1) {
-            return "";
-        }
-
-        Date start = list.get(loopIndex).getTimestamp();
-        Date end = list.get(loopIndex + 1).getTimestamp();
-        return getTimeDuration(start, end);
     }
 
     public static String getPerson(HttpSession session) {
