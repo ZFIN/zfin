@@ -1,5 +1,6 @@
 package org.zfin.infrastructure;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -7,10 +8,17 @@ import java.io.Serializable;
  * group enumeration items.
  * Use DataAlias.Group enum if needed.
  */
+@Entity
+@Table(name = "alias_group")
 public class DataAliasGroup implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "aliasgrp_pk_id")
     private int id;
+    @Column(name = "aliasgrp_name")
     private String name;
+    @Column(name = "aliasgrp_significance")
     private int significance;
 
     public int getId() {

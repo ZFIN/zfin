@@ -105,6 +105,14 @@
         <mapping class="org.zfin.infrastructure.ActiveSource"/>
         <mapping class="org.zfin.infrastructure.Updates"/>
         <mapping class="org.zfin.infrastructure.DataNote"/>
+        <mapping class="org.zfin.infrastructure.ControlledVocab"/>
+        <mapping class="org.zfin.database.UnloadInfo"/>
+        <mapping class="org.zfin.ontology.ConsiderTerm"/>
+        <mapping class="org.zfin.ontology.ReplacementTerm"/>
+        <mapping class="org.zfin.infrastructure.DataAliasGroup"/>
+        <mapping class="org.zfin.infrastructure.ZdbFlag"/>
+        <mapping class="org.zfin.infrastructure.ReplacementZdbID"/>
+        <mapping class="org.zfin.infrastructure.WithdrawnZdbID"/>
 
 
     </session-factory>

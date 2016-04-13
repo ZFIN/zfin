@@ -21,21 +21,6 @@
         <param name="enumClassname">org.zfin.ontology.Ontology</param>
     </typedef>
 
-    <class name="org.zfin.infrastructure.DataAliasGroup" mutable="false" table="alias_group">
-        <cache usage="read-only"/>
-        <id name="id" access="field">
-            <column name="aliasgrp_pk_id"/>
-        </id>
-        <property name="name" column="aliasgrp_name"/>
-        <property name="significance" column="aliasgrp_significance"/>
-    </class>
-
-    <class name="org.zfin.infrastructure.ZdbFlag" table="zdb_flag">
-        <id name="type" column="zflag_name" type="zdbFlagType"/>
-        <property name="systemUpdateDisabled" column="zflag_is_on"/>
-        <property name="dateLastModified" column="zflag_last_modified"/>
-    </class>
-
     <class name="org.zfin.infrastructure.DataAlias" table="DATA_ALIAS">
         <cache usage="nonstrict-read-write"/>
         <id name="zdbID">
@@ -112,24 +97,6 @@
         <subclass name="org.zfin.infrastructure.AllMarkerNamesFastSearch" discriminator-value="Marker">
             <many-to-one name="marker" class="org.zfin.marker.Marker" column="allmapnm_zdb_id"/>
         </subclass>
-    </class>
-
-    <class name="org.zfin.infrastructure.ReplacementZdbID" table="zdb_replaced_data">
-        <composite-id>
-            <key-property name="oldZdbID" column="zrepld_old_zdb_id"/>
-            <key-property name="replacementZdbID" column="zrepld_new_zdb_id"/>
-        </composite-id>
-
-        <property name="oldName" column="zrepld_old_name"/>
-    </class>
-
-    <class name="org.zfin.infrastructure.WithdrawnZdbID" table="withdrawn_data">
-        <composite-id>
-            <key-property name="wdoldZdbID" column="wd_old_zdb_id"/>
-            <key-property name="wdnewZdbID" column="wd_new_zdb_id"/>
-        </composite-id>
-
-
     </class>
 
     <class name="org.zfin.ontology.TermDefinitionReference" table="external_reference">
@@ -280,44 +247,6 @@
             <key column="osubset_ont_id" not-null="false"/>
             <one-to-many class="org.zfin.ontology.Subset"/>
         </set>
-    </class>
-
-
-    <class name="org.zfin.ontology.ReplacementTerm" table="OBSOLETE_TERM_REPLACEMENT">
-        <id name="id">
-            <column name="obstermrep_pk_id" not-null="true"/>
-        </id>
-
-        <many-to-one name="obsoletedTerm" column="obstermrep_term_zdb_id"/>
-        <many-to-one name="replacementTerm" column="obstermrep_term_replacement_zdb_id"/>
-    </class>
-
-    <class name="org.zfin.ontology.ConsiderTerm" table="OBSOLETE_TERM_SUGGESTION">
-        <id name="id">
-            <column name="obstermsug_pk_id" not-null="true"/>
-        </id>
-
-        <many-to-one name="obsoletedTerm" column="obstermsug_term_zdb_id"/>
-        <many-to-one name="considerTerm" column="obstermsug_term_suggestion_zdb_id"/>
-    </class>
-
-    <class name="org.zfin.database.UnloadInfo" table="DATABASE_INFO">
-        <id name="id">
-            <column name="di_pk_id" not-null="true"/>
-        </id>
-
-        <property name="date" column="di_date_unloaded"/>
-        <property name="version" column="di_code_version"/>
-        <property name="databaseName" column="di_database_unloaded"/>
-
-    </class>
-
-    <class name="org.zfin.infrastructure.ControlledVocab" table="controlled_vocabulary">
-        <id name="zdbID" type="string">
-            <column name="cv_zdb_id" not-null="true"/>
-
-        </id>
-        <property name="cvTermName" column="cv_term_name"/>
     </class>
 
 
