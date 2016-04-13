@@ -104,19 +104,11 @@ public class Feature implements EntityNotes, EntityZdbID {
     private Set<FeatureDBLink> dbLinks;
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<FeatureRnaMutationDetail> featureRnaMutationDetailSet;
-    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
-    private Set<FeatureProteinMutationDetail> featureProteinMutationDetailSet;
-    @Column(name = "feature_number_additional_bps", nullable = true)
-    private Integer numberOfAdditionalBps;
-    @Column(name = "feature_number_removed_bps", nullable = true)
-    private Integer numberOfremovedBps;
-    /*
-        @Column(table = "dna_mutation_term", name = "dmt_term_display_name")
-        private String dnaMutationDetail;
-    */
-    @OneToOne
-    @JoinColumn(name = "feature_dna_mutation_term_zdb_id")
-    private DnaMutationTerm dnaMutationTerm;
+    @OneToOne(mappedBy = "feature", fetch = FetchType.LAZY)
+    private FeatureProteinMutationDetail featureProteinMutationDetail;
+    @OneToOne(mappedBy = "feature", fetch = FetchType.LAZY)
+    private FeatureDnaMutationDetail featureDnaMutationDetail;
+
 
     public String getTransgenicSuffix() {
         return transgenicSuffix;
@@ -243,12 +235,6 @@ public class Feature implements EntityNotes, EntityZdbID {
         this.aliases = aliases;
     }
 
-    public String getDnaMutationName() {
-        if (dnaMutationTerm == null)
-            return null;
-        return dnaMutationTerm.getDisplayName();
-    }
-
     public String getZdbID() {
 
         return zdbID;
@@ -308,21 +294,6 @@ public class Feature implements EntityNotes, EntityZdbID {
         this.genotypeFeatures = genotypeFeatures;
     }
 
-    public Integer getNumberOfAdditionalBps() {
-        return numberOfAdditionalBps;
-    }
-
-    public void setNumberOfAdditionalBps(Integer numberOfAdditionalBps) {
-        this.numberOfAdditionalBps = numberOfAdditionalBps;
-    }
-
-    public Integer getNumberOfremovedBps() {
-        return numberOfremovedBps;
-    }
-
-    public void setNumberOfremovedBps(Integer numberOfremovedBps) {
-        this.numberOfremovedBps = numberOfremovedBps;
-    }
 
     public int compareTo(Object otherFeature) {
         return getAbbreviationOrder().compareTo(((Feature) otherFeature).getAbbreviationOrder());
@@ -357,12 +328,20 @@ public class Feature implements EntityNotes, EntityZdbID {
         this.featureRnaMutationDetailSet = mutationDetailSet;
     }
 
-    public Set<FeatureProteinMutationDetail> getFeatureProteinMutationDetailSet() {
-        return featureProteinMutationDetailSet;
+    public FeatureProteinMutationDetail getFeatureProteinMutationDetail() {
+        return featureProteinMutationDetail;
     }
 
-    public void setFeatureProteinMutationDetailSet(Set<FeatureProteinMutationDetail> featureProteinMutationDetailSet) {
-        this.featureProteinMutationDetailSet = featureProteinMutationDetailSet;
+    public void setFeatureProteinMutationDetail(FeatureProteinMutationDetail featureProteinMutationDetail) {
+        this.featureProteinMutationDetail = featureProteinMutationDetail;
+    }
+
+    public FeatureDnaMutationDetail getFeatureDnaMutationDetail() {
+        return featureDnaMutationDetail;
+    }
+
+    public void setFeatureDnaMutationDetail(FeatureDnaMutationDetail featureDnaMutationDetail) {
+        this.featureDnaMutationDetail = featureDnaMutationDetail;
     }
 
     public Genotype getSingleRelatedGenotype() {

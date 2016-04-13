@@ -84,7 +84,6 @@
         <mapping class="org.zfin.marker.OrthologyNote"/>
         <mapping class="org.zfin.mutant.GenotypeExternalNote"/>
         <mapping class="org.zfin.antibody.AntibodyExternalNote"/>
-        <mapping class="org.zfin.feature.FeatureRnaMutationDetail"/>
         <mapping class="org.zfin.feature.FeatureProteinMutationDetail"/>
         <mapping class="org.zfin.feature.FeatureTracking"/>
         <mapping class="org.zfin.Species"/>
@@ -113,6 +112,9 @@
         <mapping class="org.zfin.infrastructure.ZdbFlag"/>
         <mapping class="org.zfin.infrastructure.ReplacementZdbID"/>
         <mapping class="org.zfin.infrastructure.WithdrawnZdbID"/>
+        <mapping class="org.zfin.feature.ProteinConsequence"/>
+        <mapping class="org.zfin.feature.RnaConsequence"/>
+        <mapping class="org.zfin.feature.FeatureDnaMutationDetail"/>
 
 
     </session-factory>

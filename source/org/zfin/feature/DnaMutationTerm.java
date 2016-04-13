@@ -1,9 +1,8 @@
 package org.zfin.feature;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.zfin.ontology.GenericTerm;
+
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
@@ -12,7 +11,10 @@ public class DnaMutationTerm implements Serializable {
 
     @Id
     @Column(name = "dmt_term_zdb_id")
-    private String dnaMutationTermId;
+    private String termZdbID;
+    @OneToOne
+    @JoinColumn(name = "dmt_term_zdb_id")
+    private GenericTerm mutationTerm;
     @Column(name = "dmt_term_display_name")
     private String displayName;
 
@@ -24,11 +26,19 @@ public class DnaMutationTerm implements Serializable {
         this.displayName = displayName;
     }
 
-    public String getDnaMutationTermId() {
-        return dnaMutationTermId;
+    public GenericTerm getMutationTerm() {
+        return mutationTerm;
     }
 
-    public void setDnaMutationTermId(String dnaMutationTermId) {
-        this.dnaMutationTermId = dnaMutationTermId;
+    public void setMutationTerm(GenericTerm mutationTerm) {
+        this.mutationTerm = mutationTerm;
+    }
+
+    public String getTermZdbID() {
+        return termZdbID;
+    }
+
+    public void setTermZdbID(String termZdbID) {
+        this.termZdbID = termZdbID;
     }
 }
