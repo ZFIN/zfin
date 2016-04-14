@@ -1,23 +1,39 @@
 package org.zfin.ontology;
 
+import javax.persistence.*;
 import java.util.Set;
 
 /**
  * This class holds the header info provided in the OBO file.
  */
+@Entity
+@Table(name = "ontology")
 public class OntologyMetadata {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ont_pk_id")
     private long id;
+    @Column(name = "ont_ontology_name")
     private String name;
+    @Column(name = "ont_order")
     private int order;
+    @Column(name = "ont_default_namespace")
     private String defaultNamespace;
+    @Column(name = "ont_format_version")
     private String oboVersion;
+    @Column(name = "ont_data_version")
     private String dataVersion;
+    @Column(name = "ont_current_date")
     private String date;
+    @Column(name = "ont_saved_by")
     private String savedBy;
     // software used to generate the obo file.
+    @Column(name = "ont_import")
     private String generatedBy;
+    @Column(name = "ont_remark")
     private String remark;
+    @OneToMany(mappedBy = "metaData")
     private Set<Subset> subsets;
 
     public long getId() {
