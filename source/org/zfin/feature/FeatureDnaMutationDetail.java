@@ -1,6 +1,7 @@
 package org.zfin.feature;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.sequence.ReferenceDatabase;
 
 import javax.persistence.*;
@@ -39,6 +40,9 @@ public class FeatureDnaMutationDetail {
     private Integer exonNumber;
     @Column(name = "fdmd_intron_number")
     private Integer intronNumber;
+    @ManyToOne
+    @JoinColumn(name = "fdmd_gene_localization_splice_term_zdb_id")
+    private GenericTerm geneLocalizationTerm;
     @ManyToOne
     @JoinColumn(name = "fdmd_dna_mutation_term_zdb_id")
     private DnaMutationTerm dnaMutationTerm;
@@ -130,5 +134,13 @@ public class FeatureDnaMutationDetail {
 
     public void setZdbID(String zdbID) {
         this.zdbID = zdbID;
+    }
+
+    public GenericTerm getGeneLocalizationTerm() {
+        return geneLocalizationTerm;
+    }
+
+    public void setGeneLocalizationTerm(GenericTerm geneLocalizationTerm) {
+        this.geneLocalizationTerm = geneLocalizationTerm;
     }
 }

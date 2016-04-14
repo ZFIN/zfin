@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureDnaMutationDetail;
 import org.zfin.feature.presentation.MutationDetailsPresentation;
+import org.zfin.ontology.GenericTerm;
 
 @Service
 public class MutationDetailsConversionService {
@@ -35,24 +36,126 @@ public class MutationDetailsConversionService {
             return "";
         }
         StringBuilder statement = new StringBuilder(dnaChange.getDnaMutationTerm().getDisplayName());
-        String localization = getGeneLocalizationStatement(dnaChange);
+        String localization = geneLocalizationWithPreposition(dnaChange);
         if (StringUtils.isNotEmpty(localization)) {
-            statement.append(" in ").append(localization);
+            statement.append(" ").append(localization);
         }
         return statement.toString();
     }
 
-    private String getGeneLocalizationStatement(FeatureDnaMutationDetail dnaChange) {
+    /**
+     * Produces a full gene localization statement based on the localization term, exon, and intron values
+     * including an appropriate preposition at the beginning of the string.
+     *
+     * @param dnaChange the dna change
+     * @return localization statement
+     */
+    public String geneLocalizationWithPreposition(FeatureDnaMutationDetail dnaChange) {
+        GenericTerm term = dnaChange.getGeneLocalizationTerm();
+        String statement = geneLocalizationStatement(dnaChange);
+        if (StringUtils.isEmpty(statement)) {
+            return "";
+        }
+        String preposition = "in";
+        if (term != null && term.getOboID() != null && term.getOboID().equals("SO:0001421")) {
+            preposition = "at";
+        }
+        return preposition + " " + statement;
+    }
+
+    /**
+     * Produces a gene localization statement based on the localization term, exon, and intron values
+     * of the FeatureDnaMutationDetail object.
+     *
+     * @param dnaChange the dna change
+     * @return localization statement
+     */
+    public String geneLocalizationStatement(FeatureDnaMutationDetail dnaChange) {
         if (dnaChange == null) {
             return  "";
         }
-        if (dnaChange.getExonNumber() != null) {
-            return "exon " + dnaChange.getExonNumber();
-        }
-        if (dnaChange.getIntronNumber() != null) {
-            return "interon " + dnaChange.getIntronNumber();
+        GenericTerm term = dnaChange.getGeneLocalizationTerm();
+        if (term == null || term.getOboID() == null) {
+            return exonOrIntronLocation(dnaChange);
+        } else {
+            switch (term.getOboID()) {
+                case "SO:0000163":
+                    return "splice donor site" + exonOrIntronLocation(dnaChange, " of ");
+                case "SO:0000164":
+                    return "splice acceptor site" + exonOrIntronLocation(dnaChange, " of ");
+                case "SO:0001421":
+                    return spliceJunctionLocation(dnaChange) + "splice junction";
+                case "SO:0000167":
+                    return "promotor";
+                case "SO:0000318":
+                    return "start codon";
+                case "SO:0000204":
+                    return "5' UTR";
+                case "SO:0000205":
+                    return "3' UTR";
+                case "SO:0000165":
+                    return "enhancer";
+            }
         }
         return "";
+    }
+
+    /**
+     * Return a location display string in cases where *either* an exon or intron is expected. Should
+     * not be used in cases where both are needed (e.g. a splice junction).
+     *
+     * @param dnaChange the dna change
+     * @return a string which describes the location of either an exon or intron
+     */
+    private String exonOrIntronLocation(FeatureDnaMutationDetail dnaChange) {
+        return exonOrIntronLocation(dnaChange, "");
+    }
+
+    /**
+     * Return a location display string in cases where *either* an exon or intron is expected. Should
+     * not be used in cases where both are needed (e.g. a splice junction). The preposition is prepended
+     * to the location string.
+     *
+     * @param dnaChange the dna change
+     * @param preposition a string added to the beginning
+     * @return a string which describes the location of either an exon or intron
+     */
+    private String exonOrIntronLocation(FeatureDnaMutationDetail dnaChange, String preposition) {
+        if (dnaChange == null) {
+            return "";
+        }
+
+        if (dnaChange.getExonNumber() != null) {
+            return preposition + "exon " + dnaChange.getExonNumber();
+        }
+        if (dnaChange.getIntronNumber() != null) {
+            return preposition + "intron " + dnaChange.getIntronNumber();
+        }
+        return "";
+    }
+
+    /**
+     * Splice junction location should have both and exon and intron value. If not, this method
+     * returns a blank string. When the exon number is less than or equal to the intron number, then
+     * return "exon X - intron Y", otherwise it's "intron Y - exon X".
+     *
+     * @param dnaChange the dna change
+     * @return a string which describes the location of a splice junction
+     */
+    private String spliceJunctionLocation(FeatureDnaMutationDetail dnaChange) {
+        if (dnaChange == null) {
+            return "";
+        }
+
+        if (dnaChange.getExonNumber() == null || dnaChange.getIntronNumber() == null) {
+            return "";
+        }
+
+        if (dnaChange.getExonNumber() <= dnaChange.getIntronNumber()) {
+            return "exon " + dnaChange.getExonNumber() + " - intron " + dnaChange.getIntronNumber() + " ";
+        } else {
+            return "intron " + dnaChange.getIntronNumber() + " - exon " + dnaChange.getExonNumber() + " ";
+        }
     }
 
 }
