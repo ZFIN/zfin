@@ -213,7 +213,7 @@ public class FacetBuilderService {
         facetGroups.add(buildSingleFacetGroup("Affected Gene", "affected_gene", true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildPhenotypeBlock(response, filterQuerySelectionMap, baseUrl));
         //todo: need this in the index still?
-
+        facetGroups.add(buildSingleFacetGroup("Consequence", "rna_consequence", false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Mutagen", "mutagen", false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Source", "source", false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Lab of Origin", "lab_of_origin", false, response, filterQuerySelectionMap, baseUrl));
