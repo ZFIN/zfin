@@ -1,19 +1,14 @@
 package org.zfin.mutant;
 
-import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.expression.Figure;
-
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Set;
 
 /**
  * Main Experiment object that contains expression annotations.
  */
 @Entity
-@Table(name = "PHENOTYPE_GENERATED_CURATED_MAPPING")
+@Table(name = "phenotype_generated_curated_mapping")
 public class PhenotypeCurationSearch implements Serializable {
-
 
     @Id
     @ManyToOne()
@@ -38,6 +33,25 @@ public class PhenotypeCurationSearch implements Serializable {
 
     public void setPhenoOrExpID(String phenoOrExpID) {
         this.phenoOrExpID = phenoOrExpID;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PhenotypeCurationSearch that = (PhenotypeCurationSearch) o;
+
+        if (phenoWarehouse.getId() != that.phenoWarehouse.getId()) return false;
+        return phenoOrExpID.equals(that.phenoOrExpID);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = phenoWarehouse != null ? phenoWarehouse.hashCode() : 0;
+        result = 31 * result + (phenoOrExpID != null ? phenoOrExpID.hashCode() : 0);
+        return result;
     }
 }
 
