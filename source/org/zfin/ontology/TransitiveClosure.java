@@ -2,17 +2,27 @@ package org.zfin.ontology;
 
 import org.apache.commons.lang.ObjectUtils;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
  * Maps to the table that contains the information of all children of a given term.
  * Allows to search for 'including substructure'
  */
+@Entity
+@Table(name = "all_term_contains")
 public class TransitiveClosure implements Serializable, Comparable<TransitiveClosure> {
 
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "alltermcon_container_zdb_id")
     private GenericTerm root;
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "alltermcon_contained_zdb_id")
     private GenericTerm child;
     // this is the minimum number of terms you have to traverse to connect the root term with the child. 
+    @Column(name = "alltermcon_min_contain_distance")
     private int distance;
 
     public GenericTerm getRoot() {

@@ -76,59 +76,6 @@
 
     </class>
 
-    <class name="org.zfin.infrastructure.AllNamesFastSearch" table="all_map_names">
-        <id name="id" type="int">
-            <column name="allmapnm_serial_id" not-null="true"/>
-            <generator class="identity"/>
-        </id>
-
-        <discriminator type="string"
-                       formula="(CASE get_obj_type(allmapnm_zdb_id)
-                                    WHEN 'ALT'  THEN     'Alt---'
-                                    WHEN 'GENO' THEN     'Geno--'
-                                    WHEN 'MRPHLNO' THEN  'Morpho'
-                                    ELSE                 'Marker'
-                                 END)"/>
-
-        <property name="name" column="allmapnm_name" type="string"/>
-        <property name="nameLowerCase" column="allmapnm_name_lower" type="string"/>
-        <property name="precedence" column="allmapnm_precedence" type="string"/>
-
-        <subclass name="org.zfin.infrastructure.AllMarkerNamesFastSearch" discriminator-value="Marker">
-            <many-to-one name="marker" class="org.zfin.marker.Marker" column="allmapnm_zdb_id"/>
-        </subclass>
-    </class>
-
-    <class name="org.zfin.ontology.TermDefinitionReference" table="external_reference">
-        <cache usage="read-only"/>
-        <id name="ID" type="long">
-            <column name="exref_pk_id" not-null="true"/>
-        </id>
-
-        <many-to-one name="term" column="exref_data_zdb_id" class="org.zfin.ontology.GenericTerm"/>
-        <many-to-one name="foreignDB" column="exref_foreign_db_id" class="org.zfin.sequence.ForeignDB"/>
-        <property name="reference" column="exref_reference"/>
-
-    </class>
-
-    <class name="org.zfin.ontology.TermExternalReference" table="term_xref">
-        <cache usage="read-only"/>
-        <id name="ID" type="long">
-            <column name="tx_pk_id" not-null="true"/>
-        </id>
-
-        <many-to-one name="term" column="tx_term_zdb_id" class="org.zfin.ontology.GenericTerm"/>
-        <many-to-one name="foreignDB" column="tx_fdb_db_id" class="org.zfin.sequence.ForeignDB"/>
-        <property name="fullAccession" column="tx_full_accession"/>
-        <property name="prefix" column="tx_prefix"/>
-        <property name="accessionNumber" column="tx_accession"/>
-
-        <set name="omimPhenotypes" lazy="true" table="omimp_termxref_mapping" access="field">
-            <key column="otm_tx_id"/>
-            <many-to-many class="org.zfin.mutant.OmimPhenotype" column="otm_omimp_id"/>
-        </set>
-    </class>
-
     <class name="org.zfin.ontology.GenericTerm" mutable="false" table="TERM" batch-size="10">
         <cache usage="read-only"/>
         <id name="zdbID" type="string">
@@ -194,59 +141,6 @@
             <many-to-one name="start" column="ts_start_stg_zdb_id" lazy="proxy"/>
         </join>
 
-    </class>
-
-    <class name="org.zfin.ontology.GenericTermRelationship" table="term_relationship">
-        <id name="zdbId">
-            <column name="termrel_zdb_id" not-null="true"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">TERMREL</param>
-            </generator>
-        </id>
-
-        <property name="type" column="termrel_type"/>
-        <many-to-one name="termOne" class="org.zfin.ontology.GenericTerm" column="termrel_term_1_zdb_id"/>
-        <many-to-one name="termTwo" class="org.zfin.ontology.GenericTerm" column="termrel_term_2_zdb_id"/>
-
-    </class>
-
-    <class name="org.zfin.ontology.Subset" table="ONTOLOGY_SUBSET">
-        <id name="id">
-            <column name="osubset_pk_id" not-null="true"/>
-        </id>
-        <property name="internalName" column="osubset_subset_name"/>
-        <property name="name" column="osubset_subset_definition"/>
-        <many-to-one name="metaData" column="osubset_ont_id" not-null="false"/>
-    </class>
-
-    <class name="org.zfin.ontology.TransitiveClosure" table="all_term_contains">
-        <composite-id>
-            <key-many-to-one name="child" column="alltermcon_contained_zdb_id"/>
-            <key-many-to-one name="root" column="alltermcon_container_zdb_id"/>
-        </composite-id>
-
-        <property name="distance" column="alltermcon_min_contain_distance"/>
-    </class>
-
-    <class name="org.zfin.ontology.OntologyMetadata" table="ontology">
-        <id name="id">
-            <column name="ont_pk_id" not-null="true"/>
-        </id>
-
-        <property name="name" column="ont_ontology_name"/>
-        <property name="date" column="ont_current_date"/>
-        <property name="dataVersion" column="ont_data_version"/>
-        <property name="defaultNamespace" column="ont_default_namespace"/>
-        <property name="generatedBy" column="ont_import"/>
-        <property name="oboVersion" column="ont_format_version"/>
-        <property name="order" column="ont_order"/>
-        <property name="remark" column="ont_remark"/>
-        <property name="savedBy" column="ont_saved_by"/>
-
-        <set name="subsets" lazy="false" inverse="true">
-            <key column="osubset_ont_id" not-null="false"/>
-            <one-to-many class="org.zfin.ontology.Subset"/>
-        </set>
     </class>
 
 
