@@ -643,6 +643,7 @@
              institution
              institution_t
              lab_of_origin
+             rna_consequence
              related_accession
              related_marker
              allele_t

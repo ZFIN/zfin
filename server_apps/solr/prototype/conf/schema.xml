@@ -525,6 +525,7 @@
    <field name="institution" type="keyword" indexed="true" stored="true" multiValued="true"   />
    <field name="lab_of_origin" type="keyword" indexed="true" stored="true" multiValued="true"   />
    <!--<field name="screen" type="keyword" indexed="true" stored="true" />-->
+   <field name="rna_consequence" type="keyword" indexed="true" stored="true" multiValued="true"   />
    <field name="mutagen" type="keyword" indexed="true" stored="true" />
 
    <field name="allele" type="keyword" indexed="true" stored="true" multiValued="true"   />
@@ -1086,6 +1087,7 @@
     <copyField source="lab" dest="text"/>
     <copyField source="curator" dest="text"/>
     <copyField source="lab_of_origin" dest="text"/>
+    <copyField source="rna_consequence" dest="text"/>
     <copyField source="institution" dest="text"/>
     <!--screen used to be here, removed as a result of case 11323-->
     <!--<copyField source="screen" dest="text"/>-->

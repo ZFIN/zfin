@@ -3095,6 +3095,14 @@ where feature_zdb_id = ids_data_zdb_id
                    cacheImpl="SortedMapBackedCache"
                    where="feature_id=feature.id"/>
 
+           <entity name="feature_rna_consequence"
+                   datasource="db" query="select feature_zdb_id as feature_id,
+       rct_term_display_name as rna_consequence
+from feature, rna_consequence_term,feature_rna_mutation_detail
+where feature_zdb_id = frmd_feature_zdb_id
+  and frmd_rna_consequence_term_zdb_id=rct_term_zdb_id ;"
+                     cacheImpl="SortedMapBackedCache"
+                   where="feature_id=feature.id"/>
 
        <entity name="feature_supplier"
                datasource="db" query="select lab.zdb_id as xref, lab.name as source, idsup_data_zdb_id as feature_zdb_id
