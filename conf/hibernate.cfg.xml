@@ -115,6 +115,7 @@
         <mapping class="org.zfin.feature.ProteinConsequence"/>
         <mapping class="org.zfin.feature.RnaConsequence"/>
         <mapping class="org.zfin.feature.FeatureDnaMutationDetail"/>
+        <mapping class="org.zfin.feature.Protein"/>
 
 
     </session-factory>
