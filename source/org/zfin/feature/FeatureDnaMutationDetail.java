@@ -36,9 +36,9 @@ public class FeatureDnaMutationDetail {
     @Column(name = "fdmd_number_removed_dna_base_pairs")
     private Integer numberRemovedBasePair;
     @Column(name = "fdmd_exon_number")
-    private Integer numberExon;
+    private Integer exonNumber;
     @Column(name = "fdmd_intron_number")
-    private Integer numberItrons;
+    private Integer intronNumber;
     @ManyToOne
     @JoinColumn(name = "fdmd_dna_mutation_term_zdb_id")
     private DnaMutationTerm dnaMutationTerm;
@@ -100,20 +100,20 @@ public class FeatureDnaMutationDetail {
         this.numberAdditionalBasePair = numberAdditionalBasePair;
     }
 
-    public int getNumberExon() {
-        return numberExon;
+    public Integer getExonNumber() {
+        return exonNumber;
     }
 
-    public void setNumberExon(int numberExon) {
-        this.numberExon = numberExon;
+    public void setExonNumber(Integer exonNumber) {
+        this.exonNumber = exonNumber;
     }
 
-    public int getNumberItrons() {
-        return numberItrons;
+    public Integer getIntronNumber() {
+        return intronNumber;
     }
 
-    public void setNumberItrons(int numberItrons) {
-        this.numberItrons = numberItrons;
+    public void setIntronNumber(Integer intronNumber) {
+        this.intronNumber = intronNumber;
     }
 
     public int getNumberRemovedBasePair() {

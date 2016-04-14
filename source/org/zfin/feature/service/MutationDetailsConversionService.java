@@ -1,5 +1,6 @@
 package org.zfin.feature.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureDnaMutationDetail;
@@ -33,7 +34,25 @@ public class MutationDetailsConversionService {
         if (dnaChange == null || dnaChange.getDnaMutationTerm() == null) {
             return "";
         }
-        return dnaChange.getDnaMutationTerm().getDisplayName();
+        StringBuilder statement = new StringBuilder(dnaChange.getDnaMutationTerm().getDisplayName());
+        String localization = getGeneLocalizationStatement(dnaChange);
+        if (StringUtils.isNotEmpty(localization)) {
+            statement.append(" in ").append(localization);
+        }
+        return statement.toString();
+    }
+
+    private String getGeneLocalizationStatement(FeatureDnaMutationDetail dnaChange) {
+        if (dnaChange == null) {
+            return  "";
+        }
+        if (dnaChange.getExonNumber() != null) {
+            return "exon " + dnaChange.getExonNumber();
+        }
+        if (dnaChange.getIntronNumber() != null) {
+            return "interon " + dnaChange.getIntronNumber();
+        }
+        return "";
     }
 
 }

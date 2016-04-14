@@ -37,4 +37,21 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         presentation.dnaChangeStatement == 'A>G'
     }
 
+    def 'dna statement should show exon localiazation'() {
+        setup:
+        def feature = new Feature(
+                type: FeatureTypeEnum.POINT_MUTATION,
+                featureDnaMutationDetail: new FeatureDnaMutationDetail(
+                        dnaMutationTerm: new DnaMutationTerm(displayName: 'A>G'),
+                        exonNumber: 4
+                )
+        )
+
+        when:
+        def presentation = converter.convert(feature)
+
+        then:
+        presentation.dnaChangeStatement == 'A>G in exon 4'
+    }
+
 }
