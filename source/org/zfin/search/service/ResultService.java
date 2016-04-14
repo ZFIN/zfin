@@ -82,6 +82,7 @@ public class ResultService {
     public static String NOTE = "Note:";
     public static String COMMENT = "Comment:";
     public static String LINE_DESIGNATION = "Line Designation:";
+    public static String CONSEQUENCE = "RNA Consequence:";
     public static String TRANSCRIPT_NAME = "Transcript Name:";
 
 
@@ -316,7 +317,9 @@ public class ResultService {
             }
 
             result.addAttribute(TYPE, feature.getType().getDisplay());
-
+            if (feature.getFeatureRnaMutationDetailSet() != null && feature.getFeatureRnaMutationDetailSet().size() > 0) {
+                result.addAttribute(CONSEQUENCE, withCommas(feature.getFeatureRnaMutationDetailSet()));
+            }
             if (feature.getConstructs() != null && feature.getConstructs().size() > 0) {
                 result.addAttribute(CONSTRUCT, withCommas(feature.getConstructs(), "marker.name"));
             }
