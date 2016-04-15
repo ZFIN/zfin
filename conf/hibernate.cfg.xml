@@ -124,6 +124,10 @@
         <mapping class="org.zfin.ontology.TermDefinitionReference"/>
         <mapping class="org.zfin.ontology.TermExternalReference"/>
         <mapping class="org.zfin.ontology.TransitiveClosure"/>
+        <mapping class="org.zfin.feature.FeatureAlias"/>
+        <mapping class="org.zfin.mutant.GenotypeAlias"/>
+        <mapping class="org.zfin.ontology.TermAlias"/>
+        <mapping class="org.zfin.marker.MarkerAlias"/>
 
 
     </session-factory>
