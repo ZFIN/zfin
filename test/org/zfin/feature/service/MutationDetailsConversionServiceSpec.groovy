@@ -27,6 +27,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         presentation.mutationType == 'Point Mutation'
     }
 
+    @Unroll
     def 'dna statement point mutations'() {
         setup:
         def feature = new Feature(
@@ -134,18 +135,36 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         "GENBANK" | "2242"    || "in GENBANK:2242"
     }
 
-    def 'dna statement should show number of nucleotides for deletion'() {
+    @Unroll
+    def 'dna statement for deletions'() {
         setup:
         def feature = new Feature(
                 type: FeatureTypeEnum.DELETION,
-                featureDnaMutationDetail: new FeatureDnaMutationDetail(numberRemovedBasePair: 10)
+                featureDnaMutationDetail: new FeatureDnaMutationDetail(
+                        numberRemovedBasePair: 10,
+                        geneLocalizationTerm: localization == null ? null : new GenericTerm(oboID: localization),
+                        exonNumber: exon,
+                        intronNumber: intron,
+                        dnaPositionStart: position,
+                        referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
+                        dnaSequenceReferenceAccessionNumber: accession
+                )
         )
 
         when:
         def presentation = converter.convert(feature)
 
         then:
-        presentation.dnaChangeStatement == '-10 bp'
+        presentation.dnaChangeStatement == display
+
+        where:
+        localization | exon | intron | position | db        | accession || display
+        null         | null | null   | null     | null      | null      || '-10 bp'
+        null         | null | 2      | null     | null      | null      || '-10 bp in intron 2'
+        'SO:0000163' | 6    | null   | 1010     | null      | null      || '-10 bp in splice donor site of exon 6 at position 1010'
+        null         | null | null   | 482      | null      | null      || '-10 bp at position 482'
+        null         | null | null   | 1829     | 'GENBANK' | 'C1032'   || '-10 bp at position 1829 in GENBANK:C1032'
+        null         | null | null   | null     | 'GENBANK' | '9999'    || '-10 bp in GENBANK:9999'
     }
 
 }

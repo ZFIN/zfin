@@ -24,21 +24,15 @@ public class MutationDetailsConversionService {
 
     public String getDnaMutationStatement(Feature feature) {
         FeatureDnaMutationDetail dnaChange = feature.getFeatureDnaMutationDetail();
+        StringBuilder statement = new StringBuilder();
         switch (feature.getType()) {
             case POINT_MUTATION:
-                return getDnaMutationStatementForPointMutation(dnaChange);
+                statement.append(pointMutationStatement(dnaChange));
+                break;
             case DELETION:
-                return getDnaMutationStatementForDeletion(dnaChange);
-            default:
-                return "";
+                statement.append(deletionStatement(dnaChange));
+                break;
         }
-    }
-
-    private String getDnaMutationStatementForPointMutation(FeatureDnaMutationDetail dnaChange) {
-        if (dnaChange == null || dnaChange.getDnaMutationTerm() == null) {
-            return "";
-        }
-        StringBuilder statement = new StringBuilder(dnaChange.getDnaMutationTerm().getDisplayName());
         String localization = geneLocalizationWithPreposition(dnaChange);
         if (StringUtils.isNotEmpty(localization)) {
             statement.append(" ").append(localization);
@@ -54,7 +48,14 @@ public class MutationDetailsConversionService {
         return statement.toString();
     }
 
-    private String getDnaMutationStatementForDeletion(FeatureDnaMutationDetail dnaChange) {
+    private String pointMutationStatement(FeatureDnaMutationDetail dnaChange) {
+        if (dnaChange == null || dnaChange.getDnaMutationTerm() == null) {
+            return "";
+        }
+        return dnaChange.getDnaMutationTerm().getDisplayName();
+    }
+
+    private String deletionStatement(FeatureDnaMutationDetail dnaChange) {
         if (dnaChange == null || dnaChange.getNumberRemovedBasePair() == null) {
             return "";
         }
@@ -69,6 +70,10 @@ public class MutationDetailsConversionService {
      * @return localization statement
      */
     public String geneLocalizationWithPreposition(FeatureDnaMutationDetail dnaChange) {
+        if (dnaChange == null) {
+            return "";
+        }
+
         GenericTerm term = dnaChange.getGeneLocalizationTerm();
         String statement = geneLocalizationStatement(dnaChange);
         if (StringUtils.isEmpty(statement)) {
