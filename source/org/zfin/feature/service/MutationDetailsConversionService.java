@@ -6,6 +6,7 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureDnaMutationDetail;
 import org.zfin.feature.presentation.MutationDetailsPresentation;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.sequence.ReferenceDatabase;
 
 @Service
 public class MutationDetailsConversionService {
@@ -43,6 +44,10 @@ public class MutationDetailsConversionService {
         String position = positionStatement(dnaChange);
         if (StringUtils.isNotEmpty(position)) {
             statement.append(" ").append(position);
+        }
+        String refSeq = referenceSequenceStatement(dnaChange);
+        if (StringUtils.isNotEmpty(refSeq)) {
+            statement.append(" ").append(refSeq);
         }
         return statement.toString();
     }
@@ -185,6 +190,25 @@ public class MutationDetailsConversionService {
         }
 
         return "from position " + dnaChange.getDnaPositionStart() + " to " + dnaChange.getDnaPositionEnd();
+    }
+
+    /**
+     * Produces a statement indicating a sequence of reference in the usual DBNAME:ACCESSION format
+     *
+     * @param dnaChange the dna change
+     * @return reference sequence statement
+     */
+    public String referenceSequenceStatement(FeatureDnaMutationDetail dnaChange) {
+        if (dnaChange == null) {
+            return "";
+        }
+
+        ReferenceDatabase refDb = dnaChange.getReferenceDatabase();
+        if (refDb == null) {
+            return "";
+        }
+
+        return "in " + refDb.getForeignDB().getDisplayName() + ":" + dnaChange.getDnaSequenceReferenceAccessionNumber();
     }
 
 }

@@ -1,16 +1,20 @@
 package org.zfin.feature.service
+
 import org.zfin.AbstractZfinSpec
 import org.zfin.feature.DnaMutationTerm
 import org.zfin.feature.Feature
 import org.zfin.feature.FeatureDnaMutationDetail
 import org.zfin.gwt.root.dto.FeatureTypeEnum
 import org.zfin.ontology.GenericTerm
+import org.zfin.sequence.ForeignDB
+import org.zfin.sequence.ReferenceDatabase
 import spock.lang.Shared
 import spock.lang.Unroll
 
 class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
 
-    @Shared MutationDetailsConversionService converter = new MutationDetailsConversionService()
+    @Shared
+    MutationDetailsConversionService converter = new MutationDetailsConversionService()
 
     def 'mutation type field should be populated'() {
         setup:
@@ -123,6 +127,48 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         null  | 38   || ""
         75    | null || "at position 75"
         181   | 371  || "from position 181 to 371"
+    }
+
+    def 'dna statement should show reference sequence for point mutation'() {
+        setup:
+        def feature = new Feature(
+                type: FeatureTypeEnum.POINT_MUTATION,
+                featureDnaMutationDetail: new FeatureDnaMutationDetail(
+                        dnaMutationTerm: new DnaMutationTerm(displayName: 'A>G'),
+                        referenceDatabase: new ReferenceDatabase(foreignDB: new ForeignDB(displayName: "REFDB")),
+                        dnaSequenceReferenceAccessionNumber: "A19492"
+                )
+        )
+
+        when:
+        def presentation = converter.convert(feature)
+
+        then:
+        presentation.dnaChangeStatement == 'A>G in REFDB:A19492'
+    }
+
+    @Unroll
+    def 'reference sequence statement with database #db, accession #accession'() {
+        setup:
+        def refDb = null
+        if (db != null) {
+            refDb = new ReferenceDatabase(
+                    foreignDB: new ForeignDB(displayName: db)
+            )
+        }
+        def dnaChange = new FeatureDnaMutationDetail(
+                referenceDatabase: refDb,
+                dnaSequenceReferenceAccessionNumber: accession
+        )
+
+        expect:
+        converter.referenceSequenceStatement(dnaChange) == display
+
+        where:
+        db        | accession || display
+        null      | null      || ""
+        null      | "32"      || ""
+        "GENBANK" | "2242"    || "in GENBANK:2242"
     }
 
 }
