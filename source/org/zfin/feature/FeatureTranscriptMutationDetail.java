@@ -5,8 +5,8 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "feature_rna_mutation_detail")
-public class FeatureRnaMutationDetail {
+@Table(name = "feature_transcript_mutation_detail")
+public class FeatureTranscriptMutationDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
@@ -16,17 +16,17 @@ public class FeatureRnaMutationDetail {
                     @org.hibernate.annotations.Parameter(name = "type", value = "FRMD"),
                     @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
             })
-    @Column(name = "frmd_zdb_id")
+    @Column(name = "ftmd_zdb_id")
     private String zdbID;
     @ManyToOne
-    @JoinColumn(name = "frmd_feature_zdb_id")
+    @JoinColumn(name = "ftmd_feature_zdb_id")
     private Feature feature;
     @ManyToOne
-    @JoinColumn(name = "frmd_rna_consequence_term_zdb_id")
-    private RnaConsequence rnaConsequence;
-    @Transient
+    @JoinColumn(name = "ftmd_transcript_consequence_term_zdb_id")
+    private TranscriptConsequence transcriptConsequence;
+    @Column(name = "ftmd_introl_number")
     private Integer intronNumber;
-    @Transient
+    @Column(name = "ftmd_exon_number")
     private Integer exonNumber   ;
 
     public Feature getFeature() {
@@ -45,12 +45,12 @@ public class FeatureRnaMutationDetail {
         this.zdbID = zdbID;
     }
 
-    public RnaConsequence getRnaConsequence() {
-        return rnaConsequence;
+    public TranscriptConsequence getTranscriptConsequence() {
+        return transcriptConsequence;
     }
 
-    public void setRnaConsequence(RnaConsequence rnaConsequence) {
-        this.rnaConsequence = rnaConsequence;
+    public void setTranscriptConsequence(TranscriptConsequence transcriptConsequence) {
+        this.transcriptConsequence = transcriptConsequence;
     }
 
     public Integer getExonNumber() {

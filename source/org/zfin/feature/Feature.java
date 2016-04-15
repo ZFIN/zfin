@@ -103,7 +103,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<FeatureDBLink> dbLinks;
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
-    private Set<FeatureRnaMutationDetail> featureRnaMutationDetailSet;
+    private Set<FeatureTranscriptMutationDetail> featureTranscriptMutationDetailSet;
     @OneToOne(mappedBy = "feature", fetch = FetchType.LAZY)
     private FeatureProteinMutationDetail featureProteinMutationDetail;
     @OneToOne(mappedBy = "feature", fetch = FetchType.LAZY)
@@ -320,12 +320,12 @@ public class Feature implements EntityNotes, EntityZdbID {
         return null;
     }
 
-    public Set<FeatureRnaMutationDetail> getFeatureRnaMutationDetailSet() {
-        return featureRnaMutationDetailSet;
+    public Set<FeatureTranscriptMutationDetail> getFeatureTranscriptMutationDetailSet() {
+        return featureTranscriptMutationDetailSet;
     }
 
-    public void setFeatureRnaMutationDetailSet(Set<FeatureRnaMutationDetail> mutationDetailSet) {
-        this.featureRnaMutationDetailSet = mutationDetailSet;
+    public void setFeatureTranscriptMutationDetailSet(Set<FeatureTranscriptMutationDetail> mutationDetailSet) {
+        this.featureTranscriptMutationDetailSet = mutationDetailSet;
     }
 
     public FeatureProteinMutationDetail getFeatureProteinMutationDetail() {

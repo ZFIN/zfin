@@ -72,7 +72,7 @@
         <mapping class="org.zfin.feature.Feature"/>
         <mapping class="org.zfin.mutant.Genotype"/>
         <mapping class="org.zfin.feature.FeatureAssay"/>
-        <mapping class="org.zfin.feature.FeatureRnaMutationDetail"/>
+        <mapping class="org.zfin.feature.FeatureTranscriptMutationDetail"/>
         <mapping class="org.zfin.feature.FeatureHistory"/>
         <mapping class="org.zfin.feature.FeaturePrefix"/>
         <mapping class="org.zfin.feature.FeatureMarkerRelationshipType"/>
@@ -112,10 +112,13 @@
         <mapping class="org.zfin.infrastructure.ZdbFlag"/>
         <mapping class="org.zfin.infrastructure.ReplacementZdbID"/>
         <mapping class="org.zfin.infrastructure.WithdrawnZdbID"/>
+        <mapping class="org.zfin.feature.AminoAcidTerm"/>
+        <mapping class="org.zfin.feature.GeneLocalizationTerm"/>
         <mapping class="org.zfin.feature.ProteinConsequence"/>
-        <mapping class="org.zfin.feature.RnaConsequence"/>
+        <mapping class="org.zfin.feature.TranscriptConsequence"/>
         <mapping class="org.zfin.feature.FeatureDnaMutationDetail"/>
-        <mapping class="org.zfin.feature.Protein"/>
+        <mapping class="org.zfin.feature.FeatureTranscriptMutationDetail"/>
+        <mapping class="org.zfin.feature.MutationDetailControlledVocabularyTerm"/>
         <mapping class="org.zfin.infrastructure.AllMarkerNamesFastSearch"/>
         <mapping class="org.zfin.infrastructure.AllNamesFastSearch"/>
         <mapping class="org.zfin.ontology.GenericTermRelationship"/>
@@ -124,6 +127,10 @@
         <mapping class="org.zfin.ontology.TermDefinitionReference"/>
         <mapping class="org.zfin.ontology.TermExternalReference"/>
         <mapping class="org.zfin.ontology.TransitiveClosure"/>
+        <mapping class="org.zfin.feature.FeatureAlias"/>
+        <mapping class="org.zfin.mutant.GenotypeAlias"/>
+        <mapping class="org.zfin.ontology.TermAlias"/>
+        <mapping class="org.zfin.marker.MarkerAlias"/>
 
 
     </session-factory>

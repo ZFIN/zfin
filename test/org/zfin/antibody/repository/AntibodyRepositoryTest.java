@@ -505,11 +505,11 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
             List<Marker> markers = ab.getAllRelatedMarker();
             for (Marker marker : markers) {
-                if (marker.getAbbreviation().indexOf(antigenName) > -1) {
+                if (marker.getAbbreviation().contains(antigenName)) {
                     foundAB = ab;
                     foundGene = true;
                 }
-                if (marker.getName().indexOf(antigenName) > -1) {
+                if (marker.getName().contains(antigenName)) {
                     foundAB = ab;
                     foundGene = true;
                 }
@@ -517,7 +517,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
                 if (aliases == null)
                     continue;
                 for (MarkerAlias alias : aliases) {
-                    if (alias.getAlias().indexOf(antigenName) > -1) {
+                    if (alias.getAlias().contains(antigenName)) {
                         foundAB = ab;
                         foundGene = true;
                     }

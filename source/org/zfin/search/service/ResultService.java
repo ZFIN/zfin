@@ -317,8 +317,8 @@ public class ResultService {
             }
 
             result.addAttribute(TYPE, feature.getType().getDisplay());
-            if (feature.getFeatureRnaMutationDetailSet() != null && feature.getFeatureRnaMutationDetailSet().size() > 0) {
-                result.addAttribute(CONSEQUENCE, withCommas(feature.getFeatureRnaMutationDetailSet()));
+            if (feature.getFeatureTranscriptMutationDetailSet() != null && feature.getFeatureTranscriptMutationDetailSet().size() > 0) {
+                result.addAttribute(CONSEQUENCE, withCommas(feature.getFeatureTranscriptMutationDetailSet()));
             }
             if (feature.getConstructs() != null && feature.getConstructs().size() > 0) {
                 result.addAttribute(CONSTRUCT, withCommas(feature.getConstructs(), "marker.name"));

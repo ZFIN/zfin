@@ -1,6 +1,7 @@
 package org.zfin.feature;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.sequence.ReferenceDatabase;
 
 import javax.persistence.*;
@@ -32,13 +33,16 @@ public class FeatureDnaMutationDetail {
     @JoinColumn(name = "fdmd_fdbcont_zdb_id")
     private ReferenceDatabase referenceDatabase;
     @Column(name = "fdmd_number_additional_dna_base_pairs")
-    private Integer numberAdditionalBasePair;
+    private Integer numberAddedBasePair;
     @Column(name = "fdmd_number_removed_dna_base_pairs")
     private Integer numberRemovedBasePair;
     @Column(name = "fdmd_exon_number")
     private Integer exonNumber;
     @Column(name = "fdmd_intron_number")
     private Integer intronNumber;
+    @ManyToOne
+    @JoinColumn(name = "fdmd_gene_localization_term_zdb_id")
+    private GenericTerm geneLocalizationTerm;
     @ManyToOne
     @JoinColumn(name = "fdmd_dna_mutation_term_zdb_id")
     private DnaMutationTerm dnaMutationTerm;
@@ -68,19 +72,19 @@ public class FeatureDnaMutationDetail {
         this.dnaMutationTerm = dnaMutationTerm;
     }
 
-    public int getDnaPositionEnd() {
+    public Integer getDnaPositionEnd() {
         return dnaPositionEnd;
     }
 
-    public void setDnaPositionEnd(int dnaPositionEnd) {
+    public void setDnaPositionEnd(Integer dnaPositionEnd) {
         this.dnaPositionEnd = dnaPositionEnd;
     }
 
-    public int getDnaPositionStart() {
+    public Integer getDnaPositionStart() {
         return dnaPositionStart;
     }
 
-    public void setDnaPositionStart(int dnaPositionStart) {
+    public void setDnaPositionStart(Integer dnaPositionStart) {
         this.dnaPositionStart = dnaPositionStart;
     }
 
@@ -92,12 +96,12 @@ public class FeatureDnaMutationDetail {
         this.dnaSequenceReferenceAccessionNumber = dnaSequenceReferenceAccessionNumber;
     }
 
-    public int getNumberAdditionalBasePair() {
-        return numberAdditionalBasePair;
+    public Integer getNumberAddedBasePair() {
+        return numberAddedBasePair;
     }
 
-    public void setNumberAdditionalBasePair(int numberAdditionalBasePair) {
-        this.numberAdditionalBasePair = numberAdditionalBasePair;
+    public void setNumberAddedBasePair(Integer numberAdditionalBasePair) {
+        this.numberAddedBasePair = numberAdditionalBasePair;
     }
 
     public Integer getExonNumber() {
@@ -116,11 +120,11 @@ public class FeatureDnaMutationDetail {
         this.intronNumber = intronNumber;
     }
 
-    public int getNumberRemovedBasePair() {
+    public Integer getNumberRemovedBasePair() {
         return numberRemovedBasePair;
     }
 
-    public void setNumberRemovedBasePair(int numberRemovedBasePair) {
+    public void setNumberRemovedBasePair(Integer numberRemovedBasePair) {
         this.numberRemovedBasePair = numberRemovedBasePair;
     }
 
@@ -130,5 +134,13 @@ public class FeatureDnaMutationDetail {
 
     public void setZdbID(String zdbID) {
         this.zdbID = zdbID;
+    }
+
+    public GenericTerm getGeneLocalizationTerm() {
+        return geneLocalizationTerm;
+    }
+
+    public void setGeneLocalizationTerm(GenericTerm geneLocalizationTerm) {
+        this.geneLocalizationTerm = geneLocalizationTerm;
     }
 }

@@ -300,11 +300,11 @@
                 <td>${formBean.feature.numberOfremovedBps}</td>
             </tr>
             <c:choose>
-                <c:when test="${!empty formBean.feature.featureRnaMutationDetailSet}">
-                    <c:forEach items="${formBean.feature.featureRnaMutationDetailSet}" var="rna" varStatus="rnaLoop">
+                <c:when test="${!empty formBean.feature.featureTranscriptMutationDetailSet}">
+                    <c:forEach items="${formBean.feature.featureTranscriptMutationDetailSet}" var="rna" varStatus="rnaLoop">
                         <tr>
-                            <th>featureRnaMutationDetailSet[${rnaLoop.index}].rnaConsequence</th>
-                            <td>${rna.rnaConsequence.termName}</td>
+                            <th>featureRnaMutationDetailSet[${rnaLoop.index}].transcriptConsequence</th>
+                            <td>${rna.transcriptConsequence.termName}</td>
                         </tr>
                     </c:forEach>
                 </c:when>
