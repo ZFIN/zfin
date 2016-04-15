@@ -4,6 +4,8 @@ import org.zfin.AbstractZfinSpec
 import org.zfin.feature.DnaMutationTerm
 import org.zfin.feature.Feature
 import org.zfin.feature.FeatureDnaMutationDetail
+import org.zfin.feature.FeatureTranscriptMutationDetail
+import org.zfin.feature.TranscriptConsequence
 import org.zfin.gwt.root.dto.FeatureTypeEnum
 import org.zfin.ontology.GenericTerm
 import org.zfin.sequence.ForeignDB
@@ -262,5 +264,53 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         'SO:0000167' | null | null   | null     | null     | null      || "Insertion in promotor"
         null         | null | null   | 8849     | null     | null      || "Insertion at position 8849"
         null         | null | null   | null     | 'FOOBAR' | '998A'    || "Insertion in FOOBAR:998A"
+    }
+
+    @Unroll
+    def 'transcript consequence statement with term #term, exon #exon, intron #intron'() {
+        setup:
+        def transcriptConsequence = new FeatureTranscriptMutationDetail(
+                transcriptConsequence: term == null ? null : new TranscriptConsequence(displayName: 'missense_variant'),
+                exonNumber: exon,
+                intronNumber: intron
+        )
+
+        expect:
+        converter.transcriptConsequenceStatement(transcriptConsequence) == display
+
+        where:
+        term               | exon | intron || display
+        null               | null | null   || ''
+        'missense_variant' | null | null   || 'missense_variant'
+        'missense_variant' | 1    | null   || 'missense_variant in exon 1'
+        'missense_variant' | null | 2      || 'missense_variant in intron 2'
+        'missense_variant' | 3    | 4      || 'missense_variant in exon 3'
+    }
+
+    @Unroll
+    def 'transcript sequence statement should show all terms in correct order'() {
+        setup:
+        def detailSet = new TreeSet([
+                new FeatureTranscriptMutationDetail(
+                        transcriptConsequence: new TranscriptConsequence(displayName: 'missense_variant', order: 1)),
+                new FeatureTranscriptMutationDetail(
+                        transcriptConsequence: new TranscriptConsequence(displayName: 'intron_gain_variant', order: 6),
+                        intronNumber: 5
+                ),
+                new FeatureTranscriptMutationDetail(
+                        transcriptConsequence: new TranscriptConsequence(displayName: 'splicing_variant', order: 3),
+                        exonNumber: 3
+                ),
+                new FeatureTranscriptMutationDetail(
+                        transcriptConsequence: new TranscriptConsequence(displayName: '3_prime_UTR_variant', order: 2)),
+
+        ])
+        def feature = new Feature(featureTranscriptMutationDetailSet: detailSet)
+
+        when:
+        def presentation = converter.convert(feature)
+
+        then:
+        presentation.transcriptChangeStatement == 'missense_variant, 3_prime_UTR_variant, splicing_variant in exon 3, intron_gain_variant in intron 5'
     }
 }

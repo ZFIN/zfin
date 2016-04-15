@@ -1,12 +1,13 @@
 package org.zfin.feature;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "feature_transcript_mutation_detail")
-public class FeatureTranscriptMutationDetail {
+public class FeatureTranscriptMutationDetail implements Comparable<FeatureTranscriptMutationDetail> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
@@ -67,5 +68,10 @@ public class FeatureTranscriptMutationDetail {
 
     public void setIntronNumber(Integer intronNumber) {
         this.intronNumber = intronNumber;
+    }
+
+    @Override
+    public int compareTo(FeatureTranscriptMutationDetail o) {
+        return ObjectUtils.compare(transcriptConsequence, o.transcriptConsequence);
     }
 }

@@ -4,9 +4,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureDnaMutationDetail;
+import org.zfin.feature.FeatureTranscriptMutationDetail;
 import org.zfin.feature.presentation.MutationDetailsPresentation;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.sequence.ReferenceDatabase;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class MutationDetailsConversionService {
@@ -15,14 +20,21 @@ public class MutationDetailsConversionService {
         MutationDetailsPresentation details = new MutationDetailsPresentation();
         details.setMutationType(getMutationTypeStatement(feature));
         details.setDnaChangeStatement(getDnaMutationStatement(feature));
+        details.setTranscriptChangeStatement(getTranscriptMutationStatement(feature));
         return details;
     }
 
     public String getMutationTypeStatement(Feature feature) {
+        if (feature == null || feature.getType() == null) {
+            return "";
+        }
         return feature.getType().getDisplay();
     }
 
     public String getDnaMutationStatement(Feature feature) {
+        if (feature == null || feature.getType() == null) {
+            return "";
+        }
         FeatureDnaMutationDetail dnaChange = feature.getFeatureDnaMutationDetail();
         StringBuilder statement = new StringBuilder();
         switch (feature.getType()) {
@@ -55,6 +67,18 @@ public class MutationDetailsConversionService {
             statement.append(" ").append(refSeq);
         }
         return statement.toString();
+    }
+
+    public String getTranscriptMutationStatement(Feature feature) {
+        Set<FeatureTranscriptMutationDetail> consequences = feature.getFeatureTranscriptMutationDetailSet();
+        if (consequences == null) {
+            return "";
+        }
+        List<String> consequenceStatements = new ArrayList<>(consequences.size());
+        for (FeatureTranscriptMutationDetail consequence : consequences) {
+            consequenceStatements.add(transcriptConsequenceStatement(consequence));
+        }
+        return StringUtils.join(consequenceStatements, ", ");
     }
 
     private String pointMutationStatement(FeatureDnaMutationDetail dnaChange) {
@@ -209,6 +233,20 @@ public class MutationDetailsConversionService {
         return "";
     }
 
+    private String exonOrIntronLocation(FeatureTranscriptMutationDetail transcriptConsequence) {
+        if (transcriptConsequence == null) {
+            return "";
+        }
+
+        if (transcriptConsequence.getExonNumber() != null) {
+            return "exon " + transcriptConsequence.getExonNumber();
+        }
+        if (transcriptConsequence.getIntronNumber() != null) {
+            return "intron " + transcriptConsequence.getIntronNumber();
+        }
+        return "";
+    }
+
     /**
      * Splice junction location should have both and exon and intron value. If not, this method
      * returns a blank string. When the exon number is less than or equal to the intron number, then
@@ -275,6 +313,18 @@ public class MutationDetailsConversionService {
         }
 
         return "in " + refDb.getForeignDB().getDisplayName() + ":" + dnaChange.getDnaSequenceReferenceAccessionNumber();
+    }
+
+    public String transcriptConsequenceStatement(FeatureTranscriptMutationDetail transcriptDetail) {
+        if (transcriptDetail == null || transcriptDetail.getTranscriptConsequence() == null) {
+            return "";
+        }
+        StringBuilder statement = new StringBuilder(transcriptDetail.getTranscriptConsequence().getDisplayName());
+        String location = exonOrIntronLocation(transcriptDetail);
+        if (StringUtils.isNotEmpty(location)) {
+            statement.append(" in ").append(location);
+        }
+        return statement.toString();
     }
 
 }
