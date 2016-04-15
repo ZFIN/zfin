@@ -300,8 +300,8 @@ public class OntologyManager {
         List<TermDTO> children = new ArrayList<TermDTO>(averageMaximumNumOfChildren);
         Set<TermDTO> childrenSet = new HashSet<TermDTO>(averageMaximumNumOfChildren);
         for (String rootOboID : rootOboIDs) {
-            Term rootTerm = getOntologyRepository().getTermByOboID(rootOboID);
-            for (Term childTerm : rootTerm.getChildTerms()) {
+            GenericTerm rootTerm = getOntologyRepository().getTermByOboID(rootOboID);
+            for (GenericTerm childTerm : rootTerm.getChildTerms()) {
                 TermDTO childTermDTO = DTOConversionService.convertToTermDTOWithDirectRelationships(childTerm);
                 children.add(childTermDTO);
                 childrenSet.add(childTermDTO);
@@ -454,7 +454,7 @@ public class OntologyManager {
             return;
         }
 
-        for (Term term : terms) {
+        for (GenericTerm term : terms) {
             if (term.getOntology() == Ontology.STAGE) {
                 tokenizer.tokenizeTerm(DTOConversionService.convertToTermDTO(term), termMap);
             } else {

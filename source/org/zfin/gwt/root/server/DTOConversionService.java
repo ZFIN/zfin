@@ -792,14 +792,14 @@ public class DTOConversionService {
         return aliasDTOs;
     }
 
-    public static TermDTO convertToTermDTOWithDirectRelationships(Term term) {
+    public static TermDTO convertToTermDTOWithDirectRelationships(GenericTerm term) {
         if (term == null) {
             return null;
         }
         TermDTO dto = convertToTermDTO(term);
 
         Set<TermDTO> childTerms = new HashSet<>();
-        for (TermRelationship termRelationship : term.getChildTermRelationships()) {
+        for (GenericTermRelationship termRelationship : term.getChildTermRelationships()) {
             TermDTO childTerm = convertToTermDTO(termRelationship.getTermTwo());
             childTerm.setRelationshipType(termRelationship.getType());
             childTerms.add(childTerm);
@@ -848,7 +848,7 @@ public class DTOConversionService {
         return term;
     }
 
-    public static TermDTO convertToTermDTO(Term term) {
+    public static TermDTO convertToTermDTO(GenericTerm term) {
         if (term == null) {
             return null;
         }
@@ -1289,7 +1289,7 @@ public class DTOConversionService {
      * @param term Term
      * @return ExpressedTermDTO
      */
-    public static ExpressedTermDTO convertToExpressedTermDTO(Term term) {
+    public static ExpressedTermDTO convertToExpressedTermDTO(GenericTerm term) {
         ExpressedTermDTO expressedDTO = new ExpressedTermDTO();
         EntityDTO entity = new EntityDTO();
         entity.setSuperTerm(DTOConversionService.convertToTermDTO(term));

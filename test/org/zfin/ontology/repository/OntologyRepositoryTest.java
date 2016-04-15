@@ -59,7 +59,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getTermWithDefinitionReference() {
         String anatomyRootID = "ZFA:0000089";
-        Term term = ontologyRepository.getTermByOboID(anatomyRootID);
+        GenericTerm term = ontologyRepository.getTermByOboID(anatomyRootID);
         assertNotNull(term);
         assertNotNull(term.getDefinitionReferences());
         assertTrue(term.getDefinitionReferences().size() > 0);
@@ -222,7 +222,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     public void testRelationships() {
         // choose a term that has both children and parents
         // size
-        Term t = ontologyRepository.getTermByZdbID("ZDB-TERM-070117-118");
+        GenericTerm t = ontologyRepository.getTermByZdbID("ZDB-TERM-070117-118");
         assertThat(t.getChildTermRelationships().size(), greaterThan(4));
         assertThat(t.getChildTermRelationships().size(), lessThan(10));
         assertThat(t.getChildTerms().size(), greaterThan(4));
@@ -233,11 +233,11 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         assertThat(t.getAllDirectlyRelatedTerms().size(), greaterThan(6));
         assertThat(t.getAllDirectlyRelatedTerms().size(), lessThan(10));
 
-        for (TermRelationship tr : t.getChildTermRelationships()) {
+        for (GenericTermRelationship tr : t.getChildTermRelationships()) {
             assertEquals(t.getZdbID(), tr.getTermOne().getZdbID());
         }
 
-        for (TermRelationship tr : t.getParentTermRelationships()) {
+        for (GenericTermRelationship tr : t.getParentTermRelationships()) {
             assertEquals(t.getZdbID(), tr.getTermTwo().getZdbID());
         }
     }

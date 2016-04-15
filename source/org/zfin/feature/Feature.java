@@ -26,13 +26,6 @@ import java.util.*;
  */
 @Entity
 @Table(name = "feature")
-/*
-@SecondaryTables({
-        @SecondaryTable(name = "dna_mutation_term", pkJoinColumns = {
-                @PrimaryKeyJoinColumn(name = "dmt_term_zdb_id", referencedColumnName = "feature_dna_mutation_term_zdb_id")}
-        )
-})
-*/
 // Only update attributes that have changed.
 @org.hibernate.annotations.Entity(dynamicUpdate = true)
 public class Feature implements EntityNotes, EntityZdbID {

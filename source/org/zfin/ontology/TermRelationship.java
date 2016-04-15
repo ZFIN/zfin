@@ -2,29 +2,28 @@ package org.zfin.ontology;
 
 import org.zfin.gwt.root.dto.RelationshipType;
 
+import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 
-/**
- */
 public interface TermRelationship extends Serializable, Comparable<TermRelationship> {
 
-    public String getZdbId();
+    String getZdbId();
 
-    public GenericTerm getTermOne();
+    GenericTerm getTermOne();
 
-    public void setTermOne(GenericTerm term);
+    void setTermOne(GenericTerm term);
 
-    public Term getTermTwo();
+    Term getTermTwo();
 
-    public void setTermTwo(GenericTerm term);
+    void setTermTwo(GenericTerm term);
 
-    public GenericTerm getRelatedTerm(GenericTerm t);
+    GenericTerm getRelatedTerm(GenericTerm t);
 
-    public String getType();
+    String getType();
 
-    public void setType(String type);
+    void setType(String type);
 
-    public RelationshipType getRelationshipType();
+    RelationshipType getRelationshipType();
 
 
 }

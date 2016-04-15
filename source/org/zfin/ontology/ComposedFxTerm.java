@@ -10,23 +10,23 @@ public class ComposedFxTerm implements Comparable<ComposedFxTerm> {
 
     private long ID;
     private String zdbID;
-    private Term superTerm;
-    private Term subterm;
+    private GenericTerm superTerm;
+    private GenericTerm subterm;
     private boolean expressionFound;
 
-    public Term getSuperTerm() {
+    public GenericTerm getSuperTerm() {
         return superTerm;
     }
 
-    public void setSuperTerm(Term superTerm) {
+    public void setSuperTerm(GenericTerm superTerm) {
         this.superTerm = superTerm;
     }
 
-    public Term getSubterm() {
+    public GenericTerm getSubterm() {
         return subterm;
     }
 
-    public void setSubterm(Term subterm) {
+    public void setSubterm(GenericTerm subterm) {
         this.subterm = subterm;
     }
 
