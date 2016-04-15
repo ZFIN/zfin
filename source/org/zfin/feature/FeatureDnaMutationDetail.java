@@ -72,19 +72,19 @@ public class FeatureDnaMutationDetail {
         this.dnaMutationTerm = dnaMutationTerm;
     }
 
-    public int getDnaPositionEnd() {
+    public Integer getDnaPositionEnd() {
         return dnaPositionEnd;
     }
 
-    public void setDnaPositionEnd(int dnaPositionEnd) {
+    public void setDnaPositionEnd(Integer dnaPositionEnd) {
         this.dnaPositionEnd = dnaPositionEnd;
     }
 
-    public int getDnaPositionStart() {
+    public Integer getDnaPositionStart() {
         return dnaPositionStart;
     }
 
-    public void setDnaPositionStart(int dnaPositionStart) {
+    public void setDnaPositionStart(Integer dnaPositionStart) {
         this.dnaPositionStart = dnaPositionStart;
     }
 

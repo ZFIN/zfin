@@ -40,6 +40,10 @@ public class MutationDetailsConversionService {
         if (StringUtils.isNotEmpty(localization)) {
             statement.append(" ").append(localization);
         }
+        String position = positionStatement(dnaChange);
+        if (StringUtils.isNotEmpty(position)) {
+            statement.append(" ").append(position);
+        }
         return statement.toString();
     }
 
@@ -156,6 +160,31 @@ public class MutationDetailsConversionService {
         } else {
             return "intron " + dnaChange.getIntronNumber() + " - exon " + dnaChange.getExonNumber() + " ";
         }
+    }
+
+    /**
+     * Produces a position statement based on the position start and end values of the
+     * FeatureDnaMutationDetail object. If the start is null, a blank string is always returned.
+     * If only the start has a value, it produces a string for that position. If start and end
+     * have a value, it produces a statement for the range.
+     *
+     * @param dnaChange the dna change
+     * @return position statement
+     */
+    public String positionStatement(FeatureDnaMutationDetail dnaChange) {
+        if (dnaChange == null) {
+            return  "";
+        }
+
+        if (dnaChange.getDnaPositionStart() == null) {
+            return "";
+        }
+
+        if (dnaChange.getDnaPositionEnd() == null) {
+            return "at position " + dnaChange.getDnaPositionStart();
+        }
+
+        return "from position " + dnaChange.getDnaPositionStart() + " to " + dnaChange.getDnaPositionEnd();
     }
 
 }

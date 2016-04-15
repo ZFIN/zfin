@@ -89,4 +89,40 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         "SO:0000165" | 3    | 4      || "in enhancer"
     }
 
+    def 'dna statement should show location for point mutation'() {
+        setup:
+        def feature = new Feature(
+                type: FeatureTypeEnum.POINT_MUTATION,
+                featureDnaMutationDetail: new FeatureDnaMutationDetail(
+                        dnaMutationTerm: new DnaMutationTerm(displayName: 'A>G'),
+                        dnaPositionStart: 48
+                )
+        )
+
+        when:
+        def presentation = converter.convert(feature)
+
+        then:
+        presentation.dnaChangeStatement == 'A>G at position 48'
+    }
+
+    @Unroll
+    def 'position statement with start #start, end #end'() {
+        setup:
+        def dnaChange = new FeatureDnaMutationDetail(
+                dnaPositionStart: start,
+                dnaPositionEnd: end
+        )
+
+        expect:
+        converter.positionStatement(dnaChange) == display
+
+        where:
+        start | end  || display
+        null  | null || ""
+        null  | 38   || ""
+        75    | null || "at position 75"
+        181   | 371  || "from position 181 to 371"
+    }
+
 }
