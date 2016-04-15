@@ -38,6 +38,9 @@ public class MutationDetailsConversionService {
             case INDEL:
                 statement.append(indelStatement(dnaChange));
                 break;
+            case TRANSGENIC_INSERTION:
+                statement.append(transgenicStatement(dnaChange));
+                break;
         }
         String localization = geneLocalizationWithPreposition(dnaChange);
         if (StringUtils.isNotEmpty(localization)) {
@@ -93,6 +96,22 @@ public class MutationDetailsConversionService {
         }
 
         return "+" + dnaChange.getNumberAddedBasePair() + "/-" + dnaChange.getNumberRemovedBasePair() + " bp";
+    }
+
+    private String transgenicStatement(FeatureDnaMutationDetail dnaChange) {
+        if (dnaChange == null) {
+            return "";
+        }
+
+        if (dnaChange.getGeneLocalizationTerm() == null &&
+                dnaChange.getExonNumber() == null &&
+                dnaChange.getIntronNumber() == null &&
+                dnaChange.getDnaPositionStart() == null &&
+                dnaChange.getReferenceDatabase() == null) {
+            return "";
+        }
+
+        return "Insertion";
     }
 
     /**

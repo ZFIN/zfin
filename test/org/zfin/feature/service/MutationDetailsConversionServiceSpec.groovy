@@ -234,4 +234,33 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         34    | 17      | null         | null | null   | null     | 'GENBANK' | '9999'    || '+34/-17 bp in GENBANK:9999'
     }
 
+    @Unroll
+    def 'dna statement for transgenics'() {
+        setup:
+        def feature = new Feature(
+                type: FeatureTypeEnum.TRANSGENIC_INSERTION,
+                featureDnaMutationDetail: new FeatureDnaMutationDetail(
+                        geneLocalizationTerm: localization == null ? null : new GenericTerm(oboID: localization),
+                        exonNumber: exon,
+                        intronNumber: intron,
+                        dnaPositionStart: position,
+                        referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
+                        dnaSequenceReferenceAccessionNumber: accession
+                )
+        )
+
+        when:
+        def presentation = converter.convert(feature)
+
+        then:
+        presentation.dnaChangeStatement == display
+
+        where:
+        localization | exon | intron | position | db       | accession || display
+        null         | null | null   | null     | null     | null      || ""
+        null         | null | 5      | null     | null     | null      || "Insertion in intron 5"
+        'SO:0000167' | null | null   | null     | null     | null      || "Insertion in promotor"
+        null         | null | null   | 8849     | null     | null      || "Insertion at position 8849"
+        null         | null | null   | null     | 'FOOBAR' | '998A'    || "Insertion in FOOBAR:998A"
+    }
 }
