@@ -37,10 +37,10 @@ public class FeatureProteinMutationDetail {
     private Integer numberAminoAcidsAdded;
     @ManyToOne
     @JoinColumn(name = "fpmd_wt_protein_term_zdb_id")
-    private Protein wildtypeProtein;
+    private AminoAcidTerm wildtypeProtein;
     @ManyToOne
     @JoinColumn(name = "fpmd_mutant_or_stop_protein_term_zdb_id")
-    private Protein mutantProtein;
+    private AminoAcidTerm mutantProtein;
 
     public Feature getFeature() {
         return feature;
@@ -98,20 +98,19 @@ public class FeatureProteinMutationDetail {
         this.referenceDatabase = referenceDatabase;
     }
 
-
-    public Protein getMutantProtein() {
+    public AminoAcidTerm getMutantProtein() {
         return mutantProtein;
     }
 
-    public void setMutantProtein(Protein mutantProtein) {
+    public void setMutantProtein(AminoAcidTerm mutantProtein) {
         this.mutantProtein = mutantProtein;
     }
 
-    public Protein getWildtypeProtein() {
+    public AminoAcidTerm getWildtypeProtein() {
         return wildtypeProtein;
     }
 
-    public void setWildtypeProtein(Protein wildtypeProtein) {
+    public void setWildtypeProtein(AminoAcidTerm wildtypeProtein) {
         this.wildtypeProtein = wildtypeProtein;
     }
 

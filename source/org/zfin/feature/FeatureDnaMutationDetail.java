@@ -41,7 +41,7 @@ public class FeatureDnaMutationDetail {
     @Column(name = "fdmd_intron_number")
     private Integer intronNumber;
     @ManyToOne
-    @JoinColumn(name = "fdmd_gene_localization_splice_term_zdb_id")
+    @JoinColumn(name = "fdmd_gene_localization_term_zdb_id")
     private GenericTerm geneLocalizationTerm;
     @ManyToOne
     @JoinColumn(name = "fdmd_dna_mutation_term_zdb_id")

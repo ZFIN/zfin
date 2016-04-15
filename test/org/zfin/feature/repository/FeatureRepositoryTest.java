@@ -10,7 +10,7 @@ import org.zfin.TestConfiguration;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.feature.FeaturePrefix;
-import org.zfin.feature.FeatureRnaMutationDetail;
+import org.zfin.feature.FeatureTranscriptMutationDetail;
 import org.zfin.feature.presentation.FeatureLabEntry;
 import org.zfin.feature.presentation.FeaturePrefixLight;
 import org.zfin.framework.HibernateUtil;
@@ -364,8 +364,9 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getDnaProteinMutationDetail() {
         Feature feature = featureRepository.getFeatureByID("ZDB-ALT-100412-3");
-        for (FeatureRnaMutationDetail detail : feature.getFeatureRnaMutationDetailSet())
-            System.out.println(detail.getRnaConsequence().getDisplayName());
+        for (FeatureTranscriptMutationDetail detail : feature.getFeatureTranscriptMutationDetailSet()) {
+            System.out.println(detail.getTranscriptConsequence().getDisplayName());
+        }
         Assert.assertNotNull(feature);
     }
 
