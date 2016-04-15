@@ -30,7 +30,7 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(synonyms);
         // check that none of the synonyms are secondary ids
         for (TermAlias syn : synonyms) {
-            assertEquals(" Not a secondary id", true, syn.getGroup() != DataAliasGroup.Group.SECONDARY_ID);
+            assertEquals(" Not a secondary id", false, syn.getAliasGroup().getName().equals(DataAliasGroup.Group.SECONDARY_ID.name()));
         }
     }
 

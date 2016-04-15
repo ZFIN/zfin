@@ -21,61 +21,6 @@
         <param name="enumClassname">org.zfin.ontology.Ontology</param>
     </typedef>
 
-    <class name="org.zfin.infrastructure.DataAlias" table="DATA_ALIAS">
-        <cache usage="nonstrict-read-write"/>
-        <id name="zdbID">
-            <column name="dalias_zdb_id"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">DALIAS</param>
-                <param name="insertActiveData">true</param>
-            </generator>
-        </id>
-
-        <discriminator type="string"
-                       formula="(CASE get_obj_type(dalias_data_zdb_id)
-                                    WHEN 'ANAT' THEN 'Anatom'
-                                    WHEN 'GENE' THEN 'Marker'
-                                    WHEN 'ATB' THEN  'Marker'
-                                    WHEN 'TERM' THEN 'Term  '
-                                    WHEN 'GENO' THEN 'Genoty'
-                                    WHEN 'ALT'  THEN 'Featur'
-                                    ELSE             'Marker'
-                                 END)"/>
-
-        <property name="alias" column="dalias_alias"/>
-        <property name="aliasLowerCase" column="dalias_alias_lower"/>
-        <property name="dataZdbID" column="dalias_data_zdb_id" update="false" insert="false"/>
-
-        <many-to-one name="aliasGroup" class="org.zfin.infrastructure.DataAliasGroup" column="dalias_group_id"
-                     not-null="true"/>
-
-        <set name="sources" lazy="true" table="record_attribution">
-            <key column="recattrib_data_zdb_id" foreign-key="recattrib_data_zdb_id"/>
-            <many-to-many class="org.zfin.infrastructure.ActiveSource" column="recattrib_source_zdb_id"/>
-        </set>
-
-        <set name="publications" lazy="true" cascade="all">
-            <key column="recattrib_data_zdb_id" update="false"/>
-            <one-to-many class="org.zfin.infrastructure.PublicationAttribution"/>
-        </set>
-
-        <subclass name="org.zfin.marker.MarkerAlias" discriminator-value="Marker">
-            <many-to-one name="marker" column="dalias_data_zdb_id" class="org.zfin.marker.Marker"/>
-        </subclass>
-        <subclass name="org.zfin.feature.FeatureAlias" discriminator-value="Featur">
-            <many-to-one name="feature" column="dalias_data_zdb_id" class="org.zfin.feature.Feature"/>
-        </subclass>
-
-        <subclass name="org.zfin.ontology.TermAlias" discriminator-value="Term  ">
-            <many-to-one name="term" column="dalias_data_zdb_id" class="org.zfin.ontology.GenericTerm"/>
-        </subclass>
-
-        <subclass name="org.zfin.mutant.GenotypeAlias" discriminator-value="Genoty">
-            <many-to-one name="genotype" column="dalias_data_zdb_id" class="org.zfin.mutant.Genotype"/>
-        </subclass>
-
-    </class>
-
     <class name="org.zfin.ontology.GenericTerm" mutable="false" table="TERM" batch-size="10">
         <cache usage="read-only"/>
         <id name="zdbID" type="string">
