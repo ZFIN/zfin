@@ -32,6 +32,12 @@ public class MutationDetailsConversionService {
             case DELETION:
                 statement.append(deletionStatement(dnaChange));
                 break;
+            case INSERTION:
+                statement.append(insertionStatement(dnaChange));
+                break;
+            case INDEL:
+                statement.append(indelStatement(dnaChange));
+                break;
         }
         String localization = geneLocalizationWithPreposition(dnaChange);
         if (StringUtils.isNotEmpty(localization)) {
@@ -60,6 +66,33 @@ public class MutationDetailsConversionService {
             return "";
         }
         return "-" + dnaChange.getNumberRemovedBasePair() + " bp";
+    }
+
+    private String insertionStatement(FeatureDnaMutationDetail dnaChange) {
+        if (dnaChange == null || dnaChange.getNumberAddedBasePair() == null) {
+            return "";
+        }
+        return "+" + dnaChange.getNumberAddedBasePair() + " bp";
+    }
+
+    private String indelStatement(FeatureDnaMutationDetail dnaChange) {
+        if (dnaChange == null) {
+            return "";
+        }
+
+        if (dnaChange.getNumberAddedBasePair() == null && dnaChange.getNumberRemovedBasePair() == null) {
+            return "";
+        }
+
+        if (dnaChange.getNumberAddedBasePair() == null) {
+            return "net -" + dnaChange.getNumberRemovedBasePair() + " bp";
+        }
+
+        if (dnaChange.getNumberRemovedBasePair() == null) {
+            return "net +" + dnaChange.getNumberAddedBasePair() + " bp";
+        }
+
+        return "+" + dnaChange.getNumberAddedBasePair() + "/-" + dnaChange.getNumberRemovedBasePair() + " bp";
     }
 
     /**

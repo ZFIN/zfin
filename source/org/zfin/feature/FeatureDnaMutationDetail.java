@@ -33,7 +33,7 @@ public class FeatureDnaMutationDetail {
     @JoinColumn(name = "fdmd_fdbcont_zdb_id")
     private ReferenceDatabase referenceDatabase;
     @Column(name = "fdmd_number_additional_dna_base_pairs")
-    private Integer numberAdditionalBasePair;
+    private Integer numberAddedBasePair;
     @Column(name = "fdmd_number_removed_dna_base_pairs")
     private Integer numberRemovedBasePair;
     @Column(name = "fdmd_exon_number")
@@ -96,12 +96,12 @@ public class FeatureDnaMutationDetail {
         this.dnaSequenceReferenceAccessionNumber = dnaSequenceReferenceAccessionNumber;
     }
 
-    public Integer getNumberAdditionalBasePair() {
-        return numberAdditionalBasePair;
+    public Integer getNumberAddedBasePair() {
+        return numberAddedBasePair;
     }
 
-    public void setNumberAdditionalBasePair(Integer numberAdditionalBasePair) {
-        this.numberAdditionalBasePair = numberAdditionalBasePair;
+    public void setNumberAddedBasePair(Integer numberAdditionalBasePair) {
+        this.numberAddedBasePair = numberAdditionalBasePair;
     }
 
     public Integer getExonNumber() {

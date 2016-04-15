@@ -167,4 +167,71 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         null         | null | null   | null     | 'GENBANK' | '9999'    || '-10 bp in GENBANK:9999'
     }
 
+    @Unroll
+    def 'dna statement for insertions'() {
+        setup:
+        def feature = new Feature(
+                type: FeatureTypeEnum.INSERTION,
+                featureDnaMutationDetail: new FeatureDnaMutationDetail(
+                        numberAddedBasePair: 13,
+                        geneLocalizationTerm: localization == null ? null : new GenericTerm(oboID: localization),
+                        exonNumber: exon,
+                        intronNumber: intron,
+                        dnaPositionStart: position,
+                        referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
+                        dnaSequenceReferenceAccessionNumber: accession
+                )
+        )
+
+        when:
+        def presentation = converter.convert(feature)
+
+        then:
+        presentation.dnaChangeStatement == display
+
+        where:
+        localization | exon | intron | position | db        | accession || display
+        null         | null | null   | null     | null      | null      || '+13 bp'
+        null         | 12   | null   | null     | null      | null      || '+13 bp in exon 12'
+        'SO:0000204' | 6    | null   | 1010     | null      | null      || '+13 bp in 5\' UTR at position 1010'
+        null         | null | null   | 832      | null      | null      || '+13 bp at position 832'
+        null         | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '+13 bp in intron 5 at position 1829 in GENBANK:C1032'
+        null         | null | null   | null     | 'GENBANK' | '9999'    || '+13 bp in GENBANK:9999'
+    }
+
+    @Unroll
+    def 'dna statement for indels'() {
+        setup:
+        def feature = new Feature(
+                type: FeatureTypeEnum.INDEL,
+                featureDnaMutationDetail: new FeatureDnaMutationDetail(
+                        numberAddedBasePair: added,
+                        numberRemovedBasePair: removed,
+                        geneLocalizationTerm: localization == null ? null : new GenericTerm(oboID: localization),
+                        exonNumber: exon,
+                        intronNumber: intron,
+                        dnaPositionStart: position,
+                        referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
+                        dnaSequenceReferenceAccessionNumber: accession
+                )
+        )
+
+        when:
+        def presentation = converter.convert(feature)
+
+        then:
+        presentation.dnaChangeStatement == display
+
+        where:
+        added | removed | localization | exon | intron | position | db        | accession || display
+        18    | null    | null         | null | null   | null     | null      | null      || 'net +18 bp'
+        null  | 21      | null         | null | null   | null     | null      | null      || 'net -21 bp'
+        34    | 17      | null         | null | null   | null     | null      | null      || '+34/-17 bp'
+        34    | 17      | null         | 2    | null   | null     | null      | null      || '+34/-17 bp in exon 2'
+        34    | 17      | 'SO:0000163' | null | null   | 1010     | null      | null      || '+34/-17 bp in splice donor site at position 1010'
+        34    | 17      | null         | null | null   | 832      | null      | null      || '+34/-17 bp at position 832'
+        34    | 17      | null         | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '+34/-17 bp in intron 5 at position 1829 in GENBANK:C1032'
+        34    | 17      | null         | null | null   | null     | 'GENBANK' | '9999'    || '+34/-17 bp in GENBANK:9999'
+    }
+
 }
