@@ -49,10 +49,11 @@ public class FeatureNotesView extends AbstractViewComposite {
 
     public void addNoteReferenceCell(NoteDTO noteDTO, int rowindex) {
         dataTable.resizeRows(rowindex + 1);
-        Anchor pubAnchor = new Anchor(SafeHtmlUtils.fromTrustedString(noteDTO.getPublicationDTO().getMiniRef()), "/" +
-                noteDTO.getPublicationDTO().getZdbID());
-
-        dataTable.setWidget(rowindex, 0, pubAnchor);
+        if (noteDTO.getPublicationDTO() != null) {
+            Anchor pubAnchor = new Anchor(SafeHtmlUtils.fromTrustedString(noteDTO.getPublicationDTO().getMiniRef()), "/" +
+                    noteDTO.getPublicationDTO().getZdbID());
+            dataTable.setWidget(rowindex, 0, pubAnchor);
+        }
     }
 
     public void addNoteCuratorReferenceCell(CuratorNoteDTO noteDTO, int rowindex) {
