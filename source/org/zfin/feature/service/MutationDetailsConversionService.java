@@ -27,6 +27,8 @@ public class MutationDetailsConversionService {
         switch (feature.getType()) {
             case POINT_MUTATION:
                 return getDnaMutationStatementForPointMutation(dnaChange);
+            case DELETION:
+                return getDnaMutationStatementForDeletion(dnaChange);
             default:
                 return "";
         }
@@ -50,6 +52,13 @@ public class MutationDetailsConversionService {
             statement.append(" ").append(refSeq);
         }
         return statement.toString();
+    }
+
+    private String getDnaMutationStatementForDeletion(FeatureDnaMutationDetail dnaChange) {
+        if (dnaChange == null || dnaChange.getNumberRemovedBasePair() == null) {
+            return "";
+        }
+        return "-" + dnaChange.getNumberRemovedBasePair() + " bp";
     }
 
     /**

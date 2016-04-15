@@ -27,11 +27,17 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         presentation.mutationType == 'Point Mutation'
     }
 
-    def 'dna statement should show nucleotide change for point mutation'() {
+    def 'dna statement point mutations'() {
         setup:
         def feature = new Feature(
                 type: FeatureTypeEnum.POINT_MUTATION,
                 featureDnaMutationDetail: new FeatureDnaMutationDetail(
+                        geneLocalizationTerm: localization == null ? null : new GenericTerm(oboID: localization),
+                        exonNumber: exon,
+                        intronNumber: intron,
+                        dnaPositionStart: position,
+                        referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
+                        dnaSequenceReferenceAccessionNumber: accession,
                         dnaMutationTerm: new DnaMutationTerm(displayName: 'A>G')
                 )
         )
@@ -40,24 +46,16 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         def presentation = converter.convert(feature)
 
         then:
-        presentation.dnaChangeStatement == 'A>G'
-    }
+        presentation.dnaChangeStatement == display
 
-    def 'dna statement should show gene localization for point mutation'() {
-        setup:
-        def feature = new Feature(
-                type: FeatureTypeEnum.POINT_MUTATION,
-                featureDnaMutationDetail: new FeatureDnaMutationDetail(
-                        dnaMutationTerm: new DnaMutationTerm(displayName: 'A>G'),
-                        exonNumber: 6
-                )
-        )
-
-        when:
-        def presentation = converter.convert(feature)
-
-        then:
-        presentation.dnaChangeStatement == 'A>G in exon 6'
+        where:
+        localization | exon | intron | position | db        | accession || display
+        null         | null | null   | null     | null      | null      || 'A>G'
+        null         | 4    | null   | null     | null      | null      || 'A>G in exon 4'
+        'SO:0001421' | 6    | 7      | 1010     | null      | null      || 'A>G at exon 6 - intron 7 splice junction at position 1010'
+        null         | null | null   | 392      | null      | null      || 'A>G at position 392'
+        null         | null | null   | 1829     | 'GENBANK' | 'C1032'   || 'A>G at position 1829 in GENBANK:C1032'
+        null         | null | null   | null     | 'GENBANK' | '9999'    || 'A>G in GENBANK:9999'
     }
 
     @Unroll
@@ -93,23 +91,6 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         "SO:0000165" | 3    | 4      || "in enhancer"
     }
 
-    def 'dna statement should show location for point mutation'() {
-        setup:
-        def feature = new Feature(
-                type: FeatureTypeEnum.POINT_MUTATION,
-                featureDnaMutationDetail: new FeatureDnaMutationDetail(
-                        dnaMutationTerm: new DnaMutationTerm(displayName: 'A>G'),
-                        dnaPositionStart: 48
-                )
-        )
-
-        when:
-        def presentation = converter.convert(feature)
-
-        then:
-        presentation.dnaChangeStatement == 'A>G at position 48'
-    }
-
     @Unroll
     def 'position statement with start #start, end #end'() {
         setup:
@@ -127,24 +108,6 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         null  | 38   || ""
         75    | null || "at position 75"
         181   | 371  || "from position 181 to 371"
-    }
-
-    def 'dna statement should show reference sequence for point mutation'() {
-        setup:
-        def feature = new Feature(
-                type: FeatureTypeEnum.POINT_MUTATION,
-                featureDnaMutationDetail: new FeatureDnaMutationDetail(
-                        dnaMutationTerm: new DnaMutationTerm(displayName: 'A>G'),
-                        referenceDatabase: new ReferenceDatabase(foreignDB: new ForeignDB(displayName: "REFDB")),
-                        dnaSequenceReferenceAccessionNumber: "A19492"
-                )
-        )
-
-        when:
-        def presentation = converter.convert(feature)
-
-        then:
-        presentation.dnaChangeStatement == 'A>G in REFDB:A19492'
     }
 
     @Unroll
@@ -169,6 +132,20 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         null      | null      || ""
         null      | "32"      || ""
         "GENBANK" | "2242"    || "in GENBANK:2242"
+    }
+
+    def 'dna statement should show number of nucleotides for deletion'() {
+        setup:
+        def feature = new Feature(
+                type: FeatureTypeEnum.DELETION,
+                featureDnaMutationDetail: new FeatureDnaMutationDetail(numberRemovedBasePair: 10)
+        )
+
+        when:
+        def presentation = converter.convert(feature)
+
+        then:
+        presentation.dnaChangeStatement == '-10 bp'
     }
 
 }

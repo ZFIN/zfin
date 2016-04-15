@@ -96,11 +96,11 @@ public class FeatureDnaMutationDetail {
         this.dnaSequenceReferenceAccessionNumber = dnaSequenceReferenceAccessionNumber;
     }
 
-    public int getNumberAdditionalBasePair() {
+    public Integer getNumberAdditionalBasePair() {
         return numberAdditionalBasePair;
     }
 
-    public void setNumberAdditionalBasePair(int numberAdditionalBasePair) {
+    public void setNumberAdditionalBasePair(Integer numberAdditionalBasePair) {
         this.numberAdditionalBasePair = numberAdditionalBasePair;
     }
 
@@ -120,11 +120,11 @@ public class FeatureDnaMutationDetail {
         this.intronNumber = intronNumber;
     }
 
-    public int getNumberRemovedBasePair() {
+    public Integer getNumberRemovedBasePair() {
         return numberRemovedBasePair;
     }
 
-    public void setNumberRemovedBasePair(int numberRemovedBasePair) {
+    public void setNumberRemovedBasePair(Integer numberRemovedBasePair) {
         this.numberRemovedBasePair = numberRemovedBasePair;
     }
 
