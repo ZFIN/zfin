@@ -4,8 +4,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 
+<c:set var="geneCategoryName" value="<%=Category.GENE.getName()%>"/>
 <c:set var="publicationCategoryName" value="<%=Category.PUBLICATION.getName()%>"/>
 <c:set var="constructCategoryName" value="<%=Category.CONSTRUCT.getName()%>"/>
+
 
 <script src="/javascript/angular/angular.min.js"></script>
 <script src="/javascript/angular/angular-sanitize.js"></script>
@@ -204,7 +206,7 @@
                     <div class="result-count col-md-10 col-sm-9 col-xs-8">
                         <fmt:formatNumber value="${numFound}" pattern="##,###"/> results
                         <div class="pull-right">
-                            <authz:authorize access="hasRole('root')">
+<%--                            <authz:authorize access="hasRole('root')">--%>
                                 <div class="btn-group">
                                     <button id="boxy-result-button" class="btn btn-default result-action-tooltip" title="Detailed Results">
                                         <i class="fa fa-newspaper-o fa-flip-horizontal"></i>
@@ -219,7 +221,7 @@
                                     <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=50" class="btn btn-default <c:if test="${rows eq 50}">btn-selected disabled</c:if>">50</a>
                                     <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=200" class="btn btn-default <c:if test="${rows eq 200}">btn-selected disabled</c:if>">200</a>
                                 </div>
-                            </authz:authorize>
+<%--                            </authz:authorize>--%>
 
                             <div class="btn-group sort-controls">
                                 <a class="btn btn-default dropdown-toggle sort-button" data-toggle="dropdown" href="#">
@@ -242,16 +244,15 @@
                     <zfin2:searchResult result="${result}"/>
                 </c:forEach>
 
-                <table class="table-results searchresults" style="display: none;">
-                    <th>Name</th> <th>ID</th> <th>Category</th>
-                    <c:forEach var="result" items="${results}" varStatus="loop">
-                        <zfin:alternating-tr loopName="loop" groupBeanCollection="${results}" groupByBean="id">
-                            <td>${result.link}</td>
-                            <td style="white-space: nowrap"> <c:if test="${!empty result.displayedID}">${result.id}</c:if> </td>
-                            <td>${result.category}</td>
-                        </zfin:alternating-tr>
-                    </c:forEach>
-                </table>
+
+                <c:choose>
+                    <c:when test="${category eq geneCategoryName}">
+                        <zfin-search:geneResultTable results="${results}"/>
+                    </c:when>
+                    <c:otherwise>
+                        <zfin-search:mixedResultTable results="${results}"/>
+                    </c:otherwise>
+                </c:choose>
 
 
                 <div style="clear: both ; width: 80%">

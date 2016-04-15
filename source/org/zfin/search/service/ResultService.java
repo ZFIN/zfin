@@ -266,6 +266,8 @@ public class ResultService {
 
         if (gene != null) {
 
+            result.setEntity(gene);
+
             if (gene.getType() == Marker.Type.GENE) {
                 result.addAttribute(GENE_NAME, "<span class=\"genedom\">" + gene.getName() + "</span>");
             }

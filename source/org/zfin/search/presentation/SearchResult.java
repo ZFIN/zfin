@@ -61,6 +61,8 @@ public class SearchResult implements ProvidesLink {
     @Field("[explain]")
     String explain;
 
+    Object entity;
+
     //fields that need to be injected after
     String matchingText;
 
@@ -287,6 +289,14 @@ public class SearchResult implements ProvidesLink {
 
     public void setHasOrthology(String hasOrthology) {
         this.hasOrthology = hasOrthology;
+    }
+
+    public Object getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Object entity) {
+        this.entity = entity;
     }
 
     /* just grab an arbitrary first one for now.. */
