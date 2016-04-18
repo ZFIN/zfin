@@ -17,6 +17,13 @@ import java.util.Set;
 @Service
 public class MutationDetailsConversionService {
 
+    private static final String EXON = "exon";
+    private static final String INTRON = "intron";
+    private static final String BASE_PAIRS = "bp";
+    private static final String NET = "net";
+    private static final String PLUS = "+";
+    private static final String MINUS = "-";
+
     public MutationDetailsPresentation convert(Feature feature) {
         MutationDetailsPresentation details = new MutationDetailsPresentation();
         details.setMutationType(getMutationTypeStatement(feature));
@@ -93,14 +100,14 @@ public class MutationDetailsConversionService {
         if (dnaChange == null || dnaChange.getNumberRemovedBasePair() == null) {
             return "";
         }
-        return "-" + dnaChange.getNumberRemovedBasePair() + " bp";
+        return MINUS + dnaChange.getNumberRemovedBasePair() + " " + BASE_PAIRS;
     }
 
     private String insertionStatement(FeatureDnaMutationDetail dnaChange) {
         if (dnaChange == null || dnaChange.getNumberAddedBasePair() == null) {
             return "";
         }
-        return "+" + dnaChange.getNumberAddedBasePair() + " bp";
+        return PLUS + dnaChange.getNumberAddedBasePair() + " " + BASE_PAIRS;
     }
 
     private String indelStatement(FeatureDnaMutationDetail dnaChange) {
@@ -113,14 +120,14 @@ public class MutationDetailsConversionService {
         }
 
         if (dnaChange.getNumberAddedBasePair() == null) {
-            return "net -" + dnaChange.getNumberRemovedBasePair() + " bp";
+            return NET + " " + MINUS + dnaChange.getNumberRemovedBasePair() + " " + BASE_PAIRS;
         }
 
         if (dnaChange.getNumberRemovedBasePair() == null) {
-            return "net +" + dnaChange.getNumberAddedBasePair() + " bp";
+            return NET + " " + PLUS + dnaChange.getNumberAddedBasePair() + " " + BASE_PAIRS;
         }
 
-        return "+" + dnaChange.getNumberAddedBasePair() + "/-" + dnaChange.getNumberRemovedBasePair() + " bp";
+        return PLUS + dnaChange.getNumberAddedBasePair() + "/" + MINUS + dnaChange.getNumberRemovedBasePair() + " " + BASE_PAIRS;
     }
 
     private String transgenicStatement(FeatureDnaMutationDetail dnaChange) {
@@ -236,10 +243,10 @@ public class MutationDetailsConversionService {
 
     private String exonOrIntronLocation(Integer exon, Integer intron, String preposition) {
         if (exon != null) {
-            return preposition + "exon " + exon;
+            return preposition + EXON + " " + exon;
         }
         if (intron != null) {
-            return preposition + "intron " + intron;
+            return preposition + INTRON + " " + intron;
         }
         return "";
     }
@@ -262,9 +269,9 @@ public class MutationDetailsConversionService {
         }
 
         if (dnaChange.getExonNumber() <= dnaChange.getIntronNumber()) {
-            return "exon " + dnaChange.getExonNumber() + " - intron " + dnaChange.getIntronNumber() + " ";
+            return EXON + " " + dnaChange.getExonNumber() + " - " + INTRON + " " + dnaChange.getIntronNumber() + " ";
         } else {
-            return "intron " + dnaChange.getIntronNumber() + " - exon " + dnaChange.getExonNumber() + " ";
+            return INTRON + " " + dnaChange.getIntronNumber() + " - " + EXON + " " + dnaChange.getExonNumber() + " ";
         }
     }
 
