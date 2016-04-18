@@ -1,6 +1,7 @@
 package org.zfin.feature.service
 
 import org.zfin.AbstractZfinSpec
+import org.zfin.feature.AminoAcidTerm
 import org.zfin.feature.DnaMutationTerm
 import org.zfin.feature.Feature
 import org.zfin.feature.FeatureDnaMutationDetail
@@ -344,5 +345,30 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         null       | null      || ""
         null       | "13111"   || ""
         "PROTEINZ" | "ZZ11"    || "in PROTEINZ:ZZ11"
+    }
+
+    @Unroll
+    def 'amino acid change statement with wild type AA #wtAA, mutant AA #mutantAA, #addedAA added, #removedAA removed'() {
+        setup:
+        def proteinConsequence = new FeatureProteinMutationDetail(
+                wildtypeAminoAcid: wtAA == null ? null : new AminoAcidTerm(displayName: wtAA),
+                mutantAminoAcid: mutantAA == null ? null : new AminoAcidTerm(displayName: mutantAA),
+                numberAminoAcidsAdded: addedAA,
+                numberAminoAcidsRemoved: removedAA
+        )
+
+        expect:
+        converter.aminoAcidChangeStatement(proteinConsequence) == display
+
+        where:
+        wtAA  | mutantAA | addedAA | removedAA || display
+        null  | null     | null    | null      || ''
+        'Trp' | null     | null    | null      || 'Trp>STOP'
+        null  | 'Met'    | null    | null      || ''
+        'Phe' | 'Gly'    | null    | null      || 'Phe>Gly'
+        null  | null     | 5       | null      || '+5 AA'
+        null  | null     | null    | 8         || '-8 AA'
+        null  | null     | 3       | 9         || '+3/-9 AA'
+        'Sec' | 'Ala'    | 1       | 2         || 'Sec>Ala, +1/-2 AA' // does this case even make sense? well, just in case.
     }
 }

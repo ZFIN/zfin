@@ -20,6 +20,8 @@ public class MutationDetailsConversionService {
     private static final String EXON = "exon";
     private static final String INTRON = "intron";
     private static final String BASE_PAIRS = "bp";
+    private static final String AMINO_ACIDS = "AA";
+    private static final String STOP = "STOP";
     private static final String NET = "net";
     private static final String PLUS = "+";
     private static final String MINUS = "-";
@@ -97,37 +99,45 @@ public class MutationDetailsConversionService {
     }
 
     private String deletionStatement(FeatureDnaMutationDetail dnaChange) {
-        if (dnaChange == null || dnaChange.getNumberRemovedBasePair() == null) {
+        if (dnaChange == null) {
             return "";
         }
-        return MINUS + dnaChange.getNumberRemovedBasePair() + " " + BASE_PAIRS;
+        return addedOrRemovedStatement(null, dnaChange.getNumberRemovedBasePair(), BASE_PAIRS);
     }
 
     private String insertionStatement(FeatureDnaMutationDetail dnaChange) {
-        if (dnaChange == null || dnaChange.getNumberAddedBasePair() == null) {
+        if (dnaChange == null) {
             return "";
         }
-        return PLUS + dnaChange.getNumberAddedBasePair() + " " + BASE_PAIRS;
+        return addedOrRemovedStatement(dnaChange.getNumberAddedBasePair(), null, BASE_PAIRS);
     }
 
     private String indelStatement(FeatureDnaMutationDetail dnaChange) {
         if (dnaChange == null) {
             return "";
         }
+        return addedOrRemovedStatement(dnaChange.getNumberAddedBasePair(), dnaChange.getNumberRemovedBasePair(), BASE_PAIRS, true);
+    }
 
-        if (dnaChange.getNumberAddedBasePair() == null && dnaChange.getNumberRemovedBasePair() == null) {
+    private String addedOrRemovedStatement(Integer added, Integer removed, String item) {
+        return addedOrRemovedStatement(added, removed, item, false);
+    }
+
+    private String addedOrRemovedStatement(Integer added, Integer removed, String item, boolean isNet) {
+        if (added == null && removed == null) {
             return "";
         }
 
-        if (dnaChange.getNumberAddedBasePair() == null) {
-            return NET + " " + MINUS + dnaChange.getNumberRemovedBasePair() + " " + BASE_PAIRS;
+        String prefix = isNet ? (NET + " ") : "";
+        if (added == null) {
+            return prefix + MINUS + removed + " " + item;
         }
 
-        if (dnaChange.getNumberRemovedBasePair() == null) {
-            return NET + " " + PLUS + dnaChange.getNumberAddedBasePair() + " " + BASE_PAIRS;
+        if (removed == null) {
+            return prefix + PLUS + added + " " + item;
         }
 
-        return PLUS + dnaChange.getNumberAddedBasePair() + "/" + MINUS + dnaChange.getNumberRemovedBasePair() + " " + BASE_PAIRS;
+        return PLUS + added + "/" + MINUS + removed + " " + item;
     }
 
     private String transgenicStatement(FeatureDnaMutationDetail dnaChange) {
@@ -349,5 +359,32 @@ public class MutationDetailsConversionService {
         }
         return statement.toString();
     }
+
+    public String aminoAcidChangeStatement(FeatureProteinMutationDetail proteinConsequence) {
+        if (proteinConsequence == null) {
+            return "";
+        }
+
+        StringBuilder statement = new StringBuilder();
+        if (proteinConsequence.getWildtypeAminoAcid() != null) {
+            statement.append(proteinConsequence.getWildtypeAminoAcid().getDisplayName()).append(">");
+            if (proteinConsequence.getMutantAminoAcid() != null) {
+                statement.append(proteinConsequence.getMutantAminoAcid().getDisplayName());
+            } else {
+                statement.append(STOP);
+            }
+        }
+
+        String addedOrRemoved = addedOrRemovedStatement(proteinConsequence.getNumberAminoAcidsAdded(),
+                proteinConsequence.getNumberAminoAcidsRemoved(), AMINO_ACIDS);
+        if (StringUtils.isNotEmpty(addedOrRemoved)) {
+            if (StringUtils.isNotEmpty(statement)) {
+                statement.append(", ");
+            }
+            statement.append(addedOrRemoved);
+        }
+        return statement.toString();
+    }
+
 
 }
