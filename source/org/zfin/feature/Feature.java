@@ -103,6 +103,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<FeatureDBLink> dbLinks;
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
+    @Sort(type = SortType.NATURAL)
     private SortedSet<FeatureTranscriptMutationDetail> featureTranscriptMutationDetailSet;
     @OneToOne(mappedBy = "feature", fetch = FetchType.LAZY)
     private FeatureProteinMutationDetail featureProteinMutationDetail;
