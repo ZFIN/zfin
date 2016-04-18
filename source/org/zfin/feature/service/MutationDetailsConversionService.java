@@ -320,13 +320,22 @@ public class MutationDetailsConversionService {
         if (dnaChange == null) {
             return "";
         }
+        return referenceSequenceStatement(dnaChange.getReferenceDatabase(), dnaChange.getDnaSequenceReferenceAccessionNumber());
+    }
 
-        ReferenceDatabase refDb = dnaChange.getReferenceDatabase();
+    public String referenceSequenceStatement(FeatureProteinMutationDetail proteinConsequence) {
+        if (proteinConsequence == null) {
+            return "";
+        }
+        return referenceSequenceStatement(proteinConsequence.getReferenceDatabase(), proteinConsequence.getProteinSequenceReferenceAccessionNumber());
+    }
+
+    private String referenceSequenceStatement(ReferenceDatabase refDb, String accession) {
         if (refDb == null) {
             return "";
         }
 
-        return "in " + refDb.getForeignDB().getDisplayName() + ":" + dnaChange.getDnaSequenceReferenceAccessionNumber();
+        return "in " + refDb.getForeignDB().getDisplayName() + ":" + accession;
     }
 
     public String transcriptConsequenceStatement(FeatureTranscriptMutationDetail transcriptDetail) {

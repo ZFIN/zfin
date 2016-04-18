@@ -115,16 +115,10 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
     }
 
     @Unroll
-    def 'reference sequence statement with database #db, accession #accession'() {
+    def 'dna reference sequence statement with database #db, accession #accession'() {
         setup:
-        def refDb = null
-        if (db != null) {
-            refDb = new ReferenceDatabase(
-                    foreignDB: new ForeignDB(displayName: db)
-            )
-        }
         def dnaChange = new FeatureDnaMutationDetail(
-                referenceDatabase: refDb,
+                referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
                 dnaSequenceReferenceAccessionNumber: accession
         )
 
@@ -332,5 +326,23 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         null  | 12    || ""
         9911  | null  || "at position 9911"
         28281 | 28282 || "from position 28281 to 28282"
+    }
+
+    @Unroll
+    def 'protein reference sequence statement with database #db, accession #accession'() {
+        setup:
+        def proteinConsequence = new FeatureProteinMutationDetail(
+                referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
+                proteinSequenceReferenceAccessionNumber: accession
+        )
+
+        expect:
+        converter.referenceSequenceStatement(proteinConsequence) == display
+
+        where:
+        db         | accession || display
+        null       | null      || ""
+        null       | "13111"   || ""
+        "PROTEINZ" | "ZZ11"    || "in PROTEINZ:ZZ11"
     }
 }
