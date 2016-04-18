@@ -4,6 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.zfin.sequence.ReferenceDatabase;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "feature_protein_mutation_detail")
@@ -22,6 +23,11 @@ public class FeatureProteinMutationDetail {
     @OneToOne
     @JoinColumn(name = "fpmd_feature_zdb_id")
     private Feature feature;
+    @ManyToMany
+    @JoinTable(name = "feature_protein_consequence",
+            joinColumns = {@JoinColumn(name = "fpc_protein_consequence_term_zdb_id", nullable = false, updatable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "fpc_fpmd_zdb_id", nullable = false, updatable = false)})
+    private Set<ProteinConsequence> proteinConsequences;
     @Column(name = "fpmd_protein_position_start")
     private Integer proteinPositionStart;
     @Column(name = "fpmd_protein_position_end")
@@ -50,35 +56,43 @@ public class FeatureProteinMutationDetail {
         this.feature = feature;
     }
 
-    public int getNumberAminoAcidsAdded() {
+    public Set<ProteinConsequence> getProteinConsequences() {
+        return proteinConsequences;
+    }
+
+    public void setProteinConsequences(Set<ProteinConsequence> proteinConsequences) {
+        this.proteinConsequences = proteinConsequences;
+    }
+
+    public Integer getNumberAminoAcidsAdded() {
         return numberAminoAcidsAdded;
     }
 
-    public void setNumberAminoAcidsAdded(int numberAminoAcidsAdded) {
+    public void setNumberAminoAcidsAdded(Integer numberAminoAcidsAdded) {
         this.numberAminoAcidsAdded = numberAminoAcidsAdded;
     }
 
-    public int getNumberAminoAcidsRemoved() {
+    public Integer getNumberAminoAcidsRemoved() {
         return numberAminoAcidsRemoved;
     }
 
-    public void setNumberAminoAcidsRemoved(int numberAminoAcidsRemoved) {
+    public void setNumberAminoAcidsRemoved(Integer numberAminoAcidsRemoved) {
         this.numberAminoAcidsRemoved = numberAminoAcidsRemoved;
     }
 
-    public int getProteinPositionEnd() {
+    public Integer getProteinPositionEnd() {
         return proteinPositionEnd;
     }
 
-    public void setProteinPositionEnd(int proteinPositionEnd) {
+    public void setProteinPositionEnd(Integer proteinPositionEnd) {
         this.proteinPositionEnd = proteinPositionEnd;
     }
 
-    public int getProteinPositionStart() {
+    public Integer getProteinPositionStart() {
         return proteinPositionStart;
     }
 
-    public void setProteinPositionStart(int proteinPositionStart) {
+    public void setProteinPositionStart(Integer proteinPositionStart) {
         this.proteinPositionStart = proteinPositionStart;
     }
 
