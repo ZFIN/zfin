@@ -224,26 +224,22 @@ public class MutationDetailsConversionService {
         if (dnaChange == null) {
             return "";
         }
-
-        if (dnaChange.getExonNumber() != null) {
-            return preposition + "exon " + dnaChange.getExonNumber();
-        }
-        if (dnaChange.getIntronNumber() != null) {
-            return preposition + "intron " + dnaChange.getIntronNumber();
-        }
-        return "";
+        return exonOrIntronLocation(dnaChange.getExonNumber(), dnaChange.getIntronNumber(), preposition);
     }
 
     private String exonOrIntronLocation(FeatureTranscriptMutationDetail transcriptConsequence) {
         if (transcriptConsequence == null) {
             return "";
         }
+        return exonOrIntronLocation(transcriptConsequence.getExonNumber(), transcriptConsequence.getIntronNumber(), "");
+    }
 
-        if (transcriptConsequence.getExonNumber() != null) {
-            return "exon " + transcriptConsequence.getExonNumber();
+    private String exonOrIntronLocation(Integer exon, Integer intron, String preposition) {
+        if (exon != null) {
+            return preposition + "exon " + exon;
         }
-        if (transcriptConsequence.getIntronNumber() != null) {
-            return "intron " + transcriptConsequence.getIntronNumber();
+        if (intron != null) {
+            return preposition + "intron " + intron;
         }
         return "";
     }
