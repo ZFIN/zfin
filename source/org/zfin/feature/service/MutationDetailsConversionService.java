@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureDnaMutationDetail;
+import org.zfin.feature.FeatureProteinMutationDetail;
 import org.zfin.feature.FeatureTranscriptMutationDetail;
 import org.zfin.feature.presentation.MutationDetailsPresentation;
 import org.zfin.ontology.GenericTerm;
@@ -15,6 +16,13 @@ import java.util.Set;
 
 @Service
 public class MutationDetailsConversionService {
+
+    private static final String EXON = "exon";
+    private static final String INTRON = "intron";
+    private static final String BASE_PAIRS = "bp";
+    private static final String NET = "net";
+    private static final String PLUS = "+";
+    private static final String MINUS = "-";
 
     public MutationDetailsPresentation convert(Feature feature) {
         MutationDetailsPresentation details = new MutationDetailsPresentation();
@@ -92,14 +100,14 @@ public class MutationDetailsConversionService {
         if (dnaChange == null || dnaChange.getNumberRemovedBasePair() == null) {
             return "";
         }
-        return "-" + dnaChange.getNumberRemovedBasePair() + " bp";
+        return MINUS + dnaChange.getNumberRemovedBasePair() + " " + BASE_PAIRS;
     }
 
     private String insertionStatement(FeatureDnaMutationDetail dnaChange) {
         if (dnaChange == null || dnaChange.getNumberAddedBasePair() == null) {
             return "";
         }
-        return "+" + dnaChange.getNumberAddedBasePair() + " bp";
+        return PLUS + dnaChange.getNumberAddedBasePair() + " " + BASE_PAIRS;
     }
 
     private String indelStatement(FeatureDnaMutationDetail dnaChange) {
@@ -112,14 +120,14 @@ public class MutationDetailsConversionService {
         }
 
         if (dnaChange.getNumberAddedBasePair() == null) {
-            return "net -" + dnaChange.getNumberRemovedBasePair() + " bp";
+            return NET + " " + MINUS + dnaChange.getNumberRemovedBasePair() + " " + BASE_PAIRS;
         }
 
         if (dnaChange.getNumberRemovedBasePair() == null) {
-            return "net +" + dnaChange.getNumberAddedBasePair() + " bp";
+            return NET + " " + PLUS + dnaChange.getNumberAddedBasePair() + " " + BASE_PAIRS;
         }
 
-        return "+" + dnaChange.getNumberAddedBasePair() + "/-" + dnaChange.getNumberRemovedBasePair() + " bp";
+        return PLUS + dnaChange.getNumberAddedBasePair() + "/" + MINUS + dnaChange.getNumberRemovedBasePair() + " " + BASE_PAIRS;
     }
 
     private String transgenicStatement(FeatureDnaMutationDetail dnaChange) {
@@ -223,26 +231,22 @@ public class MutationDetailsConversionService {
         if (dnaChange == null) {
             return "";
         }
-
-        if (dnaChange.getExonNumber() != null) {
-            return preposition + "exon " + dnaChange.getExonNumber();
-        }
-        if (dnaChange.getIntronNumber() != null) {
-            return preposition + "intron " + dnaChange.getIntronNumber();
-        }
-        return "";
+        return exonOrIntronLocation(dnaChange.getExonNumber(), dnaChange.getIntronNumber(), preposition);
     }
 
     private String exonOrIntronLocation(FeatureTranscriptMutationDetail transcriptConsequence) {
         if (transcriptConsequence == null) {
             return "";
         }
+        return exonOrIntronLocation(transcriptConsequence.getExonNumber(), transcriptConsequence.getIntronNumber(), "");
+    }
 
-        if (transcriptConsequence.getExonNumber() != null) {
-            return "exon " + transcriptConsequence.getExonNumber();
+    private String exonOrIntronLocation(Integer exon, Integer intron, String preposition) {
+        if (exon != null) {
+            return preposition + EXON + " " + exon;
         }
-        if (transcriptConsequence.getIntronNumber() != null) {
-            return "intron " + transcriptConsequence.getIntronNumber();
+        if (intron != null) {
+            return preposition + INTRON + " " + intron;
         }
         return "";
     }
@@ -265,9 +269,9 @@ public class MutationDetailsConversionService {
         }
 
         if (dnaChange.getExonNumber() <= dnaChange.getIntronNumber()) {
-            return "exon " + dnaChange.getExonNumber() + " - intron " + dnaChange.getIntronNumber() + " ";
+            return EXON + " " + dnaChange.getExonNumber() + " - " + INTRON + " " + dnaChange.getIntronNumber() + " ";
         } else {
-            return "intron " + dnaChange.getIntronNumber() + " - exon " + dnaChange.getExonNumber() + " ";
+            return INTRON + " " + dnaChange.getIntronNumber() + " - " + EXON + " " + dnaChange.getExonNumber() + " ";
         }
     }
 
@@ -284,16 +288,26 @@ public class MutationDetailsConversionService {
         if (dnaChange == null) {
             return  "";
         }
+        return positionStatement(dnaChange.getDnaPositionStart(), dnaChange.getDnaPositionEnd());
+    }
 
-        if (dnaChange.getDnaPositionStart() == null) {
+    public String positionStatement(FeatureProteinMutationDetail proteinConsequence) {
+        if (proteinConsequence == null) {
+            return "";
+        }
+        return positionStatement(proteinConsequence.getProteinPositionStart(), proteinConsequence.getProteinPositionEnd());
+    }
+
+    private String positionStatement(Integer start, Integer end) {
+        if (start == null) {
             return "";
         }
 
-        if (dnaChange.getDnaPositionEnd() == null) {
-            return "at position " + dnaChange.getDnaPositionStart();
+        if (end == null) {
+            return "at position " + start;
         }
 
-        return "from position " + dnaChange.getDnaPositionStart() + " to " + dnaChange.getDnaPositionEnd();
+        return "from position " + start + " to " + end;
     }
 
     /**
@@ -306,13 +320,22 @@ public class MutationDetailsConversionService {
         if (dnaChange == null) {
             return "";
         }
+        return referenceSequenceStatement(dnaChange.getReferenceDatabase(), dnaChange.getDnaSequenceReferenceAccessionNumber());
+    }
 
-        ReferenceDatabase refDb = dnaChange.getReferenceDatabase();
+    public String referenceSequenceStatement(FeatureProteinMutationDetail proteinConsequence) {
+        if (proteinConsequence == null) {
+            return "";
+        }
+        return referenceSequenceStatement(proteinConsequence.getReferenceDatabase(), proteinConsequence.getProteinSequenceReferenceAccessionNumber());
+    }
+
+    private String referenceSequenceStatement(ReferenceDatabase refDb, String accession) {
         if (refDb == null) {
             return "";
         }
 
-        return "in " + refDb.getForeignDB().getDisplayName() + ":" + dnaChange.getDnaSequenceReferenceAccessionNumber();
+        return "in " + refDb.getForeignDB().getDisplayName() + ":" + accession;
     }
 
     public String transcriptConsequenceStatement(FeatureTranscriptMutationDetail transcriptDetail) {
