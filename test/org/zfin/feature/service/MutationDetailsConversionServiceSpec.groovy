@@ -7,6 +7,7 @@ import org.zfin.feature.Feature
 import org.zfin.feature.FeatureDnaMutationDetail
 import org.zfin.feature.FeatureProteinMutationDetail
 import org.zfin.feature.FeatureTranscriptMutationDetail
+import org.zfin.feature.ProteinConsequence
 import org.zfin.feature.TranscriptConsequence
 import org.zfin.gwt.root.dto.FeatureTypeEnum
 import org.zfin.ontology.GenericTerm
@@ -370,5 +371,39 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         null  | null     | null    | 8         || '-8 AA'
         null  | null     | 3       | 9         || '+3/-9 AA'
         'Sec' | 'Ala'    | 1       | 2         || 'Sec>Ala, +1/-2 AA' // does this case even make sense? well, just in case.
+    }
+
+    @Unroll
+    def 'protein consequence statement'() {
+        setup:
+        def feature = new Feature(
+                featureProteinMutationDetail: new FeatureProteinMutationDetail(
+                        wildtypeAminoAcid: wtAA == null ? null : new AminoAcidTerm(displayName: wtAA),
+                        mutantAminoAcid: mutantAA == null ? null : new AminoAcidTerm(displayName: mutantAA),
+                        numberAminoAcidsAdded: addedAA,
+                        numberAminoAcidsRemoved: removedAA,
+                        proteinConsequences: term == null ? null : [new ProteinConsequence(displayName: term)] as Set,
+                        proteinPositionStart: start,
+                        proteinPositionEnd: end,
+                        referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
+                        proteinSequenceReferenceAccessionNumber: accession
+                )
+        )
+
+        when:
+        def presentation = converter.convert(feature)
+
+        then:
+        presentation.proteinChangeStatement == display
+
+        where:
+        wtAA  | mutantAA | addedAA | removedAA | term                      | start | end  | db       | accession || display
+        null  | null     | null    | null      | null                      | null  | null | null     | null      || ''
+        'Gln' | 'Pro'    | null    | null      | null                      | null  | null | null     | null      || 'Gln>Pro'
+        'Tyr' | null     | null    | null      | null                      | 400   | null | null     | null      || 'Tyr>STOP at position 400'
+        null  | null     | 10      | null      | null                      | 312   | 322  | null     | null      || '+10 AA from position 312 to 322'
+        null  | null     | null    | 14        | null                      | null  | null | 'PROTDB' | '10000'   || '-14 AA in PROTDB:10000'
+        null  | null     | null    | null      | 'elongated_polypeptide'   | null  | null | null     | null      || 'elongated_polypeptide'
+        'Gln' | 'Tyr'    | null    | null      | 'amino_acid_substitution' | 90    | null | 'FooDB'  | '848484'  || 'Gln>Tyr amino_acid_substitution at position 90 in FooDB:848484'
     }
 }

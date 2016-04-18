@@ -1,11 +1,9 @@
 package org.zfin.feature.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureDnaMutationDetail;
-import org.zfin.feature.FeatureProteinMutationDetail;
-import org.zfin.feature.FeatureTranscriptMutationDetail;
+import org.zfin.feature.*;
 import org.zfin.feature.presentation.MutationDetailsPresentation;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.sequence.ReferenceDatabase;
@@ -31,6 +29,7 @@ public class MutationDetailsConversionService {
         details.setMutationType(getMutationTypeStatement(feature));
         details.setDnaChangeStatement(getDnaMutationStatement(feature));
         details.setTranscriptChangeStatement(getTranscriptMutationStatement(feature));
+        details.setProteinChangeStatement(getProteinMutationStatement(feature));
         return details;
     }
 
@@ -89,6 +88,30 @@ public class MutationDetailsConversionService {
             consequenceStatements.add(transcriptConsequenceStatement(consequence));
         }
         return StringUtils.join(consequenceStatements, ", ");
+    }
+
+    public String getProteinMutationStatement(Feature feature) {
+        if (feature == null) {
+            return "";
+        }
+        FeatureProteinMutationDetail proteinConsequence = feature.getFeatureProteinMutationDetail();
+        StringBuilder statement = new StringBuilder(aminoAcidChangeStatement(proteinConsequence));
+        String terms = proteinConsequenceStatement(proteinConsequence);
+        if (StringUtils.isNotEmpty(terms)) {
+            if (StringUtils.isNotEmpty(statement)) {
+                statement.append(" ");
+            }
+            statement.append(terms);
+        }
+        String position = positionStatement(proteinConsequence);
+        if (StringUtils.isNotEmpty(position)) {
+            statement.append(" ").append(position);
+        }
+        String refSeq = referenceSequenceStatement(proteinConsequence);
+        if (StringUtils.isNotEmpty(refSeq)) {
+            statement.append(" ").append(refSeq);
+        }
+        return statement.toString();
     }
 
     private String pointMutationStatement(FeatureDnaMutationDetail dnaChange) {
@@ -386,5 +409,20 @@ public class MutationDetailsConversionService {
         return statement.toString();
     }
 
+    public String proteinConsequenceStatement(FeatureProteinMutationDetail proteinConsequence) {
+        if (proteinConsequence == null) {
+            return "";
+        }
 
+        Set<ProteinConsequence> consequenceTerms = proteinConsequence.getProteinConsequences();
+        if (CollectionUtils.isEmpty(consequenceTerms)) {
+            return "";
+        }
+
+        List<String> displayNames = new ArrayList<>(consequenceTerms.size());
+        for (ProteinConsequence term : consequenceTerms) {
+            displayNames.add(term.getDisplayName());
+        }
+        return StringUtils.join(displayNames, ", ");
+    }
 }
