@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.zfin.feature.*;
 import org.zfin.feature.presentation.MutationDetailsPresentation;
-import org.zfin.ontology.GenericTerm;
 import org.zfin.sequence.ReferenceDatabase;
 
 import java.util.ArrayList;
@@ -191,13 +190,15 @@ public class MutationDetailsConversionService {
             return "";
         }
 
-        GenericTerm term = dnaChange.getGeneLocalizationTerm();
+        GeneLocalizationTerm term = dnaChange.getGeneLocalizationTerm();
         String statement = geneLocalizationStatement(dnaChange);
         if (StringUtils.isEmpty(statement)) {
             return "";
         }
+
+        // splice junctions are 'at', everything else is 'in'
         String preposition = "in";
-        if (term != null && term.getOboID() != null && term.getOboID().equals("SO:0001421")) {
+        if (term != null && term.getZdbID().equals("ZDB-TERM-130401-1417")) {
             preposition = "at";
         }
         return preposition + " " + statement;
@@ -214,30 +215,20 @@ public class MutationDetailsConversionService {
         if (dnaChange == null) {
             return  "";
         }
-        GenericTerm term = dnaChange.getGeneLocalizationTerm();
-        if (term == null || term.getOboID() == null) {
+        GeneLocalizationTerm term = dnaChange.getGeneLocalizationTerm();
+        if (term == null) {
             return exonOrIntronLocation(dnaChange);
         } else {
-            switch (term.getOboID()) {
-                case "SO:0000163":
-                    return "splice donor site" + exonOrIntronLocation(dnaChange, " of ");
-                case "SO:0000164":
-                    return "splice acceptor site" + exonOrIntronLocation(dnaChange, " of ");
-                case "SO:0001421":
-                    return spliceJunctionLocation(dnaChange) + "splice junction";
-                case "SO:0000167":
-                    return "promotor";
-                case "SO:0000318":
-                    return "start codon";
-                case "SO:0000204":
-                    return "5' UTR";
-                case "SO:0000205":
-                    return "3' UTR";
-                case "SO:0000165":
-                    return "enhancer";
+            switch (term.getZdbID()) {
+                case "ZDB-TERM-130401-166":     // splice donor site
+                case "ZDB-TERM-130401-167":     // splice acceptor site
+                    return term.getDisplayName() + exonOrIntronLocation(dnaChange, " of ");
+                case "ZDB-TERM-130401-1417":    // splice junction
+                    return spliceJunctionLocation(dnaChange) + term.getDisplayName();
+                default:
+                    return term.getDisplayName();
             }
         }
-        return "";
     }
 
     /**

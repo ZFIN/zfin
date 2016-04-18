@@ -76,4 +76,9 @@ public abstract class MutationDetailControlledVocabularyTerm implements Comparab
         }
         return ObjectUtils.compare(displayName, o.displayName);
     }
+
+    @Override
+    public String toString() {
+        return displayName;
+    }
 }

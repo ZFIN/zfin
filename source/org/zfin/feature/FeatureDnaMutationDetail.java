@@ -42,7 +42,7 @@ public class FeatureDnaMutationDetail {
     private Integer intronNumber;
     @ManyToOne
     @JoinColumn(name = "fdmd_gene_localization_term_zdb_id")
-    private GenericTerm geneLocalizationTerm;
+    private GeneLocalizationTerm geneLocalizationTerm;
     @ManyToOne
     @JoinColumn(name = "fdmd_dna_mutation_term_zdb_id")
     private DnaMutationTerm dnaMutationTerm;
@@ -136,11 +136,11 @@ public class FeatureDnaMutationDetail {
         this.zdbID = zdbID;
     }
 
-    public GenericTerm getGeneLocalizationTerm() {
+    public GeneLocalizationTerm getGeneLocalizationTerm() {
         return geneLocalizationTerm;
     }
 
-    public void setGeneLocalizationTerm(GenericTerm geneLocalizationTerm) {
+    public void setGeneLocalizationTerm(GeneLocalizationTerm geneLocalizationTerm) {
         this.geneLocalizationTerm = geneLocalizationTerm;
     }
 }

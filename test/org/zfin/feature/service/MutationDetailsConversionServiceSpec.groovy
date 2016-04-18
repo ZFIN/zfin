@@ -1,16 +1,8 @@
 package org.zfin.feature.service
 
 import org.zfin.AbstractZfinSpec
-import org.zfin.feature.AminoAcidTerm
-import org.zfin.feature.DnaMutationTerm
-import org.zfin.feature.Feature
-import org.zfin.feature.FeatureDnaMutationDetail
-import org.zfin.feature.FeatureProteinMutationDetail
-import org.zfin.feature.FeatureTranscriptMutationDetail
-import org.zfin.feature.ProteinConsequence
-import org.zfin.feature.TranscriptConsequence
+import org.zfin.feature.*
 import org.zfin.gwt.root.dto.FeatureTypeEnum
-import org.zfin.ontology.GenericTerm
 import org.zfin.sequence.ForeignDB
 import org.zfin.sequence.ReferenceDatabase
 import spock.lang.Shared
@@ -20,6 +12,23 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
 
     @Shared
     MutationDetailsConversionService converter = new MutationDetailsConversionService()
+
+    @Shared
+    GeneLocalizationTerm spliceDonor = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-166", displayName: "splice donor site");
+    @Shared
+    GeneLocalizationTerm spliceAcceptor = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-167", displayName: "splice acceptor site");
+    @Shared
+    GeneLocalizationTerm spliceJunction = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-1417", displayName: "splice junction");
+    @Shared
+    GeneLocalizationTerm promoter = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-170", displayName: "promoter");
+    @Shared
+    GeneLocalizationTerm enhancer = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-168", displayName: "enhancer");
+    @Shared
+    GeneLocalizationTerm fivePrimeUTR = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-207", displayName: "5' UTR");
+    @Shared
+    GeneLocalizationTerm threePrimeUTR = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-208", displayName: "3' UTR");
+    @Shared
+    GeneLocalizationTerm startCodon = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-321", displayName: "start codon");
 
     def 'mutation type field should be populated'() {
         setup:
@@ -38,7 +47,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         def feature = new Feature(
                 type: FeatureTypeEnum.POINT_MUTATION,
                 featureDnaMutationDetail: new FeatureDnaMutationDetail(
-                        geneLocalizationTerm: localization == null ? null : new GenericTerm(oboID: localization),
+                        geneLocalizationTerm: localization,
                         exonNumber: exon,
                         intronNumber: intron,
                         dnaPositionStart: position,
@@ -55,46 +64,46 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         presentation.dnaChangeStatement == display
 
         where:
-        localization | exon | intron | position | db        | accession || display
-        null         | null | null   | null     | null      | null      || 'A>G'
-        null         | 4    | null   | null     | null      | null      || 'A>G in exon 4'
-        'SO:0001421' | 6    | 7      | 1010     | null      | null      || 'A>G at exon 6 - intron 7 splice junction at position 1010'
-        null         | null | null   | 392      | null      | null      || 'A>G at position 392'
-        null         | null | null   | 1829     | 'GENBANK' | 'C1032'   || 'A>G at position 1829 in GENBANK:C1032'
-        null         | null | null   | null     | 'GENBANK' | '9999'    || 'A>G in GENBANK:9999'
+        localization   | exon | intron | position | db        | accession || display
+        null           | null | null   | null     | null      | null      || 'A>G'
+        null           | 4    | null   | null     | null      | null      || 'A>G in exon 4'
+        spliceJunction | 6    | 7      | 1010     | null      | null      || 'A>G at exon 6 - intron 7 splice junction at position 1010'
+        null           | null | null   | 392      | null      | null      || 'A>G at position 392'
+        null           | null | null   | 1829     | 'GENBANK' | 'C1032'   || 'A>G at position 1829 in GENBANK:C1032'
+        null           | null | null   | null     | 'GENBANK' | '9999'    || 'A>G in GENBANK:9999'
     }
 
     @Unroll
-    def 'gene localization with term #termOboId, exon #exon, intron #intron'() {
+    def 'gene localization with term #localization, exon #exon, intron #intron'() {
         setup:
         def dnaChange = new FeatureDnaMutationDetail(
                 exonNumber: exon,
                 intronNumber: intron,
-                geneLocalizationTerm: new GenericTerm(oboID: termOboId)
+                geneLocalizationTerm: localization
         )
 
         expect:
         converter.geneLocalizationWithPreposition(dnaChange) == display
 
         where:
-        termOboId    | exon | intron || display
-        null         | 1    | null   || "in exon 1"
-        null         | null | 2      || "in intron 2"
-        "SO:0000163" | null | null   || "in splice donor site"
-        "SO:0000163" | 1    | null   || "in splice donor site of exon 1"
-        "SO:0000163" | null | 2      || "in splice donor site of intron 2"
-        "SO:0000164" | null | null   || "in splice acceptor site"
-        "SO:0000164" | 1    | null   || "in splice acceptor site of exon 1"
-        "SO:0000164" | null | 2      || "in splice acceptor site of intron 2"
-        "SO:0001421" | null | null   || "at splice junction"
-        "SO:0001421" | 3    | 3      || "at exon 3 - intron 3 splice junction"
-        "SO:0001421" | 4    | 5      || "at exon 4 - intron 5 splice junction"
-        "SO:0001421" | 7    | 6      || "at intron 6 - exon 7 splice junction"
-        "SO:0000167" | 3    | 4      || "in promotor"
-        "SO:0000318" | 3    | 4      || "in start codon"
-        "SO:0000204" | 3    | 4      || "in 5' UTR"
-        "SO:0000205" | 3    | 4      || "in 3' UTR"
-        "SO:0000165" | 3    | 4      || "in enhancer"
+        localization   | exon | intron || display
+        null           | 1    | null   || "in exon 1"
+        null           | null | 2      || "in intron 2"
+        spliceDonor    | null | null   || "in splice donor site"
+        spliceDonor    | 1    | null   || "in splice donor site of exon 1"
+        spliceDonor    | null | 2      || "in splice donor site of intron 2"
+        spliceAcceptor | null | null   || "in splice acceptor site"
+        spliceAcceptor | 1    | null   || "in splice acceptor site of exon 1"
+        spliceAcceptor | null | 2      || "in splice acceptor site of intron 2"
+        spliceJunction | null | null   || "at splice junction"
+        spliceJunction | 3    | 3      || "at exon 3 - intron 3 splice junction"
+        spliceJunction | 4    | 5      || "at exon 4 - intron 5 splice junction"
+        spliceJunction | 7    | 6      || "at intron 6 - exon 7 splice junction"
+        promoter       | 3    | 4      || "in promoter"
+        startCodon     | 3    | 4      || "in start codon"
+        fivePrimeUTR   | 3    | 4      || "in 5' UTR"
+        threePrimeUTR  | 3    | 4      || "in 3' UTR"
+        enhancer       | 3    | 4      || "in enhancer"
     }
 
     @Unroll
@@ -141,7 +150,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
                 type: FeatureTypeEnum.DELETION,
                 featureDnaMutationDetail: new FeatureDnaMutationDetail(
                         numberRemovedBasePair: 10,
-                        geneLocalizationTerm: localization == null ? null : new GenericTerm(oboID: localization),
+                        geneLocalizationTerm: localization,
                         exonNumber: exon,
                         intronNumber: intron,
                         dnaPositionStart: position,
@@ -160,7 +169,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         localization | exon | intron | position | db        | accession || display
         null         | null | null   | null     | null      | null      || '-10 bp'
         null         | null | 2      | null     | null      | null      || '-10 bp in intron 2'
-        'SO:0000163' | 6    | null   | 1010     | null      | null      || '-10 bp in splice donor site of exon 6 at position 1010'
+        spliceDonor  | 6    | null   | 1010     | null      | null      || '-10 bp in splice donor site of exon 6 at position 1010'
         null         | null | null   | 482      | null      | null      || '-10 bp at position 482'
         null         | null | null   | 1829     | 'GENBANK' | 'C1032'   || '-10 bp at position 1829 in GENBANK:C1032'
         null         | null | null   | null     | 'GENBANK' | '9999'    || '-10 bp in GENBANK:9999'
@@ -173,7 +182,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
                 type: FeatureTypeEnum.INSERTION,
                 featureDnaMutationDetail: new FeatureDnaMutationDetail(
                         numberAddedBasePair: 13,
-                        geneLocalizationTerm: localization == null ? null : new GenericTerm(oboID: localization),
+                        geneLocalizationTerm: localization,
                         exonNumber: exon,
                         intronNumber: intron,
                         dnaPositionStart: position,
@@ -192,7 +201,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         localization | exon | intron | position | db        | accession || display
         null         | null | null   | null     | null      | null      || '+13 bp'
         null         | 12   | null   | null     | null      | null      || '+13 bp in exon 12'
-        'SO:0000204' | 6    | null   | 1010     | null      | null      || '+13 bp in 5\' UTR at position 1010'
+        fivePrimeUTR | 6    | null   | 1010     | null      | null      || '+13 bp in 5\' UTR at position 1010'
         null         | null | null   | 832      | null      | null      || '+13 bp at position 832'
         null         | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '+13 bp in intron 5 at position 1829 in GENBANK:C1032'
         null         | null | null   | null     | 'GENBANK' | '9999'    || '+13 bp in GENBANK:9999'
@@ -206,7 +215,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
                 featureDnaMutationDetail: new FeatureDnaMutationDetail(
                         numberAddedBasePair: added,
                         numberRemovedBasePair: removed,
-                        geneLocalizationTerm: localization == null ? null : new GenericTerm(oboID: localization),
+                        geneLocalizationTerm: localization,
                         exonNumber: exon,
                         intronNumber: intron,
                         dnaPositionStart: position,
@@ -227,7 +236,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         null  | 21      | null         | null | null   | null     | null      | null      || 'net -21 bp'
         34    | 17      | null         | null | null   | null     | null      | null      || '+34/-17 bp'
         34    | 17      | null         | 2    | null   | null     | null      | null      || '+34/-17 bp in exon 2'
-        34    | 17      | 'SO:0000163' | null | null   | 1010     | null      | null      || '+34/-17 bp in splice donor site at position 1010'
+        34    | 17      | spliceDonor  | null | null   | 1010     | null      | null      || '+34/-17 bp in splice donor site at position 1010'
         34    | 17      | null         | null | null   | 832      | null      | null      || '+34/-17 bp at position 832'
         34    | 17      | null         | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '+34/-17 bp in intron 5 at position 1829 in GENBANK:C1032'
         34    | 17      | null         | null | null   | null     | 'GENBANK' | '9999'    || '+34/-17 bp in GENBANK:9999'
@@ -239,7 +248,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         def feature = new Feature(
                 type: FeatureTypeEnum.TRANSGENIC_INSERTION,
                 featureDnaMutationDetail: new FeatureDnaMutationDetail(
-                        geneLocalizationTerm: localization == null ? null : new GenericTerm(oboID: localization),
+                        geneLocalizationTerm: localization,
                         exonNumber: exon,
                         intronNumber: intron,
                         dnaPositionStart: position,
@@ -258,7 +267,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         localization | exon | intron | position | db       | accession || display
         null         | null | null   | null     | null     | null      || ""
         null         | null | 5      | null     | null     | null      || "Insertion in intron 5"
-        'SO:0000167' | null | null   | null     | null     | null      || "Insertion in promotor"
+        promoter     | null | null   | null     | null     | null      || "Insertion in promoter"
         null         | null | null   | 8849     | null     | null      || "Insertion at position 8849"
         null         | null | null   | null     | 'FOOBAR' | '998A'    || "Insertion in FOOBAR:998A"
     }
