@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureDnaMutationDetail;
+import org.zfin.feature.FeatureProteinMutationDetail;
 import org.zfin.feature.FeatureTranscriptMutationDetail;
 import org.zfin.feature.presentation.MutationDetailsPresentation;
 import org.zfin.ontology.GenericTerm;
@@ -284,16 +285,26 @@ public class MutationDetailsConversionService {
         if (dnaChange == null) {
             return  "";
         }
+        return positionStatement(dnaChange.getDnaPositionStart(), dnaChange.getDnaPositionEnd());
+    }
 
-        if (dnaChange.getDnaPositionStart() == null) {
+    public String positionStatement(FeatureProteinMutationDetail proteinConsequence) {
+        if (proteinConsequence == null) {
+            return "";
+        }
+        return positionStatement(proteinConsequence.getProteinPositionStart(), proteinConsequence.getProteinPositionEnd());
+    }
+
+    private String positionStatement(Integer start, Integer end) {
+        if (start == null) {
             return "";
         }
 
-        if (dnaChange.getDnaPositionEnd() == null) {
-            return "at position " + dnaChange.getDnaPositionStart();
+        if (end == null) {
+            return "at position " + start;
         }
 
-        return "from position " + dnaChange.getDnaPositionStart() + " to " + dnaChange.getDnaPositionEnd();
+        return "from position " + start + " to " + end;
     }
 
     /**

@@ -4,6 +4,7 @@ import org.zfin.AbstractZfinSpec
 import org.zfin.feature.DnaMutationTerm
 import org.zfin.feature.Feature
 import org.zfin.feature.FeatureDnaMutationDetail
+import org.zfin.feature.FeatureProteinMutationDetail
 import org.zfin.feature.FeatureTranscriptMutationDetail
 import org.zfin.feature.TranscriptConsequence
 import org.zfin.gwt.root.dto.FeatureTypeEnum
@@ -95,7 +96,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
     }
 
     @Unroll
-    def 'position statement with start #start, end #end'() {
+    def 'dna position statement with start #start, end #end'() {
         setup:
         def dnaChange = new FeatureDnaMutationDetail(
                 dnaPositionStart: start,
@@ -312,5 +313,24 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
 
         then:
         presentation.transcriptChangeStatement == 'missense_variant, 3_prime_UTR_variant, splicing_variant in exon 3, intron_gain_variant in intron 5'
+    }
+
+    @Unroll
+    def 'protein position statement with start #start, end #end'() {
+        setup:
+        def proteinConsequence = new FeatureProteinMutationDetail(
+                proteinPositionStart: start,
+                proteinPositionEnd: end
+        )
+
+        expect:
+        converter.positionStatement(proteinConsequence) == display
+
+        where:
+        start | end   || display
+        null  | null  || ""
+        null  | 12    || ""
+        9911  | null  || "at position 9911"
+        28281 | 28282 || "from position 28281 to 28282"
     }
 }
