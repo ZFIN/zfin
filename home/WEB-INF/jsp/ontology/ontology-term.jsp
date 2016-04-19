@@ -7,7 +7,7 @@
 <script src="/javascript/table-collapse.js"></script>
 <div class="data-page">
 
-    <zfin2:dataManager oboID="${formBean.term.oboID}" termID="${formBean.term.zdbID}" />
+    <zfin2:dataManager oboID="${formBean.term.oboID}" termID="${formBean.term.zdbID}"/>
 
     <div style="float: right;">
         <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
@@ -77,27 +77,20 @@
             </td>
         </tr>
 
-        <tr>
-            <td></td>
-        </tr>
-
         <c:if test="${formBean.term.obsolete}">
             <tr>
-                <th class="red">Obsolete</th>
+                <th class="red">Obsolete:</th>
                 <td class="red">true</td>
             </tr>
         </c:if>
     </table>
 
-    <p>
-
-        <c:if test="${!empty formBean.term.images}">
-
-    <div class="summary">
-        <c:forEach var="image" items="${formBean.term.images}">
-            <zfin:link entity="${image}"/>
-        </c:forEach>
-    </div>
+    <c:if test="${!empty formBean.term.images}">
+        <div class="summary">
+            <c:forEach var="image" items="${formBean.term.images}">
+                <zfin:link entity="${image}"/>
+            </c:forEach>
+        </div>
     </c:if>
 
     <div class="summary">
@@ -105,10 +98,9 @@
                                                    href='/action/ontology/note/ontology-relationship'></a></span>
         <table class="summary horizontal-solidblock">
             <c:forEach var="relationshipPresentation" items="${formBean.termRelationships}" varStatus="index">
-                <tr id="${fn:replace(relationshipPresentation.type," ","-")}">
+                <tr id="${zfn:makeDomIdentifier(relationshipPresentation.type)}">
                     <th>
-                            <%-- keep the relationship types from wrapping --%>
-                            ${fn:replace(relationshipPresentation.type," ","&nbsp;")}:
+                            ${relationshipPresentation.type}:
                     </th>
                     <td>
                         <zfin2:createExpandCollapseList items="${relationshipPresentation.items}" id="${index.count}"/>
@@ -142,15 +134,6 @@
     <tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_term_detail_phenotype.jsp" flush="false"/>
 
     <zfin2:ExpandRequestSections sectionVisibility="${formBean.sectionVisibility}"/>
-
-
-    <%--<div class="summary">
-        <%// Number of Publications with an abstract that contains the anatomical structure %>
-        <A HREF='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=<zfin2:urlEncode string="${formBean.term.termName}"/>&query_results=exists'>Search
-            for publications with '${formBean.term.termName}' in abstract</A>
-    </div>--%>
-
-
 
     <authz:authorize access="hasRole('root')">
         <c:if test="${isDiseaseTerm}">

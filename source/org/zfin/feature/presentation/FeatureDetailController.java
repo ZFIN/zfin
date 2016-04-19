@@ -11,6 +11,7 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
+import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.gbrowse.presentation.GBrowseImage;
@@ -40,6 +41,9 @@ public class FeatureDetailController {
 
     @Autowired
     private LinkageRepository linkageRepository;
+
+    @Autowired
+    private MutationDetailsConversionService mutationDetailsConversionService;
 
     @RequestMapping(value = "view/{zdbID}")
     protected String getFeatureDetail(@PathVariable String zdbID, Model model) {
@@ -127,7 +131,7 @@ public class FeatureDetailController {
         retrievePubData(feature, form);
 
         model.addAttribute("externalNotes",FeatureService.getSortedExternalNotes(feature));
-
+        model.addAttribute("mutationDetails", mutationDetailsConversionService.convert(feature));
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, feature.getName());

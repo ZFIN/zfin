@@ -208,6 +208,7 @@ table.horizontal-solidblock th {
     background-color: #eee;
     padding-right: 1em;
     width: 10%;
+    white-space: nowrap;
 }
 
 /* sequenceView.tag is a strange beast, and requires some exceptions */

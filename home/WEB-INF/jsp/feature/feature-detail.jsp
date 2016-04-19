@@ -280,61 +280,26 @@
     </tr>
 </table>
 
-<authz:authorize access="hasRole('root')">
-    <zfin2:subsection title="MUTATION DETAILS -- ROOT ONLY" additionalCssClass="red">
-        <table class="primary-entity-attributes">
-            <tr>
-                <th>type</th>
-                <td>${formBean.feature.type.name}</td>
-            </tr>
-            <tr>
-                <th>dnaMutationName</th>
-                <td>${formBean.feature.dnaMutationName}</td>
-            </tr>
-            <tr>
-                <th>numberOfAdditionalBps</th>
-                <td>${formBean.feature.numberOfAdditionalBps}</td>
-            </tr>
-            <tr>
-                <th>numberOfremovedBps</th>
-                <td>${formBean.feature.numberOfremovedBps}</td>
-            </tr>
-            <c:choose>
-                <c:when test="${!empty formBean.feature.featureTranscriptMutationDetailSet}">
-                    <c:forEach items="${formBean.feature.featureTranscriptMutationDetailSet}" var="rna" varStatus="rnaLoop">
-                        <tr>
-                            <th>featureRnaMutationDetailSet[${rnaLoop.index}].transcriptConsequence</th>
-                            <td>${rna.transcriptConsequence.termName}</td>
-                        </tr>
-                    </c:forEach>
-                </c:when>
-                <c:otherwise>
-                    <tr>
-                        <th>featureRnaMutationDetailSet</th>
-                        <td>empty</td>
-                    </tr>
-                </c:otherwise>
-            </c:choose>
-            <c:choose>
-                <c:when test="${!empty formBean.feature.featureProteinMutationDetailSet}">
-                    <c:forEach items="${formBean.feature.featureProteinMutationDetailSet}" var="protein" varStatus="proteinLoop">
-                        <tr>
-                            <th>featureProteinMutationDetailSet[${proteinLoop.index}].proteinConsequence</th>
-                            <td>${protein.proteinConsequence.termName}</td>
-                        </tr>
-                    </c:forEach>
-                </c:when>
-                <c:otherwise>
-                    <tr>
-                        <th>featureProteinMutationDetailSet</th>
-                        <td>empty</td>
-                    </tr>
-                </c:otherwise>
-            </c:choose>
-        </table>
-    </zfin2:subsection>
-</authz:authorize>
-
+<zfin2:subsection title="MUTATION">
+    <table class="summary horizontal-solidblock">
+        <tr>
+            <th>Type:</th>
+            <td>${mutationDetails.mutationType}</td>
+        </tr>
+        <tr>
+            <th>DNA/cDNA Change:</th>
+            <td>${mutationDetails.dnaChangeStatement}</td>
+        </tr>
+        <tr>
+            <th>Transcript Consequence:</th>
+            <td>${mutationDetails.transcriptChangeStatement}</td>
+        </tr>
+        <tr>
+            <th>Protein Consequence:</th>
+            <td>${mutationDetails.proteinChangeStatement}</td>
+        </tr>
+    </table>
+</zfin2:subsection>
 
 <zfin2:externalNotes notes="${externalNotes}" />
 
