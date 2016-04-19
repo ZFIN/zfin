@@ -22,6 +22,7 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
 import org.zfin.profile.Person;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.Database;
 import org.zfin.util.DateUtil;
@@ -392,6 +393,9 @@ public class ZfinJSPFunctions {
 
     public static AuditLogItem getLastUpdate(String entityID) {
         return RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(entityID);
+    }
 
+    public static String getWebdriverRoot() {
+        return "/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT;
     }
 }

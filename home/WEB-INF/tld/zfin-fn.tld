@@ -334,4 +334,10 @@
         <function-signature>org.zfin.audit.AuditLogItem getLastUpdate(java.lang.String)</function-signature>
     </function>
 
+    <function>
+        <name>getWebdriverLink</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String getWebdriverRoot()</function-signature>
+    </function>
+
 </taglib>

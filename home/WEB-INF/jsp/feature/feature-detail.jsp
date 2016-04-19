@@ -136,170 +136,144 @@
                 </c:if>
                 <tr>
                     <th>
-                        Type:
-                    </th>
-                    <td>${formBean.feature.type.display}
-                        <c:if test="${fn:length(formBean.featureTypeAttributions) > 0 }">
-                            <c:choose>
-                                <c:when test="${fn:length(formBean.featureTypeAttributions)== 1 }">
-                                    (<a href="/${formBean.singlePublication}">${1}</a>)
-                                </c:when>
-                                <c:otherwise>
-                                    (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&rtype=genotype&recattrsrctype=feature+type&OID=${formBean.feature.zdbID}">${fn:length(formBean.featureTypeAttributions)}</a>)
-                                </c:otherwise>
-                            </c:choose>
-                        </c:if>
-                    </td>
-                </tr>
-
-                <tr>
-                    <th>
-                        Protocol:
-                    </th>
-                    <td>
-                        <c:set var="mutagen" value="${formBean.feature.featureAssay.mutagen}"/>
-                        <c:set var="mutagee" value="${formBean.feature.featureAssay.mutagee}"/>
-                        <c:choose>
-                            <c:when test="${mutagen eq null || mutagen eq zfn:getMutagen('not specified')}">
-                            </c:when>
-                            <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen eq zfn:getMutagen('not specified')}">
-                            </c:when>
-                            <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen ne zfn:getMutagen('not specified')}">
-                                ${mutagen.toString()}&nbsp; <c:if
-                                    test="${formBean.createdByRelationship ne null}"><zfin:link
-                                    entity="${formBean.createdByRelationship.marker}"/></c:if>
-                            </c:when>
-                            <c:otherwise>
-                                <c:choose>
-                                    <c:when test="${formBean.createdByRelationship ne null}">
-                                        ${mutagee.toString()} treated with <zfin:link
-                                            entity="${formBean.createdByRelationship.marker}"/>
-                                    </c:when>
-                                    <c:otherwise>
-                                        ${mutagee.toString()} treated with ${mutagen.toString()}
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
-                </tr>
-
-                <tr>
-                    <th>
-                        Lab Of Origin:
-                    </th>
-                    <td>
-                        <c:choose>
-                            <c:when test="${formBean.feature.sources ne null && fn:length(formBean.feature.sources) > 0}">
-                                <c:forEach var="source" items="${formBean.feature.sources}" varStatus="status">
-                                    <c:if test="${source.organization.zdbID != 'ZDB-LAB-000914-1'}">
-                                        <zfin:link entity="${source.organization}"/>
-                                    </c:if>
-                                </c:forEach>
-                            </c:when>
-                        </c:choose>
-                    </td>
-                </tr>
-
-                <tr>
-                    <th>
                         Location:
                     </th>
                     <td>
                         <zfin2:displayLocation entity="${formBean.feature}"/>
                     </td>
                 </tr>
-
-                <tr>
-                    <th>
-                        Sequence:
-                    </th>
-                    <td>
-                        <c:forEach var="featureGenbankLink" items="${formBean.genbankDbLinks}" varStatus="loop">
-                            <zfin:link entity="${featureGenbankLink}"/>
-                            <c:if test="${featureGenbankLink.publicationCount > 0}">
-                                <c:choose>
-                                    <c:when test="${featureGenbankLink.publicationCount == 1}">
-                                        (<a href="/${featureGenbankLink.singlePublication.zdbID}">${featureGenbankLink.publicationCount}</a>)
-                                    </c:when>
-                                    <c:otherwise>
-                                        (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureGenbankLink.zdbID}&rtype=genotype">${featureGenbankLink.publicationCount}</a>)
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:if>
-                            <c:if test="${!loop.last}">,&nbsp;</c:if>
-                        </c:forEach>
-                    </td>
-                </tr>
-
-
-                <tr>
-                    <th>
-                        Current Sources:
-                    </th>
-                    <td>
-                        <c:choose>
-                            <c:when test="${formBean.feature.suppliers ne null && fn:length(formBean.feature.suppliers) > 0}">
-                                <c:forEach var="supplier" items="${formBean.feature.suppliers}" varStatus="status">
-                                    <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}"
-                                       id="${supplier.organization.zdbID}">
-                                            ${supplier.organization.name}</a>
-                                    <c:if test="${supplier.zirc || supplier.ezrc || supplier.czrc}">&nbsp;
-                                        <zfin2:orderThis organization="${supplier.organization}"
-                                                         accessionNumber="${formBean.feature.zdbID}"/>
-                                    </c:if>
-                                    <c:if test="${supplier.moensLab}">&nbsp;(<a href="http://labs.fhcrc.org/moens/Tilling_Mutants/${formBean.feature.singleRelatedMarker.abbreviation}"><font size="-1">request this mutant</font></a>)
-                                    </c:if>
-                                    <c:if test="${supplier.solnicaLab}">&nbsp;(<a href="http://devbio.wustl.edu/solnicakrezellab/${formBean.feature.singleRelatedMarker.abbreviation}.htm"><font size="-1">request this mutant</font></a>)
-                                    </c:if>
-                                    <c:if test="${supplier.riken}">&nbsp;(<a href="http://www.shigen.nig.ac.jp/zebrafish/strainDetailAction.do?zfinId=${formBean.feature.singleRelatedGenotype.zdbID}"><font size="-1">order this</font></a>)
-                                    </c:if>
-                                    <c:if test="${!status.last}"><br/></c:if>
-                                </c:forEach>
-                            </c:when>
-                            <c:otherwise>
-                                <span class="no-data-tag"></span>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
-                </tr>
-                <zfin2:notesInDiv hasNotes="${formBean.feature}"/>
             </table>
+
+            <zfin2:subsection title="MUTATION">
+                <table class="summary horizontal-solidblock">
+                    <tr>
+                        <th>Type:</th>
+                        <td>${mutationDetails.mutationType}</td>
+                    </tr>
+                    <tr>
+                        <th>DNA/cDNA Change:</th>
+                        <td>${mutationDetails.dnaChangeStatement}</td>
+                    </tr>
+                    <tr>
+                        <th>Transcript Consequence:</th>
+                        <td>${mutationDetails.transcriptChangeStatement}</td>
+                    </tr>
+                    <tr>
+                        <th>Protein Consequence:</th>
+                        <td>${mutationDetails.proteinChangeStatement}</td>
+                    </tr>
+                </table>
+            </zfin2:subsection>
+
+            <zfin2:subsection title="ADDITIONAL DETAILS">
+                <table class="summary horizontal-solidblock">
+                    <tr>
+                        <th>
+                            Protocol:
+                        </th>
+                        <td>
+                            <c:set var="mutagen" value="${formBean.feature.featureAssay.mutagen}"/>
+                            <c:set var="mutagee" value="${formBean.feature.featureAssay.mutagee}"/>
+                            <c:choose>
+                                <c:when test="${mutagen eq null || mutagen eq zfn:getMutagen('not specified')}">
+                                </c:when>
+                                <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen eq zfn:getMutagen('not specified')}">
+                                </c:when>
+                                <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen ne zfn:getMutagen('not specified')}">
+                                    ${mutagen.toString()}&nbsp; <c:if
+                                        test="${formBean.createdByRelationship ne null}"><zfin:link
+                                        entity="${formBean.createdByRelationship.marker}"/></c:if>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:choose>
+                                        <c:when test="${formBean.createdByRelationship ne null}">
+                                            ${mutagee.toString()} treated with <zfin:link
+                                                entity="${formBean.createdByRelationship.marker}"/>
+                                        </c:when>
+                                        <c:otherwise>
+                                            ${mutagee.toString()} treated with ${mutagen.toString()}
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Lab Of Origin:
+                        </th>
+                        <td>
+                            <c:choose>
+                                <c:when test="${formBean.feature.sources ne null && fn:length(formBean.feature.sources) > 0}">
+                                    <c:forEach var="source" items="${formBean.feature.sources}" varStatus="status">
+                                        <c:if test="${source.organization.zdbID != 'ZDB-LAB-000914-1'}">
+                                            <zfin:link entity="${source.organization}"/>
+                                        </c:if>
+                                    </c:forEach>
+                                </c:when>
+                            </c:choose>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Sequence:
+                        </th>
+                        <td>
+                            <c:forEach var="featureGenbankLink" items="${formBean.genbankDbLinks}" varStatus="loop">
+                                <zfin:link entity="${featureGenbankLink}"/>
+                                <c:if test="${featureGenbankLink.publicationCount > 0}">
+                                    <c:choose>
+                                        <c:when test="${featureGenbankLink.publicationCount == 1}">
+                                            (<a href="/${featureGenbankLink.singlePublication.zdbID}">${featureGenbankLink.publicationCount}</a>)
+                                        </c:when>
+                                        <c:otherwise>
+                                            (<a href="${zfn:getWebdriverLink()}?MIval=aa-showpubs.apg&OID=${featureGenbankLink.zdbID}&rtype=genotype">${featureGenbankLink.publicationCount}</a>)
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:if>
+                                <c:if test="${!loop.last}">,&nbsp;</c:if>
+                            </c:forEach>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Current Sources:
+                        </th>
+                        <td>
+                            <c:choose>
+                                <c:when test="${formBean.feature.suppliers ne null && fn:length(formBean.feature.suppliers) > 0}">
+                                    <c:forEach var="supplier" items="${formBean.feature.suppliers}" varStatus="status">
+                                        <a href="${zfn:getWebdriverLink()}?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}"
+                                           id="${supplier.organization.zdbID}">
+                                                ${supplier.organization.name}
+                                        </a>
+                                        <c:if test="${supplier.zirc || supplier.ezrc || supplier.czrc}">&nbsp;
+                                            <zfin2:orderThis organization="${supplier.organization}"
+                                                             accessionNumber="${formBean.feature.zdbID}"/>
+                                        </c:if>
+                                        <c:if test="${supplier.moensLab}">&nbsp;(<a href="http://labs.fhcrc.org/moens/Tilling_Mutants/${formBean.feature.singleRelatedMarker.abbreviation}"><font size="-1">request this mutant</font></a>)
+                                        </c:if>
+                                        <c:if test="${supplier.solnicaLab}">&nbsp;(<a href="http://devbio.wustl.edu/solnicakrezellab/${formBean.feature.singleRelatedMarker.abbreviation}.htm"><font size="-1">request this mutant</font></a>)
+                                        </c:if>
+                                        <c:if test="${supplier.riken}">&nbsp;(<a href="http://www.shigen.nig.ac.jp/zebrafish/strainDetailAction.do?zfinId=${formBean.feature.singleRelatedGenotype.zdbID}"><font size="-1">order this</font></a>)
+                                        </c:if>
+                                        <c:if test="${!status.last}"><br/></c:if>
+                                    </c:forEach>
+                                </c:when>
+                                <c:otherwise>
+                                    <span class="no-data-tag"></span>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
+                    </tr>
+                </table>
+            </zfin2:subsection>
         </td>
         <td>
             <div class="gbrowse-image"></div>
-            <script>
-                jQuery(".gbrowse-image").gbrowseImage({
-                    width: 400,
-                    imageUrl: "${formBean.gBrowseImage.imageUrl}",
-                    linkUrl: "${formBean.gBrowseImage.linkUrl}",
-                    build: "${formBean.gBrowseImage.build}"
-                });
-            </script>
         </td>
     </tr>
 </table>
-
-<zfin2:subsection title="MUTATION">
-    <table class="summary horizontal-solidblock">
-        <tr>
-            <th>Type:</th>
-            <td>${mutationDetails.mutationType}</td>
-        </tr>
-        <tr>
-            <th>DNA/cDNA Change:</th>
-            <td>${mutationDetails.dnaChangeStatement}</td>
-        </tr>
-        <tr>
-            <th>Transcript Consequence:</th>
-            <td>${mutationDetails.transcriptChangeStatement}</td>
-        </tr>
-        <tr>
-            <th>Protein Consequence:</th>
-            <td>${mutationDetails.proteinChangeStatement}</td>
-        </tr>
-    </table>
-</zfin2:subsection>
 
 <zfin2:externalNotes notes="${externalNotes}" />
 
@@ -353,5 +327,11 @@
 <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${formBean.feature.zdbID}&total_count=${formBean.numPubs}&rtype=genotype'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.numPubs})
 
 <script type="text/javascript">
-    jQuery('#genotype').tableCollapse({label: 'rows'});
+    $('#genotype').tableCollapse({label: 'rows'});
+    $(".gbrowse-image").gbrowseImage({
+        width: 400,
+        imageUrl: "${formBean.gBrowseImage.imageUrl}",
+        linkUrl: "${formBean.gBrowseImage.linkUrl}",
+        build: "${formBean.gBrowseImage.build}"
+    });
 </script>
