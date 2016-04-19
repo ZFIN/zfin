@@ -150,18 +150,24 @@
                         <th>Type:</th>
                         <td>${mutationDetails.mutationType}</td>
                     </tr>
-                    <tr>
-                        <th>DNA/cDNA Change:</th>
-                        <td>${mutationDetails.dnaChangeStatement}</td>
-                    </tr>
-                    <tr>
-                        <th>Transcript Consequence:</th>
-                        <td>${mutationDetails.transcriptChangeStatement}</td>
-                    </tr>
-                    <tr>
-                        <th>Protein Consequence:</th>
-                        <td>${mutationDetails.proteinChangeStatement}</td>
-                    </tr>
+                    <c:if test="${!empty mutationDetails.dnaChangeStatement}">
+                        <tr>
+                            <th>DNA/cDNA Change:</th>
+                            <td>${mutationDetails.dnaChangeStatement}</td>
+                        </tr>
+                    </c:if>
+                    <c:if test="${!empty mutationDetails.transcriptChangeStatement}">
+                        <tr>
+                            <th>Transcript Consequence:</th>
+                            <td>${mutationDetails.transcriptChangeStatement}</td>
+                        </tr>
+                    </c:if>
+                    <c:if test="${!empty mutationDetails.proteinChangeStatement}">
+                        <tr>
+                            <th>Protein Consequence:</th>
+                            <td>${mutationDetails.proteinChangeStatement}</td>
+                        </tr>
+                    </c:if>
                     <tr>
                         <th>Citations:</th>
                         <td>
