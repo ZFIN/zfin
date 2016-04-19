@@ -7,6 +7,7 @@ import org.zfin.feature.FeatureAlias;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.feature.FeatureNote;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.FeatureGenomeLocation;
@@ -31,8 +32,9 @@ public class FeatureService {
         for (FeatureMarkerRelationship ftrmrkrRelation : fmrelationships) {
             if (ftrmrkrRelation != null) {
                 if (ftrmrkrRelation.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
-                    if (ftrmrkrRelation.getMarker().isInTypeGroup(Marker.TypeGroup.GENEDOM))
+                    if (ftrmrkrRelation.getMarker().isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                         affectedGenes.add(ftrmrkrRelation);
+                    }
                 }
             }
         }
@@ -124,35 +126,10 @@ public class FeatureService {
         return delmarklg;
     }
 
-    public static List<RecordAttribution> getFeatureTypeAttributions(Feature feature) {
+    public static List<PublicationAttribution> getFeatureTypeAttributions(Feature feature) {
         InfrastructureRepository infRep = RepositoryFactory.getInfrastructureRepository();
-        List<RecordAttribution> recordAttributions = infRep.getRecAttribforFtrType(feature.getZdbID());
-        List<RecordAttribution> attributions = new ArrayList<>();
-        for (RecordAttribution recordAttribution : recordAttributions) {
-            attributions.add(recordAttribution);
-        }
-
-        return attributions;
-
+        return infRep.getPublicationAttributions(feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
     }
-
-    public static int getPublicationCount(Feature feature) {
-        InfrastructureRepository infRep = RepositoryFactory.getInfrastructureRepository();
-        List<RecordAttribution> recordAttributions = infRep.getRecAttribforFtrType(feature.getZdbID());
-        List<RecordAttribution> attributions = new ArrayList<>();
-        for (RecordAttribution recordAttribution : recordAttributions) {
-            attributions.add(recordAttribution);
-        }
-        return attributions.size();
-    }
-
-    public static String getSinglePublication(Feature feature) {
-        if (getPublicationCount(feature) == 1) {
-            return getFeatureTypeAttributions(feature).get(0).getSourceZdbID();
-        }
-        return null;
-    }
-
 
     public static Set<FeatureMarkerRelationship> getSortedConstructRelationships(Feature feature) {
         Set<FeatureMarkerRelationship> fmrelationships = feature.getFeatureMarkerRelations();

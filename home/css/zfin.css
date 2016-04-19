@@ -806,3 +806,19 @@ a + .inline-upload {
 .notif-letter-alert {
     margin: 15px 0;
 }
+
+ul.comma-separated {
+    list-style: none;
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+ul.comma-separated > li {
+    display: inline;
+}
+ul.comma-separated > li:after {
+    content: ", ";
+}
+ul.comma-separated > li:last-child:after {
+    content: "";
+}

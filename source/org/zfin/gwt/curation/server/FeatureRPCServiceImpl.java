@@ -117,7 +117,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             feature.setUnspecifiedFeature(false);
         }
         if (oldFeatureType == featureDTO.getFeatureType()) {
-            List<RecordAttribution> recordAttributions = infrastructureRepository.getRecAttribforFtrType(feature.getZdbID());
+            List<RecordAttribution> recordAttributions = infrastructureRepository.getRecordAttributionsForType(feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
             if (recordAttributions.size() != 0) {
                 if (!recordAttributions.get(0).getSourceZdbID().equals(featureDTO.getPublicationZdbID())) {
                     infrastructureRepository.removeRecordAttributionForType(recordAttributions.get(0).getSourceZdbID(), feature.getZdbID());
@@ -128,7 +128,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         } else {
             RecordAttribution recordAttributions = infrastructureRepository.getRecordAttribution(feature.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
             if (recordAttributions == null) {
-                List<RecordAttribution> recordAttribution = infrastructureRepository.getRecAttribforFtrType(feature.getZdbID());
+                List<RecordAttribution> recordAttribution = infrastructureRepository.getRecordAttributionsForType(feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
                 if (recordAttribution.size() != 0) {
 
                     infrastructureRepository.removeRecordAttributionForType(recordAttribution.get(0).getSourceZdbID(), feature.getZdbID());

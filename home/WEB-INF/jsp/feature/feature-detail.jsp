@@ -162,6 +162,16 @@
                         <th>Protein Consequence:</th>
                         <td>${mutationDetails.proteinChangeStatement}</td>
                     </tr>
+                    <tr>
+                        <th>Citations:</th>
+                        <td>
+                            <ul class="comma-separated">
+                                <c:forEach items="${formBean.featureTypeAttributions}" var="citation">
+                                    <li><zfin:link entity="${citation.publication}"/></li>
+                                </c:forEach>
+                            </ul>
+                        </td>
+                    </tr>
                 </table>
             </zfin2:subsection>
 

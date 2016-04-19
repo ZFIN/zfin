@@ -58,8 +58,6 @@ public interface InfrastructureRepository {
                                            String sourceZdbId,
                                            RecordAttribution.SourceType sourceType);
 
-    List<RecordAttribution> getRecAttribforFtrType(String dataZdbID);
-
     List<RecordAttribution> getRecordAttributionsForType(String dataZdbID, RecordAttribution.SourceType sourceType);
 
 
@@ -220,7 +218,9 @@ public interface InfrastructureRepository {
      */
     List<ExpressionAssay> getAllAssays();
 
-    List<PublicationAttribution> getPublicationAttributions(String dblinkZdbID);
+    List<PublicationAttribution> getPublicationAttributions(String dataZdbID);
+
+    List<PublicationAttribution> getPublicationAttributions(String dataZdbID, RecordAttribution.SourceType type);
 
     /**
      * Retrieves all data alias groups
