@@ -7,7 +7,7 @@
         <table class="summary rowstripes">
             <tr>
                 <th>Comment</th>
-                <th width="30%">Reference</th>
+                <th width="30%">Citation</th>
             </tr>
             <c:forEach var="note" items="${notes}" varStatus="loop">
                 <zfin:alternating-tr loopName="loop">
