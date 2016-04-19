@@ -160,7 +160,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             curationExperimentRPCAsync.readAntibodiesByGene(publicationID, geneID, new RetrieveAntibodyList());
         } else {
             view.getAntibodyList().setEnabled(false);
-            //updateGenes();
+            
         }
     }
 
@@ -434,8 +434,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     public void updateGenes() {
         if (lastSelectedExperiment != null)
             curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(lastSelectedExperiment.getGene()));
-       /* else
-            curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(null));*/
+
     }
 
     public void onShowHideClick(boolean visibility) {
