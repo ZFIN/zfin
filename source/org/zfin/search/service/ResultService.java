@@ -516,6 +516,10 @@ public class ResultService {
         Figure figure = RepositoryFactory.getPublicationRepository().getFigure(result.getFigZdbId());
 
         if (xpatex != null) {
+
+            result.setEntity(xpatex);
+            result.setFigure(figure);
+
             //Show the gene name if there is one, and the probe isn't chimeric (if there is one)
             if (xpatex.getGene() != null) {
 
@@ -569,7 +573,7 @@ public class ResultService {
                 sb.append(TermPresentation.getLink(expressionResult.getEntity(), true));
                 results.add(sb.toString());
             }
-            result.addAttribute(EXPRESSION, withBreaks(results));
+            result.addAttribute(EXPRESSION, asUnorderedList(results));
 
 
             //build a more complex title than the one used in the query
@@ -794,6 +798,22 @@ public class ResultService {
             sb.append("<div>");
             sb.append(s);
             sb.append("</div>");
+        }
+        return sb.toString();
+    }
+
+    public String asUnorderedList(Collection collection) {
+        StringBuilder sb = new StringBuilder();
+        if (CollectionUtils.isNotEmpty(collection)) {
+            sb.append("<ul class=\"list-unstyled\">");
+            for (Object o : collection) {
+                String s = (String) o;
+                sb.append("<li>");
+                sb.append(s);
+                sb.append("</li>");
+
+            }
+            sb.append("</ul>");
         }
         return sb.toString();
     }

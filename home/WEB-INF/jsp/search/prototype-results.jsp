@@ -5,10 +5,11 @@
 
 
 <c:set var="geneCategoryName" value="<%=Category.GENE.getName()%>"/>
+<c:set var="expressionCategoryName" value="<%=Category.EXPRESSIONS.getName()%>"/>
 <c:set var="publicationCategoryName" value="<%=Category.PUBLICATION.getName()%>"/>
 <c:set var="constructCategoryName" value="<%=Category.CONSTRUCT.getName()%>"/>
 
-
+<script src="/javascript/list-collapse.js"></script>
 <script src="/javascript/angular/angular.min.js"></script>
 <script src="/javascript/angular/angular-sanitize.js"></script>
 
@@ -249,6 +250,9 @@
                     <c:when test="${category eq geneCategoryName}">
                         <zfin-search:geneResultTable results="${results}"/>
                     </c:when>
+                    <c:when test="${category eq expressionCategoryName}">
+                        <zfin-search:expressionResultTable results="${results}"/>
+                    </c:when>
                     <c:otherwise>
                         <zfin-search:mixedResultTable results="${results}"/>
                     </c:otherwise>
@@ -316,6 +320,8 @@ function submitAdvancedQuery(fields) {
 }
 
 $(document).ready(function () {
+
+    $('.list-collapse').listCollapse({label: 'results', itemsToShow: 3});
 
     $('#primary-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
 
