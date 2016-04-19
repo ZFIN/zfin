@@ -266,6 +266,27 @@
                             </c:choose>
                         </td>
                     </tr>
+                    <tr>
+                        <th>
+                            Other Pages:
+                        </th>
+                        <td>
+                            <c:forEach var="link" items="${formBean.summaryPageDbLinks}" varStatus="loop">
+                                <zfin:link entity="${link}"/>
+                                <c:if test="${link.publicationCount > 0}">
+                                    <c:choose>
+                                        <c:when test="${link.publicationCount == 1}">
+                                            (<a href="/${link.singlePublication.zdbID}">${link.publicationCount}</a>)
+                                        </c:when>
+                                        <c:otherwise>
+                                            (<a href="${zfn:getWebdriverLink()}?MIval=aa-showpubs.apg&OID=${link.zdbID}&rtype=genotype">${link.publicationCount}</a>)
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:if>
+                                <c:if test="${!loop.last}">, </c:if>
+                            </c:forEach>
+                        </td>
+                    </tr>
                 </table>
             </zfin2:subsection>
         </td>
@@ -276,10 +297,6 @@
 </table>
 
 <zfin2:externalNotes notes="${externalNotes}" />
-
-<div id="other-pages">
-    <zfin2:featureSummaryReport feature="${formBean.feature}" links="${formBean.summaryPageDbLinks}"/>
-</div>
 
 <div id="genotype">
     <zfin2:subsection title="Genotypes" test="${!empty formBean.genotypeDisplays}" showNoData="true">
