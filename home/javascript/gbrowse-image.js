@@ -83,11 +83,11 @@
                 success = this.options.success,
                 link, img;
 
+            host.hide();
+
             if (!this.options.imageUrl) {
                 return;
             }
-
-            host.hide();
 
             if (this.options.build) {
                 $('<span>')
