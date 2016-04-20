@@ -122,7 +122,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                              + [[Category.COMMUNITY.getName()],["type"]].combinations() \
                              + [[Category.PUBLICATION.getName()],["gene", "sequence_alteration", "registered_author", "journal", "keyword", "publication_type"]].combinations() \
                              + [[Category.ANTIBODY.getName()],["type","antigen_gene","labeled_structure_tf", "assay", "source", "host_organism"]].combinations() \
-                             + [[Category.DISEASE.getName()],[FieldName.GENE.name,FieldName.DISEASE_MODEL.name,FieldName.EXPERIMENTAL_CONDITIONS.name]].combinations()
+                             + [[Category.DISEASE.getName()],[FieldName.GENE.name,FieldName.FISH.name,FieldName.EXPERIMENTAL_CONDITIONS.name]].combinations()
     }
 
 
