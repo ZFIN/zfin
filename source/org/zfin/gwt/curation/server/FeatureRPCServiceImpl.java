@@ -573,12 +573,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             FeatureNote note = new FeatureNote();
             note.setNote(noteDTO.getNoteData());
             note.setFeature(feature);
-            feature.getExternalNotes().add(note);
-            PublicationAttribution attribution = new PublicationAttribution();
-            attribution.setPublication(getPublicationRepository().getPublication(noteDTO.getPublicationZdbID()));
-            attribution.setSourceType(RecordAttribution.SourceType.STANDARD);
-            attribution.setDataZdbID(note.getZdbID());
-            note.addPublicationAttribution(attribution);
+            note.setPublication(getPublicationRepository().getPublication(noteDTO.getPublicationZdbID()));
+            feature.addExternalNote(note);
         } else {
             for (FeatureNote note : feature.getExternalNotes()) {
                 if (note.getZdbID().equals(noteDTO.getZdbID())) {
@@ -592,6 +588,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
         }
         HibernateUtil.flushAndCommitCurrentSession();
+
+
         return DTOConversionService.convertToFeatureDTO(feature);
     }
 

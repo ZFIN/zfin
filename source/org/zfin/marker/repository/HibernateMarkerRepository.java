@@ -11,7 +11,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.zfin.ExternalNote;
 import org.zfin.Species;
@@ -52,7 +51,6 @@ import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
-import org.zfin.sequence.service.SequenceService;
 import org.zfin.util.NumberAwareStringComparator;
 import org.zfin.util.ZfinStringUtils;
 
@@ -481,15 +479,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
         externalNote.setType(ExternalNote.Type.ANTIBODY.toString());
         HibernateUtil.currentSession().save(externalNote);
         if (!sourceZdbID.equals("")) {
-            PublicationAttribution pa = new PublicationAttribution();
             PublicationRepository pr = RepositoryFactory.getPublicationRepository();
             Publication publication = pr.getPublication(sourceZdbID);
-            pa.setPublication(publication);
-            pa.setDataZdbID(externalNote.getZdbID());
-            pa.setSourceType(RecordAttribution.SourceType.STANDARD);
             Set<PublicationAttribution> pubattr = new HashSet<PublicationAttribution>();
-            pubattr.add(pa);
-            externalNote.setPubAttributions(pubattr);
+            externalNote.setPublication(publication);
             if (antibody.getExternalNotes() == null) {
                 Set<AntibodyExternalNote> abExtNote = new HashSet<AntibodyExternalNote>();
                 abExtNote.add(externalNote);
@@ -497,8 +490,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
             } else {
                 antibody.getExternalNotes().add(externalNote);
             }
-            currentSession().save(pa);
-
             addMarkerPub(antibody, publication);
         }
         infrastructureRepository.insertUpdatesTable(antibody, "notes", "", ZfinStringUtils.escapeHighUnicode(note), "");
@@ -1760,8 +1751,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                         previousNameLight.setMarkerZdbID(gene.getZdbID());
                         if (gene.getZdbID().startsWith("ZDB-GENE")) {
                             previousNameLight.setAlias("<i>" + tuple[0].toString() + "</i>");
-                        }
-                        else {
+                        } else {
                             if (gene.getZdbID().contains("CONSTRCT")) {
                                 previousNameLight.setAlias("<i>" + tuple[0].toString() + "</i>");
                             } else {
@@ -2050,7 +2040,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         return linkDisplay;
     }
-
 
 
     @Override
@@ -3005,7 +2994,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
         logger.error("note not found with zdbID: " + note.getZdbID());
     }
-   public int getCrisprCount(String geneAbbrev) {
+
+    public int getCrisprCount(String geneAbbrev) {
         Session session = currentSession();
         String hql = "select rel.firstMarker from MarkerRelationship as rel  " +
                 "where rel.secondMarker.zdbID = :geneAbbrev and rel.type = :type " +

@@ -12,12 +12,11 @@
             <c:forEach var="note" items="${notes}" varStatus="loop">
                 <zfin:alternating-tr loopName="loop">
                     <td>
-                        <zfin2:toggleTextLength text="${note.note}" idName="${zfn:generateRandomDomID()}" shortLength="80"/>
+                        <zfin2:toggleTextLength text="${note.note}" idName="${zfn:generateRandomDomID()}"
+                                                shortLength="80"/>
                     </td>
                     <td>
-                        <c:forEach var="attribution" items="${note.pubAttributions}">
-                            <zfin:link entity="${attribution.publication}"/>
-                        </c:forEach>
+                        <zfin:link entity="${note.publication}"/>
                     </td>
                 </zfin:alternating-tr>
             </c:forEach>

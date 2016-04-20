@@ -306,10 +306,8 @@ public class AntibodyWikiWebService extends WikiWebService {
                 publicCommentsStringBuilder.append(" <li> ");
                 publicCommentsStringBuilder.append(getEncodedString(externalNote.getNote()));
                 publicCommentsStringBuilder.append(" (");
-                if (externalNote.getSinglePubAttribution() != null) {
-                    String wikiLink = PublicationPresentation.getWikiLink(externalNote.getSinglePubAttribution().getPublication());
-                    publicCommentsStringBuilder.append(wikiLink);
-                }
+                String wikiLink = PublicationPresentation.getWikiLink(externalNote.getPublication());
+                publicCommentsStringBuilder.append(wikiLink);
                 publicCommentsStringBuilder.append(")");
                 publicCommentsStringBuilder.append(" </li> ");
                 publicCommentsStringBuilder.append(FileUtil.LINE_SEPARATOR);

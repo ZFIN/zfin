@@ -2,14 +2,17 @@ package org.zfin.feature;
 
 import org.zfin.ExternalNote;
 
-import javax.persistence.*;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  * Note entered by Curators concerning the existence or absence of orthology.
  */
 @Entity
 @DiscriminatorValue("feature")
-public class FeatureNote extends ExternalNote implements Comparable<FeatureNote> {
+public class FeatureNote extends ExternalNote {
 
     @ManyToOne
     @JoinColumn(name = "extnote_data_zdb_id")
@@ -22,10 +25,5 @@ public class FeatureNote extends ExternalNote implements Comparable<FeatureNote>
     public void setFeature(Feature feature) {
         this.feature = feature;
     }
-
-    public int compareTo(FeatureNote note) {
-        return getZdbID().compareTo(note.getZdbID());
-    }
-
 
 }

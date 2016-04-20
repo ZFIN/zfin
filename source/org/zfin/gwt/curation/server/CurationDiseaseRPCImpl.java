@@ -130,7 +130,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             note.setType("genotype");
             note.setGenotype(genotype);
             note.setNote(text);
-            getInfrastructureRepository().saveExternalNote(note, publication);
+            note.setPublication(publication);
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();

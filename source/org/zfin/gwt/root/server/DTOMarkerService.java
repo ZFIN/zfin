@@ -106,6 +106,7 @@ public class DTOMarkerService {
         logger.debug("# of related genes: " + relatedGenes.size());
         return relatedGenes;
     }
+
     public static List<MarkerDTO> getGenesMarkerDTOs(Marker marker) {
 
         List<MarkerRelationship> markerRelationships = RepositoryFactory.getMarkerRepository().getMarkerRelationshipBySecondMarker(marker);
@@ -120,7 +121,6 @@ public class DTOMarkerService {
 
         return relatedGenes;
     }
-
 
 
     /**
@@ -164,9 +164,7 @@ public class DTOMarkerService {
             antibodyExternalNoteDTO.setZdbID(antibodyExternalNote.getZdbID());
             antibodyExternalNoteDTO.setNoteEditMode(NoteEditMode.EXTERNAL);
             antibodyExternalNoteDTO.setDataZdbID(antibody.getZdbID());
-            if (antibodyExternalNote.getSinglePubAttribution() != null) {
-                antibodyExternalNoteDTO.setPublicationZdbID(antibodyExternalNote.getSinglePubAttribution().getPublication().getZdbID());
-            }
+            antibodyExternalNoteDTO.setPublicationZdbID(antibodyExternalNote.getPublication().getZdbID());
             antibodyExternalNoteDTO.setNoteData(DTOConversionService.unescapeString(antibodyExternalNote.getNote()));
             externalNotes.add(antibodyExternalNoteDTO);
         }

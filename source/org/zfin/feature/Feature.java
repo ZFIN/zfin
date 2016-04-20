@@ -415,6 +415,7 @@ public class Feature implements EntityNotes, EntityZdbID {
         }
         return affectedGenes;
     }
+
     public SortedSet<FeatureMarkerRelationship> getAffectedGenesReln() {
         SortedSet<FeatureMarkerRelationship> affectedGenesReln = new TreeSet<FeatureMarkerRelationship>();
         for (FeatureMarkerRelationship featureMarkerRelationship : featureMarkerRelations) {
@@ -424,6 +425,7 @@ public class Feature implements EntityNotes, EntityZdbID {
         }
         return affectedGenesReln;
     }
+
     public SortedSet<Marker> getTgConstructs() {
         SortedSet<Marker> tgConstructs = new TreeSet<Marker>();
         for (FeatureMarkerRelationship ftrmarkrel : featureMarkerRelations) {
@@ -543,5 +545,11 @@ public class Feature implements EntityNotes, EntityZdbID {
             return UNSPECIFIED;
         return abbreviation;
 
+    }
+
+    public void addExternalNote(FeatureNote note) {
+        if (externalNotes == null)
+            externalNotes = new HashSet<>();
+        externalNotes.add(note);
     }
 }

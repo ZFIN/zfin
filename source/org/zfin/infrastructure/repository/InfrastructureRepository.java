@@ -442,8 +442,6 @@ public interface InfrastructureRepository {
 
     List<Publication> getTermReferences(GenericTerm term, String orderBy);
 
-    void saveExternalNote(GenotypeExternalNote note, Publication publication);
-
     void saveDataNote(DataNote note, Publication publication);
 
     void insertPublicAttribution(Genotype genotype, Publication publication);

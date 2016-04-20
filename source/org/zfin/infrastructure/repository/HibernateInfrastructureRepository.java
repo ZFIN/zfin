@@ -3,7 +3,6 @@
  */
 package org.zfin.infrastructure.repository;
 
-import org.zfin.util.ZfinStringUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -40,6 +39,7 @@ import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DateUtil;
+import org.zfin.util.ZfinStringUtils;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -1702,19 +1702,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             pubList.add((Publication) o[0]);
         }
         return pubList;
-    }
-
-    @Override
-    public void saveExternalNote(GenotypeExternalNote note, Publication publication) {
-        HibernateUtil.currentSession().save(note);
-        PublicationAttribution attribution = new PublicationAttribution();
-        attribution.setPublication(publication);
-        attribution.setDataZdbID(note.getZdbID());
-        attribution.setSourceType(RecordAttribution.SourceType.STANDARD);
-        HibernateUtil.currentSession().save(attribution);
-        Set<PublicationAttribution> set = new HashSet<>(1);
-        set.add(attribution);
-        note.setPubAttributions(set);
     }
 
     @Override

@@ -2,10 +2,9 @@ package org.zfin;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.infrastructure.PersonAttribution;
-import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.publication.Publication;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -19,7 +18,7 @@ import java.util.Set;
         discriminatorType = DiscriminatorType.STRING
 )
 @Table(name = "external_note")
-public abstract class ExternalNote {
+public class ExternalNote implements Comparable<ExternalNote> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
@@ -35,9 +34,9 @@ public abstract class ExternalNote {
     protected String note;
     @Column(name = "extnote_note_type", insertable = false, updatable = false)
     private String type;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "recattrib_data_zdb_id")
-    protected Set<PublicationAttribution> pubAttributions;
+    @ManyToOne
+    @JoinColumn(name = "extnote_source_zdb_id")
+    protected Publication publication;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "recattrib_data_zdb_id")
     protected Set<PersonAttribution> personAttributions;
@@ -76,12 +75,12 @@ public abstract class ExternalNote {
         this.type = type;
     }
 
-    public Set<PublicationAttribution> getPubAttributions() {
-        return pubAttributions;
+    public Publication getPublication() {
+        return publication;
     }
 
-    public void setPubAttributions(Set<PublicationAttribution> pubAttributions) {
-        this.pubAttributions = pubAttributions;
+    public void setPublication(Publication publication) {
+        this.publication = publication;
     }
 
     public Set<PersonAttribution> getPersonAttributions() {
@@ -92,11 +91,21 @@ public abstract class ExternalNote {
         this.personAttributions = personAttributions;
     }
 
-    public void addPublicationAttribution(PublicationAttribution attribution) {
-        if (pubAttributions == null)
-            pubAttributions = new HashSet<>();
-        pubAttributions.add(attribution);
+    public int compareTo(ExternalNote note) {
+        if (note.publication == null)
+            return -1;
+        if (publication == null)
+            return +1;
+
+        int publicationComparison = publication.compareTo(note.publication);
+        if (publicationComparison != 0)
+            return publicationComparison;
+
+        // handle case the notes have the same publication
+        // compare according to date it got created
+        return getZdbID().compareTo(note.getZdbID());
     }
+
 
 
     public enum Type {
