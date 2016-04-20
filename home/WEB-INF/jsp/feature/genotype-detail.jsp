@@ -186,9 +186,7 @@
         <c:forEach var="extNote" items="${formBean.genotype.externalNotes}">
             <div>
                     ${extNote.note}
-                <c:if test="${extNote.singlePubAttribution ne null}">
-                    &nbsp;(<a href='/${extNote.singlePubAttribution.publication.zdbID}'>1</a>)
-                </c:if>
+                    &nbsp;(<a href='/${extNote.publication.zdbID}'>1</a>)
             </div>
         </c:forEach>
     </div>

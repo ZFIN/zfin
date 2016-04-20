@@ -1430,17 +1430,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @Override
-    public List<ExternalNote> getExternalNotes(String zdbID) {
-        String hql = " select en from ExternalNote en join en.pubAttributions pa " +
-                " where en.externalDataZdbID = :externalDataZdbID " +
-                " order by pa.publication.publicationDate desc ";
-
-        return HibernateUtil.currentSession().createQuery(hql)
-                .setString("externalDataZdbID", zdbID)
-                .list();
-    }
-
-    @Override
     public List<String> getPublicationAttributionZdbIdsForType(String microarrayPubZdbID, Marker.Type markerType) {
         String hql = " select distinct pa.dataZdbID from Marker m join m.publications pa " +
                 " where m.markerType.name = :type " +

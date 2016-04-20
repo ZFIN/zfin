@@ -100,9 +100,10 @@ public class GenotypeDTO extends RelatedEntityDTO {
         if (publicNotes == null)
             return null;
         List<ExternalNoteDTO> truncatedList = new ArrayList<>();
-        for (ExternalNoteDTO note : publicNotes)
-            if (note.publicationZdbID.equals(publicationID))
+        for (ExternalNoteDTO note : publicNotes) {
+            if (note.getPublicationDTO().getZdbID().equals(publicationID))
                 truncatedList.add(note);
+        }
         return truncatedList;
     }
 

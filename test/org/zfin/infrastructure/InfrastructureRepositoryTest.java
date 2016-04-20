@@ -8,6 +8,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.ExternalNote;
+import org.zfin.antibody.Antibody;
+import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.database.UnloadInfo;
 import org.zfin.datatransfer.microarray.MicroarrayWebserviceJob;
 import org.zfin.expression.ExpressionAssay;
@@ -38,6 +40,8 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
+import static org.zfin.repository.RepositoryFactory.getAntibodyRepository;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 /**
  * Class InfrastructureRepositoryTest.
@@ -99,7 +103,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void allMapNamesGenes() {
         String string = "pdx";
-        MarkerType type = RepositoryFactory.getMarkerRepository().getMarkerTypeByName(Marker.Type.GENE.toString());
+        MarkerType type = getMarkerRepository().getMarkerTypeByName(Marker.Type.GENE.toString());
         List<AllMarkerNamesFastSearch> all = infrastructureRepository.getAllNameMarkerMatches(string, type);
         assertNotNull(all);
     }
@@ -282,19 +286,19 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getExpressionExperimentMarkerAttributionsForGene() {
-        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-990415-200");
+        Marker m = getMarkerRepository().getMarkerByID("ZDB-GENE-990415-200");
         infrastructureRepository.getExpressionExperimentMarkerAttributions(m, "ZDB-PUB-090324-13");
     }
 
     @Test
     public void getExpressionExperimentMarkerAttributionsForAntibody() {
-        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-ATB-081002-19");
+        Marker m = getMarkerRepository().getMarkerByID("ZDB-ATB-081002-19");
         infrastructureRepository.getExpressionExperimentMarkerAttributions(m, "ZDB-PUB-090324-13");
     }
 
     @Test
     public void getExpressionExperimentMarkerAttributionsForClone() {
-        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-CDNA-040425-3105");
+        Marker m = getMarkerRepository().getMarkerByID("ZDB-CDNA-040425-3105");
         infrastructureRepository.getExpressionExperimentMarkerAttributions(m, "ZDB-PUB-090324-13");
     }
 
@@ -455,10 +459,14 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getExternalNotes() {
-        List<ExternalNote> notes = infrastructureRepository.getExternalNotes("ZDB-ATB-081002-19");
+        Antibody antibody = getAntibodyRepository().getAntibodyByID("ZDB-ATB-081002-19");
+        Set<AntibodyExternalNote> externalNotes = antibody.getExternalNotes();
+        List<ExternalNote> notes = new ArrayList<>();
+        notes.addAll(externalNotes);
         assertEquals(1, notes.size());
 
-        notes = infrastructureRepository.getExternalNotes("ZDB-ATB-081006-1");
+        notes.clear();
+        notes.addAll(getAntibodyRepository().getAntibodyByID("ZDB-ATB-081006-1").getExternalNotes());
         assertEquals(2, notes.size());
         assertTrue(notes.get(0).getNote().startsWith("Labels both fast and slow"));
         assertTrue(notes.get(1).getNote().startsWith("labels slow and fast"));
