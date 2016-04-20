@@ -105,7 +105,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                                            "construct", "sequence_alteration", "background"]].combinations() \
                              + [[Category.MUTANT.getName()],["type","affected_gene", "affected_anatomy_tf", "affected_biological_process_tf",
                                            "affected_molecular_function_tf", "affected_cellular_component_tf", "phenotype_statement", FieldName.MISEXPRESSED_GENE.getName(),
-                                           "source", "lab_of_origin", "institution"]].combinations() \
+                                           "source", "lab_of_origin", "rna_consequence","institution"]].combinations() \
                              + [[Category.CONSTRUCT.getName()],["type","regulatory_region", "coding_sequence","inserted_in_gene",FieldName.EXPRESSED_IN_TF.getName(),
                                            "reporter_color","engineered_region"]].combinations() \
                              + [[Category.SEQUENCE_TARGETING_REAGENT.getName()],["type","targeted_gene"]].combinations() \
