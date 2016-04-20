@@ -56,6 +56,7 @@ public enum FieldName {
     JOURNAL("journal"),
     KEYWORD("keyword"),
     LAB_OF_ORIGIN("lab_of_origin"),
+    CONSEQUENCE("rna_consequence"),
     LABELED_STRUCTURE_TF("labeled_structure_tf"),
     MISEXPRESSED_GENE("misexpressed_gene"),
     MOLECULAR_FUNCTION("molecular_function"),

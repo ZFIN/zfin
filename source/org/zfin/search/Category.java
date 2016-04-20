@@ -65,6 +65,7 @@ public enum Category {
             MISEXPRESSED_GENE,
             SOURCE,
             LAB_OF_ORIGIN,
+            CONSEQUENCE,
             INSTITUTION,
             MUTAGEN
 
