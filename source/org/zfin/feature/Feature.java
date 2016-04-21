@@ -1,8 +1,10 @@
 package org.zfin.feature;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
+import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.DataNote;
@@ -17,10 +19,7 @@ import org.zfin.profile.FeatureSupplier;
 import org.zfin.sequence.FeatureDBLink;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Feature business entity.
@@ -536,6 +535,13 @@ public class Feature implements EntityNotes, EntityZdbID {
             if (relationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF))
                 return relationship.getMarker();
         return null;
+    }
+
+    public String getFtrTranscriptStmt() {
+        String ftrTranscriptStmt;
+        MutationDetailsConversionService mdcs = new MutationDetailsConversionService();
+        ftrTranscriptStmt=mdcs.geneLocalizationStatement(featureDnaMutationDetail);
+        return ftrTranscriptStmt;
     }
 
     public String getDisplayAbbreviation() {
