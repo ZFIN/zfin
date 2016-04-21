@@ -437,27 +437,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore("for performance; performs no assertions")
-    public void getUpdatesFlagPerformance() {
-
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < 1000; i++) {
-//            ZdbFlag flag = infrastructureRepository.getUpdatesFlag();
-            boolean flag = infrastructureRepository.getDisableUpdatesFlag();
-        }
-
-        long endTime = System.currentTimeMillis();
-        logger.info("total time: " + (endTime - startTime) / 1000.0f);
-    }
-
-    @Test
-    public void getExternalOrthologyNotes() {
-        List<String> notes = infrastructureRepository.getExternalOrthologyNoteStrings("ZDB-GENE-030131-2333");
-        assertEquals(1, notes.size());
-    }
-
-    @Test
     public void getExternalNotes() {
         Antibody antibody = getAntibodyRepository().getAntibodyByID("ZDB-ATB-081002-19");
         Set<AntibodyExternalNote> externalNotes = antibody.getExternalNotes();

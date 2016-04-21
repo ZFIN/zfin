@@ -391,8 +391,6 @@ public interface InfrastructureRepository {
      */
     List<String> getAllEntities(Class clazz, String idName, int firstNIds);
 
-    List<String> getExternalOrthologyNoteStrings(String zdbID);
-
     List<String> getPublicationAttributionZdbIdsForType(String microarray_pub, Marker.Type markerType);
 
     int removeAttributionsNotFound(Collection<String> attributionsToRemove, String microarrayPub);

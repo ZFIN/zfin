@@ -1419,17 +1419,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @Override
-    public List<String> getExternalOrthologyNoteStrings(String zdbID) {
-        String sql = "   select en.extnote_note from external_note en  " +
-                "   join marker m on m.mrkr_zdb_id=en.extnote_data_zdb_id " +
-                "   where m.mrkr_zdb_id = :markerZdbID " +
-                "   and en.extnote_note_type='orthology' ";
-        return HibernateUtil.currentSession().createSQLQuery(sql)
-                .setString("markerZdbID", zdbID)
-                .list();
-    }
-
-    @Override
     public List<String> getPublicationAttributionZdbIdsForType(String microarrayPubZdbID, Marker.Type markerType) {
         String hql = " select distinct pa.dataZdbID from Marker m join m.publications pa " +
                 " where m.markerType.name = :type " +
