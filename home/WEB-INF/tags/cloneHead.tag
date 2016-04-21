@@ -26,7 +26,7 @@
         <td><zfin2:displayLocation entity="${cloneBean.clone}"/></td>
     </tr>
 
-    <zfin2:notesInDiv hasNotes="${cloneBean.clone}"/>
+    <zfin2:entityNotes entity="${cloneBean.clone}"/>
 
 </table>
 

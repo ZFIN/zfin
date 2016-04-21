@@ -36,7 +36,7 @@
         </tr>
     </c:if>
 
-    <zfin2:notesInDiv hasNotes="${gene}"/>
+    <zfin2:entityNotes entity="${gene}"/>
 
 </table>
 
