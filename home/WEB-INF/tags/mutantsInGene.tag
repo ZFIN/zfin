@@ -27,6 +27,8 @@
                 <tr>
                     <th width="10%">Allele</th>
                     <th width="13%">Type</th>
+                    <th width="15%">Consequence</th>
+                    <th width="20%">Location</th>
                     <th width="10%">Mutagen</th>
                     <th width="50%">Suppliers</th>
                 </tr>
@@ -37,6 +39,16 @@
                         </td>
                         <td>
                             ${feature.type.display}
+                        </td>
+                        <td>
+                            <c:forEach var="consequence" items="${feature.featureTranscriptMutationDetailSet}">
+                                <li style="list-style-type: none;">
+                                    ${consequence.transcriptConsequence.displayName}
+                                </li>
+                            </c:forEach>
+                        </td>
+                        <td>
+                        ${feature.ftrTranscriptStmt}
                         </td>
                         <td>
                             <c:set var="mutagen" value="${feature.featureAssay.mutagen}"/>
