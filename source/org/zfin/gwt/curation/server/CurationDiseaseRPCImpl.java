@@ -127,10 +127,11 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             if (genotype == null)
                 throw new TermNotFoundException("No genotype with ID: " + genotypeID + " found");
             GenotypeExternalNote note = new GenotypeExternalNote();
-            note.setType("genotype");
             note.setGenotype(genotype);
             note.setNote(text);
             note.setPublication(publication);
+            genotype.addExternalNote(note);
+            HibernateUtil.currentSession().save(note);
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();

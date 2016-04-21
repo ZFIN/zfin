@@ -257,6 +257,12 @@ public class Genotype implements Comparable, EntityZdbID {
         return backgroundDisplay;
     }
 
+    public void addExternalNote(GenotypeExternalNote note) {
+        if (externalNotes == null)
+            externalNotes = new HashSet<>();
+        externalNotes.add(note);
+    }
+
 
     /* Only putting TU in for now, since it's the only wildtype that's specified by name
      * rather than generically looking at the isWildtype boolean */

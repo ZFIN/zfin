@@ -508,17 +508,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
             extnote = new OrthologyNote();
             extnote.setMarker(gene);
             extnote.setNote(note);
-            extnote.setType(ExternalNote.Type.ORTHOLOGY.toString());
+            extnote.setPublication(RepositoryFactory.getPublicationRepository().getPublication("ZDB-PUB-990507-16"));
             HibernateUtil.currentSession().save(extnote);
             PersonAttribution pa = new PersonAttribution();
             pa.setPerson(currentUser);
             pa.setDataZdbID(extnote.getZdbID());
             pa.setSourceType(RecordAttribution.SourceType.STANDARD);
             HibernateUtil.currentSession().save(pa);
-            Set<PersonAttribution> personAttributions = new HashSet<PersonAttribution>();
+            Set<PersonAttribution> personAttributions = new HashSet<>();
             personAttributions.add(pa);
             extnote.setPersonAttributions(personAttributions);
-            Set<OrthologyNote> markerExternalNotes = new HashSet<OrthologyNote>();
+            Set<OrthologyNote> markerExternalNotes = new HashSet<>();
             markerExternalNotes.add(extnote);
             gene.setOrthologyNotes(markerExternalNotes);
         } else {

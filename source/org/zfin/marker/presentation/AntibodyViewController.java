@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.zfin.ExternalNote;
 import org.zfin.antibody.Antibody;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
@@ -14,6 +15,9 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.AntibodyMarkerService;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  */
@@ -24,7 +28,7 @@ public class AntibodyViewController {
     private Logger logger = Logger.getLogger(AntibodyViewController.class);
 
     @Autowired
-    private MarkerRepository markerRepository ;
+    private MarkerRepository markerRepository;
 
     @RequestMapping(value = "/view/{zdbID}")
     public String getAntibodyView(Model model
@@ -42,20 +46,22 @@ public class AntibodyViewController {
         // set standard stuff
         antibodyBean.setMarkerTypeDisplay(MarkerService.getMarkerTypeString(antibody));
         antibodyBean.setPreviousNames(markerRepository.getPreviousNamesLight(antibody));
-        antibodyBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID)) ;
+        antibodyBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID));
 
         // set other antibody data
         antibodyBean.setDistinctAssayNames(AntibodyMarkerService.getDistinctAssayNames(antibody));
         antibodyBean.setAntigenGenes(markerRepository.getRelatedMarkerDisplayForTypes(antibody, false, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
 
-       // set external notes (same as orthology)
-        antibodyBean.setExternalNotes(RepositoryFactory.getInfrastructureRepository().getExternalNotes(antibody.getZdbID()));
+        // set external notes (same as orthology)
+        List<ExternalNote> listOfNotes = new ArrayList<>();
+        listOfNotes.addAll(antibody.getExternalNotes());
+        antibodyBean.setExternalNotes(listOfNotes);
 
-       // set labeling
+        // set labeling
         antibodyBean.setAntibodyDetailedLabelings(AntibodyMarkerService.getAntibodyDetailedLabelings(antibody));
         antibodyBean.setNumberOfDistinctComposedTerms(AntibodyMarkerService.getNumberOfDistinctComposedTerms(antibody));
 
-       // set source
+        // set source
         antibodyBean.setSuppliers(markerRepository.getSuppliersForMarker(antibody.getZdbID()));
 
 //      CITATIONS

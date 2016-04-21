@@ -55,29 +55,6 @@ public class MarkerNotesController {
         return "marker/sequence-targeting-reagent-gbrowse-note.insert";
     }
 
-    @RequestMapping("/note/external/{zdbID}")
-    public String getExternalNote(
-            @PathVariable String zdbID
-            , Model model) {
-
-        Marker marker = markerRepository.getMarkerByID(zdbID);
-        if (marker == null) {
-            marker = getReplacedMarker(zdbID);
-        }
-
-        if (marker == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, zdbID) ;
-            return "record-not-found.popup";
-        }
-
-        List<String> notes = RepositoryFactory.getInfrastructureRepository().getExternalOrthologyNoteStrings(marker.getZdbID());
-        model.addAttribute("marker", marker);
-        model.addAttribute("notes", notes);
-
-        return "marker/external-note.insert";
-    }
-
-
     @RequestMapping("/gene-product-description/{zdbID}")
     public String getGeneProducts(
             @PathVariable String zdbID

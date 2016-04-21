@@ -2,12 +2,12 @@ package org.zfin.infrastructure;
 
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.ExternalNote;
+import org.zfin.antibody.Antibody;
+import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.database.UnloadInfo;
 import org.zfin.datatransfer.microarray.MicroarrayWebserviceJob;
 import org.zfin.expression.ExpressionAssay;
@@ -38,6 +38,8 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
+import static org.zfin.repository.RepositoryFactory.getAntibodyRepository;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 /**
  * Class InfrastructureRepositoryTest.
@@ -46,8 +48,6 @@ import static org.junit.Assert.*;
 public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
     private InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
-
-    private Logger logger = Logger.getLogger(InfrastructureRepositoryTest.class);
 
     @Test
     public void persistActiveData() {
@@ -99,7 +99,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void allMapNamesGenes() {
         String string = "pdx";
-        MarkerType type = RepositoryFactory.getMarkerRepository().getMarkerTypeByName(Marker.Type.GENE.toString());
+        MarkerType type = getMarkerRepository().getMarkerTypeByName(Marker.Type.GENE.toString());
         List<AllMarkerNamesFastSearch> all = infrastructureRepository.getAllNameMarkerMatches(string, type);
         assertNotNull(all);
     }
@@ -139,7 +139,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getGoCcTermsByQueryString() {
         String queryString = "mito";
-        List<Ontology> ontologies = new ArrayList<Ontology>(1);
+        List<Ontology> ontologies = new ArrayList<>(1);
         ontologies.add(Ontology.GO_CC);
         List<GenericTerm> groups = infrastructureRepository.getTermsByName(queryString, ontologies);
         assertNotNull(groups);
@@ -149,7 +149,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getGoCcTermsSynonymByQueryString() {
         String queryString = "orga";
-        List<Ontology> ontologies = new ArrayList<Ontology>(1);
+        List<Ontology> ontologies = new ArrayList<>(1);
         ontologies.add(Ontology.GO_CC);
         List<GenericTerm> groups = infrastructureRepository.getTermsByName(queryString, ontologies);
         assertNotNull(groups);
@@ -282,19 +282,19 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getExpressionExperimentMarkerAttributionsForGene() {
-        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-990415-200");
+        Marker m = getMarkerRepository().getMarkerByID("ZDB-GENE-990415-200");
         infrastructureRepository.getExpressionExperimentMarkerAttributions(m, "ZDB-PUB-090324-13");
     }
 
     @Test
     public void getExpressionExperimentMarkerAttributionsForAntibody() {
-        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-ATB-081002-19");
+        Marker m = getMarkerRepository().getMarkerByID("ZDB-ATB-081002-19");
         infrastructureRepository.getExpressionExperimentMarkerAttributions(m, "ZDB-PUB-090324-13");
     }
 
     @Test
     public void getExpressionExperimentMarkerAttributionsForClone() {
-        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-CDNA-040425-3105");
+        Marker m = getMarkerRepository().getMarkerByID("ZDB-CDNA-040425-3105");
         infrastructureRepository.getExpressionExperimentMarkerAttributions(m, "ZDB-PUB-090324-13");
     }
 
@@ -433,33 +433,17 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore("for performance; performs no assertions")
-    public void getUpdatesFlagPerformance() {
-
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < 1000; i++) {
-//            ZdbFlag flag = infrastructureRepository.getUpdatesFlag();
-            boolean flag = infrastructureRepository.getDisableUpdatesFlag();
-        }
-
-        long endTime = System.currentTimeMillis();
-        logger.info("total time: " + (endTime - startTime) / 1000.0f);
-    }
-
-    @Test
-    public void getExternalOrthologyNotes() {
-        List<String> notes = infrastructureRepository.getExternalOrthologyNoteStrings("ZDB-GENE-030131-2333");
-        assertEquals(1, notes.size());
-    }
-
-    @Test
     public void getExternalNotes() {
-        List<ExternalNote> notes = infrastructureRepository.getExternalNotes("ZDB-ATB-081002-19");
+        Antibody antibody = getAntibodyRepository().getAntibodyByID("ZDB-ATB-081002-19");
+        Set<AntibodyExternalNote> externalNotes = antibody.getExternalNotes();
+        List<ExternalNote> notes = new ArrayList<>();
+        notes.addAll(externalNotes);
         assertEquals(1, notes.size());
 
-        notes = infrastructureRepository.getExternalNotes("ZDB-ATB-081006-1");
+        notes.clear();
+        notes.addAll(getAntibodyRepository().getAntibodyByID("ZDB-ATB-081006-1").getExternalNotes());
         assertEquals(2, notes.size());
+        // these are ordered by publication date!
         assertTrue(notes.get(0).getNote().startsWith("Labels both fast and slow"));
         assertTrue(notes.get(1).getNote().startsWith("labels slow and fast"));
     }
@@ -476,7 +460,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         try {
             HibernateUtil.createTransaction();
             infrastructureRepository.deleteRecordAttributionForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
-            Set<String> datas = new HashSet<String>();
+            Set<String> datas = new HashSet<>();
             datas.add("ZDB-GENE-000607-47");
             datas.add("ZDB-GENE-000607-71");
             datas.add("ZDB-GENE-030131-10076");
@@ -496,7 +480,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         try {
             HibernateUtil.createTransaction();
             infrastructureRepository.deleteRecordAttributionForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
-            Set<String> datas = new HashSet<String>();
+            Set<String> datas = new HashSet<>();
             datas.add("ZDB-GENE-000607-47");
             datas.add("ZDB-GENE-000607-71");
             datas.add("ZDB-GENE-030131-10076");
