@@ -468,6 +468,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         notes.clear();
         notes.addAll(getAntibodyRepository().getAntibodyByID("ZDB-ATB-081006-1").getExternalNotes());
         assertEquals(2, notes.size());
+        // these are ordered by publication date!
         assertTrue(notes.get(0).getNote().startsWith("Labels both fast and slow"));
         assertTrue(notes.get(1).getNote().startsWith("labels slow and fast"));
     }

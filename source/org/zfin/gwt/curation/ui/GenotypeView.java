@@ -8,7 +8,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.CuratorNoteDTO;
 import org.zfin.gwt.root.dto.ExternalNoteDTO;

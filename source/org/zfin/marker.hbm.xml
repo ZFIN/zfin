@@ -218,7 +218,7 @@
                 <one-to-many class="org.zfin.expression.ExpressionExperiment"/>
             </set>
 
-            <set name="externalNotes" lazy="true">
+            <set name="externalNotes" lazy="true" sort="natural">
                 <key column="extnote_data_zdb_id"/>
                 <one-to-many class="org.zfin.antibody.AntibodyExternalNote"/>
             </set>
