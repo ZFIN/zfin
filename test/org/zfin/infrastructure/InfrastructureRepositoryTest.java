@@ -2,9 +2,7 @@ package org.zfin.infrastructure;
 
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.ExternalNote;
@@ -50,8 +48,6 @@ import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
     private InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
-
-    private Logger logger = Logger.getLogger(InfrastructureRepositoryTest.class);
 
     @Test
     public void persistActiveData() {
@@ -143,7 +139,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getGoCcTermsByQueryString() {
         String queryString = "mito";
-        List<Ontology> ontologies = new ArrayList<Ontology>(1);
+        List<Ontology> ontologies = new ArrayList<>(1);
         ontologies.add(Ontology.GO_CC);
         List<GenericTerm> groups = infrastructureRepository.getTermsByName(queryString, ontologies);
         assertNotNull(groups);
@@ -153,7 +149,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getGoCcTermsSynonymByQueryString() {
         String queryString = "orga";
-        List<Ontology> ontologies = new ArrayList<Ontology>(1);
+        List<Ontology> ontologies = new ArrayList<>(1);
         ontologies.add(Ontology.GO_CC);
         List<GenericTerm> groups = infrastructureRepository.getTermsByName(queryString, ontologies);
         assertNotNull(groups);
@@ -464,7 +460,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         try {
             HibernateUtil.createTransaction();
             infrastructureRepository.deleteRecordAttributionForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
-            Set<String> datas = new HashSet<String>();
+            Set<String> datas = new HashSet<>();
             datas.add("ZDB-GENE-000607-47");
             datas.add("ZDB-GENE-000607-71");
             datas.add("ZDB-GENE-030131-10076");
@@ -484,7 +480,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         try {
             HibernateUtil.createTransaction();
             infrastructureRepository.deleteRecordAttributionForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
-            Set<String> datas = new HashSet<String>();
+            Set<String> datas = new HashSet<>();
             datas.add("ZDB-GENE-000607-47");
             datas.add("ZDB-GENE-000607-71");
             datas.add("ZDB-GENE-030131-10076");
