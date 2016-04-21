@@ -207,7 +207,7 @@
                     <div class="result-count col-md-10 col-sm-9 col-xs-8">
                         <fmt:formatNumber value="${numFound}" pattern="##,###"/> results
                         <div class="pull-right">
-<%--                            <authz:authorize access="hasRole('root')">--%>
+                            <authz:authorize access="hasRole('root')">
                                 <div class="btn-group">
                                     <button id="boxy-result-button" class="btn btn-default result-action-tooltip" title="Detailed Results">
                                         <i class="fa fa-newspaper-o fa-flip-horizontal"></i>
@@ -222,7 +222,7 @@
                                     <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=50" class="btn btn-default <c:if test="${rows eq 50}">btn-selected disabled</c:if>">50</a>
                                     <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=200" class="btn btn-default <c:if test="${rows eq 200}">btn-selected disabled</c:if>">200</a>
                                 </div>
-<%--                            </authz:authorize>--%>
+                            </authz:authorize>
 
                             <div class="btn-group sort-controls">
                                 <a class="btn btn-default dropdown-toggle sort-button" data-toggle="dropdown" href="#">
