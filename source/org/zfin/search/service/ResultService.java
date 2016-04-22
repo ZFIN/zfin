@@ -604,6 +604,7 @@ public class ResultService {
 
             result.setName(sb.toString());
 
+            //This needs to be last, it serves as a title for the fish component table below
             result.addAttribute(FISH, "");
 
         }
@@ -677,6 +678,7 @@ public class ResultService {
 
                     result.setName(sb.toString());
                 }
+                //This needs to be last, it serves as a title for the fish component table below
                 result.addAttribute(FISH, "");
 
             }
