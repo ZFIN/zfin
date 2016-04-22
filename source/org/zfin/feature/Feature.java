@@ -40,6 +40,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     public static final String MUTANT = "Mutant";
     public static final String UNRECOGNIZED = "unrecognized";
     public static final String UNSPECIFIED = "unspecified";
+    public static final String UNKNOWN= "unknown";
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
     @GenericGenerator(name = "zfinGenerator",
@@ -537,12 +538,17 @@ public class Feature implements EntityNotes, EntityZdbID {
         return null;
     }
 
-    public String getFtrTranscriptStmt() {
-        String ftrTranscriptStmt;
+    public String getGeneLocalizationStmt() {
+        String geneLocalizationStmt;
         MutationDetailsConversionService mdcs = new MutationDetailsConversionService();
-        ftrTranscriptStmt=mdcs.geneLocalizationStatement(featureDnaMutationDetail);
-        return ftrTranscriptStmt;
+        geneLocalizationStmt=mdcs.geneLocalizationStatement(featureDnaMutationDetail);
+        if (geneLocalizationStmt==null){
+            geneLocalizationStmt=UNKNOWN;
+        }
+        return geneLocalizationStmt;
     }
+
+
 
     public String getDisplayAbbreviation() {
         if (abbreviation.endsWith("_" + UNRECOGNIZED))
