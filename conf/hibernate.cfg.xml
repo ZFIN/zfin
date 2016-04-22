@@ -44,7 +44,6 @@
         <mapping resource="org/zfin/construct.hbm.xml"/>
         <mapping resource="org/zfin/blast.hbm.xml"/>
         <mapping resource="org/zfin/expression.hbm.xml"/>
-        <mapping resource="org/zfin/infrastructure.hbm.xml"/>
         <mapping resource="org/zfin/marker.hbm.xml"/>
         <mapping resource="org/zfin/mapping.hbm.xml"/>
         <mapping resource="org/zfin/mutant.hbm.xml"/>
@@ -70,6 +69,7 @@
         <mapping class="org.zfin.anatomy.AnatomyStatistics"/>
         <mapping class="org.zfin.anatomy.AnatomyTreeInfo"/>
         <mapping class="org.zfin.feature.Feature"/>
+        <mapping class="org.zfin.feature.FeatureAlias"/>
         <mapping class="org.zfin.mutant.Genotype"/>
         <mapping class="org.zfin.feature.FeatureAssay"/>
         <mapping class="org.zfin.feature.FeatureTranscriptMutationDetail"/>
@@ -131,6 +131,13 @@
         <mapping class="org.zfin.mutant.GenotypeAlias"/>
         <mapping class="org.zfin.ontology.TermAlias"/>
         <mapping class="org.zfin.marker.MarkerAlias"/>
+        <mapping class="org.zfin.ontology.GenericTerm"/>
+        <mapping class="org.zfin.ontology.GenericTermRelationship"/>
+        <mapping class="org.zfin.marker.MarkerAlias"/>
+        <mapping class="org.zfin.ontology.TermAlias"/>
+        <mapping class="org.zfin.mutant.GenotypeAlias"/>
+        <mapping class="org.zfin.ontology.GenericTerm"/>
+        <mapping class="org.zfin.ontology.TermStage"/>
 
 
     </session-factory>

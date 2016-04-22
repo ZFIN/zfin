@@ -40,19 +40,19 @@ public class OntologyService {
      *
      * @return stage
      */
-    public static DevelopmentStage getStartStageForTerm(Term term) {
+    public static DevelopmentStage getStartStageForTerm(GenericTerm term) {
         return getStageForRelationshipType(term, RelationshipType.START_STAGE);
     }
 
     /**
      * Get the parent term that has the end stage and return
      */
-    public static DevelopmentStage getEndStageForTerm(Term term) {
+    public static DevelopmentStage getEndStageForTerm(GenericTerm term) {
         return getStageForRelationshipType(term, RelationshipType.END_STAGE);
     }
 
-    public static DevelopmentStage getStageForRelationshipType(Term term, RelationshipType relationshipType) {
-        for (TermRelationship parentTerm : term.getParentTermRelationships()) {
+    public static DevelopmentStage getStageForRelationshipType(GenericTerm term, RelationshipType relationshipType) {
+        for (GenericTermRelationship parentTerm : term.getParentTermRelationships()) {
             if (parentTerm.getRelationshipType().equals(relationshipType)) {
                 return ontologyRepository.getDevelopmentStageFromTerm(parentTerm.getTermOne());
             }
@@ -74,7 +74,7 @@ public class OntologyService {
     public static List<RelationshipPresentation> getRelatedTerms(GenericTerm term) {
         logger.debug("get related terms for " + term.getTermName());
         Map<String, RelationshipPresentation> types = new HashMap<>(5);
-        List<TermRelationship> relatedItems = term.getAllDirectlyRelatedTerms();
+        List<GenericTermRelationship> relatedItems = term.getAllDirectlyRelatedTerms();
         if (relatedItems != null) {
             for (TermRelationship rel : relatedItems) {
                 String displayName;

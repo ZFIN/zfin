@@ -142,6 +142,7 @@
                         <zfin2:displayLocation entity="${formBean.feature}"/>
                     </td>
                 </tr>
+                <zfin2:entityNotes entity="${formBean.feature}"/>
             </table>
 
             <zfin2:subsection title="MUTATION">

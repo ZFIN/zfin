@@ -2,7 +2,10 @@ package org.zfin.anatomy.presentation;
 
 import org.junit.Test;
 import org.zfin.infrastructure.DataAliasGroup;
-import org.zfin.ontology.*;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.GenericTermRelationship;
+import org.zfin.ontology.Term;
+import org.zfin.ontology.TermAlias;
 
 import java.util.*;
 
@@ -13,7 +16,7 @@ public class AnatomyPresentationTest {
 
     @Test
     public void displayRelationshipsOnDetailPage() {
-        List<String> types = new ArrayList<String>(10);
+        List<String> types = new ArrayList<>(10);
         String typeOne = "develops into";
         String typeTwo = "develops from";
         String typeThree = "has instance";
@@ -42,14 +45,14 @@ public class AnatomyPresentationTest {
         arOne.setTermTwo(relatedItemOne);
         // add inverse relationship
         GenericTermRelationship arOneInverse = getInverseRelationship(arOne, typeThree);
-        Set<TermRelationship> arOneInverseRels = getSetFromItem(arOneInverse);
+        Set<GenericTermRelationship> arOneInverseRels = getSetFromItem(arOneInverse);
         relatedItemOne.setParentTermRelationships(arOneInverseRels);
 
         GenericTerm relatedItemTwo = new GenericTerm();
         relatedItemTwo.setZdbID("ZDB-TERM-010921-8897");
         relatedItemTwo.setTermName("yolk");
 
-        TermRelationship arTwo = new GenericTermRelationship();
+        GenericTermRelationship arTwo = new GenericTermRelationship();
         arTwo.setType("is a");
         arTwo.setTermOne(item);
         arTwo.setTermTwo(relatedItemTwo);
@@ -59,12 +62,12 @@ public class AnatomyPresentationTest {
         relatedItemThree.setZdbID("ZDB-Term-010921-8897");
         relatedItemThree.setTermName("yolk");
 
-        TermRelationship arThree = new GenericTermRelationship();
+        GenericTermRelationship arThree = new GenericTermRelationship();
         arThree.setType("part of");
         arThree.setTermOne(item);
         arThree.setTermTwo(relatedItemThree);
 
-        Set<TermRelationship> relatedItems = new TreeSet<TermRelationship>();
+        Set<GenericTermRelationship> relatedItems = new TreeSet<>();
         relatedItems.add(arOne);
         relatedItems.add(arTwo);
         relatedItems.add(arThree);
@@ -77,8 +80,8 @@ public class AnatomyPresentationTest {
         RelationshipPresentation presentation = presentations.get(0);
         assertEquals("Relation Ship", "is a", presentation.getType());
 
-        List<Term> relItems = presentation.getTerms();
-        assertEquals("Number of Items for 'is a'",2, relItems.size());
+        List<GenericTerm> relItems = presentation.getTerms();
+        assertEquals("Number of Items for 'is a'", 2, relItems.size());
 
         Term relItem = relItems.get(0);
         assertEquals("Name of First Anatomy Item", "inner nuclear layer", relItem.getTermName());
@@ -91,8 +94,8 @@ public class AnatomyPresentationTest {
 
     }
 
-    private Set<TermRelationship> getSetFromItem(GenericTermRelationship relationship) {
-        Set<TermRelationship> relationshipSet = new HashSet<TermRelationship>(1);
+    private Set<GenericTermRelationship> getSetFromItem(GenericTermRelationship relationship) {
+        Set<GenericTermRelationship> relationshipSet = new HashSet<>(1);
         relationshipSet.add(relationship);
         return relationshipSet;
     }
@@ -138,7 +141,7 @@ public class AnatomyPresentationTest {
         dag4.setSignificance(4);
         syn4.setAlias("fourth");
         syn4.setAliasGroup(dag4);
-        Set<TermAlias> synonyms = new HashSet<TermAlias>(4);
+        Set<TermAlias> synonyms = new HashSet<>(4);
         synonyms.add(syn1);
         synonyms.add(syn2);
         synonyms.add(syn3);
@@ -158,7 +161,7 @@ public class AnatomyPresentationTest {
         Term item = new GenericTerm();
         TermAlias syn1 = new TermAlias();
         syn1.setAlias("first");
-        Set<TermAlias> synonyms = new HashSet<TermAlias>(1);
+        Set<TermAlias> synonyms = new HashSet<>(1);
         synonyms.add(syn1);
         DataAliasGroup group = new DataAliasGroup();
         group.setSignificance(1);
@@ -200,7 +203,7 @@ public class AnatomyPresentationTest {
     @Test
     public void aoAutoCompleteTermListNoQuery() {
 
-        List<Term> terms = new ArrayList<Term>(1);
+        List<Term> terms = new ArrayList<>(1);
         Term term = new GenericTerm();
         term.setTermName("neural rod");
         terms.add(term);
@@ -229,7 +232,7 @@ public class AnatomyPresentationTest {
     public void aoAutoCompleteTermListWithQuery() {
 
         String query = "neur";
-        List<Term> terms = new ArrayList<Term>(2);
+        List<Term> terms = new ArrayList<>(2);
         Term term = new GenericTerm();
         String firstTermName = "neural rod";
         term.setTermName(firstTermName);
@@ -249,7 +252,7 @@ public class AnatomyPresentationTest {
         DataAliasGroup group = new DataAliasGroup();
         group.setSignificance(1);
         syn.setAliasGroup(group);
-        Set<TermAlias> syns = new HashSet<TermAlias>(1);
+        Set<TermAlias> syns = new HashSet<>(1);
         syns.add(syn);
         termTwo.setAliases(syns);
 
@@ -274,7 +277,7 @@ public class AnatomyPresentationTest {
     public void aoAutoCompleteWithQueryCaseInsensitive() {
 
         String query = "Neur";
-        List<Term> terms = new ArrayList<Term>(2);
+        List<Term> terms = new ArrayList<>(2);
         Term term = new GenericTerm();
         String firstTermName = "neural rod";
         term.setTermName(firstTermName);
@@ -291,12 +294,12 @@ public class AnatomyPresentationTest {
 
         TermAlias syn = new TermAlias();
         syn.setAlias("neuron");
-        Set<TermAlias> synonyms = new HashSet<TermAlias>(1);
+        Set<TermAlias> synonyms = new HashSet<>(1);
         synonyms.add(syn);
         DataAliasGroup group = new DataAliasGroup();
         group.setSignificance(1);
         syn.setAliasGroup(group);
-        termTwo.setAliases(synonyms) ;
+        termTwo.setAliases(synonyms);
 
         // match on first term and second terms synonym
         list = AnatomyPresentation.getAnatomyTermList(terms, query);
@@ -309,12 +312,12 @@ public class AnatomyPresentationTest {
 
         }
 
-        syn = new TermAlias() ;
-        syn.setAlias("Neuron") ;
+        syn = new TermAlias();
+        syn.setAlias("Neuron");
         syn.setAliasGroup(group);
         synonyms.clear();
         synonyms.add(syn);
-        termTwo.setAliases(synonyms) ;
+        termTwo.setAliases(synonyms);
 
         // match on first term and second terms synonym
         list = AnatomyPresentation.getAnatomyTermList(terms, query);
@@ -337,7 +340,7 @@ public class AnatomyPresentationTest {
     public void aoAutoCompleteWithQueryWhiteSpaceIgnore() {
 
         String query = "Neur  ";
-        List<Term> terms = new ArrayList<Term>(2);
+        List<Term> terms = new ArrayList<>(2);
         Term term = new GenericTerm();
         String firstTermName = "neural rod";
         term.setTermName(firstTermName);
@@ -357,7 +360,7 @@ public class AnatomyPresentationTest {
         DataAliasGroup group = new DataAliasGroup();
         group.setSignificance(1);
         syn.setAliasGroup(group);
-        Set<TermAlias> syns = new HashSet<TermAlias>(1);
+        Set<TermAlias> syns = new HashSet<>(1);
         syns.add(syn);
         termTwo.setAliases(syns);
 

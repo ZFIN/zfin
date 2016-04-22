@@ -138,7 +138,7 @@
         </td>
     </tr>
 
-    <zfin2:notesInDiv hasNotes="${marker}"/>
+    <zfin2:entityNotes entity="${marker}"/>
 
 </table>
 

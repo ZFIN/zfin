@@ -4,9 +4,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 
+<c:set var="geneCategoryName" value="<%=Category.GENE.getName()%>"/>
+<c:set var="expressionCategoryName" value="<%=Category.EXPRESSIONS.getName()%>"/>
 <c:set var="publicationCategoryName" value="<%=Category.PUBLICATION.getName()%>"/>
 <c:set var="constructCategoryName" value="<%=Category.CONSTRUCT.getName()%>"/>
 
+<script src="/javascript/list-collapse.js"></script>
 <script src="/javascript/angular/angular.min.js"></script>
 <script src="/javascript/angular/angular-sanitize.js"></script>
 
@@ -242,16 +245,18 @@
                     <zfin2:searchResult result="${result}"/>
                 </c:forEach>
 
-                <table class="table-results searchresults" style="display: none;">
-                    <th>Name</th> <th>ID</th> <th>Category</th>
-                    <c:forEach var="result" items="${results}" varStatus="loop">
-                        <zfin:alternating-tr loopName="loop" groupBeanCollection="${results}" groupByBean="id">
-                            <td>${result.link}</td>
-                            <td style="white-space: nowrap"> <c:if test="${!empty result.displayedID}">${result.id}</c:if> </td>
-                            <td>${result.category}</td>
-                        </zfin:alternating-tr>
-                    </c:forEach>
-                </table>
+
+                <c:choose>
+                    <c:when test="${category eq geneCategoryName}">
+                        <zfin-search:geneResultTable results="${results}"/>
+                    </c:when>
+                    <c:when test="${category eq expressionCategoryName}">
+                        <zfin-search:expressionResultTable results="${results}"/>
+                    </c:when>
+                    <c:otherwise>
+                        <zfin-search:mixedResultTable results="${results}"/>
+                    </c:otherwise>
+                </c:choose>
 
 
                 <div style="clear: both ; width: 80%">
@@ -315,6 +320,8 @@ function submitAdvancedQuery(fields) {
 }
 
 $(document).ready(function () {
+
+    $('.list-collapse').listCollapse({label: 'results', itemsToShow: 3});
 
     $('#primary-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
 

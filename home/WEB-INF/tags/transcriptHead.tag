@@ -54,7 +54,7 @@
                                     showAttributionLinks="true"/>
         </td></tr>
 
-    <zfin2:notesInDiv hasNotes="${transcript}"/>
+    <zfin2:entityNotes entity="${transcript}"/>
 </table>
 
 

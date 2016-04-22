@@ -6,13 +6,12 @@ import org.zfin.expression.Image;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
  * Basic interface definition for a term in an ontology.
  */
-public interface Term extends Comparable<Term>, Serializable {
+public interface Term<T extends TermRelationship> extends Comparable<Term>, Serializable {
 
     public static final String UNSPECIFIED = "unspecified";
     public static final String QUALITY = "quality";
@@ -59,16 +58,16 @@ public interface Term extends Comparable<Term>, Serializable {
 
     void setDefinition(String definition);
 
-    List<TermRelationship> getAllDirectlyRelatedTerms();
+    List<T> getAllDirectlyRelatedTerms();
 
     /**
      * Retrieves all terms that are immediate children of this term.
      *
      * @return list of children terms
      */
-    Set<TermRelationship> getChildTermRelationships();
+    Set<T> getChildTermRelationships();
 
-    void setChildTermRelationships(Set<TermRelationship> childTerms);
+    void setChildTermRelationships(Set<T> childTerms);
 
     /**
      * Retrieves all terms that are immediate children of this term
@@ -76,23 +75,19 @@ public interface Term extends Comparable<Term>, Serializable {
      *
      * @return list of children terms
      */
-    List<Term> getChildrenTerms(String relationshipType);
+    List<? extends Term> getChildrenTerms(String relationshipType);
 
-    Set<Term> getChildTerms();
+    Set<? extends Term> getChildTerms();
 
-    Set<TermRelationship> getParentTermRelationships();
+    Set<T> getParentTermRelationships();
 
-    void setParentTermRelationships(Set<TermRelationship> childTerms);
+    void setParentTermRelationships(Set<T> childTerms);
 
-    Set<Term> getParentTerms();
+    Set<? extends Term> getParentTerms();
 
     DevelopmentStage getStart();
 
-    void setStart(DevelopmentStage stage);
-
     DevelopmentStage getEnd();
-
-    void setEnd(DevelopmentStage stage);
 
     Set<Image> getImages();
 

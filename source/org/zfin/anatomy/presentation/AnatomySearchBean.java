@@ -12,10 +12,7 @@ import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.mutant.presentation.FishStatistics;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Ontology;
-import org.zfin.ontology.Term;
-import org.zfin.ontology.TermRelationship;
+import org.zfin.ontology.*;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.util.URLCreator;
@@ -63,7 +60,7 @@ public class AnatomySearchBean extends PaginationBean {
     private int totalNumberOfImagesPerAnatomyItem;
     private List<FishStatistics> genoStats;
     private List<AntibodyStatistics> antibodyStatistics;
-    private Term aoTerm;
+    private GenericTerm aoTerm;
     private String ontologyName = Ontology.ANATOMY.getOntologyName();
 
     private Map<String, String> stageListDisplay;
@@ -107,7 +104,7 @@ public class AnatomySearchBean extends PaginationBean {
         return aoTerm;
     }
 
-    public void setAoTerm(Term aoTerm) {
+    public void setAoTerm(GenericTerm aoTerm) {
         this.aoTerm = aoTerm;
     }
 
@@ -289,7 +286,7 @@ public class AnatomySearchBean extends PaginationBean {
 
     public List<RelationshipPresentation> getRelations() {
         Set<String> types = new HashSet<>();
-        List<TermRelationship> relatedItems = aoTerm.getAllDirectlyRelatedTerms();
+        List<GenericTermRelationship> relatedItems = aoTerm.getAllDirectlyRelatedTerms();
         if (relatedItems != null) {
             for (TermRelationship rel : relatedItems) {
                 types.add(rel.getType());

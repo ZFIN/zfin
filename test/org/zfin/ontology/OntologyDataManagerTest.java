@@ -33,7 +33,7 @@ public class OntologyDataManagerTest extends AbstractDatabaseTest {
     @Test
     public void checkDataTerm() {
         // brain
-        Term term = RepositoryFactory.getOntologyRepository().getTermByOboID("ZFA:0000008");
+        GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByOboID("ZFA:0000008");
         TermDTO termDto = DTOConversionService.convertToTermDTO(term);
         assertTrue("No expression data found for 'brain'", OntologyDataManager.getInstance().hasExpressionData(termDto));
     }

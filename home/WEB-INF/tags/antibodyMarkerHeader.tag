@@ -22,7 +22,7 @@
       </td>
   </tr>
 
-    <zfin2:notesInDiv hasNotes="${antibodyBean.marker}"/>
+    <zfin2:entityNotes entity="${antibodyBean.marker}"/>
 
 </table>
 

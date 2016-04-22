@@ -6,6 +6,7 @@ import java.util.*;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.util.CollectionUtils;
+import org.zfin.expression.Figure;
 import org.zfin.fish.FeatureGene;
 import org.zfin.framework.presentation.ProvidesLink;
 
@@ -60,6 +61,9 @@ public class SearchResult implements ProvidesLink {
 
     @Field("[explain]")
     String explain;
+
+    Object entity;
+    Figure figure;
 
     //fields that need to be injected after
     String matchingText;
@@ -288,6 +292,14 @@ public class SearchResult implements ProvidesLink {
     public void setHasOrthology(String hasOrthology) {
         this.hasOrthology = hasOrthology;
     }
+
+    public Object getEntity() { return entity; }
+
+    public void setEntity(Object entity) { this.entity = entity; }
+
+    public Figure getFigure() { return figure; }
+
+    public void setFigure(Figure figure) { this.figure = figure; }
 
     /* just grab an arbitrary first one for now.. */
     public String getThumbnail() {

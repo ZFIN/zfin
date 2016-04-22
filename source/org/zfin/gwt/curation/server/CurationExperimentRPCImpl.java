@@ -33,10 +33,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.mutant.repository.PhenotypeRepository;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Ontology;
-import org.zfin.ontology.Term;
-import org.zfin.ontology.TermRelationship;
+import org.zfin.ontology.*;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.profile.CuratorSession;
 import org.zfin.profile.repository.ProfileRepository;
@@ -972,10 +969,10 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
     public List<RelatedPileStructureDTO> getTermsWithStageOverlap(ExpressionPileStructureDTO selectedPileStructure,
                                                                   StageRangeIntersectionService intersection) {
         GenericTerm term = ontologyRepository.getTermByZdbID(selectedPileStructure.getExpressedTerm().getEntity().getSuperTerm().getZdbID());
-        List<TermRelationship> terms = term.getAllDirectlyRelatedTerms();
+        List<GenericTermRelationship> terms = term.getAllDirectlyRelatedTerms();
         List<RelatedPileStructureDTO> structures = new ArrayList<>(terms.size());
         ExpressionStructure expressionStructure = DTOConversionService.getExpressionStructureFromDTO(selectedPileStructure.getExpressedTerm());
-        for (TermRelationship rel : terms) {
+        for (GenericTermRelationship rel : terms) {
             Term relatedTerm = rel.getRelatedTerm(term);
             // some terms may be stage terms and should be ignored.
             if (relatedTerm == null) {
@@ -1006,7 +1003,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         return structures;
     }
 
-    private RelatedPileStructureDTO populatePileStructureDTO(Term term) {
+    private RelatedPileStructureDTO populatePileStructureDTO(GenericTerm term) {
         if (term == null)
             return null;
 
