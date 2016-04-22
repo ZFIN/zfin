@@ -95,12 +95,11 @@ public class MutationDetailsConversionService {
         }
         FeatureProteinMutationDetail proteinConsequence = feature.getFeatureProteinMutationDetail();
         StringBuilder statement = new StringBuilder(aminoAcidChangeStatement(proteinConsequence));
-        String terms = proteinConsequenceStatement(proteinConsequence);
-        if (StringUtils.isNotEmpty(terms)) {
+        if (proteinConsequence != null && proteinConsequence.getProteinConsequence() != null) {
             if (StringUtils.isNotEmpty(statement)) {
                 statement.append(" ");
             }
-            statement.append(terms);
+            statement.append(proteinConsequence.getProteinConsequence().getDisplayName());
         }
         String position = positionStatement(proteinConsequence);
         if (StringUtils.isNotEmpty(position)) {
@@ -398,22 +397,5 @@ public class MutationDetailsConversionService {
             statement.append(addedOrRemoved);
         }
         return statement.toString();
-    }
-
-    public String proteinConsequenceStatement(FeatureProteinMutationDetail proteinConsequence) {
-        if (proteinConsequence == null) {
-            return "";
-        }
-
-        Set<ProteinConsequence> consequenceTerms = proteinConsequence.getProteinConsequences();
-        if (CollectionUtils.isEmpty(consequenceTerms)) {
-            return "";
-        }
-
-        List<String> displayNames = new ArrayList<>(consequenceTerms.size());
-        for (ProteinConsequence term : consequenceTerms) {
-            displayNames.add(term.getDisplayName());
-        }
-        return StringUtils.join(displayNames, ", ");
     }
 }

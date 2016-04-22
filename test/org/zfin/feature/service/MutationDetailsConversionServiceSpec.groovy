@@ -391,7 +391,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
                         mutantAminoAcid: mutantAA == null ? null : new AminoAcidTerm(displayName: mutantAA),
                         numberAminoAcidsAdded: addedAA,
                         numberAminoAcidsRemoved: removedAA,
-                        proteinConsequences: term == null ? null : [new ProteinConsequence(displayName: term)] as Set,
+                        proteinConsequence: term == null ? null : new ProteinConsequence(displayName: term),
                         proteinPositionStart: start,
                         proteinPositionEnd: end,
                         referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),

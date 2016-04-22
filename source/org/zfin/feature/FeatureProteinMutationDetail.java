@@ -23,16 +23,14 @@ public class FeatureProteinMutationDetail {
     @OneToOne
     @JoinColumn(name = "fpmd_feature_zdb_id")
     private Feature feature;
-    @ManyToMany
-    @JoinTable(name = "feature_protein_consequence",
-            joinColumns = {@JoinColumn(name = "fpc_protein_consequence_term_zdb_id", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "fpc_fpmd_zdb_id", nullable = false, updatable = false)})
-    private Set<ProteinConsequence> proteinConsequences;
+    @ManyToOne
+    @JoinColumn(name = "fpmd_protein_consequence_term_zdb_id")
+    private ProteinConsequence proteinConsequence;
     @Column(name = "fpmd_protein_position_start")
     private Integer proteinPositionStart;
     @Column(name = "fpmd_protein_position_end")
     private Integer proteinPositionEnd;
-    @Column(name = "fpmd_protein_sequence_of_reference_accession_number")
+    @Column(name = "fpmd_sequence_of_reference_accession_number")
     private String proteinSequenceReferenceAccessionNumber;
     @ManyToOne
     @JoinColumn(name = "fpmd_fdbcont_zdb_id")
@@ -56,12 +54,12 @@ public class FeatureProteinMutationDetail {
         this.feature = feature;
     }
 
-    public Set<ProteinConsequence> getProteinConsequences() {
-        return proteinConsequences;
+    public ProteinConsequence getProteinConsequence() {
+        return proteinConsequence;
     }
 
-    public void setProteinConsequences(Set<ProteinConsequence> proteinConsequences) {
-        this.proteinConsequences = proteinConsequences;
+    public void setProteinConsequences(ProteinConsequence proteinConsequence) {
+        this.proteinConsequence = proteinConsequence;
     }
 
     public Integer getNumberAminoAcidsAdded() {
