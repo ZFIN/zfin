@@ -12,9 +12,6 @@
     <c:when test="${result.category == geneCategoryName}">
         <zfin-search:geneResult result="${result}"/>
     </c:when>
-    <c:when test="${result.category == fishCategoryName}">
-        <zfin-search:fishResult result="${result}"/>
-    </c:when>
     <c:when test="${result.category == publicationCategoryName}">
         <zfin-search:publicationResult result="${result}"/>
     </c:when>

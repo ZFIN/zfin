@@ -74,6 +74,7 @@ public class ResultService {
     public static String PHENOTYPE = "Phenotype:";
     public static String EMAIL = "Email:";
     public static String EXPRESSION = "Expression:";
+    public static String FISH = "Fish:";
     public static String GENE = "Gene:";
     public static String ANTIBODY = "Antibody:";
     public static String PROBE = "Probe:";
@@ -536,9 +537,6 @@ public class ResultService {
                 result.addAttribute(PROBE, MarkerPresentation.getName(xpatex.getProbe()));
             }
 
-            String genoLink=GenotypePresentation.getLink(xpatex.getFishExperiment().getFish().getGenotype());
-            result.addAttribute(GENOTYPE, genoLink);
-
             String conditions = ExperimentPresentation.getLink(xpatex.getFishExperiment().getExperiment(), true);
             // String conditions = ExperimentPresentation.getNameForFaceted(xpatex.getGenotypeExperiment().getExperiment(), true, false);
             if (StringUtils.isNotBlank(conditions)) {
@@ -575,6 +573,8 @@ public class ResultService {
             }
             result.addAttribute(EXPRESSION, asUnorderedList(results));
 
+            result.setFeatureGenes(FishService.getFeatureGenes(xpatex.getFishExperiment().getFish()));
+
 
             //build a more complex title than the one used in the query
 
@@ -603,6 +603,9 @@ public class ResultService {
             sb.append(figure.getLabel());
 
             result.setName(sb.toString());
+
+            //This needs to be last, it serves as a title for the fish component table below
+            result.addAttribute(FISH, "");
 
         }
 
@@ -633,9 +636,6 @@ public class ResultService {
 
             if (phenotypeExperiment != null) {
 
-                String genoLink = GenotypePresentation.getLink(phenotypeExperiment.getFishExperiment().getFish().getGenotype());
-                result.addAttribute(GENOTYPE, genoLink);
-
                 String conditionsLink = ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true);
                 if (StringUtils.isNotBlank(conditionsLink)) {
                     result.addAttribute(CONDITIONS, conditionsLink);
@@ -655,6 +655,8 @@ public class ResultService {
                 if (CollectionUtils.isNotEmpty(statements)) {
                     result.addAttribute(PHENOTYPE, withBreaks(statements));
                 }
+
+                result.setFeatureGenes(FishService.getFeatureGenes(phenotypeExperiment.getFishExperiment().getFish()));
 
                 if (!StringUtils.contains(ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true), "standard or control")) {
 
@@ -676,6 +678,8 @@ public class ResultService {
 
                     result.setName(sb.toString());
                 }
+                //This needs to be last, it serves as a title for the fish component table below
+                result.addAttribute(FISH, "");
 
             }
         }
