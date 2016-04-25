@@ -27,8 +27,8 @@
                 <tr>
                     <th width="10%">Allele</th>
                     <th width="13%">Type</th>
-                    <th width="15%">Consequence</th>
-                    <th width="20%">Location</th>
+                    <th width="15%">Localization</th>
+                    <th width="20%">Consequence</th>
                     <th width="10%">Mutagen</th>
                     <th width="50%">Suppliers</th>
                 </tr>
@@ -41,15 +41,16 @@
                             ${feature.type.display}
                         </td>
                         <td>
-                            <c:forEach var="consequence" items="${feature.featureTranscriptMutationDetailSet}">
-                                <li style="list-style-type: none;">
-                                    ${consequence.transcriptConsequence.displayName}
-                                </li>
-                            </c:forEach>
+                                ${feature.geneLocalizationStmt}
                         </td>
                         <td>
-                        ${feature.ftrTranscriptStmt}
+                            <c:forEach var="consequence" items="${feature.featureTranscriptMutationDetailSet}" varStatus="loop">
+
+                                    ${consequence.transcriptConsequence.displayName}
+                                <c:if test="${!loop.last}">,&nbsp;</c:if>
+                            </c:forEach>
                         </td>
+
                         <td>
                             <c:set var="mutagen" value="${feature.featureAssay.mutagen}"/>
                             <c:if test="${mutagen ne zfn:getMutagen('not specified')}">
