@@ -41,14 +41,26 @@
                             ${feature.type.display}
                         </td>
                         <td>
+
                                 ${feature.geneLocalizationStmt}
+
+
                         </td>
                         <td>
-                            <c:forEach var="consequence" items="${feature.featureTranscriptMutationDetailSet}" varStatus="loop">
+                            <c:choose>
+                                <c:when test="${fn:length(feature.featureTranscriptMutationDetailSet) ne null && fn:length(feature.featureTranscriptMutationDetailSet) > 0}">
+                                    <c:forEach var="consequence" items="${feature.featureTranscriptMutationDetailSet}" varStatus="loop">
 
-                                    ${consequence.transcriptConsequence.displayName}
-                                <c:if test="${!loop.last}">,&nbsp;</c:if>
-                            </c:forEach>
+                                        ${consequence.transcriptConsequence.displayName}
+
+                                        <c:if test="${!loop.last}">,&nbsp;</c:if>
+                                    </c:forEach>
+                                </c:when>
+                                <c:otherwise>
+                                    Unknown
+                                </c:otherwise>
+                            </c:choose>
+
                         </td>
 
                         <td>
