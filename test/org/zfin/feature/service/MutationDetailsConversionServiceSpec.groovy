@@ -14,21 +14,33 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
     MutationDetailsConversionService converter = new MutationDetailsConversionService()
 
     @Shared
-    GeneLocalizationTerm spliceDonor = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-166", displayName: "splice donor site");
+    GeneLocalizationTerm spliceDonor = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-166", displayName: "splice donor site")
     @Shared
-    GeneLocalizationTerm spliceAcceptor = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-167", displayName: "splice acceptor site");
+    GeneLocalizationTerm spliceAcceptor = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-167", displayName: "splice acceptor site")
     @Shared
-    GeneLocalizationTerm spliceJunction = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-1417", displayName: "splice junction");
+    GeneLocalizationTerm spliceJunction = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-1417", displayName: "splice junction")
     @Shared
-    GeneLocalizationTerm promoter = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-170", displayName: "promoter");
+    GeneLocalizationTerm promoter = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-170", displayName: "promoter")
     @Shared
-    GeneLocalizationTerm enhancer = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-168", displayName: "enhancer");
+    GeneLocalizationTerm enhancer = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-168", displayName: "enhancer")
     @Shared
-    GeneLocalizationTerm fivePrimeUTR = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-207", displayName: "5' UTR");
+    GeneLocalizationTerm fivePrimeUTR = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-207", displayName: "5' UTR")
     @Shared
-    GeneLocalizationTerm threePrimeUTR = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-208", displayName: "3' UTR");
+    GeneLocalizationTerm threePrimeUTR = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-208", displayName: "3' UTR")
     @Shared
-    GeneLocalizationTerm startCodon = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-321", displayName: "start codon");
+    GeneLocalizationTerm startCodon = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-321", displayName: "start codon")
+
+    @Shared
+    TranscriptConsequence missense = new TranscriptConsequence(zdbID: "ZDB-TERM-130401-1577", displayName: "missense", order: 1)
+    @Shared
+    TranscriptConsequence gain = new TranscriptConsequence(zdbID: "ZDB-TERM-130401-1568", displayName: "gain", order: 6)
+    @Shared
+    TranscriptConsequence loss = new TranscriptConsequence(zdbID: "ZDB-TERM-130401-1567", displayName: "loss", order: 6)
+    @Shared
+    TranscriptConsequence splicingVariant = new TranscriptConsequence(zdbID: "ZDB-TERM-130401-1563", displayName: "splicing variant", order: 3)
+    @Shared
+    TranscriptConsequence frameshift = new TranscriptConsequence(zdbID: "ZDB-TERM-130401-1581", displayName: "frameshift", order: 7)
+
 
     def 'mutation type field should be populated'() {
         setup:
@@ -276,7 +288,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
     def 'transcript consequence statement with term #term, exon #exon, intron #intron'() {
         setup:
         def transcriptConsequence = new FeatureTranscriptMutationDetail(
-                transcriptConsequence: term == null ? null : new TranscriptConsequence(displayName: 'missense_variant'),
+                transcriptConsequence: term,
                 exonNumber: exon,
                 intronNumber: intron
         )
@@ -285,39 +297,34 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         converter.transcriptConsequenceStatement(transcriptConsequence) == display
 
         where:
-        term               | exon | intron || display
-        null               | null | null   || ''
-        'missense_variant' | null | null   || 'missense_variant'
-        'missense_variant' | 1    | null   || 'missense_variant in exon 1'
-        'missense_variant' | null | 2      || 'missense_variant in intron 2'
-        'missense_variant' | 3    | 4      || 'missense_variant in exon 3'
+        term     | exon | intron || display
+        null     | null | null   || ''
+        missense | null | null   || 'Missense'
+        missense | 1    | null   || 'Missense in exon 1'
+        missense | null | 2      || 'Missense in intron 2'
+        missense | 3    | 4      || 'Missense in exon 3'
+        gain     | null | null   || 'Gain'
+        gain     | 1    | null   || 'Gain of exon 1'
+        gain     | null | 2      || 'Gain of intron 2'
+        loss     | 3    | null   || 'Loss of exon 3'
+        loss     | null | 4      || 'Loss of intron 4'
     }
 
     @Unroll
     def 'transcript sequence statement should show all terms in correct order'() {
         setup:
         def detailSet = new TreeSet([
-                new FeatureTranscriptMutationDetail(
-                        transcriptConsequence: new TranscriptConsequence(displayName: 'missense_variant', order: 1)),
-                new FeatureTranscriptMutationDetail(
-                        transcriptConsequence: new TranscriptConsequence(displayName: 'intron_gain_variant', order: 6),
-                        intronNumber: 5
-                ),
-                new FeatureTranscriptMutationDetail(
-                        transcriptConsequence: new TranscriptConsequence(displayName: 'splicing_variant', order: 3),
-                        exonNumber: 3
-                ),
-                new FeatureTranscriptMutationDetail(
-                        transcriptConsequence: new TranscriptConsequence(displayName: '3_prime_UTR_variant', order: 2)),
-
-        ])
+                new FeatureTranscriptMutationDetail(transcriptConsequence: missense),
+                new FeatureTranscriptMutationDetail(transcriptConsequence: gain, intronNumber: 5),
+                new FeatureTranscriptMutationDetail(transcriptConsequence: splicingVariant, exonNumber: 3),
+                new FeatureTranscriptMutationDetail(transcriptConsequence: frameshift)])
         def feature = new Feature(featureTranscriptMutationDetailSet: detailSet)
 
         when:
         def presentation = converter.convert(feature)
 
         then:
-        presentation.transcriptChangeStatement == 'missense_variant, 3_prime_UTR_variant, splicing_variant in exon 3, intron_gain_variant in intron 5'
+        presentation.transcriptChangeStatement == 'Missense, Splicing Variant in exon 3, Gain of intron 5, Frameshift'
     }
 
     @Unroll

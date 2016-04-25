@@ -1,7 +1,7 @@
 package org.zfin.feature.service;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.stereotype.Service;
 import org.zfin.feature.*;
 import org.zfin.feature.presentation.MutationDetailsPresentation;
@@ -257,11 +257,11 @@ public class MutationDetailsConversionService {
         return exonOrIntronLocation(dnaChange.getExonNumber(), dnaChange.getIntronNumber(), preposition);
     }
 
-    private String exonOrIntronLocation(FeatureTranscriptMutationDetail transcriptConsequence) {
+    private String exonOrIntronLocation(FeatureTranscriptMutationDetail transcriptConsequence, String preposition) {
         if (transcriptConsequence == null) {
             return "";
         }
-        return exonOrIntronLocation(transcriptConsequence.getExonNumber(), transcriptConsequence.getIntronNumber(), "");
+        return exonOrIntronLocation(transcriptConsequence.getExonNumber(), transcriptConsequence.getIntronNumber(), preposition);
     }
 
     private String exonOrIntronLocation(Integer exon, Integer intron, String preposition) {
@@ -365,10 +365,20 @@ public class MutationDetailsConversionService {
         if (transcriptDetail == null || transcriptDetail.getTranscriptConsequence() == null) {
             return "";
         }
-        StringBuilder statement = new StringBuilder(transcriptDetail.getTranscriptConsequence().getDisplayName());
-        String location = exonOrIntronLocation(transcriptDetail);
+        String termDisplay = WordUtils.capitalize(transcriptDetail.getTranscriptConsequence().getDisplayName());
+        StringBuilder statement = new StringBuilder(termDisplay);
+        String preposition;
+        switch (transcriptDetail.getTranscriptConsequence().getZdbID()) {
+            case "ZDB-TERM-130401-1568":
+            case "ZDB-TERM-130401-1567":
+                preposition = " of ";
+                break;
+            default:
+                preposition = " in ";
+        }
+        String location = exonOrIntronLocation(transcriptDetail, preposition);
         if (StringUtils.isNotEmpty(location)) {
-            statement.append(" in ").append(location);
+            statement.append(location);
         }
         return statement.toString();
     }
