@@ -888,8 +888,8 @@ public class HibernateOntologyRepository implements OntologyRepository {
     public List<GenericTermRelationship> getTermsWithInvalidStartStageRange() {
         Session session = HibernateUtil.currentSession();
         String hql = "select relationship from GenericTermRelationship relationship " +
-                " where relationship.termOne.start.hoursStart > relationship.termTwo.start.hoursStart AND " +
-                "       relationship.termTwo.start.name != :unknown AND" +
+                " where relationship.termOne.termStage.start.hoursStart > relationship.termTwo.termStage.start.hoursStart AND " +
+                "       relationship.termTwo.termStage.start.name != :unknown AND" +
                 "       relationship.type in (:typeList)";
         Query query = session.createQuery(hql);
         query.setString("unknown", DevelopmentStage.UNKNOWN);
@@ -910,8 +910,8 @@ public class HibernateOntologyRepository implements OntologyRepository {
     public List<GenericTermRelationship> getTermsWithInvalidEndStageRange() {
         Session session = HibernateUtil.currentSession();
         String hql = "select relationship from GenericTermRelationship relationship " +
-                " where relationship.termOne.end.hoursEnd < relationship.termTwo.end.hoursEnd AND " +
-                "       relationship.termTwo.end.name != :unknown AND " +
+                " where relationship.termOne.termStage.end.hoursEnd < relationship.termTwo.termStage.end.hoursEnd AND " +
+                "       relationship.termTwo.termStage.end.name != :unknown AND " +
                 "       relationship.type in (:typeList)";
         Query query = session.createQuery(hql);
         query.setString("unknown", DevelopmentStage.UNKNOWN);
@@ -931,8 +931,8 @@ public class HibernateOntologyRepository implements OntologyRepository {
     public List<GenericTermRelationship> getTermsWithInvalidStartEndStageRangeForDevelopsFrom() {
         Session session = HibernateUtil.currentSession();
         String hql = "select relationship from GenericTermRelationship relationship " +
-                " where relationship.termOne.end.hoursEnd < relationship.termTwo.start.hoursStart AND " +
-                "       relationship.termTwo.end.name != :unknown AND " +
+                " where relationship.termOne.termStage.end.hoursEnd < relationship.termTwo.termStage.start.hoursStart AND " +
+                "       relationship.termTwo.termStage.end.name != :unknown AND " +
                 " relationship.type = :developsFrom";
         Query query = session.createQuery(hql);
         query.setString("unknown", DevelopmentStage.UNKNOWN);
