@@ -535,7 +535,7 @@ public class Feature implements EntityNotes, EntityZdbID {
         String geneLocalizationStmt;
         MutationDetailsConversionService mdcs = new MutationDetailsConversionService();
         geneLocalizationStmt=mdcs.geneLocalizationStatement(featureDnaMutationDetail);
-        if (geneLocalizationStmt==null){
+        if (geneLocalizationStmt==""){
             geneLocalizationStmt=UNKNOWN;
         }
         return geneLocalizationStmt;
