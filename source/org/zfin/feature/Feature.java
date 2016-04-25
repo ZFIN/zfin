@@ -33,7 +33,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     public static final String MUTANT = "Mutant";
     public static final String UNRECOGNIZED = "unrecognized";
     public static final String UNSPECIFIED = "unspecified";
-    public static final String UNKNOWN= "unknown";
+    public static final String UNKNOWN= "Unknown";
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
     @GenericGenerator(name = "zfinGenerator",
