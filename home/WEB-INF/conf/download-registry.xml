@@ -1778,20 +1778,52 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                   select feature_zdb_id, a.szm_term_ont_id, feature_name, mrkr_abbrev, mrkr_zdb_id, b.szm_term_ont_id, fmrel_type 
-                     from feature, feature_marker_relationship,marker, so_zfin_mapping a, so_zfin_mapping b
-                    where fmrel_ftr_zdb_id = feature_zdb_id 
-                      and mrkr_zdb_id = fmrel_mrkr_zdb_id
-                      and a.szm_object_type = feature_type
-                      and b.szm_objecT_type = mrkr_type
-                      and mrkr_type like 'GENE%' and
-                         (
-                            (feature_type in ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
-                                              'UNSPECIFIED','TRANSGENIC_INSERTION', 'INDEL') AND fmrel_type ='is allele of') OR
-                                              (feature_type in ('TRANSLOC', 'INVERSION') AND fmrel_type in ('is allele of', 'markers moved')) OR
-                                              (feature_type in ('DEFICIENCY') AND fmrel_type in ('is allele of','markers missing'))
-                         )
-                      order by lower( feature_name);
+                    SELECT
+                        feature_zdb_id,
+                        a.szm_term_ont_id,
+                        feature_name,
+                        mrkr_abbrev,
+                        mrkr_zdb_id,
+                        b.szm_term_ont_id,
+                        fmrel_type,
+                        feature_type,
+                        dna_change_so_id,
+                        dna_ref_nucleotide,
+                        dna_mut_nucleotide,
+                        dna_bp_added,
+                        dna_bp_removed,
+                        dna_position_start,
+                        dna_position_end,
+                        dna_reference_seq,
+                        dna_localization_name,
+                        dna_localization_so_id,
+                        dna_localization_exon,
+                        dna_localization_intron,
+                        transcript_consequence_name,
+                        transcript_consequence_so_id,
+                        transcript_consequence_exon,
+                        transcript_consequence_intron,
+                        protein_consequence_name,
+                        protein_consequence_so_id,
+                        protein_ref_aa,
+                        protein_mut_aa,
+                        protein_aa_added,
+                        protein_aa_removed,
+                        protein_position_start,
+                        protein_position_end,
+                        protein_reference_seq
+                      FROM feature, feature_marker_relationship,marker, so_zfin_mapping a, so_zfin_mapping b, tmp_mutation_details
+                      WHERE fmrel_ftr_zdb_id = feature_zdb_id
+                      AND mrkr_zdb_id = fmrel_mrkr_zdb_id
+                      AND a.szm_object_type = feature_type
+                      AND b.szm_objecT_type = mrkr_type
+                      AND mrkr_type LIKE 'GENE%' AND (
+                        (feature_type IN ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
+                                          'UNSPECIFIED','TRANSGENIC_INSERTION', 'INDEL') AND fmrel_type ='is allele of') OR
+                        (feature_type IN ('TRANSLOC', 'INVERSION') AND fmrel_type IN ('is allele of', 'markers moved')) OR
+                        (feature_type IN ('DEFICIENCY') AND fmrel_type IN ('is allele of','markers missing')))
+                      AND tmp_feat_zdb_id = feature_zdb_id
+                      ORDER BY LOWER(feature_name);
                 ]]>
             </Query>
             <Column id="1" unique="true">Genomic Feature ID</Column>
@@ -1801,6 +1833,32 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="5">Gene ID</Column>
             <Column id="6">Gene SO ID</Column>
             <Column id="7">Genomic Feature - Marker Relationship</Column>
+            <Column id="8">Feature Type</Column>
+            <Column id="9">DNA/cDNA Change SO ID</Column>
+            <Column id="10">Reference Nucleotide</Column>
+            <Column id="11">Mutant Nucleotide</Column>
+            <Column id="12">Base Pairs Added</Column>
+            <Column id="13">Base Pairs Removed</Column>
+            <Column id="14">DNA/cDNA Change Position Start</Column>
+            <Column id="15">DNA/cDNA Change Position End</Column>
+            <Column id="16">DNA/cDNA Reference Sequence</Column>
+            <Column id="17">DNA/cDNA Change Localization</Column>
+            <Column id="18">DNA/cDNA Change Localization SO ID</Column>
+            <Column id="19">DNA/cDNA Change Localization Exon</Column>
+            <Column id="20">DNA/cDNA Change Localization Intron</Column>
+            <Column id="21">Transcript Consequence</Column>
+            <Column id="22">Transcript Consequence SO ID</Column>
+            <Column id="23">Transcript Consequence Exon</Column>
+            <Column id="24">Transcript Consequence Intron</Column>
+            <Column id="25">Protein Consequence</Column>
+            <Column id="26">Protein Consequence SO ID</Column>
+            <Column id="27">Reference Amino Acid</Column>
+            <Column id="28">Mutant Amino Acid</Column>
+            <Column id="29">Amino Acids Added</Column>
+            <Column id="30">Amino Acids Removed</Column>
+            <Column id="31">Protein Consequence Position Start</Column>
+            <Column id="32">Protein Consequence Position End</Column>
+            <Column id="33">Protein Reference Sequence</Column>
         </Download>
         <Download orderIndex="1">
             <Name>

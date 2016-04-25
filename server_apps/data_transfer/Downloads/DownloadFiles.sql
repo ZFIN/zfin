@@ -1906,23 +1906,141 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 select * from tmp_identifiers;
 
 
+CREATE TEMP TABLE tmp_mutation_details(
+  tmp_feat_zdb_id VARCHAR(25),
+  dna_change_so_id VARCHAR(25),
+  dna_ref_nucleotide VARCHAR(5),
+  dna_mut_nucleotide VARCHAR(5),
+  dna_bp_added INT,
+  dna_bp_removed INT,
+  dna_position_start INT,
+  dna_position_end INT,
+  dna_reference_seq VARCHAR(50),
+  dna_localization_name VARCHAR(50),
+  dna_localization_so_id VARCHAR(25),
+  dna_localization_exon INT,
+  dna_localization_intron INT,
+  transcript_consequence_name VARCHAR(50),
+  transcript_consequence_so_id VARCHAR(25),
+  transcript_consequence_exon INT,
+  transcript_consequence_intron INT,
+  protein_consequence_name VARCHAR(50),
+  protein_consequence_so_id VARCHAR(25),
+  protein_ref_aa VARCHAR(5),
+  protein_mut_aa VARCHAR(5),
+  protein_aa_added INT,
+  protein_aa_removed INT,
+  protein_position_start INT,
+  protein_position_end INT,
+  protein_reference_seq VARCHAR(50)
+);
+
+CREATE TEMP TABLE tmp_term_names_and_ids(
+  zdb_id VARCHAR(50),
+  ont_id VARCHAR(50),
+  display VARCHAR(50)
+);
+
+INSERT INTO tmp_term_names_and_ids
+  SELECT mdcv_term_zdb_id, term_ont_id, mdcv_term_display_name
+  FROM mutation_detail_controlled_vocabulary
+  INNER JOIN term ON term_zdb_id = mdcv_term_zdb_id;
+
+INSERT INTO tmp_mutation_details
+  SELECT
+    feature_zdb_id,
+    dna_term.ont_id,
+    SUBSTR(dna_term.display, 0, 1),
+    SUBSTR(dna_term.display, 3, 1),
+    fdmd_number_additional_dna_base_pairs,
+    fdmd_number_removed_dna_base_pairs,
+    fdmd_dna_position_start,
+    fdmd_dna_position_end,
+    dna_db.fdb_db_display_name || ':' || fdmd_dna_sequence_of_reference_accession_number,
+    localization_term.display,
+    localization_term.ont_id,
+    fdmd_exon_number,
+    fdmd_intron_number,
+    transcript_term.display,
+    transcript_term.ont_id,
+    ftmd_exon_number,
+    ftmd_introl_number,
+    protein_term.display,
+    protein_term.ont_id,
+    wt_aa.display,
+    mut_aa.display,
+    fpmd_number_amino_acids_added,
+    fpmd_number_amino_acids_removed,
+    fpmd_protein_position_start,
+    fpmd_protein_position_end,
+    prot_db.fdb_db_display_name || ':' || fpmd_sequence_of_reference_accession_number
+  FROM feature
+  LEFT OUTER JOIN feature_dna_mutation_detail ON feature_zdb_id = fdmd_feature_zdb_id
+  LEFT OUTER JOIN tmp_term_names_and_ids dna_term ON dna_term.zdb_id = fdmd_dna_mutation_term_zdb_id
+  LEFT OUTER JOIN foreign_db_contains dna_dbc ON fdmd_fdbcont_zdb_id = dna_dbc.fdbcont_zdb_id
+  LEFT OUTER JOIN foreign_db dna_db ON dna_db.fdb_db_pk_id = dna_dbc.fdbcont_fdb_db_id
+  LEFT OUTER JOIN tmp_term_names_and_ids localization_term ON localization_term.zdb_id = fdmd_gene_localization_term_zdb_id
+  LEFT OUTER JOIN feature_transcript_mutation_detail ON feature_zdb_id = ftmd_feature_zdb_id
+  LEFT OUTER JOIN tmp_term_names_and_ids transcript_term ON transcript_term.zdb_id = ftmd_transcript_consequence_term_zdb_id
+  LEFT OUTER JOIN feature_protein_mutation_detail ON feature_zdb_id = fpmd_feature_zdb_id
+  LEFT OUTER JOIN tmp_term_names_and_ids protein_term ON protein_term.zdb_id = fpmd_protein_consequence_term_zdb_id
+  LEFT OUTER JOIN tmp_term_names_and_ids wt_aa ON wt_aa.zdb_id = fpmd_wt_protein_term_zdb_id
+  LEFT OUTER JOIN tmp_term_names_and_ids mut_aa ON mut_aa.zdb_id = fpmd_mutant_or_stop_protein_term_zdb_id
+  LEFT OUTER JOIN foreign_db_contains prot_dbc ON fpmd_fdbcont_zdb_id = prot_dbc.fdbcont_zdb_id
+  LEFT OUTER JOIN foreign_db prot_db ON prot_db.fdb_db_pk_id = prot_dbc.fdbcont_fdb_db_id;
+
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features-affected-genes.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features-affected-genes.txt'
- DELIMITER "	"
-select feature_zdb_id, a.szm_term_ont_id, feature_name, mrkr_abbrev, mrkr_zdb_id, b.szm_term_ont_id, fmrel_type from feature,
-feature_marker_relationship,marker, so_zfin_mapping a, so_zfin_mapping b
-where fmrel_ftr_zdb_id = feature_zdb_id
-  and mrkr_zdb_id = fmrel_mrkr_zdb_id
-  and a.szm_object_type = feature_type
-  and b.szm_objecT_type = mrkr_type
-  and mrkr_type like 'GENE%' and
-  (
-    (feature_type in ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
+  DELIMITER "	"
+  SELECT
+    feature_zdb_id,
+    a.szm_term_ont_id,
+    feature_name,
+    mrkr_abbrev,
+    mrkr_zdb_id,
+    b.szm_term_ont_id,
+    fmrel_type,
+    feature_type,
+    dna_change_so_id,
+    dna_ref_nucleotide,
+    dna_mut_nucleotide,
+    dna_bp_added,
+    dna_bp_removed,
+    dna_position_start,
+    dna_position_end,
+    dna_reference_seq,
+    dna_localization_name,
+    dna_localization_so_id,
+    dna_localization_exon,
+    dna_localization_intron,
+    transcript_consequence_name,
+    transcript_consequence_so_id,
+    transcript_consequence_exon,
+    transcript_consequence_intron,
+    protein_consequence_name,
+    protein_consequence_so_id,
+    protein_ref_aa,
+    protein_mut_aa,
+    protein_aa_added,
+    protein_aa_removed,
+    protein_position_start,
+    protein_position_end,
+    protein_reference_seq
+  FROM feature, feature_marker_relationship,marker, so_zfin_mapping a, so_zfin_mapping b, tmp_mutation_details
+  WHERE fmrel_ftr_zdb_id = feature_zdb_id
+  AND mrkr_zdb_id = fmrel_mrkr_zdb_id
+  AND a.szm_object_type = feature_type
+  AND b.szm_objecT_type = mrkr_type
+  AND mrkr_type LIKE 'GENE%' AND (
+    (feature_type IN ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
                       'UNSPECIFIED','TRANSGENIC_INSERTION', 'INDEL') AND fmrel_type ='is allele of') OR
-    (feature_type in ('TRANSLOC', 'INVERSION') AND fmrel_type in ('is allele of', 'markers moved')) OR
-    (feature_type in ('DEFICIENCY') AND fmrel_type in ('is allele of','markers missing'))
-  )
-  order by lower( feature_name);
+    (feature_type IN ('TRANSLOC', 'INVERSION') AND fmrel_type IN ('is allele of', 'markers moved')) OR
+    (feature_type IN ('DEFICIENCY') AND fmrel_type IN ('is allele of','markers missing')))
+  AND tmp_feat_zdb_id = feature_zdb_id
+  ORDER BY LOWER(feature_name);
+
+DROP TABLE tmp_term_names_and_ids;
+DROP TABLE tmp_mutation_details;
 
 ! echo "generating clean phenotype download" ;
 
