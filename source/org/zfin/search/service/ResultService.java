@@ -605,7 +605,12 @@ public class ResultService {
             result.setName(sb.toString());
 
             //This needs to be last, it serves as a title for the fish component table below
-            result.addAttribute(FISH, "");
+            if (xpatex.getFishExperiment().getFish().isWildtypeWithoutReagents()) {
+                result.addAttribute(FISH, FishPresentation.getName(xpatex.getFishExperiment().getFish()));
+            } else {
+                result.addAttribute(FISH, "");
+            }
+
 
         }
 
