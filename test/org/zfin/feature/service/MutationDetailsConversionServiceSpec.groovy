@@ -29,6 +29,10 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
     GeneLocalizationTerm threePrimeUTR = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-208", displayName: "3' UTR")
     @Shared
     GeneLocalizationTerm startCodon = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-321", displayName: "start codon")
+    @Shared
+    GeneLocalizationTerm exonLoc = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-150", displayName: "exon");
+    @Shared
+    GeneLocalizationTerm intronLoc = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-191", displayName: "intron");
 
     @Shared
     TranscriptConsequence missense = new TranscriptConsequence(zdbID: "ZDB-TERM-130401-1577", displayName: "missense", order: 1)
@@ -78,7 +82,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         where:
         localization   | exon | intron | position | db        | accession || display
         null           | null | null   | null     | null      | null      || 'A>G'
-        null           | 4    | null   | null     | null      | null      || 'A>G in exon 4'
+        exonLoc        | 4    | null   | null     | null      | null      || 'A>G in exon 4'
         spliceJunction | 6    | 7      | 1010     | null      | null      || 'A>G at exon 6 - intron 7 splice junction at position 1010'
         null           | null | null   | 392      | null      | null      || 'A>G at position 392'
         null           | null | null   | 1829     | 'GENBANK' | 'C1032'   || 'A>G at position 1829 in GENBANK:C1032'
@@ -99,8 +103,10 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
 
         where:
         localization   | exon | intron || display
-        null           | 1    | null   || "in exon 1"
-        null           | null | 2      || "in intron 2"
+        null           | 1    | null   || ""
+        null           | null | 2      || ""
+        exonLoc        | 1    | null   || "in exon 1"
+        intronLoc      | null | 2      || "in intron 2"
         spliceDonor    | null | null   || "in splice donor site"
         spliceDonor    | 1    | null   || "in splice donor site of exon 1"
         spliceDonor    | null | 2      || "in splice donor site of intron 2"
@@ -180,7 +186,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         where:
         localization | exon | intron | position | db        | accession || display
         null         | null | null   | null     | null      | null      || '-10 bp'
-        null         | null | 2      | null     | null      | null      || '-10 bp in intron 2'
+        intronLoc    | null | 2      | null     | null      | null      || '-10 bp in intron 2'
         spliceDonor  | 6    | null   | 1010     | null      | null      || '-10 bp in splice donor site of exon 6 at position 1010'
         null         | null | null   | 482      | null      | null      || '-10 bp at position 482'
         null         | null | null   | 1829     | 'GENBANK' | 'C1032'   || '-10 bp at position 1829 in GENBANK:C1032'
@@ -212,10 +218,10 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         where:
         localization | exon | intron | position | db        | accession || display
         null         | null | null   | null     | null      | null      || '+13 bp'
-        null         | 12   | null   | null     | null      | null      || '+13 bp in exon 12'
+        exonLoc      | 12   | null   | null     | null      | null      || '+13 bp in exon 12'
         fivePrimeUTR | 6    | null   | 1010     | null      | null      || '+13 bp in 5\' UTR at position 1010'
         null         | null | null   | 832      | null      | null      || '+13 bp at position 832'
-        null         | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '+13 bp in intron 5 at position 1829 in GENBANK:C1032'
+        intronLoc    | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '+13 bp in intron 5 at position 1829 in GENBANK:C1032'
         null         | null | null   | null     | 'GENBANK' | '9999'    || '+13 bp in GENBANK:9999'
     }
 
@@ -247,10 +253,10 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         18    | null    | null         | null | null   | null     | null      | null      || 'net +18 bp'
         null  | 21      | null         | null | null   | null     | null      | null      || 'net -21 bp'
         34    | 17      | null         | null | null   | null     | null      | null      || '+34/-17 bp'
-        34    | 17      | null         | 2    | null   | null     | null      | null      || '+34/-17 bp in exon 2'
+        34    | 17      | exonLoc      | 2    | null   | null     | null      | null      || '+34/-17 bp in exon 2'
         34    | 17      | spliceDonor  | null | null   | 1010     | null      | null      || '+34/-17 bp in splice donor site at position 1010'
         34    | 17      | null         | null | null   | 832      | null      | null      || '+34/-17 bp at position 832'
-        34    | 17      | null         | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '+34/-17 bp in intron 5 at position 1829 in GENBANK:C1032'
+        34    | 17      | intronLoc    | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '+34/-17 bp in intron 5 at position 1829 in GENBANK:C1032'
         34    | 17      | null         | null | null   | null     | 'GENBANK' | '9999'    || '+34/-17 bp in GENBANK:9999'
     }
 
@@ -278,7 +284,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         where:
         localization | exon | intron | position | db       | accession || display
         null         | null | null   | null     | null     | null      || ""
-        null         | null | 5      | null     | null     | null      || "Insertion in intron 5"
+        intronLoc    | null | 5      | null     | null     | null      || "Insertion in intron 5"
         promoter     | null | null   | null     | null     | null      || "Insertion in promoter"
         null         | null | null   | 8849     | null     | null      || "Insertion at position 8849"
         null         | null | null   | null     | 'FOOBAR' | '998A'    || "Insertion in FOOBAR:998A"

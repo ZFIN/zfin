@@ -211,22 +211,24 @@ public class MutationDetailsConversionService {
      * @return localization statement
      */
     public String geneLocalizationStatement(FeatureDnaMutationDetail dnaChange) {
-        if (dnaChange == null) {
+        if (dnaChange == null || dnaChange.getGeneLocalizationTerm() == null) {
             return  "";
         }
         GeneLocalizationTerm term = dnaChange.getGeneLocalizationTerm();
-        if (term == null) {
-            return exonOrIntronLocation(dnaChange);
-        } else {
-            switch (term.getZdbID()) {
-                case "ZDB-TERM-130401-166":     // splice donor site
-                case "ZDB-TERM-130401-167":     // splice acceptor site
-                    return term.getDisplayName() + exonOrIntronLocation(dnaChange, " of ");
-                case "ZDB-TERM-130401-1417":    // splice junction
-                    return spliceJunctionLocation(dnaChange) + term.getDisplayName();
-                default:
-                    return term.getDisplayName();
-            }
+        switch (term.getZdbID()) {
+            case "ZDB-TERM-130401-150":     // exon
+            case "ZDB-TERM-130401-191":     // intron
+                return exonOrIntronLocation(dnaChange);
+
+            case "ZDB-TERM-130401-166":     // splice donor site
+            case "ZDB-TERM-130401-167":     // splice acceptor site
+                return term.getDisplayName() + exonOrIntronLocation(dnaChange, " of ");
+
+            case "ZDB-TERM-130401-1417":    // splice junction
+                return spliceJunctionLocation(dnaChange) + term.getDisplayName();
+
+            default:
+                return term.getDisplayName();
         }
     }
 
