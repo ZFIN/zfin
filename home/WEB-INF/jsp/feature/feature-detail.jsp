@@ -287,7 +287,7 @@
                         <th>
                             Other Pages:
                         </th>
-                        <td>
+                        <td id="other-pages">
                             <c:forEach var="link" items="${formBean.summaryPageDbLinks}" varStatus="loop">
                                 <zfin:link entity="${link}"/>
                                 <c:if test="${link.publicationCount > 0}">
