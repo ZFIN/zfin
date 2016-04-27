@@ -3711,9 +3711,9 @@ where feature_zdb_id = ftmd_feature_zdb_id
                    cacheImpl="SortedMapBackedCache"/>
 
 
-           <entity name="disease_disease_model_fish"
+           <entity name="disease_disease_model_fish" transformer="RegexTransformer"
                    datasource="db" query="select distinct
-                                          fish_name as fish,
+                                          fish_name || '|Any' as fish,
                                           genox_fish_zdb_id as xref,
                                           term_zdb_id
                                           from term
@@ -3722,7 +3722,9 @@ where feature_zdb_id = ftmd_feature_zdb_id
                                           join fish_experiment on fish_experiment.genox_zdb_id = disease_annotation_model.damo_genox_zdb_id
                                           join fish on genox_fish_zdb_id = fish_zdb_id;"
                    where="term_zdb_id=term.internal_id"
-                   cacheImpl="SortedMapBackedCache"/>
+                   cacheImpl="SortedMapBackedCache">
+               <field name="fish" column="fish" splitBy="\|"/>
+           </entity>
 
 
            <entity name="disease_publication_xref"
