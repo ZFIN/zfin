@@ -25,7 +25,7 @@ public class FeatureTranscriptMutationDetail implements Comparable<FeatureTransc
     @ManyToOne
     @JoinColumn(name = "ftmd_transcript_consequence_term_zdb_id")
     private TranscriptConsequence transcriptConsequence;
-    @Column(name = "ftmd_introl_number")
+    @Column(name = "ftmd_intron_number")
     private Integer intronNumber;
     @Column(name = "ftmd_exon_number")
     private Integer exonNumber   ;
