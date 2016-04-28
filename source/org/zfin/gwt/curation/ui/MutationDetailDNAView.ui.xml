@@ -1,0 +1,107 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        >
+
+    <ui:style>
+        .grey-background {
+            background-color: lightgrey;
+        }
+
+        .blue {
+            color: #0000FF;
+        }
+
+        .valign-top {
+            vertical-align: top;
+        }
+
+        .align-left {
+            horiz-align: left;
+        }
+
+        .empty-column {
+            width: 80%;
+        }
+
+        .header-row {
+            background-color: #000088;
+        }
+
+        .green {
+            color: green;
+        }
+    </ui:style>
+
+    <g:FlowPanel ui:field="changePanel" visible="false">
+        <g:Grid ui:field='dnaDataTable' cellSpacing='2' styleName="searchresults groupstripes-hover">
+            <g:row>
+                <g:cell>Change</g:cell>
+                <g:cell>Position</g:cell>
+                <g:cell>Sequence of Ref</g:cell>
+                <g:cell>Localization</g:cell>
+                <g:customCell>
+                    <g:Label text="Exon" ui:field="exonLabel"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label text="Intron" ui:field="intronLabel"/>
+                </g:customCell>
+            </g:row>
+            <g:row visible="false">
+                <g:customCell>
+                    <g:Grid ui:field="dataTable" visible="true">
+                        <g:row>
+                            <g:customCell>
+                                <zfin:StringListBox ui:field="nucleotideChangeList" width="120px"/>
+                            </g:customCell>
+                        </g:row>
+                        <g:row>
+                            <g:cell>plus</g:cell>
+                            <g:customCell>
+                                <zfin:NumberTextBox ui:field="plusBasePair" visibleLength="4"/>
+                            </g:customCell>
+                            <g:cell>bp</g:cell>
+                        </g:row>
+                        <g:row>
+                            <g:cell>minus</g:cell>
+                            <g:customCell>
+                                <zfin:NumberTextBox ui:field="minusBasePair" visibleLength="4"/>
+                            </g:customCell>
+                            <g:cell>bp</g:cell>
+                        </g:row>
+                    </g:Grid>
+                </g:customCell>
+                <g:customCell>
+                    <g:HorizontalPanel>
+                        <zfin:NumberTextBox ui:field="positionStart" visibleLength="8"/>
+                        <g:Label text="-" ui:field="positionDash"/>
+                        <zfin:NumberTextBox ui:field="positionEnd" visibleLength="8"/>
+                    </g:HorizontalPanel>
+                </g:customCell>
+                <g:customCell>
+                    <g:HorizontalPanel>
+                        <zfin:StringTextBox ui:field="sequenceOfReference"/>
+                        <g:HTML ui:field="validSequenceCharacter" visible="false">
+                            <i class="fa fa-check {style.green}" aria-hidden="true"></i>
+                        </g:HTML>
+                        <g:HTML ui:field="faultySequenceCharacter" visible="false">
+                            <i class="fa fa-exclamation error" aria-hidden="true"></i>
+                        </g:HTML>
+                    </g:HorizontalPanel>
+                </g:customCell>
+                <g:customCell>
+                    <zfin:StringListBox ui:field="localizationTerm" width="120px"/>
+                </g:customCell>
+                <g:customCell>
+                    <zfin:NumberTextBox ui:field="exonNumber" visibleLength="4" visible="false"/>
+                </g:customCell>
+                <g:customCell>
+                    <zfin:NumberTextBox ui:field="intronNumber" visibleLength="4" visible="false"/>
+                </g:customCell>
+            </g:row>
+        </g:Grid>
+        <zfin:SimpleErrorElement ui:field="errorLabel" styleName="clickable-error"/>
+    </g:FlowPanel>
+</ui:UiBinder>

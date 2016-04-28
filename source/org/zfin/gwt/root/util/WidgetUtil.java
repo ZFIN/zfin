@@ -4,6 +4,8 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
+import org.zfin.gwt.root.ui.StringListBox;
+import org.zfin.gwt.root.ui.StringTextBox;
 
 /**
  * Some convenience methods to handle widgets.
@@ -123,6 +125,41 @@ public final class WidgetUtil {
         sb.append(" ");
         sb.append(CssStyles.EXPERIMENT_ROW.toString());
         grid.getRowFormatter().setStyleName(row, sb.toString());
+    }
+
+    public static Integer getIntegerFromField(StringTextBox box) {
+        if (!box.getValue().trim().equals("")) {
+            return Integer.parseInt(box.getValue());
+        }
+        return null;
+    }
+
+    public static String getStringFromField(StringTextBox box) {
+        if (!box.getValue().trim().equals("")) {
+            return box.getValue();
+        }
+        return null;
+    }
+
+    public static String getStringFromListBox(StringListBox listBox) {
+        if (listBox.getSelectedIndex() > 0) {
+            return listBox.getSelected();
+        }
+        return null;
+    }
+
+    public static String getSelectedStringFromListBox(StringListBox listBox) {
+        if (listBox.getSelectedIndex() > 0) {
+            return listBox.getSelectedText();
+        }
+        return null;
+    }
+
+    public static void showHideBoxField(StringTextBox box, boolean show) {
+        box.setVisible(show);
+        // empty field upon hiding
+        if (!show)
+            box.setText("");
     }
 
     public enum CssStyles {

@@ -12,7 +12,10 @@ import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.expression.repository.ExpressionSummaryRepository;
 import org.zfin.expression.repository.HibernateExpressionRepository;
 import org.zfin.expression.repository.HibernateExpressionSummaryRepository;
+import org.zfin.feature.*;
+import org.zfin.feature.repository.ControlledVocabularyRepository;
 import org.zfin.feature.repository.FeatureRepository;
+import org.zfin.feature.repository.HibernateControlledVocabularyRepository;
 import org.zfin.feature.repository.HibernateFeatureRepository;
 import org.zfin.figure.repository.FigureRepository;
 import org.zfin.figure.repository.HibernateFigureRepository;
@@ -24,7 +27,10 @@ import org.zfin.mapping.repository.HibernateLinkageRepository;
 import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.repository.HibernateMarkerRepository;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.mutant.repository.*;
+import org.zfin.mutant.repository.HibernateMutantRepository;
+import org.zfin.mutant.repository.HibernatePhenotypeRepository;
+import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.ontology.repository.HibernateMarkerGoTermEvidenceRepository;
 import org.zfin.ontology.repository.HibernateOntologyRepository;
 import org.zfin.ontology.repository.MarkerGoTermEvidenceRepository;
@@ -75,8 +81,47 @@ public class RepositoryFactory {
     private static OntologyRepository ontologyRepository = new HibernateOntologyRepository();
     private static FishRepository fishRepository = new HibernateFishRepository();
     private static ConstructRepository constructRepository = new HibernateConstructRepository();
+    private static ControlledVocabularyRepository<DnaMutationTerm> dnaMutationTermRepository;
+    private static ControlledVocabularyRepository<GeneLocalizationTerm> geneLocalizationTermRepository;
+    private static ControlledVocabularyRepository<ProteinConsequence> proteinConsequenceTermRepository;
+    private static ControlledVocabularyRepository<AminoAcidTerm> aminoAcidTermRepository;
+    private static ControlledVocabularyRepository<TranscriptConsequence> transcriptTermRepository;
 
 
+    public static ControlledVocabularyRepository<TranscriptConsequence> getTranscriptTermRepository() {
+        if (transcriptTermRepository == null) {
+            transcriptTermRepository = new HibernateControlledVocabularyRepository<>(TranscriptConsequence.class);
+        }
+        return transcriptTermRepository;
+    }
+
+    public static ControlledVocabularyRepository<AminoAcidTerm> getAminoAcidTermRepository() {
+        if (aminoAcidTermRepository == null) {
+            aminoAcidTermRepository = new HibernateControlledVocabularyRepository<>(AminoAcidTerm.class);
+        }
+        return aminoAcidTermRepository;
+    }
+
+    public static ControlledVocabularyRepository<ProteinConsequence> getProteinConsequenceTermRepository() {
+        if (proteinConsequenceTermRepository == null) {
+            proteinConsequenceTermRepository = new HibernateControlledVocabularyRepository<>(ProteinConsequence.class);
+        }
+        return proteinConsequenceTermRepository;
+    }
+
+    public static ControlledVocabularyRepository<DnaMutationTerm> getDnaMutationTermRepository() {
+        if (dnaMutationTermRepository == null) {
+            dnaMutationTermRepository = new HibernateControlledVocabularyRepository<>(DnaMutationTerm.class);
+        }
+        return dnaMutationTermRepository;
+    }
+
+    public static ControlledVocabularyRepository<GeneLocalizationTerm> getGeneLocalizationTermRepository() {
+        if (geneLocalizationTermRepository == null) {
+            geneLocalizationTermRepository = new HibernateControlledVocabularyRepository<>(GeneLocalizationTerm.class);
+        }
+        return geneLocalizationTermRepository;
+    }
 
     public static ExpressionSummaryRepository getExpressionSummaryRepository() {
         if (xpatsumRep == null) {
@@ -247,6 +292,7 @@ public class RepositoryFactory {
             displayGroupRepository = new HibernateDisplayGroupRepository();
         return displayGroupRepository;
     }
+
     public static FigureRepository getFigureRepository() {
         if (figureRepository == null)
             figureRepository = new HibernateFigureRepository();
@@ -264,7 +310,7 @@ public class RepositoryFactory {
     }
 
     public static PhenotypeRepository getPhenotypeRepository() {
-        if(phenotypeRep==null){
+        if (phenotypeRep == null) {
             phenotypeRep = new HibernatePhenotypeRepository();
         }
         return phenotypeRep;
@@ -275,7 +321,7 @@ public class RepositoryFactory {
     }
 
     public static OntologyRepository getOntologyRepository() {
-        if(ontologyRepository==null){
+        if (ontologyRepository == null) {
             ontologyRepository = new HibernateOntologyRepository();
         }
         return ontologyRepository;
@@ -286,7 +332,7 @@ public class RepositoryFactory {
     }
 
     public static FishRepository getFishRepository() {
-        if(fishRepository==null){
+        if (fishRepository == null) {
             fishRepository = new HibernateFishRepository();
         }
         return fishRepository;
@@ -297,7 +343,7 @@ public class RepositoryFactory {
     }
 
     public static ConstructRepository getConstructRepository() {
-        if(constructRepository==null){
+        if (constructRepository == null) {
             constructRepository = new HibernateConstructRepository();
         }
         return constructRepository;

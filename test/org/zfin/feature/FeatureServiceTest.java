@@ -7,8 +7,11 @@ import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.FeatureDBLink;
+import org.zfin.sequence.ReferenceDatabase;
+
 import java.util.Set;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertNotNull;
 
 public class FeatureServiceTest extends AbstractDatabaseTest {
 
@@ -29,6 +32,13 @@ public class FeatureServiceTest extends AbstractDatabaseTest {
         Set<FeatureDBLink> featureDbLinks = FeatureService.getSummaryDbLinks(feature);
         Set<FeatureDBLink> genbankFeatureDbLinks = FeatureService.getGenbankDbLinks(feature);
         assertNotNull("Feature has genbank dblinks", genbankFeatureDbLinks);
+    }
+
+    @Test
+    public void getReferenceDatabaseDna() {
+        // check that the version number is stripped off...
+        ReferenceDatabase referenceDatabase = FeatureService.getForeignDbMutationDetailDna("NM_212779.1");
+        assertNotNull(referenceDatabase);
     }
 }
 

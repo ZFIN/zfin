@@ -5,27 +5,25 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 /**
  */
 public enum FeatureTypeEnum implements IsSerializable{
-    POINT_MUTATION(1,"Point Mutation"),
-    INSERTION(2, "Insertion"),
-    TRANSGENIC_INSERTION(3, "Transgenic Insertion"),
-    INVERSION(4, "Inversion"),
-    INDEL(5, "Indel"),
-    TRANSLOC(6, "Translocation"),
-    DEFICIENCY(7, "Deficiency"),
-    DELETION(8, "Small Deletion"),
-    COMPLEX_SUBSTITUTION(9, "Complex"),
-    SEQUENCE_VARIANT(10, "Unknown"),
-    UNSPECIFIED(11, "Unspecified")
+    TRANSGENIC_INSERTION("Transgenic Insertion"),
+    POINT_MUTATION("Point Mutation"),
+    DELETION("Small Deletion"),
+    INSERTION("Insertion"),
+    INDEL("Indel"),
+    TRANSLOC("Translocation"),
+    INVERSION("Inversion"),
+    DEFICIENCY("Deficiency"),
+    COMPLEX_SUBSTITUTION("Complex"),
+    SEQUENCE_VARIANT("Unknown"),
+    UNSPECIFIED("Unspecified")
     ;
 
 
     private String display;
-    private int order;
 
-    FeatureTypeEnum(int order, String value) {
+    FeatureTypeEnum(String value) {
         this.display = value;
     }
-
     public String toString() {
         return name();
     }

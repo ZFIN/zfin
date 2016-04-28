@@ -3,9 +3,9 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import org.zfin.gwt.root.dto.MutationDetailControlledVocabularyTermDTO;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.DuplicateEntryException;
-import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.ValidationException;
 
 import java.util.List;
@@ -60,7 +60,7 @@ public interface FeatureRPCService extends RemoteService {
 
     List<MarkerDTO> getMarkersForFeatureRelationAndSource(String featureTypeName, String publicationZdbID);
 
-    void addFeatureMarkerRelationShip(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO);
+    List<FeatureMarkerRelationshipDTO> addFeatureMarkerRelationShip(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO, String publicationID);
 
     // note stuff
     FeatureDTO editPublicNote(NoteDTO noteDTO);
@@ -76,5 +76,18 @@ public interface FeatureRPCService extends RemoteService {
     void removePublicNote(NoteDTO updatedNoteDTO);
 
     PersonDTO getCuratorInfo();
+
+    List<MutationDetailControlledVocabularyTermDTO> getDnaChangeList();
+
+    List<MutationDetailControlledVocabularyTermDTO> getDnaLocalizationChangeList();
+
+    List<MutationDetailControlledVocabularyTermDTO> getProteinConsequenceList();
+
+    List<MutationDetailControlledVocabularyTermDTO> getTranscriptConsequenceList();
+
+    List<MutationDetailControlledVocabularyTermDTO> getAminoAcidList();
+
+    String isValidAccession(String accessionNumber, String type);
+
 
 }

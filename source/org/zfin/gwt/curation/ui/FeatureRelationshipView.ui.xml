@@ -57,16 +57,16 @@
                 </g:row>
                 <g:row>
                     <g:customCell>
-                        <zfin:StringListBox ui:field="featureToAddList"/>
+                        <zfin:StringListBox ui:field="featureList"/>
                     </g:customCell>
                     <g:customCell>
-                        <g:Label ui:field="featureToAddType"/>
+                        <g:Label ui:field="featureType"/>
                     </g:customCell>
                     <g:customCell>
-                        <zfin:StringListBox ui:field="featureToAddRelationship"/>
+                        <zfin:StringListBox ui:field="relationshipList"/>
                     </g:customCell>
                     <g:customCell>
-                        <zfin:StringListBox ui:field="featureToAddTarget"/>
+                        <zfin:StringListBox ui:field="targetMarkerList"/>
                     </g:customCell>
                     <g:cell/>
                 </g:row>

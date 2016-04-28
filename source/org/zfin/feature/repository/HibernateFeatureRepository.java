@@ -1020,6 +1020,27 @@ public class HibernateFeatureRepository implements FeatureRepository {
         feature.setPublications(set);
         currentSession().flush();
 
+        // create attributions for feature note
+        if (feature.getExternalNotes() != null) {
+            for (FeatureNote note : feature.getExternalNotes()) {
+                savePublicationAttribution(publication, note.getZdbID());
+            }
+        }
+        // create attributions for mutation details: DNA
+        if (feature.getFeatureProteinMutationDetail() != null) {
+            savePublicationAttribution(publication, feature.getFeatureProteinMutationDetail().getZdbID());
+        }
+        // create attributions for mutation details: Protein
+        if (feature.getFeatureDnaMutationDetail() != null) {
+            savePublicationAttribution(publication, feature.getFeatureDnaMutationDetail().getZdbID());
+        }
+        // create attribution for transcripts
+        if (feature.getFeatureTranscriptMutationDetailSet() != null) {
+            for (FeatureTranscriptMutationDetail detail : feature.getFeatureTranscriptMutationDetailSet()) {
+                savePublicationAttribution(publication, detail.getZdbID());
+            }
+        }
+
         // create Attribution for feature alias
         if (CollectionUtils.isNotEmpty(feature.getAliases())) {
             for (FeatureAlias alias : feature.getAliases()) {
@@ -1033,6 +1054,14 @@ public class HibernateFeatureRepository implements FeatureRepository {
             }
         }
 
+    }
+
+    private void savePublicationAttribution(Publication publication, String zdbID) {
+        PublicationAttribution pa = new PublicationAttribution();
+        pa.setPublication(publication);
+        pa.setDataZdbID(zdbID);
+        pa.setSourceType(RecordAttribution.SourceType.STANDARD);
+        currentSession().save(pa);
     }
 
     @Override

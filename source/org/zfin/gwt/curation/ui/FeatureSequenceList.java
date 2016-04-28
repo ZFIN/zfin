@@ -40,9 +40,6 @@ public class FeatureSequenceList extends AbstractStackComposite<FeatureDTO> {
         panel.add(addPanel);
         panel.add(errorLabel);
         errorLabel.setStyleName("error");
-        panel.add(new HTML("<br>")); // spacer
-        panel.setStyleName("gwt-editbox");
-
     }
 
 

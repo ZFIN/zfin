@@ -54,11 +54,11 @@ public class FeatureModule implements EntryPoint {
         RelatedEntityDTO relatedEntityDTO = new RelatedEntityDTO();
         relatedEntityDTO.setPublicationZdbID(publicationID);
         attributionModule.setDTO(relatedEntityDTO);
-        FeatureAddPresenter addFeaturePresenter = new FeatureAddPresenter(featureAddView, publicationID);
+        FeatureAddPresenter addFeaturePresenter = new FeatureAddPresenter(featureAddView, featureEditView, publicationID);
         featureAddView.setPresenter(addFeaturePresenter);
         addFeaturePresenter.go();
 
-        featureEditPresenter = new FeatureEditPresenter(featureEditView, publicationID);
+        featureEditPresenter = new FeatureEditPresenter(featureAddView, featureEditView, publicationID);
         featureEditView.setPresenter(featureEditPresenter);
         featureEditPresenter.go();
 
@@ -75,7 +75,7 @@ public class FeatureModule implements EntryPoint {
                 new AddNewFeatureEventHandler() {
                     @Override
                     public void onAdd(AddNewFeatureEvent event) {
-                        featureEditPresenter.loadFeaturesForPub();
+                        featureEditPresenter.loadFeaturesForPub(true);
                         featureRelationshipPresenter.onFeatureAddEvent();
                     }
                 });
@@ -84,7 +84,7 @@ public class FeatureModule implements EntryPoint {
                     @Override
                     public void onEvent(AddAttributeEvent event) {
                         attributionModule.populateAttributeRemoval();
-                        featureEditPresenter.loadFeaturesForPub();
+                        featureEditPresenter.loadFeaturesForPub(true);
                         featureRelationshipPresenter.onFeatureAddEvent();
                     }
                 });
@@ -93,7 +93,7 @@ public class FeatureModule implements EntryPoint {
                     @Override
                     public void onRemoveAttribute(RemoveAttributeEvent event) {
                         attributionModule.populateAttributeRemoval();
-                        featureEditPresenter.loadFeaturesForPub();
+                        featureEditPresenter.loadFeaturesForPub(true);
                         featureRelationshipPresenter.onFeatureAddEvent();
                     }
                 });

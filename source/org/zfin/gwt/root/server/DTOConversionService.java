@@ -17,6 +17,7 @@ import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.util.NullpointerException;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.EntityZdbID;
@@ -555,6 +556,7 @@ public class DTOConversionService {
         feature.setDominantFeature(featureDTO.getDominant());
         feature.setKnownInsertionSite(featureDTO.getKnownInsertionSite());
 
+        Publication publication = getPublicationRepository().getPublication(featureDTO.getPublicationZdbID());
 
         // if not unspecified
         if (!(featureDTO.getFeatureType().isUnspecified())) {
@@ -587,10 +589,71 @@ public class DTOConversionService {
             }
         }
 
+        MutationDetailDnaChangeDTO dnaChangeDTO = featureDTO.getDnaChangeDTO();
+        if (dnaChangeDTO != null) {
+            FeatureDnaMutationDetail detail = new FeatureDnaMutationDetail();
+            DnaMutationTerm term = getDnaMutationTermRepository().getControlledVocabularyTerm(dnaChangeDTO.getChangeTermOboId());
+            detail.setDnaMutationTerm(term);
+            detail.setExonNumber(dnaChangeDTO.getExonNumber());
+            detail.setIntronNumber(dnaChangeDTO.getIntronNumber());
+            detail.setNumberAddedBasePair(dnaChangeDTO.getNumberAddedBasePair());
+            detail.setNumberRemovedBasePair(dnaChangeDTO.getNumberRemovedBasePair());
+            detail.setDnaPositionStart(dnaChangeDTO.getPositionStart());
+            detail.setDnaPositionEnd(dnaChangeDTO.getPositionEnd());
+            detail.setGeneLocalizationTerm(getGeneLocalizationTermRepository().getControlledVocabularyTerm(dnaChangeDTO.getLocalizationTermOboID()));
+            detail.setFeature(feature);
+            feature.setFeatureDnaMutationDetail(detail);
+            String sequenceReferenceAccessionNumber = dnaChangeDTO.getSequenceReferenceAccessionNumber();
+            if (StringUtils.isNotEmpty(sequenceReferenceAccessionNumber)) {
+                detail.setDnaSequenceReferenceAccessionNumber(sequenceReferenceAccessionNumber);
+                ReferenceDatabase referenceDatabase = FeatureService.getForeignDbMutationDetailDna(sequenceReferenceAccessionNumber);
+                if (referenceDatabase == null)
+                    throw new NullpointerException("Accession number not found in Genbank, RefSeq or Ensembl: " + sequenceReferenceAccessionNumber);
+                detail.setReferenceDatabase(referenceDatabase);
+            }
+        }
+        MutationDetailProteinChangeDTO proteinChangeDTO = featureDTO.getProteinChangeDTO();
+        if (proteinChangeDTO != null) {
+            FeatureProteinMutationDetail detail = new FeatureProteinMutationDetail();
+            ProteinConsequence term = getProteinConsequenceTermRepository().getControlledVocabularyTerm(proteinChangeDTO.getConsequenceTermOboID());
+            detail.setProteinConsequences(term);
+            detail.setNumberAminoAcidsAdded(proteinChangeDTO.getNumberAddedAminoAcid());
+            detail.setNumberAminoAcidsRemoved(proteinChangeDTO.getNumberRemovedAminoAcid());
+            detail.setNumberAminoAcidsAdded(proteinChangeDTO.getNumberAddedAminoAcid());
+            detail.setNumberAminoAcidsRemoved(proteinChangeDTO.getNumberRemovedAminoAcid());
+            detail.setProteinPositionStart(proteinChangeDTO.getPositionStart());
+            detail.setProteinPositionEnd(proteinChangeDTO.getPositionEnd());
+            detail.setWildtypeAminoAcid(getAminoAcidTermRepository().getControlledVocabularyTerm(proteinChangeDTO.getWildtypeAATermOboID()));
+            detail.setMutantAminoAcid(getAminoAcidTermRepository().getControlledVocabularyTerm(proteinChangeDTO.getMutantAATermOboID()));
+            detail.setFeature(feature);
+            feature.setFeatureProteinMutationDetail(detail);
+            String sequenceReferenceAccessionNumber = proteinChangeDTO.getSequenceReferenceAccessionNumber();
+            if (StringUtils.isNotEmpty(sequenceReferenceAccessionNumber)) {
+                detail.setProteinSequenceReferenceAccessionNumber(sequenceReferenceAccessionNumber);
+                ReferenceDatabase referenceDatabase = FeatureService.getForeignDbMutationDetailProtein(sequenceReferenceAccessionNumber);
+                if (referenceDatabase == null)
+                    throw new NullpointerException("Accession number not found in Genank, RefSeq or UniProt: " + sequenceReferenceAccessionNumber);
+                detail.setReferenceDatabase(referenceDatabase);
+            }
+        }
+        if (CollectionUtils.isNotEmpty(featureDTO.getTranscriptChangeDTOSet())) {
+            for (MutationDetailTranscriptChangeDTO dto : featureDTO.getTranscriptChangeDTOSet()) {
+                FeatureTranscriptMutationDetail detail = new FeatureTranscriptMutationDetail();
+                detail.setFeature(feature);
+                detail.setExonNumber(dto.getExonNumber());
+                detail.setIntronNumber(dto.getIntronNumber());
+                detail.setTranscriptConsequence(getTranscriptTermRepository().getControlledVocabularyTerm(dto.getConsequenceOboID()));
+                feature.addMutationDetailTranscript(detail);
+            }
+        }
         return feature;
     }
 
     public static FeatureDTO convertToFeatureDTO(Feature feature) {
+        return convertToFeatureDTO(feature, true);
+    }
+
+    public static FeatureDTO convertToFeatureDTO(Feature feature, boolean includeDetails) {
         FeatureDTO featureDTO = new FeatureDTO();
         featureDTO.setZdbID(feature.getZdbID());
         featureDTO.setName(unescapeString(feature.getName()));
@@ -663,7 +726,71 @@ public class DTOConversionService {
                 }
             }
         }
+
+        if (includeDetails) {
+            featureDTO.setProteinChangeDTO(convertToMutationDetailProteinDTO(feature.getFeatureProteinMutationDetail()));
+            featureDTO.setDnaChangeDTO(convertToMutationDetailDnaDTO(feature.getFeatureDnaMutationDetail()));
+            if (CollectionUtils.isNotEmpty(feature.getFeatureTranscriptMutationDetailSet())) {
+                Set<MutationDetailTranscriptChangeDTO> set = new HashSet<>(3);
+                for (FeatureTranscriptMutationDetail detail : feature.getFeatureTranscriptMutationDetailSet()) {
+                    set.add(convertToMutationDetailTranscriptDTO(detail));
+                }
+                featureDTO.setTranscriptChangeDTOSet(set);
+            }
+        }
         return featureDTO;
+    }
+
+    private static MutationDetailTranscriptChangeDTO convertToMutationDetailTranscriptDTO(FeatureTranscriptMutationDetail detail) {
+        if (detail == null)
+            return null;
+        MutationDetailTranscriptChangeDTO dto = new MutationDetailTranscriptChangeDTO();
+        dto.setZdbID(detail.getZdbID());
+        if (detail.getTranscriptConsequence() != null) {
+            dto.setConsequenceOboID(detail.getTranscriptConsequence().getTerm().getOboID());
+            dto.setConsequenceName(detail.getTranscriptConsequence().getDisplayName());
+        }
+        dto.setExonNumber(detail.getExonNumber());
+        dto.setIntronNumber(detail.getIntronNumber());
+        return dto;
+    }
+
+    private static MutationDetailDnaChangeDTO convertToMutationDetailDnaDTO(FeatureDnaMutationDetail detail) {
+        if (detail == null)
+            return null;
+        MutationDetailDnaChangeDTO dto = new MutationDetailDnaChangeDTO();
+        dto.setZdbID(detail.getZdbID());
+        if (detail.getDnaMutationTerm() != null)
+            dto.setChangeTermOboId(detail.getDnaMutationTerm().getTerm().getOboID());
+        if (detail.getGeneLocalizationTerm() != null)
+            dto.setLocalizationTermOboID(detail.getGeneLocalizationTerm().getTerm().getOboID());
+        dto.setNumberAddedBasePair(detail.getNumberAddedBasePair());
+        dto.setNumberRemovedBasePair(detail.getNumberRemovedBasePair());
+        dto.setPositionStart(detail.getDnaPositionStart());
+        dto.setPositionEnd(detail.getDnaPositionEnd());
+        dto.setExonNumber(detail.getExonNumber());
+        dto.setIntronNumber(detail.getIntronNumber());
+        dto.setSequenceReferenceAccessionNumber(detail.getDnaSequenceReferenceAccessionNumber());
+        return dto;
+    }
+
+    private static MutationDetailProteinChangeDTO convertToMutationDetailProteinDTO(FeatureProteinMutationDetail detail) {
+        if (detail == null)
+            return null;
+        MutationDetailProteinChangeDTO dto = new MutationDetailProteinChangeDTO();
+        dto.setZdbID(detail.getZdbID());
+        if (detail.getProteinConsequence() != null)
+            dto.setConsequenceTermOboID(detail.getProteinConsequence().getTerm().getOboID());
+        if (detail.getMutantAminoAcid() != null)
+            dto.setMutantAATermOboID(detail.getMutantAminoAcid().getTerm().getOboID());
+        if (detail.getWildtypeAminoAcid() != null)
+            dto.setWildtypeAATermOboID(detail.getWildtypeAminoAcid().getTerm().getOboID());
+        dto.setNumberAddedAminoAcid(detail.getNumberAminoAcidsAdded());
+        dto.setNumberRemovedAminoAcid(detail.getNumberAminoAcidsRemoved());
+        dto.setPositionStart(detail.getProteinPositionStart());
+        dto.setPositionEnd(detail.getProteinPositionEnd());
+        dto.setSequenceReferenceAccessionNumber(detail.getProteinSequenceReferenceAccessionNumber());
+        return dto;
     }
 
     public static CuratorSessionDTO convertToCuratorSessionDTO(CuratorSession session) {
@@ -1146,7 +1273,7 @@ public class DTOConversionService {
 
         featureMarkerRelationshipDTO.setZdbID(featureMarkerRelationship.getZdbID());
         featureMarkerRelationshipDTO.setRelationshipType(featureMarkerRelationship.getFeatureMarkerRelationshipType().getName());
-        featureMarkerRelationshipDTO.setFeatureDTO(convertToFeatureDTO(featureMarkerRelationship.getFeature()));
+        featureMarkerRelationshipDTO.setFeatureDTO(convertToFeatureDTO(featureMarkerRelationship.getFeature(), false));
         featureMarkerRelationshipDTO.setMarkerDTO(convertToMarkerDTO(featureMarkerRelationship.getMarker()));
 
         return featureMarkerRelationshipDTO;
@@ -1680,6 +1807,15 @@ public class DTOConversionService {
         dto.setName(entity.getEntityName());
         dto.setAbbreviation(entity.getAbbreviation());
         dto.setType(entity.getEntityType());
+        return dto;
+    }
+
+    public static MutationDetailControlledVocabularyTermDTO convertMutationDetailedControlledVocab(MutationDetailControlledVocabularyTerm controlledVocab) {
+        MutationDetailControlledVocabularyTermDTO dto = new MutationDetailControlledVocabularyTermDTO();
+        dto.setAbbreviation(controlledVocab.getAbbreviation());
+        dto.setDisplayName(controlledVocab.getDisplayName());
+        dto.setTerm(DTOConversionService.convertToTermDTO(controlledVocab.getTerm()));
+        dto.setOrder(controlledVocab.getOrder());
         return dto;
     }
 }

@@ -14,7 +14,7 @@ public class FeatureTranscriptMutationDetail implements Comparable<FeatureTransc
     @GenericGenerator(name = "zfinGenerator",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
-                    @org.hibernate.annotations.Parameter(name = "type", value = "FRMD"),
+                    @org.hibernate.annotations.Parameter(name = "type", value = "FTMD"),
                     @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
             })
     @Column(name = "ftmd_zdb_id")

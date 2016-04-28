@@ -9,16 +9,23 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
 
     private FeatureEditView view;
     private FeatureNotesPresenter featureNotesPresenter;
+    private MutationDetailPresenter mutationDetailPresenter;
 
-    public FeatureEditPresenter(FeatureEditView view, String publicationID) {
+    public FeatureEditPresenter(FeatureAddView addView, FeatureEditView view, String publicationID) {
         super(view, publicationID);
         if (publicationID == null)
             throw new RuntimeException("NO pub ID found");
         this.view = view;
-        dto = new FeatureDTO();
+        this.
+                dto = new FeatureDTO();
         dto.setPublicationZdbID(publicationID);
         featureNotesPresenter = new FeatureNotesPresenter(publicationID, view.featureNotesView);
         view.featureNotesView.setPresenter(featureNotesPresenter);
+        mutationDetailPresenter = new MutationDetailPresenter(addView, view);
+        view.mutationDetailTranscriptView.setPresenter(mutationDetailPresenter);
+        view.mutationDetailDnaView.setPresenter(mutationDetailPresenter);
+        view.mutationDetailProteinView.setPresenter(mutationDetailPresenter);
+
     }
 
     public void go() {
@@ -28,7 +35,11 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
     }
 
     public void loadFeaturesForPub() {
-        FeatureRPCService.App.getInstance().getFeaturesForPub(publicationID,
+        loadFeaturesForPub(false);
+    }
+
+    public void loadFeaturesForPub(boolean forceLoad) {
+        FeatureServiceGWT.getFeatureList(publicationID,
                 new FeatureEditCallBack<List<FeatureDTO>>("Failed to find features for pub: " + publicationID, this) {
 
                     @Override
@@ -58,7 +69,8 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                         revertGUI();
                         view.onChangeFeatureType();
                     }
-                });
+                }, forceLoad);
+
     }
 
 
@@ -67,7 +79,8 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
             public void onSuccess(FeatureDTO featureDTO) {
                 featureDTO.setPublicationZdbID(publicationID);
                 dto = featureDTO;
-                loadFeaturesForPub();
+                revertGUI();
+                view.onChangeFeatureType();
                 view.removeFeatureLink.setUrl("/action/infrastructure/deleteRecord/" + dto.getZdbID());
                 view.removeFeatureLink.setTitle("Delete Feature " + dto.getZdbID());
             }
@@ -133,6 +146,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         if (dto.getFeatureType() != null) {
             view.featureTypeBox.setIndexForText(dto.getFeatureType().getDisplay());
             updateMutagenOnFeatureTypeChange();
+            view.onChangeFeatureType(null);
         }
         view.featureAliasList.setDTO(dto);
         view.featureSequenceList.setDTO(dto);
@@ -149,7 +163,9 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         view.dominantCheckBox.setValue(dto.getDominant());
         view.featureDisplayName.setValue(dto.getName());
         view.featureSuffixBox.setIndexForText(dto.getTransgenicSuffix());
-
+        view.mutationDetailProteinView.populateFields(dto.getProteinChangeDTO());
+        view.mutationDetailDnaView.populateFields(dto.getDnaChangeDTO());
+        mutationDetailPresenter.setDtoSet(dto.getTranscriptChangeDTOSet());
     }
 
 

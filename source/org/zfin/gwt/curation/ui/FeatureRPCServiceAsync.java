@@ -2,7 +2,6 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.root.dto.*;
-import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
 import java.util.List;
 
@@ -32,7 +31,7 @@ public interface FeatureRPCServiceAsync {
 
     void getMarkersForFeatureRelationAndSource(String featureTypeName, String publicationZdbID, AsyncCallback<List<MarkerDTO>> featureEditCallBack);
 
-    void addFeatureMarkerRelationShip(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO, AsyncCallback<Void> featureEditCallBack);
+    void addFeatureMarkerRelationShip(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO, String publicationID, AsyncCallback<List<FeatureMarkerRelationshipDTO>> featureEditCallBack);
 
     void addFeatureAlias(String name, String ftrZdbID, String pubZdbID, AsyncCallback<Void> async);
 
@@ -55,5 +54,17 @@ public interface FeatureRPCServiceAsync {
     void removePublicNote(NoteDTO updatedNoteDTO, AsyncCallback<Void> featureEditCallBack);
 
     void getCuratorInfo(AsyncCallback<PersonDTO> personDTOZfinAsyncCallback);
+
+    void getDnaChangeList(AsyncCallback<List<MutationDetailControlledVocabularyTermDTO>> zfinAsyncCallback);
+
+    void getDnaLocalizationChangeList(AsyncCallback<List<MutationDetailControlledVocabularyTermDTO>> zfinAsyncCallback);
+
+    void getProteinConsequenceList(AsyncCallback<List<MutationDetailControlledVocabularyTermDTO>> zfinAsyncCallback);
+
+    void getAminoAcidList(AsyncCallback<List<MutationDetailControlledVocabularyTermDTO>> zfinAsyncCallback);
+
+    void getTranscriptConsequenceList(AsyncCallback<List<MutationDetailControlledVocabularyTermDTO>> zfinAsyncCallback);
+
+    void isValidAccession(String accessionNumber, String type, AsyncCallback<String> valid);
 }
 

@@ -7,8 +7,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
@@ -25,7 +23,7 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
     interface MyUiBinder extends UiBinder<FlowPanel, FeatureAddView> {
     }
 
-    private FeatureAddPresenter editPresenter;
+    private FeatureAddPresenter addPresenter;
     @UiField
     StringTextBox featureAliasBox;
     @UiField
@@ -48,12 +46,46 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
 
     @UiHandler("saveButton")
     void onClickSaveButton(@SuppressWarnings("unused") ClickEvent event) {
-        editPresenter.createFeature();
+        // if no consequence is selected and AA selection is used then default to substitution
+        if (mutationDetailProteinView.proteinTermList.getSelectedIndex() == 0 &&
+                mutationDetailProteinView.hasNonStopAASelected()) {
+            mutationDetailProteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_SUBSTITUTION);
+        }
+        // if no consequence is selected and plus AA is used then default to Insertion
+        if (mutationDetailProteinView.hasPlusFieldOnly()) {
+            mutationDetailProteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_INSERTION);
+        }
+        // if no consequence is selected and minus AA is used then default to Deletion
+        if (mutationDetailProteinView.hasMinusFieldOnly()) {
+            mutationDetailProteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_DELETION);
+        }
+        // if no transcript consequence and protein: AA > AA for a Point mutation create
+        if (getFeatureType().equals(FeatureTypeEnum.POINT_MUTATION.getName())) {
+            if (mutationDetailTranscriptView.getPresenter().getDtoSet().isEmpty()) {
+                // substitution is a missense consequence on the transcript level
+                if (mutationDetailProteinView.hasNonStopAASelected())
+                    mutationDetailTranscriptView.getPresenter().setMissenseTerm(this);
+                else if (mutationDetailProteinView.hasStopCodon())
+                    mutationDetailTranscriptView.getPresenter().setStopGainTerm(this);
+            }
+        }
+        addPresenter.createFeature();
     }
 
-    private void handleChanges() {
+    protected void handleChanges() {
         clearErrors();
-        editPresenter.handleDirty();
+        addPresenter.handleDirty();
+    }
+
+    @UiHandler("knownInsertionCheckBox")
+    void onClickKnownInsertionSite(@SuppressWarnings("unused") ClickEvent event) {
+        if (knownInsertionCheckBox.getValue()) {
+            showMutationDetail();
+            mutationDetailDnaView.showTgFields();
+        } else {
+            hideMutationDetail();
+        }
+        super.onClickKnownInsertionSite(event);
     }
 
     @UiHandler("featureTypeBox")
@@ -63,9 +95,9 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         curatorNoteBox.setEnabled(true);
         featureAliasBox.setEnabled(true);
         featureSequenceBox.setEnabled(true);
-
         handleDirty();
     }
+
 
     public void resetInterface() {
         labOfOriginBox.setEnabled(false);
@@ -94,6 +126,9 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         knownInsertionCheckBox.setEnabled(false);
         knownInsertionCheckBox.setValue(false);
         featureDisplayName.clear();
+        mutationDetailDnaView.resetGUI();
+        mutationDetailTranscriptView.fullResetGUI();
+        mutationDetailProteinView.resetGUI();
     }
 
     @Override
@@ -103,15 +138,13 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
 
     @Override
     public boolean handleDirty() {
-        editPresenter.handleDirty();
+        addPresenter.handleDirty();
         return true;
     }
 
-
-
     public void setPresenter(FeatureAddPresenter presenter) {
         this.presenter = presenter;
-        editPresenter = presenter;
+        addPresenter = presenter;
     }
 
     public void clearErrors() {
@@ -125,5 +158,6 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         publicNoteBox.setEnabled(false);
         curatorNoteBox.setEnabled(false);
     }
+
 
 }

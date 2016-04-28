@@ -13,6 +13,9 @@ import org.zfin.gwt.root.dto.NoteDTO;
 import org.zfin.gwt.root.ui.StringListBox;
 import org.zfin.gwt.root.util.DeleteImage;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class FeatureNotesView extends AbstractViewComposite {
 
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
@@ -96,6 +99,14 @@ public class FeatureNotesView extends AbstractViewComposite {
         typeListBox.setSelectedIndex(0);
     }
 
+
+    @Override
+    public Set<Widget> getValueFields() {
+        Set<Widget> fields = new HashSet<>();
+        fields.add(newNoteTextArea);
+        return fields;
+
+    }
 
     public void setPresenter(FeatureNotesPresenter presenter) {
         this.presenter = presenter;

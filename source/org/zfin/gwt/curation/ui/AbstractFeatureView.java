@@ -5,12 +5,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.ui.*;
 
-public abstract class AbstractFeatureView extends Composite implements Revertible{
+public abstract class AbstractFeatureView extends Composite implements Revertible {
 
     AbstractFeaturePresenter presenter;
 
@@ -48,6 +47,20 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     CheckBox dominantCheckBox;
     @UiField
     Button saveButton;
+    @UiField
+    MutationDetailDNAView mutationDetailDnaView;
+    @UiField
+    MutationDetailProteinView mutationDetailProteinView;
+    @UiField
+    MutationDetailTranscriptView mutationDetailTranscriptView;
+    @UiField
+    Label noMutationDetailMessage;
+    @UiField
+    Label proteinChangeFirstColumn;
+    @UiField
+    Label transcriptChangeFirstColumn;
+    @UiField
+    Label dnaChangeFirstColumn;
 
     @UiHandler("showHideToggle")
     void onClickShowHide(@SuppressWarnings("unused") ClickEvent event) {
@@ -116,7 +129,7 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         handleChanges();
     }
 
-    private void handleChanges() {
+    protected void handleChanges() {
         clearErrors();
         presenter.handleDirty();
     }
@@ -152,8 +165,48 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     void onChangeFeatureType(@SuppressWarnings("unused") ChangeEvent event) {
         errorLabel.clearAllErrors();
         message.setText("");
+        String featureType = featureTypeBox.getSelected();
+        if (hasMutationDetails()) {
+            showMutationDetail();
+            mutationDetailDnaView.showFields(MutationDetailType.getType(featureType));
+        } else {
+            hideMutationDetail();
+            mutationDetailDnaView.changePanel.setVisible(false);
+        }
+        handleDirty();
+
         onChangeFeatureType();
     }
+
+    protected String getFeatureType() {
+        return featureTypeBox.getSelected();
+    }
+
+    protected void hideMutationDetail() {
+        noMutationDetailMessage.setVisible(true);
+        dnaChangeFirstColumn.setVisible(false);
+        transcriptChangeFirstColumn.setVisible(false);
+        proteinChangeFirstColumn.setVisible(false);
+        mutationDetailDnaView.changePanel.setVisible(false);
+        mutationDetailTranscriptView.changePanel.setVisible(false);
+        mutationDetailProteinView.proteinChangePanel.setVisible(false);
+    }
+
+    protected void showMutationDetail() {
+        noMutationDetailMessage.setVisible(false);
+        dnaChangeFirstColumn.setVisible(true);
+        transcriptChangeFirstColumn.setVisible(true);
+        proteinChangeFirstColumn.setVisible(true);
+        mutationDetailDnaView.changePanel.setVisible(true);
+        mutationDetailTranscriptView.changePanel.setVisible(true);
+        mutationDetailProteinView.proteinChangePanel.setVisible(true);
+    }
+
+
+    public boolean hasMutationDetails() {
+        return MutationDetailType.hasFeatureType(featureTypeBox.getSelected(), knownInsertionCheckBox.getValue());
+    }
+
 
     void onChangeFeatureType() {
         final FeatureTypeEnum featureTypeSelected = FeatureTypeEnum.getTypeForDisplay(featureTypeBox.getSelectedText());
@@ -253,4 +306,32 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         errorLabel.setStyleName("clickable");
         setError(message + "[close]");
     }
+
+    enum MutationDetailType {
+        POINT_MUTATION,
+        DELETION,
+        INSERTION,
+        INDEL,
+        TRANSGENIC_INSERTION;
+
+        public static boolean hasFeatureType(String featureType, boolean knownInsertionSite) {
+            for (MutationDetailType type : values()) {
+                if (type.name().equals(featureType)) {
+                    return type != MutationDetailType.TRANSGENIC_INSERTION || knownInsertionSite;
+                }
+            }
+            return false;
+        }
+
+        public static MutationDetailType getType(String featureType) {
+            for (MutationDetailType type : values()) {
+                if (type.name().equals(featureType)) {
+                    return type;
+                }
+            }
+            return null;
+        }
+    }
+
+
 }

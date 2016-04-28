@@ -50,7 +50,7 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
     }
 
     @UiHandler("featureEditList")
-    void onChangeFeature(@SuppressWarnings("unused") ChangeEvent event) {
+    void onChangeFeature(@SuppressWarnings("unused") final ChangeEvent event) {
         final String featureID = featureEditList.getValue(featureEditList.getSelectedIndex());
         if (StringUtils.isEmpty(featureID)) {
             setError("Empty ID");
@@ -70,8 +70,28 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
         handleDirty();
     }
 
+    @UiHandler("mutageeBox")
+    void onChangeMutagee(@SuppressWarnings("unused") ChangeEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("mutagenBox")
+    void onChangeMutagen(@SuppressWarnings("unused") ChangeEvent event) {
+        handleChanges();
+    }
+
+
     @UiHandler("saveButton")
     void onClickSaveButton(@SuppressWarnings("unused") ClickEvent event) {
+        if (getFeatureType().equals(FeatureTypeEnum.POINT_MUTATION.getName())) {
+            if (mutationDetailTranscriptView.getPresenter().getDtoSet().isEmpty()) {
+                // substitution is a missense consequence on the transcript level
+                if (mutationDetailProteinView.hasNonStopAASelected())
+                    mutationDetailTranscriptView.getPresenter().setMissenseTerm(this);
+                else if (mutationDetailProteinView.hasStopCodon())
+                    mutationDetailTranscriptView.getPresenter().setStopGainTerm(this);
+            }
+        }
         editPresenter.updateFeature();
     }
 

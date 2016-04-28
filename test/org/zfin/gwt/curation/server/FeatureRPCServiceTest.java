@@ -11,7 +11,6 @@ import org.zfin.feature.*;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.curation.ui.FeatureRPCService;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
@@ -40,9 +39,9 @@ import java.util.*;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.*;
 
-public class FeatureRPCServiceImpl extends RemoteServiceServlet implements FeatureRPCService {
+public class FeatureRPCServiceTest extends RemoteServiceServlet implements FeatureRPCService {
 
-    private transient Logger logger = Logger.getLogger(FeatureRPCServiceImpl.class);
+    private transient Logger logger = Logger.getLogger(FeatureRPCServiceTest.class);
     private final MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
     private final PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
     private final SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
@@ -211,7 +210,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             return DTOConversionService.convertToOrganizationDTO(labsOfOrigin);
         } else {
             List<Organization> returnList = Arrays.asList(new Organization[labsOfOrigin.size()]);
-            java.util.Collections.copy(returnList, labsOfOrigin);
+            Collections.copy(returnList, labsOfOrigin);
             new SupplierCacheThread().start();
             return DTOConversionService.convertToOrganizationDTO(returnList);
         }
@@ -219,7 +218,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
     public List<FeatureDTO> getFeaturesForPub(String pubZdbId) {
         Publication pub = pubRepository.getPublication(pubZdbId);
-        List<FeatureDTO> featureDTOs = new ArrayList<>();
+        List<FeatureDTO> featureDTOs = new ArrayList<FeatureDTO>();
         List<Feature> features = featureRepository.getFeaturesForStandardAttribution(pub);
         if (CollectionUtils.isNotEmpty(features)) {
             for (Feature f : features) {
@@ -546,6 +545,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     public List<FeatureMarkerRelationshipDTO> addFeatureMarkerRelationShip(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO, String publicationID) {
 
         FeatureDTO featureDTO = featureMarkerRelationshipDTO.getFeatureDTO();
+/*
         HibernateUtil.createTransaction();
         Feature feature = featureRepository.getFeatureByID(featureDTO.getZdbID());
         FeatureMarkerRelationship featureMarkerRelationship = new FeatureMarkerRelationship();
@@ -561,9 +561,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         infrastructureRepository.insertPublicAttribution(featureMarkerRelationship.getZdbID(), featureMarkerRelationshipDTO.getPublicationZdbID());
         infrastructureRepository.insertUpdatesTable(featureMarkerRelationship.getZdbID(), "FeatureMarkerRelationship", featureMarkerRelationship.toString(), "Created feature marker relationship");
         HibernateUtil.flushAndCommitCurrentSession();
-        HibernateUtil.closeSession();
-        List<FeatureMarkerRelationshipDTO> dtos = getFeatureMarkerRelationshipsForPub(publicationID);
-        return dtos;
+*/
+        return getFeatureMarkerRelationshipsForPub(publicationID);
     }
 
     @Override

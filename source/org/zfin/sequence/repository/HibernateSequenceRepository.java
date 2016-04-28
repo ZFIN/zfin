@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
@@ -25,6 +26,7 @@ import org.zfin.sequence.blast.Origination;
 import org.zfin.sequence.presentation.AccessionPresentation;
 
 import java.util.*;
+
 @Repository
 public class HibernateSequenceRepository implements SequenceRepository {
 
@@ -305,9 +307,15 @@ public class HibernateSequenceRepository implements SequenceRepository {
     }
 
     public List<DBLink> getDBLinks(String accessionString, ReferenceDatabase... referenceDatabases) {
+        // check for a version-truncated accession  number as well...
+        String truncatedAccession = null;
+        if (accessionString.contains("."))
+            truncatedAccession = accessionString.substring(0, accessionString.indexOf("."));
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(DBLink.class);
-        criteria.add(Restrictions.eq("accessionNumber", accessionString));
+        Criterion c1 = Restrictions.eq("accessionNumber", accessionString);
+        Criterion c2 = Restrictions.eq("accessionNumber", truncatedAccession);
+        criteria.add(Restrictions.or(c1, c2));
         if (referenceDatabases != null && referenceDatabases.length > 0 && referenceDatabases[0] != null) {
             criteria.add(Restrictions.in("referenceDatabase", referenceDatabases));
         }
@@ -356,6 +364,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         criteria.add(Restrictions.eq("accessionNumber", accessionString));
         return (DBLink) criteria.uniqueResult();
     }
+
     public DBLink getDBLinkByData(String dataZdbID, ReferenceDatabase referenceDatabase) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(DBLink.class);
@@ -1108,7 +1117,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
                         AccessionPresentation accessionPresentation = new AccessionPresentation();
                         accessionPresentation.setAccessionNumber(tuple[0].toString());
                         if (tuple[2] == null) {
-                           accessionPresentation.setUrl(tuple[1].toString() + tuple[0].toString());
+                            accessionPresentation.setUrl(tuple[1].toString() + tuple[0].toString());
                         } else {
                             accessionPresentation.setUrl(tuple[1].toString() + tuple[0].toString() + tuple[2].toString());
                         }
@@ -1122,8 +1131,8 @@ public class HibernateSequenceRepository implements SequenceRepository {
     @Override
     public List<DBLink> getDBLinksForAccession(Accession accession) {
         return HibernateUtil.currentSession().createCriteria(DBLink.class)
-                .add(Restrictions.eq("accessionNumber",accession.getNumber()))
-                .add(Restrictions.eq("referenceDatabase",accession.getReferenceDatabase())).list();
+                .add(Restrictions.eq("accessionNumber", accession.getNumber()))
+                .add(Restrictions.eq("referenceDatabase", accession.getReferenceDatabase())).list();
 
     }
 
@@ -1149,29 +1158,48 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
         markerDBLinks.addAll(
                 session.createCriteria(DBLink.class)
-                .add(Restrictions.eq("accessionNumber",accession.getNumber()))
-                .createAlias("referenceDatabase", "refDB")
-                .createAlias("refDB.foreignDBDataType", "fdbType")
-                .add(Restrictions.eq("referenceDatabase", accession.getReferenceDatabase()))
-                .add(Restrictions.eq("fdbType.superType",ForeignDBDataType.SuperType.SEQUENCE.toString()))
-                .add(Restrictions.or(
-                        Restrictions.eq("fdbType.dataType", ForeignDBDataType.DataType.RNA.toString()),
-                        Restrictions.eq("fdbType.dataType", ForeignDBDataType.DataType.POLYPEPTIDE.toString()))
-                )
-                .list()
+                        .add(Restrictions.eq("accessionNumber", accession.getNumber()))
+                        .createAlias("referenceDatabase", "refDB")
+                        .createAlias("refDB.foreignDBDataType", "fdbType")
+                        .add(Restrictions.eq("referenceDatabase", accession.getReferenceDatabase()))
+                        .add(Restrictions.eq("fdbType.superType", ForeignDBDataType.SuperType.SEQUENCE.toString()))
+                        .add(Restrictions.or(
+                                        Restrictions.eq("fdbType.dataType", ForeignDBDataType.DataType.RNA.toString()),
+                                        Restrictions.eq("fdbType.dataType", ForeignDBDataType.DataType.POLYPEPTIDE.toString()))
+                        )
+                        .list()
         );
 
-        ReferenceDatabase ensembl = (ReferenceDatabase) session.get(ReferenceDatabase.class,"ZDB-FDBCONT-061018-1");
+        ReferenceDatabase ensembl = (ReferenceDatabase) session.get(ReferenceDatabase.class, "ZDB-FDBCONT-061018-1");
 
         markerDBLinks.addAll(
                 session.createCriteria(DBLink.class)
-                        .add(Restrictions.eq("accessionNumber",accession.getNumber()))
+                        .add(Restrictions.eq("accessionNumber", accession.getNumber()))
                         .createAlias("referenceDatabase", "refDB")
                         .add(Restrictions.eq("referenceDatabase", ensembl))
                         .list()
         );
 
         return markerDBLinks;
+    }
+
+    @Override
+    public List<ReferenceDatabase> getReferenceDatabases(List<ForeignDB.AvailableName> availableNames,
+                                                         List<ForeignDBDataType.DataType> dataTypes,
+                                                         ForeignDBDataType.SuperType superType,
+                                                         Species.Type species) {
+        String hql = " from ReferenceDatabase referenceDatabase " +
+                " where referenceDatabase.foreignDB.dbName in (:dbNames) " +
+                " and referenceDatabase.foreignDBDataType.dataType in  (:types)" +
+                " and referenceDatabase.foreignDBDataType.superType = :superType" +
+                " and referenceDatabase.organism  = :organism" +
+                " ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("dbNames", availableNames);
+        query.setParameterList("types", dataTypes);
+        query.setString("superType", superType.toString());
+        query.setString("organism", species.toString());
+        return query.list();
     }
 }
 

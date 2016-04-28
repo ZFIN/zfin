@@ -18,9 +18,6 @@ public class FeatureValidationService {
 
         FeatureTypeEnum featureTypeEnum = featureDTO.getFeatureType();
         switch (featureTypeEnum) {
-            case INDEL:
-            case INSERTION:
-            case DELETION:
             case COMPLEX_SUBSTITUTION:
                 if (featureDTO.getPublicNoteList() == null) {
                     boolean yes = Window.confirm("Do you want to briefly summarize authors statement about " + featureTypeEnum.getDisplay() + "?");

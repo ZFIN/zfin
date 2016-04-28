@@ -2,6 +2,8 @@ package org.zfin.feature.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.springframework.stereotype.Service;
+import org.zfin.Species;
 import org.zfin.feature.*;
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.gbrowse.presentation.GBrowseImage;
@@ -15,12 +17,16 @@ import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.DisplayGroup;
-import org.zfin.sequence.FeatureDBLink;
+import org.zfin.sequence.*;
 
 import java.util.*;
 
+import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
+import static org.zfin.sequence.ForeignDB.AvailableName;
+import static org.zfin.sequence.ForeignDBDataType.DataType;
 
+
+@Service
 public class FeatureService {
 
     public static Set<FeatureMarkerRelationship> getSortedMarkerRelationships(Feature feature) {
@@ -229,5 +235,56 @@ public class FeatureService {
         imageBuilder.tracks(GBrowseTrack.GENES, featureLocation.getGbrowseTrack(), GBrowseTrack.TRANSCRIPTS);
 
         return imageBuilder.build();
+    }
+
+    public static ReferenceDatabase getForeignDbMutationDetailDna(String accessionNumber) {
+        // check for Genbank: Genomic and RNA, RefSeq and Ensembl
+        ForeignDB.AvailableName[] databases = {AvailableName.GENBANK, AvailableName.REFSEQ};
+        ForeignDBDataType.DataType[] dataTypes = {DataType.GENOMIC, DataType.RNA};
+
+        List<ReferenceDatabase> refDatabaseList = getSequenceRepository().getReferenceDatabases(Arrays.asList(databases),
+                Arrays.asList(dataTypes),
+                ForeignDBDataType.SuperType.SEQUENCE,
+                Species.Type.ZEBRAFISH);
+
+        ReferenceDatabase databaseMatch = checkRefDatabase(accessionNumber, refDatabaseList);
+        if (databaseMatch != null)
+            return databaseMatch;
+
+        // if not found check Accession, aka accession_bank
+        List<Accession> accessionList = getSequenceRepository().getAccessionsByNumber(accessionNumber);
+        for (Accession accession : accessionList) {
+            if (refDatabaseList.contains(accession.getReferenceDatabase()))
+                return accession.getReferenceDatabase();
+        }
+        return null;
+    }
+
+    private static ReferenceDatabase checkRefDatabase(String accessionNumber, List<ReferenceDatabase> refDatabaseList) {
+        ReferenceDatabase databaseMatch = null;
+        for (ReferenceDatabase referenceDatabase : refDatabaseList) {
+            List<DBLink> links = getSequenceRepository().getDBLinks(accessionNumber, referenceDatabase);
+            if (CollectionUtils.isNotEmpty(links)) {
+                databaseMatch = referenceDatabase;
+                break;
+            }
+        }
+        return databaseMatch;
+    }
+
+    public static ReferenceDatabase getForeignDbMutationDetailProtein(String accessionNumber) {
+        ForeignDB.AvailableName[] databases = {AvailableName.GENBANK, AvailableName.REFSEQ, AvailableName.UNIPROTKB};
+        ForeignDBDataType.DataType[] dataTypes = {DataType.POLYPEPTIDE};
+
+        List<ReferenceDatabase> genBankRefDB = getSequenceRepository().getReferenceDatabases(Arrays.asList(databases),
+                Arrays.asList(dataTypes),
+                ForeignDBDataType.SuperType.SEQUENCE,
+                Species.Type.ZEBRAFISH);
+        for (ReferenceDatabase referenceDatabase : genBankRefDB) {
+            List<DBLink> links = getSequenceRepository().getDBLinks(accessionNumber, referenceDatabase);
+            if (CollectionUtils.isNotEmpty(links))
+                return referenceDatabase;
+        }
+        return null;
     }
 }

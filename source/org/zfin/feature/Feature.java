@@ -1,5 +1,6 @@
 package org.zfin.feature;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
@@ -39,7 +40,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     public static final String MUTANT = "Mutant";
     public static final String UNRECOGNIZED = "unrecognized";
     public static final String UNSPECIFIED = "unspecified";
-
+    public static final String UNKNOWN = "Unknown";
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
     @GenericGenerator(name = "zfinGenerator",
@@ -101,12 +102,13 @@ public class Feature implements EntityNotes, EntityZdbID {
     private FeatureAssay featureAssay;
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<FeatureDBLink> dbLinks;
-    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
     @Sort(type = SortType.NATURAL)
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private SortedSet<FeatureTranscriptMutationDetail> featureTranscriptMutationDetailSet;
-    @OneToOne(mappedBy = "feature", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private FeatureProteinMutationDetail featureProteinMutationDetail;
-    @OneToOne(mappedBy = "feature", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private FeatureDnaMutationDetail featureDnaMutationDetail;
 
 
@@ -549,6 +551,7 @@ public class Feature implements EntityNotes, EntityZdbID {
         return null;
     }
 
+
     public String getGeneLocalizationStatement() {
         return mutationDetailsConversionService.geneLocalizationStatement(featureDnaMutationDetail);
     }
@@ -573,5 +576,11 @@ public class Feature implements EntityNotes, EntityZdbID {
             externalNotes = new HashSet<>();
         }
         externalNotes.add(note);
+    }
+
+    public void addMutationDetailTranscript(FeatureTranscriptMutationDetail detail) {
+        if (featureTranscriptMutationDetailSet == null)
+            featureTranscriptMutationDetailSet = new TreeSet<>();
+        featureTranscriptMutationDetailSet.add(detail);
     }
 }
