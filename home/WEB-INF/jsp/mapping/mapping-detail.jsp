@@ -4,21 +4,15 @@
 
 <zfin2:dataManager zdbID="${marker.zdbID}" rtype="marker"/>
 <p/>
-<table width="100%" cellpadding="0" cellspacing="0">
-    <tr>
-        <td class="titlebar" style="">
-                <span style="font-size: x-large; margin-left: 0.5em; font-weight: bold;">
-                        Mapping Details
-            </span>
-        </td>
-        <td align="right" class="titlebarRight">
-            <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                <tiles:putAttribute name="subjectName" value="Mapping Details"/>
-            </tiles:insertTemplate>
-        </td>
-    </tr>
-</table>
 
+<div class="titlebar">
+    <h1>Mapping Details</h1>
+    <span class="yourinputwelcome">
+        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+            <tiles:putAttribute name="subjectName" value="Mapping Details"/>
+        </tiles:insertTemplate>
+    </span>
+</div>
 
 <table class="primary-entity-attributes">
     <c:choose>

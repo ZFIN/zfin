@@ -143,6 +143,11 @@ public class FeatureDetailController {
         return getFeatureDetail(zdbID, model);
     }
 
+    @RequestMapping(value = "{zdbID}/mapping")
+    public String showFeatureMappingDetailsPage(Model model, @PathVariable String zdbID) {
+        return "feature/feature-mapping-detail.page";
+    }
+
     private void retrieveSortedGenotypeData(Feature feature, FeatureBean form) {
         Set<GenotypeFeature> genotypeFeatures = feature.getGenotypeFeatures();
         List<GenotypeDisplay> genotypeDisplays = new ArrayList<>(genotypeFeatures.size());

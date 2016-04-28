@@ -3,15 +3,11 @@
 
 
 <p/>
-<table width="100%" cellpadding="0" cellspacing="0">
-    <tr>
-        <td class="titlebar">
-                <span style="font-size: larger; margin-left: 0.5em; font-weight: bold;">
-                        Scoring Data
-            </span>
-        </td>
-    </tr>
-</table>
+
+<div class="titlebar">
+    <h1>Scoring Data</h1>
+</div>
+
 <p/>
 
 <table id="geneticMapping" class="summary horizontal-solidblock">

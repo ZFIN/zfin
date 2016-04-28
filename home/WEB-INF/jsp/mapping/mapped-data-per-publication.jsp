@@ -3,15 +3,10 @@
 <zfin2:dataManager zdbID="${publication.zdbID}" rtype="linkage"/>
 
 <p/>
-<table width="100%" cellpadding="0" cellspacing="0">
-    <tr>
-        <td class="titlebar" style="">
-                <span style="font-size: x-large; margin-left: 0.5em; font-weight: bold;">
-                        Mapping Data for <zfin:link entity="${publication}"/>  (${fn:length(mappedEntities)} records)
-            </span>
-        </td>
-    </tr>
-</table>
+
+<div class="titlebar">
+    <h1>Mapping Data for <zfin:link entity="${publication}"/>  (${fn:length(mappedEntities)} records)</h1>
+</div>
 
 <p/>
 <table class="summary rowstripes sortable">
