@@ -9,3 +9,9 @@
   </div>
 </div>
 
+<table class="primary-entity-attributes">
+  <tr>
+    <td>Genomic Feature Name:</td>
+    <td><zfin:link entity="${feature}"/></td>
+  </tr>
+</table>

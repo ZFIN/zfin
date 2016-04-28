@@ -145,6 +145,13 @@ public class FeatureDetailController {
 
     @RequestMapping(value = "{zdbID}/mapping")
     public String showFeatureMappingDetailsPage(Model model, @PathVariable String zdbID) {
+        Feature feature = featureRepository.getFeatureByID(zdbID);
+        if (feature == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+        model.addAttribute("feature", feature);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, feature.getName() + " Mapping Details");
         return "feature/feature-mapping-detail.page";
     }
 
