@@ -70,7 +70,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
                         cacheImpl="SortedMapBackedCache"/>
 
                 <entity name="gene_omim"
-                        datasource="db" query="select omimp_name as disease,
+                        datasource="db" query="select strip_omim(omimp_name) as disease,
                                       omimp_omim_id as omim_id,
                                       ortho_zebrafish_gene_zdb_id as gene_zdb_id
                               from omim_phenotype
@@ -2989,7 +2989,6 @@ term_name as expression_anatomy_direct,
                         feature_name as full_name,
                         feature_name_order as name_sort,
                         feature_abbrev as alias,
-                        feature_comments as note,
                         fto_priority as complexity,
                            '/' || feature_zdb_id as url,
                         (select case when fp_prefix = 'la' then 'Burgess / Lin'
@@ -4958,12 +4957,12 @@ where fig_zdb_id=xpatfig_fig_zdb_id
         <entity name="omim_disease"
                 datasource="db" query="
                         select distinct
-                               omimp_name as name,
-                               omimp_name as full_name,
-                               omimp_name as id,
+                               strip_omim(omimp_name) as name,
+                               strip_omim(omimp_name) as full_name,
+                               strip_omim(omimp_name) as id,
                                'Autocomplete' as category,
                                'OMIM Disease' as type
-                        from omim_phenotype where omimp_name not in (Select term_name from term where term_ontology = 'disease_ontology')
+                        from omim_phenotype where strip_omim(omimp_name) not in (Select term_name from term where term_ontology = 'disease_ontology')
                 "/>
 
 

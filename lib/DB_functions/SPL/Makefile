@@ -34,7 +34,7 @@ DBLINK_STATS = get_dblink_acc_num_display.sql p_dblink_has_parent.sql \
 	       getZfinAccessionNumber.sql \
 	       setTscriptLoadId.sql \
 	       checkDblinkTranscriptWithdrawn.sql \
-	       p_marker_sequence_unique.sql 
+	       p_marker_sequence_unique.sql strip_omim.sql
 FISH_STATS   = get_image_stats.sql \
 	       p_update_related_names.sql \
 	       p_update_related_genotype_names.sql \
