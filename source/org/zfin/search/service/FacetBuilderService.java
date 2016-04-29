@@ -141,8 +141,9 @@ public class FacetBuilderService {
         type.addFacet(buildFacet("type", true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(type);
 
-        FacetGroup expressedIn = new FacetGroup("Expressed In", true);
-        expressedIn.addFacet(buildFacet(EXPRESSED_IN_TF.getName(), true, response, filterQuerySelectionMap, baseUrl));
+        FacetGroup expressedIn = new FacetGroup("Expression", true);
+        expressedIn.addFacet(buildFacet(ANATOMY_TF.getName(), true, response, filterQuerySelectionMap, baseUrl));
+        expressedIn.addFacet(buildFacet(FieldName.STAGE.getName(), false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(expressedIn);
 
 
