@@ -2,10 +2,7 @@ package org.zfin.feature.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureAlias;
-import org.zfin.feature.FeatureMarkerRelationship;
-import org.zfin.feature.FeatureNote;
+import org.zfin.feature.*;
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
@@ -129,9 +126,25 @@ public class FeatureService {
         return delmarklg;
     }
 
-    public static List<PublicationAttribution> getFeatureTypeAttributions(Feature feature) {
+    public static Collection<PublicationAttribution> getMutationDetailAttributions(Feature feature) {
         InfrastructureRepository infRep = RepositoryFactory.getInfrastructureRepository();
-        return infRep.getPublicationAttributions(feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
+        SortedSet<PublicationAttribution> attributions = new TreeSet<>();
+        attributions.addAll(infRep.getPublicationAttributions(feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE));
+        FeatureDnaMutationDetail dnaDetails = feature.getFeatureDnaMutationDetail();
+        if (dnaDetails != null) {
+            attributions.addAll(infRep.getPublicationAttributions(dnaDetails.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE));
+        }
+        Set<FeatureTranscriptMutationDetail> transcriptDetails = feature.getFeatureTranscriptMutationDetailSet();
+        if (CollectionUtils.isNotEmpty(transcriptDetails)) {
+            for (FeatureTranscriptMutationDetail detail : transcriptDetails) {
+                attributions.addAll(infRep.getPublicationAttributions(detail.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE));
+            }
+        }
+        FeatureProteinMutationDetail proteinDetail = feature.getFeatureProteinMutationDetail();
+        if (proteinDetail != null) {
+            attributions.addAll(infRep.getPublicationAttributions(proteinDetail.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE));
+        }
+        return attributions;
     }
 
     public static Set<FeatureMarkerRelationship> getSortedConstructRelationships(Feature feature) {
