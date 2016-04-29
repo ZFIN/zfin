@@ -18,6 +18,10 @@
     </tr>
 </table>
 
+<zfin2:subsection title="PHYSICAL MAP AND BROWSER" test="${!empty locations}" showNoData="true">
+    <zfin2:PhysicalMapAndBrowserSection locations="${locations}" gbrowseImage="${gbrowseImage}"/>
+</zfin2:subsection>
+
 <div class="summary">
     <c:choose>
         <c:when test="${!otherMappingDetail}">

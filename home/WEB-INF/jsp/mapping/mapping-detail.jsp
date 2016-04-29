@@ -35,17 +35,12 @@
     </c:choose>
 </table>
 
-<div class="summary">
-    <b>PHYSICAL MAP AND BROWSER</b>
-    <c:choose>
-        <c:when test="${empty locations && empty mappedClones}"><span
-                class="no-data-tag">No data available</span></c:when>
-        <c:otherwise>
-            <zfin2:PhysicalMapAndBrowserSection marker="${marker}" locations="${locations}"
-                                                gbrowseImage="${gbrowseImage}"/>
-        </c:otherwise>
-    </c:choose>
-</div>
+<zfin2:subsection title="PHYSICAL MAP AND BROWSER" test="${!empty locations || !empty mappedClones}" showNoData="true">
+    <c:if test="${!isClone}">
+        <zfin2:PhysicalMapAndBrowserSection locations="${locations}" gbrowseImage="${gbrowseImage}"/>
+    </c:if>
+    <zfin2:mappedClonesTable mappedClones="${mappedClones}" marker="${marker}"/>
+</zfin2:subsection>
 
 <p/>
 

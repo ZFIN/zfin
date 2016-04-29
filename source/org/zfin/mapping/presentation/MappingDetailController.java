@@ -194,6 +194,8 @@ public class MappingDetailController {
             if (marker == null) {
                 model.addAttribute("pureFeature", true);
                 model.addAttribute("otherMappingDetail", isOtherMappingDetail);
+                model.addAttribute("gbrowseImage", FeatureService.getGbrowseImage(feature));
+                model.addAttribute("locations", MappingService.getGenomeBrowserLocations(feature));
                 return "mapping/mapping-detail-pure-feature.page";
             }
             markerID = marker.getZdbID();
