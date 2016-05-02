@@ -14,7 +14,16 @@ INPUT VARS:
 
 <script type="text/javascript" src="/javascript/jquery.modal.min.js"></script>
 <script src="/javascript/autocompletify.js"></script>
-<script type="text/javascript" src="/javascript/typeahead.bundle.js"></script>
+<script type="text/javascript" src="/javascript/typeahead.bundle.min.js"></script>
+<script src="/javascript/header-menu.js"></script>
+
+<script>
+<?MIBLOCK COND="$(XST,$hdr_showmotto)">
+    hdrSetCookie("tabCookie","Motto","","/");
+<?MIELSE>
+    hdrSetCookie("tabCookie","Research","","/");
+<?/MIBLOCK>
+</script>
 
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 
@@ -23,276 +32,11 @@ INPUT VARS:
 <link rel="stylesheet" type="text/css" href="/css/footer.css">
 <link rel=stylesheet type="text/css" href="/css/searchresults.css">
 <link rel=stylesheet type="text/css" href="/css/summary.css">
-<link rel=stylesheet type="text/css" href="/css/spiffycorners.css">
 <link rel=stylesheet type="text/css" href="/css/Lookup.css">
 <link rel=stylesheet type="text/css" href="/css/datapage.css">
 <link rel=stylesheet type="text/css" href="/css/popup.css">
 <link rel=stylesheet type="text/css" href="/css/jquery.modal.css">
 <link rel=stylesheet type="text/css" href="/css/typeahead.css">
-
-
-<script type="text/javascript" id="inspectletjs">
-	window.__insp = window.__insp || [];
-	__insp.push(['wid', <!--|INSPECTLET_ID|-->]);
-	(function() {
-		function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
-		if (window.attachEvent){
-			window.attachEvent('onload', __ldinsp);
-		}else{
-			window.addEventListener('load', __ldinsp, false);
-		}
-	})();
-</script>
-
-<script type="text/javascript">
-
-/** mostly this kind of thing is bad, but there's a
-    tiny bit of css we want for IE only  **/
-
-if (navigator.appName == 'Microsoft Internet Explorer') {
-  document.write("<style type='text/css'>");
-  //document.write("body { width:expression(document.body.clientWidth < 600? '600px': 'auto' );}  ");
-  //document.write("#hdr-banner {   width:expression(document.body.clientWidth < 580? '580px': 'auto' );  } ");
-
-  /** if (IE version > 7) **/
-  if (!window.XMLHttpRequest) {
-    document.write("#hdr-tabs { margin-left: 95px; } ");
-  }
-  document.write("</style>");
-
-}
-
-
-// causes to call onload() function to be executed upon loading the page
-function addLoadEvent(_function) {
-    var _onload = window.onload;
-    if (typeof window.onload != 'function') {
-        if (window.onload) {
-            window.onload = _function;
-        } else {
-            var _addEventListener = window.addEventListener || document.addEventListener;
-            var _attachEvent = window.attachEvent || document.attachEvent;
-            if (_addEventListener) {
-                _addEventListener('load', _function, true);
-                return true;
-            } else if (_attachEvent) {
-	        var _result = _attachEvent('onload', _function);
-                return _result;
-            } else {
-            //todo: preloading fix for ie5.2 on mac os
-	        return false;
-            }
-        }
-    } else {
-        window.onload = function() {
-            _onload();
-            _function();
-        }
-    }
-}
-
-function hdrSetCookie(name,value,expires,path,domain,secure) {
-   document.cookie = name + "=" +escape(value) +
-          ( (expires) ? ";expires=" + expires.toGMTString() : "") +
-          ( (path) ? ";path=" + path : "") +
-          ( (domain) ? ";domain=" + domain : "") +
-          ( (secure) ? ";secure" : "");
-   var cookieVal = document.cookie;
-  }
-
-function hdrGetCookie(name) {
-   var allcookies = document.cookie;
-   if (allcookies == "") return false;
-   var start = allcookies.indexOf(name + '=');
-   if (start == -1) return false;
-   start += name.length + 1;
-   var end = allcookies.indexOf(';', start);
-   if (end == -1) end = allcookies.length;
-   return allcookies.substring(start, end);
-	}
-
-function hdrDeleteCookie(name, path, domain) {
-  var today = new Date();
-  var expired = new Date(today.getTime() - 28 * 24 * 60 * 60 * 1000); // less 28 days
-   if (hdrGetCookie(name)) {
-      document.cookie = name + "=" +
-              ((path) ? "; path=" + path : "") +
-              ((domain) ? "; domain=" + domain : "") +
-              "; expires=Thu, 01-Jan-70 00:00:01 GMT";
-   }
-}
-
-
-
-function deselectTabs(tab_id) {
-
-  $('researchspiffy').className = "spiffy";
-  $('researchspiffy1').className = "spiffy1";
-  $('researchspiffy2').className = "spiffy2";
-  $('researchspiffy3').className = "spiffy3";
-  $('researchspiffy4').className = "spiffy4";
-  $('researchspiffy5').className = "spiffy5";
-  $('researchTabContent').className = "tabContent";
-
-  $('generalspiffy').className = "spiffy";
-  $('generalspiffy1').className = "spiffy1";
-  $('generalspiffy2').className = "spiffy2";
-  $('generalspiffy3').className = "spiffy3";
-  $('generalspiffy4').className = "spiffy4";
-  $('generalspiffy5').className = "spiffy5";
-  $('generalTabContent').className = "tabContent";
-
-
-  $('productspiffy').className = "spiffy";
-  $('productspiffy1').className = "spiffy1";
-  $('productspiffy2').className = "spiffy2";
-  $('productspiffy3').className = "spiffy3";
-  $('productspiffy4').className = "spiffy4";
-  $('productspiffy5').className = "spiffy5";
-  $('productTabContent').className = "tabContent";
-
-
-}
-
-
-function showZFINLinks() {
-  hdrSetCookie("tabCookie","Research","","/");
-
-  deselectTabs();
-
-  $('researchspiffy').className = "selectedspiffy";
-  $('researchspiffy1').className = "selectedspiffy1";
-  $('researchspiffy2').className = "selectedspiffy2";
-  $('researchspiffy3').className = "selectedspiffy3";
-  $('researchspiffy4').className = "selectedspiffy4";
-  $('researchspiffy5').className = "selectedspiffy5";
-  $('researchTabContent').className = "selectedTabContent";
-
-
-
-  document.getElementById("hdr-zirclinks").style.display = "none";
-  document.getElementById("hdr-generallinks").style.display = "none";
-  document.getElementById("hdr-motto").style.display = "none";
-  document.getElementById("hdr-zfinlinks").style.display = "block";
-
-<?MICOMMENT>
-  document.getElementsByTagName("head")[0].blur();
-<?/MICOMMENT>
-
-}
-
-function showGeneralLinks() {
-  hdrSetCookie("tabCookie","General","","/");
-
-  deselectTabs();
-
-  $('generalspiffy').className = "selectedspiffy";
-  $('generalspiffy1').className = "selectedspiffy1";
-  $('generalspiffy2').className = "selectedspiffy2";
-  $('generalspiffy3').className = "selectedspiffy3";
-  $('generalspiffy4').className = "selectedspiffy4";
-  $('generalspiffy5').className = "selectedspiffy5";
-  $('generalTabContent').className = "selectedTabContent";
-
-
-
-  document.getElementById("hdr-zfinlinks").style.display = "none";
-  document.getElementById("hdr-zirclinks").style.display = "none";
-  document.getElementById("hdr-motto").style.display = "none";
-  document.getElementById("hdr-generallinks").style.display = "block";
-
-<?MICOMMENT>
-  document.getElementsByTagName("head")[0].blur();
-<?/MICOMMENT>
-}
-
-
-
-
-function showZIRCLinks() {
-
-  hdrSetCookie("tabCookie","Products","","/");
-
-  deselectTabs();
-
-  $('productspiffy').className = "selectedspiffy";
-  $('productspiffy1').className = "selectedspiffy1";
-  $('productspiffy2').className = "selectedspiffy2";
-  $('productspiffy3').className = "selectedspiffy3";
-  $('productspiffy4').className = "selectedspiffy4";
-  $('productspiffy5').className = "selectedspiffy5";
-  $('productTabContent').className = "selectedTabContent";
-
-
-  document.getElementById("hdr-zfinlinks").style.display = "none";
-  document.getElementById("hdr-generallinks").style.display = "none";
-  document.getElementById("hdr-motto").style.display = "none";
-  document.getElementById("hdr-zirclinks").style.display = "block";
-
-<?MICOMMENT>
-  document.getElementsByTagName("head")[0].blur();
-<?/MICOMMENT>
-}
-
-function showMotto() {
-  /* for some reason, one of these is coming up null in IE */
-
-  if (document.getElementById("hdr-zfinlinks") != null) {
-    document.getElementById("hdr-zfinlinks").style.display = "none";
-  } else { alert('hdr-zfinlinks is null'); }
-
-  if (document.getElementById("hdr-zirclinks") != null) {
-    document.getElementById("hdr-zirclinks").style.display = "none";
-  } else { alert('hdr-zirclinks is null'); }
-
-  if (document.getElementById("hdr-generallinks") != null) {
-    document.getElementById("hdr-generallinks").style.display = "none";
-  } else { alert('hdr-generallinks is null'); }
-
-  if (document.getElementById("hdr-motto") != null) {
-    document.getElementById("hdr-motto").style.display = "block";
-  } else { alert('hdr-motto is null'); }
-}
-
-
-
-
-function hdrSetTabs() {
-
-   <?MICOMMENT> *** if hdr_showmotto exists, we'll delete the cookie,
-                    and then ignore the routine below ***<?/MICOMMENT>
-   <?MIBLOCK COND="$(XST,$hdr_showmotto)">
-     var hdr_showmotto = true;
-     hdrDeleteCookie("tabCookie","/","");
-   <?MIELSE>
-     var hdr_showmotto = false;
-   <?/MIBLOCK>
-
-   if (hdr_showmotto) {
-     showMotto();
-   } else {
-
-     tabCookie = hdrGetCookie("tabCookie");
-
-     if (!tabCookie) {
-       hdrSetCookie("tabCookie","Research","","/");
-       tabCookie = hdrGetCookie("tabCookie");
-     }
-     if (tabCookie == "Research") {
-       showZFINLinks();
-     }
-     if (tabCookie == "Products") {
-       showZIRCLinks();
-     }
-     if (tabCookie == "General") {
-       showGeneralLinks();
-     }
-   }
-}
-
-
-
-</script>
 
 <script>
     if ('<!--|GOOGLE_ANALYTICS_ID|-->' != '0') {
@@ -306,11 +50,7 @@ function hdrSetTabs() {
     }
 </script>
 
-
-
-<body id="body" onload="hdrSetTabs();">
-
-
+<body id="body">
   <a href="/">
    <img id="logo-img" src="/images/zfinlogo.png">
    <img id="logo-text" src="/images/zfintxt.png">
@@ -340,7 +80,7 @@ function hdrSetTabs() {
               jQuery(document).ready(function() {
                 jQuery('#header-search-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
               });
-              $('#header-search-query-input').bind("typeahead:selected", function() {
+              $('#header-search-query-input').bind("typeahead:select", function() {
                   $('#header-query-form').submit();
               });
       </script>
@@ -359,30 +99,15 @@ function hdrSetTabs() {
   <?/MIBLOCK>
 
     <div id="feedBox">
-   <span id="site-link">
-     <a href="/downloads">Downloads</a>
-<script>
-function getCookie(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0;i < ca.length;i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-    }
-    return null;
-}
-    document.write('<span id="site-link">');
-if(getCookie('zfin_login').lastIndexOf('GUEST') == 0)
-    document.write("   <a href=\"/action/login\">Login</a>");
-else
-    document.write("<a href=\"/action/logout\">Logout</a>");
-</script>
-</span> &nbsp;
+   <span class="site-link"><a href="/downloads">Downloads</a></span>
+   <span class="site-link">
+      <a id="hdr-login-link" href="/action/login">Login</a>
+      <a id="hdr-logout-link" style="display:none" href="/action/logout">Logout</a>
+   </span>
         <a href="https://<!--|WIKI_HOST|-->/createrssfeed.action?types=blogpost&spaces=news&title=Zebrafish+News&labelString%3D&excludedSpaceKeys%3D&sort=modified&maxResults=10&timeSpan=120&showContent=true"><img id="social-icon" src="/images/feed-icon-28x28.png"></a>
         <iframe id="social-icon" allowtransparency="true" frameborder="0" scrolling="no"
                 src="//platform.twitter.com/widgets/follow_button.html?screen_name=ZFINmod&show_count=false&show_screen_name=false"
-                style="width:60px; height:20px;"></iframe>
+                style="width:64px; height:20px;"></iframe>
     </div>
 
 
@@ -391,66 +116,21 @@ else
 <div id="hdr-banner">
 
   <div id="hdr-tabs">
-
-     <div id="researchtab">
-     <b class="spiffy" id="researchspiffy"><b class="spiffy1"  id="researchspiffy1"><b></b></b><b class="spiffy2"  id="researchspiffy2"><b></b></b><b class="spiffy3"  id="researchspiffy3"></b><b class="spiffy4" id="researchspiffy4"></b><b class="spiffy5" id="researchspiffy5"></b></b>
-     <div class="tabContent" id="researchTabContent" >
-       Research
-     </div>
-     </div>
-
-     <div id="generaltab">
-     <b class="spiffy" id="generalspiffy"><b class="spiffy1" id="generalspiffy1"><b></b></b><b class="spiffy2" id="generalspiffy2"><b></b></b><b class="spiffy3" id="generalspiffy3"></b><b class="spiffy4" id="generalspiffy4"></b><b class="spiffy5" id="generalspiffy5"></b></b>
-     <div class="tabContent" id="generalTabContent">
-       General Information
-     </div>
-     </div>
-
-     <div id="zirctab">
-     <b class="spiffy" id="productspiffy"><b class="spiffy1" id="productspiffy1"><b></b></b><b class="spiffy2" id="productspiffy2"><b></b></b><b class="spiffy3" id="productspiffy3"></b><b class="spiffy4" id="productspiffy4"></b><b class="spiffy5" id="productspiffy5"></b></b>
-     <div class="tabContent"  id="productTabContent">
-      ZIRC
-     </div>
-     </div>
-
-
-
-     <script type="text/javascript">
-     if (document.addEventListener) {
-       document.getElementById("researchtab").addEventListener("click",showZFINLinks,true);
-       document.getElementById("generaltab").addEventListener("click",showGeneralLinks,true);
-       document.getElementById("zirctab").addEventListener("click",showZIRCLinks,true);
-
-     } else {
-       document.getElementById("researchtab").onclick = showZFINLinks;
-       document.getElementById("generaltab").onclick = showGeneralLinks;
-       document.getElementById("zirctab").onclick = showZIRCLinks;
-
-     }
-     </script>
-
-
+    <div class="header-tab research">Research</div>
+    <div class="header-tab general">General Information</div>
+    <div class="header-tab zirc">ZIRC</div>
   </div>
-
-
-
-
-
 
   <div id="hdr-navlinks">
     <div id="hdr-zirclinks" class="hdr-linkbar" style="display: none;">
       <a href="http://zebrafish.org/">ZIRC Home</a>
-      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-      <strong> Request: </strong> &nbsp; <a href="http://zebrafish.org/zirc/fish/lineAll.php">Fish</a>,
-      &nbsp; <a href="http://zebrafish.org/zirc/est/estAll.php">ESTs/cDNAs</a>,
-      &nbsp; <a href="http://zebrafish.org/zirc/abs/absAll.php">Antibodies</a>,
-      &nbsp; <a href="http://zebrafish.org/zirc/orders/buyBookQ.php?item=Book&id=book&detail=The%20Zebrafish%20Book">ZF Book</span></a>,
-      &nbsp; <a href="http://zebrafish.org/zirc/orders/buyParaQ.php?item=Paramecia&id=para&detail=Paramecia%20Starter%20Culture" >Paramecia</a>&nbsp;
-      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
+      <strong> Request: </strong> &nbsp; <a href="http://zebrafish.org/zirc/fish/lineAll.php">Fish</a>
+      <a href="http://zebrafish.org/zirc/est/estAll.php">ESTs/cDNAs</a>
+      <a href="http://zebrafish.org/zirc/abs/absAll.php">Antibodies</a>
+      <a href="http://zebrafish.org/zirc/orders/buyBookQ.php?item=Book&id=book&detail=The%20Zebrafish%20Book">ZF Book</span></a>
+      <a href="http://zebrafish.org/zirc/orders/buyParaQ.php?item=Paramecia&id=para&detail=Paramecia%20Starter%20Culture" >Paramecia</a>
       <a href="http://zebrafish.org/zirc/documents/fees.php">Prices</a>
-      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="http://zebrafish.org/zirc/documents/payment.php">Payment Help</a>
-      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="http://zebrafish.org/zirc/health/index.php">Health Services</a>
 
     </div>
@@ -458,63 +138,38 @@ else
          style="<?MIBLOCK COND="$(XST,$hdr_showmotto)">display: none;
                 <?MIELSE>display: block;<?/MIBLOCK> ">
       <a href="/">Home</a>
-      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg"  title="Search by name, accession number, chromosome, vector or sequence type">Genes / Markers / Clones</a>
-      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="/action/blast/blast" title="Search for sequence alignment against ZFIN datasets and zebrafish datasets">BLAST</a>
-      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="/<!--|GBROWSE_PATH_FROM_ROOT|-->">GBrowse</a>
-      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg"  title="Search by gene, developmental stage, anatomy and other attributes">Expression</a>
-      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="/action/antibody/search" title="Search for antibodies by gene, labeled anatomy and other attributes">Antibodies</a>
-      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="/action/fish/search">Mutants / Knockdowns / Tg</a>
-      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="/action/construct/search">Constructs</a>
-      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="/action/ontology/search">Anatomy / GO / Human Disease</a>
-      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&select_from=PUBLICATION" title="Search for zebrafish research publications by author, title or citation">Publications</a>
-      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi" title="View genetic, radiation hybrid or consolidated maps">Maps</a>
     </div>
 
     <div id="hdr-generallinks" class="hdr-linkbar" style="display: none;">
      <a href="/">Home</a>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
      <a href="https://wiki.zfin.org" title="ZFIN-hosted community wiki: browse, contribute and export">Wiki</A>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
      <a href="https://wiki.zfin.org/display/jobs/Zebrafish-Related+Job+Announcements" title="Zebrafish-related job announcements">Jobs</a>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
      <a href="https://wiki.zfin.org/display/meetings" title="Zebrafish-related meeting announcements">Meetings</a>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
      <a href="https://wiki.zfin.org/display/general/Zebrafish+Newsgroup+Information/" title="Moderated, online discussion group for anyone interested in zebrafish research">Newsgroup</a>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
      <a href="/action/profile/person/search"  title="Search for zebrafish researchers by name or address">People</a>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
      <a href="/action/profile/lab/search" title="Search for laboratories by name, address or research interests">Labs</a>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
      <a href="/action/profile/company/search" title="Search for companies supplying zebrafish reagents">Companies</a>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
      <a href="/zf_info/news/education.html" title="Educational websites for students and educators">Education</A>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
      <a href="/zf_info/zfbook/zfbk.html" title="Browse The Zebrafish Book"><em>ZF Book</em></A>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-     <a href="/zf_info/contact_us.html" title="ZFIN contact information">Contact</A>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
+     <a href="https://wiki.zfin.org/display/general/ZFIN+Contact+Information" title="ZFIN contact information">Contact</A>
      <a href="https://wiki.zfin.org/display/general/ZFIN+db+information" title="About ZFIN and citing ZFIN resources in publications">About</A>
-
     </div>
+
     <div id="hdr-motto" class="hdr-linkbar"
          style="<?MIBLOCK COND="$(XST,$hdr_showmotto)"> display: block;
                 <?MIELSE> display: none; <?/MIBLOCK> ">
       The Zebrafish Model Organism Database
     </div>
-
-
-
-
 
   </div> <!-- navlinks -->
 </div>

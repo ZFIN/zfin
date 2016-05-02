@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.zfin.search.service.SolrService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Facet  {
@@ -11,6 +12,7 @@ public class Facet  {
     FacetField facetField;
     List<FacetValue> selectedFacetValues;
     List<FacetValue> facetValues;
+    List<FacetQuery> facetQueries;
     int nonEmptyDocumentCount;
     Boolean openByDefault;
     Boolean showAutocompleteBox;
@@ -114,4 +116,19 @@ public class Facet  {
         this.showIncludeExcludeIcons = showIncludeExcludeIcons;
     }
 
+    public List<FacetQuery> getFacetQueries() {
+        return facetQueries;
+    }
+
+    public void setFacetQueries(List<FacetQuery> facetQueries) {
+        this.facetQueries = facetQueries;
+    }
+
+    public void addFacetQuery(FacetQuery facetQuery) {
+        if (facetQueries == null)
+            facetQueries = new ArrayList<FacetQuery>();
+
+        if (facetQuery != null)
+            facetQueries.add(facetQuery);
+    }
 }

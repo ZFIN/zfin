@@ -1,15 +1,12 @@
 /*** data page summary table ***/
 
 table.summary {
-  width: 100%;
-  border-collapse: collapse;
-  border: 1px solid #ccc;
-  background: #eee;
-  clear: both;
-
-  /* just enough margin so that lowercase p's & q's don't touch */
-  margin-top: .1em;
-
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+    background: #eee;
+    clear: both;
+    margin-top: .1em;
 }
 
 div.summary {
@@ -17,71 +14,72 @@ div.summary {
     clear: both;
 }
 
-table.summary caption, h3.summary, span.summaryTitle, div.summaryTitle {
-  font-weight: bold;
-  text-align: left;
-  padding-bottom: .2em;
-  
+table.summary caption,
+h3.summary,
+span.summaryTitle,
+div.summaryTitle {
+    font-weight: bold;
+    text-align: left;
+    padding-bottom: .2em;
 }
 
 table.summary th {
-  background: #ccc;
-  font-weight: bold;
-  text-align: left;
-  vertical-align: top;
-  padding: .2em;
+    background: #ccc;
+    font-weight: bold;
+    text-align: left;
+    vertical-align: top;
+    padding: .2em;
 }
 
 table.summary th.length {
-  text-align: right;
-  width: 15%;  
+    text-align: right;
+    width: 15%;
 }
 
 table.summary th.analysis {
-  text-align: center;
-  width: 20%;
+    text-align: center;
+    width: 20%;
 }
 
 table.summary th.gbrowseimage {
     text-align: center;
     vertical-align: middle;
-    min-width:20%;
+    min-width: 20%;
 }
 
-table.summary td.data-label ,
-table.summary th.data-label  {
+table.summary td.data-label,
+table.summary th.data-label {
     white-space: nowrap;
     width: 5%;
 }
 
 table.summary td {
-  /* background: #eee; */
-  padding: .2em;
-  text-align: left;
-  vertical-align: top;
+    padding: .2em;
+    text-align: left;
+    vertical-align: top;
 }
 
 table.summary td.length {
-  text-align: right;
+    text-align: right;
 }
 
 table.summary td.analysis {
-  text-align: center;
+    text-align: center;
 }
 
 table.summary td.showall {
-  background: none;
+    background: none;
 }
 
 ul.summary {
-  background: #eee;
-  margin-left: -3em;
+    background: #eee;
+    margin-left: -3em;
 }
 
 ul.summary li {
-  display: inline;
-  white-space: nowrap;
-  padding-left: 1em;
+    display: inline;
+    white-space: nowrap;
+    padding-left: 1em;
 
 }
 
@@ -89,69 +87,203 @@ ul.summary li {
 
 /* small stripes (w/top border dividers) summary table styling */
 
-table.summary.rowstripes tr.newgroup { border-top: 1px solid #ccc; }
-table.rowstripes tr.odd { background-color: #eee; }
-table.rowstripes tr.even { background-color: #fff; }
-table.summary.rowstripes { border: 1px solid #ccc; }
+table.summary.rowstripes tr.newgroup {
+    border-top: 1px solid #ccc;
+}
 
-table.rowstripes_withdrawn tr.odd { background-color: #eee; }
-table.rowstripes_withdrawn tr.even { background-color: #fff; }
-table.summary.rowstripes_withdrawn { border: none; }
+table.rowstripes tr.odd {
+    background-color: #eee;
+}
+
+table.rowstripes tr.even {
+    background-color: #fff;
+}
+
+table.summary.rowstripes {
+    border: 1px solid #ccc;
+}
+
+table.rowstripes_withdrawn tr.odd {
+    background-color: #eee;
+}
+
+table.rowstripes_withdrawn tr.even {
+    background-color: #fff;
+}
+
+table.summary.rowstripes_withdrawn {
+    border: none;
+}
 
 /* large striped (one per group) summary table styling */
-table.groupstripes { border: 1px solid #ccc; }
-table.groupstripes tr.newgroup { border-top: 1px solid #ccc; }
-table.groupstripes tr.odd { background-color: transparent; }
-table.groupstripes tr.even { background-color: transparent; }
-table.groupstripes tr.oddgroup { background-color: #eee; }
-table.groupstripes tr.evengroup { background-color: #fff; }
+table.groupstripes {
+    border: 1px solid #ccc;
+}
+
+table.groupstripes tr.newgroup {
+    border-top: 1px solid #ccc;
+}
+
+table.groupstripes tr.odd {
+    background-color: transparent;
+}
+
+table.groupstripes tr.even {
+    background-color: transparent;
+}
+
+table.groupstripes tr.oddgroup {
+    background-color: #eee;
+}
+
+table.groupstripes tr.evengroup {
+    background-color: #fff;
+}
 
 /* large striped (one per group) summary table styling with a hover feature*/
-table.groupstripes-hover { border: 1px solid #ccc; }
-table.groupstripes-hover tr.newgroup { border-top: 1px solid #ccc; }
-table.groupstripes-hover tr.odd { background-color: transparent; }
-table.groupstripes-hover tr.even { background-color: transparent; }
-table.groupstripes-hover tr.oddgroup { background-color: #eee; }
-table.groupstripes-hover tr.evengroup { background-color: #fff; }
-table.groupstripes-hover tr.experiment-row:hover { background-color: #CCFFFF; }
+table.groupstripes-hover {
+    border: 1px solid #ccc;
+}
+
+table.groupstripes-hover tr.newgroup {
+    border-top: 1px solid #ccc;
+}
+
+table.groupstripes-hover tr.odd {
+    background-color: transparent;
+}
+
+table.groupstripes-hover tr.even {
+    background-color: transparent;
+}
+
+table.groupstripes-hover tr.oddgroup {
+    background-color: #eee;
+}
+
+table.groupstripes-hover tr.evengroup {
+    background-color: #fff;
+}
+
+table.groupstripes-hover tr.experiment-row:hover {
+    background-color: #CCFFFF;
+}
 
 /* solid block summary table styling */
-table.solidblock tr.newgroup { border-top: 1px solid #ccc; }
-table.solidblock tr.odd, tr.even { background-color: #eee; }
-table.solidblock tr.oddgroup, tr.evengroup { background-color: #eee; }
-table.summary.solidblock { border: 1px solid #ccc; }
+table.solidblock tr.newgroup {
+    border-top: 1px solid #ccc;
+}
 
+table.solidblock tr.odd, tr.even {
+    background-color: #eee;
+}
+
+table.solidblock tr.oddgroup, tr.evengroup {
+    background-color: #eee;
+}
+
+table.summary.solidblock {
+    border: 1px solid #ccc;
+}
 
 /* horizontal solid block summary table styling */
-table.horizontal-solidblock tr.newgroup { border-top: 1px solid #ccc; } /* not sure if this will be used */
-table.horizontal-solidblock tr.odd, tr.even { background-color: #eee; }
-table.horizontal-solidblock tr.oddgroup, tr.evengroup { background-color: #eee; }
-table.summary.horizontal-solidblock { border: 1px solid #ccc; }
-table.horizontal-solidblock th { background-color: #eee; padding-right: 1em; width: 10%; }
-
-/* table with grey boxes over white gridlines */
-table.gridlines {
-    background-color: #fff;
-    border-collapse: separate;
+table.horizontal-solidblock tr.newgroup {
+    border-top: 1px solid #ccc;
 }
-table.gridlines td { background-color: #eee; }
+
+/* not sure if this will be used */
+table.horizontal-solidblock tr.odd, tr.even {
+    background-color: #eee;
+}
+
+table.horizontal-solidblock tr.oddgroup, tr.evengroup {
+    background-color: #eee;
+}
+
+table.summary.horizontal-solidblock {
+    border: 1px solid #ccc;
+}
+
+table.horizontal-solidblock th {
+    background-color: #eee;
+    padding-right: 1em;
+    width: 10%;
+    white-space: nowrap;
+}
 
 /* sequenceView.tag is a strange beast, and requires some exceptions */
-div.sequence-view-table-wrapper { border: 1px solid #ccc; min-width: 800px; }
-table.summary.sequence-view { border: none; margin: 0px;}
+div.sequence-view-table-wrapper {
+    border: 1px solid #ccc;
+    min-width: 800px;
+}
 
-div.analysis_tools_box { border: 1px solid #666666; min-width: 200px; margin: 0 auto; padding: 3px; border-radius: 8px; -moz-border-radius: 8px; background: #DDDDDD; }
-div.analysis_tools_box_slim { border: 1px solid #666666; width: 40%; min-width: 160px; margin: 0 auto; padding: 3px; border-radius: 8px; -moz-border-radius: 8px; background: #DDDDDD; }
-div.analysis_tools_box_header { color: blue; font-size: small;cursor: pointer; white-space: nowrap; text-align: center;}
-div.analysis_tools_box_popup_box { display: none;background-color: #DDDDDD; border-top: 1px solid #CCCCCC; }
-div.analysis_tools_box_popup_box a{ font-size: small; white-space: nowrap;}
-div.analysis_tools_box_popup_entry { margin-left: 20px; margin-right: 5px; text-align: left; }
-a.analysis_tools_single_link { font-size: small;  white-space: nowrap;}
+table.summary.sequence-view {
+    border: none;
+    margin: 0;
+}
 
-td.qualifier { font-style: italic }
+div.analysis_tools_box {
+    border: 1px solid #666666;
+    min-width: 200px;
+    margin: 0 auto;
+    padding: 3px;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    background: #DDDDDD;
+}
 
-table.summary.basicstripes tr:nth-child(odd) { background-color: #eee; }
-table.summary.basicstripes tr:nth-child(even) { background-color: #fff; }
+div.analysis_tools_box_slim {
+    border: 1px solid #666666;
+    width: 40%;
+    min-width: 160px;
+    margin: 0 auto;
+    padding: 3px;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    background: #DDDDDD;
+}
+
+div.analysis_tools_box_header {
+    color: blue;
+    font-size: small;
+    cursor: pointer;
+    white-space: nowrap;
+    text-align: center;
+}
+
+div.analysis_tools_box_popup_box {
+    display: none;
+    background-color: #DDDDDD;
+    border-top: 1px solid #CCCCCC;
+}
+
+div.analysis_tools_box_popup_box a {
+    font-size: small;
+    white-space: nowrap;
+}
+
+div.analysis_tools_box_popup_entry {
+    margin-left: 20px;
+    margin-right: 5px;
+    text-align: left;
+}
+
+a.analysis_tools_single_link {
+    font-size: small;
+    white-space: nowrap;
+}
+
+td.qualifier {
+    font-style: italic
+}
+
+table.summary.basicstripes tr:nth-child(odd) {
+    background-color: #eee;
+}
+
+table.summary.basicstripes tr:nth-child(even) {
+    background-color: #fff;
+}
 
 table.summary td.no-data {
     text-align: center;

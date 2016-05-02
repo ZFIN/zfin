@@ -26,6 +26,7 @@ import org.zfin.marker.ExpressedGene;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.MatchType;
 
@@ -74,7 +75,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         // Fig S11
         String figureID = "ZDB-FIG-080512-1";
         Figure figure = RepositoryFactory.getPublicationRepository().getFigure(figureID);
-        List<PhenotypeStatement> phenotypeStatements = FishService.getPhenotypeStatements(figure, fishID);
+        List<PhenotypeStatementWarehouse> phenotypeStatements = FishService.getPhenotypeStatements(figure, fishID);
         assertNotNull(phenotypeStatements);
         assertTrue(phenotypeStatements.size() > 3);
     }
@@ -112,7 +113,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
     public void matchingOnGeneAbbreviation() {
         String fishID = "ZDB-FISH-150901-19155";
         Fish fish = getMutantRepository().getFish(fishID);
-        Assert.assertNotNull("Could not find MartFish with fishID: " + fishID, fish);
+        Assert.assertNotNull("Could not find fish with fishID: " + fishID, fish);
         FishMatchingService service = new FishMatchingService(fish);
         criteria.getGeneOrFeatureNameCriteria().setValue("Shha");
         Set<MatchingText> matchingTexts = service.getMatchingText(criteria);

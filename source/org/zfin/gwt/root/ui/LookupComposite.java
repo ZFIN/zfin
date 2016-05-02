@@ -7,7 +7,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -412,7 +411,7 @@ public class LookupComposite extends Composite implements Revertible {
                 }
             });
         }
-        setToSingleOntologySelection(text);
+        //setToSingleOntologySelection(text);
         unsetUnValidatedTextMarkup();
     }
 
@@ -613,6 +612,10 @@ public class LookupComposite extends Composite implements Revertible {
 
     public void addOnFocusHandler(FocusHandler autocompleteFocusHandler) {
         suggestBox.getTextBox().addFocusHandler(autocompleteFocusHandler);
+    }
+
+    public void addOnClickHandler(ClickHandler clickHandler) {
+        suggestBox.getTextBox().addClickHandler(clickHandler);
     }
 
     public void setLimit(int thisLimit) {

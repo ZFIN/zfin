@@ -1,14 +1,32 @@
 package org.zfin.infrastructure;
 
+import org.hibernate.annotations.DiscriminatorFormula;
+
+import javax.persistence.*;
+
 /**
  * This class maps to a fast search table in the db for lookup of
  * marker names and aliases and other entities.
  */
+@Entity
+@Table(name = "all_map_names")
+@DiscriminatorFormula("CASE get_obj_type(allmapnm_zdb_id)" +
+        "                                    WHEN 'ALT'  THEN     'Alt---'" +
+        "                                    WHEN 'GENO' THEN     'Geno--'" +
+        "                                    WHEN 'MRPHLNO' THEN  'Morpho'" +
+        "                                    ELSE                 'Marker'" +
+        "                                 END")
 public abstract class AllNamesFastSearch {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "allmapnm_serial_id")
     private int id;
+    @Column(name = "allmapnm_name")
     private String name;
+    @Column(name = "allmapnm_name_lower")
     private String nameLowerCase;
+    @Column(name = "allmapnm_precedence")
     private String precedence;
 
     public int getId() {

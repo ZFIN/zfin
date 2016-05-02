@@ -3,7 +3,6 @@ package org.zfin.antibody.repository;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.Species;
@@ -154,11 +153,10 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     }
 
     // Test search by a single ao term only
-
     @Test
     public void getAntibodyByAnatomyTerm() {
 
-        // cranial nerve
+        // cranial nerve V
         String aoTermCN = "ZDB-TERM-100331-666";
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
@@ -507,11 +505,11 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
             List<Marker> markers = ab.getAllRelatedMarker();
             for (Marker marker : markers) {
-                if (marker.getAbbreviation().indexOf(antigenName) > -1) {
+                if (marker.getAbbreviation().contains(antigenName)) {
                     foundAB = ab;
                     foundGene = true;
                 }
-                if (marker.getName().indexOf(antigenName) > -1) {
+                if (marker.getName().contains(antigenName)) {
                     foundAB = ab;
                     foundGene = true;
                 }
@@ -519,7 +517,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
                 if (aliases == null)
                     continue;
                 for (MarkerAlias alias : aliases) {
-                    if (alias.getAlias().indexOf(antigenName) > -1) {
+                    if (alias.getAlias().contains(antigenName)) {
                         foundAB = ab;
                         foundGene = true;
                     }

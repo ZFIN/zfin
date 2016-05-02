@@ -1,6 +1,5 @@
 package org.zfin.framework.presentation;
 
-import com.opensymphony.clickstream.ClickstreamRequest;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContext;
@@ -23,6 +22,7 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
 import org.zfin.profile.Person;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.Database;
 import org.zfin.util.DateUtil;
@@ -255,20 +255,6 @@ public class ZfinJSPFunctions {
         return DateUtil.getTimeDuration(start, new Date());
     }
 
-    public static String getTimeBetweenRequests(List<ClickstreamRequest> list, int loopIndex) {
-        if (loopIndex < 0 || list == null) {
-            return "";
-        }
-
-        if (list.size() <= loopIndex + 1) {
-            return "";
-        }
-
-        Date start = list.get(loopIndex).getTimestamp();
-        Date end = list.get(loopIndex + 1).getTimestamp();
-        return getTimeDuration(start, end);
-    }
-
     public static String getPerson(HttpSession session) {
         if (session == null) {
             return null;
@@ -407,6 +393,9 @@ public class ZfinJSPFunctions {
 
     public static AuditLogItem getLastUpdate(String entityID) {
         return RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(entityID);
+    }
 
+    public static String getWebdriverRoot() {
+        return "/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT;
     }
 }

@@ -5,9 +5,11 @@
     <div>
       <h3>Curation</h3>
       <ul>
+      <?MICOMMENT>
         <?MIVAR>
         <li>View <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&query_results=exist&curator=$ZDB_ident&cur_status=is "><em>my open pubs</em></a></li>
         <?/MIVAR>
+        <?/MICOMMENT>
         <li>
           Add
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENE"><em>gene</em></a>,
@@ -16,7 +18,7 @@
           <a href="/action/marker/clone-add"><em>clone</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
           <a href="/action/antibody/add"><em>antibody</em></a>,
-          <a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=Morpholino"><em>morpholino</em></a>,
+          <a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=MRPHLNO"><em>morpholino</em></a>,
           <a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=TALEN"><em>TALEN</em></a>,
           <a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=CRISPR"><em>CRISPR</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -141,6 +143,7 @@
       <a href="/<!--|GBROWSE_PATH_FROM_ROOT|-->">ZFIN</a>,
       <a href="http://www.ensembl.org/Danio_rerio/">Ensembl</a>,
       <a href="http://vega.sanger.ac.uk/Danio_rerio/">Vega</a>,<br>
+      <a href="http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/zebrafish/">GRC</a>,
       <a href="http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=85282730&clade=vertebrate&org=Zebrafish&db=0">UCSC</a>,
       <a href="http://www.ncbi.nlm.nih.gov/projects/mapview/map_search.cgi?taxid=7955">NCBI</a>, <a href="http://genome.igib.res.in/">FishMap</a>
     </li>
@@ -155,7 +158,7 @@
       <a href="http://www.ensembl.org/Danio_rerio/blastview">Ensembl</a>,
       <a href="http://vega.sanger.ac.uk/Multi/blastview?species=Danio_rerio">Vega</a>,
       <a href="http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&BLAST_SPEC=OGP__7955__9557">NCBI</a>,
-      <a href="http://danio.mgh.harvard.edu/blast/blast_grp.html">MGH</a>
+      <a href="http://danio.mgh.harvard.edu/blast/blast.html">MGH</a>
     </li>
 
     <li>Find cDNAs and ESTs at

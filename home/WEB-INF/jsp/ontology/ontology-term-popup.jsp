@@ -1,33 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
-<html>
-<head>
-
-    <%-- override some of zfin.css since this will come up in an iframe --%>
-
-    <style type="text/css">
-
-
-        body {
-            font-family: arial, sans-serif;
-            background: white;
-        }
-
-        a.external {
-            background: transparent url(/images/external.png) no-repeat scroll right center;
-            padding-right: 13px;
-        }
-
-        a.xpatanat-close_link {
-            color: #333333;
-            font-family: sans-serif;
-            font-weight: bold;
-            text-decoration: none;
-            font-size: large;
-        }
-    </style>
-</head>
 
 <div class="popup-body phenotype-popup-body">
 
@@ -97,26 +70,26 @@
     <p>
 
     <div class="summary">
-        <span class="summaryTitle">Relationships<a class='popup-link info-popup-link' href='/action/ontology/note/ontology-relationship'></a></span>
+        <span class="summaryTitle">Relationships<a class='popup-link info-popup-link'
+                                                   href='/action/ontology/note/ontology-relationship'></a></span>
         <table class="summary horizontal-solidblock">
             <c:forEach var="relationshipPresentation" items="${termRelationships}">
-                <tr id="${fn:replace(relationshipPresentation.type," ","-")}">
+                <tr id="${zfn:makeDomIdentifier(relationshipPresentation.type)}">
                     <th>
-                            <%-- keep the relationship types from wrapping --%>
-                            ${fn:replace(relationshipPresentation.type," ","&nbsp;")}:
+                            ${relationshipPresentation.type}:
                     </th>
                     <td>
                         <c:forEach var="term" items="${relationshipPresentation.items}">
-                            <%--<span class="related-ontology-term" id="${term.termName}"><zfin:link
-                                    entity="${term}"/></span>--%>
                             <c:choose>
                                 <c:when test="${hasAddToSearchButton}">
-                            <span class="related-ontology-term" id="${term.termName}"><a
-                                    href="/action/ontology/term-detail-popup-button?termID=${term.zdbID}">${term.termName}</a></span>
+                                    <span class="related-ontology-term" id="${term.termName}">
+                                        <a href="/action/ontology/term-detail-popup-button?termID=${term.zdbID}">${term.termName}</a>
+                                    </span>
                                 </c:when>
                                 <c:otherwise>
-                            <span class="related-ontology-term" id="${term.termName}"><a
-                                    href="/action/ontology/term-detail-popup?termID=${term.zdbID}">${term.termName}</a></span>
+                                    <span class="related-ontology-term" id="${term.termName}">
+                                        <a href="/action/ontology/term-detail-popup?termID=${term.zdbID}">${term.termName}</a>
+                                    </span>
                                 </c:otherwise>
                             </c:choose>
                         </c:forEach>
@@ -130,4 +103,3 @@
         <a href="/action/ontology/term-detail/${term.zdbID}" target="_blank">Show Anatomy Details</a>
     </c:if>
 </div>
-</html>

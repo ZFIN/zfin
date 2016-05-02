@@ -106,16 +106,6 @@
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/servlet-context-info.jsp"/>
     </definition>
 
-    <definition name="user-request-tracking.page" extends="dev_layout">
-        <put-attribute name="staticTitle" value="User Request Tracking"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/user-request-tracking.jsp"/>
-    </definition>
-
-    <definition name="single-user-request-tracking.page" extends="dev_layout">
-        <put-attribute name="staticTitle" value="Single User Request Tracking"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/view-single-user-request.jsp"/>
-    </definition>
-
     <definition name="hibernate-statistics-view.page" extends="dev_layout">
         <put-attribute name="staticTitle" value="Hibernate Statistics"/>
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/hibernate-statistics-view.jsp"/>
@@ -278,7 +268,7 @@
     <definition name="no-error.page" template="/WEB-INF/jsp/dev-tools/no-error-page.jsp"/>
 
     <definition name="unload/*.page" extends="main_layout">
-        <put-attribute name="staticTitle" value="Download Archive: "/>
+        <put-attribute name="staticTitle" value="Downloads Archive: "/>
         <put-attribute name="body" value="/WEB-INF/jsp/unload/{1}.jsp"/>
     </definition>
 

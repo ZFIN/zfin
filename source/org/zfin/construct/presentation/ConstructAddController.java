@@ -140,9 +140,6 @@ public class ConstructAddController {
 
                 String constructZdbID = newConstruct.getZdbID();
 
-                //ir.insertUpdatesTable(latestConstruct, "new " + newConstruct.getConstructType().getName(), "");
-
-
 
                 if (!StringUtils.isEmpty(constructComments)) {
                     newConstruct.setPublicComments(constructComments);

@@ -2,14 +2,26 @@ package org.zfin.ontology;
 
 import org.zfin.sequence.ForeignDB;
 
+import javax.persistence.*;
+
 /**
  * Term definition reference.
  */
+@Entity
+@Table(name = "external_reference")
 public class TermDefinitionReference {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "exref_pk_id")
     private long ID;
-    private Term term;
+    @ManyToOne
+    @JoinColumn(name = "exref_data_zdb_id")
+    private GenericTerm term;
+    @ManyToOne
+    @JoinColumn(name = "exref_foreign_db_id")
     private ForeignDB foreignDB;
+    @Column(name = "exref_reference")
     private String reference;
 
     public long getID() {
@@ -36,11 +48,11 @@ public class TermDefinitionReference {
         this.reference = reference;
     }
 
-    public Term getTerm() {
+    public GenericTerm getTerm() {
         return term;
     }
 
-    public void setTerm(Term term) {
+    public void setTerm(GenericTerm term) {
         this.term = term;
     }
 }

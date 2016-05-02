@@ -5,14 +5,12 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Image;
-import org.zfin.gwt.root.dto.FeatureDTO;
-import org.zfin.gwt.root.dto.GenotypeDTO;
-import org.zfin.gwt.root.dto.GenotypeFeatureDTO;
-import org.zfin.gwt.root.dto.ZygosityDTO;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
-import org.zfin.gwt.root.util.DeleteImage;
+import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.DeleteLink;
 
 import java.util.ArrayList;
@@ -25,7 +23,6 @@ public class GenotypeConstructionPresenter implements Presenter {
 
     private CurationDiseaseRPCAsync diseaseRpcService = CurationDiseaseRPC.App.getInstance();
     private CurationExperimentRPCAsync curationExperimentRpcService = CurationExperimentRPC.App.getInstance();
-    private final HandlerManager eventBus;
     private GenotypeConstruction view;
     private String publicationID;
 
@@ -33,8 +30,7 @@ public class GenotypeConstructionPresenter implements Presenter {
     private List<ZygosityDTO> zygosityList = new ArrayList<>();
     private List<GenotypeDTO> backgroundGenoList = new ArrayList<>();
 
-    public GenotypeConstructionPresenter(HandlerManager eventBus, GenotypeConstruction view, String publicationID) {
-        this.eventBus = eventBus;
+    public GenotypeConstructionPresenter(GenotypeConstruction view, String publicationID) {
         this.view = view;
         this.view.setPresenter(this);
         this.publicationID = publicationID;
@@ -69,8 +65,8 @@ public class GenotypeConstructionPresenter implements Presenter {
         });
     }
 
-    protected void addRemoveGenotypeFeatureClickHandler(DeleteImage image, GenotypeFeatureDTO genotypeFeatureDTO) {
-        image.addClickHandler(new RemoveGenotypeFeature(genotypeFeatureDTO));
+    protected void addRemoveGenotypeFeatureClickHandler(Anchor deleteAnchor, GenotypeFeatureDTO genotypeFeatureDTO) {
+        deleteAnchor.addClickHandler(new RemoveGenotypeFeature(genotypeFeatureDTO));
     }
 
     private RetrieveRelatedEntityDTOListCallBack<GenotypeDTO> retrieveBackgroundNewGenoCallback;
@@ -101,6 +97,7 @@ public class GenotypeConstructionPresenter implements Presenter {
 
     private void resetError() {
         view.getErrorLabel().setError("");
+        view.setMessage("");
     }
 
     public void resetGUI() {
@@ -185,6 +182,20 @@ public class GenotypeConstructionPresenter implements Presenter {
         resetError();
     }
 
+    public void on1UUClick() {
+        view.getZygosityListBox().setSelectedIndex(1);
+        view.getZygosityMaternalListBox().setSelectedIndex(3);
+        view.getZygosityPaternalListBox().setSelectedIndex(3);
+        resetError();
+    }
+
+    public void on22UClick() {
+        view.getZygosityListBox().setSelectedIndex(0);
+        view.getZygosityMaternalListBox().setSelectedIndex(0);
+        view.getZygosityPaternalListBox().setSelectedIndex(3);
+        resetError();
+    }
+
     public void addDeleteGenotypeBackgroundClickHandler(DeleteLink deleteLink, final GenotypeDTO genotypeDTO) {
         deleteLink.addClickHandler(new ClickHandler() {
             @Override
@@ -214,19 +225,20 @@ public class GenotypeConstructionPresenter implements Presenter {
         }
     }
 
-    class CreateGenotypeCallBack extends ZfinAsyncCallback<GenotypeDTO> {
+    class CreateGenotypeCallBack extends ZfinAsyncCallback<GenotypeCreationReportDTO> {
 
         public CreateGenotypeCallBack(String errorMessage, ErrorHandler errorLabel, Image loadingImg) {
             super(errorMessage, errorLabel, loadingImg);
         }
 
         @Override
-        public void onSuccess(GenotypeDTO genotypeDTO) {
+        public void onSuccess(GenotypeCreationReportDTO report) {
+            GenotypeDTO genotypeDTO = report.getGenotypeDTO();
             resetNewGenotypeUI();
             view.getLoadingImage().setVisible(false);
-            errorHandler.setError("Created new Genotype: " + genotypeDTO.getHandle());
+            view.setMessage(report.getReportMessage());
             resetGUI();
-            eventBus.fireEvent(new AddNewGenotypeEvent());
+            AppUtils.EVENT_BUS.fireEvent(new AddNewGenotypeEvent());
         }
     }
 

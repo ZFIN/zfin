@@ -3,17 +3,18 @@
 <project name="load ontology" default="load-ontology" basedir=".">
 
     <property name="anatomyOboURL"
-              value="http://berkeleybop.org/ontologies/obo-all/zebrafish_anatomy/zebrafish_anatomy.obo"/>
+              value="http://purl.obolibrary.org/obo/zfa.obo"/>
     <property name="qualityOboURL"
               value="http://purl.obolibrary.org/obo/pato.obo"/>
     <property name="geneOboURL" value="http://purl.obolibrary.org/obo/go.obo"/>
     <property name="diseaseOboURL" value="http://www.berkeleybop.org/ontologies/doid.obo"/>
-    <property name="mpathOboURL" value="http://obo.cvs.sourceforge.net/viewvc/obo/obo/ontology/phenotype/mouse_pathology/mouse_pathology.obo"/>
+    <property name="mpathOboURL" value="https://raw.githubusercontent.com/PaulNSchofield/mpath/master/mpath.obo"/>
     <property name="sequenceOboURL" value="http://www.berkeleybop.org/ontologies/obo-all/sequence/sequence.obo"/>
     <property name="spatialOboURL"
               value="http://purl.obolibrary.org/obo/bspo.obo"/>
     <property name="chebiOboURL" value="http://www.berkeleybop.org/ontologies/chebi.obo"/>
     <property name="zecoOboURL" value="http://swirl.zfin.org/zeco.obo"/>
+    <property name="soOboURL" value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/so-xp-simple.obo"/>
     <property name="root.dir" value="${basedir}/../../../"/>
     <property name="web.dir" value="${root.dir}/home"/>
     <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
@@ -21,6 +22,7 @@
     <property name="lib" value="${root.dir}/lib/Java"/>
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="log.dir" value="${basedir}/logs"/>
+    <property name="jvm.args" value="-XX:-UseSplitVerifier"/>
 
     <property environment="env"/>
 
@@ -79,6 +81,11 @@
         <load-ontology oboDirectory="${run-directory}" oboFileName="zeco.obo" />
     </target>
 
+
+    <target name="load-so-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="so-xp-simple.obo" />
+    </target>
+
     <target name="load-gene-ontology" depends="init">
         <load-ontology oboDirectory="${run-directory}" oboFileName="gene-ontology.obo" />
     </target>
@@ -113,6 +120,12 @@
         <antcall target="download-ontology"/>
     </target>
 
+ <target name="download-so-ontology">
+        <property name="localOboFile" value="so-xp-simple.obo"/>
+        <property name="oboFileURL" value="${soOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
     <target name="download-disease-ontology">
         <property name="localOboFile" value="disease-ontology.obo"/>
         <property name="oboFileURL" value="${diseaseOboURL}"/>
@@ -136,6 +149,8 @@
     </target>
 
     <target name="load-zeco" depends="download-zeco-ontology,load-zeco-ontology"/>
+
+    <target name="load-so" depends="download-so-ontology,load-so-ontology"/>
 
     <target name="load-quality" depends="download-quality-ontology,load-quality-ontology"/>
 
@@ -181,7 +196,7 @@
             <echo>OBO dir : @{oboFileName}</echo>
             <echo>OBO file: @{oboDirectory}</echo>
             <antcall target="clear-output-directory"/>
-            <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="2024m"
+            <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="no" maxmemory="2024m"
                   failonerror="true">
                 <classpath refid="classpath"/>
                 <arg value="-localOboFileName"/>
@@ -196,7 +211,7 @@
                 <arg value="${basedir}"/>
                 <arg value="-jobName"/>
                 <arg value="${JobName}"/>
-               <!-- <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5555"/>-->
+                <jvmarg value="${jvm.args}"/>
             </java>
         </sequential>
     </macrodef>
@@ -226,7 +241,7 @@
             <arg value="${basedir}"/>
             <arg value="-jobName"/>
             <arg value="${JobName}"/>
-
+            <jvmarg value="${jvm.args}"/>
         </java>
 
     </target>
@@ -242,7 +257,7 @@
             <arg value="term-stage-updates.txt"/>
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
-
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -255,7 +270,7 @@
             <arg value="expression-result-update.txt"/>
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
-
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -267,6 +282,7 @@
             <arg value="anatomy.obo"/>
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
 
     </target>
@@ -288,6 +304,7 @@
                 <arg value="@{db-query-file}"/>
                 <arg value="${basedir}"/>
                 <arg value="${basedir}/../../../home/"/>
+                <jvmarg value="${jvm.args}"/>
             </java>
         </sequential>
     </macrodef>
@@ -304,6 +321,7 @@
             <arg value="${run-directory}/${localOboFile}"/>
             <arg value="-oboFileURL"/>
             <arg value="${oboFileURL}"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
 
     </target>
@@ -335,6 +353,7 @@
             download-sequence-ontology
             download-chebi-ontology
             download-zeco-ontology
+	    download-so-ontology
 
             load-zeco-ontology
             load-chebi-ontology
@@ -344,8 +363,10 @@
             load-spatial-ontology
             load-mpath-ontology
             load-sequence-ontology
+	    load-so-ontology
 
             load-zeco
+	    load-so
             load-chebi
             load-quality
             load-gene

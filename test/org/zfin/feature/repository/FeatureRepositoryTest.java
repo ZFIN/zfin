@@ -10,6 +10,7 @@ import org.zfin.TestConfiguration;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.feature.FeaturePrefix;
+import org.zfin.feature.FeatureTranscriptMutationDetail;
 import org.zfin.feature.presentation.FeatureLabEntry;
 import org.zfin.feature.presentation.FeaturePrefixLight;
 import org.zfin.framework.HibernateUtil;
@@ -23,8 +24,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
@@ -360,6 +359,15 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         Feature feature = featureRepository.getFeatureByID("ZDB-ALT-050617-64");
         List<Marker> markerSet = featureRepository.getMarkerIsAlleleOf(feature);
         Assert.assertNotNull(markerSet);
+    }
+
+    @Test
+    public void getDnaProteinMutationDetail() {
+        Feature feature = featureRepository.getFeatureByID("ZDB-ALT-100412-3");
+        for (FeatureTranscriptMutationDetail detail : feature.getFeatureTranscriptMutationDetailSet()) {
+            System.out.println(detail.getTranscriptConsequence().getDisplayName());
+        }
+        Assert.assertNotNull(feature);
     }
 
     @Test

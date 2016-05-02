@@ -6,9 +6,9 @@
     <title>
         Ontology Loader
     </title>
-    <link rel="stylesheet" type="text/css" href="http://zfin.org/css/datapage.css" />
-    <link rel="stylesheet" type="text/css" href="http://zfin.org/css/searchresults.css" />
-    <link rel="stylesheet" type="text/css" href="http://zfin.org/css/summary.css" />
+    <link rel="stylesheet" type="text/css" href="/css/datapage.css" />
+    <link rel="stylesheet" type="text/css" href="/css/searchresults.css" />
+    <link rel="stylesheet" type="text/css" href="/css/summary.css" />
 
     <style type="text/css">
         .section-title {

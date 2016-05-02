@@ -30,6 +30,7 @@
 <!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	pkalita\@zfin.org
 <!--|GO_EMAIL_ERR|-->	pkalita\@zfin.org
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/dizzy/home/WEB-INF/lib*:/opt/zfin/source_roots/dizzy/lib/Java/*:/opt/zfin/www_homes/dizzy/home/WEB-INF/classes:/private/apps/tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
@@ -62,7 +63,7 @@
 <!--|SECURE_HTTP|-->	https://
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
-<!--|SITE_BACKGROUND|-->	#DDEEAA
+<!--|SITE_BACKGROUND|-->	#F9DB2C url(data:image/png;base64\,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAANklEQVQYV2NkYGDwYcAEW6DicJoRi0IMRSA12BSCzKfMRJAJIHcim4LhapjVeBWBdIEUDnYTAePEGKMo1xuVAAAAAElFTkSuQmCC)
 <!--|SOURCEROOT|-->	/opt/zfin/source_roots/dizzy
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	cuboid.zfin.org

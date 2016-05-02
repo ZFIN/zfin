@@ -55,7 +55,7 @@
       <li><a href="/action/ontology/search"
                     title="Search anatomy, gene and disease ontology"><strong>Anatomy / GO / Human Disease</strong></a></li>
       <ul>
-        <li><a href="/zf_info/anatomy/dict/sum.html" title="Atlases, anatomical resources and ontology">Anatomy Atlases and Resources</a></li>
+        <li><a href="https://<!--|WIKI_HOST|-->/display/general/Anatomy+Atlases+and+Resources" title="Atlases, anatomical resources and ontology">Anatomy Atlases and Resources</a></li>
       </ul>
   </ul>
    
@@ -129,7 +129,7 @@
     <li>Data
       <ul>
         <?MICOMMENT> **Back in 1070 release case 13058<?/MICOMMENT>
-          <li><a href="downloads" title="Download bulk data files generated from the ZFIN database" >Download</a>
+          <li><a href="downloads" title="Download bulk data files generated from the ZFIN database" >Downloads</a>
         <li><a href="<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/display/general/ZFIN+Data+Submissions" title="Submit data directly to the ZFIN database using Phenote">Submit</a>
         <li><a href="/zf_info/zfin_stats.html" title="Annual summary of ZFIN data content">Statistics</a>
 	<li><a href="/schemaSpy/index.html" title="Browse ZFIN database schema">Data Model</a>

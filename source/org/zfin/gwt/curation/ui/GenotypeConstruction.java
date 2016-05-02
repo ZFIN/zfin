@@ -13,7 +13,6 @@ import org.zfin.gwt.root.dto.GenotypeFeatureDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
 import org.zfin.gwt.root.ui.ZfinFlexTable;
-import org.zfin.gwt.root.util.DeleteImage;
 import org.zfin.gwt.root.util.DeleteLink;
 import org.zfin.gwt.root.util.ShowHideWidget;
 
@@ -25,6 +24,11 @@ import java.util.List;
 public class GenotypeConstruction extends Composite {
 
     private static MyUiBinder binder = GWT.create(MyUiBinder.class);
+
+    public void setMessage(String reportMessage) {
+        messageLabel.setText(reportMessage);
+        messageLabel.setStyleName("phenotype-normal");
+    }
 
 
     @UiTemplate("GenotypeConstruction.ui.xml")
@@ -66,6 +70,12 @@ public class GenotypeConstruction extends Composite {
     Button addBackgroundGenotype;
     @UiField
     HorizontalPanel backgroundGenotypePanel;
+    @UiField
+    Button button1UU;
+    @UiField
+    Button button22U;
+    @UiField
+    Label messageLabel;
 
     public GenotypeConstruction() {
         initWidget(binder.createAndBindUi(this));
@@ -117,9 +127,23 @@ public class GenotypeConstruction extends Composite {
         presenter.on211Click();
     }
 
+    @UiHandler("button1UU")
+    void on1UUButtonClick(@SuppressWarnings("unused") ClickEvent event) {
+        presenter.on1UUClick();
+    }
+
+    @UiHandler("button22U")
+    void on22UButtonClick(@SuppressWarnings("unused") ClickEvent event) {
+        presenter.on22UClick();
+    }
+
     @UiHandler("addBackgroundGenotype")
     void onAddGenotypeBackgroundClick(@SuppressWarnings("unused") ClickEvent event) {
         presenter.onBackgroundClick();
+    }
+
+    public void resetGUI() {
+        errorLabel.clearAllErrors();
     }
 
     private void initGenotypeConstructionTableHeader() {
@@ -169,7 +193,7 @@ public class GenotypeConstruction extends Composite {
             genotypeConstructionTable.setWidget(rowIndex, col++, getHtml(genotypeFeature.getZygosity()));
             genotypeConstructionTable.setWidget(rowIndex, col++, getHtml(genotypeFeature.getMaternalZygosity()));
             genotypeConstructionTable.setWidget(rowIndex, col++, getHtml(genotypeFeature.getPaternalZygosity()));
-            DeleteImage delete = new DeleteImage("Remove Genotype Feature");
+            Anchor delete = new Anchor(" (X)");
             presenter.addRemoveGenotypeFeatureClickHandler(delete, genotypeFeature);
             genotypeConstructionTable.setWidget(rowIndex, col, delete);
             groupIndex = genotypeConstructionTable.setRowStyle(rowIndex++, null, genotypeFeature.getZdbID(), groupIndex);

@@ -13,13 +13,16 @@ import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.*;
 import org.zfin.ontology.repository.OntologyRepository;
+import org.zfin.orthology.NcbiOrthoExternalReference;
+import org.zfin.orthology.NcbiOtherSpeciesGene;
+import org.zfin.orthology.repository.OrthologyRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.service.SequenceService;
 
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
-import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 /**
  * This service provides a bridge between the OntologyRepository and business logic.
@@ -30,25 +33,26 @@ public class OntologyService {
 
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
     private static MarkerRepository mR = RepositoryFactory.getMarkerRepository();
+    private static OrthologyRepository oR = RepositoryFactory.getOrthologyRepository();
 
     /**
      * Get the parent term that has the start stage and return
      *
      * @return stage
      */
-    public static DevelopmentStage getStartStageForTerm(Term term) {
+    public static DevelopmentStage getStartStageForTerm(GenericTerm term) {
         return getStageForRelationshipType(term, RelationshipType.START_STAGE);
     }
 
     /**
      * Get the parent term that has the end stage and return
      */
-    public static DevelopmentStage getEndStageForTerm(Term term) {
+    public static DevelopmentStage getEndStageForTerm(GenericTerm term) {
         return getStageForRelationshipType(term, RelationshipType.END_STAGE);
     }
 
-    public static DevelopmentStage getStageForRelationshipType(Term term, RelationshipType relationshipType) {
-        for (TermRelationship parentTerm : term.getParentTermRelationships()) {
+    public static DevelopmentStage getStageForRelationshipType(GenericTerm term, RelationshipType relationshipType) {
+        for (GenericTermRelationship parentTerm : term.getParentTermRelationships()) {
             if (parentTerm.getRelationshipType().equals(relationshipType)) {
                 return ontologyRepository.getDevelopmentStageFromTerm(parentTerm.getTermOne());
             }
@@ -60,8 +64,9 @@ public class OntologyService {
         List<RelationshipPresentation> list = getRelatedTerms(term);
         List<RelationshipPresentation> newList = new ArrayList<>(list.size());
         for (RelationshipPresentation presentation : list) {
-            if (!presentation.getType().equalsIgnoreCase("start stage") && !presentation.getType().equalsIgnoreCase("end stage"))
+            if (!presentation.getType().equalsIgnoreCase("start stage") && !presentation.getType().equalsIgnoreCase("end stage")) {
                 newList.add(presentation);
+            }
         }
         return newList;
     }
@@ -69,12 +74,13 @@ public class OntologyService {
     public static List<RelationshipPresentation> getRelatedTerms(GenericTerm term) {
         logger.debug("get related terms for " + term.getTermName());
         Map<String, RelationshipPresentation> types = new HashMap<>(5);
-        List<TermRelationship> relatedItems = term.getAllDirectlyRelatedTerms();
+        List<GenericTermRelationship> relatedItems = term.getAllDirectlyRelatedTerms();
         if (relatedItems != null) {
             for (TermRelationship rel : relatedItems) {
                 String displayName;
-                if (rel.getTermTwo() == null)
+                if (rel.getTermTwo() == null) {
                     logger.error("No term two found for: " + rel.getZdbId());
+                }
                 if (rel.getTermTwo().equals(term)) {
                     displayName = RelationshipDisplayNames.getRelationshipName(rel.getType(), true);
                 } else {
@@ -107,23 +113,26 @@ public class OntologyService {
      * @return map
      */
     public static Map<OntologyDTO, Integer> getHistogramOfTerms(List<TermDTO> terms) {
-        if (terms == null)
+        if (terms == null) {
             return null;
+        }
         Map<OntologyDTO, Integer> map = new HashMap<>(5);
         for (TermDTO term : terms) {
             Integer count = map.get(term.getOntology());
-            if (count == null)
+            if (count == null) {
                 map.put(term.getOntology(), 0);
+            }
             map.put(term.getOntology(), map.get(term.getOntology()) + 1);
         }
         return map;
     }
 
     public static int getNumberOfDiseaseGenes(GenericTerm term) {
-        for (TermExternalReference xRef : term.getExternalReferences())
+        for (TermExternalReference xRef : term.getExternalReferences()) {
             if (xRef.getOmimPhenotypes() != null) {
                 return xRef.getOmimPhenotypes().size();
             }
+        }
         return 0;
 
 
@@ -133,8 +142,9 @@ public class OntologyService {
     public static List<OmimPhenotypeDisplay> getOmimPhenotypeForTerm(GenericTerm term) {
         SequenceService sequenceService = new SequenceService();
 
-        if (term == null)
+        if (term == null) {
             return null;
+        }
         Map<String, OmimPhenotypeDisplay> map = new HashMap<>();
         Set<TermExternalReference> termXRef = term.getExternalReferences();
         ArrayList<String> hA = new ArrayList<>();
@@ -143,39 +153,51 @@ public class OntologyService {
 
             for (OmimPhenotype omimResult : omimResults) {
                 // form the key
+                if (omimResult.getOrtholog().getOrganism().getCommonName().startsWith("Hu")) {
+                    String key = omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation() + omimResult.getName();
 
-                String key = omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation() + omimResult.getName();
 
-                OmimPhenotypeDisplay omimDisplay;
+                    OmimPhenotypeDisplay omimDisplay;
 
-                // if the key is not in the map, instantiate a display (OmimPhenotypeDisplay) object and add it to the map
-                // otherwise, just get the display object from the map
-                if (!map.containsKey(key)) {
-                    omimDisplay = new OmimPhenotypeDisplay();
-                    map.put(key, omimDisplay);
-                } else {
-                    omimDisplay = map.get(key);
+                    // if the key is not in the map, instantiate a display (OmimPhenotypeDisplay) object and add it to the map
+                    // otherwise, just get the display object from the map
+                    if (!map.containsKey(key)) {
+                        omimDisplay = new OmimPhenotypeDisplay();
+                        map.put(key, omimDisplay);
+                    } else {
+                        omimDisplay = map.get(key);
+                    }
+                    omimDisplay.setOrthology(omimResult.getOrtholog());
+                    //  omimDisplay.setHumanAccession(getSequenceRepository().getDBLinkByData(omimResult.getOrtholog().getZdbID(), sequenceService.getOMIMHumanOrtholog()));
+                    NcbiOtherSpeciesGene ncbiOtherGene = omimResult.getOrtholog().getNcbiOtherSpeciesGene();
+                    Set<NcbiOrthoExternalReference> ncbiExternalReferenceList = ncbiOtherGene.getNcbiExternalReferenceList();
+                    List<String> accessions = new ArrayList();
+                    for (NcbiOrthoExternalReference othrRef : ncbiExternalReferenceList) {
+                        if (othrRef.getReferenceDatabase().getForeignDB().getDbName() == ForeignDB.AvailableName.OMIM) {
+                            accessions.add(othrRef.getAccessionNumber());
+                        }
+                    }
+                    omimDisplay.setOmimAccession(accessions.get(0));
+                    omimDisplay.setName(omimResult.getName());
+                    omimDisplay.setOmimNum(omimResult.getOmimNum());
+                    omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation()));
+                    if (omimResult.getOrtholog() != null) {
+
+                        hA.add(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation());
+                        omimDisplay.setHumanGene(hA);
+                    }
                 }
-                omimDisplay.setOrthology(omimResult.getOrtholog());
-                omimDisplay.setHumanAccession(getSequenceRepository().getDBLinkByData(omimResult.getOrtholog().getZdbID(), sequenceService.getOMIMHumanOrtholog()));
-                omimDisplay.setName(omimResult.getName());
-                omimDisplay.setOmimNum(omimResult.getOmimNum());
-                omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation()));
-                if (omimResult.getOrtholog() != null) {
-
-                    hA.add(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation());
-                    omimDisplay.setHumanGene(hA);
-                }
-
-
             }
+
         }
+
 
         // use SortedSet to hold the values of the map so that the data could be displayed in order
         List<OmimPhenotypeDisplay> omimDisplays = new ArrayList<>();
 
-        if (map.values().size() > 0)
+        if (map.values().size() > 0) {
             omimDisplays.addAll(map.values());
+        }
         ////ToDo
         Collections.sort(omimDisplays, new OmimPhenotypeDisplayComparator());
 
@@ -184,35 +206,42 @@ public class OntologyService {
     }
 
     public static List<FishModelDisplay> getDiseaseModelsWithFishModel(GenericTerm disease) {
-        return getDiseaseModels(disease, true);
-    }
-
-    public static List<FishModelDisplay> getDiseaseModels(GenericTerm disease) {
-        return getDiseaseModels(disease, false);
-    }
-
-    public static List<FishModelDisplay> getDiseaseModels(GenericTerm disease, boolean fishModelRequired) {
-      //  List<DiseaseAnnotation> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease);
-        List<DiseaseAnnotationModel> modelList=getPhenotypeRepository().getHumanDiseaseModels(disease);;
-        if (CollectionUtils.isEmpty(modelList))
+        List<DiseaseAnnotationModel> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease);
+        if (CollectionUtils.isEmpty(modelList)) {
             return null;
+        }
         Map<FishExperiment, FishModelDisplay> map = new HashMap<>();
         for (DiseaseAnnotationModel model : modelList) {
             // ignore disease models without fish models
-            if(model ==null)
+            if (model == null) {
                 continue;
+            }
 
             FishModelDisplay display = new FishModelDisplay(model.getFishExperiment());
             display.addPublication(model.getDiseaseAnnotation().getPublication());
+
             FishModelDisplay mapModel = map.get(model.getFishExperiment());
-            if (mapModel == null)
+            if (mapModel == null) {
                 map.put(model.getFishExperiment(), display);
-            else
+            } else {
                 mapModel.addPublication(model.getDiseaseAnnotation().getPublication());
+            }
         }
         List<FishModelDisplay> displayList = new ArrayList<>(map.values());
         Collections.sort(displayList);
         return displayList;
+    }
+
+
+    public static String getDisplayName(GenericTerm superterm, GenericTerm subterm) {
+        StringBuilder builder = new StringBuilder();
+        if (superterm != null)
+            builder.append(superterm.getTermName());
+        if (subterm != null) {
+            builder.append(" : ");
+            builder.append(subterm.getTermName());
+        }
+        return builder.toString();
     }
 }
 

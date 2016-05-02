@@ -15,6 +15,7 @@ public class RelatedEntityDTO implements IsSerializable, HasLink, Comparable , S
     protected String zdbID ;  // the primary key of this object
     protected String dataZdbID; // the attached value
     protected String publicationZdbID;
+    protected PublicationDTO publication;
     protected List<PublicationDTO> associatedPublications;
 
     // display
@@ -75,6 +76,14 @@ public class RelatedEntityDTO implements IsSerializable, HasLink, Comparable , S
 
     public void setDataZdbID(String dataZdbID) {
         this.dataZdbID = dataZdbID;
+    }
+
+    public PublicationDTO getPublication() {
+        return publication;
+    }
+
+    public void setPublication(PublicationDTO publication) {
+        this.publication = publication;
     }
 
     public RelatedEntityDTO create(String dataZdbID,String name,String publicationZdbID) {

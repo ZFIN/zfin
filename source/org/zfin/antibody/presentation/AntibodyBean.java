@@ -5,8 +5,6 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.AnatomyLabel;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyService;
-import org.zfin.audit.AuditLogItem;
-import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.expression.ExpressionSummaryCriteria;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.MarkerRelationship;
@@ -15,7 +13,6 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationListBean;
-import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
@@ -191,11 +188,7 @@ public class AntibodyBean extends PublicationListBean {
         SortedSet<ExternalNote> notes = getNotesSortedByPubTime();
         if (notes != null && !notes.isEmpty()) {
             for (ExternalNote note : notes) {
-                Set<PublicationAttribution> notePubs = note.getPubAttributions();
-                if (notePubs != null && !notePubs.isEmpty()) {
-                    for (PublicationAttribution pubAttr : notePubs)
-                        publications.add(pubAttr.getPublication());
-                }
+                publications.add(note.getPublication());
             }
         }
 

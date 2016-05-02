@@ -1,0 +1,190 @@
+package org.zfin.gwt.curation.ui;
+
+import org.zfin.gwt.root.dto.FeatureDTO;
+import org.zfin.gwt.root.ui.FeatureEditCallBack;
+
+import java.util.List;
+
+public class FeatureEditPresenter extends AbstractFeaturePresenter {
+
+    private FeatureEditView view;
+    private FeatureNotesPresenter featureNotesPresenter;
+
+    public FeatureEditPresenter(FeatureEditView view, String publicationID) {
+        super(view, publicationID);
+        if (publicationID == null)
+            throw new RuntimeException("NO pub ID found");
+        this.view = view;
+        dto = new FeatureDTO();
+        dto.setPublicationZdbID(publicationID);
+        featureNotesPresenter = new FeatureNotesPresenter(publicationID, view.featureNotesView);
+        view.featureNotesView.setPresenter(featureNotesPresenter);
+    }
+
+    public void go() {
+        super.go();
+        loadFeaturesForPub();
+        featureNotesPresenter.go();
+    }
+
+    public void loadFeaturesForPub() {
+        FeatureRPCService.App.getInstance().getFeaturesForPub(publicationID,
+                new FeatureEditCallBack<List<FeatureDTO>>("Failed to find features for pub: " + publicationID, this) {
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        super.onFailure(throwable);
+                        view.featureEditList.setEnabled(true);
+                    }
+
+                    @Override
+                    public void onSuccess(List<FeatureDTO> results) {
+                        if (results == null || results.size() == 0) {
+                            view.showHideToggle.setVisibility(false);
+                            return;
+                        }
+                        view.featureEditList.clear();
+                        view.featureEditList.addItem("");
+                        for (FeatureDTO dto : results) {
+                            if (view.featureEditList.setIndexForValue(dto.getZdbID()) < 0) {
+                                view.featureEditList.addItem(dto.getName(), dto.getZdbID());
+                            }
+                        }
+
+                        view.featureEditList.setIndexForValue(dto.getZdbID());
+                        view.featureEditList.setEnabled(true);
+                        view.featureAliasList.setDTO(dto);
+                        view.featureSequenceList.setDTO(dto);
+                        revertGUI();
+                        view.onChangeFeatureType();
+                    }
+                });
+    }
+
+
+    public void onFeatureSelectionChange(String featureID) {
+        FeatureRPCService.App.getInstance().getFeature(featureID, new FeatureEditCallBack<FeatureDTO>("Failed to remove attribution: ", this) {
+            public void onSuccess(FeatureDTO featureDTO) {
+                featureDTO.setPublicationZdbID(publicationID);
+                dto = featureDTO;
+                loadFeaturesForPub();
+                view.removeFeatureLink.setUrl("/action/infrastructure/deleteRecord/" + dto.getZdbID());
+                view.removeFeatureLink.setTitle("Delete Feature " + dto.getZdbID());
+            }
+        });
+
+    }
+
+
+    public void handleDirty() {
+        view.featureDisplayName.setText(FeatureValidationService.generateFeatureDisplayName(createDTOFromGUI()));
+        boolean isDirty = isDirty();
+        view.saveButton.setEnabled(isDirty && FeatureValidationService.isFeatureSaveable(createDTOFromGUI()));
+        view.revertButton.setEnabled(isDirty);
+    }
+
+    public boolean isDirty() {
+        boolean isDirty = false;
+        // this displays most changes
+        // alias and notes are done automatically?
+        isDirty = view.featureDisplayName.isDirty(dto.getName()) || isDirty;
+        if (view.knownInsertionCheckBox.getValue() != dto.getKnownInsertionSite()) {
+            view.saveButton.setEnabled(true);
+            isDirty = true;
+        }
+        if (view.featureTypeBox.getSelected() != null && dto.getFeatureType() != null) {
+            isDirty = view.featureTypeBox.isDirty(dto.getFeatureType().name()) || isDirty;
+        } else if ((view.featureTypeBox.getSelected() == null && dto.getFeatureType() != null)
+                || (view.featureTypeBox.getSelected() != null && dto.getFeatureType() == null)
+                ) {
+            isDirty = view.featureTypeBox.setDirty(true);
+        }
+        isDirty = (view.mutageeBox.isDirty(dto.getMutagee()) || isDirty);
+        isDirty = (view.mutagenBox.isDirty(dto.getMutagen()) || isDirty);
+        isDirty = (view.labDesignationBox.isDirty(dto.getLabPrefix()) || isDirty);
+        isDirty = (view.lineNumberBox.isDirty(dto.getLineNumber()) || isDirty);
+        isDirty = (view.labOfOriginBox.isDirty(dto.getLabOfOrigin()) || isDirty);
+////        isDirty = (view.featureSequenceBox.isDirty(dto.getFeatureSequence()) || isDirty) ;
+        return isDirty;
+    }
+
+    public FeatureDTO createDTOFromGUI() {
+        FeatureDTO featureDTO = super.createDTOFromGUI();
+        // set things from actual object that are not grabbed from GUI
+        // alias and notes are already handled by the interface, i.e.
+        // are added / removed from the feature via independent Ajax call.
+        featureDTO.setZdbID(dto.getZdbID());
+        featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
+        featureDTO.setPublicNoteList(dto.getPublicNoteList());
+        featureDTO.setCuratorNotes(dto.getCuratorNotes());
+        return featureDTO;
+    }
+
+    protected void revertGUI() {
+        if (dto == null || dto.getZdbID() == null || dto.getZdbID().trim().isEmpty()) {
+            view.resetGUI();
+            featureNotesPresenter.setFeatureDTO(null);
+            featureNotesPresenter.rebuildGUI();
+            return;
+        }
+
+        view.removeFeatureLink.setVisible(true);
+        view.featureEditList.setIndexForValue(dto.getZdbID());
+        if (dto.getFeatureType() != null) {
+            view.featureTypeBox.setIndexForText(dto.getFeatureType().getDisplay());
+            updateMutagenOnFeatureTypeChange();
+        }
+        view.featureAliasList.setDTO(dto);
+        view.featureSequenceList.setDTO(dto);
+        view.lineNumberBox.setValue(dto.getLineNumber());
+        view.mutageeBox.setIndexForText(dto.getMutagee());
+        featureNotesPresenter.setFeatureDTO(dto);
+        featureNotesPresenter.rebuildGUI();
+        view.featureNameBox.setText(FeatureValidationService.getNameFromFullName(dto));
+        view.labOfOriginBox.setIndexForValue(dto.getLabOfOrigin());
+        String selectedLab = view.labOfOriginBox.getSelectedText();
+        if (selectedLab != null)
+            onLabOfOriginChange(selectedLab, dto.getLabPrefix());
+        view.knownInsertionCheckBox.setValue(dto.getKnownInsertionSite());
+        view.dominantCheckBox.setValue(dto.getDominant());
+        view.featureDisplayName.setValue(dto.getName());
+        view.featureSuffixBox.setIndexForText(dto.getTransgenicSuffix());
+
+    }
+
+
+    public void updateFeature() {
+        FeatureDTO featureDTO = createDTOFromGUI();
+
+        String errorMessage = FeatureValidationService.isValidToSave(featureDTO);
+        if (errorMessage != null) {
+            setError(errorMessage);
+            return;
+        }
+
+        featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
+        if (isDirty() && FeatureValidationService.isFeatureSaveable(featureDTO)) {
+            view.working();
+            FeatureRPCService.App.getInstance().editFeatureDTO(featureDTO,
+                    new FeatureEditCallBack<FeatureDTO>("Failed to create feature:", this) {
+
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            super.onFailure(throwable);
+                            view.notWorking();
+                        }
+
+                        @Override
+                        public void onSuccess(final FeatureDTO result) {
+                            result.setPublicationZdbID(dto.getPublicationZdbID());
+                            dto = result;
+                            view.notWorking();
+                            view.setNote("Saved Feature [" + result.getName() + "]");
+                            loadFeaturesForPub();
+                        }
+                    });
+
+        }
+
+    }
+}

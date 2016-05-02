@@ -191,9 +191,9 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         String hql = "from GenericTermRelationship termRelationship where " +
                 "          termRelationship.termOne.zdbID = :termID AND" +
                 "          termRelationship.type = :type AND " +
-                "          ((termRelationship.termTwo.start.hoursStart > :start AND termRelationship.termTwo.start.hoursStart < :end)" +
-                "        OR (termRelationship.termTwo.end.hoursEnd > :start AND termRelationship.termTwo.end.hoursEnd < :end) " +
-                "        OR (termRelationship.termTwo.start.hoursStart < :start AND termRelationship.termTwo.end.hoursEnd > :end))" +
+                "          ((termRelationship.termTwo.termStage.start.hoursStart > :start AND termRelationship.termTwo.termStage.start.hoursStart < :end)" +
+                "        OR (termRelationship.termTwo.termStage.end.hoursEnd > :start AND termRelationship.termTwo.termStage.end.hoursEnd < :end) " +
+                "        OR (termRelationship.termTwo.termStage.start.hoursStart < :start AND termRelationship.termTwo.termStage.end.hoursEnd > :end))" +
                 "        order by termRelationship.termTwo.termNameOrder ";
         Query query = session.createQuery(hql);
         query.setParameter("termID", termID);
@@ -243,7 +243,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
             AnatomyTreeInfo treeInfo = (AnatomyTreeInfo) object[1];
             stat.setTreeInfo(treeInfo);
             stats.add(stat);
-            Term item = RepositoryFactory.getOntologyRepository().getTermByOboID(stat.getTerm().getOboID());
+            GenericTerm item = RepositoryFactory.getOntologyRepository().getTermByOboID(stat.getTerm().getOboID());
             stat.setTerm(item);
         }
         return stats;

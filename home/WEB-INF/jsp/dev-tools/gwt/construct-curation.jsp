@@ -22,7 +22,6 @@
   <link rel="stylesheet" type="text/css" href="/css/footer.css">
   <link rel=stylesheet type="text/css" href="/css/searchresults.css">
   <link rel=stylesheet type="text/css" href="/css/summary.css">
-  <link rel=stylesheet type="text/css" href="/css/spiffycorners.css">
   <link rel=stylesheet type="text/css" href="/css/Lookup.css">
   <link rel=stylesheet type="text/css" href="/css/datapage.css">
   <link rel=stylesheet type="text/css" href="/css/popup.css">
@@ -38,9 +37,7 @@
   <script type="text/javascript" src="/javascript/sorttable.js"></script>
 
   <script src="/javascript/autocompletify.js"></script>
-
-
-  <script type="text/javascript" src="/javascript/typeahead.bundle.js"></script>
+  <script type="text/javascript" src="/javascript/typeahead.bundle.min.js"></script>
 
 </head>
 <%--<script type="text/javascript" language="javascript"

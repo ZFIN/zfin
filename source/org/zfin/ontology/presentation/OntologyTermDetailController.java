@@ -1,5 +1,6 @@
 package org.zfin.ontology.presentation;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +24,7 @@ import org.zfin.publication.presentation.PublicationListAdapter;
 import org.zfin.publication.presentation.PublicationListBean;
 import org.zfin.repository.RepositoryFactory;
 
+import java.net.URL;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.*;
@@ -300,7 +302,7 @@ public class OntologyTermDetailController {
 
     private boolean hasPhenotypeData(Term anatomyTerm) {
         GenericTerm term = getOntologyRepository().getTermByOboID(anatomyTerm.getOboID());
-        List<PhenotypeStatement> phenotypes = getMutantRepository().getPhenotypeWithEntity(term);
+        List<PhenotypeStatementWarehouse> phenotypes = getMutantRepository().getPhenotypeWithEntity(term);
         if (phenotypes != null && phenotypes.size() > 0) {
             return true;
         }
@@ -403,5 +405,5 @@ public class OntologyTermDetailController {
     public String getOntologyRelationshipNote() {
         return "ontology/ontology-relationship-note.insert";
     }
-
+    
 }

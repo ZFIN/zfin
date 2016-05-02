@@ -22,9 +22,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
-import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
-import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Service class that deals with Phenotype-related logic
@@ -39,7 +37,7 @@ public class PhenotypeService {
      * anatomy structure.
      *
      * @param fishExperiment Genotype Experiment
-     * @param anatomyItem        Anatomy Term
+     * @param anatomyItem    Anatomy Term
      * @return HashMap
      */
     public static Map<String, Set<String>> getPhenotypesGroupedByOntology(FishExperiment fishExperiment, GenericTerm anatomyItem) {
@@ -60,14 +58,6 @@ public class PhenotypeService {
                         Term anatomyTerm = phenoStatement.getEntity().getSuperterm();
                         keyBuilder.append(":");
                         keyBuilder.append(anatomyTerm.getTermName());
-                        ////TODO
-/*
-                    if (anatomyTerm.isCellTerm()) {
-                        keyBuilder.append(anatomyTerm.getName());
-                    } else {
-                        keyBuilder.append(ANATOMY);
-                    }
-*/
                     } else {
                         keyBuilder.append(ANATOMY);
                     }
@@ -132,38 +122,6 @@ public class PhenotypeService {
         // I have to create a distinct list myself.
         Set<PhenotypeStatement> distinctPhenoStatements = new HashSet<>(phenoStatements.size());
         for (PhenotypeStatement statement : phenoStatements) {
-            boolean recordFound = false;
-            for (PhenotypeStatement distinctStatement : distinctPhenoStatements) {
-                if (distinctStatement.equalsByPhenotype(statement)) {
-                    recordFound = true;
-                    break;
-                }
-            }
-            if (!recordFound) {
-                distinctPhenoStatements.add(statement);
-            }
-        }
-        return distinctPhenoStatements;
-    }
-
-    /**
-     * Retrieve a list of phenotype statements that contain the given term
-     * in any position (E1 or E2) in a given genotype experiment
-     *
-     * @param fish Genotype
-     * @param term     Term
-     * @return list of phenotype statements
-     */
-    public static Set<PhenotypeStatement> getPhenotypeStatements(Fish fish, GenericTerm term, boolean includSubstructures) {
-        if (fish == null) {
-            return null;
-        }
-
-        List<PhenotypeStatement> phenotypeStatementList = getMutantRepository().getPhenotypeStatement(term, fish, includSubstructures);
-        // since I do not want to change the equals() method to ignore the PK id
-        // I have to create a distinct list myself.
-        Set<PhenotypeStatement> distinctPhenoStatements = new HashSet<>(phenotypeStatementList.size());
-        for (PhenotypeStatement statement : phenotypeStatementList) {
             boolean recordFound = false;
             for (PhenotypeStatement distinctStatement : distinctPhenoStatements) {
                 if (distinctStatement.equalsByPhenotype(statement)) {
@@ -310,6 +268,24 @@ public class PhenotypeService {
         return new ArrayList<>(publicationSet);
     }
 
+    public static List<Publication> getPublicationListWithConditions(GenericTerm disease, Fish fish, String environmentCondition) {
+        List<FishModelDisplay> model = OntologyService.getDiseaseModelsWithFishModel(disease);
+        if (CollectionUtils.isEmpty(model)) {
+            return null;
+        }
+        Set<Publication> publicationSet = new HashSet<>();
+        for (FishModelDisplay display : model) {
+            if (display.getFishModel().getFish().equals(fish)) {
+                if (StringUtils.isNotEmpty(environmentCondition)) {
+                    if (display.getFishModel().getExperiment().getConditionKey().equals(environmentCondition))
+                        publicationSet.addAll(display.getPublications());
+                } else
+                    publicationSet.addAll(display.getPublications());
+            }
+        }
+        return new ArrayList<>(publicationSet);
+    }
+
     public static List<Publication> getPublicationList(GenericTerm disease, FishExperiment fishExperiment, String orderBy) {
         List<Publication> publicationList = getPublicationList(disease, fishExperiment);
         if (publicationList == null) {
@@ -351,6 +327,39 @@ public class PhenotypeService {
         if (StringUtils.isEmpty(orderBy) || orderBy.equalsIgnoreCase("date")) {
             Collections.sort(publications);
         }
+    }
+
+    public static List<Publication> getPublicationList(GenericTerm disease, Fish fish, String orderBy, String environmentCondition) {
+        List<Publication> publicationList = getPublicationListWithConditions(disease, fish, environmentCondition);
+        if (publicationList == null) {
+            return null;
+        }
+        orderPublications(publicationList, orderBy);
+        return publicationList;
+    }
+
+    public static Set<PhenotypeStatementWarehouse> getPhenotypeObserved(Fish fish, GenericTerm term, boolean includeSubstructures) {
+        if (fish == null) {
+            return null;
+        }
+
+        List<PhenotypeStatementWarehouse> phenotypeStatementList = getMutantRepository().getPhenotypeObserved(term, fish, includeSubstructures);
+        // since I do not want to change the equals() method to ignore the PK id
+        // I have to create a distinct list myself.
+        Set<PhenotypeStatementWarehouse> distinctPhenoStatements = new HashSet<>(phenotypeStatementList.size());
+        for (PhenotypeStatementWarehouse statement : phenotypeStatementList) {
+            boolean recordFound = false;
+            for (PhenotypeStatementWarehouse distinctStatement : distinctPhenoStatements) {
+                if (distinctStatement.equalsByPhenotype(statement)) {
+                    recordFound = true;
+                    break;
+                }
+            }
+            if (!recordFound) {
+                distinctPhenoStatements.add(statement);
+            }
+        }
+        return distinctPhenoStatements;
     }
 
     private static class PhenotypeComparator implements Comparator<String> {
@@ -437,22 +446,23 @@ public class PhenotypeService {
      * Create a list of phenotypeDisplay objects organized by phenotype statement first,
      * then by the associated experiment.
      */
-    public static List<PhenotypeDisplay> getPhenotypeDisplays(List<PhenotypeStatement> phenotypeStatements, String groupBy, String sortBy) {
+    public static List<PhenotypeDisplay> getPhenotypeDisplays(List<PhenotypeStatementWarehouse> phenotypeStatements, String groupBy, String sortBy) {
         if (phenotypeStatements != null && phenotypeStatements.size() > 0) {
 
             // a map of phenotypeStatement-experiment-publication-concatenated-Ids as keys and display objects as values
             Map<String, PhenotypeDisplay> phenoMap = new HashMap<>();
 
-            for (PhenotypeStatement pheno : phenotypeStatements) {
+            for (PhenotypeStatementWarehouse pheno : phenotypeStatements) {
 
-                Figure fig = pheno.getPhenotypeExperiment().getFigure();
+
+                Figure fig = pheno.getPhenotypeWarehouse().getFigure();
                 Publication pub = fig.getPublication();
 
-                FishExperiment fishExp = pheno.getPhenotypeExperiment().getFishExperiment();
+                FishExperiment fishExp = pheno.getPhenotypeWarehouse().getFishExperiment();
                 Experiment exp = fishExp.getExperiment();
 
                 String key;
-                String keyPheno = pheno.getPhenoStatementString();
+                String keyPheno = pheno.getShortName();
                 if (groupBy.equals("condition")) {
                     if (fishExp.isStandardOrGenericControl()) {
                         key = keyPheno + "standard";
@@ -462,7 +472,7 @@ public class PhenotypeService {
                         key = keyPheno + exp.getZdbID();
                     }
                 } else {
-                    key = keyPheno + pheno.getPhenotypeExperiment().getFishExperiment().getFish().getZdbID();
+                    key = keyPheno + pheno.getPhenotypeWarehouse().getFishExperiment().getFish().getZdbID();
                 }
 
                 PhenotypeDisplay phenoDisplay;
@@ -524,7 +534,7 @@ public class PhenotypeService {
             if (figures.add(figure)) {
                 figureSummaryDisplay.setFigure(figure);
                 figureSummaryDisplay.setPublication(figure.getPublication());
-                List<PhenotypeStatement> phenotypeStatements = RepositoryFactory.getPhenotypeRepository().getPhenotypeStatementsForFigureAndGenotype(figure, genotype);
+                List<PhenotypeStatementWarehouse> phenotypeStatements = RepositoryFactory.getPhenotypeRepository().getPhenotypeStatementsForFigureAndGenotype(figure, genotype);
                 figureSummaryDisplay.setPhenotypeStatementList(FishService.getDistinctPhenotypeStatements(phenotypeStatements));
                 figureSummaryDisplays.add(figureSummaryDisplay);
                 if (!figure.isImgless()) {

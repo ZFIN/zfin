@@ -27,6 +27,8 @@
                 <tr>
                     <th width="10%">Allele</th>
                     <th width="13%">Type</th>
+                    <th width="15%">Localization</th>
+                    <th width="20%">Consequence</th>
                     <th width="10%">Mutagen</th>
                     <th width="50%">Suppliers</th>
                 </tr>
@@ -38,6 +40,27 @@
                         <td>
                             ${feature.type.display}
                         </td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${!empty feature.geneLocalizationStatement}">
+                                    ${feature.geneLocalizationStatement}
+                                </c:when>
+                                <c:otherwise>
+                                    <span class="no-data-tag">Unknown</span>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${!empty feature.transcriptConsequenceStatement}">
+                                    ${feature.transcriptConsequenceStatement}
+                                </c:when>
+                                <c:otherwise>
+                                    <span class="no-data-tag">Unknown</span>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
+
                         <td>
                             <c:set var="mutagen" value="${feature.featureAssay.mutagen}"/>
                             <c:if test="${mutagen ne zfn:getMutagen('not specified')}">

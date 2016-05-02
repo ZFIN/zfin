@@ -71,7 +71,7 @@
                 ${(empty company.contactPerson.zdbID && !empty members) ? '<span style="color: red;">Please provide a contact person</span>' : '' }
 
                 <%--/ line designation--%>
-                <authz:authorize ifAnyGranted="root">
+                <authz:authorize access="hasRole('root')">
                     <br/>
                     <form:label path="prefix">Line Designation:</form:label>
                     <form:select path="prefix" items="${prefixes}"
@@ -79,7 +79,7 @@
                     </form:select>
                     <br/>
                 </authz:authorize>
-                <authz:authorize ifNotGranted="root">
+                <authz:authorize access="!hasAnyRole('root')">
                     <form:hidden path="prefix"/>
                 </authz:authorize>
 
@@ -129,7 +129,7 @@
                         ">
 --%>
 
-              <authz:authorize ifAnyGranted="root">
+              <authz:authorize access="hasRole('root')">
                  <div style="text-align: right"><a href="/action/profile/person/create?organization=${company.zdbID}">add new person</a></div>
               </authz:authorize>
             </form>
@@ -167,7 +167,7 @@
     $(document).ready(function () {
 
         $('#addMemberBox').autocompletify('/action/profile/find-member?term=%QUERY');
-        $('#addMemberBox').bind('typeahead:selected', function(obj, datum, name) {
+        $('#addMemberBox').bind('typeahead:select', function(obj, datum, name) {
             personToAddZdbID = datum.id;
         });
 

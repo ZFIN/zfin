@@ -85,6 +85,17 @@
 
             host.hide();
 
+            if (!this.options.imageUrl) {
+                return;
+            }
+
+            if (this.options.build) {
+                $('<span>')
+                    .addClass('gbrowse-source-label')
+                    .text('Genome Build: ' + this.options.build)
+                    .appendTo(target);
+            }
+
             link = $('<a>')
                 .attr('href', this.options.linkUrl)
                 .appendTo(target);
@@ -98,7 +109,9 @@
                 if (wasDisplayed) {
                     host.show();
                 }
-                success();
+                if (typeof success === 'function') {
+                    success();
+                }
             });
 
             // if the image was already loaded (e.g. due to caching), manually trigger the load event

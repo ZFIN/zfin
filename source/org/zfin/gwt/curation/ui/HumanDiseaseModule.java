@@ -2,24 +2,23 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.zfin.gwt.curation.event.AddAttributeEvent;
+import org.zfin.gwt.curation.event.AddAttributeEventHandler;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
 import org.zfin.gwt.root.ui.TermEntry;
 import org.zfin.gwt.root.ui.TermInfoComposite;
+import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +56,6 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
     @UiField
     SimpleErrorElement diseaseErrorLabel;
 
-    private final HandlerManager eventBus = new HandlerManager(null);
     private DiseaseModelPresenter diseaseModelPresenter;
 
     public HumanDiseaseModule(String publicationID) {
@@ -74,20 +72,17 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
     @UiHandler("addButton")
     void onClickAdd(@SuppressWarnings("unused") ClickEvent event) {
         TermDTO disease = termInfoBox.getCurrentTermInfoDTO();
-        eventBus.fireEvent(new AddNewDiseaseTermEvent(disease));
-        diseaseModelPresenter.clearErrorMessages();
+        AppUtils.EVENT_BUS.fireEvent(new AddNewDiseaseTermEvent(disease));
+        diseaseModelView.clearErrorMessage();
     }
 
     @Override
     public void onModuleLoad() {
         FlowPanel outer = uiBinder.createAndBindUi(this);
         RootPanel.get(HUMAN_DISEASE_ZONE).add(outer);
-
-        termEntry.getTermTextBox().setTermInfoTable(termInfoBox);
-        termEntry.setTermInfoTable(termInfoBox);
-
-        diseaseModelPresenter = new DiseaseModelPresenter(eventBus, diseaseModelView, publicationID);
-      diseaseModelPresenter.go();
+        diseaseModelPresenter = new DiseaseModelPresenter(diseaseModelView, publicationID);
+        diseaseModelPresenter.go();
+        diseaseModelView.setPresenter(diseaseModelPresenter);
 
         RelatedEntityDTO relatedEntityDTO = new RelatedEntityDTO();
         relatedEntityDTO.setPublicationZdbID(publicationID);
@@ -111,8 +106,7 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
 
             @Override
             public void fireEventSuccess() {
-                Window.alert("Kui");
-                eventBus.fireEvent(new RemoveAttributeEvent());
+
             }
 
             @Override
@@ -123,14 +117,14 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
     }
 
     private void bindEventBusHandler() {
-        eventBus.addHandler(AddNewDiseaseTermEvent.TYPE,
+        AppUtils.EVENT_BUS.addHandler(AddNewDiseaseTermEvent.TYPE,
                 new AddNewDiseaseTermHandler() {
                     @Override
                     public void onAddDiseaseTerm(AddNewDiseaseTermEvent event) {
                         diseaseModelPresenter.addDiseaseToSelectionBox(event.getDisease());
                     }
                 });
-        eventBus.addHandler(ClickTermEvent.TYPE,
+        AppUtils.EVENT_BUS.addHandler(ClickTermEvent.TYPE,
                 new ClickTermEventHandler() {
                     @Override
                     public void onClickOnTerm(ClickTermEvent event) {
@@ -138,15 +132,20 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
                         termInfoBox.reloadTermInfo(event.getTermDTO(), "termInfo");
                     }
                 });
-        eventBus.addHandler(RemoveAttributeEvent.TYPE,
+        AppUtils.EVENT_BUS.addHandler(RemoveAttributeEvent.TYPE,
                 new RemoveAttributeEventHandler() {
                     @Override
                     public void onRemoveAttribute(RemoveAttributeEvent event) {
                         attributionModule.populateAttributeRemoval();
-                        diseaseModelPresenter.updateFishList();
                     }
                 });
-
+        AppUtils.EVENT_BUS.addHandler(AddAttributeEvent.TYPE,
+                new AddAttributeEventHandler() {
+                    @Override
+                    public void onEvent(AddAttributeEvent event) {
+                        attributionModule.populateAttributeRemoval();
+                    }
+                });
     }
 
     @Override

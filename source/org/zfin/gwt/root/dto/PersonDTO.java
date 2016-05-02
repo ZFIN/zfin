@@ -1,11 +1,14 @@
 package org.zfin.gwt.root.dto;
 
 
-public class PersonDTO {
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class PersonDTO implements IsSerializable {
     String firstName;
     String lastName;
     String display;
     String zdbID;
+    String email;
 
     public String getFirstName() {
         return firstName;
@@ -37,5 +40,13 @@ public class PersonDTO {
 
     public void setZdbID(String zdbID) {
         this.zdbID = zdbID;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

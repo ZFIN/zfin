@@ -6,9 +6,9 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.stereotype.Service;
@@ -38,9 +38,9 @@ public class SolrService {
 
     private static final String SEARCH_URL = "/search";
 
-    private static SolrServer prototype;
+    private static SolrClient prototype;
 
-    public static SolrServer getSolrServer(String core) {
+    public static SolrClient getSolrClient(String core) {
 
         if (prototype == null) {
 
@@ -57,7 +57,7 @@ public class SolrService {
 
 
             try {
-                prototype = new HttpSolrServer(solrUrl.toString());
+                prototype = new HttpSolrClient(solrUrl.toString());
             } catch (Exception e) {
                 logger.error("couldn't get SolrServer", e);
             }
@@ -160,7 +160,7 @@ public class SolrService {
 
 
     public static String getExpressionLink(String geneSymbol, boolean onlyWildtype) {
-        SolrServer server = getSolrServer("prototype");
+        SolrClient server = getSolrClient("prototype");
         SolrQuery query = new SolrQuery();
         query.addFilterQuery("zebrafish_gene:\"" + geneSymbol + "\"");
         if (onlyWildtype) {
@@ -213,7 +213,7 @@ public class SolrService {
     }
 
     public static Map<String, String> getExpressionTermLinks(String geneSymbol) {
-        SolrServer server = getSolrServer("prototype");
+        SolrClient server = getSolrClient("prototype");
         SolrQuery query = new SolrQuery();
         query.addFilterQuery("zebrafish_gene:\"" + geneSymbol + "\"");
         query.addFilterQuery("is_wildtype:\"true\"");
@@ -264,7 +264,7 @@ public class SolrService {
     public static String getExpressionLink(String geneSymbol, String termName) {
         //query Solr to get the count...
 
-        SolrServer server = getSolrServer("prototype");
+        SolrClient server = getSolrClient("prototype");
         SolrQuery query = new SolrQuery();
         query.addFilterQuery("zebrafish_gene:\"" + geneSymbol + "\"");
         query.addFilterQuery(FieldName.EXPRESSIONS_ANATOMY_TF.getName()+":\"" + termName + "\"");
@@ -340,7 +340,7 @@ public class SolrService {
     }
 
     protected static QueryResponse getGenePhenotypeQuery(String geneSymbol, boolean isMonogenic) {
-        SolrServer server = getSolrServer("prototype");
+        SolrClient server = getSolrClient("prototype");
         SolrQuery query = new SolrQuery();
         query.addFilterQuery("gene:" + geneSymbol);
         if (isMonogenic)
@@ -369,7 +369,7 @@ public class SolrService {
 
     public QueryResponse getRelatedDataResponse(String id) {
         String field = "category";
-        SolrServer server = getSolrServer("prototype");
+        SolrClient server = getSolrClient("prototype");
         SolrQuery query = new SolrQuery();
         query.addFilterQuery("xref:\"" + id + "\"");
         query.setRows(0);
@@ -466,7 +466,6 @@ public class SolrService {
         urlCreator.removeNameValuePair("page");
         if (StringUtils.equals("category", facetField.getName())) {
             urlCreator.removeNameValuePair("category");
-            /*urlCreator.addNamevaluePair("category", count.getName());*/
         }
         logger.debug("exclude URL for " + count.getName() + ": " + urlCreator.getURL());
         return urlCreator.getURL();
@@ -578,6 +577,19 @@ public class SolrService {
             return null;
 
         return new BasicNameValuePair(field, value);
+    }
+
+    public static List<String> getFacetQueryValues(List<FacetQueryEnum> facetQueryEnumList) {
+        List<String> values = new ArrayList<>();
+
+        for (FacetQueryEnum facetQueryEnum : facetQueryEnumList) {
+            String value = splitFilterQuery(facetQueryEnum.getQuery()).getValue();
+            if (!values.contains(value)) {
+                values.add(value);
+            }
+        }
+
+        return values;
     }
 
     public static String decode(String value) {

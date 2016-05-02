@@ -17,10 +17,12 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.orthology.Ortholog;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.publication.Publication;
-import org.zfin.sequence.*;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.DisplayGroup;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.blast.Database;
 
 import java.util.List;
@@ -89,6 +91,8 @@ public interface MarkerRepository {
 
     void addSmallSegmentToGene(Marker gene, Marker segment, String attributionZdbID);
 
+    void updateMarkerPublicNote(Marker marker, String note);
+
     DataNote addMarkerDataNote(Marker marker, String note);
 
     AntibodyExternalNote addAntibodyExternalNote(Antibody antibody, String note, String sourcezdbid);
@@ -124,6 +128,8 @@ public interface MarkerRepository {
      */
     void deleteMarkerAlias(Marker marker, MarkerAlias alias);
 
+    void updateCuratorNote(Marker marker, DataNote note, String newNote);
+
     void removeCuratorNote(Marker marker, DataNote note);
 
     /**
@@ -138,6 +144,8 @@ public interface MarkerRepository {
     void addDataAliasAttribution(DataAlias alias, Publication attribution, Marker marker);
 
     void addMarkerRelationshipAttribution(MarkerRelationship mrel, Publication attribution, Marker marker);
+
+    void addDBLinkAttribution(DBLink dbLink, Publication attribution, Marker marker);
 
     /**
      * Add a publication to a given marker: Attribution.
@@ -207,7 +215,7 @@ public interface MarkerRepository {
      * @param pubZdbId
      * @return list of marker objects
      */
-    List<Marker> getMarkersByAbbreviationGroupAndAttribution(String name, Marker.TypeGroup markerType, String pubZdbId);
+  
     List<Marker> getConstructsByAttribution(String name);
 
     // clone methods
@@ -351,6 +359,10 @@ public interface MarkerRepository {
 
     List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayForTypes(Marker construct, boolean b, MarkerRelationship.Type... types);
 
+    MarkerDBLink getMarkerDBLink(String linkId);
+
+    List<LinkDisplay> getMarkerLinkDisplay(String dbLinkId);
+
     List<LinkDisplay> getMarkerDBLinksFast(Marker marker, DisplayGroup.GroupName groupName);
 
     List<MarkerRelationshipPresentation> getRelatedMarkerDisplayForTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... types);
@@ -386,6 +398,10 @@ public interface MarkerRepository {
     List<Feature> getFeaturesBySTR(SequenceTargetingReagent sequenceTargetingReagent);
 
     SequenceTargetingReagent getSequenceTargetingReagent(String markerID);
+
+    SequenceTargetingReagent getSequenceTargetingReagentBySequence(Marker.Type type, String sequence);
+
+    SequenceTargetingReagent getSequenceTargetingReagentBySequence(Marker.Type type, String sequence1, String sequence2);
 
     List<Marker> getConstructsForGene(Marker gene);
 
@@ -463,9 +479,11 @@ public interface MarkerRepository {
     List<TargetGenePresentation> getTargetGenesForSequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent);
 
     List<Marker> getSecondMarkersByFirstMarkerAndMarkerRelationshipType(Marker firstMarker, MarkerRelationship.Type relationshipType);
+     List<MarkerRelationship> getMarkerRelationshipBySecondMarker(Marker secondMarker);
 
     PaginationResult<Marker> getRelatedMarker(Marker marker, Set<MarkerRelationship.Type> types, PaginationBean paginationBean);
 
     List<OmimPhenotype> getOmimPhenotype(Marker marker);
     List<Marker> getZfinOrtholog(String humanAbbrev);
+    int getCrisprCount(String geneAbbrev);
 }

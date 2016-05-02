@@ -1,14 +1,24 @@
 package org.zfin.infrastructure;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
  * This class holds a replaced zdbID and its replacement ZDBID including the
  * old name.
  */
+@Entity
+@Table(name = "withdrawn_data")
 public class WithdrawnZdbID implements Serializable {
 
+    @Id
+    @Column(name = "wd_old_zdb_id")
     private String wdoldZdbID;
+    @Id
+    @Column(name = "wd_new_zdb_id")
     private String wdnewZdbID;
 
     public String getWdoldZdbID() {

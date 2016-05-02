@@ -31,21 +31,16 @@
     var options= {
         denoteDirtyForm: true,
         denoteDirtyOptions: true,
-        formChangeCallback: function(isDirty,dirtyFieldsArray) {
-            if(isDirty) {
-                jQuery(this).find("input:submit").addClass("encourageClick");
-            }
-        },
         fieldChangeCallback: function(originalValue,isDirty) {
             if(isDirty) {
-                jQuery(this).addClass("dirtyField");
+                $(this).addClass("dirty");
             }
             else {
-                jQuery(this).removeClass("dirtyField");
+                $(this).removeClass("dirty");
             }
         }
     };
 
-    jQuery('form.mark-dirty').dirtyFields(options);
+    $('form.mark-dirty').dirtyFields(options);
 </script>
 

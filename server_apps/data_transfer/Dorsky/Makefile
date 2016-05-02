@@ -19,7 +19,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Dorsky
 
-STATICS = LoadFeatures.groovy
+STATICS = LoadFeatures.groovy LoadBurgessExpression.groovy build.xml log4j.xml
 
 # Define targets that require special handling.
 

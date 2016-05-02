@@ -79,13 +79,11 @@
     <tr>
         <th>MeSH Terms:</th>
         <td>
-
-            <c:forEach var="relationshipPresentation" items="${publication.meshHeadings}" varStatus="index">
-
-            ${relationshipPresentation.displayListString}
-                <c:if test="${!index.last}">,&nbsp;</c:if>
-
-        </c:forEach>
+            <c:forEach var="meshHeading" items="${publication.meshHeadings}" varStatus="idx1">
+                <c:forEach var="displayString" items="${meshHeading.displayList}" varStatus="idx2">
+                    ${displayString}<c:if test="${!idx1.last || !idx2.last}">; </c:if>
+                </c:forEach>
+            </c:forEach>
         </td>
     </tr>
 
@@ -108,7 +106,7 @@
         </td>
     </tr>
 
-    <authz:authorize ifAnyGranted="root">
+    <authz:authorize access="hasRole('root')">
 
         <tr>
             <th>File:</th>

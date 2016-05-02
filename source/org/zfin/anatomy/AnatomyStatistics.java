@@ -1,8 +1,9 @@
 package org.zfin.anatomy;
 
 import org.zfin.anatomy.presentation.AnatomyPresentation;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.text.ChoiceFormat;
 import java.util.Set;
@@ -10,16 +11,31 @@ import java.util.Set;
 /**
  * Please provide JavaDoc info!!!
  */
+@Entity
+@Table(name = "ANATOMY_STATS")
 public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Serializable {
 
+    @Id
+    @Column(name = "anatstat_term_zdb_id")
     private String zdbID;
+    @Id
+    @Column(name = "anatstat_object_type")
+    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.anatomy.AnatomyStatistics$Type")})
     private Type type;
+    @Column(name = "anatstat_object_count")
     private int numberOfObjects;
+    @Column(name = "anatstat_total_distinct_count")
     private int numberOfTotalDistinctObjects;
+    @Column(name = "anatstat_synonym_count")
     private int numberOfSynonyms;
+    @Transient
     private AnatomyTreeInfo treeInfo;
+    @Transient
     private Set<AnatomyTreeInfo> treeInfos;
-    private Term term;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "anatstat_term_zdb_id")
+    private GenericTerm term;
 
     // ToDo: move into a formatting class for presentation layer
     private static final ChoiceFormat geneChoice = new ChoiceFormat("0#genes| 1#gene| 2#genes");
@@ -30,7 +46,7 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
     public AnatomyStatistics() {
     }
 
-    public AnatomyStatistics(Term term) {
+    public AnatomyStatistics(GenericTerm term) {
         this.term = term;
     }
 
@@ -42,11 +58,11 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
         this.zdbID = zdbID;
     }
 
-    public Term getTerm() {
+    public GenericTerm getTerm() {
         return term;
     }
 
-    public void setTerm(Term term) {
+    public void setTerm(GenericTerm term) {
         this.term = term;
     }
 

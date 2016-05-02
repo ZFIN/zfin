@@ -2,10 +2,18 @@ package org.zfin.infrastructure;
 
 import org.zfin.profile.Person;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
+@Entity
+@DiscriminatorValue("Person ")
 public class PersonAttribution extends RecordAttribution implements Serializable, Comparable<PersonAttribution> {
 
+    @ManyToOne
+    @JoinColumn(name = "recattrib_source_zdb_id", insertable = false, updatable = false)
     private Person person;
 
     public Person getPerson() {

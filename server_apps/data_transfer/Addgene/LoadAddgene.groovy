@@ -1,11 +1,12 @@
 #!/bin/bash
-//usr/bin/env groovy -cp "$SOURCEROOT/home/WEB-INF/lib*:$SOURCEROOT/lib/Java/*:$SOURCEROOT/home/WEB-INF/classes:$CATALINA_HOME/endorsed/*" "$0" $@; exit $?
+//usr/bin/env groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
 
 import groovy.json.JsonSlurper
 import org.hibernate.Session
 import org.zfin.framework.HibernateSessionCreator
 import org.zfin.framework.HibernateUtil
-import org.zfin.orthology.Species
+import org.zfin.Species
+import org.zfin.infrastructure.RecordAttribution
 import org.zfin.properties.ZfinProperties
 import org.zfin.repository.RepositoryFactory
 import org.zfin.sequence.ForeignDB
@@ -41,7 +42,7 @@ addgeneDb = RepositoryFactory.sequenceRepository.getReferenceDatabase(
         ForeignDB.AvailableName.ADDGENE,
         ForeignDBDataType.DataType.OTHER,
         ForeignDBDataType.SuperType.SUMMARY_PAGE,
-        Species.ZEBRAFISH)
+        Species.Type.ZEBRAFISH)
 entrezGeneDb = session.get(ReferenceDatabase.class, 'ZDB-FDBCONT-040412-1')
 
 
@@ -123,8 +124,29 @@ addedLinks = query.list().collect { entrezLink ->
     session.save(addgeneLink)
     println "  $addgeneLink.zdbID"
     addgeneLink
-}
+   /* println "Adding new attributions test "
+    recAttr = new RecordAttribution()
+    recAttr.with {
 
+        dataZdbID = addgeneLink.zdbID
+        sourceZdbID = "ZDB-PUB-160316-6"
+        sourceType=RecordAttribution.SourceType.STANDARD
+    }
+    session.save(recAttr)
+    recAttr*/
+}
+println "getting db links for IDs  "
+hql = """from MarkerDBLink dbl
+         where referenceDatabase = :addgeneDb"""
+
+query = session.createQuery(hql)
+query.setParameter("addgeneDb", addgeneDb)
+
+linksAdded = query.list()
+linksAdded.each { link ->
+    println "  $link.zdbID"
+    
+}
 
 if (options.report) {
     // one more query that only matters if we're doing a report
@@ -141,7 +163,7 @@ if (options.report) {
     rg.includeTimestamp();
     rg.addIntroParagraph("With this load there are now $count Addgene links in total.")
     rg.addDataTable("${linksToDelete.size()} Links Removed", ["Gene", "Accession Number"], linksToDelete.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
-    rg.addDataTable("${addedLinks.size()} Links Added", ["Gene", "Accession Number"], addedLinks.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
+    rg.addDataTable("${linksAdded.size()} Links Added", ["Gene", "Accession Number"], linksAdded.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
     new File("addgene-report.html").withWriter { writer ->
         rg.write(writer, ReportGenerator.Format.HTML)
     }

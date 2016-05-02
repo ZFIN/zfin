@@ -33,7 +33,7 @@ public abstract class AbstractNoteBox<T extends RelatedEntityDTO>
     protected TextArea newNoteTextArea = new TextArea();
 
     // internal data
-    protected Set<NoteEditMode> noteEditModes = new HashSet<NoteEditMode>();
+    protected Set<NoteEditMode> noteEditModes = new HashSet<>();
     protected NoteEditMode defaultNoteEditMode = null;
 
 
@@ -142,4 +142,7 @@ public abstract class AbstractNoteBox<T extends RelatedEntityDTO>
         this.defaultNoteEditMode = noteEditMode;
     }
 
+    public void setPublicationID(String publicationID) {
+        this.publicationZdbID = publicationID;
+    }
 }

@@ -30,6 +30,7 @@
 <!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	pkalita\@zfin.org
 <!--|GO_EMAIL_ERR|-->	pkalita\@zfin.org
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/xray/home/WEB-INF/lib*:/opt/zfin/source_roots/xray/lib/Java/*:/opt/zfin/www_homes/xray/home/WEB-INF/classes:/private/apps/tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4

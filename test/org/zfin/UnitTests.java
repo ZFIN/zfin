@@ -11,12 +11,12 @@ import org.zfin.anatomy.presentation.RelationshipTypeSortingTest;
 import org.zfin.anatomy.presentation.SortAnatomyResultsTest;
 import org.zfin.anatomy.presentation.StagePresentationTest;
 import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
-import org.zfin.curation.service.CurationDTOConversionServiceSpec;
 import org.zfin.database.DatabaseServiceTest;
 import org.zfin.database.presentation.TableTest;
 import org.zfin.datatransfer.microarray.MicroarrayParseTest;
 import org.zfin.expression.CurationExperimentTest;
 import org.zfin.expression.ExpressionExperimentTest;
+import org.zfin.feature.service.MutationDetailsConversionServiceSpec;
 import org.zfin.framework.ExecProcessTest;
 import org.zfin.framework.mail.MailTest;
 import org.zfin.framework.presentation.*;
@@ -74,8 +74,8 @@ import org.zfin.util.*;
 @RunWith(ProgressSuite.class)
 @BatchTestRunner.BatchTestInclude("**.*Suite")
 @Suite.SuiteClasses({
-        ActiveSourceTest.class,
         ActiveDataTest.class,
+        ActiveSourceTest.class,
         AnatomyItemTest.class,
         AnatomyPresentationTest.class,
         AntibodySearchCriteriaTest.class,
@@ -84,7 +84,6 @@ import org.zfin.util.*;
         BlastNonDBTest.class,
         BlastPresentationServiceTest.class,
 //        BtsContainsServiceTest.class,
-        CurationDTOConversionServiceSpec.class,
         CurationExperimentTest.class,
         DatabaseServiceTest.class,
         DbLinkDisplayComparatorTest.class,
@@ -92,19 +91,19 @@ import org.zfin.util.*;
         DiseaseDisplayComparatorTest.class,
         EntityPresentationTest.class,
         EnvironmentDTOTest.class,
+        ExperimentDTOTest.class,
         ExpressionExperimentTest.class,
         ExpressionResultPresentationTest.class,
-        ExperimentDTOTest.class,
         FeatureMarkerRelationshipTest.class,
         FeatureValidationTest.class,
         FileUtilTest.class,
         FunctionsTest.class,
-        InferenceUnitTest.class,
-        IndexerUtilTest.class,
         GenericTermTest.class,
         GwtStringUtilsTest.class,
-        HighlightUtilTest.class,
         HighlighterTest.class,
+        HighlightUtilTest.class,
+        IndexerUtilTest.class,
+        InferenceUnitTest.class,
         ListFormatterTest.class,
         MailTest.class,
         MarkerPresentationTest.class,
@@ -112,9 +111,10 @@ import org.zfin.util.*;
         MatchingTermServiceTest.class,
         MatchTypeTest.class,
         Md5PasswordEncoderTest.class,
+        MergeMarkerUnitTest.class,
         MeshHeadingSpec.class,
         MicroarrayParseTest.class,
-        MergeMarkerUnitTest.class,
+        MutationDetailsConversionServiceSpec.class,
         OntologyServiceTest.class,
         OntologyTokenizationTest.class,
         OrganizationUrlTest.class,
@@ -122,8 +122,8 @@ import org.zfin.util.*;
         PatoPileStructureValidatorTest.class,
         PhenotypeServiceTest.class,
         PhenotypeStatementTest.class,
-        PhenotypeStructureTest.class,
         PhenotypeStatementTest.class,
+        PhenotypeStructureTest.class,
         ProfileUnitTests.class,
         PublicationTest.class,
         PubMedValidationReportTest.class,
@@ -132,8 +132,8 @@ import org.zfin.util.*;
         ReportGeneratorSpec.class,
         RunCandidatePresentationTest.class,
         RunPresentationTest.class,
-        SectionVisibilityTest.class,
         SearchCriterionTest.class,
+        SectionVisibilityTest.class,
         SequenceTest.class,
         SerializationTests.class,
         SiteSearchTest.class,
@@ -142,8 +142,8 @@ import org.zfin.util.*;
         StageRangeIntersectionTest.class,
         StageRangeUnionTest.class,
         TableTest.class,
-        TermStageUpdateFileParserTest.class,
         TermStageSplitStatementTest.class,
+        TermStageUpdateFileParserTest.class,
         TrieMapTest.class,
         UIFieldTransformerTest.class,
         UrlCreatorTest.class,

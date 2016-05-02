@@ -2,28 +2,33 @@ package org.zfin.gwt.root.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import java.util.List;
+
 /**
  */
 public class PublicationDTO implements IsSerializable {
-    private String title ;
-    private String authors ;
-    private String zdbID ;
-    private String abstractText ;
-    private String doi ;
+
+    private String title;
+    private String authors;
+    private List<PersonDTO> registeredAuthors;
+    private String zdbID;
+    private String abstractText;
+    private String doi;
     private String accession;
-    private String citation ;
+    private String citation;
     private String miniRef;
 
-    public PublicationDTO(){}
+    public PublicationDTO() {
+    }
 
-    public PublicationDTO(PubEnum pubEnum){
+    public PublicationDTO(PubEnum pubEnum) {
         this.title = pubEnum.title();
         this.zdbID = pubEnum.zdbID();
     }
 
-    public PublicationDTO(String title,String zdbID){
-        this.title = title ;
-        this.zdbID = zdbID ; 
+    public PublicationDTO(String title, String zdbID) {
+        this.title = title;
+        this.zdbID = zdbID;
     }
 
     public String getTitle() {
@@ -40,6 +45,14 @@ public class PublicationDTO implements IsSerializable {
 
     public void setAuthors(String authors) {
         this.authors = authors;
+    }
+
+    public List<PersonDTO> getRegisteredAuthors() {
+        return registeredAuthors;
+    }
+
+    public void setRegisteredAuthors(List<PersonDTO> registeredAuthors) {
+        this.registeredAuthors = registeredAuthors;
     }
 
     public String getZdbID() {

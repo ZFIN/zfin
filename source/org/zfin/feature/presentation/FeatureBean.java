@@ -3,14 +3,14 @@ package org.zfin.feature.presentation;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.gbrowse.presentation.GBrowseImage;
-import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.GenotypeDisplay;
-import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.presentation.GenoExpStatistics;
 import org.zfin.sequence.FeatureDBLink;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -22,8 +22,7 @@ public class FeatureBean {
     private MappedMarkerBean mappedMarkerBean;
     private Set<FeatureMarkerRelationship> sortedConstructRelationships ;
     private FeatureMarkerRelationship createdByRelationship;
-    private List<RecordAttribution> featureTypeAttributions ;
-    private String singlePublication ;
+    private Collection<PublicationAttribution> featureTypeAttributions ;
     private Set<String> featureMap ;
     private Set<String> featureLocations ;
     private String zdbID;
@@ -98,20 +97,12 @@ public class FeatureBean {
         this.sortedConstructRelationships = sortedConstructRelationships;
     }
 
-    public List<RecordAttribution> getFeatureTypeAttributions() {
+    public Collection<PublicationAttribution> getFeatureTypeAttributions() {
         return featureTypeAttributions;
     }
 
-    public void setFeatureTypeAttributions(List<RecordAttribution> featureTypeAttributions) {
+    public void setFeatureTypeAttributions(Collection<PublicationAttribution> featureTypeAttributions) {
         this.featureTypeAttributions = featureTypeAttributions;
-    }
-
-    public String getSinglePublication() {
-        return singlePublication;
-    }
-
-    public void setSinglePublication(String singlePublication) {
-        this.singlePublication = singlePublication;
     }
 
     public Set<String> getFeatureMap() {

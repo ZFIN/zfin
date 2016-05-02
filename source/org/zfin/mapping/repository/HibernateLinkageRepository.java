@@ -53,8 +53,9 @@ public class HibernateLinkageRepository implements LinkageRepository {
     public TreeSet<String> getChromosomeLocations(Marker marker) {
         List<MarkerGenomeLocation> genomeLocationList = getGenomeLocation(marker);
         TreeSet<String> locations = new TreeSet<>();
-        for (MarkerGenomeLocation chromosome : genomeLocationList)
+        for (MarkerGenomeLocation chromosome : genomeLocationList) {
             locations.add(chromosome.getChromosome());
+        }
         return locations;
     }
 
@@ -126,8 +127,9 @@ public class HibernateLinkageRepository implements LinkageRepository {
         query.setParameterList("relationshipTypes", new MarkerRelationship.Type[]{MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT,
                 MarkerRelationship.Type.CLONE_CONTAINS_GENE, MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT});
         List<Marker> list = (List<Marker>) query.list();
-        if (list == null)
+        if (list == null) {
             list = new ArrayList<>();
+        }
 
         Query query2 = HibernateUtil.currentSession().createQuery(
                 "select distinct m from  Marker as m, MarkerRelationship as rel1, MarkerRelationship as rel2  " +
@@ -140,8 +142,9 @@ public class HibernateLinkageRepository implements LinkageRepository {
         query2.setParameter("relationshipType1", MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
         query2.setParameter("relationshipType2", MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT);
         List<Marker> list2 = (List<Marker>) query2.list();
-        if (list2 != null)
+        if (list2 != null) {
             list.addAll(list2);
+        }
         Set<Marker> set = new HashSet<>(list.size());
         set.addAll(list);
         List<Marker> objects = new ArrayList<>();
@@ -153,12 +156,15 @@ public class HibernateLinkageRepository implements LinkageRepository {
     public List<MappedMarker> getMappedMarkers(Panel panel, ZdbID marker, String lg) {
 
         Criteria criteria = HibernateUtil.currentSession().createCriteria(MappedMarker.class);
-        if (lg != null)
+        if (lg != null) {
             criteria.add(Restrictions.eq("lg", lg));
-        if (marker != null)
+        }
+        if (marker != null) {
             criteria.add(Restrictions.eq("marker", marker));
-        if (panel != null)
+        }
+        if (panel != null) {
             criteria.add(Restrictions.eq("panel", panel));
+        }
         return criteria.list();
 
     }
@@ -184,8 +190,9 @@ public class HibernateLinkageRepository implements LinkageRepository {
         query.setParameter("marker", marker);
         query.setParameter("relationshipTypes", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
         List<Marker> list = (List<Marker>) query.list();
-        if (list == null)
+        if (list == null) {
             list = new ArrayList<>();
+        }
         return list;
     }
 
@@ -201,8 +208,9 @@ public class HibernateLinkageRepository implements LinkageRepository {
         query.setParameterList("relationshipTypes", new MarkerRelationship.Type[]{MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT,
                 MarkerRelationship.Type.CLONE_CONTAINS_GENE});
         List<Marker> list = (List<Marker>) query.list();
-        if (list == null)
+        if (list == null) {
             list = new ArrayList<>();
+        }
         return list;
     }
 
@@ -250,13 +258,23 @@ public class HibernateLinkageRepository implements LinkageRepository {
     }
 
     @Override
-    public List<GenomeLocation> getPhysicalGenomeLocations(Marker marker) {
+    public List<MarkerGenomeLocation> getPhysicalGenomeLocations(Marker marker) {
         Query query = HibernateUtil.currentSession().createQuery(
-                "from GenomeLocation as loc where marker = :marker " +
+                "from MarkerGenomeLocation as loc where marker = :marker " +
                         "and loc.source != :sourceDB");
         query.setParameter("marker", marker);
         query.setParameter("sourceDB", GenomeLocation.Source.OTHER_MAPPING);
-        return (List<GenomeLocation>) query.list();
+        return (List<MarkerGenomeLocation>) query.list();
+    }
+
+    @Override
+    public List<FeatureGenomeLocation> getPhysicalGenomeLocations(Feature feature) {
+        Query query = HibernateUtil.currentSession().createQuery(
+                "from FeatureGenomeLocation as loc where feature = :feature " +
+                        "and loc.source != :sourceDB");
+        query.setParameter("feature", feature);
+        query.setParameter("sourceDB", GenomeLocation.Source.OTHER_MAPPING);
+        return (List<FeatureGenomeLocation>) query.list();
     }
 
     @Override
@@ -286,8 +304,9 @@ public class HibernateLinkageRepository implements LinkageRepository {
         query.setParameter("mtype", Marker.Type.EST.toString());
         query.setParameterList("relationshipTypes", new MarkerRelationship.Type[]{MarkerRelationship.Type.CONTAINS_POLYMORPHISM});
         List<Marker> list = (List<Marker>) query.list();
-        if (list == null)
+        if (list == null) {
             list = new ArrayList<>();
+        }
         return list;
     }
 
@@ -304,8 +323,9 @@ public class HibernateLinkageRepository implements LinkageRepository {
         query.setParameter("mtype", Marker.Type.GENE.toString());
         query.setParameterList("relationshipTypes", new MarkerRelationship.Type[]{MarkerRelationship.Type.CONTAINS_POLYMORPHISM});
         List<Marker> list = (List<Marker>) query.list();
-        if (list == null)
+        if (list == null) {
             list = new ArrayList<>();
+        }
         return list;
     }
 
@@ -325,8 +345,9 @@ public class HibernateLinkageRepository implements LinkageRepository {
 
     @Override
     public void saveLinkageComment(Linkage linkage, String newComment) {
-        if (!Person.isCurrentSecurityUserRoot())
+        if (!Person.isCurrentSecurityUserRoot()) {
             throw new RuntimeException("No User with permissions found");
+        }
         Updates updates = new Updates();
         updates.setOldValue(linkage.getComments());
         updates.setNewValue(newComment);
@@ -373,8 +394,9 @@ public class HibernateLinkageRepository implements LinkageRepository {
         Collections.sort(uniqueList, new Comparator<EntityZdbID>() {
             @Override
             public int compare(EntityZdbID o1, EntityZdbID o2) {
-                if (!o1.getEntityType().equals(o2.getEntityType()))
+                if (!o1.getEntityType().equals(o2.getEntityType())) {
                     return o1.getEntityType().compareTo(o2.getEntityType());
+                }
                 return o1.getAbbreviationOrder().compareTo(o2.getAbbreviationOrder());
             }
         });

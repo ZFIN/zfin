@@ -1,16 +1,31 @@
 package org.zfin.infrastructure;
 
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "updates")
 public class Updates {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "upd_pk_id")
     private Long ID;
+    @Column(name = "rec_id")
     private String recID;
+    @Column(name = "submitter_id")
     private String submitterID;
+    @Column(name = "field_name")
     private String fieldName;
+    @Column(name = "old_value")
     private String oldValue;
+    @Column(name = "new_value")
     private String newValue;
+    @Column(name = "comments")
     private String comments;
+    @Column(name = "when")
     private Date whenUpdated;
+    @Column(name = "submitter_name")
     private String submitterName;
 
 

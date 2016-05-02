@@ -1,11 +1,14 @@
 package org.zfin.uniquery
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.log4j.Logger
 import org.apache.solr.client.solrj.SolrQuery
-import org.apache.solr.client.solrj.SolrServer
+import org.apache.solr.client.solrj.SolrClient
 import org.apache.solr.client.solrj.response.QueryResponse
+import org.apache.solr.common.SolrDocument
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
+import org.zfin.search.presentation.SearchResult
 import org.zfin.search.service.QueryManipulationService
 import spock.lang.Shared
 import spock.lang.Unroll
@@ -24,26 +27,26 @@ class QuerySpec extends ZfinIntegrationSpec {
     @Autowired
     QueryManipulationService queryManipulationService
 
-    @Shared SolrServer server
+    @Shared SolrClient client
     @Shared SolrQuery query
     @Shared SolrQuery secondQuery
 
     //sets up for all tests in class
-    def setupSpec() {
-        server = SolrService.getSolrServer("prototype")
+    public def setupSpec() {
+        client = SolrService.getSolrClient("prototype")
     }
 
-    def cleanSpec() {
-        server = null
+    public def cleanSpec() {
+        client = null
     }
 
     //sets up for each test
-    def setup() {
+    public void setup() {
         query = new SolrQuery()
         secondQuery = new SolrQuery()
     }
 
-    def clean() {
+    public void clean() {
         query = null
         secondQuery = null
     }
@@ -57,7 +60,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         QueryResponse response = new QueryResponse()
 
         try {
-            response = server.query(query)
+            response = client.query(query)
         } catch (Exception e) {
             logger.error(e);
         }
@@ -72,6 +75,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.ANTIBODY.name         | "actin ab1-act"                                  | "11329"
         Category.ANTIBODY.name         | "fgf Ab1-fgfbp1"                                 | "11209"
         Category.ANTIBODY.name         | "prk Ab2-prkcz"                                  | "11209"
+        Category.EXPRESSIONS.name      | "xref:ZDB-PUB-150919-1"                          | "13882"
         Category.MUTANT.name           | "gz12 ZDB-ALT-090424-3"                          | "11228"
         Category.MUTANT.name           | "b566 hox"                                       | "11208"
         Category.MARKER.name           | "hoxa2b DKEY-45E15"                              | "11289"
@@ -92,13 +96,22 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.GENE.name             | "expressed_in_tf:\"medulla oblongata\" type:Gene id:ZDB-GENE-000616-13"      | "0"
         Category.GENE.name             | "expressed_in_tf:\"enteric nervous system\" type:Gene id:ZDB-GENE-980526-90" | "0"
         Category.GENE.name             | "gene:13"                                        | "12504"
+        Category.GENE.name             | "misexpressed_gene:Any"                          | "12775"
+        Category.GENE.name             | "trpv6 misexpression id:ZDB-GENE-040623-1"       | "12776"
+        Category.FIGURE.name           | "sa365"                                          | "12028"
+        Category.FIGURE.name           | "trpv6 misexpression id:ZDB-FIG-160128-2"        | "12776"
         Category.FISH.name             | "t24412 MO4-tp53"                                | "11415"
         Category.FISH.name             | "Tg(5xUAS:casp3a,5xUAS:Hsa.HIST1H2BJ-Citrine,cryaa:RFP)" | "0"
         Category.FISH.name             | "casper mitfa"                                   | "13079"
         Category.FISH.name             | "ZDB-GENO-960809-7"                              | "13315"
+        Category.FISH.name             | "sequence_alteration:bw6Tg ZDB-FISH-150901-26882"| "13808"
+        Category.FISH.name             | "trpv6 misexpression id:ZDB-FISH-160128-1"       | "12776"
         Category.PUBLICATION.name      | "kraus 1993"                                     | "11699"
+        Category.PHENOTYPE.name        | "stage:Unknown"                                  | "13741"
+        Category.PHENOTYPE.name        | "trpv6 misexpression Kwong 2015"                 | "12776"
         Category.PUBLICATION.name      | "bohni"                                          | "11699"
         Category.PUBLICATION.name      | "abstract:\"motor control requires circuits\""   | "n/a"
+        Category.PUBLICATION.name      | "thesis id:ZDB-PUB-150918-21"                    | "13042"
         Category.CONSTRUCT.name        | "4xnr"                                           | "11810"
         Category.COMMUNITY.name        | "nuss id:ZDB-PERS-960805-412"                    | "11216"
         Category.COMMUNITY.name        | "Nüss id:ZDB-PERS-960805-412"                    | "11216"
@@ -113,11 +126,13 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.CONSTRUCT.name        | "TgBAC(pax7a:GFP) id:ZDB-TGCONSTRCT-150108-2"    | "12299"
         Category.CONSTRUCT.name        | "Tg2(krt5;EGFP) id:ZDB-TGCONSTRCT-141020-3"      | "12299"
         Category.CONSTRUCT.name        | "Tg(ttna:MA-EGFP) id:ZDB-TGCONSTRCT-121127-1"    | "12299"
+        Category.CONSTRUCT.name        | "ZDB-TGCONSTRCT-110127-19 coding_sequence:EGFP expressed_in_tf:\"dorsal aorta\"" | "12460"
         Category.ANATOMY.name          | "(-)-isopiperitenone reductase activity GO:0052581" | "12299"
         Category.DISEASE.name          | "DOID:10609 ICD10CM:E55"                            | "12560"
         Category.DISEASE.name          | "DOID:10609 UMLS_CUI:C0221468"                      | "12560"
         Category.DISEASE.name          | "DOID:10609 MSH:D012279"                            | "12560"
         Category.DISEASE.name          | "DOID:10609 NCI:C26878"                             | "12560"
+        Category.MUTANT.name           | "ZMP:sa28 sa28"                                 | "13840"
     }
 
 
@@ -126,11 +141,13 @@ class QuerySpec extends ZfinIntegrationSpec {
 
         when: "Solr is queried"
         query.setQuery(queryManipulationService.processQueryString(queryString))
-        query.addFilterQuery("category:\"" + category + "\"")
+        if (category) {
+            query.addFilterQuery("category:\"" + category + "\"")
+        }
         QueryResponse response = new QueryResponse()
 
         try {
-            response = server.query(query)
+            response = client.query(query)
         } catch (Exception e) {
             logger.error(e);
         }
@@ -143,6 +160,10 @@ class QuerySpec extends ZfinIntegrationSpec {
         category                  | queryString                          | fogbugzCase
         Category.EXPRESSIONS.name | "MGC:56505 zebrafish_gene:[* TO *]"  | "12346"
         Category.EXPRESSIONS.name | "MGC:56505 gcdha"                    | "12346"
+        Category.PUBLICATION.name | "curator:\"David Fashena\" curator:\"Sabrina Toro\" ZDB-PUB-100504-14"  | "13571"
+        Category.PUBLICATION.name | "Doug Howe id:ZDB-PUB-990119-20"     | "13813"
+        null                      | "sheturnedmeintoanewt"               | "12988"
+
 
     }
 
@@ -161,8 +182,8 @@ class QuerySpec extends ZfinIntegrationSpec {
         QueryResponse secondResponse = new QueryResponse()
 
         try {
-            response = server.query(query)
-            secondResponse = server.query(secondQuery)
+            response = client.query(query)
+            secondResponse = client.query(secondQuery)
         } catch (Exception e) {
             logger.error(e);
         }
@@ -181,5 +202,114 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.PHENOTYPE.name     | "vasculature torn"             |  "vasculature ruptured"   //Case 11266
         ""                          | "znf zmp mouse"                |  "znf zmp Mouse"          //Case 11330
     }
+
+    def "a query for #queryString should bring back #resultName as the first result"() {
+        when: "Solr is queried for this string"
+        query.setQuery(queryManipulationService.processQueryString(queryString))
+        QueryResponse response = new QueryResponse()
+
+        try {
+            response = client.query(query)
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+        then: "the first result matches the specified name"
+        response?.results?.first()?.name == resultName
+
+        where:
+        queryString | resultName
+        "fgf8a"     | "fgf8a"
+        "pax2a"     | "pax2a"
+
+    }
+
+    @Unroll
+    def "an expression search for #symbol should return wildtype results first"() {
+        when: "Solr is queried"
+        query.setQuery(queryManipulationService.processQueryString(symbol))
+        query.addFilterQuery("category:\"" + Category.EXPRESSIONS.name + "\"")
+        query.set('fl','name, id, is_wildtype')
+        QueryResponse response = new QueryResponse()
+
+        try {
+            response = client.query(query)
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+        SolrDocument firstDoc = response?.getResults()?.first()
+
+
+        then: "confirm that the first result has a wildtype fish"
+        response
+        response.getResults()
+        firstDoc
+        firstDoc.get("is_wildtype") == "true"
+
+        where:
+        symbol << ["fgf8a","pax2a","fgf3","bmp2a"]
+    }
+
+    def "an expression search for #symbol should have first results with #symbol as an expressed gene"() {
+        when: "Solr is queried"
+        query.setQuery(queryManipulationService.processQueryString(symbol))
+        query.addFilterQuery("category:\"" + Category.EXPRESSIONS.name + "\"")
+        query.set('fl','name, id, zebrafish_gene')
+        QueryResponse response = new QueryResponse()
+
+        try {
+            response = client.query(query)
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+        SolrDocument firstDoc = response?.getResults()?.first()
+
+
+        then: "confirm that the first result has a wildtype fish"
+        response
+        response.getResults()
+        firstDoc
+        firstDoc.get("zebrafish_gene") == [symbol]
+
+        where:
+        symbol << ["fgf8a","pax2a","fgf3","bmp2a"]
+
+    }
+
+    @Unroll
+    def "a feature search for #symbol should return the unspecified feature last"() {
+        when: "Solr is queried"
+        query.setQuery(queryManipulationService.processQueryString(symbol))
+        query.addFilterQuery("category:\"" + Category.MUTANT.name + "\"")
+        query.setRows(500)
+        QueryResponse response = new QueryResponse()
+
+        try {
+            response = client.query(query)
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+        SolrDocument lastDoc = response?.getResults()?.last()
+
+
+        then: "confirm that the last result is an unspecified feature"
+        response
+        response.getResults()
+        lastDoc
+        lastDoc.get("name")
+        StringUtils.contains((String) lastDoc.get("name"),"unspecified")
+
+
+        where:
+        symbol << ["fgf3","kita","lamb1a","csf1ra"]
+    }
+
+/*    def "the first feature returned when searching for #symbol should not be the unspecified feature"() {
+
+    }*/
+
 
 }

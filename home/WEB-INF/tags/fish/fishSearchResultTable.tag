@@ -109,7 +109,7 @@
             </td>
             <td>
 
-                <c:if test="${result.expressionFigureCount > 1}">
+                <c:if test="${result.expressionFigureCount > 0}">
                     <a href="/action/expression/fish-expression-figure-summary?fishID=${result.fish.zdbID}&imagesOnly=false">
                         <zfin:choice choicePattern="0# Figures| 1# Figure| 2# Figures" includeNumber="true"
                                      integerEntity="${result.expressionFigureCount}"/>
@@ -150,7 +150,7 @@
                     </c:if>
                 </td>
                 <td>
-                    <zfin:link entity="${featureGene.construct}"/>
+                    <i><zfin:link entity="${featureGene.construct}"/></i>
                 </td>
                 <td>
                     <c:if test="${!empty featureGene.feature}">
@@ -161,7 +161,7 @@
                 </td>
                 <td>
                     <c:if test="${(fgIndex.last) && (!formBean.showAllMutantFish)}">
-                        <authz:authorize ifAnyGranted="root">
+                        <authz:authorize access="hasRole('root')">
                         <span style="font-size:small ; opacity: 0.33;">
                           <a style=" " class="clickable" onclick="jQuery('#${result.fish.zdbID}-text').slideToggle(); ">Score</a>
                           | <a style=" " href="/action/database/view-record/FISH-${fish.ID}">DB</a> | 
@@ -200,7 +200,7 @@
         </c:forEach>
         <zfin:alternating-tr loopName="loop">
             <td colspan="7">
-                <authz:authorize ifAnyGranted="root">
+                <authz:authorize access="hasRole('root')">
                     <div id="${result.fish.zdbID}-text"
                          style="width: 800px ; display:none; margin: 0.5em 2em; padding: .5em; ">
                         <strong>Gene Or Feature Text:</strong> ${result.geneOrFeatureText}

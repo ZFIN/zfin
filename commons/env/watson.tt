@@ -30,6 +30,7 @@
 <!--|GOOGLE_ANALYTICS_ID|-->	UA-2417927-1
 <!--|GO_EMAIL_CURATOR|-->	dhowe\@zfin.org smoxon\@zfin.org xshao\@zfin.org
 <!--|GO_EMAIL_ERR|-->	smoxon\@zfin.org xshao\@zfin.org dhowe\@zfin.org
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/watson/home/WEB-INF/lib*:/opt/zfin/source_roots/watson/ZFIN_WWW/lib/Java/*:/opt/zfin/www_homes/watson/home/WEB-INF/classes:/private/apps/tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
@@ -66,7 +67,7 @@
 <!--|SOURCEROOT|-->	/opt/zfin/source_roots/watson/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	watson.zfin.org
-<!--|SWISSPROT_EMAIL_CURATOR|-->	ksf\@zfin.org dhowe\@zfin.org
+<!--|SWISSPROT_EMAIL_CURATOR|-->	ksf\@zfin.org dhowe\@zfin.org sabrina\@zfin.org
 <!--|SWISSPROT_EMAIL_ERR|-->	informix\@zfin.org xshao\@zfin.org
 <!--|SWISSPROT_EMAIL_REPORT|-->	ksf\@zfin.org dhowe\@zfin.org smoxon\@zfin.org xshao\@zfin.org sramachandran\@zfin.org
 <!--|TARGETROOT|-->	/opt/zfin/www_homes/watson

@@ -14,6 +14,7 @@ import org.obo.history.SessionHistoryList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zfin.database.DbSystemUtil;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
@@ -199,7 +200,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                 try {
                     // set refresh status file so the new ontology can be loaded into memory
                     File dir = ZfinProperties.getOntologyReloadStatusDirectory().toFile();
-                    if(!dir.exists())
+                    if (!dir.exists())
                         dir.mkdir();
                     File statusFile = new File(dir, ontology.getOntologyName());
                     if (statusFile.exists())
@@ -352,7 +353,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             cronJobUtil.emailReport("ontology-loader-obsolete-terms-used.ftl", cronReport);
         }
         // check if any secondary IDs are used in any expression annotation:
-        List<ExpressionResult> obsoletedTermsUsedExpression = RepositoryFactory.getExpressionRepository().getExpressionOnObsoletedTerms();
+        List<ExpressionResult2> obsoletedTermsUsedExpression = RepositoryFactory.getExpressionRepository().getExpressionOnObsoletedTerms();
         if (obsoletedTermsUsedExpression != null && obsoletedTermsUsedExpression.size() > 0) {
             LOG.warn("Expression annotations found that use obsoleted term ids");
             StringBuffer buffer = new StringBuffer();
@@ -360,10 +361,10 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             buffer.append(messageHeader);
             report.addMessageToSection(messageHeader, "Post-Processing");
             List<List<String>> rows = new ArrayList<>(obsoletedTermsUsedExpression.size());
-            for (ExpressionResult expressionResult : obsoletedTermsUsedExpression) {
+            for (ExpressionResult2 expressionResult : obsoletedTermsUsedExpression) {
                 List<String> row = new ArrayList<>();
-                row.add(expressionResult.getExpressionExperiment().getPublication().getZdbID());
-                row.add(expressionResult.getExpressionExperiment().getPublication().getTitle());
+                row.add(expressionResult.getExpressionFigureStage().getExpressionExperiment().getPublication().getZdbID());
+                row.add(expressionResult.getExpressionFigureStage().getExpressionExperiment().getPublication().getTitle());
                 row.add(expressionResult.getEntity().getDisplayName());
                 Set<GenericTerm> obsoletedTerms = expressionService.getObsoleteTerm(expressionResult);
                 StringBuilder hyperlink = new StringBuilder();
@@ -922,7 +923,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                     }
                     if (term.getDbxrefs() != null) {
                         for (Dbxref dbxref : term.getDbxrefs()) {
-                          //  appendFormattedRecord(UnloadFile.TERM_XREF, term.getID(), dbxref.getDatabase(), dbxref.getDatabaseID(), "xref");
+                            //  appendFormattedRecord(UnloadFile.TERM_XREF, term.getID(), dbxref.getDatabase(), dbxref.getDatabaseID(), "xref");
                             appendFormattedRecord(UnloadFile.TERM_XREF, term.getID(), dbxref.getDatabase(), dbxref.getDatabaseID(), "xref");
                         }
                     }
@@ -1041,7 +1042,11 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         if (term.getDefDbxrefs() != null) {
             for (Dbxref xref : term.getDefDbxrefs()) {
                 // remove non-printable characters
-                String databaseID =xref.getDatabaseID().replaceAll("\\p{C}", "");
+                String databaseID = xref.getDatabaseID().replaceAll("\\p{C}", "");
+                // replace the en dash '\u2013', –, with a regular hyphen
+                databaseID = databaseID.replace("\u2013", "-");
+                // replace the em dash '\u2014', –, with a regular hyphen
+                databaseID = databaseID.replace("\u2014", "-");
                 appendFormattedRecord(UnloadFile.TERM_REFERENCES, term.getID(), xref.getDatabase(), databaseID);
             }
         }

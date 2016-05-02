@@ -178,15 +178,19 @@ public interface MutantRepository {
      * @param term Term
      * @return list of phenotypes
      */
-    List<PhenotypeStatement> getPhenotypeWithEntity(GenericTerm term);
+    List<PhenotypeStatementWarehouse> getPhenotypeWithEntity(GenericTerm term);
 
-    List<PhenotypeStatement> getPhenotypeWithEntity(List<GenericTerm> terms);
+    List<PhenotypeStatementWarehouse> getPhenotypeWithEntity(List<GenericTerm> terms);
 
     List<MarkerGoTermEvidence> getMarkerGoEvidence(List<GenericTerm> terms);
 
     PhenotypeExperiment getPhenotypeExperiment(Long id);
 
     PhenotypeStatement getPhenotypeStatementById(Long Id);
+
+    PhenotypeStatementWarehouse getPhenotypeStatementWarehouseById(Long id);
+
+    PhenotypeWarehouse getPhenotypeWarehouseById(Long id);
 
     /**
      * Retrieve the phenotypes that are annotated with obsoleted terms.
@@ -202,7 +206,7 @@ public interface MutantRepository {
      * @param genotype Genotype
      * @return list of phenotype statement objects
      */
-    List<PhenotypeStatement> getPhenotypeStatementsByGenotype(Genotype genotype);
+    List<PhenotypeStatementWarehouse> getPhenotypeStatementsByGenotype(Genotype genotype);
 
     void runFeatureNameFastSearchUpdate(Feature feature);
 
@@ -248,6 +252,8 @@ public interface MutantRepository {
     List<PhenotypeStatement> getPhenotypeStatementsByGenotypeExperiments(List<String> genotypeExperimentIDs);
 
     List<PhenotypeStatement> getPhenotypeStatementsByFish(Fish fish);
+
+    List<PhenotypeStatementWarehouse> getPhenotypeStatementWarehousesByFish(Fish fish);
 
     /**
      * Retrieve phenotype statements by genotype experiment ids
@@ -305,38 +311,7 @@ public interface MutantRepository {
      */
     boolean hasImagesOnExpressionFigures(String genotypeID, Set<FishExperiment> fishOx);
 
-    /**
-     * Retrieve figures for phenotypes for a given genotype and structure.
-     *
-     * @param term                 structure
-     * @param genotype             genotype
-     * @param includeSubstructures true or false
-     * @return list of figures
-     */
-    List<Figure> getPhenotypeFigures(GenericTerm term, Genotype genotype, boolean includeSubstructures);
-
-    /**
-     * Retrieve phenotype statements for given structure and genotype.
-     *
-     * @param term
-     * @param fish
-     * @param includeSubstructures
-     * @return
-     */
-    List<PhenotypeStatement> getPhenotypeStatement(GenericTerm term, Fish fish, boolean includeSubstructures);
-
-    List<PhenotypeStatement> getPhenotypeStatementForMutantSummary(GenericTerm term, Genotype genotype, boolean includeSubstructures);
-
-    List<PhenotypeStatement> getPhenotypeStatementForMutantSummary(GenericTerm term, Fish fish, boolean includeSubstructures);
-
-    /**
-     * Retrieve phenotype statements for given structure and genotype.
-     *
-     * @param fish
-     * @param includeSubstructures
-     * @return
-     */
-    List<PhenotypeStatement> getPhenotypeStatement(Fish fish, boolean includeSubstructures);
+    List<PhenotypeStatementWarehouse> getPhenotypeStatementForMutantSummary(GenericTerm term, Genotype genotype, boolean includeSubstructures);
 
     PaginationResult<Fish> getFishByAnatomyTermIncludingSubstructures(GenericTerm item, boolean wildtype, PaginationBean bean);
 
@@ -506,7 +481,7 @@ public interface MutantRepository {
 
     void updateGenotypeNicknameWithHandleForPublication(Publication publication);
 
-    List<PhenotypeStatement> getPhenotypeStatementForMarker(Marker marker);
+    List<PhenotypeStatementWarehouse> getPhenotypeStatementForMarker(Marker marker);
 
     /**
      * Retrieve FishExperiment by Fish ID and Experiment ID
@@ -528,5 +503,9 @@ public interface MutantRepository {
     long getInferredFromCountByGenotype(String genotypeID, String publicationID);
 
     long getFishExperimentCountByGenotype(Fish fish, String publicationID);
+
+    List<PhenotypeStatementWarehouse> getPhenotypeObserved(GenericTerm term, Fish fish, boolean includeSubstructures);
+
+    List<PhenotypeStatementWarehouse> getPhenotypeStatementObservedForMutantSummary(GenericTerm term, Fish fish, boolean includeSubstructures);
 }
 

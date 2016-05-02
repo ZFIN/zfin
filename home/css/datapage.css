@@ -1,24 +1,7 @@
-
 .name-label, .name-value {
     font-size: large;
     font-weight: bold;
     text-align:left;
-}
-
-
-/* special cases for the name section */
-
-/* terms can have HUGE synonyms, display them one per line */
-.term-detail-page span.alias-value {
-    display: block;
-    margin-left: 2em;
-    text-indent: -2em;
-}
-
-/* remove the commas, since we're doing it line by line */
-.term-detail-page span .alias-separator {
-    display: none;
-
 }
 
 /* title bar over the top of sub-pages of a data page */
@@ -28,9 +11,7 @@
     background: #ccc;
 }
 
-
 /* entity attribute table stuff here */
-
 table.primary-entity-attributes {
     border-collapse: collapse;
     clear:both;
@@ -76,6 +57,7 @@ table.ontology-term-mini-summary th {
     text-align: left;
     vertical-align: top;
     padding-right: 1em;
+    white-space: nowrap;
 }
 
 table.ontology-term-mini-summary td {
@@ -94,29 +76,14 @@ table.ontology-term-mini-summary td.name {
     text-indent: -2em;
 }
 
-.related-ontology-term-separator {
-    display: none;
-}
-
-.no-data-tag{
-    background-color: white;
-    border: none;
-    border-spacing: 0 ;
-    border-width: 0 ;
+.no-data-tag {
+    border-spacing: 0;
+    border: 0 none;
     color: gray;
     font-weight: lighter;
 }
 
-.no-data-tag-inline{
-    background-color: white;
-    border: none;
-    border-spacing: 0 ;
-    border-width: 0 ;
-    color: gray;
-    font-weight: lighter;
-}
-
-.data-note{
+.data-note {
     font-size: small;
 }
 
@@ -124,19 +91,19 @@ table.ontology-term-mini-summary td.name {
     font-size: larger;
 }
 
-.caution-head{
+.caution-head {
     color: red;
     font-weight: 800;
     font-size: 200%;
 }
 
-.caution-emphasis{
+.caution-emphasis {
     color: red;
     font-weight: 700;
     font-size: 130%;
 }
 
-.caution-text{
+.caution-text {
     color: black;
     font-weight: 500;
     font-size: 110%;
@@ -146,8 +113,8 @@ tr.spaceUnder > td{
     padding-bottom: 1em;
 }
 
-.citation-heading{
-    font-size: x-large; 
-    font-weight: 700; 
+.citation-heading {
+    font-size: x-large;
+    font-weight: 700;
     text-align: left;
 }

@@ -1,0 +1,50 @@
+<div class="row">
+    <form class="form-single-row">
+        <div class="form-group col-sm-3">
+            <label>Alias</label>
+            <p class="text-danger" ng-repeat="error in vm.errors.alias">{{error}}</p>
+            <input ng-model="vm.newAlias" class="form-control">
+        </div>
+        <div class="form-group col-sm-3">
+            <label>Reference</label>
+            <p class="text-danger" ng-repeat="error in vm.errors.references">{{error}}</p>
+            <input pub-lookup class="form-control" ng-model="vm.newReference">
+        </div>
+        <div class="form-group col-sm-3">
+            <button type="button" class="btn btn-primary"
+                    ng-click="vm.add()"
+                    ng-disabled="vm.processing || !vm.newAlias || !vm.newReference">
+                <span ng-hide="vm.processing">Add</span>
+                <i ng-show="vm.processing" class="fa fa-spinner fa-spin"></i>
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-sm-6">
+        <p class="text-muted" ng-hide="vm.aliases.length">
+            <i>No aliases yet</i>
+        </p>
+        <table class="table" ng-show="vm.aliases.length">
+            <tr ng-repeat="alias in vm.aliases">
+                <td>
+                    {{alias.alias}} ({{alias.references.length}})
+                    <span class="small pull-right">
+                        <a href ng-click="vm.edit(alias)">Edit References</a> |
+                        <a href ng-click="vm.remove(alias, $index)">Remove</a>
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div reference-editor
+     show="vm.editing != null"
+     entity="vm.editing.alias"
+     references="vm.editing.references"
+     on-add="vm.addReference(pubId)"
+     on-remove="vm.removeReference(reference, index)"
+     on-close="vm.closeEditModal()">
+</div>

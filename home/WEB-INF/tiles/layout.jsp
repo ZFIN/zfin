@@ -32,12 +32,8 @@
 
     <link href="/css/font-awesome.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" type="text/css" href="/css/zfin.css">
-    <link rel="stylesheet" type="text/css" href="/css/header.css">
-    <link rel="stylesheet" type="text/css" href="/css/footer.css">
     <link rel=stylesheet type="text/css" href="/css/searchresults.css">
     <link rel=stylesheet type="text/css" href="/css/summary.css">
-    <link rel=stylesheet type="text/css" href="/css/spiffycorners.css">
     <link rel=stylesheet type="text/css" href="/css/Lookup.css">
     <link rel=stylesheet type="text/css" href="/css/datapage.css">
     <link rel=stylesheet type="text/css" href="/css/popup.css">
@@ -46,32 +42,16 @@
     <link rel=stylesheet type="text/css" href="/css/typeahead.css">
     <link rel="stylesheet" href="/css/datepicker3.css">
 
-
-    <script src="/javascript/jquery-1.11.1.min.js" type="text/javascript"></script>
     <script src="/javascript/header.js" type="text/javascript"></script>
     <script type="text/javascript" src="/javascript/jquery.modal.min.js"></script>
     <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
     <script type="text/javascript" src="/javascript/sorttable.js"></script>
 
-    <script src="/javascript/autocompletify.js"></script>
-
-
-    <script type="text/javascript" src="/javascript/typeahead.bundle.js"></script>
-
-    <!-- Begin Inspectlet Embed Code -->
-    <script type="text/javascript" id="inspectletjs">
-        window.__insp = window.__insp || [];
-        __insp.push(['wid', <%=ZfinProperties.getInspectletID()%>]);
-        (function() {
-            function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
-            if (window.attachEvent){
-                window.attachEvent('onload', __ldinsp);
-            }else{
-                window.addEventListener('load', __ldinsp, false);
-            }
-        })();
+    <script>
+        if (hdrGetCookie("tabCookie") === "Motto") {
+            hdrSetCookie("tabCookie", "Research", "", "/");
+        }
     </script>
-    <!-- End Inspectlet Embed Code -->
 
 </head>
 
@@ -83,7 +63,7 @@
 
 <tiles:insertAttribute name="footer"/>
 
-<authz:authorize ifAnyGranted="root">
+<authz:authorize access="hasRole('root')">
     <zfin:printDebugInfo>
         <table cellpadding=5 width=100%>
             <tr>

@@ -2,6 +2,7 @@ package org.zfin.ontology.repository;
 
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionResult2;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.PhenotypeStatement;
@@ -236,7 +237,7 @@ public interface OntologyRepository {
      *
      * @return expressions
      */
-    List<ExpressionResult> getExpressionsOnSecondaryTerms();
+    List<ExpressionResult2> getExpressionsOnSecondaryTerms();
 
     /**
      * Retrieve go evidences with secondary terms annotated.

@@ -2,6 +2,7 @@ package org.zfin.gwt.root.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import org.zfin.gwt.root.dto.NoteDTO;
 import org.zfin.gwt.root.dto.NoteEditMode;
 import org.zfin.gwt.root.event.NoteEvent;
@@ -20,6 +21,11 @@ public class PrivateNoteEntry extends AbstractNoteEntry {
 
         removeNoteButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
+                Window.alert("Hi");
+                if (!Window.confirm("Do you really want to delete this note?")) {
+                    return;
+                }
+
                 MarkerRPCService.App.getInstance().removeCuratorNote(noteDTO, new MarkerEditCallBack<Void>("Failed to remove curator note: ") {
                     @Override
                     public void onSuccess(Void result) {

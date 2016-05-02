@@ -11,6 +11,7 @@ public class ExperimentDTO implements IsSerializable, Comparable<ExperimentDTO> 
     private String experimentZdbID;
     private MarkerDTO gene;
     private MarkerDTO antibodyMarker;
+    private FishDTO fishDTO;
     private String fishName;
     private String fishID;
     private EnvironmentDTO environment;
@@ -89,6 +90,14 @@ public class ExperimentDTO implements IsSerializable, Comparable<ExperimentDTO> 
 
     public void setFishID(String fishID) {
         this.fishID = fishID;
+    }
+
+    public FishDTO getFishDTO() {
+        return fishDTO;
+    }
+
+    public void setFishDTO(FishDTO fishDTO) {
+        this.fishDTO = fishDTO;
     }
 
     public String getGenbankNumber() {
@@ -267,5 +276,9 @@ public class ExperimentDTO implements IsSerializable, Comparable<ExperimentDTO> 
 
     public void setFeatureID(String featureID) {
         this.featureID = featureID;
+    }
+
+    public boolean isWildtype() {
+        return true;
     }
 }

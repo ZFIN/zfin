@@ -1,5 +1,5 @@
 /**
- *  Class InfrastructureRepository
+ * Class InfrastructureRepository
  */
 package org.zfin.infrastructure.repository;
 
@@ -15,7 +15,6 @@ import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExternalNote;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.profile.service.BeanFieldUpdate;
@@ -58,8 +57,6 @@ public interface InfrastructureRepository {
                                            String sourceZdbId,
                                            RecordAttribution.SourceType sourceType);
 
-    List<RecordAttribution> getRecAttribforFtrType(String dataZdbID);
-
     List<RecordAttribution> getRecordAttributionsForType(String dataZdbID, RecordAttribution.SourceType sourceType);
 
 
@@ -101,7 +98,7 @@ public interface InfrastructureRepository {
 
     PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType);
 
-    void insertUpdatesTable(String recID, String comments, String submitterZdbID,Date updateDate);
+    void insertUpdatesTable(String recID, String comments, String submitterZdbID, Date updateDate);
 
     void insertUpdatesTable(String recID, String fieldName, String comments);
 
@@ -220,7 +217,9 @@ public interface InfrastructureRepository {
      */
     List<ExpressionAssay> getAllAssays();
 
-    List<PublicationAttribution> getPublicationAttributions(String dblinkZdbID);
+    List<PublicationAttribution> getPublicationAttributions(String dataZdbID);
+
+    List<PublicationAttribution> getPublicationAttributions(String dataZdbID, RecordAttribution.SourceType type);
 
     /**
      * Retrieves all data alias groups
@@ -283,6 +282,7 @@ public interface InfrastructureRepository {
      * @return DataAliasGroup entity
      */
     DataAliasGroup getDataAliasGroupByName(String name);
+
     ControlledVocab getCVZdbIDByTerm(String cvTermName);
 
     /**
@@ -391,10 +391,6 @@ public interface InfrastructureRepository {
      */
     List<String> getAllEntities(Class clazz, String idName, int firstNIds);
 
-    List<String> getExternalOrthologyNoteStrings(String zdbID);
-
-    List<ExternalNote> getExternalNotes(String zdbID);
-
     List<String> getPublicationAttributionZdbIdsForType(String microarray_pub, Marker.Type markerType);
 
     int removeAttributionsNotFound(Collection<String> attributionsToRemove, String microarrayPub);
@@ -441,8 +437,6 @@ public interface InfrastructureRepository {
     void deleteActiveEntity(String zdbID);
 
     List<Publication> getTermReferences(GenericTerm term, String orderBy);
-
-    void saveExternalNote(GenotypeExternalNote note, Publication publication);
 
     void saveDataNote(DataNote note, Publication publication);
 

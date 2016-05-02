@@ -104,7 +104,7 @@ public class EnumValidationService {
 
         String hqlWithTypes = "select count(astat.zdbID) from AnatomyStatistics astat where astat.type in  (:types) ";
         Query queryBothTypes = session.createQuery(hqlWithTypes);
-        List<String> types = new ArrayList<String>();
+        List<String> types = new ArrayList<>();
         for (AnatomyStatistics.Type type : AnatomyStatistics.Type.values()) {
             types.add(type.name());
         }

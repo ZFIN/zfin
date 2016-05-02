@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <config>
-
-  <luceneMatchVersion>LUCENE_42</luceneMatchVersion>
+    <luceneMatchVersion>5.2.0</luceneMatchVersion>
 
   <jmx />
 
@@ -239,13 +238,11 @@
 
 
 
-          <str name="q.alt">*:*</str>
-          <str name="defType">edismax</str>
-          <!-- there is an override in SearchPrototypeController that mirrors this list but includes an extra, so they should be updated in tandem -->
-          <!--screen used to be here, removed as a result of case 11323-->
-          <str name="fl">name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count, has_orthology, xpat_zdb_id, fig_zdb_id, score</str>
-
-
+        <str name="q.alt">*:*</str>
+        <str name="defType">edismax</str>
+        <!-- there is an override in SearchPrototypeController that mirrors this list but includes an extra, so they should be updated in tandem -->
+        <!--screen used to be here, removed as a result of case 11323-->
+        <str name="fl">name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count, has_orthology, xpat_zdb_id, fig_zdb_id, score,pgcmid</str>
 
           <!-- fast vector highlighter config -->
          <str name="hl.tag.pre"><![CDATA[<span class="search-result-highlight">]]></str>
@@ -330,6 +327,7 @@
              phenotype_statement_t
              synonym_phenotype_statement_t
              expression_statement_t
+             journal_t
              registered_author_t
                           registered_author
              author_string
@@ -358,6 +356,7 @@
              expressed_gene_full_name
              expressed_gene_previous_name
                           expressed_gene
+                          misexpressed_gene
                                      insertion_gene_t
              insertion_gene_full_name
              insertion_gene_previous_name
@@ -451,6 +450,7 @@
              expressed_gene_full_name
              expressed_gene_previous_name
                           expressed_gene
+             misexpressed_gene
                                      insertion_gene_t
              insertion_gene_full_name
              insertion_gene_previous_name
@@ -471,7 +471,7 @@
              targeted_gene_previous_name
 
              experimental_conditions
-
+             journal_t
              prefix
              institution
              institution_t
@@ -504,33 +504,16 @@
          </str>
 
 
-<!--         <str name="complexity_boost">mul(recip(complexity,1,1,1),500000000000000)</str>-->
          <str name="complexity_boost">mul(recip(complexity,1,1,1),1000000)</str>
          <str name="popularity_boost">mul(sqrt(popularity),0.00001)</str>
          <str name="recency_boost">mul(recip(ms(NOW/HOUR,tdate),3.16e-11,1,1),0.001)</str>
          <str name="images_boost">mul(exists(has_image),0.1)</str>
          <str name="jtype_boost">mul(exists(query({!v='publication_type:Journal'})),0.001)</str>
+         <str name="bq">(*:* -is_wildtype:false)^1000 (*:* -name_t:unspecified)^10000 </str>
 
-<!--
-        //todo: this is an attempt at de-boosting unspecified transgenics, not working yet
-        <str name="bq">
-            (*:* name_t:-unspecified)^10000
-        </str>
--->
-
-         <!--  this works and there's no idf nonsense, but I can't seem to pass in two words quoted
-             termfreq(category,'Gene')
-             termfreq(category,'Antibody')
-             -->
-
-<!-- this fails pretty badly because of term frequency being so much different across types -->
-<!--
-
-         <str name="bq">(category:Gene^2 OR category:"Sequence Alteration"^1.8 OR category:"DNA Construct"^1.2 OR category:Antibody^1.2)</str>
--->
-         <!--  less indented values are the keyword version of text fields for highlighting when adding fq's to the q -->
-
-         <str name="qf">proper_name^10.0
+         <str name="qf">
+             proper_name_k^50.0
+             proper_name^10.0
              name
              category_t
              type_t
@@ -571,7 +554,7 @@
              synonym_phenotype_statement_t
              synonym_phenotype_statement
 
-
+             journal journal_t
              registered_author_t^0.5
              registered_author^0.5
              author_string
@@ -636,6 +619,7 @@
              expressed_gene_full_name^0.8
              expressed_gene_previous_name^0.7
              expressed_gene
+             misexpressed_gene
              inserted_in_gene_full_name^0.8
              inserted_in_gene_previous_name^0.7
              inserted_in_gene_t
@@ -659,6 +643,7 @@
              institution
              institution_t
              lab_of_origin
+             rna_consequence
              related_accession
              related_marker
              allele_t
@@ -869,7 +854,7 @@
             <str name="q.alt">*:*</str>
             <str name="defType">edismax</str>
             <!-- This list needs to match the fl for the primary requesthandler, or, more importantly, it needs to match the annotations in SearchResult.java  -->
-            <str name="fl">name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count,  has_orthology, xpat_zdb_id, fig_zdb_id, score</str>
+            <str name="fl">name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count,  has_orthology, xpat_zdb_id, fig_zdb_id, score,pgcmid</str>
             <str name="qf">proper_name^10.0
                 name
                 category_t

@@ -33,7 +33,7 @@ public class FeatureDetailSmokeTest extends AbstractSmokeTest {
     public void testFeaturePageWithOtherPagesLink() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/ZDB-ALT-130627-1");
         assertEquals(page.getTitleText(),"Feature: tud11Gt");
-        assertTrue("Should be at least one other feature page link", page.getElementById("other-feature-pages").getElementsByTagName("a").size() > 0);
+        assertTrue("Should be at least one other feature page link", page.getElementById("other-pages").getElementsByTagName("a").size() > 0);
     }
 
 }

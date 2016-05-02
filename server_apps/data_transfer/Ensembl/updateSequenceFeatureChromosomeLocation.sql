@@ -1,13 +1,16 @@
 begin work;
 
-delete from sequence_feature_chromosome_location
- where sfcl_location_source = 'ZfinGbrowseStartEndLoader';
+delete from sequence_feature_chromosome_location_generated
+ where sfclg_location_source = 'ZfinGbrowseStartEndLoader';
 
-delete from sequence_feature_chromosome_location
- where sfcl_location_source = 'EnsemblStartEndLoader';
+ delete from sequence_feature_chromosome_location_generated
+ where sfclg_location_source = 'ZfinGbrowseZv9StartEndLoader';
 
-delete from sequence_feature_chromosome_location
- where sfcl_location_source = 'UCSCStartEndLoader';
+delete from sequence_feature_chromosome_location_generated
+ where sfclg_location_source = 'EnsemblStartEndLoader';
+
+delete from sequence_feature_chromosome_location_generated
+ where sfclg_location_source = 'UCSCStartEndLoader';
 
 create temp table tmp_gff_start_end (accnum varchar(50),chrom varchar(20), gene varchar(50),
        start int,
@@ -97,23 +100,23 @@ select count(*) as counter, geneId, chrom1, source, source as subsource, dblink_
 group by geneId, chrom1, source, dblink_acc_num
  into temp tmp_ucsc_all;
 
-insert into sequence_feature_chromosome_location (sfcl_data_Zdb_id, 
-       	    			       sfcl_chromosome,
-				       sfcl_acc_num,
-				       sfcl_location_source,
-				       sfcl_location_Subsource
+insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id, 
+       	    			       sfclg_chromosome,
+				       sfclg_acc_num,
+				       sfclg_location_source,
+				       sfclg_location_Subsource
 				   )
 select distinct geneId, chrom1, dblink_acc_num, source, subsource
   from tmp_ucsc_all;
 
 
-insert into sequence_feature_chromosome_location (sfcl_data_Zdb_id, 
-       	    			       sfcl_chromosome,
-				       sfcl_start,
-				       sfcl_end,
-				       sfcl_acc_num,
-				       sfcl_location_source,
-				       sfcl_fdb_db_id)
+insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id, 
+       	    			       sfclg_chromosome,
+				       sfclg_start,
+				       sfclg_end,
+				       sfclg_acc_num,
+				       sfclg_location_source,
+				       sfclg_fdb_db_id)
 select distinct dblink_linked_recid,
        		chrom1,
 		start,
@@ -128,13 +131,13 @@ select distinct dblink_linked_recid,
  and start is not null
  and end is not null;
 
-insert into sequence_feature_chromosome_location (sfcl_data_Zdb_id, 
-       	    			       sfcl_chromosome,
-				       sfcl_start,
-				       sfcl_end,
-				       sfcl_acc_num,
-				       sfcl_location_source,
-				       sfcl_fdb_db_id)
+insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id, 
+       	    			       sfclg_chromosome,
+				       sfclg_start,
+				       sfclg_end,
+				       sfclg_acc_num,
+				       sfclg_location_source,
+				       sfclg_fdb_db_id)
 select distinct dblink_linked_recid,
        		chrom1,
 		start,
@@ -149,38 +152,41 @@ select distinct dblink_linked_recid,
  and start is not null
  and end is not null;
 
-insert into sequence_feature_chromosome_location (sfcl_chromosome, sfcl_data_zdb_id,
-  sfcl_start, sfcl_end, sfcl_location_source, sfcl_location_subsource)
-select gff3.gff_seqname, feature.feature_zdb_id, gff3.gff_start, gff3.gff_end, 'ZfinGbrowseStartEndLoader', 'ZMP'
+insert into sequence_feature_chromosome_location_generated (sfclg_chromosome, sfclg_data_zdb_id,
+  sfclg_start, sfclg_end, sfclg_location_source, sfclg_location_subsource)
+select gff3.gff_seqname, feature.feature_zdb_id, gff3.gff_start, gff3.gff_end, 'ZfinGbrowseZv9StartEndLoader', 'ZMP'
 from gff3
 inner join feature on gff3.gff_name = feature.feature_abbrev
 where gff3.gff_source = 'ZMP';
 
-insert into sequence_feature_chromosome_location (sfcl_chromosome, sfcl_data_zdb_id,
-  sfcl_start, sfcl_end, sfcl_location_source, sfcl_location_subsource)
-select gff3.gff_seqname, feature.feature_zdb_id, gff3.gff_start, gff3.gff_end, 'ZfinGbrowseStartEndLoader', 'BurgessLin'
+insert into sequence_feature_chromosome_location_generated (sfclg_chromosome, sfclg_data_zdb_id,
+  sfclg_start, sfclg_end, sfclg_location_source, sfclg_location_subsource)
+select gff3.gff_seqname, feature.feature_zdb_id, gff3.gff_start, gff3.gff_end, 'ZfinGbrowseZv9StartEndLoader', 'BurgessLin'
 from gff3
 inner join feature on (gff3.gff_id || 'Tg') = feature.feature_abbrev
 where gff3.gff_source = 'BurgessLin';
 
-insert into sequence_feature_chromosome_location (sfcl_chromosome, sfcl_data_zdb_id,
-  sfcl_start, sfcl_end, sfcl_location_source, sfcl_location_subsource)
+insert into sequence_feature_chromosome_location_generated (sfclg_chromosome, sfclg_data_zdb_id,
+  sfclg_start, sfclg_end, sfclg_location_source, sfclg_location_subsource)
 select gff_seqname, gff_name, gff_start, gff_end, 'ZfinGbrowseStartEndLoader', 'KnockdownReagentLoader'
 from gff3
 where gff_source = 'ZFIN_knockdown_reagent';
 
 
-delete from sequence_feature_chromosome_location
- where sfcl_chromosome in ('AB','U','0')
- and sfcl_location_source = 'UCSCStartEndLoader';
+delete from sequence_feature_chromosome_location_generated
+ where sfclg_chromosome in ('AB','U','0')
+ and sfclg_location_source = 'UCSCStartEndLoader';
 
-delete from sequence_feature_chromosome_location
- where sfcl_chromosome in ('AB','U','0')
- and sfcl_location_source = 'ZfinGbrowseStartEndLoader';
+delete from sequence_feature_chromosome_location_generated
+ where sfclg_chromosome in ('AB','U','0')
+ and (
+  sfclg_location_source = 'ZfinGbrowseStartEndLoader'
+  OR sfclg_location_source = 'ZfinGbrowseZv9StartEndLoader'
+);
 
-delete from sequence_feature_chromosome_location
- where sfcl_chromosome in ('AB','U','0')
- and sfcl_location_source = 'EnsemblStartEndLoader';
+delete from sequence_feature_chromosome_location_generated
+ where sfclg_chromosome in ('AB','U','0')
+ and sfclg_location_source = 'EnsemblStartEndLoader';
 
 commit work;
 -- commit or rollback is appended externally

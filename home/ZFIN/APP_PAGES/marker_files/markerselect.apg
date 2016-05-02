@@ -155,6 +155,7 @@ Message: $MI_ERRORMSG
     when gene is involved, two more columns expression and mutant
    <?/MICOMMENT>
    <?MIVAR NAME=type_of_genedom>f<?/MIVAR>
+   <?MIVAR NAME=constrct>f<?/MIVAR>
 
    <?MIVAR NAME=type_of_knockdown_reagent>f<?/MIVAR>
 
@@ -205,7 +206,10 @@ Message: $MI_ERRORMSG
 	<?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=type_of_knockdown_reagent>t<?/MIVAR>
     <?MIELSE>
 	<?MIVAR NAME=$constraint> mrkr_type not in (select mtgrpmem_mrkr_type from marker_type_group_member where mtgrpmem_mrkr_type_group ='SEARCH_SEG')<?/MIVAR>
+
+
     <?/MIBLOCK>
+
 
     <?MICOMMENT>---------------------------------------------------------------
       Create markerselect_temp_match temp table if it does not already exist.
@@ -863,6 +867,7 @@ Message: $MI_ERRORMSG
            <?MIVAR NAME=mksel_map_col>t<?/MIVAR>
            <?MIVAR COND="$(AND,$(XST,$marker_type),$(>,$(POSITION,$marker_type,CONSTRCT),0))">
 		$(SETVAR,$mksel_map_col,f)
+		<?MIVAR NAME=$constrct>t<?/MIVAR>
            <?/MIVAR>
            <?MIVAR COND="$(AND,$(EC,$type_of_knockdown_reagent,f),$(EC,$mksel_map_col,t),$(AND,$(XST,$marker_type),$(NE,$marker_type,TSCRIPT),$(NE,$marker_type,REGION),$(NE,$marker_type,EFG)))">
        	     <th align-left><b>Location</b></th>
@@ -935,7 +940,11 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
      <?/MISQL>
       <?MIVAR><a href=/action/feature/view/$OID>$ftrname</a><?/MIVAR>
      <?MIELSE>
+     <?MIBLOCK COND=$(EC,$constrct,t)>
+      <?MIVAR><i>$mrkrsel_mrkr_link</i><?/MIVAR>
+      <?MIELSE>
       <?MIVAR>$mrkrsel_mrkr_link<?/MIVAR>
+      <?/MIBLOCK>
       <?/MIBLOCK>
 	  <?MIELSE> <?MICOMMENT> ** IS A GENE ** <?/MICOMMENT>
 	     <?MIVAR>
@@ -1030,36 +1039,27 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
 
               <?MIVAR NAME=mrkrsel_pheno_img_count>0<?/MIVAR>
               <?MIVAR NAME=mrkrsel_MO_flag>0<?/MIVAR>
-              <?MISQL SQL="select distinct phenox_fig_zdb_id
-                             from mutant_fast_search, phenotype_experiment
-                            where mfs_mrkr_zdb_id ='$OID'
-      	                      and mfs_genox_zdb_id = phenox_genox_zdb_id
-      	                      and exists (select NOTnormal.phenos_pk_id
-                                            from phenotype_statement NOTnormal
-                                           where NOTnormal.phenos_phenox_pk_id = phenox_pk_id
-                                             and NOTnormal.phenos_tag != 'normal');">
-                <?MIVAR NAME=mrkrsel_pheno_fig_zdb_id>$1<?/MIVAR>
 
-                <?MICOMMENT> *** deciding on displaying camera icon or not <?/MICOMMENT>
-                <?MISQL COND="$(<,$mrkrsel_pheno_img_count,1)"
-                        SQL="select count(img_zdb_id) from image
-                              where img_fig_zdb_id = '$mrkrsel_pheno_fig_zdb_id';">
-                  <?MIVAR>$(SETVAR,$mrkrsel_pheno_img_count,$1)<?/MIVAR>
-                <?/MISQL>
+                <?MISQL SQL=" select distinct pg_fig_zdb_id
+                                                  from phenotype_source_generated, mutant_fast_search  
+                                                 where mfs_mrkr_zdb_id = '$OID'
+                                                   and pg_genox_zdb_id = mfs_genox_zdb_id  
+                                                   and exists (select NOTnormal.psg_id  
+                                                                 from phenotype_observation_generated NOTnormal  
+                                                                where NOTnormal.psg_pg_id = pg_id  
+                                                                  and NOTnormal.psg_tag != 'normal')
+                                              ;">
 
-                <?MICOMMENT> *** deciding on displaying MO icon or not
-                <?MISQL COND="$(<,$mrkrsel_MO_flag,1)"
-                        SQL="select count(expcond_mrkr_zdb_id)
-       	                       from mutant_fast_search,fish_experiment,experiment_condition,phenotype_experiment
-       	                      where mfs_mrkr_zdb_id = '$OID'
-       	                        and phenox_genox_zdb_id = mfs_genox_zdb_id
-       	                        and phenox_fig_zdb_id = '$mrkrsel_pheno_fig_zdb_id'
-       	                        and mfs_genox_zdb_id = genox_zdb_id
-       	                        and expcond_exp_zdb_id = genox_exp_zdb_id
-       	                        and expcond_mrkr_zdb_id is not null;">
-                  <?MIVAR>$(SETVAR,$mrkrsel_MO_flag,$1)<?/MIVAR>
-                <?/MISQL>
-                <?/MICOMMENT>
+                                <?MIVAR NAME=mrkrsel_pheno_fig_zdb_id>$1<?/MIVAR>
+
+                                <?MICOMMENT> *** deciding on displaying camera icon or not <?/MICOMMENT>
+                                <?MISQL COND="$(<,$mrkrsel_pheno_img_count,1)"
+                                        SQL="select count(img_zdb_id) from image
+                                              where img_fig_zdb_id = '$mrkrsel_pheno_fig_zdb_id';">
+                                  <?MIVAR>$(SETVAR,$mrkrsel_pheno_img_count,$1)<?/MIVAR>
+                                <?/MISQL>
+
+
               <?/MISQL>
 
 	      <?MIVAR NAME=mrkrsel_pheno_fig_count>$MI_ROWCOUNT<?/MIVAR>

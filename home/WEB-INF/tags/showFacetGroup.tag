@@ -21,7 +21,7 @@
     <c:set var="rootOnlyCssClass" value="root-only-facet-group"/>
 </c:if>
 
-<authz:authorize ifAnyGranted="root">
+<authz:authorize access="hasRole('root')">
     <c:set var="hidden" value="false"/>
 </authz:authorize>
 

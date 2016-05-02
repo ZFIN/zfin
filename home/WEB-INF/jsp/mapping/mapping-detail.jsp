@@ -4,21 +4,15 @@
 
 <zfin2:dataManager zdbID="${marker.zdbID}" rtype="marker"/>
 <p/>
-<table width="100%" cellpadding="0" cellspacing="0">
-    <tr>
-        <td class="titlebar" style="">
-                <span style="font-size: x-large; margin-left: 0.5em; font-weight: bold;">
-                        Mapping Details
-            </span>
-        </td>
-        <td align="right" class="titlebarRight">
-            <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                <tiles:putAttribute name="subjectName" value="Mapping Details"/>
-            </tiles:insertTemplate>
-        </td>
-    </tr>
-</table>
 
+<div class="titlebar">
+    <h1>Mapping Details</h1>
+    <span class="yourinputwelcome">
+        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+            <tiles:putAttribute name="subjectName" value="Mapping Details"/>
+        </tiles:insertTemplate>
+    </span>
+</div>
 
 <table class="primary-entity-attributes">
     <c:choose>
@@ -41,16 +35,12 @@
     </c:choose>
 </table>
 
-<div class="summary">
-    <b>PHYSICAL MAP AND BROWSER</b>
-    <c:choose>
-        <c:when test="${empty locations && empty mappedClones}"><span
-                class="no-data-tag">No data available</span></c:when>
-        <c:otherwise>
-            <zfin2:PhysicalMapAndBrowserSection marker="${marker}" locations="${locations}" gbrowseImage="${gbrowseImage}"/>
-        </c:otherwise>
-    </c:choose>
-</div>
+<zfin2:subsection title="PHYSICAL MAP AND BROWSER" test="${!empty locations || !empty mappedClones}" showNoData="true">
+    <c:if test="${!isClone}">
+        <zfin2:PhysicalMapAndBrowserSection locations="${locations}" gbrowseImage="${gbrowseImage}"/>
+    </c:if>
+    <zfin2:mappedClonesTable mappedClones="${mappedClones}" marker="${marker}"/>
+</zfin2:subsection>
 
 <p/>
 
@@ -80,7 +70,17 @@
     </c:choose>
 </div>
 
-<authz:authorize ifAnyGranted="root">
+<c:if test="${not empty feature}">
+    <table class="primary-entity-attributes">
+        <tr>
+            <td><span class="name-value">Genomic Feature <zfin:link entity="${feature}"/>
+        is an allele of <zfin:link entity="${marker}"/>
+        </span></td>
+        </tr>
+    </table>
+</c:if>
+
+<authz:authorize access="hasRole('root')">
     <p/>
 
     <div id="toggleMartOn"><a href="javascript:toggleOn('mart','toggleMartOff','toggleMartOn')">Show Chromosome Mart

@@ -24,9 +24,6 @@ echo 'execute function regen_term(); update statistics for procedure' | dbaccess
 echo "Starting regen_names at `date`"
 echo 'execute function regen_names(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 
-echo "Starting regen_feature_term_fast_search at `date`"
-echo 'execute function regen_feature_term_fast_search(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
-
 echo "Starting regen_expression_term_fast_search at `date`"
 echo 'execute function regen_expression_term_fast_search(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 

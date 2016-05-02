@@ -45,6 +45,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
     public static final String RELATED_TERMS_PANEL = "related-terms-panel";
     public static final String TAG_ABNORMAL = "abnormal";
     public static final String TAG_NORMAL = "normal";
+    public static final String TAG_AMELIORATED = "ameliorated";
 
     // GUI elements
     private Map<EntityPart, TermEntry> termEntryUnitsMap = new HashMap<EntityPart, TermEntry>(5);
@@ -133,6 +134,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
             tagList = new ZfinListBox(false);
             tagList.addItem(TAG_ABNORMAL);
             tagList.addItem(TAG_NORMAL);
+            tagList.addItem(TAG_AMELIORATED);
             HorizontalPanel tagPanel = new HorizontalPanel();
             HTML tagHtml = new HTML("Tag: ");
             tagHtml.setStyleName(WidgetUtil.BOLD);
@@ -499,8 +501,11 @@ public class PileConstructionZoneModule extends Composite implements Constructio
                 }
                 if (isPhenotype)
                     pileStructureRPCAsync.createPhenotypePileStructure(termDTO, publicationID, new CreatePhenotypePileStructureCallback());
-                else
-                    pileStructureRPCAsync.createPileStructure(termDTO, publicationID, new CreatePileStructureCallback());
+                else {
+                    List<ExpressedTermDTO> list = new ArrayList<>(1);
+                    list.add(termDTO);
+                    pileStructureRPCAsync.createPileStructure(list, publicationID, new CreatePileStructureCallback());
+                }
                 errorElement.clearAllErrors();
             } else {
                 errorElement.setText(structureValidator.getErrorMessage());
@@ -516,7 +521,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
 
     }
 
-    private class CreatePileStructureCallback implements AsyncCallback<ExpressionPileStructureDTO> {
+    private class CreatePileStructureCallback implements AsyncCallback<List<ExpressionPileStructureDTO>> {
 
         public void onFailure(Throwable throwable) {
             errorElement.setText(throwable.getMessage());
@@ -525,14 +530,15 @@ public class PileConstructionZoneModule extends Composite implements Constructio
         /**
          * Returns the pile Structure entity
          *
-         * @param pileStructure pile Structure
+         * @param pileStructureList pile Structure
          */
-        public void onSuccess(ExpressionPileStructureDTO pileStructure) {
+        public void onSuccess(List<ExpressionPileStructureDTO> pileStructureList) {
             //Window.alert("Success");
             // call listeners
-            for (PileStructureListener listener : pileListener) {
-                listener.onPileStructureCreation(pileStructure);
-            }
+            for (ExpressionPileStructureDTO pileStructure : pileStructureList)
+                for (PileStructureListener listener : pileListener) {
+                    listener.onPileStructureCreation(pileStructure);
+                }
             resetButton.click();
             errorElement.clearAllErrors();
         }

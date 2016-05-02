@@ -11,7 +11,7 @@ import spock.lang.Specification
 @ContextConfiguration(locations = "file:home/WEB-INF/spring/mvc-webapp.xml")
 abstract class ZfinIntegrationSpec extends Specification {
 
-    def setupSpec() {
+    public def setupSpec() {
         TestConfiguration.configure();
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         if (sessionFactory == null) {
@@ -19,7 +19,7 @@ abstract class ZfinIntegrationSpec extends Specification {
         }
     }
 
-    def cleanupSpec() {
+    public def cleanupSpec() {
         HibernateUtil.closeSession();
     }
 

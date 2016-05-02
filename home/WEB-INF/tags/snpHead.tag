@@ -30,7 +30,7 @@
         <td><zfin2:displayLocation entity="${formBean.marker}"/></td>
     </tr>
 
-    <zfin2:notesInDiv hasNotes="${formBean.marker}"/>
+    <zfin2:entityNotes entity="${formBean.marker}"/>
 
 
 </table>

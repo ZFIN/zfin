@@ -584,28 +584,18 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
 
   <?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
 
-  <Table class=search width="100%" border=0 cellpadding=1 cellspacing=0>
-      <TR>
-	<td class=titlebar>
-          &nbsp;&nbsp;
+  <div class="titlebar">
+    <?MIBLOCK COND="$(NXST,$query_results)">
+      <h1>Search for Publication</h1>
+    <?MIELSE>
+      <h1><a name=modify></a>Modify your search</h1>
+    <?/MIBLOCK>
+    <span class="yourinputwelcome">
+      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
+    </span>
+  </div>
 
-  <?MIBLOCK COND="$(NXST,$query_results)">
-	  <b>Search for PUBLICATION</b>
-      <?MICOMMENT>
-                <a href="/action/profile/help/international-characters" class="popup-link help-popup-link"></a>
-                <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=international_characters.html" class="popup-link help-popup-link"></a>
-
-      <?/MICOMMENT>
-  <?MIELSE>
-          <a name=modify></a><b>Modify your search</b>
-  <?/MIBLOCK>
-
-        </td>
-        <td class=titlebar align=right>
-        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
-        </td>
-      </tr>
-
+<Table class=search width="100%" border=0 cellpadding=1 cellspacing=0>
   <form name="critform"
 	method="get"
 	action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
@@ -846,7 +836,7 @@ bugzID:12306, not worth fixing since pubmed id searches can be done using facete
 
     <tr>
   <?MIVAR>
-      <TD class=resultcount>
+      <TD class="right-align">
 	Display results in groups of
 	<input type="text" name="WINSIZE" size="3" onChange='document.critform.START.value = "";' $(IF,$(XST,$WINSIZE),value='$WINSIZE',value="10")>
 	<?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">

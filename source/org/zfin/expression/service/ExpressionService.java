@@ -9,7 +9,9 @@ import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.*;
 import org.zfin.expression.repository.ExpressionRepository;
-import org.zfin.expression.presentation.StageExpressionPresentation;
+import org.zfin.gwt.root.dto.ExpressionPhenotypeExperimentDTO;
+import org.zfin.gwt.root.dto.ExpressionPhenotypeStatementDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -19,7 +21,6 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.datatransfer.service.ExpressionResultUpdateRecord;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDBDataType;
@@ -372,9 +373,9 @@ public class ExpressionService {
      * Could be one or both terms.
      *
      * @param expressionResult expression
-     * @return set of obsolseted terms
+     * @return set of obsoleted terms
      */
-    public Set<GenericTerm> getObsoleteTerm(ExpressionResult expressionResult) {
+    public Set<GenericTerm> getObsoleteTerm(ExpressionResult2 expressionResult) {
         Set<GenericTerm> obsoletedTerms = new HashSet<>(2);
         if (expressionResult.getEntity().getSuperterm().isObsolete()) {
             obsoletedTerms.add(expressionResult.getEntity().getSuperterm());
@@ -389,14 +390,14 @@ public class ExpressionService {
      * Could be one or both terms.
      *
      * @param expressionResult expression
-     * @return set of obsolseted terms
+     * @return set of obsoleted terms
      */
-    public Set<GenericTerm> getSecondaryTerm(ExpressionResult expressionResult) {
+    public Set<GenericTerm> getSecondaryTerm(ExpressionResult2 expressionResult) {
         Set<GenericTerm> obsoletedTerms = new HashSet<>(2);
-        if (expressionResult.getEntity().getSuperterm().isSecondary()) {
-            obsoletedTerms.add(expressionResult.getEntity().getSuperterm());
-        } else if (expressionResult.getEntity().getSubterm() != null && expressionResult.getEntity().getSubterm().isSecondary()) {
-            obsoletedTerms.add(expressionResult.getEntity().getSubterm());
+        if (expressionResult.getSuperTerm().isSecondary()) {
+            obsoletedTerms.add(expressionResult.getSuperTerm());
+        } else if (expressionResult.getSubTerm() != null && expressionResult.getSubTerm().isSecondary()) {
+            obsoletedTerms.add(expressionResult.getSubTerm());
         }
         return obsoletedTerms;
     }
@@ -478,7 +479,7 @@ public class ExpressionService {
                     result.setSuperTerm(stageRange.getSuperTerm());
                     result.setStartStage(stageRange.getStart());
                     result.setEndStage(stageRange.getEnd());
-                    result.setComment("Created by a split of " + result.getZdbID());
+                    ///result.setComment("Created by a split of " + result.getZdbID());
                     firstElement = false;
                     splitStatement.setOriginalExpressionResult(result);
                 } else {
@@ -488,7 +489,7 @@ public class ExpressionService {
                     splitResult.setStartStage(stageRange.getStart());
                     splitResult.setEndStage(stageRange.getEnd());
                     splitResult.setExpressionFound(result.isExpressionFound());
-                    splitResult.setComment("Created by a split of " + result.getZdbID());
+                    ///splitResult.setComment("Created by a split of " + result.getZdbID());
                     //splitResult.setFigures(result.getFigures());
                     for (Figure figure : result.getFigures()) {
                         getExpressionRepository().createExpressionResult(splitResult, figure);
@@ -597,7 +598,7 @@ public class ExpressionService {
                 Set<Figure> figs = xpResult.getFigures();
                 Set<Figure> qualifiedFigures = new HashSet<>();
 
-                for (Figure fig : figs)  {
+                for (Figure fig : figs) {
                     if (expressionFigureIDs.contains(fig.getZdbID())) {
                         qualifiedFigures.add(fig);
                     }
@@ -656,12 +657,35 @@ public class ExpressionService {
             expressionDisplays.addAll(map.values());
             Collections.sort(expressionDisplays);
             return expressionDisplays;
-        }  else {
+        } else {
             return null;
         }
 
 
-
     }
 
+    public static List<ExpressionPhenotypeExperimentDTO> createPhenotypeFromExpressions(List<ExpressionResult2> expressionResultList) {
+        List<ExpressionPhenotypeExperimentDTO> list = new ArrayList<>();
+        for (ExpressionResult2 result : expressionResultList) {
+            for (ExpressionPhenotypeTerm phenotypeTerm : result.getPhenotypeTermSet()) {
+                ExpressionPhenotypeExperimentDTO dto = new ExpressionPhenotypeExperimentDTO();
+                dto.setFish(DTOConversionService.convertToFishDtoFromFish(result.getExpressionFigureStage().getExpressionExperiment().getFishExperiment().getFish()));
+                dto.setFigure(DTOConversionService.convertToFigureDTO(result.getExpressionFigureStage().getFigure()));
+                dto.setStart(DTOConversionService.convertToStageDTO(result.getExpressionFigureStage().getStartStage()));
+                dto.setEnd(DTOConversionService.convertToStageDTO(result.getExpressionFigureStage().getEndStage()));
+                dto.setEnvironment(DTOConversionService.convertToEnvironmentDTO(result.getExpressionFigureStage().getExpressionExperiment().getFishExperiment().getExperiment()));
+                ExpressionPhenotypeStatementDTO statement = new ExpressionPhenotypeStatementDTO();
+                statement.setQuality(DTOConversionService.convertToTermDTO(phenotypeTerm.getQualityTerm()));
+                statement.setEntity(DTOConversionService.convertToEntityDTO(result.getEntity()));
+                statement.setTag(phenotypeTerm.getTag());
+                if (result.getExpressionFigureStage().getExpressionExperiment().getGene() != null)
+                    statement.setGeneName(result.getExpressionFigureStage().getExpressionExperiment().getGene().getAbbreviation());
+                if (result.getExpressionFigureStage().getExpressionExperiment().getAntibody() != null)
+                    statement.setAntibodyName(result.getExpressionFigureStage().getExpressionExperiment().getAntibody().getName());
+                dto.addExpressedTerm(statement);
+                list.add(dto);
+            }
+        }
+        return list;
+    }
 }

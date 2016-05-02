@@ -53,7 +53,7 @@ import java.util.*;
  * as a related marker are listed.
  * II)GenBank-Selection-Box: Selecting a gene updates the GenBank-Selection-Box: GenBank accession numbers that
  * belong the given gene or clones that are related to the gene (EST or cDNA) are listed.
- * C) MartFish-Selection-Box: It list first WT then the list of non-wildtype fish attributes to this publication
+ * C) Fish-Selection-Box: It list first WT then the list of non-wildtype fish attributes to this publication
  * and then all other wild-type fish. No cross-interaction upon selection.
  * D) Environment-Selection-Box: This lists first: Standard, Generic-control and the all environments defined in
  * the environment tab. No cross-interaction upon selection.
@@ -68,7 +68,7 @@ import java.util.*;
  * I)   Adding an experiment requires to either selecting a gene or an antibody or both and all other
  * attributes except the GenBank accession number which is optional.
  * II) Experiments have to be unique according to the combination
- * Gene/MartFish/Environment/Assay/Antibody/GenBank, i.e. you cannot create two experiments with the same
+ * Gene/Fish/Environment/Assay/Antibody/GenBank, i.e. you cannot create two experiments with the same
  * values for these attributes. An error message is displayed below the construction zone if a new
  * experiment equals an existing one while highlighting the existing experiment in the list purple that
  * that the new experiment is conflicting with.
@@ -80,16 +80,28 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
 
     // div-elements
     public static final String SHOW_HIDE_EXPRESSIONS = "show-hide-expressions";
+
     public static final String EXPRESSIONS_DISPLAY = "display-expressions";
+    public static final String EAP_DISPLAY = "display-eap";
     public static final String CHECK_SIZE_BAR = "check-size-bar";
     public static final String MUTANTS_CONSTRUCTION_ZONE = "display-mutants-construction-zone";
     public static final String IMAGE_LOADING_EXPRESSION_SECTION = "image-loading-expression-section";
     public static final String EXPRESSIONS_DISPLAY_ERRORS = "display-expression-errors";
+    public static final String SHOW_HIDE_EAP = "show-hide-eap";
+
+
+
 
     // GUI elements
     // this panel holds the Title and the show / hide link
     private HorizontalPanel panel = new HorizontalPanel();
     private Hyperlink showExpressionSection = new Hyperlink();
+
+    private HorizontalPanel eapPanel=new HorizontalPanel();
+    private Hyperlink showEapSection = new Hyperlink();
+    private FlexTable eapTable = new FlexTable();
+    private HTMLTable.RowFormatter rowFormatter = eapTable.getRowFormatter() ;
+
     private FlexTable constructionRow = new FlexTable();
     private MutantFlexTable displayTable;
     private ErrorHandler errorElement = new SimpleErrorElement(EXPRESSIONS_DISPLAY_ERRORS);
@@ -110,6 +122,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     private List<PhenotypeExperimentDTO> selectedExpressions = new ArrayList<>(10);
     // all mutants displayed on the page (all or a subset defined by the filter elements)
     private List<PhenotypeExperimentDTO> displayedExpressions = new ArrayList<>(20);
+    private List<ExpressionPhenotypeExperimentDTO> displayedEaps = new ArrayList<>(20);
     // This maps the display table and contains the full objects that each
     // row is made up from
     private Map<Integer, PhenotypeExperimentDTO> displayTableMap = new HashMap<>(20);
@@ -169,12 +182,30 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
 
     private void initGUI() {
         initShowHideGUI();
+
         experimentSelection.setVisible(false);
+
 
         initCheckAndSize();
         displayTable.setWidth("100%");
         RootPanel.get(EXPRESSIONS_DISPLAY).add(displayTable);
+
         RootPanel.get(MUTANTS_CONSTRUCTION_ZONE).add(constructionRow);
+        RootPanel.get(SHOW_HIDE_EXPRESSIONS).add(panel);
+        RootPanel.get(SHOW_HIDE_EAP).add(eapPanel);
+
+        Label eapLabel = new Label("Expression Phenotypes: ");
+        eapLabel.setStyleName(WidgetUtil.BOLD);
+        eapPanel.add(eapLabel);
+        showEapSection.setStyleName("small");
+        showEapSection.setText(HIDE);
+        showEapSection.setTargetHistoryToken(HIDE);
+        showEapSection.addClickHandler(new ShowHideEapSectionHandler());
+        eapPanel.add(showEapSection);
+
+        eapTable.setWidth("100%");
+        RootPanel.get(EAP_DISPLAY).add(eapTable);
+
         addChangeHandlers();
     }
 
@@ -195,20 +226,24 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
 
     private void initShowHideGUI() {
         RootPanel.get(SHOW_HIDE_EXPRESSIONS).add(panel);
-        Label experimentLabel = new Label("Mutants: ");
+        Label experimentLabel = new Label("Anatomy/GO Phenotypes: ");
         experimentLabel.setStyleName(WidgetUtil.BOLD);
         panel.add(experimentLabel);
     }
 
     private void setInitialValues() {
         retrieveExpressions();
+
         retrieveConstructionZoneValues();
+        retrieveEaps();
+
         retrieveSessionValues();
     }
 
     private void retrieveSessionValues() {
         boxCheckAndSize.initializeSessionVariables();
     }
+
 
     public void retrieveConstructionZoneValues() {
         // figure list
@@ -242,6 +277,9 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     public void retrieveExpressions() {
         phenotypeCurationRPCAsync.getExpressionsByFilter(experimentFilter, figureID, new RetrieveExpressionsCallback());
     }
+    public void retrieveEaps() {
+        phenotypeCurationRPCAsync.getPhenotypeFromExpressionsByFilter(experimentFilter, figureID, new RetrieveEapsCallback());
+    }
 
 
     private void recordAllExpressedTerms() {
@@ -270,6 +308,8 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             classSpan.append("</span>");
         return classSpan.toString();
     }
+
+
 
     public Set<PhenotypeStatementDTO> getExpressedTermDTOs() {
         return expressedTerms;
@@ -377,6 +417,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         }
         selectedExpressions.clear();
         retrieveExpressions();
+        retrieveEaps();
     }
 
     private void uncheckExpressionRecord(PhenotypeExperimentDTO expression) {
@@ -570,32 +611,52 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         }
 
     }
+    private class RetrieveEapsCallback extends ZfinAsyncCallback<List<ExpressionPhenotypeExperimentDTO>> {
 
+        public RetrieveEapsCallback() {
+            super("Error while reading Experiment Filters", errorElement, IMAGE_LOADING_EXPRESSION_SECTION);
+        }
+
+        @Override
+        public void onSuccess(List<ExpressionPhenotypeExperimentDTO> list) {
+            super.onSuccess(list);
+            displayedEaps.clear();
+            if (list == null)
+                return;
+
+            for (ExpressionPhenotypeExperimentDTO id : list) {
+                displayedEaps.add(id);
+            }
+            Collections.sort(displayedEaps);
+
+
+            displayTable.createEapTable();
+        }
+
+    }
     /**
      * Show or hide expression section
      */
-    private class ShowHideExpressionSectionHandler implements ClickHandler {
+    private class ShowHideEapSectionHandler implements ClickHandler {
 
         public void onClick(ClickEvent event) {
             String errorMessage = "Error while trying to save expression visibility";
             if (sectionVisible) {
                 // hide experiments
-                displayTable.setVisible(false);
-                showExpressionSection.setText(SHOW);
+                eapTable.setVisible(false);
+                showEapSection.setText(SHOW);
                 sectionVisible = false;
                 // phenotypeCurationRPCAsync.setExpressionVisibilitySession(publicationID, false,
                 ///new VoidAsyncCallback(new Label(errorMessage), loadingImage));
             } else {
                 // display experiments
                 // check if it already exists
-                if (displayTable != null && displayTable.getRowCount() > 0) {
-                    displayTable.setVisible(true);
+                if (eapTable != null && eapTable.getRowCount() > 0) {
+                    eapTable.setVisible(true);
                 } else {
-                    retrieveExpressions();
-                    if (displayTable.getRowCount() == 0)
-                        retrieveConstructionZoneValues();
+                    retrieveEaps();
                 }
-                showExpressionSection.setText(HIDE);
+                showEapSection.setText(HIDE);
                 sectionVisible = true;
                 //phenotypeCurationRPCAsync.setExpressionVisibilitySession(publicationID, true,
                 /// new VoidAsyncCallback(new Label(errorMessage), loadingImage));
@@ -770,6 +831,10 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             displayTable.getRowFormatter().setStyleName(duplicateRowIndex, duplicateRowOriginalStyle);
     }
 
+
+
+
+
     private class MutantFlexTable extends ZfinFlexTable {
 
         private HeaderName[] headerNames;
@@ -786,6 +851,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             createConstructionZone();
             // header row index = 0
             createTableHeader();
+
             int rowIndex = 1;
             //Window.alert("Experiment List Size: " + experiments.size());
             PhenotypeExperimentDTO previousExpression = null;
@@ -841,13 +907,92 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
                 rowIndex++;
                 previousExpression = expression;
             }
-            createBottomClearAllLinkRow(rowIndex);
+
+           createBottomClearAllLinkRow(rowIndex);
+
+              showHideClearAllLink();
+
+
+        }
+        private void createEapTable(){
+            for (; eapTable.getRowCount() > 0; ) {
+                eapTable.removeRow(0);
+            }
+
+          eapTable.clear();
+
+            int eapRowIndex = 1;
+            //Window.alert("Experiment List Size: " + experiments.size());
+            ExpressionPhenotypeExperimentDTO previousEapExpression = null;
+            // first element is an odd group element
+            int eapgroupIndex = 1;
+
+            List<ExpressionPhenotypeExperimentDTO> eapexpressionFigureStageDTOs;
+            if (showSelectedMutantsOnly) {
+                eapexpressionFigureStageDTOs = new ArrayList<>(20);
+                // eapexpressionFigureStageDTOs.addAll(selectedExpressions);
+            } else {
+                eapexpressionFigureStageDTOs = displayedEaps;
+            }
+
+            for (ExpressionPhenotypeExperimentDTO eapexpression : eapexpressionFigureStageDTOs) {
+
+                // row index minus the header row
+
+                Label figure = new Label(eapexpression.getFigure().getLabel());
+                figure.setTitle(eapexpression.getFigure().getZdbID());
+                eapTable.setWidget(eapRowIndex, HeaderName.FIGURE.getIndex(), figure);
+                Label fish = new Label(eapexpression.getFish().getHandle());
+                fish.setTitle(eapexpression.getFish().getZdbID());
+                eapTable.setWidget(eapRowIndex, HeaderName.FISH.getIndex(), fish);
+                Widget environment = new Label(eapexpression.getEnvironment().getName());
+                environment.setTitle(eapexpression.getEnvironment().getZdbID());
+                eapTable.setWidget(eapRowIndex, HeaderName.ENVIRONMENT.getIndex(), environment);
+                eapTable.setText(eapRowIndex, HeaderName.STAGE_RANGE.getIndex(), eapexpression.getStageRange());
+                Widget eapTerms = createEapList(eapexpression);
+                eapTable.setWidget(eapRowIndex, HeaderName.EXPRESSED_IN.getIndex(), eapTerms);
+
+
+
+
+                long previousEID = 0;
+                if (previousEapExpression != null)
+                    previousEID = previousEapExpression.getId();
+
+                eapgroupIndex = setRowStyle(eapRowIndex, Long.toString(eapexpression.getId()), Long.toString(previousEID), eapgroupIndex);
+                eapRowIndex++;
+                previousEapExpression = eapexpression;
+            }
+            //    createBottomClearAllLinkRow(eapRowIndex);
             //Window.alert("HIO");
-            showHideClearAllLink();
-            //Window.alert("HIO II");
+
+
+
+
+        }
+        private Widget createEapList(ExpressionPhenotypeExperimentDTO mutants) {
+            // create phenotype list
+            VerticalPanel eapPhenotypePanel = new VerticalPanel();
+            eapPhenotypePanel.setStyleName("phenotype-table");
+            List<ExpressionPhenotypeStatementDTO> terms = mutants.getExpressedTerms();
+            if (terms == null || terms.isEmpty()) {
+                Label label = new Label("Phenotype unspecified.");
+                label.setStyleName("term-unspecified");
+                eapPhenotypePanel.add(label);
+                return eapPhenotypePanel;
+            }
+            for (ExpressionPhenotypeStatementDTO eap : terms) {
+                StringBuilder eapText = new StringBuilder(50);
+
+                HTML eapPhenotype = new HTML(eap.getDisplayName() + ""  + eapText.toString());
+                eapPhenotype.setTitle(eap.getId() + "");
+                eapPhenotypePanel.add(eapPhenotype);
+            }
+            return eapPhenotypePanel;
         }
 
         private void createConstructionZone() {
+
             stageSelector.setPublicationID(publicationID);
             addButton.addClickHandler(new AddMutantClickHandler());
             constructionRow.setWidget(0, 4, stageSelector.getPanelTitle());
@@ -864,6 +1009,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             constructionRow.setWidget(2, 4, stageSelector.getEndStagePanel());
             constructionRow.setWidget(3, 4, stageSelector.getTogglePanel());
             constructionRow.getFlexCellFormatter().setColSpan(4, 0, 6);
+
         }
 
 
@@ -883,6 +1029,9 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
                 String classSpan;
                 if (pheno.getTag().equals("normal")) {
                     classSpan = createSpanElement(pheno, WidgetUtil.PHENOTYPE_NORMAL);
+                }
+                else if (pheno.getTag().equals("ameliorated")) {
+                    classSpan = createSpanElement(pheno, WidgetUtil.PHENOTYPE_AMELIORATED);
                 } else if (pheno.getEntity().getSuperTerm().getTermName().equals("unspecified")) {
                     classSpan = createSpanElement(pheno, "term-unspecified");
                 } else {
@@ -1008,6 +1157,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             displayedExpressions.addAll(newAnnotations);
             Collections.sort(displayedExpressions);
             displayTable.createMutantTable();
+
             recordAllExpressedTerms();
             addButtonInProgress = false;
             addButton.setEnabled(true);
@@ -1180,5 +1330,5 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         }
     }
 
-
 }
+

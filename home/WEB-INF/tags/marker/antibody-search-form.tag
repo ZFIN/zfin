@@ -78,11 +78,6 @@
                         termsWithDataOnly: true
                     }
                 </script>
-                <style type="text/css">
-                    .accessoryLabel {
-                        font-size: .75em;
-                    }
-                </style>
 
                 <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
                 <script language="javascript"
@@ -115,7 +110,7 @@
                 <br/>
 
                 <div align="left">
-                    <a href="http://zfin.org/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
+                    <a href="/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
                 </div>
             </td>
         </tr>

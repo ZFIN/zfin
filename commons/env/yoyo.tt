@@ -30,6 +30,7 @@
 <!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	annee\@zfin.org
 <!--|GO_EMAIL_ERR|-->	annee\@zfin.org
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/yoyo/home/WEB-INF/lib*:/opt/zfin/source_roots/yoyo/ZFIN_WWW/lib/Java/*:/opt/zfin/www_homes/yoyo/home/WEB-INF/classes:/private/apps/tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4

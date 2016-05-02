@@ -1,49 +1,60 @@
-
-
 div.search-result-container {
-    /* width: 68% ; float: right ; */
     margin: 0;
+    font-size: 16px;
 }
-
-
 
 div.search-result {
     border: 1px solid #c0c7c0;
     border-top-right-radius: 5px;;
     margin-top: .5em;
     padding: .5em;
-    position: relative;
-    left: -.5em;
 }
 
-.cross-reference-result-container { margin-left: 3em; margin-right: 2em; }
+.cross-reference-result-container {
+    margin-left: 3em;
+    margin-right: 2em;
+}
+
 .cross-reference-result-container .search-result {
-    left: 0em;
+    left: 0;
     border-width: 2px;
     background: #efefef;
-    margin-bottom: 10px; 
+    margin-bottom: 10px;
 }
-.cross-reference-result-container .cross-reference-btn-group { display: none }
-.cross-reference-result-container .search-result-category { display: none }
 
+.cross-reference-result-container .search-result-category {
+    display: none;
+}
 
+.search-result .fish-result-table {
+    font-size: small;
+    margin-top: .5em;
+    margin-left: 1em;
+    opacity: .9;
+}
 
-.search-result .fish-result-table { font-size: small ; margin-top: .5em; margin-left: 1em; opacity: .9 }
-.search-result .fish-result-table th { font-weight: bold; opacity: .8; border-bottom: 1px solid #eee;}
+.search-result .fish-result-table th {
+    font-weight: bold;
+    opacity: .8;
+    border-bottom: 1px solid #eee;
+}
 
 .search-result .fish-result-table td,
-.search-result .fish-result-table th {min-width: 4em ; padding-left: .5em ; padding-right: .5em ; border-right: 1px solid #eee;}
+.search-result .fish-result-table th {
+    min-width: 4em;
+    padding-left: .5em;
+    padding-right: .5em;
+    border-right: 1px solid #eee;
+}
 
 .search-result .fish-result-table th:last-child,
-.search-result .fish-result-table td:last-child { border-right: none;}
+.search-result .fish-result-table td:last-child {
+    border-right: none;
+}
 
 .result-street-address {
     white-space: pre-wrap;
 }
-
-.cross-reference-btn-group { float:right; margin-right: 4em; margin-top: .6em}
-.cross-reference-btn-group li { font-size: small }
-
 
 div.search-result-category {
     background-color: #c0c7c0;
@@ -51,47 +62,28 @@ div.search-result-category {
     border-bottom-left-radius: 5px;
     border-top-right-radius: 5px;
     float: right;
-    padding: 2px;
-    padding-left: 4px;
-    padding-right: 4px;
+    padding: 2px 4px;
     position: relative;
     top: -9px;
     left: 9px;
 
-
-    /* Safari 4-5, Chrome 1-9 */
     background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#a0a7ca), to(#d0d7d0));
-
-    /* Safari 5.1, Chrome 10+ */
     background: -webkit-linear-gradient(top, #d0d7d0, #a0a7a0);
-
-    /* Firefox 3.6+ */
     background: -moz-linear-gradient(top, #d0d7d0, #a0a7a0);
-
-    /* IE 10 */
     background: -ms-linear-gradient(top, #d0d7d0, #a0a7a0);
-
-    /* Opera 11.10+ */
     background: -o-linear-gradient(top, #d0d7d0, #a0a7a0);
-
 }
 
 div.search-result-name {
     font-weight: bold;
 }
 
-div.search-result-full-name {
-    text-indent: 1em;
-    color: #555;
-    line-height: 150%
-}
-
 .result-id {
-    font-weight: normal ;
+    font-weight: normal;
     font-size: smaller;
-    opacity: .75 ;
-    float:right ;
-    position: relative ;
+    opacity: .75;
+    float: right;
+    position: relative;
     top: -7px;
     left: 5px;
 }
@@ -101,24 +93,17 @@ div.search-result-full-name {
 table.search-result-entity-attributes {
     border-collapse: collapse;
     width: 80%;
-    /*clear:both;*/
     margin-top: .3em;
-    /* margin-right: 100px; */
     font-size: .8em;
     opacity: .9;
-
     line-height: 18px; /* reduced from Bootstrap's default of 22px */
-
 }
-
 
 table.search-result-entity-attributes th {
     opacity: .8;
     text-align: left;
     vertical-align: top;
     padding-right: .5em;
-/*    padding-top: .1em;
-    padding-bottom: .1em;*/
     white-space: nowrap;
 }
 
@@ -130,31 +115,26 @@ table.search-result-entity-attributes td.genotype-name-value {
 table.search-result-entity-attributes td {
     text-align: left;
     vertical-align: top;
-/*    padding-top: .1em;
-    padding-bottom: .1em; */
 }
 
+.btn-pub-actions {
+    visibility: hidden;
+}
 
-.btn-pub-actions { visibility: hidden; }
 .search-result:hover .btn-pub-actions {
-    visibility:visible;
+    visibility: visible;
 }
-
-
 
 .collapsible-attribute {
     cursor: pointer;
 }
 
-
 /*  todo: deal with collapsing attributes, genotype superscripts mess this bit up, but it's getting there */
 .collapsed-attribute {
     overflow: hidden;
-
     text-overflow: ellipsis;
     position: relative;
-    max-height: 54px;  /* line-height is 18px  */
-
+    max-height: 54px;
 }
 
 .collapsed-attribute:after {
@@ -167,8 +147,6 @@ table.search-result-entity-attributes td {
     height: 18px;
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 90%);
 }
-
-
 
 .search-result-related-links {
     font-size: .75em;
@@ -192,36 +170,26 @@ table.search-result-entity-attributes td {
     font-weight: bold;
     opacity: .65;
 }
+
 .search-result-related-links li + li::before {
-    content:" | "
+    content: " | "
 }
 
-.secondary-action-links {
-    float: right;
-    margin-right: 6em;
+.table-results {
+/*    margin-left: 15px;*/
+    margin-top: 8px;
 }
 
-.reset-link {
-    margin-left: .5em;
-    margin-right: .5em;
+.search-result-related-links {
+    clear: both;
 }
 
-.advanced-search-link {
-    margin-left: .5em;
-    margin-right: .5em;
-}
-
-.table-results { margin-left: 15px; margin-top: 8px; /*border: 2px solid #eee; width: 100%*/ }
-
-.result-header {  }
-.search-result-body { clear: both; }
-.search-result-related-links { clear: both; }
 .search-result-thumbnail img {
     border: none;
 }
 
 span.search-result-highlight {
-    font-weight: bold; /*background-color: #ffe;*/
+    font-weight: bold;
 }
 
 div.search-result-snippet {
@@ -246,8 +214,7 @@ table.search-result-snippet {
 
 .snippet-value {
     padding-left: .45em;
-    padding-top: .5em; /*border: 1px solid #eee;*/
-    /*border-bottom: 1px solid #eee ; */
+    padding-top: .5em;
 }
 
 .result-explain-container {
@@ -259,6 +226,7 @@ table.search-result-snippet {
     font-size: small;
     font-color: #600;
 }
+
 .result-explain {
     white-space: pre-wrap;
     font-size: small;
@@ -268,28 +236,27 @@ table.search-result-snippet {
     padding: .5em;
 }
 
-.search-result h1, .search-result h2, .search-result h3, .search-result h4 {
+.search-result h1,
+.search-result h2,
+.search-result h3,
+.search-result h4 {
     font-size: 14px !important;
     font-weight: 500;
-    display:inline;
+    display: inline;
 }
 
-div.result-date, div.result-attribution-count { text-align: right; font-size: small ; color: #888; margin-top: .4em;}
-
-div.result-actions {
-    margin-left: 45px;
-    margin-top: 7px;
-}
 .result-count {
-    padding-top: 1em;
-    padding-left: 2em;
-    padding-right: 2em;
     font-weight: bold;
     text-align: center
 }
-.sort-controls li { text-align: left;}
-.sort-button .caret { margin-left: 1em;}
 
+.sort-controls li {
+    text-align: left;
+}
+
+.sort-button .caret {
+    margin-left: 1em;
+}
 
 div.facet-container, .breadbox {
     font-size: small;
@@ -298,32 +265,29 @@ div.facet-container, .breadbox {
 
 div.breadbox {
     margin-bottom: 2.5em;
-
 }
 
 .horizontal-breadbox {
-    margin-bottom: 2px;
+    margin-bottom: 1em;
 }
 
 .horizontal-breadbox-label {
-
-    background-color: #066;
-    padding: .5em;
-    margin: .25em;
-    margin-top: 0px;
-    margin-bottom: .5em;
+    margin-right: 0.5em;
+    margin-bottom: 0.5em;
 }
-
 
 .horizontal-breadbox-label .breadbox-field-name {
     opacity: 0.6;
 }
+
 .horizontal-breadbox-label .breadbox-field-value {
     opacity: 1.0;
 }
 
 div.search-box {
     white-space: nowrap;
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 #primary-query-input {
@@ -339,25 +303,38 @@ div.search-box {
     margin-top: .4em
 }
 
-
-.modal-body-scrolling { max-height: 500px; overflow-y: scroll; }
+.modal-body-scrolling {
+    max-height: 500px;
+    overflow-y: scroll;
+}
 
 body.modal-open {
     overflow: hidden;
 }
 
-.gene-expression-data-modal, .phenotype-data-modal { width: 100%; }
-.gene-expression-data-modal td, .phenotype-data-modal td { font-size: 14px; }
+.gene-expression-data-modal,
+.phenotype-data-modal {
+    width: 100%;
+}
 
-
-.category-label {  }
+.gene-expression-data-modal td,
+.phenotype-data-modal td {
+    font-size: 14px;
+}
 
 #facet-list-controller {
     font-size: small;
 }
 
-.solr-document-link { padding-left: 1em; }
-.solr-document-link, .result-explain-link { visibility: hidden; }
+.solr-document-link {
+    padding-left: 1em;
+}
+
+.solr-document-link,
+.result-explain-link {
+    visibility: hidden;
+}
+
 .search-result:hover .solr-document-link,
 .search-result:hover .result-explain-link {
     visibility: visible;
@@ -372,27 +349,6 @@ body.modal-open {
     color: #333333;
 }
 
-/* this is breaking the input with typeahead added */
-
-/*
-.clear-search {
-    position: relative;
-    display: inline-block;
-}
-
-.clear-search .clear {
-    position: absolute;
-    right: 5px;
-    top: 0;
-    bottom: 0;
-    height: 24px;
-    margin: auto;
-    font-size: 24px;
-    cursor: pointer;
-    color: #ccc;
-}
-*/
-
 .btn-selected {
     background-color: #888 !important;
     color: #eee !important;
@@ -405,6 +361,7 @@ body.modal-open {
     border-color: #066;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 }
+
 .btn-zfin:hover,
 .btn-zfin:focus,
 .btn-zfin:active,
@@ -416,10 +373,8 @@ body.modal-open {
 }
 
 .advanced-text-input {
-    width:600px;
+    width: 600px;
 }
-
-
 
 .carousel-control {
     top: 0px !important;
@@ -432,29 +387,73 @@ body.modal-open {
 /***** Facet Layout *****/
 
 /* indentation, layout */
+li.facet-value {
+    line-height: 21px !important;
+}
 
-li.facet-value { line-height: 21px !important; }
-.tight-on-the-left { padding-left: 2px !important; margin-left: 0px !important; }
-.tight-on-the-right { padding-right: 2px !important; margin-right: 0px !important; }
+.tight-on-the-left {
+    padding-left: 2px !important;
+    margin-left: 0 !important;
+}
 
+.tight-on-the-right {
+    padding-right: 2px !important;
+    margin-right: 0 !important;
+}
 
 /* labels, etc */
-.facet-group-label-container { font-size: 18px; font-weight: bold; cursor: pointer; }
-.facet-label { font-size: 15px; font-weight: bold; color: #666; cursor: pointer;}
-.category-facet-group-values li.facet-value { font-size: 15px; }
-.root-only-facet-group .facet-group-label-container { color: red;}
+.facet-group-label-container {
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
 
-a.facet-link,a.facet-link:hover { color: #404440; }
+.facet-label {
+    font-size: 15px;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+}
+
+.category-facet-group-values li.facet-value {
+    font-size: 15px;
+}
+
+.root-only-facet-group .facet-group-label-container {
+    color: red;
+}
+
+a.facet-link,
+a.facet-link:hover {
+    color: #404440;
+}
 
 /* a mute the icons and counts */
-.include-exclude-icon, i.facet-selected, .facet-field-count, .facet-value-modal-link { color: #707770;}
-.facet-count { color: #888;}
+.include-exclude-icon,
+i.facet-selected,
+.facet-field-count,
+.facet-value-modal-link {
+    color: #707770;
+}
 
-.facet-value i.include-exclude-icon { visibility: hidden; }
-.facet-value:hover i.include-exclude-icon { visibility: visible; }
+.facet-count {
+    color: #888;
+}
 
+.facet-value i.include-exclude-icon {
+    visibility: hidden;
+}
 
-.facet-value-modal-link { font-style: italic; }
+.facet-value:hover i.include-exclude-icon {
+    visibility: visible;
+}
 
-/* This hides the '5th' facet value, one extra is selected so that we'll know if there should be a 'show all' link */
-.additional-facet-values { display: none; }
+.facet-value-modal-link {
+    font-style: italic;
+}
+
+/* This hides the '5th' facet value, one extra is selected so that
+ we'll know if there should be a 'show all' link */
+.additional-facet-values {
+    display: none;
+}

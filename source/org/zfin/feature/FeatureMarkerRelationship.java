@@ -1,25 +1,45 @@
 package org.zfin.feature;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 
-/**
- * map as string for now
- */
-
+@Entity
+@Table(name = "feature_marker_relationship")
 public class FeatureMarkerRelationship implements Comparable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "FMREL"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "fmrel_zdb_id")
     private String zdbID;
+    @Column(name = "fmrel_type")
+    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum")})
     private FeatureMarkerRelationshipTypeEnum type;
+    @ManyToOne
+    @JoinColumn(name = "fmrel_ftr_zdb_id")
     private Feature feature;
+    @ManyToOne
+    @JoinColumn(name = "fmrel_mrkr_zdb_id")
     private Marker marker;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "recattrib_data_zdb_id")
     private Set<PublicationAttribution> publications;
+    @ManyToOne
+    @JoinColumn(name = "fmrel_type", insertable=false, updatable=false)
     private FeatureMarkerRelationshipType featureMarkerRelationshipType;
 
 

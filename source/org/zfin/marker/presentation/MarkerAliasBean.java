@@ -2,43 +2,52 @@ package org.zfin.marker.presentation;
 
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.MarkerAlias;
-import org.zfin.publication.Publication;
-import org.zfin.publication.presentation.PublicationListBean;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
 
+public class MarkerAliasBean {
 
-public class MarkerAliasBean extends PublicationListBean {
+    private String zdbID;
+    private String alias;
+    private Collection<MarkerReferenceBean> references;
 
-    private MarkerAlias markerAlias;
-
-    public MarkerAlias getMarkerAlias() {
-        if (markerAlias == null) {
-            markerAlias = new MarkerAlias();
-        }
-        return markerAlias;
+    public String getZdbID() {
+        return zdbID;
     }
 
-    public void setMarkerAlias(MarkerAlias markerAlias) {
-        this.markerAlias = markerAlias;
+    public void setZdbID(String zdbID) {
+        this.zdbID = zdbID;
     }
 
-    public Set<Publication> getPublications() {
-        Set<Publication> publications = new HashSet<Publication>();
+    public String getAlias() {
+        return alias;
+    }
 
-        if (markerAlias == null)
-            return publications;
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
 
-        Set<PublicationAttribution> pubAttributions = markerAlias.getPublications();
-        if (pubAttributions != null && !pubAttributions.isEmpty()) {
-            for (PublicationAttribution attr : pubAttributions) {
-                Publication pub = attr.getPublication();
-                if (pub != null)
-                    publications.add(pub);
-            }
+    public Collection<MarkerReferenceBean> getReferences() {
+        return references;
+    }
+
+    public void setReferences(Collection<MarkerReferenceBean> references) {
+        this.references = references;
+    }
+
+    public static MarkerAliasBean convert(MarkerAlias alias) {
+        MarkerAliasBean bean = new MarkerAliasBean();
+        bean.setZdbID(alias.getZdbID());
+        bean.setAlias(alias.getAlias());
+        Collection<MarkerReferenceBean> references = new ArrayList<>();
+        for (PublicationAttribution reference : alias.getPublications()) {
+            MarkerReferenceBean referenceBean = new MarkerReferenceBean();
+            referenceBean.setZdbID(reference.getSourceZdbID());
+            referenceBean.setTitle(reference.getPublication().getTitle());
+            references.add(referenceBean);
         }
-
-        return publications;
+        bean.setReferences(references);
+        return bean;
     }
 }

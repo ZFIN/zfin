@@ -23,12 +23,9 @@ $dir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/SNP/";
 chdir "$dir";
 print "$dir\n";
 
-### remove old files 
-system("/bin/rm -f *.xml") and die "can not rm old xml data file";
-system("/bin/rm -f *.gz") and die "can not rm old .gz files";
-system("/bin/rm -f *.bcp") and die "can not rm old .bcp files";
+### remove old report file 
 system("/bin/rm -f *.report.txt") and die "can not rm old .report.txt files";
-print "\nRemoving old data files done.\n";
+print "\nRemoving old report file done.\n";
 
 ### open the text file containing the list of the xml files to be downloaded
 open (INP, "downloadListSNPncbi.txt") || die "Can't open downloadListSNPncbi.txt : $!\n";
@@ -442,6 +439,13 @@ if ($ctNew3 > 0) {
 } 
 
 close REPORT;
+
+### remove used files
+system("/bin/rm -f *.xml") and die "can not rm old xml data file";
+system("/bin/rm -f *.gz") and die "can not rm old .gz files";
+system("/bin/rm -f *.bcp") and die "can not rm old .bcp files";
+
+print "Remove used files done\n";
 
 print "Done\n";
 

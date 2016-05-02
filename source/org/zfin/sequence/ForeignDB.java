@@ -115,9 +115,11 @@ public class ForeignDB implements Comparable<ForeignDB> {
         PUBRNA("PUBRNA"),
         QUICKGO("QuickGO"),
         REFSEQ("RefSeq"),
+        RRID("RRID"),
         SANGER_CLONE("Sanger_Clone"),
         // FB case 8239
         //SP_KW("SP_KW"),
+        SIGNAFISH("SignaFish"),
         UNIPROTKB_KW("UniProtKB-KW"),
         //SP_SL("SP_SL"),
         UNIPROTKB_SUBCELL("UniProtKB-SubCell"),
@@ -143,7 +145,8 @@ public class ForeignDB implements Comparable<ForeignDB> {
         WIKIPEDIA("Wikipedia"),
         UBERON("UBERON"),
         ISBN("ISBN"),
-        ZMP("ZMP");
+        ZMP("ZMP"),
+        CRISPRZ("CRISPRz");
 
 
         private final String value;

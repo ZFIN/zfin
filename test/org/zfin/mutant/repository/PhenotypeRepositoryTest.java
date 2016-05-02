@@ -432,8 +432,8 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
     @Test
     public void getPhenotypeStatementsByGenoxID() {
         //have to provide fishexperiment
-        FishExperiment fishExp=getMutantRepository().getGenotypeExperiment("ZDB-GENOX-100402-4");
-       List<PhenotypeStatement> phenotypeStatementList = getPhenotypeRepository().getPhenotypeStatements(fishExp);
+        FishExperiment fishExp = getMutantRepository().getGenotypeExperiment("ZDB-GENOX-100402-4");
+        List<PhenotypeStatement> phenotypeStatementList = getPhenotypeRepository().getPhenotypeStatements(fishExp);
         assertNotNull(phenotypeStatementList);
     }
 
@@ -462,5 +462,32 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         GenericTerm disease = getOntologyRepository().getTermByOboID("DOID:0050600");
         List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModels(disease);
         assertNotNull(diseaseAnnotations);
+    }
+
+    @Test
+    public void getPhenotypeWarehouse() {
+        String figureID = "ZDB-FIG-150416-9";
+        List<PhenotypeWarehouse> list = getPhenotypeRepository().getPhenotypeWarehouse(figureID);
+        for (PhenotypeWarehouse warehous : list)
+            for (PhenotypeStatementWarehouse st : warehous.getStatementWarehouseSet())
+                assertNotNull(st);
+        assertNotNull(list);
+    }
+
+   @Test
+    public void getAllPhenotypeStatementsForSTR() {
+       //SequenceTargetingReagent reagent = getMarkerRepository().getSequenceTargetingReagent("ZDB-MRPHLNO-070126-7 ");
+       SequenceTargetingReagent reagent = getMarkerRepository().getSequenceTargetingReagent("ZDB-TALEN-160126-1");
+        List<PhenotypeStatementWarehouse> list = getPhenotypeRepository().getAllPhenotypeStatementsForSTR(reagent);
+        assertNotNull(list);
+    }
+
+    @Test
+    @Ignore("Needs to run with -XX:useSplitVerifier until we switch over to Java 8. Ignoring for now.")
+    public void getPhenotypeStatementWarehouse() {
+        String ID = "68641";
+        PhenotypeStatementWarehouse psw = (PhenotypeStatementWarehouse) HibernateUtil.currentSession().get(PhenotypeStatementWarehouse.class, 68641L);
+        // no assertion as this may or may not return an object. These objects are regenerated regularly and thus the id's
+        // are not stable. Still want to test that this method does not throw an exception
     }
 }

@@ -128,6 +128,11 @@
                     <th width="20%">
                         Construct
                     </th>
+                    <th width="20%">
+                        Zygosity
+                    </th><th width="20%">
+                    Parental Zygosity
+                </th>
 
 
                 </tr>
@@ -139,13 +144,19 @@
                         <td>
                             <c:forEach var="construct" items="${genoFeat.feature.constructs}"
                                        varStatus="constructsloop">
-                                <a href="/action/marker/view/${construct.marker.zdbID}">${construct.marker.name}</a>
+                                <a href="/action/marker/view/${construct.marker.zdbID}"><i>${construct.marker.name}</i></a>
                                 <c:if test="${!constructsloop.last}">
                                     ,&nbsp;
                                 </c:if>
                             </c:forEach>
                         </td>
-
+                        <td>
+                                ${genoFeat.zygosity.name}
+                        </td>
+                        <td>
+                                ${genoFeat.parentalZygosityDisplay}
+                        </td>
+                    </td>
 
                     </zfin:alternating-tr>
                 </c:forEach>

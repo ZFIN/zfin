@@ -383,9 +383,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
             Set<LinkageGroup> groups = MarkerService.getLinkageGroups(gene);
             assertTrue(groups != null);
             assertTrue(groups.size() > 1);
-            //            assertEquals("linkage groups found", 3, groups.size());
-            //LinkageGroup group = groups.get(0);
-            //assertEquals("First LG", "13", group.getName());
         } finally {
             tx.rollback();
         }
@@ -425,38 +422,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         }
         long totalTime = System.currentTimeMillis() - startTime;
         System.out.println(totalTime / 1000f);
-    }
-
-
-    @Test
-    public void getMarkersByAbbreviationGroupAndAttribution() {
-        // not, that is an lower-case 'L' not the number one.
-        String markerAbbreviation = "tg(kdrl:grcfp)";
-        String pub = "ZDB-PUB-030527-16";
-        List<Marker> markers = null;
-        markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution("Tg(", Marker.TypeGroup.CONSTRUCT, pub);
-        assertTrue(containsMarkerName(markerAbbreviation, markers));
-        markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution("tg(", Marker.TypeGroup.CONSTRUCT, pub);
-        assertTrue(containsMarkerName(markerAbbreviation, markers));
-        markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution("GRCFP", Marker.TypeGroup.CONSTRUCT, pub);
-        assertTrue(containsMarkerName(markerAbbreviation, markers));
-        markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution("cfp", Marker.TypeGroup.CONSTRUCT, pub);
-        assertTrue(containsMarkerName(markerAbbreviation, markers));
-        markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution("drl:g", Marker.TypeGroup.CONSTRUCT, pub);
-        assertTrue(containsMarkerName(markerAbbreviation, markers));
-
-    }
-
-    private boolean containsMarkerName(String markerName, List<Marker> markers) {
-        if (markers == null || markers.size() == 0) {
-            return false;
-        }
-        for (Marker marker : markers) {
-            if (marker.getAbbreviation().equals(markerName)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 
@@ -538,8 +503,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         query = session.createQuery(hql);
         query.setParameter("aoterm", term);
         List<AntibodyAOStatistics> listStat = query.list();
-        assertTrue(list != null);
-        assertTrue(list.size() > 0);
+        assertTrue(listStat != null);
+        assertTrue(listStat.size() > 0);
 
     }
 
@@ -587,7 +552,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         query.setFirstResult(0);
         query.setMaxResults(5);
         ScrollableResults results = query.scroll();
-        List<HighQualityProbe> probes = new ArrayList<HighQualityProbe>();
+        List<HighQualityProbe> probes = new ArrayList<>();
         while (results.next()) {
             Marker probe = new Marker();
             Object[] objects = results.get();
@@ -806,7 +771,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
         List<GeneProductsBean> geneProductsBean2 = markerRepository.getGeneProducts("ZDB-GENE-000405-1");
         assertNotNull(geneProductsBean2);
-        assertTrue(geneProductsBean2.size() > 2);
+        assertTrue(geneProductsBean2.size() > 0);
 
         List<GeneProductsBean> geneProductsBean3 = markerRepository.getGeneProducts("ZDB-GENE-030131-2333");
         assertNotNull(geneProductsBean3);
@@ -918,6 +883,58 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(marker);
         marker = markerRepository.getMarkerByID("ZDB-TSCRIPT-090929-193");
         assertNotNull(marker);
+    }
+
+    @Test
+    public void shouldFindMorpholinoWithKnownSequence() {
+        String sequenceForMO1adam8a = "TAAATAGTCCAGTGTATCGCATGGC";
+        SequenceTargetingReagent results = markerRepository.getSequenceTargetingReagentBySequence(Marker.Type.MRPHLNO, sequenceForMO1adam8a);
+        assertThat("Should find MO with sequence" + sequenceForMO1adam8a,
+                results, not(nullValue()));
+    }
+
+    @Test
+    public void shouldNotFindCrisprWithMorpholinoSequence() {
+        String sequenceForMO1adam8a = "TAAATAGTCCAGTGTATCGCATGGC";
+        SequenceTargetingReagent results = markerRepository.getSequenceTargetingReagentBySequence(Marker.Type.CRISPR, sequenceForMO1adam8a);
+        assertThat("Should not find CRISPR with sequence" + sequenceForMO1adam8a,
+                results, is(nullValue()));
+    }
+
+    @Test
+    public void shouldNotFindTalenWithCrisprSequence() {
+        String sequenceForCRISPR3th = "GGCGGCGGAGGCTGCAGGAC";
+        SequenceTargetingReagent results = markerRepository.getSequenceTargetingReagentBySequence(Marker.Type.TALEN, sequenceForCRISPR3th);
+        assertThat("Should not find TALEN with sequence" + sequenceForCRISPR3th,
+                results, is(nullValue()));
+    }
+
+    @Test
+    public void shouldFindTalenWithOneSequence() {
+        String sequence1ForTALEN2ptpmt1 = "TGGTCCAAAATGAAAAAG";
+        SequenceTargetingReagent results = markerRepository.getSequenceTargetingReagentBySequence(Marker.Type.TALEN, sequence1ForTALEN2ptpmt1);
+        assertThat("Should find TALEN with sequence1 " + sequence1ForTALEN2ptpmt1,
+                results, not(nullValue()));
+    }
+
+    @Test
+    public void shouldFindTalenWithTwoSequences() {
+        String sequence1ForTALEN2ptpmt1 = "TGGTCCAAAATGAAAAAG";
+        String sequence2ForTALEN2ptpmt1 = "TCATATTCTTCATTCATG";
+        SequenceTargetingReagent results = markerRepository.getSequenceTargetingReagentBySequence(
+                Marker.Type.TALEN, sequence1ForTALEN2ptpmt1, sequence2ForTALEN2ptpmt1);
+        assertThat("Should find TALEN with sequence1 = " + sequence1ForTALEN2ptpmt1 + " and sequence2 = " + sequence2ForTALEN2ptpmt1,
+                results, not(nullValue()));
+    }
+
+    @Test
+    public void shouldFindTalenWithTwoSequencesFlipped() {
+        String sequence1ForTALEN2ptpmt1 = "TGGTCCAAAATGAAAAAG";
+        String sequence2ForTALEN2ptpmt1 = "TCATATTCTTCATTCATG";
+        SequenceTargetingReagent results = markerRepository.getSequenceTargetingReagentBySequence(
+                Marker.Type.TALEN, sequence2ForTALEN2ptpmt1, sequence1ForTALEN2ptpmt1);
+        assertThat("Should find TALEN with sequence1 = " + sequence2ForTALEN2ptpmt1 + " and sequence2 = " + sequence1ForTALEN2ptpmt1,
+                results, not(nullValue()));
     }
 
     @Test

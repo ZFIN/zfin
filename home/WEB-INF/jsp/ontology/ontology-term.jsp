@@ -5,9 +5,9 @@
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 <script src="/javascript/table-collapse.js"></script>
-<div class="data-page term-detail-page">
+<div class="data-page">
 
-    <zfin2:dataManager oboID="${formBean.term.oboID}"/>
+    <zfin2:dataManager oboID="${formBean.term.oboID}" termID="${formBean.term.zdbID}"/>
 
     <div style="float: right;">
         <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
@@ -77,27 +77,20 @@
             </td>
         </tr>
 
-        <tr>
-            <td></td>
-        </tr>
-
         <c:if test="${formBean.term.obsolete}">
             <tr>
-                <th class="red">Obsolete</th>
+                <th class="red">Obsolete:</th>
                 <td class="red">true</td>
             </tr>
         </c:if>
     </table>
 
-    <p>
-
-        <c:if test="${!empty formBean.term.images}">
-
-    <div class="summary">
-        <c:forEach var="image" items="${formBean.term.images}">
-            <zfin:link entity="${image}"/>
-        </c:forEach>
-    </div>
+    <c:if test="${!empty formBean.term.images}">
+        <div class="summary">
+            <c:forEach var="image" items="${formBean.term.images}">
+                <zfin:link entity="${image}"/>
+            </c:forEach>
+        </div>
     </c:if>
 
     <div class="summary">
@@ -105,10 +98,9 @@
                                                    href='/action/ontology/note/ontology-relationship'></a></span>
         <table class="summary horizontal-solidblock">
             <c:forEach var="relationshipPresentation" items="${formBean.termRelationships}" varStatus="index">
-                <tr id="${fn:replace(relationshipPresentation.type," ","-")}">
+                <tr id="${zfn:makeDomIdentifier(relationshipPresentation.type)}">
                     <th>
-                            <%-- keep the relationship types from wrapping --%>
-                            ${fn:replace(relationshipPresentation.type," ","&nbsp;")}:
+                            ${relationshipPresentation.type}:
                     </th>
                     <td>
                         <zfin2:createExpandCollapseList items="${relationshipPresentation.items}" id="${index.count}"/>
@@ -143,27 +135,20 @@
 
     <zfin2:ExpandRequestSections sectionVisibility="${formBean.sectionVisibility}"/>
 
-
-    <%--<div class="summary">
-        <%// Number of Publications with an abstract that contains the anatomical structure %>
-        <A HREF='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=<zfin2:urlEncode string="${formBean.term.termName}"/>&query_results=exists'>Search
-            for publications with '${formBean.term.termName}' in abstract</A>
-    </div>--%>
-
-
-    <authz:authorize ifAnyGranted="root">
-        <c:if test="${formBean.term.ontology.ontologyName == 'disease_ontology'}">
+    <authz:authorize access="hasRole('root')">
+        <c:if test="${isDiseaseTerm}">
             <zfin-ontology:phenogrid doid="${formBean.term.oboID}"/>
         </c:if>
     </authz:authorize>
 
-
-    <c:choose>
-        <c:when test="${numberOfCitations == 0}"><span class="name-label"> CITATIONS:</span> None</c:when>
-        <c:otherwise>
-            <a href="/action/ontology/disease-publication-list/${term.oboID}">CITATIONS</a> (${numberOfCitations})
-        </c:otherwise>
-    </c:choose>
+    <div class="summary">
+        <c:choose>
+            <c:when test="${numberOfCitations == 0}"><span class="name-label"> CITATIONS:</span> None</c:when>
+            <c:otherwise>
+                <a href="/action/ontology/disease-publication-list/${term.oboID}">CITATIONS</a> (${numberOfCitations})
+            </c:otherwise>
+        </c:choose>
+    </div>
 
 </div>
 <script>

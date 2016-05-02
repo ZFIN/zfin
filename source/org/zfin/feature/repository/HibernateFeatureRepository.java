@@ -31,7 +31,6 @@ import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.profile.FeatureSource;
 import org.zfin.profile.Organization;
 import org.zfin.profile.OrganizationFeaturePrefix;
-import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -123,12 +122,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 "   where" +
                 "   ftrgrpmem_ftr_type= :featureType " +
                 "   and ftrgrpmem_ftr_type_group=fmreltype_ftr_type_group";
-
-//                     " --                      $(IF,$(NE,$featcur_reln_add_type,Transgenic Insertion),and fmreltype_name not like 'contains%')" +
-        // this line is not necessary, since this is what is already mapped in the database
-//        if(!featureType.equals(Feature.Type.TRANSGENIC_INSERTION.toString())){
-//            sql += " and fmreltype_name not like 'contains%' ";
-//        }
 
         sql += "   union" +
                 "   select distinct mreltype_name " +
@@ -463,7 +456,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     public FeatureAssay addFeatureAssay(Feature ftr, Mutagen mutagen, Mutagee mutagee) {
         FeatureAssay ftrAss = new FeatureAssay();
-        ftrAss.setFeatAssayFeature(ftr);
+        ftrAss.setFeature(ftr);
         ftrAss.setMutagen(mutagen);
         ftrAss.setMutagee(mutagee);
         HibernateUtil.currentSession().save(ftrAss);
@@ -471,9 +464,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
 
-    public FeatureAssay getFeatureAssay(String ftrZdbID) {
+    public FeatureAssay getFeatureAssay(Feature feature) {
         Criteria criteria = HibernateUtil.currentSession().createCriteria(FeatureAssay.class);
-        criteria.add(Restrictions.eq("featzdbID", ftrZdbID));
+        criteria.add(Restrictions.eq("feature", feature));
         criteria.setMaxResults(1);
         FeatureAssay ftrAss = (FeatureAssay) criteria.uniqueResult();
         return ftrAss;
@@ -531,28 +524,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 " where mh.featureAlias = :zdbID ";
         Query query = currentSession().createQuery(hql);
         query.setString("zdbID", alias.getZdbID());
+        query.executeUpdate();
 
-        currentSession().flush();
-
-        int removed = query.executeUpdate();
-
-
-      //  infrastructureRepository.deleteActiveDataByZdbID(alias.getZdbID());
-        currentSession().flush();
-
-        hql = "delete from FeatureAlias ma " +
-                " where ma.dataZdbID = :zdbID ";
-        query = currentSession().createQuery(hql);
-        query.setString("zdbID", feature.getZdbID());
-
-        removed = query.executeUpdate();
+        feature.getAliases().remove(alias);
         infrastructureRepository.deleteActiveDataByZdbID(alias.getZdbID());
-        currentSession().flush();
-
-     //   currentSession().refresh(feature);
-
-        // run the fast search table script so the alias is not showing up any more.
-        //runFeatureNameFastSearchUpdate(feature);
     }
 
 
@@ -589,7 +564,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     @Override
     public String getFeatureByAbbreviationInTrackingTable(String featTrackingFeatAbbrev) {
         Session session = HibernateUtil.currentSession();
-        String hqlFtrTrack = " select ft.featTrackingFeatAbbrev from  FeatureTracking ft where ft.featTrackingFeatAbbrev =:featTrackingFeatAbbrev ";
+        String hqlFtrTrack = " select ft.featTrackingFeatAbbrev from  FeatureTracking ft where ft.feature.zdbID =:featTrackingFeatAbbrev ";
         Query queryTracker = session.createQuery(hqlFtrTrack);
         queryTracker.setParameter("featTrackingFeatAbbrev", featTrackingFeatAbbrev);
         return (String) queryTracker.uniqueResult();
@@ -597,7 +572,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     public String getFeatureByIDInTrackingTable(String featTrackingFeatZdbID) {
         Session session = HibernateUtil.currentSession();
-        String hqlFtrTrack = " select ft.featTrackingFeatAbbrev from  FeatureTracking ft where ft.featTrackingFeatZdbID =:featTrackingFeatZdbID ";
+        String hqlFtrTrack = " select ft.featTrackingFeatAbbrev from  FeatureTracking ft where ft.feature.zdbID =:featTrackingFeatZdbID ";
         Query queryTracker = session.createQuery(hqlFtrTrack);
         queryTracker.setParameter("featTrackingFeatZdbID", featTrackingFeatZdbID);
         return (String) queryTracker.uniqueResult();
@@ -993,7 +968,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     public int deleteFeatureFromTracking(String featureZdbId) {
         Session session = HibernateUtil.currentSession();
-        Query query = session.createQuery("delete from FeatureTracking ft where ft.featTrackingFeatZdbID=:featureZdbId");
+        Query query = session.createQuery("delete from FeatureTracking ft where ft.feature.zdbID=:featureZdbId");
         query.setParameter("featureZdbId", featureZdbId);
         return query.executeUpdate();
     }

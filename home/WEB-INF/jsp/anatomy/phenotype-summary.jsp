@@ -48,5 +48,5 @@
 </table>
 
 <div class="summary">
-    <zfin2:figureSummary figureExpressionSummaryList="${figureSummaryDisplayList}" showMarker="false" expressionData="false" phenotypeData="true"/>
+    <zfin2:figureSummary figureSummaryList="${figureSummaryDisplayList}" showMarker="false" expressionData="false" phenotypeData="true"/>
 </div>

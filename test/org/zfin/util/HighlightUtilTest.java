@@ -47,30 +47,4 @@ public class HighlightUtilTest {
         assertEquals(text, highlightString);
     }
 
-    @Test
-    @Ignore("broken")
-    public void highlightSpecialCharacter() {
-        String text = "mp:zf637-3-001691";
-        String highlightString = "300";
-        highlightString  = HighlightUtil.highlightSmartMatchHTML(text, highlightString, false, true);
-        assertEquals("mp:zf637-<b>3-00</b>1691", highlightString);
-        highlightString  = HighlightUtil.highlightSmartMatchHTML(text, "mpz", false, true);
-        assertEquals("<b>mp:z</b>f637-3-001691", highlightString);
-        highlightString  = HighlightUtil.highlightSmartMatchHTML(text, "pzf", false, true);
-        assertEquals("m<b>p:zf</b>637-3-001691", highlightString);
-        highlightString  = HighlightUtil.highlightSmartMatchHTML(text, "pzf6373", false, true);
-        assertEquals("m<b>p:zf637-3</b>-001691", highlightString);
-        highlightString  = HighlightUtil.highlightSmartMatchHTML(text, "pzf63730", false, true);
-        assertEquals("m<b>p:zf637-3-0</b>01691", highlightString);
-    }
-
-    @Test
-    @Ignore("broken")
-    public void highlightSpecialCharacterInQueryString() {
-        String text = "B-ACTZF";
-        String highlightString = "b-actzf";
-        highlightString  = HighlightUtil.highlightSmartMatchHTML(text, highlightString, false, true);
-        assertEquals("<b>B-ACTZF</b>", highlightString);
-    }
-
 }

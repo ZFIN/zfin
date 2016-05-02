@@ -1,5 +1,5 @@
 #!/bin/bash
-//usr/bin/env groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
+//private/apps/groovy/bin/groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
 
 import org.zfin.properties.ZfinProperties
 import org.zfin.util.ReportGenerator
@@ -38,7 +38,7 @@ POST_FILE = "meshTermsPost.txt"
 
 new File(OUTFILE).withWriter { out ->
 
-  download("ftp://nlmpubs.nlm.nih.gov/online/mesh/.xmlmesh/desc2015.gz") { stream ->
+  download("ftp://nlmpubs.nlm.nih.gov/online/mesh/.xmlmesh/desc2016.gz") { stream ->
     xml = parse(new GZIPInputStream(stream))
     records = xml.DescriptorRecord.each { record ->
       id = record.DescriptorUI.text()
@@ -48,7 +48,7 @@ new File(OUTFILE).withWriter { out ->
     println("Parsed ${records.size()} descriptor terms")
   }
 
-  download("ftp://nlmpubs.nlm.nih.gov/online/mesh/.xmlmesh/qual2015.xml") { stream ->
+  download("ftp://nlmpubs.nlm.nih.gov/online/mesh/.xmlmesh/qual2016.xml") { stream ->
     xml = parse(stream)
     records = xml.QualifierRecord.each { record ->
       id = record.QualifierUI.text()

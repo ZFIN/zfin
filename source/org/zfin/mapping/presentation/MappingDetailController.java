@@ -182,7 +182,7 @@ public class MappingDetailController {
             model.addAttribute("isFeature", true);
             model.addAttribute("singleton", getLinkageRepository().getSingletonLinkage(feature));
             List<SingletonLinkage> singletonLinkage = getLinkageRepository().getSingletonLinkage(feature);
-            if (singletonLinkage != null) {
+            if (CollectionUtils.isNotEmpty(singletonLinkage)) {
                 Map<Feature, List<SingletonLinkage>> map = new HashMap<>();
                 map.put(feature, singletonLinkage);
                 model.addAttribute("singletonFeatureMapList", map);
@@ -194,6 +194,8 @@ public class MappingDetailController {
             if (marker == null) {
                 model.addAttribute("pureFeature", true);
                 model.addAttribute("otherMappingDetail", isOtherMappingDetail);
+                model.addAttribute("gbrowseImage", FeatureService.getGbrowseImage(feature));
+                model.addAttribute("locations", MappingService.getGenomeBrowserLocations(feature));
                 return "mapping/mapping-detail-pure-feature.page";
             }
             markerID = marker.getZdbID();

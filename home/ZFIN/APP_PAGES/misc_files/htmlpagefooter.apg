@@ -1,98 +1,35 @@
 
 </div> <!-- allcontent -->
 
+<script src="/javascript/popups.js"></script>
 <script src="/javascript/your-input-welcome.js" type="text/javascript"></script>
 
 <script>
-
-    jQuery(document).ready(function() { jQuery(".default-input").focus(); })
-
-function randomUniqueID(prefix) {
-  var id = prefix + Math.floor( Math.random()*99999 );
-  // if the id exists, try again
-  if ( document.getElementById(id) != undefined ) {
-    return randomUniqueID(prefix);
-  } else {
-    return id;
-  }
-
-
-}
-
-    function processPopupLinks(parent) {
-        var selector = parent + ' .popup-link ';
-
-        jQuery(selector).each(function() {
-            div_id = randomUniqueID("popup-");
-            jQuery(this).attr("rel", "#" + div_id);
-            div_html = "<div class=\"jq-modal\" id=\"" + div_id + "\"><div class=\"popup-content\">Loading... <img src=\"/images/ajax-loader.gif\"/></div></div>";
-            //append to the body so that we don't get unwanted css rules
-            jQuery('body').append(div_html);
-            if (jQuery(this).modal != undefined) {
-                this.style.display = "inline";
-            }
-
-        });
-
-        jQuery(selector).click(function (event) {
-            event.preventDefault();
-            var overlay = jQuery(jQuery(this).attr("rel"));
-            jQuery.ajax({
-                url: jQuery(this).attr('href'),
-                success: function(data) {
-                    jQuery(".popup-content", overlay).html(data);
-                    overlay.modal({
-                        fadeDuration: 100
-                    });
-                }
-            });
-        });
-    }
-
-
-  jQuery(document).ready(function() {
+  $(function() {
+    $(".default-input").focus();
     processPopupLinks('body');
     initYIW();
   });
-
-
-
 </script>
 
 
 <div id="footer">
-
   <div id="footerlinks">
     <a href="/">Home</a>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider"> 
-
-   <a href="/ZFIN/misc_html/tips.html" title="Frequently asked questions">Help and Tips</a>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider"> 
-
+    <a href="/ZFIN/misc_html/tips.html" title="Frequently asked questions">Help and Tips</a>
     <a href="/zf_info/glossary.html" title="Terms useful in understanding zebrafish development, anatomy, genetics and bioinformatics">Glossary</a>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider"> 
-  
     <a href="/zf_info/news/committees.html" title="Committees and working groups">Committees</a>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider">
-  
     <a href="https://wiki.zfin.org/display/general/ZFIN+db+information" title="Citing ZFIN resources in publications">Citing ZFIN</a>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider"> 
-  
-    <a href="/zf_info/contact_us.html" title="ZFIN contact information">Contact</a>
-      <img src="/images/research-dot.png" class="hdr-linkbar-divider"> 
-
+    <a href="https://wiki.zfin.org/display/general/ZFIN+Contact+Information" title="ZFIN contact information">Contact</a>
     <a href="https://wiki.zfin.org/display/general/ZFIN+db+information" title="About ZFIN">About</a>
-      <img src="/images/research-dot.png" class="hdr-linkbar-divider"> 
     <a href="https://wiki.zfin.org/display/jobs/ZFIN+Jobs" title="Jobs">ZFIN Jobs</a>
-     
   </div>
 
-  <div id="footercredits" style="text-align: center">
+  <div id="footercredits" class="center">
       <span id="footer-generous-support">Development of the Zebrafish Database is generously supported by the National Human Genome Research Institute (HG004838, and HG004834) of the National Institutes of Health. <br> </span>
       <a href="/warranty.html">Disclaimer, limitations, copyright &copy;  </a> <a href="http://www.uoregon.edu">
-      University of Oregon</a>, 1994-2015,<a href="http://www.ci.eugene.or.us"> Eugene</a>, Oregon. <br>
+      University of Oregon</a>, 1994-2016,<a href="http://www.ci.eugene.or.us"> Eugene</a>, Oregon. <br>
       <small>ZFIN logo design by Kari Pape, <A HREF="http://www.uoregon.edu">University of Oregon</a></small>
   </div>
-
 </div>
 

@@ -39,7 +39,7 @@
             <a href="/${pub.zdbID}"
                id="${pub.zdbID}">${pub.authors}&nbsp;(${pub.year})&nbsp;${pub.title}.&nbsp;${pub.journal.abbreviation}&nbsp;<c:if
                       test="${pub.volume != null}">${pub.volume}:</c:if>${pub.pages}</a>
-            <authz:authorize ifAnyGranted="root"><c:if
+            <authz:authorize access="hasRole('root')"><c:if
               test="${pub.open}">OPEN</c:if><c:if
               test="${!pub.open}">CLOSED</c:if><c:if
               test="${pub.indexed}">, INDEXED</c:if>
@@ -61,7 +61,7 @@
       <td>
         <div class="show_pubs">
           <a href="/${pub.zdbID}">${pub.authors}&nbsp;(${pub.year})&nbsp;${pub.title}</a>
-          <authz:authorize ifAnyGranted="root"><c:if
+          <authz:authorize access="hasRole('root')"><c:if
             test="${pub.open}">OPEN</c:if><c:if
             test="${!pub.open}">CLOSED</c:if><c:if
             test="${pub.indexed}">, INDEXED</c:if>

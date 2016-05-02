@@ -4,6 +4,6 @@
 
 <c:if test="${fn:length(markerCollection) > 0 }">
   <c:forEach var="tgConstruct" items="${markerCollection}" varStatus="constructLoop">
-        <zfin:link entity="${tgConstruct}"/><c:if test="${!constructLoop.last}">,&nbsp</c:if>
+        <i><zfin:link entity="${tgConstruct}"/></i><c:if test="${!constructLoop.last}">,&nbsp</c:if>
   </c:forEach>
 </c:if>

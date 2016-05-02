@@ -1,9 +1,0 @@
-{:timestamp=>"2014-11-10T14:57:05.260000-0800", :message=>"Config file does not exist.", :path=>"shipper.conf", :level=>:fatal}
-Exception in thread "LogStash::Runner" org.jruby.exceptions.RaiseException: (RuntimeError) Configuration problem
-	at RUBY.configure(file:/net/filer.zfin.org/vol/users/kschaper/cell/ZFIN_WWW/server_apps/logstash_shipper/logstash-1.1.13-flatjar.jar!/logstash/agent.rb:251)
-	at RUBY.run(file:/net/filer.zfin.org/vol/users/kschaper/cell/ZFIN_WWW/server_apps/logstash_shipper/logstash-1.1.13-flatjar.jar!/logstash/agent.rb:364)
-	at logstash.runner.run(logstash/runner.rb:101)
-	at org.jruby.RubyProc.call(org/jruby/RubyProc.java:249)
-	at logstash.runner.run(logstash/runner.rb:199)
-	at logstash.runner.main(logstash/runner.rb:74)
-	at logstash.runner.(root)(logstash/runner.rb:224)

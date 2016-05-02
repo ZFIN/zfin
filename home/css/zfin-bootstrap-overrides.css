@@ -1,41 +1,56 @@
 .ui-menu-item {
-    font-size: small
+    font-size: small;
 }
 
-/* necessary because bootstrap overrides our body margin on top */
 body {
+    font-family: arial, sans-serif;
     margin-top: 81px;
+    background: @SITE_BACKGROUND@;
 }
 
-/* don't need the left-right magin fixes from all-content */
 div.allcontent {
-    margin: 0px;
+    margin: 0;
 }
 
-#hdr-navlinks {
-    line-height: 15px;
-    /*        position: relative;
-            top: 5px;*/
+a,
+a:hover {
+    color: blue
 }
 
-.tabContent, .selectedTabContent { height: 22px !important; }
-
-#feedBox #rss-icon {
-    position: absolute;
-    top: 1px;
-    right: 64px;
+#hdr-banner {
+    line-height: normal;
+    font-size: 16px;
 }
 
-html { font-size: 100%; }
-#hdr-banner { font-size: 16px; }
-#footer { font-size: 12px; }
+#footer {
+    line-height: normal;
+    font-size: 12.8px;
+    margin: 0 0 8px;
+}
 
-.table tbody > tr > td{
+.header-tab {
+    box-sizing: content-box;
+    line-height: normal;
+}
+
+.hdr-linkbar {
+    box-sizing: content-box;
+    height: 15px;
+    line-height: normal;
+}
+
+.table tbody > tr > td {
     vertical-align: middle;
 }
 
-.btn-dense, .btn-group-dense > .btn {
+.btn-dense,
+.btn-group-dense > .btn {
     padding: 1px 8px;
     line-height: 1.5;
     border-radius: 3px;
+}
+
+.form-single-row {
+    display: flex;
+    align-items: flex-end;
 }

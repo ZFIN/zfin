@@ -111,16 +111,15 @@ public class AbstractSecureSmokeTest extends AbstractSmokeTest {
     public void login(WebClient webClient) throws Exception {
         HtmlPage page = webClient.getPage(secureUrlDomain + "/action/login-redirect");
         HtmlForm loginForm = page.getFormByName("login");
-        HtmlInput nameField = loginForm.getInputByName("j_username");
+        HtmlInput nameField = loginForm.getInputByName("username");
         nameField.setValueAttribute(person.getAccountInfo().getLogin());
-        HtmlInput passwordField = loginForm.getInputByName("j_password");
+        HtmlInput passwordField = loginForm.getInputByName("password");
         passwordField.setValueAttribute(password);
         HtmlInput loginButton = loginForm.getInputByName("action");
         try {
-            loginButton.click();
+            HtmlPage pageLogin = loginButton.click();
         } catch (Throwable t) {
               logger.error("Couldn't login %n" + t.toString());
-//            t.printStackTrace();
             // ignore the 404 error
         }
     }

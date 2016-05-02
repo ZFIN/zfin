@@ -90,18 +90,18 @@ public class FigureService {
      * @param fish         fish
      * @param gene         gene
      * @param withImgsOnly require that figures joined in have images
+     * @para environmentGroup  environment group
      * @return expressionsummarycriteria object
      */
-    public static ExpressionSummaryCriteria createExpressionCriteriaChemicalEnvironment(Fish fish, Marker gene, boolean withImgsOnly) {
-        //assumed by title, this method is only relevant for getting the chemical environments, not for getting
-        //everything *but* chemical
-        boolean isChemicalEnvironment = true;
-
+    public static ExpressionSummaryCriteria createExpressionCriteriaEnvironmentGroup(Fish fish, Marker gene, boolean withImgsOnly, String environmentGroup) {
         ExpressionSummaryCriteria criteria = new ExpressionSummaryCriteria();
         criteria.setFish(fish);
         criteria.setGene(gene);
         criteria.setWithImagesOnly(withImgsOnly);
-        criteria.setChemicalEnvironment(isChemicalEnvironment);
+        if (environmentGroup.equalsIgnoreCase("chemical"))
+            criteria.setChemicalEnvironment(true);
+        else if (environmentGroup.equalsIgnoreCase("heatshock"))
+            criteria.setHeatShockEnvironment(true);
         criteria.setWildtypeOnly(false);
         return criteria;
     }
@@ -119,7 +119,7 @@ public class FigureService {
 
         if (expressionCriteria.getSequenceTargetingReagent() != null) {
             List<String> expressionFigureIDs = RepositoryFactory.getExpressionRepository().getExpressionFigureIDsBySequenceTargetingReagentAndExpressedGene(expressionCriteria.getSequenceTargetingReagent(), expressionCriteria.getGene());
-            figures = new ArrayList<Figure>();
+            figures = new ArrayList<>();
             for (String figId : expressionFigureIDs) {
                 Figure fig = RepositoryFactory.getPublicationRepository().getFigureByID(figId);
                 figures.add(fig);
@@ -182,46 +182,12 @@ public class FigureService {
 
     }
 
-    public static List<FigureSummaryDisplay> createPhenotypeFigureSummary(GenericTerm term, Genotype geno, boolean includeSubstructures) {
-
-        List<PhenotypeStatement> statements = getMutantRepository().getPhenotypeStatementForMutantSummary(term, geno, includeSubstructures);
-        // a map of publicationID-FigureID as keys and figure summary display objects as values
-        Map<String, FigureSummaryDisplay> map = new HashMap<String, FigureSummaryDisplay>();
-        for (PhenotypeStatement statement : statements) {
-            Figure figure = statement.getPhenotypeExperiment().getFigure();
-            Publication pub = figure.getPublication();
-            String key = pub.getZdbID() + figure.getZdbID();
-
-            // if the key is not in the map, instantiate a display object and add it to the map
-            // otherwise, get the display object from the map
-            if (!map.containsKey(key)) {
-                FigureSummaryDisplay figureData = new FigureSummaryDisplay();
-                figureData.setPublication(pub);
-                figureData.setFigure(figure);
-                figureData.addPhenotypeStatement(statement);
-                for (Image img : figure.getImages()) {
-                    if (figureData.getThumbnail() == null)
-                        figureData.setThumbnail(img.getThumbnail());
-                }
-                map.put(key, figureData);
-            } else {
-                map.get(key).addPhenotypeStatement(statement);
-            }
-        }
-        List<FigureSummaryDisplay> summaryRows = new ArrayList<FigureSummaryDisplay>();
-        if (map.values().size() > 0) {
-            summaryRows.addAll(map.values());
-        }
-        Collections.sort(summaryRows);
-        return summaryRows;
-    }
-
     public static List<FigureSummaryDisplay> createPhenotypeFigureSummary(GenericTerm term, Fish fish, boolean includeSubstructures) {
 
-        List<PhenotypeStatement> statements = getMutantRepository().getPhenotypeStatementForMutantSummary(term, fish, includeSubstructures);
+        List<PhenotypeStatementWarehouse> statements = getMutantRepository().getPhenotypeStatementObservedForMutantSummary(term, fish, includeSubstructures);
         // a map of publicationID-FigureID as keys and figure summary display objects as values
         Map<String, FigureSummaryDisplay> map = new HashMap<>();
-        for (PhenotypeStatement statement : statements) {
+        for (PhenotypeStatementWarehouse statement : statements) {
             Figure figure = statement.getPhenotypeExperiment().getFigure();
             Publication pub = figure.getPublication();
             String key = pub.getZdbID() + figure.getZdbID();
@@ -252,10 +218,10 @@ public class FigureService {
 
     public static List<FigureSummaryDisplay> createPhenotypeFigureSummary(Marker marker) {
 
-        List<PhenotypeStatement> statements = getMutantRepository().getPhenotypeStatementForMarker(marker);
+        List<PhenotypeStatementWarehouse> statements = getMutantRepository().getPhenotypeStatementForMarker(marker);
         // a map of publicationID-FigureID as keys and figure summary display objects as values
         Map<String, FigureSummaryDisplay> map = new HashMap<>();
-        for (PhenotypeStatement statement : statements) {
+        for (PhenotypeStatementWarehouse statement : statements) {
             Figure figure = statement.getPhenotypeExperiment().getFigure();
             Publication pub = figure.getPublication();
             String key = pub.getZdbID() + figure.getZdbID();
@@ -292,4 +258,5 @@ public class FigureService {
         }
         return figures;
     }
+
 }

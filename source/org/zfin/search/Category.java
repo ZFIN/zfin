@@ -15,13 +15,15 @@ public enum Category {
 
     GENE("Gene / Transcript",
             TYPE,
-            EXPRESSED_IN_TF,
+            ANATOMY_TF,
+            STAGE,
             AFFECTED_ANATOMY_TF,
             AFFECTED_BIOLOGICAL_PROCESS_TF,
             AFFECTED_MOLECULAR_FUNCTION_TF,
             AFFECTED_CELLULAR_COMPONENT_TF,
             FieldName.DISEASE,
             PHENOTYPE_STATEMENT,
+            MISEXPRESSED_GENE,
             BIOLOGICAL_PROCESS_TF,
             MOLECULAR_FUNCTION_TF,
             CELLULAR_COMPONENT_TF,
@@ -46,11 +48,13 @@ public enum Category {
     ),
     ANATOMY("Anatomy / GO",
             ONTOLOGY,
-            OBSOLETE
+            TERM_STATUS
     ),
     DISEASE("Human Disease",
             FieldName.GENE,
-            FieldName.DISEASE_MODEL),  
+            FieldName.FISH,
+            FieldName.EXPERIMENTAL_CONDITIONS
+    ),
     MUTANT("Mutation / Tg",
             TYPE,
             AFFECTED_GENE,
@@ -59,8 +63,10 @@ public enum Category {
             AFFECTED_BIOLOGICAL_PROCESS_TF,
             AFFECTED_MOLECULAR_FUNCTION_TF,
             AFFECTED_CELLULAR_COMPONENT_TF,
+            MISEXPRESSED_GENE,
             SOURCE,
             LAB_OF_ORIGIN,
+            CONSEQUENCE,
             INSTITUTION,
             MUTAGEN
 
@@ -99,6 +105,7 @@ public enum Category {
             AFFECTED_CELLULAR_COMPONENT_TF,
             PHENOTYPE_QUALITY_TF,
             PHENOTYPE_STATEMENT,
+            MISEXPRESSED_GENE,
             FieldName.CONSTRUCT,
             HAS_IMAGE,
             EXPRESSIONS_ANATOMY_TF,
@@ -113,7 +120,9 @@ public enum Category {
             TARGETED_GENE
     ),
     EXPRESSIONS("Expression",
-            asList(FacetQueryEnum.ANY_WILDTYPE,
+            asList( FacetQueryEnum.ANY_ZEBRAFISH_GENE,
+                    FacetQueryEnum.ANY_REPORTER_GENE,
+                    FacetQueryEnum.ANY_WILDTYPE,
                     FacetQueryEnum.ANY_MUTANT),
             REPORTER_GENE,
             ZEBRAFISH_GENE,
@@ -131,11 +140,13 @@ public enum Category {
             FieldName.GENE,
             SEQUENCE_ALTERATION,
             IS_MONOGENIC,
+            STAGE,
             ANATOMY_TF,
             BIOLOGICAL_PROCESS_TF,
             MOLECULAR_FUNCTION_TF,
             CELLULAR_COMPONENT_TF,
             PHENOTYPE_STATEMENT,
+            MISEXPRESSED_GENE,
             HAS_IMAGE,
             FieldName.SEQUENCE_TARGETING_REAGENT
     ),
@@ -156,6 +167,7 @@ public enum Category {
             AFFECTED_MOLECULAR_FUNCTION_TF,
             AFFECTED_CELLULAR_COMPONENT_TF,
             PHENOTYPE_STATEMENT,
+            MISEXPRESSED_GENE,
             FieldName.SEQUENCE_TARGETING_REAGENT,
             FieldName.CONSTRUCT,
             SEQUENCE_ALTERATION,
@@ -218,6 +230,17 @@ public enum Category {
         }
 
         return fields.toArray(new String[fields.size()]);
+    }
+
+    public List<FacetQueryEnum> getFacetQueriesForField(FieldName fieldName) {
+        List<FacetQueryEnum> matchingFacetQueries = new ArrayList<FacetQueryEnum>();
+
+        for (FacetQueryEnum facetQueryEnum : facetQueries) {
+            if (facetQueryEnum.getFieldName() == fieldName) {
+                matchingFacetQueries.add(facetQueryEnum);
+            }
+        }
+        return matchingFacetQueries;
     }
 
     private static Map<String, String> facetMap = new HashMap<>();

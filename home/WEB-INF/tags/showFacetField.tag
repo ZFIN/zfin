@@ -17,10 +17,10 @@
             <%-- Only show the widgets if there are values --%>
             <c:choose>
                 <c:when test="${(fn:length(facet.selectedFacetValues) + fn:length(facet.facetValues)) > 0}">
-                    <i class="fa fa-caret-down facet-control-widget ${name}-outer-toggle"
+                    <i class="fa fa-fw fa-caret-down facet-control-widget ${name}-outer-toggle"
                             <c:if test="${!open}">style="display:none;"</c:if>
                      ></i>
-                    <i class="fa fa-caret-right facet-control-widget ${name}-outer-toggle"
+                    <i class="fa fa-fw fa-caret-right facet-control-widget ${name}-outer-toggle"
                                 <c:if test="${open}">style="display:none;"</c:if>
                      ></i>
                 </c:when>
@@ -60,6 +60,10 @@
         </c:if>
 
            <div class="single-facet-value-container" id="${name}-facet-value-container">
+
+               <c:forEach var="facetQuery" items="${facet.facetQueries}" varStatus="loop">
+                   <li><zfin-search:showFacetQuery open="true" gaCategory="${zfn:buildFacetedSearchGACategory(category, facet.label)}" facetQuery="${facetQuery}"/></li>
+               </c:forEach>
 
             <c:forEach var="facetValue" items="${facet.selectedFacetValues}">
                 <zfin2:showSelectedFacetValue value="${facetValue}"/>

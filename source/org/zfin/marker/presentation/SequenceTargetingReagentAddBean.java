@@ -1,82 +1,75 @@
 package org.zfin.marker.presentation;
 
 
+import java.util.Map;
+
 public class SequenceTargetingReagentAddBean {
 
-    public static final String NEW_STR_NAME = "sequenceTargetingReagentName";
-    public static final String STR_PUBLICATION_ZDB_ID = "sequenceTargetingReagentPublicationID";
-    public static final String NEW_STR_COMMENT = "sequenceTargetingReagentComment";
-
-
-
-    public static final String NEW_STR_ALLIAS = "sequenceTargetingReagentAlias";
-    public static final String NEW_STR_CURNOTE = "sequenceTargetingReagentCuratorNote";
-    public static final String NEW_STR_SEQUENCE = "sequenceTargetingReagentSequence";
-    public static final String NEW_STR_SECOND_SEQUENCE = "sequenceTargetingReagentSecondSequence";
-    public static final String NEW_STR_REPORTEDSEQUENCE = "sequenceTargetingReagentReportedSequence";
-    public static final String NEW_STR_SECOND_REPORTEDSEQUENCE = "sequenceTargetingReagentSecondReportedSequence";
-    public static final String NEW_STR_TARGET = "targetGeneSymbol";
-    public static final String NEW_STR_SUPPLIER = "sequenceTargetingReagentSupplierName";
-
-    private String sequenceTargetingReagentPublicationID;
-    private String sequenceTargetingReagentName;
-    private String sequenceTargetingReagentComment;
-    private String sequenceTargetingReagentAlias;
-    private String sequenceTargetingReagentCuratorNote;
-    private String sequenceTargetingReagentType;
+    private String publicationID;
+    private String name;
+    private String publicNote;
+    private String alias;
+    private String curatorNote;
+    private String strType;
     private String targetGeneSymbol;
-    private String sequenceTargetingReagentSequence;
-    private String sequenceTargetingReagentSecondSequence;
-    private String sequenceTargetingReagentReportedSequence;
-    private String sequenceTargetingReagentSecondReportedSequence;
-    private String sequenceTargetingReagentSupplierName;
+    private String sequence;
+    private String sequence2;
+    private String reportedSequence;
+    private String reportedSequence2;
+    private boolean reversed;
+    private boolean reversed2;
+    private boolean complemented;
+    private boolean complemented2;
+    private String supplier;
 
-    public String getSequenceTargetingReagentName() {
-        return sequenceTargetingReagentName;
+    private Map<String, String> strTypes;
+
+    public String getName() {
+        return name;
     }
 
-    public void setSequenceTargetingReagentName(String regionName) {
-        this.sequenceTargetingReagentName = regionName;
+    public void setName(String regionName) {
+        this.name = regionName;
     }
 
-    public String getSequenceTargetingReagentPublicationID() {
-        return sequenceTargetingReagentPublicationID;
+    public String getPublicationID() {
+        return publicationID;
     }
 
-    public void setSequenceTargetingReagentPublicationID(String sequenceTargetingReagentPublicationID) {
-        this.sequenceTargetingReagentPublicationID = sequenceTargetingReagentPublicationID;
+    public void setPublicationID(String publicationID) {
+        this.publicationID = publicationID;
     }
 
-    public String getSequenceTargetingReagentComment() {
-        return sequenceTargetingReagentComment;
+    public String getPublicNote() {
+        return publicNote;
     }
 
-    public void setSequenceTargetingReagentComment(String regionComment) {
-        this.sequenceTargetingReagentComment = regionComment;
+    public void setPublicNote(String regionComment) {
+        this.publicNote = regionComment;
     }
 
-    public String getSequenceTargetingReagentAlias() {
-        return sequenceTargetingReagentAlias;
+    public String getAlias() {
+        return alias;
     }
 
-    public void setSequenceTargetingReagentAlias(String regionAlias) {
-        this.sequenceTargetingReagentAlias = regionAlias;
+    public void setAlias(String regionAlias) {
+        this.alias = regionAlias;
     }
 
-    public String getSequenceTargetingReagentCuratorNote() {
-        return sequenceTargetingReagentCuratorNote;
+    public String getCuratorNote() {
+        return curatorNote;
     }
 
-    public void setSequenceTargetingReagentCuratorNote(String regionCuratorNote) {
-        this.sequenceTargetingReagentCuratorNote = regionCuratorNote;
+    public void setCuratorNote(String regionCuratorNote) {
+        this.curatorNote = regionCuratorNote;
     }
 
-    public String getSequenceTargetingReagentType() {
-        return sequenceTargetingReagentType;
+    public String getStrType() {
+        return strType;
     }
 
-    public void setSequenceTargetingReagentType(String sequenceTargetingReagentType) {
-        this.sequenceTargetingReagentType = sequenceTargetingReagentType;
+    public void setStrType(String strType) {
+        this.strType = strType;
     }
 
     public String getTargetGeneSymbol() {
@@ -87,47 +80,85 @@ public class SequenceTargetingReagentAddBean {
         this.targetGeneSymbol = targetGeneSymbol;
     }
 
-    public String getSequenceTargetingReagentSequence() {
-        return sequenceTargetingReagentSequence;
+    public String getSequence() {
+        return sequence;
     }
 
-    public void setSequenceTargetingReagentSequence(String sequenceTargetingReagentSequence) {
-        this.sequenceTargetingReagentSequence = sequenceTargetingReagentSequence;
+    public void setSequence(String sequence) {
+        this.sequence = sequence;
     }
 
-    public String getSequenceTargetingReagentSecondSequence() {
-        return sequenceTargetingReagentSecondSequence;
+    public String getSequence2() {
+        return sequence2;
     }
 
-    public void setSequenceTargetingReagentSecondSequence(String sequenceTargetingReagentSecondSequence) {
-        this.sequenceTargetingReagentSecondSequence = sequenceTargetingReagentSecondSequence;
+    public void setSequence2(String sequence2) {
+        this.sequence2 = sequence2;
     }
 
-    public String getSequenceTargetingReagentReportedSequence() {
-        return sequenceTargetingReagentReportedSequence;
+    public String getReportedSequence() {
+        return reportedSequence;
     }
 
-    public void setSequenceTargetingReagentReportedSequence(String sequenceTargetingReagentReportedSequence) {
-        this.sequenceTargetingReagentReportedSequence = sequenceTargetingReagentReportedSequence;
+    public void setReportedSequence(String reportedSequence) {
+        this.reportedSequence = reportedSequence;
     }
 
-    public String getSequenceTargetingReagentSecondReportedSequence() {
-        return sequenceTargetingReagentSecondReportedSequence;
+    public String getReportedSequence2() {
+        return reportedSequence2;
     }
 
-    public void setSequenceTargetingReagentSecondReportedSequence(String sequenceTargetingReagentSecondReportedSequence) {
-        this.sequenceTargetingReagentSecondReportedSequence = sequenceTargetingReagentSecondReportedSequence;
+    public void setReportedSequence2(String reportedSequence2) {
+        this.reportedSequence2 = reportedSequence2;
     }
 
-    public String getSequenceTargetingReagentSupplierName() {
-        return sequenceTargetingReagentSupplierName;
+    public String getSupplier() {
+        return supplier;
     }
 
-    public void setSequenceTargetingReagentSupplierName(String sequenceTargetingReagentSupplierName) {
-        this.sequenceTargetingReagentSupplierName = sequenceTargetingReagentSupplierName;
+    public void setSupplier(String supplier) {
+        this.supplier = supplier;
     }
 
+    public Map<String, String> getStrTypes() {
+        return strTypes;
+    }
 
+    public void setStrTypes(Map<String, String> strTypes) {
+        this.strTypes = strTypes;
+    }
+
+    public boolean isReversed() {
+        return reversed;
+    }
+
+    public void setReversed(boolean reversed) {
+        this.reversed = reversed;
+    }
+
+    public boolean isReversed2() {
+        return reversed2;
+    }
+
+    public void setReversed2(boolean reversed2) {
+        this.reversed2 = reversed2;
+    }
+
+    public boolean isComplemented() {
+        return complemented;
+    }
+
+    public void setComplemented(boolean complemented) {
+        this.complemented = complemented;
+    }
+
+    public boolean isComplemented2() {
+        return complemented2;
+    }
+
+    public void setComplemented2(boolean complemented2) {
+        this.complemented2 = complemented2;
+    }
 }
 
 

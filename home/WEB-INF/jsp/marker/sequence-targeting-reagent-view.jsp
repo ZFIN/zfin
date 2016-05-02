@@ -16,7 +16,7 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.SequenceTargetingReagentBean" scope="request"/>
 
-<c:set var="editURL">/<%=ZfinProperties.getWebDriver()%>?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=${formBean.marker.zdbID}</c:set>
+<c:set var="editURL">/action/str/${formBean.marker.zdbID}/edit</c:set>
 <c:set var="deleteURL">/action/infrastructure/deleteRecord/${formBean.marker.zdbID}</c:set>
 <c:set var="mergeURL">/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}</c:set>
 
@@ -25,7 +25,6 @@
                    deleteURL="${deleteURL}"
                    mergeURL="${mergeURL}"
                    rtype="marker"/>
-
 
 <div style="float: right">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
@@ -43,7 +42,7 @@
 
     <c:forEach items="${formBean.gbrowseImages}" var="image" end="1">
         <div class="gbrowse-image"
-             data-gbrowse-image='{"imageUrl": "${image.imageUrl}", "linkUrl": "${image.linkUrl}"}'>
+             data-gbrowse-image='{"imageUrl": "${image.imageUrl}", "linkUrl": "${image.linkUrl}", "build": "${image.build}"}'>
         </div>
     </c:forEach>
 

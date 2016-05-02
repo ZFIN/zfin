@@ -7,8 +7,8 @@ package org.zfin.ontology;
  */
 public class PostComposedEntity implements Comparable<PostComposedEntity> {
 
-    private GenericTerm superterm;
-    private GenericTerm subterm;
+    protected GenericTerm superterm;
+    protected GenericTerm subterm;
 
     public GenericTerm getSuperterm() {
         return superterm;
@@ -29,7 +29,7 @@ public class PostComposedEntity implements Comparable<PostComposedEntity> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || !getClass().isAssignableFrom(o.getClass())) return false;
 
         PostComposedEntity that = (PostComposedEntity) o;
 

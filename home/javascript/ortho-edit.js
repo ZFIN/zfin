@@ -64,7 +64,7 @@
     function orthoEdit($timeout) {
         var directive = {
             restrict: 'EA',
-            templateUrl: '/javascript/orthoedit.directive.html', // todo: this is totally the wrong location for this file
+            templateUrl: '/templates/orthoedit.directive.html',
             scope: {
                 gene: '@',
                 pub: '@'

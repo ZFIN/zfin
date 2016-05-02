@@ -51,7 +51,6 @@ import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
-import org.zfin.sequence.service.SequenceService;
 import org.zfin.util.NumberAwareStringComparator;
 import org.zfin.util.ZfinStringUtils;
 
@@ -67,11 +66,8 @@ import static org.zfin.framework.HibernateUtil.currentSession;
 public class HibernateMarkerRepository implements MarkerRepository {
 
     private static Logger logger = Logger.getLogger(HibernateMarkerRepository.class);
-    private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
-    private final SequenceService sequenceService = new SequenceService();
-    private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-    private static final String uri = "?MIval=aa-curatornote.apg&OID=";
-
+    private final static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
+    private final static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
 
     // utilities
     private MarkerDBLinksTransformer markerDBLinkTransformer = new MarkerDBLinksTransformer();
@@ -102,8 +98,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public Marker getMarkerOrReplacedByID(String zdbID) {
         Marker marker = getMarkerByID(zdbID);
-        if (marker != null)
+        if (marker != null) {
             return marker;
+        }
         String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
         marker = getMarkerByID(replacedZdbID);
         return marker;
@@ -338,8 +335,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Session session = currentSession();
         TreeSet<String> lgList = new TreeSet<String>();
 
-        Query query = session.createSQLQuery("select sfcl_chromosome from sequence_feature_chromosome_location " +
-                "where sfcl_data_zdb_id = :mrkrZdbId order by 1");
+        Query query = session.createSQLQuery("select sfclg_chromosome from sequence_feature_chromosome_location_generated " +
+                "where sfclg_data_zdb_id = :mrkrZdbId order by 1");
         query.setParameter("mrkrZdbId", marker.getZdbID());
 
         lgList.addAll(query.list());
@@ -427,21 +424,27 @@ public class HibernateMarkerRepository implements MarkerRepository {
             firstMarkerRelationships = new HashSet<>();
             firstMarkerRelationships.add(mrel);
             gene.setFirstMarkerRelationships(firstMarkerRelationships);
-        } else
+        } else {
             firstMarkerRelationships.add(mrel);
+        }
 
         Set<MarkerRelationship> secondSegmentRelationships = segment.getSecondMarkerRelationships();
         if (secondSegmentRelationships == null) {
             secondSegmentRelationships = new HashSet<>();
             secondSegmentRelationships.add(mrel);
             segment.setSecondMarkerRelationships(secondSegmentRelationships);
-        } else
+        } else {
             secondSegmentRelationships.add(mrel);
+        }
 
         //now deal with attribution
-        RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(mrel.getZdbID(), sourceZdbID);
+        infrastructureRepository.insertRecordAttribution(mrel.getZdbID(), sourceZdbID);
     }
 
+    public void updateMarkerPublicNote(Marker marker, String note) {
+        infrastructureRepository.insertUpdatesTable(marker.getZdbID(), "public note", marker.getPublicComments(), note, "");
+        marker.setPublicComments(note);
+    }
 
     public DataNote addMarkerDataNote(Marker marker, String note) {
         Person curator = ProfileService.getCurrentSecurityUser();
@@ -458,7 +461,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
             dataNotes = new HashSet<DataNote>();
             dataNotes.add(dnote);
             marker.setDataNotes(dataNotes);
-        } else dataNotes.add(dnote);
+        } else {
+            dataNotes.add(dnote);
+        }
 
 
         HibernateUtil.currentSession().save(dnote);
@@ -468,22 +473,16 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public AntibodyExternalNote addAntibodyExternalNote(Antibody antibody, String note, String sourceZdbID) {
         logger.debug("enter addExtDataNote");
-        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         AntibodyExternalNote externalNote = new AntibodyExternalNote();
         externalNote.setAntibody(antibody);
         externalNote.setNote(ZfinStringUtils.escapeHighUnicode(note));
         externalNote.setType(ExternalNote.Type.ANTIBODY.toString());
         HibernateUtil.currentSession().save(externalNote);
         if (!sourceZdbID.equals("")) {
-            PublicationAttribution pa = new PublicationAttribution();
             PublicationRepository pr = RepositoryFactory.getPublicationRepository();
             Publication publication = pr.getPublication(sourceZdbID);
-            pa.setPublication(publication);
-            pa.setDataZdbID(externalNote.getZdbID());
-            pa.setSourceType(RecordAttribution.SourceType.STANDARD);
             Set<PublicationAttribution> pubattr = new HashSet<PublicationAttribution>();
-            pubattr.add(pa);
-            externalNote.setPubAttributions(pubattr);
+            externalNote.setPublication(publication);
             if (antibody.getExternalNotes() == null) {
                 Set<AntibodyExternalNote> abExtNote = new HashSet<AntibodyExternalNote>();
                 abExtNote.add(externalNote);
@@ -491,51 +490,49 @@ public class HibernateMarkerRepository implements MarkerRepository {
             } else {
                 antibody.getExternalNotes().add(externalNote);
             }
-            currentSession().save(pa);
-
             addMarkerPub(antibody, publication);
         }
-        ir.insertUpdatesTable(antibody, "notes", "", ZfinStringUtils.escapeHighUnicode(note), "");
+        infrastructureRepository.insertUpdatesTable(antibody, "notes", "", ZfinStringUtils.escapeHighUnicode(note), "");
         return externalNote;
     }
 
     public OrthologyNote createOrUpdateOrthologyExternalNote(Marker gene, String note) {
         logger.debug("add orthology note");
         Person currentUser = ProfileService.getCurrentSecurityUser();
-        if (currentUser == null)
+        if (currentUser == null) {
             throw new RuntimeException("Cannot add an orthology note without an authenticated user");
+        }
 
         OrthologyNote extnote;
-        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         if (gene.getOrthologyNotes() == null || gene.getOrthologyNotes().size() == 0) {
             extnote = new OrthologyNote();
             extnote.setMarker(gene);
             extnote.setNote(note);
-            extnote.setType(ExternalNote.Type.ORTHOLOGY.toString());
+            extnote.setPublication(RepositoryFactory.getPublicationRepository().getPublication("ZDB-PUB-990507-16"));
             HibernateUtil.currentSession().save(extnote);
             PersonAttribution pa = new PersonAttribution();
             pa.setPerson(currentUser);
             pa.setDataZdbID(extnote.getZdbID());
             pa.setSourceType(RecordAttribution.SourceType.STANDARD);
             HibernateUtil.currentSession().save(pa);
-            Set<PersonAttribution> personAttributions = new HashSet<PersonAttribution>();
+            Set<PersonAttribution> personAttributions = new HashSet<>();
             personAttributions.add(pa);
             extnote.setPersonAttributions(personAttributions);
-            Set<OrthologyNote> markerExternalNotes = new HashSet<OrthologyNote>();
+            Set<OrthologyNote> markerExternalNotes = new HashSet<>();
             markerExternalNotes.add(extnote);
             gene.setOrthologyNotes(markerExternalNotes);
         } else {
             extnote = gene.getOrthologyNotes().iterator().next();
             String oldNote = gene.getOrthologyNotes().iterator().next().getNote();
             extnote.setNote(note);
-            ir.insertUpdatesTable(gene, "notes", "", note, oldNote);
+            infrastructureRepository.insertUpdatesTable(gene, "notes", "", note, oldNote);
         }
         return extnote;
     }
 
     public void editAntibodyExternalNote(String notezdbid, String note) {
         logger.debug("enter addExtDataNote");
-        ExternalNote extnote = RepositoryFactory.getInfrastructureRepository().getExternalNoteByID(notezdbid);
+        ExternalNote extnote = infrastructureRepository.getExternalNoteByID(notezdbid);
         extnote.setNote(ZfinStringUtils.escapeHighUnicode(note));
         HibernateUtil.currentSession().update(extnote);
     }
@@ -561,8 +558,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
             Set<MarkerAlias> markerAliases = new HashSet<MarkerAlias>();
             markerAliases.add(markerAlias);
             marker.setAliases(markerAliases);
-        } else
+        } else {
             marker.getAliases().add(markerAlias);
+        }
 
         currentSession().save(markerAlias);
 
@@ -579,28 +577,32 @@ public class HibernateMarkerRepository implements MarkerRepository {
             markerAlias.setPublications(pubattr);
             currentSession().save(pa);
 
-            if (marker.getMarkerType().getType() == Marker.Type.ATB)
+            if (marker.getMarkerType().getType() == Marker.Type.ATB) {
                 addMarkerPub(marker, publication);
+            }
             updateComment = "Added alias: '" + markerAlias.getAlias() + "' attributed to publication: '"
                     + publication.getZdbID() + "'";
         } else {
             updateComment = "Added alias: '" + markerAlias.getAlias() + " with no attribution";
         }
 
-       // InfrastructureService.insertUpdate(marker, updateComment);
+        InfrastructureService.insertUpdate(marker, updateComment);
         runMarkerNameFastSearchUpdate(marker);
         return markerAlias;
     }
 
     public void deleteMarkerAlias(Marker marker, MarkerAlias alias) {
-        if (marker == null)
+        if (marker == null) {
             throw new RuntimeException("No marker object provided.");
-        if (alias == null)
+        }
+        if (alias == null) {
             throw new RuntimeException("No alias object provided.");
+        }
         // check that the alias belongs to the marker
-        if (!marker.getAliases().contains(alias))
+        if (!marker.getAliases().contains(alias)) {
             throw new RuntimeException("Alias '" + alias + "' does not belong to the marker '" + marker + "'! " +
                     "Cannot remove such an alias.");
+        }
         // remove the ZDB active data record with cascade.
 
         String hql = "delete from MarkerHistory  mh " +
@@ -630,9 +632,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     public void deleteMarkerRelationship(MarkerRelationship mrel) {
-        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-        ir.deleteActiveDataByZdbID(mrel.getZdbID());
-
+        infrastructureRepository.deleteActiveDataByZdbID(mrel.getZdbID());
     }
 
     public void deleteConstructComponentByID(String constructID) {
@@ -656,24 +656,23 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         String aliasZdbID = alias.getZdbID();
 
-        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-        RecordAttribution recordAttribution = ir.getRecordAttribution(aliasZdbID, attributionZdbID, RecordAttribution.SourceType.STANDARD);
+        RecordAttribution recordAttribution = infrastructureRepository.getRecordAttribution(aliasZdbID, attributionZdbID, RecordAttribution.SourceType.STANDARD);
         // only add the publication when it is not there
         if (recordAttribution == null) {
             PublicationAttribution pa = new PublicationAttribution();
             pa.setSourceZdbID(attributionZdbID);
             pa.setDataZdbID(aliasZdbID);
             pa.setSourceType(PublicationAttribution.SourceType.STANDARD);
-            Publication publication = RepositoryFactory.getPublicationRepository().getPublication(attributionZdbID);
-            pa.setPublication(publication);
-            Set<PublicationAttribution> pubAttrbs = new HashSet<PublicationAttribution>();
+            pa.setPublication(attribution);
+            Set<PublicationAttribution> pubAttrbs = new HashSet<>();
             pubAttrbs.add(pa);
             MarkerAlias markerAlias = new MarkerAlias();
             markerAlias.setPublications(pubAttrbs);
             currentSession().save(pa);
-            addMarkerPub(marker, publication);
+            currentSession().refresh(alias);
+            addMarkerPub(marker, attribution);
         }
-        ir.insertUpdatesTable(marker, "", "new attribution, data alias: " + alias.getAlias() + " with pub: " + attributionZdbID, attributionZdbID, "");
+        infrastructureRepository.insertUpdatesTable(marker, "", "new attribution, data alias: " + alias.getAlias() + " with pub: " + attributionZdbID, attributionZdbID, "");
     }
 
     public void addMarkerRelationshipAttribution(MarkerRelationship mrel, Publication attribution, Marker marker) {
@@ -681,11 +680,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
         String attributionZdbID = attribution.getZdbID();
         String relZdbID = mrel.getZdbID();
 
-        if (attributionZdbID.equals(""))
+        if (attributionZdbID.equals("")) {
             throw new RuntimeException("Cannot attribute this alias with a blank pub.");
+        }
 
-        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-        RecordAttribution recordAttribution = ir.getRecordAttribution(relZdbID, attributionZdbID, RecordAttribution.SourceType.STANDARD);
+        RecordAttribution recordAttribution = infrastructureRepository.getRecordAttribution(relZdbID, attributionZdbID, RecordAttribution.SourceType.STANDARD);
 
         // only add the publication when it is not there
         if (recordAttribution == null) {
@@ -693,22 +692,34 @@ public class HibernateMarkerRepository implements MarkerRepository {
             pa.setSourceZdbID(attributionZdbID);
             pa.setDataZdbID(relZdbID);
             pa.setSourceType(RecordAttribution.SourceType.STANDARD);
-            Publication publication = RepositoryFactory.getPublicationRepository().getPublication(attributionZdbID);
-            pa.setPublication(publication);
+            pa.setPublication(attribution);
             currentSession().save(pa);
             currentSession().refresh(mrel);
-            addMarkerPub(marker, publication);
+            addMarkerPub(marker, attribution);
         }
-        ir.insertUpdatesTable(marker, "", "new attribution, marker relationship: " + mrel.getZdbID() + " with pub: " + attributionZdbID, attributionZdbID, "");
+        infrastructureRepository.insertUpdatesTable(marker, "", "new attribution, marker relationship: " + mrel.getZdbID() + " with pub: " + attributionZdbID, attributionZdbID, "");
+    }
+
+    public void addDBLinkAttribution(DBLink dbLink, Publication attribution, Marker marker) {
+        String linkId = dbLink.getZdbID();
+        String attrId = attribution.getZdbID();
+
+        RecordAttribution recordAttribution = infrastructureRepository.getRecordAttribution(linkId, attrId, RecordAttribution.SourceType.STANDARD);
+        if (recordAttribution != null) {
+            return;
+        }
+
+        infrastructureRepository.insertPublicAttribution(linkId, attrId);
+        infrastructureRepository.insertUpdatesTable(marker, "", "new attribution, marker dblink: " + linkId + " with pub: " + attrId, attrId, "");
     }
 
     public void addMarkerPub(Marker marker, Publication publication) {
-        if (publication == null)
+        if (publication == null) {
             throw new RuntimeException("Cannot attribute this marker with a blank pub.");
+        }
 
         String markerZdbID = marker.getZdbID();
-        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-        RecordAttribution recordAttribution = ir.getRecordAttribution(markerZdbID, publication.getZdbID(), RecordAttribution.SourceType.STANDARD);
+        RecordAttribution recordAttribution = infrastructureRepository.getRecordAttribution(markerZdbID, publication.getZdbID(), RecordAttribution.SourceType.STANDARD);
 
         // only add the publication when it is not there
         if (recordAttribution == null) {
@@ -716,7 +727,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             pa.setDataZdbID(markerZdbID);
             pa.setSourceType(RecordAttribution.SourceType.STANDARD);
             pa.setPublication(publication);
-            Set<PublicationAttribution> pubAttrbs = new HashSet<PublicationAttribution>();
+            Set<PublicationAttribution> pubAttrbs = new HashSet<>();
             pubAttrbs.add(pa);
             Marker mrkr = new Marker();
             mrkr.setPublications(pubAttrbs);
@@ -728,11 +739,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         Set<MarkerDBLink> markerDBLinks = marker.getDbLinks();
         for (MarkerDBLink markerDBLink : markerDBLinks) {
-            if (
-                    markerDBLink.getAccessionNumber().equals(accessionNumber)
-                            &&
-                            markerDBLink.getReferenceDatabase().equals(refdb)
-                    ) {
+            if (markerDBLink.getAccessionNumber().equals(accessionNumber) &&
+                    markerDBLink.getReferenceDatabase().equals(refdb)) {
                 return markerDBLink;
             }
         }
@@ -751,12 +759,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
             markerDBLinks = new HashSet<MarkerDBLink>();
             markerDBLinks.add(mdb);
             marker.setDbLinks(markerDBLinks);
-        } else
+        } else {
             marker.getDbLinks().add(mdb);
+        }
         currentSession().save(mdb);
         if (StringUtils.isNotEmpty(attributionZdbID)) {
-            RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(mdb.getZdbID(), attributionZdbID);
+            infrastructureRepository.insertRecordAttribution(mdb.getZdbID(), attributionZdbID);
         }
+
+        String updateComment = "Adding dblink " + mdb.getReferenceDatabase().getForeignDB().getDisplayName() + ":" + mdb.getAccessionNumber();
+        updateComment += StringUtils.isNotBlank(attributionZdbID) ? (" with attribution " + attributionZdbID) : " without attribution";
+        InfrastructureService.insertUpdate(marker, updateComment);
 
         //accessions will end up in the fast search table associated with the marker
         runMarkerNameFastSearchUpdate(marker);
@@ -771,8 +784,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Criteria criteria = session.createCriteria(MarkerHistory.class);
         criteria.add(Restrictions.eq("marker.zdbID", marker.getZdbID()));
         // Todo: Check this carefully
-        if (event != null)
+        if (event != null) {
             criteria.add(Restrictions.eq("event", event.toString()));
+        }
         criteria.addOrder(Property.forName("date").desc());
         // very dangerous as the trigger creates two history records, one for a name change (no alias available)
         // and one for an abbrev change with an associated alias generation
@@ -850,35 +864,41 @@ public class HibernateMarkerRepository implements MarkerRepository {
             logger.error("Could not run: " + sql, e);
             logger.error(DbSystemUtil.getLockInfo());
         } finally {
-            if (statement != null)
+            if (statement != null) {
                 try {
                     statement.close();
                 } catch (SQLException e) {
                     logger.error(e);
                 }
+            }
         }
     }
 
     public void createMarker(Marker marker, Publication pub) {
-        if (marker.getName() == null)
+        if (marker.getName() == null) {
             throw new RuntimeException("Cannot create a new marker without a name.");
-        if (marker == null)
+        }
+        if (marker == null) {
             throw new RuntimeException("No marker object provided.");
-        if (marker.getMarkerType() == null)
+        }
+        if (marker.getMarkerType() == null) {
             throw new RuntimeException("Cannot create a new marker without a type.");
-        if (pub == null)
+        }
+        if (pub == null) {
             throw new RuntimeException("Cannot create a new marker without a publication.");
+        }
 
         marker.setOwner(ProfileService.getCurrentSecurityUser());
-        if (!marker.getOwner().getAccountInfo().getRoot())
+        if (!marker.getOwner().getAccountInfo().getRoot()) {
             throw new RuntimeException("Non-root user cannot create a marker");
+        }
         currentSession().save(marker);
         // Need to flush here to make the trigger fire as that will
         // create a MarkerHistory record needed.
         //   currentSession().flush();
 
         //add publication to attribution list.
-        RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(marker.getZdbID(), pub.getZdbID());
+        infrastructureRepository.insertRecordAttribution(marker.getZdbID(), pub.getZdbID());
 
         // run procedure for fast search table
         runMarkerNameFastSearchUpdate(marker);
@@ -927,8 +947,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Session session = currentSession();
 
         MarkerTypeGroup group = getMarkerTypeGroupByName(markerType.name());
-        if (group == null)
+        if (group == null) {
             return null;
+        }
         MarkerType[] types = new MarkerType[group.getTypeStrings().size()];
         int index = 0;
         for (String type : group.getTypeStrings()) {
@@ -965,36 +986,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
 //        return markerList;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Marker> getMarkersByAbbreviationGroupAndAttribution(String name, Marker.TypeGroup markerType, String pubZdbId) {
-        List<Marker> markerList = new ArrayList<Marker>();
-
-        MarkerTypeGroup group = getMarkerTypeGroupByName(markerType.name());
-        if (group == null)
-            return null;
-        MarkerType[] types = new MarkerType[group.getTypeStrings().size()];
-        int index = 0;
-        for (String type : group.getTypeStrings()) {
-            types[index++] = getMarkerTypeByName(type);
-        }
-
-        String hql = " select distinct m from Marker m , PublicationAttribution pa "
-                + " where lower(m.abbreviation) like lower(:name)  "
-                + " and pa.dataZdbID = m.zdbID  "
-                + " and pa.sourceZdbID = :publicationZdbId "
-                + " and m.markerType in (:types)  ";
-//                + " order by m.abbreviationOrder asc " ;
-        markerList.addAll(HibernateUtil.currentSession()
-                .createQuery(hql)
-                .setString("name", "%" + name + "%")
-                .setString("publicationZdbId", pubZdbId)
-                .setParameterList("types", types)
-                .list());
-
-        Collections.sort(markerList, new MarkerAbbreviationComparator(name));
-
-        return markerList;
-    }
 
     public List<Marker> getConstructsByAttribution(String name) {
         List<Marker> markerList = new ArrayList<Marker>();
@@ -1200,8 +1191,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
 
         // if no antibodies found return here
-        if (totalCount == 0)
+        if (totalCount == 0) {
             return new PaginationResult<>(0, null);
+        }
 
         String sqlQueryStr = " select distinct(stat.fstat_feat_zdb_id), probe.mrkr_abbrev, gene.mrkr_zdb_id," +
                 "                       gene.mrkr_abbrev,gene.mrkr_abbrev_order  " +
@@ -1210,8 +1202,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "           and fstat_gene_zdb_id = gene.mrkr_zdb_id " +
                 "           and fstat_feat_zdb_id = probe.mrkr_zdb_id " +
                 "           and fstat_type = :type ";
-        if (!includeSubstructures)
+        if (!includeSubstructures) {
             sqlQueryStr += "  and fstat_subterm_zdb_id = :aoterm ";
+        }
         sqlQueryStr += "order by gene.mrkr_abbrev_order ";
 
         SQLQuery sqlQquery = session.createSQLQuery(sqlQueryStr);
@@ -1255,8 +1248,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "           and fstat_fig_zdb_id = fig.fig_zdb_id " +
                 "           and fstat_pub_zdb_id = pub.zdb_id " +
                 "           and fstat_img_zdb_id = img.img_zdb_id ";
-        if (!includeSubstructures)
+        if (!includeSubstructures) {
             sqlQueryAllStr += "  and fstat_subterm_zdb_id = :aoterm ";
+        }
         sqlQueryAllStr += "order by gene.mrkr_abbrev_order ";
 
         SQLQuery sqlAllQquery = session.createSQLQuery(sqlQueryAllStr);
@@ -1294,10 +1288,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
             String figID = (String) record[4];
             String label = (String) record[5];
             Figure figure = null;
-            if (label != null && label.equals(Figure.Type.TOD.toString()))
+            if (label != null && label.equals(Figure.Type.TOD.toString())) {
                 figure = new TextOnlyFigure();
-            else
+            } else {
                 figure = new FigureFigure();
+            }
 
             figure.setZdbID(figID);
             figure.setLabel(label);
@@ -1311,12 +1306,14 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 image.setZdbID((String) record[13]);
                 highQualityProbeStats.setImage(image);
             }
-            if (hqpRecords.contains(highQualityProbeStats.getProbe()))
+            if (hqpRecords.contains(highQualityProbeStats.getProbe())) {
                 populateProbeStatisticsRecord(highQualityProbeStats, list, aoTerm);
+            }
         }
         // remove the last entity as it is beyond the display limit.
-        if (list.size() > pagination.getMaxDisplayRecordsInteger())
+        if (list.size() > pagination.getMaxDisplayRecordsInteger()) {
             list.remove(list.size() - 1);
+        }
         scrollableResults.close();
         return new PaginationResult<HighQualityProbe>(totalCount, list);
 
@@ -1425,15 +1422,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
      */
     private void populateProbeStatisticsRecord(HighQualityProbeAOStatistics record, List<HighQualityProbe> list, GenericTerm aoTerm) {
 
-        if (record == null || record.getProbe() == null)
+        if (record == null || record.getProbe() == null) {
             return;
+        }
 
         HighQualityProbe probeStats;
         if (list.size() == 0) {
             probeStats = new HighQualityProbe(record.getProbe(), aoTerm);
             list.add(probeStats);
-        } else
+        } else {
             probeStats = list.get(list.size() - 1);
+        }
 
         // if antibody from records is the same as the one on the statistics object
         // add new info to that object.
@@ -1447,20 +1446,25 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
 
         Marker gene = record.getGene();
-        if (gene != null)
+        if (gene != null) {
             newProbeStats.addGene(gene);
+        }
         Figure figure = record.getFigure();
-        if (figure != null)
+        if (figure != null) {
             newProbeStats.addFigure(figure);
+        }
         Publication publication = record.getPublication();
-        if (publication != null)
+        if (publication != null) {
             newProbeStats.addPublication(publication);
+        }
         Image image = record.getImage();
-        if (image != null)
+        if (image != null) {
             newProbeStats.addImage(image);
+        }
 
-        if (isNew)
+        if (isNew) {
             list.add(newProbeStats);
+        }
     }
 
     /**
@@ -1473,15 +1477,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
      */
     private void populateProbeStatisticsRecordOld(HighQualityProbeAOStatistics record, List<HighQualityProbe> list, GenericTerm aoTerm) {
 
-        if (record == null || record.getProbe() == null)
+        if (record == null || record.getProbe() == null) {
             return;
+        }
 
         HighQualityProbe probeStats;
         if (list.size() == 0) {
             probeStats = new HighQualityProbe(record.getProbe(), aoTerm);
             list.add(probeStats);
-        } else
+        } else {
             probeStats = list.get(list.size() - 1);
+        }
 
         // if antibody from records is the same as the one on the statistics object
         // add new info to that object.
@@ -1495,20 +1501,25 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
 
         Marker gene = record.getGene();
-        if (gene != null)
+        if (gene != null) {
             newProbeStats.addGene(gene);
+        }
         Figure figure = record.getFigure();
-        if (figure != null)
+        if (figure != null) {
             newProbeStats.addFigure(figure);
+        }
         Publication publication = record.getPublication();
-        if (publication != null)
+        if (publication != null) {
             newProbeStats.addPublication(publication);
+        }
         Image image = record.getImage();
-        if (image != null)
+        if (image != null) {
             newProbeStats.addImage(image);
+        }
 
-        if (isNew)
+        if (isNew) {
             list.add(newProbeStats);
+        }
     }
 
 
@@ -1553,12 +1564,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
             throw new RuntimeException("No Marker History record found! Trigger did not run.");
         }
         //add record attribution for previous name if the abbreviation was changed
-        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         logger.info("marker history: " + mhist);
         logger.info("marker alias: " + mhist.getMarkerAlias());
         logger.info("publication: " + publication);
 
-        ir.insertRecordAttribution(mhist.getMarkerAlias().getZdbID(), publication.getZdbID());
+        infrastructureRepository.insertRecordAttribution(mhist.getMarkerAlias().getZdbID(), publication.getZdbID());
 
     }
 
@@ -1569,8 +1579,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
      * @return list of marker types
      */
     public List<MarkerType> getMarkerTypesByGroup(Marker.TypeGroup typeGroup) {
-        if (typeGroup == null)
+        if (typeGroup == null) {
             return null;
+        }
         MarkerTypeGroup group = getMarkerTypeGroupByName(typeGroup.name());
         List<MarkerType> markerTypes = new ArrayList<MarkerType>();
         for (String type : group.getTypeStrings()) {
@@ -1587,8 +1598,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
      * @return the target gene of the sequence targeting reagent
      */
     public List<Marker> getTargetGenesAsMarkerForSequenceTargetingReagent(SequenceTargetingReagent stReagent) {
-        if (stReagent == null)
+        if (stReagent == null) {
             return null;
+        }
         Marker sequenceTargetingReagent = (Marker) stReagent;
         Session session = currentSession();
         String hql = "select rel.secondMarker from MarkerRelationship as rel  " +
@@ -1629,10 +1641,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
      */
     @Override
     public List<String> getNMarkersPerType(int firstN) {
-        if (firstN < 0)
+        if (firstN < 0) {
             return null;
-        if (firstN == 0)
+        }
+        if (firstN == 0) {
             return getAllMarkers();
+        }
 
         Session session = HibernateUtil.currentSession();
         List<MarkerType> markerTypes = getAllMarkerTypes();
@@ -1677,8 +1691,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 " order by accession.dataZdbID";
         Query query = session.createQuery(hql);
         query.setString("sourceName", "UniProtKB");
-        if (firstNIds > 0)
+        if (firstNIds > 0) {
             query.setMaxResults(firstNIds);
+        }
         return query.list();
     }
 
@@ -1737,7 +1752,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
                         if (gene.getZdbID().startsWith("ZDB-GENE")) {
                             previousNameLight.setAlias("<i>" + tuple[0].toString() + "</i>");
                         } else {
-                            previousNameLight.setAlias(tuple[0].toString());
+                            if (gene.getZdbID().contains("CONSTRCT")) {
+                                previousNameLight.setAlias("<i>" + tuple[0].toString() + "</i>");
+                            } else {
+                                previousNameLight.setAlias(tuple[0].toString());
+                            }
                         }
                         previousNameLight.setAliasZdbID(tuple[2].toString());
                         if (tuple[1] != null) {
@@ -1920,23 +1939,31 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 linkDisplay.setUrlSuffix(tuple[4].toString());
             }
             if (tuple[5] != null) {
-                linkDisplay.addAttributionZdbID(tuple[5].toString());
+                MarkerReferenceBean reference = new MarkerReferenceBean();
+                reference.setZdbID(tuple[5].toString());
+                if (tuple.length > 9 && tuple[9] != null) {
+                    reference.setTitle(tuple[9].toString());
+                }
+                linkDisplay.addReference(reference);
             }
             if (tuple[6] != null) {
                 linkDisplay.setSignificance(Integer.valueOf(tuple[6].toString()));
             }
             linkDisplay.setDblinkZdbID(tuple[7].toString());
+            if (tuple.length > 8) {
+                linkDisplay.setReferenceDatabaseZdbID(tuple[8].toString());
+            }
             return linkDisplay;
         }
 
         @Override
         public List transformList(List list) {
-            Map<String, LinkDisplay> linkMap = new HashMap<String, LinkDisplay>();
+            Map<String, LinkDisplay> linkMap = new HashMap<>();
             for (Object o : list) {
                 LinkDisplay display = (LinkDisplay) o;
                 LinkDisplay displayStored = linkMap.get(display.getAccession());
                 if (displayStored != null) {
-                    displayStored.addAttributionZdbIDs(display.getAttributionZdbIDs());
+                    displayStored.addReferences(display.getReferences());
                     linkMap.put(displayStored.getAccession(), displayStored);
                 } else {
                     linkMap.put(display.getAccession(), display);
@@ -1948,15 +1975,38 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
     }
 
+    public MarkerDBLink getMarkerDBLink(String linkId) {
+        Session session = HibernateUtil.currentSession();
+        return (MarkerDBLink) session.get(MarkerDBLink.class, linkId);
+    }
+
+    public List<LinkDisplay> getMarkerLinkDisplay(String dbLinkId) {
+        String sql = "select dbl.dblink_linked_recid, dbl.dblink_acc_num, fdb.fdb_db_display_name, fdb.fdb_db_query, fdb.fdb_url_suffix, " +
+                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id, pub.title " +
+                "from db_link dbl  " +
+                "join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
+                "join foreign_db fdb on fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id " +
+                "left outer join record_attribution ra on ra.recattrib_data_zdb_id=dbl.dblink_zdb_id " +
+                "join publication pub on ra.recattrib_source_zdb_id=pub.zdb_id " +
+                "where dbl.dblink_zdb_id = :dbLinkId ";
+
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql)
+                .setParameter("dbLinkId", dbLinkId)
+                .setResultTransformer(markerDBLinkTransformer);
+
+        return markerDBLinkTransformer.transformList(query.list());
+    }
+
     public List<LinkDisplay> getMarkerDBLinksFast(Marker marker, DisplayGroup.GroupName groupName) {
         String sql = "select dbl.dblink_linked_recid,dbl.dblink_acc_num,fdb.fdb_db_display_name,fdb.fdb_db_query,fdb.fdb_url_suffix, " +
-                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id " +
+                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id, pub.title " +
                 "from db_link dbl  " +
                 "join foreign_db_contains_display_group_member m on m.fdbcdgm_fdbcont_zdb_id=dbl.dblink_fdbcont_zdb_id " +
                 "join foreign_db_contains_display_group g on g.fdbcdg_pk_id=m.fdbcdgm_group_id " +
                 "join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
                 "join foreign_db fdb on fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id " +
                 "left outer join record_attribution ra on ra.recattrib_data_zdb_id=dbl.dblink_zdb_id " +
+                "join publication pub on ra.recattrib_source_zdb_id=pub.zdb_id " +
                 "where g.fdbcdg_name= :displayGroup " +
                 "and " +
                 "dbl.dblink_linked_recid= :markerZdbId ";
@@ -2224,6 +2274,43 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public SequenceTargetingReagent getSequenceTargetingReagent(String markerID) {
         Session session = currentSession();
         return (SequenceTargetingReagent) session.get(SequenceTargetingReagent.class, markerID);
+    }
+
+    @Override
+    public SequenceTargetingReagent getSequenceTargetingReagentBySequence(Marker.Type type, String sequence) {
+        return getSequenceTargetingReagentBySequence(type, sequence, null);
+    }
+
+    @Override
+    public SequenceTargetingReagent getSequenceTargetingReagentBySequence(Marker.Type type, String sequence1, String sequence2) {
+        String hql = "select str from SequenceTargetingReagent str " +
+                "where str.markerType.name = :type ";
+        if (sequence2 == null) {
+            hql += "and str.sequence.sequence = :sequence1 ";
+        } else {
+            hql +=
+                    "and ( " +
+                            "   (str.sequence.sequence = :sequence1 and str.sequence.secondSequence = :sequence2) " +
+                            "   or " +
+                            "   (str.sequence.sequence = :sequence2 and str.sequence.secondSequence = :sequence1) " +
+                            ")";
+        }
+
+        Query query = HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("type", type.toString())
+                .setParameter("sequence1", sequence1);
+        if (sequence2 != null) {
+            query.setParameter("sequence2", sequence2);
+        }
+
+        // a database constraint should be enforcing that STRs are unique by sequence. So for convenience
+        // just return the first result or null.
+        List results = query.list();
+        if (results.size() > 0) {
+            return (SequenceTargetingReagent) results.get(0);
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -2519,8 +2606,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
         query.setParameter("marker", marker);
         query.setParameterList("relationshipTypes", types);
         list.addAll((List<Marker>) query.list());
-        if (list == null)
+        if (list == null) {
             list = new ArrayList<>();
+        }
         return list;
     }
 
@@ -2540,8 +2628,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         List<Marker> list = (List<Marker>) query.list();
         //list.addAll((List<Marker>) query.list());
-        if (list == null)
+        if (list == null) {
             list = new ArrayList<>();
+        }
         return list;
     }
 
@@ -2567,8 +2656,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
         query.setParameter("database", database);
         query.setParameter("marker", marker);
         List<MarkerDBLink> dbLinks = (List<MarkerDBLink>) query.list();
-        if (CollectionUtils.isEmpty(dbLinks))
+        if (CollectionUtils.isEmpty(dbLinks)) {
             return null;
+        }
         if (CollectionUtils.isNotEmpty(dbLinks) && dbLinks.size() > 1) {
             logger.error("More than one accession number found for " + marker.getAbbreviation() + " and Database " + database.toString());
         }
@@ -2587,7 +2677,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     }
 
-//    changed this code
+    //    changed this code
     public List<ConstructComponentPresentation> getConstructComponents(String zdbID) {
         String sqlCount = " select MAX(cc_cassette_number) from construct_component where cc_construct_zdb_id=:zdbID ";
         Query query = currentSession().createSQLQuery(sqlCount);
@@ -2597,7 +2687,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         String sql = " select a.construct_name,a.construct_comments,a.construct_zdb_id" +
                 " from construct a " +
-                " where a.construct_zdb_id =:zdbID " ;
+                " where a.construct_zdb_id =:zdbID ";
         return HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("zdbID", zdbID)
                 .setResultTransformer(new BasicTransformerAdapter() {
@@ -2701,8 +2791,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     @Override
     public List<TargetGenePresentation> getTargetGenesForSequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
-        if (sequenceTargetingReagent == null)
+        if (sequenceTargetingReagent == null) {
             return null;
+        }
 
         Session session = HibernateUtil.currentSession();
 
@@ -2728,8 +2819,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     public List<Marker> getSecondMarkersByFirstMarkerAndMarkerRelationshipType(Marker firstMarker, MarkerRelationship.Type relationshipType) {
-        if (firstMarker == null)
+        if (firstMarker == null) {
             return null;
+        }
 
         String hql = "select rel.secondMarker from MarkerRelationship as rel  " +
                 "where rel.firstMarker = :firstMarker " +
@@ -2745,11 +2837,30 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (List<Marker>) query.list();
     }
 
+    public List<MarkerRelationship> getMarkerRelationshipBySecondMarker(Marker secondMarker) {
+        if (secondMarker == null) {
+            return null;
+        }
+
+        String hql = "select rel from MarkerRelationship as rel  " +
+                "where rel.secondMarker = :secondMarker " +
+                "order by rel.firstMarker.abbreviationOrder";
+
+        Session session = currentSession();
+        Query query = session.createQuery(hql);
+
+        query.setParameter("secondMarker", secondMarker);
+
+
+        return (List<MarkerRelationship>) query.list();
+    }
+
 
     @Override
     public PaginationResult<Marker> getRelatedMarker(Marker marker, Set<MarkerRelationship.Type> types, PaginationBean paginationBean) {
-        if (marker == null)
+        if (marker == null) {
             return null;
+        }
         // second related elements
         String hql = "select rel.secondMarker from MarkerRelationship as rel  " +
                 "where rel.firstMarker = :firstMarker " +
@@ -2856,6 +2967,18 @@ public class HibernateMarkerRepository implements MarkerRepository {
         currentSession().flush();
     }
 
+    public void updateCuratorNote(Marker marker, DataNote note, String newNote) {
+        if (!marker.getDataNotes().contains(note)) {
+            logger.error("Note " + note.getZdbID() + " not associated with marker " + marker.getZdbID());
+            return;
+        }
+
+        String oldNote = note.getNote();
+        note.setNote(newNote);
+        currentSession().save(note);
+        InfrastructureService.insertUpdate(marker, "curator note", oldNote, newNote);
+    }
+
     public void removeCuratorNote(Marker marker, DataNote note) {
         //   logger.info("remove curator note: " + noteDTO.getNoteData() + " - " + noteDTO.getZdbID());
 
@@ -2870,6 +2993,19 @@ public class HibernateMarkerRepository implements MarkerRepository {
             }
         }
         logger.error("note not found with zdbID: " + note.getZdbID());
+    }
+
+    public int getCrisprCount(String geneAbbrev) {
+        Session session = currentSession();
+        String hql = "select rel.firstMarker from MarkerRelationship as rel  " +
+                "where rel.secondMarker.zdbID = :geneAbbrev and rel.type = :type " +
+                "and rel.firstMarker.markerType like '%CRISPR%'  order by rel.secondMarker.abbreviationOrder";
+        Query query = session.createQuery(hql);
+        query.setParameter("geneAbbrev", geneAbbrev);
+        query.setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+
+        List<Marker> targetGenes = (List<Marker>) query.list();
+        return targetGenes.size();
     }
 
 }

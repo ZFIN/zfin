@@ -20,7 +20,7 @@ public class ZfinAsyncCallback<T> implements AsyncCallback<T> {
     private RootPanel loadingPanel;
     private Widget loadingImage;
 
-    private static final String LOGIN_REQUIRED = "login required";
+    private static final String LOGIN_REQUIRED = "/j_security-check";
 
     public ZfinAsyncCallback(String errorMessage, ErrorHandler errorLabel, String loadingImageDivName) {
         this.message = errorMessage;
@@ -73,6 +73,7 @@ public class ZfinAsyncCallback<T> implements AsyncCallback<T> {
             getImageWidget().setVisible(false);
         if (loadingImage != null)
             loadingImage.setVisible(false);
+
     }
 
     public void onSuccess(T t) {
@@ -82,7 +83,7 @@ public class ZfinAsyncCallback<T> implements AsyncCallback<T> {
 
     private boolean handleDuplicateRecords(Throwable throwable) {
         String errorMessage = throwable.getMessage();
-        if (throwable instanceof Exception && errorMessage != null && !errorMessage.equals(LOGIN_REQUIRED)) {
+        if (throwable instanceof Exception && errorMessage != null && !errorMessage.contains(LOGIN_REQUIRED)) {
             displayMessage(throwable.getMessage());
             if (loadingImage != null)
                 loadingImage.setVisible(false);
@@ -110,7 +111,7 @@ public class ZfinAsyncCallback<T> implements AsyncCallback<T> {
     private boolean checkLogin(Throwable t) {
         String message = t.getMessage();
         if (message != null && message.contains(LOGIN_REQUIRED)) {
-            Window.open("/action/login", "_blank", "status=1,toolbar=1,menubar=1,location=1,resizable=0,height=400,width=600");
+            //Window.open("/action/login", "login", "status=1,toolbar=1,menubar=1,location=1,resizable=0,height=400,width=600");
             return true;
         }
         return false;

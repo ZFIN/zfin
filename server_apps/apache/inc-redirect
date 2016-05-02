@@ -103,6 +103,9 @@ RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
 RewriteCond %{QUERY_STRING}     ^Mival=aa-pubview2.apg&OID=([\w-]+)$    [NC]
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
 
+RewriteCond %{QUERY_STRING}     ^Mival=aa-pheno_summary.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/marker/%1/phenotype-summary? [NC,R=301]
+
 RewriteCond %{QUERY_STRING} ^anatomyItem.zdbID=([\w-]+)&wildtype=([\w]+)$ [NC]
 RewriteRule ^/action/anatomy/show-all-morpholino-experiments /action/anatomy/show-all-sequence-targeting-reagents/%1/%2? [NC,R=301]
 
@@ -130,6 +133,8 @@ RewriteRule ^/action/feature/feature-detail /%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}    ^query=(.*)$ [NC]
 RewriteRule ^/action/quicksearch/query  /search?q=%1   [NC,R=301]
+
+RewriteRule /action/anatomy/anatomy-search    /action/ontology/ontology-search [NC,R=301]
 
 RewriteRule ^/action/anatomy/anatomy-view/(.+) /action/ontology/term-detail/$1 [NC]
 

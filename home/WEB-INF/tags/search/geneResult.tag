@@ -28,6 +28,10 @@
             </div>
         </div>
 
+        <script>
+            $('#${phenotypeModalDomID}').appendTo('body');
+            $('#${expressionModalDomID}').appendTo('body');
+        </script>
 
     </jsp:body>
 </zfin-search:resultTemplate>

@@ -89,7 +89,7 @@ dorskyVideos.each { csv ->
     if (!videosAdded[csv.file]) {
         figureLabelIndex[publication.zdbID] = figureLabelIndex.get(publication.zdbID, 0) + 1;
         figure = createFigure(figureLabelIndex[publication.zdbID], publication)
-        image = ImageService.processImage(figure, owner, mediaDir + csv.file.replace(".mov", "_still.png"), true)
+        image = ImageService.processImage(figure,  mediaDir + csv.file.replace(".mov", "_still.png"), true, Image.NOT_SPECIFIED)
         videos = []
         videos << VideoService.processVideo(mediaDir + csv.file.replace(".mov", ".mp4"), image)
         videos << VideoService.processVideo(mediaDir + csv.file.replace(".mov", ".webm"), image)

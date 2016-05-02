@@ -1,14 +1,22 @@
 package org.zfin.fish;
 
+import javax.persistence.*;
 import java.util.Date;
 
 /**
  * Business Class that maps to the fish mart release tracking table.
  */
+@Entity
+@Table(name = "warehouse_run_tracking")
 public class WarehouseSummary {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "wrt_pk_id")
     private long ID;
+    @Column(name = "wrt_last_loaded_date")
     private Date releaseDate;
+    @Column(name = "wrt_mart_name")
     private String martName;
 
     public long getID() {

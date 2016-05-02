@@ -268,16 +268,17 @@ update apato_infrastructure
 -- Expression-related updates after a new ontology is loaded.
 -- update super terms
 unload to 'expression-superterm-updates.unl'
-    select distinct xpatres_zdb_id, super.term_zdb_id, super.term_name, replacement.term_zdb_id, replacement.term_name
-      from expression_result, term as super, term as replacement, sec_oks
+    select distinct efs_xpatex_zdb_id, super.term_zdb_id, super.term_name, replacement.term_zdb_id, replacement.term_name
+      from expression_result2, expression_figure_stage, term as super, term as replacement, sec_oks
       where exists (Select 'x' from term
                        where term_is_Secondary = 't'
                    and xpatres_superterm_zdb_id = term_zdb_id)
+      and xpatres_efs_id = efs_pk_id
       and super.term_zdb_id = xpatres_superterm_zdb_id
       and replacement.term_zdb_id = prim_zdb_id
       and sec_zdb_id = xpatres_superterm_zdb_id;
 
-update expression_result
+update expression_result2
   set xpatres_superterm_zdb_id = (Select prim_zdb_id
       			        from sec_oks
 				where sec_zdb_id = xpatres_superterm_zdb_id)
@@ -291,16 +292,17 @@ unload to 'debug'
   select * from sec_oks;
 
 unload to 'expression-subterm-updates.unl'
-    select distinct xpatres_zdb_id, sub.term_zdb_id, sub.term_name, replacement.term_zdb_id, replacement.term_name
-      from expression_result, term as sub, term as replacement, sec_oks
+    select distinct efs_xpatex_zdb_id, sub.term_zdb_id, sub.term_name, replacement.term_zdb_id, replacement.term_name
+      from expression_result2, expression_figure_stage, term as sub, term as replacement, sec_oks
       where exists (Select 'x' from term
                        where term_is_Secondary = 't'
                    and xpatres_subterm_zdb_id = term_zdb_id)
+      and xpatres_efs_id = efs_pk_id
       and sub.term_zdb_id = xpatres_superterm_zdb_id
       and replacement.term_zdb_id = prim_zdb_id
       and sec_zdb_id = xpatres_subterm_zdb_id;
 
-update expression_result
+update expression_result2
   set xpatres_subterm_zdb_id = (Select prim_zdb_id
       			        from sec_oks
 				where sec_zdb_id = xpatres_subterm_zdb_id)

@@ -162,7 +162,7 @@
 </table>
 
 
-<authz:authorize ifAnyGranted="root">
+<authz:authorize access="hasRole('root')">
     <div class="summary">
         <table class="summary">
             <tr>
@@ -186,9 +186,7 @@
         <c:forEach var="extNote" items="${formBean.genotype.externalNotes}">
             <div>
                     ${extNote.note}
-                <c:if test="${extNote.singlePubAttribution ne null}">
-                    &nbsp;(<a href='/${extNote.singlePubAttribution.publication.zdbID}'>1</a>)
-                </c:if>
+                    &nbsp;(<a href='/${extNote.publication.zdbID}'>1</a>)
             </div>
         </c:forEach>
     </div>
@@ -226,7 +224,8 @@
                             <td>
                                 <c:forEach var="construct" items="${genoFeat.feature.constructs}"
                                            varStatus="constructsloop">
-                                    <a href="/action/marker/view/${construct.marker.zdbID}">${construct.marker.name}</a><c:if
+
+                                    <a href="/action/marker/view/${construct.marker.zdbID}"><i>${construct.marker.name}</i></a><c:if
                                         test="${!constructsloop.last}">,&nbsp;</c:if>
                                 </c:forEach>
                             </td>

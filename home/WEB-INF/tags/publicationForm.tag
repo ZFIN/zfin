@@ -78,7 +78,7 @@
     <div id="journal" class="form-group">
         <label for="journal" class="col-sm-3 control-label">Journal Abbreviation</label>
         <div class="col-sm-8">
-            <div id="scrollable-dropdown-menu">
+            <div class="scrollable-dropdown-menu">
                 <form:input path="journal" cssClass="form-control" id="journal-autocomplete"/>
             </div>
             <form:errors path="journal" cssClass="text-danger" htmlEscape="false" />
@@ -141,8 +141,8 @@
                 "/action/quicksearch/autocomplete?q=%QUERY&category=Autocomplete&type=Journal&rows=10000", {
                     templates: {
                         suggestion: function (item) {
-                            return '<p class="journal-abbrev">' + item.value + '</p>' +
-                                    '<p class="journal-name text-muted">' + item.name + '</p>';
+                            return '<div><p class="journal-abbrev">' + item.value + '</p>' +
+                                    '<p class="journal-name text-muted">' + item.name + '</p></div>';
                         },
                         empty: "<p class=\"tt-no-results text-danger\">" +
                                 "Oof. I couldn't find any journals like that.<br>" +

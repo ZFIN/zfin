@@ -55,14 +55,6 @@ get_obj_name(zdbId varchar(50))
       into objName
       from fish
       where fish_zdb_id = zdbId ;
-  elif (objType = "XPATRES") then
-    select get_obj_name(xpatres_xpatex_zdb_id) || ", " || 
-           get_obj_name(xpatres_superterm_zdb_id) || ", " ||
-           get_obj_name(xpatres_start_stg_zdb_id) || ", " ||
-           get_obj_name(xpatres_end_stg_zdb_id)
-      into objName
-      from expression_result
-      where xpatres_zdb_id = zdbId ;
   elif (objType = "XPATINF") then
     select xpatinf_zdb_id
       into objName
@@ -260,11 +252,6 @@ get_obj_name(zdbId varchar(50))
       into objName
       from expression_experiment
       where xpatex_zdb_id = zdbId ;
-  elif (objType = "XPATRES") then
-    select xpatres_zdb_id		-- don't have names, use ZDB ID
-      into objName
-      from expression_results
-      where xpatres_zdb_id = zdbId;
   elif (objType = "API") then
     select api_zdb_id		-- don't have names, use ZDB ID
       into objName

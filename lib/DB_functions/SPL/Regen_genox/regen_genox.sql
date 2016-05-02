@@ -154,7 +154,7 @@ create  function regen_genox() returning integer
     let errorHint = "populate regen_genofig_input_zdb_id_temp";
 
     insert into regen_genofig_input_zdb_id_temp ( rgfg_id )
-      select phenox_pk_id from phenotype_experiment;
+      select pg_id from phenotype_source_generated;
 
 
     let errorHint = "fill fast search tables genofig";

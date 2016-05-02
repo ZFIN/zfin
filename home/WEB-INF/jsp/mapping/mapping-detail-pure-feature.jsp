@@ -2,21 +2,14 @@
 
 <jsp:useBean id="marker" class="org.zfin.marker.Marker" scope="request"/>
 
-<table width="100%" cellpadding="0" cellspacing="0">
-    <tr>
-        <td class="titlebar" style="">
-                <span style="font-size: x-large; margin-left: 0.5em; font-weight: bold;">
-                        Mapping Details
-            </span>
-        </td>
-        <td align="right" class="titlebarRight">
-            <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                <tiles:putAttribute name="subjectName" value="Mapping Details"/>
-            </tiles:insertTemplate>
-        </td>
-    </tr>
-</table>
-
+<div class="titlebar">
+    <h1>Mapping Details</h1>
+    <span class="yourinputwelcome">
+        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+            <tiles:putAttribute name="subjectName" value="Mapping Details"/>
+        </tiles:insertTemplate>
+    </span>
+</div>
 
 <table class="primary-entity-attributes">
     <tr>
@@ -24,6 +17,10 @@
         <td><span class="name-value"><zfin:link entity="${feature}"/></span></td>
     </tr>
 </table>
+
+<zfin2:subsection title="PHYSICAL MAP AND BROWSER" test="${!empty locations}" showNoData="true">
+    <zfin2:PhysicalMapAndBrowserSection locations="${locations}" gbrowseImage="${gbrowseImage}"/>
+</zfin2:subsection>
 
 <div class="summary">
     <c:choose>

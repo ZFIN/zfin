@@ -30,6 +30,7 @@
 <!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	pm\@zfin.org
 <!--|GO_EMAIL_ERR|-->	pm\@zfin.org
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/edison/home/WEB-INF/lib*:/research/zusers/pm/Projects/releases/gitMaster/ZFIN_WWW//lib/Java/*:/opt/zfin/www_homes/edison/home/WEB-INF/classes:/private/apps/tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
@@ -63,7 +64,7 @@
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFFFCC
-<!--|SOURCEROOT|-->	/research/zusers/pm/Projects/releases/1069trunk/ZFIN_WWWnew/
+<!--|SOURCEROOT|-->	/research/zusers/pm/Projects/releases/gitMaster/ZFIN_WWW/
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	young.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	pm\@zfin.org

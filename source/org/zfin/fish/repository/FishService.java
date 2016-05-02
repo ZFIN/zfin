@@ -4,8 +4,8 @@ import com.google.common.base.Joiner;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.Group;
 import org.apache.solr.client.solrj.response.GroupCommand;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -54,10 +54,10 @@ public class FishService {
 
         SolrQuery query = generateFishSearchSolrQuery(criteria);
 
-        SolrServer solrServer = SolrService.getSolrServer("prototype");
+        SolrClient solrClient = SolrService.getSolrClient("prototype");
         QueryResponse response;
         try {
-            response = solrServer.query(query);
+            response = solrClient.query(query);
         } catch (Exception e) {
             logger.error(e);
             throw new RuntimeException(e);
@@ -155,7 +155,10 @@ public class FishService {
             Set<FeatureGene> featureGeneSet = new HashSet<>();
             for (GenotypeFeature genotypeFeature : fish.getGenotype().getGenotypeFeatures()) {
                 Feature feature = genotypeFeature.getFeature();
-                featureGeneSet.addAll(getFeatureGeneList(feature));
+                for (FeatureGene fg : getFeatureGeneList(feature)) {
+                    fg.setParentalZygosityDisplay(genotypeFeature.getParentalZygosityDisplay());
+                    featureGeneSet.add(fg);
+                }
             }
             featureGenes.addAll(featureGeneSet);
         }
@@ -190,8 +193,9 @@ public class FishService {
                 fg.setConstruct(marker);
                 hasMarkerOrConstruct = true;
             }
-            if (hasMarkerOrConstruct)
+            if (hasMarkerOrConstruct) {
                 featureGeneList.add(fg);
+            }
         }
         // at least have a feature in this list
         if (CollectionUtils.isEmpty(featureGeneList)) {
@@ -219,11 +223,18 @@ public class FishService {
     private static void setImageAttributeOnFish(FishResult fishResult, Set<ZfinFigureEntity> figures, Set<ZfinFigureEntity> expFigures) {
 
         if (figures == null || figures.size() == 0) {
-            return;
+            if (expFigures == null || expFigures.size() == 0) {
+                return;
+            }
         }
         fishResult.setPhenotypeFigures(figures);
         fishResult.setExpressionFigures(expFigures);
         for (ZfinFigureEntity figure : figures) {
+            if (figure.isHasImage()) {
+                fishResult.setImageAvailable(true);
+            }
+        }
+        for (ZfinFigureEntity figure : expFigures) {
             if (figure.isHasImage()) {
                 fishResult.setImageAvailable(true);
             }
@@ -248,7 +259,7 @@ public class FishService {
             if (figures.add(figure)) {
                 figureSummaryDisplay.setFigure(figure);
                 figureSummaryDisplay.setPublication(figure.getPublication());
-                List<PhenotypeStatement> phenotypeStatements = FishService.getPhenotypeStatements(figure, fishID);
+                List<PhenotypeStatementWarehouse> phenotypeStatements = FishService.getPhenotypeStatements(figure, fishID);
                 figureSummaryDisplay.setPhenotypeStatementList(FishService.getDistinctPhenotypeStatements(phenotypeStatements));
                 figureSummaryDisplays.add(figureSummaryDisplay);
                 if (!figure.isImgless()) {
@@ -278,13 +289,13 @@ public class FishService {
      * @param phenotypeStatementList phenotypeStatementList
      * @return list of phenotype statements
      */
-    public static List<PhenotypeStatement> getDistinctPhenotypeStatements(List<PhenotypeStatement> phenotypeStatementList) {
+    public static List<PhenotypeStatementWarehouse> getDistinctPhenotypeStatements(List<PhenotypeStatementWarehouse> phenotypeStatementList) {
         if (phenotypeStatementList == null) {
             return null;
         }
 
-        List<PhenotypeStatement> phenotypeStatements = new ArrayList<>(phenotypeStatementList.size());
-        for (PhenotypeStatement phenotypeStatement : phenotypeStatementList) {
+        List<PhenotypeStatementWarehouse> phenotypeStatements = new ArrayList<>(phenotypeStatementList.size());
+        for (PhenotypeStatementWarehouse phenotypeStatement : phenotypeStatementList) {
             if (isDistinctPhenotype(phenotypeStatement, phenotypeStatements)) {
                 phenotypeStatements.add(phenotypeStatement);
             }
@@ -293,11 +304,11 @@ public class FishService {
         return phenotypeStatements;
     }
 
-    private static boolean isDistinctPhenotype(PhenotypeStatement phenotypeStatement, List<PhenotypeStatement> phenotypeStatements) {
+    private static boolean isDistinctPhenotype(PhenotypeStatementWarehouse phenotypeStatement, List<PhenotypeStatementWarehouse> phenotypeStatements) {
         if (phenotypeStatements == null) {
             return true;
         }
-        for (PhenotypeStatement phenoStatement : phenotypeStatements) {
+        for (PhenotypeStatementWarehouse phenoStatement : phenotypeStatements) {
             if (phenoStatement.equalsByName(phenotypeStatement)) {
                 return false;
             }
@@ -328,7 +339,7 @@ public class FishService {
         return returnId;
     }
 
-    public static List<PhenotypeStatement> getPhenotypeStatements(Figure figure, String fishID) {
+    public static List<PhenotypeStatementWarehouse> getPhenotypeStatements(Figure figure, String fishID) {
         return RepositoryFactory.getPhenotypeRepository().getPhenotypeStatements(figure, fishID);
     }
 
@@ -415,7 +426,7 @@ public class FishService {
         }
 */
 
-        SolrServer server = SolrService.getSolrServer("prototype");
+        SolrClient server = SolrService.getSolrClient("prototype");
 
         SolrQuery query = new SolrQuery();
 
@@ -424,7 +435,7 @@ public class FishService {
         query.addFilterQuery(FieldName.XREF.getName() + ":" + fishID);
         query.setRows(500);
         query.add("group", "true");
-        query.add("group.field","figure_id");
+        query.add("group.field", "figure_id");
         query.add("group.ngroups", "true");
 
 
@@ -456,7 +467,7 @@ public class FishService {
 
         for (GroupCommand groupCommand : response.getGroupResponse().getValues()) {
 
-            if (CollectionUtils.isNotEmpty(groupCommand.getValues()) ) {
+            if (CollectionUtils.isNotEmpty(groupCommand.getValues())) {
                 for (Group group : groupCommand.getValues()) {
                     for (SolrDocument doc : group.getResult()) {
                         ZfinFigureEntity figure = new ZfinFigureEntity();
@@ -490,10 +501,11 @@ public class FishService {
         for (Figure figure : expressionFigures) {
             figureEntity = new ZfinFigureEntity();
             figureEntity.setID(figure.getZdbID());
-            if (figure.getImages() != null)
+            if (figure.getImages() != null) {
                 figureEntity.setHasImage(true);
-            else
+            } else {
                 figureEntity.setHasImage(false);
+            }
             figureEntities.add(figureEntity);
         }
 

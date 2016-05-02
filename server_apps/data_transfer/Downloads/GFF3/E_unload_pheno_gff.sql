@@ -11,14 +11,12 @@ select
 	zeg_strand,
 	zeg_frame,
 	zeg_ID_Name ||';Alias='|| zeg_Alias attribute
- from zfin_ensembl_gene, phenotype_experiment, phenotype_statement, mutant_fast_search
- where phenox_genox_zdb_id == mfs_genox_zdb_id
-   and phenos_phenox_pk_id = phenox_pk_id
-   and phenos_tag != 'normal'
-   and mfs_mrkr_zdb_id     == zeg_Alias
-   and exists (Select 'x' from phenotype_statement
-       	      	      where phenos_phenox_pk_id = phenox_pk_id
-		      and phenos_tag != 'normal')
+ from zfin_ensembl_gene
+      join mutant_fast_search on zeg_Alias = mfs_mrkr_zdb_id
+      join phenotype_source_generated on pg_genox_zdb_id = mfs_genox_zdb_id
+ where exists (Select 'x' from phenotype_observation_generated
+       	      	         where psg_id = psg_pg_id
+		                       and psg_tag != 'normal')
  group by 1,3,6,7,8,9
  order by 1,4,5,9
 ;

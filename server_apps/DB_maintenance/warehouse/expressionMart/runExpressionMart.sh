@@ -23,6 +23,9 @@ set expressionMartScripts=( begin.sql \
 set regenExpressionMartScripts=( begin.sql \
 	     refreshExpressionMart.sql \
 	     commit.sql \
+	    # begin.sql \
+	    # addIndexes.sql \
+	    # commit.sql \
 	     );
 
 touch $FULL_SCRIPT_FILE
@@ -45,6 +48,8 @@ echo "ready to start dropTables.sql DBNAME from environment." ;
 else
 echo "ready to start dropTables.sql DBNAME provided from script call." ;
 /private/apps/Informix/informix/bin/dbaccess -a $1 $FULL_SCRIPT_FILE
+
+
 
 endif 
 

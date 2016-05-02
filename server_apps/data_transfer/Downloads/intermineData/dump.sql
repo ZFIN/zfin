@@ -35,7 +35,9 @@ select osubset_pk_id, osubset_subset_name, osubset_subset_definition,
        osubset_subset_type, osubset_ont_id, term_ont_id, term_ontology
  from ontology_subset, term_subset, term
   where osubset_pk_id = termsub_subset_id
-  and termsub_term_zdb_id = term_zdb_id;
+  and termsub_term_zdb_id = term_zdb_id
+  and term_is_obsolete = 'f'
+  and term_is_secondary ='f';
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dataSourceSupplier/1dataSourceSupplier.txt"
 select idsup_data_zdb_id, idsup_supplier_zdb_id, idsup_acc_num, idsup_avail_state, "supplier", get_obj_type(idsup_data_zdb_id), feature_type
@@ -74,7 +76,8 @@ where mrkr_Zdb_id = seq_mrkr_zdb_id
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/omimPhenotype/1omimphenotype.txt"
  select ortho_zebrafish_gene_zdb_id,omimp_name,omimp_omim_id from omim_phenotype, ortholog
- where omimp_ortho_zdb_id = ortho_Zdb_id;
+ where omimp_ortho_zdb_id = ortho_Zdb_id
+ and ortho_zebrafish_gene_zdb_id not like 'ZDB-GENEP%';
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/featureCrossReferences/1featureCrossReferences.txt"
  select feature_zdb_id, feature_type, dblink_acc_num, fdb_db_name, fdb_db_query from feature, db_link, foreign_db, foreign_db_contains
@@ -84,8 +87,8 @@ and fdbcont_zdb_id = dblink_fdbcont_zdb_id;
 
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/chromosome/1chromosome.txt"
-select distinct sfcl_chromosome, sfcl_data_zdb_id from sequence_feature_chromosome_location
- where sfcl_data_zdb_id like 'ZDB-GENE%';
+select distinct sfclg_chromosome, sfclg_data_zdb_id from sequence_feature_chromosome_location_generated
+ where sfclg_data_zdb_id like 'ZDB-GENE-%';
 
 --all identifiers;
 
@@ -145,15 +148,14 @@ select source_id, target_id from int_person_pub;
 --   where exists (select 'x' from expression_result where xpatres_xpatex_zdb_id =xpatex_zdb_id) ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_expression/2xpatres.txt"
- select res.*, anat.term_ont_id, a.stg_obo_id, b.stg_obo_id,xpatex.*, xpatfig.*,termt.term_ont_id, fish_zdb_id, genox_exp_zdb_id
- 	  
-  from expression_experiment xpatex,expression_pattern_figure xpatfig, expression_result res, stage a, stage b, term anat, outer term termt,fish_experiment,fish
+ select res.xpatres_pk_id, res.xpatres_expression_found, anat.term_ont_id, a.stg_obo_id, b.stg_obo_id,xpatex.xpatex_source_zdb_id,xpatex.xpatex_assay_name,xpatex.xpatex_probe_feature_zdb_id, xpatex.xpatex_gene_zdb_id, xpatex.xpatex_dblink_zdb_id, xpatex.xpatex_genox_zdb_id, xpatex.xpatex_atb_zdb_id, xpatfig.efs_fig_Zdb_id, termt.term_ont_id, fish_zdb_id, genox_exp_zdb_id
+  from expression_experiment2 xpatex, expression_figure_stage xpatfig, expression_result2 res, stage a, stage b, term anat, outer term termt,fish_experiment,fish
   where res.xpatres_superterm_zdb_id = anat.term_zdb_id
   and res.xpatres_subterm_zdb_id = termt.term_zdb_id
-  and res.xpatres_start_stg_zdb_id = a.stg_zdb_id
-  and res.xpatres_end_stg_zdb_id = b.stg_zdb_id
-  and xpatex.xpatex_zdb_id = res.xpatres_xpatex_zdb_id
-  and res.xpatres_zdb_id = xpatfig.xpatfig_xpatres_zdb_id
+  and xpatfig.efs_start_stg_zdb_id = a.stg_zdb_id
+  and xpatfig.efs_end_stg_zdb_id = b.stg_zdb_id
+  and res.xpatres_efs_id = xpatfig.efs_pk_id
+  and xpatfig.efs_xpatex_zdb_id = xpatex.xpatex_zdb_id
   and genox_zdb_id = xpatex_genox_zdb_id
   and fish_zdb_id = genox_fish_zdb_id;
 
@@ -179,12 +181,14 @@ create temp table tmp_pato (id int8,
        quality varchar(50),
        geno_id varchar(50),
        exp_id varchar(50),
-       clean boolean)
+       clean boolean,
+       mrkr_id varchar(50),
+       short_name varchar(255))
 with no log;
 
-insert into tmp_pato (id, genox_id, superterm, subterm, superterm2, subterm2, quality, startstg, endstg, fig, tag, geno_id, exp_id)
-  select phenos_pk_id,
-  	 phenox_genox_zdb_id,
+insert into tmp_pato (id, genox_id, superterm, subterm, superterm2, subterm2, quality, startstg, endstg, fig, tag, geno_id, exp_id, mrkr_id, short_name)
+  select psg_id,
+  	 pg_genox_zdb_id,
 	 a.term_ont_id,
 	 b.term_ont_id,
 	 c.term_ont_id,
@@ -192,20 +196,22 @@ insert into tmp_pato (id, genox_id, superterm, subterm, superterm2, subterm2, qu
 	 e.term_ont_id,
 	 f.stg_obo_id,
 	 g.stg_obo_id,
-	 phenox_fig_zdb_id, 
-          phenos_tag,
+	 pg_fig_zdb_id, 
+          psg_tag,
 	  fish_zdb_id,
-	  genox_exp_zdb_id
-   from phenotype_experiment, phenotype_statement, stage f, stage g,term a, outer term b, outer term c, outer term d, term e, fish_experiment, fish
-   where phenox_start_Stg_zdb_id = f.stg_zdb_id
-   and phenox_end_stg_zdb_id = g.stg_zdb_id
-   and phenos_entity_1_superterm_Zdb_id = a.term_Zdb_id
-   and phenos_entity_1_subterm_zdb_id = b.term_zdb_id
-   and phenos_entity_2_superterm_zdb_id = c.term_Zdb_id
-   and phenos_entity_2_subterm_zdb_id = d.term_zdb_id
-   and phenos_quality_Zdb_id = e.term_zdb_id
-   and phenox_pk_id = phenos_phenox_pk_id
-   and genox_zdb_id = phenox_genox_zdb_id
+	  genox_exp_zdb_id,
+	  psg_mrkr_Zdb_id,
+	  psg_short_name
+   from phenotype_source_generated, phenotype_observation_generated, stage f, stage g,term a, outer term b, outer term c, outer term d, term e, fish_experiment, fish
+   where pg_start_Stg_zdb_id = f.stg_zdb_id
+   and pg_end_stg_zdb_id = g.stg_zdb_id
+   and psg_e1a_Zdb_id = a.term_Zdb_id
+   and psg_e1b_zdb_id = b.term_zdb_id
+   and psg_e2a_zdb_id = c.term_Zdb_id
+   and psg_e2b_zdb_id = d.term_zdb_id
+   and psg_quality_Zdb_id = e.term_zdb_id
+   and pg_id = psg_pg_id
+   and genox_zdb_id = pg_genox_zdb_id
    and genox_fish_zdb_id = fish_zdb_id
 ;
 
@@ -406,7 +412,7 @@ select clone_mrkr_zdb_id, replace(clone_comments,'
 --ortholog
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_orthos/1orthos.txt"
- select ortho_zdb_id, ortho_zebrafish_gene_zdb_id, organism_common_name, ortho_other_species_symbol, current year to second,
+ select ortho_other_species_ncbi_gene_id, ortho_zebrafish_gene_zdb_id, organism_common_name, ortho_other_species_symbol, current year to second,
  	ortho_other_species_name, replace(ortho_other_species_chromosome,"|",";"), replace(ortho_other_species_chromosome,"|",";"),
 	oef_accession_number,fdb_db_name,fdbdt_data_type,oev_ortho_Zdb_id, oev_evidence_code, oev_pub_zdb_id,ortho_zdb_id||oef_accession_number
    from ortholog,ortholog_evidence,ortholog_external_reference,foreign_Db,foreign_db_data_type,foreign_db_Contains, organism
@@ -459,3 +465,41 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
  select fp_pk_id, fp_prefix,fp_Institute_display
  from feature_prefix;
 
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/disease/disease-annotation.txt"
+ select dat_zdb_id,term_ont_id, dat_source_zdb_id, dat_evidence_code,  genox_fish_zdb_id, genox_exp_zdb_id
+   from disease_annotation, disease_annotation_model, fish_experiment, term
+   where dat_zdb_id = damo_dat_Zdb_id
+ and damo_genox_zdb_id = genox_zdb_id
+ and term_zdb_id = dat_term_zdb_id;
+
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/eap/eap.txt"
+  select ept_pk_id, ept_relational_term, ept_quality_term_zdb_id, ept_tag, ept_xpatres_id
+    from expression_phenotype_term;
+
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/phenoWarehouse/phenoWarehouse.txt"
+  select pg_id, pg_genox_zdb_id, pg_fig_zdb_id, pg_start_stg_zdb_id, pg_end_stg_zdb_id, psg_id, psg_mrkr_zdb_id,
+    psg_mrkr_abbrev,
+    psg_mrkr_relation,
+    psg_e1a_zdb_id,
+    psg_e1a_name,
+    psg_e1_relation_name,
+    psg_e1b_zdb_id,
+    psg_e1b_name,
+    psg_e2a_zdb_id,
+    psg_e2a_name,
+    psg_e2_relation_name,
+    psg_e2b_zdb_id,
+    psg_e2b_name,
+    psg_tag ,
+    psg_quality_zdb_id,
+    psg_quality_name,
+    psg_short_name
+from phenotype_source_generated, phenotype_observation_generated
+where pg_id = psg_id;
+
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/allele/allele.txt"
+select feature_zdb_id, feature_name, feature_Type, feature_abbrev, fmrel_mrkr_zdb_id, mrkr_type
+  from feature, feature_marker_relationship, marker
+  where feature_zdb_id =fmrel_ftr_zdb_id
+ and fmrel_mrkr_zdb_id = mrkr_zdb_id
+ and fmrel_type = 'is allele of';

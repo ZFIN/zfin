@@ -62,7 +62,8 @@ public class DisplayGroup implements Comparable<DisplayGroup>{
         TRANSCRIPT_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE("transcript edit addable nucleotide sequence"),
         TRANSCRIPT_EDIT_ADDABLE_MIRNA_NUCLEOTIDE_SEQUENCE("transcript edit addable miRNA nucleotide sequence"),
         HIDDEN_DBLINKS("hidden dblinks"),
-        PLASMIDS("plasmids")
+        PLASMIDS("plasmids"),
+        PATHWAYS("pathways")
         ;
 
         private String value;

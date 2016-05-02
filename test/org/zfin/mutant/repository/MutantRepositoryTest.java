@@ -265,7 +265,7 @@ public class MutantRepositoryTest {
     public void getPhenotypeStatementsByGenotype() {
         String genotypeID = "ZDB-GENO-070215-11";
         Genotype genotype = mutantRepository.getGenotypeByID(genotypeID);
-        List<PhenotypeStatement> statements = mutantRepository.getPhenotypeStatementsByGenotype(genotype);
+        List<PhenotypeStatementWarehouse> statements = mutantRepository.getPhenotypeStatementsByGenotype(genotype);
         assertThat(statements, notNullValue());
     }
 
@@ -331,28 +331,6 @@ public class MutantRepositoryTest {
     }
 
     @Test
-    public void getPhenotypeFigures() {
-        // fin fold actinotrichium
-        String oboID = "ZFA:0000089";
-        String genotypeID = "ZDB-GENO-090827-1";
-        GenericTerm term = getOntologyRepository().getTermByOboID(oboID);
-        Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(genotypeID);
-        List<Figure> figures = getMutantRepository().getPhenotypeFigures(term, genotype, true);
-        assertThat(figures, notNullValue());
-    }
-
-    @Test
-    public void getPhenotypeStatementsForGenoAndStructure() {
-        // fin fold actinotrichium
-        String oboID = "ZFA:0000089";
-        String fishID = "ZDB-FISH-090827-1";
-        GenericTerm term = getOntologyRepository().getTermByOboID(oboID);
-        Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
-        List<PhenotypeStatement> statements = getMutantRepository().getPhenotypeStatement(term, fish, true);
-        assertThat(statements, notNullValue());
-    }
-
-    @Test
     public void gwtStrList() {
         String publicationID = "ZDB-PUB-130403-23";
         List<SequenceTargetingReagent> reagentList = RepositoryFactory.getMutantRepository().getStrList(publicationID);
@@ -363,6 +341,14 @@ public class MutantRepositoryTest {
     public void gwtFishList() {
         String publicationID = "ZDB-PUB-130403-23";
         List<Fish> reagentList = RepositoryFactory.getMutantRepository().getFishList(publicationID);
+        assertThat(reagentList, notNullValue());
+    }
+
+    @Test
+    public void getDiseaseModel() {
+        String publicationID = "ZDB-PUB-990507-16";
+        String fishID = "ZDB-FISH-150901-19447";
+        List<DiseaseAnnotation> reagentList = RepositoryFactory.getMutantRepository().getDiseaseModel(fishID, publicationID);
         assertThat(reagentList, notNullValue());
     }
 
@@ -456,17 +442,9 @@ public class MutantRepositoryTest {
     }
 
     @Test
-    public void getPhenotypeStatementForMutantSummary() {
-        Fish genotype = getMutantRepository().getFish("ZDB-FISH-150901-21301");
-        GenericTerm term = getOntologyRepository().getTermByOboID("ZFA:0000386/");
-        List<PhenotypeStatement> fishList = mutantRepository.getPhenotypeStatementForMutantSummary(term, genotype, false);
-        assertThat(fishList, notNullValue());
-    }
-
-    @Test
     public void getPhenotypeStatementForMarker() {
         Marker marker = getMarkerRepository().getMarkerByID("ZDB-GENE-000627-2");
-        List<PhenotypeStatement> fishList = mutantRepository.getPhenotypeStatementForMarker(marker);
+        List<PhenotypeStatementWarehouse> fishList = mutantRepository.getPhenotypeStatementForMarker(marker);
         assertThat(fishList, notNullValue());
     }
 

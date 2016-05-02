@@ -12,12 +12,12 @@ select
 	zeg_frame,
 	zeg_ID_Name ||';Alias='||  zeg_Alias attribute
  from zfin_ensembl_gene,
- expression_experiment, expression_result, expression_pattern_figure
+ expression_experiment2, expression_result2, expression_figure_stage
  where xpatex_gene_zdb_id is not NULL
    and xpatex_gene_zdb_id == zeg_Alias
-   and xpatex_zdb_id = xpatres_xpatex_zdb_id
+   and xpatex_zdb_id = efs_xpatex_zdb_id
    and xpatres_expression_found = 't'
-   and xpatres_zdb_id = xpatfig_xpatres_zdb_id
+   and xpatres_efs_id = efs_pk_id
 
  group by 1,3,6,7,8,9
  order by 1,4,5,9

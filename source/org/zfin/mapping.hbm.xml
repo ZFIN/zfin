@@ -116,31 +116,31 @@
         </subclass>
     </class>
 
-    <class name="org.zfin.mapping.GenomeLocation" table="sequence_feature_chromosome_location">
+    <class name="org.zfin.mapping.GenomeLocation" table="sequence_feature_chromosome_location_generated">
         <id name="ID">
-            <column name="sfcl_pk_id" not-null="true"/>
+            <column name="sfclg_pk_id" not-null="true"/>
             <generator class="identity"/>
         </id>
 
         <discriminator type="string"
-                       formula="(CASE get_obj_type(sfcl_data_zdb_id)
+                       formula="(CASE get_obj_type(sfclg_data_zdb_id)
                                     WHEN 'ALT' THEN  'Feat'
                                     ELSE             'Mark'
                                  END)"/>
-        <property name="chromosome" column="sfcl_chromosome" type="string"/>
-        <property name="entityID" column="sfcl_data_zdb_id" type="string"/>
-        <property name="source" column="sfcl_location_source" type="genomeLocationSource"/>
-        <property name="start" column="sfcl_start" type="java.lang.Integer"/>
-        <property name="end" column="sfcl_end" type="java.lang.Integer"/>
-        <property name="detailedSource" column="sfcl_location_subsource" type="string"/>
-        <property name="accessionNumber" column="sfcl_acc_num" type="string"/>
+        <property name="chromosome" column="sfclg_chromosome" type="string"/>
+        <property name="entityID" column="sfclg_data_zdb_id" type="string"/>
+        <property name="source" column="sfclg_location_source" type="genomeLocationSource"/>
+        <property name="start" column="sfclg_start" type="java.lang.Integer"/>
+        <property name="end" column="sfclg_end" type="java.lang.Integer"/>
+        <property name="detailedSource" column="sfclg_location_subsource" type="string"/>
+        <property name="accessionNumber" column="sfclg_acc_num" type="string"/>
 
         <subclass name="MarkerGenomeLocation" discriminator-value="Mark">
-            <many-to-one name="marker" column="sfcl_data_zdb_id" insert="false" update="false"/>
+            <many-to-one name="marker" column="sfclg_data_zdb_id" insert="false" update="false"/>
         </subclass>
 
         <subclass name="FeatureGenomeLocation" discriminator-value="Feat">
-            <many-to-one name="feature" column="sfcl_data_zdb_id" insert="false" update="false"/>
+            <many-to-one name="feature" column="sfclg_data_zdb_id" insert="false" update="false"/>
         </subclass>
     </class>
 

@@ -109,6 +109,15 @@
         </if>
     </target>
 
+    <target name="run-all-jobs-now">
+        <groovy>
+            Date now = new Date()
+            runInFiveMinutes = (now.getMinutes() + 5) + " " + now.getHours() + " * * *"
+            properties.schedule = runInFiveMinutes
+        </groovy>
+        <addTriggerForAllJobs/>
+    </target>
+
     <target name="deploy-production-jobs" depends="_copyDefaultConfig" description="Copy jobs into Jenkins_home">
         <tstamp/>
         <echo message="Deploy production jobs into: ${JENKINS_HOME}"/>
@@ -158,12 +167,13 @@
         </groovy>
     </target>
 
+    <property name="jobSourceDirectory" value="${basedir}/server_apps/jenkins/jobs"/>
+    <property name="jobTargetDirectory" value="${JENKINS_HOME}/jobs"/>
+
     <target name="remove-jobs" description="Remove jobs into Jenkins_home that are not defined in the source">
         <tstamp/>
         <echo message="Remove undefined jobs in ${JENKINS_HOME}/jobs"/>
 
-        <property name="jobSourceDirectory" value="${basedir}/server_apps/jenkins/jobs"/>
-        <property name="jobTargetDirectory" value="${JENKINS_HOME}/jobs"/>
         <groovy>
             def jobSourceDirectory = new File(properties.jobSourceDirectory)
             def sourceJobs = jobSourceDirectory.listFiles()
@@ -422,11 +432,11 @@
 
     <target name="create-jenkins-symlink">
         <mkdir dir="${JENKINS_HOME}/logs"/>
-	<exec executable="rm">
-	  <arg value="${jenkins}/jenkins.war" />
-	</exec>
+        <exec executable="rm">
+            <arg value="${jenkins}/jenkins.war"/>
+        </exec>
         <symlink link="${jenkins}/jenkins.war" action="single" overwrite="true" failonerror="fail"
-                 resource="${jenkins}/jenkins-636.war"/>
+                 resource="${jenkins}/jenkins-656.war"/>
     </target>
 
     <target name="copy-certificate">
@@ -569,6 +579,53 @@
                 </then>
             </if>
             <var name="schedule" unset="true"/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="addTriggerForAllJobs">
+        <sequential>
+            <echo message="Adding cron expression for all jobs"/>
+
+            <property name="schedule" value=""/>
+
+            <groovy>
+                def dir = new File(properties.jobTargetDirectory)
+                new File(properties.jobTargetDirectory).eachFile {
+                    if (!it.name.endsWith(".svn")) {
+                        def jobDirName = it.name
+                        new File(dir, jobDirName).eachFile { configFile ->
+                            if (configFile.getName().endsWith("config.xml")) {
+                                if (jobDirName.contains("_")) {
+                                    println configFile
+                                    properties.jobName = jobDirName
+                                    ant."add-new-cron-expression-for-job"()
+                                }
+                            }
+                        }
+                    }
+                }
+            </groovy>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="add-new-cron-expression-for-job">
+        <sequential>
+<!--
+            <echo message="Schedule: ${schedule}"/>
+            <echo message="Job: ${jobName}"/>
+-->
+            <if>
+                <not>
+                    <equals arg1="${schedule}" arg2=""/>
+                </not>
+                <then>
+                    <echo message="Modify cron Schedule for ${jobName}: ${schedule} "/>
+                    <replaceregexp match="&lt;spec&gt;[\d\s?\*]*&lt;/spec&gt;"
+                                   replace="&lt;spec&gt;${schedule}&lt;/spec&gt;" flags="g">
+                        <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
+                    </replaceregexp>
+                </then>
+            </if>
         </sequential>
     </macrodef>
 
@@ -728,7 +785,7 @@
     <target name="execute-all-validate-data-jobs">
         <property name="jobDirectory" value="${basedir}/server_apps/jenkins/jobs"/>
         <property name="jenkPort" value="${env.JENKINS_PORT}"/>
-        <echo message="${env.JENKINS_PORT}" />
+        <echo message="${env.JENKINS_PORT}"/>
         <groovy>
             def dir = new File(properties.jobDirectory)
             new File(properties.jobDirectory).eachFile {

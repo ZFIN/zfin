@@ -6,8 +6,8 @@ import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.mutant.MutantFigureStage;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
-import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -66,9 +66,7 @@ public class DTOConversionServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void convertTermDTO() {
-//        Term t = ontologyRepository.getTermByZdbID("ZDB-TERM-070117-118") ;
-        // a GO term
-        Term term = ontologyRepository.getTermByZdbID("ZDB-TERM-091209-10003");
+        GenericTerm term = ontologyRepository.getTermByZdbID("ZDB-TERM-091209-10003");
         TermDTO termDTO = DTOConversionService.convertToTermDTO(term);
         assertEquals(term.getAliases().size(), termDTO.getAliases().size());
         assertEquals(term.getTermName(), termDTO.getName());
@@ -84,8 +82,6 @@ public class DTOConversionServiceTest extends AbstractDatabaseTest {
         assertEquals(term.getOntology().getOntologyName(), termDTO.getOntology().getOntologyName());
         assertEquals(term.getZdbID(), termDTO.getZdbID());
 
-//        assertEquals(term.getEnd().getName(),termDTO.getStartStage().getName()) ;
-//        assertEquals(term.getEnd().getName(),termDTO.getStartStage().getName()) ;
     }
 
 
@@ -93,7 +89,7 @@ public class DTOConversionServiceTest extends AbstractDatabaseTest {
     public void convertTermDTOWithRelationships() {
 //        Term t = ontologyRepository.getTermByZdbID("ZDB-TERM-070117-118") ;
         // a GO term
-        Term term = ontologyRepository.getTermByZdbID("ZDB-TERM-091209-10003");
+        GenericTerm term = ontologyRepository.getTermByZdbID("ZDB-TERM-091209-10003");
         TermDTO termDTO = DTOConversionService.convertToTermDTOWithDirectRelationships(term);
         assertEquals(term.getAliases().size(), termDTO.getAliases().size());
         assertEquals(term.getTermName(), termDTO.getName());
@@ -112,15 +108,13 @@ public class DTOConversionServiceTest extends AbstractDatabaseTest {
         assertEquals(term.getOntology().getOntologyName(), termDTO.getOntology().getOntologyName());
         assertEquals(term.getZdbID(), termDTO.getZdbID());
 
-//        assertEquals(term.getEnd().getName(),termDTO.getStartStage().getName()) ;
-//        assertEquals(term.getEnd().getName(),termDTO.getStartStage().getName()) ;
     }
 
 
     @Test
     public void convertTermDTOWithRelationshipsAndAnatomy() {
         // a GO term
-        Term term = ontologyRepository.getTermByZdbID("ZDB-TERM-100331-1014");
+        GenericTerm term = ontologyRepository.getTermByZdbID("ZDB-TERM-100331-1014");
         TermDTO termDTO = DTOConversionService.convertToTermDTOWithDirectRelationships(term);
         assertEquals(term.getAliases().size(), termDTO.getAliases().size());
         assertEquals(term.getTermName(), termDTO.getName());

@@ -2,24 +2,26 @@
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<h1><tiles:getAsString name="headerText" /></h1>
+<link rel="stylesheet" href="/css/bootstrap3/css/bootstrap.css"/>
+<link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css"/>
 
-<c:choose>
-    <c:when test="${sent}">
-        <p class="message success">
-            Thank you for your submission. Your submission has been forwarded to the ZFIN nomenclature coordinator who may
-            contact you if additional information is required.
-        </p>
-    </c:when>
-    <c:otherwise>
-        <p class="message error">
-            Looks like something went wrong on our end. You can either try again later or
-            <a href="mailto:<%= ZfinPropertiesEnum.NOMEN_COORDINATOR.value()%>">email your submission directly to us</a>.
-        </p>
-    </c:otherwise>
-</c:choose>
+<div class="container-fluid">
+    <h1><tiles:getAsString name="headerText" /></h1>
 
-<div class="nomenclature-submission">
+    <c:choose>
+        <c:when test="${sent}">
+            <div class="alert alert-success">
+                <strong>Thank you for your submission.</strong> Your submission has been forwarded to the ZFIN nomenclature coordinator who may
+                contact you if additional information is required.
+            </div>
+        </c:when>
+        <c:otherwise>
+            <div class="alert alert-danger">
+                <strong>Looks like something went wrong on our end.</strong> You can either try again later or
+                <a href="mailto:<%= ZfinPropertiesEnum.NOMEN_COORDINATOR.value()%>">email your submission directly to us</a>.
+            </div>
+        </c:otherwise>
+    </c:choose>
 
     <h3>Contact Information</h3>
     <dl>

@@ -2,12 +2,19 @@ package org.zfin.infrastructure;
 
 import org.zfin.infrastructure.delete.*;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-/**
- */
+@Entity
+@Table(name = "zdb_active_data")
 public class ActiveData implements ZdbID {
+
+    @Id
+    @Column(name = "zactvd_zdb_id")
     private String zdbID;
 
     public String getZdbID() {

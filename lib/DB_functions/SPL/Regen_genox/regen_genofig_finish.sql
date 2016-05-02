@@ -1,20 +1,20 @@
-create procedure regen_genofig_finish(vUpdate boolean,phenoxId int8)
+create procedure regen_genofig_finish(vUpdate boolean,pgId int8)
   
 if (vUpdate != 't') then
 
     insert into genotype_figure_fast_search_new(gffs_geno_zdb_id,
 						gffs_fig_zdb_id,
 						gffs_morph_zdb_id,
-						gffs_phenox_pk_id,
+						gffs_pg_id,
 						gffs_fish_zdb_id,
-						gffs_phenos_id,
+						gffs_psg_id,
 						gffs_genox_Zdb_id)
       select distinct c.gffs_geno_zdb_id,
 				c.gffs_fig_zdb_id,
 				c.gffs_morph_zdb_id,
-				c.gffs_phenox_pk_id,
+				c.gffs_pg_id,
 				c.gffs_fish_zdb_id,
-				c.gffs_phenos_id,
+				c.gffs_psg_id,
 				c.gffs_genox_Zdb_id 
         from genotype_Figure_fast_Search c;
 
@@ -22,23 +22,25 @@ if (vUpdate != 't') then
 
     delete from genotype_figure_fast_search_new
       where exists (Select 'x' from regen_genofig_input_zdb_id_temp
-   	 		where gffs_phenox_pk_id = rgfg_id);
+   	 		where gffs_pg_id = rgfg_id);
 
- 
+ delete from genotype_figure_fast_search_new
+ where gffs_psg_id not in (select psg_id from phenotype_observation_generated);
+
     insert into genotype_figure_fast_search_new
       (gffs_geno_zdb_id,
 	gffs_fig_zdb_id,
 	gffs_morph_zdb_id,
-	gffs_phenox_pk_id,
+	gffs_pg_id,
 	gffs_fish_zdb_id,
-	gffs_phenos_id,
+	gffs_psg_id,
 	gffs_genox_Zdb_id)
     select distinct rgf_geno_zdb_id,
     	   rgf_fig_zdb_id,
 	   rgf_morph_zdb_id,
-	   rgf_phenox_pk_id,
+	   rgf_pg_id,
 	   rgf_fish_zdb_id,
-	   rgf_phenos_id,
+	   rgf_psg_id,
 	   rgf_genox_zdb_id
       from regen_genofig_temp;
 
@@ -67,13 +69,13 @@ if (vUpdate != 't') then
       in idxdbs3;
 
   
-    create index genotype_figure_fast_search_phenox_foreign_key_index_transient
-      on genotype_figure_fast_search_new (gffs_phenox_pk_id)
+    create index genotype_figure_fast_search_pg_foreign_key_index_transient
+      on genotype_figure_fast_search_new (gffs_pg_id)
       fillfactor 100
       in idxdbs3;
 
-   create index genotype_figure_fast_search_phenos_foreign_key_index_transient
-      on genotype_figure_fast_search_new (gffs_phenos_id)
+   create index genotype_figure_fast_search_psg_foreign_key_index_transient
+      on genotype_figure_fast_search_new (gffs_psg_id)
       fillfactor 100
       in idxdbs2;
         
@@ -96,11 +98,11 @@ if (vUpdate != 't') then
         to genotype_figure_fast_search_morph_zdb_id_foreign_key_index;
      rename index genotype_figure_fast_search_fish_foreign_key_index_transient 
         to genotype_figure_fast_search_fish_zdb_id_foreign_key_index;
-    rename index genotype_figure_fast_search_phenox_foreign_key_index_transient 
-        to genotype_figure_fast_search_phenox_zdb_id_foreign_key_index;
+    rename index genotype_figure_fast_search_pg_foreign_key_index_transient 
+        to genotype_figure_fast_search_pg_id_foreign_key_index;
 
-  rename index genotype_figure_fast_search_phenos_foreign_key_index_transient 
-        to genotype_figure_fast_search_phenos_id_foreign_key_index;
+  rename index genotype_figure_fast_search_psg_foreign_key_index_transient 
+        to genotype_figure_fast_search_psg_id_foreign_key_index;
 
 
       --let errorHint = "genotype_figure_fast_search add foreign key to reference genotype";
@@ -119,42 +121,39 @@ if (vUpdate != 't') then
       alter table genotype_figure_fast_search add constraint (foreign key (gffs_morph_zdb_id) references marker on 
       delete cascade constraint gffs_morph_zdb_id_foreign_key);
 
-     --let errorHint = "genotype_figure_fast_search add foreign key to reference phenotype_experiment";
-      alter table genotype_figure_fast_search add constraint (foreign key (gffs_phenox_pk_id) references phenotype_Experiment on 
-      delete cascade constraint gffs_phenox_pk_id_foreign_key);
-
-alter table genotype_figure_fast_search add constraint 
-    (foreign key (gffs_phenos_id) references phenotype_statement 
-     on delete cascade constraint gffs_phenos_pk_id_foreign_key);
 
 else 
 
 delete from genotype_figure_fast_search
- where gffs_phenox_pk_id = phenoxId;
+ where gffs_pg_id = pgId;
+
+delete from genotype_figure_fast_search
+ where gffs_psg_id not in (select psg_id from phenotype_observation_generated);
  
     insert into genotype_figure_fast_search
       (gffs_geno_zdb_id,
 	gffs_fig_zdb_id,
 	gffs_morph_zdb_id,
-	gffs_phenox_pk_id,
+	gffs_pg_id,
 	gffs_fish_zdb_id,
-	gffs_phenos_id,
+	gffs_psg_id,
 	gffs_genox_Zdb_id)
     select distinct rgf_geno_zdb_id,
     	   rgf_fig_zdb_id,
 	   rgf_morph_zdb_id,
-	   rgf_phenox_pk_id,
+	   rgf_pg_id,
 	   rgf_fish_zdb_id,
-	   rgf_phenos_id,
+	   rgf_psg_id,
 	   rgf_genox_zdb_id
       from regen_genofig_temp
       where not exists (Select 'x' from genotype_figure_fast_Search
-      	    	       	       where gffs_phenos_id = rgf_phenos_id);
+      	    	       	       where gffs_psg_id = rgf_psg_id);
 
 end if;
 
 delete from regen_genofig_temp;
 delete from regen_genofig_input_zdb_id_temp;
+
 
 
 end procedure;

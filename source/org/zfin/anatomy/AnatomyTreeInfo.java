@@ -1,8 +1,10 @@
 package org.zfin.anatomy;
 
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.util.EqualsUtil;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
 
@@ -11,12 +13,22 @@ import java.io.Serializable;
  * the DAG. A very simplified version that needs to be reworked when
  * we implement a generic DAG.
  */
+@Entity
+@Table(name = "ANATOMY_DISPLAY")
 public class AnatomyTreeInfo implements Serializable {
 
+    @Id
+    @Column(name = "anatdisp_stg_zdb_id")
     private String zdbID;
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "anatdisp_item_zdb_id")
+    private GenericTerm item;
+    @Column(name = "anatdisp_seq_num")
     private int sequenceNumber;
+    @Column(name = "anatdisp_indent")
     private int indent;
-    private Term item;
+    @Transient
     private AnatomyStatistics statistics;
 
     public String getZdbID() {
@@ -43,11 +55,11 @@ public class AnatomyTreeInfo implements Serializable {
         this.indent = indent;
     }
 
-    public Term getItem() {
+    public GenericTerm getItem() {
         return item;
     }
 
-    public void setItem(Term item) {
+    public void setItem(GenericTerm item) {
         this.item = item;
     }
 

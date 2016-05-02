@@ -84,7 +84,7 @@ MILIBS = -lsocket -lnsl -L$(LIBDIR)
 include $(TOP)/make.default.rules
 
 $(OBJS) : %.so : %.c
-	$(CC) $(CFLAGS) -I $(INCDIR) $(MICFLAGS) -G $^ -o $@
+	$(CC) $(CFLAGS) -I $(INCDIR) $(MICFLAGS) $^ -o $@
 	/bin/chmod o+x,o+r $@
 
 $(TARGETDIR_OBJS) : $(TARGETDIR)/% : %

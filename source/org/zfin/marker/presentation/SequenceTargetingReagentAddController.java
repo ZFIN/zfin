@@ -19,21 +19,21 @@ import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.profile.Organization;
-import org.zfin.profile.repository.*;
+import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.STRMarkerSequence;
-
 import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/marker")
@@ -52,88 +52,86 @@ public class SequenceTargetingReagentAddController {
                                                                  @RequestParam(value = "sequenceTargetingReagentPublicationZdbID", required = false) String pubZdbID) {
         SequenceTargetingReagentAddBean sequenceTargetingReagentBean = new SequenceTargetingReagentAddBean();
 
-        sequenceTargetingReagentBean.setSequenceTargetingReagentType(type);
+        Map<String, String> strTypes = new HashMap<>(3);
+        strTypes.put(Marker.Type.CRISPR.name(), "CRISPR");
+        strTypes.put(Marker.Type.MRPHLNO.name(), "Morpholino");
+        strTypes.put(Marker.Type.TALEN.name(), "TALEN");
+        sequenceTargetingReagentBean.setStrTypes(strTypes);
 
-        if (StringUtils.isNotEmpty(pubZdbID))
-            sequenceTargetingReagentBean.setSequenceTargetingReagentPublicationID(pubZdbID);
+        sequenceTargetingReagentBean.setStrType(type);
+
+        if (StringUtils.isNotEmpty(pubZdbID)) {
+            sequenceTargetingReagentBean.setPublicationID(pubZdbID);
+        }
 
         return sequenceTargetingReagentBean;
-
     }
 
-    @RequestMapping("/sequence-targeting-reagent-add")
-    protected String showForm(Model model) throws Exception {
-
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Sequence Targeting Reagent");
-        return "marker/sequence-targeting-reagent-add.page";
-    }
-
-    private @Autowired
-    HttpServletRequest request;
+    @Autowired
+    private HttpServletRequest request;
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(new SequenceTargetingReagentAddBeanValidator());
     }
 
-    @RequestMapping(value = "/sequence-targeting-reagent-do-submit", method = RequestMethod.POST)
-    public String addSequenceTargetingReagent (Model model,
-                                @Valid @ModelAttribute("formBean") SequenceTargetingReagentAddBean formBean,
-                                BindingResult result) throws Exception {
+    @RequestMapping(value = "/sequence-targeting-reagent-add", method = RequestMethod.GET)
+    protected String showForm(Model model) throws Exception {
 
-        if(result.hasErrors())
-            return "marker/sequence-targeting-reagent-add.page";
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Sequence Targeting Reagent");
+        return "marker/sequence-targeting-reagent-add.page";
+    }
 
-        String sequenceTargetingReagentName = formBean.getSequenceTargetingReagentName();
+    @RequestMapping(value = "/sequence-targeting-reagent-add", method = RequestMethod.POST)
+    public String addSequenceTargetingReagent(Model model,
+                                              @Valid @ModelAttribute("formBean") SequenceTargetingReagentAddBean formBean,
+                                              BindingResult result) throws Exception {
+
+        if (result.hasErrors()) {
+            return showForm(model);
+        }
+
+        String sequenceTargetingReagentName = formBean.getName();
 
         STRMarkerSequence newSequenceTargetingReagentSequence = new STRMarkerSequence();
-        SequenceTargetingReagent newSequenceTargetingReagent = new SequenceTargetingReagent() ;
-        newSequenceTargetingReagentSequence.setSequence(formBean.getSequenceTargetingReagentSequence().toUpperCase());
+        SequenceTargetingReagent newSequenceTargetingReagent = new SequenceTargetingReagent();
+        newSequenceTargetingReagentSequence.setSequence(formBean.getSequence().toUpperCase());
         newSequenceTargetingReagentSequence.setType("Nucleotide");
         newSequenceTargetingReagent.setSequence(newSequenceTargetingReagentSequence);
 
-        if (formBean.getSequenceTargetingReagentType().equalsIgnoreCase("TALEN")) {
-            String sequenceTargetingReagentSecondSequence = formBean.getSequenceTargetingReagentSecondSequence();
+        if (formBean.getStrType().equalsIgnoreCase("TALEN")) {
+            String sequenceTargetingReagentSecondSequence = formBean.getSequence2();
             newSequenceTargetingReagentSequence.setSecondSequence(sequenceTargetingReagentSecondSequence.toUpperCase());
         }
 
         newSequenceTargetingReagent.setName(sequenceTargetingReagentName);
         newSequenceTargetingReagent.setAbbreviation(sequenceTargetingReagentName);
-        newSequenceTargetingReagent.setPublicComments(formBean.getSequenceTargetingReagentComment());
+        newSequenceTargetingReagent.setPublicComments(formBean.getPublicNote());
 
-        String pubZdbID = formBean.getSequenceTargetingReagentPublicationID().trim();
-        if (PublicationValidator.isShortVersion(pubZdbID))
-            formBean.setSequenceTargetingReagentPublicationID(PublicationValidator.completeZdbID(pubZdbID));
-        else
-            formBean.setSequenceTargetingReagentPublicationID(pubZdbID);
-        Publication sequenceTargetingReagentPub = pr.getPublication(formBean.getSequenceTargetingReagentPublicationID());
-
-        MarkerType mt = new MarkerType();
-        if (formBean.getSequenceTargetingReagentType().equalsIgnoreCase("Morpholino")) {
-            mt = mr.getMarkerTypeByName(Marker.Type.MRPHLNO.toString());
-        } else if (formBean.getSequenceTargetingReagentType().equalsIgnoreCase("TALEN")) {
-            mt = mr.getMarkerTypeByName(Marker.Type.TALEN.toString());
-        } else if (formBean.getSequenceTargetingReagentType().equalsIgnoreCase("CRISPR")) {
-            mt = mr.getMarkerTypeByName(Marker.Type.CRISPR.toString());
+        String pubZdbID = formBean.getPublicationID().trim();
+        if (PublicationValidator.isShortVersion(pubZdbID)) {
+            formBean.setPublicationID(PublicationValidator.completeZdbID(pubZdbID));
+        } else {
+            formBean.setPublicationID(pubZdbID);
         }
+        Publication sequenceTargetingReagentPub = pr.getPublication(formBean.getPublicationID());
+
+        MarkerType mt = mr.getMarkerTypeByName(formBean.getStrType());
         newSequenceTargetingReagent.setMarkerType(mt);
-        // set marker sequence component
-
-
 
         try {
             HibernateUtil.createTransaction();
             mr.createMarker(newSequenceTargetingReagent, sequenceTargetingReagentPub);
-            ir.insertUpdatesTable(newSequenceTargetingReagent, "new " + formBean.getSequenceTargetingReagentType(), "");
-            PublicationService.addRecentPublications(request.getSession().getServletContext(), sequenceTargetingReagentPub, PublicationSessionKey.GENE) ;
+            ir.insertUpdatesTable(newSequenceTargetingReagent, "new " + formBean.getStrType(), "");
+            PublicationService.addRecentPublications(request.getSession().getServletContext(), sequenceTargetingReagentPub, PublicationSessionKey.GENE);
 
-            String alias = formBean.getSequenceTargetingReagentAlias();
-            if(!StringUtils.isEmpty(alias)) {
+            String alias = formBean.getAlias();
+            if (!StringUtils.isEmpty(alias)) {
                 mr.addMarkerAlias(newSequenceTargetingReagent, alias, sequenceTargetingReagentPub);
             }
 
-            String curationNote = formBean.getSequenceTargetingReagentCuratorNote();
-            if(!StringUtils.isEmpty(curationNote)) {
+            String curationNote = formBean.getCuratorNote();
+            if (!StringUtils.isEmpty(curationNote)) {
                 mr.addMarkerDataNote(newSequenceTargetingReagent, curationNote);
             }
 
@@ -144,10 +142,20 @@ public class SequenceTargetingReagentAddController {
                 MarkerService.addMarkerRelationship(newSequenceTargetingReagent, targetGene, pubZdbID, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
             }
 
-            String supplierName = formBean.getSequenceTargetingReagentSupplierName();
+            String supplierName = formBean.getSupplier();
             if (!StringUtils.isEmpty(supplierName)) {
-                Organization supplier = profileRepository.getOrganizationByName(formBean.getSequenceTargetingReagentSupplierName());
+                Organization supplier = profileRepository.getOrganizationByName(formBean.getSupplier());
                 profileRepository.addSupplier(supplier, newSequenceTargetingReagent);
+            }
+
+            if (formBean.isReversed() || formBean.isComplemented()) {
+                String note = MarkerService.getSTRModificationNote(formBean.getReportedSequence(), formBean.isReversed(), formBean.isComplemented());
+                mr.addMarkerDataNote(newSequenceTargetingReagent, note);
+            }
+
+            if (formBean.isReversed2() || formBean.isComplemented2()) {
+                String note = MarkerService.getSTRModificationNote(formBean.getReportedSequence2(), formBean.isReversed2(), formBean.isComplemented2());
+                mr.addMarkerDataNote(newSequenceTargetingReagent, note);
             }
 
             HibernateUtil.flushAndCommitCurrentSession();
@@ -161,8 +169,7 @@ public class SequenceTargetingReagentAddController {
             throw new RuntimeException("Error during transaction. Rolled back.", e);
         }
 
-        return "redirect:/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() +
-                "?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=" + newSequenceTargetingReagent.getZdbID();
+        return "redirect:/" + newSequenceTargetingReagent.getZdbID();
     }
 
     // looks up suppliers

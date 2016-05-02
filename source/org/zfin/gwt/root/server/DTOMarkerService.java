@@ -40,18 +40,23 @@ public class DTOMarkerService {
         insertMarkerUpdate(marker, fieldname, oldValueString, newValueString);
     }
 
+    public static CuratorNoteDTO convertToCuratorNoteDto(DataNote dataNote, Marker marker) {
+        CuratorNoteDTO noteDTO = new CuratorNoteDTO();
+        noteDTO.setNoteData(DTOConversionService.unescapeString(dataNote.getNote()));
+        noteDTO.setZdbID(dataNote.getZdbID());
+        noteDTO.setDataZdbID(marker.getZdbID());
+        noteDTO.setCurator(DTOConversionService.convertToPersonDTO(dataNote.getCurator()));
+        noteDTO.setDate(dataNote.getDate());
+        noteDTO.setNoteEditMode(NoteEditMode.PRIVATE);
+        return noteDTO;
+    }
+
     public static List<NoteDTO> getCuratorNoteDTOs(Marker marker) {
         // get notes
-        List<NoteDTO> curatorNotes = new ArrayList<NoteDTO>();
+        List<NoteDTO> curatorNotes = new ArrayList<>();
         Set<DataNote> dataNotes = marker.getDataNotes();
         for (DataNote dataNote : dataNotes) {
-            NoteDTO noteDTO = new NoteDTO();
-            noteDTO.setNoteData(DTOConversionService.unescapeString(dataNote.getNote()));
-            noteDTO.setZdbID(dataNote.getZdbID());
-//            noteDTO.setDataZdbID(dataNote.getDataZdbID());
-            noteDTO.setDataZdbID(marker.getZdbID());
-            noteDTO.setNoteEditMode(NoteEditMode.PRIVATE);
-            curatorNotes.add(noteDTO);
+            curatorNotes.add(convertToCuratorNoteDto(dataNote, marker));
         }
         return curatorNotes;
     }
@@ -102,6 +107,22 @@ public class DTOMarkerService {
         return relatedGenes;
     }
 
+    public static List<MarkerDTO> getGenesMarkerDTOs(Marker marker) {
+
+        List<MarkerRelationship> markerRelationships = RepositoryFactory.getMarkerRepository().getMarkerRelationshipBySecondMarker(marker);
+        List<MarkerDTO> relatedGenes = new ArrayList<MarkerDTO>();
+        for (MarkerRelationship markerRelationship : markerRelationships) {
+            Marker internalGene = markerRelationship.getFirstMarker();
+            relatedGenes.addAll(DTOConversionService.createLinks(DTOConversionService.convertToMarkerDTO(internalGene), markerRelationship.getPublications()));
+            logger.debug("# of related genes: " + relatedGenes.size());
+
+        }
+
+
+        return relatedGenes;
+    }
+
+
     /**
      * @param marker Marker
      * @return list of DBlinkDTOs
@@ -143,9 +164,7 @@ public class DTOMarkerService {
             antibodyExternalNoteDTO.setZdbID(antibodyExternalNote.getZdbID());
             antibodyExternalNoteDTO.setNoteEditMode(NoteEditMode.EXTERNAL);
             antibodyExternalNoteDTO.setDataZdbID(antibody.getZdbID());
-            if (antibodyExternalNote.getSinglePubAttribution() != null) {
-                antibodyExternalNoteDTO.setPublicationZdbID(antibodyExternalNote.getSinglePubAttribution().getPublication().getZdbID());
-            }
+            antibodyExternalNoteDTO.setPublicationZdbID(antibodyExternalNote.getPublication().getZdbID());
             antibodyExternalNoteDTO.setNoteData(DTOConversionService.unescapeString(antibodyExternalNote.getNote()));
             externalNotes.add(antibodyExternalNoteDTO);
         }

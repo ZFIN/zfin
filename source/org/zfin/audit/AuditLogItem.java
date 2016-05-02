@@ -2,20 +2,34 @@ package org.zfin.audit;
 
 import org.zfin.profile.Person;
 
+import javax.persistence.*;
 import java.util.Date;
 
 /**
  * This class defines a single item that was changed in a single attribute.
  */
+@Entity
+@Table(name = "UPDATES")
 public class AuditLogItem {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "upd_pk_id")
     private long auditLogID;
+    @Column(name = "rec_id")
     private String zdbID;
+    @Column(name = "field_name")
     private String fieldName;
+    @Column(name = "new_value")
     private String newValue;
+    @Column(name = "old_value")
     private String oldValue;
+    @Column(name = "comments")
     private String comment;
+    @Column(name = "when")
     private Date dateUpdated;
+    @ManyToOne()
+    @JoinColumn(name = "submitter_id")
     private Person owner;
 
     public long getAuditLogID() {

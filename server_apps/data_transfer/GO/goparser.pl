@@ -21,7 +21,7 @@ $versionNumber += 0.001;
 
 open (UNL, ">gene_association.zfin") or die "Cannot open exppat.unl";
 
-print UNL "$gaf_version";
+print UNL "!gaf_version: 2.1\n";
 printf UNL "!Version: %.3f\n", $versionNumber;
 print UNL "!Date: ".`/bin/date +%Y/%m/%d`;
 print UNL "!From: ZFIN (zfin.org) \n";
@@ -40,7 +40,7 @@ while ($line = <INDEXFILE>) {
       if ($lastmrkrgoev ne '' && $mrkrgoev ne $lastmrkrgoev) {
 
 	  print UNL "$db\t$mrkrid\t$mrkrabb\t$qualifier\t$goid\tZFIN:$pubid\t$evidence\t".
-        join('|',@inf_array)."\t$go_o\t$mrkrname\t$aliases\tgene_product\ttaxon:7955\t$ev_date\t$mod_by\t\t\n";
+        join(',',@inf_array)."\t$go_o\t$mrkrname\t$aliases\tgene_product\ttaxon:7955\t$ev_date\t$mod_by\t\t\n";
 
 	  @inf_array = ();
       }

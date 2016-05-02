@@ -18,14 +18,13 @@ import org.zfin.expression.presentation.StageExpressionPresentation;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.server.CurationExperimentRPCImpl;
-import org.zfin.gwt.root.dto.EnvironmentDTO;
-import org.zfin.gwt.root.dto.ExperimentDTO;
-import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.Genotype;
 import org.zfin.mutant.FishExperiment;
+import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
@@ -40,9 +39,7 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
-import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Test the ExpressionRepository class.
@@ -133,7 +130,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         dto.setFishID(genotypeID);
         dto.setPublicationID(pubID);
 
-        ExpressionExperiment expressionExperiment = new ExpressionExperiment();
+        ExpressionExperiment2 expressionExperiment = new ExpressionExperiment2();
 
 
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
@@ -152,7 +149,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         String experimentID = "ZDB-XPAT-090430-4";
 
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
-        ExpressionExperiment experiment = expRep.getExpressionExperiment(experimentID);
+        ExpressionExperiment2 experiment = expRep.getExpressionExperiment2(experimentID);
         try {
             expRep.deleteExpressionExperiment(experiment);
         } finally {
@@ -161,10 +158,21 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getExpressionResultwithEaPForGene() {
+        String geneSymbol = "alcama";
+
+        Marker gene = getMarkerRepository().getMarkerByAbbreviation(geneSymbol);
+        List<ExpressionResult2> list = getExpressionRepository().getExpressionResultList(gene);
+
+        //// TODO: uncomment this once we have a stable EaP annotation.
+        //assertNotNull(list);
+    }
+
+    @Test
     public void retrieveExperimentFigureStages2() {
         String pubID = "ZDB-PUB-060105-3";
 
-        List<ExperimentFigureStage> experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, null, null, null);
+        List<ExpressionFigureStage> experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, null, null, null);
         // this represents 5 unique experiments
         assertThat(experiments.size(), greaterThan(14));
         assertThat(experiments.size(), lessThan(16));
@@ -228,6 +236,31 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getExpressionExperimentsNew() {
+        String zdbID = "ZDB-PUB-990507-16";
+
+        List<ExpressionExperiment2> experiments = expRep.getExperiments2(zdbID);
+        assertTrue(experiments != null);
+        // alcam
+        String geneID = "ZDB-GENE-990415-30";
+        experiments = expRep.getExperimentsByGeneAndFish(zdbID, geneID, null);
+        Set<ExpressionFigureStage> figureStageSet = experiments.get(0).getFigureStageSet();
+        System.out.println(figureStageSet.iterator().next().getExpressionResultSet());
+        System.out.println(figureStageSet.iterator().next().getExpressionResultSet().size());
+        for (ExpressionResult2 result : figureStageSet.iterator().next().getExpressionResultSet())
+            System.out.println(result.getID() + " " + result.getSuperTerm());
+        assertTrue(experiments != null);
+
+        // alcam and WT
+//        String fishName = "WT";
+//        experiments = expRep.getExperimentsByGeneAndFish(zdbID, geneID, fishName);
+//        assertTrue(experiments != null);
+        String fishZdbID = "ZDB-GENO-030619-2";
+        //experiments = expRep.getExperimentsByGeneAndFish(zdbID, geneID, fishZdbID);
+        assertTrue(experiments != null);
+    }
+
+    @Test
     public void getExpressionExperiments2() {
         String zdbID = "ZDB-PUB-990507-16";
 
@@ -256,7 +289,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void retrieveExperimentFigureStages() {
         String pubID = "ZDB-PUB-060105-3";
 
-        List<ExperimentFigureStage> experiment = expRep.getExperimentFigureStagesByGeneAndFish(pubID, null, null, null);
+        List<ExpressionFigureStage> experiment = expRep.getExperimentFigureStagesByGeneAndFish(pubID, null, null, null);
         assertNotNull(experiment);
 
         // mir122
@@ -286,42 +319,6 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         assertTrue(structures.size() > 15);
         assertTrue(structures.size() < 40);
     }
-
-    // Excluded until we have the ontologyManager loaded into memory for the unit tests.
-    // right now it would load all ontologies when trying to create an expression result record.
-    @Test
-    @Ignore("need ontologyManager loaded into memory for the unit tests")
-    public void createExpressionResult() {
-        String xpatexID = "ZDB-XPAT-050128-4";
-
-        Transaction tx = HibernateUtil.currentSession().beginTransaction();
-        try {
-            ExpressionExperiment experiment = expRep.getExpressionExperiment(xpatexID);
-            assertNotNull(experiment);
-            ExpressionResult result = new ExpressionResult();
-            result.setExpressionExperiment(experiment);
-
-            DevelopmentStage start = anatomyRep.getStageByID("ZDB-STAGE-010723-35");
-            result.setStartStage(start);
-            DevelopmentStage end = anatomyRep.getStageByID("ZDB-STAGE-010723-36");
-            result.setEndStage(end);
-            GenericTerm term = new GenericTerm();
-            term.setTermName(Term.UNSPECIFIED);
-            term.setZdbID("ZDB-TERM-100331-1055");
-
-            result.setSuperTerm(term);
-
-            Figure figure = pubRep.getFigureByID("ZDB-FIG-041119-3");
-            result.addFigure(figure);
-            result.setExpressionFound(true);
-            expRep.createExpressionResult(result, null);
-            //tx.commit();
-        } finally {
-            tx.rollback();
-        }
-        assertTrue("yipie", true);
-    }
-
 
     @Test
     public void testDirectlySubmittedExpression() {
@@ -356,7 +353,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getExpressionOnObsoletedTerms() {
-        List<ExpressionResult> expressionResults = expRep.getExpressionOnObsoletedTerms();
+        List<ExpressionResult2> expressionResults = expRep.getExpressionOnObsoletedTerms();
         assertNotNull(expressionResults);
         Assert.assertEquals(0, expressionResults.size());
     }
@@ -484,7 +481,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getExpressionSinglePub() {
-        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-060130-9");
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-030131-4357");
         assertNotNull(m);
         Publication p = expRep.getExpressionSinglePub(m);
         assertNotNull(p);
@@ -493,7 +490,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getExpressionPub() {
-        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-060130-9");
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-030131-4357");
         assertNotNull(m);
         List<Publication> p = expRep.getExpressionPub(m);
         assertNotNull(p);
@@ -525,6 +522,27 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void pileStructureExists() {
+        ExpressedTermDTO term = new ExpressedTermDTO();
+        EntityDTO entity = new EntityDTO();
+        TermDTO superterm = new TermDTO();
+        superterm.setName("liver");
+        superterm.setOntology(OntologyDTO.ANATOMY);
+        entity.setSuperTerm(superterm);
+        term.setEntity(entity);
+        String publicationID = "ZDB-PUB-990507-16";
+        expRep.pileStructureExists(term, publicationID);
+
+        EapQualityTermDTO eap = new EapQualityTermDTO();
+        eap.setTag("abnormal");
+        TermDTO qual = new TermDTO();
+        qual.setZdbID("PATO:0000462");
+        eap.setTerm(qual);
+        term.setQualityTerm(eap);
+        expRep.pileStructureExists(term, publicationID);
+    }
+
+    @Test
     public void getExpressionResultsByTermAndStage() {
         String termOboID = "ZFA:0000823";
         GenericTerm term = getOntologyRepository().getTermByOboID(termOboID);
@@ -540,6 +558,17 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         range.setEnd(end);
         List<ExpressionResult> resultList = getExpressionRepository().getExpressionResultsByTermAndStage(range);
         assertNotNull(resultList);
+    }
+
+    @Test
+    public void getPhenotypeFromExpressions() {
+        String publicationID = "ZDB-PUB-990507-16";
+        String figureID = "ZDB-FIG-081003-3";
+        String fishID = "ZDB-FISH-150901-19447";
+        List<ExpressionResult2> expressionExperiment2s = getExpressionRepository().getPhenotypeFromExpressionsByFigureFish(publicationID, figureID, fishID, null);
+        assertNotNull(expressionExperiment2s);
+        List<ExpressionPhenotypeExperimentDTO> list = ExpressionService.createPhenotypeFromExpressions(expressionExperiment2s);
+        assertNotNull(list);
     }
 
 }

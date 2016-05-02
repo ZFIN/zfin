@@ -30,19 +30,15 @@
 </dl>
 
 <c:if test="${!empty submission.homologyInfoList}">
-<h4>Homology</h4>
-<table class="summary">
-    <tr>
-        <th>Species</th>
-        <th>Gene Symbol</th>
-        <th>Database ID</th>
-    </tr>
+    <h4>Homology</h4>
     <c:forEach var="homologue" items="${submission.homologyInfoList}">
-        <tr>
-            <td>${homologue.species}</td>
-            <td>${homologue.geneSymbol}</td>
-            <td>${homologue.databaseID}</td>
-        </tr>
+        <dl>
+            <dt>Species</dt>
+            <dd>${homologue.species}</dd>
+            <dt>Gene Symbol</dt>
+            <dd>${homologue.geneSymbol}</dd>
+            <dt>Database ID</dt>
+            <dd>${homologue.databaseID}</dd>
+        </dl>
     </c:forEach>
-</table>
 </c:if>

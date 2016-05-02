@@ -17,12 +17,14 @@ TOP = ../../..
 include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/PUBMED
-GENERICS = updatepubstatus.pl \
-           fetchPubsFromPubMed.pl \
-           loadNewPubs.sql \
-           updatePublicationDate.pl \
-           fixBadCharacterEncoding.pl
-STATICS = loadMeshTerms.groovy
+SUBDIRS   = LinkOut
+GENERICS  = addMeshTermsToAllPubs.groovy \
+            fetchPubsFromPubMed.pl \
+            fixBadCharacterEncoding.pl \
+            loadNewPubs.sql \
+            updatePublicationDate.groovy \
+            updatepubstatus.pl
+STATICS  =  PubmedUtils.groovy loadMeshTerms.groovy 
 
 # ---------------  Production Rules  ------------------------------------
 

@@ -1,22 +1,46 @@
 package org.zfin;
 
-import org.zfin.gwt.root.server.DTOConversionService;
+import org.hibernate.annotations.GenericGenerator;
 import org.zfin.infrastructure.PersonAttribution;
-import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.publication.Publication;
 
+import javax.persistence.*;
 import java.util.Set;
 
 /**
  * Domain object for ZFIN.
  */
-public abstract class ExternalNote {
 
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(
+        name = "extnote_note_type",
+        discriminatorType = DiscriminatorType.STRING
+)
+@Table(name = "external_note")
+public class ExternalNote implements Comparable<ExternalNote> {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "EXTNOTE"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "extnote_zdb_id")
     private String zdbID;
+    @Column(name = "extnote_note")
     protected String note;
+    @Column(name = "extnote_note_type", insertable = false, updatable = false)
     private String type;
-    protected Set<PublicationAttribution> pubAttributions;
+    @ManyToOne
+    @JoinColumn(name = "extnote_source_zdb_id")
+    protected Publication publication;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "recattrib_data_zdb_id")
     protected Set<PersonAttribution> personAttributions;
+    @Column(name = "extnote_data_zdb_id", insertable = false, updatable = false)
     private String externalDataZdbID;
 
     public String getExternalDataZdbID() {
@@ -51,12 +75,12 @@ public abstract class ExternalNote {
         this.type = type;
     }
 
-    public Set<PublicationAttribution> getPubAttributions() {
-        return pubAttributions;
+    public Publication getPublication() {
+        return publication;
     }
 
-    public void setPubAttributions(Set<PublicationAttribution> pubAttributions) {
-        this.pubAttributions = pubAttributions;
+    public void setPublication(Publication publication) {
+        this.publication = publication;
     }
 
     public Set<PersonAttribution> getPersonAttributions() {
@@ -67,9 +91,29 @@ public abstract class ExternalNote {
         this.personAttributions = personAttributions;
     }
 
+    public int compareTo(ExternalNote note) {
+        if (note.publication == null)
+            return -1;
+        if (publication == null)
+            return +1;
+
+        int publicationComparison = publication.compareTo(note.publication);
+        if (publicationComparison != 0)
+            return publicationComparison;
+
+        // handle case the notes have the same publication
+        // compare according to date it got created
+        return getZdbID().compareTo(note.getZdbID());
+    }
+
+
 
     public enum Type {
         ORTHOLOGY("orthology"),
+        FEATURE("feature"),
+        GENOTYPE("genotype"),
+        CURATOR_NOTE("curator note"),
+        ORIGINAL_SUBMITTER_COMMENTS("original submitter comments"),
         ANTIBODY("antibody");
 
         private String value;

@@ -3,36 +3,32 @@ package org.zfin.figure.presentation;
 
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Experiment;
-import org.zfin.mutant.*;
+import org.zfin.mutant.Fish;
+import org.zfin.mutant.FishExperiment;
+import org.zfin.mutant.PhenotypeStatementWarehouse;
+import org.zfin.mutant.PhenotypeWarehouse;
 
 
 /* Should be: Genotype, Experiment, Start Stage, End Stage, PhenotypeStatement  */
-public class PhenotypeTableRow{
+public class PhenotypeTableRow {
 
     private FishExperiment fishExperiment;
     private Fish fish;
     private Experiment experiment;
     private DevelopmentStage start;
     private DevelopmentStage end;
-    private PhenotypeStatement phenotypeStatement;
     private String fishNameOrder;
+    private PhenotypeStatementWarehouse phenotypeStatement;
 
-    public PhenotypeTableRow() {
-
-    }
-
-    public PhenotypeTableRow(PhenotypeStatement phenotypeStatement) {
-        setFishExperiment(phenotypeStatement.getPhenotypeExperiment().getFishExperiment());
-        setFish(phenotypeStatement.getPhenotypeExperiment().getFishExperiment().getFish());
-        setExperiment(phenotypeStatement.getPhenotypeExperiment().getFishExperiment().getExperiment());
-        setStart(phenotypeStatement.getPhenotypeExperiment().getStartStage());
-        setEnd(phenotypeStatement.getPhenotypeExperiment().getEndStage());
-        setPhenotypeStatement(phenotypeStatement);
-
-        //todo: might want this to be getNameOrder later...
-        setFishNameOrder(fishExperiment.getFish().getAbbreviationOrder());
-
-
+    public PhenotypeTableRow(PhenotypeStatementWarehouse phenotypeStatement) {
+        this.phenotypeStatement = phenotypeStatement;
+        PhenotypeWarehouse phenotypeWarehouse = phenotypeStatement.getPhenotypeWarehouse();
+        fishExperiment = phenotypeWarehouse.getFishExperiment();
+        fish = phenotypeWarehouse.getFishExperiment().getFish();
+        experiment = phenotypeWarehouse.getFishExperiment().getExperiment();
+        start = phenotypeWarehouse.getStart();
+        end = phenotypeWarehouse.getEnd();
+        fishNameOrder = fish.getAbbreviationOrder();
     }
 
     public FishExperiment getFishExperiment() {
@@ -47,47 +43,26 @@ public class PhenotypeTableRow{
         return fish;
     }
 
-    public void setFish(Fish fish) {
-        this.fish = fish;
-    }
-
     public Experiment getExperiment() {
         return experiment;
     }
 
-    public void setExperiment(Experiment experiment) {
-        this.experiment = experiment;
-    }
 
     public DevelopmentStage getStart() {
         return start;
     }
 
-    public void setStart(DevelopmentStage start) {
-        this.start = start;
-    }
 
     public DevelopmentStage getEnd() {
         return end;
     }
 
-    public void setEnd(DevelopmentStage end) {
-        this.end = end;
-    }
-
-    public PhenotypeStatement getPhenotypeStatement() {
+    public PhenotypeStatementWarehouse getPhenotypeStatement() {
         return phenotypeStatement;
-    }
-
-    public void setPhenotypeStatement(PhenotypeStatement phenotypeStatement) {
-        this.phenotypeStatement = phenotypeStatement;
     }
 
     public String getFishNameOrder() {
         return fishNameOrder;
     }
 
-    public void setFishNameOrder(String fishNameOrder) {
-        this.fishNameOrder = fishNameOrder;
-    }
 }

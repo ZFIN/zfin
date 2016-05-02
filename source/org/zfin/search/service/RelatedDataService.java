@@ -3,8 +3,8 @@ package org.zfin.search.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +15,14 @@ import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.OrthologyPresentationBean;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.mutant.presentation.FishModelDisplay;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
+import org.zfin.ontology.service.OntologyService;
 import org.zfin.orthology.presentation.OrthologyPresentationRow;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
 import org.zfin.search.FieldName;
 import org.zfin.search.presentation.SearchResult;
@@ -37,19 +41,23 @@ public class RelatedDataService {
     public static final String GBROWSE = "GBrowse";
     public static final String ORTHOLOGY = "Orthology";
     public static final String GENOME_BROWSER = "Genome Browser";
+    public static final String DISEASE_MODELS = "Disease Models";
+    public static final String CONSTRUCT_MAP = "Construct Map";
 
     @Autowired
     private SolrService solrService;
 
     private String[] featureRelatedDataCategories = {Category.PUBLICATION.getName(), Category.FISH.getName(), GENOME_BROWSER};
-    private String[] constructRelatedDateCategories = {"Construct Map", Category.MUTANT.getName(), Category.PUBLICATION.getName()};
+    private String[] constructRelatedDateCategories = {CONSTRUCT_MAP, Category.MUTANT.getName(), Category.PUBLICATION.getName()};
     private String[] markerCloneRelatedDateCategories = {SEQUENCES, EXPRESSION, GBROWSE, Category.PUBLICATION.getName()};
     private String[] antibodyRelatedDataCategories = {EXPRESSION, Category.PUBLICATION.getName()};
     private String[] anatomyGoRelatedDataCategories = {GENES_WITH_GO, GENES_CAUSING_PHENOTYPE, GENES_EXPRESSED};
     private String[] geneRelatedDataCategories = {EXPRESSION, PHENOTYPE, Category.DISEASE.getName(), Category.MUTANT.getName(), SEQUENCES, GENOME_BROWSER, ORTHOLOGY, Category.PUBLICATION.getName()};
     private String[] pubRelatedDataCategories = {Category.GENE.getName(), EXPRESSION, PHENOTYPE, Category.DISEASE.getName(), Category.MUTANT.getName(), Category.CONSTRUCT.getName(), Category.SEQUENCE_TARGETING_REAGENT.getName(), Category.ANTIBODY.getName(), ORTHOLOGY};
+    private String[] diseaseRelatedDataCategories = {DISEASE_MODELS, Category.PUBLICATION.getName()};
+
     public static final String GENES_WITH_GO = "Genes Annotated with this GO Term";
-    public static final String GENES_CAUSING_PHENOTYPE = "Genes Causing Phenotype";
+    public static final String GENES_CAUSING_PHENOTYPE = "Genes With Phenotype";
     public static final String GENES_EXPRESSED = "Genes Expressed in this Structure";
 
 
@@ -92,7 +100,7 @@ public class RelatedDataService {
                         }
                     }
                 }
-                String link = "<a href=/action/marker/sequence/view/" + id + ">" + SEQUENCES + "</a>";
+                String link = getSequencesLink(id);
                 links.add(link);
             }
         }
@@ -102,7 +110,7 @@ public class RelatedDataService {
         if (StringUtils.equals(category, Category.PUBLICATION.getName())
                 && StringUtils.equals(result.getHasOrthology(), "true")
                 && !StringUtils.equals(result.getId(), "ZDB-PUB-030905-1")) {
-            links.add(getOrtholistLink(id));
+            links.add(getOrthoListLink(id));
         }
 
 
@@ -115,7 +123,7 @@ public class RelatedDataService {
         if (StringUtils.equals(category, Category.MARKER.getName())) {
             if (ActiveData.isValidActiveData(id, ActiveData.Type.BAC) || ActiveData.isValidActiveData(id, ActiveData.Type.PAC)
                     || ActiveData.isValidActiveData(id, ActiveData.Type.CDNA) || ActiveData.isValidActiveData(id, ActiveData.Type.EST)) {
-                String link = "<a href=/action/marker/sequence/view/" + id + ">" + SEQUENCES + "</a>";
+                String link = getSequencesLink(id);
                 links.add(link);
             }
             links = sortLinks(links, markerCloneRelatedDateCategories);
@@ -128,7 +136,7 @@ public class RelatedDataService {
                     Figure markerFigure = figures.iterator().next();
                     Image img = markerFigure.getImg();
                     if (img != null) {
-                        String link = "<a href=/" + img.getZdbID() + ">Construct Map</a>";
+                        String link = makeLink(CONSTRUCT_MAP, "/" + img.getZdbID());
                         links.add(link);
                     }
                 }
@@ -150,11 +158,12 @@ public class RelatedDataService {
             links = sortLinks(links, anatomyGoRelatedDataCategories);
         }
         if (StringUtils.equals(category, Category.DISEASE.getName())) {
-            for (int i = 0; i < links.size(); i++) {
-                String link = links.get(i).replaceAll(Category.FISH.getName() + " \\(", "Disease Models (");
-                links.set(i, link);
+            GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByOboID(id);
+            List<FishModelDisplay> models = OntologyService.getDiseaseModelsWithFishModel(term);
+            if (CollectionUtils.isNotEmpty(models)) {
+                links.add(getDiseaseModelsLink(id, models.size()));
             }
-
+            links = sortLinks(links, diseaseRelatedDataCategories);
         }
 
         return links;
@@ -217,7 +226,7 @@ public class RelatedDataService {
 
     private QueryResponse getQueryResponse(String ontologyName) {
         String field = "category";
-        SolrServer server = SolrService.getSolrServer("prototype");
+        SolrClient server = SolrService.getSolrClient("prototype");
         SolrQuery query = new SolrQuery();
         //look for the term name in an OR over multiple fields
         query.addFilterQuery(ontologyName + ":\"" + entityName + "\"");
@@ -361,7 +370,7 @@ public class RelatedDataService {
 
 
     //todo: probably this should move to GBrowseService, but I don't want to refactor that in this branch till I can grab trunk again...
-    public String getGBrowseLink(String id) {
+    private String getGBrowseLink(String id) {
 
         if (ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
             List<Marker> markerList = getMarkerRepository().getTranscriptByZdbID(id).getAllRelatedMarker();
@@ -376,16 +385,31 @@ public class RelatedDataService {
                 return null;
             }
         }
-        return "<a href=\"" + "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id + "\">Genome Browser</a>";
+        return makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
     }
 
-
-    public String getOrthologyLink(String id) {
-        return "<a href=\"" + "/" + id + "#orthology\">Orthology</a>";
+    private String getSequencesLink(String id) {
+        return makeLink(SEQUENCES, "/action/marker/sequence/view/" + id);
     }
 
-    public String getOrtholistLink(String id) {
-        return "<a href=\"" + "/action/publication/" + id + "/orthology-list\">Orthology</a>";
+    private String getOrthologyLink(String id) {
+        return makeLink(ORTHOLOGY, "/" + id, "orthology");
+    }
+
+    private String getOrthoListLink(String id) {
+        return makeLink(ORTHOLOGY, "/action/publication/" + id + "/orthology-list");
+    }
+
+    private String getDiseaseModelsLink(String id, int count) {
+        return makeLink(DISEASE_MODELS + " (" + count + ")", "/" + id, "fish_models");
+    }
+
+    private String makeLink(String text, String url) {
+        return String.format("<a href=\"%s\">%s</a>", url, text);
+    }
+
+    private String makeLink(String text, String url, String anchor) {
+        return makeLink(text, url + "#" + anchor);
     }
 
 }

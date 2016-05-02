@@ -6,7 +6,7 @@
 <script type="text/javascript" src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
 <script type="text/javascript" src="/javascript/jquery-ui-1.10.4.custom.js"></script>
 
-<authz:authorize ifAnyGranted="root">
+<authz:authorize access="hasRole('root')">
 
 <script type="text/javascript">
 var LookupProperties0 = {
@@ -102,7 +102,7 @@ jQuery(document).ready(function () {
             jQuery('#intoMarkerAbbrev').val(markerAbbrevToMergeInto);
             jQuery('#into').html('<a target="_blank" class="external" href="/action/marker/view/' + markerZdbIdToBeMergedInto + '">' + markerAbbrevToMergeInto + '</a>');
             <c:if test="${formBean.markerToDelete.markerType.name eq 'GENE' || formBean.markerToDelete.markerType.name eq 'GENEP'}">
-                    validateUnspecifiedAlleles(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
+                    validateEap(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
             </c:if>
             <c:if test="${formBean.markerToDelete.markerType.name eq 'MRPHLNO' || formBean.markerToDelete.markerType.name eq 'TALEN' || formBean.markerToDelete.markerType.name eq 'CRISPR'}">
                     validateTargetGenesForMergingSRTs(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
@@ -172,7 +172,7 @@ var validateUnspecifiedAlleles = function(geneIDdelete, geneZdbIdMergedInto, gen
     var unspecifiedAlleleNameOfGene1 = unspecifiedAlleleDataOfGene1.name;
     var unspecifiedAlleleIdOfGene1 = unspecifiedAlleleDataOfGene1.zdbID;
 
-    if (null !== unspecifiedAlleleNameOfGene1) {
+    if (null !== unspecifiedAlleleNameOfGene1 && typeof unspecifiedAlleleNameOfGene1 != 'undefined') {
 
         unspecifiedAllelesIgnored = false;
 
@@ -190,7 +190,7 @@ var validateUnspecifiedAlleles = function(geneIDdelete, geneZdbIdMergedInto, gen
         var unspecifiedAlleleNameOfGene2 = unspecifiedAlleleDataOfGene2.name;
         var unspecifiedAlleleIdOfGene2 = unspecifiedAlleleDataOfGene2.zdbID;
 
-        if (null !== unspecifiedAlleleNameOfGene2) {
+        if (null !== unspecifiedAlleleNameOfGene2 && typeof unspecifiedAlleleNameOfGene2 != 'undefined') {
 
             jQuery('#validationUnspecifiedAllelesText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following unspecified allele:</h3>');
             jQuery('#validationUnspecifiedAllelesText').append('<div>'
@@ -686,84 +686,105 @@ var validateGeneWithTranscript = function(geneIDdelete, geneZdbIdMergedInto, gen
     checkTranscriptsDone = 1;
 
     if (checkTranscriptsDone == 1)
-        validateGeneWithOrthology(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+        validateGeneWithMappingInfo(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
 
 };
 
 var validateGeneWithOrthology = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
+
     var numberOfOrthology = 0;
-    var checkOrthologyDone = 0;
+    var numberOfOrthologyOfMarker2 = 0;
+    var checkOrthologyEvidenceAndPubDone = 0;
+    var blockMergeDueToOrth = "No";
     orthologyIgnored = false;
 
-    jQuery.ajax(
-            {
-                url: "/action/marker/get-orthology-for-geneId?geneZdbId=" + geneIDdelete,
-                type: "GET",
-                success: function(data) {
-                    for (orthology in data) {
-                        numberOfOrthology++;
-                        if (numberOfOrthology == 1)
-                            jQuery('#validationOrthologyText').append('<h3><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following orthology:</h3>');
+    var orthologyData1 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-orthology-for-geneId?geneZdbId=" + geneIDdelete,
+        dataType: "json",
+        async: false
+    }).responseText);
+
+    if (orthologyData1.length > 0) {
+        var orthologyData2 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-orthology-for-geneId?geneZdbId=" + geneZdbIdMergedInto,
+            dataType: "json",
+            async: false
+        }).responseText);
+
+        if (orthologyData2.length > 0) {
+            for (orthology1 in orthologyData1) {
+                numberOfOrthology++;
+                if (numberOfOrthology == 1)
+                    jQuery('#validationOrthologyText').append('<h3><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following orthology:</h3>');
 
 
-                        jQuery('#validationOrthologyText').append("<div>"
-                                +data[orthology].organism+"&nbsp;&nbsp;&nbsp;"+data[orthology].orthologySymbol+"&nbsp;&nbsp;&nbsp;"+data[orthology].evidenceCode+"&nbsp;&nbsp;&nbsp;"+data[orthology].publication
-                                + "</div>");
+                jQuery('#validationOrthologyText').append("<div>"
+                        +orthologyData1[orthology1].organism+"&nbsp;&nbsp;&nbsp;"+orthologyData1[orthology1].orthologySymbol+"&nbsp;&nbsp;&nbsp;"+orthologyData1[orthology1].evidenceCode+"&nbsp;&nbsp;&nbsp;"+orthologyData1[orthology1].publication
+                        + "</div>");
+                for (orthology2 in orthologyData2) {
+                    if (orthologyData1[orthology1].orthologySymbol == orthologyData2[orthology2].orthologySymbol &&
+                            (orthologyData1[orthology1].evidenceCode != orthologyData2[orthology2].evidenceCode || orthologyData1[orthology1].publication != orthologyData2[orthology2].publication) &&
+                            !(orthologyData1[orthology1].evidenceCode == orthologyData2[orthology2].evidenceCode && orthologyData1[orthology1].publication == orthologyData2[orthology2].publication)) {
+                        blockMergeDueToOrth = "Yes";
+                        break;
                     }
-
-                    if (numberOfOrthology > 0) {
-                        orthologyIgnored = false;
-
-                        jQuery('#mergedIntoGeneAbbrev').attr("disabled","disabled");
-
-                        jQuery.ajax(
-                                {
-                                    url: "/action/marker/get-orthology-for-geneId?geneZdbId=" + geneZdbIdMergedInto,
-                                    type: "GET",
-                                    success: function(data) {
-                                        var numberOfOrthologyOfMarker2 = 0;
-                                        for (orthology in data) {
-                                            numberOfOrthologyOfMarker2++;
-                                            if (numberOfOrthologyOfMarker2 == 1)
-                                                jQuery('#validationOrthologyText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following orthology:</h3>');
-
-                                            jQuery('#validationOrthologyText').append("<div>"
-                                                    +data[orthology].organism+"&nbsp;&nbsp;&nbsp;"+data[orthology].orthologySymbol+"&nbsp;&nbsp;&nbsp;"+data[orthology].evidenceCode+"&nbsp;&nbsp;&nbsp;"+data[orthology].publication
-                                                    + "</div>");
-                                        }
-                                        if (numberOfOrthologyOfMarker2 == 0)
-                                            jQuery('#validationOrthologyText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto +'">' + geneAbbrevMergedInto + '</a> has no orthology.</h3>');
-
-
-                                        jQuery('#ignoreOrth').show();
-                                    },
-                                    error: function(data) {
-                                        alert('There was a problem with the second ajax call to get orthology data: ' + data);
-                                    }
-                                }
-                        );
-
-                    }   // end of if (numberOfOrthology > 0)
-
-                    else {
-                        orthologyIgnored = true;;
-                    }
-
-
-
-                },
-                error: function(data) {
-                    alert('There was a problem with the first ajax call to get orthology data: ' + data);
                 }
             }
-    );
 
-    checkOrthologyDone = 1;
+            for (orthology2 in orthologyData2) {
+                numberOfOrthologyOfMarker2++;
+                if (numberOfOrthologyOfMarker2 == 1)
+                    jQuery('#validationOrthologyText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following orthology:</h3>');
 
-    if (checkOrthologyDone == 1)
-        validateGeneWithMappingInfo(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+                jQuery('#validationOrthologyText').append("<div>"
+                        +orthologyData2[orthology2].organism+"&nbsp;&nbsp;&nbsp;"+orthologyData2[orthology2].orthologySymbol+"&nbsp;&nbsp;&nbsp;"+orthologyData2[orthology2].evidenceCode+"&nbsp;&nbsp;&nbsp;"+orthologyData2[orthology2].publication
+                        + "</div>");
+            }
+        }
+    }
 
+    checkOrthologyEvidenceAndPubDone = 1;
+
+    if (checkOrthologyEvidenceAndPubDone == 1) {
+
+        if (blockMergeDueToOrth == "Yes") {
+            jQuery('#blockMerge').append('<h3>You cannot merge these two zebrafish genes because they have orthology data to the same human, mouse and/or fly gene.<br/>You need to move that human, mouse and/or orthology data manually before merging the zebrafish genes.</h3>');
+
+        } else {
+            if (orthologyData1.length > 0) {
+                jQuery('#ignoreOrth').show();
+            } else {
+                orthologyIgnored = true;
+            }
+            validateUnspecifiedAlleles(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+        }
+
+    }
 };
+
+var validateEap = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
+
+    var numberOfEapPubs = 0;
+
+    var eapPubs = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-eap-publication-for-geneId?geneZdbId=" + geneIDdelete,
+        dataType: "json",
+        async: false
+    }).responseText);
+
+    if (eapPubs.length > 0) {
+        for (eapPub in eapPubs) {
+            numberOfEapPubs++;
+            if (numberOfEapPubs == 1)
+                jQuery('#blockMerge').append('<h3>You cannot merge the gene with expression as phenotype data to another gene; you have to do some manual work first. <br/><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has been in the following publication(s) with expression as phenotype data:</h3>');
+
+
+            jQuery('#blockMerge').append("<div>"
+                    + '<a target="_blank" href="/' + eapPubs[eapPub].publicationZdbId +'">'
+                    + eapPubs[eapPub].linkContent + '</a>'
+                    + '</div>');
+        }
+    } else {
+        validateGeneWithOrthology(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+    }
+}
 
 var validateGeneWithMappingInfo = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
     var chromosomeGeneDelete = "Chr: ";
@@ -919,31 +940,44 @@ var validateSequencesForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, 
 };
 
 var validateFishListForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, strAbbrevMergedInto) {
-    var fishListSTR1 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-fish-for-sequenceTargetingReagentZdbId?sequenceTargetingReagentZdbId=" + strIDdelete,
+
+    var str1UsedInFish = jQuery.ajax({url: "/action/marker/sequenceTargetingReagent-used-in-fish?sequenceTargetingReagentZdbId=" + strIDdelete,
+                                      async: false
+    }).responseText;
+
+    if (str1UsedInFish === "Yes") {
+      var fishListSTR1 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-fish-for-sequenceTargetingReagentZdbId?sequenceTargetingReagentZdbId=" + strIDdelete,
         dataType: "json",
         async: false
-    }).responseText);
+      }).responseText);
 
-    var fishNamesOfSTR1 = new Array();
-    var fishIDsOfSTR1 = new Array();
-    for (fish in fishListSTR1) {
+      var fishNamesOfSTR1 = new Array();
+      var fishIDsOfSTR1 = new Array();
+      for (fish in fishListSTR1) {
         fishNamesOfSTR1.push(fishListSTR1[fish].name);
-        fishIDsOfSTR1.push(fishListSTR1[fish].zdbID);
+        fishIDsOfSTR1.push(fishListSTR1[fish].id);
+      }
     }
 
-    var fishListSTR2 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-fish-for-sequenceTargetingReagentZdbId?sequenceTargetingReagentZdbId=" + strZdbIdMergedInto,
+    var str2UsedInFish = jQuery.ajax({url: "/action/marker/sequenceTargetingReagent-used-in-fish?sequenceTargetingReagentZdbId=" + strZdbIdMergedInto,
+                                      async: false
+    }).responseText;
+
+    if (str2UsedInFish === "Yes") {
+      var fishListSTR2 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-fish-for-sequenceTargetingReagentZdbId?sequenceTargetingReagentZdbId=" + strZdbIdMergedInto,
         dataType: "json",
         async: false
-    }).responseText);
+      }).responseText);
 
-    var fishNamesOfSTR2 = new Array();
-    var fishIDsOfSTR2 = new Array();
-    for (fish in fishListSTR2) {
+      var fishNamesOfSTR2 = new Array();
+      var fishIDsOfSTR2 = new Array();
+      for (fish in fishListSTR2) {
         fishNamesOfSTR2.push(fishListSTR2[fish].name);
-        fishIDsOfSTR2.push(fishListSTR2[fish].zdbID);
+        fishIDsOfSTR2.push(fishListSTR2[fish].id);
+      }
     }
 
-    if(fishIDsOfSTR1.length !== 0 && fishIDsOfSTR2.length !== 0) {
+    if(str1UsedInFish === "Yes" && str2UsedInFish === "Yes") {
         if (fishIDsOfSTR1.length !== fishIDsOfSTR2.length) {
             differentFish = true;
         } else {
@@ -952,12 +986,20 @@ var validateFishListForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, s
                     differentFish = true;
             }
         }
+    } else if (str1UsedInFish === "Yes" && str2UsedInFish === "No") {
+        differentFish = true;
+    } else if (str1UsedInFish === "No" && str2UsedInFish === "Yes") {
+        differentFish = false;
+    } else {
+        differentFish = false;
     }
+
+
 
     if (differentFish) {
         jQuery('#validationSTRText').append('<h4>Merging these two sequence targeting reagents is not allowed because they have been with different fish.</h4>');
-        if (fishNamesOfSTR1.length > 0) {
-            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> is with the following fish:</h4>');
+        if (str1UsedInFish === "Yes") {
+            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> is associated with the following fish:</h4>');
             for (var i = 0; i < fishNamesOfSTR1.length; i++) {
                 jQuery('#validationSTRText').append('<div>'
                         + '<a target="_blank" href="/' + fishIDsOfSTR1[i] +'">'
@@ -965,11 +1007,11 @@ var validateFishListForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, s
                         + '</div>');
             }
         } else {
-            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> is with no fish.</h4>');
+            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> is associated with no fish.</h4>');
         }
 
-        if (fishNamesOfSTR2.length > 0) {
-            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is with the following fish:</h4>');
+        if (str2UsedInFish === "Yes") {
+            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is associated with the following fish:</h4>');
             for (var i = 0; i < fishNamesOfSTR2.length; i++) {
                 jQuery('#validationSTRText').append('<div>'
                         + '<a target="_blank" href="/' + fishIDsOfSTR2[i] +'">'
@@ -977,9 +1019,12 @@ var validateFishListForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, s
                         + '</div>');
             }
         } else {
-            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is with no fish.</h4>');
+            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is associated with no fish.</h4>');
         }
     }
+
+    if (!differentTargets && !differentSequence && !differentFish)
+        jQuery('#submitMerge').removeAttr('disabled');
 
     if (!differentTargets && !differentSequence && differentFish)
         jQuery('#ignoreDifferentFishForSTR').show();
@@ -1097,6 +1142,7 @@ function enableMerge() {
         <input type="button" value="Merge these two markers" id="submitMerge" title="Perform the merge action">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <input type="button" value="Cancel" id="cancelMerge" onclick="window.history.back();" title="Cancel the merge and go back to gene page">
     </form>
+    <div id="blockMerge"></div>
     <div id="validationUnspecifiedAllelesText"></div>
     <form id="sameUnspecifiedAllele">
         <input type="button" value="Ignore Unspecified Alleles" onclick="ignoreUnspecifiedAlleles(this);" title="because these two unspecified alleles are the same.">
@@ -1134,7 +1180,7 @@ function enableMerge() {
     </form>
     <div id="validationOrthologyText"></div>
     <form id="ignoreOrth">
-        <input type="button" value="Ignore Orthology" onclick="ignoreOrthology(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, orthology data for ${formBean.markerToDeleteViewString} that is different than orthology data for the same human, mouse or fly ortholog in the gene retained will be deleted (you should move it manually); data for different human, mouse or fly orthologs will be associated with the gene retained.">
+        <input type="button" value="Ignore Orthology" onclick="ignoreOrthology(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, the orthology data of ${formBean.markerToDeleteViewString} will be associated with the gene retained.">
     </form>
     <div id="validationMapInfoText"></div>
     <form id="ignoreMapping">

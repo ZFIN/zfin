@@ -1,7 +1,5 @@
 package org.zfin.gwt.root.dto;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -102,9 +100,10 @@ public class GenotypeDTO extends RelatedEntityDTO {
         if (publicNotes == null)
             return null;
         List<ExternalNoteDTO> truncatedList = new ArrayList<>();
-        for (ExternalNoteDTO note : publicNotes)
-            if (note.publicationZdbID.equals(publicationID))
+        for (ExternalNoteDTO note : publicNotes) {
+            if (note.getPublicationDTO().getZdbID().equals(publicationID))
                 truncatedList.add(note);
+        }
         return truncatedList;
     }
 
@@ -144,5 +143,17 @@ public class GenotypeDTO extends RelatedEntityDTO {
         if (backgroundGenotypeList == null)
             backgroundGenotypeList = new ArrayList<>(2);
         backgroundGenotypeList.add(genotypeDTO);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (!(o instanceof GenotypeDTO))
+            throw new RuntimeException("Can only compare genotypeDTO objects");
+        GenotypeDTO genotypeDTO = (GenotypeDTO) o;
+        if (wildtype && !genotypeDTO.isWildtype())
+            return -1;
+        if (!wildtype && genotypeDTO.isWildtype())
+            return 1;
+        return name.compareTo(genotypeDTO.getName());
     }
 }

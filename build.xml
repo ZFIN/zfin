@@ -346,8 +346,21 @@
         </taskdef>
 
         <instrument verbose="true">
-            <fileset dir="${classbin.dir}">
-                <include name="org/zfin/profile/Person1.class"/>
+            <fileset dir="${TARGETROOT}/home/WEB-INF/classes">
+                <include name="org/zfin/profile/Person.class"/>
+                <include name="org/zfin/expression/Figure.class"/>
+                <include name="org/zfin/expression/TextOnlyFigure.class"/>
+                <include name="org/zfin/expression/FigureFigure.class"/>
+                <include name="org/zfin/ontology/**Term.class"/>
+                <include name="org/zfin/publication/Publication.class"/>
+            </fileset>
+            <fileset dir="${SOURCEROOT}/home/WEB-INF/classes">
+                <include name="org/zfin/profile/Person.class"/>
+                <include name="org/zfin/expression/Figure.class"/>
+                <include name="org/zfin/expression/TextOnlyFigure.class"/>
+                <include name="org/zfin/expression/FigureFigure.class"/>
+                <include name="org/zfin/ontology/**Term.class"/>
+                <include name="org/zfin/publication/Publication.class"/>
             </fileset>
         </instrument>
     </target>
@@ -496,7 +509,6 @@
             </condition>
         </fail>
 
-        <moveWebApp to="${archive-home.target" from="${post-home.target}"/>
         <moveWebApp to="${post-home.target" from="${home.target}"/>
         <moveWebApp to="${home.target" from="${pre-home.target}" failonerror="true"/>
 
@@ -518,6 +530,7 @@
                     <include name="css/**"/>
                     <include name="fonts/**"/>
                     <include name="javascript/**"/>
+                    <include name="templates/**"/>
                 </fileset>
             </move>
             <move file="@{from}/java-deploy-version.html" todir="@{to}" failonerror="false"/>
@@ -544,13 +557,6 @@
         <available property="post-home.exists" file="${post-home.target}"/>
         <echo message="${post-home.exists}"/>
 
-        <if>
-            <equals arg1="${post-home.exists}" arg2="true"/>
-            <then>
-                <moveWebApp to="${archive-home.target}" from="${post-home.target}" overwrite="true"
-                            failonerror="false"/>
-            </then>
-        </if>
         <moveWebApp to="${post-home.target}" from="${home.target}" overwrite="true" failonerror="false"/>
         <moveWebApp to="${home.target}" from="${pre-home.target}" overwrite="true" failonerror="true"/>
 
@@ -590,11 +596,14 @@
     </macrodef>
 
 
-    <target name="deploy" depends="deploy-without-tests,test,productionSmokeTests"
+    <target name="deploy" depends="deploy-without-tests,instrument,test,productionSmokeTests"
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
     <target name="deploy-without-tests"
-            depends="pre-deploy,build-properties,advance-build,unittests-quiet,notify-restart,restart,notify-up,deploy-solr"/>
+            depends="pre-deploy,build-properties,advance-build,unittests-quiet,notify-restart,instrument,restart,notify-up,deploy-solr"/>
+
+    <target name="deploy-without-tests-and-tomcat-restart"
+            depends="pre-deploy,build-properties,advance-build,unittests-quiet,deploy-solr"/>
 
     <target name="pre-deploy" depends="do,notify-deploy,prepareDeploy,gwt,copy-to-pre-release,generateVersionInfo"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
@@ -611,6 +620,7 @@
             <delete dir="@{location}/fonts"/>
             <delete dir="@{location}/javascript"/>
             <delete dir="@{location}/images"/>
+            <delete dir="@{location}/templates"/>
             <delete dir="@{location}/WEB-INF"/>
         </sequential>
     </macrodef>
@@ -663,6 +673,7 @@
                     <exclude name="javascript/phenogrid/**"/>
                     <exclude name="fonts/**"/>
                     <exclude name="images/**"/>
+                    <exclude name="templates/**"/>
                     <exclude name="**/*.jar"/>
                     <exclude name="**/*.zip"/>
                     <exclude name="**/*.class"/>
@@ -678,6 +689,7 @@
                     <include name="images/**"/>
                     <include name="css/images/**"/>
                     <include name="fonts/**"/>
+                    <include name="templates/**"/>
                     <include name="WEB-INF/**/*.jar"/>
                     <include name="WEB-INF/**/*.zip"/>
                     <include name="WEB-INF/**/*.class"/>
@@ -697,7 +709,7 @@
         <copy-indexer-build-file-with-env-variables/>
     </target>
 
-    <target name="dirtydeploy" depends="compile"
+    <target name="dirtydeploy" depends="compile,instrument"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been built">
         <copyWebApp from="${web.dir}" to="${home.target}"/>
         <copy-indexer-build-file-with-env-variables/>

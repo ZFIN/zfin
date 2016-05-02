@@ -1,12 +1,17 @@
 package org.zfin.marker.presentation;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.gwt.root.dto.CuratorNoteDTO;
+import org.zfin.gwt.root.dto.NoteDTO;
+import org.zfin.gwt.root.server.DTOMarkerService;
+import org.zfin.infrastructure.DataNote;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.publication.Publication;
@@ -24,13 +29,16 @@ import java.util.Set;
 public class MarkerNotesController {
     private Logger logger = Logger.getLogger(SequenceViewController.class);
 
-    private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+    @Autowired
+    private InfrastructureRepository infrastructureRepository;
+
+    @Autowired
+    private MarkerRepository markerRepository;
 
     @RequestMapping("/note/expression")
     public String getXpatSelectNote() {
         return "marker/expression-note.insert";
     }
-
 
     @RequestMapping("/note/phenotype")
     public String getPhenotypeSelectNote() {
@@ -46,29 +54,6 @@ public class MarkerNotesController {
     public String getSTRGbrowseNote() {
         return "marker/sequence-targeting-reagent-gbrowse-note.insert";
     }
-
-    @RequestMapping("/note/external/{zdbID}")
-    public String getExternalNote(
-            @PathVariable String zdbID
-            , Model model) {
-
-        Marker marker = markerRepository.getMarkerByID(zdbID);
-        if (marker == null) {
-            marker = getReplacedMarker(zdbID);
-        }
-
-        if (marker == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, zdbID) ;
-            return "record-not-found.popup";
-        }
-
-        List<String> notes = RepositoryFactory.getInfrastructureRepository().getExternalOrthologyNoteStrings(marker.getZdbID());
-        model.addAttribute("marker", marker);
-        model.addAttribute("notes", notes);
-
-        return "marker/external-note.insert";
-    }
-
 
     @RequestMapping("/gene-product-description/{zdbID}")
     public String getGeneProducts(
@@ -135,6 +120,71 @@ public class MarkerNotesController {
         return "marker/snp-publication-list.page";
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/{markerId}/notes", method = RequestMethod.GET)
+    public List<? super NoteDTO> getMarkerNotes(@PathVariable String markerId) {
+        Marker marker = markerRepository.getMarkerByID(markerId);
+        List<? super NoteDTO> notes = DTOMarkerService.getCuratorNoteDTOs(marker);
+        notes.add(DTOMarkerService.getPublicNoteDTO(marker));
+        return notes;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{markerId}/public-note", method = RequestMethod.POST)
+    public NoteDTO updatePublicNote(@PathVariable String markerId,
+                                    @RequestBody NoteDTO noteDTO) {
+        Marker marker = markerRepository.getMarkerByID(markerId);
+
+        HibernateUtil.createTransaction();
+        markerRepository.updateMarkerPublicNote(marker, noteDTO.getNoteData());
+        NoteDTO newNote = DTOMarkerService.getPublicNoteDTO(marker);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return newNote;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{markerId}/curator-notes", method = RequestMethod.POST)
+    public CuratorNoteDTO addCuratorNote(@PathVariable String markerId,
+                                         @RequestBody NoteDTO noteDTO) {
+        Marker marker = markerRepository.getMarkerByID(markerId);
+
+        HibernateUtil.createTransaction();
+        DataNote note = markerRepository.addMarkerDataNote(marker, noteDTO.getNoteData());
+        CuratorNoteDTO newNote = DTOMarkerService.convertToCuratorNoteDto(note, marker);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return newNote;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{markerId}/curator-notes/{noteID}", method = RequestMethod.POST)
+    public CuratorNoteDTO updateCuratorNote(@PathVariable String markerId,
+                                            @PathVariable String noteID,
+                                            @RequestBody NoteDTO noteDTO) {
+        Marker marker = markerRepository.getMarkerByID(markerId);
+        DataNote note = infrastructureRepository.getDataNoteByID(noteID);
+
+        HibernateUtil.createTransaction();
+        markerRepository.updateCuratorNote(marker, note, noteDTO.getNoteData());
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return DTOMarkerService.convertToCuratorNoteDto(note, marker);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{markerId}/curator-notes/{noteID}", method = RequestMethod.DELETE)
+    public String deleteCuratorNote(@PathVariable String markerId,
+                                    @PathVariable String noteID) {
+        Marker marker = markerRepository.getMarkerByID(markerId);
+        DataNote note = infrastructureRepository.getDataNoteByID(noteID);
+
+        HibernateUtil.createTransaction();
+        markerRepository.removeCuratorNote(marker, note);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return "OK";
+    }
 
     private Marker getReplacedMarker(String markerZdbId) {
         String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(markerZdbId);

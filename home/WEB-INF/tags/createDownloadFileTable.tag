@@ -68,7 +68,7 @@
                         </c:forEach>
                     </tr>
                 </table>
-                <authz:authorize ifAnyGranted="root">
+                <authz:authorize access="hasRole('root')">
                 <c:if test="${!empty fileInfo.downloadFile.query}">
                      <table>
                         <tr>

@@ -1,5 +1,5 @@
 <%@ page import="org.zfin.gwt.marker.ui.GoMarkerEditController" %>
-<%--<authz:authorize ifAnyGranted="root">--%>
+<%--<authz:authorize access="hasRole('root')">--%>
 <%
     //    String state = request.getParameter(GoMarkerEditController.STATE_STRING);
 //    if(state==null){

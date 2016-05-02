@@ -43,7 +43,7 @@
                         ${formBean.antibody.zdbID}
                     </font>
                 </td>
-                <authz:authorize ifAnyGranted="root">
+                <authz:authorize access="hasRole('root')">
                     <td>
                         <a href="antibody-publication-list?antibodyID=${formBean.antibody.zdbID}&update=true">
                             <font size=-1 color=red> Add/Update this Record </font>
@@ -111,7 +111,7 @@
     </c:choose>
     &nbsp;&nbsp;&nbsp;
     </c:if>
-    <authz:authorize ifAnyGranted="root">
+    <authz:authorize access="hasRole('root')">
         <span id="enter-pub-id" style="display: none;">
                 <strong title="Global Reference used on this page" id="Def-Pub-field">Enter Pub ID:</strong><form:input
                 path="<%= AntibodyBean.AB_NEWPUB_ZDB_ID%>" size="20"></form:input>
@@ -133,7 +133,7 @@
         <c:forEach var="publishedPublication" items="${formBean.sortedPublishedPublications}" varStatus="loop">
             <zfin:alternating-tr loopName="loop">
                 <td>
-                    <authz:authorize ifAnyGranted="root">
+                    <authz:authorize access="hasRole('root')">
                     <c:if test="${formBean.update && publishedPublication.deletable}">
                         <font size=-1><input type=button value=delete
                                              onclick="disassociatePublication('antibody-citation-disassociate-publication?antibodyID=${formBean.antibody.zdbID}&disassociatedPubId=${publishedPublication.zdbID}<c:if test="${formBean.orderBy == 'author'}">&orderBy=author</c:if><c:if test="${formBean.orderBy == 'date'}">&orderBy=date</c:if>&update=true')"></font>
@@ -144,7 +144,7 @@
                         <a href="/${publishedPublication.zdbID}">${publishedPublication.authors}
                             &nbsp;(${publishedPublication.year})&nbsp;${publishedPublication.title}.&nbsp;${publishedPublication.journal.abbreviation}&nbsp;<c:if
                                     test="${publishedPublication.volume != null}">${publishedPublication.volume}:</c:if>${publishedPublication.pages}
-                        </a><authz:authorize ifAnyGranted="root">&nbsp;&nbsp;&nbsp;<c:if
+                        </a><authz:authorize access="hasRole('root')">&nbsp;&nbsp;&nbsp;<c:if
                             test="${publishedPublication.open}">OPEN</c:if><c:if
                             test="${!publishedPublication.open}">CLOSE</c:if><c:if
                             test="${publishedPublication.indexed}">,&nbsp;INDEXED</c:if></authz:authorize>
@@ -172,7 +172,7 @@
             <div class="show_pubs">
             <a href="/${unpublishedPublication.zdbID}">${unpublishedPublication.authors}
                 &nbsp;(${unpublishedPublication.year})&nbsp;${unpublishedPublication.title}
-            </a><authz:authorize ifAnyGranted="root">&nbsp;&nbsp;&nbsp;<c:if
+            </a><authz:authorize access="hasRole('root')">&nbsp;&nbsp;&nbsp;<c:if
                 test="${unpublishedPublication.open}">OPEN</c:if><c:if
                 test="${!unpublishedPublication.open}">CLOSE</c:if><c:if
                 test="${publishedPublication.indexed}">,&nbsp;INDEXED</c:if></authz:authorize>

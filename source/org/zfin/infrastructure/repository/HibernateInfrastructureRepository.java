@@ -39,6 +39,7 @@ import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DateUtil;
+import org.zfin.util.ZfinStringUtils;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -46,7 +47,6 @@ import java.util.*;
 import java.util.Date;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 @Repository
 public class HibernateInfrastructureRepository implements InfrastructureRepository {
@@ -136,8 +136,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     //todo: add a getter here, or do some mapping to objects so that we can test the insert in a routine way
 
     public void insertRecordAttribution(String dataZdbID, String sourceZdbID) {
-        if (hasStandardPublicationAttribution(dataZdbID, sourceZdbID))
+        if (hasStandardPublicationAttribution(dataZdbID, sourceZdbID)) {
             return;
+        }
 
         Session session = HibernateUtil.currentSession();
 
@@ -170,8 +171,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         publicationAttribution.setDataZdbID(dataZdbID);
         publicationAttribution.setPublication(publication);
         publicationAttribution.setSourceType(RecordAttribution.SourceType.STANDARD);
-        if (!existAttribution(publicationAttribution))
+        if (!existAttribution(publicationAttribution)) {
             HibernateUtil.currentSession().save(publicationAttribution);
+        }
     }
 
     private boolean existAttribution(PublicationAttribution attribution) {
@@ -230,23 +232,13 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (RecordAttribution) criteria.uniqueResult();
     }
 
-    public List<RecordAttribution> getRecAttribforFtrType(String dataZdbID) {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(RecordAttribution.class);
-        criteria.add(Restrictions.eq("dataZdbID", dataZdbID));
-        criteria.add(Restrictions.eq("sourceType", RecordAttribution.SourceType.FEATURE_TYPE.toString()));
-
-        return criteria.list();
-
-    }
-
+    @SuppressWarnings("unchecked")
     public List<RecordAttribution> getRecordAttributionsForType(String dataZdbID, RecordAttribution.SourceType sourceType) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(RecordAttribution.class);
         criteria.add(Restrictions.eq("dataZdbID", dataZdbID));
         criteria.add(Restrictions.eq("sourceType", sourceType.toString()));
         return criteria.list();
-
     }
 
 
@@ -284,10 +276,19 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @SuppressWarnings("unchecked")
-    public List<PublicationAttribution> getPublicationAttributions(String dblinkZdbID) {
+    public List<PublicationAttribution> getPublicationAttributions(String dataZdbID) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(PublicationAttribution.class);
-        criteria.add(Restrictions.eq("dataZdbID", dblinkZdbID));
+        criteria.add(Restrictions.eq("dataZdbID", dataZdbID));
+        return criteria.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<PublicationAttribution> getPublicationAttributions(String dataZdbID, RecordAttribution.SourceType type) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(PublicationAttribution.class);
+        criteria.add(Restrictions.eq("dataZdbID", dataZdbID));
+        criteria.add(Restrictions.eq("sourceType", type.toString()));
         return criteria.list();
     }
 
@@ -313,9 +314,10 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      */
     @SuppressWarnings("unchecked")
     public List<GenericTerm> getTermsByName(String termName, List<Ontology> ontologies) {
-        if (ontologies == null || ontologies.isEmpty())
+        if (ontologies == null || ontologies.isEmpty()) {
             throw new NullPointerException("No Ontology provided");
-        List<String> ontologyNameStrings = new ArrayList<String>(2);
+        }
+        List<String> ontologyNameStrings = new ArrayList<>(2);
         for (Ontology ontology : ontologies) {
             ontologyNameStrings.add(ontology.getOntologyName());
         }
@@ -324,41 +326,45 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         String hql = "select distinct term from GenericTerm term  " +
                 "where lower(term.termName) like :name " +
                 " AND term.obsolete = :obsolete ";
-        if (ontologies.size() == 1)
+        if (ontologies.size() == 1) {
             hql += " AND term.ontology = :ontology ";
-        else
+        } else {
             hql += " AND term.ontology in (:ontology) ";
+        }
         hql += " order by term.termName";
 
         Session session = HibernateUtil.currentSession();
         Query query = session.createQuery(hql);
         query.setString("name", "%" + termName.toLowerCase() + "%");
-        if (ontologies.size() == 1)
+        if (ontologies.size() == 1) {
             query.setParameter("ontology", ontologies.get(0));
-        else
+        } else {
             query.setParameterList("ontology", ontologyNameStrings);
+        }
         query.setBoolean("obsolete", false);
         List<GenericTerm> list = (List<GenericTerm>) query.list();
 
         hql = "select alias.term from TermAlias alias " +
                 "where  alias.aliasLowerCase like :name " +
                 " AND alias.term.obsolete = :obsolete ";
-        if (ontologies.size() == 1)
+        if (ontologies.size() == 1) {
             hql += " AND alias.term.ontology = :ontology ";
-        else
+        } else {
             hql += " AND alias.term.ontology in  (:ontology) ";
+        }
         hql += " order by alias.term.termName";
         Query queryTwo = session.createQuery(hql);
         queryTwo.setString("name", "%" + termName.toLowerCase() + "%");
-        if (ontologies.size() == 1)
+        if (ontologies.size() == 1) {
             queryTwo.setParameter("ontology", ontologies.get(0));
-        else
+        } else {
             queryTwo.setParameterList("ontology", ontologies);
+        }
         queryTwo.setBoolean("obsolete", false);
         List<GenericTerm> synonyms = (List<GenericTerm>) queryTwo.list();
         list.addAll(synonyms);
-        Set<GenericTerm> distinctSet = new HashSet<GenericTerm>(list);
-        List<GenericTerm> distinctList = new ArrayList<GenericTerm>(distinctSet);
+        Set<GenericTerm> distinctSet = new HashSet<>(list);
+        List<GenericTerm> distinctList = new ArrayList<>(distinctSet);
         return distinctList;
     }
 
@@ -371,12 +377,11 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      */
     @SuppressWarnings("unchecked")
     public List<GenericTerm> getTermsBySynonymName(String queryString, Ontology ontology) {
-        if (ontology == null)
+        if (ontology == null) {
             throw new NullPointerException("No Ontology provided");
+        }
 
         Session session = HibernateUtil.currentSession();
-        String hql = "from TermAlias alias where " +
-                "          alias ";
         Criteria criteria = session.createCriteria(TermAlias.class);
         criteria.add(Restrictions.like("alias", queryString, MatchMode.ANYWHERE));
         Criteria termCriteria = criteria.createCriteria("term");
@@ -395,8 +400,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      */
     @SuppressWarnings("unchecked")
     public GenericTerm getTermByName(String termName, Ontology ontology) {
-        if (ontology == null)
+        if (ontology == null) {
             throw new NullPointerException("No Ontology provided");
+        }
 
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(GenericTerm.class);
@@ -405,8 +411,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         criteria.add(Restrictions.eq("ontology", ontology));
         criteria.add(Restrictions.eq("secondary", false));
         GenericTerm term = (GenericTerm) criteria.uniqueResult();
-        if (term == null)
+        if (term == null) {
             return null;
+        }
         return term;
     }
 
@@ -419,12 +426,14 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      * @return Term
      */
     public GenericTerm getTermByName(String termName, List<Ontology> ontologies) {
-        if (ontologies == null)
+        if (ontologies == null) {
             return null;
+        }
         for (Ontology ontology : ontologies) {
             GenericTerm term = getTermByName(termName, ontology);
-            if (term != null)
+            if (term != null) {
                 return term;
+            }
         }
         return null;
     }
@@ -438,14 +447,16 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      */
     @SuppressWarnings("unchecked")
     public GenericTerm getTermByID(String termID) {
-        if (StringUtils.isEmpty(termID))
+        if (StringUtils.isEmpty(termID)) {
             return null;
+        }
 
         Session session = HibernateUtil.currentSession();
         GenericTerm term = null;
         term = (GenericTerm) session.get(GenericTerm.class, termID);
-        if (term == null)
+        if (term == null) {
             return null;
+        }
         return term;
     }
 
@@ -684,7 +695,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     // Todo: ReplacementZdbID is a composite key (why?) and thus this
     // could retrieve more than one record. If so then it throws an exception,
-    // meaning the id was replaced more than once and then we would not know whic one to use.
+    // meaning the id was replaced more than once and then we would not know which one to use.
 
     public ReplacementZdbID getReplacementZdbId(String oldZdbID) {
         Session session = HibernateUtil.currentSession();
@@ -1066,8 +1077,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             throw new RuntimeException(exception);
         } finally {
             try {
-                if (statement != null)
+                if (statement != null) {
                     statement.close();
+                }
             } catch (SQLException e) {
                 logger.error("could not close statement '" + jdbcStatement.getScriptFile() + "' " +
                         "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
@@ -1112,8 +1124,13 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                     } else if (columnType.equals("java.lang.Long")) {
                         long number = Long.valueOf(column);
                         statement.setLong(index++, number);
-                    } else
-                        statement.setString(index++, column);
+                    } else {
+                        String unicoded = column;
+                        if (column != null) {
+                            unicoded = ZfinStringUtils.escapeHighUnicode(column);
+                        }
+                        statement.setString(index++, unicoded);
+                    }
                 }
                 statement.addBatch();
                 currentBatchSize++;
@@ -1140,10 +1157,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             throw new RuntimeException(exception);
         } finally {
             try {
-                if (rs != null)
+                if (rs != null) {
                     rs.close();
-                if (statement != null)
+                }
+                if (statement != null) {
                     statement.close();
+                }
             } catch (SQLException e) {
                 logger.error("could not close statement '" + jdbcStatement.getScriptFile() + "' " +
                         "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
@@ -1176,8 +1195,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             throw new RuntimeException(exception);
         } finally {
             try {
-                if (rs != null)
+                if (rs != null) {
                     rs.close();
+                }
             } catch (SQLException e) {
                 // ignore
             }
@@ -1206,8 +1226,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                     if (columnType.equals("java.lang.Boolean")) {
                         boolean columnTypeBol = column.equals("t");
                         statement.setBoolean(index++, columnTypeBol);
-                    } else
+                    } else {
                         statement.setString(index++, column);
+                    }
                 }
                 statement.execute();
             }
@@ -1216,10 +1237,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             logger.error(DbSystemUtil.getLockInfo());
         } finally {
             try {
-                if (rs != null)
+                if (rs != null) {
                     rs.close();
-                if (statement != null)
+                }
+                if (statement != null) {
                     statement.close();
+                }
             } catch (SQLException e) {
                 logger.error("could not close statement '" + jdbcStatement.getScriptFile() + "' " +
                         "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
@@ -1236,10 +1259,11 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      */
     @Override
     public List<List<String>> executeNativeQuery(DatabaseJdbcStatement statement) {
-        if (statement.isSubquery())
+        if (statement.isSubquery()) {
             return executeNativeQuery(statement.getSubQuery());
-        else
+        } else {
             return executeNativeQuery(statement.getQuery());
+        }
     }
 
     public List<List<String>> executeNativeQuery(String queryString) {
@@ -1252,8 +1276,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 List<String> row = new ArrayList<>();
                 for (int index = 1; index <= rs.getMetaData().getColumnCount(); index++) {
                     String value = rs.getString(index);
-                    if (value == null)
+                    if (value == null) {
                         value = "";
+                    }
                     row.add(value);
                 }
                 data.add(row);
@@ -1279,21 +1304,24 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             throw new RuntimeException("Not a dynamic query");
 */
         List<List<String>> firstQueryResultList = executeNativeQuery(statement);
-        if (firstQueryResultList == null)
+        if (firstQueryResultList == null) {
             return null;
+        }
         DatabaseJdbcStatement subQuery = statement.getSubQueryStatement();
-        if (subQuery == null)
+        if (subQuery == null) {
             return firstQueryResultList;
+        }
         List<List<String>> returnResultList = new ArrayList<>();
         for (List<String> resultRecord : firstQueryResultList) {
             subQuery.bindVariables(resultRecord);
             List<List<String>> c = executeNativeQuery(subQuery);
             if ((!subQuery.isExistsSubquery() && CollectionUtils.isEmpty(c)) ||
                     (subQuery.isExistsSubquery() && CollectionUtils.isNotEmpty(c))) {
-                if (subQuery.isListSubquery())
+                if (subQuery.isListSubquery()) {
                     returnResultList.addAll(c);
-                else
+                } else {
                     returnResultList.add(resultRecord);
+                }
             }
         }
         return returnResultList;
@@ -1309,35 +1337,38 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public List<List<String>> executeNativeQuery(DatabaseJdbcStatement statement, Session session) {
         SQLQuery query = session.createSQLQuery(statement.getQuery());
         List objects = query.list();
-        if (objects == null)
+        if (objects == null) {
             return null;
-        if (objects.size() == 0)
+        }
+        if (objects.size() == 0) {
             return null;
+        }
 
-        List<List<String>> data = new ArrayList<List<String>>(objects.size());
+        List<List<String>> data = new ArrayList<>(objects.size());
         if (objects.get(0) instanceof Object[]) {
             List<Object[]> entities = (List<Object[]>) objects;
             for (Object[] row : entities) {
-                List<String> singleRow = new ArrayList<String>(row.length);
+                List<String> singleRow = new ArrayList<>(row.length);
                 for (Object o : row) {
-                    if (o != null)
+                    if (o != null) {
                         singleRow.add(o.toString());
-                    else
+                    } else {
                         singleRow.add("");
+                    }
                 }
                 data.add(singleRow);
             }
         } else if (objects.get(0) instanceof BigDecimal) {
             List<BigDecimal> entities = (List<BigDecimal>) objects;
             for (BigDecimal row : entities) {
-                List<String> singleRow = new ArrayList<String>(1);
+                List<String> singleRow = new ArrayList<>(1);
                 singleRow.add(row.toString());
                 data.add(singleRow);
             }
         } else {
             List<String> entities = (List<String>) objects;
             for (String row : entities) {
-                List<String> singleRow = new ArrayList<String>(1);
+                List<String> singleRow = new ArrayList<>(1);
                 singleRow.add(row);
                 data.add(singleRow);
             }
@@ -1375,8 +1406,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public List<String> getAllEntities(Class clazz, String idName, int firstNIds) {
         if (firstNIds < 0) return null;
 
-        if (HibernateUtil.currentSession().getSessionFactory().getClassMetadata(clazz) == null)
+        if (HibernateUtil.currentSession().getSessionFactory().getClassMetadata(clazz) == null) {
             throw new NullPointerException("No Entity of type " + clazz.getName() + " found in Hibernate mapping file.");
+        }
 
         String hql = "select distinct " + idName + " from " + clazz.getSimpleName() + " order by " + idName;
         Query query = HibernateUtil.currentSession().createQuery(hql);
@@ -1384,28 +1416,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             query.setMaxResults(firstNIds);
         }
         return query.list();
-    }
-
-    @Override
-    public List<String> getExternalOrthologyNoteStrings(String zdbID) {
-        String sql = "   select en.extnote_note from external_note en  " +
-                "   join marker m on m.mrkr_zdb_id=en.extnote_data_zdb_id " +
-                "   where m.mrkr_zdb_id = :markerZdbID " +
-                "   and en.extnote_note_type='orthology' ";
-        return HibernateUtil.currentSession().createSQLQuery(sql)
-                .setString("markerZdbID", zdbID)
-                .list();
-    }
-
-    @Override
-    public List<ExternalNote> getExternalNotes(String zdbID) {
-        String hql = " select en from ExternalNote en join en.pubAttributions pa " +
-                " where en.externalDataZdbID = :externalDataZdbID " +
-                " order by pa.publication.publicationDate desc ";
-
-        return HibernateUtil.currentSession().createQuery(hql)
-                .setString("externalDataZdbID", zdbID)
-                .list();
     }
 
     @Override
@@ -1502,10 +1512,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 "and ra.recattrib_source_zdb_id= :pubZdbID " +
                 "and ra.recattrib_source_type='standard' " +
                 " ";
-//        String hql = " " +
-//                "  select count(*) from Marker m join m.publications p where p.sourceZdbID = :pubZdbIDs and p.sourceType.value = :type " +
-//                " ";
-//        int numPubs = Integer.valueOf(HibernateUtil.currentSession().createQuery(hql)
         int numPubs = Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("zdbID", zdbID)
                 .setString("pubZdbID", microarrayPub)
@@ -1533,10 +1539,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 " and ra.recattrib_source_type='standard' " +
                 ") " +
                 " ";
-//        String hql = " " +
-//                "  select count(*) from Marker m join m.publications p where p.sourceZdbID = :pubZdbIDs and p.sourceType.value = :type " +
-//                " ";
-//        int numPubs = Integer.valueOf(HibernateUtil.currentSession().createQuery(hql)
         int numPubs = Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("zdbID", zdbID)
                 .setString("pubZdbID", microarrayPub)
@@ -1556,7 +1558,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             rs = st.executeQuery("select * from " + table);
             ResultSetMetaData rsMetaData = rs.getMetaData();
             int columnCount = rsMetaData.getColumnCount();
-            columnNames = new ArrayList<String>(columnCount);
+            columnNames = new ArrayList<>(columnCount);
             int index = 1;
             while (index <= columnCount) {
                 columnNames.add(rsMetaData.getColumnName(index++));
@@ -1565,10 +1567,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             logger.error(DbSystemUtil.getLockInfo());
         } finally {
             try {
-                if (rs != null)
+                if (rs != null) {
                     rs.close();
-                if (statement != null)
+                }
+                if (statement != null) {
                     statement.close();
+                }
             } catch (SQLException e) {
                 logger.error("could not close statement", e);
             }
@@ -1588,7 +1592,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Connection connection = session.connection();
         PreparedStatement statement = null;
         ResultSet rs = null;
-        List<Column> columns = new ArrayList<Column>(5);
+        List<Column> columns = new ArrayList<>(5);
         try {
             Statement st = connection.createStatement();
             rs = st.executeQuery("select * from " + tableName);
@@ -1607,10 +1611,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             logger.error(DbSystemUtil.getLockInfo());
         } finally {
             try {
-                if (rs != null)
+                if (rs != null) {
                     rs.close();
-                if (statement != null)
+                }
+                if (statement != null) {
                     statement.close();
+                }
             } catch (SQLException e) {
                 logger.error("could not close statement", e);
             }
@@ -1660,31 +1666,20 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 "model.publication.authors  from DiseaseAnnotation as model where " +
                 "model.disease = :term";
 
-        if (orderBy == null || orderBy.equalsIgnoreCase("date"))
+        if (orderBy == null || orderBy.equalsIgnoreCase("date")) {
             hql += "     order by model.publication.publicationDate desc";
-        else if (orderBy.equalsIgnoreCase("author"))
+        } else if (orderBy.equalsIgnoreCase("author")) {
             hql += "     order by model.publication.authors";
+        }
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("term", term);
 
         List<Object[]> objectList = (List<Object[]>) query.list();
         List<Publication> pubList = new ArrayList<>(objectList.size());
-        for (Object[] o : objectList)
+        for (Object[] o : objectList) {
             pubList.add((Publication) o[0]);
+        }
         return pubList;
-    }
-
-    @Override
-    public void saveExternalNote(GenotypeExternalNote note, Publication publication) {
-        HibernateUtil.currentSession().save(note);
-        PublicationAttribution attribution = new PublicationAttribution();
-        attribution.setPublication(publication);
-        attribution.setDataZdbID(note.getZdbID());
-        attribution.setSourceType(RecordAttribution.SourceType.STANDARD);
-        HibernateUtil.currentSession().save(attribution);
-        Set<PublicationAttribution> set = new HashSet<>(1);
-        set.add(attribution);
-        note.setPubAttributions(set);
     }
 
     @Override
@@ -1700,8 +1695,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         for (GenotypeFeature gFeature : genotype.getGenotypeFeatures()) {
             Feature feature = gFeature.getFeature();
             insertStandardPubAttribution(feature.getZdbID(), publication);
-            if (feature.getAllelicGene() != null)
+            if (feature.getAllelicGene() != null) {
                 insertStandardPubAttribution(feature.getAllelicGene().getZdbID(), publication);
+            }
         }
 
     }

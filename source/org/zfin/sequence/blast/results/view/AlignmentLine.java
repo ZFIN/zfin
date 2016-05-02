@@ -4,15 +4,20 @@ package org.zfin.sequence.blast.results.view;
  */
 public class AlignmentLine {
 
-    public final static int PADDING = 5 ;
+    public final static int PADDING = 5;
 
-    private String queryStrand ;
+    private final static String QUERY_LABEL = "Query:  ";
+    private final static String HIT_LABEL = "  Hit:  ";
+    private final static String PADDING_BEFORE = "  ";
+    private final static String PADDING_AFTER = "   ";
+
+    private String queryStrand;
     private String midlineStrand;
-    private String hitStrand ;
-    private int startQuery ;
-    private int stopQuery ;
-    private int startHit ;
-    private int stopHit ;
+    private String hitStrand;
+    private int startQuery;
+    private int stopQuery;
+    private int startHit;
+    private int stopHit;
 
     public String getQueryStrand() {
         return queryStrand;
@@ -71,30 +76,53 @@ public class AlignmentLine {
     }
 
     public String getStartQueryString() {
-        return padTo(String.valueOf(startQuery),PADDING) ;
+        return padTo(String.valueOf(startQuery), PADDING);
     }
 
     public String getStopQueryString() {
-        return padTo(String.valueOf(stopQuery),PADDING) ;
+        return padTo(String.valueOf(stopQuery), PADDING);
     }
 
     public String getStartHitString() {
-        return padTo(String.valueOf(startHit),PADDING) ;
+        return padTo(String.valueOf(startHit), PADDING);
     }
 
     public String getStopHitString() {
-        return padTo(String.valueOf(stopHit),PADDING) ;
+        return padTo(String.valueOf(stopHit), PADDING);
     }
-        /**
+
+    /**
      * Ensures the given string is the correct length.
-     *
      */
-    private String padTo( String poString, int numberOfChars) {
-        int toPad = numberOfChars - poString.length() ;
-        for(int i = 0 ; i < toPad ; i++){
-            poString += " " ;
+    private String padTo(String poString, int numberOfChars) {
+        int toPad = numberOfChars - poString.length();
+        for (int i = 0; i < toPad; i++) {
+            poString += " ";
         }
-        return poString ;
+        return poString;
+    }
+
+    /**
+     * Display gets built here instead of JSP so we have full control
+     * over spacing.
+     */
+    public String getDisplayString() {
+        return QUERY_LABEL +
+                getStartQueryString() +
+                PADDING_BEFORE +
+                getQueryStrand() +
+                PADDING_AFTER +
+                getStopQueryString() +
+                "\n" +
+                padTo("", QUERY_LABEL.length() + PADDING + PADDING_BEFORE.length()) +
+                getMidlineStrand() +
+                "\n" +
+                HIT_LABEL +
+                getStartHitString() +
+                PADDING_BEFORE +
+                getHitStrand() +
+                PADDING_AFTER +
+                getStopHitString();
     }
 
 }

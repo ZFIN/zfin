@@ -2,20 +2,14 @@
 
 <jsp:useBean id="phenotypeSummaryCriteria" class="org.zfin.fish.presentation.PhenotypeSummaryCriteria" scope="request"/>
 
-<table width="100%" cellpadding="0" cellspacing="0">
-    <tr>
-        <td width="100%" class="titlebar">
-            <span style="font-size: larger; margin-left: 0.5em; font-weight: bold;">
-            Expression Summary
-                </span>
-
-        <span style="float: right">
-            <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                <tiles:putAttribute name="subjectName" value="Phenotype summary from Fish search"/>
-            </tiles:insertTemplate>
-        </td>
-    </tr>
-</table>
+<div class="titlebar">
+    <h1>Expression Summary</h1>
+    <span class="yourinputwelcome">
+        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+            <tiles:putAttribute name="subjectName" value="Phenotype summary from Fish search"/>
+        </tiles:insertTemplate>
+    </span>
+</div>
 
 <table class="primary-entity-attributes">
     <tr>
@@ -60,5 +54,5 @@
             </c:if>
         </span>
     --%>
-    <zfin2:figureSummary figureExpressionSummaryList="${figureExpressionSummaryDisplayList}" expressionData="true" showMarker="true"/>
+    <zfin2:figureSummary figureSummaryList="${figureExpressionSummaryDisplayList}" expressionData="true" showMarker="true"/>
 </div>

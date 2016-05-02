@@ -13,10 +13,14 @@
             <th class="genotype-name-label">Marker:</th>
             <td class="genotype-name-value"><zfin:link entity="${marker}"/></td>
         </tr>
+        <tr>
+            <th class="genotype-name-label">Conditions:</th>
+            <td class="genotype-name-value">Standard or Control</td>
+        </tr>
     </c:if>
 </table>
 
 <div class="summary">
-    <zfin2:figureSummary figureExpressionSummaryList="${figureSummaryDisplayList}" showMarker="false"
+    <zfin2:figureSummary figureSummaryList="${figureSummaryDisplayList}" showMarker="false"
                          expressionData="false" phenotypeData="true" showGenotype="true"/>
 </div>

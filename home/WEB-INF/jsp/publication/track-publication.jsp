@@ -6,7 +6,6 @@
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
 
 <script src="/javascript/angular/angular.min.js"></script>
-<script src="/javascript/angular/angular-route.min.js"></script>
 <script src="/javascript/pub-tracking.js"></script>
 
 <c:set var="editURL">/action/publication/${publication.zdbID}/edit</c:set>
@@ -24,13 +23,15 @@
                      curateURL="${curateURL}"
                      rtype="publication"/>
 
-  <%--<h2>Track ${publication.zdbID}</h2>--%>
   <p class="lead">
     <a href="/${publication.zdbID}">${publication.title}</a>
     <c:if test="${!empty publication.fileName}"> <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}" target="_blank"><i class="fa fa-file-pdf-o"></i></a></c:if>
   </p>
 
-  <div id="pub-tracking-main" ng-controller="PubTrackingController as trackCtrl" data-zdb-id="${publication.zdbID}">
+  <div id="pub-tracking-main"
+       ng-controller="PubTrackingController as trackCtrl"
+       data-zdb-id="${publication.zdbID}"
+       data-curator-first="${loggedInUser.firstName}" data-curator-last="${loggedInUser.lastName}" data-curator-email="${loggedInUser.email}">
     <div ng-cloak ng-show="trackCtrl.status">
       <div class="row bottom-buffer">
         <div class="col-xs-4 col-xs-offset-1" >
@@ -211,53 +212,121 @@
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">Contact Authors</h3>
-    </div>
-    <div class="panel-body">
-      <form id="edit-notification">
-        <ul class="list-unstyled">
-          <c:forEach var="author" items="${publication.people}">
-            <c:if test="${!empty author.email}">
-              <li><input class="author-email" type="checkbox" checked value="${author.fullName}=${author.email}"/> ${author.fullName}</li>
-            </c:if>
-          </c:forEach>
-        </ul>
-        <div class="form-group">
-          <label for="additional-emails">Additional recipients</label>
-          <input class="form-control" id="additional-emails" type="text" placeholder="alice@example.com, bob@example.net"/>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Contact Authors</h3>
+      </div>
+      <div class="panel-body">
+
+        <div ng-show="!trackCtrl.notification.editing && !trackCtrl.notification.previewing">
+          <label>Registered Authors</label>
+          <ul class="list-unstyled">
+            <li ng-repeat="author in trackCtrl.notification.authors">
+              <input class="author-email" type="checkbox" checked ng-model="author.send"> {{author.display}}
+            </li>
+          </ul>
+          <div class="form-group">
+            <label for="additional-emails">Additional Recipients</label>
+            <input ng-model="trackCtrl.notification.additionalRecipients"
+                    class="form-control" id="additional-emails"
+                    type="text" placeholder="alice@example.com, bob@example.net"/>
+          </div>
+
+          <button class="btn btn-primary" type="button"
+                  ng-disabled="trackCtrl.hasNoRecipients() || trackCtrl.notification.loading"
+                  ng-click="trackCtrl.editNotification()">
+            <span ng-show="!trackCtrl.notification.loading">Edit Notification</span>
+            <i ng-show="trackCtrl.notification.loading" class="fa fa-spinner fa-spin"></i>
+          </button>
         </div>
-        <p class="text-danger error">No contacts selected</p>
-        <button class="btn btn-primary" type="submit">Edit Notification</button>
-      </form>
+
+        <div ng-show="trackCtrl.notification.editing || trackCtrl.notification.previewing">
+          <b>Recipients: </b>
+          {{ trackCtrl.notification.recipients.join(", ") }}
+        </div>
+
+        <div ng-show="trackCtrl.notification.editing">
+          <div class="form-inline notif-letter">
+            <p>{{trackCtrl.notification.salutation}} <input class="form-control" style="width: 500px;" ng-model="trackCtrl.notification.names">,</p>
+            <p>{{trackCtrl.notification.intro}}</p>
+            <p><a ng-href="{{trackCtrl.notification.pubLink}}">{{trackCtrl.notification.pubReference}}</a></p>
+            <p>{{trackCtrl.notification.dataNote}}</p>
+            <p><textarea class="form-control" ng-model="trackCtrl.notification.customNote" cols="80" rows="4"></textarea></p>
+            <p>{{trackCtrl.notification.zfinDescription}}</p>
+            <p>{{trackCtrl.notification.signOff}},</p>
+            <p>{{trackCtrl.notification.sender.name}}<br>
+            {{trackCtrl.notification.sender.group}}<br>
+            {{trackCtrl.notification.sender.email}}</p>
+            <p>{{trackCtrl.notification.address[0]}}<br>
+            {{trackCtrl.notification.address[1]}}<br>
+            {{trackCtrl.notification.address[2]}}</p>
+          </div>
+
+          <div select-all-list
+                  items="trackCtrl.notification.curatedData.genes"
+                  all-label="All Genes"
+                  item-label="item.name + ' (' + item.abbreviation + ')'"
+                  class="notif-letter-list">
+          </div>
+
+          <div select-all-list
+               items="trackCtrl.notification.curatedData.strs"
+               all-label="All STRs"
+               item-label="item.name"
+               class="notif-letter-list">
+          </div>
+
+          <div select-all-list
+               items="trackCtrl.notification.curatedData.antibodies"
+               all-label="All Antibodies"
+               item-label="item.name"
+               class="notif-letter-list">
+          </div>
+
+          <div select-all-list
+               items="trackCtrl.notification.curatedData.expressionGenes"
+               all-label="All Gene Expression"
+               item-label="item.name + ' (' + item.abbreviation + ')'"
+               class="notif-letter-list">
+          </div>
+
+          <div select-all-list
+               items="trackCtrl.notification.curatedData.genotypes"
+               all-label="All Genotypes"
+               item-label="item.name"
+               class="notif-letter-list">
+          </div>
+
+          <button class="btn btn-primary" type="button" ng-click="trackCtrl.previewNotification()">Preview Notification</button>
+          <button class="btn btn-default" type="button" ng-click="trackCtrl.cancelNotificationEditing()">Cancel</button>
+        </div>
+
+        <div ng-show="trackCtrl.notification.previewing">
+          <div class="notif-letter" ng-bind-html="trackCtrl.generateNotification()">
+          </div>
+          <button class="btn btn-primary" type="button" ng-click="trackCtrl.sendNotification()" ng-disabled="trackCtrl.notification.loading">
+            <span ng-show="!trackCtrl.notification.loading">Send Notification</span>
+            <i ng-show="trackCtrl.notification.loading" class="fa fa-spinner fa-spin"></i>
+          </button>
+          <button class="btn btn-default" type="button" ng-click="trackCtrl.cancelNotificationPreview()">Cancel</button>
+        </div>
+
+        <div class="notif-letter-alert">
+          <div class="alert alert-success" ng-show="trackCtrl.notification.sendSuccess">
+            Message has been sent.
+          </div>
+          <div class="alert alert-danger" ng-show="trackCtrl.notification.sendError">
+            Something went wrong while sending the message.
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
   $(function() {
-    $("#edit-notification .error").hide();
-    $("#edit-notification").submit(function (evt) {
-      evt.preventDefault();
-      var contactList = $(":checked", this).map(function () { return $(this).val(); }).get().join("|") + "|";
-      var additionalEaddr = $("#additional-emails").val();
-      if (!contactList && !additionalEaddr) {
-        $(".error", this).show();
-        return;
-      }
-      $(".error", this).hide();
-      window.open("/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-notif_frame.apg" +
-              "&status=edit" +
-              "&OID=${publication.zdbID}" +
-              "&contact_list=" + contactList +
-              "&additional_eaddr=" + additionalEaddr +
-              "&sender_id=${loggedInUser.zdbID}",
-              "editwindow","resizable=yes,toolbar=yes,scrollbars=yes,width=700,height=900");
-    });
-
     $("#pub-tracking-main")
             .on("mouseenter", ".hover-trigger", function () {
               $(".hover-reveal", this).show();

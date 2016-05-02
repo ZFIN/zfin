@@ -16,7 +16,7 @@
 <!--|CURATION_DBNAME|-->	false
 <!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	cmpich\@zfin.org
-<!--|DB_NAME|-->	jrdb
+<!--|DB_NAME|-->	juniordb
 <!--|DB_OWNER|-->	cmpich
 <!--|DEFAULT_EMAIL|-->	cmpich\@zfin.org
 <!--|DOMAIN_NAME|-->	junior.zfin.org
@@ -30,6 +30,7 @@
 <!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	cmpich\@zfin.org
 <!--|GO_EMAIL_ERR|-->	cmpich\@zfin.org
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/junior/home/WEB-INF/lib*:/opt/zfin/source_roots/junior/lib/Java/*:/opt/zfin/www_homes/junior/home/WEB-INF/classes:/private/apps/tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
@@ -63,7 +64,7 @@
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFFFCC
-<!--|SOURCEROOT|-->	/opt/zfin/source_www/junior
+<!--|SOURCEROOT|-->	/opt/zfin/source_roots/junior
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	aria.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	cmpich\@zfin.org

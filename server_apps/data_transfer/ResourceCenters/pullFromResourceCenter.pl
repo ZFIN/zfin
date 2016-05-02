@@ -109,17 +109,17 @@ sub downloadFiles($$) {
 	}
 	$labZdbId = "ZDB-LAB-130607-1";
     }
-    elsif ($resourceCenter eq "CZRC"){
-	if (system("/local/bin/wget http://zfish.cn/$filename")) {
-	    &errorExit("Failed to download $filename file from CZRC.","  See $wgetStatusFile for details.");
-	}
-	$labZdbId = "ZDB-LAB-130226-1";
-    }
     elsif ($resourceCenter eq "Baier"){
 	if (system("/local/bin/wget --user=Extranet --password=neuro89mpi https://sp.neuro.mpg.de/extranet/Shared%20Documents/Baier/$filename")) {
 	    &errorExit("Failed to download $filename file from Baier.","  See $wgetStatusFile for details.");
 	}
 	$labZdbId = "ZDB-LAB-990120-1";
+    }
+    elsif ($resourceCenter eq "CZRC"){
+	if (system("/local/bin/wget http://www.zfish.cn/$filename")) {
+	    &errorExit("Failed to download $filename file from CZRC.","  See $wgetStatusFile for details.");
+	}
+	$labZdbId = "ZDB-LAB-130226-1";
     }
     if (-z $filename) {
 	&errorExit("Downloaded file $filename is empty.  Aborting.",
@@ -188,8 +188,6 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
        # EST availability ZIRC
 
 &geno_main($dbh, $baierZdbId,"Baier");           # Genotype availability Baier
-&geno_main($dbh, $czrcZdbId,"CZRC");           # Genotype availability CZRC
-
 &geno_main($dbh, $ezrcZdbId,"EZRC");           # Genotype availability EZRC
 # &atb_main($dbh, $zircZdbId);	        # Antibody availability
 
@@ -204,7 +202,8 @@ $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
   || errorExit("Failed while connecting to <!--|DB_NAME|--> ");
 
 
-#&geno_main($dbh, $zircZdbId, "ZIRC");           # Genotype availability ZIRC
+&geno_main($dbh, $zircZdbId, "ZIRC");           # Genotype availability ZIRC
+&geno_main($dbh, $czrcZdbId,"CZRC");           # Genotype availability CZRC
 #&est_main($dbh, $zircZdbId);	 
 
 $dbh->commit();

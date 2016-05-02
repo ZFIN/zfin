@@ -7,6 +7,7 @@ CDNA	/action/marker/view/ZDB-CDNA
 COMPANY	/action/profile/view/ZDB-COMPANY
 CONSTRCT	/action/marker/view/ZDB-CONSTRCT
 CRISPR   /action/marker/view/ZDB-CRISPR
+CNE	 /action/marker/view/ZDB-CNE
 EFG	/action/marker/view/ZDB-EFG
 EST	/action/marker/view/ZDB-EST
 ETCONSTRCT	/action/marker/view/ZDB-ETCONSTRCT

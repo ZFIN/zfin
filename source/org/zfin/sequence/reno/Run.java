@@ -1,8 +1,10 @@
 package org.zfin.sequence.reno;
 
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.GenericGenerator;
 import org.zfin.publication.Publication;
 
+import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,8 +14,12 @@ import java.util.Set;
  * Each run has a Set of RunCandidate's as well as information pertaining to the
  * run, itself.
  */
+@Entity
+@Table(name = "run")
+@DiscriminatorColumn(name = "run_type")
 public abstract class Run {
 
+    @Transient
     Logger logger = Logger.getLogger(Run.class);
 
     public enum Type {
@@ -42,15 +48,31 @@ public abstract class Run {
         }
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "RUN"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "run_zdb_id")
     private String zdbID;
+    @Column(name = "run_name")
     private String name;
+    @Column(name = "run_program")
     private String program;
+    @Column(name = "run_date")
     private Date date;
+    @Transient
     private String markerComment;
+    @Column(name = "run_blastdb")
     private String blastDatabase;
-    private Set<RunCandidate> candidates = new HashSet<RunCandidate>();
+    @OneToMany(mappedBy = "run", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<RunCandidate> candidates = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "run_nomen_pub_zdb_id")
     private Publication nomenclaturePublication;
-
 
     /**
      * Total number of RunCandidates in queue (not locked or finished)

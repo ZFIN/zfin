@@ -2,7 +2,7 @@ package org.zfin.uniquery
 
 import org.apache.log4j.Logger
 import org.apache.solr.client.solrj.SolrQuery
-import org.apache.solr.client.solrj.SolrServer
+import org.apache.solr.client.solrj.SolrClient
 import org.apache.solr.client.solrj.response.FacetField
 import org.apache.solr.client.solrj.response.QueryResponse
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,17 +26,17 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
     FacetBuilderService facetBuilderService
 
     @Shared
-    SolrServer server
+    SolrClient client
     @Shared
     SolrQuery query
 
     //sets up for all tests in class
-    def setupSpec() {
-        server = SolrService.getSolrServer("prototype")
+    public def setupSpec() {
+        client = SolrService.getSolrClient("prototype")
     }
 
-    def cleanSpec() {
-        server = null
+    public def cleanSpec() {
+        client = null
     }
 
     //sets up for each test
@@ -58,7 +58,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         QueryResponse response = new QueryResponse();
 
         try {
-            response = server.query(query);
+            response = client.query(query);
         } catch (Exception e) {
             logger.error(e);
         }
@@ -84,7 +84,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         QueryResponse response = new QueryResponse();
 
         try {
-            response = server.query(query);
+            response = client.query(query);
         } catch (Exception e) {
             logger.error(e);
         }
@@ -95,34 +95,34 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         returnedFacets.contains(field)
 
         where:
-        [category, field] << [[Category.GENE.getName()] , [FieldName.EXPRESSED_IN_TF.getName(), "affected_anatomy_tf", "affected_biological_process_tf",
+        [category, field] << [[Category.GENE.getName()] , [FieldName.ANATOMY_TF.getName(),FieldName.STAGE.name, "affected_anatomy_tf", "affected_biological_process_tf",
                                           "affected_molecular_function_tf", "affected_cellular_component_tf",
-                                          "phenotype_statement", "disease", "biological_process_tf",
+                                          "phenotype_statement", FieldName.MISEXPRESSED_GENE.getName(), "disease", "biological_process_tf",
                                           "molecular_function_tf", "cellular_component_tf","chromosome","type"]].combinations() \
                              + [[Category.FISH.getName()],["affected_gene","affected_anatomy_tf", "affected_biological_process_tf",
                                            "affected_molecular_function_tf", "affected_cellular_component_tf",
-                                           "phenotype_statement", FieldName.EXPRESSIONS_ANATOMY_TF.getName(), "sequence_targeting_reagent",
+                                           "phenotype_statement", FieldName.MISEXPRESSED_GENE.getName(), FieldName.EXPRESSIONS_ANATOMY_TF.getName(), "sequence_targeting_reagent",
                                            "construct", "sequence_alteration", "background"]].combinations() \
                              + [[Category.MUTANT.getName()],["type","affected_gene", "affected_anatomy_tf", "affected_biological_process_tf",
-                                           "affected_molecular_function_tf", "affected_cellular_component_tf", "phenotype_statement",
-                                           "source", "lab_of_origin", "institution"]].combinations() \
+                                           "affected_molecular_function_tf", "affected_cellular_component_tf", "phenotype_statement", FieldName.MISEXPRESSED_GENE.getName(),
+                                           "source", "lab_of_origin", "rna_consequence","institution"]].combinations() \
                              + [[Category.CONSTRUCT.getName()],["type","regulatory_region", "coding_sequence","inserted_in_gene",FieldName.EXPRESSED_IN_TF.getName(),
                                            "reporter_color","engineered_region"]].combinations() \
                              + [[Category.SEQUENCE_TARGETING_REAGENT.getName()],["type","targeted_gene"]].combinations() \
                              + [[Category.MARKER.getName()],["type", "chromosome"]].combinations() \
                              + [[Category.FIGURE.getName()],[FieldName.EXPRESSIONS_ANATOMY_TF.getName(), "reporter_gene", "zebrafish_gene", "affected_anatomy_tf",
                                            "affected_biological_process_tf", "affected_molecular_function_tf",
-                                           "affected_cellular_component_tf", "phenotype_statement",
+                                           "affected_cellular_component_tf", "phenotype_statement", FieldName.MISEXPRESSED_GENE.getName(),
                                            "construct", "registered_author"]].combinations() \
                              + [[Category.EXPRESSIONS.getName()],["reporter_gene", "zebrafish_gene", FieldName.EXPRESSIONS_ANATOMY_TF.getName(), "assay", "genotype",
                                            "has_image","experimental_conditions","registered_author","sequence_targeting_reagent" ]].combinations() \
-                             + [[Category.PHENOTYPE.getName()],["phenotype_statement","anatomy_tf","biological_process_tf","molecular_function_tf",
-                                               "has_image","sequence_targeting_reagent"]].combinations() \
-                             + [[Category.ANATOMY.getName()],["ontology", "obsolete"]].combinations() \
+                             + [[Category.PHENOTYPE.getName()],["phenotype_statement", FieldName.MISEXPRESSED_GENE.getName(),"anatomy_tf","biological_process_tf","molecular_function_tf",
+                                               "has_image","stage","sequence_targeting_reagent"]].combinations() \
+                             + [[Category.ANATOMY.getName()],["ontology", "term_status"]].combinations() \
                              + [[Category.COMMUNITY.getName()],["type"]].combinations() \
                              + [[Category.PUBLICATION.getName()],["gene", "sequence_alteration", "registered_author", "journal", "keyword", "publication_type"]].combinations() \
                              + [[Category.ANTIBODY.getName()],["type","antigen_gene","labeled_structure_tf", "assay", "source", "host_organism"]].combinations() \
-                             + [[Category.DISEASE.getName()],[FieldName.GENE.name,FieldName.DISEASE_MODEL.name]].combinations()
+                             + [[Category.DISEASE.getName()],[FieldName.GENE.name,FieldName.FISH.name,FieldName.EXPERIMENTAL_CONDITIONS.name]].combinations()
     }
 
 

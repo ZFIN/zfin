@@ -14,6 +14,7 @@ import org.zfin.framework.ComparatorCreator;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Clone;
 import org.zfin.marker.presentation.OrganizationLink;
+import org.zfin.mutant.PhenotypeWarehouse;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -21,6 +22,8 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 
 @Controller
 @RequestMapping("/figure")
@@ -55,40 +58,41 @@ public class FigureViewController {
         model.addAttribute("showThisseInSituLink", figureViewService.showThisseInSituLink(figure.getPublication()));
         model.addAttribute("showErrataAndNotes", figureViewService.showErrataAndNotes(figure.getPublication()));
         model.addAttribute("showMultipleMediumSizedImages", figureViewService.showMultipleMediumSizedImages(figure.getPublication()));
-        model.addAttribute("expressionGenes",figureViewService.getExpressionGenes(figure));
-        model.addAttribute("expressionAntibodies",figureViewService.getAntibodies(figure));
-        model.addAttribute("expressionFish",figureViewService.getExpressionFish(figure));
-        model.addAttribute("expressionSTRs",figureViewService.getExpressionSTR(figure));
+        model.addAttribute("expressionGenes", figureViewService.getExpressionGenes(figure));
+        model.addAttribute("expressionAntibodies", figureViewService.getAntibodies(figure));
+        model.addAttribute("expressionFish", figureViewService.getExpressionFish(figure));
+        model.addAttribute("expressionSTRs", figureViewService.getExpressionSTR(figure));
         model.addAttribute("expressionConditions", figureViewService.getExpressionCondition(figure)); // conditions are actually List<Experiment>
-        model.addAttribute("expressionEntities",figureViewService.getExpressionEntities(figure));
-        model.addAttribute("expressionStartStage",figureViewService.getExpressionStartStage(figure));
-        model.addAttribute("expressionEndStage",figureViewService.getExpressionEndStage(figure));
+        model.addAttribute("expressionEntities", figureViewService.getExpressionEntities(figure));
+        model.addAttribute("expressionStartStage", figureViewService.getExpressionStartStage(figure));
+        model.addAttribute("expressionEndStage", figureViewService.getExpressionEndStage(figure));
 
+        List<PhenotypeWarehouse> warehouseList = getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID());
         //fishes, STRs, conditions, terms, stages
-        model.addAttribute("phenotypeFish",figureViewService.getPhenotypeFish(figure));
-        model.addAttribute("phenotypeSTRs",figureViewService.getPhenotypeSTR(figure));
-        model.addAttribute("phenotypeConditions",figureViewService.getPhenotypeCondition(figure));
-        model.addAttribute("phenotypeEntities",figureViewService.getPhenotypeEntities(figure));
-        model.addAttribute("phenotypeStartStage",figureViewService.getPhenotypeStartStage(figure));
-        model.addAttribute("phenotypeEndStage",figureViewService.getPhenotypeEndStage(figure));
+        model.addAttribute("phenotypeFish", figureViewService.getPhenotypeFish(figure));
+        model.addAttribute("phenotypeSTRs", figureViewService.getPhenotypeSTR(figure));
+        model.addAttribute("phenotypeConditions", figureViewService.getPhenotypeCondition(figure));
+        model.addAttribute("phenotypeEntities", figureViewService.getPhenotypeEntitiesFromWarehouse(warehouseList));
+        model.addAttribute("phenotypeStartStage", figureViewService.getPhenotypeStartStage(figure));
+        model.addAttribute("phenotypeEndStage", figureViewService.getPhenotypeEndStage(figure));
 
         List<ExpressionTableRow> expressionTableRows = figureViewService.getExpressionTableRows(figure);
-        model.addAttribute("expressionTableRows",expressionTableRows);
-        model.addAttribute("showExpressionQualifierColumn",figureViewService.showExpressionQualifierColumn(expressionTableRows));
+        model.addAttribute("expressionTableRows", expressionTableRows);
+        model.addAttribute("showExpressionQualifierColumn", figureViewService.showExpressionQualifierColumn(expressionTableRows));
 
         List<AntibodyTableRow> antibodyTableRows = figureViewService.getAntibodyTableRows(figure);
-        model.addAttribute("antibodyTableRows",antibodyTableRows);
-        model.addAttribute("showAntibodyQualifierColumn",figureViewService.showAntibodyQualifierColumn(antibodyTableRows));
+        model.addAttribute("antibodyTableRows", antibodyTableRows);
+        model.addAttribute("showAntibodyQualifierColumn", figureViewService.showAntibodyQualifierColumn(antibodyTableRows));
 
-        List<PhenotypeTableRow> phenotypeTableRows = figureViewService.getPhenotypeTableRows(figure);
+        List<PhenotypeTableRow> phenotypeTableRows = figureViewService.getPhenotypeTableRows(warehouseList);
         model.addAttribute("phenotypeTableRows", phenotypeTableRows);
 
-        model.addAttribute("figure",figure);
+        model.addAttribute("figure", figure);
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Figure: " + figureViewService.getFullFigureLabel(figure));
 
-        model.addAttribute("showElsevierMessage",figureViewService.showElsevierMessage(figure.getPublication()));
-        model.addAttribute("hasAcknowledgment",figureViewService.hasAcknowledgment(figure.getPublication()));
+        model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(figure.getPublication()));
+        model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(figure.getPublication()));
 
         return "figure/figure-view.page";
     }
@@ -108,8 +112,8 @@ public class FigureViewController {
         }
 
         model.addAttribute("publication", publication);
-        model.addAttribute("showElsevierMessage",figureViewService.showElsevierMessage(publication));
-        model.addAttribute("hasAcknowledgment",figureViewService.hasAcknowledgment(publication));
+        model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(publication));
+        model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(publication));
         model.addAttribute("showMultipleMediumSizedImages", figureViewService.showMultipleMediumSizedImages(publication));
         //for direct submission pubs, publication.getFigures() won't be correct and we'll need to do a query...
         List<Figure> figures = new ArrayList<>();
@@ -118,7 +122,7 @@ public class FigureViewController {
         Clone probe = null;
         if (!StringUtils.isEmpty(probeZdbID))
             probe = RepositoryFactory.getMarkerRepository().getCloneById(probeZdbID);
-        model.addAttribute("probe",probe);
+        model.addAttribute("probe", probe);
         if (probe != null) {
             List<OrganizationLink> suppliers = RepositoryFactory.getProfileRepository().getSupplierLinksForZdbId(probe.getZdbID());
             model.addAttribute("probeSuppliers", suppliers);
@@ -133,7 +137,7 @@ public class FigureViewController {
             figures.addAll(publication.getFigures());
         }
 
-        Collections.sort(figures,ComparatorCreator.orderBy("orderingLabel","zdbID"));
+        Collections.sort(figures, ComparatorCreator.orderBy("orderingLabel", "zdbID"));
 
         model.addAttribute("figures", figures);
 
@@ -143,14 +147,14 @@ public class FigureViewController {
 
         model.addAttribute("expressionGeneMap", figureViewService.getExpressionGenes(figures));
         model.addAttribute("expressionAntibodyMap", figureViewService.getAntibodies(figures));
-        model.addAttribute("expressionFishMap",figureViewService.getExpressionFish(figures));
-        model.addAttribute("expressionSTRMap",figureViewService.getExpressionSTRs(figures));
+        model.addAttribute("expressionFishMap", figureViewService.getExpressionFish(figures));
+        model.addAttribute("expressionSTRMap", figureViewService.getExpressionSTRs(figures));
         model.addAttribute("expressionConditionMap", figureViewService.getExpressionConditions(figures));
         model.addAttribute("expressionEntityMap", figureViewService.getExpressionEntities(figures));
         model.addAttribute("expressionStartStageMap", figureViewService.getExpressionStartStages(figures));
         model.addAttribute("expressionEndStageMap", figureViewService.getExpressionEndStages(figures));
 
-        model.addAttribute("phenotypeFishMap",figureViewService.getPhenotypeFish(figures));
+        model.addAttribute("phenotypeFishMap", figureViewService.getPhenotypeFish(figures));
         model.addAttribute("phenotypeConditionMap", figureViewService.getPhenotypeConditions(figures));
         model.addAttribute("phenotypeSTRMap", figureViewService.getPhenotypeSTRs(figures));
         model.addAttribute("phenotypeEntitiesMap", figureViewService.getPhenotypeEntities(figures));

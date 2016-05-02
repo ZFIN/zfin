@@ -28,6 +28,7 @@ import org.zfin.orthology.OrthologEvidence;
 import org.zfin.orthology.presentation.OrthologEvidencePresentation;
 import org.zfin.orthology.presentation.OrthologyPresentationRow;
 import org.zfin.profile.MarkerSupplier;
+import org.zfin.profile.Organization;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -529,8 +530,8 @@ public class MarkerService {
      * @param pubZdbID               Attribute Pub ZdbID.
      * @param markerRelationshipType Marker relationship type to create.
      */
-    public static void addMarkerRelationship(Marker marker1, Marker marker2, String pubZdbID,
-                                             MarkerRelationship.Type markerRelationshipType) {
+    public static MarkerRelationship addMarkerRelationship(Marker marker1, Marker marker2, String pubZdbID,
+                                                           MarkerRelationship.Type markerRelationshipType) {
         // adds the marker relation and attributes it
 //        MarkerRelationship markerRelationship = RepositoryFactory.getMarkerRepository().getSpecificMarkerRelationship(marker1,marker2,markerRelationshipType) ;
         MarkerRelationship markerRelationship = new MarkerRelationship();
@@ -538,7 +539,7 @@ public class MarkerService {
         markerRelationship.setSecondMarker(marker2);
         markerRelationship.setType(markerRelationshipType);
         // also inserts attribution
-        markerRepository.addMarkerRelationship(markerRelationship, pubZdbID);
+        return markerRepository.addMarkerRelationship(markerRelationship, pubZdbID);
     }
 
 
@@ -695,6 +696,30 @@ public class MarkerService {
             supplierList.add(markerSupplier.getOrganization().getName());
         }
         return supplierList;
+    }
+
+    public static boolean markerHasSupplier(Marker marker, Organization supplier) {
+        Collection<MarkerSupplier> suppliers = marker.getSuppliers();
+        if (CollectionUtils.isNotEmpty(suppliers)) {
+            for (MarkerSupplier markerSupplier : marker.getSuppliers()) {
+                if (markerSupplier.getOrganization().equals(supplier)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean markerHasAlias(Marker marker, String alias) {
+        Collection<MarkerAlias> aliases = marker.getAliases();
+        if (CollectionUtils.isNotEmpty(aliases)) {
+            for (MarkerAlias markerAlias : aliases) {
+                if (markerAlias.getAlias().equals(alias)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static List<String> getDirectAttributions(Marker marker) {
@@ -945,6 +970,15 @@ public class MarkerService {
         }
 
         return diseaseDisplays;
+    }
+
+    public static String getSTRModificationNote(String sequence, boolean reversed, boolean complemented) {
+        String note = "Reported sequence " + sequence + " was";
+        note += (reversed) ? " reversed" : "";
+        note += (reversed && complemented) ? " and" : "";
+        note += (complemented) ? " complemented" : "";
+        note += ".";
+        return note;
     }
 
 }

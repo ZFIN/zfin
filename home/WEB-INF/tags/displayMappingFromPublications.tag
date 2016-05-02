@@ -16,7 +16,7 @@
                 <th style="width: 8%">Distance</th>
                 <th style="width: 17%">Publication / Person</th>
                 <th style="width: 55%">Comments</th>
-                <authz:authorize ifAnyGranted="root">
+                <authz:authorize access="hasRole('root')">
                     <th>Linkage</th>
                 </authz:authorize>
             </tr>
@@ -33,7 +33,7 @@
                         <zfin2:toggleTextLength text=" ${member.linkage.comments}" idName="${zfn:generateRandomDomID()}"
                                                 shortLength="80"/>
                     </td>
-                    <authz:authorize ifAnyGranted="root">
+                    <authz:authorize access="hasRole('root')">
                         <td><a href="/action/mapping/linkage/${member.linkage.zdbID}">${member.linkage.zdbID}</a></td>
                     </authz:authorize>
                 </zfin:alternating-tr>

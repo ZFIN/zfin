@@ -1,5 +1,6 @@
 package org.zfin.gwt.root.util;
 
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -16,6 +17,7 @@ public final class WidgetUtil {
     public static final String RED_MODIFIER = "red-modifier";
     public static final String GREEN = "green";
     public static final String PHENOTYPE_NORMAL = "phenotype-normal";
+    public static final String PHENOTYPE_AMELIORATED = "phenotype-ameliorated";
     public static final String CSS_CLASS_DELIMITER = " ";
     public static final String RED_HYPERLINK = "red-modifier-hyperlink";
     public static final String CSS_CURATION_BOX_CONTROL_TEXT = "curation-box-control-text";
@@ -72,6 +74,88 @@ public final class WidgetUtil {
             if (boxValue.equals(value))
                 listBox.setSelectedIndex(index);
         }
+    }
+
+    // Returns the group index
+    public static int setRowStyle(int rowIndex, String currentID, String previousID, int currentGroupIndex, Grid grid) {
+        StringBuilder sb = new StringBuilder(50);
+        // check even/odd row
+        if (rowIndex % 2 == 0)
+            sb.append(CssStyles.EVEN.toString());
+        else
+            sb.append(CssStyles.ODD.toString());
+
+        sb.append(" ");
+        if (previousID == null && currentID == null) {
+            sb.append(CssStyles.OLDGROUP.toString());
+        } else if (previousID == null) {
+            sb.append(CssStyles.NEWGROUP.toString());
+            currentGroupIndex++;
+        } else if (previousID.equals(currentID)) {
+            sb.append(CssStyles.OLDGROUP.toString());
+        } else {
+            sb.append(CssStyles.NEWGROUP.toString());
+            currentGroupIndex++;
+        }
+
+        // check if odd group or even group
+        sb.append(" ");
+        if (currentGroupIndex % 2 == 0)
+            sb.append(CssStyles.EVENGROUP.toString());
+        else
+            sb.append(CssStyles.ODDGROUP.toString());
+
+        // add row
+        sb.append(" ");
+        sb.append(CssStyles.EXPERIMENT_ROW.toString());
+        grid.getRowFormatter().setStyleName(rowIndex, sb.toString());
+        return currentGroupIndex;
+    }
+
+    public static void setAlternateRowStyle(int row, Grid grid) {
+        StringBuilder sb = new StringBuilder(50);
+        sb.append(CssStyles.NEWGROUP.toString());
+        sb.append(" ");
+        if (row % 2 == 0)
+            sb.append(CssStyles.EVENGROUP.toString());
+        else
+            sb.append(CssStyles.ODDGROUP.toString());
+        sb.append(" ");
+        sb.append(CssStyles.EXPERIMENT_ROW.toString());
+        grid.getRowFormatter().setStyleName(row, sb.toString());
+    }
+
+    public enum CssStyles {
+
+        EVEN("even"),
+        ODD("odd"),
+        EVENGROUP("evengroup"),
+        ODDGROUP("oddgroup"),
+        NEWGROUP("newgroup"),
+        OLDGROUP("oldgroup"),
+        EXPERIMENT_ROW("experiment-row"),
+        SEARCHRESULTS("searchresults"),
+        GROUPSTRIPES_HOVER("groupstripes-hover"),
+        TABLE_HEADER("table-header");
+
+        private final String value;
+
+        private CssStyles(String name) {
+            this.value = name;
+        }
+
+        public String toString() {
+            return this.value;
+        }
+
+        public static CssStyles getType(String type) {
+            for (CssStyles t : values()) {
+                if (t.toString().equals(type))
+                    return t;
+            }
+            throw new RuntimeException("No Css class named " + type + " found.");
+        }
+
     }
 
 }

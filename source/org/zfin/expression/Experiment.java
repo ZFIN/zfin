@@ -1,6 +1,8 @@
 package org.zfin.expression;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.infrastructure.EntityZdbID;
+import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.publication.Publication;
 
 import java.util.Set;
@@ -79,6 +81,21 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         return allChemical;
     }
 
+    public boolean isHeatShock() {
+        if (experimentConditions == null || experimentConditions.isEmpty()) {
+            return false;
+        }
+
+        boolean allHeatShock = true;
+        for (ExperimentCondition expCdt : experimentConditions) {
+            if (!expCdt.isHeatShock()) {
+                allHeatShock = false;
+                break;
+            }
+        }
+        return allHeatShock;
+    }
+
     public int compareTo(Experiment o) {
         if (this.isStandard() && !o.isStandard()) {
             return -1;
@@ -113,6 +130,16 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     @Override
     public String getEntityName() {
         return "Experiment";
+    }
+
+    public String getConditionKey() {
+        String groupingKey = "";
+        for (ExperimentCondition condition : experimentConditions) {
+            groupingKey += condition.getConditionDataType().getGroup() + ":" + condition.getConditionDataType().getName() + "&&";
+        }
+        if (CollectionUtils.isNotEmpty(experimentConditions))
+            groupingKey = groupingKey.substring(0, groupingKey.length() - 2);
+        return groupingKey;
     }
 
 }

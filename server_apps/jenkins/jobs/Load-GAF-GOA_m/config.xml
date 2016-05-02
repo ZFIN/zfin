@@ -24,7 +24,7 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m*</artifacts>
+      <artifacts>server_apps/DB_maintenance/gafLoad/Load-GAF-GOA*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>

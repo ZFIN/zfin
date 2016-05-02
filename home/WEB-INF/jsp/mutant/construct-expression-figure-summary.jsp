@@ -2,20 +2,14 @@
 
 <jsp:useBean id="formBean" class="org.zfin.mutant.presentation.ConstructSearchFormBean" scope="request"/>
 
-<table width="100%" cellpadding="0" cellspacing="0">
-    <tr>
-        <td width="100%" class="titlebar">
-            <span style="font-size: larger; margin-left: 0.5em; font-weight: bold;">
-            Construct Expression Summary
-                </span>
-
-        <span style="float: right">
-            <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                <tiles:putAttribute name="subjectName" value="Expression summary from Constructs search"/>
-            </tiles:insertTemplate>
-        </td>
-    </tr>
-</table>
+<div class="titlebar">
+    <h1>Construct Expression Summary</h1>
+    <span class="yourinputwelcome">
+        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+            <tiles:putAttribute name="subjectName" value="Expression summary from Constructs search"/>
+        </tiles:insertTemplate>
+    </span>
+</div>
 
 <%--<zfin2:constructExpressionSummaryCriteria criteria="${formBean.constructSearchCriteria}"/>--%>
 
@@ -68,7 +62,7 @@
 <%-- todo: need a class name for this --%>
 (${formBean.constructService.numberOfFiguresDisplay} from ${formBean.constructService.numberOfPublicationsDisplay})
 
-<zfin2:figureSummary figureExpressionSummaryList="${formBean.constructService.figureSummary}" showMarker="false" showGenotype="true"
+<zfin2:figureSummary figureSummaryList="${formBean.constructService.figureSummary}" showMarker="false" showGenotype="true"
                      expressionGenotypeData="true"/>
 </div>
 

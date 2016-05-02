@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class Citexplore {
 
-    @WebServiceRef(wsdlLocation = "http://www.ebi.ac.uk/webservices/citexplore/v3.0.1/service?wsdl")
+    @WebServiceRef(wsdlLocation = "http://www.ebi.ac.uk/europepmc/webservices/soap?wsdl")
     private static final WSCitationImplService service = new WSCitationImplService();
     public final static String DOI_URL = "http://dx.doi.org";
 
@@ -45,7 +45,10 @@ public class Citexplore {
             while (iter.hasNext()) {
                 Publication publication = iter.next();
                 try {
-                    ResponseWrapper response = port.searchPublications(publication.getAccessionNumber(), "metadata", "lite", 0, false, "cmpich@zfin.org");
+                    String query = publication.getAccessionNumber();
+                    String resultType = "lite";
+                    String email = "cmpich@zfin.org";
+                    ResponseWrapper response = port.searchPublications(query, resultType, 0, "25",false, email);
                     if (response.getHitCount() == 0) {
                         logger.debug("No Publication with accession number " + publication.getAccessionNumber() + " found in Europe PubMed Central");
                     }

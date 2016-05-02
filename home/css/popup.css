@@ -1,43 +1,19 @@
 div.popup-header {
-    margin-top: 0px;
-    margin-left: 0px;
-    margin-right: 0px;
-    margin-bottom: 3px;
+    margin: 0 0 3px;
     background: #eee;
     padding: 5px;
     font-weight: bold;
-
-    /* browser specific */
-    -moz-border-radius-topleft:5px;
-    -webkit-border-radius-topleft:5px;
-    -moz-border-radius-topright:5px;
-    -webkit-border-radius-topright:5px;
-
-    /* CSS3 standard */
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-
     border-bottom: 2px solid #ccc;
-
 }
 
 div.popup-body {
-
-    max-height:450px;
+    max-height: 450px;
     overflow-y: auto;
-
-    /* browser specific */
-    -moz-border-radius-bottomleft:5px;
-    -webkit-border-radius-bottomleft:5px;
-    -moz-border-radius-bottomright:5px;
-    -webkit-border-radius-bottomright:5px;
-
-    /* CSS3 standard */
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-
     padding: 5px;
-
 }
 
 div.popup-actions {
@@ -45,107 +21,34 @@ div.popup-actions {
     text-align: right;
 }
 
-div.phenotype-figure-popup-body {
-
-    max-height:500px;
-    overflow-y: auto;
-
-    /* browser specific */
-    -moz-border-radius-bottomleft:5px;
-    -webkit-border-radius-bottomleft:5px;
-    -moz-border-radius-bottomright:5px;
-    -webkit-border-radius-bottomright:5px;
-
-    /* CSS3 standard */
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-
-    padding: 5px;
-
-}
-
-/* Apply padding to td elements that are direct children of the tr element. */
-tr.spaced > td {
-   padding-top: 1em;
-   padding-bottom: 1em;
-}
-
-td.border-black {
-   border-bottom: 1px solid black;
-}
-
-td.bottom-alligned {
-  vertical-align: bottom;
-}
-
-span.left {
-width: 100px;
-display: inline-block;
-}
-
-span.right {
-float:right;
-}
-
 div.phenotype-popup-body {
-    padding: 0px;
+    padding: 0;
 }
 
 hr.popup-divider {
-    background-color: #ddd; height:2px; width:100%; padding: 0px ; margin: 0px;
+    background-color: #ddd;
+    height: 2px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
 }
 
-
-.imghover_popup {
-  display: none; 
-
-  border: 2px solid black;
-  color: white;
-  background: black;
-/*  width: 500px;
-  min-height: 200px; */
-
-  padding: 5px;
-
-  /* browser specific */
-  -moz-box-shadow:0 0 5px 3px #000;
-  -webkit-box-shadow: 0 0 5px #000;
-  -moz-border-radius:3px;
-  -webkit-border-radius:3px;
-
-  /* CSS3 standard */
-  box-shadow: 0 0 5px #000;
-  border-radius: 3px;
-
+.close_link {
+    display: none;
 }
-
-.imghover_popup img {
-  border-style: none;
-}
-
-.imghover_popup a {
-  color: white;
-}
-
-.figpop_image {
-  margin-top: 5px;
-}
-
-.close_link { display: none; }
 
 /* hide it here, show it in the popup code, so that
    browsers that don't support the popup code won't
    see a popup icon */
-.data-popup-link { display: none;}
-/*.info-popup-link { display: none;}*/
-
-/*a.popup-link img { text-decoration: none; }*/
+.data-popup-link {
+    display: none;
+}
 
 .data-popup-link:after {
     content: url(/images/popup-link-icon.png);
     padding-top: 2px;
     margin-left: 4px;
-    margin-right: 0px;
+    margin-right: 0;
     text-decoration: none;
     opacity: 0.5;
     white-space: nowrap;
@@ -155,11 +58,10 @@ hr.popup-divider {
     content: url(/images/popup-link-icon-hover.png);
     padding-top: 2px;
     margin-left: 4px;
-    margin-right: 0px;
+    margin-right: 0;
     text-decoration: none;
     opacity: 0.8;
     white-space: nowrap;
-
 }
 
 .info-popup-link:after {
@@ -167,46 +69,23 @@ hr.popup-divider {
     padding-top: 2px;
     margin-left: 3px;
     margin-right: 5px;
-
-    /*text-decoration: none;*/
-    /*for some stupid reason opacity has to be set and < 1.0*/
-    /*see case 7376*/
-    opacity: 0.99 ;
-    /*white-space: nowrap;*/
+    opacity: 0.99 ; /*see case 7376*/
 }
-
 
 .help-popup-link:after {
     content: url(/images/help.gif);
-    padding-top: 2px;    
-    margin-left: 2px;
-    margin-right: 5px;
-
-    /*for some stupid reason opacity has to be set and < 1.0*/
-    /*see case 7376*/
-    opacity: 0.99 ;
-}
-
-.search-help-popup-link:after {
     padding-top: 2px;
     margin-left: 2px;
-    margin-right: 25px;
-    /*for some stupid reason opacity has to be set and < 1.0*/
-    opacity: 0.99 ;
-}
-
-.fig-popup-link:after {
-    /*content: url(/images/zoom_in.gif);*/
-    padding-top: 2px;        
-    margin-left: 3px;
     margin-right: 5px;
+    opacity: 0.99; /*see case 7376*/
 }
 
 a.gbrowse_hover{
     background-color:#cfc;
     font-weight: bold;
     color:#000;
-    text-decoration:none}
+    text-decoration:none;
+}
 
 .gbrowse_popup{
     display: none;
@@ -216,14 +95,9 @@ a.gbrowse_hover{
 }
 
 a.gbrowse_hover:hover .gbrowse_popup{ /*the span will display just on :hover state*/
-   background-color:#fff; color:#000;
-   text-align: center;
-}
-
-
-
-.sort-column-tooltip {
-
+    background-color:#fff;
+    color:#000;
+    text-align: center;
 }
 
 #input-welcome-overlay {

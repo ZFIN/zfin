@@ -1,5 +1,11 @@
 package org.zfin.gwt.root.dto;
 
+import com.google.gwt.user.client.Window;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Data Transfer Object corresponding to a unique combination of
  * Experiment, Figure and Stage range.
@@ -91,5 +97,25 @@ public class ExpressionFigureStageDTO extends AbstractFigureStageDTO<ExpressedTe
     public String toString() {
         return "ExpressionFigureStageDTO: " +
                 getUniqueID();
+    }
+
+    public Collection<? extends ExpressedTermDTO> getUniqueExpressedTerms() {
+        List<ExpressedTermDTO> list = new ArrayList<>();
+        for (ExpressedTermDTO dto : getExpressedTerms()) {
+            if (dto.getQualityTermDTOList() == null || dto.getQualityTermDTOList().size() == 0)
+                list.add(dto);
+            else {
+                for (EapQualityTermDTO eap : dto.getQualityTermDTOList()) {
+                    ExpressedTermDTO newDto = new ExpressedTermDTO();
+                    newDto.setExpressionFound(dto.isExpressionFound());
+                    newDto.setZdbID(dto.getZdbID());
+                    newDto.setEntity(dto.entity);
+                    newDto.setId(dto.id);
+                    newDto.setQualityTerm(eap);
+                    list.add(newDto);
+                }
+            }
+        }
+        return list;
     }
 }

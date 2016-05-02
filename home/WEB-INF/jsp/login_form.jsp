@@ -21,40 +21,33 @@
         Wrong Login/Password. Please try again or contact <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a>
         </span>
         <% } %><br/>
-        <zfin2:spiffyCorners>
-            <div style="padding: 2em;">
-                <form id="login" name="login" action="/action/security-check"
-                      method="POST" accept-charset="UTF-8">
-                    <input type='hidden' name='_spring_security_remember_me' value="true" />
-                    <input type="hidden" name="page" value="Main"/>
-                    <label for="j_username">Login:</label>
-                    <input type="text" size="12" name="j_username" id="j_username">
-                    &nbsp;&nbsp;
-                    <label for="j_password">Password:</label>
-                    <input type="password" size="12" name="j_password" id="j_password">
-                    &nbsp;&nbsp; <input type="submit" name="action" value="login"/>
-                </form>
-            </div>
-        </zfin2:spiffyCorners>
+
+        <div class="login-box">
+            <form id="login" name="login" action="/action/j_security-check"
+                  method="POST" accept-charset="UTF-8">
+                <input type='hidden' name='_spring_security_remember_me' value="true" />
+                <input type="hidden" name="page" value="Main"/>
+                <label for="username">Login:</label>
+                <input type="text" size="12" name="username" id="username">
+                &nbsp;&nbsp;
+                <label for="password">Password:</label>
+                <input type="password" size="12" name="password" id="password">
+                &nbsp;&nbsp; <input type="submit" name="action" value="login"/>
+            </form>
+        </div>
 
         <script>
-
-
-    
-    function makeLinksNotHttps() {
-          var elements = document.getElementsByTagName("a");
-          
-          for (var i = 0 ; i < elements.length ; i++) {
-            var link = elements[i];
-            if (link.href != null)
-                link.href = link.href.replace("https","http");                        
-          }
-    }
-
-    addLoadEvent(makeLinksNotHttps);
-
+            $(function() {
+                document.login.username.focus();
+                var elements = document.getElementsByTagName("a");
+                for (var i = 0 ; i < elements.length ; i++) {
+                    var link = elements[i];
+                    if (link.href != null) {
+                        link.href = link.href.replace("https", "http");
+                    }
+                }
+            });
         </script>
-        <script>document.login.j_username.focus();</script>
     </zfin:databaseLock>
 </div>
 

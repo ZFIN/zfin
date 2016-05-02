@@ -2,14 +2,27 @@ package org.zfin.feature;
 
 import org.zfin.marker.MarkerTypeGroup;
 
+import javax.persistence.*;
 
+
+@Entity
+@Table(name = "feature_marker_relationship_type")
 public class FeatureMarkerRelationshipType {
 
+    @Id
+    @Column(name = "fmreltype_name")
     private String name;
+    @ManyToOne()
+    @JoinColumn(name = "fmreltype_ftr_type_group")
     private FeatureTypeGroup FeatureTypeGroup;
+    @ManyToOne()
+    @JoinColumn(name = "fmreltype_mrkr_type_group")
     private MarkerTypeGroup MarkerTypeGroup;
+    @Column(name = "fmreltype_1_to_2_comments")
     private String firstToSecondLabel;
+    @Column(name = "fmreltype_2_to_1_comments")
     private String secondToFirstLabel;
+    @Column(name = "fmreltype_produces_affected_marker")
     private boolean affectedMarkerFlag;
 
     public boolean isAffectedMarkerFlag() {

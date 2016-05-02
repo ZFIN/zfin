@@ -1,27 +1,30 @@
-
 /* this is a fix for the input box getting pushed down some of the time */
 input.tt-input {
-    vertical-align:middle !important;
+    vertical-align: middle !important;
 }
 
 .tt-hint {
     opacity: .5 !important;
 }
 
-.tt-dropdown-menu {
+.tt-menu {
     padding: 8px 0;
     background-color: #fff;
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 8px;
-    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
 }
 
-.tt-suggestion, .tt-no-results {
+.tt-suggestion,
+.tt-no-results {
     font-size: 14px;
     padding: 6px 6px;
+    margin: 0;
+    text-align: left;
 }
 
-.tt-suggestion.tt-cursor {
+.tt-suggestion.tt-cursor,
+.tt-suggestion:hover {
     color: #fff;
     background-color: #0097cf;
 }
@@ -30,7 +33,7 @@ input.tt-input {
     text-align: center;
 }
 
-.tt-suggestion.tt-cursor .text-muted {
+.tt-suggestion:hover .text-muted {
     color: #a0c8de;
 }
 

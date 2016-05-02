@@ -116,6 +116,8 @@ public class GeneViewController {
 
         geneBean.setPlasmidDBLinks(
                 markerRepository.getMarkerDBLinksFast(gene, DisplayGroup.GroupName.PLASMIDS));
+        geneBean.setPathwayDBLinks(
+                markerRepository.getMarkerDBLinksFast(gene, DisplayGroup.GroupName.PATHWAYS));
 
         // ORTHOLOGY
         geneBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(gene));
@@ -137,7 +139,7 @@ public class GeneViewController {
 
 
     @RequestMapping(value = "/{geneID}/phenotype-summary")
-    public String genotypeSummary(Model model
+    public String phenotypeSummary(Model model
             , @PathVariable("geneID") String geneID) throws Exception {
 
         Marker marker = getMarkerRepository().getMarkerByID(geneID);

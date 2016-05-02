@@ -81,4 +81,8 @@ public class EnvironmentDTO extends RelatedEntityDTO {
     public int hashCode() {
         return name != null ? name.hashCode() : 0;
     }
+
+    public boolean isStandard() {
+        return name.equals(STANDARD) || name.equals(GENERIC_CONTROL);
+    }
 }

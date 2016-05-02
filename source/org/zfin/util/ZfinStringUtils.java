@@ -1,48 +1,17 @@
 package org.zfin.util;
 
 import org.apache.commons.lang3.text.translate.NumericEntityEscaper;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Utilities that are not in StringUtils.
  */
 public class ZfinStringUtils {
     public static final String ELLIPSIS = "...";
-
-    /**
-     * Replace a given string replace in a given string text with a string with.
-     * <p/>
-     * Example:
-     * StringUtils.replace("AbCDeF", "abCD", gWE)       = "gweef"
-     *
-     * @param text    string
-     * @param replace string
-     * @param with    string
-     * @return string
-     */
-    public static String replaceCaseInsensitive(String text, String replace, String with) {
-        if (text == null)
-            return null;
-
-        if (replace == null)
-            return text;
-
-        String replaceLowerCase = replace.toLowerCase();
-
-        // get all the case insensitive matches
-        String textLowerCase = text.toLowerCase();
-        int position = textLowerCase.indexOf(replaceLowerCase);
-
-
-        char[] characters = replace.toCharArray();
-        for (char character : characters) {
-            //        if (Character.isLowerCase(character))
-//                char lowerCase = Character.toLowerCase(character);
-            //          text = StringUtils.replaceChars(text, lowerCase, )
-        }
-        return null;
-    }
 
     /**
      * Truncate a given text to the maximum of maxLength characters and add an ellipsis (...) at the end
@@ -53,15 +22,18 @@ public class ZfinStringUtils {
      * @return truncated text
      */
     public static String getTruncatedString(String originalText, int maxLength) {
-        if (originalText == null)
+        if (originalText == null) {
             return null;
+        }
 
-        if (maxLength < 1)
+        if (maxLength < 1) {
             throw new IllegalStateException("The maximum length of the text to be truncated must be greater than 0!");
+        }
 
         int textLength = originalText.length();
-        if (textLength < maxLength)
+        if (textLength < maxLength) {
             return originalText;
+        }
 
         String truncatedText = originalText.substring(0, maxLength - 1);
         int indexOfLastWhiteSpace = truncatedText.lastIndexOf(" ");
@@ -75,8 +47,9 @@ public class ZfinStringUtils {
     }
 
     public static String getHtmlTableFromQueryString(String text) {
-        if (text == null)
+        if (text == null) {
             return null;
+        }
         String[] querParameters = text.split("&");
         StringBuffer buffer = new StringBuffer(querParameters.length * 10);
         buffer.append("<table>");
@@ -87,8 +60,9 @@ public class ZfinStringUtils {
             buffer.append(keyValuesPair[0]);
             buffer.append("</td>");
             buffer.append("<td>");
-            if (keyValuesPair.length == 2)
+            if (keyValuesPair.length == 2) {
                 buffer.append(keyValuesPair[1]);
+            }
             buffer.append("</td>");
             buffer.append("</tr>");
         }
@@ -101,51 +75,54 @@ public class ZfinStringUtils {
     }
 
     public static List<Integer> detectWhiteSpaces(String line, int startPosition) {
-        if (line == null)
+        if (line == null) {
             return null;
+        }
         List<Integer> whiteSpaceSet = new ArrayList<Integer>();
         String[] tokens = line.split(" ");
         int accumulatedPosition = startPosition;
         int index = 0;
         for (String token : tokens) {
-            if (index++ == tokens.length - 1)
+            if (index++ == tokens.length - 1) {
                 break;
+            }
             accumulatedPosition += token.length() + 1;
             whiteSpaceSet.add(accumulatedPosition - 1);
         }
-        if (line.substring(line.length() - 1).equals(" "))
+        if (line.substring(line.length() - 1).equals(" ")) {
             whiteSpaceSet.add(line.length() - 1);
+        }
         return whiteSpaceSet;
     }
 
-    // useful for cases such as FB case 8817,MartFish Search: MartFish view page geno/genox id list parser error
-    public static String cleanUpConcatenatedZDBIdsDelimitedByComma (String concatenatedZDBIdsDelimitedByComma) {
+    // useful for cases such as FB case 8817,Fish Search: Fish view page geno/genox id list parser error
+    public static String cleanUpConcatenatedZDBIdsDelimitedByComma(String concatenatedZDBIdsDelimitedByComma) {
         if (concatenatedZDBIdsDelimitedByComma == null) {
             return null;
         }
         String delimiter = ",";
         if (concatenatedZDBIdsDelimitedByComma.indexOf(delimiter) > 0) {
             String[] concatenatedIDsPieces = concatenatedZDBIdsDelimitedByComma.split(delimiter);
-            for(int i =0; i < concatenatedIDsPieces.length ; i++) {
-                  String newStr = concatenatedIDsPieces[i].trim();
-                  if (newStr.isEmpty() || newStr.indexOf("ZDB") < 0)  {
-                      continue;
-                  }
+            for (int i = 0; i < concatenatedIDsPieces.length; i++) {
+                String newStr = concatenatedIDsPieces[i].trim();
+                if (newStr.isEmpty() || newStr.indexOf("ZDB") < 0) {
+                    continue;
+                }
 
-                  if (!newStr.startsWith("ZDB")) {
-                        String[] piecesZDBId = newStr.split("ZDB");
-                        if (i == 0) {
-                              concatenatedZDBIdsDelimitedByComma = "ZDB" + piecesZDBId[1];
-                        }   else {
-                              concatenatedZDBIdsDelimitedByComma = concatenatedZDBIdsDelimitedByComma + delimiter + "ZDB" + piecesZDBId[1];
-                        }
-                  }   else {
-                        if (i == 0) {
-                              concatenatedZDBIdsDelimitedByComma = newStr;
-                        }   else {
-                              concatenatedZDBIdsDelimitedByComma = concatenatedZDBIdsDelimitedByComma + delimiter + newStr;
-                        }
-                  }
+                if (!newStr.startsWith("ZDB")) {
+                    String[] piecesZDBId = newStr.split("ZDB");
+                    if (i == 0) {
+                        concatenatedZDBIdsDelimitedByComma = "ZDB" + piecesZDBId[1];
+                    } else {
+                        concatenatedZDBIdsDelimitedByComma = concatenatedZDBIdsDelimitedByComma + delimiter + "ZDB" + piecesZDBId[1];
+                    }
+                } else {
+                    if (i == 0) {
+                        concatenatedZDBIdsDelimitedByComma = newStr;
+                    } else {
+                        concatenatedZDBIdsDelimitedByComma = concatenatedZDBIdsDelimitedByComma + delimiter + newStr;
+                    }
+                }
 
             }
         }
@@ -154,28 +131,47 @@ public class ZfinStringUtils {
 
     /**
      * Escape characters into character entities if they are outside of the range supported by informix
+     *
      * @param name String to escape
      * @return escaped String
      */
     public static String escapeHighUnicode(String name) {
-
-        if (name ==null)
+        if (name == null) {
             return null;
+        }
 
         return NumericEntityEscaper.above(0xFF).translate(name);
-
     }
 
-    public static boolean containsWhiteSpaceOrNoneATGC(final String sequenceString){
-        if(sequenceString != null){
-            for(int i = 0; i < sequenceString.length(); i++){
-                char c = sequenceString.charAt(i);
-                if(Character.isWhitespace(c) || (c != 'A' && c != 'T' && c != 'G' && c != 'C')){
-                    return true;
-                }
-            }
+    public static boolean isValidNucleotideSequence(final String sequenceString) {
+        if (sequenceString == null) {
+            return false;
         }
-        return false;
+
+        Pattern pattern = Pattern.compile("\\s|[^ATGC]");
+        Matcher matcher = pattern.matcher(sequenceString);
+        return !matcher.find();
+    }
+
+    public static boolean isZdbId(final String txt) {
+        // generated with
+        // http://txt2re.com/index-java.php3?s=ZDB-GENE-160119-12&-7&-28&4&-29&2&-30&9
+
+        String re1="(ZDB)";	// Word 1
+        String re2="(-)";	// Any Single Character 1
+        String re3="((?:[a-z][a-z]+))";	// Word 2
+        String re4="(-)";	// Any Single Character 2
+        String re5="((?:(?:[1]{1}\\d{1}\\d{1}\\d{1})|(?:[2]{1}\\d{3}))(?:[0]?[1-9]|[1][012])(?:(?:[0-2]?\\d{1})|(?:[3][01]{1})))(?![\\d])";	// YYYYMMDD 1
+        String re6="(-)";	// Any Single Character 3
+        String re7="(\\d+)";	// Integer Number 1
+
+        Pattern p = Pattern.compile(re1+re2+re3+re4+re5+re6+re7,Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        Matcher m = p.matcher(txt);
+        return m.find();
+    }
+
+    public static String removeHtmlTags(final String string) {
+        return string.replaceAll("<.*?>", "");
     }
 
 }

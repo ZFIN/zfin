@@ -30,6 +30,7 @@
 <!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	kevin\@zfin.org
 <!--|GO_EMAIL_ERR|-->	kevin\@zfin.org
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/dicer/home/WEB-INF/lib*:/opt/zfin/source_roots/dicer/ZFIN_WWW/lib/Java/*:/opt/zfin/www_homes/dicer/home/WEB-INF/classes:/private/apps/tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
@@ -46,7 +47,7 @@
 <!--|LN54_CONTACT_EMAIL|-->	kevin\@zfin.org
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	kevin\@zfin.org
-<!--|MACHINE_NAME|-->	bent
+<!--|MACHINE_NAME|-->	rhel7test
 <!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false
 <!--|MUTANT_NAME|-->	dicer
 <!--|NOMEN_COORDINATOR|-->	kevin\@zfin.org
@@ -65,7 +66,7 @@
 <!--|SITE_BACKGROUND|-->	#FFFFFF
 <!--|SOURCEROOT|-->	/opt/zfin/source_roots/dicer/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
-<!--|SQLHOSTS_HOST|-->	bent.zfin.org
+<!--|SQLHOSTS_HOST|-->	rhel7test.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	kevin\@zfin.org
 <!--|SWISSPROT_EMAIL_ERR|-->	kevin\@zfin.org
 <!--|SWISSPROT_EMAIL_REPORT|-->	kevin\@zfin.org

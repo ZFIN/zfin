@@ -4,18 +4,6 @@
 
 <zfin-ontology:anatomy-search-form formBean="${formBean}"/>
 
-
-<TABLE width=100%>
-    <TR>
-        <TD class="titlebar">
-            <span style="font-size:larger; margin-left:0.5em; font-weight:bold;">
-                &nbsp;&nbsp;
-            </span>
-            &nbsp;&nbsp;
-        </TD>
-    </TR>
-</TABLE>
-
 <TABLE width="100%">
     <tbody>
     <TR>

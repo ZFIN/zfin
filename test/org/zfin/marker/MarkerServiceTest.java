@@ -13,6 +13,7 @@ import org.zfin.marker.service.MarkerService;
 import org.zfin.orthology.Ortholog;
 import org.zfin.orthology.presentation.OrthologEvidencePresentation;
 import org.zfin.orthology.presentation.OrthologyPresentationRow;
+import org.zfin.profile.Organization;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
@@ -25,6 +26,7 @@ import java.util.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.getProfileRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
@@ -42,18 +44,18 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         //piles of fake data
         MarkerType gene = new MarkerType();
         gene.setDisplayName("gene");
-        HashSet<Marker.TypeGroup> geneGroups = new HashSet<Marker.TypeGroup>();
+        HashSet<Marker.TypeGroup> geneGroups = new HashSet<>();
         geneGroups.add(Marker.TypeGroup.GENEDOM);
         gene.setTypeGroups(geneGroups);
 
         MarkerType clone = new MarkerType();
-        HashSet<Marker.TypeGroup> cloneGroups = new HashSet<Marker.TypeGroup>();
+        HashSet<Marker.TypeGroup> cloneGroups = new HashSet<>();
         //todo: this will likely change to something like ALLCLONES
         cloneGroups.add(Marker.TypeGroup.CLONE);
         clone.setTypeGroups(cloneGroups);
 
         MarkerType transcript = new MarkerType();
-        HashSet<Marker.TypeGroup> transcriptGroups = new HashSet<Marker.TypeGroup>();
+        HashSet<Marker.TypeGroup> transcriptGroups = new HashSet<>();
         transcriptGroups.add(Marker.TypeGroup.GENEDOM);
         transcript.setTypeGroups(transcriptGroups);
         transcript.setDisplayName("transcript");
@@ -437,7 +439,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         OrthologyNote note = new OrthologyNote();
         note.setMarker(m);
         note.setNote(noteText);
-        m.setOrthologyNotes(new HashSet<OrthologyNote>(Arrays.asList(note)));
+        m.setOrthologyNotes(new HashSet<>(Collections.singletonList(note)));
         Collection<Ortholog> orthologs = new ArrayList<>();
 
         // EXECUTE
@@ -447,5 +449,40 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         assertThat("OrthologyPresentationBean should not be null", bean, is(notNullValue()));
         assertThat("Note text should match", bean.getNote(), is(noteText));
         assertThat("Orthologs should be empty", bean.getOrthologs(), is(nullValue()));
+    }
+
+    @Test
+    public void getSTRModificationNote() {
+        String sequence = "AATTGGCCTTAAGG";
+        String actual = MarkerService.getSTRModificationNote(sequence, true, false);
+        assertThat(actual, is("Reported sequence " + sequence + " was reversed."));
+
+        actual = MarkerService.getSTRModificationNote(sequence, true, true);
+        assertThat(actual, is("Reported sequence " + sequence + " was reversed and complemented."));
+
+        actual = MarkerService.getSTRModificationNote(sequence, false, true);
+        assertThat(actual, is("Reported sequence " + sequence + " was complemented."));
+    }
+
+    @Test
+    public void markerHasSupplier() {
+        Marker marker = getMarkerRepository().getMarkerByID("ZDB-BAC-060503-214");
+        Organization bprc = getProfileRepository().getLabById("ZDB-LAB-040701-1");
+        Organization geneTools = getProfileRepository().getCompanyById("ZDB-COMPANY-000502-1");
+
+        assertThat(bprc.getZdbID() + " should be a supplier for " + marker.getZdbID(),
+                MarkerService.markerHasSupplier(marker, bprc), is(true));
+
+        assertThat(geneTools.getZdbID() + " should not be a supplier for " + marker.getZdbID(),
+                MarkerService.markerHasSupplier(marker, geneTools), is(false));
+    }
+
+    @Test
+    public void markerHasAlias() {
+        Marker marker = getMarkerRepository().getMarkerByID("ZDB-GENE-980526-166");
+        assertThat(marker.getZdbID() + " should have alias sonic you",
+                MarkerService.markerHasAlias(marker, "sonic you"), is(true));
+        assertThat(marker.getZdbID() + " should have not alias sonic youth",
+                MarkerService.markerHasAlias(marker, "sonic youth"), is(false));
     }
 }

@@ -5,8 +5,8 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.beans.Field;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.util.CollectionUtils;
+import org.zfin.expression.Figure;
 import org.zfin.fish.FeatureGene;
 import org.zfin.framework.presentation.ProvidesLink;
 
@@ -26,7 +26,11 @@ public class SearchResult implements ProvidesLink {
     String category;
     @Field
     String type;
+
+
+
     @Field
+
     String url;
     @Field
     String screen;
@@ -51,10 +55,15 @@ public class SearchResult implements ProvidesLink {
     String xpatZdbId;
     @Field("fig_zdb_id")
     String figZdbId;
+    @Field
+    String pgcmid;
 
 
     @Field("[explain]")
     String explain;
+
+    Object entity;
+    Figure figure;
 
     //fields that need to be injected after
     String matchingText;
@@ -77,9 +86,18 @@ public class SearchResult implements ProvidesLink {
         String cssClass = "";
         if (id.startsWith("ZDB-GENE"))
             cssClass = " class = \"genedom\" ";
-        return "<a " + cssClass + " href=\"" + url + "\">" + name + "</a>";
+        if (id.contains("CONSTRCT"))
+            cssClass = " class = \"genedom\" ";
+        return "<a " + cssClass + " href=\"" + url + "\">" +  name +  "</a>";
     }
 
+    public String getPgcmid() {
+        return pgcmid;
+    }
+
+    public void setPgcmid(String pgcmid) {
+        this.pgcmid = pgcmid;
+    }
     public String getLinkWithAttribution() {
         return getLink();
     }
@@ -274,6 +292,14 @@ public class SearchResult implements ProvidesLink {
     public void setHasOrthology(String hasOrthology) {
         this.hasOrthology = hasOrthology;
     }
+
+    public Object getEntity() { return entity; }
+
+    public void setEntity(Object entity) { this.entity = entity; }
+
+    public Figure getFigure() { return figure; }
+
+    public void setFigure(Figure figure) { this.figure = figure; }
 
     /* just grab an arbitrary first one for now.. */
     public String getThumbnail() {

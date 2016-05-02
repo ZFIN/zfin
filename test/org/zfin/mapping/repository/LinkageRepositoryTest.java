@@ -1,14 +1,11 @@
 package org.zfin.mapping.repository;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
 import org.zfin.feature.Feature;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.mapping.*;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -69,65 +66,6 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore("broken")
-    public void createLinkage() {
-        Session session = currentSession();
-        // pax2a
-        Marker pax2a = (Marker) session.get(Marker.class, "ZDB-GENE-990415-8");
-        Marker fgf8a = (Marker) session.get(Marker.class, "ZDB-GENE-990415-72");
-        MarkerMarkerLinkageMember member = new MarkerMarkerLinkageMember();
-        member.setMarker(pax2a);
-        member.setPairedMarker(fgf8a);
-        member.setDistance(22.5);
-        member.setMetric("cM");
-
-        Linkage linkage = new Linkage();
-        linkage.setChromosome("2");
-        linkage.setPerson(getProfileRepository().getPersonByName("cmpich"));
-        // Fashena and Westerfield
-        linkage.setPublication(getPublicationRepository().getPublication("ZDB-PUB-990507-16"));
-
-        linkage.addLinkageMember(member);
-        try {
-            HibernateUtil.createTransaction().begin();
-
-            session.save(linkage);
-            HibernateUtil.flushAndCommitCurrentSession();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            HibernateUtil.rollbackTransaction();
-        }
-
-        assertNotNull(linkage.getZdbID());
-    }
-
-    @Test
-    @Ignore("broken")
-    public void updateLinkage() {
-        Session session = currentSession();
-        // pax2a
-        Marker pax2a = (Marker) session.get(Marker.class, "ZDB-GENE-990415-8");
-        Marker est = (Marker) session.get(Marker.class, "ZDB-EST-000329-419");
-        MarkerMarkerLinkageMember member = new MarkerMarkerLinkageMember();
-        member.setMarker(pax2a);
-        member.setPairedMarker(est);
-        member.setDistance(13.2);
-        member.setMetric("cM");
-
-        Linkage linkage = (Linkage) session.get(Linkage.class, "ZDB-LINK-140305-6");
-        try {
-            HibernateUtil.createTransaction().begin();
-            linkage.addLinkageMember(member);
-            HibernateUtil.flushAndCommitCurrentSession();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            HibernateUtil.rollbackTransaction();
-        }
-        assertNotNull(linkage.getZdbID());
-    }
-
-
-    @Test
     public void findLinkageForMappedClones() {
         Session session = currentSession();
 
@@ -138,14 +76,13 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore("broken")
     public void displayScaffoldingLocation() {
         Session session = currentSession();
 
         Marker gene = (Marker) session.get(Marker.class, "ZDB-GENE-070831-1");
         String display = MappingService.getChromosomeLocationDisplay(gene);
         assertNotNull(display);
-        assertTrue(display.startsWith("Zv9"));
+        assertTrue(display.startsWith("15"));
     }
 
     @Test
@@ -159,7 +96,7 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
     public void testGetLG() {
         // when the gene has method of creating/adding linkage group information and
         // adding relationship, it would be better to create the test cases rather
-        // than using the exisiting genes which might be merged
+        // than using the existing genes which might be merged
         LinkageRepository linkageRepository = getLinkageRepository();
         Marker marker1 = (Marker) currentSession().get(Marker.class, "ZDB-EST-000426-1181");
         assertTrue("marker lg list contains all self panel mappings", linkageRepository.getChromosomeLocations(marker1).contains("13") && linkageRepository.getChromosomeLocations(marker1).contains("23"));
@@ -248,7 +185,7 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
         List<MarkerGenomeLocation> genomeLocationList = getLinkageRepository().getGenomeLocation(marker);
         assertNotNull(genomeLocationList);
 
-        List<GenomeLocation> genomeLocationList1 = getLinkageRepository().getPhysicalGenomeLocations(marker);
+        List<MarkerGenomeLocation> genomeLocationList1 = getLinkageRepository().getPhysicalGenomeLocations(marker);
         assertNotNull(genomeLocationList1);
 
         marker = getMarkerRepository().getMarkerByAbbreviation("ahr2");
@@ -367,7 +304,7 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getCloneLocation() {
         Marker marker = getMarkerRepository().getMarkerByID("ZDB-BAC-050218-2519");
-        List<GenomeLocation> list = getLinkageRepository().getPhysicalGenomeLocations(marker);
+        List<MarkerGenomeLocation> list = getLinkageRepository().getPhysicalGenomeLocations(marker);
         assertNotNull(list);
     }
 

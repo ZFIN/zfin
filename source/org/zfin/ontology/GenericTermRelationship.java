@@ -1,16 +1,33 @@
 package org.zfin.ontology;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.zfin.gwt.root.dto.RelationshipType;
+
+import javax.persistence.*;
 
 /**
  * Domain object for a term-term relationship entity.
  */
+@Entity
+@Table(name = "term_relationship")
 public class GenericTermRelationship implements TermRelationship {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "TERMREL")
+            })
+    @Column(name = "termrel_zdb_id")
     private String zdbId;
+    @Column(name = "termrel_type")
     private String type;
-
+    @ManyToOne
+    @JoinColumn(name = "termrel_term_1_zdb_id")
     private GenericTerm termOne;
+    @ManyToOne
+    @JoinColumn(name = "termrel_term_2_zdb_id")
     private GenericTerm termTwo;
 
 

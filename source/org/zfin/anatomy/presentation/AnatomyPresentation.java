@@ -1,9 +1,7 @@
 package org.zfin.anatomy.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.ontology.Term;
-import org.zfin.ontology.TermAlias;
-import org.zfin.ontology.TermRelationship;
+import org.zfin.ontology.*;
 import org.zfin.util.ListFormatter;
 
 import java.util.*;
@@ -23,7 +21,7 @@ public final class AnatomyPresentation {
      * @return list of Presentation objects
      */
     public static List<RelationshipPresentation> createRelationshipPresentation(List<String> relationshipTypes,
-                                                                                Term term) {
+                                                                                GenericTerm term) {
         if (relationshipTypes == null)
             return null;
         if (term == null)
@@ -32,9 +30,9 @@ public final class AnatomyPresentation {
         List<RelationshipPresentation> relList = new ArrayList<RelationshipPresentation>();
         for (String type : relationshipTypes) {
             RelationshipPresentation rel = new RelationshipPresentation();
-            List<Term> items = new ArrayList<Term>();
+            List<GenericTerm> items = new ArrayList<>();
             rel.setType(type);
-            for (TermRelationship relatedItem : term.getAllDirectlyRelatedTerms()) {
+            for (GenericTermRelationship relatedItem : term.getAllDirectlyRelatedTerms()) {
                 if (relatedItem.getType().equals(type)) {
                     items.add(relatedItem.getTermTwo());
                 }

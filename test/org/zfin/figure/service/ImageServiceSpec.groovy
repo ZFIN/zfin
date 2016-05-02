@@ -48,7 +48,7 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
 
     def "when a new image is created, it should have a zdb_id, zdbID should be part of filename"() {
         when: "a new image is created"
-        Image image = ImageService.processImage(figure, owner, "test/resources/540x1130.jpg", false)
+        Image image = ImageService.processImage(figure,  "test/resources/540x1130.jpg", false,Image.NOT_SPECIFIED)
 
         then: "it should have a zdbID generated for it"
         image.zdbID
@@ -61,7 +61,7 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
 
     def "Regular sized, thumbnail & medium sized files should exist in loadUp"() {
         when: "a new image is created"
-        Image image = ImageService.processImage(figure, owner, "test/resources/540x1130.jpg", false)
+        Image image = ImageService.processImage(figure, "test/resources/540x1130.jpg", false,Image.NOT_SPECIFIED)
         File imageFile = new File(imageLoadUp, image.imageFilename)
         File thumbnailFile = new File(imageLoadUp, image.thumbnail)
         File mediumFile = new File(new File(imageLoadUp.toString(), "medium"), image.imageFilename)
@@ -75,7 +75,7 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
 
     def "The figure and image are properly associated"() {
         when: "a new image is created"
-        Image image = ImageService.processImage(figure, owner, "test/resources/540x1130.jpg", false)
+        Image image = ImageService.processImage(figure, "test/resources/540x1130.jpg", false,Image.NOT_SPECIFIED)
 
         then: "it should be associated with the figure and vice-versa"
         image.figure == figure
@@ -85,7 +85,7 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
 
     def "Image should have it's dimensions when piped through processImage"() {
         when: "a new image is created"
-        Image image = ImageService.processImage(figure, owner, "test/resources/${width}x${height}.jpg", false)
+        Image image = ImageService.processImage(figure,  "test/resources/${width}x${height}.jpg", false,Image.NOT_SPECIFIED)
 
         then: "main image has correct dimensions"
         image.width == width

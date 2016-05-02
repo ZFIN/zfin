@@ -5,6 +5,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.DuplicateEntryException;
+import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.ValidationException;
 
 import java.util.List;
@@ -43,7 +44,7 @@ public interface FeatureRPCService extends RemoteService {
 
     void deleteFeature(String zdbID);
 
-    List<FeatureMarkerRelationshipDTO> getFeaturesMarkerRelationshipsForPub(String publicationZdbID);
+    List<FeatureMarkerRelationshipDTO> getFeatureMarkerRelationshipsForPub(String publicationZdbID);
 
     void addFeatureAlias(String name, String ftrZdbID, String pubZdbID);
 
@@ -62,14 +63,18 @@ public interface FeatureRPCService extends RemoteService {
     void addFeatureMarkerRelationShip(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO);
 
     // note stuff
-    void editPublicNote(NoteDTO noteDTO);
+    FeatureDTO editPublicNote(NoteDTO noteDTO);
 
-    NoteDTO addCuratorNote(NoteDTO noteDTO);
+    CuratorNoteDTO addCuratorNote(CuratorNoteDTO noteDTO);
 
     void editCuratorNote(NoteDTO noteDTO);
 
     void removeCuratorNote(NoteDTO noteDTO);
 
     List<String> getMutagensForFeatureType(FeatureTypeEnum ftrType);
+
+    void removePublicNote(NoteDTO updatedNoteDTO);
+
+    PersonDTO getCuratorInfo();
 
 }

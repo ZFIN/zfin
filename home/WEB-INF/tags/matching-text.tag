@@ -60,7 +60,7 @@
         </ul>
     </c:otherwise>
 </c:choose>
-<authz:authorize ifAnyGranted="root">
+<authz:authorize access="hasRole('root')">
     <c:if test="${matchingTextList == null || fn:length(matchingTextList) == 0}">
         No Match found.
     </c:if>

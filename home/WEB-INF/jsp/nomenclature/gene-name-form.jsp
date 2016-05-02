@@ -3,21 +3,25 @@
 
 <h3>Proposed Nomenclature</h3>
 
-<div>
-    <form:label path="geneSymbol" cssClass="required">Gene Symbol</form:label>
-    <form:input path="geneSymbol"/>
-    <em>e.g. ndr2</em>
+<div class="form-group">
+    <form:label path="geneSymbol" cssClass="col-sm-2 control-label required">Gene Symbol</form:label>
+    <div class="col-sm-4">
+        <form:input path="geneSymbol" cssClass="form-control" placeholder="e.g. ndr2"/>
+    </div>
 </div>
 
-<div>
-    <form:label path="geneName" cssClass="required">Gene Name</form:label>
-    <form:input path="geneName"/>
-    <em>e.g. nodal-related 2</em>
+<div class="form-group">
+    <form:label path="geneName" cssClass="col-sm-2 control-label required">Gene Name</form:label>
+    <div class="col-sm-4">
+        <form:input path="geneName" cssClass="form-control" placeholder="e.g. nodal-related 2"/>
+    </div>
 </div>
 
-<div>
-    <form:label path="otherNames">Other Names</form:label>
-    <form:input path="otherNames"/>
+<div class="form-group">
+    <form:label path="otherNames" cssClass="col-sm-2 control-label">Other Names</form:label>
+    <div class="col-sm-4">
+        <form:input path="otherNames" cssClass="form-control"/>
+    </div>
 </div>
 
 <h3>Supporting Information</h3>
@@ -36,44 +40,61 @@
     <em>Sequence data will be treated in complete confidence.</em>
 </p>
 
-<div>
-    <form:label path="genBankID">GenBank ID</form:label>
-    <form:input path="genBankID"/>
+<div class="form-group">
+    <form:label path="genBankID" cssClass="col-sm-2 control-label">GenBank ID</form:label>
+    <div class="col-sm-4">
+        <form:input path="genBankID" cssClass="form-control"/>
+    </div>
 </div>
 
-<div>
-    <form:label path="sequence">Sequence</form:label>
-    <form:textarea path="sequence" cols="80" rows="5"/>
+<div class="form-group">
+    <form:label path="sequence" cssClass="col-sm-2 control-label">Sequence</form:label>
+    <div class="col-sm-6">
+        <form:textarea path="sequence" rows="5" cssClass="form-control"/>
+    </div>
 </div>
 
-<div>
-    <form:label path="chromosome">Chromosome</form:label>
-    <form:input path="chromosome"/>
+<div class="form-group">
+    <form:label path="chromosome" cssClass="col-sm-2 control-label">Chromosome</form:label>
+    <div class="col-sm-4">
+        <form:input path="chromosome" cssClass="form-control"/>
+    </div>
 </div>
 
 <h4>Homology</h4>
 
-<table id="homologues">
-    <tr>
-        <th>Species</th>
-        <th>Gene Symbol</th>
-        <th>Database ID <small>(e.g.,
-            <a href="http://www.ncbi.nlm.nih.gov/Genbank/index.html" target="_blank">GenBank</a>,
-            <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM" target="_blank">OMIM</a>,
-            <a href="http://www.informatics.jax.org/" target="_blank">Mouse Genome Informatics</a>)</small></th>
-    </tr>
-    <c:forEach var="homologue" items="${submission.homologyInfoList}" varStatus="status">
-        <tr>
-            <td><form:input path="homologyInfoList[${status.index}].species"/></td>
-            <td><form:input path="homologyInfoList[${status.index}].geneSymbol"/></td>
-            <td><form:input path="homologyInfoList[${status.index}].databaseID"/></td>
-        </tr>
+<div id="homologs">
+    <c:forEach var="homolog" items="${submission.homologyInfoList}" varStatus="status">
+        <div class="line-form-row">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Species</label>
+                <div class="col-sm-4">
+                    <form:input path="homologyInfoList[${status.index}].species" class="form-control"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Gene Symbol</label>
+                <div class="col-sm-4">
+                    <form:input path="homologyInfoList[${status.index}].geneSymbol" class="form-control"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Database ID</label>
+                <div class="col-sm-4">
+                    <form:input path="homologyInfoList[${status.index}].databaseID" class="form-control"/>
+                    <span class="help-block">
+                        An identifier from <a href="http://www.ncbi.nlm.nih.gov/Genbank/index.html" target="_blank">GenBank</a>,
+                        <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM" target="_blank">OMIM</a>,
+                        <a href="http://www.informatics.jax.org/" target="_blank">Mouse Genome Informatics</a>, etc.
+                    </span>
+                </div>
+            </div>
+        </div>
     </c:forEach>
-</table>
+</div>
 
 <script>
-    jQuery(function () {
-        makeDynamicTable("#homologues", ${fn:length(submission.homologyInfoList)}, "homologyInfoList",
-                ["species", "geneSymbol", "databaseID"]);
+    $(function() {
+        $("#homologs").multirowTable(".line-form-row", "Add another homolog");
     });
 </script>

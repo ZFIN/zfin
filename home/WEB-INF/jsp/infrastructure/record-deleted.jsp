@@ -2,7 +2,7 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<authz:authorize ifAnyGranted="root">
+<authz:authorize access="hasRole('root')">
     <c:choose>
         <c:when test="${!empty formBean.errors}">
             <ul>

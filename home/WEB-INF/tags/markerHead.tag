@@ -40,8 +40,7 @@
     </tr>
 </c:if>
     <%--</c:if>--%>
-<%--<zfin2:notes hasNotes="${formBean.marker}"/>--%>
-    <zfin2:notesInDiv hasNotes="${formBean.marker}"/>
+    <zfin2:entityNotes entity="${formBean.marker}"/>
 
 </table>
 

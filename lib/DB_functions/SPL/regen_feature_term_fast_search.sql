@@ -51,7 +51,7 @@ Create dba function regen_feature_term_fast_search()
    define figureZdbId     like figure.fig_zdb_id;
    define pubZdbId        like publication.zdb_id;
    define imgZdbId        like image.img_zdb_id;
-   define xpatresZdbId    like expression_result.xpatres_zdb_id;
+   define xpatresZdbId    like expression_result2.xpatres_pk_id;
 
 
     -- exception handler variables and zdbFlag variable
@@ -132,7 +132,7 @@ Create dba function regen_feature_term_fast_search()
 		fstat_gene_zdb_id varchar(50),
 		fstat_fig_zdb_id varchar(50) not null,
 		fstat_pub_zdb_id varchar(50)  not null,
-		fstat_xpatres_zdb_id varchar(50) not null,
+		fstat_xpatres_zdb_id int8 not null,
 		fstat_type varchar(20),
 		fstat_img_zdb_id varchar(50)
 	) 
@@ -293,16 +293,16 @@ Create dba function regen_feature_term_fast_search()
 		       fstat_xpatres_zdb_id,
 		       fstat_type)
 		select atb_zdb_id, alltermcon_container_zdb_id, xpatres_superterm_zdb_id, 
-		       xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id,
+		       xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id, xpatres_pk_id,
 		       'Antibody' 
-		from antibody, fish_experiment, expression_experiment, expression_result, 
-			  figure, expression_pattern_figure, genotype, all_term_contains, fish
+		from antibody, fish_experiment, expression_experiment2, expression_result2, 
+			  figure, expression_figure_stage, genotype, all_term_contains, fish
 		where  xpatres_expression_found = 't'
 		and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatex_atb_zdb_id = atb_zdb_id
-		and  xpatres_xpatex_zdb_id = xpatex_zdb_id
-		and fig_zdb_id = xpatfig_fig_zdb_id
-		and xpatfig_xpatres_zdb_id = xpatres_zdb_id
+		   and efs_xpatex_zdb_id = xpatex_zdb_id
+		and fig_zdb_id = efs_fig_zdb_id
+		and efs_pk_id = xpatres_efs_id
 		and genox_is_std_or_generic_control = 't'
 		and fish_zdb_id = genox_fish_zdb_id
 		and fish_genotype_zdb_id = geno_zdb_id
@@ -322,15 +322,16 @@ Create dba function regen_feature_term_fast_search()
 		       fstat_pub_zdb_id,
 		       fstat_xpatres_zdb_id,
 		       fstat_type)
-		select atb_zdb_id, alltermcon_container_zdb_id, xpatres_subterm_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id, 'Antibody' 
-		from antibody, fish_experiment, expression_experiment, expression_result, 
-			  figure, expression_pattern_figure, genotype, all_term_contains, fish
+		select atb_zdb_id, alltermcon_container_zdb_id, xpatres_subterm_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, 
+		       xpatex_source_zdb_id, xpatres_pk_id, 'Antibody' 
+		from antibody, fish_experiment, expression_experiment2, expression_result2, 
+			  figure, expression_figure_stage, genotype, all_term_contains, fish
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatex_atb_zdb_id = atb_zdb_id
-		and  xpatres_xpatex_zdb_id = xpatex_zdb_id
-		and fig_zdb_id = xpatfig_fig_zdb_id
-		and xpatfig_xpatres_zdb_id = xpatres_zdb_id
+		and fig_zdb_id = efs_fig_zdb_id
+		   and efs_xpatex_zdb_id = xpatex_zdb_id
+		and xpatres_efs_id = efs_pk_id
 		and genox_is_std_or_generic_control = 't'
 		and fish_zdb_id = genox_fish_zdb_id
 		and fish_genotype_zdb_id = geno_zdb_id
@@ -351,17 +352,18 @@ Create dba function regen_feature_term_fast_search()
 		       fstat_img_zdb_id,
 		       fstat_type) 
 		select xpatex_probe_feature_zdb_id, alltermcon_container_zdb_id, xpatres_superterm_zdb_id, xpatex_gene_zdb_id, 
-		       xpatfig_fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id, img_zdb_id, 'High-Quality-Probe'
-		  from clone, fish, fish_experiment, expression_experiment, expression_result, image, 
-			  expression_pattern_figure, genotype, all_term_contains
+		       efs_fig_zdb_id, xpatex_source_zdb_id, xpatres_pk_id, img_zdb_id, 'High-Quality-Probe'
+		  from clone, fish, fish_experiment, expression_experiment2, expression_result2, image, 
+			  expression_figure_stage, genotype, all_term_contains
 		   where  xpatres_expression_found = 't'
 	           and genox_zdb_id = xpatex_genox_zdb_id
-		   and  xpatres_xpatex_zdb_id = xpatex_zdb_id
 		   and genox_is_std_or_generic_control = 't'
-		   and img_fig_zdb_id = xpatfig_fig_zdb_id
-		   and xpatfig_xpatres_zdb_id = xpatres_zdb_id
+		   and img_fig_zdb_id = efs_fig_zdb_id
+		   and efs_pk_id = xpatres_efs_id
 		   and fish_zdb_id = genox_fish_zdb_id
+		   and efs_xpatex_zdb_id = xpatex_zdb_id
 		   and fish_genotype_zdb_id = geno_zdb_id
+		   and fish_is_wildtype = 't'
 		and geno_is_wildtype = 't'
 		and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
 		and xpatres_superterm_zdb_id !='ZDB-TERM-100331-1055'
@@ -380,18 +382,19 @@ Create dba function regen_feature_term_fast_search()
 		       fstat_img_zdb_id,
 		       fstat_type)	
 		select clone_mrkr_zdb_id, alltermcon_container_zdb_id, xpatres_subterm_zdb_id, xpatex_gene_zdb_id, 
-		       xpatfig_fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id, img_zdb_id, 'High-Quality-Probe'
-		from clone, fish,fish_experiment, expression_experiment, expression_result, image,
-			   expression_pattern_figure, genotype, all_term_contains
+		       efs_fig_zdb_id, xpatex_source_zdb_id, xpatres_pk_id, img_zdb_id, 'High-Quality-Probe'
+		from clone, fish,fish_experiment, expression_experiment2, expression_result2, image,
+			   expression_figure_stage, genotype, all_term_contains
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
-		and  xpatres_xpatex_zdb_id = xpatex_zdb_id
-		and img_fig_zdb_id = xpatfig_fig_zdb_id
-		and xpatfig_xpatres_zdb_id = xpatres_zdb_id
+		and img_fig_zdb_id = efs_fig_zdb_id
+		and xpatres_efs_id = efs_pk_id
+		   and efs_xpatex_zdb_id = xpatex_zdb_id
 		   and genox_is_std_or_generic_control = 't'
 		and fish_zdb_id = genox_fish_zdb_id
 		and fish_genotype_zdb_id = geno_Zdb_id
 		and geno_is_wildtype = 't'
+    and fish_is_wildtype = 't'
 		and alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
 		and xpatres_subterm_zdb_id !='ZDB-TERM-100331-1055'
 		and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id

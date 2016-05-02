@@ -1,12 +1,15 @@
 package org.zfin.feature;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
+import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.EntityNotes;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.mapping.MappedDeletion;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
@@ -14,6 +17,7 @@ import org.zfin.profile.FeatureSource;
 import org.zfin.profile.FeatureSupplier;
 import org.zfin.sequence.FeatureDBLink;
 
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -22,34 +26,89 @@ import java.util.TreeSet;
 /**
  * Feature business entity.
  */
+@Entity
+@Table(name = "feature")
+// Only update attributes that have changed.
+@org.hibernate.annotations.Entity(dynamicUpdate = true)
 public class Feature implements EntityNotes, EntityZdbID {
+
+    // TODO: can this be managed by spring?
+    @Transient
+    MutationDetailsConversionService mutationDetailsConversionService = new MutationDetailsConversionService();
 
     public static final String MUTANT = "Mutant";
     public static final String UNRECOGNIZED = "unrecognized";
     public static final String UNSPECIFIED = "unspecified";
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "ALT"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "feature_zdb_id")
     private String zdbID;
+    @Column(name = "feature_name", nullable = false)
     private String name;
+    @OneToMany(mappedBy = "feature", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<FeatureNote> externalNotes;
+    @Transient
     private String publicComments;
+    @Column(name = "feature_line_number")
     private String lineNumber;
+    @ManyToOne()
+    @JoinColumn(name = "feature_lab_prefix_id")
     private FeaturePrefix featurePrefix;
+    @Column(name = "feature_abbrev", nullable = false)
     private String abbreviation;
+    @Column(name = "feature_tg_suffix")
     private String transgenicSuffix;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dnote_data_zdb_id")
     private Set<DataNote> dataNotes;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "recattrib_data_zdb_id")
     private Set<PublicationAttribution> publications;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<GenotypeFeature> genotypeFeatures;
+    @Column(name = "feature_abbrev_order", nullable = false)
     private String abbreviationOrder;
+    @Column(name = "feature_name_order", nullable = false)
     private String nameOrder;
+    @Column(name = "feature_known_insertion_site")
     private Boolean isKnownInsertionSite;
+    @Column(name = "feature_dominant")
     private Boolean isDominantFeature;
+    @Column(name = "feature_unspecified")
     private Boolean isUnspecifiedFeature;
-    private Set<MappedDeletion> mappedDeletions;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature", fetch = FetchType.LAZY)
+    @Sort(type = SortType.NATURAL)
     private Set<FeatureMarkerRelationship> featureMarkerRelations;
+    @Column(name = "feature_type")
+    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.gwt.root.dto.FeatureTypeEnum")})
     private FeatureTypeEnum type;
+    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<FeatureSupplier> suppliers;
+    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<FeatureSource> sources;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature", fetch = FetchType.LAZY)
+    @org.hibernate.annotations.OrderBy(clause = "dalias_alias_lower")
     private Set<FeatureAlias> aliases;
+    @OneToOne(mappedBy = "feature")
     private FeatureAssay featureAssay;
+    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<FeatureDBLink> dbLinks;
+    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
+    @Sort(type = SortType.NATURAL)
+    private SortedSet<FeatureTranscriptMutationDetail> featureTranscriptMutationDetailSet;
+    @OneToOne(mappedBy = "feature", fetch = FetchType.LAZY)
+    private FeatureProteinMutationDetail featureProteinMutationDetail;
+    @OneToOne(mappedBy = "feature", fetch = FetchType.LAZY)
+    private FeatureDnaMutationDetail featureDnaMutationDetail;
+
 
     public String getTransgenicSuffix() {
         return transgenicSuffix;
@@ -77,6 +136,14 @@ public class Feature implements EntityNotes, EntityZdbID {
 
     public SortedSet<DataNote> getSortedDataNotes() {
         return new TreeSet(this.getDataNotes());
+    }
+
+    public Set<FeatureNote> getExternalNotes() {
+        return externalNotes;
+    }
+
+    public void setExternalNotes(Set<FeatureNote> externalNotes) {
+        this.externalNotes = externalNotes;
     }
 
     public Boolean getKnownInsertionSite() {
@@ -128,14 +195,6 @@ public class Feature implements EntityNotes, EntityZdbID {
         this.nameOrder = nameOrder;
     }
 
-    public Set<MappedDeletion> getMappedDeletions() {
-        return mappedDeletions;
-    }
-
-    public void setMappedDeletions(Set<MappedDeletion> mappedDeletions) {
-        this.mappedDeletions = mappedDeletions;
-    }
-
     public FeatureTypeEnum getType() {
         return type;
     }
@@ -159,7 +218,6 @@ public class Feature implements EntityNotes, EntityZdbID {
     public void setSources(Set<FeatureSource> sources) {
         this.sources = sources;
     }
-
 
     public FeatureAssay getFeatureAssay() {
         return featureAssay;
@@ -236,6 +294,7 @@ public class Feature implements EntityNotes, EntityZdbID {
         this.genotypeFeatures = genotypeFeatures;
     }
 
+
     public int compareTo(Object otherFeature) {
         return getAbbreviationOrder().compareTo(((Feature) otherFeature).getAbbreviationOrder());
     }
@@ -245,7 +304,7 @@ public class Feature implements EntityNotes, EntityZdbID {
             return 0;
         }
 
-        Set<Genotype> relatedGenotypes = new HashSet<Genotype>();
+        Set<Genotype> relatedGenotypes = new HashSet<>();
         for (GenotypeFeature genoFtr : genotypeFeatures) {
             if (genoFtr != null) {
                 relatedGenotypes.add(genoFtr.getGenotype());
@@ -261,6 +320,29 @@ public class Feature implements EntityNotes, EntityZdbID {
         return null;
     }
 
+    public SortedSet<FeatureTranscriptMutationDetail> getFeatureTranscriptMutationDetailSet() {
+        return featureTranscriptMutationDetailSet;
+    }
+
+    public void setFeatureTranscriptMutationDetailSet(SortedSet<FeatureTranscriptMutationDetail> mutationDetailSet) {
+        this.featureTranscriptMutationDetailSet = mutationDetailSet;
+    }
+
+    public FeatureProteinMutationDetail getFeatureProteinMutationDetail() {
+        return featureProteinMutationDetail;
+    }
+
+    public void setFeatureProteinMutationDetail(FeatureProteinMutationDetail featureProteinMutationDetail) {
+        this.featureProteinMutationDetail = featureProteinMutationDetail;
+    }
+
+    public FeatureDnaMutationDetail getFeatureDnaMutationDetail() {
+        return featureDnaMutationDetail;
+    }
+
+    public void setFeatureDnaMutationDetail(FeatureDnaMutationDetail featureDnaMutationDetail) {
+        this.featureDnaMutationDetail = featureDnaMutationDetail;
+    }
 
     public Genotype getSingleRelatedGenotype() {
         if (genotypeFeatures != null && genotypeFeatures.size() == 1) {
@@ -274,9 +356,9 @@ public class Feature implements EntityNotes, EntityZdbID {
             return null;
         }
         if (featureMarkerRelations == null) {
-            return new TreeSet<FeatureMarkerRelationship>();
+            return new TreeSet<>();
         }
-        SortedSet<FeatureMarkerRelationship> constructs = new TreeSet<FeatureMarkerRelationship>();
+        SortedSet<FeatureMarkerRelationship> constructs = new TreeSet<>();
         for (FeatureMarkerRelationship ftrmrkrRelation : featureMarkerRelations) {
             if (ftrmrkrRelation != null) {
                 if (ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString())
@@ -324,7 +406,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     }
 
     public SortedSet<Marker> getAffectedGenes() {
-        SortedSet<Marker> affectedGenes = new TreeSet<Marker>();
+        SortedSet<Marker> affectedGenes = new TreeSet<>();
         for (FeatureMarkerRelationship featureMarkerRelationship : featureMarkerRelations) {
             if (featureMarkerRelationship.isMarkerIsGene() && featureMarkerRelationship.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
                 affectedGenes.add(featureMarkerRelationship.getMarker());
@@ -333,8 +415,18 @@ public class Feature implements EntityNotes, EntityZdbID {
         return affectedGenes;
     }
 
+    public SortedSet<FeatureMarkerRelationship> getAffectedGenesReln() {
+        SortedSet<FeatureMarkerRelationship> affectedGenesReln = new TreeSet<>();
+        for (FeatureMarkerRelationship featureMarkerRelationship : featureMarkerRelations) {
+            if (featureMarkerRelationship.isMarkerIsGene() && featureMarkerRelationship.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
+                affectedGenesReln.add(featureMarkerRelationship);
+            }
+        }
+        return affectedGenesReln;
+    }
+
     public SortedSet<Marker> getTgConstructs() {
-        SortedSet<Marker> tgConstructs = new TreeSet<Marker>();
+        SortedSet<Marker> tgConstructs = new TreeSet<>();
         for (FeatureMarkerRelationship ftrmarkrel : featureMarkerRelations) {
             if (ftrmarkrel.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString())
                     || ftrmarkrel.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString())
@@ -347,8 +439,9 @@ public class Feature implements EntityNotes, EntityZdbID {
     }
 
     public boolean isAllZfishbook() {
-        if (dbLinks == null || dbLinks.isEmpty())
+        if (dbLinks == null || dbLinks.isEmpty()) {
             return false;
+        }
 
         int countZfishbook = 0;
         for (FeatureDBLink dblink : dbLinks) {
@@ -357,15 +450,17 @@ public class Feature implements EntityNotes, EntityZdbID {
             }
         }
 
-        if (countZfishbook == dbLinks.size())
+        if (countZfishbook == dbLinks.size()) {
             return true;
+        }
 
         return false;
     }
 
     public boolean isNoZfishbook() {
-        if (dbLinks == null || dbLinks.isEmpty())
+        if (dbLinks == null || dbLinks.isEmpty()) {
             return true;
+        }
 
         for (FeatureDBLink dblink : dbLinks) {
             if (dblink.getReferenceDatabase().getForeignDB().getDisplayName() != null && dblink.getReferenceDatabase().getForeignDB().getDisplayName().equals("zfishbook")) {
@@ -377,8 +472,9 @@ public class Feature implements EntityNotes, EntityZdbID {
     }
 
     public boolean isAllZmp() {
-        if (dbLinks == null || dbLinks.isEmpty())
+        if (dbLinks == null || dbLinks.isEmpty()) {
             return false;
+        }
 
         int countZmp = 0;
         for (FeatureDBLink dblink : dbLinks) {
@@ -387,15 +483,17 @@ public class Feature implements EntityNotes, EntityZdbID {
             }
         }
 
-        if (countZmp == dbLinks.size())
+        if (countZmp == dbLinks.size()) {
             return true;
+        }
 
         return false;
     }
 
     public boolean isAllCrezoo() {
-        if (dbLinks == null || dbLinks.isEmpty())
+        if (dbLinks == null || dbLinks.isEmpty()) {
             return false;
+        }
 
         int countCreZoo = 0;
         for (FeatureDBLink dblink : dbLinks) {
@@ -404,15 +502,17 @@ public class Feature implements EntityNotes, EntityZdbID {
             }
         }
 
-        if (countCreZoo == dbLinks.size())
+        if (countCreZoo == dbLinks.size()) {
             return true;
+        }
 
         return false;
     }
 
     public boolean isNoZmp() {
-        if (dbLinks == null || dbLinks.isEmpty())
+        if (dbLinks == null || dbLinks.isEmpty()) {
             return true;
+        }
 
         for (FeatureDBLink dblink : dbLinks) {
             if (dblink.getReferenceDatabase().getForeignDB().getDisplayName() != null && dblink.getReferenceDatabase().getForeignDB().getDisplayName().equals("zfishbook")) {
@@ -424,8 +524,9 @@ public class Feature implements EntityNotes, EntityZdbID {
     }
 
     public boolean isNoCrezoo() {
-        if (dbLinks == null || dbLinks.isEmpty())
+        if (dbLinks == null || dbLinks.isEmpty()) {
             return true;
+        }
 
         for (FeatureDBLink dblink : dbLinks) {
             if (dblink.getReferenceDatabase().getForeignDB().getDisplayName() != null && dblink.getReferenceDatabase().getForeignDB().getDisplayName().equals("CreZoo")) {
@@ -437,20 +538,40 @@ public class Feature implements EntityNotes, EntityZdbID {
     }
 
     public Marker getAllelicGene() {
-        if (featureMarkerRelations == null)
+        if (featureMarkerRelations == null) {
             return null;
-        for (FeatureMarkerRelationship relationship : featureMarkerRelations)
-            if (relationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF))
+        }
+        for (FeatureMarkerRelationship relationship : featureMarkerRelations) {
+            if (relationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF)) {
                 return relationship.getMarker();
+            }
+        }
         return null;
     }
 
+    public String getGeneLocalizationStatement() {
+        return mutationDetailsConversionService.geneLocalizationStatement(featureDnaMutationDetail);
+    }
+
+    public String getTranscriptConsequenceStatement() {
+        return mutationDetailsConversionService.getTranscriptMutationStatement(this);
+    }
+
     public String getDisplayAbbreviation() {
-        if (abbreviation.endsWith("_" + UNRECOGNIZED))
+        if (abbreviation.endsWith("_" + UNRECOGNIZED)) {
             return UNRECOGNIZED;
-        if (abbreviation.endsWith("_" + UNSPECIFIED))
+        }
+        if (abbreviation.endsWith("_" + UNSPECIFIED)) {
             return UNSPECIFIED;
+        }
         return abbreviation;
 
+    }
+
+    public void addExternalNote(FeatureNote note) {
+        if (externalNotes == null) {
+            externalNotes = new HashSet<>();
+        }
+        externalNotes.add(note);
     }
 }

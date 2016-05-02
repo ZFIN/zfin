@@ -39,12 +39,12 @@ TRIGGERS = \
 	experiment_update_trigger.sql \
 	experiment_condition_insert_trigger.sql \
 	experiment_condition_update_trigger.sql \
-	expression_experiment_insert_trigger.sql \
-	expression_experiment_update_trigger.sql \
+	expression_experiment2_insert_trigger.sql \
+	expression_experiment2_update_trigger.sql \
 	expression_pattern_infrastructure_insert_trigger.sql \
 	expression_pattern_infrastructure_update_trigger.sql \
-	expression_result_insert_trigger.sql \
-	expression_result_update_trigger.sql \
+	external_note_insert_trigger.sql \
+	external_note_update_trigger.sql \
 	feature_stats_insert_trigger.sql \
 	figure_insert_trigger.sql \
 	figure_update_trigger.sql \
@@ -80,6 +80,8 @@ TRIGGERS = \
         mrkr_name_update_trigger.sql \
 	marker_go_term_evidence_update_trigger.sql \
 	marker_go_term_evidence_insert_trigger.sql \
+	marker_sequence_insert_trigger.sql \
+	marker_sequence_update_trigger.sql \
 	inference_group_member_insert_trigger.sql \
 	inference_group_member_notes_update_trigger.sql \
 	inference_group_member_inferred_from_update_trigger.sql \

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.PhenotypeService;
@@ -48,10 +48,10 @@ public class ObsoleteTermReportController {
             model.addAttribute("phenotypeObsoleteTermReports", phenotypeObsoleteTermReports);
             model.addAttribute("numberOfObsoletedTermsPhenotype", phenotypesWithObsoletes.size());
         }
-        List<ExpressionResult> expressionsWithObsoletes = RepositoryFactory.getExpressionRepository().getExpressionOnObsoletedTerms();
+        List<ExpressionResult2> expressionsWithObsoletes = RepositoryFactory.getExpressionRepository().getExpressionOnObsoletedTerms();
         if (expressionsWithObsoletes != null) {
             List<ExpressionObsoleteTermReport> expressionObsoleteTermReports = new ArrayList<>(expressionsWithObsoletes.size());
-            for (ExpressionResult phenotypeStatement : expressionsWithObsoletes) {
+            for (ExpressionResult2 phenotypeStatement : expressionsWithObsoletes) {
                 ExpressionObsoleteTermReport report = new ExpressionObsoleteTermReport(phenotypeStatement);
                 Set<GenericTerm> obsoletedTermSet = expressionService.getObsoleteTerm(phenotypeStatement);
                 report.setObsoletedTermList(obsoletedTermSet);

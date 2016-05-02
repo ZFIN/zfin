@@ -2,11 +2,10 @@ package org.zfin.anatomy.repository;
 
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.anatomy.*;
+import org.zfin.anatomy.AnatomyStatistics;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.framework.presentation.PaginationBean;
-import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.DataAliasGroup;
-import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.*;
 
 import java.util.List;
@@ -31,7 +30,7 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(synonyms);
         // check that none of the synonyms are secondary ids
         for (TermAlias syn : synonyms) {
-            assertEquals(" Not a secondary id", true, syn.getGroup() != DataAliasGroup.Group.SECONDARY_ID);
+            assertEquals(" Not a secondary id", false, syn.getAliasGroup().getName().equals(DataAliasGroup.Group.SECONDARY_ID.name()));
         }
     }
 
@@ -77,7 +76,6 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void stageOverlapTermsDevelopsInto() {
         // adaxial cell
-        String oboID = "ZFA:0000003";
         String termID = "ZDB-TERM-100331-3";
         double startHours = 10;
         double endHours = 144;
@@ -96,13 +94,9 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
 
         // only primary ao term
         getAntibodyRepository().getAntibodiesByAOTerm(term, new PaginationBean(), false);
-//        assertEquals("no antibodies annotated against cranium", 0, antibodies.getPopulatedResults().size());
 
         // include annotation to substructures
         getAntibodyRepository().getAntibodiesByAOTerm(term, new PaginationBean(), true);
-//        assertTrue("no antibodies annotated against cranium", antibodies.getPopulatedResults().size() > 0);
-
-
     }
 
     @Test

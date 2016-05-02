@@ -36,26 +36,26 @@ create index pd_data_id_index
 
 update statistics high for table pre_delete;
 
-create temp table db_link_in_expression_experiment 
+create temp table db_link_in_expression_experiment2
       (dblink_ee_zdb_id		varchar(50)
       )with no log;
 
-!echo 'Prepare a list of db_link records also in expression_experiment table attributed only to NCBI gene load publications (ZDB-PUB-020723-3, ZDB-PUB-130725-2)'
+!echo 'Prepare a list of db_link records also in expression_experiment2 table attributed only to NCBI gene load publications (ZDB-PUB-020723-3, ZDB-PUB-130725-2)'
 
-insert into db_link_in_expression_experiment
+insert into db_link_in_expression_experiment2
 select distinct xpatex_dblink_zdb_id
- from expression_experiment
+ from expression_experiment2
  where exists (select "x" from record_attribution
-                where xpatex_dblink_zdb_id = recattrib_data_zdb_id
-                and recattrib_source_zdb_id in ("ZDB-PUB-020723-3","ZDB-PUB-130725-2"))
+               where xpatex_dblink_zdb_id = recattrib_data_zdb_id
+               and recattrib_source_zdb_id in ("ZDB-PUB-020723-3","ZDB-PUB-130725-2"))
  and not exists (select "x" from record_attribution
-                  where xpatex_dblink_zdb_id = recattrib_data_zdb_id
-                    and recattrib_source_zdb_id not in ("ZDB-PUB-020723-3","ZDB-PUB-130725-2"));
+                 where xpatex_dblink_zdb_id = recattrib_data_zdb_id
+                 and recattrib_source_zdb_id not in ("ZDB-PUB-020723-3","ZDB-PUB-130725-2"));
 
-!echo 'Retain those db_link records that are also in expression_experiment table, which are only attributed to the load pub'
+!echo 'Retain those db_link records that are also in expression_experiment2 table, which are only attributed to the load pub'
 
 delete from pre_delete
- where exists (select "x" from db_link_in_expression_experiment
+ where exists (select "x" from db_link_in_expression_experiment2
                 where dblink_loaded_zdb_id = dblink_ee_zdb_id);
 
 !echo 'Analyze what kinds of data in pre_delete table'

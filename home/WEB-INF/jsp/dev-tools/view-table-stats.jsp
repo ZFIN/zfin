@@ -2,16 +2,12 @@
 
 <jsp:useBean id="table" type="org.zfin.database.presentation.Table" scope="request"/>
 
-<table width="100%" cellpadding="0" cellspacing="0">
-    <tr>
-        <td class="titlebar">
-            <span class="name-label">View Table Statistics for: </span>
-            <span style="color: red">
-                ${table.tableName}
-            </span>
-        </td>
-    </tr>
-</table>
+<div class="titlebar">
+    <span class="name-label">View Table Statistics for: </span>
+    <span style="color: red">
+        ${table.tableName}
+    </span>
+</div>
 
 <p/>
 

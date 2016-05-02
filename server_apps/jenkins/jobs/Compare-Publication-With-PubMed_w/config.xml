@@ -69,7 +69,7 @@ the records at PubMed. Comparison is done on the following attributes:&#xd;
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w/*</attachmentsPattern>
+            <attachmentsPattern>server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w/Compare-Publication-With-PubMed_w.faulty-PubMed-IDs.txt</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>
@@ -92,6 +92,7 @@ the records at PubMed. Comparison is done on the following attributes:&#xd;
     <EnvInjectBuildWrapper plugin="envinject@1.89">
       <info>
         <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
+        <propertiesContent>ANT_OPTS=-XX:PermSize=256m -XX:MaxPermSize=1024m -Xms256m -Xmx2048m -XX:-UseSplitVerifier</propertiesContent>
         <loadFilesFromMaster>false</loadFilesFromMaster>
       </info>
     </EnvInjectBuildWrapper>

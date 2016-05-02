@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<%@ attribute name="figureExpressionSummaryList" type="java.util.List" required="true"
+<%@ attribute name="figureSummaryList" type="java.util.List" required="true"
               description="List of FigureSummaryDisplay objects" %>
 
 <%@ attribute name="expressionData" type="java.lang.Boolean" required="false" %>
@@ -9,7 +9,7 @@
 <%@ attribute name="showMarker" type="java.lang.Boolean" required="false" %>
 <%@ attribute name="showGenotype" type="java.lang.Boolean" required="false" %>
 
-<c:if test="${!empty figureExpressionSummaryList}">
+<c:if test="${!empty figureSummaryList}">
 
     <table class="summary rowstripes">
         <tr>
@@ -28,27 +28,27 @@
                 Anatomy
             </th>
         </tr>
-        <c:forEach var="figureExpressionSummaryDisplay" items="${figureExpressionSummaryList}" varStatus="status">
+        <c:forEach var="figureExpressionSummaryDisplay" items="${figureSummaryList}" varStatus="status">
             <zfin:alternating-tr loopName="status"
-                                 groupBeanCollection="${figureExpressionSummaryList}"
+                                 groupBeanCollection="${figureSummaryList}"
                                  groupByBean="figure">
                 <td>
                     <zfin:groupByDisplay loopName="status"
-                                         groupBeanCollection="${figureExpressionSummaryList}"
+                                         groupBeanCollection="${figureSummaryList}"
                                          groupByBean="publication">
                         <zfin:link entity="${figureExpressionSummaryDisplay.figure.publication}"/>
                     </zfin:groupByDisplay>
                 </td>
                 <td>
                     <zfin:groupByDisplay loopName="status"
-                                         groupBeanCollection="${figureExpressionSummaryList}"
+                                         groupBeanCollection="${figureSummaryList}"
                                          groupByBean="figure">
                         <zfin:link entity="${figureExpressionSummaryDisplay.figure}"/>
                     </zfin:groupByDisplay>
                 </td>
                 <td>
                     <zfin:groupByDisplay loopName="status"
-                                         groupBeanCollection="${figureExpressionSummaryList}"
+                                         groupBeanCollection="${figureSummaryList}"
                                          groupByBean="figure">
                         <c:if test="${figureExpressionSummaryDisplay.thumbnail != null}">
                             <zfin:link entity="${figureExpressionSummaryDisplay.figure}">

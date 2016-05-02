@@ -3,7 +3,7 @@ package org.zfin.gwt.root.dto;
 /**
  * Data Transfer Object individual structures on the pile.
  */
-public class ExpressionPileStructureDTO extends AbstractPileStructureDTO implements Comparable<ExpressionPileStructureDTO> {
+public class ExpressionPileStructureDTO extends AbstractPileStructureDTO implements Comparable {
 
     private StageDTO start;
     private StageDTO end;
@@ -64,7 +64,10 @@ public class ExpressionPileStructureDTO extends AbstractPileStructureDTO impleme
         return result;
     }
 
-    public int compareTo(ExpressionPileStructureDTO o) {
+    public int compareTo(Object object) {
+        if (!(object instanceof ExpressionPileStructureDTO))
+            return -1;
+        ExpressionPileStructureDTO o = (ExpressionPileStructureDTO) object;
         if (o == null)
             return -1;
         if (o.getExpressedTerm() == null)

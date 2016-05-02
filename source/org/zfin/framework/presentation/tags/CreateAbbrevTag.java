@@ -1,8 +1,9 @@
 package org.zfin.framework.presentation.tags;
 
+import org.zfin.feature.Feature;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
-
+import org.zfin.feature.presentation.FeaturePresentation;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -21,6 +22,8 @@ public class CreateAbbrevTag extends TagSupport {
         String link;
         if (o instanceof Marker)
             link = MarkerPresentation.getAbbreviation((Marker) o);
+        else if (o instanceof Feature)
+            link = FeaturePresentation.getName((Feature) o);
         else
             throw new JspException("Tag is not yet implemented for a class of type " + o.getClass());
 

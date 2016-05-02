@@ -137,8 +137,6 @@ public class HibernateComparisonSessionFactory implements FactoryBean {
         String connectionString = "jdbc:informix-sqli://" + sqlHostsHost + ":" + informixPort + "/" + db + ":INFORMIXSERVER=" + informixServer;
 //        System.out.println("connectionString: " + connectionString) ; 
         config.setProperty("hibernate.connection.url", connectionString);
-        config.setProperty("hibernate.connection.username", "zfinner");
-        config.setProperty("hibernate.connection.password", "Rtwm4ts");
         config.setProperty("hibernate.connection.pool_size", "1");
         config.setProperty("hibernate.connection.autocommit", "false");
 

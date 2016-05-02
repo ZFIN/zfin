@@ -27,12 +27,12 @@ import java.util.Date;
  * sendRedirect() method is called that would not allow adding cookies to the response
  * as the response is marked as committed. Check out the catalina Response Class
  */
-public class ApgAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler{
+public class ApgAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     public static final String APG_ZFIN_LOGIN = "zfin_login";
     public static final int MAX_LENGTH_OF_APG_COOKIE = 19;
 
-    private SessionRegistry sessionRegistry ;
+    private SessionRegistry sessionRegistry;
 
     // Used to keep track of authenticated sessions.
     // We would like to know if a session is non-authenticated
@@ -49,15 +49,14 @@ public class ApgAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
                 String value = convertTomcatCookieToApgCookie(id);
                 Cookie zfinCookie = new Cookie(APG_ZFIN_LOGIN, value);
                 zfinCookie.setPath(ZfinProperties.getCookiePath());
-                zfinCookie.setSecure(false);
+                zfinCookie.setSecure(true);
                 zfinCookie.setMaxAge(Integer.valueOf(ZfinPropertiesEnum.VALID_SESSION_TIMEOUT_SECONDS.value()));
                 response.addCookie(zfinCookie);
-//                cookie.setSecure(false);
                 String login = authentication.getName();
                 setCookieAndSession(login, id, value);
             }
         }
-        super.onAuthenticationSuccess(request,response,authentication);
+        super.onAuthenticationSuccess(request, response, authentication);
     }
 
     /**
@@ -86,24 +85,18 @@ public class ApgAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
         AccountInfo accountInfo = person.getAccountInfo();
         accountInfo.setCookie(value);
         accountInfo.setPreviousLoginDate(new Date());
-        if(accountInfo.getZdbID()==null){
-            accountInfo.setZdbID(person.getZdbID()) ;
+        if (accountInfo.getZdbID() == null) {
+            accountInfo.setZdbID(person.getZdbID());
         }
         HibernateUtil.currentSession().update(accountInfo);
-
-
-//        ZfinSession newSession = new ZfinSession();
-//        newSession.setUserName(login);
-//        newSession.setSessionID(sessionID);
-//        authenticatedSessions.put(sessionID, newSession);
         HibernateUtil.flushAndCommitCurrentSession();
         GBrowseHibernateUtil.closeSession();
 
-        sessionRegistry.registerNewSession(sessionID,person);
+        sessionRegistry.registerNewSession(sessionID, person);
 
     }
 
-    public void setSessionRegistry(SessionRegistry sessionRegistry ) {
-        this.sessionRegistry = sessionRegistry ;
+    public void setSessionRegistry(SessionRegistry sessionRegistry) {
+        this.sessionRegistry = sessionRegistry;
     }
 }

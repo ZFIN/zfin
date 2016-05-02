@@ -25,6 +25,8 @@ public class GBrowseImage {
     private String linkUrlBase;
     private String linkUrl;
 
+    private GenomeBuild build;
+
     public static GBrowseImageBuilder builder() {
         return new GBrowseImageBuilder();
     }
@@ -36,15 +38,9 @@ public class GBrowseImage {
         this.highlightColor = builder.highlightColor;
         this.grid = builder.grid;
 
-        if (builder.getGenomeBuild() == GenomeBuild.ZV9) {
-            linkUrlBase = ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT.toString();
-            imageUrlBase= ZfinPropertiesEnum.GBROWSE_ZV9_IMG_PATH_FROM_ROOT.toString();
-        } else {
-            linkUrlBase = ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT.toString();
-            imageUrlBase= ZfinPropertiesEnum.GBROWSE_IMG_PATH_FROM_ROOT.toString();
-        }
-
-
+        this.build = builder.genomeBuild;
+        this.linkUrlBase = this.build.getPath();
+        this.imageUrlBase= this.build.getImagePath();
     }
 
     public String getImageUrl() {
@@ -91,6 +87,10 @@ public class GBrowseImage {
 
     public String getLandmark() {
         return landmark;
+    }
+
+    public String getBuild() {
+        return build.getValue();
     }
 
     private String getHighlightString() {
@@ -160,7 +160,6 @@ public class GBrowseImage {
                 genomeBuild = GenomeBuild.CURRENT;
             }
 
-
             // setup range
             if (landmarkLocation != null) {
                 start = landmarkLocation.getStart();
@@ -185,12 +184,9 @@ public class GBrowseImage {
             return new GBrowseImage(this);
         }
 
-        public GenomeBuild getGenomeBuild() {
-            return genomeBuild;
-        }
-
-        public void setGenomeBuild(GenomeBuild genomeBuild) {
+        public GBrowseImageBuilder genomeBuild(GenomeBuild genomeBuild) {
             this.genomeBuild = genomeBuild;
+            return this;
         }
 
         public GBrowseImageBuilder landmark(String landmark) {
@@ -260,16 +256,28 @@ public class GBrowseImage {
     }
 
     public enum GenomeBuild {
-        ZV9("Zv9"),
-        CURRENT("GRCz10");
+        ZV9("Zv9", ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT.toString(), ZfinPropertiesEnum.GBROWSE_ZV9_IMG_PATH_FROM_ROOT.toString()),
+        CURRENT("GRCz10", ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT.toString(), ZfinPropertiesEnum.GBROWSE_IMG_PATH_FROM_ROOT.toString());
 
         private final String value;
+        private final String path;
+        private final String imagePath;
 
-        GenomeBuild(String value) {
+        GenomeBuild(String value, String path, String imagePath) {
             this.value = value;
+            this.path = path;
+            this.imagePath = imagePath;
         }
 
         public String getValue() { return value; }
+
+        public String getPath() {
+            return path;
+        }
+
+        public String getImagePath() {
+            return imagePath;
+        }
     }
 
 

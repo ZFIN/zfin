@@ -240,17 +240,14 @@ Message: $MI_ERRORMSG
 <!------------- search ------------->
 
     
+  <div class="titlebar">
+	 <?MIBLOCK COND="$(NXST,$jrnlsel_jabbrev)">
+		 <h1>Search for Journal</h1>
+	 <?MIELSE>
+		 <a name=modify></a><h1>Modify your search</h1>
+	 <?/MIBLOCK>
+  </div>
     <Table class=search width="100%" border=0 cellpadding=5 cellspacing=4>
-        <TR>
-	  <td class=titlebar>
-            &nbsp;&nbsp;
-
-          <?MIBLOCK COND="$(NXST,$jrnlsel_jabbrev)">
-	    <b>Search for Journal</b>
-          <?MIELSE>
-            <a name=modify></a><b>Modify your search</b>
-          <?/MIBLOCK>
-
         <form name=critform method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 	
         <input type=hidden name=MIval value=aa-journalselect.apg>

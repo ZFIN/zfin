@@ -8,6 +8,7 @@
     <property name="lib" value="${basedir}/lib/Java"/>
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="validateData" value="${basedir}/server_apps/DB_maintenance"/>
+    <property name="jvm.args" value="-XX:-UseSplitVerifier"/>
 
     <property environment="env"/>
 
@@ -60,6 +61,7 @@
             <arg value="PAINT"/>
             <arg value="http://www.geneontology.org/gene-associations/submission/paint/pre-submission/gene_association.paint_zfin.gz"/>
             <arg value="org.zfin.datatransfer.go.PaintGafParser"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -74,6 +76,7 @@
             <arg value="GOA"/>
             <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/gene_association.goa_zebrafish.gz"/>
             <arg value="org.zfin.datatransfer.go.GoaGafParser"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -88,6 +91,7 @@
             <arg value="FP Inferences"/>
             <arg value="http://build.berkeleybop.org/view/GAF/job/gaf-check-zfin/lastSuccessfulBuild/artifact/gene_association.zfin.inf.gaf"/>
             <arg value="org.zfin.datatransfer.go.FpInferenceGafParser"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -99,6 +103,19 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
             <arg value="Synchronize-Antibodies-Zfin-Wiki_w"/>
+            <jvmarg value="${jvm.args}"/>
+        </java>
+    </target>
+
+    <target name="check-eap-pato-terms" description="">
+        <echo message="Check EaP terms with the latest PATO ontology"/>
+        <java classname="org.zfin.ontology.jobs.CheckEapPatoTermsJob" fork="no"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="Check-Eap-Pato-Terms_d"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -110,6 +127,7 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/validatedata"/>
             <arg value="Set-Permissions-Zebrafish-Book-Wiki_d"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
         <echo message="Check file: ${validateData}/validatedata/${JobName}/${JobName}.faulty-pages.txt"/>
     </target>
@@ -122,6 +140,7 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/validatedata"/>
             <arg value="Clean-Wiki-Sandbox_w"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -132,6 +151,7 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
             <arg value="${jobName}"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -143,6 +163,7 @@
             <arg value="${validateData}/report_data"/>
             <arg value="${jobName}"/>
             <arg value="10"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -153,6 +174,7 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
             <arg value="${jobName}"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -163,6 +185,7 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
             <arg value="${jobName}"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -173,6 +196,7 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
             <arg value="${jobName}"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -183,6 +207,7 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
             <arg value="${jobName}"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
 
         <fail message="Error in microarray update">
@@ -202,34 +227,16 @@
             <arg value="${JobName}"/>
             <arg value="${validateData}/validatedata"/>
             <arg value="${web-inf.dir}/zfin.properties"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
     <target name="run-data-report-param" description="">
-        <echo message="Create Report"/>
-        <echo message="Use database: ${DBNAME}"/>
-        <echo message="Use ParameterValues: ${DateValues}"/>
-        <delete dir="${validateData}/report_data/${JobName}"/>
-        <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="no"
-              classpathref="extended.classpath"
-              failonerror="true">
-            <arg value="-jobName"/>
-            <arg value="${JobName}"/>
-            <arg value="-useParameters"/>
-            <arg value="true"/>
-            <arg value="-parameterVariables"/>
-            <arg value="${ParameterVariables}"/>
-            <arg value="-parameterValues"/>
-            <arg value="${ParameterValues}"/>
-            <arg value="-dateVariables"/>
-            <arg value="${DateVariables}"/>
-            <arg value="-dateValues"/>
-            <arg value="${DateValues}"/>
-            <arg value="-dataDir"/>
-            <arg value="${validateData}/report_data"/>
-            <arg value="-propertyDir"/>
-            <arg value="${web-inf.dir}/zfin.properties"/>
-        </java>
+        <data-report-param/>
+    </target>
+
+    <target name="run-curation-metrics-report" description="">
+        <data-report-param task-class-name="org.zfin.infrastructure.ant.CurationMetricsReportTask"/>
     </target>
 
     <target name="run-data-report" description="">
@@ -245,6 +252,9 @@
             <arg value="${validateData}/report_data"/>
             <arg value="-propertyDir"/>
             <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="-taskClassName"/>
+            <arg value="org.zfin.infrastructure.ant.DataReportTask"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -259,6 +269,7 @@
             <arg value="${validateData}/validatedata"/>
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="true"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -275,6 +286,7 @@
             <arg value="${validateData}/validatedata"/>
             <arg value="-propertyFilePath"/>
             <arg value="${web-inf.dir}/zfin.properties"/>
+            <jvmarg value="${jvm.args}"/>
         </java>
     </target>
 
@@ -294,6 +306,7 @@
             <arg value="-threads"/>
             <arg value="40"/>
             <arg value=""/>
+            <jvmarg value="${jvm.args}"/>
         </java>
 
         <echo message="${validateData}/validatedata/${JobName}.txt"/>
@@ -317,27 +330,40 @@
                 <arg value="@{instanceName}"/>
                 <arg value="@{db-query-file}"/>
                 <arg value="${unloadDir}"/>
+		        <jvmarg value="${jvm.args}"/>
             </java>
         </sequential>
     </macrodef>
 
-    <!--
-        <macrodef name="run-db-query">
-            <attribute name="db-query-file"/>
-            <attribute name="instanceName"/>
-            <sequential>
-                <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="yes"
-                      classpathref="extended.classpath"
-                      failonerror="true">
-                    <arg value="@{instanceName}"/>
-                    <arg value="@{db-query-file}"/>
-                    <arg value="${validateData}"/>
-                    <arg value="${web-inf.dir}/zfin.properties"/>
-                </java>
-            </sequential>
-        </macrodef>
+    <macrodef name="data-report-param">
+        <attribute name="task-class-name" default="org.zfin.infrastructure.ant.DataReportTask"/>
+        <sequential>
+            <echo message="Create Report"/>
+            <echo message="Use database: ${DBNAME}"/>
+            <echo message="Use ParameterValues: ${ParameterValues}"/>
+            <delete dir="${validateData}/report_data/${JobName}"/>
+            <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="no"
+                  classpathref="extended.classpath"
+                  failonerror="true">
+                <arg value="-jobName"/>
+                <arg value="${JobName}"/>
+                <arg value="-taskClassName"/>
+                <arg value="@{task-class-name}"/>
+                <arg value="-useParameters"/>
+                <arg value="true"/>
+                <arg value="-parameterVariables"/>
+                <arg value="${ParameterVariables}"/>
+                <arg value="-parameterValues"/>
+                <arg value="${ParameterValues}"/>
+                <arg value="-dataDir"/>
+                <arg value="${validateData}/report_data"/>
+                <arg value="-propertyDir"/>
+                <arg value="${web-inf.dir}/zfin.properties"/>
+                <jvmarg value="${jvm.args}"/>
+            </java>
+        </sequential>
+    </macrodef>
 
-    -->
     <target name="usage">
         <echo>
             TARGETS

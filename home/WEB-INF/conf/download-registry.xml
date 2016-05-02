@@ -90,29 +90,50 @@
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-               select feature_zdb_id as id1, feature_zdb_id as id2
-	       from feature
-	       union
-	       select feature_zdb_id as id1, feature_abbrev as id2
-	       from feature
-	       union
-	       select mrkr_zdb_id as id1,mrkr_zdb_id as id2
-	       from marker
-	       union 
-	       select mrkr_zdb_id as id1, mrkr_abbrev as id2
-	       from marker
-	       union
-	       select dblink_linked_recid as id1, dblink_acc_num as id2
-	       from db_link
-	       union
-	       select zrepld_new_zdb_id as id1, zrepld_old_zdb_id as id2
-	       from zdb_replaced_data
-	       where exists (Select 'x' from marker where mrkr_zdb_id = zrepld_new_zdb_id)
-	      ]]>
+                select feature_zdb_id as id1, feature_zdb_id as id2
+                from feature
+                union
+                select feature_zdb_id as id1, feature_abbrev as id2
+                from feature
+                union
+                select mrkr_zdb_id as id1,mrkr_zdb_id as id2
+                from marker
+                union
+                select mrkr_zdb_id as id1, mrkr_abbrev as id2
+                from marker
+                union
+                select dblink_linked_recid as id1, dblink_acc_num as id2
+                from db_link
+                union
+                select zrepld_new_zdb_id as id1, zrepld_old_zdb_id as id2
+                from zdb_replaced_data
+                where exists (Select 'x' from marker where mrkr_zdb_id = zrepld_new_zdb_id)
+                ]]>
             </Query>
             <Column id="1">ID</Column>
             <Column id="2">Alternate Identifiers</Column>
         </Download>
+
+ <!--       
+        <Download orderIndex="5">
+            <Name>
+                ZFIN RRIDs and names
+            </Name>
+            <Category>
+                ZFIN RRIDs and names
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>rrid</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1">ID</Column>
+            <Column id="2">Alternate Identifiers</Column>
+        </Download> -->
+
         <Download orderIndex="2">
             <Name>
                 Antibody Expressions in wild-type
@@ -126,8 +147,7 @@
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
-                <![CDATA[]
-              ]]>
+                <![CDATA[]]>
             </Query>
             <Column id="1" unique="true">Antibody ID</Column>
             <Column id="2">AnatomyStructure ID</Column>
@@ -174,7 +194,7 @@
                 from mapped_marker, panels p, marker m
                 where refcross_id = p.zdb_id and marker_id = mrkr_zdb_id
                 order by 1
-              ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">Symbol</Column>
@@ -389,32 +409,33 @@
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-select t.tscript_mrkr_zdb_id,szm_term_ont_id,m.mrkr_name,'no related gene','no related clone',tt.tscriptt_type,ts.tscripts_status
- from transcript t
- join marker m on m.mrkr_zdb_id=t.tscript_mrkr_zdb_id
- join so_zfin_mapping on szm_object_type = m.mrkr_type
- join transcript_type tt on tt.tscriptt_pk_id=t.tscript_type_id
- left outer join transcript_status ts on ts.tscripts_pk_id=t.tscript_status_id
- where not exists (
-	select 'x'
-	 from marker gene , marker_relationship mr
-	 where gene.mrkr_zdb_id=mr.mrel_mrkr_1_zdb_id
-	   and mr.mrel_mrkr_2_zdb_id=m.mrkr_zdb_id
-	   and mr.mrel_type in ('gene produces transcript','clone contains transcript')
-)
-union
-select t.tscript_mrkr_zdb_id,szm_term_ont_id,m.mrkr_name,gene.mrkr_zdb_id,c.mrkr_zdb_id,tt.tscriptt_type,ts.tscripts_status
- from transcript t
- join marker m on m.mrkr_zdb_id=t.tscript_mrkr_zdb_id
- join transcript_type tt on tt.tscriptt_pk_id=t.tscript_type_id
- left outer join transcript_status ts on ts.tscripts_pk_id=t.tscript_status_id
- join so_zfin_mapping on szm_object_type = m.mrkr_type
- join marker_relationship gener on gener.mrel_mrkr_2_zdb_id=m.mrkr_zdb_id
- join marker_relationship cloner on cloner.mrel_mrkr_2_zdb_id=m.mrkr_zdb_id
- join marker gene on gene.mrkr_zdb_id=gener.mrel_mrkr_1_zdb_id
- join marker c on c.mrkr_zdb_id=cloner.mrel_mrkr_1_zdb_id
- where gener.mrel_type='gene produces transcript'
-   and cloner.mrel_type='clone contains transcript']]>
+                select t.tscript_mrkr_zdb_id,szm_term_ont_id,m.mrkr_name,'no related gene','no related clone',tt.tscriptt_type,ts.tscripts_status
+                 from transcript t
+                 join marker m on m.mrkr_zdb_id=t.tscript_mrkr_zdb_id
+                 join so_zfin_mapping on szm_object_type = m.mrkr_type
+                 join transcript_type tt on tt.tscriptt_pk_id=t.tscript_type_id
+                 left outer join transcript_status ts on ts.tscripts_pk_id=t.tscript_status_id
+                 where not exists (
+                     select 'x'
+                     from marker gene , marker_relationship mr
+                     where gene.mrkr_zdb_id=mr.mrel_mrkr_1_zdb_id
+                       and mr.mrel_mrkr_2_zdb_id=m.mrkr_zdb_id
+                       and mr.mrel_type in ('gene produces transcript','clone contains transcript')
+                )
+                union
+                select t.tscript_mrkr_zdb_id,szm_term_ont_id,m.mrkr_name,gene.mrkr_zdb_id,c.mrkr_zdb_id,tt.tscriptt_type,ts.tscripts_status
+                 from transcript t
+                 join marker m on m.mrkr_zdb_id=t.tscript_mrkr_zdb_id
+                 join transcript_type tt on tt.tscriptt_pk_id=t.tscript_type_id
+                 left outer join transcript_status ts on ts.tscripts_pk_id=t.tscript_status_id
+                 join so_zfin_mapping on szm_object_type = m.mrkr_type
+                 join marker_relationship gener on gener.mrel_mrkr_2_zdb_id=m.mrkr_zdb_id
+                 join marker_relationship cloner on cloner.mrel_mrkr_2_zdb_id=m.mrkr_zdb_id
+                 join marker gene on gene.mrkr_zdb_id=gener.mrel_mrkr_1_zdb_id
+                 join marker c on c.mrkr_zdb_id=cloner.mrel_mrkr_1_zdb_id
+                 where gener.mrel_type='gene produces transcript'
+                   and cloner.mrel_type='clone contains transcript'
+                ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">SO ID</Column>
@@ -438,41 +459,41 @@ select t.tscript_mrkr_zdb_id,szm_term_ont_id,m.mrkr_name,gene.mrkr_zdb_id,c.mrkr
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id, gene.mrkr_abbrev gene_sym,dblink_acc_num accession
- from db_link, marker gene, foreign_db_contains, foreign_db, foreign_db_data_type, so_zfin_mapping
- where dblink_linked_recid=gene.mrkr_zdb_id
-   and gene.mrkr_type='GENE'
-   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-   and fdbcont_fdbdt_id = fdbdt_pk_id
-   and fdbcont_fdb_db_id = fdb_db_pk_id
-   and szm_object_type = mrkr_type
-   and fdbdt_data_type='RNA'
-   -- and fdb_db_name not like '%Vega%' and fdb_db_name not like '%VEGA%'
-   -- note: the below would have the same effect as above
-   --       but since neither catch anything go with the faster/cheaper
-   and dblink_acc_num[1,6] != "OTTDAR"
-union
-select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
-       gene.mrkr_abbrev gene_sym,
-       dblink_acc_num accession
- from marker gene, marker est, db_link, marker_relationship, foreign_db_contains,
- 	foreign_db, foreign_db_data_type, so_zfin_mapping
- where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id
-   and est.mrkr_zdb_id  = mrel_mrkr_2_zdb_id
-   and mrel_type = 'gene encodes small segment'
-   and est.mrkr_zdb_id = dblink_linked_recid
-   and szm_object_type = gene.mrkr_type
-   and est.mrkr_type  in ('EST','CDNA')
-   and gene.mrkr_type = 'GENE'
-   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-   and fdbcont_fdbdt_id = fdbdt_pk_id
-   and fdbcont_fdb_db_id = fdb_db_pk_id
-   and fdbdt_data_type='RNA'
-   -- and fdb_db_name not like '%Vega%' and fdb_db_name not like '%VEGA%'
-   -- note: the below would have the same effect as above
-   --       but since neither catch anything go with the faster/cheaper
-   and dblink_acc_num[1,6] != "OTTDAR"
-            ]]>
+                select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id, gene.mrkr_abbrev gene_sym,dblink_acc_num accession
+                 from db_link, marker gene, foreign_db_contains, foreign_db, foreign_db_data_type, so_zfin_mapping
+                 where dblink_linked_recid=gene.mrkr_zdb_id
+                   and gene.mrkr_type='GENE'
+                   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                   and fdbcont_fdbdt_id = fdbdt_pk_id
+                   and fdbcont_fdb_db_id = fdb_db_pk_id
+                   and szm_object_type = mrkr_type
+                   and fdbdt_data_type='RNA'
+                   -- and fdb_db_name not like '%Vega%' and fdb_db_name not like '%VEGA%'
+                   -- note: the below would have the same effect as above
+                   --       but since neither catch anything go with the faster/cheaper
+                   and dblink_acc_num[1,6] != "OTTDAR"
+                union
+                select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
+                       gene.mrkr_abbrev gene_sym,
+                       dblink_acc_num accession
+                 from marker gene, marker est, db_link, marker_relationship, foreign_db_contains,
+                    foreign_db, foreign_db_data_type, so_zfin_mapping
+                 where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+                   and est.mrkr_zdb_id  = mrel_mrkr_2_zdb_id
+                   and mrel_type = 'gene encodes small segment'
+                   and est.mrkr_zdb_id = dblink_linked_recid
+                   and szm_object_type = gene.mrkr_type
+                   and est.mrkr_type  in ('EST','CDNA')
+                   and gene.mrkr_type = 'GENE'
+                   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                   and fdbcont_fdbdt_id = fdbdt_pk_id
+                   and fdbcont_fdb_db_id = fdb_db_pk_id
+                   and fdbdt_data_type='RNA'
+                   -- and fdb_db_name not like '%Vega%' and fdb_db_name not like '%VEGA%'
+                   -- note: the below would have the same effect as above
+                   --       but since neither catch anything go with the faster/cheaper
+                   and dblink_acc_num[1,6] != "OTTDAR"
+                ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">SO ID</Column>
@@ -520,8 +541,8 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
                 and fdbcont_fdb_db_id = fdb_db_pk_id
                 and fdbcont_zdb_id = dblink_fdbcont_zdb_id
                 and fdb_db_name = 'GenPept'
-                order by 
-                1]]>
+                order by 1
+                ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">Symbol</Column>
@@ -570,17 +591,17 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Query>
                 <![CDATA[
                   select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev, dblink_acc_num
- from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
- where mrkr_zdb_id = dblink_linked_recid
-   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-   and szm_object_type = mrkr_type
-   and fdb_db_name = 'GenBank'
-   and fdbcont_fdb_db_id = fdb_db_pk_id
-   and dblink_acc_num[3] <> "_"  -- filter misplaced acc
-   and not (
-   	dblink_linked_recid[1,12] = 'ZDB-TSCRIPT-'
-   	and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-37"
- ) order by 1;
+                  from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
+                  where mrkr_zdb_id = dblink_linked_recid
+                    and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                    and szm_object_type = mrkr_type
+                    and fdb_db_name = 'GenBank'
+                    and fdbcont_fdb_db_id = fdb_db_pk_id
+                    and dblink_acc_num[3] <> "_"  -- filter misplaced acc
+                    and not (
+                        dblink_linked_recid[1,12] = 'ZDB-TSCRIPT-'
+                        and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-37"
+                  ) order by 1;
               ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
@@ -609,7 +630,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
                    and dblink_fdbcont_zdb_id = fdbcont_zdb_id
                    and fdb_db_name = 'Gene'
                  order by 1
-                 ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">SO ID</Column>
@@ -637,7 +658,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
                   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
                   and fdb_db_name = 'InterPro'
                 order by 1
-                 ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">SO ID</Column>
@@ -666,7 +687,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
                    and fdb_db_name = 'RefSeq'
                    and dblink_acc_num[3] = "_"
                  order by 1
-                  ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">SO ID</Column>
@@ -694,7 +715,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
                        and fdbcont_zdb_id = dblink_fdbcont_zdb_id
                        and fdb_db_name in ('VEGA','unreleasedRNA')
                      order by 1
-                   ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">SO ID</Column>
@@ -722,7 +743,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
                       and dblink_fdbcont_zdb_id = fdbcont_zdb_id
                       and fdb_db_name = 'UniGene'
                     order by 1
-                   ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">SO ID</Column>
@@ -750,7 +771,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
                       and fdbcont_fdb_db_id = fdb_db_pk_id
                       and fdb_db_name = 'UniProtKB'
                     order by 1
-                   ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">SO ID</Column>
@@ -771,15 +792,17 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                    select distinct gene_id,zfish_abbrev,zfish_name,ortho_name,ortho_abbrev, oef_accession_number,entrez,oev_evidence_code,oev_pub_zdb_id         from tmp_ortho_exp o, ortholog_external_reference, foreign_db_contains, foreign_db,ortholog_evidence
-         where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-           and fdbcont_fdb_db_id = fdb_db_pk_id
-           and fdb_db_name = 'FLYBASE'
-           and o.ortho_id = oef_ortho_zdb_id
-          and o.organism='Fruit fly'
-          and o.ortho_id=oev_ortho_zdb_id
-          order by 1
-                    ]]>
+                    SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
+                                    tmp_flybase.accession, tmp_gene.accession, oev_evidence_code, oev_pub_zdb_id
+                        FROM ortholog
+                        INNER JOIN marker on ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+                        INNER JOIN ortholog_evidence on ortho_zdb_id = oev_ortho_zdb_id
+                        INNER JOIN organism on ortho_other_species_taxid = organism_taxid
+                        LEFT OUTER JOIN tmp_flybase on ortho_zdb_id = tmp_flybase.ortho_id
+                        LEFT OUTER JOIN tmp_gene on ortho_zdb_id = tmp_gene.ortho_id
+                        WHERE organism_common_name = 'Fruit fly'
+                        ORDER BY mrkr_zdb_id;
+                ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">ZFIN Symbol</Column>
@@ -805,13 +828,18 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                     select distinct gene_id,zfish_abbrev,zfish_name,ortho_name,ortho_abbrev, oef_accession_number,entrez,hgnc,oev_evidence_code,oev_pub_zdb_id         from tmp_ortho_exp o, ortholog_external_reference, foreign_db_contains, foreign_db,ortholog_evidence
-         where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-           and fdbcont_fdb_db_id = fdb_db_pk_id
-           and fdb_db_name = 'OMIM'
-           and o.ortho_id = oef_ortho_zdb_id          and o.organism='Human'
-          and o.ortho_id=oev_ortho_zdb_id          order by 1
-                     ]]>
+                    SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
+                                    tmp_omim.accession, tmp_gene.accession, tmp_hgnc.accession, oev_evidence_code, oev_pub_zdb_id
+                        FROM ortholog
+                        INNER JOIN marker ON ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+                        INNER JOIN ortholog_evidence ON ortho_zdb_id = oev_ortho_zdb_id
+                        INNER JOIN organism ON ortho_other_species_taxid = organism_taxid
+                        LEFT OUTER JOIN tmp_omim ON ortho_zdb_id = tmp_omim.ortho_id
+                        LEFT OUTER JOIN tmp_gene ON ortho_zdb_id = tmp_gene.ortho_id
+                        LEFT OUTER JOIN tmp_hgnc ON ortho_zdb_id = tmp_hgnc.ortho_id
+                        WHERE organism_common_name = 'Human'
+                        ORDER BY mrkr_zdb_id;
+                ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">ZFIN Symbol</Column>
@@ -838,14 +866,17 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                   select distinct gene_id,zfish_abbrev,zfish_name,ortho_name,ortho_abbrev, oef_accession_number,entrez,oev_evidence_code,oev_pub_zdb_id         from tmp_ortho_exp o, ortholog_external_reference, foreign_db_contains, foreign_db,ortholog_evidence
-         where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-           and fdbcont_fdb_db_id = fdb_db_pk_id
-           and fdb_db_name = 'MGI'
-           and o.ortho_id = oef_ortho_zdb_id
-          and o.organism='Mouse'          and o.ortho_id=oev_ortho_zdb_id
-          order by 1
-                     ]]>
+                    SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
+                                    'MGI:' || tmp_mgi.accession, tmp_gene.accession, oev_evidence_code, oev_pub_zdb_id
+                      FROM ortholog
+                      INNER JOIN marker on ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+                      INNER JOIN ortholog_evidence on ortho_zdb_id = oev_ortho_zdb_id
+                      INNER JOIN organism on ortho_other_species_taxid = organism_taxid
+                      LEFT OUTER JOIN tmp_mgi on ortho_zdb_id = tmp_mgi.ortho_id
+                      LEFT OUTER JOIN tmp_gene on ortho_zdb_id = tmp_gene.ortho_id
+                      WHERE organism_common_name = 'Mouse'
+                      ORDER BY mrkr_zdb_id;
+                ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">ZFIN Symbol</Column>
@@ -874,7 +905,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
                     select distinct gene_id, mrkr_abbrev, entrezZebrafishId, ortho_abbrev, entrezHumanId
                     from tmp_ortho_pheno
                     order by gene_id, mrkr_abbrev, ortho_abbrev
-                     ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">ZFIN Symbol</Column>
@@ -909,7 +940,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
                        and seq.mrkr_type[1,4] != 'GENE'
                        and mrel_mrkr_2_zdb_id = gene.mrkr_zdb_id
                        and mrel_mrkr_1_zdb_id = seq.mrkr_zdb_id
-                        ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Gene ID</Column>
             <Column id="2">Gene SO ID</Column>
@@ -947,7 +978,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="11">Publication ID</Column>
             <Column id="12">Probe ID</Column>
             <Column id="13">Antibody ID</Column>
-	    <Column id="14">Fish ID</Column>
+            <Column id="14">Fish ID</Column>
         </Download>
         <Download orderIndex="4">
             <Name>
@@ -988,7 +1019,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
                      where xpatex_zdb_id=xpatres_xpatex_zdb_id
                        and xpatres_zdb_id=xpatfig_xpatres_zdb_id
                      order by xpatex_zdb_id
-                         ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Expression ID</Column>
             <Column id="2">Expression Result ID</Column>
@@ -1019,7 +1050,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
                      where superterm.term_zdb_id = xpatres_superterm_zdb_id
                        and subterm.term_zdb_id = xpatres_subterm_zdb_id
                      order by xpatres_xpatex_zdb_id
-                         ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Expression Result ID</Column>
             <Column id="2">Expression ID</Column>
@@ -1098,6 +1129,150 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="1" unique="true">Fish ID</Column>
             <Column id="2" unique="true">Figure ID</Column>
         </Download>
+        <Download orderIndex="7">
+            <Name>
+                Gene Expression Phenotypes
+            </Name>
+            <Category>
+                Phenotype Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>gene_expression_phenotype</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb_id),
+                psg_mrkr_zdb_id, 
+                "expressed in",
+                "RO:0002206",
+                psg_e1a_name,
+                psg_e1a_zdb_id,
+                psg_e1b_name,
+                psg_e1b_zdb_id,
+                psg_quality_name,
+                psg_quality_zdb_id,
+                psg_tag,
+                (select stg_name from stage where stg_zdb_id = pg_start_stg_zdb_id),
+                pg_start_stg_zdb_id,
+                (select stg_name from stage where stg_zdb_id = pg_end_stg_zdb_id),
+                pg_end_stg_zdb_id,
+                xpatex_assay_name,
+                xpatex_probe_feature_zdb_id,
+                (select mrkr_abbrev from marker where mrkr_zdb_id = xpatex_atb_zdb_id),
+                xpatex_atb_zdb_id,
+                genox_fish_zdb_id,
+                genox_exp_zdb_id,
+                pg_fig_zdb_id,
+                fig_source_zdb_id,
+                pub.accession_no
+from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, fish_experiment, figure, publication pub
+where psg_mrkr_zdb_id[1,8] = "ZDB-GENE"
+  and psg_pg_id = pg_id
+  and xpatex_genox_zdb_id = pg_genox_zdb_id
+  and xpatex_gene_zdb_id = psg_mrkr_zdb_id
+  and genox_zdb_id = pg_genox_zdb_id
+  and fig_zdb_id = pg_fig_zdb_id
+  and pub.zdb_id = fig_source_zdb_id
+                ]]>
+            </Query>
+            <Column id="1">Gene Symbol</Column>
+            <Column id="2">Gene ID</Column>
+            <Column id="3">RO Term</Column>
+            <Column id="4">RO ID</Column>
+            <Column id="5">Superstructure Name</Column>
+            <Column id="6">Superstructure ID</Column>
+            <Column id="7">Substructure Name</Column>
+            <Column id="8">Substructure ID</Column>
+            <Column id="9">Phenotype Keyword Name</Column>
+            <Column id="10">Phenotype Keyword ID</Column>
+            <Column id="11">Phenotype Tag</Column>
+            <Column id="12">Start Stage Name</Column>
+            <Column id="13">Start Stage ID</Column>
+            <Column id="14">End Stage Name</Column>
+            <Column id="15">End Stage ID</Column>
+            <Column id="16">Assay</Column>
+            <Column id="17">Probe ID</Column>
+            <Column id="18">Antibody Name</Column>
+            <Column id="19">Antibody ID</Column>
+            <Column id="20">Fish ID</Column>
+            <Column id="21">Environment ID</Column>
+            <Column id="22">Figure ID</Column>
+            <Column id="23">Publication ID</Column>
+            <Column id="24">PubMed ID</Column>
+        </Download>
+        <Download orderIndex="8">
+            <Name>
+                Antibody Labeling Phenotypes
+            </Name>
+            <Category>
+                Phenotype Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>antibody_labeling_phenotype</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+select distinct (select mrkr_name from marker where mrkr_zdb_id = psg_mrkr_zdb_id),
+                psg_mrkr_zdb_id, 
+                "eptitope",
+                "SO:0001018",
+                "expressed in",
+                "RO:0002206",
+                psg_e1a_name,
+                psg_e1a_zdb_id,
+                psg_e1b_name,
+                psg_e1b_zdb_id,
+                psg_quality_name,
+                psg_quality_zdb_id,
+                psg_tag,
+                (select stg_name from stage where stg_zdb_id = pg_start_stg_zdb_id),
+                pg_start_stg_zdb_id,
+                (select stg_name from stage where stg_zdb_id = pg_end_stg_zdb_id),
+                pg_end_stg_zdb_id,
+                xpatex_assay_name,
+                genox_fish_zdb_id,
+                genox_exp_zdb_id,
+                pg_fig_zdb_id,
+                fig_source_zdb_id,
+                pub.accession_no
+from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, fish_experiment, figure, publication pub
+where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
+  and psg_pg_id = pg_id
+  and xpatex_genox_zdb_id = pg_genox_zdb_id
+  and xpatex_atb_zdb_id = psg_mrkr_zdb_id
+  and genox_zdb_id = pg_genox_zdb_id
+  and fig_zdb_id = pg_fig_zdb_id
+  and pub.zdb_id = fig_source_zdb_id
+                ]]>
+            </Query>
+            <Column id="1">Antibody Name</Column>
+            <Column id="2">Antibody ID</Column>
+            <Column id="3">SO Term</Column>
+            <Column id="4">SO ID</Column>
+            <Column id="5">RO Term</Column>
+            <Column id="6">RO ID</Column>
+            <Column id="7">Superstructure Name</Column>
+            <Column id="8">Superstructure ID</Column>
+            <Column id="9">Substructure Name</Column>
+            <Column id="10">Substructure ID</Column>
+            <Column id="11">Phenotype Keyword Name</Column>
+            <Column id="12">Phenotype Keyword ID</Column>
+            <Column id="13">Phenotype Tag</Column>
+            <Column id="14">Start Stage Name</Column>
+            <Column id="15">Start Stage ID</Column>
+            <Column id="16">End Stage Name</Column>
+            <Column id="17">End Stage ID</Column>
+            <Column id="18">Assay</Column>
+            <Column id="19">Fish ID</Column>
+            <Column id="20">Environment ID</Column>
+            <Column id="21">Figure ID</Column>
+            <Column id="22">Publication ID</Column>
+            <Column id="23">PubMed ID</Column>
+        </Download>        
         <Download orderIndex="1">
             <Name>
                 Fish with Phenotypes
@@ -1150,8 +1325,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
-                <![CDATA[
-                          ]]>
+                <![CDATA[]]>
             </Query>
             <Column id="1">ID</Column>
             <Column id="2">Gene Symbol</Column>
@@ -1215,7 +1389,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
                     select gene_id, entrezZebrafishId,entrezHumanId, mrkr_abbrev,a_ont_id,e1superName, b_ont_id,e1subName,
                          c_ont_id,e2superName,d_ont_id,e2subName,e_ont_id,qualityName, phenos_tag  from tmp_ortho_pheno
                         order by gene_id, mrkr_abbrev, ortho_abbrev, type
-                  ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Gene ID</Column>
             <Column id="2" unique="false">Entrez Zebrafish Gene ID</Column>
@@ -1254,7 +1428,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
                     select gene_id, entrezZebrafishId,entrezHumanId, mrkr_abbrev,a_ont_id,e1superName, b_ont_id,e1subName,
                          c_ont_id,e2superName,d_ont_id,e2subName,e_ont_id,qualityName, phenos_tag  from tmp_ortho_pheno
                         order by gene_id, mrkr_abbrev, ortho_abbrev, type
-                  ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Gene ID</Column>
             <Column id="2" unique="false">Entrez Zebrafish Gene ID</Column>
@@ -1286,16 +1460,19 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                    select distinct geno_zdb_id, geno_display_name, genoback_background_zdb_id
-                     from genotype, genotype_background
-                     where geno_Zdb_id = genoback_geno_Zdb_id
-                  ]]>
+                   select distinct a.geno_zdb_id, a.geno_display_name, genoback_background_zdb_id,b.geno_display_name
+                   from genotype a, genotype_background, genotype b
+                   where a.geno_Zdb_id = genoback_geno_Zdb_id
+                   and b.geno_zdb_id=genoback_backgound_zdb_id
+                ]]>
             </Query>
             <Column id="1" unique="true">Genotype ID</Column>
             <Column id="2">Genotype Name</Column>
             <Column id="3">Background</Column>
+            <Column id="4">Background Name</Column>
+
         </Download>
-       <Download orderIndex="2">
+        <Download orderIndex="2">
             <Name>
                 Fish Components
             </Name>
@@ -1310,36 +1487,36 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Query>
                 <![CDATA[
                     select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_zdb_id, b.mrkr_abbrev, fc_construct_zdb_id, c.mrkr_abbrev, genoback_background_zdb_id, geno_handle
-   from fish_components,outer (genotype_background,genotype), outer marker a, outer marker b, outer marker c
-   where fc_genotype_zdb_id = genoback_geno_zdb_id
-   and a.mrkr_Zdb_id = fc_gene_zdb_id
-   and genoback_background_zdb_id = geno_Zdb_id
-   and b.mrkr_zdb_id = fc_affector_zdb_id
-   and c.mrkr_Zdb_id = fc_construct_zdb_id
-   and fc_affector_zdb_id not like 'ZDB-ALT%'
-union
-select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_zdb_id, b.feature_abbrev, fc_construct_zdb_id, c.mrkr_abbrev, genoback_background_zdb_id, geno_handle
-   from fish_components,outer (genotype_background,genotype), outer marker a, outer feature b, outer marker c
-   where fc_genotype_zdb_id = genoback_geno_zdb_id
-   and a.mrkr_Zdb_id = fc_gene_zdb_id
-   and genoback_background_zdb_id = geno_Zdb_id
-   and b.feature_zdb_id = fc_affector_zdb_id
-   and c.mrkr_Zdb_id = fc_construct_zdb_id
-   and fc_affector_zdb_id like 'ZDB-ALT%'
-                  ]]>
+                       from fish_components,outer (genotype_background,genotype), outer marker a, outer marker b, outer marker c
+                       where fc_genotype_zdb_id = genoback_geno_zdb_id
+                       and a.mrkr_Zdb_id = fc_gene_zdb_id
+                       and genoback_background_zdb_id = geno_Zdb_id
+                       and b.mrkr_zdb_id = fc_affector_zdb_id
+                       and c.mrkr_Zdb_id = fc_construct_zdb_id
+                       and fc_affector_zdb_id not like 'ZDB-ALT%'
+                    union
+                    select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_zdb_id, b.feature_abbrev, fc_construct_zdb_id, c.mrkr_abbrev, genoback_background_zdb_id, geno_handle
+                       from fish_components,outer (genotype_background,genotype), outer marker a, outer feature b, outer marker c
+                       where fc_genotype_zdb_id = genoback_geno_zdb_id
+                       and a.mrkr_Zdb_id = fc_gene_zdb_id
+                       and genoback_background_zdb_id = geno_Zdb_id
+                       and b.feature_zdb_id = fc_affector_zdb_id
+                       and c.mrkr_Zdb_id = fc_construct_zdb_id
+                       and fc_affector_zdb_id like 'ZDB-ALT%'
+                ]]>
             </Query>
             <Column id="1">Fish ID</Column>
             <Column id="2">Fish Name</Column>
             <Column id="3">Gene ID</Column>
-	    <Column id="4">Gene Symbol</Column>
+            <Column id="4">Gene Symbol</Column>
             <Column id="5">Affector ID</Column>
             <Column id="6">Affector Symbol</Column>
-	    <Column id="7">Construct ID</Column>
+            <Column id="7">Construct ID</Column>
             <Column id="8">Construct Symbol</Column>
             <Column id="9">Background ID</Column>
-	    <Column id="10">Background Name</Column>
-	    <Column id="11">Genotype ID</Column>
-	    <Column id="12">Genotype Name</Column>
+            <Column id="10">Background Name</Column>
+            <Column id="11">Genotype ID</Column>
+            <Column id="12">Genotype Name</Column>
         </Download>
         <Download orderIndex="1">
             <Name>
@@ -1366,12 +1543,12 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                         feature_type_display,
                         gene_abbrev,
                         gene_id,
-			feature_zygosity,
+                        feature_zygosity,
                         construct_name,
                         construct_zdb_id
                      from tmp_geno_data
                      order by genotype_id, geno_display_name
-                   ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Genotype ID</Column>
             <Column id="2">Genotype Name</Column>
@@ -1384,8 +1561,8 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <Column id="9">Gene or Construct Symbol</Column>
             <Column id="10">Corresponding ZFIN Gene ID/Construct ID</Column>
             <Column id="11">Allele Zygosity</Column>
-	    <Column id="12">Construct Name</Column>
-	    <Column id="13">Construct ZdbId</Column>
+            <Column id="12">Construct Name</Column>
+            <Column id="13">Construct ZdbId</Column>
         </Download>
         <Download orderIndex="4">
             <Name>
@@ -1402,10 +1579,10 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <Query>
                 <![CDATA[
                 select mrkr_zdb_id, mrkr_abbrev, snpd_rs_acc_num, snpdattr_pub_zdb_id
-  from marker, snp_download, snp_download_attribution
- where mrkr_zdb_id = snpd_mrkr_zdb_id
- and snpdattr_snpd_pk_id = snpd_pk_id;
-                   ]]>
+                from marker, snp_download, snp_download_attribution
+                where mrkr_zdb_id = snpd_mrkr_zdb_id
+                and snpdattr_snpd_pk_id = snpd_pk_id;
+                ]]>
             </Query>
             <Column id="1">Marker ID</Column>
             <Column id="2">Marker Symbol</Column>
@@ -1434,7 +1611,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                        and mrkr_zdb_id[1,8] = 'ZDB-GENE'
                        and feature_zdb_id = genofeat_feature_zdb_id
                        and geno_zdb_id = genofeat_geno_zdb_id
-                      ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Genotype ID</Column>
             <Column id="2">Genotype Name</Column>
@@ -1447,7 +1624,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                 Fish-Publication relation
             </Name>
             <Category>
-                Fish Data
+                Publications
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
@@ -1455,8 +1632,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
-                <![CDATA[
-                         ]]>
+                <![CDATA[]]>
             </Query>
             <Column id="1" unique="true">Fish ID</Column>
             <Column id="2">Publication ID</Column>
@@ -1466,7 +1642,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                 Genotype-Publication relation
             </Name>
             <Category>
-                Fish Data
+                Publications
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
@@ -1474,12 +1650,11 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
-                <![CDATA[
-                         ]]>
+                <![CDATA[]]>
             </Query>
-            <Column id="1" unique="true">Genotype ID</Column>
-	    <Column id="2">OMIM ID </Column>
-            <Column id="3">Publication ID</Column>
+            <Column id="1" unique="true">Publication ID</Column>
+            <Column id="2">PubMed ID</Column>
+            <Column id="3">Genotype ID</Column>
         </Download>
         <Download orderIndex="1">
             <Name>
@@ -1500,7 +1675,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                     where feature_type =ftrtype_name
                     and feature_zdb_id = featassay_feature_zdb_id
                     order by lower(feature_abbrev);
-                         ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Genomic Feature ID</Column>
             <Column id="2">Feature SO ID</Column>
@@ -1509,9 +1684,11 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <Column id="5">Genomic Feature Type</Column>
             <Column id="6">Mutagen</Column>
             <Column id="7">Mutagee</Column>
-	    <Column id="8">Construct ID</Column>
-	    <Column id="9">Construct name</Column>
-	    <Column id="10">Construct SO ID</Column>
+            <Column id="8">Construct ID</Column>
+            <Column id="9">Construct name</Column>
+            <Column id="10">Construct SO ID</Column>
+            <Column id="11">TALEN/CRISPR ID</Column>
+            <Column id="12">TALEN/CRISPR Name</Column>
         </Download>
 
         <Download orderIndex="1">
@@ -1528,14 +1705,14 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
- select distinct feature_zdb_id, feature_abbrev, feature_name, a.szm_term_ont_id, fmrel_mrkr_zdb_id, mrkr_name, b.szm_term_ont_id
-                     from feature, feature_marker_Relationship, marker, so_zfin_mapping a, so_zfin_mapping b
+                select distinct feature_zdb_id, feature_abbrev, feature_name, a.szm_term_ont_id, fmrel_mrkr_zdb_id, mrkr_name, b.szm_term_ont_id
+                    from feature, feature_marker_Relationship, marker, so_zfin_mapping a, so_zfin_mapping b
                     where fmrel_ftr_zdb_id = feature_zdb_id
-		    and feature_type in ('TRANSGENIC_INSERTION')
+                    and feature_type in ('TRANSGENIC_INSERTION')
                     and fmrel_mrkr_zdb_id = mrkr_zdb_id
-		    and get_obj_type(mrkr_zdb_id) = b.szm_object_type
-		    and feature_type = a.szm_object_type
-                         ]]>
+                    and get_obj_type(mrkr_zdb_id) = b.szm_object_type
+                    and feature_type = a.szm_object_type
+                ]]>
             </Query>
             <Column id="1" unique="true">Genomic Feature ID</Column>
             <Column id="2">Genomic Feature Abbreviation</Column>
@@ -1559,23 +1736,23 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                 select distinct a.mrkr_zdb_id, 
-                a.mrkr_name, 
-                a.mrkr_type, 
-                b.mrkr_zdb_id, 
-                b.mrkr_name, 
-                b.mrkr_type, 
-		mrel_type,
-                c.szm_term_ont_id, 
-                d.szm_term_ont_id
-         from marker a, marker b, marker_Relationship, so_zfin_mapping c, so_zfin_mapping d
- 	 where a.mrkr_zdb_id = mrel_mrkr_1_zdb_id
-	 and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
-	 and get_obj_type(a.mrkr_zdb_id) = c.szm_object_type
-	 and get_obj_type(b.mrkr_zdb_id) = d.szm_object_type 
-	 and a.mrkr_type in ('TGCONSTRCT','GTCONSTRCT','ETCONSTRCT','PTCONSTRCT')
-         order by a.mrkr_zdb_id 
-                         ]]>
+                    select distinct a.mrkr_zdb_id,
+                    a.mrkr_name,
+                    a.mrkr_type,
+                    b.mrkr_zdb_id,
+                    b.mrkr_name,
+                    b.mrkr_type,
+                    mrel_type,
+                    c.szm_term_ont_id,
+                    d.szm_term_ont_id
+                    from marker a, marker b, marker_Relationship, so_zfin_mapping c, so_zfin_mapping d
+                    where a.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+                    and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+                    and get_obj_type(a.mrkr_zdb_id) = c.szm_object_type
+                    and get_obj_type(b.mrkr_zdb_id) = d.szm_object_type
+                    and a.mrkr_type in ('TGCONSTRCT','GTCONSTRCT','ETCONSTRCT','PTCONSTRCT')
+                    order by a.mrkr_zdb_id
+                ]]>
             </Query>
             <Column id="1" unique="true">Construct ID</Column>
             <Column id="2">Construct Name</Column>
@@ -1584,8 +1761,8 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <Column id="5">Component Name</Column>
             <Column id="6">Component Type</Column>
             <Column id="7">Relationship</Column>
-	    <Column id="8">Construct SO ID</Column>
-	    <Column id="9">Component SO ID</Column>
+            <Column id="8">Construct SO ID</Column>
+            <Column id="9">Component SO ID</Column>
         </Download>
         <Download orderIndex="2">
             <Name>
@@ -1601,21 +1778,53 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                   select feature_zdb_id, a.szm_term_ont_id, feature_name, mrkr_abbrev, mrkr_zdb_id, b.szm_term_ont_id, fmrel_type 
-                     from feature, feature_marker_relationship,marker, so_zfin_mapping a, so_zfin_mapping b
-                    where fmrel_ftr_zdb_id = feature_zdb_id 
-                      and mrkr_zdb_id = fmrel_mrkr_zdb_id
-                      and a.szm_object_type = feature_type
-                      and b.szm_objecT_type = mrkr_type
-                      and mrkr_type like 'GENE%' and
-                         (
-                            (feature_type in ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
-                                              'UNSPECIFIED','TRANSGENIC_INSERTION', 'INDEL') AND fmrel_type ='is allele of') OR
-                                              (feature_type in ('TRANSLOC', 'INVERSION') AND fmrel_type in ('is allele of', 'markers moved')) OR
-                                              (feature_type in ('DEFICIENCY') AND fmrel_type in ('is allele of','markers missing'))
-                         )
-                      order by lower( feature_name);
-                         ]]>
+                    SELECT
+                        feature_zdb_id,
+                        a.szm_term_ont_id,
+                        feature_name,
+                        mrkr_abbrev,
+                        mrkr_zdb_id,
+                        b.szm_term_ont_id,
+                        fmrel_type,
+                        feature_type,
+                        dna_change_so_id,
+                        dna_ref_nucleotide,
+                        dna_mut_nucleotide,
+                        dna_bp_added,
+                        dna_bp_removed,
+                        dna_position_start,
+                        dna_position_end,
+                        dna_reference_seq,
+                        dna_localization_name,
+                        dna_localization_so_id,
+                        dna_localization_exon,
+                        dna_localization_intron,
+                        transcript_consequence_name,
+                        transcript_consequence_so_id,
+                        transcript_consequence_exon,
+                        transcript_consequence_intron,
+                        protein_consequence_name,
+                        protein_consequence_so_id,
+                        protein_ref_aa,
+                        protein_mut_aa,
+                        protein_aa_added,
+                        protein_aa_removed,
+                        protein_position_start,
+                        protein_position_end,
+                        protein_reference_seq
+                      FROM feature, feature_marker_relationship,marker, so_zfin_mapping a, so_zfin_mapping b, tmp_mutation_details
+                      WHERE fmrel_ftr_zdb_id = feature_zdb_id
+                      AND mrkr_zdb_id = fmrel_mrkr_zdb_id
+                      AND a.szm_object_type = feature_type
+                      AND b.szm_objecT_type = mrkr_type
+                      AND mrkr_type LIKE 'GENE%' AND (
+                        (feature_type IN ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
+                                          'UNSPECIFIED','TRANSGENIC_INSERTION', 'INDEL') AND fmrel_type ='is allele of') OR
+                        (feature_type IN ('TRANSLOC', 'INVERSION') AND fmrel_type IN ('is allele of', 'markers moved')) OR
+                        (feature_type IN ('DEFICIENCY') AND fmrel_type IN ('is allele of','markers missing')))
+                      AND tmp_feat_zdb_id = feature_zdb_id
+                      ORDER BY LOWER(feature_name);
+                ]]>
             </Query>
             <Column id="1" unique="true">Genomic Feature ID</Column>
             <Column id="2">Feature SO ID</Column>
@@ -1624,6 +1833,32 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <Column id="5">Gene ID</Column>
             <Column id="6">Gene SO ID</Column>
             <Column id="7">Genomic Feature - Marker Relationship</Column>
+            <Column id="8">Feature Type</Column>
+            <Column id="9">DNA/cDNA Change SO ID</Column>
+            <Column id="10">Reference Nucleotide</Column>
+            <Column id="11">Mutant Nucleotide</Column>
+            <Column id="12">Base Pairs Added</Column>
+            <Column id="13">Base Pairs Removed</Column>
+            <Column id="14">DNA/cDNA Change Position Start</Column>
+            <Column id="15">DNA/cDNA Change Position End</Column>
+            <Column id="16">DNA/cDNA Reference Sequence</Column>
+            <Column id="17">DNA/cDNA Change Localization</Column>
+            <Column id="18">DNA/cDNA Change Localization SO ID</Column>
+            <Column id="19">DNA/cDNA Change Localization Exon</Column>
+            <Column id="20">DNA/cDNA Change Localization Intron</Column>
+            <Column id="21">Transcript Consequence</Column>
+            <Column id="22">Transcript Consequence SO ID</Column>
+            <Column id="23">Transcript Consequence Exon</Column>
+            <Column id="24">Transcript Consequence Intron</Column>
+            <Column id="25">Protein Consequence</Column>
+            <Column id="26">Protein Consequence SO ID</Column>
+            <Column id="27">Reference Amino Acid</Column>
+            <Column id="28">Mutant Amino Acid</Column>
+            <Column id="29">Amino Acids Added</Column>
+            <Column id="30">Amino Acids Removed</Column>
+            <Column id="31">Protein Consequence Position Start</Column>
+            <Column id="32">Protein Consequence Position End</Column>
+            <Column id="33">Protein Reference Sequence</Column>
         </Download>
         <Download orderIndex="1">
             <Name>
@@ -1643,12 +1878,12 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                      from genotype,fish
                      where geno_is_wildtype = 't'
                       and fish_genotype_zdb_id = geno_Zdb_id
-                         ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Fish ID</Column>
             <Column id="2">Fish Name</Column>
             <Column id="3">Fish Abbreviation</Column>
-	    <Column id="5">Genotype ID</Column>
+            <Column id="5">Genotype ID</Column>
         </Download>
         <Download orderIndex="1">
             <Name>
@@ -1668,7 +1903,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                      from publication, journal
                      where pub_jrnl_zdb_id = jrnl_zdb_id
                        and jtype = 'Journal'
-                         ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Publication ID</Column>
             <Column id="2">pubMed ID (none or blank when not available)</Column>
@@ -1718,7 +1953,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                      from publication, journal
                      where pub_jrnl_zdb_id = jrnl_zdb_id
                        and jtype = 'Journal'
-                         ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Publication ZFIN ID</Column>
             <Column id="2">PubMed ID (none or blank when not available)</Column>
@@ -1736,8 +1971,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
-                <![CDATA[
-                ]]>
+                <![CDATA[]]>
             </Query>
             <Column id="1">Gene Symbol</Column>
             <Column id="2">Gene ID</Column>
@@ -1765,7 +1999,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                           join term on anatdisp_item_zdb_id = term_zdb_id
                      where term_zdb_id not in ('ZDB-TERM-100331-91', 'ZDB-TERM-100331-1055')
                      order by stg_hours_start, anatdisp_seq_num;
-                         ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Entire Staged Anatomy (tab indented)</Column>
         </Download>
@@ -1789,7 +2023,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                        and term2.term_ontology = 'zebrafish_anatomy'
                        and term1.term_zdb_id = termrel_term_1_zdb_id
                        and term2.term_zdb_id = termrel_term_2_zdb_id
-                         ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Parent Item ID</Column>
             <Column id="2" unique="true">Child Item ID</Column>
@@ -1813,7 +2047,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                 from term, term_stage
                 where term_zdb_id = ts_term_zdb_id
                 order by term_name
-                          ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Anatomy ID</Column>
             <Column id="2">Anatomy Name</Column>
@@ -1843,7 +2077,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                        and term_ontology = 'zebrafish_anatomy'
                        and aliasgrp_name not in ('plural','secondary id')
                      order by term_name
-                          ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Anatomy OBO ID</Column>
             <Column id="2">Anatomy Name</Column>
@@ -1871,7 +2105,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                        and dalias_group_id = aliasgrp_pk_id
                        and aliasgrp_name not in ('plural','secondary id')
                      order by anatitem_name
-                          ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Stage ID</Column>
             <Column id="2">Stage OBO ID</Column>
@@ -1903,7 +2137,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                        and mrel_type = "knockdown reagent targets gene"
                        and mo.mrkr_zdb_id = seq_mrkr_zdb_id
                        order by gn.mrkr_abbrev
-                          ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Gene ID</Column>
             <Column id="2">Gene SO ID</Column>
@@ -1929,19 +2163,19 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-        select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, talen.mrkr_zdb_id, b.szm_term_ont_id, talen.mrkr_abbrev,
-	       seq_sequence, seq_sequence_2, talen.mrkr_comments
-          from marker gn, marker talen, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
-         where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
-           and talen.mrkr_zdb_id = mrel_mrkr_1_zdb_id
-           and a.szm_object_type = gn.mrkr_type
-           and b.szm_object_type = talen.mrkr_type
-           and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
-           and mrel_mrkr_1_zdb_id[1,10] = "ZDB-TALEN-"
-           and mrel_type = "knockdown reagent targets gene"
-           and talen.mrkr_zdb_id = seq_mrkr_zdb_id
-      order by gn.mrkr_abbrev
-                          ]]>
+                select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, talen.mrkr_zdb_id, b.szm_term_ont_id, talen.mrkr_abbrev,
+                   seq_sequence, seq_sequence_2, talen.mrkr_comments
+                from marker gn, marker talen, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
+                where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+                   and talen.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+                   and a.szm_object_type = gn.mrkr_type
+                   and b.szm_object_type = talen.mrkr_type
+                   and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
+                   and mrel_mrkr_1_zdb_id[1,10] = "ZDB-TALEN-"
+                   and mrel_type = "knockdown reagent targets gene"
+                   and talen.mrkr_zdb_id = seq_mrkr_zdb_id
+                order by gn.mrkr_abbrev
+                ]]>
             </Query>
             <Column id="1" unique="true">Gene ID</Column>
             <Column id="2">Gene SO ID</Column>
@@ -1953,7 +2187,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <Column id="7">TALEN Target Sequence 2</Column>
             <Column id="9">Publication(s)</Column>
             <Column id="10">Note</Column>
-        </Download>  
+        </Download>
         <Download orderIndex="3">
             <Name>
                 CRISPR
@@ -1968,19 +2202,19 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-        select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, crispr.mrkr_zdb_id, b.szm_term_ont_id, crispr.mrkr_abbrev,
-	       seq_sequence, crispr.mrkr_comments
-          from marker gn, marker crispr, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
-         where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
-           and crispr.mrkr_zdb_id = mrel_mrkr_1_zdb_id
-           and a.szm_object_type = gn.mrkr_type
-           and b.szm_object_type = crispr.mrkr_type
-           and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
-           and mrel_mrkr_1_zdb_id[1,11] = "ZDB-CRISPR-"
-           and mrel_type = "knockdown reagent targets gene"
-           and crispr.mrkr_zdb_id = seq_mrkr_zdb_id
-      order by gn.mrkr_abbrev
-                          ]]>
+                select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, crispr.mrkr_zdb_id, b.szm_term_ont_id, crispr.mrkr_abbrev,
+                   seq_sequence, crispr.mrkr_comments
+                from marker gn, marker crispr, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
+                where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+                   and crispr.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+                   and a.szm_object_type = gn.mrkr_type
+                   and b.szm_object_type = crispr.mrkr_type
+                   and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
+                   and mrel_mrkr_1_zdb_id[1,11] = "ZDB-CRISPR-"
+                   and mrel_type = "knockdown reagent targets gene"
+                   and crispr.mrkr_zdb_id = seq_mrkr_zdb_id
+                order by gn.mrkr_abbrev
+                ]]>
             </Query>
             <Column id="1" unique="true">Gene ID</Column>
             <Column id="2">Gene SO ID</Column>
@@ -1991,7 +2225,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <Column id="7">CRISPR Target Sequence</Column>
             <Column id="8">Publication(s)</Column>
             <Column id="9">Note</Column>
-        </Download>                
+        </Download>
         <Download orderIndex="1">
             <Name>
                 Image-Figure translations
@@ -2002,7 +2236,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <Description>
                 <![CDATA[
                     <b>Note</b>: <it>Images are not provided due to copyright restrictions</it>
-                   ]]>
+                ]]>
             </Description>
             <WikiLink></WikiLink>
             <FileName>ImageFigures</FileName>
@@ -2014,7 +2248,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                      from image
                      where img_fig_zdb_id is not null
                      order by img_zdb_id
-                      ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Image ID</Column>
             <Column id="2">Figure ID</Column>
@@ -2042,7 +2276,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                 and jtype='Journal'
                 and pub_jrnl_zdb_id=jrnl_zdb_id
                 order by feature_abbrev
-                 ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Publication ZDB ID</Column>
             <Column id="2">PubMed ID</Column>
@@ -2072,9 +2306,39 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                 and jtype='Journal'
                 and pub_jrnl_zdb_id=jrnl_zdb_id
                 order by feature_abbrev
-                 ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Publication ZDB ID</Column>
+            <Column id="2">PubMed ID</Column>
+            <Column id="3">Pub Mini Ref</Column>
+            <Column id="4">Genomic Feature Abbrev</Column>
+        </Download>
+
+        <Download private="true" orderIndex="4">
+            <Name>
+                hu Alleles used in publications
+            </Name>
+            <Category>
+                Unofficial Download Files
+            </Category>
+            <Description>FB Case 13856</Description>
+            <WikiLink></WikiLink>
+            <FileName>huAlleles</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||jrnl_name ||' '|| ' ' || pub_volume ||' '|| pub_pages, feature_abbrev
+                from feature, record_attribution, publication, journal
+                where recattrib_data_zdb_id=feature_zdb_id
+                and feature_abbrev like 'hu%'
+                and zdb_id=recattrib_source_zdb_id
+                and jtype='Journal'
+                and pub_jrnl_zdb_id=jrnl_zdb_id
+                order by feature_abbrev;
+                ]]>
+            </Query>
+            <Column id="1">Publication ZDB ID</Column>
             <Column id="2">PubMed ID</Column>
             <Column id="3">Pub Mini Ref</Column>
             <Column id="4">Genomic Feature Abbrev</Column>
@@ -2104,7 +2368,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                         dblink_linked_recid[1,12] = 'ZDB-TSCRIPT-'
                         and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-37"
                        ) order by 1
-                   ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Transcript ID</Column>
             <Column id="2">Transcript SO ID</Column>
@@ -2132,7 +2396,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                       and dblink_fdbcont_zdb_id = fdbcont_zdb_id
                       and fdb_db_name = 'Pfam'
                     order by 1
-                   ]]>
+                ]]>
             </Query>
             <Column id="1" unique="true">Gene ID</Column>
             <Column id="2">Gene SO ID</Column>

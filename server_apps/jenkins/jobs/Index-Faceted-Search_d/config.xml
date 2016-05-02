@@ -17,6 +17,15 @@
   <concurrentBuild>false</concurrentBuild>
   <customWorkspace>$SOURCEROOT</customWorkspace>
   <builders>
+     <hudson.tasks.Shell>
+      <command>cd $TARGETROOT/server_apps/DB_maintenance/warehouse &amp;&amp; regenPhenotypeMart.sh </command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>cd $TARGETROOT/server_apps/DB_maintenance/warehouse &amp;&amp; regenExpressionMart.sh </command>
+    </hudson.tasks.Shell>
+  <hudson.tasks.Shell>
+      <command>cd $TARGETROOT/server_apps/DB_maintenance &amp;&amp; regen.sh </command>
+ </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>cd $SOURCEROOT</command>
     </hudson.tasks.Shell>

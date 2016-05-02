@@ -2,7 +2,6 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -11,6 +10,7 @@ import org.zfin.gwt.root.dto.GenotypeDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.*;
 
@@ -22,14 +22,12 @@ public class FishConstructionPresenter implements Presenter {
     private CurationDiseaseRPCAsync diseaseRpcService = CurationDiseaseRPC.App.getInstance();
 
     private CurationExperimentRPCAsync curationExperimentRpcService = CurationExperimentRPC.App.getInstance();
-    private final HandlerManager eventBus;
     private FishConstruction view;
     private String publicationID;
 
     private FishPresenter fishPresenter;
 
-    public FishConstructionPresenter(HandlerManager eventBus, FishConstruction view, String publicationID) {
-        this.eventBus = eventBus;
+    public FishConstructionPresenter(FishConstruction view, String publicationID) {
         this.view = view;
         this.publicationID = publicationID;
         this.view.setFishConstructionPresenter(this);
@@ -160,7 +158,7 @@ public class FishConstructionPresenter implements Presenter {
         public void onSuccess(List<FishDTO> list) {
             view.getLoadingImage().setVisible(false);
             resetGUI();
-            eventBus.fireEvent(new AddNewFishEvent());
+            AppUtils.EVENT_BUS.fireEvent(new AddNewFishEvent());
         }
 
     }

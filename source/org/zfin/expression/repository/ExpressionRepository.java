@@ -1,5 +1,6 @@
 package org.zfin.expression.repository;
 
+import org.zfin.antibody.Antibody;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExpressedStructurePresentation;
 import org.zfin.expression.presentation.PublicationExpressionBean;
@@ -12,6 +13,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.sequence.MarkerDBLink;
@@ -64,6 +66,7 @@ public interface ExpressionRepository {
      * @return ExpressionExperiment
      */
     ExpressionExperiment getExpressionExperiment(String experimentID);
+    ExpressionExperiment2 getExpressionExperiment2(String experimentID);
 
     ExpressionDetailsGenerated getExpressionExperiment2(long id);
 
@@ -134,14 +137,14 @@ public interface ExpressionRepository {
      *
      * @param expressionExperiment expression experiment
      */
-    void createExpressionExperiment(ExpressionExperiment expressionExperiment);
+    void createExpressionExperiment(ExpressionExperiment2 expressionExperiment);
 
     /**
      * Remove an existing expression experiment and all objects that it is composed of.
      *
      * @param experiment expression experiment
      */
-    void deleteExpressionExperiment(ExpressionExperiment experiment);
+    void deleteExpressionExperiment(ExpressionExperiment2 experiment);
 
     /**
      * Retrieves experiment that pertain to a given
@@ -149,14 +152,12 @@ public interface ExpressionRepository {
      * gene
      * fish
      *
-     * @deprecated Use getExperimentsByGeneAndFish2
-     *
      * @param publicationID publication
      * @param geneZdbID     gene ID
      * @param fishID        genotype ID
      * @return list of expression experiment
      */
-    List<ExpressionExperiment> getExperimentsByGeneAndFish(String publicationID, String geneZdbID, String fishID);
+    List<ExpressionExperiment2> getExperimentsByGeneAndFish(String publicationID, String geneZdbID, String fishID);
 
     /**
      * Retrieves experiment that pertain to a given
@@ -180,7 +181,7 @@ public interface ExpressionRepository {
      * @param figureID      figure ID
      * @return list of experiment figure stages.
      */
-    List<ExperimentFigureStage> getExperimentFigureStagesByGeneAndFish(String publicationID, String geneZdbID, String fishID, String figureID);
+    List<ExpressionFigureStage> getExperimentFigureStagesByGeneAndFish(String publicationID, String geneZdbID, String fishID, String figureID);
 
 
     /**
@@ -202,13 +203,14 @@ public interface ExpressionRepository {
     void createExpressionResult(ExpressionResult expressionResult, Figure singleFigure);
 
     List<ExpressionResult> checkForExpressionResultRecord(ExpressionResult result);
+    List<ExpressionResult2> checkForExpressionResultRecord2(ExpressionResult2 result);
 
     /**
      * Delete a figure annotation, including all expression result records.
      *
      * @param efs experiment figure stage.
      */
-    void deleteFigureAnnotation(ExperimentFigureStage efs);
+    void deleteFigureAnnotation(ExpressionFigureStage efs);
 
     /**
      * Retrieve an efs by experiment, figure, start and end stage id.
@@ -219,7 +221,7 @@ public interface ExpressionRepository {
      * @param endStageID      end
      * @return efs object
      */
-    ExperimentFigureStage getExperimentFigureStage(String experimentZdbID, String figureID, String startStageID, String endStageID);
+    ExpressionFigureStage getExperimentFigureStage(String experimentZdbID, String figureID, String startStageID, String endStageID);
 
     /**
      * Retrieve all expression structures for a given publication, which is the same as the
@@ -254,7 +256,7 @@ public interface ExpressionRepository {
      * @param result expression result.
      * @param figure Figure
      */
-    void deleteExpressionResultPerFigure(ExpressionResult result, Figure figure);
+    void deleteExpressionResultPerFigure(ExpressionResult2 result, Figure figure);
 
     /**
      * Check if a pile structure already exists.
@@ -355,7 +357,7 @@ public interface ExpressionRepository {
      * Retrieve list of expression result records that use obsoleted terms in the annotation.
      * @return list of expression results records
      */
-    List<ExpressionResult> getExpressionOnObsoletedTerms();
+    List<ExpressionResult2> getExpressionOnObsoletedTerms();
     int getImagesFromPubAndClone(PublicationExpressionBean publicationExpressionBean);
     int getImagesForEfg(PublicationExpressionBean publicationExpressionBean);
 
@@ -382,13 +384,13 @@ public interface ExpressionRepository {
      */
     List<ExpressionResult> getExpressionResultsByTermAndStage(TermFigureStageRange range);
 
-    ExpressionResult getExpressionResult(String expressionResultID);
+    ExpressionResult getExpressionResult(Long expressionResultID);
 
     /**
      * Deletes a given ExpressionResult record and its associations to all figures.
      * @param expressionResult
      */
-    void deleteExpressionResult(ExpressionResult expressionResult);
+    void deleteExpressionResult(ExpressionResult2 expressionResult);
 
     /**
      * Retrieve list of expression experiment records for a given gene.
@@ -397,4 +399,26 @@ public interface ExpressionRepository {
     List<ExpressionExperiment> getExpressionExperimentByGene(Marker gene);
 
     long getExpressionExperimentByFishAndPublication(Fish fish, String publicationID);
+
+    List<ExpressionExperiment2> getExperiments2(String zdbID);
+
+    void createExpressionFigureStage(ExpressionFigureStage experimentFigureStage);
+
+    List<ExpressionResult2> getPhenotypeFromExpressionsByFigureFish(String publicationID, String figureID, String fishID, String featureID);
+
+    /**
+     * Retrieve list of expression experiment2 records for a given antibody.
+     * @return list of expression experiment2 records
+     */
+    List<ExpressionExperiment2> getExperiment2sByAntibody(Antibody antibody);
+
+    /**
+     * Retrieve all expression experiment2 records for a given fish
+     *
+     * @param fish Fish
+     * @return list of expression experiment2 records
+     */
+    List<ExpressionExperiment2> getExpressionExperiment2sByFish (Fish fish);
+
+    List<ExpressionResult2> getExpressionResultList(Marker gene);
 }

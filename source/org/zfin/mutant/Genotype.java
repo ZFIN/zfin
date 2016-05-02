@@ -1,5 +1,6 @@
 package org.zfin.mutant;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.util.CollectionUtils;
 import org.zfin.fish.FishAnnotation;
 import org.zfin.infrastructure.DataNote;
@@ -8,6 +9,7 @@ import org.zfin.profile.GenotypeSupplier;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
+import javax.persistence.*;
 import java.util.*;
 
 /**
@@ -19,27 +21,57 @@ import java.util.*;
  * The name of the genotype is a semicolon-delimited list of allele names.
  * Each allele is called a Feature
  */
+@Entity
+@Table(name = "genotype")
 public class Genotype implements Comparable, EntityZdbID {
 
     public static final String WT = "WT";
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "GENO"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "geno_zdb_id")
     private String zdbID;
+    @Column(name = "geno_display_name")
     private String name;
+    @Column(name = "geno_name_order")
     private String nameOrder;
+    @Column(name = "geno_handle")
     private String handle;
+    @Column(name = "geno_nickname")
     private String nickname;
+    @Column(name = "geno_is_wildtype")
     private boolean wildtype;
+    @Column(name = "geno_is_extinct")
     private boolean extinct;
     // This attribute is used only for storage purposes.
     // as the background is stored as a many-to-many relationship.
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "genotype_background", joinColumns = {
+            @JoinColumn(name = "genoback_geno_zdb_id", nullable = false, updatable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "genoback_background_zdb_id",
+                    nullable = false, updatable = false)})
     private Set<Genotype> associatedGenotypes;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "genotype")
     private Set<GenotypeFeature> genotypeFeatures;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "genotype")
     private Set<GenotypeExternalNote> externalNotes;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dnote_data_zdb_id")
     private Set<DataNote> dataNotes;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "genotype")
     private Set<GenotypeSupplier> suppliers;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "genotype")
     private Set<GenotypeAlias> aliases;
 
+    @Column(name = "geno_complexity_order")
     private String complexity;
+    @Transient
     private List<Publication> associatedPulications;
 
     public String getZdbID() {
@@ -223,6 +255,12 @@ public class Genotype implements Comparable, EntityZdbID {
             backgroundDisplay = backgroundDisplay.substring(0, backgroundDisplay.length() - 2);
         }
         return backgroundDisplay;
+    }
+
+    public void addExternalNote(GenotypeExternalNote note) {
+        if (externalNotes == null)
+            externalNotes = new HashSet<>();
+        externalNotes.add(note);
     }
 
 

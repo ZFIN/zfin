@@ -36,7 +36,7 @@
 </c:if>
 
 
-<authz:authorize ifAnyGranted="root">
+<authz:authorize access="hasRole('root')">
     <c:if test="${!empty database.databaseStatistics.numSequences && database.databaseStatistics.numSequences>=0}">
         <fmt:formatNumber value="${database.databaseStatistics.numSequences}"  pattern="##,###" />
         sequences

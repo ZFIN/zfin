@@ -1,23 +1,40 @@
-/**
- *  Class Candidate.
- */
 package org.zfin.sequence.reno;
 
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.annotation.Generated;
+import javax.persistence.*;
 import java.util.Date;
 
-/**
- */
+@Entity
+@Table(name = "candidate")
 public class Candidate {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "CND"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "cnd_zdb_id")
     private String zdbID;
     /**
      * private Accession accession;
      */
+    @Column(name = "cnd_note")
     private String note;
+    @Column(name = "cnd_is_problem")
     private boolean problem;
+    @Generated(value = "GenerationTime.ALWAYS")
+    @Column(name = "cnd_run_count", insertable = false, updatable = false)
     private Integer runCount;
+    @Column(name = "cnd_last_done_date")
     private Date lastFinishedDate;
+    @Column(name = "cnd_mrkr_type")
     private String markerType;
-//    private Marker identifiedMarker;
+    @Column(name = "cnd_suggested_name")
     private String suggestedName;
 
     /**
@@ -77,14 +94,6 @@ public class Candidate {
     public void setLastFinishedDate(Date lastFinishedDate) {
         this.lastFinishedDate = lastFinishedDate;
     }
-
-//    public Marker getIdentifiedMarker() {
-//        return identifiedMarker;
-//    }
-//
-//    public void setIdentifiedMarker(Marker identifiedMarker) {
-//        this.identifiedMarker = identifiedMarker;
-//    }
 
     /**
      * Get markerType.

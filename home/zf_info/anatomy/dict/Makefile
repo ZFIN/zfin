@@ -29,7 +29,7 @@ SUBDIRS = ear hair_cell lat_line oto semi_canal sens stato caud_fin
 
 GENERICS = mem.html mtg2.html 
 
-STATICS  = zfish_stages.txt sum.html meeting_sum.html Trevarrow.html atlas_info.html
+STATICS  = zfish_stages.txt meeting_sum.html Trevarrow.html atlas_info.html
 
 
 # ---------------  Production Rules  ------------------------------------

@@ -69,7 +69,7 @@
                             <c:otherwise>
                                 <c:forEach var="prefix" items="${prefixes}">
                                     ${prefix.activeForSet ? prefix.prefixString : ''}
-                                    <authz:authorize ifAnyGranted="root">
+                                    <authz:authorize access="hasRole('root')">
                                         <div style="color: #a9a9a9; display: inline-block;"> ${prefix.activeForSet ? prefix.institute : ''}</div>
                                     </authz:authorize>
                                 </c:forEach>

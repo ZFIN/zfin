@@ -5,7 +5,7 @@
 <h3>Download Archive:</h3>
 
 
-<authz:authorize ifAnyGranted="root">
+<authz:authorize access="hasRole('root')">
     Back to <a href="/action/devtool/home">Dev Tools Home Page</a>
 
 

@@ -3,17 +3,18 @@
         xmlns:ui='urn:ui:com.google.gwt.uibinder'
         xmlns:g='urn:import:com.google.gwt.user.client.ui'
         xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
-        xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui'
         >
 
     <g:FlowPanel>
         <g:HorizontalPanel spacing="0">
             <g:Label text="GENOTYPE LIST: &nbsp;" styleName="summaryTitle"/>
-            <g:Hyperlink text="Hide" ui:field="showHideGenoList"/>
+            <g:Hyperlink text="Hide" ui:field="showHideSection"/>
             <g:Label ui:field="noneDefinedGenoLabel" text="&nbsp;None defined" styleName="no-data-tag"/>
         </g:HorizontalPanel>
         <zfin:ZfinFlexTable ui:field="genotypeListTable" numberOfColumns="3" styleName="searchresults groupstripes"
                             cellSpacing="5" cellPadding="5"/>
-        <zfin:SimpleErrorElement ui:field="errorElement"/>
+        <g:Grid ui:field="dataTable"/>
+        <zfin:SimpleErrorElement ui:field="errorLabel"/>
+        <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="false"/>
     </g:FlowPanel>
 </ui:UiBinder>

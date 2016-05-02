@@ -1,11 +1,11 @@
 package org.zfin.framework.search;
 
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.zfin.AbstractSolrTest;
 import org.junit.Test;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -26,7 +26,7 @@ public class SolrPrototypeTest extends AbstractSolrTest {
 
     @Test
     public void getAResult() {
-        SolrServer server = solrService.getSolrServer(CORE);
+        SolrClient server = solrService.getSolrClient(CORE);
 
         String name = "fgf8a";
 
@@ -55,7 +55,7 @@ public class SolrPrototypeTest extends AbstractSolrTest {
 
     @Test
     public void getFacets() {
-        SolrServer server = solrService.getSolrServer(CORE);
+        SolrClient server = solrService.getSolrClient(CORE);
 
         String name = "fgf8a";
 
@@ -91,7 +91,7 @@ public class SolrPrototypeTest extends AbstractSolrTest {
      */
     @Test
     public void walkUpAnatomy() {
-        SolrServer server = solrService.getSolrServer(CORE);
+        SolrClient server = solrService.getSolrClient(CORE);
 
         List<String> terms = new ArrayList<String>();
         terms.add("primary olfactory fiber layer");

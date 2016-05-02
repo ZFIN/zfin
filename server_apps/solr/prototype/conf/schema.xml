@@ -10,21 +10,20 @@
     <!-- numeric field types that store and index the text
          value verbatim (and hence don't support range queries, since the
          lexicographic ordering isn't equal to the numeric ordering) -->
-    <fieldType name="integer" class="solr.IntField" omitNorms="true"/>
-    <fieldType name="long" class="solr.LongField" omitNorms="true"/>
-    <fieldType name="float" class="solr.FloatField" omitNorms="true"/>
-    <fieldType name="double" class="solr.DoubleField" omitNorms="true"/>
 
+    <fieldType name="integer" class="solr.TrieIntField" omitNorms="true"/>
+    <fieldType name="long" class="solr.TrieLongField" omitNorms="true"/>
+    <fieldType name="float" class="solr.TrieFloatField" omitNorms="true"/>
+    <fieldType name="double" class="solr.TrieDoubleField" omitNorms="true"/>
 
     <!-- Numeric field types that manipulate the value into
          a string value that isn't human-readable in its internal form,
          but with a lexicographic ordering the same as the numeric ordering,
          so that range queries work correctly. -->
-    <fieldType name="sint" class="solr.SortableIntField" sortMissingLast="true" omitNorms="true"/>
-    <fieldType name="slong" class="solr.SortableLongField" sortMissingLast="true" omitNorms="true"/>
-    <fieldType name="sfloat" class="solr.SortableFloatField" sortMissingLast="true" omitNorms="true"/>
-    <fieldType name="sdouble" class="solr.SortableDoubleField" sortMissingLast="true" omitNorms="true"/>
-
+    <fieldType name="sint" class="solr.TrieIntField" sortMissingLast="true" omitNorms="true"/>
+    <fieldType name="slong" class="solr.TrieLongField" sortMissingLast="true" omitNorms="true"/>
+    <fieldType name="sfloat" class="solr.TrieFloatField" sortMissingLast="true" omitNorms="true"/>
+    <fieldType name="sdouble" class="solr.TrieDoubleField" sortMissingLast="true" omitNorms="true"/>
 
 
     <!-- Trie Fields -->
@@ -59,8 +58,8 @@
                       
          Consult the DateField javadocs for more information.
       -->
-    <fieldType name="date" class="solr.DateField" sortMissingLast="true" omitNorms="true"/>
 
+    <fieldType name="date" class="solr.TrieDateField" sortMissingLast="true" omitNorms="true"/>
 
     <!-- A text field that only splits on whitespace for exact matching of words -->
     <fieldType name="text_ws" class="solr.TextField" positionIncrementGap="100">
@@ -127,14 +126,13 @@
               <tokenizer class="solr.WhitespaceTokenizerFactory"/>
               <filter class="solr.LowerCaseFilterFactory"/>
               <filter class="solr.ASCIIFoldingFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" side="front"/>
+              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
               <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
           <analyzer type="query">
               <tokenizer class="solr.WhitespaceTokenizerFactory"/>
               <filter class="solr.LowerCaseFilterFactory"/>
               <filter class="solr.ASCIIFoldingFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" side="front"/>
               <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
       </fieldType>
@@ -143,39 +141,41 @@
           <analyzer type="index">
               <tokenizer class="solr.PatternTokenizerFactory" pattern="-" />
               <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" side="front"/>
+              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
               <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
           <analyzer type="query">
               <tokenizer class="solr.PatternTokenizerFactory" pattern="-" />
               <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" side="front"/>
               <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
       </fieldType>
 
       <fieldType name="construct_name" class="solr.TextField" positionIncrementGap="100">
-          <analyzer>
+          <analyzer type="index">
               <tokenizer class="solr.StandardTokenizerFactory"/>
               <filter class="solr.WordDelimiterFilterFactory"/>
               <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" side="front"/>
+              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
               <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
+          <analyzer type="query">
+              <tokenizer class="solr.StandardTokenizerFactory"/>
+              <filter class="solr.WordDelimiterFilterFactory"/>
+              <filter class="solr.LowerCaseFilterFactory"/>
+              <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+          </analyzer>
+
       </fieldType>
 
       <fieldType name="tokenized_author" class="solr.TextField" positionIncrementGap="100">
           <analyzer type="index">
               <tokenizer class="solr.PatternTokenizerFactory" pattern="," />
               <filter class="solr.LowerCaseFilterFactory"/>
-              <!--<filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" side="front"/>
-              <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>-->
           </analyzer>
           <analyzer type="query">
               <tokenizer class="solr.PatternTokenizerFactory" pattern="," />
               <filter class="solr.LowerCaseFilterFactory"/>
-      <!--        <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" side="front"/>
-              <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>-->
           </analyzer>
       </fieldType>
 
@@ -184,13 +184,12 @@
           <analyzer type="index">
               <tokenizer class="solr.WhitespaceTokenizerFactory"/>
               <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="3" maxGramSize="25" side="front"/>
+              <filter class="solr.EdgeNGramFilterFactory" minGramSize="3" maxGramSize="25" />
               <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
           <analyzer type="query">
               <tokenizer class="solr.WhitespaceTokenizerFactory"/>
               <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="3" maxGramSize="25" side="front"/>
               <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
       </fieldType>
@@ -224,14 +223,13 @@
             <tokenizer class="solr.LetterTokenizerFactory"/>
             <filter class="solr.LowerCaseFilterFactory"/>
             <filter class="solr.ShingleFilterFactory" maxShingleSize="3" outputUnigrams="true" tokenSeparator=""/>
-            <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" side="front"/>
+            <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
             <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
           <analyzer type="query">
             <tokenizer class="solr.LetterTokenizerFactory"/>
             <filter class="solr.LowerCaseFilterFactory"/>
             <filter class="solr.ShingleFilterFactory" maxShingleSize="3" outputUnigrams="true" tokenSeparator=""/>
-            <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" side="front"/>
             <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
           </analyzer>
         </fieldType>
@@ -470,14 +468,13 @@
        When using MoreLikeThis, fields used for similarity should be stored for 
        best performance.
    -->
-
    <field name="id" type="string" indexed="true" stored="true" required="true" />
    <field name="popularity" type="file" default="1.0"/>
 
    <field name="url" type="string" indexed="true" stored="true"   />
    <field name="category" type="keyword" indexed="true" stored="true" required="true" />
 
-   <field name="name" type="abbrev" indexed="true" stored="true" required="true"  termVectors="true" termPositions="true" termOffsets="true" />
+   <field name="name" type="text" indexed="true" stored="true" required="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="proper_name" type="abbrev" indexed="true" stored="true" termVectors="true" termPositions="true" termOffsets="true" />
    <field name="full_name" type="text" indexed="true" stored="true" required="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="alias" type="abbrev" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
@@ -496,7 +493,8 @@
    <field name="ontology" type="keyword" indexed="true" stored="true"   />
 
    <!-- this field is intended to split STR and antibody names on dashes so that we'll have a starts-with match on the second portion -->
-   <field name="marker_abbrev" type="tokenized_abbrev" indexed="true" stored="false" multiValued="true"/>
+   <field name="marker_abbrev" type="tokenized_abbrev" indexed="true" stored="true" multiValued="true"/>
+
    <field name="related_accession" type="text" indexed="true" stored="true" multiValued="true" />
    <!--adding a field for related markers case 11289-->
      <field name="related_marker" type="text" indexed="true" stored="true" multiValued="true" />
@@ -527,8 +525,8 @@
    <field name="institution" type="keyword" indexed="true" stored="true" multiValued="true"   />
    <field name="lab_of_origin" type="keyword" indexed="true" stored="true" multiValued="true"   />
    <!--<field name="screen" type="keyword" indexed="true" stored="true" />-->
+   <field name="rna_consequence" type="keyword" indexed="true" stored="true" multiValued="true"   />
    <field name="mutagen" type="keyword" indexed="true" stored="true" />
-
 
    <field name="allele" type="keyword" indexed="true" stored="true" multiValued="true"   />
    <field name="sequence_alteration" type="keyword" indexed="true" stored="true" multiValued="true"   />
@@ -561,9 +559,11 @@
    <field name="reporter_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />
    <field name="reporter_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"   />
 
-     <field name="expressed_gene" type="keyword" indexed="true" stored="true" multiValued="true"  />
-     <field name="expressed_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"  />
-     <field name="expressed_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"  />
+   <field name="expressed_gene" type="keyword" indexed="true" stored="true" multiValued="true"  />
+   <field name="expressed_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"  />
+   <field name="expressed_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"  />
+
+   <field name="misexpressed_gene" type="keyword" indexed="true" stored="true" multiValued="true"  />
 
    <field name="sequence_targeting_reagent" type="keyword" indexed="true" stored="true" multiValued="true"   />
 
@@ -597,6 +597,7 @@
 
 
    <field name="phenotype_statement" type="keyword" indexed="true" stored="true" multiValued="true"   />
+     <field name="pgcmid" type="keyword" indexed="true" stored="true"  />
    <field name="synonym_phenotype_statement" type="keyword" indexed="true" stored="true" multiValued="true"   />
 
 
@@ -694,7 +695,7 @@
    <field name="term_usage" type="keyword" indexed="true" stored="true" multiValued="true" default="None"/>
    <field name="term_usage_with_children" type="keyword" indexed="true" stored="true" multiValued="true" default="None"/>
 
-   <field name="obsolete" type="boolean" indexed="true" stored="true" />
+   <field name="term_status" type="keyword" indexed="true" stored="true" />
 
    <field name="abstract" type="text" indexed="true" stored="true"   />
    <field name="keyword" type="publication_keyword" indexed="true" stored="true"  multiValued="true"   />
@@ -809,6 +810,8 @@
 
  <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
  <solrQueryParser defaultOperator="AND"/>
+
+    <copyField source="proper_name" dest="proper_name_k"/>
 
    <copyField source="labeled_anatomy_direct" dest="labeled_anatomy"/>
    <copyField source="labeled_anatomy_parent" dest="labeled_anatomy"/>
@@ -964,7 +967,7 @@
     <copyField source="quality_alias" dest="term_t"/>
     <copyField source="quality_alias" dest="text"/>
 
-
+   <copyField source="journal" dest="journal_t"/>
    <copyField source="registered_author" dest="registered_author_t"/>
    <copyField source="id" dest="id_t"/>
    <copyField source="name" dest="name_t"/>
@@ -983,6 +986,7 @@
    <copyField source="coding_sequence" dest="coding_sequence_t"/>
    <copyField source="inserted_in_gene" dest="inserted_in_gene_t"/>
    <copyField source="lab" dest="lab_t"/>
+   <copyField source="curator" dest="curator_t"/>
    <copyField source="sequence_alteration" dest="sequence_alteration_t"/>
    <copyField source="background" dest="background_t"/>
 
@@ -1060,6 +1064,8 @@
     <copyField source="expressed_gene_full_name" dest="text"/>
     <copyField source="expressed_gene_previous_name" dest="text"/>
 
+    <copyField source="misexpressed_gene" dest="text"/>
+
     <copyField source="expression_observation" dest="text"/>
 
     <copyField source="regulatory_region" dest="text"/>
@@ -1070,6 +1076,7 @@
 
     <copyField source="caption" dest="text"/>
     <copyField source="biography" dest="text"/>
+
     <copyField source="abstract" dest="text"/>
     <copyField source="definition" dest="text"/>
     <copyField source="note" dest="text"/>
@@ -1078,8 +1085,9 @@
     <copyField source="clone" dest="clone_t"/>
 
     <copyField source="lab" dest="text"/>
-
+    <copyField source="curator" dest="text"/>
     <copyField source="lab_of_origin" dest="text"/>
+    <copyField source="rna_consequence" dest="text"/>
     <copyField source="institution" dest="text"/>
     <!--screen used to be here, removed as a result of case 11323-->
     <!--<copyField source="screen" dest="text"/>-->

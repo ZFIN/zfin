@@ -4,19 +4,38 @@ import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
 
+@Entity
+@Table(name = "GENOTYPE_FIGURE_FAST_SEARCH")
 public class GenotypeFigure implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "gffs_serial_id")
     private int id;
+    @ManyToOne()
+    @JoinColumn(name = "gffs_geno_zdb_id")
     private Genotype genotype;
+    @ManyToOne()
+    @JoinColumn(name = "gffs_fish_zdb_id")
     private Fish fish;
+    @ManyToOne()
+    @JoinColumn(name = "gffs_fig_zdb_id")
     private Figure figure;
-    private String tag;
+    @ManyToOne()
+    @JoinColumn(name = "gffs_morph_zdb_id")
     private Marker sequenceTargetingReagent;
-    private PhenotypeExperiment phenotypeExperiment;
-    private PhenotypeStatement phenotypeStatement;
+    @ManyToOne()
+    @JoinColumn(name = "gffs_pg_id")
+    private PhenotypeWarehouse phenotypeWarehouse;
+    @ManyToOne()
+    @JoinColumn(name = "gffs_psg_id")
+    private PhenotypeStatementWarehouse phenotypeStatement;
+    @ManyToOne()
+    @JoinColumn(name = "gffs_genox_zdb_id")
     private FishExperiment fishExperiment;
 
     public int getId() {
@@ -51,20 +70,12 @@ public class GenotypeFigure implements Serializable {
         this.sequenceTargetingReagent = sequenceTargetingReagent;
     }
 
-    public String getTag() {
-        return tag;
+    public PhenotypeWarehouse getPhenotypeWarehouse() {
+        return phenotypeWarehouse;
     }
 
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
-    public PhenotypeExperiment getPhenotypeExperiment() {
-        return phenotypeExperiment;
-    }
-
-    public void setPhenotypeExperiment(PhenotypeExperiment phenotypeExperiment) {
-        this.phenotypeExperiment = phenotypeExperiment;
+    public void setPhenotypeWarehouse(PhenotypeWarehouse phenotypeWarehouse) {
+        this.phenotypeWarehouse = phenotypeWarehouse;
     }
 
     public Fish getFish() {
@@ -75,11 +86,11 @@ public class GenotypeFigure implements Serializable {
         this.fish = fish;
     }
 
-    public PhenotypeStatement getPhenotypeStatement() {
+    public PhenotypeStatementWarehouse getPhenotypeStatement() {
         return phenotypeStatement;
     }
 
-    public void setPhenotypeStatement(PhenotypeStatement phenotypeStatement) {
+    public void setPhenotypeStatement(PhenotypeStatementWarehouse phenotypeStatement) {
         this.phenotypeStatement = phenotypeStatement;
     }
 

@@ -44,6 +44,11 @@
                     <exclude name="**/*.svn"/>
                 </fileset>
             </copy>
+            <chmod perm="ug+x" type="file" verbose="true">
+                <fileset dir="@{to}">
+                    <include name="**/solr"/>
+                </fileset>
+            </chmod>
         </sequential>
     </macrodef>
 
@@ -216,11 +221,9 @@
     </target>
 
     <!-- Useful cleaning up when upgrading solr, I think -->
-    <target name="remove-solr-lib">
+    <target name="remove-solr-client-lib">
         <echo message="Removing existing solr libraries..."/>
         <delete>
-            <fileset dir="${TARGETROOT}/solr/" includes="*solr*war"/>
-            <fileset dir="${TARGETROOT}/solr/prototype/lib/" includes="*solr*jar"/>
             <fileset dir="${TARGETROOT}/home/WEB-INF/lib/" includes="*solr*jar"/>
             <fileset dir="${TARGETROOT}/home/WEB-INF/lib/" includes="httpclient*jar"/>
             <fileset dir="${TARGETROOT}/home/WEB-INF/lib/" includes="httpcore*jar"/>
@@ -230,6 +233,12 @@
 
     </target>
 
+    <target name="remove-solr-home">
+        <echo message="Removing existing solr home..."/>
+        <delete>
+            <fileset dir="${SOLR_HOME}"/>
+        </delete>
+    </target>
 
     <target name="start-solr" description="Start up Solr ">
         <echo message="Source: ${solr}"/>
@@ -260,7 +269,7 @@
     <target name="tail-solr-log" description="tail -f on solr.log file">
         <exec executable="tail">
             <arg value="-f"/>
-            <arg value="${SOLR_HOME}/logs/solr.log"/>
+            <arg value="${SOLR_HOME}/server/logs/solr.log"/>
         </exec>
     </target>
 

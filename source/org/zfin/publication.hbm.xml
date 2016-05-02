@@ -74,7 +74,7 @@
             <many-to-many class="org.zfin.profile.Person" column="source_id" order-by="full_name asc"/>
         </set>
 
-        <set name="meshHeadings" lazy="true">
+        <set name="meshHeadings" sort="natural">
             <key column="mh_pub_zdb_id"/>
             <one-to-many class="org.zfin.publication.MeshHeading"/>
         </set>
@@ -139,7 +139,7 @@
             <property name="majorTopic" column="mh_descriptor_is_major_topic"/>
         </component>
 
-        <set name="qualifiers" lazy="true" table="mesh_heading_qualifier">
+        <set name="qualifiers" table="mesh_heading_qualifier" sort="natural">
             <key column="mhq_mesh_heading_id"/>
             <composite-element class="org.zfin.publication.MeshHeadingTerm">
                 <many-to-one name="term" column="mhq_mesht_mesh_qualifier_id"/>

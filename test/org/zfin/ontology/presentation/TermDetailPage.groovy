@@ -7,11 +7,11 @@ class TermDetailPage extends Page {
 
     static url = "http://${ZfinPropertiesEnum.DOMAIN_NAME}/action/ontology/term-detail"
     static content = {
-        contentContainer(required: true) { $(".term-detail-page") }
+        contentContainer(required: true) { $(".data-page") }
         ontologyName { $("#ontology-name") }
         ontologyLinks { ontologyName.find("a") }
         termDefinition { $("#term-definition") }
-        isTypeOfRow { $("#is-a-type-of") }
+        isTypeOfRow { $("#isatypeof") }
         termSynonyms { $("#term-synonyms") }
     }
 

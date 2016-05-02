@@ -1,9 +1,46 @@
 package org.zfin.feature;
 
 
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "feature_history")
 public class FeatureHistory {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "NOMEN"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "feature_zdb_id")
+    private String zdbID;
+    @ManyToOne
+    @JoinColumn(name = "fhist_ftr_zdb_id")
+    private Feature feature;
+    @Column(name = "fhist_reason")
+    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.feature.FeatureHistory$Reason")})
+    private Reason reason;
+    @Column(name = "fhist_event")
+    private String event;
+    //name after renaming event
+    @Column(name = "fhist_ftr_name_on_fhist_date")
+    private String name;
+    //abbreviation after renaming event
+    @Column(name = "fhist_ftr_abbrev_on_fhist_date")
+    private String abbreviation;
+    @Column(name = "fhist_date")
+    private Date date;
+    @ManyToOne
+    @JoinColumn(name = "fhist_dalias_zdb_id")
+    private FeatureAlias featureAlias;
+    private String oldMarkerName;
 
     public enum Reason {
         NOT_SPECIFIED("Not Specified"),
@@ -49,7 +86,6 @@ public class FeatureHistory {
 
     }
 
-    private String zdbID;
 
     public Feature getFeature() {
         return feature;
@@ -57,6 +93,10 @@ public class FeatureHistory {
 
     public void setFeature(Feature feature) {
         this.feature = feature;
+    }
+
+    public Reason getReason() {
+        return reason;
     }
 
     public FeatureAlias getFeatureAlias() {
@@ -67,29 +107,12 @@ public class FeatureHistory {
         this.featureAlias = featureAlias;
     }
 
-    private Feature feature;
-    private Reason reason;
-    private String event;
-    //name after renaming event
-    private String name;
-    //abbreviation after renaming event
-    private String abbreviation;
-    private Date date;
-    private FeatureAlias featureAlias;
-    private String oldMarkerName;
-
-
     public String getZdbID() {
         return zdbID;
     }
 
     public void setZdbID(String zdbID) {
         this.zdbID = zdbID;
-    }
-
-
-    public Reason getReason() {
-        return reason;
     }
 
     public void setReason(Reason reason) {

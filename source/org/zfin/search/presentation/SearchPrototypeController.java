@@ -5,8 +5,8 @@ import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
@@ -18,6 +18,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.infrastructure.ReplacementZdbID;
+import org.zfin.infrastructure.service.ZdbIDService;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
@@ -26,6 +28,7 @@ import org.zfin.search.FacetCategoryComparator;
 import org.zfin.search.FacetValueAlphanumComparator;
 import org.zfin.search.service.*;
 import org.zfin.util.URLCreator;
+import org.zfin.util.ZfinStringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,22 +57,14 @@ public class SearchPrototypeController {
     @Autowired
     private ResultService resultService;
 
+    @Autowired
+    private ZdbIDService zdbIDService;
+
     public Logger logger = Logger.getLogger(SearchPrototypeController.class);
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
-    }
-
-
-    @RequestMapping(value = "/angularTest")
-    public String angularTest() {
-        return "search/angular-test.popup";
-    }
-
-    @RequestMapping(value = "/angularTestPage")
-    public String angulartestPage() {
-        return "search/angular-test-page.page";
     }
 
     @RequestMapping(value = "/prototype")
@@ -93,18 +88,41 @@ public class SearchPrototypeController {
             }
         }
 
+        if (StringUtils.isNotEmpty(q)) {
+            q = q.trim();
+        }
+
+
         Boolean redirectToFirstResult = false;
         if (StringUtils.startsWith(q,"!!")) {
             redirectToFirstResult = true;
             q = q.substring(2);
         }
 
-        if (StringUtils.isNotEmpty(q) && q.trim().startsWith("-")) {
-            model.addAttribute("isDashQuery", true);
-            model.addAttribute("newQuery", q.trim().substring(1));
+
+        if (StringUtils.isNotEmpty(q)) {
+            String url = null;
+
+            String replacementZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(q);
+
+            if (zdbIDService.isActiveZdbID(q)) {
+                url = "/" + q;
+            } else if (StringUtils.isNotEmpty(replacementZdbID)) {
+                url = "/" + replacementZdbID;
+            }
+
+            if (StringUtils.isNotEmpty(url)) {
+                return "redirect:" + url;
+            }
         }
 
-        SolrServer server = SolrService.getSolrServer("prototype");
+
+        if (StringUtils.isNotEmpty(q) && q.startsWith("-")) {
+            model.addAttribute("isDashQuery", true);
+            model.addAttribute("newQuery", q.substring(1));
+        }
+
+        SolrClient client = SolrService.getSolrClient("prototype");
         SolrQuery query = new SolrQuery();
 
         String queryStringInput;
@@ -116,7 +134,7 @@ public class SearchPrototypeController {
         model.addAttribute("request", request);
 
         if (explain) {
-            query.set("fl", "name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count, screen, has_orthology, score, xpat_zdb_id, fig_zdb_id, [explain]");
+            query.set("fl", "name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count, screen, has_orthology, score, xpat_zdb_id, fig_zdb_id, [explain]","pgcmid");
         }
 
 
@@ -209,7 +227,7 @@ public class SearchPrototypeController {
 
         QueryResponse response = new QueryResponse();
         try {
-            response = server.query(query);
+            response = client.query(query);
         } catch (Exception e) {
             logger.error(e);
         }
@@ -260,7 +278,7 @@ public class SearchPrototypeController {
         logger.debug(xrefList);
 
         if (!CollectionUtils.isEmpty(xrefList)) {
-            List<SearchResult> xrefResults = getXrefResult(server, xrefList);
+            List<SearchResult> xrefResults = getXrefResult(client, xrefList);
             model.addAttribute("xrefResults", xrefResults);
         }
 
@@ -330,7 +348,7 @@ public class SearchPrototypeController {
                       HttpServletRequest request) {
         List<FacetLookupEntry> facets = new ArrayList<FacetLookupEntry>();
 
-        SolrServer server = SolrService.getSolrServer("prototype");
+        SolrClient server = SolrService.getSolrClient("prototype");
         SolrQuery query = new SolrQuery();
 
         query = handleFacetSorting(query, request);
@@ -384,9 +402,6 @@ public class SearchPrototypeController {
             if (!StringUtils.equals(facetField.getName(), "stage"))
                 Collections.sort(facetValues, new FacetValueAlphanumComparator());
 
-//            facetBuilderService.sortFacetValues(facetField.getName(), facetValues);
-
-
             for (FacetField.Count count : facetValues) {
                 FacetLookupEntry entry = new FacetLookupEntry();
                 entry.setName(SolrService.encode(count.getName()));
@@ -410,7 +425,7 @@ public class SearchPrototypeController {
                                         @RequestParam(required = false) String category,
                                         @RequestParam(required = false) String type,
                                         @RequestParam(required = false) Integer rows) {
-        SolrServer server = SolrService.getSolrServer("prototype");
+        SolrClient server = SolrService.getSolrClient("prototype");
         SolrQuery query = new SolrQuery();
 
         query.setRequestHandler("/name-autocomplete");
@@ -483,7 +498,7 @@ public class SearchPrototypeController {
         response.setContentType("data:text/csv;charset=utf-8");
         response.setHeader("Content-Disposition", "attachment; filename=\"zfin_search_results.csv\"");
 
-        SolrServer server = SolrService.getSolrServer("prototype");
+        SolrClient server = SolrService.getSolrClient("prototype");
         SolrQuery query = new SolrQuery();
         //set handler to a csv specific handler?
 
@@ -646,26 +661,26 @@ public class SearchPrototypeController {
             sortUrlSeparator = "&";
         model.addAttribute("sortUrlSeparator", sortUrlSeparator);
         if (!StringUtils.isEmpty(sort) && StringUtils.equals(sort, "A to Z")) {
-            query.setSortField("name_sort", SolrQuery.ORDER.asc);
+            query.addSort("name_sort", SolrQuery.ORDER.asc);
             model.addAttribute("sortDisplay", "A to Z");
         } else if (!StringUtils.isEmpty(sort) && StringUtils.equals(sort, "Z to A")) {
-            query.setSortField("name_sort", SolrQuery.ORDER.desc);
+            query.addSort("name_sort", SolrQuery.ORDER.desc);
             model.addAttribute("sortDisplay", "Z to A");
         } else if (!StringUtils.isEmpty(sort) && StringUtils.equals(sort, "Newest")) {
-            query.setSortField("date", SolrQuery.ORDER.desc);
+            query.addSort("date", SolrQuery.ORDER.desc);
             model.addAttribute("sortDisplay", "Newest First");
             model.addAttribute("showDates", true);
         } else if (!StringUtils.isEmpty(sort) && StringUtils.equals(sort, "Oldest")) {
-            query.setSortField("date", SolrQuery.ORDER.asc);
+            query.addSort("date", SolrQuery.ORDER.asc);
             model.addAttribute("sortDisplay", "Oldest First");
             model.addAttribute("showDates", true);
         } else if (!StringUtils.isEmpty(sort) && StringUtils.equals(sort, "Most Attributed")) {
-            query.setSortField("attribution_count", SolrQuery.ORDER.desc);
+            query.addSort("attribution_count", SolrQuery.ORDER.desc);
             model.addAttribute("sortDisplay", "Most Attributed First");
             model.addAttribute("showAttributionCount", true);
 
         } else if (!StringUtils.isEmpty(sort) && StringUtils.equals(sort, "Least Attributed")) {
-            query.setSortField("date", SolrQuery.ORDER.asc);
+            query.addSort("date", SolrQuery.ORDER.asc);
             model.addAttribute("sortDisplay", "Least Attributed First");
             model.addAttribute("showAttributionCount", true);
 
@@ -772,7 +787,7 @@ public class SearchPrototypeController {
 
     }
 
-    private List<SearchResult> getXrefResult(SolrServer server, List<String> xrefList) {
+    private List<SearchResult> getXrefResult(SolrClient server, List<String> xrefList) {
 
 
         if (CollectionUtils.isEmpty(xrefList))

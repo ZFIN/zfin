@@ -1,0 +1,37 @@
+<div class="form-group row">
+    <div class="col-sm-6">
+        <input placeholder="Add supplier" class="form-control"
+               url="/action/marker/find-suppliers?term=%QUERY"
+               ng-model="vm.supplier"
+               autocompletify>
+    </div>
+    <div class="col-sm-6">
+        <button class="btn btn-primary" type="button"
+                ng-click="vm.submit()" ng-disabled="vm.processing || !vm.supplier">
+            <span ng-hide="vm.processing">Add</span>
+            <i ng-show="vm.processing" class="fa fa-spinner fa-spin"></i>
+        </button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <p class="text-danger" ng-repeat="error in vm.errors.name">{{error}}</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <p class="text-muted" ng-hide="vm.suppliers.length">
+            <i>No suppliers yet</i>
+        </p>
+        <table class="table" ng-show="vm.suppliers.length">
+            <tr ng-repeat="supplier in vm.suppliers">
+                <td>
+                    {{supplier.name}}
+                    <span class="small pull-right"><a href ng-click="vm.remove(supplier, $index)">Remove</a></span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+

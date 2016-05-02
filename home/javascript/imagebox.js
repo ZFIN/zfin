@@ -22,107 +22,103 @@
 
 function ImageBox() {
 
+    var instance = this;
+
     this.FIRST = 0;
     this.MAX_VISIBLE = 10;
 
     this.IMG_URL = "/imageLoadUp/";
     this.POPUP_URL = "/action/publication/image-popup/";
-    this.FIG_URL = "/";
     this.IMG_PAGE_URL = "/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-imageview.apg&image_table=image&OID=";
 
-    this.max_images = 100; //a default that should get set by the page
-
-    this.images = new Array();
-
-    this.controlDiv = "";
-    this.imageDiv = "";
-    this.hiddenInput = "";
+    this.images = [];
 
     this.firstVisibleImage = this.FIRST;
-	
-	//"private" methods
 
-    this.generateImageAnchor = function(image) {
+    // "private" methods
+
+    this.generateImageAnchor = function (image) {
         var anchor = document.createElement('a');
         anchor.hoverHref = this.POPUP_URL + image.imgZdbId + "?imgpop_displayed_width=670";
         anchor.id = image.imgZdbId;
-        anchor.href=this.IMG_PAGE_URL + image.imgZdbId;
+        anchor.href = this.IMG_PAGE_URL + image.imgZdbId;
         var img = document.createElement('img');
         img.src = this.IMG_URL + image.imgThumb;
         img.className = "xpresimg_img";
         anchor.appendChild(img);
-
         return anchor;
     };
 
-    this.render = function() {
-
+    this.render = function () {
         //render the controls section
         this.renderControls();
 
         //render the image section
         this.renderImages();
-
     };
 
-    this.renderControls = function() {
+    this.renderControls = function () {
+        var backArrow;
+        var backArrowImg;
+        var nextArrow;
+        var nextArrowImg;
+        var countField;
+        var maxboxes;
+        var maxnote;
+
         this.controlDiv.innerHTML = "";
 
         //only show controls if there are more images than
         //will fit in a single frame
         if (this.images.length > this.MAX_VISIBLE) {
-
             //previous arrow
-            if (this.firstVisibleImage == 0 ) {
+            if (this.firstVisibleImage === 0) {
                 //on the first set, don't make a link
-                var backArrow = document.createElement('img');
+                backArrow = document.createElement('img');
                 backArrow.src = "/images/arrow_back_disabled.png";
                 backArrow.title = "This is the first set";
             } else {
-                var backArrow = document.createElement('a');
+                backArrow = document.createElement('a');
                 backArrowImg = document.createElement('img');
                 backArrowImg.src = "/images/arrow_back.png";
                 backArrow.href = "javascript:;";
-                //see the commment below about the onclick method, notice that
-                //it's imageBox rather than ImageBox - referring to the insance
-                //rather than the class - so the object *MUST* be named imageBox
-                backArrow.onclick = function() { imageBox.displayPrev(); };
+                backArrow.onclick = function () {
+                    instance.displayPrev();
+                };
                 backArrow.appendChild(backArrowImg);
             }
             this.controlDiv.appendChild(backArrow);
 
             countField = document.createElement('input');
-            countField.size = 3 ;
-        
+            countField.size = 3;
 
-            countField.value = (this.firstVisibleImage + (this.MAX_VISIBLE))/this.MAX_VISIBLE;
-        
+            countField.value = (this.firstVisibleImage + (this.MAX_VISIBLE)) / this.MAX_VISIBLE;
+
             if (this.getHiddenCountInput() != null) {
                 this.getHiddenCountInput().value = countField.value;
             }
 
-
-            countField.onchange = function() {
-                if (countField.value < 1)
+            countField.onchange = function () {
+                if (countField.value < 1) {
                     countField.value = 1;
-                if (countField.value > imageBox.getLastPageIndex()) {
-                    countField.value = imageBox.getLastPageIndex();
                 }
-            
+
+                if (countField.value > instance.getLastPageIndex()) {
+                    countField.value = instance.getLastPageIndex();
+                }
+
                 document.getElementById('xpatsel_thumbnail_page_hidden_field').value = countField.value;
-                imageBox.jumpToPage(countField.value);
+                instance.jumpToPage(countField.value);
             };
 
-            this.controlDiv.appendChild(countField) ;
+            this.controlDiv.appendChild(countField);
 
-        maxboxes = document.createElement('span');
-        maxboxes.innerHTML = " / "  + this.getLastPageIndex()  + "";
-        this.controlDiv.appendChild(maxboxes);
+            maxboxes = document.createElement('span');
+            maxboxes.innerHTML = " / " + this.getLastPageIndex() + "";
+            this.controlDiv.appendChild(maxboxes);
 
-
-        //next arrow
-
-            if (this.getLastVisibleImageIndex() ==  this.getLastImageIndex() ) {
+            //next arrow
+            if (this.getLastVisibleImageIndex() == this.getLastImageIndex()) {
                 //on the last set, don't make a link
                 nextArrow = document.createElement('img');
                 nextArrow.src = "/images/arrow_next_disabled.png";
@@ -132,11 +128,9 @@ function ImageBox() {
                 nextArrowImg = document.createElement('img');
                 nextArrowImg.src = "/images/arrow_next.png";
                 nextArrow.href = "javascript:;";
-                //this is unfortunate - imageBox *has* to be the name of the
-                //instance of this class - it should probably be refactored
-                //to be a singleton where the object is created by name when
-                //the .js file is included.
-                nextArrow.onclick = function() { imageBox.displayNext(); };
+                nextArrow.onclick = function () {
+                    instance.displayNext();
+                };
                 nextArrow.appendChild(nextArrowImg);
             }
             this.controlDiv.appendChild(nextArrow);
@@ -149,149 +143,135 @@ function ImageBox() {
         }
     };
 
+    this.renderImages = function () {
+        var anchor;
+        var popupDiv;
+        var wrapper;
 
-    this.renderImages = function() {
         this.imageDiv.innerHTML = "";
         document.getElementById("xpresimg_imagePreload").innerHTML = "";
 
-        //j is a position counter within the 10 being displayed
-        var j = 0;
-        for(var i = this.firstVisibleImage ; i <= this.getLastVisibleImageIndex() ; i++) {
-            var wrapper = document.createElement('span');
+        for (var i = this.firstVisibleImage; i <= this.getLastVisibleImageIndex(); i++) {
+            wrapper = document.createElement('span');
             wrapper.className = "imagebox-image-wrapper";
-
 
             anchor = this.generateImageAnchor(this.images[i]);
             wrapper.appendChild(anchor);
 
-            var popupDiv = document.createElement('div');
+            popupDiv = document.createElement('div');
             popupDiv.className = "imagebox-popup";
             wrapper.appendChild(popupDiv);
 
             this.imageDiv.appendChild(wrapper);
 
-            var popup_width = 550;
-
-
-            jQuery(anchor).hover(
-                function() {
-                    jQuery('.imagebox-popup').hide();
-                    clearTimeout(document.popupTimeout);
-                    var $popupDiv = jQuery(jQuery(this).siblings('.imagebox-popup'));
-                    console.log(this.hoverHref);
-                    //if ($popupDiv.html == '') {
-                        $popupDiv.load(this.hoverHref);
-                    //}
-
-                    $popupDiv.fadeIn(50);
-
+            $(anchor).hover(
+                function () {
+                    $('.imagebox-popup').hide();
+                    clearTimeout(instance.popupTimeout);
+                    $($(this).siblings('.imagebox-popup'))
+                        .load(this.hoverHref)
+                        .fadeIn(50);
                 },
-                function(imageDiv) {
-                    document.popupTimeout = setTimeout(function() {
-                        jQuery('.imagebox-popup').fadeOut(100);
-                    } , 500);
-
+                function () {
+                    instance.popupTimeout = setTimeout(function () {
+                        $('.imagebox-popup').fadeOut(100);
+                    }, 500);
                 }
             );
 
-            jQuery(popupDiv).hover(
-                function() { clearTimeout(document.popupTimeout);
-                             jQuery(this).show(); },
-                function() { jQuery(this).fadeOut(100); }
+            $(popupDiv).hover(
+                function () {
+                    clearTimeout(instance.popupTimeout);
+                    $(this).show();
+                },
+                function () {
+                    $(this).fadeOut(100);
+                }
             );
-
-
-            j++;
         }
 
-        
     };
 
-    this.getLastVisibleImageIndex = function() {
+    this.getLastVisibleImageIndex = function () {
         var lastVisibleImage = this.firstVisibleImage + this.MAX_VISIBLE - 1;
-        if (lastVisibleImage > this.getLastImageIndex()) { lastVisibleImage = this.getLastImageIndex(); }
+        if (lastVisibleImage > this.getLastImageIndex()) {
+            lastVisibleImage = this.getLastImageIndex();
+        }
         return lastVisibleImage;
     };
 
-    this.getLastImageIndex = function() {
+    this.getLastImageIndex = function () {
         return this.images.length - 1;
     };
 
-    this.getLastPageIndex = function() {
+    this.getLastPageIndex = function () {
         return Math.ceil((this.getLastImageIndex() + 1) / this.MAX_VISIBLE);
     };
 
-    this.getHiddenCountInput = function() {
-	return document.getElementById(this.hiddenInput);
+    this.getHiddenCountInput = function () {
+        return document.getElementById(this.hiddenInput);
     };
-  
-    this.setHiddenCountFieldById = function(hiddenInputId) {
-	this.hiddenInput = hiddenInputId;
+
+    this.setHiddenCountFieldById = function (hiddenInputId) {
+        this.hiddenInput = hiddenInputId;
     };
 
     //public methods
 
-    this.preloadImages = function() {
+    this.preloadImages = function () {
         //todo: get & set this via a method once preloading is actually in use
         var div = document.getElementById('xpresimg_imagePreload');
 
         div.innerHTML = "";
-        for(var i = this.firstVisibleImage ; i <= this.getLastVisibleImageIndex() ; i++) {
+        for (var i = this.firstVisibleImage; i <= this.getLastVisibleImageIndex(); i++) {
             var img = document.createElement('img');
             img.src = "/cgi-bin/image_resize.cgi?maxheight=500&maxwidth=550&image=" + this.images[i].filename;
             div.appendChild(img);
         }
     };
 
-    this.setMaxImages = function(max) {
+    this.setMaxImages = function (max) {
         this.maxImages = max;
     };
 
-    this.setControlDivById = function(div) {
+    this.setControlDivById = function (div) {
         this.controlDiv = document.getElementById(div);
     };
 
-    this.setImageDivById = function(div) {
+    this.setImageDivById = function (div) {
         this.imageDiv = document.getElementById(div);
     };
 
-    this.displayFirstSet = function() {
-
+    this.displayFirstSet = function () {
         if (this.imageDiv != null) {
-            //this.imageDiv.style.display = "block";
             this.jumpToImage(this.FIRST);
         }
-
     };
 
     this.displayNext = function () {
         var newIndex = this.firstVisibleImage + this.MAX_VISIBLE;
         if (newIndex <= this.getLastImageIndex()) {
-            this.jumpToImage(this.firstVisibleImage + this.MAX_VISIBLE);
-            countField.value = this.firstVisibleImage  / this.MAX_VISIBLE + 1 ; 
+            var pageString =  (newIndex / this.MAX_VISIBLE + 1) + ' / ' + this.getLastPageIndex();
+            this.jumpToImage(newIndex);
         }
     };
-
 
     this.displayPrev = function () {
-        if (this.firstVisibleImage > this.MAX_VISIBLE-1) {
-            this.jumpToImage(this.firstVisibleImage - this.MAX_VISIBLE);
-            countField.value = this.firstVisibleImage  / this.MAX_VISIBLE + 1 ; 
+        if (this.firstVisibleImage > this.MAX_VISIBLE - 1) {
+            var newIndex = this.firstVisibleImage - this.MAX_VISIBLE;
+            var pageString =  (newIndex / this.MAX_VISIBLE + 1) + ' / ' + this.getLastPageIndex();
+            this.jumpToImage(newIndex);
         }
     };
 
-    this.jumpToImage = function(index) {
+    this.jumpToImage = function (index) {
         this.firstVisibleImage = index;
         this.render();
     };
 
-    this.jumpToPage = function(index) {
+    this.jumpToPage = function (index) {
         this.firstVisibleImage = (index - 1) * this.MAX_VISIBLE;
         this.render();
     };
 
 }
-
-
-
-

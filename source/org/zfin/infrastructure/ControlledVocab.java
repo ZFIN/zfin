@@ -1,15 +1,16 @@
 package org.zfin.infrastructure;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Prita
- * Date: 4/17/14
- * Time: 11:35 AM
- * To change this template use File | Settings | File Templates.
- */
+import javax.persistence.*;
 
+@Entity
+@Table(name = "controlled_vocabulary")
 public class ControlledVocab {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cv_zdb_id")
     private String zdbID;
+    @Column(name = "cv_term_name")
     private String cvTermName;
 
     public String getZdbID() {

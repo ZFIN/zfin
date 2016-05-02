@@ -2,8 +2,8 @@
 <project>
   <actions/>
   <description>For fx interface, we store the source (pub) zdb_id in both the figure
-      table and in the expression_experiment table.
-      We then relate the two, figure and expression, in fx_expression_pattern_figure
+      table and in the expression_experiment2 table.
+      We then relate the two, figure and expression, in expression_figure_stage
       We want the two sources to match--otherwise, we'd have figures from
       one paper associated with expression_patterns from other papers.  This
       would be incorrect. These attributions are also stored in record_attribution, but that

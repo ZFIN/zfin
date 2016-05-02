@@ -7,26 +7,7 @@ use LWP::Simple;
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 $dbname = "<!--|DB_NAME|-->";
 
-#print "$dbname\n\n";
-# Download PubMed records that are indexed in MeSH for zebrafish and danio rerio
-
-$db = 'pubmed';
-$query = 'zebrafish[mesh]+OR+zebra fish[mesh]+OR+danio rerio';
-
-#assemble the esearch URL
-$base = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
-$retmax = '200';
-$url = $base . "esearch.fcgi?db=$db&term=$query&usehistory=y&reldate=80&datetype=edat&retmax=$retmax";
-
-#get the esearch URL
-#the usehistory key creates a url key that we can use to access the return: suggested for larger queries by NCBI
-$output = get($url);
-
-#parse WebEnv and QueryKey
-$web = $1 if ($output =~ /<WebEnv>(\S+)<\/WebEnv>/);
-$key = $1 if ($output =~ /<QueryKey>(\d+)<\/QueryKey>/);
-$count = $1 if ($output =~ /<Count>(\d+)<\/Count>/);
-
+# clean up files from last run
 @filesToRemove = ("parsePubs.log", "newPublicationsAdded.txt", "newJournalsAdded.txt",
                   "loadSQLError.log", "loadSQLOutput.log", "newPubSummary.txt", "parseMesh.log");
 foreach my $file (@filesToRemove) {
@@ -34,36 +15,57 @@ foreach my $file (@filesToRemove) {
 }
 unlink glob "<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/*.clob";
 
-print "webenv: ".$web."\n";
-print "query_key: ".$key."\n";
-print "total pub count: ".$count."\n";
 open (LOG, "><!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePubs.log") || die "Cannot open <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePub.log : $!\n";
 open (MESH, "><!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parseMesh.log") || die "Cannot open <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parseMesh.log : $!\n";
 
-#assemble the efetch URL
+$base = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
+$db = 'pubmed';
+my $pubCount = 0;
+if (scalar @ARGV > 0) {
+    # Got a list of PubMed IDs to fetch
+    $ids = join(",", @ARGV);
+    $url = $base . "efetch.fcgi?db=$db&id=$ids&retmode=xml";
+    print "fetched url: ".$url."\n";
+    $twig = XML::Twig->new(twig_handlers => { 'PubmedArticle' => \&pubMedArticle });
+    $twig->parseurl($url);
+} else {
+    # Didn't get any command line arguments, so let's load new pubs
+    # Download PubMed records that are indexed in MeSH for zebrafish and danio rerio
+    # Use the TW (Text Words) field for zebrafish (to avoid picking up the journal Zebrafish.
+    # http://www.ncbi.nlm.nih.gov/books/NBK3827/#_pubmedhelp_Search_Field_Descriptions_and_
+    $query = 'zebrafish[TW]+OR+"zebra fish"[TW]+OR+"danio rerio"[ALL]';
 
+    #assemble the esearch URL
+    $retmax = '200';
+    $url = $base . "esearch.fcgi?db=$db&term=$query&usehistory=y&reldate=80&datetype=edat&retmax=$retmax";
 
-for ($retstart = 0; $retstart < $count; $retstart += $retmax) {
-    $fetch_url = $base . "efetch.fcgi?db=$db&query_key=$key&WebEnv=$web";
-    $fetch_url .= "&retmode=xml";
-    $fetch_url .= "&retstart=$retstart";
-    $fetch_url .= "&retmax=$retmax";
-    print "fetched url: ".$fetch_url."\n";
-    my $pubCount = 0;
-    $twig = XML::Twig->new( 
-        twig_handlers =>
-            { 'PubmedArticle' => \&pubMedArticle }
-    );
-    $twig->parseurl($fetch_url);
-    
-    
-#print "Total Pubs Added: ".$pubCount."\n";
-#print $web."\n";
-#print $key."\n";
-    
-    
-# The twig parser will go through an entire pubMedArticle, extracting fields as it goes.  
-# consequently, the order it parses, is the order the load file will be generated.
+    #get the esearch URL
+    #the usehistory key creates a url key that we can use to access the return: suggested for larger queries by NCBI
+    $output = get($url);
+
+    #parse WebEnv and QueryKey
+    $web = $1 if ($output =~ /<WebEnv>(\S+)<\/WebEnv>/);
+    $key = $1 if ($output =~ /<QueryKey>(\d+)<\/QueryKey>/);
+    $count = $1 if ($output =~ /<Count>(\d+)<\/Count>/);
+
+    print "webenv: ".$web."\n";
+    print "query_key: ".$key."\n";
+    print "total pub count: ".$count."\n";
+    #assemble the efetch URL
+    for ($retstart = 0; $retstart < $count; $retstart += $retmax) {
+        $fetch_url = $base . "efetch.fcgi?db=$db&query_key=$key&WebEnv=$web";
+        $fetch_url .= "&retmode=xml";
+        $fetch_url .= "&retstart=$retstart";
+        $fetch_url .= "&retmax=$retmax";
+        print "fetched url: ".$fetch_url."\n";
+        $twig = XML::Twig->new(
+            twig_handlers =>
+                { 'PubmedArticle' => \&pubMedArticle }
+        );
+        # The twig parser will go through an entire pubMedArticle, extracting fields as it goes.
+        # consequently, the order it parses, is the order the load file will be generated.
+        $twig->parseurl($fetch_url);
+    }
 }
 
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> loadNewPubs.sql >loadSQLOutput.log 2> loadSQLError.log") && die "loading the pubs failed.";

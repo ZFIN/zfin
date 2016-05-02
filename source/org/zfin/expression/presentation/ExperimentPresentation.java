@@ -58,7 +58,6 @@ public class ExperimentPresentation extends EntityPresentation {
     }
 
 
-    //this could share code more elegantly with the getLink method above...
     public static String getName(Experiment experiment, boolean suppressChemicalDetails) {
         if (experiment == null)
             return null;
@@ -111,7 +110,6 @@ public class ExperimentPresentation extends EntityPresentation {
         return sb.toString();
     }
 
-    //this is called by getLinkWithChemicalDetails. needs to be refactored so that it shares code with getName()
     public static String getNameWithChemicalDetails(Experiment experiment) {
         return getName(experiment, false);
     }

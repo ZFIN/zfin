@@ -30,16 +30,14 @@ public class ApgLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
 
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(ApgCookieHandler.APG_ZFIN_LOGIN)) {
-                if(false==cookie.getValue().startsWith(GUEST)){
+                if(!cookie.getValue().startsWith(GUEST)){
                     String id = GUEST + cookie.getValue();
-                    String value = id.substring(0, 19);
+                    String value = id.substring(0, ApgAuthenticationSuccessHandler.MAX_LENGTH_OF_APG_COOKIE);
                     cookie.setValue(value);
                     cookie.setPath(ZfinProperties.getCookiePath());
                     response.addCookie(cookie);
                 }
             }
-//            if (cookie.getName().equals(ServletService.JSESSIONID)) {
-//            }
         }
         super.onLogoutSuccess(request,response,authentication);
 

@@ -3,7 +3,7 @@
 <script src="/javascript/jquery-ui-1.10.4.custom.js"></script>
 <link rel=stylesheet type="text/css" href="/css/jquery-ui-1.10.4.custom.css">
 
-<authz:authorize ifAnyGranted="root">
+<authz:authorize access="hasRole('root')">
 
     <c:set var="zdbIdString" value="${formBean.zdbIDToDelete}"/>
 

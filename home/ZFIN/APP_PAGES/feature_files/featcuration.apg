@@ -138,18 +138,7 @@ FILTERs section
 
 <div id="directAttributionName"></div>
 
-<div id="feature-add-link"></div>
-
-
-<div id="add-feature"></div>
-<br>
-<div id="feature-edit-link"></div>
-
-
-<div id="edit-feature"></div>
-<br>
-<div id="feature-relationship-link"></div>
-<div id="feature-relationship"></div>
+<div id="feature-module"></div>
 <hr>
 <?MICOMMENT> 
 	  ===============

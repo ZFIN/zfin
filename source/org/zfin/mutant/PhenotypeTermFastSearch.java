@@ -2,15 +2,28 @@ package org.zfin.mutant;
 
 import org.zfin.ontology.GenericTerm;
 
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "PHENO_TERM_FAST_SEARCH")
 public class PhenotypeTermFastSearch {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ptfs_pk_id")
     private long id;
-    private PhenotypeStatement phenotypeStatement;
+    @ManyToOne()
+    @JoinColumn(name = "ptfs_psg_id")
+    private PhenotypeStatementWarehouse phenotypeObserved;
+    @ManyToOne()
+    @JoinColumn(name = "ptfs_term_zdb_id")
     private GenericTerm term;
+    @Column(name = "ptfs_tag")
     private String tag;
+    @Column(name = "ptfs_phenos_created_date")
     private Date dateCreated;
+    @Column(name = "ptfs_is_direct_annotation")
     private boolean directAnnotation;
 
     public long getId() {
@@ -21,12 +34,12 @@ public class PhenotypeTermFastSearch {
         this.id = id;
     }
 
-    public PhenotypeStatement getPhenotypeStatement() {
-        return phenotypeStatement;
+    public PhenotypeStatementWarehouse getPhenotypeObserved() {
+        return phenotypeObserved;
     }
 
-    public void setPhenotypeStatement(PhenotypeStatement phenotypeStatement) {
-        this.phenotypeStatement = phenotypeStatement;
+    public void setPhenotypeObserved(PhenotypeStatementWarehouse phenotypeObserved) {
+        this.phenotypeObserved = phenotypeObserved;
     }
 
     public GenericTerm getTerm() {

@@ -1,69 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="Shipper" basedir="../">
+<project name="Forwarder" basedir="../">
 
-    <property name="shipper.src" value="${SOURCEROOT}/server_apps/logstash_shipper"/>
-    <property name="shipper" value="${TARGETROOT}/server_apps/logstash_shipper"/>
+    <property name="forwarder.src" value="${SOURCEROOT}/server_apps/logstash-forwarder"/>
+    <property name="forwarder" value="${TARGETROOT}/server_apps/logstash-forwarder"/>
 
 
-    <target name="deploy-shipper">
-        <copyShipper from="${shipper.src}" to="${shipper}"/>
+    <target name="deploy-forwarder">
+        <mkdir dir="${forwarder}" />
+        <copyForwarder from="${forwarder.src}" to="${forwarder}"/>
+<!--
         <exec executable="cp">
-            <arg value="server_apps/logstash_shipper/shipper.sh"/>
-            <arg value="${TARGETROOT}/server_apps/logstash_shipper/shipper.sh"/>
+            <arg value="server_apps/logstash-forwarder/forwarder.sh"/>
+            <arg value="${TARGETROOT}/server_apps/logstash-forwarder/forwarder.sh"/>
         </exec>
+-->
     </target>
 
-    <macrodef name="copyShipper">
+    <macrodef name="copyForwarder">
         <attribute name="from"/>
         <attribute name="to"/>
-        <attribute name="overwrite" default="false"/>
+        <attribute name="overwrite" default="true"/>
         <sequential>
             <echo message="@{from}"/>
             <copy todir="@{to}" overwrite="@{overwrite}">
                 <fileset dir="@{from}">
-                    <include name="**/*.conf"/>
-                    <exclude name="**/shipper.sh"/>
-                    <exclude name="**/*.svn"/>
+                    <include name="**/logstash*"/>
+                    <include name="**/forwarder*"/>
+                    <exclude name="**/*.git"/>
                 </fileset>
                 <filterset refid="allfilters"/>
-            </copy>
-            <copy todir="@{to}" overwrite="@{overwrite}">
-                <fileset dir="@{from}">
-                    <include name="**"/>
-                    <exclude name="**/*.conf"/>
-                    <exclude name="**/shipper.sh"/>
-                    <exclude name="**/*.svn"/>
-                </fileset>
             </copy>
         </sequential>
 
     </macrodef>
 
 
-    <target name="start-shipper" description="Start up Logstash Shipper ">
-        <echo message="Source: ${shipper}"/>
-        <exec executable="${shipper}/shipper.sh">
+    <target name="start-forwarder" description="Start up Logstash Forwarder ">
+        <echo message="Source: ${forwarder}"/>
+        <exec executable="${forwarder}/forwarder.sh">
             <arg value="start"/>
         </exec>
     </target>
 
-    <target name="stop-shipper" description="Stop Logstash Shipper">
-        <exec executable="${shipper}/shipper.sh">
+    <target name="stop-forwarder" description="Stop Logstash Forwarder">
+        <exec executable="${forwarder}/forwarder.sh">
             <arg value="stop"/>
         </exec>
     </target>
 
-    <target name="restart-shipper" description="Restart up Logstash Shipper">
-        <exec executable="${shipper}/shipper.sh">
+    <target name="restart-forwarder" description="Restart up Logstash Forwarder">
+        <exec executable="${forwarder}/forwarder.sh">
             <arg value="restart"/>
         </exec>
     </target>
 
-    <target name="pid-shipper" description="Display the PID of the Logstash Shipper">
-        <loadfile property="shipper-pid" srcFile="${shipper}/shipper.pid"/>
+    <target name="pid-forwarder" description="Display the PID of the Logstash Forwarder">
+        <loadfile property="forwarder-pid" srcFile="${forwarder}/forwarder.pid"/>
         <echo>
-            shipper server PID: ${shipper-pid}
+            forwarder server PID: ${forwarder-pid}
         </echo>
     </target>
 

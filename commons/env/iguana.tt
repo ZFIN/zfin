@@ -30,6 +30,7 @@
 <!--|GOOGLE_ANALYTICS_ID|-->	UA-2417927-5
 <!--|GO_EMAIL_CURATOR|-->	kevin\@zfin.org
 <!--|GO_EMAIL_ERR|-->	kevin\@zfin.org
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/iguana/home/WEB-INF/lib*:/opt/zfin/source_roots/iguana/ZFIN_WWW/lib/Java/*:/opt/zfin/www_homes/iguana/home/WEB-INF/classes:/private/apps/tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4

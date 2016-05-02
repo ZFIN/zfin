@@ -9,7 +9,7 @@
 <%@attribute name="curatorContent" fragment="true" %>
 <%-- Initially set to display:none for root users only, since they're the only users that can select the table view,
     document.ready in prototype-results.jsp will make these visible --%>
-<div style="clear:both; <authz:authorize ifAnyGranted="root">display:none;</authz:authorize>" class="col-md-12 search-result boxy-search-result">
+<div style="clear:both; <authz:authorize access="hasRole('root')">display:none;</authz:authorize>" class="col-md-12 search-result boxy-search-result">
 
     <div class="result-meta-data search-result-category">
         <jsp:invoke fragment="metadata"/>
@@ -21,7 +21,7 @@
     <div class="result-header search-result-name">
         <zfin:link entity="${result}"/>
 
-        <authz:authorize ifAnyGranted="root">
+        <authz:authorize access="hasRole('root')">
           <a title="see everything solr knows about this record"
              class="solr-document-link"
              href="/solr/prototype/select?q=id:${result.id}&fl=*&wt=json&indent=true&hl=false&rows=1"><i class="fa fa-file-text-o"></i></a>
@@ -67,6 +67,44 @@
             </tr>
         </table>
 
+        <c:if test="${!empty result.featureGenes}">
+            <table class="fish-result-table">
+                <tr>
+                    <th>Affected Gene</th>
+                    <th>Line / Reagent</th>
+                    <th>Mutation Type</th>
+                    <th>Construct</th>
+                    <th>Parental Zygosity</th>
+                </tr>
+                <c:forEach var="featureGene" items="${result.featureGenes}">
+                    <tr>
+                        <td title="Affected Gene">
+                            <zfin:link entity="${featureGene.gene}" suppressPopupLink="true"/>
+                        </td>
+                        <td title="Line / Reagent">
+                            <c:if test="${!empty featureGene.feature}">
+                                <zfin:link entity="${featureGene.feature}" suppressPopupLink="true"/>
+                            </c:if>
+                            <c:if test="${!empty featureGene.sequenceTargetingReagent}">
+                                <zfin:link entity="${featureGene.sequenceTargetingReagent}" suppressPopupLink="true"/>
+                            </c:if>
+                        </td>
+                        <td title="Mutation Type">
+                            <c:if test="${!empty featureGene.feature}">
+                                ${featureGene.feature.type.display}
+                            </c:if>
+                        </td>
+                        <td title="Construct">
+                            <zfin:link entity="${featureGene.construct}" suppressPopupLink="true"/>
+                        </td>
+                        <td title="Parental Zygosity">
+                                ${featureGene.parentalZygosityDisplay}
+                        </td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </c:if>
+
         <jsp:doBody/>
     </div>
 
@@ -85,7 +123,7 @@
         </c:choose>
     </div>
 
-    <authz:authorize ifAnyGranted="root">
+    <authz:authorize access="hasRole('root')">
         <jsp:invoke fragment="curatorContent"/>
     </authz:authorize>
     <div class="result-matching-text search-result-snippet">

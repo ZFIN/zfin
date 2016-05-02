@@ -2,33 +2,45 @@
 
 <%@ attribute name="doid" rtexprvalue="true" required="true" %>
 
-<script src="/javascript/phenogrid/js/jquery-ui-1.10.3.custom.min.js"></script>
-<script src="/javascript/phenogrid/js/d3.min.js"></script>
-<script src="/javascript/phenogrid/js/jshashtable.js"></script>
-<script src="/javascript/phenogrid/js/stickytooltip.js"></script>
-<script src="/javascript/phenogrid/js/phenogrid_config.js"></script>
-<script src="/javascript/phenogrid/js/phenogrid.js"></script>
-<script src="/javascript/phenogrid/js/render.js"></script>
-<link rel="stylesheet" type="text/css" href="/javascript/phenogrid/css/jquery-ui.css"/>
-<link rel="stylesheet" type="text/css" href="/javascript/phenogrid/css/phenogrid.css"/>
-<link rel="stylesheet" type="text/css" href="/javascript/phenogrid/css/stickytooltip.css"/>
+<script src="/javascript/phenogrid/phenogrid-bundle.js"></script>
+<script src="/javascript/phenogrid/phenogrid_config.js"></script>
+<link rel="stylesheet" type="text/css" href="/javascript/phenogrid/phenogrid-bundle.css"/>
+
+<style>
+    body {margin-top: 80px;}
+
+</style>
 
 <script>
 
+
     jQuery(document).ready(function() {
+
         $.ajax({
             dataType: "json",
-            url: "https://tartini.crbs.ucsd.edu/disease/${doid}.json",
+            url: "https://monarchinitiative.org/disease/${doid}/phenotype_list.json",
             success: function(data) {
-                var phenotypes = [];
 
-                $.each(data.phenotype_list, function() {
-                    phenotypes.push(this.id);
-                });
+                $('#disease-phenotype-spinner').hide();
 
+                if (data.phenotype_list.length == 0) {
+                    $('#phen_vis').hide();
+                    $('#disease-phenotype-no-data-tag').show();
 
-                $("#phen_vis").phenogrid({serverURL :
-                        "https://tartini.crbs.ucsd.edu", phenotypeData: phenotypes,targetSpeciesName: "Danio rerio" });
+                } else {
+                    var phenotypes = data.phenotype_list.map(function (p) { return p.id; });
+
+                    Phenogrid.createPhenogridForElement(document.getElementById('phen_vis'), {
+                        serverURL : "https://monarchinitiative.org",
+                        phenotypeData: phenotypes,
+                        targetGroupList: [
+                            {name: "Danio rerio", taxon: "7955", crossComparisonView: true, active: true},
+                            {name: "Homo sapiens", taxon: "9606", crossComparisonView: true, active: true},
+                            {name: "Mus musculus", taxon: "10090", crossComparisonView: true, active: true}
+                        ]
+                    });
+                }
+
 
 
             }
@@ -37,9 +49,14 @@
     });
 
 
+
 </script>
 
-<div id="viscontent" style="height: 650px;">
-    <div id="phen_vis"></div>
+
+<div class="summary">
+
+    <span class="summaryTitle" id="phenogrid-title">DISEASE PHENOTYPE</span>
+    <img id="disease-phenotype-spinner" src="/images/ajax-loader.gif" alt="loading...">
+    <span  class="no-data-tag" id="disease-phenotype-no-data-tag" style="display:none">No data available</span>
+    <div id="phen_vis" class="clearfix"></div>
 </div>
-<div class="text"></div>

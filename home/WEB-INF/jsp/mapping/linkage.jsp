@@ -3,15 +3,10 @@
 <zfin2:dataManager zdbID="${linkage.zdbID}" rtype="linkage"/>
 
 <p/>
-<table width="100%" cellpadding="0" cellspacing="0">
-    <tr>
-        <td class="titlebar" style="">
-                <span style="font-size: x-large; margin-left: 0.5em; font-weight: bold;">
-                        Linkage Detail
-            </span>
-        </td>
-    </tr>
-</table>
+
+<div class="titlebar">
+    <h1>Linkage Detail</h1>
+</div>
 
 <table class="primary-entity-attributes">
     <tr>
@@ -20,13 +15,13 @@
     </tr>
     <tr>
         <th><span class="name-label">Comment:</span>
-            <authz:authorize ifAnyGranted="root">
+            <authz:authorize access="hasRole('root')">
                 <span> (<a href="#" onclick="jQuery('#editComment').show()">Edit</a>)</span>
             </authz:authorize>
         </th>
         <td><span class="name-value">${linkage.comments}</span></td>
     </tr>
-    <authz:authorize ifAnyGranted="root">
+    <authz:authorize access="hasRole('root')">
         <tr style="display: none" id="editComment">
             <th><span class="name-label">Edit
                 :</span></th>

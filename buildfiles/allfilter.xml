@@ -91,6 +91,7 @@
 <filter token="INSTANCE" value="${INSTANCE}"/>
 <filter token="INTERNAL_BLAST_PATH" value="${INTERNAL_BLAST_PATH}"/>
 <filter token="JAVA_HOME" value="${JAVA_HOME}"/>
+<filter token="JAVA_OPTS" value="${JAVA_OPTS}"/>
 <filter token="JENKINS_HOME" value="${JENKINS_HOME}"/>
 <filter token="JENKINS_PORT" value="${JENKINS_PORT}"/>
 <filter token="JPDA_ADDRESS" value="${JPDA_ADDRESS}"/>
@@ -109,6 +110,7 @@
 <filter token="MICROARRAY_EMAIL" value="${MICROARRAY_EMAIL}"/>
 <filter token="MOVE_BLAST_FILES_TO_DEVELOPMENT" value="${MOVE_BLAST_FILES_TO_DEVELOPMENT}"/>
 <filter token="MUTANT_NAME" value="${MUTANT_NAME}"/>
+<filter token="NCBI_LINKOUT_UPLOAD" value="${NCBI_LINKOUT_UPLOAD}"/>
 <filter token="NEW_PUBLICATION_REPORT" value="${NEW_PUBLICATION_REPORT}"/>
 <filter token="NOMEN_COORDINATOR" value="${NOMEN_COORDINATOR}"/>
 <filter token="NON_SECUREPORT" value="${NON_SECUREPORT}"/>
@@ -129,6 +131,7 @@
 <filter token="SECUREPORT" value="${SECUREPORT}"/>
 <filter token="SECURE_HTTP" value="${SECURE_HTTP}"/>
 <filter token="SECURE_SERVER" value="${SECURE_SERVER}"/>
+<filter token="SEND_AUTHOR_NOTIF_EMAIL" value="${SEND_AUTHOR_NOTIF_EMAIL}"/>
 <filter token="SHARED_DOMAIN_NAME" value="${SHARED_DOMAIN_NAME}"/>
 <filter token="SHOW_SQL" value="${SHOW_SQL}"/>
 <filter token="SHUTDOWNPORT" value="${SHUTDOWNPORT}"/>

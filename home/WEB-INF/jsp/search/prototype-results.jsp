@@ -4,66 +4,36 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 
+<c:set var="geneCategoryName" value="<%=Category.GENE.getName()%>"/>
+<c:set var="expressionCategoryName" value="<%=Category.EXPRESSIONS.getName()%>"/>
 <c:set var="publicationCategoryName" value="<%=Category.PUBLICATION.getName()%>"/>
 <c:set var="constructCategoryName" value="<%=Category.CONSTRUCT.getName()%>"/>
 
+<script src="/javascript/list-collapse.js"></script>
 <script src="/javascript/angular/angular.min.js"></script>
 <script src="/javascript/angular/angular-sanitize.js"></script>
 
-<link rel=stylesheet type="text/css" href="/css/bootstrap3/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="/css/bootstrap3/css/bootstrap.css">
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
 
-<link rel=stylesheet type="text/css" href="/css/datepicker3.css">
+<link rel="stylesheet" type="text/css" href="/css/datepicker3.css">
 <script type="text/javascript" src="/javascript/bootstrap-datepicker.js"></script>
 
 <script src="/javascript/purl.js"></script>
 <script src="/javascript/jquery.validate.min.js"></script>
 
-<link rel=stylesheet type="text/css" href="/css/faceted-search.css">
+<link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css">
+<link rel="stylesheet" type="text/css" href="/css/faceted-search.css">
 
 <style>
-    .ui-menu-item {
-        font-size: small
-    }
-
-    /* necessary because bootstrap overrides our body margin on top */
-    body {
-        margin-top: 81px;
-    }
-
-    /* don't need the left-right magin fixes from all-content */
-    div.allcontent {
-        margin: 0px;
-    }
-
-    #hdr-navlinks {
-        line-height: 15px;
-    }
-
-    #hdr-banner { height: 77px; }
-
-    .tabContent, .selectedTabContent { height: 22px !important; }
-
     /* remove parts of the header that we don't need */
-
     #quicksearchBox {
         display: none
     }
-
-    #feedBox #rss-icon {
-        position: absolute;
-        top: 1px;
-        right: 64px;
-    }
-
-    html { font-size: 100%; }
-    body { font-size: 16px; }
-    a,a:hover { color: blue }
-    
 </style>
 
 <script>
-    showMotto();
+    hdrSetCookie("tabCookie","Motto","","/");
 </script>
 
 <%-- placed this outside of the search container below so that it won't inherit odd css, content of modal is loaded via remote --%>
@@ -82,7 +52,7 @@
 
 
     <div class="row">
-        <div class="search-box col-md-offset-1 col-md-11" style="margin-bottom: 10px; margin-top:10px; ">
+        <div class="search-box col-md-offset-1 col-md-11">
             <form id="query-form" class="form-inline" method="get" action="/search">
                 <div class="search-input-container">
 
@@ -109,7 +79,7 @@
 
                         <div class="btn-group search-box-buttons">
                             <button type="submit" class="btn btn-default btn-zfin">Go</button>
-                            <authz:authorize ifAnyGranted="root">
+                            <authz:authorize access="hasRole('root')">
                                 <c:if test="${category eq publicationCategoryName}">
                                     <a id="advanced-search-button" class="btn btn-default" href="#" title="Advanced Search Options"
                                        onClick="jQuery('#advanced-container').slideToggle(200);"><i class="fa fa-list"></i></a>
@@ -164,7 +134,7 @@
 
     <div style="display: block; position: absolute; top: 125px; right: 50px; color: #666; font-size: 9px;">
 
-            <authz:authorize ifAnyGranted="root">
+            <authz:authorize access="hasRole('root')">
                 <a href="${baseUrl}&hl=true">highlight</a>
                 <a href="${baseUrl}&explain=true">debug</a>
             </authz:authorize>
@@ -228,20 +198,16 @@
                     </div>
                 </c:if>
 
-                <div class="row" style="margin-top: 1em;">
+                <div class="row">
                     <div class="col-md-2 col-sm-3 col-xs-4">
                         <a href="${downloadUrl}" class="btn btn-default">
                             <i class="fa fa-download"></i> Download
                         </a>
                     </div>
-                    <div class="col-md-10 col-sm-9 col-xs-8">
-
-                        <span class="result-count">
-                            <fmt:formatNumber value="${numFound}" pattern="##,###"/> results
-                        </span>
-
+                    <div class="result-count col-md-10 col-sm-9 col-xs-8">
+                        <fmt:formatNumber value="${numFound}" pattern="##,###"/> results
                         <div class="pull-right">
-                            <authz:authorize ifAnyGranted="root">
+                            <authz:authorize access="hasRole('root')">
                                 <div class="btn-group">
                                     <button id="boxy-result-button" class="btn btn-default result-action-tooltip" title="Detailed Results">
                                         <i class="fa fa-newspaper-o fa-flip-horizontal"></i>
@@ -279,16 +245,18 @@
                     <zfin2:searchResult result="${result}"/>
                 </c:forEach>
 
-                <table class="table-results searchresults" style="display: none;">
-                    <th>Name</th> <th>ID</th> <th>Category</th>
-                    <c:forEach var="result" items="${results}" varStatus="loop">
-                        <zfin:alternating-tr loopName="loop" groupBeanCollection="${results}" groupByBean="id">
-                            <td>${result.link}</td>
-                            <td style="white-space: nowrap"> <c:if test="${!empty result.displayedID}">${result.id}</c:if> </td>
-                            <td>${result.category}</td>
-                        </zfin:alternating-tr>
-                    </c:forEach>
-                </table>
+
+                <c:choose>
+                    <c:when test="${category eq geneCategoryName}">
+                        <zfin-search:geneResultTable results="${results}"/>
+                    </c:when>
+                    <c:when test="${category eq expressionCategoryName}">
+                        <zfin-search:expressionResultTable results="${results}"/>
+                    </c:when>
+                    <c:otherwise>
+                        <zfin-search:mixedResultTable results="${results}"/>
+                    </c:otherwise>
+                </c:choose>
 
 
                 <div style="clear: both ; width: 80%">
@@ -353,9 +321,11 @@ function submitAdvancedQuery(fields) {
 
 $(document).ready(function () {
 
+    $('.list-collapse').listCollapse({label: 'results', itemsToShow: 3});
+
     $('#primary-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
 
-    $('#primary-query-input').bind("typeahead:selected", function() {
+    $('#primary-query-input').bind("typeahead:select", function() {
         $('#query-form').submit();
     });
 

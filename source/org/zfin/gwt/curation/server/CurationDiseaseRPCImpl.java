@@ -3,7 +3,6 @@ package org.zfin.gwt.curation.server;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 import org.zfin.ExternalNote;
@@ -128,10 +127,11 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             if (genotype == null)
                 throw new TermNotFoundException("No genotype with ID: " + genotypeID + " found");
             GenotypeExternalNote note = new GenotypeExternalNote();
-            //note.setType("genotype");
             note.setGenotype(genotype);
             note.setNote(text);
-            getInfrastructureRepository().saveExternalNote(note, publication);
+            note.setPublication(publication);
+            genotype.addExternalNote(note);
+            HibernateUtil.currentSession().save(note);
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
@@ -221,10 +221,11 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
     }
 
     @Override
-    public GenotypeDTO createGenotypeFeature(String publicationID, List<GenotypeFeatureDTO> genotypeFeatureDTOList, List<GenotypeDTO> genotypeBackgroundDTOList, String nickname)
+    public GenotypeCreationReportDTO createGenotypeFeature(String publicationID, List<GenotypeFeatureDTO> genotypeFeatureDTOList, List<GenotypeDTO> genotypeBackgroundDTOList, String nickname)
             throws TermNotFoundException {
         Genotype genotype;
         HibernateUtil.createTransaction();
+        GenotypeCreationReportDTO report = new GenotypeCreationReportDTO();
         try {
             Publication publication = getPublicationRepository().getPublication(publicationID);
             if (publication == null)
@@ -251,13 +252,16 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
                 PublicationAttribution attribution = new PublicationAttribution();
                 attribution.setPublication(publication);
                 attribution.setDataZdbID(existentGenotype.getZdbID());
-                if (getInfrastructureRepository().getPublicationAttribution(attribution) != null)
+                PublicationAttribution publicationAttribution = getInfrastructureRepository().getPublicationAttribution(attribution);
+                if (publicationAttribution != null)
                     throw new TermNotFoundException("Genotype already exists.");
                 else {
                     getInfrastructureRepository().insertPublicAttribution(existentGenotype.getZdbID(), publicationID);
+                    report.setReportMessage("Imported Genotype " + genotype.getHandle());
                 }
             } else {
                 getMutantRepository().saveGenotype(genotype, publicationID);
+                report.setReportMessage("Created Genotype " + genotype.getHandle());
             }
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (ConstraintViolationException e) {
@@ -270,7 +274,8 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             HibernateUtil.rollbackTransaction();
             throw new TermNotFoundException(e.getMessage());
         }
-        return DTOConversionService.convertToPureGenotypeDTOs(genotype);
+        report.setGenotypeDTO(DTOConversionService.convertToPureGenotypeDTOs(genotype));
+        return report;
     }
 
 
@@ -398,9 +403,9 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
         if (diseaseAnnotationModelDTO == null)
             throw new TermNotFoundException("No disease model found");
         DiseaseAnnotationModel diseaseAnnotationModel = getMutantRepository().getDiseaseAnnotationModelByID(diseaseAnnotationModelDTO.getDamoID());
-        DiseaseAnnotation dA=new DiseaseAnnotation();
+        DiseaseAnnotation dA = new DiseaseAnnotation();
         if (diseaseAnnotationModel != null) {
-          dA = diseaseAnnotationModel.getDiseaseAnnotation();
+            dA = diseaseAnnotationModel.getDiseaseAnnotation();
         }
 
         HibernateUtil.createTransaction();

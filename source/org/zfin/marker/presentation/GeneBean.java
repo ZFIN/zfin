@@ -5,10 +5,12 @@ import java.util.List;
 /**
  * TODO: move more stuff off of MarkerBean
  */
+
 public class GeneBean extends MarkerBean {
 
     boolean hasChimericClone ;
     private List<LinkDisplay> plasmidDBLinks;
+    private List<LinkDisplay> pathwayDBLinks;
 
     public boolean isHasChimericClone() {
         return hasChimericClone;
@@ -26,4 +28,11 @@ public class GeneBean extends MarkerBean {
         this.plasmidDBLinks = plasmidDBLinks;
     }
 
+    public List<LinkDisplay> getPathwayDBLinks() {
+        return pathwayDBLinks;
+    }
+
+    public void setPathwayDBLinks(List<LinkDisplay> pathwayDBLinks) {
+        this.pathwayDBLinks = pathwayDBLinks;
+    }
 }

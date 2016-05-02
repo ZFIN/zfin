@@ -144,9 +144,16 @@ function start_tips() {
 
 }
 
-var intervalId = 0 ; 
+var intervalId = 0 ;
+
+<?MISQL SQL="select zflag_is_on from zdb_flag where zflag_name = 'regen_expressionmart';">
+  <?MIVAR NAME=$regen_is_on>$1<?/MIVAR>
+<?/MISQL>
 
 function call_submit() {
+<?MIBLOCK COND="$(EC,$regen_is_on,t)">
+  return false;
+<?MIELSE>
   var pauseIcrement = 500 ;  // wait up to 4 seconds
   var currentTime = new Date() ;  // wait up to 4 seconds
   try{
@@ -177,6 +184,7 @@ function call_submit() {
       // if not defined or some other problem, then go ahead and submit
       document.critform.submit();
   }
+<?/MIBLOCK>
 }
 
 
@@ -853,7 +861,7 @@ return false ; "
 		  <OPTION $(IF,$(EC,$stage_end,$3), SELECTED) VALUE="$3")> $1 
 		<?/MISQL>
 	      </SELECT>
-	    <br><a href="http://zfin.org/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
+	    <br><a href=/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
 	    <!-- end stage -->
 	  </td>
 	</tr>
@@ -1033,7 +1041,7 @@ return false ; "
 
          <br>
          <?MIVAR>
-         <span id="xpatsel_efgOnlySpan" $(IF,$(XST,$xpatsel_highlightEFGOnly),class="highlight")>
+         <span id="xpatsel_efgOnlySpan">
          <?/MIVAR>
 
          <?MICOMMENT> *** EFG Only Checkbox *** <?/MICOMMENT>
@@ -1122,13 +1130,16 @@ return false ; "
       </TR>
 
       <tr>
-	<td colspan=3 bgcolor=<!--|SIDEBAR_COLOR|--> class="submitbar"> 
-
-          <input name="xpatsel_calledBySelf" type="hidden" value="true">
-	
-	  <input accesskey="s" type="button" value="Search" onClick="call_submit();">
-	  <input type="button" value="Reset" onClick="call_reset();">
-
+	    <td colspan=3 bgcolor=<!--|SIDEBAR_COLOR|--> class="submitbar">
+	      <?MIBLOCK COND="$(EC,$regen_is_on,t)">
+            <span class="error">
+              Gene expression search is temporarily disabled for maintenance. Please check back in a few minutes.
+            </span>
+          <?MIELSE>
+            <input name="xpatsel_calledBySelf" type="hidden" value="true">
+	        <input accesskey="s" type="button" value="Search" onClick="call_submit();">
+	        <input type="button" value="Reset" onClick="call_reset();">
+          <?/MIBLOCK>
         </td>
       </tr>
     </table>

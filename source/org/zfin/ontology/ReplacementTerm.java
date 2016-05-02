@@ -1,12 +1,23 @@
 package org.zfin.ontology;
 
+import javax.persistence.*;
+
 /**
  * Basic implementation of the Term interface.
  */
-public class ReplacementTerm  {
+@Entity
+@Table(name = "obsolete_term_replacement")
+public class ReplacementTerm {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "obstermrep_pk_id")
     private long id;
+    @ManyToOne
+    @JoinColumn(name = "obstermrep_term_zdb_id")
     private GenericTerm obsoletedTerm;
+    @ManyToOne
+    @JoinColumn(name = "obstermrep_term_replacement_zdb_id")
     private GenericTerm replacementTerm;
 
     public long getId() {

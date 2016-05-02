@@ -9,10 +9,12 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.zfin.gwt.curation.event.AddAttributeEvent;
 import org.zfin.gwt.root.dto.DeAttributionException;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.*;
+import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.StringUtils;
 
@@ -253,6 +255,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
                     public void onSuccess(Void result) {
                         notWorking();
                         fireEventSuccess();
+                        AppUtils.EVENT_BUS.fireEvent(new AddAttributeEvent());
                         clearError();
                         setMessage("Marker attribution added: " + value);
                         resetInput();
@@ -286,6 +289,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
                     public void onSuccess(Void result) {
                         notWorking();
                         fireEventSuccess();
+                        AppUtils.EVENT_BUS.fireEvent(new AddAttributeEvent());
                         clearError();
                         setMessage("Feature attribution added:" + value);
                         resetInput();
@@ -365,6 +369,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
                             notWorking();
                             if (message == null) {
                                 fireEventSuccess();
+                                AppUtils.EVENT_BUS.fireEvent(new RemoveAttributeEvent());
                                 clearError();
                                 setMessage("Removed attribution: ");
                                 resetInput();

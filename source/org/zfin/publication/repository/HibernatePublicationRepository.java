@@ -280,6 +280,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "       genox.genox_fish_zdb_id=fish.fish_zdb_id AND " +
                 "       fish.fish_genotype_zdb_id=geno.geno_zdb_id AND " +
                 "       geno.geno_is_wildtype = :isWildtype AND " +
+                "       fish.fish_is_wildtype = :isWildtype AND " +
                 "       exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND " +
                 "       genox.genox_is_std_or_generic_control = :condition AND " +
                 "       gene.mrkr_abbrev[1,10] <> :withdrawn  AND   " +
@@ -624,14 +625,14 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public PaginationResult<Figure> getFiguresByFishAndAnatomy(Fish fish, GenericTerm term, boolean includeSubstructures) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct figure from Figure figure, PhenotypeStatement phenos, " +
+        String hql = "select distinct figure from Figure figure, PhenotypeStatementWarehouse phenos, " +
                 "FishExperiment fishox, TransitiveClosure transitiveClosure " +
                 "where fishox.fish = :fish AND " +
-                "      phenos.phenotypeExperiment.fishExperiment = fishox  AND " +
-                "      phenos.phenotypeExperiment.figure = figure AND " +
+                "      phenos.phenotypeWarehouse.fishExperiment = fishox  AND " +
+                "      phenos.phenotypeWarehouse.figure = figure AND " +
                 "      transitiveClosure.root = :aoTerm AND " +
-                "      ( phenos.entity.superterm = transitiveClosure.child OR phenos.entity.subterm = transitiveClosure.child OR " +
-                "        phenos.relatedEntity.superterm = transitiveClosure.child OR phenos.relatedEntity.subterm = transitiveClosure.child) " +
+                "      ( phenos.e1a = transitiveClosure.child OR phenos.e1b = transitiveClosure.child OR " +
+                "        phenos.e2a = transitiveClosure.child OR phenos.e2b = transitiveClosure.child) " +
                 " AND exists (select 'x' from GeneGenotypeExperiment where fishExperiment = fishox) " +
                 "order by figure.orderingLabel    ";
         Query query = session.createQuery(hql);
@@ -1860,10 +1861,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public Long getPhenotypeCount(Publication publication) {
-        String sql = "\tselect count(distinct phenox_fig_zdb_id)\n" +
-                " \t  from figure, phenotype_experiment\n" +
+        String sql = "\tselect count(distinct pg_fig_zdb_id)\n" +
+                " \t  from figure, phenotype_source_generated\n" +
                 " \t where fig_source_zdb_id = :zdbID\n" +
-                "         and phenox_fig_zdb_id = fig_zdb_id";
+                "         and pg_fig_zdb_id = fig_zdb_id";
         return getCount(sql, publication.getZdbID());
     }
 

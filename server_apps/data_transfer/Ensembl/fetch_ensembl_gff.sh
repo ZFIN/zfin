@@ -90,7 +90,7 @@ if [[ ( "${post}" != "${prior}" ) && ${geterr} -eq 0  ]] ; then
 
 	# note: can use ~/bin/unlcollen.awk to get max length of columns
 
-	zcat ${GTF}| sed 's@ (@(@g' | sed 's@ of @of@g' | \
+	zcat ${GTF}| sed 's@ (@(@g' | sed 's@ of @of@g' | sed 's@ to @to@g' |\
 	./gtf2gff3.pl|\
 	nawk -v OFS='|' '/^[^#]/{$2="Ensembl_"$2;att=substr(substr($9,1,length($9)-1),4);\
 		for(i=0;i<4;i++){if(match(att,/;[^=]*=/)){sub(/;[^=]*=/,"|",att)}\

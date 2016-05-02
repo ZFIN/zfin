@@ -74,16 +74,16 @@ with no log;
 ! echo "Insert all phenotype data with term_ont_ids "
 insert into tmp_phenotype_statement (phenos_Pk_id,asubterm_ont_id, asubterm_name,asuperterm_ont_id, asuperterm_name,
 bsubterm_ont_id, bsubterm_name,bsuperterm_ont_id, bsuperterm_name, quality_id, quality_name, a_ontology_name,b_ontology_name,quality_tag)
-  select phenos_Pk_id, asubterm.term_ont_id, asubterm.term_name, asuperterm.term_ont_id, asuperterm.term_name,
+  select psg_id, asubterm.term_ont_id, asubterm.term_name, asuperterm.term_ont_id, asuperterm.term_name,
          bsubterm.term_ont_id, bsubterm.term_name, bsuperterm.term_ont_id, bsuperterm.term_name,
-         quality.term_ont_id, quality.term_name,  asubterm.term_ontology, bsubterm.term_ontology, phenos_tag
-    from phenotype_statement, OUTER term as asubterm, term as asuperterm, OUTER term as bsubterm, OUTER term as bsuperterm,
+         quality.term_ont_id, quality.term_name,  asubterm.term_ontology, bsubterm.term_ontology, psg_tag
+    from phenotype_observation_generated, OUTER term as asubterm, OUTER term as asuperterm, OUTER term as bsubterm, OUTER term as bsuperterm, 
          term as quality
-    where asubterm.term_zdb_id = phenos_entity_1_subterm_zdb_id AND
-          asuperterm.term_zdb_id = phenos_entity_1_superterm_zdb_id AND
-          bsubterm.term_zdb_id = phenos_entity_2_subterm_zdb_id AND
-          bsuperterm.term_zdb_id = phenos_entity_2_superterm_zdb_id AND
-          quality.term_zdb_id = phenos_quality_zdb_id;
+    where asubterm.term_zdb_id = psg_e1b_zdb_id AND
+          asuperterm.term_zdb_id = psg_e1a_zdb_id AND
+          bsubterm.term_zdb_id = psg_e2b_zdb_id AND
+          bsuperterm.term_zdb_id = psg_e2a_zdb_id AND
+          quality.term_zdb_id = psg_quality_zdb_id;
 
 ! echo "update a relationship name"
 update tmp_phenotype_statement
@@ -265,94 +265,111 @@ select gene.mrkr_zdb_id, a.szm_term_ont_id, gene.mrkr_abbrev, seq.mrkr_zdb_id,  
    and b.szm_object_type = seq.mrkr_type
 ;
 
-
-create temp table tmp_ortho_exp (
-  gene_id varchar(50),
-  ortho_id varchar(50),
-  zfish_name varchar(120),
-  zfish_abbrev varchar(40),
-  organism varchar(30),
-  ortho_name varchar(120),
-  ortho_abbrev varchar(15),
-  entrez varchar(50),
-hgnc varchar(50)
-) with no log;
-
-insert into tmp_ortho_exp
-select distinct ortho_zebrafish_gene_zdb_id, ortho_zdb_id, mrkr_name, mrkr_abbrev, organism_common_name, ortho_other_species_name,ortho_other_species_symbol,
-NULL::varchar(50),NULL::varchar(50)
- from ortholog,marker,organism
- where ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
-  and ortho_other_species_taxid=organism_taxid;
-
-update tmp_ortho_exp set Entrez = (
-        select distinct oef_accession_number
-         from ortholog o, ortholog_external_reference, foreign_db_contains, foreign_db
-         where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-           and fdb_db_name = 'Gene'
-           and fdbcont_fdb_db_id = fdb_db_pk_id
-           and o.ortho_zdb_id = oef_ortho_zdb_id
-           and ortho_id = o.ortho_zdb_id
+-- ==== BEGIN ORTHOLOGY QUERIES ====
+CREATE TEMP TABLE tmp_hgnc (
+  ortho_id VARCHAR(50),
+  accession VARCHAR(200)
 );
-update tmp_ortho_exp set hgnc = (
-        select distinct oef_accession_number
-         from ortholog o, ortholog_external_reference, foreign_db_contains, foreign_db
-         where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-           and fdb_db_name = 'HGNC'
-           and fdbcont_fdb_db_id = fdb_db_pk_id
-           and o.ortho_zdb_id = oef_ortho_zdb_id
-           and ortho_id = o.ortho_zdb_id
+INSERT INTO tmp_hgnc
+  SELECT oef_ortho_zdb_id, oef_accession_number
+  FROM ortholog_external_reference
+  INNER JOIN foreign_db_contains ON oef_fdbcont_zdb_id = fdbcont_zdb_id
+  INNER JOIN foreign_db ON fdb_db_pk_id = fdbcont_fdb_db_id
+  WHERE fdb_db_name = 'HGNC';
+
+CREATE TEMP TABLE tmp_omim (
+  ortho_id VARCHAR(50),
+  accession VARCHAR(200)
 );
+INSERT INTO tmp_omim
+  SELECT oef_ortho_zdb_id, oef_accession_number
+  FROM ortholog_external_reference
+  INNER JOIN foreign_db_contains ON oef_fdbcont_zdb_id = fdbcont_zdb_id
+  INNER JOIN foreign_db ON fdb_db_pk_id = fdbcont_fdb_db_id
+  WHERE fdb_db_name = 'OMIM';
 
+CREATE TEMP TABLE tmp_gene (
+  ortho_id VARCHAR(50),
+  accession VARCHAR(200)
+);
+INSERT INTO tmp_gene
+  SELECT oef_ortho_zdb_id, oef_accession_number
+  FROM ortholog_external_reference
+  INNER JOIN foreign_db_contains ON oef_fdbcont_zdb_id = fdbcont_zdb_id
+  INNER JOIN foreign_db ON fdb_db_pk_id = fdbcont_fdb_db_id
+  WHERE fdb_db_name = 'Gene';
 
+CREATE TEMP TABLE tmp_mgi (
+  ortho_id VARCHAR(50),
+  accession VARCHAR(200)
+);
+INSERT INTO tmp_mgi
+  SELECT oef_ortho_zdb_id, oef_accession_number
+  FROM ortholog_external_reference
+  INNER JOIN foreign_db_contains ON oef_fdbcont_zdb_id = fdbcont_zdb_id
+  INNER JOIN foreign_db ON fdb_db_pk_id = fdbcont_fdb_db_id
+  WHERE fdb_db_name = 'MGI';
 
-
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fly_orthos.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fly_orthos.txt'
- DELIMITER "	"
-select distinct gene_id,zfish_abbrev,zfish_name,ortho_name,ortho_abbrev, oef_accession_number,entrez,oev_evidence_code,oev_pub_zdb_id         from tmp_ortho_exp o, ortholog_external_reference, foreign_db_contains, foreign_db,ortholog_evidence
-         where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-           and fdbcont_fdb_db_id = fdb_db_pk_id
-           and fdb_db_name = 'FLYBASE'
-           and o.ortho_id = oef_ortho_zdb_id
-          and o.organism='Fruit fly'
-          and o.ortho_id=oev_ortho_zdb_id
-          order by 1;
-
+CREATE TEMP TABLE tmp_flybase (
+  ortho_id VARCHAR(50),
+  accession VARCHAR(200)
+);
+INSERT INTO tmp_flybase
+  SELECT oef_ortho_zdb_id, oef_accession_number
+  FROM ortholog_external_reference
+  INNER JOIN foreign_db_contains ON oef_fdbcont_zdb_id = fdbcont_zdb_id
+  INNER JOIN foreign_db ON fdb_db_pk_id = fdbcont_fdb_db_id
+  WHERE fdb_db_name = 'FLYBASE';
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/human_orthos.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/human_orthos.txt'
- DELIMITER "	"
- select distinct gene_id,zfish_abbrev,zfish_name,ortho_name,ortho_abbrev, oef_accession_number,entrez,hgnc,oev_evidence_code,oev_pub_zdb_id         from tmp_ortho_exp o, ortholog_external_reference, foreign_db_contains, foreign_db,ortholog_evidence
-         where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-           and fdbcont_fdb_db_id = fdb_db_pk_id
-           and fdb_db_name = 'OMIM'
-           and o.ortho_id = oef_ortho_zdb_id          and o.organism='Human'
-          and o.ortho_id=oev_ortho_zdb_id          order by 1;
+UNLOAD TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/human_orthos.txt'
+  DELIMITER "	"
+  SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
+                  tmp_omim.accession, tmp_gene.accession, tmp_hgnc.accession, oev_evidence_code, oev_pub_zdb_id
+    FROM ortholog
+    INNER JOIN marker ON ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+    INNER JOIN ortholog_evidence ON ortho_zdb_id = oev_ortho_zdb_id
+    INNER JOIN organism ON ortho_other_species_taxid = organism_taxid
+    LEFT OUTER JOIN tmp_omim ON ortho_zdb_id = tmp_omim.ortho_id
+    LEFT OUTER JOIN tmp_gene ON ortho_zdb_id = tmp_gene.ortho_id
+    LEFT OUTER JOIN tmp_hgnc ON ortho_zdb_id = tmp_hgnc.ortho_id
+    WHERE organism_common_name = 'Human'
+    ORDER BY mrkr_zdb_id;
 
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fly_orthos.txt'"
+UNLOAD TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fly_orthos.txt'
+  DELIMITER "	"
+  SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
+                  tmp_flybase.accession, tmp_gene.accession, oev_evidence_code, oev_pub_zdb_id
+    FROM ortholog
+    INNER JOIN marker ON ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+    INNER JOIN ortholog_evidence ON ortho_zdb_id = oev_ortho_zdb_id
+    INNER JOIN organism ON ortho_other_species_taxid = organism_taxid
+    LEFT OUTER JOIN tmp_flybase ON ortho_zdb_id = tmp_flybase.ortho_id
+    LEFT OUTER JOIN tmp_gene ON ortho_zdb_id = tmp_gene.ortho_id
+    WHERE organism_common_name = 'Fruit fly'
+    ORDER BY mrkr_zdb_id;
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mouse_orthos.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mouse_orthos.txt'
- DELIMITER "	"
- select distinct gene_id,zfish_abbrev,zfish_name,ortho_name,ortho_abbrev, 'MGI:'|| oef_accession_number,entrez,oev_evidence_code,oev_pub_zdb_id         from tmp_ortho_exp o, ortholog_external_reference, foreign_db_contains, foreign_db,ortholog_evidence
-         where oef_fdbcont_zdb_id  = fdbcont_zdb_id
-           and fdbcont_fdb_db_id = fdb_db_pk_id
-           and fdb_db_name = 'MGI'
-           and o.ortho_id = oef_ortho_zdb_id
-          and o.organism='Mouse'          and o.ortho_id=oev_ortho_zdb_id
-          order by 1;
+UNLOAD TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mouse_orthos.txt'
+  DELIMITER "	"
+  SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
+                  'MGI:' || tmp_mgi.accession, tmp_gene.accession, oev_evidence_code, oev_pub_zdb_id
+    FROM ortholog
+    INNER JOIN marker ON ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+    INNER JOIN ortholog_evidence ON ortho_zdb_id = oev_ortho_zdb_id
+    INNER JOIN organism ON ortho_other_species_taxid = organism_taxid
+    LEFT OUTER JOIN tmp_mgi ON ortho_zdb_id = tmp_mgi.ortho_id
+    LEFT OUTER JOIN tmp_gene ON ortho_zdb_id = tmp_gene.ortho_id
+    WHERE organism_common_name = 'Mouse'
+    ORDER BY mrkr_zdb_id;
 
--- going away shortly
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/yeast_orthos.txt'"
---UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/yeast_orthos.txt'
---  DELIMITER "	"
---select gene_id, zfish_abbrev, zfish_name, ortho_abbrev, ortho_name, sgd
--- from tmp_ortho_exp
--- where organism = 'Yeast'
--- order by 1;
-
-drop table tmp_ortho_exp;
-
+DROP TABLE tmp_omim;
+DROP TABLE tmp_gene;
+DROP TABLE tmp_hgnc;
+DROP TABLE tmp_mgi;
+DROP TABLE tmp_flybase;
+-- ==== END ORTHOLOGY QUERIES ====
 
 -- generate a file with genes and associated expression experiment
 create temp table tmp_xpat_Fish (gene_zdb_id varchar(50),
@@ -478,12 +495,12 @@ and not exists (Select 'x' from clone
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish.txt'
  DELIMITER "	"
  select distinct f.fish_zdb_id, f.fish_name,
-            phenox_start_stg_zdb_id,
+            pg_start_stg_zdb_id,
             (select stg_name
                 from stage
-                where stg_zdb_id = phenox_start_stg_zdb_id),
-            phenox_end_stg_zdb_id,
-            (select stg_name from stage where stg_zdb_id = phenox_end_stg_zdb_id),
+                where stg_zdb_id = pg_start_stg_zdb_id),
+            pg_end_stg_zdb_id,
+            (select stg_name from stage where stg_zdb_id = pg_end_stg_zdb_id),
               tps.asubterm_ont_id,
               tps.asubterm_name,
               tps.arelationship_id,
@@ -492,7 +509,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
               tps.asuperterm_name,
               tps.quality_id,
               tps.quality_name,
-              phenos_tag,
+              psg_tag,
               tps.bsubterm_ont_id,
               tps.bsubterm_name,
               tps.brelationship_id,
@@ -501,13 +518,12 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
               tps.bsuperterm_name,
               fig_source_zdb_id,
               gx.genox_exp_zdb_id
-  from phenotype_experiment, phenotype_statement ps, figure, genotype g, fish f, fish_experiment gx, tmp_phenotype_statement tps
- where ps.phenos_phenox_pk_id = phenox_pk_id
-   and phenox_genox_zdb_id = gx.genox_zdb_id
-   and f.fish_genotype_zdb_id = g.geno_zdb_id
+  from phenotype_source_generated, phenotype_observation_generated ps, figure, fish f, fish_experiment gx, tmp_phenotype_statement tps
+ where ps.psg_pg_id = pg_id
+   and pg_genox_zdb_id = gx.genox_zdb_id
    and f.fish_zdb_id = gx.genox_fish_zdb_id
-   and phenox_fig_zdb_id = fig_zdb_id
-   and ps.phenos_pk_Id = tps.phenos_pk_id
+   and pg_fig_zdb_id = fig_zdb_id
+   and ps.psg_id = tps.phenos_pk_id
  order by fish_zdb_id, fig_source_zdb_id;
 
 -- generate a file with xpatex and associated figure zdbid's
@@ -528,12 +544,10 @@ select distinct xpatex_zdb_id, xpatres_zdb_id, xpatfig_fig_zdb_id
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genofig_fish.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genofig_fish.txt'
  DELIMITER "	"
- select distinct fish_zdb_id, phenox_fig_zdb_id
- from fish_experiment, phenotype_experiment, fish
- where genox_zdb_id = phenox_genox_zdb_id
- and genox_fish_zdb_id = fish_zdb_id
- order by fish_zdb_id;
-
+ select distinct genox_fish_zdb_id, pg_fig_zdb_id
+ from fish_experiment, phenotype_source_generated
+ where genox_zdb_id = pg_genox_zdb_id
+ order by genox_fish_zdb_id;
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment_fish.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment_fish.txt'
@@ -543,10 +557,10 @@ select exp_zdb_id, cdt_group, cdt_name, expcond_comments
  where exp_zdb_id = expcond_exp_zdb_id
    and expcond_cdt_zdb_id = cdt_zdb_id
    and exists (
-	select 't'
-	 from fish_experiment, phenotype_experiment
-	 where exp_zdb_id = genox_exp_zdb_id
-	   and genox_zdb_id = phenox_genox_zdb_id
+        select 't'
+         from fish_experiment, phenotype_source_generated
+         where exp_zdb_id = genox_exp_zdb_id
+           and genox_zdb_id = pg_genox_zdb_id
 )
 union
 -- special handling for _Generic-control--insert into tmp_env
@@ -555,6 +569,92 @@ select exp_zdb_id, exp_name, exp_name,"This environment is used for non-standard
  where exp_name = "_Generic-control"
  order by 1,2
 ;
+
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt'
+  DELIMITER "	"
+select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb_id) as gene,
+                psg_mrkr_zdb_id, 
+                "expressed in",
+                "RO:0002206",
+                psg_e1a_name,
+                psg_e1a_zdb_id,
+                psg_e1b_name,
+                psg_e1b_zdb_id,
+                psg_quality_name,
+                psg_quality_zdb_id,
+                psg_tag,
+                (select stg_name from stage where stg_zdb_id = pg_start_stg_zdb_id),
+                pg_start_stg_zdb_id,
+                (select stg_name from stage where stg_zdb_id = pg_end_stg_zdb_id),
+                pg_end_stg_zdb_id,
+                xpatex_assay_name,
+                xpatex_probe_feature_zdb_id,
+                (select mrkr_abbrev from marker where mrkr_zdb_id = xpatex_atb_zdb_id),
+                xpatex_atb_zdb_id,
+                genox_fish_zdb_id,
+                genox_exp_zdb_id,
+                pg_fig_zdb_id as figure,
+                fig_source_zdb_id as publication,
+                pub.accession_no
+from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, expression_figure_stage, expression_result2, fish_experiment, figure, publication pub
+where psg_mrkr_zdb_id[1,8] in ("ZDB-GENE", "ZDB-EFG-")
+  and psg_pg_id = pg_id
+  and xpatex_genox_zdb_id = pg_genox_zdb_id
+  and xpatex_gene_zdb_id = psg_mrkr_zdb_id
+  and efs_xpatex_zdb_id = xpatex_zdb_id
+  and efs_fig_zdb_id = pg_fig_zdb_id
+  and efs_start_stg_zdb_id = pg_start_stg_zdb_id
+  and efs_end_stg_zdb_id = pg_end_stg_zdb_id
+  and xpatres_efs_id = efs_pk_id
+  and xpatres_superterm_zdb_id = psg_e1a_zdb_id
+  and genox_zdb_id = pg_genox_zdb_id
+  and fig_zdb_id = pg_fig_zdb_id
+  and pub.zdb_id = fig_source_zdb_id 
+ order by gene, publication, figure;
+
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_labeling_phenotype.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_labeling_phenotype.txt'
+  DELIMITER "	"
+select distinct (select mrkr_name from marker where mrkr_zdb_id = psg_mrkr_zdb_id) as antibody,
+                psg_mrkr_zdb_id, 
+                "eptitope",
+                "SO:0001018",
+                "expressed in",
+                "RO:0002206",
+                psg_e1a_name,
+                psg_e1a_zdb_id,
+                psg_e1b_name,
+                psg_e1b_zdb_id,
+                psg_quality_name,
+                psg_quality_zdb_id,
+                psg_tag,
+                (select stg_name from stage where stg_zdb_id = pg_start_stg_zdb_id),
+                pg_start_stg_zdb_id,
+                (select stg_name from stage where stg_zdb_id = pg_end_stg_zdb_id),
+                pg_end_stg_zdb_id,
+                xpatex_assay_name,
+                genox_fish_zdb_id,
+                genox_exp_zdb_id,
+                pg_fig_zdb_id as figure,
+                fig_source_zdb_id as publication,
+                pub.accession_no 
+from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, expression_figure_stage, expression_result2, fish_experiment, figure, publication pub
+where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
+  and psg_pg_id = pg_id
+  and xpatex_genox_zdb_id = pg_genox_zdb_id
+  and xpatex_atb_zdb_id = psg_mrkr_zdb_id
+  and efs_xpatex_zdb_id = xpatex_zdb_id
+  and efs_fig_zdb_id = pg_fig_zdb_id
+  and efs_start_stg_zdb_id = pg_start_stg_zdb_id
+  and efs_end_stg_zdb_id = pg_end_stg_zdb_id
+  and xpatres_efs_id = efs_pk_id
+  and xpatres_superterm_zdb_id = psg_e1a_zdb_id
+  and genox_zdb_id = pg_genox_zdb_id
+  and fig_zdb_id = pg_fig_zdb_id
+  and pub.zdb_id = fig_source_zdb_id
+ order by antibody, publication, figure;
+
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fishPub.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fishPub.txt'
@@ -990,9 +1090,10 @@ select distinct  geno_zdb_id, geno_display_name, geno_handle, mrkr_abbrev, mrkr_
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_backgrounds.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_backgrounds.txt'
  DELIMITER "	"
-select distinct geno_zdb_id, geno_display_name, genoback_background_zdb_id
- from genotype, genotype_background
- where geno_Zdb_id = genoback_geno_Zdb_id
+select distinct a.geno_zdb_id, a.geno_display_name, genoback_background_zdb_id,b.geno_display_name
+ from genotype a, genotype_background, genotype b
+ where a.geno_Zdb_id = genoback_geno_Zdb_id
+ and b.geno_zdb_id=genoback_background_zdb_id
 ;
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtypes_fish.tx'"
@@ -1419,6 +1520,19 @@ and jtype='Journal'
 and pub_jrnl_zdb_id=jrnl_zdb_id
 order by feature_abbrev;
 
+-- case 13856
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/huAlleles.txt'"
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/huAlleles.txt'
+DELIMITER "	"
+select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||jrnl_name ||' '|| ' ' || pub_volume ||' '|| pub_pages, feature_abbrev
+from feature, record_attribution, publication, journal
+where recattrib_data_zdb_id=feature_zdb_id
+and feature_abbrev like 'hu%'
+and zdb_id=recattrib_source_zdb_id
+and jtype='Journal'
+and pub_jrnl_zdb_id=jrnl_zdb_id
+order by feature_abbrev;
+
 {
 case 4402  Weekly download file available via the web.
 Fields: OMIM, ZFIN-GENE-ID, ZFIN-GENO-ID, ZIRC-ALT-ID
@@ -1637,8 +1751,9 @@ select zdb_id, accession_no, authors,title,jrnl_name,year(pub_date),pub_volume,p
 ;
 
 create temp table tmp_features (feature_id varchar(50), term_o_id varchar(50), f_abbrev varchar(100),
-       	    	  	       f_name varchar(100),ftypedisp varchar(30), mutagen varchar(50),
-			       mutagee varchar(50), construct_id varchar(50), construct_name varchar(50), construct_so_id varchar(50))
+                               f_name varchar(100),ftypedisp varchar(30), mutagen varchar(50),
+                               mutagee varchar(50), construct_id varchar(50), construct_name varchar(50), construct_so_id varchar(50), 
+                               created_by_zdb_id varchar(50), created_by_name varchar(255))
 with no log;
 
 -- a list of all features ordered by abbreviation (case insensitive)
@@ -1649,6 +1764,20 @@ where feature_type =ftrtype_name
  and szm_object_type = feature_type
  and feature_zdb_id = featassay_feature_zdb_id
 and feature_Type not in ('TRANSGENIC_INSERTION')
+and featassay_mutagen not in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
+order by lower(feature_abbrev);
+
+insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, created_by_zdb_id, created_by_name)
+select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee,fmrel_mrkr_zdb_id,mrkr_name
+from feature, feature_type, feature_assay, so_zfin_mapping, feature_marker_relationship, marker
+where feature_type =ftrtype_name
+ and szm_object_type = feature_type
+ and feature_zdb_id = featassay_feature_zdb_id
+and feature_Type not in ('TRANSGENIC_INSERTION')
+and featassay_mutagen in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
+and fmrel_type = "created by"
+and feature_zdb_id = fmrel_ftr_zdb_id
+and mrkr_zdb_id = fmrel_mrkr_zdb_id
 order by lower(feature_abbrev);
 
 insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name)
@@ -1662,6 +1791,24 @@ where feature_type =ftrtype_name
  and mrkr_type in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
 and feature_Type in ('TRANSGENIC_INSERTION')
 and fmrel_type != 'is allele of'
+and featassay_mutagen not in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
+order by lower(feature_abbrev);
+
+insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name, created_by_zdb_id, created_by_name)
+select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee, construct.mrkr_zdb_id, construct.mrkr_name, createdby.fmrel_mrkr_zdb_id, str.mrkr_name
+from feature, feature_type, feature_assay, so_zfin_mapping, feature_marker_relationship cst, marker construct, feature_marker_relationship createdby, marker str
+where feature_type =ftrtype_name
+ and szm_object_type = feature_type
+ and feature_zdb_id = featassay_feature_zdb_id
+ and feature_zdb_id = cst.fmrel_ftr_zdb_id
+ and cst.fmrel_mrkr_zdb_id = construct.mrkr_zdb_id
+ and construct.mrkr_type in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
+and feature_Type in ('TRANSGENIC_INSERTION')
+and cst.fmrel_type != 'is allele of'
+and featassay_mutagen in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
+and createdby.fmrel_type = "created by"
+and feature_zdb_id = createdby.fmrel_ftr_zdb_id
+and str.mrkr_zdb_id = createdby.fmrel_mrkr_zdb_id
 order by lower(feature_abbrev);
 
 insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name)
@@ -1675,6 +1822,24 @@ where feature_type =ftrtype_name
  and mrkr_type  in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
 and feature_Type in ('TRANSGENIC_INSERTION')
 and fmrel_type = 'is allele of'
+and featassay_mutagen not in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
+order by lower(feature_abbrev);
+
+insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name, created_by_zdb_id, created_by_name)
+select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee, construct.mrkr_zdb_id, construct.mrkr_name, createdby.fmrel_mrkr_zdb_id, str.mrkr_name 
+from feature, feature_type, feature_assay, so_zfin_mapping, feature_marker_relationship cst, marker construct, feature_marker_relationship createdby, marker str
+where feature_type =ftrtype_name
+ and szm_object_type = feature_type
+ and feature_zdb_id = featassay_feature_zdb_id
+ and feature_zdb_id = cst.fmrel_ftr_zdb_id
+ and cst.fmrel_mrkr_zdb_id = construct.mrkr_zdb_id
+ and construct.mrkr_type  in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
+and feature_Type in ('TRANSGENIC_INSERTION')
+and cst.fmrel_type = 'is allele of'
+and featassay_mutagen in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
+and createdby.fmrel_type = "created by"
+and feature_zdb_id = createdby.fmrel_ftr_zdb_id
+and str.mrkr_zdb_id = createdby.fmrel_mrkr_zdb_id
 order by lower(feature_abbrev);
 
 update tmp_features
@@ -1741,23 +1906,141 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 select * from tmp_identifiers;
 
 
+CREATE TEMP TABLE tmp_mutation_details(
+  tmp_feat_zdb_id VARCHAR(25),
+  dna_change_so_id VARCHAR(25),
+  dna_ref_nucleotide VARCHAR(5),
+  dna_mut_nucleotide VARCHAR(5),
+  dna_bp_added INT,
+  dna_bp_removed INT,
+  dna_position_start INT,
+  dna_position_end INT,
+  dna_reference_seq VARCHAR(50),
+  dna_localization_name VARCHAR(50),
+  dna_localization_so_id VARCHAR(25),
+  dna_localization_exon INT,
+  dna_localization_intron INT,
+  transcript_consequence_name VARCHAR(50),
+  transcript_consequence_so_id VARCHAR(25),
+  transcript_consequence_exon INT,
+  transcript_consequence_intron INT,
+  protein_consequence_name VARCHAR(50),
+  protein_consequence_so_id VARCHAR(25),
+  protein_ref_aa VARCHAR(5),
+  protein_mut_aa VARCHAR(5),
+  protein_aa_added INT,
+  protein_aa_removed INT,
+  protein_position_start INT,
+  protein_position_end INT,
+  protein_reference_seq VARCHAR(50)
+);
+
+CREATE TEMP TABLE tmp_term_names_and_ids(
+  zdb_id VARCHAR(50),
+  ont_id VARCHAR(50),
+  display VARCHAR(50)
+);
+
+INSERT INTO tmp_term_names_and_ids
+  SELECT mdcv_term_zdb_id, term_ont_id, mdcv_term_display_name
+  FROM mutation_detail_controlled_vocabulary
+  INNER JOIN term ON term_zdb_id = mdcv_term_zdb_id;
+
+INSERT INTO tmp_mutation_details
+  SELECT
+    feature_zdb_id,
+    dna_term.ont_id,
+    SUBSTR(dna_term.display, 0, 1),
+    SUBSTR(dna_term.display, 3, 1),
+    fdmd_number_additional_dna_base_pairs,
+    fdmd_number_removed_dna_base_pairs,
+    fdmd_dna_position_start,
+    fdmd_dna_position_end,
+    dna_db.fdb_db_display_name || ':' || fdmd_dna_sequence_of_reference_accession_number,
+    localization_term.display,
+    localization_term.ont_id,
+    fdmd_exon_number,
+    fdmd_intron_number,
+    transcript_term.display,
+    transcript_term.ont_id,
+    ftmd_exon_number,
+    ftmd_introl_number,
+    protein_term.display,
+    protein_term.ont_id,
+    wt_aa.display,
+    mut_aa.display,
+    fpmd_number_amino_acids_added,
+    fpmd_number_amino_acids_removed,
+    fpmd_protein_position_start,
+    fpmd_protein_position_end,
+    prot_db.fdb_db_display_name || ':' || fpmd_sequence_of_reference_accession_number
+  FROM feature
+  LEFT OUTER JOIN feature_dna_mutation_detail ON feature_zdb_id = fdmd_feature_zdb_id
+  LEFT OUTER JOIN tmp_term_names_and_ids dna_term ON dna_term.zdb_id = fdmd_dna_mutation_term_zdb_id
+  LEFT OUTER JOIN foreign_db_contains dna_dbc ON fdmd_fdbcont_zdb_id = dna_dbc.fdbcont_zdb_id
+  LEFT OUTER JOIN foreign_db dna_db ON dna_db.fdb_db_pk_id = dna_dbc.fdbcont_fdb_db_id
+  LEFT OUTER JOIN tmp_term_names_and_ids localization_term ON localization_term.zdb_id = fdmd_gene_localization_term_zdb_id
+  LEFT OUTER JOIN feature_transcript_mutation_detail ON feature_zdb_id = ftmd_feature_zdb_id
+  LEFT OUTER JOIN tmp_term_names_and_ids transcript_term ON transcript_term.zdb_id = ftmd_transcript_consequence_term_zdb_id
+  LEFT OUTER JOIN feature_protein_mutation_detail ON feature_zdb_id = fpmd_feature_zdb_id
+  LEFT OUTER JOIN tmp_term_names_and_ids protein_term ON protein_term.zdb_id = fpmd_protein_consequence_term_zdb_id
+  LEFT OUTER JOIN tmp_term_names_and_ids wt_aa ON wt_aa.zdb_id = fpmd_wt_protein_term_zdb_id
+  LEFT OUTER JOIN tmp_term_names_and_ids mut_aa ON mut_aa.zdb_id = fpmd_mutant_or_stop_protein_term_zdb_id
+  LEFT OUTER JOIN foreign_db_contains prot_dbc ON fpmd_fdbcont_zdb_id = prot_dbc.fdbcont_zdb_id
+  LEFT OUTER JOIN foreign_db prot_db ON prot_db.fdb_db_pk_id = prot_dbc.fdbcont_fdb_db_id;
+
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features-affected-genes.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features-affected-genes.txt'
- DELIMITER "	"
-select feature_zdb_id, a.szm_term_ont_id, feature_name, mrkr_abbrev, mrkr_zdb_id, b.szm_term_ont_id, fmrel_type from feature,
-feature_marker_relationship,marker, so_zfin_mapping a, so_zfin_mapping b
-where fmrel_ftr_zdb_id = feature_zdb_id
-  and mrkr_zdb_id = fmrel_mrkr_zdb_id
-  and a.szm_object_type = feature_type
-  and b.szm_objecT_type = mrkr_type
-  and mrkr_type like 'GENE%' and
-  (
-    (feature_type in ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
+  DELIMITER "	"
+  SELECT
+    feature_zdb_id,
+    a.szm_term_ont_id,
+    feature_name,
+    mrkr_abbrev,
+    mrkr_zdb_id,
+    b.szm_term_ont_id,
+    fmrel_type,
+    feature_type,
+    dna_change_so_id,
+    dna_ref_nucleotide,
+    dna_mut_nucleotide,
+    dna_bp_added,
+    dna_bp_removed,
+    dna_position_start,
+    dna_position_end,
+    dna_reference_seq,
+    dna_localization_name,
+    dna_localization_so_id,
+    dna_localization_exon,
+    dna_localization_intron,
+    transcript_consequence_name,
+    transcript_consequence_so_id,
+    transcript_consequence_exon,
+    transcript_consequence_intron,
+    protein_consequence_name,
+    protein_consequence_so_id,
+    protein_ref_aa,
+    protein_mut_aa,
+    protein_aa_added,
+    protein_aa_removed,
+    protein_position_start,
+    protein_position_end,
+    protein_reference_seq
+  FROM feature, feature_marker_relationship,marker, so_zfin_mapping a, so_zfin_mapping b, tmp_mutation_details
+  WHERE fmrel_ftr_zdb_id = feature_zdb_id
+  AND mrkr_zdb_id = fmrel_mrkr_zdb_id
+  AND a.szm_object_type = feature_type
+  AND b.szm_objecT_type = mrkr_type
+  AND mrkr_type LIKE 'GENE%' AND (
+    (feature_type IN ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
                       'UNSPECIFIED','TRANSGENIC_INSERTION', 'INDEL') AND fmrel_type ='is allele of') OR
-    (feature_type in ('TRANSLOC', 'INVERSION') AND fmrel_type in ('is allele of', 'markers moved')) OR
-    (feature_type in ('DEFICIENCY') AND fmrel_type in ('is allele of','markers missing'))
-  )
-  order by lower( feature_name);
+    (feature_type IN ('TRANSLOC', 'INVERSION') AND fmrel_type IN ('is allele of', 'markers moved')) OR
+    (feature_type IN ('DEFICIENCY') AND fmrel_type IN ('is allele of','markers missing')))
+  AND tmp_feat_zdb_id = feature_zdb_id
+  ORDER BY LOWER(feature_name);
+
+DROP TABLE tmp_term_names_and_ids;
+DROP TABLE tmp_mutation_details;
 
 ! echo "generating clean phenotype download" ;
 
@@ -1765,52 +2048,53 @@ where fmrel_ftr_zdb_id = feature_zdb_id
 ! echo "Create tmp_dumpPheno temp table"
 
 
- select  phenos_pk_id as phenos_id,
- 	 phenox_pk_id as phenox_id,
-	 mfs_mrkr_zdb_id as gene_Zdb_id,
- 	 "                                                                     " as fish_name,
- 	 	 phenox_fig_zdb_id as fig_id,
-		 fig_source_zdb_id as pub_id,
- 		 genox_zdb_id as id,
-		 genox_fish_zdb_id as fish_id,
-		 "" as mo_id,
-		 phenox_start_stg_zdb_id as stage_start_id,
-		 phenox_end_stg_Zdb_id as stage_end_id,
-		 genox_Zdb_id as genox_id
+ select  psg_id as phenos_id,
+         pg_id as phenox_id,
+         mfs_mrkr_zdb_id as gene_Zdb_id,
+         "                                                                     " as fish_name,
+                 pg_fig_zdb_id as fig_id,
+                 fig_source_zdb_id as pub_id,
+                 genox_zdb_id as id,
+                 genox_fish_zdb_id as fish_id,
+                 "" as mo_id,
+                 pg_start_stg_zdb_id as stage_start_id,
+                 pg_end_stg_zdb_id as stage_end_id,
+                 genox_Zdb_id as genox_id
    from fish_Experiment,
-	phenotype_experiment,
-	phenotype_statement,
-	mutant_fasT_search, figure
-    where phenox_genox_zdb_id = genox_zdb_id
-    and phenox_pk_id = phenos_phenox_pk_id
+        phenotype_source_generated,
+        phenotype_observation_generated,
+        mutant_fasT_search, figure
+    where pg_genox_zdb_id = genox_zdb_id
+    and psg_pg_id = pg_id
     and mfs_genox_zdb_id = genox_zdb_id
-    and fig_zdb_id = phenox_fig_zdb_id
+    and fig_zdb_id = pg_fig_zdb_id
     and mfs_mrkr_zdb_id like 'ZDB-GENE%'
     and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = genox_fish_Zdb_id)
 union
- select  phenos_pk_id,
- 	 phenox_pk_id as phenox_id,
-	 mfs_mrkr_zdb_id as gene_Zdb_id,
- 	 "                                                                     " as fish_name,
-	 phenox_fig_zdb_id,
-	 fig_source_zdb_id,
- 		 genox_zdb_id,
-		 genox_fish_zdb_id,
-		 fishstr_str_zdb_id,
-		 phenox_start_stg_zdb_id,
-		 phenox_end_stg_Zdb_id,
-		 genox_zdb_id
+ select  psg_id,
+         pg_id as phenox_id,
+         mfs_mrkr_zdb_id as gene_Zdb_id,
+         "                                                                     " as fish_name,
+         pg_fig_zdb_id as fig_id,
+         fig_source_zdb_id,
+                 genox_zdb_id,
+                 genox_fish_zdb_id,
+                 fishstr_str_zdb_id,
+                 pg_start_stg_zdb_id as stage_start_id,
+                 pg_end_stg_zdb_id as stage_end_id,
+                 genox_zdb_id
    from fish_Experiment,
-	phenotype_experiment,
-	phenotype_statement, 
-	fish_str, 
-	mutant_fast_Search, figure
-    where phenox_genox_zdb_id = genox_zdb_id
-    and phenox_fig_zdb_id = fig_zdb_id
-    and phenox_pk_id = phenos_phenox_pk_id
+        phenotype_source_generated,
+        phenotype_observation_generated, 
+        fish_str, 
+        mutant_fast_Search, figure
+    where pg_genox_zdb_id = genox_zdb_id
+    and pg_fig_zdb_id = fig_zdb_id
+    and psg_pg_id = pg_id
     and genox_fish_zdb_id = fishstr_fish_Zdb_id
     and mfs_genox_zdb_id = genox_zdb_id
     and mfs_mrkr_zdb_id like 'ZDB-GENE%'
+
 
 into temp tmp_dumpCleanPheno;
 
@@ -1914,6 +2198,51 @@ WHERE  genox_zdb_id = damo_genox_zdb_id
 
 !echo "unload feature/STR relations"
 
+  select feature_zdb_id as zdb_id, feature_name as alias2
+   from feature
+  union 
+ select mrkr_zdb_id as zdb_id, mrkr_name as alias2
+   from marker
+   where mrkr_type in ('MRPHLNO','ATB')
+ union 
+ select mrkr_zdb_id as zdb_id, mrkr_abbrev as alias2
+   from marker
+where mrkr_type in ('MRPHLNO','ATB')
+union
+  select dalias_Data_zdb_id, dalias_alias as alias2
+  	 from data_alias
+	 where (dalias_data_zdb_id like 'ZDB-ALT%'
+	       	 or dalias_data_zdb_id like 'ZDB-MRPHLNO-%'
+		 or dalias_data_zdb_id like 'ZDB-ATB-%')
+into temp tmp_feature_alias;
+
+drop table tmp_identifiers;
+
+create temp table tmp_identifiers (id varchar(50), id2 lvarchar(1500))
+with no log;
+
+insert into tmp_identifiers (id)
+ select distinct zdb_id from tmp_feature_alias;
+
+create index tmp4_index on tmp_feature_alias(zdb_id)
+using btree in idxdbs3;
+
+create index tmpidentifiers_index on tmp_identifiers (id)
+using btree in idxdbs2;
+
+update tmp_identifiers
+  set id2 = replace(replace(replace(substr(multiset (select distinct item alias2 from tmp_feature_alias
+							  where tmp_feature_alias.zdb_id = tmp_identifiers.id
+
+							 )::lvarchar(4000),11),""),"'}",""),"'","");
+
+
+--commenting out on purpose, we are not quite ready to release this.
+--!echo "unload RRID info"
+--unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/rrid.txt' DELIMITER "	"
+--  select id, id2
+--    from tmp_identifiers;
+	 
 
 
 commit work;

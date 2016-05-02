@@ -20,7 +20,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/gafLoad
 
 SUBDIRS =
 
-STATICS = gaf-load.xml report.properties
+STATICS = gaf-load.xml report.properties cleanUpGafAttribution.groovy
 
 
 # ---------------  Production Rules  ------------------------------------

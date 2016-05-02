@@ -50,6 +50,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
 
     /**
      * Use if you cannot instantiate class through the non-default constructor, e.g. Autowire
+     *
      * @param jobName
      * @param propertyFilePath
      * @param dataDirectoryString
@@ -74,6 +75,10 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
 
     }
 
+    public void initDatabase(boolean autocommit) {
+        new HibernateSessionCreator(false, autocommit);
+    }
+
     protected void setReportProperties() {
         reportProperties = new Properties();
         try {
@@ -84,8 +89,9 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     }
 
     public static String getPropertyFileFromWebroot(String webrootDirectory) {
-        if(webrootDirectory == null)
+        if (webrootDirectory == null) {
             return null;
+        }
 
         Path path = Paths.get(webrootDirectory, "WEB-INF", "zfin.properties");
         return path.toString();
@@ -140,8 +146,9 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
         }
         report.writeFiles(reportConfiguration.getReportDirectory(), reportConfiguration.getReportName());
 
-        if (CollectionUtils.isEmpty(errorMessages))
+        if (CollectionUtils.isEmpty(errorMessages)) {
             return;
+        }
 
         int index = 1;
         for (String error : errorMessages) {
@@ -165,8 +172,9 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
                 ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, dataDirectory, jobName, true);
                 createErrorReport(errorMessages, result, reportConfiguration);
             }
-        } else
+        } else {
             createErrorReport(errorMessages, null);
+        }
     }
 
     // Override this in your sub class...
@@ -196,8 +204,9 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
         service.setLoggerLevelInfo();
         File logFile = FileUtils.getFile(dataDirectory, jobName, jobName + ".log");
         if (logFile.exists()) {
-            if (!logFile.delete())
+            if (!logFile.delete()) {
                 LOG.error("Could not delete lgo file " + logFile.getAbsolutePath());
+            }
         }
         service.setLoggerFile(logFile);
     }
@@ -213,8 +222,9 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
             LOG.error(e);
         }
 
-        if (!reportDirectory.mkdir())
+        if (!reportDirectory.mkdir()) {
             LOG.error("could not create Directory: " + reportDirectory.getAbsolutePath());
+        }
     }
 
 

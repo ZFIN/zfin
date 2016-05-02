@@ -1,5 +1,6 @@
 package org.zfin.infrastructure;
 
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -8,10 +9,19 @@ import java.util.Date;
  * concurrent execution of the same process or processes
  * that should not be run concurrently.
  */
+@Entity
+@Table(name = "zdb_flag")
 public class ZdbFlag {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "zflag_name")
+    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.infrastructure.ZdbFlag$Type")})
     private Type type;
+    @Column(name = "zflag_is_on")
     private boolean systemUpdateDisabled;
+    @Column(name = "zflag_last_modified")
     private Date dateLastModified;
 
     public Type getType() {
@@ -38,7 +48,7 @@ public class ZdbFlag {
         this.dateLastModified = dateLastModified;
     }
 
-    public enum Type{
+    public enum Type {
         DISABLE_UPDATES("disable updates"),
         ALIAS_TOKEN("regen_alias_tokens"),
         ANATOMY("regen_anatomy"),

@@ -146,9 +146,6 @@ public class ShowFacetLinksTag extends TagSupport {
             facetHtml.append("   >");
             facetHtml.append("<script>jQuery('#" + facetField.getName() + "-facet-group-label-container').click(function() {" +
                     " jQuery('#" + facetField.getName() + "-facet-value-outer-box').slideToggle(); " +
-//                            " jQuery('." + facetField.getName() + "-toggle').toggle(); " +
-//                            " jQuery('#" + facetField.getName() + "-facet-filter-form-input').focus();" +
-                    //" toggleLocalStorage('" + facetField.getName() + "');"   +
                     " });  </script>");
             facetHtml.append(getFacetFilterForm(facetField));
 
@@ -191,13 +188,11 @@ public class ShowFacetLinksTag extends TagSupport {
                 facetHtml.append("<a id=\"" + facetField.getName()
                         + "\" class=\"facet-expand-more-link " + facetField.getName() + "-toggle \" href=\"#" + facetField.getName() +  "\" onClick=\"jQuery('."
                         + facetField.getName() + "-toggle').toggle();" +
-                        //" localStorage.setItem('" + facetField.getName() + "','open');"   +
                         "\">Show More</a> ");
                 facetHtml.append("<a id=\"" + facetField.getName()
                         + "\" class=\"facet-expand-less-link " + facetField.getName() + "-toggle \" href=\"#" + facetField.getName() +  "\" onClick=\"jQuery('."
                         + facetField.getName() + "-toggle').toggle() ;"
                         + " jQuery('html,body').animate({scrollTop:jQuery('#" + facetField.getName() + "-facet-label').offset().top}, 50);  "
-                        //+ " localStorage.setItem('" + facetField.getName() + "', 'closed');"
                         + "\">Show Less</a> ");
 
                 facetHtml.append("</div></li>");
@@ -220,11 +215,6 @@ public class ShowFacetLinksTag extends TagSupport {
 
             //set css per category
             String categoryCssClasses = "";
-    /*                        if (StringUtils.equals(facetField.getName(),"category"))
-                                categoryCssClasses = " " + count.getName() + "-label label ";*/
-
-            //with respect to 'Show More' - only count facet values that haven't been selected
-
             facetHtml.append("<span style=\"min-height:10px\" class=\"col-md-9 selectable-facet-value\">");
             facetHtml.append("<a title=\"require in results\" style=\"min-height:10px\" class=\" ");
             facetHtml.append(categoryCssClasses);
@@ -234,27 +224,7 @@ public class ShowFacetLinksTag extends TagSupport {
             facetHtml.append("<img class=\"checkbox-icon\" src=\"/images/icon-check-empty.png\"/>");
             facetHtml.append(count.getName());
             facetHtml.append("</a>");
-
-
             facetHtml.append("</span>");
-
-/*                            facetHtml.append("<span style=\"min-height:10px\" class=\"col-md-3 facet-count\">");
-
-
-                            facetHtml.append("<a class=\"not-facet-link\" title=\"exclude ");
-                            facetHtml.append(count.getName());
-                            facetHtml.append(" from results\" href=\"");
-                            facetHtml.append(SolrService.getNotFacetUrl(facetField, count, baseUrl));
-                            facetHtml.append("\">not</a> "); // null character
-
-                            facetHtml.append("(");
-                            facetHtml.append(count.getCount());
-                            facetHtml.append(")");
-
-
-                            facetHtml.append("</span>\n");
-
-*/
 
             String shortenedName = SolrService.shortenFacetValue(count.getName());
 

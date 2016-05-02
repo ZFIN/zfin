@@ -15,7 +15,7 @@
             </c:if>
         </td>
     </tr>
-    <authz:authorize ifAnyGranted="root">
+    <authz:authorize access="hasRole('root')">
         <tr>
             <td valign="top">
                 Stack Trace:

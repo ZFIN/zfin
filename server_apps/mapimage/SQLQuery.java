@@ -49,7 +49,7 @@ public class SQLQuery
 		
 		String C = "<!--|ZFIN_COOKIE|-->";
 		C = cook(C);
-		String newUrl = "jdbc:informix-sqli://<!--|SQLHOSTS_HOST|-->:<!--|INFORMIX_PORT|-->/<!--|DB_NAME|-->:INFORMIXSERVER=<!--|INFORMIX_SERVER|-->;user=zfinner;pa"+CC + "r" + "d="+ C;
+		String newUrl = "jdbc:informix-sqli://<!--|SQLHOSTS_HOST|-->:<!--|INFORMIX_PORT|-->/<!--|DB_NAME|-->:INFORMIXSERVER=<!--|INFORMIX_SERVER|-->";
 
 		Connection conn = null;
 		

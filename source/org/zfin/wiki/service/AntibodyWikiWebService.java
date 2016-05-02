@@ -177,9 +177,6 @@ public class AntibodyWikiWebService extends WikiWebService {
 
         AntibodyService antibodyService = new AntibodyService(antibody);
 
-        // name
-        // should leave this unchanged to force a constraint
-//        content = content.replace("{page-info:title}",antibody.getName()) ;
         StringBuilder antibodyNameString = new StringBuilder();
         antibodyNameString.append(getHyperlink(antibody.getName(), "http://zfin.org/" + antibody.getZdbID()));
         antibodyNameString.append(" from the ");
@@ -246,17 +243,22 @@ public class AntibodyWikiWebService extends WikiWebService {
             }
         });
         anatomyLabelSet.addAll(anatomyLabelList);
-        List<String> antibodyLinks = new ArrayList<>(anatomyLabelSet.size());
         for (AnatomyLabel anatomyLabel : anatomyLabelSet) {
             if (anatomyLabel.getSuperterm() != null && TermPresentation.getWikiLink(anatomyLabel.getSuperterm()) != null) {
-                antibodyLinks.add(TermPresentation.getWikiLink(anatomyLabel.getSuperterm()));
+
+                anatomyStringBuilder.append(TermPresentation.getWikiLink(anatomyLabel.getSuperterm()));
+                if (anatomyLabel.getSubterm() != null) {
+                    anatomyStringBuilder.append(" ");
+                    anatomyStringBuilder.append(TermPresentation.getWikiLink(anatomyLabel.getSubterm()));
+                }
+                anatomyStringBuilder.append("; ");
             }
         }
-        for (String antibodyLink : antibodyLinks) {
-            anatomyStringBuilder.append(antibodyLink);
-            anatomyStringBuilder.append(" &nbsp;");
+        String anatomyLink = "";
+        if (anatomyStringBuilder.length() > 1) {
+            anatomyLink = anatomyStringBuilder.substring(0, anatomyStringBuilder.length() - 2);
         }
-        content = content.replace("{text-data:AnatomicalStructuresRecognized}{text-data}", anatomyStringBuilder.toString());
+        content = content.replace("{text-data:AnatomicalStructuresRecognized}{text-data}", anatomyLink);
 
         // target molecules: we don't do these, only user input
 //        content = content.replace("{text-data:RecognizedTargetMolecules}{text-data}",antibody.getHostSpecies()) ;
@@ -304,10 +306,8 @@ public class AntibodyWikiWebService extends WikiWebService {
                 publicCommentsStringBuilder.append(" <li> ");
                 publicCommentsStringBuilder.append(getEncodedString(externalNote.getNote()));
                 publicCommentsStringBuilder.append(" (");
-                if (externalNote.getSinglePubAttribution() != null) {
-                    String wikiLink = PublicationPresentation.getWikiLink(externalNote.getSinglePubAttribution().getPublication());
-                    publicCommentsStringBuilder.append(wikiLink);
-                }
+                String wikiLink = PublicationPresentation.getWikiLink(externalNote.getPublication());
+                publicCommentsStringBuilder.append(wikiLink);
                 publicCommentsStringBuilder.append(")");
                 publicCommentsStringBuilder.append(" </li> ");
                 publicCommentsStringBuilder.append(FileUtil.LINE_SEPARATOR);

@@ -90,7 +90,7 @@ Message: $MI_ERRORMSG
          
          	<?MIVAR NAME=$update_sql>$1<?/MIVAR>
          	<?MIVAR NAME=$update_sql DELIMIT='"' REPLACE="'">$update_sql<?/MIVAR>
-         	<?MISQL SQL="$update_sql"> <?/MISQL>
+         	<?MISQL SQL="$update_sql" COND="$(=,$(POSITION,$update_sql,xpatres_zdb_id),0)"> <?/MISQL>
          	<?MISQL COND="$(EC,$(SUBSTR,$update_sql,1,6),delete)"
          	        SQL="insert into updates (
 				submitter_id ,
@@ -202,15 +202,7 @@ Message: $MI_ERRORMSG
 			    	CURRENT,
 			    	'$ZDB_name');">
 		<?/MISQL>        	
-         <?/MISQL> 
-         
-
-         <?MICOMMENT> =====  Clean up the merge_markers_sql table ========              
-         <?MISQL SQL="delete from merge_markers_sql 
-                      where mms_mrkr_1_zdb_id = '$OID'
-                        and mms_mrkr_2_zdb_id = '$merge_oid';">
-         	
-         <?/MISQL>  <?/MICOMMENT>  
+         <?/MISQL>  
   
          <?MICOMMENT> =====  clean up duplicate GO evidence  ========
          <?MISQL SQL="select mrkrgoev_zdb_id from marker_go_term_evidence m1
@@ -426,6 +418,9 @@ Message: $MI_ERRORMSG
   <?MIVAR COND="$(OR,$(NXST,$OID),$(NXST,$rtype))">
     <H1 align=center>ERROR: Insufficient input; no action taken </H1>
   <?/MIVAR>
+  
+  <?MICOMMENT> =====  Clean up the merge_markers_sql table ========<?/MICOMMENT>               
+  <?MISQL SQL="delete from merge_markers_sql;"><?/MISQL>  
 
 <?/MIBLOCK> <?MICOMMENT> =======  end Authorization ======== <?/MICOMMENT>
 

@@ -5,7 +5,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -13,6 +12,9 @@ import org.zfin.AbstractSmokeTest;
 
 import java.io.IOException;
 import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 @RunWith(Parameterized.class)
 public class AntibodySmokeTest extends AbstractSmokeTest {
@@ -97,47 +99,47 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     public void testSearchZn5() throws IOException {
         String uri = "/action/antibody/antibody-do-search?antibodyCriteria.antibodyNameFilterType=contains&antibodyCriteria.name=zn5&maxDisplayRecords=25";
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + uri);
-        assertEquals("Antibody detail page", "ZFIN Antibody: zn-5", page.getTitleText());
+        assertThat("Should have page title for detail page",
+                page.getTitleText(), is("ZFIN Antibody: zn-5"));
+
         // Fashena et al. publication: check that this reference is used
         HtmlAnchor hyperlink = (HtmlAnchor) page.getElementById("ZDB-PUB-990507-16");
-        assertTrue(StringUtils.contains(hyperlink.getHrefAttribute(), "ZDB-PUB-990507-16"));
+        assertThat("Link to Fashena et al. should be present",
+                hyperlink.getHrefAttribute(), containsString("ZDB-PUB-990507-16"));
 
         // alcama antigen gene: check this antigen gene is present
         HtmlAnchor geneHyperlink = (HtmlAnchor) page.getElementById("ZDB-GENE-990415-30");
         HtmlPage genePage = geneHyperlink.click();
         // cannot check the title of the page as it is not in the <head> segment!
         //assertEquals("ZFIN: Gene: alcama", genePage.getTitleText());
-        assertNotNull(genePage);
+        assertThat("Link to antigen gene page should load", genePage, notNullValue());
 
         // check figure view:  Fig. 7 from Chen et al., 2008
         hyperlink = (HtmlAnchor) page.getElementById("ZDB-FIG-140206-11");
         HtmlPage figurePage = hyperlink.click();
-        assertNotNull(figurePage);
-
+        assertThat("Link to figure page should load", figurePage, notNullValue());
 
         // Source: check ZIRC is one of them
-        HtmlAnchor sourceHyperlink = page.getAnchorByHref("http://zebrafish.org/");
-        assertEquals("Zebrafish International Resource Center (ZIRC)", sourceHyperlink.getTextContent());
-
-        // check source link to lab detail
+        HtmlAnchor sourceHyperlink = (HtmlAnchor) page.getElementById("ZDB-LAB-991005-53");
         HtmlPage labPage = sourceHyperlink.click();
-        assertEquals("Zebrafish International Resource Center", labPage.getTitleText());
+        assertThat("ZIRC link should load correctly",
+                labPage.getTitleText(), is("Zebrafish International Resource Center"));
 
         // check alias
         HtmlSpan span = (HtmlSpan) page.getElementById("previous-name-0");
-        assertTrue(span.getTextContent().startsWith("zn5 ("));
+        assertThat("Synonym should be present", span.getTextContent(), startsWith("zn5 ("));
 
         // check host organism
-        span = (HtmlSpan) page.getElementById("host organism");
-        assertEquals("Mouse", span.getTextContent());
+        span = (HtmlSpan) page.getElementById("host-organism");
+        assertThat("Host organism should be listed", span.getTextContent(), is("Mouse"));
 
         // check immunogen organism
-        span = (HtmlSpan) page.getElementById("immunogen organism");
-        assertEquals("Zebrafish", span.getTextContent());
+        span = (HtmlSpan) page.getElementById("immunogen-organism");
+        assertThat("Immunogen organism should be listed", span.getTextContent(), is("Zebrafish"));
 
         // check clonal type
-        span = (HtmlSpan) page.getElementById("clonal type");
-        assertEquals("monoclonal", span.getTextContent());
+        span = (HtmlSpan) page.getElementById("clonal-type");
+        assertThat("Clonal type should be listed", span.getTextContent(), is("monoclonal"));
     }
 
     /**
@@ -156,7 +158,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testAntibodyFigureSummaryPageSupertermAllFiguresNoStageInfo() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053");
+        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10");
         assertEquals("Antibody figure summary page is not coming up", "ZFIN Antibody figure summary: Ab1-eng", page.getTitleText());
         // check that Pub Zhou et al is present.
         assertNotNull(page.getElementById("ZDB-PUB-090407-2"));
