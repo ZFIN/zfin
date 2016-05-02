@@ -239,7 +239,7 @@ public class MutationDetailsConversionService {
      * @param dnaChange the dna change
      * @return a string which describes the location of either an exon or intron
      */
-    private String exonOrIntronLocation(FeatureDnaMutationDetail dnaChange) {
+    public String exonOrIntronLocation(FeatureDnaMutationDetail dnaChange) {
         return exonOrIntronLocation(dnaChange, "");
     }
 
@@ -259,14 +259,14 @@ public class MutationDetailsConversionService {
         return exonOrIntronLocation(dnaChange.getExonNumber(), dnaChange.getIntronNumber(), preposition);
     }
 
-    private String exonOrIntronLocation(FeatureTranscriptMutationDetail transcriptConsequence, String preposition) {
+    public static String exonOrIntronLocation(FeatureTranscriptMutationDetail transcriptConsequence, String preposition) {
         if (transcriptConsequence == null) {
             return "";
         }
         return exonOrIntronLocation(transcriptConsequence.getExonNumber(), transcriptConsequence.getIntronNumber(), preposition);
     }
 
-    private String exonOrIntronLocation(Integer exon, Integer intron, String preposition) {
+    private static String exonOrIntronLocation(Integer exon, Integer intron, String preposition) {
         if (exon != null) {
             return preposition + EXON + " " + exon;
         }
