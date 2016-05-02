@@ -89,6 +89,7 @@ public enum Category {
             AUTHOR,
             JOURNAL,
             KEYWORD,
+            MESH_TERM,
             PUBLICATION_TYPE,
             TOPIC,
             CURATION_STATUS,
