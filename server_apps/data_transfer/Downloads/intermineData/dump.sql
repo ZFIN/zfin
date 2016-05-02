@@ -412,7 +412,7 @@ select clone_mrkr_zdb_id, replace(clone_comments,'
 --ortholog
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_orthos/1orthos.txt"
- select ortho_zdb_id, ortho_zebrafish_gene_zdb_id, organism_common_name, ortho_other_species_symbol, current year to second,
+ select ortho_other_species_ncbi_gene_id, ortho_zebrafish_gene_zdb_id, organism_common_name, ortho_other_species_symbol, current year to second,
  	ortho_other_species_name, replace(ortho_other_species_chromosome,"|",";"), replace(ortho_other_species_chromosome,"|",";"),
 	oef_accession_number,fdb_db_name,fdbdt_data_type,oev_ortho_Zdb_id, oev_evidence_code, oev_pub_zdb_id,ortho_zdb_id||oef_accession_number
    from ortholog,ortholog_evidence,ortholog_external_reference,foreign_Db,foreign_db_data_type,foreign_db_Contains, organism
