@@ -2,16 +2,16 @@ package org.zfin.feature.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureAlias;
-import org.zfin.feature.FeatureMarkerRelationship;
-import org.zfin.feature.FeatureNote;
+import org.zfin.feature.*;
+import org.zfin.gbrowse.GBrowseTrack;
+import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -126,9 +126,25 @@ public class FeatureService {
         return delmarklg;
     }
 
-    public static List<PublicationAttribution> getFeatureTypeAttributions(Feature feature) {
+    public static Collection<PublicationAttribution> getMutationDetailAttributions(Feature feature) {
         InfrastructureRepository infRep = RepositoryFactory.getInfrastructureRepository();
-        return infRep.getPublicationAttributions(feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
+        SortedSet<PublicationAttribution> attributions = new TreeSet<>();
+        attributions.addAll(infRep.getPublicationAttributions(feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE));
+        FeatureDnaMutationDetail dnaDetails = feature.getFeatureDnaMutationDetail();
+        if (dnaDetails != null) {
+            attributions.addAll(infRep.getPublicationAttributions(dnaDetails.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE));
+        }
+        Set<FeatureTranscriptMutationDetail> transcriptDetails = feature.getFeatureTranscriptMutationDetailSet();
+        if (CollectionUtils.isNotEmpty(transcriptDetails)) {
+            for (FeatureTranscriptMutationDetail detail : transcriptDetails) {
+                attributions.addAll(infRep.getPublicationAttributions(detail.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE));
+            }
+        }
+        FeatureProteinMutationDetail proteinDetail = feature.getFeatureProteinMutationDetail();
+        if (proteinDetail != null) {
+            attributions.addAll(infRep.getPublicationAttributions(proteinDetail.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE));
+        }
+        return attributions;
     }
 
     public static Set<FeatureMarkerRelationship> getSortedConstructRelationships(Feature feature) {
@@ -187,5 +203,43 @@ public class FeatureService {
         Collections.sort(notes);
 
         return notes;
+    }
+
+    public static GBrowseImage getGbrowseImage(Feature feature) {
+        Set<FeatureMarkerRelationship> featureMarkerRelationships = feature.getFeatureMarkerRelations();
+        List<FeatureGenomeLocation> locations = getFeatureGenomeLocations(feature, GenomeLocation.Source.ZFIN_Zv9);
+        if (CollectionUtils.isEmpty(locations)) {
+            return null;
+        }
+
+        // gbrowse has a location for this feature. if there is a feature marker relationship AND we know where
+        // that marker is, show the feature in the context of the marker. Otherwise just show the feature with
+        // some appropriate amount of padding. We don't yet have GRCz10 coordinates for any features, so for
+        // now, they're all Zv9 still
+        GBrowseImage.GBrowseImageBuilder imageBuilder = GBrowseImage.builder()
+                .genomeBuild(GBrowseImage.GenomeBuild.ZV9)
+                .highlight(feature);
+
+        FeatureGenomeLocation featureLocation = locations.get(0);
+        if (featureMarkerRelationships.size() == 1) {
+            Marker related = featureMarkerRelationships.iterator().next().getMarker();
+            List<MarkerGenomeLocation> markerLocations = RepositoryFactory.getLinkageRepository().getGenomeLocation(related, GenomeLocation.Source.ZFIN_Zv9);
+            if (CollectionUtils.isNotEmpty(markerLocations)) {
+                imageBuilder.landmark(markerLocations.get(0)).withPadding(0.1);
+            } else {
+                imageBuilder.landmark(featureLocation).withPadding(10000);
+            }
+        } else {
+            imageBuilder.landmark(featureLocation).withPadding(10000);
+        }
+        String subSource = featureLocation.getDetailedSource();
+        if (subSource != null) {
+            if (subSource.equals("BurgessLin")) {
+                imageBuilder.tracks(GBrowseTrack.GENES, GBrowseTrack.INSERTION, GBrowseTrack.TRANSCRIPTS);
+            } else if (subSource.equals("ZMP")) {
+                imageBuilder.tracks(GBrowseTrack.GENES, GBrowseTrack.ZMP, GBrowseTrack.TRANSCRIPTS);
+            }
+        }
+        return imageBuilder.build();
     }
 }

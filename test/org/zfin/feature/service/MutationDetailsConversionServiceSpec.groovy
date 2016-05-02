@@ -83,7 +83,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         localization   | exon | intron | position | db        | accession || display
         null           | null | null   | null     | null      | null      || 'A>G'
         exonLoc        | 4    | null   | null     | null      | null      || 'A>G in exon 4'
-        spliceJunction | 6    | 7      | 1010     | null      | null      || 'A>G at exon 6 - intron 7 splice junction at position 1010'
+        spliceJunction | 6    | 7      | 1010     | null      | null      || 'A>G at position 1010 at exon 6 - intron 7 splice junction'
         null           | null | null   | 392      | null      | null      || 'A>G at position 392'
         null           | null | null   | 1829     | 'GENBANK' | 'C1032'   || 'A>G at position 1829 in GENBANK:C1032'
         null           | null | null   | null     | 'GENBANK' | '9999'    || 'A>G in GENBANK:9999'
@@ -187,7 +187,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         localization | exon | intron | position | db        | accession || display
         null         | null | null   | null     | null      | null      || '-10 bp'
         intronLoc    | null | 2      | null     | null      | null      || '-10 bp in intron 2'
-        spliceDonor  | 6    | null   | 1010     | null      | null      || '-10 bp in splice donor site of exon 6 at position 1010'
+        spliceDonor  | 6    | null   | 1010     | null      | null      || '-10 bp at position 1010 in splice donor site of exon 6'
         null         | null | null   | 482      | null      | null      || '-10 bp at position 482'
         null         | null | null   | 1829     | 'GENBANK' | 'C1032'   || '-10 bp at position 1829 in GENBANK:C1032'
         null         | null | null   | null     | 'GENBANK' | '9999'    || '-10 bp in GENBANK:9999'
@@ -219,9 +219,9 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         localization | exon | intron | position | db        | accession || display
         null         | null | null   | null     | null      | null      || '+13 bp'
         exonLoc      | 12   | null   | null     | null      | null      || '+13 bp in exon 12'
-        fivePrimeUTR | 6    | null   | 1010     | null      | null      || '+13 bp in 5\' UTR at position 1010'
+        fivePrimeUTR | 6    | null   | 1010     | null      | null      || '+13 bp at position 1010 in 5\' UTR'
         null         | null | null   | 832      | null      | null      || '+13 bp at position 832'
-        intronLoc    | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '+13 bp in intron 5 at position 1829 in GENBANK:C1032'
+        intronLoc    | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '+13 bp at position 1829 in GENBANK:C1032 in intron 5'
         null         | null | null   | null     | 'GENBANK' | '9999'    || '+13 bp in GENBANK:9999'
     }
 
@@ -254,9 +254,9 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         null  | 21      | null         | null | null   | null     | null      | null      || 'net -21 bp'
         34    | 17      | null         | null | null   | null     | null      | null      || '+34/-17 bp'
         34    | 17      | exonLoc      | 2    | null   | null     | null      | null      || '+34/-17 bp in exon 2'
-        34    | 17      | spliceDonor  | null | null   | 1010     | null      | null      || '+34/-17 bp in splice donor site at position 1010'
+        34    | 17      | spliceDonor  | null | null   | 1010     | null      | null      || '+34/-17 bp at position 1010 in splice donor site'
         34    | 17      | null         | null | null   | 832      | null      | null      || '+34/-17 bp at position 832'
-        34    | 17      | intronLoc    | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '+34/-17 bp in intron 5 at position 1829 in GENBANK:C1032'
+        34    | 17      | intronLoc    | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '+34/-17 bp at position 1829 in GENBANK:C1032 in intron 5'
         34    | 17      | null         | null | null   | null     | 'GENBANK' | '9999'    || '+34/-17 bp in GENBANK:9999'
     }
 
@@ -425,7 +425,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         'Tyr' | null     | null    | null      | null                      | 400   | null | null     | null      || 'Tyr>STOP at position 400'
         null  | null     | 10      | null      | null                      | 312   | 322  | null     | null      || '+10 AA from position 312 to 322'
         null  | null     | null    | 14        | null                      | null  | null | 'PROTDB' | '10000'   || '-14 AA in PROTDB:10000'
-        null  | null     | null    | null      | 'elongated_polypeptide'   | null  | null | null     | null      || 'elongated_polypeptide'
-        'Gln' | 'Tyr'    | null    | null      | 'amino_acid_substitution' | 90    | null | 'FooDB'  | '848484'  || 'Gln>Tyr amino_acid_substitution at position 90 in FooDB:848484'
+        null  | null     | null    | null      | 'elongated polypeptide'   | null  | null | null     | null      || 'Elongated Polypeptide'
+        'Gln' | 'Tyr'    | null    | null      | 'amino acid substitution' | 90    | null | 'FooDB'  | '848484'  || 'Amino Acid Substitution, Gln>Tyr at position 90 in FooDB:848484'
     }
 }

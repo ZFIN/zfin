@@ -141,8 +141,9 @@ public class FacetBuilderService {
         type.addFacet(buildFacet("type", true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(type);
 
-        FacetGroup expressedIn = new FacetGroup("Expressed In", true);
-        expressedIn.addFacet(buildFacet(EXPRESSED_IN_TF.getName(), true, response, filterQuerySelectionMap, baseUrl));
+        FacetGroup expressedIn = new FacetGroup("Expression", true);
+        expressedIn.addFacet(buildFacet(ANATOMY_TF.getName(), true, response, filterQuerySelectionMap, baseUrl));
+        expressedIn.addFacet(buildFacet(FieldName.STAGE.getName(), false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(expressedIn);
 
 
@@ -336,6 +337,7 @@ public class FacetBuilderService {
         facetGroups.add(buildSingleFacetGroup("Registered Author", "registered_author", true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Journal", "journal", false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Keyword", "keyword", false, response, filterQuerySelectionMap, baseUrl));
+        facetGroups.add(buildSingleFacetGroup("MeSH Term", MESH_TERM.getName(), false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Publication Type", "publication_type", false, response, filterQuerySelectionMap, baseUrl));
 
         FacetGroup publishedDateGroup = new FacetGroup("Publication Date", false);

@@ -149,7 +149,15 @@ public interface LinkageRepository {
      * @param marker Marker
      * @return
      */
-    List<GenomeLocation> getPhysicalGenomeLocations(Marker marker);
+    List<MarkerGenomeLocation> getPhysicalGenomeLocations(Marker marker);
+
+    /**
+     * Retrieve non-genetic mapping genomic locations.
+     *
+     * @param feature Feature
+     * @return
+     */
+    List<FeatureGenomeLocation> getPhysicalGenomeLocations(Feature feature);
 
     /**
      * retrieve linkage info for given feature.

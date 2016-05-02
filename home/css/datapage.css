@@ -77,10 +77,8 @@ table.ontology-term-mini-summary td.name {
 }
 
 .no-data-tag {
-    background-color: white;
-    border: none;
-    border-spacing: 0 ;
-    border-width: 0 ;
+    border-spacing: 0;
+    border: 0 none;
     color: gray;
     font-weight: lighter;
 }

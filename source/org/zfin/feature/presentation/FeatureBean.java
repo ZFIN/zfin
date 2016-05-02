@@ -10,6 +10,7 @@ import org.zfin.mutant.GenotypeDisplay;
 import org.zfin.mutant.presentation.GenoExpStatistics;
 import org.zfin.sequence.FeatureDBLink;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ public class FeatureBean {
     private MappedMarkerBean mappedMarkerBean;
     private Set<FeatureMarkerRelationship> sortedConstructRelationships ;
     private FeatureMarkerRelationship createdByRelationship;
-    private List<PublicationAttribution> featureTypeAttributions ;
+    private Collection<PublicationAttribution> featureTypeAttributions ;
     private Set<String> featureMap ;
     private Set<String> featureLocations ;
     private String zdbID;
@@ -96,11 +97,11 @@ public class FeatureBean {
         this.sortedConstructRelationships = sortedConstructRelationships;
     }
 
-    public List<PublicationAttribution> getFeatureTypeAttributions() {
+    public Collection<PublicationAttribution> getFeatureTypeAttributions() {
         return featureTypeAttributions;
     }
 
-    public void setFeatureTypeAttributions(List<PublicationAttribution> featureTypeAttributions) {
+    public void setFeatureTypeAttributions(Collection<PublicationAttribution> featureTypeAttributions) {
         this.featureTypeAttributions = featureTypeAttributions;
     }
 

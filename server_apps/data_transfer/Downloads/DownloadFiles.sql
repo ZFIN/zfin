@@ -1964,7 +1964,7 @@ INSERT INTO tmp_mutation_details
     transcript_term.display,
     transcript_term.ont_id,
     ftmd_exon_number,
-    ftmd_introl_number,
+    ftmd_intron_number,
     protein_term.display,
     protein_term.ont_id,
     wt_aa.display,

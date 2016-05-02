@@ -44,37 +44,28 @@ public class MutationDetailsConversionService {
             return "";
         }
         FeatureDnaMutationDetail dnaChange = feature.getFeatureDnaMutationDetail();
-        StringBuilder statement = new StringBuilder();
+        String change = null;
         switch (feature.getType()) {
             case POINT_MUTATION:
-                statement.append(pointMutationStatement(dnaChange));
+                change = pointMutationStatement(dnaChange);
                 break;
             case DELETION:
-                statement.append(deletionStatement(dnaChange));
+                change = deletionStatement(dnaChange);
                 break;
             case INSERTION:
-                statement.append(insertionStatement(dnaChange));
+                change = insertionStatement(dnaChange);
                 break;
             case INDEL:
-                statement.append(indelStatement(dnaChange));
+                change = indelStatement(dnaChange);
                 break;
             case TRANSGENIC_INSERTION:
-                statement.append(transgenicStatement(dnaChange));
+                change = transgenicStatement(dnaChange);
                 break;
         }
-        String localization = geneLocalizationWithPreposition(dnaChange);
-        if (StringUtils.isNotEmpty(localization)) {
-            statement.append(" ").append(localization);
-        }
         String position = positionStatement(dnaChange);
-        if (StringUtils.isNotEmpty(position)) {
-            statement.append(" ").append(position);
-        }
         String refSeq = referenceSequenceStatement(dnaChange);
-        if (StringUtils.isNotEmpty(refSeq)) {
-            statement.append(" ").append(refSeq);
-        }
-        return statement.toString();
+        String localization = geneLocalizationWithPreposition(dnaChange);
+        return makeSentence(change, position, refSeq, localization);
     }
 
     public String getTranscriptMutationStatement(Feature feature) {
@@ -94,22 +85,17 @@ public class MutationDetailsConversionService {
             return "";
         }
         FeatureProteinMutationDetail proteinConsequence = feature.getFeatureProteinMutationDetail();
-        StringBuilder statement = new StringBuilder(aminoAcidChangeStatement(proteinConsequence));
+        String term = null;
         if (proteinConsequence != null && proteinConsequence.getProteinConsequence() != null) {
-            if (StringUtils.isNotEmpty(statement)) {
-                statement.append(" ");
-            }
-            statement.append(proteinConsequence.getProteinConsequence().getDisplayName());
+            term = WordUtils.capitalize(proteinConsequence.getProteinConsequence().getDisplayName());
         }
+        String change = aminoAcidChangeStatement(proteinConsequence);
         String position = positionStatement(proteinConsequence);
-        if (StringUtils.isNotEmpty(position)) {
-            statement.append(" ").append(position);
-        }
         String refSeq = referenceSequenceStatement(proteinConsequence);
-        if (StringUtils.isNotEmpty(refSeq)) {
-            statement.append(" ").append(refSeq);
+        if (StringUtils.isNotEmpty(term) && (StringUtils.isNotEmpty(change) || StringUtils.isNotEmpty(position))) {
+            term += ",";
         }
-        return statement.toString();
+        return makeSentence(term, change, position, refSeq);
     }
 
     private String pointMutationStatement(FeatureDnaMutationDetail dnaChange) {
@@ -409,5 +395,19 @@ public class MutationDetailsConversionService {
             statement.append(addedOrRemoved);
         }
         return statement.toString();
+    }
+
+    private String makeSentence(String... phrases) {
+        StringBuilder sentence = new StringBuilder();
+        for (String phrase : phrases) {
+            if (StringUtils.isBlank(phrase)) {
+                continue;
+            }
+            if (StringUtils.isNotEmpty(sentence)) {
+                sentence.append(" ");
+            }
+            sentence.append(phrase);
+        }
+        return sentence.toString();
     }
 }
