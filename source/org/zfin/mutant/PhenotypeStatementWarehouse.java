@@ -44,6 +44,8 @@ public class PhenotypeStatementWarehouse implements Comparable<PhenotypeStatemen
     @ManyToOne()
     @JoinColumn(name = "psg_quality_zdb_id")
     private GenericTerm quality;
+    @Column(name = "psg_pre_eap_phenotype")
+    private boolean isPreEap;
 
     public Marker getGene() {
         return gene;
@@ -155,6 +157,13 @@ public class PhenotypeStatementWarehouse implements Comparable<PhenotypeStatemen
         return !isNormal();
     }
 
+    public boolean isPreEap() {
+        return isPreEap;
+    }
+
+    public void setIsPreEap(boolean isPreEap) {
+        this.isPreEap = isPreEap;
+    }
 
     public boolean equalsByPhenotype(PhenotypeStatementWarehouse statement) {
         return false;
@@ -192,7 +201,9 @@ public class PhenotypeStatementWarehouse implements Comparable<PhenotypeStatemen
         if (getRelatedEntity() != null ? !getRelatedEntity().equals(phenotypeStatement.getRelatedEntity()) : phenotypeStatement.getRelatedEntity() != null) {
             return false;
         }
-        if (!tag.equals(phenotypeStatement.getTag())) return false;
+        if (!tag.equals(phenotypeStatement.getTag())) {
+            return false;
+        }
 
         return true;
     }
