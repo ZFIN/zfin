@@ -92,20 +92,13 @@ public class FeatureService {
         return delmarklg;
     }
 
-    public static List<FeatureGenomeLocation> getFeatureGenomeLocations(Feature feature) {
+    public static List<FeatureGenomeLocation> getFeatureGenomeLocationsInGbrowse(Feature feature) {
         List<FeatureGenomeLocation> locations = RepositoryFactory.getLinkageRepository().getGenomeLocation(feature);
         Collections.sort(locations);
-        return locations;
-    }
-
-    public static List<FeatureGenomeLocation> getFeatureGenomeLocations(Feature feature, GenomeLocation.Source... sources) {
-        List<FeatureGenomeLocation> locations = getFeatureGenomeLocations(feature);
-        final Collection<GenomeLocation.Source> sourceList = Arrays.asList(sources);
         CollectionUtils.filter(locations, new Predicate() {
             @Override
             public boolean evaluate(Object o) {
-                return (o instanceof FeatureGenomeLocation) &&
-                        sourceList.contains(((FeatureGenomeLocation) o).getSource());
+                return (o instanceof FeatureGenomeLocation) && ((FeatureGenomeLocation) o).getGbrowseTrack() != null;
             }
         });
         return locations;
@@ -207,7 +200,7 @@ public class FeatureService {
 
     public static GBrowseImage getGbrowseImage(Feature feature) {
         Set<FeatureMarkerRelationship> featureMarkerRelationships = feature.getFeatureMarkerRelations();
-        List<FeatureGenomeLocation> locations = getFeatureGenomeLocations(feature, GenomeLocation.Source.ZFIN_Zv9);
+        List<FeatureGenomeLocation> locations = getFeatureGenomeLocationsInGbrowse(feature);
         if (CollectionUtils.isEmpty(locations)) {
             return null;
         }
@@ -232,14 +225,8 @@ public class FeatureService {
         } else {
             imageBuilder.landmark(featureLocation).withPadding(10000);
         }
-        String subSource = featureLocation.getDetailedSource();
-        if (subSource != null) {
-            if (subSource.equals("BurgessLin")) {
-                imageBuilder.tracks(GBrowseTrack.GENES, GBrowseTrack.INSERTION, GBrowseTrack.TRANSCRIPTS);
-            } else if (subSource.equals("ZMP")) {
-                imageBuilder.tracks(GBrowseTrack.GENES, GBrowseTrack.ZMP, GBrowseTrack.TRANSCRIPTS);
-            }
-        }
+        imageBuilder.tracks(GBrowseTrack.GENES, featureLocation.getGbrowseTrack(), GBrowseTrack.TRANSCRIPTS);
+
         return imageBuilder.build();
     }
 }

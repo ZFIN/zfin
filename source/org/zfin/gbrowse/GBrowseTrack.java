@@ -28,4 +28,13 @@ public enum GBrowseTrack {
         return trackName;
     }
 
+    public static GBrowseTrack fromString(String trackName) {
+        for (GBrowseTrack gbrowseTrack : values()) {
+            if (gbrowseTrack.trackName.equals(trackName)) {
+                return gbrowseTrack;
+            }
+        }
+        return null;
+    }
+
 }
