@@ -1123,6 +1123,7 @@
     <copyField source="name" dest="name_ac"/>
     <copyField source="full_name" dest="full_name_ac"/>
     <copyField source="alias" dest="alias_ac"/>
+    <copyField source="alias" dest="alias_k"/>
     <copyField source="alias" dest="alias_t"/>
 
     <!-- DANGER! unintended consequence!! -->

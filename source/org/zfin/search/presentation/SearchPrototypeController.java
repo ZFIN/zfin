@@ -48,6 +48,8 @@ public class SearchPrototypeController {
     @Autowired
     private QueryManipulationService queryManipulationService;
 
+    @Autowired SearchSuggestionService searchSuggestionService;
+
     @Autowired
     private FacetBuilderService facetBuilderService;
 
@@ -116,6 +118,8 @@ public class SearchPrototypeController {
             }
         }
 
+
+        model.addAttribute("suggestions",searchSuggestionService.getSuggestions(q));
 
         if (StringUtils.isNotEmpty(q) && q.startsWith("-")) {
             model.addAttribute("isDashQuery", true);

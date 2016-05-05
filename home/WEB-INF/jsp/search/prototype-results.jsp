@@ -148,7 +148,7 @@
 
     <c:if test="${!empty message}">
         <div style="margin-top: 1em;" class="row">
-            <div class="col-md-offset-2 col-md-8 alert alert-info">
+            <div class="col-md-offset-2 col-md-6 alert alert-info">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                     ${message}
             </div>
@@ -157,10 +157,24 @@
 
     <c:if test="${isDashQuery}">
         <div style="margin-top: 1em;" class="row">
-            <div class="col-md-offset-2 col-md-8 alert alert-info">
+            <div class="col-md-offset-2 col-md-6 alert alert-info">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                 Did you mean to search for <a href="#" onclick="javascript:replaceQuery('${newQuery}')">${newQuery}</a>?
                 A leading dash means NOT.
+            </div>
+        </div>
+    </c:if>
+
+    <c:if test="${!empty suggestions}">
+        <div style="margin-top: 1em;" class="row">
+            <div class="col-md-offset-2 col-md-6 alert alert-info">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                Related:
+                <c:forEach var="suggestion" items="${suggestions}" varStatus="loop">
+                    <c:if test="${loop.last && !loop.first}"> or </c:if>
+                    <a href="/search?q=${suggestion}">${suggestion}</a>
+                    <c:if test="${!loop.last}"><span> </span></c:if>
+                </c:forEach>
             </div>
         </div>
     </c:if>
