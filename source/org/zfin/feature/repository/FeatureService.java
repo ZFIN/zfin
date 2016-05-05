@@ -81,17 +81,6 @@ public class FeatureService {
         return null;
     }
 
-    public static Set<String> getFeatureLocations(Feature feature) {
-        TreeSet<String> lg = RepositoryFactory.getFeatureRepository().getFeatureLG(feature);
-        TreeSet<String> delmarklg = new TreeSet<>();
-
-        for (String lgchr : lg) {
-            delmarklg.add(lgchr);
-        }
-
-        return delmarklg;
-    }
-
     public static List<FeatureGenomeLocation> getFeatureGenomeLocationsInGbrowse(Feature feature) {
         List<FeatureGenomeLocation> locations = RepositoryFactory.getLinkageRepository().getGenomeLocation(feature);
         Collections.sort(locations);
@@ -99,6 +88,18 @@ public class FeatureService {
             @Override
             public boolean evaluate(Object o) {
                 return (o instanceof FeatureGenomeLocation) && ((FeatureGenomeLocation) o).getGbrowseTrack() != null;
+            }
+        });
+        return locations;
+    }
+
+    public static List<FeatureGenomeLocation> getPhysicalLocations(Feature feature) {
+        List<FeatureGenomeLocation> locations = RepositoryFactory.getLinkageRepository().getGenomeLocation(feature);
+        Collections.sort(locations);
+        CollectionUtils.filter(locations, new Predicate() {
+            @Override
+            public boolean evaluate(Object o) {
+                return ((FeatureGenomeLocation) o).getSource().isPhysicalMappingLocation();
             }
         });
         return locations;

@@ -166,8 +166,8 @@ set sfclg_gbrowse_track = 'allzmp'
 where sfclg_pub_zdb_id = 'ZDB-PUB-130425-4';
 
 insert into sequence_feature_chromosome_location_generated (sfclg_chromosome, sfclg_data_zdb_id,
-  sfclg_start, sfclg_end, sfclg_location_source, sfclg_location_subsource, sfclg_gbrowse_track)
-select gff3.gff_seqname, feature.feature_zdb_id, gff3.gff_start, gff3.gff_end, 'ZfinGbrowseZv9StartEndLoader', 'BurgessLin', 'insertion'
+  sfclg_start, sfclg_end, sfclg_location_source, sfclg_location_subsource, sfclg_assembly, sfclg_gbrowse_track)
+select gff3.gff_seqname, feature.feature_zdb_id, gff3.gff_start, gff3.gff_end, 'ZfinGbrowseZv9StartEndLoader', 'BurgessLin', 'Zv9', 'insertion'
 from gff3
 inner join feature on (gff3.gff_id || 'Tg') = feature.feature_abbrev
 where gff3.gff_source = 'BurgessLin';

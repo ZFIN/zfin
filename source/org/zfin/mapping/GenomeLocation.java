@@ -23,6 +23,7 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
     protected GenomeBrowserMetaData metaData;
     protected Publication attribution;
     protected GBrowseTrack gbrowseTrack;
+    protected String assembly;
 
     public long getID() {
         return ID;
@@ -114,6 +115,14 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
 
     public void setGbrowseTrack(GBrowseTrack gbrowseTrack) {
         this.gbrowseTrack = gbrowseTrack;
+    }
+
+    public String getAssembly() {
+        return assembly;
+    }
+
+    public void setAssembly(String assembly) {
+        this.assembly = assembly;
     }
 
     @Override

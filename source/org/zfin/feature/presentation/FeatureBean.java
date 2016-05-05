@@ -4,6 +4,7 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.GenotypeDisplay;
@@ -20,11 +21,11 @@ public class FeatureBean {
     private int numPubs;
     private List<GenoExpStatistics> genoexpStats;
     private MappedMarkerBean mappedMarkerBean;
-    private Set<FeatureMarkerRelationship> sortedConstructRelationships ;
+    private Set<FeatureMarkerRelationship> sortedConstructRelationships;
     private FeatureMarkerRelationship createdByRelationship;
-    private Collection<PublicationAttribution> featureTypeAttributions ;
-    private Set<String> featureMap ;
-    private Set<String> featureLocations ;
+    private Collection<PublicationAttribution> featureTypeAttributions;
+    private Set<String> featureMap;
+    private Collection<FeatureGenomeLocation> featureLocations;
     private String zdbID;
     private Set<FeatureDBLink> summaryPageDbLinks;
     private Set<FeatureDBLink> genbankDbLinks;
@@ -113,11 +114,11 @@ public class FeatureBean {
         this.featureMap = featureMap;
     }
 
-    public Set<String> getFeatureLocations() {
+    public Collection<FeatureGenomeLocation> getFeatureLocations() {
         return featureLocations;
     }
 
-    public void setFeatureLocations(Set<String> featureLocations) {
+    public void setFeatureLocations(Collection<FeatureGenomeLocation> featureLocations) {
         this.featureLocations = featureLocations;
     }
 

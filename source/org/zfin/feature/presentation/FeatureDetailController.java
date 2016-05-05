@@ -72,13 +72,10 @@ public class FeatureDetailController {
         form.setCreatedByRelationship(FeatureService.getCreatedByRelationship(feature));
         form.setFeatureTypeAttributions(FeatureService.getMutationDetailAttributions(feature));
         form.setFeatureMap(FeatureService.getFeatureMap(feature));
-        form.setFeatureLocations(FeatureService.getFeatureLocations(feature));
-        LOG.debug("got to summary page bit");
-
+        form.setFeatureLocations(FeatureService.getPhysicalLocations(feature));
         form.setSummaryPageDbLinks(FeatureService.getSummaryDbLinks(feature));
         form.setGenbankDbLinks(FeatureService.getGenbankDbLinks(feature));
 
-        LOG.debug("genbank link count " + form.getGenbankDbLinks().size());
         retrieveSortedGenotypeData(feature, form);
         retrievePubData(feature, form);
 
