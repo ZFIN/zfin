@@ -512,6 +512,7 @@ public class ResultService {
         //don't show for real, but useful to turn this on to get values for the test
         //result.setDisplayedID(result.getId());
 
+        ExpressionFigureStage efs = RepositoryFactory.getExpressionRepository().getExpressionFigureStage(id);
 
         ExpressionExperiment xpatex = RepositoryFactory.getExpressionRepository().getExpressionExperiment(result.getXpatZdbId());
         Figure figure = RepositoryFactory.getPublicationRepository().getFigure(result.getFigZdbId());
@@ -543,27 +544,35 @@ public class ResultService {
                 result.addAttribute(CONDITIONS, conditions);
             }
 
+            if (efs.getStartStage().equals(efs.getEndStage())) {
+                result.addAttribute(STAGE, efs.getStartStage().getName());
+            } else {
+                result.addAttribute(STAGE, efs.getStartStage().getName() + " to " + efs.getEndStage().getName());
+            }
+
             List<String> results = new ArrayList<>();
             List<ExpressionResult> expressionResults = new ArrayList<>();
 
+
+
             //Surprisngly, it turns out that this actually performs better than a query.  Could be caching, but we like caching.
-            expressionResults.addAll(CollectionUtils.intersection(xpatex.getExpressionResults(), figure.getExpressionResults()));
+            //expressionResults.addAll(CollectionUtils.intersection(xpatex.getExpressionResults(), figure.getExpressionResults()));
 
 
             //Sort expressionResults by start stage, end stage, superterm name, subterm name...
             Collections.sort(expressionResults);
 
-            for (ExpressionResult expressionResult : expressionResults) {
+            for (ExpressionResult2 expressionResult : efs.getExpressionResultSet()) {
                 StringBuilder sb = new StringBuilder();
-                if (expressionResult.getStartStage() == expressionResult.getEndStage()) {
-                    sb.append(DevelopmentStagePresentation.getName(expressionResult.getStartStage(), true));
+/*                if (efs.getStartStage() == efs.getEndStage()) {
+                    sb.append(DevelopmentStagePresentation.getName(efs.getStartStage(), true));
                 } else {
-                    sb.append(DevelopmentStagePresentation.getName(expressionResult.getStartStage(), true))
+                    sb.append(DevelopmentStagePresentation.getName(efs.getStartStage(), true))
                             .append(" to ")
-                            .append(DevelopmentStagePresentation.getName(expressionResult.getEndStage(), true));
+                            .append(DevelopmentStagePresentation.getName(efs.getEndStage(), true));
                 }
 
-                sb.append(" - ");
+                sb.append(" - ");*/
 
                 if (!expressionResult.isExpressionFound()) {
                     sb.append(" <i>not in</i> ");
@@ -594,6 +603,13 @@ public class ResultService {
             if (StringUtils.isNotBlank(experimentText)) {
                 sb.append(" + ");
                 sb.append(experimentText);
+            }
+
+            sb.append(" at ");
+            sb.append(efs.getStartStage().getName());
+            if (efs.getStartStage() != efs.getEndStage()) {
+                sb.append(" to ");
+                sb.append(efs.getEndStage().getName());
             }
 
             sb.append(" from ");
