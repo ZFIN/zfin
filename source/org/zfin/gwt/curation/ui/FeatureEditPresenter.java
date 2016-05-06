@@ -79,6 +79,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
             public void onSuccess(FeatureDTO featureDTO) {
                 featureDTO.setPublicationZdbID(publicationID);
                 dto = featureDTO;
+                mutationDetailPresenter.setDto(featureDTO);
                 revertGUI();
                 view.onChangeFeatureType();
                 view.removeFeatureLink.setUrl("/action/infrastructure/deleteRecord/" + dto.getZdbID());
@@ -92,8 +93,8 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
     public void handleDirty() {
         view.featureDisplayName.setText(FeatureValidationService.generateFeatureDisplayName(createDTOFromGUI()));
         boolean isDirty = isDirty();
-        view.saveButton.setEnabled(isDirty && FeatureValidationService.isFeatureSaveable(createDTOFromGUI()));
-        view.revertButton.setEnabled(isDirty);
+        isDirty = mutationDetailPresenter.isDirty() || isDirty;
+        onDirtyValueNotification(isDirty);
     }
 
     public boolean isDirty() {
@@ -119,6 +120,12 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         isDirty = (view.labOfOriginBox.isDirty(dto.getLabOfOrigin()) || isDirty);
 ////        isDirty = (view.featureSequenceBox.isDirty(dto.getFeatureSequence()) || isDirty) ;
         return isDirty;
+    }
+
+
+    public void onDirtyValueNotification(boolean isDirty) {
+        view.saveButton.setEnabled(isDirty && FeatureValidationService.isFeatureSaveable(createDTOFromGUI()));
+        view.revertButton.setEnabled(isDirty);
     }
 
     public FeatureDTO createDTOFromGUI() {

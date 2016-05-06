@@ -4,6 +4,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
+import org.zfin.gwt.root.ui.NumberTextBox;
 import org.zfin.gwt.root.ui.StringListBox;
 import org.zfin.gwt.root.ui.StringTextBox;
 
@@ -156,6 +157,13 @@ public final class WidgetUtil {
     }
 
     public static void showHideBoxField(StringTextBox box, boolean show) {
+        box.setVisible(show);
+        // empty field upon hiding
+        if (!show)
+            box.setText("");
+    }
+
+    public static void showHideBoxField(NumberTextBox box, boolean show) {
         box.setVisible(show);
         // empty field upon hiding
         if (!show)

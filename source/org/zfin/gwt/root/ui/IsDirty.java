@@ -5,10 +5,10 @@ package org.zfin.gwt.root.ui;
  */
 public interface IsDirty<T> {
 
-    public static final String NULL_STRING = "null";
+    String NULL_STRING = "null";
 
-    static final String DIRTY_STYLE = "dirty";
-    static final String CLEAN_STYLE = "table";
+    String DIRTY_STYLE = "dirty";
+    String CLEAN_STYLE = "table";
 
     boolean isDirty(T value);
 }

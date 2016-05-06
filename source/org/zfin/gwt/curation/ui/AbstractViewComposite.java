@@ -7,13 +7,14 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import org.zfin.gwt.root.ui.NumberTextBox;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
-import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.Set;
 
 public abstract class AbstractViewComposite extends Composite {
 
     public static final String NOT_A_NUMBER = "Not a number";
+
+    protected MutationDetailPresenter presenter;
 
     @UiField
     SimpleErrorElement errorLabel;
@@ -42,16 +43,21 @@ public abstract class AbstractViewComposite extends Composite {
         return false;
     }
 
-    protected void validateNumber(NumberTextBox numberField) {
-        String boxValue = numberField.getBoxValue();
-        if (boxValue != null && !boxValue.trim().isEmpty()) {
-            if (!StringUtils.isNumeric(boxValue.trim())) {
-                errorLabel.setError(NOT_A_NUMBER);
-                return;
-            }
+    protected boolean validateNumber(NumberTextBox numberField) {
+        if (!numberField.isValid()) {
+            errorLabel.setError(NOT_A_NUMBER);
+            return false;
         }
         clearError();
+        return true;
     }
 
+    protected void handleChanges() {
+        presenter.handleDirty();
+    }
+
+    public void setPresenter(MutationDetailPresenter presenter) {
+        this.presenter = presenter;
+    }
 
 }

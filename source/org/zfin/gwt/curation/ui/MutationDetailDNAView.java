@@ -7,6 +7,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.MutationDetailDnaChangeDTO;
 import org.zfin.gwt.root.ui.NumberTextBox;
@@ -30,7 +31,6 @@ public class MutationDetailDNAView extends AbstractViewComposite {
     interface MyUiBinder extends UiBinder<FlowPanel, MutationDetailDNAView> {
     }
 
-    private MutationDetailPresenter presenter;
     @UiField
     StringListBox nucleotideChangeList;
     @UiField
@@ -72,32 +72,38 @@ public class MutationDetailDNAView extends AbstractViewComposite {
 
     @UiHandler("positionStart")
     void onBlurPositionStart(@SuppressWarnings("unused") BlurEvent event) {
-        validateNumber(positionStart);
+        if (validateNumber(positionStart))
+            handleChanges();
     }
 
     @UiHandler("positionEnd")
     void onBlurPositionEnd(@SuppressWarnings("unused") BlurEvent event) {
-        validateNumber(positionEnd);
+        if (validateNumber(positionEnd))
+            handleChanges();
     }
 
     @UiHandler("minusBasePair")
     void onBlurMinusBasePair(@SuppressWarnings("unused") BlurEvent event) {
-        validateNumber(minusBasePair);
+        if (validateNumber(minusBasePair))
+            handleChanges();
     }
 
     @UiHandler("plusBasePair")
     void onBlurPlusBasePair(@SuppressWarnings("unused") BlurEvent event) {
-        validateNumber(plusBasePair);
+        if (validateNumber(plusBasePair))
+            handleChanges();
     }
 
     @UiHandler("exonNumber")
     void onBlurExonNumber(@SuppressWarnings("unused") BlurEvent event) {
-        validateNumber(exonNumber);
+        if (validateNumber(exonNumber))
+            handleChanges();
     }
 
     @UiHandler("intronNumber")
     void onBlurIntronNumber(@SuppressWarnings("unused") BlurEvent event) {
-        validateNumber(intronNumber);
+        if (validateNumber(intronNumber))
+            handleChanges();
     }
 
     @UiHandler("sequenceOfReference")
@@ -128,6 +134,7 @@ public class MutationDetailDNAView extends AbstractViewComposite {
             WidgetUtil.showHideBoxField(intronNumber, false);
             WidgetUtil.showHideBoxField(exonNumber, false);
         }
+        handleChanges();
     }
 
     public void showPointMutationUI() {
@@ -192,17 +199,17 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         MutationDetailDnaChangeDTO dto = new MutationDetailDnaChangeDTO();
         dto.setChangeTermOboId(WidgetUtil.getStringFromListBox(nucleotideChangeList));
         dto.setLocalizationTermOboID(WidgetUtil.getStringFromListBox(localizationTerm));
-        dto.setPositionStart(WidgetUtil.getIntegerFromField(positionStart));
+        dto.setPositionStart(positionStart.getBoxValue());
         // if positionEnd is invisible it means: end equals start.
         if (positionEnd.isVisible())
-            dto.setPositionEnd(WidgetUtil.getIntegerFromField(positionEnd));
+            dto.setPositionEnd(positionEnd.getBoxValue());
         else
             dto.setPositionEnd(dto.getPositionStart());
-        dto.setNumberAddedBasePair(WidgetUtil.getIntegerFromField(plusBasePair));
-        dto.setNumberRemovedBasePair(WidgetUtil.getIntegerFromField(minusBasePair));
+        dto.setNumberAddedBasePair(plusBasePair.getBoxValue());
+        dto.setNumberRemovedBasePair(minusBasePair.getBoxValue());
         dto.setSequenceReferenceAccessionNumber(WidgetUtil.getStringFromField(sequenceOfReference));
-        dto.setExonNumber(WidgetUtil.getIntegerFromField(exonNumber));
-        dto.setIntronNumber(WidgetUtil.getIntegerFromField(intronNumber));
+        dto.setExonNumber(exonNumber.getBoxValue());
+        dto.setIntronNumber(intronNumber.getBoxValue());
         return dto;
     }
 
@@ -263,25 +270,17 @@ public class MutationDetailDNAView extends AbstractViewComposite {
             return;
         nucleotideChangeList.setIndexForValue(dto.getChangeTermOboId());
         localizationTerm.setIndexForValue(dto.getLocalizationTermOboID());
-        if (dto.getNumberAddedBasePair() != null)
-            plusBasePair.setText(dto.getNumberAddedBasePair().toString());
-        if (dto.getNumberRemovedBasePair() != null)
-            minusBasePair.setText(dto.getNumberRemovedBasePair().toString());
-        if (dto.getPositionStart() != null)
-            positionStart.setText(dto.getPositionStart().toString());
-        if (dto.getPositionEnd() != null)
-            positionEnd.setText(dto.getPositionEnd().toString());
-        if (dto.getExonNumber() != null)
-            exonNumber.setText(dto.getExonNumber().toString());
-        if (dto.getIntronNumber() != null)
-            intronNumber.setText(dto.getIntronNumber().toString());
+        plusBasePair.setNumber(dto.getNumberAddedBasePair());
+        minusBasePair.setNumber(dto.getNumberRemovedBasePair());
+        Window.alert("Val ");
+        positionStart.setNumber(dto.getPositionStart());
+        positionEnd.setNumber(dto.getPositionEnd());
+        exonNumber.setNumber(dto.getExonNumber());
+        intronNumber.setNumber(dto.getIntronNumber());
         sequenceOfReference.setText(dto.getSequenceReferenceAccessionNumber());
         onChangeLocalization(null);
     }
 
-    public void setPresenter(MutationDetailPresenter presenter) {
-        this.presenter = presenter;
-    }
 }
 
 

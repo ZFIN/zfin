@@ -94,8 +94,8 @@ public class MutationDetailTranscriptView extends AbstractViewComposite {
         MutationDetailTranscriptChangeDTO dto = new MutationDetailTranscriptChangeDTO();
         dto.setConsequenceOboID(WidgetUtil.getStringFromListBox(consequenceList));
         dto.setConsequenceName(WidgetUtil.getSelectedStringFromListBox(consequenceList));
-        dto.setExonNumber(WidgetUtil.getIntegerFromField(exonNumber));
-        dto.setIntronNumber(WidgetUtil.getIntegerFromField(intronNumber));
+        dto.setExonNumber(exonNumber.getBoxValue());
+        dto.setIntronNumber(intronNumber.getBoxValue());
         return dto;
     }
 

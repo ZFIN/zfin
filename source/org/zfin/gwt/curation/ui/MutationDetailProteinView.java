@@ -9,6 +9,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.MutationDetailProteinChangeDTO;
+import org.zfin.gwt.root.ui.IsDirty;
 import org.zfin.gwt.root.ui.NumberTextBox;
 import org.zfin.gwt.root.ui.StringListBox;
 import org.zfin.gwt.root.ui.StringTextBox;
@@ -28,7 +29,6 @@ public class MutationDetailProteinView extends AbstractViewComposite {
     interface MyUiBinder extends UiBinder<FlowPanel, MutationDetailProteinView> {
     }
 
-    private MutationDetailPresenter presenter;
     @UiField
     Grid proteinDataTable;
     @UiField
@@ -60,14 +60,21 @@ public class MutationDetailProteinView extends AbstractViewComposite {
         initWidget(uiBinder.createAndBindUi(this));
     }
 
+    @UiHandler("proteinTermList")
+    void onWTAaConsequenceChange(ChangeEvent event) {
+        handleChanges();
+    }
+
     @UiHandler("proteinWTTermList")
     void onWTAaChange(ChangeEvent event) {
         useProteinListControls();
+        handleChanges();
     }
 
     @UiHandler("proteinMutatedTerm")
     void onMutatedAaChange(ChangeEvent event) {
         useProteinListControls();
+        handleChanges();
     }
 
     private void useProteinListControls() {
@@ -84,17 +91,20 @@ public class MutationDetailProteinView extends AbstractViewComposite {
 
     @UiHandler("positionStart")
     void onBlurPositionStart(@SuppressWarnings("unused") BlurEvent event) {
-        validateNumber(positionStart);
+        if (validateNumber(positionStart))
+            handleChanges();
     }
 
     @UiHandler("positionEnd")
     void onBlurPositionEnd(@SuppressWarnings("unused") BlurEvent event) {
-        validateNumber(positionEnd);
+        if (validateNumber(positionEnd))
+            handleChanges();
     }
 
     @UiHandler("minusAminoAcid")
     void onBlurMinusBasePair(@SuppressWarnings("unused") BlurEvent event) {
-        validateNumber(minusAminoAcid);
+        if (validateNumber(minusAminoAcid))
+            handleChanges();
         usePlusMinusControls();
         if (!minusAminoAcid.isEmpty())
             plusAminoAcid.clear();
@@ -102,7 +112,8 @@ public class MutationDetailProteinView extends AbstractViewComposite {
 
     @UiHandler("plusAminoAcid")
     void onBlurPlusBasePair(@SuppressWarnings("unused") BlurEvent event) {
-        validateNumber(plusAminoAcid);
+        if (validateNumber(plusAminoAcid))
+            handleChanges();
         usePlusMinusControls();
         if (!plusAminoAcid.isEmpty())
             minusAminoAcid.clear();
@@ -125,7 +136,7 @@ public class MutationDetailProteinView extends AbstractViewComposite {
             faultySequenceCharacter.setVisible(false);
             validSequenceCharacter.setVisible(false);
         }
-
+        handleChanges();
     }
 
 
@@ -136,14 +147,14 @@ public class MutationDetailProteinView extends AbstractViewComposite {
         dto.setConsequenceTermOboID(WidgetUtil.getStringFromListBox(proteinTermList));
         dto.setWildtypeAATermOboID(WidgetUtil.getStringFromListBox(proteinWTTermList));
         dto.setMutantAATermOboID(WidgetUtil.getStringFromListBox(proteinMutatedTerm));
-        dto.setPositionStart(WidgetUtil.getIntegerFromField(positionStart));
+        dto.setPositionStart(positionStart.getBoxValue());
         // if positionEnd is invisible it means: end equals start.
         if (positionEnd.isVisible())
-            dto.setPositionEnd(WidgetUtil.getIntegerFromField(positionEnd));
+            dto.setPositionEnd(positionEnd.getBoxValue());
         else
             dto.setPositionEnd(dto.getPositionStart());
-        dto.setNumberAddedAminoAcid(WidgetUtil.getIntegerFromField(plusAminoAcid));
-        dto.setNumberRemovedAminoAcid(WidgetUtil.getIntegerFromField(minusAminoAcid));
+        dto.setNumberAddedAminoAcid(plusAminoAcid.getBoxValue());
+        dto.setNumberRemovedAminoAcid(minusAminoAcid.getBoxValue());
         dto.setSequenceReferenceAccessionNumber(WidgetUtil.getStringFromField(sequenceOfReference));
 
         return dto;
@@ -178,6 +189,13 @@ public class MutationDetailProteinView extends AbstractViewComposite {
         return fields;
     }
 
+    public Set<IsDirty> getIsDirtyFields() {
+        Set<IsDirty> fields = new HashSet<>();
+        for (Widget widget : getValueFields())
+            fields.add((IsDirty) widget);
+        return fields;
+    }
+
     public boolean hasAASelected() {
         return proteinWTTermList.getSelectedIndex() > 0 || proteinMutatedTerm.getSelectedIndex() > 0;
     }
@@ -199,6 +217,8 @@ public class MutationDetailProteinView extends AbstractViewComposite {
     }
 
     public void populateFields(MutationDetailProteinChangeDTO dto) {
+        if (dto == null)
+            return;
         proteinTermList.setIndexForValue(dto.getConsequenceTermOboID());
         proteinWTTermList.setIndexForValue(dto.getWildtypeAATermOboID());
         proteinMutatedTerm.setIndexForValue(dto.getMutantAATermOboID());
@@ -217,10 +237,6 @@ public class MutationDetailProteinView extends AbstractViewComposite {
         return proteinMutatedTerm.getSelectedIndex() == 1;
     }
 
-
-    public void setPresenter(MutationDetailPresenter presenter) {
-        this.presenter = presenter;
-    }
 }
 
 

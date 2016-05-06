@@ -3,9 +3,12 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
-import org.zfin.gwt.root.dto.MutationDetailControlledVocabularyTermDTO;
-import org.zfin.gwt.root.dto.MutationDetailTranscriptChangeDTO;
+import org.zfin.gwt.curation.event.DirtyValueEvent;
+import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.ui.IsDirty;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.util.AppUtils;
+import org.zfin.gwt.root.util.BooleanCollector;
 
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +21,7 @@ public class MutationDetailPresenter {
     private FeatureAddView view;
     private FeatureEditView editView;
     private Set<MutationDetailTranscriptChangeDTO> dtoSet = new HashSet<>(3);
+    private FeatureDTO dto;
 
     public MutationDetailPresenter(FeatureAddView view, FeatureEditView editView) {
         this.view = view;
@@ -113,7 +117,7 @@ public class MutationDetailPresenter {
 
     private void populateTranscriptDataTable(AbstractFeatureView view) {
         int elementIndex = 0;
-        if (dtoSet.isEmpty()) {
+        if (dtoSet == null || dtoSet.isEmpty()) {
             view.mutationDetailTranscriptView.emptyDataTable();
             return;
         }
@@ -184,7 +188,53 @@ public class MutationDetailPresenter {
         }
     }
 
-////// Handlers and Listeners....
+    // for the edit feature section
+    public boolean isDirty() {
+        MutationDetailDNAView mutationDetailDnaView = editView.mutationDetailDnaView;
+        MutationDetailDnaChangeDTO dnaChangeDTO = dto.getDnaChangeDTO();
+        BooleanCollector col = new BooleanCollector(false);
+        if (dnaChangeDTO != null) {
+            col.addBoolean(mutationDetailDnaView.localizationTerm.isDirty(dnaChangeDTO.getLocalizationTermOboID()));
+            col.addBoolean(mutationDetailDnaView.nucleotideChangeList.isDirty(dnaChangeDTO.getChangeTermOboId()));
+            col.addBoolean(mutationDetailDnaView.plusBasePair.isDirty(dnaChangeDTO.getNumberAddedBasePair()));
+            col.addBoolean(mutationDetailDnaView.minusBasePair.isDirty(dnaChangeDTO.getNumberRemovedBasePair()));
+            col.addBoolean(mutationDetailDnaView.positionStart.isDirty(dnaChangeDTO.getPositionStart()));
+            col.addBoolean(mutationDetailDnaView.positionEnd.isDirty(dnaChangeDTO.getPositionEnd()));
+            col.addBoolean(mutationDetailDnaView.exonNumber.isDirty(dnaChangeDTO.getExonNumber()));
+            col.addBoolean(mutationDetailDnaView.intronNumber.isDirty(dnaChangeDTO.getIntronNumber()));
+            col.addBoolean(mutationDetailDnaView.sequenceOfReference.isDirty(dnaChangeDTO.getSequenceReferenceAccessionNumber()));
+        }
+        MutationDetailProteinView mutationDetailProteinView = editView.mutationDetailProteinView;
+        MutationDetailProteinChangeDTO proteinChangeDTO = dto.getProteinChangeDTO();
+        if (proteinChangeDTO == null) {
+            for (IsDirty widget : mutationDetailProteinView.getIsDirtyFields())
+                col.addBoolean(widget.isDirty(null));
+
+        } else {
+            col.addBoolean(mutationDetailProteinView.proteinTermList.isDirty(proteinChangeDTO.getConsequenceTermOboID()));
+            col.addBoolean(mutationDetailProteinView.proteinMutatedTerm.isDirty(proteinChangeDTO.getMutantAATermOboID()));
+            col.addBoolean(mutationDetailProteinView.proteinWTTermList.isDirty(proteinChangeDTO.getWildtypeAATermOboID()));
+            col.addBoolean(mutationDetailProteinView.plusAminoAcid.isDirty(proteinChangeDTO.getNumberAddedAminoAcid()));
+            col.addBoolean(mutationDetailProteinView.minusAminoAcid.isDirty(proteinChangeDTO.getNumberRemovedAminoAcid()));
+            col.addBoolean(mutationDetailProteinView.positionStart.isDirty(proteinChangeDTO.getPositionStart()));
+            col.addBoolean(mutationDetailProteinView.positionEnd.isDirty(proteinChangeDTO.getPositionEnd()));
+            col.addBoolean(mutationDetailProteinView.sequenceOfReference.isDirty(proteinChangeDTO.getSequenceReferenceAccessionNumber()));
+        }
+        return col.arrivedValue();
+    }
+
+    public void handleDirty() {
+        // notify upper view / presenter logic about dirty or un-dirtied fields.
+        DirtyValueEvent event = new DirtyValueEvent();
+        event.setDirty(isDirty());
+        AppUtils.EVENT_BUS.fireEvent(event);
+    }
+
+    public void setDto(FeatureDTO dto) {
+        this.dto = dto;
+    }
+
+    ////// Handlers and Listeners....
 
     private class DeleteTranscriptConsequence extends Anchor {
 
