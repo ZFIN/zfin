@@ -78,7 +78,7 @@
     <table class="primary-entity-attributes">
         <tr>
             <td><span class="name-value">Genomic Feature <zfin:link entity="${feature}"/>
-        is an allele of <zfin:link entity="${marker}"/>${feature.name}"
+        is an allele of <zfin:link entity="${marker}"/>"
         </span></td>
         </tr>
     </table>
