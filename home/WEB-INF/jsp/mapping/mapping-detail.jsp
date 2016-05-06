@@ -42,6 +42,10 @@
     <zfin2:mappedClonesTable mappedClones="${mappedClones}" marker="${marker}"/>
 </zfin2:subsection>
 
+<zfin2:subsection title="PHYSICAL MAPPING " test="${!empty allelicFeatures}" showNoData="true">
+
+    <zfin2:displayFeatureLocations allelicFeatures="${allelicFeatures}"/>
+</zfin2:subsection>
 <p/>
 
 <div class="summary">
@@ -74,7 +78,7 @@
     <table class="primary-entity-attributes">
         <tr>
             <td><span class="name-value">Genomic Feature <zfin:link entity="${feature}"/>
-        is an allele of <zfin:link entity="${marker}"/>
+        is an allele of <zfin:link entity="${marker}"/>${feature.name}"
         </span></td>
         </tr>
     </table>
