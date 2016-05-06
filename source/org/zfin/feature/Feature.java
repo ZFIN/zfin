@@ -557,6 +557,11 @@ public class Feature implements EntityNotes, EntityZdbID {
         return mutationDetailsConversionService.getTranscriptMutationStatement(this);
     }
 
+
+
+
+
+
     public String getDisplayAbbreviation() {
         if (abbreviation.endsWith("_" + UNRECOGNIZED)) {
             return UNRECOGNIZED;

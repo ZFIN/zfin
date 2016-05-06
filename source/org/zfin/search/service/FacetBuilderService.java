@@ -337,6 +337,7 @@ public class FacetBuilderService {
         facetGroups.add(buildSingleFacetGroup("Registered Author", "registered_author", true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Journal", "journal", false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Keyword", "keyword", false, response, filterQuerySelectionMap, baseUrl));
+        facetGroups.add(buildSingleFacetGroup("MeSH Term", MESH_TERM.getName(), false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Publication Type", "publication_type", false, response, filterQuerySelectionMap, baseUrl));
 
         FacetGroup publishedDateGroup = new FacetGroup("Publication Date", false);

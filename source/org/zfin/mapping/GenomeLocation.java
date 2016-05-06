@@ -1,7 +1,9 @@
 package org.zfin.mapping;
 
+import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.publication.Publication;
 
 import java.io.Serializable;
 
@@ -19,6 +21,9 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
     protected String detailedSource;
     protected String accessionNumber;
     protected GenomeBrowserMetaData metaData;
+    protected Publication attribution;
+    protected GBrowseTrack gbrowseTrack;
+    protected String assembly;
 
     public long getID() {
         return ID;
@@ -96,6 +101,30 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
         this.detailedSource = detailedSource;
     }
 
+    public Publication getAttribution() {
+        return attribution;
+    }
+
+    public void setAttribution(Publication attribution) {
+        this.attribution = attribution;
+    }
+
+    public GBrowseTrack getGbrowseTrack() {
+        return gbrowseTrack;
+    }
+
+    public void setGbrowseTrack(GBrowseTrack gbrowseTrack) {
+        this.gbrowseTrack = gbrowseTrack;
+    }
+
+    public String getAssembly() {
+        return assembly;
+    }
+
+    public void setAssembly(String assembly) {
+        this.assembly = assembly;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -104,11 +133,13 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
         GenomeLocation that = (GenomeLocation) o;
 
         if (chromosome != null ? !chromosome.equals(that.chromosome) : that.chromosome != null) return false;
-        if (end != null)
+        if (end != null) {
             if (!end.equals(that.end)) return false;
+        }
         if (source != null ? !source.equals(that.source) : that.source != null) return false;
-        if (start != null)
+        if (start != null) {
             if (!start.equals(that.start)) return false;
+        }
 
         return true;
     }
@@ -116,10 +147,12 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
     @Override
     public int hashCode() {
         int result = 0;
-        if (start != null)
+        if (start != null) {
             result = 31 * result + start.hashCode();
-        if (end != null)
+        }
+        if (end != null) {
             result = 31 * result + end.hashCode();
+        }
         result = 31 * result + (chromosome != null ? chromosome.hashCode() : 0);
         result = 31 * result + (source != null ? source.hashCode() : 0);
         return result;
@@ -127,12 +160,14 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
 
     @Override
     public int compareTo(GenomeLocation o) {
-        if (o == null)
+        if (o == null) {
             return -1;
+        }
         return source.compareTo(o.getSource());
     }
 
     public enum Source {
+        DIRECT("DirectSubmission", true, "Direct Data Submission", null),
         ZFIN("ZfinGbrowseStartEndLoader", true, "ZFIN Gbrowse", "/" + ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT + "?name="),
         ZFIN_Zv9("ZfinGbrowseZv9StartEndLoader", true, "ZFIN Zv9 Gbrowse", "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name="),
         ENSEMBL("EnsemblStartEndLoader", true, "Ensembl", "http://www.ensembl.org/Danio_rerio/Location/View?db=core;g="),
@@ -165,11 +200,14 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
 
         public static Source getSource(String name) {
             name = name.trim();
-            if (StringUtils.isEmpty(name))
+            if (StringUtils.isEmpty(name)) {
                 return null;
-            for (Source source : values())
-                if (source.name.equals(name))
+            }
+            for (Source source : values()) {
+                if (source.name.equals(name)) {
                     return source;
+                }
+            }
             return null;
         }
 

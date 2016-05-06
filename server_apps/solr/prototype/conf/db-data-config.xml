@@ -4266,6 +4266,15 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                <field column="pub_abstract" name="abstract" &lt;!&ndash;clob="true"&ndash;&gt; />
            </entity>
 -->
+           <entity name="pub_mesh_term"
+                   datasource="db" query="
+                        SELECT des.mesht_term_name || nvl('/' || qual.mesht_term_name, '') AS full_mesh_term, mh_pub_zdb_id AS pub_zdb_id
+                        FROM mesh_heading
+                        LEFT JOIN mesh_heading_qualifier ON mh_pk_id = mhq_mesh_heading_id
+                        INNER JOIN mesh_term des ON des.mesht_mesh_id = mh_mesht_mesh_descriptor_id
+                        LEFT JOIN mesh_term qual ON qual.mesht_mesh_id = mhq_mesht_mesh_qualifier_id"
+                   cacheImpl="SortedMapBackedCache"
+                   where="pub_zdb_id=publication.id"/>
 
        </entity>
 

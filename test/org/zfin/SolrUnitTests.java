@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.zfin.framework.search.SolrExampleTests;
 import org.zfin.framework.search.SolrPrototypeTest;
+import org.zfin.search.SearchSuggestionServiceSpec;
 import org.zfin.uniquery.CategoriesAndFacetsSpec;
 import org.zfin.uniquery.QuerySpec;
 import org.zfin.uniquery.RelatedLinksSpec;
@@ -18,10 +19,11 @@ import org.zfin.uniquery.ResultAttributesSpec;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        ResultAttributesSpec.class,
-        RelatedLinksSpec.class,
-        CategoriesAndFacetsSpec.class,
-        QuerySpec.class
+//        ResultAttributesSpec.class,
+//        RelatedLinksSpec.class,
+//        CategoriesAndFacetsSpec.class,
+//        QuerySpec.class,
+        SearchSuggestionServiceSpec.class
 /*        SolrPrototypeTest.class   //this references fields that don't exist anymore, but would be useful if refactored */
 })
 
