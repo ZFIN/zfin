@@ -81,8 +81,7 @@
             </c:forEach>
 
         </div>
-
-        <c:if test="${fn:length(facet.facetValues) > 4 && !facet.alwaysShowAllFacets}">
+        <c:if test="${(fn:length(facet.facetValues) + fn:length(facet.selectedFacetValues)) > 4 && !facet.alwaysShowAllFacets}">
         <li class="row">
             <div class="col-md-2 col-xs-2"> <%-- this is a placehold because tight-on-the-left breaks the offsets --%></div>
             <div id="${name}-facet-expand-contract-links" class="col-md-8 col-xs-9 tight-on-the-left facet-expand-contract-links">
