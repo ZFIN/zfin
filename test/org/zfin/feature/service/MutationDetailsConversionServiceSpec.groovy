@@ -392,7 +392,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         null  | null     | 5       | null      || '5 AA added'
         null  | null     | null    | 8         || '8 AA missing'
         null  | null     | 3       | 9         || '3 AA added / 9 AA missing'
-        'Sec' | 'Ala'    | 1       | 2         || 'Sec>Ala, 1 AA added / 2 AA missing' // does this case even make sense? well, just in case.
+        'Sec' | 'Ala'    | 1       | 2         || 'Sec>Ala: 1 AA added / 2 AA missing' // does this case even make sense? well, just in case.
     }
 
     @Unroll

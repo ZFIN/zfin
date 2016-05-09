@@ -426,7 +426,7 @@ public class MutationDetailsConversionService {
                 proteinConsequence.getNumberAminoAcidsRemoved(), MISSING, AMINO_ACIDS);
         if (StringUtils.isNotEmpty(addedOrRemoved)) {
             if (StringUtils.isNotEmpty(statement)) {
-                statement.append(", ");
+                statement.append(": ");
             }
             statement.append(addedOrRemoved);
         }
