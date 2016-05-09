@@ -332,6 +332,8 @@
                           registered_author
              author_string
              author_year
+             full_mesh_term
+             full_mesh_term_t
                                      related_accession
                                      related_marker
                                      affected_gene_t
@@ -425,6 +427,8 @@
                                      registered_author_t
                                      author_string
                                      author_year
+             full_mesh_term
+             full_mesh_term_t
                                      related_accession
                                      related_marker
                                      affected_gene_t
@@ -559,6 +563,8 @@
              registered_author^0.5
              author_string
              author_year
+             full_mesh_term
+             full_mesh_term_t
 
              related_accession
              related_marker

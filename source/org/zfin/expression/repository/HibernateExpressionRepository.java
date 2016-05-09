@@ -696,6 +696,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (List<ExpressionFigureStage>) query.list();
     }
 
+    public ExpressionFigureStage getExpressionFigureStage(Long id) {
+        return (ExpressionFigureStage) HibernateUtil.currentSession().get(ExpressionFigureStage.class, id);
+    }
+
     @SuppressWarnings("unchecked")
     public List<ExpressionExperiment> getExperimentsByGeneAndFish2(String publicationID, String geneZdbID, String fishID) {
 

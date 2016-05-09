@@ -223,6 +223,8 @@ public interface ExpressionRepository {
      */
     ExpressionFigureStage getExperimentFigureStage(String experimentZdbID, String figureID, String startStageID, String endStageID);
 
+    ExpressionFigureStage getExpressionFigureStage(Long id);
+
     /**
      * Retrieve all expression structures for a given publication, which is the same as the
      * structure pile.
