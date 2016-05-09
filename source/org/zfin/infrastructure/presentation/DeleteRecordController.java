@@ -4,17 +4,17 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.ControlledVocab;
 import org.zfin.infrastructure.delete.DeleteEntityRule;
 import org.zfin.infrastructure.delete.DeleteFeatureRule;
 import org.zfin.infrastructure.delete.DeleteValidationReport;
 import org.zfin.marker.service.DeleteService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
@@ -89,4 +89,23 @@ public class DeleteRecordController {
         return "infrastructure/record-deleted.page";
     }
 
+    @RequestMapping(value = "/controlled-vocabulary-delete")
+    public String doDelete(Model model
+            , @RequestParam(value = "zdbIDToDelete", required = true) String zdbID
+    ) throws Exception {
+
+        try {
+            HibernateUtil.createTransaction();
+            getInfrastructureRepository().insertUpdatesTable(zdbID, "Controlled Vocabulary", zdbID, "", " Controlled Vocabulary deleted through UI");
+            getInfrastructureRepository().deleteActiveEntity(zdbID);
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            logger.error("Can not delete " + zdbID, e);
+            HibernateUtil.rollbackTransaction();
+        }
+
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Controlled Vocabulary record deleted");
+
+        return "infrastructure/controlled-vocabulary-add.page";
+    }
 }

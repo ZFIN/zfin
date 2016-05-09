@@ -125,6 +125,7 @@ public class ActiveData implements ZdbID {
         CND,
         CRISPR(DeleteSTRRule.class),
         CUR,
+        CV,
         DAT,
         DALIAS,
         DBLINK,

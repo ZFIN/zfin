@@ -445,6 +445,14 @@ public interface InfrastructureRepository {
     void insertRecordAttribution(Fish fish, Publication publication);
 
     long getDistinctPublicationsByData(String entityID);
+
+    boolean isTermNameForControlledVocabExists(String cvTermName);
+
+    boolean isForeignSpeciesForControlledVocabExists(String cvForeignSpecies);
+
+    boolean isNameDefForControlledVocabExists(String cvNameDefinition);
+
+    ControlledVocab getControlledVocabByNameAndSpecies(String termName, String foreignSpecies);
 }
 
 
