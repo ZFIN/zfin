@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.presentation.DevelopmentStagePresentation;
@@ -12,8 +13,11 @@ import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExperimentPresentation;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeaturePrefix;
+import org.zfin.feature.FeatureTranscriptMutationDetail;
+import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.fish.presentation.FishPresentation;
 import org.zfin.fish.repository.FishService;
+import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.mapping.MappingService;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -303,6 +307,7 @@ public class ResultService {
 
 
     public void injectFeatureAttributes(SearchResult result) {
+
         Feature feature = RepositoryFactory.getFeatureRepository().getFeatureByID(result.getId());
 
         result.setDisplayedID(result.getId());
@@ -320,8 +325,14 @@ public class ResultService {
             }
 
             result.addAttribute(TYPE, feature.getType().getDisplay());
+            Set<FeatureTranscriptMutationDetail> consequences = feature.getFeatureTranscriptMutationDetailSet();
+            List<String> consequenceStatements = new ArrayList<>(consequences.size());
+            for (FeatureTranscriptMutationDetail consequence : consequences) {
+                consequenceStatements.add(transcriptConsequenceStatement(consequence));
+            }
+
             if (feature.getFeatureTranscriptMutationDetailSet() != null && feature.getFeatureTranscriptMutationDetailSet().size() > 0) {
-                result.addAttribute(CONSEQUENCE, withCommas(feature.getFeatureTranscriptMutationDetailSet(), "transcriptConsequence.displayName"));
+                result.addAttribute(CONSEQUENCE, StringUtils.join(consequenceStatements, ", "));
             }
             if (feature.getConstructs() != null && feature.getConstructs().size() > 0) {
                 result.addAttribute(CONSTRUCT, withCommas(feature.getConstructs(), "marker.name"));
@@ -826,5 +837,25 @@ public class ResultService {
         }
         return sb.toString();
     }
-
+    public String transcriptConsequenceStatement(FeatureTranscriptMutationDetail transcriptDetail) {
+        if (transcriptDetail == null || transcriptDetail.getTranscriptConsequence() == null) {
+            return "";
+        }
+        String termDisplay = WordUtils.capitalize(transcriptDetail.getTranscriptConsequence().getDisplayName());
+        StringBuilder statement = new StringBuilder(termDisplay);
+        String preposition;
+        switch (transcriptDetail.getTranscriptConsequence().getZdbID()) {
+            case "ZDB-TERM-130401-1568":
+            case "ZDB-TERM-130401-1567":
+                preposition = " of ";
+                break;
+            default:
+                preposition = " in ";
+        }
+        String location = MutationDetailsConversionService.exonOrIntronLocation(transcriptDetail, preposition);
+        if (StringUtils.isNotEmpty(location)) {
+            statement.append(location);
+        }
+        return statement.toString();
+    }
 }
