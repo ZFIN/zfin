@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.TextArea;
 
 /**
  */
-public class RevertibleTextArea<T extends String> extends TextArea implements IsDirty<T> {
+public class RevertibleTextArea<T extends String> extends TextArea implements IsDirtyWidget<T> {
 
     public RevertibleTextArea() {
         super();

@@ -1,10 +1,8 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
+import org.zfin.gwt.root.ui.IsDirtyWidget;
 import org.zfin.gwt.root.ui.NumberTextBox;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
 
@@ -27,10 +25,10 @@ public abstract class AbstractViewComposite extends Composite {
         errorLabel.setText("");
     }
 
-    public abstract Set<Widget> getValueFields();
+    public abstract Set<IsDirtyWidget> getValueFields();
 
     public boolean hasEnteredValues() {
-        for (Widget widget : getValueFields()) {
+        for (IsWidget widget : getValueFields()) {
             if (widget instanceof ListBox) {
                 if (((ListBox) widget).getSelectedIndex() > 0)
                     return true;

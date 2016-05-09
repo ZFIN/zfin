@@ -10,6 +10,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.MutationDetailTranscriptChangeDTO;
+import org.zfin.gwt.root.ui.IsDirtyWidget;
 import org.zfin.gwt.root.ui.NumberTextBox;
 import org.zfin.gwt.root.ui.StringListBox;
 import org.zfin.gwt.root.util.WidgetUtil;
@@ -122,8 +123,8 @@ public class MutationDetailTranscriptView extends AbstractViewComposite {
     }
 
     @Override
-    public Set<Widget> getValueFields() {
-        Set<Widget> fields = new HashSet<>();
+    public Set<IsDirtyWidget> getValueFields() {
+        Set<IsDirtyWidget> fields = new HashSet<>();
         fields.add(consequenceList);
         fields.add(exonNumber);
         fields.add(intronNumber);

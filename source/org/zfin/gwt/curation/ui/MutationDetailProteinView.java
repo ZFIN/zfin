@@ -7,9 +7,12 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Label;
 import org.zfin.gwt.root.dto.MutationDetailProteinChangeDTO;
-import org.zfin.gwt.root.ui.IsDirty;
+import org.zfin.gwt.root.ui.IsDirtyWidget;
 import org.zfin.gwt.root.ui.NumberTextBox;
 import org.zfin.gwt.root.ui.StringListBox;
 import org.zfin.gwt.root.ui.StringTextBox;
@@ -176,8 +179,8 @@ public class MutationDetailProteinView extends AbstractViewComposite {
 
 
     @Override
-    public Set<Widget> getValueFields() {
-        Set<Widget> fields = new HashSet<>();
+    public Set<IsDirtyWidget> getValueFields() {
+        Set<IsDirtyWidget> fields = new HashSet<>();
         fields.add(proteinMutatedTerm);
         fields.add(proteinWTTermList);
         fields.add(positionStart);
@@ -186,13 +189,6 @@ public class MutationDetailProteinView extends AbstractViewComposite {
         fields.add(minusAminoAcid);
         fields.add(plusAminoAcid);
         fields.add(sequenceOfReference);
-        return fields;
-    }
-
-    public Set<IsDirty> getIsDirtyFields() {
-        Set<IsDirty> fields = new HashSet<>();
-        for (Widget widget : getValueFields())
-            fields.add((IsDirty) widget);
         return fields;
     }
 

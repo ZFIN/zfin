@@ -10,6 +10,8 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.CuratorNoteDTO;
 import org.zfin.gwt.root.dto.NoteDTO;
+import org.zfin.gwt.root.ui.IsDirtyWidget;
+import org.zfin.gwt.root.ui.RevertibleTextArea;
 import org.zfin.gwt.root.ui.StringListBox;
 import org.zfin.gwt.root.util.DeleteImage;
 
@@ -32,7 +34,7 @@ public class FeatureNotesView extends AbstractViewComposite {
     @UiField
     Button cancelButton;
     @UiField
-    TextArea newNoteTextArea;
+    RevertibleTextArea newNoteTextArea;
     @UiField
     StringListBox typeListBox;
 
@@ -101,8 +103,8 @@ public class FeatureNotesView extends AbstractViewComposite {
 
 
     @Override
-    public Set<Widget> getValueFields() {
-        Set<Widget> fields = new HashSet<>();
+    public Set<IsDirtyWidget> getValueFields() {
+        Set<IsDirtyWidget> fields = new HashSet<>();
         fields.add(newNoteTextArea);
         return fields;
 

@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * A generic listbox that is easier to work with and handles isDirty.
  */
-public abstract class AbstractListBox<T extends Object> extends ListBox implements IsDirty<T> {
+public abstract class AbstractListBox<T extends Object> extends ListBox implements IsDirtyWidget<T> {
 
     public static final String EMPTY_CHOICE = "---";
     public static final String NONE = "none";

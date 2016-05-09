@@ -1,8 +1,10 @@
 package org.zfin.gwt.root.ui;
 
+import org.zfin.gwt.root.util.StringUtils;
+
 /**
  */
-public class StringListBox extends AbstractListBox<String>{
+public class StringListBox extends AbstractListBox<String> {
 
     public StringListBox(boolean multiselect) {
         super(multiselect);
@@ -12,13 +14,13 @@ public class StringListBox extends AbstractListBox<String>{
         super();
     }
 
-    public boolean isSelectedNull(){
-        return getSelected()==null ; 
+    public boolean isSelectedNull() {
+        return getSelected() == null;
     }
 
     public String getSelected() {
-        if(getSelectedIndex()<0){
-            return null ; 
+        if (getSelectedIndex() < 0) {
+            return null;
         }
         String value = getValue(getSelectedIndex());
         if (value.equals(NULL_STRING)) {
@@ -29,26 +31,19 @@ public class StringListBox extends AbstractListBox<String>{
     }
 
 
-
     public boolean isFieldEqual(String value) {
+        if (value == null) {
+            return getSelectedIndex() == 0;
+        }
         String selectedString = getSelected();
-        if (
-                (value == null && selectedString != null)
-                        ||
-                        (value != null && selectedString == null)) {
-            return false;
-        } else if ((value == selectedString) || value.equals(selectedString)) {
-            return true;
-        } else if (value.equals(selectedString)) {
+        if (StringUtils.isEmpty(value) && StringUtils.isEmpty(selectedString)) {
             return true;
         }
-        else if(value==null && selectedString==null) {
-            return true ;
-        }
-        // values are not equal
-        else {
+        if ((StringUtils.isNotEmpty(value) && StringUtils.isEmpty(selectedString)) ||
+                (StringUtils.isEmpty(value) && StringUtils.isNotEmpty(selectedString))) {
             return false;
         }
+        return value.equals(selectedString);
     }
 
     public int setIndexForText(String value) {
@@ -63,7 +58,7 @@ public class StringListBox extends AbstractListBox<String>{
                 return i;
             }
         }
-        return -1 ;
+        return -1;
     }
 
     @Override
@@ -79,14 +74,13 @@ public class StringListBox extends AbstractListBox<String>{
                 return i;
             }
         }
-        return -1 ;
+        return -1;
     }
 
     public boolean isDirty(String value) {
-        if(getItemCount()==0 || isFieldEqual(value)){
+        if (getItemCount() == 0 || isFieldEqual(value)) {
             return setDirty(false);
-        }
-        else{
+        } else {
             return setDirty(true);
         }
     }

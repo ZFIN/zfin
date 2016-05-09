@@ -5,7 +5,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import org.zfin.gwt.curation.event.DirtyValueEvent;
 import org.zfin.gwt.root.dto.*;
-import org.zfin.gwt.root.ui.IsDirty;
+import org.zfin.gwt.root.ui.IsDirtyWidget;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.BooleanCollector;
@@ -193,7 +193,11 @@ public class MutationDetailPresenter {
         MutationDetailDNAView mutationDetailDnaView = editView.mutationDetailDnaView;
         MutationDetailDnaChangeDTO dnaChangeDTO = dto.getDnaChangeDTO();
         BooleanCollector col = new BooleanCollector(false);
-        if (dnaChangeDTO != null) {
+        if (dnaChangeDTO == null) {
+            for (IsDirtyWidget widget : mutationDetailDnaView.getValueFields())
+                col.addBoolean(widget.isDirty(null));
+
+        } else {
             col.addBoolean(mutationDetailDnaView.localizationTerm.isDirty(dnaChangeDTO.getLocalizationTermOboID()));
             col.addBoolean(mutationDetailDnaView.nucleotideChangeList.isDirty(dnaChangeDTO.getChangeTermOboId()));
             col.addBoolean(mutationDetailDnaView.plusBasePair.isDirty(dnaChangeDTO.getNumberAddedBasePair()));
@@ -207,7 +211,7 @@ public class MutationDetailPresenter {
         MutationDetailProteinView mutationDetailProteinView = editView.mutationDetailProteinView;
         MutationDetailProteinChangeDTO proteinChangeDTO = dto.getProteinChangeDTO();
         if (proteinChangeDTO == null) {
-            for (IsDirty widget : mutationDetailProteinView.getIsDirtyFields())
+            for (IsDirtyWidget widget : mutationDetailProteinView.getValueFields())
                 col.addBoolean(widget.isDirty(null));
 
         } else {

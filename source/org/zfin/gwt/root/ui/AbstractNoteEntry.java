@@ -108,9 +108,9 @@ public abstract class AbstractNoteEntry extends AbstractRevertibleComposite {
         saveButton.setEnabled(dirty);
         revertButton.setEnabled(dirty);
         if (dirty) {
-            noteText.setStyleName(IsDirty.DIRTY_STYLE);
+            noteText.setStyleName(IsDirtyWidget.DIRTY_STYLE);
         } else {
-            noteText.setStyleName(IsDirty.CLEAN_STYLE);
+            noteText.setStyleName(IsDirtyWidget.CLEAN_STYLE);
             fireEventSuccess();
         }
         return dirty;

@@ -1,9 +1,11 @@
 package org.zfin.gwt.root.ui;
 
+import com.google.gwt.user.client.ui.IsWidget;
+
 /**
  * If a component can be dirty and can be displayed as such.
  */
-public interface IsDirty<T> {
+public interface IsDirtyWidget<T> extends IsWidget {
 
     String NULL_STRING = "null";
 

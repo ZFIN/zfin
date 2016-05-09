@@ -79,9 +79,9 @@ public class StackComposite<T extends RelatedEntityDTO> extends AbstractComposit
     public boolean handleDirty() {
         boolean dirty = isDirty();
         if (dirty) {
-            nameLabel.setStyleName(IsDirty.DIRTY_STYLE);
+            nameLabel.setStyleName(IsDirtyWidget.DIRTY_STYLE);
         } else {
-            nameLabel.setStyleName(IsDirty.CLEAN_STYLE);
+            nameLabel.setStyleName(IsDirtyWidget.CLEAN_STYLE);
         }
         return dirty;
     }
