@@ -22,8 +22,10 @@ public class MutationDetailsConversionService {
     private static final String AMINO_ACIDS = "AA";
     private static final String STOP = "STOP";
     private static final String NET = "Net";
-    private static final String PLUS = "+";
-    private static final String MINUS = "-";
+    private static final String INSERTED = "inserted";
+    private static final String DELETED = "deleted";
+    private static final String ADDED = "added";
+    private static final String MISSING = "missing";
 
     public MutationDetailsPresentation convert(Feature feature) {
         return convert(feature, false);
@@ -127,42 +129,42 @@ public class MutationDetailsConversionService {
         if (dnaChange == null) {
             return "";
         }
-        return addedOrRemovedStatement(null, dnaChange.getNumberRemovedBasePair(), BASE_PAIRS);
+        return addedOrRemovedStatement(null, INSERTED, dnaChange.getNumberRemovedBasePair(), DELETED, BASE_PAIRS);
     }
 
     private String insertionStatement(FeatureDnaMutationDetail dnaChange) {
         if (dnaChange == null) {
             return "";
         }
-        return addedOrRemovedStatement(dnaChange.getNumberAddedBasePair(), null, BASE_PAIRS);
+        return addedOrRemovedStatement(dnaChange.getNumberAddedBasePair(), INSERTED, null, DELETED, BASE_PAIRS);
     }
 
     private String indelStatement(FeatureDnaMutationDetail dnaChange) {
         if (dnaChange == null) {
             return "";
         }
-        return addedOrRemovedStatement(dnaChange.getNumberAddedBasePair(), dnaChange.getNumberRemovedBasePair(), BASE_PAIRS, true);
+        return addedOrRemovedStatement(dnaChange.getNumberAddedBasePair(), INSERTED, dnaChange.getNumberRemovedBasePair(), DELETED, BASE_PAIRS, true);
     }
 
-    private String addedOrRemovedStatement(Integer added, Integer removed, String item) {
-        return addedOrRemovedStatement(added, removed, item, false);
+    private String addedOrRemovedStatement(Integer added, String addedTerm, Integer removed, String removedTerm, String item) {
+        return addedOrRemovedStatement(added, addedTerm, removed, removedTerm, item, false);
     }
 
-    private String addedOrRemovedStatement(Integer added, Integer removed, String item, boolean isNet) {
+    private String addedOrRemovedStatement(Integer added, String addedTerm, Integer removed, String removedTerm, String item, boolean isNet) {
         if (added == null && removed == null) {
             return "";
         }
 
-        String prefix = isNet ? (NET + " ") : "";
+        String prefix = isNet ? NET : "";
         if (added == null) {
-            return prefix + MINUS + removed + " " + item;
+            return makeSentence(prefix, removed.toString(), item, removedTerm);
         }
 
         if (removed == null) {
-            return prefix + PLUS + added + " " + item;
+            return makeSentence(prefix, added.toString(), item, addedTerm);
         }
 
-        return PLUS + added + "/" + MINUS + removed + " " + item;
+        return makeSentence(added.toString(), item, addedTerm, "/", removed.toString(), item, removedTerm);
     }
 
     private String transgenicStatement(FeatureDnaMutationDetail dnaChange) {
@@ -420,8 +422,8 @@ public class MutationDetailsConversionService {
             }
         }
 
-        String addedOrRemoved = addedOrRemovedStatement(proteinConsequence.getNumberAminoAcidsAdded(),
-                proteinConsequence.getNumberAminoAcidsRemoved(), AMINO_ACIDS);
+        String addedOrRemoved = addedOrRemovedStatement(proteinConsequence.getNumberAminoAcidsAdded(), ADDED,
+                proteinConsequence.getNumberAminoAcidsRemoved(), MISSING, AMINO_ACIDS);
         if (StringUtils.isNotEmpty(addedOrRemoved)) {
             if (StringUtils.isNotEmpty(statement)) {
                 statement.append(", ");

@@ -185,12 +185,12 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
 
         where:
         localization | exon | intron | position | db        | accession || display
-        null         | null | null   | null     | null      | null      || '-10 bp'
-        intronLoc    | null | 2      | null     | null      | null      || '-10 bp in Intron 2'
-        spliceDonor  | 6    | null   | 1010     | null      | null      || '-10 bp at position 1010 in Splice Donor Site of Exon 6'
-        null         | null | null   | 482      | null      | null      || '-10 bp at position 482'
-        null         | null | null   | 1829     | 'GENBANK' | 'C1032'   || '-10 bp at position 1829 in GENBANK:C1032'
-        null         | null | null   | null     | 'GENBANK' | '9999'    || '-10 bp in GENBANK:9999'
+        null         | null | null   | null     | null      | null      || '10 bp deleted'
+        intronLoc    | null | 2      | null     | null      | null      || '10 bp deleted in Intron 2'
+        spliceDonor  | 6    | null   | 1010     | null      | null      || '10 bp deleted at position 1010 in Splice Donor Site of Exon 6'
+        null         | null | null   | 482      | null      | null      || '10 bp deleted at position 482'
+        null         | null | null   | 1829     | 'GENBANK' | 'C1032'   || '10 bp deleted at position 1829 in GENBANK:C1032'
+        null         | null | null   | null     | 'GENBANK' | '9999'    || '10 bp deleted in GENBANK:9999'
     }
 
     @Unroll
@@ -217,12 +217,12 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
 
         where:
         localization | exon | intron | position | db        | accession || display
-        null         | null | null   | null     | null      | null      || '+13 bp'
-        exonLoc      | 12   | null   | null     | null      | null      || '+13 bp in Exon 12'
-        fivePrimeUTR | 6    | null   | 1010     | null      | null      || '+13 bp at position 1010 in 5\' UTR'
-        null         | null | null   | 832      | null      | null      || '+13 bp at position 832'
-        intronLoc    | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '+13 bp at position 1829 in GENBANK:C1032 in Intron 5'
-        null         | null | null   | null     | 'GENBANK' | '9999'    || '+13 bp in GENBANK:9999'
+        null         | null | null   | null     | null      | null      || '13 bp inserted'
+        exonLoc      | 12   | null   | null     | null      | null      || '13 bp inserted in Exon 12'
+        fivePrimeUTR | 6    | null   | 1010     | null      | null      || '13 bp inserted at position 1010 in 5\' UTR'
+        null         | null | null   | 832      | null      | null      || '13 bp inserted at position 832'
+        intronLoc    | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '13 bp inserted at position 1829 in GENBANK:C1032 in Intron 5'
+        null         | null | null   | null     | 'GENBANK' | '9999'    || '13 bp inserted in GENBANK:9999'
     }
 
     @Unroll
@@ -250,14 +250,14 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
 
         where:
         added | removed | localization | exon | intron | position | db        | accession || display
-        18    | null    | null         | null | null   | null     | null      | null      || 'Net +18 bp'
-        null  | 21      | null         | null | null   | null     | null      | null      || 'Net -21 bp'
-        34    | 17      | null         | null | null   | null     | null      | null      || '+34/-17 bp'
-        34    | 17      | exonLoc      | 2    | null   | null     | null      | null      || '+34/-17 bp in Exon 2'
-        34    | 17      | spliceDonor  | null | null   | 1010     | null      | null      || '+34/-17 bp at position 1010 in Splice Donor Site'
-        34    | 17      | null         | null | null   | 832      | null      | null      || '+34/-17 bp at position 832'
-        34    | 17      | intronLoc    | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '+34/-17 bp at position 1829 in GENBANK:C1032 in Intron 5'
-        34    | 17      | null         | null | null   | null     | 'GENBANK' | '9999'    || '+34/-17 bp in GENBANK:9999'
+        18    | null    | null         | null | null   | null     | null      | null      || 'Net 18 bp inserted'
+        null  | 21      | null         | null | null   | null     | null      | null      || 'Net 21 bp deleted'
+        34    | 17      | null         | null | null   | null     | null      | null      || '34 bp inserted / 17 bp deleted'
+        34    | 17      | exonLoc      | 2    | null   | null     | null      | null      || '34 bp inserted / 17 bp deleted in Exon 2'
+        34    | 17      | spliceDonor  | null | null   | 1010     | null      | null      || '34 bp inserted / 17 bp deleted at position 1010 in Splice Donor Site'
+        34    | 17      | null         | null | null   | 832      | null      | null      || '34 bp inserted / 17 bp deleted at position 832'
+        34    | 17      | intronLoc    | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '34 bp inserted / 17 bp deleted at position 1829 in GENBANK:C1032 in Intron 5'
+        34    | 17      | null         | null | null   | null     | 'GENBANK' | '9999'    || '34 bp inserted / 17 bp deleted in GENBANK:9999'
     }
 
     @Unroll
@@ -389,10 +389,10 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         'Trp' | null     | null    | null      || 'Trp>STOP'
         null  | 'Met'    | null    | null      || ''
         'Phe' | 'Gly'    | null    | null      || 'Phe>Gly'
-        null  | null     | 5       | null      || '+5 AA'
-        null  | null     | null    | 8         || '-8 AA'
-        null  | null     | 3       | 9         || '+3/-9 AA'
-        'Sec' | 'Ala'    | 1       | 2         || 'Sec>Ala, +1/-2 AA' // does this case even make sense? well, just in case.
+        null  | null     | 5       | null      || '5 AA added'
+        null  | null     | null    | 8         || '8 AA missing'
+        null  | null     | 3       | 9         || '3 AA added / 9 AA missing'
+        'Sec' | 'Ala'    | 1       | 2         || 'Sec>Ala, 1 AA added / 2 AA missing' // does this case even make sense? well, just in case.
     }
 
     @Unroll
@@ -423,8 +423,8 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         null  | null     | null    | null      | null                      | null  | null | null     | null      || ''
         'Gln' | 'Pro'    | null    | null      | null                      | null  | null | null     | null      || 'Gln>Pro'
         'Tyr' | null     | null    | null      | null                      | 400   | null | null     | null      || 'Tyr>STOP at position 400'
-        null  | null     | 10      | null      | null                      | 312   | 322  | null     | null      || '+10 AA from position 312 to 322'
-        null  | null     | null    | 14        | null                      | null  | null | 'PROTDB' | '10000'   || '-14 AA in PROTDB:10000'
+        null  | null     | 10      | null      | null                      | 312   | 322  | null     | null      || '10 AA added from position 312 to 322'
+        null  | null     | null    | 14        | null                      | null  | null | 'PROTDB' | '10000'   || '14 AA missing in PROTDB:10000'
         null  | null     | null    | null      | 'elongated polypeptide'   | null  | null | null     | null      || 'Elongated Polypeptide'
         'Gln' | 'Tyr'    | null    | null      | 'amino acid substitution' | 90    | null | 'FooDB'  | '848484'  || 'Amino Acid Substitution, Gln>Tyr at position 90 in FooDB:848484'
     }
