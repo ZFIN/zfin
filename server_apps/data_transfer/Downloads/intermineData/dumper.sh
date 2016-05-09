@@ -10,6 +10,19 @@ if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/d
   mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/disease/
 fi;
 
+if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dnaMutationDetail ]; then
+  mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dnaMutationDetail/
+fi;
+
+if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/transcriptMutationDetail ]; then
+  mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/transcriptMutationDetail/
+fi;
+
+if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/proteinMutationDetail ]; then
+  mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/proteinMutationDetail/
+fi;
+
+
 if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/allele ]; then
   mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/allele/
 fi;
@@ -199,18 +212,6 @@ export LD_LIBRARY_PATH=/private/apps/Informix/informix/lib:/private/apps/Informi
 export PATH=/private/apps/Informix/informix/bin:/private/ZfinLinks/Commons/bin:/private/apps/wublast:/local/apps/netpbm/bin:/local/bin:/home/zusers/staylor/bin:/local/apps/Lang/SUNWspro/bin:/local/apps/java/bin:/bin:/usr/bin:/cs/bin:/local/apps/X11/bin:/usr/bin/X11:/local/apps/mh/bin:/local/apps/tex/bin:/etc:/usr/etc:/usr/dt/bin:/usr/openwin/bin:/usr/ccs/bin:/sbin:/usr/sbin:/usr/sfw/bin:.
 
 $INFORMIXDIR/bin/dbaccess -a <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dump.sql 
-
-#cp /research/zprod/catalina_bases/zfin.org/temp/quality.obo <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_pato/
-
-#cp /research/zprod/catalina_bases/zfin.org/temp/anatomy.obo <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_anatomy/
-
-#mv <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_anatomy/anatomy.obo <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_anatomy/zebrafish_anatomy.obo 
-
-#cp /research/zprod/catalina_bases/zfin.org/temp/gene-ontology.obo <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/go/
-
-#mv <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/go/gene-ontology.obo <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/go/gene_ontology.obo
-
-#cp /research/zprod/catalina_bases/zfin.org/temp/spatial.obo <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfinSpatial/
 
 cp /research/zprod/www_homes/zfin.org/server_apps/data_transfer/GO/gene_association.zfin.gz <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/go-annotation
 gunzip <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/go-annotation/gene_association.zfin.gz
