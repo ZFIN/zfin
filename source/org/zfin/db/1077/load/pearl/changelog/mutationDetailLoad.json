@@ -1,0 +1,16 @@
+{
+    "changeSet": {
+        "id": "loadData-mutation-detail-controlled-vocabulary",
+        "author": "staylor",
+        "changes": [
+            {
+                "loadData": {
+                    "catalogName": "waffle",
+                    "file": "/opt/zfin/www_homes/swirl/source/org/zfin/db/1077/load/pearl/",
+                    "schemaName": "swirl",
+                    "tableName": "tmp_term"
+                }
+            }]
+
+    }
+}

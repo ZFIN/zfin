@@ -1,5 +1,4 @@
 --liquibase formatted sql
-
 --changeset staylor:11
 create table test2 (id varchar(50))
 in tbldbs2;

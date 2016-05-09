@@ -5,17 +5,8 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-  <include file="source/org/zfin/db/changelog/0.sql"/> 
-  <include file="source/org/zfin/db/changelog/1.sql"/>
-  <include file="source/org/zfin/db/changelog/2.sql"/>
-<!--  <include file="source/org/zfin/db/changelog/db.changelog-1.0.json"/>
-  <include file="source/org/zfin/db/changelog/db.changelog-1.1.sql"/>-->
-  <include file="source/org/zfin/db/changelog/db.changelog-1.2.sql"/>
-  <include file="source/org/zfin/db/changelog/db.changelog.island-1.0.sql"/>
-<!--  <include file="source/org/zfin/db/changelog/db.changelog.island-1.1.sql"/>-->
-  <include file="source/org/zfin/db/changelog/db.changelog.island-1.2.sql"/>
- <include file="source/org/zfin/db/changelog/db.changelog-1.2.1.sql"/>
-  <include file="source/org/zfin/db/changelog/db.changelog.island-1.4.sql"/>
-   <!-- <include file="source/org/zfin/db/changelog/db.changelog.testTable.sql"/>-->
+  <include file="source/org/zfin/db/1077/octopus/db.changelog.master.xml"/>
+  <include file="source/org/zfin/db/1077/pearl/db.changelog.master.xml"/>
+  <include file="source/org/zfin/db/1077/qualle/db.changelog.master.xml"/>
 
 </databaseChangeLog>
