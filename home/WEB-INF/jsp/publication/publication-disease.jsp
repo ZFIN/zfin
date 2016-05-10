@@ -47,7 +47,13 @@
                     <zfin:link entity="${diseaseAnnos.fishExperiment.experiment}"/><c:if test="${!loop.last}"><br></c:if>
                 </c:forEach>
              </td>
-            <td>${disease.evidenceCode}</td>
+            <td>
+            <c:forEach var="diseaseAnnos" items="${disease.diseaseAnnotationModel}" varStatus="loop">
+
+               ${diseaseAnnos.diseaseAnnotation.evidenceCode}<c:if test="${!loop.last}"><br></c:if>
+            </c:forEach>
+                </td>
+            <%--<td>${disease.evidenceCode}</td>--%>
 
         </zfin:alternating-tr>
     </c:forEach>
