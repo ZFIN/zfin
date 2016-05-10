@@ -6,15 +6,16 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
   <include file="source/org/zfin/db/1077/load/pearl/changelog/mutationDetailControlledVocabularies.sql"/>
-  <include file="source/org/zfin/db/1077/load/pearl/changelog/mutationDetailLoad.json"/>
+  <include file="source/org/zfin/db/1077/load/pearl/changelog/mutationDetailLoad.xml"/>
   <include file="source/org/zfin/db/1077/load/pearl/changelog/mungeMutationDetailTable.sql"/>
   <include file="source/org/zfin/db/1077/load/pearl/changelog/featureDNADetail.sql"/>
   <include file="source/org/zfin/db/1077/load/pearl/changelog/featureTranscriptConsequence.sql"/>
-
-<include file="source/org/zfin/db/1077/load/pearl/changelog/featureProteinDetail.sql"/>
-<include file="source/org/zfin/db/1077/load/pearl/changelog/moveFeatureCommentsToExternalNote.sql"/>
-<include file="source/org/zfin/db/1077/load/pearl/changelog/loadMutationDetails.sql"/>
-<include file="source/org/zfin/db/1077/load/pearl/changelog/loadRNAConseq.sql"/>
-<include file="source/org/zfin/db/1077/load/pearl/changelog/14141.sql"/>
-
+  <include file="source/org/zfin/db/1077/load/pearl/changelog/featureProteinDetail.sql"/>
+  <include file="source/org/zfin/db/1077/load/pearl/changelog/moveFeatureCommentsToExternalNote.sql"/>
+<!--  <include file="source/org/zfin/db/1077/load/pearl/changelog/featureMutationDetailsTempTable.xml"/>
+  <include file="source/org/zfin/db/1077/load/pearl/changelog/loadMutationDetails.sql"/>
+  <include file="source/org/zfin/db/1077/load/pearl/changelog/ftrConsequence.xml"/>
+  <include file="source/org/zfin/db/1077/load/pearl/changelog/loadRNAConseq.sql"/>-->
+  <include file="source/org/zfin/db/1077/load/pearl/changelog/14141.sql"/>
+  
 </databaseChangeLog>

@@ -47,8 +47,6 @@
      id="liquidatabase" 
      driver="com.informix.jdbc.IfxDriver" 
      url="jdbc:informix-sqli://${HOSTNAME}:${INFORMIX_PORT}/${DBNAME}:INFORMIXSERVER=${INFORMIXSERVER}" 
-     user="informix" 
-     password="1sbtkshmC0dd!"
      defaultSchemaName="${DBNAME}"
      />
   

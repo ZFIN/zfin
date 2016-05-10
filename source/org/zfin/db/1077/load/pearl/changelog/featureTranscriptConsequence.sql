@@ -1,3 +1,5 @@
+--liquibase formatted sql
+--changeset staylor:featureTranscriptDetails
 
 create table feature_transcript_mutation_detail (ftmd_zdb_id varchar(50) not null constraint ftmd_zdb_id_not_null,
 				       ftmd_transcript_consequence_term_zdb_id varchar(50) not null constraint ftmd_consequence_term_zdb_id_not_null,

@@ -1,7 +1,5 @@
-
-create temp table ftrMutDets (ftr varchar(50), ref1 varchar(10), ref2 varchar(10)) with no log;
-load from alleleMutDetails.csv insert into ftrMutDets;
-
+--liquibase formatted sql
+--changeset pm:loadMutationDetails
 
 create temp table ftrMutDetsnew (ftr varchar(50), ref1 varchar(50), ref2 varchar(10),mutDisplay varchar(10), fdmd_zdb_id varchar(50)) with no log;
 
