@@ -154,7 +154,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         )
 
         expect:
-        converter.referenceSequenceStatement(dnaChange) == display
+        converter.referenceSequenceStatement(dnaChange, false) == display
 
         where:
         db        | accession || display
@@ -363,7 +363,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         )
 
         expect:
-        converter.referenceSequenceStatement(proteinConsequence) == display
+        converter.referenceSequenceStatement(proteinConsequence, false) == display
 
         where:
         db         | accession || display

@@ -7,6 +7,7 @@ import org.zfin.feature.*;
 import org.zfin.feature.presentation.MutationDetailsPresentation;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.ontology.presentation.TermPresentation;
+import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ReferenceDatabase;
 
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class MutationDetailsConversionService {
                 break;
         }
         String position = positionStatement(dnaChange);
-        String refSeq = referenceSequenceStatement(dnaChange);
+        String refSeq = referenceSequenceStatement(dnaChange, showLinks);
         String localization = geneLocalizationWithPreposition(dnaChange, showLinks);
         return makeSentence(change, position, refSeq, localization);
     }
@@ -111,7 +112,7 @@ public class MutationDetailsConversionService {
         }
         String change = aminoAcidChangeStatement(proteinConsequence);
         String position = positionStatement(proteinConsequence);
-        String refSeq = referenceSequenceStatement(proteinConsequence);
+        String refSeq = referenceSequenceStatement(proteinConsequence, showLinks);
         if (StringUtils.isNotEmpty(term) && (StringUtils.isNotEmpty(change) || StringUtils.isNotEmpty(position))) {
             term += ":";
         }
@@ -358,26 +359,37 @@ public class MutationDetailsConversionService {
      * @param dnaChange the dna change
      * @return reference sequence statement
      */
-    public String referenceSequenceStatement(FeatureDnaMutationDetail dnaChange) {
+    public String referenceSequenceStatement(FeatureDnaMutationDetail dnaChange, boolean showLink) {
         if (dnaChange == null) {
             return "";
         }
-        return referenceSequenceStatement(dnaChange.getReferenceDatabase(), dnaChange.getDnaSequenceReferenceAccessionNumber());
+        return referenceSequenceStatement(dnaChange.getReferenceDatabase(),
+                dnaChange.getDnaSequenceReferenceAccessionNumber(), showLink);
     }
 
-    public String referenceSequenceStatement(FeatureProteinMutationDetail proteinConsequence) {
+    public String referenceSequenceStatement(FeatureProteinMutationDetail proteinConsequence, boolean showLink) {
         if (proteinConsequence == null) {
             return "";
         }
-        return referenceSequenceStatement(proteinConsequence.getReferenceDatabase(), proteinConsequence.getProteinSequenceReferenceAccessionNumber());
+        return referenceSequenceStatement(proteinConsequence.getReferenceDatabase(),
+                proteinConsequence.getProteinSequenceReferenceAccessionNumber(), showLink);
     }
 
-    private String referenceSequenceStatement(ReferenceDatabase refDb, String accession) {
+    private String referenceSequenceStatement(ReferenceDatabase refDb, String accession, boolean showLink) {
         if (refDb == null) {
             return "";
         }
 
-        return "in " + refDb.getForeignDB().getDisplayName() + ":" + accession;
+        ForeignDB foreignDB = refDb.getForeignDB();
+        String display = foreignDB.getDisplayName() + ":" + accession;
+        if (showLink) {
+            String url = foreignDB.getDbUrlPrefix() + accession;
+            if (StringUtils.isNotEmpty(foreignDB.getDbUrlSuffix())) {
+                url += foreignDB.getDbUrlSuffix();
+            }
+            display = EntityPresentation.getGeneralHyperLink(url, display);
+        }
+        return "in " + display;
     }
 
     public String transcriptConsequenceStatement(FeatureTranscriptMutationDetail transcriptDetail) {
