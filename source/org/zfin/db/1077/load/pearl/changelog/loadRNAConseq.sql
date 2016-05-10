@@ -1,6 +1,6 @@
+--liquibase formatted sql
+--changeset pm:loadRNAConseq
 
-create temp table ftrConsequence (ftr varchar(50),cons1 varchar(50), cons2 varchar(50)) with no log;
-load from transcriptCorrected.csv insert into ftrConsequence;
 
 --laoding first consequence
 

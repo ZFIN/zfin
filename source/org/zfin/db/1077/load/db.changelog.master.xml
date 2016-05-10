@@ -7,6 +7,6 @@
 
   <include file="source/org/zfin/db/1077/load/octopus/changelog/db.changelog.master.xml"/>
   <include file="source/org/zfin/db/1077/load/pearl/changelog/db.changelog.master.xml"/>
-<!--  <include file="source/org/zfin/db/1077/load/qualle/changelog/db.changelog.master.xml"/>-->
+  <include file="source/org/zfin/db/1077/load/qualle/changelog/db.changelog.master.xml"/>
 
 </databaseChangeLog>

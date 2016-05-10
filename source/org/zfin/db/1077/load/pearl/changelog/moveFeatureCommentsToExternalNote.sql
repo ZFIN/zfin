@@ -1,4 +1,5 @@
-
+--liquibase formatted sql
+--changeset staylor:moveFeatureCommentsToExternalNote
 
 alter table external_note 
   add (extnote_source_zdb_id varchar(50));

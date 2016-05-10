@@ -1,4 +1,5 @@
-
+--liquibase formatted sql
+--changeset staylor:featureProteinDetails
 
 create table feature_protein_mutation_detail(fpmd_zdb_id varchar(50) not null constraint fpmd_zdb_id_not_null,
        	     			      fpmd_feature_zdb_id varchar(50) not null constraint fpmd_feature_zdb_id_not_null,

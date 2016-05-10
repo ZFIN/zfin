@@ -1,3 +1,5 @@
+--liquibase formatted sql
+--changeset staylor:mungeMutationDetails
 
 update tmp_term
  set term_id = (Select term_zdb_id from term where term_ont_id = so_term_id);

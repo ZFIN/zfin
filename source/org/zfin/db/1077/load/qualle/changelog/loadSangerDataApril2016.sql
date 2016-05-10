@@ -1,3 +1,5 @@
+--liquibase formatted sql
+
 -- loadSangerData.sql
 -- input: allelezfin.unl
 -- Some of the hard-coded data associated with this loading:
@@ -7,8 +9,6 @@
 -- ZDB-LAB-050412-2  Stemple Lab or ZDB-LAB-070815-1 cuppen Lab
 -- ZDB-PUB-130425-4
 
-
-begin work;
 
 ---creating temp table to load all of the input data form sanger
 create temp table sanger_pre_input_known (
@@ -300,7 +300,6 @@ drop table pre_db_link;
                                  
 --rollback work;
 
-commit work;
 
 --execute function regen_names();
 
