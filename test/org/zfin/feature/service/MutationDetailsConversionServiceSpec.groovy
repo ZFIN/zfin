@@ -66,7 +66,8 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
                         geneLocalizationTerm: localization,
                         exonNumber: exon,
                         intronNumber: intron,
-                        dnaPositionStart: position,
+                        dnaPositionStart: position, // curation interface sets both fields
+                        dnaPositionEnd: position,   // to the same value in this case
                         referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
                         dnaSequenceReferenceAccessionNumber: accession,
                         dnaMutationTerm: new DnaMutationTerm(displayName: 'A>G')
@@ -140,6 +141,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         null  | null || ""
         null  | 38   || ""
         75    | null || "at position 75"
+        22    | 22   || "at position 22"
         181   | 371  || "from position 181 to 371"
     }
 
