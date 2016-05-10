@@ -37,8 +37,8 @@ public class FeatureNotesPresenter {
 
     private void populateDataTable() {
 
+        view.dataTable.resizeRows(0);
         if (featureDTO == null) {
-            view.dataTable.resizeRows(0);
             view.endTableUpdate();
             return;
         }
@@ -112,7 +112,7 @@ public class FeatureNotesPresenter {
                     Scheduler.get().scheduleDeferred(new Command() {
                         @Override
                         public void execute() {
-                            view.resetGUI();
+                            view.clearGUI();
                         }
                     });
                 }
@@ -134,7 +134,7 @@ public class FeatureNotesPresenter {
                     Scheduler.get().scheduleDeferred(new Command() {
                         @Override
                         public void execute() {
-                            view.resetGUI();
+                            view.clearGUI();
                         }
                     });
                 }

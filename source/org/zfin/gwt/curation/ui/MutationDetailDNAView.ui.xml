@@ -40,7 +40,7 @@
             <g:row>
                 <g:cell>Change</g:cell>
                 <g:cell>Position</g:cell>
-                <g:cell>Sequence of Ref</g:cell>
+                <g:cell>Accession #</g:cell>
                 <g:cell>Localization</g:cell>
                 <g:customCell>
                     <g:Label text="Exon" ui:field="exonLabel"/>
@@ -58,14 +58,14 @@
                             </g:customCell>
                         </g:row>
                         <g:row>
-                            <g:cell>plus</g:cell>
+                            <g:cell>insertion</g:cell>
                             <g:customCell>
                                 <zfin:NumberTextBox ui:field="plusBasePair" visibleLength="4"/>
                             </g:customCell>
                             <g:cell>bp</g:cell>
                         </g:row>
                         <g:row>
-                            <g:cell>minus</g:cell>
+                            <g:cell>deletion</g:cell>
                             <g:customCell>
                                 <zfin:NumberTextBox ui:field="minusBasePair" visibleLength="4"/>
                             </g:customCell>

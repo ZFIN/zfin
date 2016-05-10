@@ -49,7 +49,7 @@ public class FeatureNotesView extends AbstractViewComposite {
 
     @UiHandler("cancelButton")
     void onClickCancelButton(@SuppressWarnings("unused") ClickEvent event) {
-        resetGUI();
+        clearGUI();
     }
 
     public void addNoteReferenceCell(NoteDTO noteDTO, int rowindex) {
@@ -101,6 +101,11 @@ public class FeatureNotesView extends AbstractViewComposite {
         typeListBox.setSelectedIndex(0);
         dataTable.resizeRows(0);
         endTableUpdate();
+    }
+
+    public void clearGUI() {
+        newNoteTextArea.setText("");
+        typeListBox.setSelectedIndex(0);
     }
 
 

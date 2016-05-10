@@ -159,6 +159,9 @@ public class MutationDetailPresenter {
                             if (valid)
                                 view.mutationDetailProteinView.validSequenceCharacter.setTitle(dbName);
                         }
+                        if(!valid){
+                            view.setError("Not an NCBI accession number.");
+                        }
                     }
                 }
 

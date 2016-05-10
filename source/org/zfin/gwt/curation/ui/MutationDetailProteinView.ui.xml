@@ -46,7 +46,7 @@
                 <g:cell>Consequence</g:cell>
                 <g:cell>Amino Acid Change</g:cell>
                 <g:cell>Position</g:cell>
-                <g:cell>Sequence of Ref</g:cell>
+                <g:cell>Accession #</g:cell>
             </g:row>
             <g:row>
                 <g:customCell>
