@@ -99,6 +99,8 @@ public class FeatureNotesView extends AbstractViewComposite {
     public void resetGUI() {
         newNoteTextArea.setText("");
         typeListBox.setSelectedIndex(0);
+        dataTable.resizeRows(0);
+        endTableUpdate();
     }
 
 

@@ -139,7 +139,7 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
 
     }
 
-    public FeatureDTO createDTOFromGUI() {
+    public FeatureDTO createDTOFromGUI(AbstractFeatureView view) {
 
         FeatureDTO featureDTO = new FeatureDTO();
         featureDTO.setName(view.featureDisplayName.getText());
@@ -163,6 +163,13 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
         featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
         featureDTO.setTransgenicSuffix(view.featureSuffixBox.getSelectedText());
         featureDTO.setAbbreviation(FeatureValidationService.getAbbreviationFromName(featureDTO));
+
+        if (view.hasMutationDetails()) {
+            featureDTO.setDnaChangeDTO(view.mutationDetailDnaView.getDto());
+            featureDTO.setProteinChangeDTO(view.mutationDetailProteinView.getDto());
+            featureDTO.setTranscriptChangeDTOSet(view.mutationDetailTranscriptView.getPresenter().getDtoSet());
+        }
+
 
         return featureDTO;
     }

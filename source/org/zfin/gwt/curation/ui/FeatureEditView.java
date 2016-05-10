@@ -52,6 +52,9 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
     @UiHandler("featureEditList")
     void onChangeFeature(@SuppressWarnings("unused") final ChangeEvent event) {
         final String featureID = featureEditList.getValue(featureEditList.getSelectedIndex());
+        mutationDetailDnaView.resetGUI();
+        mutationDetailProteinView.resetGUI();
+        mutationDetailTranscriptView.resetGUI();
         if (StringUtils.isEmpty(featureID)) {
             setError("Empty ID");
             resetGUI();
@@ -80,18 +83,9 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
         handleChanges();
     }
 
-
     @UiHandler("saveButton")
     void onClickSaveButton(@SuppressWarnings("unused") ClickEvent event) {
-        if (getFeatureType().equals(FeatureTypeEnum.POINT_MUTATION.getName())) {
-            if (mutationDetailTranscriptView.getPresenter().getDtoSet().isEmpty()) {
-                // substitution is a missense consequence on the transcript level
-                if (mutationDetailProteinView.hasNonStopAASelected())
-                    mutationDetailTranscriptView.getPresenter().setMissenseTerm(this);
-                else if (mutationDetailProteinView.hasStopCodon())
-                    mutationDetailTranscriptView.getPresenter().setStopGainTerm(this);
-            }
-        }
+        super.onclickSaveButton(event);
         editPresenter.updateFeature();
     }
 
@@ -107,18 +101,11 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
     }
 
     public void resetGUI() {
+        super.resetGUI();
         featureEditList.setSelectedIndex(0);
-        featureTypeBox.setSelectedIndex(0);
-        labOfOriginBox.setSelectedIndex(0);
-        labOfOriginBox.setDirty(false);
-        labDesignationBox.clear();
-        labDesignationBox.setDirty(false);
-        mutageeBox.setDirty(false);
-        mutagenBox.setDirty(false);
-        lineNumberBox.setDirty(false);
-        featureDisplayName.setDirty(false);
         featureAliasList.revertGUI();
         featureNotesView.resetGUI();
+        hideMutationDetail();
     }
 
     @Override

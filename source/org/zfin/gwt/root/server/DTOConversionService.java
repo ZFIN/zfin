@@ -591,50 +591,15 @@ public class DTOConversionService {
 
         MutationDetailDnaChangeDTO dnaChangeDTO = featureDTO.getDnaChangeDTO();
         if (dnaChangeDTO != null) {
-            FeatureDnaMutationDetail detail = new FeatureDnaMutationDetail();
-            DnaMutationTerm term = getDnaMutationTermRepository().getControlledVocabularyTerm(dnaChangeDTO.getChangeTermOboId());
-            detail.setDnaMutationTerm(term);
-            detail.setExonNumber(dnaChangeDTO.getExonNumber());
-            detail.setIntronNumber(dnaChangeDTO.getIntronNumber());
-            detail.setNumberAddedBasePair(dnaChangeDTO.getNumberAddedBasePair());
-            detail.setNumberRemovedBasePair(dnaChangeDTO.getNumberRemovedBasePair());
-            detail.setDnaPositionStart(dnaChangeDTO.getPositionStart());
-            detail.setDnaPositionEnd(dnaChangeDTO.getPositionEnd());
-            detail.setGeneLocalizationTerm(getGeneLocalizationTermRepository().getControlledVocabularyTerm(dnaChangeDTO.getLocalizationTermOboID()));
+            FeatureDnaMutationDetail detail = convertToDnaMutationDetail(null, dnaChangeDTO);
             detail.setFeature(feature);
             feature.setFeatureDnaMutationDetail(detail);
-            String sequenceReferenceAccessionNumber = dnaChangeDTO.getSequenceReferenceAccessionNumber();
-            if (StringUtils.isNotEmpty(sequenceReferenceAccessionNumber)) {
-                detail.setDnaSequenceReferenceAccessionNumber(sequenceReferenceAccessionNumber);
-                ReferenceDatabase referenceDatabase = FeatureService.getForeignDbMutationDetailDna(sequenceReferenceAccessionNumber);
-                if (referenceDatabase == null)
-                    throw new NullpointerException("Accession number not found in Genbank, RefSeq or Ensembl: " + sequenceReferenceAccessionNumber);
-                detail.setReferenceDatabase(referenceDatabase);
-            }
         }
         MutationDetailProteinChangeDTO proteinChangeDTO = featureDTO.getProteinChangeDTO();
         if (proteinChangeDTO != null) {
-            FeatureProteinMutationDetail detail = new FeatureProteinMutationDetail();
-            ProteinConsequence term = getProteinConsequenceTermRepository().getControlledVocabularyTerm(proteinChangeDTO.getConsequenceTermOboID());
-            detail.setProteinConsequences(term);
-            detail.setNumberAminoAcidsAdded(proteinChangeDTO.getNumberAddedAminoAcid());
-            detail.setNumberAminoAcidsRemoved(proteinChangeDTO.getNumberRemovedAminoAcid());
-            detail.setNumberAminoAcidsAdded(proteinChangeDTO.getNumberAddedAminoAcid());
-            detail.setNumberAminoAcidsRemoved(proteinChangeDTO.getNumberRemovedAminoAcid());
-            detail.setProteinPositionStart(proteinChangeDTO.getPositionStart());
-            detail.setProteinPositionEnd(proteinChangeDTO.getPositionEnd());
-            detail.setWildtypeAminoAcid(getAminoAcidTermRepository().getControlledVocabularyTerm(proteinChangeDTO.getWildtypeAATermOboID()));
-            detail.setMutantAminoAcid(getAminoAcidTermRepository().getControlledVocabularyTerm(proteinChangeDTO.getMutantAATermOboID()));
+            FeatureProteinMutationDetail detail = convertToProteinMutationDetail(null, proteinChangeDTO);
             detail.setFeature(feature);
             feature.setFeatureProteinMutationDetail(detail);
-            String sequenceReferenceAccessionNumber = proteinChangeDTO.getSequenceReferenceAccessionNumber();
-            if (StringUtils.isNotEmpty(sequenceReferenceAccessionNumber)) {
-                detail.setProteinSequenceReferenceAccessionNumber(sequenceReferenceAccessionNumber);
-                ReferenceDatabase referenceDatabase = FeatureService.getForeignDbMutationDetailProtein(sequenceReferenceAccessionNumber);
-                if (referenceDatabase == null)
-                    throw new NullpointerException("Accession number not found in Genank, RefSeq or UniProt: " + sequenceReferenceAccessionNumber);
-                detail.setReferenceDatabase(referenceDatabase);
-            }
         }
         if (CollectionUtils.isNotEmpty(featureDTO.getTranscriptChangeDTOSet())) {
             for (MutationDetailTranscriptChangeDTO dto : featureDTO.getTranscriptChangeDTOSet()) {
@@ -647,6 +612,64 @@ public class DTOConversionService {
             }
         }
         return feature;
+    }
+
+    private static FeatureDnaMutationDetail convertToDnaMutationDetail(FeatureDnaMutationDetail detail, MutationDetailDnaChangeDTO dnaChangeDTO) {
+        if (detail == null)
+            detail = new FeatureDnaMutationDetail();
+        DnaMutationTerm term = getDnaMutationTermRepository().getControlledVocabularyTerm(dnaChangeDTO.getChangeTermOboId());
+        detail.setDnaMutationTerm(term);
+        detail.setExonNumber(dnaChangeDTO.getExonNumber());
+        detail.setIntronNumber(dnaChangeDTO.getIntronNumber());
+        detail.setNumberAddedBasePair(dnaChangeDTO.getNumberAddedBasePair());
+        detail.setNumberRemovedBasePair(dnaChangeDTO.getNumberRemovedBasePair());
+        detail.setDnaPositionStart(dnaChangeDTO.getPositionStart());
+        detail.setDnaPositionEnd(dnaChangeDTO.getPositionEnd());
+        detail.setGeneLocalizationTerm(getGeneLocalizationTermRepository().getControlledVocabularyTerm(dnaChangeDTO.getLocalizationTermOboID()));
+        String sequenceReferenceAccessionNumber = dnaChangeDTO.getSequenceReferenceAccessionNumber();
+        if (StringUtils.isNotEmpty(sequenceReferenceAccessionNumber)) {
+            detail.setDnaSequenceReferenceAccessionNumber(sequenceReferenceAccessionNumber);
+            ReferenceDatabase referenceDatabase = FeatureService.getForeignDbMutationDetailDna(sequenceReferenceAccessionNumber);
+            if (referenceDatabase == null)
+                throw new NullpointerException("Accession number not found in Genbank, RefSeq or Ensembl: " + sequenceReferenceAccessionNumber);
+            detail.setReferenceDatabase(referenceDatabase);
+        }
+        return detail;
+    }
+
+    public static FeatureTranscriptMutationDetail convertToTranscriptMutationDetail(FeatureTranscriptMutationDetail detail, MutationDetailTranscriptChangeDTO dto) {
+        if (detail == null)
+            detail = new FeatureTranscriptMutationDetail();
+        detail.setExonNumber(dto.getExonNumber());
+        detail.setIntronNumber(dto.getIntronNumber());
+        detail.setTranscriptConsequence(getTranscriptTermRepository().getControlledVocabularyTerm(dto.getConsequenceOboID()));
+
+        return detail;
+    }
+
+    private static FeatureProteinMutationDetail convertToProteinMutationDetail(FeatureProteinMutationDetail detail,
+                                                                               MutationDetailProteinChangeDTO proteinChangeDTO) {
+        if (detail == null)
+            detail = new FeatureProteinMutationDetail();
+        ProteinConsequence term = getProteinConsequenceTermRepository().getControlledVocabularyTerm(proteinChangeDTO.getConsequenceTermOboID());
+        detail.setProteinConsequences(term);
+        detail.setNumberAminoAcidsAdded(proteinChangeDTO.getNumberAddedAminoAcid());
+        detail.setNumberAminoAcidsRemoved(proteinChangeDTO.getNumberRemovedAminoAcid());
+        detail.setNumberAminoAcidsAdded(proteinChangeDTO.getNumberAddedAminoAcid());
+        detail.setNumberAminoAcidsRemoved(proteinChangeDTO.getNumberRemovedAminoAcid());
+        detail.setProteinPositionStart(proteinChangeDTO.getPositionStart());
+        detail.setProteinPositionEnd(proteinChangeDTO.getPositionEnd());
+        detail.setWildtypeAminoAcid(getAminoAcidTermRepository().getControlledVocabularyTerm(proteinChangeDTO.getWildtypeAATermOboID()));
+        detail.setMutantAminoAcid(getAminoAcidTermRepository().getControlledVocabularyTerm(proteinChangeDTO.getMutantAATermOboID()));
+        String sequenceReferenceAccessionNumber = proteinChangeDTO.getSequenceReferenceAccessionNumber();
+        if (StringUtils.isNotEmpty(sequenceReferenceAccessionNumber)) {
+            detail.setProteinSequenceReferenceAccessionNumber(sequenceReferenceAccessionNumber);
+            ReferenceDatabase referenceDatabase = FeatureService.getForeignDbMutationDetailProtein(sequenceReferenceAccessionNumber);
+            if (referenceDatabase == null)
+                throw new NullpointerException("Accession number not found in Genank, RefSeq or UniProt: " + sequenceReferenceAccessionNumber);
+            detail.setReferenceDatabase(referenceDatabase);
+        }
+        return detail;
     }
 
     public static FeatureDTO convertToFeatureDTO(Feature feature) {
@@ -1817,5 +1840,40 @@ public class DTOConversionService {
         dto.setTerm(DTOConversionService.convertToTermDTO(controlledVocab.getTerm()));
         dto.setOrder(controlledVocab.getOrder());
         return dto;
+    }
+
+    public static FeatureDnaMutationDetail updateDnaMutationDetailWithDTO(FeatureDnaMutationDetail detail, MutationDetailDnaChangeDTO dnaChangeDTO) {
+        if (detail == null) {
+            detail = new FeatureDnaMutationDetail();
+        }
+        FeatureDnaMutationDetail changes = convertToDnaMutationDetail(detail, dnaChangeDTO);
+        detail.setReferenceDatabase(changes.getReferenceDatabase());
+        detail.setDnaSequenceReferenceAccessionNumber(changes.getDnaSequenceReferenceAccessionNumber());
+        detail.setGeneLocalizationTerm(changes.getGeneLocalizationTerm());
+        detail.setDnaPositionStart(changes.getDnaPositionStart());
+        detail.setDnaPositionEnd(changes.getDnaPositionEnd());
+        detail.setExonNumber(changes.getExonNumber());
+        detail.setIntronNumber(changes.getIntronNumber());
+        detail.setNumberAddedBasePair(changes.getNumberAddedBasePair());
+        detail.setNumberRemovedBasePair(changes.getNumberRemovedBasePair());
+        return detail;
+    }
+
+    public static FeatureProteinMutationDetail updateProteinMutationDetailWithDTO(FeatureProteinMutationDetail detail, MutationDetailProteinChangeDTO proteinChangeDTO) {
+        if (detail == null) {
+            detail = new FeatureProteinMutationDetail();
+        }
+        FeatureProteinMutationDetail changes = convertToProteinMutationDetail(detail, proteinChangeDTO);
+        detail.setReferenceDatabase(changes.getReferenceDatabase());
+        detail.setProteinSequenceReferenceAccessionNumber(changes.getProteinSequenceReferenceAccessionNumber());
+        detail.setProteinConsequences(changes.getProteinConsequence());
+        detail.setNumberAminoAcidsAdded(changes.getNumberAminoAcidsAdded());
+        detail.setNumberAminoAcidsRemoved(changes.getNumberAminoAcidsRemoved());
+        detail.setProteinPositionStart(changes.getProteinPositionStart());
+        detail.setProteinPositionEnd(changes.getProteinPositionEnd());
+        detail.setWildtypeAminoAcid(changes.getWildtypeAminoAcid());
+        detail.setMutantAminoAcid(changes.getMutantAminoAcid());
+        return detail;
+
     }
 }

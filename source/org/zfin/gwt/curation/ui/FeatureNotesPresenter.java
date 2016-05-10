@@ -158,7 +158,6 @@ public class FeatureNotesPresenter {
         populateDataTable();
     }
 
-
     ////// Handlers and Listeners....
 
     private class DeleteExternalFeatureNote implements ClickHandler {

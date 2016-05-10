@@ -3,12 +3,10 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
-import org.zfin.gwt.curation.event.DirtyValueEvent;
-import org.zfin.gwt.root.dto.*;
-import org.zfin.gwt.root.ui.IsDirtyWidget;
+import org.zfin.gwt.root.dto.FeatureDTO;
+import org.zfin.gwt.root.dto.MutationDetailControlledVocabularyTermDTO;
+import org.zfin.gwt.root.dto.MutationDetailTranscriptChangeDTO;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
-import org.zfin.gwt.root.util.AppUtils;
-import org.zfin.gwt.root.util.BooleanCollector;
 
 import java.util.HashSet;
 import java.util.List;
@@ -18,14 +16,12 @@ public class MutationDetailPresenter {
 
     public static final String MISSENSE = "SO:0001583";
     public static final String STOP_GAIN = "SO:0001587";
-    private FeatureAddView view;
-    private FeatureEditView editView;
+    protected AbstractFeatureView view;
     private Set<MutationDetailTranscriptChangeDTO> dtoSet = new HashSet<>(3);
-    private FeatureDTO dto;
+    protected FeatureDTO dto;
 
-    public MutationDetailPresenter(FeatureAddView view, FeatureEditView editView) {
+    public MutationDetailPresenter(AbstractFeatureView view) {
         this.view = view;
-        this.editView = editView;
     }
 
     public void go() {
@@ -34,7 +30,6 @@ public class MutationDetailPresenter {
             @Override
             public void onSuccess(List<MutationDetailControlledVocabularyTermDTO> termList) {
                 setNucleotideChangeList(termList, view);
-                setNucleotideChangeList(termList, editView);
             }
 
             private void setNucleotideChangeList(List<MutationDetailControlledVocabularyTermDTO> termList, AbstractFeatureView featureView) {
@@ -49,7 +44,6 @@ public class MutationDetailPresenter {
             @Override
             public void onSuccess(List<MutationDetailControlledVocabularyTermDTO> termList) {
                 setGeneLocalizationList(termList, view);
-                setGeneLocalizationList(termList, editView);
             }
 
             private void setGeneLocalizationList(List<MutationDetailControlledVocabularyTermDTO> termList, AbstractFeatureView featureView) {
@@ -64,7 +58,6 @@ public class MutationDetailPresenter {
             @Override
             public void onSuccess(List<MutationDetailControlledVocabularyTermDTO> termList) {
                 setProteinConsequenceList(termList, view);
-                setProteinConsequenceList(termList, editView);
             }
 
             private void setProteinConsequenceList(List<MutationDetailControlledVocabularyTermDTO> termList, AbstractFeatureView featureView) {
@@ -79,7 +72,6 @@ public class MutationDetailPresenter {
             @Override
             public void onSuccess(List<MutationDetailControlledVocabularyTermDTO> termList) {
                 setProteinLists(termList, view);
-                setProteinLists(termList, editView);
             }
 
             private void setProteinLists(List<MutationDetailControlledVocabularyTermDTO> termList, AbstractFeatureView featureView) {
@@ -102,7 +94,6 @@ public class MutationDetailPresenter {
             @Override
             public void onSuccess(List<MutationDetailControlledVocabularyTermDTO> termList) {
                 setTranscriptConsequenceList(termList, view);
-                setTranscriptConsequenceList(termList, editView);
             }
 
             private void setTranscriptConsequenceList(List<MutationDetailControlledVocabularyTermDTO> termList, AbstractFeatureView featureView) {
@@ -115,9 +106,10 @@ public class MutationDetailPresenter {
         });
     }
 
-    private void populateTranscriptDataTable(AbstractFeatureView view) {
+    private void populateTranscriptDataTable() {
         int elementIndex = 0;
-        if (dtoSet == null || dtoSet.isEmpty()) {
+
+        if (dtoSet.isEmpty()) {
             view.mutationDetailTranscriptView.emptyDataTable();
             return;
         }
@@ -129,12 +121,13 @@ public class MutationDetailPresenter {
     }
 
     public void rebuildGUI() {
-        dtoSet.clear();
+        if (dtoSet != null)
+            dtoSet.clear();
     }
 
     public void addTranscriptConsequence(MutationDetailTranscriptChangeDTO dto) {
         dtoSet.add(dto);
-        populateTranscriptDataTable(view);
+        populateTranscriptDataTable();
     }
 
     public Set<MutationDetailTranscriptChangeDTO> getDtoSet() {
@@ -143,8 +136,11 @@ public class MutationDetailPresenter {
 
 
     public void setDtoSet(Set<MutationDetailTranscriptChangeDTO> dtoSet) {
-        this.dtoSet = dtoSet;
-        populateTranscriptDataTable(editView);
+        if (dtoSet == null)
+            this.dtoSet = new HashSet<>(5);
+        else
+            this.dtoSet = dtoSet;
+        populateTranscriptDataTable();
     }
 
     public void checkValidAccession(String accessionNumber, final String type) {
@@ -175,7 +171,7 @@ public class MutationDetailPresenter {
             MutationDetailTranscriptChangeDTO dto = new MutationDetailTranscriptChangeDTO();
             dto.setConsequenceOboID(MISSENSE);
             dtoSet.add(dto);
-            populateTranscriptDataTable(view);
+            populateTranscriptDataTable();
         }
     }
 
@@ -184,58 +180,20 @@ public class MutationDetailPresenter {
             MutationDetailTranscriptChangeDTO dto = new MutationDetailTranscriptChangeDTO();
             dto.setConsequenceOboID(STOP_GAIN);
             dtoSet.add(dto);
-            populateTranscriptDataTable(view);
+            populateTranscriptDataTable();
         }
-    }
-
-    // for the edit feature section
-    public boolean isDirty() {
-        MutationDetailDNAView mutationDetailDnaView = editView.mutationDetailDnaView;
-        MutationDetailDnaChangeDTO dnaChangeDTO = dto.getDnaChangeDTO();
-        BooleanCollector col = new BooleanCollector(false);
-        if (dnaChangeDTO == null) {
-            for (IsDirtyWidget widget : mutationDetailDnaView.getValueFields())
-                col.addBoolean(widget.isDirty(null));
-
-        } else {
-            col.addBoolean(mutationDetailDnaView.localizationTerm.isDirty(dnaChangeDTO.getLocalizationTermOboID()));
-            col.addBoolean(mutationDetailDnaView.nucleotideChangeList.isDirty(dnaChangeDTO.getChangeTermOboId()));
-            col.addBoolean(mutationDetailDnaView.plusBasePair.isDirty(dnaChangeDTO.getNumberAddedBasePair()));
-            col.addBoolean(mutationDetailDnaView.minusBasePair.isDirty(dnaChangeDTO.getNumberRemovedBasePair()));
-            col.addBoolean(mutationDetailDnaView.positionStart.isDirty(dnaChangeDTO.getPositionStart()));
-            col.addBoolean(mutationDetailDnaView.positionEnd.isDirty(dnaChangeDTO.getPositionEnd()));
-            col.addBoolean(mutationDetailDnaView.exonNumber.isDirty(dnaChangeDTO.getExonNumber()));
-            col.addBoolean(mutationDetailDnaView.intronNumber.isDirty(dnaChangeDTO.getIntronNumber()));
-            col.addBoolean(mutationDetailDnaView.sequenceOfReference.isDirty(dnaChangeDTO.getSequenceReferenceAccessionNumber()));
-        }
-        MutationDetailProteinView mutationDetailProteinView = editView.mutationDetailProteinView;
-        MutationDetailProteinChangeDTO proteinChangeDTO = dto.getProteinChangeDTO();
-        if (proteinChangeDTO == null) {
-            for (IsDirtyWidget widget : mutationDetailProteinView.getValueFields())
-                col.addBoolean(widget.isDirty(null));
-
-        } else {
-            col.addBoolean(mutationDetailProteinView.proteinTermList.isDirty(proteinChangeDTO.getConsequenceTermOboID()));
-            col.addBoolean(mutationDetailProteinView.proteinMutatedTerm.isDirty(proteinChangeDTO.getMutantAATermOboID()));
-            col.addBoolean(mutationDetailProteinView.proteinWTTermList.isDirty(proteinChangeDTO.getWildtypeAATermOboID()));
-            col.addBoolean(mutationDetailProteinView.plusAminoAcid.isDirty(proteinChangeDTO.getNumberAddedAminoAcid()));
-            col.addBoolean(mutationDetailProteinView.minusAminoAcid.isDirty(proteinChangeDTO.getNumberRemovedAminoAcid()));
-            col.addBoolean(mutationDetailProteinView.positionStart.isDirty(proteinChangeDTO.getPositionStart()));
-            col.addBoolean(mutationDetailProteinView.positionEnd.isDirty(proteinChangeDTO.getPositionEnd()));
-            col.addBoolean(mutationDetailProteinView.sequenceOfReference.isDirty(proteinChangeDTO.getSequenceReferenceAccessionNumber()));
-        }
-        return col.arrivedValue();
-    }
-
-    public void handleDirty() {
-        // notify upper view / presenter logic about dirty or un-dirtied fields.
-        DirtyValueEvent event = new DirtyValueEvent();
-        event.setDirty(isDirty());
-        AppUtils.EVENT_BUS.fireEvent(event);
     }
 
     public void setDto(FeatureDTO dto) {
         this.dto = dto;
+    }
+
+    public boolean isTranscriptDtoSetEmpty() {
+        return dtoSet != null && !dtoSet.isEmpty();
+    }
+
+    public void handleDirty() {
+
     }
 
     ////// Handlers and Listeners....
@@ -251,7 +209,7 @@ public class MutationDetailPresenter {
                 @Override
                 public void onClick(ClickEvent event) {
                     dtoSet.remove(dto);
-                    populateTranscriptDataTable(view);
+                    populateTranscriptDataTable();
                     view.mutationDetailTranscriptView.resetGUI();
                 }
             });

@@ -184,6 +184,53 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         } else {
             throw new ValidationException("Feature cannot be saved without lab of origin");
         }
+        if (featureDTO.getDnaChangeDTO() != null) {
+            FeatureDnaMutationDetail detail = feature.getFeatureDnaMutationDetail();
+            if (detail == null) {
+                detail = new FeatureDnaMutationDetail();
+                detail.setFeature(feature);
+                feature.setFeatureDnaMutationDetail(detail);
+            }
+            DTOConversionService.updateDnaMutationDetailWithDTO(detail, featureDTO.getDnaChangeDTO());
+        }
+        if (featureDTO.getProteinChangeDTO() != null) {
+            FeatureProteinMutationDetail detail = feature.getFeatureProteinMutationDetail();
+            if (detail == null) {
+                detail = new FeatureProteinMutationDetail();
+                detail.setFeature(feature);
+                feature.setFeatureProteinMutationDetail(detail);
+            }
+            DTOConversionService.updateProteinMutationDetailWithDTO(detail, featureDTO.getProteinChangeDTO());
+        }
+        if (featureDTO.getTranscriptChangeDTOSet() != null) {
+            Set<FeatureTranscriptMutationDetail> detailSet = feature.getFeatureTranscriptMutationDetailSet();
+            if (detailSet != null) {
+                Iterator<FeatureTranscriptMutationDetail> iterator = detailSet.iterator();
+                while (iterator.hasNext()) {
+                    FeatureTranscriptMutationDetail detail = iterator.next();
+                    boolean exists = false;
+                    for (MutationDetailTranscriptChangeDTO dto : featureDTO.getTranscriptChangeDTOSet()) {
+                        if (dto.getZdbID().equals(detail.getZdbID())) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (!exists)
+                        iterator.remove();
+                }
+            }
+            for (MutationDetailTranscriptChangeDTO dto : featureDTO.getTranscriptChangeDTOSet()) {
+                // since we never update a transcript record we can check if the zdbID:
+                // if it exists then the record exists in the database and the record has not changed.
+                // if it is empty then it is a new record
+                if (StringUtils.isEmpty(dto.getZdbID())) {
+                    FeatureTranscriptMutationDetail newDetail = DTOConversionService.convertToTranscriptMutationDetail(null, dto);
+                    newDetail.setFeature(feature);
+                    feature.addMutationDetailTranscript(newDetail);
+                }
+            }
+
+        }
         HibernateUtil.currentSession().update(feature);
         if (!StringUtils.equals(oldFtrName, newFtrName)) {
 
@@ -192,8 +239,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 infrastructureRepository.insertPublicAttribution(featureAlias.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
             }
         }
-        //currentSession().flush();
-        //currentSession().refresh(feature);
         HibernateUtil.flushAndCommitCurrentSession();
 
         return getFeature(featureDTO.getZdbID());

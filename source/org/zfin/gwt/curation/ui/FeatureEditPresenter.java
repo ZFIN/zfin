@@ -2,6 +2,7 @@ package org.zfin.gwt.curation.ui;
 
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
+import org.zfin.gwt.root.util.BooleanCollector;
 
 import java.util.List;
 
@@ -9,9 +10,9 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
 
     private FeatureEditView view;
     private FeatureNotesPresenter featureNotesPresenter;
-    private MutationDetailPresenter mutationDetailPresenter;
+    private EditMutationDetailPresenter mutationDetailPresenter;
 
-    public FeatureEditPresenter(FeatureAddView addView, FeatureEditView view, String publicationID) {
+    public FeatureEditPresenter(FeatureEditView view, String publicationID) {
         super(view, publicationID);
         if (publicationID == null)
             throw new RuntimeException("NO pub ID found");
@@ -21,7 +22,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         dto.setPublicationZdbID(publicationID);
         featureNotesPresenter = new FeatureNotesPresenter(publicationID, view.featureNotesView);
         view.featureNotesView.setPresenter(featureNotesPresenter);
-        mutationDetailPresenter = new MutationDetailPresenter(addView, view);
+        mutationDetailPresenter = new EditMutationDetailPresenter(view);
         view.mutationDetailTranscriptView.setPresenter(mutationDetailPresenter);
         view.mutationDetailDnaView.setPresenter(mutationDetailPresenter);
         view.mutationDetailProteinView.setPresenter(mutationDetailPresenter);
@@ -32,6 +33,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         super.go();
         loadFeaturesForPub();
         featureNotesPresenter.go();
+        mutationDetailPresenter.go();
     }
 
     public void loadFeaturesForPub() {
@@ -93,7 +95,6 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
     public void handleDirty() {
         view.featureDisplayName.setText(FeatureValidationService.generateFeatureDisplayName(createDTOFromGUI()));
         boolean isDirty = isDirty();
-        isDirty = mutationDetailPresenter.isDirty() || isDirty;
         onDirtyValueNotification(isDirty);
     }
 
@@ -101,25 +102,28 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         boolean isDirty = false;
         // this displays most changes
         // alias and notes are done automatically?
-        isDirty = view.featureDisplayName.isDirty(dto.getName()) || isDirty;
+        BooleanCollector col = new BooleanCollector(false);
+
+        col.addBoolean(view.featureDisplayName.isDirty(dto.getName()));
         if (view.knownInsertionCheckBox.getValue() != dto.getKnownInsertionSite()) {
             view.saveButton.setEnabled(true);
-            isDirty = true;
+            col.addBoolean(true);
         }
         if (view.featureTypeBox.getSelected() != null && dto.getFeatureType() != null) {
-            isDirty = view.featureTypeBox.isDirty(dto.getFeatureType().name()) || isDirty;
+            col.addBoolean(view.featureTypeBox.isDirty(dto.getFeatureType().name()));
         } else if ((view.featureTypeBox.getSelected() == null && dto.getFeatureType() != null)
                 || (view.featureTypeBox.getSelected() != null && dto.getFeatureType() == null)
                 ) {
-            isDirty = view.featureTypeBox.setDirty(true);
+            col.addBoolean(view.featureTypeBox.setDirty(true));
         }
-        isDirty = (view.mutageeBox.isDirty(dto.getMutagee()) || isDirty);
-        isDirty = (view.mutagenBox.isDirty(dto.getMutagen()) || isDirty);
-        isDirty = (view.labDesignationBox.isDirty(dto.getLabPrefix()) || isDirty);
-        isDirty = (view.lineNumberBox.isDirty(dto.getLineNumber()) || isDirty);
-        isDirty = (view.labOfOriginBox.isDirty(dto.getLabOfOrigin()) || isDirty);
+        col.addBoolean(view.mutageeBox.isDirty(dto.getMutagee()));
+        col.addBoolean(view.mutagenBox.isDirty(dto.getMutagen()));
+        col.addBoolean(view.labDesignationBox.isDirty(dto.getLabPrefix()));
+        col.addBoolean(view.lineNumberBox.isDirty(dto.getLineNumber()));
+        col.addBoolean(view.labOfOriginBox.isDirty(dto.getLabOfOrigin()));
+        col.addBoolean(mutationDetailPresenter.isDirty());
 ////        isDirty = (view.featureSequenceBox.isDirty(dto.getFeatureSequence()) || isDirty) ;
-        return isDirty;
+        return col.arrivedValue();
     }
 
 
@@ -129,7 +133,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
     }
 
     public FeatureDTO createDTOFromGUI() {
-        FeatureDTO featureDTO = super.createDTOFromGUI();
+        FeatureDTO featureDTO = super.createDTOFromGUI(view);
         // set things from actual object that are not grabbed from GUI
         // alias and notes are already handled by the interface, i.e.
         // are added / removed from the feature via independent Ajax call.
@@ -178,7 +182,6 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
 
     public void updateFeature() {
         FeatureDTO featureDTO = createDTOFromGUI();
-
         String errorMessage = FeatureValidationService.isValidToSave(featureDTO);
         if (errorMessage != null) {
             setError(errorMessage);
@@ -203,7 +206,9 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                             dto = result;
                             view.notWorking();
                             view.setNote("Saved Feature [" + result.getName() + "]");
-                            loadFeaturesForPub();
+                            //loadFeaturesForPub(true);
+                            view.resetGUI();
+
                         }
                     });
 

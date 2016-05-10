@@ -23,7 +23,6 @@ public class FeatureModule implements EntryPoint {
     interface MyUiBinder extends UiBinder<FlowPanel, FeatureModule> {
     }
 
-    // data
     private String publicationID;
     private boolean debug;
     @UiField
@@ -51,11 +50,11 @@ public class FeatureModule implements EntryPoint {
         RelatedEntityDTO relatedEntityDTO = new RelatedEntityDTO();
         relatedEntityDTO.setPublicationZdbID(publicationID);
         attributionModule.setDTO(relatedEntityDTO);
-        FeatureAddPresenter addFeaturePresenter = new FeatureAddPresenter(featureAddView, featureEditView, publicationID);
+        FeatureAddPresenter addFeaturePresenter = new FeatureAddPresenter(featureAddView, publicationID);
         featureAddView.setPresenter(addFeaturePresenter);
         addFeaturePresenter.go();
 
-        featureEditPresenter = new FeatureEditPresenter(featureAddView, featureEditView, publicationID);
+        featureEditPresenter = new FeatureEditPresenter(featureEditView, publicationID);
         featureEditView.setPresenter(featureEditPresenter);
         featureEditPresenter.go();
 

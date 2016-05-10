@@ -1,7 +1,10 @@
 package org.zfin.gwt.curation.ui;
 
 import org.zfin.gwt.curation.event.AddNewFeatureEvent;
-import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.dto.CuratorNoteDTO;
+import org.zfin.gwt.root.dto.FeatureDTO;
+import org.zfin.gwt.root.dto.FeaturePrefixDTO;
+import org.zfin.gwt.root.dto.NoteDTO;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.util.AppUtils;
@@ -15,24 +18,23 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
     private FeatureAddView view;
     protected final String ZF_PREFIX = "zf";
     private String publicationID;
-    private MutationDetailPresenter mutationDetailPresenter;
+    private MutationDetailPresenter addMutationDetailPresenter;
 
-    public FeatureAddPresenter(FeatureAddView view, FeatureEditView editView, String publicationID) {
+    public FeatureAddPresenter(FeatureAddView view, String publicationID) {
         super(view, publicationID);
         this.publicationID = publicationID;
         this.view = view;
         dto = new FeatureDTO();
         dto.setPublicationZdbID(publicationID);
-        mutationDetailPresenter = new MutationDetailPresenter(view, editView);
-        view.mutationDetailTranscriptView.setPresenter(mutationDetailPresenter);
-        view.mutationDetailDnaView.setPresenter(mutationDetailPresenter);
-        view.mutationDetailProteinView.setPresenter(mutationDetailPresenter);
+        addMutationDetailPresenter = new MutationDetailPresenter(view);
+        view.mutationDetailTranscriptView.setPresenter(addMutationDetailPresenter);
+        view.mutationDetailDnaView.setPresenter(addMutationDetailPresenter);
+        view.mutationDetailProteinView.setPresenter(addMutationDetailPresenter);
     }
-
 
     public void go() {
         super.go();
-        mutationDetailPresenter.go();
+        addMutationDetailPresenter.go();
     }
 
     @Override
@@ -90,30 +92,9 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
     }
 
     public FeatureDTO createDTOFromGUI() {
+        FeatureDTO featureDTO = super.createDTOFromGUI(view);
 
-        FeatureDTO featureDTO = new FeatureDTO();
-        featureDTO.setName(view.featureDisplayName.getText());
-        if (view.featureNameBox.isVisible()) {
-            featureDTO.setOptionalName(view.featureNameBox.getText());
-        }
-
-        FeatureTypeEnum featureTypeEnum = FeatureTypeEnum.getTypeForName(view.featureTypeBox.getSelected());
-        if (featureTypeEnum != null) {
-            featureDTO.setFeatureType(featureTypeEnum);
-            if (!featureTypeEnum.isUnspecified()) {
-                featureDTO.setLineNumber(view.lineNumberBox.getText());
-                featureDTO.setLabPrefix(view.labDesignationBox.getSelected());
-                featureDTO.setLabOfOrigin(view.labOfOriginBox.getSelected());
-            }
-        }
-        featureDTO.setMutagen(view.mutagenBox.getSelected());
-        featureDTO.setMutagee(view.mutageeBox.getSelected());
-        featureDTO.setDominant(view.dominantCheckBox.getValue());
-        featureDTO.setKnownInsertionSite(view.knownInsertionCheckBox.getValue());
-        featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
-        featureDTO.setTransgenicSuffix(view.featureSuffixBox.getSelectedText());
         featureDTO.setFeatureSequence(view.featureSequenceBox.getText());
-        featureDTO.setAbbreviation(FeatureValidationService.getAbbreviationFromName(featureDTO));
 
         if (StringUtils.isNotEmptyTrim(view.featureAliasBox.getText())) {
             featureDTO.setAlias(view.featureAliasBox.getText());
@@ -154,7 +135,7 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
             setError(errorMessage);
             return;
         }
-        if(view.mutationDetailProteinView.hasAASelected() && view.mutationDetailProteinView.hasPlusMinusUsed()) {
+        if (view.mutationDetailProteinView.hasAASelected() && view.mutationDetailProteinView.hasPlusMinusUsed()) {
             view.setError("Cannot select Amino Acids and defines plus / minus fields");
             return;
         }

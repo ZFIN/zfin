@@ -2,6 +2,7 @@ package org.zfin.gwt.root.dto;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -239,6 +240,12 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes {
 
     public void setTranscriptChangeDTOSet(Set<MutationDetailTranscriptChangeDTO> transcriptChangeDTOSet) {
         this.transcriptChangeDTOSet = transcriptChangeDTOSet;
+    }
+
+    public void addTranscriptChange(MutationDetailTranscriptChangeDTO dto){
+        if(transcriptChangeDTOSet == null)
+            transcriptChangeDTOSet = new HashSet<>(5);
+        transcriptChangeDTOSet.add(dto);
     }
 
     /**

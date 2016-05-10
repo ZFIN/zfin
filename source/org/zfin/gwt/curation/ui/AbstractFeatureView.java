@@ -272,6 +272,23 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         presenter.updateMutagenOnFeatureTypeChange(featureTypeSelected);
     }
 
+    public void resetGUI() {
+        featureTypeBox.setSelectedIndex(0);
+        labOfOriginBox.setSelectedIndex(0);
+        labOfOriginBox.setDirty(false);
+        labDesignationBox.clear();
+        labDesignationBox.setDirty(false);
+        mutageeBox.setDirty(false);
+        mutagenBox.setDirty(false);
+        lineNumberBox.setDirty(false);
+        featureDisplayName.setDirty(false);
+        mutationDetailDnaView.resetGUI();
+        mutationDetailTranscriptView.fullResetGUI();
+        mutationDetailProteinView.resetGUI();
+
+    }
+
+
     public void clearErrors() {
         errorLabel.clearAllErrors();
     }
@@ -305,6 +322,32 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     public void setNote(String message) {
         errorLabel.setStyleName("clickable");
         setError(message + "[close]");
+    }
+
+    public void onclickSaveButton(ClickEvent event) {
+        // if no consequence is selected and AA selection is used then default to substitution
+        if (mutationDetailProteinView.proteinTermList.getSelectedIndex() == 0 &&
+                mutationDetailProteinView.hasNonStopAASelected()) {
+            mutationDetailProteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_SUBSTITUTION);
+        }
+        // if no consequence is selected and plus AA is used then default to Insertion
+        if (mutationDetailProteinView.hasPlusFieldOnly()) {
+            mutationDetailProteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_INSERTION);
+        }
+        // if no consequence is selected and minus AA is used then default to Deletion
+        if (mutationDetailProteinView.hasMinusFieldOnly()) {
+            mutationDetailProteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_DELETION);
+        }
+        // if no transcript consequence and protein: AA > AA for a Point mutation create
+        if (getFeatureType().equals(FeatureTypeEnum.POINT_MUTATION.getName())) {
+            if (mutationDetailTranscriptView.getPresenter().isTranscriptDtoSetEmpty()) {
+                // substitution is a missense consequence on the transcript level
+                if (mutationDetailProteinView.hasNonStopAASelected())
+                    mutationDetailTranscriptView.getPresenter().setMissenseTerm(this);
+                else if (mutationDetailProteinView.hasStopCodon())
+                    mutationDetailTranscriptView.getPresenter().setStopGainTerm(this);
+            }
+        }
     }
 
     enum MutationDetailType {

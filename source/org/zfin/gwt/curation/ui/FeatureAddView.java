@@ -46,29 +46,7 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
 
     @UiHandler("saveButton")
     void onClickSaveButton(@SuppressWarnings("unused") ClickEvent event) {
-        // if no consequence is selected and AA selection is used then default to substitution
-        if (mutationDetailProteinView.proteinTermList.getSelectedIndex() == 0 &&
-                mutationDetailProteinView.hasNonStopAASelected()) {
-            mutationDetailProteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_SUBSTITUTION);
-        }
-        // if no consequence is selected and plus AA is used then default to Insertion
-        if (mutationDetailProteinView.hasPlusFieldOnly()) {
-            mutationDetailProteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_INSERTION);
-        }
-        // if no consequence is selected and minus AA is used then default to Deletion
-        if (mutationDetailProteinView.hasMinusFieldOnly()) {
-            mutationDetailProteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_DELETION);
-        }
-        // if no transcript consequence and protein: AA > AA for a Point mutation create
-        if (getFeatureType().equals(FeatureTypeEnum.POINT_MUTATION.getName())) {
-            if (mutationDetailTranscriptView.getPresenter().getDtoSet().isEmpty()) {
-                // substitution is a missense consequence on the transcript level
-                if (mutationDetailProteinView.hasNonStopAASelected())
-                    mutationDetailTranscriptView.getPresenter().setMissenseTerm(this);
-                else if (mutationDetailProteinView.hasStopCodon())
-                    mutationDetailTranscriptView.getPresenter().setStopGainTerm(this);
-            }
-        }
+        super.onclickSaveButton(event);
         addPresenter.createFeature();
     }
 
@@ -100,12 +78,10 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
 
 
     public void resetInterface() {
-        labOfOriginBox.setEnabled(false);
-        labOfOriginBox.setSelectedIndex(0);
+        super.resetGUI();
         labDesignationBox.setEnabled(false);
         labDesignationBox.clear();
         labDesignationBox.setSelectedIndex(0);
-        lineNumberBox.setEnabled(false);
         lineNumberBox.clear();
         dominantCheckBox.setEnabled(false);
         dominantCheckBox.setValue(false);
@@ -115,10 +91,6 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         featureAliasBox.clear();
         featureSequenceBox.setEnabled(false);
         featureSequenceBox.clear();
-        mutageeBox.setEnabled(false);
-        mutageeBox.setSelectedIndex(0);
-        mutagenBox.setEnabled(false);
-        mutagenBox.setSelectedIndex(0);
         publicNoteBox.setEnabled(false);
         publicNoteBox.setText("");
         curatorNoteBox.setEnabled(false);
@@ -126,9 +98,6 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         knownInsertionCheckBox.setEnabled(false);
         knownInsertionCheckBox.setValue(false);
         featureDisplayName.clear();
-        mutationDetailDnaView.resetGUI();
-        mutationDetailTranscriptView.fullResetGUI();
-        mutationDetailProteinView.resetGUI();
     }
 
     @Override
