@@ -1,0 +1,1 @@
+cat /var/log/httpd/zfin_access | grep -vE "128.223.[56|57]|all-figure-view|fxallfigures|nagios|Googlebot|bingbot|Exabot|check_http" | cut -d' ' -f 7 | grep -E "detaill|view|ZFIN_jump|^/ZDB|^/[A-Z]{2}:" | grep -Eo "ZDB-[A-Z]*-[0-9]*-[0-9]*|[A-Z]{2}:[0-9]*" | grep -v "^ZDB-PERS" 
