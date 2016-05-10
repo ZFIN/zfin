@@ -113,7 +113,7 @@ public class MutationDetailsConversionService {
         String position = positionStatement(proteinConsequence);
         String refSeq = referenceSequenceStatement(proteinConsequence);
         if (StringUtils.isNotEmpty(term) && (StringUtils.isNotEmpty(change) || StringUtils.isNotEmpty(position))) {
-            term += ",";
+            term += ":";
         }
         return makeSentence(term, change, position, refSeq);
     }
@@ -426,7 +426,7 @@ public class MutationDetailsConversionService {
                 proteinConsequence.getNumberAminoAcidsRemoved(), MISSING, AMINO_ACIDS);
         if (StringUtils.isNotEmpty(addedOrRemoved)) {
             if (StringUtils.isNotEmpty(statement)) {
-                statement.append(": ");
+                statement.append(", ");
             }
             statement.append(addedOrRemoved);
         }

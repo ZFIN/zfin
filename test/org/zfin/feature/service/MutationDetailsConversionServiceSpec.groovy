@@ -394,7 +394,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         null  | null     | 5       | null      || '5 AA added'
         null  | null     | null    | 8         || '8 AA missing'
         null  | null     | 3       | 9         || '3 AA added / 9 AA missing'
-        'Sec' | 'Ala'    | 1       | 2         || 'Sec>Ala: 1 AA added / 2 AA missing' // does this case even make sense? well, just in case.
+        'Sec' | 'Ala'    | 1       | 2         || 'Sec>Ala, 1 AA added / 2 AA missing' // does this case even make sense? well, just in case.
     }
 
     @Unroll
@@ -428,6 +428,6 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         null  | null     | 10      | null      | null                      | 312   | 322  | null     | null      || '10 AA added from position 312 to 322'
         null  | null     | null    | 14        | null                      | null  | null | 'PROTDB' | '10000'   || '14 AA missing in PROTDB:10000'
         null  | null     | null    | null      | 'elongated polypeptide'   | null  | null | null     | null      || 'Elongated Polypeptide'
-        'Gln' | 'Tyr'    | null    | null      | 'amino acid substitution' | 90    | null | 'FooDB'  | '848484'  || 'Amino Acid Substitution, Gln>Tyr at position 90 in FooDB:848484'
+        'Gln' | 'Tyr'    | null    | null      | 'amino acid substitution' | 90    | null | 'FooDB'  | '848484'  || 'Amino Acid Substitution: Gln>Tyr at position 90 in FooDB:848484'
     }
 }
