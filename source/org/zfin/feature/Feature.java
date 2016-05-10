@@ -39,7 +39,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     public static final String MUTANT = "Mutant";
     public static final String UNRECOGNIZED = "unrecognized";
     public static final String UNSPECIFIED = "unspecified";
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
     @GenericGenerator(name = "zfinGenerator",
@@ -556,11 +556,6 @@ public class Feature implements EntityNotes, EntityZdbID {
     public String getTranscriptConsequenceStatement() {
         return mutationDetailsConversionService.getTranscriptMutationStatement(this);
     }
-
-
-
-
-
 
     public String getDisplayAbbreviation() {
         if (abbreviation.endsWith("_" + UNRECOGNIZED)) {

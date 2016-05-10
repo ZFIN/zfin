@@ -1720,6 +1720,50 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return list.size();
 
     }
+
+    @Override
+    public boolean isTermNameForControlledVocabExists(String cvTermName) {
+        Session session = HibernateUtil.currentSession();
+
+        Criteria criteria = session.createCriteria(ControlledVocab.class);
+        criteria.add(Restrictions.eq("cvTermName", cvTermName));
+
+        ControlledVocab controlledVocab = (ControlledVocab) criteria.uniqueResult();
+        return controlledVocab != null;
+    }
+
+    @Override
+    public boolean isForeignSpeciesForControlledVocabExists(String cvForeignSpecies) {
+        Session session = HibernateUtil.currentSession();
+
+        Criteria criteria = session.createCriteria(ControlledVocab.class);
+        criteria.add(Restrictions.eq("cvForeignSpecies", cvForeignSpecies));
+
+        ControlledVocab controlledVocab = (ControlledVocab) criteria.uniqueResult();
+        return controlledVocab != null;
+    }
+
+    @Override
+    public boolean isNameDefForControlledVocabExists(String cvNameDefinition) {
+        Session session = HibernateUtil.currentSession();
+
+        Criteria criteria = session.createCriteria(ControlledVocab.class);
+        criteria.add(Restrictions.eq("cvNameDefinition", cvNameDefinition));
+
+        ControlledVocab controlledVocab = (ControlledVocab) criteria.uniqueResult();
+        return controlledVocab != null;
+    }
+
+    @Override
+    public ControlledVocab getControlledVocabByNameAndSpecies(String termName, String foreignSpecies) {
+        Session session = HibernateUtil.currentSession();
+
+        Criteria criteria = session.createCriteria(ControlledVocab.class);
+        criteria.add(Restrictions.eq("cvTermName", termName));
+        criteria.add(Restrictions.eq("cvForeignSpecies", foreignSpecies));
+
+        return (ControlledVocab) criteria.uniqueResult();
+    }
 }
 
 

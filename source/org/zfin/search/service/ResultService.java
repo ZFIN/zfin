@@ -4,10 +4,9 @@ import com.google.common.base.Joiner;
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.zfin.anatomy.presentation.DevelopmentStagePresentation;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExperimentPresentation;
@@ -17,7 +16,6 @@ import org.zfin.feature.FeatureTranscriptMutationDetail;
 import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.fish.presentation.FishPresentation;
 import org.zfin.fish.repository.FishService;
-import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.mapping.MappingService;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -28,7 +26,6 @@ import org.zfin.mutant.Fish;
 import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.mutant.PhenotypeWarehouse;
 import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.mutant.presentation.GenotypePresentation;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.presentation.TermPresentation;
@@ -51,6 +48,9 @@ import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 public class ResultService {
 
     public static Logger logger = Logger.getLogger(ResultService.class);
+
+    @Autowired
+    MutationDetailsConversionService mutationDetailsConversionService;
 
     public static String ABSTRACT = "Abstract:";
     public static String ADDRESS = "Address:";
@@ -328,7 +328,7 @@ public class ResultService {
             Set<FeatureTranscriptMutationDetail> consequences = feature.getFeatureTranscriptMutationDetailSet();
             List<String> consequenceStatements = new ArrayList<>(consequences.size());
             for (FeatureTranscriptMutationDetail consequence : consequences) {
-                consequenceStatements.add(transcriptConsequenceStatement(consequence));
+                consequenceStatements.add(mutationDetailsConversionService.transcriptConsequenceStatement(consequence));
             }
 
             if (feature.getFeatureTranscriptMutationDetailSet() != null && feature.getFeatureTranscriptMutationDetailSet().size() > 0) {
@@ -852,26 +852,5 @@ public class ResultService {
             sb.append("</ul>");
         }
         return sb.toString();
-    }
-    public String transcriptConsequenceStatement(FeatureTranscriptMutationDetail transcriptDetail) {
-        if (transcriptDetail == null || transcriptDetail.getTranscriptConsequence() == null) {
-            return "";
-        }
-        String termDisplay = WordUtils.capitalize(transcriptDetail.getTranscriptConsequence().getDisplayName());
-        StringBuilder statement = new StringBuilder(termDisplay);
-        String preposition;
-        switch (transcriptDetail.getTranscriptConsequence().getZdbID()) {
-            case "ZDB-TERM-130401-1568":
-            case "ZDB-TERM-130401-1567":
-                preposition = " of ";
-                break;
-            default:
-                preposition = " in ";
-        }
-        String location = MutationDetailsConversionService.exonOrIntronLocation(transcriptDetail, preposition);
-        if (StringUtils.isNotEmpty(location)) {
-            statement.append(location);
-        }
-        return statement.toString();
     }
 }

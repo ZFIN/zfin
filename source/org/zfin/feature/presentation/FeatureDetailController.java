@@ -80,7 +80,7 @@ public class FeatureDetailController {
         retrievePubData(feature, form);
 
         model.addAttribute("externalNotes",FeatureService.getSortedExternalNotes(feature));
-        model.addAttribute("mutationDetails", mutationDetailsConversionService.convert(feature));
+        model.addAttribute("mutationDetails", mutationDetailsConversionService.convert(feature, true));
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, feature.getName());

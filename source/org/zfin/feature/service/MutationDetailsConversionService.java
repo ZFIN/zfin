@@ -5,6 +5,8 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.stereotype.Service;
 import org.zfin.feature.*;
 import org.zfin.feature.presentation.MutationDetailsPresentation;
+import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.sequence.ReferenceDatabase;
 
 import java.util.ArrayList;
@@ -14,21 +16,27 @@ import java.util.Set;
 @Service
 public class MutationDetailsConversionService {
 
-    private static final String EXON = "exon";
-    private static final String INTRON = "intron";
+    private static final String EXON = "Exon";
+    private static final String INTRON = "Intron";
     private static final String BASE_PAIRS = "bp";
     private static final String AMINO_ACIDS = "AA";
     private static final String STOP = "STOP";
-    private static final String NET = "net";
-    private static final String PLUS = "+";
-    private static final String MINUS = "-";
+    private static final String NET = "Net";
+    private static final String INSERTED = "inserted";
+    private static final String DELETED = "deleted";
+    private static final String ADDED = "added";
+    private static final String MISSING = "missing";
 
     public MutationDetailsPresentation convert(Feature feature) {
+        return convert(feature, false);
+    }
+
+    public MutationDetailsPresentation convert(Feature feature, boolean showLink) {
         MutationDetailsPresentation details = new MutationDetailsPresentation();
         details.setMutationType(getMutationTypeStatement(feature));
-        details.setDnaChangeStatement(getDnaMutationStatement(feature));
-        details.setTranscriptChangeStatement(getTranscriptMutationStatement(feature));
-        details.setProteinChangeStatement(getProteinMutationStatement(feature));
+        details.setDnaChangeStatement(getDnaMutationStatement(feature, showLink));
+        details.setTranscriptChangeStatement(getTranscriptMutationStatement(feature, showLink));
+        details.setProteinChangeStatement(getProteinMutationStatement(feature, showLink));
         return details;
     }
 
@@ -40,6 +48,10 @@ public class MutationDetailsConversionService {
     }
 
     public String getDnaMutationStatement(Feature feature) {
+        return getDnaMutationStatement(feature, false);
+    }
+
+    public String getDnaMutationStatement(Feature feature, boolean showLinks) {
         if (feature == null || feature.getType() == null) {
             return "";
         }
@@ -64,30 +76,38 @@ public class MutationDetailsConversionService {
         }
         String position = positionStatement(dnaChange);
         String refSeq = referenceSequenceStatement(dnaChange);
-        String localization = geneLocalizationWithPreposition(dnaChange);
+        String localization = geneLocalizationWithPreposition(dnaChange, showLinks);
         return makeSentence(change, position, refSeq, localization);
     }
 
     public String getTranscriptMutationStatement(Feature feature) {
+        return getTranscriptMutationStatement(feature, false);
+    }
+
+    public String getTranscriptMutationStatement(Feature feature, boolean showLinks) {
         Set<FeatureTranscriptMutationDetail> consequences = feature.getFeatureTranscriptMutationDetailSet();
         if (consequences == null) {
             return "";
         }
         List<String> consequenceStatements = new ArrayList<>(consequences.size());
         for (FeatureTranscriptMutationDetail consequence : consequences) {
-            consequenceStatements.add(transcriptConsequenceStatement(consequence));
+            consequenceStatements.add(transcriptConsequenceStatement(consequence, showLinks));
         }
         return StringUtils.join(consequenceStatements, ", ");
     }
 
     public String getProteinMutationStatement(Feature feature) {
+        return getProteinMutationStatement(feature, false);
+    }
+
+    public String getProteinMutationStatement(Feature feature, boolean showLinks) {
         if (feature == null) {
             return "";
         }
         FeatureProteinMutationDetail proteinConsequence = feature.getFeatureProteinMutationDetail();
         String term = null;
         if (proteinConsequence != null && proteinConsequence.getProteinConsequence() != null) {
-            term = WordUtils.capitalize(proteinConsequence.getProteinConsequence().getDisplayName());
+            term = termDisplay(proteinConsequence.getProteinConsequence(), showLinks);
         }
         String change = aminoAcidChangeStatement(proteinConsequence);
         String position = positionStatement(proteinConsequence);
@@ -109,42 +129,42 @@ public class MutationDetailsConversionService {
         if (dnaChange == null) {
             return "";
         }
-        return addedOrRemovedStatement(null, dnaChange.getNumberRemovedBasePair(), BASE_PAIRS);
+        return addedOrRemovedStatement(null, INSERTED, dnaChange.getNumberRemovedBasePair(), DELETED, BASE_PAIRS);
     }
 
     private String insertionStatement(FeatureDnaMutationDetail dnaChange) {
         if (dnaChange == null) {
             return "";
         }
-        return addedOrRemovedStatement(dnaChange.getNumberAddedBasePair(), null, BASE_PAIRS);
+        return addedOrRemovedStatement(dnaChange.getNumberAddedBasePair(), INSERTED, null, DELETED, BASE_PAIRS);
     }
 
     private String indelStatement(FeatureDnaMutationDetail dnaChange) {
         if (dnaChange == null) {
             return "";
         }
-        return addedOrRemovedStatement(dnaChange.getNumberAddedBasePair(), dnaChange.getNumberRemovedBasePair(), BASE_PAIRS, true);
+        return addedOrRemovedStatement(dnaChange.getNumberAddedBasePair(), INSERTED, dnaChange.getNumberRemovedBasePair(), DELETED, BASE_PAIRS, true);
     }
 
-    private String addedOrRemovedStatement(Integer added, Integer removed, String item) {
-        return addedOrRemovedStatement(added, removed, item, false);
+    private String addedOrRemovedStatement(Integer added, String addedTerm, Integer removed, String removedTerm, String item) {
+        return addedOrRemovedStatement(added, addedTerm, removed, removedTerm, item, false);
     }
 
-    private String addedOrRemovedStatement(Integer added, Integer removed, String item, boolean isNet) {
+    private String addedOrRemovedStatement(Integer added, String addedTerm, Integer removed, String removedTerm, String item, boolean isNet) {
         if (added == null && removed == null) {
             return "";
         }
 
-        String prefix = isNet ? (NET + " ") : "";
+        String prefix = isNet ? NET : "";
         if (added == null) {
-            return prefix + MINUS + removed + " " + item;
+            return makeSentence(prefix, removed.toString(), item, removedTerm);
         }
 
         if (removed == null) {
-            return prefix + PLUS + added + " " + item;
+            return makeSentence(prefix, added.toString(), item, addedTerm);
         }
 
-        return PLUS + added + "/" + MINUS + removed + " " + item;
+        return makeSentence(added.toString(), item, addedTerm, "/", removed.toString(), item, removedTerm);
     }
 
     private String transgenicStatement(FeatureDnaMutationDetail dnaChange) {
@@ -163,6 +183,10 @@ public class MutationDetailsConversionService {
         return "Insertion";
     }
 
+    public String geneLocalizationWithPreposition(FeatureDnaMutationDetail dnaChange) {
+        return geneLocalizationWithPreposition(dnaChange, false);
+    }
+
     /**
      * Produces a full gene localization statement based on the localization term, exon, and intron values
      * including an appropriate preposition at the beginning of the string.
@@ -170,13 +194,13 @@ public class MutationDetailsConversionService {
      * @param dnaChange the dna change
      * @return localization statement
      */
-    public String geneLocalizationWithPreposition(FeatureDnaMutationDetail dnaChange) {
+    public String geneLocalizationWithPreposition(FeatureDnaMutationDetail dnaChange, boolean showLinks) {
         if (dnaChange == null) {
             return "";
         }
 
         GeneLocalizationTerm term = dnaChange.getGeneLocalizationTerm();
-        String statement = geneLocalizationStatement(dnaChange);
+        String statement = geneLocalizationStatement(dnaChange, showLinks);
         if (StringUtils.isEmpty(statement)) {
             return "";
         }
@@ -189,6 +213,10 @@ public class MutationDetailsConversionService {
         return preposition + " " + statement;
     }
 
+    public String geneLocalizationStatement(FeatureDnaMutationDetail dnaChange) {
+        return geneLocalizationStatement(dnaChange, false);
+    }
+
     /**
      * Produces a gene localization statement based on the localization term, exon, and intron values
      * of the FeatureDnaMutationDetail object.
@@ -196,7 +224,7 @@ public class MutationDetailsConversionService {
      * @param dnaChange the dna change
      * @return localization statement
      */
-    public String geneLocalizationStatement(FeatureDnaMutationDetail dnaChange) {
+    public String geneLocalizationStatement(FeatureDnaMutationDetail dnaChange, boolean showLinks) {
         if (dnaChange == null || dnaChange.getGeneLocalizationTerm() == null) {
             return  "";
         }
@@ -208,13 +236,16 @@ public class MutationDetailsConversionService {
 
             case "ZDB-TERM-130401-166":     // splice donor site
             case "ZDB-TERM-130401-167":     // splice acceptor site
-                return term.getDisplayName() + exonOrIntronLocation(dnaChange, " of ");
+                return termDisplay(term, showLinks, false) +
+                        exonOrIntronLocation(dnaChange, " of ") +
+                        termPopup(term, showLinks);
 
             case "ZDB-TERM-130401-1417":    // splice junction
-                return spliceJunctionLocation(dnaChange) + term.getDisplayName();
+                return spliceJunctionLocation(dnaChange) +
+                        termDisplay(term, showLinks);
 
             default:
-                return term.getDisplayName();
+                return termDisplay(term, showLinks);
         }
     }
 
@@ -245,14 +276,14 @@ public class MutationDetailsConversionService {
         return exonOrIntronLocation(dnaChange.getExonNumber(), dnaChange.getIntronNumber(), preposition);
     }
 
-    public static String exonOrIntronLocation(FeatureTranscriptMutationDetail transcriptConsequence, String preposition) {
+    public String exonOrIntronLocation(FeatureTranscriptMutationDetail transcriptConsequence, String preposition) {
         if (transcriptConsequence == null) {
             return "";
         }
         return exonOrIntronLocation(transcriptConsequence.getExonNumber(), transcriptConsequence.getIntronNumber(), preposition);
     }
 
-    private static String exonOrIntronLocation(Integer exon, Integer intron, String preposition) {
+    private String exonOrIntronLocation(Integer exon, Integer intron, String preposition) {
         if (exon != null) {
             return preposition + EXON + " " + exon;
         }
@@ -314,7 +345,7 @@ public class MutationDetailsConversionService {
             return "";
         }
 
-        if (end == null) {
+        if (end == null || start == end) {
             return "at position " + start;
         }
 
@@ -350,10 +381,14 @@ public class MutationDetailsConversionService {
     }
 
     public String transcriptConsequenceStatement(FeatureTranscriptMutationDetail transcriptDetail) {
+        return transcriptConsequenceStatement(transcriptDetail, false);
+    }
+
+    public String transcriptConsequenceStatement(FeatureTranscriptMutationDetail transcriptDetail, boolean showLinks) {
         if (transcriptDetail == null || transcriptDetail.getTranscriptConsequence() == null) {
             return "";
         }
-        String termDisplay = WordUtils.capitalize(transcriptDetail.getTranscriptConsequence().getDisplayName());
+        String termDisplay = termDisplay(transcriptDetail.getTranscriptConsequence(), showLinks, false);
         StringBuilder statement = new StringBuilder(termDisplay);
         String preposition;
         switch (transcriptDetail.getTranscriptConsequence().getZdbID()) {
@@ -368,6 +403,7 @@ public class MutationDetailsConversionService {
         if (StringUtils.isNotEmpty(location)) {
             statement.append(location);
         }
+        statement.append(termPopup(transcriptDetail.getTranscriptConsequence(), showLinks));
         return statement.toString();
     }
 
@@ -386,15 +422,37 @@ public class MutationDetailsConversionService {
             }
         }
 
-        String addedOrRemoved = addedOrRemovedStatement(proteinConsequence.getNumberAminoAcidsAdded(),
-                proteinConsequence.getNumberAminoAcidsRemoved(), AMINO_ACIDS);
+        String addedOrRemoved = addedOrRemovedStatement(proteinConsequence.getNumberAminoAcidsAdded(), ADDED,
+                proteinConsequence.getNumberAminoAcidsRemoved(), MISSING, AMINO_ACIDS);
         if (StringUtils.isNotEmpty(addedOrRemoved)) {
             if (StringUtils.isNotEmpty(statement)) {
-                statement.append(", ");
+                statement.append(": ");
             }
             statement.append(addedOrRemoved);
         }
         return statement.toString();
+    }
+
+    private String termDisplay(MutationDetailControlledVocabularyTerm term, boolean asLink, boolean showPopup) {
+        String display = WordUtils.capitalize(term.getDisplayName());
+        if (asLink) {
+            display = EntityPresentation.getGeneralHyperLink("/" + term.getTerm().getZdbID(), display);
+            if (showPopup) {
+                display += termPopup(term, asLink);
+            }
+        }
+        return display;
+    }
+
+    private String termDisplay(MutationDetailControlledVocabularyTerm term, boolean asLink) {
+        return termDisplay(term, asLink, true);
+    }
+
+    private String termPopup(MutationDetailControlledVocabularyTerm term, boolean showLink) {
+        if (!showLink) {
+            return "";
+        }
+        return TermPresentation.getPopupLink(term.getTerm());
     }
 
     private String makeSentence(String... phrases) {
