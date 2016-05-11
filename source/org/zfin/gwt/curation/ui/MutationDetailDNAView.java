@@ -28,6 +28,8 @@ public class MutationDetailDNAView extends AbstractViewComposite {
     public static final String FIVE_PRIME_SPLICE = "SO:0000163";
     public static final String EXON = "SO:0000147";
     public static final String INTRON = "SO:0000188";
+    public static final String INSERTION = "insertion";
+    public static final String DELETION = "deletion";
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @UiTemplate("MutationDetailDNAView.ui.xml")
@@ -159,7 +161,7 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         dataTable.resizeRows(1);
         dataTable.resizeColumns(3);
         int row = 0;
-        dataTable.setText(row, 0, "plus");
+        dataTable.setText(row, 0, INSERTION);
         dataTable.setWidget(row, 1, plusBasePair);
         dataTable.setText(row, 2, "bp");
         showHideBaseFields(true);
@@ -169,7 +171,7 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         dataTable.resizeRows(1);
         dataTable.resizeColumns(3);
         int row = 0;
-        dataTable.setText(row, 0, "minus");
+        dataTable.setText(row, 0, DELETION);
         dataTable.setWidget(row, 1, minusBasePair);
         dataTable.setText(row, 2, "bp");
         showHideBaseFields(true);
@@ -179,11 +181,11 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         dataTable.resizeRows(2);
         dataTable.resizeColumns(3);
         int row = 0;
-        dataTable.setText(row, 0, "plus");
+        dataTable.setText(row, 0, INSERTION);
         dataTable.setWidget(row, 1, plusBasePair);
         dataTable.setText(row, 2, "bp");
         row++;
-        dataTable.setText(row, 0, "minus");
+        dataTable.setText(row, 0, DELETION);
         dataTable.setWidget(row, 1, minusBasePair);
         dataTable.setText(row, 2, "bp");
         showHideBaseFields(true);
