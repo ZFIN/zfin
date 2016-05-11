@@ -6,7 +6,10 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
   <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/addDisplayNames.sql"/> 
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/createSangerLocationsTable.sql"/>
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/sangerLocations.xml"/>
   <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/loadChrforSanger.sql"/> 
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/dropSangerLocationsTable.sql"/>
   <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/14156.sql"/> 
   <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/dnaComments.sql"/> 
   <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/rnaComments.sql"/> 
