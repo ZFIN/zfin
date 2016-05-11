@@ -5,7 +5,7 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-  <include file="source/org/zfin/db/1077/postGmakePostloaddb/octopus/changelog/sequenceFeatureChromosomeLocationRename.sql"/>
-  <include file="source/org/zfin/db/1077/postGmakePostloaddb/octopus/changelog/newSequenceFeatureChromosomeLocation.sql"/>
-  <include file="source/org/zfin/db/1077/postGmakePostloaddb/octopus/changelog/updateSequenceFeatureChromosomeLocationGenerated.sql"/>
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/octopus/changelog/sequenceFeatureChromosomeLocationRename1.sql"/>
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/octopus/changelog/newSequenceFeatureChromosomeLocation1.sql"/>
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/octopus/changelog/updateSequenceFeatureChromosomeLocationGenerated1.sql"/>
 </databaseChangeLog>

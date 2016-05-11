@@ -1,8 +1,4 @@
-
-create temp table sangerLocations(ftrAbbrev varchar(50),ftrAssembly varchar(10), ftrChrom varchar(2), locStart integer) with no log;
-
-
-load from position.csv insert into sangerLocations;
+--liquibase formatted sql
 
 create temp table tmp_id (zdb_id varchar(50), ftrAbbrev varchar(50),ftrAssembly varchar(10), ftrChrom varchar(2), locStart integer)
 with no log;
