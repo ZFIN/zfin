@@ -73,6 +73,7 @@ public class FeatureModule implements EntryPoint {
                     public void onAdd(AddNewFeatureEvent event) {
                         featureEditPresenter.loadFeaturesForPub(true);
                         featureRelationshipPresenter.onFeatureAddEvent();
+                        attributionModule.populateAttributeRemoval();
                     }
                 });
         AppUtils.EVENT_BUS.addHandler(AddAttributeEvent.TYPE,
