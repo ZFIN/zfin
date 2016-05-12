@@ -136,9 +136,12 @@ public class FeatureProteinMutationDetail implements Cloneable {
     public FeatureProteinMutationDetail clone() {
         try {
             FeatureProteinMutationDetail detail = (FeatureProteinMutationDetail) super.clone();
-            detail.proteinConsequence = (ProteinConsequence) proteinConsequence.clone();
-            detail.wildtypeAminoAcid = (AminoAcidTerm) wildtypeAminoAcid.clone();
-            detail.mutantAminoAcid = (AminoAcidTerm) mutantAminoAcid.clone();
+            if (proteinConsequence != null)
+                detail.proteinConsequence = (ProteinConsequence) proteinConsequence.clone();
+            if (wildtypeAminoAcid != null)
+                detail.wildtypeAminoAcid = (AminoAcidTerm) wildtypeAminoAcid.clone();
+            if (mutantAminoAcid != null)
+                detail.mutantAminoAcid = (AminoAcidTerm) mutantAminoAcid.clone();
             return detail;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();

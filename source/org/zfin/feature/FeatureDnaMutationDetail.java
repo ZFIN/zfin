@@ -146,8 +146,10 @@ public class FeatureDnaMutationDetail implements Cloneable {
     public FeatureDnaMutationDetail clone() {
         try {
             FeatureDnaMutationDetail detail = (FeatureDnaMutationDetail) super.clone();
-            detail.dnaMutationTerm = (DnaMutationTerm) dnaMutationTerm.clone();
-            detail.geneLocalizationTerm = (GeneLocalizationTerm) geneLocalizationTerm.clone();
+            if (dnaMutationTerm != null)
+                detail.dnaMutationTerm = (DnaMutationTerm) dnaMutationTerm.clone();
+            if (geneLocalizationTerm != null)
+                detail.geneLocalizationTerm = (GeneLocalizationTerm) geneLocalizationTerm.clone();
             return detail;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
