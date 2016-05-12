@@ -55,17 +55,6 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         addPresenter.handleDirty();
     }
 
-    @UiHandler("knownInsertionCheckBox")
-    void onClickKnownInsertionSite(@SuppressWarnings("unused") ClickEvent event) {
-        if (knownInsertionCheckBox.getValue()) {
-            showMutationDetail();
-            mutationDetailDnaView.showTgFields();
-        } else {
-            hideMutationDetail();
-        }
-        super.onClickKnownInsertionSite(event);
-    }
-
     @UiHandler("featureTypeBox")
     void onChangeFeatureType(@SuppressWarnings("unused") ChangeEvent event) {
         super.onChangeFeatureType(event);

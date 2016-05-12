@@ -1077,5 +1077,18 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 .list();
 
     }
+
+    @Override
+    public void update(Feature feature, Set<FeatureTranscriptMutationDetail> addTranscriptAttribution, String publicationID) {
+        HibernateUtil.currentSession().update(feature);
+        HibernateUtil.currentSession().flush();
+
+        if (feature.getFeatureTranscriptMutationDetailSet() != null) {
+            for (FeatureTranscriptMutationDetail detail : feature.getFeatureTranscriptMutationDetailSet()) {
+                if (addTranscriptAttribution.contains(detail))
+                    infrastructureRepository.insertMutationDetailAttribution(detail.getZdbID(), publicationID);
+            }
+        }
+    }
 }
 

@@ -10,6 +10,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.criterion.Example;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -28,7 +29,6 @@ import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExternalNote;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -190,7 +190,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         publicationAttribution.setPublication(publication);
         publicationAttribution.setSourceType(sourceType);
 
-        session.save(publicationAttribution);
+        PublicationAttribution result = (PublicationAttribution) session.createCriteria(PublicationAttribution.class).add(Example.create(publicationAttribution)).uniqueResult();
+        if (result == null)
+            session.save(publicationAttribution);
         return publicationAttribution;
     }
 
@@ -644,6 +646,16 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         query.setParameter("zdbID", zdbID);
         query.setParameter("datazdbID", datazdbID);
         query.setParameter("sourceType", RecordAttribution.SourceType.FEATURE_TYPE.toString());
+        query.executeUpdate();
+        currentSession().flush();
+    }
+
+    public void removeRecordAttributionForTranscript(String zdbID, String datazdbID) {
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createQuery("delete from RecordAttribution ra where ra.dataZdbID=:datazdbID and ra.sourceZdbID=:zdbID and ra.sourceType=:sourceType");
+        query.setParameter("zdbID", zdbID);
+        query.setParameter("datazdbID", datazdbID);
+        query.setParameter("sourceType", RecordAttribution.SourceType.MUTATION_DETAIL.toString());
         query.executeUpdate();
         currentSession().flush();
     }
@@ -1763,6 +1775,36 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         criteria.add(Restrictions.eq("cvForeignSpecies", foreignSpecies));
 
         return (ControlledVocab) criteria.uniqueResult();
+    }
+
+    @Override
+    public void insertMutationDetailAttribution(String dataZdbID, String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        PublicationAttribution publicationAttribution = new PublicationAttribution();
+        publicationAttribution.setDataZdbID(dataZdbID);
+        publicationAttribution.setSourceZdbID(publicationID);
+        Publication publication = (Publication) session.get(Publication.class, publicationID);
+        publicationAttribution.setPublication(publication);
+        publicationAttribution.setSourceType(RecordAttribution.SourceType.MUTATION_DETAIL);
+
+        Criteria criteriaExisting = session.createCriteria(PublicationAttribution.class);
+        criteriaExisting.add(Example.create(publicationAttribution));
+        PublicationAttribution thisPubResult = (PublicationAttribution) criteriaExisting.uniqueResult();
+        // done if record already exists
+        if (thisPubResult != null)
+            return;
+
+        Criteria criteria = session.createCriteria(PublicationAttribution.class);
+        criteria.add(Restrictions.eq("dataZdbID", dataZdbID));
+        criteria.add(Restrictions.eq("sourceZdbID", RecordAttribution.SourceType.MUTATION_DETAIL.toString()));
+        PublicationAttribution result = (PublicationAttribution) criteria.uniqueResult();
+
+        // remove previous attribution if different from current pub
+        if (result != null && !result.getPublication().getZdbID().equals(publicationID)) {
+            session.delete(result);
+        }
+        session.save(publicationAttribution);
     }
 }
 

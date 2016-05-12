@@ -5,6 +5,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.ui.*;
@@ -79,12 +80,18 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
 
     @UiHandler("knownInsertionCheckBox")
     void onClickKnownInsertionSite(@SuppressWarnings("unused") ClickEvent event) {
+        Window.alert("Hi");
+        if (knownInsertionCheckBox.getValue()) {
+            showMutationDetail();
+            mutationDetailDnaView.showTgFields();
+        } else {
+            hideMutationDetail();
+        }
         if (knownInsertionCheckBox.getValue()) {
             featureNameBox.setVisible(true);
             featureNameBox.setEnabled(false);
             featureSuffixBox.setVisible(true);
             featureSuffixPanel.setVisible(true);
-///            saveButton.setEnabled(true);
         } else {
             featureNameBox.setVisible(false);
             featureNameBox.setEnabled(false);

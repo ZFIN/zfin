@@ -4,11 +4,10 @@ import org.hibernate.annotations.GenericGenerator;
 import org.zfin.sequence.ReferenceDatabase;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Table(name = "feature_protein_mutation_detail")
-public class FeatureProteinMutationDetail {
+public class FeatureProteinMutationDetail implements Cloneable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
@@ -132,5 +131,60 @@ public class FeatureProteinMutationDetail {
 
     public void setZdbID(String zdbID) {
         this.zdbID = zdbID;
+    }
+
+    public FeatureProteinMutationDetail clone() {
+        try {
+            FeatureProteinMutationDetail detail = (FeatureProteinMutationDetail) super.clone();
+            detail.proteinConsequence = (ProteinConsequence) proteinConsequence.clone();
+            detail.wildtypeAminoAcid = (AminoAcidTerm) wildtypeAminoAcid.clone();
+            detail.mutantAminoAcid = (AminoAcidTerm) mutantAminoAcid.clone();
+            return detail;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FeatureProteinMutationDetail that = (FeatureProteinMutationDetail) o;
+
+        if (zdbID != null ? !zdbID.equals(that.zdbID) : that.zdbID != null) return false;
+        if (proteinConsequence != null ? !proteinConsequence.equals(that.proteinConsequence) : that.proteinConsequence != null)
+            return false;
+        if (proteinPositionStart != null ? !proteinPositionStart.equals(that.proteinPositionStart) : that.proteinPositionStart != null)
+            return false;
+        if (proteinPositionEnd != null ? !proteinPositionEnd.equals(that.proteinPositionEnd) : that.proteinPositionEnd != null)
+            return false;
+        if (proteinSequenceReferenceAccessionNumber != null ? !proteinSequenceReferenceAccessionNumber.equals(that.proteinSequenceReferenceAccessionNumber) : that.proteinSequenceReferenceAccessionNumber != null)
+            return false;
+        if (referenceDatabase != null ? !referenceDatabase.equals(that.referenceDatabase) : that.referenceDatabase != null)
+            return false;
+        if (numberAminoAcidsRemoved != null ? !numberAminoAcidsRemoved.equals(that.numberAminoAcidsRemoved) : that.numberAminoAcidsRemoved != null)
+            return false;
+        if (numberAminoAcidsAdded != null ? !numberAminoAcidsAdded.equals(that.numberAminoAcidsAdded) : that.numberAminoAcidsAdded != null)
+            return false;
+        if (wildtypeAminoAcid != null ? !wildtypeAminoAcid.equals(that.wildtypeAminoAcid) : that.wildtypeAminoAcid != null)
+            return false;
+        return !(mutantAminoAcid != null ? !mutantAminoAcid.equals(that.mutantAminoAcid) : that.mutantAminoAcid != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = zdbID != null ? zdbID.hashCode() : 0;
+        result = 31 * result + (proteinConsequence != null ? proteinConsequence.hashCode() : 0);
+        result = 31 * result + (proteinPositionStart != null ? proteinPositionStart.hashCode() : 0);
+        result = 31 * result + (proteinPositionEnd != null ? proteinPositionEnd.hashCode() : 0);
+        result = 31 * result + (proteinSequenceReferenceAccessionNumber != null ? proteinSequenceReferenceAccessionNumber.hashCode() : 0);
+        result = 31 * result + (referenceDatabase != null ? referenceDatabase.hashCode() : 0);
+        result = 31 * result + (numberAminoAcidsRemoved != null ? numberAminoAcidsRemoved.hashCode() : 0);
+        result = 31 * result + (numberAminoAcidsAdded != null ? numberAminoAcidsAdded.hashCode() : 0);
+        result = 31 * result + (wildtypeAminoAcid != null ? wildtypeAminoAcid.hashCode() : 0);
+        result = 31 * result + (mutantAminoAcid != null ? mutantAminoAcid.hashCode() : 0);
+        return result;
     }
 }

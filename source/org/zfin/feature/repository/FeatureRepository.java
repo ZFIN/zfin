@@ -58,10 +58,11 @@ public interface FeatureRepository {
 
     List<FeaturePrefix> getLabPrefixes(String labName);
 
-    List<FeaturePrefix> getLabPrefixes(String labName,boolean assignIfEmpty);
+    List<FeaturePrefix> getLabPrefixes(String labName, boolean assignIfEmpty);
 
-    List<FeaturePrefix> getLabPrefixesById(String labZdbID,boolean assignIfEmpty);
-    List<FeaturePrefix> getCurrentLabPrefixesById(String labZdbID,boolean assignIfEmpty);
+    List<FeaturePrefix> getLabPrefixesById(String labZdbID, boolean assignIfEmpty);
+
+    List<FeaturePrefix> getCurrentLabPrefixesById(String labZdbID, boolean assignIfEmpty);
 
 
     List<Organization> getLabsOfOriginWithPrefix();
@@ -104,11 +105,14 @@ public interface FeatureRepository {
     List<Feature> getFeaturesForAttribution(String publicationZdbID);
 
     Feature getFeatureByAbbreviation(String featureAbbrev);
+
     String getFeatureByAbbreviationInTrackingTable(String featureAbbrev);
+
     String getFeatureByIDInTrackingTable(String featTrackingFeatZdbID);
 
 
     void deleteFeatureAlias(Feature feature, FeatureAlias alias);
+
     void deleteFeatureDBLink(Feature feature, DBLink sequence);
 
     DataNote addFeatureDataNote(Feature feature, String noteData);
@@ -122,6 +126,7 @@ public interface FeatureRepository {
     List<Feature> getFeaturesForLab(String labZdbId);
 
     FeaturePrefix setNewLabPrefix(String prefix, String location);
+
     String getPrefix(String prefix);
 
 
@@ -135,6 +140,7 @@ public interface FeatureRepository {
      * Retrieve all feature ids.
      * If firstNIds > 0 return only the first N.
      * If firstNIds < 0 return null
+     *
      * @param firstNIds
      * @return list of ids
      */
@@ -150,10 +156,12 @@ public interface FeatureRepository {
 
     /**
      * Retrieve features that have an allelic relationship with a given marker.
+     *
      * @param marker
      * @return
      */
     List<Feature> getFeaturesByMarker(Marker marker);
+
     List<Feature> getFeaturesByConstruct(Marker marker);
 
     int deleteFeatureFromTracking(String featureZdbId);
@@ -162,10 +170,13 @@ public interface FeatureRepository {
 
     /**
      * Save a new feature and create a standard pub attribution and a feature type attribution
+     *
      * @param feature
      * @param publication
      */
     void saveFeature(Feature feature, Publication publication);
 
     List<String> getMutagensForFeatureType(FeatureTypeEnum featureTypeEnum);
+
+    void update(Feature feature, Set<FeatureTranscriptMutationDetail> addTranscriptAttribution, String publicationID);
 }

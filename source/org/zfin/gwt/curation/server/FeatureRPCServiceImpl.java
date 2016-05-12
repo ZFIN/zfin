@@ -115,16 +115,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         if (featureDTO.getFeatureType() != FeatureTypeEnum.UNSPECIFIED) {
             feature.setUnspecifiedFeature(false);
         }
-        if (oldFeatureType == featureDTO.getFeatureType()) {
-            List<RecordAttribution> recordAttributions = infrastructureRepository.getRecordAttributionsForType(feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
-            if (recordAttributions.size() != 0) {
-                if (!recordAttributions.get(0).getSourceZdbID().equals(featureDTO.getPublicationZdbID())) {
-                    infrastructureRepository.removeRecordAttributionForType(recordAttributions.get(0).getSourceZdbID(), feature.getZdbID());
-                    infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Feature type attribution", oldFeatureType.name(), featureDTO.getFeatureType().toString(), recordAttributions.get(0).getSourceZdbID());
-                    infrastructureRepository.insertPublicAttribution(featureDTO.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
-                }
-            }
-        } else {
+        if (oldFeatureType != featureDTO.getFeatureType()) {
             RecordAttribution recordAttributions = infrastructureRepository.getRecordAttribution(feature.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
             if (recordAttributions == null) {
                 List<RecordAttribution> recordAttribution = infrastructureRepository.getRecordAttributionsForType(feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
@@ -141,10 +132,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
 
         Feature existingFeature = featureRepository.getFeatureByAbbreviation(featureDTO.getAbbreviation());
-        String existingFeatureAbbrev = feature.getAbbreviation();
-       /* if (existingFeatureAbbrev != featureDTO.getAbbreviation())   {
-        feature.setAbbreviation(featureDTO.getAbbreviation());
-        }*/
         if (existingFeature == null) {
             feature.setAbbreviation(featureDTO.getAbbreviation());
         }
@@ -153,9 +140,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
         feature.setDominantFeature(featureDTO.getDominant());
         feature.setKnownInsertionSite(featureDTO.getKnownInsertionSite());
-       /* if (featureDTO.getKnownInsertionSite()) {
-            feature.setTransgenicSuffix(featureDTO.getTransgenicSuffix());
-        }*/
         feature.setTransgenicSuffix(featureDTO.getTransgenicSuffix());
         if (featureDTO.getLineNumber() != null) {
             feature.setLineNumber(featureDTO.getLineNumber());
@@ -178,8 +162,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 Organization newLabOfOrigin = profileRepository.getOrganizationByZdbID(featureDTO.getLabOfOrigin());
                 featureRepository.setLabOfOriginForFeature(newLabOfOrigin, feature);
             }
-        } /*else if (featureDTO.getLabOfOrigin() == null && existingLabOfOrigin != null) {
-            featureRepository.deleteLabOfOriginForFeature(feature);*/ else if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin == null) {
+        } else if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin == null) {
             featureRepository.addLabOfOriginForFeature(feature, featureDTO.getLabOfOrigin());
         } else {
             throw new ValidationException("Feature cannot be saved without lab of origin");
@@ -191,7 +174,11 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 detail.setFeature(feature);
                 feature.setFeatureDnaMutationDetail(detail);
             }
+            FeatureDnaMutationDetail oldDetail = detail.clone();
             DTOConversionService.updateDnaMutationDetailWithDTO(detail, featureDTO.getDnaChangeDTO());
+            if (!detail.equals(oldDetail)) {
+                infrastructureRepository.insertMutationDetailAttribution(detail.getZdbID(), featureDTO.getPublicationZdbID());
+            }
         }
         if (featureDTO.getProteinChangeDTO() != null) {
             FeatureProteinMutationDetail detail = feature.getFeatureProteinMutationDetail();
@@ -200,8 +187,13 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 detail.setFeature(feature);
                 feature.setFeatureProteinMutationDetail(detail);
             }
+            FeatureProteinMutationDetail oldDetail = detail.clone();
             DTOConversionService.updateProteinMutationDetailWithDTO(detail, featureDTO.getProteinChangeDTO());
+            if (!detail.equals(oldDetail)) {
+                infrastructureRepository.insertMutationDetailAttribution(detail.getZdbID(), featureDTO.getPublicationZdbID());
+            }
         }
+        Set<FeatureTranscriptMutationDetail> addTranscriptAttribution = new HashSet<>();
         if (featureDTO.getTranscriptChangeDTOSet() != null) {
             Set<FeatureTranscriptMutationDetail> detailSet = feature.getFeatureTranscriptMutationDetailSet();
             if (detailSet != null) {
@@ -210,13 +202,15 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                     FeatureTranscriptMutationDetail detail = iterator.next();
                     boolean exists = false;
                     for (MutationDetailTranscriptChangeDTO dto : featureDTO.getTranscriptChangeDTOSet()) {
-                        if (dto.getZdbID().equals(detail.getZdbID())) {
+                        if (dto.getZdbID() != null && dto.getZdbID().equals(detail.getZdbID())) {
                             exists = true;
                             break;
                         }
                     }
-                    if (!exists)
+                    if (!exists) {
                         iterator.remove();
+                        infrastructureRepository.removeRecordAttributionForTranscript(featureDTO.getPublicationZdbID(), detail.getZdbID());
+                    }
                 }
             }
             for (MutationDetailTranscriptChangeDTO dto : featureDTO.getTranscriptChangeDTOSet()) {
@@ -227,11 +221,12 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                     FeatureTranscriptMutationDetail newDetail = DTOConversionService.convertToTranscriptMutationDetail(null, dto);
                     newDetail.setFeature(feature);
                     feature.addMutationDetailTranscript(newDetail);
+                    addTranscriptAttribution.add(newDetail);
                 }
             }
 
         }
-        HibernateUtil.currentSession().update(feature);
+        featureRepository.update(feature, addTranscriptAttribution, featureDTO.getPublicationZdbID());
         if (!StringUtils.equals(oldFtrName, newFtrName)) {
 
             FeatureAlias featureAlias = mutantRepository.getSpecificDataAlias(feature, oldFtrName);

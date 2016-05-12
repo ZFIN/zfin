@@ -170,7 +170,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         String selectedLab = view.labOfOriginBox.getSelectedText();
         if (selectedLab != null)
             onLabOfOriginChange(selectedLab, dto.getLabPrefix());
-        view.knownInsertionCheckBox.setValue(dto.getKnownInsertionSite());
+        view.knownInsertionCheckBox.setValue(dto.getKnownInsertionSite(), true);
         view.dominantCheckBox.setValue(dto.getDominant());
         view.featureDisplayName.setValue(dto.getName());
         view.featureSuffixBox.setIndexForText(dto.getTransgenicSuffix());

@@ -51,6 +51,8 @@ public interface InfrastructureRepository {
 
     void removeRecordAttributionForType(String zdbID, String datazdbID);
 
+    void removeRecordAttributionForTranscript(String zdbID, String datazdbID);
+
     int getGoRecordAttributions(String dataZdbID, String sourceZdbId);
 
     RecordAttribution getRecordAttribution(String dataZdbID,
@@ -453,6 +455,8 @@ public interface InfrastructureRepository {
     boolean isNameDefForControlledVocabExists(String cvNameDefinition);
 
     ControlledVocab getControlledVocabByNameAndSpecies(String termName, String foreignSpecies);
+
+    void insertMutationDetailAttribution(String dataZdbID, String publicationID);
 }
 
 
