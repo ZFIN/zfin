@@ -70,7 +70,7 @@ public class FeatureDetailController {
         form.setgBrowseImage(FeatureService.getGbrowseImage(feature));
         form.setSortedConstructRelationships(FeatureService.getSortedConstructRelationships(feature));
         form.setCreatedByRelationship(FeatureService.getCreatedByRelationship(feature));
-        form.setFeatureTypeAttributions(FeatureService.getMutationDetailAttributions(feature));
+        form.setFeatureTypeAttributions(FeatureService.getFeatureTypeAttributions(feature));
         form.setFeatureMap(FeatureService.getFeatureMap(feature));
         form.setFeatureLocations(FeatureService.getPhysicalLocations(feature));
         form.setSummaryPageDbLinks(FeatureService.getSummaryDbLinks(feature));
