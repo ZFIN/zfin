@@ -2,6 +2,7 @@ package org.zfin.feature.presentation;
 
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.feature.FeatureNote;
 import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.mapping.FeatureGenomeLocation;
@@ -31,6 +32,8 @@ public class FeatureBean {
     private Set<FeatureDBLink> genbankDbLinks;
     private GBrowseImage gBrowseImage;
     private List<GenotypeDisplay> genotypeDisplays;
+    private MutationDetailsPresentation mutationDetails;
+    private List<FeatureNote> externalNotes;
 
     public Set<FeatureDBLink> getGenbankDbLinks() {
         return genbankDbLinks;
@@ -161,6 +164,22 @@ public class FeatureBean {
 
     public void setGenotypeDisplays(List<GenotypeDisplay> genotypeDisplays) {
         this.genotypeDisplays = genotypeDisplays;
+    }
+
+    public MutationDetailsPresentation getMutationDetails() {
+        return mutationDetails;
+    }
+
+    public void setMutationDetails(MutationDetailsPresentation mutationDetails) {
+        this.mutationDetails = mutationDetails;
+    }
+
+    public List<FeatureNote> getExternalNotes() {
+        return externalNotes;
+    }
+
+    public void setExternalNotes(List<FeatureNote> externalNotes) {
+        this.externalNotes = externalNotes;
     }
 }
 

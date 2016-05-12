@@ -75,12 +75,11 @@ public class FeatureDetailController {
         form.setFeatureLocations(FeatureService.getPhysicalLocations(feature));
         form.setSummaryPageDbLinks(FeatureService.getSummaryDbLinks(feature));
         form.setGenbankDbLinks(FeatureService.getGenbankDbLinks(feature));
+        form.setExternalNotes(FeatureService.getSortedExternalNotes(feature));
+        form.setMutationDetails(mutationDetailsConversionService.convert(feature, true));
 
         retrieveSortedGenotypeData(feature, form);
         retrievePubData(feature, form);
-
-        model.addAttribute("externalNotes",FeatureService.getSortedExternalNotes(feature));
-        model.addAttribute("mutationDetails", mutationDetailsConversionService.convert(feature, true));
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, feature.getName());

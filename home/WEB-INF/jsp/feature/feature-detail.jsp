@@ -284,38 +284,28 @@
 
 <zfin2:subsection title="MUTATION DETAILS">
     <table class="summary horizontal-solidblock">
-        <c:if test="${!empty mutationDetails.dnaChangeStatement}">
+        <c:if test="${!empty formBean.mutationDetails.dnaChangeStatement}">
             <tr>
                 <th>DNA/cDNA Change:</th>
-                <td>${mutationDetails.dnaChangeStatement}</td>
+                <td>${formBean.mutationDetails.dnaChangeStatement}</td>
             </tr>
         </c:if>
-        <c:if test="${!empty mutationDetails.transcriptChangeStatement}">
+        <c:if test="${!empty formBean.mutationDetails.transcriptChangeStatement}">
             <tr>
                 <th>Transcript Consequence:</th>
-                <td>${mutationDetails.transcriptChangeStatement}</td>
+                <td>${formBean.mutationDetails.transcriptChangeStatement}</td>
             </tr>
         </c:if>
-        <c:if test="${!empty mutationDetails.proteinChangeStatement}">
+        <c:if test="${!empty formBean.mutationDetails.proteinChangeStatement}">
             <tr>
                 <th>Protein Consequence:</th>
-                <td>${mutationDetails.proteinChangeStatement}</td>
+                <td>${formBean.mutationDetails.proteinChangeStatement}</td>
             </tr>
         </c:if>
-        <tr>
-            <th>Citations:</th>
-            <td>
-                <ul class="comma-separated">
-                    <c:forEach items="${formBean.featureTypeAttributions}" var="citation">
-                        <li><zfin:link entity="${citation.publication}"/></li>
-                    </c:forEach>
-                </ul>
-            </td>
-        </tr>
     </table>
 </zfin2:subsection>
 
-<zfin2:externalNotes notes="${externalNotes}" />
+<zfin2:externalNotes notes="${formBean.externalNotes}" />
 
 <c:set var="title">
     OTHER <zfin:abbrev entity="${formBean.feature}"/> PAGES
