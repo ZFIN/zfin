@@ -45,18 +45,6 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
     @Shared
     TranscriptConsequence frameshift = new TranscriptConsequence(zdbID: "ZDB-TERM-130401-1581", displayName: "frameshift", order: 7)
 
-
-    def 'mutation type field should be populated'() {
-        setup:
-        def feature = new Feature(type: FeatureTypeEnum.POINT_MUTATION)
-
-        when:
-        def presentation = converter.convert(feature)
-
-        then:
-        presentation.mutationType == 'Point Mutation'
-    }
-
     @Unroll
     def 'dna statement point mutations'() {
         setup:

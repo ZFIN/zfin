@@ -34,7 +34,6 @@ public class MutationDetailsConversionService {
 
     public MutationDetailsPresentation convert(Feature feature, boolean showLink) {
         MutationDetailsPresentation details = new MutationDetailsPresentation();
-        details.setMutationType(getMutationTypeStatement(feature));
         details.setDnaChangeStatement(getDnaMutationStatement(feature, showLink));
         details.setTranscriptChangeStatement(getTranscriptMutationStatement(feature, showLink));
         details.setProteinChangeStatement(getProteinMutationStatement(feature, showLink));
