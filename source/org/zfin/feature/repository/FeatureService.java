@@ -125,12 +125,12 @@ public class FeatureService {
         return delmarklg;
     }
 
-    public static Collection<PublicationAttribution> getFeatureTypeAttributions(Feature feature) {
+    public static List<PublicationAttribution> getFeatureTypeAttributions(Feature feature) {
         return RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
                 feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
     }
 
-    public static Collection<PublicationAttribution> getDnaChangeAttributions(Feature feature) {
+    public static List<PublicationAttribution> getDnaChangeAttributions(Feature feature) {
         if (feature.getFeatureDnaMutationDetail() == null) {
             return null;
         }
@@ -140,7 +140,7 @@ public class FeatureService {
                 RecordAttribution.SourceType.STANDARD);
     }
 
-    public static Collection<PublicationAttribution> getTranscriptConsequenceAttributions(Feature feature) {
+    public static List<PublicationAttribution> getTranscriptConsequenceAttributions(Feature feature) {
         if (CollectionUtils.isEmpty(feature.getFeatureTranscriptMutationDetailSet())) {
             return null;
         }
@@ -150,10 +150,10 @@ public class FeatureService {
             attributions.addAll(RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
                     detail.getZdbID(), RecordAttribution.SourceType.STANDARD));
         }
-        return attributions;
+        return new ArrayList<>(attributions);
     }
 
-    public static Collection<PublicationAttribution> getProteinConsequenceAttributions(Feature feature) {
+    public static List<PublicationAttribution> getProteinConsequenceAttributions(Feature feature) {
         if (feature.getFeatureProteinMutationDetail() == null) {
             return null;
         }

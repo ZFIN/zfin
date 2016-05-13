@@ -24,7 +24,7 @@ public class FeatureBean {
     private MappedMarkerBean mappedMarkerBean;
     private Set<FeatureMarkerRelationship> sortedConstructRelationships;
     private FeatureMarkerRelationship createdByRelationship;
-    private Collection<PublicationAttribution> featureTypeAttributions;
+    private List<PublicationAttribution> featureTypeAttributions;
     private Set<String> featureMap;
     private Collection<FeatureGenomeLocation> featureLocations;
     private String zdbID;
@@ -33,9 +33,9 @@ public class FeatureBean {
     private GBrowseImage gBrowseImage;
     private List<GenotypeDisplay> genotypeDisplays;
     private MutationDetailsPresentation mutationDetails;
-    private Collection<PublicationAttribution> dnaChangeAttributions;
-    private Collection<PublicationAttribution> transcriptConsequenceAttributions;
-    private Collection<PublicationAttribution> proteinConsequenceAttributions;
+    private List<PublicationAttribution> dnaChangeAttributions;
+    private List<PublicationAttribution> transcriptConsequenceAttributions;
+    private List<PublicationAttribution> proteinConsequenceAttributions;
     private List<FeatureNote> externalNotes;
 
     public Set<FeatureDBLink> getGenbankDbLinks() {
@@ -104,11 +104,11 @@ public class FeatureBean {
         this.sortedConstructRelationships = sortedConstructRelationships;
     }
 
-    public Collection<PublicationAttribution> getFeatureTypeAttributions() {
+    public List<PublicationAttribution> getFeatureTypeAttributions() {
         return featureTypeAttributions;
     }
 
-    public void setFeatureTypeAttributions(Collection<PublicationAttribution> featureTypeAttributions) {
+    public void setFeatureTypeAttributions(List<PublicationAttribution> featureTypeAttributions) {
         this.featureTypeAttributions = featureTypeAttributions;
     }
 
@@ -177,27 +177,27 @@ public class FeatureBean {
         this.mutationDetails = mutationDetails;
     }
 
-    public Collection<PublicationAttribution> getDnaChangeAttributions() {
+    public List<PublicationAttribution> getDnaChangeAttributions() {
         return dnaChangeAttributions;
     }
 
-    public void setDnaChangeAttributions(Collection<PublicationAttribution> dnaChangeAttributions) {
+    public void setDnaChangeAttributions(List<PublicationAttribution> dnaChangeAttributions) {
         this.dnaChangeAttributions = dnaChangeAttributions;
     }
 
-    public Collection<PublicationAttribution> getTranscriptConsequenceAttributions() {
+    public List<PublicationAttribution> getTranscriptConsequenceAttributions() {
         return transcriptConsequenceAttributions;
     }
 
-    public void setTranscriptConsequenceAttributions(Collection<PublicationAttribution> transcriptConsequenceAttributions) {
+    public void setTranscriptConsequenceAttributions(List<PublicationAttribution> transcriptConsequenceAttributions) {
         this.transcriptConsequenceAttributions = transcriptConsequenceAttributions;
     }
 
-    public Collection<PublicationAttribution> getProteinConsequenceAttributions() {
+    public List<PublicationAttribution> getProteinConsequenceAttributions() {
         return proteinConsequenceAttributions;
     }
 
-    public void setProteinConsequenceAttributions(Collection<PublicationAttribution> proteinConsequenceAttributions) {
+    public void setProteinConsequenceAttributions(List<PublicationAttribution> proteinConsequenceAttributions) {
         this.proteinConsequenceAttributions = proteinConsequenceAttributions;
     }
 

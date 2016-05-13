@@ -293,7 +293,14 @@
                 <th>DNA/cDNA Change:</th>
                 <td>
                     ${formBean.mutationDetails.dnaChangeStatement}
-                    (${fn:length(formBean.dnaChangeAttributions)})
+                    <c:choose>
+                        <c:when test="${fn:length(formBean.dnaChangeAttributions) == 1}">
+                            (<a href="/${formBean.dnaChangeAttributions[0].sourceZdbID}">1</a>)
+                        </c:when>
+                        <c:when test="${fn:length(formBean.dnaChangeAttributions) > 1}">
+                            (${fn:length(formBean.dnaChangeAttributions)})
+                        </c:when>
+                    </c:choose>
                 </td>
             </tr>
         </c:if>
@@ -302,7 +309,14 @@
                 <th>Transcript Consequence:</th>
                 <td>
                     ${formBean.mutationDetails.transcriptChangeStatement}
-                    (${fn:length(formBean.transcriptConsequenceAttributions)})
+                    <c:choose>
+                        <c:when test="${fn:length(formBean.transcriptConsequenceAttributions) == 1}">
+                            (<a href="/${formBean.transcriptConsequenceAttributions[0].sourceZdbID}">1</a>)
+                        </c:when>
+                        <c:when test="${fn:length(formBean.transcriptConsequenceAttributions) > 1}">
+                            (${fn:length(formBean.transcriptConsequenceAttributions)})
+                        </c:when>
+                    </c:choose>
                 </td>
             </tr>
         </c:if>
@@ -311,7 +325,14 @@
                 <th>Protein Consequence:</th>
                 <td>
                     ${formBean.mutationDetails.proteinChangeStatement}
-                    (${fn:length(formBean.proteinConsequenceAttributions)})
+                    <c:choose>
+                        <c:when test="${fn:length(formBean.proteinConsequenceAttributions) == 1}">
+                            (<a href="/${formBean.proteinConsequenceAttributions[0].sourceZdbID}">1</a>)
+                        </c:when>
+                        <c:when test="${fn:length(formBean.proteinConsequenceAttributions) > 1}">
+                            (${fn:length(formBean.proteinConsequenceAttributions)})
+                        </c:when>
+                    </c:choose>
                 </td>
             </tr>
         </c:if>
