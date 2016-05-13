@@ -8,7 +8,10 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Grid;
 import org.zfin.gwt.root.dto.MutationDetailTranscriptChangeDTO;
 import org.zfin.gwt.root.ui.IsDirtyWidget;
 import org.zfin.gwt.root.ui.NumberTextBox;
@@ -28,7 +31,6 @@ public class MutationDetailTranscriptView extends AbstractViewComposite {
     interface MyUiBinder extends UiBinder<FlowPanel, MutationDetailTranscriptView> {
     }
 
-    private MutationDetailPresenter presenter;
     @UiField
     StringListBox consequenceList;
     @UiField
@@ -50,6 +52,7 @@ public class MutationDetailTranscriptView extends AbstractViewComposite {
     void onClickSaveButton(@SuppressWarnings("unused") ClickEvent event) {
         presenter.addTranscriptConsequence(getDtoFromForm());
         resetGUI();
+        handleChanges();
     }
 
     @UiHandler("exonNumber")

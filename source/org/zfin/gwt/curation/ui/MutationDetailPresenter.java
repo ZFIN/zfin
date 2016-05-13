@@ -17,7 +17,7 @@ public class MutationDetailPresenter {
     public static final String MISSENSE = "SO:0001583";
     public static final String STOP_GAIN = "SO:0001587";
     protected AbstractFeatureView view;
-    private Set<MutationDetailTranscriptChangeDTO> dtoSet = new HashSet<>(3);
+    protected Set<MutationDetailTranscriptChangeDTO> dtoSet = new HashSet<>(3);
     protected FeatureDTO dto;
 
     public MutationDetailPresenter(AbstractFeatureView view) {
@@ -139,11 +139,15 @@ public class MutationDetailPresenter {
     }
 
 
-    public void setDtoSet(Set<MutationDetailTranscriptChangeDTO> dtoSet) {
-        if (dtoSet == null)
-            this.dtoSet = new HashSet<>(5);
-        else
-            this.dtoSet = dtoSet;
+    public void setDtoSet(Set<MutationDetailTranscriptChangeDTO> dtoSetTranscript) {
+        if (dtoSetTranscript == null) {
+            dtoSet = new HashSet<>(5);
+        } else {
+            // ensure that we work on a copy and not the original collection
+            // works as long as there are no objects on the individual entity: it's only a shallow copy
+            // copy constructor
+            dtoSet = new HashSet<>(dtoSetTranscript);
+        }
         populateTranscriptDataTable();
     }
 
@@ -218,6 +222,7 @@ public class MutationDetailPresenter {
                     dtoSet.remove(dto);
                     populateTranscriptDataTable();
                     view.mutationDetailTranscriptView.resetGUI();
+                    handleDirty();
                 }
             });
         }

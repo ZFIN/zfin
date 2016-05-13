@@ -7,6 +7,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
@@ -276,8 +277,17 @@ public class MutationDetailDNAView extends AbstractViewComposite {
 
 
     public void populateFields(MutationDetailDnaChangeDTO dto) {
-        if (dto == null)
+        if (dto == null) {
+            nucleotideChangeList.setSelectedIndex(0);
+            localizationTerm.setSelectedIndex(0);
+            intronNumber.clear();
+            exonNumber.clear();
+            positionStart.clear();
+            positionEnd.clear();
+            plusBasePair.clear();
+            minusBasePair.clear();
             return;
+        }
         nucleotideChangeList.setIndexForValue(dto.getChangeTermOboId());
         localizationTerm.setIndexForValue(dto.getLocalizationTermOboID());
         plusBasePair.setNumber(dto.getNumberAddedBasePair());
@@ -289,6 +299,11 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         sequenceOfReference.setText(dto.getSequenceReferenceAccessionNumber());
         onChangeLocalization(null);
     }
+    public void resetMessages() {
+        validSequenceCharacter.setVisible(false);
+        faultySequenceCharacter.setVisible(false);
+    }
+
 
 }
 

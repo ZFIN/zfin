@@ -213,24 +213,33 @@ public class MutationDetailProteinView extends AbstractViewComposite {
     }
 
     public void populateFields(MutationDetailProteinChangeDTO dto) {
-        if (dto == null)
+        if (dto == null) {
+            proteinTermList.setSelectedIndex(0);
+            proteinWTTermList.setSelectedIndex(0);
+            proteinMutatedTerm.setSelectedIndex(0);
+            plusAminoAcid.clear();
+            minusAminoAcid.clear();
+            positionStart.clear();
+            positionEnd.clear();
             return;
+        }
         proteinTermList.setIndexForValue(dto.getConsequenceTermOboID());
         proteinWTTermList.setIndexForValue(dto.getWildtypeAATermOboID());
         proteinMutatedTerm.setIndexForValue(dto.getMutantAATermOboID());
-        if (dto.getNumberAddedAminoAcid() != null)
-            plusAminoAcid.setText(dto.getNumberAddedAminoAcid().toString());
-        if (dto.getNumberRemovedAminoAcid() != null)
-            minusAminoAcid.setText(dto.getNumberRemovedAminoAcid().toString());
-        if (dto.getPositionStart() != null)
-            positionStart.setText(dto.getPositionStart().toString());
-        if (dto.getPositionEnd() != null)
-            positionEnd.setText(dto.getPositionEnd().toString());
+        plusAminoAcid.setNumber(dto.getNumberAddedAminoAcid());
+        minusAminoAcid.setNumber(dto.getNumberRemovedAminoAcid());
+        positionStart.setNumber(dto.getPositionStart());
+        positionEnd.setNumber(dto.getPositionEnd());
         sequenceOfReference.setText(dto.getSequenceReferenceAccessionNumber());
     }
 
     public boolean hasStopCodon() {
         return proteinMutatedTerm.getSelectedIndex() == 1;
+    }
+
+    public void resetMessages() {
+        validSequenceCharacter.setVisible(false);
+        faultySequenceCharacter.setVisible(false);
     }
 
 }

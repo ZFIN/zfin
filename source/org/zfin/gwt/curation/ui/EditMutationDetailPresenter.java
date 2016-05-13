@@ -3,9 +3,12 @@ package org.zfin.gwt.curation.ui;
 import org.zfin.gwt.curation.event.DirtyValueEvent;
 import org.zfin.gwt.root.dto.MutationDetailDnaChangeDTO;
 import org.zfin.gwt.root.dto.MutationDetailProteinChangeDTO;
+import org.zfin.gwt.root.dto.MutationDetailTranscriptChangeDTO;
 import org.zfin.gwt.root.ui.IsDirtyWidget;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.BooleanCollector;
+
+import java.util.Set;
 
 public class EditMutationDetailPresenter extends MutationDetailPresenter {
 
@@ -17,7 +20,7 @@ public class EditMutationDetailPresenter extends MutationDetailPresenter {
     public boolean isDirty() {
         MutationDetailDNAView mutationDetailDnaView = view.mutationDetailDnaView;
         MutationDetailDnaChangeDTO dnaChangeDTO = dto.getDnaChangeDTO();
-        BooleanCollector col = new BooleanCollector(false);
+        BooleanCollector col = new BooleanCollector(true);
         if (dnaChangeDTO == null) {
             for (IsDirtyWidget widget : mutationDetailDnaView.getValueFields())
                 col.addBoolean(widget.isDirty(null));
@@ -48,6 +51,21 @@ public class EditMutationDetailPresenter extends MutationDetailPresenter {
             col.addBoolean(mutationDetailProteinView.positionStart.isDirty(proteinChangeDTO.getPositionStart()));
             col.addBoolean(mutationDetailProteinView.positionEnd.isDirty(proteinChangeDTO.getPositionEnd()));
             col.addBoolean(mutationDetailProteinView.sequenceOfReference.isDirty(proteinChangeDTO.getSequenceReferenceAccessionNumber()));
+        }
+        MutationDetailTranscriptView mutationDetailTranscriptView = view.mutationDetailTranscriptView;
+        Set<MutationDetailTranscriptChangeDTO> transcriptChangeDTOSet = dto.getTranscriptChangeDTOSet();
+        if (transcriptChangeDTOSet == null || transcriptChangeDTOSet.isEmpty()) {
+            // check if there are any transcript records created
+            col.addBoolean(!dtoSet.isEmpty());
+        } else {
+            if (dtoSet != null) {
+                for (MutationDetailTranscriptChangeDTO detailDto : dtoSet) {
+                    col.addBoolean(!transcriptChangeDTOSet.contains(detailDto));
+                }
+                for (MutationDetailTranscriptChangeDTO detailDto : transcriptChangeDTOSet) {
+                    col.addBoolean(!dtoSet.contains(detailDto));
+                }
+            }
         }
         return col.arrivedValue();
     }

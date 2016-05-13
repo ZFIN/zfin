@@ -5,7 +5,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.ui.*;
@@ -284,14 +283,18 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         labOfOriginBox.setDirty(false);
         labDesignationBox.clear();
         labDesignationBox.setDirty(false);
+        mutageeBox.setSelectedIndex(0);
         mutageeBox.setDirty(false);
+        mutagenBox.setSelectedIndex(0);
         mutagenBox.setDirty(false);
+        lineNumberBox.clear();
         lineNumberBox.setDirty(false);
+        featureDisplayName.clear();
         featureDisplayName.setDirty(false);
         mutationDetailDnaView.resetGUI();
         mutationDetailTranscriptView.fullResetGUI();
         mutationDetailProteinView.resetGUI();
-
+        knownInsertionCheckBox.setValue(false);
     }
 
 
@@ -325,9 +328,10 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         onChangeFeatureType();
     }
 
-    public void setNote(String message) {
-        errorLabel.setStyleName("clickable");
-        setError(message + "[close]");
+    public void setNote(String text) {
+        message.setText(text);
+        message.setStyleName("clickable");
+
     }
 
     public void onclickSaveButton(ClickEvent event) {

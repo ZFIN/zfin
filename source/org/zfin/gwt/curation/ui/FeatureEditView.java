@@ -56,7 +56,7 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
         mutationDetailProteinView.resetGUI();
         mutationDetailTranscriptView.resetGUI();
         if (StringUtils.isEmpty(featureID)) {
-            setError("Empty ID");
+            setNote("No feature selected");
             resetGUI();
             removeFeatureLink.setVisible(false);
             editPresenter.dto = null;
@@ -93,6 +93,8 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
     void onClickRevertButton(@SuppressWarnings("unused") ClickEvent event) {
         editPresenter.revertGUI();
         editPresenter.handleDirty();
+        mutationDetailProteinView.resetMessages();
+        mutationDetailDnaView.resetMessages();
     }
 
     public void setPresenter(FeatureEditPresenter presenter) {

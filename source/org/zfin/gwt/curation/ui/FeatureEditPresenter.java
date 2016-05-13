@@ -1,5 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.user.client.Window;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.util.BooleanCollector;
@@ -82,8 +83,8 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                 featureDTO.setPublicationZdbID(publicationID);
                 dto = featureDTO;
                 mutationDetailPresenter.setDto(featureDTO);
-                revertGUI();
                 view.onChangeFeatureType();
+                revertGUI();
                 view.removeFeatureLink.setUrl("/action/infrastructure/deleteRecord/" + dto.getZdbID());
                 view.removeFeatureLink.setTitle("Delete Feature " + dto.getZdbID());
             }
@@ -102,9 +103,8 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         boolean isDirty = false;
         // this displays most changes
         // alias and notes are done automatically?
-        BooleanCollector col = new BooleanCollector(false);
+        BooleanCollector col = new BooleanCollector(true);
 
-        col.addBoolean(view.featureDisplayName.isDirty(dto.getName()));
         if (view.knownInsertionCheckBox.getValue() != dto.getKnownInsertionSite()) {
             view.saveButton.setEnabled(true);
             col.addBoolean(true);

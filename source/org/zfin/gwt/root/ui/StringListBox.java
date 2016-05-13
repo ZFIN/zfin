@@ -63,6 +63,10 @@ public class StringListBox extends AbstractListBox<String> {
 
     @Override
     public int setIndexForValue(String value) {
+        if (value == null) {
+            setSelectedIndex(0);
+            return 0;
+        }
         int count = getItemCount();
         for (int i = 0; i < count; i++) {
             if (
