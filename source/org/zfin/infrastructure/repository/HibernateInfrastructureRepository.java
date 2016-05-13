@@ -655,7 +655,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Query query = session.createQuery("delete from RecordAttribution ra where ra.dataZdbID=:datazdbID and ra.sourceZdbID=:zdbID and ra.sourceType=:sourceType");
         query.setParameter("zdbID", zdbID);
         query.setParameter("datazdbID", datazdbID);
-        query.setParameter("sourceType", RecordAttribution.SourceType.MUTATION_DETAIL.toString());
+        query.setParameter("sourceType", RecordAttribution.SourceType.STANDARD.toString());
         query.executeUpdate();
         currentSession().flush();
     }
@@ -1786,7 +1786,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         publicationAttribution.setSourceZdbID(publicationID);
         Publication publication = (Publication) session.get(Publication.class, publicationID);
         publicationAttribution.setPublication(publication);
-        publicationAttribution.setSourceType(RecordAttribution.SourceType.MUTATION_DETAIL);
+        publicationAttribution.setSourceType(RecordAttribution.SourceType.STANDARD);
 
         Criteria criteriaExisting = session.createCriteria(PublicationAttribution.class);
         criteriaExisting.add(Example.create(publicationAttribution));
@@ -1797,7 +1797,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
         Criteria criteria = session.createCriteria(PublicationAttribution.class);
         criteria.add(Restrictions.eq("dataZdbID", dataZdbID));
-        criteria.add(Restrictions.eq("sourceZdbID", RecordAttribution.SourceType.MUTATION_DETAIL.toString()));
+        criteria.add(Restrictions.eq("sourceZdbID", RecordAttribution.SourceType.STANDARD.toString()));
         PublicationAttribution result = (PublicationAttribution) criteria.uniqueResult();
 
         // remove previous attribution if different from current pub

@@ -47,7 +47,6 @@ public class RecordAttribution implements Serializable {
         CLONED_GENE("cloned gene"),
         FEATURE_TYPE("feature type"),
         MOLECULAR_CHARACTERIZATION("molecular characterization"),
-        MUTATION_DETAIL("mutation detail"),
         SEGREGATION("segregation"),
         STANDARD("standard"),
         TERM_DEFINITION("term definition"),
