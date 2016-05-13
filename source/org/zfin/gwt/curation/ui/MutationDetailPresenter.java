@@ -82,9 +82,13 @@ public class MutationDetailPresenter {
                 int index = 0;
                 for (MutationDetailControlledVocabularyTermDTO dto : termList) {
                     // do not include stop item in Wildtype list
-                    if (index != 0)
-                        featureView.mutationDetailProteinView.proteinWTTermList.addItem(dto.getDisplayName(), dto.getTerm().getOboID());
-                    featureView.mutationDetailProteinView.proteinMutatedTerm.addItem(dto.getDisplayName(), dto.getTerm().getOboID());
+                    String displayName = dto.getDisplayName();
+                    if (!dto.getTerm().getOboID().equals("SO:0000319"))
+                        displayName += " [" + dto.getAbbreviation() + "]";
+                    if (index != 0) {
+                        featureView.mutationDetailProteinView.proteinWTTermList.addItem(displayName, dto.getTerm().getOboID());
+                    }
+                    featureView.mutationDetailProteinView.proteinMutatedTerm.addItem(displayName, dto.getTerm().getOboID());
                     index++;
                 }
             }
@@ -159,7 +163,7 @@ public class MutationDetailPresenter {
                             if (valid)
                                 view.mutationDetailProteinView.validSequenceCharacter.setTitle(dbName);
                         }
-                        if(!valid){
+                        if (!valid) {
                             view.setError("Not an NCBI accession number.");
                         }
                     }

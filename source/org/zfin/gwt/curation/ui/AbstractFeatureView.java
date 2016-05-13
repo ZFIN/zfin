@@ -80,7 +80,6 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
 
     @UiHandler("knownInsertionCheckBox")
     void onClickKnownInsertionSite(@SuppressWarnings("unused") ClickEvent event) {
-        Window.alert("Hi");
         if (knownInsertionCheckBox.getValue()) {
             showMutationDetail();
             mutationDetailDnaView.showTgFields();

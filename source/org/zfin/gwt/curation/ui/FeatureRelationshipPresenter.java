@@ -42,6 +42,7 @@ public class FeatureRelationshipPresenter implements HandlesError {
     protected void populateDataTable() {
         int elementIndex = 0;
         FeatureDTO pastFeature = null;
+        view.emptyDataTable();
         for (FeatureMarkerRelationshipDTO relationshipDTO : featureMarkerRelationshipDTOs) {
             if (featureNameFilter != null && !relationshipDTO.getFeatureDTO().getAbbreviation().equals(featureNameFilter))
                 continue;

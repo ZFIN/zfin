@@ -84,6 +84,10 @@ public class FeatureRelationshipView extends Composite {
 
     private int currentGroupIndex;
 
+    public void emptyDataTable() {
+        dataTable.resizeRows(1);
+    }
+
     public void addFeatureCell(FeatureDTO feature, FeatureDTO lastFeature, int elementIndex) {
         dataTable.resizeRows(elementIndex + 2);
         int row = elementIndex + 1;
