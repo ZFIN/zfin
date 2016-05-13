@@ -287,19 +287,28 @@
         <c:if test="${!empty formBean.mutationDetails.dnaChangeStatement}">
             <tr>
                 <th>DNA/cDNA Change:</th>
-                <td>${formBean.mutationDetails.dnaChangeStatement}</td>
+                <td>
+                    ${formBean.mutationDetails.dnaChangeStatement}
+                    (${fn:length(formBean.dnaChangeAttributions)})
+                </td>
             </tr>
         </c:if>
         <c:if test="${!empty formBean.mutationDetails.transcriptChangeStatement}">
             <tr>
                 <th>Transcript Consequence:</th>
-                <td>${formBean.mutationDetails.transcriptChangeStatement}</td>
+                <td>
+                    ${formBean.mutationDetails.transcriptChangeStatement}
+                    (${fn:length(formBean.transcriptConsequenceAttributions)})
+                </td>
             </tr>
         </c:if>
         <c:if test="${!empty formBean.mutationDetails.proteinChangeStatement}">
             <tr>
                 <th>Protein Consequence:</th>
-                <td>${formBean.mutationDetails.proteinChangeStatement}</td>
+                <td>
+                    ${formBean.mutationDetails.proteinChangeStatement}
+                    (${fn:length(formBean.proteinConsequenceAttributions)})
+                </td>
             </tr>
         </c:if>
     </table>

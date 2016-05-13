@@ -77,6 +77,9 @@ public class FeatureDetailController {
         form.setGenbankDbLinks(FeatureService.getGenbankDbLinks(feature));
         form.setExternalNotes(FeatureService.getSortedExternalNotes(feature));
         form.setMutationDetails(mutationDetailsConversionService.convert(feature, true));
+        form.setDnaChangeAttributions(FeatureService.getDnaChangeAttributions(feature));
+        form.setTranscriptConsequenceAttributions(FeatureService.getTranscriptConsequenceAttributions(feature));
+        form.setProteinConsequenceAttributions(FeatureService.getProteinConsequenceAttributions(feature));
 
         retrieveSortedGenotypeData(feature, form);
         retrievePubData(feature, form);

@@ -126,8 +126,41 @@ public class FeatureService {
     }
 
     public static Collection<PublicationAttribution> getFeatureTypeAttributions(Feature feature) {
-        return RepositoryFactory.getInfrastructureRepository()
-                .getPublicationAttributions(feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
+        return RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
+                feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
+    }
+
+    public static Collection<PublicationAttribution> getDnaChangeAttributions(Feature feature) {
+        if (feature.getFeatureDnaMutationDetail() == null) {
+            return null;
+        }
+
+        return RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
+                feature.getFeatureDnaMutationDetail().getZdbID(),
+                RecordAttribution.SourceType.STANDARD);
+    }
+
+    public static Collection<PublicationAttribution> getTranscriptConsequenceAttributions(Feature feature) {
+        if (CollectionUtils.isEmpty(feature.getFeatureTranscriptMutationDetailSet())) {
+            return null;
+        }
+
+        SortedSet<PublicationAttribution> attributions = new TreeSet<>();
+        for (FeatureTranscriptMutationDetail detail : feature.getFeatureTranscriptMutationDetailSet()) {
+            attributions.addAll(RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
+                    detail.getZdbID(), RecordAttribution.SourceType.STANDARD));
+        }
+        return attributions;
+    }
+
+    public static Collection<PublicationAttribution> getProteinConsequenceAttributions(Feature feature) {
+        if (feature.getFeatureProteinMutationDetail() == null) {
+            return null;
+        }
+
+        return RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
+                feature.getFeatureProteinMutationDetail().getZdbID(),
+                RecordAttribution.SourceType.STANDARD);
     }
 
     public static Set<FeatureMarkerRelationship> getSortedConstructRelationships(Feature feature) {

@@ -33,6 +33,9 @@ public class FeatureBean {
     private GBrowseImage gBrowseImage;
     private List<GenotypeDisplay> genotypeDisplays;
     private MutationDetailsPresentation mutationDetails;
+    private Collection<PublicationAttribution> dnaChangeAttributions;
+    private Collection<PublicationAttribution> transcriptConsequenceAttributions;
+    private Collection<PublicationAttribution> proteinConsequenceAttributions;
     private List<FeatureNote> externalNotes;
 
     public Set<FeatureDBLink> getGenbankDbLinks() {
@@ -172,6 +175,30 @@ public class FeatureBean {
 
     public void setMutationDetails(MutationDetailsPresentation mutationDetails) {
         this.mutationDetails = mutationDetails;
+    }
+
+    public Collection<PublicationAttribution> getDnaChangeAttributions() {
+        return dnaChangeAttributions;
+    }
+
+    public void setDnaChangeAttributions(Collection<PublicationAttribution> dnaChangeAttributions) {
+        this.dnaChangeAttributions = dnaChangeAttributions;
+    }
+
+    public Collection<PublicationAttribution> getTranscriptConsequenceAttributions() {
+        return transcriptConsequenceAttributions;
+    }
+
+    public void setTranscriptConsequenceAttributions(Collection<PublicationAttribution> transcriptConsequenceAttributions) {
+        this.transcriptConsequenceAttributions = transcriptConsequenceAttributions;
+    }
+
+    public Collection<PublicationAttribution> getProteinConsequenceAttributions() {
+        return proteinConsequenceAttributions;
+    }
+
+    public void setProteinConsequenceAttributions(Collection<PublicationAttribution> proteinConsequenceAttributions) {
+        this.proteinConsequenceAttributions = proteinConsequenceAttributions;
     }
 
     public List<FeatureNote> getExternalNotes() {
