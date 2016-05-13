@@ -282,7 +282,11 @@
     </tr>
 </table>
 
-<zfin2:subsection title="MUTATION DETAILS">
+<zfin2:subsection title="MUTATION DETAILS"
+                  showNoData="true"
+                  test="${!empty formBean.mutationDetails.dnaChangeStatement ||
+                          !empty formBean.mutationDetails.transcriptChangeStatement ||
+                          !empty formBean.mutationDetails.proteinChangeStatement}">
     <table class="summary horizontal-solidblock">
         <c:if test="${!empty formBean.mutationDetails.dnaChangeStatement}">
             <tr>
