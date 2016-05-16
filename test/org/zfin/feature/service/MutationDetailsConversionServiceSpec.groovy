@@ -54,8 +54,8 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
                         geneLocalizationTerm: localization,
                         exonNumber: exon,
                         intronNumber: intron,
-                        dnaPositionStart: position, // curation interface sets both fields
-                        dnaPositionEnd: position,   // to the same value in this case
+                        dnaPositionStart: position == null ? null : new Integer(position), // curation interface sets both fields
+                        dnaPositionEnd: position == null ? null : new Integer(position),   // to the same value in this case
                         referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
                         dnaSequenceReferenceAccessionNumber: accession,
                         dnaMutationTerm: new DnaMutationTerm(displayName: 'A>G')
@@ -117,8 +117,8 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
     def 'dna position statement with start #start, end #end'() {
         setup:
         def dnaChange = new FeatureDnaMutationDetail(
-                dnaPositionStart: start,
-                dnaPositionEnd: end
+                dnaPositionStart: start == null ? null : new Integer(start),
+                dnaPositionEnd: end == null ? null : new Integer(end)
         )
 
         expect:
@@ -327,8 +327,8 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
     def 'protein position statement with start #start, end #end'() {
         setup:
         def proteinConsequence = new FeatureProteinMutationDetail(
-                proteinPositionStart: start,
-                proteinPositionEnd: end
+                proteinPositionStart: start == null ? null : new Integer(start),
+                proteinPositionEnd: end == null ? null : new Integer(end)
         )
 
         expect:
@@ -339,6 +339,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         null  | null  || ""
         null  | 12    || ""
         9911  | null  || "at position 9911"
+        1121  | 1121  || "at position 1121"
         28281 | 28282 || "from position 28281 to 28282"
     }
 
@@ -395,8 +396,8 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
                         numberAminoAcidsAdded: addedAA,
                         numberAminoAcidsRemoved: removedAA,
                         proteinConsequence: term == null ? null : new ProteinConsequence(displayName: term),
-                        proteinPositionStart: start,
-                        proteinPositionEnd: end,
+                        proteinPositionStart: start == null ? null : new Integer(start),
+                        proteinPositionEnd: end == null ? null : new Integer(end),
                         referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
                         proteinSequenceReferenceAccessionNumber: accession
                 )

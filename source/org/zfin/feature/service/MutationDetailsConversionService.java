@@ -345,7 +345,7 @@ public class MutationDetailsConversionService {
             return "";
         }
 
-        if (end == null || start == end) {
+        if (end == null || start.equals(end)) {
             return "at position " + start;
         }
 
