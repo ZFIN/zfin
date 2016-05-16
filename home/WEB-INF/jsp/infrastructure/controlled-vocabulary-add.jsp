@@ -9,7 +9,7 @@
 
 <authz:authorize access="hasRole('root')">
 <div class="container-fluid">
-    <h2 class="page-header">New Species</h2>
+    <h2 class="page-header">New Species As Construct Component</h2>
 
     <form:form id="cv-form"
                class="form-horizontal"

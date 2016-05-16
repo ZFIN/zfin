@@ -26,6 +26,14 @@
            <span>&nbsp;&nbsp;&nbsp;<a href="/action/infrastructure/controlled-vocabulary-delete?zdbIDToDelete=${newlyCreatedControlledVocab.zdbID}">Delete this record</a></span>
         </c:if>
       </div>
+      <div class="form-group">
+        <c:if test="${!empty constructComponents}">
+          <div>The above species has been used in the following constructs:</div>
+          <c:forEach var="constructComponent" items="${constructComponents}" varStatus="loop">
+              <div><a href="/${constructComponent.constructZdbID}">${constructComponent.constructZdbID}</a></div>
+          </c:forEach>
+        </c:if>
+      </div>
     </form:form>
   </div>
 </authz:authorize>
