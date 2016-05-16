@@ -7,8 +7,10 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
+import org.zfin.construct.presentation.ConstructComponentPresentation;
 import org.zfin.database.BtsContainsService;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
@@ -68,4 +70,6 @@ public interface ConstructRepository {
     void createConstruct(ConstructCuration construct, Publication publication);
 
     List<Fish> getFishByFigureConstruct(Figure figure, String constructID);
+
+    List<ConstructComponent> getConstructComponentsByComponentID(String componentZdbID);
 }

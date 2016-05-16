@@ -32,10 +32,14 @@ public class ControlledVocabularyAddBeanValidator implements Validator {
             errors.rejectValue("termName", "controlledvocabulary.termname.inuse");
         }
 
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "foreignSpecies", "controlledvocabulary.foreignspecies.empty");
+
         String foreignSpecies = controlledVocabularyAddBean.getForeignSpecies();
         if (!StringUtils.isEmpty(foreignSpecies) && infrastructureRepository.isForeignSpeciesForControlledVocabExists(foreignSpecies)) {
             errors.rejectValue("foreignSpecies", "controlledvocabulary.foreignspecies.inuse");
         }
+
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "nameDefinition", "controlledvocabulary.namedefinition.empty");
 
         String nameDefinition = controlledVocabularyAddBean.getNameDefinition();
         if (!StringUtils.isEmpty(nameDefinition) && infrastructureRepository.isNameDefForControlledVocabExists(nameDefinition)) {
