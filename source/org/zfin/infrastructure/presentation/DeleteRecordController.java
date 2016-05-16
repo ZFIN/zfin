@@ -100,7 +100,7 @@ public class DeleteRecordController {
         if (constructComponents != null && constructComponents.size() > 0) {
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "record could not be deleted");
             model.addAttribute("constructComponents", constructComponents);
-            return "infrastructure/record-deleted.page";
+            return "infrastructure/controlled-vocabulary-added.page";
         }
 
         try {
