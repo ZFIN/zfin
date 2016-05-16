@@ -98,6 +98,8 @@ public class DeleteRecordController {
 
         List<ConstructComponent> constructComponents = getConstructRepository().getConstructComponentsByComponentID(zdbID);
         if (constructComponents != null && constructComponents.size() > 0) {
+            ControlledVocab controlledVocab = getInfrastructureRepository().getControlledVocabByID(zdbID);
+            model.addAttribute("controlledVocab", controlledVocab);
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "record could not be deleted");
             model.addAttribute("constructComponents", constructComponents);
             return "infrastructure/controlled-vocabulary-added.page";

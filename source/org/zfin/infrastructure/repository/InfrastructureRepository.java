@@ -456,6 +456,8 @@ public interface InfrastructureRepository {
 
     ControlledVocab getControlledVocabByNameAndSpecies(String termName, String foreignSpecies);
 
+    ControlledVocab getControlledVocabByID(String zdbID);
+
     void insertMutationDetailAttribution(String dataZdbID, String publicationID);
 }
 

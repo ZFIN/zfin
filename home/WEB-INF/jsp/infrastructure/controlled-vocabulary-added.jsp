@@ -8,6 +8,7 @@
 <jsp:useBean id="formBean" class="org.zfin.infrastructure.presentation.ControlledVocabularyAddBean" scope="request"/>
 
 <authz:authorize access="hasRole('root')">
+  <c:if test="${empty controlledVocab}">
   <div class="container-fluid">
     <h2 class="page-header">You have added the following new species</h2>
 
@@ -26,16 +27,20 @@
            <span>&nbsp;&nbsp;&nbsp;<a href="/action/infrastructure/controlled-vocabulary-delete?zdbIDToDelete=${newlyCreatedControlledVocab.zdbID}">Delete this record</a></span>
         </c:if>
       </div>
-      <div class="form-group">
-        <c:if test="${!empty constructComponents}">
-          <div>The above species has been used in the following constructs:</div>
-          <c:forEach var="constructComponent" items="${constructComponents}" varStatus="loop">
-              <div><a href="/${constructComponent.constructZdbID}">${constructComponent.constructZdbID}</a></div>
-          </c:forEach>
-        </c:if>
-      </div>
     </form:form>
   </div>
+  </c:if>
+  <c:if test="${!empty controlledVocab}">
+    <div class="form-group">Term Name: ${controlledVocab.cvTermName}</div>
+    <div class="form-group">Foreign Species: ${controlledVocab.cvForeignSpecies}</div>
+    <div class="form-group">Name Definition: ${controlledVocab.cvNameDefinition}</div>
+    <c:if test="${!empty constructComponents}">
+      <div class="form-group">The above species could not be deleted because it has been used in the following constructs:</div>
+      <c:forEach var="constructComponent" items="${constructComponents}" varStatus="loop">
+        <div><a href="/${constructComponent.constructZdbID}">${constructComponent.constructZdbID}</a></div>
+      </c:forEach>
+    </c:if>
+  </c:if>
 </authz:authorize>
 
 

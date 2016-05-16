@@ -1778,6 +1778,16 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @Override
+    public ControlledVocab getControlledVocabByID(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+
+        Criteria criteria = session.createCriteria(ControlledVocab.class);
+        criteria.add(Restrictions.eq("zdbID", zdbID));
+
+        return (ControlledVocab) criteria.uniqueResult();
+    }
+
+    @Override
     public void insertMutationDetailAttribution(String dataZdbID, String publicationID) {
         Session session = HibernateUtil.currentSession();
 
@@ -1797,7 +1807,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
         Criteria criteria = session.createCriteria(PublicationAttribution.class);
         criteria.add(Restrictions.eq("dataZdbID", dataZdbID));
-        criteria.add(Restrictions.eq("sourceType", RecordAttribution.SourceType.STANDARD.toString()));
+        criteria.add(Restrictions.eq("sourceZdbID", RecordAttribution.SourceType.STANDARD.toString()));
         PublicationAttribution result = (PublicationAttribution) criteria.uniqueResult();
 
         // remove previous attribution if different from current pub
