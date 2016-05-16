@@ -19,10 +19,10 @@ import org.zfin.uniquery.ResultAttributesSpec;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-//        ResultAttributesSpec.class,
-//        RelatedLinksSpec.class,
-//        CategoriesAndFacetsSpec.class,
-//        QuerySpec.class,
+        ResultAttributesSpec.class,
+        RelatedLinksSpec.class,
+        CategoriesAndFacetsSpec.class,
+        QuerySpec.class,
         SearchSuggestionServiceSpec.class
 /*        SolrPrototypeTest.class   //this references fields that don't exist anymore, but would be useful if refactored */
 })
