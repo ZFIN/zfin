@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="allelicFeatures" required="true" type="java.util.List" %>
-<%@ attribute name="hideTitle" required="false" type="java.lang.Boolean" %>
+
 
 <c:if test="${allelicFeatures.size() >=1}">
     <div class="summary">
@@ -20,8 +20,8 @@
                 <zfin:alternating-tr loopName="loop">
                     <td><zfin:link entity="${member.feature}"/></td>
                     <td>${member.chromosome}</td>
-                    <td>${member.start}<c:if test="${!empty member.end && member.end != member.end}">
-                        - ${member.end}
+                    <td> <fmt:formatNumber value="${member.start}" pattern="##,###"/><c:if test="${!empty member.end && member.end != member.end}">
+                        - <fmt:formatNumber value="${member.end}" pattern="##,###"/>
                     </c:if></td>
                     <td>${member.assembly}</td>
                     <td>
