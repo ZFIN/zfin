@@ -281,6 +281,8 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         mutationDetailTranscriptView.fullResetGUI();
         mutationDetailProteinView.resetGUI();
         knownInsertionCheckBox.setValue(false);
+        featureSuffixPanel.setVisible(false);
+        saveButton.setEnabled(false);
     }
 
 

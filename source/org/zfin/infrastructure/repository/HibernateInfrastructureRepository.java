@@ -1797,7 +1797,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
         Criteria criteria = session.createCriteria(PublicationAttribution.class);
         criteria.add(Restrictions.eq("dataZdbID", dataZdbID));
-        criteria.add(Restrictions.eq("sourceZdbID", RecordAttribution.SourceType.STANDARD.toString()));
+        criteria.add(Restrictions.eq("sourceType", RecordAttribution.SourceType.STANDARD.toString()));
         PublicationAttribution result = (PublicationAttribution) criteria.uniqueResult();
 
         // remove previous attribution if different from current pub

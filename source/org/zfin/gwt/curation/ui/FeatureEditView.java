@@ -105,8 +105,10 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
     public void resetGUI() {
         super.resetGUI();
         featureEditList.setSelectedIndex(0);
-        featureAliasList.revertGUI();
+        featureAliasList.resetGUI();
+        featureSequenceList.resetGUI();
         featureNotesView.resetGUI();
+        removeFeatureLink.setVisible(false);
         hideMutationDetail();
     }
 

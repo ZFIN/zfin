@@ -89,6 +89,10 @@ public class FeatureAliasList extends AbstractStackComposite<FeatureDTO> {
     @Override
     protected void setValues() { }
 
+    public void resetGUI(){
+        stackTable.clear();
+    }
+
     @Override
     public void revertGUI() {
         while(stackTable.getRowCount()>0){
