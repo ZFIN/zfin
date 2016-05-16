@@ -90,11 +90,14 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
             featureNameBox.setEnabled(false);
             featureSuffixBox.setVisible(true);
             featureSuffixPanel.setVisible(true);
+            saveButton.setEnabled(true);
         } else {
             featureNameBox.setVisible(false);
             featureNameBox.setEnabled(false);
             featureSuffixPanel.setVisible(true);
+            featureSuffixPanel.setVisible(true);
         }
+        handleChanges();
     }
 
     @UiHandler("labOfOriginBox")
@@ -146,23 +149,6 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
 
     @UiHandler("featureNameBox")
     void onChangeFeatureName(@SuppressWarnings("unused") ChangeEvent event) {
-        handleChanges();
-    }
-
-    @UiHandler("knownInsertionCheckBox")
-    void onClickKnownInsertion(@SuppressWarnings("unused") ClickEvent event) {
-        if (knownInsertionCheckBox.getValue()) {
-            featureNameBox.setVisible(true);
-            featureNameBox.setEnabled(false);
-            featureSuffixBox.setVisible(true);
-            featureSuffixPanel.setVisible(true);
-            saveButton.setEnabled(true);
-        } else {
-            featureNameBox.setVisible(false);
-            featureNameBox.setEnabled(false);
-            featureSuffixBox.setVisible(true);
-            featureSuffixPanel.setVisible(true);
-        }
         handleChanges();
     }
 

@@ -5,6 +5,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.MutationDetailControlledVocabularyTermDTO;
+import org.zfin.gwt.root.dto.MutationDetailProteinChangeDTO;
 import org.zfin.gwt.root.dto.MutationDetailTranscriptChangeDTO;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
@@ -205,6 +206,17 @@ public class MutationDetailPresenter {
 
     public void handleDirty() {
 
+    }
+
+    public String isValid(FeatureDTO featureDTO) {
+        MutationDetailProteinChangeDTO proteinChanges = featureDTO.getProteinChangeDTO();
+        if (proteinChanges != null) {
+            if (proteinChanges.getMutantAATermOboID() != null &&
+                    proteinChanges.getMutantAATermOboID().equals(proteinChanges.getWildtypeAATermOboID())
+                    )
+                return "Cannot have both amino acids the same!";
+        }
+        return null;
     }
 
     ////// Handlers and Listeners....

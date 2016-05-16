@@ -1,6 +1,5 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.user.client.Window;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.util.BooleanCollector;
@@ -170,7 +169,8 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         String selectedLab = view.labOfOriginBox.getSelectedText();
         if (selectedLab != null)
             onLabOfOriginChange(selectedLab, dto.getLabPrefix());
-        view.knownInsertionCheckBox.setValue(dto.getKnownInsertionSite(), true);
+        view.knownInsertionCheckBox.setValue(dto.getKnownInsertionSite());
+        view.onClickKnownInsertionSite(null);
         view.dominantCheckBox.setValue(dto.getDominant());
         view.featureDisplayName.setValue(dto.getName());
         view.featureSuffixBox.setIndexForText(dto.getTransgenicSuffix());
@@ -183,6 +183,11 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
     public void updateFeature() {
         FeatureDTO featureDTO = createDTOFromGUI();
         String errorMessage = FeatureValidationService.isValidToSave(featureDTO);
+        if (errorMessage != null) {
+            setError(errorMessage);
+            return;
+        }
+        errorMessage = mutationDetailPresenter.isValid(featureDTO);
         if (errorMessage != null) {
             setError(errorMessage);
             return;
