@@ -6,21 +6,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.mutant.GenotypeDisplay;
 import org.zfin.mutant.GenotypeFeature;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Controller
@@ -93,6 +93,38 @@ public class FeatureDetailController {
     @RequestMapping(value = "/feature/view/{zdbID}")
     public String retrieveFeatureDetail(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         return getFeatureDetail(zdbID, model);
+    }
+
+    @RequestMapping(value = "{zdbID}/mutation-detail-citations")
+    public String showMutationDetailCitationList(Model model, @PathVariable String zdbID, @RequestParam(required = false) String orderBy,
+                                                 @RequestParam(required = true) String type) {
+        Feature feature = featureRepository.getFeatureByID(zdbID);
+        MutationDetailAttributionList.Type detailType = MutationDetailAttributionList.Type.fromString(type);
+        MutationDetailAttributionList bean = new MutationDetailAttributionList(feature, detailType);
+        List<PublicationAttribution> attributions = null;
+        if (detailType != null) {
+            switch (detailType) {
+                case DNA:
+                    attributions = FeatureService.getDnaChangeAttributions(feature);
+                    break;
+                case TRANSCRIPT:
+                    attributions = FeatureService.getTranscriptConsequenceAttributions(feature);
+                    break;
+                case PROTEIN:
+                    attributions = FeatureService.getProteinConsequenceAttributions(feature);
+                    break;
+            }
+        }
+        if (attributions != null) {
+            Set<Publication> publications = new HashSet<>(attributions.size());
+            for (PublicationAttribution attribution : attributions) {
+                publications.add(attribution.getPublication());
+            }
+            bean.setPublications(publications);
+        }
+        bean.setOrderBy(orderBy);
+        model.addAttribute(LookupStrings.FORM_BEAN, bean);
+        return "feature/mutation-detail-citation-list.page";
     }
 
     private void retrieveSortedGenotypeData(Feature feature, FeatureBean form) {

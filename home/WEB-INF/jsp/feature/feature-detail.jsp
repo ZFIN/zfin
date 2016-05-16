@@ -298,7 +298,7 @@
                             (<a href="/${formBean.dnaChangeAttributions[0].sourceZdbID}">1</a>)
                         </c:when>
                         <c:when test="${fn:length(formBean.dnaChangeAttributions) > 1}">
-                            (${fn:length(formBean.dnaChangeAttributions)})
+                            (<a href="/action/feature/${formBean.feature.zdbID}/mutation-detail-citations?type=dna">${fn:length(formBean.dnaChangeAttributions)}</a>)
                         </c:when>
                     </c:choose>
                 </td>
@@ -314,7 +314,7 @@
                             (<a href="/${formBean.transcriptConsequenceAttributions[0].sourceZdbID}">1</a>)
                         </c:when>
                         <c:when test="${fn:length(formBean.transcriptConsequenceAttributions) > 1}">
-                            (${fn:length(formBean.transcriptConsequenceAttributions)})
+                            (<a href="/action/feature/${formBean.feature.zdbID}/mutation-detail-citations?type=transcript">${fn:length(formBean.transcriptConsequenceAttributions)}</a>)
                         </c:when>
                     </c:choose>
                 </td>
@@ -330,7 +330,7 @@
                             (<a href="/${formBean.proteinConsequenceAttributions[0].sourceZdbID}">1</a>)
                         </c:when>
                         <c:when test="${fn:length(formBean.proteinConsequenceAttributions) > 1}">
-                            (${fn:length(formBean.proteinConsequenceAttributions)})
+                            (<a href="/action/feature/${formBean.feature.zdbID}/mutation-detail-citations?type=protein">${fn:length(formBean.proteinConsequenceAttributions)}</a>)
                         </c:when>
                     </c:choose>
                 </td>

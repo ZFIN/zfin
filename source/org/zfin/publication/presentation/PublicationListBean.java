@@ -4,9 +4,9 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationAuthorComparator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public abstract class PublicationListBean {
 
@@ -17,11 +17,11 @@ public abstract class PublicationListBean {
     public static final String ORDER_BY_AUTHOR = "author";
 
 
-    abstract public Set<Publication> getPublications();
+    abstract public Collection<Publication> getPublications();
 
     public List<Publication> getSortedPublications() {
         if (sortedPublications == null) {
-            sortedPublications = new ArrayList<Publication>();
+            sortedPublications = new ArrayList<>();
             sortedPublications.addAll(getPublications());
         }
         sortPublications(sortedPublications, getOrderBy());
@@ -34,8 +34,9 @@ public abstract class PublicationListBean {
 
     public Publication getSinglePublication() {
         if (getNumOfPublications() == 1) {
-            for (Publication pub : getSortedPublications())
+            for (Publication pub : getSortedPublications()) {
                 return pub;
+            }
         }
         return null;
     }
@@ -56,8 +57,9 @@ public abstract class PublicationListBean {
     }
 
     public String getOrderBy() {
-        if (orderBy == null)
+        if (orderBy == null) {
             return ORDER_BY_AUTHOR;
+        }
         return orderBy;
     }
 
@@ -66,17 +68,19 @@ public abstract class PublicationListBean {
     }
 
     public void sortPublications(List<Publication> publications, String sortBy) {
-        if (sortBy.equalsIgnoreCase(ORDER_BY_AUTHOR))
+        if (sortBy.equalsIgnoreCase(ORDER_BY_AUTHOR)) {
             Collections.sort(publications, new PublicationAuthorComparator());
-        else
+        } else {
             Collections.sort(publications);
+        }
     }
 
     public List<Publication> getSortedPublishedPublications() {
         List<Publication> sortedPublishedPublications = new ArrayList<Publication>();
         for (Publication pub : getSortedPublications()) {
-            if (!pub.isUnpublished())
+            if (!pub.isUnpublished()) {
                 sortedPublishedPublications.add(pub);
+            }
         }
 
         sortPublications(sortedPublishedPublications, getOrderBy());
@@ -86,8 +90,9 @@ public abstract class PublicationListBean {
     public List<Publication> getSortedUnpublishedPublications() {
         List<Publication> sortedUnpublishedPublications = new ArrayList<Publication>();
         for (Publication pub : getSortedPublications()) {
-            if (pub.isUnpublished())
+            if (pub.isUnpublished()) {
                 sortedUnpublishedPublications.add(pub);
+            }
         }
 
         sortPublications(sortedUnpublishedPublications, getOrderBy());
