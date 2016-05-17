@@ -519,7 +519,8 @@ select fdmd_zdb_id,
     fdmd_intron_number,
     (select term_ont_id 
        from term where fdmd_gene_localization_term_zdb_id =term_Zdb_id)
-  from feature_dna_mutation_detail;
+  from feature_dna_mutation_detail, feature
+  where fdmd_feature_zdb_id = feature_zdb_id;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/proteinMutationDetail/proteinMutationDetail.txt"
 select ftmd_zdb_id,
@@ -527,7 +528,9 @@ select ftmd_zdb_id,
     ftmd_feature_zdb_id,
     ftmd_exon_number,
     ftmd_intron_number
-  from feature_transcript_mutation_detail;
+  from feature_transcript_mutation_detail
+  , feature
+ where ftmd_feature_zdb_id = feature_zdb_id;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/transcriptMutationDetail/transcriptMutationDetail.txt"
 select fpmd_zdb_id,
@@ -541,5 +544,6 @@ select fpmd_zdb_id,
     fpmd_number_amino_acids_removed,
     fpmd_number_amino_acids_added,
     (select term_ont_id from term where fpmd_protein_consequence_term_zdb_id=term_Zdb_id)
- from feature_protein_mutation_detail;
+ from feature_protein_mutation_detail, feature
+      where fpmd_feature_zdb_id = feature_zdb_id;
 
