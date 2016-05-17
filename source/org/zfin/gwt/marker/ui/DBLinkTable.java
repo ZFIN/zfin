@@ -1,6 +1,6 @@
 package org.zfin.gwt.marker.ui;
 
-import com.google.gwt.user.client.Window;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HTML;
 import org.zfin.gwt.marker.event.DBLinkTableListener;
 import org.zfin.gwt.root.dto.DBLinkDTO;
@@ -32,7 +32,7 @@ public abstract class DBLinkTable extends AbstractRelatedEntityBox<DBLinkDTO> {
     // listeners
     private final List<DBLinkTableListener> dbLinkTableListeners = new ArrayList<DBLinkTableListener>();
 
-    public DBLinkTable(){
+    public DBLinkTable() {
         super();
         initGUI();
     }
@@ -164,8 +164,7 @@ public abstract class DBLinkTable extends AbstractRelatedEntityBox<DBLinkDTO> {
         Integer length = null;
         try {
             length = Integer.valueOf(lengthField.getText().trim());
-        }
-        catch (NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             // nothing to catch here
         }
         dbLinkDTO.setLength(length);
@@ -247,7 +246,7 @@ public abstract class DBLinkTable extends AbstractRelatedEntityBox<DBLinkDTO> {
         List<String> relatedEntityList = new ArrayList<String>();
         for (int i = 0; i < rowCount; ++i) {
             if (relatedEntityTable.getWidget(i, 0) == null) {
-                Window.alert("Problem at row, contact dev: " + i);
+                GWT.log("Problem at row, contact dev: " + i);
                 return null;
             } else {
                 String name = ((RelatedEntityLabel<DBLinkDTO>) relatedEntityTable.getWidget(i, 0)).getName();

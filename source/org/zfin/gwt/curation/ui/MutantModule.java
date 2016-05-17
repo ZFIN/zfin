@@ -1,5 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
@@ -90,17 +91,15 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     public static final String SHOW_HIDE_EAP = "show-hide-eap";
 
 
-
-
     // GUI elements
     // this panel holds the Title and the show / hide link
     private HorizontalPanel panel = new HorizontalPanel();
     private Hyperlink showExpressionSection = new Hyperlink();
 
-    private HorizontalPanel eapPanel=new HorizontalPanel();
+    private HorizontalPanel eapPanel = new HorizontalPanel();
     private Hyperlink showEapSection = new Hyperlink();
     private FlexTable eapTable = new FlexTable();
-    private HTMLTable.RowFormatter rowFormatter = eapTable.getRowFormatter() ;
+    private HTMLTable.RowFormatter rowFormatter = eapTable.getRowFormatter();
 
     private FlexTable constructionRow = new FlexTable();
     private MutantFlexTable displayTable;
@@ -277,6 +276,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     public void retrieveExpressions() {
         phenotypeCurationRPCAsync.getExpressionsByFilter(experimentFilter, figureID, new RetrieveExpressionsCallback());
     }
+
     public void retrieveEaps() {
         phenotypeCurationRPCAsync.getPhenotypeFromExpressionsByFilter(experimentFilter, figureID, new RetrieveEapsCallback());
     }
@@ -308,7 +308,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             classSpan.append("</span>");
         return classSpan.toString();
     }
-
 
 
     public Set<PhenotypeStatementDTO> getExpressedTermDTOs() {
@@ -611,6 +610,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         }
 
     }
+
     private class RetrieveEapsCallback extends ZfinAsyncCallback<List<ExpressionPhenotypeExperimentDTO>> {
 
         public RetrieveEapsCallback() {
@@ -634,6 +634,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         }
 
     }
+
     /**
      * Show or hide expression section
      */
@@ -749,7 +750,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
          *
          * @param mutant expression figure stage DTO
          * @return true if experiment is found in the full list (new experiment) or in the list except itself
-         *         false if experiment is different from all other experiments
+         * false if experiment is different from all other experiments
          */
         private boolean isMutantFigureStageOnPile(PhenotypeExperimentDTO mutant) {
             int rowIndex = 1;
@@ -832,9 +833,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     }
 
 
-
-
-
     private class MutantFlexTable extends ZfinFlexTable {
 
         private HeaderName[] headerNames;
@@ -908,18 +906,19 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
                 previousExpression = expression;
             }
 
-           createBottomClearAllLinkRow(rowIndex);
+            createBottomClearAllLinkRow(rowIndex);
 
-              showHideClearAllLink();
+            showHideClearAllLink();
 
 
         }
-        private void createEapTable(){
+
+        private void createEapTable() {
             for (; eapTable.getRowCount() > 0; ) {
                 eapTable.removeRow(0);
             }
 
-          eapTable.clear();
+            eapTable.clear();
 
             int eapRowIndex = 1;
             //Window.alert("Experiment List Size: " + experiments.size());
@@ -953,8 +952,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
                 eapTable.setWidget(eapRowIndex, HeaderName.EXPRESSED_IN.getIndex(), eapTerms);
 
 
-
-
                 long previousEID = 0;
                 if (previousEapExpression != null)
                     previousEID = previousEapExpression.getId();
@@ -967,9 +964,8 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             //Window.alert("HIO");
 
 
-
-
         }
+
         private Widget createEapList(ExpressionPhenotypeExperimentDTO mutants) {
             // create phenotype list
             VerticalPanel eapPhenotypePanel = new VerticalPanel();
@@ -984,7 +980,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             for (ExpressionPhenotypeStatementDTO eap : terms) {
                 StringBuilder eapText = new StringBuilder(50);
 
-                HTML eapPhenotype = new HTML(eap.getDisplayName() + ""  + eapText.toString());
+                HTML eapPhenotype = new HTML(eap.getDisplayName() + "" + eapText.toString());
                 eapPhenotype.setTitle(eap.getId() + "");
                 eapPhenotypePanel.add(eapPhenotype);
             }
@@ -1029,8 +1025,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
                 String classSpan;
                 if (pheno.getTag().equals("normal")) {
                     classSpan = createSpanElement(pheno, WidgetUtil.PHENOTYPE_NORMAL);
-                }
-                else if (pheno.getTag().equals("ameliorated")) {
+                } else if (pheno.getTag().equals("ameliorated")) {
                     classSpan = createSpanElement(pheno, WidgetUtil.PHENOTYPE_AMELIORATED);
                 } else if (pheno.getEntity().getSuperTerm().getTermName().equals("unspecified")) {
                     classSpan = createSpanElement(pheno, "term-unspecified");
@@ -1223,9 +1218,9 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     private class FigureAnnotationCheckmarkStatusCallback implements AsyncCallback<CheckMarkStatusDTO> {
         public void onFailure(Throwable throwable) {
             if (throwable instanceof PublicationNotFoundException) {
-                Window.alert(String.valueOf(throwable));
+                GWT.log(String.valueOf(throwable));
             } else {
-                Window.alert("Fatal exception: " + throwable);
+                GWT.log("Fatal exception: " + throwable);
             }
         }
 

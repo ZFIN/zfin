@@ -1,8 +1,8 @@
 package org.zfin.gwt.root.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -42,7 +42,7 @@ public class TestComposite {
         b3.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                Window.alert("red alert");
+                GWT.log("red alert");
 //                popup = new PopupPanel(false);
 //                popup.setTitle("dogz");
 //                popup.setWidget(new Label("inner label"));

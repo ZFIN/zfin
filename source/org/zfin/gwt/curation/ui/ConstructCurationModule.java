@@ -1,12 +1,11 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.root.dto.ConstructDTO;
-import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 
 import java.util.ArrayList;
@@ -19,8 +18,8 @@ public class ConstructCurationModule extends ConstructionZoneAdapater {
     public static final String CONSTRUCT_RELATIONSHIP_TEXT = "[Construct Relationships]";
     public static final String CONSTRUCT_RELATIONSHIP = "construct-relationship";
 
-    private final static String RIGHT_ARROW_FEATURE_LINK  = "<img align=\"top\" src=\"/images/right.gif\" >" + CONSTRUCT_RELATIONSHIP_TEXT;
-    private final static String DOWN_ARROW_FEATURE_LINK  = "<img align=\"top\" src=\"/images/down.gif\" >" + CONSTRUCT_RELATIONSHIP_TEXT;
+    private final static String RIGHT_ARROW_FEATURE_LINK = "<img align=\"top\" src=\"/images/right.gif\" >" + CONSTRUCT_RELATIONSHIP_TEXT;
+    private final static String DOWN_ARROW_FEATURE_LINK = "<img align=\"top\" src=\"/images/down.gif\" >" + CONSTRUCT_RELATIONSHIP_TEXT;
 
     private HTML constructRelationshipLink = new HTML(RIGHT_ARROW_FEATURE_LINK);
     public static final String CONSTRUCT_RELATIONSHIP_LINK = "construct-relationship-link";
@@ -74,13 +73,12 @@ public class ConstructCurationModule extends ConstructionZoneAdapater {
         constructRelationshipBox.setDTO(featureDTO);
     }
 
-    
 
     public void clearError() {
         setError("");
         attributionModule.revertGUI();
 //        attributionModule.clearError();
-     //   constructRelationshipBox.setPublication(publicationID);
+        //   constructRelationshipBox.setPublication(publicationID);
         constructRelationshipBox.clearError();
     }
 
@@ -99,15 +97,14 @@ public class ConstructCurationModule extends ConstructionZoneAdapater {
     }
 
 
-
-    public void openFeatureRelationshipsBox(boolean b){
+    public void openFeatureRelationshipsBox(boolean b) {
         constructRelationshipBox.setVisible(b);
         constructRelationshipLink.setHTML((b ? DOWN_ARROW_FEATURE_LINK : RIGHT_ARROW_FEATURE_LINK));
     }
 
     public void setError(String message) {
-        if(!message.isEmpty()){
-            Window.alert("Error: " + message);
+        if (!message.isEmpty()) {
+            GWT.log("Error: " + message);
         }
     }
 

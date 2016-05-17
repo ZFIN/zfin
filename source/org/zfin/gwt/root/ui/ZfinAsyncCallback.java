@@ -1,6 +1,6 @@
 package org.zfin.gwt.root.ui;
 
-import com.google.gwt.user.client.Window;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -104,7 +104,7 @@ public class ZfinAsyncCallback<T> implements AsyncCallback<T> {
         if (errorHandler != null) {
             errorHandler.setError(s);
         } else {
-            Window.alert(s);
+            GWT.log(s);
         }
     }
 

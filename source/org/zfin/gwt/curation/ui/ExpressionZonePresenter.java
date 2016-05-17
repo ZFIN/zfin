@@ -1,5 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -360,9 +361,9 @@ public class ExpressionZonePresenter implements Presenter {
     private class FigureAnnotationCheckmarkStatusCallback implements AsyncCallback<CheckMarkStatusDTO> {
         public void onFailure(Throwable throwable) {
             if (throwable instanceof PublicationNotFoundException) {
-                Window.alert(String.valueOf(throwable));
+                GWT.log(String.valueOf(throwable));
             } else {
-                Window.alert("Fatal exception: " + throwable);
+                GWT.log("Fatal exception: " + throwable);
             }
         }
 

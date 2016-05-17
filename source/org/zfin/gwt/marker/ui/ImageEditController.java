@@ -1,9 +1,9 @@
 package org.zfin.gwt.marker.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.root.dto.ImageDTO;
@@ -16,15 +16,15 @@ import java.util.List;
 
 /**
  * A GWT Controller class for editing image information
- *
+ * <p/>
  * Initially it will only be used to create relationships to anatomy,
  * eventually it should replace all of the update functionality of
  * imageview.apg.
  */
 public class ImageEditController extends Composite {
 
-    public static final String LOOKUP_ZDBID = "zdbID";    
-    private static final String ANATOMY_CONTAINER_DIV = "imageEditDiv" ;
+    public static final String LOOKUP_ZDBID = "zdbID";
+    private static final String ANATOMY_CONTAINER_DIV = "imageEditDiv";
     private static final String STAGE_CONTAINER_DIV = "imageStageEditDiv";
     private static final String CONSTRUCT_CONTAINER_DIV = "imageConstructEditDiv";
     private ImageDTO dto;
@@ -34,8 +34,8 @@ public class ImageEditController extends Composite {
     private ImageConstructBox imageConstructBox;
 
     public void initGUI() {
-    
-        Dictionary dictionary = Dictionary.getDictionary("MarkerProperties") ;
+
+        Dictionary dictionary = Dictionary.getDictionary("MarkerProperties");
 
         imageAnatomyBox = new ImageAnatomyBox(dictionary.get(ANATOMY_CONTAINER_DIV));
         stageSelector = new ImageEditStageSelector();
@@ -64,7 +64,7 @@ public class ImageEditController extends Composite {
 
     protected void loadDTO() {
         try {
-            Dictionary dictionary = Dictionary.getDictionary("MarkerProperties") ;
+            Dictionary dictionary = Dictionary.getDictionary("MarkerProperties");
             String zdbID = dictionary.get(LOOKUP_ZDBID);
 
             ImageRPCService.App.getInstance().getImageForZdbID(zdbID,
@@ -79,10 +79,9 @@ public class ImageEditController extends Composite {
                     });
 
         } catch (Exception e) {
-            Window.alert(e.toString());
+            GWT.log(e.toString());
         }
     }
-
 
 
     /**
@@ -108,7 +107,6 @@ public class ImageEditController extends Composite {
             //loadingImage.setVisible(true);
         }
     }
-
 
 
 }

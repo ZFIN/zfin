@@ -1,9 +1,9 @@
 package org.zfin.gwt.marker.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.Window;
 import org.zfin.gwt.marker.event.DirectAttributionDBLinkTableListener;
 import org.zfin.gwt.marker.event.MarkerLoadEvent;
 import org.zfin.gwt.marker.event.MarkerLoadListener;
@@ -64,7 +64,7 @@ public final class AlternateGeneEditController extends AbstractFullMarkerEditCon
                         }
                     });
         } catch (Exception e) {
-            Window.alert(e.toString());
+            GWT.log(e.toString());
         }
     }
 

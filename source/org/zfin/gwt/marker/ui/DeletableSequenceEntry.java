@@ -1,8 +1,8 @@
 package org.zfin.gwt.marker.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.SequenceDTO;
 import org.zfin.gwt.root.ui.HasRelatedEntities;
@@ -43,7 +43,7 @@ public class DeletableSequenceEntry extends Composite {
         if (type.equals(NUCLEOTIDE_SEQUENCE) || type.equals(PROTEIN_SEQUENCE)) {
             this.type = type;
         } else {
-            Window.alert("sequence type is unknown: " + type);
+            GWT.log("sequence type is unknown: " + type);
             return;
         }
         this.sequenceDTO = sequenceDTO;

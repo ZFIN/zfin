@@ -1,10 +1,10 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -42,8 +42,8 @@ public class GoCurationModule extends ConstructionZoneAdapater {
 
     // get filter bar
     private HorizontalPanel filterPanel = new HorizontalPanel();
-    private ListBoxWrapper geneFilterListBox = new ListBoxWrapper() ;
-    public static final String GENE_FILTER_ALL = "ALL" ;
+    private ListBoxWrapper geneFilterListBox = new ListBoxWrapper();
+    public static final String GENE_FILTER_ALL = "ALL";
 
 
     // data
@@ -77,10 +77,10 @@ public class GoCurationModule extends ConstructionZoneAdapater {
 
         });
 
-        geneFilterListBox.addChangeHandler(new ChangeHandler(){
+        geneFilterListBox.addChangeHandler(new ChangeHandler() {
             @Override
             public void onChange(ChangeEvent event) {
-                goViewTable.doGeneFilter(geneFilterListBox.getSelectedText()) ;
+                goViewTable.doGeneFilter(geneFilterListBox.getSelectedText());
             }
         });
 
@@ -110,18 +110,18 @@ public class GoCurationModule extends ConstructionZoneAdapater {
         goAddBox.setDTO(goEvidenceDTO);
         attributionModule.setDTO(goEvidenceDTO);
         goViewTable.setZdbID(publicationID);
-        updateGeneFilter() ;
+        updateGeneFilter();
     }
 
     private void updateGeneFilter() {
         MarkerGoEvidenceRPCService.App.getInstance().getMarkerGoTermEvidencesForPub(publicationID,
-                new MarkerEditCallBack<List<GoEvidenceDTO>>("Failed to find pub: " + publicationID+ " ") {
+                new MarkerEditCallBack<List<GoEvidenceDTO>>("Failed to find pub: " + publicationID + " ") {
                     @Override
                     public void onSuccess(List<GoEvidenceDTO> result) {
                         geneFilterListBox.clear();
                         geneFilterListBox.addItem(GENE_FILTER_ALL);
-                        for(GoEvidenceDTO goEvidenceDTO: result){
-                            if(false==geneFilterListBox.containsItemText(goEvidenceDTO.getMarkerDTO().getName())){
+                        for (GoEvidenceDTO goEvidenceDTO : result) {
+                            if (false == geneFilterListBox.containsItemText(goEvidenceDTO.getMarkerDTO().getName())) {
                                 geneFilterListBox.addItem(goEvidenceDTO.getMarkerDTO().getName());
                             }
                         }
@@ -135,7 +135,7 @@ public class GoCurationModule extends ConstructionZoneAdapater {
 
     @Override
     public void setError(String message) {
-        Window.alert("Error: " + message);
+        GWT.log("Error: " + message);
     }
 
     @Override
