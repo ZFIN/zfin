@@ -522,7 +522,7 @@ select fdmd_zdb_id,
   from feature_dna_mutation_detail, feature
   where fdmd_feature_zdb_id = feature_zdb_id;
 
-unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/proteinMutationDetail/proteinMutationDetail.txt"
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/transcriptMutationDetail/transcriptMutationDetail.txt"
 select ftmd_zdb_id,
     (select term_ont_id from term where term_zdb_id = ftmd_transcript_consequence_term_zdb_id),
     ftmd_feature_zdb_id,
@@ -532,7 +532,7 @@ select ftmd_zdb_id,
   , feature
  where ftmd_feature_zdb_id = feature_zdb_id;
 
-unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/transcriptMutationDetail/transcriptMutationDetail.txt"
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/transcriptMutationDetail/proteinMutationDetail.txt"
 select fpmd_zdb_id,
     fpmd_feature_zdb_id,
     fpmd_sequence_of_reference_accession_number,
