@@ -3,6 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -77,39 +78,54 @@ public class MutationDetailDNAView extends AbstractViewComposite {
     }
 
     @UiHandler("positionStart")
-    void onBlurPositionStart(@SuppressWarnings("unused") BlurEvent event) {
-        if (validateNumber(positionStart))
-            handleChanges();
+    void onKeyChangePositionStart(@SuppressWarnings("unused") KeyUpEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("positionStart")
+    void onChangePositionStart(@SuppressWarnings("unused") ChangeEvent event) {
+        if (validateNumber(positionStart)) {
+            if (positionEnd.isVisible())
+                validateStartEnd(positionStart, positionEnd);
+        }
+        handleChanges();
     }
 
     @UiHandler("positionEnd")
-    void onBlurPositionEnd(@SuppressWarnings("unused") BlurEvent event) {
-        if (validateNumber(positionEnd))
-            handleChanges();
+    void onKeyChangePositionEnd(@SuppressWarnings("unused") KeyUpEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("positionEnd")
+    void onChangePositionEnd(@SuppressWarnings("unused") ChangeEvent event) {
+        if (validateNumber(positionEnd)) {
+            validateStartEnd(positionStart, positionEnd);
+        }
+        handleChanges();
     }
 
     @UiHandler("minusBasePair")
-    void onBlurMinusBasePair(@SuppressWarnings("unused") BlurEvent event) {
-        if (validateNumber(minusBasePair))
-            handleChanges();
+    void onChangeMinusBasePair(@SuppressWarnings("unused") KeyUpEvent event) {
+        validateNumber(minusBasePair);
+        handleChanges();
     }
 
     @UiHandler("plusBasePair")
-    void onBlurPlusBasePair(@SuppressWarnings("unused") BlurEvent event) {
-        if (validateNumber(plusBasePair))
-            handleChanges();
+    void onChangePlusBasePair(@SuppressWarnings("unused") KeyUpEvent event) {
+        validateNumber(plusBasePair);
+        handleChanges();
     }
 
     @UiHandler("exonNumber")
-    void onBlurExonNumber(@SuppressWarnings("unused") BlurEvent event) {
-        if (validateNumber(exonNumber))
-            handleChanges();
+    void onChangeExonNumber(@SuppressWarnings("unused") KeyUpEvent event) {
+        validateNumber(exonNumber);
+        handleChanges();
     }
 
     @UiHandler("intronNumber")
-    void onBlurIntronNumber(@SuppressWarnings("unused") BlurEvent event) {
-        if (validateNumber(intronNumber))
-            handleChanges();
+    void onChangeIntronNumber(@SuppressWarnings("unused") KeyUpEvent event) {
+        validateNumber(intronNumber);
+        handleChanges();
     }
 
     @UiHandler("nucleotideChangeList")
@@ -299,9 +315,11 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         sequenceOfReference.setText(dto.getSequenceReferenceAccessionNumber());
         onChangeLocalization(null);
     }
+
     public void resetMessages() {
         validSequenceCharacter.setVisible(false);
         faultySequenceCharacter.setVisible(false);
+        clearError();
     }
 
 

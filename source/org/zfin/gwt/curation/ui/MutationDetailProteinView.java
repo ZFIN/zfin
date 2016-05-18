@@ -3,6 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -64,18 +65,18 @@ public class MutationDetailProteinView extends AbstractViewComposite {
     }
 
     @UiHandler("proteinTermList")
-    void onWTAaConsequenceChange(ChangeEvent event) {
+    void onWTAaConsequenceChange(@SuppressWarnings("unused") ChangeEvent event) {
         handleChanges();
     }
 
     @UiHandler("proteinWTTermList")
-    void onWTAaChange(ChangeEvent event) {
+    void onWTAaChange(@SuppressWarnings("unused") ChangeEvent event) {
         useProteinListControls();
         handleChanges();
     }
 
     @UiHandler("proteinMutatedTerm")
-    void onMutatedAaChange(ChangeEvent event) {
+    void onMutatedAaChange(@SuppressWarnings("unused") ChangeEvent event) {
         useProteinListControls();
         handleChanges();
     }
@@ -93,30 +94,44 @@ public class MutationDetailProteinView extends AbstractViewComposite {
     }
 
     @UiHandler("positionStart")
-    void onBlurPositionStart(@SuppressWarnings("unused") BlurEvent event) {
-        if (validateNumber(positionStart))
-            handleChanges();
+    void onKeyChangePositionStart(@SuppressWarnings("unused") KeyUpEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("positionStart")
+    void onChangePositionStart(@SuppressWarnings("unused") ChangeEvent event) {
+        if (validateNumber(positionStart)) {
+            validateStartEnd(positionStart, positionEnd);
+        }
+        handleChanges();
     }
 
     @UiHandler("positionEnd")
-    void onBlurPositionEnd(@SuppressWarnings("unused") BlurEvent event) {
-        if (validateNumber(positionEnd))
-            handleChanges();
+    void onKeyChangePositionEnd(@SuppressWarnings("unused") KeyUpEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("positionEnd")
+    void onChangePositionEnd(@SuppressWarnings("unused") ChangeEvent event) {
+        if (validateNumber(positionEnd)) {
+            validateStartEnd(positionStart, positionEnd);
+        }
+        handleChanges();
     }
 
     @UiHandler("minusAminoAcid")
-    void onBlurMinusBasePair(@SuppressWarnings("unused") BlurEvent event) {
-        if (validateNumber(minusAminoAcid))
-            handleChanges();
+    void onBlurMinusBasePair(@SuppressWarnings("unused") KeyUpEvent event) {
+        validateNumber(minusAminoAcid);
+        handleChanges();
         usePlusMinusControls();
         if (!minusAminoAcid.isEmpty())
             plusAminoAcid.clear();
     }
 
     @UiHandler("plusAminoAcid")
-    void onBlurPlusBasePair(@SuppressWarnings("unused") BlurEvent event) {
-        if (validateNumber(plusAminoAcid))
-            handleChanges();
+    void onBlurPlusBasePair(@SuppressWarnings("unused") KeyUpEvent event) {
+        validateNumber(plusAminoAcid);
+        handleChanges();
         usePlusMinusControls();
         if (!plusAminoAcid.isEmpty())
             minusAminoAcid.clear();
@@ -240,6 +255,7 @@ public class MutationDetailProteinView extends AbstractViewComposite {
     public void resetMessages() {
         validSequenceCharacter.setVisible(false);
         faultySequenceCharacter.setVisible(false);
+        clearError();
     }
 
 }

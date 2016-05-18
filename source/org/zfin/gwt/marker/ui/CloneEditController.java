@@ -1,9 +1,9 @@
 package org.zfin.gwt.marker.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.marker.event.DirectAttributionAddsRelatedEntityListener;
@@ -72,7 +72,7 @@ public final class CloneEditController extends AbstractFullMarkerEditController<
                         }
                     });
         } catch (Exception e) {
-            Window.alert(e.toString());
+            GWT.log(e.toString());
         }
     }
 

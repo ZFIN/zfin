@@ -1,11 +1,10 @@
 package org.zfin.gwt.root.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
-import org.zfin.gwt.root.server.DTOConversionService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,7 +134,7 @@ public abstract class AbstractRelatedEntityBox<U extends RelatedEntityDTO> exten
         List<String> relatedEntityList = new ArrayList<String>();
         for (int i = 0; i < rowCount; ++i) {
             if (relatedEntityTable.getWidget(i, 0) == null) {
-                Window.alert("Problem at row, contact dev: " + i);
+                GWT.log("Problem at row, contact dev: " + i);
                 return null;
             } else {
                 relatedEntityList.add(((RelatedEntityLabel<U>) relatedEntityTable.getWidget(i, 0)).getName());
@@ -148,14 +147,13 @@ public abstract class AbstractRelatedEntityBox<U extends RelatedEntityDTO> exten
         List<U> entities = new ArrayList<U>();
         int rowCount = relatedEntityTable.getRowCount();
 
-        for (int i = 0; i < rowCount; ++i) {
+        for (int i = 0; i < rowCount; ++i)
             if (relatedEntityTable.getWidget(i, 0) == null) {
-                Window.alert("Problem at row, contact dev: " + i);
+                GWT.log("Problem at row, contact dev: " + i);
                 return null;
             } else {
                 entities.add(((RelatedEntityLabel<U>) relatedEntityTable.getWidget(i, 0)).getRelatedEntityDTO());
             }
-        }
 
         return entities;
     }
@@ -203,7 +201,7 @@ public abstract class AbstractRelatedEntityBox<U extends RelatedEntityDTO> exten
 
     @Override
     public boolean isDirty() {
-        return newRelatedEntityField.getText().trim().length()>0;
+        return newRelatedEntityField.getText().trim().length() > 0;
     }
 
     int getAttributionIndex(String aliasName, String publication) {

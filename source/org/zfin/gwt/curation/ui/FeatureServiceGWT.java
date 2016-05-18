@@ -22,7 +22,7 @@ public class FeatureServiceGWT {
         // if already one callback in list add it and return;
         if (callbackList == null)
             callbackList = new ArrayList<>();
-        GWT.log("Number of callbacks: " + callbackList.size());
+        //GWT.log("Number of callbacks: " + callbackList.size());
         callbackList.add(callback);
         // requests that came in after the first one will be handled
         if (callbackList.size() > 1) {

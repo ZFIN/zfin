@@ -1,5 +1,6 @@
 package org.zfin.gwt.marker.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -159,7 +160,7 @@ public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelat
 
                             @Override
                             public void onFailure(Throwable throwable) {
-                                Window.alert("failed: " + throwable);
+                                GWT.log("failed: " + throwable);
                             }
                         });
             }

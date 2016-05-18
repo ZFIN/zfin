@@ -1,5 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -160,7 +161,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             curationExperimentRPCAsync.readAntibodiesByGene(publicationID, geneID, new RetrieveAntibodyList());
         } else {
             view.getAntibodyList().setEnabled(false);
-            
+
         }
     }
 
@@ -719,7 +720,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             genbankList.addItem("");
             int rowIndex = 1;
             if (isDebug())
-                Window.alert("Selected GeneBank ID: " + selectedGenBankID);
+                GWT.log("Selected GeneBank ID: " + selectedGenBankID);
             for (ExperimentDTO accession : accessions) {
                 genbankList.addItem(accession.getGenbankNumber(), accession.getGenbankID());
                 if (selectedGenBankID != null && accession.getGenbankID().equals(selectedGenBankID)) {

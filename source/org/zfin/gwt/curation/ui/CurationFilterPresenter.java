@@ -1,5 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
@@ -135,9 +136,9 @@ public class CurationFilterPresenter extends Composite {
     private class RetrieveFishCallback implements AsyncCallback<FilterValuesDTO> {
         public void onFailure(Throwable throwable) {
             if (throwable instanceof PublicationNotFoundException) {
-                Window.alert(String.valueOf(throwable));
+                GWT.log(String.valueOf(throwable));
             } else {
-                Window.alert("Fatal exception: " + throwable);
+                GWT.log("Fatal exception: " + throwable);
             }
         }
 
@@ -184,9 +185,9 @@ public class CurationFilterPresenter extends Composite {
     private class RetrieveSelectFilterValuesCallback implements AsyncCallback<FilterValuesDTO> {
         public void onFailure(Throwable throwable) {
             if (throwable instanceof PublicationNotFoundException) {
-                Window.alert(String.valueOf(throwable));
+                GWT.log(String.valueOf(throwable));
             } else {
-                Window.alert("Fatal exception: " + throwable);
+                GWT.log("Fatal exception: " + throwable);
             }
         }
 

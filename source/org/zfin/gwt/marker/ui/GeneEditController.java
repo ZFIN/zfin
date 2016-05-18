@@ -1,5 +1,6 @@
 package org.zfin.gwt.marker.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.Dictionary;
@@ -261,7 +262,7 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
                 new MarkerEditCallBack<MarkerDTO>("failed to find zdbID: ", nucleotideSequenceArea) {
                     public void onSuccess(MarkerDTO markerDTO) {
                         if (markerDTO == null) {
-                            Window.alert("failed to find gene for zdbID: " + zdbID);
+                            GWT.log("failed to find gene for zdbID: " + zdbID);
                         }
                         setDTO(markerDTO);
                     }

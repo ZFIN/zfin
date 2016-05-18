@@ -532,7 +532,7 @@ select ftmd_zdb_id,
   , feature
  where ftmd_feature_zdb_id = feature_zdb_id;
 
-unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/transcriptMutationDetail/proteinMutationDetail.txt"
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/proteinMutationDetail/proteinMutationDetail.txt"
 select fpmd_zdb_id,
     fpmd_feature_zdb_id,
     fpmd_sequence_of_reference_accession_number,

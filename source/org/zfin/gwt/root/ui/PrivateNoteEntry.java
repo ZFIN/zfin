@@ -1,5 +1,6 @@
 package org.zfin.gwt.root.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -21,7 +22,7 @@ public class PrivateNoteEntry extends AbstractNoteEntry {
 
         removeNoteButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                Window.alert("Hi");
+                GWT.log("Hi");
                 if (!Window.confirm("Do you really want to delete this note?")) {
                     return;
                 }

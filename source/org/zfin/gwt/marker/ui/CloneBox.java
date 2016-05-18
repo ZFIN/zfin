@@ -1,7 +1,7 @@
 package org.zfin.gwt.marker.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.*;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -11,7 +11,7 @@ import org.zfin.gwt.root.ui.*;
 
 /**
  */
-public class CloneBox extends AbstractDataBox<CloneDTO>{
+public class CloneBox extends AbstractDataBox<CloneDTO> {
 
     // table
     private Grid table = new Grid(5, 4);
@@ -24,7 +24,6 @@ public class CloneBox extends AbstractDataBox<CloneDTO>{
     private StringTextBox cloneComments = new StringTextBox();
     private StringTextBox pcrAmplificationTextBox = new StringTextBox();
     private StringListBox cloningSiteListBox = new StringListBox();
-
 
 
     public CloneBox(String div) {
@@ -80,7 +79,7 @@ public class CloneBox extends AbstractDataBox<CloneDTO>{
 
         CloneRPCService.App.getInstance().getCloneTypes(new AsyncCallback<CloneTypesDTO>() {
             public void onFailure(Throwable throwable) {
-                Window.alert("failure to load clone types: " + throwable);
+                GWT.log("failure to load clone types: " + throwable);
             }
 
             public void onSuccess(CloneTypesDTO cloneTypesDTO) {
@@ -96,7 +95,7 @@ public class CloneBox extends AbstractDataBox<CloneDTO>{
 
     }
 
-    public void addInternalListeners(HandlesError handlesError){
+    public void addInternalListeners(HandlesError handlesError) {
         libraryListBox.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
                 handleDirty();
@@ -123,7 +122,7 @@ public class CloneBox extends AbstractDataBox<CloneDTO>{
             }
         });
 
-        insertSizeTextBox.addKeyPressHandler(new KeyPressHandler(){
+        insertSizeTextBox.addKeyPressHandler(new KeyPressHandler() {
             @Override
             public void onKeyPress(KeyPressEvent event) {
                 handleDirty();
@@ -171,17 +170,16 @@ public class CloneBox extends AbstractDataBox<CloneDTO>{
     public boolean isDirty() {
 //            if (cloneRatingListBox.isDirty(dto.getRating())) return true;
 //            if (cloneComments.isDirty(dto.getCloneComments())) return true;
-        boolean isDirty = false ;
-        isDirty = (vectorListBox.isDirty(dto.getVectorName()) || isDirty)  ;
-        isDirty = (digestListBox.isDirty(dto.getDigest())|| isDirty);
-        isDirty = (libraryListBox.isDirty(dto.getProbeLibraryName())|| isDirty);
-        isDirty = (polymeraseListBox.isDirty(dto.getPolymerase())|| isDirty);
-        isDirty = (insertSizeTextBox.isDirty(dto.getInsertSize())|| isDirty);
-        isDirty = (pcrAmplificationTextBox.isDirty(dto.getPcrAmplification())|| isDirty);
-        isDirty = (cloningSiteListBox.isDirty(dto.getCloningSite())|| isDirty);
-        return isDirty ;
+        boolean isDirty = false;
+        isDirty = (vectorListBox.isDirty(dto.getVectorName()) || isDirty);
+        isDirty = (digestListBox.isDirty(dto.getDigest()) || isDirty);
+        isDirty = (libraryListBox.isDirty(dto.getProbeLibraryName()) || isDirty);
+        isDirty = (polymeraseListBox.isDirty(dto.getPolymerase()) || isDirty);
+        isDirty = (insertSizeTextBox.isDirty(dto.getInsertSize()) || isDirty);
+        isDirty = (pcrAmplificationTextBox.isDirty(dto.getPcrAmplification()) || isDirty);
+        isDirty = (cloningSiteListBox.isDirty(dto.getCloningSite()) || isDirty);
+        return isDirty;
     }
-
 
 
     protected CloneDTO createDTOFromGUI() {
@@ -222,7 +220,7 @@ public class CloneBox extends AbstractDataBox<CloneDTO>{
         if (false == dirty) {
             fireEventSuccess();
         }
-        return dirty ;
+        return dirty;
     }
 
 

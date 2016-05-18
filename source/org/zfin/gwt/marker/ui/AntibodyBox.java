@@ -1,10 +1,10 @@
 package org.zfin.gwt.marker.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -63,7 +63,7 @@ public class AntibodyBox extends AbstractDataBox<AntibodyDTO> {
 
         AntibodyRPCService.App.getInstance().getAntibodyTypes(new AsyncCallback<AntibodyTypesDTO>() {
             public void onFailure(Throwable throwable) {
-                Window.alert("failure to load clone types: " + throwable);
+                GWT.log("failure to load clone types: " + throwable);
             }
 
             public void onSuccess(AntibodyTypesDTO antibodyTypesDTO) {

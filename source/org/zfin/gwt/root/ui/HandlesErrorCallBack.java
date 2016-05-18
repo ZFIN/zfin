@@ -1,5 +1,6 @@
 package org.zfin.gwt.root.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
@@ -13,12 +14,12 @@ public abstract class HandlesErrorCallBack<T> implements AsyncCallback<T> {
 
     protected String message = "";
     protected HandlesError handlesError = null;
-    protected boolean showTrace = true ;
+    protected boolean showTrace = true;
 
-    public HandlesErrorCallBack(String message, HandlesError handlesError,boolean showTrace) {
+    public HandlesErrorCallBack(String message, HandlesError handlesError, boolean showTrace) {
         this(message);
         this.handlesError = handlesError;
-        this.showTrace = showTrace ;
+        this.showTrace = showTrace;
     }
 
     public HandlesErrorCallBack(String message, HandlesError handlesError) {
@@ -36,7 +37,7 @@ public abstract class HandlesErrorCallBack<T> implements AsyncCallback<T> {
         if (handlesError != null) {
             handlesError.setError(s);
         } else {
-            Window.alert(s);
+            GWT.log(s);
         }
     }
 
@@ -46,7 +47,7 @@ public abstract class HandlesErrorCallBack<T> implements AsyncCallback<T> {
         if (handleOutOfDateError(throwable)) return;
         if (handleTermNotFound(throwable)) return;
         if (handleDuplicateEntry(throwable)) return;
-        displayMessage(message + (showTrace ? throwable : "") );
+        displayMessage(message + (showTrace ? throwable : ""));
     }
 
     protected boolean handleConnectionError(Throwable t) {

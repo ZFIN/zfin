@@ -1,5 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -180,7 +181,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
                 }
                 String cannotRemove = getCannotRemoveMessage(attributionToRemoveID, attributionToRemoveLabel);
                 if (StringUtils.isNotEmpty(cannotRemove)) {
-                    Window.alert(cannotRemove);
+                    GWT.log(cannotRemove);
                     return;
                 }
 
@@ -386,7 +387,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
         @Override
         public void onFailure(Throwable throwable) {
             if (throwable instanceof DeAttributionException)
-                Window.alert(throwable.getMessage());
+                GWT.log(throwable.getMessage());
             else
                 super.onFailure(throwable);
             notWorking();

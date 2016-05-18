@@ -40,6 +40,7 @@ public class FishConstructionPresenter implements Presenter {
     // only few STR will be added in most cases
     private Set<RelatedEntityDTO> newStrList = new TreeSet<>();
     private GenotypeDTO newGenotype;
+    private GenotypeDTO wildtypeGenotype;
 
     private RetrieveGenotypeListCallBack genotypeListCallBack;
     private RetrieveSTRListCallBack strListCallBack;
@@ -82,9 +83,10 @@ public class FishConstructionPresenter implements Presenter {
     }
 
     public void resetGUI() {
-        newGenotype = null;
+        newGenotype = wildtypeGenotype;
         newStrList.clear();
         view.resetGUI();
+        view.setGenotypeName(newGenotype);
     }
 
 
@@ -180,8 +182,10 @@ public class FishConstructionPresenter implements Presenter {
             int index = 0;
             for (GenotypeDTO dto : dtoList) {
                 // set the first genotype -- WT -- into the construction zone
-                if (index == 0)
+                if (index == 0) {
                     newGenotype = dto;
+                    wildtypeGenotype = dto;
+                }
                 if (dto.getName() == null)
                     continue;
                 if (dto.getName().startsWith("---")) {

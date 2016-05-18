@@ -1,8 +1,8 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
@@ -484,7 +484,7 @@ public abstract class AbstractStructureModule extends Composite implements Struc
         }
 
         public void onSuccess(PhenotypePileStructureDTO pileStructure) {
-            Window.alert("Success");
+            GWT.log("Success");
             displayedStructures.add(pileStructure);
             Collections.sort(displayedStructures);
             displayTable.createStructureTable();
