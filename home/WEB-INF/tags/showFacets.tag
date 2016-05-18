@@ -35,17 +35,17 @@
             }
         }
     });
-    $('.facet-group-label-container').click(function(event) {
-        var $target = $(event.target);
-        var $group = $target.closest('.facet-group');
+    $('.facet-group-label-container').click(function() {
+        var $this = $(this);
+        var $group = $this.closest('.facet-group');
         var $values = $group.find('.facet-group-values');
-        var $icon = $target.find('.icon-toggle');
+        var $icon = $this.find('.icon-toggle');
         $icon.toggleClass('open');
         $values.slideToggle(200);
         window.localStorage.setItem($group.data('name'), $icon.hasClass('open') ? 'open' : 'closed');
     });
-    $('.facet-label-container').click(function (event) {
-        var $list = $(event.target).closest('.facet-value-list');
+    $('.facet-label-container').click(function () {
+        var $list = $(this).closest('.facet-value-list');
         var $icon = $list.find('.icon-toggle');
         if (!$icon.length) {
             // no icon, nothing to toggle.
