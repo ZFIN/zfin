@@ -50,6 +50,11 @@ public class MutationDetailTranscriptView extends AbstractViewComposite {
 
     @UiHandler("addConsequenceButton")
     void onClickSaveButton(@SuppressWarnings("unused") ClickEvent event) {
+        // if no consequence selected, do not update.
+        if (consequenceList.getSelectedIndex() == 0) {
+            errorLabel.setText("Need to select a consequence");
+            return;
+        }
         presenter.addTranscriptConsequence(getDtoFromForm());
         resetGUI();
         handleChanges();
@@ -107,6 +112,7 @@ public class MutationDetailTranscriptView extends AbstractViewComposite {
         consequenceList.setSelectedIndex(0);
         exonNumber.clear();
         intronNumber.clear();
+        errorLabel.setText("");
     }
 
     public void fullResetGUI() {

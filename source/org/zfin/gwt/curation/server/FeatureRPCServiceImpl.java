@@ -175,6 +175,11 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 feature.setFeatureDnaMutationDetail(detail);
             }
             FeatureDnaMutationDetail oldDetail = detail.clone();
+            String accessionNumber = featureDTO.getDnaChangeDTO().getSequenceReferenceAccessionNumber();
+            if (StringUtils.isNotEmpty(accessionNumber)) {
+                if (isValidAccession(accessionNumber, "DNA") == null)
+                    throw new ValidationException("DNA accession Number not found: " + accessionNumber);
+            }
             DTOConversionService.updateDnaMutationDetailWithDTO(detail, featureDTO.getDnaChangeDTO());
             if (!detail.equals(oldDetail)) {
                 infrastructureRepository.insertMutationDetailAttribution(detail.getZdbID(), featureDTO.getPublicationZdbID());
@@ -188,6 +193,11 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 feature.setFeatureProteinMutationDetail(detail);
             }
             FeatureProteinMutationDetail oldDetail = detail.clone();
+            String accessionNumber = featureDTO.getProteinChangeDTO().getSequenceReferenceAccessionNumber();
+            if (StringUtils.isNotEmpty(accessionNumber)) {
+                if (isValidAccession(accessionNumber, "Protein") == null)
+                    throw new ValidationException("Protein accession Number not found: " + accessionNumber);
+            }
             DTOConversionService.updateProteinMutationDetailWithDTO(detail, featureDTO.getProteinChangeDTO());
             if (!detail.equals(oldDetail)) {
                 infrastructureRepository.insertMutationDetailAttribution(detail.getZdbID(), featureDTO.getPublicationZdbID());
