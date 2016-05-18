@@ -26,15 +26,13 @@
 </authz:authorize>
 
 <c:if test="${!hidden}">
-    <div class="facet-group ${rootOnlyCssClass}">
+    <div class="facet-group ${rootOnlyCssClass}" data-name="${category}:${name}">
         <div id="${name}-facet-group-label-container" class="facet-group-label-container">
-            <i <c:if test="${!open}"> style="display: none" </c:if> class="${name}-icon-toggle fa fa-fw fa-chevron-down"></i>
-            <i <c:if test="${open}"> style="display: none" </c:if> class="${name}-icon-toggle fa fa-fw fa-chevron-right"></i>
+            <i class="icon-toggle fa fa-fw fa-chevron-right <c:if test="${open}">open</c:if>"></i>
             ${facetGroup.label}
         </div>
-        <div id="${name}-facet-group-values" class="facet-group-values <c:if test="${facetGroup.label == 'Category'}">category-facet-group-values</c:if> "
-                <c:if test="${!open}"> style="display:none;" </c:if>
-                >
+        <div id="${name}-facet-group-values" class="facet-group-values <c:if test="${facetGroup.label == 'Category'}">category-facet-group-values</c:if>"
+                <c:if test="${!open}"> style="display:none;"</c:if>>
             <ol class="facet-field-list list-unstyled">
                 <c:forEach var="facetQuery" items="${facetGroup.facetQueries}" varStatus="loop">
                     <li><zfin-search:showFacetQuery open="true" gaCategory="${zfn:buildFacetedSearchGACategory(category, facetGroup.label)}" facetQuery="${facetQuery}"/></li>
@@ -45,12 +43,6 @@
             </ol>
         </div>
     </div>
-    <script>
-        jQuery('#${name}-facet-group-label-container').click(function() {
-            jQuery('#${name}-facet-group-values').slideToggle(200);
-            jQuery('.${name}-icon-toggle').toggle();
-        });
-    </script>
 </c:if>
 
 

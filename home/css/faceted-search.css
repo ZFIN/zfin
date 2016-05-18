@@ -408,6 +408,13 @@ li.facet-value {
     cursor: pointer;
 }
 
+.icon-toggle {
+    transition: transform 200ms;
+}
+.icon-toggle.open {
+    transform: rotate(90deg);
+}
+
 .facet-label {
     font-size: 15px;
     font-weight: bold;

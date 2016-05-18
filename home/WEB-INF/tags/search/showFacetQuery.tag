@@ -1,25 +1,12 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@attribute name="open" type="java.lang.Boolean" required="true" %>
-<%@attribute name="facetQuery" type="org.zfin.search.presentation.FacetQuery"%>
+<%@attribute name="facetQuery" type="org.zfin.search.presentation.FacetQuery" %>
 <%@attribute name="gaCategory" type="java.lang.String" required="true" %>
 
-
-
-
-
-
-
 <ol class="facet-value-list list-unstyled" id="${name}-facet-value-list">
-
-
-    <div class="facet-value-outer-box"
-         id="${name}-facet-value-outer-box"
-         <c:if test="${open == false}">style="display: none"</c:if>
-    >
-
+    <div <c:if test="${open == false}">style="display: none"</c:if>>
         <div class="single-facet-value-container" id="${name}-facet-value-container">
-
             <c:choose>
                 <%-- not selected --%>
                 <c:when test="${!facetQuery.selected}">
@@ -30,8 +17,8 @@
                             <a class="facet-link"
                                onclick="ga('send', 'event', '${gaCategory} Facet', 'include', '${facetQuery.label}')"
                                href="${facetQuery.url}">
-                                ${facetQuery.label}
-                           </a>
+                                    ${facetQuery.label}
+                            </a>
                         </div>
                         <div class="col-md-3 col-xs-2 facet-count">
                             <span class="pull-right">
@@ -55,15 +42,7 @@
                         </div>
                     </li>
                 </c:otherwise>
-
             </c:choose>
-
-
-
-
         </div>
-
-
     </div>
-
 </ol>
