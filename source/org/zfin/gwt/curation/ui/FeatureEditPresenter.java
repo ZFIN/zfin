@@ -198,6 +198,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
 
         featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
         if (isDirty() && FeatureValidationService.isFeatureSaveable(featureDTO)) {
+            clearError();
             view.working();
             FeatureRPCService.App.getInstance().editFeatureDTO(featureDTO,
                     new FeatureEditCallBack<FeatureDTO>("Failed to create feature:", this) {
@@ -206,6 +207,8 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                         public void onFailure(Throwable throwable) {
                             super.onFailure(throwable);
                             view.notWorking();
+                            view.revertButton.setEnabled(true);
+
                         }
 
                         @Override
