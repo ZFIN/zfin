@@ -654,11 +654,6 @@ public class SearchPrototypeController {
         return "search/phenotype.popup";
     }
 
-    @RequestMapping(value = "/message")
-    public String getSearchMessage() {
-        return "search/searchMessage.popup";
-    }
-
     public Model handleSorting(Model model, SolrQuery query, String baseUrl, String sort) {
         URLCreator urlWithoutSort = new URLCreator(baseUrl);
         urlWithoutSort.removeNameValuePair("sort");
