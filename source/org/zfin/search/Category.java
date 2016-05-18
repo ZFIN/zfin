@@ -114,7 +114,8 @@ public enum Category {
     ),
     MARKER("Marker / Clone",
             TYPE,
-            CHROMOSOME
+            CHROMOSOME,
+            SOURCE
     ),
     SEQUENCE_TARGETING_REAGENT("Sequence Targeting Reagent (STR)",
             TYPE,

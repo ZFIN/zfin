@@ -425,6 +425,9 @@ public class ResultService {
         if (marker.getType().equals(Marker.Type.REGION))
             addComments(result, marker);
         addLocationInfo(result, marker);
+        if (CollectionUtils.isNotEmpty(marker.getSuppliers())) {
+            result.addAttribute("Source", withCommas(marker.getSuppliers(), "organization.name"));
+        }
         List<Marker> genesContainedInClones = getMarkerRepository().getMarkersContainedIn(marker, MarkerRelationship.Type.CLONE_CONTAINS_GENE);
         if (CollectionUtils.isNotEmpty(genesContainedInClones)) {
             result.addAttribute(CLONE_CONTAINS_GENES, withCommasAndLink(genesContainedInClones, "abbreviation", "zdbID"));
