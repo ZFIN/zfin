@@ -612,14 +612,11 @@ public class FacetBuilderService {
 
         if (SolrService.isToBeHumanSorted(fieldName)) {
             Collections.sort(values, new FacetValueAlphanumComparator<>());
-        }
-        if (fieldName.equals("category")) {
+        } else if (fieldName.equals(FieldName.CATEGORY.getName())) {
             Collections.sort(values, new FacetCategoryComparator<>());
-        }
-        if (fieldName.equals("stage")) {
+        } else if (fieldName.equals(FieldName.STAGE.getName())) {
             Collections.sort(values, new FacetStageComparator<>());
         }
-
     }
 
 }

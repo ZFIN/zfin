@@ -403,10 +403,7 @@ public class SearchPrototypeController {
 
             facetValues.addAll(facetField.getValues());
 
-
-            //todo: use field name enum!
-            if (!StringUtils.equals(facetField.getName(), "stage"))
-                Collections.sort(facetValues, new FacetValueAlphanumComparator());
+            facetBuilderService.sortFacetValues(facetField.getName(),facetValues);
 
             for (FacetField.Count count : facetValues) {
                 FacetLookupEntry entry = new FacetLookupEntry();
