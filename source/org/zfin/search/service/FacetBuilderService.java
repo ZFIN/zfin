@@ -50,6 +50,9 @@ public class FacetBuilderService {
         else if (StringUtils.equals(category, Category.MUTANT.getName())) {
             return buildFeatureFacetGroup(response, filterQuerySelectionMap, baseUrl);
         }
+        else if (StringUtils.equals(category, Category.REPORTER_LINE.getName())) {
+            return buildReporterLineFacetGroup(response, filterQuerySelectionMap, baseUrl);
+        }
         else if (StringUtils.equals(category, Category.FISH.getName())) {
             return buildFishFacetGroup(response, filterQuerySelectionMap, baseUrl);
         }
@@ -225,6 +228,15 @@ public class FacetBuilderService {
         return facetGroups;
     }
 
+    public List<FacetGroup> buildReporterLineFacetGroup(QueryResponse response, Map<String, Boolean> filterQuerySelectionMap, String baseUrl) {
+        List<FacetGroup> facetGroups = new ArrayList<>();
+
+        FacetGroup expressionAnatomy = new FacetGroup("Expression Anatomy", true);
+        expressionAnatomy.addFacet(buildFacet(EXPRESSIONS_ANATOMY_TF.getName(), true, response, filterQuerySelectionMap, baseUrl));
+        facetGroups.add(expressionAnatomy);
+
+        return facetGroups;
+    }
 
     public List<FacetGroup> buildFishFacetGroup(QueryResponse response, Map<String, Boolean> filterQuerySelectionMap, String baseUrl) {
         List<FacetGroup> facetGroups = new ArrayList<>();
