@@ -155,12 +155,6 @@ public enum Category {
     COMMUNITY("Community",
             TYPE
     ),
-    /*
-        PERSON("Person",
-                FieldName.GENE,
-                SEQUENCE_ALTERATION
-        ),
-    */
     FISH("Fish", AFFECTED_GENE,
             FieldName.DISEASE,
             EXPRESSIONS_ANATOMY_TF,
@@ -173,7 +167,8 @@ public enum Category {
             FieldName.SEQUENCE_TARGETING_REAGENT,
             FieldName.CONSTRUCT,
             SEQUENCE_ALTERATION,
-            BACKGROUND),;
+            BACKGROUND),
+    REPORTER_LINE("Reporter Line", EXPRESSIONS_ANATOMY_TF);
 
 
     Category(String name, FieldName... fieldNames) {

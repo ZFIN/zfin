@@ -472,7 +472,7 @@
    <field name="popularity" type="file" default="1.0"/>
 
    <field name="url" type="string" indexed="true" stored="true"   />
-   <field name="category" type="keyword" indexed="true" stored="true" required="true" />
+   <field name="category" type="keyword" indexed="true" stored="true" required="true" multiValued="true"/>
 
    <field name="name" type="text" indexed="true" stored="true" required="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="proper_name" type="abbrev" indexed="true" stored="true" termVectors="true" termPositions="true" termOffsets="true" />

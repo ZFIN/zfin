@@ -9,6 +9,7 @@ import org.springframework.util.CollectionUtils;
 import org.zfin.expression.Figure;
 import org.zfin.fish.FeatureGene;
 import org.zfin.framework.presentation.ProvidesLink;
+import org.zfin.search.Category;
 
 /*
 * This should match the fl parameter set as default in solrconfig
@@ -22,8 +23,8 @@ public class SearchResult implements ProvidesLink {
     String name;
     @Field("full_name")
     String fullName;
-    @Field
-    String category;
+    @Field("category")
+    List<String> categories;
     @Field
     String type;
 
@@ -126,12 +127,12 @@ public class SearchResult implements ProvidesLink {
         this.name = name;
     }
 
-    public String getCategory() {
-        return category;
+    public List<String> getCategories() {
+        return categories;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategories(List<String> categories) {
+        this.categories = categories;
     }
 
     public String getType() {
@@ -312,6 +313,17 @@ public class SearchResult implements ProvidesLink {
         if (CollectionUtils.isEmpty(images))
             return null;
         return images.get(0);
+    }
+
+    public String getCategory() {
+        if (categories == null || categories.size() == 0) { return null; }
+        else if (categories.size() == 1) { return categories.get(0); }
+        else if (categories.size() == 2 && categories.contains(Category.REPORTER_LINE.getName())) {
+            return Category.REPORTER_LINE.getName();
+        } else {
+            return categories.get(0);
+        }
+
     }
 
 
