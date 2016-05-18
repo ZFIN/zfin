@@ -102,8 +102,8 @@ public class MutationDetailProteinView extends AbstractViewComposite {
     void onChangePositionStart(@SuppressWarnings("unused") ChangeEvent event) {
         if (validateNumber(positionStart)) {
             validateStartEnd(positionStart, positionEnd);
-            handleChanges();
         }
+        handleChanges();
     }
 
     @UiHandler("positionEnd")
@@ -115,15 +115,14 @@ public class MutationDetailProteinView extends AbstractViewComposite {
     void onChangePositionEnd(@SuppressWarnings("unused") ChangeEvent event) {
         if (validateNumber(positionEnd)) {
             validateStartEnd(positionStart, positionEnd);
-            handleChanges();
         }
+        handleChanges();
     }
 
     @UiHandler("minusAminoAcid")
     void onBlurMinusBasePair(@SuppressWarnings("unused") KeyUpEvent event) {
-        if (validateNumber(minusAminoAcid)) {
-            handleChanges();
-        }
+        validateNumber(minusAminoAcid);
+        handleChanges();
         usePlusMinusControls();
         if (!minusAminoAcid.isEmpty())
             plusAminoAcid.clear();
@@ -131,8 +130,8 @@ public class MutationDetailProteinView extends AbstractViewComposite {
 
     @UiHandler("plusAminoAcid")
     void onBlurPlusBasePair(@SuppressWarnings("unused") KeyUpEvent event) {
-        if (validateNumber(plusAminoAcid))
-            handleChanges();
+        validateNumber(plusAminoAcid);
+        handleChanges();
         usePlusMinusControls();
         if (!plusAminoAcid.isEmpty())
             minusAminoAcid.clear();

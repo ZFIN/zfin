@@ -10,7 +10,10 @@ public class NumberTextBox extends AbstractTextBox<Integer> {
         if (text.trim().length() == 0) {
             return null;
         } else {
-            return Integer.parseInt(text);
+            if (StringUtils.isNumeric(text))
+                return Integer.parseInt(text);
+            else
+                return null;
         }
     }
 

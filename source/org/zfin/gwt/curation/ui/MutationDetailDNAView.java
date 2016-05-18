@@ -8,6 +8,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
@@ -86,8 +87,8 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         if (validateNumber(positionStart)) {
             if (positionEnd.isVisible())
                 validateStartEnd(positionStart, positionEnd);
-            handleChanges();
         }
+        handleChanges();
     }
 
     @UiHandler("positionEnd")
@@ -99,34 +100,32 @@ public class MutationDetailDNAView extends AbstractViewComposite {
     void onChangePositionEnd(@SuppressWarnings("unused") ChangeEvent event) {
         if (validateNumber(positionEnd)) {
             validateStartEnd(positionStart, positionEnd);
-            handleChanges();
         }
+        handleChanges();
     }
 
     @UiHandler("minusBasePair")
     void onChangeMinusBasePair(@SuppressWarnings("unused") KeyUpEvent event) {
-        if (validateNumber(minusBasePair)) {
-            handleChanges();
-        }
+        validateNumber(minusBasePair);
+        handleChanges();
     }
 
     @UiHandler("plusBasePair")
-    void onBlurPlusBasePair(@SuppressWarnings("unused") KeyUpEvent event) {
-        if (validateNumber(plusBasePair)) {
-            handleChanges();
-        }
+    void onChangePlusBasePair(@SuppressWarnings("unused") KeyUpEvent event) {
+        validateNumber(plusBasePair);
+        handleChanges();
     }
 
     @UiHandler("exonNumber")
-    void onBlurExonNumber(@SuppressWarnings("unused") KeyUpEvent event) {
-        if (validateNumber(exonNumber))
-            handleChanges();
+    void onChangeExonNumber(@SuppressWarnings("unused") KeyUpEvent event) {
+        validateNumber(exonNumber);
+        handleChanges();
     }
 
     @UiHandler("intronNumber")
-    void onBlurIntronNumber(@SuppressWarnings("unused") KeyUpEvent event) {
-        if (validateNumber(intronNumber))
-            handleChanges();
+    void onChangeIntronNumber(@SuppressWarnings("unused") KeyUpEvent event) {
+        validateNumber(intronNumber);
+        handleChanges();
     }
 
     @UiHandler("nucleotideChangeList")
