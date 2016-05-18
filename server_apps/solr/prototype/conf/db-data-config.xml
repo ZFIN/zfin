@@ -142,7 +142,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
                             and er.xpatres_expression_found='t'
                             and g.geno_is_wildtype='t'
                             and ee.xpatex_gene_zdb_id is not null
-                            and term_ontology='zebrafish_anatomy'
+
                         union
                         select
                            term_ont_id as xref, term_name as anatomy_direct,
@@ -157,7 +157,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                 and er.xpatres_expression_found='t'
                                 and g.geno_is_wildtype='t'
                                 and ee.xpatex_gene_zdb_id is not null
-                                and term_ontology='zebrafish_anatomy'
+
 
                            "
                         cacheImpl="SortedMapBackedCache"
@@ -178,7 +178,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                                                                 and er.xpatres_expression_found='t'
                                                                                 and g.geno_is_wildtype='t'
                                                                                 and ee.xpatex_gene_zdb_id is not null
-                                                                                and term_ontology='zebrafish_anatomy'
+
                                                 union
                                                 select                           term_ont_id as xref, term_name as anatomy_parent,
                                                                                  ee.xpatex_gene_zdb_id as gene_zdb_id
@@ -193,7 +193,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                                                                 and er.xpatres_expression_found='t'
                                                                                 and g.geno_is_wildtype='t'
                                                                                 and ee.xpatex_gene_zdb_id is not null
-                                                                                and term_ontology='zebrafish_anatomy'
+
                                                 "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
@@ -931,6 +931,22 @@ where ul_data_zdb_id[1,8] != 'ZDB-GENE'
                cacheImpl="SortedMapBackedCache"
                where="marker_zdb_id=marker.id"/>
 
+       <entity name="marker_supplier"
+               datasource="db" query=" select lab.zdb_id as xref, lab.name as source, idsup_data_zdb_id
+                           from int_data_supplier, lab
+                           where idsup_data_zdb_id[1,7] != 'ZDB-ATB'
+                           and idsup_data_zdb_id[1,8] != 'ZDB-GENE'
+  and idsup_data_zdb_id[1,7] != 'ZDB-EFG'
+                             and idsup_supplier_zdb_id = lab.zdb_id
+                           union
+                           select company.zdb_id as xref, company.name as source, idsup_data_zdb_id
+                           from int_data_supplier, company
+                            where idsup_data_zdb_id[1,7] != 'ZDB-ATB'
+                           and idsup_data_zdb_id[1,8] != 'ZDB-GENE'
+  and idsup_data_zdb_id[1,7] != 'ZDB-EFG'
+                             and idsup_supplier_zdb_id = company.zdb_id;"
+               cacheImpl="SortedMapBackedCache"
+               where="idsup_data_zdb_id=marker.id"/>
 
 
 
