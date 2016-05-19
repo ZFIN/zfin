@@ -18,7 +18,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.presentation.PaginationBean;
-import org.zfin.infrastructure.ReplacementZdbID;
 import org.zfin.infrastructure.service.ZdbIDService;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
@@ -28,7 +27,6 @@ import org.zfin.search.FacetCategoryComparator;
 import org.zfin.search.FacetValueAlphanumComparator;
 import org.zfin.search.service.*;
 import org.zfin.util.URLCreator;
-import org.zfin.util.ZfinStringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,9 +46,9 @@ public class SearchPrototypeController {
     @Autowired
     private QueryManipulationService queryManipulationService;
 
-    @Autowired SearchSuggestionService searchSuggestionService;
-
     @Autowired
+    SearchSuggestionService searchSuggestionService;
+
     private FacetBuilderService facetBuilderService;
 
     @Autowired
@@ -96,7 +94,7 @@ public class SearchPrototypeController {
 
 
         Boolean redirectToFirstResult = false;
-        if (StringUtils.startsWith(q,"!!")) {
+        if (StringUtils.startsWith(q, "!!")) {
             redirectToFirstResult = true;
             q = q.substring(2);
         }
@@ -119,7 +117,7 @@ public class SearchPrototypeController {
         }
 
 
-        model.addAttribute("suggestions",searchSuggestionService.getSuggestions(q));
+        model.addAttribute("suggestions", searchSuggestionService.getSuggestions(q));
 
         if (StringUtils.isNotEmpty(q) && q.startsWith("-")) {
             model.addAttribute("isDashQuery", true);
@@ -138,13 +136,13 @@ public class SearchPrototypeController {
         model.addAttribute("request", request);
 
         if (explain) {
-            query.set("fl", "name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count, screen, has_orthology, score, xpat_zdb_id, fig_zdb_id, [explain]","pgcmid");
+            query.set("fl", "name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count, screen, has_orthology, score, xpat_zdb_id, fig_zdb_id, [explain]", "pgcmid");
         }
 
 
         URLCreator resubmitUrlCreator = new URLCreator(baseUrl);
         resubmitUrlCreator.removeNameValuePair("q");
-        resubmitUrlCreator.addNamevaluePair("q","");
+        resubmitUrlCreator.addNamevaluePair("q", "");
         model.addAttribute("baseUrlWithoutQ", resubmitUrlCreator.getURL());
 
         query = handleFacetSorting(query, request);
@@ -153,9 +151,13 @@ public class SearchPrototypeController {
             page = 1;
 
         //default to 20 rows
-        if (rows == null) { rows = 20; }
+        if (rows == null) {
+            rows = 20;
+        }
         //allow for no more than 500
-        if (rows > 500) { rows = 500; }
+        if (rows > 500) {
+            rows = 500;
+        }
 
         query.setRows(rows);
         int start = (page - 1) * rows;
@@ -238,9 +240,9 @@ public class SearchPrototypeController {
 
         SolrDocumentList solrDocumentList = response.getResults();
 
-
-        model.addAttribute("facetGroups", facetBuilderService.buildFacetGroup(category, response, query, baseUrl));
-        model.addAttribute("facetQueries", facetBuilderService.getFacetQueries(response, baseUrl));
+        facetBuilderService = new FacetBuilderService(response);
+        model.addAttribute("facetGroups", facetBuilderService.buildFacetGroup(category, baseUrl, query));
+        model.addAttribute("facetQueries", facetBuilderService.getFacetQueries(baseUrl));
         model.addAttribute("response", response);
         model.addAttribute("query", query);
 
@@ -304,9 +306,9 @@ public class SearchPrototypeController {
             rowsUrlSeparator = "&";
         }
         model.addAttribute("rowsUrlSeparator", rowsUrlSeparator);
-        model.addAttribute("rows",rows);
+        model.addAttribute("rows", rows);
 
-        model.addAttribute("downloadUrl", baseUrl.replaceAll("^/search","/action/quicksearch/download"));
+        model.addAttribute("downloadUrl", baseUrl.replaceAll("^/search", "/action/quicksearch/download"));
         paginationBean.setPage(page.toString());
         paginationBean.setTotalRecords((int) solrDocumentList.getNumFound());
         paginationBean.setQueryString(request.getQueryString());
@@ -492,12 +494,12 @@ public class SearchPrototypeController {
 
     @RequestMapping(value = "/download")
     public void downloadResults(@RequestParam(value = "q", required = false) String q,
-                                  @RequestParam(value = "fq", required = false) String[] filterQuery,
-                                  @RequestParam(value = "category", required = false) String category,
-                                  @RequestParam(value = "page", required = false) String pageNumber,
-                                  @RequestParam(value = "keepfacets", required = false) Boolean isKeptFacets,
-                                  HttpServletResponse response,
-                                  HttpServletRequest request) {
+                                @RequestParam(value = "fq", required = false) String[] filterQuery,
+                                @RequestParam(value = "category", required = false) String category,
+                                @RequestParam(value = "page", required = false) String pageNumber,
+                                @RequestParam(value = "keepfacets", required = false) Boolean isKeptFacets,
+                                HttpServletResponse response,
+                                HttpServletRequest request) {
 
         response.setContentType("data:text/csv;charset=utf-8");
         response.setHeader("Content-Disposition", "attachment; filename=\"zfin_search_results.csv\"");
@@ -517,9 +519,11 @@ public class SearchPrototypeController {
         //  no highlighting
         query.setHighlight(false);
         //  set the fl to just name, id
-        query.set("fl","id, name");
+        query.set("fl", "id, name");
 
-        if (StringUtils.isNotEmpty(q)) { query.setQuery(q); }
+        if (StringUtils.isNotEmpty(q)) {
+            query.setQuery(q);
+        }
         if (ArrayUtils.isNotEmpty(filterQuery)) {
             for (String fq : filterQuery) {
                 query.addFilterQuery(fq);
@@ -551,10 +555,10 @@ public class SearchPrototypeController {
             CSVPrinter csvPrinter = new CSVPrinter(outputwriter, csvFormat);
 
 
-            csvPrinter.printRecord("id","name");
+            csvPrinter.printRecord("id", "name");
 
             for (SearchResult result : results) {
-                csvPrinter.printRecord(result.getId(),result.getName());
+                csvPrinter.printRecord(result.getId(), result.getName());
             }
 
             outputwriter.flush();
@@ -577,7 +581,6 @@ public class SearchPrototypeController {
         outputwriter.flush();
         outputwriter.close();
 */
-
 
 
     }
