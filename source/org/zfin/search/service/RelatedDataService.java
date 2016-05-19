@@ -1,6 +1,7 @@
 package org.zfin.search.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
@@ -16,6 +17,7 @@ import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.OrthologyPresentationBean;
+import org.zfin.marker.presentation.SequencePageInfoBean;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.GenericTerm;
@@ -117,24 +119,20 @@ public class RelatedDataService {
 
 
         if (!(id.contains("EFG"))) {
-
             if (StringUtils.equals(category, Category.GENE.getName())) {
+                Marker marker = getMarkerRepository().getMarkerByID(id);
                 if (!ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
-                    OrthologyPresentationBean orthologyEvidenceBean = MarkerService
-                            .getOrthologyEvidence(getMarkerRepository().getGeneByID(id));
+                    OrthologyPresentationBean orthologyEvidenceBean = MarkerService.getOrthologyEvidence(marker);
                     if (orthologyEvidenceBean != null) {
-                        List<OrthologyPresentationRow> markerList = orthologyEvidenceBean
-                                .getOrthologs();
+                        List<OrthologyPresentationRow> markerList = orthologyEvidenceBean.getOrthologs();
                         if (CollectionUtils.isNotEmpty(markerList)) {
                             links.add(getOrthologyLink(id));
                         }
                     }
                 }
-                String link = getSequencesLink(id);
-                links.add(link);
+                addSequenceLink(links, marker);
             }
         }
-
 
         //Special case here, so that the ZFIN orthology pub doesn't get an orthlogy link, because the page will take 10 minutes to load!
         if (StringUtils.equals(category, Category.PUBLICATION.getName())
@@ -153,8 +151,7 @@ public class RelatedDataService {
         if (StringUtils.equals(category, Category.MARKER.getName())) {
             if (ActiveData.isValidActiveData(id, ActiveData.Type.BAC) || ActiveData.isValidActiveData(id, ActiveData.Type.PAC)
                     || ActiveData.isValidActiveData(id, ActiveData.Type.CDNA) || ActiveData.isValidActiveData(id, ActiveData.Type.EST)) {
-                String link = getSequencesLink(id);
-                links.add(link);
+                addSequenceLink(links, id);
             }
             links = sortLinks(links, markerCloneRelatedDateCategories);
         }
@@ -418,6 +415,21 @@ public class RelatedDataService {
         }
 
         return makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
+    }
+
+    private void addSequenceLink(Collection<String> links, String markerId) {
+        addSequenceLink(links, getMarkerRepository().getMarkerByID(markerId));
+    }
+
+    private void addSequenceLink(Collection<String> links, Marker marker) {
+        if (marker == null) {
+            return;
+        }
+
+        SequencePageInfoBean sequenceInfo = MarkerService.getSequenceInfoFull(marker);
+        if (CollectionUtils.isNotEmpty(sequenceInfo.getDbLinks()) || MapUtils.isNotEmpty(sequenceInfo.getRelatedMarkerDBLinks())) {
+            links.add(getSequencesLink(marker.getZdbID()));
+        }
     }
 
     private String getSequencesLink(String id) {
