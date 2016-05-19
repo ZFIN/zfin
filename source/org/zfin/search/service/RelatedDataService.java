@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.infrastructure.ActiveData;
+import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.OrthologyPresentationBean;
 import org.zfin.marker.service.MarkerService;
@@ -29,6 +31,7 @@ import org.zfin.search.presentation.SearchResult;
 
 import java.util.*;
 
+import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 
@@ -70,19 +73,46 @@ public class RelatedDataService {
         String category = result.getCategory();
 
         List<String> links = new ArrayList<>();
-
+        String gBrowseLink;
         if (StringUtils.equals(category, Category.GENE.getName())
                 || (StringUtils.equals(category, Category.MUTANT.getName()) && (StringUtils.startsWith(result.getName(), "la0")))) {
 
-            String gBrowseLink = getGBrowseLink(id);
+            //String gBrowseLink = getGBrowseLink(id);
+            if (ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
+                List<Marker> markerList = getMarkerRepository().getTranscriptByZdbID(id).getAllRelatedMarker();
+                int numberOfTargetGenes = 0;
+                for (Marker marker : markerList) {
+                    if (marker.getMarkerType().getType().name().equals(ActiveData.Type.GENE.name())) {
+                        id = marker.getZdbID();
+                        numberOfTargetGenes++;
+                    }
+                }
+                if (numberOfTargetGenes > 1) {
+                    return null;
+                }
+                gBrowseLink=makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
+                links.add(gBrowseLink);
+            }
 
-            if (!(id.contains("EFG"))) {
+
+            if (ActiveData.isValidActiveData(id, ActiveData.Type.GENE)) {
+                List<MarkerGenomeLocation> genomeLocations = getLinkageRepository().getGenomeLocation(getMarkerRepository().getMarkerByID(id));
+                for (MarkerGenomeLocation genomeLocation : genomeLocations) {
+                    if (genomeLocation.getSource() == GenomeLocation.Source.ZFIN) {
+
+
+                        gBrowseLink = makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
+                        links.add(gBrowseLink);
+                    }
+                }
+            }
+            /*if (!(id.contains("EFG"))) {
                 if (!(entityName.contains("WITHDRAWN"))) {
                     if (gBrowseLink != null) {
                         links.add(gBrowseLink);
                     }
                 }
-            }
+            }*/
         }
 
 
@@ -384,7 +414,9 @@ public class RelatedDataService {
             if (numberOfTargetGenes > 1) {
                 return null;
             }
+
         }
+
         return makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
     }
 
