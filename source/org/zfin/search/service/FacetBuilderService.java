@@ -183,10 +183,12 @@ public class FacetBuilderService {
 
         facetGroups.add(expressedGene);
 
-        facetGroups.add(buildSingleFacetGroup("Expressed In Anatomy", EXPRESSIONS_ANATOMY_TF.getName(), true, filterQuerySelectionMap));
+
+        facetGroups.add(buildSingleFacetGroup("Expressed In Anatomy", EXPRESSION_ANATOMY_TF.getName(), true, filterQuerySelectionMap));
         facetGroups.add(buildSingleFacetGroup("Stage", "stage", true, filterQuerySelectionMap));
         facetGroups.add(buildSingleFacetGroup("Has Image", "has_image", true, filterQuerySelectionMap));
         FacetGroup wildtypeGroup = buildSingleFacetGroup("Is Wildtype and Clean", "is_wildtype", false, filterQuerySelectionMap);
+
         wildtypeGroup.setRootOnly(true);
         facetGroups.add(wildtypeGroup);
         facetGroups.add(buildSingleFacetGroup("Assay", "assay", false, filterQuerySelectionMap));
@@ -227,7 +229,9 @@ public class FacetBuilderService {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
         FacetGroup expressionAnatomy = new FacetGroup("Expression Anatomy", true);
-        expressionAnatomy.addFacet(buildFacet(EXPRESSIONS_ANATOMY_TF.getName(), true, filterQuerySelectionMap));
+
+        expressionAnatomy.addFacet(buildFacet(EXPRESSION_ANATOMY_TF.getName(), true, filterQuerySelectionMap));
+
         facetGroups.add(expressionAnatomy);
 
         facetGroups.add(buildSingleFacetGroup("Regulatory Region", REGULATORY_REGION.getName(), true, filterQuerySelectionMap));
@@ -248,7 +252,9 @@ public class FacetBuilderService {
         facetGroups.add(modelOf);
 
         FacetGroup expressionAnatomy = new FacetGroup("Expression Anatomy", true);
-        expressionAnatomy.addFacet(buildFacet(EXPRESSIONS_ANATOMY_TF.getName(), true, filterQuerySelectionMap));
+
+        expressionAnatomy.addFacet(buildFacet(EXPRESSION_ANATOMY_TF.getName(), true, filterQuerySelectionMap));
+
         facetGroups.add(expressionAnatomy);
 
         facetGroups.add(buildPhenotypeBlock(filterQuerySelectionMap));
@@ -278,7 +284,9 @@ public class FacetBuilderService {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
         FacetGroup expressionAnatomy = new FacetGroup("Expression Anatomy", true);
-        expressionAnatomy.addFacet(buildFacet(EXPRESSIONS_ANATOMY_TF.getName(), true, filterQuerySelectionMap));
+
+        expressionAnatomy.addFacet(buildFacet(EXPRESSION_ANATOMY_TF.getName(), true, filterQuerySelectionMap));
+
         facetGroups.add(expressionAnatomy);
 
         FacetGroup expressedGene = new FacetGroup("Expressed Gene", true);

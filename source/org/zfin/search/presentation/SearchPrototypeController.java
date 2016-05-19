@@ -565,20 +565,6 @@ public class SearchPrototypeController {
             logger.error(e);
         }
 
-/*
-        OutputStream resOs= response.getOutputStream();
-        OutputStream buffOs= new BufferedOutputStream(resOs);
-        OutputStreamWriter outputwriter = new OutputStreamWriter(buffOs);
-
-        CsvWriter writer = new CsvWriter(outputwriter, '\u0009');
-        for(int i=1;i <allRecords.size();i++){
-            CompositeRequirement aReq=allRecords.get(i);
-            writer.write(aReq.toString());
-        }
-        outputwriter.flush();
-        outputwriter.close();
-*/
-
 
     }
 
