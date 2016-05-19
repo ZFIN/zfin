@@ -4249,7 +4249,7 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
 
 
            <entity name="pub_journal"
-                   datasource="db" query="select jrnl_abbrev as journal, zdb_id as pub_zdb_id
+                   datasource="db" query="select jrnl_abbrev as journal, jrnl_name as journal_name, zdb_id as pub_zdb_id
                      from publication,journal
                     where pub_jrnl_zdb_id = jrnl_zdb_id;"
                    cacheImpl="SortedMapBackedCache"
