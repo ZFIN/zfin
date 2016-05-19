@@ -36,7 +36,7 @@ class RelatedLinksSpec extends ZfinIntegrationSpec {
         List<String> links = relatedDataService.getRelatedDataLinks(result)
 
         then:
-        expect links, everyItem(not(containsString("sequence/view")))
+        expect links, everyItem(not(containsString(RelatedDataService.SEQUENCES)))
     }
 
     def "pxna should have sequence related link"() {
@@ -45,7 +45,7 @@ class RelatedLinksSpec extends ZfinIntegrationSpec {
         List<String> links = relatedDataService.getRelatedDataLinks(result)
 
         then:
-        expect links, hasItem(containsString("sequence/view"))
+        expect links, hasItem(containsString(RelatedDataService.SEQUENCES))
     }
 
 }
