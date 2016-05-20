@@ -1857,7 +1857,7 @@ select
                             union
                             select distinct cons_construct_zdb_id as construct_zdb_id, recattrib_source_zdb_id as xref
                             from record_attribution, construct_search,feature_marker_relationship
-                            where recattrib_data_zdb_id = fmrel_feature_zdb_id
+                            where recattrib_data_zdb_id = fmrel_ftr_zdb_id
                             and fmrel_mrkr_zdb_id=cons_construct_zdb_id"
 
                    where="construct_zdb_id=construct.id"
@@ -3737,7 +3737,8 @@ where feature_zdb_id = ftmd_feature_zdb_id
                              end as term_status,
                              term_definition as definition
                       from term
-                      where term_ontology in ('biological_process', 'cellular_component', 'molecular_function','zebrafish_anatomy','disease_ontology');
+                      where term_ontology in ('biological_process', 'cellular_component', 'molecular_function','zebrafish_anatomy','disease_ontology')
+                      and term_is_secondary = 'f';
  ">
 
            <entity name="term_aliases"
