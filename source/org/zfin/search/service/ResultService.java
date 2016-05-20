@@ -1,6 +1,5 @@
 package org.zfin.search.service;
 
-import com.google.common.base.Joiner;
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -176,9 +175,7 @@ public class ResultService {
         }
 
         if (CollectionUtils.isNotEmpty(isotypeList)) {
-            type += "[";
-            type += Joiner.on(", ").join(isotypeList);
-            type += "]";
+            type += "[" + withCommas(isotypeList) + "]";
         }
         if (org.apache.commons.lang.StringUtils.isNotEmpty(type)) {
             result.addAttribute("Type:", type);
@@ -333,7 +330,7 @@ public class ResultService {
             }
 
             if (feature.getFeatureTranscriptMutationDetailSet() != null && feature.getFeatureTranscriptMutationDetailSet().size() > 0) {
-                result.addAttribute(CONSEQUENCE, StringUtils.join(consequenceStatements, ", "));
+                result.addAttribute(CONSEQUENCE, withCommas(consequenceStatements));
             }
             if (feature.getConstructs() != null && feature.getConstructs().size() > 0) {
                 result.addAttribute(CONSTRUCT, withCommas(feature.getConstructs(), "marker.name"));
@@ -776,7 +773,7 @@ public class ResultService {
                 new BeanToPropertyValueTransformer(property));
 
         //comma separate it
-        return Joiner.on(", ").join(stringList);
+        return withCommas(stringList);
     }
 
     public String withCommasAndItalics(Collection collection, String property) {
@@ -786,7 +783,7 @@ public class ResultService {
                 new BeanToPropertyValueTransformer(property));
 
         //comma separate it
-        return "<i>" + Joiner.on(", ").join(stringList) + "</i>";
+        return "<i>" + withCommas(stringList) + "</i>";
     }
 
     /**
@@ -812,7 +809,7 @@ public class ResultService {
             }
         }
         //comma separate it
-        return Joiner.on(", ").join(stringList);
+        return withCommas(stringList);
     }
 
 
@@ -823,7 +820,7 @@ public class ResultService {
      * @return
      */
     public String withCommas(Collection collection) {
-        return Joiner.on(", ").join(collection);
+        return StringUtils.join(collection, ", ");
     }
 
 
