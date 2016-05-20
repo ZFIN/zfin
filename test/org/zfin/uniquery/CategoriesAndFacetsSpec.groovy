@@ -8,7 +8,6 @@ import org.apache.solr.client.solrj.response.QueryResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
 import org.zfin.search.FieldName
-import org.zfin.search.service.FacetBuilderService
 import org.zfin.search.service.SolrService
 import org.zfin.search.Category
 import spock.lang.Shared
@@ -21,9 +20,6 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
 
     @Autowired
     SolrService solrService
-
-    @Autowired
-    FacetBuilderService facetBuilderService
 
     @Shared
     SolrClient client
