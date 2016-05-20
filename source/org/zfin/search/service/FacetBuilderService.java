@@ -235,6 +235,9 @@ public class FacetBuilderService {
         expressionAnatomy.addFacet(buildFacet(EXPRESSIONS_ANATOMY_TF.getName(), true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(expressionAnatomy);
 
+        facetGroups.add(buildSingleFacetGroup("Regulatory Region", REGULATORY_REGION.getName(), true, response, filterQuerySelectionMap, baseUrl));
+
+
         return facetGroups;
     }
 

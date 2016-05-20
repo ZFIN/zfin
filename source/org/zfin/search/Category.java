@@ -168,7 +168,7 @@ public enum Category {
             FieldName.CONSTRUCT,
             SEQUENCE_ALTERATION,
             BACKGROUND),
-    REPORTER_LINE("Reporter Line", EXPRESSIONS_ANATOMY_TF);
+    REPORTER_LINE("Reporter Line", EXPRESSIONS_ANATOMY_TF,REGULATORY_REGION);
 
 
     Category(String name, FieldName... fieldNames) {
