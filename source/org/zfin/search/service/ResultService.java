@@ -54,41 +54,42 @@ public class ResultService {
 
     public static String ABSTRACT = "Abstract:";
     public static String ADDRESS = "Address:";
-    public static String AUTHORS = "Authors:";
-    public static String PREVIOUS_NAME = "Previous Names:";
-    public static String LOCATION = "Location:";
-    public static String GENE_NAME = "Gene Name:";
-    public static String PSEUDOGENE_NAME = "Pseudogene Name:";
-    public static String EFG_NAME = "Engineered Foreign Gene Name:";
-    public static String SYNONYMS = "Synonyms:";
     public static String AFFECTED_GENES = "Affected Genes:";
-    public static String TARGETED_GENES = "Targeted Genes:";
-    public static String TYPE = "Type:";
-    public static String CONSTRUCT = "Construct:";
-    public static String SEQUENCE = "Sequence:";
-    public static String CLONE_PROBLEM_TYPE = "Clone Problem Type:";
+    public static String ANTIBODY = "Antibody:";
+    public static String AUTHORS = "Authors:";
+    public static String CAPTION = "Caption:";
     public static String CLONE_CONTAINS_GENES = "Clone Contains Genes:";
     public static String CLONE_ENCODED_BY_GENES = "Clone Encoded By Gene:";
-    public static String QUALITY = "Quality:";
-    public static String GENOTYPE = "Genotype:";
-    public static String STAGE = "Stage:";
+    public static String CLONE_PROBLEM_TYPE = "Clone Problem Type:";
+    public static String COMMENT = "Comment:";
     public static String CONDITIONS = "Conditions:";
-    public static String PUBLICATION = "Publication:";
-    public static String CAPTION = "Caption:";
-    public static String PHENOTYPE = "Phenotype:";
+    public static String CONSEQUENCE = "Consequence:";
+    public static String CONSTRUCT = "Construct:";
+    public static String EFG_NAME = "Engineered Foreign Gene Name:";
     public static String EMAIL = "Email:";
     public static String EXPRESSION = "Expression:";
     public static String FISH = "Fish:";
     public static String GENE = "Gene:";
-    public static String ANTIBODY = "Antibody:";
-    public static String PROBE = "Probe:";
-    public static String SCREEN = "Screen:";
+    public static String GENE_NAME = "Gene Name:";
+    public static String GENOTYPE = "Genotype:";
     public static String JOURNAL = "Journal:";
-    public static String NOTE = "Note:";
-    public static String COMMENT = "Comment:";
     public static String LINE_DESIGNATION = "Line Designation:";
-    public static String CONSEQUENCE = "Consequence:";
+    public static String LOCATION = "Location:";
+    public static String NOTE = "Note:";
+    public static String PHENOTYPE = "Phenotype:";
+    public static String PREVIOUS_NAME = "Previous Names:";
+    public static String PROBE = "Probe:";
+    public static String PSEUDOGENE_NAME = "Pseudogene Name:";
+    public static String PUBLICATION = "Publication:";
+    public static String QUALITY = "Quality:";
+    public static String SCREEN = "Screen:";
+    public static String SEQUENCE = "Sequence:";
+    public static String SOURCE = "Source:";
+    public static String STAGE = "Stage:";
+    public static String SYNONYMS = "Synonyms:";
+    public static String TARGETED_GENES = "Targeted Genes:";
     public static String TRANSCRIPT_NAME = "Transcript Name:";
+    public static String TYPE = "Type:";
 
 
     public void injectAttributes(Collection<SearchResult> results) {
@@ -185,7 +186,7 @@ public class ResultService {
 
 
         if (CollectionUtils.isNotEmpty(antibody.getSuppliers())) {
-            result.addAttribute("Source", withCommas(antibody.getSuppliers(), "organization.name"));
+            result.addAttribute(SOURCE, withCommas(antibody.getSuppliers(), "organization.name"));
         }
     }
 
@@ -422,11 +423,12 @@ public class ResultService {
         }
 
         addSynonyms(result, marker);
-        if (marker.getType().equals(Marker.Type.REGION))
+        if (marker.getType().equals(Marker.Type.REGION)) {
             addComments(result, marker);
+        }
         addLocationInfo(result, marker);
         if (CollectionUtils.isNotEmpty(marker.getSuppliers())) {
-            result.addAttribute("Source", withCommas(marker.getSuppliers(), "organization.name"));
+            result.addAttribute(SOURCE, withCommas(marker.getSuppliers(), "organization.name"));
         }
         List<Marker> genesContainedInClones = getMarkerRepository().getMarkersContainedIn(marker, MarkerRelationship.Type.CLONE_CONTAINS_GENE);
         if (CollectionUtils.isNotEmpty(genesContainedInClones)) {
@@ -516,7 +518,7 @@ public class ResultService {
     }
 
     protected void addComments(SearchResult result, Marker marker) {
-            result.addAttribute(COMMENT, marker.getPublicComments());
+        result.addAttribute(COMMENT, marker.getPublicComments());
     }
 
     public void injectExpressionAttributes(SearchResult result) {
@@ -566,7 +568,6 @@ public class ResultService {
 
             List<String> results = new ArrayList<>();
             List<ExpressionResult> expressionResults = new ArrayList<>();
-
 
 
             //Surprisngly, it turns out that this actually performs better than a query.  Could be caching, but we like caching.
@@ -721,12 +722,6 @@ public class ResultService {
     }
 
 
-
-
-
-
-
-
     public void injectPublicationAttributes(SearchResult result) {
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication(result.getId());
 
@@ -783,6 +778,7 @@ public class ResultService {
         //comma separate it
         return Joiner.on(", ").join(stringList);
     }
+
     public String withCommasAndItalics(Collection collection, String property) {
 
         //get the named property out as a list of strings
@@ -790,8 +786,9 @@ public class ResultService {
                 new BeanToPropertyValueTransformer(property));
 
         //comma separate it
-        return "<i>"+Joiner.on(", ").join(stringList)+"</i>";
+        return "<i>" + Joiner.on(", ").join(stringList) + "</i>";
     }
+
     /**
      * Create a comma separated list from a property of each member of a collection
      * including a hyperlink to the zdbID
