@@ -3737,7 +3737,8 @@ where feature_zdb_id = ftmd_feature_zdb_id
                              end as term_status,
                              term_definition as definition
                       from term
-                      where term_ontology in ('biological_process', 'cellular_component', 'molecular_function','zebrafish_anatomy','disease_ontology');
+                      where term_ontology in ('biological_process', 'cellular_component', 'molecular_function','zebrafish_anatomy','disease_ontology')
+                      and term_is_secondary = 'f';
  ">
 
            <entity name="term_aliases"
