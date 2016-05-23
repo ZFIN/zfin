@@ -2,6 +2,7 @@ package org.zfin.search.service;
 
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.zfin.feature.FeatureTranscriptMutationDetail;
 import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.fish.presentation.FishPresentation;
 import org.zfin.fish.repository.FishService;
+import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.mapping.MappingService;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -28,9 +30,7 @@ import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.presentation.TermPresentation;
-import org.zfin.profile.Company;
-import org.zfin.profile.Lab;
-import org.zfin.profile.Person;
+import org.zfin.profile.*;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
@@ -83,7 +83,7 @@ public class ResultService {
     public static String QUALITY = "Quality:";
     public static String SCREEN = "Screen:";
     public static String SEQUENCE = "Sequence:";
-    public static String SOURCE = "Source:";
+    public static String SOURCE = "Sources:";
     public static String STAGE = "Stage:";
     public static String SYNONYMS = "Synonyms:";
     public static String TARGETED_GENES = "Targeted Genes:";
@@ -334,6 +334,23 @@ public class ResultService {
             }
             if (feature.getConstructs() != null && feature.getConstructs().size() > 0) {
                 result.addAttribute(CONSTRUCT, withCommas(feature.getConstructs(), "marker.name"));
+            }
+            if (CollectionUtils.isNotEmpty(feature.getSuppliers())) {
+                result.addAttribute(SOURCE, withBreaks(feature.getSuppliers(), new Transformer() {
+                    @Override
+                    public Object transform(Object o) {
+                        FeatureSupplier supplier = (FeatureSupplier) o;
+                        String link = "";
+                        if (supplier.getOrganization() != null) {
+                            Organization organization = supplier.getOrganization();
+                            link += EntityPresentation.getGeneralHyperLink("/" + organization.getZdbID(), organization.getName());
+                        }
+                        if (StringUtils.isNotEmpty(supplier.getOrderURL())) {
+                            link += " (" + EntityPresentation.getGeneralHyperLink(supplier.getOrderURL(), "order this") + ")";
+                        }
+                        return link;
+                    }
+                }));
             }
 
 //            screen used to be here, removed as a result of case 11323
@@ -823,6 +840,9 @@ public class ResultService {
         return StringUtils.join(collection, ", ");
     }
 
+    public <T> String withBreaks(Collection<T> collection, Transformer transformer) {
+        return withBreaks(CollectionUtils.collect(collection, transformer));
+    }
 
     public String withBreaks(Collection collection) {
         StringBuilder sb = new StringBuilder();
