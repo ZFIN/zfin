@@ -1,8 +1,10 @@
 package org.zfin.search.service;
 
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+import org.apache.commons.collections.TransformerUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,7 @@ import org.zfin.sequence.DBLink;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.presentation.DBLinkPresentation;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
@@ -183,7 +186,7 @@ public class ResultService {
 
 
         if (CollectionUtils.isNotEmpty(antibody.getSuppliers())) {
-            result.addAttribute(SOURCE, withCommas(antibody.getSuppliers(), "organization.name"));
+            result.addAttribute(SOURCE, withCommas(antibody.getSuppliers(), new SupplierLinkTransformer()));
         }
     }
 
@@ -336,21 +339,7 @@ public class ResultService {
                 result.addAttribute(CONSTRUCT, withCommas(feature.getConstructs(), "marker.name"));
             }
             if (CollectionUtils.isNotEmpty(feature.getSuppliers())) {
-                result.addAttribute(SOURCE, withBreaks(feature.getSuppliers(), new Transformer() {
-                    @Override
-                    public Object transform(Object o) {
-                        FeatureSupplier supplier = (FeatureSupplier) o;
-                        String link = "";
-                        if (supplier.getOrganization() != null) {
-                            Organization organization = supplier.getOrganization();
-                            link += EntityPresentation.getGeneralHyperLink("/" + organization.getZdbID(), organization.getName());
-                        }
-                        if (StringUtils.isNotEmpty(supplier.getOrderURL())) {
-                            link += " (" + EntityPresentation.getGeneralHyperLink(supplier.getOrderURL(), "order this") + ")";
-                        }
-                        return link;
-                    }
-                }));
+                result.addAttribute(SOURCE, withBreaks(feature.getSuppliers(), new SupplierLinkTransformer()));
             }
 
 //            screen used to be here, removed as a result of case 11323
@@ -442,7 +431,7 @@ public class ResultService {
         }
         addLocationInfo(result, marker);
         if (CollectionUtils.isNotEmpty(marker.getSuppliers())) {
-            result.addAttribute(SOURCE, withCommas(marker.getSuppliers(), "organization.name"));
+            result.addAttribute(SOURCE, withCommas(marker.getSuppliers(), new SupplierLinkTransformer()));
         }
         List<Marker> genesContainedInClones = getMarkerRepository().getMarkersContainedIn(marker, MarkerRelationship.Type.CLONE_CONTAINS_GENE);
         if (CollectionUtils.isNotEmpty(genesContainedInClones)) {
@@ -775,6 +764,9 @@ public class ResultService {
         return "<div class=\"collapsible-attribute collapsed-attribute\">" + string + "</div>";
     }
 
+    public <T> String withCommas(Collection<T> collection, Transformer transformer) {
+        return withCommas(CollectionUtils.collect(collection, transformer));
+    }
 
     /**
      * Create a comma separated list from a property of each member of a collection
@@ -783,24 +775,14 @@ public class ResultService {
      * @param property   property path name
      * @return String
      */
-    public String withCommas(Collection collection, String property) {
-
-        //get the named property out as a list of strings
-        List<String> stringList = (List<String>) CollectionUtils.collect(collection,
-                new BeanToPropertyValueTransformer(property));
-
-        //comma separate it
-        return withCommas(stringList);
+    public <T> String withCommas(Collection<T> collection, String property) {
+        return withCommas(collection, new BeanToPropertyValueTransformer(property));
     }
 
-    public String withCommasAndItalics(Collection collection, String property) {
-
-        //get the named property out as a list of strings
-        List<String> stringList = (List<String>) CollectionUtils.collect(collection,
-                new BeanToPropertyValueTransformer(property));
-
-        //comma separate it
-        return "<i>" + withCommas(stringList) + "</i>";
+    public <T> String withCommasAndItalics(Collection<T> collection, String property) {
+        return withCommas(collection, TransformerUtils.chainedTransformer(
+                new BeanToPropertyValueTransformer(property),
+                new ItalicsTransformer()));
     }
 
     /**
@@ -811,22 +793,19 @@ public class ResultService {
      * @param property   property path name
      * @return String
      */
-    public String withCommasAndLink(Collection collection, String property, String zdbIdProperty) {
-        //get the named property out as a list of strings
-        List<String> stringList = (List<String>) CollectionUtils.collect(collection,
-                new BeanToPropertyValueTransformer(property));
-        List<String> idList = (List<String>) CollectionUtils.collect(collection,
-                new BeanToPropertyValueTransformer(zdbIdProperty));
-
-        if (CollectionUtils.isNotEmpty(stringList)) {
-            int index = 0;
-            for (String entry : stringList) {
-                stringList.set(index, "<a href='/" + idList.get(index) + "'>" + entry + "</a>");
-                index++;
+    public <T> String withCommasAndLink(Collection<T> collection, final String property, final String zdbIdProperty) {
+        return withCommas(collection, new Transformer() {
+            @Override
+            public Object transform(Object o) {
+                try {
+                    return EntityPresentation.getGeneralHyperLink("/" + PropertyUtils.getProperty(o, zdbIdProperty),
+                            PropertyUtils.getProperty(o, property).toString());
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    logger.error("Error while transforming collection item to link", e);
+                    return "";
+                }
             }
-        }
-        //comma separate it
-        return withCommas(stringList);
+        });
     }
 
 
@@ -836,7 +815,7 @@ public class ResultService {
      * @param collection
      * @return
      */
-    public String withCommas(Collection collection) {
+    public <T> String withCommas(Collection<T> collection) {
         return StringUtils.join(collection, ", ");
     }
 
@@ -869,5 +848,28 @@ public class ResultService {
             sb.append("</ul>");
         }
         return sb.toString();
+    }
+
+    private class SupplierLinkTransformer implements Transformer {
+        @Override
+        public Object transform(Object o) {
+            ObjectSupplier supplier = (ObjectSupplier) o;
+            String link = "";
+            if (supplier.getOrganization() != null) {
+                Organization organization = supplier.getOrganization();
+                link += EntityPresentation.getGeneralHyperLink("/" + organization.getZdbID(), organization.getName());
+            }
+            if (StringUtils.isNotEmpty(supplier.getOrderURL())) {
+                link += " (" + EntityPresentation.getGeneralHyperLink(supplier.getOrderURL(), "order this") + ")";
+            }
+            return link;
+        }
+    }
+
+    private class ItalicsTransformer implements Transformer {
+        @Override
+        public Object transform(Object o) {
+            return "<i>" + o.toString() + "</i>";
+        }
     }
 }
