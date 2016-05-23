@@ -33,7 +33,7 @@
 
                     <zfin:link entity="${disease.disease}"/>
                 </zfin:groupByDisplay>
-</td>
+            </td>
 
             <td>
                 <c:forEach var="diseaseAnnos" items="${disease.diseaseAnnotationModel}" varStatus="fishLoop">
@@ -44,10 +44,17 @@
             <td>
                 <c:forEach var="diseaseAnnos" items="${disease.diseaseAnnotationModel}" varStatus="loop">
 
-                    <zfin:link entity="${diseaseAnnos.fishExperiment.experiment}"/><c:if test="${!loop.last}"><br></c:if>
+                    <zfin:link entity="${diseaseAnnos.fishExperiment.experiment}"/><c:if
+                        test="${!loop.last}"><br></c:if>
                 </c:forEach>
-             </td>
-            <td>${disease.evidenceCode}</td>
+            </td>
+            <td>
+                <c:forEach var="diseaseAnnos" items="${disease.diseaseAnnotationModel}" varStatus="loop">
+
+                    ${diseaseAnnos.diseaseAnnotation.evidenceCode}<c:if test="${!loop.last}"><br></c:if>
+                </c:forEach>
+            </td>
+
 
         </zfin:alternating-tr>
     </c:forEach>

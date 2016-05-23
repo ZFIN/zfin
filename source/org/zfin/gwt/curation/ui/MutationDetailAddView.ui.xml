@@ -1,0 +1,195 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        >
+
+    <ui:style>
+        .grey-background {
+            background-color: lightgrey;
+        }
+
+        .blue {
+            color: #0000FF;
+        }
+
+        .valign-top {
+            vertical-align: top;
+        }
+
+        .align-left {
+            horiz-align: left;
+        }
+
+        .empty-column {
+            width: 80%;
+        }
+
+        .header-row {
+            background-color: #000088;
+        }
+
+    </ui:style>
+
+    <g:VerticalPanel spacing="10" title="Feature Notes" width="100%">
+        <g:Grid ui:field='dnaDataTable' cellSpacing='2' styleName="searchresults groupstripes-hover">
+            <g:row>
+                <g:cell>Nucleotide Change</g:cell>
+                <g:cell>Position</g:cell>
+                <g:cell>Sequence of Ref</g:cell>
+                <g:cell>Localization</g:cell>
+                <g:cell>Exon</g:cell>
+                <g:cell>Intron</g:cell>
+                <g:cell></g:cell>
+            </g:row>
+            <g:row visible="false">
+                <g:customCell>
+                    <zfin:StringListBox ui:field="nucleotideChange" width="120px">
+                        <g:item value="">------</g:item>
+                        <g:item value="Public">C>T</g:item>
+                        <g:item value="Public">T>C</g:item>
+                        <g:item value="Public">A>G</g:item>
+                        <g:item value="Public">G>A</g:item>
+                        <g:item value="Public">C>A</g:item>
+                        <g:item value="Public">A>C</g:item>
+                        <g:item value="Public">T>A</g:item>
+                        <g:item value="Public">A>T</g:item>
+                        <g:item value="Public">G>C</g:item>
+                        <g:item value="Public">G>T</g:item>
+                        <g:item value="Public">C>G</g:item>
+                        <g:item value="Public">T>G</g:item>
+                    </zfin:StringListBox>
+                </g:customCell>
+                <g:customCell>
+                    <zfin:StringTextBox ui:field="position"/>
+                </g:customCell>
+                <g:customCell>
+                    <zfin:StringTextBox ui:field="sequenceOfReference"/>
+                </g:customCell>
+                <g:customCell>
+                    <zfin:StringListBox ui:field="localizationTerm" width="120px">
+                        <g:item value="">------</g:item>
+                        <g:item value="Public">Splice Donor</g:item>
+                    </zfin:StringListBox>
+                </g:customCell>
+                <g:customCell>
+                    <zfin:StringTextBox ui:field="exonNumber" visibleLength="4"/>
+                </g:customCell>
+                <g:customCell>
+                    <zfin:StringTextBox ui:field="intronNumber" visibleLength="4"/>
+                </g:customCell>
+            </g:row>
+        </g:Grid>
+        <g:Label text="Transcript Change" addStyleNames="bold" horizontalAlignment="left"/>
+        <g:Grid ui:field='transcriptDataTable' cellSpacing='2' styleName="searchresults groupstripes-hover">
+            <g:row>
+                <g:customCell>
+                    <g:Label text="Change"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label text="Exon"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label text="Intron"/>
+                </g:customCell>
+                <g:cell styleName="{style.empty-column}">
+                </g:cell>
+            </g:row>
+            <g:row>
+                <g:customCell>
+                    <zfin:StringListBox ui:field="transcriptConsequence" width="120px">
+                        <g:item value="">------</g:item>
+                        <g:item value="Public">Splice Donor</g:item>
+                    </zfin:StringListBox>
+                </g:customCell>
+                <g:customCell>
+                    <zfin:StringTextBox ui:field="exonNumberTranscript" visibleLength="4"/>
+                </g:customCell>
+                <g:customCell>
+                    <zfin:StringTextBox ui:field="intronNumberTranscript" visibleLength="4"/>
+                </g:customCell>
+            </g:row>
+        </g:Grid>
+        <g:Label text="Protein Consequence" addStyleNames="bold" horizontalAlignment="left"/>
+        <g:Grid ui:field='proteinDataTable' cellSpacing='2' styleName="searchresults groupstripes-hover">
+            <g:row styleName="bold">
+                <g:cell>Consequence</g:cell>
+                <g:cell>Amino Acid Change</g:cell>
+                <g:cell>Position</g:cell>
+                <g:cell>Sequence of Ref</g:cell>
+            </g:row>
+            <g:row>
+                <g:customCell>
+                    <zfin:StringListBox ui:field="proteinTerm" width="120px">
+                        <g:item value="">------</g:item>
+                        <g:item value="Public">Amino Acid Deletion</g:item>
+                        <g:item value="Public">Amino Acid Insertion</g:item>
+                        <g:item value="Public">Amino Acid Subsitution</g:item>
+                        <g:item value="Public">polypeptide truncation</g:item>
+                    </zfin:StringListBox>
+                </g:customCell>
+                <g:customCell>
+                    <g:HorizontalPanel>
+                        <zfin:StringListBox ui:field="proteinWTTerm" width="120px">
+                            <g:item value="">------</g:item>
+                            <g:item value="Public">Alanine</g:item>
+                            <g:item value="Public">Arginine</g:item>
+                            <g:item value="Public">Asparagine</g:item>
+                            <g:item value="Public">Aspartine</g:item>
+                            <g:item value="Public">Cystein</g:item>
+                            <g:item value="Public">Glutamine</g:item>
+                            <g:item value="Public">Glutamic Acid</g:item>
+                            <g:item value="Public">Glycine</g:item>
+                            <g:item value="Public">Histindine</g:item>
+                            <g:item value="Public">Isoleucine</g:item>
+                            <g:item value="Public">Leucine</g:item>
+                            <g:item value="Public">Lycsine</g:item>
+                            <g:item value="Public">Methionine</g:item>
+                            <g:item value="Public">Phenylalanine</g:item>
+                            <g:item value="Public">Proline</g:item>
+                            <g:item value="Public">Serine</g:item>
+                            <g:item value="Public">Threonine</g:item>
+                            <g:item value="Public">Tryptophan</g:item>
+                            <g:item value="Public">Tyrosine</g:item>
+                            <g:item value="Public">Valine</g:item>
+                        </zfin:StringListBox>
+                        <g:Label text=">"/>
+                        <zfin:StringListBox ui:field="proteinMutatedTerm" width="120px">
+                            <g:item value="">------</g:item>
+                            <g:item value="Public">Alanine</g:item>
+                            <g:item value="Public">Arginine</g:item>
+                            <g:item value="Public">Asparagine</g:item>
+                            <g:item value="Public">Aspartine</g:item>
+                            <g:item value="Public">Cystein</g:item>
+                            <g:item value="Public">Glutamine</g:item>
+                            <g:item value="Public">Glutamic Acid</g:item>
+                            <g:item value="Public">Glycine</g:item>
+                            <g:item value="Public">Histindine</g:item>
+                            <g:item value="Public">Isoleucine</g:item>
+                            <g:item value="Public">Leucine</g:item>
+                            <g:item value="Public">Lycsine</g:item>
+                            <g:item value="Public">Methionine</g:item>
+                            <g:item value="Public">Phenylalanine</g:item>
+                            <g:item value="Public">Proline</g:item>
+                            <g:item value="Public">Serine</g:item>
+                            <g:item value="Public">Threonine</g:item>
+                            <g:item value="Public">Tryptophan</g:item>
+                            <g:item value="Public">Tyrosine</g:item>
+                            <g:item value="Public">Valine</g:item>
+                        </zfin:StringListBox>
+                    </g:HorizontalPanel>
+                </g:customCell>
+                <g:customCell>
+                    <zfin:StringTextBox ui:field="proteinPosition" visibleLength="20"/>
+                </g:customCell>
+                <g:customCell>
+                    <zfin:StringTextBox ui:field="sequenceOfReferenceProtein"/>
+                </g:customCell>
+            </g:row>
+        </g:Grid>
+        <!--
+                <zfin:SimpleErrorElement ui:field="errorLabel" styleName="clickable-error"/>
+        -->
+    </g:VerticalPanel>
+</ui:UiBinder>

@@ -22,7 +22,7 @@ import java.util.TreeSet;
  * Everything available will be related to that pub.
  * However, if free-text can also be entered and it will be associated with whatever is selected in the drop-down.
  */
-public abstract class AbstractInferenceListBox extends AbstractStackComposite<GoEvidenceDTO> implements IsDirty<GoEvidenceDTO> {
+public abstract class AbstractInferenceListBox extends AbstractStackComposite<GoEvidenceDTO> implements IsDirtyWidget<GoEvidenceDTO> {
 
 
     // GUI suppliers panel
@@ -107,7 +107,7 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
             availableList.setVisible(true);
             lookupBox.setVisible(false);
             working();
-            if (dto.getPublicationZdbID() == null || dto.getPublicationZdbID().isEmpty() || dto.getPublicationZdbID().equals(IsDirty.NULL_STRING)) {
+            if (dto.getPublicationZdbID() == null || dto.getPublicationZdbID().isEmpty() || dto.getPublicationZdbID().equals(IsDirtyWidget.NULL_STRING)) {
                 notWorking();
 //                setError("Please select a valid pub to display available options.");
                 return;

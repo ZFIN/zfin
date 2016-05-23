@@ -185,7 +185,7 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
         List<MarkerGenomeLocation> genomeLocationList = getLinkageRepository().getGenomeLocation(marker);
         assertNotNull(genomeLocationList);
 
-        List<GenomeLocation> genomeLocationList1 = getLinkageRepository().getPhysicalGenomeLocations(marker);
+        List<MarkerGenomeLocation> genomeLocationList1 = getLinkageRepository().getPhysicalGenomeLocations(marker);
         assertNotNull(genomeLocationList1);
 
         marker = getMarkerRepository().getMarkerByAbbreviation("ahr2");
@@ -304,7 +304,7 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getCloneLocation() {
         Marker marker = getMarkerRepository().getMarkerByID("ZDB-BAC-050218-2519");
-        List<GenomeLocation> list = getLinkageRepository().getPhysicalGenomeLocations(marker);
+        List<MarkerGenomeLocation> list = getLinkageRepository().getPhysicalGenomeLocations(marker);
         assertNotNull(list);
     }
 

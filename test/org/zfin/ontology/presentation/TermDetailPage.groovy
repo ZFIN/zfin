@@ -11,7 +11,7 @@ class TermDetailPage extends Page {
         ontologyName { $("#ontology-name") }
         ontologyLinks { ontologyName.find("a") }
         termDefinition { $("#term-definition") }
-        isTypeOfRow { $("#is-a-type-of") }
+        isTypeOfRow { $("#isatypeof") }
         termSynonyms { $("#term-synonyms") }
     }
 

@@ -2,25 +2,30 @@ package org.zfin.feature.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureAlias;
-import org.zfin.feature.FeatureMarkerRelationship;
-import org.zfin.feature.FeatureNote;
+import org.springframework.stereotype.Service;
+import org.zfin.Species;
+import org.zfin.feature.*;
+import org.zfin.gbrowse.GBrowseTrack;
+import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
-import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.DisplayGroup;
-import org.zfin.sequence.FeatureDBLink;
+import org.zfin.sequence.*;
 
 import java.util.*;
 
+import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
+import static org.zfin.sequence.ForeignDB.AvailableName;
+import static org.zfin.sequence.ForeignDBDataType.DataType;
 
+
+@Service
 public class FeatureService {
 
     public static Set<FeatureMarkerRelationship> getSortedMarkerRelationships(Feature feature) {
@@ -81,31 +86,25 @@ public class FeatureService {
         return null;
     }
 
-    public static Set<String> getFeatureLocations(Feature feature) {
-        TreeSet<String> lg = RepositoryFactory.getFeatureRepository().getFeatureLG(feature);
-        TreeSet<String> delmarklg = new TreeSet<>();
-
-        for (String lgchr : lg) {
-            delmarklg.add(lgchr);
-        }
-
-        return delmarklg;
-    }
-
-    public static List<FeatureGenomeLocation> getFeatureGenomeLocations(Feature feature) {
+    public static List<FeatureGenomeLocation> getFeatureGenomeLocationsInGbrowse(Feature feature) {
         List<FeatureGenomeLocation> locations = RepositoryFactory.getLinkageRepository().getGenomeLocation(feature);
         Collections.sort(locations);
-        return locations;
-    }
-
-    public static List<FeatureGenomeLocation> getFeatureGenomeLocations(Feature feature, GenomeLocation.Source... sources) {
-        List<FeatureGenomeLocation> locations = getFeatureGenomeLocations(feature);
-        final Collection<GenomeLocation.Source> sourceList = Arrays.asList(sources);
         CollectionUtils.filter(locations, new Predicate() {
             @Override
             public boolean evaluate(Object o) {
-                return (o instanceof FeatureGenomeLocation) &&
-                        sourceList.contains(((FeatureGenomeLocation) o).getSource());
+                return (o instanceof FeatureGenomeLocation) && ((FeatureGenomeLocation) o).getGbrowseTrack() != null;
+            }
+        });
+        return locations;
+    }
+
+    public static List<FeatureGenomeLocation> getPhysicalLocations(Feature feature) {
+        List<FeatureGenomeLocation> locations = RepositoryFactory.getLinkageRepository().getGenomeLocation(feature);
+        Collections.sort(locations);
+        CollectionUtils.filter(locations, new Predicate() {
+            @Override
+            public boolean evaluate(Object o) {
+                return ((FeatureGenomeLocation) o).getSource().isPhysicalMappingLocation();
             }
         });
         return locations;
@@ -127,8 +126,41 @@ public class FeatureService {
     }
 
     public static List<PublicationAttribution> getFeatureTypeAttributions(Feature feature) {
-        InfrastructureRepository infRep = RepositoryFactory.getInfrastructureRepository();
-        return infRep.getPublicationAttributions(feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
+        return RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
+                feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
+    }
+
+    public static List<PublicationAttribution> getDnaChangeAttributions(Feature feature) {
+        if (feature.getFeatureDnaMutationDetail() == null) {
+            return null;
+        }
+
+        return RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
+                feature.getFeatureDnaMutationDetail().getZdbID(),
+                RecordAttribution.SourceType.STANDARD);
+    }
+
+    public static List<PublicationAttribution> getTranscriptConsequenceAttributions(Feature feature) {
+        if (CollectionUtils.isEmpty(feature.getFeatureTranscriptMutationDetailSet())) {
+            return null;
+        }
+
+        SortedSet<PublicationAttribution> attributions = new TreeSet<>();
+        for (FeatureTranscriptMutationDetail detail : feature.getFeatureTranscriptMutationDetailSet()) {
+            attributions.addAll(RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
+                    detail.getZdbID(), RecordAttribution.SourceType.STANDARD));
+        }
+        return new ArrayList<>(attributions);
+    }
+
+    public static List<PublicationAttribution> getProteinConsequenceAttributions(Feature feature) {
+        if (feature.getFeatureProteinMutationDetail() == null) {
+            return null;
+        }
+
+        return RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
+                feature.getFeatureProteinMutationDetail().getZdbID(),
+                RecordAttribution.SourceType.STANDARD);
     }
 
     public static Set<FeatureMarkerRelationship> getSortedConstructRelationships(Feature feature) {
@@ -187,5 +219,88 @@ public class FeatureService {
         Collections.sort(notes);
 
         return notes;
+    }
+
+    public static GBrowseImage getGbrowseImage(Feature feature) {
+        Set<FeatureMarkerRelationship> featureMarkerRelationships = feature.getFeatureMarkerRelations();
+        List<FeatureGenomeLocation> locations = getFeatureGenomeLocationsInGbrowse(feature);
+        if (CollectionUtils.isEmpty(locations)) {
+            return null;
+        }
+
+        // gbrowse has a location for this feature. if there is a feature marker relationship AND we know where
+        // that marker is, show the feature in the context of the marker. Otherwise just show the feature with
+        // some appropriate amount of padding. We don't yet have GRCz10 coordinates for any features, so for
+        // now, they're all Zv9 still
+        GBrowseImage.GBrowseImageBuilder imageBuilder = GBrowseImage.builder()
+                .genomeBuild(GBrowseImage.GenomeBuild.ZV9)
+                .highlight(feature);
+
+        FeatureGenomeLocation featureLocation = locations.get(0);
+        if (featureMarkerRelationships.size() == 1) {
+            Marker related = featureMarkerRelationships.iterator().next().getMarker();
+            List<MarkerGenomeLocation> markerLocations = RepositoryFactory.getLinkageRepository().getGenomeLocation(related, GenomeLocation.Source.ZFIN_Zv9);
+            if (CollectionUtils.isNotEmpty(markerLocations)) {
+                imageBuilder.landmark(markerLocations.get(0)).withPadding(0.1);
+            } else {
+                imageBuilder.landmark(featureLocation).withPadding(10000);
+            }
+        } else {
+            imageBuilder.landmark(featureLocation).withPadding(10000);
+        }
+        imageBuilder.tracks(GBrowseTrack.GENES, featureLocation.getGbrowseTrack(), GBrowseTrack.TRANSCRIPTS);
+
+        return imageBuilder.build();
+    }
+
+    public static ReferenceDatabase getForeignDbMutationDetailDna(String accessionNumber) {
+        // check for Genbank: Genomic and RNA, RefSeq and Ensembl
+        ForeignDB.AvailableName[] databases = {AvailableName.GENBANK, AvailableName.REFSEQ};
+        ForeignDBDataType.DataType[] dataTypes = {DataType.GENOMIC, DataType.RNA};
+
+        List<ReferenceDatabase> refDatabaseList = getSequenceRepository().getReferenceDatabases(Arrays.asList(databases),
+                Arrays.asList(dataTypes),
+                ForeignDBDataType.SuperType.SEQUENCE,
+                Species.Type.ZEBRAFISH);
+
+        ReferenceDatabase databaseMatch = checkRefDatabase(accessionNumber, refDatabaseList);
+        if (databaseMatch != null)
+            return databaseMatch;
+
+        // if not found check Accession, aka accession_bank
+        List<Accession> accessionList = getSequenceRepository().getAccessionsByNumber(accessionNumber);
+        for (Accession accession : accessionList) {
+            if (refDatabaseList.contains(accession.getReferenceDatabase()))
+                return accession.getReferenceDatabase();
+        }
+        return null;
+    }
+
+    private static ReferenceDatabase checkRefDatabase(String accessionNumber, List<ReferenceDatabase> refDatabaseList) {
+        ReferenceDatabase databaseMatch = null;
+        for (ReferenceDatabase referenceDatabase : refDatabaseList) {
+            List<DBLink> links = getSequenceRepository().getDBLinks(accessionNumber, referenceDatabase);
+            if (CollectionUtils.isNotEmpty(links)) {
+                databaseMatch = referenceDatabase;
+                break;
+            }
+        }
+        return databaseMatch;
+    }
+
+    public static ReferenceDatabase getForeignDbMutationDetailProtein(String accessionNumber) {
+        ForeignDB.AvailableName[] databases = {AvailableName.GENBANK, AvailableName.REFSEQ, AvailableName.UNIPROTKB};
+        ForeignDBDataType.DataType[] dataTypes = {DataType.POLYPEPTIDE};
+
+        List<ReferenceDatabase> genBankRefDB = getSequenceRepository().getReferenceDatabases(Arrays.asList(databases),
+                Arrays.asList(dataTypes),
+                ForeignDBDataType.SuperType.SEQUENCE,
+                Species.Type.ZEBRAFISH);
+        for (ReferenceDatabase referenceDatabase : genBankRefDB) {
+            List<DBLink> links = getSequenceRepository().getDBLinks(accessionNumber, referenceDatabase);
+            if (CollectionUtils.isNotEmpty(links))
+                return referenceDatabase;
+        }
+        return null;
     }
 }

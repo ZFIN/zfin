@@ -3,20 +3,14 @@
 
 <%@ attribute name="formBean" type="org.zfin.anatomy.presentation.AnatomySearchBean" required="true" %>
 
-<table class="search" width=100% border="0" cellspacing="0">
-    <tr>
-        <td class="titlebar">
-            <span style="font-size:larger; margin-left:0.5em; font-weight:bold;">
-            Ontology Search
-            </span>
-        </td>
-        <td class="titlebarRight">
-            <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                <tiles:putAttribute name="subjectName" value="Ontology Search"/>
-            </tiles:insertTemplate>
-        </td>
-    </tr>
-</table>
+<div class="titlebar">
+    <h1>Ontology Search</h1>
+    <span class="yourinputwelcome">
+        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+            <tiles:putAttribute name="subjectName" value="Ontology Search"/>
+        </tiles:insertTemplate>
+    </span>
+</div>
 
 <TABLE width=100%>
     <TR>

@@ -95,7 +95,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         returnedFacets.contains(field)
 
         where:
-        [category, field] << [[Category.GENE.getName()] , [FieldName.EXPRESSED_IN_TF.getName(), "affected_anatomy_tf", "affected_biological_process_tf",
+        [category, field] << [[Category.GENE.getName()] , [FieldName.ANATOMY_TF.getName(),FieldName.STAGE.name, "affected_anatomy_tf", "affected_biological_process_tf",
                                           "affected_molecular_function_tf", "affected_cellular_component_tf",
                                           "phenotype_statement", FieldName.MISEXPRESSED_GENE.getName(), "disease", "biological_process_tf",
                                           "molecular_function_tf", "cellular_component_tf","chromosome","type"]].combinations() \
@@ -120,7 +120,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                                                "has_image","stage","sequence_targeting_reagent"]].combinations() \
                              + [[Category.ANATOMY.getName()],["ontology", "term_status"]].combinations() \
                              + [[Category.COMMUNITY.getName()],["type"]].combinations() \
-                             + [[Category.PUBLICATION.getName()],["gene", "sequence_alteration", "registered_author", "journal", "keyword", "publication_type"]].combinations() \
+                             + [[Category.PUBLICATION.getName()],["gene", "sequence_alteration", "registered_author", "journal", "keyword", FieldName.MESH_TERM.getName(), "publication_type"]].combinations() \
                              + [[Category.ANTIBODY.getName()],["type","antigen_gene","labeled_structure_tf", "assay", "source", "host_organism"]].combinations() \
                              + [[Category.DISEASE.getName()],[FieldName.GENE.name,FieldName.FISH.name,FieldName.EXPERIMENTAL_CONDITIONS.name]].combinations()
     }

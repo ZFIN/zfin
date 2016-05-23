@@ -42,6 +42,7 @@ public class FeatureRelationshipPresenter implements HandlesError {
     protected void populateDataTable() {
         int elementIndex = 0;
         FeatureDTO pastFeature = null;
+        view.emptyDataTable();
         for (FeatureMarkerRelationshipDTO relationshipDTO : featureMarkerRelationshipDTOs) {
             if (featureNameFilter != null && !relationshipDTO.getFeatureDTO().getAbbreviation().equals(featureNameFilter))
                 continue;
@@ -60,8 +61,12 @@ public class FeatureRelationshipPresenter implements HandlesError {
     }
 
     private void loadValues() {
+        loadValues(false);
+    }
+
+    private void loadValues(boolean forcedLoad) {
         // retrieve Filter elements
-        loadFilterValues();
+        loadFilterValues(forcedLoad);
 
         // get Feature-Marker-Relationships
         FeatureRPCService.App.getInstance().getFeatureMarkerRelationshipsForPub(publicationID,
@@ -81,29 +86,29 @@ public class FeatureRelationshipPresenter implements HandlesError {
     }
 
     private void loadFeatureList() {
-        FeatureRPCService.App.getInstance().getFeaturesForPub(publicationID,
+        FeatureServiceGWT.getFeatureList(publicationID,
                 new FeatureEditCallBack<List<FeatureDTO>>("Problem finding features for pub: " + publicationID + " ", this) {
 
                     @Override
                     public void onFailure(Throwable throwable) {
                         super.onFailure(throwable);
-                        view.featureToAddList.setEnabled(false);
+                        view.featureList.setEnabled(false);
                     }
 
                     @Override
                     public void onSuccess(List<FeatureDTO> features) {
                         featureDTOs = features;
                         if (featureDTOs != null) {
-                            view.featureToAddList.clear();
-                            view.featureToAddList.addItem("-----------");
+                            view.featureList.clear();
+                            view.featureList.addItem("-----------");
                             for (FeatureDTO featureDTO : featureDTOs) {
-                                view.featureToAddList.addItem(featureDTO.getName(), featureDTO.getZdbID());
+                                view.featureList.addItem(featureDTO.getName(), featureDTO.getZdbID());
                             }
-                            view.featureToAddList.setEnabled(true);
+                            view.featureList.setEnabled(true);
                         }
 
                         if (lastSelectedFeatureZdbId != null) {
-                            view.featureToAddList.setIndexForValue(lastSelectedFeatureZdbId);
+                            view.featureList.setIndexForValue(lastSelectedFeatureZdbId);
                             lastSelectedFeatureZdbId = null;
                         }
                     }
@@ -111,7 +116,11 @@ public class FeatureRelationshipPresenter implements HandlesError {
     }
 
     private void loadFilterValues() {
-        FeatureRPCService.App.getInstance().getFeaturesForPub(publicationID,
+        loadFilterValues(false);
+    }
+
+    private void loadFilterValues(boolean forceLoad) {
+        FeatureServiceGWT.getFeatureList(publicationID,
                 new FeatureEditCallBack<List<FeatureDTO>>("Problem finding features for pub: " + publicationID + " ", this) {
                     @Override
                     public void onSuccess(List<FeatureDTO> featureMarkerRelationshipList) {
@@ -131,7 +140,7 @@ public class FeatureRelationshipPresenter implements HandlesError {
                             }
                         }
                     }
-                });
+                }, forceLoad);
     }
 
     @Override
@@ -157,7 +166,7 @@ public class FeatureRelationshipPresenter implements HandlesError {
     public void onFeatureSelectionChange(String selectedText) {
         final FeatureDTO featureDTO = getFeatureDTOForName(selectedText);
         if (featureDTO != null && featureDTO.getFeatureType() != null) {
-            view.featureToAddType.setText(featureDTO.getFeatureType().getDisplay());
+            view.featureType.setText(featureDTO.getFeatureType().getDisplay());
         } else {
             setError("Feature type was null");
             return;
@@ -166,13 +175,13 @@ public class FeatureRelationshipPresenter implements HandlesError {
                 new FeatureEditCallBack<List<String>>("Failed to return feature relationships for type: " + featureDTO.getFeatureType().getDisplay(), this) {
                     @Override
                     public void onSuccess(List<String> result) {
-                        view.featureToAddRelationship.clear();
+                        view.relationshipList.clear();
                         if (result != null && result.size() > 0) {
                             if (result.size() == 1) {
                                 // this is probably correct so we don't need to screen it
-                                view.featureToAddRelationship.addItem(result.get(0));
+                                view.relationshipList.addItem(result.get(0));
                             } else {
-                                view.featureToAddRelationship.addItem("-------");
+                                view.relationshipList.addItem("-------");
                                 for (String rel : result) {
                                     // see case 6337
                                     // is_allele relationship should only be available for transgenic insertions where the known insertion site box is checked
@@ -181,14 +190,14 @@ public class FeatureRelationshipPresenter implements HandlesError {
                                     )
                                             && rel.startsWith("is allele of")) {
                                         if (featureDTO.getKnownInsertionSite()) {
-                                            view.featureToAddRelationship.addItem(rel);
+                                            view.relationshipList.addItem(rel);
                                         }
                                     } else {
-                                        view.featureToAddRelationship.addItem(rel);
+                                        view.relationshipList.addItem(rel);
                                     }
                                 }
                             }
-                            view.featureToAddRelationship.setEnabled(true);
+                            view.relationshipList.setEnabled(true);
                         }
                     }
                 }
@@ -198,35 +207,35 @@ public class FeatureRelationshipPresenter implements HandlesError {
 
     protected void updateTargetGeneList(String selectedFeature, final String selectedRelationship) {
         view.addButton.setEnabled(false);
-        view.featureToAddTarget.setEnabled(false);
+        view.targetMarkerList.setEnabled(false);
         final String mutagenForFeature = getFeatureDTOForName(selectedFeature).getMutagen();
         FeatureRPCService.App.getInstance().getMarkersForFeatureRelationAndSource(selectedRelationship, publicationID,
-                new FeatureEditCallBack<List<MarkerDTO>>("Failed to find markers for type[" + view.featureToAddType.getText() + "] and pub: " +
+                new FeatureEditCallBack<List<MarkerDTO>>("Failed to find markers for type[" + view.featureType.getText() + "] and pub: " +
                         publicationID, this) {
                     @Override
                     public void onSuccess(List<MarkerDTO> markers) {
-                        view.featureToAddTarget.clear();
+                        view.targetMarkerList.clear();
                         Collections.sort(markers);
                         if (markers.size() > 0) {
                             for (MarkerDTO m : markers) {
                                 if (mutagenForFeature != null) {
                                     if (selectedRelationship.equalsIgnoreCase("created by")) {
                                         if (m.getName().startsWith(mutagenForFeature)) {
-                                            view.featureToAddTarget.addItem(m.getName(), m.getZdbID());
+                                            view.targetMarkerList.addItem(m.getName(), m.getZdbID());
                                         } else if (mutagenForFeature.equals("DNA and CRISPR") && m.getName().startsWith("CRISPR")) {
-                                            view.featureToAddTarget.addItem(m.getName(), m.getZdbID());
+                                            view.targetMarkerList.addItem(m.getName(), m.getZdbID());
                                         } else if (mutagenForFeature.equals("DNA and TALEN") && m.getName().startsWith("TALEN")) {
-                                            view.featureToAddTarget.addItem(m.getName(), m.getZdbID());
+                                            view.targetMarkerList.addItem(m.getName(), m.getZdbID());
                                         }
                                     } else {
-                                        view.featureToAddTarget.addItem(m.getName(), m.getZdbID());
+                                        view.targetMarkerList.addItem(m.getName(), m.getZdbID());
                                     }
                                 } else {
-                                    view.featureToAddTarget.addItem(m.getName(), m.getZdbID());
+                                    view.targetMarkerList.addItem(m.getName(), m.getZdbID());
                                 }
                             }
                             view.addButton.setEnabled(true);
-                            view.featureToAddTarget.setEnabled(true);
+                            view.targetMarkerList.setEnabled(true);
                         }
                     }
                 });
@@ -252,8 +261,8 @@ public class FeatureRelationshipPresenter implements HandlesError {
         }
         view.disableEntryFields();
         lastSelectedFeatureZdbId = featureMarkerRelationshipDTO.getFeatureDTO().getZdbID();
-        FeatureRPCService.App.getInstance().addFeatureMarkerRelationShip(featureMarkerRelationshipDTO,
-                new FeatureEditCallBack<Void>("Failed to create FeatureMarkerRelation: " +
+        FeatureRPCService.App.getInstance().addFeatureMarkerRelationShip(featureMarkerRelationshipDTO, publicationID,
+                new FeatureEditCallBack<List<FeatureMarkerRelationshipDTO>>("Failed to create FeatureMarkerRelation: " +
                         featureMarkerRelationshipDTO, this) {
 
                     @Override
@@ -263,9 +272,11 @@ public class FeatureRelationshipPresenter implements HandlesError {
                     }
 
                     @Override
-                    public void onSuccess(Void result) {
-                        revertGUI();
-                        clearError();
+                    public void onSuccess(List<FeatureMarkerRelationshipDTO> resultList) {
+                        featureMarkerRelationshipDTOs = resultList;
+                        populateDataTable();
+                        view.revertGUI();
+                        view.enableEntryFields();
                     }
                 });
     }
@@ -279,17 +290,17 @@ public class FeatureRelationshipPresenter implements HandlesError {
     private FeatureMarkerRelationshipDTO getFeatureMarkerRelationshipFromGui() {
         FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO = new FeatureMarkerRelationshipDTO();
         FeatureDTO featureDTO = new FeatureDTO();
-        featureDTO.setZdbID(view.featureToAddList.getSelected());
-        featureDTO.setName(view.featureToAddList.getSelectedText());
-        featureDTO.setFeatureType(FeatureTypeEnum.getTypeForDisplay(view.featureToAddType.getText()));
+        featureDTO.setZdbID(view.featureList.getSelected());
+        featureDTO.setName(view.featureList.getSelectedText());
+        featureDTO.setFeatureType(FeatureTypeEnum.getTypeForDisplay(view.featureType.getText()));
         featureMarkerRelationshipDTO.setFeatureDTO(featureDTO);
         featureMarkerRelationshipDTO.setPublicationZdbID(publicationID);
 
-        featureMarkerRelationshipDTO.setRelationshipType(view.featureToAddRelationship.getSelectedText());
+        featureMarkerRelationshipDTO.setRelationshipType(view.relationshipList.getSelectedText());
 
         MarkerDTO markerDTO = new MarkerDTO();
-        markerDTO.setZdbID(view.featureToAddTarget.getSelected());
-        markerDTO.setName(view.featureToAddTarget.getSelectedText());
+        markerDTO.setZdbID(view.targetMarkerList.getSelected());
+        markerDTO.setName(view.targetMarkerList.getSelectedText());
 
         featureMarkerRelationshipDTO.setMarkerDTO(markerDTO);
 
@@ -297,8 +308,7 @@ public class FeatureRelationshipPresenter implements HandlesError {
     }
 
     public void onFeatureAddEvent() {
-        loadFilterValues();
-        loadValues();
+        loadValues(true);
     }
 
     public void onFeatureNameFilterChange(String featureName) {

@@ -34,13 +34,13 @@ public class FeatureRelationshipView extends Composite {
     @UiField
     SimpleErrorElement errorLabel;
     @UiField
-    StringListBox featureToAddList;
+    StringListBox featureList;
     @UiField
-    StringListBox featureToAddRelationship;
+    StringListBox relationshipList;
     @UiField
-    StringListBox featureToAddTarget;
+    StringListBox targetMarkerList;
     @UiField
-    Label featureToAddType;
+    Label featureType;
     @UiField
     Grid dataTable;
     @UiField
@@ -62,9 +62,9 @@ public class FeatureRelationshipView extends Composite {
         presenter.addRelationship();
     }
 
-    @UiHandler("featureToAddList")
+    @UiHandler("featureList")
     void onChangeFeatureSelection(@SuppressWarnings("unused") ChangeEvent event) {
-        presenter.onFeatureSelectionChange(featureToAddList.getSelectedText());
+        presenter.onFeatureSelectionChange(featureList.getSelectedText());
     }
 
     @UiHandler("featureNameList")
@@ -77,12 +77,16 @@ public class FeatureRelationshipView extends Composite {
         presenter.onFeatureTypeFilterChange(featureTypeList.getSelectedText());
     }
 
-    @UiHandler("featureToAddRelationship")
+    @UiHandler("relationshipList")
     void onChangeFeatureRelationship(@SuppressWarnings("unused") ChangeEvent event) {
-        presenter.updateTargetGeneList(featureToAddList.getSelectedText(), featureToAddRelationship.getSelectedText());
+        presenter.updateTargetGeneList(featureList.getSelectedText(), relationshipList.getSelectedText());
     }
 
     private int currentGroupIndex;
+
+    public void emptyDataTable() {
+        dataTable.resizeRows(1);
+    }
 
     public void addFeatureCell(FeatureDTO feature, FeatureDTO lastFeature, int elementIndex) {
         dataTable.resizeRows(elementIndex + 2);
@@ -119,42 +123,37 @@ public class FeatureRelationshipView extends Composite {
         dataTable.setWidget(row, 4, deleteButton);
     }
 
-
-    private void setRowStyle(int row) {
-        WidgetUtil.setAlternateRowStyle(row, dataTable);
-    }
-
-
     protected void endTableUpdate() {
         int rows = dataTable.getRowCount() + 1;
         dataTable.resizeRows(rows);
         int lastRow = rows - 1;
         int col = 0;
-        dataTable.setWidget(lastRow, col++, featureToAddList);
-        dataTable.setWidget(lastRow, col++, featureToAddType);
-        dataTable.setWidget(lastRow, col++, featureToAddRelationship);
-        dataTable.setWidget(lastRow, col++, featureToAddTarget);
+        dataTable.setWidget(lastRow, col++, featureList);
+        dataTable.setWidget(lastRow, col++, featureType);
+        dataTable.setWidget(lastRow, col++, relationshipList);
+        dataTable.setWidget(lastRow, col, targetMarkerList);
     }
 
     public void enableEntryFields() {
         addButton.setEnabled(true);
-        featureToAddTarget.setEnabled(true);
-        featureToAddList.setEnabled(true);
-        featureToAddRelationship.setEnabled(true);
+        targetMarkerList.setEnabled(true);
+        featureList.setEnabled(true);
+        relationshipList.setEnabled(true);
 
     }
 
     public void disableEntryFields() {
         addButton.setEnabled(false);
-        featureToAddTarget.setEnabled(false);
-        featureToAddList.setEnabled(false);
-        featureToAddRelationship.setEnabled(false);
+        targetMarkerList.setEnabled(false);
+        featureList.setEnabled(false);
+        relationshipList.setEnabled(false);
     }
 
     public void revertGUI() {
-        featureToAddType.setText("");
-        featureToAddRelationship.clear();
-        featureToAddTarget.clear();
+        featureType.setText("");
+        relationshipList.clear();
+        targetMarkerList.clear();
+        featureList.setSelectedIndex(0);
     }
 
 

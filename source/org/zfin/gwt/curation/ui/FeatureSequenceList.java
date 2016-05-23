@@ -40,9 +40,6 @@ public class FeatureSequenceList extends AbstractStackComposite<FeatureDTO> {
         panel.add(addPanel);
         panel.add(errorLabel);
         errorLabel.setStyleName("error");
-        panel.add(new HTML("<br>")); // spacer
-        panel.setStyleName("gwt-editbox");
-
     }
 
 
@@ -56,8 +53,8 @@ public class FeatureSequenceList extends AbstractStackComposite<FeatureDTO> {
 
         working();
 
-        FeatureRPCService.App.getInstance().addFeatureSequence(valueToAdd, dto.getZdbID(),dto.getPublicationZdbID(),
-                new FeatureEditCallBack<Void>("Failed to add sequence ["+valueToAdd+"] to feature: ",this) {
+        FeatureRPCService.App.getInstance().addFeatureSequence(valueToAdd, dto.getZdbID(), dto.getPublicationZdbID(),
+                new FeatureEditCallBack<Void>("Failed to add sequence [" + valueToAdd + "] to feature: ", this) {
                     public void onFailure(Throwable t) {
                         super.onFailure(t);
                         notWorking();
@@ -86,14 +83,15 @@ public class FeatureSequenceList extends AbstractStackComposite<FeatureDTO> {
     }
 
     @Override
-    protected void setValues() { }
+    protected void setValues() {
+    }
 
     @Override
     public void revertGUI() {
-        while(stackTable.getRowCount()>0){
+        while (stackTable.getRowCount() > 0) {
             stackTable.removeRow(0);
         }
-        if(dto.getFeatureSequences()!=null){
+        if (dto.getFeatureSequences() != null) {
             for (String sequence : dto.getFeatureSequences()) {
                 addToGUI(sequence);
             }
@@ -115,7 +113,7 @@ public class FeatureSequenceList extends AbstractStackComposite<FeatureDTO> {
     protected void addToGUI(String name) {
         FeatureDTO featureDTO = createDTOFromGUI();
         featureDTO.setName(name);
-        FeatureSequenceStackComposite stackComposite = new FeatureSequenceStackComposite(featureDTO,"Remove sequence from feature");
+        FeatureSequenceStackComposite stackComposite = new FeatureSequenceStackComposite(featureDTO, "Remove sequence from feature");
         stackComposite.addRelatedEntityListener(new RelatedEntityAdapter<FeatureDTO>() {
             @Override
             public void removeRelatedEntity(final RelatedEntityEvent<FeatureDTO> event) {
@@ -139,15 +137,19 @@ public class FeatureSequenceList extends AbstractStackComposite<FeatureDTO> {
         sequenceTextBox.setText("");
     }
 
+    public void resetGUI() {
+        stackTable.clear();
+    }
+
     /**
      * For use with the InferenceListBox.
      */
     public static class FeatureSequenceStackComposite extends StackComposite<FeatureDTO> {
 
-        private String title ;
+        private String title;
 
-        public FeatureSequenceStackComposite(FeatureDTO dto,String title) {
-            this.title = title ;
+        public FeatureSequenceStackComposite(FeatureDTO dto, String title) {
+            this.title = title;
             initGUI();
             setDTO(dto);
             addInternalListeners(this);

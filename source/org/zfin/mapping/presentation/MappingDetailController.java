@@ -22,6 +22,8 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.GenotypeDisplay;
+import org.zfin.mutant.GenotypeFeature;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
@@ -194,6 +196,8 @@ public class MappingDetailController {
             if (marker == null) {
                 model.addAttribute("pureFeature", true);
                 model.addAttribute("otherMappingDetail", isOtherMappingDetail);
+                model.addAttribute("gbrowseImage", FeatureService.getGbrowseImage(feature));
+                model.addAttribute("locations", MappingService.getGenomeBrowserLocations(feature));
                 return "mapping/mapping-detail-pure-feature.page";
             }
             markerID = marker.getZdbID();
@@ -207,6 +211,14 @@ public class MappingDetailController {
         Marker marker = markerRepository.getMarkerByID(markerID);
 
         // genetic mapping Panels
+        List<Feature> featureList = getFeatureRepository().getFeaturesByMarker(marker);
+
+
+        for (Feature featureL : featureList) {
+            List<FeatureGenomeLocation> featureLocationList = FeatureService.getPhysicalLocations(featureL);
+            model.addAttribute("allelicFeatures",featureLocationList);
+        }
+
         List<MappedMarker> mappedMarkers = getLinkageRepository().getMappedMarkers(marker);
 
         List<LinkageMember> linkageList = getLinkageRepository().getLinkageMemberForMarker(marker);
@@ -259,6 +271,7 @@ public class MappingDetailController {
         }
 
         model.addAttribute("otherMappingDetail", isOtherMappingDetail);
+
         return "mapping/mapping-detail.page";
     }
 

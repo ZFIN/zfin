@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "mdcv_used_in", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "mutation_detail_controlled_vocabulary")
-public abstract class MutationDetailControlledVocabularyTerm implements Comparable<MutationDetailControlledVocabularyTerm> {
+public abstract class MutationDetailControlledVocabularyTerm implements Comparable<MutationDetailControlledVocabularyTerm>, Cloneable {
 
     @Id
     @Column(name = "mdcv_term_zdb_id")
@@ -80,5 +80,30 @@ public abstract class MutationDetailControlledVocabularyTerm implements Comparab
     @Override
     public String toString() {
         return displayName;
+    }
+
+    public MutationDetailControlledVocabularyTerm clone() {
+        try {
+            MutationDetailControlledVocabularyTerm detail = (MutationDetailControlledVocabularyTerm) super.clone();
+            return detail;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MutationDetailControlledVocabularyTerm that = (MutationDetailControlledVocabularyTerm) o;
+
+        return !(zdbID != null ? !zdbID.equals(that.zdbID) : that.zdbID != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return zdbID != null ? zdbID.hashCode() : 0;
     }
 }

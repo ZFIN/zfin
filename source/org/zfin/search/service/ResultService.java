@@ -5,13 +5,15 @@ import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.zfin.anatomy.presentation.DevelopmentStagePresentation;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExperimentPresentation;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeaturePrefix;
+import org.zfin.feature.FeatureTranscriptMutationDetail;
+import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.fish.presentation.FishPresentation;
 import org.zfin.fish.repository.FishService;
 import org.zfin.mapping.MappingService;
@@ -24,7 +26,6 @@ import org.zfin.mutant.Fish;
 import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.mutant.PhenotypeWarehouse;
 import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.mutant.presentation.GenotypePresentation;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.presentation.TermPresentation;
@@ -47,6 +48,9 @@ import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 public class ResultService {
 
     public static Logger logger = Logger.getLogger(ResultService.class);
+
+    @Autowired
+    MutationDetailsConversionService mutationDetailsConversionService;
 
     public static String ABSTRACT = "Abstract:";
     public static String ADDRESS = "Address:";
@@ -303,6 +307,7 @@ public class ResultService {
 
 
     public void injectFeatureAttributes(SearchResult result) {
+
         Feature feature = RepositoryFactory.getFeatureRepository().getFeatureByID(result.getId());
 
         result.setDisplayedID(result.getId());
@@ -320,8 +325,14 @@ public class ResultService {
             }
 
             result.addAttribute(TYPE, feature.getType().getDisplay());
+            Set<FeatureTranscriptMutationDetail> consequences = feature.getFeatureTranscriptMutationDetailSet();
+            List<String> consequenceStatements = new ArrayList<>(consequences.size());
+            for (FeatureTranscriptMutationDetail consequence : consequences) {
+                consequenceStatements.add(mutationDetailsConversionService.transcriptConsequenceStatement(consequence));
+            }
+
             if (feature.getFeatureTranscriptMutationDetailSet() != null && feature.getFeatureTranscriptMutationDetailSet().size() > 0) {
-                result.addAttribute(CONSEQUENCE, withCommas(feature.getFeatureTranscriptMutationDetailSet(), "transcriptConsequence.displayName"));
+                result.addAttribute(CONSEQUENCE, StringUtils.join(consequenceStatements, ", "));
             }
             if (feature.getConstructs() != null && feature.getConstructs().size() > 0) {
                 result.addAttribute(CONSTRUCT, withCommas(feature.getConstructs(), "marker.name"));
@@ -512,6 +523,7 @@ public class ResultService {
         //don't show for real, but useful to turn this on to get values for the test
         //result.setDisplayedID(result.getId());
 
+        ExpressionFigureStage efs = RepositoryFactory.getExpressionRepository().getExpressionFigureStage(id);
 
         ExpressionExperiment xpatex = RepositoryFactory.getExpressionRepository().getExpressionExperiment(result.getXpatZdbId());
         Figure figure = RepositoryFactory.getPublicationRepository().getFigure(result.getFigZdbId());
@@ -543,27 +555,35 @@ public class ResultService {
                 result.addAttribute(CONDITIONS, conditions);
             }
 
+            if (efs.getStartStage().equals(efs.getEndStage())) {
+                result.addAttribute(STAGE, efs.getStartStage().getName());
+            } else {
+                result.addAttribute(STAGE, efs.getStartStage().getName() + " to " + efs.getEndStage().getName());
+            }
+
             List<String> results = new ArrayList<>();
             List<ExpressionResult> expressionResults = new ArrayList<>();
 
+
+
             //Surprisngly, it turns out that this actually performs better than a query.  Could be caching, but we like caching.
-            expressionResults.addAll(CollectionUtils.intersection(xpatex.getExpressionResults(), figure.getExpressionResults()));
+            //expressionResults.addAll(CollectionUtils.intersection(xpatex.getExpressionResults(), figure.getExpressionResults()));
 
 
             //Sort expressionResults by start stage, end stage, superterm name, subterm name...
             Collections.sort(expressionResults);
 
-            for (ExpressionResult expressionResult : expressionResults) {
+            for (ExpressionResult2 expressionResult : efs.getExpressionResultSet()) {
                 StringBuilder sb = new StringBuilder();
-                if (expressionResult.getStartStage() == expressionResult.getEndStage()) {
-                    sb.append(DevelopmentStagePresentation.getName(expressionResult.getStartStage(), true));
+/*                if (efs.getStartStage() == efs.getEndStage()) {
+                    sb.append(DevelopmentStagePresentation.getName(efs.getStartStage(), true));
                 } else {
-                    sb.append(DevelopmentStagePresentation.getName(expressionResult.getStartStage(), true))
+                    sb.append(DevelopmentStagePresentation.getName(efs.getStartStage(), true))
                             .append(" to ")
-                            .append(DevelopmentStagePresentation.getName(expressionResult.getEndStage(), true));
+                            .append(DevelopmentStagePresentation.getName(efs.getEndStage(), true));
                 }
 
-                sb.append(" - ");
+                sb.append(" - ");*/
 
                 if (!expressionResult.isExpressionFound()) {
                     sb.append(" <i>not in</i> ");
@@ -594,6 +614,13 @@ public class ResultService {
             if (StringUtils.isNotBlank(experimentText)) {
                 sb.append(" + ");
                 sb.append(experimentText);
+            }
+
+            sb.append(" at ");
+            sb.append(efs.getStartStage().getName());
+            if (efs.getStartStage() != efs.getEndStage()) {
+                sb.append(" to ");
+                sb.append(efs.getEndStage().getName());
             }
 
             sb.append(" from ");
@@ -826,5 +853,4 @@ public class ResultService {
         }
         return sb.toString();
     }
-
 }

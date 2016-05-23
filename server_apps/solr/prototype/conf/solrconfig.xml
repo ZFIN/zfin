@@ -332,6 +332,8 @@
                           registered_author
              author_string
              author_year
+             full_mesh_term
+             full_mesh_term_t
                                      related_accession
                                      related_marker
                                      affected_gene_t
@@ -425,6 +427,8 @@
                                      registered_author_t
                                      author_string
                                      author_year
+             full_mesh_term
+             full_mesh_term_t
                                      related_accession
                                      related_marker
                                      affected_gene_t
@@ -500,16 +504,19 @@
 <!-- sqrt(map(attribution_count,1000,99999999,0))^0.2 -->
 
          <str name="bf">
-             sum($complexity_boost,$popularity_boost,$recency_boost,$images_boost,$jtype_boost)
+             sum($complexity_boost,$popularity_boost,$images_boost,$jtype_boost)
          </str>
 
 
          <str name="complexity_boost">mul(recip(complexity,1,1,1),1000000)</str>
-         <str name="popularity_boost">mul(sqrt(popularity),0.00001)</str>
-         <str name="recency_boost">mul(recip(ms(NOW/HOUR,tdate),3.16e-11,1,1),0.001)</str>
+         <str name="popularity_boost">mul(sqrt(popularity),0.001)</str>
+         <!-- not currently in use now that most records have 'date' as their creation date, rather than last updated date,
+              but I want to keep it around in case we want to use it for just pubs and figures -->
+         <!-- <str name="recency_boost">mul(recip(ms(NOW/HOUR,tdate),3.16e-11,1,1),0.001) </str>-->
          <str name="images_boost">mul(exists(has_image),0.1)</str>
          <str name="jtype_boost">mul(exists(query({!v='publication_type:Journal'})),0.001)</str>
-         <str name="bq">(*:* -is_wildtype:false)^1000 (*:* -name_t:unspecified)^10000 </str>
+         <!-- since you can't negatively boost, this pattern boosts everything BUT the records that match these queries-->
+          <str name="bq">(*:* -is_wildtype:false)^1000 (*:* -name_t:unspecified)^10000 </str>
 
          <str name="qf">
              proper_name_k^50.0
@@ -559,6 +566,8 @@
              registered_author^0.5
              author_string
              author_year
+             full_mesh_term
+             full_mesh_term_t
 
              related_accession
              related_marker
@@ -886,12 +895,12 @@
             </str>
 
             <str name="bf">
-                sum($complexity_boost,$popularity_boost,$recency_boost,$images_boost,$jtype_boost)
+                sum($complexity_boost,$popularity_boost,$images_boost,$jtype_boost)
             </str>
 
             <str name="complexity_boost">mul(recip(complexity,1,1,1),1000000)</str>
-            <str name="popularity_boost">mul(sqrt(popularity),0.00001)</str>
-            <str name="recency_boost">mul(recip(ms(NOW/HOUR,tdate),3.16e-11,1,1),0.001)</str>
+            <str name="popularity_boost">mul(sqrt(popularity),0.001)</str>
+            <!--<str name="recency_boost">mul(recip(ms(NOW/HOUR,tdate),3.16e-11,1,1),0.001)</str>-->
             <str name="images_boost">mul(exists(has_image),0.1)</str>
             <str name="jtype_boost">mul(exists(query({!v='publication_type:Journal'})),0.001)</str>
         </lst>

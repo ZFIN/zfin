@@ -1,7 +1,9 @@
 package org.zfin.gwt.curation.ui;
 
 import org.zfin.gwt.root.dto.FeatureDTO;
+import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
+import org.zfin.gwt.root.util.BooleanCollector;
 
 import java.util.List;
 
@@ -9,26 +11,38 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
 
     private FeatureEditView view;
     private FeatureNotesPresenter featureNotesPresenter;
+    private EditMutationDetailPresenter mutationDetailPresenter;
 
     public FeatureEditPresenter(FeatureEditView view, String publicationID) {
         super(view, publicationID);
         if (publicationID == null)
             throw new RuntimeException("NO pub ID found");
         this.view = view;
-        dto = new FeatureDTO();
+        this.
+                dto = new FeatureDTO();
         dto.setPublicationZdbID(publicationID);
         featureNotesPresenter = new FeatureNotesPresenter(publicationID, view.featureNotesView);
         view.featureNotesView.setPresenter(featureNotesPresenter);
+        mutationDetailPresenter = new EditMutationDetailPresenter(view);
+        view.mutationDetailTranscriptView.setPresenter(mutationDetailPresenter);
+        view.mutationDetailDnaView.setPresenter(mutationDetailPresenter);
+        view.mutationDetailProteinView.setPresenter(mutationDetailPresenter);
+
     }
 
     public void go() {
         super.go();
         loadFeaturesForPub();
         featureNotesPresenter.go();
+        mutationDetailPresenter.go();
     }
 
     public void loadFeaturesForPub() {
-        FeatureRPCService.App.getInstance().getFeaturesForPub(publicationID,
+        loadFeaturesForPub(false);
+    }
+
+    public void loadFeaturesForPub(boolean forceLoad) {
+        FeatureServiceGWT.getFeatureList(publicationID,
                 new FeatureEditCallBack<List<FeatureDTO>>("Failed to find features for pub: " + publicationID, this) {
 
                     @Override
@@ -58,7 +72,8 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                         revertGUI();
                         view.onChangeFeatureType();
                     }
-                });
+                }, forceLoad);
+
     }
 
 
@@ -67,7 +82,9 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
             public void onSuccess(FeatureDTO featureDTO) {
                 featureDTO.setPublicationZdbID(publicationID);
                 dto = featureDTO;
-                loadFeaturesForPub();
+                mutationDetailPresenter.setDto(featureDTO);
+                view.onChangeFeatureType();
+                revertGUI();
                 view.removeFeatureLink.setUrl("/action/infrastructure/deleteRecord/" + dto.getZdbID());
                 view.removeFeatureLink.setTitle("Delete Feature " + dto.getZdbID());
             }
@@ -79,37 +96,44 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
     public void handleDirty() {
         view.featureDisplayName.setText(FeatureValidationService.generateFeatureDisplayName(createDTOFromGUI()));
         boolean isDirty = isDirty();
-        view.saveButton.setEnabled(isDirty && FeatureValidationService.isFeatureSaveable(createDTOFromGUI()));
-        view.revertButton.setEnabled(isDirty);
+        onDirtyValueNotification(isDirty);
     }
 
     public boolean isDirty() {
         boolean isDirty = false;
         // this displays most changes
         // alias and notes are done automatically?
-        isDirty = view.featureDisplayName.isDirty(dto.getName()) || isDirty;
+        BooleanCollector col = new BooleanCollector(true);
+
         if (view.knownInsertionCheckBox.getValue() != dto.getKnownInsertionSite()) {
             view.saveButton.setEnabled(true);
-            isDirty = true;
+            col.addBoolean(true);
         }
         if (view.featureTypeBox.getSelected() != null && dto.getFeatureType() != null) {
-            isDirty = view.featureTypeBox.isDirty(dto.getFeatureType().name()) || isDirty;
+            col.addBoolean(view.featureTypeBox.isDirty(dto.getFeatureType().name()));
         } else if ((view.featureTypeBox.getSelected() == null && dto.getFeatureType() != null)
                 || (view.featureTypeBox.getSelected() != null && dto.getFeatureType() == null)
                 ) {
-            isDirty = view.featureTypeBox.setDirty(true);
+            col.addBoolean(view.featureTypeBox.setDirty(true));
         }
-        isDirty = (view.mutageeBox.isDirty(dto.getMutagee()) || isDirty);
-        isDirty = (view.mutagenBox.isDirty(dto.getMutagen()) || isDirty);
-        isDirty = (view.labDesignationBox.isDirty(dto.getLabPrefix()) || isDirty);
-        isDirty = (view.lineNumberBox.isDirty(dto.getLineNumber()) || isDirty);
-        isDirty = (view.labOfOriginBox.isDirty(dto.getLabOfOrigin()) || isDirty);
+        col.addBoolean(view.mutageeBox.isDirty(dto.getMutagee()));
+        col.addBoolean(view.mutagenBox.isDirty(dto.getMutagen()));
+        col.addBoolean(view.labDesignationBox.isDirty(dto.getLabPrefix()));
+        col.addBoolean(view.lineNumberBox.isDirty(dto.getLineNumber()));
+        col.addBoolean(view.labOfOriginBox.isDirty(dto.getLabOfOrigin()));
+        col.addBoolean(mutationDetailPresenter.isDirty());
 ////        isDirty = (view.featureSequenceBox.isDirty(dto.getFeatureSequence()) || isDirty) ;
-        return isDirty;
+        return col.arrivedValue();
+    }
+
+
+    public void onDirtyValueNotification(boolean isDirty) {
+        view.saveButton.setEnabled(isDirty && FeatureValidationService.isFeatureSaveable(createDTOFromGUI()));
+        view.revertButton.setEnabled(isDirty);
     }
 
     public FeatureDTO createDTOFromGUI() {
-        FeatureDTO featureDTO = super.createDTOFromGUI();
+        FeatureDTO featureDTO = super.createDTOFromGUI(view);
         // set things from actual object that are not grabbed from GUI
         // alias and notes are already handled by the interface, i.e.
         // are added / removed from the feature via independent Ajax call.
@@ -133,6 +157,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         if (dto.getFeatureType() != null) {
             view.featureTypeBox.setIndexForText(dto.getFeatureType().getDisplay());
             updateMutagenOnFeatureTypeChange();
+            view.onChangeFeatureType(null);
         }
         view.featureAliasList.setDTO(dto);
         view.featureSequenceList.setDTO(dto);
@@ -146,17 +171,26 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         if (selectedLab != null)
             onLabOfOriginChange(selectedLab, dto.getLabPrefix());
         view.knownInsertionCheckBox.setValue(dto.getKnownInsertionSite());
+        // only call event handler if transgenic Insertion
+        if (dto.getFeatureType().equals(FeatureTypeEnum.TRANSGENIC_INSERTION))
+            view.onClickKnownInsertionSite(null);
         view.dominantCheckBox.setValue(dto.getDominant());
         view.featureDisplayName.setValue(dto.getName());
         view.featureSuffixBox.setIndexForText(dto.getTransgenicSuffix());
-
+        view.mutationDetailProteinView.populateFields(dto.getProteinChangeDTO());
+        view.mutationDetailDnaView.populateFields(dto.getDnaChangeDTO());
+        mutationDetailPresenter.setDtoSet(dto.getTranscriptChangeDTOSet());
     }
 
 
     public void updateFeature() {
         FeatureDTO featureDTO = createDTOFromGUI();
-
         String errorMessage = FeatureValidationService.isValidToSave(featureDTO);
+        if (errorMessage != null) {
+            setError(errorMessage);
+            return;
+        }
+        errorMessage = mutationDetailPresenter.isValid(featureDTO);
         if (errorMessage != null) {
             setError(errorMessage);
             return;
@@ -164,6 +198,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
 
         featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
         if (isDirty() && FeatureValidationService.isFeatureSaveable(featureDTO)) {
+            clearError();
             view.working();
             FeatureRPCService.App.getInstance().editFeatureDTO(featureDTO,
                     new FeatureEditCallBack<FeatureDTO>("Failed to create feature:", this) {
@@ -172,6 +207,8 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                         public void onFailure(Throwable throwable) {
                             super.onFailure(throwable);
                             view.notWorking();
+                            view.revertButton.setEnabled(true);
+
                         }
 
                         @Override
@@ -180,7 +217,9 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                             dto = result;
                             view.notWorking();
                             view.setNote("Saved Feature [" + result.getName() + "]");
-                            loadFeaturesForPub();
+                            //loadFeaturesForPub(true);
+                            view.resetGUI();
+
                         }
                     });
 

@@ -67,7 +67,7 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
 
     public static String getTagNote(PhenotypeStatementWarehouse statement) {
         if (statement.getTag().equals("normal")) {
-            if (statement.getPhenotypeWarehouse().isPreEap()) {
+            if (statement.isPreEap()) {
                 // "old normal"
                 return "This annotation denotes a phenotype that is wild-type or significantly rescued.";
             } else {

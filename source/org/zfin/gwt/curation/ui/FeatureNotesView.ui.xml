@@ -16,7 +16,7 @@
                     </zfin:StringListBox>
                 </g:customCell>
                 <g:customCell>
-                    <g:TextArea ui:field="newNoteTextArea" width="600"/>
+                    <zfin:RevertibleTextArea ui:field="newNoteTextArea" width="600"/>
                 </g:customCell>
                 <g:cell/>
                 <g:customCell>

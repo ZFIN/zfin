@@ -1,28 +1,23 @@
 package org.zfin.feature.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.gbrowse.GBrowseTrack;
-import org.zfin.gbrowse.presentation.GBrowseImage;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.mapping.FeatureGenomeLocation;
-import org.zfin.mapping.GenomeLocation;
-import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.mapping.repository.LinkageRepository;
-import org.zfin.marker.Marker;
 import org.zfin.mutant.GenotypeDisplay;
 import org.zfin.mutant.GenotypeFeature;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
@@ -71,66 +66,23 @@ public class FeatureDetailController {
 
         FeatureBean form = new FeatureBean();
         form.setZdbID(zdbID);
-
-
         form.setFeature(feature);
-
-        Set<FeatureMarkerRelationship> featureMarkerRelationships = feature.getFeatureMarkerRelations();
-        Collection<FeatureGenomeLocation> locations = FeatureService.getFeatureGenomeLocations(feature, GenomeLocation.Source.ZFIN_Zv9);
-        if (CollectionUtils.isNotEmpty(locations)) {
-            // gbrowse has a location for this feature. if there is a feature marker relationship AND we know where
-            // that marker is, show the feature in the context of the marker. Otherwise just show the feature with
-            // some appropriate amount of padding.
-            GBrowseImage.GBrowseImageBuilder imageBuilder = GBrowseImage.builder();
-
-            // We don't yet have GRCz10 coordinates for any features, so for now, they're all Zv9 still
-            imageBuilder.setGenomeBuild(GBrowseImage.GenomeBuild.ZV9);
-
-            FeatureGenomeLocation featureLocation = locations.iterator().next();
-            if (featureMarkerRelationships.size() == 1) {
-                Marker related = featureMarkerRelationships.iterator().next().getMarker();
-                List<MarkerGenomeLocation> markerLocations = linkageRepository.getGenomeLocation(related, GenomeLocation.Source.ZFIN_Zv9);
-                if (CollectionUtils.isNotEmpty(markerLocations)) {
-                    imageBuilder.landmark(markerLocations.get(0))
-                            .highlight(feature)
-                            .withPadding(0.1);
-                } else {
-                    imageBuilder.landmark(featureLocation)
-                            .highlight(feature)
-                            .withPadding(10000);
-                }
-            } else {
-                imageBuilder.landmark(featureLocation)
-                        .highlight(feature)
-                        .withPadding(10000);
-            }
-            String subSource = featureLocation.getDetailedSource();
-            if (subSource != null) {
-                if (subSource.equals("BurgessLin")) {
-                    imageBuilder.tracks(GBrowseTrack.GENES, GBrowseTrack.INSERTION, GBrowseTrack.TRANSCRIPTS);
-                } else if (subSource.equals("ZMP")) {
-                    imageBuilder.tracks(GBrowseTrack.GENES, GBrowseTrack.ZMP, GBrowseTrack.TRANSCRIPTS);
-                }
-            }
-            form.setgBrowseImage(imageBuilder.build());
-        }
-
+        form.setgBrowseImage(FeatureService.getGbrowseImage(feature));
         form.setSortedConstructRelationships(FeatureService.getSortedConstructRelationships(feature));
         form.setCreatedByRelationship(FeatureService.getCreatedByRelationship(feature));
         form.setFeatureTypeAttributions(FeatureService.getFeatureTypeAttributions(feature));
         form.setFeatureMap(FeatureService.getFeatureMap(feature));
-        form.setFeatureLocations(FeatureService.getFeatureLocations(feature));
-        LOG.debug("got to summary page bit");
-
+        form.setFeatureLocations(FeatureService.getPhysicalLocations(feature));
         form.setSummaryPageDbLinks(FeatureService.getSummaryDbLinks(feature));
         form.setGenbankDbLinks(FeatureService.getGenbankDbLinks(feature));
+        form.setExternalNotes(FeatureService.getSortedExternalNotes(feature));
+        form.setMutationDetails(mutationDetailsConversionService.convert(feature, true));
+        form.setDnaChangeAttributions(FeatureService.getDnaChangeAttributions(feature));
+        form.setTranscriptConsequenceAttributions(FeatureService.getTranscriptConsequenceAttributions(feature));
+        form.setProteinConsequenceAttributions(FeatureService.getProteinConsequenceAttributions(feature));
 
-        LOG.debug("genbank link count " + form.getGenbankDbLinks().size());
         retrieveSortedGenotypeData(feature, form);
         retrievePubData(feature, form);
-
-        model.addAttribute("externalNotes",FeatureService.getSortedExternalNotes(feature));
-        model.addAttribute("mutationDetails", mutationDetailsConversionService.convert(feature));
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, feature.getName());
@@ -141,6 +93,38 @@ public class FeatureDetailController {
     @RequestMapping(value = "/feature/view/{zdbID}")
     public String retrieveFeatureDetail(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         return getFeatureDetail(zdbID, model);
+    }
+
+    @RequestMapping(value = "{zdbID}/mutation-detail-citations")
+    public String showMutationDetailCitationList(Model model, @PathVariable String zdbID, @RequestParam(required = false) String orderBy,
+                                                 @RequestParam(required = true) String type) {
+        Feature feature = featureRepository.getFeatureByID(zdbID);
+        MutationDetailAttributionList.Type detailType = MutationDetailAttributionList.Type.fromString(type);
+        MutationDetailAttributionList bean = new MutationDetailAttributionList(feature, detailType);
+        List<PublicationAttribution> attributions = null;
+        if (detailType != null) {
+            switch (detailType) {
+                case DNA:
+                    attributions = FeatureService.getDnaChangeAttributions(feature);
+                    break;
+                case TRANSCRIPT:
+                    attributions = FeatureService.getTranscriptConsequenceAttributions(feature);
+                    break;
+                case PROTEIN:
+                    attributions = FeatureService.getProteinConsequenceAttributions(feature);
+                    break;
+            }
+        }
+        if (attributions != null) {
+            Set<Publication> publications = new HashSet<>(attributions.size());
+            for (PublicationAttribution attribution : attributions) {
+                publications.add(attribution.getPublication());
+            }
+            bean.setPublications(publications);
+        }
+        bean.setOrderBy(orderBy);
+        model.addAttribute(LookupStrings.FORM_BEAN, bean);
+        return "feature/mutation-detail-citation-list.page";
     }
 
     private void retrieveSortedGenotypeData(Feature feature, FeatureBean form) {

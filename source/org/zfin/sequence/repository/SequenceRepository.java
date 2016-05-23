@@ -141,6 +141,8 @@ public interface SequenceRepository {
 
     List<DBLink> getDBLinksForAccession(Accession accesion);
     List<MarkerDBLink> getBlastableDBlinksForAccession(Accession accession);
+
+    List<ReferenceDatabase> getReferenceDatabases(List<ForeignDB.AvailableName> availableNames, List<ForeignDBDataType.DataType> dataTypes, ForeignDBDataType.SuperType superType, Species.Type species);
 }
 
 

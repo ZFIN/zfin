@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.TextBox;
 /**
  * A generic textbox that can be "dirty".
  */
-public abstract class AbstractTextBox<T> extends TextBox implements IsDirty<T>{
+public abstract class AbstractTextBox<T> extends TextBox implements IsDirtyWidget<T> {
 
     public abstract T getBoxValue() ;
 

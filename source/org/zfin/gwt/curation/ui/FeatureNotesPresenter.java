@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextArea;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
-import org.zfin.gwt.root.ui.IsDirty;
+import org.zfin.gwt.root.ui.IsDirtyWidget;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.DeleteImage;
 
@@ -37,8 +37,8 @@ public class FeatureNotesPresenter {
 
     private void populateDataTable() {
 
+        view.dataTable.resizeRows(0);
         if (featureDTO == null) {
-            view.dataTable.resizeRows(0);
             view.endTableUpdate();
             return;
         }
@@ -112,7 +112,7 @@ public class FeatureNotesPresenter {
                     Scheduler.get().scheduleDeferred(new Command() {
                         @Override
                         public void execute() {
-                            view.resetGUI();
+                            view.clearGUI();
                         }
                     });
                 }
@@ -134,7 +134,7 @@ public class FeatureNotesPresenter {
                     Scheduler.get().scheduleDeferred(new Command() {
                         @Override
                         public void execute() {
-                            view.resetGUI();
+                            view.clearGUI();
                         }
                     });
                 }
@@ -157,7 +157,6 @@ public class FeatureNotesPresenter {
     public void rebuildGUI() {
         populateDataTable();
     }
-
 
     ////// Handlers and Listeners....
 
@@ -286,9 +285,9 @@ public class FeatureNotesPresenter {
             saveButton.setEnabled(dirty);
             revertButton.setEnabled(dirty);
             if (dirty) {
-                noteTextArea.setStyleName(IsDirty.DIRTY_STYLE);
+                noteTextArea.setStyleName(IsDirtyWidget.DIRTY_STYLE);
             } else {
-                noteTextArea.setStyleName(IsDirty.CLEAN_STYLE);
+                noteTextArea.setStyleName(IsDirtyWidget.CLEAN_STYLE);
             }
             return dirty;
         }

@@ -47,16 +47,8 @@
 </c:if>
 
 <p></p>
-<table width="100%">
-    <tr>
-        <td class="titlebar">
-                <span style="font-size: larger; margin-left: 0.5em; font-weight: bold;">
-                        <a name="modify-search">Modify your search </a>
-            </span>
 
-            <a href="/ZFIN/misc_html/antibody_search_tips.html" class="popup-link help-popup-link"
-                    ></a>
-        </td>
-    </tr>
-</table>
-
+<div class="titlebar">
+    <h1><a name="modify-search">Modify your search</a></h1>
+    <a href="/ZFIN/misc_html/antibody_search_tips.html" class="popup-link help-popup-link"></a>
+</div>

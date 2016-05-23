@@ -10,8 +10,13 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.CuratorNoteDTO;
 import org.zfin.gwt.root.dto.NoteDTO;
+import org.zfin.gwt.root.ui.IsDirtyWidget;
+import org.zfin.gwt.root.ui.RevertibleTextArea;
 import org.zfin.gwt.root.ui.StringListBox;
 import org.zfin.gwt.root.util.DeleteImage;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class FeatureNotesView extends AbstractViewComposite {
 
@@ -29,7 +34,7 @@ public class FeatureNotesView extends AbstractViewComposite {
     @UiField
     Button cancelButton;
     @UiField
-    TextArea newNoteTextArea;
+    RevertibleTextArea newNoteTextArea;
     @UiField
     StringListBox typeListBox;
 
@@ -44,7 +49,7 @@ public class FeatureNotesView extends AbstractViewComposite {
 
     @UiHandler("cancelButton")
     void onClickCancelButton(@SuppressWarnings("unused") ClickEvent event) {
-        resetGUI();
+        clearGUI();
     }
 
     public void addNoteReferenceCell(NoteDTO noteDTO, int rowindex) {
@@ -94,8 +99,23 @@ public class FeatureNotesView extends AbstractViewComposite {
     public void resetGUI() {
         newNoteTextArea.setText("");
         typeListBox.setSelectedIndex(0);
+        dataTable.resizeRows(0);
+        endTableUpdate();
     }
 
+    public void clearGUI() {
+        newNoteTextArea.setText("");
+        typeListBox.setSelectedIndex(0);
+    }
+
+
+    @Override
+    public Set<IsDirtyWidget> getValueFields() {
+        Set<IsDirtyWidget> fields = new HashSet<>();
+        fields.add(newNoteTextArea);
+        return fields;
+
+    }
 
     public void setPresenter(FeatureNotesPresenter presenter) {
         this.presenter = presenter;

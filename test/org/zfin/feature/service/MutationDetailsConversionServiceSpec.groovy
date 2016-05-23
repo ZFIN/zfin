@@ -29,6 +29,10 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
     GeneLocalizationTerm threePrimeUTR = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-208", displayName: "3' UTR")
     @Shared
     GeneLocalizationTerm startCodon = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-321", displayName: "start codon")
+    @Shared
+    GeneLocalizationTerm exonLoc = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-150", displayName: "exon");
+    @Shared
+    GeneLocalizationTerm intronLoc = new GeneLocalizationTerm(zdbID: "ZDB-TERM-130401-191", displayName: "intron");
 
     @Shared
     TranscriptConsequence missense = new TranscriptConsequence(zdbID: "ZDB-TERM-130401-1577", displayName: "missense", order: 1)
@@ -41,18 +45,6 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
     @Shared
     TranscriptConsequence frameshift = new TranscriptConsequence(zdbID: "ZDB-TERM-130401-1581", displayName: "frameshift", order: 7)
 
-
-    def 'mutation type field should be populated'() {
-        setup:
-        def feature = new Feature(type: FeatureTypeEnum.POINT_MUTATION)
-
-        when:
-        def presentation = converter.convert(feature)
-
-        then:
-        presentation.mutationType == 'Point Mutation'
-    }
-
     @Unroll
     def 'dna statement point mutations'() {
         setup:
@@ -62,7 +54,8 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
                         geneLocalizationTerm: localization,
                         exonNumber: exon,
                         intronNumber: intron,
-                        dnaPositionStart: position,
+                        dnaPositionStart: position == null ? null : new Integer(position), // curation interface sets both fields
+                        dnaPositionEnd: position == null ? null : new Integer(position),   // to the same value in this case
                         referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
                         dnaSequenceReferenceAccessionNumber: accession,
                         dnaMutationTerm: new DnaMutationTerm(displayName: 'A>G')
@@ -78,8 +71,8 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         where:
         localization   | exon | intron | position | db        | accession || display
         null           | null | null   | null     | null      | null      || 'A>G'
-        null           | 4    | null   | null     | null      | null      || 'A>G in exon 4'
-        spliceJunction | 6    | 7      | 1010     | null      | null      || 'A>G at exon 6 - intron 7 splice junction at position 1010'
+        exonLoc        | 4    | null   | null     | null      | null      || 'A>G in Exon 4'
+        spliceJunction | 6    | 7      | 1010     | null      | null      || 'A>G at position 1010 at Exon 6 - Intron 7 Splice Junction'
         null           | null | null   | 392      | null      | null      || 'A>G at position 392'
         null           | null | null   | 1829     | 'GENBANK' | 'C1032'   || 'A>G at position 1829 in GENBANK:C1032'
         null           | null | null   | null     | 'GENBANK' | '9999'    || 'A>G in GENBANK:9999'
@@ -99,31 +92,33 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
 
         where:
         localization   | exon | intron || display
-        null           | 1    | null   || "in exon 1"
-        null           | null | 2      || "in intron 2"
-        spliceDonor    | null | null   || "in splice donor site"
-        spliceDonor    | 1    | null   || "in splice donor site of exon 1"
-        spliceDonor    | null | 2      || "in splice donor site of intron 2"
-        spliceAcceptor | null | null   || "in splice acceptor site"
-        spliceAcceptor | 1    | null   || "in splice acceptor site of exon 1"
-        spliceAcceptor | null | 2      || "in splice acceptor site of intron 2"
-        spliceJunction | null | null   || "at splice junction"
-        spliceJunction | 3    | 3      || "at exon 3 - intron 3 splice junction"
-        spliceJunction | 4    | 5      || "at exon 4 - intron 5 splice junction"
-        spliceJunction | 7    | 6      || "at intron 6 - exon 7 splice junction"
-        promoter       | 3    | 4      || "in promoter"
-        startCodon     | 3    | 4      || "in start codon"
+        null           | 1    | null   || ""
+        null           | null | 2      || ""
+        exonLoc        | 1    | null   || "in Exon 1"
+        intronLoc      | null | 2      || "in Intron 2"
+        spliceDonor    | null | null   || "in Splice Donor Site"
+        spliceDonor    | 1    | null   || "in Splice Donor Site of Exon 1"
+        spliceDonor    | null | 2      || "in Splice Donor Site of Intron 2"
+        spliceAcceptor | null | null   || "in Splice Acceptor Site"
+        spliceAcceptor | 1    | null   || "in Splice Acceptor Site of Exon 1"
+        spliceAcceptor | null | 2      || "in Splice Acceptor Site of Intron 2"
+        spliceJunction | null | null   || "at Splice Junction"
+        spliceJunction | 3    | 3      || "at Exon 3 - Intron 3 Splice Junction"
+        spliceJunction | 4    | 5      || "at Exon 4 - Intron 5 Splice Junction"
+        spliceJunction | 7    | 6      || "at Intron 6 - Exon 7 Splice Junction"
+        promoter       | 3    | 4      || "in Promoter"
+        startCodon     | 3    | 4      || "in Start Codon"
         fivePrimeUTR   | 3    | 4      || "in 5' UTR"
         threePrimeUTR  | 3    | 4      || "in 3' UTR"
-        enhancer       | 3    | 4      || "in enhancer"
+        enhancer       | 3    | 4      || "in Enhancer"
     }
 
     @Unroll
     def 'dna position statement with start #start, end #end'() {
         setup:
         def dnaChange = new FeatureDnaMutationDetail(
-                dnaPositionStart: start,
-                dnaPositionEnd: end
+                dnaPositionStart: start == null ? null : new Integer(start),
+                dnaPositionEnd: end == null ? null : new Integer(end)
         )
 
         expect:
@@ -134,6 +129,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         null  | null || ""
         null  | 38   || ""
         75    | null || "at position 75"
+        22    | 22   || "at position 22"
         181   | 371  || "from position 181 to 371"
     }
 
@@ -146,7 +142,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         )
 
         expect:
-        converter.referenceSequenceStatement(dnaChange) == display
+        converter.referenceSequenceStatement(dnaChange, false) == display
 
         where:
         db        | accession || display
@@ -179,12 +175,12 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
 
         where:
         localization | exon | intron | position | db        | accession || display
-        null         | null | null   | null     | null      | null      || '-10 bp'
-        null         | null | 2      | null     | null      | null      || '-10 bp in intron 2'
-        spliceDonor  | 6    | null   | 1010     | null      | null      || '-10 bp in splice donor site of exon 6 at position 1010'
-        null         | null | null   | 482      | null      | null      || '-10 bp at position 482'
-        null         | null | null   | 1829     | 'GENBANK' | 'C1032'   || '-10 bp at position 1829 in GENBANK:C1032'
-        null         | null | null   | null     | 'GENBANK' | '9999'    || '-10 bp in GENBANK:9999'
+        null         | null | null   | null     | null      | null      || '10 bp deleted'
+        intronLoc    | null | 2      | null     | null      | null      || '10 bp deleted in Intron 2'
+        spliceDonor  | 6    | null   | 1010     | null      | null      || '10 bp deleted at position 1010 in Splice Donor Site of Exon 6'
+        null         | null | null   | 482      | null      | null      || '10 bp deleted at position 482'
+        null         | null | null   | 1829     | 'GENBANK' | 'C1032'   || '10 bp deleted at position 1829 in GENBANK:C1032'
+        null         | null | null   | null     | 'GENBANK' | '9999'    || '10 bp deleted in GENBANK:9999'
     }
 
     @Unroll
@@ -211,12 +207,12 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
 
         where:
         localization | exon | intron | position | db        | accession || display
-        null         | null | null   | null     | null      | null      || '+13 bp'
-        null         | 12   | null   | null     | null      | null      || '+13 bp in exon 12'
-        fivePrimeUTR | 6    | null   | 1010     | null      | null      || '+13 bp in 5\' UTR at position 1010'
-        null         | null | null   | 832      | null      | null      || '+13 bp at position 832'
-        null         | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '+13 bp in intron 5 at position 1829 in GENBANK:C1032'
-        null         | null | null   | null     | 'GENBANK' | '9999'    || '+13 bp in GENBANK:9999'
+        null         | null | null   | null     | null      | null      || '13 bp inserted'
+        exonLoc      | 12   | null   | null     | null      | null      || '13 bp inserted in Exon 12'
+        fivePrimeUTR | 6    | null   | 1010     | null      | null      || '13 bp inserted at position 1010 in 5\' UTR'
+        null         | null | null   | 832      | null      | null      || '13 bp inserted at position 832'
+        intronLoc    | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '13 bp inserted at position 1829 in GENBANK:C1032 in Intron 5'
+        null         | null | null   | null     | 'GENBANK' | '9999'    || '13 bp inserted in GENBANK:9999'
     }
 
     @Unroll
@@ -244,14 +240,14 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
 
         where:
         added | removed | localization | exon | intron | position | db        | accession || display
-        18    | null    | null         | null | null   | null     | null      | null      || 'net +18 bp'
-        null  | 21      | null         | null | null   | null     | null      | null      || 'net -21 bp'
-        34    | 17      | null         | null | null   | null     | null      | null      || '+34/-17 bp'
-        34    | 17      | null         | 2    | null   | null     | null      | null      || '+34/-17 bp in exon 2'
-        34    | 17      | spliceDonor  | null | null   | 1010     | null      | null      || '+34/-17 bp in splice donor site at position 1010'
-        34    | 17      | null         | null | null   | 832      | null      | null      || '+34/-17 bp at position 832'
-        34    | 17      | null         | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '+34/-17 bp in intron 5 at position 1829 in GENBANK:C1032'
-        34    | 17      | null         | null | null   | null     | 'GENBANK' | '9999'    || '+34/-17 bp in GENBANK:9999'
+        18    | null    | null         | null | null   | null     | null      | null      || 'Net 18 bp inserted'
+        null  | 21      | null         | null | null   | null     | null      | null      || 'Net 21 bp deleted'
+        34    | 17      | null         | null | null   | null     | null      | null      || '34 bp inserted / 17 bp deleted'
+        34    | 17      | exonLoc      | 2    | null   | null     | null      | null      || '34 bp inserted / 17 bp deleted in Exon 2'
+        34    | 17      | spliceDonor  | null | null   | 1010     | null      | null      || '34 bp inserted / 17 bp deleted at position 1010 in Splice Donor Site'
+        34    | 17      | null         | null | null   | 832      | null      | null      || '34 bp inserted / 17 bp deleted at position 832'
+        34    | 17      | intronLoc    | null | 5      | 1829     | 'GENBANK' | 'C1032'   || '34 bp inserted / 17 bp deleted at position 1829 in GENBANK:C1032 in Intron 5'
+        34    | 17      | null         | null | null   | null     | 'GENBANK' | '9999'    || '34 bp inserted / 17 bp deleted in GENBANK:9999'
     }
 
     @Unroll
@@ -278,8 +274,8 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         where:
         localization | exon | intron | position | db       | accession || display
         null         | null | null   | null     | null     | null      || ""
-        null         | null | 5      | null     | null     | null      || "Insertion in intron 5"
-        promoter     | null | null   | null     | null     | null      || "Insertion in promoter"
+        intronLoc    | null | 5      | null     | null     | null      || "Insertion in Intron 5"
+        promoter     | null | null   | null     | null     | null      || "Insertion in Promoter"
         null         | null | null   | 8849     | null     | null      || "Insertion at position 8849"
         null         | null | null   | null     | 'FOOBAR' | '998A'    || "Insertion in FOOBAR:998A"
     }
@@ -300,14 +296,14 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         term     | exon | intron || display
         null     | null | null   || ''
         missense | null | null   || 'Missense'
-        missense | 1    | null   || 'Missense in exon 1'
-        missense | null | 2      || 'Missense in intron 2'
-        missense | 3    | 4      || 'Missense in exon 3'
+        missense | 1    | null   || 'Missense in Exon 1'
+        missense | null | 2      || 'Missense in Intron 2'
+        missense | 3    | 4      || 'Missense in Exon 3'
         gain     | null | null   || 'Gain'
-        gain     | 1    | null   || 'Gain of exon 1'
-        gain     | null | 2      || 'Gain of intron 2'
-        loss     | 3    | null   || 'Loss of exon 3'
-        loss     | null | 4      || 'Loss of intron 4'
+        gain     | 1    | null   || 'Gain of Exon 1'
+        gain     | null | 2      || 'Gain of Intron 2'
+        loss     | 3    | null   || 'Loss of Exon 3'
+        loss     | null | 4      || 'Loss of Intron 4'
     }
 
     @Unroll
@@ -324,15 +320,15 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         def presentation = converter.convert(feature)
 
         then:
-        presentation.transcriptChangeStatement == 'Missense, Splicing Variant in exon 3, Gain of intron 5, Frameshift'
+        presentation.transcriptChangeStatement == 'Missense, Splicing Variant in Exon 3, Gain of Intron 5, Frameshift'
     }
 
     @Unroll
     def 'protein position statement with start #start, end #end'() {
         setup:
         def proteinConsequence = new FeatureProteinMutationDetail(
-                proteinPositionStart: start,
-                proteinPositionEnd: end
+                proteinPositionStart: start == null ? null : new Integer(start),
+                proteinPositionEnd: end == null ? null : new Integer(end)
         )
 
         expect:
@@ -343,6 +339,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         null  | null  || ""
         null  | 12    || ""
         9911  | null  || "at position 9911"
+        1121  | 1121  || "at position 1121"
         28281 | 28282 || "from position 28281 to 28282"
     }
 
@@ -355,7 +352,7 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         )
 
         expect:
-        converter.referenceSequenceStatement(proteinConsequence) == display
+        converter.referenceSequenceStatement(proteinConsequence, false) == display
 
         where:
         db         | accession || display
@@ -383,10 +380,10 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         'Trp' | null     | null    | null      || 'Trp>STOP'
         null  | 'Met'    | null    | null      || ''
         'Phe' | 'Gly'    | null    | null      || 'Phe>Gly'
-        null  | null     | 5       | null      || '+5 AA'
-        null  | null     | null    | 8         || '-8 AA'
-        null  | null     | 3       | 9         || '+3/-9 AA'
-        'Sec' | 'Ala'    | 1       | 2         || 'Sec>Ala, +1/-2 AA' // does this case even make sense? well, just in case.
+        null  | null     | 5       | null      || '5 AA added'
+        null  | null     | null    | 8         || '8 AA missing'
+        null  | null     | 3       | 9         || '3 AA added / 9 AA missing'
+        'Sec' | 'Ala'    | 1       | 2         || 'Sec>Ala, 1 AA added / 2 AA missing' // does this case even make sense? well, just in case.
     }
 
     @Unroll
@@ -399,8 +396,8 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
                         numberAminoAcidsAdded: addedAA,
                         numberAminoAcidsRemoved: removedAA,
                         proteinConsequence: term == null ? null : new ProteinConsequence(displayName: term),
-                        proteinPositionStart: start,
-                        proteinPositionEnd: end,
+                        proteinPositionStart: start == null ? null : new Integer(start),
+                        proteinPositionEnd: end == null ? null : new Integer(end),
                         referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
                         proteinSequenceReferenceAccessionNumber: accession
                 )
@@ -417,9 +414,9 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
         null  | null     | null    | null      | null                      | null  | null | null     | null      || ''
         'Gln' | 'Pro'    | null    | null      | null                      | null  | null | null     | null      || 'Gln>Pro'
         'Tyr' | null     | null    | null      | null                      | 400   | null | null     | null      || 'Tyr>STOP at position 400'
-        null  | null     | 10      | null      | null                      | 312   | 322  | null     | null      || '+10 AA from position 312 to 322'
-        null  | null     | null    | 14        | null                      | null  | null | 'PROTDB' | '10000'   || '-14 AA in PROTDB:10000'
-        null  | null     | null    | null      | 'elongated_polypeptide'   | null  | null | null     | null      || 'elongated_polypeptide'
-        'Gln' | 'Tyr'    | null    | null      | 'amino_acid_substitution' | 90    | null | 'FooDB'  | '848484'  || 'Gln>Tyr amino_acid_substitution at position 90 in FooDB:848484'
+        null  | null     | 10      | null      | null                      | 312   | 322  | null     | null      || '10 AA added from position 312 to 322'
+        null  | null     | null    | 14        | null                      | null  | null | 'PROTDB' | '10000'   || '14 AA missing in PROTDB:10000'
+        null  | null     | null    | null      | 'elongated polypeptide'   | null  | null | null     | null      || 'Elongated Polypeptide'
+        'Gln' | 'Tyr'    | null    | null      | 'amino acid substitution' | 90    | null | 'FooDB'  | '848484'  || 'Amino Acid Substitution: Gln>Tyr at position 90 in FooDB:848484'
     }
 }

@@ -699,6 +699,7 @@
 
    <field name="abstract" type="text" indexed="true" stored="true"   />
    <field name="keyword" type="publication_keyword" indexed="true" stored="true"  multiValued="true"   />
+   <field name="full_mesh_term" type="keyword" indexed="true" stored="true" multiValued="true" />
 
    <field name="journal" type="keyword" indexed="true" stored="true"   />
    <field name="topic" type="keyword" indexed="true" stored="true"   multiValued="true" />
@@ -989,6 +990,7 @@
    <copyField source="curator" dest="curator_t"/>
    <copyField source="sequence_alteration" dest="sequence_alteration_t"/>
    <copyField source="background" dest="background_t"/>
+   <copyField source="full_mesh_term" dest="full_mesh_term_t"/>
 
     <copyField source="engineered_region" dest="engineered_region_t"/>
    <copyField source="expressed_in" dest="expressed_in_t"/>
@@ -1078,6 +1080,7 @@
     <copyField source="biography" dest="text"/>
 
     <copyField source="abstract" dest="text"/>
+    <copyField source="full_mesh_term" dest="text"/>
     <copyField source="definition" dest="text"/>
     <copyField source="note" dest="text"/>
 
@@ -1120,6 +1123,7 @@
     <copyField source="name" dest="name_ac"/>
     <copyField source="full_name" dest="full_name_ac"/>
     <copyField source="alias" dest="alias_ac"/>
+    <copyField source="alias" dest="alias_k"/>
     <copyField source="alias" dest="alias_t"/>
 
     <!-- DANGER! unintended consequence!! -->

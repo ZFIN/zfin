@@ -412,7 +412,7 @@ select clone_mrkr_zdb_id, replace(clone_comments,'
 --ortholog
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_orthos/1orthos.txt"
- select ortho_zdb_id, ortho_zebrafish_gene_zdb_id, organism_common_name, ortho_other_species_symbol, current year to second,
+ select ortho_other_species_ncbi_gene_id, ortho_zebrafish_gene_zdb_id, organism_common_name, ortho_other_species_symbol, current year to second,
  	ortho_other_species_name, replace(ortho_other_species_chromosome,"|",";"), replace(ortho_other_species_chromosome,"|",";"),
 	oef_accession_number,fdb_db_name,fdbdt_data_type,oev_ortho_Zdb_id, oev_evidence_code, oev_pub_zdb_id,ortho_zdb_id||oef_accession_number
    from ortholog,ortholog_evidence,ortholog_external_reference,foreign_Db,foreign_db_data_type,foreign_db_Contains, organism
@@ -503,3 +503,47 @@ select feature_zdb_id, feature_name, feature_Type, feature_abbrev, fmrel_mrkr_zd
   where feature_zdb_id =fmrel_ftr_zdb_id
  and fmrel_mrkr_zdb_id = mrkr_zdb_id
  and fmrel_type = 'is allele of';
+
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dnaMutationDetail/dnaMutationDetail.txt"
+select fdmd_zdb_id,
+    fdmd_feature_zdb_id,
+    (select term_ont_id 
+       from term where fdmd_dna_mutation_term_zdb_id = term_zdb_id),
+    fdmd_dna_sequence_of_reference_accession_number,
+    fdmd_fdbcont_zdb_id,
+    fdmd_dna_position_start,
+    fdmd_dna_position_end,
+    fdmd_number_additional_dna_base_pairs,
+    fdmd_number_removed_dna_base_pairs,
+    fdmd_exon_number,
+    fdmd_intron_number,
+    (select term_ont_id 
+       from term where fdmd_gene_localization_term_zdb_id =term_Zdb_id)
+  from feature_dna_mutation_detail, feature
+  where fdmd_feature_zdb_id = feature_zdb_id;
+
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/transcriptMutationDetail/transcriptMutationDetail.txt"
+select ftmd_zdb_id,
+    (select term_ont_id from term where term_zdb_id = ftmd_transcript_consequence_term_zdb_id),
+    ftmd_feature_zdb_id,
+    ftmd_exon_number,
+    ftmd_intron_number
+  from feature_transcript_mutation_detail
+  , feature
+ where ftmd_feature_zdb_id = feature_zdb_id;
+
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/proteinMutationDetail/proteinMutationDetail.txt"
+select fpmd_zdb_id,
+    fpmd_feature_zdb_id,
+    fpmd_sequence_of_reference_accession_number,
+    fpmd_fdbcont_zdb_id,
+    fpmd_protein_position_start,
+    fpmd_protein_position_end,
+    (select term_ont_id from term where fpmd_wt_protein_term_zdb_id = term_zdb_id),
+    (select term_ont_id from term where fpmd_mutant_or_stop_protein_term_zdb_id = term_Zdb_id),
+    fpmd_number_amino_acids_removed,
+    fpmd_number_amino_acids_added,
+    (select term_ont_id from term where fpmd_protein_consequence_term_zdb_id=term_Zdb_id)
+ from feature_protein_mutation_detail, feature
+      where fpmd_feature_zdb_id = feature_zdb_id;
+

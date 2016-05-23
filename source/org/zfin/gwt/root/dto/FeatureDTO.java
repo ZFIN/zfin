@@ -2,7 +2,9 @@ package org.zfin.gwt.root.dto;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -32,6 +34,9 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes {
     protected List<String> featureSequences;
     protected String displayNameForGenotypeBase;
     protected String displayNameForGenotypeSuperior;
+    protected MutationDetailDnaChangeDTO dnaChangeDTO;
+    protected MutationDetailProteinChangeDTO proteinChangeDTO;
+    protected Set<MutationDetailTranscriptChangeDTO> transcriptChangeDTOSet;
 
     public String getFeatureSequence() {
         return featureSequence;
@@ -211,6 +216,36 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes {
 
     public void setPublicNoteList(List<NoteDTO> publicNoteList) {
         this.publicNoteList = publicNoteList;
+    }
+
+    public MutationDetailDnaChangeDTO getDnaChangeDTO() {
+        return dnaChangeDTO;
+    }
+
+    public void setDnaChangeDTO(MutationDetailDnaChangeDTO dnaChangeDTO) {
+        this.dnaChangeDTO = dnaChangeDTO;
+    }
+
+    public MutationDetailProteinChangeDTO getProteinChangeDTO() {
+        return proteinChangeDTO;
+    }
+
+    public void setProteinChangeDTO(MutationDetailProteinChangeDTO proteinChangeDTO) {
+        this.proteinChangeDTO = proteinChangeDTO;
+    }
+
+    public Set<MutationDetailTranscriptChangeDTO> getTranscriptChangeDTOSet() {
+        return transcriptChangeDTOSet;
+    }
+
+    public void setTranscriptChangeDTOSet(Set<MutationDetailTranscriptChangeDTO> transcriptChangeDTOSet) {
+        this.transcriptChangeDTOSet = transcriptChangeDTOSet;
+    }
+
+    public void addTranscriptChange(MutationDetailTranscriptChangeDTO dto){
+        if(transcriptChangeDTOSet == null)
+            transcriptChangeDTOSet = new HashSet<>(5);
+        transcriptChangeDTOSet.add(dto);
     }
 
     /**

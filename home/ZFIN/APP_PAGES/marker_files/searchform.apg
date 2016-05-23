@@ -18,27 +18,19 @@ Input:
       }
 
   </SCRIPT>
-  
-  <TABLE class="search" width=100% border=0 cellpadding=1 cellspacing=0>
-    <TR>
-      <?MIBLOCK COND="$(AND,$(NXST,$query_results),$(EC,$page,newmrkrselect))">
-        <TD class=titlebar>
-	  &nbsp;&nbsp;
-	  <font size=+1>
-	     <b>Search for Genes / Markers / Clones</b>
-	   </font>
-       </TD>
-       <TD class=titlebar align=right> 
- 	 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
-       </TD>
-     <?MIELSE> 	
-       <TD class=titlebar colspan=2>
-         &nbsp;&nbsp;
-         <font size=+1>	 
-	   <a name="modify"></a><b>Modify your search.</b>
-         </font>
-       </TD> 
-     <?/MIBLOCK>
+
+  <?MIBLOCK COND="$(AND,$(NXST,$query_results),$(EC,$page,newmrkrselect))">
+    <div class="titlebar">
+	  <h1>Search for Genes / Markers / Clones</h1>
+	  <span class="yourinputwelcome">
+	    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
+	  </span>
+	</div>
+  <?MIELSE>
+    <div class="titlebar">
+      <h1><a name="modify"></a>Modify your search</h1>
+    </div>
+  <?/MIBLOCK>
 
     <?MICOMMENT> ** You may notice that the form below uses a post, and think,
                        "I'm not uploading a file or changing the state 
@@ -48,8 +40,7 @@ Input:
                     page 5-8 of the informix manual ...and they should be deeply
                     embarassed about it.    ** 
      <?/MICOMMENT>
-
-    </TR>
+  <TABLE class="search" width=100% border=0 cellpadding=1 cellspacing=0>
      <FORM name="critform" method="post" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
         <input type=hidden name=MIval value=aa-newmrkrselect.apg>
       <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>

@@ -42,8 +42,10 @@
                         <td class="data-label"><b>All Expression Data: </b></td>
                         <td align="left">
                             <c:choose>
-                            <c:when test="${markerExpression.allExpressionData.figureCount eq 1}">
+                            <c:when test="${markerExpression.allExpressionData.figureCount == 1}">
+
                                 ${markerExpression.allExpressionData.singleFigure.link}
+
                             </c:when>
                             <c:otherwise>
                                 <c:choose>
@@ -54,7 +56,7 @@
                                 </c:when>
                                 <c:otherwise>
                                 <a href="/${webdriverRoot}?MIval=aa-xpatselect.apg&query_results=true&gene_name=${marker.name}&searchtype=equals"
-                                        >${markerExpression.allExpressionData.figureCount}
+                                        >${markerExpression.allExpressionData.figureCount} figures
                                 </c:otherwise>
                                     </c:choose>
                                 </c:otherwise>

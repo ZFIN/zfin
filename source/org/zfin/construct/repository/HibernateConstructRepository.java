@@ -7,8 +7,11 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
+import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructRelationship;
+import org.zfin.construct.presentation.ConstructComponentPresentation;
 import org.zfin.database.BtsContainsService;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
@@ -18,6 +21,7 @@ import org.zfin.fish.WarehouseSummary;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
@@ -618,6 +622,15 @@ public class HibernateConstructRepository implements ConstructRepository {
             fishList.add(geno);
         }
         return fishList;
+    }
+
+    @Override
+    public List<ConstructComponent> getConstructComponentsByComponentID(String componentZdbID) {
+        Session session = HibernateUtil.currentSession();
+
+        Criteria criteria = session.createCriteria(ConstructComponent.class);
+        criteria.add(Restrictions.eq("componentZdbID", componentZdbID));
+        return (List<ConstructComponent>) criteria.list();
     }
 
     public void addConstructRelationshipAttribution(ConstructRelationship cmrel, Publication attribution, ConstructCuration construct) {

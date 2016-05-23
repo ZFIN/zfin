@@ -50,10 +50,13 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
     }
 
     @UiHandler("featureEditList")
-    void onChangeFeature(@SuppressWarnings("unused") ChangeEvent event) {
+    void onChangeFeature(@SuppressWarnings("unused") final ChangeEvent event) {
         final String featureID = featureEditList.getValue(featureEditList.getSelectedIndex());
+        mutationDetailDnaView.resetGUI();
+        mutationDetailProteinView.resetGUI();
+        mutationDetailTranscriptView.resetGUI();
         if (StringUtils.isEmpty(featureID)) {
-            setError("Empty ID");
+            setNote("No feature selected");
             resetGUI();
             removeFeatureLink.setVisible(false);
             editPresenter.dto = null;
@@ -70,8 +73,19 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
         handleDirty();
     }
 
+    @UiHandler("mutageeBox")
+    void onChangeMutagee(@SuppressWarnings("unused") ChangeEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("mutagenBox")
+    void onChangeMutagen(@SuppressWarnings("unused") ChangeEvent event) {
+        handleChanges();
+    }
+
     @UiHandler("saveButton")
     void onClickSaveButton(@SuppressWarnings("unused") ClickEvent event) {
+        super.onclickSaveButton(event);
         editPresenter.updateFeature();
     }
 
@@ -79,6 +93,8 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
     void onClickRevertButton(@SuppressWarnings("unused") ClickEvent event) {
         editPresenter.revertGUI();
         editPresenter.handleDirty();
+        mutationDetailProteinView.resetMessages();
+        mutationDetailDnaView.resetMessages();
     }
 
     public void setPresenter(FeatureEditPresenter presenter) {
@@ -87,18 +103,13 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
     }
 
     public void resetGUI() {
+        super.resetGUI();
         featureEditList.setSelectedIndex(0);
-        featureTypeBox.setSelectedIndex(0);
-        labOfOriginBox.setSelectedIndex(0);
-        labOfOriginBox.setDirty(false);
-        labDesignationBox.clear();
-        labDesignationBox.setDirty(false);
-        mutageeBox.setDirty(false);
-        mutagenBox.setDirty(false);
-        lineNumberBox.setDirty(false);
-        featureDisplayName.setDirty(false);
-        featureAliasList.revertGUI();
+        featureAliasList.resetGUI();
+        featureSequenceList.resetGUI();
         featureNotesView.resetGUI();
+        removeFeatureLink.setVisible(false);
+        hideMutationDetail();
     }
 
     @Override

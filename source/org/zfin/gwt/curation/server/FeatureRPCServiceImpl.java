@@ -9,6 +9,7 @@ import org.hibernate.Transaction;
 import org.zfin.Species;
 import org.zfin.feature.*;
 import org.zfin.feature.repository.FeatureRepository;
+import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.curation.ui.FeatureRPCService;
@@ -39,8 +40,6 @@ import java.util.*;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.*;
 
-/**
- */
 public class FeatureRPCServiceImpl extends RemoteServiceServlet implements FeatureRPCService {
 
     private transient Logger logger = Logger.getLogger(FeatureRPCServiceImpl.class);
@@ -116,16 +115,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         if (featureDTO.getFeatureType() != FeatureTypeEnum.UNSPECIFIED) {
             feature.setUnspecifiedFeature(false);
         }
-        if (oldFeatureType == featureDTO.getFeatureType()) {
-            List<RecordAttribution> recordAttributions = infrastructureRepository.getRecordAttributionsForType(feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
-            if (recordAttributions.size() != 0) {
-                if (!recordAttributions.get(0).getSourceZdbID().equals(featureDTO.getPublicationZdbID())) {
-                    infrastructureRepository.removeRecordAttributionForType(recordAttributions.get(0).getSourceZdbID(), feature.getZdbID());
-                    infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Feature type attribution", oldFeatureType.name(), featureDTO.getFeatureType().toString(), recordAttributions.get(0).getSourceZdbID());
-                    infrastructureRepository.insertPublicAttribution(featureDTO.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
-                }
-            }
-        } else {
+        if (oldFeatureType != featureDTO.getFeatureType()) {
             RecordAttribution recordAttributions = infrastructureRepository.getRecordAttribution(feature.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
             if (recordAttributions == null) {
                 List<RecordAttribution> recordAttribution = infrastructureRepository.getRecordAttributionsForType(feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
@@ -142,10 +132,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
 
         Feature existingFeature = featureRepository.getFeatureByAbbreviation(featureDTO.getAbbreviation());
-        String existingFeatureAbbrev = feature.getAbbreviation();
-       /* if (existingFeatureAbbrev != featureDTO.getAbbreviation())   {
-        feature.setAbbreviation(featureDTO.getAbbreviation());
-        }*/
         if (existingFeature == null) {
             feature.setAbbreviation(featureDTO.getAbbreviation());
         }
@@ -154,9 +140,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
         feature.setDominantFeature(featureDTO.getDominant());
         feature.setKnownInsertionSite(featureDTO.getKnownInsertionSite());
-       /* if (featureDTO.getKnownInsertionSite()) {
-            feature.setTransgenicSuffix(featureDTO.getTransgenicSuffix());
-        }*/
         feature.setTransgenicSuffix(featureDTO.getTransgenicSuffix());
         if (featureDTO.getLineNumber() != null) {
             feature.setLineNumber(featureDTO.getLineNumber());
@@ -179,13 +162,81 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 Organization newLabOfOrigin = profileRepository.getOrganizationByZdbID(featureDTO.getLabOfOrigin());
                 featureRepository.setLabOfOriginForFeature(newLabOfOrigin, feature);
             }
-        } /*else if (featureDTO.getLabOfOrigin() == null && existingLabOfOrigin != null) {
-            featureRepository.deleteLabOfOriginForFeature(feature);*/ else if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin == null) {
+        } else if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin == null) {
             featureRepository.addLabOfOriginForFeature(feature, featureDTO.getLabOfOrigin());
         } else {
             throw new ValidationException("Feature cannot be saved without lab of origin");
         }
-        HibernateUtil.currentSession().update(feature);
+        if (featureDTO.getDnaChangeDTO() != null) {
+            FeatureDnaMutationDetail detail = feature.getFeatureDnaMutationDetail();
+            if (detail == null) {
+                detail = new FeatureDnaMutationDetail();
+                detail.setFeature(feature);
+                feature.setFeatureDnaMutationDetail(detail);
+            }
+            FeatureDnaMutationDetail oldDetail = detail.clone();
+            String accessionNumber = featureDTO.getDnaChangeDTO().getSequenceReferenceAccessionNumber();
+            if (StringUtils.isNotEmpty(accessionNumber)) {
+                if (isValidAccession(accessionNumber, "DNA") == null)
+                    throw new ValidationException("DNA accession Number not found: " + accessionNumber);
+            }
+            DTOConversionService.updateDnaMutationDetailWithDTO(detail, featureDTO.getDnaChangeDTO());
+            if (!detail.equals(oldDetail)) {
+                infrastructureRepository.insertMutationDetailAttribution(detail.getZdbID(), featureDTO.getPublicationZdbID());
+            }
+        }
+        if (featureDTO.getProteinChangeDTO() != null) {
+            FeatureProteinMutationDetail detail = feature.getFeatureProteinMutationDetail();
+            if (detail == null) {
+                detail = new FeatureProteinMutationDetail();
+                detail.setFeature(feature);
+                feature.setFeatureProteinMutationDetail(detail);
+            }
+            FeatureProteinMutationDetail oldDetail = detail.clone();
+            String accessionNumber = featureDTO.getProteinChangeDTO().getSequenceReferenceAccessionNumber();
+            if (StringUtils.isNotEmpty(accessionNumber)) {
+                if (isValidAccession(accessionNumber, "Protein") == null)
+                    throw new ValidationException("Protein accession Number not found: " + accessionNumber);
+            }
+            DTOConversionService.updateProteinMutationDetailWithDTO(detail, featureDTO.getProteinChangeDTO());
+            if (!detail.equals(oldDetail)) {
+                infrastructureRepository.insertMutationDetailAttribution(detail.getZdbID(), featureDTO.getPublicationZdbID());
+            }
+        }
+        Set<FeatureTranscriptMutationDetail> addTranscriptAttribution = new HashSet<>();
+        if (featureDTO.getTranscriptChangeDTOSet() != null) {
+            Set<FeatureTranscriptMutationDetail> detailSet = feature.getFeatureTranscriptMutationDetailSet();
+            if (detailSet != null) {
+                Iterator<FeatureTranscriptMutationDetail> iterator = detailSet.iterator();
+                while (iterator.hasNext()) {
+                    FeatureTranscriptMutationDetail detail = iterator.next();
+                    boolean exists = false;
+                    for (MutationDetailTranscriptChangeDTO dto : featureDTO.getTranscriptChangeDTOSet()) {
+                        if (dto.getZdbID() != null && dto.getZdbID().equals(detail.getZdbID())) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (!exists) {
+                        iterator.remove();
+                        infrastructureRepository.removeRecordAttributionForTranscript(featureDTO.getPublicationZdbID(), detail.getZdbID());
+                    }
+                }
+            }
+            for (MutationDetailTranscriptChangeDTO dto : featureDTO.getTranscriptChangeDTOSet()) {
+                // since we never update a transcript record we can check if the zdbID:
+                // if it exists then the record exists in the database and the record has not changed.
+                // if it is empty then it is a new record
+                if (StringUtils.isEmpty(dto.getZdbID())) {
+                    FeatureTranscriptMutationDetail newDetail = DTOConversionService.convertToTranscriptMutationDetail(null, dto);
+                    newDetail.setFeature(feature);
+                    feature.addMutationDetailTranscript(newDetail);
+                    addTranscriptAttribution.add(newDetail);
+                }
+            }
+
+        }
+        featureRepository.update(feature, addTranscriptAttribution, featureDTO.getPublicationZdbID());
         if (!StringUtils.equals(oldFtrName, newFtrName)) {
 
             FeatureAlias featureAlias = mutantRepository.getSpecificDataAlias(feature, oldFtrName);
@@ -193,8 +244,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 infrastructureRepository.insertPublicAttribution(featureAlias.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
             }
         }
-        //currentSession().flush();
-        //currentSession().refresh(feature);
         HibernateUtil.flushAndCommitCurrentSession();
 
         return getFeature(featureDTO.getZdbID());
@@ -220,7 +269,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
     public List<FeatureDTO> getFeaturesForPub(String pubZdbId) {
         Publication pub = pubRepository.getPublication(pubZdbId);
-        List<FeatureDTO> featureDTOs = new ArrayList<FeatureDTO>();
+        List<FeatureDTO> featureDTOs = new ArrayList<>();
         List<Feature> features = featureRepository.getFeaturesForStandardAttribution(pub);
         if (CollectionUtils.isNotEmpty(features)) {
             for (Feature f : features) {
@@ -544,11 +593,12 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
     @Override
-    public void addFeatureMarkerRelationShip(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO) {
-        FeatureMarkerRelationship featureMarkerRelationship = new FeatureMarkerRelationship();
+    public List<FeatureMarkerRelationshipDTO> addFeatureMarkerRelationShip(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO, String publicationID) {
 
         FeatureDTO featureDTO = featureMarkerRelationshipDTO.getFeatureDTO();
+        HibernateUtil.createTransaction();
         Feature feature = featureRepository.getFeatureByID(featureDTO.getZdbID());
+        FeatureMarkerRelationship featureMarkerRelationship = new FeatureMarkerRelationship();
         featureMarkerRelationship.setFeature(feature);
 
         MarkerDTO markerDTO = featureMarkerRelationshipDTO.getMarkerDTO();
@@ -557,11 +607,13 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
         featureMarkerRelationship.setType(FeatureMarkerRelationshipTypeEnum.getType(featureMarkerRelationshipDTO.getRelationshipType()));
 
-        HibernateUtil.createTransaction();
         HibernateUtil.currentSession().save(featureMarkerRelationship);
         infrastructureRepository.insertPublicAttribution(featureMarkerRelationship.getZdbID(), featureMarkerRelationshipDTO.getPublicationZdbID());
         infrastructureRepository.insertUpdatesTable(featureMarkerRelationship.getZdbID(), "FeatureMarkerRelationship", featureMarkerRelationship.toString(), "Created feature marker relationship");
         HibernateUtil.flushAndCommitCurrentSession();
+        HibernateUtil.closeSession();
+        List<FeatureMarkerRelationshipDTO> dtos = getFeatureMarkerRelationshipsForPub(publicationID);
+        return dtos;
     }
 
     @Override
@@ -673,4 +725,67 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     public PersonDTO getCuratorInfo() {
         return DTOConversionService.convertToPersonDTO(ProfileService.getCurrentSecurityUser());
     }
+
+
+    @Override
+    public List<MutationDetailControlledVocabularyTermDTO> getDnaChangeList() {
+        List<DnaMutationTerm> list = getDnaMutationTermRepository().getControlledVocabularyTermList();
+        List<MutationDetailControlledVocabularyTermDTO> dtoList = new ArrayList<>(list.size());
+        for (MutationDetailControlledVocabularyTerm controlledVocab : list) {
+            dtoList.add(DTOConversionService.convertMutationDetailedControlledVocab(controlledVocab));
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<MutationDetailControlledVocabularyTermDTO> getDnaLocalizationChangeList() {
+        List<GeneLocalizationTerm> list = getGeneLocalizationTermRepository().getControlledVocabularyTermList();
+        List<MutationDetailControlledVocabularyTermDTO> dtoList = new ArrayList<>(list.size());
+        for (MutationDetailControlledVocabularyTerm controlledVocab : list) {
+            dtoList.add(DTOConversionService.convertMutationDetailedControlledVocab(controlledVocab));
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<MutationDetailControlledVocabularyTermDTO> getProteinConsequenceList() {
+        List<ProteinConsequence> list = getProteinConsequenceTermRepository().getControlledVocabularyTermList();
+        List<MutationDetailControlledVocabularyTermDTO> dtoList = new ArrayList<>(list.size());
+        for (MutationDetailControlledVocabularyTerm controlledVocab : list) {
+            dtoList.add(DTOConversionService.convertMutationDetailedControlledVocab(controlledVocab));
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<MutationDetailControlledVocabularyTermDTO> getTranscriptConsequenceList() {
+        List<TranscriptConsequence> list = getTranscriptTermRepository().getControlledVocabularyTermList();
+        List<MutationDetailControlledVocabularyTermDTO> dtoList = new ArrayList<>(list.size());
+        for (MutationDetailControlledVocabularyTerm controlledVocab : list) {
+            dtoList.add(DTOConversionService.convertMutationDetailedControlledVocab(controlledVocab));
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<MutationDetailControlledVocabularyTermDTO> getAminoAcidList() {
+        List<AminoAcidTerm> list = getAminoAcidTermRepository().getControlledVocabularyTermList();
+        List<MutationDetailControlledVocabularyTermDTO> dtoList = new ArrayList<>(list.size());
+        for (MutationDetailControlledVocabularyTerm controlledVocab : list) {
+            dtoList.add(DTOConversionService.convertMutationDetailedControlledVocab(controlledVocab));
+        }
+        return dtoList;
+    }
+
+    @Override
+    public String isValidAccession(String accessionNumber, String type) {
+        if (type.equals("DNA")) {
+            ReferenceDatabase referenceDatabase = FeatureService.getForeignDbMutationDetailDna(accessionNumber);
+            return referenceDatabase != null ? referenceDatabase.getForeignDB().getDbName().toString() : null;
+        } else {
+            ReferenceDatabase referenceDatabase = FeatureService.getForeignDbMutationDetailProtein(accessionNumber);
+            return referenceDatabase != null ? referenceDatabase.getForeignDB().getDbName().toString() : null;
+        }
+    }
+
 }

@@ -160,7 +160,6 @@ public class GBrowseImage {
                 genomeBuild = GenomeBuild.CURRENT;
             }
 
-
             // setup range
             if (landmarkLocation != null) {
                 start = landmarkLocation.getStart();
@@ -185,12 +184,9 @@ public class GBrowseImage {
             return new GBrowseImage(this);
         }
 
-        public GenomeBuild getGenomeBuild() {
-            return genomeBuild;
-        }
-
-        public void setGenomeBuild(GenomeBuild genomeBuild) {
+        public GBrowseImageBuilder genomeBuild(GenomeBuild genomeBuild) {
             this.genomeBuild = genomeBuild;
+            return this;
         }
 
         public GBrowseImageBuilder landmark(String landmark) {

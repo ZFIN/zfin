@@ -2,22 +2,14 @@
 
 <jsp:useBean id="formBean" class="org.zfin.antibody.presentation.AntibodySearchFormBean" scope="request"/>
 
-<table width="100%" cellpadding="0" cellspacing="0">
-    <tr>
-        <td class="titlebar">
-                <span style="font-size: larger; margin-left: 0.5em; font-weight: bold;">
-                        Search for Antibodies
-            </span>
-
-            <a href="/ZFIN/misc_html/antibody_search_tips.html" class="popup-link help-popup-link"></a>
-
-        </td>
-        <td class="titlebarRight">
-            <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                <tiles:putAttribute name="subjectName" value="Antibody search"/>
-            </tiles:insertTemplate>
-        </td>
-    </tr>
-</table>
+<div class="titlebar">
+    <h1>Search for Antibodies</h1>
+    <a href="/ZFIN/misc_html/antibody_search_tips.html" class="popup-link help-popup-link"></a>
+    <span class="yourinputwelcome">
+        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+            <tiles:putAttribute name="subjectName" value="Antibody search"/>
+        </tiles:insertTemplate>
+    </span>
+</div>
 
 <zfin-marker:antibody-search-form formBean="${formBean}"/>

@@ -6,16 +6,13 @@
 <jsp:useBean id="ID" class="java.lang.String" scope="request"/>
 <jsp:useBean id="query" class="org.zfin.util.DatabaseJdbcStatement" scope="request"/>
 
-<table width="100%" cellpadding="0" cellspacing="0">
-    <tr>
-        <td class="titlebar">
-            <span class="name-label">View Records of: </span>
-            <span style="color: red">
-                <a href="/action/database/view-table-statistics/${table.tableName}">${fn:toUpperCase(table.tableName)}</a>
-            </span>
-        </td>
-    </tr>
-</table>
+<div class="titlebar">
+    <span class="name-label">View Records of: </span>
+    <span style="color: red">
+        <a href="/action/database/view-table-statistics/${table.tableName}">${fn:toUpperCase(table.tableName)}</a>
+    </span>
+</div>
+
 <p/>
 <table class="primary-entity-attributes">
     <tr>

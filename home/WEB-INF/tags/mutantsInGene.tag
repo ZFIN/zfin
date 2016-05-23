@@ -41,26 +41,24 @@
                             ${feature.type.display}
                         </td>
                         <td>
-
-                                ${feature.geneLocalizationStmt}
-
-
+                            <c:choose>
+                                <c:when test="${!empty feature.geneLocalizationStatement}">
+                                    ${feature.geneLocalizationStatement}
+                                </c:when>
+                                <c:otherwise>
+                                    <span class="no-data-tag">Unknown</span>
+                                </c:otherwise>
+                            </c:choose>
                         </td>
                         <td>
                             <c:choose>
-                                <c:when test="${fn:length(feature.featureTranscriptMutationDetailSet) ne null && fn:length(feature.featureTranscriptMutationDetailSet) > 0}">
-                                    <c:forEach var="consequence" items="${feature.featureTranscriptMutationDetailSet}" varStatus="loop">
-
-                                        ${consequence.transcriptConsequence.displayName}
-
-                                        <c:if test="${!loop.last}">,&nbsp;</c:if>
-                                    </c:forEach>
+                                <c:when test="${!empty feature.transcriptConsequenceStatement}">
+                                    ${feature.transcriptConsequenceStatement}
                                 </c:when>
                                 <c:otherwise>
-                                    Unknown
+                                    <span class="no-data-tag">Unknown</span>
                                 </c:otherwise>
                             </c:choose>
-
                         </td>
 
                         <td>

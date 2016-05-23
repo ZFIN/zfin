@@ -10,6 +10,9 @@
         <param name="enumClassname">org.zfin.mapping.GenomeLocation$Source</param>
     </typedef>
 
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="gbrowseTrackType">
+        <param name="enumClassname">org.zfin.gbrowse.GBrowseTrack</param>
+    </typedef>
 
     <class name="Linkage" table="linkage">
         <id name="zdbID">
@@ -134,6 +137,9 @@
         <property name="end" column="sfclg_end" type="java.lang.Integer"/>
         <property name="detailedSource" column="sfclg_location_subsource" type="string"/>
         <property name="accessionNumber" column="sfclg_acc_num" type="string"/>
+        <many-to-one name="attribution" column="sfclg_pub_zdb_id" class="org.zfin.publication.Publication" insert="false" update="false"/>
+        <property name="gbrowseTrack" column="sfclg_gbrowse_track" type="gbrowseTrackType"/>
+        <property name="assembly" column="sfclg_assembly" type="string"/>
 
         <subclass name="MarkerGenomeLocation" discriminator-value="Mark">
             <many-to-one name="marker" column="sfclg_data_zdb_id" insert="false" update="false"/>

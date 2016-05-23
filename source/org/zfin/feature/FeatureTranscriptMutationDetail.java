@@ -14,7 +14,7 @@ public class FeatureTranscriptMutationDetail implements Comparable<FeatureTransc
     @GenericGenerator(name = "zfinGenerator",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
-                    @org.hibernate.annotations.Parameter(name = "type", value = "FRMD"),
+                    @org.hibernate.annotations.Parameter(name = "type", value = "FTMD"),
                     @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
             })
     @Column(name = "ftmd_zdb_id")
@@ -25,7 +25,7 @@ public class FeatureTranscriptMutationDetail implements Comparable<FeatureTransc
     @ManyToOne
     @JoinColumn(name = "ftmd_transcript_consequence_term_zdb_id")
     private TranscriptConsequence transcriptConsequence;
-    @Column(name = "ftmd_introl_number")
+    @Column(name = "ftmd_intron_number")
     private Integer intronNumber;
     @Column(name = "ftmd_exon_number")
     private Integer exonNumber   ;

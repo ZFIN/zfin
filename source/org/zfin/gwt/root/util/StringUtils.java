@@ -130,4 +130,20 @@ public class StringUtils implements IsSerializable {
         return equals(one, two);
     }
 
+    public static boolean isNumeric(String str) {
+        if(str == null) {
+            return false;
+        } else {
+            int sz = str.length();
+
+            for(int i = 0; i < sz; ++i) {
+                if(!Character.isDigit(str.charAt(i))) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
 }

@@ -70,7 +70,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
                         cacheImpl="SortedMapBackedCache"/>
 
                 <entity name="gene_omim"
-                        datasource="db" query="select omimp_name as disease,
+                        datasource="db" query="select strip_omim(omimp_name) as disease,
                                       omimp_omim_id as omim_id,
                                       ortho_zebrafish_gene_zdb_id as gene_zdb_id
                               from omim_phenotype
@@ -93,10 +93,44 @@ where mrkr_type in ('GENE','GENEP','EFG')
                         where="gene_zdb_id=gene.id"
                         cacheImpl="SortedMapBackedCache"/>
 
+                <entity name="gene_expression_stage"
+                        datasource="db" query="select this_stage.stg_name as stage, xpatex_gene_zdb_id as gene_zdb_id
+                            from expression_experiment2
+                                join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
+                                join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
+                                join stage this_stage on this_stage.stg_hours_start &gt;= start_stage.stg_hours_start
+                                                         and this_stage.stg_hours_end &lt;= end_stage.stg_hours_end
+                            where start_stage.stg_name != 'Unknown'
+                              and end_stage.stg_name != 'Unknown'
+                              and this_stage.stg_name != 'Unknown';"
+                        cacheImpl="SortedMapBackedCache"
+                        where="gene_zdb_id=gene.id"/>
+
+                <entity name="gene_expression_stage_unknowns"
+                        datasource="db" query="select start_stage.stg_name as stage, xpatex_gene_zdb_id as gene_zdb_id
+                            from expression_experiment2
+                                join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
+                                join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
+                            where (start_stage.stg_name == 'Unknown'
+                                   OR end_stage.stg_name == 'Unknown')
+                           union
+                           select end_stage.stg_name as stage, xpatex_gene_zdb_id as gene_zdb_id
+                            from expression_experiment2
+                                join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
+                                join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
+                            where (start_stage.stg_name == 'Unknown'
+                                   OR end_stage.stg_name == 'Unknown');"
+                        cacheImpl="SortedMapBackedCache"
+                        where="gene_zdb_id=gene.id"/>
+
+
                 <entity name="gene_expressed_in_direct"
                         datasource="db" query="
                         select
-                            term_ont_id as xref, term_name as expressed_in_direct,
+                            term_ont_id as xref, term_name as anatomy_direct,
                              ee.xpatex_gene_zdb_id as gene_zdb_id
                         from expression_result er
                             join expression_experiment ee on ee.xpatex_zdb_id=er.xpatres_xpatex_zdb_id
@@ -111,7 +145,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
                             and term_ontology='zebrafish_anatomy'
                         union
                         select
-                           term_ont_id as xref, term_name as expressed_in_direct,
+                           term_ont_id as xref, term_name as anatomy_direct,
                                  ee.xpatex_gene_zdb_id as gene_zdb_id
                             from expression_result er
                                 join expression_experiment ee on ee.xpatex_zdb_id=er.xpatres_xpatex_zdb_id
@@ -131,7 +165,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
 
                 <entity name="gene_expressed_in_parent"
                         datasource="db" query="select
-                                                                                term_ont_id as xref, term_name as expressed_in_parent,
+                                                                                term_ont_id as xref, term_name as anatomy_parent,
                                                                                  ee.xpatex_gene_zdb_id as gene_zdb_id
                                                                             from expression_result er
                                                                                 join expression_experiment ee on ee.xpatex_zdb_id=er.xpatres_xpatex_zdb_id
@@ -146,7 +180,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                                                                 and ee.xpatex_gene_zdb_id is not null
                                                                                 and term_ontology='zebrafish_anatomy'
                                                 union
-                                                select                           term_ont_id as xref, term_name as expressed_in_parent,
+                                                select                           term_ont_id as xref, term_name as anatomy_parent,
                                                                                  ee.xpatex_gene_zdb_id as gene_zdb_id
                                                                             from expression_result er
                                                                                 join expression_experiment ee on ee.xpatex_zdb_id=er.xpatres_xpatex_zdb_id
@@ -167,7 +201,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
 
                 <entity name="gene_efg_expressed_in_direct"
                         datasource="db" query="select
-                                    term_ont_id as xref, term_name as expressed_in_direct,
+                                    term_ont_id as xref, term_name as anatomy_direct,
                                      ee.xpatex_gene_zdb_id as gene_zdb_id
                                 from expression_result er
                                     join expression_experiment ee on ee.xpatex_zdb_id=er.xpatres_xpatex_zdb_id
@@ -178,7 +212,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                     and xpatex_gene_zdb_id[1,7] == 'ZDB-EFG'
                                 union
                                 select
-                                   term_ont_id as xref, term_name as expressed_in_direct,
+                                   term_ont_id as xref, term_name as anatomy_direct,
                                          ee.xpatex_gene_zdb_id as gene_zdb_id
                                     from expression_result er
                                         join expression_experiment ee on ee.xpatex_zdb_id=er.xpatres_xpatex_zdb_id
@@ -193,7 +227,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
 
                 <entity name="gene_efg_expressed_in_parent"
                         datasource="db" query="select
-                                    term_ont_id as xref, term_name as expressed_in_direct,
+                                    term_ont_id as xref, term_name as anatomy_direct,
                                      ee.xpatex_gene_zdb_id as gene_zdb_id
                                 from expression_result er
                                     join expression_experiment ee on ee.xpatex_zdb_id=er.xpatres_xpatex_zdb_id
@@ -205,7 +239,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                     and xpatex_gene_zdb_id[1,7] == 'ZDB-EFG'
                                 union
                                 select
-                                   term_ont_id as xref, term_name as expressed_in_direct,
+                                   term_ont_id as xref, term_name as anatomy_direct,
                                          ee.xpatex_gene_zdb_id as gene_zdb_id
                                     from expression_result er
                                         join expression_experiment ee on ee.xpatex_zdb_id=er.xpatres_xpatex_zdb_id
@@ -2989,7 +3023,6 @@ term_name as expression_anatomy_direct,
                         feature_name as full_name,
                         feature_name_order as name_sort,
                         feature_abbrev as alias,
-                        feature_comments as note,
                         fto_priority as complexity,
                            '/' || feature_zdb_id as url,
                         (select case when fp_prefix = 'la' then 'Burgess / Lin'
@@ -3711,9 +3744,9 @@ where feature_zdb_id = ftmd_feature_zdb_id
                    cacheImpl="SortedMapBackedCache"/>
 
 
-           <entity name="disease_disease_model_fish"
+           <entity name="disease_disease_model_fish" transformer="RegexTransformer"
                    datasource="db" query="select distinct
-                                          fish_name as fish,
+                                          fish_name || '|Any' as fish,
                                           genox_fish_zdb_id as xref,
                                           term_zdb_id
                                           from term
@@ -3722,7 +3755,9 @@ where feature_zdb_id = ftmd_feature_zdb_id
                                           join fish_experiment on fish_experiment.genox_zdb_id = disease_annotation_model.damo_genox_zdb_id
                                           join fish on genox_fish_zdb_id = fish_zdb_id;"
                    where="term_zdb_id=term.internal_id"
-                   cacheImpl="SortedMapBackedCache"/>
+                   cacheImpl="SortedMapBackedCache">
+               <field name="fish" column="fish" splitBy="\|"/>
+           </entity>
 
 
            <entity name="disease_publication_xref"
@@ -4231,6 +4266,15 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                <field column="pub_abstract" name="abstract" &lt;!&ndash;clob="true"&ndash;&gt; />
            </entity>
 -->
+           <entity name="pub_mesh_term"
+                   datasource="db" query="
+                        SELECT des.mesht_term_name || nvl('/' || qual.mesht_term_name, '') AS full_mesh_term, mh_pub_zdb_id AS pub_zdb_id
+                        FROM mesh_heading
+                        LEFT JOIN mesh_heading_qualifier ON mh_pk_id = mhq_mesh_heading_id
+                        INNER JOIN mesh_term des ON des.mesht_mesh_id = mh_mesht_mesh_descriptor_id
+                        LEFT JOIN mesh_term qual ON qual.mesht_mesh_id = mhq_mesht_mesh_qualifier_id"
+                   cacheImpl="SortedMapBackedCache"
+                   where="pub_zdb_id=publication.id"/>
 
        </entity>
 
@@ -4956,12 +5000,12 @@ where fig_zdb_id=xpatfig_fig_zdb_id
         <entity name="omim_disease"
                 datasource="db" query="
                         select distinct
-                               omimp_name as name,
-                               omimp_name as full_name,
-                               omimp_name as id,
+                               strip_omim(omimp_name) as name,
+                               strip_omim(omimp_name) as full_name,
+                               strip_omim(omimp_name) as id,
                                'Autocomplete' as category,
                                'OMIM Disease' as type
-                        from omim_phenotype where omimp_name not in (Select term_name from term where term_ontology = 'disease_ontology')
+                        from omim_phenotype where strip_omim(omimp_name) not in (Select term_name from term where term_ontology = 'disease_ontology')
                 "/>
 
 

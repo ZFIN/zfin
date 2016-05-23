@@ -15,7 +15,8 @@ public enum Category {
 
     GENE("Gene / Transcript",
             TYPE,
-            EXPRESSED_IN_TF,
+            ANATOMY_TF,
+            STAGE,
             AFFECTED_ANATOMY_TF,
             AFFECTED_BIOLOGICAL_PROCESS_TF,
             AFFECTED_MOLECULAR_FUNCTION_TF,
@@ -88,6 +89,7 @@ public enum Category {
             AUTHOR,
             JOURNAL,
             KEYWORD,
+            MESH_TERM,
             PUBLICATION_TYPE,
             TOPIC,
             CURATION_STATUS,

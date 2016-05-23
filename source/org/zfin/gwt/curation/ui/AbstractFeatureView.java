@@ -5,12 +5,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.ui.*;
 
-public abstract class AbstractFeatureView extends Composite implements Revertible{
+public abstract class AbstractFeatureView extends Composite implements Revertible {
 
     AbstractFeaturePresenter presenter;
 
@@ -48,6 +47,20 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     CheckBox dominantCheckBox;
     @UiField
     Button saveButton;
+    @UiField
+    MutationDetailDNAView mutationDetailDnaView;
+    @UiField
+    MutationDetailProteinView mutationDetailProteinView;
+    @UiField
+    MutationDetailTranscriptView mutationDetailTranscriptView;
+    @UiField
+    Label noMutationDetailMessage;
+    @UiField
+    Label proteinChangeFirstColumn;
+    @UiField
+    Label transcriptChangeFirstColumn;
+    @UiField
+    Label dnaChangeFirstColumn;
 
     @UiHandler("showHideToggle")
     void onClickShowHide(@SuppressWarnings("unused") ClickEvent event) {
@@ -67,16 +80,24 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     @UiHandler("knownInsertionCheckBox")
     void onClickKnownInsertionSite(@SuppressWarnings("unused") ClickEvent event) {
         if (knownInsertionCheckBox.getValue()) {
+            showMutationDetail();
+            mutationDetailDnaView.showTgFields();
+        } else {
+            hideMutationDetail();
+        }
+        if (knownInsertionCheckBox.getValue()) {
             featureNameBox.setVisible(true);
             featureNameBox.setEnabled(false);
             featureSuffixBox.setVisible(true);
             featureSuffixPanel.setVisible(true);
-///            saveButton.setEnabled(true);
+            saveButton.setEnabled(true);
         } else {
             featureNameBox.setVisible(false);
             featureNameBox.setEnabled(false);
             featureSuffixPanel.setVisible(true);
+            featureSuffixPanel.setVisible(true);
         }
+        handleChanges();
     }
 
     @UiHandler("labOfOriginBox")
@@ -116,7 +137,7 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         handleChanges();
     }
 
-    private void handleChanges() {
+    protected void handleChanges() {
         clearErrors();
         presenter.handleDirty();
     }
@@ -131,29 +152,52 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         handleChanges();
     }
 
-    @UiHandler("knownInsertionCheckBox")
-    void onClickKnownInsertion(@SuppressWarnings("unused") ClickEvent event) {
-        if (knownInsertionCheckBox.getValue()) {
-            featureNameBox.setVisible(true);
-            featureNameBox.setEnabled(false);
-            featureSuffixBox.setVisible(true);
-            featureSuffixPanel.setVisible(true);
-            saveButton.setEnabled(true);
-        } else {
-            featureNameBox.setVisible(false);
-            featureNameBox.setEnabled(false);
-            featureSuffixBox.setVisible(true);
-            featureSuffixPanel.setVisible(true);
-        }
-        handleChanges();
-    }
-
     @UiHandler("featureTypeBox")
     void onChangeFeatureType(@SuppressWarnings("unused") ChangeEvent event) {
         errorLabel.clearAllErrors();
         message.setText("");
+        String featureType = featureTypeBox.getSelected();
+        if (hasMutationDetails()) {
+            showMutationDetail();
+            mutationDetailDnaView.showFields(MutationDetailType.getType(featureType));
+        } else {
+            hideMutationDetail();
+            mutationDetailDnaView.changePanel.setVisible(false);
+        }
+        handleDirty();
+
         onChangeFeatureType();
     }
+
+    protected String getFeatureType() {
+        return featureTypeBox.getSelected();
+    }
+
+    protected void hideMutationDetail() {
+        noMutationDetailMessage.setVisible(true);
+        dnaChangeFirstColumn.setVisible(false);
+        transcriptChangeFirstColumn.setVisible(false);
+        proteinChangeFirstColumn.setVisible(false);
+        mutationDetailDnaView.changePanel.setVisible(false);
+        mutationDetailTranscriptView.changePanel.setVisible(false);
+        mutationDetailProteinView.proteinChangePanel.setVisible(false);
+    }
+
+    protected void showMutationDetail() {
+        noMutationDetailMessage.setVisible(false);
+        dnaChangeFirstColumn.setVisible(true);
+        transcriptChangeFirstColumn.setVisible(true);
+        proteinChangeFirstColumn.setVisible(true);
+        mutationDetailDnaView.changePanel.setVisible(true);
+        mutationDetailTranscriptView.changePanel.setVisible(true);
+        mutationDetailProteinView.proteinChangePanel.setVisible(true);
+    }
+
+
+    public boolean hasMutationDetails() {
+        return MutationDetailType.hasFeatureType(featureTypeBox.getSelected(), knownInsertionCheckBox.getValue());
+    }
+
 
     void onChangeFeatureType() {
         final FeatureTypeEnum featureTypeSelected = FeatureTypeEnum.getTypeForDisplay(featureTypeBox.getSelectedText());
@@ -219,6 +263,29 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         presenter.updateMutagenOnFeatureTypeChange(featureTypeSelected);
     }
 
+    public void resetGUI() {
+        featureTypeBox.setSelectedIndex(0);
+        labOfOriginBox.setSelectedIndex(0);
+        labOfOriginBox.setDirty(false);
+        labDesignationBox.clear();
+        labDesignationBox.setDirty(false);
+        mutageeBox.setSelectedIndex(0);
+        mutageeBox.setDirty(false);
+        mutagenBox.setSelectedIndex(0);
+        mutagenBox.setDirty(false);
+        lineNumberBox.clear();
+        lineNumberBox.setDirty(false);
+        featureDisplayName.clear();
+        featureDisplayName.setDirty(false);
+        mutationDetailDnaView.resetGUI();
+        mutationDetailTranscriptView.fullResetGUI();
+        mutationDetailProteinView.resetGUI();
+        knownInsertionCheckBox.setValue(false);
+        featureSuffixPanel.setVisible(false);
+        saveButton.setEnabled(false);
+    }
+
+
     public void clearErrors() {
         errorLabel.clearAllErrors();
     }
@@ -249,8 +316,63 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         onChangeFeatureType();
     }
 
-    public void setNote(String message) {
-        errorLabel.setStyleName("clickable");
-        setError(message + "[close]");
+    public void setNote(String text) {
+        message.setText(text);
+        message.setStyleName("clickable");
+
     }
+
+    public void onclickSaveButton(ClickEvent event) {
+        // if no consequence is selected and AA selection is used then default to substitution
+        if (mutationDetailProteinView.proteinTermList.getSelectedIndex() == 0 &&
+                mutationDetailProteinView.hasNonStopAASelected()) {
+            mutationDetailProteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_SUBSTITUTION);
+        }
+        // if no consequence is selected and plus AA is used then default to Insertion
+        if (mutationDetailProteinView.hasPlusFieldOnly()) {
+            mutationDetailProteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_INSERTION);
+        }
+        // if no consequence is selected and minus AA is used then default to Deletion
+        if (mutationDetailProteinView.hasMinusFieldOnly()) {
+            mutationDetailProteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_DELETION);
+        }
+        // if no transcript consequence and protein: AA > AA for a Point mutation create
+        if (getFeatureType().equals(FeatureTypeEnum.POINT_MUTATION.getName())) {
+            if (mutationDetailTranscriptView.getPresenter().isTranscriptDtoSetEmpty()) {
+                // substitution is a missense consequence on the transcript level
+                if (mutationDetailProteinView.hasNonStopAASelected())
+                    mutationDetailTranscriptView.getPresenter().setMissenseTerm(this);
+                else if (mutationDetailProteinView.hasStopCodon())
+                    mutationDetailTranscriptView.getPresenter().setStopGainTerm(this);
+            }
+        }
+    }
+
+    enum MutationDetailType {
+        POINT_MUTATION,
+        DELETION,
+        INSERTION,
+        INDEL,
+        TRANSGENIC_INSERTION;
+
+        public static boolean hasFeatureType(String featureType, boolean knownInsertionSite) {
+            for (MutationDetailType type : values()) {
+                if (type.name().equals(featureType)) {
+                    return type != MutationDetailType.TRANSGENIC_INSERTION || knownInsertionSite;
+                }
+            }
+            return false;
+        }
+
+        public static MutationDetailType getType(String featureType) {
+            for (MutationDetailType type : values()) {
+                if (type.name().equals(featureType)) {
+                    return type;
+                }
+            }
+            return null;
+        }
+    }
+
+
 }

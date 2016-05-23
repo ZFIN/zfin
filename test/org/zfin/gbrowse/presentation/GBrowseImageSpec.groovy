@@ -56,10 +56,10 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         when:
         def f = RepositoryFactory.featureRepository.getFeatureByID(zdbId)
         def location = linkageRepository.getGenomeLocation(f, GenomeLocation.Source.ZFIN_Zv9)?.getAt(0)
-        def builder = GBrowseImage.builder()
+        def image = GBrowseImage.builder()
                 .landmark(location)
-        builder.setGenomeBuild(GBrowseImage.GenomeBuild.ZV9)
-        def image = builder.build()
+                .genomeBuild(GBrowseImage.GenomeBuild.ZV9)
+                .build()
 
         then:
         image.imageUrl.contains('Zv9')

@@ -40,8 +40,8 @@ public class FeatureAliasList extends AbstractStackComposite<FeatureDTO> {
         panel.add(addPanel);
         panel.add(errorLabel);
         errorLabel.setStyleName("error");
-        panel.add(new HTML("<br>")); // spacer
-        panel.setStyleName("gwt-editbox");
+        // hide it when it is not use to save space.
+        errorLabel.setVisible(false);
 
     }
 
@@ -60,6 +60,7 @@ public class FeatureAliasList extends AbstractStackComposite<FeatureDTO> {
                 new FeatureEditCallBack<Void>("Failed to add alias ["+valueToAdd+"] to feature: ",this) {
                     public void onFailure(Throwable t) {
                         super.onFailure(t);
+                        errorLabel.setVisible(true);
                         notWorking();
                     }
 
@@ -87,6 +88,10 @@ public class FeatureAliasList extends AbstractStackComposite<FeatureDTO> {
 
     @Override
     protected void setValues() { }
+
+    public void resetGUI(){
+        stackTable.clear();
+    }
 
     @Override
     public void revertGUI() {

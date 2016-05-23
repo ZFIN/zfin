@@ -43,8 +43,6 @@ TRIGGERS = \
 	expression_experiment2_update_trigger.sql \
 	expression_pattern_infrastructure_insert_trigger.sql \
 	expression_pattern_infrastructure_update_trigger.sql \
-	external_note_insert_trigger.sql \
-	external_note_update_trigger.sql \
 	feature_stats_insert_trigger.sql \
 	figure_insert_trigger.sql \
 	figure_update_trigger.sql \

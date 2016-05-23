@@ -50,16 +50,17 @@ table.search {
     border: 0;
 }
 
-td.titlebar {
-    vertical-align: middle;
-    text-align: left;
+.titlebar {
     background-color: #efefef;
+    overflow: auto; /* clearfix alternative */
 }
 
-td.titlebarRight {
-    vertical-align: middle;
-    text-align: right;
-    background-color: #efefef;
+.titlebar > h1 {
+    font-weight: bold;
+    font-size: 1.25em;
+    display: inline-block;
+    padding: 0;
+    margin: 0.2em;
 }
 
 td.submitbar {
@@ -91,6 +92,7 @@ table.data_manager a.root {
 /*** gene name & abbrev ***/
 .genedom {
     font-style: italic;
+    padding-right: 3px;
 }
 
 /*** construct name & abbrev ***/

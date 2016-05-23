@@ -38,7 +38,13 @@ public class SolrService {
 
     private static final String SEARCH_URL = "/search";
 
+    private static final String PRIMARY_CORE = "prototype";
+
     private static SolrClient prototype;
+
+    public static SolrClient getSolrClient() {
+        return getSolrClient(PRIMARY_CORE);
+    }
 
     public static SolrClient getSolrClient(String core) {
 

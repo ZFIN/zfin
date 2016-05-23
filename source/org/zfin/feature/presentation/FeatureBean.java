@@ -2,14 +2,17 @@ package org.zfin.feature.presentation;
 
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.feature.FeatureNote;
 import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.GenotypeDisplay;
 import org.zfin.mutant.presentation.GenoExpStatistics;
 import org.zfin.sequence.FeatureDBLink;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -19,16 +22,21 @@ public class FeatureBean {
     private int numPubs;
     private List<GenoExpStatistics> genoexpStats;
     private MappedMarkerBean mappedMarkerBean;
-    private Set<FeatureMarkerRelationship> sortedConstructRelationships ;
+    private Set<FeatureMarkerRelationship> sortedConstructRelationships;
     private FeatureMarkerRelationship createdByRelationship;
-    private List<PublicationAttribution> featureTypeAttributions ;
-    private Set<String> featureMap ;
-    private Set<String> featureLocations ;
+    private List<PublicationAttribution> featureTypeAttributions;
+    private Set<String> featureMap;
+    private Collection<FeatureGenomeLocation> featureLocations;
     private String zdbID;
     private Set<FeatureDBLink> summaryPageDbLinks;
     private Set<FeatureDBLink> genbankDbLinks;
     private GBrowseImage gBrowseImage;
     private List<GenotypeDisplay> genotypeDisplays;
+    private MutationDetailsPresentation mutationDetails;
+    private List<PublicationAttribution> dnaChangeAttributions;
+    private List<PublicationAttribution> transcriptConsequenceAttributions;
+    private List<PublicationAttribution> proteinConsequenceAttributions;
+    private List<FeatureNote> externalNotes;
 
     public Set<FeatureDBLink> getGenbankDbLinks() {
         return genbankDbLinks;
@@ -112,11 +120,11 @@ public class FeatureBean {
         this.featureMap = featureMap;
     }
 
-    public Set<String> getFeatureLocations() {
+    public Collection<FeatureGenomeLocation> getFeatureLocations() {
         return featureLocations;
     }
 
-    public void setFeatureLocations(Set<String> featureLocations) {
+    public void setFeatureLocations(Collection<FeatureGenomeLocation> featureLocations) {
         this.featureLocations = featureLocations;
     }
 
@@ -159,6 +167,46 @@ public class FeatureBean {
 
     public void setGenotypeDisplays(List<GenotypeDisplay> genotypeDisplays) {
         this.genotypeDisplays = genotypeDisplays;
+    }
+
+    public MutationDetailsPresentation getMutationDetails() {
+        return mutationDetails;
+    }
+
+    public void setMutationDetails(MutationDetailsPresentation mutationDetails) {
+        this.mutationDetails = mutationDetails;
+    }
+
+    public List<PublicationAttribution> getDnaChangeAttributions() {
+        return dnaChangeAttributions;
+    }
+
+    public void setDnaChangeAttributions(List<PublicationAttribution> dnaChangeAttributions) {
+        this.dnaChangeAttributions = dnaChangeAttributions;
+    }
+
+    public List<PublicationAttribution> getTranscriptConsequenceAttributions() {
+        return transcriptConsequenceAttributions;
+    }
+
+    public void setTranscriptConsequenceAttributions(List<PublicationAttribution> transcriptConsequenceAttributions) {
+        this.transcriptConsequenceAttributions = transcriptConsequenceAttributions;
+    }
+
+    public List<PublicationAttribution> getProteinConsequenceAttributions() {
+        return proteinConsequenceAttributions;
+    }
+
+    public void setProteinConsequenceAttributions(List<PublicationAttribution> proteinConsequenceAttributions) {
+        this.proteinConsequenceAttributions = proteinConsequenceAttributions;
+    }
+
+    public List<FeatureNote> getExternalNotes() {
+        return externalNotes;
+    }
+
+    public void setExternalNotes(List<FeatureNote> externalNotes) {
+        this.externalNotes = externalNotes;
     }
 }
 

@@ -2,18 +2,9 @@ package org.zfin.feature.presentation;
 
 public class MutationDetailsPresentation {
 
-    private String mutationType;
     private String dnaChangeStatement;
     private String transcriptChangeStatement;
     private String proteinChangeStatement;
-
-    public String getMutationType() {
-        return mutationType;
-    }
-
-    public void setMutationType(String mutationType) {
-        this.mutationType = mutationType;
-    }
 
     public String getDnaChangeStatement() {
         return dnaChangeStatement;
@@ -38,5 +29,4 @@ public class MutationDetailsPresentation {
     public void setProteinChangeStatement(String proteinChangeStatement) {
         this.proteinChangeStatement = proteinChangeStatement;
     }
-
 }

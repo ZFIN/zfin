@@ -123,12 +123,21 @@ public class MappingService {
      * @return
      */
     public static List<GenomeLocation> getGenomeBrowserLocations(Marker marker) {
-        List<GenomeLocation> genomeLocationList = getLinkageRepository().getPhysicalGenomeLocations(marker);
+        List<MarkerGenomeLocation> genomeLocationList = getLinkageRepository().getPhysicalGenomeLocations(marker);
+        return sortAndFilterGenomeBrowserLocations(genomeLocationList);
+    }
+
+    public static List<GenomeLocation> getGenomeBrowserLocations(Feature feature) {
+        List<FeatureGenomeLocation> genomeLocationList = getLinkageRepository().getPhysicalGenomeLocations(feature);
+        return sortAndFilterGenomeBrowserLocations(genomeLocationList);
+    }
+
+    private static List<GenomeLocation> sortAndFilterGenomeBrowserLocations(List<? extends GenomeLocation> genomeLocationList) {
         Collections.sort(genomeLocationList);
         List<GenomeLocation> finalGenomeList = new ArrayList<>(genomeLocationList.size());
         for (GenomeLocation genomeLocation : genomeLocationList) {
             GenomeLocation.Source source = genomeLocation.getSource();
-            if (!source.equals(GenomeLocation.Source.GENERAL_LOAD)) {
+            if (source != GenomeLocation.Source.GENERAL_LOAD) {
                 finalGenomeList.add(genomeLocation);
             }
         }

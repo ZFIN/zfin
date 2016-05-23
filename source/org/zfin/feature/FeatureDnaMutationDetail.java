@@ -1,14 +1,13 @@
 package org.zfin.feature;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.zfin.ontology.GenericTerm;
 import org.zfin.sequence.ReferenceDatabase;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "feature_dna_mutation_detail")
-public class FeatureDnaMutationDetail {
+public class FeatureDnaMutationDetail implements Cloneable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
@@ -56,7 +55,7 @@ public class FeatureDnaMutationDetail {
         this.feature = feature;
     }
 
-        public ReferenceDatabase getReferenceDatabase() {
+    public ReferenceDatabase getReferenceDatabase() {
         return referenceDatabase;
     }
 
@@ -143,4 +142,60 @@ public class FeatureDnaMutationDetail {
     public void setGeneLocalizationTerm(GeneLocalizationTerm geneLocalizationTerm) {
         this.geneLocalizationTerm = geneLocalizationTerm;
     }
+
+    public FeatureDnaMutationDetail clone() {
+        try {
+            FeatureDnaMutationDetail detail = (FeatureDnaMutationDetail) super.clone();
+            if (dnaMutationTerm != null)
+                detail.dnaMutationTerm = (DnaMutationTerm) dnaMutationTerm.clone();
+            if (geneLocalizationTerm != null)
+                detail.geneLocalizationTerm = (GeneLocalizationTerm) geneLocalizationTerm.clone();
+            return detail;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FeatureDnaMutationDetail that = (FeatureDnaMutationDetail) o;
+
+        if (dnaPositionStart != null ? !dnaPositionStart.equals(that.dnaPositionStart) : that.dnaPositionStart != null)
+            return false;
+        if (dnaPositionEnd != null ? !dnaPositionEnd.equals(that.dnaPositionEnd) : that.dnaPositionEnd != null)
+            return false;
+        if (dnaSequenceReferenceAccessionNumber != null ? !dnaSequenceReferenceAccessionNumber.equals(that.dnaSequenceReferenceAccessionNumber) : that.dnaSequenceReferenceAccessionNumber != null)
+            return false;
+        if (referenceDatabase != null ? !referenceDatabase.equals(that.referenceDatabase) : that.referenceDatabase != null)
+            return false;
+        if (numberAddedBasePair != null ? !numberAddedBasePair.equals(that.numberAddedBasePair) : that.numberAddedBasePair != null)
+            return false;
+        if (numberRemovedBasePair != null ? !numberRemovedBasePair.equals(that.numberRemovedBasePair) : that.numberRemovedBasePair != null)
+            return false;
+        if (exonNumber != null ? !exonNumber.equals(that.exonNumber) : that.exonNumber != null) return false;
+        if (intronNumber != null ? !intronNumber.equals(that.intronNumber) : that.intronNumber != null) return false;
+        if (geneLocalizationTerm != null ? !geneLocalizationTerm.equals(that.geneLocalizationTerm) : that.geneLocalizationTerm != null)
+            return false;
+        return !(dnaMutationTerm != null ? !dnaMutationTerm.equals(that.dnaMutationTerm) : that.dnaMutationTerm != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = dnaPositionStart != null ? dnaPositionStart.hashCode() : 0;
+        result = 31 * result + (dnaPositionEnd != null ? dnaPositionEnd.hashCode() : 0);
+        result = 31 * result + (dnaSequenceReferenceAccessionNumber != null ? dnaSequenceReferenceAccessionNumber.hashCode() : 0);
+        result = 31 * result + (referenceDatabase != null ? referenceDatabase.hashCode() : 0);
+        result = 31 * result + (numberAddedBasePair != null ? numberAddedBasePair.hashCode() : 0);
+        result = 31 * result + (numberRemovedBasePair != null ? numberRemovedBasePair.hashCode() : 0);
+        result = 31 * result + (exonNumber != null ? exonNumber.hashCode() : 0);
+        result = 31 * result + (intronNumber != null ? intronNumber.hashCode() : 0);
+        result = 31 * result + (geneLocalizationTerm != null ? geneLocalizationTerm.hashCode() : 0);
+        result = 31 * result + (dnaMutationTerm != null ? dnaMutationTerm.hashCode() : 0);
+        return result;
+    }
+
 }

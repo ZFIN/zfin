@@ -7,8 +7,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
@@ -25,7 +23,7 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
     interface MyUiBinder extends UiBinder<FlowPanel, FeatureAddView> {
     }
 
-    private FeatureAddPresenter editPresenter;
+    private FeatureAddPresenter addPresenter;
     @UiField
     StringTextBox featureAliasBox;
     @UiField
@@ -48,12 +46,13 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
 
     @UiHandler("saveButton")
     void onClickSaveButton(@SuppressWarnings("unused") ClickEvent event) {
-        editPresenter.createFeature();
+        super.onclickSaveButton(event);
+        addPresenter.createFeature();
     }
 
-    private void handleChanges() {
+    protected void handleChanges() {
         clearErrors();
-        editPresenter.handleDirty();
+        addPresenter.handleDirty();
     }
 
     @UiHandler("featureTypeBox")
@@ -63,17 +62,15 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         curatorNoteBox.setEnabled(true);
         featureAliasBox.setEnabled(true);
         featureSequenceBox.setEnabled(true);
-
         handleDirty();
     }
 
+
     public void resetInterface() {
-        labOfOriginBox.setEnabled(false);
-        labOfOriginBox.setSelectedIndex(0);
+        super.resetGUI();
         labDesignationBox.setEnabled(false);
         labDesignationBox.clear();
         labDesignationBox.setSelectedIndex(0);
-        lineNumberBox.setEnabled(false);
         lineNumberBox.clear();
         dominantCheckBox.setEnabled(false);
         dominantCheckBox.setValue(false);
@@ -83,10 +80,6 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         featureAliasBox.clear();
         featureSequenceBox.setEnabled(false);
         featureSequenceBox.clear();
-        mutageeBox.setEnabled(false);
-        mutageeBox.setSelectedIndex(0);
-        mutagenBox.setEnabled(false);
-        mutagenBox.setSelectedIndex(0);
         publicNoteBox.setEnabled(false);
         publicNoteBox.setText("");
         curatorNoteBox.setEnabled(false);
@@ -103,15 +96,13 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
 
     @Override
     public boolean handleDirty() {
-        editPresenter.handleDirty();
+        addPresenter.handleDirty();
         return true;
     }
 
-
-
     public void setPresenter(FeatureAddPresenter presenter) {
         this.presenter = presenter;
-        editPresenter = presenter;
+        addPresenter = presenter;
     }
 
     public void clearErrors() {
@@ -125,5 +116,6 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         publicNoteBox.setEnabled(false);
         curatorNoteBox.setEnabled(false);
     }
+
 
 }

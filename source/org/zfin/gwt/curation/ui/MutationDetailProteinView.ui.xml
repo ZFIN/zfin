@@ -1,0 +1,105 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        >
+
+    <ui:style>
+        .grey-background {
+            background-color: lightgrey;
+        }
+
+        .blue {
+            color: #0000FF;
+        }
+
+        .valign-top {
+            vertical-align: top;
+        }
+
+        .align-left {
+            horiz-align: left;
+        }
+
+        .empty-column {
+            width: 80%;
+        }
+
+        .header-row {
+            background-color: #000088;
+        }
+
+        .table {
+            background-color: #000088;
+        }
+
+        .green {
+            color: green;
+        }
+
+    </ui:style>
+
+    <g:FlowPanel ui:field="proteinChangePanel" visible="false">
+        <g:Grid ui:field='proteinDataTable' cellSpacing='4'>
+            <g:row>
+                <g:cell>Consequence</g:cell>
+                <g:cell>Amino Acid Change</g:cell>
+                <g:cell>Position</g:cell>
+                <g:cell>Accession #</g:cell>
+            </g:row>
+            <g:row>
+                <g:customCell>
+                    <zfin:StringListBox ui:field="proteinTermList" width="120px"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:HorizontalPanel>
+                        <zfin:StringListBox ui:field="proteinWTTermList"/>
+                        <g:Label text=">"/>
+                        <zfin:StringListBox ui:field="proteinMutatedTerm"/>
+                    </g:HorizontalPanel>
+                </g:customCell>
+                <g:customCell>
+                    <g:HorizontalPanel>
+                        <zfin:NumberTextBox ui:field="positionStart" visibleLength="8"/>
+                        <g:Label text="-" ui:field="positionDash"/>
+                        <zfin:NumberTextBox ui:field="positionEnd" visibleLength="8"/>
+                    </g:HorizontalPanel>
+                </g:customCell>
+                <g:customCell>
+                    <g:HorizontalPanel>
+                        <zfin:StringTextBox ui:field="sequenceOfReference"/>
+                        <g:HTML ui:field="validSequenceCharacter" visible="false">
+                            <i class="fa fa-check {style.green}" aria-hidden="true"></i>
+                        </g:HTML>
+                        <g:HTML ui:field="faultySequenceCharacter" visible="false">
+                            <i class="fa fa-exclamation error" aria-hidden="true"></i>
+                        </g:HTML>
+                    </g:HorizontalPanel>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:cell></g:cell>
+                <g:customCell>
+                    <g:Grid>
+                        <g:row>
+                            <g:cell>plus</g:cell>
+                            <g:customCell>
+                                <zfin:NumberTextBox visibleLength="4" ui:field="plusAminoAcid"/>
+                            </g:customCell>
+                            <g:cell>aa</g:cell>
+                        </g:row>
+                        <g:row>
+                            <g:cell>minus</g:cell>
+                            <g:customCell>
+                                <zfin:NumberTextBox visibleLength="4" ui:field="minusAminoAcid"/>
+                            </g:customCell>
+                            <g:cell>aa</g:cell>
+                        </g:row>
+                    </g:Grid>
+                </g:customCell>
+            </g:row>
+        </g:Grid>
+        <zfin:SimpleErrorElement ui:field="errorLabel" styleName="clickable-error"/>
+    </g:FlowPanel>
+</ui:UiBinder>

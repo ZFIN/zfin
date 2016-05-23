@@ -98,9 +98,9 @@ public abstract class AbstractNoteBox<T extends RelatedEntityDTO>
         saveButton.setEnabled(dirty);
         revertButton.setEnabled(dirty);
         if (dirty) {
-            newNoteTextArea.setStyleName(IsDirty.DIRTY_STYLE);
+            newNoteTextArea.setStyleName(IsDirtyWidget.DIRTY_STYLE);
         } else {
-            newNoteTextArea.setStyleName(IsDirty.CLEAN_STYLE);
+            newNoteTextArea.setStyleName(IsDirtyWidget.CLEAN_STYLE);
             fireEventSuccess();
         }
         return dirty;

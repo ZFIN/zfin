@@ -886,8 +886,14 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
   <a class="small-new-link" href="javascript:;" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=EFG&newmrkrSource='$OID'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New EFG</a>
   &nbsp;
   <a class="small-new-link" href="javascript:;" onClick=open("/action/marker/region-add?regionPublicationZdbID=$OID","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Engineered Region</a>
-
  <?/MIVAR>
+ <?MIBLOCK COND="$(XST,$cookie)">
+    <?MIBLOCK COND="$(EC,$cookie,tabConstruct)">
+       &nbsp;
+       <a class="small-new-link" href="javascript:;" onClick=open("/action/infrastructure/controlled-vocabulary-add","helpwindow","scrollbars=yes,height=850,width=750,resizable=yes")>Add New Species</a>
+    <?/MIBLOCK>
+ <?/MIBLOCK>
+ 
 
   <br/><p>
 <?MICOMMENT>

@@ -8,9 +8,7 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.ExpressionResult2;
 import org.zfin.gwt.root.dto.TermDTO;
-import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
 import org.zfin.repository.RepositoryFactory;
@@ -379,26 +377,6 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
             fail("An error occurred");
 
         }
-    }
-
-    // This is a normal condition following an ontology update in which doug receives an email
-    // when this condition occurs anyway.
-    @Test
-    public void getGoEvidenceOnSecondaryTerms() {
-        List<MarkerGoTermEvidence> term = ontologyRepository.getGoEvidenceOnSecondaryTerms();
-        assertEquals(0, term.size());
-    }
-
-    @Test
-    public void getExpressionsOnSecondaryTerms() {
-        List<ExpressionResult2> term = ontologyRepository.getExpressionsOnSecondaryTerms();
-        assertEquals(0, term.size());
-    }
-
-    @Test
-    public void getPhenotypesOnSecondaryTerms() {
-        List<PhenotypeStatement> term = ontologyRepository.getPhenotypesOnSecondaryTerms();
-        assertEquals(0, term.size());
     }
 
     /**

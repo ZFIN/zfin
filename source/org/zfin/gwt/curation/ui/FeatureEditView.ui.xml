@@ -20,13 +20,27 @@
             vertical-align: top;
         }
 
+        .valign-middle {
+            vertical-align: middle;
+        }
+
+        .italics {
+            font-style: italic;
+        }
+
+        .grey-text {
+            color: darkgrey;
+            font-style: italic;
+            font-size: small;
+        }
+
     </ui:style>
 
     <g:FlowPanel>
         <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
             <g:Label text="Edit Feature" addStyleNames="bold" horizontalAlignment="left"/>
             <g:Label text=":&nbsp;" addStyleNames="bold"/>
-            <zfin:ShowHideToggle widget="{featureConstructionPanel}" ui:field="showHideToggle" show="true"/>
+            <zfin:ShowHideToggle widget="{featureConstructionPanel}" ui:field="showHideToggle" show="false"/>
         </g:HorizontalPanel>
         <g:Grid ui:field="featureConstructionPanel" styleName="{style.grey-background}">
             <g:row>
@@ -98,6 +112,42 @@
                         <g:Label text="&nbsp;Treated with:"/>
                         <zfin:StringListBox ui:field="mutagenBox"/>
                     </g:HorizontalPanel>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell styleName="{style.valign-top} {style.grey-background}">
+                    <g:Label text="Mutation Detail"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:HTML ui:field="noMutationDetailMessage" styleName="{style.grey-text}">Only for feature type:
+                        Point Mutation, Insertion, Indel , Deletion and Transgenic Insertion with known insertion site</g:HTML>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell styleName="{style.valign-top} {style.grey-background}">
+                    <g:Label text="DNA / cDNA" horizontalAlignment="right" styleName="{style.italics}"
+                             ui:field="dnaChangeFirstColumn" visible="false"/>
+                </g:customCell>
+                <g:customCell>
+                    <zfin-mod:MutationDetailDNAView ui:field="mutationDetailDnaView"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell styleName="{style.valign-top} {style.grey-background}">
+                    <g:Label text="Transcript" horizontalAlignment="right" styleName="{style.italics}"
+                             ui:field="transcriptChangeFirstColumn" visible="false"/>
+                </g:customCell>
+                <g:customCell>
+                    <zfin-mod:MutationDetailTranscriptView ui:field="mutationDetailTranscriptView"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell styleName="{style.valign-top} {style.grey-background}">
+                    <g:Label text="Protein" horizontalAlignment="right" styleName="{style.italics}"
+                             ui:field="proteinChangeFirstColumn" visible="false"/>
+                </g:customCell>
+                <g:customCell>
+                    <zfin-mod:MutationDetailProteinView ui:field="mutationDetailProteinView"/>
                 </g:customCell>
             </g:row>
             <g:row>

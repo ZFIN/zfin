@@ -259,18 +259,21 @@ public class ExpressionService {
             return markerExpression;
         }
 
-        // all expression
+        // all expressionList
+        List<Publication> pubs = expressionRepository.getExpressionPub(marker);
         MarkerExpressionInstance allMarkerExpressionInstance = new MarkerExpressionInstance();
         allMarkerExpressionInstance.setPublicationCount(
                 expressionRepository.getExpressionPubCountForEfg(marker));
 
         if (allMarkerExpressionInstance.getPublicationCount() == 1) {
-            allMarkerExpressionInstance.setSinglePublication(expressionRepository.getExpressionSinglePub(marker));
+            allMarkerExpressionInstance.setSinglePublication(pubs.get(0));
         }
         allMarkerExpressionInstance.setFigureCount(
                 expressionRepository.getExpressionFigureCountForEfg(marker));
         markerExpression.setAllExpressionData(allMarkerExpressionInstance);
-
+        if (allMarkerExpressionInstance.getFigureCount() == 1) {
+            allMarkerExpressionInstance.setSingleFigure(expressionRepository.getExpressionSingleFigure(marker));
+        }
         // directly submitted
         logger.info("setting directly submitted expression");
         markerExpression.setDirectlySubmittedExpression(getDirectlySubmittedExpressionEfg(marker));
