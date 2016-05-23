@@ -1,8 +1,10 @@
 package org.zfin.search.service;
 
-import com.google.common.base.Joiner;
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
+import org.apache.commons.collections.TransformerUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.zfin.feature.FeatureTranscriptMutationDetail;
 import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.fish.presentation.FishPresentation;
 import org.zfin.fish.repository.FishService;
+import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.mapping.MappingService;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -29,9 +32,7 @@ import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.presentation.TermPresentation;
-import org.zfin.profile.Company;
-import org.zfin.profile.Lab;
-import org.zfin.profile.Person;
+import org.zfin.profile.*;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
@@ -40,6 +41,7 @@ import org.zfin.sequence.DBLink;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.presentation.DBLinkPresentation;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
@@ -54,41 +56,42 @@ public class ResultService {
 
     public static String ABSTRACT = "Abstract:";
     public static String ADDRESS = "Address:";
-    public static String AUTHORS = "Authors:";
-    public static String PREVIOUS_NAME = "Previous Names:";
-    public static String LOCATION = "Location:";
-    public static String GENE_NAME = "Gene Name:";
-    public static String PSEUDOGENE_NAME = "Pseudogene Name:";
-    public static String EFG_NAME = "Engineered Foreign Gene Name:";
-    public static String SYNONYMS = "Synonyms:";
     public static String AFFECTED_GENES = "Affected Genes:";
-    public static String TARGETED_GENES = "Targeted Genes:";
-    public static String TYPE = "Type:";
-    public static String CONSTRUCT = "Construct:";
-    public static String SEQUENCE = "Sequence:";
-    public static String CLONE_PROBLEM_TYPE = "Clone Problem Type:";
+    public static String ANTIBODY = "Antibody:";
+    public static String AUTHORS = "Authors:";
+    public static String CAPTION = "Caption:";
     public static String CLONE_CONTAINS_GENES = "Clone Contains Genes:";
     public static String CLONE_ENCODED_BY_GENES = "Clone Encoded By Gene:";
-    public static String QUALITY = "Quality:";
-    public static String GENOTYPE = "Genotype:";
-    public static String STAGE = "Stage:";
+    public static String CLONE_PROBLEM_TYPE = "Clone Problem Type:";
+    public static String COMMENT = "Comment:";
     public static String CONDITIONS = "Conditions:";
-    public static String PUBLICATION = "Publication:";
-    public static String CAPTION = "Caption:";
-    public static String PHENOTYPE = "Phenotype:";
+    public static String CONSEQUENCE = "Consequence:";
+    public static String CONSTRUCT = "Construct:";
+    public static String EFG_NAME = "Engineered Foreign Gene Name:";
     public static String EMAIL = "Email:";
     public static String EXPRESSION = "Expression:";
     public static String FISH = "Fish:";
     public static String GENE = "Gene:";
-    public static String ANTIBODY = "Antibody:";
-    public static String PROBE = "Probe:";
-    public static String SCREEN = "Screen:";
+    public static String GENE_NAME = "Gene Name:";
+    public static String GENOTYPE = "Genotype:";
     public static String JOURNAL = "Journal:";
-    public static String NOTE = "Note:";
-    public static String COMMENT = "Comment:";
     public static String LINE_DESIGNATION = "Line Designation:";
-    public static String CONSEQUENCE = "Consequence:";
+    public static String LOCATION = "Location:";
+    public static String NOTE = "Note:";
+    public static String PHENOTYPE = "Phenotype:";
+    public static String PREVIOUS_NAME = "Previous Names:";
+    public static String PROBE = "Probe:";
+    public static String PSEUDOGENE_NAME = "Pseudogene Name:";
+    public static String PUBLICATION = "Publication:";
+    public static String QUALITY = "Quality:";
+    public static String SCREEN = "Screen:";
+    public static String SEQUENCE = "Sequence:";
+    public static String SOURCE = "Sources:";
+    public static String STAGE = "Stage:";
+    public static String SYNONYMS = "Synonyms:";
+    public static String TARGETED_GENES = "Targeted Genes:";
     public static String TRANSCRIPT_NAME = "Transcript Name:";
+    public static String TYPE = "Type:";
 
 
     public void injectAttributes(Collection<SearchResult> results) {
@@ -175,9 +178,7 @@ public class ResultService {
         }
 
         if (CollectionUtils.isNotEmpty(isotypeList)) {
-            type += "[";
-            type += Joiner.on(", ").join(isotypeList);
-            type += "]";
+            type += "[" + withCommas(isotypeList) + "]";
         }
         if (org.apache.commons.lang.StringUtils.isNotEmpty(type)) {
             result.addAttribute("Type:", type);
@@ -185,7 +186,7 @@ public class ResultService {
 
 
         if (CollectionUtils.isNotEmpty(antibody.getSuppliers())) {
-            result.addAttribute("Source", withCommas(antibody.getSuppliers(), "organization.name"));
+            result.addAttribute(SOURCE, withCommas(antibody.getSuppliers(), new SupplierLinkTransformer()));
         }
     }
 
@@ -332,10 +333,13 @@ public class ResultService {
             }
 
             if (feature.getFeatureTranscriptMutationDetailSet() != null && feature.getFeatureTranscriptMutationDetailSet().size() > 0) {
-                result.addAttribute(CONSEQUENCE, StringUtils.join(consequenceStatements, ", "));
+                result.addAttribute(CONSEQUENCE, withCommas(consequenceStatements));
             }
             if (feature.getConstructs() != null && feature.getConstructs().size() > 0) {
                 result.addAttribute(CONSTRUCT, withCommas(feature.getConstructs(), "marker.name"));
+            }
+            if (CollectionUtils.isNotEmpty(feature.getSuppliers())) {
+                result.addAttribute(SOURCE, withBreaks(feature.getSuppliers(), new SupplierLinkTransformer()));
             }
 
 //            screen used to be here, removed as a result of case 11323
@@ -422,11 +426,12 @@ public class ResultService {
         }
 
         addSynonyms(result, marker);
-        if (marker.getType().equals(Marker.Type.REGION))
+        if (marker.getType().equals(Marker.Type.REGION)) {
             addComments(result, marker);
+        }
         addLocationInfo(result, marker);
         if (CollectionUtils.isNotEmpty(marker.getSuppliers())) {
-            result.addAttribute("Source", withCommas(marker.getSuppliers(), "organization.name"));
+            result.addAttribute(SOURCE, withCommas(marker.getSuppliers(), new SupplierLinkTransformer()));
         }
         List<Marker> genesContainedInClones = getMarkerRepository().getMarkersContainedIn(marker, MarkerRelationship.Type.CLONE_CONTAINS_GENE);
         if (CollectionUtils.isNotEmpty(genesContainedInClones)) {
@@ -516,7 +521,7 @@ public class ResultService {
     }
 
     protected void addComments(SearchResult result, Marker marker) {
-            result.addAttribute(COMMENT, marker.getPublicComments());
+        result.addAttribute(COMMENT, marker.getPublicComments());
     }
 
     public void injectExpressionAttributes(SearchResult result) {
@@ -566,7 +571,6 @@ public class ResultService {
 
             List<String> results = new ArrayList<>();
             List<ExpressionResult> expressionResults = new ArrayList<>();
-
 
 
             //Surprisngly, it turns out that this actually performs better than a query.  Could be caching, but we like caching.
@@ -721,12 +725,6 @@ public class ResultService {
     }
 
 
-
-
-
-
-
-
     public void injectPublicationAttributes(SearchResult result) {
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication(result.getId());
 
@@ -766,6 +764,9 @@ public class ResultService {
         return "<div class=\"collapsible-attribute collapsed-attribute\">" + string + "</div>";
     }
 
+    public <T> String withCommas(Collection<T> collection, Transformer transformer) {
+        return withCommas(CollectionUtils.collect(collection, transformer));
+    }
 
     /**
      * Create a comma separated list from a property of each member of a collection
@@ -774,24 +775,16 @@ public class ResultService {
      * @param property   property path name
      * @return String
      */
-    public String withCommas(Collection collection, String property) {
-
-        //get the named property out as a list of strings
-        List<String> stringList = (List<String>) CollectionUtils.collect(collection,
-                new BeanToPropertyValueTransformer(property));
-
-        //comma separate it
-        return Joiner.on(", ").join(stringList);
+    public <T> String withCommas(Collection<T> collection, String property) {
+        return withCommas(collection, new BeanToPropertyValueTransformer(property));
     }
-    public String withCommasAndItalics(Collection collection, String property) {
 
-        //get the named property out as a list of strings
-        List<String> stringList = (List<String>) CollectionUtils.collect(collection,
-                new BeanToPropertyValueTransformer(property));
-
-        //comma separate it
-        return "<i>"+Joiner.on(", ").join(stringList)+"</i>";
+    public <T> String withCommasAndItalics(Collection<T> collection, String property) {
+        return withCommas(collection, TransformerUtils.chainedTransformer(
+                new BeanToPropertyValueTransformer(property),
+                new ItalicsTransformer()));
     }
+
     /**
      * Create a comma separated list from a property of each member of a collection
      * including a hyperlink to the zdbID
@@ -800,22 +793,19 @@ public class ResultService {
      * @param property   property path name
      * @return String
      */
-    public String withCommasAndLink(Collection collection, String property, String zdbIdProperty) {
-        //get the named property out as a list of strings
-        List<String> stringList = (List<String>) CollectionUtils.collect(collection,
-                new BeanToPropertyValueTransformer(property));
-        List<String> idList = (List<String>) CollectionUtils.collect(collection,
-                new BeanToPropertyValueTransformer(zdbIdProperty));
-
-        if (CollectionUtils.isNotEmpty(stringList)) {
-            int index = 0;
-            for (String entry : stringList) {
-                stringList.set(index, "<a href='/" + idList.get(index) + "'>" + entry + "</a>");
-                index++;
+    public <T> String withCommasAndLink(Collection<T> collection, final String property, final String zdbIdProperty) {
+        return withCommas(collection, new Transformer() {
+            @Override
+            public Object transform(Object o) {
+                try {
+                    return EntityPresentation.getGeneralHyperLink("/" + PropertyUtils.getProperty(o, zdbIdProperty),
+                            PropertyUtils.getProperty(o, property).toString());
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    logger.error("Error while transforming collection item to link", e);
+                    return "";
+                }
             }
-        }
-        //comma separate it
-        return Joiner.on(", ").join(stringList);
+        });
     }
 
 
@@ -825,10 +815,13 @@ public class ResultService {
      * @param collection
      * @return
      */
-    public String withCommas(Collection collection) {
-        return Joiner.on(", ").join(collection);
+    public <T> String withCommas(Collection<T> collection) {
+        return StringUtils.join(collection, ", ");
     }
 
+    public <T> String withBreaks(Collection<T> collection, Transformer transformer) {
+        return withBreaks(CollectionUtils.collect(collection, transformer));
+    }
 
     public String withBreaks(Collection collection) {
         StringBuilder sb = new StringBuilder();
@@ -855,5 +848,28 @@ public class ResultService {
             sb.append("</ul>");
         }
         return sb.toString();
+    }
+
+    private class SupplierLinkTransformer implements Transformer {
+        @Override
+        public Object transform(Object o) {
+            ObjectSupplier supplier = (ObjectSupplier) o;
+            String link = "";
+            if (supplier.getOrganization() != null) {
+                Organization organization = supplier.getOrganization();
+                link += EntityPresentation.getGeneralHyperLink("/" + organization.getZdbID(), organization.getName());
+            }
+            if (StringUtils.isNotEmpty(supplier.getOrderURL())) {
+                link += " (" + EntityPresentation.getGeneralHyperLink(supplier.getOrderURL(), "order this") + ")";
+            }
+            return link;
+        }
+    }
+
+    private class ItalicsTransformer implements Transformer {
+        @Override
+        public Object transform(Object o) {
+            return "<i>" + o.toString() + "</i>";
+        }
     }
 }

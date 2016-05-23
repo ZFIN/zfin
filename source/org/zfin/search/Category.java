@@ -73,16 +73,7 @@ public enum Category {
 //            SCREEN   <!--screen used to be here, removed as a result of case 11323-->
     ),
     PUBLICATION("Publication",
-            //facet queries
-            asList(FacetQueryEnum.DATE_LAST_30_DAYS,
-                    FacetQueryEnum.DATE_LAST_90_DAYS,
-                    FacetQueryEnum.DATE_THIS_YEAR,
-                    FacetQueryEnum.DATE_THIS_YEAR_MINUS_1,
-                    FacetQueryEnum.DATE_THIS_YEAR_MINUS_2,
-                    FacetQueryEnum.DATE_THIS_YEAR_MINUS_3,
-                    FacetQueryEnum.DATE_THIS_YEAR_MINUS_4,
-                    FacetQueryEnum.DATE_THIS_YEAR_MINUS_5,
-                    FacetQueryEnum.DATE_MORE_THAN_5_YEARS),
+            //facet queries for pub dates can be found in FacetBuilderService
             FieldName.GENE,
             SEQUENCE_ALTERATION,
             FieldName.DISEASE,

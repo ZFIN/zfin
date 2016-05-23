@@ -144,6 +144,10 @@ public class SolrService {
             for (FacetQueryEnum facetQueryEnum :category.getFacetQueries()) {
                 query.addFacetQuery(facetQueryEnum.getQuery());
             }
+            for (String facetQuery : FacetBuilderService.getPublicationDateQueries().values()) {
+                query.addFacetQuery(facetQuery);
+            }
+
             String[] facetFields = category.getFieldArray();
             for (String ff : facetFields)
                 if (!StringUtils.isEmpty(ff)) {

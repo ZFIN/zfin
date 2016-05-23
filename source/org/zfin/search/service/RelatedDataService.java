@@ -1,6 +1,7 @@
 package org.zfin.search.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
@@ -12,8 +13,11 @@ import org.springframework.stereotype.Service;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.infrastructure.ActiveData;
+import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.OrthologyPresentationBean;
+import org.zfin.marker.presentation.SequencePageInfoBean;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.GenericTerm;
@@ -29,6 +33,7 @@ import org.zfin.search.presentation.SearchResult;
 
 import java.util.*;
 
+import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 
@@ -70,41 +75,64 @@ public class RelatedDataService {
         String category = result.getCategory();
 
         List<String> links = new ArrayList<>();
-
+        String gBrowseLink;
         if (StringUtils.equals(category, Category.GENE.getName())
                 || (StringUtils.equals(category, Category.MUTANT.getName()) && (StringUtils.startsWith(result.getName(), "la0")))) {
 
-            String gBrowseLink = getGBrowseLink(id);
+            //String gBrowseLink = getGBrowseLink(id);
+            if (ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
+                List<Marker> markerList = getMarkerRepository().getTranscriptByZdbID(id).getAllRelatedMarker();
+                int numberOfTargetGenes = 0;
+                for (Marker marker : markerList) {
+                    if (marker.getMarkerType().getType().name().equals(ActiveData.Type.GENE.name())) {
+                        id = marker.getZdbID();
+                        numberOfTargetGenes++;
+                    }
+                }
+                if (numberOfTargetGenes > 1) {
+                    return null;
+                }
+                gBrowseLink=makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
+                links.add(gBrowseLink);
+            }
 
-            if (!(id.contains("EFG"))) {
+
+            if (ActiveData.isValidActiveData(id, ActiveData.Type.GENE)) {
+                List<MarkerGenomeLocation> genomeLocations = getLinkageRepository().getGenomeLocation(getMarkerRepository().getMarkerByID(id));
+                for (MarkerGenomeLocation genomeLocation : genomeLocations) {
+                    if (genomeLocation.getSource() == GenomeLocation.Source.ZFIN) {
+
+
+                        gBrowseLink = makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
+                        links.add(gBrowseLink);
+                    }
+                }
+            }
+            /*if (!(id.contains("EFG"))) {
                 if (!(entityName.contains("WITHDRAWN"))) {
                     if (gBrowseLink != null) {
                         links.add(gBrowseLink);
                     }
                 }
-            }
+            }*/
         }
 
 
         if (!(id.contains("EFG"))) {
-
             if (StringUtils.equals(category, Category.GENE.getName())) {
+                Marker marker = getMarkerRepository().getMarkerByID(id);
                 if (!ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
-                    OrthologyPresentationBean orthologyEvidenceBean = MarkerService
-                            .getOrthologyEvidence(getMarkerRepository().getGeneByID(id));
+                    OrthologyPresentationBean orthologyEvidenceBean = MarkerService.getOrthologyEvidence(marker);
                     if (orthologyEvidenceBean != null) {
-                        List<OrthologyPresentationRow> markerList = orthologyEvidenceBean
-                                .getOrthologs();
+                        List<OrthologyPresentationRow> markerList = orthologyEvidenceBean.getOrthologs();
                         if (CollectionUtils.isNotEmpty(markerList)) {
                             links.add(getOrthologyLink(id));
                         }
                     }
                 }
-                String link = getSequencesLink(id);
-                links.add(link);
+                addSequenceLink(links, marker);
             }
         }
-
 
         //Special case here, so that the ZFIN orthology pub doesn't get an orthlogy link, because the page will take 10 minutes to load!
         if (StringUtils.equals(category, Category.PUBLICATION.getName())
@@ -123,8 +151,7 @@ public class RelatedDataService {
         if (StringUtils.equals(category, Category.MARKER.getName())) {
             if (ActiveData.isValidActiveData(id, ActiveData.Type.BAC) || ActiveData.isValidActiveData(id, ActiveData.Type.PAC)
                     || ActiveData.isValidActiveData(id, ActiveData.Type.CDNA) || ActiveData.isValidActiveData(id, ActiveData.Type.EST)) {
-                String link = getSequencesLink(id);
-                links.add(link);
+                addSequenceLink(links, id);
             }
             links = sortLinks(links, markerCloneRelatedDateCategories);
         }
@@ -384,8 +411,25 @@ public class RelatedDataService {
             if (numberOfTargetGenes > 1) {
                 return null;
             }
+
         }
+
         return makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
+    }
+
+    private void addSequenceLink(Collection<String> links, String markerId) {
+        addSequenceLink(links, getMarkerRepository().getMarkerByID(markerId));
+    }
+
+    private void addSequenceLink(Collection<String> links, Marker marker) {
+        if (marker == null) {
+            return;
+        }
+
+        SequencePageInfoBean sequenceInfo = MarkerService.getSequenceInfoFull(marker);
+        if (CollectionUtils.isNotEmpty(sequenceInfo.getDbLinks()) || MapUtils.isNotEmpty(sequenceInfo.getRelatedMarkerDBLinks())) {
+            links.add(getSequencesLink(marker.getZdbID()));
+        }
     }
 
     private String getSequencesLink(String id) {

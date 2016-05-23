@@ -702,6 +702,7 @@
    <field name="full_mesh_term" type="keyword" indexed="true" stored="true" multiValued="true" />
 
    <field name="journal" type="keyword" indexed="true" stored="true"   />
+     <field name="journal_name" type="text" indexed="true" stored="true"   />
    <field name="topic" type="keyword" indexed="true" stored="true"   multiValued="true" />
    <field name="pub_status" type="keyword" indexed="true" stored="true"   multiValued="true" />
    <field name="pet_date" type="date" indexed="true" stored="true"/>
@@ -969,6 +970,7 @@
     <copyField source="quality_alias" dest="text"/>
 
    <copyField source="journal" dest="journal_t"/>
+    <copyField source="journal_name" dest="journal_name_t"/>
    <copyField source="registered_author" dest="registered_author_t"/>
    <copyField source="id" dest="id_t"/>
    <copyField source="name" dest="name_t"/>

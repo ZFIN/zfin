@@ -1,5 +1,6 @@
 package org.zfin.orthology;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ReferenceDatabase;
 
@@ -39,13 +40,12 @@ public class OrthologExternalReference implements Comparable<OrthologExternalRef
         ForeignDB.AvailableName nameTwo = o.getReferenceDatabase().getForeignDB().getDbName();
         ExternalDatabase externalDatabaseOne = ExternalDatabase.getExternalDatabase(nameOne);
         ExternalDatabase externalDatabaseTwo = ExternalDatabase.getExternalDatabase(nameTwo);
-        if (externalDatabaseOne == null)
-            return -1;
-        if (externalDatabaseTwo == null)
-            return 1;
-        return externalDatabaseOne.getIndex() - externalDatabaseTwo.getIndex();
+        int externalDbCompare = ObjectUtils.compare(externalDatabaseOne, externalDatabaseTwo);
+        if (externalDbCompare != 0) {
+            return externalDbCompare;
+        }
+        return ObjectUtils.compare(getAccessionNumber(), o.getAccessionNumber());
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -55,8 +55,9 @@ public class OrthologExternalReference implements Comparable<OrthologExternalRef
         OrthologExternalReference reference = (OrthologExternalReference) o;
 
         if (ortholog != null ? !ortholog.equals(reference.ortholog) : reference.ortholog != null) return false;
-        if (accessionNumber != null ? !accessionNumber.equals(reference.accessionNumber) : reference.accessionNumber != null)
+        if (accessionNumber != null ? !accessionNumber.equals(reference.accessionNumber) : reference.accessionNumber != null) {
             return false;
+        }
         return !(referenceDatabase != null ? !referenceDatabase.equals(reference.referenceDatabase) : reference.referenceDatabase != null);
 
     }

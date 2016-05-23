@@ -197,25 +197,6 @@ public class MarkerService {
         return relatedMarkerDBLinks;
     }
 
-    public static SequenceInfo getSequenceInfo(Marker marker) {
-        SequenceInfo sequenceInfo = new SequenceInfo();
-
-
-        if (marker.getDbLinks() != null) {
-            logger.debug(marker.getDbLinks().size() + " total marker dblinks");
-            for (MarkerDBLink dblink : marker.getDbLinks()) {
-                if (dblink.getReferenceDatabase().getForeignDBDataType().getSuperType().equals(ForeignDBDataType.SuperType.SEQUENCE) && !dblink.isInDisplayGroup(DisplayGroup.GroupName.HIDDEN_DBLINKS)) {
-                    sequenceInfo.addDBLink(dblink);
-                }
-            }
-        }
-
-        logger.debug(sequenceInfo.getDbLinks().size() + " marker linked sequence dblinks");
-
-        return sequenceInfo;
-    }
-
-
     public static SummaryDBLinkDisplay getMarkerDBLinkDisplay(Marker marker, DisplayGroup.GroupName groupName) {
         SummaryDBLinkDisplay sp = new SummaryDBLinkDisplay();
         for (DBLink dblink : marker.getDbLinks()) {

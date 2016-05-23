@@ -314,8 +314,8 @@ select count(distinct fig_source_zdb_id)
 -- ct18        
 !echo "number of phenotypes (EQs) total";
 
-select count(phenos_pk_id)
-  from phenotype_statement;
+select count(psg_id)
+  from phenotype_observation_generated;
 
 
 ------------------IMAGES xpat and PATO or just xpat-------------------------

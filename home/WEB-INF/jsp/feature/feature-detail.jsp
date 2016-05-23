@@ -249,9 +249,8 @@
                         <c:choose>
                             <c:when test="${formBean.feature.suppliers ne null && fn:length(formBean.feature.suppliers) > 0}">
                                 <c:forEach var="supplier" items="${formBean.feature.suppliers}" varStatus="status">
-                                    <a href="${zfn:getWebdriverLink()}?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}"
-                                       id="${supplier.organization.zdbID}">
-                                            ${supplier.organization.name}
+                                    <a href="/${supplier.organization.zdbID}" id="${supplier.organization.zdbID}">
+                                        ${supplier.organization.name}
                                     </a>
                                     <c:if test="${supplier.zirc || supplier.ezrc || supplier.czrc}">&nbsp;
                                         <zfin2:orderThis organization="${supplier.organization}"

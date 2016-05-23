@@ -328,6 +328,7 @@
              synonym_phenotype_statement_t
              expression_statement_t
              journal_t
+             journal_name_t
              registered_author_t
                           registered_author
              author_string
@@ -476,6 +477,7 @@
 
              experimental_conditions
              journal_t
+             journal_name_t
              prefix
              institution
              institution_t
@@ -562,6 +564,7 @@
              synonym_phenotype_statement
 
              journal journal_t
+             journal journal_name_t
              registered_author_t^0.5
              registered_author^0.5
              author_string
