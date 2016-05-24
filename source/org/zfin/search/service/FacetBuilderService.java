@@ -225,11 +225,11 @@ public class FacetBuilderService {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
         FacetGroup expressionAnatomy = new FacetGroup("Expression Anatomy", true);
-        expressionAnatomy.addFacet(buildFacet(EXPRESSIONS_ANATOMY_TF.getName(), true, response, filterQuerySelectionMap, baseUrl));
+        expressionAnatomy.addFacet(buildFacet(EXPRESSIONS_ANATOMY_TF.getName(), true, filterQuerySelectionMap, baseUrl));
         facetGroups.add(expressionAnatomy);
 
-        facetGroups.add(buildSingleFacetGroup("Regulatory Region", REGULATORY_REGION.getName(), true, response, filterQuerySelectionMap, baseUrl));
-
+        facetGroups.add(buildSingleFacetGroup("Regulatory Region", REGULATORY_REGION.getName(), true, filterQuerySelectionMap, baseUrl));
+        facetGroups.add(buildSingleFacetGroup("Regulatory Region", REGULATORY_REGION.getName(), true, filterQuerySelectionMap, baseUrl));
 
         return facetGroups;
     }

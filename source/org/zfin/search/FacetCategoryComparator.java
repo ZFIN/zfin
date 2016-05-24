@@ -25,6 +25,7 @@ public class FacetCategoryComparator<T extends FacetField.Count> implements Comp
         map.put(Category.PHENOTYPE, pad(i++));
         map.put(Category.DISEASE, pad(i++));
         map.put(Category.FISH, pad(i++));
+        map.put(Category.REPORTER_LINE, pad(i++));
         map.put(Category.MUTANT, pad(i++));
         map.put(Category.CONSTRUCT, pad(i++));
         map.put(Category.SEQUENCE_TARGETING_REAGENT, pad(i++));
