@@ -455,7 +455,7 @@ public class ResultService {
                 result.addAttribute(CLONE_PROBLEM_TYPE, clone.getProblem().name() + " <img src=\"/images/warning-noborder.gif\" width=\"20\" height=\"20\" align=\"top\"/>");
             }
             if (clone.getRating() != null) {
-                result.addAttribute(QUALITY, "<img src='/images/" + clone.getRating() + "0stars.gif'>");
+                result.addAttribute(QUALITY, "<img src='/images/" + (clone.getRating() + 1) + "0stars.gif'>");
             }
         }
 
