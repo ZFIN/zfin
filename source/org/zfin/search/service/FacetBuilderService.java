@@ -189,7 +189,7 @@ public class FacetBuilderService {
         facetGroups.add(wildtypeGroup);
         facetGroups.add(buildSingleFacetGroup("Assay", "assay", false, filterQuerySelectionMap, baseUrl));
 
-        FacetGroup genotype = buildSingleFacetGroup("Genotype", FieldName.GENOTYPE_FULL_NAME,
+        FacetGroup genotype = buildSingleFacetGroup("Genotype", FieldName.GENOTYPE_FULL_NAME.getName(),
                 Category.EXPRESSIONS.getFacetQueriesForField(FieldName.GENOTYPE),
                 false, filterQuerySelectionMap, baseUrl);
 
@@ -229,6 +229,7 @@ public class FacetBuilderService {
         facetGroups.add(expressionAnatomy);
 
         facetGroups.add(buildSingleFacetGroup("Regulatory Region", REGULATORY_REGION.getName(), true, filterQuerySelectionMap, baseUrl));
+        facetGroups.add(buildSingleFacetGroup("Stage", STAGE.getName(), true, filterQuerySelectionMap, baseUrl));
 
         return facetGroups;
     }
