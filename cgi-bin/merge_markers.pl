@@ -638,6 +638,14 @@ while ($curGetFishName->fetch()) {
 $curGetFishName->finish();
 $curUpdateFishName->finish();
 
+### FB case 14194
+
+$sqlUpdateSfclg = "update sequence_feature_chromosome_location_generated set sfclg_data_zdb_id = ? where sfclg_data_zdb_id = ?";
+$curUpdateSfclg = $dbh->prepare_cached($sqlUpdateSfclg);
+$curUpdateSfclg->execute($intoId,$mergeId);
+
+$curUpdateSfclg->finish();
+
 ##close DBG;
 
 ### close database connection
