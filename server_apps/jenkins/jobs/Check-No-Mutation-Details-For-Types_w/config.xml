@@ -18,13 +18,13 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>validate-data-report-simple -DJobName=Check-No-Mutation-Details-For-Types</targets>
+            <targets>validate-data-report-simple -DJobName=Check-No-Mutation-Details-For-Types_w</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/DB_maintenance/validatedata/Check-No-Mutation-Details-For-Types/*</artifacts>
+            <artifacts>server_apps/DB_maintenance/validatedata/Check-No-Mutation-Details-For-Types_w/*</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -37,8 +37,8 @@
             <reportTargets>
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Error Report</reportName>
-                    <reportDir>server_apps/DB_maintenance/validatedata/Check-No-Mutation-Details-For-Types</reportDir>
-                    <reportFiles>Check-No-Mutation-Details-For-Types.html</reportFiles>
+                    <reportDir>server_apps/DB_maintenance/validatedata/Check-No-Mutation-Details-For-Types_w</reportDir>
+                    <reportFiles>Check-No-Mutation-Details-For-Types_w.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>false</allowMissing>
                 </htmlpublisher.HtmlPublisherTarget>
@@ -52,7 +52,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-No-Mutation-Details-For-Types/Check-No-Mutation-Details-For-Types.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-No-Mutation-Details-For-Types_w.html&quot;}
 
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
@@ -72,7 +72,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-No-Mutation-Details-For-Types/Check-No-Mutation-Details-For-Types.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-No-Mutation-Details-For-Types_w.html&quot;}
 
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
