@@ -122,7 +122,7 @@ public enum Category {
             EXPRESSIONS_ANATOMY_TF,
             STAGE,
             ASSAY,
-            GENOTYPE,
+            GENOTYPE_FULL_NAME,
             AUTHOR,
             EXPERIMENTAL_CONDITIONS,
             HAS_IMAGE,

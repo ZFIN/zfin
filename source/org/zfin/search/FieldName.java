@@ -46,6 +46,7 @@ public enum FieldName {
     GENE("gene"),
     GENES_WITH_ALTERED_EXPRESSION("genes_with_altered_expression"),
     GENOTYPE("genotype"),
+    GENOTYPE_FULL_NAME("genotype_full_name"),
     HAS_IMAGE("has_image"),
     HOST_ORGANISM("host_organism"),
     ID("id"),
