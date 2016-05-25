@@ -2772,6 +2772,29 @@ term_name as expression_anatomy_direct,
                    cacheImpl="SortedMapBackedCache"
                    where="efs_pk_id=expression.id"/>
 
+           <entity name="expression_genotype"
+                   datasource="db" query="
+		       SELECT CASE Length(Get_genotype_backgrounds(geno_zdb_id)) 
+			  WHEN '0' THEN geno_display_name 
+			  ELSE Get_genotype_display(geno_zdb_id) 
+			  || ' (' 
+			  || Get_genotype_backgrounds(geno_zdb_id) 
+			  || ')' 
+			  END AS genotype_full_name,
+			  'xpatex-' || efs_pk_id as efs_pk_id
+		      FROM   expression_experiment2 
+		         JOIN expression_figure_stage 
+			 ON efs_xpatex_zdb_id = xpatex_zdb_id 
+			 JOIN fish_experiment 
+			 ON xpatex_genox_zdb_id = genox_zdb_id 
+			 JOIN fish 
+			 ON fish_zdb_id = genox_fish_zdb_id 
+			 JOIN genotype 
+			 ON geno_zdb_id = fish_genotype_zdb_id;"
+                   cacheImpl="SortedMapBackedCache"
+                   where="efs_pk_id=expression.id"/>
+
+
            <entity name="expression_conditions"
                    datasource="db" query="select
                              case

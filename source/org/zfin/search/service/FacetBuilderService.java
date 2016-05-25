@@ -189,7 +189,7 @@ public class FacetBuilderService {
         facetGroups.add(wildtypeGroup);
         facetGroups.add(buildSingleFacetGroup("Assay", "assay", false, filterQuerySelectionMap, baseUrl));
 
-        FacetGroup genotype = buildSingleFacetGroup("Genotype", "genotype",
+        FacetGroup genotype = buildSingleFacetGroup("Genotype", FieldName.GENOTYPE_FULL_NAME,
                 Category.EXPRESSIONS.getFacetQueriesForField(FieldName.GENOTYPE),
                 false, filterQuerySelectionMap, baseUrl);
 

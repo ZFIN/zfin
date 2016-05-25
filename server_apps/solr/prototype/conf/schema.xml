@@ -478,7 +478,7 @@
    <field name="proper_name" type="abbrev" indexed="true" stored="true" termVectors="true" termPositions="true" termOffsets="true" />
    <field name="full_name" type="text" indexed="true" stored="true" required="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="alias" type="abbrev" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-
+   <field name="genotype_full_name" type="string" indexed="true" stored="true"/>
    <field name="ortholog_other_species_symbol" type="abbrev" indexed="true" stored="true" multiValued="true"   />
    <field name="ortholog_other_species_name" type="abbrev" indexed="true" stored="true" multiValued="true"   />
    <field name="ortholog_organism" type="keyword" indexed="true" stored="true" multiValued="true"  />
