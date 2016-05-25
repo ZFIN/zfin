@@ -317,7 +317,6 @@ select count(distinct fig_source_zdb_id)
 select count(psg_id)
   from phenotype_observation_generated;
 
-
 ------------------IMAGES xpat and PATO or just xpat-------------------------
 
 -- ct19
