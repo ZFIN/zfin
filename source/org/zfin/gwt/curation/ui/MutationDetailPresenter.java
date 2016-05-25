@@ -215,6 +215,9 @@ public class MutationDetailPresenter {
                     proteinChanges.getMutantAATermOboID().equals(proteinChanges.getWildtypeAATermOboID())
                     )
                 return "Cannot have both amino acids the same!";
+            if (proteinChanges.getMutantAATermOboID() != null && proteinChanges.getWildtypeAATermOboID() == null ||
+                    proteinChanges.getMutantAATermOboID() == null && proteinChanges.getWildtypeAATermOboID() != null)
+                return "Please select both the amino acids for a change or none.";
         }
         return null;
     }
