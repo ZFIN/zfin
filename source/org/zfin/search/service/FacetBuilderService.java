@@ -229,6 +229,7 @@ public class FacetBuilderService {
         facetGroups.add(expressionAnatomy);
 
         facetGroups.add(buildSingleFacetGroup("Regulatory Region", REGULATORY_REGION.getName(), true, filterQuerySelectionMap, baseUrl));
+        facetGroups.add(buildSingleFacetGroup("Reporter Gene", REPORTER_GENE.getName(), true, filterQuerySelectionMap, baseUrl));
 
         return facetGroups;
     }
