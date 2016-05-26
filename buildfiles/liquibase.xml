@@ -56,7 +56,7 @@
     description="Builds the database">
     
     <echo message="Building DB componentes necessary after loaddb.pl" />
-    <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/1077/load/db.changelog.master.xml" 
+    <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/load/db.changelog.master.xml" 
 			      dropFirst="false" 
 			      classpathref="classpath"
 			      logLevel="debug"
@@ -68,7 +68,7 @@
     description="Builds the database components necessary post gmake postloaddb">
     
     <echo message="Building DB..." />
-    <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/1077/postGmakePostloaddb/db.changelog.master.xml" 
+    <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/db.changelog.master.xml" 
 			      dropFirst="false" 
 			      classpathref="classpath"
 			      logLevel="debug"
