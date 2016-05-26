@@ -202,7 +202,7 @@ public class RelatedDataService {
             getGoAnnotationData(links, id, FieldName.getFieldName(ontology));
         }
         createAffectedPhenotypeData(links, id, FieldName.getAffectedFieldName(ontology));
-        createExpressedGenesData(links, id, FieldName.EXPRESSED_IN_TF);
+        createExpressedGenesData(links, id, FieldName.ANATOMY_TF);
     }
 
     private void createAffectedPhenotypeData(List<String> links, String id, String fieldName) {
