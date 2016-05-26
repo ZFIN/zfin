@@ -48,6 +48,11 @@ public class RelatedDataService {
     public static final String GENOME_BROWSER = "Genome Browser";
     public static final String DISEASE_MODELS = "Disease Models";
     public static final String CONSTRUCT_MAP = "Construct Map";
+    public static final String GENES_WITH_GO = "Genes Annotated with this GO Term";
+    public static final String GENES_CAUSING_PHENOTYPE = "Genes With Phenotype";
+    public static final String GENES_EXPRESSED = "Genes Expressed in this Structure";
+    public static final String RELATED_GENE = "Related zebrafish gene";
+    public static final String LAB = "Lab";
 
     @Autowired
     private SolrService solrService;
@@ -59,12 +64,7 @@ public class RelatedDataService {
     private String[] anatomyGoRelatedDataCategories = {GENES_WITH_GO, GENES_CAUSING_PHENOTYPE, GENES_EXPRESSED};
     private String[] geneRelatedDataCategories = {EXPRESSION, PHENOTYPE, Category.DISEASE.getName(), Category.MUTANT.getName(), SEQUENCES, GENOME_BROWSER, ORTHOLOGY, Category.PUBLICATION.getName()};
     private String[] pubRelatedDataCategories = {Category.GENE.getName(), EXPRESSION, PHENOTYPE, Category.DISEASE.getName(), Category.MUTANT.getName(), Category.CONSTRUCT.getName(), Category.SEQUENCE_TARGETING_REAGENT.getName(), Category.ANTIBODY.getName(), ORTHOLOGY};
-    private String[] diseaseRelatedDataCategories = {DISEASE_MODELS, Category.PUBLICATION.getName()};
-
-    public static final String GENES_WITH_GO = "Genes Annotated with this GO Term";
-    public static final String GENES_CAUSING_PHENOTYPE = "Genes With Phenotype";
-    public static final String GENES_EXPRESSED = "Genes Expressed in this Structure";
-
+    private String[] diseaseRelatedDataCategories = {RELATED_GENE, DISEASE_MODELS, Category.PUBLICATION.getName()};
 
     private String entityName;
 
@@ -92,7 +92,7 @@ public class RelatedDataService {
                 if (numberOfTargetGenes > 1) {
                     return null;
                 }
-                gBrowseLink=makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
+                gBrowseLink = makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
                 links.add(gBrowseLink);
             }
 
@@ -141,8 +141,7 @@ public class RelatedDataService {
             links.add(getOrthoListLink(id));
         }
 
-
-        links.addAll(getXrefLinks(id));
+        links.addAll(getXrefLinks(result));
 
 
         if (StringUtils.equals(category, Category.MUTANT.getName())) {
@@ -299,18 +298,19 @@ public class RelatedDataService {
     }
 
 
-    public List<String> getXrefLinks(String id) {
+    public List<String> getXrefLinks(SearchResult result) {
         List<String> links = new ArrayList<>();
 
-        QueryResponse response = solrService.getRelatedDataResponse(id);
+        QueryResponse response = solrService.getRelatedDataResponse(result.getId());
 
         FacetField facetField = response.getFacetField("category");
 
         if (facetField != null && facetField.getValues() != null) {
-            for (FacetField.Count count : facetField.getValues()) {
-                StringBuilder link = createHyperLink(id, facetField.getName(), count.getName(), count.getCount());
+            for (FacetField.Count related : facetField.getValues()) {
+                String linkText = LinkDisplay.lookup(result.getCategory(), result.getType(), related.getName());
+                StringBuilder link = createHyperLink(result.getId(), facetField.getName(), related.getName(),
+                        related.getCount(), linkText, true, null);
                 links.add(link.toString());
-
             }
         }
         return links;
@@ -332,9 +332,6 @@ public class RelatedDataService {
         } else {
             if (StringUtils.isEmpty(hyperlinkName)) {
                 hyperlinkName = categoryName;
-            }
-            if (id.startsWith("ZDB-PERS") && StringUtils.equals(categoryName, "Community")) {
-                hyperlinkName = "Labs";
             }
             StringBuilder link = new StringBuilder();
             link.append("<a href=\"/prototype?q=");
@@ -373,11 +370,6 @@ public class RelatedDataService {
 
         return link;
     }
-
-    protected StringBuilder createHyperLink(String id, String facetFieldName, String categoryName, long categoryCount) {
-        return createHyperLink(id, facetFieldName, categoryName, categoryCount, null, true, null);
-    }
-
 
     public StringBuilder getGeneExpressionPopupLink(String id, Long count) {
         //<a href="/action/quicksearch/gene-expression/${result.id}" data-toggle="modal" data-target="#${expressionModalDomID}">Expression</a>
@@ -455,6 +447,40 @@ public class RelatedDataService {
 
     private String makeLink(String text, String url, String anchor) {
         return makeLink(text, url + "#" + anchor);
+    }
+
+    /**
+     * By default xref related data links will use the category name as the text of the link.
+     * If you don't want that behavior, add a value here to override it. The enum value itself
+     * doesn't really matter, this just funtions as a static look-up table based on the result's
+     * category and type and the related data category.
+     */
+    private enum LinkDisplay {
+        PERSON_LAB(Category.COMMUNITY, "Person", Category.COMMUNITY, LAB),
+        DISEASE_RELATED_GENE(Category.DISEASE, null, Category.GENE, RELATED_GENE);
+
+        private Category resultCategory;
+        private String resultType;
+        private Category relatedCategory;
+        private String linkDisplay;
+
+        LinkDisplay(Category resultCategory, String resultType, Category relatedCategory, String linkDisplay) {
+            this.resultCategory = resultCategory;
+            this.resultType = resultType;
+            this.relatedCategory = relatedCategory;
+            this.linkDisplay = linkDisplay;
+        }
+
+        public static String lookup(String resultCategory, String resultType, String relatedCategory) {
+            for (LinkDisplay linkDisplay : values()) {
+                if (linkDisplay.resultCategory.getName().equals(resultCategory) &&
+                        (linkDisplay.resultType == null || linkDisplay.resultType.equals(resultType)) &&
+                        linkDisplay.relatedCategory.getName().equals(relatedCategory)) {
+                    return linkDisplay.linkDisplay;
+                }
+            }
+            return relatedCategory;
+        }
     }
 
 }

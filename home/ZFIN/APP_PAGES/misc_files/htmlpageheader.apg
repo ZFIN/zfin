@@ -159,7 +159,7 @@ INPUT VARS:
      <a href="/action/profile/person/search"  title="Search for zebrafish researchers by name or address">People</a>
      <a href="/action/profile/lab/search" title="Search for laboratories by name, address or research interests">Labs</a>
      <a href="/action/profile/company/search" title="Search for companies supplying zebrafish reagents">Companies</a>
-     <a href="http://www.uoneuro.uoregon.edu/k12/zfk12.html" title="Educational websites for students and educators">Education</A>
+     <a href="/zf_info/news/education.html" title="Educational websites for students and educators">Education</A>
      <a href="/zf_info/zfbook/zfbk.html" title="Browse The Zebrafish Book"><em>ZF Book</em></A>
      <a href="https://wiki.zfin.org/display/general/ZFIN+Contact+Information" title="ZFIN contact information">Contact</A>
      <a href="https://wiki.zfin.org/display/general/ZFIN+db+information" title="About ZFIN and citing ZFIN resources in publications">About</A>
