@@ -201,6 +201,7 @@ public class RelatedDataService {
         Ontology ontology = OntologyManager.getInstance().getOntologyForTerm(id);
         if (Ontology.isGoOntology(ontology)) {
             getGoAnnotationData(links, id, FieldName.getFieldName(ontology));
+            createExpressedGenesData(links, id, FieldName.EXPRESSED_IN_TF);
         }
         createAffectedPhenotypeData(links, id, FieldName.getAffectedFieldName(ontology));
         createExpressedGenesData(links, id, FieldName.EXPRESSED_IN_TF);
