@@ -240,9 +240,9 @@ public class SearchPrototypeController {
 
         SolrDocumentList solrDocumentList = response.getResults();
 
-        facetBuilderService = new FacetBuilderService(response);
-        model.addAttribute("facetGroups", facetBuilderService.buildFacetGroup(category, baseUrl, query));
-        model.addAttribute("facetQueries", facetBuilderService.getFacetQueries(baseUrl));
+        facetBuilderService = new FacetBuilderService(response, baseUrl);
+        model.addAttribute("facetGroups", facetBuilderService.buildFacetGroup(category, query));
+        model.addAttribute("facetQueries", facetBuilderService.getFacetQueries());
         model.addAttribute("response", response);
         model.addAttribute("query", query);
 
