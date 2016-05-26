@@ -240,8 +240,18 @@ public class SearchPrototypeController {
 
         SolrDocumentList solrDocumentList = response.getResults();
 
-        facetBuilderService = new FacetBuilderService(response, baseUrl);
-        model.addAttribute("facetGroups", facetBuilderService.buildFacetGroup(category, query));
+        //a map to know whether or not to show a facet value as a link
+        Map<String, Boolean> filterQuerySelectionMap = new HashMap<>();
+
+        if (query != null && query.getFilterQueries() != null) {
+            for (String fq : query.getFilterQueries()) {
+                filterQuerySelectionMap.put(fq, true);
+                logger.debug("added to filterQuerySelectionMap: " + fq);
+            }
+        }
+
+        facetBuilderService = new FacetBuilderService(response, baseUrl, filterQuerySelectionMap);
+        model.addAttribute("facetGroups", facetBuilderService.buildFacetGroup(category));
         model.addAttribute("facetQueries", facetBuilderService.getFacetQueries());
         model.addAttribute("response", response);
         model.addAttribute("query", query);
