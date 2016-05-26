@@ -97,7 +97,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                                           "molecular_function_tf", "cellular_component_tf","chromosome","type"]].combinations() \
                              + [[Category.FISH.getName()],["affected_gene","affected_anatomy_tf", "affected_biological_process_tf",
                                            "affected_molecular_function_tf", "affected_cellular_component_tf",
-                                           "phenotype_statement", FieldName.MISEXPRESSED_GENE.getName(), FieldName.EXPRESSIONS_ANATOMY_TF.getName(), "sequence_targeting_reagent",
+                                           "phenotype_statement", FieldName.MISEXPRESSED_GENE.getName(), FieldName.EXPRESSION_ANATOMY_TF.getName(), "sequence_targeting_reagent",
                                            "construct", "sequence_alteration", "background"]].combinations() \
                              + [[Category.MUTANT.getName()],["type","affected_gene", "affected_anatomy_tf", "affected_biological_process_tf",
                                            "affected_molecular_function_tf", "affected_cellular_component_tf", "phenotype_statement", FieldName.MISEXPRESSED_GENE.getName(),
@@ -106,11 +106,11 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                                            "reporter_color","engineered_region"]].combinations() \
                              + [[Category.SEQUENCE_TARGETING_REAGENT.getName()],["type","targeted_gene"]].combinations() \
                              + [[Category.MARKER.getName()],["type", "chromosome","source",]].combinations() \
-                             + [[Category.FIGURE.getName()],[FieldName.EXPRESSIONS_ANATOMY_TF.getName(), "reporter_gene", "zebrafish_gene", "affected_anatomy_tf",
+                             + [[Category.FIGURE.getName()],[FieldName.EXPRESSION_ANATOMY_TF.getName(), "reporter_gene", "zebrafish_gene", "affected_anatomy_tf",
                                            "affected_biological_process_tf", "affected_molecular_function_tf",
                                            "affected_cellular_component_tf", "phenotype_statement", FieldName.MISEXPRESSED_GENE.getName(),
                                            "construct", "registered_author"]].combinations() \
-                             + [[Category.EXPRESSIONS.getName()],["reporter_gene", "zebrafish_gene", FieldName.EXPRESSIONS_ANATOMY_TF.getName(), "assay", "genotype",
+                             + [[Category.EXPRESSIONS.getName()],["reporter_gene", "zebrafish_gene", FieldName.EXPRESSION_ANATOMY_TF.getName(), "assay", "genotype",
                                            "has_image","experimental_conditions","registered_author","sequence_targeting_reagent" ]].combinations() \
                              + [[Category.PHENOTYPE.getName()],["phenotype_statement", FieldName.MISEXPRESSED_GENE.getName(),"anatomy_tf","biological_process_tf","molecular_function_tf",
                                                "has_image","stage","sequence_targeting_reagent"]].combinations() \
