@@ -3856,6 +3856,7 @@ where feature_zdb_id = ftmd_feature_zdb_id
                                 when term_is_obsolete == 't' then 'obsolete'
                                 when term_is_obsolete == 'f' then 'current'
                              end as term_status,
+                             term_is_obsolete as root_only,
                              term_definition as definition
                       from term
                       where term_ontology in ('biological_process', 'cellular_component', 'molecular_function','zebrafish_anatomy','disease_ontology')
