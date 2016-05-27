@@ -413,10 +413,7 @@ public class SearchPrototypeController {
 
             facetValues.addAll(facetField.getValues());
 
-
-            //todo: use field name enum!
-            if (!StringUtils.equals(facetField.getName(), "stage"))
-                Collections.sort(facetValues, new FacetValueAlphanumComparator());
+            facetBuilderService.sortFacetValues(facetField.getName(),facetValues);
 
             for (FacetField.Count count : facetValues) {
                 FacetLookupEntry entry = new FacetLookupEntry();
@@ -578,20 +575,6 @@ public class SearchPrototypeController {
             logger.error(e);
         }
 
-/*
-        OutputStream resOs= response.getOutputStream();
-        OutputStream buffOs= new BufferedOutputStream(resOs);
-        OutputStreamWriter outputwriter = new OutputStreamWriter(buffOs);
-
-        CsvWriter writer = new CsvWriter(outputwriter, '\u0009');
-        for(int i=1;i <allRecords.size();i++){
-            CompositeRequirement aReq=allRecords.get(i);
-            writer.write(aReq.toString());
-        }
-        outputwriter.flush();
-        outputwriter.close();
-*/
-
 
     }
 
@@ -662,11 +645,6 @@ public class SearchPrototypeController {
         model.addAttribute("allPhenotypeInvolvingLink", SolrService.getAllPhenotypeLink(gene.getAbbreviation(), false));
 
         return "search/phenotype.popup";
-    }
-
-    @RequestMapping(value = "/message")
-    public String getSearchMessage() {
-        return "search/searchMessage.popup";
     }
 
     public Model handleSorting(Model model, SolrQuery query, String baseUrl, String sort) {

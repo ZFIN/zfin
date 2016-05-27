@@ -174,10 +174,11 @@ public class FacetBuilderService {
 
         facetGroups.add(expressedGene);
 
-        facetGroups.add(buildSingleFacetGroup("Expressed In Anatomy", EXPRESSIONS_ANATOMY_TF.getName(), true));
+        facetGroups.add(buildSingleFacetGroup("Expressed In Anatomy", EXPRESSION_ANATOMY_TF.getName(), true));
         facetGroups.add(buildSingleFacetGroup("Stage", "stage", true));
         facetGroups.add(buildSingleFacetGroup("Has Image", "has_image", true));
         FacetGroup wildtypeGroup = buildSingleFacetGroup("Is Wildtype and Clean", "is_wildtype", false);
+
         wildtypeGroup.setRootOnly(true);
         facetGroups.add(wildtypeGroup);
         facetGroups.add(buildSingleFacetGroup("Assay", "assay", false));
@@ -220,7 +221,7 @@ public class FacetBuilderService {
         facetGroups.add(buildSingleFacetGroup("Reporter Gene", REPORTER_GENE.getName(), true));
 
         FacetGroup expressionAnatomy = new FacetGroup("Expression Anatomy", true);
-        expressionAnatomy.addFacet(buildFacet(EXPRESSIONS_ANATOMY_TF.getName(), true));
+        expressionAnatomy.addFacet(buildFacet(EXPRESSION_ANATOMY_TF.getName(), true));
         facetGroups.add(expressionAnatomy);
 
         facetGroups.add(buildSingleFacetGroup("Regulatory Region", REGULATORY_REGION.getName(), true));
@@ -241,7 +242,7 @@ public class FacetBuilderService {
         facetGroups.add(modelOf);
 
         FacetGroup expressionAnatomy = new FacetGroup("Expression Anatomy", true);
-        expressionAnatomy.addFacet(buildFacet(EXPRESSIONS_ANATOMY_TF.getName(), true));
+        expressionAnatomy.addFacet(buildFacet(EXPRESSION_ANATOMY_TF.getName(), true));
         facetGroups.add(expressionAnatomy);
 
         facetGroups.add(buildPhenotypeBlock());
@@ -271,7 +272,7 @@ public class FacetBuilderService {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
         FacetGroup expressionAnatomy = new FacetGroup("Expression Anatomy", true);
-        expressionAnatomy.addFacet(buildFacet(EXPRESSIONS_ANATOMY_TF.getName(), true));
+        expressionAnatomy.addFacet(buildFacet(EXPRESSION_ANATOMY_TF.getName(), true));
         facetGroups.add(expressionAnatomy);
 
         FacetGroup expressedGene = new FacetGroup("Expressed Gene", true);
@@ -600,14 +601,11 @@ public class FacetBuilderService {
 
         if (SolrService.isToBeHumanSorted(fieldName)) {
             Collections.sort(values, new FacetValueAlphanumComparator<>());
-        }
-        if (fieldName.equals("category")) {
+        } else if (fieldName.equals(FieldName.CATEGORY.getName())) {
             Collections.sort(values, new FacetCategoryComparator<>());
-        }
-        if (fieldName.equals("stage")) {
+        } else if (fieldName.equals(FieldName.STAGE.getName())) {
             Collections.sort(values, new FacetStageComparator<>());
         }
-
     }
 
 }

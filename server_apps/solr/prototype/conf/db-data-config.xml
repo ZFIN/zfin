@@ -82,6 +82,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
                 <entity name="gene_disease"
                         datasource="db" query="select
                                 term_name as disease,
+                                term_ont_id as xref,
                                 ortholog.ortho_zebrafish_gene_zdb_id as gene_zdb_id
                                 from term
                                      join term_xref on tx_term_zdb_id = term_zdb_id
