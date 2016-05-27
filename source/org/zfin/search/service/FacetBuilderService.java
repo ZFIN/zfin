@@ -217,6 +217,8 @@ public class FacetBuilderService {
     private List<FacetGroup> buildReporterLineFacetGroup() {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
+        facetGroups.add(buildSingleFacetGroup("Reporter Gene", REPORTER_GENE.getName(), true));
+
         FacetGroup expressionAnatomy = new FacetGroup("Expression Anatomy", true);
         expressionAnatomy.addFacet(buildFacet(EXPRESSIONS_ANATOMY_TF.getName(), true));
         facetGroups.add(expressionAnatomy);
