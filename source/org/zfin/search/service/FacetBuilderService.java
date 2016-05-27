@@ -4,7 +4,6 @@ package org.zfin.search.service;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.zfin.search.*;
@@ -26,55 +25,47 @@ public class FacetBuilderService {
 
     public static String PHENOTYPE_FACET_QUERY = "phenotype_statement:[* TO *]";
 
-    private QueryResponse response;
-    private String baseUrl;
+    private final QueryResponse response;
+    private final String baseUrl;
+    private final Map<String, Boolean> filterQuerySelectionMap;
 
-    public FacetBuilderService(QueryResponse response, String baseUrl) {
+    public FacetBuilderService(QueryResponse response, String baseUrl, Map<String, Boolean> filterQuerySelectionMap) {
         this.response = response;
         this.baseUrl = baseUrl;
+        this.filterQuerySelectionMap = filterQuerySelectionMap;
     }
 
-    public List<FacetGroup> buildFacetGroup(String category, SolrQuery query) {
-
-        //a map to know whether or not to show a facet value as a link
-        Map<String, Boolean> filterQuerySelectionMap = new HashMap<>();
-
-        if (query != null && query.getFilterQueries() != null) {
-            for (String fq : query.getFilterQueries()) {
-                filterQuerySelectionMap.put(fq, true);
-                logger.debug("added to filterQuerySelectionMap: " + fq);
-            }
-        }
+    public List<FacetGroup> buildFacetGroup(String category) {
 
         if (StringUtils.isEmpty(category) || StringUtils.equals(category, "Any")) {
-            return buildCategoryFacetGroup(filterQuerySelectionMap);
+            return buildCategoryFacetGroup();
         } else if (StringUtils.equals(category, Category.GENE.getName())) {
-            return buildGeneFacetGroup(filterQuerySelectionMap);
+            return buildGeneFacetGroup();
         } else if (StringUtils.equals(category, Category.MUTANT.getName())) {
-            return buildFeatureFacetGroup(filterQuerySelectionMap);
+            return buildFeatureFacetGroup();
         } else if (StringUtils.equals(category, Category.REPORTER_LINE.getName())) {
-            return buildReporterLineFacetGroup(filterQuerySelectionMap);
+            return buildReporterLineFacetGroup();
         } else if (StringUtils.equals(category, Category.FISH.getName())) {
-            return buildFishFacetGroup(filterQuerySelectionMap);
+            return buildFishFacetGroup();
         } else if (StringUtils.equals(category, Category.FIGURE.getName())) {
-            return buildFigureFacetGroup(filterQuerySelectionMap);
+            return buildFigureFacetGroup();
         } else if (StringUtils.equals(category, Category.EXPRESSIONS.getName())) {
-            return buildExpressionFacetGroup(filterQuerySelectionMap);
+            return buildExpressionFacetGroup();
         } else if (StringUtils.equals(category, Category.PHENOTYPE.getName())) {
-            return buildPhenotypeFacetGroup(filterQuerySelectionMap);
+            return buildPhenotypeFacetGroup();
         } else if (StringUtils.equals(category, Category.PUBLICATION.getName())) {
-            return buildPublicationFacetGroup(filterQuerySelectionMap);
+            return buildPublicationFacetGroup();
         } else if (StringUtils.equals(category, Category.DISEASE.getName())) {
-            return buildDiseaseFacetGroup(filterQuerySelectionMap);
+            return buildDiseaseFacetGroup();
         } else {
-            return buildFlatFacetGroup(category, filterQuerySelectionMap);
+            return buildFlatFacetGroup(category);
         }
 
 
     }
 
     /* generically build a "one-facet-per-group" section for any category in the map */
-    public List<FacetGroup> buildFlatFacetGroup(String category, Map<String, Boolean> filterQuerySelectionMap) {
+    private List<FacetGroup> buildFlatFacetGroup(String category) {
 
         //if the category is not in our closed set, just give up.
         if (!Category.getFacetMap().containsKey(category))
@@ -93,7 +84,7 @@ public class FacetBuilderService {
             boolean open;
             open = count <= 2;
             FacetGroup facetGroup = new FacetGroup(SolrService.getPrettyFieldName(fieldName), open);
-            facetGroup.addFacet(buildFacet(fieldName, true, filterQuerySelectionMap));
+            facetGroup.addFacet(buildFacet(fieldName, true));
             facetGroups.add(facetGroup);
             count++;
         }
@@ -102,11 +93,11 @@ public class FacetBuilderService {
     }
 
 
-    public List<FacetGroup> buildCategoryFacetGroup(Map<String, Boolean> filterQuerySelectionMap) {
+    private List<FacetGroup> buildCategoryFacetGroup() {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
         FacetGroup category = new FacetGroup("Category", true);
-        Facet categoryFacet = buildFacet("category", true, filterQuerySelectionMap);
+        Facet categoryFacet = buildFacet("category", true);
         categoryFacet.setShowIncludeExcludeIcons(false);
         categoryFacet.setAlwaysShowAllFacets(true);
         categoryFacet.setShowAutocompleteBox(false);
@@ -117,14 +108,14 @@ public class FacetBuilderService {
         return facetGroups;
     }
 
-    public List<FacetGroup> buildDiseaseFacetGroup(Map<String, Boolean> filterQuerySelectionMap) {
+    private List<FacetGroup> buildDiseaseFacetGroup() {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
-        facetGroups.add(buildSingleFacetGroup("Gene", FieldName.GENE.getName(), true, filterQuerySelectionMap));
+        facetGroups.add(buildSingleFacetGroup("Gene", FieldName.GENE.getName(), true));
 
         FacetGroup diseaseModel = new FacetGroup("Disease Model", true);
-        diseaseModel.addFacet(buildFacet(FieldName.FISH.getName(), true, filterQuerySelectionMap));
-        diseaseModel.addFacet(buildFacet(FieldName.EXPERIMENTAL_CONDITIONS.getName(), true, filterQuerySelectionMap));
+        diseaseModel.addFacet(buildFacet(FieldName.FISH.getName(), true));
+        diseaseModel.addFacet(buildFacet(FieldName.EXPERIMENTAL_CONDITIONS.getName(), true));
         facetGroups.add(diseaseModel);
 
         return facetGroups;
@@ -132,35 +123,35 @@ public class FacetBuilderService {
 
 
     /*  This is just a temporary method, should be replaced by further configuration */
-    public List<FacetGroup> buildGeneFacetGroup(Map<String, Boolean> filterQuerySelectionMap) {
+    private List<FacetGroup> buildGeneFacetGroup() {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
         FacetGroup type = new FacetGroup("Type", true);
-        type.addFacet(buildFacet("type", true, filterQuerySelectionMap));
+        type.addFacet(buildFacet("type", true));
         facetGroups.add(type);
 
         FacetGroup expressedIn = new FacetGroup("Expression", true);
-        expressedIn.addFacet(buildFacet(ANATOMY_TF.getName(), true, filterQuerySelectionMap));
-        expressedIn.addFacet(buildFacet(FieldName.STAGE.getName(), false, filterQuerySelectionMap));
+        expressedIn.addFacet(buildFacet(ANATOMY_TF.getName(), true));
+        expressedIn.addFacet(buildFacet(FieldName.STAGE.getName(), false));
         facetGroups.add(expressedIn);
 
 
-        facetGroups.add(buildPhenotypeBlock(filterQuerySelectionMap));
+        facetGroups.add(buildPhenotypeBlock());
 
 
         FacetGroup diseaseModel = new FacetGroup("Human Disease");
-        diseaseModel.addFacet(buildFacet(DISEASE.getName(), true, filterQuerySelectionMap));
+        diseaseModel.addFacet(buildFacet(DISEASE.getName(), true));
         facetGroups.add(diseaseModel);
 
 
         FacetGroup geneOntology = new FacetGroup("Gene Ontology");
-        geneOntology.addFacet(buildFacet(BIOLOGICAL_PROCESS_TF.getName(), true, filterQuerySelectionMap));
-        geneOntology.addFacet(buildFacet(MOLECULAR_FUNCTION_TF.getName(), true, filterQuerySelectionMap));
-        geneOntology.addFacet(buildFacet(CELLULAR_COMPONENT_TF.getName(), true, filterQuerySelectionMap));
+        geneOntology.addFacet(buildFacet(BIOLOGICAL_PROCESS_TF.getName(), true));
+        geneOntology.addFacet(buildFacet(MOLECULAR_FUNCTION_TF.getName(), true));
+        geneOntology.addFacet(buildFacet(CELLULAR_COMPONENT_TF.getName(), true));
         facetGroups.add(geneOntology);
 
         FacetGroup location = new FacetGroup("Location", false);
-        Facet locationFacet = buildFacet(CHROMOSOME.getName(), true, filterQuerySelectionMap);
+        Facet locationFacet = buildFacet(CHROMOSOME.getName(), true);
         locationFacet.setAlwaysShowAllFacets(true);
         location.addFacet(locationFacet);
         facetGroups.add(location);
@@ -169,107 +160,114 @@ public class FacetBuilderService {
 
     }
 
-    public List<FacetGroup> buildExpressionFacetGroup(Map<String, Boolean> filterQuerySelectionMap) {
+    private List<FacetGroup> buildExpressionFacetGroup() {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
         FacetGroup expressedGene = new FacetGroup("Expressed Gene", true);
 
         expressedGene.addFacet(buildFacet(FieldName.ZEBRAFISH_GENE.getName(),
                 Category.EXPRESSIONS.getFacetQueriesForField(FieldName.ZEBRAFISH_GENE),
-                true, filterQuerySelectionMap));
+                true));
         expressedGene.addFacet(buildFacet(FieldName.REPORTER_GENE.getName(),
                 Category.EXPRESSIONS.getFacetQueriesForField(FieldName.REPORTER_GENE),
-                false, filterQuerySelectionMap));
+                false));
 
         facetGroups.add(expressedGene);
 
-        facetGroups.add(buildSingleFacetGroup("Expressed In Anatomy", EXPRESSIONS_ANATOMY_TF.getName(), true, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Stage", "stage", true, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Has Image", "has_image", true, filterQuerySelectionMap));
-        FacetGroup wildtypeGroup = buildSingleFacetGroup("Is Wildtype and Clean", "is_wildtype", false, filterQuerySelectionMap);
+        facetGroups.add(buildSingleFacetGroup("Expressed In Anatomy", EXPRESSION_ANATOMY_TF.getName(), true));
+        facetGroups.add(buildSingleFacetGroup("Stage", "stage", true));
+        facetGroups.add(buildSingleFacetGroup("Has Image", "has_image", true));
+        FacetGroup wildtypeGroup = buildSingleFacetGroup("Is Wildtype and Clean", "is_wildtype", false);
+
         wildtypeGroup.setRootOnly(true);
         facetGroups.add(wildtypeGroup);
-        facetGroups.add(buildSingleFacetGroup("Assay", "assay", false, filterQuerySelectionMap));
+        facetGroups.add(buildSingleFacetGroup("Assay", "assay", false));
 
 
         FacetGroup genotype = buildSingleFacetGroup("Genotype", FieldName.GENOTYPE_FULL_NAME.getName(),
                 Category.EXPRESSIONS.getFacetQueriesForField(FieldName.GENOTYPE),
-                false, filterQuerySelectionMap);
+                false);
 
         facetGroups.add(genotype);
 
-        facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)", "sequence_targeting_reagent", false, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Experimental Conditions", "experimental_conditions", false, filterQuerySelectionMap));
+        facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)", "sequence_targeting_reagent", false));
+        facetGroups.add(buildSingleFacetGroup("Experimental Conditions", "experimental_conditions", false));
 
 
         return facetGroups;
     }
 
 
-    public List<FacetGroup> buildFeatureFacetGroup(Map<String, Boolean> filterQuerySelectionMap) {
+    private List<FacetGroup> buildFeatureFacetGroup() {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
-        facetGroups.add(buildSingleFacetGroup("Type", "type", true, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Affected Gene", "affected_gene", true, filterQuerySelectionMap));
-        facetGroups.add(buildPhenotypeBlock(filterQuerySelectionMap));
+        facetGroups.add(buildSingleFacetGroup("Type", "type", true));
+        facetGroups.add(buildSingleFacetGroup("Affected Gene", "affected_gene", true));
+        facetGroups.add(buildPhenotypeBlock());
         //todo: need this in the index still?
-        facetGroups.add(buildSingleFacetGroup("Consequence", "rna_consequence", false, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Mutagen", "mutagen", false, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Source", "source", false, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Lab of Origin", "lab_of_origin", false, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Institution", "institution", false, filterQuerySelectionMap));
+        facetGroups.add(buildSingleFacetGroup("Consequence", "rna_consequence", false));
+        facetGroups.add(buildSingleFacetGroup("Mutagen", "mutagen", false));
+        facetGroups.add(buildSingleFacetGroup("Source", "source", false));
+        facetGroups.add(buildSingleFacetGroup("Lab of Origin", "lab_of_origin", false));
+        facetGroups.add(buildSingleFacetGroup("Institution", "institution", false));
         //screen used to be here, removed as a result of case 11323
         //facetGroups.add(buildSingleFacetGroup("Screen", "screen", false,  fqMap));
 
         return facetGroups;
     }
 
-    public List<FacetGroup> buildReporterLineFacetGroup(Map<String, Boolean> filterQuerySelectionMap) {
+    private List<FacetGroup> buildReporterLineFacetGroup() {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
         FacetGroup expressionAnatomy = new FacetGroup("Expression Anatomy", true);
-        expressionAnatomy.addFacet(buildFacet(EXPRESSIONS_ANATOMY_TF.getName(), true, filterQuerySelectionMap));
+
+        expressionAnatomy.addFacet(buildFacet(EXPRESSION_ANATOMY_TF.getName(), true));
         facetGroups.add(expressionAnatomy);
 
+<<<<<<< HEAD
 
 
         facetGroups.add(buildSingleFacetGroup("Regulatory Region", REGULATORY_REGION.getName(), true, filterQuerySelectionMap));
         facetGroups.add(buildSingleFacetGroup("Stage", STAGE.getName(), true, filterQuerySelectionMap));
+=======
+        facetGroups.add(buildSingleFacetGroup("Regulatory Region", REGULATORY_REGION.getName(), true));
+        facetGroups.add(buildSingleFacetGroup("Stage", STAGE.getName(), true));
+>>>>>>> 8e8544975935b57fe5809dd9372bfbbf0a4493e7
 
         return facetGroups;
     }
 
-    public List<FacetGroup> buildFishFacetGroup(Map<String, Boolean> filterQuerySelectionMap) {
+    private List<FacetGroup> buildFishFacetGroup() {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
         FacetGroup affectedGene = new FacetGroup("Affected Gene", true);
-        affectedGene.addFacet(buildFacet(AFFECTED_GENE.getName(), true, filterQuerySelectionMap));
+        affectedGene.addFacet(buildFacet(AFFECTED_GENE.getName(), true));
         facetGroups.add(affectedGene);
 
         FacetGroup modelOf = new FacetGroup("Is Model Of", true);
-        modelOf.addFacet(buildFacet(DISEASE.getName(), true, filterQuerySelectionMap));
+        modelOf.addFacet(buildFacet(DISEASE.getName(), true));
         facetGroups.add(modelOf);
 
         FacetGroup expressionAnatomy = new FacetGroup("Expression Anatomy", true);
-        expressionAnatomy.addFacet(buildFacet(EXPRESSIONS_ANATOMY_TF.getName(), true, filterQuerySelectionMap));
+        expressionAnatomy.addFacet(buildFacet(EXPRESSION_ANATOMY_TF.getName(), true));
         facetGroups.add(expressionAnatomy);
 
-        facetGroups.add(buildPhenotypeBlock(filterQuerySelectionMap));
+        facetGroups.add(buildPhenotypeBlock());
 
         FacetGroup str = new FacetGroup("Sequence Targeting Reagent (STR)");
-        str.addFacet(buildFacet(SEQUENCE_TARGETING_REAGENT.getName(), true, filterQuerySelectionMap));
+        str.addFacet(buildFacet(SEQUENCE_TARGETING_REAGENT.getName(), true));
         facetGroups.add(str);
 
         FacetGroup construct = new FacetGroup("Construct");
-        construct.addFacet(buildFacet(CONSTRUCT.getName(), true, filterQuerySelectionMap));
+        construct.addFacet(buildFacet(CONSTRUCT.getName(), true));
         facetGroups.add(construct);
 
         FacetGroup sequenceAlteration = new FacetGroup("Mutation / Tg");
-        sequenceAlteration.addFacet(buildFacet(SEQUENCE_ALTERATION.getName(), true, filterQuerySelectionMap));
+        sequenceAlteration.addFacet(buildFacet(SEQUENCE_ALTERATION.getName(), true));
         facetGroups.add(sequenceAlteration);
 
         FacetGroup background = new FacetGroup("Background");
-        background.addFacet(buildFacet(BACKGROUND.getName(), true, filterQuerySelectionMap));
+        background.addFacet(buildFacet(BACKGROUND.getName(), true));
         facetGroups.add(background);
 
         return facetGroups;
@@ -277,81 +275,82 @@ public class FacetBuilderService {
     }
 
 
-    public List<FacetGroup> buildFigureFacetGroup(Map<String, Boolean> filterQuerySelectionMap) {
+    private List<FacetGroup> buildFigureFacetGroup() {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
         FacetGroup expressionAnatomy = new FacetGroup("Expression Anatomy", true);
-        expressionAnatomy.addFacet(buildFacet(EXPRESSIONS_ANATOMY_TF.getName(), true, filterQuerySelectionMap));
+
+        expressionAnatomy.addFacet(buildFacet(EXPRESSION_ANATOMY_TF.getName(), true));
         facetGroups.add(expressionAnatomy);
 
         FacetGroup expressedGene = new FacetGroup("Expressed Gene", true);
-        expressedGene.addFacet(buildFacet("zebrafish_gene", true, filterQuerySelectionMap));
-        expressedGene.addFacet(buildFacet("reporter_gene", true, filterQuerySelectionMap));
+        expressedGene.addFacet(buildFacet("zebrafish_gene", true));
+        expressedGene.addFacet(buildFacet("reporter_gene", true));
         facetGroups.add(expressedGene);
 
-        facetGroups.add(buildPhenotypeBlock(filterQuerySelectionMap));
+        facetGroups.add(buildPhenotypeBlock());
 
         FacetGroup construct = new FacetGroup("Construct");
-        construct.addFacet(buildFacet(CONSTRUCT.getName(), true, filterQuerySelectionMap));
+        construct.addFacet(buildFacet(CONSTRUCT.getName(), true));
         facetGroups.add(construct);
 
 
         FacetGroup author = new FacetGroup("Registered Author");
-        author.addFacet(buildFacet("registered_author", true, filterQuerySelectionMap));
+        author.addFacet(buildFacet("registered_author", true));
         facetGroups.add(author);
 
-        facetGroups.add(buildSingleFacetGroup("Has Image", "has_image", true, filterQuerySelectionMap));
+        facetGroups.add(buildSingleFacetGroup("Has Image", "has_image", true));
 
         return facetGroups;
     }
 
-    public List<FacetGroup> buildPhenotypeFacetGroup(Map<String, Boolean> filterQuerySelectionMap) {
+    private List<FacetGroup> buildPhenotypeFacetGroup() {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
-        facetGroups.add(buildSingleFacetGroup("Phenotypic Gene", GENE.getName(), true, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Phenotype Statement", PHENOTYPE_STATEMENT.getName(), true, filterQuerySelectionMap));
+        facetGroups.add(buildSingleFacetGroup("Phenotypic Gene", GENE.getName(), true));
+        facetGroups.add(buildSingleFacetGroup("Phenotype Statement", PHENOTYPE_STATEMENT.getName(), true));
 
-        facetGroups.add(buildSingleFacetGroup("Stage", STAGE.getName(), true, filterQuerySelectionMap));
+        facetGroups.add(buildSingleFacetGroup("Stage", STAGE.getName(), true));
 
         //FacetGroup phenotype = new FacetGroup("Manifests In", false);
         FacetGroup phenotype = new FacetGroup("Manifests In", true);
-        phenotype.addFacet(buildFacet(ANATOMY_TF.getName(), true, filterQuerySelectionMap));
-        phenotype.addFacet(buildFacet(BIOLOGICAL_PROCESS_TF.getName(), false, filterQuerySelectionMap));
-        phenotype.addFacet(buildFacet(MOLECULAR_FUNCTION_TF.getName(), false, filterQuerySelectionMap));
-        phenotype.addFacet(buildFacet(CELLULAR_COMPONENT_TF.getName(), false, filterQuerySelectionMap));
-        phenotype.addFacet(buildFacet(MISEXPRESSED_GENE.getName(), false, filterQuerySelectionMap));
+        phenotype.addFacet(buildFacet(ANATOMY_TF.getName(), true));
+        phenotype.addFacet(buildFacet(BIOLOGICAL_PROCESS_TF.getName(), false));
+        phenotype.addFacet(buildFacet(MOLECULAR_FUNCTION_TF.getName(), false));
+        phenotype.addFacet(buildFacet(CELLULAR_COMPONENT_TF.getName(), false));
+        phenotype.addFacet(buildFacet(MISEXPRESSED_GENE.getName(), false));
         facetGroups.add(phenotype);
         //facetGroups.add(buildSingleFacetGroup("Genes With Altered Expression","genes_with_altered_expression",false,  filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)", SEQUENCE_TARGETING_REAGENT.getName(), false, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Is Monogenic", "is_monogenic", false, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Has Image", "has_image", false, filterQuerySelectionMap));
+        facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)", SEQUENCE_TARGETING_REAGENT.getName(), false));
+        facetGroups.add(buildSingleFacetGroup("Is Monogenic", "is_monogenic", false));
+        facetGroups.add(buildSingleFacetGroup("Has Image", "has_image", false));
         //todo: stage, conditions, author, data_source
 
         return facetGroups;
     }
 
 
-    public List<FacetGroup> buildPublicationFacetGroup(Map<String, Boolean> filterQuerySelectionMap) {
+    private List<FacetGroup> buildPublicationFacetGroup() {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
         FacetGroup curation = new FacetGroup("Curation", true);
         curation.setRootOnly(true);
-        curation.addFacet(buildFacet("topic", false, filterQuerySelectionMap));
-        curation.addFacet(buildFacet("curator", false, filterQuerySelectionMap));
-        curation.addFacet(buildFacet("curation_status", false, filterQuerySelectionMap));
-        curation.addFacet(buildFacet("indexing_status", false, filterQuerySelectionMap));
-        curation.addFacet(buildFacet("publication_status", false, filterQuerySelectionMap));
+        curation.addFacet(buildFacet("topic", false));
+        curation.addFacet(buildFacet("curator", false));
+        curation.addFacet(buildFacet("curation_status", false));
+        curation.addFacet(buildFacet("indexing_status", false));
+        curation.addFacet(buildFacet("publication_status", false));
 
         facetGroups.add(curation);
 
-        facetGroups.add(buildSingleFacetGroup("Gene", "gene", true, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Mutation / Tg", "sequence_alteration", true, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Human Disease", "disease", true, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Registered Author", "registered_author", true, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Journal", "journal", false, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Keyword", "keyword", false, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("MeSH Term", MESH_TERM.getName(), false, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Publication Type", "publication_type", false, filterQuerySelectionMap));
+        facetGroups.add(buildSingleFacetGroup("Gene", "gene", true));
+        facetGroups.add(buildSingleFacetGroup("Mutation / Tg", "sequence_alteration", true));
+        facetGroups.add(buildSingleFacetGroup("Human Disease", "disease", true));
+        facetGroups.add(buildSingleFacetGroup("Registered Author", "registered_author", true));
+        facetGroups.add(buildSingleFacetGroup("Journal", "journal", false));
+        facetGroups.add(buildSingleFacetGroup("Keyword", "keyword", false));
+        facetGroups.add(buildSingleFacetGroup("MeSH Term", MESH_TERM.getName(), false));
+        facetGroups.add(buildSingleFacetGroup("Publication Type", "publication_type", false));
 
         FacetGroup publishedDateGroup = new FacetGroup("Publication Date", false);
 
@@ -360,8 +359,7 @@ public class FacetBuilderService {
         return facetGroups;
     }
 
-    public List<FacetQuery> buildFacetQueries(List<FacetQueryEnum> facetQueryEnumList,
-                                              Map<String, Boolean> filterQuerySelectionMap) {
+    private List<FacetQuery> buildFacetQueries(List<FacetQueryEnum> facetQueryEnumList) {
 
         List<FacetQuery> unselectedFacetQueries = new ArrayList<>();
         List<FacetQuery> selectedFacetQueries = new ArrayList<>();
@@ -401,7 +399,7 @@ public class FacetBuilderService {
 
     }
 
-    public List<FacetQuery> buildDateFacetQueries(Map<String, Boolean> filterQuerySelectionMap) {
+    private List<FacetQuery> buildDateFacetQueries(Map<String, Boolean> filterQuerySelectionMap) {
 
         List<FacetQuery> unselectedFacetQueries = new ArrayList<>();
         List<FacetQuery> selectedFacetQueries = new ArrayList<>();
@@ -462,43 +460,39 @@ public class FacetBuilderService {
         return queryMap;
     }
 
-    public FacetGroup buildSingleFacetGroup(String label, String fieldName,
-                                            boolean openByDefault,
-                                            Map<String, Boolean> filterQuerySelectionMap) {
-        return buildSingleFacetGroup(label, fieldName, new ArrayList<FacetQueryEnum>(), openByDefault, filterQuerySelectionMap);
+    private FacetGroup buildSingleFacetGroup(String label, String fieldName,
+                                            boolean openByDefault) {
+        return buildSingleFacetGroup(label, fieldName, new ArrayList<FacetQueryEnum>(), openByDefault);
     }
 
-    public FacetGroup buildSingleFacetGroup(String label, String fieldName, List<FacetQueryEnum> facetQueryEnumList,
-                                            boolean openByDefault,
-                                            Map<String, Boolean> filterQuerySelectionMap) {
+    private FacetGroup buildSingleFacetGroup(String label, String fieldName, List<FacetQueryEnum> facetQueryEnumList,
+                                            boolean openByDefault) {
         FacetGroup group = new FacetGroup(label, openByDefault);
-        group.addFacet(buildFacet(fieldName, true, filterQuerySelectionMap));
-        group.setFacetQueries(buildFacetQueries(facetQueryEnumList, filterQuerySelectionMap));
+        group.addFacet(buildFacet(fieldName, true));
+        group.setFacetQueries(buildFacetQueries(facetQueryEnumList));
         return group;
     }
 
-    public FacetGroup buildPhenotypeBlock(Map<String, Boolean> filterQuerySelectionMap) {
+    private FacetGroup buildPhenotypeBlock() {
         FacetGroup phenotype = new FacetGroup("Phenotype", true);
-        phenotype.addFacet(buildFacet(AFFECTED_ANATOMY_TF.getName(), true, filterQuerySelectionMap));
-        phenotype.addFacet(buildFacet(AFFECTED_BIOLOGICAL_PROCESS_TF.getName(), false, filterQuerySelectionMap));
-        phenotype.addFacet(buildFacet(AFFECTED_MOLECULAR_FUNCTION_TF.getName(), false, filterQuerySelectionMap));
-        phenotype.addFacet(buildFacet(AFFECTED_CELLULAR_COMPONENT_TF.getName(), false, filterQuerySelectionMap));
-        phenotype.addFacet(buildFacet(PHENOTYPE_STATEMENT.getName(), false, filterQuerySelectionMap));
-        phenotype.addFacet(buildFacet(MISEXPRESSED_GENE.getName(), false, filterQuerySelectionMap));
+        phenotype.addFacet(buildFacet(AFFECTED_ANATOMY_TF.getName(), true));
+        phenotype.addFacet(buildFacet(AFFECTED_BIOLOGICAL_PROCESS_TF.getName(), false));
+        phenotype.addFacet(buildFacet(AFFECTED_MOLECULAR_FUNCTION_TF.getName(), false));
+        phenotype.addFacet(buildFacet(AFFECTED_CELLULAR_COMPONENT_TF.getName(), false));
+        phenotype.addFacet(buildFacet(PHENOTYPE_STATEMENT.getName(), false));
+        phenotype.addFacet(buildFacet(MISEXPRESSED_GENE.getName(), false));
         return phenotype;
     }
 
 
-    public Facet buildFacet(String fieldName,
-                            boolean openByDefault,
-                            Map<String, Boolean> filterQuerySelectionMap) {
-        return buildFacet(fieldName, new ArrayList<FacetQueryEnum>(), openByDefault, filterQuerySelectionMap);
+    private Facet buildFacet(String fieldName,
+                            boolean openByDefault) {
+        return buildFacet(fieldName, new ArrayList<FacetQueryEnum>(), openByDefault);
     }
 
-    public Facet buildFacet(String fieldName,
+    private Facet buildFacet(String fieldName,
                             List<FacetQueryEnum> facetQueryEnumList,
-                            boolean openByDefault,
-                            Map<String, Boolean> filterQuerySelectionMap) {
+                            boolean openByDefault) {
 
         FacetField facetField = response.getFacetField(fieldName);
 
@@ -507,7 +501,7 @@ public class FacetBuilderService {
 
         Facet facet = new Facet(facetField);
 
-        facet.setFacetQueries(buildFacetQueries(facetQueryEnumList, filterQuerySelectionMap));
+        facet.setFacetQueries(buildFacetQueries(facetQueryEnumList));
 
         List<String> facetQueryValues = SolrService.getFacetQueryValues(facetQueryEnumList);
 
@@ -575,7 +569,7 @@ public class FacetBuilderService {
         return facet;
     }
 
-    public FacetValue buildFacetValue(FacetField facetField, FacetField.Count count, boolean selected, String baseUrl) {
+    private FacetValue buildFacetValue(FacetField facetField, FacetField.Count count, boolean selected, String baseUrl) {
         String url;
         if (selected) {
             String quotedFq = facetField.getName() + ":\"" + count.getName() + "\"";
@@ -615,14 +609,11 @@ public class FacetBuilderService {
 
         if (SolrService.isToBeHumanSorted(fieldName)) {
             Collections.sort(values, new FacetValueAlphanumComparator<>());
-        }
-        if (fieldName.equals("category")) {
+        } else if (fieldName.equals(FieldName.CATEGORY.getName())) {
             Collections.sort(values, new FacetCategoryComparator<>());
-        }
-        if (fieldName.equals("stage")) {
+        } else if (fieldName.equals(FieldName.STAGE.getName())) {
             Collections.sort(values, new FacetStageComparator<>());
         }
-
     }
 
 }

@@ -100,7 +100,7 @@ public enum Category {
             MISEXPRESSED_GENE,
             FieldName.CONSTRUCT,
             HAS_IMAGE,
-            EXPRESSIONS_ANATOMY_TF,
+            EXPRESSION_ANATOMY_TF,
             AUTHOR
     ),
     MARKER("Marker / Clone",
@@ -119,7 +119,7 @@ public enum Category {
                     FacetQueryEnum.ANY_MUTANT),
             REPORTER_GENE,
             ZEBRAFISH_GENE,
-            EXPRESSIONS_ANATOMY_TF,
+            EXPRESSION_ANATOMY_TF,
             STAGE,
             ASSAY,
             GENOTYPE_FULL_NAME,
@@ -148,7 +148,7 @@ public enum Category {
     ),
     FISH("Fish", AFFECTED_GENE,
             FieldName.DISEASE,
-            EXPRESSIONS_ANATOMY_TF,
+            EXPRESSION_ANATOMY_TF,
             AFFECTED_ANATOMY_TF,
             AFFECTED_BIOLOGICAL_PROCESS_TF,
             AFFECTED_MOLECULAR_FUNCTION_TF,
@@ -159,7 +159,7 @@ public enum Category {
             FieldName.CONSTRUCT,
             SEQUENCE_ALTERATION,
             BACKGROUND),
-    REPORTER_LINE("Reporter Line", EXPRESSIONS_ANATOMY_TF,REGULATORY_REGION, STAGE);
+    REPORTER_LINE("Reporter Line", EXPRESSION_ANATOMY_TF,REGULATORY_REGION, STAGE);
 
 
     Category(String name, FieldName... fieldNames) {
