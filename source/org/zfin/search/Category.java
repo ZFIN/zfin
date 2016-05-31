@@ -159,7 +159,8 @@ public enum Category {
             FieldName.CONSTRUCT,
             SEQUENCE_ALTERATION,
             BACKGROUND),
-    REPORTER_LINE("Reporter Line", EXPRESSION_ANATOMY_TF,REGULATORY_REGION, STAGE);
+    REPORTER_LINE("Reporter Line", REPORTER_GENE, EXPRESSION_ANATOMY_TF,REGULATORY_REGION, STAGE);
+
 
 
     Category(String name, FieldName... fieldNames) {

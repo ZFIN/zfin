@@ -1227,6 +1227,21 @@ WHERE  ( NOT g.geno_is_wildtype
                                  join marker on mrel_mrkr_2_zdb_id = mrkr_zdb_id"
                    where="fish_zdb_id=fish.id"
                    cacheImpl="SortedMapBackedCache"/>
+
+           <entity name="fish_reporter_gene"
+                   query="select
+                            mrkr_abbrev as reporter_gene,
+                            fish_zdb_id
+                            from fish
+                                 join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id
+                                 join feature on genofeat_feature_zdb_id = feature_zdb_id
+                                 join feature_marker_relationship on fmrel_ftr_zdb_id = feature_zdb_id
+                                 join marker_relationship on mrel_mrkr_1_zdb_id = fmrel_mrkr_zdb_id
+                                                          and mrel_mrkr_2_zdb_id like 'ZDB-EFG%'
+                                 join marker on mrel_mrkr_2_zdb_id = mrkr_zdb_id"
+                   where="fish_zdb_id=fish.id"
+                   cacheImpl="SortedMapBackedCache"/>
+
            <entity name="fish_development_stage"
                    query="select
                             this_stage.stg_name as stage,
@@ -1247,7 +1262,35 @@ WHERE  ( NOT g.geno_is_wildtype
                    where="fish_zdb_id=fish.id"
                    cacheImpl="SortedMapBackedCache"/>
 
-
+           <entity name="reporter_line_image"
+                   query="select
+                     case
+                       when img_image_with_annotation is not null
+                       then img_image_with_annotation
+                       else img_image end as image,
+                       img_thumbnail as thumbnail,
+                       'true' as has_image,
+                       fish_zdb_id
+                       from fish
+                            join fish_experiment on genox_fish_zdb_id = fish_zdb_id
+                            join expression_experiment on genox_zdb_id = xpatex_genox_zdb_id
+                            join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                            join image on img_fig_zdb_id = efs_fig_zdb_id
+                      where fish_genotype_zdb_id in (
+                                 select genofeat_geno_zdb_id
+                                 from genotype_feature
+                                      join feature_marker_relationship
+                                        on fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+                                 where fmrel_type = 'contains innocuous sequence feature')
+                             and  fish_genotype_zdb_id not in (
+                                     select genofeat_geno_zdb_id
+                                     from genotype_feature
+                                          join feature_marker_relationship
+                                on fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+                                 where fmrel_type != 'contains innocuous sequence feature')
+                             and fish_zdb_id not in (select fishstr_fish_zdb_id from fish_str);"
+                   where="fish_zdb_id=fish.id"
+                   cacheImpl="SortedMapBackedCache"/>
 
            <entity name="fish_construct_alias"
                    query="select
@@ -3813,6 +3856,7 @@ where feature_zdb_id = ftmd_feature_zdb_id
                                 when term_is_obsolete == 't' then 'obsolete'
                                 when term_is_obsolete == 'f' then 'current'
                              end as term_status,
+                             term_is_obsolete as root_only,
                              term_definition as definition
                       from term
                       where term_ontology in ('biological_process', 'cellular_component', 'molecular_function','zebrafish_anatomy','disease_ontology')
