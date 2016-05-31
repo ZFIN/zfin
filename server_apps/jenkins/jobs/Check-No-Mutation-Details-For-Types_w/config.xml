@@ -53,6 +53,7 @@
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
                             ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-No-Mutation-Details-For-Types_w.html&quot;}
+
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
                         <sendToDevelopers>false</sendToDevelopers>
@@ -72,7 +73,8 @@
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
                             ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-No-Mutation-Details-For-Types_w.html&quot;}
-			    See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
+
+                            See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>
