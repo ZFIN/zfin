@@ -70,10 +70,17 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
     }
 
     private String getBreadBoxLinkHtml(String fq) {
-        StringBuilder out = new StringBuilder();
-
         NameValuePair nameValuePair = SolrService.splitFilterQuery(fq);
 
+        if (nameValuePair == null) {
+            return "";
+        }
+
+        if (StringUtils.equals(nameValuePair.getName(), "root_only")) {
+            return "";
+        }
+
+        StringBuilder out = new StringBuilder();
         out.append("<a class=\"btn btn-default btn-zfin horizontal-breadbox-label\" href=\"");
         out.append(SolrService.getBreadBoxUrl(fq, baseUrl));
         out.append("\">");

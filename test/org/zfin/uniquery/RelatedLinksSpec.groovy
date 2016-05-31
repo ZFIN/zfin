@@ -17,7 +17,7 @@ class RelatedLinksSpec extends ZfinIntegrationSpec {
     @Unroll
     def "#id shouldn't have empty relatedLinks"() {
         when:
-        SearchResult result = new SearchResult(id: id, name: name, category: category.getName())
+        SearchResult result = new SearchResult(id: id, name: name, categories: [category.name])
         def links = relatedDataService.getRelatedDataLinks(result)
 
         then:
@@ -32,7 +32,7 @@ class RelatedLinksSpec extends ZfinIntegrationSpec {
 
     def "pxnb should not have sequence related link"() {
         when:
-        SearchResult result = new SearchResult(id: "ZDB-GENE-130530-697", name: "pxnb", category: Category.GENE.getName())
+        SearchResult result = new SearchResult(id: "ZDB-GENE-130530-697", name: "pxnb", categories: [Category.GENE.name])
         List<String> links = relatedDataService.getRelatedDataLinks(result)
 
         then:
@@ -41,11 +41,28 @@ class RelatedLinksSpec extends ZfinIntegrationSpec {
 
     def "pxna should have sequence related link"() {
         when:
-        SearchResult result = new SearchResult(id: "ZDB-GENE-040105-1", name: "pxna", category: Category.GENE.getName())
+        SearchResult result = new SearchResult(id: "ZDB-GENE-040105-1", name: "pxna", categories: [Category.GENE.name])
         List<String> links = relatedDataService.getRelatedDataLinks(result)
 
         then:
         expect links, hasItem(containsString(RelatedDataService.SEQUENCES))
     }
 
+    def "Diamond-Blackfan anemia should have related genes"() {
+        when:
+        SearchResult result = new SearchResult(id: "DOID:1339", name: "Diamond-Blackfan anemia", categories: [Category.DISEASE.name])
+        List<String> links = relatedDataService.getRelatedDataLinks(result)
+
+        then:
+        expect links, hasItem(containsString(RelatedDataService.RELATED_GENE))
+    }
+
+    def "kleptomania should have related genes"() {
+        when:
+        SearchResult result = new SearchResult(id: "DOID:12400", name: "kleptomania", categories: [Category.DISEASE.name])
+        List<String> links = relatedDataService.getRelatedDataLinks(result)
+
+        then:
+        expect links, everyItem(not(containsString(RelatedDataService.RELATED_GENE)))
+    }
 }

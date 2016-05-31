@@ -88,6 +88,7 @@ public class ResultService {
     public static String SEQUENCE = "Sequence:";
     public static String SOURCE = "Sources:";
     public static String STAGE = "Stage:";
+    public static String STATUS = "Status:";
     public static String SYNONYMS = "Synonyms:";
     public static String TARGETED_GENES = "Targeted Genes:";
     public static String TRANSCRIPT_NAME = "Transcript Name:";
@@ -197,7 +198,7 @@ public class ResultService {
             return;
         }
         if (term.isObsolete()) {
-            result.addAttribute("Status", "<span class='red'>Yes</span>");
+            result.addAttribute(STATUS, "<span class='red'>Obsolete</span>");
         }
         if (CollectionUtils.isNotEmpty(term.getAliases())) {
             result.addAttribute(SYNONYMS, withCommas(term.getAliases(), "alias"));

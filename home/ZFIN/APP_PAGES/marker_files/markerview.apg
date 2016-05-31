@@ -2599,6 +2599,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
      where fdbdt_super_type = 'summary page'
       and fdbdt_pk_id = fdbcont_fdbdt_id
       and fdbcont_fdb_db_id = fdb_db_pk_id
+      and fdbcont_zdb_id != 'ZDB-FDBCONT-040412-1'
       order by fdb_db_name;">
     <option value="$1" $(IF,$(EC,$1,VEGA),SELECTED)>$1</option>
   <?/MISQL>
