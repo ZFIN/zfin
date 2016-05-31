@@ -224,15 +224,10 @@ public class FacetBuilderService {
         expressionAnatomy.addFacet(buildFacet(EXPRESSION_ANATOMY_TF.getName(), true));
         facetGroups.add(expressionAnatomy);
 
-<<<<<<< HEAD
 
-
-        facetGroups.add(buildSingleFacetGroup("Regulatory Region", REGULATORY_REGION.getName(), true, filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Stage", STAGE.getName(), true, filterQuerySelectionMap));
-=======
         facetGroups.add(buildSingleFacetGroup("Regulatory Region", REGULATORY_REGION.getName(), true));
         facetGroups.add(buildSingleFacetGroup("Stage", STAGE.getName(), true));
->>>>>>> 8e8544975935b57fe5809dd9372bfbbf0a4493e7
+
 
         return facetGroups;
     }
