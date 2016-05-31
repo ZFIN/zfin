@@ -21,10 +21,10 @@ import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.infrastructure.service.ZdbIDService;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
 import org.zfin.search.FacetCategoryComparator;
-import org.zfin.search.FacetValueAlphanumComparator;
 import org.zfin.search.service.*;
 import org.zfin.util.URLCreator;
 
@@ -221,6 +221,9 @@ public class SearchPrototypeController {
 
         model.addAttribute("q", (originalQ != null ? originalQ : ""));
 
+        if (!ProfileService.isRootUser()) {
+            query.add("fq", "root_only:false");
+        }
 
         //hide results when no criteria are selected, also don't ask solr for results
         if (StringUtils.isEmpty(q)

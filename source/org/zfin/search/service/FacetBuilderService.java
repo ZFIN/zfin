@@ -57,11 +57,11 @@ public class FacetBuilderService {
             return buildPublicationFacetGroup();
         } else if (StringUtils.equals(category, Category.DISEASE.getName())) {
             return buildDiseaseFacetGroup();
+        } else if (StringUtils.equals(category, Category.ANATOMY.getName())) {
+            return buildAnatomyFacetGroup();
         } else {
             return buildFlatFacetGroup(category);
         }
-
-
     }
 
     /* generically build a "one-facet-per-group" section for any category in the map */
@@ -105,6 +105,15 @@ public class FacetBuilderService {
         facetGroups.add(category);
 
 
+        return facetGroups;
+    }
+
+    private List<FacetGroup> buildAnatomyFacetGroup() {
+        List<FacetGroup> facetGroups = new ArrayList<>();
+        facetGroups.add(buildSingleFacetGroup("Ontology", FieldName.ONTOLOGY.getName(), true));
+        FacetGroup statusGroup = buildSingleFacetGroup("Term Status", FieldName.TERM_STATUS.getName(), true);
+        statusGroup.setRootOnly(true);
+        facetGroups.add(statusGroup);
         return facetGroups;
     }
 
@@ -219,8 +228,9 @@ public class FacetBuilderService {
     private List<FacetGroup> buildReporterLineFacetGroup() {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
-        FacetGroup expressionAnatomy = new FacetGroup("Expression Anatomy", true);
+        facetGroups.add(buildSingleFacetGroup("Reporter Gene", REPORTER_GENE.getName(), true));
 
+        FacetGroup expressionAnatomy = new FacetGroup("Expression Anatomy", true);
         expressionAnatomy.addFacet(buildFacet(EXPRESSION_ANATOMY_TF.getName(), true));
         facetGroups.add(expressionAnatomy);
 
@@ -274,7 +284,6 @@ public class FacetBuilderService {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
         FacetGroup expressionAnatomy = new FacetGroup("Expression Anatomy", true);
-
         expressionAnatomy.addFacet(buildFacet(EXPRESSION_ANATOMY_TF.getName(), true));
         facetGroups.add(expressionAnatomy);
 
