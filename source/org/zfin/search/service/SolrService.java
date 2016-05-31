@@ -271,13 +271,24 @@ public class SolrService {
         return expressionLinks;
     }
 
+
     public static String getExpressionLink(String geneSymbol, String termName) {
+        String link = getExpressionLink(geneSymbol, termName, FieldName.EXPRESSION_ANATOMY_TF.getName());
+        //if no link is returned, it might be a high level term that has been chopped out of the _TF field, so
+        //try again against the non-TF field
+        if (StringUtils.isEmpty(link)) {
+            link = getExpressionLink(geneSymbol, termName, FieldName.EXPRESSION_ANATOMY.getName());
+        }
+        return link;
+    }
+
+    public static String getExpressionLink(String geneSymbol, String termName, String fieldName) {
         //query Solr to get the count...
 
         SolrClient server = getSolrClient("prototype");
         SolrQuery query = new SolrQuery();
         query.addFilterQuery("zebrafish_gene:\"" + geneSymbol + "\"");
-        query.addFilterQuery(FieldName.EXPRESSIONS_ANATOMY_TF.getName()+":\"" + termName + "\"");
+        query.addFilterQuery(fieldName+":\"" + termName + "\"");
         query.addFilterQuery("is_wildtype:\"true\"");
         query.setRows(0);
         query.setHighlight(false);
@@ -303,7 +314,7 @@ public class SolrService {
             link.append(geneSymbol);
             link.append("%22");
 
-            String fq = SolrService.encode(FieldName.EXPRESSIONS_ANATOMY_TF.getName()+":" + getEscapedValue(termName));
+            String fq = SolrService.encode(fieldName+":" + getEscapedValue(termName));
             link.append("&fq=");
             link.append(fq);
 
@@ -318,6 +329,9 @@ public class SolrService {
 
         return link.toString();
     }
+
+
+
 
     public static Map<String, String> getPhenotypeLink(String geneSymbol) {
 

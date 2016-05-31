@@ -36,17 +36,6 @@
     hdrSetCookie("tabCookie","Motto","","/");
 </script>
 
-<%-- placed this outside of the search container below so that it won't inherit odd css, content of modal is loaded via remote --%>
-
-<!-- Modal -->
-<div class="modal fade" id="beta-message" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        </div>
-    </div>
-</div>
-
-
 
 <div class="container-fluid">
 
@@ -55,12 +44,6 @@
         <div class="search-box col-md-offset-1 col-md-11">
             <form id="query-form" class="form-inline" method="get" action="/search">
                 <div class="search-input-container">
-
-                        <a data-remote="/action/quicksearch/message" data-target="#beta-message" data-toggle="modal"
-                           class="clickable">
-                            <span class="badge alert-success">Beta</span>
-                        </a>
-
 
                         <select class="form-control" name="category">
                             <option>Any</option>

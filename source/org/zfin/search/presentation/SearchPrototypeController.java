@@ -240,9 +240,19 @@ public class SearchPrototypeController {
 
         SolrDocumentList solrDocumentList = response.getResults();
 
-        facetBuilderService = new FacetBuilderService(response);
-        model.addAttribute("facetGroups", facetBuilderService.buildFacetGroup(category, baseUrl, query));
-        model.addAttribute("facetQueries", facetBuilderService.getFacetQueries(baseUrl));
+        //a map to know whether or not to show a facet value as a link
+        Map<String, Boolean> filterQuerySelectionMap = new HashMap<>();
+
+        if (query != null && query.getFilterQueries() != null) {
+            for (String fq : query.getFilterQueries()) {
+                filterQuerySelectionMap.put(fq, true);
+                logger.debug("added to filterQuerySelectionMap: " + fq);
+            }
+        }
+
+        facetBuilderService = new FacetBuilderService(response, baseUrl, filterQuerySelectionMap);
+        model.addAttribute("facetGroups", facetBuilderService.buildFacetGroup(category));
+        model.addAttribute("facetQueries", facetBuilderService.getFacetQueries());
         model.addAttribute("response", response);
         model.addAttribute("query", query);
 
@@ -403,10 +413,7 @@ public class SearchPrototypeController {
 
             facetValues.addAll(facetField.getValues());
 
-
-            //todo: use field name enum!
-            if (!StringUtils.equals(facetField.getName(), "stage"))
-                Collections.sort(facetValues, new FacetValueAlphanumComparator());
+            facetBuilderService.sortFacetValues(facetField.getName(),facetValues);
 
             for (FacetField.Count count : facetValues) {
                 FacetLookupEntry entry = new FacetLookupEntry();
@@ -568,20 +575,6 @@ public class SearchPrototypeController {
             logger.error(e);
         }
 
-/*
-        OutputStream resOs= response.getOutputStream();
-        OutputStream buffOs= new BufferedOutputStream(resOs);
-        OutputStreamWriter outputwriter = new OutputStreamWriter(buffOs);
-
-        CsvWriter writer = new CsvWriter(outputwriter, '\u0009');
-        for(int i=1;i <allRecords.size();i++){
-            CompositeRequirement aReq=allRecords.get(i);
-            writer.write(aReq.toString());
-        }
-        outputwriter.flush();
-        outputwriter.close();
-*/
-
 
     }
 
@@ -652,11 +645,6 @@ public class SearchPrototypeController {
         model.addAttribute("allPhenotypeInvolvingLink", SolrService.getAllPhenotypeLink(gene.getAbbreviation(), false));
 
         return "search/phenotype.popup";
-    }
-
-    @RequestMapping(value = "/message")
-    public String getSearchMessage() {
-        return "search/searchMessage.popup";
     }
 
     public Model handleSorting(Model model, SolrQuery query, String baseUrl, String sort) {
