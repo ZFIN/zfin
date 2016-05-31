@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+<changeSet author="pm" id="loadData-construct">
+    <loadData
+            file="${SOURCEROOT}/source/org/zfin/db/load/1078/regatta/construct_component.csv"
+            catalogName="${DBNAME}" schemaName="${USER}" tableName="cc_temp" quotchar="A String" separator="|" encoding="UTF-8" >
+        <column name="ccid" type="String"/>
+        <column name="cctype" type="String"/>
+        <column name="cccategory" type="String"/>
+        <column name="compid" type="String"/>
+        <column name="cccomp" type="String"/>
+        <column name="cccasset" type="String"/>
+	<column name="ccorder" type="Numeric"/>
+    </loadData>
+</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,37 @@
+ccid|cctype|cccategory|cccomp|cccasset|ccorder
+ZDB-TGCONSTRCT-140814-1|promoter of|promoter component|ZDB-GENE-991019-3|myl7|2|14
+ZDB-TGCONSTRCT-140814-1|controlled vocab component|promoter component|ZDB-CV-150506-10|:|2|15
+ZDB-TGCONSTRCT-140814-1|coding sequence of|coding sequence component|ZDB-EFG-070117-1|EGFP|2|16
+ZDB-TGCONSTRCT-140814-1|controlled vocab component|construct wrapper component|ZDB-CV-150506-8|)|2|17
+ZDB-TGCONSTRCT-140814-10|promoter of|promoter component|ZDB-GENE-991019-3|myl7|2|18
+ZDB-TGCONSTRCT-140814-10|controlled vocab component|promoter component|ZDB-CV-150506-10|:|2|19
+ZDB-TGCONSTRCT-140814-10|coding sequence of|coding sequence component|ZDB-EFG-070117-1|EGFP|2|20
+ZDB-TGCONSTRCT-140814-10|controlled vocab component|construct wrapper component|ZDB-CV-150506-8|)|2|21
+ZDB-TGCONSTRCT-140814-2|promoter of|promoter component|ZDB-GENE-991019-3|myl7|2|14
+ZDB-TGCONSTRCT-140814-2|controlled vocab component|promoter component|ZDB-CV-150506-10|:|2|15
+ZDB-TGCONSTRCT-140814-2|coding sequence of|coding sequence component|ZDB-EFG-070117-1|EGFP|2|16
+ZDB-TGCONSTRCT-140814-2|controlled vocab component|construct wrapper component|ZDB-CV-150506-8|)|2|17
+ZDB-TGCONSTRCT-140814-3|promoter of|promoter component|ZDB-GENE-991019-3|myl7|2|17
+ZDB-TGCONSTRCT-140814-3|controlled vocab component|promoter component|ZDB-CV-150506-10|:|2|18
+ZDB-TGCONSTRCT-140814-3|coding sequence of|coding sequence component|ZDB-EFG-070117-1|EGFP|2|19
+ZDB-TGCONSTRCT-140814-3|controlled vocab component|construct wrapper component|ZDB-CV-150506-8|)|2|20
+ZDB-TGCONSTRCT-140814-4|promoter of|promoter component|ZDB-GENE-991019-3|myl7|2|14
+ZDB-TGCONSTRCT-140814-4|controlled vocab component|promoter component|ZDB-CV-150506-10|:|2|15
+ZDB-TGCONSTRCT-140814-4|coding sequence of|coding sequence component|ZDB-EFG-070117-1|EGFP|2|16
+ZDB-TGCONSTRCT-140814-4|controlled vocab component|construct wrapper component|ZDB-CV-150506-8|)|2|17
+ZDB-TGCONSTRCT-140814-5|promoter of|promoter component|ZDB-GENE-991019-3|myl7|2|14
+ZDB-TGCONSTRCT-140814-5|controlled vocab component|promoter component|ZDB-CV-150506-10|:|2|15
+ZDB-TGCONSTRCT-140814-5|coding sequence of|coding sequence component|ZDB-EFG-070117-1|EGFP|2|16
+ZDB-TGCONSTRCT-140814-5|controlled vocab component|construct wrapper component|ZDB-CV-150506-8|)|2|17
+ZDB-TGCONSTRCT-140814-6|promoter of|promoter component|ZDB-GENE-991019-3|myl7|2|14
+ZDB-TGCONSTRCT-140814-6|controlled vocab component|promoter component|ZDB-CV-150506-10|:|2|15
+ZDB-TGCONSTRCT-140814-6|coding sequence of|coding sequence component|ZDB-EFG-070117-1|EGFP|2|16
+ZDB-TGCONSTRCT-140814-6|controlled vocab component|construct wrapper component|ZDB-CV-150506-8|)|2|17
+ZDB-TGCONSTRCT-140814-7|promoter of|promoter component|ZDB-GENE-991019-3|myl7|2|17
+ZDB-TGCONSTRCT-140814-7|controlled vocab component|promoter component|ZDB-CV-150506-10|:|2|18
+ZDB-TGCONSTRCT-140814-7|coding sequence of|coding sequence component|ZDB-EFG-070117-1|EGFP|2|19
+ZDB-TGCONSTRCT-140814-7|controlled vocab component|construct wrapper component|ZDB-CV-150506-8|)|2|20
+ZDB-TGCONSTRCT-140814-8|promoter of|promoter component|ZDB-GENE-991019-3|myl7|2|17
+ZDB-TGCONSTRCT-140814-8|controlled vocab component|promoter component|ZDB-CV-150506-10|:|2|18
+ZDB-TGCONSTRCT-140814-8|coding sequence of|coding sequence component|ZDB-EFG-070117-1|EGFP|2|19
+ZDB-TGCONSTRCT-140814-8|controlled vocab component|construct wrapper component|ZDB-CV-150506-8|)|2|20
