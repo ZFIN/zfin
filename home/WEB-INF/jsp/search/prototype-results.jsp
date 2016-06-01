@@ -6,6 +6,8 @@
 
 <c:set var="geneCategoryName" value="<%=Category.GENE.getName()%>"/>
 <c:set var="expressionCategoryName" value="<%=Category.EXPRESSIONS.getName()%>"/>
+<c:set var="diseaseCategoryName" value="<%=Category.DISEASE.getName()%>"/>
+<c:set var="mutationCategoryName" value="<%=Category.MUTANT.getName()%>"/>
 <c:set var="publicationCategoryName" value="<%=Category.PUBLICATION.getName()%>"/>
 <c:set var="constructCategoryName" value="<%=Category.CONSTRUCT.getName()%>"/>
 
@@ -249,6 +251,12 @@
                     </c:when>
                     <c:when test="${category eq expressionCategoryName}">
                         <zfin-search:expressionResultTable results="${results}"/>
+                    </c:when>
+                    <c:when test="${category eq diseaseCategoryName}">
+                        <zfin-search:diseaseResultTable results="${results}"/>
+                    </c:when>
+                    <c:when test="${category eq mutationCategoryName}">
+                        <zfin-search:mutationResultTable results="${results}"/>
                     </c:when>
                     <c:otherwise>
                         <zfin-search:mixedResultTable results="${results}"/>
