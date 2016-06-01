@@ -93,6 +93,7 @@ public class ResultService {
     public static String TARGETED_GENES = "Targeted Genes:";
     public static String TRANSCRIPT_NAME = "Transcript Name:";
     public static String TYPE = "Type:";
+    public static String HOST_ORGANISM = "Host Organism:";
 
 
     public void injectAttributes(Collection<SearchResult> results) {
@@ -163,7 +164,7 @@ public class ResultService {
         }
 
         if (StringUtils.isNotEmpty(antibody.getHostSpecies())) {
-            result.addAttribute("Host Organism:", antibody.getHostSpecies());
+            result.addAttribute(HOST_ORGANISM, antibody.getHostSpecies());
         }
 
         String type = "";
@@ -182,7 +183,7 @@ public class ResultService {
             type += "[" + withCommas(isotypeList) + "]";
         }
         if (org.apache.commons.lang.StringUtils.isNotEmpty(type)) {
-            result.addAttribute("Type:", type);
+            result.addAttribute(TYPE, type);
         }
 
 
