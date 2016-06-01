@@ -85,7 +85,7 @@ system("/local/bin/wget ftp://ftp.omim.org/OMIM/genemap");
 
 if (!-e "genemap" || !-e "mim2gene.txt") {
    print "One or more required file(s) not exisiting/downloaded. Exit.\n";
-   exit;
+   exit -1;
 }
 
 print "\nDone with downloading OMIM files. \n\n";
