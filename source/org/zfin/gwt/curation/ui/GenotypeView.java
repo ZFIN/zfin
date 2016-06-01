@@ -6,7 +6,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.CuratorNoteDTO;
@@ -42,20 +41,17 @@ public class GenotypeView extends SingleGridBaseComposite {
 
     public GenotypeView() {
         initWidget(binder.createAndBindUi(this));
-        sectionVisibilityToggle = new ShowHideWidget(showHideSection, genotypeListTable, true);
+        sectionVisibilityToggle = new ShowHideWidget(showHideToggle, genotypeListTable, true);
     }
 
     @UiField
     ZfinFlexTable genotypeListTable;
     @UiField
     Label noneDefinedGenoLabel;
+    @UiField
+    FlowPanel viewPanel;
 
     private String publicationID;
-
-    @UiHandler("showHideSection")
-    void onShowHideClick(@SuppressWarnings("unused") ClickEvent event) {
-        sectionVisibilityToggle.toggleVisibility();
-    }
 
     public void setData(List<GenotypeDTO> genotypeDTOList) {
         genotypeListTable.removeAllRows();
@@ -193,7 +189,7 @@ public class GenotypeView extends SingleGridBaseComposite {
         genotypeListTable.getCellFormatter().setStyleName(0, col, "bold");
         genotypeListTable.setText(0, col++, "Display Name");
         genotypeListTable.getCellFormatter().setStyleName(0, col, "bold");
-        genotypeListTable.setText(0, col++, "Genotype Nickname");
+        genotypeListTable.setText(0, col++, "Genotype Handle");
         genotypeListTable.getCellFormatter().setStyleName(0, col, "bold");
         genotypeListTable.setText(0, col++, "Feature");
         genotypeListTable.getCellFormatter().setStyleName(0, col, "bold");

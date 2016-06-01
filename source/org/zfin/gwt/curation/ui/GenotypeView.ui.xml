@@ -8,13 +8,15 @@
     <g:FlowPanel>
         <g:HorizontalPanel spacing="0">
             <g:Label text="GENOTYPE LIST: &nbsp;" styleName="summaryTitle"/>
-            <g:Hyperlink text="Hide" ui:field="showHideSection"/>
+            <zfin:ShowHideToggle widget="{viewPanel}" ui:field="showHideToggle" show="false"/>
             <g:Label ui:field="noneDefinedGenoLabel" text="&nbsp;None defined" styleName="no-data-tag"/>
         </g:HorizontalPanel>
-        <zfin:ZfinFlexTable ui:field="genotypeListTable" numberOfColumns="3" styleName="searchresults groupstripes"
-                            cellSpacing="5" cellPadding="5"/>
-        <g:Grid ui:field="dataTable"/>
-        <zfin:SimpleErrorElement ui:field="errorLabel"/>
-        <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="false"/>
+        <g:FlowPanel ui:field="viewPanel">
+            <zfin:ZfinFlexTable ui:field="genotypeListTable" numberOfColumns="3" styleName="searchresults groupstripes"
+                                cellSpacing="5" cellPadding="5"/>
+            <g:Grid ui:field="dataTable"/>
+            <zfin:SimpleErrorElement ui:field="errorLabel"/>
+            <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="false"/>
+        </g:FlowPanel>
     </g:FlowPanel>
 </ui:UiBinder>

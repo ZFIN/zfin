@@ -97,6 +97,12 @@ public class GenotypeService {
     }
 
     public static Genotype createGenotype(List<GenotypeFeatureDTO> genotypeFeatureDTOList, List<Genotype> genotypeBackgroundList) {
+        // if empty feature list then use the background genotype as the genotype
+        if (CollectionUtils.isEmpty(genotypeFeatureDTOList)) {
+            if (genotypeBackgroundList.size() > 1)
+                throw new IllegalStateException("Can not have more than one background genotype when no feature is given");
+            return genotypeBackgroundList.get(0);
+        }
         Genotype genotype = new Genotype();
         genotype.setWildtype(false);
         if (genotypeBackgroundList != null)

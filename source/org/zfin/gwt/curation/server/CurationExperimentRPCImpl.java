@@ -33,7 +33,10 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.mutant.repository.PhenotypeRepository;
-import org.zfin.ontology.*;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.GenericTermRelationship;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.profile.CuratorSession;
 import org.zfin.profile.repository.ProfileRepository;
@@ -393,15 +396,19 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
     public List<RelatedEntityDTO> getBackgroundGenotypes(String publicationID) {
         List<Genotype> wildtypes = mutantRep.getAllWildtypeGenotypes();
         List<RelatedEntityDTO> backgroundList = new ArrayList<>(wildtypes.size());
+        GenotypeDTO wildtype = null;
         for (Genotype wiltype : wildtypes) {
             // only add non-WT wildtypes as WT is placed at the top
-            if (wiltype.getHandle().equals(Genotype.WT))
-                continue;
             GenotypeDTO fishy = new GenotypeDTO();
             fishy.setZdbID(wiltype.getZdbID());
             fishy.setName(wiltype.getNickname());
             backgroundList.add(fishy);
+            if (wiltype.getHandle().equals(Genotype.WT)) {
+                wildtype = fishy;
+            }
         }
+        backgroundList.remove(wildtype);
+        backgroundList.add(0, wildtype);
         return backgroundList;
     }
 

@@ -8,6 +8,7 @@ import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
 import org.zfin.gwt.root.dto.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * GWT class to facilitate curation of FX
@@ -36,7 +37,7 @@ public interface CurationDiseaseRPC extends RemoteService {
 
     List<ZygosityDTO> getZygosityLists();
 
-    GenotypeCreationReportDTO createGenotypeFeature(String publicationID, List<GenotypeFeatureDTO> genotypeFeatureDTOList, List<GenotypeDTO> genotypeBackgroundList, String nickname)
+    GenotypeCreationReportDTO createGenotypeFish(String publicationID, List<GenotypeFeatureDTO> genotypeFeatureDTOList, List<GenotypeDTO> genotypeBackgroundList, Set<RelatedEntityDTO> strSet)
             throws TermNotFoundException;
 
     public static class App {
@@ -60,11 +61,10 @@ public interface CurationDiseaseRPC extends RemoteService {
 
     List<RelatedEntityDTO> getStrList(String publicationID);
 
-    List<FishDTO> createFish(String publicationID, FishDTO newFish) throws TermNotFoundException;
-
     List<FishDTO> getFishList(String publicationID);
 
     List<DiseaseAnnotationDTO> deleteDiseaseModel(DiseaseAnnotationDTO diseaseAnnotationDTO) throws TermNotFoundException;
+
     List<DiseaseAnnotationDTO> deleteDiseaseAnnotationModel(DiseaseAnnotationModelDTO diseaseAnnotationModelDTO) throws TermNotFoundException;
 
 }

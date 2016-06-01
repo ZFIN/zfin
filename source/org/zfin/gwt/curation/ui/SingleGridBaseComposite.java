@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
+import org.zfin.gwt.root.ui.ShowHideToggle;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
 import org.zfin.gwt.root.util.ShowHideWidget;
 import org.zfin.gwt.root.util.WidgetUtil;
@@ -17,7 +18,7 @@ import org.zfin.gwt.root.util.WidgetUtil;
 public abstract class SingleGridBaseComposite extends Composite {
 
     @UiField
-    Hyperlink showHideSection;
+    ShowHideToggle showHideToggle;
     @UiField
     SimpleErrorElement errorLabel;
     @UiField
@@ -27,12 +28,19 @@ public abstract class SingleGridBaseComposite extends Composite {
 
     protected ShowHideWidget sectionVisibilityToggle;
 
+    @UiHandler("showHideToggle")
+    void onClickShowHide(@SuppressWarnings("unused") ClickEvent event) {
+        showHideToggle.toggleVisibility();
+    }
+
+
     protected void setRowStyle(int row) {
         WidgetUtil.setAlternateRowStyle(row, dataTable);
     }
 
     /**
      * Returns the last row index.
+     *
      * @return
      */
     protected int getLastRow() {

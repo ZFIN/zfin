@@ -46,6 +46,11 @@ public class FishView extends Composite {
         InlineHTML handle = new InlineHTML(fish.getHandle());
         handle.setTitle(fish.getZdbID());
         dataTable.setWidget(row, 1, handle);
+/*
+        HTML html = new HTML("<i class='fa fa-clone' aria-hidden='true'></i>Clone");
+        Anchor cloneLink = new Anchor(SafeHtmlUtils.fromTrustedString(html.getHTML()));
+        dataTable.setWidget(row, 2, cloneLink);
+*/
     }
 
     public void addDeleteButton(FishDTO fish, int elementIndex) {

@@ -1,12 +1,16 @@
 package org.zfin.gwt.root.util;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import org.apache.commons.lang3.ObjectUtils;
+
+import java.util.Iterator;
 
 /**
  * StringUtils version for GWT.
  */
 public class StringUtils implements IsSerializable {
     public static final String NULL = "null";
+    private static final String EMPTY = "";
 
     /**
      * <p>Checks if a String is empty ("") or null.</p>
@@ -145,5 +149,50 @@ public class StringUtils implements IsSerializable {
             return true;
         }
     }
+
+    /// copied from org.apache.commons.lang3.StringUtils
+    public static String join(Iterable<?> iterable, String separator) {
+        if (iterable == null) {
+            return null;
+        }
+        return join(iterable.iterator(), separator);
+    }
+
+    public static String join(Iterator<?> iterator, String separator) {
+
+        // handle null, zero and one elements before building a buffer
+        if (iterator == null) {
+            return null;
+        }
+        if (!iterator.hasNext()) {
+            return EMPTY;
+        }
+        Object first = iterator.next();
+        if (!iterator.hasNext()) {
+            return objectToString(first);
+        }
+
+        // two or more elements
+        StringBuilder buf = new StringBuilder(256); // Java default is 16, probably too small
+        if (first != null) {
+            buf.append(first);
+        }
+
+        while (iterator.hasNext()) {
+            if (separator != null) {
+                buf.append(separator);
+            }
+            Object obj = iterator.next();
+            if (obj != null) {
+                buf.append(obj);
+            }
+        }
+        return buf.toString();
+    }
+
+    public static String objectToString(Object obj) {
+        return obj == null ? "" : obj.toString();
+    }
+
 
 }

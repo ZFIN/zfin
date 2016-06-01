@@ -6,6 +6,7 @@ import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
 import org.zfin.gwt.root.dto.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * RPC Async Class for the Curation module.
@@ -20,11 +21,10 @@ public interface CurationDiseaseRPCAsync {
 
     void getStrList(String publicationID, AsyncCallback<List<RelatedEntityDTO>> callback);
 
-    void createFish(String publicationID, FishDTO newFish, AsyncCallback<List<FishDTO>> error);
-
     void getFishList(String publicationID, AsyncCallback<List<FishDTO>> callback);
 
     void deleteDiseaseModel(DiseaseAnnotationDTO diseaseAnnotationDTO, AsyncCallback<List<DiseaseAnnotationDTO>> callback);
+
     void deleteDiseaseAnnotationModel(DiseaseAnnotationModelDTO diseaseAnnotationModelDTO, AsyncCallback<List<DiseaseAnnotationDTO>> callback);
 
     void getGenotypeList(String publicationID, AsyncCallback<List<GenotypeDTO>> callback);
@@ -49,7 +49,7 @@ public interface CurationDiseaseRPCAsync {
 
     void getZygosityLists(AsyncCallback<List<ZygosityDTO>> async);
 
-    void createGenotypeFeature(String publicationID, List<GenotypeFeatureDTO> genotypeFeatureDTOList, List<GenotypeDTO> genotypeBackgroundList, String nickname, AsyncCallback<GenotypeCreationReportDTO> callBack);
+    void createGenotypeFish(String publicationID, List<GenotypeFeatureDTO> genotypeFeatureDTOList, List<GenotypeDTO> genotypeBackgroundList, Set<RelatedEntityDTO> strSet, AsyncCallback<GenotypeCreationReportDTO> callBack);
 }
 
 

@@ -17,6 +17,11 @@
                 <g:customCell>
                     <g:Label text="Display Handle" styleName="bold" horizontalAlignment="left"/>
                 </g:customCell>
+<!--
+                <g:customCell>
+                    <g:Label text="Clone" styleName="bold" horizontalAlignment="left"/>
+                </g:customCell>
+-->
                 <g:customCell>
                     <g:Label text="Delete" styleName="bold" horizontalAlignment="left"/>
                 </g:customCell>
