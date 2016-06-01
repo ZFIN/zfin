@@ -10,6 +10,7 @@
 <c:set var="mutationCategoryName" value="<%=Category.MUTANT.getName()%>"/>
 <c:set var="publicationCategoryName" value="<%=Category.PUBLICATION.getName()%>"/>
 <c:set var="constructCategoryName" value="<%=Category.CONSTRUCT.getName()%>"/>
+<c:set var="strCategoryName" value="<%=Category.SEQUENCE_TARGETING_REAGENT.getName()%>"/>
 
 <script src="/javascript/list-collapse.js"></script>
 <script src="/javascript/angular/angular.min.js"></script>
@@ -260,6 +261,9 @@
                     </c:when>
                     <c:when test="${category eq constructCategoryName}">
                         <zfin-search:constructResultTable results="${results}"/>
+                    </c:when>
+                    <c:when test="${category eq strCategoryName}">
+                        <zfin-search:strResultTable results="${results}"/>
                     </c:when>
                     <c:otherwise>
                         <zfin-search:mixedResultTable results="${results}"/>
