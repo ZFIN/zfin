@@ -2703,7 +2703,7 @@ sub reportErrAndExit {
   $subjectError = $_[0];
   ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subjectError","logNCBIgeneLoad");
   close LOG;
-  exit;
+  exit -1;
 }
 
 sub sendLoadLogs {
