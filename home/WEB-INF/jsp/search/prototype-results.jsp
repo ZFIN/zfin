@@ -258,6 +258,9 @@
                     <c:when test="${category eq mutationCategoryName}">
                         <zfin-search:mutationResultTable results="${results}"/>
                     </c:when>
+                    <c:when test="${category eq constructCategoryName}">
+                        <zfin-search:constructResultTable results="${results}"/>
+                    </c:when>
                     <c:otherwise>
                         <zfin-search:mixedResultTable results="${results}"/>
                     </c:otherwise>
