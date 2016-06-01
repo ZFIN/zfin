@@ -1,0 +1,42 @@
+<%@ tag import="org.zfin.search.service.ResultService" %>
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
+<%@attribute name="results" required="true" type="java.util.List" %>
+<c:set var="aliasAttribute" value="<%=ResultService.SYNONYMS%>"/>
+
+<table class="table-results searchresults" style="display: none;">
+    <th>Name</th>
+    <th>Synonym</th>
+    <th>Affected Genes</th>
+    <th>Feature Type</th>
+    <th>Related Data</th>
+    <c:forEach var="result" items="${results}" varStatus="loop">
+        <zfin:alternating-tr loopName="loop" groupBeanCollection="${results}" groupByBean="id">
+            <td>${result.link}</td>
+           <%-- <td>
+                <c:forEach var="alias" items="${result.entity.aliases}" varStatus="loop">
+                    ${alias.alias}<c:if test="${!loop.last}">, </c:if>
+                </c:forEach>--%>
+            <td>${result.attributes[aliasAttribute]}</td>
+            <%--</td>--%>
+            <c:forEach var="affectedGene" items="${result.entity.affectedGenes}" varStatus="loop">
+                ${affectedGene.abbreviation}<c:if test="${!loop.last}">, </c:if>
+            </c:forEach>
+            <td>${result.type}</td>
+
+            <td style="white-space: nowrap"> <c:if test="${!empty result.displayedID}">${result.id}</c:if> </td>
+            <td>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Related <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu pull-right">
+                        <c:forEach var="link" items="${result.relatedLinks}">
+                            <li>${link}</li>
+                        </c:forEach>
+                    </ul>
+                </div>
+            </td>
+        </zfin:alternating-tr>
+    </c:forEach>
+</table>
