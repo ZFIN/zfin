@@ -47,9 +47,10 @@ class RelatedLinksSpec extends ZfinIntegrationSpec {
         then:
         expect links, hasItem(containsString(RelatedDataService.SEQUENCES))
     }
+
     def "fli3 should not have genome browser link"() {
         when:
-        SearchResult result = new SearchResult(id: "ZDB-GENE-980526-376", name: "fli3", category: Category.GENE.getName())
+        SearchResult result = new SearchResult(id: "ZDB-GENE-980526-376", name: "fli3", categories: [Category.GENE.name])
         List<String> links = relatedDataService.getRelatedDataLinks(result)
 
         then:

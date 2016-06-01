@@ -1,15 +1,14 @@
 package org.zfin.datatransfer.webservice;
 
-import ebi.ws.client.ResponseWrapper;
-import ebi.ws.client.Result;
-import ebi.ws.client.WSCitationImpl;
-import ebi.ws.client.WSCitationImplService;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.publication.Publication;
 
-import javax.xml.ws.WebServiceRef;
+import java.net.URL;
 import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -20,15 +19,13 @@ import java.util.List;
  */
 public class Citexplore {
 
-    @WebServiceRef(wsdlLocation = "http://www.ebi.ac.uk/europepmc/webservices/soap?wsdl")
-    private static final WSCitationImplService service = new WSCitationImplService();
     public final static String DOI_URL = "http://dx.doi.org";
+    public final static String EPMC_SEARCH = "http://www.ebi.ac.uk/europepmc/webservices/rest/search";
 
     private Logger logger = Logger.getLogger(Citexplore.class);
 
-
     /**
-     * Iterates through the Publication list and updates the DOI, if it exists, from the CiteXplorer Webservice.
+     * Iterates through the Publication list and updates the DOI, if it exists, from the Europe PMC REST service.
      *
      * @param publicationList Publications with accession numbers but no DOIs.
      * @return List<Publication>
@@ -40,25 +37,33 @@ public class Citexplore {
             boolean hasDOI;
             int initSize = publicationList.size();
 
-            WSCitationImpl port = service.getWSCitationImplPort();
             Iterator<Publication> iter = publicationList.iterator();
             while (iter.hasNext()) {
                 Publication publication = iter.next();
                 try {
-                    String query = publication.getAccessionNumber();
-                    String resultType = "lite";
-                    String email = "cmpich@zfin.org";
-                    ResponseWrapper response = port.searchPublications(query, resultType, 0, "25",false, email);
+                    URL request = new URIBuilder(EPMC_SEARCH)
+                            .addParameter("query", "ext_id:" + publication.getAccessionNumber())
+                            .addParameter("format", "json")
+                            .build()
+                            .toURL();
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                    EPMCSearchResponse response = mapper.readValue(request, EPMCSearchResponse.class);
+
                     if (response.getHitCount() == 0) {
                         logger.debug("No Publication with accession number " + publication.getAccessionNumber() + " found in Europe PubMed Central");
                     }
-                    if (response.getHitCount() > 1)
+
+                    if (response.getHitCount() > 1) {
                         logger.debug("More than one Publication with accession number " + publication.getAccessionNumber() + " found in Europe PubMed Central");
+                    }
+
                     hasDOI = false;
                     String doiValue;
-                    for (Result publicationBean : response.getResultList().getResult()) {
-                        doiValue = publicationBean.getDOI();
-                        if (StringUtils.isNotEmpty(doiValue) && publicationBean.getId().equals(publication.getAccessionNumber())) {
+                    for (EPMCResult result : response.getResultList().getResult()) {
+                        doiValue = result.getDoi();
+                        if (StringUtils.isNotEmpty(doiValue) && result.getId().equals(publication.getAccessionNumber())) {
                             logger.debug("added doi[" + doiValue + "]  for pmid[" + publication.getAccessionNumber() + "]");
                             publication.setDoi(doiValue);
                             hasDOI = true;
@@ -91,6 +96,60 @@ public class Citexplore {
         NumberFormat nf = NumberFormat.getPercentInstance();
         double percent = (((double) counter / ((double) initSize - 1.0)));
         logger.info(counter + " of " + initSize + " = " + nf.format(percent));
+    }
+
+    static private class EPMCSearchResponse {
+        private int hitCount;
+        private EPMCResultList resultList;
+
+        public int getHitCount() {
+            return hitCount;
+        }
+
+        public void setHitCount(int hitCount) {
+            this.hitCount = hitCount;
+        }
+
+        public EPMCResultList getResultList() {
+            return resultList;
+        }
+
+        public void setResultList(EPMCResultList resultList) {
+            this.resultList = resultList;
+        }
+    }
+
+    static private class EPMCResultList {
+        List<EPMCResult> result;
+
+        public List<EPMCResult> getResult() {
+            return result;
+        }
+
+        public void setResult(List<EPMCResult> result) {
+            this.result = result;
+        }
+    }
+
+    static private class EPMCResult {
+        private String id;
+        private String doi;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getDoi() {
+            return doi;
+        }
+
+        public void setDoi(String doi) {
+            this.doi = doi;
+        }
     }
 
 } 
