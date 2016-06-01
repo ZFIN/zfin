@@ -23,32 +23,18 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
 
     @Shared
     SolrClient client
-    @Shared
-    SolrQuery query
+
+    SolrQuery query = new SolrQuery();
 
     //sets up for all tests in class
     public def setupSpec() {
         client = SolrService.getSolrClient("prototype")
     }
 
-    public def cleanSpec() {
-        client = null
-    }
-
-    //sets up for each test
-    def setup() {
-        query = new SolrQuery();
-    }
-
-    def clean() {
-        query = null
-    }
-
     @Unroll
     def "#category category doesn't exist"() {
 
         when: "do a no result query asking for category facets"
-        //SolrService.setCategory(category,facetBuilderService.getFacetMap(), query)
         query.addFacetField("category")
         query.rows = 0
         QueryResponse response = new QueryResponse();
@@ -87,37 +73,136 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         returnedFacets.contains(field.name)
 
         where:
-        [category, field] << [[Category.GENE], [FieldName.ANATOMY_TF, FieldName.STAGE, FieldName.AFFECTED_ANATOMY_TF, FieldName.AFFECTED_BIOLOGICAL_PROCESS_TF,
-                                                FieldName.AFFECTED_MOLECULAR_FUNCTION_TF, FieldName.AFFECTED_CELLULAR_COMPONENT_TF,
-                                                FieldName.PHENOTYPE_STATEMENT, FieldName.MISEXPRESSED_GENE, FieldName.DISEASE, FieldName.BIOLOGICAL_PROCESS_TF,
-                                                FieldName.MOLECULAR_FUNCTION_TF, FieldName.CELLULAR_COMPONENT_TF, FieldName.CHROMOSOME, FieldName.TYPE]].combinations() +
-                [[Category.FISH], [FieldName.AFFECTED_GENE, FieldName.AFFECTED_ANATOMY_TF, FieldName.AFFECTED_BIOLOGICAL_PROCESS_TF,
-                                   FieldName.AFFECTED_MOLECULAR_FUNCTION_TF, FieldName.AFFECTED_CELLULAR_COMPONENT_TF,
-                                   FieldName.PHENOTYPE_STATEMENT, FieldName.MISEXPRESSED_GENE, FieldName.EXPRESSION_ANATOMY_TF, FieldName.SEQUENCE_TARGETING_REAGENT,
-                                   FieldName.CONSTRUCT, FieldName.SEQUENCE_ALTERATION, FieldName.BACKGROUND]].combinations() +
-                [[Category.MUTANT], [FieldName.TYPE, FieldName.AFFECTED_GENE, FieldName.AFFECTED_ANATOMY_TF, FieldName.AFFECTED_BIOLOGICAL_PROCESS_TF,
-                                     FieldName.AFFECTED_MOLECULAR_FUNCTION_TF, FieldName.AFFECTED_CELLULAR_COMPONENT_TF, FieldName.PHENOTYPE_STATEMENT, FieldName.MISEXPRESSED_GENE,
-                                     FieldName.SOURCE, FieldName.LAB_OF_ORIGIN, FieldName.CONSEQUENCE, FieldName.INSTITUTION]].combinations() +
-                [[Category.CONSTRUCT], [FieldName.TYPE, FieldName.REGULATORY_REGION, FieldName.CODING_SEQUENCE, FieldName.INSERTED_IN_GENE, FieldName.EXPRESSED_IN_TF,
-                                        FieldName.REPORTER_COLOR, FieldName.ENGINEERED_REGION]].combinations() +
-                [[Category.SEQUENCE_TARGETING_REAGENT], [FieldName.TYPE, FieldName.TARGETED_GENE]].combinations() +
-                [[Category.MARKER], [FieldName.TYPE, FieldName.CHROMOSOME, FieldName.SOURCE]].combinations() +
-                [[Category.FIGURE], [FieldName.EXPRESSION_ANATOMY_TF, FieldName.REPORTER_GENE, FieldName.ZEBRAFISH_GENE, FieldName.AFFECTED_ANATOMY_TF,
-                                     FieldName.AFFECTED_BIOLOGICAL_PROCESS_TF, FieldName.AFFECTED_MOLECULAR_FUNCTION_TF,
-                                     FieldName.AFFECTED_CELLULAR_COMPONENT_TF, FieldName.PHENOTYPE_STATEMENT, FieldName.MISEXPRESSED_GENE,
-                                     FieldName.CONSTRUCT, FieldName.AUTHOR]].combinations() +
-                [[Category.EXPRESSIONS], [FieldName.REPORTER_GENE, FieldName.ZEBRAFISH_GENE, FieldName.EXPRESSION_ANATOMY_TF, FieldName.ASSAY, FieldName.GENOTYPE_FULL_NAME,
-                                          FieldName.HAS_IMAGE, FieldName.EXPERIMENTAL_CONDITIONS, FieldName.AUTHOR, FieldName.SEQUENCE_TARGETING_REAGENT]].combinations() +
-                [[Category.PHENOTYPE], [FieldName.PHENOTYPE_STATEMENT, FieldName.MISEXPRESSED_GENE, FieldName.ANATOMY_TF, FieldName.BIOLOGICAL_PROCESS_TF, FieldName.MOLECULAR_FUNCTION_TF,
-                                        FieldName.HAS_IMAGE, FieldName.STAGE, FieldName.SEQUENCE_TARGETING_REAGENT]].combinations() +
-                [[Category.ANATOMY], [FieldName.ONTOLOGY, FieldName.TERM_STATUS]].combinations() +
-                [[Category.COMMUNITY], [FieldName.TYPE]].combinations() +
-                [[Category.PUBLICATION], [FieldName.GENE, FieldName.SEQUENCE_ALTERATION, FieldName.AUTHOR, FieldName.JOURNAL, FieldName.KEYWORD,
-                                          FieldName.MESH_TERM, FieldName.PUBLICATION_TYPE]].combinations() +
-                [[Category.ANTIBODY], [FieldName.TYPE, FieldName.ANTIGEN_GENE, FieldName.LABELED_STRUCTURE_TF, FieldName.ASSAY, FieldName.SOURCE, FieldName.HOST_ORGANISM]].combinations() +
-                [[Category.DISEASE], [FieldName.GENE, FieldName.FISH, FieldName.EXPERIMENTAL_CONDITIONS]].combinations() +
-                [[Category.REPORTER_LINE], [FieldName.EXPRESSION_ANATOMY_TF, FieldName.REGULATORY_REGION]].combinations()
-        }
-
-
+        [category, field] << [
+                (Category.GENE)                      : [
+                        FieldName.AFFECTED_ANATOMY_TF,
+                        FieldName.AFFECTED_BIOLOGICAL_PROCESS_TF,
+                        FieldName.AFFECTED_CELLULAR_COMPONENT_TF,
+                        FieldName.AFFECTED_MOLECULAR_FUNCTION_TF,
+                        FieldName.ANATOMY_TF,
+                        FieldName.BIOLOGICAL_PROCESS_TF,
+                        FieldName.CELLULAR_COMPONENT_TF,
+                        FieldName.CHROMOSOME,
+                        FieldName.DISEASE,
+                        FieldName.MISEXPRESSED_GENE,
+                        FieldName.MOLECULAR_FUNCTION_TF,
+                        FieldName.PHENOTYPE_STATEMENT,
+                        FieldName.STAGE,
+                        FieldName.TYPE
+                ],
+                (Category.FISH)                      : [
+                        FieldName.AFFECTED_ANATOMY_TF,
+                        FieldName.AFFECTED_BIOLOGICAL_PROCESS_TF,
+                        FieldName.AFFECTED_CELLULAR_COMPONENT_TF,
+                        FieldName.AFFECTED_GENE,
+                        FieldName.AFFECTED_MOLECULAR_FUNCTION_TF,
+                        FieldName.BACKGROUND,
+                        FieldName.CONSTRUCT,
+                        FieldName.EXPRESSION_ANATOMY_TF,
+                        FieldName.MISEXPRESSED_GENE,
+                        FieldName.PHENOTYPE_STATEMENT,
+                        FieldName.SEQUENCE_ALTERATION,
+                        FieldName.SEQUENCE_TARGETING_REAGENT
+                ],
+                (Category.MUTANT)                    : [
+                        FieldName.AFFECTED_ANATOMY_TF,
+                        FieldName.AFFECTED_BIOLOGICAL_PROCESS_TF,
+                        FieldName.AFFECTED_CELLULAR_COMPONENT_TF,
+                        FieldName.AFFECTED_GENE,
+                        FieldName.AFFECTED_MOLECULAR_FUNCTION_TF,
+                        FieldName.CONSEQUENCE,
+                        FieldName.INSTITUTION,
+                        FieldName.LAB_OF_ORIGIN,
+                        FieldName.MISEXPRESSED_GENE,
+                        FieldName.PHENOTYPE_STATEMENT,
+                        FieldName.SOURCE,
+                        FieldName.TYPE
+                ],
+                (Category.CONSTRUCT)                 : [
+                        FieldName.CODING_SEQUENCE,
+                        FieldName.ENGINEERED_REGION,
+                        FieldName.EXPRESSED_IN_TF,
+                        FieldName.INSERTED_IN_GENE,
+                        FieldName.REGULATORY_REGION,
+                        FieldName.REPORTER_COLOR,
+                        FieldName.TYPE
+                ],
+                (Category.SEQUENCE_TARGETING_REAGENT): [
+                        FieldName.TARGETED_GENE,
+                        FieldName.TYPE
+                ],
+                (Category.MARKER)                    : [
+                        FieldName.CHROMOSOME,
+                        FieldName.SOURCE,
+                        FieldName.TYPE
+                ],
+                (Category.FIGURE)                    : [
+                        FieldName.AFFECTED_ANATOMY_TF,
+                        FieldName.AFFECTED_BIOLOGICAL_PROCESS_TF,
+                        FieldName.AFFECTED_CELLULAR_COMPONENT_TF,
+                        FieldName.AFFECTED_MOLECULAR_FUNCTION_TF,
+                        FieldName.AUTHOR,
+                        FieldName.CONSTRUCT,
+                        FieldName.EXPRESSION_ANATOMY_TF,
+                        FieldName.MISEXPRESSED_GENE,
+                        FieldName.PHENOTYPE_STATEMENT,
+                        FieldName.REPORTER_GENE,
+                        FieldName.ZEBRAFISH_GENE
+                ],
+                (Category.EXPRESSIONS)               : [
+                        FieldName.ASSAY,
+                        FieldName.AUTHOR,
+                        FieldName.EXPERIMENTAL_CONDITIONS,
+                        FieldName.EXPRESSION_ANATOMY_TF,
+                        FieldName.GENOTYPE_FULL_NAME,
+                        FieldName.HAS_IMAGE,
+                        FieldName.REPORTER_GENE,
+                        FieldName.SEQUENCE_TARGETING_REAGENT,
+                        FieldName.ZEBRAFISH_GENE
+                ],
+                (Category.PHENOTYPE)                 : [
+                        FieldName.ANATOMY_TF,
+                        FieldName.BIOLOGICAL_PROCESS_TF,
+                        FieldName.HAS_IMAGE,
+                        FieldName.MISEXPRESSED_GENE,
+                        FieldName.MOLECULAR_FUNCTION_TF,
+                        FieldName.PHENOTYPE_STATEMENT,
+                        FieldName.SEQUENCE_TARGETING_REAGENT,
+                        FieldName.STAGE
+                ],
+                (Category.ANATOMY)                   : [
+                        FieldName.ONTOLOGY,
+                        FieldName.TERM_STATUS
+                ],
+                (Category.COMMUNITY)                 : [
+                        FieldName.TYPE
+                ],
+                (Category.PUBLICATION)               : [
+                        FieldName.AUTHOR,
+                        FieldName.GENE,
+                        FieldName.JOURNAL,
+                        FieldName.KEYWORD,
+                        FieldName.MESH_TERM,
+                        FieldName.PUBLICATION_TYPE,
+                        FieldName.SEQUENCE_ALTERATION
+                ],
+                (Category.ANTIBODY)                  : [
+                        FieldName.ANTIGEN_GENE,
+                        FieldName.ASSAY,
+                        FieldName.HOST_ORGANISM,
+                        FieldName.LABELED_STRUCTURE_TF,
+                        FieldName.SOURCE,
+                        FieldName.TYPE
+                ],
+                (Category.DISEASE)                   : [
+                        FieldName.EXPERIMENTAL_CONDITIONS,
+                        FieldName.FISH,
+                        FieldName.GENE
+                ],
+                (Category.REPORTER_LINE)             : [
+                        FieldName.EXPRESSION_ANATOMY_TF,
+                        FieldName.REGULATORY_REGION
+                ]
+        ].collectMany { category, facets -> facets.collect { facet -> [category, facet] } }
+    }
 }
