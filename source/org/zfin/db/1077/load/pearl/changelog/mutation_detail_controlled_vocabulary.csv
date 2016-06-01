@@ -1,0 +1,3 @@
+so_term_id,term_id,term_type,term_abbrev,term_letter,term_order
+SO:1000024,,dna_mutation_term,,,''
+SO:0001992,,transcript_consequence_term,,,9

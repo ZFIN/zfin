@@ -25,9 +25,7 @@ class ResultAttributesSpec extends ZfinIntegrationSpec {
         assumeThat("phenox ids are transient", id, not(startsWith("phenox-")))
         assumeThat("xpatex ids are transient", id, not(startsWith("xpatex-")))
 
-        SearchResult result = new SearchResult()
-        result.setId(id)
-        result.setCategory(category)
+        SearchResult result = new SearchResult(id: id, categories: [category])
         resultService.injectAttributes(result)
 
         then: "the given attribute should contain the given value"

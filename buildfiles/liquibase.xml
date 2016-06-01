@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Database builder" basedir="../" xmlns:liquibase="antlib:liquibase.integration.ant">
+  
+  <path id="extended.classpath">
+    <path refid="classpath"/>
+    <fileset dir="${env.CATALINA_HOME}/endorsed">
+      <include name="*.jar"/>
+        <include name="*.zip"/>
+    </fileset>
+  </path>
+  
+  <path id="lib.build.classpath">
+    <path refid="classpath"/>
+    <fileset dir="lib/Java">
+      <include name="*.jar"/>
+        <include name="*.zip"/>
+    </fileset>
+  </path>
+
+  <path id="liquibase.lib.path">
+    <fileset dir="lib/Java">
+      <include name="**/*.jar" />
+      </fileset>
+    <fileset dir="lib/Java">
+      <include name="liquibase.jar" />
+    </fileset>
+  </path>
+  
+  <!-- Classpath definitions -->
+  <path id="classpath">
+      <pathelement location="${classbin.dir}"/>
+      <pathelement path="${logsDir}"/>
+      <fileset dir="${web.lib}">
+        <include name="*.jar"/>
+      </fileset>
+  </path>
+  
+  <taskdef 
+     resource="liquibase/integration/ant/antlib.xml" 
+     uri="antlib:liquibase.integration.ant">
+      
+    <classpath refid="liquibase.lib.path" />  
+  </taskdef>
+
+  <liquibase:database 
+     id="liquidatabase" 
+     driver="com.informix.jdbc.IfxDriver" 
+     url="jdbc:informix-sqli://${HOSTNAME}:${INFORMIX_PORT}/${DBNAME}:INFORMIXSERVER=${INFORMIXSERVER}" 
+     defaultSchemaName="${DBNAME}"
+     />
+  
+
+  <target
+     name="buildDatabase"
+    description="Builds the database">
+    
+    <echo message="Building DB componentes necessary after loaddb.pl" />
+    <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/load/db.changelog.master.xml" 
+			      dropFirst="false" 
+			      classpathref="classpath"
+			      logLevel="debug"
+			      databaseref="liquidatabase">
+    </liquibase:updateDatabase>
+  </target>
+   <target
+     name="buildPostGmakeDatabase"
+    description="Builds the database components necessary post gmake postloaddb">
+    
+    <echo message="Building DB..." />
+    <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/db.changelog.master.xml" 
+			      dropFirst="false" 
+			      classpathref="classpath"
+			      logLevel="debug"
+			      databaseref="liquidatabase">
+    </liquibase:updateDatabase>
+  </target>
+ 
+ 
+</project>

@@ -147,8 +147,9 @@ public class SearchPrototypeController {
 
         query = handleFacetSorting(query, request);
 
-        if (page == null)
+        if (page == null) {
             page = 1;
+        }
 
         //default to 20 rows
         if (rows == null) {
@@ -221,9 +222,7 @@ public class SearchPrototypeController {
 
         model.addAttribute("q", (originalQ != null ? originalQ : ""));
 
-        if (!ProfileService.isRootUser()) {
-            query.add("fq", "root_only:false");
-        }
+        handleRootOnlyResults(query);
 
         //hide results when no criteria are selected, also don't ask solr for results
         if (StringUtils.isEmpty(q)
@@ -387,12 +386,14 @@ public class SearchPrototypeController {
         }
 
         query.setFacet(true);
-        if (limit == null)
+        if (limit == null) {
             limit = 10;
+        }
         query.setFacetLimit(limit);
 
-        if (StringUtils.isNotEmpty(sort))
+        if (StringUtils.isNotEmpty(sort)) {
             query.setFacetSort("index");
+        }
 
         //facet on a single field, limit by prefix
         query.addFacetField(field);
@@ -416,7 +417,7 @@ public class SearchPrototypeController {
 
             facetValues.addAll(facetField.getValues());
 
-            facetBuilderService.sortFacetValues(facetField.getName(),facetValues);
+            facetBuilderService.sortFacetValues(facetField.getName(), facetValues);
 
             for (FacetField.Count count : facetValues) {
                 FacetLookupEntry entry = new FacetLookupEntry();
@@ -461,6 +462,7 @@ public class SearchPrototypeController {
             query.setRows(rows);
         }
 
+        handleRootOnlyResults(query);
 
         QueryResponse response = new QueryResponse();
         try {
@@ -543,6 +545,8 @@ public class SearchPrototypeController {
         //set rows to...lots
         query.setRows(9999999);
 
+        handleRootOnlyResults(query);
+
         //  then connect to solr by http?  or solrj and convert to csv? hmmm..
 
         QueryResponse queryResponse = new QueryResponse();
@@ -598,7 +602,7 @@ public class SearchPrototypeController {
 
         FacetField facetField = response.getFacetField("category");
 
-        if (facetField != null && facetField.getValues() != null)
+        if (facetField != null && facetField.getValues() != null) {
             for (FacetField.Count count : facetField.getValues()) {
                 FacetLookupEntry entry = new FacetLookupEntry();
                 entry.setName(count.getName());
@@ -609,6 +613,7 @@ public class SearchPrototypeController {
                 entry.setCount(String.valueOf(count.getCount()));
                 facetValues.add(entry);
             }
+        }
 
         return facetValues;
     }
@@ -623,8 +628,9 @@ public class SearchPrototypeController {
 
         if (gene != null && terms != null && terms.size() > 0) {
             for (GenericTerm term : terms) {
-                if (!StringUtils.equals(term.getTermName(), "unspecified"))
+                if (!StringUtils.equals(term.getTermName(), "unspecified")) {
                     expressionLinks.put(term.getTermName(), SolrService.getExpressionLink(gene.getAbbreviation(), term.getTermName()));
+                }
             }
             model.addAttribute("expressionTermLinks", expressionLinks);
             model.addAttribute("gene", gene);
@@ -655,8 +661,9 @@ public class SearchPrototypeController {
         urlWithoutSort.removeNameValuePair("sort");
         model.addAttribute("baseUrlWithoutSort", urlWithoutSort.getURL());
         String sortUrlSeparator = "?";
-        if (StringUtils.contains(urlWithoutSort.getURL(), "?"))
+        if (StringUtils.contains(urlWithoutSort.getURL(), "?")) {
             sortUrlSeparator = "&";
+        }
         model.addAttribute("sortUrlSeparator", sortUrlSeparator);
         if (!StringUtils.isEmpty(sort) && StringUtils.equals(sort, "A to Z")) {
             query.addSort("name_sort", SolrQuery.ORDER.asc);
@@ -694,25 +701,33 @@ public class SearchPrototypeController {
     private SolrQuery handleFacetSorting(SolrQuery query, HttpServletRequest request) {
         Map<String, String[]> parameterMap = request.getParameterMap();
         for (String key : parameterMap.keySet()) {
-            if (key.startsWith("f.") && key.endsWith("facet.sort"))
+            if (key.startsWith("f.") && key.endsWith("facet.sort")) {
                 query.add(key, parameterMap.get(key));
+            }
 
         }
         return query;
     }
 
+    private void handleRootOnlyResults(SolrQuery query) {
+        if (!ProfileService.isRootUser()) {
+            query.add("fq", "root_only:false");
+        }
+    }
 
     private String getCategory(String[] filterQuery, String categoryFromPulldown) {
-        if (StringUtils.isNotEmpty(categoryFromPulldown))
+        if (StringUtils.isNotEmpty(categoryFromPulldown)) {
             return categoryFromPulldown;
+        }
 
         Map<String, List<String>> fqMap = SolrService.getFilterQueryMap(filterQuery);
 
         List<String> categories = fqMap.get("category");
-        if (categories == null || categories.isEmpty())
+        if (categories == null || categories.isEmpty()) {
             return null;
-        else
+        } else {
             return categories.get(0).replace("\"", "");
+        }
     }
 
 
@@ -788,22 +803,25 @@ public class SearchPrototypeController {
     private List<SearchResult> getXrefResult(SolrClient server, List<String> xrefList) {
 
 
-        if (CollectionUtils.isEmpty(xrefList))
+        if (CollectionUtils.isEmpty(xrefList)) {
             return null;
+        }
 
 
         SolrQuery query = new SolrQuery();
         StringBuilder sb = new StringBuilder();
 
         for (String xref : xrefList) {
-            if (!StringUtils.isEmpty(sb.toString()))
+            if (!StringUtils.isEmpty(sb.toString())) {
                 sb.append(" OR ");
+            }
             sb.append("id:");
             sb.append(xref);
         }
 
-        if (StringUtils.isEmpty(sb.toString()))
+        if (StringUtils.isEmpty(sb.toString())) {
             return null;
+        }
         query.setQuery(sb.toString());
 
         //more than a few would be silly...
