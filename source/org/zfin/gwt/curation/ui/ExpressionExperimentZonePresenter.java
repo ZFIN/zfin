@@ -124,8 +124,10 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     }
 
     private boolean isEfgWildtypeCombo(ExperimentDTO experimentDTO) {
-        if (experimentDTO.getFishDTO().isWildtype() && experimentDTO.getGene().getMarkerType().equals("Engineered Foreign Gene"))
-            return true;
+        if (experimentDTO.getGene()!=null) {
+            if (experimentDTO.getFishDTO().isWildtype() && experimentDTO.getGene().getMarkerType().equals("Engineered Foreign Gene"))
+                return true;
+        }
         return false;
     }
 
