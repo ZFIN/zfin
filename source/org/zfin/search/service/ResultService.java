@@ -94,6 +94,8 @@ public class ResultService {
     public static String TRANSCRIPT_NAME = "Transcript Name:";
     public static String TYPE = "Type:";
     public static String HOST_ORGANISM = "Host Organism:";
+    public static String DEFINITION = "Definition:";
+    public static String EXISTS_DURING = "Exists during:";
 
 
     public void injectAttributes(Collection<SearchResult> results) {
@@ -205,7 +207,7 @@ public class ResultService {
             result.addAttribute(SYNONYMS, withCommas(term.getAliases(), "alias"));
         }
         if (StringUtils.isNotEmpty(term.getDefinition())) {
-            result.addAttribute("Definition", term.getDefinition());
+            result.addAttribute(DEFINITION, term.getDefinition());
         }
 
         if (term.getOntology() == Ontology.ANATOMY) {
@@ -215,7 +217,7 @@ public class ResultService {
                 String message = term.getStart().getNameLong();
                 message += " - ";
                 message += term.getEnd().getNameLong();
-                result.addAttribute("Exists During:", message);
+                result.addAttribute(EXISTS_DURING, message);
             }
             if (CollectionUtils.isNotEmpty(term.getImages())) {
                 if (term.getImages().size() != 1) {
