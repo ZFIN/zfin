@@ -476,21 +476,19 @@ public class HibernateMarkerRepository implements MarkerRepository {
         AntibodyExternalNote externalNote = new AntibodyExternalNote();
         externalNote.setAntibody(antibody);
         externalNote.setNote(ZfinStringUtils.escapeHighUnicode(note));
-        externalNote.setType(ExternalNote.Type.ANTIBODY.toString());
-        HibernateUtil.currentSession().save(externalNote);
         if (!sourceZdbID.equals("")) {
             PublicationRepository pr = RepositoryFactory.getPublicationRepository();
             Publication publication = pr.getPublication(sourceZdbID);
-            Set<PublicationAttribution> pubattr = new HashSet<PublicationAttribution>();
             externalNote.setPublication(publication);
-            if (antibody.getExternalNotes() == null) {
-                Set<AntibodyExternalNote> abExtNote = new HashSet<AntibodyExternalNote>();
-                abExtNote.add(externalNote);
-                antibody.setExternalNotes(abExtNote);
-            } else {
-                antibody.getExternalNotes().add(externalNote);
-            }
             addMarkerPub(antibody, publication);
+        }
+        HibernateUtil.currentSession().save(externalNote);
+        if (antibody.getExternalNotes() == null) {
+            Set<AntibodyExternalNote> abExtNote = new HashSet<>();
+            abExtNote.add(externalNote);
+            antibody.setExternalNotes(abExtNote);
+        } else {
+            antibody.getExternalNotes().add(externalNote);
         }
         infrastructureRepository.insertUpdatesTable(antibody, "notes", "", ZfinStringUtils.escapeHighUnicode(note), "");
         return externalNote;
