@@ -79,11 +79,10 @@ open (LOG, ">log1.log") || die "Cannot open log1.log : $!\n";
 
 print LOG "\nDownloading OMIM files ... \n\n";
 
-system("/local/bin/wget ftp://ftp.omim.org/OMIM/mim2gene.txt");
-system("/local/bin/wget ftp://ftp.omim.org/OMIM/genemap");
-##system("/local/bin/wget ftp://ftp.omim.org/OMIM/genemap2.txt");
+system("/local/bin/wget http://omim.org/static/omim/data/mim2gene.txt");
+system("/local/bin/wget http://data.omim.org/downloads/qsxhqVTCT4m3YpTl1MnXiw/genemap.txt");
 
-if (!-e "genemap" || !-e "mim2gene.txt") {
+if (!-e "genemap.txt" || !-e "mim2gene.txt") {
    print "One or more required file(s) not exisiting/downloaded. Exit.\n";
    exit -1;
 }
@@ -131,16 +130,15 @@ $ctMim2genes = 0;
 $ctMimHGNCsymbols = $ctHGNCsymbolsNCBIgeneIds = $ctAllDiscontinuedMIMnums = 0;
 
 ### parsing mim2gene.txt
-## Mim Number    Type    Gene IDs        Approved Gene Symbols
-## 100650  gene/phenotype  217     ALDH2
-## 100680  moved/removed   -       -
-## 100850  gene    50      ACO2
-## 105800  phenotype       116833  ANIB1
-
+# Copyright (c) 1966-2016 Johns Hopkins University. Use of this file adheres to the terms specified at http://omim.org/help/agreement.
+# Generated: 2016-06-01
+# This file provides links between the genes in OMIM and other gene identifiers.
+# THIS IS NOT A TABLE OF GENE-PHENOTYPE RELATIONSHIPS.
+# MIM Number    MIM Entry Type (see FAQ 1.3 at http://omim.org/help/faq)        Entrez Gene ID (NCBI)   Approved Gene Symbol (HGNC)     Ensembl Gene ID (Ensembl)
 
 foreach $mim2gene (@mim2genes) {
    $ctMim2genes++;
-   next if $ctMim2genes < 2;
+   next if $ctMim2genes < 5;
 
    chop($mim2gene);
    @fieldsMim2gene = split(/\s+/, $mim2gene);
@@ -168,12 +166,12 @@ foreach $mim2gene (@mim2genes) {
      $allDiscontinuedMIMnums{$mimNum} = $type;
    }
 
-   next if $HGNCsymbol eq "-";
+   next if $HGNCsymbol eq "";
 
    $ctMimHGNCsymbols++;
    $mimNumsHGNCsymbols{$mimNum} = $HGNCsymbol;
 
-   if ($NCBIid ne "-") {
+   if ($NCBIid ne "") {
      $ctHGNCsymbolsNCBIgeneIds++;
      $HGNCsymbolsNCBIgeneIds{$HGNCsymbol} = $NCBIid;
      $ncbiGeneIdsHGNCsymbols{$NCBIid} = $HGNCsymbol;
@@ -181,7 +179,7 @@ foreach $mim2gene (@mim2genes) {
    }
 }
 
-$ctMim2genes = $ctMim2genes - 1;
+$ctMim2genes = $ctMim2genes - 5;
 print "total number of records on mim2gene.txt: $ctMim2genes \n\n\n";
 print "total number of records on mim2gene.txt that have HGNC symbol::: $ctMimHGNCsymbols \n\n\n";
 print "ctHGNCsymbolsNCBIgeneIds::: $ctHGNCsymbolsNCBIgeneIds \n\n\n";
@@ -220,7 +218,7 @@ print "total number of OMIM phenotype names stored at ZFIN: $ctOMIMphenotypeName
 print LOG "total number of OMIM phenotype names stored at ZFIN: $ctOMIMphenotypeNamesAtZFIN";
 
 
-open (GENEMAP, "genemap") || die "Cannot open genemap : $!\n";
+open (GENEMAP, "genemap.txt") || die "Cannot open genemap.txt : $!\n";
 
 open (OMIM, ">pre_load_input_omim.txt") || die "Cannot open pre_load_input_omim.txt : $!\n";
 
@@ -244,18 +242,21 @@ $ctHumanGenePhenoPossibleOrth = 0;
 %humanGeneMimNumPhenoNoOrth = ();
 %humanGeneMimNumPhenoPossibleOrth = ();
 
+# Sort  Month   Day     Year    Cyto Location   Gene Symbols    Confidence      Gene Name       MIM Number      Mapping Method  Comments        Phenotypes      Mouse Gene Symbol
+#1.35    10      25      12      1p36.32 PEX10, NALD, PBD6A, PBD6B       C       Peroxisome biogenesis factor 10 602859  REc             Peroxisome biogenesis disorder 6A (Zellweger), 614870 (3); Peroxisome biogenesis disorder 6B, 614871 (3)
 foreach $line (@lines) {
    $ctTotalOnGenmap++;
+   next if $ctTotalOnGenmap < 5;
    %ZDBgeneIdOMIMnums = ();
 
    $matchedGeneOrGenesFound = 0;
    $matchedSymbolFound = 0;
 
    chop($line);
-   @fields = split(/\|/, $line);
+   @fields = split(/\t/, $line);
 
-   ### not all filed[9] numbers are OMIM numbers for gene; many for phenotype
-   $mimNumGene = $fields[9];
+   ### not all filed[8] numbers are OMIM numbers for gene; many for phenotype
+   $mimNumGene = $fields[8];
 
 
    ### only process those with Gene OMIM numbers having HGNC symbols
@@ -290,10 +291,8 @@ foreach $line (@lines) {
         $matchedSymbolFound = 1;
      }
 
-     ### up to 3 fileds with disorders (including OMIM numbers and Phenotype mapping method - appears in parentheses after a disorder)
-     ### example: Cystic fibrosis, 219700 (3); Congenital bilateral absence of vas|deferens, 277180 (3); Sweat chloride elevation without CF (3); {Pancreatitis, idiopathic}, 167800 (3); {Hypertrypsinemia, neonatal} (3);|{Bronchiectasis with or without elevated sweat chloride 1, modifier of}, 211400 (3)|
 
-     $phenotypesIn3Fileds = $fields[13] . " " . $fields[14] . " " . $fields[15];
+     $phenotypesIn3Fileds = $fields[11];
 
      if ($phenotypesIn3Fileds ne "") {
        $ctNotEmptyPheno++;
@@ -374,6 +373,8 @@ foreach $line (@lines) {
 
    undef %ZDBgeneIdOMIMnums;
 }
+
+$ctTotalOnGenmap = $ctTotalOnGenmap - 4;
 
 close OMIM;
 close CHECKNOPHENO;
