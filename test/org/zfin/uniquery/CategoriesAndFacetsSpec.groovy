@@ -1,18 +1,19 @@
 package org.zfin.uniquery
 
 import org.apache.log4j.Logger
-import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.SolrClient
+import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.response.FacetField
 import org.apache.solr.client.solrj.response.QueryResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
-import org.zfin.search.FieldName
-import org.zfin.search.service.SolrService
 import org.zfin.search.Category
+import org.zfin.search.FieldName
+import org.zfin.search.presentation.FacetGroup
+import org.zfin.search.service.FacetBuilderService
+import org.zfin.search.service.SolrService
 import spock.lang.Shared
 import spock.lang.Unroll
-
 
 class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
 
@@ -203,6 +204,37 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                         FieldName.EXPRESSION_ANATOMY_TF,
                         FieldName.REGULATORY_REGION
                 ]
-        ].collectMany { category, facets -> facets.collect { facet -> [category, facet] } }
+        ].collectMany { category, fields -> fields.collect { field -> [category, field] } }
+    }
+
+    @Unroll
+    def "#category category groups"() {
+        when:
+        SolrService.setCategory(category.name, query)
+        query.rows = 20
+        QueryResponse response = client.query(query)
+        FacetBuilderService facetBuilder = new FacetBuilderService(response, "", new HashMap<String, Boolean>())
+        List<FacetGroup> facetGroups = facetBuilder.buildFacetGroup(category.name)
+
+        then:
+        facetGroups*.label == expectedLabels
+
+        where:
+        category                            | expectedLabels
+        Category.GENE                       | ["Type", "Expression", "Phenotype", "Human Disease", "Gene Ontology", "Location"]
+        Category.EXPRESSIONS                | ["Expressed Gene", "Expressed In Anatomy", "Stage", "Has Image", "Is Wildtype and Clean", "Assay", "Genotype", "Sequence Targeting Reagent (STR)", "Experimental Conditions"]
+        Category.PHENOTYPE                  | ["Phenotypic Gene", "Phenotype Statement", "Stage", "Manifests In", "Sequence Targeting Reagent (STR)", "Is Monogenic", "Has Image"]
+        Category.DISEASE                    | ["Gene", "Disease Model"]
+        Category.FISH                       | ["Affected Gene", "Is Model Of", "Expression Anatomy", "Phenotype", "Sequence Targeting Reagent (STR)", "Construct", "Mutation / Tg", "Background"]
+        Category.REPORTER_LINE              | ["Reporter Gene", "Expression Anatomy", "Regulatory Region", "Stage"]
+        Category.MUTANT                     | ["Type", "Affected Gene", "Phenotype", "Consequence", "Mutagen", "Source", "Lab of Origin", "Institution"]
+        Category.CONSTRUCT                  | ["Type", "Regulatory Region", "Coding Sequence", "Inserted In Gene", "Expressed In", "Reporter Color", "Engineered Region"]
+        Category.SEQUENCE_TARGETING_REAGENT | ["Type", "Targeted Gene"]
+        Category.ANTIBODY                   | ["Type", "Antigen Gene", "Labeled Structure", "Assay", "Source", "Host Organism"]
+        Category.MARKER                     | ["Type", "Location", "Source"]
+        Category.FIGURE                     | ["Expression Anatomy", "Expressed Gene", "Phenotype", "Construct", "Registered Author", "Has Image"]
+        Category.ANATOMY                    | ["Ontology", "Term Status"]
+        Category.COMMUNITY                  | ["Type"]
+        Category.PUBLICATION                | ["Curation", "Gene", "Mutation / Tg", "Human Disease", "Registered Author", "Journal", "Keyword", "MeSH Term", "Publication Type", "Publication Date"]
     }
 }
