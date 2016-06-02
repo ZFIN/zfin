@@ -128,7 +128,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         }
         return false;
     }
-   
+
 
     protected void populateDataTable() {
         int elementIndex = 0;
