@@ -12,7 +12,7 @@ public class QueryManipulationService {
         query = processIdIbd(query);
         query = processNcbiAccession(query);
         query = processConstructDash(query);
-        query = processSequence(query);
+
         return query;
     }
 
@@ -30,18 +30,7 @@ public class QueryManipulationService {
         return query.replaceAll("gene:"," gene\\\\:");
     }
 
-    public String processSequence(String query) {
-        char first=query.charAt(0);
-        if((Character.isUpperCase(first))&&(query.contains("."))) {
-            //this allows field specific searching on gene fields like affected_gene or misexpressed_gene
-
-            return query.split("\\.", 2)[0];
-        }
-        else{
-            return query;
-        }
-
-    }
+    
     //Case 12299, '(-' in construct names needs to be scaped
     public String processConstructDash(String query) {
         if (query.startsWith("Tg")) {
