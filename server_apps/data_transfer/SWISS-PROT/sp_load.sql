@@ -368,7 +368,7 @@ and exists (Select 'x' from pre_marker_go_term_evidence
         create temp table temp_mrkr_cc (
                 gene_zdb_id      varchar(50),
 		sp_acc_num	 varchar(50),
-                cc_note          lvarchar(32613)
+                cc_note          lvarchar(8192)
         )with no log;
 
 --!echo 'Load cc_external.unl'
@@ -386,7 +386,7 @@ and exists (Select 'x' from pre_marker_go_term_evidence
         create temp table temp_nondupl_mrkr_cc (
                 nondupl_gene_zdb_id      varchar(50),
 		nondupl_sp_acc_num	 varchar(50),
-                nondupl_cc_note          lvarchar(32613)
+                nondupl_cc_note          lvarchar(8192)
         )with no log;
 
         insert into temp_nondupl_mrkr_cc (nondupl_gene_zdb_id,nondupl_sp_acc_num,nondupl_cc_note)
@@ -396,11 +396,12 @@ and exists (Select 'x' from pre_marker_go_term_evidence
         create temp table pre_external_note(
                 p_extnote_zdb_id          varchar(50),
                 p_extnote_data_zdb_id     varchar(50), 
-                p_extnote_note            lvarchar(32613)
+                p_extnote_note            lvarchar(8192),
+                p_extnote_source_zdb_id   varchar(50)
         )with no log;
         
-        insert into pre_external_note (p_extnote_note,p_extnote_data_zdb_id)
-                select nondupl_cc_note, dblink_zdb_id
+        insert into pre_external_note (p_extnote_note,p_extnote_data_zdb_id, p_extnote_source_zdb_id)
+                select nondupl_cc_note, dblink_zdb_id, "ZDB-PUB-020723-2"
 	          from temp_nondupl_mrkr_cc, db_link
 		 where nondupl_gene_zdb_id = dblink_linked_recid
 		   and nondupl_sp_acc_num  = dblink_acc_num
@@ -416,13 +417,13 @@ and exists (Select 'x' from pre_marker_go_term_evidence
 --!echo '		into zdb_active_data'
 
 --!echo 'Insert into external_note'
-        insert into external_note (extnote_zdb_id, extnote_data_zdb_id, extnote_note)
+        insert into external_note (extnote_zdb_id, extnote_data_zdb_id, extnote_note, extnote_source_zdb_id)
                    select * from pre_external_note;
 --!echo '		into external_note'
 
 --!echo 'Attribute EXTNOTE to the internal pub record'
         insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-                select p_extnote_zdb_id, "ZDB-PUB-020723-2"
+                select p_extnote_zdb_id, p_extnote_source_zdb_id
                 from pre_external_note;
 --!echo '		into record_attribution'
 
