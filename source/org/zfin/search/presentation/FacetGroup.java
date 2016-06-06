@@ -39,7 +39,7 @@ public class FacetGroup {
 
     public void addFacet(Facet facet) {
         if (facets == null)
-            facets = new ArrayList<Facet>();
+            facets = new ArrayList<>();
 
         if (facet != null)
             facets.add(facet);
@@ -56,7 +56,7 @@ public class FacetGroup {
 
     public void addFacetQuery(FacetQuery facetQuery) {
         if (facetQueries == null)
-            facetQueries = new ArrayList<FacetQuery>();
+            facetQueries = new ArrayList<>();
 
         if (facetQuery != null)
             facetQueries.add(facetQuery);
