@@ -1,4 +1,4 @@
-ccid|cctype|cccategory|cccomp|cccasset|ccorder
+ccid|cctype|cccategory|compid|cccomp|cccasset|ccorder
 ZDB-TGCONSTRCT-140814-1|promoter of|promoter component|ZDB-GENE-991019-3|myl7|2|14
 ZDB-TGCONSTRCT-140814-1|controlled vocab component|promoter component|ZDB-CV-150506-10|:|2|15
 ZDB-TGCONSTRCT-140814-1|coding sequence of|coding sequence component|ZDB-EFG-070117-1|EGFP|2|16
