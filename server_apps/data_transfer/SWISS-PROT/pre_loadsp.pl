@@ -54,7 +54,7 @@ sub downloadGOtermFiles () {
 
 sub sendErrorReport ($) {
   
-  my $SUBJECT="Auto from $dbname SWISS-PROT:".$_[0];
+  my $SUBJECT="Auto from SWISS-PROT:".$_[0];
   my $MAILTO="<!--|SWISSPROT_EMAIL_ERR|-->";
   my $TXTFILE="./report.txt";
  
@@ -81,7 +81,8 @@ sub sendErrorReport ($) {
 # No parameter
 #
 sub sendRunningResult {
-		
+  my $dbname = $_[0];
+  		
  #----- One mail send out the checking report----
 
   my $SUBJECT="Auto from $dbname: SWISS-PROT check report";
@@ -533,7 +534,7 @@ print "\nfailed to run sp_check.pl.............\n\n";
 # concatenate all the sub problem files
 system("cat prob1 prob2 prob3 prob4 prob5 prob6 prob7 prob8 > allproblems.txt");
 
-&sendRunningResult();
+&sendRunningResult($dbname);
 
 exit;
 
