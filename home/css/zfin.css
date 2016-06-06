@@ -828,3 +828,7 @@ ul.comma-separated > li:last-child:after {
 .notransition {
     transition: none !important;
 }
+
+.flow-margin {
+    margin: 10px;
+}

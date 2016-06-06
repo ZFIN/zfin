@@ -5,12 +5,6 @@
         xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
         >
 
-    <ui:style>
-        .flow-margin {
-            margin: 10px;
-        }
-    </ui:style>
-
     <g:FlowPanel>
         <g:HorizontalPanel>
             <g:Label text="FISH / GENOTYPE CONSTRUCTION:&nbsp;" styleName="bold"/>
@@ -82,7 +76,7 @@
                     </td>
                 </tr>
             </g:HTMLPanel>
-            <g:HorizontalPanel styleName="{style.flow-margin}">
+            <g:HorizontalPanel styleName="flow-margin">
                 <g:Button ui:field="createFishGenotypeButton" text="Create Fish / Genotype"
                           addStyleNames="btn btn-primary" enabled="false"/>
                 <g:Button ui:field="resetButton" text="Reset" addStyleNames="btn btn-link"/>
