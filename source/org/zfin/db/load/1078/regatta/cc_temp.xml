@@ -15,7 +15,7 @@
         <column name="cccategory" type="String"/>
         <column name="compid" type="String"/>
         <column name="cccomp" type="String"/>
-        <column name="cccasset" type="String"/>
+        <column name="cccasset" type="Numeric"/>
 	<column name="ccorder" type="Numeric"/>
     </loadData>
 </changeSet>
