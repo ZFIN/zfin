@@ -75,73 +75,51 @@ public class RelatedDataService {
         String category = result.getCategory();
 
         List<String> links = new ArrayList<>();
-        String gBrowseLink;
+
         if (StringUtils.equals(category, Category.GENE.getName())
                 || (StringUtils.equals(category, Category.MUTANT.getName()) && (StringUtils.startsWith(result.getName(), "la0")))) {
 
-            //String gBrowseLink = getGBrowseLink(id);
-            if (ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
-                List<Marker> markerList = getMarkerRepository().getTranscriptByZdbID(id).getAllRelatedMarker();
-                int numberOfTargetGenes = 0;
-                for (Marker marker : markerList) {
-                    if (marker.getMarkerType().getType().name().equals(ActiveData.Type.GENE.name())) {
-                        id = marker.getZdbID();
-                        numberOfTargetGenes++;
-                    }
-                }
-                if (numberOfTargetGenes > 1) {
-                    return null;
-                }
-                gBrowseLink = makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
-                links.add(gBrowseLink);
-            }
 
+            String gBrowseLink = getGBrowseLink(id);
 
-            if (ActiveData.isValidActiveData(id, ActiveData.Type.GENE)) {
-                List<MarkerGenomeLocation> genomeLocations = getLinkageRepository().getGenomeLocation(getMarkerRepository().getMarkerByID(id));
-                for (MarkerGenomeLocation genomeLocation : genomeLocations) {
-                    if (genomeLocation.getSource() == GenomeLocation.Source.ZFIN) {
-
-
-                        gBrowseLink = makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
-                        links.add(gBrowseLink);
-                    }
-                }
-            }
-            /*if (!(id.contains("EFG"))) {
+            if (!(id.contains("EFG"))) {
                 if (!(entityName.contains("WITHDRAWN"))) {
-                    if (gBrowseLink != null) {
-                        links.add(gBrowseLink);
-                    }
-                }
-            }*/
-        }
 
-
-        if (!(id.contains("EFG"))) {
-            if (StringUtils.equals(category, Category.GENE.getName())) {
-                Marker marker = getMarkerRepository().getMarkerByID(id);
-                if (!ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
-                    OrthologyPresentationBean orthologyEvidenceBean = MarkerService.getOrthologyEvidence(marker);
-                    if (orthologyEvidenceBean != null) {
-                        List<OrthologyPresentationRow> markerList = orthologyEvidenceBean.getOrthologs();
-                        if (CollectionUtils.isNotEmpty(markerList)) {
-                            links.add(getOrthologyLink(id));
+                    if (getLinkageRepository().hasGenomeLocation(getMarkerRepository().getMarkerByID(id), GenomeLocation.Source.ENSEMBL)) {
+                        if (gBrowseLink != null) {
+                            links.add(gBrowseLink);
                         }
                     }
                 }
-                addSequenceLink(links, marker);
             }
         }
 
-        //Special case here, so that the ZFIN orthology pub doesn't get an orthlogy link, because the page will take 10 minutes to load!
-        if (StringUtils.equals(category, Category.PUBLICATION.getName())
-                && StringUtils.equals(result.getHasOrthology(), "true")
-                && !StringUtils.equals(result.getId(), "ZDB-PUB-030905-1")) {
-            links.add(getOrthoListLink(id));
-        }
 
-        links.addAll(getXrefLinks(result));
+
+            if (!(id.contains("EFG"))) {
+                if (StringUtils.equals(category, Category.GENE.getName())) {
+                    Marker marker = getMarkerRepository().getMarkerByID(id);
+                    if (!ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
+                        OrthologyPresentationBean orthologyEvidenceBean = MarkerService.getOrthologyEvidence(marker);
+                        if (orthologyEvidenceBean != null) {
+                            List<OrthologyPresentationRow> markerList = orthologyEvidenceBean.getOrthologs();
+                            if (CollectionUtils.isNotEmpty(markerList)) {
+                                links.add(getOrthologyLink(id));
+                            }
+                        }
+                    }
+                    addSequenceLink(links, marker);
+                }
+            }
+
+            //Special case here, so that the ZFIN orthology pub doesn't get an orthlogy link, because the page will take 10 minutes to load!
+            if (StringUtils.equals(category, Category.PUBLICATION.getName())
+                    && StringUtils.equals(result.getHasOrthology(), "true")
+                    && !StringUtils.equals(result.getId(), "ZDB-PUB-030905-1")) {
+                links.add(getOrthoListLink(id));
+            }
+
+            links.addAll(getXrefLinks(result));
 
 
         if (StringUtils.equals(category, Category.MUTANT.getName())) {
