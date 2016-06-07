@@ -30,7 +30,7 @@ public class QueryManipulationService {
         return query.replaceAll("gene:"," gene\\\\:");
     }
 
-
+    
     //Case 12299, '(-' in construct names needs to be scaped
     public String processConstructDash(String query) {
         if (query.startsWith("Tg")) {

@@ -5,22 +5,9 @@
         xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui'
         >
 
-    <ui:style>
-        .flow-margin {
-            margin: 10px;
-        }
-    </ui:style>
-
-
     <g:VerticalPanel spacing="10" width="100%">
-<<<<<<< HEAD
-        <zfin-mod:FishGenotypeConstruction ui:field="genotypeConstructionView" styleName="{style.flow-margin}"/>
-        <zfin-mod:FishView ui:field="fishView" styleName="{style.flow-margin}"/>
-        <zfin-mod:GenotypeView ui:field="genotypeView" styleName="{style.flow-margin}"/>
-=======
         <zfin-mod:FishGenotypeConstruction ui:field="genotypeConstructionView" styleName="flow-margin"/>
         <zfin-mod:FishView ui:field="fishView" styleName="flow-margin"/>
         <zfin-mod:GenotypeView ui:field="genotypeView" styleName="flow-margin"/>
->>>>>>> 60fb778c4e2bf7470187f956c1b61b0a7b049236
     </g:VerticalPanel>
 </ui:UiBinder>
