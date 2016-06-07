@@ -1,0 +1,95 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        >
+
+    <ui:style>
+        .flow-margin {
+            margin: 10px;
+        }
+    </ui:style>
+
+    <g:FlowPanel>
+        <g:HorizontalPanel>
+            <g:Label text="FISH / GENOTYPE CONSTRUCTION:&nbsp;" styleName="bold"/>
+            <zfin:ShowHideToggle widget="{genotypeConstructionPanel}" ui:field="showHideToggle" show="true"/>
+        </g:HorizontalPanel>
+        <g:VerticalPanel ui:field="genotypeConstructionPanel" addStyleNames="newgroup oddgroup odd experiment-row"
+                         spacing="5" visible="true">
+            <zfin:ZfinFlexTable ui:field="genotypeConstructionTable" numberOfColumns="2" styleName="searchresults"
+                                cellSpacing="5" cellPadding="5"/>
+            <g:HTMLPanel tag="table" styleName="searchresults">
+                <tr>
+                    <td width="15%"></td>
+                    <td class="bold" style="white-space: nowrap;">
+                        <zfin:StringListBox ui:field="featureForGenotypeListBox"/>
+                        <zfin:StringListBox ui:field="zygosityListBox"/>
+                        <zfin:StringListBox ui:field="zygosityMaternalListBox"/>
+                        <zfin:StringListBox ui:field="zygosityPaternalListBox"/>
+                        <g:Button ui:field="addGenotypeFeature" text="Add" styleName="btn btn-default"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="15%"></td>
+                    <td class="bold" style="white-space: nowrap;">
+                        <g:Button ui:field="buttonUUU" addStyleNames=" btn-default">UUU</g:Button>
+                        <g:Button ui:field="button2UU" addStyleNames=" btn-default">2UU</g:Button>
+                        <g:Button ui:field="button211" addStyleNames=" btn-default">211</g:Button>
+                        <g:Button ui:field="button1UU" addStyleNames=" btn-default">1UU</g:Button>
+                        <g:Button ui:field="button22U" addStyleNames=" btn-default">22U</g:Button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="bold">
+                        <g:InlineLabel>Background</g:InlineLabel>
+                    </td>
+                    <td>
+                        <zfin:StringListBox ui:field="backgroundListBox"/>
+                        <g:HorizontalPanel ui:field="backgroundGenotypePanel"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="bold" nowrap="true">
+                        <g:InlineLabel>STR Reagent</g:InlineLabel>
+                    </td>
+                    <td>
+                        <zfin:StringListBox ui:field="strSelectionBox"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="bold" nowrap="true">
+                    </td>
+                    <td>
+                        <g:FlowPanel ui:field="sTRPanel"/>
+                    </td>
+                </tr>
+                <tr style="outline: thin solid">
+                    <td class="bold" nowrap="true">
+                        <g:InlineLabel>Fish Display Name</g:InlineLabel>
+                    </td>
+                    <td>
+                        <g:InlineHTML ui:field="genotypeDisplayName"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="bold" nowrap="true">
+                        <g:InlineLabel>Fish Handle</g:InlineLabel>
+                    </td>
+                    <td>
+                        <g:Label ui:field="genotypeHandle"/>
+                    </td>
+                </tr>
+            </g:HTMLPanel>
+            <g:HorizontalPanel styleName="{style.flow-margin}">
+                <g:Button ui:field="createFishGenotypeButton" text="Create Fish / Genotype"
+                          addStyleNames="btn btn-primary" enabled="false"/>
+                <g:Button ui:field="resetButton" text="Reset" addStyleNames="btn btn-link"/>
+            </g:HorizontalPanel>
+            <zfin:SimpleErrorElement ui:field="errorLabel"/>
+            <g:Label ui:field="messageLabel"/>
+            <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="false"/>
+        </g:VerticalPanel>
+    </g:FlowPanel>
+</ui:UiBinder>

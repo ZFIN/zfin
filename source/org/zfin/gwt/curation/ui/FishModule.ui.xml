@@ -2,15 +2,19 @@
 <ui:UiBinder
         xmlns:ui='urn:ui:com.google.gwt.uibinder'
         xmlns:g='urn:import:com.google.gwt.user.client.ui'
-        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
         xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui'
         >
 
+    <ui:style>
+        .flow-margin {
+            margin: 10px;
+        }
+    </ui:style>
+
+
     <g:VerticalPanel spacing="10" width="100%">
-        <zfin-mod:GenotypeView ui:field="genotypeView"/>
-        <zfin-mod:ImportGenotype ui:field="importGenotypeView"/>
-        <zfin-mod:GenotypeConstruction ui:field="genotypeConstructionView"/>
-        <zfin-mod:FishConstruction ui:field="fishConstructionView"/>
-        <zfin-mod:FishView ui:field="fishView"/>
+        <zfin-mod:FishGenotypeConstruction ui:field="genotypeConstructionView" styleName="{style.flow-margin}"/>
+        <zfin-mod:FishView ui:field="fishView" styleName="{style.flow-margin}"/>
+        <zfin-mod:GenotypeView ui:field="genotypeView" styleName="{style.flow-margin}"/>
     </g:VerticalPanel>
 </ui:UiBinder>

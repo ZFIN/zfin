@@ -38,18 +38,12 @@ public class FishModule extends Composite implements EntryPoint {
     @UiField
     GenotypeView genotypeView;
     @UiField
-    ImportGenotype importGenotypeView;
-    @UiField
     FishView fishView;
     @UiField
-    FishConstruction fishConstructionView;
-    @UiField
-    GenotypeConstruction genotypeConstructionView;
+    FishGenotypeConstruction genotypeConstructionView;
 
     private GenotypePresenter presenter;
-    private ImportGenotypePresenter importPresenter;
-    private GenotypeConstructionPresenter genotypeConstructionPresenter;
-    private FishConstructionPresenter fishConstructionPresenter;
+    private FishGenotypeConstructionPresenter genotypeConstructionPresenter;
     private FishPresenter fishPresenter;
 
     @Override
@@ -64,68 +58,40 @@ public class FishModule extends Composite implements EntryPoint {
         addHandlers();
         presenter = new GenotypePresenter(genotypeView, publicationID);
         presenter.go();
-        importPresenter = new ImportGenotypePresenter(importGenotypeView, publicationID);
-        importPresenter.go();
-        importGenotypeView.setPresenter(importPresenter);
 
         fishPresenter = new FishPresenter(fishView, publicationID);
         fishPresenter.go();
-        fishConstructionPresenter = new FishConstructionPresenter(fishConstructionView, publicationID);
-        fishConstructionPresenter.setFishPresenter(fishPresenter);
-        fishConstructionPresenter.go();
-        genotypeConstructionPresenter = new GenotypeConstructionPresenter(genotypeConstructionView, publicationID);
+        genotypeConstructionPresenter = new FishGenotypeConstructionPresenter(genotypeConstructionView, publicationID);
         genotypeConstructionPresenter.go();
     }
 
     private void bindEventBusHandler() {
-        AppUtils.EVENT_BUS.addHandler(AddNewFishEvent.TYPE,
-                new AddNewFishEventHandler() {
-                    @Override
-                    public void onAddFish(AddNewFishEvent event) {
-                        fishPresenter.go();
-                        attributionModule.populateAttributeRemoval();
-                        importGenotypeView.resetGUI();
-                        genotypeConstructionView.resetGUI();
-                    }
-                });
         AppUtils.EVENT_BUS.addHandler(AddNewGenotypeEvent.TYPE,
                 new AddNewGenotypeEventHandler() {
                     @Override
                     public void onAddGenotype(AddNewGenotypeEvent event) {
                         presenter.go();
-                        fishConstructionPresenter.updateGenotypeList();
                         attributionModule.populateAttributeRemoval();
+                        fishPresenter.go();
+                        genotypeConstructionView.resetGUI();
                     }
                 });
         AppUtils.EVENT_BUS.addHandler(RemoveAttributeEvent.TYPE,
                 new RemoveAttributeEventHandler() {
                     @Override
                     public void onRemoveAttribute(RemoveAttributeEvent event) {
-                        importPresenter.updateFeatureList();
                         presenter.go();
                         genotypeConstructionPresenter.updateFeatureList();
-                        fishConstructionPresenter.retrieveInitialEntities();
                         attributionModule.populateAttributeRemoval();
                         fishPresenter.go();
                     }
                 });
-        AppUtils.EVENT_BUS.addHandler(ImportGenotypeEvent.TYPE,
-                new ImportGenotypeEventHandler() {
-                    @Override
-                    public void onImportGenotype(ImportGenotypeEvent event) {
-                        presenter.go();
-                        fishConstructionPresenter.updateGenotypeList();
-                        attributionModule.populateAttributeRemoval();
-                    }
-                });
         AppUtils.EVENT_BUS.addHandler(RemoveAttributeEvent.TYPE,
                 new RemoveAttributeEventHandler() {
                     @Override
                     public void onRemoveAttribute(RemoveAttributeEvent event) {
                         attributionModule.populateAttributeRemoval();
-                        importPresenter.updateFeatureList();
                         genotypeConstructionPresenter.updateFeatureList();
-                        fishConstructionPresenter.updateSTRListBox();
                     }
                 });
         AppUtils.EVENT_BUS.addHandler(AddAttributeEvent.TYPE,
@@ -133,9 +99,7 @@ public class FishModule extends Composite implements EntryPoint {
                     @Override
                     public void onEvent(AddAttributeEvent event) {
                         attributionModule.populateAttributeRemoval();
-                        importPresenter.updateFeatureList();
-                        genotypeConstructionPresenter.updateFeatureList();
-                        fishConstructionPresenter.updateSTRListBox();
+                        genotypeConstructionPresenter.update();
                     }
                 });
 
