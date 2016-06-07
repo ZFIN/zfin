@@ -54,7 +54,7 @@ sub downloadGOtermFiles () {
 
 sub sendErrorReport ($) {
   
-  my $SUBJECT="Auto SWISS-PROT:".$_[0];
+  my $SUBJECT="Auto from SWISS-PROT:".$_[0];
   my $MAILTO="<!--|SWISSPROT_EMAIL_ERR|-->";
   my $TXTFILE="./report.txt";
  
@@ -81,10 +81,11 @@ sub sendErrorReport ($) {
 # No parameter
 #
 sub sendRunningResult {
-		
+  my $dbname = $_[0];
+  		
  #----- One mail send out the checking report----
 
-  my $SUBJECT="Auto: SWISS-PROT check report";
+  my $SUBJECT="Auto from $dbname: SWISS-PROT check report";
   my $MAILTO="<!--|SWISSPROT_EMAIL_REPORT|-->";
   my $TXTFILE="./checkreport.txt";
  
@@ -107,7 +108,7 @@ sub sendRunningResult {
   
  #----- Another mail send out problem files ----
 
-  my $SUBJECT="Auto: SWISS-PROT problem file";
+  my $SUBJECT="Auto from $dbname: SWISS-PROT problem file";
   my $MAILTO="<!--|SWISSPROT_EMAIL_REPORT|-->";     
   my $ATTFILE = "allproblems.txt";
 
@@ -130,7 +131,7 @@ sub sendRunningResult {
 
  #----- Another mail send out problem files ----
 
-  my $SUBJECT="Auto: PubMed not in ZFIN";
+  my $SUBJECT="Auto from $dbname: PubMed not in ZFIN";
   my $MAILTO="<!--|SWISSPROT_EMAIL_REPORT|-->";     
   my $ATTFILE = "pubmed_not_in_zfin";
 
@@ -153,7 +154,7 @@ sub sendRunningResult {
 
  #----- Another mail send out problem files ----
 
-  my $SUBJECT="Auto: report of processing pre_zfin.org";
+  my $SUBJECT="Auto from $dbname: report of processing pre_zfin.org";
   my $MAILTO="<!--|SWISSPROT_EMAIL_REPORT|-->";     
   my $ATTFILE = "redGeneReport.txt";
 
@@ -533,7 +534,7 @@ print "\nfailed to run sp_check.pl.............\n\n";
 # concatenate all the sub problem files
 system("cat prob1 prob2 prob3 prob4 prob5 prob6 prob7 prob8 > allproblems.txt");
 
-&sendRunningResult();
+&sendRunningResult($dbname);
 
 exit;
 

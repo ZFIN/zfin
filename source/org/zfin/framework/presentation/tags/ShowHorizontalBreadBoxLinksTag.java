@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.zfin.search.FacetQueryEnum;
+import org.zfin.search.service.FacetBuilderService;
 import org.zfin.search.service.SolrService;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.util.URLCreator;
@@ -15,6 +16,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
+import java.util.Map;
 
 
 public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
@@ -89,6 +91,13 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
         FacetQueryEnum facetQueryEnum = FacetQueryEnum.getFacetQueryEnum(fq);
         if (facetQueryEnum != null) {
             nameValuePair = new BasicNameValuePair(nameValuePair.getName(), facetQueryEnum.getLabel());
+        }
+
+        Map<String, String> dateMap = FacetBuilderService.getPublicationDateQueries();
+        for(String key: dateMap.keySet()){
+            if(dateMap.get(key).equals(fq)){
+                nameValuePair = new BasicNameValuePair(nameValuePair.getName(), key);
+            }
         }
 
         if (!StringUtils.equals(nameValuePair.getName(), "category")) {

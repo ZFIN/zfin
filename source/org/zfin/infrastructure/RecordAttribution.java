@@ -9,16 +9,19 @@ import java.io.Serializable;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorFormula(
-        "CASE get_obj_type(recattrib_source_zdb_id)" +
-                "     WHEN 'PUB' then  " +
-                "           CASE get_obj_type(recattrib_data_zdb_id)" +
-                "                WHEN 'TERM' then 'Term   '" +
-                "                ELSE             'Pub    '" +
-                "           END " +
-                "     WHEN 'PERS' THEN 'Person '" +
-                "     ELSE             'Pub    '" +
-                "END")
+        "CASE get_obj_type(recattrib_source_zdb_id)\n" +
+                "                                    WHEN 'PUB' THEN\n" +
+                "                                    CASE get_obj_type(recattrib_data_zdb_id)\n" +
+                "                                         WHEN 'TERM' then 'Term   '\n" +
+                "                                         ELSE             'Pub    '\n" +
+                "                                    END\n" +
+                "                                    WHEN 'PERS' THEN      'Person '\n" +
+                "                                    WHEN 'COMPANY' THEN   'Company'\n" +
+                "                                    WHEN 'JRNL' THEN      'Journal'\n" +
+                "                                    ELSE                  'other  '\n" +
+                "                                 END")
 @Table(name = "record_attribution")
+@DiscriminatorValue("other  ")
 public class RecordAttribution implements Serializable {
 
     @Id

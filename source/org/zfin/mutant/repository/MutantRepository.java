@@ -344,7 +344,7 @@ public interface MutantRepository {
      */
     List<SequenceTargetingReagent> getStrList(String publicationID);
 
-    void createFish(Fish fish, Publication publication);
+    boolean createFish(Fish fish, Publication publication);
 
     /**
      * Retrieve all fish attributed to a given pub

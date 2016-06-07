@@ -22,6 +22,7 @@ import org.zfin.publication.Publication;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -221,7 +222,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
     }
 
     @Override
-    public GenotypeCreationReportDTO createGenotypeFeature(String publicationID, List<GenotypeFeatureDTO> genotypeFeatureDTOList, List<GenotypeDTO> genotypeBackgroundDTOList, String nickname)
+    public GenotypeCreationReportDTO createGenotypeFish(String publicationID, List<GenotypeFeatureDTO> genotypeFeatureDTOList, List<GenotypeDTO> genotypeBackgroundDTOList, Set<RelatedEntityDTO> strSet)
             throws TermNotFoundException {
         Genotype genotype;
         HibernateUtil.createTransaction();
@@ -243,19 +244,16 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
                 }
             }
             genotype = GenotypeService.createGenotype(genotypeFeatureDTOList, genotypeBackgroundList);
-            if (nickname != null)
-                genotype.setNickname(nickname);
 
             // check if the genotype already exists
             Genotype existentGenotype = getMutantRepository().getGenotypeByHandle(genotype.getHandle());
             if (existentGenotype != null) {
+                genotype = existentGenotype;
                 PublicationAttribution attribution = new PublicationAttribution();
                 attribution.setPublication(publication);
                 attribution.setDataZdbID(existentGenotype.getZdbID());
                 PublicationAttribution publicationAttribution = getInfrastructureRepository().getPublicationAttribution(attribution);
-                if (publicationAttribution != null)
-                    throw new TermNotFoundException("Genotype already exists.");
-                else {
+                if (publicationAttribution == null) {
                     getInfrastructureRepository().insertPublicAttribution(existentGenotype.getZdbID(), publicationID);
                     report.setReportMessage("Imported Genotype " + genotype.getHandle());
                 }
@@ -263,6 +261,13 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
                 getMutantRepository().saveGenotype(genotype, publicationID);
                 report.setReportMessage("Created Genotype " + genotype.getHandle());
             }
+            FishDTO fishDTO = new FishDTO();
+            fishDTO.setStrList((new ArrayList<>(strSet)));
+            GenotypeDTO genoDTO = new GenotypeDTO();
+            genoDTO.setZdbID(genotype.getZdbID());
+            genoDTO.setName(genotype.getName());
+            fishDTO.setGenotypeDTO(genoDTO);
+            createFish(publication, fishDTO, report);
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
@@ -350,20 +355,13 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
         return dtoList;
     }
 
-    @Override
-    public List<FishDTO> createFish(String publicationID, FishDTO newFish) throws TermNotFoundException {
-        HibernateUtil.createTransaction();
-        try {
-            Publication publication = getPublicationRepository().getPublication(publicationID);
-            Fish fish = DTOConversionService.convertToFishFromFishDTO(newFish);
-            getMutantRepository().createFish(fish, publication);
-            HibernateUtil.flushAndCommitCurrentSession();
-        } catch (Exception e) {
-            LOG.error(e);
-            HibernateUtil.rollbackTransaction();
-            throw new TermNotFoundException(e.getMessage());
+    protected void createFish(Publication publication, FishDTO newFish, GenotypeCreationReportDTO report) throws TermNotFoundException {
+        Fish fish = DTOConversionService.convertToFishFromFishDTO(newFish);
+        if (getMutantRepository().createFish(fish, publication)) {
+            report.addMessage("created new fish " + fish.getHandle());
+        } else {
+            report.addMessage("imported fish " + fish.getHandle());
         }
-        return getFishList(publicationID);
     }
 
     @Override

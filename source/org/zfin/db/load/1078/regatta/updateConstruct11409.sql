@@ -1,4 +1,6 @@
 --liquibase formatted sql
+--changeset pm:constructNameUpdatesRegatta
+
 update construct_component set cc_component=',' where cc_component=')' and cc_construct_zdb_id like 'ZDB-TGCONSTRCT-140814-%';
 update construct_component set cc_component_type='controlled vocab component' where cc_construct_Zdb_id like 'ZDB-TGCONSTRCT-140814-%' and cc_order=13;
 update construct_component set cc_component_category='cassette delimiter' where cc_construct_Zdb_id like 'ZDB-TGCONSTRCT-140814-%' and cc_order=13;

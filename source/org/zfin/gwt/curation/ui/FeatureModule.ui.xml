@@ -11,9 +11,9 @@
     </ui:style>
 
     <g:FlowPanel>
-        <zfin-mod:AttributionModule ui:field="attributionModule" styleName="{style.flow-margin}"/>
-        <zfin-mod:FeatureAddView ui:field="featureAddView" styleName="{style.flow-margin}"/>
-        <zfin-mod:FeatureEditView ui:field="featureEditView" styleName="{style.flow-margin}"/>
-        <zfin-mod:FeatureRelationshipView ui:field="featureRelationshipView" styleName="{style.flow-margin}"/>
+        <zfin-mod:AttributionModule ui:field="attributionModule" styleName="flow-margin"/>
+        <zfin-mod:FeatureAddView ui:field="featureAddView" styleName="flow-margin"/>
+        <zfin-mod:FeatureEditView ui:field="featureEditView" styleName="flow-margin"/>
+        <zfin-mod:FeatureRelationshipView ui:field="featureRelationshipView" styleName="flow-margin"/>
     </g:FlowPanel>
 </ui:UiBinder>

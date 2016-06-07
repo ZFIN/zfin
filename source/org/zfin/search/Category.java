@@ -222,7 +222,7 @@ public enum Category {
     }
 
     public List<FacetQueryEnum> getFacetQueriesForField(FieldName fieldName) {
-        List<FacetQueryEnum> matchingFacetQueries = new ArrayList<FacetQueryEnum>();
+        List<FacetQueryEnum> matchingFacetQueries = new ArrayList<>();
 
         for (FacetQueryEnum facetQueryEnum : facetQueries) {
             if (facetQueryEnum.getFieldName() == fieldName) {
