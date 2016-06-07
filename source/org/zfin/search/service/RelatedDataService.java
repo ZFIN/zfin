@@ -85,7 +85,7 @@ public class RelatedDataService {
             if (!(id.contains("EFG"))) {
                 if (!(entityName.contains("WITHDRAWN"))) {
 
-                    if (getLinkageRepository().hasGenomeLocation(getMarkerRepository().getMarkerByID(id), GenomeLocation.Source.ENSEMBL)) {
+                    if (getLinkageRepository().hasGenomeLocation(getMarkerRepository().getMarkerByID(id), GenomeLocation.Source.ENSEMBL)||(getLinkageRepository().hasGenomeLocation(getMarkerRepository().getMarkerByID(id), GenomeLocation.Source.VEGA))) {
                         if (gBrowseLink != null) {
                             links.add(gBrowseLink);
                         }
