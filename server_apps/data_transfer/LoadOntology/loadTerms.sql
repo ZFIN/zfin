@@ -1,12 +1,12 @@
 begin work;
 
-create temp table tmp_header (format_ver varchar(10), data_ver varchar(10), datet varchar(20), saved_by varchar(10), auto varchar(50), default_namespace varchar(30), remark varchar(100))
+create temp table tmp_header (format_ver varchar(10), data_ver varchar(10), datet varchar(20), saved_by varchar(10), auto varchar(50), default_namespace varchar(50), remark varchar(100))
 with no log;
 
 load from ontology_header.unl
   insert into tmp_header;
 
-create temp table tmp_syndef (namespace varchar(30), type varchar(30), def varchar(100), scoper varchar(30), syntypedefs varchar(20))
+create temp table tmp_syndef (namespace varchar(50), type varchar(30), def varchar(100), scoper varchar(30), syntypedefs varchar(20))
 with no log;
 
 load from syntypedefs_header.unl

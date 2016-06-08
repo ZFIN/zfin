@@ -53,3 +53,4 @@ MPATH     /action/ontology/term-detail/MPATH
 BSPO     /action/ontology/term-detail/BSPO
 SO     /action/ontology/term-detail/SO
 DOID     /action/ontology/term-detail/DOID
+ZECO     /action/ontology/term-detail/ZECO
