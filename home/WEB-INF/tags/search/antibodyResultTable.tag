@@ -23,18 +23,7 @@
             <td>${result.attributes[hostOrganismAttribute]}</td>
             <td>${result.attributes[typeAttribute]}</td>
             <td>${result.attributes[sourceAttribute]}</td>
-            <td>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Related <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu pull-right">
-                        <c:forEach var="link" items="${result.relatedLinks}">
-                            <li>${link}</li>
-                        </c:forEach>
-                    </ul>
-                </div>
-            </td>
+            <td><zfin-search:relatedLinkMenu links="${result.relatedLinks}"/></td>
         </zfin:alternating-tr>
     </c:forEach>
 </table>

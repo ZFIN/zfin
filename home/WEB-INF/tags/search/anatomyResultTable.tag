@@ -22,18 +22,7 @@
             <td>${result.attributes[aliasAttribute]}</td>
             <td>${result.attributes[definitionAttribute]}</td>
             <td>${result.attributes[stageAttribute]}</td>
-            <td>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Related <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu pull-right">
-                        <c:forEach var="link" items="${result.relatedLinks}">
-                            <li>${link}</li>
-                        </c:forEach>
-                    </ul>
-                </div>
-            </td>
+            <td><zfin-search:relatedLinkMenu links="${result.relatedLinks}"/></td>
             <td>${result.id}</td>
         </zfin:alternating-tr>
     </c:forEach>
