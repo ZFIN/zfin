@@ -242,6 +242,25 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="figure-gallery-preview-container">
+                            <div class="figure-gallery-image-strip">
+                                <img src="/imageLoadUp/medium/ZDB-IMAGE-081117-41.jpg">
+                                <img src="/imageLoadUp/medium/ZDB-IMAGE-081117-43.jpg">
+                                <img src="/imageLoadUp/medium/ZDB-IMAGE-111028-25.jpg">
+                                <img src="/imageLoadUp/medium/ZDB-IMAGE-120315-14.jpg">
+                                <img src="/imageLoadUp/medium/ZDB-IMAGE-070613-30.jpeg">
+                                <img src="/imageLoadUp/medium/ZDB-IMAGE-120601-40.jpg">
+                                <img src="/imageLoadUp/medium/ZDB-IMAGE-070307-4.jpg">
+                            </div>
+                            <div class="figure-gallery-overlay-link">
+                                <a href="#">View More Images</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <c:forEach var="result" items="${results}">
                     <zfin2:searchResult result="${result}"/>
                 </c:forEach>

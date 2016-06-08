@@ -476,3 +476,38 @@ i.facet-selected,
 .additional-facet-values {
     display: none;
 }
+
+.figure-gallery-preview-container {
+    margin-top: 0.5em;
+    position: relative;
+}
+
+.figure-gallery-image-strip {
+    height: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.figure-gallery-image-strip > img {
+    height: 100%;
+    margin-right: 0.25em;
+    border: 1px solid #c0c7c0;
+    padding: 0.5em;
+}
+
+.figure-gallery-overlay-link {
+    text-align: center;
+}
+
+.figure-gallery-overlay-link > a {
+    position: absolute;
+    width: 150px;
+    height: 100%;
+    right: 0;
+    top: 0;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 50px 5px 5px 5px;
+}
