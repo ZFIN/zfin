@@ -246,13 +246,14 @@
                     <div class="col-md-12">
                         <div class="figure-gallery-preview-container">
                             <div class="figure-gallery-image-strip">
-                                <img src="/imageLoadUp/medium/ZDB-IMAGE-081117-41.jpg">
-                                <img src="/imageLoadUp/medium/ZDB-IMAGE-081117-43.jpg">
-                                <img src="/imageLoadUp/medium/ZDB-IMAGE-111028-25.jpg">
-                                <img src="/imageLoadUp/medium/ZDB-IMAGE-120315-14.jpg">
-                                <img src="/imageLoadUp/medium/ZDB-IMAGE-070613-30.jpeg">
-                                <img src="/imageLoadUp/medium/ZDB-IMAGE-120601-40.jpg">
-                                <img src="/imageLoadUp/medium/ZDB-IMAGE-070307-4.jpg">
+                                <%-- TODO: replace data-fill-size with just the zdb id? might need it for fetching figure expression details --%>
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-081117-41.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-081117-41.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-081117-43.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-081117-43.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-111028-25.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-111028-25.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-120315-14.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-120315-14.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-070613-30.jpeg" src="/imageLoadUp/medium/ZDB-IMAGE-070613-30.jpeg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-120601-40.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-120601-40.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-070307-4.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-070307-4.jpg">
                             </div>
                             <div class="figure-gallery-overlay-link">
                                 <a href="#">View More Images</a>
@@ -312,7 +313,7 @@
             at my debug output!</a>
     </div>
     <div class="debug-output"
-         style="display:none; clear: both; background-color: pink ; border:5px solid magenta; display: none">
+         style="display:none; clear: both; background-color: pink ; border:5px solid magenta;">
         ${debug}
     </div>
 
@@ -321,6 +322,20 @@
 
 
 <zfin-search:allFacetsModal/>
+
+<div id="figureGalleryModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Figure 4 from Chisenhall <i>et. al.</i>, 2015</h4>
+            </div>
+            <div class="modal-body figure-gallery-modal-body">
+                <img class="figure-gallery-modal-image" src>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <script>
@@ -356,7 +371,7 @@ function submitAdvancedQuery(fields) {
 
 }
 
-$(document).ready(function () {
+$(function () {
 
     $('.list-collapse').listCollapse({label: 'results', itemsToShow: 3});
 
@@ -445,16 +460,50 @@ $(document).ready(function () {
 
     $('#boxy-result-button').click(function() {
         showBoxyResults();
-    })
+    });
     $('#table-result-button').click(function() {
         showTabularResults();
-    })
+    });
 
     if(localStorage.getItem("results-type") == "table") {
         showTabularResults();
     } else {
         showBoxyResults();
     }
+
+    function resizeModal() {
+        var newHeight;
+        var newWidth;
+        var $modal = $('#figureGalleryModal');
+        var headerHeight = $modal.find('.modal-header').outerHeight();
+        var img = $modal.find('img')[0];
+        if ((img.naturalWidth / img.naturalHeight) < ($(window).width() / $(window).height())) {
+            newHeight = Math.min($(window).height() - headerHeight - 60, img.naturalHeight);
+            newWidth = img.naturalWidth * newHeight / img.naturalHeight;
+        } else {
+            newWidth = Math.min($(window).width() - 60, img.naturalWidth);
+            newHeight = img.naturalHeight * newWidth / img.naturalWidth;
+        }
+        $modal.find('.modal-body').animate({height: newHeight, width: newWidth}, 200);
+        $modal.find('.modal-dialog').animate({width: newWidth + 2}, 200);
+    }
+
+    $('#figureGalleryModal').on('shown.bs.modal', resizeModal);
+
+    <%-- do a little timeout to prevent lots of animating during resize --%>
+    var resizeTimer;
+    $(window).resize(function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(resizeModal, 250);
+    });
+
+    $('.figure-gallery-modal-image').on('load', function () {
+        $('#figureGalleryModal').modal();
+    });
+
+    $('.figure-gallery-image-strip > img').on('click', function () {
+        $('.figure-gallery-modal-image').attr('src', $(this).data('full-size'));
+    });
 
 });
 

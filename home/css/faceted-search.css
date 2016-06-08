@@ -493,6 +493,7 @@ i.facet-selected,
     margin-right: 0.25em;
     border: 1px solid #c0c7c0;
     padding: 0.5em;
+    cursor: pointer;
 }
 
 .figure-gallery-overlay-link {
@@ -510,4 +511,13 @@ i.facet-selected,
     text-decoration: none;
     font-size: 18px;
     padding: 50px 5px 5px 5px;
+}
+
+.figure-gallery-modal-image {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.figure-gallery-modal-body {
+    padding: 0;
 }
