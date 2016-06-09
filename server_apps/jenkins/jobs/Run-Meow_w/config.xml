@@ -22,30 +22,51 @@
     </hudson.tasks.Shell>
   </builders>
   <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>server_apps/data_transfer/MEOW/*.txt</artifacts>
+      <latestOnly>false</latestOnly>
+      <allowEmptyArchive>true</allowEmptyArchive>
+    </hudson.tasks.ArtifactArchiver>
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
       <recipientList></recipientList>
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
-            <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+            <recipientList>${SWISSPROT_EMAIL_REPORT} ${ALL_FAILURE_REPORTS_EMAIL}</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <body>${SCRIPT, template=&quot;reportBody.template&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
-            <sendToRequester>true</sendToRequester>
+            <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
-            <sendToRecipientList>false</sendToRecipientList>
+            <sendToRecipientList>true</sendToRecipientList>
             <attachmentsPattern></attachmentsPattern>
-            <attachBuildLog>true</attachBuildLog>
+            <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>
             <contentType>project</contentType>
           </email>
         </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+        <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+          <email>
+            <recipientList>${SWISSPROT_EMAIL_REPORT}</recipientList>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <sendToDevelopers>false</sendToDevelopers>
+            <sendToRequester>false</sendToRequester>
+            <includeCulprits>false</includeCulprits>
+            <sendToRecipientList>true</sendToRecipientList>
+            <attachmentsPattern></attachmentsPattern>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
       </configuredTriggers>
-      <contentType>default</contentType>
+      <contentType>text/html</contentType>
       <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
-      <attachmentsPattern></attachmentsPattern>
+      <attachmentsPattern>server_apps/data_transfer/MEOW/*.txt</attachmentsPattern>
       <presendScript></presendScript>
       <attachBuildLog>false</attachBuildLog>
       <compressBuildLog>false</compressBuildLog>

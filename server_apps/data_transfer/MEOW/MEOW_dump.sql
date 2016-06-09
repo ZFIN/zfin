@@ -19,6 +19,8 @@
  
 -- Create the main zfin_genes file
 
+begin work;
+
 ! echo "Unload files to: <!--|FTP_ROOT|-->/pub/transfer/MEOW/"
 
 create temp table meow_exp1_dup (
@@ -102,31 +104,31 @@ insert into meow_exp1
     from marker
    where mrkr_type[1,4] == 'GENE'
      and not exists (
-		select 't'
-		  from linkage_member
-		 where lnkgmem_member_zdb_id == mrkr_zdb_id
-		 )
+                select 't'
+                  from linkage_member
+                 where lnkgmem_member_zdb_id == mrkr_zdb_id
+                 )
      and not exists (
-		select 't'
-		 from mapped_marker where marker_id == mrkr_zdb_id
-		 )
+                select 't'
+                 from mapped_marker where marker_id == mrkr_zdb_id
+                 )
      and not exists (
-		select 't'
-                  from mapped_marker, marker_relationship	
-		 where mrel_mrkr_2_zdb_id = marker_id
-		  and mrel_mrkr_1_zdb_id == mrkr_zdb_id
-		)
+                select 't'
+                  from mapped_marker, marker_relationship
+                 where mrel_mrkr_2_zdb_id = marker_id
+                  and mrel_mrkr_1_zdb_id == mrkr_zdb_id
+                )
       and not exists (
-		select 't'
-                  from linkage_member, marker_relationship	
-		 where mrel_mrkr_1_zdb_id = lnkgmem_member_zdb_id
+                select 't'
+                  from linkage_member, marker_relationship
+                 where mrel_mrkr_1_zdb_id = lnkgmem_member_zdb_id
                  and mrel_type = 'clone contains gene'
                  and mrel_mrkr_2_zdb_id == mrkr_zdb_id
-		);
+                );
 
 update meow_exp1
-	set source_zdb_id = null
-	where source_zdb_id = '0';
+        set source_zdb_id = null
+        where source_zdb_id = '0';
 
 create index meow_exp1_zdb_id_idx on meow_exp1(zdb_id);
 update statistics medium for table meow_exp1;
@@ -134,15 +136,13 @@ update statistics medium for table meow_exp1;
 --  Okay, now write it to a file
 
 ! echo "unload zfin_genes.txt"
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes.txt' 
-  DELIMITER "	" 
+UNLOAD to zfin_genes.txt DELIMITER "	"
   select distinct * from meow_exp1 order by abbrev, source_zdb_id;
 
 -- Create the file of known correspondences
 
 ! echo "unload zfin_genes_mutants.txt"
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes_mutants.txt'
-  DELIMITER "	"
+UNLOAD to zfin_genes_mutants.txt DELIMITER "	" 
    select distinct mrkr_zdb_id, mrkr_abbrev
      from feature_marker_relationship, marker
     where fmrel_mrkr_zdb_id = mrkr_zdb_id
@@ -152,15 +152,14 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes_mutants.txt'
 -- NOW let's create the table of pubs associated with these genes.
 
 ! echo "unload zfin_pubs.txt"
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_pubs.txt'
-  DELIMITER "	"
+UNLOAD to zfin_pubs.txt DELIMITER "	"
   select recattrib_data_zdb_id, zdb_id, title, authors, pub_date, jrnl_abbrev||pub_volume||':'||pub_pages as source, 
-	accession_no 
+        accession_no 
     from publication, record_attribution, journal
    where zdb_id = recattrib_source_zdb_id
      and jrnl_zdb_id= pub_jrnl_zdb_id
      and exists (
-     	select 't' from meow_exp1 where zdb_id == recattrib_data_zdb_id
+        select 't' from meow_exp1 where zdb_id == recattrib_data_zdb_id
    )
 ;
 
@@ -176,19 +175,17 @@ create temp table meow_exp3 (
 insert into meow_exp3 
   select ortho_zebrafish_gene_zdb_id, organism_common_name, ortho_other_species_name, ortho_other_species_symbol, ortho_zdb_id
     from ortholog, organism
-   where exists (select 't' from meow_exp1 where zdb_id == ortho_other_species_gene_zdb_id)
+   where exists (select 't' from meow_exp1 where zdb_id == ortho_zebrafish_gene_zdb_id)
    and organism_taxid = ortho_other_species_taxid;
 
 ! echo "unload zfin_genes_orthos.txt"
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_orthos.txt' 
-  DELIMITER "	" 
+UNLOAD to zfin_orthos.txt DELIMITER "	"
   select * 
     from meow_exp3;
 
 --  generate the ortho_links file with DB_links to other species DBs
 ! echo "unload zfin_ortholinks.txt"
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_ortholinks.txt'
-  DELIMITER "	"
+UNLOAD to zfin_ortholinks.txt DELIMITER "	"
   select ortho_zebrafish_gene_zdb_id, fdb_db_name, oef_accession_number
     from ortholog, ortholog_external_reference, foreign_db_contains, foreign_db
    where exists (select 't' from meow_exp3 where ortho_id == ortho_zdb_id)
@@ -201,8 +198,7 @@ drop table meow_exp3;
 -- And now the links to sequence DBs
 
 ! echo "unload zfin_dblinks.txt"
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_dblinks.txt'
-  DELIMITER "	"
+UNLOAD to zfin_dblinks.txt DELIMITER "	"
    select dblink_linked_recid, fdb_db_name, dblink_acc_num
     from db_link, foreign_db_contains, foreign_db
    where exists (select 't' from meow_exp1 where zdb_id == dblink_linked_recid)
@@ -213,7 +209,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_dblinks.txt'
     from db_link , marker_relationship, foreign_db_contains, foreign_db
    where mrel_mrkr_2_zdb_id = dblink_linked_recid
         and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	and fdbcont_fdb_db_id = fdb_db_pk_id
+        and fdbcont_fdb_db_id = fdb_db_pk_id
      and fdb_db_name == 'GenBank'
      and mrel_type != "gene produces transcript" -- supporting evidence
      and exists (select 't' from meow_exp1 where mrel_mrkr_1_zdb_id == zdb_id)
@@ -221,8 +217,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_dblinks.txt'
 
 -- generate a file of cDNAs and assoc GenBank accession numbers
 ! echo "unload SC.txt"
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC.txt'
-  DELIMITER "	"
+UNLOAD to SC.txt DELIMITER "	"
   select distinct mrkr_zdb_id, mrkr_abbrev, dblink_acc_num
     from marker, OUTER (db_link, foreign_db_contains, foreign_db)
     where mrkr_type == 'EST'
@@ -234,8 +229,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC.txt'
 
 -- generate a file of anonymous markers  and assoc GenBank accession numbers
 ! echo "unload SC_sts.txt"
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC_sts.txt'
-  DELIMITER "	"
+UNLOAD to SC_sts.txt DELIMITER "	"
   select distinct mrkr_zdb_id, mrkr_abbrev, dblink_acc_num
     from marker, db_link, foreign_db_contains, foreign_db
     where mrkr_type in ('STS', 'SSLP','RAPD')
@@ -247,25 +241,25 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC_sts.txt'
 
 -- generate a file with zdb history data
 ! echo "unload zdb_history.txt"
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zdb_history.txt'
- DELIMITER "	" select zrepld_old_zdb_id, zrepld_new_zdb_id from zdb_replaced_data;
+UNLOAD to zdb_history.txt DELIMITER "	"
+  select zrepld_old_zdb_id, zrepld_new_zdb_id from zdb_replaced_data;
 
 -- generate a file with genes that have expression data in ZFIN
 -- NCBI will use the gene symbol to link to xpatselect page.
 ! echo "unload xpat.txt"
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/xpat.txt'
- DELIMITER "	"  select xpatex_gene_zdb_id, mrkr_abbrev
-		     from expression_experiment2
-			  join marker on mrkr_zdb_id = xpatex_gene_zdb_id;
+UNLOAD to xpat.txt DELIMITER "	"
+  select xpatex_gene_zdb_id, mrkr_abbrev
+                     from expression_experiment2
+                          join marker on mrkr_zdb_id = xpatex_gene_zdb_id;
 
 --- generate mapping data for NCBI
 ! echo "unload panels.txt"
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/panels.txt' 
-  DELIMITER "	" select zdb_id, abbrev, metric from panels; 
+UNLOAD to panels.txt DELIMITER "	"
+   select zdb_id, abbrev, metric from panels; 
 
 ! echo "unload sanger_mappings.txt"
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/sanger_mappings.txt' 
-  DELIMITER "	" select distinct pm.target_id, pm.zdb_id, pm.abbrev, pm.OR_lg, pm.lg_location,
+UNLOAD to sanger_mappings.txt DELIMITER "	"
+  select distinct pm.target_id, pm.zdb_id, pm.abbrev, pm.OR_lg, pm.lg_location,
         case
             when target_id in('ZDB-REFCROSS-980521-11','ZDB-REFCROSS-000320-1')
                 then 1
@@ -286,26 +280,24 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/sanger_mappings.txt'
         and mm.metric      == pm.metric
         order by 1;
 ! echo "unload mappings.txt"
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/mappings.txt' 
-  DELIMITER "	" select distinct target_id, zdb_id, abbrev, OR_lg, lg_location from paneled_markers where zdb_id[1,7] <> 'ZDB-ALT' order by 1;
+UNLOAD to mappings.txt DELIMITER "	"
+  select distinct target_id, zdb_id, abbrev, OR_lg, lg_location from paneled_markers where zdb_id[1,7] <> 'ZDB-ALT' order by 1;
 
 --- generate file with zmap mapping data
 ! echo "unload zmap_mappings.txt"
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zmap_mappings.txt' 
- DELIMITER "	"  select zdb_id, abbrev, abbrevp, panel_id, zmap_chromosome, lg_location from zmap_pub_pan_mark;
+UNLOAD to zmap_mappings.txt DELIMITER "	"
+  select zdb_id, abbrev, abbrevp, panel_id, zmap_chromosome, lg_location from zmap_pub_pan_mark;
 ! echo "unload zfin_genes_mutants.txt"
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/markers.txt' 
-  DELIMITER "	" select distinct zdb_id, abbrev from paneled_markers;
+UNLOAD to markers.txt DELIMITER "	"
+  select distinct zdb_id, abbrev from paneled_markers;
 ! echo "unload marker_alias.txt"
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/marker_alias.txt' 
-
-  DELIMITER "	" select distinct mrkr_zdb_id, dalias_alias from marker , data_alias where mrkr_zdb_id = dalias_data_zdb_id order by 1;
+UNLOAD to marker_alias.txt DELIMITER "	"
+  select distinct mrkr_zdb_id, dalias_alias from marker, data_alias where mrkr_zdb_id = dalias_data_zdb_id order by 1;
 
 --- generate alias file for Sanger
 ! echo "unload sanger_alias.txt"
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/sanger_alias.txt' 
-DELIMITER "	" select dblink_acc_num[1,20]ottdarg,mrkr_zdb_id[1,25] zdbid ,mrkr_abbrev symbol,
-dalias_alias alias
+UNLOAD to sanger_alias.txt DELIMITER "	"
+ select dblink_acc_num[1,20]ottdarg,mrkr_zdb_id[1,25] zdbid, mrkr_abbrev symbol, dalias_alias alias
  from db_link,marker, outer data_alias
  where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-14'
  and dblink_linked_recid = mrkr_zdb_id
@@ -315,7 +307,10 @@ order by 1
 
 --- generate marker relationship file
 ! echo "unload gene_relationships.txt"
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/gene_relationships.txt'
-  DELIMITER "	" select distinct mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id from marker_relationship, meow_exp1 where mrel_type[1,4] == 'gene' and mrel_mrkr_1_zdb_id = meow_exp1.zdb_id order by 1;
+UNLOAD to gene_relationships.txt DELIMITER "	"
+ select distinct mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id from marker_relationship, meow_exp1 where mrel_type[1,4] == 'gene' and mrel_mrkr_1_zdb_id = meow_exp1.zdb_id order by 1;
  
 drop table meow_exp1;
+
+commit work;
+
