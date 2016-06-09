@@ -5,7 +5,7 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-  <include file="source/org/zfin/db/load/1079/regatta/zeco.sql"/>
-  <include file="source/org/zfin/db/load/1079/regatta/chebi.sql"/>
+  <include file="source/org/zfin/db/load/1079/shipwreck/zeco.sql"/>
+  <include file="source/org/zfin/db/load/1079/shipwreck/chebi.sql"/>
 
 </databaseChangeLog>

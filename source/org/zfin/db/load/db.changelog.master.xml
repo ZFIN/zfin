@@ -6,5 +6,6 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
   <include file="source/org/zfin/db/load/1078/regatta/db.changelog.master.xml"/>
+  <include file="source/org/zfin/db/load/1079/shipwreck/db.changelog.master.xml"/>
 
 </databaseChangeLog>
