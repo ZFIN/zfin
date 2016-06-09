@@ -3,7 +3,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<c:set var="galleryMode" value="true"/>
+<c:set var="galleryMode" value="false"/>
 
 <c:set var="geneCategoryName" value="<%=Category.GENE.getName()%>"/>
 <c:set var="expressionCategoryName" value="<%=Category.EXPRESSIONS.getName()%>"/>
@@ -310,87 +310,87 @@
                         <div class="figure-gallery-result-size"></div>
                         <div class="figure-gallery-result-container">
                             <div class="figure-gallery-image-container">
-                                <img src="/imageLoadUp/ZDB-IMAGE-041008-390.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-041008-390.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-041008-390.jpg">
                             </div>
                         </div>
                         <div class="figure-gallery-result-container">
                             <div class="figure-gallery-image-container">
-                                <img src="/imageLoadUp/ZDB-IMAGE-041111-471.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-041111-471.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-041111-471.jpg">
                             </div>
                         </div>
                         <div class="figure-gallery-result-container">
                             <div class="figure-gallery-image-container">
-                                <img src="/imageLoadUp/ZDB-IMAGE-080702-12.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-080702-12.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-080702-12.jpg">
                             </div>
                         </div>
                         <div class="figure-gallery-result-container">
                             <div class="figure-gallery-image-container">
-                                <img src="/imageLoadUp/ZDB-IMAGE-130808-11.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-130808-11.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-130808-11.jpg">
                             </div>
                         </div>
                         <div class="figure-gallery-result-container">
                             <div class="figure-gallery-image-container">
-                                <img src="/imageLoadUp/ZDB-IMAGE-130808-13.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-130808-13.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-130808-13.jpg">
                             </div>
                         </div>
                         <div class="figure-gallery-result-container">
                             <div class="figure-gallery-image-container">
-                                <img src="/imageLoadUp/ZDB-IMAGE-131015-6.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-131015-6.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-131015-6.jpg">
                             </div>
                         </div>
                         <div class="figure-gallery-result-container">
                             <div class="figure-gallery-image-container">
-                                <img src="/imageLoadUp/ZDB-IMAGE-140221-12.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-140221-12.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-140221-12.jpg">
                             </div>
                         </div>
                         <div class="figure-gallery-result-container">
                             <div class="figure-gallery-image-container">
-                                <img src="/imageLoadUp/ZDB-IMAGE-150423-40.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-150423-40.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-150423-40.jpg">
                             </div>
                         </div>
                         <div class="figure-gallery-result-container">
                             <div class="figure-gallery-image-container">
-                                <img src="/imageLoadUp/ZDB-IMAGE-150612-2.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-150612-2.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-150612-2.jpg">
                             </div>
                         </div>
                         <div class="figure-gallery-result-container">
                             <div class="figure-gallery-image-container">
-                                <img src="/imageLoadUp/ZDB-IMAGE-151214-8.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-151214-8.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-151214-8.jpg">
                             </div>
                         </div>
                         <div class="figure-gallery-result-container">
                             <div class="figure-gallery-image-container">
-                                <img src="/imageLoadUp/ZDB-IMAGE-151214-11.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-151214-11.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-151214-11.jpg">
                             </div>
                         </div>
                         <div class="figure-gallery-result-container">
                             <div class="figure-gallery-image-container">
-                                <img src="/imageLoadUp/ZDB-IMAGE-151214-15.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-151214-15.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-151214-15.jpg">
                             </div>
                         </div>
                         <div class="figure-gallery-result-container">
                             <div class="figure-gallery-image-container">
-                                <img src="/imageLoadUp/ZDB-IMAGE-160224-1.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-160224-1.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-160224-1.jpg">
                             </div>
                         </div>
                         <div class="figure-gallery-result-container">
                             <div class="figure-gallery-image-container">
-                                <img src="/imageLoadUp/ZDB-IMAGE-160205-29.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-160205-29.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-160205-29.jpg">
                             </div>
                         </div>
                         <div class="figure-gallery-result-container">
                             <div class="figure-gallery-image-container">
-                                <img src="/imageLoadUp/ZDB-IMAGE-160205-104.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-160205-104.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-160205-104.jpg">
                             </div>
                         </div>
                         <div class="figure-gallery-result-container">
                             <div class="figure-gallery-image-container">
-                                <img src="/imageLoadUp/ZDB-IMAGE-160205-111.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-160205-111.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-160205-111.jpg">
                             </div>
                         </div>
                         <div class="figure-gallery-result-container">
                             <div class="figure-gallery-image-container">
-                                <img src="/imageLoadUp/ZDB-IMAGE-160324-29.jpg">
+                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-160324-29.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-160324-29.jpg">
                             </div>
                         </div>
                     </div>
@@ -601,6 +601,9 @@ $(function () {
     });
 
     $('.figure-gallery-image-strip > img').on('click', function () {
+        $('.figure-gallery-modal-image').attr('src', $(this).data('full-size'));
+    });
+    $('.figure-gallery-image-container > img').on('click', function () {
         $('.figure-gallery-modal-image').attr('src', $(this).data('full-size'));
     });
 
