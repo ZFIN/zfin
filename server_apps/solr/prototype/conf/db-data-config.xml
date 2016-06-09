@@ -4276,6 +4276,15 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                    cacheImpl="SortedMapBackedCache"
                    where="pub_zdb_id=publication.id"/>
 
+           <entity name="pub_construct"
+                   datasource="db" query="select recattrib_source_zdb_id as pub_zdb_id,
+                                 cons_construct_zdb_id as xref
+           from record_attribution, construct_search,feature_marker_relationship
+           where recattrib_data_zdb_id = fmrel_ftr_zdb_id
+           and fmrel_mrkr_zdb_id=cons_construct_zdb_id;"
+                   cacheImpl="SortedMapBackedCache"
+                   where="pub_zdb_id=publication.id"/>
+
 
            <entity name="pub_fish_xref_from_exp"
                    datasource="db" query="select
