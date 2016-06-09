@@ -62,7 +62,7 @@ load from term_consider.unl
 create temp table tmp_term_onto_with_dups (
 		term_id			varchar(50),
 		term_name		varchar(255),
-		term_onto		varchar(30),
+		term_onto		varchar(50),
 		term_definition		lvarchar,
 		term_comment		lvarchar,
 		term_is_obsolete	boolean default 'f'
@@ -81,7 +81,7 @@ where term_onto is null;
 create temp table tmp_term_onto_no_dups (
 		term_id			varchar(50),
 		term_name		varchar(255),
-		term_onto		varchar(30),
+		term_onto		varchar(50),
 		term_definition		lvarchar,
 		term_comment		lvarchar,
 		term_is_obsolete	boolean default 'f'
@@ -116,7 +116,7 @@ create temp table tmp_term 	(
 			 term_zdb_id		varchar(50),
 			 term_id		varchar(50),
 			 term_name		varchar(255),
-			 term_ontology		varchar(30),
+			 term_ontology		varchar(50),
 			 term_definition	lvarchar,
 			 term_comment		lvarchar,
 			 term_is_obsolete	boolean default 'f',

@@ -21,7 +21,7 @@
             <command>cd $TARGETROOT/server_apps/data_transfer/LoadOntology</command>
         </hudson.tasks.Shell>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>Load-Chebi -DJobName=Load-Chebi-Ontology_w</targets>
+            <targets>load-chebi -DJobName=Load-Chebi-Ontology_w</targets>
             <buildFile>$TARGETROOT/server_apps/data_transfer/LoadOntology/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>

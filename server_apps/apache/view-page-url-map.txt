@@ -54,3 +54,4 @@ BSPO     /action/ontology/term-detail/BSPO
 SO     /action/ontology/term-detail/SO
 DOID     /action/ontology/term-detail/DOID
 ZECO     /action/ontology/term-detail/ZECO
+CHEBI     /action/ontology/term-detail/CHEBI
