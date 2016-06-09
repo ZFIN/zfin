@@ -12,7 +12,7 @@
     <property name="sequenceOboURL" value="http://www.berkeleybop.org/ontologies/obo-all/sequence/sequence.obo"/>
     <property name="spatialOboURL"
               value="http://purl.obolibrary.org/obo/bspo.obo"/>
-    <property name="chebiOboURL" value="http://www.berkeleybop.org/ontologies/chebi.obo"/>
+    <property name="chebiOboURL" value="ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.obo"/>
     <property name="zecoOboURL" value="http://swirl.zfin.org/zeco.obo"/>
     <property name="soOboURL" value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/so-xp-simple.obo"/>
     <property name="root.dir" value="${basedir}/../../../"/>
