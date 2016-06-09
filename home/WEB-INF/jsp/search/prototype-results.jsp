@@ -3,6 +3,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
+<c:set var="galleryMode" value="true"/>
 
 <c:set var="geneCategoryName" value="<%=Category.GENE.getName()%>"/>
 <c:set var="expressionCategoryName" value="<%=Category.EXPRESSIONS.getName()%>"/>
@@ -17,6 +18,8 @@
 <script src="/javascript/list-collapse.js"></script>
 <script src="/javascript/angular/angular.min.js"></script>
 <script src="/javascript/angular/angular-sanitize.js"></script>
+<script src="/javascript/imagesloaded.pkgd.min.js"></script>
+<script src="/javascript/masonry.pkgd.min.js"></script>
 
 <link rel="stylesheet" type="text/css" href="/css/bootstrap3/css/bootstrap.css">
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
@@ -200,102 +203,198 @@
                 </c:if>
 
                 <div class="row">
-                    <div class="col-md-2 col-sm-3 col-xs-4">
-                        <a href="${downloadUrl}" class="btn btn-default">
-                            <i class="fa fa-download"></i> Download
-                        </a>
-                    </div>
+                    <c:if test="${!galleryMode}">
+                        <div class="col-md-2 col-sm-3 col-xs-4">
+                            <a href="${downloadUrl}" class="btn btn-default">
+                                <i class="fa fa-download"></i> Download
+                            </a>
+                        </div>
+                    </c:if>
                     <div class="result-count col-md-10 col-sm-9 col-xs-8">
                         <fmt:formatNumber value="${numFound}" pattern="##,###"/> results
-                        <div class="pull-right">
-                            <authz:authorize access="hasRole('root')">
-                                <div class="btn-group">
-                                    <button id="boxy-result-button" class="btn btn-default result-action-tooltip" title="Detailed Results">
-                                        <i class="fa fa-newspaper-o fa-flip-horizontal"></i>
-                                    </button>
-                                    <button id="table-result-button" class="btn btn-default result-action-tooltip" title="Tabular Results">
-                                        <i class="fa fa-table"></i>
-                                    </button>
-                                </div>
+                        <c:if test="${!galleryMode}">
+                            <div class="pull-right">
+                                <authz:authorize access="hasRole('root')">
+                                    <div class="btn-group">
+                                        <button id="boxy-result-button" class="btn btn-default result-action-tooltip" title="Detailed Results">
+                                            <i class="fa fa-newspaper-o fa-flip-horizontal"></i>
+                                        </button>
+                                        <button id="table-result-button" class="btn btn-default result-action-tooltip" title="Tabular Results">
+                                            <i class="fa fa-table"></i>
+                                        </button>
+                                    </div>
 
-                                <div class="btn-group">
-                                    <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=20" class="btn btn-default <c:if test="${rows eq 20}">btn-selected disabled</c:if>">20</a>
-                                    <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=50" class="btn btn-default <c:if test="${rows eq 50}">btn-selected disabled</c:if>">50</a>
-                                    <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=200" class="btn btn-default <c:if test="${rows eq 200}">btn-selected disabled</c:if>">200</a>
-                                </div>
-                            </authz:authorize>
+                                    <div class="btn-group">
+                                        <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=20" class="btn btn-default <c:if test="${rows eq 20}">btn-selected disabled</c:if>">20</a>
+                                        <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=50" class="btn btn-default <c:if test="${rows eq 50}">btn-selected disabled</c:if>">50</a>
+                                        <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=200" class="btn btn-default <c:if test="${rows eq 200}">btn-selected disabled</c:if>">200</a>
+                                    </div>
+                                </authz:authorize>
 
-                            <div class="btn-group sort-controls">
-                                <a class="btn btn-default dropdown-toggle sort-button" data-toggle="dropdown" href="#">
-                                    Sorted ${sortDisplay}
-                                    <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="${baseUrlWithoutSort}">Relevance</a></li>
-                                    <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=A+to+Z">A to Z</a></li>
-                                    <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Z+to+A">Z to A</a></li>
-                                    <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Newest">Newest</a></li>
-                                    <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Oldest">Oldest</a></li>
-                                </ul>
+                                <div class="btn-group sort-controls">
+                                    <a class="btn btn-default dropdown-toggle sort-button" data-toggle="dropdown" href="#">
+                                        Sorted ${sortDisplay}
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="${baseUrlWithoutSort}">Relevance</a></li>
+                                        <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=A+to+Z">A to Z</a></li>
+                                        <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Z+to+A">Z to A</a></li>
+                                        <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Newest">Newest</a></li>
+                                        <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Oldest">Oldest</a></li>
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
+                        </c:if>
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="figure-gallery-preview-container">
-                            <div class="figure-gallery-image-strip">
-                                <%-- TODO: replace data-fill-size with just the zdb id? might need it for fetching figure expression details --%>
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-081117-41.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-081117-41.jpg">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-081117-43.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-081117-43.jpg">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-111028-25.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-111028-25.jpg">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-120315-14.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-120315-14.jpg">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-070613-30.jpeg" src="/imageLoadUp/medium/ZDB-IMAGE-070613-30.jpeg">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-120601-40.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-120601-40.jpg">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-070307-4.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-070307-4.jpg">
-                            </div>
-                            <div class="figure-gallery-overlay-link">
-                                <a href="#">View More Images</a>
+                <c:if test="${!galleryMode}">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="figure-gallery-preview-container">
+                                <div class="figure-gallery-image-strip">
+                                        <%-- TODO: replace data-fill-size with just the zdb id? might need it for fetching figure expression details --%>
+                                    <img data-full-size="/imageLoadUp/ZDB-IMAGE-081117-41.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-081117-41.jpg">
+                                    <img data-full-size="/imageLoadUp/ZDB-IMAGE-081117-43.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-081117-43.jpg">
+                                    <img data-full-size="/imageLoadUp/ZDB-IMAGE-111028-25.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-111028-25.jpg">
+                                    <img data-full-size="/imageLoadUp/ZDB-IMAGE-120315-14.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-120315-14.jpg">
+                                    <img data-full-size="/imageLoadUp/ZDB-IMAGE-070613-30.jpeg" src="/imageLoadUp/medium/ZDB-IMAGE-070613-30.jpeg">
+                                    <img data-full-size="/imageLoadUp/ZDB-IMAGE-120601-40.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-120601-40.jpg">
+                                    <img data-full-size="/imageLoadUp/ZDB-IMAGE-070307-4.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-070307-4.jpg">
+                                </div>
+                                <div class="figure-gallery-overlay-link">
+                                    <a href="#">View More Images</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <c:forEach var="result" items="${results}">
-                    <zfin2:searchResult result="${result}"/>
-                </c:forEach>
+                    <c:forEach var="result" items="${results}">
+                        <zfin2:searchResult result="${result}"/>
+                    </c:forEach>
 
-                <c:choose>
-                    <c:when test="${category eq geneCategoryName}">
-                        <zfin-search:geneResultTable results="${results}"/>
-                    </c:when>
-                    <c:when test="${category eq expressionCategoryName}">
-                        <zfin-search:expressionResultTable results="${results}"/>
-                    </c:when>
-                    <c:when test="${category eq diseaseCategoryName}">
-                        <zfin-search:diseaseResultTable results="${results}"/>
-                    </c:when>
-                    <c:when test="${category eq mutationCategoryName}">
-                        <zfin-search:mutationResultTable results="${results}"/>
-                    </c:when>
-                    <c:when test="${category eq constructCategoryName}">
-                        <zfin-search:constructResultTable results="${results}"/>
-                    </c:when>
-                    <c:when test="${category eq strCategoryName}">
-                        <zfin-search:strResultTable results="${results}"/>
-                    </c:when>
-                    <c:when test="${category eq abCategoryName}">
-                        <zfin-search:antibodyResultTable results="${results}"/>
-                    </c:when>
-                    <c:when test="${category eq anatomyCategoryName}">
-                        <zfin-search:anatomyResultTable results="${results}"/>
-                    </c:when>
-                    <c:otherwise>
-                        <zfin-search:mixedResultTable results="${results}"/>
-                    </c:otherwise>
-                </c:choose>
+                    <c:choose>
+                        <c:when test="${category eq geneCategoryName}">
+                            <zfin-search:geneResultTable results="${results}"/>
+                        </c:when>
+                        <c:when test="${category eq expressionCategoryName}">
+                            <zfin-search:expressionResultTable results="${results}"/>
+                        </c:when>
+                        <c:when test="${category eq diseaseCategoryName}">
+                            <zfin-search:diseaseResultTable results="${results}"/>
+                        </c:when>
+                        <c:when test="${category eq mutationCategoryName}">
+                            <zfin-search:mutationResultTable results="${results}"/>
+                        </c:when>
+                        <c:when test="${category eq constructCategoryName}">
+                            <zfin-search:constructResultTable results="${results}"/>
+                        </c:when>
+                        <c:when test="${category eq strCategoryName}">
+                            <zfin-search:strResultTable results="${results}"/>
+                        </c:when>
+                        <c:when test="${category eq abCategoryName}">
+                            <zfin-search:antibodyResultTable results="${results}"/>
+                        </c:when>
+                        <c:when test="${category eq anatomyCategoryName}">
+                            <zfin-search:anatomyResultTable results="${results}"/>
+                        </c:when>
+                        <c:otherwise>
+                            <zfin-search:mixedResultTable results="${results}"/>
+                        </c:otherwise>
+                    </c:choose>
+                </c:if>
 
+                <c:if test="${galleryMode}">
+                    <div class="masonry figure-gallery-results-container clearfix">
+                        <div class="figure-gallery-result-size"></div>
+                        <div class="figure-gallery-result-container">
+                            <div class="figure-gallery-image-container">
+                                <img src="/imageLoadUp/ZDB-IMAGE-041008-390.jpg">
+                            </div>
+                        </div>
+                        <div class="figure-gallery-result-container">
+                            <div class="figure-gallery-image-container">
+                                <img src="/imageLoadUp/ZDB-IMAGE-041111-471.jpg">
+                            </div>
+                        </div>
+                        <div class="figure-gallery-result-container">
+                            <div class="figure-gallery-image-container">
+                                <img src="/imageLoadUp/ZDB-IMAGE-080702-12.jpg">
+                            </div>
+                        </div>
+                        <div class="figure-gallery-result-container">
+                            <div class="figure-gallery-image-container">
+                                <img src="/imageLoadUp/ZDB-IMAGE-130808-11.jpg">
+                            </div>
+                        </div>
+                        <div class="figure-gallery-result-container">
+                            <div class="figure-gallery-image-container">
+                                <img src="/imageLoadUp/ZDB-IMAGE-130808-13.jpg">
+                            </div>
+                        </div>
+                        <div class="figure-gallery-result-container">
+                            <div class="figure-gallery-image-container">
+                                <img src="/imageLoadUp/ZDB-IMAGE-131015-6.jpg">
+                            </div>
+                        </div>
+                        <div class="figure-gallery-result-container">
+                            <div class="figure-gallery-image-container">
+                                <img src="/imageLoadUp/ZDB-IMAGE-140221-12.jpg">
+                            </div>
+                        </div>
+                        <div class="figure-gallery-result-container">
+                            <div class="figure-gallery-image-container">
+                                <img src="/imageLoadUp/ZDB-IMAGE-150423-40.jpg">
+                            </div>
+                        </div>
+                        <div class="figure-gallery-result-container">
+                            <div class="figure-gallery-image-container">
+                                <img src="/imageLoadUp/ZDB-IMAGE-150612-2.jpg">
+                            </div>
+                        </div>
+                        <div class="figure-gallery-result-container">
+                            <div class="figure-gallery-image-container">
+                                <img src="/imageLoadUp/ZDB-IMAGE-151214-8.jpg">
+                            </div>
+                        </div>
+                        <div class="figure-gallery-result-container">
+                            <div class="figure-gallery-image-container">
+                                <img src="/imageLoadUp/ZDB-IMAGE-151214-11.jpg">
+                            </div>
+                        </div>
+                        <div class="figure-gallery-result-container">
+                            <div class="figure-gallery-image-container">
+                                <img src="/imageLoadUp/ZDB-IMAGE-151214-15.jpg">
+                            </div>
+                        </div>
+                        <div class="figure-gallery-result-container">
+                            <div class="figure-gallery-image-container">
+                                <img src="/imageLoadUp/ZDB-IMAGE-160224-1.jpg">
+                            </div>
+                        </div>
+                        <div class="figure-gallery-result-container">
+                            <div class="figure-gallery-image-container">
+                                <img src="/imageLoadUp/ZDB-IMAGE-160205-29.jpg">
+                            </div>
+                        </div>
+                        <div class="figure-gallery-result-container">
+                            <div class="figure-gallery-image-container">
+                                <img src="/imageLoadUp/ZDB-IMAGE-160205-104.jpg">
+                            </div>
+                        </div>
+                        <div class="figure-gallery-result-container">
+                            <div class="figure-gallery-image-container">
+                                <img src="/imageLoadUp/ZDB-IMAGE-160205-111.jpg">
+                            </div>
+                        </div>
+                        <div class="figure-gallery-result-container">
+                            <div class="figure-gallery-image-container">
+                                <img src="/imageLoadUp/ZDB-IMAGE-160324-29.jpg">
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
 
                 <div style="clear: both ; width: 80%">
                     <zfin2:pagination paginationBean="${paginationBean}"/>
@@ -505,11 +604,14 @@ $(function () {
         $('.figure-gallery-modal-image').attr('src', $(this).data('full-size'));
     });
 
+    var figureGallery = $('.figure-gallery-results-container');
+    figureGallery.imagesLoaded(function () {
+        figureGallery.masonry({
+            itemSelector: '.figure-gallery-result-container',
+            columnWidth: '.figure-gallery-result-size',
+            transitionDuration: 0
+        });
+    });
+
 });
-
-
-
 </script>
-
-</body>
-</html>
