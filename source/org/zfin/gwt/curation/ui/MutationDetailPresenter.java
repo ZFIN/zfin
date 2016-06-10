@@ -182,6 +182,7 @@ public class MutationDetailPresenter {
         if (getDtoSet().isEmpty()) {
             MutationDetailTranscriptChangeDTO dto = new MutationDetailTranscriptChangeDTO();
             dto.setConsequenceOboID(MISSENSE);
+            dto.setConsequenceName("missense");
             dtoSet.add(dto);
             populateTranscriptDataTable();
         }
@@ -191,6 +192,7 @@ public class MutationDetailPresenter {
         if (getDtoSet().isEmpty()) {
             MutationDetailTranscriptChangeDTO dto = new MutationDetailTranscriptChangeDTO();
             dto.setConsequenceOboID(STOP_GAIN);
+            dto.setConsequenceName("premature stop");
             dtoSet.add(dto);
             populateTranscriptDataTable();
         }
@@ -201,7 +203,7 @@ public class MutationDetailPresenter {
     }
 
     public boolean isTranscriptDtoSetEmpty() {
-        return dtoSet != null && !dtoSet.isEmpty();
+        return dtoSet == null || dtoSet.isEmpty();
     }
 
     public void handleDirty() {
