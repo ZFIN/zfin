@@ -1,6 +1,7 @@
 package org.zfin.datatransfer.go.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +68,11 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
     protected FpInferenceGafParser gafParser;
     protected GafService gafService;
     protected String downloadUrl;
+    protected String downloadUrl2;
+    protected String downloadUrl3;
     protected String localDownloadFile;
+    protected String localDownloadFile2;
+    protected String localDownloadFile3;
     protected String organization;
 
     public int execute() {
@@ -83,6 +88,21 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
                     , new URL(downloadUrl)
                     , false);
+
+            if(organization.equals("GOA")) {
+                localDownloadFile2 = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + "Load-GAF-" + organizationEnum.name() + "-gene_association2";
+                File downloadedFile2 = downloadService.downloadFile(new File(localDownloadFile2)
+                        , new URL(downloadUrl2)
+                        , false);
+                String downloadFile2Str = FileUtils.readFileToString(downloadedFile2);
+                FileUtils.write(downloadedFile, downloadFile2Str, true); // true for append
+                localDownloadFile3 = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + "Load-GAF-" + organizationEnum.name() + "-gene_association3";
+                File downloadedFile3 = downloadService.downloadFile(new File(localDownloadFile3)
+                        , new URL(downloadUrl3)
+                        , false);
+                String downloadFile3Str = FileUtils.readFileToString(downloadedFile3);
+                FileUtils.write(downloadedFile, downloadFile3Str, true); // true for append
+            }
 
             // 2. parse file
             List<GafEntry> gafEntries = gafParser.parseGafFile(downloadedFile);
@@ -272,6 +292,10 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
         job.initBasicInfo(args[2], args[0], baseDir);
         job.organization = args[3];
         job.downloadUrl = args[4];
+        if (job.organization.equals("GOA")) {
+            job.downloadUrl2 = args[6];
+            job.downloadUrl3 = args[7];
+        }
         String parserClassName = args[5];
         try {
             job.gafParser = (FpInferenceGafParser) context.getBean(Class.forName(parserClassName));
