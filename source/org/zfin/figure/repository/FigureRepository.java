@@ -1,6 +1,7 @@
 package org.zfin.figure.repository;
 
 import org.zfin.expression.Figure;
+import org.zfin.expression.Image;
 import org.zfin.figure.presentation.ExpressionTableRow;
 import org.zfin.marker.Clone;
 import org.zfin.profile.Person;
@@ -18,5 +19,5 @@ public interface FigureRepository {
 
     public List<Figure> getFiguresForDirectSubmissionPublication(Publication publication, Clone probe);
 
-
+    public List<Image> getImages(List<String> imageIDs);
 }

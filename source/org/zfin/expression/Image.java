@@ -219,4 +219,18 @@ public class Image implements Serializable {
         return zdbID.hashCode();
     }
 
+    public String getDisplayedImageFilename() {
+        if (imageWithAnnotationsFilename != null && !imageWithAnnotationsFilename.equals("")) {
+            return imageWithAnnotationsFilename;
+        }
+        return imageFilename;
+    }
+
+    public String getUrl() {
+        return "/imageLoadUp/" + getDisplayedImageFilename();
+    }
+    public String getMediumUrl() {
+        return "/imageLoadUp/medium/" + getDisplayedImageFilename();
+    }
+
 }

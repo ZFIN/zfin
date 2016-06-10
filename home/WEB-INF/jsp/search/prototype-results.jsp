@@ -250,26 +250,23 @@
                 </div>
 
                 <c:if test="${!galleryMode}">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="figure-gallery-preview-container">
-                                <div class="figure-gallery-image-strip">
-                                        <%-- TODO: replace data-fill-size with just the zdb id? might need it for fetching figure expression details --%>
-                                    <img data-full-size="/imageLoadUp/ZDB-IMAGE-081117-41.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-081117-41.jpg">
-                                    <img data-full-size="/imageLoadUp/ZDB-IMAGE-081117-43.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-081117-43.jpg">
-                                    <img data-full-size="/imageLoadUp/ZDB-IMAGE-111028-25.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-111028-25.jpg">
-                                    <img data-full-size="/imageLoadUp/ZDB-IMAGE-120315-14.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-120315-14.jpg">
-                                    <img data-full-size="/imageLoadUp/ZDB-IMAGE-070613-30.jpeg" src="/imageLoadUp/medium/ZDB-IMAGE-070613-30.jpeg">
-                                    <img data-full-size="/imageLoadUp/ZDB-IMAGE-120601-40.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-120601-40.jpg">
-                                    <img data-full-size="/imageLoadUp/ZDB-IMAGE-070307-4.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-070307-4.jpg">
-                                </div>
-                                <div class="figure-gallery-overlay-link">
-                                    <a href="#">View More Images</a>
+                    <c:if test="${!empty previewImages}">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="figure-gallery-preview-container">
+                                    <div class="figure-gallery-image-strip">
+                                            <%-- TODO: replace data-fill-size with just the zdb id? might need it for fetching figure expression details --%>
+                                        <c:forEach var="image" items="${previewImages}">
+                                            <img data-full-size="${image.url}" src="${image.mediumUrl}">
+                                        </c:forEach>
+                                    </div>
+                                    <div class="figure-gallery-overlay-link">
+                                        <a href="#">View More Images</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
+                    </c:if>
                     <c:forEach var="result" items="${results}">
                         <zfin2:searchResult result="${result}"/>
                     </c:forEach>

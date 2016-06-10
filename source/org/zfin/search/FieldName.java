@@ -52,6 +52,7 @@ public enum FieldName {
     HAS_IMAGE("has_image"),
     HOST_ORGANISM("host_organism"),
     ID("id"),
+    IMG_ZDB_ID("img_zdb_id"),
     INDEXING_STATUS("indexing_status"),
     INSERTED_IN_GENE("inserted_in_gene"),
     INSTITUTION("institution"),

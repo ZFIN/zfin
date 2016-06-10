@@ -11,6 +11,7 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
+import org.zfin.expression.Image;
 import org.zfin.figure.presentation.ExpressionTableRow;
 import org.zfin.framework.ComparatorCreator;
 import org.zfin.framework.HibernateUtil;
@@ -132,6 +133,12 @@ public class HibernateFigureRepository implements FigureRepository {
 
         return figures;
 
+    }
+
+    public List<Image> getImages(List<String> zdbIDs) {
+        return HibernateUtil.currentSession()
+                .createCriteria(Image.class)
+                .add(Restrictions.in("zdbID", zdbIDs)).list();
     }
 
 }

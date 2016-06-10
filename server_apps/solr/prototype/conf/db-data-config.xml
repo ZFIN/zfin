@@ -1270,6 +1270,7 @@ WHERE  ( NOT g.geno_is_wildtype
                        else img_image end as image,
                        img_thumbnail as thumbnail,
                        'true' as has_image,
+                       img_zdb_id,
                        fish_zdb_id
                        from fish
                             join fish_experiment on genox_fish_zdb_id = fish_zdb_id
@@ -2177,6 +2178,7 @@ select
                        else img_image end as image,
                        img_thumbnail as thumbnail,
                        'true' as has_image,
+                       img_zdb_id,
                        'pg-' || pg_id as pg_id
                        from phenotype_source_generated
                             join image on img_fig_zdb_id = pg_fig_zdb_id;"
@@ -2811,6 +2813,7 @@ term_name as expression_anatomy_direct,
                        then img_image_with_annotation
                        else img_image end as image,
                        img_thumbnail as thumbnail,
+                       img_zdb_id,
                        'true' as has_image,
                        'xpatex-' || efs_pk_id as efs_pk_id
                        from expression_experiment2
@@ -4155,6 +4158,7 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                        then img_image_with_annotation
                        else img_image end as image,
                        img_thumbnail as thumbnail,
+                       img_zdb_id,
                        'true' as has_image,
                        publication.zdb_id as pub_zdb_id
                        from image
@@ -4527,6 +4531,7 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                        else img_image end as image,
                        img_thumbnail as thumbnail,
                        'true' as has_image,
+                       img_zdb_id,
                        img_fig_zdb_id as fig_zdb_id
                        from image where img_fig_zdb_id is not null;"
                    cacheImpl="SortedMapBackedCache"

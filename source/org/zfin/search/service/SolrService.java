@@ -155,6 +155,7 @@ public class SolrService {
                     query.addFacetQuery(ff + ":[* TO *]");
                 }
             }
+            query.addFacetField(FieldName.IMG_ZDB_ID.getName());
         }
 
 

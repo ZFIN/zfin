@@ -26,6 +26,7 @@ import org.zfin.profile.service.ProfileService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
 import org.zfin.search.FacetCategoryComparator;
+import org.zfin.search.FieldName;
 import org.zfin.search.service.*;
 import org.zfin.util.URLCreator;
 
@@ -188,7 +189,6 @@ public class SearchPrototypeController {
             String[] newFq = new String[1];
             newFq[0] = "category:" + "\"" + category + "\"";
             filterQuery = ArrayUtils.addAll(newFq, filterQuery);
-
         }
         SolrService.setCategory(category, query);
 
@@ -326,6 +326,18 @@ public class SearchPrototypeController {
         paginationBean.setMaxDisplayRecords(rows);
         model.addAttribute("paginationBean", paginationBean);
 
+        //set up images
+        List<String> imageIDs = new ArrayList<>();
+        FacetField imageFacet = response.getFacetField(FieldName.IMG_ZDB_ID.getName());
+        if (imageFacet != null) {
+            for (FacetField.Count count : imageFacet.getValues()) {
+                imageIDs.add(count.getName());
+            }
+        }
+
+        if (!CollectionUtils.isEmpty(imageIDs)) {
+            model.addAttribute("previewImages", RepositoryFactory.getFigureRepository().getImages(imageIDs));
+        }
         List<String> categories = new ArrayList<>();
         categories.addAll(org.zfin.search.Category.getFacetMap().keySet());
         Collections.sort(categories, new Comparator<String>() {
