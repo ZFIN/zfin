@@ -329,11 +329,13 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
             mutationDetailProteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_SUBSTITUTION);
         }
         // if no consequence is selected and plus AA is used then default to Insertion
-        if (mutationDetailProteinView.hasPlusFieldOnly()) {
+        if (mutationDetailProteinView.proteinTermList.getSelectedIndex() == 0 &&
+                mutationDetailProteinView.hasPlusFieldOnly()) {
             mutationDetailProteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_INSERTION);
         }
         // if no consequence is selected and minus AA is used then default to Deletion
-        if (mutationDetailProteinView.hasMinusFieldOnly()) {
+        if (mutationDetailProteinView.proteinTermList.getSelectedIndex() == 0 &&
+                mutationDetailProteinView.hasMinusFieldOnly()) {
             mutationDetailProteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_DELETION);
         }
         // if no transcript consequence and protein: AA > AA for a Point mutation create
