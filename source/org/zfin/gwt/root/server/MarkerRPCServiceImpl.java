@@ -577,9 +577,11 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         // set publicationattribution
         if (StringUtils.isNotEmpty(dbLinkDTO.getPublicationZdbID())) {
             Set<PublicationAttribution> publications = new HashSet<PublicationAttribution>();
-            PublicationAttribution publicationAttribution =
-                    infrastructureRepository.insertPublicAttribution(dbLinkDTO.getZdbID(),
-                            dbLinkDTO.getPublicationZdbID());
+            infrastructureRepository.insertPublicAttribution(dbLinkDTO.getZdbID(),
+                    dbLinkDTO.getPublicationZdbID());
+            PublicationAttribution publicationAttribQuery = new PublicationAttribution();
+            publicationAttribQuery.setPublication(getPublicationRepository().getPublication(dbLinkDTO.getPublicationZdbID()));
+            PublicationAttribution publicationAttribution = infrastructureRepository.getPublicationAttribution(publicationAttribQuery);
             publications.add(publicationAttribution);
             dbLink.setPublications(publications);
         }
@@ -1139,7 +1141,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
     public void addConstructMarkerRelationShip(ConstructRelationshipDTO constructRelationshipDTO) {
         ConstructRelationship constructRelationship = new ConstructRelationship();
-MarkerRelationship markerRelationship=new MarkerRelationship();
+        MarkerRelationship markerRelationship = new MarkerRelationship();
         ConstructDTO constructDTO = constructRelationshipDTO.getConstructDTO();
         ConstructCuration construct = constructRepository.getConstructByID(constructDTO.getZdbID());
         constructRelationship.setConstruct(construct);
@@ -1149,7 +1151,7 @@ MarkerRelationship markerRelationship=new MarkerRelationship();
         constructRelationship.setMarker(marker);
 
         constructRelationship.setType(ConstructRelationship.Type.getType(constructRelationshipDTO.getRelationshipType()));
-markerRelationship.setFirstMarker(markerRepository.getMarkerByID(constructDTO.getZdbID()));
+        markerRelationship.setFirstMarker(markerRepository.getMarkerByID(constructDTO.getZdbID()));
         markerRelationship.setSecondMarker(marker);
         markerRelationship.setType(MarkerRelationship.Type.getType(constructRelationshipDTO.getRelationshipType()));
         HibernateUtil.createTransaction();
