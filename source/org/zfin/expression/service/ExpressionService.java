@@ -154,7 +154,7 @@ public class ExpressionService {
                 );
                 return -1;
             } else {
-                PublicationAttribution publicationAttribution = infrastructureRepository.insertPublicAttribution(marker.getZdbID()
+                RecordAttribution publicationAttribution = infrastructureRepository.insertPublicAttribution(marker.getZdbID()
                         , MicroarrayWebserviceJob.MICROARRAY_PUB);
                 if (publicationAttribution != null) {
                     logger.debug(publicationAttribution);

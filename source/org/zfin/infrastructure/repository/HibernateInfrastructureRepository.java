@@ -156,7 +156,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         session.save(ra);
     }
 
-    public PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID) {
+    public RecordAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID) {
         return insertPublicAttribution(dataZdbID, sourceZdbID, RecordAttribution.SourceType.STANDARD);
     }
 
@@ -180,20 +180,20 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return getRecordAttribution(attribution.getDataZdbID(), attribution.getSourceZdbID(), attribution.getSourceType()) != null;
     }
 
-    public PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType) {
+    public RecordAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType) {
         Session session = HibernateUtil.currentSession();
 
-        PublicationAttribution publicationAttribution = new PublicationAttribution();
-        publicationAttribution.setDataZdbID(dataZdbID);
-        publicationAttribution.setSourceZdbID(sourceZdbID);
+        RecordAttribution recordAttribution = new RecordAttribution();
+        recordAttribution.setDataZdbID(dataZdbID);
+        recordAttribution.setSourceZdbID(sourceZdbID);
         Publication publication = (Publication) session.get(Publication.class, sourceZdbID);
-        publicationAttribution.setPublication(publication);
-        publicationAttribution.setSourceType(sourceType);
+        recordAttribution.setSourceZdbID(publication.getZdbID());
+        recordAttribution.setSourceType(sourceType);
 
-        PublicationAttribution result = (PublicationAttribution) session.createCriteria(PublicationAttribution.class).add(Example.create(publicationAttribution)).uniqueResult();
+        RecordAttribution result = (RecordAttribution) session.createCriteria(RecordAttribution.class).add(Example.create(recordAttribution)).uniqueResult();
         if (result == null)
-            session.save(publicationAttribution);
-        return publicationAttribution;
+            session.save(recordAttribution);
+        return recordAttribution;
     }
 
     //retrieve a dataNote by its zdb_id

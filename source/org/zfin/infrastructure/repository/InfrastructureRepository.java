@@ -94,11 +94,11 @@ public interface InfrastructureRepository {
 
     void insertRecordAttribution(String dataZdbID, String sourceZdbID);
 
-    PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID);
+    RecordAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID);
 
     void insertPublicAttribution(Genotype genotype, String sourceZdbID);
 
-    PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType);
+    RecordAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType);
 
     void insertUpdatesTable(String recID, String comments, String submitterZdbID, Date updateDate);
 
