@@ -122,7 +122,6 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         curationExperimentRPCAsync.createExpressionExperiment(zoneExperiment, new AddExperimentCallback());
 
     }
-
     private boolean isEfgWildtypeCombo(ExperimentDTO experimentDTO) {
         if (experimentDTO.getGene()!=null) {
             if (experimentDTO.getFishDTO().isWildtype() && experimentDTO.getGene().getMarkerType().equals("Engineered Foreign Gene"))
@@ -130,6 +129,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         }
         return false;
     }
+
 
     protected void populateDataTable() {
         int elementIndex = 0;

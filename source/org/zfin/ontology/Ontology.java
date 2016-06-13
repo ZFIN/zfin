@@ -12,7 +12,7 @@ public enum Ontology implements Serializable {
     ANATOMY_FULL("zebrafish_anatomical_ontology", "Anatomy Ontology including stage ontology", false),
     // stages
     STAGE("zebrafish_stages", "Zebrafish Stage Ontology", false, "ZFS:"),
-    CHEBI("chebi","chebi",false,"CHEBI:"),
+    CHEBI("chebi_ontology","Chebi",false,"CHEBI:"),
     DISEASE_ONTOLOGY("disease_ontology", "Human Disease", false, "DOID:"),
     GO_ONTOLOGY("gene_ontology", "Full Gene Ontology: Default namespace", true),
     // full GO ontology
@@ -48,7 +48,7 @@ public enum Ontology implements Serializable {
     SO("sequence", "sequence", "Sequence Ontology", false, "SO:"),
     AOGO(ANATOMY.getOntologyName() + "," + GO.getOntologyName(), "AO and GO", true),
     AOGODO(ANATOMY.getOntologyName() + "," + GO.getOntologyName()+ "," + DISEASE_ONTOLOGY.getOntologyName(), "AO, GO and DO", true),
-    ZECO("zeco", "Zebrafish Environment Condition Ontology", false, "ZECO:");
+    ZECO("zebrafish_experimental_conditions_ontology", "Zebrafish Environment Condition Ontology", false, "ZECO:");
 
     private String ontologyName;
     private String commonName;
@@ -160,6 +160,8 @@ public enum Ontology implements Serializable {
                 Ontology.MPATH,
                 Ontology.MPATH_NEOPLASM,
                 Ontology.SPATIAL,
+                Ontology.ZECO,
+                Ontology.CHEBI,
                 Ontology.SO};
     }
 

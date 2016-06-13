@@ -74,8 +74,10 @@
             <arg value="${validateData}/gafLoad"/>
             <arg value="${jobName}"/>
             <arg value="GOA"/>
-            <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/gene_association.goa_zebrafish.gz"/>
+            <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish.gaf.gz"/>
             <arg value="org.zfin.datatransfer.go.GoaGafParser"/>
+            <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_isoform.gaf.gz"/>
+            <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_rna.gaf.gz"/>
             <jvmarg value="${jvm.args}"/>
         </java>
     </target>

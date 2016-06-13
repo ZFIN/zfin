@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 
 import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.*;
 
@@ -57,21 +58,23 @@ public class DownloadOntology extends AbstractScriptWrapper {
     }
 
     public void downloadOntology() {
-        HttpURLConnection httpURLConnection;
+        URLConnection uRLConnection;
         String urlString = downloadUrl;
         try {
             // loop needed to support redirects, i.e. if the url is being redirected to
             // another URL. by default, it does not do this for security purposes.
             while (true) {
                 URL url = new URL(urlString);
-                httpURLConnection = (HttpURLConnection) url.openConnection();
-                switch (httpURLConnection.getResponseCode()) {
-                    case HttpURLConnection.HTTP_MOVED_PERM:
-                    case HttpURLConnection.HTTP_MOVED_TEMP:
-                        urlString = httpURLConnection.getHeaderField("Location");
-                        continue;
+                uRLConnection = url.openConnection();
+                if (urlString.toLowerCase().startsWith("http")) {
+                    HttpURLConnection httpURLConnection = (HttpURLConnection) uRLConnection;
+                    switch (httpURLConnection.getResponseCode()) {
+                        case HttpURLConnection.HTTP_MOVED_PERM:
+                        case HttpURLConnection.HTTP_MOVED_TEMP:
+                            urlString = httpURLConnection.getHeaderField("Location");
+                            continue;
+                    }
                 }
-
                 break;
             }
         } catch (IOException e) {
@@ -81,7 +84,7 @@ public class DownloadOntology extends AbstractScriptWrapper {
         InputStream is = null;
         OutputStream os = null;
         try {
-            is = httpURLConnection.getInputStream();
+            is = uRLConnection.getInputStream();
             os = new FileOutputStream(path);
             byte[] temp = new byte[1024];
             int numOfBytesRead;

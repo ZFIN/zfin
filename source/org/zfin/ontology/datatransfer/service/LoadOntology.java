@@ -588,7 +588,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
     }
 
     private List<GenericTermRelationship> createRelationshipList(List<List<String>> relationships) {
-        List<GenericTermRelationship> relationshipList = new ArrayList<GenericTermRelationship>();
+        List<GenericTermRelationship> relationshipList = new ArrayList<>();
         if (relationships != null) {
             for (List<String> listID : relationships) {
                 GenericTermRelationship relationship = new GenericTermRelationship();
@@ -958,9 +958,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
 
         private String childId;
         // <parentID, relationshipType>
-        private Map<String, String> parentRelationshipMap = new HashMap<String, String>(4);
+        private Map<String, String> parentRelationshipMap = new HashMap<>(4);
         // relationship types
-        private List<String> relationshipTypeList = new ArrayList<String>(4);
+        private List<String> relationshipTypeList = new ArrayList<>(4);
 
         RelationshipsValidator(String childId) {
             this.childId = childId;
@@ -1058,7 +1058,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         // GOBOParseEngine can parse several files at once
         // and create one munged-together ontology,
         // so we need to provide a Collection to the setPaths() method
-        Collection<String> paths = new LinkedList<String>();
+        Collection<String> paths = new LinkedList<>();
         paths.add(oboFilename);
         engine.setPaths(paths);
         engine.parse();
@@ -1206,7 +1206,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         }
 
         List<String> individualRecord;
-        individualRecord = new ArrayList<String>(record.length);
+        individualRecord = new ArrayList<>(record.length);
         individualRecord.addAll(Arrays.asList(record));
         data.add(individualRecord);
         dataMap.put(unloadFile.getValue(), data);
@@ -1218,7 +1218,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         if (data == null) {
             data = new ArrayList<>();
         }
-        List<String> individualRecord = new ArrayList<String>(2);
+        List<String> individualRecord = new ArrayList<>(2);
         individualRecord.add(firstString);
         individualRecord.add(secondString);
         data.add(individualRecord);
