@@ -1642,6 +1642,10 @@ public class HibernateMutantRepository implements MutantRepository {
     public void saveGenotype(Genotype genotype, String publicationID) {
         Session session = HibernateUtil.currentSession();
         session.save(genotype);
+        if (genotype.getGenotypeFeatures() != null) {
+            for (GenotypeFeature genoFeature : genotype.getGenotypeFeatures())
+                session.save(genoFeature);
+        }
         getInfrastructureRepository().insertPublicAttribution(genotype.getZdbID(), publicationID, RecordAttribution.SourceType.STANDARD);
         getInfrastructureRepository().insertUpdatesTable(publicationID, "geno_zdb_id", null, genotype.getZdbID(), "create new record");
     }
