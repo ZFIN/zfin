@@ -910,11 +910,32 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                             appendFormattedRecord(UnloadFile.TERM_REPLACED, replacedByID.getID(), term.getID(), "replaced_by");
                     }
                     if (term.getSynonyms() != null) {
+                        Set<String> synonymKeySet = new HashSet<>(5);
                         for (Synonym synonym : term.getSynonyms()) {
+                            boolean isChebiSynonym = false;
+                            if (ontology.equals(Ontology.CHEBI)) {
+                                if (synonym.getXrefs() != null) {
+                                    for (Dbxref ref : synonym.getXrefs()) {
+                                        if (ref.getDatabase().toLowerCase().startsWith("chebi") )
+                                            isChebiSynonym = true;
+                                    }
+                                }
+                            }
+                            // don't create synonyms for entries dbxrefs of type chebi:! they have huge strings....
+                            if(isChebiSynonym)
+                                continue;
+                            // Make sure not to create distinct synonyms per these three keys.
+                            String synonymText =synonym.getText().trim().replaceAll(" +"," ");
+                            if(synonymText.length() > 255)
+                                synonymText = synonymText.substring(0,255);
+                            String synonymKey = term.getID() + ":" + synonymText;
+                            if (synonymKeySet.contains(synonymKey))
+                                continue;
+                            synonymKeySet.add(synonymKey);
                             if (synonym.getSynonymType() != null)
-                                appendSynonym(UnloadFile.TERM_SYNONYMS, term.getID(), synonym.getScope(), synonym.getText(), synonym.getSynonymType().getName());
+                                appendSynonym(UnloadFile.TERM_SYNONYMS, term.getID(), synonym.getScope(), synonymText, synonym.getSynonymType().getName());
                             else
-                                appendSynonym(UnloadFile.TERM_SYNONYMS, term.getID(), synonym.getScope(), synonym.getText(), "");
+                                appendSynonym(UnloadFile.TERM_SYNONYMS, term.getID(), synonym.getScope(), synonymText, "");
                         }
                     }
                     if (term.getConsiderReplacements() != null) {
