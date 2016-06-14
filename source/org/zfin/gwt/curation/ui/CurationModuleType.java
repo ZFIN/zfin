@@ -76,6 +76,13 @@ public enum CurationModuleType {
             return null;
         }
     },
+    EXPERIMENT_TAB {
+        @Override
+        public ConstructionZone initializeModule(String publicationID) {
+            new ExperimentModule(publicationID);
+            return null;
+        }
+    },
     ORTHO_TAB {
         @Override
         public ConstructionZone initializeModule(String publicationID) {
