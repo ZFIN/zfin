@@ -14,7 +14,8 @@
               value="http://purl.obolibrary.org/obo/bspo.obo"/>
     <property name="chebiOboURL" value="ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.obo"/>
     <property name="zecoOboURL" value="http://swirl.zfin.org/zeco.obo"/>
-    <property name="soOboURL" value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/so-xp-simple.obo"/>
+    <property name="soOboURL"
+              value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/so-xp-simple.obo"/>
     <property name="root.dir" value="${basedir}/../../../"/>
     <property name="web.dir" value="${root.dir}/home"/>
     <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
@@ -37,7 +38,7 @@
         </fileset>
     </path>
 
-   <path id="extended.classpath">
+    <path id="extended.classpath">
         <path refid="classpath"/>
         <!-- This class needs to come first to ensure that unit test methods are executed in the order they appear in the source file -->
         <fileset dir="${lib}">
@@ -63,7 +64,7 @@
     </target>
 
     <target name="load-spatial-ontology" depends="init">
-        <load-ontology oboDirectory="${run-directory}" oboFileName="spatial.obo" />
+        <load-ontology oboDirectory="${run-directory}" oboFileName="spatial.obo"/>
     </target>
 
     <target name="download-spatial-ontology">
@@ -78,28 +79,29 @@
     </target>
 
     <target name="load-zeco-ontology" depends="init">
-        <load-ontology oboDirectory="${run-directory}" oboFileName="zeco.obo" />
+        <load-ontology oboDirectory="${run-directory}" oboFileName="zeco.obo" scripts="${scriptFilesNoAnnotation}"/>
     </target>
 
 
     <target name="load-so-ontology" depends="init">
-        <load-ontology oboDirectory="${run-directory}" oboFileName="so-xp-simple.obo" />
+        <load-ontology oboDirectory="${run-directory}" oboFileName="so-xp-simple.obo"/>
     </target>
 
     <target name="load-gene-ontology" depends="init">
-        <load-ontology oboDirectory="${run-directory}" oboFileName="gene-ontology.obo" />
+        <load-ontology oboDirectory="${run-directory}" oboFileName="gene-ontology.obo"/>
     </target>
 
     <target name="load-chebi-ontology" depends="init">
-        <load-ontology oboDirectory="${run-directory}" oboFileName="chebi-ontology.obo" />
+        <load-ontology oboDirectory="${run-directory}" oboFileName="chebi-ontology.obo"
+                       scripts="${scriptFilesNoAnnotation}"/>
     </target>
 
     <target name="load-disease-ontology" depends="init">
-        <load-ontology oboDirectory="${run-directory}" oboFileName="disease-ontology.obo" />
+        <load-ontology oboDirectory="${run-directory}" oboFileName="disease-ontology.obo"/>
     </target>
 
     <target name="load-mpath-ontology" depends="init">
-        <load-ontology oboDirectory="${run-directory}" oboFileName="mouse_pathology.obo" />
+        <load-ontology oboDirectory="${run-directory}" oboFileName="mouse_pathology.obo"/>
     </target>
 
     <target name="download-gene-ontology">
@@ -120,7 +122,7 @@
         <antcall target="download-ontology"/>
     </target>
 
- <target name="download-so-ontology">
+    <target name="download-so-ontology">
         <property name="localOboFile" value="so-xp-simple.obo"/>
         <property name="oboFileURL" value="${soOboURL}"/>
         <antcall target="download-ontology"/>
@@ -145,7 +147,7 @@
     </target>
 
     <target name="load-quality-ontology" depends="init">
-        <load-ontology oboDirectory="${run-directory}" oboFileName="quality.obo" />
+        <load-ontology oboDirectory="${run-directory}" oboFileName="quality.obo"/>
     </target>
 
     <target name="load-zeco" depends="download-zeco-ontology,load-zeco-ontology"/>
@@ -163,7 +165,7 @@
     <target name="load-disease" depends="download-disease-ontology,load-disease-ontology,run-omim-mapping-updates">
     </target>
 
-    <target name="run-omim-mapping-updates" >
+    <target name="run-omim-mapping-updates">
         <echo message="Updating the Omim Phenotype xref mapping table..."/>
         <run-db-query db-query-file="../OMIM/update_omimp_termxref_mapping.sql" instanceName="${env.INSTANCE}"/>
     </target>
@@ -176,7 +178,7 @@
 
     <target name="load-sequence-ontology" depends="init">
         <property name="localOboFile" value="${run-directory}/sequence-ontology.obo"/>
-        <load-ontology oboDirectory="${run-directory}" oboFileName="sequence-ontology.obo" />
+        <load-ontology oboDirectory="${run-directory}" oboFileName="sequence-ontology.obo"/>
     </target>
 
     <target name="download-quality-ontology">
@@ -188,13 +190,18 @@
     <property name="scriptFiles"
               value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,dropTempTables.sql"/>
 
+    <property name="scriptFilesNoAnnotation"
+              value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,dropTempTables.sql"/>
+
     <macrodef name="load-ontology" description="Run the ontology loader">
         <attribute name="oboFileName"/>
         <attribute name="oboDirectory"/>
+        <attribute name="scripts" default="${scriptFiles}"/>
 
         <sequential>
             <echo>OBO dir : @{oboFileName}</echo>
             <echo>OBO file: @{oboDirectory}</echo>
+            <echo>script Files: @{scripts}</echo>
             <antcall target="clear-output-directory"/>
             <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="no" maxmemory="2024m"
                   failonerror="true">
@@ -204,7 +211,7 @@
                 <arg value="-log4jFilename"/>
                 <arg value="log4j.xml"/>
                 <arg value="-dbScriptFileNames"/>
-                <arg value="${scriptFiles}"/>
+                <arg value="@{scripts}"/>
                 <arg value="-webrootDirectory"/>
                 <arg value="${web.dir}"/>
                 <arg value="-loadDir"/>
@@ -310,7 +317,6 @@
     </macrodef>
 
 
-
     <target name="download-ontology" depends="init" description="Run the ontology loader">
         <echo>Downloading OBO file: ${oboFileURL}</echo>
 
@@ -353,7 +359,7 @@
             download-sequence-ontology
             download-chebi-ontology
             download-zeco-ontology
-	    download-so-ontology
+            download-so-ontology
 
             load-zeco-ontology
             load-chebi-ontology
@@ -363,10 +369,10 @@
             load-spatial-ontology
             load-mpath-ontology
             load-sequence-ontology
-	    load-so-ontology
+            load-so-ontology
 
             load-zeco
-	    load-so
+            load-so
             load-chebi
             load-quality
             load-gene
