@@ -1,0 +1,13 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        >
+    <g:FlowPanel>
+        <zfin-mod:AttributionModule ui:field="attributionModule" styleName="flow-margin"/>
+        <zfin-mod:ExperimentAddView ui:field="experimentAddView" styleName="flow-margin"/>
+        <zfin-mod:ExpConditionDetailsView ui:field="expCondDetView" styleName="flow-margin"/>
+    </g:FlowPanel>
+
+</ui:UiBinder>
