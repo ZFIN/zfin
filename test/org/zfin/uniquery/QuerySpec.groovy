@@ -88,7 +88,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.MARKER.name           | "id:ibd5006  ibd5006"                            | "11289"
         Category.MARKER.name           | "id:ibd5006  CH211-96B20 id:ZDB-BAC-100127-972"  | "11289"
         Category.MARKER.name           | "id:ibd5006  fgf3"                               | "11289"
-        Category.MUTANT.name           | "id:ZDB-ALT-000913-2 Contains a 1848 bp insertion" | "0" //priorities meeting discussion
+        Category.MUTANT.name           | "id:ZDB-ALT-980203-1256 Contains an A-to-G point mutation in the start codon" | "0" //feature notes, per priorities meeting discussion
         Category.GENE.name             | "OTTDARG00000020346 ZDB-GENE-030131-3445"        | "11331"
         Category.GENE.name             | "tlx1 CH211-103O12"                              | "11657"
         Category.GENE.name             | "fgf8 CH211-194I8 id:ZDB-GENE-990415-72"         | "11657"

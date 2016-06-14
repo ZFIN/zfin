@@ -3195,8 +3195,15 @@ SELECT trim(CASE Length(Get_genotype_backgrounds(geno_zdb_id))
                            ;"
                         cacheImpl="SortedMapBackedCache"
                         where="feature_zdb_id=feature.id"/>
-
            </entity>
+
+           <entity name="feature_note"
+                   query="select feature_zdb_id, dnote_text as note
+                            from feature
+                                 join data_note on dnote_data_zdb_id = feature_zdb_id"
+                   cacheImpl="SortedMapBackedCache"
+                   where="feature_zdb_id=feature.id"/>
+
            <entity name="feature_aliases_from_feature_tracking"
                    datasource="db" query="select ft_feature_abbrev as alias, ft_feature_zdb_id as feature_zdb_id from feature_tracking
                    union
