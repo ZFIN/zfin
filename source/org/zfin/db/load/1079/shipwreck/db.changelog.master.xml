@@ -9,4 +9,5 @@
   <include file="source/org/zfin/db/load/1079/shipwreck/chebi.sql"/>
   <include file="source/org/zfin/db/load/1079/shipwreck/14312.sql"/>
   <include file="source/org/zfin/db/load/1079/shipwreck/experiment_condition_update.sql"/>
+  <include file="source/org/zfin/db/load/1079/shipwreck/chebi_taxon_expcond.sql"/>
 </databaseChangeLog>
