@@ -7,7 +7,7 @@
     <g:FlowPanel>
         <zfin-mod:AttributionModule ui:field="attributionModule" styleName="flow-margin"/>
         <zfin-mod:ExperimentAddView ui:field="experimentAddView" styleName="flow-margin"/>
-        <zfin-mod:ExpConditionDetailsView ui:field="expCondDetView" styleName="flow-margin"/>
+        <zfin-mod:ConditionDetailsView ui:field="conditionDetailsView" styleName="flow-margin"/>
     </g:FlowPanel>
 
 </ui:UiBinder>
