@@ -274,6 +274,27 @@
             <column name="expcond_cdt_zdb_id"/>
         </many-to-one>
 
+        <many-to-one name="zecoTerm" class="org.zfin.ontology.GenericTerm">
+            <column name="expcond_zeco_term_zdb_id"/>
+        </many-to-one>
+
+        <many-to-one name="chebiTerm" class="org.zfin.ontology.GenericTerm">
+            <column name="expcond_chebi_zdb_id"/>
+        </many-to-one>
+
+        <many-to-one name="aoTerm" class="org.zfin.ontology.GenericTerm">
+            <column name="expcond_ao_term_zdb_id"/>
+        </many-to-one>
+
+        <many-to-one name="goTerm" class="org.zfin.ontology.GenericTerm">
+            <column name="expcond_go_cc_term_zdb_id"/>
+        </many-to-one>
+
+        <many-to-one name="taxonTerm" class="org.zfin.ontology.GenericTerm">
+            <column name="expcond_taxon_term_zdb_id"/>
+        </many-to-one>
+
+
     </class>
 
     <class name="org.zfin.expression.ConditionDataType" table="condition_data_type">

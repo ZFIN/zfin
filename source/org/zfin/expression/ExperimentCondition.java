@@ -2,6 +2,7 @@ package org.zfin.expression;
 
 import org.apache.log4j.Logger;
 import org.zfin.infrastructure.EntityZdbID;
+import org.zfin.ontology.GenericTerm;
 
 /**
  * Entity class that maps to experiment table.
@@ -12,6 +13,11 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
     private Experiment experiment;
     private ConditionDataType conditionDataType;
     private String comments;
+    private GenericTerm zecoTerm;
+    private GenericTerm chebiTerm;
+    private GenericTerm aoTerm;
+    private GenericTerm goTerm;
+    private GenericTerm taxonTerm;
 
     private static Logger logger = Logger.getLogger(ExperimentCondition.class);
 
@@ -84,5 +90,45 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
     @Override
     public String getEntityName() {
         return experiment.getName();
+    }
+
+    public GenericTerm getZecoTerm() {
+        return zecoTerm;
+    }
+
+    public void setZecoTerm(GenericTerm zecoTerm) {
+        this.zecoTerm = zecoTerm;
+    }
+
+    public GenericTerm getChebiTerm() {
+        return chebiTerm;
+    }
+
+    public void setChebiTerm(GenericTerm chebiTerm) {
+        this.chebiTerm = chebiTerm;
+    }
+
+    public GenericTerm getAoTerm() {
+        return aoTerm;
+    }
+
+    public void setAoTerm(GenericTerm aoTerm) {
+        this.aoTerm = aoTerm;
+    }
+
+    public GenericTerm getGoTerm() {
+        return goTerm;
+    }
+
+    public void setGoTerm(GenericTerm goTerm) {
+        this.goTerm = goTerm;
+    }
+
+    public GenericTerm getTaxonTerm() {
+        return taxonTerm;
+    }
+
+    public void setTaxonTerm(GenericTerm taxonTerm) {
+        this.taxonTerm = taxonTerm;
     }
 }
