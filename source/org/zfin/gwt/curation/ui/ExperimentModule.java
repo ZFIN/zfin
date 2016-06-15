@@ -41,6 +41,8 @@ public class ExperimentModule implements  EntryPoint {
     AttributionModule attributionModule;
     @UiField
     ExperimentAddView experimentAddView;
+    @UiField
+    ConditionAddView conditionAddView;
 
     public ExperimentModule(String publicationID) {
         this.publicationID = publicationID;

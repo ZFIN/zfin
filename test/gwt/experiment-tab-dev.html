@@ -1,3 +1,4 @@
+<!doctype html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -28,31 +29,30 @@
     <script type="text/javascript" src="/javascript/jquery.modal.min.js"></script>
     <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
     <script type="text/javascript" src="/javascript/sorttable.js"></script>
-    <script type="text/javascript" src="/css/bootstrap3/js/tab.js"></script>
+    <script type="text/javascript" src="/css/bootstrap3/js/tabs.js"></script>
 
     <script src="/javascript/autocompletify.js"></script>
 
 
 </head>
-<script type="text/javascript" language="javascript"
-        src="org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
-
+<body>
 <ul class="nav nav-pills" id="myTab">
     <li><a data-toggle="tab">Home</a></li>
     <li><a href="feature-tab-dev.html">Feature</a></li>
-    <li><a href="experiment-tab-dev.html">Experiment</a></li>
     <li><a href="fish-tab-dev.html">Fish</a></li>
+    <li class="active"><a href="experiment-tab-dev.html">Experiment</a></li>
     <li><a href="fx-tab-dev.html">FX</a></li>
     <li><a href="pheno-tab-dev.html">PHENO</a></li>
     <!--
         <li><a href="feature-tab-dev.html">GO</a></li>
     -->
-    <li class="active"><a href="human-disease-tab-dev.html">Disease</a></li>
+    <li><a href="human-disease-tab-dev.html">Disease</a></li>
     <!--
         <li><a href="feature-tab-dev.html">Orthology</a></li>
     -->
 </ul>
-
+<script type="text/javascript" language="javascript"
+        src="org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
 
 <div id="show-hide-all-sections"></div>
 
@@ -61,7 +61,7 @@
 <p/>
 
 <div id="title">
-    Publication: Fashena et al., 1999  &nbsp; ZDB-PUB-990507-16
+    Publication: Fashena et al., 1999 &nbsp; ZDB-PUB-990507-16
 </div>
 <form method="GET">
     Publication ID: <label>
@@ -72,16 +72,17 @@
 
 <div id="directAttributionName"></div>
 
-<div id="humanDiseaseZone"></div>
+<div id="experimentTab"></div>
 
 <script type="text/javascript">
     var curationProperties = {
         zdbID: "ZDB-PUB-990507-16",
-        moduleType: "DISEASE_CURATION",
+        moduleType: "EXPERIMENT_TAB",
         debug: "false"
     };
     var g = "ZDB-PUB-060105-3,ZDB-PUB-090616-53,ZDB-PUB-990507-16";
 </script>
-<script type="text/javascript" src="/javascript/zfin-gwt-autocomplete-helper.js">
-</script>
 
+
+</body>
+</html>

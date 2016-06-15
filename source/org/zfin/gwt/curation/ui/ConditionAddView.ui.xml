@@ -1,0 +1,59 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        >
+
+    <g:FlowPanel>
+        <g:HorizontalPanel spacing="0">
+            <g:Label text="CONDITION DETAILS: &nbsp;" styleName="summaryTitle"/>
+            <zfin:ShowHideToggle widget="{viewPanel}" ui:field="showHideToggle" show="true"/>
+            <g:Label ui:field="noneDefinedGenoLabel" text="&nbsp;None defined" styleName="no-data-tag"/>
+        </g:HorizontalPanel>
+        <g:FlowPanel ui:field="viewPanel">
+            <g:Grid ui:field='dataTable' cellSpacing='10' styleName="searchresults groupstripes">
+                <g:row styleName="table-header">
+                    <g:customCell>
+                        <g:Label text="" horizontalAlignment="left"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label text="Experiment Name" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label text="Condition" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label text="Delete" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                </g:row>
+            </g:Grid>
+            <zfin:SimpleErrorElement ui:field="errorLabel"/>
+            <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="false"/>
+            <g:HTML>
+                <hr/>
+            </g:HTML>
+            <g:Button ui:field="createExperimentCondition" text="Add Condition"
+                      addStyleNames="btn btn-primary" enabled="false"/>
+<!--
+            <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
+                <g:HorizontalPanel verticalAlignment="middle" horizontalAlignment="left">
+                    <g:Button ui:field="addButton" text="Add"/>
+                    <g:Button ui:field="resetButton" text="Reset"/>
+                    <g:HTML>&nbsp;</g:HTML>
+                    <zfin:SimpleErrorElement ui:field="diseaseErrorLabel"/>
+                </g:HorizontalPanel>
+                <g:VerticalPanel spacing="10" title="Pile">
+                    <zfin:TermEntry ui:field="termEntry" listOFOntologies="zeco_ontology"
+                                    entityPart="ENTITY_SUPERTERM"
+                                    errorHandler="{diseaseErrorLabel}"
+                                    termInfoTable="{termInfoBox}"/>
+
+                </g:VerticalPanel>
+                <zfin:TermInfoComposite ui:field='termInfoBox' styleName="searchresults" cellSpacing='0' cellPadding='5'
+                                        ontologyName="zeco_ontology"/>
+            </g:HorizontalPanel>
+-->
+        </g:FlowPanel>
+    </g:FlowPanel>
+</ui:UiBinder>

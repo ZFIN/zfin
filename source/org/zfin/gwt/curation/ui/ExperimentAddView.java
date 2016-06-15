@@ -54,7 +54,7 @@ public class ExperimentAddView extends Composite  {
 
 
 
-    @UiHandler("addConditionNameButton")
+    //@UiHandler("addConditionNameButton")
    /*void onAddModel(@SuppressWarnings("unused") ClickEvent event) {
         presenter.addModelEvent();
     }

@@ -2,12 +2,12 @@
 <ui:UiBinder
         xmlns:ui='urn:ui:com.google.gwt.uibinder'
         xmlns:g='urn:import:com.google.gwt.user.client.ui'
-        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui'
         >
     <g:FlowPanel>
         <zfin-mod:AttributionModule ui:field="attributionModule" styleName="flow-margin"/>
         <zfin-mod:ExperimentAddView ui:field="experimentAddView" styleName="flow-margin"/>
-        <zfin-mod:ConditionDetailsView ui:field="conditionDetailsView" styleName="flow-margin"/>
+        <zfin-mod:ConditionAddView ui:field="conditionAddView" styleName="flow-margin"/>
     </g:FlowPanel>
 
 </ui:UiBinder>

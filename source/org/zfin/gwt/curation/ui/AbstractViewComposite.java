@@ -1,12 +1,15 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import org.zfin.gwt.root.ui.IsDirtyWidget;
 import org.zfin.gwt.root.ui.NumberTextBox;
+import org.zfin.gwt.root.ui.ShowHideToggle;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
 
 import java.util.Set;
