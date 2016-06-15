@@ -1791,30 +1791,28 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public void insertMutationDetailAttribution(String dataZdbID, String publicationID) {
         Session session = HibernateUtil.currentSession();
 
-        PublicationAttribution publicationAttribution = new PublicationAttribution();
-        publicationAttribution.setDataZdbID(dataZdbID);
-        publicationAttribution.setSourceZdbID(publicationID);
-        Publication publication = (Publication) session.get(Publication.class, publicationID);
-        publicationAttribution.setPublication(publication);
-        publicationAttribution.setSourceType(RecordAttribution.SourceType.STANDARD);
+        RecordAttribution recordAttribution = new RecordAttribution();
+        recordAttribution.setDataZdbID(dataZdbID);
+        recordAttribution.setSourceZdbID(publicationID);
+        recordAttribution.setSourceType(RecordAttribution.SourceType.STANDARD);
 
-        Criteria criteriaExisting = session.createCriteria(PublicationAttribution.class);
-        criteriaExisting.add(Example.create(publicationAttribution));
-        PublicationAttribution thisPubResult = (PublicationAttribution) criteriaExisting.uniqueResult();
+        Criteria criteriaExisting = session.createCriteria(RecordAttribution.class);
+        criteriaExisting.add(Example.create(recordAttribution));
+        RecordAttribution thisPubResult = (RecordAttribution) criteriaExisting.uniqueResult();
         // done if record already exists
         if (thisPubResult != null)
             return;
 
-        Criteria criteria = session.createCriteria(PublicationAttribution.class);
+        Criteria criteria = session.createCriteria(RecordAttribution.class);
         criteria.add(Restrictions.eq("dataZdbID", dataZdbID));
         criteria.add(Restrictions.eq("sourceType", RecordAttribution.SourceType.STANDARD.toString()));
-        PublicationAttribution result = (PublicationAttribution) criteria.uniqueResult();
+        RecordAttribution result = (RecordAttribution) criteria.uniqueResult();
 
         // remove previous attribution if different from current pub
-        if (result != null && !result.getPublication().getZdbID().equals(publicationID)) {
+        if (result != null && !result.getSourceZdbID().equals(publicationID)) {
             session.delete(result);
         }
-        session.save(publicationAttribution);
+        session.save(recordAttribution);
     }
 }
 
