@@ -387,6 +387,8 @@ insert into sec_unload_report
 unload to 'sec_unload_report.unl'
   select * from sec_unload_report;
 
+drop table sec_unload_report;
+
 --commit work ;
 
 --rollback work; 

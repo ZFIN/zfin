@@ -46,8 +46,6 @@ drop table tmp_term_comment_changed;
 
 drop table tmp_term_definition_changed;
 
-drop table sec_unload_report;
-
 drop table tmp_consider;
 
 drop table tmp_term_obsoletes;
