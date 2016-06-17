@@ -459,34 +459,29 @@ UNION
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_environment_fish.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_environment_fish.txt'
  DELIMITER "	"
-select exp_zdb_id, cdt_group, cdt_name, expcond_comments
- from experiment, experiment_condition, condition_data_type
- where exp_zdb_id = expcond_exp_zdb_id
-   and expcond_cdt_zdb_id = cdt_zdb_id
-   and exists (
-	select 't' from fish_experiment, expression_experiment
-	 where exp_zdb_id = genox_exp_zdb_id
-	   and genox_zdb_id = xpatex_genox_zdb_id
-           and not exists (Select 'x' from clone
-	    where xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id
-	   and clone_problem_type = 'Chimeric'))
+select exp_zdb_id, zeco.term_name, expcond_zeco_term_zdb_id, chebi.term_name, expcond_chebi_zdb_id
+  from experiment_condition
+join experiment on exp_zdb_id = expcond_exp_zdb_id
+left outer join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id  
+left outer join term chebi on chebi.term_zdb_id = expcond_chebi_zdb_id
+ where exists (
+        select 'x' from fish_experiment, expression_experiment
+         where expcond_exp_zdb_id = genox_exp_zdb_id
+           and genox_zdb_id = xpatex_genox_zdb_id) 
 union
-select exp_zdb_id, exp_name,exp_name, "This environment is used for non-standard conditions used in control treatments."
+select exp_zdb_id, exp_name, "", "", ""
  from experiment
- where exp_name = "_Generic-control"
+ where exp_name = "_Generic-control"  
 union
-select exp_zdb_id, exp_name,exp_name,"standard environment"
+select exp_zdb_id, "standard environment", "", "", ""
  from experiment
  where not exists (Select 'x' from experiment_condition
-       	   	  	  where exp_zdb_id = expcond_exp_zdb_id)
-  and exists (
-	select 't' from fish_experiment, expression_experiment
-	 where exp_zdb_id = genox_exp_zdb_id
-	   and genox_zdb_id = xpatex_genox_zdb_id
-and not exists (Select 'x' from clone
-	    where xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id
-	   and clone_problem_type = 'Chimeric'))
- order by  1,2
+                          where exp_zdb_id = expcond_exp_zdb_id)
+   and exists (
+        select 't' from fish_experiment, expression_experiment
+         where exp_zdb_id = genox_exp_zdb_id
+           and genox_zdb_id = xpatex_genox_zdb_id)
+ order by 1, 2, 4
 ;
 
 
@@ -552,23 +547,19 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment_fish.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment_fish.txt'
  DELIMITER "	"
-select exp_zdb_id, cdt_group, cdt_name, expcond_comments
- from experiment, experiment_condition, condition_data_type
- where exp_zdb_id = expcond_exp_zdb_id
-   and expcond_cdt_zdb_id = cdt_zdb_id
-   and exists (
+select exp_zdb_id, zeco.term_name, expcond_zeco_term_zdb_id, chebi.term_name, expcond_chebi_zdb_id
+  from experiment_condition
+join experiment on exp_zdb_id = expcond_exp_zdb_id
+left outer join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id  
+left outer join term chebi on chebi.term_zdb_id = expcond_chebi_zdb_id
+ where exists (
         select 't'
-         from fish_experiment, phenotype_source_generated
+          from fish_experiment, phenotype_source_generated
          where exp_zdb_id = genox_exp_zdb_id
-           and genox_zdb_id = pg_genox_zdb_id
-)
-union
--- special handling for _Generic-control--insert into tmp_env
-select exp_zdb_id, exp_name, exp_name,"This environment is used for non-standard conditions used in control treatments."
- from experiment
- where exp_name = "_Generic-control"
- order by 1,2
+           and genox_zdb_id = pg_genox_zdb_id) 
+order by 1, 2, 4
 ;
+
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt'

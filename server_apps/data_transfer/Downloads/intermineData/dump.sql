@@ -300,23 +300,27 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_experiments/1exps.txt"
   select expcond_zdb_id,
   	 expcond_exp_zdb_id,
-	 expcond_cdt_zdb_id, 
-	 cdt_name, 
-	 cdt_group,
-	 exp_name
-    from experiment_condition, condition_data_type,experiment
-    where expcond_cdt_zdb_id = cdt_zdb_id
-    and exp_zdb_id = expcond_exp_Zdb_id
+  	 zeco.term_name,
+  	 expcond_zeco_term_zdb_id,
+  	 chebi.term_name,
+	 expcond_chebi_zdb_id, 
+	 exp_name  
+    from experiment_condition
+join experiment on exp_zdb_id = expcond_exp_zdb_id
+left outer join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id  
+left outer join term chebi on chebi.term_zdb_id = expcond_chebi_zdb_id
 union
   select exp_zdb_id,
   	 exp_zdb_id,
   	 '',
 	 '',
 	 '',
+	 '',
 	 ''
     from experiment 
-  where not exists (Select 'x' from experiment_condition
-  	    	   	   where expcond_exp_zdb_id = exp_zdb_id);
+  where not exists (select 'x' from experiment_condition
+  	    	   	   where expcond_exp_zdb_id = exp_zdb_id)
+;
 
 --markers
 

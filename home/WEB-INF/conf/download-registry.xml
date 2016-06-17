@@ -996,9 +996,10 @@
                 <![CDATA[ ]]>
             </Query>
             <Column id="1" unique="true">Environment ID</Column>
-            <Column id="2">Condition Group</Column>
-            <Column id="3">Condition Content</Column>
-            <Column id="6">Comment</Column>
+            <Column id="2">ZECO Term Name</Column>
+            <Column id="3">ZECO Term ID</Column>
+            <Column id="4">Chebi Term Name</Column>
+            <Column id="5">Chebi Term ID</Column>
         </Download>
         <Download orderIndex="5">
             <Name>
@@ -1369,8 +1370,10 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
                 <![CDATA[]]>
             </Query>
             <Column id="1" unique="true">Environment ID</Column>
-            <Column id="2">Condition Group</Column>
-            <Column id="3">Condition</Column>
+            <Column id="2">ZECO Term name</Column>
+            <Column id="3">ZECO Term ID</Column>
+            <Column id="4">Chebi Term name</Column> 
+            <Column id="5">Chebi Term ID</Column>
         </Download>
         <Download orderIndex="5">
             <Name>
