@@ -83,7 +83,12 @@ public class ConditionAddView extends AbstractViewComposite {
             dataTable.setText(row, col++, experimentDTO.getName());
         else
             dataTable.setText(row, col++, "");
-            dataTable.setText(row, col++, dto.getName());
+        dataTable.setText(row, col++, dto.getName());
+    }
+
+    public void addDeleteButton(DeleteImage deleteImage, int elementIndex) {
+        int row = elementIndex + 1;
+        dataTable.setWidget(row, 3, deleteImage);
     }
 
     public void emptyDataTable() {

@@ -1,12 +1,17 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import org.zfin.gwt.root.dto.ConditionDTO;
 import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.event.SelectAutoCompleteEvent;
+import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.TermEntry;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.util.DeleteImage;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -54,14 +59,12 @@ public class ConditionAddPresenter implements HandlesError {
             int index = 0;
             for (ConditionDTO conditionDTO : dto.getConditionDTOList()) {
                 view.addCondition(dto, conditionDTO, elementIndex);
+                DeleteImage deleteImage = new DeleteImage("Delete Note " + conditionDTO.getZdbID());
+                deleteImage.addClickHandler(new DeleteConditionClickHandler(conditionDTO, this));
+                view.addDeleteButton(deleteImage, elementIndex);
+                elementIndex++;
             }
-/*
-            DeleteTranscriptConsequence deleteAnchor = new DeleteTranscriptConsequence(dto, view);
-            view.addConsequenceRow(dto, deleteAnchor, elementIndex);
-*/
-            elementIndex++;
         }
-
     }
 
     @Override
@@ -71,7 +74,6 @@ public class ConditionAddPresenter implements HandlesError {
 
     @Override
     public void clearError() {
-        //  view.message.setText("");
         view.errorLabel.setError("");
     }
 
@@ -177,4 +179,34 @@ public class ConditionAddPresenter implements HandlesError {
         dto.setTaxonTerm(view.taxonTermEntry.getTermTextBox().getSelectedTerm());
         return dto;
     }
+
+    private class DeleteConditionClickHandler implements ClickHandler {
+
+        private ConditionDTO conditionDTO;
+        private ConditionAddPresenter presenter;
+
+
+        public DeleteConditionClickHandler(ConditionDTO conditionDTO, ConditionAddPresenter presenter) {
+            this.conditionDTO = conditionDTO;
+            this.presenter = presenter;
+        }
+
+        @Override
+        public void onClick(ClickEvent clickEvent) {
+            String message = "Are you sure you want to delete this condition?";
+            if (!Window.confirm(message))
+                return;
+
+            ExperimentRPCService.App.getInstance().deleteCondition(conditionDTO, new FeatureEditCallBack<List<EnvironmentDTO>>("Failed to remove condition: ", presenter) {
+                @Override
+                public void onSuccess(List<EnvironmentDTO> list) {
+                    dtoList.clear();
+                    dtoList = list;
+                    populateData();
+                }
+            });
+        }
+    }
+
+
 }

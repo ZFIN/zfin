@@ -832,3 +832,7 @@ ul.comma-separated > li:last-child:after {
 .flow-margin {
     margin: 10px;
 }
+
+.vertical-margin {
+    margin-top: 20px;
+}

@@ -16,6 +16,8 @@ public interface ExperimentRPCService extends RemoteService {
 
     List<EnvironmentDTO> createCondition(String publicationID, ConditionDTO conditionDTO) throws ValidationException, TermNotFoundException;
 
+    List<EnvironmentDTO> deleteCondition(ConditionDTO conditionDTO) throws ValidationException, TermNotFoundException;
+
     /**
      * Utility/Convenience class.
      */

@@ -1141,6 +1141,8 @@ public class DTOConversionService {
             List<ConditionDTO> list = new ArrayList<>();
             for (ExperimentCondition condition : experiment.getExperimentConditions()) {
                 ConditionDTO dto = new ConditionDTO();
+                dto.setZdbID(condition.getZdbID());
+                dto.setEnvironmentZdbID(experiment.getZdbID());
                 dto.setZecoTerm(DTOConversionService.convertToTermDTO(condition.getZecoTerm()));
                 dto.setAoTerm(DTOConversionService.convertToTermDTO(condition.getAoTerm()));
                 dto.setGoCCTerm(DTOConversionService.convertToTermDTO(condition.getGoCCTerm()));

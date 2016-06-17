@@ -2111,4 +2111,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         return (List<Experiment>) query.list();
     }
+
+    @Override
+    public void deleteExperimentCondition(ExperimentCondition condition) {
+        HibernateUtil.currentSession().delete(condition);
+    }
 }

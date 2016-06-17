@@ -65,6 +65,40 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
     }
 
     @Override
+    public List<EnvironmentDTO> deleteCondition(ConditionDTO conditionDTO) throws ValidationException, TermNotFoundException {
+        if (conditionDTO == null)
+            throw new ValidationException("No condition entity provided");
+        String experimentID = conditionDTO.getEnvironmentZdbID();
+        if (experimentID == null)
+            throw new ValidationException("No experimentID provided");
+        String publicationID = null;
+        HibernateUtil.createTransaction();
+        try {
+            Experiment experiment = getExpressionRepository().getExperimentByID(experimentID);
+            if (experiment == null)
+                throw new ValidationException("No experiment found for " + experimentID);
+            publicationID = experiment.getPublication().getZdbID();
+            if (experiment.getExperimentConditions() != null) {
+                for (ExperimentCondition condition : experiment.getExperimentConditions()) {
+                    if (condition.getZdbID().equals(conditionDTO.getZdbID())) {
+                        experiment.getExperimentConditions().remove(condition);
+                        getExpressionRepository().deleteExperimentCondition(condition);
+                        break;
+                    }
+                }
+            }
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            throw new TermNotFoundException(e.getMessage());
+        }
+
+        return getExperimentList(publicationID);
+    }
+
+    @Override
     public List<EnvironmentDTO> getExperimentList(String publicationID) {
         List<EnvironmentDTO> list = new ArrayList<>();
         List<Experiment> experimentSet = getExpressionRepository().geExperimentByPublication(publicationID);

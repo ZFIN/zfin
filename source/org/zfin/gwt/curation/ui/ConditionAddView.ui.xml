@@ -20,20 +20,29 @@
                     <g:customCell>
                         <g:Label text="Condition" styleName="bold" horizontalAlignment="left" width="75%"/>
                     </g:customCell>
-                    <g:cell/>
                     <g:customCell>
-                        <g:Label text="Delete" styleName="bold"/>
+                        <g:Label text="Delete" styleName="bold" horizontalAlignment="left"/>
                     </g:customCell>
                 </g:row>
+            </g:Grid>
+            <g:Grid cellSpacing='10' styleName="searchresults groupstripes">
                 <g:row>
                     <g:cell/>
                     <g:customCell>
-                        <g:HorizontalPanel>
+                        <g:FlowPanel>
                             <zfin:StringListBox ui:field="experimentSelectionList"/>
-                        </g:HorizontalPanel>
+                            <g:HTML>
+                                <p/>
+                            </g:HTML>
+                            <g:HorizontalPanel addStyleNames="vertical-margin">
+                                <g:Button ui:field="createExperimentConditionButton" text="Add Condition"
+                                          addStyleNames="btn btn-primary" enabled="false"/>
+                                <g:Button ui:field="resetButton" text="Reset" addStyleNames="btn btn-link"/>
+                            </g:HorizontalPanel>
+                        </g:FlowPanel>
                     </g:customCell>
                     <g:customCell>
-                        <g:FlowPanel>
+                        <g:FlowPanel width="75%">
                             <zfin:TermEntry ui:field="zecoTermEntry"
                                             listOFOntologies="zebrafish_experimental_conditions_ontology"
                                             entityPart="ENTITY_SUPERTERM"
@@ -66,27 +75,10 @@
             </g:Grid>
             <zfin:SimpleErrorElement ui:field="errorLabel"/>
             <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="false"/>
-            <g:Button ui:field="createExperimentConditionButton" text="Add Condition"
-                      addStyleNames="btn btn-primary" enabled="false"/>
-            <g:Button ui:field="resetButton" text="Reset" addStyleNames="btn btn-link"/>
             <!--
-                        <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
-                            <g:HorizontalPanel verticalAlignment="middle" horizontalAlignment="left">
-                                <g:Button ui:field="addButton" text="Add"/>
-                                <g:Button ui:field="resetButton" text="Reset"/>
-                                <g:HTML>&nbsp;</g:HTML>
-                                <zfin:SimpleErrorElement ui:field="diseaseErrorLabel"/>
-                            </g:HorizontalPanel>
-                            <g:VerticalPanel spacing="10" title="Pile">
-                                <zfin:TermEntry ui:field="termEntry" listOFOntologies="zeco_ontology"
-                                                entityPart="ENTITY_SUPERTERM"
-                                                errorHandler="{diseaseErrorLabel}"
-                                                termInfoTable="{termInfoBox}"/>
-
-                            </g:VerticalPanel>
-                            <zfin:TermInfoComposite ui:field='termInfoBox' styleName="searchresults" cellSpacing='0' cellPadding='5'
-                                                    ontologyName="zeco_ontology"/>
-                        </g:HorizontalPanel>
+                        <g:Button ui:field="createExperimentConditionButton" text="Add Condition"
+                                  addStyleNames="btn btn-primary" enabled="false"/>
+                        <g:Button ui:field="resetButton" text="Reset" addStyleNames="btn btn-link"/>
             -->
         </g:FlowPanel>
     </g:FlowPanel>
