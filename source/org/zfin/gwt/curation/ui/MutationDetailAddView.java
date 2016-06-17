@@ -61,6 +61,23 @@ public class MutationDetailAddView extends Composite {
     public void setPresenter(MutationDetailPresenter presenter) {
         this.presenter = presenter;
     }
+
+    public static class A {
+        public int i = 1;
+    }
+
+    public static class B extends A {
+        public int i = 2;
+    }
+
+    public static void main(String[] args) {
+        B b = new B();
+        A a = b;
+
+        // Quiz: what do they print?
+        System.out.println(b.i);
+        System.out.println(a.i);
+    }
 }
 
 

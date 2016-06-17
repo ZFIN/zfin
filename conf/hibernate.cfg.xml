@@ -138,6 +138,8 @@
         <mapping class="org.zfin.mutant.GenotypeAlias"/>
         <mapping class="org.zfin.ontology.GenericTerm"/>
         <mapping class="org.zfin.ontology.TermStage"/>
+        <mapping class="org.zfin.expression.Experiment"/>
+        <mapping class="org.zfin.expression.ExperimentCondition"/>
 
 
     </session-factory>

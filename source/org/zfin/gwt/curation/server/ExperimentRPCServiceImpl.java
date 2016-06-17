@@ -1,0 +1,80 @@
+package org.zfin.gwt.curation.server;
+
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.exception.ConstraintViolationException;
+import org.zfin.expression.Experiment;
+import org.zfin.expression.ExperimentCondition;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.curation.ui.ExperimentRPCService;
+import org.zfin.gwt.root.dto.ConditionDTO;
+import org.zfin.gwt.root.dto.EnvironmentDTO;
+import org.zfin.gwt.root.dto.TermNotFoundException;
+import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
+import org.zfin.gwt.root.ui.ValidationException;
+import org.zfin.ontology.GenericTerm;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
+
+public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implements ExperimentRPCService {
+
+    @Override
+    public List<EnvironmentDTO> createCondition(String publicationID, ConditionDTO conditionDTO) throws ValidationException, TermNotFoundException {
+        if (StringUtils.isEmpty(publicationID))
+            throw new ValidationException("No Publication ID provided");
+        if (conditionDTO == null)
+            throw new ValidationException("No condition entity provided");
+        String experimentID = conditionDTO.getEnvironmentZdbID();
+        if (experimentID == null)
+            throw new ValidationException("No experimentID provided");
+        HibernateUtil.createTransaction();
+        try {
+            Experiment experiment = getExpressionRepository().getExperimentByID(experimentID);
+            if (experiment == null)
+                throw new ValidationException("No experiment found for " + experimentID);
+            ExperimentCondition condition = new ExperimentCondition();
+            condition.setExperiment(experiment);
+            experiment.addExperimentCondition(condition);
+
+            GenericTerm zecoTerm = DTOConversionService.convertToTerm(conditionDTO.zecoTerm);
+            condition.setZecoTerm(zecoTerm);
+            if (conditionDTO.aoTerm != null) {
+                GenericTerm term = DTOConversionService.convertToTerm(conditionDTO.aoTerm);
+                condition.setAoTerm(term);
+            }
+            if (conditionDTO.goCCTerm != null) {
+                GenericTerm term = DTOConversionService.convertToTerm(conditionDTO.goCCTerm);
+                condition.setGoCCTerm(term);
+            }
+            if (conditionDTO.taxonTerm != null) {
+                GenericTerm term = DTOConversionService.convertToTerm(conditionDTO.taxonTerm);
+                condition.setTaxaonymTerm(term);
+            }
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            throw new TermNotFoundException(e.getMessage());
+        }
+
+        return getExperimentList(publicationID);
+    }
+
+    @Override
+    public List<EnvironmentDTO> getExperimentList(String publicationID) {
+        List<EnvironmentDTO> list = new ArrayList<>();
+        List<Experiment> experimentSet = getExpressionRepository().geExperimentByPublication(publicationID);
+        if (experimentSet != null) {
+            for (Experiment experiment : experimentSet) {
+                EnvironmentDTO dto = DTOConversionService.convertToEnvironmentDTO(experiment);
+                list.add(dto);
+            }
+        }
+        return list;
+    }
+
+}

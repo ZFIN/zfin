@@ -11,7 +11,9 @@ import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.event.CheckSubsetEventHandler;
+import org.zfin.gwt.root.event.SelectAutoCompleteEvent;
 import org.zfin.gwt.root.event.SingleOntologySelectionEventHandler;
+import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 
@@ -107,6 +109,8 @@ public class LookupComposite extends Composite implements Revertible {
 
     private String suggestPopupStyleName = "gwt-SuggestBoxPopup";
 
+    private TermDTO selectedTerm;
+
     public LookupComposite() {
         types.add(TYPE_SUPPLIER);
         types.add(MARKER_LOOKUP);
@@ -134,12 +138,9 @@ public class LookupComposite extends Composite implements Revertible {
     public void initGui() {
         textBox.setName(inputName);
         textBox.setTitle(inputName);
-
-
         textBox.getElement().setPropertyString("id", inputName);
         textBox.getElement().setPropertyString("autocomplete", "off");
         textBox.setVisibleLength(suggestBoxWidth);
-
         textBox.addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(ValueChangeEvent<String> stringValueChangeEvent) {
@@ -290,6 +291,12 @@ public class LookupComposite extends Composite implements Revertible {
                 suggestion = (SuggestOracle.Suggestion) event.getSelectedItem();
                 final String termID = suggestion.getReplacementString();
                 String displayString = suggestion.getDisplayString();
+                SelectAutoCompleteEvent selectEvent = new SelectAutoCompleteEvent(termID, displayString, ontology);
+                AppUtils.EVENT_BUS.fireEvent(selectEvent);
+                selectedTerm = new TermDTO();
+                selectedTerm.setOboID(termID);
+                selectedTerm.setOntology(ontology);
+                selectedTerm.setName(extractPureTermNameHtml(displayString).trim());
                 if (displayString == null) {
                     suggestBox.setText(extractPureTermNameHtml(displayString));
                     doSubmit(termID);
@@ -770,5 +777,9 @@ public class LookupComposite extends Composite implements Revertible {
                 lookupRPC.getTermInfo(ontology, termID, new TermInfoCallBack(termInfoTable, termID));
             }
         }
+    }
+
+    public TermDTO getSelectedTerm() {
+        return selectedTerm;
     }
 }

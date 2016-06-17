@@ -177,7 +177,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
                 StringBuilder builder = highlighter.hidePureTermNameHtml(term.getTerm().getTermName());
                 String displayName = highlighter.highlight(suggestion);
                 builder.append(displayName);
-                String termValue = term.getTerm().getZdbID();
+                String termValue = term.getTerm().getOboID();
                 StringBuilder fillBuilder = new StringBuilder(builder);
                 fillBuilder.append(" [");
                 fillBuilder.append(term.getTerm().getOntology().getDisplayName());

@@ -68,8 +68,8 @@ public class TermEntry extends HorizontalPanel {
 
     public
     @UiConstructor
-    TermEntry(String listOFOntologies, String entityPart, ErrorHandler errorHandler, TermInfoComposite termInfoTable) {
-        this(getOntologyDTOs(listOFOntologies), EntityPart.valueOf(entityPart), termInfoTable, errorHandler);
+    TermEntry(String listOFOntologies, String entityPart, TermInfoComposite termInfoTable) {
+        this(getOntologyDTOs(listOFOntologies), EntityPart.valueOf(entityPart), termInfoTable);
         copyFromTerminfoToTextButton.addClickHandler(new CopyTermToEntryFieldClickListener());
     }
 
@@ -185,7 +185,6 @@ public class TermEntry extends HorizontalPanel {
         });
         termTextBox.initGui();
         add(termTextBox);
-        add(WidgetUtil.getNbsp());
     }
 
     /**
@@ -213,14 +212,18 @@ public class TermEntry extends HorizontalPanel {
         } else {
             Widget html = new HTML(ontologies.get(0).getDisplayName() + ": ");
             html.setStyleName(WidgetUtil.BOLD);
-            add(html);
+            // to make this field line up with the auto-complete field. A hack!
+            HorizontalPanel panel = new HorizontalPanel();
+            HorizontalPanel panel1 = new HorizontalPanel();
+            panel.add(html);
+            panel1.add(panel);
+            add(panel1);
             // hidden field that contains the ontology name used for the term info call
             Widget hidden = new HTML(ontologies.get(0).getOntologyName());
             hidden.setStyleName(termPart.name() + "_single");
             hidden.setVisible(false);
             add(hidden);
         }
-        add(WidgetUtil.getNbsp());
         ontologySelector.addChangeHandler(new OntologyChangeHandler());
     }
 
@@ -286,6 +289,7 @@ public class TermEntry extends HorizontalPanel {
 
     public void reset() {
         termTextBox.setText("");
+        termTextBox.setErrorString("");
         termTextBox.markUnValidateText();
         String defaultOntology = getDefaultOntology().getDisplayName();
         ontologySelector.selectEntryByDisplayName(defaultOntology);
@@ -403,7 +407,7 @@ public class TermEntry extends HorizontalPanel {
         public void onClick(ClickEvent event) {
             TermDTO termInfo = termInfoComposite.getCurrentTermInfoDTO();
             if (!setTerm(termInfo)) {
-                errorHandler.setError("The " + termPart + " term does not allow terms from the <" +
+                termTextBox.setErrorString("The " + termPart + " term does not allow terms from the <" +
                         termInfo.getOntology().getDisplayName() + "> ontology.");
             }
             // check if the new term name is valid

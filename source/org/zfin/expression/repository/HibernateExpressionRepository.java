@@ -33,7 +33,6 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
-import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.profile.service.ProfileService;
@@ -2099,5 +2098,17 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         query.setParameter("gene", gene);
 
         return (List<ExpressionResult2>) query.list();
+    }
+
+    @Override
+    public List<Experiment> geExperimentByPublication(String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "from Experiment  " +
+                "      where publication.zdbID = :pubID ";
+        Query query = session.createQuery(hql);
+        query.setParameter("pubID", publicationID);
+
+        return (List<Experiment>) query.list();
     }
 }

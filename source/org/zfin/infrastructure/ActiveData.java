@@ -135,7 +135,7 @@ public class ActiveData implements ZdbID {
         ETCONSTRCT(DeleteConstructRule.class),
         EXP,
         EXPUNIT,
-        EXCOND,
+        EXPCOND,
         EXTNOTE,
         FDBCONT,
         FDMD,

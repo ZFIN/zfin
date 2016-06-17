@@ -269,9 +269,19 @@
         <servlet-class>org.zfin.gwt.curation.server.FeatureRPCServiceImpl</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>ExperimentService</servlet-name>
+        <servlet-class>org.zfin.gwt.curation.server.ExperimentRPCServiceImpl</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>FeatureService</servlet-name>
         <url-pattern>/ajax/featureservice</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ExperimentService</servlet-name>
+        <url-pattern>/ajax/experimentservice</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

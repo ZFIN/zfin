@@ -1,6 +1,6 @@
 package org.zfin.gwt.root.dto;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import java.util.List;
 
 /**
  * GWT version of Environment corresponding to {@link org.zfin.expression.Experiment}.
@@ -11,6 +11,7 @@ public class EnvironmentDTO extends RelatedEntityDTO {
     private String name;
     public static final String STANDARD = "Standard";
     public static final String GENERIC_CONTROL = "Generic-control";
+    public List<ConditionDTO> conditionDTOList;
 
     public String getZdbID() {
         return zdbID;
@@ -22,6 +23,14 @@ public class EnvironmentDTO extends RelatedEntityDTO {
 
     public String getName() {
         return name;
+    }
+
+    public List<ConditionDTO> getConditionDTOList() {
+        return conditionDTOList;
+    }
+
+    public void setConditionDTOList(List<ConditionDTO> conditionDTOList) {
+        this.conditionDTOList = conditionDTOList;
     }
 
     public void setName(String name) {

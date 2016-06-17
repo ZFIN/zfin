@@ -1137,6 +1137,18 @@ public class DTOConversionService {
         } else {
             environment.setName(experiment.getName());
         }
+        if (CollectionUtils.isNotEmpty(experiment.getExperimentConditions())) {
+            List<ConditionDTO> list = new ArrayList<>();
+            for (ExperimentCondition condition : experiment.getExperimentConditions()) {
+                ConditionDTO dto = new ConditionDTO();
+                dto.setZecoTerm(DTOConversionService.convertToTermDTO(condition.getZecoTerm()));
+                dto.setAoTerm(DTOConversionService.convertToTermDTO(condition.getAoTerm()));
+                dto.setGoCCTerm(DTOConversionService.convertToTermDTO(condition.getGoCCTerm()));
+                dto.setTaxonTerm(DTOConversionService.convertToTermDTO(condition.getTaxaonymTerm()));
+                list.add(dto);
+            }
+            environment.setConditionDTOList(list);
+        }
         return environment;
     }
 

@@ -1,24 +1,38 @@
 package org.zfin.expression;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.annotations.GenericGenerator;
 import org.zfin.infrastructure.EntityZdbID;
-import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.publication.Publication;
 
+import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Domain object.
- */
 @SuppressWarnings({"JpaAttributeMemberSignatureInspection", "JpaAttributeTypeInspection"})
+@Entity
+@Table(name = "experiment")
 public class Experiment implements Comparable<Experiment>, EntityZdbID {
 
     public static final String STANDARD = "_Standard";
     public static final String GENERIC_CONTROL = "_Generic-control";
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "EXP"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "exp_zdb_id")
     private String zdbID;
+    @Column(name = "exp_name")
     private String name;
+    @ManyToOne
+    @JoinColumn(name = "exp_source_zdb_id")
     private Publication publication;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment", fetch = FetchType.LAZY)
     private Set<ExperimentCondition> experimentConditions;
 
 
@@ -142,4 +156,9 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         return groupingKey;
     }
 
+    public void addExperimentCondition(ExperimentCondition condition) {
+        if (experimentConditions == null)
+            experimentConditions = new HashSet<>();
+        experimentConditions.add(condition);
+    }
 }

@@ -20,7 +20,6 @@
                     <zfin:TermEntry ui:field="subTermEntry"
                                     listOFOntologies="zebrafish_anatomy,cellular_component,spatial,mouse_pathology.ontology"
                                     entityPart="ENTITY_SUBTERM"
-                                    errorHandler="{errorElement}"
                                     termInfoTable="{termInfoBox}"/>
                     <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
                         <g:Label text="within the" addStyleNames="bold"/>
@@ -33,7 +32,6 @@
                 <zfin:TermEntry ui:field="superTermEntry"
                                 listOFOntologies="zebrafish_anatomy"
                                 entityPart="ENTITY_SUPERTERM"
-                                errorHandler="{errorElement}"
                                 termInfoTable="{termInfoBox}"/>
             </g:HorizontalPanel>
             <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">

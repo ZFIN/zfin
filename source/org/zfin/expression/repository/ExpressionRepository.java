@@ -423,4 +423,6 @@ public interface ExpressionRepository {
     List<ExpressionExperiment2> getExpressionExperiment2sByFish (Fish fish);
 
     List<ExpressionResult2> getExpressionResultList(Marker gene);
+
+    List<Experiment> geExperimentByPublication(String publicationID);
 }

@@ -254,6 +254,9 @@ public class OntologyManager {
         initOntologyMapFast(Ontology.BEHAVIOR);
         serializeOntology(Ontology.BEHAVIOR);
 
+        initOntologyMapFast(Ontology.ZECO);
+        serializeOntology(Ontology.ZECO);
+
         // Quality  Processes and Objects
         // Root is "process quality"
         // Quality Processes and Objects
@@ -282,6 +285,9 @@ public class OntologyManager {
         serializeOntology(Ontology.GO_MF);
         initOntologyMapFast(Ontology.GO_BP);
         serializeOntology(Ontology.GO_BP);
+
+        initOntologyMapFast(Ontology.CHEBI);
+        serializeOntology(Ontology.CHEBI);
 
         ontologySerializationService.serializeLoadData(loadingData);
     }

@@ -270,23 +270,6 @@
         </class>
     -->
 
-    <class name="org.zfin.expression.Experiment" table="experiment">
-        <id name="zdbID">
-            <column name="exp_zdb_id"/>
-        </id>
-
-        <property name="name">
-            <column name="exp_name"/>
-        </property>
-
-        <set name="experimentConditions" lazy="true">
-            <key column="expcond_exp_zdb_id"/>
-            <one-to-many class="org.zfin.expression.ExperimentCondition"/>
-        </set>
-
-        <many-to-one name="publication" column="exp_source_zdb_id"/>
-    </class>
-
     <class name="org.zfin.expression.ExpressionAssay" mutable="false" table="expression_pattern_assay">
         <cache usage="read-only"/>
         <id name="name" column="xpatassay_name">

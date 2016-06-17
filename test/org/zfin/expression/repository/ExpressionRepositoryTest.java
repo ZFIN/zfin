@@ -4,7 +4,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
@@ -21,12 +20,10 @@ import org.zfin.gwt.curation.server.CurationExperimentRPCImpl;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
-import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.publication.repository.PublicationRepository;
@@ -569,6 +566,12 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(expressionExperiment2s);
         List<ExpressionPhenotypeExperimentDTO> list = ExpressionService.createPhenotypeFromExpressions(expressionExperiment2s);
         assertNotNull(list);
+    }
+
+    @Test
+    public void getExperimentList() {
+        List<Experiment> experimentSet = getExpressionRepository().geExperimentByPublication("ZDB-PUB-131112-24");
+        assertNotNull(experimentSet);
     }
 
 }
