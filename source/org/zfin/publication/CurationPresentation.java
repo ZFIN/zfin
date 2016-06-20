@@ -8,7 +8,7 @@ import org.zfin.framework.presentation.EntityPresentation;
 public class CurationPresentation extends EntityPresentation {
 
     public static enum CurationTab{
-        GO,PHENO,FX,Environment,Figure,Genotype,Feature,Construct ;
+        GO,PHENO,FX,Experiment,Figure,Genotype,Feature,Construct ;
     }
 
     private static final String uri = "?MIval=aa-curation.apg&OID=";
