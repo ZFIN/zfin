@@ -574,4 +574,10 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(experimentSet);
     }
 
+    @Test
+    public void getExperimentCondition() {
+        ExperimentCondition experimentCondition = getExpressionRepository().getExperimentCondition("ZDB-EXPCOND-041102-1");
+        assertNotNull(experimentCondition);
+    }
+
 }

@@ -3,10 +3,7 @@ package org.zfin.gwt.root.ui;
 import com.google.gwt.event.dom.client.*;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.EntityPart;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -126,7 +123,12 @@ public class TermEntry extends HorizontalPanel {
 
     private void addCopyFromTermInfoButton() {
         copyFromTerminfoToTextButton.setTitle("Copy term into text box");
-        add(copyFromTerminfoToTextButton);
+        VerticalPanel outerPanel = new VerticalPanel();
+        VerticalPanel panel = new VerticalPanel();
+        panel.add(copyFromTerminfoToTextButton);
+        outerPanel.add(panel);
+        outerPanel.add(copyFromTerminfoToTextButton);
+        add(outerPanel);
     }
 
     /**
@@ -294,6 +296,7 @@ public class TermEntry extends HorizontalPanel {
         String defaultOntology = getDefaultOntology().getDisplayName();
         ontologySelector.selectEntryByDisplayName(defaultOntology);
         termTextBox.setOntology(OntologyDTO.getOntologyByDisplayName(defaultOntology));
+        termTextBox.resetSelectedTerm();
     }
 
     public OntologyDTO getSelectedOntology() {

@@ -2,15 +2,11 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.ConditionDTO;
 import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.ui.*;
@@ -56,6 +52,12 @@ public class ConditionAddView extends AbstractViewComposite {
     TermEntry aoTermEntry;
     @UiField
     TermEntry taxonTermEntry;
+    @UiField
+    Button copyExperimentConditionButton;
+    @UiField
+    StringListBox experimentCopyToSelectionList;
+    @UiField
+    HorizontalPanel copyControlsPanel;
 
     @UiHandler("showHideToggle")
     void onClickShowHide(@SuppressWarnings("unused") ClickEvent event) {
@@ -72,18 +74,29 @@ public class ConditionAddView extends AbstractViewComposite {
         presenter.createCondition();
     }
 
+    @UiHandler("copyExperimentConditionButton")
+    void onClickCopyCondition(@SuppressWarnings("unused") ClickEvent event) {
+        presenter.copyConditions();
+    }
 
-    protected void addCondition(EnvironmentDTO experimentDTO, ConditionDTO dto, int elementIndex) {
+
+    private int currentGroupIndex;
+
+    protected void addCondition(EnvironmentDTO experimentDTO, ConditionDTO dto, ConditionDTO lastCondition, int elementIndex) {
         dataTable.resizeRows(elementIndex + 2);
         int row = elementIndex + 1;
-        setRowStyle(row);
         int col = 0;
         dataTable.setText(row, col++, "");
-        if (experimentDTO != null)
+        if (lastCondition == null || !lastCondition.getEnvironmentZdbID().equals(dto.getEnvironmentZdbID()))
             dataTable.setText(row, col++, experimentDTO.getName());
         else
             dataTable.setText(row, col++, "");
-        dataTable.setText(row, col++, dto.getName());
+        dataTable.setText(row, col, dto.getName());
+
+        String lastID = null;
+        if (lastCondition != null)
+            lastID = lastCondition.getEnvironmentZdbID();
+        currentGroupIndex = WidgetUtil.setRowStyle(row, dto.getEnvironmentZdbID(), lastID, currentGroupIndex, dataTable);
     }
 
     public void addDeleteButton(DeleteImage deleteImage, int elementIndex) {
@@ -91,43 +104,14 @@ public class ConditionAddView extends AbstractViewComposite {
         dataTable.setWidget(row, 3, deleteImage);
     }
 
+    public void addCopyCheckBox(CheckBox checkBox, int elementIndex) {
+        int row = elementIndex + 1;
+        dataTable.setWidget(row, 0, checkBox);
+    }
+
+
     public void emptyDataTable() {
         dataTable.resizeRows(2);
-    }
-
-    private void setRowStyle(int row) {
-        WidgetUtil.setAlternateRowStyle(row, dataTable);
-    }
-
-    public void removeAllDataRows() {
-        dataTable.resizeRows(1);
-    }
-
-    protected void endTableUpdate() {
-        int rows = dataTable.getRowCount() + 3;
-        dataTable.resizeRows(rows);
-        int lastRow = rows - 1;
-        int col = 0;
-/*
-        dataTable.setWidget(lastRow, col++, updateConditionNameButton);
-        dataTable.setWidget(lastRow, col++, conditionNameAddBox);
-        dataTable.setWidget(lastRow, col, deleteConditionButton);
-*/
-
-    }
-
-    private void addDeleteButton(int elementIndex, ClickHandler clickHandler, String title, String zdbID) {
-        DeleteImage deleteImage;
-        deleteImage = new DeleteImage(title);
-        deleteImage.setTitle(deleteImage.getTitle() + ": " + zdbID);
-        deleteImage.addClickHandler(clickHandler);
-        dataTable.setWidget(elementIndex + 1, 5, deleteImage);
-    }
-
-    public void resetUI() {
-        errorLabel.clearAllErrors();
-//        conditionNameAddBox.setText("");
-
     }
 
     public void setPresenter(ConditionAddPresenter presenter) {

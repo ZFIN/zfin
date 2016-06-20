@@ -427,4 +427,6 @@ public interface ExpressionRepository {
     List<Experiment> geExperimentByPublication(String publicationID);
 
     void deleteExperimentCondition(ExperimentCondition condition);
+
+    ExperimentCondition getExperimentCondition(String conditionID);
 }

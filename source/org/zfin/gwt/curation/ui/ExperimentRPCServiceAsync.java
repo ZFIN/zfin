@@ -16,5 +16,7 @@ public interface ExperimentRPCServiceAsync {
     void createCondition(String publicationID, ConditionDTO conditionDTO, AsyncCallback<List<EnvironmentDTO>> callback);
 
     void deleteCondition(ConditionDTO conditionDTO, AsyncCallback<List<EnvironmentDTO>> callBack);
+
+    void copyConditions(String experimentID, List<String> copyConditionIdList, AsyncCallback<List<EnvironmentDTO>> callback);
 }
 
