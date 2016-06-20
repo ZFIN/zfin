@@ -147,6 +147,10 @@
         <put-attribute name="body" value="/WEB-INF/jsp/figure/{1}.jsp"/>
     </definition>
 
+    <!-- Using popup_layout rather than creating a fragment_layout, since both cases just need a plain layout -->
+    <definition name="figure/*.fragment" extends="popup_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/figure/{1}.jsp"/>
+    </definition>
 
     <definition name="infrastructure/*.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/infrastructure/{1}.jsp" />

@@ -36,6 +36,55 @@ public class FigureViewController {
 
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
 
+    private Model injectFigureSummaryAttributes(Model model, Figure figure, List<PhenotypeWarehouse> warehouseList) {
+
+        model.addAttribute("figure", figure);
+
+        model.addAttribute("expressionGenes", figureViewService.getExpressionGenes(figure));
+        model.addAttribute("expressionAntibodies", figureViewService.getAntibodies(figure));
+        model.addAttribute("expressionFish", figureViewService.getExpressionFish(figure));
+        model.addAttribute("expressionSTRs", figureViewService.getExpressionSTR(figure));
+        model.addAttribute("expressionConditions", figureViewService.getExpressionCondition(figure)); // conditions are actually List<Experiment>
+        model.addAttribute("expressionEntities", figureViewService.getExpressionEntities(figure));
+        model.addAttribute("expressionStartStage", figureViewService.getExpressionStartStage(figure));
+        model.addAttribute("expressionEndStage", figureViewService.getExpressionEndStage(figure));
+
+        //fishes, STRs, conditions, terms, stages
+        model.addAttribute("phenotypeFish", figureViewService.getPhenotypeFish(figure));
+        model.addAttribute("phenotypeSTRs", figureViewService.getPhenotypeSTR(figure));
+        model.addAttribute("phenotypeConditions", figureViewService.getPhenotypeCondition(figure));
+        model.addAttribute("phenotypeEntities", figureViewService.getPhenotypeEntitiesFromWarehouse(warehouseList));
+        model.addAttribute("phenotypeStartStage", figureViewService.getPhenotypeStartStage(figure));
+        model.addAttribute("phenotypeEndStage", figureViewService.getPhenotypeEndStage(figure));
+
+        return model;
+    }
+
+
+    @RequestMapping("/summary/{zdbID}")
+    public String getFigureSummary(Model model, @PathVariable("zdbID") String zdbID) {
+
+        Figure figure = figureRepository.getFigure(zdbID);
+
+        if (figure == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        Clone probe = figureViewService.getProbeForFigure(figure);
+        model.addAttribute("probe", probe);
+        if (probe != null) {
+            List<OrganizationLink> suppliers = RepositoryFactory.getProfileRepository().getSupplierLinksForZdbId(probe.getZdbID());
+            model.addAttribute("probeSuppliers", suppliers);
+        }
+
+        List<PhenotypeWarehouse> warehouseList = getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID());
+        model = injectFigureSummaryAttributes(model, figure, warehouseList);
+
+        return "figure/figure-summary.fragment";
+    }
+
+
     // get together all of the data that you need later in the JSP it returns
     @RequestMapping("/view/{zdbID}")
     public String getFigureView(Model model, @PathVariable("zdbID") String zdbID) {
@@ -54,27 +103,13 @@ public class FigureViewController {
             model.addAttribute("probeSuppliers", suppliers);
         }
 
+        List<PhenotypeWarehouse> warehouseList = getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID());
+        model = injectFigureSummaryAttributes(model, figure, warehouseList);
+
         model.addAttribute("submitters", figureRepository.getSubmitters(figure.getPublication(), probe));
         model.addAttribute("showThisseInSituLink", figureViewService.showThisseInSituLink(figure.getPublication()));
         model.addAttribute("showErrataAndNotes", figureViewService.showErrataAndNotes(figure.getPublication()));
         model.addAttribute("showMultipleMediumSizedImages", figureViewService.showMultipleMediumSizedImages(figure.getPublication()));
-        model.addAttribute("expressionGenes", figureViewService.getExpressionGenes(figure));
-        model.addAttribute("expressionAntibodies", figureViewService.getAntibodies(figure));
-        model.addAttribute("expressionFish", figureViewService.getExpressionFish(figure));
-        model.addAttribute("expressionSTRs", figureViewService.getExpressionSTR(figure));
-        model.addAttribute("expressionConditions", figureViewService.getExpressionCondition(figure)); // conditions are actually List<Experiment>
-        model.addAttribute("expressionEntities", figureViewService.getExpressionEntities(figure));
-        model.addAttribute("expressionStartStage", figureViewService.getExpressionStartStage(figure));
-        model.addAttribute("expressionEndStage", figureViewService.getExpressionEndStage(figure));
-
-        List<PhenotypeWarehouse> warehouseList = getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID());
-        //fishes, STRs, conditions, terms, stages
-        model.addAttribute("phenotypeFish", figureViewService.getPhenotypeFish(figure));
-        model.addAttribute("phenotypeSTRs", figureViewService.getPhenotypeSTR(figure));
-        model.addAttribute("phenotypeConditions", figureViewService.getPhenotypeCondition(figure));
-        model.addAttribute("phenotypeEntities", figureViewService.getPhenotypeEntitiesFromWarehouse(warehouseList));
-        model.addAttribute("phenotypeStartStage", figureViewService.getPhenotypeStartStage(figure));
-        model.addAttribute("phenotypeEndStage", figureViewService.getPhenotypeEndStage(figure));
 
         List<ExpressionTableRow> expressionTableRows = figureViewService.getExpressionTableRows(figure);
         model.addAttribute("expressionTableRows", expressionTableRows);
@@ -86,8 +121,6 @@ public class FigureViewController {
 
         List<PhenotypeTableRow> phenotypeTableRows = figureViewService.getPhenotypeTableRows(warehouseList);
         model.addAttribute("phenotypeTableRows", phenotypeTableRows);
-
-        model.addAttribute("figure", figure);
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Figure: " + figureViewService.getFullFigureLabel(figure));
 

@@ -78,6 +78,7 @@ public class SearchPrototypeController {
                               @RequestParam(value = "sort", required = false) String sort,
                               @RequestParam(value = "hl", required = false, defaultValue = "false") Boolean highlight,
                               @RequestParam(value = "explain", required = false, defaultValue = "false") Boolean explain,
+                              @RequestParam(value = "galleryMode", required = false, defaultValue = "false") Boolean galleryMode,
                               @RequestParam(required = false, defaultValue = "true") Boolean appendCategoryToBaseUrl,
                               Model model,
                               HttpServletRequest request) {
@@ -279,7 +280,7 @@ public class SearchPrototypeController {
             model.addAttribute("message", "All matching results were in the <strong>" + automaticallySelectedCategory + "</strong> category, so it was automatically selected.");
 
             return viewResults(q, filterQuery, automaticallySelectedCategory, pageNumber, rows, sort,
-                    highlight, explain, true, model, request);
+                    highlight, explain, galleryMode, true, model, request);
         }
 
 
@@ -318,8 +319,8 @@ public class SearchPrototypeController {
         }
         model.addAttribute("rowsUrlSeparator", rowsUrlSeparator);
         model.addAttribute("rows", rows);
-
         model.addAttribute("downloadUrl", baseUrl.replaceAll("^/search", "/action/quicksearch/download"));
+
         paginationBean.setPage(page.toString());
         paginationBean.setTotalRecords((int) solrDocumentList.getNumFound());
         paginationBean.setQueryString(request.getQueryString());
@@ -336,8 +337,15 @@ public class SearchPrototypeController {
         }
 
         if (!CollectionUtils.isEmpty(imageIDs)) {
-            model.addAttribute("previewImages", RepositoryFactory.getFigureRepository().getImages(imageIDs));
+            model.addAttribute("images", RepositoryFactory.getFigureRepository().getImages(imageIDs));
         }
+
+        URLCreator galleryModeUrlCreator = new URLCreator(baseUrl);
+        galleryModeUrlCreator.removeNameValuePair("page");
+        galleryModeUrlCreator.removeNameValuePair("rows");
+        galleryModeUrlCreator.removeNameValuePair("galleryMode");
+        model.addAttribute("baseUrlWithoutGalleryMode", galleryModeUrlCreator.getFullURLPlusSeparator());
+
         List<String> categories = new ArrayList<>();
         categories.addAll(org.zfin.search.Category.getFacetMap().keySet());
         Collections.sort(categories, new Comparator<String>() {
@@ -347,7 +355,7 @@ public class SearchPrototypeController {
             }
         });
 
-
+        model.addAttribute("galleryMode", galleryMode);
         model.addAttribute("category", category);
         model.addAttribute("categories", categories);
         model.addAttribute("numFound", solrDocumentList.getNumFound());

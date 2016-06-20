@@ -235,6 +235,8 @@
          <str name="f.stage.facet.limit">50</str>
          <str name="f.type.facet.limit">50</str>
          <str name="f.chromosome.facet.limit">50</str>
+         <!-- This is essentially the page size of the gallery mode pages-->
+         <str name="f.img_zdb_id.facet.limit">50</str>
 
 
 

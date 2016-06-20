@@ -3,8 +3,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<c:set var="galleryMode" value="false"/>
-
 <c:set var="geneCategoryName" value="<%=Category.GENE.getName()%>"/>
 <c:set var="expressionCategoryName" value="<%=Category.EXPRESSIONS.getName()%>"/>
 <c:set var="diseaseCategoryName" value="<%=Category.DISEASE.getName()%>"/>
@@ -210,9 +208,19 @@
                             </a>
                         </div>
                     </c:if>
+                    <c:if test="${galleryMode}">
+                        <div class="col-md-2 col-sm-3 col-xs-4">
+                            <a class="btn btn-default" href="${baseUrlWithoutGalleryMode}&galleryMode=false">
+                                <i class="fa fa-chevron-left"></i>
+                                Back to results
+                            </a>
+                        </div>
+
+                    </c:if>
                     <div class="result-count col-md-10 col-sm-9 col-xs-8">
-                        <fmt:formatNumber value="${numFound}" pattern="##,###"/> results
+
                         <c:if test="${!galleryMode}">
+                            <fmt:formatNumber value="${numFound}" pattern="##,###"/> results
                             <div class="pull-right">
                                 <authz:authorize access="hasRole('root')">
                                     <div class="btn-group">
@@ -250,27 +258,28 @@
                 </div>
 
                 <c:if test="${!galleryMode}">
-                    <c:if test="${!empty previewImages}">
+                    <c:if test="${!empty images}">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="figure-gallery-preview-container">
                                     <div class="figure-gallery-image-strip">
                                             <%-- TODO: replace data-fill-size with just the zdb id? might need it for fetching figure expression details --%>
-                                        <c:forEach var="image" items="${previewImages}">
+                                        <c:forEach var="image" items="${images}">
                                             <img data-full-size="${image.url}" src="${image.mediumUrl}">
                                         </c:forEach>
                                     </div>
                                     <div class="figure-gallery-overlay-link">
-                                        <a href="#">View More Images</a>
+                                        <a href="${baseUrlWithoutGalleryMode}&galleryMode=true">View More Images</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </c:if>
-                    <c:forEach var="result" items="${results}">
-                        <zfin2:searchResult result="${result}"/>
-                    </c:forEach>
-
+                    <c:if test="${!galleryMode}">
+                        <c:forEach var="result" items="${results}">
+                            <zfin2:searchResult result="${result}"/>
+                        </c:forEach>
+                    </c:if>
                     <c:choose>
                         <c:when test="${category eq geneCategoryName}">
                             <zfin-search:geneResultTable results="${results}"/>
@@ -303,99 +312,31 @@
                 </c:if>
 
                 <c:if test="${galleryMode}">
-                    <div class="masonry figure-gallery-results-container clearfix">
-                        <div class="figure-gallery-result-size"></div>
-                        <div class="figure-gallery-result-container">
-                            <div class="figure-gallery-image-container">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-041008-390.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-041008-390.jpg">
-                            </div>
+                    <c:if test="${!empty images}">
+                        <div class="masonry figure-gallery-results-container clearfix">
+                            <c:forEach var="image" items="${images}">
+                                <div class="figure-gallery-result-size"></div>
+                                <div class="figure-gallery-result-container">
+                                    <div class="figure-gallery-image-container">
+                                        <img data-figure-zdb-id="${image.figure.zdbID}"
+                                             data-full-size="${image.url}"
+                                             src="${image.mediumUrl}">
+                                    </div>
+                                </div>
+                            </c:forEach>
                         </div>
-                        <div class="figure-gallery-result-container">
-                            <div class="figure-gallery-image-container">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-041111-471.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-041111-471.jpg">
-                            </div>
+                    </c:if>
+                    <c:if test="${empty images}">
+                        <div class="alert alert-danger col-sm-4 col-sm-offset-2" style="margin-top: 2em;">
+                            There are no images in your result set, exit gallery mode to see <fmt:formatNumber value="${numFound}" pattern="##,###"/> results.
                         </div>
-                        <div class="figure-gallery-result-container">
-                            <div class="figure-gallery-image-container">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-080702-12.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-080702-12.jpg">
-                            </div>
-                        </div>
-                        <div class="figure-gallery-result-container">
-                            <div class="figure-gallery-image-container">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-130808-11.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-130808-11.jpg">
-                            </div>
-                        </div>
-                        <div class="figure-gallery-result-container">
-                            <div class="figure-gallery-image-container">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-130808-13.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-130808-13.jpg">
-                            </div>
-                        </div>
-                        <div class="figure-gallery-result-container">
-                            <div class="figure-gallery-image-container">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-131015-6.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-131015-6.jpg">
-                            </div>
-                        </div>
-                        <div class="figure-gallery-result-container">
-                            <div class="figure-gallery-image-container">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-140221-12.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-140221-12.jpg">
-                            </div>
-                        </div>
-                        <div class="figure-gallery-result-container">
-                            <div class="figure-gallery-image-container">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-150423-40.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-150423-40.jpg">
-                            </div>
-                        </div>
-                        <div class="figure-gallery-result-container">
-                            <div class="figure-gallery-image-container">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-150612-2.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-150612-2.jpg">
-                            </div>
-                        </div>
-                        <div class="figure-gallery-result-container">
-                            <div class="figure-gallery-image-container">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-151214-8.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-151214-8.jpg">
-                            </div>
-                        </div>
-                        <div class="figure-gallery-result-container">
-                            <div class="figure-gallery-image-container">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-151214-11.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-151214-11.jpg">
-                            </div>
-                        </div>
-                        <div class="figure-gallery-result-container">
-                            <div class="figure-gallery-image-container">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-151214-15.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-151214-15.jpg">
-                            </div>
-                        </div>
-                        <div class="figure-gallery-result-container">
-                            <div class="figure-gallery-image-container">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-160224-1.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-160224-1.jpg">
-                            </div>
-                        </div>
-                        <div class="figure-gallery-result-container">
-                            <div class="figure-gallery-image-container">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-160205-29.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-160205-29.jpg">
-                            </div>
-                        </div>
-                        <div class="figure-gallery-result-container">
-                            <div class="figure-gallery-image-container">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-160205-104.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-160205-104.jpg">
-                            </div>
-                        </div>
-                        <div class="figure-gallery-result-container">
-                            <div class="figure-gallery-image-container">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-160205-111.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-160205-111.jpg">
-                            </div>
-                        </div>
-                        <div class="figure-gallery-result-container">
-                            <div class="figure-gallery-image-container">
-                                <img data-full-size="/imageLoadUp/ZDB-IMAGE-160324-29.jpg" src="/imageLoadUp/medium/ZDB-IMAGE-160324-29.jpg">
-                            </div>
-                        </div>
+                    </c:if>
+                </c:if>
+                <c:if test="${!galleryMode}">
+                    <div style="clear: both ; width: 80%" class="clearfix">
+                        <zfin2:pagination paginationBean="${paginationBean}"/>
                     </div>
                 </c:if>
-
-                <div style="clear: both ; width: 80%">
-                    <zfin2:pagination paginationBean="${paginationBean}"/>
-                </div>
 
 
             </div>
@@ -428,6 +369,7 @@
             </div>
             <div class="modal-body figure-gallery-modal-body">
                 <img class="figure-gallery-modal-image" src>
+                <div class="figure-summary"></div>
             </div>
         </div>
     </div>
@@ -602,6 +544,7 @@ $(function () {
     });
     $('.figure-gallery-image-container > img').on('click', function () {
         $('.figure-gallery-modal-image').attr('src', $(this).data('full-size'));
+        $('.figure-gallery-modal-body .figure-summary').load('/action/figure/summary/' + $(this).data('figure-zdb-id'));
     });
 
     var figureGallery = $('.figure-gallery-results-container');
