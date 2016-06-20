@@ -1,23 +1,52 @@
 package org.zfin.expression;
 
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.GenericGenerator;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.ontology.GenericTerm;
+
+import javax.persistence.*;
 
 /**
  * Entity class that maps to experiment table.
  */
+@Entity
+@Table(name = "experiment_condition")
 public class ExperimentCondition implements Comparable<ExperimentCondition>, EntityZdbID {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "EXPCOND"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "expcond_zdb_id")
     private String zdbID;
+
+    @ManyToOne
+    @JoinColumn(name = "expcond_exp_zdb_id")
     private Experiment experiment;
-    private ConditionDataType conditionDataType;
-    private String comments;
+    @ManyToOne
+    @JoinColumn(name = "expcond_zeco_term_zdb_id")
     private GenericTerm zecoTerm;
-    private GenericTerm chebiTerm;
+    @ManyToOne
+    @JoinColumn(name = "expcond_ao_term_zdb_id")
     private GenericTerm aoTerm;
-    private GenericTerm goTerm;
-    private GenericTerm taxonTerm;
+    @ManyToOne
+    @JoinColumn(name = "expcond_go_cc_term_zdb_id")
+    private GenericTerm goCCTerm;
+
+    /*
+        @ManyToOne
+        @JoinColumn(name = "expcond_go_cc_term_zdb_id")
+    */
+    @Transient
+    private GenericTerm taxaonymTerm;
+
+    @Transient
+    private ConditionDataType conditionDataType;
 
     private static Logger logger = Logger.getLogger(ExperimentCondition.class);
 
@@ -36,14 +65,6 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
 
     public void setExperiment(Experiment experiment) {
         this.experiment = experiment;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
     }
 
     public ConditionDataType getConditionDataType() {
@@ -72,6 +93,38 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
             return getZdbID().compareTo(o.getZdbID());
     }
 
+    public GenericTerm getZecoTerm() {
+        return zecoTerm;
+    }
+
+    public void setZecoTerm(GenericTerm zecoTerm) {
+        this.zecoTerm = zecoTerm;
+    }
+
+    public GenericTerm getAoTerm() {
+        return aoTerm;
+    }
+
+    public void setAoTerm(GenericTerm aoTerm) {
+        this.aoTerm = aoTerm;
+    }
+
+    public GenericTerm getGoCCTerm() {
+        return goCCTerm;
+    }
+
+    public void setGoCCTerm(GenericTerm goCCTerm) {
+        this.goCCTerm = goCCTerm;
+    }
+
+    public GenericTerm getTaxaonymTerm() {
+        return taxaonymTerm;
+    }
+
+    public void setTaxaonymTerm(GenericTerm taxaonymTerm) {
+        this.taxaonymTerm = taxaonymTerm;
+    }
+
     @Override
     public String getAbbreviation() {
         return experiment.getName();
@@ -90,45 +143,5 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
     @Override
     public String getEntityName() {
         return experiment.getName();
-    }
-
-    public GenericTerm getZecoTerm() {
-        return zecoTerm;
-    }
-
-    public void setZecoTerm(GenericTerm zecoTerm) {
-        this.zecoTerm = zecoTerm;
-    }
-
-    public GenericTerm getChebiTerm() {
-        return chebiTerm;
-    }
-
-    public void setChebiTerm(GenericTerm chebiTerm) {
-        this.chebiTerm = chebiTerm;
-    }
-
-    public GenericTerm getAoTerm() {
-        return aoTerm;
-    }
-
-    public void setAoTerm(GenericTerm aoTerm) {
-        this.aoTerm = aoTerm;
-    }
-
-    public GenericTerm getGoTerm() {
-        return goTerm;
-    }
-
-    public void setGoTerm(GenericTerm goTerm) {
-        this.goTerm = goTerm;
-    }
-
-    public GenericTerm getTaxonTerm() {
-        return taxonTerm;
-    }
-
-    public void setTaxonTerm(GenericTerm taxonTerm) {
-        this.taxonTerm = taxonTerm;
     }
 }
