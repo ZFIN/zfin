@@ -42,6 +42,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     private static MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
     private static AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
+    private static FigureViewService figureViewService = new FigureViewService();
 
 
     @Test
@@ -409,7 +410,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     public void getExpressedGenesForFigure() {
         Figure fig = publicationRepository.getFigureByID("ZDB-FIG-080617-24"); //has xpat, pheno & AB
 
-        List<Marker> expressedGenes = FigureViewService.getExpressionGenes(fig);
+        List<Marker> expressedGenes = figureViewService.getExpressionGenes(fig);
         assertNotNull("FigureService.getExpressedGenes doesn't return a null", expressedGenes);
         for (Marker gene : expressedGenes) {
             assertTrue("expressed genes for a figure should all be genes", gene.isInTypeGroup(Marker.TypeGroup.GENEDOM));

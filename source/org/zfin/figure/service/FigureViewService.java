@@ -2,6 +2,7 @@ package org.zfin.figure.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Experiment;
@@ -15,13 +16,11 @@ import org.zfin.framework.ComparatorCreator;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
+import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.publication.Publication;
 
 import java.util.*;
-
-import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
-
 
 /**
  * This will likely end up merged with the existing FigureService
@@ -31,6 +30,8 @@ public class FigureViewService {
 
     static Logger LOG = Logger.getLogger(FigureViewService.class);
 
+    @Autowired
+    private PhenotypeRepository phenotypeRepository;
 
     /**
      * Get a list of ExpressionTableRows for the given figure
@@ -111,10 +112,8 @@ public class FigureViewService {
 
     /**
      * Get a sorted list of genes for which expression is shown in this figure
-     * <p/>
-     * todo: refactor non-figure page usage of this method to stop using static
      */
-    public static List<Marker> getExpressionGenes(Figure figure) {
+    public List<Marker> getExpressionGenes(Figure figure) {
         List<Marker> genes = new ArrayList<>();
         for (ExpressionResult er : figure.getExpressionResults()) {
             ExpressionExperiment ee = er.getExpressionExperiment();
@@ -367,11 +366,7 @@ public class FigureViewService {
     public List<Fish> getPhenotypeFish(Figure figure) {
         List<Fish> fishList = new ArrayList<>();
 
-        for (PhenotypeWarehouse phenotypeExperiment : getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID())) {
-            /*if (!fishList.contains(phenotypeExperiment.getFishExperiment().getFish())
-                    && !phenotypeExperiment.getFishExperiment().getFish().isWildtypeWithoutReagents()) {
-                fishList.add(phenotypeExperiment.getFishExperiment().getFish());
-            }*/
+        for (PhenotypeWarehouse phenotypeExperiment : phenotypeRepository.getPhenotypeWarehouse(figure.getZdbID())) {
             if (!fishList.contains(phenotypeExperiment.getFishExperiment().getFish())) {
                 fishList.add(phenotypeExperiment.getFishExperiment().getFish());
             }
@@ -400,7 +395,7 @@ public class FigureViewService {
     public List<SequenceTargetingReagent> getPhenotypeSTR(Figure figure) {
         List<SequenceTargetingReagent> strs = new ArrayList<>();
 
-        for (PhenotypeWarehouse phenotypeExperiment : getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID())) {
+        for (PhenotypeWarehouse phenotypeExperiment : phenotypeRepository.getPhenotypeWarehouse(figure.getZdbID())) {
             for (SequenceTargetingReagent str : phenotypeExperiment.getFishExperiment().getFish().getStrList()) {
                 if (str != null && !strs.contains(str)) {
                     strs.add(str);
@@ -431,7 +426,7 @@ public class FigureViewService {
     public List<Experiment> getPhenotypeCondition(Figure figure) {
         List<Experiment> conditions = new ArrayList<>();
 
-        for (PhenotypeWarehouse phenotypeExperiment : getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID())) {
+        for (PhenotypeWarehouse phenotypeExperiment : phenotypeRepository.getPhenotypeWarehouse(figure.getZdbID())) {
             if (canAddExperimentToConditionsList(phenotypeExperiment.getFishExperiment(), conditions)) {
                 conditions.add(phenotypeExperiment.getFishExperiment().getExperiment());
             }
@@ -442,13 +437,9 @@ public class FigureViewService {
     }
 
     private boolean canAddExperimentToConditionsList(FishExperiment fishExperiment, List<Experiment> conditions) {
-        if (fishExperiment == null
+        return !(fishExperiment == null
                 || fishExperiment.isStandardOrGenericControl()
-                || conditions.contains(fishExperiment.getExperiment())) {
-            return false;
-        }
-        return true;
-
+                || conditions.contains(fishExperiment.getExperiment()));
     }
 
     /**
@@ -494,7 +485,7 @@ public class FigureViewService {
         Map<Figure, List<PostComposedEntity>> map = new HashMap<>();
 
         for (Figure figure : figures) {
-            List<PhenotypeWarehouse> list = getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID());
+            List<PhenotypeWarehouse> list = phenotypeRepository.getPhenotypeWarehouse(figure.getZdbID());
             map.put(figure, getPhenotypeEntitiesFromWarehouse(list));
         }
 
@@ -509,7 +500,7 @@ public class FigureViewService {
 
         List<DevelopmentStage> stages = new ArrayList<>();
 
-        for (PhenotypeWarehouse phenotypeExperiment : getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID())) {
+        for (PhenotypeWarehouse phenotypeExperiment : phenotypeRepository.getPhenotypeWarehouse(figure.getZdbID())) {
             stages.add(phenotypeExperiment.getStart());
         }
 
@@ -541,7 +532,7 @@ public class FigureViewService {
 
         List<DevelopmentStage> stages = new ArrayList<>();
 
-        for (PhenotypeWarehouse phenotypeExperiment : getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID())) {
+        for (PhenotypeWarehouse phenotypeExperiment : phenotypeRepository.getPhenotypeWarehouse(figure.getZdbID())) {
             stages.add(phenotypeExperiment.getEnd());
         }
 
@@ -585,13 +576,16 @@ public class FigureViewService {
 
 
     public boolean showElsevierMessage(Publication publication) {
-        if (publication == null || publication.getJournal() == null || publication.getJournal().getPublisher() == null)
+        if (publication == null || publication.getJournal() == null || publication.getJournal().getPublisher() == null) {
             return false;
+        }
         return publication.getJournal().getPublisher().equals("Elsevier");
     }
 
     public boolean hasAcknowledgment(Publication publication) {
-        if (publication == null || publication.getAcknowledgment() == null) return false;
+        if (publication == null || publication.getAcknowledgment() == null) {
+            return false;
+        }
         return !publication.getAcknowledgment().equals("");
     }
 

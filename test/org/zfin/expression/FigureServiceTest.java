@@ -31,11 +31,11 @@ public class FigureServiceTest extends AbstractDatabaseTest {
 
     static Logger logger = Logger.getLogger(FigureServiceTest.class);
 
-    PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-    MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-    MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
-    OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
-
+    private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+    private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+    private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
+    private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+    private FigureViewService figureViewService = new FigureViewService();
 
     @Test
     public void expressionGenesTest() {
@@ -43,7 +43,7 @@ public class FigureServiceTest extends AbstractDatabaseTest {
         Marker pax2a = markerRepository.getMarkerByAbbreviation("pax2a");
         Marker fgf8a = markerRepository.getMarkerByAbbreviation("fgf8a");
 
-        List<Marker> genes = FigureViewService.getExpressionGenes(figure);
+        List<Marker> genes = figureViewService.getExpressionGenes(figure);
 
         assertThat("Figure has genes", genes, notNullValue());
         assertThat("Figure contains pax2a", genes, hasItem(pax2a));

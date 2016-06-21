@@ -36,8 +36,7 @@ public class FigureViewController {
 
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
 
-    private Model injectFigureSummaryAttributes(Model model, Figure figure, List<PhenotypeWarehouse> warehouseList) {
-
+    private void injectFigureSummaryAttributes(Model model, Figure figure, List<PhenotypeWarehouse> warehouseList) {
         model.addAttribute("figure", figure);
 
         model.addAttribute("expressionGenes", figureViewService.getExpressionGenes(figure));
@@ -56,8 +55,6 @@ public class FigureViewController {
         model.addAttribute("phenotypeEntities", figureViewService.getPhenotypeEntitiesFromWarehouse(warehouseList));
         model.addAttribute("phenotypeStartStage", figureViewService.getPhenotypeStartStage(figure));
         model.addAttribute("phenotypeEndStage", figureViewService.getPhenotypeEndStage(figure));
-
-        return model;
     }
 
 
@@ -79,7 +76,7 @@ public class FigureViewController {
         }
 
         List<PhenotypeWarehouse> warehouseList = getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID());
-        model = injectFigureSummaryAttributes(model, figure, warehouseList);
+        injectFigureSummaryAttributes(model, figure, warehouseList);
 
         return "figure/figure-summary.fragment";
     }
@@ -104,7 +101,7 @@ public class FigureViewController {
         }
 
         List<PhenotypeWarehouse> warehouseList = getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID());
-        model = injectFigureSummaryAttributes(model, figure, warehouseList);
+        injectFigureSummaryAttributes(model, figure, warehouseList);
 
         model.addAttribute("submitters", figureRepository.getSubmitters(figure.getPublication(), probe));
         model.addAttribute("showThisseInSituLink", figureViewService.showThisseInSituLink(figure.getPublication()));
@@ -153,8 +150,9 @@ public class FigureViewController {
 
         //also for direct submission pubs, we should see if we got a probe
         Clone probe = null;
-        if (!StringUtils.isEmpty(probeZdbID))
+        if (!StringUtils.isEmpty(probeZdbID)) {
             probe = RepositoryFactory.getMarkerRepository().getCloneById(probeZdbID);
+        }
         model.addAttribute("probe", probe);
         if (probe != null) {
             List<OrganizationLink> suppliers = RepositoryFactory.getProfileRepository().getSupplierLinksForZdbId(probe.getZdbID());
