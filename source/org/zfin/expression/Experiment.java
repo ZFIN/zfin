@@ -149,7 +149,7 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     public String getConditionKey() {
         String groupingKey = "";
         for (ExperimentCondition condition : experimentConditions) {
-            groupingKey += condition.getConditionDataType().getGroup() + ":" + condition.getConditionDataType().getName() + "&&";
+            groupingKey += condition.getZecoTerm().getTermName() + "&&";
         }
         if (CollectionUtils.isNotEmpty(experimentConditions))
             groupingKey = groupingKey.substring(0, groupingKey.length() - 2);

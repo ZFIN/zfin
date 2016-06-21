@@ -74,7 +74,7 @@ public class ExperimentConditionPresentation extends EntityPresentation {
      * @return name of condition
      */
     public static String getName(ExperimentCondition condition) {
-        return condition.getConditionDataType().getGroup() + ":" + condition.getConditionDataType().getName();
+        return condition.getDisplayName();
     }
 
     public static String getPopupLink(ExperimentCondition condition) {
