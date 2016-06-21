@@ -37,13 +37,12 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
     @ManyToOne
     @JoinColumn(name = "expcond_go_cc_term_zdb_id")
     private GenericTerm goCCTerm;
-
-    /*
-        @ManyToOne
-        @JoinColumn(name = "expcond_go_cc_term_zdb_id")
-    */
-    @Transient
+    @ManyToOne
+    @JoinColumn(name = "expcond_taxon_term_zdb_id")
     private GenericTerm taxaonymTerm;
+    @ManyToOne
+    @JoinColumn(name = "expcond_chebi_zdb_id")
+    private GenericTerm chebiTerm;
 
     @Transient
     private ConditionDataType conditionDataType;
@@ -109,6 +108,14 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
         this.aoTerm = aoTerm;
     }
 
+    public GenericTerm getChebiTerm() {
+        return chebiTerm;
+    }
+
+    public void setChebiTerm(GenericTerm chebiTerm) {
+        this.chebiTerm = chebiTerm;
+    }
+
     public GenericTerm getGoCCTerm() {
         return goCCTerm;
     }
@@ -143,5 +150,28 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
     @Override
     public String getEntityName() {
         return experiment.getName();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ExperimentCondition that = (ExperimentCondition) o;
+
+        if (zecoTerm != null ? !zecoTerm.equals(that.zecoTerm) : that.zecoTerm != null) return false;
+        if (aoTerm != null ? !aoTerm.equals(that.aoTerm) : that.aoTerm != null) return false;
+        if (goCCTerm != null ? !goCCTerm.equals(that.goCCTerm) : that.goCCTerm != null) return false;
+        return !(taxaonymTerm != null ? !taxaonymTerm.equals(that.taxaonymTerm) : that.taxaonymTerm != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = zecoTerm != null ? zecoTerm.hashCode() : 0;
+        result = 31 * result + (aoTerm != null ? aoTerm.hashCode() : 0);
+        result = 31 * result + (goCCTerm != null ? goCCTerm.hashCode() : 0);
+        result = 31 * result + (taxaonymTerm != null ? taxaonymTerm.hashCode() : 0);
+        return result;
     }
 }

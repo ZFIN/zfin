@@ -769,6 +769,10 @@ public class LookupComposite extends Composite implements Revertible {
         }
     }
 
+    public void resetSelectedTerm() {
+        selectedTerm = null;
+    }
+
 
     private class MyHighlightAction implements HighlightAction {
         @Override

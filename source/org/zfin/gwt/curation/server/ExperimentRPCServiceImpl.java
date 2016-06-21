@@ -1,6 +1,10 @@
 package org.zfin.gwt.curation.server;
 
+
 import com.gargoylesoftware.htmlunit.javascript.host.Window;
+
+import org.apache.commons.collections.CollectionUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.zfin.expression.Experiment;
@@ -152,6 +156,48 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
 
         return getExperimentList(publicationID);
     }
+    @Override
+    public List<EnvironmentDTO> copyConditions(String experimentID, List<String> copyConditionIdList) throws ValidationException, TermNotFoundException {
+        if (experimentID == null)
+            throw new ValidationException("No experiment ID provided");
+        if (CollectionUtils.isEmpty(copyConditionIdList))
+            throw new ValidationException("No condition to be copied provided");
+        Experiment experiment = null;
+        HibernateUtil.createTransaction();
+        try {
+            experiment = getExpressionRepository().getExperimentByID(experimentID);
+            if (experiment == null)
+                throw new ValidationException("No experiment found for " + experimentID);
+            for (String conditionID : copyConditionIdList) {
+                ExperimentCondition condition = getExpressionRepository().getExperimentCondition(conditionID);
+                boolean conditionExists = false;
+                if (experiment.getExperimentConditions() != null) {
+                    for (ExperimentCondition expCondition : experiment.getExperimentConditions()) {
+                        if (expCondition.equals(condition))
+                            conditionExists = true;
+                    }
+                }
+                if (conditionExists)
+                    continue;
+                ExperimentCondition newCondition = new ExperimentCondition();
+                newCondition.setZecoTerm(condition.getZecoTerm());
+                newCondition.setAoTerm(condition.getAoTerm());
+                newCondition.setGoCCTerm(condition.getGoCCTerm());
+                newCondition.setTaxaonymTerm(condition.getTaxaonymTerm());
+                newCondition.setChebiTerm(condition.getChebiTerm());
+                newCondition.setExperiment(experiment);
+                experiment.addExperimentCondition(newCondition);
+            }
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            throw new TermNotFoundException(e.getMessage());
+        }
+        return getExperimentList(experiment.getPublication().getZdbID());
+    }
+
     @Override
     public List<EnvironmentDTO> getExperimentList(String publicationID) {
         com.google.gwt.user.client.Window.alert("gtgexplist");

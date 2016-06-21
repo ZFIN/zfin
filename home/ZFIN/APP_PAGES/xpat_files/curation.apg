@@ -954,11 +954,6 @@ and feature_zdb_id=fmrel_ftr_zdb_id
 <?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,PHENO))">
    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-patocuration.apg';">$1<?/MISQL>
 <?/MIBLOCK>
-<?MICOMMENT>
-<?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,Environment))">
-    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-experimentcuration.apg';">$1<?/MISQL>
-<?/MIBLOCK>
-<?/MICOMMENT>
 <?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,Experiment))">
     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-experimentcuration.apg';">$1<?/MISQL>
 <?/MIBLOCK>

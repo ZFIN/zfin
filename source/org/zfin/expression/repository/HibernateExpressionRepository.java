@@ -2112,7 +2112,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "from Experiment  " +
-                "      where publication.zdbID = :pubID ";
+                "      where publication.zdbID = :pubID " +
+                "      order by name ";
         Query query = session.createQuery(hql);
         query.setParameter("pubID", publicationID);
 
@@ -2122,5 +2123,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     @Override
     public void deleteExperimentCondition(ExperimentCondition condition) {
         HibernateUtil.currentSession().delete(condition);
+    }
+
+    @Override
+    public ExperimentCondition getExperimentCondition(String conditionID) {
+        return (ExperimentCondition) HibernateUtil.currentSession().get(ExperimentCondition.class, conditionID);
     }
 }

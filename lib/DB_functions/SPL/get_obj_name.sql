@@ -120,11 +120,6 @@ get_obj_name(zdbId varchar(50))
       into objName
       from run_Candidate
      where runcan_zdb_id = zdbId;
-   elif (objType = "CDT") then
-    select cdt_name
-      into objName
-      from condition_data_type
-      where cdt_zdb_id = zdbId ;
   elif (objType = "COMPANY") then
     select name 
       into objName

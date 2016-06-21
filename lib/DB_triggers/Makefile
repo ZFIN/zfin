@@ -37,8 +37,6 @@ TRIGGERS = \
 	external_reference_insert_trigger.sql \
 	experiment_insert_trigger.sql \
 	experiment_update_trigger.sql \
-	experiment_condition_insert_trigger.sql \
-	experiment_condition_update_trigger.sql \
 	expression_experiment2_insert_trigger.sql \
 	expression_experiment2_update_trigger.sql \
 	expression_pattern_infrastructure_insert_trigger.sql \

@@ -86,37 +86,47 @@ linksToDelete.each { link ->
     println "  $link.zdbID"
     session.delete(link)
 }
+println "Determine if  db links alreday exist "
+hql = """from MarkerDBLink dbl
+         where dbl.referenceDatabase = :refDb
+         and dbl.accessionNumber  in (:accNums)"""
+query = session.createQuery(hql)
+query.setParameter("refDb", signafishDb)
+query.setParameterList("accNums", array)
+linksExist = query.list()
+if (linksExist.size()==0) {
 
 
-println "Adding new Signafish db links "
-hql = """from Marker
+    println "Adding new Signafish db links "
+    hql = """from Marker
          where zdbID in (:accNums)
           """
-query = session.createQuery(hql)
+    query = session.createQuery(hql)
 
-query.setParameterList("accNums", array)
-addedLinks = query.list().collect { genes ->
-    signafishLink = new MarkerDBLink()
-    signafishLink.with {
-        marker = genes
-        accessionNumber = genes.zdbID
-        accessionNumberDisplay = genes.zdbID
-        linkInfo = String.format("Uncurated: signafish load for %tF", new Date())
-        referenceDatabase = signafishDb
-    }
-    session.save(signafishLink)
-    println "  $signafishLink.zdbID"
-    signafishLink
-    println "Adding new attributions test "
-    recAttr = new RecordAttribution()
-    recAttr.with {
+    query.setParameterList("accNums", array)
+    addedLinks = query.list().collect { genes ->
+        signafishLink = new MarkerDBLink()
+        signafishLink.with {
+            marker = genes
+            accessionNumber = genes.zdbID
+            accessionNumberDisplay = genes.zdbID
+            linkInfo = String.format("Uncurated: signafish load for %tF", new Date())
+            referenceDatabase = signafishDb
+        }
+        session.save(signafishLink)
+        println "  $signafishLink.zdbID"
+        signafishLink
+        println "Adding new attributions test "
+        recAttr = new RecordAttribution()
+        recAttr.with {
 
-        dataZdbID = signafishLink.zdbID
-        sourceZdbID = "ZDB-PUB-160316-7"
-        sourceType=RecordAttribution.SourceType.STANDARD
+            dataZdbID = signafishLink.zdbID
+            sourceZdbID = "ZDB-PUB-160316-7"
+            sourceType = RecordAttribution.SourceType.STANDARD
+        }
+        session.save(recAttr)
+        recAttr
     }
-    session.save(recAttr)
-    recAttr
 }
 println "getting db links for IDs  "
 hql = """from MarkerDBLink dbl

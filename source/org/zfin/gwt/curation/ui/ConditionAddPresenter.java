@@ -3,6 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.CheckBox;
 import org.zfin.gwt.root.dto.ConditionDTO;
 import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.dto.OntologyDTO;
@@ -13,10 +14,7 @@ import org.zfin.gwt.root.ui.TermEntry;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.DeleteImage;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConditionAddPresenter implements HandlesError {
 
@@ -25,6 +23,7 @@ public class ConditionAddPresenter implements HandlesError {
     private String publicationID;
 
     private List<EnvironmentDTO> dtoList;
+    private List<CheckBox> copyConditionsCheckBoxList = new ArrayList<>();
 
     public ConditionAddPresenter(ConditionAddView view, String publicationID) {
         this.publicationID = publicationID;
@@ -41,6 +40,7 @@ public class ConditionAddPresenter implements HandlesError {
                 dtoList = experimentList;
                 for (EnvironmentDTO dto : experimentList) {
                     view.experimentSelectionList.addItem(dto.getName(), dto.getZdbID());
+                    view.experimentCopyToSelectionList.addItem(dto.getName(), dto.getZdbID());
                 }
                 populateData();
             }
@@ -51,22 +51,62 @@ public class ConditionAddPresenter implements HandlesError {
     private void populateData() {
         int elementIndex = 0;
 
+        copyConditionsCheckBoxList.clear();
         if (dtoList.isEmpty()) {
             view.emptyDataTable();
             return;
         }
+        ConditionDTO lastCondition = null;
+
         for (EnvironmentDTO dto : dtoList) {
-            int index = 0;
-            if (dto.getConditionDTOList() != null) {
-                for (ConditionDTO conditionDTO : dto.getConditionDTOList()) {
-                    view.addCondition(dto, conditionDTO, elementIndex);
-                    DeleteImage deleteImage = new DeleteImage("Delete Note " + conditionDTO.getZdbID());
-                    deleteImage.addClickHandler(new DeleteConditionClickHandler(conditionDTO, this));
-                    view.addDeleteButton(deleteImage, elementIndex);
-                    elementIndex++;
-                }
+
+            for (ConditionDTO conditionDTO : dto.getConditionDTOList()) {
+                view.addCondition(dto, conditionDTO, lastCondition, elementIndex);
+                final CheckBox checkBox = new CheckBox();
+                checkBox.setTitle(conditionDTO.getZdbID());
+                checkBox.addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+                        if (clickEvent.getSource() instanceof CheckBox) {
+                            CheckBox checkBox = (CheckBox) clickEvent.getSource();
+                            enableCopyControls(checkBox.getValue());
+                        }
+                    }
+                });
+                copyConditionsCheckBoxList.add(checkBox);
+                view.addCopyCheckBox(checkBox, elementIndex);
+                DeleteImage deleteImage = new DeleteImage("Delete Note " + conditionDTO.getZdbID());
+                deleteImage.addClickHandler(new DeleteConditionClickHandler(conditionDTO, this));
+                view.addDeleteButton(deleteImage, elementIndex);
+                elementIndex++;
+                lastCondition = conditionDTO;
             }
         }
+    }
+
+    protected void copyConditions() {
+        List<String> copyConditionIdList = new ArrayList<>(copyConditionsCheckBoxList.size());
+        for (CheckBox checkBox : copyConditionsCheckBoxList) {
+            if (checkBox.getValue())
+                copyConditionIdList.add(checkBox.getTitle());
+        }
+        String experimentID = view.experimentCopyToSelectionList.getSelected();
+        ExperimentRPCService.App.getInstance().copyConditions(experimentID, copyConditionIdList, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to copy conditions: ", view.errorLabel) {
+            public void onSuccess(List<EnvironmentDTO> experimentList) {
+                dtoList = experimentList;
+                for (EnvironmentDTO dto : experimentList) {
+                    view.experimentSelectionList.addItem(dto.getName(), dto.getZdbID());
+                    view.experimentCopyToSelectionList.addItem(dto.getName(), dto.getZdbID());
+                }
+                populateData();
+                resetGUI();
+            }
+        });
+
+    }
+
+    private void enableCopyControls(boolean enable) {
+        view.copyControlsPanel.setVisible(enable);
     }
 
     @Override
@@ -124,6 +164,7 @@ public class ConditionAddPresenter implements HandlesError {
                 termEntry.setVisible(visibilityVector.get(index));
 
         }
+        view.copyControlsPanel.setVisible(false);
     }
 
     private void handleDirty() {
@@ -138,6 +179,7 @@ public class ConditionAddPresenter implements HandlesError {
         view.taxonTermEntry.reset();
         view.clearError();
         setVisibility("");
+
     }
 
     public void createCondition() {
