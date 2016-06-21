@@ -44,9 +44,6 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
     @JoinColumn(name = "expcond_chebi_zdb_id")
     private GenericTerm chebiTerm;
 
-    @Transient
-    private ConditionDataType conditionDataType;
-
     private static Logger logger = Logger.getLogger(ExperimentCondition.class);
 
     public String getZdbID() {
@@ -66,30 +63,21 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
         this.experiment = experiment;
     }
 
-    public ConditionDataType getConditionDataType() {
-        return conditionDataType;
-    }
-
-    public void setConditionDataType(ConditionDataType conditionDataType) {
-        this.conditionDataType = conditionDataType;
-    }
-
     public boolean isChemicalCondition() {
-        return (conditionDataType.getGroup().equalsIgnoreCase("chemical"));
+        return (zecoTerm.getTermName().contains("chemical"));
     }
 
     public boolean isHeatShock() {
-        return (conditionDataType.getName().equalsIgnoreCase("heat shock"));
+        return (zecoTerm.getTermName().equalsIgnoreCase("heat shock"));
     }
 
     @Override
     public int compareTo(ExperimentCondition o) {
         if (o == null)
             return -1;
-        if (conditionDataType.compareTo(o.getConditionDataType()) != 0)
-            return conditionDataType.compareTo(o.getConditionDataType());
-        else
-            return getZdbID().compareTo(o.getZdbID());
+        if (!zecoTerm.getOboID().equals(o.getZecoTerm().getOboID()))
+            return zecoTerm.getTermNameOrder().compareToIgnoreCase(o.getZecoTerm().getTermNameOrder());
+        return 0;
     }
 
     public GenericTerm getZecoTerm() {
@@ -173,5 +161,18 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
         result = 31 * result + (goCCTerm != null ? goCCTerm.hashCode() : 0);
         result = 31 * result + (taxaonymTerm != null ? taxaonymTerm.hashCode() : 0);
         return result;
+    }
+
+    public String getDisplayName() {
+        String displayName = zecoTerm.getTermName();
+        if (chebiTerm != null)
+            displayName += ": " + chebiTerm.getTermName();
+        if (goCCTerm != null)
+            displayName += ": " + goCCTerm.getTermName();
+        if (aoTerm != null)
+            displayName += ": " + aoTerm.getTermName();
+        if (taxaonymTerm != null)
+            displayName += ": " + taxaonymTerm.getTermName();
+        return displayName;
     }
 }

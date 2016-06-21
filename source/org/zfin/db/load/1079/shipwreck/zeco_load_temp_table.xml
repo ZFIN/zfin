@@ -14,8 +14,9 @@
         <column name="cdtid" type="String"/>
         <column name="zecoid" type="String"/>
         <column name="aoTermId" type="String"/>
-        <column name="chebiTermId" type="String"/>	
-        <column name="ccTermTd" type="String"/>
+        <column name="chebiTermId" type="String"/>
+        <column name="otherTermId" type="String"/>	
+        <column name="ccTermId" type="String"/>
         <column name="extra" type="String"/>
     </loadData>
 </changeSet>
