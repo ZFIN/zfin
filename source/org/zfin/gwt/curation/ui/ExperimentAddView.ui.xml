@@ -8,7 +8,7 @@
 
    <g:FlowPanel>
         <g:HorizontalPanel>
-            <g:Label text="Conditions:" styleName="bold"/>
+            <g:Label text="Experiments:" styleName="bold"/>
         </g:HorizontalPanel>
         <g:Grid ui:field='dataTable' cellSpacing='10' styleName="searchresults groupstripes">
             <g:row styleName="table-header">
@@ -16,34 +16,56 @@
                     <g:Label text="" styleName="bold" horizontalAlignment="left"/>
                 </g:customCell>
                 <g:customCell>
-                    <g:Label text="Condition Name" styleName="bold" horizontalAlignment="left"/>
+                    <g:Label text="Experiment Name" styleName="bold" horizontalAlignment="left"/>
                 </g:customCell>
 
                 <g:customCell>
                     <g:Label text="Delete" styleName="bold" horizontalAlignment="left"/>
                 </g:customCell>
             </g:row>
+        </g:Grid>
+       <g:Grid cellSpacing='10' styleName="searchresults groupstripes">
+       <g:row>
+           <g:cell/>
+           <g:customCell>
+               <g:FlowPanel>
+                   <g:TextBox ui:field="experimentNameAddBox"/>
+                   <g:HTML>
+                       <p/>
+                   </g:HTML>
+                   <g:HorizontalPanel addStyleNames="vertical-margin">
+                       <g:Button ui:field="addExperimentButton" text="Add"
+                                 addStyleNames="btn btn-primary" />
+
+                   </g:HorizontalPanel>
+               </g:FlowPanel>
+           </g:customCell>
+
+       </g:row>
+   </g:Grid>
+       <!--<g:Grid cellSpacing='10' styleName="searchresults groupstripes">
             <g:row>
+       <g:cell/>
                 <g:customCell>
-                    <g:Button ui:field="updateConditionNameButton" text="Update"/>
+                    <g:Button ui:field="updateExperimentNameButton" text="Update"/>
                 </g:customCell>
                 <g:customCell>
-                    <g:TextBox ui:field="conditionNameBox"/>
+                    <g:TextBox ui:field="ExperimentNameBox"/>
                 </g:customCell>
 
                 <g:customCell>
-                    <g:Button ui:field="deleteConditionButton" text="Delete"/>
+                    <g:Button ui:field="deleteExperimentButton" text="Delete"/>
                 </g:customCell>
             </g:row>
             <g:row>
                 <g:customCell>
-                    <g:Button ui:field="addConditionNameButton" text="Add"/>
+                    <g:Button ui:field="addExperimentNameButton" text="Add"/>
                 </g:customCell>
                 <g:customCell>
-                    <g:TextBox ui:field="conditionNameAddBox"/>
-                </g:customCell>
-            </g:row>
-        </g:Grid>
+                    <g:TextBox ui:field="ExperimentNameAddBox"/>
+       </g:customCell>
+       </g:row>
+       </g:Grid>-->
         <zfin:SimpleErrorElement ui:field="errorLabel"/>
         <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="false"/>
     </g:FlowPanel>

@@ -1,5 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
+import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -13,13 +14,17 @@ import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.ui.IsDirtyWidget;
 import org.zfin.gwt.root.ui.Revertible;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
 import org.zfin.gwt.root.ui.StringTextBox;
 import org.zfin.gwt.root.util.DeleteImage;
 import org.zfin.gwt.root.util.WidgetUtil;
 
-public class ExperimentAddView extends Composite  {
+
+import java.util.Set;
+
+public class ExperimentAddView extends AbstractViewComposite  {
 
     public static final String STANDARD = "_Standard";
     public static final String GENERIC_CONTROL = "_Generic-Control";
@@ -44,58 +49,47 @@ public class ExperimentAddView extends Composite  {
     @UiField
     Grid dataTable;
     @UiField
-    Button addConditionNameButton;
+    Button addExperimentButton;
+    //@UiField
+    //Button deleteExperimentButton;
+    /*@UiField
+    Button updateExperimentButton;*/
     @UiField
-    Button deleteConditionButton;
-    @UiField
-    Button updateConditionNameButton;
-    @UiField
-    TextBox conditionNameAddBox;
+    TextBox experimentNameAddBox;
 
 
-
-    //@UiHandler("addConditionNameButton")
-   /*void onAddModel(@SuppressWarnings("unused") ClickEvent event) {
-        presenter.addModelEvent();
-    }
-
-    /*@UiHandler("fishSelectionBox")
-    void onChangeFishSelection(@SuppressWarnings("unused") ChangeEvent event) {
-        presenter.updateConditions();
-        clearErrorMessage();
-    }
-
-    @UiHandler("environmentSelectionBox")
-    void onChangeEnvironmentSelection(@SuppressWarnings("unused") ChangeEvent event) {
-        clearErrorMessage();
-    }
-
-    @UiHandler("evidenceCodeSelectionBox")
-    void onChangeEvidenceSelection(@SuppressWarnings("unused") ChangeEvent event) {
-        clearErrorMessage();
-    }
-
-
-
-    private void setEvidenceCodes() {
-        evidenceCodeSelectionBox.addItem("TAS");
-        evidenceCodeSelectionBox.addItem("IC");
+   /* @UiHandler("resetButton")
+    void onClickReset(@SuppressWarnings("unused") ClickEvent event) {
+        presenter.resetGUI();
     }*/
-    public void clearErrorMessage() {
-        errorLabel.setError("");
+
+    @UiHandler("addExperimentButton")
+    void onClickCreateExperiment(@SuppressWarnings("unused") ClickEvent event) {
+        com.google.gwt.user.client.Window.alert("no click");
+        presenter.createExperiment();
     }
 
-    protected void addFish(FishDTO fish, int elementIndex) {
+
+    protected void addExperiment(EnvironmentDTO experimentDTO,int elementIndex) {
         dataTable.resizeRows(elementIndex + 2);
         int row = elementIndex + 1;
         setRowStyle(row);
-        if (fish == null) {
-            dataTable.setText(row, 0, "");
-            return;
-        }
-        Anchor fishAnchor = new Anchor(SafeHtmlUtils.fromTrustedString(fish.getHandle()), "/" + fish.getZdbID());
-        fishAnchor.setTitle(fish.getZdbID());
-        dataTable.setWidget(elementIndex + 1, 0, fishAnchor);
+        int col = 0;
+        dataTable.setText(row, col++, "");
+        if (experimentDTO != null)
+            dataTable.setText(row, col++, experimentDTO.getName());
+        else
+            dataTable.setText(row, col++, "");
+
+    }
+
+    public void addDeleteButton(DeleteImage deleteImage, int elementIndex) {
+        int row = elementIndex + 1;
+        dataTable.setWidget(row, 2, deleteImage);
+    }
+
+    public void emptyDataTable() {
+        dataTable.resizeRows(2);
     }
 
     private void setRowStyle(int row) {
@@ -107,40 +101,14 @@ public class ExperimentAddView extends Composite  {
     }
 
     protected void endTableUpdate() {
-        dataTable.setText(0,1,STANDARD);
-        dataTable.setText(1,1,GENERIC_CONTROL);
         int rows = dataTable.getRowCount() + 3;
         dataTable.resizeRows(rows);
         int lastRow = rows - 1;
         int col = 0;
-        dataTable.setWidget(lastRow, col++, updateConditionNameButton);
-        dataTable.setWidget(lastRow, col++, conditionNameAddBox);
-        dataTable.setWidget(lastRow, col, deleteConditionButton);
-
-    }
-
-    protected void addEnvironment(EnvironmentDTO environment, int elementIndex) {
-        if (environment == null) {
-            dataTable.setText(elementIndex + 1, 1, "");
-            return;
-        }
-        dataTable.setText(elementIndex + 1, 1, environment.getName());
-    }
 
 
 
 
-
-    protected void addDeleteButtonDisease(DiseaseAnnotationDTO disease, int elementIndex, ClickHandler clickHandler) {
-        String title = "Delete Disease Model";
-        String zdbID = disease.getZdbID();
-        addDeleteButton(elementIndex, clickHandler, title, zdbID);
-    }
-
-    protected void addDeleteButtonFishModel(DiseaseAnnotationModelDTO model, int elementIndex, ClickHandler clickHandler) {
-        String title = "Delete Fish Model from Annotation";
-        String zdbID = model.getDat().getZdbID();
-        addDeleteButton(elementIndex, clickHandler, title, zdbID);
     }
 
     private void addDeleteButton(int elementIndex, ClickHandler clickHandler, String title, String zdbID) {
@@ -151,33 +119,21 @@ public class ExperimentAddView extends Composite  {
         dataTable.setWidget(elementIndex + 1, 5, deleteImage);
     }
 
-    protected void addDisease(TermDTO disease, int elementIndex, ClickHandler clickHandler) {
-        Hyperlink diseaseHyperlink = new Hyperlink(SafeHtmlUtils.fromTrustedString(disease.getTermName()), "diseaseName");
-        diseaseHyperlink.setTitle(disease.getOboID());
-        diseaseHyperlink.addClickHandler(clickHandler);
-        dataTable.setWidget(elementIndex + 1, 3, diseaseHyperlink);
-    }
-
     public void resetUI() {
         errorLabel.clearAllErrors();
-        conditionNameAddBox.setText("");
+      experimentNameAddBox.setText("");
 
-    }
-
-
-
-    public SimpleErrorElement getErrorLabel() {
-        return errorLabel;
-    }
-
-
-    public Image getLoadingImage() {
-        return loadingImage;
     }
 
     public void setPresenter(ExperimentAddPresenter presenter) {
         this.presenter = presenter;
     }
+
+    @Override
+    public Set<IsDirtyWidget> getValueFields() {
+        return null;
+    }
+
 
 }
 

@@ -1,5 +1,6 @@
 package org.zfin.gwt.curation.server;
 
+import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.zfin.expression.Experiment;
@@ -12,12 +13,15 @@ import org.zfin.gwt.root.dto.TermNotFoundException;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.ui.ValidationException;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implements ExperimentRPCService {
 
@@ -63,6 +67,30 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
 
         return getExperimentList(publicationID);
     }
+    public List<EnvironmentDTO> createExperiment(String publicationID, EnvironmentDTO environmentDTO) throws ValidationException {
+        com.google.gwt.user.client.Window.alert("createExp");
+        com.google.gwt.user.client.Window.alert(publicationID);
+
+        if (StringUtils.isEmpty(publicationID))
+            throw new ValidationException("No Publication ID provided");
+
+
+
+        HibernateUtil.createTransaction();
+        try {
+            Experiment experiment1 = getExpressionRepository().getExperimentByPubAndName(publicationID, environmentDTO.getName());
+            if (experiment1==null) {
+                Experiment experiment = new Experiment();
+
+                experiment.setName("tryruityertuiytu");
+                experiment.setPublication(getPublicationRepository().getPublication(publicationID));
+            }
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+        }
+        return getExperimentList(publicationID);
+    }
 
     @Override
     public List<EnvironmentDTO> deleteCondition(ConditionDTO conditionDTO) throws ValidationException, TermNotFoundException {
@@ -97,9 +125,36 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
 
         return getExperimentList(publicationID);
     }
+    public List<EnvironmentDTO> deleteExperiment(EnvironmentDTO experimentDTO) throws ValidationException {
+        if (experimentDTO == null)
+            throw new ValidationException("No experiment entity provided");
+        String experimentID = experimentDTO.getZdbID();
+        if (experimentID == null)
+            throw new ValidationException("No experimentID provided");
+        String publicationID = null;
+        HibernateUtil.createTransaction();
+        try {
+            Experiment experiment = getExpressionRepository().getExperimentByID(experimentID);
+            if (experiment == null) {
+                throw new ValidationException("No experiment found for " + experimentID);
+            }
+            publicationID = experiment.getPublication().getZdbID();
+            InfrastructureRepository infraRep = RepositoryFactory.getInfrastructureRepository();
+            infraRep.deleteActiveDataByZdbID(experiment.getZdbID());
 
+
+
+
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+        }
+
+        return getExperimentList(publicationID);
+    }
     @Override
     public List<EnvironmentDTO> getExperimentList(String publicationID) {
+        com.google.gwt.user.client.Window.alert("gtgexplist");
         List<EnvironmentDTO> list = new ArrayList<>();
         List<Experiment> experimentSet = getExpressionRepository().geExperimentByPublication(publicationID);
         if (experimentSet != null) {

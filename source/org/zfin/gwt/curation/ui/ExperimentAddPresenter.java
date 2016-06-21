@@ -1,38 +1,74 @@
 package org.zfin.gwt.curation.ui;
 
-import org.zfin.gwt.curation.event.AddNewFeatureEvent;
-import org.zfin.gwt.root.dto.CuratorNoteDTO;
-import org.zfin.gwt.root.dto.FeatureDTO;
-import org.zfin.gwt.root.dto.FeaturePrefixDTO;
-import org.zfin.gwt.root.dto.NoteDTO;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
+import org.apache.commons.collections.CollectionUtils;
+import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.EnvironmentDTO;
+import org.zfin.gwt.root.dto.OntologyDTO;
+import org.zfin.gwt.root.event.SelectAutoCompleteEvent;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
-import org.zfin.gwt.root.util.AppUtils;
-import org.zfin.gwt.root.util.StringUtils;
+import org.zfin.gwt.root.ui.TermEntry;
+import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.util.DeleteImage;
+import org.zfin.gwt.root.util.DeleteImage;
+import java.util.Arrays;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class ExperimentAddPresenter   implements HandlesError {
+public class ExperimentAddPresenter implements HandlesError {
 
     private ExperimentAddView view;
 
     private String publicationID;
 
+    private List<EnvironmentDTO> dtoList;
 
     public ExperimentAddPresenter(ExperimentAddView view, String publicationID) {
-       // super(view, publicationID);
         this.publicationID = publicationID;
         this.view = view;
-        //dto = new FeatureDTO();
-        //dto.setPublicationZdbID(publicationID);
-
     }
 
     public void go() {
-      //  super.go();
+        loadExperiments();
+    }
+
+    private void loadExperiments() {
+        ExperimentRPCService.App.getInstance().getExperimentList(publicationID, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to retrieve experiments: ", view.errorLabel) {
+            public void onSuccess(List<EnvironmentDTO> experimentList) {
+                dtoList = experimentList;
+                /*for (EnvironmentDTO dto : experimentList) {
+                    view.experimentSelectionList.addItem(dto.getName(), dto.getZdbID());
+                }*/
+                populateExperiments();
+            }
+        });
 
     }
+
+    private void populateExperiments() {
+        int elementIndex = 0;
+
+        if (dtoList.isEmpty()) {
+            view.emptyDataTable();
+            return;
+        }
+        for (EnvironmentDTO dto : dtoList) {
+            int index = 0;
+
+                view.addExperiment(dto, elementIndex);
+            if (dto.getConditionDTOList()==null) {
+                DeleteImage deleteImage = new DeleteImage("Delete Note " + dto.getZdbID());
+                deleteImage.addClickHandler(new DeleteExperimentClickHandler(dto, this));
+                view.addDeleteButton(deleteImage, elementIndex);
+                elementIndex++;
+            }
+            }
+        }
+
 
     @Override
     public void setError(String message) {
@@ -41,7 +77,6 @@ public class ExperimentAddPresenter   implements HandlesError {
 
     @Override
     public void clearError() {
-      //  view.message.setText("");
         view.errorLabel.setError("");
     }
 
@@ -55,80 +90,87 @@ public class ExperimentAddPresenter   implements HandlesError {
 
     }
 
+    static Map<String, List<Boolean>> ontologyDependencyMap;
 
 
-    /*public FeatureDTO createDTOFromGUI() {
-        FeatureDTO featureDTO = super.createDTOFromGUI(view);
 
-        featureDTO.setFeatureSequence(view.featureSequenceBox.getText());
-
-        if (StringUtils.isNotEmptyTrim(view.featureAliasBox.getText())) {
-            featureDTO.setAlias(view.featureAliasBox.getText());
-        }
-        if (StringUtils.isNotEmptyTrim(view.publicNoteBox.getText())) {
-            NoteDTO publicNoteDTO = new NoteDTO();
-            publicNoteDTO.setNoteData(view.publicNoteBox.getText());
-            publicNoteDTO.setPublicationZdbID(publicationID);
-            featureDTO.addPublicNote(publicNoteDTO);
-        }
-
-        if (StringUtils.isNotEmptyTrim(view.curatorNoteBox.getText())) {
-            List<CuratorNoteDTO> curatorNoteDTOs = new ArrayList<>();
-            CuratorNoteDTO noteDTO = new CuratorNoteDTO();
-            noteDTO.setNoteData(view.curatorNoteBox.getText());
-            curatorNoteDTOs.add(noteDTO);
-            featureDTO.setCuratorNotes(curatorNoteDTOs);
-        }
-        if (view.hasMutationDetails()) {
-            featureDTO.setDnaChangeDTO(view.mutationDetailDnaView.getDto());
-            featureDTO.setProteinChangeDTO(view.mutationDetailProteinView.getDto());
-            featureDTO.setTranscriptChangeDTOSet(view.mutationDetailTranscriptView.getPresenter().getDtoSet());
-        }
-
-        return featureDTO;
+    private void handleDirty() {
+        view.addExperimentButton.setEnabled(true);
     }
 
 
+    public void resetGUI() {
 
-    public void createFeature() {
-        final FeatureDTO featureDTO = createDTOFromGUI();
+        view.experimentNameAddBox.setText("");
 
-        String errorMessage = FeatureValidationService.isValidToSave(featureDTO);
-        if (errorMessage != null) {
-            setError(errorMessage);
-            return;
-        }
-        if (view.mutationDetailProteinView.hasAASelected() && view.mutationDetailProteinView.hasPlusMinusUsed()) {
-            view.setError("Cannot select Amino Acids and defines plus / minus fields");
-            return;
-        }
-        view.working();
-        FeatureRPCService.App.getInstance().createFeature(featureDTO, new FeatureEditCallBack<FeatureDTO>("Failed to create feature:", this) {
+        view.clearError();
+        //setVisibility("");
+    }
 
-            @Override
-            public void onFailure(Throwable throwable) {
-                super.onFailure(throwable);
-                view.notWorking();
-                handleDirty();
-            }
+    public void createExperiment() {
+       EnvironmentDTO environmentDTO = getEnvironmentFromForm();
+        Window.alert(environmentDTO.getName());
+       // view.clearError();
+        ExperimentRPCService.App.getInstance().createExperiment(publicationID, environmentDTO, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to save a Experiment: ", view.errorLabel) {
+            public void onSuccess(List<EnvironmentDTO> experimentList) {
+                Window.alert("jhgj");
+                dtoList = experimentList;
+                for (EnvironmentDTO dto : experimentList) {
+                    resetGUI();
 
-            @Override
-            public void onSuccess(final FeatureDTO result) {
-                fireEventSuccess();
-                //Window.alert("Feature successfully created");
-                view.featureTypeBox.setSelectedIndex(0);
-                view.message.setText("Feature created: " + result.getName() + " [" + result.getZdbID() + "]");
-                view.notWorking();
-                view.saveButton.setEnabled(false);
-                view.clearErrors();
-                AddNewFeatureEvent event = new AddNewFeatureEvent(result);
-                AppUtils.EVENT_BUS.fireEvent(event);
-                view.resetInterface();
-                view.hideMutationDetail();
+                    //view.experimentSelectionList.addItem(dto.getName(), dto.getZdbID());
+                }
+                populateExperiments();
             }
         });
-
     }
-*/
+
+    private boolean formIsValidated() {
+       /* if (view.zecoTermEntry.getTermTextBox().hasValidateTerm())
+            return true;
+        if (view.aoTermEntry.getTermTextBox().hasValidateTerm() && view.aoTermEntry.isVisible())
+            return true;
+        if (view.goCcTermEntry.getTermTextBox().hasValidateTerm() && view.goCcTermEntry.isVisible())
+            return true;
+        if (view.taxonTermEntry.getTermTextBox().hasValidateTerm() && view.taxonTermEntry.isVisible())
+            return true;*/
+        return false;
+    }
+
+    private EnvironmentDTO getEnvironmentFromForm() {
+        EnvironmentDTO dto = new EnvironmentDTO();
+        dto.setName(view.experimentNameAddBox.getText());
+
+        return dto;
+    }
+
+    private class DeleteExperimentClickHandler implements ClickHandler {
+
+        private EnvironmentDTO environmentDTO;
+        private ExperimentAddPresenter presenter;
+
+
+        public DeleteExperimentClickHandler(EnvironmentDTO environmentDTO, ExperimentAddPresenter presenter) {
+            this.environmentDTO = environmentDTO;
+            this.presenter = presenter;
+        }
+
+        @Override
+        public void onClick(ClickEvent clickEvent) {
+           String message = "Are you sure you want to delete this experiment?";
+            if (!Window.confirm(message))
+                return;
+
+            ExperimentRPCService.App.getInstance().deleteExperiment(environmentDTO, new FeatureEditCallBack<List<EnvironmentDTO>>("Failed to remove Experiment: ", presenter) {
+                @Override
+                public void onSuccess(List<EnvironmentDTO> list) {
+                    dtoList.clear();
+                    dtoList = list;
+                    populateExperiments();
+                }
+            });
+        }
+    }
+
 
 }

@@ -34,5 +34,7 @@ public interface ExperimentRPCService extends RemoteService {
     }
 
     List<EnvironmentDTO> getExperimentList(String publicationID);
+    List<EnvironmentDTO> createExperiment(String publicationID, EnvironmentDTO environmentDTO)throws ValidationException;
+    List<EnvironmentDTO> deleteExperiment(EnvironmentDTO environmentDTO)throws ValidationException;
 
 }

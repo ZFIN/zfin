@@ -57,12 +57,14 @@ public class ConditionAddPresenter implements HandlesError {
         }
         for (EnvironmentDTO dto : dtoList) {
             int index = 0;
-            for (ConditionDTO conditionDTO : dto.getConditionDTOList()) {
-                view.addCondition(dto, conditionDTO, elementIndex);
-                DeleteImage deleteImage = new DeleteImage("Delete Note " + conditionDTO.getZdbID());
-                deleteImage.addClickHandler(new DeleteConditionClickHandler(conditionDTO, this));
-                view.addDeleteButton(deleteImage, elementIndex);
-                elementIndex++;
+            if (dto.getConditionDTOList() != null) {
+                for (ConditionDTO conditionDTO : dto.getConditionDTOList()) {
+                    view.addCondition(dto, conditionDTO, elementIndex);
+                    DeleteImage deleteImage = new DeleteImage("Delete Note " + conditionDTO.getZdbID());
+                    deleteImage.addClickHandler(new DeleteConditionClickHandler(conditionDTO, this));
+                    view.addDeleteButton(deleteImage, elementIndex);
+                    elementIndex++;
+                }
             }
         }
     }
