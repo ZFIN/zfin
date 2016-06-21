@@ -162,7 +162,7 @@ public enum OntologyDTO implements IsSerializable {
             return null;
         }
     },
-    ZECO_TAXONomy(19, "Zeco Taxa", "zeco_taxonomy", false) {
+    ZECO_TAXONONY(19, "Zeco Taxa", "zeco_taxonomy", false) {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
             return null;
