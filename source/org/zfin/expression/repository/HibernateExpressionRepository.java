@@ -547,6 +547,13 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Session session = HibernateUtil.currentSession();
         return (Experiment) session.get(Experiment.class, experimentID);
     }
+    public Experiment getExperimentByPubAndName(String pubID, String experimentID) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(Experiment.class);
+        criteria.add(Restrictions.eq("experiment.zdbID", experimentID));
+        criteria.add(Restrictions.eq("experiment.publication.zdbID", pubID));
+        return (Experiment) criteria.uniqueResult();
+    }
 
     /**
      * Retrieve Genotype by PK.
