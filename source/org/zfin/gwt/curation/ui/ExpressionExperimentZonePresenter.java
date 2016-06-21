@@ -849,17 +849,16 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
         @Override
         public void onSuccess(List<FishDTO> fishDTOList) {
-            //Window.alert("brought back genes: " + genes.size());
             fishMap.clear();
             int index = 0;
             StringListBox listBox = view.getFishList();
             listBox.clear();
             for (FishDTO fish : fishDTOList) {
                 if (fish.getName().startsWith("---")) {
-                    listBox.addItem(fish.getName(), fish.getZdbID());
+                    listBox.addItem(fish.getHandle(), fish.getZdbID());
                     listBox.getElement().getElementsByTagName("option").getItem(index).setAttribute("disabled", "disabled");
                 } else
-                    listBox.addItem(fish.getName(), fish.getZdbID());
+                    listBox.addItem(fish.getHandle(), fish.getZdbID());
                 index++;
                 fishMap.put(fish.getZdbID(), fish);
             }

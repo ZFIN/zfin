@@ -153,6 +153,7 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
         fish = new FishDTO();
         fish.setZdbID(null);
         fish.setName("---------");
+        fish.setHandle("---------");
         fishDTOList.add(fish);
         List<Fish> fishList = pubRepository.getNonWTFishByPublication(publicationID);
         for (Fish nonWTFish : fishList) {
@@ -164,6 +165,7 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
         FishDTO separator = new FishDTO();
         separator.setZdbID(null);
         separator.setName("---------");
+        separator.setHandle("---------");
         fishDTOList.add(separator);
         List<Fish> wildtypeList = pubRepository.getWildtypeFish();
         for (Fish wFish : wildtypeList) {
