@@ -263,9 +263,13 @@
                             <div class="col-md-12">
                                 <div class="figure-gallery-preview-container">
                                     <div class="figure-gallery-image-strip">
-                                            <%-- TODO: replace data-fill-size with just the zdb id? might need it for fetching figure expression details --%>
                                         <c:forEach var="image" items="${images}">
-                                            <img data-full-size="${image.url}" src="${image.mediumUrl}">
+                                            <div class="figure-gallery-image-container preview" data-image-zdb-id="${image.zdbID}">
+                                                <img src="${image.mediumUrl}">
+                                                <div class="hidden figure-gallery-loading-overlay">
+                                                    <i class="fa fa-spinner fa-spin"></i>
+                                                </div>
+                                            </div>
                                         </c:forEach>
                                     </div>
                                     <div class="figure-gallery-overlay-link">
@@ -317,10 +321,11 @@
                             <c:forEach var="image" items="${images}">
                                 <div class="figure-gallery-result-size"></div>
                                 <div class="figure-gallery-result-container">
-                                    <div class="figure-gallery-image-container">
-                                        <img data-figure-zdb-id="${image.figure.zdbID}"
-                                             data-full-size="${image.url}"
-                                             src="${image.mediumUrl}">
+                                    <div class="figure-gallery-image-container gallery" data-image-zdb-id="${image.zdbID}">
+                                        <img src="${image.mediumUrl}">
+                                        <div class="hidden figure-gallery-loading-overlay">
+                                            <i class="fa fa-spinner fa-spin"></i>
+                                        </div>
                                     </div>
                                 </div>
                             </c:forEach>
@@ -360,20 +365,7 @@
 
 <zfin-search:allFacetsModal/>
 
-<div id="figureGalleryModal" class="modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Figure 4 from Chisenhall <i>et. al.</i>, 2015</h4>
-            </div>
-            <div class="modal-body figure-gallery-modal-body">
-                <img class="figure-gallery-modal-image" src>
-                <div class="figure-summary"></div>
-            </div>
-        </div>
-    </div>
-</div>
+<div id="figureGalleryModal" class="figure-gallery-modal modal" tabindex="-1" role="dialog"></div>
 
 
 <script>
@@ -510,20 +502,23 @@ $(function () {
     }
 
     function resizeModal() {
-        var newHeight;
-        var newWidth;
         var $modal = $('#figureGalleryModal');
+        var totalHeight = $(window).height();
+        var padding = 90;
         var headerHeight = $modal.find('.modal-header').outerHeight();
-        var img = $modal.find('img')[0];
-        if ((img.naturalWidth / img.naturalHeight) < ($(window).width() / $(window).height())) {
-            newHeight = Math.min($(window).height() - headerHeight - 60, img.naturalHeight);
-            newWidth = img.naturalWidth * newHeight / img.naturalHeight;
+        var modalBody = $modal.find('.modal-body');
+        var modalBackdrop = $modal.find('.modal-backdrop');
+        var modalImage = $modal.find('.figure-gallery-modal-image')[0];
+        var availableHeight = totalHeight - headerHeight - padding;
+        var availableWidth = $(window).width() - padding;
+        var newHeight;
+        if (modalImage.naturalWidth / modalImage.naturalHeight > availableWidth / availableHeight) {
+            newHeight = availableWidth * modalImage.naturalHeight / modalImage.naturalWidth;
         } else {
-            newWidth = Math.min($(window).width() - 60, img.naturalWidth);
-            newHeight = img.naturalHeight * newWidth / img.naturalWidth;
+            newHeight = availableHeight;
         }
-        $modal.find('.modal-body').animate({height: newHeight, width: newWidth}, 200);
-        $modal.find('.modal-dialog').animate({width: newWidth + 2}, 200);
+        modalBody.height(Math.min(newHeight, modalImage.naturalHeight));
+        modalBackdrop.height(totalHeight);
     }
 
     $('#figureGalleryModal').on('shown.bs.modal', resizeModal);
@@ -535,16 +530,14 @@ $(function () {
         resizeTimer = setTimeout(resizeModal, 250);
     });
 
-    $('.figure-gallery-modal-image').on('load', function () {
-        $('#figureGalleryModal').modal();
-    });
-
-    $('.figure-gallery-image-strip > img').on('click', function () {
-        $('.figure-gallery-modal-image').attr('src', $(this).data('full-size'));
-    });
-    $('.figure-gallery-image-container > img').on('click', function () {
-        $('.figure-gallery-modal-image').attr('src', $(this).data('full-size'));
-        $('.figure-gallery-modal-body .figure-summary').load('/action/figure/summary/' + $(this).data('figure-zdb-id'));
+    $('.figure-gallery-image-container').on('click', function () {
+        var loading = $(this).find('.figure-gallery-loading-overlay').removeClass('hidden');
+        $('#figureGalleryModal').load('/action/image/' + $(this).data('image-zdb-id') + '/summary', function () {
+            $('.figure-gallery-modal-image').on('load', function() {
+                $('#figureGalleryModal').modal();
+                loading.addClass('hidden');
+            })
+        });
     });
 
     var figureGallery = $('.figure-gallery-results-container');

@@ -88,27 +88,6 @@ class FigureViewServiceSpec extends AbstractZfinIntegrationSpec {
 
     }
 
-
-    @Unroll
-    def "#figZdbID should have #count expression genes"() {
-        when: "we get the figure and the gene list"
-        Figure figure = RepositoryFactory.figureRepository.getFigure(figZdbID)
-        List<Marker> genes = FigureViewService.getExpressionGenes(figure)
-
-        then:
-        count == genes.size()
-
-        where:
-        count | figZdbID
-        1     | figures.singleXpatRes
-        4     | figures.tenXpatRes
-        0     | figures.hasOnlyPhenotype
-        2     | figures.hasAllThree
-        0     | figures.hasNoData
-
-    }
-
-
     @Unroll
     def "#figZdbID should have #count expression fish"() {
         when: "we get the figure"
@@ -205,25 +184,6 @@ class FigureViewServiceSpec extends AbstractZfinIntegrationSpec {
         11    | figures.hasOnlyPhenotype
         3     | figures.hasAllThree
 
-
-    }
-
-    @Unroll
-    def "#figZdbID should have #count phenotype entities"() {
-        when: "we get the figure"
-        Figure figure = RepositoryFactory.figureRepository.getFigure(figZdbID)
-        def entities = figureViewService.getPhenotypeEntities([figure])
-
-        then:
-        count == entities[figure].size()
-
-        where:
-        count | figZdbID
-        0     | figures.hasNoData
-        0     | figures.singleXpatRes
-        3     | figures.hasOnlyPhenotype
-        6     | figures.hasAllThree
-        9     | figures.hasPhenotypeRelatedEntity
 
     }
 

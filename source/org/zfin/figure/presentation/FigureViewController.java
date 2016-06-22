@@ -19,9 +19,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 
@@ -32,55 +30,11 @@ public class FigureViewController {
     @Autowired
     private FigureViewService figureViewService;
 
-    private FigureRepository figureRepository = RepositoryFactory.getFigureRepository();
+    @Autowired
+    private FigureRepository figureRepository;
 
-    private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-
-    private void injectFigureSummaryAttributes(Model model, Figure figure, List<PhenotypeWarehouse> warehouseList) {
-        model.addAttribute("figure", figure);
-
-        model.addAttribute("expressionGenes", figureViewService.getExpressionGenes(figure));
-        model.addAttribute("expressionAntibodies", figureViewService.getAntibodies(figure));
-        model.addAttribute("expressionFish", figureViewService.getExpressionFish(figure));
-        model.addAttribute("expressionSTRs", figureViewService.getExpressionSTR(figure));
-        model.addAttribute("expressionConditions", figureViewService.getExpressionCondition(figure)); // conditions are actually List<Experiment>
-        model.addAttribute("expressionEntities", figureViewService.getExpressionEntities(figure));
-        model.addAttribute("expressionStartStage", figureViewService.getExpressionStartStage(figure));
-        model.addAttribute("expressionEndStage", figureViewService.getExpressionEndStage(figure));
-
-        //fishes, STRs, conditions, terms, stages
-        model.addAttribute("phenotypeFish", figureViewService.getPhenotypeFish(figure));
-        model.addAttribute("phenotypeSTRs", figureViewService.getPhenotypeSTR(figure));
-        model.addAttribute("phenotypeConditions", figureViewService.getPhenotypeCondition(figure));
-        model.addAttribute("phenotypeEntities", figureViewService.getPhenotypeEntitiesFromWarehouse(warehouseList));
-        model.addAttribute("phenotypeStartStage", figureViewService.getPhenotypeStartStage(figure));
-        model.addAttribute("phenotypeEndStage", figureViewService.getPhenotypeEndStage(figure));
-    }
-
-
-    @RequestMapping("/summary/{zdbID}")
-    public String getFigureSummary(Model model, @PathVariable("zdbID") String zdbID) {
-
-        Figure figure = figureRepository.getFigure(zdbID);
-
-        if (figure == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-
-        Clone probe = figureViewService.getProbeForFigure(figure);
-        model.addAttribute("probe", probe);
-        if (probe != null) {
-            List<OrganizationLink> suppliers = RepositoryFactory.getProfileRepository().getSupplierLinksForZdbId(probe.getZdbID());
-            model.addAttribute("probeSuppliers", suppliers);
-        }
-
-        List<PhenotypeWarehouse> warehouseList = getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID());
-        injectFigureSummaryAttributes(model, figure, warehouseList);
-
-        return "figure/figure-summary.fragment";
-    }
-
+    @Autowired
+    private PublicationRepository publicationRepository;
 
     // get together all of the data that you need later in the JSP it returns
     @RequestMapping("/view/{zdbID}")
@@ -93,17 +47,14 @@ public class FigureViewController {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
-        Clone probe = figureViewService.getProbeForFigure(figure);
-        model.addAttribute("probe", probe);
-        if (probe != null) {
-            List<OrganizationLink> suppliers = RepositoryFactory.getProfileRepository().getSupplierLinksForZdbId(probe.getZdbID());
-            model.addAttribute("probeSuppliers", suppliers);
-        }
+        model.addAttribute("figure", figure);
 
         List<PhenotypeWarehouse> warehouseList = getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID());
-        injectFigureSummaryAttributes(model, figure, warehouseList);
+        FigureExpressionSummary expressionSummary = figureViewService.getFigureExpressionSummary(figure);
+        model.addAttribute("expressionSummary", expressionSummary);
+        model.addAttribute("phenotypeSummary", figureViewService.getFigurePhenotypeSummary(figure));
 
-        model.addAttribute("submitters", figureRepository.getSubmitters(figure.getPublication(), probe));
+        model.addAttribute("submitters", figureRepository.getSubmitters(figure.getPublication(), expressionSummary.getProbe()));
         model.addAttribute("showThisseInSituLink", figureViewService.showThisseInSituLink(figure.getPublication()));
         model.addAttribute("showErrataAndNotes", figureViewService.showErrataAndNotes(figure.getPublication()));
         model.addAttribute("showMultipleMediumSizedImages", figureViewService.showMultipleMediumSizedImages(figure.getPublication()));
@@ -176,21 +127,14 @@ public class FigureViewController {
         model.addAttribute("showThisseInSituLink", figureViewService.showThisseInSituLink(publication));
         model.addAttribute("showErrataAndNotes", figureViewService.showErrataAndNotes(publication));
 
-        model.addAttribute("expressionGeneMap", figureViewService.getExpressionGenes(figures));
-        model.addAttribute("expressionAntibodyMap", figureViewService.getAntibodies(figures));
-        model.addAttribute("expressionFishMap", figureViewService.getExpressionFish(figures));
-        model.addAttribute("expressionSTRMap", figureViewService.getExpressionSTRs(figures));
-        model.addAttribute("expressionConditionMap", figureViewService.getExpressionConditions(figures));
-        model.addAttribute("expressionEntityMap", figureViewService.getExpressionEntities(figures));
-        model.addAttribute("expressionStartStageMap", figureViewService.getExpressionStartStages(figures));
-        model.addAttribute("expressionEndStageMap", figureViewService.getExpressionEndStages(figures));
-
-        model.addAttribute("phenotypeFishMap", figureViewService.getPhenotypeFish(figures));
-        model.addAttribute("phenotypeConditionMap", figureViewService.getPhenotypeConditions(figures));
-        model.addAttribute("phenotypeSTRMap", figureViewService.getPhenotypeSTRs(figures));
-        model.addAttribute("phenotypeEntitiesMap", figureViewService.getPhenotypeEntities(figures));
-        model.addAttribute("phenotypeStartStageMap", figureViewService.getPhenotypeStartStage(figures));
-        model.addAttribute("phenotypeEndStageMap", figureViewService.getPhenotypeEndStage(figures));
+        Map<Figure, FigureExpressionSummary> expressionSummaryMap = new HashMap<>();
+        Map<Figure, FigurePhenotypeSummary> phenotypeSummaryMap = new HashMap<>();
+        for (Figure figure : figures) {
+            expressionSummaryMap.put(figure, figureViewService.getFigureExpressionSummary(figure));
+            phenotypeSummaryMap.put(figure, figureViewService.getFigurePhenotypeSummary(figure));
+        }
+        model.addAttribute("expressionSummaryMap", expressionSummaryMap);
+        model.addAttribute("phenotypeSummaryMap", phenotypeSummaryMap);
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Figures, " + publication.getShortAuthorList());
 

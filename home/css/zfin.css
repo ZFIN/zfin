@@ -2,6 +2,11 @@ a {
     text-decoration: none;
 }
 
+html,
+body {
+    height: 100%;
+}
+
 body {
     font-family: arial, sans-serif;
     min-width: 600px;

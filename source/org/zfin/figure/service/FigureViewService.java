@@ -9,15 +9,14 @@ import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
-import org.zfin.figure.presentation.AntibodyTableRow;
-import org.zfin.figure.presentation.ExpressionTableRow;
-import org.zfin.figure.presentation.PhenotypeTableRow;
+import org.zfin.figure.presentation.*;
 import org.zfin.framework.ComparatorCreator;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.ontology.PostComposedEntity;
+import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Publication;
 
 import java.util.*;
@@ -32,6 +31,9 @@ public class FigureViewService {
 
     @Autowired
     private PhenotypeRepository phenotypeRepository;
+
+    @Autowired
+    private ProfileRepository profileRepository;
 
     /**
      * Get a list of ExpressionTableRows for the given figure
@@ -50,6 +52,35 @@ public class FigureViewService {
         Collections.sort(rows, ComparatorCreator.orderBy("gene", "fishNameOrder", "experiment", "start", "end", "entity"));
 
         return rows;
+    }
+
+    public FigureExpressionSummary getFigureExpressionSummary(Figure figure) {
+        FigureExpressionSummary summary = new FigureExpressionSummary();
+        summary.setGenes(getExpressionGenes(figure));
+        summary.setAntibodies(getAntibodies(figure));
+        summary.setFish(getExpressionFish(figure));
+        summary.setSequenceTargetingReagents(getExpressionSTR(figure));
+        summary.setExperiments(getExpressionCondition(figure));
+        summary.setEntities(getExpressionEntities(figure));
+        summary.setStartStage(getExpressionStartStage(figure));
+        summary.setEndStage(getExpressionEndStage(figure));
+        Clone probe = getProbeForFigure(figure);
+        summary.setProbe(probe);
+        if (probe != null) {
+            summary.setProbeSuppliers(profileRepository.getSupplierLinksForZdbId(probe.getZdbID()));
+        }
+        return summary;
+    }
+
+    public FigurePhenotypeSummary getFigurePhenotypeSummary(Figure figure) {
+        FigurePhenotypeSummary summary = new FigurePhenotypeSummary();
+        summary.setFish(getPhenotypeFish(figure));
+        summary.setSequenceTargetingReagents(getPhenotypeSTR(figure));
+        summary.setExperiments(getPhenotypeCondition(figure));
+        summary.setEntities(getPhenotypeEntitiesFromWarehouse(phenotypeRepository.getPhenotypeWarehouse(figure.getZdbID())));
+        summary.setStartStage(getPhenotypeStartStage(figure));
+        summary.setEndStage(getPhenotypeEndStage(figure));
+        return summary;
     }
 
     public boolean showExpressionQualifierColumn(List<ExpressionTableRow> rows) {
@@ -131,20 +162,6 @@ public class FigureViewService {
     }
 
     /**
-     * Get the list of expression genes for each figure in a list
-     */
-    public Map<Figure, List<Marker>> getExpressionGenes(List<Figure> figures) {
-        Map<Figure, List<Marker>> map = new HashMap<>();
-
-        for (Figure figure : figures) {
-            map.put(figure, getExpressionGenes(figure));
-        }
-
-        return map;
-    }
-
-
-    /**
      * Get a sorted list of antibodies with labeled expression in this figure
      */
     public List<Marker> getAntibodies(Figure figure) {
@@ -165,20 +182,6 @@ public class FigureViewService {
     }
 
     /**
-     * Get the list of antibodies for each figure in a list
-     */
-    public Map<Figure, List<Marker>> getAntibodies(List<Figure> figures) {
-        Map<Figure, List<Marker>> map = new HashMap<>();
-
-        for (Figure figure : figures) {
-            map.put(figure, getAntibodies(figure));
-        }
-
-        return map;
-    }
-
-
-    /**
      * Sorted/unique list of genotypes from the gene expression in this figure
      */
     public List<Fish> getExpressionFish(Figure figure) {
@@ -188,20 +191,6 @@ public class FigureViewService {
         }
         return new ArrayList<>(fishSet);
     }
-
-    /**
-     * Get the list of expression genotypes for each figure in a list
-     */
-    public Map<Figure, List<Fish>> getExpressionFish(List<Figure> figures) {
-        Map<Figure, List<Fish>> map = new HashMap<>();
-
-        for (Figure figure : figures) {
-            map.put(figure, getExpressionFish(figure));
-        }
-
-        return map;
-    }
-
 
     /**
      * Get the list of sequence targeting reagent (knockdown reagents) shown in a figure
@@ -222,19 +211,6 @@ public class FigureViewService {
     }
 
     /**
-     * Get the list of sequence target reagent for each figure in a list
-     */
-    public Map<Figure, List<SequenceTargetingReagent>> getExpressionSTRs(List<Figure> figures) {
-        Map<Figure, List<SequenceTargetingReagent>> map = new HashMap<>();
-
-        for (Figure figure : figures) {
-            map.put(figure, getExpressionSTR(figure));
-        }
-
-        return map;
-    }
-
-    /**
      * Sorted/unique list of conditions (experiments) from the expression shown in this Figure
      */
     public List<Experiment> getExpressionCondition(Figure figure) {
@@ -249,17 +225,6 @@ public class FigureViewService {
         Collections.sort(conditions);
         return conditions;
     }
-
-    public Map<Figure, List<Experiment>> getExpressionConditions(List<Figure> figures) {
-        Map<Figure, List<Experiment>> map = new HashMap<>();
-
-        for (Figure figure : figures) {
-            map.put(figure, getExpressionCondition(figure));
-        }
-
-        return map;
-    }
-
 
     /*
     * Sorted & unique list of superTerm & subTerm wrapped as PostComposedEntities from figure expression,
@@ -280,21 +245,6 @@ public class FigureViewService {
 
     }
 
-
-    /**
-     * Get the list of expression entities for each figure in a list
-     */
-    public Map<Figure, List<PostComposedEntity>> getExpressionEntities(List<Figure> figures) {
-        Map<Figure, List<PostComposedEntity>> map = new HashMap<>();
-
-        for (Figure figure : figures) {
-            map.put(figure, getExpressionEntities(figure));
-        }
-
-        return map;
-    }
-
-
     /**
      * Earliest stage from expression of this figure
      */
@@ -312,21 +262,6 @@ public class FigureViewService {
 
         return Collections.min(stages);
     }
-
-    /**
-     * Get the earliest stage for each figure in a list
-     */
-    public Map<Figure, DevelopmentStage> getExpressionStartStages(List<Figure> figures) {
-        Map<Figure, DevelopmentStage> map = new HashMap<>();
-
-        for (Figure figure : figures) {
-            map.put(figure, getExpressionStartStage(figure));
-        }
-
-        return map;
-
-    }
-
 
     /**
      * Latest stage from expression of this figure
@@ -347,20 +282,6 @@ public class FigureViewService {
     }
 
     /**
-     * Get the latest stage for each figure in a list
-     */
-    public Map<Figure, DevelopmentStage> getExpressionEndStages(List<Figure> figures) {
-        Map<Figure, DevelopmentStage> map = new HashMap<>();
-
-        for (Figure figure : figures) {
-            map.put(figure, getExpressionEndStage(figure));
-        }
-
-        return map;
-
-    }
-
-    /**
      * Sorted/unique list of genotypes from the phenotype shown in this Figure
      */
     public List<Fish> getPhenotypeFish(Figure figure) {
@@ -374,19 +295,6 @@ public class FigureViewService {
 
         Collections.sort(fishList);
         return fishList;
-    }
-
-    /**
-     * Get the list of genotypes for each figure in a list
-     */
-    public Map<Figure, List<Fish>> getPhenotypeFish(List<Figure> figures) {
-        Map<Figure, List<Fish>> map = new HashMap<>();
-
-        for (Figure figure : figures) {
-            map.put(figure, getPhenotypeFish(figure));
-        }
-
-        return map;
     }
 
     /**
@@ -405,19 +313,6 @@ public class FigureViewService {
 
         Collections.sort(strs);
         return strs;
-    }
-
-    /**
-     * Get the list of sequence target reagent for each figure in a list
-     */
-    public Map<Figure, List<SequenceTargetingReagent>> getPhenotypeSTRs(List<Figure> figures) {
-        Map<Figure, List<SequenceTargetingReagent>> map = new HashMap<>();
-
-        for (Figure figure : figures) {
-            map.put(figure, getPhenotypeSTR(figure));
-        }
-
-        return map;
     }
 
     /**
@@ -440,19 +335,6 @@ public class FigureViewService {
         return !(fishExperiment == null
                 || fishExperiment.isStandardOrGenericControl()
                 || conditions.contains(fishExperiment.getExperiment()));
-    }
-
-    /**
-     * Get the list of genotypes for each figure in a list
-     */
-    public Map<Figure, List<Experiment>> getPhenotypeConditions(List<Figure> figures) {
-        Map<Figure, List<Experiment>> map = new HashMap<>();
-
-        for (Figure figure : figures) {
-            map.put(figure, getPhenotypeCondition(figure));
-        }
-
-        return map;
     }
 
     /**
@@ -479,21 +361,6 @@ public class FigureViewService {
     }
 
     /**
-     * Get the list of PostComposedEntities for each figure in a list
-     */
-    public Map<Figure, List<PostComposedEntity>> getPhenotypeEntities(List<Figure> figures) {
-        Map<Figure, List<PostComposedEntity>> map = new HashMap<>();
-
-        for (Figure figure : figures) {
-            List<PhenotypeWarehouse> list = phenotypeRepository.getPhenotypeWarehouse(figure.getZdbID());
-            map.put(figure, getPhenotypeEntitiesFromWarehouse(list));
-        }
-
-        return map;
-    }
-
-
-    /**
      * Earliest stage from phenotype of this figure
      */
     public DevelopmentStage getPhenotypeStartStage(Figure figure) {
@@ -509,20 +376,6 @@ public class FigureViewService {
         }
 
         return Collections.min(stages);
-    }
-
-    /**
-     * Get the earliest stage for each figure in a list
-     */
-    public Map<Figure, DevelopmentStage> getPhenotypeStartStage(List<Figure> figures) {
-        Map<Figure, DevelopmentStage> map = new HashMap<>();
-
-        for (Figure figure : figures) {
-            map.put(figure, getPhenotypeStartStage(figure));
-        }
-
-        return map;
-
     }
 
     /**
@@ -543,24 +396,10 @@ public class FigureViewService {
         return Collections.max(stages);
     }
 
-    /**
-     * Get the latest stage for each figure in a list
-     */
-    public Map<Figure, DevelopmentStage> getPhenotypeEndStage(List<Figure> figures) {
-        Map<Figure, DevelopmentStage> map = new HashMap<>();
-
-        for (Figure figure : figures) {
-            map.put(figure, getPhenotypeEndStage(figure));
-        }
-
-        return map;
-    }
-
     public String getFullFigureLabel(Figure figure) {
         return figure.getPublication().getShortAuthorList().replace("<i>", "").replace("</i>", "")
                 + ", " + figure.getLabel();
     }
-
 
     public Clone getProbeForFigure(Figure figure) {
         Clone probe = null;
@@ -573,7 +412,6 @@ public class FigureViewService {
 
         return probe;
     }
-
 
     public boolean showElsevierMessage(Publication publication) {
         if (publication == null || publication.getJournal() == null || publication.getJournal().getPublisher() == null) {

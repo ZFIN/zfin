@@ -43,27 +43,17 @@
 <c:forEach var="figure" items="${figures}">
     <zfin-figure:imagesAndCaption figure="${figure}" autoplayVideo="false" showMultipleMediumSizedImages="${showMultipleMediumSizedImages}">
 
-        <zfin-figure:expressionSummary genes="${expressionGeneMap[figure]}"
-                                       antibodies="${expressionAntibodyMap[figure]}"
-                                       fish="${expressionFishMap[figure]}"
-                                       strs="${expressionSTRMap[figure]}"
-                                       experiments="${expressionConditionMap[figure]}"
-                                       entities="${expressionEntityMap[figure]}"
-                                       start="${expressionStartStageMap[figure]}" end="${expressionEndStageMap[figure]}"
-                                       suppressProbe="true"/>
-        <c:if test="${!empty expressionStartStageMap[figure]}">
+        <zfin-figure:expressionSummary summary="${expressionSummaryMap[figure]}" suppressProbe="true"/>
+
+        <c:if test="${!empty expressionSummaryMap[figure].startStage}">
             <div style="margin-top: 1em;">
                 <a href="/${figure.zdbID}#expDetail">Expression / Labeling details</a>
             </div>
         </c:if>
 
-        <zfin-figure:phenotypeSummary fish="${phenotypeFishMap[figure]}"
-                                      strs="${phenotypeSTRMap[figure]}"
-                                      entities="${phenotypeEntitiesMap[figure]}"
-                                      experiments="${phenotypeConditionMap[figure]}"
-                                      start="${phenotypeStartStageMap[figure]}" end="${phenotypeEndStageMap[figure]}" />
+        <zfin-figure:phenotypeSummary summary="${phenotypeSummaryMap[figure]}" />
 
-        <c:if test="${!empty phenotypeFishMap[figure]}">
+        <c:if test="${!empty phenotypeSummaryMap[figure].fish}">
             <div style="margin-top: 1em;">
                 <a href="/${figure.zdbID}#phenoDetail">Phenotype details</a>
             </div>

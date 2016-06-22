@@ -3,13 +3,15 @@ package org.zfin.publication.presentation;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.expression.Image;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.repository.RepositoryFactory;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * For display of figure information
@@ -22,7 +24,8 @@ public class ImageViewController {
     @Autowired
     private FigureViewService figureViewService;
 
-    private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+    @Autowired
+    private PublicationRepository publicationRepository;
 
     @RequestMapping("/publication/image-popup/{zdbID}")
     public String updateOrthologyNote(@PathVariable String zdbID,
@@ -37,6 +40,21 @@ public class ImageViewController {
         form.setImage(image);
         form.setExpressionGenes(figureViewService.getExpressionGenes(image.getFigure()));
         return "image-popup.page";
+    }
+
+    @RequestMapping("/image/{zdbID}/summary")
+    public String getImageSummaryPopup(Model model, @PathVariable("zdbID") String zdbID, HttpServletResponse response) {
+        Image image = publicationRepository.getImageById(zdbID);
+
+        if (image == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
+        }
+
+        model.addAttribute("image", image);
+        model.addAttribute("expressionSummary", figureViewService.getFigureExpressionSummary(image.getFigure()));
+
+        return "figure/figure-summary.fragment";
     }
 
 }

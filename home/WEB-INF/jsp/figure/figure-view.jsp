@@ -41,22 +41,9 @@
     </div>
 </c:if>
 
+<zfin-figure:expressionSummary summary="${expressionSummary}"/>
 
-<zfin-figure:expressionSummary genes="${expressionGenes}"
-                               antibodies="${expressionAntibodies}"
-                               fish="${expressionFish}"
-                               strs="${expressionSTRs}"
-                               experiments="${expressionConditions}"
-                               entities="${expressionEntities}"
-                               start="${expressionStartStage}" end="${expressionEndStage}"
-                               probe="${probe}" probeSuppliers="${probeSuppliers}"/>
-
-<zfin-figure:phenotypeSummary fish="${phenotypeFish}"
-                              strs="${phenotypeSTRs}"
-                              entities="${phenotypeEntities}"
-                              experiments="${phenotypeConditions}"
-                              start="${phenotypeStartStage}" end="${phenotypeEndStage}" />
-
+<zfin-figure:phenotypeSummary summary="${phenotypeSummary}"/>
 
 <zfin-figure:imagesAndCaption figure="${figure}" showMultipleMediumSizedImages="${showMultipleMediumSizedImages}"/>
 

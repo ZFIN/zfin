@@ -1,17 +1,17 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<zfin-figure:expressionSummary genes="${expressionGenes}"
-                               antibodies="${expressionAntibodies}"
-                               fish="${expressionFish}"
-                               strs="${expressionSTRs}"
-                               experiments="${expressionConditions}"
-                               entities="${expressionEntities}"
-                               start="${expressionStartStage}" end="${expressionEndStage}"
-                               probe="${probe}" probeSuppliers="${probeSuppliers}"/>
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">${image.figure.label} from <zfin:link entity="${image.figure.publication}"/></h4>
+            <zfin-figure:expressionSummary summary="${expressionSummary}"/>
+        </div>
+        <div class="modal-body figure-gallery-modal-body">
+            <a href="/${image.figure.zdbID}">
+                <img class="figure-gallery-modal-image" src="${image.url}">
+            </a>
+        </div>
+    </div>
+</div>
 
-<zfin-figure:phenotypeSummary fish="${phenotypeFish}"
-                              strs="${phenotypeSTRs}"
-                              entities="${phenotypeEntities}"
-                              experiments="${phenotypeConditions}"
-                              start="${phenotypeStartStage}" end="${phenotypeEndStage}"/>
