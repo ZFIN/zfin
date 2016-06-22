@@ -5,12 +5,12 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-  <include file="source/org/zfin/db/load/1079/shipwreck/createZecoTempTable.sql"/>  
-  <include file="source/org/zfin/db/load/1079/shipwreck/zeco_load_temp_table.xml"/>
-  <include file="source/org/zfin/db/load/1079/shipwreck/convertToZeco.sql"/>  
-  <include file="source/org/zfin/db/load/1079/shipwreck/dropZecoTempTable.sql"/> 
-  <include file="source/org/zfin/db/load/1079/shipwreck/removeExpcondComments.sql"/>  
-  <include file="source/org/zfin/db/load/1079/shipwreck/updateExpcondZeco.sql"/>  
+  <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/createZecoTempTable.sql"/>  
+  <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/zeco_load_temp_table.xml"/>
+  <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/convertToZeco.sql"/>  
+  <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/dropZecoTempTable.sql"/> 
+  <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/removeExpcondComments.sql"/>  
+  <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/updateExpcondZeco.sql"/>  
 	
 
 </databaseChangeLog>
