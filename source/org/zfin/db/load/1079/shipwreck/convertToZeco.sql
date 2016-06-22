@@ -74,20 +74,24 @@ where ccTermId = 'none';
 
 
 update experiment_condition
- set expcond_zeco_term_zdb_id = (select zecoid from tmp_zeco_tt
+ set expcond_zeco_term_zdb_id = (select term_zdb_id  from tmp_zeco_tt, term
      			      		where expcond_exp_zdb_id = expid
-					and expcond_cdt_zdb_id = cdtid);
+					and expcond_cdt_zdb_id = cdtid
+					and term_ont_id = zecoid);
      			      
 update experiment_condition
- set expcond_chebi_zdb_id = (select chebiTermId from tmp_zeco_tt
+ set expcond_chebi_zdb_id = (select term_Zdb_id  from tmp_zeco_tt, term
      			      		where expid = expcond_exp_zdb_id
+					and chebiTermId = term_ont_id
 					and cdtid = expcond_cdt_zdb_id);
 
 update experiment_condition
- set expcond_ao_term_zdb_id = (select aoTermId from tmp_zeco_tt
+ set expcond_ao_term_zdb_id = (select term_zdb_id  from tmp_zeco_tt, term
      			      		where expid = expcond_exp_zdb_id
-					and cdtid = expcond_cdt_zdb_id);
+					and cdtid = expcond_cdt_zdb_id
+					and aoTermId = term_ont_id);
 update experiment_condition
- set expcond_go_cc_term_zdb_id = (select ccTermid from tmp_zeco_tt
+ set expcond_go_cc_term_zdb_id = (select term_zdb_id from tmp_zeco_tt, term
      			      		where expid = expcond_exp_zdb_id
-					and cdtid = expcond_cdt_zdb_id);
+					and cdtid = expcond_cdt_zdb_id
+					and ccTermid = term_ont_id);
