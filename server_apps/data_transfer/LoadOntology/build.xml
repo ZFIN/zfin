@@ -82,6 +82,22 @@
         <load-ontology oboDirectory="${run-directory}" oboFileName="zeco.obo" scripts="${scriptFilesNoAnnotation}"/>
     </target>
 
+    <target name="setHeaderForZeco">
+        <replaceregexp replace="default-namespace: zeco_taxonomy" byline="true" file="obo-files/zeco-taxonomy.obo">
+            <regexp pattern="default-namespace: (.*)"/>
+        </replaceregexp>
+        <replaceregexp replace="ontology: zeco taxonomy" byline="true" file="obo-files/zeco-taxonomy.obo">
+            <regexp pattern="ontology: (.*)"/>
+        </replaceregexp>
+        <replaceregexp replace="namespace: zeco_taxonomy" byline="true" file="obo-files/zeco-taxonomy.obo">
+            <regexp pattern="namespace: (.*)"/>
+        </replaceregexp>
+    </target>
+
+    <target name="load-zeco-taxonomy-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="zeco-taxonomy.obo" scripts="${scriptFilesNoAnnotation}"/>
+    </target>
+
 
     <target name="load-so-ontology" depends="init">
         <load-ontology oboDirectory="${run-directory}" oboFileName="so-xp-simple.obo"/>

@@ -257,6 +257,9 @@ public class OntologyManager {
         initOntologyMapFast(Ontology.ZECO);
         serializeOntology(Ontology.ZECO);
 
+        initOntologyMapFast(Ontology.ZECO_TAXONONY);
+        serializeOntology(Ontology.ZECO_TAXONONY);
+
         // Quality  Processes and Objects
         // Root is "process quality"
         // Quality Processes and Objects
