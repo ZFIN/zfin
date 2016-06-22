@@ -54,6 +54,7 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
                 GenericTerm term = DTOConversionService.convertToTerm(conditionDTO.taxonTerm);
                 condition.setTaxaonymTerm(term);
             }
+            getExpressionRepository().saveExperimentCondition(condition);
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
