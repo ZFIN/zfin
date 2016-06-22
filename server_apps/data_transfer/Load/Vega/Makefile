@@ -71,9 +71,9 @@ run_commit: begin  fetch_vega novel_check withdrawn_check blast_transcripts load
 
 VEGADIR = /research/zprod/data/VEGA
 
-DEST = $(VEGADIR)/2015-12
-FTP  = ftp.sanger.ac.uk/pub/users/st3/vega64/
-PREV = $(VEGADIR)/2014-11
+DEST = $(VEGADIR)/2016-06
+FTP  = ftp.sanger.ac.uk/pub/users/st3/vega66/zebrafish/
+PREV = $(VEGADIR)/2015-12
 
 ZFIN_DOWNLOADS = http://zfin.org/data_transfer/Downloads
 
@@ -363,11 +363,7 @@ $(DEST)/check_vega_type.plain: novel_transcript.unl
 $(PREV)/check_vega_type.plain: $(PREV)/novel_transcript.unl
 	cut -f 4,9 -d \| $< | sort -u > $@
 
-refresh_vega_type_translation:
-	rm -f vega_type_translation.unl ;\
-	git checkout vega_type_translation.unl
-
-$(DEST)/novel_vega_type_NOT_to_add: refresh_vega_type_translation
+$(DEST)/novel_vega_type_NOT_to_add: 
 	cut -f 1-2 -d \| < vega_type_translation.unl  > $@ 
 
 $(DEST)/novel_vega_type_to_add: $(PREV)/check_vega_type.plain \

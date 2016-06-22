@@ -51,6 +51,7 @@ public class TranscriptStatus {
         HAPLOTYPIC("haplotypic"),
         KNOWN("known"),
         MICRORNA_REGISTRY("microRNA registry"),
+        NON_STOP_DECAY("non stop decay"),
         NOVEL("novel"),
         NMD("NMD"),
         PREDICTED("predicted"),
