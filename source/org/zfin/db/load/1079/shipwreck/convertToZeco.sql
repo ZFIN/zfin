@@ -24,10 +24,6 @@ update tmp_zeco_tt
      		  	  where term_ont_id = ccTermId);
 
 update tmp_zeco_tt
- set cdt_zdb_id = (select cdt_zdb_id from condition_data_type
-     		  	  where cdt_name = supertype
-			  and cdt_group = subtype);
-update tmp_zeco_tt
  set otherTermId = "none"
  where otherTermId is null;
 
@@ -39,14 +35,11 @@ where ccTermId is null
 
 delete from tmp_zeco_tt 
 where not exists (select 'x' from experiment_condition
-      	  	 	 where expcond_exp_Zdb_id = exp_id);
+      	  	 	 where expcond_exp_Zdb_id = expid);
 
-select count(*) from tmp_zeco_tt
- where cdt_zdb_id is null;
-
-select count(*) as counter, exp_id as expid, cdt_zdb_id
+select count(*) as counter, expid as exp_id, cdtId
  from tmp_zeco_tt
- group by exp_id, cdt_zdb_id having count(*) > 1
+ group by exp_id, cdtId having count(*) > 1
 into temp tmp_dups;
 
 delete from tmp_zeco_tt
