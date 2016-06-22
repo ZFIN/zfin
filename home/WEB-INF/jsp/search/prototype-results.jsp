@@ -337,12 +337,10 @@
                         </div>
                     </c:if>
                 </c:if>
-                <c:if test="${!galleryMode}">
-                    <div style="clear: both ; width: 80%" class="clearfix">
-                        <zfin2:pagination paginationBean="${paginationBean}"/>
-                    </div>
-                </c:if>
 
+                <div style="clear: both ; width: 80%" class="clearfix">
+                    <zfin2:pagination paginationBean="${paginationBean}"/>
+                </div>
 
             </div>
 

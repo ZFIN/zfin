@@ -73,7 +73,7 @@ public class SearchPrototypeController {
     public String viewResults(@RequestParam(value = "q", required = false) String q,
                               @RequestParam(value = "fq", required = false) String[] filterQuery,
                               @RequestParam(value = "category", required = false) String category,
-                              @RequestParam(value = "page", required = false) String pageNumber,
+                              @RequestParam(value = "page", required = false) Integer page,
                               @RequestParam(value = "rows", required = false) Integer rows,
                               @RequestParam(value = "sort", required = false) String sort,
                               @RequestParam(value = "hl", required = false, defaultValue = "false") Boolean highlight,
@@ -82,13 +82,8 @@ public class SearchPrototypeController {
                               @RequestParam(required = false, defaultValue = "true") Boolean appendCategoryToBaseUrl,
                               Model model,
                               HttpServletRequest request) {
-        Integer page = 1;
-        if (StringUtils.isNotEmpty(pageNumber)) {
-            try {
-                page = Integer.parseInt(pageNumber);
-            } catch (NumberFormatException e) {
-                logger.error(e);
-            }
+        if (page == null) {
+            page = 1;
         }
 
         if (StringUtils.isNotEmpty(q)) {
@@ -146,10 +141,6 @@ public class SearchPrototypeController {
 
         query = handleFacetSorting(query, request);
 
-        if (page == null) {
-            page = 1;
-        }
-
         //default to 20 rows
         if (rows == null) {
             rows = 20;
@@ -163,6 +154,18 @@ public class SearchPrototypeController {
         int start = (page - 1) * rows;
         model.addAttribute("start", start);
         query.setStart(start);
+
+        if (galleryMode) {
+            // 50 comes from f.img_zdb_id.facet.limit set in solrconfig.xml
+            query.setParam("f.img_zdb_id.facet.offset", Integer.toString((page - 1) * 50));
+        }
+
+        if (highlight) {
+            query.setHighlight(true);
+            //gonna be slow!
+            query.setParam("hl.fl", "*");
+        }
+
 
         //handle sorting... move this a separate method?  use an enum?
         model = handleSorting(model, query, baseUrl, sort);
@@ -279,7 +282,7 @@ public class SearchPrototypeController {
 
             model.addAttribute("message", "All matching results were in the <strong>" + automaticallySelectedCategory + "</strong> category, so it was automatically selected.");
 
-            return viewResults(q, filterQuery, automaticallySelectedCategory, pageNumber, rows, sort,
+            return viewResults(q, filterQuery, automaticallySelectedCategory, page, rows, sort,
                     highlight, explain, galleryMode, true, model, request);
         }
 
