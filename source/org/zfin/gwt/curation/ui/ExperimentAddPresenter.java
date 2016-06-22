@@ -4,6 +4,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import org.apache.commons.collections.CollectionUtils;
+import org.zfin.gwt.curation.event.AddNewExperimentEvent;
+import org.zfin.gwt.curation.event.AddNewFeatureEvent;
 import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.dto.OntologyDTO;
@@ -12,6 +14,7 @@ import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.TermEntry;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.DeleteImage;
 import org.zfin.gwt.root.util.DeleteImage;
 import java.util.Arrays;
@@ -47,7 +50,7 @@ public class ExperimentAddPresenter implements HandlesError {
 
     }
 
-    private void populateExperiments() {
+    public void populateExperiments() {
         int elementIndex = 0;
 
         if (dtoList.isEmpty()) {
@@ -56,14 +59,16 @@ public class ExperimentAddPresenter implements HandlesError {
         }
         for (EnvironmentDTO dto : dtoList) {
             int index = 0;
-
+            DeleteImage deleteImage1 = new DeleteImage("Delete Note " + dto.getZdbID());
+           // deleteImage1.addClickHandler(new deleteExperimentClickHandler(dto, this));
+          //  view.addDelete1Button(deleteImage1, elementIndex);
           view.addExperiment(dto, elementIndex);
-            //if (dto.getConditionDTOList()==null) {
+
                 DeleteImage deleteImage = new DeleteImage("Delete Note " + dto.getZdbID());
                 deleteImage.addClickHandler(new DeleteExperimentClickHandler(dto, this));
-                view.addDeleteButton(deleteImage, elementIndex);
+                view.addDeleteButton(dto,deleteImage, elementIndex);
                 elementIndex++;
-            //}
+
             }
         }
 
@@ -108,18 +113,22 @@ public class ExperimentAddPresenter implements HandlesError {
     public void createExperiment() {
        EnvironmentDTO environmentDTO = getEnvironmentFromForm();
 
-        Window.alert(environmentDTO.getName());
 
        // view.clearError();
         ExperimentRPCService.App.getInstance().createExperiment(publicationID, environmentDTO, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to save a Experiment: ", view.errorLabel) {
             public void onSuccess(List<EnvironmentDTO> experimentList) {
-                ConditionAddView cdView=new ConditionAddView();
+                fireEventSuccess();
+                //Window.alert("Feature successfully created");
+
+                AddNewExperimentEvent event = new AddNewExperimentEvent(experimentList);
+                AppUtils.EVENT_BUS.fireEvent(event);
+
                 dtoList = experimentList;
 
                 for (EnvironmentDTO dto : experimentList) {
                     resetGUI();
 
-                    cdView.experimentSelectionList.addItem(dto.getName(), dto.getZdbID());
+
                 }
                 populateExperiments();
             }

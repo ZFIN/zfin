@@ -58,6 +58,7 @@ public class ExperimentAddView extends AbstractViewComposite  {
     TextBox experimentNameAddBox;
 
 
+
    /* @UiHandler("resetButton")
     void onClickReset(@SuppressWarnings("unused") ClickEvent event) {
         presenter.resetGUI();
@@ -65,28 +66,37 @@ public class ExperimentAddView extends AbstractViewComposite  {
 
     @UiHandler("addExperimentButton")
     void onClickCreateExperiment(@SuppressWarnings("unused") ClickEvent event) {
-        com.google.gwt.user.client.Window.alert("no click");
+
         presenter.createExperiment();
     }
 
 
     protected void addExperiment(EnvironmentDTO experimentDTO,int elementIndex) {
+
+
         dataTable.resizeRows(elementIndex + 2);
         int row = elementIndex + 1;
         setRowStyle(row);
         int col = 0;
+
         dataTable.setText(row, col++, "");
+        if (experimentDTO != null)
 
             dataTable.setText(row, col++, experimentDTO.getName());
-
-
-
+        else
+            dataTable.setText(row, col++, "");
 
     }
 
-    public void addDeleteButton(DeleteImage deleteImage, int elementIndex) {
+    public void addDeleteButton(EnvironmentDTO dto,DeleteImage deleteImage, int elementIndex) {
         int row = elementIndex + 1;
-        dataTable.setWidget(row, 2, deleteImage);
+        if (dto.conditionDTOList == null) {
+            dataTable.setWidget(row, 2, deleteImage);
+        }
+    }
+    public void addDelete1Button(DeleteImage deleteImage, int elementIndex) {
+        int row = elementIndex + 1;
+        dataTable.setWidget(row, 0, deleteImage);
     }
 
     public void emptyDataTable() {

@@ -48,7 +48,7 @@ public class ConditionAddPresenter implements HandlesError {
 
     }
 
-    private void populateData() {
+    public void populateData() {
         int elementIndex = 0;
 
         copyConditionsCheckBoxList.clear();
