@@ -76,10 +76,11 @@ public class ExperimentAddView extends AbstractViewComposite  {
         setRowStyle(row);
         int col = 0;
         dataTable.setText(row, col++, "");
-        if (experimentDTO != null)
+
             dataTable.setText(row, col++, experimentDTO.getName());
-        else
-            dataTable.setText(row, col++, "");
+
+
+
 
     }
 

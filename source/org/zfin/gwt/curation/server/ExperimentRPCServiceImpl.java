@@ -72,8 +72,6 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
         return getExperimentList(publicationID);
     }
     public List<EnvironmentDTO> createExperiment(String publicationID, EnvironmentDTO environmentDTO) throws ValidationException {
-        com.google.gwt.user.client.Window.alert("createExp");
-        com.google.gwt.user.client.Window.alert(publicationID);
 
         if (StringUtils.isEmpty(publicationID))
             throw new ValidationException("No Publication ID provided");
@@ -85,8 +83,7 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
             Experiment experiment1 = getExpressionRepository().getExperimentByPubAndName(publicationID, environmentDTO.getName());
             if (experiment1==null) {
                 Experiment experiment = new Experiment();
-
-                experiment.setName("tryruityertuiytu");
+                experiment.setName(environmentDTO.getName());
                 experiment.setPublication(getPublicationRepository().getPublication(publicationID));
             }
             HibernateUtil.flushAndCommitCurrentSession();
@@ -200,7 +197,7 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
 
     @Override
     public List<EnvironmentDTO> getExperimentList(String publicationID) {
-        com.google.gwt.user.client.Window.alert("gtgexplist");
+
         List<EnvironmentDTO> list = new ArrayList<>();
         List<Experiment> experimentSet = getExpressionRepository().geExperimentByPublication(publicationID);
         if (experimentSet != null) {

@@ -40,9 +40,7 @@ public class ExperimentAddPresenter implements HandlesError {
         ExperimentRPCService.App.getInstance().getExperimentList(publicationID, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to retrieve experiments: ", view.errorLabel) {
             public void onSuccess(List<EnvironmentDTO> experimentList) {
                 dtoList = experimentList;
-                /*for (EnvironmentDTO dto : experimentList) {
-                    view.experimentSelectionList.addItem(dto.getName(), dto.getZdbID());
-                }*/
+
                 populateExperiments();
             }
         });
@@ -59,13 +57,13 @@ public class ExperimentAddPresenter implements HandlesError {
         for (EnvironmentDTO dto : dtoList) {
             int index = 0;
 
-                view.addExperiment(dto, elementIndex);
-            if (dto.getConditionDTOList()==null) {
+          view.addExperiment(dto, elementIndex);
+            //if (dto.getConditionDTOList()==null) {
                 DeleteImage deleteImage = new DeleteImage("Delete Note " + dto.getZdbID());
                 deleteImage.addClickHandler(new DeleteExperimentClickHandler(dto, this));
                 view.addDeleteButton(deleteImage, elementIndex);
                 elementIndex++;
-            }
+            //}
             }
         }
 
@@ -109,16 +107,19 @@ public class ExperimentAddPresenter implements HandlesError {
 
     public void createExperiment() {
        EnvironmentDTO environmentDTO = getEnvironmentFromForm();
+
         Window.alert(environmentDTO.getName());
+
        // view.clearError();
         ExperimentRPCService.App.getInstance().createExperiment(publicationID, environmentDTO, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to save a Experiment: ", view.errorLabel) {
             public void onSuccess(List<EnvironmentDTO> experimentList) {
-                Window.alert("jhgj");
+                ConditionAddView cdView=new ConditionAddView();
                 dtoList = experimentList;
+
                 for (EnvironmentDTO dto : experimentList) {
                     resetGUI();
 
-                    //view.experimentSelectionList.addItem(dto.getName(), dto.getZdbID());
+                    cdView.experimentSelectionList.addItem(dto.getName(), dto.getZdbID());
                 }
                 populateExperiments();
             }
