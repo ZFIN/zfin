@@ -550,8 +550,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public Experiment getExperimentByPubAndName(String pubID, String experimentID) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Experiment.class);
-        criteria.add(Restrictions.eq("experiment.zdbID", experimentID));
-        criteria.add(Restrictions.eq("experiment.publication.zdbID", pubID));
+        criteria.add(Restrictions.eq("zdbID", experimentID));
+        criteria.add(Restrictions.eq("publication.zdbID", pubID));
         return (Experiment) criteria.uniqueResult();
     }
 
