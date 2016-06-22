@@ -16,6 +16,7 @@ import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
@@ -82,12 +83,13 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
 
         HibernateUtil.createTransaction();
         try {
-            Experiment experiment1 = getExpressionRepository().getExperimentByPubAndName(publicationID, environmentDTO.getName());
-            if (experiment1 == null) {
-                Experiment experiment = new Experiment();
-                experiment.setName(environmentDTO.getName());
-                experiment.setPublication(getPublicationRepository().getPublication(publicationID));
-            }
+            Publication publication = getPublicationRepository().getPublication(publicationID);
+            if (publication == null)
+                throw new ValidationException("No Publication with ID found: " + publicationID);
+            Experiment experiment = new Experiment();
+            experiment.setPublication(publication);
+            experiment.setName(environmentDTO.getName());
+            getExpressionRepository().saveExperiment(experiment);
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();

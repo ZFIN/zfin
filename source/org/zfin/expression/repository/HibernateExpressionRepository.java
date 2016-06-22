@@ -2134,4 +2134,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public void saveExperimentCondition(ExperimentCondition condition) {
         HibernateUtil.currentSession().save(condition);
     }
+
+    @Override
+    public void saveExperiment(Experiment experiment) {
+        HibernateUtil.currentSession().save(experiment);
+    }
 }

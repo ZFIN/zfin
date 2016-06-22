@@ -1147,6 +1147,7 @@ public class DTOConversionService {
                 dto.setAoTerm(DTOConversionService.convertToTermDTO(condition.getAoTerm()));
                 dto.setGoCCTerm(DTOConversionService.convertToTermDTO(condition.getGoCCTerm()));
                 dto.setTaxonTerm(DTOConversionService.convertToTermDTO(condition.getTaxaonymTerm()));
+                dto.setChebiTerm(DTOConversionService.convertToTermDTO(condition.getChebiTerm()));
                 list.add(dto);
             }
             environment.setConditionDTOList(list);

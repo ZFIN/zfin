@@ -432,4 +432,6 @@ public interface ExpressionRepository {
     ExperimentCondition getExperimentCondition(String conditionID);
 
     void saveExperimentCondition(ExperimentCondition condition);
+
+    void saveExperiment(Experiment experiment);
 }
