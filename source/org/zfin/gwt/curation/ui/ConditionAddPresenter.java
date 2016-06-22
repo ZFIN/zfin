@@ -34,7 +34,7 @@ public class ConditionAddPresenter implements HandlesError {
         loadExperiments();
     }
 
-    private void loadExperiments() {
+    public void loadExperiments() {
         ExperimentRPCService.App.getInstance().getExperimentList(publicationID, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to retrieve experiments: ", view.errorLabel) {
             public void onSuccess(List<EnvironmentDTO> experimentList) {
                 dtoList = experimentList;
@@ -61,8 +61,7 @@ public class ConditionAddPresenter implements HandlesError {
         for (EnvironmentDTO dto : dtoList) {
 
 
-
-            if(dto.conditionDTOList == null)
+            if (dto.conditionDTOList == null)
                 continue;
 
             for (ConditionDTO conditionDTO : dto.getConditionDTOList()) {
@@ -143,6 +142,8 @@ public class ConditionAddPresenter implements HandlesError {
             ontologyDependencyMap.put("ZECO:0000239", Arrays.asList(true, false, false, false));
             ontologyDependencyMap.put("ZECO:0000143", Arrays.asList(false, true, false, false));
             ontologyDependencyMap.put("ZECO:0000229", Arrays.asList(false, true, true, false));
+            ontologyDependencyMap.put("ZECO:0000176", Arrays.asList(false, true, true, false));
+            ontologyDependencyMap.put("ZECO:0000105", Arrays.asList(false, false, false, true));
         }
         return ontologyDependencyMap.get(zecoTermID);
     }

@@ -81,7 +81,7 @@
                                                         entityPart="ENTITY_SUBTERM"
                                                         termInfoTable="{termInfoBox}" visible="false"/>
                                         <zfin:TermEntry ui:field="taxonTermEntry"
-                                                        listOFOntologies="zebrafish_anatomy"
+                                                        listOFOntologies="zeco_taxonomy"
                                                         entityPart="ENTITY_SUBTERM"
                                                         termInfoTable="{termInfoBox}" visible="false"/>
                                     </g:FlowPanel>
