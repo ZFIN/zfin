@@ -60,6 +60,11 @@ public class ConditionAddPresenter implements HandlesError {
 
         for (EnvironmentDTO dto : dtoList) {
 
+
+
+            if(dto.conditionDTOList == null)
+                continue;
+
             for (ConditionDTO conditionDTO : dto.getConditionDTOList()) {
                 view.addCondition(dto, conditionDTO, lastCondition, elementIndex);
                 final CheckBox checkBox = new CheckBox();

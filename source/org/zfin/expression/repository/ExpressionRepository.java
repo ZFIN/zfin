@@ -430,4 +430,6 @@ public interface ExpressionRepository {
     void deleteExperimentCondition(ExperimentCondition condition);
 
     ExperimentCondition getExperimentCondition(String conditionID);
+
+    void saveExperimentCondition(ExperimentCondition condition);
 }

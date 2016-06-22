@@ -8,5 +8,6 @@
   <include file="source/org/zfin/db/load/1078/regatta/cc_temp.xml"/>
   <include file="source/org/zfin/db/load/1078/regatta/updateConstruct11409.sql"/>
   <include file="source/org/zfin/db/load/1078/regatta/dropCCTemp.sql"/>
+  <include file="source/org/zfin/db/load/1078/regatta/insertTranscriptStatus.sql"/>
 
 </databaseChangeLog>

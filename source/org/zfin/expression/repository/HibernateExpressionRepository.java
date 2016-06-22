@@ -2129,4 +2129,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public ExperimentCondition getExperimentCondition(String conditionID) {
         return (ExperimentCondition) HibernateUtil.currentSession().get(ExperimentCondition.class, conditionID);
     }
+
+    @Override
+    public void saveExperimentCondition(ExperimentCondition condition) {
+        HibernateUtil.currentSession().save(condition);
+    }
 }

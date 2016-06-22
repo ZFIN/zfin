@@ -5,13 +5,9 @@ import org.zfin.framework.HibernateSessionCreator
 import org.zfin.properties.ZfinProperties
 import org.zfin.repository.*
 
-//ZfinProperties.init("${System.getenv()['SOURCEROOT']}/home/WEB-INF/zfin.properties")
-//new HibernateSessionCreator()
-//println RepositoryFactory.markerRepository.getGeneByAbbreviation("fgf8a").abbreviation
-
 def vegaDir = "/research/zprod/data/VEGA"
-def thisLoad = "2015-12"
-def prevLoad = "2014-11"
+def thisLoad = "2016-06"
+def prevLoad = "2015-12"
 
 Map lengthMap = [:]
 Map ottdartToOttdargMap = [:]
@@ -46,7 +42,11 @@ ottdartsToKeep.each {
     ottdargsToKeep.add(ottdartToOttdargMap[it])
 }
 
-ottdargsToKeep.each { println it }
+ottdargsToKeep.each { 
+    if (it?.startsWith("OTTDARG")) {
+        println it
+    }        
+}
 
 
 def buildMaps(String vegaDir, String dataDir, Map lengthMap, Map ottdartToOttdargMap) {
