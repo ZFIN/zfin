@@ -182,6 +182,7 @@ public class ConditionAddPresenter implements HandlesError {
         view.aoTermEntry.reset();
         view.goCcTermEntry.reset();
         view.taxonTermEntry.reset();
+        view.chebiTermEntry.reset();
         view.clearError();
         setVisibility("");
 
@@ -216,6 +217,8 @@ public class ConditionAddPresenter implements HandlesError {
             return true;
         if (view.taxonTermEntry.getTermTextBox().hasValidateTerm() && view.taxonTermEntry.isVisible())
             return true;
+        if (view.chebiTermEntry.getTermTextBox().hasValidateTerm() && view.chebiTermEntry.isVisible())
+            return true;
         return false;
     }
 
@@ -226,6 +229,7 @@ public class ConditionAddPresenter implements HandlesError {
         dto.setAoTerm(view.aoTermEntry.getTermTextBox().getSelectedTerm());
         dto.setGoCCTerm(view.goCcTermEntry.getTermTextBox().getSelectedTerm());
         dto.setTaxonTerm(view.taxonTermEntry.getTermTextBox().getSelectedTerm());
+        dto.setChebiTerm(view.chebiTermEntry.getTermTextBox().getSelectedTerm());
         return dto;
     }
 
