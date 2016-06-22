@@ -64,18 +64,18 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
     }
 
     public boolean isChemicalCondition() {
-        return (zecoTerm.getTermName().contains("chemical"));
+        return (zecoTerm != null && zecoTerm.getTermName().contains("chemical"));
     }
 
     public boolean isHeatShock() {
-        return (zecoTerm.getTermName().equalsIgnoreCase("heat shock"));
+        return (zecoTerm != null && zecoTerm.getTermName().equalsIgnoreCase("heat shock"));
     }
 
     @Override
     public int compareTo(ExperimentCondition o) {
         if (o == null)
             return -1;
-        if (!zecoTerm.getOboID().equals(o.getZecoTerm().getOboID()))
+        if (zecoTerm != null && !zecoTerm.getOboID().equals(o.getZecoTerm().getOboID()))
             return zecoTerm.getTermNameOrder().compareToIgnoreCase(o.getZecoTerm().getTermNameOrder());
         return 0;
     }
@@ -164,6 +164,8 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
     }
 
     public String getDisplayName() {
+        if (zecoTerm == null)
+            return "";
         String displayName = zecoTerm.getTermName();
         if (chebiTerm != null)
             displayName += ": " + chebiTerm.getTermName();
