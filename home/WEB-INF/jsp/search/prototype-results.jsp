@@ -257,33 +257,33 @@
                     </div>
                 </div>
 
-                <c:if test="${!galleryMode}">
-                    <c:if test="${!empty images}">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="figure-gallery-preview-container">
-                                    <div class="figure-gallery-image-strip">
-                                        <c:forEach var="image" items="${images}">
-                                            <div class="figure-gallery-image-container preview" data-image-zdb-id="${image.zdbID}">
-                                                <img src="${image.mediumUrl}">
-                                                <div class="hidden figure-gallery-loading-overlay">
-                                                    <i class="fa fa-spinner fa-spin"></i>
-                                                </div>
+                <c:if test="${!galleryMode && fn:length(images) > 10}">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="figure-gallery-preview-container">
+                                <div class="figure-gallery-image-strip">
+                                    <c:forEach var="image" items="${images}">
+                                        <div class="figure-gallery-image-container preview" data-image-zdb-id="${image.zdbID}">
+                                            <img src="${image.mediumUrl}">
+                                            <div class="hidden figure-gallery-loading-overlay">
+                                                <i class="fa fa-spinner fa-spin"></i>
                                             </div>
-                                        </c:forEach>
-                                    </div>
-                                    <div class="figure-gallery-overlay-link">
-                                        <a href="${baseUrlWithoutGalleryMode}&galleryMode=true">View More Images</a>
-                                    </div>
+                                        </div>
+                                    </c:forEach>
+                                </div>
+                                <div class="figure-gallery-overlay-link">
+                                    <a href="${baseUrlWithoutGalleryMode}&galleryMode=true">View More Images</a>
                                 </div>
                             </div>
                         </div>
-                    </c:if>
-                    <c:if test="${!galleryMode}">
-                        <c:forEach var="result" items="${results}">
-                            <zfin2:searchResult result="${result}"/>
-                        </c:forEach>
-                    </c:if>
+                    </div>
+                </c:if>
+
+                <c:if test="${!galleryMode}">
+                    <c:forEach var="result" items="${results}">
+                        <zfin2:searchResult result="${result}"/>
+                    </c:forEach>
+
                     <c:choose>
                         <c:when test="${category eq geneCategoryName}">
                             <zfin-search:geneResultTable results="${results}"/>
