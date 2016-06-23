@@ -178,6 +178,8 @@
 
     <target name="load-chebi" depends="download-chebi-ontology,load-chebi-ontology"/>
 
+    <target name="load-zeco-taxonomy" depends="load-zeco-taxonomy-ontology"/>
+
     <target name="load-disease" depends="download-disease-ontology,load-disease-ontology,run-omim-mapping-updates">
     </target>
 

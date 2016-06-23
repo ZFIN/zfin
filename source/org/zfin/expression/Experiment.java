@@ -2,6 +2,8 @@ package org.zfin.expression;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.publication.Publication;
 
@@ -33,6 +35,7 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     @JoinColumn(name = "exp_source_zdb_id")
     private Publication publication;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment")
+    @Sort(type = SortType.NATURAL)
     private Set<ExperimentCondition> experimentConditions;
 
 

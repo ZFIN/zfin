@@ -78,7 +78,7 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
         if (o == null || o.getZecoTerm() == null)
             return -1;
         if (zecoTerm != null && !zecoTerm.getOboID().equals(o.getZecoTerm().getOboID()))
-            return zecoTerm.getTermNameOrder().compareToIgnoreCase(o.getZecoTerm().getTermNameOrder());
+            return zecoTerm.getTermName().compareToIgnoreCase(o.getZecoTerm().getTermName());
         return 0;
     }
 
