@@ -160,8 +160,8 @@ public class SearchPrototypeController {
         query.setStart(start);
 
         if (galleryMode) {
-            query.setParam("f.img_zdb_id.facet.offset", Integer.toString(start));
-            query.setGetFieldStatistics("img_zdb_id");
+            query.setParam("f." + FieldName.IMG_ZDB_ID.getName() + ".facet.offset", Integer.toString(start));
+            query.setGetFieldStatistics("{!countDistinct=true}" + FieldName.IMG_ZDB_ID.getName());
         }
 
         if (highlight) {
@@ -307,7 +307,7 @@ public class SearchPrototypeController {
             model.addAttribute("xrefResults", xrefResults);
         }
 
-        long numImages = galleryMode ? response.getFieldStatsInfo().get("img_zdb_id").getCount() : 0;
+        long numImages = galleryMode ? response.getFieldStatsInfo().get(FieldName.IMG_ZDB_ID.getName()).getCountDistinct() : 0;
         long numFound = solrDocumentList.getNumFound();
 
         //Set up pagination
