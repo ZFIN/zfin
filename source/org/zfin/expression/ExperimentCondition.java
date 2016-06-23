@@ -184,6 +184,7 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
         if (zecoTerm == null)
             return null;
         Set<GenericTerm> terms = new HashSet<>();
+        terms.add(zecoTerm);
         if (chebiTerm != null)
             terms.add(chebiTerm);
         if (goCCTerm != null)
