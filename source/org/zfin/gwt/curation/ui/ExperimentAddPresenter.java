@@ -3,6 +3,8 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.gwt.curation.event.AddNewExperimentEvent;
 import org.zfin.gwt.curation.event.AddNewFeatureEvent;
@@ -60,13 +62,16 @@ public class ExperimentAddPresenter implements HandlesError {
         for (EnvironmentDTO dto : dtoList) {
             int index = 0;
             DeleteImage deleteImage1 = new DeleteImage("Delete Note " + dto.getZdbID());
-           // deleteImage1.addClickHandler(new deleteExperimentClickHandler(dto, this));
-          //  view.addDelete1Button(deleteImage1, elementIndex);
+          deleteImage1.addClickHandler(new DeleteExperimentClickHandler(dto, this));
+
           view.addExperiment(dto, elementIndex);
 
-                DeleteImage deleteImage = new DeleteImage("Delete Note " + dto.getZdbID());
+                DeleteImage deleteImage = new DeleteImage("Delete Experiment " + dto.getZdbID());
                 deleteImage.addClickHandler(new DeleteExperimentClickHandler(dto, this));
-                view.addDeleteButton(dto,deleteImage, elementIndex);
+                view.addDeleteButton(dto, deleteImage, elementIndex);
+            final Button updateButton = new Button();
+            updateButton.addClickHandler(new UpdateExperimentClickHandler(dto,this));
+            view.addUpdateButton(updateButton, elementIndex);
                 elementIndex++;
 
             }
@@ -120,7 +125,7 @@ public class ExperimentAddPresenter implements HandlesError {
                 fireEventSuccess();
                 //Window.alert("Feature successfully created");
 
-                AddNewExperimentEvent event = new AddNewExperimentEvent(experimentList);
+                AddNewExperimentEvent event = new AddNewExperimentEvent();
                 AppUtils.EVENT_BUS.fireEvent(event);
 
                 dtoList = experimentList;
@@ -171,7 +176,7 @@ public class ExperimentAddPresenter implements HandlesError {
             if (!Window.confirm(message))
                 return;
 
-            ExperimentRPCService.App.getInstance().deleteExperiment(environmentDTO, new FeatureEditCallBack<List<EnvironmentDTO>>("Failed to remove Experiment: ", presenter) {
+            ExperimentRPCService.App.getInstance().deleteExperiment(environmentDTO, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to remove Experiment: ", view.errorLabel) {
                 @Override
                 public void onSuccess(List<EnvironmentDTO> list) {
                     dtoList.clear();
@@ -181,6 +186,32 @@ public class ExperimentAddPresenter implements HandlesError {
             });
         }
     }
+    private class UpdateExperimentClickHandler implements ClickHandler {
 
+        private EnvironmentDTO environmentDTO;
+        private ExperimentAddPresenter presenter;
+
+
+        public UpdateExperimentClickHandler(EnvironmentDTO environmentDTO, ExperimentAddPresenter presenter) {
+            this.environmentDTO = environmentDTO;
+            this.presenter = presenter;
+        }
+
+        @Override
+        public void onClick(ClickEvent clickEvent) {
+            String message = "Are you sure you want to update the name of this experiment?";
+            if (!Window.confirm(message))
+                return;
+
+            ExperimentRPCService.App.getInstance().updateExperiment(environmentDTO, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to update Experiment: ", view.errorLabel) {
+                @Override
+                public void onSuccess(List<EnvironmentDTO> list) {
+                    dtoList.clear();
+                    dtoList = list;
+                    populateExperiments();
+                }
+            });
+        }
+    }
 
 }

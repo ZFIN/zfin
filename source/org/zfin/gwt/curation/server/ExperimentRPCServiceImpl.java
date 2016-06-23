@@ -156,6 +156,32 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
 
         return getExperimentList(publicationID);
     }
+    public List<EnvironmentDTO> updateExperiment(EnvironmentDTO experimentDTO) throws ValidationException {
+        if (experimentDTO == null)
+            throw new ValidationException("No experiment entity provided");
+        String experimentID = experimentDTO.getZdbID();
+        if (experimentID == null)
+            throw new ValidationException("No experimentID provided");
+        String publicationID = null;
+        HibernateUtil.createTransaction();
+        try {
+            Experiment experiment = getExpressionRepository().getExperimentByID(experimentID);
+            if (experiment == null) {
+                throw new ValidationException("No experiment found for " + experimentID);
+            }
+            publicationID = experiment.getPublication().getZdbID();
+            experiment.setName(experimentDTO.getName());
+            getExpressionRepository().saveExperiment(experiment);
+
+
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+        }
+
+        return getExperimentList(publicationID);
+    }
+
 
     @Override
     public List<EnvironmentDTO> copyConditions(String experimentID, List<String> copyConditionIdList) throws ValidationException, TermNotFoundException {

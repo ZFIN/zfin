@@ -9,11 +9,8 @@ import java.util.List;
 public class AddNewExperimentEvent extends GwtEvent<AddNewExperimentEventHandler> {
     public static Type<AddNewExperimentEventHandler> TYPE = new Type<>();
 
-    private List<EnvironmentDTO> experiment;
 
-    public AddNewExperimentEvent(List<EnvironmentDTO> experiment) {
-        this.experiment = experiment;
-    }
+
 
     @Override
     public Type<AddNewExperimentEventHandler> getAssociatedType() {
@@ -27,7 +24,5 @@ public class AddNewExperimentEvent extends GwtEvent<AddNewExperimentEventHandler
 
 
 
-    public List<EnvironmentDTO> getExperiment() {
-        return experiment;
-    }
+
 }

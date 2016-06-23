@@ -73,16 +73,18 @@ public class ExperimentAddView extends AbstractViewComposite  {
 
     protected void addExperiment(EnvironmentDTO experimentDTO,int elementIndex) {
 
-
+        TextBox exptBox=new TextBox();
         dataTable.resizeRows(elementIndex + 2);
         int row = elementIndex + 1;
         setRowStyle(row);
         int col = 0;
 
         dataTable.setText(row, col++, "");
-        if (experimentDTO != null)
-
-            dataTable.setText(row, col++, experimentDTO.getName());
+        if (experimentDTO != null) {
+            dataTable.setWidget(row, col++, exptBox);
+            exptBox.setText(experimentDTO.getName());
+        }
+           // dataTable.setText(row, col++, experimentDTO.getName());
         else
             dataTable.setText(row, col++, "");
 
@@ -94,9 +96,11 @@ public class ExperimentAddView extends AbstractViewComposite  {
             dataTable.setWidget(row, 2, deleteImage);
         }
     }
-    public void addDelete1Button(DeleteImage deleteImage, int elementIndex) {
+    public void addUpdateButton(Button updateButton, int elementIndex) {
         int row = elementIndex + 1;
-        dataTable.setWidget(row, 0, deleteImage);
+        updateButton.setText("Update");
+        dataTable.setWidget(row, 0, updateButton);
+
     }
 
     public void emptyDataTable() {
