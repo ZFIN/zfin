@@ -260,7 +260,8 @@
                     </div>
                 </div>
 
-                <c:if test="${!galleryMode && fn:length(images) > 10}">
+                <%-- Show figure gallery teaser if there are enough images and you're on the first page of results --%>
+                <c:if test="${!galleryMode && fn:length(images) > 10 && paginationBean.page == 1}">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="figure-gallery-preview-container">
