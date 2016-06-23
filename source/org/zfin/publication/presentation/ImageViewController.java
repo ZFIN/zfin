@@ -7,9 +7,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.search.Category;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -43,7 +46,10 @@ public class ImageViewController {
     }
 
     @RequestMapping("/image/{zdbID}/summary")
-    public String getImageSummaryPopup(Model model, @PathVariable("zdbID") String zdbID, HttpServletResponse response) {
+    public String getImageSummaryPopup(Model model,
+                                       @PathVariable("zdbID") String zdbID,
+                                       @RequestParam(required = false) String category,
+                                       HttpServletResponse response) {
         Image image = publicationRepository.getImageById(zdbID);
 
         if (image == null) {
@@ -52,7 +58,13 @@ public class ImageViewController {
         }
 
         model.addAttribute("image", image);
-        model.addAttribute("expressionSummary", figureViewService.getFigureExpressionSummary(image.getFigure()));
+
+        Figure figure = image.getFigure();
+        if (category.equals(Category.EXPRESSIONS.getName())) {
+            model.addAttribute("expressionSummary", figureViewService.getFigureExpressionSummary(figure));
+        } else if (category.equals(Category.PHENOTYPE.getName())) {
+            model.addAttribute("phenotypeSummary", figureViewService.getFigurePhenotypeSummary(figure));
+        }
 
         return "figure/figure-summary.fragment";
     }

@@ -5,7 +5,12 @@
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title">${image.figure.label} from <zfin:link entity="${image.figure.publication}"/></h4>
-            <zfin-figure:expressionSummary summary="${expressionSummary}"/>
+            <c:if test="${!empty expressionSummary}">
+                <zfin-figure:expressionSummary summary="${expressionSummary}"/>
+            </c:if>
+            <c:if test="${!empty phenotypeSummary}">
+                <zfin-figure:phenotypeSummary summary="${phenotypeSummary}"/>
+            </c:if>
         </div>
         <div class="modal-body figure-gallery-modal-body">
             <a href="/${image.figure.zdbID}">

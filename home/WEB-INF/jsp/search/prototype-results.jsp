@@ -533,7 +533,8 @@ $(function () {
 
     $('.figure-gallery-image-container').on('click', function () {
         var loading = $(this).find('.figure-gallery-loading-overlay').removeClass('hidden');
-        $('#figureGalleryModal').load('/action/image/' + $(this).data('image-zdb-id') + '/summary', function () {
+        var summaryUrl = '/action/image/' + $(this).data('image-zdb-id') + '/summary?category=' + encodeURIComponent('${category}');
+        $('#figureGalleryModal').load(summaryUrl, function () {
             $('.figure-gallery-modal-image').on('load', function() {
                 $('#figureGalleryModal').modal();
                 loading.addClass('hidden');
