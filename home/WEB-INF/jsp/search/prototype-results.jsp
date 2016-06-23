@@ -212,7 +212,7 @@
                         <div class="col-md-2 col-sm-3 col-xs-4">
                             <a class="btn btn-default" href="${baseUrlWithoutGalleryMode}&galleryMode=false">
                                 <i class="fa fa-chevron-left"></i>
-                                Back to results
+                                See all <fmt:formatNumber value="${numFound}" pattern="##,###"/> results
                             </a>
                         </div>
 
@@ -253,6 +253,9 @@
                                     </ul>
                                 </div>
                             </div>
+                        </c:if>
+                        <c:if test="${galleryMode}">
+                            <fmt:formatNumber value="${numImages}" pattern="##,###"/> images
                         </c:if>
                     </div>
                 </div>

@@ -141,6 +141,10 @@ public class SearchPrototypeController {
 
         query = handleFacetSorting(query, request);
 
+        if (galleryMode) {
+            rows = 50;  // 50 comes from f.img_zdb_id.facet.limit set in solrconfig.xml
+        }
+
         //default to 20 rows
         if (rows == null) {
             rows = 20;
@@ -156,8 +160,8 @@ public class SearchPrototypeController {
         query.setStart(start);
 
         if (galleryMode) {
-            // 50 comes from f.img_zdb_id.facet.limit set in solrconfig.xml
-            query.setParam("f.img_zdb_id.facet.offset", Integer.toString((page - 1) * 50));
+            query.setParam("f.img_zdb_id.facet.offset", Integer.toString(start));
+            query.setGetFieldStatistics("img_zdb_id");
         }
 
         if (highlight) {
@@ -303,6 +307,9 @@ public class SearchPrototypeController {
             model.addAttribute("xrefResults", xrefResults);
         }
 
+        long numImages = galleryMode ? response.getFieldStatsInfo().get("img_zdb_id").getCount() : 0;
+        long numFound = solrDocumentList.getNumFound();
+
         //Set up pagination
         PaginationBean paginationBean = new PaginationBean();
         URLCreator paginationUrlCreator = new URLCreator(baseUrl);
@@ -325,7 +332,7 @@ public class SearchPrototypeController {
         model.addAttribute("downloadUrl", baseUrl.replaceAll("^/search", "/action/quicksearch/download"));
 
         paginationBean.setPage(page.toString());
-        paginationBean.setTotalRecords((int) solrDocumentList.getNumFound());
+        paginationBean.setTotalRecords((int) (galleryMode ? numImages : numFound));
         paginationBean.setQueryString(request.getQueryString());
         paginationBean.setMaxDisplayRecords(rows);
         model.addAttribute("paginationBean", paginationBean);
@@ -361,7 +368,8 @@ public class SearchPrototypeController {
         model.addAttribute("galleryMode", galleryMode);
         model.addAttribute("category", category);
         model.addAttribute("categories", categories);
-        model.addAttribute("numFound", solrDocumentList.getNumFound());
+        model.addAttribute("numFound", numFound);
+        model.addAttribute("numImages", numImages);
         model.addAttribute("results", results);
         model.addAttribute("debug", "header: " + response.getHeader() + "<br><br>highlighting: ");
 
