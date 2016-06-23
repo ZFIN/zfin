@@ -158,6 +158,8 @@ public class ConditionAddPresenter implements HandlesError {
             ontologyDependencyMap.put("ZECO:0000176", Arrays.asList(false, true, true, false));
             ontologyDependencyMap.put("ZECO:0000105", Arrays.asList(false, false, false, true));
         }
+        if (ontologyDependencyMap.get(zecoTermID) == null)
+            zecoTermID = "";
         return ontologyDependencyMap.get(zecoTermID);
     }
 
