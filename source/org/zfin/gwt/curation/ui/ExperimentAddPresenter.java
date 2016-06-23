@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.gwt.curation.event.AddNewExperimentEvent;
 import org.zfin.gwt.curation.event.AddNewFeatureEvent;
+import org.zfin.gwt.curation.event.UpdateExperimentEvent;
 import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.dto.OntologyDTO;
@@ -61,8 +62,6 @@ public class ExperimentAddPresenter implements HandlesError {
         }
         for (EnvironmentDTO dto : dtoList) {
             int index = 0;
-            DeleteImage deleteImage1 = new DeleteImage("Delete Note " + dto.getZdbID());
-          deleteImage1.addClickHandler(new DeleteExperimentClickHandler(dto, this));
 
           view.addExperiment(dto, elementIndex);
 
@@ -206,6 +205,11 @@ public class ExperimentAddPresenter implements HandlesError {
             ExperimentRPCService.App.getInstance().updateExperiment(environmentDTO, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to update Experiment: ", view.errorLabel) {
                 @Override
                 public void onSuccess(List<EnvironmentDTO> list) {
+                    fireEventSuccess();
+                    //Window.alert("Feature successfully created");
+
+                    UpdateExperimentEvent event = new UpdateExperimentEvent();
+                    AppUtils.EVENT_BUS.fireEvent(event);
                     dtoList.clear();
                     dtoList = list;
                     populateExperiments();
