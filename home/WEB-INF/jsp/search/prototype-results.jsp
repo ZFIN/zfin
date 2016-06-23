@@ -212,7 +212,7 @@
                         <div class="col-md-2 col-sm-3 col-xs-4">
                             <a class="btn btn-default" href="${baseUrlWithoutGalleryMode}&galleryMode=false">
                                 <i class="fa fa-chevron-left"></i>
-                                See all <fmt:formatNumber value="${numFound}" pattern="##,###"/> results
+                                See all <fmt:formatNumber value="${numFound}" pattern="##,###"/><zfin:choice choicePattern="0# results| 1# result| 2# results" integerEntity="${numFound}"/>
                             </a>
                         </div>
 
@@ -220,7 +220,7 @@
                     <div class="result-count col-md-10 col-sm-9 col-xs-8">
 
                         <c:if test="${!galleryMode}">
-                            <fmt:formatNumber value="${numFound}" pattern="##,###"/> results
+                            <fmt:formatNumber value="${numFound}" pattern="##,###"/><zfin:choice choicePattern="0# results| 1# result| 2# results" integerEntity="${numFound}"/>
                             <div class="pull-right">
                                 <authz:authorize access="hasRole('root')">
                                     <div class="btn-group">
@@ -255,7 +255,7 @@
                             </div>
                         </c:if>
                         <c:if test="${galleryMode}">
-                            <fmt:formatNumber value="${numImages}" pattern="##,###"/> images
+                            <fmt:formatNumber value="${numImages}" pattern="##,###"/><zfin:choice choicePattern="0# images| 1# image| 2# images" integerEntity="${numImages}"/>
                         </c:if>
                     </div>
                 </div>
