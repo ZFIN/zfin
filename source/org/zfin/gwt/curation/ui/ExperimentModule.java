@@ -7,7 +7,10 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.curation.event.*;
+import org.zfin.gwt.curation.event.AddNewExperimentEvent;
+import org.zfin.gwt.curation.event.AddNewExperimentEventHandler;
+import org.zfin.gwt.curation.event.UpdateExperimentEvent;
+import org.zfin.gwt.curation.event.UpdateExperimentEventHandler;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.event.SelectAutoCompleteEvent;
 import org.zfin.gwt.root.event.SelectAutoCompleteEventHandler;
@@ -36,7 +39,8 @@ public class ExperimentModule implements EntryPoint {
     ConditionAddView conditionAddView;
 
     private ConditionAddPresenter conditionPresenter;
-private ExperimentAddPresenter addExperimentPresenter;
+    private ExperimentAddPresenter addExperimentPresenter;
+
     public ExperimentModule(String publicationID) {
         this.publicationID = publicationID;
         onModuleLoad();
@@ -74,8 +78,6 @@ private ExperimentAddPresenter addExperimentPresenter;
                 new AddNewExperimentEventHandler() {
                     @Override
                     public void onAdd(AddNewExperimentEvent event) {
-                        // conditionPresenter.populateData();
-                        addExperimentPresenter.go();
                         conditionPresenter.go();
                     }
 
@@ -84,8 +86,6 @@ private ExperimentAddPresenter addExperimentPresenter;
                 new UpdateExperimentEventHandler() {
                     @Override
                     public void onUpdate(UpdateExperimentEvent event) {
-                        // conditionPresenter.populateData();
-                        addExperimentPresenter.go();
                         conditionPresenter.go();
                     }
 

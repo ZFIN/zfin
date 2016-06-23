@@ -1,30 +1,21 @@
 package org.zfin.gwt.curation.ui;
 
-import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
-import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
-import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.ui.IsDirtyWidget;
-import org.zfin.gwt.root.ui.Revertible;
-import org.zfin.gwt.root.ui.SimpleErrorElement;
-import org.zfin.gwt.root.ui.StringTextBox;
 import org.zfin.gwt.root.util.DeleteImage;
 import org.zfin.gwt.root.util.WidgetUtil;
 
-
 import java.util.Set;
 
-public class ExperimentAddView extends AbstractViewComposite  {
+public class ExperimentAddView extends AbstractViewComposite {
 
     public static final String STANDARD = "_Standard";
     public static final String GENERIC_CONTROL = "_Generic-Control";
@@ -45,15 +36,9 @@ public class ExperimentAddView extends AbstractViewComposite  {
     @UiField
     Image loadingImage;
     @UiField
-    SimpleErrorElement errorLabel;
-    @UiField
     Grid dataTable;
     @UiField
     Button addExperimentButton;
-    //@UiField
-    //Button deleteExperimentButton;
-    /*@UiField
-    Button updateExperimentButton;*/
     @UiField
     TextBox experimentNameAddBox;
 
@@ -71,9 +56,9 @@ public class ExperimentAddView extends AbstractViewComposite  {
     }
 
 
-    protected void addExperiment(EnvironmentDTO experimentDTO,int elementIndex) {
+    protected void addExperiment(EnvironmentDTO experimentDTO, int elementIndex) {
 
-        TextBox exptBox=new TextBox();
+        TextBox exptBox = new TextBox();
         dataTable.resizeRows(elementIndex + 2);
         int row = elementIndex + 1;
         setRowStyle(row);
@@ -84,18 +69,19 @@ public class ExperimentAddView extends AbstractViewComposite  {
             dataTable.setWidget(row, col++, exptBox);
             exptBox.setText(experimentDTO.getName());
         }
-           // dataTable.setText(row, col++, experimentDTO.getName());
+        // dataTable.setText(row, col++, experimentDTO.getName());
         else
             dataTable.setText(row, col++, "");
 
     }
 
-    public void addDeleteButton(EnvironmentDTO dto,DeleteImage deleteImage, int elementIndex) {
+    public void addDeleteButton(EnvironmentDTO dto, DeleteImage deleteImage, int elementIndex) {
         int row = elementIndex + 1;
         if (dto.conditionDTOList == null) {
             dataTable.setWidget(row, 2, deleteImage);
         }
     }
+
     public void addUpdateButton(Button updateButton, int elementIndex) {
         int row = elementIndex + 1;
         updateButton.setText("Update");
@@ -122,8 +108,6 @@ public class ExperimentAddView extends AbstractViewComposite  {
         int col = 0;
 
 
-
-
     }
 
     private void addDeleteButton(int elementIndex, ClickHandler clickHandler, String title, String zdbID) {
@@ -136,7 +120,7 @@ public class ExperimentAddView extends AbstractViewComposite  {
 
     public void resetUI() {
         errorLabel.clearAllErrors();
-      experimentNameAddBox.setText("");
+        experimentNameAddBox.setText("");
 
     }
 
