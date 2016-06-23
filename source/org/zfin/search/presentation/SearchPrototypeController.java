@@ -310,6 +310,11 @@ public class SearchPrototypeController {
         long numImages = galleryMode ? response.getFieldStatsInfo().get(FieldName.IMG_ZDB_ID.getName()).getCountDistinct() : 0;
         long numFound = solrDocumentList.getNumFound();
 
+        if (galleryMode && numImages == 0) {
+            model.addAttribute("message", "No images were found, showing all results.");
+            return viewResults(q, filterQuery, category, page, rows, sort, highlight, explain, false, appendCategoryToBaseUrl, model, request);
+        }
+
         //Set up pagination
         PaginationBean paginationBean = new PaginationBean();
         URLCreator paginationUrlCreator = new URLCreator(baseUrl);

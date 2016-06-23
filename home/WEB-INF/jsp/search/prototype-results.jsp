@@ -334,11 +334,6 @@
                             </c:forEach>
                         </div>
                     </c:if>
-                    <c:if test="${empty images}">
-                        <div class="alert alert-danger col-sm-4 col-sm-offset-2" style="margin-top: 2em;">
-                            There are no images in your result set, exit gallery mode to see <fmt:formatNumber value="${numFound}" pattern="##,###"/> results.
-                        </div>
-                    </c:if>
                 </c:if>
 
                 <div style="clear: both ; width: 80%" class="clearfix">
