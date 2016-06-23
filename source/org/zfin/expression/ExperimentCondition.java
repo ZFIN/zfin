@@ -6,6 +6,8 @@ import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.ontology.GenericTerm;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Entity class that maps to experiment table.
@@ -73,7 +75,7 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
 
     @Override
     public int compareTo(ExperimentCondition o) {
-        if (o == null)
+        if (o == null || o.getZecoTerm() == null)
             return -1;
         if (zecoTerm != null && !zecoTerm.getOboID().equals(o.getZecoTerm().getOboID()))
             return zecoTerm.getTermNameOrder().compareToIgnoreCase(o.getZecoTerm().getTermNameOrder());
@@ -176,5 +178,20 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
         if (taxaonymTerm != null)
             displayName += ": " + taxaonymTerm.getTermName();
         return displayName;
+    }
+
+    public Set<GenericTerm> getAllTerms() {
+        if (zecoTerm == null)
+            return null;
+        Set<GenericTerm> terms = new HashSet<>();
+        if (chebiTerm != null)
+            terms.add(chebiTerm);
+        if (goCCTerm != null)
+            terms.add(goCCTerm);
+        if (aoTerm != null)
+            terms.add(aoTerm);
+        if (taxaonymTerm != null)
+            terms.add(taxaonymTerm);
+        return terms;
     }
 }

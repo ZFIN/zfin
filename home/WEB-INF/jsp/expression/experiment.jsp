@@ -2,21 +2,24 @@
 
 <zfin2:dataManager zdbID="${experiment.zdbID}"/>
 
-<div class="data-sub-page-title">Environment Description</div>
-
 <div style="float: right;">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
         <tiles:putAttribute name="subjectName" value="${experiment.zdbID}"/>
     </tiles:insertTemplate>
 </div>
 
+<div class="data-page">
+    <c:forEach var="condition" items="${conditions}" varStatus="loop">
+        <table class="primary-entity-attributes">
+            <tr>
+                <th>${condition.displayName}</th>
+            </tr>
+        </table>
 
-<table class="primary-entity-attributes">
-    <tr>
-        <th>Publication:</th>
-        <td><zfin:link entity="${experiment.publication}"/> </td>
-    </tr>
-</table>
-
-<zfin2:experimentConditions conditions="${conditions}" />
-
+        <div class="summary">
+            <c:forEach var="term" items="${condition.allTerms}">
+                <zfin2:termMiniSummary term="${term}" additionalCssClasses="summary horizontal-solidblock"/>
+            </c:forEach>
+        </div>
+    </c:forEach>
+</div>
