@@ -94,7 +94,7 @@
         </replaceregexp>
     </target>
 
-    <target name="load-zeco-taxonomy-ontology" depends="init">
+    <target name="load-zeco-taxonomy-ontology" depends="init,setHeaderForZeco">
         <load-ontology oboDirectory="${run-directory}" oboFileName="zeco-taxonomy.obo" scripts="${scriptFilesNoAnnotation}"/>
     </target>
 

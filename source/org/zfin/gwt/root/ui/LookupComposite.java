@@ -773,6 +773,9 @@ public class LookupComposite extends Composite implements Revertible {
         selectedTerm = null;
     }
 
+    public void setSelectedTerm(TermDTO selectedTerm) {
+        this.selectedTerm = selectedTerm;
+    }
 
     private class MyHighlightAction implements HighlightAction {
         @Override

@@ -32,6 +32,7 @@ public class ConditionAddPresenter implements HandlesError {
 
     public void go() {
         loadExperiments();
+        setVisibility("");
     }
 
     public void loadExperiments() {
@@ -59,8 +60,6 @@ public class ConditionAddPresenter implements HandlesError {
         ConditionDTO lastCondition = null;
 
         for (EnvironmentDTO dto : dtoList) {
-
-
             if (dto.conditionDTOList == null)
                 continue;
 
@@ -88,6 +87,17 @@ public class ConditionAddPresenter implements HandlesError {
         }
     }
 
+    private void displayControlSection(Map<TermEntry, Boolean> visibilityMap) {
+        view.addZeco();
+        int row = 1;
+        for (TermEntry termEntry : visibilityMap.keySet()) {
+            if (visibilityMap.get(termEntry))
+                view.addTermEntry(termEntry, row++);
+        }
+        view.addControls(row);
+    }
+
+
     protected void copyConditions() {
         List<String> copyConditionIdList = new ArrayList<>(copyConditionsCheckBoxList.size());
         for (CheckBox checkBox : copyConditionsCheckBoxList) {
@@ -106,11 +116,13 @@ public class ConditionAddPresenter implements HandlesError {
                 resetGUI();
             }
         });
-
     }
 
     private void enableCopyControls(boolean enable) {
-        view.copyControlsPanel.setVisible(enable);
+        if (enable)
+            view.addCopyControlsPanel();
+        else
+            setVisibility("");
     }
 
     @Override
@@ -138,6 +150,7 @@ public class ConditionAddPresenter implements HandlesError {
     public static List<Boolean> getVisibilityMatrixOfDependentOntologies(String zecoTermID) {
         if (ontologyDependencyMap == null) {
             ontologyDependencyMap = new HashMap<>();
+            ontologyDependencyMap.put("", Arrays.asList(false, false, false, false));
             ontologyDependencyMap.put("ZECO:0000111", Arrays.asList(true, false, false, false));
             ontologyDependencyMap.put("ZECO:0000239", Arrays.asList(true, false, false, false));
             ontologyDependencyMap.put("ZECO:0000143", Arrays.asList(false, true, false, false));
@@ -161,16 +174,15 @@ public class ConditionAddPresenter implements HandlesError {
     }
 
     private void setVisibility(String termID) {
+        if (termID == null)
+            termID = "";
         List<Boolean> visibilityVector = getVisibilityMatrixOfDependentOntologies(termID);
-        for (int index = 0; index < getListOfTermEntries().size(); index++) {
-            TermEntry termEntry = getListOfTermEntries().get(index);
-            if (visibilityVector == null)
-                termEntry.setVisible(false);
-            else
-                termEntry.setVisible(visibilityVector.get(index));
-
+        Map<TermEntry, Boolean> visibilityMap = new HashMap<>(4);
+        int index = 0;
+        for (TermEntry termEntry : getListOfTermEntries()) {
+            visibilityMap.put(termEntry, visibilityVector.get(index++));
         }
-        view.copyControlsPanel.setVisible(false);
+        displayControlSection(visibilityMap);
     }
 
     private void handleDirty() {
@@ -186,7 +198,7 @@ public class ConditionAddPresenter implements HandlesError {
         view.chebiTermEntry.reset();
         view.clearError();
         setVisibility("");
-
+        view.createExperimentConditionButton.setEnabled(false);
     }
 
     public void createCondition() {

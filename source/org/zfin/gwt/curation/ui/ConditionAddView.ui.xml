@@ -6,7 +6,9 @@
         >
 
     <ui:style>
-        .copyCheckBox { width: 30px; }
+        .copyCheckBox {
+            width: 30px;
+        }
     </ui:style>
 
     <g:FlowPanel>
@@ -33,14 +35,14 @@
                     </g:customCell>
                 </g:row>
             </g:Grid>
-            <g:Grid cellSpacing='10' styleName="searchresults groupstripes">
+            <g:Grid cellSpacing='10'  styleName="searchresults groupstripes">
                 <g:row>
                     <g:cell/>
                     <g:customCell>
-                        <g:Grid cellSpacing='10'>
+                        <g:Grid cellSpacing='10' ui:field="controlTable" >
                             <g:row>
                                 <g:customCell>
-                                    <g:FlowPanel>
+                                    <g:FlowPanel ui:field="experimentSelectionPanel">
                                         <g:HorizontalPanel>
                                             <g:HorizontalPanel>
                                                 <zfin:StringListBox ui:field="experimentSelectionList"/>
@@ -64,11 +66,11 @@
                                         <zfin:TermEntry ui:field="chebiTermEntry"
                                                         listOFOntologies="chebi_ontology"
                                                         entityPart="ENTITY_SUBTERM"
-                                                        termInfoTable="{termInfoBox}" visible="false"/>
+                                                        termInfoTable="{termInfoBox}"/>
                                         <zfin:TermEntry ui:field="goCcTermEntry"
                                                         listOFOntologies="cellular_component"
                                                         entityPart="ENTITY_SUBTERM"
-                                                        termInfoTable="{termInfoBox}" visible="false"/>
+                                                        termInfoTable="{termInfoBox}"/>
                                     </g:FlowPanel>
                                 </g:customCell>
                             </g:row>
@@ -79,18 +81,18 @@
                                         <zfin:TermEntry ui:field="aoTermEntry"
                                                         listOFOntologies="zebrafish_anatomy"
                                                         entityPart="ENTITY_SUBTERM"
-                                                        termInfoTable="{termInfoBox}" visible="false"/>
+                                                        termInfoTable="{termInfoBox}"/>
                                         <zfin:TermEntry ui:field="taxonTermEntry"
                                                         listOFOntologies="zeco_taxonomy"
                                                         entityPart="ENTITY_SUBTERM"
-                                                        termInfoTable="{termInfoBox}" visible="false"/>
+                                                        termInfoTable="{termInfoBox}"/>
                                     </g:FlowPanel>
                                 </g:customCell>
                             </g:row>
                             <g:row>
                                 <g:cell/>
                                 <g:customCell>
-                                    <g:HorizontalPanel>
+                                    <g:HorizontalPanel ui:field="createButtonPanel">
                                         <g:Button ui:field="createExperimentConditionButton" text="Add Condition"
                                                   addStyleNames="btn btn-primary" enabled="false"/>
                                         <g:Button ui:field="resetButton" text="Reset" addStyleNames="btn btn-link"/>
@@ -98,22 +100,22 @@
                                 </g:customCell>
                                 <g:cell/>
                             </g:row>
+                            <g:row>
+                                <g:cell/>
+                                <g:customCell>
+                                    <g:HorizontalPanel ui:field="copyControlsPanel">
+                                        <g:Button ui:field="copyExperimentConditionButton" text="Copy selected conditions to"
+                                                  addStyleNames="btn btn-primary"/>
+                                        <zfin:StringListBox ui:field="experimentCopyToSelectionList"/>
+                                    </g:HorizontalPanel>
+                                </g:customCell>
+                            </g:row>
                         </g:Grid>
                     </g:customCell>
                     <g:customCell>
                         <zfin:TermInfoComposite ui:field='termInfoBox' styleName="searchresults" cellSpacing='0'
                                                 cellPadding='5'
                                                 ontologyName="zebrafish_experimental_conditions_ontology"/>
-                    </g:customCell>
-                </g:row>
-                <g:row>
-                    <g:cell/>
-                    <g:customCell>
-                        <g:HorizontalPanel ui:field="copyControlsPanel" visible="false">
-                            <g:Button ui:field="copyExperimentConditionButton" text="Copy selected conditions to"
-                                      addStyleNames="btn btn-primary"/>
-                            <zfin:StringListBox ui:field="experimentCopyToSelectionList"/>
-                        </g:HorizontalPanel>
                     </g:customCell>
                 </g:row>
             </g:Grid>

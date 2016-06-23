@@ -32,8 +32,7 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     @ManyToOne
     @JoinColumn(name = "exp_source_zdb_id")
     private Publication publication;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "expcond_exp_zdb_id")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment")
     private Set<ExperimentCondition> experimentConditions;
 
 

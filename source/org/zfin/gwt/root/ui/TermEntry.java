@@ -352,14 +352,15 @@ public class TermEntry extends HorizontalPanel {
      * set the term name and select the correct ontology.
      * If successful return true, otherwise false.
      *
-     * @param termInfoDTO term info
+     * @param termDTO term info
      * @return boolean
      */
-    public boolean setTerm(TermDTO termInfoDTO) {
-        if (hasOntology(termInfoDTO.getOntology())) {
-            termTextBox.setText(termInfoDTO.getName());
-            setOntologySelector(termInfoDTO.getOntology());
+    public boolean setTerm(TermDTO termDTO) {
+        if (hasOntology(termDTO.getOntology())) {
+            termTextBox.setText(termDTO.getName());
+            setOntologySelector(termDTO.getOntology());
             termTextBox.unsetUnValidatedTextMarkup();
+            termTextBox.setSelectedTerm(termDTO);
             return true;
         } else {
             return false;
@@ -421,6 +422,10 @@ public class TermEntry extends HorizontalPanel {
                             @Override
                             public void onFailure(Throwable throwable) {
                                 getTermTextBox().setValidationStyle(false);
+                            }
+
+                            @Override
+                            public void onSuccess(TermDTO termDTO) {
                             }
                         });
             }

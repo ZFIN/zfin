@@ -58,6 +58,12 @@ public class ConditionAddView extends AbstractViewComposite {
     StringListBox experimentCopyToSelectionList;
     @UiField
     HorizontalPanel copyControlsPanel;
+    @UiField
+    Grid controlTable;
+    @UiField
+    HorizontalPanel createButtonPanel;
+    @UiField
+    FlowPanel experimentSelectionPanel;
 
     @UiHandler("showHideToggle")
     void onClickShowHide(@SuppressWarnings("unused") ClickEvent event) {
@@ -97,6 +103,35 @@ public class ConditionAddView extends AbstractViewComposite {
         if (lastCondition != null)
             lastID = lastCondition.getEnvironmentZdbID();
         currentGroupIndex = WidgetUtil.setRowStyle(row, dto.getEnvironmentZdbID(), lastID, currentGroupIndex, dataTable);
+    }
+
+    public void addZeco() {
+        controlTable.resizeRows(1);
+        int row = 0;
+        int column = 0;
+        controlTable.setWidget(row, column++, experimentSelectionPanel);
+        controlTable.setWidget(row++, column++, zecoTermEntry);
+    }
+
+    public void addTermEntry(TermEntry termEntry, int row) {
+        controlTable.resizeRows(row + 1);
+        int column = 0;
+        controlTable.setText(row, column++, "");
+        controlTable.setWidget(row++, column++, termEntry);
+    }
+
+    public void addControls(int row) {
+        controlTable.resizeRows(row + 1);
+        int column = 0;
+        controlTable.setText(row, column++, "");
+        controlTable.setWidget(row, column, createButtonPanel);
+    }
+
+    public void addCopyControlsPanel() {
+        controlTable.resizeRows(1);
+        controlTable.setWidget(0, 0, copyControlsPanel);
+        controlTable.setText(0, 1, "");
+        controlTable.setText(0, 2, "");
     }
 
     public void addDeleteButton(DeleteImage deleteImage, int elementIndex) {
