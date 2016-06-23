@@ -12,7 +12,7 @@
   <include file="source/org/zfin/db/load/1079/shipwreck/experiment_condition_update.sql"/>
   <include file="source/org/zfin/db/load/1079/shipwreck/chebi_taxon_expcond.sql"/>
   <include file="source/org/zfin/db/load/1079/shipwreck/restoreGenotypes.sql"/>
-  <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/removeExpcondComments.sql"/> 
-  <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/dropComments.sql"/>  
+  <include file="source/org/zfin/db/load/1079/shipwreck/removeExpcondComments.sql"/> 
+  <include file="source/org/zfin/db/load/1079/shipwreck/dropComments.sql"/>  
 
 </databaseChangeLog>
