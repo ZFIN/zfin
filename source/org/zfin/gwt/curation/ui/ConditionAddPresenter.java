@@ -36,16 +36,8 @@ public class ConditionAddPresenter implements HandlesError {
     }
 
     public void loadExperiments() {
-        ExperimentRPCService.App.getInstance().getExperimentList(publicationID, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to retrieve experiments: ", view.errorLabel) {
-            public void onSuccess(List<EnvironmentDTO> experimentList) {
-                dtoList = experimentList;
-                for (EnvironmentDTO dto : experimentList) {
-                    view.experimentSelectionList.addItem(dto.getName(), dto.getZdbID());
-                    view.experimentCopyToSelectionList.addItem(dto.getName(), dto.getZdbID());
-                }
-                populateData();
-            }
-        });
+        ExperimentRPCService.App.getInstance().getExperimentList(publicationID,
+                new ExperimentListCallBack("Failed to retrieve experiments: "));
 
     }
 
@@ -105,17 +97,8 @@ public class ConditionAddPresenter implements HandlesError {
                 copyConditionIdList.add(checkBox.getTitle());
         }
         String experimentID = view.experimentCopyToSelectionList.getSelected();
-        ExperimentRPCService.App.getInstance().copyConditions(experimentID, copyConditionIdList, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to copy conditions: ", view.errorLabel) {
-            public void onSuccess(List<EnvironmentDTO> experimentList) {
-                dtoList = experimentList;
-                for (EnvironmentDTO dto : experimentList) {
-                    view.experimentSelectionList.addItem(dto.getName(), dto.getZdbID());
-                    view.experimentCopyToSelectionList.addItem(dto.getName(), dto.getZdbID());
-                }
-                populateData();
-                resetGUI();
-            }
-        });
+        ExperimentRPCService.App.getInstance().copyConditions(experimentID, copyConditionIdList,
+                new ExperimentListCallBack("Failed to copy conditions: "));
     }
 
     private void enableCopyControls(boolean enable) {
@@ -211,16 +194,8 @@ public class ConditionAddPresenter implements HandlesError {
 
         ConditionDTO conditionDTO = getConditionFromFrom();
         view.clearError();
-        ExperimentRPCService.App.getInstance().createCondition(publicationID, conditionDTO, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to save a condition: ", view.errorLabel) {
-            public void onSuccess(List<EnvironmentDTO> experimentList) {
-                dtoList = experimentList;
-                for (EnvironmentDTO dto : experimentList) {
-                    resetGUI();
-                    view.experimentSelectionList.addItem(dto.getName(), dto.getZdbID());
-                }
-                populateData();
-            }
-        });
+        ExperimentRPCService.App.getInstance().createCondition(publicationID, conditionDTO,
+                new ExperimentListCallBack("Failed to save condition: "));
     }
 
     private boolean formIsValidated() {
@@ -277,4 +252,21 @@ public class ConditionAddPresenter implements HandlesError {
     }
 
 
+    private class ExperimentListCallBack extends ZfinAsyncCallback<List<EnvironmentDTO>> {
+        public ExperimentListCallBack(String errorMessage) {
+            super(errorMessage, ConditionAddPresenter.this.view.errorLabel);
+        }
+
+        public void onSuccess(List<EnvironmentDTO> experimentList) {
+            dtoList = experimentList;
+            view.experimentSelectionList.clear();
+            view.experimentCopyToSelectionList.clear();
+            for (EnvironmentDTO dto : experimentList) {
+                view.experimentSelectionList.addItem(dto.getName(), dto.getZdbID());
+                view.experimentCopyToSelectionList.addItem(dto.getName(), dto.getZdbID());
+            }
+            populateData();
+            resetGUI();
+        }
+    }
 }
