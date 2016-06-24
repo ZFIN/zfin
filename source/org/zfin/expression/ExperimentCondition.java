@@ -6,7 +6,9 @@ import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.ontology.GenericTerm;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -180,10 +182,10 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
         return displayName;
     }
 
-    public Set<GenericTerm> getAllTerms() {
+    public List<GenericTerm> getAllTerms() {
         if (zecoTerm == null)
             return null;
-        Set<GenericTerm> terms = new HashSet<>();
+        List<GenericTerm> terms = new ArrayList<>();
         terms.add(zecoTerm);
         if (chebiTerm != null)
             terms.add(chebiTerm);
