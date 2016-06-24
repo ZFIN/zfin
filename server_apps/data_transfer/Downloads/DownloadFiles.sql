@@ -469,11 +469,11 @@ left outer join term chebi on chebi.term_zdb_id = expcond_chebi_zdb_id
          where expcond_exp_zdb_id = genox_exp_zdb_id
            and genox_zdb_id = xpatex_genox_zdb_id) 
 union
-select exp_zdb_id, exp_name, "", "", ""
+select exp_zdb_id, exp_name, " ", " ", " "
  from experiment
  where exp_name = "_Generic-control"  
 union
-select exp_zdb_id, "standard environment", "", "", ""
+select exp_zdb_id, "standard environment", " ", " ", " "
  from experiment
  where not exists (Select 'x' from experiment_condition
                           where exp_zdb_id = expcond_exp_zdb_id)
