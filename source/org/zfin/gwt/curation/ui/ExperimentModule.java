@@ -75,7 +75,7 @@ public class ExperimentModule implements EntryPoint {
                 new AddNewExperimentEventHandler() {
                     @Override
                     public void onAdd(AddNewExperimentEvent event) {
-                        conditionPresenter.go();
+                        conditionPresenter.updateExperimentList();
                     }
 
                 });
@@ -83,7 +83,7 @@ public class ExperimentModule implements EntryPoint {
                 new UpdateExperimentEventHandler() {
                     @Override
                     public void onUpdate(UpdateExperimentEvent event) {
-                        conditionPresenter.go();
+                        conditionPresenter.updateExperimentList();
                     }
 
                 });

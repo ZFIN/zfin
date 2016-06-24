@@ -19,11 +19,9 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implements ExperimentRPCService {
 
@@ -43,7 +41,6 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
                 throw new ValidationException("No experiment found for " + experimentID);
             ExperimentCondition condition = new ExperimentCondition();
             condition.setExperiment(experiment);
-            experiment.addExperimentCondition(condition);
 
             GenericTerm zecoTerm = DTOConversionService.convertToTerm(conditionDTO.zecoTerm);
             condition.setZecoTerm(zecoTerm);
@@ -63,10 +60,9 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
                 GenericTerm term = DTOConversionService.convertToTerm(conditionDTO.chebiTerm);
                 condition.setChebiTerm(term);
             }
+            experiment.addExperimentCondition(condition);
             getExpressionRepository().saveExperimentCondition(condition);
             HibernateUtil.flushAndCommitCurrentSession();
-        } catch (ConstraintViolationException e) {
-            HibernateUtil.rollbackTransaction();
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
             throw new TermNotFoundException(e.getMessage());
@@ -189,7 +185,7 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
             throw new ValidationException("No experiment ID provided");
         if (CollectionUtils.isEmpty(copyConditionIdList))
             throw new ValidationException("No condition to be copied provided");
-        Experiment experiment = null;
+        Experiment experiment;
         HibernateUtil.createTransaction();
         try {
             experiment = getExpressionRepository().getExperimentByID(experimentID);
@@ -216,8 +212,6 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
                 experiment.addExperimentCondition(newCondition);
             }
             HibernateUtil.flushAndCommitCurrentSession();
-        } catch (ConstraintViolationException e) {
-            HibernateUtil.rollbackTransaction();
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
             throw new TermNotFoundException(e.getMessage());
@@ -226,17 +220,48 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
     }
 
     @Override
-    public List<EnvironmentDTO> getExperimentList(String publicationID) {
+    public List<EnvironmentDTO> getExperimentList(String publicationID) throws ValidationException {
 
         List<EnvironmentDTO> list = new ArrayList<>();
-        List<Experiment> experimentSet = getExpressionRepository().geExperimentByPublication(publicationID);
-        if (experimentSet != null) {
-            for (Experiment experiment : experimentSet) {
-                EnvironmentDTO dto = DTOConversionService.convertToEnvironmentDTO(experiment);
-                list.add(dto);
+        HibernateUtil.createTransaction();
+        try {
+
+            List<Experiment> experimentSet = getExpressionRepository().geExperimentByPublication(publicationID);
+            if (experimentSet != null) {
+                for (Experiment experiment : experimentSet) {
+                    EnvironmentDTO dto = DTOConversionService.convertToEnvironmentDTO(experiment);
+                    list.add(dto);
+                }
             }
+        } catch (Exception e) {
+            throw new ValidationException(e.getMessage());
         }
         return list;
+    }
+
+    static Set<String> zecoRootTerms = new HashSet<>(10);
+
+    static {
+        zecoRootTerms.add("ZECO:0000229");
+        zecoRootTerms.add("ZECO:0000111");
+        zecoRootTerms.add("ZECO:0000239");
+        zecoRootTerms.add("ZECO:0000176");
+        zecoRootTerms.add("ZECO:0000143");
+        zecoRootTerms.add("ZECO:0000105");
+    }
+
+    public HashMap<String, Set<String>> getChildMap() {
+        HashMap<String, Set<String>> map = new HashMap<>();
+        for (String zecoTermRootID : zecoRootTerms) {
+            GenericTerm term = getOntologyRepository().getTermByOboID(zecoTermRootID);
+            Set<String> termSet = new HashSet<>();
+            termSet.add(zecoTermRootID);
+            for (GenericTerm childTerm : term.getAllChildren()) {
+                termSet.add(childTerm.getOboID());
+            }
+            map.put(zecoTermRootID, termSet);
+        }
+        return map;
     }
 
 }

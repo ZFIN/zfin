@@ -24,6 +24,7 @@ public class ConditionAddPresenter implements HandlesError {
 
     private List<EnvironmentDTO> dtoList;
     private List<CheckBox> copyConditionsCheckBoxList = new ArrayList<>();
+    private Map<String, Set<String>> childMap;
 
     public ConditionAddPresenter(ConditionAddView view, String publicationID) {
         this.publicationID = publicationID;
@@ -31,8 +32,23 @@ public class ConditionAddPresenter implements HandlesError {
     }
 
     public void go() {
+        loadChildMap();
+    }
+
+
+    public void updateExperimentList() {
         loadExperiments();
-        setVisibility("");
+        setVisibility(null);
+    }
+
+    private void loadChildMap() {
+
+        ExperimentRPCService.App.getInstance().getChildMap(new ZfinAsyncCallback<Map<String, Set<String>>>("Failed to load child map: ", view.errorLabel) {
+            public void onSuccess(Map<String, Set<String>> childrenMap) {
+                childMap = childrenMap;
+                updateExperimentList();
+            }
+        });
     }
 
     public void loadExperiments() {
@@ -105,7 +121,7 @@ public class ConditionAddPresenter implements HandlesError {
         if (enable)
             view.addCopyControlsPanel();
         else
-            setVisibility("");
+            setVisibility(null);
     }
 
     @Override
@@ -159,15 +175,28 @@ public class ConditionAddPresenter implements HandlesError {
     }
 
     private void setVisibility(String termID) {
-        if (termID == null)
-            termID = "";
-        List<Boolean> visibilityVector = getVisibilityMatrixOfDependentOntologies(termID);
+        String zecoRootTermID = "";
+        if (termID != null) {
+            zecoRootTermID = getRoot(termID);
+        }
+        List<Boolean> visibilityVector = getVisibilityMatrixOfDependentOntologies(zecoRootTermID);
         Map<TermEntry, Boolean> visibilityMap = new HashMap<>(4);
         int index = 0;
         for (TermEntry termEntry : getListOfTermEntries()) {
             visibilityMap.put(termEntry, visibilityVector.get(index++));
         }
         displayControlSection(visibilityMap);
+    }
+
+    private String getRoot(String termID) {
+        if (termID == null)
+            return null;
+        for (String rootTermID : childMap.keySet()) {
+            Set<String> termSet = childMap.get(rootTermID);
+            if (termSet.contains(termID))
+                return rootTermID;
+        }
+        return null;
     }
 
     private void handleDirty() {

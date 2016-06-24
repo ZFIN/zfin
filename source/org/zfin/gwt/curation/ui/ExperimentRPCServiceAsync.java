@@ -8,6 +8,8 @@ import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface ExperimentRPCServiceAsync {
 
@@ -23,5 +25,6 @@ public interface ExperimentRPCServiceAsync {
 
     void copyConditions(String experimentID, List<String> copyConditionIdList, AsyncCallback<List<EnvironmentDTO>> callback);
 
+    void getChildMap(AsyncCallback<Map<String,Set<String>>> callback);
 }
 

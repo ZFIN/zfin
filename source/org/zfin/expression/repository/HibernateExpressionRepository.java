@@ -547,6 +547,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Session session = HibernateUtil.currentSession();
         return (Experiment) session.get(Experiment.class, experimentID);
     }
+
     public Experiment getExperimentByPubAndName(String pubID, String experimentID) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Experiment.class);
@@ -2133,6 +2134,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     @Override
     public void saveExperimentCondition(ExperimentCondition condition) {
         HibernateUtil.currentSession().save(condition);
+        HibernateUtil.currentSession().saveOrUpdate(condition.getExperiment());
     }
 
     @Override
