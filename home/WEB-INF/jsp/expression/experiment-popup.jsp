@@ -4,18 +4,17 @@
     Environment Description: <zfin:name entity="${experiment}"/>
 </div>
 <div class="popup-body">
-    <div>
+    <c:forEach var="condition" items="${conditions}" varStatus="loop">
         <table class="primary-entity-attributes">
             <tr>
-                <th>Publication:</th>
-                <td><zfin:link entity="${experiment.publication}"/> </td>
+                <th>${condition.displayName}</th>
             </tr>
-
         </table>
 
-
-        <zfin2:experimentConditions conditions="${conditions}" />
-
-
-    </div>
+        <div class="summary">
+            <c:forEach var="term" items="${condition.allTerms}">
+                <zfin2:termMiniSummary term="${term}" additionalCssClasses="summary horizontal-solidblock"/>
+            </c:forEach>
+        </div>
+    </c:forEach>
 </div>
