@@ -42,6 +42,7 @@ public class ExperimentAddView extends AbstractViewComposite {
     @UiField
     TextBox experimentNameAddBox;
 
+    TextBox exptBox;
 
 
    /* @UiHandler("resetButton")
@@ -56,9 +57,9 @@ public class ExperimentAddView extends AbstractViewComposite {
     }
 
 
-    protected void addExperiment(EnvironmentDTO experimentDTO, int elementIndex) {
+    public void addExperiment(EnvironmentDTO experimentDTO, int elementIndex) {
 
-        TextBox exptBox = new TextBox();
+         TextBox exptBox = new TextBox();
         dataTable.resizeRows(elementIndex + 2);
         int row = elementIndex + 1;
         setRowStyle(row);

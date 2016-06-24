@@ -5,6 +5,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import org.zfin.gwt.curation.event.AddNewExperimentEvent;
+import org.zfin.gwt.curation.event.DeleteExperimentEvent;
 import org.zfin.gwt.curation.event.UpdateExperimentEvent;
 import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.ui.HandlesError;
@@ -142,8 +143,11 @@ public class ExperimentAddPresenter implements HandlesError {
             ExperimentRPCService.App.getInstance().deleteExperiment(environmentDTO, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to remove Experiment: ", view.errorLabel) {
                 @Override
                 public void onSuccess(List<EnvironmentDTO> list) {
-                    dtoList.clear();
+                    fireEventSuccess();
+                    DeleteExperimentEvent event = new DeleteExperimentEvent();
+                    AppUtils.EVENT_BUS.fireEvent(event);
                     dtoList = list;
+                    resetGUI();
                     populateExperiments();
                 }
             });
@@ -163,8 +167,8 @@ public class ExperimentAddPresenter implements HandlesError {
             String message = "Are you sure you want to update the name of this experiment?";
             if (!Window.confirm(message))
                 return;
-
-            ExperimentRPCService.App.getInstance().updateExperiment(environmentDTO, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to update Experiment: ", view.errorLabel) {
+           // EnvironmentDTO dto = new EnvironmentDTO();
+            ExperimentRPCService.App.getInstance().updateExperiment(environmentDTO, view.exptBox.getText(),new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to update Experiment: ", view.errorLabel) {
                 @Override
                 public void onSuccess(List<EnvironmentDTO> list) {
                     fireEventSuccess();
@@ -172,8 +176,8 @@ public class ExperimentAddPresenter implements HandlesError {
 
                     UpdateExperimentEvent event = new UpdateExperimentEvent();
                     AppUtils.EVENT_BUS.fireEvent(event);
-                    dtoList.clear();
                     dtoList = list;
+                    resetGUI();
                     populateExperiments();
                 }
             });

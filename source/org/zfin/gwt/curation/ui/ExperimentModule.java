@@ -7,10 +7,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.curation.event.AddNewExperimentEvent;
-import org.zfin.gwt.curation.event.AddNewExperimentEventHandler;
-import org.zfin.gwt.curation.event.UpdateExperimentEvent;
-import org.zfin.gwt.curation.event.UpdateExperimentEventHandler;
+import org.zfin.gwt.curation.event.*;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.event.SelectAutoCompleteEvent;
 import org.zfin.gwt.root.event.SelectAutoCompleteEventHandler;
@@ -86,6 +83,14 @@ public class ExperimentModule implements EntryPoint {
                 new UpdateExperimentEventHandler() {
                     @Override
                     public void onUpdate(UpdateExperimentEvent event) {
+                        conditionPresenter.go();
+                    }
+
+                });
+        AppUtils.EVENT_BUS.addHandler(DeleteExperimentEvent.TYPE,
+                new DeleteExperimentEventHandler() {
+                    @Override
+                    public void onDelete(DeleteExperimentEvent event) {
                         conditionPresenter.go();
                     }
 

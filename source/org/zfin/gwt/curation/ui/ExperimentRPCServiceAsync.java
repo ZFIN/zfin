@@ -19,7 +19,7 @@ public interface ExperimentRPCServiceAsync {
     void deleteCondition(ConditionDTO conditionDTO, AsyncCallback<List<EnvironmentDTO>> callBack);
 
     void deleteExperiment(EnvironmentDTO environmentDTO, AsyncCallback<List<EnvironmentDTO>> callBack);
-    void updateExperiment(EnvironmentDTO environmentDTO, AsyncCallback<List<EnvironmentDTO>> callBack);
+    void updateExperiment(EnvironmentDTO environmentDTO, String exptName,AsyncCallback<List<EnvironmentDTO>> callBack);
 
     void copyConditions(String experimentID, List<String> copyConditionIdList, AsyncCallback<List<EnvironmentDTO>> callback);
 

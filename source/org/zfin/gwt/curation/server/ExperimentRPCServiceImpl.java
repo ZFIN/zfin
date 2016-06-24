@@ -156,7 +156,7 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
 
         return getExperimentList(publicationID);
     }
-    public List<EnvironmentDTO> updateExperiment(EnvironmentDTO experimentDTO) throws ValidationException {
+    public List<EnvironmentDTO> updateExperiment(EnvironmentDTO experimentDTO,String exptName) throws ValidationException {
         if (experimentDTO == null)
             throw new ValidationException("No experiment entity provided");
         String experimentID = experimentDTO.getZdbID();
@@ -170,7 +170,7 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
                 throw new ValidationException("No experiment found for " + experimentID);
             }
             publicationID = experiment.getPublication().getZdbID();
-            experiment.setName(experimentDTO.getName());
+            experiment.setName(exptName);
             getExpressionRepository().saveExperiment(experiment);
 
 
