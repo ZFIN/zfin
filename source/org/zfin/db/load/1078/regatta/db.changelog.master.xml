@@ -9,6 +9,6 @@
   <include file="source/org/zfin/db/load/1078/regatta/updateConstruct11409.sql"/>
   <include file="source/org/zfin/db/load/1078/regatta/dropCCTemp.sql"/>
   <include file="source/org/zfin/db/load/1078/regatta/insertTranscriptStatus.sql"/>
-  <include file="source/org/zfin/db/load/1079/shipwreck/restoreGenotypes.sql"/>
+  <include file="source/org/zfin/db/load/1078/regatta/restoreGenotypes.sql"/>
 
 </databaseChangeLog>
