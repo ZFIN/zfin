@@ -4,6 +4,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
+import org.zfin.gwt.curation.event.ChangeConditionEvent;
 import org.zfin.gwt.root.dto.ConditionDTO;
 import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.dto.OntologyDTO;
@@ -12,6 +13,7 @@ import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.TermEntry;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.DeleteImage;
 
 import java.util.*;
@@ -37,7 +39,7 @@ public class ConditionAddPresenter implements HandlesError {
 
 
     public void updateExperimentList() {
-        loadExperiments();
+        loadExperiments(false);
         setVisibility(null);
     }
 
@@ -51,9 +53,11 @@ public class ConditionAddPresenter implements HandlesError {
         });
     }
 
-    public void loadExperiments() {
+    // notify means: calling this form within this module, notification needed for other part,
+    // or it is called from outside then no notification needed.
+    public void loadExperiments(boolean notify) {
         ExperimentRPCService.App.getInstance().getExperimentList(publicationID,
-                new ExperimentListCallBack("Failed to retrieve experiments: "));
+                new ExperimentListCallBack(notify, "Failed to retrieve experiments: "));
 
     }
 
@@ -114,7 +118,7 @@ public class ConditionAddPresenter implements HandlesError {
         }
         String experimentID = view.experimentCopyToSelectionList.getSelected();
         ExperimentRPCService.App.getInstance().copyConditions(experimentID, copyConditionIdList,
-                new ExperimentListCallBack("Failed to copy conditions: "));
+                new ExperimentListCallBack(true, "Failed to copy conditions: "));
     }
 
     private void enableCopyControls(boolean enable) {
@@ -218,13 +222,14 @@ public class ConditionAddPresenter implements HandlesError {
     public void createCondition() {
         if (!formIsValidated()) {
             setError("The Term entry fields are not all validated...");
+            view.loadingImage.setVisible(false);
             return;
         }
 
         ConditionDTO conditionDTO = getConditionFromFrom();
         view.clearError();
         ExperimentRPCService.App.getInstance().createCondition(publicationID, conditionDTO,
-                new ExperimentListCallBack("Failed to save condition: "));
+                new ExperimentListCallBack(true, "Failed to save condition: "));
     }
 
     private boolean formIsValidated() {
@@ -268,6 +273,7 @@ public class ConditionAddPresenter implements HandlesError {
             String message = "Are you sure you want to delete this condition?";
             if (!Window.confirm(message))
                 return;
+            view.loadingImage.setVisible(true);
 
             ExperimentRPCService.App.getInstance().deleteCondition(conditionDTO, new FeatureEditCallBack<List<EnvironmentDTO>>("Failed to remove condition: ", presenter) {
                 @Override
@@ -275,6 +281,10 @@ public class ConditionAddPresenter implements HandlesError {
                     dtoList.clear();
                     dtoList = list;
                     populateData();
+                    view.loadingImage.setVisible(false);
+                    // notify the create-experiment section
+                    ChangeConditionEvent event = new ChangeConditionEvent();
+                    AppUtils.EVENT_BUS.fireEvent(event);
                 }
             });
         }
@@ -282,8 +292,12 @@ public class ConditionAddPresenter implements HandlesError {
 
 
     private class ExperimentListCallBack extends ZfinAsyncCallback<List<EnvironmentDTO>> {
-        public ExperimentListCallBack(String errorMessage) {
+        private boolean notify;
+
+        public ExperimentListCallBack(boolean notify, String errorMessage) {
             super(errorMessage, ConditionAddPresenter.this.view.errorLabel);
+            view.loadingImage.setVisible(false);
+            this.notify = notify;
         }
 
         public void onSuccess(List<EnvironmentDTO> experimentList) {
@@ -296,6 +310,12 @@ public class ConditionAddPresenter implements HandlesError {
             }
             populateData();
             resetGUI();
+            view.loadingImage.setVisible(false);
+            // notify the create-experiment section
+            if (notify) {
+                ChangeConditionEvent event = new ChangeConditionEvent();
+                AppUtils.EVENT_BUS.fireEvent(event);
+            }
         }
     }
 }

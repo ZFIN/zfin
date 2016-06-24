@@ -77,11 +77,13 @@ public class ConditionAddView extends AbstractViewComposite {
 
     @UiHandler("createExperimentConditionButton")
     void onClickCreateCondition(@SuppressWarnings("unused") ClickEvent event) {
+        loadingImage.setVisible(true);
         presenter.createCondition();
     }
 
     @UiHandler("copyExperimentConditionButton")
     void onClickCopyCondition(@SuppressWarnings("unused") ClickEvent event) {
+        loadingImage.setVisible(true);
         presenter.copyConditions();
     }
 
@@ -93,6 +95,8 @@ public class ConditionAddView extends AbstractViewComposite {
         int row = elementIndex + 1;
         int col = 0;
         dataTable.setText(row, col++, "");
+        dataTable.getColumnFormatter().setWidth(0, "20px");
+        dataTable.getColumnFormatter().setWidth(1, "150px");
         if (lastCondition == null || !lastCondition.getEnvironmentZdbID().equals(dto.getEnvironmentZdbID()))
             dataTable.setText(row, col++, experimentDTO.getName());
         else
