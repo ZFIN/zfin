@@ -475,4 +475,16 @@ public class GenericTerm implements Term<GenericTermRelationship> {
     }
 
 
+    public Set<GenericTerm> getAllChildren() {
+        if (getChildTerms() == null)
+            return null;
+        Set<GenericTerm> childSet = new HashSet<>();
+        for (GenericTerm child : getChildTerms()) {
+            childSet.add(child);
+            Set<GenericTerm> allChildren = child.getAllChildren();
+            if (allChildren != null)
+                childSet.addAll(allChildren);
+        }
+        return childSet;
+    }
 }

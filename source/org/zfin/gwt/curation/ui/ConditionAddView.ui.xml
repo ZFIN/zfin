@@ -120,7 +120,7 @@
                 </g:row>
             </g:Grid>
             <zfin:SimpleErrorElement ui:field="errorLabel"/>
-            <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="false"/>
+            <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="true"/>
         </g:FlowPanel>
     </g:FlowPanel>
 </ui:UiBinder>
