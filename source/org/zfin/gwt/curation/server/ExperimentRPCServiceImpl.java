@@ -1,6 +1,7 @@
 package org.zfin.gwt.curation.server;
 
 
+import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
@@ -157,6 +158,7 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
         return getExperimentList(publicationID);
     }
     public List<EnvironmentDTO> updateExperiment(EnvironmentDTO experimentDTO,String exptName) throws ValidationException {
+
         if (experimentDTO == null)
             throw new ValidationException("No experiment entity provided");
         String experimentID = experimentDTO.getZdbID();
