@@ -142,8 +142,13 @@ using btree in idxdbs2;
 create index betterFishIdIndex on tmp_betterFish(betterFishId)
 using btree in idxdbs3;
 
-create table tmp_betterFishDump (badFishId varchar(50), badFishName, varchar(255), betterFishId varchar(50),
-       betterFishName varchar(255));
+create table tmp_betterFishDump (badFishId varchar(50),
+        badFishName varchar(255), 
+	betterFishId varchar(50),
+       betterFishName varchar(255)
+       )
+in tbldbs2
+extent size 2048 next size 2048;
 
 insert into tmp_betterFishDump (badFishId, badFishName, betterFishId, betterFishName)
 select distinct badFishId, badFishName, betterFishId, betterFishName
