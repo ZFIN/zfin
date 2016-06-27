@@ -130,7 +130,8 @@ select distinct badFishId, badFishName, betterFishId, betterFishName
 unload to "<!--|TARGETROOT|-->/server_apps/Reports/BetterFish/betterFishNoGeneticMatch.txt"
  select dat_term_zdb_id, tmp_betterFish.* from tmp_betterFish, outer (disease_annotation, disease_annotation_model, fish_experiment)
    where genox_zdb_id = damo_genox_zdb_id 
-   and genox_fish_zdb_id = betterFishId;
+   and genox_fish_zdb_id = betterFishId
+   and dat_Zdb_id = damo_dat_zdb_id;
 
 unload to "<!--|TARGETROOT|-->/server_apps/Reports/BetterFish/betterFishOneGeneticMatch.txt"
 select * from tmp_betterFishDump;
