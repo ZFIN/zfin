@@ -128,7 +128,9 @@ select distinct badFishId, badFishName, betterFishId, betterFishName
 ;
 
 unload to "<!--|TARGETROOT|-->/server_apps/Reports/BetterFish/betterFishNoGeneticMatch.txt"
- select * from tmp_betterFish;
+ select dat_term_zdb_id, tmp_betterFish.* from tmp_betterFish, outer (disease_annotation, disease_annotation_model, fish_experiment)
+   where genox_zdb_id = damo_genox_zdb_id 
+   and genox_fish_zdb_id = betterFishId;
 
 unload to "<!--|TARGETROOT|-->/server_apps/Reports/BetterFish/betterFishOneGeneticMatch.txt"
 select * from tmp_betterFishDump;
