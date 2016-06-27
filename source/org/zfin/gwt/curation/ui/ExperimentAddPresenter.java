@@ -4,9 +4,9 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import org.zfin.gwt.curation.event.AddNewExperimentEvent;
-import org.zfin.gwt.curation.event.DeleteExperimentEvent;
-import org.zfin.gwt.curation.event.UpdateExperimentEvent;
+import com.google.gwt.user.client.ui.TextBox;
+import org.zfin.gwt.curation.event.ChangeExperimentEvent;
+
 import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
@@ -51,17 +51,18 @@ public class ExperimentAddPresenter implements HandlesError {
             return;
         }
         for (EnvironmentDTO dto : dtoList) {
-            DeleteImage deleteImage1 = new DeleteImage("Delete Note " + dto.getZdbID());
-            deleteImage1.addClickHandler(new DeleteExperimentClickHandler(dto));
+
 
             view.addExperiment(dto, elementIndex);
-
+            final TextBox exptBox=new TextBox();
+           view.addExptTextBox(exptBox, dto, elementIndex);
             DeleteImage deleteImage = new DeleteImage("Delete Experiment " + dto.getZdbID());
             deleteImage.addClickHandler(new DeleteExperimentClickHandler(dto));
             view.addDeleteButton(dto, deleteImage, elementIndex);
             final Button updateButton = new Button();
-            updateButton.addClickHandler(new UpdateExperimentClickHandler(dto));
-            view.addUpdateButton(updateButton, elementIndex);
+
+            updateButton.addClickHandler(new UpdateExperimentClickHandler(dto,exptBox.getValue()));
+            view.addUpdateButton(dto,updateButton, elementIndex);
             elementIndex++;
 
         }
@@ -98,7 +99,7 @@ public class ExperimentAddPresenter implements HandlesError {
 
         ExperimentRPCService.App.getInstance().createExperiment(publicationID, environmentDTO, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to save a Experiment: ", view.errorLabel) {
             public void onSuccess(List<EnvironmentDTO> experimentList) {
-                AddNewExperimentEvent event = new AddNewExperimentEvent();
+                ChangeExperimentEvent event = new ChangeExperimentEvent();
                 AppUtils.EVENT_BUS.fireEvent(event);
                 dtoList = experimentList;
                 resetGUI();
@@ -144,7 +145,7 @@ public class ExperimentAddPresenter implements HandlesError {
                 @Override
                 public void onSuccess(List<EnvironmentDTO> list) {
                     fireEventSuccess();
-                    DeleteExperimentEvent event = new DeleteExperimentEvent();
+                    ChangeExperimentEvent event = new ChangeExperimentEvent();
                     AppUtils.EVENT_BUS.fireEvent(event);
                     dtoList = list;
                     resetGUI();
@@ -157,24 +158,25 @@ public class ExperimentAddPresenter implements HandlesError {
     private class UpdateExperimentClickHandler implements ClickHandler {
 
         private EnvironmentDTO environmentDTO;
+  String exptName;
 
-        public UpdateExperimentClickHandler(EnvironmentDTO environmentDTO) {
+        public UpdateExperimentClickHandler(EnvironmentDTO environmentDTO,String exptName) {
+
             this.environmentDTO = environmentDTO;
+            this.exptName=exptName;
         }
 
         @Override
         public void onClick(ClickEvent clickEvent) {
-            String message = "Are you sure you want to update the name of this experiment?";
-            if (!Window.confirm(message))
-                return;
+
            // EnvironmentDTO dto = new EnvironmentDTO();
-            ExperimentRPCService.App.getInstance().updateExperiment(environmentDTO, view.exptBox.getText(),new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to update Experiment: ", view.errorLabel) {
+            ExperimentRPCService.App.getInstance().updateExperiment(environmentDTO, exptName,new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to update Experiment: ", view.errorLabel) {
                 @Override
                 public void onSuccess(List<EnvironmentDTO> list) {
                     fireEventSuccess();
                     //Window.alert("Feature successfully created");
 
-                    UpdateExperimentEvent event = new UpdateExperimentEvent();
+                    ChangeExperimentEvent event = new ChangeExperimentEvent();
                     AppUtils.EVENT_BUS.fireEvent(event);
                     dtoList = list;
                     resetGUI();

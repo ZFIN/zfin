@@ -42,7 +42,7 @@ public class ExperimentAddView extends AbstractViewComposite {
     @UiField
     TextBox experimentNameAddBox;
 
-    TextBox exptBox;
+  //  TextBox exptBox;
 
 
    /* @UiHandler("resetButton")
@@ -59,23 +59,28 @@ public class ExperimentAddView extends AbstractViewComposite {
 
     public void addExperiment(EnvironmentDTO experimentDTO, int elementIndex) {
 
-         TextBox exptBox = new TextBox();
+     //    TextBox exptBox = new TextBox();
         dataTable.resizeRows(elementIndex + 2);
         int row = elementIndex + 1;
         setRowStyle(row);
         int col = 0;
 
-        dataTable.setText(row, col++, "");
+     /*   dataTable.setText(row, col++, "");
         if (experimentDTO != null) {
             dataTable.setWidget(row, col++, exptBox);
             exptBox.setText(experimentDTO.getName());
         }
         // dataTable.setText(row, col++, experimentDTO.getName());
         else
-            dataTable.setText(row, col++, "");
+            dataTable.setText(row, col++, "");*/
 
     }
+    public void addExptTextBox(TextBox exptBox, EnvironmentDTO dto, int elementIndex) {
+        int row = elementIndex + 1;
+        dataTable.setWidget(row, 1, exptBox);
+        exptBox.setText(dto.getName());
 
+    }
     public void addDeleteButton(EnvironmentDTO dto, DeleteImage deleteImage, int elementIndex) {
         int row = elementIndex + 1;
         if (dto.conditionDTOList == null) {
@@ -83,7 +88,7 @@ public class ExperimentAddView extends AbstractViewComposite {
         }
     }
 
-    public void addUpdateButton(Button updateButton, int elementIndex) {
+    public void addUpdateButton(EnvironmentDTO dto,Button updateButton, int elementIndex) {
         int row = elementIndex + 1;
         updateButton.setText("Update");
         dataTable.setWidget(row, 0, updateButton);

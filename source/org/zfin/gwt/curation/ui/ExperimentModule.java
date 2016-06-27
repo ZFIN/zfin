@@ -71,30 +71,22 @@ public class ExperimentModule implements EntryPoint {
                         conditionPresenter.onTermSelectEvent(event);
                     }
                 });
-        AppUtils.EVENT_BUS.addHandler(AddNewExperimentEvent.TYPE,
-                new AddNewExperimentEventHandler() {
+        AppUtils.EVENT_BUS.addHandler(ChangeExperimentEvent.TYPE,
+                new ChangeExperimentEventHandler() {
                     @Override
-                    public void onAdd(AddNewExperimentEvent event) {
+                    public void onAdd(ChangeExperimentEvent event) {
                         conditionPresenter.updateExperimentList();
                     }
-
-                });
-        AppUtils.EVENT_BUS.addHandler(UpdateExperimentEvent.TYPE,
-                new UpdateExperimentEventHandler() {
-                    @Override
-                    public void onUpdate(UpdateExperimentEvent event) {
+                    public void onUpdate(ChangeExperimentEvent event) {
                         conditionPresenter.updateExperimentList();
                     }
-
-                });
-        AppUtils.EVENT_BUS.addHandler(DeleteExperimentEvent.TYPE,
-                new DeleteExperimentEventHandler() {
-                    @Override
-                    public void onDelete(DeleteExperimentEvent event) {
+                    public void onDelete(ChangeExperimentEvent event) {
                         conditionPresenter.go();
                     }
 
                 });
+
+
         AppUtils.EVENT_BUS.addHandler(ChangeConditionEvent.TYPE,
                 new ChangeConditionEventHandler() {
                     @Override

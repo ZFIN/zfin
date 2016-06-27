@@ -25,24 +25,24 @@
             </g:row>
         </g:Grid>
        <g:Grid cellSpacing='10' styleName="searchresults groupstripes">
-       <g:row>
-           <g:cell/>
-           <g:customCell>
-               <g:FlowPanel>
-                   <g:TextBox ui:field="experimentNameAddBox"/>
-                   <g:HTML>
-                       <p/>
-                   </g:HTML>
-                   <g:HorizontalPanel addStyleNames="vertical-margin">
-                       <g:Button ui:field="addExperimentButton" text="Add"
-                                 addStyleNames="btn btn-primary" />
+           <g:row>
+               <g:cell/>
+               <g:customCell>
+                   <g:FlowPanel>
 
-                   </g:HorizontalPanel>
-               </g:FlowPanel>
-           </g:customCell>
+                       <g:HTML>
+                           <p/>
+                       </g:HTML>
+                       <g:HorizontalPanel addStyleNames="vertical-margin">
+                           <g:Button ui:field="addExperimentButton" text="Add"
+                                     addStyleNames="btn btn-primary" />
+                           <g:TextBox ui:field="experimentNameAddBox"/>
+                       </g:HorizontalPanel>
+                   </g:FlowPanel>
+               </g:customCell>
 
-       </g:row>
-   </g:Grid>
+           </g:row>
+       </g:Grid>
        <!--<g:Grid cellSpacing='10' styleName="searchresults groupstripes">
             <g:row>
        <g:cell/>
