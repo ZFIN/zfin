@@ -20,8 +20,8 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/Reports/BetterFish
 
 
-GENERICS = 
-STATICS  = runBetterFish.sh betterFish.sql 
+GENERICS = betterFish.sql 
+STATICS  = runBetterFish.sh 
 
 
 # ---------------  Production Rules  ------------------------------------
