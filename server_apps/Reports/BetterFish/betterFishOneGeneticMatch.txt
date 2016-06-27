@@ -1,2 +1,0 @@
-ZDB-FISH-160415-22|mitfa<sup>w2/w2</sup>; roy<sup>a9/a9</sup> + MO2-alas2|ZDB-FISH-160415-20|mitfa<sup>w2/w2</sup>; roy<sup>a9/a9</sup> + MO1-slc25a38a + MO1-slc25a38b|
-ZDB-FISH-160429-18|jh2Tg + MO1-alms1|ZDB-FISH-160429-19|jh2Tg + MO1-bbs1|
