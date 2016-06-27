@@ -50,7 +50,7 @@ public class ExperimentAddPresenter implements HandlesError {
             return;
         }
         for (EnvironmentDTO dto : dtoList) {
-            view.addExperiment(dto, elementIndex);
+            //view.addExperiment(dto, elementIndex);
             final TextBox experimentTextBox = new TextBox();
             view.addExptTextBox(experimentTextBox, dto, elementIndex);
             DeleteImage deleteImage = new DeleteImage("Delete Experiment " + dto.getZdbID());
@@ -60,8 +60,8 @@ public class ExperimentAddPresenter implements HandlesError {
             updateButton.addClickHandler(new UpdateExperimentClickHandler(dto, experimentTextBox));
             view.addUpdateButton(dto, updateButton, elementIndex);
             elementIndex++;
-
         }
+        view.addConstructionRow(elementIndex);
     }
 
 

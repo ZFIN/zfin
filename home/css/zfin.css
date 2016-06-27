@@ -836,3 +836,9 @@ ul.comma-separated > li:last-child:after {
 .vertical-margin {
     margin-top: 20px;
 }
+
+.construction {
+    background: rgb(204, 204, 204) none repeat scroll 0%;
+    border: 1px solid #ccc;
+}
+

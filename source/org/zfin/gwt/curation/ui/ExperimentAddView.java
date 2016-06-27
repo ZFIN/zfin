@@ -10,6 +10,7 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.ui.IsDirtyWidget;
+import org.zfin.gwt.root.ui.ShowHideToggle;
 import org.zfin.gwt.root.util.DeleteImage;
 import org.zfin.gwt.root.util.WidgetUtil;
 
@@ -41,14 +42,8 @@ public class ExperimentAddView extends AbstractViewComposite {
     Button addExperimentButton;
     @UiField
     TextBox experimentNameAddBox;
-
-  //  TextBox exptBox;
-
-
-   /* @UiHandler("resetButton")
-    void onClickReset(@SuppressWarnings("unused") ClickEvent event) {
-        presenter.resetGUI();
-    }*/
+    @UiField
+    ShowHideToggle showHideToggle;
 
     @UiHandler("addExperimentButton")
     void onClickCreateExperiment(@SuppressWarnings("unused") ClickEvent event) {
@@ -56,31 +51,37 @@ public class ExperimentAddView extends AbstractViewComposite {
         presenter.createExperiment();
     }
 
+    @UiHandler("showHideToggle")
+    void onClickShowHide(@SuppressWarnings("unused") ClickEvent event) {
+        showHideToggle.toggleVisibility();
+    }
+
 
     public void addExperiment(EnvironmentDTO experimentDTO, int elementIndex) {
-
-     //    TextBox exptBox = new TextBox();
         dataTable.resizeRows(elementIndex + 2);
         int row = elementIndex + 1;
         setRowStyle(row);
         int col = 0;
-
-     /*   dataTable.setText(row, col++, "");
-        if (experimentDTO != null) {
-            dataTable.setWidget(row, col++, exptBox);
-            exptBox.setText(experimentDTO.getName());
-        }
-        // dataTable.setText(row, col++, experimentDTO.getName());
-        else
-            dataTable.setText(row, col++, "");*/
-
     }
+
     public void addExptTextBox(TextBox exptBox, EnvironmentDTO dto, int elementIndex) {
+        dataTable.resizeRows(elementIndex + 2);
         int row = elementIndex + 1;
+        setRowStyle(row);
+        dataTable.getColumnFormatter().setWidth(0, "20px");
+        dataTable.getColumnFormatter().setWidth(1, "75%");
         dataTable.setWidget(row, 1, exptBox);
         exptBox.setText(dto.getName());
-
     }
+
+    public void addConstructionRow(int elementIndex) {
+        dataTable.resizeRows(elementIndex + 2);
+        int row = elementIndex + 1;
+        dataTable.getRowFormatter().setStyleName(row, "construction");
+        dataTable.setWidget(row, 0, addExperimentButton);
+        dataTable.setWidget(row, 1, experimentNameAddBox);
+    }
+
     public void addDeleteButton(EnvironmentDTO dto, DeleteImage deleteImage, int elementIndex) {
         int row = elementIndex + 1;
         if (dto.conditionDTOList == null) {
@@ -88,11 +89,10 @@ public class ExperimentAddView extends AbstractViewComposite {
         }
     }
 
-    public void addUpdateButton(EnvironmentDTO dto,Button updateButton, int elementIndex) {
+    public void addUpdateButton(EnvironmentDTO dto, Button updateButton, int elementIndex) {
         int row = elementIndex + 1;
         updateButton.setText("Update");
         dataTable.setWidget(row, 0, updateButton);
-
     }
 
     public void emptyDataTable() {
