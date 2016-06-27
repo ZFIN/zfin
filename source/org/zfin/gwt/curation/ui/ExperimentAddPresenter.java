@@ -6,7 +6,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextBox;
 import org.zfin.gwt.curation.event.ChangeExperimentEvent;
-
 import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
@@ -51,18 +50,15 @@ public class ExperimentAddPresenter implements HandlesError {
             return;
         }
         for (EnvironmentDTO dto : dtoList) {
-
-
             view.addExperiment(dto, elementIndex);
-            final TextBox exptBox=new TextBox();
-           view.addExptTextBox(exptBox, dto, elementIndex);
+            final TextBox experimentTextBox = new TextBox();
+            view.addExptTextBox(experimentTextBox, dto, elementIndex);
             DeleteImage deleteImage = new DeleteImage("Delete Experiment " + dto.getZdbID());
             deleteImage.addClickHandler(new DeleteExperimentClickHandler(dto));
             view.addDeleteButton(dto, deleteImage, elementIndex);
             final Button updateButton = new Button();
-
-            updateButton.addClickHandler(new UpdateExperimentClickHandler(dto,exptBox.getValue()));
-            view.addUpdateButton(dto,updateButton, elementIndex);
+            updateButton.addClickHandler(new UpdateExperimentClickHandler(dto, experimentTextBox));
+            view.addUpdateButton(dto, updateButton, elementIndex);
             elementIndex++;
 
         }
@@ -108,18 +104,6 @@ public class ExperimentAddPresenter implements HandlesError {
         });
     }
 
-    private boolean formIsValidated() {
-       /* if (view.zecoTermEntry.getTermTextBox().hasValidateTerm())
-            return true;
-        if (view.aoTermEntry.getTermTextBox().hasValidateTerm() && view.aoTermEntry.isVisible())
-            return true;
-        if (view.goCcTermEntry.getTermTextBox().hasValidateTerm() && view.goCcTermEntry.isVisible())
-            return true;
-        if (view.taxonTermEntry.getTermTextBox().hasValidateTerm() && view.taxonTermEntry.isVisible())
-            return true;*/
-        return false;
-    }
-
     private EnvironmentDTO getEnvironmentFromForm() {
         EnvironmentDTO dto = new EnvironmentDTO();
         dto.setName(view.experimentNameAddBox.getText());
@@ -158,19 +142,18 @@ public class ExperimentAddPresenter implements HandlesError {
     private class UpdateExperimentClickHandler implements ClickHandler {
 
         private EnvironmentDTO environmentDTO;
-  String exptName;
+        TextBox experimentTextBox;
 
-        public UpdateExperimentClickHandler(EnvironmentDTO environmentDTO,String exptName) {
+        public UpdateExperimentClickHandler(EnvironmentDTO environmentDTO, TextBox experimentTextBox) {
 
             this.environmentDTO = environmentDTO;
-            this.exptName=exptName;
+            this.experimentTextBox = experimentTextBox;
         }
 
         @Override
         public void onClick(ClickEvent clickEvent) {
 
-           // EnvironmentDTO dto = new EnvironmentDTO();
-            ExperimentRPCService.App.getInstance().updateExperiment(environmentDTO, exptName,new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to update Experiment: ", view.errorLabel) {
+            ExperimentRPCService.App.getInstance().updateExperiment(environmentDTO, experimentTextBox.getValue(), new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to update Experiment: ", view.errorLabel) {
                 @Override
                 public void onSuccess(List<EnvironmentDTO> list) {
                     fireEventSuccess();
