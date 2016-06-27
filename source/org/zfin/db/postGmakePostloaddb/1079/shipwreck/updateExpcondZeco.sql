@@ -6,7 +6,7 @@ update experiment_condition
      			      		from term
 					where term_name = 'chemical treatment')
  where exists (Select 'x' from condition_data_type
-       	      	      where cdt_zdb_id = expcond_zdb_id
+       	      	      where cdt_zdb_id = expcond_cdt_zdb_id
 		      and cdt_group = 'chemical');
 
 
