@@ -27,7 +27,7 @@ GENERICS = data_mgr.apg \
     start_select.apg htmlpageheader.apg zdb_history.apg \
     ZDB_home_leftcolumn.apg ZDB_home_rightcolumn.apg
 
-STATICS=ZDB_home.apg docframes.apg stub.html helpframes.html \
+STATICS=ZDB_home.apg stub.html helpframes.html \
     htmlpagefooter.apg input_button_generic.apg
 
 # --------------------------  Rules  ------------------------------------
