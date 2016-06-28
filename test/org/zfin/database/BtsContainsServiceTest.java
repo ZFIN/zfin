@@ -1,5 +1,6 @@
 package org.zfin.database;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -8,12 +9,13 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@Ignore("don't need to run this anymore?")
 public class BtsContainsServiceTest {
 
     @Test
     public void singleGeneFeatureCriteria() {
         String queryString = "act";
-        List<String> values = new ArrayList<String>(1);
+        List<String> values = new ArrayList<>(1);
         values.add(queryString);
         BtsContainsService btsService = new BtsContainsService("fas_all");
         btsService.addBtsExpandedValueList("fas_all", values);
@@ -26,9 +28,9 @@ public class BtsContainsServiceTest {
     @Test
     public void singleGeneFeatureMultipleTermCriteria() {
         String queryString = "act";
-        List<String> geneFeatures = new ArrayList<String>(1);
+        List<String> geneFeatures = new ArrayList<>(1);
         geneFeatures.add(queryString);
-        List<String> termIds = new ArrayList<String>(2);
+        List<String> termIds = new ArrayList<>(2);
         termIds.add("ZDB-TERM-100331-8");
         termIds.add("ZDB-TERM-100331-107");
 

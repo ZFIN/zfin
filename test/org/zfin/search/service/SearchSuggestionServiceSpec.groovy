@@ -1,11 +1,8 @@
-package org.zfin.search
+package org.zfin.search.service
 
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
-import org.zfin.search.service.SearchSuggestionService
-
-
 
 class SearchSuggestionServiceSpec extends ZfinIntegrationSpec {
 

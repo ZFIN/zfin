@@ -27,7 +27,7 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
 
     private Logger logger = Logger.getLogger(ShowHorizontalBreadBoxLinksTag.class);
 
-    private String createBreadBoxSection()  {
+    private String createBreadBoxSection() {
         QueryResponse response = getQueryResponse();
 
         if (response == null) {
@@ -46,15 +46,16 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
         }
 
         //this one isn't an error state - it just means no facets are selected
-        if (query.getFilterQueries() == null) {
+        if (!SolrService.queryHasFilterQueries(query)) {
             return "";
         }
 
         URLCreator urlCreator = new URLCreator(baseUrl);
         String path = urlCreator.getPath();
         String q = urlCreator.getFirstValue("q");
-        if (q == null)
+        if (q == null) {
             q = "";
+        }
         String url = path + "?q=" + q;
 
         StringBuilder out = new StringBuilder();
@@ -94,8 +95,8 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
         }
 
         Map<String, String> dateMap = FacetBuilderService.getPublicationDateQueries();
-        for(String key: dateMap.keySet()){
-            if(dateMap.get(key).equals(fq)){
+        for (String key : dateMap.keySet()) {
+            if (dateMap.get(key).equals(fq)) {
                 nameValuePair = new BasicNameValuePair(nameValuePair.getName(), key);
             }
         }
@@ -107,7 +108,7 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
         }
         out.append("</span>");
         out.append("<span class=\"breadbox-field-value\">");
-        String displayValue = nameValuePair.getValue().replace("\"","");
+        String displayValue = nameValuePair.getValue().replace("\"", "");
 
         out.append(SolrService.getPrettyFieldValue(displayValue));
         out.append("</span>");
@@ -123,7 +124,7 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
         try {
             pageContext.getOut().print(facetHtml);
         } catch (IOException ioe) {
-                    throw new JspException("Error: IOException while writing to client" + ioe.getMessage());
+            throw new JspException("Error: IOException while writing to client" + ioe.getMessage());
         }
         return SKIP_BODY;
     }

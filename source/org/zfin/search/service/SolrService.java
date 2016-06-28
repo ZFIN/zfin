@@ -4,7 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -20,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -141,7 +141,7 @@ public class SolrService {
             query.set("f.category.facet.limit", "100");
         } else {
 
-            for (FacetQueryEnum facetQueryEnum :category.getFacetQueries()) {
+            for (FacetQueryEnum facetQueryEnum : category.getFacetQueries()) {
                 query.addFacetQuery(facetQueryEnum.getQuery());
             }
             for (String facetQuery : FacetBuilderService.getPublicationDateQueries().values()) {
@@ -149,11 +149,12 @@ public class SolrService {
             }
 
             String[] facetFields = category.getFieldArray();
-            for (String ff : facetFields)
+            for (String ff : facetFields) {
                 if (!StringUtils.isEmpty(ff)) {
                     query.addFacetField(ff);
                     query.addFacetQuery(ff + ":[* TO *]");
                 }
+            }
         }
 
 
@@ -207,10 +208,11 @@ public class SolrService {
 
             link.append("\">");
 
-            if (onlyWildtype)
+            if (onlyWildtype) {
                 link.append("Wildtype Expression for ");
-            else
+            } else {
                 link.append("All Expression for ");
+            }
             link.append("<span class=\"genedom\">");
             link.append(geneSymbol);
             link.append("</span>");
@@ -288,7 +290,7 @@ public class SolrService {
         SolrClient server = getSolrClient("prototype");
         SolrQuery query = new SolrQuery();
         query.addFilterQuery("zebrafish_gene:\"" + geneSymbol + "\"");
-        query.addFilterQuery(fieldName+":\"" + termName + "\"");
+        query.addFilterQuery(fieldName + ":\"" + termName + "\"");
         query.addFilterQuery("is_wildtype:\"true\"");
         query.setRows(0);
         query.setHighlight(false);
@@ -314,7 +316,7 @@ public class SolrService {
             link.append(geneSymbol);
             link.append("%22");
 
-            String fq = SolrService.encode(fieldName+":" + getEscapedValue(termName));
+            String fq = SolrService.encode(fieldName + ":" + getEscapedValue(termName));
             link.append("&fq=");
             link.append(fq);
 
@@ -329,8 +331,6 @@ public class SolrService {
 
         return link.toString();
     }
-
-
 
 
     public static Map<String, String> getPhenotypeLink(String geneSymbol) {
@@ -367,8 +367,9 @@ public class SolrService {
         SolrClient server = getSolrClient("prototype");
         SolrQuery query = new SolrQuery();
         query.addFilterQuery("gene:" + geneSymbol);
-        if (isMonogenic)
+        if (isMonogenic) {
             query.addFilterQuery("is_monogenic:true");
+        }
         //only look for genes
         query.addFilterQuery("category:Phenotype");
 
@@ -415,8 +416,6 @@ public class SolrService {
     }
 
 
-
-
     public static String getBreadBoxLink(String fq, String baseUrl, boolean showLabel) {
         StringBuilder out = new StringBuilder();
 
@@ -436,8 +435,9 @@ public class SolrService {
             String displayValue = nameValuePair.getValue().replace("\"", "");
             out.append(displayValue);
             out.append("</a>");
-            if (showLabel)
+            if (showLabel) {
                 out.append("</li>");
+            }
             logger.debug("constructed pretty breadbox link text as: \"" + out.toString() + "\" ");
         }
         return out.toString();
@@ -500,8 +500,9 @@ public class SolrService {
 
 
         FieldName fName = FieldName.getFieldName(fieldName);
-        if(fName != null && fName.hasDefinedPrettyName())
+        if (fName != null && fName.hasDefinedPrettyName()) {
             return fName.getPrettyName();
+        }
 
 
         //        if (StringUtils.equals(fieldName,"normal_phenotype_statement"))
@@ -511,7 +512,7 @@ public class SolrService {
         fieldName = StringUtils.replace(fieldName, "-", "NOT ");
 
         //remove fieldType suffix cruft
-        fieldName = fieldName.replaceAll("_t$","");
+        fieldName = fieldName.replaceAll("_t$", "");
         fieldName = StringUtils.replace(fieldName, "_tf", "");
         fieldName = StringUtils.replace(fieldName, "_hl", "");
 
@@ -530,7 +531,7 @@ public class SolrService {
 
     public static String getPrettyFieldValue(String displayValue) {
         //Case 12390 - Remove the time from the date display
-        displayValue = StringUtils.replace(displayValue,"T00:00:00Z","");
+        displayValue = StringUtils.replace(displayValue, "T00:00:00Z", "");
         return displayValue;
     }
 
@@ -539,18 +540,20 @@ public class SolrService {
         String values[] = null;
 
         for (String key : parameterMap.keySet()) {
-            if (StringUtils.equals(key, "f." + fieldName + "facet.sort"))
+            if (StringUtils.equals(key, "f." + fieldName + "facet.sort")) {
                 values = parameterMap.get(key);
+            }
 
         }
 
         List<String> valueList = new ArrayList<>();
         //todo: possibly throw an exception if a sort value made it in more than once?
         //todo: also, if it did, the graceful thing to do is probably take the last value...
-        if (values != null && values.length > 0)
+        if (values != null && values.length > 0) {
             return values[0];
-        else
+        } else {
             return "count";
+        }
         //todo: here too... returning "the default" instead of null...but the default is set in solrconfig.xml,
         //todo: so it's sort of duplicated here in a little bit of an ugly way..
     }
@@ -558,8 +561,9 @@ public class SolrService {
     public static Map<String, List<String>> getFilterQueryMap(String[] filterQueries) {
         Map<String, List<String>> fqMap = new HashMap<>();
 
-        if (filterQueries == null)
+        if (filterQueries == null) {
             return fqMap;
+        }
 
         for (String fq : filterQueries) {
 
@@ -589,16 +593,19 @@ public class SolrService {
 
         StringTokenizer tokenizer = new StringTokenizer(fq, ":");
 
-        if (tokenizer.hasMoreTokens())
+        if (tokenizer.hasMoreTokens()) {
             field = tokenizer.nextToken();
+        }
         //why loop? some values have a : in them.
         while (tokenizer.hasMoreTokens()) {
-            if (!StringUtils.isEmpty(value))
+            if (!StringUtils.isEmpty(value)) {
                 value = value + ":";
+            }
             value = value + tokenizer.nextToken();
         }
-        if (StringUtils.isEmpty(field) || StringUtils.isEmpty(value))
+        if (StringUtils.isEmpty(field) || StringUtils.isEmpty(value)) {
             return null;
+        }
 
         return new BasicNameValuePair(field, value);
     }
@@ -617,11 +624,12 @@ public class SolrService {
     }
 
     public static String decode(String value) {
-        if (value == null)
+        if (value == null) {
             return null;
+        }
 
         try {
-            return URLDecoder.decode(value, HTTP.UTF_8);
+            return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             logger.error(e);
             return null;
@@ -631,11 +639,12 @@ public class SolrService {
 
 
     public static String encode(String value) {
-        if (value == null)
+        if (value == null) {
             return null;
+        }
 
         try {
-            return URLEncoder.encode(value, HTTP.UTF_8);
+            return URLEncoder.encode(value, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             logger.error(e);
             return null;
@@ -645,20 +654,22 @@ public class SolrService {
     public static String shortenFacetValue(String facetValue) {
         String shortenedName;
 
-        if (facetValue == null)
+        if (facetValue == null) {
             return null;
+        }
 
         shortenedName = StringUtils.abbreviate(facetValue, 15);
         return shortenedName;
     }
 
     public static boolean hideFacetFiltersForField(String field) {
-        if (StringUtils.contains(field, "chromosome"))
+        if (StringUtils.contains(field, "chromosome")) {
             return true;
-        else if (StringUtils.equals(field, "affected_gene_count"))
+        } else if (StringUtils.equals(field, "affected_gene_count")) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
     /* for now, hideFacetFiltersForField and this method travel together and follow the same rules */
@@ -668,36 +679,50 @@ public class SolrService {
 
     public static boolean isAJoinableFacetField(String field) {
 
-        if (field == null)
+        if (field == null) {
             return false;
+        }
 
-        if (StringUtils.contains(field, "gene"))
+        if (StringUtils.contains(field, "gene")) {
             return true;
-        if (StringUtils.contains(field, "sequence_alteration"))
+        }
+        if (StringUtils.contains(field, "sequence_alteration")) {
             return true;
+        }
         //_tf is all of the term facets
-        if (StringUtils.contains(field, "_tf"))
+        if (StringUtils.contains(field, "_tf")) {
             return true;
-        if (StringUtils.contains(field, "background"))
+        }
+        if (StringUtils.contains(field, "background")) {
             return true;
-        if (StringUtils.contains(field, "morpholino"))
+        }
+        if (StringUtils.contains(field, "morpholino")) {
             return true;
-        if (StringUtils.contains(field, "construct"))
+        }
+        if (StringUtils.contains(field, "construct")) {
             return true;
-        if (StringUtils.startsWith(field, "lab"))
+        }
+        if (StringUtils.startsWith(field, "lab")) {
             return true;
-        if (StringUtils.equals(field, "genotype"))
+        }
+        if (StringUtils.equals(field, "genotype")) {
             return true;
-        if (StringUtils.contains(field, "coding_sequence"))
+        }
+        if (StringUtils.contains(field, "coding_sequence")) {
             return true;
-        if (StringUtils.contains(field, "regulatory_region"))
+        }
+        if (StringUtils.contains(field, "regulatory_region")) {
             return true;
-        if (StringUtils.contains(field, "engineered_region"))
+        }
+        if (StringUtils.contains(field, "engineered_region")) {
             return true;
-        if (StringUtils.contains(field, "supplier"))
+        }
+        if (StringUtils.contains(field, "supplier")) {
             return true;
-        if (StringUtils.contains(field, "registered_author"))
+        }
+        if (StringUtils.contains(field, "registered_author")) {
             return true;
+        }
 
         return false;
     }
@@ -705,31 +730,37 @@ public class SolrService {
     /* Default to true, but there might be some exceptions... */
     public static boolean isAnAutocompletableFacet(String field) {
 
-        if (field == null)
+        if (field == null) {
             return false;
+        }
 
-        if (StringUtils.contains(field, "chromosome"))
+        if (StringUtils.contains(field, "chromosome")) {
             return false;
+        }
 
         return true;
     }
 
     public static boolean addFilterQueryToQuery(String fq) {
-        if (fq == null)
+        if (fq == null) {
             return false;
+        }
 
         NameValuePair nvp = splitFilterQuery(fq);
         String field = nvp.getName();
 
-        if (field == null)
+        if (field == null) {
             return false;
+        }
 
         //this catches lots, but we might want a few extra...
-        if (isAJoinableFacetField(field))
+        if (isAJoinableFacetField(field)) {
             return true;
+        }
 
-        if (StringUtils.contains(field, "disease"))
+        if (StringUtils.contains(field, "disease")) {
             return true;
+        }
 
         return false;
     }
@@ -749,13 +780,15 @@ public class SolrService {
         link.append("&fq=gene%3A%22");
         link.append(geneSymbol);
         link.append("%22");
-        if (isMonogenic)
+        if (isMonogenic) {
             link.append("&fq=is_monogenic%3Atrue");
+        }
         link.append("\">");
-        if (isMonogenic)
-        link.append("All Phenotypes for " + geneSymbol);
-        else
-        link.append("All Phenotypes involving " + geneSymbol);
+        if (isMonogenic) {
+            link.append("All Phenotypes for " + geneSymbol);
+        } else {
+            link.append("All Phenotypes involving " + geneSymbol);
+        }
         link.append(" (");
         link.append(response.getResults().getNumFound());
         link.append(") </a>");
@@ -763,5 +796,8 @@ public class SolrService {
         return link.toString();
     }
 
-
+    public static boolean queryHasFilterQueries(SolrQuery query) {
+        String[] filterQueries = query.getFilterQueries();
+        return filterQueries != null && !(filterQueries.length == 1 && filterQueries[0].startsWith("root_only:"));
+    }
 }

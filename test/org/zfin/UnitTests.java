@@ -11,6 +11,7 @@ import org.zfin.anatomy.presentation.RelationshipTypeSortingTest;
 import org.zfin.anatomy.presentation.SortAnatomyResultsTest;
 import org.zfin.anatomy.presentation.StagePresentationTest;
 import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
+import org.zfin.database.BtsContainsServiceTest;
 import org.zfin.database.DatabaseServiceTest;
 import org.zfin.database.presentation.TableTest;
 import org.zfin.datatransfer.microarray.MicroarrayParseTest;
@@ -56,6 +57,7 @@ import org.zfin.properties.ZfinPropertiesTest;
 import org.zfin.publication.MeshHeadingSpec;
 import org.zfin.publication.PubMedValidationReportTest;
 import org.zfin.publication.PublicationTest;
+import org.zfin.search.service.SolrServiceSpec;
 import org.zfin.security.Md5PasswordEncoderTest;
 import org.zfin.sequence.blast.BlastNonDBTest;
 import org.zfin.sequence.blast.SequenceTest;
@@ -83,7 +85,7 @@ import org.zfin.util.*;
         BeanCompareServiceTest.class,
         BlastNonDBTest.class,
         BlastPresentationServiceTest.class,
-//        BtsContainsServiceTest.class,
+        BtsContainsServiceTest.class,
         CurationExperimentTest.class,
         DatabaseServiceTest.class,
         DbLinkDisplayComparatorTest.class,
@@ -137,6 +139,7 @@ import org.zfin.util.*;
         SequenceTest.class,
         SerializationTests.class,
         SiteSearchTest.class,
+        SolrServiceSpec.class,
         SortAnatomyResultsTest.class,
         StagePresentationTest.class,
         StageRangeIntersectionTest.class,
