@@ -67,23 +67,18 @@ public class FishService {
 
         for (FishResult fishResult : solrSearchResults) {
             String category = fishResult.getCategory();
-            switch (category) {
-                case "Fish":
-                    Fish fish = RepositoryFactory.getMutantRepository().getFish(fishResult.getId());
-                    if (fish != null) {
-                        fishResult.setFish(fish);
-                        fishResult.setFeatureGenes(getFeatureGenes(fish));
-                        addFigures(fishResult, criteria);
-                    }
-                    break;
-                case "Mutation / Tg":
-                    Feature feature = RepositoryFactory.getFeatureRepository().getFeatureByID(fishResult.getId());
-                    if (feature != null) {
-                        fishResult.setFeatureGenes(getFeatureGeneList(feature));
-                    }
-                    break;
-                default:
-                    break;
+            if (StringUtils.equals(category, Category.FISH.getName()) || StringUtils.equals(category, Category.REPORTER_LINE.getName())) {
+                Fish fish = RepositoryFactory.getMutantRepository().getFish(fishResult.getId());
+                if (fish != null) {
+                    fishResult.setFish(fish);
+                    fishResult.setFeatureGenes(getFeatureGenes(fish));
+                    addFigures(fishResult, criteria);
+                }
+            } else if (StringUtils.equals(category, Category.MUTANT.getName())) {
+                Feature feature = RepositoryFactory.getFeatureRepository().getFeatureByID(fishResult.getId());
+                if (feature != null) {
+                    fishResult.setFeatureGenes(getFeatureGeneList(feature));
+                }
             }
         }
         results.setResultsFound((int) response.getResults().getNumFound());
