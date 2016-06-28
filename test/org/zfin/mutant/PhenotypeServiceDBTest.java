@@ -50,16 +50,4 @@ public class PhenotypeServiceDBTest extends AbstractDatabaseTest {
         assertTrue(statements.size() > 0);
     }
 
-    @Test
-    public void getPublicationList() {
-        // fetal alcohol spectrum disorder
-        String diseaseOboID = "DOID:0050696";
-        String environmentCondition = "chemical:Ethanol";
-        GenericTerm disease = getOntologyRepository().getTermByOboID(diseaseOboID);
-        Fish fish = getFishRepository().getFishByName("WT");
-        List<Publication> list = PhenotypeService.getPublicationList(disease, fish, "date", environmentCondition);
-        assertNotNull(list);
-        assertThat(list.size(), greaterThan(1));
-    }
-
 }

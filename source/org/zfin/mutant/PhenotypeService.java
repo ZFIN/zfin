@@ -268,24 +268,6 @@ public class PhenotypeService {
         return new ArrayList<>(publicationSet);
     }
 
-    public static List<Publication> getPublicationListWithConditions(GenericTerm disease, Fish fish, String environmentCondition) {
-        List<FishModelDisplay> model = OntologyService.getDiseaseModelsWithFishModel(disease);
-        if (CollectionUtils.isEmpty(model)) {
-            return null;
-        }
-        Set<Publication> publicationSet = new HashSet<>();
-        for (FishModelDisplay display : model) {
-            if (display.getFishModel().getFish().equals(fish)) {
-                if (StringUtils.isNotEmpty(environmentCondition)) {
-                    if (display.getFishModel().getExperiment().getConditionKey().equals(environmentCondition))
-                        publicationSet.addAll(display.getPublications());
-                } else
-                    publicationSet.addAll(display.getPublications());
-            }
-        }
-        return new ArrayList<>(publicationSet);
-    }
-
     public static List<Publication> getPublicationList(GenericTerm disease, FishExperiment fishExperiment, String orderBy) {
         List<Publication> publicationList = getPublicationList(disease, fishExperiment);
         if (publicationList == null) {
@@ -327,15 +309,6 @@ public class PhenotypeService {
         if (StringUtils.isEmpty(orderBy) || orderBy.equalsIgnoreCase("date")) {
             Collections.sort(publications);
         }
-    }
-
-    public static List<Publication> getPublicationList(GenericTerm disease, Fish fish, String orderBy, String environmentCondition) {
-        List<Publication> publicationList = getPublicationListWithConditions(disease, fish, environmentCondition);
-        if (publicationList == null) {
-            return null;
-        }
-        orderPublications(publicationList, orderBy);
-        return publicationList;
     }
 
     public static Set<PhenotypeStatementWarehouse> getPhenotypeObserved(Fish fish, GenericTerm term, boolean includeSubstructures) {
