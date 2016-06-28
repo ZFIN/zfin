@@ -31,6 +31,7 @@ import org.zfin.search.Category;
 import org.zfin.search.FieldName;
 import org.zfin.search.presentation.SearchResult;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
@@ -75,42 +76,61 @@ public class RelatedDataService {
         String category = result.getCategory();
 
         List<String> links = new ArrayList<>();
-
+        String gBrowseLink;
         if (StringUtils.equals(category, Category.GENE.getName())
                 || (StringUtils.equals(category, Category.MUTANT.getName()) && (StringUtils.startsWith(result.getName(), "la0")))) {
 
+            //String gBrowseLink = getGBrowseLink(id);
+            if (ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
+                List<Marker> markerList = getMarkerRepository().getTranscriptByZdbID(id).getAllRelatedMarker();
+                int numberOfTargetGenes = 0;
+                for (Marker marker : markerList) {
+                    if (marker.getMarkerType().getType().name().equals(ActiveData.Type.GENE.name())) {
+                        id = marker.getZdbID();
+                        numberOfTargetGenes++;
+                    }
+                }
+                if (numberOfTargetGenes > 1) {
+                    return null;
+                }
+                gBrowseLink = makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
+                links.add(gBrowseLink);
+            }
 
-            String gBrowseLink = getGBrowseLink(id);
 
-            if (!(id.contains("EFG"))) {
-                if (!(entityName.contains("WITHDRAWN"))) {
+            if (ActiveData.isValidActiveData(id, ActiveData.Type.GENE)) {
+                List<MarkerGenomeLocation> genomeLocations = getLinkageRepository().getGenomeLocation(getMarkerRepository().getMarkerByID(id));
+                for (MarkerGenomeLocation genomeLocation : genomeLocations) {
+                    if (genomeLocation.getSource() == GenomeLocation.Source.ZFIN) {
 
-                    if (getLinkageRepository().hasGenomeLocation(getMarkerRepository().getMarkerByID(id), GenomeLocation.Source.ENSEMBL)||(getLinkageRepository().hasGenomeLocation(getMarkerRepository().getMarkerByID(id), GenomeLocation.Source.VEGA))) {
-                        if (gBrowseLink != null) {
-                            links.add(gBrowseLink);
-                        }
+
+                        gBrowseLink = makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
+                        links.add(gBrowseLink);
                     }
                 }
             }
         }
 
 
+        if (StringUtils.equals(category, Category.REPORTER_LINE.getName())) {
+            links.addAll(getRelatedDataForReporterLine(id));
+        }
 
-            if (!(id.contains("EFG"))) {
-                if (StringUtils.equals(category, Category.GENE.getName())) {
-                    Marker marker = getMarkerRepository().getMarkerByID(id);
-                    if (!ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
-                        OrthologyPresentationBean orthologyEvidenceBean = MarkerService.getOrthologyEvidence(marker);
-                        if (orthologyEvidenceBean != null) {
-                            List<OrthologyPresentationRow> markerList = orthologyEvidenceBean.getOrthologs();
-                            if (CollectionUtils.isNotEmpty(markerList)) {
-                                links.add(getOrthologyLink(id));
-                            }
+        if (!(id.contains("EFG"))) {
+            if (StringUtils.equals(category, Category.GENE.getName())) {
+                Marker marker = getMarkerRepository().getMarkerByID(id);
+                if (!ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
+                    OrthologyPresentationBean orthologyEvidenceBean = MarkerService.getOrthologyEvidence(marker);
+                    if (orthologyEvidenceBean != null) {
+                        List<OrthologyPresentationRow> markerList = orthologyEvidenceBean.getOrthologs();
+                        if (CollectionUtils.isNotEmpty(markerList)) {
+                            links.add(getOrthologyLink(id));
                         }
                     }
-                    addSequenceLink(links, marker);
                 }
+                addSequenceLink(links, marker);
             }
+        }
 
             //Special case here, so that the ZFIN orthology pub doesn't get an orthlogy link, because the page will take 10 minutes to load!
             if (StringUtils.equals(category, Category.PUBLICATION.getName())
@@ -184,8 +204,43 @@ public class RelatedDataService {
         createExpressedGenesData(links, id, FieldName.ANATOMY_TF);
     }
 
-    private void createAffectedPhenotypeData(List<String> links, String id, String fieldName) {
-        QueryResponse response = getQueryResponse(fieldName);
+    private List<String> getRelatedDataForReporterLine(String id) {
+        List<String> links = new ArrayList<>();
+        
+        String expressionLink = getCategoryLink(Category.EXPRESSIONS, Category.EXPRESSIONS.getName(), FieldName.FISH, FieldName.EXPERIMENTAL_CONDITIONS.getName() + ":\"standard or control\"");
+        if (StringUtils.isNotEmpty(expressionLink)) {
+            links.add(expressionLink);
+        }
+
+        String phenotypeLink = getCategoryLink(Category.PHENOTYPE, Category.PHENOTYPE.getName(), FieldName.FISH, FieldName.EXPERIMENTAL_CONDITIONS.getName() + ":\"standard or control\"");
+        if (StringUtils.isNotEmpty(phenotypeLink)) {
+            links.add(phenotypeLink);
+        }
+
+        return links;
+    }
+
+    private String getCategoryLink(Category category, String label, FieldName fieldName, String... filterQueries) {
+
+        QueryResponse response = getQueryResponse(fieldName, category, filterQueries);
+        FacetField facetField = response.getFacetField(FieldName.CATEGORY.getName());
+
+        String link = null;
+
+        if (facetField != null && facetField.getValues() != null) {
+            for (FacetField.Count count : facetField.getValues()) {
+                Properties properties = new Properties();
+                properties.put(fieldName.getName(), entityName);
+                link = createHyperLink("", FieldName.CATEGORY.getName(), count.getName(), count.getCount(), label, false, properties, filterQueries).toString();
+            }
+        }
+
+        return link;
+
+    }
+
+    private void createAffectedPhenotypeData(List<String> links, String id, FieldName fieldName) {
+        QueryResponse response = getQueryResponse(fieldName, Category.GENE);
 
         FacetField category = response.getFacetField("category");
         if (category != null && category.getValues() != null) {
@@ -200,7 +255,7 @@ public class RelatedDataService {
     }
 
     private void createExpressedGenesData(List<String> links, String id, FieldName fieldName) {
-        QueryResponse response = getQueryResponse(fieldName.getName());
+        QueryResponse response = getQueryResponse(fieldName, Category.GENE);
 
         FacetField category = response.getFacetField("category");
         if (category != null && category.getValues() != null) {
@@ -214,34 +269,43 @@ public class RelatedDataService {
         }
     }
 
-    private void getGoAnnotationData(List<String> links, String id, String fieldName) {
-        QueryResponse response = getQueryResponse(fieldName);
+    private void getGoAnnotationData(List<String> links, String id, FieldName field) {
+        QueryResponse response = getQueryResponse(field, Category.GENE);
 
         FacetField category = response.getFacetField("category");
         if (category != null && category.getValues() != null) {
             for (FacetField.Count count : category.getValues()) {
                 if (count.getName().equals(Category.GENE.getName())) {
                     Properties properties = new Properties();
-                    properties.put(fieldName, entityName);
+                    properties.put(field.getName(), entityName);
                     links.add(createHyperLink(id, category.getName(), count.getName(), count.getCount(), GENES_WITH_GO, false, properties).toString());
                 }
             }
         }
     }
 
-    private QueryResponse getQueryResponse(String ontologyName) {
-        String field = "category";
-        SolrClient server = SolrService.getSolrClient("prototype");
+    private QueryResponse getQueryResponse(FieldName field, Category category) {
+        return getQueryResponse(field, category, (String[]) null);
+    }
+
+    private QueryResponse getQueryResponse(FieldName field, Category category, String... filterQueries) {
+
+        SolrClient server = SolrService.getSolrClient();
         SolrQuery query = new SolrQuery();
         //look for the term name in an OR over multiple fields
-        query.addFilterQuery(ontologyName + ":\"" + entityName + "\"");
-        //only look for genes
-        query.addFilterQuery("category:\"" + Category.GENE.getName() + "\"");
+        query.addFilterQuery(field.getName() + ":\"" + entityName + "\"");
+        query.addFilterQuery(FieldName.CATEGORY.getName() + ":\"" + category.getName() + "\"");
         query.setRows(0);
         query.setHighlight(false);
         query.setFacet(true);
         query.setFacetLimit(100);
-        query.addFacetField(field);
+        query.addFacetField(FieldName.CATEGORY.getName());
+        if (filterQueries != null && filterQueries.length > 0) {
+            for (String filterQuery : filterQueries) {
+                query.addFilterQuery(filterQuery);
+            }
+
+        }
 
         QueryResponse response = new QueryResponse();
         try {
@@ -297,6 +361,12 @@ public class RelatedDataService {
     protected StringBuilder createHyperLink(String id, String facetFieldName, String categoryName,
                                             long categoryCount, String hyperlinkName, boolean isXref,
                                             Properties properties) {
+        return createHyperLink(id, facetFieldName, categoryName, categoryCount, hyperlinkName, isXref, properties, (String[]) null);
+    }
+
+    protected StringBuilder createHyperLink(String id, String facetFieldName, String categoryName,
+                                            long categoryCount, String hyperlinkName, boolean isXref,
+                                            Properties properties, String... filterQueries) {
         //this is an unpleasant hack, I need to stuff the expression popup link in here, so it's a little hijack...
         if (id.startsWith("ZDB-GENE") && StringUtils.equals(categoryName, "Expression")) {
             return getGeneExpressionPopupLink(id, categoryCount);
@@ -312,7 +382,7 @@ public class RelatedDataService {
                 hyperlinkName = categoryName;
             }
             StringBuilder link = new StringBuilder();
-            link.append("<a href=\"/prototype?q=");
+            link.append("<a href=\"/search?q=");
             String fq = SolrService.encode(facetFieldName + ":\"" + categoryName + "\"");
             link.append("&fq=");
             link.append(fq);
@@ -320,10 +390,19 @@ public class RelatedDataService {
                 link.append("&fq=xref%3A%22");
                 link.append(id);
             } else {
+                //org.zfin.search.FieldName cannot be cast to java.lang.String
                 link.append("&fq=").append(properties.propertyNames().nextElement()).append("%3A%22");
                 link.append(properties.elements().nextElement());
             }
             link.append("%22");
+
+            if (filterQueries != null && filterQueries.length > 0) {
+                for (String filterQuery : filterQueries) {
+                    link.append("&fq=" + SolrService.encode(filterQuery));
+                }
+            }
+
+
             link.append("\">");
             link.append(hyperlinkName.replace("\"", ""));
             link.append(" (");
@@ -364,28 +443,6 @@ public class RelatedDataService {
         link.append(") <img class=\"modal-icon\" src=\"/images/popup-link-icon.png\"/></a>");
 
         return link;
-    }
-
-
-    //todo: probably this should move to GBrowseService, but I don't want to refactor that in this branch till I can grab trunk again...
-    private String getGBrowseLink(String id) {
-
-        if (ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
-            List<Marker> markerList = getMarkerRepository().getTranscriptByZdbID(id).getAllRelatedMarker();
-            int numberOfTargetGenes = 0;
-            for (Marker marker : markerList) {
-                if (marker.getMarkerType().getType().name().equals(ActiveData.Type.GENE.name())) {
-                    id = marker.getZdbID();
-                    numberOfTargetGenes++;
-                }
-            }
-            if (numberOfTargetGenes > 1) {
-                return null;
-            }
-
-        }
-
-        return makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
     }
 
     private void addSequenceLink(Collection<String> links, String markerId) {

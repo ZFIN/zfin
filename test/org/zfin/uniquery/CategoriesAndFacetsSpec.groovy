@@ -164,6 +164,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                 (Category.PHENOTYPE)                 : [
                         FieldName.ANATOMY_TF,
                         FieldName.BIOLOGICAL_PROCESS_TF,
+                        FieldName.EXPERIMENTAL_CONDITIONS,
                         FieldName.HAS_IMAGE,
                         FieldName.MISEXPRESSED_GENE,
                         FieldName.MOLECULAR_FUNCTION_TF,

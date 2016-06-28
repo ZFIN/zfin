@@ -110,6 +110,8 @@ public class ResultService {
                 injectGeneAttributes(result);
             } else if (StringUtils.equals(result.getCategory(), Category.FISH.getName())) {
                 injectFishAttributes(result);
+            } else if (StringUtils.equals(result.getCategory(), Category.REPORTER_LINE.getName())) {
+                injectFishAttributes(result);
             } else if (StringUtils.equals(result.getCategory(), Category.FIGURE.getName())) {
                 injectFigureAttributes(result);
             } else if (StringUtils.equals(result.getCategory(), Category.MUTANT.getName())) {
