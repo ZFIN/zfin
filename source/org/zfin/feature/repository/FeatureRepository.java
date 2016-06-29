@@ -179,4 +179,6 @@ public interface FeatureRepository {
     List<String> getMutagensForFeatureType(FeatureTypeEnum featureTypeEnum);
 
     void update(Feature feature, Set<FeatureTranscriptMutationDetail> addTranscriptAttribution, String publicationID);
+
+    void deleteFeatureProteinMutationDetail(FeatureProteinMutationDetail detail);
 }

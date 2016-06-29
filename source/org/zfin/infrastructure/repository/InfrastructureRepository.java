@@ -459,6 +459,8 @@ public interface InfrastructureRepository {
     ControlledVocab getControlledVocabByID(String zdbID);
 
     void insertMutationDetailAttribution(String dataZdbID, String publicationID);
+
+    void deleteMutationDetailAttribution(String zdbID, String publicationZdbID);
 }
 
 

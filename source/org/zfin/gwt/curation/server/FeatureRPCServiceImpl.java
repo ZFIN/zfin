@@ -185,23 +185,32 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 infrastructureRepository.insertMutationDetailAttribution(detail.getZdbID(), featureDTO.getPublicationZdbID());
             }
         }
+        FeatureProteinMutationDetail proteinDetail = feature.getFeatureProteinMutationDetail();
         if (featureDTO.getProteinChangeDTO() != null) {
-            FeatureProteinMutationDetail detail = feature.getFeatureProteinMutationDetail();
-            if (detail == null) {
-                detail = new FeatureProteinMutationDetail();
-                detail.setFeature(feature);
-                feature.setFeatureProteinMutationDetail(detail);
+            if (proteinDetail == null) {
+                proteinDetail = new FeatureProteinMutationDetail();
+                proteinDetail.setFeature(feature);
+                feature.setFeatureProteinMutationDetail(proteinDetail);
             }
-            FeatureProteinMutationDetail oldDetail = detail.clone();
+            FeatureProteinMutationDetail oldDetail = proteinDetail.clone();
             String accessionNumber = featureDTO.getProteinChangeDTO().getSequenceReferenceAccessionNumber();
             if (StringUtils.isNotEmpty(accessionNumber)) {
                 if (isValidAccession(accessionNumber, "Protein") == null)
                     throw new ValidationException("Protein accession Number not found: " + accessionNumber);
             }
-            DTOConversionService.updateProteinMutationDetailWithDTO(detail, featureDTO.getProteinChangeDTO());
-            if (!detail.equals(oldDetail)) {
-                infrastructureRepository.insertMutationDetailAttribution(detail.getZdbID(), featureDTO.getPublicationZdbID());
+            DTOConversionService.updateProteinMutationDetailWithDTO(proteinDetail, featureDTO.getProteinChangeDTO());
+            if(proteinDetail.getZdbID() == null)
+                HibernateUtil.currentSession().save(proteinDetail);
+            if (!proteinDetail.equals(oldDetail)) {
+                infrastructureRepository.insertMutationDetailAttribution(proteinDetail.getZdbID(), featureDTO.getPublicationZdbID());
             }
+        } else {
+            // remove existing record
+            if (proteinDetail != null) {
+                featureRepository.deleteFeatureProteinMutationDetail(proteinDetail);
+                infrastructureRepository.deleteMutationDetailAttribution(proteinDetail.getZdbID(), featureDTO.getPublicationZdbID());
+            }
+
         }
         Set<FeatureTranscriptMutationDetail> addTranscriptAttribution = new HashSet<>();
         if (featureDTO.getTranscriptChangeDTOSet() != null) {

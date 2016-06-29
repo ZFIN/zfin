@@ -1090,5 +1090,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
             }
         }
     }
+
+    @Override
+    public void deleteFeatureProteinMutationDetail(FeatureProteinMutationDetail detail) {
+        HibernateUtil.currentSession().delete(detail);
+    }
 }
 

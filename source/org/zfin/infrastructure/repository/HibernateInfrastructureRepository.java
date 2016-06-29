@@ -1814,6 +1814,22 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         }
         session.save(recordAttribution);
     }
+
+    @Override
+    public void deleteMutationDetailAttribution(String zdbID, String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        RecordAttribution recordAttribution = new RecordAttribution();
+        recordAttribution.setDataZdbID(zdbID);
+        recordAttribution.setSourceZdbID(publicationID);
+        recordAttribution.setSourceType(RecordAttribution.SourceType.STANDARD);
+
+        Criteria criteriaExisting = session.createCriteria(RecordAttribution.class);
+        criteriaExisting.add(Example.create(recordAttribution));
+        RecordAttribution thisPubResult = (RecordAttribution) criteriaExisting.uniqueResult();
+        if (thisPubResult != null)
+            HibernateUtil.currentSession().delete(thisPubResult);
+    }
 }
 
 
