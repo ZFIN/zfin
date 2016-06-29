@@ -634,6 +634,17 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (List<ExpressionExperiment2>) query.list();
     }
 
+    public List<ExpressionExperiment> getExpressionByExperiment(String experimentID) {
+        String hql = "select experiment from ExpressionExperiment experiment "
+                            + "     where experiment.fishExperiment.experiment.zdbID = :experimentID ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setString("experimentID", experimentID);
+
+
+
+        return (List<ExpressionExperiment>) query.list();
+    }
 
     @SuppressWarnings("unchecked")
     public List<ExpressionExperiment> getExperiments(String publicationID) {

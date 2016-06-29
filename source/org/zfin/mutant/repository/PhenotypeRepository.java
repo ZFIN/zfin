@@ -108,6 +108,7 @@ public interface PhenotypeRepository {
      * @return set of phenotypes
      */
     List<PhenotypeExperiment> getAllPhenotypes(String publicationID);
+     List<PhenotypeExperiment> getPhenoByExperimentID(String experimentID);
 
     /**
      * Create the Phenotype pile structure pile if it does not already exist.
@@ -252,6 +253,7 @@ public interface PhenotypeRepository {
      * @return
      */
     List<DiseaseAnnotationModel> getHumanDiseaseModelsByFish(String zdbID);
+    List<DiseaseAnnotationModel> getHumanDiseaseModelsByExperiment(String exptID);
 
 
     /**

@@ -13,6 +13,7 @@ import org.zfin.gwt.root.ui.IsDirtyWidget;
 import org.zfin.gwt.root.ui.ShowHideToggle;
 import org.zfin.gwt.root.util.DeleteImage;
 import org.zfin.gwt.root.util.WidgetUtil;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.Set;
 
@@ -84,7 +85,10 @@ public class ExperimentAddView extends AbstractViewComposite {
 
     public void addDeleteButton(EnvironmentDTO dto, DeleteImage deleteImage, int elementIndex) {
         int row = elementIndex + 1;
-        if (dto.conditionDTOList == null) {
+        if (!dto.getUsedInExpression()&&(!dto.getUsedInPhenotype())&&(!dto.getUsedInDisease())) {
+        /*if (dto.conditionDTOList == null) {
+            dataTable.setWidget(row, 2, deleteImage);
+        }*/
             dataTable.setWidget(row, 2, deleteImage);
         }
     }

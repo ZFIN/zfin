@@ -1137,6 +1137,25 @@ public class DTOConversionService {
         } else {
             environment.setName(experiment.getName());
         }
+        if (CollectionUtils.isNotEmpty(RepositoryFactory.getExpressionRepository().getExpressionByExperiment(experiment.getZdbID()))) {
+            environment.setUsedInExpression(true);
+
+        }
+        else{
+            environment.setUsedInExpression(false);
+        }
+        if (CollectionUtils.isNotEmpty(RepositoryFactory.getPhenotypeRepository().getPhenoByExperimentID(experiment.getZdbID()))) {
+            environment.setUsedInPhenotype(true);
+        }
+        else{
+            environment.setUsedInPhenotype(false);
+        }
+        if (CollectionUtils.isNotEmpty(RepositoryFactory.getPhenotypeRepository().getHumanDiseaseModelsByExperiment(experiment.getZdbID()))) {
+            environment.setUsedInDisease(true);
+        }
+        else{
+            environment.setUsedInDisease(false);
+        }
         if (CollectionUtils.isNotEmpty(experiment.getExperimentConditions())) {
             List<ConditionDTO> list = new ArrayList<>();
             for (ExperimentCondition condition : experiment.getExperimentConditions()) {
@@ -1151,7 +1170,9 @@ public class DTOConversionService {
                 list.add(dto);
             }
             environment.setConditionDTOList(list);
+
         }
+
         return environment;
     }
 

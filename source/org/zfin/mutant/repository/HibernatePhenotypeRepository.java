@@ -300,6 +300,14 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         query.setParameter("publicationID", publicationID);
         return (List<PhenotypeExperiment>) query.list();
     }
+    public List<PhenotypeExperiment> getPhenoByExperimentID(String experimentID) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct experiment from PhenotypeExperiment experiment where" +
+                "          experiment.fishExperiment.experiment.zdbID = :experimentID";
+        Query query = session.createQuery(hql);
+        query.setParameter("experimentID", experimentID);
+        return (List<PhenotypeExperiment>) query.list();
+    }
 
     /**
      * Create the Phenotype pile structure pile if it does not already exist.
@@ -833,6 +841,13 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         return (List<DiseaseAnnotationModel>) query.list();
     }
 
+    public List<DiseaseAnnotationModel> getHumanDiseaseModelsByExperiment(String exptID) {
+        String hql = "from DiseaseAnnotationModel as disease where" +
+                " disease.fishExperiment.experiment.zdbID = :exptID";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("exptID", exptID);
+        return (List<DiseaseAnnotationModel>) query.list();
+    }
     @Override
 
     public List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease) {

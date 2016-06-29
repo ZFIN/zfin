@@ -192,6 +192,7 @@ public interface ExpressionRepository {
      * @return list of experiments
      */
     List<ExpressionExperiment> getExperiments(String publicationID);
+    List<ExpressionExperiment> getExpressionByExperiment(String experimentID);
 
 
     /**
