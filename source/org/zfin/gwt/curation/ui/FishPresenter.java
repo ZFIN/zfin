@@ -1,9 +1,14 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Widget;
+import org.zfin.gwt.curation.event.CloneFishEvent;
 import org.zfin.gwt.root.dto.FishDTO;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,7 +49,11 @@ public class FishPresenter implements Presenter {
 
         @Override
         public void onSuccess(List<FishDTO> list) {
-            if (list != null && list.size() > 0) {
+            if (list == null) {
+                view.emptyDataTable();
+                return;
+            }
+            if (list.size() > 0) {
                 view.getNoneDefined().setVisible(false);
                 Collections.sort(list, new Comparator<FishDTO>() {
                     @Override
@@ -54,8 +63,18 @@ public class FishPresenter implements Presenter {
                 });
             }
             int elementIndex = 0;
-            for (FishDTO dto : list) {
+            for (final FishDTO dto : list) {
                 view.addFish(dto, elementIndex);
+                Anchor cloneLink = view.getCloneLink();
+                cloneLink.addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+                        CloneFishEvent event = new CloneFishEvent();
+                        event.setFish(dto);
+                        AppUtils.EVENT_BUS.fireEvent(event);
+                    }
+                });
+                view.addCloneLink(cloneLink, elementIndex);
                 view.addDeleteButton(dto, elementIndex);
                 elementIndex++;
             }

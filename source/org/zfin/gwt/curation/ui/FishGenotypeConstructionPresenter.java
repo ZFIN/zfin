@@ -224,6 +224,32 @@ public class FishGenotypeConstructionPresenter implements Presenter {
         updateStrList();
     }
 
+    public void populate(FishDTO fish) {
+        // populate background
+        backgroundGenoList.clear();
+        if (fish.getGenotypeDTO().getBackgroundGenotypeList() != null && fish.getGenotypeDTO().getBackgroundGenotypeList().size() > 0) {
+            for (GenotypeDTO bgGenotype : fish.getGenotypeDTO().getBackgroundGenotypeList()) {
+                backgroundGenoList.add(bgGenotype);
+            }
+        }
+        // populate STR list
+        newStrList.clear();
+        if (fish.getStrList() != null && fish.getStrList().size() > 0) {
+            newStrList.addAll(fish.getStrList());
+        }
+        // if fish is a wildtype fish without features
+        if (fish.getGenotypeDTO().isWildtype()) {
+            backgroundGenoList.add(fish.getGenotypeDTO());
+            view.setFishGenotypeInfo(genotypeFeatureDTOList, backgroundGenoList, newStrList);
+        }
+        // populate geno features
+        genotypeFeatureDTOList.clear();
+        if (fish.getGenotypeDTO().getGenotypeFeatureList() != null) {
+            genotypeFeatureDTOList.addAll(fish.getGenotypeDTO().getGenotypeFeatureList());
+        }
+        view.updateGenotypeFeatureList(genotypeFeatureDTOList, backgroundGenoList, newStrList);
+    }
+
     class RetrieveZygosityListCallBack extends ZfinAsyncCallback<List<ZygosityDTO>> {
 
         public RetrieveZygosityListCallBack(String errorMessage, ErrorHandler errorLabel) {
