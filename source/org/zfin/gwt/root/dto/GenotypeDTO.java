@@ -13,6 +13,7 @@ public class GenotypeDTO extends RelatedEntityDTO {
     private String nickName;
     private List<GenotypeDTO> backgroundGenotypeList;
     private List<FeatureDTO> featureList;
+    private List<GenotypeFeatureDTO> genotypeFeatureList;
     private List<ExternalNoteDTO> publicNotes;
     private List<CuratorNoteDTO> privateNotes;
     private boolean wildtype;
@@ -76,12 +77,12 @@ public class GenotypeDTO extends RelatedEntityDTO {
         this.nickName = nickName;
     }
 
-    public List<FeatureDTO> getFeatureList() {
-        return featureList;
+    public List<GenotypeFeatureDTO> getGenotypeFeatureList() {
+        return genotypeFeatureList;
     }
 
-    public void setFeatureList(List<FeatureDTO> featureList) {
-        this.featureList = featureList;
+    public void setGenotypeFeatureList(List<GenotypeFeatureDTO> genotypeFeatureList) {
+        this.genotypeFeatureList = genotypeFeatureList;
     }
 
     public List<CuratorNoteDTO> getPrivateNotes() {

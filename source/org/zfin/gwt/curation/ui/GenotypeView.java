@@ -8,10 +8,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.root.dto.CuratorNoteDTO;
-import org.zfin.gwt.root.dto.ExternalNoteDTO;
-import org.zfin.gwt.root.dto.FeatureDTO;
-import org.zfin.gwt.root.dto.GenotypeDTO;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ZfinFlexTable;
 import org.zfin.gwt.root.util.DeleteImage;
 import org.zfin.gwt.root.util.ShowHideWidget;
@@ -68,9 +65,9 @@ public class GenotypeView extends SingleGridBaseComposite {
             handle.setTitle(genotype.getZdbID());
             genotypeListTable.setWidget(index, col++, handle);
             VerticalPanel featurePanel = new VerticalPanel();
-            if (genotype.getFeatureList() != null && genotype.getFeatureList().size() > 0)
-                for (FeatureDTO featureDTO : genotype.getFeatureList())
-                    featurePanel.add(new InlineHTML(featureDTO.getAbbreviation()));
+            if (genotype.getGenotypeFeatureList() != null && genotype.getGenotypeFeatureList().size() > 0)
+                for (GenotypeFeatureDTO genoFeatureDTO : genotype.getGenotypeFeatureList())
+                    featurePanel.add(new InlineHTML(genoFeatureDTO.getFeatureDTO().getAbbreviation()));
             genotypeListTable.setWidget(index, col++, featurePanel);
 
             VerticalPanel curatorNotePanel = addCuratorNotes(genotype);

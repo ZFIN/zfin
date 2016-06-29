@@ -141,6 +141,7 @@ public enum Category {
             PHENOTYPE_STATEMENT,
             MISEXPRESSED_GENE,
             HAS_IMAGE,
+            EXPERIMENTAL_CONDITIONS,
             FieldName.SEQUENCE_TARGETING_REAGENT
     ),
     COMMUNITY("Community",

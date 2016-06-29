@@ -10,6 +10,8 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import org.zfin.gwt.curation.event.AddAttributeEvent;
 import org.zfin.gwt.curation.event.AddAttributeEventHandler;
+import org.zfin.gwt.curation.event.CloneFishEvent;
+import org.zfin.gwt.curation.event.CloneFishEventHandler;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.util.AppUtils;
@@ -100,6 +102,13 @@ public class FishModule extends Composite implements EntryPoint {
                     public void onEvent(AddAttributeEvent event) {
                         attributionModule.populateAttributeRemoval();
                         genotypeConstructionPresenter.update();
+                    }
+                });
+        AppUtils.EVENT_BUS.addHandler(CloneFishEvent.TYPE,
+                new CloneFishEventHandler() {
+                    @Override
+                    public void onClone(CloneFishEvent event) {
+                        genotypeConstructionPresenter.populate(event.getFish());
                     }
                 });
 

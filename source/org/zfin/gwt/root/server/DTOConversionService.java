@@ -405,11 +405,11 @@ public class DTOConversionService {
 
         // add features
         if (CollectionUtils.isNotEmpty(genotype.getGenotypeFeatures())) {
-            List<FeatureDTO> featureDTOList = new ArrayList<>(4);
+            List<GenotypeFeatureDTO> featureDTOList = new ArrayList<>(4);
             for (GenotypeFeature genotypeFeature : genotype.getGenotypeFeatures()) {
-                featureDTOList.add(convertToFeatureDTO(genotypeFeature.getFeature()));
+                featureDTOList.add(convertToGenotypeFeawtureDTO(genotypeFeature));
             }
-            genotypeDTO.setFeatureList(featureDTOList);
+            genotypeDTO.setGenotypeFeatureList(featureDTOList);
         }
         return genotypeDTO;
     }
@@ -433,13 +433,22 @@ public class DTOConversionService {
         }
         // add features
         if (CollectionUtils.isNotEmpty(genotype.getGenotypeFeatures())) {
-            List<FeatureDTO> featureDTOList = new ArrayList<>(4);
+            List<GenotypeFeatureDTO> genotypeFeatureDTOList = new ArrayList<>(4);
             for (GenotypeFeature genotypeFeature : genotype.getGenotypeFeatures()) {
-                featureDTOList.add(convertToFeatureDTO(genotypeFeature.getFeature()));
+                genotypeFeatureDTOList.add(convertToGenotypeFeawtureDTO(genotypeFeature));
             }
-            genotypeDTO.setFeatureList(featureDTOList);
+            genotypeDTO.setGenotypeFeatureList(genotypeFeatureDTOList);
         }
         return genotypeDTO;
+    }
+
+    private static GenotypeFeatureDTO convertToGenotypeFeawtureDTO(GenotypeFeature genotypeFeature) {
+        GenotypeFeatureDTO dto = new GenotypeFeatureDTO();
+        dto.setFeatureDTO(convertToFeatureDTO(genotypeFeature.getFeature()));
+        dto.setZygosity(convertToZygosityDTO(genotypeFeature.getZygosity()));
+        dto.setMaternalZygosity(convertToZygosityDTO(genotypeFeature.getMomZygosity()));
+        dto.setPaternalZygosity(convertToZygosityDTO(genotypeFeature.getDadZygosity()));
+        return dto;
     }
 
     public static GenotypeDTO convertToPureGenotypeDTOs(Genotype genotype) {
@@ -490,6 +499,24 @@ public class DTOConversionService {
                 associatedPublications.add(DTOConversionService.convertToPublicationDTO(publication));
             }
             genotypeDTO.setAssociatedPublications(associatedPublications);
+        }
+        if (genotype.getAssociatedGenotypes() != null) {
+            List<GenotypeDTO> backgroundList = new ArrayList<>(genotype.getAssociatedGenotypes().size());
+            for (Genotype background : genotype.getAssociatedGenotypes()) {
+                GenotypeDTO backgroundDTO = new GenotypeDTO();
+                backgroundDTO.setName(background.getName());
+                backgroundDTO.setZdbID(background.getZdbID());
+                backgroundList.add(backgroundDTO);
+            }
+            genotypeDTO.setBackgroundGenotypeList(backgroundList);
+        }
+        // add features
+        if (CollectionUtils.isNotEmpty(genotype.getGenotypeFeatures())) {
+            List<GenotypeFeatureDTO> featureDTOList = new ArrayList<>(4);
+            for (GenotypeFeature genotypeFeature : genotype.getGenotypeFeatures()) {
+                featureDTOList.add(convertToGenotypeFeawtureDTO(genotypeFeature));
+            }
+            genotypeDTO.setGenotypeFeatureList(featureDTOList);
         }
         return genotypeDTO;
     }
@@ -555,8 +582,6 @@ public class DTOConversionService {
         feature.setType(featureDTO.getFeatureType());
         feature.setDominantFeature(featureDTO.getDominant());
         feature.setKnownInsertionSite(featureDTO.getKnownInsertionSite());
-
-        Publication publication = getPublicationRepository().getPublication(featureDTO.getPublicationZdbID());
 
         // if not unspecified
         if (!(featureDTO.getFeatureType().isUnspecified())) {

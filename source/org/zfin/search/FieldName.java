@@ -107,6 +107,7 @@ public enum FieldName {
     public String getName() {
         return name;
     }
+    public String toString() { return name; }
 
     public boolean isTermFacet() {
         return name.endsWith("tf");
@@ -132,18 +133,18 @@ public enum FieldName {
         return prettyName != null;
     }
 
-    public static String getFieldName(Ontology ontology) {
+    public static FieldName getFieldName(Ontology ontology) {
         for (FieldName fNname : values())
             if (fNname.getName().startsWith(ontology.getDbOntologyName()))
-                return fNname.getName();
+                return fNname;
         return null;
     }
 
-    public static String getAffectedFieldName(Ontology ontology) {
+    public static FieldName getAffectedFieldName(Ontology ontology) {
         for (FieldName fNname : values())
             if (fNname.getName().startsWith("affected_" + ontology.getDbOntologyName()) ||
                     fNname.getName().startsWith("affected_anatomy"))
-                return fNname.getName();
+                return fNname;
         return null;
     }
 }

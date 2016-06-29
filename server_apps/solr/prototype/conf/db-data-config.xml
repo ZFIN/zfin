@@ -2233,6 +2233,41 @@ select
                    where="pg_id=phenotype.id"/>
 
 
+           <entity name="phenotype_experimental_conditions"
+                   datasource="db" query="select
+                             case
+                                  when cdt_name = 'Ethinylestradiol (CAS: 57-63-6)' then 'Ethinylestradiol'
+                                  when cdt_name = 'TCDD (2,3,7,8-tetrachlorodibenzo-p-dioxin) (CAS: 1746-01-6)' then 'TCDD (2,3,7,8-tetrachlorodibenzo-p-dioxin)'
+                                  when cdt_name = 'DEAB (CAS:93148-15-3)' then 'DEAB'
+                                  when cdt_name = 'Cadmium chloride (CAS: 10108-64-2)' then 'Cadmium chloride'
+                                  when cdt_name = 'all-trans retinoic acid (CAS: 302-79-4)' then 'all-trans retinoic acid'
+                                  when cdt_name = 'ENU (CAS: 759-73-9)' then 'ENU'
+                                  when cdt_name = '3-methyladenine (CAS: 5142-23-4)' then '3-methyladenine'
+                                  when cdt_name = 'Acridine orange (CAS: 65-61-2)' then 'Acridine orange'
+                                  when cdt_name = '17beta-estradiol (CAS: 50-28-2)' then '17beta-estradiol'
+                                  when cdt_name = 'cyclopamine (CAS: 4449-51-8)' then 'cyclopamine'
+                                  when cdt_name = 'SU5416 (CAS:194413-58-6)' then 'SU5416'
+                                  when cdt_name = 'Rapamycin (CAS: 53123-88-9)' then 'Rapamycin'
+                                  when cdt_group in ('physical','chemical','physiological') then cdt_name
+                                  else cdt_group || ':' || cdt_name end as experimental_conditions,
+                                  'pg-' || pg_id as pg_id
+                        from condition_data_type
+                             join experiment_condition on expcond_cdt_zdb_id = cdt_zdb_id
+                             join fish_experiment on genox_exp_zdb_id = expcond_exp_zdb_id and genox_is_std_or_generic_control = 'f'
+                             join phenotype_source_generated on genox_zdb_id = pg_genox_zdb_id
+                        where cdt_group || ':' || cdt_name not in ('chemical:other','morpholino:morpholino','TALEN:TALEN','CRISPR:CRISPR');"
+                   cacheImpl="SortedMapBackedCache"
+                   where="pg_id=phenotype.id"/>
+
+           <entity name="phenotype_standard_or_control"
+                   datasource="db" query="select 'standard or control' as experimental_conditions,
+                                   'pg-' || pg_id as pg_id
+                            from phenotype_source_generated
+                                 join fish_experiment on genox_zdb_id = pg_genox_zdb_id
+                                      and genox_is_std_or_generic_control = 't';"
+                   cacheImpl="SortedMapBackedCache"
+                   where="pg_id=phenotype.id"/>
+
            <entity name="phenotype_is_monogenic"
                    datasource="db" query="select 'true' as is_monogenic,
                            'pg-' || pg_id as pg_id
@@ -2243,11 +2278,29 @@ select
 
            <entity name="phenotype_fish_xref"
                    datasource="db" query="select
-                              fish_zdb_id as xref,
+                              fish_zdb_id as xref,fish_name,
                               'pg-' || pg_id as pg_id
                             from fish
                                  join fish_experiment on genox_fish_zdb_id = fish_zdb_id
-                                 join phenotype_source_generated on genox_zdb_id = pg_genox_zdb_id;"
+                                 join phenotype_source_generated on genox_zdb_id = pg_genox_zdb_id
+                            where
+                                 fish_zdb_id not in
+      	      	      	      	(select	fish_zdb_id
+      	      	      	      	  from fish where
+                                       fish_genotype_zdb_id in (
+                                       	   select genofeat_geno_zdb_id
+                                       	     from genotype_feature
+                                               	  join feature_marker_relationship
+                                               	    on fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+                                       	    where fmrel_type = 'contains innocuous sequence feature')
+                                       and fish_genotype_zdb_id not in (
+                                            select genofeat_geno_zdb_id
+                                              from genotype_feature
+                                              	   join feature_marker_relationship
+                                       	       	     on fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+                                       	    where fmrel_type != 'contains innocuous sequence feature')
+                                       and fish_zdb_id not in (select fishstr_fish_zdb_id from fish_str)
+       	       	       	       	);"
                    cacheImpl="SortedMapBackedCache"
                    where="pg_id=phenotype.id"/>
 

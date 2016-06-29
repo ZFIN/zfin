@@ -17,14 +17,22 @@
                 <g:customCell>
                     <g:Label text="Display Handle" styleName="bold" horizontalAlignment="left"/>
                 </g:customCell>
-<!--
                 <g:customCell>
                     <g:Label text="Clone" styleName="bold" horizontalAlignment="left"/>
                 </g:customCell>
--->
                 <g:customCell>
                     <g:Label text="Delete" styleName="bold" horizontalAlignment="left"/>
                 </g:customCell>
+            </g:row>
+            <g:row styleName="table-header">
+                <g:cell/>
+                <g:cell/>
+                <g:customCell>
+                    <g:HTML ui:field="cloneLink" visible="false">
+                        <i class="fa fa-copy" aria-hidden="true"></i>
+                    </g:HTML>
+                </g:customCell>
+                <g:cell/>
             </g:row>
         </g:Grid>
 

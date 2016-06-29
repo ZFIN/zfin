@@ -29,6 +29,8 @@ public class FishView extends Composite {
     Label noneDefined;
     @UiField
     Grid dataTable;
+    @UiField
+    HTML cloneLink;
 
     // elementIndex starts with 0
     // but the grid starts with 1
@@ -46,19 +48,26 @@ public class FishView extends Composite {
         InlineHTML handle = new InlineHTML(fish.getHandle());
         handle.setTitle(fish.getZdbID());
         dataTable.setWidget(row, 1, handle);
-/*
-        HTML html = new HTML("<i class='fa fa-clone' aria-hidden='true'></i>Clone");
-        Anchor cloneLink = new Anchor(SafeHtmlUtils.fromTrustedString(html.getHTML()));
+    }
+
+    public void emptyDataTable() {
+        dataTable.resizeRows(1);
+    }
+
+    public void addCloneLink(Anchor cloneLink, int elementIndex) {
+        int row = elementIndex + 1;
         dataTable.setWidget(row, 2, cloneLink);
-*/
     }
 
     public void addDeleteButton(FishDTO fish, int elementIndex) {
         int row = elementIndex + 1;
         DeleteImage deleteFish = new DeleteImage("/action/infrastructure/deleteRecord/" + fish.getZdbID(), "Delete Fish");
-        dataTable.setWidget(row, 2, deleteFish);
+        dataTable.setWidget(row, 3, deleteFish);
     }
 
+    public Anchor getCloneLink() {
+        return new Anchor(SafeHtmlUtils.fromTrustedString(cloneLink.getHTML()));
+    }
 
     private void setRowStyle(int row) {
         WidgetUtil.setAlternateRowStyle(row, dataTable);
