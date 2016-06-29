@@ -51,128 +51,132 @@ INPUT VARS:
 </script>
 
 <body id="body">
-  <a href="/">
-   <img id="logo-img" src="/images/zfinlogo.png">
-   <img id="logo-text" src="/images/zfintxt.png">
-  </a>
-
-  <noscript>
-   <div id="noscriptWarningBox">
-     Many ZFIN features require that javascript be enabled.
-   </div>
-  </noscript>
-
-
-  <div id="quicksearchBox">
-        <form id="header-query-form" method="GET" action="/search" name="faceted-search" accept-charset="utf-8">
-          <label for="search-query-input">
-           Search
-          </label>
-          <input class="search-form-input input"
-                 style="width: 300px;" name="q"
-                 id="header-search-query-input" autocomplete="off" type="text"/>
-          <?MICOMMENT> required so that typeahead will submit ... <?/MICOMMENT>
-          <input type="submit" style="visibility: hidden; position: fixed;"/>
-        </form>
-
-      <script>
-
-              jQuery(document).ready(function() {
-                jQuery('#header-search-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
-              });
-              $('#header-search-query-input').bind("typeahead:select", function() {
-                  $('#header-query-form').submit();
-              });
-      </script>
+  <div class="uber-banner">
+    <a href="http://www.genetics-gsa.org/MODSupport/">Funding for ZFIN and other Model Organism Databases: Sign a letter of support!</a>
   </div>
+  <header class="zfin-header">
+    <a href="/">
+     <img id="logo-img" src="/images/zfinlogo.png">
+     <img id="logo-text" src="/images/zfintxt.png">
+    </a>
+
+    <noscript>
+     <div id="noscriptWarningBox">
+       Many ZFIN features require that javascript be enabled.
+     </div>
+    </noscript>
 
 
-  <?MICOMMENT> *** Prototype search input w/autocompleter *********** <?/MICOMMENT>
+    <div id="quicksearchBox">
+          <form id="header-query-form" method="GET" action="/search" name="faceted-search" accept-charset="utf-8">
+            <label for="search-query-input">
+             Search
+            </label>
+            <input class="search-form-input input"
+                   style="width: 300px;" name="q"
+                   id="header-search-query-input" autocomplete="off" type="text"/>
+            <?MICOMMENT> required so that typeahead will submit ... <?/MICOMMENT>
+            <input type="submit" style="visibility: hidden; position: fixed;"/>
+          </form>
 
-  <?MIBLOCK COND="$(NXST,$AUTHORIZED)">
-      <?MISQL SQL="
-        select WebExplode(object,'')
-          from webPages
-          where ID='aa-secure_navigation.apg';">
-        $1
-      <?/MISQL>
-  <?/MIBLOCK>
-
-    <div id="feedBox">
-   <span class="site-link"><a href="/downloads">Downloads</a></span>
-   <span class="site-link">
-      <a id="hdr-login-link" href="/action/login">Login</a>
-      <a id="hdr-logout-link" style="display:none" href="/action/logout">Logout</a>
-   </span>
-        <a href="https://<!--|WIKI_HOST|-->/createrssfeed.action?types=blogpost&spaces=news&title=Zebrafish+News&labelString%3D&excludedSpaceKeys%3D&sort=modified&maxResults=10&timeSpan=120&showContent=true"><img id="social-icon" src="/images/feed-icon-28x28.png"></a>
-        <iframe id="social-icon" allowtransparency="true" frameborder="0" scrolling="no"
-                src="//platform.twitter.com/widgets/follow_button.html?screen_name=ZFINmod&show_count=false&show_screen_name=false"
-                style="width:64px; height:20px;"></iframe>
+        <script>
+                jQuery(document).ready(function() {
+                  jQuery('#header-search-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
+                });
+                $('#header-search-query-input').bind("typeahead:select", function() {
+                    $('#header-query-form').submit();
+                });
+        </script>
     </div>
 
 
+    <?MICOMMENT> *** Prototype search input w/autocompleter *********** <?/MICOMMENT>
 
-<?MIBLOCK COND="$(NXST,$g_hideHeaderAndFooter)">
-<div id="hdr-banner">
+    <?MIBLOCK COND="$(NXST,$AUTHORIZED)">
+        <?MISQL SQL="
+          select WebExplode(object,'')
+            from webPages
+            where ID='aa-secure_navigation.apg';">
+          $1
+        <?/MISQL>
+    <?/MIBLOCK>
 
-  <div id="hdr-tabs">
-    <div class="header-tab research">Research</div>
-    <div class="header-tab general">General Information</div>
-    <div class="header-tab zirc">ZIRC</div>
-  </div>
+      <div id="feedBox">
+     <span class="site-link"><a href="/downloads">Downloads</a></span>
+     <span class="site-link">
+        <a id="hdr-login-link" href="/action/login">Login</a>
+        <a id="hdr-logout-link" style="display:none" href="/action/logout">Logout</a>
+     </span>
+          <a href="https://<!--|WIKI_HOST|-->/createrssfeed.action?types=blogpost&spaces=news&title=Zebrafish+News&labelString%3D&excludedSpaceKeys%3D&sort=modified&maxResults=10&timeSpan=120&showContent=true"><img id="social-icon" src="/images/feed-icon-28x28.png"></a>
+          <iframe id="social-icon" allowtransparency="true" frameborder="0" scrolling="no"
+                  src="//platform.twitter.com/widgets/follow_button.html?screen_name=ZFINmod&show_count=false&show_screen_name=false"
+                  style="width:64px; height:20px;"></iframe>
+      </div>
 
-  <div id="hdr-navlinks">
-    <div id="hdr-zirclinks" class="hdr-linkbar" style="display: none;">
-      <a href="http://zebrafish.org/">ZIRC Home</a>
-      <strong> Request: </strong> &nbsp; <a href="http://zebrafish.org/zirc/fish/lineAll.php">Fish</a>
-      <a href="http://zebrafish.org/zirc/est/estAll.php">ESTs/cDNAs</a>
-      <a href="http://zebrafish.org/zirc/abs/absAll.php">Antibodies</a>
-      <a href="http://zebrafish.org/zirc/orders/buyBookQ.php?item=Book&id=book&detail=The%20Zebrafish%20Book">ZF Book</span></a>
-      <a href="http://zebrafish.org/zirc/orders/buyParaQ.php?item=Paramecia&id=para&detail=Paramecia%20Starter%20Culture" >Paramecia</a>
-      <a href="http://zebrafish.org/zirc/documents/fees.php">Prices</a>
-      <a href="http://zebrafish.org/zirc/documents/payment.php">Payment Help</a>
-      <a href="http://zebrafish.org/zirc/health/index.php">Health Services</a>
 
+
+    <?MIBLOCK COND="$(NXST,$g_hideHeaderAndFooter)">
+    <div id="hdr-banner">
+
+      <div id="hdr-tabs">
+        <div class="header-tab research">Research</div>
+        <div class="header-tab general">General Information</div>
+        <div class="header-tab zirc">ZIRC</div>
+      </div>
+
+      <div id="hdr-navlinks">
+        <div id="hdr-zirclinks" class="hdr-linkbar" style="display: none;">
+          <a href="http://zebrafish.org/">ZIRC Home</a>
+          <strong> Request: </strong> &nbsp; <a href="http://zebrafish.org/zirc/fish/lineAll.php">Fish</a>
+          <a href="http://zebrafish.org/zirc/est/estAll.php">ESTs/cDNAs</a>
+          <a href="http://zebrafish.org/zirc/abs/absAll.php">Antibodies</a>
+          <a href="http://zebrafish.org/zirc/orders/buyBookQ.php?item=Book&id=book&detail=The%20Zebrafish%20Book">ZF Book</span></a>
+          <a href="http://zebrafish.org/zirc/orders/buyParaQ.php?item=Paramecia&id=para&detail=Paramecia%20Starter%20Culture" >Paramecia</a>
+          <a href="http://zebrafish.org/zirc/documents/fees.php">Prices</a>
+          <a href="http://zebrafish.org/zirc/documents/payment.php">Payment Help</a>
+          <a href="http://zebrafish.org/zirc/health/index.php">Health Services</a>
+
+        </div>
+        <div id="hdr-zfinlinks" class="hdr-linkbar"
+             style="<?MIBLOCK COND="$(XST,$hdr_showmotto)">display: none;
+                    <?MIELSE>display: block;<?/MIBLOCK> ">
+          <a href="/">Home</a>
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg"  title="Search by name, accession number, chromosome, vector or sequence type">Genes / Markers / Clones</a>
+          <a href="/action/blast/blast" title="Search for sequence alignment against ZFIN datasets and zebrafish datasets">BLAST</a>
+          <a href="/<!--|GBROWSE_PATH_FROM_ROOT|-->">GBrowse</a>
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg"  title="Search by gene, developmental stage, anatomy and other attributes">Expression</a>
+          <a href="/action/antibody/search" title="Search for antibodies by gene, labeled anatomy and other attributes">Antibodies</a>
+          <a href="/action/fish/search">Mutants / Knockdowns / Tg</a>
+          <a href="/action/construct/search">Constructs</a>
+          <a href="/action/ontology/search">Anatomy / GO / Human Disease</a>
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&select_from=PUBLICATION" title="Search for zebrafish research publications by author, title or citation">Publications</a>
+          <a href="/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi" title="View genetic, radiation hybrid or consolidated maps">Maps</a>
+        </div>
+
+        <div id="hdr-generallinks" class="hdr-linkbar" style="display: none;">
+         <a href="/">Home</a>
+         <a href="https://wiki.zfin.org" title="ZFIN-hosted community wiki: browse, contribute and export">Wiki</A>
+         <a href="https://wiki.zfin.org/display/jobs/Zebrafish-Related+Job+Announcements" title="Zebrafish-related job announcements">Jobs</a>
+         <a href="https://wiki.zfin.org/display/meetings" title="Zebrafish-related meeting announcements">Meetings</a>
+         <a href="https://wiki.zfin.org/display/general/Zebrafish+Newsgroup+Information/" title="Moderated, online discussion group for anyone interested in zebrafish research">Newsgroup</a>
+         <a href="/action/profile/person/search"  title="Search for zebrafish researchers by name or address">People</a>
+         <a href="/action/profile/lab/search" title="Search for laboratories by name, address or research interests">Labs</a>
+         <a href="/action/profile/company/search" title="Search for companies supplying zebrafish reagents">Companies</a>
+         <a href="/zf_info/news/education.html" title="Educational websites for students and educators">Education</A>
+         <a href="/zf_info/zfbook/zfbk.html" title="Browse The Zebrafish Book"><em>ZF Book</em></A>
+         <a href="https://wiki.zfin.org/display/general/ZFIN+Contact+Information" title="ZFIN contact information">Contact</A>
+         <a href="https://wiki.zfin.org/display/general/ZFIN+db+information" title="About ZFIN and citing ZFIN resources in publications">About</A>
+        </div>
+
+        <div id="hdr-motto" class="hdr-linkbar"
+             style="<?MIBLOCK COND="$(XST,$hdr_showmotto)"> display: block;
+                    <?MIELSE> display: none; <?/MIBLOCK> ">
+          The Zebrafish Model Organism Database
+        </div>
+
+      </div> <!-- navlinks -->
     </div>
-    <div id="hdr-zfinlinks" class="hdr-linkbar"
-         style="<?MIBLOCK COND="$(XST,$hdr_showmotto)">display: none;
-                <?MIELSE>display: block;<?/MIBLOCK> ">
-      <a href="/">Home</a>
-      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg"  title="Search by name, accession number, chromosome, vector or sequence type">Genes / Markers / Clones</a>
-      <a href="/action/blast/blast" title="Search for sequence alignment against ZFIN datasets and zebrafish datasets">BLAST</a>
-      <a href="/<!--|GBROWSE_PATH_FROM_ROOT|-->">GBrowse</a>
-      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg"  title="Search by gene, developmental stage, anatomy and other attributes">Expression</a>
-      <a href="/action/antibody/search" title="Search for antibodies by gene, labeled anatomy and other attributes">Antibodies</a>
-      <a href="/action/fish/search">Mutants / Knockdowns / Tg</a>
-      <a href="/action/construct/search">Constructs</a>
-      <a href="/action/ontology/search">Anatomy / GO / Human Disease</a>
-      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&select_from=PUBLICATION" title="Search for zebrafish research publications by author, title or citation">Publications</a>
-      <a href="/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi" title="View genetic, radiation hybrid or consolidated maps">Maps</a>
-    </div>
-
-    <div id="hdr-generallinks" class="hdr-linkbar" style="display: none;">
-     <a href="/">Home</a>
-     <a href="https://wiki.zfin.org" title="ZFIN-hosted community wiki: browse, contribute and export">Wiki</A>
-     <a href="https://wiki.zfin.org/display/jobs/Zebrafish-Related+Job+Announcements" title="Zebrafish-related job announcements">Jobs</a>
-     <a href="https://wiki.zfin.org/display/meetings" title="Zebrafish-related meeting announcements">Meetings</a>
-     <a href="https://wiki.zfin.org/display/general/Zebrafish+Newsgroup+Information/" title="Moderated, online discussion group for anyone interested in zebrafish research">Newsgroup</a>
-     <a href="/action/profile/person/search"  title="Search for zebrafish researchers by name or address">People</a>
-     <a href="/action/profile/lab/search" title="Search for laboratories by name, address or research interests">Labs</a>
-     <a href="/action/profile/company/search" title="Search for companies supplying zebrafish reagents">Companies</a>
-     <a href="/zf_info/news/education.html" title="Educational websites for students and educators">Education</A>
-     <a href="/zf_info/zfbook/zfbk.html" title="Browse The Zebrafish Book"><em>ZF Book</em></A>
-     <a href="https://wiki.zfin.org/display/general/ZFIN+Contact+Information" title="ZFIN contact information">Contact</A>
-     <a href="https://wiki.zfin.org/display/general/ZFIN+db+information" title="About ZFIN and citing ZFIN resources in publications">About</A>
-    </div>
-
-    <div id="hdr-motto" class="hdr-linkbar"
-         style="<?MIBLOCK COND="$(XST,$hdr_showmotto)"> display: block;
-                <?MIELSE> display: none; <?/MIBLOCK> ">
-      The Zebrafish Model Organism Database
-    </div>
-
-  </div> <!-- navlinks -->
-</div>
+  </header>
 
 <?/MIBLOCK> <?MICOMMENT> ** hide header & footer ** <?/MICOMMENT>
 

@@ -1,5 +1,8 @@
-body {
-    margin-top: 81px;
+.zfin-header {
+    position: relative;
+    background: @HEADER_BACKGROUND@;
+    height: 80px;
+    width: 100%;
 }
 
 #hdr-banner {
@@ -11,7 +14,6 @@ body {
     margin-left: 0;
     margin-right: 0;
     min-width: 580px;
-    background: @HEADER_BACKGROUND@;
 }
 
 #logo-img,
@@ -175,4 +177,24 @@ body {
   white-space: nowrap; 
   padding: 0.3em;
   z-index: 5;
+}
+
+.uber-banner {
+    background: #740C56;
+    padding: 0.7em;
+    margin-bottom: 0.25em;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.5);
+    font-size: 14.4px;
+    line-height: normal;
+}
+
+.uber-banner a {
+    color: white;
+    text-decoration: underline;
+}
+
+.uber-banner a:hover {
+    color: white;
 }
