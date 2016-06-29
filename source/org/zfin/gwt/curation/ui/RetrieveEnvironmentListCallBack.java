@@ -23,12 +23,10 @@ public class RetrieveEnvironmentListCallBack extends ZfinAsyncCallback<List<Envi
         //Window.alert("brought back: " + experiments.size() );
         environmentList.clear();
         for (EnvironmentDTO environmentDTO : environments) {
-
-                String name = environmentDTO.getName();
-                if (name.startsWith("_"))
-                    name = name.substring(1);
-                environmentList.addItem(name, environmentDTO.getZdbID());
-
+            String name = environmentDTO.getName();
+            if (name.startsWith("_"))
+                name = name.substring(1);
+            environmentList.addItem(name, environmentDTO.getZdbID());
         }
     }
 
