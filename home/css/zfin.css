@@ -5,9 +5,8 @@ a {
 body {
     font-family: arial, sans-serif;
     min-width: 600px;
-    margin-top: 81px;
-    margin-left: 0;
-    margin-right: 0;
+    margin: 0;
+    padding: 0;
     background: @SITE_BACKGROUND@;
 }
 
