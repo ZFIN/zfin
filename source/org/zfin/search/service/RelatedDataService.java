@@ -247,7 +247,7 @@ public class RelatedDataService {
             for (FacetField.Count count : category.getValues()) {
                 if (count.getName().equals(Category.GENE.getName())) {
                     Properties properties = new Properties();
-                    properties.put(fieldName, entityName);
+                    properties.put(fieldName.getName(), entityName);
                     links.add(createHyperLink(id, category.getName(), count.getName(), count.getCount(), GENES_CAUSING_PHENOTYPE, false, properties).toString());
                 }
             }
