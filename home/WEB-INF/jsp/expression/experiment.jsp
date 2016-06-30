@@ -2,7 +2,7 @@
 
 <zfin2:dataManager zdbID="${experiment.zdbID}"/>
 
-<div><span class="data-sub-page-title">Experiment Conditions Description:</span>&nbsp;<span class="data-sub-page-title-italic">${experiment.displayAllConditions}</span></div>
+<div><span class="data-sub-page-title">Experiment Conditions Description:&nbsp;</span><span class="data-sub-page-title-italic">${experiment.displayAllConditions}</span></div>
 
 <div style="float: right;">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
