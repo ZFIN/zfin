@@ -326,10 +326,13 @@
                 <c:if test="${galleryMode}">
                     <c:if test="${!empty images}">
                         <div class="masonry figure-gallery-results-container clearfix">
-                            <c:forEach var="image" items="${images}">
+                            <c:forEach var="image" items="${images}" varStatus="loop">
                                 <div class="figure-gallery-result-size"></div>
                                 <div class="figure-gallery-result-container">
-                                    <div class="figure-gallery-image-container gallery" data-image-zdb-id="${image.zdbID}">
+                                    <div class="figure-gallery-image-container gallery"
+                                         data-prev="${loop.first ? '' : images[loop.index - 1].zdbID}"
+                                         data-next="${loop.last ? '' : images[loop.index + 1].zdbID}"
+                                         id="${image.zdbID}">
                                         <img src="${image.mediumUrl}">
                                         <div class="hidden figure-gallery-loading-overlay">
                                             <i class="fa fa-spinner fa-spin"></i>
@@ -366,7 +369,9 @@
 
 <zfin-search:allFacetsModal/>
 
-<div id="figureGalleryModal" class="figure-gallery-modal modal" tabindex="-1" role="dialog"></div>
+<div id="figureGalleryModal" class="figure-gallery-modal modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog"></div>
+</div>
 
 
 <script>
@@ -509,16 +514,19 @@ $(function () {
         var headerHeight = $modal.find('.modal-header').outerHeight();
         var modalBody = $modal.find('.modal-body');
         var modalBackdrop = $modal.find('.modal-backdrop');
+        var modalDialog = $modal.find('.modal-dialog');
         var modalImage = $modal.find('.figure-gallery-modal-image')[0];
         var availableHeight = totalHeight - headerHeight - padding;
-        var availableWidth = $(window).width() - padding;
+        var availableWidth = $(window).width() - padding - 150;
         var newHeight;
         if (modalImage.naturalWidth / modalImage.naturalHeight > availableWidth / availableHeight) {
             newHeight = availableWidth * modalImage.naturalHeight / modalImage.naturalWidth;
         } else {
             newHeight = availableHeight;
         }
-        modalBody.height(Math.min(newHeight, modalImage.naturalHeight));
+        newHeight = Math.min(newHeight, modalImage.naturalHeight);
+        modalBody.height(newHeight);
+        modalDialog.height(newHeight + headerHeight + 30);
         modalBackdrop.height(totalHeight);
     }
 
@@ -531,15 +539,41 @@ $(function () {
         resizeTimer = setTimeout(resizeModal, 250);
     });
 
-    $('.figure-gallery-image-container').on('click', function () {
-        var loading = $(this).find('.figure-gallery-loading-overlay').removeClass('hidden');
-        var summaryUrl = '/action/image/' + $(this).data('image-zdb-id') + '/summary?category=' + encodeURIComponent('${category}');
-        $('#figureGalleryModal').load(summaryUrl, function () {
+    function loadModal(el) {
+        var $el = $(el);
+        var loading = $el.find('.figure-gallery-loading-overlay').removeClass('hidden');
+        var summaryUrl = '/action/image/' + el.id + '/summary?category=' + encodeURIComponent('${category}');
+        var prevImage = $el.data('prev');
+        var nextImage = $el.data('next');
+        var $modal = $('#figureGalleryModal');
+        $('.figure-gallery-modal-image').addClass('hidden');
+        el.scrollIntoView();
+        $modal.find('.modal-dialog').load(summaryUrl, function () {
+            if (!($modal.data('bs.modal') || {}).isShown) {
+                $modal.modal();
+            }
+            $('.figure-gallery-modal-nav.prev')
+                    .toggle(Boolean(prevImage))
+                    .click(function (evt) {
+                        evt.preventDefault();
+                        loadModal(document.getElementById(prevImage));
+                    });
+            $('.figure-gallery-modal-nav.next')
+                    .toggle(Boolean(nextImage))
+                    .click(function (evt) {
+                        evt.preventDefault();
+                        loadModal(document.getElementById(nextImage));
+                    });
             $('.figure-gallery-modal-image').on('load', function() {
-                $('#figureGalleryModal').modal();
+                $('.figure-gallery-modal-image').removeClass('hidden');
+                resizeModal();
                 loading.addClass('hidden');
-            })
+            });
         });
+    }
+
+    $('.figure-gallery-image-container').on('click', function () {
+        loadModal(this);
     });
 
     var figureGallery = $('.figure-gallery-results-container');

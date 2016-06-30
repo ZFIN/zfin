@@ -521,6 +521,7 @@ i.facet-selected,
 .figure-gallery-modal-body {
     text-align: center;
     background: black;
+    overflow: hidden;
 }
 
 .figure-gallery-loading-overlay {
@@ -557,6 +558,37 @@ i.facet-selected,
     cursor: pointer;
     position: relative;
     height: 100%;
+}
+
+.figure-gallery-modal-nav {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 75px;
+    font-size: 48px;
+    color: #808080;
+    background: #444444;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: left 200ms, right 200ms, color 200ms;
+}
+.figure-gallery-modal-nav:hover {
+    color: #9b9b9b;
+    text-decoration: none;
+}
+.figure-gallery-modal-nav.prev {
+    left: -5px;
+}
+.figure-gallery-modal-nav.prev:hover {
+    left: 0;
+}
+.figure-gallery-modal-nav.next {
+    right: -5px;
+}
+.figure-gallery-modal-nav.next:hover {
+    right: 0;
 }
 
 .figure-gallery-image-container.preview {
