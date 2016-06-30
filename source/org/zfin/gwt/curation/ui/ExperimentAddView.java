@@ -85,13 +85,12 @@ public class ExperimentAddView extends AbstractViewComposite {
 
     public void addDeleteButton(EnvironmentDTO dto, DeleteImage deleteImage, int elementIndex) {
         int row = elementIndex + 1;
-        if (!dto.getUsedInExpression()&&(!dto.getUsedInPhenotype())&&(!dto.getUsedInDisease())) {
-        /*if (dto.conditionDTOList == null) {
-            dataTable.setWidget(row, 2, deleteImage);
-        }*/
-            dataTable.setWidget(row, 2, deleteImage);
+        if (!(dto.getIsUsedInExpression())||!(dto.getIsUsedInPhenotype())||!(dto.getIsUsedInDisease())) {
+           dataTable.setWidget(row, 2, deleteImage);
+            }
+
         }
-    }
+
 
     public void addUpdateButton(EnvironmentDTO dto, Button updateButton, int elementIndex) {
         int row = elementIndex + 1;

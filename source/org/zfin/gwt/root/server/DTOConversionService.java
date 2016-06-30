@@ -1153,6 +1153,9 @@ public class DTOConversionService {
      */
     public static EnvironmentDTO convertToEnvironmentDTO(Experiment experiment) {
         EnvironmentDTO environment = new EnvironmentDTO();
+        environment.setIsUsedInDisease(false);
+        environment.setIsUsedInExpression(false);
+        environment.setIsUsedInPhenotype(false);
         environment.setZdbID(experiment.getZdbID());
         if (experiment.getName() == null) {
             experiment = RepositoryFactory.getExpressionRepository().getExperimentByID(experiment.getZdbID());
@@ -1163,24 +1166,18 @@ public class DTOConversionService {
             environment.setName(experiment.getName());
         }
         if (CollectionUtils.isNotEmpty(RepositoryFactory.getExpressionRepository().getExpressionByExperiment(experiment.getZdbID()))) {
-            environment.setUsedInExpression(true);
+            environment.setIsUsedInExpression(true);
 
         }
-        else{
-            environment.setUsedInExpression(false);
-        }
+
         if (CollectionUtils.isNotEmpty(RepositoryFactory.getPhenotypeRepository().getPhenoByExperimentID(experiment.getZdbID()))) {
-            environment.setUsedInPhenotype(true);
+            environment.setIsUsedInPhenotype(true);
         }
-        else{
-            environment.setUsedInPhenotype(false);
-        }
+
         if (CollectionUtils.isNotEmpty(RepositoryFactory.getPhenotypeRepository().getHumanDiseaseModelsByExperiment(experiment.getZdbID()))) {
-            environment.setUsedInDisease(true);
+            environment.setIsUsedInDisease(true);
         }
-        else{
-            environment.setUsedInDisease(false);
-        }
+
         if (CollectionUtils.isNotEmpty(experiment.getExperimentConditions())) {
             List<ConditionDTO> list = new ArrayList<>();
             for (ExperimentCondition condition : experiment.getExperimentConditions()) {

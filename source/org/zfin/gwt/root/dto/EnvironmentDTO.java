@@ -12,39 +12,43 @@ public class EnvironmentDTO extends RelatedEntityDTO {
     public static final String STANDARD = "Standard";
     public static final String GENERIC_CONTROL = "Generic-control";
 
-    public Boolean getUsedInExpression() {
-        return usedInExpression;
+
+    public Boolean getIsUsedInExpression() {
+        return isUsedInExpression;
     }
 
-    public void setUsedInExpression(Boolean usedInExpression) {
-        this.usedInExpression = usedInExpression;
+    public void setIsUsedInExpression(Boolean isUsedInExpression) {
+        this.isUsedInExpression = isUsedInExpression;
+    }
+
+    public Boolean getIsUsedInPhenotype() {
+        return isUsedInPhenotype;
+    }
+
+    public void setIsUsedInPhenotype(Boolean isUsedInPhenotype) {
+        this.isUsedInPhenotype = isUsedInPhenotype;
+    }
+
+    public Boolean getIsUsedInDisease() {
+        return isUsedInDisease;
+    }
+
+    public void setIsUsedInDisease(Boolean isUsedInDisease) {
+        this.isUsedInDisease = isUsedInDisease;
     }
 
     public List<ConditionDTO> conditionDTOList;
-    public Boolean usedInExpression;
-    public Boolean usedInPhenotype;
+    public Boolean isUsedInExpression;
+    public Boolean isUsedInPhenotype;
+    public Boolean isUsedInDisease;
 
     public static String getSTANDARD() {
         return STANDARD;
     }
 
-    public Boolean getUsedInPhenotype() {
-        return usedInPhenotype;
-    }
 
-    public void setUsedInPhenotype(Boolean usedInPhenotype) {
-        this.usedInPhenotype = usedInPhenotype;
-    }
 
-    public Boolean getUsedInDisease() {
-        return usedInDisease;
-    }
 
-    public void setUsedInDisease(Boolean usedInDisease) {
-        this.usedInDisease = usedInDisease;
-    }
-
-    public Boolean usedInDisease;
 
     public String getZdbID() {
         return zdbID;
