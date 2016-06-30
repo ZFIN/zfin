@@ -634,8 +634,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (List<ExpressionExperiment2>) query.list();
     }
 
-    public List<ExpressionExperiment> getExpressionByExperiment(String experimentID) {
-        String hql = "select experiment from ExpressionExperiment experiment "
+    public List<ExpressionExperiment2> getExpressionByExperiment(String experimentID) {
+        String hql = "select experiment from ExpressionExperiment2 experiment "
                             + "     where experiment.fishExperiment.experiment.zdbID = :experimentID ";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
@@ -643,7 +643,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
 
 
-        return (List<ExpressionExperiment>) query.list();
+        return (List<ExpressionExperiment2>) query.list();
     }
 
     @SuppressWarnings("unchecked")
