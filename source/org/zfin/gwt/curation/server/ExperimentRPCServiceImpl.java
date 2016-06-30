@@ -231,7 +231,7 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
             List<Experiment> experimentSet = getExpressionRepository().geExperimentByPublication(publicationID);
             if (experimentSet != null) {
                 for (Experiment experiment : experimentSet) {
-                    EnvironmentDTO dto = DTOConversionService.convertToEnvironmentDTO(experiment);
+                    EnvironmentDTO dto = DTOConversionService.convertToEnvironmentTabDTO(experiment);
                     list.add(dto);
                 }
             }

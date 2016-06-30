@@ -1153,9 +1153,7 @@ public class DTOConversionService {
      */
     public static EnvironmentDTO convertToEnvironmentDTO(Experiment experiment) {
         EnvironmentDTO environment = new EnvironmentDTO();
-        environment.setIsUsedInDisease(false);
-        environment.setIsUsedInExpression(false);
-        environment.setIsUsedInPhenotype(false);
+
         environment.setZdbID(experiment.getZdbID());
         if (experiment.getName() == null) {
             experiment = RepositoryFactory.getExpressionRepository().getExperimentByID(experiment.getZdbID());
@@ -1165,18 +1163,7 @@ public class DTOConversionService {
         } else {
             environment.setName(experiment.getName());
         }
-        if (CollectionUtils.isNotEmpty(RepositoryFactory.getExpressionRepository().getExpressionByExperiment(experiment.getZdbID()))) {
-            environment.setIsUsedInExpression(true);
 
-        }
-
-        if (CollectionUtils.isNotEmpty(RepositoryFactory.getPhenotypeRepository().getPhenoByExperimentID(experiment.getZdbID()))) {
-            environment.setIsUsedInPhenotype(true);
-        }
-
-        if (CollectionUtils.isNotEmpty(RepositoryFactory.getPhenotypeRepository().getHumanDiseaseModelsByExperiment(experiment.getZdbID()))) {
-            environment.setIsUsedInDisease(true);
-        }
 
         if (CollectionUtils.isNotEmpty(experiment.getExperimentConditions())) {
             List<ConditionDTO> list = new ArrayList<>();
@@ -1197,6 +1184,58 @@ public class DTOConversionService {
 
         return environment;
     }
+    public static EnvironmentDTO convertToEnvironmentTabDTO(Experiment experiment) {
+        EnvironmentDTO environment = new EnvironmentDTO();
+        environment.setZdbID(experiment.getZdbID());
+        if (experiment.getName() == null) {
+            experiment = RepositoryFactory.getExpressionRepository().getExperimentByID(experiment.getZdbID());
+        }
+        if (experiment.getName().startsWith("_")) {
+            environment.setName(experiment.getName().substring(1));
+        } else {
+            environment.setName(experiment.getName());
+        }
+
+
+        if (CollectionUtils.isNotEmpty(experiment.getExperimentConditions())) {
+            List<ConditionDTO> list = new ArrayList<>();
+            for (ExperimentCondition condition : experiment.getExperimentConditions()) {
+                ConditionDTO dto = new ConditionDTO();
+                dto.setZdbID(condition.getZdbID());
+                dto.setEnvironmentZdbID(experiment.getZdbID());
+                dto.setZecoTerm(DTOConversionService.convertToTermDTO(condition.getZecoTerm()));
+                dto.setAoTerm(DTOConversionService.convertToTermDTO(condition.getAoTerm()));
+                dto.setGoCCTerm(DTOConversionService.convertToTermDTO(condition.getGoCCTerm()));
+                dto.setTaxonTerm(DTOConversionService.convertToTermDTO(condition.getTaxaonymTerm()));
+                dto.setChebiTerm(DTOConversionService.convertToTermDTO(condition.getChebiTerm()));
+                list.add(dto);
+            }
+            environment.setConditionDTOList(list);
+
+        }
+
+        environment.setIsUsedInDisease(false);
+        environment.setIsUsedInExpression(false);
+        environment.setIsUsedInPhenotype(false);
+        convertToEnvironmentDTO(experiment);
+
+        if (CollectionUtils.isNotEmpty(RepositoryFactory.getExpressionRepository().getExpressionByExperiment(experiment.getZdbID()))) {
+            environment.setIsUsedInExpression(true);
+
+        }
+
+        if (CollectionUtils.isNotEmpty(RepositoryFactory.getPhenotypeRepository().getPhenoByExperimentID(experiment.getZdbID()))) {
+            environment.setIsUsedInPhenotype(true);
+        }
+
+        if (CollectionUtils.isNotEmpty(RepositoryFactory.getPhenotypeRepository().getHumanDiseaseModelsByExperiment(experiment.getZdbID()))) {
+            environment.setIsUsedInDisease(true);
+        }
+
+
+        return environment;
+    }
+
 
     public static PhenotypePileStructureDTO convertToPhenotypePileStructureDTO(PhenotypeStructure structure) {
         PhenotypePileStructureDTO dto = new PhenotypePileStructureDTO();

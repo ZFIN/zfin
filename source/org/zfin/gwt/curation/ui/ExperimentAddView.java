@@ -85,7 +85,7 @@ public class ExperimentAddView extends AbstractViewComposite {
 
     public void addDeleteButton(EnvironmentDTO dto, DeleteImage deleteImage, int elementIndex) {
         int row = elementIndex + 1;
-        if (!(dto.getIsUsedInExpression())||!(dto.getIsUsedInPhenotype())||!(dto.getIsUsedInDisease())) {
+        if (!(dto.getIsUsedInExpression())&&!(dto.getIsUsedInPhenotype())&&!(dto.getIsUsedInDisease())) {
            dataTable.setWidget(row, 2, deleteImage);
             }
 
