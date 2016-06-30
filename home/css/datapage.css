@@ -118,3 +118,10 @@ tr.spaceUnder > td{
     font-weight: 700;
     text-align: left;
 }
+
+.data-sub-page-title-italic {
+    font-size: large;
+    font-weight: bold;
+    font-style:italic;
+    background: #ccc;
+}

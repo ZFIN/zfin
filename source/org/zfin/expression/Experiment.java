@@ -9,6 +9,7 @@ import org.zfin.publication.Publication;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 @SuppressWarnings({"JpaAttributeMemberSignatureInspection", "JpaAttributeTypeInspection"})
@@ -163,5 +164,20 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         if (experimentConditions == null)
             experimentConditions = new HashSet<>();
         experimentConditions.add(condition);
+    }
+
+    public String getDisplayAllConditions() {
+        String displayConditions = "";
+        Iterator iterator = experimentConditions.iterator();
+        if (iterator.hasNext()) {
+            ExperimentCondition firstExperimentCondition = (ExperimentCondition) iterator.next();
+            displayConditions = firstExperimentCondition.getDisplayName();
+            while (iterator.hasNext()) {
+                displayConditions += ", ";
+                ExperimentCondition experimentCondition = (ExperimentCondition) iterator.next();
+                displayConditions += experimentCondition.getDisplayName();
+            }
+        }
+        return displayConditions;
     }
 }
