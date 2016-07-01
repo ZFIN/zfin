@@ -1000,6 +1000,12 @@
             <Column id="3">ZECO Term ID</Column>
             <Column id="4">Chebi Term Name</Column>
             <Column id="5">Chebi Term ID</Column>
+            <Column id="6">ZFA Term name</Column>  
+            <Column id="7">ZFA Term ID</Column>  
+            <Column id="8">GO-CC Term name</Column>
+            <Column id="9">GO-CC Term ID</Column>
+            <Column id="10">Taxon Term name</Column>
+            <Column id="11">Taxoni Term ID</Column>
         </Download>
         <Download orderIndex="5">
             <Name>
@@ -1374,6 +1380,12 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="3">ZECO Term ID</Column>
             <Column id="4">Chebi Term name</Column> 
             <Column id="5">Chebi Term ID</Column>
+            <Column id="6">ZFA Term name</Column>
+            <Column id="7">ZFA Term ID</Column>
+            <Column id="8">GO-CC Term name</Column>
+            <Column id="9">GO-CC Term ID</Column>
+            <Column id="10">Taxon Term name</Column>
+            <Column id="11">Taxoni Term ID</Column>
         </Download>
         <Download orderIndex="5">
             <Name>

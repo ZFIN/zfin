@@ -299,27 +299,42 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_experiments/1exps.txt"
   select expcond_zdb_id,
-  	 expcond_exp_zdb_id,
-  	 zeco.term_name,
-  	 expcond_zeco_term_zdb_id,
-  	 chebi.term_name,
-	 expcond_chebi_zdb_id, 
-	 exp_name  
+         expcond_exp_zdb_id,
+         zeco.term_name,
+         expcond_zeco_term_zdb_id,
+         chebi.term_name,
+         expcond_chebi_zdb_id, 
+         zfa.term_name,
+         expcond_ao_term_zdb_id,
+         gocc.term_name,
+         expcond_go_cc_term_zdb_id,
+         taxon.term_name,
+         expcond_taxon_term_zdb_id,
+         exp_name  
     from experiment_condition
 join experiment on exp_zdb_id = expcond_exp_zdb_id
 left outer join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id  
 left outer join term chebi on chebi.term_zdb_id = expcond_chebi_zdb_id
+left outer join term zfa on zfa.term_zdb_id = expcond_ao_term_zdb_id
+left outer join term gocc on gocc.term_zdb_id = expcond_go_cc_term_zdb_id
+left outer join term taxon on taxon.term_zdb_id = expcond_taxon_term_zdb_id
 union
   select exp_zdb_id,
-  	 exp_zdb_id,
-  	 '',
-	 '',
-	 '',
-	 '',
-	 ''
+         exp_zdb_id,
+         '',
+         '',
+         '',
+         '',
+         '',
+         '',
+         '',
+         '',
+         '',
+         '',
+         ''
     from experiment 
   where not exists (select 'x' from experiment_condition
-  	    	   	   where expcond_exp_zdb_id = exp_zdb_id)
+                           where expcond_exp_zdb_id = exp_zdb_id)
 ;
 
 --markers
