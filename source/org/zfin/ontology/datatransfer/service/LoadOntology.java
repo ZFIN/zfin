@@ -516,6 +516,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         summary.put("Obsoleted Terms", getDataSize("obsoleted_terms"));
         summary.put("New DBXrefs", getDataSize("new_xrefs"));
         summary.put("Removed DBXrefs", getDataSize("removed_xrefs"));
+        summary.put("Updated Merged Terms", getDataSize("zeco_updates"));
         stats.addSummaryTable("Statistics", summary);
         stats.writeFiles(new File(loadDirectory, jobName), "statistics");
     }

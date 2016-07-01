@@ -109,6 +109,14 @@ Statistics:
         </td>
     </tr>
     <tr>
+        <th>Updated Merged Terms</th>
+        <td>
+        <#if zeco_updates??>
+        ${zeco_updates?size}
+        </#if>
+        </td>
+    </tr>
+    <tr>
     <th>New DB xrefs</th>
     <td>
      <#if new_xrefs??>
