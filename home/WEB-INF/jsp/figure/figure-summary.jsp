@@ -3,7 +3,7 @@
 <div class="modal-content">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">${image.figure.label} from <zfin:link entity="${image.figure.publication}"/></h4>
+        <h4 class="modal-title"><zfin:link entity="${image.figure}">${image.figure.label}</zfin:link> from <zfin:link entity="${image.figure.publication}"/></h4>
         <c:if test="${!empty expressionSummary}">
             <zfin-figure:expressionSummary summary="${expressionSummary}"/>
         </c:if>
@@ -15,9 +15,9 @@
         <a href="#" class="figure-gallery-modal-nav prev" role="button">
             <i class="fa fa-chevron-left"></i>
         </a>
-        <a href="/${image.figure.zdbID}">
+        <zfin:link entity="${image.figure}">
             <img class="figure-gallery-modal-image" src="${image.url}">
-        </a>
+        </zfin:link>
         <a href="#" class="figure-gallery-modal-nav next" role="button">
             <i class="fa fa-chevron-right"></i>
         </a>
