@@ -201,26 +201,32 @@
                 </c:if>
 
                 <div class="row">
-                    <c:if test="${!galleryMode}">
-                        <div class="col-md-2 col-sm-3 col-xs-4">
-                            <a href="${downloadUrl}" class="btn btn-default">
-                                <i class="fa fa-download"></i> Download
-                            </a>
+                    <div class="col-xs-12 center">
+                        <div class="pull-left">
+                            <c:if test="${!galleryMode}">
+                                <a href="${downloadUrl}" class="btn btn-default">
+                                    <i class="fa fa-download"></i> Download
+                                </a>
+                                <a href="${baseUrlWithoutGalleryMode}&galleryMode=true" class="btn btn-default">
+                                    <i class="fa fa-camera"></i> Browse Images
+                                </a>
+                            </c:if>
+                            <c:if test="${galleryMode}">
+                                <a class="btn btn-default" href="${baseUrlWithoutGalleryMode}&galleryMode=false">
+                                    <i class="fa fa-chevron-left"></i>
+                                    See all <fmt:formatNumber value="${numFound}" pattern="##,###"/><zfin:choice choicePattern="0# results| 1# result| 2# results" integerEntity="${numFound}"/>
+                                </a>
+                            </c:if>
                         </div>
-                    </c:if>
-                    <c:if test="${galleryMode}">
-                        <div class="col-md-2 col-sm-3 col-xs-4">
-                            <a class="btn btn-default" href="${baseUrlWithoutGalleryMode}&galleryMode=false">
-                                <i class="fa fa-chevron-left"></i>
-                                See all <fmt:formatNumber value="${numFound}" pattern="##,###"/><zfin:choice choicePattern="0# results| 1# result| 2# results" integerEntity="${numFound}"/>
-                            </a>
-                        </div>
-
-                    </c:if>
-                    <div class="result-count col-md-10 col-sm-9 col-xs-8">
 
                         <c:if test="${!galleryMode}">
                             <fmt:formatNumber value="${numFound}" pattern="##,###"/><zfin:choice choicePattern="0# results| 1# result| 2# results" integerEntity="${numFound}"/>
+                        </c:if>
+                        <c:if test="${galleryMode}">
+                            <fmt:formatNumber value="${numImages}" pattern="##,###"/><zfin:choice choicePattern="0# images| 1# image| 2# images" integerEntity="${numImages}"/>
+                        </c:if>
+
+                        <c:if test="${!galleryMode}">
                             <div class="pull-right">
                                 <authz:authorize access="hasRole('root')">
                                     <div class="btn-group">
@@ -254,9 +260,7 @@
                                 </div>
                             </div>
                         </c:if>
-                        <c:if test="${galleryMode}">
-                            <fmt:formatNumber value="${numImages}" pattern="##,###"/><zfin:choice choicePattern="0# images| 1# image| 2# images" integerEntity="${numImages}"/>
-                        </c:if>
+                    </div>
                     </div>
                 </div>
 
@@ -265,27 +269,27 @@
                        * there are enough images
                        * a category has been chosen
                        * you're on the first page of results --%>
-                <c:if test="${!galleryMode && fn:length(images) > 10 && !empty category && category != 'Any' && paginationBean.page == 1}">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="figure-gallery-preview-container">
-                                <div class="figure-gallery-image-strip">
-                                    <c:forEach var="image" items="${images}">
-                                        <div class="figure-gallery-image-container preview" data-image-zdb-id="${image.zdbID}">
-                                            <img src="${image.mediumUrl}">
-                                            <div class="hidden figure-gallery-loading-overlay">
-                                                <i class="fa fa-spinner fa-spin"></i>
-                                            </div>
-                                        </div>
-                                    </c:forEach>
-                                </div>
-                                <div class="figure-gallery-overlay-link">
-                                    <a href="${baseUrlWithoutGalleryMode}&galleryMode=true">View More Images</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </c:if>
+                <%--<c:if test="${!galleryMode && fn:length(images) > 10 && !empty category && category != 'Any' && paginationBean.page == 1}">--%>
+                    <%--<div class="row">--%>
+                        <%--<div class="col-md-12">--%>
+                            <%--<div class="figure-gallery-preview-container">--%>
+                                <%--<div class="figure-gallery-image-strip">--%>
+                                    <%--<c:forEach var="image" items="${images}">--%>
+                                        <%--<div class="figure-gallery-image-container preview" data-image-zdb-id="${image.zdbID}">--%>
+                                            <%--<img src="${image.mediumUrl}">--%>
+                                            <%--<div class="hidden figure-gallery-loading-overlay">--%>
+                                                <%--<i class="fa fa-spinner fa-spin"></i>--%>
+                                            <%--</div>--%>
+                                        <%--</div>--%>
+                                    <%--</c:forEach>--%>
+                                <%--</div>--%>
+                                <%--<div class="figure-gallery-overlay-link">--%>
+                                    <%--<a href="${baseUrlWithoutGalleryMode}&galleryMode=true">View More Images</a>--%>
+                                <%--</div>--%>
+                            <%--</div>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                <%--</c:if>--%>
 
                 <c:if test="${!galleryMode}">
                     <c:forEach var="result" items="${results}">
