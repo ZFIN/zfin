@@ -1,5 +1,6 @@
 package org.zfin.gwt.root.server;
 
+import com.google.gwt.user.client.Window;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -652,12 +653,17 @@ public class DTOConversionService {
         detail.setDnaPositionEnd(dnaChangeDTO.getPositionEnd());
         detail.setGeneLocalizationTerm(getGeneLocalizationTermRepository().getControlledVocabularyTerm(dnaChangeDTO.getLocalizationTermOboID()));
         String sequenceReferenceAccessionNumber = dnaChangeDTO.getSequenceReferenceAccessionNumber();
+
         if (StringUtils.isNotEmpty(sequenceReferenceAccessionNumber)) {
+
             detail.setDnaSequenceReferenceAccessionNumber(sequenceReferenceAccessionNumber);
             ReferenceDatabase referenceDatabase = FeatureService.getForeignDbMutationDetailDna(sequenceReferenceAccessionNumber);
             if (referenceDatabase == null)
                 throw new NullpointerException("Accession number not found in Genbank, RefSeq or Ensembl: " + sequenceReferenceAccessionNumber);
             detail.setReferenceDatabase(referenceDatabase);
+        }
+        else{
+            detail.setDnaSequenceReferenceAccessionNumber(sequenceReferenceAccessionNumber);
         }
         return detail;
     }
