@@ -31,18 +31,18 @@ unload to 'zeco_updates'
       from experiment_condition, term as super, term as replacement, sec_oks
       where exists (Select 'x' from term
                        where term_is_Secondary = 't'
-                   and expcond_chebi_term_zdb_id = term_zdb_id)
-      and super.term_zdb_id = expcond_chebi_term_zdb_id
+                   and expcond_chebi_zdb_id = term_zdb_id)
+      and super.term_zdb_id = expcond_chebi_zdb_id
       and replacement.term_zdb_id = prim_zdb_id
-      and sec_zdb_id = expcond_chebi_term_zdb_id;
+      and sec_zdb_id = expcond_chebi_zdb_id;
 
 update experiment_condition
   set expcond_zeco_term_zdb_id = (Select prim_zdb_id
       			        from sec_oks
-				where sec_zdb_id = expcond_chebi_term_zdb_id)
+				where sec_zdb_id = expcond_chebi_zdb_id)
   where exists (Select term_zdb_id from term , sec_oks
   	       	       where term_is_Secondary = 't'
-		       and expcond_chebi_term_zdb_id = term_zdb_id
+		       and expcond_chebi_zdb_id = term_zdb_id
 		       and term_zdb_id = sec_zdb_id );
 
 -- update zeco-taxonomy terms
