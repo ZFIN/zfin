@@ -21,5 +21,8 @@
         <a href="#" class="figure-gallery-modal-nav next" role="button">
             <i class="fa fa-chevron-right"></i>
         </a>
+        <div class="figure-gallery-modal-loader hidden">
+            <i class="fa fa-spinner fa-spin"></i>
+        </div>
     </div>
 </div>

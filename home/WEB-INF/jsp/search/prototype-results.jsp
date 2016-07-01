@@ -530,7 +530,9 @@ $(function () {
         modalBackdrop.height(totalHeight);
     }
 
-    $('#figureGalleryModal').on('shown.bs.modal', resizeModal);
+    $('#figureGalleryModal').on('hidden.bs.modal', function () {
+        $('#figureGalleryModal .modal-dialog').empty();
+    });
 
     <%-- do a little timeout to prevent lots of animating during resize --%>
     var resizeTimer;
@@ -546,26 +548,29 @@ $(function () {
         var prevImage = $el.data('prev');
         var nextImage = $el.data('next');
         var $modal = $('#figureGalleryModal');
-        $('.figure-gallery-modal-image').addClass('hidden');
         el.scrollIntoView();
-        $modal.find('.modal-dialog').load(summaryUrl, function () {
+        $.get(summaryUrl, function (data) {
+            var content = $(data);
+            var loader = content.find('.figure-gallery-modal-loader');
             if (!($modal.data('bs.modal') || {}).isShown) {
                 $modal.modal();
             }
-            $('.figure-gallery-modal-nav.prev')
-                    .toggle(Boolean(prevImage))
+            content.find('.figure-gallery-modal-nav.prev')
+                    .toggleClass('hidden', !Boolean(prevImage))
                     .click(function (evt) {
                         evt.preventDefault();
+                        loader.removeClass('hidden');
                         loadModal(document.getElementById(prevImage));
                     });
-            $('.figure-gallery-modal-nav.next')
-                    .toggle(Boolean(nextImage))
+            content.find('.figure-gallery-modal-nav.next')
+                    .toggleClass('hidden', !Boolean(nextImage))
                     .click(function (evt) {
                         evt.preventDefault();
+                        loader.removeClass('hidden');
                         loadModal(document.getElementById(nextImage));
                     });
-            $('.figure-gallery-modal-image').on('load', function() {
-                $('.figure-gallery-modal-image').removeClass('hidden');
+            content.find('.figure-gallery-modal-image').on('load', function() {
+                $modal.find('.modal-dialog').html(content);
                 resizeModal();
                 loading.addClass('hidden');
             });
