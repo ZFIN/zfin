@@ -5223,7 +5223,7 @@ where fig_zdb_id=xpatfig_fig_zdb_id
                 "/>
 
 
-       <entity name="quality"
+       <entity name="autocomple_terms"
                datasource="db" query="select term_ont_id as id,
                              term_zdb_id as internal_id,
                              term_name as name,
@@ -5233,7 +5233,7 @@ where fig_zdb_id=xpatfig_fig_zdb_id
                              term_is_obsolete as obsolete,
                              term_definition as definition
                       from term
-                      where term_ontology = 'quality'; ">
+                      where term_ontology in ('quality','zebrafish_experimental_conditions_ontology','zeco_taxonomy'); ">
 
            <entity name="term_aliases"
                    datasource="db" query="select dalias_alias alias, dalias_data_zdb_id
