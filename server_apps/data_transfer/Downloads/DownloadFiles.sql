@@ -459,21 +459,26 @@ UNION
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_environment_fish.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_environment_fish.txt'
  DELIMITER "	"
-select exp_zdb_id, zeco.term_name, expcond_zeco_term_zdb_id, chebi.term_name, expcond_chebi_zdb_id
+select exp_zdb_id, zeco.term_name, expcond_zeco_term_zdb_id, chebi.term_name, expcond_chebi_zdb_id,
+       zfa.term_name, expcond_ao_term_zdb_id, gocc.term_name, expcond_go_cc_term_zdb_id,
+       taxon.term_name, expcond_taxon_term_zdb_id 
   from experiment_condition
 join experiment on exp_zdb_id = expcond_exp_zdb_id
 left outer join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id  
 left outer join term chebi on chebi.term_zdb_id = expcond_chebi_zdb_id
+left outer join term zfa on zfa.term_zdb_id = expcond_ao_term_zdb_id
+left outer join term gocc on gocc.term_zdb_id = expcond_go_cc_term_zdb_id
+left outer join term taxon on taxon.term_zdb_id = expcond_taxon_term_zdb_id
  where exists (
         select 'x' from fish_experiment, expression_experiment
          where expcond_exp_zdb_id = genox_exp_zdb_id
            and genox_zdb_id = xpatex_genox_zdb_id) 
 union
-select exp_zdb_id, exp_name, " ", " ", " "
+select exp_zdb_id, exp_name, " ", " ", " ", " ", " ", " ", " ", " ", " "
  from experiment
  where exp_name = "_Generic-control"  
 union
-select exp_zdb_id, "standard environment", " ", " ", " "
+select exp_zdb_id, "standard environment", " ", " ", " ", " ", " ", " ", " ", " ", " "
  from experiment
  where not exists (Select 'x' from experiment_condition
                           where exp_zdb_id = expcond_exp_zdb_id)
@@ -547,11 +552,16 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment_fish.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment_fish.txt'
  DELIMITER "	"
-select exp_zdb_id, zeco.term_name, expcond_zeco_term_zdb_id, chebi.term_name, expcond_chebi_zdb_id
+select exp_zdb_id, zeco.term_name, expcond_zeco_term_zdb_id, chebi.term_name, expcond_chebi_zdb_id,
+       zfa.term_name, expcond_ao_term_zdb_id, gocc.term_name, expcond_go_cc_term_zdb_id,
+       taxon.term_name, expcond_taxon_term_zdb_id  
   from experiment_condition
 join experiment on exp_zdb_id = expcond_exp_zdb_id
 left outer join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id  
 left outer join term chebi on chebi.term_zdb_id = expcond_chebi_zdb_id
+left outer join term zfa on zfa.term_zdb_id = expcond_ao_term_zdb_id
+left outer join term gocc on gocc.term_zdb_id = expcond_go_cc_term_zdb_id
+left outer join term taxon on taxon.term_zdb_id = expcond_taxon_term_zdb_id
  where exists (
         select 't'
           from fish_experiment, phenotype_source_generated
