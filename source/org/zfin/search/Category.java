@@ -53,7 +53,8 @@ public enum Category {
     DISEASE("Human Disease",
             FieldName.GENE,
             FieldName.FISH,
-            FieldName.EXPERIMENTAL_CONDITIONS
+            FieldName.EXPERIMENTAL_CONDITIONS,
+            FieldName.CONDITIONS
     ),
     MUTANT("Mutation / Tg",
             TYPE,
@@ -125,6 +126,7 @@ public enum Category {
             GENOTYPE_FULL_NAME,
             AUTHOR,
             EXPERIMENTAL_CONDITIONS,
+            CONDITIONS,
             HAS_IMAGE,
             FieldName.SEQUENCE_TARGETING_REAGENT,
             IS_WILDTYPE
@@ -142,6 +144,7 @@ public enum Category {
             MISEXPRESSED_GENE,
             HAS_IMAGE,
             EXPERIMENTAL_CONDITIONS,
+            CONDITIONS,
             FieldName.SEQUENCE_TARGETING_REAGENT
     ),
     COMMUNITY("Community",

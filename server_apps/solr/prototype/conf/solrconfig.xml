@@ -571,6 +571,9 @@
              full_mesh_term
              full_mesh_term_t
 
+             experimental_conditions_t
+             conditions_t
+
              related_accession
              related_marker
              affected_gene_t

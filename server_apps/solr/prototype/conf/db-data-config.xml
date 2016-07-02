@@ -2268,6 +2268,27 @@ select
                    cacheImpl="SortedMapBackedCache"
                    where="pg_id=phenotype.id"/>
 
+           <entity name="phenotype_condition"
+                   datasource="db" query="select
+                                nvl(zeco.term_name,'') ||
+                                nvl(': ' || ao.term_name,'') ||
+                                nvl(': ' || go_cc.term_name,'') ||
+                                nvl(': ' || chebi.term_name,'') ||
+                                nvl(': ' || taxon.term_name,'') as conditions,
+                                'pg-' || pg_id as pg_id
+                                from condition_data_type
+                             join experiment_condition on expcond_cdt_zdb_id = cdt_zdb_id
+                             join fish_experiment on genox_exp_zdb_id = expcond_exp_zdb_id and genox_is_std_or_generic_control = 'f'
+                             join phenotype_source_generated on genox_zdb_id = pg_genox_zdb_id
+                             join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id
+                             left outer join term ao on ao.term_zdb_id = expcond_ao_term_zdb_id
+                             left outer join term go_cc on go_cc.term_zdb_id = expcond_go_cc_term_zdb_id
+                             left outer join term chebi on chebi.term_zdb_id = expcond_chebi_zdb_id
+                             left outer join term taxon on taxon.term_zdb_id = expcond_taxon_term_zdb_id"
+                   cacheImpl="SortedMapBackedCache"
+                   where="pg_id=phenotype.id"/>
+
+
            <entity name="phenotype_is_monogenic"
                    datasource="db" query="select 'true' as is_monogenic,
                            'pg-' || pg_id as pg_id

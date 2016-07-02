@@ -30,6 +30,7 @@ public enum FieldName {
     CELLULAR_COMPONENT_TF("cellular_component_tf"),
     CHROMOSOME("chromosome", "Location"),
     CODING_SEQUENCE("coding_sequence"),
+    CONDITIONS("conditions"),
     CONSEQUENCE("rna_consequence"),
     CONSTRUCT("construct"),
     CURATION_STATUS("curation_status"),
