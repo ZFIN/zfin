@@ -356,6 +356,24 @@ close SA;
 
 system("rm <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/saAlleles2.txt");
 
+$huAllelesHtml = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/huAlleles2.txt';
+
+open (HUALLELEHTML, $huAllelesHtml) || die "Can't open $huAllelesHtml : $!\n";
+
+@lines=<HUALLELEHTML>;
+$huAlleles = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/huAlleles.txt';
+
+open (HUALLELE,  ">$huAlleles") || die "Can't open: $huAlleles $!\n";
+foreach $line (@lines) {
+  $line =~ s/<[^<>]+>//g;
+  print HUALLELE "$line";
+}
+
+close HUALLELEHTML;
+close HUALLELE;
+
+system("rm <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/huAlleles2.txt");
+
 
 # This part checks for any failed download files (those with 0 bytes), and ends the script if it finds some.
 
