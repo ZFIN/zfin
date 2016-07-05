@@ -62,8 +62,13 @@ public class ImageViewController {
         Figure figure = image.getFigure();
         if (category.equals(Category.EXPRESSIONS.getName())) {
             model.addAttribute("expressionSummary", figureViewService.getFigureExpressionSummary(figure));
+            model.addAttribute("showDetails", true);
         } else if (category.equals(Category.PHENOTYPE.getName())) {
             model.addAttribute("phenotypeSummary", figureViewService.getFigurePhenotypeSummary(figure));
+            model.addAttribute("showDetails", true);
+        } else if (category.equals(Category.PUBLICATION.getName())) {
+            model.addAttribute("figureCaption", figure.getCaption());
+            model.addAttribute("showDetails", true);
         }
 
         return "figure/figure-summary.fragment";

@@ -582,14 +582,14 @@ $(function () {
                         loader.removeClass('hidden');
                         loadModal(document.getElementById(nextImage));
                     });
-            content.find('.summary').toggle(shouldGalleryHeaderBeOpen());
+            content.find('.figure-gallery-modal-details').toggle(shouldGalleryHeaderBeOpen());
             content.find('.figure-gallery-modal-collapse')
                     .toggleClass('open', shouldGalleryHeaderBeOpen())
                     .click(function (evt) {
                         evt.preventDefault();
                         $(this).toggleClass('open');
                         toggleGalleryStorage();
-                        content.find('.summary').toggle();
+                        content.find('.figure-gallery-modal-details').toggle();
                         resizeModal();
                     });
             content.find('.figure-gallery-modal-image').on('load', function() {

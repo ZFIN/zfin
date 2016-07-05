@@ -5,16 +5,23 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true"><i class="fa fa-fw fa-close"></i></span>
         </button>
-        <button type="button" class="close figure-gallery-modal-collapse open">
-            <span aria-hidden="true"><i class="fa fa-fw fa-chevron-up"></i></span>
-        </button>
+        <c:if test="${showDetails}">
+            <button type="button" class="close figure-gallery-modal-collapse open">
+                <span aria-hidden="true"><i class="fa fa-fw fa-chevron-down"></i></span>
+            </button>
+        </c:if>
         <h4 class="modal-title"><zfin:link entity="${image.figure}">${image.figure.label}</zfin:link> from <zfin:link entity="${image.figure.publication}"/></h4>
-        <c:if test="${!empty expressionSummary}">
-            <zfin-figure:expressionSummary summary="${expressionSummary}"/>
-        </c:if>
-        <c:if test="${!empty phenotypeSummary}">
-            <zfin-figure:phenotypeSummary summary="${phenotypeSummary}"/>
-        </c:if>
+        <div class="figure-gallery-modal-details">
+            <c:if test="${!empty expressionSummary}">
+                <zfin-figure:expressionSummary summary="${expressionSummary}"/>
+            </c:if>
+            <c:if test="${!empty phenotypeSummary}">
+                <zfin-figure:phenotypeSummary summary="${phenotypeSummary}"/>
+            </c:if>
+            <c:if test="${!empty figureCaption}">
+                ${figureCaption}
+            </c:if>
+        </div>
     </div>
     <div class="modal-body figure-gallery-modal-body">
         <a href="#" class="figure-gallery-modal-nav prev" role="button">
