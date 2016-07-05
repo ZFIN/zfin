@@ -9,3 +9,8 @@ kill $processID;
 cd <!--|SOURCEROOT|-->/server_apps/DB_maintenance/
 
 gmake dumplogscontinuous
+
+cd <!--|TARGET_ROOT|-->/server_apps/DB_maintenance/
+
+
+<!--|TARGET_ROOT|-->/server_apps/DB_maintenance/dumpServer.pl

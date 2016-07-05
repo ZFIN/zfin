@@ -11,10 +11,10 @@ update experiment_condition
 
 
 update experiment_condition
- set expcond_chebi_zdb_id = (Select term_zdb_id
+ set expcond_chebi_term_zdb_id = (Select term_zdb_id
      			      		from term
 					where term_ont_id = 'CHEBI:52217')
- where expcond_chebi_zdb_id is null
+ where expcond_chebi_term_zdb_id is null
  and expcond_zeco_term_zdb_id = (Select term_zdb_id
      			      		from term
 					where term_name = 'chemical treatment');

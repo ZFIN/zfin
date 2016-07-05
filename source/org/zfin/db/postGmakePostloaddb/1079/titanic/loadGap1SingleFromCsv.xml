@@ -6,7 +6,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 
-<changeSet author="sierra" id="zecoLoadTempTable">
+<changeSet author="sierra" id="gap1SingleLoad">
     <loadData
             file="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/1079/titanic/tt_gap1_single.csv"
             catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_gap_tt" quotchar="A String" encoding="UTF-8" >

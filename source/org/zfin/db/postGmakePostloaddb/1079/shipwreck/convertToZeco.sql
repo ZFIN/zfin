@@ -72,7 +72,7 @@ update experiment_condition
 					and expcond_cdt_zdb_id = cdtid);
      			      
 update experiment_condition
- set expcond_chebi_zdb_id = (select chebitermid  from tmp_zeco_tt
+ set expcond_chebi_term_zdb_id = (select chebitermid  from tmp_zeco_tt
      			      		where expid = expcond_exp_zdb_id
 					and cdtid = expcond_cdt_zdb_id);
 
