@@ -625,6 +625,10 @@ i.facet-selected,
     font-size: 48px;
 }
 
+.figure-gallery-modal-collapse.open {
+    transform: rotate(180deg);
+}
+
 .figure-gallery-result-size,
 .figure-gallery-result-container {
     width: 100%;

@@ -2,7 +2,12 @@
 
 <div class="modal-content">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true"><i class="fa fa-fw fa-close"></i></span>
+        </button>
+        <button type="button" class="close figure-gallery-modal-collapse open">
+            <span aria-hidden="true"><i class="fa fa-fw fa-chevron-up"></i></span>
+        </button>
         <h4 class="modal-title"><zfin:link entity="${image.figure}">${image.figure.label}</zfin:link> from <zfin:link entity="${image.figure.publication}"/></h4>
         <c:if test="${!empty expressionSummary}">
             <zfin-figure:expressionSummary summary="${expressionSummary}"/>
