@@ -1,5 +1,7 @@
 package org.zfin.search.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang.StringUtils;
@@ -14,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.presentation.PaginationBean;
@@ -116,9 +117,6 @@ public class SearchPrototypeController {
             }
         }
 
-
-        model.addAttribute("suggestions", searchSuggestionService.getSuggestions(q));
-
         if (StringUtils.isNotEmpty(q) && q.startsWith("-")) {
             model.addAttribute("isDashQuery", true);
             model.addAttribute("newQuery", q.substring(1));
@@ -138,7 +136,6 @@ public class SearchPrototypeController {
         if (explain) {
             query.set("fl", "name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count, screen, has_orthology, score, xpat_zdb_id, fig_zdb_id, [explain]", "pgcmid");
         }
-
 
         URLCreator resubmitUrlCreator = new URLCreator(baseUrl);
         resubmitUrlCreator.removeNameValuePair("q");
@@ -250,17 +247,27 @@ public class SearchPrototypeController {
         model.addAttribute("response", response);
         model.addAttribute("query", query);
 
-        List<SearchResult> results = response.getBeans(SearchResult.class);
+        final List<SearchResult> results = response.getBeans(SearchResult.class);
+
+        if (CollectionUtils.isNotEmpty(results)) {
+            List<String> suggestions = searchSuggestionService.getSuggestions(q);
+            CollectionUtils.filter(suggestions, new Predicate() {
+                @Override
+                public boolean evaluate(Object o) {
+                    return !results.get(0).getName().equals(o);
+                }
+            });
+            model.addAttribute("suggestions", suggestions);
+        }
 
         //Easter Egg!  If the query starts with !, just go right to the first result
-        if (redirectToFirstResult && !CollectionUtils.isEmpty(results)) {
+        if (redirectToFirstResult && CollectionUtils.isNotEmpty(results)) {
             model.asMap().clear();
             return "redirect:" + results.get(0).getUrl();
         }
 
         //if the category is Any, and we only get one value back in the category facet,
         //set it and do everything again...
-
         if ((StringUtils.equals(category, "Any") || StringUtils.isEmpty(category))
                 && response.getFacetFields() != null
                 && response.getFacetFields().size() == 1
@@ -287,7 +294,7 @@ public class SearchPrototypeController {
 
         logger.debug(xrefList);
 
-        if (!CollectionUtils.isEmpty(xrefList)) {
+        if (CollectionUtils.isNotEmpty(xrefList)) {
             List<SearchResult> xrefResults = getXrefResult(client, xrefList);
             model.addAttribute("xrefResults", xrefResults);
         }
