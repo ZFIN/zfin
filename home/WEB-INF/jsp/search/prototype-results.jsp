@@ -261,7 +261,6 @@
                             </div>
                         </c:if>
                     </div>
-                    </div>
                 </div>
 
                 <%-- Show figure gallery teaser if
