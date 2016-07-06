@@ -2283,7 +2283,7 @@ select
                              join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id
                              left outer join term ao on ao.term_zdb_id = expcond_ao_term_zdb_id
                              left outer join term go_cc on go_cc.term_zdb_id = expcond_go_cc_term_zdb_id
-                             left outer join term chebi on chebi.term_zdb_id = expcond_chebi_zdb_id
+                             left outer join term chebi on chebi.term_zdb_id = expcond_chebi_term_zdb_id
                              left outer join term taxon on taxon.term_zdb_id = expcond_taxon_term_zdb_id"
                    cacheImpl="SortedMapBackedCache"
                    where="pg_id=phenotype.id"/>

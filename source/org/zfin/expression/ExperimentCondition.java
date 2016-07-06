@@ -45,7 +45,7 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
     @JoinColumn(name = "expcond_taxon_term_zdb_id")
     private GenericTerm taxaonymTerm;
     @ManyToOne
-    @JoinColumn(name = "expcond_chebi_zdb_id")
+    @JoinColumn(name = "expcond_chebi_term_zdb_id")
     private GenericTerm chebiTerm;
 
     private static Logger logger = Logger.getLogger(ExperimentCondition.class);
