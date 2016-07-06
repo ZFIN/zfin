@@ -28,7 +28,7 @@
                         ${fn:split(geneOntologyOnMarker.biologicalProcessEvidence.goTerm.ontology.commonName, ':')[1]}
                 </td>
                 <td>
-                        ${geneOntologyOnMarker.biologicalProcessEvidence.flag}
+                        ${geneOntologyOnMarker.biologicalProcessEvidence.flag}<c:if test="${!empty geneOntologyOnMarker.biologicalProcessEvidence.flag}">&nbsp;</c:if>
                     <zfin:link entity="${geneOntologyOnMarker.biologicalProcessEvidence.goTerm}"/>
 
                     (<a href="/action/marker/marker-go-view/${marker.zdbID}"
@@ -42,7 +42,7 @@
                         ${fn:split(geneOntologyOnMarker.cellularComponentEvidence.goTerm.ontology.commonName, ':')[1]}
                 </td>
                 <td>
-                        ${geneOntologyOnMarker.cellularComponentEvidence.flag}
+                        ${geneOntologyOnMarker.cellularComponentEvidence.flag}<c:if test="${!empty geneOntologyOnMarker.cellularComponentEvidence.flag}">&nbsp;</c:if>
                     <zfin:link entity="${geneOntologyOnMarker.cellularComponentEvidence.goTerm}"/>
 
                     (<a href="/action/marker/marker-go-view/${marker.zdbID}"
@@ -56,7 +56,7 @@
                         ${fn:split(geneOntologyOnMarker.molecularFunctionEvidence.goTerm.ontology.commonName, ':')[1]}
                 </td>
                 <td>
-                        ${geneOntologyOnMarker.molecularFunctionEvidence.flag}
+                        ${geneOntologyOnMarker.molecularFunctionEvidence.flag}<c:if test="${!empty geneOntologyOnMarker.molecularFunctionEvidence.flag}">&nbsp;</c:if>
                     <zfin:link entity="${geneOntologyOnMarker.molecularFunctionEvidence.goTerm}"/>
                     (<a href="/action/marker/marker-go-view/${marker.zdbID}"
                             >more</a>)
