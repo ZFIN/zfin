@@ -538,10 +538,6 @@ i.facet-selected,
     font-size: 2em;
 }
 
-.figure-gallery-result-container {
-    text-align: center;
-}
-
 .figure-gallery-modal-image {
     max-width: 100%;
     max-height: 100%;
@@ -553,11 +549,28 @@ i.facet-selected,
 }
 
 .figure-gallery-image-container {
-    border: 1px solid #c0c7c0;
-    padding: 0.5em;
     cursor: pointer;
     position: relative;
     height: 100%;
+    display: inline-block;
+}
+
+.figure-gallery-image-container.preview {
+    margin-right: 0.25em;
+    border: 1px solid #c0c7c0;
+    padding: 0.5em;
+}
+
+.figure-gallery-image-container.gallery {
+    display: block;
+    margin: 0.5em;
+    border: 1px solid #c0c7c0;
+    padding: 0.5em;
+}
+
+.figure-gallery-image-container > img {
+    max-width: 100%;
+    max-height: 100%;
 }
 
 .figure-gallery-modal-nav {
@@ -596,21 +609,6 @@ i.facet-selected,
     right: 0;
 }
 
-.figure-gallery-image-container.preview {
-    display: inline-block;
-    margin-right: 0.25em;
-}
-
-.figure-gallery-image-container.gallery {
-    display: block;
-    margin: 0.5em;
-}
-
-.figure-gallery-image-container > img {
-    max-width: 100%;
-    max-height: 100%;
-}
-
 .figure-gallery-modal-loader {
     color: white;
     position: absolute;
@@ -629,31 +627,35 @@ i.facet-selected,
     transform: rotate(180deg);
 }
 
-.figure-gallery-result-size,
-.figure-gallery-result-container {
+.figure-gallery-masonry-item {
+    text-align: center;
+}
+
+.figure-gallery-masonry-size,
+.figure-gallery-masonry-item {
     width: 100%;
 }
 @media (min-width: 768px) {
-    .figure-gallery-result-size,
-    .figure-gallery-result-container {
+    .figure-gallery-masonry-size,
+    .figure-gallery-masonry-item {
         width: 50%;
     }
 }
 @media (min-width: 992px) {
-    .figure-gallery-result-size,
-    .figure-gallery-result-container {
+    .figure-gallery-masonry-size,
+    .figure-gallery-masonry-item {
         width: 33%;
     }
 }
 @media (min-width: 1500px) {
-    .figure-gallery-result-size,
-    .figure-gallery-result-container {
+    .figure-gallery-masonry-size,
+    .figure-gallery-masonry-item {
         width: 25%;
     }
 }
 @media (min-width: 2000px) {
-    .figure-gallery-result-size,
-    .figure-gallery-result-container {
+    .figure-gallery-masonry-size,
+    .figure-gallery-masonry-item {
         width: 20%;
     }
 }

@@ -1,8 +1,5 @@
 package org.zfin.search.presentation;
 
-import java.io.IOException;
-import java.util.*;
-
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.util.CollectionUtils;
@@ -10,6 +7,11 @@ import org.zfin.expression.Figure;
 import org.zfin.fish.FeatureGene;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.search.Category;
+
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /*
 * This should match the fl parameter set as default in solrconfig
@@ -39,6 +41,8 @@ public class SearchResult implements ProvidesLink {
     List<String> images;
     @Field("thumbnail")
     List<String> thumbnails;
+    @Field("img_zdb_id")
+    List<String> imageZdbIds;
     @Field
     String snapshot;
     @Field
@@ -182,6 +186,14 @@ public class SearchResult implements ProvidesLink {
 
     public void setThumbnails(List<String> thumbnails) {
         this.thumbnails = thumbnails;
+    }
+
+    public List<String> getImageZdbIds() {
+        return imageZdbIds;
+    }
+
+    public void setImageZdbIds(List<String> imageZdbIds) {
+        this.imageZdbIds = imageZdbIds;
     }
 
     public String getSnapshot() {

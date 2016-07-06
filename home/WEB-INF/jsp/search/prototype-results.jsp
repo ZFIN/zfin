@@ -330,13 +330,10 @@
                 <c:if test="${galleryMode}">
                     <c:if test="${!empty images}">
                         <div class="masonry figure-gallery-results-container clearfix">
+                            <div class="figure-gallery-masonry-size"></div>
                             <c:forEach var="image" items="${images}" varStatus="loop">
-                                <div class="figure-gallery-result-size"></div>
-                                <div class="figure-gallery-result-container">
-                                    <div class="figure-gallery-image-container gallery"
-                                         data-prev="${loop.first ? '' : images[loop.index - 1].zdbID}"
-                                         data-next="${loop.last ? '' : images[loop.index + 1].zdbID}"
-                                         id="${image.zdbID}">
+                                <div class="figure-gallery-result-container figure-gallery-masonry-item" data-zdb-id="${image.zdbID}">
+                                    <div class="figure-gallery-image-container gallery">
                                         <img src="${image.mediumUrl}">
                                         <div class="hidden figure-gallery-loading-overlay">
                                             <i class="fa fa-spinner fa-spin"></i>
@@ -557,11 +554,10 @@ $(function () {
     function loadModal(el) {
         var $el = $(el);
         var loading = $el.find('.figure-gallery-loading-overlay').removeClass('hidden');
-        var summaryUrl = '/action/image/' + el.id + '/summary?category=' + encodeURIComponent('${category}');
-        var prevImage = $el.data('prev');
-        var nextImage = $el.data('next');
+        var summaryUrl = '/action/image/' + $el.data('zdb-id') + '/summary?category=' + encodeURIComponent('${category}');
+        var prev = $el.prev('.figure-gallery-result-container');
+        var next = $el.next('.figure-gallery-result-container');
         var $modal = $('#figureGalleryModal');
-        el.scrollIntoView();
         $.get(summaryUrl, function (data) {
             var content = $(data);
             var loader = content.find('.figure-gallery-modal-loader');
@@ -569,18 +565,18 @@ $(function () {
                 $modal.modal();
             }
             content.find('.figure-gallery-modal-nav.prev')
-                    .toggleClass('hidden', !Boolean(prevImage))
+                    .toggleClass('hidden', prev.length === 0)
                     .click(function (evt) {
                         evt.preventDefault();
                         loader.removeClass('hidden');
-                        loadModal(document.getElementById(prevImage));
+                        loadModal(prev);
                     });
             content.find('.figure-gallery-modal-nav.next')
-                    .toggleClass('hidden', !Boolean(nextImage))
+                    .toggleClass('hidden', next.length === 0)
                     .click(function (evt) {
                         evt.preventDefault();
                         loader.removeClass('hidden');
-                        loadModal(document.getElementById(nextImage));
+                        loadModal(next);
                     });
             content.find('.figure-gallery-modal-details').toggle(shouldGalleryHeaderBeOpen());
             content.find('.figure-gallery-modal-collapse')
@@ -600,15 +596,15 @@ $(function () {
         });
     }
 
-    $('.figure-gallery-image-container').on('click', function () {
+    $('.figure-gallery-result-container').on('click', function () {
         loadModal(this);
     });
 
     var figureGallery = $('.figure-gallery-results-container');
     figureGallery.imagesLoaded(function () {
         figureGallery.masonry({
-            itemSelector: '.figure-gallery-result-container',
-            columnWidth: '.figure-gallery-result-size',
+            itemSelector: '.figure-gallery-masonry-item',
+            columnWidth: '.figure-gallery-masonry-size',
             transitionDuration: 0
         });
     });

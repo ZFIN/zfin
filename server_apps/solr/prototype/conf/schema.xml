@@ -734,7 +734,7 @@
    <field name="fig_zdb_id" type="string" indexed="false" stored="true" />
 
    <!-- used for the figure gallery -->
-   <field name="img_zdb_id" type="string" indexed="true" stored="true" />
+   <field name="img_zdb_id" type="string" indexed="true" stored="true" multiValued="true"/>
 
    <field name="attribution_count" type="sint" indexed="true" stored="true"/>
 
