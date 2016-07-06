@@ -2,8 +2,6 @@
 
 <project name="load ontology" default="load-ontology" basedir=".">
 
-    <property name="anatomyOboURL"
-              value="http://purl.obolibrary.org/obo/zfa.obo"/>
     <property name="qualityOboURL"
               value="http://purl.obolibrary.org/obo/pato.obo"/>
     <property name="geneOboURL" value="http://purl.obolibrary.org/obo/go.obo"/>
@@ -13,10 +11,13 @@
     <property name="spatialOboURL"
               value="http://purl.obolibrary.org/obo/bspo.obo"/>
     <property name="chebiOboURL" value="ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.obo"/>
-    <property name="zecoOboURL" value="http://swirl.zfin.org/zeco.obo"/>
     <property name="soOboURL"
               value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/so-xp-simple.obo"/>
-    <property name="root.dir" value="${basedir}/../../../"/>
+    <property name="zecoTaxonomyOboURL" value="file:///research/zcentral/load_files/obo/zeco-taxonomy.obo"/>
+   <property name="zecoOboURL" value="file:///research/zcentral/load_files/obo/zeco.obo"/>
+   <property name="anatomyOboURL" value="file:///research/zcentral/load_files/obo/anatomy.obo"/>
+  
+  <property name="root.dir" value="${basedir}/../../../"/>
     <property name="web.dir" value="${root.dir}/home"/>
     <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
     <property name="classbin.dir" value="${web-inf.dir}/classes"/>
@@ -24,6 +25,7 @@
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="log.dir" value="${basedir}/logs"/>
     <property name="jvm.args" value="-XX:-UseSplitVerifier"/>
+    <property name="run-directory" value="./obo-files"/>
 
     <property environment="env"/>
 
@@ -74,11 +76,12 @@
     </target>
 
     <target name="load-anatomy-ontology" depends="init">
-        <property name="localOboFile" value="${run-directory}/zebrafish_anatomy.obo"/>
+        <property name="localOboFilePath" value="${run-directory}/zebrafish_anatomy.obo"/>
+	<echo message="${localOboFilePath}"/>
         <antcall target="load-ontology-with-stages"/>
     </target>
 
-    <target name="load-zeco-ontology" depends="init">
+    <target name="load-zeco-ontology">
         <load-ontology oboDirectory="${run-directory}" oboFileName="zeco.obo" scripts="${scriptFilesNoAnnotation}"/>
     </target>
 
@@ -132,12 +135,6 @@
         <antcall target="download-ontology"/>
     </target>
 
-    <target name="download-zeco-ontology">
-        <property name="localOboFile" value="zeco-ontology.obo"/>
-        <property name="oboFileURL" value="${zecoOboURL}"/>
-        <antcall target="download-ontology"/>
-    </target>
-
     <target name="download-so-ontology">
         <property name="localOboFile" value="so-xp-simple.obo"/>
         <property name="oboFileURL" value="${soOboURL}"/>
@@ -162,6 +159,25 @@
         <antcall target="download-ontology"/>
     </target>
 
+    <target name="download-zeco-taxonomy-ontology">
+        <property name="localOboFile" value="zeco-taxonomy.obo"/>
+        <property name="oboFileURL" value="${zecoTaxonomyOboURL}"/>
+        <antcall target="download-ontology"/>
+	<antcall target="setHeaderForZeco"/>
+    </target>
+
+     <target name="download-zeco-ontology">
+        <property name="localOboFile" value="zeco.obo"/>
+        <property name="oboFileURL" value="${zecoOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-anatomy-ontology">
+        <property name="localOboFile" value="zebrafish_anatomy.obo"/>
+        <property name="oboFileURL" value="${anatomyOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
     <target name="load-quality-ontology" depends="init">
         <load-ontology oboDirectory="${run-directory}" oboFileName="quality.obo"/>
     </target>
@@ -178,7 +194,9 @@
 
     <target name="load-chebi" depends="download-chebi-ontology,load-chebi-ontology"/>
 
-    <target name="load-zeco-taxonomy" depends="load-zeco-taxonomy-ontology"/>
+    <target name="load-zeco-taxonomy" depends="download-zeco-taxonomy-ontology,load-zeco-taxonomy-ontology"/>
+
+    <target name="load-anatomy" depends="download-anatomy-ontology,load-anatomy-ontology"/>
 
     <target name="load-disease" depends="download-disease-ontology,load-disease-ontology,run-omim-mapping-updates">
     </target>
@@ -187,8 +205,6 @@
         <echo message="Updating the Omim Phenotype xref mapping table..."/>
         <run-db-query db-query-file="../OMIM/update_omimp_termxref_mapping.sql" instanceName="${env.INSTANCE}"/>
     </target>
-
-    <target name="load-anatomy" depends="load-anatomy-ontology"/>
 
     <target name="load-mpath" depends="download-mpath-ontology,load-mpath-ontology"/>
 
@@ -255,7 +271,7 @@
               failonerror="true">
             <classpath refid="classpath"/>
             <arg value="-localOboFileName"/>
-            <arg value="${localOboFile}"/>
+            <arg value="${localOboFilePath}"/>
             <arg value="-log4jFilename"/>
             <arg value="log4j.xml"/>
             <arg value="-dbScriptFileNames"/>
@@ -312,14 +328,7 @@
 
     </target>
 
-    <target name="download-anatomy-ontology">
-        <property name="localOboFile" value="zebrafish_anatomy.obo"/>
-        <property name="oboFileURL" value="${anatomyOboURL}"/>
-        <antcall target="download-ontology"/>
-    </target>
-
-
-    <macrodef name="run-db-query">
+     <macrodef name="run-db-query">
         <attribute name="db-query-file"/>
         <attribute name="instanceName"/>
         <sequential>
