@@ -190,6 +190,11 @@ table.search-result-entity-attributes td {
 
 span.search-result-highlight {
     font-weight: bold;
+
+}
+
+.search-result .search-result-highlight {
+    background-color: yellow;
 }
 
 div.search-result-snippet {
@@ -210,6 +215,7 @@ table.search-result-snippet {
     color: #888;
     vertical-align: top;
     text-align: right;
+    white-space: nowrap;
 }
 
 .snippet-value {

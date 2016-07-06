@@ -605,71 +605,56 @@
    <field name="expression_anatomy" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="expression_anatomy_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="expression_anatomy_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="expression_anatomy_hl" type="all_headless_anatomy" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
 
    <field name="expressed_in" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="expressed_in_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="expressed_in_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="expressed_in_hl" type="all_headless_anatomy" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
 
    <field name="affected_anatomy" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="affected_anatomy_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="affected_anatomy_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="affected_anatomy_hl" type="all_headless_anatomy" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
 
    <field name="anatomy" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="anatomy_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="anatomy_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="anatomy_hl" type="all_headless_anatomy" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-
 
    <field name="phenotype_quality" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="phenotype_quality_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="phenotype_quality_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="phenotype_quality_hl" type="all_headless_anatomy" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
 
    <field name="quality_alias" type="keyword" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
 
    <field name="molecular_function" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="molecular_function_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="molecular_function_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="molecular_function_hl" type="all_headless_anatomy" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
 
    <field name="biological_process" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="biological_process_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="biological_process_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="biological_process_hl" type="all_headless_anatomy" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
 
    <field name="cellular_component" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="cellular_component_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="cellular_component_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="cellular_component_hl" type="all_headless_anatomy" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
 
    <field name="affected_molecular_function" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="affected_molecular_function_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="affected_molecular_function_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="affected_molecular_function_hl" type="all_headless_anatomy" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
 
    <field name="affected_biological_process" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="affected_biological_process_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="affected_biological_process_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="affected_biological_process_hl" type="all_headless_anatomy" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
 
    <field name="affected_cellular_component" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="affected_cellular_component_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="affected_cellular_component_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="affected_cellular_component_hl" type="all_headless_anatomy" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-
 
    <field name="labeled_anatomy" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="labeled_anatomy_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="labeled_anatomy_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="labeled_anatomy_hl" type="all_headless_anatomy" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
 
    <field name="labeled_cellular_component" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="labeled_cellular_component_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
    <field name="labeled_cellular_component_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="labeled_cellular_component_hl" type="all_headless_anatomy" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
 
 
 
@@ -787,9 +772,10 @@
    <dynamicField name="*_t"  type="text"    indexed="true"  stored="true" multiValued="true"  />
    <dynamicField name="*_st"  type="shingled_text"    indexed="true"  stored="true" multiValued="true"  />
    <dynamicField name="*_sn"  type="split_ngram"    indexed="true"  stored="true" multiValued="true"  />
+   <dynamicField name="*_hl" type="all_headless_anatomy" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
 
 
-   <dynamicField name="*_b"  type="boolean" indexed="true"  stored="true"/>
+     <dynamicField name="*_b"  type="boolean" indexed="true"  stored="true"/>
    <dynamicField name="*_f"  type="sfloat"  indexed="true"  stored="true"/>
    <dynamicField name="*_d"  type="sdouble" indexed="true"  stored="true"/>
    <dynamicField name="*_dt" type="date"    indexed="true"  stored="true"/>
@@ -819,24 +805,19 @@
 
    <copyField source="labeled_anatomy_direct" dest="labeled_anatomy"/>
    <copyField source="labeled_anatomy_parent" dest="labeled_anatomy"/>
+   <copyField source="labeled_anatomy_direct" dest="labeled_anatomy_t"/>
    <copyField source="labeled_anatomy_direct" dest="labeled_anatomy_hl"/>
+   <copyField source="labeled_anatomy_parent" dest="labeled_anatomy_t"/>
    <copyField source="labeled_anatomy_direct" dest="labeled_anatomy_tf"/>
    <copyField source="labeled_anatomy_parent" dest="labeled_anatomy_tf"/>
-   <copyField source="labeled_anatomy_direct" dest="term_t"/>
-   <copyField source="labeled_anatomy_parent" dest="term_t"/>
-    <copyField source="labeled_anatomy_direct" dest="text"/>
-    <copyField source="labeled_anatomy_parent" dest="text"/>
-
 
     <copyField source="labeled_cellular_component_direct" dest="labeled_cellular_component"/>
     <copyField source="labeled_cellular_component_parent" dest="labeled_cellular_component"/>
+    <copyField source="labeled_cellular_component_direct" dest="labeled_cellular_component_t"/>
     <copyField source="labeled_cellular_component_direct" dest="labeled_cellular_component_hl"/>
+    <copyField source="labeled_cellular_component_parent" dest="labeled_cellular_component_t"/>
     <copyField source="labeled_cellular_component_direct" dest="labeled_cellular_component_tf"/>
     <copyField source="labeled_cellular_component_parent" dest="labeled_cellular_component_tf"/>
-    <copyField source="labeled_cellular_component_direct" dest="term_t"/>
-    <copyField source="labeled_cellular_component_parent" dest="term_t"/>
-    <copyField source="labeled_cellular_component_direct" dest="text"/>
-    <copyField source="labeled_cellular_component_parent" dest="text"/>
 
     <!-- copy labeled_anatomy & labeled_cellular_component into a single facet -->
     <copyField source="labeled_anatomy_direct" dest="labeled_structure_tf"/>
@@ -847,129 +828,94 @@
 
     <copyField source="expression_anatomy_direct" dest="expression_anatomy"/>
     <copyField source="expression_anatomy_parent" dest="expression_anatomy"/>
+    <copyField source="expression_anatomy_direct" dest="expression_anatomy_t"/>
     <copyField source="expression_anatomy_direct" dest="expression_anatomy_hl"/>
+    <copyField source="expression_anatomy_parent" dest="expression_anatomy_t"/>
     <copyField source="expression_anatomy_direct" dest="expression_anatomy_tf"/>
     <copyField source="expression_anatomy_parent" dest="expression_anatomy_tf"/>
-    <copyField source="expression_anatomy_direct" dest="term_t"/>
-    <copyField source="expression_anatomy_parent" dest="term_t"/>
-    <copyField source="expression_anatomy_direct" dest="text"/>
-    <copyField source="expression_anatomy_parent" dest="text"/>
-
 
     <copyField source="expressed_in_direct" dest="expressed_in"/>
     <copyField source="expressed_in_parent" dest="expressed_in"/>
+    <copyField source="expressed_in_direct" dest="expressed_in_t"/>
     <copyField source="expressed_in_direct" dest="expressed_in_hl"/>
+    <copyField source="expressed_in_parent" dest="expressed_in_t"/>
     <copyField source="expressed_in_direct" dest="expressed_in_tf"/>
     <copyField source="expressed_in_parent" dest="expressed_in_tf"/>
-    <copyField source="expressed_in_direct" dest="term_t"/>
-    <copyField source="expressed_in_parent" dest="term_t"/>
-    <copyField source="expressed_in_direct" dest="text"/>
-    <copyField source="expressed_in_parent" dest="text"/>
-
-
 
     <copyField source="affected_anatomy_direct" dest="affected_anatomy"/>
     <copyField source="affected_anatomy_parent" dest="affected_anatomy"/>
+    <copyField source="affected_anatomy_direct" dest="affected_anatomy_t"/>
     <copyField source="affected_anatomy_direct" dest="affected_anatomy_hl"/>
+    <copyField source="affected_anatomy_parent" dest="affected_anatomy_t"/>
     <copyField source="affected_anatomy_direct" dest="affected_anatomy_tf"/>
     <copyField source="affected_anatomy_parent" dest="affected_anatomy_tf"/>
-    <copyField source="affected_anatomy_direct" dest="term_t"/>
-    <copyField source="affected_anatomy_parent" dest="term_t"/>
-    <copyField source="affected_anatomy_direct" dest="text"/>
-    <copyField source="affected_anatomy_parent" dest="text"/>
-
 
     <copyField source="anatomy_direct" dest="anatomy"/>
     <copyField source="anatomy_parent" dest="anatomy"/>
+    <copyField source="anatomy_direct" dest="anatomy_t"/>
     <copyField source="anatomy_direct" dest="anatomy_hl"/>
+    <copyField source="anatomy_parent" dest="anatomy_t"/>
     <copyField source="anatomy_direct" dest="anatomy_tf"/>
     <copyField source="anatomy_parent" dest="anatomy_tf"/>
-    <copyField source="anatomy_direct" dest="term_t"/>
-    <copyField source="anatomy_parent" dest="term_t"/>
-    <copyField source="anatomy_direct" dest="text"/>
-    <copyField source="anatomy_parent" dest="text"/>
-
 
     <copyField source="phenotype_quality_direct" dest="phenotype_quality"/>
     <copyField source="phenotype_quality_parent" dest="phenotype_quality"/>
+    <copyField source="phenotype_quality_direct" dest="phenotype_quality_t"/>
     <copyField source="phenotype_quality_direct" dest="phenotype_quality_hl"/>
+    <copyField source="phenotype_quality_parent" dest="phenotype_quality_t"/>
     <copyField source="phenotype_quality_direct" dest="phenotype_quality_tf"/>
     <copyField source="phenotype_quality_parent" dest="phenotype_quality_tf"/>
-    <copyField source="phenotype_quality_direct" dest="term_t"/>
-    <copyField source="phenotype_quality_parent" dest="term_t"/>
-    <copyField source="phenotype_quality_direct" dest="text"/>
-    <copyField source="phenotype_quality_parent" dest="text"/>
-
 
     <copyField source="molecular_function_direct" dest="molecular_function"/>
     <copyField source="molecular_function_parent" dest="molecular_function"/>
+    <copyField source="molecular_function_direct" dest="molecular_function_t"/>
     <copyField source="molecular_function_direct" dest="molecular_function_hl"/>
+    <copyField source="molecular_function_parent" dest="molecular_function_t"/>
     <copyField source="molecular_function_direct" dest="molecular_function_tf"/>
     <copyField source="molecular_function_parent" dest="molecular_function_tf"/>
-    <copyField source="molecular_function_direct" dest="term_t"/>
-    <copyField source="molecular_function_parent" dest="term_t"/>
-    <copyField source="molecular_function_direct" dest="text"/>
-    <copyField source="molecular_function_parent" dest="text"/>
-
 
     <copyField source="biological_process_direct" dest="biological_process"/>
     <copyField source="biological_process_parent" dest="biological_process"/>
+    <copyField source="biological_process_direct" dest="biological_process_t"/>
     <copyField source="biological_process_direct" dest="biological_process_hl"/>
+    <copyField source="biological_process_parent" dest="biological_process_t"/>
     <copyField source="biological_process_direct" dest="biological_process_tf"/>
     <copyField source="biological_process_parent" dest="biological_process_tf"/>
-    <copyField source="biological_process_direct" dest="term_t"/>
-    <copyField source="biological_process_parent" dest="term_t"/>
-    <copyField source="biological_process_direct" dest="text"/>
-    <copyField source="biological_process_parent" dest="text"/>
-
-
 
     <copyField source="cellular_component_direct" dest="cellular_component"/>
     <copyField source="cellular_component_parent" dest="cellular_component"/>
+    <copyField source="cellular_component_direct" dest="cellular_component_t"/>
     <copyField source="cellular_component_direct" dest="cellular_component_hl"/>
+    <copyField source="cellular_component_parent" dest="cellular_component_t"/>
     <copyField source="cellular_component_direct" dest="cellular_component_tf"/>
     <copyField source="cellular_component_parent" dest="cellular_component_tf"/>
-    <copyField source="cellular_component_direct" dest="term_t"/>
-    <copyField source="cellular_component_parent" dest="term_t"/>
-    <copyField source="cellular_component_direct" dest="text"/>
-    <copyField source="cellular_component_parent" dest="text"/>
-
-
 
     <copyField source="affected_molecular_function_direct" dest="affected_molecular_function"/>
     <copyField source="affected_molecular_function_parent" dest="affected_molecular_function"/>
+    <copyField source="affected_molecular_function_direct" dest="affected_molecular_function_t"/>
     <copyField source="affected_molecular_function_direct" dest="affected_molecular_function_hl"/>
+    <copyField source="affected_molecular_function_parent" dest="affected_molecular_function_t"/>
     <copyField source="affected_molecular_function_direct" dest="affected_molecular_function_tf"/>
     <copyField source="affected_molecular_function_parent" dest="affected_molecular_function_tf"/>
-    <copyField source="affected_molecular_function_direct" dest="term_t"/>
-    <copyField source="affected_molecular_function_parent" dest="term_t"/>
-    <copyField source="affected_molecular_function_direct" dest="text"/>
-    <copyField source="affected_molecular_function_parent" dest="text"/>
-
 
     <copyField source="affected_biological_process_direct" dest="affected_biological_process"/>
     <copyField source="affected_biological_process_parent" dest="affected_biological_process"/>
+    <copyField source="affected_biological_process_direct" dest="affected_biological_process_t"/>
     <copyField source="affected_biological_process_direct" dest="affected_biological_process_hl"/>
+    <copyField source="affected_biological_process_parent" dest="affected_biological_process_t"/>
     <copyField source="affected_biological_process_direct" dest="affected_biological_process_tf"/>
     <copyField source="affected_biological_process_parent" dest="affected_biological_process_tf"/>
-    <copyField source="affected_biological_process_direct" dest="term_t"/>
-    <copyField source="affected_biological_process_parent" dest="term_t"/>
-    <copyField source="affected_biological_process_direct" dest="text"/>
-    <copyField source="affected_biological_process_parent" dest="text"/>
-
 
     <copyField source="affected_cellular_component_direct" dest="affected_cellular_component"/>
     <copyField source="affected_cellular_component_parent" dest="affected_cellular_component"/>
+    <copyField source="affected_cellular_component_direct" dest="affected_cellular_component_t"/>
     <copyField source="affected_cellular_component_direct" dest="affected_cellular_component_hl"/>
+    <copyField source="affected_cellular_component_parent" dest="affected_cellular_component_t"/>
     <copyField source="affected_cellular_component_direct" dest="affected_cellular_component_tf"/>
     <copyField source="affected_cellular_component_parent" dest="affected_cellular_component_tf"/>
-    <copyField source="affected_cellular_component_direct" dest="term_t"/>
-    <copyField source="affected_cellular_component_parent" dest="term_t"/>
-    <copyField source="affected_cellular_component_direct" dest="text"/>
-    <copyField source="affected_cellular_component_parent" dest="text"/>
 
     <copyField source="quality_alias" dest="term_t"/>
-    <copyField source="quality_alias" dest="text"/>
+
 
    <copyField source="journal" dest="journal_t"/>
     <copyField source="journal_name" dest="journal_name_t"/>
@@ -1012,118 +958,11 @@
    <copyField source="institution" dest="institution_t"/>
 
 
-    <copyField source="name" dest="text"/>
-    <copyField source="type" dest="text"/>
-
     <copyField source="date" dest="tdate"/>
-
-    <copyField source="ortholog_other_species_symbol" dest="text"/>
-    <copyField source="ortholog_other_species_name" dest="text"/>
-    <copyField source="ortholog_organism" dest="text"/>
 
     <copyField source="ortholog_other_species_symbol" dest="ortholog_other_species_symbol_t"/>
     <copyField source="ortholog_other_species_name" dest="ortholog_other_species_name_t"/>
     <copyField source="ortholog_organism" dest="ortholog_organism_t"/>
-
-    <copyField source="disease_model" dest="text"/>
-    <copyField source="disease" dest="text"/>
-    <copyField source="omim_id" dest="text"/>
-
-<!--
-    <copyField source="chromosome" dest="text"/>
-    <copyField source="fly_ortho_chromosome" dest="text"/>
-    <copyField source="human_ortho_chromosome" dest="text"/>
-    <copyField source="mouse_ortho_chromosome" dest="text"/>
--->
-
-    <copyField source="source" dest="text"/>
-    <copyField source="institution" dest="text"/>
-
-    <copyField source="gene" dest="text"/>
-    <copyField source="gene_full_name" dest="text"/>
-    <copyField source="gene_previous_name" dest="text"/>
-
-    <copyField source="zebrafish_gene" dest="text"/>
-    <copyField source="zebrafish_gene_full_name" dest="text"/>
-    <copyField source="zebrafish_gene_previous_name" dest="text"/>
-
-    <copyField source="reporter_gene" dest="text"/>
-    <copyField source="reporter_gene_full_name" dest="text"/>
-    <copyField source="reporter_gene_previous_name" dest="text"/>
-
-    <copyField source="targeted_gene" dest="text"/>
-    <copyField source="targeted_gene_full_name" dest="text"/>
-    <copyField source="targeted_gene_previous_name" dest="text"/>
-
-    <copyField source="affected_gene" dest="text"/>
-    <copyField source="affected_gene_full_name" dest="text"/>
-    <copyField source="affected_gene_previous_name" dest="text"/>
-
-    <copyField source="antigen_gene" dest="text"/>
-    <copyField source="antigen_gene_full_name" dest="text"/>
-    <copyField source="antigen_gene_previous_name" dest="text"/>
-
-    <copyField source="inserted_in_gene" dest="text"/>
-    <copyField source="gene_full_name" dest="text"/>
-    <copyField source="inserted_in_gene_previous_name" dest="text"/>
-
-    <copyField source="expressed_gene" dest="text"/>
-    <copyField source="expressed_gene_full_name" dest="text"/>
-    <copyField source="expressed_gene_previous_name" dest="text"/>
-
-    <copyField source="misexpressed_gene" dest="text"/>
-
-    <copyField source="expression_observation" dest="text"/>
-
-    <copyField source="regulatory_region" dest="text"/>
-    <copyField source="promoter_full_name" dest="text"/>
-
-    <copyField source="coding_sequence" dest="text"/>
-    <copyField source="coding_sequence_full_name" dest="text"/>
-
-    <copyField source="caption" dest="text"/>
-    <copyField source="biography" dest="text"/>
-
-    <copyField source="abstract" dest="text"/>
-    <copyField source="full_mesh_term" dest="text"/>
-    <copyField source="definition" dest="text"/>
-    <copyField source="note" dest="text"/>
-
-    <copyField source="probe" dest="probe_t"/>
-    <copyField source="clone" dest="clone_t"/>
-
-    <copyField source="lab" dest="text"/>
-    <copyField source="curator" dest="text"/>
-    <copyField source="lab_of_origin" dest="text"/>
-    <copyField source="rna_consequence" dest="text"/>
-    <copyField source="institution" dest="text"/>
-    <!--screen used to be here, removed as a result of case 11323-->
-    <!--<copyField source="screen" dest="text"/>-->
-    <copyField source="mutagen" dest="text"/>
-
-    <copyField source="labeled_anatomy" dest="text"/>
-    <copyField source="labeled_cellular_component" dest="text"/>
-
-    <copyField source="id" dest="text"/>
-
-    <copyField source="background" dest="text"/>
-    <copyField source="sequence_alteration" dest="text"/>
-    <copyField source="engineered_region" dest="text"/>
-    <copyField source="expressed_in" dest="text"/>
-    <copyField source="assay" dest="text"/>
-    <copyField source="assay_abbrev" dest="text"/>
-    <copyField source="allele" dest="text"/>
-    <copyField source="phenotype_statement" dest="text"/>
-    <copyField source="related_accession" dest="text"/>
-    <copyField source="related_marker" dest="text"/>
-
-    <copyField source="registered_author" dest="text"/>
-    <!--<copyField source="author_string" dest="text"/>-->
-
-    <copyField source="lab_member_name" dest="text"/>
-
-    
-
 
     <copyField source="name" dest="name_ac"/>
     <copyField source="full_name" dest="full_name_ac"/>

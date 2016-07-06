@@ -165,14 +165,6 @@ public class SearchPrototypeController {
         model.addAttribute("start", start);
         query.setStart(start);
 
-
-        if (highlight) {
-            query.setHighlight(true);
-            //gonna be slow!
-            query.setParam("hl.fl", "*");
-        }
-
-
         //handle sorting... move this a separate method?  use an enum?
         model = handleSorting(model, query, baseUrl, sort);
 
