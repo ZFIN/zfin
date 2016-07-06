@@ -21,7 +21,7 @@
             <command>cd $TARGETROOT/server_apps/data_transfer/LoadOntology</command>
         </hudson.tasks.Shell>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>load-zeco-ontology -DJobName=Load-Zeco-Ontology</targets>
+            <targets>load-zeco -DJobName=Load-Zeco-Ontology</targets>
             <buildFile>$TARGETROOT/server_apps/data_transfer/LoadOntology/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
