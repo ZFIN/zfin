@@ -46,9 +46,8 @@
     <tr>
         <th>Source:</th>
         <td>
-            <c:out value="${publication.journal.name}"/>
-            <c:out value="${publication.volume}"/>:
-            <c:out value="${publication.pages}"/> (<c:out value="${publication.type.display}"/>)
+            ${publication.journal.name}<c:if test="${!empty publication.volume}">&nbsp;</c:if>${publication.volume}:
+            ${publication.pages} (${publication.type.display})
 
             <span style="padding-left: 1em;">
                 <form style="display: inline-block" method=post action="/cgi-bin/webdriver">
