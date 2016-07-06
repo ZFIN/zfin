@@ -9,6 +9,9 @@
                 <div class="figure-gallery-image-container ${loop.first ? '' : 'hidden'}">
                     <a href="#" role="button" data-toggle="modal">
                         <img src="/imageLoadUp/${result.thumbnails[loop.index]}"/>
+                        <div class="hidden figure-gallery-loading-overlay">
+                            <i class="fa fa-spinner fa-spin"></i>
+                        </div>
                     </a>
                 </div>
             </div>
