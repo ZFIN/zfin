@@ -507,27 +507,34 @@ $(function () {
         showBoxyResults();
     }
 
+    function modalIsShown(el) {
+        return ($(el).data('bs.modal') || {}).isShown;
+    }
+
     function resizeModal() {
         var $modal = $('#figureGalleryModal');
-        var totalHeight = $(window).height();
-        var padding = 90;
-        var headerHeight = $modal.find('.modal-header').outerHeight();
-        var modalBody = $modal.find('.modal-body');
-        var modalBackdrop = $modal.find('.modal-backdrop');
-        var modalDialog = $modal.find('.modal-dialog');
-        var modalImage = $modal.find('.figure-gallery-modal-image')[0];
-        var availableHeight = totalHeight - headerHeight - padding;
-        var availableWidth = $(window).width() - padding - 150;
-        var newHeight;
-        if (modalImage.naturalWidth / modalImage.naturalHeight > availableWidth / availableHeight) {
-            newHeight = availableWidth * modalImage.naturalHeight / modalImage.naturalWidth;
-        } else {
-            newHeight = availableHeight;
+        if (modalIsShown($modal)) {
+            var totalHeight = $(window).height();
+            var padding = 90;
+            var navigationArrowSize = 150;
+            var headerHeight = $modal.find('.modal-header').outerHeight();
+            var modalBody = $modal.find('.modal-body');
+            var modalBackdrop = $modal.find('.modal-backdrop');
+            var modalDialog = $modal.find('.modal-dialog');
+            var modalImage = $modal.find('.figure-gallery-modal-image')[0];
+            var availableHeight = totalHeight - headerHeight - padding;
+            var availableWidth = $(window).width() - padding - navigationArrowSize;
+            var newHeight;
+            if (modalImage.naturalWidth / modalImage.naturalHeight > availableWidth / availableHeight) {
+                newHeight = availableWidth * modalImage.naturalHeight / modalImage.naturalWidth;
+            } else {
+                newHeight = availableHeight;
+            }
+            newHeight = Math.min(newHeight, modalImage.naturalHeight);
+            modalBody.height(newHeight);
+            modalDialog.height(newHeight + headerHeight + 30);
+            modalBackdrop.height(totalHeight);
         }
-        newHeight = Math.min(newHeight, modalImage.naturalHeight);
-        modalBody.height(newHeight);
-        modalDialog.height(newHeight + headerHeight + 30);
-        modalBackdrop.height(totalHeight);
     }
 
     $('#figureGalleryModal').on('hidden.bs.modal', function () {
@@ -560,9 +567,28 @@ $(function () {
         $.get(summaryUrl, function (data) {
             var content = $(data);
             var loader = content.find('.figure-gallery-modal-loader');
-            if (!($modal.data('bs.modal') || {}).isShown) {
+            if (!modalIsShown($modal)) {
                 $modal.modal();
             }
+            $(document).off('keydown.figuregallery').on('keydown.figuregallery', function (evt) {
+                switch (evt.which) {
+                    case 37: // left
+                        if (prev.length) {
+                            loader.removeClass('hidden');
+                            loadModal(prev);
+                        }
+                        break;
+                    case 39: // right
+                        if (next.length) {
+                            loader.removeClass('hidden');
+                            loadModal(next);
+                        }
+                        break;
+                    default:
+                        return;
+                }
+                evt.preventDefault();
+            });
             content.find('.figure-gallery-modal-nav.prev')
                     .toggleClass('hidden', prev.length === 0)
                     .click(function (evt) {
