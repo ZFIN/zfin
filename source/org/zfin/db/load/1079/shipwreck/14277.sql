@@ -20,6 +20,17 @@ insert into tmp_ids_to_remove (id)
      	 		where recattrib_datA_zdb_id = geno_zdb_id
 			and recattrib_source_zdb_id not in ('ZDB-PUB-120207-1','ZDB-PUB-150729-10'));
 
+delete from tmp_ids_to_remove
+ where id in ('ZDB-GENO-120910-1',
+'ZDB-GENO-120910-10',
+'ZDB-GENO-120910-2',
+'ZDB-GENO-120910-3',
+'ZDB-GENO-120910-4',
+'ZDB-GENO-120910-5',
+'ZDB-GENO-120910-6',
+'ZDB-GENO-120910-7',
+'ZDB-GENO-120910-8',
+'ZDB-GENO-120910-9');
 
 insert into withdrawn_data (wd_old_zdb_id, wd_new_zdb_id)
   select id, 'ZDB-PUB-160615-7'
