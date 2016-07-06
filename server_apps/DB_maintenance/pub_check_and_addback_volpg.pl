@@ -124,7 +124,12 @@ foreach $key (sort keys %pmids) {
     my $lcXmlTitle = lc($xmlTitle);
     $ctMatch++ if index($lcXmlTitle, $w) >= 0;
   }
-  my $titlePercentageSimilar = $ctMatch / scalar(@xmlTitleWords) * 100;
+  my $titlePercentageSimilar;
+  if (scalar(@xmlTitleWords) == 0) {
+      $titlePercentageSimilar = 0;
+  } else {
+      $titlePercentageSimilar = $ctMatch / scalar(@xmlTitleWords) * 100;
+  }
 
   if ($titlePercentageSimilar > 40) {
     if ($xmlVol || $xmlIssue) {
