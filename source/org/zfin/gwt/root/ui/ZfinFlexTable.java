@@ -4,7 +4,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Base zfin flex table. It has the following features:
@@ -26,7 +29,8 @@ public class ZfinFlexTable extends FlexTable implements ClickHandler {
 
     private UncheckAllExperimentsHandler uncheckAllExperimentsHandler = null;
 
-    public @UiConstructor
+    public
+    @UiConstructor
     ZfinFlexTable(int numberOfColumns) {
         super();
         this.numberOfColumns = numberOfColumns;
@@ -144,7 +148,7 @@ public class ZfinFlexTable extends FlexTable implements ClickHandler {
      * @return toggle link
      */
     protected void setToggleHyperlink(ToggleHyperlink showSelectedRecords) {
-        this.showSelectedRecords =showSelectedRecords;
+        this.showSelectedRecords = showSelectedRecords;
     }
 
     /**

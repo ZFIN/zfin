@@ -630,7 +630,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             Collections.sort(displayedEaps);
 
 
-            displayTable.createEapTable();
+            createEapTable();
         }
 
     }
@@ -833,6 +833,67 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     }
 
 
+    private void createEapTable() {
+        for (; eapTable.getRowCount() > 0; ) {
+            eapTable.removeRow(0);
+        }
+
+        eapTable.clear();
+
+        int eapRowIndex = 1;
+        //Window.alert("Experiment List Size: " + experiments.size());
+        ExpressionPhenotypeExperimentDTO previousEapExpression = null;
+        // first element is an odd group element
+
+        List<ExpressionPhenotypeExperimentDTO> eapexpressionFigureStageDTOs;
+        if (showSelectedMutantsOnly) {
+            eapexpressionFigureStageDTOs = new ArrayList<>(20);
+        } else {
+            eapexpressionFigureStageDTOs = displayedEaps;
+        }
+
+        for (ExpressionPhenotypeExperimentDTO eapexpression : eapexpressionFigureStageDTOs) {
+
+            // row index minus the header row
+
+            Label figure = new Label(eapexpression.getFigure().getLabel());
+            figure.setTitle(eapexpression.getFigure().getZdbID());
+            eapTable.setWidget(eapRowIndex, HeaderName.FIGURE.getIndex(), figure);
+            Label fish = new Label(eapexpression.getFish().getHandle());
+            fish.setTitle(eapexpression.getFish().getZdbID());
+            eapTable.setWidget(eapRowIndex, HeaderName.FISH.getIndex(), fish);
+            Widget environment = new Label(eapexpression.getEnvironment().getName());
+            environment.setTitle(eapexpression.getEnvironment().getZdbID());
+            eapTable.setWidget(eapRowIndex, HeaderName.ENVIRONMENT.getIndex(), environment);
+            eapTable.setText(eapRowIndex, HeaderName.STAGE_RANGE.getIndex(), eapexpression.getStageRange());
+            Widget eapTerms = createEapList(eapexpression);
+            eapTable.setWidget(eapRowIndex, HeaderName.EXPRESSED_IN.getIndex(), eapTerms);
+
+            eapRowIndex++;
+        }
+
+    }
+
+    private Widget createEapList(ExpressionPhenotypeExperimentDTO mutants) {
+        // create phenotype list
+        VerticalPanel eapPhenotypePanel = new VerticalPanel();
+        eapPhenotypePanel.setStyleName("phenotype-table");
+        List<ExpressionPhenotypeStatementDTO> terms = mutants.getExpressedTerms();
+        if (terms == null || terms.isEmpty()) {
+            Label label = new Label("Phenotype unspecified.");
+            label.setStyleName("term-unspecified");
+            eapPhenotypePanel.add(label);
+            return eapPhenotypePanel;
+        }
+        for (ExpressionPhenotypeStatementDTO eap : terms) {
+            HTML eapPhenotype = new HTML(eap.getDisplayName());
+            eapPhenotype.setTitle(eap.getId() + "");
+            eapPhenotypePanel.add(eapPhenotype);
+        }
+        return eapPhenotypePanel;
+    }
+
+
     private class MutantFlexTable extends ZfinFlexTable {
 
         private HeaderName[] headerNames;
@@ -845,7 +906,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         }
 
         protected void createMutantTable() {
-            clearTable();
+            clear();
             createConstructionZone();
             // header row index = 0
             createTableHeader();
@@ -905,86 +966,8 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
                 rowIndex++;
                 previousExpression = expression;
             }
-
             createBottomClearAllLinkRow(rowIndex);
-
             showHideClearAllLink();
-
-
-        }
-
-        private void createEapTable() {
-            for (; eapTable.getRowCount() > 0; ) {
-                eapTable.removeRow(0);
-            }
-
-            eapTable.clear();
-
-            int eapRowIndex = 1;
-            //Window.alert("Experiment List Size: " + experiments.size());
-            ExpressionPhenotypeExperimentDTO previousEapExpression = null;
-            // first element is an odd group element
-            int eapgroupIndex = 1;
-
-            List<ExpressionPhenotypeExperimentDTO> eapexpressionFigureStageDTOs;
-            if (showSelectedMutantsOnly) {
-                eapexpressionFigureStageDTOs = new ArrayList<>(20);
-                // eapexpressionFigureStageDTOs.addAll(selectedExpressions);
-            } else {
-                eapexpressionFigureStageDTOs = displayedEaps;
-            }
-
-            for (ExpressionPhenotypeExperimentDTO eapexpression : eapexpressionFigureStageDTOs) {
-
-                // row index minus the header row
-
-                Label figure = new Label(eapexpression.getFigure().getLabel());
-                figure.setTitle(eapexpression.getFigure().getZdbID());
-                eapTable.setWidget(eapRowIndex, HeaderName.FIGURE.getIndex(), figure);
-                Label fish = new Label(eapexpression.getFish().getHandle());
-                fish.setTitle(eapexpression.getFish().getZdbID());
-                eapTable.setWidget(eapRowIndex, HeaderName.FISH.getIndex(), fish);
-                Widget environment = new Label(eapexpression.getEnvironment().getName());
-                environment.setTitle(eapexpression.getEnvironment().getZdbID());
-                eapTable.setWidget(eapRowIndex, HeaderName.ENVIRONMENT.getIndex(), environment);
-                eapTable.setText(eapRowIndex, HeaderName.STAGE_RANGE.getIndex(), eapexpression.getStageRange());
-                Widget eapTerms = createEapList(eapexpression);
-                eapTable.setWidget(eapRowIndex, HeaderName.EXPRESSED_IN.getIndex(), eapTerms);
-
-
-                long previousEID = 0;
-                if (previousEapExpression != null)
-                    previousEID = previousEapExpression.getId();
-
-                eapgroupIndex = setRowStyle(eapRowIndex, Long.toString(eapexpression.getId()), Long.toString(previousEID), eapgroupIndex);
-                eapRowIndex++;
-                previousEapExpression = eapexpression;
-            }
-            //    createBottomClearAllLinkRow(eapRowIndex);
-            //Window.alert("HIO");
-
-
-        }
-
-        private Widget createEapList(ExpressionPhenotypeExperimentDTO mutants) {
-            // create phenotype list
-            VerticalPanel eapPhenotypePanel = new VerticalPanel();
-            eapPhenotypePanel.setStyleName("phenotype-table");
-            List<ExpressionPhenotypeStatementDTO> terms = mutants.getExpressedTerms();
-            if (terms == null || terms.isEmpty()) {
-                Label label = new Label("Phenotype unspecified.");
-                label.setStyleName("term-unspecified");
-                eapPhenotypePanel.add(label);
-                return eapPhenotypePanel;
-            }
-            for (ExpressionPhenotypeStatementDTO eap : terms) {
-                StringBuilder eapText = new StringBuilder(50);
-
-                HTML eapPhenotype = new HTML(eap.getDisplayName() + "" + eapText.toString());
-                eapPhenotype.setTitle(eap.getId() + "");
-                eapPhenotypePanel.add(eapPhenotype);
-            }
-            return eapPhenotypePanel;
         }
 
         private void createConstructionZone() {
