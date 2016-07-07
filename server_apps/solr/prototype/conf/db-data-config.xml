@@ -3001,7 +3001,25 @@ SELECT trim(CASE Length(Get_genotype_backgrounds(geno_zdb_id))
                               'xpatex-' || efs_pk_id as efs_pk_id
                             from fish_experiment
                                  join expression_experiment2 on genox_zdb_id = xpatex_genox_zdb_id
-                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id;"
+                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                            where
+                            genox_fish_zdb_id not in
+      	      	      	      	(select	fish_zdb_id
+      	      	      	      	  from fish where
+                                       fish_genotype_zdb_id in (
+                                       	   select genofeat_geno_zdb_id
+                                       	     from genotype_feature
+                                               	  join feature_marker_relationship
+                                               	    on fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+                                       	    where fmrel_type = 'contains innocuous sequence feature')
+                                       and fish_genotype_zdb_id not in (
+                                            select genofeat_geno_zdb_id
+                                              from genotype_feature
+                                              	   join feature_marker_relationship
+                                       	       	     on fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+                                       	    where fmrel_type != 'contains innocuous sequence feature')
+                                       and fish_zdb_id not in (select fishstr_fish_zdb_id from fish_str)
+       	       	       	       	);"
                    cacheImpl="SortedMapBackedCache"
                    where="efs_pk_id=expression.id"/>
 

@@ -153,6 +153,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                 (Category.EXPRESSIONS)               : [
                         FieldName.ASSAY,
                         FieldName.AUTHOR,
+                        FieldName.CONDITIONS,
                         FieldName.EXPERIMENTAL_CONDITIONS,
                         FieldName.EXPRESSION_ANATOMY_TF,
                         FieldName.GENOTYPE_FULL_NAME,
@@ -164,6 +165,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                 (Category.PHENOTYPE)                 : [
                         FieldName.ANATOMY_TF,
                         FieldName.BIOLOGICAL_PROCESS_TF,
+                        FieldName.CONDITIONS,
                         FieldName.EXPERIMENTAL_CONDITIONS,
                         FieldName.HAS_IMAGE,
                         FieldName.MISEXPRESSED_GENE,
@@ -197,6 +199,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                         FieldName.TYPE
                 ],
                 (Category.DISEASE)                   : [
+                        FieldName.CONDITIONS,
                         FieldName.EXPERIMENTAL_CONDITIONS,
                         FieldName.FISH,
                         FieldName.GENE

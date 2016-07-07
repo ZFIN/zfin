@@ -209,12 +209,12 @@ public class RelatedDataService {
     private List<String> getRelatedDataForReporterLine(String id) {
         List<String> links = new ArrayList<>();
         
-        String expressionLink = getCategoryLink(Category.EXPRESSIONS, Category.EXPRESSIONS.getName(), FieldName.FISH, FieldName.EXPERIMENTAL_CONDITIONS.getName() + ":\"standard or control\"");
+        String expressionLink = getCategoryLink(Category.EXPRESSIONS, Category.EXPRESSIONS.getName(), FieldName.FISH, FieldName.CONDITIONS.getName() + ":\"standard or control\"");
         if (StringUtils.isNotEmpty(expressionLink)) {
             links.add(expressionLink);
         }
 
-        String phenotypeLink = getCategoryLink(Category.PHENOTYPE, Category.PHENOTYPE.getName(), FieldName.FISH, FieldName.EXPERIMENTAL_CONDITIONS.getName() + ":\"standard or control\"");
+        String phenotypeLink = getCategoryLink(Category.PHENOTYPE, Category.PHENOTYPE.getName(), FieldName.FISH, FieldName.CONDITIONS.getName() + ":\"standard or control\"");
         if (StringUtils.isNotEmpty(phenotypeLink)) {
             links.add(phenotypeLink);
         }
