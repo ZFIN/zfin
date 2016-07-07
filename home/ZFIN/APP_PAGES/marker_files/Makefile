@@ -28,7 +28,7 @@ nomenview.apg searchform.apg sequence.apg sequence_data_entry.apg
 
 STATICS =  dnote_new.apg make_map.apg \
 	markerview_placeholder_note.apg \
-	snp_batch.apg marker_history_correction.apg attrib_check.apg sequence_tools.apg \
+	marker_history_correction.apg attrib_check.apg sequence_tools.apg \
 	markerrelationship.apg  \
 	mapframe.apg mrkrgenolist.apg
 
