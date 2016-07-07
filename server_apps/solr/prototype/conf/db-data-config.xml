@@ -1263,7 +1263,7 @@ WHERE  ( NOT g.geno_is_wildtype
                    cacheImpl="SortedMapBackedCache"/>
 
            <entity name="reporter_line_image"
-                   query="select
+                   query="select distinct
                      case
                        when img_image_with_annotation is not null
                        then img_image_with_annotation
@@ -2261,6 +2261,7 @@ select
 
            <entity name="phenotype_standard_or_control"
                    datasource="db" query="select 'standard or control' as experimental_conditions,
+                                   'standard or control' as conditions,
                                    'pg-' || pg_id as pg_id
                             from phenotype_source_generated
                                  join fish_experiment on genox_zdb_id = pg_genox_zdb_id
@@ -2934,7 +2935,7 @@ SELECT trim(CASE Length(Get_genotype_backgrounds(geno_zdb_id))
                    where="efs_pk_id=expression.id"/>
 
 
-           <entity name="expression_conditions"
+           <entity name="expression_experiment_conditions"
                    datasource="db" query="select
                              case
                                   when cdt_name = 'Ethinylestradiol (CAS: 57-63-6)' then 'Ethinylestradiol'
@@ -2963,6 +2964,7 @@ SELECT trim(CASE Length(Get_genotype_backgrounds(geno_zdb_id))
 
            <entity name="expression_standard_conditions"
                    datasource="db" query="select 'standard or control' as experimental_conditions,
+                                                 'standard or control' as conditions,
                                    'xpatex-' || efs_pk_id as efs_pk_id
                             from expression_experiment2
                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
@@ -2972,7 +2974,26 @@ SELECT trim(CASE Length(Get_genotype_backgrounds(geno_zdb_id))
                    where="efs_pk_id=expression.id"/>
 
 
-
+           <entity name="expression_conditions"
+                   datasource="db" query="select
+                                            nvl(zeco.term_name,'') ||
+                                            nvl(': ' || ao.term_name,'') ||
+                                            nvl(': ' || go_cc.term_name,'') ||
+                                            nvl(': ' || chebi.term_name,'') ||
+                                            nvl(': ' || taxon.term_name,'') as conditions,
+                                            'xpatex-' || efs_pk_id as efs_pk_id
+                                            from condition_data_type
+                             join experiment_condition on expcond_cdt_zdb_id = cdt_zdb_id
+                             join fish_experiment on genox_exp_zdb_id = expcond_exp_zdb_id and genox_is_std_or_generic_control = 'f'
+                             join expression_experiment2 on xpatex_genox_zdb_id = genox_zdb_id
+                             join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                             join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id
+                             left outer join term ao on ao.term_zdb_id = expcond_ao_term_zdb_id
+                             left outer join term go_cc on go_cc.term_zdb_id = expcond_go_cc_term_zdb_id
+                             left outer join term chebi on chebi.term_zdb_id = expcond_chebi_term_zdb_id
+                             left outer join term taxon on taxon.term_zdb_id = expcond_taxon_term_zdb_id"
+                   cacheImpl="SortedMapBackedCache"
+                   where="efs_pk_id=expression.id"/>
 
            <entity name="expression_fish_xref"
                    datasource="db" query="select
@@ -4033,10 +4054,33 @@ where feature_zdb_id = ftmd_feature_zdb_id
                    where="term_zdb_id=term.internal_id"
                    cacheImpl="SortedMapBackedCache"/>
 
+           <entity name="disease_condition"
+                   datasource="db"
+                   query="select
+                                nvl(zeco.term_name,'') ||
+                                nvl(': ' || ao.term_name,'') ||
+                                nvl(': ' || go_cc.term_name,'') ||
+                                nvl(': ' || chebi.term_name,'') ||
+                                nvl(': ' || taxon.term_name,'') as conditions,
+                                dat_term_zdb_id as term_zdb_id
+                                from condition_data_type
+                             join experiment_condition on expcond_cdt_zdb_id = cdt_zdb_id
+                             join fish_experiment on genox_exp_zdb_id = expcond_exp_zdb_id and genox_is_std_or_generic_control = 'f'
+                             join disease_annotation_model on damo_genox_zdb_id = genox_zdb_id
+                             join disease_annotation on damo_dat_zdb_id = dat_zdb_id
+                             join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id
+                             left outer join term ao on ao.term_zdb_id = expcond_ao_term_zdb_id
+                             left outer join term go_cc on go_cc.term_zdb_id = expcond_go_cc_term_zdb_id
+                             left outer join term chebi on chebi.term_zdb_id = expcond_chebi_term_zdb_id
+                             left outer join term taxon on taxon.term_zdb_id = expcond_taxon_term_zdb_id"
+                   where="term_zdb_id=term.internal_id"
+                   cacheImpl="SortedMapBackedCache"/>
+
            <entity name="disease_standard_conditions"
                    datasource="db"
                    query="select
                            'standard or control' as experimental_conditions,
+                           'standard or control' as conditions,
                            term_zdb_id
                           from term
                           join disease_annotation on term.term_zdb_id = disease_annotation.dat_term_zdb_id

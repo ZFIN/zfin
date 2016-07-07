@@ -125,6 +125,7 @@ public class FacetBuilderService {
         FacetGroup diseaseModel = new FacetGroup("Disease Model", true);
         diseaseModel.addFacet(buildFacet(FieldName.FISH.getName(), true));
         diseaseModel.addFacet(buildFacet(FieldName.EXPERIMENTAL_CONDITIONS.getName(), true));
+        facetGroups.add(buildSingleFacetGroup("Conditions", FieldName.CONDITIONS.getName(), false));
         facetGroups.add(diseaseModel);
 
         return facetGroups;
@@ -201,6 +202,7 @@ public class FacetBuilderService {
 
         facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)", "sequence_targeting_reagent", false));
         facetGroups.add(buildSingleFacetGroup("Experimental Conditions", "experimental_conditions", false));
+        facetGroups.add(buildSingleFacetGroup("Conditions", FieldName.CONDITIONS.getName(), false));
 
 
         return facetGroups;
