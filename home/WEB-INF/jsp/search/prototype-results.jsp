@@ -209,7 +209,7 @@
                                 </a>
                             </c:if>
                             <c:if test="${galleryMode}">
-                                <a class="btn btn-default" href="${baseUrlWithoutGalleryMode}&galleryMode=false">
+                                <a class="btn btn-default" href="${baseUrlWithoutGalleryMode}galleryMode=false">
                                     <i class="fa fa-chevron-left"></i>
                                     See all <fmt:formatNumber value="${numFound}" pattern="##,###"/><zfin:choice choicePattern="0# results| 1# result| 2# results" integerEntity="${numFound}"/>
                                 </a>
@@ -242,9 +242,11 @@
                                     </div>
                                 </authz:authorize>
 
-                                <a href="${baseUrlWithoutGalleryMode}&galleryMode=true" class="btn btn-default">
-                                    <i class="fa fa-camera"></i> Browse Images
-                                </a>
+                                <c:if test="${!empty images}">
+                                    <a href="${baseUrlWithoutGalleryMode}galleryMode=true" class="btn btn-default">
+                                        <i class="fa fa-camera"></i> Browse Images
+                                    </a>
+                                </c:if>
 
                                 <div class="btn-group sort-controls">
                                     <a class="btn btn-default dropdown-toggle sort-button" data-toggle="dropdown" href="#">
