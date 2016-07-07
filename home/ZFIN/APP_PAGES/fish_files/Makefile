@@ -20,8 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/fish_files
 
-STATICS = phenotype_note.apg  \
-          genotype_name_match.apg  \
+STATICS = genotype_name_match.apg  \
 	  allelelist.apg
 
 # Use default rules for app page directories.
