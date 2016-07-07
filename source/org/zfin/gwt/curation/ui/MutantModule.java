@@ -406,12 +406,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
                 if (StringUtils.isNotEmpty(figureID) && !expression.getFigure().getZdbID().equals(figureID)) {
                     uncheckExpressionRecord(expression);
                 }
-/*
-                if (StringUtils.isNotEmpty(filter.getFishID()) &&
-                        !expression.getExperiment().getFishID().equals(filter.getFishID())) {
-                    uncheckExpressionRecord(expression);
-                }
-*/
             }
         }
         selectedExpressions.clear();
@@ -906,7 +900,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         }
 
         protected void createMutantTable() {
-            clear();
+            clearTable();
             createConstructionZone();
             // header row index = 0
             createTableHeader();
