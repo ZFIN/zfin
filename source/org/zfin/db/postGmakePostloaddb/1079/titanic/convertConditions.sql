@@ -1,6 +1,12 @@
 --liquibase formatted sql
 --changeset sierra:convertConditions
 
+update tmp_gap_tt
+  set cztId = 'NCBITaxon:'||cztId
+ where cztId not like 'CHEBI%'
+ and cztId not like 'ZFA%'
+ and cztId not like 'GO%';
+
 update experiment_condition
   set expcond_zeco_term_Zdb_id = (Select term_zdb_id from tmp_gap_tt, term
       			       	 	 where expcond_zdb_id = expcondId
