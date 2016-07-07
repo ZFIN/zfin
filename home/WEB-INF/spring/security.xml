@@ -110,7 +110,7 @@
         <security:intercept-url pattern="/action/login" access="permitAll"/>
         <security:intercept-url pattern="/action/audit-log/**" access="hasRole('root') or ${DISABLE_SECURITY}"
                                 requires-channel="https"/>
-        <security:intercept-url pattern="/action/reno/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/reno/**" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/marker/transcript-add"
                                 access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/marker/clone-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
