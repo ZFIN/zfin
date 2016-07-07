@@ -8,5 +8,10 @@
   <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/createGap1LoadTable.sql"/>  
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/loadGap1SingleFromCsv.xml"/>  
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/convertConditions.sql"/> 
-<!--<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/dropGap1LoadTable.sql"/>  -->
+<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/dropGap1LoadTable.sql"/> 
+  <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/createGap1LoadDupTable.sql"/>  
+<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/loadGap1DupsFromCsv.xml"/>  
+<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/splitConditions.sql"/> 
+<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/dropGap1LoadDupTable.sql"/> 
+
 </databaseChangeLog>
