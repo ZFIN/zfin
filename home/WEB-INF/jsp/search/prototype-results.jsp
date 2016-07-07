@@ -207,9 +207,6 @@
                                 <a href="${downloadUrl}" class="btn btn-default">
                                     <i class="fa fa-download"></i> Download
                                 </a>
-                                <a href="${baseUrlWithoutGalleryMode}&galleryMode=true" class="btn btn-default">
-                                    <i class="fa fa-camera"></i> Browse Images
-                                </a>
                             </c:if>
                             <c:if test="${galleryMode}">
                                 <a class="btn btn-default" href="${baseUrlWithoutGalleryMode}&galleryMode=false">
@@ -244,6 +241,10 @@
                                         <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=200" class="btn btn-default <c:if test="${rows eq 200}">btn-selected disabled</c:if>">200</a>
                                     </div>
                                 </authz:authorize>
+
+                                <a href="${baseUrlWithoutGalleryMode}&galleryMode=true" class="btn btn-default">
+                                    <i class="fa fa-camera"></i> Browse Images
+                                </a>
 
                                 <div class="btn-group sort-controls">
                                     <a class="btn btn-default dropdown-toggle sort-button" data-toggle="dropdown" href="#">

@@ -19,7 +19,7 @@
                 <zfin-figure:phenotypeSummary summary="${phenotypeSummary}"/>
             </c:if>
             <c:if test="${!empty figureCaption}">
-                ${figureCaption}
+                <div class="summary">${figureCaption}</div>
             </c:if>
         </div>
     </div>
