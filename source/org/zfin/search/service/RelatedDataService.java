@@ -199,6 +199,8 @@ public class RelatedDataService {
         if (Ontology.isGoOntology(ontology)) {
             getGoAnnotationData(links, id, FieldName.getFieldName(ontology));
             createExpressedGenesData(links, id, FieldName.EXPRESSED_IN_TF);
+            createAffectedPhenotypeData(links, id, FieldName.CELLULAR_COMPONENT_TF);
+            createAffectedPhenotypeData(links, id, FieldName.getAffectedFieldName(ontology));
         }
         createAffectedPhenotypeData(links, id, FieldName.getAffectedFieldName(ontology));
         createExpressedGenesData(links, id, FieldName.ANATOMY_TF);
