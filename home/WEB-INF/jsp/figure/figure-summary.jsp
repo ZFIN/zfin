@@ -5,12 +5,12 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true"><i class="fa fa-fw fa-close"></i></span>
         </button>
-        <c:if test="${showDetails}">
-            <button type="button" class="close figure-gallery-modal-collapse open">
-                <span aria-hidden="true"><i class="fa fa-fw fa-chevron-down"></i></span>
-            </button>
-        </c:if>
-        <h4 class="modal-title"><zfin:link entity="${image.figure}">${image.figure.label}</zfin:link> from <zfin:link entity="${image.figure.publication}"/></h4>
+        <h4 class="modal-title">
+            <c:if test="${showDetails}">
+                <a role="button" class="figure-gallery-modal-collapse icon-toggle open"><span aria-hidden="true"><i class="fa fa-fw fa-chevron-right"></i></span></a>
+            </c:if>
+            <zfin:link entity="${image.figure}">${image.figure.label}</zfin:link> from <zfin:link entity="${image.figure.publication}"/>
+        </h4>
         <div class="figure-gallery-modal-details">
             <c:if test="${!empty expressionSummary}">
                 <zfin-figure:expressionSummary summary="${expressionSummary}"/>

@@ -623,8 +623,14 @@ i.facet-selected,
     font-size: 48px;
 }
 
-.figure-gallery-modal-collapse.open {
-    transform: rotate(180deg);
+.figure-gallery-modal-collapse {
+    color: #CCCCCC;
+    cursor: pointer;
+    display: inline-block;
+}
+.figure-gallery-modal-collapse:hover,
+.figure-gallery-modal-collapse:active {
+    color: #808080;
 }
 
 .figure-gallery-masonry-item {
