@@ -40,10 +40,10 @@ where not exists (select 'x' from experiment_condition
 select count(*) as counter, expid as exp_id, cdtId
  from tmp_zeco_tt
  group by exp_id, cdtId having count(*) > 1
-into temp tmp_dups;
+into temp temp_dups_temp;
 
 delete from tmp_zeco_tt
- where exists (Select 'x' from tmp_dups
+ where exists (Select 'x' from temp_dups_temp
        	      	      	  where expid = exp_id);
 
 delete from tmp_zeco_tt
