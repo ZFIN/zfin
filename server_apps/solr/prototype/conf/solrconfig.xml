@@ -373,6 +373,7 @@
               probe
               related_gene_symbol
 
+              expression_observation
               prefix
               institution_t
               lab_of_origin
