@@ -163,12 +163,23 @@ public class FishGenotypeConstructionPresenter implements Presenter {
 
     public void onCreateGenotypeButtonClick() {
         resetError();
+        if (!isValidFishGenotype()) {
+            return;
+        }
         diseaseRpcService.createGenotypeFish(publicationID,
                 genotypeFeatureDTOList,
                 backgroundGenoList,
                 newStrList,
                 new CreateGenotypeCallBack("Create new Genotype", view.getErrorLabel(), view.getLoadingImage()));
         view.getLoadingImage().setVisible(true);
+    }
+
+    private boolean isValidFishGenotype() {
+        if (newStrList.size() > 0 && genotypeFeatureDTOList.size() == 0 && backgroundGenoList.size() == 0) {
+            view.errorLabel.setError("A list of STRs either have to be combined with one or more features or one background genotype");
+            return false;
+        }
+        return true;
     }
 
     public void onBackgroundClick() {
