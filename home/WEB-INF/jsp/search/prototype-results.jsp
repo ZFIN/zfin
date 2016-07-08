@@ -266,33 +266,6 @@
                     </div>
                 </div>
 
-                <%-- Show figure gallery teaser if
-                       * not already in gallery
-                       * there are enough images
-                       * a category has been chosen
-                       * you're on the first page of results --%>
-                <%--<c:if test="${!galleryMode && fn:length(images) > 10 && !empty category && category != 'Any' && paginationBean.page == 1}">--%>
-                    <%--<div class="row">--%>
-                        <%--<div class="col-md-12">--%>
-                            <%--<div class="figure-gallery-preview-container">--%>
-                                <%--<div class="figure-gallery-image-strip">--%>
-                                    <%--<c:forEach var="image" items="${images}">--%>
-                                        <%--<div class="figure-gallery-image-container preview" data-image-zdb-id="${image.zdbID}">--%>
-                                            <%--<img src="${image.mediumUrl}">--%>
-                                            <%--<div class="hidden figure-gallery-loading-overlay">--%>
-                                                <%--<i class="fa fa-spinner fa-spin"></i>--%>
-                                            <%--</div>--%>
-                                        <%--</div>--%>
-                                    <%--</c:forEach>--%>
-                                <%--</div>--%>
-                                <%--<div class="figure-gallery-overlay-link">--%>
-                                    <%--<a href="${baseUrlWithoutGalleryMode}&galleryMode=true">View More Images</a>--%>
-                                <%--</div>--%>
-                            <%--</div>--%>
-                        <%--</div>--%>
-                    <%--</div>--%>
-                <%--</c:if>--%>
-
                 <c:if test="${!galleryMode}">
                     <c:forEach var="result" items="${results}">
                         <zfin2:searchResult result="${result}"/>
