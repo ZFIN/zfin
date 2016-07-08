@@ -22,7 +22,7 @@ public interface PhenotypeRepository {
      * @return list of annotations term dtos
      */
     public List<PhenotypeStructure> retrievePhenotypeStructures(String publicationID);
-    public List<PhenotypeWarehouse> getPhenotypeWarehouseBySourceID(String psgID);
+    public PhenotypeWarehouse getPhenotypeWarehouseBySourceID(String psgID);
 
 
 

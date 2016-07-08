@@ -626,15 +626,29 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     }
 
     @Override
-    public List<PhenotypeWarehouse> getPhenotypeWarehouseBySourceID(String psgID){
-        Session session = HibernateUtil.currentSession();
-        String sql=" select distinct phenoWarehouse " +
-                 "               from PhenotypeCurationSearch pgcm  " +
-                      "                where pgcm.phenoOrExpID=:psgID ";
+    public PhenotypeWarehouse getPhenotypeWarehouseBySourceID(String psgID){
 
-        Query query = session.createQuery(sql);
-        query.setParameter("psgID", psgID);
-        return  query.list();
+        String[] psgAttributes = psgID.split("\\|");
+
+        String id = psgAttributes[0];
+        String figureZdbID = psgAttributes[1];
+        String startStageZdbID = psgAttributes[2];
+        String endStageZdbID = psgAttributes[3];
+
+        Session session = HibernateUtil.currentSession();
+
+        String hql="select pgcm.phenoWarehouse from PhenotypeCurationSearch pgcm" +
+                " where pgcm.phenoOrExpID=:psgID  " +
+                "                  and pgcm.phenoWarehouse.figure.zdbID=:figureZdbID " +
+                "                  and pgcm.phenoWarehouse.start.zdbID=:startStageZdbID" +
+                "                  and pgcm.phenoWarehouse.end.zdbID=:endStageZdbID";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("psgID", id);
+        query.setParameter("figureZdbID",figureZdbID);
+        query.setParameter("startStageZdbID",startStageZdbID);
+        query.setParameter("endStageZdbID",endStageZdbID);
+        return  (PhenotypeWarehouse) query.uniqueResult();
 
 
     }

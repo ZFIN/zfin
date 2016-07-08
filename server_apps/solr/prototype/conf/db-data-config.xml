@@ -2088,7 +2088,11 @@ select
                         fig_zdb_id as xref,
                         pub_date as date,
                         fish_name as fish,
-                        pgcm_source_id as pgcmid,
+                        pgcm_source_id
+                        || '|' || pg_fig_zdb_id
+                        || '|' || pg_start_stg_zdb_id
+                        || '|' || pg_end_stg_zdb_id
+                         as pgcmid,
                         'pg-' || pg_id as id
                         from phenotype_source_generated
                         join phenotype_generated_curated_mapping on pg_id=pgcm_pg_id

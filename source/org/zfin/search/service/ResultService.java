@@ -676,58 +676,55 @@ public class ResultService {
         //this is pretty hacky, sorry.  I have to pull the string prefix off of the would-be integer pk id.
         Long id = Long.valueOf(result.getId().replace("pg-", ""));
         String psgID = result.getPgcmid();
-        List<PhenotypeWarehouse> pWarehouse = RepositoryFactory.getPhenotypeRepository().getPhenotypeWarehouseBySourceID(psgID);
-        for (PhenotypeWarehouse phenotypeExperiment : pWarehouse) {
+        PhenotypeWarehouse phenotypeExperiment = RepositoryFactory.getPhenotypeRepository().getPhenotypeWarehouseBySourceID(psgID);
+        if (phenotypeExperiment != null) {
 
-            if (phenotypeExperiment != null) {
-
-                String conditionsLink = ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true);
-                if (StringUtils.isNotBlank(conditionsLink)) {
-                    result.addAttribute(CONDITIONS, conditionsLink);
-                }
-
-
-                if (phenotypeExperiment.getStart().equals(phenotypeExperiment.getEnd())) {
-                    result.addAttribute(STAGE, phenotypeExperiment.getStart().getName());
-                } else {
-                    result.addAttribute(STAGE, phenotypeExperiment.getStart().getName() + " to " + phenotypeExperiment.getEnd().getName());
-                }
-
-                List<String> statements = new ArrayList<>();
-                for (PhenotypeStatementWarehouse statement : phenotypeExperiment.getStatementWarehouseSet()) {
-                    statements.add(statement.getShortName());
-                }
-                if (CollectionUtils.isNotEmpty(statements)) {
-                    result.addAttribute(PHENOTYPE, withBreaks(statements));
-                }
-
-                result.setFeatureGenes(FishService.getFeatureGenes(phenotypeExperiment.getFishExperiment().getFish()));
-
-                if (!StringUtils.contains(ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true), "standard or control")) {
-
-                    StringBuilder sb = new StringBuilder();
-
-                    sb.append(FishPresentation.getName(phenotypeExperiment.getFishExperiment().getFish()));
-
-                    String experimentText = ExperimentPresentation.getNameForFaceted(phenotypeExperiment.getFishExperiment().getExperiment());
-                    if (StringUtils.isNotBlank(experimentText)) {
-                        sb.append(" + ");
-                        sb.append(experimentText);
-                    }
-
-                    sb.append(" from ");
-
-                    sb.append(phenotypeExperiment.getFigure().getPublication().getShortAuthorList());
-                    sb.append(" ");
-                    sb.append(phenotypeExperiment.getFigure().getLabel());
-
-                    result.setName(sb.toString());
-                }
-                //This needs to be last, it serves as a title for the fish component table below
-                result.addAttribute(FISH, "");
-
+            String conditionsLink = ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true);
+            if (StringUtils.isNotBlank(conditionsLink)) {
+                result.addAttribute(CONDITIONS, conditionsLink);
             }
+
+            if (phenotypeExperiment.getStart().equals(phenotypeExperiment.getEnd())) {
+                result.addAttribute(STAGE, phenotypeExperiment.getStart().getName());
+            } else {
+                result.addAttribute(STAGE, phenotypeExperiment.getStart().getName() + " to " + phenotypeExperiment.getEnd().getName());
+            }
+
+            List<String> statements = new ArrayList<>();
+            for (PhenotypeStatementWarehouse statement : phenotypeExperiment.getStatementWarehouseSet()) {
+                statements.add(statement.getShortName());
+            }
+            if (CollectionUtils.isNotEmpty(statements)) {
+                result.addAttribute(PHENOTYPE, withBreaks(statements));
+            }
+
+            result.setFeatureGenes(FishService.getFeatureGenes(phenotypeExperiment.getFishExperiment().getFish()));
+
+            if (!StringUtils.contains(ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true), "standard or control")) {
+
+                StringBuilder sb = new StringBuilder();
+
+                sb.append(FishPresentation.getName(phenotypeExperiment.getFishExperiment().getFish()));
+
+                String experimentText = ExperimentPresentation.getNameForFaceted(phenotypeExperiment.getFishExperiment().getExperiment());
+                if (StringUtils.isNotBlank(experimentText)) {
+                    sb.append(" + ");
+                    sb.append(experimentText);
+                }
+
+                sb.append(" from ");
+
+                sb.append(phenotypeExperiment.getFigure().getPublication().getShortAuthorList());
+                sb.append(" ");
+                sb.append(phenotypeExperiment.getFigure().getLabel());
+
+                result.setName(sb.toString());
+            }
+            //This needs to be last, it serves as a title for the fish component table below
+            result.addAttribute(FISH, "");
+
         }
+
     }
 
 
