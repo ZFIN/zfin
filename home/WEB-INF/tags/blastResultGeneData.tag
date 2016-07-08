@@ -13,7 +13,8 @@
 </c:choose>
 
 <c:if test="${hit.hasGO}">
-    <a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-markergoview.apg&OID=${hit.gene.zdbID}"><img src="/images/G_letter.png" title="view GO annotation" alt="has GO annotation" border="0" class="blast"></a>
+
+    <a href="/action/marker/marker-go-view/${hit.gene.zdbID}"><img src="/images/G_letter.png" title="view GO annotation" alt="has GO annotation" border="0" class="blast"></a>
 </c:if>
 
 <c:choose>
