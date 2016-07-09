@@ -70,17 +70,16 @@ insert into tmp_new_pubs
   where not exists (select 'x' from publication
                     where accession_no = pmid);
 
-select distinct jrnl_zdb_id, jrnl_abbrev_lower, jrnl_name_lower
+select distinct jrnl_zdb_id, jrnl_abbrev_lower, jrnl_name_lower, jrnl_print_issn
   from journal, tmp_pubs
   where lower(journaltitle) = jrnl_name_lower
   or lower(iso) = jrnl_abbreV_lower
-  or jrnl_online_issn = issn
   or jrnl_print_issn = issn
 into temp tmp_journal_matches;
 
-select min(jrnl_zdb_id) as id, jrnl_abbrev_lower, jrnl_name_lower
+select min(jrnl_zdb_id) as id, jrnl_abbrev_lower, jrnl_name_lower, jrnl_print_issn
   from tmp_journal_matches
-  group by jrnl_abbrev_lower, jrnl_name_lower
+  group by jrnl_abbrev_lower, jrnl_name_lower, jrnl_print_issn
   into temp tmp_first_journal_to_match;
 
 update tmp_new_pubs
@@ -90,6 +89,13 @@ update tmp_new_pubs
 update tmp_new_pubs
   set journal_zdb_id = (select id from tmp_first_journal_to_match
                         where trim(lower(iso)) = jrnl_abbrev_lower)
+  where journal_zdb_id is null;
+
+update tmp_new_pubs
+  set journal_zdb_id = (select id from tmp_first_journal_to_match
+                        where issn is not null
+                          and jrnl_print_issn is not null
+                          and issn = jrnl_print_issn)
   where journal_zdb_id is null;
 
 select distinct journaltitle, iso, issn from tmp_new_pubs
@@ -119,7 +125,6 @@ update tmp_new_pubs
   set journal_zdb_id = (select jrnl_zdb_id from journal
                         where trim(lower(iso)) = jrnl_abbrev_lower)
   where journal_zdb_id is null;
-
 
 select iso,journaltitle from tmp_new_pubs
   where journal_Zdb_id is null;
