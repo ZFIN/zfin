@@ -93,9 +93,9 @@
                 </g:customCell>
             </g:row>
             <g:row>
-                <g:cell styleName="{style.grey-background}">Sequence</g:cell>
+                <g:cell styleName="{style.grey-background}">Accession</g:cell>
                 <g:customCell>
-                    <zfin:StringTextBox ui:field="featureSequenceBox"/>
+                    <zfin:ZfinAccessionBox ui:field="featureSequenceBox" type="DNA"/>
                 </g:customCell>
             </g:row>
             <g:row>

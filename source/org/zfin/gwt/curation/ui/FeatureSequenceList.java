@@ -2,6 +2,7 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.ui.HTML;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.event.RelatedEntityAdapter;
@@ -15,15 +16,15 @@ public class FeatureSequenceList extends AbstractStackComposite<FeatureDTO> {
 
 
     // GUI suppliers panel
-    private final StringTextBox sequenceTextBox = new StringTextBox();
+    private final ZfinAccessionBox accessionTextBox;
 
-
-    public FeatureSequenceList() {
+    @UiConstructor
+    public FeatureSequenceList(String type) {
         super();
+        accessionTextBox = new ZfinAccessionBox(type);
         initGUI();
         addInternalListeners(this);
         initWidget(panel);
-
     }
 
     @Override
@@ -34,7 +35,7 @@ public class FeatureSequenceList extends AbstractStackComposite<FeatureDTO> {
 
     @Override
     protected void initGUI() {
-        addPanel.add(sequenceTextBox);
+        addPanel.add(accessionTextBox);
         addPanel.add(addButton);
         panel.add(stackTable);
         panel.add(addPanel);
@@ -45,8 +46,11 @@ public class FeatureSequenceList extends AbstractStackComposite<FeatureDTO> {
 
     @Override
     public void sendUpdates() {
-
-        addSequence(sequenceTextBox.getText());
+        if (accessionTextBox.isValid())
+            addSequence(accessionTextBox.getAccessionNumber().getText());
+        else {
+            errorLabel.setText("Invalid Accedssion Number");
+        }
     }
 
     protected void addSequence(final String valueToAdd) {
@@ -66,6 +70,7 @@ public class FeatureSequenceList extends AbstractStackComposite<FeatureDTO> {
                         notWorking();
                         fireEventSuccess();
                         clearError();
+                        accessionTextBox.setFlagVisibility(false);
                     }
                 });
     }
@@ -73,13 +78,13 @@ public class FeatureSequenceList extends AbstractStackComposite<FeatureDTO> {
     @Override
     public void working() {
         addButton.setEnabled(false);
-        sequenceTextBox.setEnabled(false);
+        accessionTextBox.getAccessionNumber().setEnabled(false);
     }
 
     @Override
     public void notWorking() {
         addButton.setEnabled(true);
-        sequenceTextBox.setEnabled(true);
+        accessionTextBox.getAccessionNumber().setEnabled(true);
     }
 
     @Override
@@ -103,7 +108,7 @@ public class FeatureSequenceList extends AbstractStackComposite<FeatureDTO> {
         if (dto == null) return null;
         FeatureDTO featureDTO = new FeatureDTO();
         //if (supplierListBox.getItemCount() > 0) {
-        featureDTO.setFeatureSequence(sequenceTextBox.getText());
+        featureDTO.setFeatureSequence(accessionTextBox.getAccessionNumber().getText());
 
         featureDTO.setZdbID(dto.getZdbID());
         featureDTO.setDataZdbID(dto.getDataZdbID());
@@ -134,7 +139,7 @@ public class FeatureSequenceList extends AbstractStackComposite<FeatureDTO> {
 
     @Override
     public void resetInput() {
-        sequenceTextBox.setText("");
+        accessionTextBox.getAccessionNumber().setText("");
     }
 
     public void resetGUI() {
@@ -163,7 +168,7 @@ public class FeatureSequenceList extends AbstractStackComposite<FeatureDTO> {
                 @Override
                 public void onClick(ClickEvent event) {
                     working();
-                    fireRelatedEntityRemoved(new RelatedEntityEvent<FeatureDTO>(dto));
+                    fireRelatedEntityRemoved(new RelatedEntityEvent<>(dto));
                 }
             });
         }

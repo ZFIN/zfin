@@ -67,15 +67,7 @@
                     </g:HorizontalPanel>
                 </g:customCell>
                 <g:customCell>
-                    <g:HorizontalPanel>
-                        <zfin:StringTextBox ui:field="sequenceOfReference"/>
-                        <g:HTML ui:field="validSequenceCharacter" visible="false">
-                            <i class="fa fa-check {style.green}" aria-hidden="true"></i>
-                        </g:HTML>
-                        <g:HTML ui:field="faultySequenceCharacter" visible="false">
-                            <i class="fa fa-exclamation error" aria-hidden="true"></i>
-                        </g:HTML>
-                    </g:HorizontalPanel>
+                    <zfin:ZfinAccessionBox ui:field="zfinAccessionBox" type="Protein"/>
                 </g:customCell>
             </g:row>
             <g:row>

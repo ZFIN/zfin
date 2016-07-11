@@ -197,9 +197,13 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             if (StringUtils.isNotEmpty(accessionNumber)) {
                 if (isValidAccession(accessionNumber, "Protein") == null)
                     throw new ValidationException("Protein accession Number not found: " + accessionNumber);
+            } else {
+                proteinDetail.setProteinSequenceReferenceAccessionNumber(null);
+                proteinDetail.setReferenceDatabase(null);
+
             }
             DTOConversionService.updateProteinMutationDetailWithDTO(proteinDetail, featureDTO.getProteinChangeDTO());
-            if(proteinDetail.getZdbID() == null)
+            if (proteinDetail.getZdbID() == null)
                 HibernateUtil.currentSession().save(proteinDetail);
             if (!proteinDetail.equals(oldDetail)) {
                 infrastructureRepository.insertMutationDetailAttribution(proteinDetail.getZdbID(), featureDTO.getPublicationZdbID());
@@ -520,7 +524,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
     private void saveFeatureSequence(String sequence, Publication publication, Feature feature) throws ValidationException {
         // only upper case letters and numerals
-        if (!sequence.matches("[A-Z0-9]*"))
+        if (!sequence.matches("[A-Z0-9_]*"))
             throw new ValidationException("Invalid accession number / sequence: Only upper case letters and numerals allowed");
         FeatureDBLink featureDBLink = new FeatureDBLink();
         featureDBLink.setFeature(feature);

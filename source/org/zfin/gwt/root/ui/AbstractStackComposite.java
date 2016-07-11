@@ -24,7 +24,7 @@ public abstract class AbstractStackComposite<T extends RelatedEntityDTO> extends
     protected final FlexTable stackTable = new FlexTable();// contains the supplier names
 
     // listeners
-    protected List<RelatedEntityChangeListener<T>> relatedEntityChangeListeners = new ArrayList<RelatedEntityChangeListener<T>>();
+    protected List<RelatedEntityChangeListener<T>> relatedEntityChangeListeners = new ArrayList<>();
 
 
     public abstract void resetInput();
@@ -64,7 +64,7 @@ public abstract class AbstractStackComposite<T extends RelatedEntityDTO> extends
         int index = findRowForName(name);
         if (index >= 0) {
             stackTable.removeRow(index);
-            fireDataChanged(new RelatedEntityEvent<T>(createDTOFromGUI()));
+            fireDataChanged(new RelatedEntityEvent<>(createDTOFromGUI()));
             return;
         }
         setError("no inference to remove: " + name);
@@ -109,7 +109,7 @@ public abstract class AbstractStackComposite<T extends RelatedEntityDTO> extends
 
     protected List<String> getRelatedEntityNames() {
         int rowCount = stackTable.getRowCount();
-        List<String> relatedEntityList = new ArrayList<String>();
+        List<String> relatedEntityList = new ArrayList<>();
         for (int i = 0; i < rowCount; ++i) {
             if (stackTable.getWidget(i, 0) == null) {
                 GWT.log("Problem at row, contact dev: " + i);

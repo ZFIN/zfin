@@ -1,7 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -10,13 +9,12 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import org.zfin.gwt.root.dto.MutationDetailProteinChangeDTO;
 import org.zfin.gwt.root.ui.IsDirtyWidget;
 import org.zfin.gwt.root.ui.NumberTextBox;
 import org.zfin.gwt.root.ui.StringListBox;
-import org.zfin.gwt.root.ui.StringTextBox;
+import org.zfin.gwt.root.ui.ZfinAccessionBox;
 import org.zfin.gwt.root.util.WidgetUtil;
 
 import java.util.HashSet;
@@ -42,8 +40,6 @@ public class MutationDetailProteinView extends AbstractViewComposite {
     @UiField
     StringListBox proteinTermList;
     @UiField
-    StringTextBox sequenceOfReference;
-    @UiField
     NumberTextBox positionEnd;
     @UiField
     NumberTextBox positionStart;
@@ -54,11 +50,9 @@ public class MutationDetailProteinView extends AbstractViewComposite {
     @UiField
     NumberTextBox plusAminoAcid;
     @UiField
-    HTML validSequenceCharacter;
-    @UiField
-    HTML faultySequenceCharacter;
-    @UiField
     Label positionDash;
+    @UiField
+    ZfinAccessionBox zfinAccessionBox;
 
     public MutationDetailProteinView() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -146,18 +140,6 @@ public class MutationDetailProteinView extends AbstractViewComposite {
         }
     }
 
-    @UiHandler("sequenceOfReference")
-    void onBlurSequence(@SuppressWarnings("unused") BlurEvent event) {
-        if (!sequenceOfReference.isEmpty())
-            presenter.checkValidAccession(sequenceOfReference.getBoxValue(), "Polypeptide");
-        else {
-            faultySequenceCharacter.setVisible(false);
-            validSequenceCharacter.setVisible(false);
-        }
-        handleChanges();
-    }
-
-
     public MutationDetailProteinChangeDTO getDto() {
         if (!hasEnteredValues())
             return null;
@@ -173,7 +155,7 @@ public class MutationDetailProteinView extends AbstractViewComposite {
             dto.setPositionEnd(dto.getPositionStart());
         dto.setNumberAddedAminoAcid(plusAminoAcid.getBoxValue());
         dto.setNumberRemovedAminoAcid(minusAminoAcid.getBoxValue());
-        dto.setSequenceReferenceAccessionNumber(WidgetUtil.getStringFromField(sequenceOfReference));
+        dto.setSequenceReferenceAccessionNumber(WidgetUtil.getStringFromField(zfinAccessionBox.getAccessionNumber()));
 
         return dto;
     }
@@ -183,13 +165,12 @@ public class MutationDetailProteinView extends AbstractViewComposite {
         proteinTermList.setSelectedIndex(0);
         proteinWTTermList.setSelectedIndex(0);
         proteinMutatedTerm.setSelectedIndex(0);
-        sequenceOfReference.clear();
+        zfinAccessionBox.clear();
         positionEnd.clear();
         positionStart.clear();
         minusAminoAcid.clear();
         plusAminoAcid.clear();
-        validSequenceCharacter.setVisible(false);
-        faultySequenceCharacter.setVisible(false);
+        zfinAccessionBox.setFlagVisibility(false);
     }
 
 
@@ -203,7 +184,7 @@ public class MutationDetailProteinView extends AbstractViewComposite {
         fields.add(proteinTermList);
         fields.add(minusAminoAcid);
         fields.add(plusAminoAcid);
-        fields.add(sequenceOfReference);
+        fields.add(zfinAccessionBox.getAccessionNumber());
         return fields;
     }
 
@@ -245,7 +226,7 @@ public class MutationDetailProteinView extends AbstractViewComposite {
         minusAminoAcid.setNumber(dto.getNumberRemovedAminoAcid());
         positionStart.setNumber(dto.getPositionStart());
         positionEnd.setNumber(dto.getPositionEnd());
-        sequenceOfReference.setText(dto.getSequenceReferenceAccessionNumber());
+        zfinAccessionBox.getAccessionNumber().setText(dto.getSequenceReferenceAccessionNumber());
     }
 
     public boolean hasStopCodon() {
@@ -253,8 +234,7 @@ public class MutationDetailProteinView extends AbstractViewComposite {
     }
 
     public void resetMessages() {
-        validSequenceCharacter.setVisible(false);
-        faultySequenceCharacter.setVisible(false);
+        zfinAccessionBox.setFlagVisibility(false);
         clearError();
     }
 

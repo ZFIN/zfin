@@ -122,7 +122,6 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         col.addBoolean(view.lineNumberBox.isDirty(dto.getLineNumber()));
         col.addBoolean(view.labOfOriginBox.isDirty(dto.getLabOfOrigin()));
         col.addBoolean(mutationDetailPresenter.isDirty());
-////        isDirty = (view.featureSequenceBox.isDirty(dto.getFeatureSequence()) || isDirty) ;
         return col.arrivedValue();
     }
 

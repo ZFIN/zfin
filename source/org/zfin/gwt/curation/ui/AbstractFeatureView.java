@@ -343,9 +343,9 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
             if (mutationDetailTranscriptView.getPresenter().isTranscriptDtoSetEmpty()) {
                 // substitution is a missense consequence on the transcript level
                 if (mutationDetailProteinView.hasNonStopAASelected())
-                    mutationDetailTranscriptView.getPresenter().setMissenseTerm(this);
+                    mutationDetailTranscriptView.getPresenter().setMissenseTerm();
                 else if (mutationDetailProteinView.hasStopCodon())
-                    mutationDetailTranscriptView.getPresenter().setStopGainTerm(this);
+                    mutationDetailTranscriptView.getPresenter().setStopGainTerm();
             }
         }
     }

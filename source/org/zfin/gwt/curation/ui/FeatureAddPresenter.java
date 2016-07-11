@@ -94,7 +94,7 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
     public FeatureDTO createDTOFromGUI() {
         FeatureDTO featureDTO = super.createDTOFromGUI(view);
 
-        featureDTO.setFeatureSequence(view.featureSequenceBox.getText());
+        featureDTO.setFeatureSequence(view.featureSequenceBox.getAccession());
 
         if (StringUtils.isNotEmptyTrim(view.featureAliasBox.getText())) {
             featureDTO.setAlias(view.featureAliasBox.getText());
