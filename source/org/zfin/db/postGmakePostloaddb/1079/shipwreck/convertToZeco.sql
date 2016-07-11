@@ -11,7 +11,7 @@ update tmp_zeco_tt
       		   	   and otherTermId like 'CHEBI:%');
 
 update tmp_zeco_tt
-  set otherTermId = "CHEBI:"||otherTermId
+  set otherTermId = "NCBITaxon:"||otherTermId
  where otherTermId not like "%:%"
  and otherTermId not like "none";
 

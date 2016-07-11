@@ -11,10 +11,10 @@ update tmp_gap_tt
 select count(*) as counter, expcondId as id from tmp_gap_tt
  group by expcondId 
 having count(*) > 1
- into temp tmp_dups;
+ into temp tmp_dups2;
 
 delete from tmp_gap_tt
- where exists (Select 'x' from tmp_dups
+ where exists (Select 'x' from tmp_dups2
        	      	      where id = expcondId);
 
 delete from tmp_gap_tt

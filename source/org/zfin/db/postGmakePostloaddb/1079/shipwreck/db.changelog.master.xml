@@ -10,7 +10,7 @@
   <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/convertToZeco.sql"/>  
 
   <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/updateExpcondZeco.sql"/>  
-  <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/dropZecoTempTable.sql"/>  
+<!--  <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/dropZecoTempTable.sql"/>  -->
   <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/betterFishTable.sql"/>  
 
 </databaseChangeLog>
