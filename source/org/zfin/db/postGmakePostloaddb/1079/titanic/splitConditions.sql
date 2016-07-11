@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset sierra:convertConditions
+--changeset sierra:splitconditions
 
 update tmp_gap_dup_tt
   set cztId = 'NCBITaxon:'||cztId
