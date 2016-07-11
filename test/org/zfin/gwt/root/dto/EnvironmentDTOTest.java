@@ -9,12 +9,12 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Test class for EnvironmentDTO.
+ * Test class for ExperimentDTO.
  */
 @SuppressWarnings({"FeatureEnvy"})
 public class EnvironmentDTOTest  {
 
-    private List<EnvironmentDTO> environmentList = new ArrayList<EnvironmentDTO>(5);
+    private List<ExperimentDTO> environmentList = new ArrayList<ExperimentDTO>(5);
 
     /**
      * Standard before hot
@@ -22,19 +22,19 @@ public class EnvironmentDTOTest  {
     @Test
     public void compareEnvironmentSorting(){
         environmentList.add(createEnvironmentDTOObject("ypsilon"));
-        environmentList.add(createEnvironmentDTOObject(EnvironmentDTO.STANDARD));
+        environmentList.add(createEnvironmentDTOObject(ExperimentDTO.STANDARD));
         environmentList.add(createEnvironmentDTOObject("abc"));
-        environmentList.add(createEnvironmentDTOObject(EnvironmentDTO.GENERIC_CONTROL));
+        environmentList.add(createEnvironmentDTOObject(ExperimentDTO.GENERIC_CONTROL));
         environmentList.add(createEnvironmentDTOObject("hot"));
         Collections.sort(environmentList);
-        assertEquals(EnvironmentDTO.STANDARD, environmentList.get(0).getName());
-        assertEquals(EnvironmentDTO.GENERIC_CONTROL, environmentList.get(1).getName());
+        assertEquals(ExperimentDTO.STANDARD, environmentList.get(0).getName());
+        assertEquals(ExperimentDTO.GENERIC_CONTROL, environmentList.get(1).getName());
         assertEquals("abc", environmentList.get(2).getName());
         assertEquals("hot", environmentList.get(3).getName());
     }
 
-    private EnvironmentDTO createEnvironmentDTOObject(String name){
-        EnvironmentDTO environment = new EnvironmentDTO();
+    private ExperimentDTO createEnvironmentDTOObject(String name){
+        ExperimentDTO environment = new ExperimentDTO();
         environment.setName(name);
         return environment;
     }

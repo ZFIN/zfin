@@ -20,10 +20,10 @@ public class ExperimentDTOTest {
      */
     @Test
     public void sortExperimentDTOsGenes() {
-        ExperimentDTO one = new ExperimentDTO();
+        ExpressionExperimentDTO one = new ExpressionExperimentDTO();
         one.setGene(getMarkerDTO("alcam"));
-        ExperimentDTO two = new ExperimentDTO();
-        List<ExperimentDTO> experiments = new ArrayList<ExperimentDTO>(2);
+        ExpressionExperimentDTO two = new ExpressionExperimentDTO();
+        List<ExpressionExperimentDTO> experiments = new ArrayList<ExpressionExperimentDTO>(2);
         experiments.add(one);
         experiments.add(two);
 
@@ -38,13 +38,13 @@ public class ExperimentDTOTest {
      */
     @Test
     public void sortExperimentDTOsFish() {
-        ExperimentDTO one = new ExperimentDTO();
+        ExpressionExperimentDTO one = new ExpressionExperimentDTO();
         one.setGene(getMarkerDTO("alcam"));
         one.setFishName("AB");
-        ExperimentDTO two = new ExperimentDTO();
+        ExpressionExperimentDTO two = new ExpressionExperimentDTO();
         two.setGene(null);
         two.setFishName("WT");
-        List<ExperimentDTO> experiments = new ArrayList<ExperimentDTO>(2);
+        List<ExpressionExperimentDTO> experiments = new ArrayList<ExpressionExperimentDTO>(2);
         experiments.add(one);
         experiments.add(two);
         Collections.sort(experiments);
@@ -62,24 +62,24 @@ public class ExperimentDTOTest {
      */
     @Test
     public void sortExperimentDTOsEnv() {
-        ExperimentDTO one = new ExperimentDTO();
+        ExpressionExperimentDTO one = new ExpressionExperimentDTO();
         one.setGene(getMarkerDTO("alcam"));
         one.setFishName("AB");
-        EnvironmentDTO envDto = new EnvironmentDTO();
-        envDto.setName(EnvironmentDTO.STANDARD);
+        ExperimentDTO envDto = new ExperimentDTO();
+        envDto.setName(ExperimentDTO.STANDARD);
         one.setEnvironment(envDto);
-        ExperimentDTO two = new ExperimentDTO();
+        ExpressionExperimentDTO two = new ExpressionExperimentDTO();
         two.setGene(null);
         two.setFishName("AB");
-        EnvironmentDTO envDtoTwo = new EnvironmentDTO();
-        envDtoTwo.setName(EnvironmentDTO.GENERIC_CONTROL);
+        ExperimentDTO envDtoTwo = new ExperimentDTO();
+        envDtoTwo.setName(ExperimentDTO.GENERIC_CONTROL);
         two.setEnvironment(envDtoTwo);
-        List<ExperimentDTO> experiments = new ArrayList<ExperimentDTO>(2);
+        List<ExpressionExperimentDTO> experiments = new ArrayList<ExpressionExperimentDTO>(2);
         experiments.add(one);
         experiments.add(two);
         Collections.sort(experiments);
-        assertEquals(EnvironmentDTO.GENERIC_CONTROL, experiments.get(0).getEnvironment().getName());
-        assertEquals(EnvironmentDTO.STANDARD, experiments.get(1).getEnvironment().getName());
+        assertEquals(ExperimentDTO.GENERIC_CONTROL, experiments.get(0).getEnvironment().getName());
+        assertEquals(ExperimentDTO.STANDARD, experiments.get(1).getEnvironment().getName());
 
     }
 
@@ -88,21 +88,21 @@ public class ExperimentDTOTest {
      */
     @Test
     public void sortExperimentDTOsAssay() {
-        ExperimentDTO one = new ExperimentDTO();
+        ExpressionExperimentDTO one = new ExpressionExperimentDTO();
         one.setGene(getMarkerDTO("alcam"));
         one.setFishName("AB");
-        EnvironmentDTO envDto = new EnvironmentDTO();
-        envDto.setName(EnvironmentDTO.STANDARD);
+        ExperimentDTO envDto = new ExperimentDTO();
+        envDto.setName(ExperimentDTO.STANDARD);
         one.setEnvironment(envDto);
         one.setAssay("Immunohisto");
-        ExperimentDTO two = new ExperimentDTO();
+        ExpressionExperimentDTO two = new ExpressionExperimentDTO();
         two.setGene(getMarkerDTO("alcam"));
         two.setFishName("AB");
-        EnvironmentDTO envDtoTwo = new EnvironmentDTO();
-        envDtoTwo.setName(EnvironmentDTO.STANDARD);
+        ExperimentDTO envDtoTwo = new ExperimentDTO();
+        envDtoTwo.setName(ExperimentDTO.STANDARD);
         two.setEnvironment(envDtoTwo);
         two.setAssay("other");
-        List<ExperimentDTO> experiments = new ArrayList<ExperimentDTO>(2);
+        List<ExpressionExperimentDTO> experiments = new ArrayList<ExpressionExperimentDTO>(2);
         experiments.add(one);
         experiments.add(two);
         Collections.sort(experiments);

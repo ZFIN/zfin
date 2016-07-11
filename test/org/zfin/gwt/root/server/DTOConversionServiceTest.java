@@ -51,7 +51,7 @@ public class DTOConversionServiceTest extends AbstractDatabaseTest {
         pfs.setStart(start);
         pfs.setEnd(end);
         pfs.setFigure(fig);
-        EnvironmentDTO envDto = new EnvironmentDTO();
+        ExperimentDTO envDto = new ExperimentDTO();
         envDto.setZdbID(envID);
         pfs.setEnvironment(envDto);
         pfs.setPublicationID(pubID);
