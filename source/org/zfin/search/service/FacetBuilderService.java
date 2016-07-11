@@ -125,7 +125,7 @@ public class FacetBuilderService {
         FacetGroup diseaseModel = new FacetGroup("Disease Model", true);
         diseaseModel.addFacet(buildFacet(FieldName.FISH.getName(), true));
         diseaseModel.addFacet(buildFacet(FieldName.EXPERIMENTAL_CONDITIONS.getName(), true));
-        facetGroups.add(buildSingleFacetGroup("Conditions", FieldName.CONDITIONS.getName(), false));
+        diseaseModel.addFacet(buildFacet(FieldName.CONDITIONS.getName(), true));
         facetGroups.add(diseaseModel);
 
         return facetGroups;
