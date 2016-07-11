@@ -152,33 +152,7 @@ public class MutationDetailPresenter {
         populateTranscriptDataTable();
     }
 
-    public void checkValidAccession(String accessionNumber, final String type) {
-        FeatureRPCService.App.getInstance().isValidAccession(accessionNumber, type, new ZfinAsyncCallback<String>("Failed to read valid accession", null) {
-                    @Override
-                    public void onSuccess(String dbName) {
-                        boolean valid = dbName != null;
-                        if (type.equals("DNA")) {
-                            view.mutationDetailDnaView.validSequenceCharacter.setVisible(valid);
-                            view.mutationDetailDnaView.faultySequenceCharacter.setVisible(!valid);
-                            if (valid)
-                                view.mutationDetailDnaView.validSequenceCharacter.setTitle(dbName);
-                        } else {
-                            view.mutationDetailProteinView.validSequenceCharacter.setVisible(valid);
-                            view.mutationDetailProteinView.faultySequenceCharacter.setVisible(!valid);
-                            if (valid)
-                                view.mutationDetailProteinView.validSequenceCharacter.setTitle(dbName);
-                        }
-                        if (!valid) {
-                            view.setError("Not an NCBI accession number.");
-                        }
-                    }
-                }
-
-        );
-
-    }
-
-    protected void setMissenseTerm(AbstractFeatureView view) {
+    protected void setMissenseTerm() {
         if (getDtoSet().isEmpty()) {
             MutationDetailTranscriptChangeDTO dto = new MutationDetailTranscriptChangeDTO();
             dto.setConsequenceOboID(MISSENSE);
@@ -188,7 +162,7 @@ public class MutationDetailPresenter {
         }
     }
 
-    public void setStopGainTerm(AbstractFeatureView view) {
+    public void setStopGainTerm() {
         if (getDtoSet().isEmpty()) {
             MutationDetailTranscriptChangeDTO dto = new MutationDetailTranscriptChangeDTO();
             dto.setConsequenceOboID(STOP_GAIN);

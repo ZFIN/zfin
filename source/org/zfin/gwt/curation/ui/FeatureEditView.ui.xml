@@ -99,9 +99,9 @@
                 </g:customCell>
             </g:row>
             <g:row>
-                <g:cell styleName="{style.valign-top}">Sequence</g:cell>
+                <g:cell styleName="{style.valign-top}">Accession</g:cell>
                 <g:customCell>
-                    <zfin-mod:FeatureSequenceList ui:field="featureSequenceList"/>
+                    <zfin-mod:FeatureSequenceList ui:field="featureSequenceList" type="DNA"/>
                 </g:customCell>
             </g:row>
             <g:row>

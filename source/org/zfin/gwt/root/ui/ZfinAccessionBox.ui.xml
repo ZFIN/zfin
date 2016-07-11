@@ -1,0 +1,25 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        xmlns:zfin-root='urn:import:org.zfin.gwt.root.util'
+        xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui'
+        >
+
+    <ui:style>
+        .green {
+            color: green;
+        }
+    </ui:style>
+
+    <g:HorizontalPanel>
+        <zfin:StringTextBox ui:field="accessionNumber"/>
+        <g:HTML ui:field="validSequenceCharacter" visible="false">
+            <i class="fa fa-check {style.green}" aria-hidden="true"></i>
+        </g:HTML>
+        <g:HTML ui:field="faultySequenceCharacter" visible="false">
+            <i class="fa fa-exclamation error" aria-hidden="true"></i>
+        </g:HTML>
+    </g:HorizontalPanel>
+</ui:UiBinder>

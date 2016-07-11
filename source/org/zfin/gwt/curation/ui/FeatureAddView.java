@@ -14,6 +14,7 @@ import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.TransgenicSuffix;
 import org.zfin.gwt.root.ui.Revertible;
 import org.zfin.gwt.root.ui.StringTextBox;
+import org.zfin.gwt.root.ui.ZfinAccessionBox;
 
 public class FeatureAddView extends AbstractFeatureView implements Revertible {
 
@@ -27,7 +28,7 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
     @UiField
     StringTextBox featureAliasBox;
     @UiField
-    StringTextBox featureSequenceBox;
+    ZfinAccessionBox featureSequenceBox;
     @UiField
     TextArea curatorNoteBox;
     @UiField
@@ -61,7 +62,7 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         publicNoteBox.setEnabled(true);
         curatorNoteBox.setEnabled(true);
         featureAliasBox.setEnabled(true);
-        featureSequenceBox.setEnabled(true);
+        featureSequenceBox.getAccessionNumber().setEnabled(true);
         handleDirty();
     }
 
@@ -78,8 +79,9 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         featureNameBox.clear();
         featureAliasBox.setEnabled(false);
         featureAliasBox.clear();
-        featureSequenceBox.setEnabled(false);
-        featureSequenceBox.clear();
+        featureSequenceBox.getAccessionNumber().setEnabled(false);
+        featureSequenceBox.getAccessionNumber().clear();
+        featureSequenceBox.setFlagVisibility(false);
         publicNoteBox.setEnabled(false);
         publicNoteBox.setText("");
         curatorNoteBox.setEnabled(false);
@@ -112,7 +114,7 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
     public void working() {
         super.working();
         featureAliasBox.setEnabled(false);
-        featureSequenceBox.setEnabled(false);
+        featureSequenceBox.getAccessionNumber().setEnabled(false);
         publicNoteBox.setEnabled(false);
         curatorNoteBox.setEnabled(false);
     }

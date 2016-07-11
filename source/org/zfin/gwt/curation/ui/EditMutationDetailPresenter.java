@@ -1,5 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import org.zfin.gwt.curation.event.DirtyValueEvent;
 import org.zfin.gwt.root.dto.MutationDetailDnaChangeDTO;
 import org.zfin.gwt.root.dto.MutationDetailProteinChangeDTO;
@@ -14,6 +16,18 @@ public class EditMutationDetailPresenter extends MutationDetailPresenter {
 
     public EditMutationDetailPresenter(FeatureEditView editView) {
         super(editView);
+        view.mutationDetailDnaView.zfinAccessionBox.getPresenter().addBlurHandler(new BlurHandler() {
+            @Override
+            public void onBlur(BlurEvent blurEvent) {
+                handleDirty();
+            }
+        });
+        view.mutationDetailProteinView.zfinAccessionBox.getPresenter().addBlurHandler(new BlurHandler() {
+            @Override
+            public void onBlur(BlurEvent blurEvent) {
+                handleDirty();
+            }
+        });
     }
 
     // for the edit feature section
@@ -34,7 +48,7 @@ public class EditMutationDetailPresenter extends MutationDetailPresenter {
             col.addBoolean(mutationDetailDnaView.positionEnd.isDirty(dnaChangeDTO.getPositionEnd()));
             col.addBoolean(mutationDetailDnaView.exonNumber.isDirty(dnaChangeDTO.getExonNumber()));
             col.addBoolean(mutationDetailDnaView.intronNumber.isDirty(dnaChangeDTO.getIntronNumber()));
-            col.addBoolean(mutationDetailDnaView.sequenceOfReference.isDirty(dnaChangeDTO.getSequenceReferenceAccessionNumber()));
+            col.addBoolean(mutationDetailDnaView.zfinAccessionBox.getAccessionNumber().isDirty(dnaChangeDTO.getSequenceReferenceAccessionNumber()));
         }
         MutationDetailProteinView mutationDetailProteinView = view.mutationDetailProteinView;
         MutationDetailProteinChangeDTO proteinChangeDTO = dto.getProteinChangeDTO();
@@ -50,9 +64,8 @@ public class EditMutationDetailPresenter extends MutationDetailPresenter {
             col.addBoolean(mutationDetailProteinView.minusAminoAcid.isDirty(proteinChangeDTO.getNumberRemovedAminoAcid()));
             col.addBoolean(mutationDetailProteinView.positionStart.isDirty(proteinChangeDTO.getPositionStart()));
             col.addBoolean(mutationDetailProteinView.positionEnd.isDirty(proteinChangeDTO.getPositionEnd()));
-            col.addBoolean(mutationDetailProteinView.sequenceOfReference.isDirty(proteinChangeDTO.getSequenceReferenceAccessionNumber()));
+            col.addBoolean(mutationDetailProteinView.zfinAccessionBox.getAccessionNumber().isDirty(proteinChangeDTO.getSequenceReferenceAccessionNumber()));
         }
-        MutationDetailTranscriptView mutationDetailTranscriptView = view.mutationDetailTranscriptView;
         Set<MutationDetailTranscriptChangeDTO> transcriptChangeDTOSet = dto.getTranscriptChangeDTOSet();
         if (transcriptChangeDTOSet == null || transcriptChangeDTOSet.isEmpty()) {
             // check if there are any transcript records created

@@ -1,23 +1,20 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import org.zfin.gwt.root.dto.MutationDetailDnaChangeDTO;
 import org.zfin.gwt.root.ui.IsDirtyWidget;
 import org.zfin.gwt.root.ui.NumberTextBox;
 import org.zfin.gwt.root.ui.StringListBox;
-import org.zfin.gwt.root.ui.StringTextBox;
+import org.zfin.gwt.root.ui.ZfinAccessionBox;
 import org.zfin.gwt.root.util.WidgetUtil;
 
 import java.util.HashSet;
@@ -40,8 +37,6 @@ public class MutationDetailDNAView extends AbstractViewComposite {
 
     @UiField
     StringListBox nucleotideChangeList;
-    @UiField
-    StringTextBox sequenceOfReference;
     @UiField
     StringListBox localizationTerm;
     @UiField
@@ -67,11 +62,9 @@ public class MutationDetailDNAView extends AbstractViewComposite {
     @UiField
     Grid dataTable;
     @UiField
-    HTML validSequenceCharacter;
-    @UiField
-    HTML faultySequenceCharacter;
-    @UiField
     Label positionDash;
+    @UiField
+    ZfinAccessionBox zfinAccessionBox;
 
     public MutationDetailDNAView() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -130,17 +123,6 @@ public class MutationDetailDNAView extends AbstractViewComposite {
 
     @UiHandler("nucleotideChangeList")
     void onNucleotideChange(@SuppressWarnings("unused") ChangeEvent event) {
-        handleChanges();
-    }
-
-    @UiHandler("sequenceOfReference")
-    void onBlurSequence(@SuppressWarnings("unused") BlurEvent event) {
-        if (!sequenceOfReference.isEmpty())
-            presenter.checkValidAccession(sequenceOfReference.getBoxValue(), "DNA");
-        else {
-            faultySequenceCharacter.setVisible(false);
-            validSequenceCharacter.setVisible(false);
-        }
         handleChanges();
     }
 
@@ -217,7 +199,7 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         positionStart.setVisible(show);
         positionEnd.setVisible(show);
         positionDash.setVisible(show);
-        sequenceOfReference.setVisible(show);
+        zfinAccessionBox.setVisible(show);
     }
 
     public MutationDetailDnaChangeDTO getDto() {
@@ -234,7 +216,7 @@ public class MutationDetailDNAView extends AbstractViewComposite {
             dto.setPositionEnd(dto.getPositionStart());
         dto.setNumberAddedBasePair(plusBasePair.getBoxValue());
         dto.setNumberRemovedBasePair(minusBasePair.getBoxValue());
-        dto.setSequenceReferenceAccessionNumber(WidgetUtil.getStringFromField(sequenceOfReference));
+        dto.setSequenceReferenceAccessionNumber(WidgetUtil.getStringFromField(zfinAccessionBox.getAccessionNumber()));
         dto.setExonNumber(exonNumber.getBoxValue());
         dto.setIntronNumber(intronNumber.getBoxValue());
         return dto;
@@ -264,7 +246,6 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         nucleotideChangeList.setSelectedIndex(0);
         positionStart.clear();
         positionEnd.clear();
-        sequenceOfReference.clear();
         localizationTerm.setSelectedIndex(0);
         exonNumber.setVisible(false);
         intronNumber.setVisible(false);
@@ -272,8 +253,8 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         intronNumber.clear();
         plusBasePair.clear();
         minusBasePair.clear();
-        validSequenceCharacter.setVisible(false);
-        faultySequenceCharacter.setVisible(false);
+        zfinAccessionBox.clear();
+        zfinAccessionBox.setFlagVisibility(false);
         clearError();
     }
 
@@ -287,7 +268,7 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         fields.add(intronNumber);
         fields.add(plusBasePair);
         fields.add(minusBasePair);
-        fields.add(sequenceOfReference);
+        fields.add(zfinAccessionBox.getAccessionNumber());
         return fields;
     }
 
@@ -312,13 +293,12 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         positionEnd.setNumber(dto.getPositionEnd());
         exonNumber.setNumber(dto.getExonNumber());
         intronNumber.setNumber(dto.getIntronNumber());
-        sequenceOfReference.setText(dto.getSequenceReferenceAccessionNumber());
+        zfinAccessionBox.getAccessionNumber().setText(dto.getSequenceReferenceAccessionNumber());
         onChangeLocalization(null);
     }
 
     public void resetMessages() {
-        validSequenceCharacter.setVisible(false);
-        faultySequenceCharacter.setVisible(false);
+        zfinAccessionBox.setFlagVisibility(false);
         clearError();
     }
 

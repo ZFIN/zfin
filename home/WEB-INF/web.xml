@@ -270,9 +270,19 @@
     </servlet>
 
     <servlet>
+        <servlet-name>AccessionService</servlet-name>
+        <servlet-class>org.zfin.gwt.root.server.AccessionRPCServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>ExperimentService</servlet-name>
         <servlet-class>org.zfin.gwt.curation.server.ExperimentRPCServiceImpl</servlet-class>
     </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AccessionService</servlet-name>
+        <url-pattern>/ajax/accessionservice</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>FeatureService</servlet-name>
