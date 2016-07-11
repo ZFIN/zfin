@@ -1,7 +1,5 @@
 package org.zfin.gwt.root.dto;
 
-import com.google.gwt.user.client.Window;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -12,7 +10,7 @@ import java.util.List;
  */
 public class ExpressionFigureStageDTO extends AbstractFigureStageDTO<ExpressedTermDTO> implements Comparable<ExpressionFigureStageDTO> {
 
-    private ExperimentDTO experiment;
+    private ExpressionExperimentDTO experiment;
     private String expressedIn;
     private boolean patoExists;
 
@@ -20,11 +18,11 @@ public class ExpressionFigureStageDTO extends AbstractFigureStageDTO<ExpressedTe
         return experiment.getEnvironment().getName();
     }
 
-    public ExperimentDTO getExperiment() {
+    public ExpressionExperimentDTO getExperiment() {
         return experiment;
     }
 
-    public void setExperiment(ExperimentDTO experiment) {
+    public void setExperiment(ExpressionExperimentDTO experiment) {
         this.experiment = experiment;
     }
 
@@ -66,7 +64,7 @@ public class ExpressionFigureStageDTO extends AbstractFigureStageDTO<ExpressedTe
         if (ids.length != 4)
             throw new RuntimeException("unique id '" + uniqueID + "'not in the format experimentID:figureID:startStageID:endStageID");
         if (experiment == null)
-            experiment = new ExperimentDTO();
+            experiment = new ExpressionExperimentDTO();
         experiment.setExperimentZdbID(ids[0]);
         if (figure == null)
             figure = new FigureDTO();

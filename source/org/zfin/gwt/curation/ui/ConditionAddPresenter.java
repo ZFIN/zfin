@@ -6,7 +6,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import org.zfin.gwt.curation.event.ChangeConditionEvent;
 import org.zfin.gwt.root.dto.ConditionDTO;
-import org.zfin.gwt.root.dto.EnvironmentDTO;
+import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.event.SelectAutoCompleteEvent;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
@@ -24,7 +24,7 @@ public class ConditionAddPresenter implements HandlesError {
 
     private String publicationID;
 
-    private List<EnvironmentDTO> dtoList;
+    private List<ExperimentDTO> dtoList;
     private List<CheckBox> copyConditionsCheckBoxList = new ArrayList<>();
     private Map<String, Set<String>> childMap;
 
@@ -71,7 +71,7 @@ public class ConditionAddPresenter implements HandlesError {
         }
         ConditionDTO lastCondition = null;
 
-        for (EnvironmentDTO dto : dtoList) {
+        for (ExperimentDTO dto : dtoList) {
             if (dto.conditionDTOList == null)
                 continue;
 
@@ -275,9 +275,9 @@ public class ConditionAddPresenter implements HandlesError {
                 return;
             view.loadingImage.setVisible(true);
 
-            ExperimentRPCService.App.getInstance().deleteCondition(conditionDTO, new FeatureEditCallBack<List<EnvironmentDTO>>("Failed to remove condition: ", presenter) {
+            ExperimentRPCService.App.getInstance().deleteCondition(conditionDTO, new FeatureEditCallBack<List<ExperimentDTO>>("Failed to remove condition: ", presenter) {
                 @Override
-                public void onSuccess(List<EnvironmentDTO> list) {
+                public void onSuccess(List<ExperimentDTO> list) {
                     dtoList.clear();
                     dtoList = list;
                     populateData();
@@ -291,7 +291,7 @@ public class ConditionAddPresenter implements HandlesError {
     }
 
 
-    private class ExperimentListCallBack extends ZfinAsyncCallback<List<EnvironmentDTO>> {
+    private class ExperimentListCallBack extends ZfinAsyncCallback<List<ExperimentDTO>> {
         private boolean notify;
 
         public ExperimentListCallBack(boolean notify, String errorMessage) {
@@ -300,11 +300,11 @@ public class ConditionAddPresenter implements HandlesError {
             this.notify = notify;
         }
 
-        public void onSuccess(List<EnvironmentDTO> experimentList) {
+        public void onSuccess(List<ExperimentDTO> experimentList) {
             dtoList = experimentList;
             view.experimentSelectionList.clear();
             view.experimentCopyToSelectionList.clear();
-            for (EnvironmentDTO dto : experimentList) {
+            for (ExperimentDTO dto : experimentList) {
                 view.experimentSelectionList.addItem(dto.getName(), dto.getZdbID());
                 view.experimentCopyToSelectionList.addItem(dto.getName(), dto.getZdbID());
             }

@@ -105,7 +105,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     private ExpressionExperimentZonePresenter expressionExperimentZonePresenter;
 
     // filter set by the banana bar
-    private ExperimentDTO experimentFilter = new ExperimentDTO();
+    private ExpressionExperimentDTO experimentFilter = new ExpressionExperimentDTO();
 
 /*
     @UiConstructor
@@ -314,7 +314,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         displayTable.createExpressionTable();
     }
 
-    protected Set<ExperimentDTO> getSelectedExperiments() {
+    protected Set<ExpressionExperimentDTO> getSelectedExperiments() {
         return expressionExperimentZonePresenter.getSelectedExperiments();
     }
 
@@ -327,7 +327,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         return selectedExpressions;
     }
 
-    public void applyFilterElements(String figureID, ExperimentDTO experimentFilter) {
+    public void applyFilterElements(String figureID, ExpressionExperimentDTO experimentFilter) {
         // needed for new expression retrieval
         this.experimentFilter = experimentFilter;
         // un-check all checked expressions if any of the filters is set except the ones that are not hidden
@@ -437,7 +437,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     private void addFigureAnnotationsToList(String figureID, String startStageID, String endStageID, List<ExpressionFigureStageDTO> expressions) {
         //Window.alert("Experiment size: " + experiments);
 
-        for (ExperimentDTO experiment : getSelectedExperiments()) {
+        for (ExpressionExperimentDTO experiment : getSelectedExperiments()) {
             ExpressionFigureStageDTO newExpression = new ExpressionFigureStageDTO();
             newExpression.setExperiment(experiment);
             StageDTO start = new StageDTO();
@@ -871,7 +871,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
                 checkBox.addClickHandler(new ExpressionSelectCopyStructureButtonClickHandler());
                 setWidget(rowIndex, HeaderName.SELECT.getIndex(), checkBox);
 
-                ExperimentDTO experiment = expression.getExperiment();
+                ExpressionExperimentDTO experiment = expression.getExperiment();
                 setWidgetWithNameAndIdLabel(rowIndex, HeaderName.FIGURE.getIndex(), expression.getFigure().getLabel(), expression.getFigure().getZdbID());
                 setWidgetWithNameAndIdLabel(rowIndex, HeaderName.FISH.getIndex(), experiment.getFishName(), experiment.getFishID());
                 MarkerDTO gene = experiment.getGene();
@@ -1120,7 +1120,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
 
     }
 
-    public void setExperimentFilter(ExperimentDTO experimentFilter) {
+    public void setExperimentFilter(ExpressionExperimentDTO experimentFilter) {
         this.experimentFilter = experimentFilter;
     }
 
@@ -1141,10 +1141,10 @@ public class ExpressionZoneView extends Composite implements HandlesError {
      *
      * @param deletedExperiment experiment that was deleted
      */
-    public void removeFigureAnnotations(ExperimentDTO deletedExperiment) {
+    public void removeFigureAnnotations(ExpressionExperimentDTO deletedExperiment) {
         List<ExpressionFigureStageDTO> toBeDeleted = new ArrayList<>();
         for (ExpressionFigureStageDTO efs : displayedExpressions) {
-            ExperimentDTO expDto = efs.getExperiment();
+            ExpressionExperimentDTO expDto = efs.getExperiment();
             if (expDto.getExperimentZdbID().equals(deletedExperiment.getExperimentZdbID()))
                 toBeDeleted.add(efs);
         }

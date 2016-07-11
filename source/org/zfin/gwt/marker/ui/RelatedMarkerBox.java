@@ -17,6 +17,7 @@ public abstract class RelatedMarkerBox extends AbstractRelatedEntityBox<MarkerDT
 
     MarkerRelationshipEnumTypeGWTHack type;
     private boolean zdbIDThenAbbrev;
+    private boolean updateExpression;
 
 
     RelatedMarkerBox(MarkerRelationshipEnumTypeGWTHack type, boolean zdbIDThenAbbrev, String div) {
@@ -48,6 +49,13 @@ public abstract class RelatedMarkerBox extends AbstractRelatedEntityBox<MarkerDT
         fireAttributionRemoved(new RelatedEntityEvent<MarkerDTO>(markerDTO));
     }
 
+    public boolean isUpdateExpression() {
+        return updateExpression;
+    }
+
+    public void setUpdateExpression(boolean updateExpression) {
+        this.updateExpression = updateExpression;
+    }
 
     void addInternalListeners(final RelatedMarkerBox relatedMarkerbox) {
         addRelatedEntityCompositeListener(new RelatedMarkerListener(this));

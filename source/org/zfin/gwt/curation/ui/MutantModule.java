@@ -156,7 +156,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     // Publication in question.
     private String publicationID;
     // filter set by the banana bar
-    private ExperimentDTO experimentFilter = new ExperimentDTO();
+    private ExpressionExperimentDTO experimentFilter = new ExpressionExperimentDTO();
 
     public MutantModule(String publicationID) {
         this.publicationID = publicationID;
@@ -394,7 +394,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         return selectedExpressions;
     }
 
-    public void applyFilterElements(String figureID, ExperimentDTO filter) {
+    public void applyFilterElements(String figureID, ExpressionExperimentDTO filter) {
         setFigureID(figureID);
         // needed for new expression retrieval
         this.experimentFilter = filter;
@@ -489,7 +489,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
 
     private PhenotypeExperimentDTO createBasicPhenoFigDto(String figID, String fishID, String environmentID) {
         PhenotypeExperimentDTO newMutantFigureStage = new PhenotypeExperimentDTO();
-        EnvironmentDTO envDto = new EnvironmentDTO();
+        ExperimentDTO envDto = new ExperimentDTO();
         envDto.setZdbID(environmentID);
         newMutantFigureStage.setEnvironment(envDto);
         FigureDTO figDto = new FigureDTO();
@@ -1145,7 +1145,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         updateFigureListBox();
     }
 
-    public void setExperimentFilter(ExperimentDTO experimentFilter) {
+    public void setExperimentFilter(ExpressionExperimentDTO experimentFilter) {
         this.experimentFilter = experimentFilter;
     }
 
@@ -1257,11 +1257,11 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
      *
      * @param deletedExperiment experiment that was deleted
      */
-    public void removeFigureAnnotations(ExperimentDTO deletedExperiment) {
+    public void removeFigureAnnotations(ExpressionExperimentDTO deletedExperiment) {
         Collection<ExpressionFigureStageDTO> toBeDeleted = new ArrayList<>();
         for (PhenotypeExperimentDTO efs : displayedExpressions) {
 /*
-            ExperimentDTO expDto = efs.getExperiment();
+            ExpressionExperimentDTO expDto = efs.getExperiment();
             if (expDto.getExperimentZdbID().equals(deletedExperiment.getExperimentZdbID()))
                 toBeDeleted.add(efs);
 */

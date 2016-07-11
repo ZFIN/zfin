@@ -1,14 +1,14 @@
 package org.zfin.gwt.curation.event;
 
 import com.google.gwt.event.shared.GwtEvent;
-import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
 
 public class RemoveExpressionEvent extends GwtEvent<RemoveExpressionEventHandler> {
     public static Type<RemoveExpressionEventHandler> TYPE = new Type<>();
 
-    private ExperimentDTO experimentDTO;
+    private ExpressionExperimentDTO experimentDTO;
 
-    public RemoveExpressionEvent(ExperimentDTO experimentDTO) {
+    public RemoveExpressionEvent(ExpressionExperimentDTO experimentDTO) {
         this.experimentDTO = experimentDTO;
     }
 
@@ -22,7 +22,7 @@ public class RemoveExpressionEvent extends GwtEvent<RemoveExpressionEventHandler
         handler.onEvent(this);
     }
 
-    public ExperimentDTO getExperimentDTO() {
+    public ExpressionExperimentDTO getExperimentDTO() {
         return experimentDTO;
     }
 }

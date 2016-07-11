@@ -29,30 +29,30 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     private String publicationID;
     private boolean debug;
     private boolean addButtonInProgress;
-    private ExperimentDTO lastSelectedExperiment;
-    private Set<ExperimentDTO> selectedExperiments = new HashSet<>(5);
+    private ExpressionExperimentDTO lastSelectedExperiment;
+    private Set<ExpressionExperimentDTO> selectedExperiments = new HashSet<>(5);
     // avoid double updates
     private boolean updateButtonInProgress;
     private boolean showSelectedExperimentsOnly;
     private Map<String, MarkerDTO> geneMap = new HashMap<>();
     private Map<String, FishDTO> fishMap = new HashMap<>();
     // filter set by the banana bar
-    private ExperimentDTO experimentFilter = new ExperimentDTO();
+    private ExpressionExperimentDTO experimentFilter = new ExpressionExperimentDTO();
 
     private CurationExperimentRPCAsync curationExperimentRPCAsync = CurationExperimentRPC.App.getInstance();
 
-    private List<ExperimentDTO> experimentList = new ArrayList<>(15);
+    private List<ExpressionExperimentDTO> experimentList = new ArrayList<>(15);
 
     public ExpressionExperimentZonePresenter(ExpressionExperimentZoneView view, String publicationID, boolean debug) {
         this.view = view;
         this.publicationID = publicationID;
         this.debug = debug;
-        experimentFilter = new ExperimentDTO();
+        experimentFilter = new ExpressionExperimentDTO();
         experimentFilter.setPublicationID(publicationID);
         view.setPresenter(this);
     }
 
-    public void updateExperimentOnCurationFilter(ExperimentDTO experimentFilter) {
+    public void updateExperimentOnCurationFilter(ExpressionExperimentDTO experimentFilter) {
         this.experimentFilter = experimentFilter;
         retrieveExperiments();
     }
@@ -62,8 +62,8 @@ public class ExpressionExperimentZonePresenter implements Presenter {
      * of expression records is incremented by 1.
      */
     public void notifyAddedExpression() {
-        for (ExperimentDTO experiment : experimentList) {
-            for (ExperimentDTO sourceExperiment : selectedExperiments) {
+        for (ExpressionExperimentDTO experiment : experimentList) {
+            for (ExpressionExperimentDTO sourceExperiment : selectedExperiments) {
                 if (experiment.equals(sourceExperiment))
                     experiment.setNumberOfExpressions(experiment.getNumberOfExpressions() + 1);
             }
@@ -83,8 +83,8 @@ public class ExpressionExperimentZonePresenter implements Presenter {
      *
      * @param sourceExperiment experiment being removed
      */
-    public void notifyRemovedExpression(ExperimentDTO sourceExperiment) {
-        for (ExperimentDTO experiment : experimentList) {
+    public void notifyRemovedExpression(ExpressionExperimentDTO sourceExperiment) {
+        for (ExpressionExperimentDTO experiment : experimentList) {
             if (experiment.getExperimentZdbID().equals(sourceExperiment.getExperimentZdbID()))
                 experiment.setNumberOfExpressions(experiment.getNumberOfExpressions() - 1);
         }
@@ -98,7 +98,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         if (addButtonInProgress)
             return;
         addButtonInProgress = true;
-        final ExperimentDTO zoneExperiment = getExperimentFromConstructionZone(true);
+        final ExpressionExperimentDTO zoneExperiment = getExperimentFromConstructionZone(true);
         if (!isValidExperiment(zoneExperiment)) {
             view.cleanupOnExit();
             addButtonInProgress = false;
@@ -122,7 +122,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         curationExperimentRPCAsync.createExpressionExperiment(zoneExperiment, new AddExperimentCallback());
 
     }
-    private boolean isEfgWildtypeCombo(ExperimentDTO experimentDTO) {
+    private boolean isEfgWildtypeCombo(ExpressionExperimentDTO experimentDTO) {
         if (experimentDTO.getGene()!=null) {
             if (experimentDTO.getFishDTO().isWildtype() && experimentDTO.getGene().getMarkerType().equals("Engineered Foreign Gene"))
                 return true;
@@ -133,7 +133,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     protected void populateDataTable() {
         int elementIndex = 0;
-        for (ExperimentDTO experiment : experimentList) {
+        for (ExpressionExperimentDTO experiment : experimentList) {
             if (showSelectedExperimentsOnly && !selectedExperiments.contains(experiment))
                 continue;
             MarkerDTO gene = experiment.getGene();
@@ -195,9 +195,9 @@ public class ExpressionExperimentZonePresenter implements Presenter {
      * @return true if experiment is found in the full list (new experiment) or in the list except itself
      * false if experiment is different from all other experiments
      */
-    public boolean experimentExists(ExperimentDTO updatedExperiment, boolean isNewExperiment) {
+    public boolean experimentExists(ExpressionExperimentDTO updatedExperiment, boolean isNewExperiment) {
         int rowIndex = 1;
-        for (ExperimentDTO experiment : experimentList) {
+        for (ExpressionExperimentDTO experiment : experimentList) {
             if (experiment.equals(updatedExperiment)) {
                 if (isNewExperiment || (!experiment.getExperimentZdbID().equals(updatedExperiment.getExperimentZdbID()))) {
                     if (view.showHideToggle.isVisible()) {
@@ -223,7 +223,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
      * @param experiment experiment DTO
      * @return boolean
      */
-    private boolean isValidExperiment(ExperimentDTO experiment) {
+    private boolean isValidExperiment(ExpressionExperimentDTO experiment) {
         if (experiment.getAntibodyMarker() == null && experiment.getGene() == null) {
             view.setError("You need to select at least a gene or an antibody");
             return false;
@@ -243,8 +243,8 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         return true;
     }
 
-    private ExperimentDTO getExperimentFromConstructionZone(boolean newExperiment) {
-        ExperimentDTO updatedExperiment = new ExperimentDTO();
+    private ExpressionExperimentDTO getExperimentFromConstructionZone(boolean newExperiment) {
+        ExpressionExperimentDTO updatedExperiment = new ExpressionExperimentDTO();
         if (!newExperiment)
             updatedExperiment.setExperimentZdbID(lastSelectedExperiment.getExperimentZdbID());
         String assay = view.getAssayList().getValue(view.getAssayList().getSelectedIndex());
@@ -259,7 +259,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
                 updatedExperiment.setGenbankNumber(view.getGenbankList().getSelectedText());
             }
         }
-        EnvironmentDTO env = new EnvironmentDTO();
+        ExperimentDTO env = new ExperimentDTO();
         String environmentID = view.getEnvironmentList().getSelected();
         String environmentName = view.getEnvironmentList().getSelectedText();
         env.setZdbID(environmentID);
@@ -297,7 +297,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         updateButtonInProgress = true;
         view.updateButton.setEnabled(false);
         //Window.alert(itemText);
-        ExperimentDTO updatedExperiment = getExperimentFromConstructionZone(false);
+        ExpressionExperimentDTO updatedExperiment = getExperimentFromConstructionZone(false);
         if (!isValidExperiment(updatedExperiment)) {
             cleanupOnExit();
             return;
@@ -385,7 +385,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         curationExperimentRPCAsync.getExperimentsByFilter(experimentFilter, new RetrieveExperimentsCallback());
     }
 
-    public void setExperimentFilter(ExperimentDTO experimentFilter) {
+    public void setExperimentFilter(ExpressionExperimentDTO experimentFilter) {
         this.experimentFilter = experimentFilter;
     }
 
@@ -396,7 +396,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     /**
      * Un-select all experiment check boxes.
      */
-    public void unselectExperiment(ExperimentDTO experiment) {
+    public void unselectExperiment(ExpressionExperimentDTO experiment) {
         selectedExperiments.remove(experiment);
         populateDataTable();
     }
@@ -407,29 +407,29 @@ public class ExpressionExperimentZonePresenter implements Presenter {
      *
      * @param experiment Experiment DTO
      */
-    public void setSingleExperiment(ExperimentDTO experiment) {
+    public void setSingleExperiment(ExpressionExperimentDTO experiment) {
         selectedExperiments.add(experiment);
         populateDataTable();
         showSelectedExperimentsOnly = false;
     }
 
 
-    public void selectAntibody(ExperimentDTO selectedExperiment) {
+    public void selectAntibody(ExpressionExperimentDTO selectedExperiment) {
         curationExperimentRPCAsync.getAntibodies(publicationID,
                 new AntibodySelectionListAsyncCallback(selectedExperiment.getAntibodyMarker().getZdbID()));
     }
 
-    public void setGene(ExperimentDTO selectedExperiment) {
+    public void setGene(ExpressionExperimentDTO selectedExperiment) {
         curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(selectedExperiment.getGene()));
     }
 
-    public void readGenbankAccessions(ExperimentDTO selectedExperiment) {
+    public void readGenbankAccessions(ExpressionExperimentDTO selectedExperiment) {
         String geneID = selectedExperiment.getGene().getZdbID();
         String genBankID = selectedExperiment.getGenbankID();
         curationExperimentRPCAsync.readGenbankAccessions(publicationID, geneID, new GenbankSelectionListAsyncCallback(genBankID));
     }
 
-    public void deleteExperiment(final ExperimentDTO experiment) {
+    public void deleteExperiment(final ExpressionExperimentDTO experiment) {
         curationExperimentRPCAsync.deleteExperiment(experiment.getExperimentZdbID(), new DeleteExperimentCallback(experiment));
     }
 
@@ -455,7 +455,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         }
     }
 
-    public Set<ExperimentDTO> getSelectedExperiments() {
+    public Set<ExpressionExperimentDTO> getSelectedExperiments() {
         return selectedExperiments;
     }
 
@@ -492,10 +492,10 @@ public class ExpressionExperimentZonePresenter implements Presenter {
      */
     private class ExperimentSelectClickHandler implements ClickHandler {
 
-        private ExperimentDTO selectedExperiment;
+        private ExpressionExperimentDTO selectedExperiment;
 
 
-        public ExperimentSelectClickHandler(ExperimentDTO selectedExperiment) {
+        public ExperimentSelectClickHandler(ExpressionExperimentDTO selectedExperiment) {
             this.selectedExperiment = selectedExperiment;
         }
 
@@ -624,13 +624,13 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     }
 
-    private class AddExperimentCallback extends ZfinAsyncCallback<ExperimentDTO> {
+    private class AddExperimentCallback extends ZfinAsyncCallback<ExpressionExperimentDTO> {
         public AddExperimentCallback() {
             super("Error while creating experiment", view.errorElement);
         }
 
         @Override
-        public void onSuccess(ExperimentDTO newExperiment) {
+        public void onSuccess(ExpressionExperimentDTO newExperiment) {
             super.onSuccess(newExperiment);
             addButtonInProgress = false;
             retrieveExperiments();
@@ -639,17 +639,17 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     }
 
 
-    private class RetrieveExperimentsCallback extends ZfinAsyncCallback<List<ExperimentDTO>> {
+    private class RetrieveExperimentsCallback extends ZfinAsyncCallback<List<ExpressionExperimentDTO>> {
 
         public RetrieveExperimentsCallback() {
             super("Error while reading Experiment Filters", view.errorElement, view.loadingImage);
         }
 
         @Override
-        public void onSuccess(List<ExperimentDTO> list) {
+        public void onSuccess(List<ExpressionExperimentDTO> list) {
             super.onSuccess(list);
             experimentList.clear();
-            for (ExperimentDTO experiment : list) {
+            for (ExpressionExperimentDTO experiment : list) {
                 if (experiment.getEnvironment().getName().startsWith("_"))
                     experiment.getEnvironment().setName(experiment.getEnvironment().getName().substring(1));
                 experimentList.add(experiment);
@@ -688,9 +688,9 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     private class DeleteExperimentCallback extends ZfinAsyncCallback<Void> {
 
-        private ExperimentDTO experiment;
+        private ExpressionExperimentDTO experiment;
 
-        DeleteExperimentCallback(ExperimentDTO experiment) {
+        DeleteExperimentCallback(ExpressionExperimentDTO experiment) {
             super("Error while deleting Experiment", view.errorElement);
             this.experiment = experiment;
         }
@@ -706,7 +706,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     }
 
-    private class GenbankSelectionListAsyncCallback extends ZfinAsyncCallback<List<ExperimentDTO>> {
+    private class GenbankSelectionListAsyncCallback extends ZfinAsyncCallback<List<ExpressionExperimentDTO>> {
 
         private String selectedGenBankID;
 
@@ -716,14 +716,14 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         }
 
         @Override
-        public void onSuccess(List<ExperimentDTO> accessions) {
+        public void onSuccess(List<ExpressionExperimentDTO> accessions) {
             StringListBox genbankList = view.getGenbankList();
             genbankList.clear();
             genbankList.addItem("");
             int rowIndex = 1;
             if (isDebug())
                 GWT.log("Selected GeneBank ID: " + selectedGenBankID);
-            for (ExperimentDTO accession : accessions) {
+            for (ExpressionExperimentDTO accession : accessions) {
                 genbankList.addItem(accession.getGenbankNumber(), accession.getGenbankID());
                 if (selectedGenBankID != null && accession.getGenbankID().equals(selectedGenBankID)) {
                     genbankList.setSelectedIndex(rowIndex);
@@ -886,9 +886,9 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     private class ExperimentDeleteClickListener implements ClickHandler {
 
-        private ExperimentDTO experiment;
+        private ExpressionExperimentDTO experiment;
 
-        public ExperimentDeleteClickListener(ExperimentDTO experiment) {
+        public ExperimentDeleteClickListener(ExpressionExperimentDTO experiment) {
             this.experiment = experiment;
         }
 
@@ -906,7 +906,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     }
 
-    private class UpdateExperimentAsyncCallback extends ZfinAsyncCallback<ExperimentDTO> {
+    private class UpdateExperimentAsyncCallback extends ZfinAsyncCallback<ExpressionExperimentDTO> {
 
         private UpdateExperimentAsyncCallback() {
             super("Error while updating experiment", view.errorElement);
@@ -920,7 +920,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         }
 
         @Override
-        public void onSuccess(ExperimentDTO updatedExperiment) {
+        public void onSuccess(ExpressionExperimentDTO updatedExperiment) {
             super.onSuccess(updatedExperiment);
             // update inline without reading all experiments again
             retrieveExperiments();

@@ -6,7 +6,6 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
@@ -58,7 +57,7 @@ public class CurationFilterModule extends Composite {
     private String fishID;
     private String figureID;
     private String featureID;
-    private ExperimentDTO experimentFilter = new ExperimentDTO();
+    private ExpressionExperimentDTO experimentFilter = new ExpressionExperimentDTO();
     private boolean useFeatureFilter;
 
     // Attributes are injected through constructor
@@ -142,7 +141,7 @@ public class CurationFilterModule extends Composite {
             if (featureID.length() == 0)
                 featureID = null;
 
-        experimentFilter = new ExperimentDTO();
+        experimentFilter = new ExpressionExperimentDTO();
         MarkerDTO gene = new MarkerDTO();
         gene.setZdbID(geneID);
         experimentFilter.setGene(gene);

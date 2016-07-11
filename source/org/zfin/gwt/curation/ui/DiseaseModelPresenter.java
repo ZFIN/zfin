@@ -23,7 +23,7 @@ public class DiseaseModelPresenter implements Presenter {
     private DiseaseModelView view;
     private String publicationID;
     private List<FishDTO> fishList = new ArrayList<>();
-    private List<EnvironmentDTO> environmentList = new ArrayList<>();
+    private List<ExperimentDTO> environmentList = new ArrayList<>();
     private List<TermDTO> diseaseList = new ArrayList<>();
     private List<DiseaseAnnotationDTO> diseaseModelList = new ArrayList<>();
     private boolean processing = false;
@@ -59,7 +59,7 @@ public class DiseaseModelPresenter implements Presenter {
         }
         if (selectedIndexEnv > 0 && selectedIndexFish > 0) {
             FishDTO fish = fishList.get(selectedIndexFish - 1);
-            EnvironmentDTO environment = environmentList.get(selectedIndexEnv - 1);
+            ExperimentDTO environment = environmentList.get(selectedIndexEnv - 1);
             if (fish.isWildtype() && environment.isStandard()) {
                 setError("You cannot use a wildtype fish with Standard or Generic Control environment");
                 return null;
@@ -153,18 +153,18 @@ public class DiseaseModelPresenter implements Presenter {
         diseaseRpcService.getFishList(publicationID, new RetrieveFishListCallBack(message, view.getErrorLabel()));
     }
 
-    class RetrieveEnvironmentListCallBack extends ZfinAsyncCallback<List<EnvironmentDTO>> {
+    class RetrieveEnvironmentListCallBack extends ZfinAsyncCallback<List<ExperimentDTO>> {
 
         public RetrieveEnvironmentListCallBack(String errorMessage, ErrorHandler errorLabel) {
             super(errorMessage, errorLabel);
         }
 
         @Override
-        public void onSuccess(List<EnvironmentDTO> list) {
+        public void onSuccess(List<ExperimentDTO> list) {
             view.getEnvironmentSelectionBox().clear();
             environmentList = list;
             view.getEnvironmentSelectionBox().addItem("None");
-            for (EnvironmentDTO dto : list) {
+            for (ExperimentDTO dto : list) {
                 view.getEnvironmentSelectionBox().addItem(dto.getName(), dto.getZdbID());
             }
             view.resetUI();

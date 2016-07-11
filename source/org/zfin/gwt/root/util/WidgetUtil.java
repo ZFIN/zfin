@@ -1,5 +1,6 @@
 package org.zfin.gwt.root.util;
 
+import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ListBox;
@@ -136,8 +137,10 @@ public final class WidgetUtil {
     }
 
     public static String getStringFromField(StringTextBox box) {
+
         if (!box.getValue().trim().equals("")) {
             return box.getValue();
+
         }
         return null;
     }

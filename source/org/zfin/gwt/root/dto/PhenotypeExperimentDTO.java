@@ -9,7 +9,7 @@ import org.zfin.gwt.root.util.NumberAwareStringComparatorDTO;
 public class PhenotypeExperimentDTO extends AbstractFigureStageDTO<PhenotypeStatementDTO> implements Comparable<PhenotypeExperimentDTO> {
 
     private FishDTO fish;
-    private EnvironmentDTO environment;
+    private ExperimentDTO environment;
 
     public FishDTO getFish() {
         return fish;
@@ -19,11 +19,11 @@ public class PhenotypeExperimentDTO extends AbstractFigureStageDTO<PhenotypeStat
         this.fish = fish;
     }
 
-    public EnvironmentDTO getEnvironment() {
+    public ExperimentDTO getEnvironment() {
         return environment;
     }
 
-    public void setEnvironment(EnvironmentDTO environment) {
+    public void setEnvironment(ExperimentDTO environment) {
         this.environment = environment;
     }
 

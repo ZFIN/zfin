@@ -6,7 +6,6 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ValidationException;
-import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.StageRangeIntersectionService;
 
 import java.util.List;
@@ -16,11 +15,11 @@ import java.util.List;
  */
 public interface CurationExperimentRPC extends RemoteService {
 
-    public List<ExperimentDTO> getExperimentsByFilter(ExperimentDTO experimentFilter);
+    public List<ExpressionExperimentDTO> getExperimentsByFilter(ExpressionExperimentDTO experimentFilter);
 
     public List<String> getAssays();
 
-    public List<EnvironmentDTO> getEnvironments(String publicationID);
+    public List<ExperimentDTO> getEnvironments(String publicationID);
 
     /**
      * Retrieve all genotypes for a given publication:
@@ -68,21 +67,21 @@ public interface CurationExperimentRPC extends RemoteService {
      *
      * @param geneID string
      */
-    List<ExperimentDTO> readGenbankAccessions(String publicationID, String geneID);
+    List<ExpressionExperimentDTO> readGenbankAccessions(String publicationID, String geneID);
 
     /**
      * Update an existing experiment.
      *
      * @param selectedExperiment experiment to be updated
      */
-    ExperimentDTO updateExperiment(ExperimentDTO selectedExperiment);
+    ExpressionExperimentDTO updateExperiment(ExpressionExperimentDTO selectedExperiment);
 
     /**
      * Create a new expression experiment.
      *
      * @param experiment experiment
      */
-    ExperimentDTO createExpressionExperiment(ExperimentDTO experiment) throws Exception;
+    ExpressionExperimentDTO createExpressionExperiment(ExpressionExperimentDTO experiment) throws Exception;
 
     /**
      * Check the visibility of the experiment section
@@ -137,7 +136,7 @@ public interface CurationExperimentRPC extends RemoteService {
      *
      * @param publicationID publication
      */
-    public List<ExperimentDTO> readExperiments(String publicationID);
+    public List<ExpressionExperimentDTO> readExperiments(String publicationID);
 
 
     /**
@@ -173,7 +172,7 @@ public interface CurationExperimentRPC extends RemoteService {
      * @param experimentFilter filter object
      * @return expression figure stage records
      */
-    List<ExpressionFigureStageDTO> getExpressionsByFilter(ExperimentDTO experimentFilter, String figureID);
+    List<ExpressionFigureStageDTO> getExpressionsByFilter(ExpressionExperimentDTO experimentFilter, String figureID);
 
     /**
      * Retrieve all Figures associated to a given publication.

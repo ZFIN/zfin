@@ -173,6 +173,7 @@ public final class CloneEditController extends AbstractFullMarkerEditController<
             relatedGeneTitle.setHTML("<b>Encoded by Gene:</b>");
             relatedGenesBox.setType(MarkerRelationshipEnumTypeGWTHack.GENE_ENCODES_SMALL_SEGMENT);
             relatedGenesBox.setZdbIDThenAbbrev(false);
+            relatedGenesBox.setUpdateExpression(true);
         } else {
             relatedGeneTitle.setHTML("<b>Clone contains Gene:</b>");
         }

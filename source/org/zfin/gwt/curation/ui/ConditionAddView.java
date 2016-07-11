@@ -8,7 +8,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.ConditionDTO;
-import org.zfin.gwt.root.dto.EnvironmentDTO;
+import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.DeleteImage;
 import org.zfin.gwt.root.util.WidgetUtil;
@@ -90,7 +90,7 @@ public class ConditionAddView extends AbstractViewComposite {
 
     private int currentGroupIndex;
 
-    protected void addCondition(EnvironmentDTO experimentDTO, ConditionDTO dto, ConditionDTO lastCondition, int elementIndex) {
+    protected void addCondition(ExperimentDTO experimentDTO, ConditionDTO dto, ConditionDTO lastCondition, int elementIndex) {
         dataTable.resizeRows(elementIndex + 2);
         int row = elementIndex + 1;
         int col = 0;

@@ -71,7 +71,7 @@ public class ConditionDTO extends RelatedEntityDTO {
 
     @Override
     public String toString() {
-        return "EnvironmentDTO{" +
+        return "ExperimentDTO{" +
                 "zdbID='" + zdbID + '\'' +
                 ", name='" + name + '\'' +
                 '}';

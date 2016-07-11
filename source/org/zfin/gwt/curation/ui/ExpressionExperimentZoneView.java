@@ -9,8 +9,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.ui.ShowHideToggle;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
@@ -132,7 +132,7 @@ public class ExpressionExperimentZoneView extends Composite {
         dataTable.setText(row, 1, gene.getName());
     }
 
-    public void addEnvironment(EnvironmentDTO environment, int elementIndex) {
+    public void addEnvironment(ExperimentDTO environment, int elementIndex) {
         int row = elementIndex + 1;
         dataTable.setText(row, 3, environment.getName());
     }
@@ -147,7 +147,7 @@ public class ExpressionExperimentZoneView extends Composite {
         dataTable.setText(row, 4, assayName);
     }
 
-    protected void addDeleteButton(ExperimentDTO experiment, ClickHandler handler, int elementIndex) {
+    protected void addDeleteButton(ExpressionExperimentDTO experiment, ClickHandler handler, int elementIndex) {
         int row = elementIndex + 1;
         Button delete;
         if (experiment.isUsedInExpressions())
@@ -160,7 +160,7 @@ public class ExpressionExperimentZoneView extends Composite {
         dataTable.setWidget(row, 7, delete);
     }
 
-    protected CheckBox addCheckBox(ExperimentDTO experiment, ClickHandler handler, int elementIndex) {
+    protected CheckBox addCheckBox(ExpressionExperimentDTO experiment, ClickHandler handler, int elementIndex) {
         int row = elementIndex + 1;
         CheckBox checkBox = new CheckBox();
         checkBox.setTitle(experiment.getExperimentZdbID());

@@ -8,12 +8,11 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.root.dto.EnvironmentDTO;
+import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.ui.IsDirtyWidget;
 import org.zfin.gwt.root.ui.ShowHideToggle;
 import org.zfin.gwt.root.util.DeleteImage;
 import org.zfin.gwt.root.util.WidgetUtil;
-import org.zfin.repository.RepositoryFactory;
 
 import java.util.Set;
 
@@ -58,14 +57,14 @@ public class ExperimentAddView extends AbstractViewComposite {
     }
 
 
-    public void addExperiment(EnvironmentDTO experimentDTO, int elementIndex) {
+    public void addExperiment(ExperimentDTO experimentDTO, int elementIndex) {
         dataTable.resizeRows(elementIndex + 2);
         int row = elementIndex + 1;
         setRowStyle(row);
         int col = 0;
     }
 
-    public void addExptTextBox(TextBox exptBox, EnvironmentDTO dto, int elementIndex) {
+    public void addExptTextBox(TextBox exptBox, ExperimentDTO dto, int elementIndex) {
         dataTable.resizeRows(elementIndex + 2);
         int row = elementIndex + 1;
         setRowStyle(row);
@@ -83,7 +82,7 @@ public class ExperimentAddView extends AbstractViewComposite {
         dataTable.setWidget(row, 1, experimentNameAddBox);
     }
 
-    public void addDeleteButton(EnvironmentDTO dto, DeleteImage deleteImage, int elementIndex) {
+    public void addDeleteButton(ExperimentDTO dto, DeleteImage deleteImage, int elementIndex) {
         int row = elementIndex + 1;
         if (!(dto.getIsUsedInExpression())&&!(dto.getIsUsedInPhenotype())&&!(dto.getIsUsedInDisease())) {
            dataTable.setWidget(row, 2, deleteImage);
@@ -92,7 +91,7 @@ public class ExperimentAddView extends AbstractViewComposite {
         }
 
 
-    public void addUpdateButton(EnvironmentDTO dto, Button updateButton, int elementIndex) {
+    public void addUpdateButton(ExperimentDTO dto, Button updateButton, int elementIndex) {
         int row = elementIndex + 1;
         updateButton.setText("Update");
         dataTable.setWidget(row, 0, updateButton);

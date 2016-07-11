@@ -15,6 +15,7 @@ import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
 import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.database.InformixUtil;
+import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
@@ -904,6 +905,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         }
         if (true == markerDTO.isZdbIDThenAbbrev()) {
             MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.getType(markerDTO.getMarkerRelationshipType()));
+        //    ExpressionExperiment2 expExpt=RepositoryFactory.getExpressionRepository().get
         } else {
             MarkerService.addMarkerRelationship(secondMarker, firstMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.getType(markerDTO.getMarkerRelationshipType()));
         }

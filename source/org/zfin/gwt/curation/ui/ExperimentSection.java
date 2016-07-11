@@ -1,6 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
-import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
 
 import java.util.Set;
 
@@ -13,7 +13,7 @@ public interface ExperimentSection {
      * Retrieves all experiments that are selcted (checked)
      * @return set of experiments DTOs
      */
-    Set<ExperimentDTO> getSelectedExperiment();
+    Set<ExpressionExperimentDTO> getSelectedExperiment();
 
     /**
      * This method will update the experiment section after new expression records
@@ -33,14 +33,14 @@ public interface ExperimentSection {
      * experiments no experiment is selected.
      * @param experiment experiment that is being selected
      */
-    void setSingleExperiment(ExperimentDTO experiment);
+    void setSingleExperiment(ExpressionExperimentDTO experiment);
 
     /**
      * Notify that all expressions on the given experiments are removed.
      * This requires an update on the number of expressions being used per experiment
      * @param experiment experiment on which expressions where removed
      */
-    void notifyRemovedExpression(ExperimentDTO experiment);
+    void notifyRemovedExpression(ExpressionExperimentDTO experiment);
 
     /**
      * Clear all error messages that are displayed in the experiment section.
@@ -51,7 +51,7 @@ public interface ExperimentSection {
      * Set filter for experiment section. Only display experiments that match the filter elements.
      * @param experimentFilter example experiment
      */
-    void setExperimentFilter(ExperimentDTO experimentFilter);
+    void setExperimentFilter(ExpressionExperimentDTO experimentFilter);
 
     /**
      * Initialize the experiment section.
@@ -62,5 +62,5 @@ public interface ExperimentSection {
      * Apply the filter elements.
      * @param experimentFilter experiment filter.
      */
-    void applyFilterElements(ExperimentDTO experimentFilter);
+    void applyFilterElements(ExpressionExperimentDTO experimentFilter);
 }

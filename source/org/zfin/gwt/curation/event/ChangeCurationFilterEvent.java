@@ -1,16 +1,16 @@
 package org.zfin.gwt.curation.event;
 
 import com.google.gwt.event.shared.GwtEvent;
-import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
 
 public class ChangeCurationFilterEvent extends GwtEvent<ChangeCurationFilterEventHandler> {
     public static Type<ChangeCurationFilterEventHandler> TYPE = new Type<>();
 
-    private ExperimentDTO experimentFilter;
+    private ExpressionExperimentDTO experimentFilter;
     private String figureID;
 
 
-    public ChangeCurationFilterEvent(ExperimentDTO experimentFilter, String figureID) {
+    public ChangeCurationFilterEvent(ExpressionExperimentDTO experimentFilter, String figureID) {
         this.experimentFilter = experimentFilter;
         this.figureID = figureID;
     }
@@ -25,7 +25,7 @@ public class ChangeCurationFilterEvent extends GwtEvent<ChangeCurationFilterEven
         handler.onChange(this);
     }
 
-    public ExperimentDTO getExperimentFilter() {
+    public ExpressionExperimentDTO getExperimentFilter() {
         return experimentFilter;
     }
 

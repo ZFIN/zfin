@@ -4,7 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
-import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
 import org.zfin.gwt.root.dto.ExpressionPhenotypeExperimentDTO;
 import org.zfin.gwt.root.dto.PhenotypeExperimentDTO;
 import org.zfin.gwt.root.dto.PileStructureAnnotationDTO;
@@ -29,14 +29,14 @@ public interface CurationPhenotypeRPC extends RemoteService {
         }
     }
 
-    List<PhenotypeExperimentDTO> getExpressionsByFilter(ExperimentDTO experimentFilter, String figureID);
+    List<PhenotypeExperimentDTO> getExpressionsByFilter(ExpressionExperimentDTO experimentFilter, String figureID);
 
     List<PhenotypeExperimentDTO> createPhenotypeExperiments(List<PhenotypeExperimentDTO> newFigureAnnotations);
 
     void deleteFigureAnnotation(PhenotypeExperimentDTO figureAnnotation);
 
     List<PhenotypeExperimentDTO> updateStructuresForExpression(UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeExperimentDTO> updateEntity);
-    List<ExpressionPhenotypeExperimentDTO> getPhenotypeFromExpressionsByFilter(ExperimentDTO experimentFilter, String figureID);
+    List<ExpressionPhenotypeExperimentDTO> getPhenotypeFromExpressionsByFilter(ExpressionExperimentDTO experimentFilter, String figureID);
 
     /**
      * Checks if the phenotype structure pile needs to be recreated.

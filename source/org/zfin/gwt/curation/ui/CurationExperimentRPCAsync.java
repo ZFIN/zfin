@@ -3,8 +3,6 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
 import org.zfin.gwt.root.dto.*;
-import org.zfin.gwt.root.ui.ZfinAsyncCallback;
-import org.zfin.gwt.root.util.StageRangeIntersection;
 import org.zfin.gwt.root.util.StageRangeIntersectionService;
 
 import java.util.List;
@@ -14,11 +12,11 @@ import java.util.List;
  */
 public interface CurationExperimentRPCAsync {
 
-    void getExperimentsByFilter(ExperimentDTO experimentFilter, AsyncCallback<List<ExperimentDTO>> async);
+    void getExperimentsByFilter(ExpressionExperimentDTO experimentFilter, AsyncCallback<List<ExpressionExperimentDTO>> async);
 
     void getAssays(AsyncCallback<List<String>> async);
 
-    void getEnvironments(String publicationID, AsyncCallback<List<EnvironmentDTO>> async);
+    void getEnvironments(String publicationID, AsyncCallback<List<ExperimentDTO>> async);
 
     /**
      * Retrieve all genotypes for a given publication:
@@ -64,7 +62,7 @@ public interface CurationExperimentRPCAsync {
      * @param geneID        string
      * @param async         callback
      */
-    void readGenbankAccessions(String publicationID, String geneID, AsyncCallback<List<ExperimentDTO>> async);
+    void readGenbankAccessions(String publicationID, String geneID, AsyncCallback<List<ExpressionExperimentDTO>> async);
 
     /**
      * Update an existing experiment.
@@ -72,7 +70,7 @@ public interface CurationExperimentRPCAsync {
      * @param selectedExperiment experiment to be updated
      * @param async              callback
      */
-    void updateExperiment(ExperimentDTO selectedExperiment, AsyncCallback<ExperimentDTO> async);
+    void updateExperiment(ExpressionExperimentDTO selectedExperiment, AsyncCallback<ExpressionExperimentDTO> async);
 
     /**
      * Create a new expression experiment.
@@ -80,7 +78,7 @@ public interface CurationExperimentRPCAsync {
      * @param experiment experiment
      * @param async      callback
      */
-    void createExpressionExperiment(ExperimentDTO experiment, AsyncCallback<ExperimentDTO> async);
+    void createExpressionExperiment(ExpressionExperimentDTO experiment, AsyncCallback<ExpressionExperimentDTO> async);
 
     /**
      * Check the visibility of the experiment section
@@ -107,7 +105,7 @@ public interface CurationExperimentRPCAsync {
      * @param publicationID publication
      * @param async         call back
      */
-    void readExperiments(String publicationID, AsyncCallback<List<ExperimentDTO>> async);
+    void readExperiments(String publicationID, AsyncCallback<List<ExpressionExperimentDTO>> async);
 
     /**
      * Retrieve all figures that are available for this publication
@@ -123,7 +121,7 @@ public interface CurationExperimentRPCAsync {
 
     void readExpressionSectionVisibility(String publicationID, AsyncCallback<Boolean> async);
 
-    void getExpressionsByFilter(ExperimentDTO experimentFilter, String figureID, AsyncCallback<List<ExpressionFigureStageDTO>> async);
+    void getExpressionsByFilter(ExpressionExperimentDTO experimentFilter, String figureID, AsyncCallback<List<ExpressionFigureStageDTO>> async);
 
     void getFigures(String publicationID, AsyncCallback<List<FigureDTO>> async);
 

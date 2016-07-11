@@ -1,15 +1,15 @@
 package org.zfin.gwt.curation.event;
 
 import com.google.gwt.event.shared.GwtEvent;
-import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
 
 public class SelectExpressionExperimentEvent extends GwtEvent<SelectExpressionExperimentEventHandler> {
     public static Type<SelectExpressionExperimentEventHandler> TYPE = new Type<>();
 
     private boolean ckecked;
-    private ExperimentDTO experimentDTO;
+    private ExpressionExperimentDTO experimentDTO;
 
-    public SelectExpressionExperimentEvent(boolean ckecked, ExperimentDTO experimentDTO) {
+    public SelectExpressionExperimentEvent(boolean ckecked, ExpressionExperimentDTO experimentDTO) {
         this.ckecked = ckecked;
         this.experimentDTO = experimentDTO;
     }
@@ -28,7 +28,7 @@ public class SelectExpressionExperimentEvent extends GwtEvent<SelectExpressionEx
         return ckecked;
     }
 
-    public ExperimentDTO getExperimentDTO() {
+    public ExpressionExperimentDTO getExperimentDTO() {
         return experimentDTO;
     }
 }

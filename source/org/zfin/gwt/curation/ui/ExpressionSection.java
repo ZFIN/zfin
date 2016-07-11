@@ -1,7 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
 import org.zfin.gwt.root.dto.AbstractFigureStageDTO;
-import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public interface ExpressionSection<T extends ExpressedTermDTO, W extends Abstrac
      *
      * @param experiment experiment being removed.
      */
-    void removeFigureAnnotations(ExperimentDTO experiment);
+    void removeFigureAnnotations(ExpressionExperimentDTO experiment);
 
     /**
      * Re-read the expressions in case something has changed the expressions,
@@ -68,7 +68,7 @@ public interface ExpressionSection<T extends ExpressedTermDTO, W extends Abstrac
      *
      * @param experimentFilter experiment dto
      */
-    void setExperimentFilter(ExperimentDTO experimentFilter);
+    void setExperimentFilter(ExpressionExperimentDTO experimentFilter);
 
     /**
      * set a figure for filtering purposes. Only display expressions with figure annotations to this figure.
@@ -88,5 +88,5 @@ public interface ExpressionSection<T extends ExpressedTermDTO, W extends Abstrac
      * @param figureID         figure id
      * @param experimentFilter experiment
      */
-    void applyFilterElements(String figureID, ExperimentDTO experimentFilter);
+    void applyFilterElements(String figureID, ExpressionExperimentDTO experimentFilter);
 }

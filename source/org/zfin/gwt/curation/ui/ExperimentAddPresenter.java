@@ -6,7 +6,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextBox;
 import org.zfin.gwt.curation.event.ChangeExperimentEvent;
-import org.zfin.gwt.root.dto.EnvironmentDTO;
+import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
@@ -20,7 +20,7 @@ public class ExperimentAddPresenter implements HandlesError {
 
     private String publicationID;
 
-    private List<EnvironmentDTO> dtoList;
+    private List<ExperimentDTO> dtoList;
 
     public ExperimentAddPresenter(ExperimentAddView view, String publicationID) {
         this.publicationID = publicationID;
@@ -32,8 +32,8 @@ public class ExperimentAddPresenter implements HandlesError {
     }
 
     private void loadExperiments() {
-        ExperimentRPCService.App.getInstance().getExperimentList(publicationID, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to retrieve experiments: ", view.errorLabel) {
-            public void onSuccess(List<EnvironmentDTO> experimentList) {
+        ExperimentRPCService.App.getInstance().getExperimentList(publicationID, new ZfinAsyncCallback<List<ExperimentDTO>>("Failed to retrieve experiments: ", view.errorLabel) {
+            public void onSuccess(List<ExperimentDTO> experimentList) {
                 dtoList = experimentList;
 
                 populateExperiments();
@@ -49,7 +49,7 @@ public class ExperimentAddPresenter implements HandlesError {
             view.emptyDataTable();
             return;
         }
-        for (EnvironmentDTO dto : dtoList) {
+        for (ExperimentDTO dto : dtoList) {
             //view.addExperiment(dto, elementIndex);
             final TextBox experimentTextBox = new TextBox();
             view.addExptTextBox(experimentTextBox, dto, elementIndex);
@@ -91,10 +91,10 @@ public class ExperimentAddPresenter implements HandlesError {
     }
 
     public void createExperiment() {
-        EnvironmentDTO environmentDTO = getEnvironmentFromForm();
+        ExperimentDTO environmentDTO = getEnvironmentFromForm();
 
-        ExperimentRPCService.App.getInstance().createExperiment(publicationID, environmentDTO, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to save a Experiment: ", view.errorLabel) {
-            public void onSuccess(List<EnvironmentDTO> experimentList) {
+        ExperimentRPCService.App.getInstance().createExperiment(publicationID, environmentDTO, new ZfinAsyncCallback<List<ExperimentDTO>>("Failed to save a Experiment: ", view.errorLabel) {
+            public void onSuccess(List<ExperimentDTO> experimentList) {
                 ChangeExperimentEvent event = new ChangeExperimentEvent();
                 AppUtils.EVENT_BUS.fireEvent(event);
                 dtoList = experimentList;
@@ -104,8 +104,8 @@ public class ExperimentAddPresenter implements HandlesError {
         });
     }
 
-    private EnvironmentDTO getEnvironmentFromForm() {
-        EnvironmentDTO dto = new EnvironmentDTO();
+    private ExperimentDTO getEnvironmentFromForm() {
+        ExperimentDTO dto = new ExperimentDTO();
         dto.setName(view.experimentNameAddBox.getText());
 
         return dto;
@@ -113,9 +113,9 @@ public class ExperimentAddPresenter implements HandlesError {
 
     private class DeleteExperimentClickHandler implements ClickHandler {
 
-        private EnvironmentDTO environmentDTO;
+        private ExperimentDTO environmentDTO;
 
-        public DeleteExperimentClickHandler(EnvironmentDTO environmentDTO) {
+        public DeleteExperimentClickHandler(ExperimentDTO environmentDTO) {
             this.environmentDTO = environmentDTO;
         }
 
@@ -125,9 +125,9 @@ public class ExperimentAddPresenter implements HandlesError {
             if (!Window.confirm(message))
                 return;
 
-            ExperimentRPCService.App.getInstance().deleteExperiment(environmentDTO, new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to remove Experiment: ", view.errorLabel) {
+            ExperimentRPCService.App.getInstance().deleteExperiment(environmentDTO, new ZfinAsyncCallback<List<ExperimentDTO>>("Failed to remove Experiment: ", view.errorLabel) {
                 @Override
-                public void onSuccess(List<EnvironmentDTO> list) {
+                public void onSuccess(List<ExperimentDTO> list) {
                     fireEventSuccess();
                     ChangeExperimentEvent event = new ChangeExperimentEvent();
                     AppUtils.EVENT_BUS.fireEvent(event);
@@ -141,10 +141,10 @@ public class ExperimentAddPresenter implements HandlesError {
 
     private class UpdateExperimentClickHandler implements ClickHandler {
 
-        private EnvironmentDTO environmentDTO;
+        private ExperimentDTO environmentDTO;
         TextBox experimentTextBox;
 
-        public UpdateExperimentClickHandler(EnvironmentDTO environmentDTO, TextBox experimentTextBox) {
+        public UpdateExperimentClickHandler(ExperimentDTO environmentDTO, TextBox experimentTextBox) {
 
             this.environmentDTO = environmentDTO;
             this.experimentTextBox = experimentTextBox;
@@ -153,9 +153,9 @@ public class ExperimentAddPresenter implements HandlesError {
         @Override
         public void onClick(ClickEvent clickEvent) {
 
-            ExperimentRPCService.App.getInstance().updateExperiment(environmentDTO, experimentTextBox.getValue(), new ZfinAsyncCallback<List<EnvironmentDTO>>("Failed to update Experiment: ", view.errorLabel) {
+            ExperimentRPCService.App.getInstance().updateExperiment(environmentDTO, experimentTextBox.getValue(), new ZfinAsyncCallback<List<ExperimentDTO>>("Failed to update Experiment: ", view.errorLabel) {
                 @Override
-                public void onSuccess(List<EnvironmentDTO> list) {
+                public void onSuccess(List<ExperimentDTO> list) {
                     fireEventSuccess();
                     //Window.alert("Feature successfully created");
 

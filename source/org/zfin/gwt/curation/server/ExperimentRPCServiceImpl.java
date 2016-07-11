@@ -1,7 +1,6 @@
 package org.zfin.gwt.curation.server;
 
 
-import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
@@ -10,7 +9,7 @@ import org.zfin.expression.ExperimentCondition;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.ui.ExperimentRPCService;
 import org.zfin.gwt.root.dto.ConditionDTO;
-import org.zfin.gwt.root.dto.EnvironmentDTO;
+import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.TermNotFoundException;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
@@ -27,7 +26,7 @@ import static org.zfin.repository.RepositoryFactory.*;
 public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implements ExperimentRPCService {
 
     @Override
-    public List<EnvironmentDTO> createCondition(String publicationID, ConditionDTO conditionDTO) throws ValidationException, TermNotFoundException {
+    public List<ExperimentDTO> createCondition(String publicationID, ConditionDTO conditionDTO) throws ValidationException, TermNotFoundException {
         if (StringUtils.isEmpty(publicationID))
             throw new ValidationException("No Publication ID provided");
         if (conditionDTO == null)
@@ -72,7 +71,7 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
         return getExperimentList(publicationID);
     }
 
-    public List<EnvironmentDTO> createExperiment(String publicationID, EnvironmentDTO environmentDTO) throws ValidationException {
+    public List<ExperimentDTO> createExperiment(String publicationID, ExperimentDTO environmentDTO) throws ValidationException {
 
         if (StringUtils.isEmpty(publicationID))
             throw new ValidationException("No Publication ID provided");
@@ -95,7 +94,7 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
     }
 
     @Override
-    public List<EnvironmentDTO> deleteCondition(ConditionDTO conditionDTO) throws ValidationException, TermNotFoundException {
+    public List<ExperimentDTO> deleteCondition(ConditionDTO conditionDTO) throws ValidationException, TermNotFoundException {
         if (conditionDTO == null)
             throw new ValidationException("No condition entity provided");
         String experimentID = conditionDTO.getEnvironmentZdbID();
@@ -128,7 +127,7 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
         return getExperimentList(publicationID);
     }
 
-    public List<EnvironmentDTO> deleteExperiment(EnvironmentDTO experimentDTO) throws ValidationException {
+    public List<ExperimentDTO> deleteExperiment(ExperimentDTO experimentDTO) throws ValidationException {
         if (experimentDTO == null)
             throw new ValidationException("No experiment entity provided");
         String experimentID = experimentDTO.getZdbID();
@@ -153,7 +152,7 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
 
         return getExperimentList(publicationID);
     }
-    public List<EnvironmentDTO> updateExperiment(EnvironmentDTO experimentDTO,String exptName) throws ValidationException {
+    public List<ExperimentDTO> updateExperiment(ExperimentDTO experimentDTO,String exptName) throws ValidationException {
 
         if (experimentDTO == null)
             throw new ValidationException("No experiment entity provided");
@@ -182,7 +181,7 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
 
 
     @Override
-    public List<EnvironmentDTO> copyConditions(String experimentID, List<String> copyConditionIdList) throws ValidationException, TermNotFoundException {
+    public List<ExperimentDTO> copyConditions(String experimentID, List<String> copyConditionIdList) throws ValidationException, TermNotFoundException {
         if (experimentID == null)
             throw new ValidationException("No experiment ID provided");
         if (CollectionUtils.isEmpty(copyConditionIdList))
@@ -222,16 +221,16 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
     }
 
     @Override
-    public List<EnvironmentDTO> getExperimentList(String publicationID) throws ValidationException {
+    public List<ExperimentDTO> getExperimentList(String publicationID) throws ValidationException {
 
-        List<EnvironmentDTO> list = new ArrayList<>();
+        List<ExperimentDTO> list = new ArrayList<>();
         HibernateUtil.createTransaction();
         try {
 
             List<Experiment> experimentSet = getExpressionRepository().geExperimentByPublication(publicationID);
             if (experimentSet != null) {
                 for (Experiment experiment : experimentSet) {
-                    EnvironmentDTO dto = DTOConversionService.convertToEnvironmentTabDTO(experiment);
+                    ExperimentDTO dto = DTOConversionService.convertToEnvironmentTabDTO(experiment);
                     list.add(dto);
                 }
             }

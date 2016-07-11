@@ -1,11 +1,8 @@
 package org.zfin.gwt.curation.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import org.zfin.gwt.root.dto.EnvironmentDTO;
+import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.FishDTO;
-import org.zfin.gwt.root.dto.PublicationDTO;
-import org.zfin.gwt.root.dto.TermDTO;
-import org.zfin.mutant.DiseaseAnnotation;
 
 public class DiseaseAnnotationModelDTO implements IsSerializable {
     private DiseaseAnnotationDTO dat;
@@ -13,7 +10,7 @@ public class DiseaseAnnotationModelDTO implements IsSerializable {
     private FishDTO fish;
     private long damoID;
 
-    private EnvironmentDTO environment;
+    private ExperimentDTO environment;
 
     public long getDamoID() {
         return damoID;
@@ -40,11 +37,11 @@ public class DiseaseAnnotationModelDTO implements IsSerializable {
         this.fish = fish;
     }
 
-    public EnvironmentDTO getEnvironment() {
+    public ExperimentDTO getEnvironment() {
         return environment;
     }
 
-    public void setEnvironment(EnvironmentDTO environment) {
+    public void setEnvironment(ExperimentDTO environment) {
         this.environment = environment;
     }
 

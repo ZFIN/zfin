@@ -1,14 +1,14 @@
 package org.zfin.gwt.curation.event;
 
 import com.google.gwt.event.shared.GwtEvent;
-import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
 
 public class UpdateExpressionExperimentEvent extends GwtEvent<UpdateExpressionExperimentEventHandler> {
     public static Type<UpdateExpressionExperimentEventHandler> TYPE = new Type<>();
 
-    private ExperimentDTO experimentDTO;
+    private ExpressionExperimentDTO experimentDTO;
 
-    public UpdateExpressionExperimentEvent(ExperimentDTO experimentDTO) {
+    public UpdateExpressionExperimentEvent(ExpressionExperimentDTO experimentDTO) {
         this.experimentDTO = experimentDTO;
     }
 
@@ -22,7 +22,7 @@ public class UpdateExpressionExperimentEvent extends GwtEvent<UpdateExpressionEx
         handler.onEvent(this);
     }
 
-    public ExperimentDTO getExperimentDTO() {
+    public ExpressionExperimentDTO getExperimentDTO() {
         return experimentDTO;
     }
 }

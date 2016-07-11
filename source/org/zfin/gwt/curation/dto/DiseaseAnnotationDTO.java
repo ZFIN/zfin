@@ -28,7 +28,7 @@ public class DiseaseAnnotationDTO implements IsSerializable {
     }
 
     private TermDTO disease;
-    private EnvironmentDTO environment;
+    private ExperimentDTO environment;
     private PublicationDTO publication;
     private String evidenceCode;
 
@@ -41,11 +41,11 @@ public class DiseaseAnnotationDTO implements IsSerializable {
         this.fish = fish;
     }
 
-    public EnvironmentDTO getEnvironment() {
+    public ExperimentDTO getEnvironment() {
         return environment;
     }
 
-    public void setEnvironment(EnvironmentDTO environment) {
+    public void setEnvironment(ExperimentDTO environment) {
         this.environment = environment;
     }
 

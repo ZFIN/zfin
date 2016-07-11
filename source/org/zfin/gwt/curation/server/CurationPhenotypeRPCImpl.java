@@ -13,7 +13,6 @@ import org.zfin.gwt.curation.ui.CurationPhenotypeRPC;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
-import org.zfin.gwt.root.util.NumberAwareStringComparatorDTO;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
@@ -32,7 +31,7 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
 
     private static final Logger logger = Logger.getLogger(CurationPhenotypeRPCImpl.class);
 
-    public List<ExpressionPhenotypeExperimentDTO> getPhenotypeFromExpressionsByFilter(ExperimentDTO experimentFilter, String figureID) {
+    public List<ExpressionPhenotypeExperimentDTO> getPhenotypeFromExpressionsByFilter(ExpressionExperimentDTO experimentFilter, String figureID) {
         List<ExpressionResult2> expressionResultList = getExpressionRepository().getPhenotypeFromExpressionsByFigureFish(experimentFilter.getPublicationID(),
                 figureID, experimentFilter.getFishID(), experimentFilter.getFeatureID());
         List<ExpressionPhenotypeExperimentDTO> phenotypeList = ExpressionService.createPhenotypeFromExpressions(expressionResultList);
@@ -40,7 +39,7 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
         return phenotypeList;
     }
 
-    public List<PhenotypeExperimentDTO> getExpressionsByFilter(ExperimentDTO experimentFilter, String figureID) {
+    public List<PhenotypeExperimentDTO> getExpressionsByFilter(ExpressionExperimentDTO experimentFilter, String figureID) {
 
         List<PhenotypeExperiment> phenotypes = getPhenotypeRepository().getMutantExpressionsByFigureFish(experimentFilter.getPublicationID(),
                 figureID, experimentFilter.getFishID(), experimentFilter.getFeatureID());

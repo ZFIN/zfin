@@ -112,14 +112,14 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      * @param publicationID publication
      * @return list of experiments
      */
-    public List<ExperimentDTO> readExperiments(String publicationID) {
+    public List<ExpressionExperimentDTO> readExperiments(String publicationID) {
         List<ExpressionExperiment> experiments = expRepository.getExperiments(publicationID);
         if (experiments == null)
             return null;
 
-        List<ExperimentDTO> dtos = new ArrayList<>();
+        List<ExpressionExperimentDTO> dtos = new ArrayList<>();
         for (ExpressionExperiment experiment : experiments) {
-            ExperimentDTO experimentDTO = new ExperimentDTO();
+            ExpressionExperimentDTO experimentDTO = new ExpressionExperimentDTO();
             experimentDTO.setExperimentZdbID(experiment.getZdbID());
             Marker gene = experiment.getGene();
             if (gene != null) {
@@ -147,7 +147,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         return dtos;
     }
 
-    public List<ExperimentDTO> getExperimentsByFilter(ExperimentDTO experimentFilter) {
+    public List<ExpressionExperimentDTO> getExperimentsByFilter(ExpressionExperimentDTO experimentFilter) {
         List<ExpressionExperiment2> experiments =
                 expRepository.getExperimentsByGeneAndFish(experimentFilter.getPublicationID(),
                         experimentFilter.getGene() == null ? null : experimentFilter.getGene().getZdbID(),
@@ -158,10 +158,10 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         return convertExperiments2ToDTO(experiments);
     }
 
-    private List<ExperimentDTO> convertExperiments2ToDTO(List<ExpressionExperiment2> experiments) {
-        List<ExperimentDTO> dtos = new ArrayList<>();
+    private List<ExpressionExperimentDTO> convertExperiments2ToDTO(List<ExpressionExperiment2> experiments) {
+        List<ExpressionExperimentDTO> dtos = new ArrayList<>();
         for (ExpressionExperiment2 experiment : experiments) {
-            ExperimentDTO dto = DTOConversionService.convertToExperimentDTO(experiment);
+            ExpressionExperimentDTO dto = DTOConversionService.convertToExperimentDTO(experiment);
             if (experiment.getFigureStageSet() != null)
                 dto.setNumberOfExpressions(experiment.getFigureStageSet().size());
             dtos.add(dto);
@@ -178,11 +178,11 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         return assayDtos;
     }
 
-    public List<EnvironmentDTO> getEnvironments(String publicationID) {
+    public List<ExperimentDTO> getEnvironments(String publicationID) {
         List<Experiment> experiments = pubRepository.getExperimentsByPublication(publicationID);
-        List<EnvironmentDTO> assayDtos = new ArrayList<>();
+        List<ExperimentDTO> assayDtos = new ArrayList<>();
         for (Experiment experiment : experiments) {
-            EnvironmentDTO env = DTOConversionService.convertToEnvironmentDTO(experiment);
+            ExperimentDTO env = DTOConversionService.convertToEnvironmentDTO(experiment);
             assayDtos.add(env);
         }
 
@@ -282,18 +282,18 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      *
      * @param geneID string
      */
-    public List<ExperimentDTO> readGenbankAccessions(String publicationID, String geneID) {
+    public List<ExpressionExperimentDTO> readGenbankAccessions(String publicationID, String geneID) {
         List<MarkerDBLink> geneDBLinks = pubRepository.getDBLinksByGene(publicationID, geneID);
-        List<ExperimentDTO> accessionNumbers = new ArrayList<>();
+        List<ExpressionExperimentDTO> accessionNumbers = new ArrayList<>();
         for (MarkerDBLink geneDBLink : geneDBLinks) {
-            ExperimentDTO accession = new ExperimentDTO();
+            ExpressionExperimentDTO accession = new ExpressionExperimentDTO();
             accession.setGenbankNumber(geneDBLink.getAccessionNumber());
             accession.setGenbankID(geneDBLink.getZdbID());
             accessionNumbers.add(accession);
         }
         List<MarkerDBLink> cloneDBLinks = pubRepository.getDBLinksForCloneByGene(publicationID, geneID);
         for (MarkerDBLink cloneDBLink : cloneDBLinks) {
-            ExperimentDTO accession = new ExperimentDTO();
+            ExpressionExperimentDTO accession = new ExpressionExperimentDTO();
             accession.setGenbankNumber(cloneDBLink.getAccessionNumber() + " [" + cloneDBLink.getMarker().getType().toString() + "]");
             accession.setGenbankID(cloneDBLink.getZdbID());
             accessionNumbers.add(accession);
@@ -307,7 +307,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      *
      * @param experimentDTO experiment to be updated
      */
-    public ExperimentDTO updateExperiment(ExperimentDTO experimentDTO) {
+    public ExpressionExperimentDTO updateExperiment(ExpressionExperimentDTO experimentDTO) {
         if (experimentDTO == null)
             return null;
         String experimentID = experimentDTO.getExperimentZdbID();
@@ -328,7 +328,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         return experimentDTO;
     }
 
-    public ExperimentDTO createExpressionExperiment(ExperimentDTO experimentDTO) throws Exception {
+    public ExpressionExperimentDTO createExpressionExperiment(ExpressionExperimentDTO experimentDTO) throws Exception {
         if (experimentDTO == null)
             return null;
 
@@ -419,7 +419,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      * @param experimentDTO        dto
      * @param expressionExperiment expression experiment on which the changes are applied.
      */
-    public static void populateExpressionExperiment(ExperimentDTO experimentDTO, ExpressionExperiment2 expressionExperiment) {
+    public static void populateExpressionExperiment(ExpressionExperimentDTO experimentDTO, ExpressionExperiment2 expressionExperiment) {
         // update assay: never null
         ExpressionAssay newAssay = expRepository.getAssayByName(experimentDTO.getAssay());
         expressionExperiment.setAssay(newAssay);
@@ -494,7 +494,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      * @param experimentFilter filter object
      * @return expression figure stage records
      */
-    public List<ExpressionFigureStageDTO> getExpressionsByFilter(ExperimentDTO experimentFilter, String figureID) {
+    public List<ExpressionFigureStageDTO> getExpressionsByFilter(ExpressionExperimentDTO experimentFilter, String figureID) {
         List<ExpressionFigureStage> experiments = expRepository.getExperimentFigureStagesByGeneAndFish(experimentFilter.getPublicationID(),
                 experimentFilter.getGene() == null ? null : experimentFilter.getGene().getZdbID(),
                 experimentFilter.getFishID(),
@@ -681,7 +681,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
     public void deleteFigureAnnotation(ExpressionFigureStageDTO figureAnnotation) {
         if (figureAnnotation == null)
             return;
-        ExperimentDTO experiment = figureAnnotation.getExperiment();
+        ExpressionExperimentDTO experiment = figureAnnotation.getExperiment();
         if (experiment == null || experiment.getExperimentZdbID() == null)
             return;
         if (figureAnnotation.getFigure() == null ||

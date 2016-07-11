@@ -8,7 +8,7 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.curation.event.*;
-import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.util.AppUtils;
@@ -79,7 +79,7 @@ public class ExpressionModule implements HandlesError, EntryPoint {
         structurePilePresenter.go();
         structurePile.setStructurePilePresenter(structurePilePresenter);
 
-        ExperimentDTO dto = new ExperimentDTO();
+        ExpressionExperimentDTO dto = new ExpressionExperimentDTO();
         dto.setPublicationID(publicationID);
         expressionZone.setExperimentFilter(dto);
         structurePile.getStructurePileTable().setExpressionSection(expressionZone);

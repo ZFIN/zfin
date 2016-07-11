@@ -12,7 +12,7 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
-import org.zfin.gwt.root.dto.EnvironmentDTO;
+import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.FishDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
@@ -123,7 +123,7 @@ public class DiseaseModelView extends Composite {
 
     }
 
-    protected void addEnvironment(EnvironmentDTO environment, int elementIndex) {
+    protected void addEnvironment(ExperimentDTO environment, int elementIndex) {
         if (environment == null) {
             dataTable.setText(elementIndex + 1, 1, "");
             return;

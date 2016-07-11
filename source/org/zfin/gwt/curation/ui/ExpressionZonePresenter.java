@@ -1,7 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -28,7 +27,7 @@ public class ExpressionZonePresenter implements Presenter {
     // Typical number of figures used per publication is less than 5.
     private List<FigureDTO> allFigureDtos = new ArrayList<>(5);
     // filter set by the banana bar
-    private ExperimentDTO experimentFilter = new ExperimentDTO();
+    private ExpressionExperimentDTO experimentFilter = new ExpressionExperimentDTO();
     private String figureID;
     // all expressions displayed on the page (all or a subset defined by the filter elements)
     private List<ExpressionFigureStageDTO> displayedExpressions = new ArrayList<>(15);
@@ -51,7 +50,7 @@ public class ExpressionZonePresenter implements Presenter {
     public ExpressionZonePresenter(ExpressionZoneView view, String publicationID) {
         this.view = view;
         this.publicationID = publicationID;
-        experimentFilter = new ExperimentDTO();
+        experimentFilter = new ExpressionExperimentDTO();
         experimentFilter.setPublicationID(publicationID);
     }
 
@@ -61,7 +60,7 @@ public class ExpressionZonePresenter implements Presenter {
     }
 
 
-    public void setExperimentFilter(ExperimentDTO experimentFilter) {
+    public void setExperimentFilter(ExpressionExperimentDTO experimentFilter) {
         this.experimentFilter = experimentFilter;
     }
 
@@ -201,7 +200,7 @@ public class ExpressionZonePresenter implements Presenter {
     private void addFigureAnnotationsToList(String figureID, String startStageID, String endStageID, List<ExpressionFigureStageDTO> expressions) {
         //Window.alert("Experiment size: " + experiments);
 
-        for (ExperimentDTO experiment : view.getSelectedExperiments()) {
+        for (ExpressionExperimentDTO experiment : view.getSelectedExperiments()) {
             ExpressionFigureStageDTO newExpression = new ExpressionFigureStageDTO();
             newExpression.setExperiment(experiment);
             StageDTO start = new StageDTO();
@@ -252,7 +251,7 @@ public class ExpressionZonePresenter implements Presenter {
         return true;
     }
 
-    public void updateExpressionOnCurationFilter(ExperimentDTO experimentFilter, String figureID) {
+    public void updateExpressionOnCurationFilter(ExpressionExperimentDTO experimentFilter, String figureID) {
         this.experimentFilter = experimentFilter;
         this.figureID = figureID;
         retrieveExpressions();
@@ -315,7 +314,7 @@ public class ExpressionZonePresenter implements Presenter {
                 return;
 
             for (ExpressionFigureStageDTO id : list) {
-                ExperimentDTO experiment = id.getExperiment();
+                ExpressionExperimentDTO experiment = id.getExperiment();
                 if (experiment.getEnvironment().getName().startsWith("_"))
                     experiment.getEnvironment().setName(experiment.getEnvironment().getName().substring(1));
                 displayedExpressions.add(id);

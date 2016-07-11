@@ -1,7 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.user.client.ui.ListBox;
-import org.zfin.gwt.root.dto.EnvironmentDTO;
+import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * ToDo: ADD DOCUMENTATION!
  */
-public class RetrieveEnvironmentListCallBack extends ZfinAsyncCallback<List<EnvironmentDTO>> {
+public class RetrieveEnvironmentListCallBack extends ZfinAsyncCallback<List<ExperimentDTO>> {
 
     private ListBox environmentList;
 
@@ -19,10 +19,10 @@ public class RetrieveEnvironmentListCallBack extends ZfinAsyncCallback<List<Envi
         this.environmentList = environmentList;
     }
 
-    public void onSuccess(List<EnvironmentDTO> environments) {
+    public void onSuccess(List<ExperimentDTO> environments) {
         //Window.alert("brought back: " + experiments.size() );
         environmentList.clear();
-        for (EnvironmentDTO environmentDTO : environments) {
+        for (ExperimentDTO environmentDTO : environments) {
             String name = environmentDTO.getName();
             if (name.startsWith("_"))
                 name = name.substring(1);

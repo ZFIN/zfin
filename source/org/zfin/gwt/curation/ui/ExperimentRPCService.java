@@ -4,7 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.root.dto.ConditionDTO;
-import org.zfin.gwt.root.dto.EnvironmentDTO;
+import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.TermNotFoundException;
 import org.zfin.gwt.root.ui.ValidationException;
 
@@ -16,11 +16,11 @@ import java.util.Set;
  */
 public interface ExperimentRPCService extends RemoteService {
 
-    List<EnvironmentDTO> createCondition(String publicationID, ConditionDTO conditionDTO) throws ValidationException, TermNotFoundException;
+    List<ExperimentDTO> createCondition(String publicationID, ConditionDTO conditionDTO) throws ValidationException, TermNotFoundException;
 
-    List<EnvironmentDTO> deleteCondition(ConditionDTO conditionDTO) throws ValidationException, TermNotFoundException;
+    List<ExperimentDTO> deleteCondition(ConditionDTO conditionDTO) throws ValidationException, TermNotFoundException;
 
-    List<EnvironmentDTO> copyConditions(String experimentID, List<String> copyConditionIdList) throws ValidationException, TermNotFoundException;
+    List<ExperimentDTO> copyConditions(String experimentID, List<String> copyConditionIdList) throws ValidationException, TermNotFoundException;
 
     Map<String, Set<String>> getChildMap();
 
@@ -39,13 +39,13 @@ public interface ExperimentRPCService extends RemoteService {
         }
     }
 
-    List<EnvironmentDTO> updateExperiment(EnvironmentDTO environmentDTO, String exptName) throws ValidationException;
+    List<ExperimentDTO> updateExperiment(ExperimentDTO environmentDTO, String exptName) throws ValidationException;
 
-    List<EnvironmentDTO> getExperimentList(String publicationID) throws ValidationException;
+    List<ExperimentDTO> getExperimentList(String publicationID) throws ValidationException;
 
-    List<EnvironmentDTO> createExperiment(String publicationID, EnvironmentDTO environmentDTO) throws ValidationException;
+    List<ExperimentDTO> createExperiment(String publicationID, ExperimentDTO environmentDTO) throws ValidationException;
 
-    List<EnvironmentDTO> deleteExperiment(EnvironmentDTO environmentDTO) throws ValidationException;
+    List<ExperimentDTO> deleteExperiment(ExperimentDTO environmentDTO) throws ValidationException;
 
 
 }

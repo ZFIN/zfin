@@ -1157,8 +1157,8 @@ public class DTOConversionService {
      * @param experiment Experiment
      * @return environmentDTO
      */
-    public static EnvironmentDTO convertToEnvironmentDTO(Experiment experiment) {
-        EnvironmentDTO environment = new EnvironmentDTO();
+    public static ExperimentDTO convertToEnvironmentDTO(Experiment experiment) {
+        ExperimentDTO environment = new ExperimentDTO();
 
         environment.setZdbID(experiment.getZdbID());
         if (experiment.getName() == null) {
@@ -1190,8 +1190,8 @@ public class DTOConversionService {
 
         return environment;
     }
-    public static EnvironmentDTO convertToEnvironmentTabDTO(Experiment experiment) {
-        EnvironmentDTO environment = new EnvironmentDTO();
+    public static ExperimentDTO convertToEnvironmentTabDTO(Experiment experiment) {
+        ExperimentDTO environment = new ExperimentDTO();
         environment.setZdbID(experiment.getZdbID());
         if (experiment.getName() == null) {
             experiment = RepositoryFactory.getExpressionRepository().getExperimentByID(experiment.getZdbID());
@@ -1262,8 +1262,8 @@ public class DTOConversionService {
         return phenotypeTerm;
     }
 
-    public static ExperimentDTO convertToExperimentDTO(ExpressionExperiment experiment) {
-        ExperimentDTO experimentDTO = new ExperimentDTO();
+    public static ExpressionExperimentDTO convertToExperimentDTO(ExpressionExperiment experiment) {
+        ExpressionExperimentDTO experimentDTO = new ExpressionExperimentDTO();
         experimentDTO.setExperimentZdbID(experiment.getZdbID());
         Marker gene = experiment.getGene();
         if (gene != null) {
@@ -1838,8 +1838,8 @@ public class DTOConversionService {
         return dto;
     }
 
-    public static ExperimentDTO convertToExperimentDTO(ExpressionExperiment2 experiment) {
-        ExperimentDTO experimentDTO = new ExperimentDTO();
+    public static ExpressionExperimentDTO convertToExperimentDTO(ExpressionExperiment2 experiment) {
+        ExpressionExperimentDTO experimentDTO = new ExpressionExperimentDTO();
         experimentDTO.setExperimentZdbID(experiment.getZdbID());
         Marker gene = experiment.getGene();
         if (gene != null) {
@@ -1912,7 +1912,7 @@ public class DTOConversionService {
         return expressionFigureStage;
     }
 
-    private static ExpressionExperiment2 convertToExperiment(ExperimentDTO experiment) {
+    private static ExpressionExperiment2 convertToExperiment(ExpressionExperimentDTO experiment) {
         ExpressionExperiment2 expressionExperiment = new ExpressionExperiment2();
         //expressionExperiment.set
         return null;

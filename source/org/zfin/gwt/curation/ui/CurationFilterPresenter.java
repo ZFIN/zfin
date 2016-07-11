@@ -1,7 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
@@ -42,7 +41,7 @@ public class CurationFilterPresenter extends Composite {
     private CurationFilterView view;
     private CurationFilterRPCAsync curationFilterRPCAsync = CurationFilterRPC.Application.getInstance();
     public static final String ALL = "ALL";
-    private ExperimentDTO experimentFilter = new ExperimentDTO();
+    private ExpressionExperimentDTO experimentFilter = new ExpressionExperimentDTO();
 
     public CurationFilterPresenter(CurationFilterView curationFilterZone, String publicationID) {
         this.publicationID = publicationID;
