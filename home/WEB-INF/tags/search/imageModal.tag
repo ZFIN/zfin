@@ -5,7 +5,10 @@
 <div class="result-thumbnail-container pull-right" style="min-width: 100px;">
     <div class="search-result-thumbnail">
         <c:forEach var="image" items="${result.images}" varStatus="loop">
-            <div class="figure-gallery-result-container" data-zdb-id="${result.imageZdbIds[loop.index]}">
+            <div class="figure-gallery-result-container"
+                 data-result="${result.id}"
+                 data-zdb-id="${result.imageZdbIds[loop.index]}"
+                 data-category="${result.category}">
                 <div class="figure-gallery-image-container ${loop.first ? '' : 'hidden'}">
                     <a href="#" role="button" data-toggle="modal">
                         <img src="/imageLoadUp/${result.thumbnails[loop.index]}"/>

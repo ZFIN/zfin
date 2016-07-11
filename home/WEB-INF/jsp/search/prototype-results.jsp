@@ -536,7 +536,9 @@ $(function () {
     function loadModal(el) {
         var $el = $(el);
         var loading = $el.find('.figure-gallery-loading-overlay').removeClass('hidden');
-        var summaryUrl = '/action/image/' + $el.data('zdb-id') + '/summary?category=' + encodeURIComponent('${category}');
+        var summaryUrl = '/action/image/' + $el.data('zdb-id') + '/summary' +
+                '?category=' + encodeURIComponent($el.data('category')) +
+                '&record=' + encodeURIComponent($el.data('result'));
         var prev = $el.prev('.figure-gallery-result-container');
         var next = $el.next('.figure-gallery-result-container');
         var $modal = $('#figureGalleryModal');

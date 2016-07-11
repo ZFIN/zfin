@@ -221,19 +221,20 @@ public class ResultService {
                 message += term.getEnd().getNameLong();
                 result.addAttribute(EXISTS_DURING, message);
             }
-            if (CollectionUtils.isNotEmpty(term.getImages())) {
-                if (term.getImages().size() != 1) {
-                    result.setUrl("/" + term.getOboID());
-                    Set<Image> images = term.getImages();
-                    List<String> imageStringList = new ArrayList<>(images.size());
-                    List<String> thumbnailStringList = new ArrayList<>(images.size());
-                    for (Image image : images) {
-                        imageStringList.add(image.getImageFilename());
-                        thumbnailStringList.add(image.getThumbnail());
-                    }
-                    result.setImages(imageStringList);
-                    result.setThumbnails(thumbnailStringList);
+            Set<Image> termImages = term.getImages();
+            if (CollectionUtils.isNotEmpty(termImages)) {
+                result.setUrl("/" + term.getOboID());
+                List<String> imageStringList = new ArrayList<>(termImages.size());
+                List<String> thumbnailStringList = new ArrayList<>(termImages.size());
+                List<String> imageZdbIds = new ArrayList<>(termImages.size());
+                for (Image image : termImages) {
+                    imageStringList.add(image.getImageFilename());
+                    thumbnailStringList.add(image.getThumbnail());
+                    imageZdbIds.add(image.getZdbID());
                 }
+                result.setImages(imageStringList);
+                result.setThumbnails(thumbnailStringList);
+                result.setImageZdbIds(imageZdbIds);
             }
         }
 
