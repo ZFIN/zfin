@@ -116,12 +116,12 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         String assay = "other";
         String pubID = "ZDB-PUB-990507-16";
 
-        ExperimentDTO dto = new ExperimentDTO();
+        ExpressionExperimentDTO dto = new ExpressionExperimentDTO();
         dto.setAssay(assay);
         MarkerDTO abDto = new MarkerDTO();
         abDto.setZdbID(antibodyID);
         dto.setAntibodyMarker(abDto);
-        EnvironmentDTO envDto = new EnvironmentDTO();
+        ExperimentDTO envDto = new ExperimentDTO();
         envDto.setZdbID(experimentID);
         dto.setEnvironment(envDto);
         dto.setFishID(genotypeID);
