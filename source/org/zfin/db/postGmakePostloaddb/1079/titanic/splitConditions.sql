@@ -20,10 +20,10 @@ insert into zdb_active_data
 select count(*) as counter, expcondId as id from tmp_gap_dup_tt
  group by expcondId 
 having count(*) > 1
- into temp temp_dups;
+ into temp tmp_dups1;
 
 delete from tmp_gap_dup_tt
- where exists (Select 'x' from temp_dups
+ where exists (Select 'x' from tmp_dups1
        	      	      where id = expcondId);
 
 delete from tmp_gap_dup_tt
