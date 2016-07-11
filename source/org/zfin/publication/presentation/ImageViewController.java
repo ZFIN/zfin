@@ -64,20 +64,18 @@ public class ImageViewController {
             return null;
         }
 
+        Figure figure = image.getFigure();
         FigureGalleryImagePresentation bean = new FigureGalleryImagePresentation();
         bean.setImage(image);
         bean.setImageLinkEntity(image.getFigure() == null ? image : image.getFigure());
+        bean.setTitleLinkEntity(new FigureFromPublicationLink(figure));
 
-        Figure figure = image.getFigure();
         if (category.equals(Category.EXPRESSIONS.getName())) {
             bean.setFigureExpressionSummary(figureViewService.getFigureExpressionSummary(figure));
-            bean.setTitleLinkEntity(new FigureFromPublicationLink(figure));
         } else if (category.equals(Category.PHENOTYPE.getName())) {
             bean.setFigurePhenotypeSummary(figureViewService.getFigurePhenotypeSummary(figure));
-            bean.setTitleLinkEntity(new FigureFromPublicationLink(figure));
         } else if (category.equals(Category.PUBLICATION.getName())) {
             bean.setDetails(figure.getCaption());
-            bean.setTitleLinkEntity(new FigureFromPublicationLink(figure));
         } else if (category.equals(Category.ANATOMY.getName())) {
             bean.setTitleLinkEntity(ontologyRepository.getTermByOboID(record));
         }

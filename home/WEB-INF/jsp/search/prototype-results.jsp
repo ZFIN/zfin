@@ -170,7 +170,7 @@
 
 
     <div class="row">
-        <zfin:horizontal-breadbox query="${query}" queryResponse="${response}" baseUrl="${baseUrl}"/>
+        <zfin:horizontal-breadbox query="${query}" queryResponse="${response}" baseUrl="${baseUrlWithoutGalleryMode}"/>
     </div>
 
 
@@ -242,7 +242,7 @@
                                     </div>
                                 </authz:authorize>
 
-                                <c:if test="${!empty images}">
+                                <c:if test="${!empty images && !empty category && category != 'Any'}">
                                     <a href="${baseUrlWithoutGalleryMode}galleryMode=true" class="btn btn-default">
                                         <i class="fa fa-camera"></i> Browse Images
                                     </a>
@@ -307,7 +307,9 @@
                         <div class="masonry figure-gallery-results-container clearfix">
                             <div class="figure-gallery-masonry-size"></div>
                             <c:forEach var="image" items="${images}" varStatus="loop">
-                                <div class="figure-gallery-result-container figure-gallery-masonry-item" data-zdb-id="${image.zdbID}">
+                                <div class="figure-gallery-result-container figure-gallery-masonry-item"
+                                     data-zdb-id="${image.zdbID}"
+                                     data-category="${category}">
                                     <div class="figure-gallery-image-container gallery">
                                         <img src="${image.mediumUrl}">
                                         <div class="hidden figure-gallery-loading-overlay">
