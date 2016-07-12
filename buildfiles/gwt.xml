@@ -122,7 +122,7 @@
             <arg value="-startupUrl"/>
             <arg value="http://${env.DOMAIN_NAME}/gwt-modules-for-testing.html"/>
             <arg line="-war"/>
-            <arg value="home"/>
+            <arg value="home/gwt"/>
             <arg line="-logLevel"/>
             <arg value="INFO"/>
             <arg line="-noserver"/>

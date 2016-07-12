@@ -31,9 +31,7 @@ SUBDIRS = \
 	security_files \
 	selection \
 	updating \
-	xpat_files \
-        feature_files \
-        curation_files
+	xpat_files
 
 
 

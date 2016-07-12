@@ -17,7 +17,7 @@
                 <div class="caution-text">This feature has also been deleted from feature tracking. </div>
             </c:if>
             <c:if test="${formBean.publicationCurated != null}">
-                <p/><div class="caution-text">Go back to <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-curation.apg&OID=${formBean.publicationCurated.zdbID}'>${formBean.publicationCurated.shortAuthorList}</a>. </div>
+                <p/><div class="caution-text">Go back to <a href='/action/curation/${formBean.publicationCurated.zdbID}'>${formBean.publicationCurated.shortAuthorList}</a>. </div>
             </c:if>
         </c:otherwise>
     </c:choose>

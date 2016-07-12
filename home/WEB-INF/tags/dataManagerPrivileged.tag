@@ -50,7 +50,7 @@
 </c:if>
 <c:if test="${!empty trackURL}">
     <td>
-        <a href="${trackURL}" class="root">Track</a>
+        <a href="${trackURL}" >Track Curation</a>
     </td>
 </c:if>
 <c:if test="${!empty linkURL}">

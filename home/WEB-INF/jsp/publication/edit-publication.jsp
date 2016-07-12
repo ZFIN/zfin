@@ -24,7 +24,7 @@
 <c:set var="trackURL">/action/publication/${publication.zdbID}/track</c:set>
 <c:set var="viewURL">/${publication.zdbID}</c:set>
 <c:if test="${allowCuration}">
-    <c:set var="curateURL">/cgi-bin/webdriver?MIval=aa-curation.apg&OID=${publication.zdbID}</c:set>
+    <c:set var="curateURL">/action/curation/${publication.zdbID}</c:set>
 </c:if>
 
 

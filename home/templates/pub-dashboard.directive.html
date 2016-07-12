@@ -43,7 +43,7 @@
                             Action <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a ng-href="/cgi-bin/webdriver?MIval=aa-curation.apg&OID={{pub.zdbId}}" target="_blank">Curate</a></li>
+                            <li><a ng-href="/action/curation/{{pub.zdbId}}" target="_blank">Curate</a></li>
                             <li><a ng-href="/action/publication/{{pub.zdbId}}/track" target="_blank">Track</a></li>
                             <li><a href ng-click="vm.openStatusModal(pub)">Set status...</a></li>
                         </ul>

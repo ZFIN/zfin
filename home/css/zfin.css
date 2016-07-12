@@ -12,7 +12,7 @@ body {
     min-width: 600px;
     margin: 0;
     padding: 0;
-    background: @SITE_BACKGROUND@;
+    background: @SITE_BACKGROUND @;
 }
 
 hr {
@@ -177,6 +177,7 @@ table.data_manager a.root {
     color: #33cc99;
     text-align: left;
 }
+
 .phenotype-ameliorated {
     color: #A461E8;
     text-align: left;
@@ -819,12 +820,15 @@ ul.comma-separated {
     margin: 0;
     padding: 0;
 }
+
 ul.comma-separated > li {
     display: inline;
 }
+
 ul.comma-separated > li:after {
     content: ", ";
 }
+
 ul.comma-separated > li:last-child:after {
     content: "";
 }
@@ -905,10 +909,12 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
     text-align: center;
     border-radius: 4px;
 }
+
 .file-drag-target.hover {
     background-color: #e0e7e0;
     border: solid #006666;
 }
+
 .file-drag-target > input {
     width: 0.1px;
     height: 0.1px;
@@ -917,10 +923,12 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
     position: absolute;
     z-index: -1;
 }
+
 .file-drag-target > label {
     white-space: nowrap;
     cursor: pointer;
 }
+
 .figure-delete-button {
     display: inline-block;
 }
@@ -963,4 +971,7 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
 }
 .image-delete-button .fa-times-circle {
     color: #0000E9;
+}
+.table-borderless td, .table-borderless th {
+    border: none !important;
 }

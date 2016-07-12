@@ -16,7 +16,6 @@ public abstract class EntityPresentation {
     public static final String WITHDRAWN = WITHDRAWN_PREFIX + " align='top' />";
     public static final String ZFIN_JUMP_URL = "/";
     public static String domain;
-    public static final String CURATION_URI = "?MIval=aa-curation.apg&";
 
     /**
      * Uses ZfinProperties to get webdriver link information
@@ -127,10 +126,9 @@ public abstract class EntityPresentation {
             sb.append("\"");
         }
         sb.append(" id='" + zdbID + "'>");
-        if (zdbID.contains("CONSTRCT")){
+        if (zdbID.contains("CONSTRCT")) {
             sb.append(name);
-        }
-        else {
+        } else {
             sb.append(abbreviation);
         }
         sb.append("</a>");
