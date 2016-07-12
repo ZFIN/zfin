@@ -19,11 +19,13 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/PUBMED
 SUBDIRS   = LinkOut
 GENERICS  = addMeshTermsToAllPubs.groovy \
+            checkJournals.sql\
+            checkJournals.pl \
             fetchPubsFromPubMed.pl \
             fixBadCharacterEncoding.pl \
             loadNewPubs.sql \
             updatePublicationDate.groovy \
-            updatepubstatus.pl
+            updatepubstatus.pl 
 STATICS  =  PubmedUtils.groovy loadMeshTerms.groovy 
 
 # ---------------  Production Rules  ------------------------------------
