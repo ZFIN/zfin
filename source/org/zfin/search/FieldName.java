@@ -39,7 +39,6 @@ public enum FieldName {
     DISEASE("disease", "Human Disease"),
     DISEASE_MODEL("disease_model"),
     ENGINEERED_REGION("engineered_region"),
-    EXPERIMENTAL_CONDITIONS("experimental_conditions"),
     EXPRESSED_IN_TF("expressed_in_tf"),
     EXPRESSION_ANATOMY_TF("expression_anatomy_tf"),
     EXPRESSION_ANATOMY("expression_anatomy"),

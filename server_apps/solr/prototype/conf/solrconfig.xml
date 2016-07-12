@@ -387,7 +387,6 @@
               mutagen
               allele
               chromosome
-              experimental_conditions
               person_name
               lab_member_name
               email_address
@@ -478,8 +477,6 @@
              targeted_gene
              targeted_gene_full_name
              targeted_gene_previous_name
-
-             experimental_conditions
 
              prefix
              institution
@@ -576,7 +573,6 @@
              targeted_gene_full_name
              targeted_gene_previous_name
 
-             experimental_conditions
              journal_t
              prefix
              institution
@@ -673,7 +669,6 @@
              full_mesh_term
              full_mesh_term_t
 
-             experimental_conditions_t
              conditions_t
 
              related_accession
@@ -771,8 +766,6 @@
              allele
              expression_observation
              chromosome
-
-             experimental_conditions
 
              person_name
              lab_member_name

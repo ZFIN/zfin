@@ -674,7 +674,6 @@
 
    <field name="stage" type="superstage" indexed="true" stored="true" multiValued="true" />
 
-   <field name="experimental_conditions" type="keyword" indexed="true" stored="true" multiValued="true" />
    <field name="conditions" type="keyword" indexed="true" stored="true" multiValued="true" />
 
    <field name="definition" type="text" indexed="true" stored="true" />
@@ -941,7 +940,6 @@
    <copyField source="sequence_alteration" dest="sequence_alteration_t"/>
    <copyField source="background" dest="background_t"/>
    <copyField source="full_mesh_term" dest="full_mesh_term_t"/>
-   <copyField source="experimental_conditions" dest="experimental_conditions_t"/>
    <copyField source="conditions" dest="conditions_t"/>
    <copyField source="engineered_region" dest="engineered_region_t"/>
    <copyField source="expressed_in" dest="expressed_in_t"/>

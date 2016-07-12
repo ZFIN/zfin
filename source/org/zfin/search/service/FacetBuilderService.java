@@ -124,7 +124,6 @@ public class FacetBuilderService {
 
         FacetGroup diseaseModel = new FacetGroup("Disease Model", true);
         diseaseModel.addFacet(buildFacet(FieldName.FISH.getName(), true));
-        diseaseModel.addFacet(buildFacet(FieldName.EXPERIMENTAL_CONDITIONS.getName(), true));
         diseaseModel.addFacet(buildFacet(FieldName.CONDITIONS.getName(), true));
         facetGroups.add(diseaseModel);
 
@@ -201,7 +200,6 @@ public class FacetBuilderService {
         facetGroups.add(genotype);
 
         facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)", "sequence_targeting_reagent", false));
-        facetGroups.add(buildSingleFacetGroup("Experimental Conditions", "experimental_conditions", false));
         facetGroups.add(buildSingleFacetGroup("Conditions", FieldName.CONDITIONS.getName(), false));
 
 
@@ -329,7 +327,6 @@ public class FacetBuilderService {
         //facetGroups.add(buildSingleFacetGroup("Genes With Altered Expression","genes_with_altered_expression",false,  filterQuerySelectionMap));
         facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)", SEQUENCE_TARGETING_REAGENT.getName(), false));
         facetGroups.add(buildSingleFacetGroup("Is Monogenic", "is_monogenic", false));
-        facetGroups.add(buildSingleFacetGroup("Experimental Conditions", FieldName.EXPERIMENTAL_CONDITIONS.getName(), false));
         facetGroups.add(buildSingleFacetGroup("Conditions", FieldName.CONDITIONS.getName(), false));
 
         facetGroups.add(buildSingleFacetGroup("Has Image", "has_image", false));

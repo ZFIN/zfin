@@ -153,7 +153,6 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                 (Category.EXPRESSIONS)               : [
                         FieldName.ASSAY,
                         FieldName.AUTHOR,
-                        FieldName.EXPERIMENTAL_CONDITIONS,
                         FieldName.CONDITIONS,
                         FieldName.EXPRESSION_ANATOMY_TF,
                         FieldName.GENOTYPE_FULL_NAME,
@@ -165,7 +164,6 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                 (Category.PHENOTYPE)                 : [
                         FieldName.ANATOMY_TF,
                         FieldName.BIOLOGICAL_PROCESS_TF,
-                        FieldName.EXPERIMENTAL_CONDITIONS,
                         FieldName.CONDITIONS,
                         FieldName.HAS_IMAGE,
                         FieldName.MISEXPRESSED_GENE,
@@ -201,7 +199,6 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                 (Category.DISEASE)                   : [
                         FieldName.GENE,
                         FieldName.FISH,
-                        FieldName.EXPERIMENTAL_CONDITIONS,
                         FieldName.CONDITIONS
                 ],
                 (Category.REPORTER_LINE)             : [
@@ -226,8 +223,8 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         where:
         category                            | expectedLabels
         Category.GENE                       | ["Type", "Expression", "Phenotype", "Human Disease", "Gene Ontology", "Location"]
-        Category.EXPRESSIONS                | ["Expressed Gene", "Expressed In Anatomy", "Stage", "Has Image", "Is Wildtype and Clean", "Assay", "Genotype", "Sequence Targeting Reagent (STR)", "Experimental Conditions", "Conditions"]
-        Category.PHENOTYPE                  | ["Phenotypic Gene", "Phenotype Statement", "Stage", "Manifests In", "Sequence Targeting Reagent (STR)", "Is Monogenic", "Experimental Conditions", "Conditions", "Has Image"]
+        Category.EXPRESSIONS                | ["Expressed Gene", "Expressed In Anatomy", "Stage", "Has Image", "Is Wildtype and Clean", "Assay", "Genotype", "Sequence Targeting Reagent (STR)", "Conditions"]
+        Category.PHENOTYPE                  | ["Phenotypic Gene", "Phenotype Statement", "Stage", "Manifests In", "Sequence Targeting Reagent (STR)", "Is Monogenic", "Conditions", "Has Image"]
         Category.DISEASE                    | ["Gene", "Disease Model"]
         Category.FISH                       | ["Affected Gene", "Is Model Of", "Expression Anatomy", "Phenotype", "Sequence Targeting Reagent (STR)", "Construct", "Mutation / Tg", "Background"]
         Category.REPORTER_LINE              | ["Reporter Gene", "Expression Anatomy", "Regulatory Region", "Stage"]
