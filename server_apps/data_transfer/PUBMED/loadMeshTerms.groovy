@@ -1,15 +1,31 @@
 #!/bin/bash
 //private/apps/groovy/bin/groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
 
+import org.apache.commons.net.ftp.FTPClient
 import org.zfin.properties.ZfinProperties
 import org.zfin.util.ReportGenerator
-import java.util.zip.GZIPInputStream
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
-def download (url, closure) {
-  println("Downloading $url")
-  url.toURL().withInputStream { closure(it) }
+def download (ftp, filename, closure) {
+  println("Downloading $filename")
+  input = ftp.retrieveFileStream(filename)
+  closure(input)
+  input.close()
+  if (!ftp.completePendingCommand()) {
+    println("Error downloading file!")
+    System.exit(1)
+  }
+}
+
+def withMeshFtpSite (closure) {
+  ftp = new FTPClient();
+  ftp.connect("nlmpubs.nlm.nih.gov")
+  ftp.enterLocalPassiveMode()
+  ftp.login("anonymous", "zfinadmn@zfin.org")
+  ftp.changeWorkingDirectory("/online/mesh/MESH_FILES/xmlmesh/")
+  closure(ftp)
+  ftp.disconnect()
 }
 
 def parse (InputStream inputStream) {
@@ -36,35 +52,45 @@ OUTFILE = "mesh.unl"
 PRE_FILE = "meshTermsPre.txt"
 POST_FILE = "meshTermsPost.txt"
 
-new File(OUTFILE).withWriter { out ->
-
-  download("ftp://nlmpubs.nlm.nih.gov/online/mesh/.xmlmesh/desc2016.gz") { stream ->
-    xml = parse(new GZIPInputStream(stream))
-    records = xml.DescriptorRecord.each { record ->
-      id = record.DescriptorUI.text()
-      name = record.DescriptorName.String.text()
-      out.writeLine("$id|$name|DESCRIPTOR")
+withMeshFtpSite { ftp ->
+  new File(OUTFILE).withWriter { out ->
+    names = ftp.listNames()
+    descFile = names.find { it =~ /desc\d{4}.xml/ }
+    if (!descFile) {
+      println "Failed to find descYYYY.xml file! Listed files were: ${names.join(", ")}"
+      System.exit(1);
     }
-    println("Parsed ${records.size()} descriptor terms")
-  }
-
-  download("ftp://nlmpubs.nlm.nih.gov/online/mesh/.xmlmesh/qual2016.xml") { stream ->
-    xml = parse(stream)
-    records = xml.QualifierRecord.each { record ->
-      id = record.QualifierUI.text()
-      name = record.QualifierName.String.text()
-      out.writeLine("$id|$name|QUALIFIER")
+    download(ftp, descFile) { stream ->
+      xml = parse(stream)
+      records = xml.DescriptorRecord.each { record ->
+        id = record.DescriptorUI.text()
+        name = record.DescriptorName.String.text()
+        out.writeLine("$id|$name|DESCRIPTOR")
+      }
+      println("Parsed ${records.size()} descriptor terms")
     }
-    println("Parsed ${records.size()} qualifier terms")
-  }
 
+    qualFile = names.find { it =~ /qual\d{4}.xml/ }
+    if (!descFile) {
+      println "Failed to find qualYYYY.xml file! Listed files were: ${names.join(", ")}"
+      System.exit(1);
+    }
+    download(ftp, qualFile) { stream ->
+      xml = parse(stream)
+      records = xml.QualifierRecord.each { record ->
+        id = record.QualifierUI.text()
+        name = record.QualifierName.String.text()
+        out.writeLine("$id|$name|QUALIFIER")
+      }
+      println("Parsed ${records.size()} qualifier terms")
+    }
+  }
 }
 
 dbname = System.getenv("DBNAME")
 println("Loading terms into $dbname")
 
 dbaccess dbname, """
-
   UNLOAD TO $PRE_FILE
     SELECT mesht_mesh_id, mesht_term_name, mesht_type
     FROM mesh_term;
@@ -90,7 +116,6 @@ dbaccess dbname, """
   UNLOAD TO $POST_FILE
     SELECT mesht_mesh_id, mesht_term_name, mesht_type
     FROM mesh_term;
-
 """
 
 if (args) {
