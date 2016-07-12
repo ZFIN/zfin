@@ -19,6 +19,8 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/PUBMED
 SUBDIRS   = LinkOut Journal
 GENERICS  = addMeshTermsToAllPubs.groovy \
+            checkJournals.sql\
+            checkJournals.pl \
             fetchPubsFromPubMed.pl \
             fixBadCharacterEncoding.pl \
             loadNewPubs.sql \
