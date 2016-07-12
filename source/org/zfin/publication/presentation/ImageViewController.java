@@ -13,6 +13,7 @@ import org.zfin.expression.Image;
 import org.zfin.figure.presentation.FigureFromPublicationLink;
 import org.zfin.figure.presentation.FigureGalleryImagePresentation;
 import org.zfin.figure.service.FigureViewService;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.search.Category;
@@ -70,14 +71,31 @@ public class ImageViewController {
         bean.setImageLinkEntity(image.getFigure() == null ? image : image.getFigure());
         bean.setTitleLinkEntity(new FigureFromPublicationLink(figure));
 
-        if (category.equals(Category.EXPRESSIONS.getName())) {
-            bean.setFigureExpressionSummary(figureViewService.getFigureExpressionSummary(figure));
-        } else if (category.equals(Category.PHENOTYPE.getName())) {
-            bean.setFigurePhenotypeSummary(figureViewService.getFigurePhenotypeSummary(figure));
-        } else if (category.equals(Category.PUBLICATION.getName())) {
-            bean.setDetails(figure.getCaption());
-        } else if (category.equals(Category.ANATOMY.getName())) {
-            bean.setTitleLinkEntity(ontologyRepository.getTermByOboID(record));
+        switch (Category.getCategory(category)) {
+            case EXPRESSIONS:
+                bean.setFigureExpressionSummary(figureViewService.getFigureExpressionSummary(figure));
+                break;
+
+            case PHENOTYPE:
+                bean.setFigurePhenotypeSummary(figureViewService.getFigurePhenotypeSummary(figure));
+                break;
+
+            case PUBLICATION:
+                bean.setDetails(figure.getCaption());
+                break;
+
+            // warning: intentional fallthrough ahead!
+            case REPORTER_LINE:
+            case FIGURE:
+            case FISH:
+                bean.setFigureExpressionSummary(figureViewService.getFigureExpressionSummary(figure));
+                bean.setFigurePhenotypeSummary(figureViewService.getFigurePhenotypeSummary(figure));
+                break;
+
+            case ANATOMY:
+                GenericTerm term = ontologyRepository.getTermByOboID(record);
+                bean.setTitleLinkEntity(term);
+                bean.setDetails(term.getDefinition());
         }
 
         model.addAttribute("bean", bean);
