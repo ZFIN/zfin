@@ -5038,7 +5038,7 @@ where psg_tag != 'normal';
                 datasource="db" query="
 select
 fig_zdb_id,
-mrkr_abbrev || ' expressed in ' || term_name || '; '
+mrkr_abbrev || ' expressed in ' || term_name
 as expression_observation
 from figure, expression_experiment, marker,
      expression_result,expression_pattern_figure, term
@@ -5051,7 +5051,7 @@ where fig_zdb_id=xpatfig_fig_zdb_id
 union
 select
 fig_zdb_id,
-mrkr_abbrev || ' expressed in ' || term_name || '; '
+mrkr_abbrev || ' expressed in ' || term_name
 as expression_observation
 from figure, expression_experiment, marker,
      expression_result,expression_pattern_figure, term

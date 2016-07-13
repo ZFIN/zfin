@@ -206,6 +206,12 @@ table.search-result-snippet {
     border-collapse: collapse;
 }
 
+.snippet-title {
+    font-weight: bold;
+    opacity: .8;
+    padding-top: 10px;
+}
+
 .snippet-label {
     width: 5%;
     padding-right: .25em;

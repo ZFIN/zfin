@@ -765,14 +765,10 @@ public class SearchPrototypeController {
                     if (response.getHighlighting().get(id).get(highlightField) != null) {
                         for (String snippet : response.getHighlighting().get(id).get(highlightField)) {
                             logger.debug("snippet: " + snippet);
-                            //don't show the field name for the "catch-all" field
-                            if (StringUtils.equals(highlightField, "text")) {
-                                highlightSnippets.add("<tr><td class=\"snippet-label\">"
-                                        + "&nbsp;" + "</td><td class=\"snippet-value\"> " + snippet + "</td></tr>");
-                            } else {
-                                highlightSnippets.add("<tr><td class=\"snippet-label\">"
-                                        + SolrService.getPrettyFieldName(highlightField) + "</td><td class=\"snippet-value\"> " + snippet + "</td></tr>");
-                            }
+
+                            highlightSnippets.add("<tr><td class=\"snippet-label\">"
+                                    + SolrService.getPrettyFieldName(highlightField) + "</td><td class=\"snippet-value\"> " + snippet + "</td></tr>");
+
                         }
                     }
                 }

@@ -255,8 +255,9 @@
          <str name="hl">true</str>
          <str name="hl.useFastVectorHighligter">true</str>
          <str name="hl.snippets">2</str>
-         <str name="hl.fragsize">100</str>
-
+         <str name="hl.fragsize">80</str>
+         <str name="f.abstract.hl.fragsize">400</str>
+         <str name="f.abstract.hl.snippets">1</str>
          <str name="hl.phraseLimit">10</str>
 
          <!-- Specifies the maximum number of entries in a multi-valued field to examine before stopping. -->
@@ -274,129 +275,104 @@
           <!-- The sad minimum fallback of dumping everything into a single text field for highlighting: -->
 
           <str name="hl.fl">
-              name
-              category_t
-              type_t
-              full_name_t
-              id_t
-              alias_t
-
-              ortholog_other_species_symbol
-              construct_t
-              construct_name
-
-              marker_abbrev
-
-              ortholog_organism
-              ortholog_other_species_name_t
-              ortholog_organism_t
-
-              disease_model_t
-
-              disease_t
-              omim_id
-
-              phenotype_statement_t
-
-              synonym_phenotype_statement_t
-
-
-              journal journal_t
-              registered_author_t
-
-              author_string
-              author_year
-
-              full_mesh_term_t
-
-              related_accession
-              related_marker
-              affected_gene_t
-
-              labeled_anatomy_hl
-              labeled_anatomy_parent_hl
-              labeled_cellular_component_hl
-              expression_anatomy_hl
-              expressed_in_hl
+              abstract
               affected_anatomy_hl
-              anatomy_hl
-              phenotype_quality_hl
-              molecular_function_hl
-              biological_process_hl
-              cellular_component_hl
-
-              affected_molecular_function_hl
               affected_biological_process_hl
               affected_cellular_component_hl
-
-              sequence_targeting_reagent_t
-
-              genotype_full_name
-
+              affected_gene
+              affected_gene_full_name
+              affected_gene_previous_name
+              affected_gene_t
+              affected_molecular_function_hl
+              alias_t
+              allele
+              allele_t
+              anatomy_hl
               antigen_gene
               antigen_gene_full_name
               antigen_gene_previous_name
-
+              attributed_publication
+              author_string
+              author_year
+              background background_t
+              biography
+              biological_process_hl
+              caption
+              category_t
+              cellular_component_hl
+              chromosome
+              clone
+              coding_sequence
+              coding_sequence_full_name
+              construct_name
+              construct_t
+              definition
+              disease_model_t
+              disease_t
+              email_address
+              engineered_region_full_name
+              expressed_gene
+              expressed_gene_full_name
+              expressed_gene_previous_name
+              expressed_in_hl
+              expression_anatomy_hl
+              expression_observation
+              full_mesh_term_t
+              full_name_t
               gene
               gene_full_name
               gene_previous_name
-
-              zebrafish_gene
-              zebrafish_gene_full_name
-              zebrafish_gene_previous_name
-
+              genotype_full_name
+              id_t
+              inserted_in_gene
+              inserted_in_gene_full_name
+              inserted_in_gene_previous_name
+              institution_t
+              journal
+              journal_t
+              lab_member_name
+              lab_of_origin
+              labeled_anatomy_hl
+              labeled_anatomy_parent_hl
+              labeled_cellular_component_hl
+              marker_abbrev
+              misexpressed_gene
+              molecular_function_hl
+              mutagen
+              name
+              note
+              omim_id
+              ortholog_organism
+              ortholog_organism_t
+              ortholog_other_species_name_t
+              ortholog_other_species_symbol
+              phenotype_quality_hl
+              phenotype_statement_t
+              postal_address
+              prefix
+              probe
+              promoter_full_name
+              registered_author_t
+              regulatory_region
+              related_accession
+              related_accession
+              related_gene_symbol
+              related_marker
+              related_marker
               reporter_gene
               reporter_gene_full_name
               reporter_gene_previous_name
-
-              affected_gene_full_name
-              affected_gene_previous_name
-              affected_gene
-
-              expressed_gene_full_name
-              expressed_gene_previous_name
-              expressed_gene
-              misexpressed_gene
-              inserted_in_gene_full_name
-              inserted_in_gene_previous_name
-              inserted_in_gene
-              regulatory_region
-              coding_sequence
-              promoter_full_name
-              coding_sequence_full_name
-              engineered_region_full_name
+              rna_consequence
+              sequence_alteration
+              sequence_targeting_reagent_t
+              synonym_phenotype_statement_t
               targeted_gene
               targeted_gene_full_name
               targeted_gene_previous_name
-
-              clone
-              probe
-              related_gene_symbol
-
-              expression_observation
-              prefix
-              institution_t
-              lab_of_origin
-              rna_consequence
-              related_accession
-              related_marker
-              allele_t
-              background background_t
-              sequence_alteration
-              probe
-              mutagen
-              allele
-              chromosome
-              person_name
-              lab_member_name
-              email_address
-              postal_address
-              note
-              caption
-              abstract
-              biography
-              definition
-              attributed_publication
+              type_t
+              zebrafish_gene
+              zebrafish_gene_full_name
+              zebrafish_gene_previous_name
           </str>
 
 
