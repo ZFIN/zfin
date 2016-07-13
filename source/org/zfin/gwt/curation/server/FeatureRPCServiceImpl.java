@@ -523,9 +523,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
     private void saveFeatureSequence(String sequence, Publication publication, Feature feature) throws ValidationException {
-        // only upper case letters and numerals
-        if (!sequence.matches("[A-Z0-9_]*"))
-            throw new ValidationException("Invalid accession number / sequence: Only upper case letters and numerals allowed");
         FeatureDBLink featureDBLink = new FeatureDBLink();
         featureDBLink.setFeature(feature);
         featureDBLink.setAccessionNumber(sequence);
