@@ -5,18 +5,19 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-  <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/createGap1LoadTable.sql"/>  
-<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/loadGap1SingleFromCsvA.xml"/>  
-<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/loadGap1SingleFromCsvB.xml"/>  
-<!--<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/loadGap1SingleFromCsvB.xml"/>  -->
-<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/convertConditions.sql"/> 
-<!--<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/dropGap1LoadTable.sql"/> 
-<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/createGap1LoadDupTable.sql"/>  
-<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/loadGap1DupsFromCsv.xml"/>  
-<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/splitConditions.sql"/> -->
-<!--<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/test.xml"/>
-<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/dropGap1LoadDupTable.sql"/> -->
-<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/14329.sql"/>
-<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/14374.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/createGap1LoadTable.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/loadGap1SingleFromCsvA.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/loadGap1SingleFromCsvB.xml"/>
+    <!--<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/loadGap1SingleFromCsvB.xml"/>  -->
+    <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/convertConditions.sql"/>
+    <!--<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/dropGap1LoadTable.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/createGap1LoadDupTable.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/loadGap1DupsFromCsv.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/splitConditions.sql"/> -->
+    <!--<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/test.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/dropGap1LoadDupTable.sql"/> -->
+    <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/14329.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/14329a.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/14374.sql"/>
 
 </databaseChangeLog>
