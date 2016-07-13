@@ -6,7 +6,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 
-<changeSet author="sierra" id="gap1SingleLoad">
+<changeSet author="sierra" id="gap1SingleLoadA">
     <loadData
             file="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/1079/titanic/segmentaa"
             catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_gap_tt" quotchar="A String" encoding="UTF-8" >
@@ -14,7 +14,6 @@
 	<column name="zecoId" type="String"/>
 	<column name="goccId" type="String"/>
 	<column name="cztId" type="String"/>
-	<column name="extra" type="String"/>
 </loadData>
 </changeSet>
 </databaseChangeLog>
