@@ -123,7 +123,6 @@
     <div style="display: block; position: absolute; top: 125px; right: 50px; color: #666; font-size: 9px;">
 
             <authz:authorize access="hasRole('root')">
-                <a href="${baseUrl}&hl=true">highlight</a>
                 <a href="${baseUrl}&explain=true">debug</a>
             </authz:authorize>
 
