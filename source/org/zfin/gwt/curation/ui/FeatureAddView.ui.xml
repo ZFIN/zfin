@@ -93,7 +93,7 @@
                 </g:customCell>
             </g:row>
             <g:row>
-                <g:cell styleName="{style.grey-background}">Accession</g:cell>
+                <g:cell styleName="{style.grey-background}">Feature Accession</g:cell>
                 <g:customCell>
                     <zfin:ZfinAccessionBox ui:field="featureSequenceBox" type="DNA"/>
                 </g:customCell>
