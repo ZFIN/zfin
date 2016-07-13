@@ -1,12 +1,13 @@
 package org.zfin.figure.service
-import org.zfin.AbstractZfinIntegrationSpec
+
+import org.springframework.beans.factory.annotation.Autowired
+import org.zfin.ZfinIntegrationSpec
 import org.zfin.anatomy.DevelopmentStage
 import org.zfin.expression.Figure
 import org.zfin.figure.FigureData
 import org.zfin.figure.presentation.AntibodyTableRow
 import org.zfin.figure.presentation.ExpressionTableRow
 import org.zfin.figure.presentation.PhenotypeTableRow
-import org.zfin.marker.Marker
 import org.zfin.mutant.Fish
 import org.zfin.mutant.PhenotypeWarehouse
 import org.zfin.repository.RepositoryFactory
@@ -15,10 +16,10 @@ import spock.lang.Unroll
 
 import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository
 
-class FigureViewServiceSpec extends AbstractZfinIntegrationSpec {
+class FigureViewServiceSpec extends ZfinIntegrationSpec {
 
-    @Shared
-    FigureViewService figureViewService = new FigureViewService()
+    @Autowired
+    FigureViewService figureViewService
 
     @Shared
     def figures = FigureData.figures

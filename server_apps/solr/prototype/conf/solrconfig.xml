@@ -655,31 +655,43 @@
 
              labeled_anatomy_direct^1.1
              labeled_anatomy_parent^1.0
+             labeled_anatomy_t
              labeled_cellular_component_direct^1.1
              labeled_cellular_component_parent^1.0
              expression_anatomy_direct^1.1
              expression_anatomy_parent^1.0
+             expression_anatomy_t
              expressed_in_direct^1.0
              expressed_in_parent^1.0
+             expressed_in_t^1.0
              affected_anatomy_direct^1.1
              affected_anatomy_parent^1.0
+             affected_anatomy_t
              anatomy_direct^1.1
              anatomy_parent^1.0
+             anatomy_t
              phenotype_quality_direct^1.1
              phenotype_quality_parent^1.0
+             phenotype_quality_t
              molecular_function_direct^1.1
              molecular_function_direct^1.0
+             molecular_function_t
              biological_process_direct^1.1
              biological_process_parent^1.0
+             biological_process_t
              cellular_component_direct^1.1
              cellular_component_parent^1.0
+             cellular_component_t
 
              affected_molecular_function_direct^1.1
              affected_molecular_function_direct^1.0
+             affected_molecular_t
              affected_biological_process_direct^1.1
              affected_biological_process_parent^1.0
+             affected_biological_t
              affected_cellular_component_direct^1.1
              affected_cellular_component_parent^1.0
+             affected_cellular_t
 
              sequence_targeting_reagent
              sequence_targeting_reagent_t

@@ -2613,7 +2613,8 @@ select
                    where="pg_id=phenotype.id"/>
 
            <entity name="phenotype_synonym_phenotype_observation_generated"
-                   datasource="db" query="select dalias_alias || ' ' || entity1a.term_name as synonym_phenotype_statement, 'pg-' || pg_id as pg_id
+                   datasource="db" query="select dalias_alias || ' ' || entity1a.term_name as synonym_phenotype_statement,
+                                                 'pg-' || pg_id as pg_id
                             from phenotype_observation_generated ps, phenotype_source_generated, data_alias, term entity1a
                             where dalias_data_zdb_id = psg_quality_zdb_id
                              and term_zdb_id = psg_e1a_zdb_id
