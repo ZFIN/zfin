@@ -9,7 +9,7 @@
 <changeSet author="sierra" id="zecoLoadTempTable">
     <loadData
             file="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/processed.txt"
-            catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_zeco_tt" quotchar="A String" encoding="UTF-8" >
+            catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_zeco_tt"  encoding="UTF-8" >
         <column name="expid" type="String"/>
         <column name="cdtid" type="String"/>
         <column name="zecoid" type="String"/>

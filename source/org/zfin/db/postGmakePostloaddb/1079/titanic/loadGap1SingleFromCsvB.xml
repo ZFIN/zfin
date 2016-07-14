@@ -9,7 +9,7 @@
 <changeSet author="sierra" id="gap1SingleLoadB">
     <loadData
             file="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/1079/titanic/segmentab"
-            catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_gap_tt" quotchar="A String" encoding="UTF-8" >
+            catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_gap_tt"  encoding="UTF-8" >
         <column name="expcondId" type="String"/>
 	<column name="zecoId" type="String"/>
 	<column name="goccId" type="String"/>
