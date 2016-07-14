@@ -7,6 +7,7 @@ import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.OrganizationDTO;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
+import com.google.gwt.user.client.Window;
 
 import java.util.List;
 
@@ -114,6 +115,7 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                         view.labDesignationBox.clear();
                         boolean hasZf = false;
                         for (FeaturePrefixDTO featurePrefixDTO : labPrefixList) {
+
                             if (hasZf || featurePrefixDTO.getPrefix().equals(ZF_PREFIX)) {
                                 hasZf = true;
                             }
@@ -122,13 +124,15 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                             } else {
                                 view.labDesignationBox.addItem(featurePrefixDTO.getPrefix());
                             }
-                            view.labDesignationBox.addItem(featurePrefixDTO.getPrefix());
+                            //view.labDesignationBox.addItem(featurePrefixDTO.getPrefix());
                         }
                         // always has zf
                         if (!hasZf) {
+
                             view.labDesignationBox.addItem(ZF_PREFIX);
                         }
                         if (labPrefix != null)
+
                             view.labDesignationBox.setIndexForValue(dto.getLabPrefix());
                         handleDirty();
                         clearError();
