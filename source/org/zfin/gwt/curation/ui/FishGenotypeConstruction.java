@@ -178,6 +178,7 @@ public class FishGenotypeConstruction extends Composite {
     void onStrClick(@SuppressWarnings("unused") ChangeEvent event) {
         if (strSelectionBox.getSelectedIndex() != 0)
             presenter.onStrClick(strSelectionBox.getSelectedIndex());
+        strSelectionBox.setSelectedIndex(0);
     }
 
     @UiHandler("backgroundListBox")

@@ -175,6 +175,10 @@ public class FishGenotypeConstructionPresenter implements Presenter {
     }
 
     private boolean isValidFishGenotype() {
+        if (newStrList.size() == 0 && genotypeFeatureDTOList.size() == 0 && backgroundGenoList.size() == 0) {
+            view.errorLabel.setError("You have to specify either a list of features w/o STRs and background or only a list of STRs with a single background");
+            return false;
+        }
         if (newStrList.size() > 0 && genotypeFeatureDTOList.size() == 0 && backgroundGenoList.size() == 0) {
             view.errorLabel.setError("A list of STRs either have to be combined with one or more features or one background genotype");
             return false;
@@ -204,6 +208,8 @@ public class FishGenotypeConstructionPresenter implements Presenter {
             public void onClick(ClickEvent clickEvent) {
                 newStrList.remove(str);
                 view.setFishGenotypeInfo(genotypeFeatureDTOList, backgroundGenoList, newStrList);
+                handleDirty();
+                view.strSelectionBox.setSelectedIndex(0);
             }
         });
     }
