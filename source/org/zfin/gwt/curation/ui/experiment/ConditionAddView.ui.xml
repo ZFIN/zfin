@@ -21,11 +21,11 @@
                 <g:row styleName="table-header">
                     <g:customCell>
                         <g:SimplePanel width="100%" height="100%" styleName="{style.copyCheckBox}">
-                            <g:Label text="Copy" styleName="bold" horizontalAlignment="left"/>
+                            <g:Label text="Experiment Name" styleName="bold" horizontalAlignment="left"/>
                         </g:SimplePanel>
                     </g:customCell>
                     <g:customCell>
-                        <g:Label text="Experiment Name" styleName="bold" horizontalAlignment="left"/>
+                        <g:Label text="Copy" styleName="bold" horizontalAlignment="left"/>
                     </g:customCell>
                     <g:customCell>
                         <g:Label text="Condition" styleName="bold" horizontalAlignment="left"/>

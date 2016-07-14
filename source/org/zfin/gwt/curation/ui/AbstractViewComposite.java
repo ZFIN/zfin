@@ -21,7 +21,7 @@ public abstract class AbstractViewComposite extends Composite {
     protected MutationDetailPresenter presenter;
 
     @UiField
-    SimpleErrorElement errorLabel;
+    public SimpleErrorElement errorLabel;
 
     public void setError(String message) {
         errorLabel.setText(message);

@@ -1,4 +1,4 @@
-package org.zfin.gwt.curation.ui;
+package org.zfin.gwt.curation.ui.experiment;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -8,6 +8,7 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.curation.event.*;
+import org.zfin.gwt.curation.ui.AttributionModule;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.event.SelectAutoCompleteEvent;
 import org.zfin.gwt.root.event.SelectAutoCompleteEventHandler;

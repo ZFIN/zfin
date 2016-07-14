@@ -7,7 +7,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.curation.ui.ExperimentRPCService;
+import org.zfin.gwt.curation.ui.experiment.ExperimentRPCService;
 import org.zfin.gwt.root.dto.ConditionDTO;
 import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.TermNotFoundException;

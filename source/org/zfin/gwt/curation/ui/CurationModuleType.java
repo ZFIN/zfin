@@ -1,5 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
+import org.zfin.gwt.curation.ui.experiment.ExperimentModule;
+
 /**
  * Each module that is served by the CurationEntryPoint has a corresponding
  * enumeration entry here.

@@ -1,4 +1,4 @@
-package org.zfin.gwt.curation.ui;
+package org.zfin.gwt.curation.ui.experiment;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -90,7 +90,7 @@ public class ConditionAddPresenter implements HandlesError {
                 });
                 copyConditionsCheckBoxList.add(checkBox);
                 view.addCopyCheckBox(checkBox, elementIndex);
-                DeleteImage deleteImage = new DeleteImage("Delete Note " + conditionDTO.getZdbID());
+                DeleteImage deleteImage = new DeleteImage("Delete Experiment Condition " + conditionDTO.getZdbID());
                 deleteImage.addClickHandler(new DeleteConditionClickHandler(conditionDTO, this));
                 view.addDeleteButton(deleteImage, elementIndex);
                 elementIndex++;
@@ -103,8 +103,12 @@ public class ConditionAddPresenter implements HandlesError {
         view.addZeco();
         int row = 1;
         for (TermEntry termEntry : visibilityMap.keySet()) {
-            if (visibilityMap.get(termEntry))
+            if (visibilityMap.get(termEntry)) {
                 view.addTermEntry(termEntry, row++);
+                termEntry.setVisible(true);
+            } else {
+                termEntry.setVisible(false);
+            }
         }
         view.addControls(row);
     }
@@ -225,11 +229,27 @@ public class ConditionAddPresenter implements HandlesError {
             view.loadingImage.setVisible(false);
             return;
         }
+        String message = validatePostCompositions();
+        if (message != null) {
+            setError(message);
+            view.loadingImage.setVisible(false);
+            return;
+        }
 
         ConditionDTO conditionDTO = getConditionFromFrom();
         view.clearError();
         ExperimentRPCService.App.getInstance().createCondition(publicationID, conditionDTO,
                 new ExperimentListCallBack(true, "Failed to save condition: "));
+    }
+
+    private String validatePostCompositions() {
+        if (!view.aoTermEntry.getTermTextBox().hasValidateTerm() && view.aoTermEntry.isVisible())
+            return "Zeco term requires an AO term ";
+        if (!view.chebiTermEntry.getTermTextBox().hasValidateTerm() && view.chebiTermEntry.isVisible())
+            return "Zeco term requires a Chebi term ";
+        if (!view.taxonTermEntry.getTermTextBox().hasValidateTerm() && view.taxonTermEntry.isVisible())
+            return "Zeco term requires a taxonomy term ";
+        return null;
     }
 
     private boolean formIsValidated() {

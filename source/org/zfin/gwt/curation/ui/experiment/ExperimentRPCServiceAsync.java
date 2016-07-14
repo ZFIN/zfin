@@ -1,4 +1,4 @@
-package org.zfin.gwt.curation.ui;
+package org.zfin.gwt.curation.ui.experiment;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.root.dto.ConditionDTO;

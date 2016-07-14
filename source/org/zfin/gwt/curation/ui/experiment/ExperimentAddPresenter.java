@@ -1,4 +1,4 @@
-package org.zfin.gwt.curation.ui;
+package org.zfin.gwt.curation.ui.experiment;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -58,7 +58,7 @@ public class ExperimentAddPresenter implements HandlesError {
             view.addDeleteButton(dto, deleteImage, elementIndex);
             final Button updateButton = new Button();
             updateButton.addClickHandler(new UpdateExperimentClickHandler(dto, experimentTextBox));
-            view.addUpdateButton(dto, updateButton, elementIndex);
+            view.addUpdateButton(updateButton, elementIndex);
             elementIndex++;
         }
         view.addConstructionRow(elementIndex);

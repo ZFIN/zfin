@@ -1,4 +1,4 @@
-package org.zfin.gwt.curation.ui;
+package org.zfin.gwt.curation.ui.experiment;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -7,6 +7,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
+import org.zfin.gwt.curation.ui.AbstractViewComposite;
 import org.zfin.gwt.root.dto.ConditionDTO;
 import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.ui.*;
@@ -94,13 +95,13 @@ public class ConditionAddView extends AbstractViewComposite {
         dataTable.resizeRows(elementIndex + 2);
         int row = elementIndex + 1;
         int col = 0;
-        dataTable.setText(row, col++, "");
-        dataTable.getColumnFormatter().setWidth(0, "20px");
-        dataTable.getColumnFormatter().setWidth(1, "150px");
+        dataTable.getColumnFormatter().setWidth(1, "20px");
+        dataTable.getColumnFormatter().setWidth(0, "150px");
         if (lastCondition == null || !lastCondition.getEnvironmentZdbID().equals(dto.getEnvironmentZdbID()))
             dataTable.setText(row, col++, experimentDTO.getName());
         else
             dataTable.setText(row, col++, "");
+        dataTable.setText(row, col++, "");
         dataTable.setText(row, col, dto.getName());
 
         String lastID = null;
@@ -133,8 +134,8 @@ public class ConditionAddView extends AbstractViewComposite {
 
     public void addCopyControlsPanel() {
         controlTable.resizeRows(1);
-        controlTable.setWidget(0, 0, copyControlsPanel);
-        controlTable.setText(0, 1, "");
+        controlTable.setWidget(0, 1, copyControlsPanel);
+        controlTable.setText(0, 0, "");
         controlTable.setText(0, 2, "");
     }
 
@@ -145,7 +146,7 @@ public class ConditionAddView extends AbstractViewComposite {
 
     public void addCopyCheckBox(CheckBox checkBox, int elementIndex) {
         int row = elementIndex + 1;
-        dataTable.setWidget(row, 0, checkBox);
+        dataTable.setWidget(row, 1, checkBox);
     }
 
 
