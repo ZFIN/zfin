@@ -9,7 +9,7 @@
 <changeSet author="sierra" id="gap1DupLoad">
     <loadData
             file="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/1079/titanic/tt_gap1_dup.csv"
-            catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_gap_dup_tt" quotchar="A String" encoding="UTF-8" >
+            catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_gap_dup_tt"  encoding="UTF-8" >
         <column name="expcondId" type="String"/>
 	<column name="expId" type="String"/>
 	<column name="cdtId" type="String"/>
