@@ -1,5 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
+
 import org.zfin.gwt.curation.event.AddNewFeatureEvent;
 import org.zfin.gwt.root.dto.CuratorNoteDTO;
 import org.zfin.gwt.root.dto.FeatureDTO;
@@ -9,6 +10,7 @@ import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StringUtils;
+import com.google.gwt.user.client.Window;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,12 +61,15 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
     }
 
     public void onLabOfOriginChange(String labOfOriginSelected) {
+
         FeatureRPCService.App.getInstance().getPrefix(labOfOriginSelected,
                 new FeatureEditCallBack<List<FeaturePrefixDTO>>("Failed to load lab prefixes", this) {
 
                     @Override
                     public void onSuccess(List<FeaturePrefixDTO> labPrefixList) {
+
                         view.labDesignationBox.clear();
+                     //   Window.alert("from FeatureAddPr");
                         boolean hasZf = false;
                         for (FeaturePrefixDTO featurePrefixDTO : labPrefixList) {
                             if (hasZf || featurePrefixDTO.getPrefix().equals(ZF_PREFIX)) {
@@ -75,11 +80,13 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
                             } else {
                                 view.labDesignationBox.addItem(featurePrefixDTO.getPrefix());
                             }
-                            view.labDesignationBox.addItem(featurePrefixDTO.getPrefix());
+                         //   view.labDesignationBox.addItem(featurePrefixDTO.getPrefix());
+                           // Window.alert("from FeatureAddPr2");
                         }
                         // always has zf
                         if (!hasZf) {
                             view.labDesignationBox.addItem(ZF_PREFIX);
+                          //  Window.alert("from FeatureAddPr1");
                         }
                         view.labDesignationBox.setIndexForValue(dto.getLabPrefix());
                         handleDirty();
