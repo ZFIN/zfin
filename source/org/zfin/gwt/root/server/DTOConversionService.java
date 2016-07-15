@@ -905,7 +905,7 @@ public class DTOConversionService {
             dto.setFigure(convertToFigureDTO(mutantFigureStage.getFigure()));
         }
         dto.setPublicationID(figure.getPublication().getZdbID());
-        dto.setEnvironment(convertToEnvironmentDTO(mutantFigureStage.getFishExperiment().getExperiment()));
+        dto.setEnvironment(convertToExperimentDTO(mutantFigureStage.getFishExperiment().getExperiment()));
         dto.setStart(convertToStageDTO(mutantFigureStage.getStartStage()));
         dto.setEnd(convertToStageDTO(mutantFigureStage.getEndStage()));
         dto.setFish(convertToFishDtoFromFish(mutantFigureStage.getFishExperiment().getFish()));
@@ -1157,7 +1157,7 @@ public class DTOConversionService {
      * @param experiment Experiment
      * @return environmentDTO
      */
-    public static ExperimentDTO convertToEnvironmentDTO(Experiment experiment) {
+    public static ExperimentDTO convertToExperimentDTO(Experiment experiment) {
         ExperimentDTO environment = new ExperimentDTO();
 
         environment.setZdbID(experiment.getZdbID());
@@ -1223,7 +1223,7 @@ public class DTOConversionService {
         environment.setIsUsedInDisease(false);
         environment.setIsUsedInExpression(false);
         environment.setIsUsedInPhenotype(false);
-        convertToEnvironmentDTO(experiment);
+        convertToExperimentDTO(experiment);
 
         if (CollectionUtils.isNotEmpty(RepositoryFactory.getExpressionRepository().getExpressionByExperiment(experiment.getZdbID()))) {
             environment.setIsUsedInExpression(true);
@@ -1279,7 +1279,7 @@ public class DTOConversionService {
         }
         experimentDTO.setFishName(experiment.getFishExperiment().getFish().getHandle());
         experimentDTO.setFishID(experiment.getFishExperiment().getFish().getZdbID());
-        experimentDTO.setEnvironment(convertToEnvironmentDTO(experiment.getFishExperiment().getExperiment()));
+        experimentDTO.setEnvironment(convertToExperimentDTO(experiment.getFishExperiment().getExperiment()));
         experimentDTO.setAssay(experiment.getAssay().getName());
         experimentDTO.setAssayAbbreviation(experiment.getAssay().getAbbreviation());
         experimentDTO.setGenotypeExperimentID(experiment.getFishExperiment().getZdbID());
@@ -1644,7 +1644,7 @@ public class DTOConversionService {
 
     public static DiseaseAnnotationModelDTO convertDamoToDamoDTO(DiseaseAnnotationModel str) {
         DiseaseAnnotationModelDTO entity = new DiseaseAnnotationModelDTO();
-        entity.setEnvironment(convertToEnvironmentDTO(str.getFishExperiment().getExperiment()));
+        entity.setEnvironment(convertToExperimentDTO(str.getFishExperiment().getExperiment()));
         entity.setFish(convertToFishDtoFromFish(str.getFishExperiment().getFish()));
         entity.setDamoID(str.getID());
 
@@ -1856,7 +1856,7 @@ public class DTOConversionService {
         experimentDTO.setFishName(experiment.getFishExperiment().getFish().getHandle());
         experimentDTO.setFishID(experiment.getFishExperiment().getFish().getZdbID());
         experimentDTO.setFishDTO(convertToFishDtoFromFish(experiment.getFishExperiment().getFish()));
-        experimentDTO.setEnvironment(convertToEnvironmentDTO(experiment.getFishExperiment().getExperiment()));
+        experimentDTO.setEnvironment(convertToExperimentDTO(experiment.getFishExperiment().getExperiment()));
         experimentDTO.setAssay(experiment.getAssay().getName());
         experimentDTO.setAssayAbbreviation(experiment.getAssay().getAbbreviation());
         experimentDTO.setGenotypeExperimentID(experiment.getFishExperiment().getZdbID());

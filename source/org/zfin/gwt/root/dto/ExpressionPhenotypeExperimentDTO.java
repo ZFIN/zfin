@@ -9,7 +9,7 @@ import org.zfin.gwt.root.util.NumberAwareStringComparatorDTO;
 public class ExpressionPhenotypeExperimentDTO extends AbstractFigureStageDTO<ExpressionPhenotypeStatementDTO> implements Comparable<ExpressionPhenotypeExperimentDTO> {
 
     private FishDTO fish;
-    private ExperimentDTO environment;
+    private ExperimentDTO experiment;
 
     public FishDTO getFish() {
         return fish;
@@ -19,12 +19,12 @@ public class ExpressionPhenotypeExperimentDTO extends AbstractFigureStageDTO<Exp
         this.fish = fish;
     }
 
-    public ExperimentDTO getEnvironment() {
-        return environment;
+    public ExperimentDTO getExperiment() {
+        return experiment;
     }
 
-    public void setEnvironment(ExperimentDTO environment) {
-        this.environment = environment;
+    public void setExperiment(ExperimentDTO experiment) {
+        this.experiment = experiment;
     }
 
     public int compareTo(ExpressionPhenotypeExperimentDTO efs) {
@@ -44,8 +44,8 @@ public class ExpressionPhenotypeExperimentDTO extends AbstractFigureStageDTO<Exp
         }
         if (!fish.equals(efs.getFish()))
             return fish.compareTo(efs.getFish());
-        if (!environment.equals(efs.getEnvironment()))
-            return environment.compareTo(efs.getEnvironment());
+        if (!experiment.equals(efs.getExperiment()))
+            return experiment.compareTo(efs.getExperiment());
         if (!start.getName().equals(efs.getStart().getName()))
             return (int) (start.getStartHours() * 10 - efs.getStart().getStartHours() * 10);
         if (!end.getName().equals(efs.getEnd().getName()))
