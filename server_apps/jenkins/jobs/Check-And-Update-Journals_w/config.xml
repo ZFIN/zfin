@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Download, parse and populate NLM journal data into a temp table&#xd;
+Clean up the NLM journal data in that temp table&#xd;
+Fill/update print issn with NLM data based on the same journal title/abbrev&#xd;
+Report the wrong print issn with our data before correcting them&#xd;
+Update other fields with NLM data based by the same print issn&#xd;
+Report possible duplicates with the same print issn but different titles&#xd;
+Report all journals missing issn print&#xd;
+</description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <hudson.triggers.TimerTrigger>
+      <spec></spec>
+    </hudson.triggers.TimerTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <customWorkspace>$TARGETROOT</customWorkspace>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>cd $TARGETROOT/server_apps/data_transfer/PUBMED/Journal &amp;&amp; checkAndUpdateJournals.pl</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>server_apps/data_transfer/PUBMED/Journal/*.txt,server_apps/data_transfer/PUBMED/Journal/*.log</artifacts>
+      <latestOnly>false</latestOnly>
+      <allowEmptyArchive>true</allowEmptyArchive>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
+      <recipientList></recipientList>
+      <configuredTriggers>
+        <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+          <email>
+            <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>${SCRIPT, template=&quot;reportBody.template&quot;}</body>
+            <sendToDevelopers>false</sendToDevelopers>
+            <sendToRequester>false</sendToRequester>
+            <includeCulprits>false</includeCulprits>
+            <sendToRecipientList>true</sendToRecipientList>
+            <attachmentsPattern></attachmentsPattern>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo></replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+        <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+          <email>
+            <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <sendToDevelopers>false</sendToDevelopers>
+            <sendToRequester>false</sendToRequester>
+            <includeCulprits>false</includeCulprits>
+            <sendToRecipientList>true</sendToRecipientList>
+            <attachmentsPattern></attachmentsPattern>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+      </configuredTriggers>
+      <contentType>text/html</contentType>
+      <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
+      <defaultContent>$DEFAULT_CONTENT</defaultContent>
+      <attachmentsPattern>server_apps/data_transfer/PUBMED/Journal/*.txt,server_apps/data_transfer/PUBMED/Journal/*.log</attachmentsPattern>
+      <presendScript></presendScript>
+      <attachBuildLog>false</attachBuildLog>
+      <compressBuildLog>false</compressBuildLog>
+      <replyTo>${DB_OWNER}@zfin.org</replyTo>
+      <saveOutput>false</saveOutput>
+    </hudson.plugins.emailext.ExtendedEmailPublisher>
+  </publishers>
+  <buildWrappers>
+    <EnvInjectBuildWrapper plugin="envinject@1.89">
+      <info>
+        <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
+        <loadFilesFromMaster>false</loadFilesFromMaster>
+      </info>
+    </EnvInjectBuildWrapper>
+  </buildWrappers>
+</project>
