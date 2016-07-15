@@ -135,7 +135,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             }
             experimentDTO.setFishName(experiment.getFishExperiment().getFish().getHandle());
             experimentDTO.setFishID(experiment.getFishExperiment().getFish().getZdbID());
-            experimentDTO.setEnvironment(DTOConversionService.convertToEnvironmentDTO(experiment.getFishExperiment().getExperiment()));
+            experimentDTO.setEnvironment(DTOConversionService.convertToExperimentDTO(experiment.getFishExperiment().getExperiment()));
             experimentDTO.setAssay(experiment.getAssay().getName());
             // check if there are expressions associated
             Set<ExpressionResult> expressionResults = experiment.getExpressionResults();
@@ -182,7 +182,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         List<Experiment> experiments = pubRepository.getExperimentsByPublication(publicationID);
         List<ExperimentDTO> assayDtos = new ArrayList<>();
         for (Experiment experiment : experiments) {
-            ExperimentDTO env = DTOConversionService.convertToEnvironmentDTO(experiment);
+            ExperimentDTO env = DTOConversionService.convertToExperimentDTO(experiment);
             assayDtos.add(env);
         }
 

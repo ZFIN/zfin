@@ -68,7 +68,7 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
             dto.setExpressedTerms(termStrings);
             FishDTO fishDTO = DTOConversionService.convertToFishDtoFromFish(phenotypeExperiment.getFishExperiment().getFish());
             dto.setFish(fishDTO);
-            dto.setEnvironment(DTOConversionService.convertToEnvironmentDTO(phenotypeExperiment.getFishExperiment().getExperiment()));
+            dto.setEnvironment(DTOConversionService.convertToExperimentDTO(phenotypeExperiment.getFishExperiment().getExperiment()));
             dto.setPublicationID(experimentFilter.getPublicationID());
             dtos.add(dto);
         }

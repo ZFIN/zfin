@@ -856,8 +856,8 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             Label fish = new Label(eapexpression.getFish().getHandle());
             fish.setTitle(eapexpression.getFish().getZdbID());
             eapTable.setWidget(eapRowIndex, HeaderName.FISH.getIndex(), fish);
-            Widget environment = new Label(eapexpression.getEnvironment().getName());
-            environment.setTitle(eapexpression.getEnvironment().getZdbID());
+            Widget environment = new Label(eapexpression.getExperiment().getName());
+            environment.setTitle(eapexpression.getExperiment().getZdbID());
             eapTable.setWidget(eapRowIndex, HeaderName.ENVIRONMENT.getIndex(), environment);
             eapTable.setText(eapRowIndex, HeaderName.STAGE_RANGE.getIndex(), eapexpression.getStageRange());
             Widget eapTerms = createEapList(eapexpression);
