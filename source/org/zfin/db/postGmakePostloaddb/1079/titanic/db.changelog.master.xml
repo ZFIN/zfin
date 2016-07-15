@@ -15,6 +15,7 @@
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/splitConditions.sql"/> 
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/dropGap1LoadDupTable.sql"/> 
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/14329.sql"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/14329a.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/14374.sql"/>
 
 </databaseChangeLog>
