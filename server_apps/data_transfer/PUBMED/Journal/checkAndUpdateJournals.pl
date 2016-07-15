@@ -23,8 +23,6 @@ print "$dbname\n\n";
 
 #remove old report and log files
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/*.txt");
-system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/*.log");
-
 
 system("/local/bin/wget ftp://ftp.ncbi.nih.gov/pubmed/J_Medline.txt");
 
@@ -79,7 +77,7 @@ close ALLJOURNALS;
 close NCBIJOURNALS;
 
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> checkAndUpdateJournals.sql >checkAndUpdateJournals.log 2> checkAndUpdateJournalsSQLError.log") && die "checking and updating journals failed.";
+system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> checkAndUpdateJournals.sql") && die "Checking and updating journals failed.";
 
 exit;
 

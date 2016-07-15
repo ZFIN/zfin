@@ -18,7 +18,7 @@ create temp table tmp_ncbi_journals (
   nlmID varchar(100))
 with no log;
 
-load from <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/journalsFromNCBI.txt
+load from <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/journalsFromNCBI.txt
   insert into tmp_ncbi_journals;
 
 select count(*) as noIssn from tmp_ncbi_journals where issnPrint is null;
@@ -39,7 +39,7 @@ group by j1.issnPrint, j1.title, j1.nlmID
 order by j1.issnPrint, j1.title, j1.nlmID
 into temp duplJournalsNCBI;
 
-unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/duplJournalsNCBI.txt select * from duplJournalsNCBI; 
+unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/duplJournalsNCBI.txt select * from duplJournalsNCBI; 
 
 -- get rid of the NLM data with duplicated issn print
 
@@ -57,7 +57,7 @@ select t1.title, t1.issnPrint, t1.nlmID
   order by t1.title, t1.issnPrint, t1.nlmID
 into temp sameTitleNCBIjournals;
 
-unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/duplTitlesNCBI.txt select * from sameTitleNCBIjournals;
+unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/duplTitlesNCBI.txt select * from sameTitleNCBIjournals;
 
 -- get rid of the NLM data with duplicated titles
 
@@ -75,7 +75,7 @@ select t1.medAbbr, t1.issnPrint, t1.nlmID
   order by t1.medAbbr, t1.issnPrint, t1.nlmID
 into temp sameMedAbbrNCBIjournals;
 
-unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/duplTitlesNCBI.txt select * from sameMedAbbrNCBIjournals;
+unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/duplTitlesNCBI.txt select * from sameMedAbbrNCBIjournals;
 
 -- get rid of the NLM data with duplicated MedAbbr
 
@@ -93,7 +93,7 @@ select t1.isoAbbr, t1.issnPrint, t1.nlmID
   order by t1.isoAbbr, t1.issnPrint, t1.nlmID
 into temp sameIsoAbbrNCBIjournals;
 
-unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/duplTitlesNCBI.txt select * from sameIsoAbbrNCBIjournals;
+unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/duplTitlesNCBI.txt select * from sameIsoAbbrNCBIjournals;
 
 -- get rid of the NLM data with duplicated IsoAbbr
 
@@ -163,7 +163,7 @@ into temp wrongIssnPrint;
 
 -- dump the issn print that disagree with NLM (same title, different issn print)
 
-unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/wrongIssnPrint.txt select * from wrongIssnPrint;
+unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrint.txt select * from wrongIssnPrint;
 
 select j1.jrnl_zdb_id as journalZdbID, j1.jrnl_abbrev, j1.jrnl_print_issn, issnPrint, j1.jrnl_name, nlmID
   from journal j1, tmp_ncbi_journals
@@ -199,7 +199,7 @@ into temp wrongIssnPrintByIsoAbbr;
 
 -- dump the issn print that disagree with NLM (same abbrev/isoAbbr, different issn print)
 
-unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/wrongIssnPrintByIsoAbbr.txt select * from wrongIssnPrintByIsoAbbr;
+unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByIsoAbbr.txt select * from wrongIssnPrintByIsoAbbr;
 
 select j1.jrnl_print_issn, j1.jrnl_zdb_id, j1.jrnl_name, j1.jrnl_online_issn, j1.jrnl_abbrev, j1.jrnl_nlmid
   from journal j1
@@ -213,7 +213,7 @@ into temp duplJournalsByIssnPrintBeforeUpdatingIssn;
 
 -- report the possible duplicates (same issn print, different zdb id) before updating issn print
 
-unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/duplicateJournalsBeforeUpdatingIssn.txt select * from duplJournalsByIssnPrintBeforeUpdatingIssn;
+unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/duplicateJournalsBeforeUpdatingIssn.txt select * from duplJournalsByIssnPrintBeforeUpdatingIssn;
 
 -- update journal issn print to the value of NLM based on same title
 
@@ -328,11 +328,11 @@ group by j1.jrnl_print_issn, j1.jrnl_name, j1.jrnl_abbrev, j1.jrnl_zdb_id, j1.jr
 order by j1.jrnl_print_issn, j1.jrnl_name, j1.jrnl_abbrev
 into temp duplJournalsByIssnPrint;    
 
-unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/duplicateJournals.txt select * from duplJournalsByIssnPrint;
+unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/duplicateJournals.txt select * from duplJournalsByIssnPrint;
 
 -- report journals missing issn print
 
-unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/journalsMissingIssnPrint.txt 
+unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/journalsMissingIssnPrint.txt 
 select jrnl_zdb_id, jrnl_name, jrnl_abbrev
   from journal
  where jrnl_print_issn is null                            
