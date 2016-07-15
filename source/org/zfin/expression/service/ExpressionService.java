@@ -12,7 +12,6 @@ import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.gwt.root.dto.ExpressionPhenotypeExperimentDTO;
 import org.zfin.gwt.root.dto.ExpressionPhenotypeStatementDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
-import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
@@ -676,7 +675,7 @@ public class ExpressionService {
                 dto.setFigure(DTOConversionService.convertToFigureDTO(result.getExpressionFigureStage().getFigure()));
                 dto.setStart(DTOConversionService.convertToStageDTO(result.getExpressionFigureStage().getStartStage()));
                 dto.setEnd(DTOConversionService.convertToStageDTO(result.getExpressionFigureStage().getEndStage()));
-                dto.setEnvironment(DTOConversionService.convertToEnvironmentDTO(result.getExpressionFigureStage().getExpressionExperiment().getFishExperiment().getExperiment()));
+                dto.setExperiment(DTOConversionService.convertToExperimentDTO(result.getExpressionFigureStage().getExpressionExperiment().getFishExperiment().getExperiment()));
                 ExpressionPhenotypeStatementDTO statement = new ExpressionPhenotypeStatementDTO();
                 statement.setQuality(DTOConversionService.convertToTermDTO(phenotypeTerm.getQualityTerm()));
                 statement.setEntity(DTOConversionService.convertToEntityDTO(result.getEntity()));
