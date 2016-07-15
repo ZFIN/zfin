@@ -69,7 +69,7 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
                     public void onSuccess(List<FeaturePrefixDTO> labPrefixList) {
 
                         view.labDesignationBox.clear();
-                     //   Window.alert("from FeatureAddPr");
+
                         boolean hasZf = false;
                         for (FeaturePrefixDTO featurePrefixDTO : labPrefixList) {
                             if (hasZf || featurePrefixDTO.getPrefix().equals(ZF_PREFIX)) {
@@ -80,13 +80,12 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
                             } else {
                                 view.labDesignationBox.addItem(featurePrefixDTO.getPrefix());
                             }
-                         //   view.labDesignationBox.addItem(featurePrefixDTO.getPrefix());
-                           // Window.alert("from FeatureAddPr2");
+
                         }
                         // always has zf
                         if (!hasZf) {
                             view.labDesignationBox.addItem(ZF_PREFIX);
-                          //  Window.alert("from FeatureAddPr1");
+
                         }
                         view.labDesignationBox.setIndexForValue(dto.getLabPrefix());
                         handleDirty();
