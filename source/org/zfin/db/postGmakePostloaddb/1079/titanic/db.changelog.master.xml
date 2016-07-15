@@ -18,4 +18,6 @@
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/14329a.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/14374.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/addStandard.sql"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/addPostComposedDefaults.sql"/>
+
 </databaseChangeLog>
