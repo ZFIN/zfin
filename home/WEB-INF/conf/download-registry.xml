@@ -1385,7 +1385,7 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="8">GO-CC Term name</Column>
             <Column id="9">GO-CC Term ID</Column>
             <Column id="10">Taxon Term name</Column>
-            <Column id="11">Taxoni Term ID</Column>
+            <Column id="11">Taxon Term ID</Column>
         </Download>
         <Download orderIndex="5">
             <Name>
