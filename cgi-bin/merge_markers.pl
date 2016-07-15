@@ -642,7 +642,7 @@ $curUpdateFishName->finish();
 
 $sqlUpdateSfclg = "update sequence_feature_chromosome_location_generated set sfclg_data_zdb_id = ? where sfclg_data_zdb_id = ? and not exists (select 'x' from sequence_feature_chromosome_location_generated as s where s.sfclg_data_zdb_id = ? and s.sfclg_chromosome = sfclg_chromosome and s.sfclg_location_source = sfclg_location_source and s.sfclg_location_subsource = sfclg_location_subsource and s.sfclg_start = sfclg_start and s.sfclg_end = sfclg_end and s.sfclg_acc_num = sfclg_acc_num )";
 $curUpdateSfclg = $dbh->prepare_cached($sqlUpdateSfclg);
-$curUpdateSfclg->execute($intoId,$mergeId, $intoId);
+$curUpdateSfclg->execute($intoId,$mergeId,$intoId);
 
 $curUpdateSfclg->finish();
 
