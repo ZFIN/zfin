@@ -124,7 +124,7 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                             } else {
                                 view.labDesignationBox.addItem(featurePrefixDTO.getPrefix());
                             }
-                            //view.labDesignationBox.addItem(featurePrefixDTO.getPrefix());
+                           
                         }
                         // always has zf
                         if (!hasZf) {
