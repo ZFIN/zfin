@@ -33,3 +33,6 @@ alter table experiment_condition
  add constraint (Foreign key (expcond_go_cc_term_zdb_id)
  references term constraint expcond_go_cc_term_zdb_id_fk);
 
+alter table experiment_condition
+ add constraint (foreign key (expcond_zdb_id)
+ references zdb_active_data on delete cascade constraint expcond_zdb_id_fk_odc);
