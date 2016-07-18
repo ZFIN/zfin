@@ -15,7 +15,7 @@ insert into zdb_active_data
 
 insert into experiment_condition (Expcond_zdb_id, expcond_exp_zdb_id,
        	    			 		  expcond_zeco_term_Zdb_id)
- select id, expid, "ZECO:0000103"  
+ select id, expid, (select term_zdb_id from term where term_ont_id ="ZECO:0000103")
     from tmp_expcond
  where not exists (SElect 'x' from experiment
        	   	  	  where exp_zdb_id = expid);
