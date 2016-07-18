@@ -28,9 +28,6 @@ else{
 
 document.write(
     '<body id="body">' +
-    '<div class="uber-banner">' +
-    '  <a href="http://www.genetics-gsa.org/MODSupport/">Funding for ZFIN and other Model Organism Databases: Sign a letter of support!</a>' +
-    '</div>' +
     '<header class="zfin-header">' +
     '<a href="/">' +
     '  <img id="logo-img" src="/images/zfinlogo.png">' +
