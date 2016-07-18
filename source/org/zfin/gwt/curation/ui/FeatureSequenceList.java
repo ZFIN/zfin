@@ -49,7 +49,7 @@ public class FeatureSequenceList extends AbstractStackComposite<FeatureDTO> {
         if (accessionTextBox.isValid())
             addSequence(accessionTextBox.getAccessionNumber().getText());
         else {
-            errorLabel.setText("Invalid Accedssion Number");
+            errorLabel.setText("Invalid Accession Number");
         }
     }
 
