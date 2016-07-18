@@ -17,6 +17,7 @@ import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.ui.DuplicateEntryException;
 import org.zfin.gwt.root.ui.ValidationException;
+import org.zfin.gwt.root.util.NullpointerException;
 import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -452,6 +453,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
 
             if (StringUtils.isNotEmpty(featureDTO.getFeatureSequence())) {
+                /*ReferenceDatabase referenceDatabase = FeatureService.getForeignDbMutationDetailDna(featureDTO.getFeatureSequence());
+                if (referenceDatabase == null)
+                    throw new NullpointerException("Accession number not found in Genbank, RefSeq or Ensembl: " + featureDTO.getFeatureSequence());*/
                 saveFeatureSequence(featureDTO.getFeatureSequence(), publication, feature);
             }
 
@@ -523,6 +527,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
     private void saveFeatureSequence(String sequence, Publication publication, Feature feature) throws ValidationException {
+        ReferenceDatabase referenceDatabase = FeatureService.getForeignDbMutationDetailDna(sequence);
+        if (referenceDatabase == null)
+            throw new NullpointerException("Accession number not found in Genbank, RefSeq or Ensembl: " + sequence);
         FeatureDBLink featureDBLink = new FeatureDBLink();
         featureDBLink.setFeature(feature);
         featureDBLink.setAccessionNumber(sequence);
