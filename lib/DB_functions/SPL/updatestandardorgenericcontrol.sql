@@ -13,7 +13,7 @@ create function updatestandardorgenericcontrol(vExpZdbId like fish_experiment.ge
 	       	      from experiment
 		      where not exists (Select 'x' from experiment_condition
 		      	    	       	       where expcond_exp_zdb_id = exp_zdb_id)
-					       and exp_Zdb_id = vExpZdbId)
+					       and exp_Zdb_id = vExpZdbId
 
    union
 	       select 't'

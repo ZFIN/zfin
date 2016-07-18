@@ -116,6 +116,8 @@ create function regen_clean_expression() returning integer
   	and not exists (Select 'x' from fish_str
 			       where genox_fish_zdb_id = fishstr_fish_Zdb_id) ;
 
+
+
     insert into regen_ce_input_zdb_id_temp ( rggz_mrkr_zdb_id, rggz_genox_zdb_id )
       select mrkr_zdb_id, genox_Zdb_id from marker,fish_str, fish_experiment, expression_experiment 
         where mrkr_type in ("MRPHLNO","CRISPR","TALEN")

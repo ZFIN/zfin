@@ -13,7 +13,7 @@ create function updatestandard(vExpZdbId like fish_experiment.genox_exp_zdb_id)
 	       	      from experiment
 		      where not exists (Select 'x' from experiment_condition
 		      	    	       	       where expcond_exp_zdb_id = exp_zdb_id)
-                      and exp_Zdb_id = vExpZdbId)
+                      and exp_Zdb_id = vExpZdbId
    union
 	       select 't'
 	       	      from experiment_condition, term
