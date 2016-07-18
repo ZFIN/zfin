@@ -5,15 +5,15 @@ create index expcond_chebi_term_zdb_id_fk_index
  on experiment_condition (expcond_chebi_term_zdb_id)
  using btree in idxdbs3;
 
-create index expcond_chebi_term_zdb_id_fk_index
+create index expcond_ao_term_zdb_id_fk_index
  on experiment_condition (expcond_ao_term_zdb_id)
  using btree in idxdbs1;
 
-create index expcond_chebi_term_zdb_id_fk_index
+create index expcond_go_cc_term_zdb_id_fk_index
  on experiment_condition (expcond_go_cc_term_zdb_id)
  using btree in idxdbs1;
 
-create index expcond_chebi_term_zdb_id_fk_index
+create index expcond_taxon_term_zdb_id_fk_index
  on experiment_condition (expcond_taxon_term_zdb_id)
  using btree in idxdbs2;
 
