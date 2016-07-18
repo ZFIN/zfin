@@ -151,7 +151,10 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
             @Override
             public void onFailure(Throwable throwable) {
                 super.onFailure(throwable);
+                view.featureSequenceBox.getAccessionNumber().setEnabled(true);
                 view.notWorking();
+
+
                 handleDirty();
             }
 
