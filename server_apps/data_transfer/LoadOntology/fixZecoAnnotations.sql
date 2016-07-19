@@ -31,7 +31,7 @@ unload to 'zeco_updates'
       from experiment_condition, term as super, term as replacement, sec_oks
       where exists (Select 'x' from term
                        where term_is_Secondary = 't'
-                   and expcond_chebi_term_zdb_id = term_zdb_id)
+                         and expcond_chebi_term_zdb_id = term_zdb_id)
       and super.term_zdb_id = expcond_chebi_term_zdb_id
       and replacement.term_zdb_id = prim_zdb_id
       and sec_zdb_id = expcond_chebi_term_zdb_id;
