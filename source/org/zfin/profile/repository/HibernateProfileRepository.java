@@ -949,4 +949,35 @@ public class HibernateProfileRepository implements ProfileRepository {
                 .setString("exclusion2", "GENO")
                 .list();
     }
+
+    public List<String> getDistributionList() {
+        return HibernateUtil.currentSession()
+                .createSQLQuery("select distinct email from person " +
+                        "where on_dist_list='t' " +
+                        "and email is not null " +
+                        "and email != '';")
+                .list();
+    }
+
+    public List<String> getPiDistributionList() {
+        return HibernateUtil.currentSession()
+                .createSQLQuery("select distinct email from person, int_person_lab, lab_position " +
+                        "where zdb_id = source_id " +
+                        "and position_id = labpos_pk_id " +
+                        "and labpos_position in ('PI/Director', 'Co-PI/Senior Scientist') " +
+                        "and email is not null " +
+                        "and email != '' " +
+                        "and on_dist_list='t'")
+                .list();
+    }
+
+    public List<String> getUsaDistributionList() {
+        return HibernateUtil.currentSession()
+                .createSQLQuery("select distinct email from person " +
+                        "where on_dist_list='t' " +
+                        "and upper(address) like '%USA%' " +
+                        "and email is not null " +
+                        "and email != '';")
+                .list();
+    }
 }
