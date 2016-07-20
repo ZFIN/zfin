@@ -121,6 +121,10 @@
         <property name="isNice">
             <column name="jrnl_is_nice"/>
         </property>
+
+        <property name="printIssn" column="jrnl_print_issn"/>
+        <property name="onlineIssn" column="jrnl_online_issn"/>
+        <property name="nlmID" column="jrnl_nlmid"/>
     </class>
 
     <class name="org.zfin.publication.MeshTerm" table="mesh_term">

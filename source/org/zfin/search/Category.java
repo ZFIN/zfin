@@ -78,7 +78,7 @@ public enum Category {
             SEQUENCE_ALTERATION,
             FieldName.DISEASE,
             AUTHOR,
-            JOURNAL,
+            FieldName.JOURNAL,
             KEYWORD,
             MESH_TERM,
             PUBLICATION_TYPE,
@@ -160,7 +160,8 @@ public enum Category {
             FieldName.CONSTRUCT,
             SEQUENCE_ALTERATION,
             BACKGROUND),
-    REPORTER_LINE("Reporter Line", REPORTER_GENE, EXPRESSION_ANATOMY_TF,REGULATORY_REGION, STAGE);
+    REPORTER_LINE("Reporter Line", REPORTER_GENE, EXPRESSION_ANATOMY_TF,REGULATORY_REGION, STAGE),
+    JOURNAL("Journal");
 
 
 

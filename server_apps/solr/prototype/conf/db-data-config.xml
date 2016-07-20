@@ -4139,6 +4139,7 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                              pub_date as date,
                              pub_arrival_date as pet_date,
                              jtype as publication_type,
+                             pub_jrnl_zdb_id as xref,
                              'PMID:' || accession_no as related_accession,
                              case when pub_is_indexed = 't' then 'Indexed'
                                   else 'Not Indexed' end as indexing_status,
@@ -5175,8 +5176,6 @@ where fig_zdb_id=xpatfig_fig_zdb_id
             <field column="biography" stripHTML="true"/>
        </entity>
 
-
-
         <!--  These are 'autocomplete only' results, which will be filtered out of the main query by default -->
 
        <entity name="phenotype_statement"
@@ -5251,13 +5250,15 @@ where fig_zdb_id=xpatfig_fig_zdb_id
        </entity>
 
        <entity name="journal"
-               datasource="db" query="select distinct
-                      jrnl_name as full_name,
-                      jrnl_abbrev as name,
+               datasource="db" query="select
+                      jrnl_full_name as full_name,
+                      jrnl_name as name,
+                      jrnl_abbrev as name_order,
                       jrnl_zdb_id as id,
-                      'Autocomplete' as category,
-                      'Journal' as type
-                      from journal"/>
+                      'Journal' as category,
+                      't' as root_only
+                      from journal">
+       </entity>
 
        <entity name="condition"
                datasource="db" query="select distinct

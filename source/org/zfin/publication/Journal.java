@@ -13,6 +13,10 @@ public class Journal implements Serializable, EntityZdbID {
     private String name;
     private String abbreviation;
     private String publisher;
+    private String printIssn;
+    private String onlineIssn;
+    private String nlmID;
+
     private boolean isNice;
 
     public String getZdbID() {
@@ -61,6 +65,21 @@ public class Journal implements Serializable, EntityZdbID {
     public void setPublisher(String publisher) {
         this.publisher = publisher;
     }
+
+    public String getPrintIssn() { return printIssn; }
+
+    public void setPrintIssn(String printIssn) { this.printIssn = printIssn; }
+
+    public String getOnlineIssn() { return onlineIssn; }
+
+    public void setOnlineIssn(String onlineIssn) { this.onlineIssn = onlineIssn; }
+
+
+    public String getNlmID() { return nlmID; }
+
+    public void setNlmID(String nlmID) { this.nlmID = nlmID; }
+
+    public boolean isNice() { return isNice; }
 
     public boolean getIsNice() {
         return isNice;
