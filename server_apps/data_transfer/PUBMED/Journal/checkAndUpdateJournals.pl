@@ -1,13 +1,7 @@
 #!/private/bin/perl
-# checkJournals.pl
+# checkAndUpdateJournals.pl
 # This script check the existing journals stored at ZFIN against the all journal file (ftp://ftp.ncbi.nih.gov/pubmed/J_Medline.txt) 
-# from NCBI.
-
-
-use DBI;
-use LWP::Simple;
-use lib "<!--|ROOT_PATH|-->/server_apps/";
-use ZFINPerlModules;
+# from NCBI, reporting problems, and update the journal data accordingly.
 
 #set environment variables
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
@@ -27,10 +21,6 @@ system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/*
 system("/local/bin/wget ftp://ftp.ncbi.nih.gov/pubmed/J_Medline.txt");
 
 open (ALLJOURNALS, "J_Medline.txt") ||  die "Cannot open J_Medline.txt : $!\n";
-
-###@allJournals = <ALLJOURNALS>;
-
-##close ALLJOURNALS;
 
 open (NCBIJOURNALS, ">journalsFromNCBI.txt") || die "Cannot open journalsFromNCBI.txt : $!\n";
 $ct = 0;
