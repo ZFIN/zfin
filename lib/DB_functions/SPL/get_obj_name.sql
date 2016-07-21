@@ -232,6 +232,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from panels		-- Note: this is a fast search table.
       where zdb_id = zdbId;
+  elif (objType = "SALIAS") then
+    select salias_alias
+      into objName
+      from source_alias
+      where salias_zdb_id = zdbId;
   elif (objType = "STAGE") then
     select stg_name		-- other choices exist here.  this is simplest
       into objName
