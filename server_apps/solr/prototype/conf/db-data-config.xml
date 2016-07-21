@@ -5251,13 +5251,31 @@ where fig_zdb_id=xpatfig_fig_zdb_id
 
        <entity name="journal"
                datasource="db" query="select
-                      jrnl_full_name as full_name,
-                      jrnl_name as name,
+                      jrnl_name as full_name,
+                      jrnl_abbrev as name,
                       jrnl_abbrev as name_order,
+                      '/' || jrnl_zdb_id as url,
                       jrnl_zdb_id as id,
                       'Journal' as category,
-                      't' as root_only
+                      't' as root_only,
+                      jrnl_online_issn,
+                      jrnl_print_issn,
+                      jrnl_nlmid
                       from journal">
+            <field column="jrnl_online_issn" name="related_accession"/>
+            <field column="jrnl_print_issn" name="related_accession"/>
+            <field column="jrnl_nlmid" name="related_accession"/>
+
+           <entity name="journal_no_accession" datasource="db"
+                   query="select 'None' as related_accession,
+                                 jrnl_zdb_id
+                          from journal
+                          where jrnl_online_issn is null
+                            and jrnl_print_issn is null
+                            and jrnl_nlmid is null"
+                   where="jrnl_zdb_id=journal.id"
+                   cacheImpl="SortedMapBackedCache"/>
+
        </entity>
 
        <entity name="condition"

@@ -235,6 +235,7 @@
          <str name="f.stage.facet.limit">50</str>
          <str name="f.type.facet.limit">50</str>
          <str name="f.chromosome.facet.limit">50</str>
+         <str name="f.related_accession.facet.limit">50</str>
          <!-- This is essentially the page size of the gallery mode pages-->
          <str name="f.img_zdb_id.facet.limit">50</str>
 
@@ -356,8 +357,7 @@
               promoter_full_name
               registered_author_t
               regulatory_region
-              related_accession
-              related_accession
+              related_accession_t
               related_gene_symbol
               related_marker
               related_marker
@@ -415,7 +415,7 @@
              author_year
              full_mesh_term
              full_mesh_term_t
-                                     related_accession
+                                     related_accession_t
                                      related_marker
                                      affected_gene_t
 
@@ -461,7 +461,7 @@
              institution_t
              lab_of_origin
              background_t
-                                     related_accession
+                                     related_accession_t
                                      related_marker
                                      allele_t
                           allele
@@ -507,7 +507,7 @@
                                      author_year
              full_mesh_term
              full_mesh_term_t
-                                     related_accession
+                                     related_accession_t
                                      related_marker
                                      affected_gene_t
 
@@ -556,7 +556,7 @@
              institution
              institution_t
              lab_of_origin
-                                     related_accession
+                                     related_accession_t
                                      related_marker
                                      allele_t
                           allele
@@ -649,7 +649,7 @@
 
              conditions_t
 
-             related_accession
+             related_accession_t
              related_marker
              affected_gene_t
 
@@ -746,7 +746,7 @@
              institution_t
              lab_of_origin
              rna_consequence
-             related_accession
+             related_accession_t
              related_marker
              allele_t
              background background_t
