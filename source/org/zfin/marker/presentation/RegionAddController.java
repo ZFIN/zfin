@@ -91,7 +91,6 @@ public class RegionAddController {
             HibernateUtil.createTransaction();
 
             mr.createMarker(newRegion, regionPub);
-            ir.insertUpdatesTable(newRegion, "new Region", "");
             PublicationService.addRecentPublications(request.getSession().getServletContext(), regionPub, PublicationSessionKey.GENE) ;
 
             HibernateUtil.flushAndCommitCurrentSession();

@@ -122,7 +122,6 @@ public class SequenceTargetingReagentAddController {
         try {
             HibernateUtil.createTransaction();
             mr.createMarker(newSequenceTargetingReagent, sequenceTargetingReagentPub);
-            ir.insertUpdatesTable(newSequenceTargetingReagent, "new " + formBean.getStrType(), "");
             PublicationService.addRecentPublications(request.getSession().getServletContext(), sequenceTargetingReagentPub, PublicationSessionKey.GENE);
 
             String alias = formBean.getAlias();

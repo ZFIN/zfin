@@ -12,9 +12,9 @@
         <?/MICOMMENT>
         <li>
           Add
-          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENE"><em>gene</em></a>,
-          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENEP"><em>pseudogene</em></a>,
-          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=EFG"><em>foreign gene</em></a>,
+          <a href="/action/marker/gene-add?type=GENE"><em>gene</em></a>,
+          <a href="/action/marker/gene-add?type=GENEP"><em>pseudogene</em></a>,
+          <a href="/action/marker/gene-add?type=EFG"><em>foreign gene</em></a>,
           <a href="/action/marker/clone-add"><em>clone</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
           <a href="/action/antibody/add"><em>antibody</em></a>,

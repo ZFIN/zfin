@@ -91,7 +91,6 @@ public class AntibodyCreateController {
             HibernateUtil.createTransaction();
 
             mr.createMarker(newAntibody, antibodyPub);
-            ir.insertUpdatesTable(newAntibody, "new Antibody", "");
             PublicationService.addRecentPublications(request.getSession().getServletContext(), antibodyPub, PublicationSessionKey.ANTIBODY) ;
 
             HibernateUtil.flushAndCommitCurrentSession();
