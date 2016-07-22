@@ -20,4 +20,5 @@
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/addStandard.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/addPostComposedDefaults.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/updateStdGenericControl.sql"/>
+  <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/updateExpcondZeco.sql"/>  
 </databaseChangeLog>
