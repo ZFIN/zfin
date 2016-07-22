@@ -1,6 +1,9 @@
+--liquibase formatted sql
+--changeset xiang_sierra:source_alias
+
 create table source_alias 
   (
-    salias_zdb_id varchar(50),
+    salias_zdb_id varchar(50) not null constraint salias_zdb_id_not_null,
     salias_source_zdb_id varchar(50) not null constraint salias_source_zdb_id_not_null,
     salias_alias varchar(255) not null constraint salias_alias_not_null,
     salias_alias_lower varchar(255) not null constraint salias_alias_lower_not_null
@@ -8,28 +11,24 @@ create table source_alias
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 2048 next size 2048;
 
-create index salias_alias_lower_index
-  on source_alias (salias_alias_lower,salias_source_zdb_id) 
-  using btree in idxdbs1;
-
 create index salias_source_zdb_id_index
   on source_alias (salias_source_zdb_id) 
   using btree in idxdbs1;
 
-create unique index source_alias_alternate_key_index 
-    on source_alias (salias_alias,salias_source_zdb_id)
-    using btree in idxdbs1;
-
 create unique index source_alias_primary_key_index 
     on source_alias (salias_zdb_id) 
-    using btree in idxdbs1;
+    using btree in idxdbs2;
+
+create unique index source_alias_alternate_key_index 
+    on source_alias (salias_alias,salias_source_zdb_id)
+    using btree in idxdbs3;
 
 alter table source_alias add constraint primary key 
     (salias_zdb_id) constraint source_alias_primary_key;
 
 alter table source_alias add constraint (foreign key 
     (salias_source_zdb_id) references zdb_active_source 
-     on delete cascade constraint salias_source_zdb_id_foreign_key);
+     on delete cascade constraint salias_source_zdb_id_foreign_key_odc);
     
 alter table source_alias add constraint (foreign key 
     (salias_zdb_id) references zdb_active_source 
