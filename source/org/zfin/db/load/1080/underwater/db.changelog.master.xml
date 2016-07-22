@@ -6,5 +6,5 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
   <include file="source/org/zfin/db/load/1080/underwater/14382SourceAlias.sql"/>
-  <include file="source/org/zfin/db/load/1080/underwater/addSaliasSeq.sql"/>
+
 </databaseChangeLog>
