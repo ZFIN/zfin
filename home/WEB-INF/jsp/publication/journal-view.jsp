@@ -2,6 +2,11 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<c:set var="authorized" value="no"/>
+
+<authz:authorize access="hasRole('root')">
+
+<c:set var="authorized" value="yes"/>
 
 <zfin2:dataManager zdbID="${journal.zdbID}"
                    rtype="publication"/>
@@ -46,4 +51,21 @@
             <c:if test="${!empty journal.nlmID}">${journal.nlmID}</c:if>
         </td>
     </tr> 
+    <tr>
+        <th>Can Reproduce Images?</th>
+        <td>
+           ${journal.nice ? "yes" : "no"} 
+        </td>
+    <tr>
+       <th>Publications:</th>
+       <td>
+          <c:forEach var="publication" items="${journal.publications}">
+              <zfin:link entity="${publication}" /><br/>
+          </c:forEach>
+       </td>
+    </tr>
 </table>
+
+</authz:authorize>
+
+<c:if test="${authorized eq 'no'}"><h3 class="red">You need to log in to see the journal</h3></c:if>

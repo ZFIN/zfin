@@ -289,6 +289,8 @@ public class PublicationViewController {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
+        journal.setPublications(publicationRepository.getPublicationForJournal(journal));
+
         model.addAttribute("journal", journal);
 
         String title = "Journal: " + journal.getAbbreviation();
