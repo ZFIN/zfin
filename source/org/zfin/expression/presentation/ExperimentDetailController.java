@@ -30,8 +30,7 @@ public class ExperimentDetailController {
         }
 
         model.addAttribute("experiment", experiment);
-        Set<ExperimentCondition> conditions = getSortedConditions(experiment);
-        model.addAttribute("conditions", conditions);
+
         return "expression/experiment.page";
     }
 
@@ -46,15 +45,8 @@ public class ExperimentDetailController {
         }
 
         model.addAttribute("experiment", experiment);
-        Set<ExperimentCondition> conditions = getSortedConditions(experiment);
-        model.addAttribute("conditions", conditions);
-        return "expression/experiment-popup.popup";
-    }
 
-    protected Set<ExperimentCondition> getSortedConditions(Experiment experiment) {
-        TreeSet<ExperimentCondition> conditions = new TreeSet<>();
-        conditions.addAll(experiment.getExperimentConditions());
-        return conditions;
+        return "expression/experiment-popup.popup";
     }
 
 }

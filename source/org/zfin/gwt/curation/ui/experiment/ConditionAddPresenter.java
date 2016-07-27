@@ -247,8 +247,8 @@ public class ConditionAddPresenter implements HandlesError {
             return "Zeco term requires an AO term ";
         if (!view.chebiTermEntry.getTermTextBox().hasValidateTerm() && view.chebiTermEntry.isVisible())
             return "Zeco term requires a Chebi term ";
-        if (!view.taxonTermEntry.getTermTextBox().hasValidateTerm() && view.taxonTermEntry.isVisible())
-            return "Zeco term requires a taxonomy term ";
+       /* if (!view.taxonTermEntry.getTermTextBox().hasValidateTerm() && view.taxonTermEntry.isVisible())
+            return "Zeco term requires a taxonomy term "*/;
         return null;
     }
 
@@ -259,8 +259,8 @@ public class ConditionAddPresenter implements HandlesError {
             return true;
         if (view.goCcTermEntry.getTermTextBox().hasValidateTerm() && view.goCcTermEntry.isVisible())
             return true;
-        if (view.taxonTermEntry.getTermTextBox().hasValidateTerm() && view.taxonTermEntry.isVisible())
-            return true;
+       /* if (view.taxonTermEntry.getTermTextBox().hasValidateTerm() && view.taxonTermEntry.isVisible())
+            return true;*/
         if (view.chebiTermEntry.getTermTextBox().hasValidateTerm() && view.chebiTermEntry.isVisible())
             return true;
         return false;

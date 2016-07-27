@@ -11,7 +11,7 @@
 </div>
 
 <div class="data-page">
-    <c:forEach var="condition" items="${conditions}" varStatus="loop">
+    <c:forEach var="condition" items="${experiment.experimentConditions}" varStatus="loop">
         <table class="primary-entity-attributes">
             <tr>
                 <th>${condition.displayName}</th>
