@@ -204,6 +204,9 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                 (Category.REPORTER_LINE)             : [
                         FieldName.EXPRESSION_ANATOMY_TF,
                         FieldName.REGULATORY_REGION
+                ],
+                (Category.JOURNAL)                   : [
+                        FieldName.RELATED_ACCESSION
                 ]
         ].collectMany { category, fields -> fields.collect { field -> [category, field] } }
     }
@@ -237,5 +240,6 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         Category.ANATOMY                    | ["Ontology", "Term Status"]
         Category.COMMUNITY                  | ["Type"]
         Category.PUBLICATION                | ["Curation", "Gene", "Mutation / Tg", "Human Disease", "Registered Author", "Journal", "Keyword", "MeSH Term", "Publication Type", "Publication Date"]
+        Category.JOURNAL                    | ["Accession"]
     }
 }

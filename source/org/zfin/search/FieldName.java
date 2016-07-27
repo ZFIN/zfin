@@ -77,10 +77,11 @@ public enum FieldName {
     PUBLICATION_STATUS("publication_status"),
     PUBLICATION_TYPE("publication_type"),
     REGULATORY_REGION("regulatory_region"),
+    RELATED_ACCESSION("related_accession", "Accession"),
+    RELATED_ACCESSION_TEXT("related_accession_t", "Accession"),
     REPORTER_COLOR("reporter_color"),
     REPORTER_EXPRESSION_ANATOMY_TF("reporter_expression_anatomy_tf", "Expressed In"),
     REPORTER_GENE("reporter_gene"),
-    //    SCREEN("screen"),   <!--screen used to be here, removed as a result of case 11323-->
     SEQUENCE_ALTERATION("sequence_alteration", "Mutation / Tg"),
     SEQUENCE_TARGETING_REAGENT("sequence_targeting_reagent"),
     SOURCE("source"),

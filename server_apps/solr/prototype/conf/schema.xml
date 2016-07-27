@@ -496,7 +496,7 @@
    <!-- this field is intended to split STR and antibody names on dashes so that we'll have a starts-with match on the second portion -->
    <field name="marker_abbrev" type="tokenized_abbrev" indexed="true" stored="true" multiValued="true"/>
 
-   <field name="related_accession" type="text" indexed="true" stored="true" multiValued="true" />
+   <field name="related_accession" type="string" indexed="true" stored="true" multiValued="true" />
    <!--adding a field for related markers case 11289-->
      <field name="related_marker" type="text" indexed="true" stored="true" multiValued="true" />
 
@@ -957,7 +957,7 @@
    <copyField source="expression_anatomy" dest="expression_anatomy_t"/>
    <copyField source="expressed_gene" dest="expressed_gene_t"/>
    <copyField source="institution" dest="institution_t"/>
-
+   <copyField source="related_accession" dest="related_accession_t"/>
 
     <copyField source="date" dest="tdate"/>
 

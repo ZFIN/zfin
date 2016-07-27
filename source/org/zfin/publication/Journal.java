@@ -3,6 +3,7 @@ package org.zfin.publication;
 import org.zfin.infrastructure.EntityZdbID;
 
 import java.io.Serializable;
+import java.util.SortedSet;
 
 /**
  * Journal domain object.
@@ -16,6 +17,7 @@ public class Journal implements Serializable, EntityZdbID {
     private String printIssn;
     private String onlineIssn;
     private String nlmID;
+    private SortedSet<Publication> publications;
 
     private boolean isNice;
 
@@ -89,4 +91,12 @@ public class Journal implements Serializable, EntityZdbID {
         this.isNice = isNice;
     }
 
+    public SortedSet<Publication> getPublications() {
+        return publications;
+    }
+
+    public void setPublications(SortedSet<Publication> publications) {
+        this.publications = publications;
+    }
 }
+

@@ -161,7 +161,7 @@ public enum Category {
             SEQUENCE_ALTERATION,
             BACKGROUND),
     REPORTER_LINE("Reporter Line", REPORTER_GENE, EXPRESSION_ANATOMY_TF,REGULATORY_REGION, STAGE),
-    JOURNAL("Journal");
+    JOURNAL("Journal", RELATED_ACCESSION);
 
 
 
