@@ -13,7 +13,7 @@ OUTPUT VARS:
 
 OUTPUT: Is a select page to find journals
 uses walking windows to display results
-calls journalview.apg when clicking on a found-journal link.
+calls journal-view.jsp when clicking on a found-journal link.
 
 *** <?/MICOMMENT>
 
@@ -174,7 +174,7 @@ Message: $MI_ERRORMSG
 		<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2">SELECT</a></font> </td>")
          <td valign=top>
 	  <div style="word-break:">
-		<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-journalview.apg&OID=$3">$1</a>
+		<a href="/action/publication/journal/$3">$1</a>
 	  </div>
 	 </font>
          </td>      
