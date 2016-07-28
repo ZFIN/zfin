@@ -106,9 +106,15 @@ public class Feature implements EntityNotes, EntityZdbID {
     @Sort(type = SortType.NATURAL)
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private SortedSet<FeatureTranscriptMutationDetail> featureTranscriptMutationDetailSet;
+
+    //I followed the same mapping for feature protein mutation details and dna mutation details(Prita)
+    //I added the SAVE_UPDATE cascade type to ensure updates, inserts and deletes. (case 14286)
+
     @OneToOne(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private FeatureProteinMutationDetail featureProteinMutationDetail;
-    @OneToOne(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private FeatureDnaMutationDetail featureDnaMutationDetail;
 
 

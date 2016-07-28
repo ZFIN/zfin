@@ -8,9 +8,7 @@ import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.publication.Publication;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 @SuppressWarnings({"JpaAttributeMemberSignatureInspection", "JpaAttributeTypeInspection"})
 @Entity
@@ -37,7 +35,8 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     private Publication publication;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment")
     @Sort(type = SortType.NATURAL)
-    private Set<ExperimentCondition> experimentConditions;
+    //private Set<ExperimentCondition> experimentConditions;
+    private List<ExperimentCondition> experimentConditions;
 
 
     public String getZdbID() {
@@ -63,14 +62,14 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     public void setPublication(Publication publication) {
         this.publication = publication;
     }
-
+/*
     public Set<ExperimentCondition> getExperimentConditions() {
         return experimentConditions;
-    }
+    }*/
 
-    public void setExperimentConditions(Set<ExperimentCondition> experimentConditions) {
+   /* public void setExperimentConditions(Set<ExperimentCondition> experimentConditions) {
         this.experimentConditions = experimentConditions;
-    }
+    }*/
 
     public boolean isStandard() {
         return (name.equalsIgnoreCase(Experiment.STANDARD) || name.equalsIgnoreCase(Experiment.GENERIC_CONTROL));
@@ -82,6 +81,14 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
 
     public boolean isOnlyControl() {
         return (name.equalsIgnoreCase(Experiment.GENERIC_CONTROL));
+    }
+
+    public List<ExperimentCondition> getExperimentConditions() {
+        return experimentConditions;
+    }
+
+    public void setExperimentConditions(List<ExperimentCondition> experimentConditions) {
+        this.experimentConditions = experimentConditions;
     }
 
     public boolean isChemical() {
@@ -161,8 +168,11 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     }
 
     public void addExperimentCondition(ExperimentCondition condition) {
-        if (experimentConditions == null)
+       /* if (experimentConditions == null)
             experimentConditions = new HashSet<>();
+        experimentConditions.add(condition);*/
+        if (experimentConditions == null)
+            experimentConditions = new ArrayList<>();
         experimentConditions.add(condition);
     }
 
