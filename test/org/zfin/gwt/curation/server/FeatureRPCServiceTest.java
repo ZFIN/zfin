@@ -255,7 +255,7 @@ public class FeatureRPCServiceTest extends RemoteServiceServlet implements Featu
         HibernateUtil.createTransaction();
         FeatureAlias featureAlias = new FeatureAlias();
         featureAlias.setFeature(feature);
-        featureAlias.setAlias(ZfinStringUtils.escapeHighUnicode(name));
+        featureAlias.setAlias(name);
         String groupName = DataAliasGroup.Group.ALIAS.toString();
         DataAliasGroup group = infrastructureRepository.getDataAliasGroupByName(groupName);
         featureAlias.setAliasGroup(group);  //default for database, hibernate tries to insert null

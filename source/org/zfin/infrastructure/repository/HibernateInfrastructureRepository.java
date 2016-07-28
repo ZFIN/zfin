@@ -191,8 +191,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         recordAttribution.setSourceType(sourceType);
 
         RecordAttribution result = (RecordAttribution) session.createCriteria(RecordAttribution.class).add(Example.create(recordAttribution)).uniqueResult();
-        if (result == null)
+        if (result == null) {
             session.save(recordAttribution);
+        }
         return recordAttribution;
     }
 
@@ -1137,11 +1138,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                         long number = Long.valueOf(column);
                         statement.setLong(index++, number);
                     } else {
-                        String unicoded = column;
-                        if (column != null) {
-                            unicoded = ZfinStringUtils.escapeHighUnicode(column);
-                        }
-                        statement.setString(index++, unicoded);
+                        statement.setString(index++, column);
                     }
                 }
                 statement.addBatch();
@@ -1800,8 +1797,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         criteriaExisting.add(Example.create(recordAttribution));
         RecordAttribution thisPubResult = (RecordAttribution) criteriaExisting.uniqueResult();
         // done if record already exists
-        if (thisPubResult != null)
+        if (thisPubResult != null) {
             return;
+        }
 
         Criteria criteria = session.createCriteria(RecordAttribution.class);
         criteria.add(Restrictions.eq("dataZdbID", dataZdbID));
@@ -1827,8 +1825,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Criteria criteriaExisting = session.createCriteria(RecordAttribution.class);
         criteriaExisting.add(Example.create(recordAttribution));
         RecordAttribution thisPubResult = (RecordAttribution) criteriaExisting.uniqueResult();
-        if (thisPubResult != null)
+        if (thisPubResult != null) {
             HibernateUtil.currentSession().delete(thisPubResult);
+        }
     }
 }
 

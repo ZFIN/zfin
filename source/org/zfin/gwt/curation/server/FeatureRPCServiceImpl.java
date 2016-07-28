@@ -34,7 +34,6 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
-import org.zfin.util.ZfinStringUtils;
 
 import java.util.*;
 
@@ -178,8 +177,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             FeatureDnaMutationDetail oldDetail = detail.clone();
             String accessionNumber = featureDTO.getDnaChangeDTO().getSequenceReferenceAccessionNumber();
             if (StringUtils.isNotEmpty(accessionNumber)) {
-                if (isValidAccession(accessionNumber, "DNA") == null)
+                if (isValidAccession(accessionNumber, "DNA") == null) {
                     throw new ValidationException("DNA accession Number not found: " + accessionNumber);
+                }
             }
             DTOConversionService.updateDnaMutationDetailWithDTO(detail, featureDTO.getDnaChangeDTO());
             if (!detail.equals(oldDetail)) {
@@ -196,16 +196,18 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             FeatureProteinMutationDetail oldDetail = proteinDetail.clone();
             String accessionNumber = featureDTO.getProteinChangeDTO().getSequenceReferenceAccessionNumber();
             if (StringUtils.isNotEmpty(accessionNumber)) {
-                if (isValidAccession(accessionNumber, "Protein") == null)
+                if (isValidAccession(accessionNumber, "Protein") == null) {
                     throw new ValidationException("Protein accession Number not found: " + accessionNumber);
+                }
             } else {
                 proteinDetail.setProteinSequenceReferenceAccessionNumber(null);
                 proteinDetail.setReferenceDatabase(null);
 
             }
             DTOConversionService.updateProteinMutationDetailWithDTO(proteinDetail, featureDTO.getProteinChangeDTO());
-            if (proteinDetail.getZdbID() == null)
+            if (proteinDetail.getZdbID() == null) {
                 HibernateUtil.currentSession().save(proteinDetail);
+            }
             if (!proteinDetail.equals(oldDetail)) {
                 infrastructureRepository.insertMutationDetailAttribution(proteinDetail.getZdbID(), featureDTO.getPublicationZdbID());
             }
@@ -320,7 +322,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         HibernateUtil.createTransaction();
         FeatureAlias featureAlias = new FeatureAlias();
         featureAlias.setFeature(feature);
-        featureAlias.setAlias(ZfinStringUtils.escapeHighUnicode(name));
+        featureAlias.setAlias(name);
         String groupName = DataAliasGroup.Group.ALIAS.toString();
         DataAliasGroup group = infrastructureRepository.getDataAliasGroupByName(groupName);
         featureAlias.setAliasGroup(group);  //default for database, hibernate tries to insert null
@@ -356,8 +358,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             Session session = HibernateUtil.currentSession();
             session.beginTransaction();
             Feature feature = featureRepository.getFeatureByID(featureZdbID);
-            if (feature == null)
+            if (feature == null) {
                 throw new ValidationException("no feature found");
+            }
             FeatureAlias featureAlias = mutantRepository.getSpecificDataAlias(feature, name);
             featureRepository.deleteFeatureAlias(feature, featureAlias);
             // infrastructureRepository.deleteRecordAttributionsForData(featureDBLink.getZdbID());
@@ -385,8 +388,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             Session session = HibernateUtil.currentSession();
             session.beginTransaction();
             Feature feature = featureRepository.getFeatureByID(featureZdbID);
-            if (feature == null)
+            if (feature == null) {
                 throw new ValidationException("no feature found");
+            }
             DBLink featureDBLink = getSequenceRepository().getDBLink(featureZdbID, sequence);
             infrastructureRepository.deleteRecordAttributionsForData(featureDBLink.getZdbID());
             session.delete(featureDBLink);
@@ -430,8 +434,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         HibernateUtil.createTransaction();
         try {
             Publication publication = getPublicationRepository().getPublication(featureDTO.getPublicationZdbID());
-            if (publication == null)
+            if (publication == null) {
                 throw new ValidationException("Could not find publication for: " + featureDTO.getPublicationZdbID());
+            }
 
             Feature feature = DTOConversionService.convertToFeature(featureDTO);
 
@@ -483,7 +488,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                         featureSources = new HashSet<>();
                         featureSources.add(featureSource);
                         feature.setSources(featureSources);
-                    } else featureSources.add(featureSource);
+                    } else {
+                        featureSources.add(featureSource);
+                    }
                     HibernateUtil.currentSession().save(featureSource);
                 } else {
                     throw new ValidationException("Feature cannot be saved without lab of origin");
@@ -528,8 +535,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
     private void saveFeatureSequence(String sequence, Publication publication, Feature feature) throws ValidationException {
         ReferenceDatabase referenceDatabase = FeatureService.getForeignDbMutationDetailDna(sequence);
-        if (referenceDatabase == null)
+        if (referenceDatabase == null) {
             throw new NullpointerException("Accession number not found in Genbank, RefSeq or Ensembl: " + sequence);
+        }
         FeatureDBLink featureDBLink = new FeatureDBLink();
         featureDBLink.setFeature(feature);
         featureDBLink.setAccessionNumber(sequence);
