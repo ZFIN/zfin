@@ -1028,7 +1028,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         }
         // create attributions for mutation details: DNA
         if (feature.getFeatureProteinMutationDetail() != null) {
-            savePublicationAttribution(publication, feature.getFeatureProteinMutationDetail().getZdbID());
+           savePublicationAttribution(publication, feature.getFeatureProteinMutationDetail().getZdbID());
         }
         // create attributions for mutation details: Protein
         if (feature.getFeatureDnaMutationDetail() != null) {
@@ -1093,7 +1093,8 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     @Override
     public void deleteFeatureProteinMutationDetail(FeatureProteinMutationDetail detail) {
-        HibernateUtil.currentSession().delete(detail);
+        //I changed this to delete this record entirely from zdb active data so as to remove lingering record attributions as well.
+        infrastructureRepository.deleteActiveDataByZdbID(detail.getZdbID());
     }
 }
 
