@@ -1067,7 +1067,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
     @Override
     @SuppressWarnings("unchecked")
     public List<String> getMutagensForFeatureType(FeatureTypeEnum featureTypeEnum) {
-
         String sql = "select distinct ftmgm_mutagen from feature_type_mutagen_group_member " +
                 " where ftmgm_feature_type = :featureType " +
                 " order by ftmgm_mutagen";
