@@ -20,6 +20,7 @@
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/addStandard.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/addPostComposedDefaults.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/updateStdGenericControl.sql"/>
-  <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/updateExpcondZeco.sql"/>  
-  <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/addAttribution.sql"/>  
+<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/updateExpcondZeco.sql"/>  
+<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/addAttribution.sql"/>  
+<include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/uniqueConstraint.sql"/>
 </databaseChangeLog>
