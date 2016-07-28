@@ -188,7 +188,7 @@ public class ConditionAddPresenter implements HandlesError {
             zecoRootTermID = getRoot(termID);
         }
         List<Boolean> visibilityVector = getVisibilityMatrixOfDependentOntologies(zecoRootTermID);
-        Map<TermEntry, Boolean> visibilityMap = new HashMap<>(4);
+        Map<TermEntry, Boolean> visibilityMap = new HashMap<>(8);
         int index = 0;
         for (TermEntry termEntry : getListOfTermEntries()) {
             visibilityMap.put(termEntry, visibilityVector.get(index++));
@@ -248,7 +248,9 @@ public class ConditionAddPresenter implements HandlesError {
         if (!view.chebiTermEntry.getTermTextBox().hasValidateTerm() && view.chebiTermEntry.isVisible())
             return "Zeco term requires a Chebi term ";
        /* if (!view.taxonTermEntry.getTermTextBox().hasValidateTerm() && view.taxonTermEntry.isVisible())
-            return "Zeco term requires a taxonomy term "*/;
+
+            return "Zeco term requires a taxonomy term ";*/
+
         return null;
     }
 
