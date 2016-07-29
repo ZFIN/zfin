@@ -663,7 +663,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
                     summary.setUrl(u);
                     summary.setUrlLink(link);
 
-                    BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream(), "ISO-8859-1"));
+                    BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream(), "UTF-8"));
 
                     StringBuilder body = new StringBuilder(2048);
                     String line;

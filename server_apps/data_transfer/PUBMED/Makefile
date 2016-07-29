@@ -20,7 +20,6 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/PUBMED
 SUBDIRS   = LinkOut Journal
 GENERICS  = addMeshTermsToAllPubs.groovy \
             fetchPubsFromPubMed.pl \
-            fixBadCharacterEncoding.pl \
             loadNewPubs.sql \
             updatePublicationDate.groovy \
             updatepubstatus.pl 

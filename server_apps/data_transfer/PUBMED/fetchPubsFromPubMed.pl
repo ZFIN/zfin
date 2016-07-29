@@ -118,7 +118,7 @@ sub pubMedArticle {
 
                     my $abstractFileName = sprintf("<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/abstract%08d.clob", $pubCount);
                     open(ABS, ">", $abstractFileName);
-                    print ABS escape_utf8($joinedParagraphs);
+                    print ABS $joinedParagraphs;
                     close ABS;
                     $row{'abstract'} = $abstractFileName;
                 }
@@ -207,11 +207,7 @@ sub pubMedArticle {
     my @fields = ('pmid', 'keywords', 'title', 'pages', 'abstract', 'authors',
                   'numAuthors', 'year', 'month', 'day', 'issn', 'volume',
                   'issue', 'journaltitle', 'iso', 'status');
-    print LOG join('|', map { escape_utf8($row{$_}) } @fields), "\n";
-}
-
-sub escape_utf8 {
-    return encode("iso-8859-1", $_[0], Encode::FB_HTMLCREF);
+    print LOG join('|', map { $row{$_} } @fields), "\n";
 }
 
 close LOG;
