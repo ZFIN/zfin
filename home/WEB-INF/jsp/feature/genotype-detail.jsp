@@ -277,13 +277,11 @@
                             </c:forEach>
                         </td>
                         <td>
-                            <zfin2:showFigureData entity="${genotype}"
-                                                  fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypePhenotypeStatistics}"
+                            <zfin2:showFigureData fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypePhenotypeStatistics}"
                                                   link="/action/fish/phenotype-summary?fishID=${fishGenotypeStatistics.fish.zdbID}&imagesOnly=false"/>
                         </td>
                         <td>
-                            <zfin2:showFigureData entity="${genotype}"
-                                                  fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypeExpressionStatistics}"
+                            <zfin2:showFigureData fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypeExpressionStatistics}"
                                                   link="/action/expression/fish-expression-figure-summary?fishID=${fishGenotypeStatistics.fish.zdbID}&imagesOnly=false"/>
                         </td>
                     </zfin:alternating-tr>

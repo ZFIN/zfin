@@ -7,12 +7,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.feature.Feature;
+import org.zfin.feature.repository.FeatureRepository;
+import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.repository.RepositoryFactory;
+import org.zfin.mutant.Genotype;
+import org.zfin.mutant.presentation.GenotypeFishResult;
+import org.zfin.mutant.repository.MutantRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +32,13 @@ public class ConstructViewController {
     private Logger logger = Logger.getLogger(ConstructViewController.class);
 
     @Autowired
-    private MarkerRepository markerRepository ;
+    private MarkerRepository markerRepository;
+
+    @Autowired
+    private FeatureRepository featureRepository;
+
+    @Autowired
+    private MutantRepository mutantRepository;
 
     @RequestMapping(value = "/construct/view/{zdbID}")
     public String getGeneView(
@@ -46,7 +56,7 @@ public class ConstructViewController {
         MarkerService.createDefaultViewForMarker(markerBean);
 
 
-        List<MarkerRelationshipPresentation> cloneRelationships = new ArrayList<MarkerRelationshipPresentation>();
+        List<MarkerRelationshipPresentation> cloneRelationships = new ArrayList<>();
         cloneRelationships.addAll(markerRepository.getRelatedMarkerOrderDisplayForTypes(
                 construct, true
                 , MarkerRelationship.Type.PROMOTER_OF
@@ -78,13 +88,17 @@ public class ConstructViewController {
 
                 int compare;
 
-                if (mr1.getArbitraryOrder() != null && mr2.getArbitraryOrder()!=null) {
+                if (mr1.getArbitraryOrder() != null && mr2.getArbitraryOrder() != null) {
                     compare = mr1.getArbitraryOrder().compareTo(mr2.getArbitraryOrder());
-                    if (compare != 0) return compare;
+                    if (compare != 0) {
+                        return compare;
+                    }
                 }
 
                 compare = mr1.getMarkerType().compareTo(mr2.getMarkerType());
-                if (compare != 0) return compare;
+                if (compare != 0) {
+                    return compare;
+                }
 
                 return mr1.getAbbreviationOrder().compareTo(mr2.getAbbreviationOrder());
             }
@@ -92,8 +106,22 @@ public class ConstructViewController {
         markerBean.setMarkerRelationshipPresentationList(cloneRelationships);
 
         // Transgenics that utilize the construct
-        List<Feature> features = RepositoryFactory.getFeatureRepository().getFeaturesByConstruct(construct);
+        List<Feature> features = featureRepository.getFeaturesByConstruct(construct);
         markerBean.setTransgenics(features);
+
+        List<GenotypeFishResult> allFish = new ArrayList<>();
+        for (Feature feature : features) {
+            List<Genotype> genotypes = mutantRepository.getGenotypesByFeature(feature);
+            for (Genotype genotype : genotypes) {
+                List<GenotypeFishResult> fishSummaryList = FishService.getFishExperiementSummaryForGenotype(genotype);
+                for (GenotypeFishResult fishSummary : fishSummaryList) {
+                    if (fishSummary.getFish().getStrList().isEmpty()) {
+                        allFish.add(fishSummary);
+                    }
+                }
+            }
+        }
+        markerBean.setFish(allFish);
 
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerBean.getMarkerTypeDisplay() + ": " + construct.getName());
