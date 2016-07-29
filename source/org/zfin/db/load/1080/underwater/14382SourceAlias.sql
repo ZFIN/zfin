@@ -32,7 +32,7 @@ alter table source_alias add constraint (foreign key
     
 alter table source_alias add constraint (foreign key 
     (salias_zdb_id) references zdb_active_source 
-    on delete cascade constraint salias_zdb_id_foreign_key);
+    on delete cascade constraint salias_zdb_id_foreign_key_odc);
     
 create trigger source_alias_insert_trigger insert
     on source_alias referencing new as new_source_alias
@@ -53,5 +53,8 @@ create trigger salias_alias_update_trigger update of
     ) into source_alias.salias_alias_lower);
 
 insert into zdb_object_type
- (zobjtype_name, zobjtype_home_table, zobjtype_home_zdb_id_column, zobjtype_is_data, zobjtype_is_source)
- values("SALIAS", "source_alias", "salias_zdb_id", "f", "t");
+ (zobjtype_name, zobjtype_home_table, zobjtype_home_zdb_id_column, zobjtype_is_data, zobjtype_is_source,zobjtype_day)
+ values("SALIAS", "source_alias", "salias_zdb_id", "f", "t", current);
+
+alter table zdb_object_type
+  modify (zobjtype_day date not null constraint zobjtype_day_is_not_null);
