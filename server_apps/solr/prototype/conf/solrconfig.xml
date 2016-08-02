@@ -1022,7 +1022,7 @@
             <str name="facet.field">chromosome</str>
 
 
-<!--            <str nane="defType">edismax</str>
+            <str nane="defType">edismax</str>
             <str name="q.alt">*:*</str>
             <str name="qf">
                 affected_gene
@@ -1101,7 +1101,7 @@
                 zebrafish_gene
                 zebrafish_gene_full_name^0.8
                 zebrafish_gene_previous_name^0.7
-            </str>-->
+            </str>
         </lst>
     </requestHandler>
 
