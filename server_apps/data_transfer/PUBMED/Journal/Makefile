@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------
 #
-# Makefile for ZFIN_WWW CVS Project, PUBMED
+# Makefile for server_apps/data_transfer/PUBMED/Journal
 #
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -13,22 +13,15 @@
 
 # ---------------  Variable Definitions  --------------------------------
 
-TOP = ../../..
+TOP = ../../../..
 include $(TOP)/make.include
 
-TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/PUBMED
-SUBDIRS   = LinkOut Journal
-GENERICS  = addMeshTermsToAllPubs.groovy \
-            fetchPubsFromPubMed.pl \
-            fixBadCharacterEncoding.pl \
-            loadNewPubs.sql \
-            updatePublicationDate.groovy \
-            updatepubstatus.pl 
-STATICS  =  PubmedUtils.groovy loadMeshTerms.groovy 
+TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/PUBMED/Journal
+GENERICS  = insertJournalAlias.sql\
+            checkAndUpdateJournals.pl mergeJournals.pl
 
 # ---------------  Production Rules  ------------------------------------
 
 # use default rules for directories without app pages in them
 
 include $(TOP)/make.default.rules
-
