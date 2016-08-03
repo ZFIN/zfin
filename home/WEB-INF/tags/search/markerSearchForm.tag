@@ -32,8 +32,8 @@
         <div class="col-sm-6 form-inline">
             <label for="searchtype">Name / Symbol</label>
             <select name="searchtype" id="searchtype" class="form-control">
-                <option>Contains</option>
                 <option>Begins With</option>
+                <option>Contains</option>
             </select>
             <input type="text" name="name" class="form-control" value="${criteria.name}"/>
 
