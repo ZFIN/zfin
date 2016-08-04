@@ -1,4 +1,4 @@
-create procedure addSourceAlias (vJournalZdbId varchar(50), vOldJournalVaule varchar(255))
+create procedure addSourceAlias (vJournalZdbId varchar(50), vOldJournalValue varchar(255))
 
        define zdbId varchar(50);
        let zdbId = get_id('SALIAS');
