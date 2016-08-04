@@ -770,7 +770,7 @@ public class ResultService {
             result.setDisplayedID(journal.getZdbID());
             result.setName(journal.getName());
             result.addAttribute(ABBREVIATION, journal.getAbbreviation());
-            //result.addAttribute(SYNONYMS,"These, Will Need, To Be Mapped"); //todo: add synonyms once they're in the database
+            result.addAttribute(SYNONYMS,withCommas(journal.getAliases()));
             if (StringUtils.isNotEmpty(journal.getPrintIssn())) {
                 result.addAttribute(ISSN,journal.getPrintIssn());
             }
