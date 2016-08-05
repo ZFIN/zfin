@@ -3,6 +3,7 @@ package org.zfin.marker.presentation;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
+import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.repository.RepositoryFactory;
@@ -29,7 +30,7 @@ public class GeneAddFormBeanValidator implements Validator {
             errors.rejectValue("name", "gene.name.inuse");
         }
 
-        if (form.getType() != null && !form.getType().equals("EFG")) {
+        if (form.getType() != null && !form.getType().equals(Marker.Type.EFG.name())) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "abbreviation", "gene.abbreviation.empty");
             if (markerRepository.isMarkerExists(form.getAbbreviation())) {
                 errors.rejectValue("abbreviation", "gene.abbreviation.inuse");
