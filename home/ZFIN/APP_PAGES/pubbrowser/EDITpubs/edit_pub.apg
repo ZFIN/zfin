@@ -233,7 +233,7 @@ code added for Bugz 6986<?/MICOMMENT>
     <INPUT TYPE=text name=q_pub_date size=10 value="$q_pub_date">
 
     <p>    <b>Journal Abbrev:</b> The journal abbreviation<br>
-    <INPUT TYPE=text name="editpub_jrnl_abbrev" size=40 value="$editpub_jrnl_abbrev"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-journalselect.apg">Find journal abbrev.</A>
+    <INPUT TYPE=text name="editpub_jrnl_abbrev" size=40 value="$editpub_jrnl_abbrev"> <A HREF="/search?category=Journal">Find journal abbrev.</A>
     <br>
 
     <p>    <b>Journal Volume: </b>journal volume that article appeared in.<br>
