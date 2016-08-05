@@ -271,7 +271,7 @@
                     <zfin:alternating-tr loopName="index">
                         <td><zfin:link entity="${fishGenotypeStatistics.fish}"/></td>
                         <td>
-                            <c:forEach var="marker" items="${fishGenotypeStatistics.getAffectedMarker()}"
+                            <c:forEach var="marker" items="${fishGenotypeStatistics.affectedMarkers}"
                                        varStatus="loop">
                                 <zfin:link entity="${marker}"/><c:if test="${!loop.last}">, </c:if>
                             </c:forEach>
