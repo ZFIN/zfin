@@ -17,7 +17,7 @@ TOP = ../../../..
 include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/PUBMED/Journal
-GENERICS  = insertJournalAlias.sql\
+GENERICS  = checkAndUpdateJournals.sql insertJournalAlias.sql\
             checkAndUpdateJournals.pl mergeJournals.pl
 
 # ---------------  Production Rules  ------------------------------------
