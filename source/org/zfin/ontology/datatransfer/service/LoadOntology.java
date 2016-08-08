@@ -942,7 +942,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                     if (term.getConsiderReplacements() != null) {
                         for (org.obo.datamodel.ObsoletableObject considerObject : term.getConsiderReplacements())
                             appendFormattedRecord(UnloadFile.TERM_CONSIDER, term.getID(), considerObject.getID(), "consider");
-                    }
+                       }
                     if (term.getDbxrefs() != null) {
                         for (Dbxref dbxref : term.getDbxrefs()) {
                             //  appendFormattedRecord(UnloadFile.TERM_XREF, term.getID(), dbxref.getDatabase(), dbxref.getDatabaseID(), "xref");

@@ -1,6 +1,9 @@
 --liquibase formatted sql
 --changeset sierra:addStandard
 
+delete from experiment_condition
+ where expcond_zdb_id = 'ZDB-EXPCOND-041102-2';
+
 create temp table tmp_expcond (id varchar(50), expid varchar(50))
 with no log;
 
