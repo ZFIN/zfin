@@ -15,4 +15,6 @@
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/underwater/14118.sql"/>
 
+    <include file="source/org/zfin/db/postGmakePostloaddb/1080/underwater/14381splitBBAjournals.sql"/>
+
 </databaseChangeLog>
