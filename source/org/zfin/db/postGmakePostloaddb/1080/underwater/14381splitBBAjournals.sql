@@ -100,7 +100,7 @@ delete from zdb_active_source where zactvs_zdb_id = "ZDB-JRNL-051107-3";
 
 select * from journal where jrnl_name like "BBA%";
 
---commit work;
+commit work;
 
-rollback work;
+--rollback work;
 
