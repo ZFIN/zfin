@@ -872,7 +872,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
     }
 
-    public void createMarker(Marker marker, Publication pub) {
+    public void createMarker(Marker marker, Publication pub, boolean insertUpdate) {
         if (marker.getName() == null) {
             throw new RuntimeException("Cannot create a new marker without a name.");
         }
@@ -898,10 +898,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
         //add publication to attribution list.
         infrastructureRepository.insertRecordAttribution(marker.getZdbID(), pub.getZdbID());
 
+        if (insertUpdate) {
+            infrastructureRepository.insertUpdatesTable(marker, "New " + marker.getType().name(), "");
+        }
+
         // run procedure for fast search table
         runMarkerNameFastSearchUpdate(marker);
     }
 
+    public void createMarker(Marker marker, Publication pub) {
+        createMarker(marker, pub, true);
+    }
 
     /**
      * Checks if a gene has a small segment relationship with a given small segment.

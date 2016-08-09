@@ -21,7 +21,7 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/ZFINadmn
 SUBDIRS = DELETErecords
 
 GENERICS = classify_pubs.apg
-STATICS = mkdist_list.apg mkdist_list_usa.apg mkdist_list_PI.apg
+STATICS =
 
 
 # Use default make rules for app page directories.

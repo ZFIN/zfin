@@ -22,6 +22,7 @@ import org.zfin.mutant.DiseaseAnnotation;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.orthology.Ortholog;
+import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 
@@ -271,4 +272,33 @@ public class PublicationViewController {
         }
         return results;
     }
+
+    @RequestMapping("/journal/{zdbID}")
+    public String viewJournal(@PathVariable String zdbID, Model model, HttpServletResponse response) {
+        Journal journal = publicationRepository.getJournalByID(zdbID);
+        //try zdb_replaced data if necessary
+        if (journal == null) {
+            String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
+            if (replacedZdbID != null) {
+                journal = publicationRepository.getJournalByID(replacedZdbID);
+            }
+        }
+
+        if (journal == null) {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        journal.setPublications(publicationRepository.getPublicationForJournal(journal));
+
+        model.addAttribute("journal", journal);
+
+        String title = "Journal: " + journal.getAbbreviation();
+
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, title);
+
+        return "publication/journal-view.page";
+    }
+
 }
+

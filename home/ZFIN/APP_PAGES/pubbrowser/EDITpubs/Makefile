@@ -20,9 +20,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/pubbrowser/EDITpubs
 
-GENERICS = edit_pub.apg process-pub.apg new_journal.apg \
-	   do-jrnlupdate.apg
-STATICS =  process-journal.apg
+GENERICS = edit_pub.apg process-pub.apg
+
 
 
 # use default rules for app page directories

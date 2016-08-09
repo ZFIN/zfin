@@ -146,7 +146,7 @@
                         },
                         empty: "<p class=\"tt-no-results text-danger\">" +
                                 "Oof. I couldn't find any journals like that.<br>" +
-                                "Perhaps a new one needs to be <a href=\"/webdriver?MIval=aa-new_journal.apg\">added</a>." +
+                                "Perhaps a new one needs to be added." +
                                 "</p>"
                     },
                     limit: 10000

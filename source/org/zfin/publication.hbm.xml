@@ -121,6 +121,16 @@
         <property name="isNice">
             <column name="jrnl_is_nice"/>
         </property>
+
+        <property name="printIssn" column="jrnl_print_issn"/>
+        <property name="onlineIssn" column="jrnl_online_issn"/>
+        <property name="nlmID" column="jrnl_nlmid"/>
+
+        <set name="aliases" table="source_alias" order-by="salias_alias_lower desc">
+            <key column="salias_source_zdb_id"/>
+            <one-to-many class="org.zfin.infrastructure.SourceAlias"/>
+        </set>
+
     </class>
 
     <class name="org.zfin.publication.MeshTerm" table="mesh_term">

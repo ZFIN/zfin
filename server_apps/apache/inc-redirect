@@ -103,6 +103,10 @@ RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
 RewriteCond %{QUERY_STRING}     ^Mival=aa-pubview2.apg&OID=([\w-]+)$    [NC]
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
 
+# Should be removed or rewritten when xpatselect.apg is converted to java
+RewriteCond %{QUERY_STRING}     ^MIval=aa-xpatview.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&xpatsel_geneZdbId=%1&query_results=true [NC,R=301]
+
 RewriteCond %{QUERY_STRING}     ^Mival=aa-pheno_summary.apg&OID=([\w-]+)$    [NC]
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/marker/%1/phenotype-summary? [NC,R=301]
 

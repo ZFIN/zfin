@@ -1,8 +1,0 @@
-<!-- This file is almost identical to the file used to generate printable pubs, except that it generated a mail list that can be passed to sendmail.
-
--->
-
-<PRE>
-<?MISQL SQL="select email from person , int_person_lab, lab_position where zdb_id = source_id and position_id = labpos_pk_id and labpos_position in ('PI/Director', 'Co-PI/Senior Scientist') and email is not null and email <> 'NULL' and email <> '' and on_dist_list='t'">$1
-<?/MISQL>
-</PRE>

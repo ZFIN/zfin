@@ -248,7 +248,9 @@ public class ConditionAddPresenter implements HandlesError {
         if (!view.chebiTermEntry.getTermTextBox().hasValidateTerm() && view.chebiTermEntry.isVisible())
             return "Zeco term requires a Chebi term ";
        /* if (!view.taxonTermEntry.getTermTextBox().hasValidateTerm() && view.taxonTermEntry.isVisible())
+
             return "Zeco term requires a taxonomy term ";*/
+
         return null;
     }
 

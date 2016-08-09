@@ -316,6 +316,13 @@ function openChild(childWinUrl,childWinName) {
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 <?MISQL SQL="select WebExplode(object,'page_title=Expression Search') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
+<?MIBLOCK COND="$(AND,$(XST,$xpatsel_geneZdbId),$(NXST,$gene_name))">
+  <?MISQL SQL="select mrkr_abbrev from marker where mrkr_zdb_id = '$xpatsel_geneZdbId';">
+    <?MIVAR NAME="$gene_name">$1<?/MIVAR>
+  <?/MISQL>
+  <?MIVAR NAME="$searchtype">equals<?/MIVAR>
+<?/MIBLOCK>
+
 <?MICOMMENT> 
   ============================================================================
   ==========  GET MIN AND MAX STAGES

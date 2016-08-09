@@ -55,6 +55,14 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         this.name = name;
     }
 
+   /* public List<ExperimentCondition> getExperimentConditions() {
+        return experimentConditions;
+    }
+
+    public void setExperimentConditions(List<ExperimentCondition> experimentConditions) {
+        this.experimentConditions = experimentConditions;
+    }*/
+
     public Publication getPublication() {
         return publication;
     }
