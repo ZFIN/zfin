@@ -104,9 +104,9 @@ while (<MGI>) {
  
  @fieldsMGI = split("\t");
 
- $mgiID = $fieldsMGI[0];
+ $MGIid = $fieldsMGI[0];
 
- if ($mgiID =~ m/^MGI:\d+/) {
+ if ($MGIid =~ m/^MGI:\d+/) {
 
    if ($fieldsMGI[4] =~ m/\d+/) {
      $ncbiGeneID = $fieldsMGI[4];
