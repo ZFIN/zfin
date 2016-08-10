@@ -1,5 +1,6 @@
 --liquibase formatted sql
 --changeset sierra:createGap1LoadTable
+
 create table tmp_gap_dup_tt (expcondId varchar(50),
        	     			   expId varchar(50),
 				   cdtId varchar(50),
