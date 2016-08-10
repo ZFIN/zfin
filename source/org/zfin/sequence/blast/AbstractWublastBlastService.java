@@ -626,20 +626,12 @@ public abstract class AbstractWublastBlastService implements BlastService {
     protected void updatePreviousAccessions(Database database, Collection<String> validAccessions,
                                             Collection<String> previousAccession) {
         // nothing to update, just drop the old and add the new
-        Transaction transaction = HibernateUtil.currentSession().getTransaction();
-        transaction.begin();
-        try {
             Collection<String> accessionToAdd = CollectionUtils.subtract(validAccessions, previousAccession);
             blastRepository.addPreviousAccessions(database, accessionToAdd);
 
             Collection<String> accessionToRemove = CollectionUtils.subtract(previousAccession, validAccessions);
             blastRepository.removePreviousAccessions(database, accessionToRemove);
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-        }
-    }
-
+	}
 
     /**
      * Sets the lock when getting it

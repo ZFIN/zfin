@@ -476,7 +476,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     }
 
 
-    @Test
     public void addAttributionsNotFound() {
         try {
             HibernateUtil.createTransaction();

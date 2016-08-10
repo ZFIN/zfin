@@ -1,4 +1,6 @@
 <%@ page import="java.sql.Connection" %>
+<%@ page import="java.sql.SQLException" %>
+<%@ page import="org.hibernate.jdbc.ReturningWork" %>
 <%@ page import="org.zfin.framework.HibernateUtil" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
@@ -57,7 +59,12 @@
         </td>
         <td class="listContent">
             <%
-                Connection conn = HibernateUtil.currentSession().connection();
+                Connection conn = HibernateUtil.currentSession().doReturningWork(new ReturningWork<Connection>(){
+                    @Override
+                    public Connection execute(Connection connection) throws SQLException {
+                        return connection;
+                    }
+                });
             %>
             <%= conn.getTransactionIsolation()%>
         </td>

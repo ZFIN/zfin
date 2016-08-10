@@ -12,6 +12,8 @@ import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 import org.zfin.antibody.Antibody;
 import org.zfin.curation.presentation.CorrespondenceDTO;
@@ -306,9 +308,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "GROUP BY exp.xpatex_gene_zdb_id, gene.mrkr_abbrev " +
                 "ORDER BY numOfFig DESC, geneSymbol ";
         SQLQuery query = session.createSQLQuery(hql);
-        query.addScalar("geneID", Hibernate.STRING);
-        query.addScalar("geneSymbol", Hibernate.STRING);
-        query.addScalar("numOfFig", Hibernate.INTEGER);
+        query.addScalar("geneID", StringType.INSTANCE);
+        query.addScalar("geneSymbol", StringType.INSTANCE);
+        query.addScalar("numOfFig", IntegerType.INSTANCE);
         query.setParameter("termID", anatomyTerm.getZdbID());
         query.setBoolean("expressionFound", true);
         query.setBoolean("isWildtype", true);

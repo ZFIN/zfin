@@ -1,7 +1,7 @@
 package org.zfin.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.jdbc.util.BasicFormatterImpl;
+import org.hibernate.engine.jdbc.internal.BasicFormatterImpl;
 
 import java.util.List;
 import java.util.Map;

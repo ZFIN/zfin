@@ -33,7 +33,6 @@ public class BlastAccessTest extends AbstractDatabaseTest{
 
     @Before
     public void setUp() {
-        RepositoryFactory.getBlastRepository().setAllDatabaseLock(false);
     }
 
     @Test

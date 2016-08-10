@@ -85,14 +85,6 @@
             </generator>
         </id>
 
-        <discriminator type="string"
-                       formula="(CASE get_obj_type(mrkr_zdb_id)
-                                    WHEN 'MRPHLNO' THEN       'MO'
-                                    WHEN 'TALEN' THEN       'MO'
-                                    WHEN 'CRISPR' THEN       'MO'
-                                    ELSE                      'ot'
-                                 END)"/>
-
         <property name="name">
             <column name="mrkr_name" not-null="true"/>
         </property>

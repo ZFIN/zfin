@@ -7,6 +7,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.jdbc.Work;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
 import org.zfin.database.DbSystemUtil;
@@ -773,29 +774,33 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
 
-    public void runFeatureNameFastSearchUpdate(Feature feature) {
+    public void runFeatureNameFastSearchUpdate(final Feature feature) {
         Session session = currentSession();
-        Connection connection = session.connection();
-        CallableStatement statement = null;
-        String sql = "execute procedure regen_names_feature(?)";
-        try {
-            statement = connection.prepareCall(sql);
-            String zdbID = feature.getZdbID();
-            statement.setString(1, zdbID);
-            statement.execute();
-            logger.info("Execute stored procedure: " + sql + " with the argument " + zdbID);
-        } catch (SQLException e) {
-            logger.error("Could not run: " + sql, e);
-            logger.error(DbSystemUtil.getLockInfo());
-        } finally {
-            if (statement != null) {
+        session.doWork(new Work(){
+            @Override
+            public void execute(Connection connection) throws SQLException {
+                CallableStatement statement = null;
+                String sql = "execute procedure regen_names_feature(?)";
                 try {
-                    statement.close();
+                    statement = connection.prepareCall(sql);
+                    String zdbID = feature.getZdbID();
+                    statement.setString(1, zdbID);
+                    statement.execute();
+                    logger.info("Execute stored procedure: " + sql + " with the argument " + zdbID);
                 } catch (SQLException e) {
-                    logger.error(e);
+                    logger.error("Could not run: " + sql, e);
+                    logger.error(DbSystemUtil.getLockInfo());
+                } finally {
+                    if (statement != null) {
+                        try {
+                            statement.close();
+                        } catch (SQLException e) {
+                            logger.error(e);
+                        }
+                    }
                 }
             }
-        }
+        });
     }
 
     /**

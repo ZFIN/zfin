@@ -14,6 +14,8 @@ import org.hibernate.criterion.Example;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.jdbc.ReturningWork;
+import org.hibernate.jdbc.Work;
 import org.springframework.stereotype.Repository;
 import org.zfin.ExternalNote;
 import org.zfin.database.DbSystemUtil;
@@ -1077,35 +1079,39 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      * @return number from sql query: # of updated records, inserted records, deleted records.
      */
     @Override
-    public int executeJdbcStatement(DatabaseJdbcStatement jdbcStatement) {
-        Session session = currentSession();
-        Connection connection = session.connection();
-        Statement statement = null;
-        int affectedRows = 0;
-        try {
-            statement = connection.createStatement();
-            statement.execute(jdbcStatement.getQuery());
-            affectedRows = statement.getUpdateCount();
-            logger.info("Number of updated rows: " + affectedRows);
-            session.flush();
-        } catch (SQLException exception) {
-            logger.error("could not execute statement in file '" + jdbcStatement.getScriptFile() + "' " +
-                    "and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
-                    jdbcStatement.getHumanReadableQueryString(), exception);
-            logger.error(DbSystemUtil.getLockInfo());
-            throw new RuntimeException(exception);
-        } finally {
-            try {
-                if (statement != null) {
-                    statement.close();
+    public int executeJdbcStatement(final DatabaseJdbcStatement jdbcStatement) {
+        final Session session = currentSession();
+        return session.doReturningWork(new ReturningWork<Integer>(){
+            @Override
+            public Integer execute(Connection connection) throws SQLException {
+                Statement statement = null;
+                int affectedRows = 0;
+                try {
+                    statement = connection.createStatement();
+                    statement.execute(jdbcStatement.getQuery());
+                    affectedRows = statement.getUpdateCount();
+                    logger.info("Number of updated rows: " + affectedRows);
+                    session.flush();
+                } catch (SQLException exception) {
+                    logger.error("could not execute statement in file '" + jdbcStatement.getScriptFile() + "' " +
+                            "and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
+                            jdbcStatement.getHumanReadableQueryString(), exception);
+                    logger.error(DbSystemUtil.getLockInfo());
+                    throw new RuntimeException(exception);
+                } finally {
+                    try {
+                        if (statement != null) {
+                            statement.close();
+                        }
+                    } catch (SQLException e) {
+                        logger.error("could not close statement '" + jdbcStatement.getScriptFile() + "' " +
+                                "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
+                                jdbcStatement.getHumanReadableQueryString(), e);
+                    }
                 }
-            } catch (SQLException e) {
-                logger.error("could not close statement '" + jdbcStatement.getScriptFile() + "' " +
-                        "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
-                        jdbcStatement.getHumanReadableQueryString(), e);
+                return affectedRows;
             }
-        }
-        return affectedRows;
+        });
     }
 
     @Override
@@ -1120,150 +1126,162 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      * @param data          string data
      */
     @Override
-    public void executeJdbcStatement(DatabaseJdbcStatement jdbcStatement, List<List<String>> data, int batchSize) {
+    public void executeJdbcStatement(final DatabaseJdbcStatement jdbcStatement, final List<List<String>> data, final int batchSize) {
         long start = System.currentTimeMillis();
-        Session session = currentSession();
-        Connection connection = session.connection();
-        PreparedStatement statement = null;
-        ResultSet rs = null;
-        int accumulatedBatchCounter = 0;
-        int currentBatchSize = 0;
-        try {
-            Statement st = connection.createStatement();
-            rs = st.executeQuery("select * from " + jdbcStatement.getTableName());
-            ResultSetMetaData rsMetaData = rs.getMetaData();
-            statement = connection.prepareStatement(jdbcStatement.getQuery());
-            for (List<String> individualRow : data) {
-                int index = 1;
-                for (String column : individualRow) {
-                    String columnType = rsMetaData.getColumnClassName(index);
-                    if (columnType.equals("java.lang.Boolean")) {
-                        boolean columnTypeBol = column.equals("t");
-                        statement.setBoolean(index++, columnTypeBol);
-                    } else if (columnType.equals("java.lang.Long")) {
-                        long number = Long.valueOf(column);
-                        statement.setLong(index++, number);
-                    } else {
-                        statement.setString(index++, column);
+        final Session session = currentSession();
+        session.doWork(new Work(){
+            @Override
+            public void execute(Connection connection) throws SQLException {
+                PreparedStatement statement = null;
+                ResultSet rs = null;
+                int accumulatedBatchCounter = 0;
+                int currentBatchSize = 0;
+                try {
+                    Statement st = connection.createStatement();
+                    rs = st.executeQuery("select * from " + jdbcStatement.getTableName());
+                    ResultSetMetaData rsMetaData = rs.getMetaData();
+                    statement = connection.prepareStatement(jdbcStatement.getQuery());
+                    for (List<String> individualRow : data) {
+                        int index = 1;
+                        for (String column : individualRow) {
+                            String columnType = rsMetaData.getColumnClassName(index);
+                            if (columnType.equals("java.lang.Boolean")) {
+                                boolean columnTypeBol = column.equals("t");
+                                statement.setBoolean(index++, columnTypeBol);
+                            } else if (columnType.equals("java.lang.Long")) {
+                                long number = Long.valueOf(column);
+                                statement.setLong(index++, number);
+                            } else {
+                                statement.setString(index++, column);
+                            }
+                        }
+                        statement.addBatch();
+                        currentBatchSize++;
+                        accumulatedBatchCounter++;
+                        // execute batch if batch size is reached or if no more records are found.
+                        if (currentBatchSize == batchSize || accumulatedBatchCounter == data.size()) {
+                            statement.executeBatch();
+                            logger.info("Batch inserted records up to #: " + accumulatedBatchCounter);
+                            // reset the index that keeps track of the current batch size
+                            currentBatchSize = 0;
+                        }
+                        session.flush();
+                        session.clear();
                     }
-                }
-                statement.addBatch();
-                currentBatchSize++;
-                accumulatedBatchCounter++;
-                // execute batch if batch size is reached or if no more records are found.
-                if (currentBatchSize == batchSize || accumulatedBatchCounter == data.size()) {
-                    statement.executeBatch();
-                    logger.info("Batch inserted records up to #: " + accumulatedBatchCounter);
-                    // reset the index that keeps track of the current batch size
-                    currentBatchSize = 0;
-                }
-                session.flush();
-                session.clear();
-            }
-        } catch (SQLException exception) {
-            logger.error("could not execute statement in file '" + jdbcStatement.getScriptFile() + "' " +
-                    "and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
-                    jdbcStatement.getHumanReadableQueryString(), exception);
-            for (int index = 0; index < batchSize; index++) {
-                int index1 = accumulatedBatchCounter - batchSize + index;
-                logger.error("Record number " + index1 + ", record: " + data.get(index1));
-            }
-            logger.error(DbSystemUtil.getLockInfo());
-            throw new RuntimeException(exception);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (statement != null) {
-                    statement.close();
-                }
-            } catch (SQLException e) {
-                logger.error("could not close statement '" + jdbcStatement.getScriptFile() + "' " +
-                        "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
-                        jdbcStatement.getQuery(), e);
-            }
-            // find out the individual line that caused the problem.
+                } catch (SQLException exception) {
+                    logger.error("could not execute statement in file '" + jdbcStatement.getScriptFile() + "' " +
+                            "and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
+                            jdbcStatement.getHumanReadableQueryString(), exception);
+                    for (int index = 0; index < batchSize; index++) {
+                        int index1 = accumulatedBatchCounter - batchSize + index;
+                        logger.error("Record number " + index1 + ", record: " + data.get(index1));
+                    }
+                    logger.error(DbSystemUtil.getLockInfo());
+                    throw new RuntimeException(exception);
+                } finally {
+                    try {
+                        if (rs != null) {
+                            rs.close();
+                        }
+                        if (statement != null) {
+                            statement.close();
+                        }
+                    } catch (SQLException e) {
+                        logger.error("could not close statement '" + jdbcStatement.getScriptFile() + "' " +
+                                "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
+                                jdbcStatement.getQuery(), e);
+                    }
+                    // find out the individual line that caused the problem.
 /*
             if (error)
                 runBatchJDBCStatementIndividually(jdbcStatement, data, accumulatedBatchCounter - batchSize, accumulatedBatchCounter);
 */
-        }
+                }
+            }
+        });
         long end = System.currentTimeMillis();
         logger.debug("Insertion:  " + jdbcStatement.getHumanReadableQueryString());
         logger.info("Finished Insertion of " + data.size() + " records in " + DateUtil.getTimeDuration(start, end));
         session.flush();
     }
 
-    public void executeJdbcQuery(String query) {
+    public void executeJdbcQuery(final String query) {
         long start = System.currentTimeMillis();
-        Session session = currentSession();
-        Connection connection = session.connection();
-        ResultSet rs = null;
-        try {
-            Statement st = connection.createStatement();
-            int returnNumber = st.executeUpdate(query);
-            session.flush();
-            session.clear();
-        } catch (SQLException exception) {
-            logger.error("could not execute  '" + query + "' ", exception);
-            throw new RuntimeException(exception);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
+        final Session session = currentSession();
+        session.doWork(new Work(){
+            @Override
+            public void execute(Connection connection) throws SQLException {
+                ResultSet rs = null;
+                try {
+                    Statement st = connection.createStatement();
+                    int returnNumber = st.executeUpdate(query);
+                    session.flush();
+                    session.clear();
+                } catch (SQLException exception) {
+                    logger.error("could not execute  '" + query + "' ", exception);
+                    throw new RuntimeException(exception);
+                } finally {
+                    try {
+                        if (rs != null) {
+                            rs.close();
+                        }
+                    } catch (SQLException e) {
+                        // ignore
+                    }
                 }
-            } catch (SQLException e) {
-                // ignore
             }
-        }
+        });
         long end = System.currentTimeMillis();
         logger.debug("Query:  " + query);
         logger.info("Query took " + DateUtil.getTimeDuration(start, end));
         session.flush();
     }
 
-    private void runBatchJDBCStatementIndividually(DatabaseJdbcStatement jdbcStatement, List<List<String>> data, int start, int end) {
-        Session session = currentSession();
-        Connection connection = session.connection();
-        PreparedStatement statement = null;
-        ResultSet rs = null;
-        int index = start;
-        try {
-            Statement st = connection.createStatement();
-            rs = st.executeQuery("select * from " + jdbcStatement.getTableName());
-            ResultSetMetaData rsMetaData = rs.getMetaData();
-            statement = connection.prepareStatement(jdbcStatement.getQuery());
-            for (; index < end; index++) {
-                List<String> row = data.get(index);
-                for (String column : row) {
-                    String columnType = rsMetaData.getColumnClassName(index);
-                    if (columnType.equals("java.lang.Boolean")) {
-                        boolean columnTypeBol = column.equals("t");
-                        statement.setBoolean(index++, columnTypeBol);
-                    } else {
-                        statement.setString(index++, column);
+    private void runBatchJDBCStatementIndividually(final DatabaseJdbcStatement jdbcStatement, final List<List<String>> data, final int start, final int end) {
+        final Session session = currentSession();
+        session.doWork(new Work(){
+            @Override
+            public void execute(Connection connection) throws SQLException {
+                PreparedStatement statement = null;
+                ResultSet rs = null;
+                int index = start;
+                try {
+                    Statement st = connection.createStatement();
+                    rs = st.executeQuery("select * from " + jdbcStatement.getTableName());
+                    ResultSetMetaData rsMetaData = rs.getMetaData();
+                    statement = connection.prepareStatement(jdbcStatement.getQuery());
+                    for (; index < end; index++) {
+                        List<String> row = data.get(index);
+                        for (String column : row) {
+                            String columnType = rsMetaData.getColumnClassName(index);
+                            if (columnType.equals("java.lang.Boolean")) {
+                                boolean columnTypeBol = column.equals("t");
+                                statement.setBoolean(index++, columnTypeBol);
+                            } else {
+                                statement.setString(index++, column);
+                            }
+                        }
+                        statement.execute();
+                    }
+                } catch (SQLException exception) {
+                    logger.error("Record number " + index + ", record: " + data.get(index));
+                    logger.error(DbSystemUtil.getLockInfo());
+                } finally {
+                    try {
+                        if (rs != null) {
+                            rs.close();
+                        }
+                        if (statement != null) {
+                            statement.close();
+                        }
+                    } catch (SQLException e) {
+                        logger.error("could not close statement '" + jdbcStatement.getScriptFile() + "' " +
+                                "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
+                                jdbcStatement.getQuery(), e);
                     }
                 }
-                statement.execute();
             }
-        } catch (SQLException exception) {
-            logger.error("Record number " + index + ", record: " + data.get(index));
-            logger.error(DbSystemUtil.getLockInfo());
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (statement != null) {
-                    statement.close();
-                }
-            } catch (SQLException e) {
-                logger.error("could not close statement '" + jdbcStatement.getScriptFile() + "' " +
-                        "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
-                        jdbcStatement.getQuery(), e);
-            }
-        }
+        });
     }
 
     /**
@@ -1281,35 +1299,42 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         }
     }
 
-    public List<List<String>> executeNativeQuery(String queryString) {
-        Statement stmt = null;
-        List<List<String>> data = new ArrayList<>();
-        try {
-            stmt = HibernateUtil.currentSession().connection().createStatement();
-            ResultSet rs = stmt.executeQuery(queryString);
-            while (rs.next()) {
-                List<String> row = new ArrayList<>();
-                for (int index = 1; index <= rs.getMetaData().getColumnCount(); index++) {
-                    String value = rs.getString(index);
-                    if (value == null) {
-                        value = "";
-                    }
-                    row.add(value);
-                }
-                data.add(row);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (stmt != null) {
+    public List<List<String>> executeNativeQuery(final String queryString) {
+        final Session session = HibernateUtil.currentSession();
+        return session.doReturningWork(new ReturningWork<List<List<String>>>(){
+            @Override
+            public List<List<String>> execute(Connection connection) throws SQLException {
+                Statement stmt = null;
+                List<List<String>> data = new ArrayList<>();
                 try {
-                    stmt.close();
+                    stmt = connection.createStatement();
+                    ResultSet rs = stmt.executeQuery(queryString);
+                    while (rs.next()) {
+                        List<String> row = new ArrayList<>();
+                        for (int index = 1; index <= rs.getMetaData().getColumnCount(); index++) {
+                            String value = rs.getString(index);
+                            if (value == null) {
+                                value = "";
+                            }
+                            row.add(value);
+                        }
+                        data.add(row);
+                    }
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                } finally {
+                    if (stmt != null) {
+                        try {
+                            stmt.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
+                return data;
             }
-        }
-        return data;
+        });
+
     }
 
     @Override
@@ -1562,37 +1587,41 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return numPubs > 0;
     }
 
-    public List<String> retrieveMetaData(String table) {
+    public List<String> retrieveMetaData(final String table) {
         Session session = currentSession();
-        Connection connection = session.connection();
-        PreparedStatement statement = null;
-        ResultSet rs = null;
-        List<String> columnNames = null;
-        try {
-            Statement st = connection.createStatement();
-            rs = st.executeQuery("select * from " + table);
-            ResultSetMetaData rsMetaData = rs.getMetaData();
-            int columnCount = rsMetaData.getColumnCount();
-            columnNames = new ArrayList<>(columnCount);
-            int index = 1;
-            while (index <= columnCount) {
-                columnNames.add(rsMetaData.getColumnName(index++));
-            }
-        } catch (SQLException exception) {
-            logger.error(DbSystemUtil.getLockInfo());
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
+        return session.doReturningWork(new ReturningWork<List<String>>(){
+            @Override
+            public List<String> execute(Connection connection) throws SQLException {
+                PreparedStatement statement = null;
+                ResultSet rs = null;
+                List<String> columnNames = null;
+                try {
+                    Statement st = connection.createStatement();
+                    rs = st.executeQuery("select * from " + table);
+                    ResultSetMetaData rsMetaData = rs.getMetaData();
+                    int columnCount = rsMetaData.getColumnCount();
+                    columnNames = new ArrayList<>(columnCount);
+                    int index = 1;
+                    while (index <= columnCount) {
+                        columnNames.add(rsMetaData.getColumnName(index++));
+                    }
+                } catch (SQLException exception) {
+                    logger.error(DbSystemUtil.getLockInfo());
+                } finally {
+                    try {
+                        if (rs != null) {
+                            rs.close();
+                        }
+                        if (statement != null) {
+                            statement.close();
+                        }
+                    } catch (SQLException e) {
+                        logger.error("could not close statement", e);
+                    }
                 }
-                if (statement != null) {
-                    statement.close();
-                }
-            } catch (SQLException e) {
-                logger.error("could not close statement", e);
+                return columnNames;
             }
-        }
-        return columnNames;
+        });
     }
 
     /**
@@ -1601,42 +1630,46 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      * @param table table
      * @return list of column objects
      */
-    public List<Column> retrieveColumnMetaData(Table table) {
-        String tableName = table.getTableName();
+    public List<Column> retrieveColumnMetaData(final Table table) {
+        final String tableName = table.getTableName();
         Session session = currentSession();
-        Connection connection = session.connection();
-        PreparedStatement statement = null;
-        ResultSet rs = null;
-        List<Column> columns = new ArrayList<>(5);
-        try {
-            Statement st = connection.createStatement();
-            rs = st.executeQuery("select * from " + tableName);
-            ResultSetMetaData rsMetaData = rs.getMetaData();
-            int columnCount = rsMetaData.getColumnCount();
-            int index = 1;
-            while (index <= columnCount) {
-                Column column = new Column(rsMetaData.getColumnName(index), table);
-                column.setColumnType(rsMetaData.getColumnTypeName(index));
-                column.setColumnLength(rsMetaData.getColumnDisplaySize(index));
-                column.setIsNullable(rsMetaData.isNullable(index));
-                columns.add(column);
-                index++;
-            }
-        } catch (SQLException exception) {
-            logger.error(DbSystemUtil.getLockInfo());
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
+        return session.doReturningWork(new ReturningWork<List<Column>>(){
+            @Override
+            public List<Column> execute(Connection connection) throws SQLException {
+                PreparedStatement statement = null;
+                ResultSet rs = null;
+                List<Column> columns = new ArrayList<>(5);
+                try {
+                    Statement st = connection.createStatement();
+                    rs = st.executeQuery("select * from " + tableName);
+                    ResultSetMetaData rsMetaData = rs.getMetaData();
+                    int columnCount = rsMetaData.getColumnCount();
+                    int index = 1;
+                    while (index <= columnCount) {
+                        Column column = new Column(rsMetaData.getColumnName(index), table);
+                        column.setColumnType(rsMetaData.getColumnTypeName(index));
+                        column.setColumnLength(rsMetaData.getColumnDisplaySize(index));
+                        column.setIsNullable(rsMetaData.isNullable(index));
+                        columns.add(column);
+                        index++;
+                    }
+                } catch (SQLException exception) {
+                    logger.error(DbSystemUtil.getLockInfo());
+                } finally {
+                    try {
+                        if (rs != null) {
+                            rs.close();
+                        }
+                        if (statement != null) {
+                            statement.close();
+                        }
+                    } catch (SQLException e) {
+                        logger.error("could not close statement", e);
+                    }
                 }
-                if (statement != null) {
-                    statement.close();
-                }
-            } catch (SQLException e) {
-                logger.error("could not close statement", e);
+                return columns;
             }
-        }
-        return columns;
+        });
     }
 
 

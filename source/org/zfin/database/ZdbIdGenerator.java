@@ -4,14 +4,16 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.engine.SessionImplementor;
-import org.hibernate.engine.TransactionHelper;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.id.Configurable;
 import org.hibernate.id.IdentifierGenerationException;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.type.Type;
 import org.zfin.construct.ConstructCuration;
+import org.hibernate.Session;
+import org.hibernate.jdbc.ReturningWork;
 
+import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.marker.Marker;
@@ -38,7 +40,7 @@ import java.util.Set;
  * as the type!
  * ToDo: Check if this function can be recreated in Java without affecting the c function.
  */
-public class ZdbIdGenerator extends TransactionHelper implements IdentifierGenerator, Configurable {
+public class ZdbIdGenerator implements IdentifierGenerator, Configurable {
 
     private static final Logger LOG = Logger.getLogger(ZdbIdGenerator.class);
     private String objectType;
@@ -79,7 +81,7 @@ public class ZdbIdGenerator extends TransactionHelper implements IdentifierGener
         long currentTime = 0;
         LOG.debug("generating zdbIDS: " + number);
         for (int i = 0; i < number; i++) {
-            String zdbID = (String) doWorkInCurrentTransaction(session.connection(), query);
+            String zdbID = (String) doWorkInCurrentTransaction(query);
             if (customInsertActiveData) {
                 LOG.debug("insertActiveData: " + customInsertActiveData + " for ZdbID[" + zdbID + "]");
                 infrastructureRepository.insertActiveData(zdbID);
@@ -141,7 +143,7 @@ public class ZdbIdGenerator extends TransactionHelper implements IdentifierGener
 
         try {
             if (!zdbExists){
-            String zdbID = (String) doWorkInCurrentTransaction(session.connection(), query);
+            String zdbID = (String) doWorkInCurrentTransaction(query);
 
             LOG.debug("Sequence for <" + objectType + "> is [" + zdbID + "]");
             if (insertActiveData) {
@@ -181,27 +183,35 @@ public class ZdbIdGenerator extends TransactionHelper implements IdentifierGener
         query = "execute function get_id('" + objectType + "') ";
     }
 
-    protected Serializable doWorkInCurrentTransaction(Connection conn, String sql) throws SQLException {
-        String result;
-        LOG.debug(query);
-        PreparedStatement statement = conn.prepareStatement(query);
-        try {
-            ResultSet rs = statement.executeQuery();
-            if (!rs.next()) {
-                String err = "could not find sequence value ";
-                LOG.error(err);
-                throw new IdentifierGenerationException(err);
-            }
-            result = rs.getString(1);
-            rs.close();
-        }
-        catch (SQLException sqle) {
-            LOG.error("could not read sequence value", sqle);
-            throw sqle;
-        }
-        finally {
-            statement.close();
-        }
-        return result;
+    protected Serializable doWorkInCurrentTransaction(final String query) throws SQLException {
+        Session session = HibernateUtil.currentSession();
+        Serializable someValue = session.doReturningWork(new ReturningWork<Serializable>() {
+
+                    @Override
+                    public Serializable execute(Connection connection) throws SQLException {
+                        String result;
+                        LOG.debug(query);
+                        PreparedStatement statement = connection.prepareStatement(query);
+                        try {
+                            ResultSet rs = statement.executeQuery();
+                            if (!rs.next()) {
+                                String err = "could not find sequence value ";
+                                LOG.error(err);
+                                throw new IdentifierGenerationException(err);
+                            }
+                            result = rs.getString(1);
+                            rs.close();
+                        }
+                        catch (SQLException sqle) {
+                            LOG.error("could not read sequence value", sqle);
+                            throw sqle;
+                        }
+                        finally {
+                            statement.close();
+                        }
+                        return result;
+                    }}
+        );
+        return someValue;
     }
 }

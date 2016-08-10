@@ -1,6 +1,7 @@
 package org.zfin.framework.presentation;
 
 import org.hibernate.Session;
+import org.hibernate.jdbc.ReturningWork;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.*;
@@ -192,14 +194,19 @@ public class DatabaseInfoController {
     }
 
     private DatabaseMetaData getMetaData() {
-        DatabaseMetaData meta = null;
-        Session session = HibernateUtil.currentSession();
-        try {
-            meta = session.connection().getMetaData();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return meta;
+        final Session session = HibernateUtil.currentSession();
+        return session.doReturningWork(new ReturningWork<DatabaseMetaData>(){
+            @Override
+            public DatabaseMetaData execute(Connection connection) throws SQLException {
+                DatabaseMetaData meta = null;
+                try {
+                    meta = connection.getMetaData();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                return meta;
+            }
+        });
     }
 
     class ThreadInfoSorting implements Comparator<ThreadInfo> {

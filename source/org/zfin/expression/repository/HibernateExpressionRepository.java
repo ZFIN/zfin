@@ -9,6 +9,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.jdbc.Work;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.transform.ResultTransformer;
@@ -911,27 +912,31 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     public void runAntibodyAnatomyFastSearchUpdate(ExpressionResult result) {
         Session session = currentSession();
-        Connection connection = session.connection();
-        CallableStatement statement = null;
-        String sql = "execute procedure add_ab_ao_fast_search(?)";
-        try {
-            statement = connection.prepareCall(sql);
-            String zdbID = "";
-            ////String zdbID = result.getZdbID();
-            statement.setString(1, zdbID);
-            statement.execute();
-            logger.info("Execute stored procedure: " + sql + " with the argument " + zdbID);
-        } catch (SQLException e) {
-            logger.error("Could not run: " + sql, e);
-        } finally {
-            if (statement != null) {
+        session.doWork(new Work(){
+            @Override
+            public void execute(Connection connection) throws SQLException {
+                CallableStatement statement = null;
+                String sql = "execute procedure add_ab_ao_fast_search(?)";
                 try {
-                    statement.close();
+                    statement = connection.prepareCall(sql);
+                    String zdbID = "";
+                    ////String zdbID = result.getZdbID();
+                    statement.setString(1, zdbID);
+                    statement.execute();
+                    logger.info("Execute stored procedure: " + sql + " with the argument " + zdbID);
                 } catch (SQLException e) {
-                    logger.error(e);
+                    logger.error("Could not run: " + sql, e);
+                } finally {
+                    if (statement != null) {
+                        try {
+                            statement.close();
+                        } catch (SQLException e) {
+                            logger.error(e);
+                        }
+                    }
                 }
             }
-        }
+        });
     }
 
     /**

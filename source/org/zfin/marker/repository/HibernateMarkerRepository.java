@@ -8,6 +8,7 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.jdbc.Work;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
@@ -853,29 +854,33 @@ public class HibernateMarkerRepository implements MarkerRepository {
      *
      * @param marker Marker
      */
-    public void runMarkerNameFastSearchUpdate(Marker marker) {
+    public void runMarkerNameFastSearchUpdate(final Marker marker) {
         Session session = currentSession();
-        Connection connection = session.connection();
-        CallableStatement statement = null;
-        String sql = "execute procedure regen_names_marker(?)";
-        try {
-            statement = connection.prepareCall(sql);
-            String zdbID = marker.getZdbID();
-            statement.setString(1, zdbID);
-            statement.execute();
-            logger.info("Execute stored procedure: " + sql + " with the argument " + zdbID);
-        } catch (SQLException e) {
-            logger.error("Could not run: " + sql, e);
-            logger.error(DbSystemUtil.getLockInfo());
-        } finally {
-            if (statement != null) {
+        session.doWork(new Work(){
+            @Override
+            public void execute(Connection connection) throws SQLException {
+                CallableStatement statement = null;
+                String sql = "execute procedure regen_names_marker(?)";
                 try {
-                    statement.close();
+                    statement = connection.prepareCall(sql);
+                    String zdbID = marker.getZdbID();
+                    statement.setString(1, zdbID);
+                    statement.execute();
+                    logger.info("Execute stored procedure: " + sql + " with the argument " + zdbID);
                 } catch (SQLException e) {
-                    logger.error(e);
+                    logger.error("Could not run: " + sql, e);
+                    logger.error(DbSystemUtil.getLockInfo());
+                } finally {
+                    if (statement != null) {
+                        try {
+                            statement.close();
+                        } catch (SQLException e) {
+                            logger.error(e);
+                        }
+                    }
                 }
             }
-        }
+        });
     }
 
     public void createMarker(Marker marker, Publication pub, boolean insertUpdate) {
@@ -1206,7 +1211,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             return new PaginationResult<>(0, null);
         }
 
-        String sqlQueryStr = " select distinct(stat.fstat_feat_zdb_id), probe.mrkr_abbrev, gene.mrkr_zdb_id," +
+        String sqlQueryStr = " select distinct(stat.fstat_feat_zdb_id), probe.mrkr_abbrev as probeAbbrev, gene.mrkr_zdb_id," +
                 "                       gene.mrkr_abbrev,gene.mrkr_abbrev_order  " +
                 "from feature_stats as stat, marker as gene, marker as probe " +
                 "     where fstat_superterm_zdb_id = :aoterm " +

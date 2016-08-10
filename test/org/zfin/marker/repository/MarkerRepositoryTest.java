@@ -555,8 +555,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         Session session = HibernateUtil.currentSession();
         OntologyRepository anatomyRep = RepositoryFactory.getOntologyRepository();
         GenericTerm aoTerm = anatomyRep.getTermByName(aoTermName, Ontology.ANATOMY);
-        String hql = " select distinct(stat.fstat_feat_zdb_id), probe.mrkr_abbrev, gene.mrkr_zdb_id," +
-                "                       gene.mrkr_abbrev,gene.mrkr_abbrev_order  " +
+        String hql = " select distinct(stat.fstat_feat_zdb_id) as featureID, probe.mrkr_abbrev as probeAbbrev, gene.mrkr_zdb_id as geneID," +
+                "                       gene.mrkr_abbrev as geneAbbrev,gene.mrkr_abbrev_order  as geneAbbrevOrder " +
                 "from feature_stats as stat, marker as gene, marker as probe " +
                 "     where fstat_superterm_zdb_id = :aoterm " +
                 "           and fstat_gene_zdb_id = gene.mrkr_zdb_id " +
