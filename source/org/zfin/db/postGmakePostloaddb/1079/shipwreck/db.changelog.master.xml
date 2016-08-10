@@ -12,9 +12,9 @@
 
 <!--  <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/dropZecoTempTable.sql"/>  -->
   <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/betterFishTable.sql"/>  
-<include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/createChebiLoadTempTable.sql"/>
-<include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/loadChebiFromFile.xml"/>
-<include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/dropChebiLoadTempTable.sql"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/createChebi.sql"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/loadChebi.xml"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/dropChebi.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/pushToTerm.sql"/>
 
 </databaseChangeLog>
