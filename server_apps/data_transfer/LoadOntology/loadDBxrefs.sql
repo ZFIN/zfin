@@ -88,7 +88,13 @@ where fdb_db_pk_id=tmp_xref_db_id;
 
 
 insert into term_xref (tx_term_zdb_id,tx_full_accession,tx_prefix,tx_accession,tx_fdb_db_id)
-select tmp_term_zdb_id,tmp_xref_db||":"||tmp_xref_accession,tmp_xref_db,tmp_xref_accession,tmp_xref_db_id from tmp_dbxrefs_with_ids;
+select distinct tmp_term_zdb_id,tmp_xref_db||":"||tmp_xref_accession,tmp_xref_db,tmp_xref_accession,tmp_xref_db_id from tmp_dbxrefs_with_ids
+ where not exists (Select 'x' from term_xref
+       	   	  	  where tmp_term_zdb_id = tx_term_zdb_id
+			  and tmp_xref_db||":"||tmp_xref_accession = tx_full_accession
+			  and tx_prefix = tmp_xref_db
+			  and tx_accession = tmp_xref_accession
+			  and tx_fdb_db_id = tmp_xref_db_id);
 
 
 
