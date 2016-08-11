@@ -22,7 +22,7 @@ GENO	/action/genotype/view/ZDB-GENO
 GO	/action/ontology/term-detail/GO
 GTCONSTRCT	/action/marker/view/ZDB-GTCONSTRCT
 IMAGE	/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=ZDB-IMAGE
-JRNL    /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-journalview.apg&OID=ZDB-JRNL
+JRNL    /action/publication/journal/ZDB-JRNL
 LAB	/action/profile/view/ZDB-LAB
 LINK /action/mapping/linkage/ZDB-LINK
 MRPHLNO	/action/marker/view/ZDB-MRPHLNO

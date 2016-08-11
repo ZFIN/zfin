@@ -59,6 +59,8 @@ public class FacetBuilderService {
             return buildDiseaseFacetGroup();
         } else if (StringUtils.equals(category, Category.ANATOMY.getName())) {
             return buildAnatomyFacetGroup();
+        } else if (StringUtils.equals(category, Category.JOURNAL.getName())) {
+            return buildJournalFacetGroup();
         } else {
             return buildFlatFacetGroup(category);
         }
@@ -362,6 +364,17 @@ public class FacetBuilderService {
 
         publishedDateGroup.setFacetQueries(buildDateFacetQueries(filterQuerySelectionMap));
         facetGroups.add(publishedDateGroup);
+        return facetGroups;
+    }
+
+    private List<FacetGroup> buildJournalFacetGroup() {
+        List<FacetGroup> facetGroups = new ArrayList<>();
+
+        FacetGroup accessionGroup = new FacetGroup("Accession", true);
+        Facet accession = buildFacet(FieldName.RELATED_ACCESSION.getName(), true);
+        accession.setAlwaysShowAllFacets(true);
+        accessionGroup.addFacet(accession);
+        facetGroups.add(accessionGroup);
         return facetGroups;
     }
 

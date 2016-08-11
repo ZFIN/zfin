@@ -12,9 +12,9 @@
         <?/MICOMMENT>
         <li>
           Add
-          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENE"><em>gene</em></a>,
-          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENEP"><em>pseudogene</em></a>,
-          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=EFG"><em>foreign gene</em></a>,
+          <a href="/action/marker/gene-add?type=GENE"><em>gene</em></a>,
+          <a href="/action/marker/gene-add?type=GENEP"><em>pseudogene</em></a>,
+          <a href="/action/marker/gene-add?type=EFG"><em>foreign gene</em></a>,
           <a href="/action/marker/clone-add"><em>clone</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
           <a href="/action/antibody/add"><em>antibody</em></a>,
@@ -92,14 +92,12 @@
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
           <!--<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-image-upload.apg"><em>image</em></a>,-->
           <a href="/action/publication/new"><em>pub</em></a>,
-	  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_journal.apg"><em>journal</em></a>,
            <a href="/action/feature/alleleDesig-add-form"><em>line designation</em></a>
         </li>
         <li>
-          Find <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-journalselect.apg"><em>Existing Journal</em></a>
+          Find <a href="/search?category=Journal"><em>Existing Journal</em></a>
         <li>
-          Generate <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkdist_list.apg" TARGET=NEW_WIN><em>dist. list</em></a>,
-	  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkdist_list_usa.apg" TARGET=NEW_WIN><em>USA dist. list</em></a>, <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkdist_list_PI.apg" TARGET=NEW_WIN><em>PI dist. list</em></a>
+          Generate <a href="/action/profile/distribution-list"><em>dist. list</em></a>, <a href="/action/profile/distribution-list?subset=usa"><em>USA dist. list</em></a>, <a href="/action/profile/distribution-list?subset=pi"><em>PI dist. list</em></a>
         </li>
       </ul>
 

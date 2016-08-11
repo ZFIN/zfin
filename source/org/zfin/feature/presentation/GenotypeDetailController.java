@@ -1,6 +1,5 @@
 package org.zfin.feature.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,15 +7,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
+import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mutant.*;
-import org.zfin.mutant.presentation.FishGenotypeExpressionStatistics;
-import org.zfin.mutant.presentation.FishGenotypePhenotypeStatistics;
-import org.zfin.mutant.presentation.GenotypeFishResult;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 
 @Controller
@@ -111,12 +109,7 @@ public class GenotypeDetailController {
         if (!genotype.isWildtype()) {
             retrieveGenotypeAndFeatureData(form, genotype);
             retrievePublicationData(form, genotype);
-            List<FishExperiment> fishExperimentList = mutantRepository.getFishExperiment(genotype);
-            List<GenotypeFishResult> fishGenotypePhenotypeStatisticsList = createResult(fishExperimentList);
-            List<Fish> fishList = mutantRepository.getFishByGenotypeNoExperiment(genotype);
-            addPureFish(fishGenotypePhenotypeStatisticsList, fishList);
-
-            model.addAttribute("fishList", fishGenotypePhenotypeStatisticsList);
+            model.addAttribute("fishList", FishService.getFishExperiementSummaryForGenotype(genotype));
             model.addAttribute("affectedMarkerList", GenotypeService.getAffectedMarker(genotype));
         }
 
@@ -126,45 +119,6 @@ public class GenotypeDetailController {
         genotypeName = genotypeName.replaceAll("</sup>", "");
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotypeName);
         return "genotype/genotype-detail.page";
-    }
-
-    private void addPureFish(List<GenotypeFishResult> fishGenotypePhenotypeStatisticsList, List<Fish> fishList) {
-        if (CollectionUtils.isEmpty(fishList))
-            return;
-        if (fishGenotypePhenotypeStatisticsList == null)
-            fishGenotypePhenotypeStatisticsList = new ArrayList<>(fishList.size());
-        for (Fish fish : fishList) {
-            GenotypeFishResult result = new GenotypeFishResult(fish);
-            if (!fishGenotypePhenotypeStatisticsList.contains(result))
-                fishGenotypePhenotypeStatisticsList.add(result);
-        }
-    }
-
-
-    private List<GenotypeFishResult> createResult(List<FishExperiment> fishExperimentList) {
-        Map<Fish, GenotypeFishResult> statisticsMap = new TreeMap<>();
-        for (FishExperiment fishExperiment : fishExperimentList) {
-            Fish fish = fishExperiment.getFish();
-            GenotypeFishResult stat = statisticsMap.get(fish);
-            if (stat == null) {
-                stat = new GenotypeFishResult(fish);
-                FishGenotypePhenotypeStatistics pheno = stat.getFishGenotypePhenotypeStatistics();
-                if (pheno == null) {
-                    pheno = new FishGenotypePhenotypeStatistics(fish);
-                    stat.setFishGenotypePhenotypeStatistics(pheno);
-                }
-                FishGenotypeExpressionStatistics expression = stat.getFishGenotypeExpressionStatistics();
-                if (expression == null) {
-                    expression = new FishGenotypeExpressionStatistics(fish);
-                    stat.setFishGenotypeExpressionStatistics(expression);
-                }
-                statisticsMap.put(fish, stat);
-            }
-            stat.getFishGenotypePhenotypeStatistics().addFishExperiment(fishExperiment);
-            stat.getFishGenotypeExpressionStatistics().addFishExperiment(fishExperiment);
-        }
-
-        return new ArrayList<>(statisticsMap.values());
     }
 
     private void retrieveGenotypeAndFeatureData(GenotypeBean form, Genotype genotype) {
@@ -179,8 +133,9 @@ public class GenotypeDetailController {
     }
 
     private void retrieveSequenceTargetingReagentData(GenotypeBean form, Fish fish) {
-        if (fish.getStrList() == null || fish.getStrList().size() == 0)
+        if (fish.getStrList() == null || fish.getStrList().size() == 0) {
             return;
+        }
         form.setSequenceTargetingReagents(getSequenceTargetingReagent(fish));
     }
 

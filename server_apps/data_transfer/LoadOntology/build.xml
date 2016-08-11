@@ -13,7 +13,7 @@
     <property name="chebiOboURL" value="ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.obo"/>
     <property name="soOboURL"
               value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/so-xp-simple.obo"/>
-    <property name="zecoTaxonomyOboURL" value="file:///home/Informix/Curation/zeco-taxonomy.obo"/>
+    <property name="zecoTaxonomyOboURL" value="file:///home/informix/Curation/zeco-taxonomy.obo"/>
    <property name="zecoOboURL" value="file:///home/informix/Curation/zeco.obo"/>
    <property name="anatomyOboURL" value="file:///home/informix/Curation/anatomy.obo"/>
   

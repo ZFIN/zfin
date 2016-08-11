@@ -2,7 +2,6 @@ package org.zfin.mutant.repository;
 
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionStatement;
-import org.zfin.expression.Figure;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.presentation.PaginationBean;

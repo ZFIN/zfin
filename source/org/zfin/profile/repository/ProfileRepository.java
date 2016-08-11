@@ -215,4 +215,10 @@ public interface ProfileRepository {
     List<String> getSuppliedDataIds(Organization organization);
 
     List<String> getSourcedDataIds(Organization organization);
+
+    List<String> getDistributionList();
+
+    List<String> getPiDistributionList();
+
+    List<String> getUsaDistributionList();
 }

@@ -6,8 +6,9 @@
 <script src="/javascript/table-collapse.js"></script>
 
 <script>
-    jQuery(function() {
-        jQuery('#transgenics').tableCollapse({label: "transgenics"});
+    $(function() {
+        $('#transgenics').tableCollapse({label: "transgenics"});
+        $('#transgenic-lines').tableCollapse({label: "transgenic lines"});
     });
 </script>
 
@@ -107,6 +108,39 @@
     </c:otherwise>
 </c:choose>
 
+<div id="transgenic-lines" class="summary">
+    <zfin2:subsection title="TRANSGENIC LINES" showNoData="true"
+                      test="${!empty formBean.fish}">
+        <table class="summary rowstripes">
+            <tr>
+                <th>Fish</th>
+                <th>Affected Genes</th>
+                <th>Phenotype</th>
+                <th>Gene Expression</th>
+            </tr>
+            <c:forEach var="fishGenotypeStatistics" items="${formBean.fish}" varStatus="index">
+                <zfin:alternating-tr loopName="index">
+                    <td>
+                        <zfin:link entity="${fishGenotypeStatistics.fish}"/>
+                    </td>
+                    <td>
+                        <c:forEach var="marker" items="${fishGenotypeStatistics.affectedMarkers}" varStatus="loop">
+                            <zfin:link entity="${marker}"/><c:if test="${!loop.last}">, </c:if>
+                        </c:forEach>
+                    </td>
+                    <td>
+                        <zfin2:showFigureData fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypePhenotypeStatistics}"
+                                              link="/action/fish/phenotype-summary?fishID=${fishGenotypeStatistics.fish.zdbID}&imagesOnly=false"/>
+                    </td>
+                    <td>
+                        <zfin2:showFigureData fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypeExpressionStatistics}"
+                                              link="/action/expression/fish-expression-figure-summary?fishID=${fishGenotypeStatistics.fish.zdbID}&imagesOnly=false"/>
+                    </td>
+                </zfin:alternating-tr>
+            </c:forEach>
+        </table>
+    </zfin2:subsection>
+</div>
 
 <%--SEQUENCE INFORMATION--%>
 <zfin2:markerSequenceInformationSummary marker="${formBean.marker}" sequenceInfo="${formBean.sequenceInfo}" title="${fn:toUpperCase('Sequence Information')}" showAllSequences="false"/>

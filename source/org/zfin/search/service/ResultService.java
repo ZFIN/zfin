@@ -33,6 +33,7 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.profile.*;
+import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
@@ -54,6 +55,7 @@ public class ResultService {
     @Autowired
     MutationDetailsConversionService mutationDetailsConversionService;
 
+    public static String ABBREVIATION = "Abbreviation:";
     public static String ABSTRACT = "Abstract:";
     public static String ADDRESS = "Address:";
     public static String AFFECTED_GENES = "Affected Genes:";
@@ -68,15 +70,18 @@ public class ResultService {
     public static String CONSEQUENCE = "Consequence:";
     public static String CONSTRUCT = "Construct:";
     public static String EFG_NAME = "Engineered Foreign Gene Name:";
+    public static String EISSN = "eISSN:";
     public static String EMAIL = "Email:";
     public static String EXPRESSION = "Expression:";
     public static String FISH = "Fish:";
     public static String GENE = "Gene:";
     public static String GENE_NAME = "Gene Name:";
     public static String GENOTYPE = "Genotype:";
+    public static String ISSN = "ISSN:";
     public static String JOURNAL = "Journal:";
     public static String LINE_DESIGNATION = "Line Designation:";
     public static String LOCATION = "Location:";
+    public static String NLMID = "NLMID:";
     public static String NOTE = "Note:";
     public static String PHENOTYPE = "Phenotype:";
     public static String PREVIOUS_NAME = "Previous Names:";
@@ -131,6 +136,8 @@ public class ResultService {
                 injectTermAttributes(result);
             } else if (StringUtils.equals(result.getCategory(), Category.PUBLICATION.getName())) {
                 injectPublicationAttributes(result);
+            } else if (StringUtils.equals(result.getCategory(), Category.JOURNAL.getName())) {
+                injectJournalAttributes(result);
             } else if (StringUtils.equals(result.getCategory(), Category.ANTIBODY.getName())) {
                 injectAntibodyAttributes(result);
             } else if (StringUtils.equals(result.getCategory(), Category.COMMUNITY.getName())) {
@@ -756,6 +763,27 @@ public class ResultService {
 
     }
 
+    public void injectJournalAttributes(SearchResult result) {
+        Journal journal = RepositoryFactory.getPublicationRepository().getJournalByID(result.getId());
+
+        if (journal != null) {
+            result.setDisplayedID(journal.getZdbID());
+            result.setName(journal.getName());
+            result.addAttribute(ABBREVIATION, journal.getAbbreviation());
+            result.addAttribute(SYNONYMS,withCommas(journal.getAliases()));
+            if (StringUtils.isNotEmpty(journal.getPrintIssn())) {
+                result.addAttribute(ISSN,journal.getPrintIssn());
+            }
+            if (StringUtils.isNotEmpty(journal.getOnlineIssn())) {
+                result.addAttribute(EISSN,journal.getOnlineIssn());
+            }
+            if (StringUtils.isNotEmpty(journal.getNlmID())) {
+                result.addAttribute(NLMID,journal.getNlmID());
+            }
+
+
+        }
+    }
 
     public String collapsible(String string) {
         //If it's only a line or two, the css applies a gradient that looks very silly, so only apply

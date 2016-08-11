@@ -25,7 +25,7 @@ figurecuration.apg \
 xpatcurfigure.apg xpatcurimage.apg xpatcurpermission.apg \
  xpatselect.apg \
 xpatselect_detailedresults.apg xpatselect_note.apg xpatselect_summaryresults.apg \
-xpatselectanatverify.apg xpatselectrowdisplay.apg
+xpatselectanatverify.apg
 
 STATICS = xpatselectquery.apg xpatcuration.apg xpatexdisplayname.apg xpatcurupdate.apg \
 diseasecuration.apg experimentcuration.apg fishcuration.apg\
@@ -33,7 +33,7 @@ fxfigstgrng.apg fxfigfishlist.apg \
 fxgenestgrng.apg record_web_update.apg attribupdate.apg \
 orthocuration.apg patocuration.apg xpatcurreset.apg \
 gocuration.apg xpatselect_resultsasimages.apg \
-xpatview.apg fxfiganatlist.apg fxfiggenelist.apg 
+fxfiganatlist.apg fxfiggenelist.apg
 
 # Use default rules for app page directories.
 

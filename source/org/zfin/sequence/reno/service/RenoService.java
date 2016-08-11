@@ -283,7 +283,7 @@ public class RenoService {
         }
         novelGene.setAbbreviation(suggestedAbbreviation);
         novelGene.setMarkerType(mt);
-        mr.createMarker(novelGene, ((RedundancyRun) runCandidate.getRun()).getRelationPublication());
+        mr.createMarker(novelGene, ((RedundancyRun) runCandidate.getRun()).getRelationPublication(), false);
         logger.info("novelGene zdb_id: " + novelGene.getZdbID());
         //update marker history reason
         MarkerHistory mhist = mr.getLastMarkerHistory(novelGene, MarkerHistory.Event.ASSIGNED);

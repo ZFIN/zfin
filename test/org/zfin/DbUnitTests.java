@@ -37,6 +37,7 @@ import org.zfin.infrastructure.delete.DeleteRuleTest;
 import org.zfin.mapping.repository.LinkageRepositoryTest;
 import org.zfin.marker.MarkerServiceTest;
 import org.zfin.marker.MergeMarkerDBTest;
+import org.zfin.marker.presentation.GeneAddFormBeanValidatorSpec;
 import org.zfin.marker.presentation.MarkerGoServiceIntegrationSpec;
 import org.zfin.marker.presentation.SequenceTargetingReagentAddBeanValidatorSpec;
 import org.zfin.marker.repository.MarkerRepositoryTest;
@@ -105,6 +106,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         GafServiceTest.class,
         GBrowseImageSpec.class,
         GBrowseServiceTest.class,
+        GeneAddFormBeanValidatorSpec.class,
         GoaGafServiceTest.class,
         GoEvidenceTest.class,
         GwtConversionTest.class,
@@ -112,8 +114,8 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         InfrastructureRepositoryTest.class,
         LinkageRepositoryTest.class,
         MapAccessionDbLinkTest.class,
-        MarkerGoTermEvidenceRepositoryTest.class,
         MarkerGoServiceIntegrationSpec.class,
+        MarkerGoTermEvidenceRepositoryTest.class,
         MarkerRepositoryTest.class,
         MarkerServiceTest.class,
         MarkerSoapDbTest.class,
