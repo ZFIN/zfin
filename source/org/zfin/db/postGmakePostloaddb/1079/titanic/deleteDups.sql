@@ -26,14 +26,25 @@ having count(*) > 1;
 
 select first 1 * from tmp_dups;
 
-Select min(b.expcond_zdb_id) as miner
+
+
+Select min(b.expcond_zdb_id) as miner, expcond_exp_zdb_id , expcond_zeco_term_zdb_id,
+     			 		      expcond_ao_term_zdb_id,
+					      expcond_go_cc_term_zdb_id,
+					      expcond_chebi_term_zdb_id,
+					      expcond_taxon_term_zdb_id
   	       	       from experiment_condition b, tmp_dups
-		       where b.expcond_exp_zdb_id = exp_zdb_id
-		       and b.expcond_zeco_term_zdb_id = zeco_term_zdb_id
-		       and b.expcond_ao_term_zdb_id = ao_Term_zdb_id
-		       and b.expcond_go_cc_term_zdb_id = go_Cc_term_zdb_id
-		       and b.expcond_chebi_Term_zdb_id =chebi_Term_zdb_id
-		       and b.expcond_taxon_Term_zdb_id = taxon_term_zdb_id
+		       where nvl(b.expcond_exp_zdb_id,"none") = nvl(exp_zdb_id,"none")
+		       and nvl(b.expcond_zeco_term_zdb_id,"none") = nvl(zeco_term_zdb_id,"none")
+		       and nvl(b.expcond_ao_term_zdb_id,"none") = nvl(ao_Term_zdb_id,"none")
+		       and nvl(b.expcond_go_cc_term_zdb_id,"none") = nvl(go_Cc_term_zdb_id,"none")
+		       and nvl(b.expcond_chebi_Term_zdb_id,"none") =nvl(chebi_Term_zdb_id,"none")
+		       and nvl(b.expcond_taxon_Term_zdb_id,"none") = nvl(taxon_term_zdb_id,"none")
+group by expcond_exp_zdb_id , expcond_zeco_term_zdb_id,
+     			 		      expcond_ao_term_zdb_id,
+					      expcond_go_cc_term_zdb_id,
+					      expcond_chebi_term_zdb_id,
+					      expcond_taxon_term_zdb_id
 into temp tmp_delete;
 
 delete from experiment_condition 
