@@ -167,8 +167,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         } else {
             throw new ValidationException("Feature cannot be saved without lab of origin");
         }
+        FeatureDnaMutationDetail detail = feature.getFeatureDnaMutationDetail();
         if (featureDTO.getDnaChangeDTO() != null) {
-            FeatureDnaMutationDetail detail = feature.getFeatureDnaMutationDetail();
+
             if (detail == null) {
                 detail = new FeatureDnaMutationDetail();
                 detail.setFeature(feature);
@@ -181,13 +182,26 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                     throw new ValidationException("DNA accession Number not found: " + accessionNumber);
                 }
             }
+            else{
+                detail.setDnaSequenceReferenceAccessionNumber(null);
+                detail.setReferenceDatabase(null);
+
+            }
             DTOConversionService.updateDnaMutationDetailWithDTO(detail, featureDTO.getDnaChangeDTO());
             if (!detail.equals(oldDetail)) {
                 infrastructureRepository.insertMutationDetailAttribution(detail.getZdbID(), featureDTO.getPublicationZdbID());
             }
         }
+        else{
+            if (detail !=null){
+                //This also will delete any FDMD record (in rec attribution as well)
+               infrastructureRepository.deleteActiveDataByZdbID(detail.getZdbID());
+            }
+
+        }
         FeatureProteinMutationDetail proteinDetail = feature.getFeatureProteinMutationDetail();
         if (featureDTO.getProteinChangeDTO() != null) {
+
             if (proteinDetail == null) {
                 proteinDetail = new FeatureProteinMutationDetail();
                 proteinDetail.setFeature(feature);
@@ -215,7 +229,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             // remove existing record
             if (proteinDetail != null) {
                 featureRepository.deleteFeatureProteinMutationDetail(proteinDetail);
-                infrastructureRepository.deleteMutationDetailAttribution(proteinDetail.getZdbID(), featureDTO.getPublicationZdbID());
+      //          infrastructureRepository.deleteMutationDetailAttribution(proteinDetail.getZdbID(), featureDTO.getPublicationZdbID());
             }
 
         }
@@ -225,17 +239,17 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             if (detailSet != null) {
                 Iterator<FeatureTranscriptMutationDetail> iterator = detailSet.iterator();
                 while (iterator.hasNext()) {
-                    FeatureTranscriptMutationDetail detail = iterator.next();
+                    FeatureTranscriptMutationDetail ftmdDetail = iterator.next();
                     boolean exists = false;
                     for (MutationDetailTranscriptChangeDTO dto : featureDTO.getTranscriptChangeDTOSet()) {
-                        if (dto.getZdbID() != null && dto.getZdbID().equals(detail.getZdbID())) {
+                        if (dto.getZdbID() != null && dto.getZdbID().equals(ftmdDetail.getZdbID())) {
                             exists = true;
                             break;
                         }
                     }
                     if (!exists) {
                         iterator.remove();
-                        infrastructureRepository.removeRecordAttributionForTranscript(featureDTO.getPublicationZdbID(), detail.getZdbID());
+                        infrastructureRepository.removeRecordAttributionForTranscript(featureDTO.getPublicationZdbID(), ftmdDetail.getZdbID());
                     }
                 }
             }

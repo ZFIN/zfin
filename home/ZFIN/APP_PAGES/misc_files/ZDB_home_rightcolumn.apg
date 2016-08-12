@@ -95,7 +95,7 @@
            <a href="/action/feature/alleleDesig-add-form"><em>line designation</em></a>
         </li>
         <li>
-          Find <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-journalselect.apg"><em>Existing Journal</em></a>
+          Find <a href="/search?category=Journal"><em>Existing Journal</em></a>
         <li>
           Generate <a href="/action/profile/distribution-list"><em>dist. list</em></a>, <a href="/action/profile/distribution-list?subset=usa"><em>USA dist. list</em></a>, <a href="/action/profile/distribution-list?subset=pi"><em>PI dist. list</em></a>
         </li>

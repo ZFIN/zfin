@@ -105,6 +105,7 @@
         <mapping class="org.zfin.infrastructure.Updates"/>
         <mapping class="org.zfin.infrastructure.DataNote"/>
         <mapping class="org.zfin.infrastructure.ControlledVocab"/>
+        <mapping class="org.zfin.infrastructure.SourceAlias"/>
         <mapping class="org.zfin.database.UnloadInfo"/>
         <mapping class="org.zfin.ontology.ConsiderTerm"/>
         <mapping class="org.zfin.ontology.ReplacementTerm"/>

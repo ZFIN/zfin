@@ -1,8 +1,10 @@
 package org.zfin.publication;
 
 import org.zfin.infrastructure.EntityZdbID;
+import org.zfin.infrastructure.SourceAlias;
 
 import java.io.Serializable;
+import java.util.Set;
 import java.util.SortedSet;
 
 /**
@@ -18,6 +20,7 @@ public class Journal implements Serializable, EntityZdbID {
     private String onlineIssn;
     private String nlmID;
     private SortedSet<Publication> publications;
+    private Set<SourceAlias> aliases;
 
     private boolean isNice;
 
@@ -97,6 +100,14 @@ public class Journal implements Serializable, EntityZdbID {
 
     public void setPublications(SortedSet<Publication> publications) {
         this.publications = publications;
+    }
+
+    public Set<SourceAlias> getAliases() {
+        return aliases;
+    }
+
+    public void setAliases(Set<SourceAlias> aliases) {
+        this.aliases = aliases;
     }
 }
 
