@@ -66,12 +66,6 @@ update tmp_zeco_tt
 where ccTermId = 'none';
 
 
-update experiment_condition
- set expcond_taxon_Term_Zdb_id = (Select othertermid from tmp_zeco_tt
-				where expcond_Exp_zdb_id =expid
-				and expcond_cdt_zdb_id = cdtid
-				and othertermid like 'NCBITaxon%')
-where expcond_taxon_term_Zdb_id is null;
 
 update experiment_condition
  set expcond_zeco_term_zdb_id = (select zecoid  from tmp_zeco_tt
