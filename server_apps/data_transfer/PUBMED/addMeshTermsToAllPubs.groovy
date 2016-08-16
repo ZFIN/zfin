@@ -6,26 +6,12 @@ import org.zfin.util.ReportGenerator
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
-def dbaccess (String dbname, String sql) {
-    proc = "dbaccess -a $dbname".execute()
-    proc.getOutputStream().with {
-        write(sql.bytes)
-        close()
-    }
-    proc.waitFor()
-    proc.getErrorStream().eachLine { println(it) }
-    if (proc.exitValue()) {
-        throw new RuntimeException("dbaccess call failed")
-    }
-    proc
-}
-
 DBNAME = System.getenv("DBNAME")
 PUB_IDS_TO_CHECK = "pubIdList.txt"
 MESH_TO_LOAD = "meshHeadings.txt"
 PUB_IDS_AFTER_LOAD = "pubIdListPost.txt"
 
-dbaccess DBNAME, """
+PubmedUtils.dbaccess DBNAME, """
   UNLOAD TO $PUB_IDS_TO_CHECK
   SELECT accession_no, zdb_id
   FROM publication
@@ -61,7 +47,7 @@ new File(MESH_TO_LOAD).withWriter { output ->
     }
 }
 
-dbaccess DBNAME, """
+PubmedUtils.dbaccess DBNAME, """
   BEGIN WORK;
 
   CREATE TEMP TABLE tmp_mesh (

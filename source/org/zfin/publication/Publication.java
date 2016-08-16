@@ -43,6 +43,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private SortedSet<MeshHeading> meshHeadings;
     private Set<PublicationNote> notes;
     private Set<Correspondence> correspondences;
+    private Set<PublicationDbXref> dbXrefs;
 
     private boolean deletable;
     private boolean indexed;
@@ -247,6 +248,14 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     public void setCorrespondences(Set<Correspondence> correspondences) {
         this.correspondences = correspondences;
+    }
+
+    public Set<PublicationDbXref> getDbXrefs() {
+        return dbXrefs;
+    }
+
+    public void setDbXrefs(Set<PublicationDbXref> dbXrefs) {
+        this.dbXrefs = dbXrefs;
     }
 
     public String getCitation() {
