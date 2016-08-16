@@ -1,6 +1,6 @@
 <dataConfig>
 
-    <dataSource name="db" driver="com.informix.jdbc.IfxDriver" url="jdbc:informix-sqli://@SQLHOSTS_HOST@:@INFORMIX_PORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@"
+    <dataSource name="db" driver="com.informix.jdbc.IfxDriver" url="jdbc:informix-sqli://@SQLHOSTS_HOST@:@INFORMIX_PORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@;DB_LOCALE=en_US.utf8"
 	        transactionIsolation="TRANSACTION_READ_UNCOMMITTED"/>
 
 
