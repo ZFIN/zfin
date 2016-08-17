@@ -156,6 +156,11 @@
         <put-attribute name="body" value="/WEB-INF/jsp/infrastructure/{1}.jsp" />
     </definition>
 
+    <!-- figure definitions -->
+    <definition name="image/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/image/{1}.jsp"/>
+    </definition>
+
     <!-- nomenclature -->
     <definition name="nomenclature/gene-name-form.page" extends="main_layout">
         <put-attribute name="body">
@@ -200,9 +205,7 @@
         <put-attribute name="body" value="/WEB-INF/jsp/gbrowse/{1}.jsp" />
     </definition>
 
-    <definition name="publication/*.page" extends="main_layout">
-        <put-attribute name="body" value="/WEB-INF/jsp/publication/{1}.jsp" />
-    </definition>
+
 
 </tiles-definitions>
 
