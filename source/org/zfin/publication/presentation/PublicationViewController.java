@@ -8,7 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.zfin.expression.Figure;
+import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
+import org.zfin.figure.presentation.FigureExpressionSummary;
+import org.zfin.figure.presentation.FigurePhenotypeSummary;
+import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.MarkerDTO;
@@ -28,7 +33,9 @@ import org.zfin.publication.repository.PublicationRepository;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/publication")
@@ -44,6 +51,9 @@ public class PublicationViewController {
 
     @Autowired
     private PhenotypeRepository phenotypeRepository;
+    @Autowired
+    private FigureViewService figureViewService;
+
 
     @RequestMapping("/view/{zdbID}")
     public String view(@PathVariable String zdbID, Model model, HttpServletResponse response) {
@@ -298,6 +308,57 @@ public class PublicationViewController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, title);
 
         return "publication/journal-view.page";
+    }
+
+    @RequestMapping("/image/{zdbID}")
+    public String getImageView(Model model, @PathVariable("zdbID") String zdbID) {
+
+        Image image = publicationRepository.getImageById(zdbID);
+        if (image == null) {
+            return null;
+        }
+
+
+        model.addAttribute("image", image);
+        Figure figure=image.getFigure();
+
+       /* List<PhenotypeWarehouse> warehouseList = getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID());
+        FigureExpressionSummary expressionSummary = figureViewService.getFigureExpressionSummary(figure);
+        model.addAttribute("expressionSummary", expressionSummary);
+        model.addAttribute("phenotypeSummary", figureViewService.getFigurePhenotypeSummary(figure));
+
+        model.addAttribute("submitters", figureRepository.getSubmitters(figure.getPublication(), expressionSummary.getProbe()));
+        model.addAttribute("showThisseInSituLink", figureViewService.showThisseInSituLink(figure.getPublication()));
+        model.addAttribute("showErrataAndNotes", figureViewService.showErrataAndNotes(figure.getPublication()));
+        model.addAttribute("showMultipleMediumSizedImages", figureViewService.showMultipleMediumSizedImages(figure.getPublication()));
+
+        List<ExpressionTableRow> expressionTableRows = figureViewService.getExpressionTableRows(figure);
+        model.addAttribute("expressionTableRows", expressionTableRows);
+        model.addAttribute("showExpressionQualifierColumn", figureViewService.showExpressionQualifierColumn(expressionTableRows));
+
+        List<AntibodyTableRow> antibodyTableRows = figureViewService.getAntibodyTableRows(figure);
+        model.addAttribute("antibodyTableRows", antibodyTableRows);
+        model.addAttribute("showAntibodyQualifierColumn", figureViewService.showAntibodyQualifierColumn(antibodyTableRows));
+
+        List<PhenotypeTableRow> phenotypeTableRows = figureViewService.getPhenotypeTableRows(warehouseList);
+        model.addAttribute("phenotypeTableRows", phenotypeTableRows);*/
+
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Image: " + figureViewService.getFullFigureLabel(image.getFigure()));
+        model.addAttribute("expressionGeneList",figureViewService.getExpressionGenes(image.getFigure()));
+        model.addAttribute("antibodyList",figureViewService.getAntibodies(image.getFigure()));
+        Map<Figure, FigureExpressionSummary> expressionSummaryMap = new HashMap<>();
+        Map<Figure, FigurePhenotypeSummary> phenotypeSummaryMap = new HashMap<>();
+
+            expressionSummaryMap.put(figure, figureViewService.getFigureExpressionSummary(figure));
+            phenotypeSummaryMap.put(figure, figureViewService.getFigurePhenotypeSummary(figure));
+
+        model.addAttribute("expressionSummaryMap", expressionSummaryMap);
+        model.addAttribute("phenotypeSummaryMap", phenotypeSummaryMap);
+
+       /* model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(figure.getPublication()));
+        model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(figure.getPublication()));*/
+
+        return "figure/image-view.page";
     }
 
 }
