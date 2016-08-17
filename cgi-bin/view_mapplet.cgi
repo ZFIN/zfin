@@ -32,6 +32,7 @@
   $ENV{INFORMIXDIR}      = '<!--|INFORMIX_DIR|-->';
   $ENV{INFORMIXSERVER}   = '<!--|INFORMIX_SERVER|-->';
   $ENV{INFORMIXSQLHOSTS} = '<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->';
+  $ENV{DB_LOCALE}        = '<!--|DB_LOCALE|-->';
   ### open a handle on the db
   my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->', '', '', {AutoCommit => 1, RaiseError => 1})
   || die "Failed while connecting to <!--|DB_NAME|--> "; #$DBI::errstr";

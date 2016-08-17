@@ -5,6 +5,7 @@
 <!--|BACKGROUND_COLOR|-->	#CCFFFF
 <!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/trunk
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
+<!--|CLIENT_LOCALE|-->	en_US.utf8
 <!--|COUNT_PATO_ERR|-->	informix\@zfin.org
 <!--|COUNT_PATO_OUT|-->	informix\@zfin.org
 <!--|COUNT_THISSE_VEGA_ERR|-->	informix\@zfin.org
@@ -16,6 +17,7 @@
 <!--|CURATION_DBNAME|-->	false
 <!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	informix\@zfin.org
+<!--|DB_LOCALE|-->	en_US.utf8
 <!--|DB_NAME|-->	trunkdb
 <!--|DB_OWNER|-->	informix
 <!--|DEFAULT_EMAIL|-->	informix\@zfin.org

@@ -5,6 +5,7 @@
 <!--|BACKGROUND_COLOR|-->	#FFFFFF
 <!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/dev_blastdb
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
+<!--|CLIENT_LOCALE|-->	en_US.utf8
 <!--|COUNT_PATO_ERR|-->	kevin\@zfin.org
 <!--|COUNT_PATO_OUT|-->	kevin\@zfin.org
 <!--|COUNT_THISSE_VEGA_ERR|-->	kevin\@zfin.org
@@ -16,6 +17,7 @@
 <!--|CURATION_DBNAME|-->	false
 <!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	kevin\@zfin.org
+<!--|DB_LOCALE|-->	en_US.utf8
 <!--|DB_NAME|-->	celldb
 <!--|DB_OWNER|-->	kschaper
 <!--|DEFAULT_EMAIL|-->	kevin\@zfin.org
