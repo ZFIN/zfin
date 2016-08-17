@@ -8,9 +8,11 @@ public class ImagePresentation extends EntityPresentation {
 
     private static final String uri = "?MIval=aa-imageview.apg&OID=";
     private static final String imageLoadUp = "/imageLoadUp/";
-
+    public static final String IMAGE_URI = "publication/image/";
     public static String getLinkStartTag(Image image) {
-        return getWebdriverStartTag(uri, image.getZdbID());
+      //return getWebdriverStartTag(uri, image.getZdbID());
+        return getViewStartTag(image.getZdbID());
+
     }
 
     public static String getLinkEndTag() {
@@ -19,7 +21,7 @@ public class ImagePresentation extends EntityPresentation {
 
 
     public static String getLink(Image image) {
-        if (image == null)
+        /*if (image == null)
             return null;
         StringBuilder thumb = new StringBuilder();
         thumb.append("<img src=\"");
@@ -27,6 +29,17 @@ public class ImagePresentation extends EntityPresentation {
         thumb.append("\">");
 
         return getWebdriverLink(uri, image.getZdbID(), thumb.toString());
+        String link = getViewLink(image.getZdbID(), "", "", null);
+        return link;*/
+        if (image == null)
+            return null;
+        StringBuilder thumb = new StringBuilder();
+        thumb.append("<img src=\"");
+        thumb.append(getThumbnailUri(image));
+        thumb.append("\">");
+
+       // return getWebdriverLink(uri, image.getZdbID(), thumb.toString());
+        return getTomcatLink(IMAGE_URI, image.getZdbID(), thumb.toString());
     }
 
     public static String getThumbnailUri(Image image) {
