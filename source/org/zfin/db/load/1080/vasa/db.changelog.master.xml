@@ -7,5 +7,5 @@
 
   <include file="source/org/zfin/db/load/1080/vasa/geoLink.sql"/>
   <include file="source/org/zfin/db/load/1080/vasa/14434delete-CRISPR6-tp53.sql"/>
-
+  <include file="source/org/zfin/db/load/1080/vasa/14420.sql"/>
 </databaseChangeLog>
