@@ -1,10 +1,59 @@
 package org.zfin.marker;
 
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 import java.util.Date;
 
-public class MarkerHistory {
+@Entity
+@Table(name = "marker_history")
+public class MarkerHistory implements Comparable<MarkerHistory> {
 
-    public enum Reason{
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "NOMEN"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "mhist_zdb_id")
+    private String zdbID;
+    @ManyToOne
+    @JoinColumn(name = "mhist_mrkr_zdb_id")
+    private Marker marker;
+    @Column(name = "mhist_reason", nullable = false)
+    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.marker.MarkerHistory$Reason")})
+    private Reason reason;
+    @Transient
+    private String event;
+    @Column(name = "mhist_event", nullable = false)
+    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.marker.MarkerHistory$Event")})
+    private Event eventType;
+    //name after renaming event
+    @Column(name = "mhist_mrkr_name_on_mhist_date")
+    private String name;
+    //abbreviation after renaming event
+    @Column(name = "mhist_mrkr_abbrev_on_mhist_date")
+    private String abbreviation;
+    @Column(name = "mhist_date")
+    private Date date;
+    @ManyToOne
+    @JoinColumn(name = "mhist_dalias_zdb_id")
+    private MarkerAlias markerAlias;
+    @Column(name = "mhist_mrkr_prev_name", nullable = false)
+    private String oldMarkerName;
+    @Column(name = "mhist_comments")
+    private String comments;
+
+    @Override
+    public int compareTo(MarkerHistory o) {
+        return -date.compareTo(o.getDate());
+    }
+
+    public enum Reason {
         NOT_SPECIFIED("Not Specified"),
         PER_GENE_FAMILIY_REVISION("per gene family revision"),
         PER_PERSONAL_COMMUNICATION_WITH_AUTHORS("per personal communication with authors"),
@@ -20,47 +69,53 @@ public class MarkerHistory {
             this.value = value;
         }
 
-        public String toString(){
+        public String toString() {
             return value;
         }
     }
 
     public enum Event {
         // original
-        ASSIGNED("assigned"),
-        REASSIGNED("reassigned"),
-        RENAMED("renamed"),
-
-
-        // previously unmnapped from marker_history_event
-        MERGED("merged"),
-        RESERVED("reserved"),
-        ;
+        ASSIGNED("assigned", "assigned"),
+        REASSIGNED("reassigned", "renamed from"),
+        RENAMED("renamed", "renamed from"),
+        // previously unmapped from marker_history_event
+        MERGED("merged", "merged with"),
+        RESERVED("reserved", "reserved");
 
         private String value;
+        private String display;
 
-        private Event(String value) {
+        private Event(String value, String display) {
             this.value = value;
+            this.display = display;
         }
 
-        public String toString(){
-            return this.value ;
+        public String getDisplay() {
+            return display;
+        }
+
+        public String toString() {
+            return this.value;
         }
 
     }
 
-    private String zdbID;
-    private Marker marker;
-    private Reason reason;
-    private String event;
-    //name after renaming event
-    private String name;
-    //abbreviation after renaming event
-    private String abbreviation;
-    private Date date;
-    private MarkerAlias markerAlias;
-    private String oldMarkerName;
+    public String getComments() {
+        return comments;
+    }
 
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public Event getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(Event eventType) {
+        this.eventType = eventType;
+    }
 
     public String getZdbID() {
         return zdbID;
@@ -135,5 +190,17 @@ public class MarkerHistory {
 
     public void setOldMarkerName(String oldMarkerName) {
         this.oldMarkerName = oldMarkerName;
+    }
+
+    public String getOldSymbol() {
+        switch (eventType) {
+            case REASSIGNED:
+                return markerAlias.getAlias();
+            case MERGED:
+                return markerAlias.getAlias();
+            case RENAMED:
+                return oldMarkerName;
+        }
+        return "";
     }
 }

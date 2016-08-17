@@ -74,5 +74,12 @@
           <saveOutput>false</saveOutput>
       </hudson.plugins.emailext.ExtendedEmailPublisher>
   </publishers>
-  <buildWrappers/>
+    <buildWrappers>
+        <EnvInjectBuildWrapper plugin="envinject@1.89">
+            <info>
+                <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
+                <loadFilesFromMaster>false</loadFilesFromMaster>
+            </info>
+        </EnvInjectBuildWrapper>
+    </buildWrappers>
 </project>

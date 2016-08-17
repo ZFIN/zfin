@@ -172,6 +172,14 @@
         </put-attribute>
     </definition>
 
+    <definition name="nomenclature/history-view.page" extends="main_layout">
+        <put-attribute name="body">
+            <definition template="/WEB-INF/jsp/nomenclature/history-view.jsp">
+                <put-attribute name="headerText" value="Nomenclature History" />
+            </definition>
+        </put-attribute>
+    </definition>
+
     <definition name="nomenclature/line-name-form.page" extends="main_layout">
         <put-attribute name="body">
             <definition template="/WEB-INF/jsp/nomenclature/new-submission-form.jsp">

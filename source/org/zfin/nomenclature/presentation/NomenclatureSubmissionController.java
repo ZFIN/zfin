@@ -6,13 +6,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.MailSender;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.marker.Marker;
 import org.zfin.nomenclature.*;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,6 +24,20 @@ import java.util.List;
 @Controller
 @RequestMapping("/nomenclature")
 public class NomenclatureSubmissionController {
+
+    @RequestMapping(value = "/history/{zdbID}")
+    public String getHistoryView(@PathVariable("zdbID") String zdbID,
+                               Model model) {
+        if(zdbID == null)
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
+        if(marker == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, "No marker with ID " + zdbID + " found");
+        }
+        model.addAttribute("marker", marker);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Submit a Proposed Gene Name");
+        return "nomenclature/history-view.page";
+    }
 
     @RequestMapping(value = "/gene-name", method = RequestMethod.GET)
     public String newGeneNameForm(Model model) {
