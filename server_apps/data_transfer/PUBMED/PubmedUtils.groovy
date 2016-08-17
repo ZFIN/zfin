@@ -17,4 +17,18 @@ class PubmedUtils {
         connection.connect()
         new XmlSlurper().parse(connection.inputStream)
     }
+
+    static Process dbaccess (String dbname, String sql) {
+        def proc = "dbaccess -a $dbname".execute()
+        proc.getOutputStream().with {
+            write(sql.bytes)
+            close()
+        }
+        proc.waitFor()
+        proc.getErrorStream().eachLine { println(it) }
+        if (proc.exitValue()) {
+            throw new RuntimeException("dbaccess call failed")
+        }
+        proc
+    }
 }
