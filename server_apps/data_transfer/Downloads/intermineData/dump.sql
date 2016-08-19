@@ -319,12 +319,6 @@ union
          '',
          '',
          '',
-         '',
-         '',
-         '',
-         '',
-         '',
-         '',
          ''
     from experiment 
   where not exists (select 'x' from experiment_condition
