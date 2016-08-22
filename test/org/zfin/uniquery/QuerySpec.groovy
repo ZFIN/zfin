@@ -6,6 +6,7 @@ import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.SolrClient
 import org.apache.solr.client.solrj.response.QueryResponse
 import org.apache.solr.common.SolrDocument
+import org.spockframework.runtime.extension.builtin.UnrollExtension
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
 import org.zfin.search.presentation.SearchResult
@@ -305,10 +306,6 @@ class QuerySpec extends ZfinIntegrationSpec {
         where:
         symbol << ["fgf3","kita","lamb1a","csf1ra"]
     }
-
-/*    def "the first feature returned when searching for #symbol should not be the unspecified feature"() {
-
-    }*/
 
 
 }

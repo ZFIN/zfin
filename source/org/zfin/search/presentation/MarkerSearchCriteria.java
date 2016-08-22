@@ -1,11 +1,15 @@
 package org.zfin.search.presentation;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.response.FacetField;
+import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerType;
 
 import java.util.List;
 
 public class MarkerSearchCriteria {
     private String name;
+    private String matchType;
     private String accession;
     private List<String> selectedTypes;
     private String chromosome;
@@ -26,6 +30,10 @@ public class MarkerSearchCriteria {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getMatchType() { return matchType; }
+
+    public void setMatchType(String matchType) { this.matchType = matchType; }
 
     public String getAccession() {
         return accession;
@@ -92,4 +100,13 @@ public class MarkerSearchCriteria {
     public void setRows(Integer rows) {
         this.rows = rows;
     }
+
+    public Boolean isGenedomResult() {
+        //we don't store the display name in the Marker.Type enum...maybe we should?
+        if (StringUtils.equals(displayType, "Gene") || StringUtils.equals(displayType, "Pseudogene")) {
+            return true;
+        }
+        return false;
+    }
+
 }

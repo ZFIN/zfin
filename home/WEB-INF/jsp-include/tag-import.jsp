@@ -6,6 +6,7 @@
 <%@ taglib prefix="zfin-ontology" tagdir="/WEB-INF/tags/ontology" %>
 <%@ taglib prefix="zfin-fish" tagdir="/WEB-INF/tags/fish" %>
 <%@ taglib prefix="zfin-marker" tagdir="/WEB-INF/tags/marker" %>
+<%@ taglib prefix="zfin-marker-search" tagdir="/WEB-INF/tags/marker-search" %>
 <%@ taglib prefix="zfin-mutant" tagdir="/WEB-INF/tags/mutant" %>
 <%@ taglib prefix="zfin-figure" tagdir="/WEB-INF/tags/figure" %>
 <%@ taglib prefix="zfin-dev" tagdir="/WEB-INF/tags/dev" %>

@@ -997,23 +997,122 @@
         </lst>
     </requestHandler>
 
+    <!--
+
+
+
+    -->
+
     <requestHandler name="/marker-search" class="org.apache.solr.handler.component.SearchHandler">
+
         <lst name="appends">
+            <!--todo: only include construct for root users, so probably this whole fq happens in the controller -->
             <str name="fq">
                 category:"Gene / Transcript"
                 OR category:"Marker / Clone"
                 OR category:"Construct"
-                OR category:"Sequence Targeting Reagent"
+                OR category:"Sequence Targeting Reagent (STR)"
             </str>
         </lst>
-
+        
         <lst name="defaults">
             <str name="echoParams">explicit</str>
             <str name="wt">json</str>
             <str name="indent">true</str>
             <str name="fl">id,name,type</str>
+
             <str name="hl">true</str>
-            <str name="hl.fl">name, full_name, synonym</str>
+            <str name="hl.requireFieldMatch">true</str>
+            <str name="hl.fl">
+                affected_gene
+                affected_gene_full_name
+                affected_gene_previous_name
+                affected_gene_t
+                alias
+                alias_ac
+                alias_t
+                allele
+                allele_t
+                antigen_gene
+                antigen_gene_full_name
+                antigen_gene_previous_name
+                background background_t
+                chromosome
+                clone
+                coding_sequence
+                coding_sequence_full_name
+                coding_sequence_t
+                construct
+                construct_alias
+                construct_name
+                construct_t
+                engineered_region_full_name
+                expressed_gene
+                expressed_gene_full_name
+                expressed_gene_previous_name
+                expressed_gene_t
+                full_name
+                full_name_ac
+                gene
+                gene_full_name
+                gene_previous_name
+                id_t
+                inserted_in_gene
+                inserted_in_gene_full_name
+                inserted_in_gene_previous_name
+                inserted_in_gene_t
+                marker_abbrev
+                name
+                name_t
+                omim_id
+                ortholog_organism
+                ortholog_organism_t
+                ortholog_other_species_name
+                ortholog_other_species_name_t
+                ortholog_other_species_symbol
+                ortholog_other_species_symbol_t
+                probe
+                promoter_full_name
+                proper_name
+                proper_name_k
+                regulatory_region
+                regulatory_region_t
+                related_accession
+                related_gene_symbol
+                related_marker
+                reporter_gene
+                reporter_gene_full_name
+                reporter_gene_previous_name
+                sequence_targeting_reagent
+                sequence_targeting_reagent_t
+                targeted_gene
+                targeted_gene_full_name
+                targeted_gene_previous_name
+                zebrafish_gene
+                zebrafish_gene_full_name
+                zebrafish_gene_previous_name
+            </str>
+
+            <!-- fast vector highlighter config -->
+            <str name="hl.tag.pre"><![CDATA[<span class="search-result-highlight">]]></str>
+            <str name="hl.tag.post"><![CDATA[</span>]]></str>
+
+            <!-- standard highlighter config -->
+            <str name="hl.simple.pre"><![CDATA[<span class="search-result-highlight">]]></str>
+            <str name="hl.simple.post"><![CDATA[</span>]]></str>
+
+            <str name="hl">true</str>
+            <str name="hl.useFastVectorHighligter">true</str>
+            <str name="hl.snippets">1</str>
+            <str name="hl.fragsize">80</str>
+
+            <!-- Specifies the maximum number of entries in a multi-valued field to examine before stopping. -->
+            <str name="hl.maxMultiValuedToExamine">1000</str>
+            <!-- Specifies the maximum number of matches in a multi-valued field that are found before stopping -->
+            <str name="hl.maxMultiValuedToMatch">1</str>
+
+
+
 
             <str name="facet">true</str>
             <str name="facet.mincount">1</str>
@@ -1021,9 +1120,9 @@
             <str name="facet.field">type</str>
             <str name="facet.field">chromosome</str>
 
-
-            <str nane="defType">edismax</str>
+            <str name="defType">edismax</str>
             <str name="q.alt">*:*</str>
+
             <str name="qf">
                 affected_gene
                 affected_gene_full_name^0.8
@@ -1038,7 +1137,6 @@
                 antigen_gene_full_name^0.8
                 antigen_gene_previous_name^0.7
                 background background_t
-                category_t
                 chromosome
                 clone
                 coding_sequence
@@ -1046,13 +1144,8 @@
                 coding_sequence_t
                 construct
                 construct_alias
-                construct_name
                 construct_name^2.0
                 construct_t
-                disease
-                disease_model
-                disease_model_t
-                disease_t
                 engineered_region_full_name
                 expressed_gene
                 expressed_gene_full_name^0.8
@@ -1063,7 +1156,6 @@
                 gene
                 gene_full_name^0.8
                 gene_previous_name^0.7
-                genotype_full_name
                 id_t
                 inserted_in_gene
                 inserted_in_gene_full_name^0.8
@@ -1091,18 +1183,18 @@
                 reporter_gene
                 reporter_gene_full_name^0.8
                 reporter_gene_previous_name^0.7
-                sequence_alteration sequence_alteration_t
                 sequence_targeting_reagent
                 sequence_targeting_reagent_t
                 targeted_gene
                 targeted_gene_full_name
                 targeted_gene_previous_name
-                type_t
                 zebrafish_gene
                 zebrafish_gene_full_name^0.8
                 zebrafish_gene_previous_name^0.7
             </str>
+
         </lst>
+
     </requestHandler>
 
   <requestHandler name="/search" class="org.apache.solr.handler.component.SearchHandler">

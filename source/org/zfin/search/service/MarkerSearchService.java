@@ -1,4 +1,5 @@
 package org.zfin.search.service;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -7,9 +8,12 @@ import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.zfin.expression.service.ExpressionService;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.Marker;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.FieldName;
 import org.zfin.search.presentation.MarkerSearchCriteria;
@@ -23,7 +27,14 @@ import java.util.List;
 @Service
 public class MarkerSearchService {
 
+    @Autowired
+    ExpressionService expressionService;
+
     private static Logger logger = Logger.getLogger(MarkerSearchService.class);
+
+    public static String BEGINS_WITH = "Begins With";
+    public static String CONTAINS = "Contains";
+    public static String MATCHES = "Matches";
 
     public MarkerSearchCriteria injectFacets(MarkerSearchCriteria criteria) {
 
@@ -38,7 +49,9 @@ public class MarkerSearchService {
         SolrClient client = SolrService.getSolrClient();
         SolrQuery query = new SolrQuery();
 
-        query.setQuery(buildQuery(criteria));
+        query.setQuery(buildQuery(criteria, query));
+
+        query.setRequestHandler("/marker-search");
 
         if (StringUtils.isNotEmpty(criteria.getDisplayType())) {
             query.addFilterQuery(FieldName.TYPE.getName() + ":\"" + criteria.getDisplayType() + "\"");
@@ -64,7 +77,12 @@ public class MarkerSearchService {
 
         SolrDocumentList solrDocumentList = response.getResults();
 
-        criteria.setNumFound(response.getResults().getNumFound());
+        if (response.getResults() != null) {
+            criteria.setNumFound(response.getResults().getNumFound());
+        } else {
+            criteria.setNumFound((long)0);
+        }
+
 
         for( SolrDocument doc : solrDocumentList) {
             MarkerSearchResult result = buildResult(doc);
@@ -73,17 +91,34 @@ public class MarkerSearchService {
             }
         }
 
+        injectHighlighting(results, response);
+
         criteria.setTypesFound(getTypesFound(response));
+
+        if (CollectionUtils.size(criteria.getTypesFound()) == 1) {
+            criteria.setDisplayType(criteria.getTypesFound().iterator().next().getName());
+        }
 
         criteria.setResults(results);
         return criteria;
     }
 
-    public String buildQuery(MarkerSearchCriteria criteria) {
+    public String buildQuery(MarkerSearchCriteria criteria, SolrQuery query) {
         StringBuilder q = new StringBuilder();
 
         if (StringUtils.isNotEmpty(criteria.getName())) {
-            q.append(criteria.getName());
+            String nameQuery = criteria.getName();
+
+            nameQuery = SolrService.luceneEscape(nameQuery);
+
+            if (StringUtils.equals(criteria.getMatchType(), MATCHES)) {
+                q.append(nameQuery);
+            } else if (StringUtils.equals(criteria.getMatchType(),BEGINS_WITH)) {
+                q.append(nameQuery + "*");
+            } else if (StringUtils.equals(criteria.getMatchType(),CONTAINS)) {
+                q.append("*" + nameQuery + "*");
+            }
+
             q.append(" ");
         }
 
@@ -108,7 +143,14 @@ public class MarkerSearchService {
         }
 
         MarkerSearchResult result = new MarkerSearchResult();
+
         result.setMarker(marker);
+
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+            result.setMarkerExpression(expressionService.getExpressionForGene(marker));
+            result.setMarkerPhenotype(MarkerService.getPhenotypeOnGene(marker));
+        }
+
 
         return result;
     }
@@ -125,6 +167,39 @@ public class MarkerSearchService {
 
 
         return types;
+    }
+
+    private void injectHighlighting(List<MarkerSearchResult> results, QueryResponse response) {
+        for (MarkerSearchResult result : results) {
+            String id = result.getMarker().getZdbID();
+            List<String> highlightSnippets = new ArrayList<String>();
+            if (response.getHighlighting() != null && response.getHighlighting().get(id) != null) {
+
+                for (String highlightField : response.getHighlighting().get(id).keySet()) {
+                    logger.debug("highlight field keys? => " + response.getHighlighting().get(id).keySet());
+                    if (response.getHighlighting().get(id).get(highlightField) != null) {
+                        for (String snippet : response.getHighlighting().get(id).get(highlightField)) {
+                            logger.debug("snippet: " + snippet);
+
+                            highlightSnippets.add("<div class=\"snippet\">"
+                                    + SolrService.getPrettyFieldName(highlightField)
+                                    + ": " + snippet + "</div>");
+
+                        }
+                    }
+                break;  // just do one, for now
+                }
+            }
+            if (!highlightSnippets.isEmpty()) {
+                StringBuilder out = new StringBuilder();
+                for (String snippet : highlightSnippets) {
+                    out.append(snippet);
+                }
+                result.setMatchingText(out.toString());
+
+            }
+        }
+
     }
 
 }

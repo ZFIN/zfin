@@ -1,9 +1,15 @@
 package org.zfin.search.presentation;
 
+import org.zfin.expression.presentation.MarkerExpression;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.PhenotypeOnMarkerBean;
 
 public class MarkerSearchResult {
     Marker marker;
+    String matchingText;
+    MarkerExpression markerExpression;
+    PhenotypeOnMarkerBean markerPhenotype;
+
 
     public Marker getMarker() {
         return marker;
@@ -11,5 +17,29 @@ public class MarkerSearchResult {
 
     public void setMarker(Marker marker) {
         this.marker = marker;
+    }
+
+    public String getMatchingText() {
+        return matchingText;
+    }
+
+    public void setMatchingText(String matchingText) {
+        this.matchingText = matchingText;
+    }
+
+    public MarkerExpression getMarkerExpression() {
+        return markerExpression;
+    }
+
+    public void setMarkerExpression(MarkerExpression markerExpression) {
+        this.markerExpression = markerExpression;
+    }
+
+    public PhenotypeOnMarkerBean getMarkerPhenotype() {
+        return markerPhenotype;
+    }
+
+    public void setMarkerPhenotype(PhenotypeOnMarkerBean markerPhenotype) {
+        this.markerPhenotype = markerPhenotype;
     }
 }

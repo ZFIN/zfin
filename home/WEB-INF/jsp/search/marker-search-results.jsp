@@ -45,20 +45,16 @@ ${criteria.chromosome}--%>
 <%--todo: handle 0 results --%>
 
 <c:if test="${!empty criteria.results && !empty criteria.displayType}">
-    <table class="searchresults">
-        <caption>${criteria.numFound} results</caption>
-        <tr>
-            <th>Name</th>
-        </tr>
-        <c:forEach var="result" items="${criteria.results}" varStatus="loop">
-            <zfin:alternating-tr loopName="loop" groupBeanCollection="${criteria.results}" groupByBean="marker.zdbID">
-                <td>
-                    <zfin:link entity="${result.marker}"/>
-                </td>
-            </zfin:alternating-tr>
-        </c:forEach>
 
-    </table>
+    <c:choose>  <%-- todo: use marker type enum? that should be what Solr always populates from --%>
+        <c:when test="${criteria.isGenedomResult()}">
+            <zfin-marker-search:geneResultTable/>
+        </c:when>
+        <c:otherwise>
+            <zfin-marker-search:genericResultTable/>
+        </c:otherwise>
+    </c:choose>
+
 
     <div style="clear: both ; width: 80%" class="clearfix">
         <zfin2:pagination paginationBean="${paginationBean}"/>
@@ -66,4 +62,4 @@ ${criteria.chromosome}--%>
 
 </c:if>
 
-<zfin-search:markerSearchForm criteria="${criteria}"/>
+<zfin-marker-search:markerSearchForm criteria="${criteria}"/>
