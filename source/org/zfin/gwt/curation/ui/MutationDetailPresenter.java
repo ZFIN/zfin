@@ -153,23 +153,25 @@ public class MutationDetailPresenter {
     }
 
     protected void setMissenseTerm() {
-        if (getDtoSet().isEmpty()) {
+      dtoSet.clear();
             MutationDetailTranscriptChangeDTO dto = new MutationDetailTranscriptChangeDTO();
             dto.setConsequenceOboID(MISSENSE);
-            dto.setConsequenceName("missense");
+           dto.setConsequenceName("missense");
             dtoSet.add(dto);
             populateTranscriptDataTable();
-        }
+
     }
 
     public void setStopGainTerm() {
-        if (getDtoSet().isEmpty()) {
+      // if (getDtoSet().isEmpty()) {
+           dtoSet.clear();
+        //    dtoSet.removeAll(dto);
             MutationDetailTranscriptChangeDTO dto = new MutationDetailTranscriptChangeDTO();
             dto.setConsequenceOboID(STOP_GAIN);
-            dto.setConsequenceName("premature stop");
+           dto.setConsequenceName("premature stop");
             dtoSet.add(dto);
             populateTranscriptDataTable();
-        }
+      //  }
     }
 
     public void setDto(FeatureDTO dto) {
@@ -194,6 +196,7 @@ public class MutationDetailPresenter {
             if (proteinChanges.getMutantAATermOboID() != null && proteinChanges.getWildtypeAATermOboID() == null ||
                     proteinChanges.getMutantAATermOboID() == null && proteinChanges.getWildtypeAATermOboID() != null)
                 return "Please select both the amino acids for a change or none.";
+
         }
         return null;
     }
