@@ -1,0 +1,36 @@
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Topic</th>
+        <th>Status</th>
+        <th>Curator</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="topic in vm.topics" ng-cloak>
+        <td>
+            <input type="checkbox" ng-checked="topic.dataFound" ng-click="vm.toggleTopicDataFound(topic, $index)"/> {{topic.topic}}
+        </td>
+        <td>
+            {{vm.getTopicStatus(topic)}}
+        </td>
+        <td>{{(!vm.isNewTopic(topic)) ? topic.curator.name : ""}}</td>
+        <td>
+            <button class="btn btn-default btn-dense" ng-show="vm.isNewTopic(topic)" ng-click="vm.openTopic(topic, $index)">Open</button>
+            <!-- Split button -->
+            <div class="btn-group" ng-show="vm.isOpenTopic(topic)">
+                <button type="button" class="btn btn-default btn-dense" ng-click="vm.closeTopic(topic, $index)">Close</button>
+                <button type="button" class="btn btn-default dropdown-toggle btn-dense" data-toggle="dropdown">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href ng-click="vm.unopenTopic(topic, $index)">Back to New</a></li>
+                </ul>
+            </div>
+            <button class="btn btn-default btn-dense" ng-show="vm.isClosedTopic(topic)" ng-click="vm.openTopic(topic, $index)">Re-open</button>
+        </td>
+    </tr>
+    </tbody>
+</table>

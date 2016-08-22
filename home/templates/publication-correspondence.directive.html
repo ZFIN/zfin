@@ -1,0 +1,49 @@
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th class="col-xs-6">Contacted</th>
+        <th class="col-xs-6">Correspondence completed</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-if="vm.allCorrespondencesClosed()">
+        <td>
+            <button class="btn btn-primary" ng-click="vm.newCorrespondence()">Contacted author</button>
+        </td>
+        <td></td>
+    </tr>
+    <tr ng-repeat="corr in vm.correspondences" ng-cloak>
+        <td class="hover-trigger">
+            {{ corr.openedDate | date:'yyyy-MM-dd' }}
+            <a href class="hover-reveal" style="display: none;" ng-click="vm.deleteCorrespondence(corr, $index)">
+                <i class="fa fa-times-circle"></i>
+            </a>
+        </td>
+        <td ng-if="corr.closedDate" class="hover-trigger">
+            <i class="fa fa-fw" ng-class="{'fa-check': corr.replyReceived, 'fa-times': !corr.replyReceived}"></i>
+            {{ corr.closedDate | date:'yyyy-MM-dd' }}
+            <a href class="hover-reveal" style="display: none;" ng-click="vm.reopenCorrespondence(corr, $index)">
+                <i class="fa fa-times-circle"></i>
+            </a>
+        </td>
+        <td ng-if="!corr.closedDate" class="hover-trigger">
+            <div class="btn-group">
+                <button class="btn btn-primary" ng-click="vm.closeCorrespondence(true, corr, $index)">
+                    <i class="fa fa-check"></i> Received reply
+                </button>
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li>
+                        <a href ng-click="vm.closeCorrespondence(false, corr, $index)">
+                            <i class="fa fa-times"></i> Reply not expected
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>

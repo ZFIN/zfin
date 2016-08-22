@@ -9,12 +9,7 @@
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
 
 <script src="/javascript/angular/angular.min.js"></script>
-<script>
-    ;(function() {
-        angular.module('app', []);
-    }());
-</script>
-
+<script src="/javascript/zfin-app.module.js"></script>
 <script src="/javascript/field-error.service.js"></script>
 <script src="/javascript/str.service.js"></script>
 <script src="/javascript/marker.service.js"></script>
