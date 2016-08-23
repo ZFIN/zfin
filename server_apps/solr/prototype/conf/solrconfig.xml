@@ -1021,6 +1021,8 @@
             <str name="indent">true</str>
             <str name="fl">id,name,type</str>
 
+            <str name="sort">name_sort asc</str>
+
             <str name="hl">true</str>
             <str name="hl.requireFieldMatch">true</str>
             <str name="hl.fl">

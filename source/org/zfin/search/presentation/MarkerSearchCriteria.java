@@ -119,4 +119,11 @@ public class MarkerSearchCriteria {
         return false;
     }
 
+    public Boolean isTranscriptResult() {
+        if (StringUtils.equals(displayType, "Transcript")) {
+            return true;
+        }
+        return false;
+    }
+
 }
