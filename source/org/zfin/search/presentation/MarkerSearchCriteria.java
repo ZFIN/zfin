@@ -109,4 +109,14 @@ public class MarkerSearchCriteria {
         return false;
     }
 
+    public Boolean isCloneResult() {
+        if (StringUtils.equals(displayType, "BAC")
+            || StringUtils.equals(displayType, "PAC")
+            || StringUtils.equals(displayType, "Fosmid")
+            || StringUtils.equals(displayType, "STS")) {
+            return true;
+        }
+        return false;
+    }
+
 }

@@ -1,6 +1,7 @@
 package org.zfin.search.presentation;
 
 import org.zfin.expression.presentation.MarkerExpression;
+import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.PhenotypeOnMarkerBean;
 

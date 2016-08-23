@@ -1,7 +1,7 @@
 
 
   <ul>	
-     <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg" 
+     <li><a href="/action/marker/search" 
                    title="Search by name, accession number, chromosome, vector or sequence type">
          <strong>Genes / Markers / Clones</strong></a></li>
      <ul>

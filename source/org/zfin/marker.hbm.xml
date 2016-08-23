@@ -262,7 +262,7 @@
             <property name="pcrAmplification" column="clone_pcr_amplification" not-null="false"/>
             <property name="cloneComments" column="clone_comments" not-null="false"/>
             <property name="cloningSite" column="clone_cloning_site" not-null="false"/>
-
+            <property name="sequenceType" column="clone_sequence_type" not-null="true"/>
             <many-to-one name="vector" column="clone_vector_name" not-null="false" class="org.zfin.marker.Vector"/>
             <many-to-one name="probeLibrary" column="clone_probelib_zdb_id" not-null="false"
                          class="org.zfin.marker.ProbeLibrary"/>

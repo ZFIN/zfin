@@ -50,6 +50,9 @@ ${criteria.chromosome}--%>
         <c:when test="${criteria.isGenedomResult()}">
             <zfin-marker-search:geneResultTable/>
         </c:when>
+        <c:when test="${criteria.isCloneResult()}">
+            <zfin-marker-search:cloneResultTable/>
+        </c:when>
         <c:otherwise>
             <zfin-marker-search:genericResultTable/>
         </c:otherwise>

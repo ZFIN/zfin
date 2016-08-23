@@ -77,7 +77,7 @@ document.write(
     '    </div>' +
     '    <div id="hdr-zfinlinks" class="hdr-linkbar"> ' +
     '      <a href="/">Home</a>' +
-    '      <a href="/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-newmrkrselect.apg" title="Search by name, accession number, chromosome, vector or sequence type">Genes / Markers / Clones</a>' +
+    '      <a href="/action/marker/search" title="Search by name, accession number, chromosome, vector or sequence type">Genes / Markers / Clones</a>' +
     '      <a href="/action/blast/blast" title="Search for sequence alignment against ZFIN datasets and zebrafish datasets">BLAST</a> ' +
     '      <a href="/@GBROWSE_PATH_FROM_ROOT@">GBrowse</a> ' +
     '      <a href="/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-xpatselect.apg" title="Search by gene, developmental stage, anatomy and other attributes">Expression</a>' +
