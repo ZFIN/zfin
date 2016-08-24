@@ -154,6 +154,7 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
         if (zecoTerm != null ? !zecoTerm.equals(that.zecoTerm) : that.zecoTerm != null) return false;
         if (aoTerm != null ? !aoTerm.equals(that.aoTerm) : that.aoTerm != null) return false;
         if (goCCTerm != null ? !goCCTerm.equals(that.goCCTerm) : that.goCCTerm != null) return false;
+        if (chebiTerm != null ? !chebiTerm.equals(that.chebiTerm) : that.chebiTerm != null) return false;
         return !(taxaonymTerm != null ? !taxaonymTerm.equals(that.taxaonymTerm) : that.taxaonymTerm != null);
 
     }
