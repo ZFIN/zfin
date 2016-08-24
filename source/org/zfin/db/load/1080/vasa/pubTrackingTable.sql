@@ -5,11 +5,11 @@ create table pub_tracking_history (pth_pk_id serial8 not null constraint pth_pk_
        	     			  	     pth_pub_Zdb_id varchar(50) not null constraint pth_pub_zdb_id_not_null,
 					     pth_event_id int8 not null constraint pth_event_id_not_null,
 					     pth_location_id int8 not null constraint pth_location_id_not_null,
-					     pth_claimed_by varchar(50),
-					     pth_last_updated_by varchar(50) not null constraint pth_last_updated_by_not_null,
 					     pth_event_set_by varchar(50) not null constraint pth_event_set_by_not_null,
-					     pth_last_updated_date datetime year to second default current year to second not null constraint pth_last_updated_date_not_null,
-					     pth_event_insert_date datetime year to second default current year to second not null constraint pth_event_insert_date_not_null)
+					     pth_claimed_by varchar(50),
+					     pth_location int8,
+					     pth_event_insert_date datetime year to second default current year to second not null constraint pth_event_insert_date_not_null,
+					     pth_status_is_current boolean default 'f' not null constraint pth_status_is_current_not_null)
 fragment by round robin in tbldbs1,tbldbs2,tbldbs3
 extent size 4096 next size 4096;
 					     					     
@@ -33,13 +33,21 @@ create index pth_event_set_by_fk_index
        on pub_tracking_history (pth_event_set_by)
  using btree in		       idxdbs1;
 
+create index pth_location_fk_index
+ on pub_tracking_history (pth_location)
+ using btree in idxdbs2;
+
 create index pth_claimed_by_fk_index
-       on pub_tracking_history (pth_claimed_by)
- using btree in                idxdbs2;
+ on pub_tracking_history(pth_location)
+ using btree in idxdbs3;
 
 create unique index pub_tracking_history_alternative on
        pub_tracking_history (pth_pub_zdb_id, pth_event_id, pth_location_id)
 using btree in idxdbs3;
+
+alter table pub_tracking_history
+  add constraint (foreign key (pth_claimed_by)
+  references person constraint pth_claimed_by_foreign_key);
 
 alter table pub_tracking_history 
  add constraint primary key (pth_pk_id)
@@ -48,10 +56,6 @@ alter table pub_tracking_history
 alter table pub_tracking_history
   add constraint (foreign key (pth_pub_zdb_id)
  references publication constraint pth_pub_fk);
-
-alter table pub_tracking_history
-  add constraint (foreign key (pth_claimed_by)
- references person	  constraint pth_claimed_by_fk);
 
 alter table pub_tracking_history
   add constraint (foreign key (pth_event_set_by)
@@ -65,7 +69,8 @@ alter table pub_tracking_history
 --bins, numbers, desks
 create table pub_tracking_location (ptl_pk_id serial8 not null constraint ptl_pk_id_not_null,
        	     			   	     ptl_location varchar(10) not null constraint ptl_location_not_null,
-					     ptl_location_process_order int not null constraint ptl_location_process_order)
+					     ptl_location_display varchar(20) not null constraint ptl_location_display_not_null,
+					     ptl_role varchar(50) not null constraint ptl_role_not_null)
 in tbldbs2
 extent size 16 next size 16
 lock mode page;
@@ -86,9 +91,13 @@ alter table pub_tracking_location
  add constraint unique (ptl_location)
  constraint ptl_alternate_key;
 
---indexed, closed, assigned to bin?, reassigned?, waiting for x,y,z
+
+--indexed, closed, assigned to bin, waiting for x,y,z, claimed
 create table pub_tracking_event (pte_pk_id serial8 not null constraint pte_pk_id_not_null,
-       	     				   pte_event varchar(100))
+       	     				   pte_event varchar(100),
+					   pte_terminal_event boolean default 'f' not null constraint pte_terminal_event_not_null,
+					   pte_event_display varchar(150) not null constraint pte_event_display_not_null,
+					   pte_event_qualifier varchar(50))
 in tbldbs3 
 extent size 16 next size 16
 lock mode page;
@@ -99,7 +108,7 @@ create unique index pte_pk_index
  using btree in		  idxdbs2;
 
 create unique index pte_event_alternate_key_index
- on pub_tracking_event (pte_event)
+ on pub_tracking_event (pte_event, pte_event_qualifier)
  using btree in		  idxdbs1;
 
 alter table pub_Tracking_event
@@ -108,7 +117,43 @@ alter table pub_Tracking_event
 
 alter table pub_tracking_event
  add constraint	unique (pte_event)
- constraint pte_alternate_key;		     
+ constraint pte_alternate_key;	
+
+insert into pub_tracking_event (pte_event, pte_event_display, pte_terminal_event)
+ values ('NEW','new','f');
+
+insert into pub_tracking_event (pte_event, pte_event_display, pte_terminal_event)
+ values ('READY_FOR_INDEXING','Ready for Indexing','f');
+
+insert into pub_tracking_event (pte_event, pte_event_display, pte_terminal_event)
+ values ('INDEXING','Indexing','f');
+
+insert into pub_tracking_event (pte_event, pte_event_display, pte_terminal_event)
+ values ('READY_FOR_CURATION','Ready for Curation','f');
+
+insert into pub_tracking_event (pte_event, pte_event_display, pte_terminal_event)
+ values ('CURATING','Curating','f');
+
+insert into pub_tracking_event (pte_event, pte_event_display, pte_terminal_event, pte_event_qualifier)
+ values ('WAIT','Waiting for Curator Review','f','curator review');
+
+insert into pub_tracking_event (pte_event, pte_event_display, pte_terminal_event, pte_event_qualifier)
+ values ('WAIT','Waiting for Software Fix','f','software');
+
+insert into pub_tracking_event (pte_event, pte_event_display, pte_terminal_event, pte_event_qualifier)
+ values ('WAIT','Waiting for Author','f','author');
+
+insert into pub_tracking_event (pte_event, pte_event_display, pte_terminal_event, pte_event_qualifier)
+ values ('WAIT','Waiting for Ontology','f','ontology');
+
+insert into pub_tracking_event (pte_event, pte_event_display, pte_terminal_event, pte_event_qualifier)
+ values ('WAIT','Waiting for Nomenclature','f','nomenclature');
+
+insert into pub_tracking_event (pte_event, pte_event_display, pte_terminal_event)
+ values ('CLOSED','Closed','t');
+
+insert into pub_tracking_event (pte_event, pte_event_display, pte_terminal_event)
+ values ('ARCHIVED','Archived','t');
 
 alter table pub_tracking_history
   add constraint (foreign key (pth_location_id)
@@ -118,4 +163,29 @@ alter table pub_tracking_history
   add constraint (foreign key (pth_event_id)
  references pub_tracking_event    constraint pth_event_fk);
 
+insert into pub_tracking_location (ptl_location, ptl_location_display, ptl_role)
+ values ('BIN_1','Bin 1','curator');
 
+insert into pub_tracking_location (ptl_location, ptl_location_display, ptl_role)
+ values ('BIN_2','Bin 2','curator');
+
+insert into pub_tracking_location (ptl_location, ptl_location_display, ptl_role)
+ values ('NEW_PHENO','New Phenotype','curator');
+
+insert into pub_tracking_location (ptl_location, ptl_location_display, ptl_role)
+ values ('NEW_EXPR','New Expression','curator');
+
+insert into pub_tracking_location (ptl_location, ptl_location_display, ptl_role)
+ values ('ORTHO','Orthology','curator');
+
+insert into pub_tracking_location (ptl_location, ptl_location_display, ptl_role)
+ values ('BIN_3','Bin 3','curator');
+
+insert into pub_tracking_location (ptl_location, ptl_location_display, ptl_role)
+ values ('pub_indexer_1','1','indexer');
+
+insert into pub_tracking_location (ptl_location, ptl_location_display, ptl_role)
+ values ('pub_indexer_2','2','indexer');
+
+insert into pub_tracking_location (ptl_location, ptl_location_display, ptl_role)
+ values ('pub_indexer_3','3','indexer');
