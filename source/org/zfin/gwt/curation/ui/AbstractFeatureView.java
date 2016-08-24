@@ -340,13 +340,11 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         }
         // if no transcript consequence and protein: AA > AA for a Point mutation create
         if (getFeatureType().equals(FeatureTypeEnum.POINT_MUTATION.getName())) {
-            if (mutationDetailTranscriptView.getPresenter().isTranscriptDtoSetEmpty()) {
-                // substitution is a missense consequence on the transcript level
-                if (mutationDetailProteinView.hasNonStopAASelected())
-                    mutationDetailTranscriptView.getPresenter().setMissenseTerm();
-                else if (mutationDetailProteinView.hasStopCodon())
-                    mutationDetailTranscriptView.getPresenter().setStopGainTerm();
-            }
+            // substitution is a missense consequence on the transcript level
+            if (mutationDetailProteinView.hasNonStopAASelected())
+                mutationDetailTranscriptView.getPresenter().setMissenseTerm();
+            else if (mutationDetailProteinView.hasStopCodon())
+                mutationDetailTranscriptView.getPresenter().setStopGainTerm();
         }
     }
 
