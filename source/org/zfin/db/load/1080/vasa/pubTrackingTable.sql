@@ -115,7 +115,7 @@ alter table pub_tracking_status
  constraint pts_alternate_key;	
 
 insert into pub_tracking_status (pts_status, pts_status_display, pts_terminal_status)
- values ('NEW','new','f');
+ values ('NEW','New','f');
 
 insert into pub_tracking_status (pts_status, pts_status_display, pts_terminal_status)
  values ('READY_FOR_INDEXING','Ready for Indexing','f');
