@@ -1,4 +1,5 @@
-begin work;
+--liquibase formatted sql
+--changeset sierra:14381splitBBAjournals
 
 create temp table tmp_new_journals 
   (
@@ -53,30 +54,13 @@ insert into journal (jrnl_zdb_id, jrnl_name, jrnl_abbrev, jrnl_print_issn, jrnl_
   select t_jrnl_zdb_id, "BBA "||t_jrnl_name, "BBA "||t_jrnl_abbrev, t_jrnl_print_issn, t_jrnl_online_issn, t_jrnl_nlmid, t_jrnl_medabbrev, t_jrnl_isoabbrev, "Elsevier", 'f'
   from tmp_new_journals;
 
-create table publication_journals
-  (
-    pub_id varchar(50),
-    pub_vol varchar(10),
-    pub_year varchar(10),
-    journal_title varchar(255),
-    journal_issn varchar(100)
-  ) in tbldbs1;
-
-load from toSplit.csv
-  insert into publication_journals;
-
 alter table publication_journals add journal_id varchar(50);
 
-select * from tmp_new_journals;
 
 update publication_journals
    set journal_id = (select t_jrnl_zdb_id
                        from tmp_new_journals
                       where t_jrnl_name = journal_title);
-
-select distinct journal_id from publication_journals;
-
-select * from publication_journals where journal_id is null;
 
 update publication
 set pub_jrnl_zdb_id = (select journal_id 
@@ -84,23 +68,12 @@ set pub_jrnl_zdb_id = (select journal_id
                         where journal_id is not null and zdb_id = pub_id)
  where exists(select "x" from publication_journals where pub_id = zdb_id);
 
-drop table publication_journals;
-
-select count(*) from publication where pub_jrnl_zdb_id = "ZDB-JRNL-050621-330";
-
 delete from zdb_active_source where zactvs_zdb_id = "ZDB-JRNL-050621-330";
 
-select count(*) from publication where pub_jrnl_zdb_id = "ZDB-JRNL-060210-1";
 
 delete from zdb_active_source where zactvs_zdb_id = "ZDB-JRNL-060210-1";
 
-select count(*) from publication where pub_jrnl_zdb_id = "ZDB-JRNL-051107-3";
 
 delete from zdb_active_source where zactvs_zdb_id = "ZDB-JRNL-051107-3";
 
-select * from journal where jrnl_name like "BBA%";
-
-commit work;
-
---rollback work;
 

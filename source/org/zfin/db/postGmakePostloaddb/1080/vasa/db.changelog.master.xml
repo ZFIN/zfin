@@ -6,5 +6,8 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/14430.sql"/>
-
+    <include file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/createPubJournalsTable.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/loadPubJournals.xml"/>   
+    <include file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/14381splitBBAjournals.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/dropPubJournalsTable.sql"/>
 </databaseChangeLog>
