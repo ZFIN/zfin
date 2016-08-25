@@ -1,5 +1,5 @@
 --liquibase formatted sql
-
+--changeset pm:14378
 
 insert into marker_type_group_member values ('ETCONSTRCT','ABBREV_EQ_NAME');
 insert into marker_type_group_member values ('TGCONSTRCT','ABBREV_EQ_NAME');
