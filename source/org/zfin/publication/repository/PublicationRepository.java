@@ -16,8 +16,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
-import org.zfin.publication.Journal;
-import org.zfin.publication.Publication;
+import org.zfin.publication.*;
 import org.zfin.repository.PaginationParameter;
 import org.zfin.sequence.MarkerDBLink;
 
@@ -509,4 +508,10 @@ public interface PublicationRepository extends PaginationParameter {
     List<Fish> getNonWTFishByPublication(String publicationID);
 
     List<Fish> getWildtypeFish();
+
+    PublicationTrackingHistory currentTrackingStatus(Publication publication);
+
+    List<PublicationTrackingStatus> getAllPublicationStatuses();
+
+    List<PublicationTrackingLocation> getAllPublicationLocations();
 }

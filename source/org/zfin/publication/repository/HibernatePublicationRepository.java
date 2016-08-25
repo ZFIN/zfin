@@ -32,9 +32,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
 import org.zfin.profile.Lab;
-import org.zfin.publication.DOIAttempt;
-import org.zfin.publication.Journal;
-import org.zfin.publication.Publication;
+import org.zfin.publication.*;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
@@ -2076,6 +2074,22 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         SQLQuery query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("zdbID", zdbID);
         return ((Number) query.uniqueResult()).longValue();
+    }
+
+    public PublicationTrackingHistory currentTrackingStatus(Publication publication) {
+        return (PublicationTrackingHistory) HibernateUtil.currentSession()
+                .createCriteria(PublicationTrackingHistory.class)
+                .add(Restrictions.eq("publication", publication))
+                .add(Restrictions.eq("isCurrent", true))
+                .uniqueResult();
+    }
+
+    public List<PublicationTrackingStatus> getAllPublicationStatuses() {
+        return HibernateUtil.currentSession().createCriteria(PublicationTrackingStatus.class).list();
+    }
+
+    public List<PublicationTrackingLocation> getAllPublicationLocations() {
+        return HibernateUtil.currentSession().createCriteria(PublicationTrackingLocation.class).list();
     }
 
 }

@@ -221,4 +221,7 @@ public interface ProfileRepository {
     List<String> getPiDistributionList();
 
     List<String> getUsaDistributionList();
+
+    List<Person> getUsersByRole(String role);
+
 }

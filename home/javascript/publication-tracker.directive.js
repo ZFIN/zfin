@@ -4,7 +4,13 @@
         .directive('publicationTracker', publicationTracker);
 
     function publicationTracker() {
-        var template = '<div publication-status pub-id="{{vm.pubId}}" status="vm.status" topics="vm.topics" notes="vm.notes"></div>' +
+        var template = '' +
+            '<div class="panel panel-default">' +
+            '  <div class="panel-heading">' +
+            '    <h3 class="panel-title">Status</h3>' +
+            '  </div>' +
+            '  <div publication-status pub-id="{{vm.pubId}}" topics="vm.topics" notes="vm.notes"></div>' +
+            '</div>' +
             '<div class="panel panel-default">' +
             '  <div class="panel-heading">' +
             '    <h3 class="panel-title">Topics</h3>' +
@@ -52,7 +58,6 @@
         var vm = this;
 
         vm.notes = [];
-        vm.status = null;
         vm.topics = [];
 
         activate();
@@ -61,10 +66,6 @@
             PublicationService.getNotes(vm.pubId)
                 .then(function (response) {
                     vm.notes = response.data;
-                });
-            PublicationService.getStatus(vm.pubId)
-                .then(function (response) {
-                    vm.status = response.data;
                 });
             PublicationService.getTopics(vm.pubId)
                 .then(function (response) {

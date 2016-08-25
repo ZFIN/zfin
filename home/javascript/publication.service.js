@@ -23,7 +23,10 @@
             getPublicationDetails  : getPublicationDetails,
             getCuratedEntities     : getCuratedEntities,
             validatePubForClose    : validatePubForClose,
-            sendAuthorNotification : sendAuthorNotification
+            sendAuthorNotification : sendAuthorNotification,
+            getStatuses            : getStatuses,
+            getLocations           : getLocations,
+            getCurators            : getCurators
         };
 
         function getTopics(id) {
@@ -95,6 +98,18 @@
                 recipients: recipients,
                 message: message
             });
+        }
+
+        function getStatuses() {
+            return $http.get('/action/publication/statuses');
+        }
+
+        function getLocations() {
+            return $http.get('/action/publication/locations');
+        }
+
+        function getCurators() {
+            return $http.get('/action/publication/curators');
         }
     }
 

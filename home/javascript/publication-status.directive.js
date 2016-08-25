@@ -9,7 +9,6 @@
             templateUrl: '/templates/publication-status.directive.html',
             scope: {
                 pubId: '@',
-                status: '=',
                 topics: '=',
                 notes: '='
             },
@@ -25,6 +24,13 @@
     function PublicationStatusController(PublicationService) {
         var vm = this;
 
+        vm.statuses = [];
+        vm.locations = [];
+        vm.curators = [];
+
+        vm.current = null;
+        vm.original = null;
+
         vm.warnings = [];
 
         vm.unindexPub = unindexPub;
@@ -35,9 +41,69 @@
         vm.cancelClosePub = cancelClosePub;
         vm.hasTopics = hasTopics;
 
+        vm.updateStatus = updateStatus;
+        vm.readyToSave = readyToSave;
+        vm.statusNeedsOwner = statusNeedsOwner;
+        vm.statusNeedsLocation = statusNeedsLocation;
+
         activate();
 
         function activate() {
+            PublicationService.getStatuses()
+                .then(function (response) {
+                    vm.statuses = response.data;
+                });
+            PublicationService.getLocations()
+                .then(function (response) {
+                    vm.locations = response.data;
+                });
+            PublicationService.getCurators()
+                .then(function (response) {
+                    vm.curators = response.data;
+                });
+            PublicationService.getStatus(vm.pubId)
+                .then(function (response) {
+                    vm.current = response.data || {status: vm.statuses[0], owner: null, location: null};
+                    vm.original = angular.copy(vm.current);
+                });
+        }
+
+        function readyToSave() {
+            if (!vm.current) {
+                return false;
+            }
+            var statusChanged = vm.current.status.id !== vm.original.status.id;
+            if (statusNeedsLocation(vm.current.status)) {
+                return vm.current.location && (statusChanged || vm.current.location.id !== vm.original.location.id);
+            }
+            if (statusNeedsOwner(vm.current.status)) {
+                return vm.current.owner && (statusChanged || vm.current.owner.zdbID !== vm.original.owner.zdbID);
+            }
+            return statusChanged;
+        }
+
+        function updateStatus(validate) {
+            if (validate && vm.current.status.type == 'CLOSED') {
+                PublicationService.validatePubForClose(vm.pubId)
+                    .then(function (response) {
+                        if (typeof response.data.warnings !== 'undefined' &&
+                            response.data.warnings !== null &&
+                            response.data.warnings.length > 0) {
+                            vm.warnings = response.data.warnings;
+                        } else {
+                            updateStatus(false);
+                        }
+                    });
+            } else {
+                if (!statusNeedsLocation(vm.current.status)) {
+                    vm.current.location = null;
+                }
+                if (!statusNeedsOwner(vm.current.status)) {
+                    vm.current.owner = null;
+                }
+                vm.original = angular.copy(vm.current);
+                vm.warnings = [];
+            }
         }
 
         function unindexPub() {
@@ -98,6 +164,7 @@
         }
 
         function cancelClosePub() {
+            vm.current = angular.copy(vm.original);
             vm.warnings = [];
         }
 
@@ -110,6 +177,14 @@
                 .then(function (response) {
                     vm.notes.unshift(response.data);
                 });
+        }
+
+        function statusNeedsOwner(status) {
+            return typeof status !== 'undefined' && status !== null && (status.type === 'CURATING' || status.type === 'WAIT');
+        }
+
+        function statusNeedsLocation(status) {
+            return typeof status !== 'undefined' && status !== null && status.type === 'READY_FOR_CURATION';
         }
 
     }

@@ -7,8 +7,7 @@ import org.zfin.curation.PublicationNote;
 import org.zfin.curation.presentation.*;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
-import org.zfin.publication.Publication;
-import org.zfin.publication.presentation.PublicationService;
+import org.zfin.publication.PublicationTrackingHistory;
 
 import java.util.*;
 
@@ -95,13 +94,16 @@ public class CurationDTOConversionService {
         return curationSet;
     }
 
-    public CurationStatusDTO toCurationStatusDTO(Publication publication) {
+    public CurationStatusDTO toCurationStatusDTO(PublicationTrackingHistory status) {
+        if (status == null) {
+            return null;
+        }
         CurationStatusDTO dto = new CurationStatusDTO();
-        dto.setClosedDate(publication.getCloseDate());
-        dto.setIndexed(publication.isIndexed());
-        dto.setIndexedDate(publication.getIndexedDate());
-        dto.setPubZdbID(publication.getZdbID());
-        dto.setCurationAllowed(PublicationService.allowCuration(publication));
+        dto.setPubZdbID(status.getPublication().getZdbID());
+        dto.setStatus(status.getStatus());
+        dto.setLocation(status.getLocation());
+        dto.setOwner(toCuratorDTO(status.getOwner()));
+        dto.setUpdateDate(status.getDate());
         return dto;
     }
 
