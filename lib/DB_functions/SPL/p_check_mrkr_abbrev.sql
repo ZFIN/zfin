@@ -13,7 +13,8 @@ create procedure p_check_mrkr_abbrev (vMrkrName   like marker.mrkr_name,
 
   if vMrkrType in (select mtgrpmem_mrkr_type
                      from marker_type_group_member
-                     where mtgrpmem_mrkr_type_group = "ABBREV_EQ_NAME") then
+                     where mtgrpmem_mrkr_type_group = "ABBREV_EQ_NAME")
+		     and vMrkrType not in ('TGCONSTRCT','PTCONSTRCT','ETCONSTRCT','GTCONSTRCT') then
     if vMrkrName <> vMrkrAbbrev then
       raise exception -746, 0, 
         'FAIL!! abbreviation must exactly equal name for marker type ' || vMrkrType ;
