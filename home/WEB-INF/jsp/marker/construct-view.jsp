@@ -51,8 +51,6 @@
                          marker="${formBean.marker}"
                          title="CONSTRUCT COMPONENTS" />
 
-<zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}" />
-
 <%--Transgenics that utilize the construct--%>
 <%--link to the facet search result if there are more than 50 features --%>
 <c:choose>
@@ -145,7 +143,8 @@
 <%--SEQUENCE INFORMATION--%>
 <zfin2:markerSequenceInformationSummary marker="${formBean.marker}" sequenceInfo="${formBean.sequenceInfo}" title="${fn:toUpperCase('Sequence Information')}" showAllSequences="false"/>
 
-
+<%--OTHER PAGES--%>
+<zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}" />
 
 <%--CITATIONS--%>
 <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>

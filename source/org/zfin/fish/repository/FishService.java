@@ -416,22 +416,17 @@ public class FishService {
      * @return set of figures
      */
     public static Set<ZfinFigureEntity> getFiguresByFishAndTerms(String fishID, List<String> termIDs) {
-/*
-        if (CollectionUtils.isEmpty(termIDs)) {
-            Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
-            if (fish == null)
-                return null;
-            return getCleanPhenotypeFigureEntitiesForFish(fish);
+        Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
+        if (fish == null) {
+            return null;
         }
-*/
 
         SolrClient server = SolrService.getSolrClient("prototype");
 
         SolrQuery query = new SolrQuery();
-
         query.setFields(FieldName.ID.getName(), FieldName.FIGURE_ID.getName(), FieldName.THUMBNAIL.getName());
         query.addFilterQuery(FieldName.CATEGORY.getName() + ":\"" + Category.PHENOTYPE.getName() + "\"");
-        query.addFilterQuery(FieldName.XREF.getName() + ":" + fishID);
+        query.addFilterQuery(FieldName.FISH.getName() + ":\"" + fish.getName() + "\"");
         query.setRows(500);
         query.add("group", "true");
         query.add("group.field", "figure_id");
