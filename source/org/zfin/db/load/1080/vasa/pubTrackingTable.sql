@@ -1,13 +1,13 @@
 --liquibase formatted sql
 --changeset sierra:pubTracking
 
+
 create table pub_tracking_history (pth_pk_id serial8 not null constraint pth_pk_id_not_null,
        	     			  	     pth_pub_Zdb_id varchar(50) not null constraint pth_pub_zdb_id_not_null,
 					     pth_status_id int8 not null constraint pth_status_id_not_null,
-					     pth_location_id int8 not null constraint pth_location_id_not_null,
+					     pth_location_id int8,
 					     pth_status_set_by varchar(50) not null constraint pth_status_set_by_not_null,
 					     pth_claimed_by varchar(50),
-					     pth_location int8,
 					     pth_status_insert_date datetime year to second default current year to second not null constraint pth_status_insert_date_not_null,
 					     pth_status_is_current boolean default 'f' not null constraint pth_status_is_current_not_null)
 fragment by round robin in tbldbs1,tbldbs2,tbldbs3
@@ -33,13 +33,8 @@ create index pth_status_set_by_fk_index
        on pub_tracking_history (pth_status_set_by)
  using btree in		       idxdbs1;
 
-create index pth_location_fk_index
- on pub_tracking_history (pth_location)
- using btree in idxdbs2;
 
-create index pth_claimed_by_fk_index
- on pub_tracking_history(pth_location)
- using btree in idxdbs3;
+
 
 create unique index pub_tracking_history_alternative on
        pub_tracking_history (pth_pub_zdb_id, pth_status_id, pth_location_id)
@@ -68,8 +63,8 @@ alter table pub_tracking_history
 
 --bins, numbers, desks
 create table pub_tracking_location (ptl_pk_id serial8 not null constraint ptl_pk_id_not_null,
-       	     			   	     ptl_location varchar(10) not null constraint ptl_location_not_null,
-					     ptl_location_display varchar(20) not null constraint ptl_location_display_not_null,
+       	     			   	     ptl_location varchar(30) not null constraint ptl_location_not_null,
+					     ptl_location_display varchar(60) not null constraint ptl_location_display_not_null,
 					     ptl_role varchar(50) not null constraint ptl_role_not_null)
 in tbldbs2
 extent size 16 next size 16
@@ -116,7 +111,7 @@ alter table pub_Tracking_status
  constraint pts_primary_key;
 
 alter table pub_tracking_status
- add constraint	unique (pts_status)
+ add constraint	unique (pts_status, pts_status_qualifier)
  constraint pts_alternate_key;	
 
 insert into pub_tracking_status (pts_status, pts_status_display, pts_terminal_status)
@@ -189,3 +184,4 @@ insert into pub_tracking_location (ptl_location, ptl_location_display, ptl_role)
 
 insert into pub_tracking_location (ptl_location, ptl_location_display, ptl_role)
  values ('pub_indexer_3','3','indexer');
+
