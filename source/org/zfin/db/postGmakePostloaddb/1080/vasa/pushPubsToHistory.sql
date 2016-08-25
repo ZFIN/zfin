@@ -1,5 +1,6 @@
 --liquibase formatted sql
 --changeset sierra:pushPubsToHistory
+
 delete from pub_tracking_history;
 
 insert into pub_tracking_history (pth_pub_zdb_id, pth_status_id, pth_status_insert_date, pth_status_set_by)
@@ -36,7 +37,7 @@ and exists (select 'x'
                         from publication
                where pub_completion_date is not null
         and pth_pub_zdb_id = zdb_id)
-and pth_status_is_current = 't'
+and pth_status_is_current = 't';
 
 update pub_tracking_status
  set pts_status_display = 'New'
