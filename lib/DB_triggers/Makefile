@@ -98,6 +98,7 @@ TRIGGERS = \
 	publication_insert_trigger.sql \
 	publication_update_trigger.sql \
 	publication_completion_date_update_trigger.sql \
+	pub_tracking_history_insert_trigger.sql \
 	record_attribution_insert_trigger.sql \
 	run_candidate_insert_trigger.sql \
 	stage_insert_trigger.sql \

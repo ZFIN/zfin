@@ -90,7 +90,7 @@ alter table pub_tracking_location
 --indexed, closed, assigned to bin, waiting for x,y,z, claimed
 create table pub_tracking_status (pts_pk_id serial8 not null constraint pts_pk_id_not_null,
        	     				   pts_status varchar(100),
-					   pts_terminal_status boolean default 'f' not null constraint pts_terminal_status_not_null,
+					   pts_terminal_status boolean default 't' not null constraint pts_terminal_status_not_null,
 					   pts_status_display varchar(150) not null constraint pts_status_display_not_null,
 					   pts_status_qualifier varchar(50))
 in tbldbs3 
