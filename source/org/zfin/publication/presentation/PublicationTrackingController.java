@@ -213,6 +213,19 @@ public class PublicationTrackingController {
         return converter.toCurationStatusDTO(publicationRepository.currentTrackingStatus(publication));
     }
 
+    @RequestMapping(value = "/{zdbID}/status-history")
+    public String showPubStatusHistory(Model model, @PathVariable String zdbID) {
+        Publication publication = publicationRepository.getPublication(zdbID);
+        if (publication == null) {
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Status History for " + publication.getTitle());
+        model.addAttribute("publication", publication);
+        model.addAttribute("statusUpdates", publicationRepository.fullTrackingHistory(publication));
+        return "publication/status-history.page";
+    }
+
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/validate", method = RequestMethod.POST)
     public JSONMessageList validatePublication(@PathVariable String zdbID) {

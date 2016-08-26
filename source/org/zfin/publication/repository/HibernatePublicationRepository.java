@@ -2084,6 +2084,14 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 .uniqueResult();
     }
 
+    public List<PublicationTrackingHistory> fullTrackingHistory(Publication publication) {
+        return HibernateUtil.currentSession()
+                .createCriteria(PublicationTrackingHistory.class)
+                .add(Restrictions.eq("publication", publication))
+                .addOrder(Order.desc("date"))
+                .list();
+    }
+
     public List<PublicationTrackingStatus> getAllPublicationStatuses() {
         return HibernateUtil.currentSession().createCriteria(PublicationTrackingStatus.class).list();
     }
