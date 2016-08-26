@@ -55,7 +55,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
     public void getPhenotypeFigures() {
 
         // WT+MO1-pitx3
-        Fish fish = getFishRepository().getFishByName("WT+MO1-pitx3");
+        Fish fish = getFishRepository().getFishByName("WT + MO1-pitx3");
 
         assertNotNull(fish);
         String fishID = fish.getZdbID();
@@ -68,7 +68,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
     public void getPhenotypeStatementsPerFigureAndFish() {
         //todo: this should be done by fish_zdb_id, once they're generated
         // WT+MO1-pitx3
-        Fish fish = getFishRepository().getFishByName("WT+MO1-pitx3");
+        Fish fish = getFishRepository().getFishByName("WT + MO1-pitx3");
 
         assertNotNull(fish);
         String fishID = fish.getZdbID();
