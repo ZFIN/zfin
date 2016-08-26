@@ -30,9 +30,11 @@
         </div>
         <div class="form-group" ng-show="vm.warnings.length == 0">
             <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-primary"
-                        ng-disabled="!vm.readyToSave()"
-                        ng-click="vm.updateStatus(true)">Save</button>
+                <button type="button" class="btn btn-default" ng-disabled="vm.processing" ng-click="vm.reset()">Reset</button>
+                <button type="submit" class="btn btn-primary" ng-disabled="!vm.readyToSave() || vm.processing" ng-click="vm.updateStatus(true)">
+                    <span ng-show="!vm.processing">Save</span>
+                    <span ng-show="vm.processing"><i class="fa fa-spinner fa-spin"></i></span>
+                </button>
             </div>
         </div>
         <div class="col-sm-offset-2 col-sm-8 alert alert-warning" role="alert" ng-show="vm.warnings.length > 0">
@@ -44,35 +46,13 @@
                 </li>
             </ul>
             <p>
-                <button class="btn btn-warning" ng-click="vm.updateStatus(false)">Yes, close it</button>
-                <button class="btn btn-default" ng-click="vm.cancelClosePub()">Cancel</button>
+                <button class="btn btn-default" ng-disabled="vm.processing" ng-click="vm.reset()">Cancel</button>
+                <button class="btn btn-warning" ng-disabled="vm.processing" ng-click="vm.updateStatus(false)">
+                    <span ng-show="!vm.processing">Yes, close it</span>
+                    <span ng-show="vm.processing"><i class="fa fa-spinner fa-spin"></i></span>
+                </button>
             </p>
         </div>
     </form>
-    <!--<div class="row bottom-buffer">-->
-        <!--<div class="col-xs-4 col-xs-offset-1" >-->
-            <!--<div ng-if="vm.status.indexed">-->
-                <!--<h4>Indexed on {{vm.status.indexedDate | date:'yyyy-MM-dd'}}</h4>-->
-                <!--<button class="btn btn-default btn-block" ng-click="vm.unindexPub()">Un-index</button>-->
-            <!--</div>-->
-            <!--<div ng-if="!vm.status.indexed">-->
-                <!--<h4>Not indexed yet</h4>-->
-                <!--<button class="btn btn-primary btn-block" ng-click="vm.indexPub()">Index</button>-->
-            <!--</div>-->
-        <!--</div>-->
-        <!--<div class="col-xs-4 col-xs-offset-2">-->
-            <!--<div ng-if="!vm.status.closedDate">-->
-                <!--<h4>Not closed yet</h4>-->
-                <!--<button class="btn btn-primary btn-block" ng-click="vm.validateForClose()">-->
-                    <!--<span ng-show="!vm.hasTopics()">Close with no data found</span>-->
-                    <!--<span ng-show="vm.hasTopics()">Close</span>-->
-                <!--</button>-->
-            <!--</div>-->
-            <!--<div ng-if="vm.status.closedDate">-->
-                <!--<h4>Closed on {{vm.status.closedDate | date:"yyyy-MM-dd"}}</h4>-->
-                <!--<button class="btn btn-default btn-block" ng-click="vm.reopenPub()">Reopen</button>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
 </div>
 

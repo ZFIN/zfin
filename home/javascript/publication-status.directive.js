@@ -32,19 +32,14 @@
         vm.original = null;
 
         vm.warnings = [];
+        vm.processing = false;
 
-        vm.unindexPub = unindexPub;
-        vm.indexPub = indexPub;
-        vm.validateForClose = validateForClose;
-        vm.reopenPub = reopenPub;
-        vm.closePub = closePub;
-        vm.cancelClosePub = cancelClosePub;
         vm.hasTopics = hasTopics;
-
         vm.updateStatus = updateStatus;
         vm.readyToSave = readyToSave;
         vm.statusNeedsOwner = statusNeedsOwner;
         vm.statusNeedsLocation = statusNeedsLocation;
+        vm.reset = reset;
 
         activate();
 
@@ -62,28 +57,34 @@
                     vm.curators = response.data;
                 });
             PublicationService.getStatus(vm.pubId)
-                .then(function (response) {
-                    vm.current = response.data || {status: vm.statuses[0], owner: null, location: null};
-                    vm.original = angular.copy(vm.current);
-                });
+                .then(storeStatus);
         }
 
         function readyToSave() {
             if (!vm.current) {
                 return false;
             }
+            // TODO: this is a lot of crazy logic -- can it be simplified?
             var statusChanged = vm.current.status.id !== vm.original.status.id;
             if (statusNeedsLocation(vm.current.status)) {
+                if (vm.original.location == null) {
+                    return vm.current.location !== null;
+                }
                 return vm.current.location && (statusChanged || vm.current.location.id !== vm.original.location.id);
             }
             if (statusNeedsOwner(vm.current.status)) {
+                if (vm.original.owner == null) {
+                    return vm.current.owner !== null;
+                }
                 return vm.current.owner && (statusChanged || vm.current.owner.zdbID !== vm.original.owner.zdbID);
             }
             return statusChanged;
         }
 
         function updateStatus(validate) {
-            if (validate && vm.current.status.type == 'CLOSED') {
+            vm.processing = true;
+            var isClosing = vm.current.status.type == 'CLOSED';
+            if (validate && isClosing) {
                 PublicationService.validatePubForClose(vm.pubId)
                     .then(function (response) {
                         if (typeof response.data.warnings !== 'undefined' &&
@@ -93,6 +94,9 @@
                         } else {
                             updateStatus(false);
                         }
+                    })
+                    .finally(function() {
+                        vm.processing = false;
                     });
             } else {
                 if (!statusNeedsLocation(vm.current.status)) {
@@ -101,82 +105,24 @@
                 if (!statusNeedsOwner(vm.current.status)) {
                     vm.current.owner = null;
                 }
-                vm.original = angular.copy(vm.current);
-                vm.warnings = [];
+                PublicationService.updateStatus(vm.current)
+                    .then(storeStatus)
+                    .then(function() {
+                        if (isClosing) {
+                            PublicationService.getTopics(vm.pubId)
+                                .then(function (response) {
+                                    vm.topics = response.data;
+                                });
+                        }
+                    })
+                    .finally(function() {
+                        vm.processing = false;
+                    });
             }
-        }
-
-        function unindexPub() {
-            vm.status.indexed = false;
-            vm.status.indexedDate = null;
-            PublicationService.updateStatus(vm.status)
-                .then(function (response) {
-                    vm.status = response.data;
-                    addNote('Un-indexed paper');
-                });
-        }
-
-        function indexPub() {
-            vm.status.indexed = true;
-            vm.status.indexedDate = Date.now();
-            PublicationService.updateStatus(vm.status)
-                .then(function (response) {
-                    vm.status = response.data;
-                    addNote('Indexed paper');
-                });
-        }
-
-        function validateForClose() {
-            PublicationService.validatePubForClose(vm.pubId)
-                .then(function (response) {
-                    if (typeof response.data.warnings !== 'undefined' &&
-                        response.data.warnings !== null &&
-                        response.data.warnings.length > 0) {
-                        vm.warnings = response.data.warnings;
-                    } else {
-                        vm.closePub();
-                    }
-                });
-        }
-
-        function reopenPub() {
-            vm.status.closedDate = null;
-            PublicationService.updateStatus(vm.status)
-                .then(function (response) {
-                    vm.status = response.data;
-                    addNote('Reopened paper')
-                });
-        }
-
-        function closePub() {
-            vm.status.closedDate = Date.now();
-            PublicationService.updateStatus(vm.status)
-                .then(function (response) {
-                    vm.status = response.data;
-                    vm.warnings = [];
-                    var noteToAdd = vm.hasTopics() ? 'Closed paper' : 'Upon review, this publication contains no information currently curated by ZFIN';
-                    addNote(noteToAdd);
-                    PublicationService.getTopics(vm.pubId)
-                        .then(function (response) {
-                            vm.topics = response.data;
-                        })
-                });
-        }
-
-        function cancelClosePub() {
-            vm.current = angular.copy(vm.original);
-            vm.warnings = [];
         }
 
         function hasTopics() {
             return vm.topics.some(function (t) { return t.dataFound; });
-        }
-
-        function addNote(text) {
-            PublicationService.addNote(vm.pubId, text)
-                .then(function (response) {
-                    vm.notes.unshift(response.data);
-                });
         }
 
         function statusNeedsOwner(status) {
@@ -185,6 +131,17 @@
 
         function statusNeedsLocation(status) {
             return typeof status !== 'undefined' && status !== null && status.type === 'READY_FOR_CURATION';
+        }
+
+        function reset() {
+            vm.current = angular.copy(vm.original);
+            vm.warnings = [];
+        }
+
+        function storeStatus(response) {
+            vm.current = response.data || {pubZdbID: vm.pubId, status: vm.statuses.length > 0 ? vm.statuses[0] : {}, owner: {}, location: {}};
+            vm.original = angular.copy(vm.current);
+            vm.warnings = [];
         }
 
     }

@@ -189,24 +189,28 @@ public class PublicationTrackingController {
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/status", method = RequestMethod.POST)
     public CurationStatusDTO updateCurationStatus(@PathVariable String zdbID, @RequestBody CurationStatusDTO dto) {
-//        Session session = HibernateUtil.currentSession();
-//        Transaction tx = session.beginTransaction();
-//        Publication publication = publicationRepository.getPublication(zdbID);
-//        publication.setIndexed(dto.isIndexed());
-//        publication.setIndexedDate((GregorianCalendar) dto.getIndexedDate());
-//        if (publication.getCloseDate() == null && dto.getClosedDate() != null) {
-//            // looks like this paper's getting closed. close all the topics and do some cleanup, too.
-//            curationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
-//            expressionRepository.deleteExpressionStructuresForPub(publication);
-//            publicationRepository.deleteExpressionExperimentIDswithNoExpressionResult(publication);
-//            mutantRepository.updateGenotypeNicknameWithHandleForPublication(publication);
-//        }
-//        publication.setCloseDate((GregorianCalendar) dto.getClosedDate());
-//        session.update(publication);
-//        tx.commit();
-//
-//        return converter.toCurationStatusDTO(publication);
-        return null;
+        Publication publication = publicationRepository.getPublication(zdbID);
+
+        PublicationTrackingHistory newStatus = new PublicationTrackingHistory();
+        newStatus.setPublication(publication);
+        newStatus.setStatus(dto.getStatus());
+        newStatus.setLocation(dto.getLocation());
+        newStatus.setOwner(dto.getOwner() == null ? null : profileRepository.getPerson(dto.getOwner().getZdbID()));
+        newStatus.setUpdater(ProfileService.getCurrentSecurityUser());
+        newStatus.setDate(new GregorianCalendar());
+
+        Session session = HibernateUtil.currentSession();
+        Transaction tx = session.beginTransaction();
+        if (newStatus.getStatus().getType() == PublicationTrackingStatus.Type.CLOSED) {
+            curationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
+            expressionRepository.deleteExpressionStructuresForPub(publication);
+            publicationRepository.deleteExpressionExperimentIDswithNoExpressionResult(publication);
+            mutantRepository.updateGenotypeNicknameWithHandleForPublication(publication);
+        }
+        session.save(newStatus);
+        tx.commit();
+
+        return converter.toCurationStatusDTO(publicationRepository.currentTrackingStatus(publication));
     }
 
     @ResponseBody

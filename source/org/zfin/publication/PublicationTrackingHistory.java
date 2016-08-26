@@ -37,8 +37,8 @@ public class PublicationTrackingHistory {
     @Column(name = "pth_status_insert_date")
     private GregorianCalendar date;
 
-    @Column(name = "pth_status_is_current")
-    private boolean isCurrent;
+    @Column(name = "pth_status_is_current", updatable = false, insertable = false)
+    private Boolean isCurrent;
 
     public long getId() {
         return id;
@@ -96,11 +96,11 @@ public class PublicationTrackingHistory {
         this.date = date;
     }
 
-    public boolean isCurrent() {
+    public Boolean isCurrent() {
         return isCurrent;
     }
 
-    public void setIsCurrent(boolean isCurrent) {
+    public void setIsCurrent(Boolean isCurrent) {
         this.isCurrent = isCurrent;
     }
 }
