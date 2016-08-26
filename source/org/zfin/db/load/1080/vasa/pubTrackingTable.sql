@@ -34,12 +34,6 @@ create index pth_status_set_by_fk_index
  using btree in		       idxdbs1;
 
 
-
-
-create unique index pub_tracking_history_alternative on
-       pub_tracking_history (pth_pub_zdb_id, pth_status_id, pth_location_id)
-using btree in idxdbs3;
-
 alter table pub_tracking_history
   add constraint (foreign key (pth_claimed_by)
   references person constraint pth_claimed_by_foreign_key);
@@ -55,11 +49,6 @@ alter table pub_tracking_history
 alter table pub_tracking_history
   add constraint (foreign key (pth_status_set_by)
  references person	  constraint pth_status_set_by_fk);
-
-alter table pub_tracking_history
- add constraint unique (pth_pub_zdb_id, pth_status_id, pth_location_id)
- constraint pth_alternate_key;
-
 
 --bins, numbers, desks
 create table pub_tracking_location (ptl_pk_id serial8 not null constraint ptl_pk_id_not_null,
