@@ -994,7 +994,7 @@ Only need to update clones, etc., which should be the only things that will have
 <?MISQL SQL="select * from marker_history where mhist_mrkr_zdb_id = '$OID'">
 <?/MISQL>
 <?MIVAR COND="$(AND,$(XST,$type_of_genedom),$(>,$MI_ROWCOUNT,0))">
-    <font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)">Nomenclature History</A>
+    <font size=-1><A HREF="/action/nomenclature/history/$OID">Nomenclature History</A>
     </font>
     <br>
 <?/MIVAR>

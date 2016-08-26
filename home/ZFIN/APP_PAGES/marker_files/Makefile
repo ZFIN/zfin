@@ -22,8 +22,8 @@ GENERICS = clonebox.apg cloneorderlink.apg \
 curatornote.apg dnote_editor.apg \
 do-markerupdate.apg geneprddescription.apg \
 markerselect.apg markerupdate.apg \
-markerview.apg msegselect.apg newmrkrselect.apg nomeneditor.apg \
-nomenview.apg searchform.apg sequence.apg sequence_data_entry.apg
+markerview.apg msegselect.apg newmrkrselect.apg \
+searchform.apg sequence.apg sequence_data_entry.apg
 
 
 STATICS =  dnote_new.apg make_map.apg \

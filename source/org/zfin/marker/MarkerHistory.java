@@ -48,6 +48,10 @@ public class MarkerHistory implements Comparable<MarkerHistory> {
     @Column(name = "mhist_comments")
     private String comments;
 
+    public Reason[] getReasonArray() {
+        return Reason.values();
+    }
+
     @Override
     public int compareTo(MarkerHistory o) {
         return -date.compareTo(o.getDate());
@@ -67,6 +71,14 @@ public class MarkerHistory implements Comparable<MarkerHistory> {
 
         Reason(String value) {
             this.value = value;
+        }
+
+        public static Reason getReason(String reasonValue) {
+            for (Reason reason : values()) {
+                if (reason.value.equals(reasonValue))
+                    return reason;
+            }
+            return null;
         }
 
         public String toString() {

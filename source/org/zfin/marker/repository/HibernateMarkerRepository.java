@@ -3013,5 +3013,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return targetGenes.size();
     }
 
+    @Override
+    public MarkerHistory getMarkerHistory(String zdbID) {
+        return (MarkerHistory) HibernateUtil.currentSession().load(MarkerHistory.class, zdbID);
+    }
+
 }
 
