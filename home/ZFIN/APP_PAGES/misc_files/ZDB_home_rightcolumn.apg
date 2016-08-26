@@ -135,11 +135,11 @@
   <ul>
     <li>Data mining:
         <a href="http://www.zebrafishmine.org">ZebrafishMine</a>,
-        <a href="http://www.ensembl.org/biomart">BioMart</a>
+        <a href="http://uswest.ensembl.org/biomart">BioMart</a>
     </li>
     <li>Browse genome:
       <a href="/<!--|GBROWSE_PATH_FROM_ROOT|-->">ZFIN</a>,
-      <a href="http://www.ensembl.org/Danio_rerio/">Ensembl</a>,
+      <a href="http://uswest.ensembl.org/Danio_rerio/">Ensembl</a>,
       <a href="http://vega.sanger.ac.uk/Danio_rerio/">Vega</a>,<br>
       <a href="http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/zebrafish/">GRC</a>,
       <a href="http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=85282730&clade=vertebrate&org=Zebrafish&db=0">UCSC</a>,
@@ -153,7 +153,7 @@
 
     <li>BLAST:
       <a href="/action/blast/blast">ZFIN</a>,
-      <a href="http://www.ensembl.org/Danio_rerio/blastview">Ensembl</a>,
+      <a href="http://uswest.ensembl.org/Danio_rerio/blastview">Ensembl</a>,
       <a href="http://vega.sanger.ac.uk/Multi/blastview?species=Danio_rerio">Vega</a>,
       <a href="http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&BLAST_SPEC=OGP__7955__9557">NCBI</a>,
       <a href="http://danio.mgh.harvard.edu/blast/blast.html">MGH</a>
