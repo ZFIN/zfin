@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.FieldName;
@@ -136,13 +137,25 @@ public class MarkerSearchService {
 
     public MarkerSearchResult buildResult(SolrDocument doc) {
         String id = (String) doc.get(FieldName.ID.getName());
-        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(id);
+
+        MarkerSearchResult result = new MarkerSearchResult();
+
+        Marker marker;
+        MarkerRelationship mrel;
+
+        if (id.startsWith("ZDB-MREL")) {
+            mrel = RepositoryFactory.getMarkerRepository().getMarkerRelationshipByID(id);
+            marker = mrel.getFirstMarker();
+            result.setTargetGene(mrel.getSecondMarker());
+        } else {
+            marker = RepositoryFactory.getMarkerRepository().getMarkerByID(id);
+        }
+
 
         if (marker == null) {
             return null;
         }
 
-        MarkerSearchResult result = new MarkerSearchResult();
 
         result.setMarker(marker);
 

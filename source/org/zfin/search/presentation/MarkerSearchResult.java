@@ -7,6 +7,7 @@ import org.zfin.marker.presentation.PhenotypeOnMarkerBean;
 
 public class MarkerSearchResult {
     Marker marker;
+    Marker targetGene;
     String matchingText;
     MarkerExpression markerExpression;
     PhenotypeOnMarkerBean markerPhenotype;
@@ -18,6 +19,14 @@ public class MarkerSearchResult {
 
     public void setMarker(Marker marker) {
         this.marker = marker;
+    }
+
+    public Marker getTargetGene() {
+        return targetGene;
+    }
+
+    public void setTargetGene(Marker gene) {
+        this.targetGene = gene;
     }
 
     public String getMatchingText() {

@@ -2008,7 +2008,7 @@ select
 
    <entity name="str_accession"
                         datasource="db" query="select fdb_db_name || ':' || dblink_acc_num as related_accession,
-                                                     dblink_linked_recid as feature_zdb_id
+                                                     dblink_linked_recid as mrkr_zdb_id
                                              from db_link, foreign_db_contains, foreign_db
                                              where dblink_fdbcont_zdb_id = fdbcont_zdb_id
                                                and fdbcont_fdb_db_id = fdb_db_pk_id
@@ -5316,6 +5316,72 @@ where fig_zdb_id=xpatfig_fig_zdb_id
                         from condition_data_type
                         where cdt_group || ':' || cdt_name not in ('chemical:other','morpholino:morpholino','TALEN:TALEN');"/>
 
+
+        <!-- this fills the STR categories on marker search, but is excluded from site search -->
+        <entity name="str_relationship"
+                datasource="db" query="select mrel_zdb_id as id,
+                                       'STR Relationship' as Category,
+                                       mrkrtype_type_display as type,
+                                       str.mrkr_abbrev as name,
+                                       str.mrkr_abbrev as proper_name,
+                                       str.mrkr_abbrev as full_name,
+                                       gene.mrkr_abbrev_order || ' ' || str.mrkr_abbrev_order as name_sort,
+                                       '/' || str.mrkr_zdb_id as url,
+                                       to_date(get_date_from_id(mrel_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
+                                from marker_relationship
+                                     join marker gene on mrel_mrkr_2_zdb_id = gene.mrkr_zdb_id
+                                     join marker str on mrel_mrkr_1_zdb_id = str.mrkr_zdb_id
+                                     join marker_types on str.mrkr_type = marker_type
+                                where mrel_type = 'knockdown reagent targets gene';">
+
+            <entity name="str_alias" datasource="db"
+                    query="select
+                            dalias_alias as alias,
+                            mrel_zdb_id
+                            from data_alias
+                                 join marker_relationship on mrel_mrkr_1_zdb_id = dalias_data_zdb_id
+                                                         and mrel_type = 'knockdown reagent targets gene';"
+                    where="mrel_zdb_id=str_relationship.id"
+                    cacheImpl="SortedMapBackedCache"/>
+
+            <entity name="str_accession"
+                    datasource="db" query="select fdb_db_name || ':' || dblink_acc_num as related_accession,
+                                                     mrel_zdb_id
+                                             from db_link, marker_relationship, foreign_db_contains, foreign_db
+                                             where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                                               and mrel_mrkr_1_zdb_id = dblink_linked_recid
+                                               and mrel_type = 'knockdown reagent targets gene'
+                                               and fdbcont_fdb_db_id = fdb_db_pk_id;"
+                    where="mrel_zdb_id=str_relationship.id"
+                    cacheImpl="SortedMapBackedCache"/>
+
+            <entity name="str_targeted_gene"
+                    datasource="db" query="select
+                            mrkr_abbrev as targeted_gene,
+                            mrkr_name as targeted_gene_full_name,
+                            mrel_zdb_id
+                            from marker_relationship
+                                 join marker gene on mrel_mrkr_2_zdb_id = mrkr_zdb_id
+                            where mrel_type = 'knockdown reagent targets gene';"
+                    where="mrel_zdb_id=str_relationship.id"
+                    cacheImpl="SortedMapBackedCache"/>
+
+
+            <entity name="str_targeted_gene_previous_name"
+                    datasource="db" query="select
+                            dalias_alias as targeted_gene_previous_name,
+                            mrel_zdb_id
+                            from data_alias
+                                 join marker_relationship on mrel_mrkr_2_zdb_id = dalias_data_zdb_id
+                                 join marker gene on mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id
+                            where mrel_type = 'knockdown reagent targets gene';"
+                    where="mrel_zdb_id=str_relationship.id"
+                    cacheImpl="SortedMapBackedCache"/>
+
+        </entity>
+
    </document>
+
+
 </dataConfig>
 

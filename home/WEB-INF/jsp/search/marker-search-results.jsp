@@ -56,6 +56,9 @@ ${criteria.chromosome}--%>
         <c:when test="${criteria.isTranscriptResult()}">
             <zfin-marker-search:transcriptResultTable/>
         </c:when>
+        <c:when test="${criteria.isStrResult()}">
+            <zfin-marker-search:strResultTable/>
+        </c:when>
         <c:otherwise>
             <zfin-marker-search:genericResultTable/>
         </c:otherwise>

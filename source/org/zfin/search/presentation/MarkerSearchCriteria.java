@@ -126,4 +126,13 @@ public class MarkerSearchCriteria {
         return false;
     }
 
+    public Boolean isStrResult() {
+        if (StringUtils.equals(displayType,"Morpholino")
+            || StringUtils.equals(displayType,"CRISPR")
+            || StringUtils.equals(displayType,"TALEN")) {
+            return true;
+        }
+        return false;
+    }
+
 }

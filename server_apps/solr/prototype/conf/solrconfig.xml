@@ -214,7 +214,7 @@
       <!-- Always append these -->
       <lst name="appends">
           <!-- The 'Autocomplete' category should always be excluded from search -->
-          <str name="fq">-category:Autocomplete</str>
+          <str name="fq">-category:Autocomplete -category:"STR Relationship"</str>
       </lst>
 
       <!-- default values for query parameters -->
@@ -1011,7 +1011,7 @@
                 category:"Gene / Transcript"
                 OR category:"Marker / Clone"
                 OR category:"Construct"
-                OR category:"Sequence Targeting Reagent (STR)"
+                OR category:"STR Relationship"
             </str>
         </lst>
         
