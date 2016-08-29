@@ -1,6 +1,6 @@
 <!--ng-cloak ng-show="vm.status"-->
 <div class="panel-body">
-    <form class="form-horizontal">
+    <form class="form-horizontal clearfix">
         <div class="form-group">
             <label for="pub-status" class="col-sm-2 control-label">Status</label>
             <div class="col-sm-4">
@@ -54,6 +54,12 @@
             </p>
         </div>
     </form>
-    <a ng-href="/action/publication/{{vm.pubId}}/status-history" target="_blank"><i class="fa fa-external-link"></i> History</a>
+    <p>
+        <small>
+            <a ng-href="/action/publication/{{vm.pubId}}/status-history" target="_blank">
+                <i class="fa fa-external-link"></i> History
+            </a>
+        </small>
+    </p>
 </div>
 
