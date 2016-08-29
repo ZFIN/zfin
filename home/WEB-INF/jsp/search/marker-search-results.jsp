@@ -11,19 +11,11 @@
 </style>
 
 
-
-
-<%--${criteria.name}
-${criteria.accession}
-${criteria.chromosome}--%>
-
-
-
 <c:if test="${!empty criteria.typesFound && empty criteria.displayType}">
     <div class="marker-search-type-choice row">
 
         <div class="col-sm-4 col-sm-offset-4">
-            <c:if test="${criteria.name != null || criteria.accession != null}">
+            <c:if test="${!empty criteria.name || !empty criteria.accession}">
                 Search results for
                 <c:if test="${!empty criteria.name}"> name: '${criteria.name}'</c:if>
                 <c:if test="${!empty criteria.accession}"> accession: '${criteria.accession}'</c:if>

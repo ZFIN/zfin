@@ -11,7 +11,7 @@ public class MarkerSearchCriteria {
     private String name;
     private String matchType;
     private String accession;
-    private List<String> selectedTypes;
+    private String selectedType;
     private String chromosome;
     private Integer limit;
 
@@ -22,6 +22,9 @@ public class MarkerSearchCriteria {
     private List<FacetField.Count> typesFound;
     private String displayType;
     private String baseUrl;
+
+    private List<String> typeOptions;
+    private List<String> chromosomeOptions;
 
     public String getName() {
         return name;
@@ -43,11 +46,29 @@ public class MarkerSearchCriteria {
         this.accession = accession;
     }
 
-    public List<String> getSelectedTypes() {
-        return selectedTypes;
+    public String getSelectedType() {
+        return selectedType;
     }
 
-    public void setSelectedTypes(List<String> selectedTypes) { this.selectedTypes = selectedTypes; }
+    public void setSelectedType(String selectedType) {
+        this.selectedType = selectedType;
+    }
+
+    public List<String> getTypeOptions() {
+        return typeOptions;
+    }
+
+    public void setTypeOptions(List<String> typeOptions) {
+        this.typeOptions = typeOptions;
+    }
+
+    public List<String> getChromosomeOptions() {
+        return chromosomeOptions;
+    }
+
+    public void setChromosomeOptions(List<String> chromosomeOptions) {
+        this.chromosomeOptions = chromosomeOptions;
+    }
 
     public String getChromosome() {
         return chromosome;

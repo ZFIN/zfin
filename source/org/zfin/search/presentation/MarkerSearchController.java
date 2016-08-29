@@ -44,6 +44,8 @@ public class MarkerSearchController {
         criteria.setPage(1);
         criteria.setRows(20);
 
+        markerSearchService.injectFacets(criteria);
+
         model.addAttribute("criteria", criteria);
 
         return "search/marker-search-results.page";
@@ -53,8 +55,9 @@ public class MarkerSearchController {
     public String results(Model model, @ModelAttribute("criteria") MarkerSearchCriteria criteria, HttpServletRequest request) {
 
         criteria.setBaseUrl(getBaseUrl(criteria, request));
-
+        markerSearchService.injectFacets(criteria);
         model.addAttribute("criteria", markerSearchService.injectResults(criteria));
+
         if (criteria.getNumFound() != null && criteria.getNumFound() > 0) {
             model.addAttribute("paginationBean", generatePaginationBean(criteria, request.getQueryString()));
         }

@@ -94,20 +94,25 @@ public class SolrService {
         List<FacetField.Count> unselectedValues = getUnselectedValues(facetField, fqMap);
         List<FacetField.Count> selectedValues = getSelectedValues(facetField, fqMap);
 
-        //always 'human sort' the chromosome facets, unless it's been asked for as count sort
-        if (SolrService.isToBeHumanSorted(facetField.getName())) {
-            Collections.sort(selectedValues, new FacetValueAlphanumComparator());
-            Collections.sort(unselectedValues, new FacetValueAlphanumComparator());
-        }
-        if (facetField.getName().equals("category")) {
-            Collections.sort(selectedValues, new FacetCategoryComparator());
-            Collections.sort(unselectedValues, new FacetCategoryComparator());
-        }
+        selectedValues = sortFacets(facetField, selectedValues);
+        unselectedValues = sortFacets(facetField, unselectedValues);
 
         facetValues.addAll(unselectedValues);
         facetValues.addAll(selectedValues);
 
         return facetValues;
+    }
+
+    public static List<FacetField.Count> sortFacets(FacetField facetField, List<FacetField.Count> inputValues) {
+        List<FacetField.Count> outputValues = new ArrayList<>();
+        outputValues.addAll(inputValues);
+        if (SolrService.isToBeHumanSorted(facetField.getName())) {
+            Collections.sort(outputValues, new FacetValueAlphanumComparator());
+        }
+        if (facetField.getName().equals("category")) {
+            Collections.sort(outputValues, new FacetCategoryComparator());
+        }
+        return outputValues;
     }
 
     private static List<FacetField.Count> getSelectedValues(FacetField facetField, Map<String, Boolean> fqMap) {

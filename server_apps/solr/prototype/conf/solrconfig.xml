@@ -1080,6 +1080,7 @@
                 regulatory_region
                 regulatory_region_t
                 related_accession
+                related_accession_t
                 related_gene_symbol
                 related_marker
                 reporter_gene

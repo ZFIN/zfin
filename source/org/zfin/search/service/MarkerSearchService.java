@@ -16,12 +16,14 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.FacetValueAlphanumComparator;
 import org.zfin.search.FieldName;
 import org.zfin.search.presentation.MarkerSearchCriteria;
 import org.zfin.search.presentation.MarkerSearchResult;
 import org.zfin.util.URLCreator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -39,8 +41,40 @@ public class MarkerSearchService {
 
     public MarkerSearchCriteria injectFacets(MarkerSearchCriteria criteria) {
 
+        SolrClient client = SolrService.getSolrClient();
+        SolrQuery query = new SolrQuery();
+
+        query.setRequestHandler("/marker-search");
+
+        query.addFacetField(FieldName.TYPE.getName());
+        query.addFacetField(FieldName.CHROMOSOME.getName());
+
+        query.setRows(0);
+
+        QueryResponse response = new QueryResponse();
+        try {
+            response = client.query(query);
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+        criteria.setChromosomeOptions(getFacetStrings(response, FieldName.CHROMOSOME));
+        criteria.setTypeOptions(getFacetStrings(response, FieldName.TYPE));
 
         return criteria;
+    }
+
+    public List<String> getFacetStrings(QueryResponse response, FieldName fieldName) {
+        List<String> values = new ArrayList<>();
+
+        FacetField facetField = response.getFacetField(fieldName.getName());
+        List<FacetField.Count> facetValues = SolrService.sortFacets(facetField, facetField.getValues());
+
+        for (FacetField.Count count : facetValues) {
+            values.add(count.getName());
+        }
+
+        return values;
     }
 
 
@@ -54,12 +88,20 @@ public class MarkerSearchService {
 
         query.setRequestHandler("/marker-search");
 
-        if (StringUtils.isNotEmpty(criteria.getDisplayType())) {
-            query.addFilterQuery(FieldName.TYPE.getName() + ":\"" + criteria.getDisplayType() + "\"");
+        if (StringUtils.isNotEmpty(criteria.getChromosome())) {
+            query.addFilterQuery(FieldName.CHROMOSOME.getName() + ":\"" + criteria.getChromosome() + "\"");
         }
 
-        query.addFacetField(FieldName.TYPE.getName());
-        query.addFacetField(FieldName.CHROMOSOME.getName());
+        if (StringUtils.isNotEmpty(criteria.getSelectedType())) {
+            query.addFilterQuery(FieldName.TYPE.getName() + ":\"" + criteria.getSelectedType() + "\"");
+        }
+
+        if (StringUtils.isNotEmpty(criteria.getDisplayType())) {
+            query.addFilterQuery(FieldName.TYPE.getName() + ":\"" + criteria.getDisplayType() + "\"");
+            criteria.setSelectedType(criteria.getDisplayType());
+        }
+
+
 
         // pagination
         if (criteria.getPage() != null && criteria.getRows() != null) {
@@ -124,13 +166,22 @@ public class MarkerSearchService {
         }
 
         if (StringUtils.isNotEmpty(criteria.getAccession())) {
+            q.append("(");
+
             q.append(FieldName.RELATED_ACCESSION.getName());
             q.append(":(");
             q.append(criteria.getAccession());
             q.append(") ");
-        }
 
-        //todo: type and chromosome
+            q.append(" OR ");
+            q.append(FieldName.RELATED_ACCESSION_TEXT.getName());
+            q.append(":(");
+            q.append(criteria.getAccession());
+            q.append(") ");
+
+            q.append(")");
+
+        }
 
         return q.toString();
     }
