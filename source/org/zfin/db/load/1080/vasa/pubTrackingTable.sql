@@ -9,7 +9,8 @@ create table pub_tracking_history (pth_pk_id serial8 not null constraint pth_pk_
 					     pth_status_set_by varchar(50) not null constraint pth_status_set_by_not_null,
 					     pth_claimed_by varchar(50),
 					     pth_status_insert_date datetime year to second default current year to second not null constraint pth_status_insert_date_not_null,
-					     pth_status_is_current boolean default 'f' not null constraint pth_status_is_current_not_null)
+					     pth_status_is_current boolean default 'f' not null constraint pth_status_is_current_not_null,
+					     pth_status_made_non_current_date datetime year to second)
 fragment by round robin in tbldbs1,tbldbs2,tbldbs3
 extent size 4096 next size 4096;
 					     					     

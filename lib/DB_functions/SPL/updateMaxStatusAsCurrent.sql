@@ -1,9 +1,11 @@
 create function updateMaxStatusAsCurrent (workingPub varchar(50))
 returning boolean;
-  
+  define now datetime year to second;
+
+  let now = current year to second;
 
   update pub_tracking_history
-    set pth_status_is_current ='f'
+    set (pth_status_is_current, pth_status_made_non_current_date) =('f', now)
     where pth_status_is_current = 't'
     and pth_pub_zdb_id = workingPub
     and pth_status_is_current = 't';
