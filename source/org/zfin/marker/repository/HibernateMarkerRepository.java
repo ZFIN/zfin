@@ -1537,6 +1537,14 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return type;
     }
 
+    public MarkerType getMarkerTypeByDisplayName(String displayName) {
+        Session session = currentSession();
+
+        return (MarkerType) session.createCriteria(MarkerType.class)
+                .add(Restrictions.eq("displayName", displayName)).uniqueResult();
+
+    }
+
     public MarkerTypeGroup getMarkerTypeGroupByName(String name) {
         Session session = currentSession();
         MarkerTypeGroup markerTypeGroup = (MarkerTypeGroup) session.get(MarkerTypeGroup.class, name);

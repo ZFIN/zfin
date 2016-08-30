@@ -354,6 +354,7 @@
             <column name="marker_type"/>
         </id>
         <property name="displayName" column="mrkrtype_type_display"/>
+        <property name="significance" column="mrkrtype_significance"/>
         <set name="typeGroupStrings" table="marker_type_group_member">
             <key column="mtgrpmem_mrkr_type"/>
             <element column="mtgrpmem_mrkr_type_group" type="string"/>

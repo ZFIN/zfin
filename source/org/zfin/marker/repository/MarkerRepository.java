@@ -165,6 +165,8 @@ public interface MarkerRepository {
 
     MarkerType getMarkerTypeByName(String name);
 
+    MarkerType getMarkerTypeByDisplayName(String displayName);
+
     MarkerTypeGroup getMarkerTypeGroupByName(String name);
 
     void renameMarker(Marker marker, Publication publication, MarkerHistory.Reason reason);

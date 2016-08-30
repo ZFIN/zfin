@@ -1,4 +1,5 @@
 package org.zfin.search.service;
+import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
@@ -14,10 +15,13 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.MarkerType;
+import org.zfin.marker.MarkerTypeSignificanceComparator;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.FacetValueAlphanumComparator;
 import org.zfin.search.FieldName;
+import org.zfin.search.MarkerTypeFacetComparator;
 import org.zfin.search.presentation.MarkerSearchCriteria;
 import org.zfin.search.presentation.MarkerSearchResult;
 import org.zfin.util.URLCreator;
@@ -59,7 +63,7 @@ public class MarkerSearchService {
         }
 
         criteria.setChromosomeOptions(getFacetStrings(response, FieldName.CHROMOSOME));
-        criteria.setTypeOptions(getFacetStrings(response, FieldName.TYPE));
+        criteria.setTypeOptions(sortMarkerTypes(getFacetStrings(response, FieldName.TYPE)));
 
         return criteria;
     }
@@ -136,7 +140,7 @@ public class MarkerSearchService {
 
         injectHighlighting(results, response);
 
-        criteria.setTypesFound(getTypesFound(response));
+        criteria.setTypesFound(sortMarkerTypeFacet(getTypesFound(response)));
 
         if (CollectionUtils.size(criteria.getTypesFound()) == 1) {
             criteria.setDisplayType(criteria.getTypesFound().iterator().next().getName());
@@ -264,6 +268,30 @@ public class MarkerSearchService {
             }
         }
 
+    }
+
+    //This is the slower, but "safer" (less redundant?) option, alternatively,
+    // we could store the display name and signficiance in the Marker.Type enumeration
+    public List<String> sortMarkerTypes(List<String> typeStrings) {
+        List<MarkerType> markerTypes = getSortedMarkerTypes(typeStrings);
+        List<String> returnStrings = new ArrayList<>();
+        Collections.sort(markerTypes, new MarkerTypeSignificanceComparator<MarkerType>());
+        returnStrings.addAll(CollectionUtils.collect(markerTypes, new BeanToPropertyValueTransformer("displayName")));
+        return returnStrings;
+    }
+
+    public List<FacetField.Count> sortMarkerTypeFacet(List<FacetField.Count> countList) {
+        Collections.sort(countList, new MarkerTypeFacetComparator<>());
+        return countList;
+    }
+
+    public List<MarkerType> getSortedMarkerTypes(List<String> typeStrings) {
+        List<MarkerType> markerTypes = new ArrayList<>();
+
+        for (String typeString : typeStrings) {
+            markerTypes.add(RepositoryFactory.getMarkerRepository().getMarkerTypeByDisplayName(typeString));
+        }
+        return markerTypes;
     }
 
 }
