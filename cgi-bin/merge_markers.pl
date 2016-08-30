@@ -103,7 +103,7 @@ $intoId = $data->param("merge_oid");
 unlink "/tmp/mergeMarkersLog";
 open (LOG, ">>/tmp/mergeMarkersLog") or  die("Unable to open log: $!\n");
 
-### open (DBG, ">/tmp/mergeDebug.txt") or  die("Unable to open mergeDebug.txt: $!\n");
+##open (DBG, ">/tmp/mergeDebug.txt") or  die("Unable to open mergeDebug.txt: $!\n");
 
 ###open (LOG2, ">>/tmp/mergeMarkersLog2") or  die("Unable to open log: $!\n");
 
@@ -658,6 +658,399 @@ $curUpdateSfclg->execute($intoId,$mergeId,$intoId);
 
 $curUpdateSfclg->finish();
 
+## for STRs to be merged, if used in fish, delete the fish_str record so as to avoid duplicated one afgter merge
+if ($mergeId =~ m/MRPHLNO/ || $mergeId =~ m/CRISP/ || $mergeId =~ m/TALEN/) {
+  $getFishStr = "select fstr1.fishstr_fish_zdb_id 
+                   from fish_str fstr1
+                  where fstr1.fishstr_str_zdb_id = ?
+                    and exists(select 'x' from fish_str fstr2
+                                where fstr2.fishstr_str_zdb_id = ?
+                                  and fstr2.fishstr_fish_zdb_id = fstr1.fishstr_fish_zdb_id);";
+ 
+  $curGetFishStr = $dbh->prepare($getFishStr);
+  $curGetFishStr->execute($intoId,$mergeId);
+  $curGetFishStr->bind_columns(\$fishStrID);
+  @fishStrIDs = ();
+  $ctFishStrIDs = 0;
+  while ($curGetFishStr->fetch()) {
+    $fishStrIDs[$ctFishStrIDs] = $fishStrID;
+    $ctFishStrIDs++;
+  }
+  $curGetFishStr->finish();
+  foreach $fishStrTodelete (@fishStrIDs) {
+     $sqlDeleteFishStr = "delete from fish_str where fishstr_str_zdb_id = $intoIdintoId and fishstr_str_zdb_id = $fishStrTodelete;";
+     $curDeleteFishStr = $dbh->prepare($sqlDeleteFishStr);
+     $curDeleteFishStr->execute();
+     $curDeleteFishStr->finish();
+  }
+}
+
+# get the merge action SQLs that contain record_attribution
+$recAttrSQL = "select mms_sql, mms_pk_id 
+               from merge_markers_sql 
+              where mms_mrkr_1_zdb_id = ?
+                and mms_mrkr_2_zdb_id = ?
+                and mms_sql like '%record_attribution%';";
+$curGetRecAttrSQLs = $dbh->prepare($recAttrSQL);
+$curGetRecAttrSQLs->execute($mergeId, $intoId);
+$curGetRecAttrSQLs->bind_columns(\$recAttrSQL,\$recAttrSQLid);
+%recAttrSQLs = ();
+while ($curGetRecAttrSQLs->fetch()) {
+   if ($recAttrSQL !~ m/xpatres_zdb_id/) {
+      $recAttrSQLs{$recAttrSQLid} = $recAttrSQL;
+   }
+}
+$curGetRecAttrSQLs->finish();
+
+$getPersonName = "select full_name from person where zdb_id = ?;";
+$curGetPerson = $dbh->prepare($getPersonName);
+$curGetPerson->execute($person_id);
+$curGetPerson->bind_columns(\$personName);
+while ($curGetPerson->fetch()) {
+  $personFullName = $personName;
+}
+$curGetPerson->finish();
+
+## run the merge action SQLs that are related to  the record attribution with first
+foreach $sqlID (keys %recAttrSQLs) {
+   $recAttrMergeSQL = $recAttrSQLs{$sqlID};
+
+   if ($recAttrMergeSQL =~ m/delete/i) {
+     $curRecAttrSQL = $dbh->prepare($recAttrMergeSQL);
+     $curRecAttrSQL->execute();
+     $curRecAttrSQL->finish();
+
+     $insertUpdatesSQL = "insert into updates(submitter_id,rec_id,new_value,comments,when,submitter_name)
+			  values(?,?,'DELETE',?,CURRENT,?);";
+     $curInsertUpdates = $dbh->prepare($insertUpdatesSQL);
+     $curInsertUpdates->execute($person_id,$intoId,$recAttrMergeSQL,$personFullName); 
+     $curInsertUpdates->finish();  
+
+   }
+}
+
+## do the record attribution with no delete secondly
+foreach $sqlID (keys %recAttrSQLs) {
+   $recAttrMergeSQL = $recAttrSQLs{$sqlID};
+   if ($recAttrMergeSQL !~ m/delete/i) {
+     $curRecAttrSQL = $dbh->prepare($recAttrMergeSQL);
+     $curRecAttrSQL->execute();
+     $curRecAttrSQL->finish();
+   }
+}
+
+## deal with root GO term from either of the party whenever there is non-root GO term for the other party, see FB case 11048
+$deleteMrkrGoEvd = "delete from zdb_active_data where zactvd_zdb_id = ?;"; 
+$curDeleteMrkrGoEvd = $dbh->prepare_cached($deleteMrkrGoEvd);
+
+$getNonRootBioProcess = "select * from marker_go_term_evidence, term 
+                          where mrkrgoev_mrkr_zdb_id = ? 
+                            and mrkrgoev_term_zdb_id != 'ZDB-TERM-091209-6070'
+                            and mrkrgoev_term_zdb_id = term_zdb_id 
+                            and term_ontology = 'biological_process';";
+$curNonRootBioProcess = $dbh->prepare_cached($getNonRootBioProcess);
+$getRootBioProcess = "select mrkrgoev_zdb_id from marker_go_term_evidence where mrkrgoev_mrkr_zdb_id = ? and mrkrgoev_term_zdb_id = 'ZDB-TERM-091209-6070';";
+$curRootBioProcess = $dbh->prepare_cached($getRootBioProcess);
+$curRootBioProcess->bind_columns(\$mrkrGoEvdId);
+
+$curNonRootBioProcess->execute($mergeId);
+while ($curNonRootBioProcess->fetch()) {
+   $curRootBioProcess->execute($intoId);
+   while ($curRootBioProcess->fetch()) {
+      $curDeleteMrkrGoEvd->execute($mrkrGoEvdId);
+   }
+}
+
+$curNonRootBioProcess->execute($intoId);
+while ($curNonRootBioProcess->fetch()) {        
+   $curRootBioProcess->execute($mergeId); 
+   while ($curRootBioProcess->fetch()) {    
+      $curDeleteMrkrGoEvd->execute($mrkrGoEvdId);
+   }
+}
+
+$curRootBioProcess->finish();
+$curNonRootBioProcess->finish();
+
+$getNonRootMolFunc = "select * from marker_go_term_evidence, term
+                       where mrkrgoev_mrkr_zdb_id = ?
+                         and mrkrgoev_term_zdb_id != 'ZDB-TERM-091209-2432'
+                         and mrkrgoev_term_zdb_id = term_zdb_id
+                         and term_ontology = 'molecular_function';";
+$curNonRootMolFunc = $dbh->prepare_cached($getNonRootMolFunc);
+$getRootMolFunc = "select mrkrgoev_zdb_id from marker_go_term_evidence where mrkrgoev_mrkr_zdb_id = ? and mrkrgoev_term_zdb_id = 'ZDB-TERM-091209-2432';";
+$curRootMolFunc = $dbh->prepare_cached($getRootMolFunc);
+$curRootMolFunc->bind_columns(\$mrkrGoEvdId);
+
+$curNonRootMolFunc->execute($mergeId);
+while ($curNonRootMolFunc->fetch()) {
+   $curRootMolFunc->execute($intoId);
+   while ($curRootMolFunc->fetch()) {
+      $curDeleteMrkrGoEvd->execute($mrkrGoEvdId);
+   }
+}
+
+$curNonRootMolFunc->execute($intoId);
+while ($curNonRootMolFunc->fetch()) {
+   $curRootMolFunc->execute($mergeId);
+   while ($curRootMolFunc->fetch()) {
+      $curDeleteMrkrGoEvd->execute($mrkrGoEvdId);
+   }
+}
+
+$curRootMolFunc->finish();
+$curNonRootMolFunc->finish();
+
+$getNonRootCelComp = "select * from marker_go_term_evidence, term
+                       where mrkrgoev_mrkr_zdb_id = ?
+                         and mrkrgoev_term_zdb_id != 'ZDB-TERM-091209-4029'
+                         and mrkrgoev_term_zdb_id = term_zdb_id
+                         and term_ontology = 'cellular_component';";
+$curNonRootCelComp = $dbh->prepare_cached($getNonRootCelComp);
+$getRootCelComp = "select mrkrgoev_zdb_id from marker_go_term_evidence where mrkrgoev_mrkr_zdb_id = ? and mrkrgoev_term_zdb_id = 'ZDB-TERM-091209-4029';";
+$curRootCelComp = $dbh->prepare_cached($getRootCelComp);
+$curRootCelComp->bind_columns(\$mrkrGoEvdId);
+
+$curNonRootCelComp->execute($mergeId);
+while ($curNonRootCelComp->fetch()) {
+   $curRootCelComp->execute($intoId);
+   while ($curRootCelComp->fetch()) {
+      $curDeleteMrkrGoEvd->execute($mrkrGoEvdId);
+   }
+}
+
+$curNonRootCelComp->execute($intoId);
+while ($curNonRootCelComp->fetch()) {
+   $curRootCelComp->execute($mergeId);
+   while ($curRootCelComp->fetch()) {
+      $curDeleteMrkrGoEvd->execute($mrkrGoEvdId);
+   }
+}
+
+$curRootCelComp->finish();
+$curNonRootCelComp->finish();
+
+$curDeleteMrkrGoEvd->finish();
+ 
+# all_map_names
+# get the allmapnm_name for the marker to be deleted
+$getAllMapNamesSQL = "select allmapnm_name, allmapnm_serial_id
+                        from all_map_names
+                       where allmapnm_zdb_id = ? ;";
+$curGetAllMapNamesDeletedMrkr = $dbh->prepare($getAllMapNamesSQL);
+$curGetAllMapNamesDeletedMrkr->execute($mergeId);
+$curGetAllMapNamesDeletedMrkr->bind_columns(\$mapNameDeletedMrkr, \$mapIdDeletedMrkr);
+%allMapNamesDeletedMrkr = ();
+while ($curGetAllMapNamesDeletedMrkr->fetch()) {
+   $allMapNamesDeletedMrkr{$mapIdDeletedMrkr} = $mapNameDeletedMrkr;
+}
+$curGetAllMapNamesDeletedMrkr->finish();
+
+# get the allmapnm_name for the marker to be merged into              
+$curGetAllMapNamesIntoMrkr = $dbh->prepare($getAllMapNamesSQL);
+$curGetAllMapNamesIntoMrkr->execute($intoId);         
+$curGetAllMapNamesIntoMrkr->bind_columns(\$mapNameIntoMrkr, \$mapIdIntoMrkr);
+%allMapNamesIntoMrkr = (); 
+while ($curGetAllMapNamesIntoMrkr->fetch()) {
+   $allMapNamesIntoMrkr{$mapIdIntoMrkr} = $mapNameIntoMrkr;
+}
+$curGetAllMapNamesIntoMrkr->finish();
+
+# delete the allmapnm_name that are the same between that of the marker to be deleted and the marker to merge into
+$deleteMapSQL = "delete from all_map_names where allmapnm_zdb_id = ? and allmapnm_name = ? ;";
+foreach $mrkrId (keys %allMapNamesDeletedMrkr) {
+  $mapNameDeletedMrkr = $allMapNamesDeletedMrkr{$mrkrId};
+  foreach $intoMrkrId (keys %allMapNamesIntoMrkr) {
+    $mapNameIntoMrkr = $allMapNamesIntoMrkr{$intoMrkrId};
+    if ($mapNameIntoMrkr eq $mapNameDeletedMrkr) {
+       $curDeleteMap = $dbh->prepare($deleteMapSQL);
+       $curDeleteMap->execute($mergeId,$mapNameIntoMrkr);
+       $curDeleteMap->finish();
+    }
+  }
+}
+
+# db_link
+# get dblink_acc_num and dblink_fdbcont_zdb_id for the marker to be deleted
+$getAlternateKeyDblinkSQL = "select dblink_acc_num, dblink_fdbcont_zdb_id, dblink_zdb_id 
+                               from db_link
+                              where dblink_linked_recid = ? ;";
+$curGetAlternateKeyDblinkDeletedMrkr = $dbh->prepare($getAlternateKeyDblinkSQL);
+$curGetAlternateKeyDblinkDeletedMrkr->execute($mergeId);
+$curGetAlternateKeyDblinkDeletedMrkr->bind_columns(\$accNumDeletedMrkr, \$fdbcntIdDeletedMrkr, \$dblinkIdDeletedMrkr);
+%alternateKeysDblinkDeletedMrkr = ();
+while ($curGetAlternateKeyDblinkDeletedMrkr->fetch()) {
+   $alternateKeysDblinkDeletedMrkr{$dblinkIdDeletedMrkr} = $accNumDeletedMrkr.$fdbcntIdDeletedMrkr;
+}
+$curGetAlternateKeyDblinkDeletedMrkr->finish();
+
+# get dblink_acc_num and dblink_fdbcont_zdb_id for the marker to be merged into
+$curGetAlternateKeyDblinkIntoMrkr = $dbh->prepare($getAlternateKeyDblinkSQL);
+$curGetAlternateKeyDblinkIntoMrkr->execute($intoId);
+$curGetAlternateKeyDblinkIntoMrkr->bind_columns(\$accNumIntoMrkr, \$fdbcntIdIntoMrkr, \$dblinkIdIntoMrkr);
+%alternateKeysDblinkIntoMrkr = ();
+while ($curGetAlternateKeyDblinkIntoMrkr->fetch()) {
+   $alternateKeysDblinkIntoMrkr{$dblinkIdIntoMrkr} = $accNumIntoMrkr.$fdbcntIdIntoMrkr;
+}
+$curGetAlternateKeyDblinkIntoMrkr->finish();
+
+# delete dblink_acc_num and dblink_fdbcont_zdb_id that are the same between those of the marker to be deleted and the marker to merge into
+$deleteDblinkSQL = "delete from db_link where dblink_zdb_id = ? and dblink_linked_recid = ? ;";
+foreach $dblinkId (keys %alternateKeysDblinkDeletedMrkr) {
+  $alternateKeyDblinkDeletedMrkr = $alternateKeysDblinkDeletedMrkr{$dblinkId};
+  foreach $dblinkIdIntoMrkr (keys %alternateKeysDblinkIntoMrkr) {
+    $alternateKeyDblinkIntoMrkr = $alternateKeysDblinkIntoMrkr{$dblinkIdIntoMrkr};
+    if ($alternateKeyDblinkIntoMrkr eq $alternateKeyDblinkDeletedMrkr) {
+       $curDeleteDblink = $dbh->prepare($deleteDblinkSQL);
+       $curDeleteDblink->execute($dblinkId,$mergeId);
+       $curDeleteDblink->finish();
+    }
+  }
+}
+
+
+# run the merge action SQLs that do not contain record_attribution
+$nonRecAttrSQL = "select mms_sql, mms_pk_id 
+                    from merge_markers_sql 
+                   where mms_mrkr_1_zdb_id = ?
+                     and mms_mrkr_2_zdb_id = ?
+                     and mms_sql not like '%record_attribution%'
+                order by 2;";
+$curGetNonRecAttrSQLs = $dbh->prepare($nonRecAttrSQL);
+$curGetNonRecAttrSQLs->execute($mergeId, $intoId);
+$curGetNonRecAttrSQLs->bind_columns(\$nonRecAttrSQL,\$nonRecAttrSQLid);
+%nonRecAttrMergeSQLs = ();
+while ($curGetNonRecAttrSQLs->fetch()) {
+   $nonRecAttrSQLs{$nonRecAttrSQLid} = $nonRecAttrSQL;
+}
+$curGetNonRecAttrSQLs->finish();
+
+foreach $sqlID (keys %nonRecAttrSQLs) {
+   $nonRecAttrMergeSQL = $nonRecAttrSQLs{$sqlID};
+   $curNonRecAttrSQL = $dbh->prepare($nonRecAttrMergeSQL);
+   $curNonRecAttrSQL->execute();
+   $curNonRecAttrSQL->finish();
+    
+   if ($nonRecAttrMergeSQL =~ m/delete/i) {
+     $insertUpdatesSQL = "insert into updates(submitter_id,rec_id,new_value,comments,when,submitter_name)
+                          values(?,?,'DELETE',?,CURRENT,?);";
+     $curInsertUpdates = $dbh->prepare($insertUpdatesSQL);
+     $curInsertUpdates->execute($person_id,$intoId,$nonRecAttrMergeSQL,$personFullName);
+     $curInsertUpdates->finish();
+   }
+}
+
+$getMarkerAbbrev = "select mrkr_abbrev, mrkr_name, get_id('DALIAS') as daliasid from marker where mrkr_zdb_id = ?;";
+$curGetMarkerAbbrev = $dbh->prepare($getMarkerAbbrev);
+$curGetMarkerAbbrev->execute($intoId);
+$curGetMarkerAbbrev->bind_columns(\$mrkrAbbrev, \$mrkrName, \$daliasID);
+while ($curGetMarkerAbbrev->fetch()) {
+  $mrkrAbbrevInto = $mrkrAbbrev;
+  $mrkrNameInto = $mrkrName;
+  $newDaliasID = $daliasID;
+}
+$curGetMarkerAbbrev->finish();
+
+$getMarkerAbbrev2 = "select mrkr_abbrev, get_id('NOMEN') as daliasid from marker where mrkr_zdb_id = ?;";
+$curGetMarkerAbbrev2 = $dbh->prepare($getMarkerAbbrev2);
+$curGetMarkerAbbrev2->execute($mergeId);
+$curGetMarkerAbbrev2->bind_columns(\$mrkrAbbrev, \$nomenID);
+while ($curGetMarkerAbbrev2->fetch()) {
+  $mrkrDeletedAbbrev = $mrkrAbbrev;
+  $newNomenID = $nomenID;
+}
+$curGetMarkerAbbrev2->finish();
+
+$deleteAlias = "delete from data_alias where dalias_alias = ? and dalias_data_zdb_id = ? ;";
+$curDeleteAlias = $dbh->prepare($deleteAlias);
+$curDeleteAlias->execute($mrkrAbbrevInto,$mergeId);
+$curDeleteAlias->finish();
+
+$updateAlias = "update data_alias set dalias_data_zdb_id = ? where dalias_data_zdb_id = ? ;";
+$curUpdateAlias = $dbh->prepare($updateAlias);   
+$curUpdateAlias->execute($intoId,$mergeId);
+$curUpdateAlias->finish();
+
+$getDaliasIdSQL = "select going.mrkr_zdb_id 
+                     from data_alias, marker going, marker staying
+                    where dalias_alias = lower(going.mrkr_abbrev)
+                      and dalias_data_zdb_id = staying.mrkr_zdb_id
+                      and going.mrkr_zdb_id = ?
+                      and staying.mrkr_zdb_id = ? ;";
+
+$curgetDaliasId = $dbh->prepare($getDaliasIdSQL);
+$curgetDaliasId->execute($mergeId,$intoId);
+$curgetDaliasId->bind_columns(\$mrkrId);
+while ($curgetDaliasId->fetch()) {
+  $daliasMrkrId = $mrkrAbbrev;
+}
+$curgetDaliasId->finish();
+
+$insertZdbActiveData = "insert into zdb_active_data values(?);";
+$curInsertZdbActiveData = $dbh->prepare_cached($insertZdbActiveData);
+if (defined $daliasMrkrId && $daliasMrkrId eq $mergeId) {
+    $newDaliasID = "";
+} else {
+    $curInsertZdbActiveData->execute($newDaliasID);
+    $addNewDataAlias = "insert into data_alias (
+                     		dalias_zdb_id, dalias_data_zdb_id,
+                    		dalias_alias, dalias_group_id,
+		     		dalias_alias_lower ) 
+                         values ( ?, ?, ?, '1', ? );";
+    $curAddNewDataAlias = $dbh->prepare($addNewDataAlias);
+    $curAddNewDataAlias->execute($newDaliasID,$intoId,$mrkrDeletedAbbrev,$mrkrDeletedAbbrev);
+    $curAddNewDataAlias->finish();
+}
+
+# marker_history
+$curInsertZdbActiveData->execute($newNomenID);
+$curInsertZdbActiveData->finish();
+
+$addNewMarkerHistory = "insert into marker_history (
+                                       mhist_zdb_id, mhist_mrkr_zdb_id, 
+                                       mhist_event, mhist_reason, mhist_date,
+                                       mhist_mrkr_name_on_mhist_date,
+                                       mhist_mrkr_abbrev_on_mhist_date,
+                                       mhist_comments,mhist_dalias_zdb_id )
+                            values ( ?, ?, 'merged', 'same marker', CURRENT, ?, ?, 'none', ?);";
+$curAddNewMarkerHistory = $dbh->prepare($addNewMarkerHistory);
+$curAddNewMarkerHistory->execute($newNomenID,$intoId,$mrkrNameInto,$mrkrAbbrevInto,$newDaliasID);
+$curAddNewMarkerHistory->finish();
+
+$updateMarkerHistory = "update marker_history set mhist_mrkr_zdb_id = ? where mhist_mrkr_zdb_id = ? ;";
+$curUpdateMarkerHistory = $dbh->prepare($updateMarkerHistory);   
+$curUpdateMarkerHistory->execute($intoId,$mergeId);
+$curUpdateMarkerHistory->finish();
+
+# regen_names
+$regenNames = "execute procedure regen_names_marker(?);";
+$curRegenNames = $dbh->prepare($regenNames);
+$curRegenNames->execute($intoId);
+$curRegenNames->finish();
+
+# regne_genox
+$regenGenox = "execute procedure regen_genox_marker(?);";
+$curRegenGenox = $dbh->prepare($regenGenox);             
+$curRegenGenox->execute($intoId);
+$curRegenGenox->finish();
+
+# zdb_replaced_data and delete the marker that will be merged 
+$updateZdbReplacedData = "update zdb_replaced_data set zrepld_new_zdb_id = ?, zrepld_old_name = ?  where zrepld_new_zdb_id = ? ;";
+$curUpdateZdbReplacedData = $dbh->prepare($updateZdbReplacedData);   
+$curUpdateZdbReplacedData->execute($intoId,$mrkrDeletedAbbrev,$mergeId);
+$curUpdateZdbReplacedData->finish();
+
+$deleteTheMarker = "delete from zdb_active_data where zactvd_zdb_id = ? ;";
+$curDeleteTheMarker = $dbh->prepare($deleteTheMarker);
+$curDeleteTheMarker->execute($mergeId);
+$curDeleteTheMarker->finish();
+
+$addNewZdbReplacedData = "insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id, zrepld_old_name)
+                                                 values ( ?, ?, ? );";
+$curAdddNewZdbReplacedData = $dbh->prepare($addNewZdbReplacedData);
+$curAdddNewZdbReplacedData->execute($mergeId,$intoId,$mrkrDeletedAbbrev);
+$curAdddNewZdbReplacedData->finish();
+
 ##close DBG;
 
 ### close database connection
@@ -667,7 +1060,7 @@ print <<EOA;
 
 <HEAD>
     <script language="JavaScript">    
-    window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-process_delete.apg&OID=$mergeId&merge_oid=$intoId&rtype=marker';
+    window.location.href='/action/marker/view/$intoId';
 </script>  
 </HEAD>
 <BODY>
