@@ -65,16 +65,16 @@
                 return false;
             }
             // TODO: this is a lot of crazy logic -- can it be simplified?
-            var statusChanged = vm.current.status.id !== vm.original.status.id;
+            var statusChanged = !vm.original || vm.current.status.id !== vm.original.status.id;
             if (statusNeedsLocation(vm.current.status)) {
-                if (vm.original.location == null) {
-                    return vm.current.location !== null;
+                if (!vm.original.location) {
+                    return vm.current.location;
                 }
                 return vm.current.location && (statusChanged || vm.current.location.id !== vm.original.location.id);
             }
             if (statusNeedsOwner(vm.current.status)) {
-                if (vm.original.owner == null) {
-                    return vm.current.owner !== null;
+                if (!vm.original.owner) {
+                    return vm.current.owner;
                 }
                 return vm.current.owner && (statusChanged || vm.current.owner.zdbID !== vm.original.owner.zdbID);
             }
@@ -139,7 +139,7 @@
         }
 
         function storeStatus(response) {
-            vm.current = response.data || {pubZdbID: vm.pubId, status: vm.statuses.length > 0 ? vm.statuses[0] : {}, owner: {}, location: {}};
+            vm.current = response.data;
             vm.original = angular.copy(vm.current);
             vm.warnings = [];
         }
