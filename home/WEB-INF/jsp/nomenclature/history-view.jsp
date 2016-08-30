@@ -1,7 +1,7 @@
-<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<jsp:useBean id="marker" type="org.zfin.marker.Marker" scope="request"/>
 
 <zfin2:dataManager zdbID="${marker.zdbID}"
                    deleteURL="none"
@@ -61,7 +61,7 @@
                                             (<a href="/${markerHistory.attributions.iterator().next().publication.zdbID}">1</a>)
                                         </c:when>
                                         <c:otherwise>
-                                            (<a href='/cgi-bin/webdriver?MIval=aa-showpubs.apg&orgOID=${marker.zdbID}&OID=${markerHistory.zdbID}&rtype=marker'>${markerHistory.attributions.size()}</a>)
+                                            (<a href='/action/publication/list/${markerHistory.zdbID}'>${markerHistory.attributions.size()}</a>)
                                         </c:otherwise>
                                     </c:choose>
                                 </c:if>
@@ -87,7 +87,7 @@
                                         (<a href="/${markerHistory.attributions.iterator().next().publication.zdbID}">1</a>)
                                     </c:when>
                                     <c:otherwise>
-                                        (<a href="/action/">${markerHistory.attributions.size()}</a>)
+                                        (<a href='/action/publication/list/${markerHistory.zdbID}'>${markerHistory.attributions.size()}</a>)
                                     </c:otherwise>
                                 </c:choose>
                             </c:if>
@@ -104,7 +104,7 @@
                     <td colspan="2">
                         <h3> Nomenclature Edit </h3>
                     </td>
-                    <td><span ng-click="control.reload()">X</span></td>
+                    <td><span ng-click="control.reload()" style="cursor: pointer;">X</span></td>
                 </tr>
                 <tr>
                     <td>ID:</td>
