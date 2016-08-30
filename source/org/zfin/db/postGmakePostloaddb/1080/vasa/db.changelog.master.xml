@@ -11,4 +11,5 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/14381splitBBAjournals.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/dropPubJournalsTable.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/pushPubsToHistory.sql"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/addPubTrackingWarehouse.sql"/>
 </databaseChangeLog>
