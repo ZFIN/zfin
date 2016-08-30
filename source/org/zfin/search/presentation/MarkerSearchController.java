@@ -58,6 +58,11 @@ public class MarkerSearchController {
         markerSearchService.injectFacets(criteria);
         model.addAttribute("criteria", markerSearchService.injectResults(criteria));
 
+        //redirect to the only result, if there's just one
+        if (criteria.getNumFound() == 1) {
+            return "redirect:/" + criteria.getResults().iterator().next().getMarker().getZdbID();
+        }
+
         if (criteria.getNumFound() != null && criteria.getNumFound() > 0) {
             model.addAttribute("paginationBean", generatePaginationBean(criteria, request.getQueryString()));
         }
