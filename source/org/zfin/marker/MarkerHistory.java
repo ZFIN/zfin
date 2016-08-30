@@ -1,9 +1,11 @@
 package org.zfin.marker;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.zfin.infrastructure.PublicationAttribution;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "marker_history")
@@ -47,6 +49,10 @@ public class MarkerHistory implements Comparable<MarkerHistory> {
     private String oldMarkerName;
     @Column(name = "mhist_comments")
     private String comments;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "recattrib_data_zdb_id")
+    private Set<PublicationAttribution> attributions;
+
 
     public Reason[] getReasonArray() {
         return Reason.values();
@@ -177,7 +183,6 @@ public class MarkerHistory implements Comparable<MarkerHistory> {
         this.abbreviation = abbreviation;
     }
 
-
     public Date getDate() {
         return date;
     }
@@ -186,6 +191,13 @@ public class MarkerHistory implements Comparable<MarkerHistory> {
         this.date = date;
     }
 
+    public Set<PublicationAttribution> getAttributions() {
+        return attributions;
+    }
+
+    public void setAttributions(Set<PublicationAttribution> attributions) {
+        this.attributions = attributions;
+    }
 
     public MarkerAlias getMarkerAlias() {
         return markerAlias;

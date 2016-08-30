@@ -1,11 +1,13 @@
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
 
 <zfin2:dataManager zdbID="${marker.zdbID}"
                    deleteURL="none"
                    rtype="marker"
                    showLastUpdate="true"
-                   editURL="javascript:editNomencalture();"/>
+                   editURL="javascript:editNomenclature();"/>
 
 <div style="float: right">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
@@ -34,41 +36,63 @@
             Events</a></span>
             </authz:authorize>
             <table class="summary sortable">
-                <th id="edit_">Edit</th>
+                <th id="edit_" style="display: none">Edit</th>
                 <th>New Symbol</th>
                 <th>Event</th>
                 <th>Old Symbol</th>
                 <th>Date</th>
                 <th>Reason</th>
                 <th>Comments</th>
-                <c:forEach var="link" items="${marker.markerHistory}" varStatus="loop">
-                    <c:if test="${link.eventType.toString() ne 'renamed'}">
+                <c:forEach var="markerHistory" items="${marker.markerHistory}" varStatus="loop">
+                    <c:if test="${markerHistory.eventType.toString() ne 'renamed'}">
                         <tr id="reduced_${loop.index}">
-                            <td id="edit_${loop.index}" style="display: inline">
-                                <span ng-click="control.openEditor('${link.zdbID}','${link.comments}','${link.reason.toString()}')"><a
+                            <td id="edit_${loop.index}" style="display: none">
+                                <span ng-click="control.openEditor('${markerHistory.zdbID}','${markerHistory.comments}','${markerHistory.reason.toString()}')"><a
                                         href>Edit</a></span>
                             </td>
                             <td><span class="genedom">${marker.abbreviation}</span></td>
-                            <td>${link.eventType.display}</td>
-                            <td><span class="genedom">${link.oldSymbol}</span></td>
-                            <td><fmt:formatDate value="${link.date}" pattern="yyyy-MM-dd"/></td>
-                            <td>${link.reason.toString()}</td>
-                            <td>${link.comments}</td>
+                            <td>${markerHistory.eventType.display}</td>
+                            <td><span class="genedom">${markerHistory.oldSymbol}</span></td>
+                            <td><fmt:formatDate value="${markerHistory.date}" pattern="yyyy-MM-dd"/></td>
+                            <td>${markerHistory.reason.toString()}
+                                <c:if test="${!empty markerHistory.attributions }">
+                                    <c:choose>
+                                        <c:when test="${markerHistory.attributions.size() ==1 }">
+                                            (<a href="/${markerHistory.attributions.iterator().next().publication.zdbID}">1</a>)
+                                        </c:when>
+                                        <c:otherwise>
+                                            (<a href='/cgi-bin/webdriver?MIval=aa-showpubs.apg&orgOID=${marker.zdbID}&OID=${markerHistory.zdbID}&rtype=marker'>${markerHistory.attributions.size()}</a>)
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:if>
+                            </td>
+                            <td>${markerHistory.comments}</td>
                         </tr>
                     </c:if>
                 </c:forEach>
-                <c:forEach var="link" items="${marker.markerHistory}" varStatus="loop">
+                <c:forEach var="markerHistory" items="${marker.markerHistory}" varStatus="loop">
                     <tr style="display: none" id="all_${loop.index}">
-                        <td id="edit_${loop.index}" style="display: inline">
-                                <span ng-click="control.openEditor('${link.zdbID}','${link.comments}','${link.reason.toString()}')"><a
+                        <td id="edit_${loop.index}" style="display: none">
+                                <span ng-click="control.openEditor('${markerHistory.zdbID}','${markerHistory.comments}','${markerHistory.reason.toString()}')"><a
                                         href>Edit</a></span>
                         </td>
                         <td><span class="genedom">${marker.abbreviation}</span></td>
-                        <td>${link.eventType.display}</td>
-                        <td><span class="genedom"> ${link.oldSymbol}</span></td>
-                        <td><fmt:formatDate value="${link.date}" pattern="yyyy-MM-dd"/></td>
-                        <td>${link.reason.toString()}</td>
-                        <td>${link.comments}</td>
+                        <td>${markerHistory.eventType.display}</td>
+                        <td><span class="genedom"> ${markerHistory.oldSymbol}</span></td>
+                        <td><fmt:formatDate value="${markerHistory.date}" pattern="yyyy-MM-dd"/></td>
+                        <td>${markerHistory.reason.toString()}
+                            <c:if test="${!empty markerHistory.attributions }">
+                                <c:choose>
+                                    <c:when test="${markerHistory.attributions.size() ==1 }">
+                                        (<a href="/${markerHistory.attributions.iterator().next().publication.zdbID}">1</a>)
+                                    </c:when>
+                                    <c:otherwise>
+                                        (<a href="/action/">${markerHistory.attributions.size()}</a>)
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:if>
+                        </td>
+                        <td>${markerHistory.comments}</td>
                     </tr>
                 </c:forEach>
             </table>
