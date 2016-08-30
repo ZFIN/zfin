@@ -18,6 +18,16 @@
                 </select>
             </div>
         </div>
+        <div class="form-group" ng-show="vm.statusHasPriority(vm.current.status)">
+            <label for="pub-location" class="col-sm-2 control-label">Priority</label>
+            <div class="col-sm-4">
+                <select class="form-control" id="pub-priority"
+                        ng-options="priority.name for priority in vm.priorities track by priority.id"
+                        ng-model="vm.current.location">
+                    <option value="">Not set</option>
+                </select>
+            </div>
+        </div>
         <div class="form-group" ng-show="vm.statusNeedsOwner(vm.current.status)">
             <label for="pub-owner" class="col-sm-2 control-label">Owner</label>
             <div class="col-sm-4">

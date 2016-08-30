@@ -20,12 +20,13 @@
         return directive;
     }
 
-    PublicationStatusController.$inject = ['PublicationService'];
-    function PublicationStatusController(PublicationService) {
+    PublicationStatusController.$inject = ['PublicationService', 'ZfinUtils'];
+    function PublicationStatusController(PublicationService, zf) {
         var vm = this;
 
         vm.statuses = [];
         vm.locations = [];
+        vm.priorities = [];
         vm.curators = [];
 
         vm.current = null;
@@ -39,6 +40,7 @@
         vm.readyToSave = readyToSave;
         vm.statusNeedsOwner = statusNeedsOwner;
         vm.statusNeedsLocation = statusNeedsLocation;
+        vm.statusHasPriority = statusHasPriority;
         vm.reset = reset;
 
         activate();
@@ -50,7 +52,12 @@
                 });
             PublicationService.getLocations()
                 .then(function (response) {
-                    vm.locations = response.data;
+                    vm.locations = response.data.filter(function (item) {
+                        return item.role === 'CURATOR';
+                    });
+                    vm.priorities = response.data.filter(function (item) {
+                        return item.role === 'INDEXER';
+                    });
                 });
             PublicationService.getCurators()
                 .then(function (response) {
@@ -66,7 +73,7 @@
             }
             // TODO: this is a lot of crazy logic -- can it be simplified?
             var statusChanged = !vm.original || vm.current.status.id !== vm.original.status.id;
-            if (statusNeedsLocation(vm.current.status)) {
+            if (statusNeedsLocation(vm.current.status) || (!statusChanged && statusHasPriority(vm.current.status))) {
                 if (!vm.original.location) {
                     return vm.current.location;
                 }
@@ -87,9 +94,7 @@
             if (validate && isClosing) {
                 PublicationService.validatePubForClose(vm.pubId)
                     .then(function (response) {
-                        if (typeof response.data.warnings !== 'undefined' &&
-                            response.data.warnings !== null &&
-                            response.data.warnings.length > 0) {
+                        if (!zf.isEmpty(response.data.warnings)) {
                             vm.warnings = response.data.warnings;
                         } else {
                             updateStatus(false);
@@ -99,11 +104,14 @@
                         vm.processing = false;
                     });
             } else {
-                if (!statusNeedsLocation(vm.current.status)) {
+                if (!statusNeedsLocation(vm.current.status) && !statusHasPriority(vm.current.status)) {
                     vm.current.location = null;
                 }
                 if (!statusNeedsOwner(vm.current.status)) {
                     vm.current.owner = null;
+                }
+                if (!vm.current.pubZdbID) {
+                    vm.current.pubZdbID = vm.pubId;
                 }
                 PublicationService.updateStatus(vm.current)
                     .then(storeStatus)
@@ -126,11 +134,16 @@
         }
 
         function statusNeedsOwner(status) {
-            return typeof status !== 'undefined' && status !== null && (status.type === 'CURATING' || status.type === 'WAIT');
+            var type = zf.get(status, 'type');
+            return type === 'CURATING' || type === 'WAIT';
         }
 
         function statusNeedsLocation(status) {
-            return typeof status !== 'undefined' && status !== null && status.type === 'READY_FOR_CURATION';
+            return zf.get(status, 'type') === 'READY_FOR_CURATION';
+        }
+
+        function statusHasPriority(status) {
+            return zf.get(status, 'type') === 'READY_FOR_INDEXING';
         }
 
         function reset() {

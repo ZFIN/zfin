@@ -5,7 +5,9 @@
 
     function ZfinUtils() {
         var service = {
-            timeago: timeago
+            timeago: timeago,
+            get: get,
+            isEmpty: isEmpty
         };
         return service;
 
@@ -63,6 +65,17 @@
                 return span;
             }
             return (time <= local) ? span + ' ago' : 'in ' + span;
+        }
+
+        function get(object, key, defaultValue) {
+            // a simplified version of https://lodash.com/docs#get
+            // it is safe to not provide defaultValue
+            var result = object == null ? undefined : object[key];
+            return typeof result === 'undefined' ? defaultValue : result;
+        }
+
+        function isEmpty(value) {
+            return Array.isArray(value) && value.length === 0;
         }
     }
 }());
