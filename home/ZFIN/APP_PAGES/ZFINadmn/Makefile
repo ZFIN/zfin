@@ -18,8 +18,6 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/ZFINadmn
 
-SUBDIRS = DELETErecords
-
 GENERICS = classify_pubs.apg
 STATICS =
 
