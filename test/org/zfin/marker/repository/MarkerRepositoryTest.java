@@ -41,13 +41,14 @@ import java.util.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 
 @SuppressWarnings({"FeatureEnvy"})
 public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     private Logger logger = Logger.getLogger(MarkerRepositoryTest.class);
-    private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+    private static MarkerRepository markerRepository = getMarkerRepository();
     private static ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
     private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
@@ -179,6 +180,21 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
             tx.rollback();
         }
         assertTrue("Successful execution of stored procedure", success);
+    }
+
+    @Test
+    public void markerHistory() {
+
+        // egr2b
+        Marker gene = getMarkerRepository().getMarkerByID("ZDB-GENE-980526-283");
+        assertNotNull(gene);
+        Set<MarkerHistory> markerHistory = gene.getMarkerHistory();
+        assertNotNull(markerHistory);
+        for(MarkerHistory history : markerHistory){
+            // make sure that this event has an attribution
+            if(history.getZdbID().equals("ZDB-NOMEN-030723-28"))
+                assertNotNull(history.getAttributions());
+        }
     }
 
     @Test
