@@ -66,7 +66,7 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
 
     public enum Reason {
         NOT_SPECIFIED("Not Specified"),
-        PER_GENE_FAMILIY_REVISION("per gene family revision"),
+        PER_GENE_FAMILY_REVISION("per gene family revision"),
         PER_PERSONAL_COMMUNICATION_WITH_AUTHORS("per personal communication with authors"),
         RENAMED_TO_CONFORM_WITH_HUMAN_NOMENCLATURE("renamed to conform with human nomenclature"),
         RENAMED_TO_CONFORM_WITH_MOUSE_NOMENCLATURE("renamed to conform with mouse nomenclature"),
