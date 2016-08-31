@@ -6,5 +6,5 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/14529.sql"/>
-    
+    <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/14507.sql"/>
 </databaseChangeLog>
