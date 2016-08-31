@@ -1830,6 +1830,11 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         if (thisPubResult != null)
             HibernateUtil.currentSession().delete(thisPubResult);
     }
+
+    @Override
+    public EntityZdbID getEntityByID(Class<? extends EntityZdbID> entity, String zdbID) {
+        return (EntityZdbID) HibernateUtil.currentSession().get(entity, zdbID);
+    }
 }
 
 

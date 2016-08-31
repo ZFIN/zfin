@@ -52,7 +52,7 @@
                                                     test="${!loop.last}">, </c:if>
                                             </c:when>
                                             <c:otherwise>
-                                                (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureAlias.zdbID}&rtype=genotype">${featureAlias.publicationCount}</a>)<c:if
+                                                (<a href="/action/publication/list/${featureAlias.zdbID}">${featureAlias.publicationCount}</a>)<c:if
                                                     test="${!loop.last}">, </c:if>
                                             </c:otherwise>
                                         </c:choose>
@@ -410,7 +410,7 @@
 </div>
 
 <hr width="80%">
-<a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${formBean.feature.zdbID}&total_count=${formBean.numPubs}&rtype=genotype'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.numPubs})
+<a href='/action/publication/list/${formBean.feature.zdbID}'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.numPubs})
 
 <script type="text/javascript">
     $('#genotype').tableCollapse({label: 'rows'});

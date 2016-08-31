@@ -134,7 +134,7 @@
 <p>
 <c:choose>
     <c:when test="${totalNumberOfPublications > 0}">
-        <a href='/action/fish/fish-publication-list?fishID=${fish.fishID}'><b>CITATIONS</b></a>&nbsp;&nbsp;(${totalNumberOfPublications})
+        <a href='/action/publication/list/${fish.fishID}'><b>CITATIONS</b></a>&nbsp;&nbsp;(${totalNumberOfPublications})
     </c:when>
     <c:otherwise>
         CITATIONS&nbsp;&nbsp;(0)

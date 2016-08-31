@@ -1,6 +1,7 @@
 package org.zfin.marker;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.PublicationAttribution;
 
 import javax.persistence.*;
@@ -9,7 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "marker_history")
-public class MarkerHistory implements Comparable<MarkerHistory> {
+public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
@@ -39,7 +40,7 @@ public class MarkerHistory implements Comparable<MarkerHistory> {
     private String name;
     //abbreviation after renaming event
     @Column(name = "mhist_mrkr_abbrev_on_mhist_date")
-    private String abbreviation;
+    private String symbol;
     @Column(name = "mhist_date")
     private Date date;
     @ManyToOne
@@ -175,12 +176,32 @@ public class MarkerHistory implements Comparable<MarkerHistory> {
         this.name = name;
     }
 
-    public String getAbbreviation() {
-        return abbreviation;
+    public String getSymbol() {
+        return symbol;
     }
 
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
+    @Override
+    public String getAbbreviation() {
+        return eventType.getDisplay() + ": " + getOldSymbol() + " to " + symbol;
+    }
+
+    @Override
+    public String getAbbreviationOrder() {
+        return event;
+    }
+
+    @Override
+    public String getEntityType() {
+        return "Marker Event (Marker History)";
+    }
+
+    @Override
+    public String getEntityName() {
+        return "Marker Event (Marker History)";
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
     }
 
     public Date getDate() {

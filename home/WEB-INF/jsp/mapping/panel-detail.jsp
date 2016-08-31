@@ -135,6 +135,6 @@
     List of all <a href="/action/mapping/all-panels"> mapping panels</a>
 
     <p/>
-    <a href="/cgi-bin/webdriver?MIval=aa-showpubs.apg&OID=${panel.zdbID}">CITATIONS</a> (${citationCount})
+    <a href="/action/publication/list/${panel.zdbID}">CITATIONS</a> (${citationCount})
 
 </div>

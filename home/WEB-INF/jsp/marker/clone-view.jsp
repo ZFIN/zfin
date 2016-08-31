@@ -63,7 +63,5 @@
 <%--old page--%>
 <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}"/>
 
-<!--http://zfin.org/cgi-bin/webdriver?MIval=aa-showpubs.apg&OID=ZDB-EST-000426-1181&rtype=marker&title=EST+Name&name=fb73a06&abbrev=fb73a06&total_count=2-->
-
 <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.clone}"/>
 

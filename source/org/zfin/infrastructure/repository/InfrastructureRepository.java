@@ -461,6 +461,8 @@ public interface InfrastructureRepository {
     void insertMutationDetailAttribution(String dataZdbID, String publicationID);
 
     void deleteMutationDetailAttribution(String zdbID, String publicationZdbID);
+
+    EntityZdbID getEntityByID(Class<? extends EntityZdbID> entity, String zdbID);
 }
 
 

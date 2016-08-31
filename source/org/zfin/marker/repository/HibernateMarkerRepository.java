@@ -797,7 +797,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         MarkerHistory history = new MarkerHistory();
         history.setDate(new Date());
         history.setName(newMarker.getName());
-        history.setAbbreviation(newMarker.getAbbreviation());
+        history.setSymbol(newMarker.getAbbreviation());
         history.setMarker(newMarker);
         history.setEvent(event.toString());
         history.setOldMarkerName(oldMarker.getName());

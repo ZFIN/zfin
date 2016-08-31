@@ -1,6 +1,11 @@
 package org.zfin.infrastructure;
 
+import org.zfin.feature.Feature;
 import org.zfin.infrastructure.delete.*;
+import org.zfin.mapping.Panel;
+import org.zfin.marker.MarkerHistory;
+import org.zfin.mutant.Fish;
+import org.zfin.mutant.Genotype;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 @Entity
 @Table(name = "zdb_active_data")
@@ -108,8 +115,36 @@ public class ActiveData implements ZdbID {
         return type;
     }
 
+    public static boolean isMarker(Type type) {
+        if (type.equals(Type.ATB) ||
+                type.equals(Type.BAC) ||
+                type.equals(Type.BAC_END) ||
+                type.equals(Type.CDNA) ||
+                type.equals(Type.CRISPR) ||
+                type.equals(Type.EFG) ||
+                type.equals(Type.EST) ||
+                type.equals(Type.ETCONSTRCT) ||
+                type.equals(Type.FOSMID) ||
+                type.equals(Type.GENE) ||
+                type.equals(Type.GENEP) ||
+                type.equals(Type.GTCONSTRCT) ||
+                type.equals(Type.MRPHLNO) ||
+                type.equals(Type.PAC) ||
+                type.equals(Type.RAPD) ||
+                type.equals(Type.REGION) ||
+                type.equals(Type.SNP) ||
+                type.equals(Type.SSLP) ||
+                type.equals(Type.STS) ||
+                type.equals(Type.TALEN) ||
+                type.equals(Type.TGCONSTRCT) ||
+                type.equals(Type.TSCRIPT)
+                )
+            return true;
+        return false;
+    }
+
     public enum Type {
-        ALT(DeleteFeatureRule.class),
+        ALT(DeleteFeatureRule.class, Feature.class),
         ANAT,
         ANATCMK,
         API,
@@ -127,7 +162,7 @@ public class ActiveData implements ZdbID {
         CUR,
         CV,
         DAT,
-        DALIAS,
+        DALIAS(null, DataAlias.class),
         DBLINK,
         DNOTE,
         EFG(DeleteEFGRule.class),
@@ -140,7 +175,7 @@ public class ActiveData implements ZdbID {
         FDBCONT,
         FDMD,
         FHIST,
-        FISH(DeleteFishRule.class),
+        FISH(DeleteFishRule.class, Fish.class),
         FIG,
         FMREL,
         FOSMID,
@@ -149,7 +184,7 @@ public class ActiveData implements ZdbID {
         GENE,
         GENEP,
         GENOX,
-        GENO(DeleteGenotypeRule.class),
+        GENO(DeleteGenotypeRule.class, Genotype.class),
         GENOFEAT,
         GOTERM,
         GTCONSTRCT(DeleteConstructRule.class),
@@ -163,7 +198,7 @@ public class ActiveData implements ZdbID {
         MRKRGOEV,
         MRKRSEQ,
         MRPHLNO(DeleteSTRRule.class),
-        NOMEN,
+        NOMEN(null, MarkerHistory.class),
         ORTHO,
         PAC,
         PAC_END,
@@ -171,7 +206,7 @@ public class ActiveData implements ZdbID {
         PROBELI,
         PTCONSTRCT(DeleteConstructRule.class),
         RAPD,
-        REFCROS,
+        REFCROSS(null, Panel.class),
         REGION(DeleteRegionRule.class),
         RUN,
         SNP,
@@ -192,12 +227,19 @@ public class ActiveData implements ZdbID {
 
         private Class<? extends DeleteEntityRule> ruleClass;
         private static String allValues;
+        private Class<? extends EntityZdbID> entity;
 
         Type() {
         }
 
+
         Type(Class<? extends DeleteEntityRule> deleteEntityRuleClass) {
             this.ruleClass = deleteEntityRuleClass;
+        }
+
+        Type(Class<? extends DeleteEntityRule> deleteEntityRuleClass, Class<? extends EntityZdbID> entity) {
+            this.ruleClass = deleteEntityRuleClass;
+            this.entity = entity;
         }
 
         public static String getValues() {
@@ -238,5 +280,10 @@ public class ActiveData implements ZdbID {
             }
             return rule;
         }
+
+        public EntityZdbID getEntity(String zdbID) {
+            return getInfrastructureRepository().getEntityByID(this.entity, zdbID);
+        }
+
     }
 }

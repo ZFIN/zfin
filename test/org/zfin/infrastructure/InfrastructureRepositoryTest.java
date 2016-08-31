@@ -18,6 +18,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.ontology.GenericTerm;
@@ -543,6 +544,12 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     public void getunloadDate() {
         UnloadInfo info = infrastructureRepository.getUnloadInfo();
         assertNotNull(info);
+    }
+
+    @Test
+    public void getEntityObject() {
+        EntityZdbID entity = infrastructureRepository.getEntityByID(Fish.class, "ZDB-FISH-150901-16069");
+        assertNotNull(entity);
     }
 
 

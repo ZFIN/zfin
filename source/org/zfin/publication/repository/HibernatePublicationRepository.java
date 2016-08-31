@@ -21,6 +21,7 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.GeneBean;
@@ -31,7 +32,6 @@ import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
-import org.zfin.profile.Lab;
 import org.zfin.publication.*;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
@@ -845,95 +845,110 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return fillList;
     }
 
-    final String commonPubSQL =
-            " select * from (select ra.recattrib_source_zdb_id   " +
-                    " from record_attribution ra   " +
-                    " where :markerZdbID = ra.recattrib_data_zdb_id " +
-                    // marker relationship 2_1
-                    " union " +
+
+    public String getCommonPublicationSQL(String zdbID) {
+        ActiveData.Type dataType = ActiveData.getType(zdbID);
+        String commonPubSQL =
+                " select * from (select ra.recattrib_source_zdb_id   " +
+                        " from record_attribution ra   " +
+                        " where :markerZdbID = ra.recattrib_data_zdb_id ";
+
+        // marker relationship 2_1
+        if (ActiveData.isMarker(dataType))
+            commonPubSQL += " union " +
                     " select ra.recattrib_source_zdb_id  " +
                     " from record_attribution ra , marker_relationship mr " +
                     " where :markerZdbID = mr.mrel_mrkr_2_zdb_id " +
-                    " and  ra.recattrib_data_zdb_id = mr.mrel_zdb_id " +
-                    // marker relationship 1_2
-                    " union " +
+                    " and  ra.recattrib_data_zdb_id = mr.mrel_zdb_id ";
+        // marker relationship 1_2
+        if (ActiveData.isMarker(dataType))
+            commonPubSQL += " union " +
                     " select ra.recattrib_source_zdb_id  " +
                     " from record_attribution ra , marker_relationship mr " +
                     " where :markerZdbID = mr.mrel_mrkr_1_zdb_id " +
-                    " and  ra.recattrib_data_zdb_id = mr.mrel_zdb_id " +
-                    // str marker type necessary ?
-                    " union " +
+                    " and  ra.recattrib_data_zdb_id = mr.mrel_zdb_id ";
+        // str marker type necessary ?
+        if (ActiveData.isMarker(dataType))
+            commonPubSQL += " union " +
                     " select ra.recattrib_source_zdb_id  " +
                     " from record_attribution ra , marker_relationship mr , marker m " +
                     " where :markerZdbID = mr.mrel_mrkr_2_zdb_id " +
                     " and  ra.recattrib_data_zdb_id = mr.mrel_mrkr_1_zdb_id " +
                     " and  mr.mrel_mrkr_1_zdb_id = m.mrkr_zdb_id " +
-                    " and  m.mrkr_type in ('MRPHLNO', 'TALEN', 'CRISPR') " +
-                    // data alias
-                    " union " +
-                    " select ra.recattrib_source_zdb_id  " +
-                    " from record_attribution ra , data_alias da  " +
-                    " where da.dalias_zdb_id = ra.recattrib_data_zdb_id " +
-                    " and :markerZdbID = da.dalias_data_zdb_id " +
-                    // db link
-                    " union " +
-                    " select ra.recattrib_source_zdb_id  " +
-                    " from record_attribution ra , db_link dbl  " +
-                    " where  dbl.dblink_zdb_id  = ra.recattrib_data_zdb_id " +
-                    " and  :markerZdbID = dbl.dblink_linked_recid " +
-                    // db link, marker_relationship
-                    " union " +
+                    " and  m.mrkr_type in ('MRPHLNO', 'TALEN', 'CRISPR') ";
+        // data alias
+        commonPubSQL += " union " +
+                " select ra.recattrib_source_zdb_id  " +
+                " from record_attribution ra , data_alias da  " +
+                " where da.dalias_zdb_id = ra.recattrib_data_zdb_id " +
+                " and :markerZdbID = da.dalias_data_zdb_id ";
+        // db link
+        commonPubSQL += " union " +
+                " select ra.recattrib_source_zdb_id  " +
+                " from record_attribution ra , db_link dbl  " +
+                " where  dbl.dblink_zdb_id  = ra.recattrib_data_zdb_id " +
+                " and  :markerZdbID = dbl.dblink_linked_recid ";
+        // db link, marker_relationship
+        if (ActiveData.isMarker(dataType))
+            commonPubSQL += " union " +
                     " select ra.recattrib_source_zdb_id  " +
                     " from record_attribution ra , db_link dbl , marker_relationship mr " +
                     " where  dbl.dblink_zdb_id  = ra.recattrib_data_zdb_id " +
                     " and dbl.dblink_linked_recid = mr.mrel_mrkr_2_zdb_id " +
                     " and  :markerZdbID = mr.mrel_mrkr_1_zdb_id " +
-                    " and  mr.mrel_type = 'gene encodes small segment' " +
-                    // ortho
-                    " union " +
+                    " and  mr.mrel_type = 'gene encodes small segment' ";
+        // ortho
+        if (ActiveData.isMarker(dataType))
+            commonPubSQL += " union " +
                     " select ra.recattrib_source_zdb_id  " +
                     " from record_attribution ra ,  ortholog_evidence oe, ortholog o " +
                     " where  ra.recattrib_data_zdb_id = oe.oev_ortho_zdb_id " +
                     " and    oe.oev_ortho_zdb_id = o.ortho_zdb_id " +
-                    " and    :markerZdbID = o.ortho_zebrafish_gene_zdb_id " +
-                    // marker_go_term_Evidence
-                    " union " +
+                    " and    :markerZdbID = o.ortho_zebrafish_gene_zdb_id ";
+        // marker_go_term_Evidence
+        if (ActiveData.isMarker(dataType))
+            commonPubSQL += " union " +
                     " select ra.recattrib_source_zdb_id  " +
                     " from record_attribution ra ,  marker_go_term_evidence ev " +
                     " where  ev.mrkrgoev_zdb_id  = ra.recattrib_data_zdb_id " +
-                    " and  :markerZdbID = ev.mrkrgoev_mrkr_zdb_id " +
-                    // feature_marker_realationship
-                    " union " +
+                    " and  :markerZdbID = ev.mrkrgoev_mrkr_zdb_id ";
+        // feature_marker_relationship
+        if (ActiveData.isMarker(dataType))
+            commonPubSQL += " union " +
                     " select ra.recattrib_source_zdb_id  " +
                     " from record_attribution ra ,  feature_marker_relationship fmr " +
                     " where  fmr.fmrel_ftr_zdb_id  = ra.recattrib_data_zdb_id " +
-                    " and  :markerZdbID = fmr.fmrel_mrkr_zdb_id " +
-                    // feature_marker_realationship, genotype_feature
-                    " union " +
+                    " and  :markerZdbID = fmr.fmrel_mrkr_zdb_id ";
+        // feature_marker_relationship, genotype_feature
+        if (ActiveData.isMarker(dataType))
+            commonPubSQL += " union " +
                     " select ra.recattrib_source_zdb_id  " +
                     " from record_attribution ra ,  feature_marker_relationship fmr, genotype_feature gf " +
                     " where  gf.genofeat_geno_zdb_id  = ra.recattrib_data_zdb_id " +
                     " and  :markerZdbID = fmr.fmrel_mrkr_zdb_id " +
-                    " and fmr.fmrel_ftr_zdb_id  = gf.genofeat_feature_zdb_id " +
+                    " and fmr.fmrel_ftr_zdb_id  = gf.genofeat_feature_zdb_id ";
+        if (dataType.equals(ActiveData.Type.ALT))
+            commonPubSQL += " union " +
                     // genotype_feature
-                    " union " +
                     " select ra.recattrib_source_zdb_id  " +
                     " from record_attribution ra ,  genotype_feature gf " +
                     " where  gf.genofeat_geno_zdb_id  = ra.recattrib_data_zdb_id " +
-                    " and  :markerZdbID = gf.genofeat_feature_zdb_id " +
-                    // expression_experiment
-                    " union " +
+                    " and  :markerZdbID = gf.genofeat_feature_zdb_id ";
+        // expression_experiment
+        if (ActiveData.isMarker(dataType))
+            commonPubSQL += " union " +
                     " select xpatex_source_zdb_id  " +
                     " from expression_experiment " +
-                    " where :markerZdbID = xpatex_gene_zdb_id " +
-                    " ) where recattrib_source_zdb_id like 'ZDB-PUB%'  ";
-
+                    " where :markerZdbID = xpatex_gene_zdb_id ";
+        commonPubSQL += " ) where recattrib_source_zdb_id like 'ZDB-PUB%'  ";
+        return commonPubSQL;
+    }
 
     @Override
     public List<Publication> getPubsForDisplay(String zdbID) {
 
         List<String> publicationIDs = HibernateUtil.currentSession()
-                .createSQLQuery(commonPubSQL)
+                .createSQLQuery(getCommonPublicationSQL(zdbID))
                 .setString("markerZdbID", zdbID)
                 .list();
 
@@ -957,7 +972,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     @Override
     public int getNumberAssociatedPublicationsForZdbID(String zdbID) {
-        String sql = " select count(*) from ( " + commonPubSQL + " )";
+        String sql = " select count(*) from ( " + getCommonPublicationSQL(zdbID) + " )";
 
         int count = Integer.valueOf(HibernateUtil.currentSession()
                 .createSQLQuery(sql)
@@ -1105,7 +1120,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * Retrieve distinct list of genes (GENEDOM_AND_EFG if includeEgfs is true; just GENEDOM otherwise) that are
      * attributed to a given publication.
      *
-     * @param pubID publication id
+     * @param pubID       publication id
      * @param includeEfgs boolean
      * @return list of markers
      */
@@ -1892,10 +1907,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public Long getOrthologyCount(Publication publication) {
-        String sql = "select count(*) from ortholog "+
-	"where exists ( "+
-	"select 'x' from ortholog_evidence where oev_pub_zdb_id = :zdbID "+
-	"and oev_ortho_zdb_id = ortho_zdb_ID)";
+        String sql = "select count(*) from ortholog " +
+                "where exists ( " +
+                "select 'x' from ortholog_evidence where oev_pub_zdb_id = :zdbID " +
+                "and oev_ortho_zdb_id = ortho_zdb_ID)";
         return getCount(sql, publication.getZdbID());
     }
 
