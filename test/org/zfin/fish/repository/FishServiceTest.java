@@ -1,5 +1,6 @@
 package org.zfin.fish.repository;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Assert;
@@ -10,6 +11,7 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.FigureExpressionSummary;
 import org.zfin.expression.presentation.FigureExpressionSummaryDisplay;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
+import org.zfin.fish.FeatureGene;
 import org.zfin.fish.FishSearchCriteria;
 import org.zfin.fish.FishSearchResult;
 import org.zfin.fish.presentation.FishResult;
@@ -402,7 +404,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
     @Test
     public void exactMatchesFirstTest() {
         FishSearchFormBean formBean = new FishSearchFormBean();
-        formBean.setGeneOrFeatureName("cz3");
+        formBean.setGeneOrFeatureName("cz4");
         formBean.setFilter1("showAll");
         formBean.setMaxDisplayRecords(20);
         formBean.setFirstPageRecord(1);
@@ -411,11 +413,20 @@ public class FishServiceTest extends AbstractDatabaseTest {
         FishSearchCriteria criteria = new FishSearchCriteria(formBean);
 
         FishSearchResult result = FishService.getFish(criteria);
-        for (int i = 0; i < 2; i++) {
-            FishResult fishResult = result.getResults().get(i);
-            assertNotNull(fishResult.getFish());
-            assertTrue("result " + i + ", " + fishResult.getFish().getName() + " should contain 'cz3 '", fishResult.getFish().getName().contains("cz3"));
+
+        FishResult fishResult = result.getResults().iterator().next();
+
+        List<String> names = new ArrayList<>();
+        if (fishResult.getFish() != null) {
+            names.add(fishResult.getFish().getName());
         }
+
+        for (FeatureGene featureGene : fishResult.getFeatureGenes()) {
+            names.add(featureGene.getFeature().getAbbreviation());
+            names.add(featureGene.getFeature().getName());
+        }
+        assertTrue(names + " should contain 'cz4 '", names.contains("cz4"));
+
     }
 
     @Test
