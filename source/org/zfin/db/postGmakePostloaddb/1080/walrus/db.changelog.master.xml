@@ -11,4 +11,10 @@
  <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/loadGapChemicals.xml"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/updateExpcondGaps.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/dropTempGapTables.sql"/>
+
+<include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/createTempDupTables.sql"/>
+ <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/loadGapChemDups.xml"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/updateExpcondDups.sql"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/dropTempDupTables.sql"/>
+
 </databaseChangeLog>
