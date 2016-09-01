@@ -238,4 +238,12 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
         }
         return "";
     }
+
+    public String getNewValue() {
+        // if it is a name change show new name otherewise new symbol
+        if (event.equals(Event.RENAMED))
+            return name;
+        return symbol;
+    }
+
 }

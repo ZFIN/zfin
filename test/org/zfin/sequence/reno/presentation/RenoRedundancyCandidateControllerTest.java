@@ -377,7 +377,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
 
             //Marker renoCdna = markerRepository.getMarkerByAbbreviation("MGC:test");
 
-            MarkerHistory mhist = markerRepository.getLastMarkerHistory(renoGene, null);
+            MarkerHistory mhist = markerRepository.getLastMarkerHistory(renoGene, MarkerHistory.Event.ASSIGNED);
 
             logger.info("mhist " + mhist.toString());
             //the renoGene has a marker_history record

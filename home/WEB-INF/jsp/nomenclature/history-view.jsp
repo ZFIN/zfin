@@ -27,7 +27,7 @@
 
 <div ng-app="nomenclature">
     <div ng-controller="NomenclatureController as control">
-        <zfin2:subsection title="Nomenclature"
+        <zfin2:subsection title="Nomenclature History"
                           test="${!empty marker.markerHistory }"
                           showNoData="true">
             <authz:authorize access="hasRole('root')">
@@ -37,9 +37,9 @@
             </authz:authorize>
             <table class="summary sortable">
                 <th id="edit_" style="display: none">Edit</th>
-                <th>New Symbol</th>
+                <th>New Value</th>
                 <th>Event</th>
-                <th>Old Symbol</th>
+                <th>Old Value</th>
                 <th>Date</th>
                 <th>Reason</th>
                 <th>Comments</th>
@@ -76,7 +76,7 @@
                                 <span ng-click="control.openEditor('${markerHistory.zdbID}','${markerHistory.comments}','${markerHistory.reason.toString()}')"><a
                                         href>Edit</a></span>
                         </td>
-                        <td><span class="genedom">${marker.abbreviation}</span></td>
+                        <td><span class="genedom">${markerHistory.newValue}</span></td>
                         <td>${markerHistory.event.display}</td>
                         <td><span class="genedom"> ${markerHistory.oldSymbol}</span></td>
                         <td><fmt:formatDate value="${markerHistory.date}" pattern="yyyy-MM-dd"/></td>
