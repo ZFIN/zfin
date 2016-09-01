@@ -7,4 +7,8 @@
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/14529.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/14507.sql"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/createTempGapTables.sql"/>
+ <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/loadGapChemicals.xml"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/updateExpcondGaps.sql"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/dropTempGapTables.sql"/>
 </databaseChangeLog>
