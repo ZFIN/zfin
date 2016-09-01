@@ -204,7 +204,7 @@ public class SolrService {
 
             if (onlyWildtype) {
                 link.append("&fq=is_genotype_wildtype%3Atrue");
-                link.append("&fq=" + FieldName.CONDITIONS.getName() + "conditions%3A%22standard+or+control%22");
+                link.append("&fq=" + FieldName.CONDITIONS.getName() + "%3A%22standard+or+control%22");
             }
 
             link.append("\">");
