@@ -177,7 +177,7 @@ public class SolrService {
         query.addFilterQuery("zebrafish_gene:\"" + geneSymbol + "\"");
         if (onlyWildtype) {
             query.addFilterQuery("is_genotype_wildtype:\"true\"");
-            query.addFilterQuery("experimental_conditions:\"standard or control\"");
+            query.addFilterQuery(FieldName.CONDITIONS.getName() + ":\"standard or control\"");
         }
         query.addFilterQuery("category:Expression");
         query.setRows(0);
@@ -204,7 +204,7 @@ public class SolrService {
 
             if (onlyWildtype) {
                 link.append("&fq=is_genotype_wildtype%3Atrue");
-                link.append("&fq=experimental_conditions%3A%22standard+or+control%22");
+                link.append("&fq=" + FieldName.CONDITIONS.getName() + "conditions%3A%22standard+or+control%22");
             }
 
             link.append("\">");
