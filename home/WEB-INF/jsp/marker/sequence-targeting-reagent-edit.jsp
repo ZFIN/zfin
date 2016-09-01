@@ -14,6 +14,8 @@
 <script src="/javascript/str.service.js"></script>
 <script src="/javascript/marker.service.js"></script>
 
+<script src="/javascript/trusted-html.filter.js"></script>
+
 <script src="/javascript/autocompletify.directive.js"></script>
 <script src="/javascript/pub-lookup.directive.js"></script>
 <script src="/javascript/bootstrap-modal.directive.js"></script>

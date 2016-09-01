@@ -63,7 +63,7 @@
                     </span>
                 </small>
             </h4>
-            <p ng-bind-html="note.noteData | trusted_html" ng-hide="note.editing"></p>
+            <p ng-bind-html="note.noteData | trustedHtml" ng-hide="note.editing"></p>
             <div ng-show="note.editing">
                 <div class="form-group">
                     <textarea class="form-control" rows="3" ng-model="note.editText"></textarea>
