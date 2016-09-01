@@ -29,12 +29,10 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.marker.MarkerHistory$Reason")})
     private Reason reason;
-    @Transient
-    private String event;
     @Column(name = "mhist_event", nullable = false)
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.marker.MarkerHistory$Event")})
-    private Event eventType;
+    private Event event;
     //name after renaming event
     @Column(name = "mhist_mrkr_name_on_mhist_date")
     private String name;
@@ -128,12 +126,12 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
         this.comments = comments;
     }
 
-    public Event getEventType() {
-        return eventType;
+    public Event getEvent() {
+        return event;
     }
 
-    public void setEventType(Event eventType) {
-        this.eventType = eventType;
+    public void setEvent(Event event) {
+        this.event = event;
     }
 
     public String getZdbID() {
@@ -160,14 +158,6 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
         this.reason = reason;
     }
 
-    public String getEvent() {
-        return event;
-    }
-
-    public void setEvent(String event) {
-        this.event = event;
-    }
-
     public String getName() {
         return name;
     }
@@ -182,12 +172,12 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
 
     @Override
     public String getAbbreviation() {
-        return eventType.getDisplay() + ": " + getOldSymbol() + " to " + symbol;
+        return event.getDisplay() + ": " + getOldSymbol() + " to " + symbol;
     }
 
     @Override
     public String getAbbreviationOrder() {
-        return event;
+        return getAbbreviation();
     }
 
     @Override
@@ -238,7 +228,7 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
     }
 
     public String getOldSymbol() {
-        switch (eventType) {
+        switch (event) {
             case REASSIGNED:
                 return markerAlias.getAlias();
             case MERGED:

@@ -50,6 +50,19 @@ public class NomenclatureSubmissionController {
         return "nomenclature/history-view.page";
     }
 
+    @RequestMapping(value = "/view/{zdbID}")
+    public String getView(@PathVariable("zdbID") String zdbID,
+                          Model model) {
+        if (zdbID == null)
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        MarkerHistory history = getMarkerRepository().getMarkerHistory(zdbID);
+        if (history == null)
+            throw new RuntimeException("No Marker History record found");
+        model.addAttribute("markerHistory", history);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "ZFIN Marker History");
+        return "nomenclature/event-view.page";
+    }
+
     @RequestMapping(value = "/gene-name", method = RequestMethod.GET)
     public String newGeneNameForm(Model model) {
         GeneNameSubmission submission = new GeneNameSubmission();

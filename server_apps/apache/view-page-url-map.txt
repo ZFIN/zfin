@@ -16,6 +16,7 @@ FIG	/action/figure/view/ZDB-FIG
 FISH	/action/fish/fish-detail/ZDB-FISH
 FOSMID	/action/marker/view/ZDB-FOSMID
 GENE	/action/marker/view/ZDB-GENE
+NOMEN	/action/nomenclature/view/ZDB-NOMEN
 GENEFAMILY	/action/marker/view/ZDB-GENEFAMILY
 GENEP	/action/marker/view/ZDB-GENEP
 GENO	/action/genotype/view/ZDB-GENO

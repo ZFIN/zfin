@@ -44,14 +44,14 @@
                 <th>Reason</th>
                 <th>Comments</th>
                 <c:forEach var="markerHistory" items="${marker.markerHistory}" varStatus="loop">
-                    <c:if test="${markerHistory.eventType.toString() ne 'renamed'}">
+                    <c:if test="${markerHistory.event.toString() ne 'renamed'}">
                         <tr id="reduced_${loop.index}">
                             <td id="edit_${loop.index}" style="display: none">
                                 <span ng-click="control.openEditor('${markerHistory.zdbID}','${markerHistory.comments}','${markerHistory.reason.toString()}')"><a
                                         href>Edit</a></span>
                             </td>
                             <td><span class="genedom">${marker.abbreviation}</span></td>
-                            <td>${markerHistory.eventType.display}</td>
+                            <td>${markerHistory.event.display}</td>
                             <td><span class="genedom">${markerHistory.oldSymbol}</span></td>
                             <td><fmt:formatDate value="${markerHistory.date}" pattern="yyyy-MM-dd"/></td>
                             <td>${markerHistory.reason.toString()}
@@ -77,7 +77,7 @@
                                         href>Edit</a></span>
                         </td>
                         <td><span class="genedom">${marker.abbreviation}</span></td>
-                        <td>${markerHistory.eventType.display}</td>
+                        <td>${markerHistory.event.display}</td>
                         <td><span class="genedom"> ${markerHistory.oldSymbol}</span></td>
                         <td><fmt:formatDate value="${markerHistory.date}" pattern="yyyy-MM-dd"/></td>
                         <td>${markerHistory.reason.toString()}

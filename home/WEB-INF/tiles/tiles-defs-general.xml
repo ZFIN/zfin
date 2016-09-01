@@ -180,6 +180,14 @@
         </put-attribute>
     </definition>
 
+    <definition name="nomenclature/event-view.page" extends="main_layout">
+        <put-attribute name="body">
+            <definition template="/WEB-INF/jsp/nomenclature/event-view.jsp">
+                <put-attribute name="headerText" value="Nomenclature History: Event" />
+            </definition>
+        </put-attribute>
+    </definition>
+
     <definition name="nomenclature/line-name-form.page" extends="main_layout">
         <put-attribute name="body">
             <definition template="/WEB-INF/jsp/nomenclature/new-submission-form.jsp">
