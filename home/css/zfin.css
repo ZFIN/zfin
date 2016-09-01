@@ -846,3 +846,17 @@ ul.comma-separated > li:last-child:after {
     border: 1px solid #ccc;
 }
 
+.pub-dashboard > .filter-bar {
+    padding: 20px 0;
+}
+
+.pub-dashboard > .table td {
+    vertical-align: text-top;
+}
+
+.pub-dashboard img {
+    max-height: 100px;
+    margin: 4px 0px;
+    border: 1px solid black;
+}
+

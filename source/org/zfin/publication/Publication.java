@@ -268,6 +268,12 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         }
         sb.append(title);
         sb.append(". ");
+        sb.append(getJournalAndPages());
+        return sb.toString();
+    }
+
+    public String getJournalAndPages() {
+        StringBuilder sb = new StringBuilder();
         if (journal != null) {
             sb.append(journal.getName());
             sb.append(". ");

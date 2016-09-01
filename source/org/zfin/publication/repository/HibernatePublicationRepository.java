@@ -2115,4 +2115,20 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return HibernateUtil.currentSession().createCriteria(PublicationTrackingLocation.class).list();
     }
 
+    public List<PublicationTrackingHistory> getPublicationsByStatus(Long status, Long location, String owner) {
+        // Uses a technique for multiple parameters which may not be set found here:
+        // http://dev.wavemaker.com/wiki/bin/Dev/HqlTutorial#HOptionalorNullParameters
+        String hql = "FROM PublicationTrackingHistory hist " +
+                "WHERE (:status IS NULL OR status.id = :status) " +
+                "AND (:location IS NULL OR location.id = :location) " +
+                "AND (:owner IS NULL OR owner.zdbID = :owner) " +
+                "AND isCurrent = :current";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("status", status);
+        query.setParameter("location", location);
+        query.setParameter("owner", owner);
+        query.setParameter("current", true);
+        return query.list();
+    }
+
 }

@@ -26,7 +26,8 @@
             sendAuthorNotification : sendAuthorNotification,
             getStatuses            : getStatuses,
             getLocations           : getLocations,
-            getCurators            : getCurators
+            getCurators            : getCurators,
+            getPubsInBin           : getPubsInBin
         };
 
         function getTopics(id) {
@@ -110,6 +111,14 @@
 
         function getCurators() {
             return $http.get('/action/publication/curators');
+        }
+
+        function getPubsInBin(location, sort) {
+            var qs = {
+                location: location.id,
+                sort: sort.value
+            };
+            return $http.get('/action/publication/search-status', {params: qs});
         }
     }
 
