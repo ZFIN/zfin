@@ -781,7 +781,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         session.flush();
         Criteria criteria = session.createCriteria(MarkerHistory.class);
         criteria.add(Restrictions.eq("marker.zdbID", marker.getZdbID()));
-        criteria.add(Restrictions.eq("eventType", event));
+        criteria.add(Restrictions.eq("event", event));
         criteria.addOrder(Property.forName("date").desc());
         // very dangerous as the trigger creates two history records, one for a name change (no alias available)
         // and one for an abbrev change with an associated alias generation

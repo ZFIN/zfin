@@ -161,7 +161,7 @@ public class NomenclatureSubmissionController {
 
         try {
             tx = HibernateUtil.createTransaction();
-            getInfrastructureRepository().insertPublicAttribution(zdbID, pubID);
+            getInfrastructureRepository().insertStandardPubAttribution(zdbID, publication);
             tx.commit();
         } catch (Exception e) {
             try {

@@ -166,6 +166,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         insertPublicAttribution(genotype, publication);
     }
 
+    @Override
     public void insertStandardPubAttribution(String dataZdbID, Publication publication) {
         PublicationAttribution publicationAttribution = new PublicationAttribution();
         publicationAttribution.setDataZdbID(dataZdbID);
