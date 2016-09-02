@@ -88,7 +88,6 @@
         <security:logout logout-url="/action/logout"
                          success-handler-ref="apgLogoutHandler"
                 />
-        <!--logout-success-url="/action/http-redirect"-->
 
         <security:anonymous key="changeThis" username="anonymousUser,guest" enabled="true" granted-authority="guest"/>
 

@@ -60,7 +60,6 @@ aa-quickfindpers.apg
 aa-sequence.apg
 aa-xpatexpcdndisplay.apg
 aa-zirclist.apg
-aa-ZDB_home.apg
 aa-showpubs.apg
 aa-externalredirect.apg
 aa-externallink.apg

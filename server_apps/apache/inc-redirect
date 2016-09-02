@@ -35,10 +35,7 @@ RewriteCond %{REQUEST_URI} ^/action/login-redirect$
 RewriteRule ^(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 
 #Remove extra stuff for home page url
-RewriteCond <!--|MUTANT_NAME|--> !=zfin.org
-RewriteRule ^/$ /<!--|MUTANT_NAME|-->/webdriver?MIval=aa-ZDB_home.apg [PT]
-RewriteCond <!--|MUTANT_NAME|--> =zfin.org
-RewriteRule ^/$ /cgi-bin/webdriver?MIval=aa-ZDB_home.apg [PT]
+RewriteRule ^/$ /action/ [PT]
 
 
 #RewriteRule ^/$ /action/quicksearch/prototype [PT]
