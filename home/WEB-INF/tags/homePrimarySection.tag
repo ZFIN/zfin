@@ -93,12 +93,12 @@
 
             <c:if test="${!empty user}">
 
-                <li><a href="/action/profile/view/$ZDB_ident"><em>Update Your ZFIN Record</em></a>
+                <li><a href="/action/profile/view/${user.zdbID}"><em>Update Your ZFIN Record</em></a>
 
                 <c:if test="${!empty user.labs}">
                     <li> View Lab Record:
                     <c:forEach var="lab" items="${user.labs}">
-                        <zfin:link entity="${lab}"/>
+                        <a href="/action/profile/view/${lab.zdbID}"><em>${lab.name}</em></a>             
                     </c:forEach>
                 </c:if>
 
