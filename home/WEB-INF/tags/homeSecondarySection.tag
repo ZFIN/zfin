@@ -164,10 +164,6 @@
         <a href="http://zgc.nci.nih.gov/">ZGC</a>
     </li>
 
-    <li>
-        Microarray expression at <a href="http://zf-espresso.tuebingen.mpg.de/search.php">ZF-Espresso</a>
-    </li>
-
     <li class="divider-above">
         <a href="https://wiki.zfin.org/display/general/Genomic+Resources+for+Zebrafish">More Zebrafish Genome Resources</a>
     </li>
