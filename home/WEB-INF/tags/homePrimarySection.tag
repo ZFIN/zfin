@@ -72,7 +72,7 @@
 <ul>
     <li>Community
         <ul>
-            <li><a href="http://<!--|WIKI_HOST|-->" title="ZFIN-hosted community wiki">Wiki</a>:<a href="http://<!--|WIKI_HOST|-->/display/prot" title="Browse, contribute experimental protocols">&nbsp; Protocols,</a><a href="http://<!--|WIKI_HOST|-->/display/AB" title="Browse, contribute antibody data">&nbsp;Antibodies</a>
+            <li><a href="@SECURE_HTTP@@WIKI_HOST@" title="ZFIN-hosted community wiki">Wiki</a>:<a href="@SECURE_HTTP@@WIKI_HOST@/display/prot" title="Browse, contribute experimental protocols">&nbsp; Protocols,</a><a href="@SECURE_HTTP@@WIKI_HOST@/display/AB" title="Browse, contribute antibody data">&nbsp;Antibodies</a>
 
             <li>
                 <a href="@SECURE_HTTP@@WIKI_HOST@/display/jobs/Zebrafish-Related+Job+Announcements" title="Zebrafish-related job announcements">Jobs</a>,
