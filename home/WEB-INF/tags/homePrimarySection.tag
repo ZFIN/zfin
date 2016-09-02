@@ -5,7 +5,7 @@
            title="Search by name, accession number, chromosome, vector or sequence type">
         <strong>Genes / Markers / Clones</strong></a></li>
     <ul>
-        <li><a href="https://<!--|WIKI_HOST|-->/display/general/ZFIN+Zebrafish+Nomenclature+Guidelines"
+        <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Zebrafish+Nomenclature+Guidelines"
                title="Zebrafish nomenclature guidelines">Nomenclature Conventions</a></li>
         <li><a href="/action/nomenclature/gene-name"
                title="Contact the Nomenclature Committee">Obtain approval for gene names</a>
@@ -17,7 +17,7 @@
     <li><a href="/action/blast/blast"
            title="Search for sequence alignment against ZFIN datasets and zebrafish datasets">
         <strong>BLAST</strong> at ZFIN</a> </li>
-    <li><a href="/<!--|GBROWSE_PATH_FROM_ROOT|-->"><strong>GBrowse</strong> genome browser</a>
+    <li><a href="/@GBROWSE_PATH_FROM_ROOT@"><strong>GBrowse</strong> genome browser</a>
     </li>
 </ul>
 
@@ -55,7 +55,7 @@
     <li><a href="/action/ontology/search"
            title="Search anatomy, gene and disease ontology"><strong>Anatomy / GO / Human Disease</strong></a></li>
     <ul>
-        <li><a href="https://<!--|WIKI_HOST|-->/display/general/Anatomy+Atlases+and+Resources" title="Atlases, anatomical resources and ontology">Anatomy Atlases and Resources</a></li>
+        <li><a href="https://@WIKI_HOST@/display/general/Anatomy+Atlases+and+Resources" title="Atlases, anatomical resources and ontology">Anatomy Atlases and Resources</a></li>
     </ul>
 </ul>
 
@@ -75,10 +75,10 @@
             <li><a href="http://<!--|WIKI_HOST|-->" title="ZFIN-hosted community wiki">Wiki</a>:<a href="http://<!--|WIKI_HOST|-->/display/prot" title="Browse, contribute experimental protocols">&nbsp; Protocols,</a><a href="http://<!--|WIKI_HOST|-->/display/AB" title="Browse, contribute antibody data">&nbsp;Antibodies</a>
 
             <li>
-                <a href="<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/display/jobs/Zebrafish-Related+Job+Announcements" title="Zebrafish-related job announcements">Jobs</a>,
+                <a href="@SECURE_HTTP@@WIKI_HOST@/display/jobs/Zebrafish-Related+Job+Announcements" title="Zebrafish-related job announcements">Jobs</a>,
                 <!-- <a href="/zf_info/news/mtgs.html" title="Zebrafish-related meeting announcements">Meetings</a>, -->
-                <a href="<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/display/meetings" title="Zebrafish-related meeting announcements">Meetings</a>,
-                <a href="<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/display/general/Zebrafish+Newsgroup+Information" title="Moderated, online discussion group for anyone intested in zebrafish research">Newsgroup</a>
+                <a href="@SECURE_HTTP@@WIKI_HOST@/display/meetings" title="Zebrafish-related meeting announcements">Meetings</a>,
+                <a href="@SECURE_HTTP@@WIKI_HOST@/display/general/Zebrafish+Newsgroup+Information" title="Moderated, online discussion group for anyone intested in zebrafish research">Newsgroup</a>
             <li><a href="/action/profile/person/search"
                    title="Search for zebrafish researchers by name or address">
                 People,</a>
@@ -113,7 +113,7 @@
     <li>Data
         <ul>
             <li><a href="downloads" title="Download bulk data files generated from the ZFIN database" >Downloads</a>
-            <li><a href="<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/display/general/ZFIN+Data+Submissions" title="Submit data directly to the ZFIN database using Phenote">Submit</a>
+            <li><a href="@SECURE_HTTP@@WIKI_HOST@/display/general/ZFIN+Data+Submissions" title="Submit data directly to the ZFIN database using Phenote">Submit</a>
             <li><a href="/zf_info/zfin_stats.html" title="Annual summary of ZFIN data content">Statistics</a>
             <li><a href="/schemaSpy/index.html" title="Browse ZFIN database schema">Data Model</a>
         </ul>

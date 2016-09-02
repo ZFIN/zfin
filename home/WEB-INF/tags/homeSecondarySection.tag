@@ -70,7 +70,7 @@
             }
         </script>
 
-        <form name="quickpub" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method="get" onsubmit="handleOID() ; ">
+        <form name="quickpub" action="/cgi-bin/webdriver" method="get" onsubmit="handleOID() ; ">
             <input type="hidden" name="MIval" value="aa-curation.apg">
             <input type="hidden" name="OID">
             <label for="OIDpart"> Curate ZDB-PUB-</label><input name="OIDpart" id="OIDpart" size="15">
@@ -120,7 +120,7 @@
         <a href="http://zebrafish.org/zirc/fish/lineAll.php">Fish Lines</a>,
         <a href="http://zebrafish.org/zirc/est/estAll.php">ESTs/cDNAs</a>,
         <a href="http://zebrafish.org/zirc/abs/absAll.php">Monoclonal Antibodies</a>,
-        <a href="http://zebrafish.org/zirc/orders/buyBookQ.php?item=Book&id=book&detail=The%20Zebrafish%20Book">The Zebrafish Book</span></a>,
+        <a href="http://zebrafish.org/zirc/orders/buyBookQ.php?item=Book&id=book&detail=The%20Zebrafish%20Book">The Zebrafish Book</a>,
         <a href="http://zebrafish.org/zirc/orders/buyParaQ.php?item=Paramecia&id=para&detail=Paramecia%20Starter%20Culture">Paramecia</a>
     </li>
     <li class="divider-above">
@@ -139,7 +139,7 @@
         <a href="http://www.ensembl.org/biomart">BioMart</a>
     </li>
     <li>Browse genome:
-        <a href="/<!--|GBROWSE_PATH_FROM_ROOT|-->">ZFIN</a>,
+        <a href="@GBROWSE_PATH_FROM_ROOT@">ZFIN</a>,
         <a href="http://www.ensembl.org/Danio_rerio/">Ensembl</a>,
         <a href="http://vega.sanger.ac.uk/Danio_rerio/">Vega</a>,<br>
         <a href="http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/zebrafish/">GRC</a>,
@@ -174,7 +174,7 @@
     </li>
 
     <li>
-        <a href="https://<!--|WIKI_HOST|-->/display/general/Other+Databases">Other Fish Genomes and Model Organism Databases</a>
+        <a href="https://@WIKI_HOST@/display/general/Other+Databases">Other Fish Genomes and Model Organism Databases</a>
     </li>
 
 </ul>
@@ -208,7 +208,7 @@
     <li>
         <a href="/zf_info/news/Newsletters.html">ZFIN Newsletters</a>,
         <!--<a href="/zf_info/news/siteNews.html">News Archive</a>-->
-        <a href="<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/display/news">News Archive</a>
+        <a href="@SECURE_HTTP@@WIKI_HOST@/display/news">News Archive</a>
     </li>
 
     <br>
