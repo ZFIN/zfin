@@ -98,7 +98,7 @@
                 <c:if test="${!empty user.labs}">
                     <li> View Lab Record:
                     <c:forEach var="lab" items="${user.labs}">
-                        <a href="/action/profile/view/${lab.zdbID}"><em>${lab.name}</em></a>             
+                        <a href="/action/profile/view/${lab.zdbID}"><em>${lab.name}</em></a>
                     </c:forEach>
                 </c:if>
 
