@@ -1,5 +1,6 @@
 package org.zfin.publication.presentation;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,10 +17,7 @@ import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.PublicationTrackingHistory;
 import org.zfin.publication.repository.PublicationRepository;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/publication")
@@ -70,6 +68,12 @@ public class PublicationDashboardController {
                     images.add(imageBean);
                 }
             }
+            Collections.sort(images, new Comparator<DashboardImageBean>() {
+                @Override
+                public int compare(DashboardImageBean o1, DashboardImageBean o2) {
+                    return ObjectUtils.compare(o1.getLabel(), o2.getLabel());
+                }
+            });
             bean.setImages(images);
             beans.add(bean);
         }
