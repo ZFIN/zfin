@@ -313,7 +313,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
 
             ///Here is the start of the test that should be true
             //gene should be created
-            //mrel should be created (as idendified marker is present on our test candidate
+            //mrel should be created (as identified marker is present on our test candidate
             //mrel attribution should be created
             //mhist should be created
             //mhist reason should be changed
@@ -334,7 +334,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
 
             logger.debug("mrel zdb_id: " + renoMrel.getZdbID());
 
-            MarkerHistory mhist = markerRepository.getLastMarkerHistory(renoGene, null);
+            MarkerHistory mhist = markerRepository.getLastMarkerHistory(renoGene, MarkerHistory.Event.ASSIGNED);
 
             //the renoGene has a marker_history record, this basically tests the trigger is working.
             assertNotNull("renoGene has marker_history record", mhist);
