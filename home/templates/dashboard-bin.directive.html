@@ -36,7 +36,7 @@
         </thead>
         <tbody>
         <tr ng-show="vm.loading">
-            <td class="text-muted text-center" colspan="5">Loading...</td>
+            <td class="text-muted text-center" colspan="5"><i class="fa fa-spinner fa-spin"></i> Loading...</td>
         </tr>
         <tr ng-show="!vm.loading && vm.pubs.length == 0">
             <td class="text-muted text-center" colspan="5">Woo hoo! Bin is empty!</td>
@@ -44,7 +44,8 @@
         <tr ng-show="!vm.loading" ng-repeat="pub in vm.pubs | filter:vm.searchTerm">
             <td>
                 <button ng-show="!pub.claimed" ng-click="vm.claimPub(pub, $index)" class="btn btn-default" ng-disabled="pub.saving">
-                    Claim
+                    <span ng-show="!pub.saving">Claim</span>
+                    <span ng-show="pub.saving"><i class="fa fa-spinner fa-spin"></i></span>
                 </button>
                 <button ng-show="pub.claimed" class="btn btn-success">
                     <i class="fa fa-check"></i> Claimed
