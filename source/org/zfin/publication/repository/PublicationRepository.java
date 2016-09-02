@@ -515,6 +515,8 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<PublicationTrackingStatus> getAllPublicationStatuses();
 
+    PublicationTrackingStatus getPublicationStatusByName(String name);
+
     List<PublicationTrackingLocation> getAllPublicationLocations();
 
     List<PublicationTrackingHistory> getPublicationsByStatus(Long status, Long location, String owner);

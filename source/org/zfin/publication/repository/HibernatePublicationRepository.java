@@ -2111,6 +2111,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return HibernateUtil.currentSession().createCriteria(PublicationTrackingStatus.class).list();
     }
 
+    public PublicationTrackingStatus getPublicationStatusByName(String name) {
+        return (PublicationTrackingStatus) HibernateUtil.currentSession()
+                .createCriteria(PublicationTrackingStatus.class)
+                .add(Restrictions.eq("name", name))
+                .uniqueResult();
+    }
+
     public List<PublicationTrackingLocation> getAllPublicationLocations() {
         return HibernateUtil.currentSession().createCriteria(PublicationTrackingLocation.class).list();
     }

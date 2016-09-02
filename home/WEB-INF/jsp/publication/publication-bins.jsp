@@ -20,5 +20,5 @@
 <script src="/javascript/dashboard-bin.directive.js"></script>
 
 <div class="container-fluid" ng-app="app">
-  <div dashboard-bin user-id="${currentUser.zdbID}"></div>
+  <div dashboard-bin user-id="${currentUser.zdbID}" status-id="${curatingStatus.id}"></div>
 </div>

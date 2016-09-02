@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.zfin.curation.repository.CurationRepository;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.framework.ComparatorCreator;
@@ -31,11 +30,9 @@ public class PublicationDashboardController {
     @Autowired
     PublicationRepository publicationRepository;
 
-    @Autowired
-    CurationRepository curationRepository;
-
     @RequestMapping("/bins")
     public String showPublicationBins(Model model) {
+        model.addAttribute("curatingStatus", publicationRepository.getPublicationStatusByName("Curating"));
         model.addAttribute("currentUser", ProfileService.getCurrentSecurityUser());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication Bins");
         return "publication/publication-bins.page";

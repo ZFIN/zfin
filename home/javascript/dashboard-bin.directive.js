@@ -8,7 +8,8 @@
             restrict: 'EA',
             templateUrl: '/templates/dashboard-bin.directive.html',
             scope: {
-                userId: '@'
+                userId: '@',
+                statusId: '@'
             },
             link: link,
             controller: DashboardBinController,
@@ -100,13 +101,9 @@
             pub.saving = true;
             var status = {
                 pubZdbID: pub.zdbId,
-                status: {
-                    id: 5 // errr... this seems fragile
-                },
+                status: { id: vm.statusId },
                 location: null,
-                owner: {
-                    zdbID: vm.userId
-                }
+                owner: { zdbID: vm.userId }
             };
             PublicationService.updateStatus(status)
                 .then(function () {
