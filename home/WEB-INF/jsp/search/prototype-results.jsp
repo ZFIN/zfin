@@ -14,6 +14,8 @@
 <c:set var="anatomyCategoryName" value="<%=Category.ANATOMY.getName()%>"/>
 
 <script src="/javascript/list-collapse.js"></script>
+<script src="/javascript/figure-gallery-resize.jquery.js"></script>
+
 <script src="/javascript/angular/angular.min.js"></script>
 <script src="/javascript/angular/angular-sanitize.js"></script>
 <script src="/javascript/imagesloaded.pkgd.min.js"></script>
@@ -485,45 +487,18 @@ $(function () {
         showBoxyResults();
     }
 
-    function modalIsShown(el) {
-        return ($(el).data('bs.modal') || {}).isShown;
-    }
-
-    function resizeModal() {
-        var $modal = $('#figureGalleryModal');
-        if (modalIsShown($modal)) {
-            var totalHeight = $(window).height();
-            var padding = 90;
-            var navigationArrowSize = 150;
-            var headerHeight = $modal.find('.modal-header').outerHeight();
-            var modalBody = $modal.find('.modal-body');
-            var modalBackdrop = $modal.find('.modal-backdrop');
-            var modalDialog = $modal.find('.modal-dialog');
-            var modalImage = $modal.find('.figure-gallery-modal-image')[0];
-            var availableHeight = totalHeight - headerHeight - padding;
-            var availableWidth = $(window).width() - padding - navigationArrowSize;
-            var newHeight;
-            if (modalImage.naturalWidth / modalImage.naturalHeight > availableWidth / availableHeight) {
-                newHeight = availableWidth * modalImage.naturalHeight / modalImage.naturalWidth;
-            } else {
-                newHeight = availableHeight;
-            }
-            newHeight = Math.min(newHeight, modalImage.naturalHeight);
-            modalBody.height(newHeight);
-            modalDialog.height(newHeight + headerHeight + 30);
-            modalBackdrop.height(totalHeight);
-        }
-    }
-
-    $('#figureGalleryModal').on('hidden.bs.modal', function () {
-        $('#figureGalleryModal .modal-dialog').empty();
+    var $figureGalleryModal = $('#figureGalleryModal');
+    $figureGalleryModal.on('hidden.bs.modal', function () {
+        $figureGalleryModal.find('.modal-dialog').empty();
     });
 
     <%-- do a little timeout to prevent lots of animating during resize --%>
     var resizeTimer;
     $(window).resize(function () {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(resizeModal, 250);
+        resizeTimer = setTimeout(function () {
+            $figureGalleryModal.figureGalleryResize();
+        }, 250);
     });
 
     function shouldGalleryHeaderBeOpen() {
@@ -543,13 +518,10 @@ $(function () {
                 '&record=' + encodeURIComponent($el.data('result'));
         var prev = $el.prev('.figure-gallery-result-container');
         var next = $el.next('.figure-gallery-result-container');
-        var $modal = $('#figureGalleryModal');
         $.get(summaryUrl, function (data) {
             var content = $(data);
             var loader = content.find('.figure-gallery-modal-loader');
-            if (!modalIsShown($modal)) {
-                $modal.modal();
-            }
+            $figureGalleryModal.modal();
             $(document).off('keydown.figuregallery').on('keydown.figuregallery', function (evt) {
                 switch (evt.which) {
                     case 37: // left
@@ -591,11 +563,11 @@ $(function () {
                         $(this).toggleClass('open');
                         toggleGalleryStorage();
                         content.find('.figure-gallery-modal-details').toggle();
-                        resizeModal();
+                        $figureGalleryModal.figureGalleryResize();
                     });
             content.find('.figure-gallery-modal-image').on('load', function() {
-                $modal.find('.modal-dialog').html(content);
-                resizeModal();
+                $figureGalleryModal.find('.modal-dialog').html(content);
+                $figureGalleryModal.figureGalleryResize();
                 loading.addClass('hidden');
             });
         });

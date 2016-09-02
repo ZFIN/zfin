@@ -63,13 +63,17 @@ public class PublicationDashboardController {
             bean.setAbstractText(history.getPublication().getAbstractText());
             bean.setLastUpdate(history.getDate());
             bean.setPdfPath(history.getPublication().getFileName());
-            List<String> figurePaths = new ArrayList<>();
+            List<DashboardImageBean> images = new ArrayList<>();
             for (Figure figure : history.getPublication().getFigures()) {
                 for (Image image : figure.getImages()) {
-                    figurePaths.add(image.getDisplayedImageFilename());
+                    DashboardImageBean imageBean = new DashboardImageBean();
+                    imageBean.setLabel(figure.getLabel());
+                    imageBean.setFullPath(image.getUrl());
+                    imageBean.setMediumPath(image.getMediumUrl());
+                    images.add(imageBean);
                 }
             }
-            bean.setFigurePaths(figurePaths);
+            bean.setImages(images);
             beans.add(bean);
         }
         return beans;

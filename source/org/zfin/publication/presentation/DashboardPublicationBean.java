@@ -10,7 +10,7 @@ public class DashboardPublicationBean {
     private String citation;
     private String authors;
     private String abstractText;
-    private List<String> figurePaths;
+    private List<DashboardImageBean> images;
     private Calendar lastUpdate;
     private String pdfPath;
 
@@ -54,12 +54,12 @@ public class DashboardPublicationBean {
         this.abstractText = abstractText;
     }
 
-    public List<String> getFigurePaths() {
-        return figurePaths;
+    public List<DashboardImageBean> getImages() {
+        return images;
     }
 
-    public void setFigurePaths(List<String> figurePaths) {
-        this.figurePaths = figurePaths;
+    public void setImages(List<DashboardImageBean> images) {
+        this.images = images;
     }
 
     public Calendar getLastUpdate() {

@@ -10,10 +10,30 @@
             scope: {
                 userId: '@'
             },
+            link: link,
             controller: DashboardBinController,
             controllerAs: 'vm',
             bindToController: true
         };
+
+        function link(scope, elem) {
+            var $modal = $(elem).find('.modal');
+            $modal.find('.figure-gallery-modal-image').on('load', function () {
+                $modal.figureGalleryResize();
+            });
+            $modal.on('hidden.bs.modal', function() {
+                scope.$apply(function () {
+                    scope.vm.modal = null;
+                });
+            });
+            scope.$watch('vm.modal', function (value) {
+                if (value) {
+                    $modal.modal('show');
+                } else {
+                    $modal.modal('hide');
+                }
+            });
+        }
 
         return directive;
     }
@@ -47,9 +67,11 @@
             }
         ];
         vm.sort = vm.sortOrders[0];
+        vm.modal = null;
 
         vm.fetchPubs = fetchPubs;
         vm.claimPub = claimPub;
+        vm.openModal = openModal;
 
         activate();
 
@@ -93,6 +115,15 @@
                 .finally(function () {
                     pub.saving = false;
                 })
+        }
+
+        function openModal(pub, idx) {
+            vm.modal = {
+                pub: pub,
+                image: pub.images[idx],
+                prev: idx > 0 ? idx - 1 : null,
+                next: idx < pub.images.length - 1 ? idx + 1 : null
+            };
         }
 
     }

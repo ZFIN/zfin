@@ -856,7 +856,8 @@ ul.comma-separated > li:last-child:after {
 
 .pub-dashboard img {
     max-height: 100px;
-    margin: 4px 0px;
+    margin: 4px 0;
     border: 1px solid black;
+    cursor: pointer;
 }
 
