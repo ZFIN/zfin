@@ -161,8 +161,7 @@
     </li>
 
     <li>Find cDNAs and ESTs at
-        <a href="http://zgc.nci.nih.gov/">ZGC</a>,
-        <a href="http://compbio.dfci.harvard.edu/tgi/cgi-bin/tgi/gimain.pl?gudb=zfish">ZGI</a>
+        <a href="http://zgc.nci.nih.gov/">ZGC</a>
     </li>
 
     <li>
