@@ -26,16 +26,16 @@ alter table candidate
 alter table genotype
  modify (geno_name_order varchar(255));
 
-alter table sequence_feature_chromosom_location_temp
+alter table sequence_feature_chromosome_location_temp
  modify (sfcl_location_subsource varchar(255));
 
-alter table sequence_feature_chromosom_location_bkup
+alter table sequence_feature_chromosome_location_bkup
  modify (sfcl_location_subsource varchar(255));
 
-alter table sequence_feature_chromosom_location_generated
+alter table sequence_feature_chromosome_location_generated
  modify (sfcl_location_subsource varchar(255));
 
-alter table sequence_feature_chromosom_location_generated_temp
+alter table sequence_feature_chromosome_location_generated_temp
  modify (sfcl_location_subsource varchar(255));
 
 
