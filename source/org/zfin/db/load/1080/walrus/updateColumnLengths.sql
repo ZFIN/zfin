@@ -33,10 +33,10 @@ alter table sequence_feature_chromosome_location_bkup
  modify (sfcl_location_subsource varchar(255));
 
 alter table sequence_feature_chromosome_location_generated
- modify (sfcl_location_subsource varchar(255));
+ modify (sfclg_location_subsource varchar(255));
 
 alter table sequence_feature_chromosome_location_generated_temp
- modify (sfcl_location_subsource varchar(255));
+ modify (sfclg_location_subsource varchar(255));
 
 
 drop table environment_group_member;
