@@ -12,6 +12,7 @@ import org.zfin.expression.ExpressionAssay;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
+import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerType;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
@@ -470,6 +471,9 @@ public interface InfrastructureRepository {
     void deleteMutationDetailAttribution(String zdbID, String publicationZdbID);
 
     EntityZdbID getEntityByID(Class<? extends EntityZdbID> entity, String zdbID);
+
+    void insertMarkerHistory(MarkerHistory history);
+
 }
 
 

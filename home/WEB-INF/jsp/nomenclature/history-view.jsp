@@ -44,15 +44,17 @@
                 <th>Reason</th>
                 <th>Comments</th>
                 <c:forEach var="markerHistory" items="${marker.markerHistory}" varStatus="loop">
-                    <c:if test="${markerHistory.event.toString() ne 'renamed'}">
+                    <c:if test="${markerHistory.event.toString() ne 'renamed' }">
                         <tr id="reduced_${loop.index}">
                             <td id="edit_${loop.index}" style="display: none">
-                                <span ng-click="control.openEditor('${markerHistory.zdbID}','${markerHistory.comments}','${markerHistory.reason.toString()}')"><a
+                                <span ng-click="control.openNomenclatureEditor('${markerHistory.zdbID}','${markerHistory.comments}','${markerHistory.reason.toString()}')"><a
                                         href>Edit</a></span>
                             </td>
                             <td><span class="genedom">${markerHistory.newValue}</span></td>
                             <td>${markerHistory.event.display}</td>
-                            <td><span class="genedom">${markerHistory.oldSymbol}</span></td>
+                            <td>
+                                <span class="genedom">${markerHistory.oldSymbol}</span>
+                            </td>
                             <td><fmt:formatDate value="${markerHistory.date}" pattern="yyyy-MM-dd"/></td>
                             <td>${markerHistory.reason.toString()}
                                 <c:if test="${!empty markerHistory.attributions }">
@@ -73,12 +75,14 @@
                 <c:forEach var="markerHistory" items="${marker.markerHistory}" varStatus="loop">
                     <tr style="display: none" id="all_${loop.index}">
                         <td id="edit_${loop.index}" style="display: none">
-                                <span ng-click="control.openEditor('${markerHistory.zdbID}','${markerHistory.comments}','${markerHistory.reason.toString()}')"><a
+                                <span ng-click="control.openNomenclatureEditor('${markerHistory.zdbID}','${markerHistory.comments}','${markerHistory.reason.toString()}','Nomenclature')"><a
                                         href>Edit</a></span>
                         </td>
                         <td><span class="genedom">${markerHistory.newValue}</span></td>
                         <td>${markerHistory.event.display}</td>
-                        <td><span class="genedom"> ${markerHistory.oldSymbol}</span></td>
+                        <td>
+                            <span class="genedom">${markerHistory.oldSymbol}</span>
+                        </td>
                         <td><fmt:formatDate value="${markerHistory.date}" pattern="yyyy-MM-dd"/></td>
                         <td>${markerHistory.reason.toString()}
                             <c:if test="${!empty markerHistory.attributions }">
@@ -98,59 +102,16 @@
             </table>
         </zfin2:subsection>
 
-        <div id="evidence-modal" class="jq-modal curation">
-            <table>
-                <tr>
-                    <td colspan="2">
-                        <h3> Nomenclature Edit </h3>
-                    </td>
-                    <td><span ng-click="control.reload()" style="cursor: pointer;">X</span></td>
-                </tr>
-                <tr>
-                    <td>ID:</td>
-                    <td>{{control.nomenID}}</td>
-                </tr>
-                <tr>
-                    <td>Reason:</td>
-                    <td>
-                        <select ng-model="control.reason"
-                                ng-options="reas for reas in reasonList"></select>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Comments:</td>
-                    <td><textarea cols="40" ng-model="control.comments">{{control.comments}}</textarea></td>
-                </tr>
-                <tr>
-                    <td>
-                        <button ng-click="control.updateNomenclature()">Update</button>
-                    </td>
-                    <td></td>
-                </tr>
-            </table>
-            <h4>
-                Attributions
-            </h4>
-            <table>
-                <tr ng-repeat="pub in control.publicationDtoList">
-                    <td>{{pub.zdbID}}</td>
-                    <td><a href><img src="/images/delete-button.png" ng-click="control.deleteAttribution(pub.zdbID)"/>
-                    </a></td>
-                </tr>
-            </table>
-            <input size="20" name="publicationID" ng-model="control.publicationID"/>
-            <button ng-click="control.addAttribution()">Add</button>
-            <span class="error" id="errorMessage">{{control.errorMessage}}</span>
-        </div>
+        <zfin2:nomenclature/>
 
         <script>
             function openEditNomenclature(nomenID) {
                 alert("ID: " + nomenID);
                 $('#evidence-modal')
                         .modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false,
+                            escapeClose: true,
+                            clickClose: true,
+                            showClose: true,
                             fadeDuration: 100
                         })
                         .on($.modal.AFTER_CLOSE, function () {

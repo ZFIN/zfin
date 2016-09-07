@@ -26,6 +26,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
+import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerType;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
@@ -1835,6 +1836,13 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     @Override
     public EntityZdbID getEntityByID(Class<? extends EntityZdbID> entity, String zdbID) {
         return (EntityZdbID) HibernateUtil.currentSession().get(entity, zdbID);
+    }
+
+    @Override
+    public void insertMarkerHistory(MarkerHistory history) {
+        Session session = HibernateUtil.currentSession();
+        history.setDate(new Date());
+        session.save(history);
     }
 }
 
