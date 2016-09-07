@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * Simple controller that serves the developer tools home page.
  */
 @org.springframework.stereotype.Controller
-public class HomeController {
+public class DevToolHomeController {
 
     @RequestMapping("devtool/home")
     public String homePage() throws Exception {

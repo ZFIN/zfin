@@ -27,10 +27,13 @@ select distinct mrkr_zdb_id, mrkr_abbrev,0 priority
  	select 1 from ortholog
  	where mrkr_zdb_id  = ortho_zebrafish_gene_zdb_id
  )
- and exists (Select 'x' from feature_marker_relationship, feature
-     	    	    where fmrel_mrkr_Zdb_id = mrkr_zdb_id
-		    and fmrel_ftr_zdb_id = feature_zdb_id
-		    and feature_abbrev like 'sa%')
+--and exists (Select 'x' from feature_marker_relationship, feature
+--    	    	    where fmrel_mrkr_Zdb_id = mrkr_zdb_id
+--		    and fmrel_ftr_zdb_id = feature_zdb_id
+--		    and feature_abbrev like 'sa%')
+and exists (Select 'x' from marker_relationship
+ where mrel_mrkr_1_zdb_id = mrkr_zdb_id
+ and mrel_mrkr_2_zdb_id like 'ZDB-TSCRIPT-160623%'
  into temp tmp_xpat_genes with no log;
 
 ! echo "bump expression pattern priority"

@@ -212,13 +212,19 @@ public class FigureViewService {
 
     /**
      * Sorted/unique list of conditions (experiments) from the expression shown in this Figure
+     * Only lists unique experiments, i.e. experiments with unique experimentCondition objects
      */
     public List<Experiment> getExpressionCondition(Figure figure) {
         List<Experiment> conditions = new ArrayList<>();
-
+        List<String> expConditionUniqueKey = new ArrayList<>();
         for (ExpressionResult expressonResult : figure.getExpressionResults()) {
-            if (canAddExperimentToConditionsList(expressonResult.getExpressionExperiment().getFishExperiment(), conditions)) {
-                conditions.add(expressonResult.getExpressionExperiment().getFishExperiment().getExperiment());
+            FishExperiment fishExperiment = expressonResult.getExpressionExperiment().getFishExperiment();
+            if (canAddExperimentToConditionsList(fishExperiment)) {
+                String key = fishExperiment.getExperiment().getDisplayAllConditions();
+                if (!expConditionUniqueKey.contains(key)) {
+                    conditions.add(fishExperiment.getExperiment());
+                    expConditionUniqueKey.add(key);
+                }
             }
         }
 
@@ -321,20 +327,23 @@ public class FigureViewService {
     public List<Experiment> getPhenotypeCondition(Figure figure) {
         List<Experiment> conditions = new ArrayList<>();
 
+        List<String> expConditionUniqueKey = new ArrayList<>();
         for (PhenotypeWarehouse phenotypeExperiment : phenotypeRepository.getPhenotypeWarehouse(figure.getZdbID())) {
-            if (canAddExperimentToConditionsList(phenotypeExperiment.getFishExperiment(), conditions)) {
-                conditions.add(phenotypeExperiment.getFishExperiment().getExperiment());
+            FishExperiment fishExperiment = phenotypeExperiment.getFishExperiment();
+            if (canAddExperimentToConditionsList(fishExperiment)) {
+                String key = fishExperiment.getExperiment().getDisplayAllConditions();
+                if (!expConditionUniqueKey.contains(key)) {
+                    conditions.add(fishExperiment.getExperiment());
+                    expConditionUniqueKey.add(key);
+                }
             }
         }
-
         Collections.sort(conditions);
         return conditions;
     }
 
-    private boolean canAddExperimentToConditionsList(FishExperiment fishExperiment, List<Experiment> conditions) {
-        return !(fishExperiment == null
-                || fishExperiment.isStandardOrGenericControl()
-                || conditions.contains(fishExperiment.getExperiment()));
+    private boolean canAddExperimentToConditionsList(FishExperiment fishExperiment) {
+        return !(fishExperiment == null || fishExperiment.isStandardOrGenericControl());
     }
 
     /**

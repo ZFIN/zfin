@@ -170,8 +170,8 @@ $sourceType -- the table name containing the source
 
   <?MIVAR>
     <SCRIPT>
-    alert('Required variables are missing.')
-    location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$(IF,$(XST,$returnTo),$returnTo,aa-ZDB_home.apg)")
+    alert('Required variables are missing.');
+    location.replace("/)");
     </SCRIPT>
   <?/MIVAR>
 
@@ -181,8 +181,8 @@ $sourceType -- the table name containing the source
 
   <?MIVAR>
     <SCRIPT>
-    alert('You are not authorized to view the page you requested.')
-    location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$(IF,$(XST,$returnTo),$returnTo,aa-ZDB_home.apg)")
+    alert('You are not authorized to view the page you requested.');
+    location.replace("/");
     </SCRIPT>
   <?/MIVAR>
 

@@ -367,23 +367,6 @@ body.modal-open {
     border-color: #888 !important;
 }
 
-.btn-zfin {
-    color: #FFFFFF;
-    background-color: #066;
-    border-color: #066;
-    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-}
-
-.btn-zfin:hover,
-.btn-zfin:focus,
-.btn-zfin:active,
-.btn-zfin.active,
-.btn-zfin.disabled,
-.btn-zfin[disabled] {
-    color: #FFFFFF;
-    background-color: #004444;
-}
-
 .advanced-text-input {
     width: 600px;
 }

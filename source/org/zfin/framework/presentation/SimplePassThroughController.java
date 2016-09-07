@@ -72,9 +72,5 @@ public class SimplePassThroughController {
         return "image-edit";
     }
 
-    @RequestMapping("/http-redirect")
-    protected String showLookupTestPage(@ModelAttribute("formBean") ApgPaginationBean bean) throws Exception {
-        return "home-page-redirect.page";
-    }
 
 }

@@ -8,7 +8,9 @@ import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.publication.Publication;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @SuppressWarnings({"JpaAttributeMemberSignatureInspection", "JpaAttributeTypeInspection"})
 @Entity

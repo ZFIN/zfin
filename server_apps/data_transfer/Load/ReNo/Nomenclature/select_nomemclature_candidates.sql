@@ -22,9 +22,8 @@ select distinct mrkr_zdb_id, mrkr_abbrev,0 priority
  from marker
  where mrkr_type[1,4] = 'GENE'
  and  mrkr_abbrev like "si:%"  --or mrkr_name like  "% like")
- and (get_date_from_id(mrkr_Zdb_id, "YYYYMMDD") > "20141001"
-     	or exists (Select 'x' from db_link, marker_relationship
-	   	  	  where get_date_from_id(dblink_Zdb_id, "YYYYMMDD") > "20141001"
+ and ( exists (Select 'x' from db_link, marker_relationship
+	   	  	  where get_date_from_id(dblink_Zdb_id, "YYYYMMDD") > "20160622"
 			  and dblink_linked_recid = mrel_mrkr_2_zdb_id
 			  and mrel_mrkr_1_zdb_id = mrkr_zdb_id
 			  and mrel_type = 'gene produces transcript'
@@ -255,7 +254,7 @@ insert into nomenclature_candidate(
 
 
 unload to nomenclature_candidate_pp.unl
- select first 400 *
+ select *
  --nc_mrkr_zdb_id, nc_priority
  from nomenclature_candidate
  where nc_seq_type = 'Polypeptide'
