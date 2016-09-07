@@ -1,16 +1,21 @@
 package org.zfin.marker.presentation;
 
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.zfin.antibody.Antibody;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.marker.Clone;
-import org.zfin.marker.Transcript;
+import org.zfin.marker.*;
+import org.zfin.nomenclature.presentation.Nomenclature;
 import org.zfin.repository.RepositoryFactory;
+
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 /**
  */
@@ -22,7 +27,7 @@ public class MarkerEditController {
 
     @RequestMapping("/marker-edit")
     public String getMarkerEdit(Model model
-            ,@RequestParam("zdbID") String zdbID
+            , @RequestParam("zdbID") String zdbID
     ) throws Exception {
         logger.info("zdbID: " + zdbID);
 
@@ -33,7 +38,7 @@ public class MarkerEditController {
             if (transcript != null) {
                 markerBean.setMarker(transcript);
                 model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
-                model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.TRANSCRIPT.getEditTitleString()+transcript.getAbbreviation());
+                model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.TRANSCRIPT.getEditTitleString() + transcript.getAbbreviation());
                 return "marker/transcript-edit.page";
             }
         }
@@ -44,7 +49,7 @@ public class MarkerEditController {
             if (antibody != null) {
                 markerBean.setMarker(antibody);
                 model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
-                model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.ANTIBODY.getEditTitleString()+antibody.getAbbreviation());
+                model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.ANTIBODY.getEditTitleString() + antibody.getAbbreviation());
                 return "marker/antibody-edit.page";
             }
         }
@@ -55,14 +60,60 @@ public class MarkerEditController {
         if (clone != null) {
             markerBean.setMarker(clone);
             model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
-            model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.CLONE.getEditTitleString()+clone.getAbbreviation());
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.CLONE.getEditTitleString() + clone.getAbbreviation());
             return "marker/clone-edit.page";
         }
 
         model.addAttribute(LookupStrings.ZDB_ID, zdbID);
         return LookupStrings.RECORD_NOT_FOUND_PAGE;
+    }
 
+    @ResponseBody
+    @RequestMapping(value = "edit/{zdbID}", method = RequestMethod.POST)
+    public Boolean editNameAndAbbreviation(@PathVariable String zdbID,
+                                           @RequestBody Nomenclature nomenclature) {
+        Marker marker = getMarkerRepository().getMarkerByID(zdbID);
+        if (marker == null)
+            throw new RuntimeException("No Marker record found");
 
+        Transaction tx = null;
+
+        try {
+            tx = HibernateUtil.createTransaction();
+            MarkerHistory history = new MarkerHistory();
+            history.setComments(nomenclature.getComments());
+            history.setReason(MarkerHistory.Reason.getReason(nomenclature.getReason()));
+            history.setName(nomenclature.getName());
+            history.setMarker(marker);
+            if (nomenclature.isGeneAbbreviationChange()) {
+                history.setEvent(MarkerHistory.Event.REASSIGNED);
+                history.setOldMarkerName(marker.getAbbreviation());
+                history.setSymbol(nomenclature.getAbbreviation());
+                history.setName(marker.getName());
+                MarkerAlias alias = getMarkerRepository().addMarkerAlias(marker, marker.getAbbreviation(), null);
+                history.setMarkerAlias(alias);
+                marker.setAbbreviation(nomenclature.getAbbreviation());
+            } else if (nomenclature.isGeneNameChange()) {
+                history.setEvent(MarkerHistory.Event.RENAMED);
+                history.setOldMarkerName(marker.getName());
+                history.setSymbol(marker.getAbbreviation());
+                history.setName(nomenclature.getName());
+                marker.setName(nomenclature.getName());
+            }
+            getInfrastructureRepository().insertMarkerHistory(history);
+            tx.commit();
+        } catch (Exception e) {
+            try {
+                if (tx != null)
+                    tx.rollback();
+            } catch (HibernateException he) {
+                logger.error("Error during roll back of transaction", he);
+            }
+            logger.error("Error in Transaction", e);
+            throw new RuntimeException("Error during transaction. Rolled back.", e);
+        }
+
+        return true;
     }
 
 }

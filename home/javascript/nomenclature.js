@@ -7,14 +7,77 @@ angular.module('nomenclature', [])
         nomenController.reason;
         nomenController.comments;
         nomenController.publicationID;
+        nomenController.geneNameOrAbbreviation = null;
+        nomenController.hasGeneEdit = false;
+        nomenController.fieldName;
+        nomenController.showAttribution = false;
         nomenController.publicationDtoList = [];
 
         $scope.reasonList = $window.reasonList;
 
         nomenController.updateNomenclature = function () {
-            var parameters = {'comments': nomenController.comments,
-                              'reason':   nomenController.reason}
-            $http.post('/action/nomenclature/update/' + nomenController.nomenID,  parameters)
+//            alert('Field Name: ' + nomenController.fieldName);
+            var parameters = {
+                'comments': nomenController.comments,
+                'reason': nomenController.reason,
+            };
+            if (nomenController.fieldName == 'Nomenclature') {
+                $http.post('/action/nomenclature/update/' + nomenController.nomenID, parameters)
+                    .then(function (success) {
+                        location.reload();
+                    })
+                    .catch(function (error) {
+
+                    });
+            } else {
+                if (nomenController.fieldName == 'Gene Name') {
+                    parameters.name = nomenController.geneNameOrAbbreviation;
+                } else if (nomenController.fieldName == 'Gene Symbol') {
+                    parameters.abbreviation = nomenController.geneNameOrAbbreviation;
+                }
+                $http.post('/action/marker/edit/' + nomenController.nomenID, parameters)
+                    .then(function (success) {
+                        location.reload();
+                    })
+                    .catch(function (error) {
+
+                    });
+
+            }
+
+        };
+
+        nomenController.updateGeneName = function () {
+            var parameters = {
+                'comments': nomenController.comments,
+                'reason': nomenController.reason,
+                'name': nomenController.geneNameOrAbbreviation
+            };
+            $http.post('/action/marker/edit/' + nomenController.nomenID, parameters)
+                .then(function (success) {
+                    location.reload();
+                })
+                .catch(function (error) {
+
+                });
+        };
+
+        nomenController.updateGeneAbbreviation = function () {
+            $http.post('/action/marker/edit/' + nomenController.nomenID, parameters)
+                .then(function (success) {
+                    location.reload();
+                })
+                .catch(function (error) {
+
+                });
+        };
+
+        nomenController.updateMarkerHistory = function () {
+            var parameters = {
+                'comments': nomenController.comments,
+                'reason': nomenController.reason
+            };
+            $http.post('/action/nomenclature/update/' + nomenController.nomenID, parameters)
                 .then(function (success) {
                     location.reload();
                 })
@@ -81,22 +144,38 @@ angular.module('nomenclature', [])
         };
 
 
-        nomenController.openEditor = function (ID, comments, reason) {
+        nomenController.openNomenclatureEditor = function (ID, comments, reason) {
             nomenController.nomenID = ID;
             nomenController.comments = comments;
             nomenController.reason = reason;
+            nomenController.showAttribution = true;
+            nomenController.hasGeneEdit = false;
+            nomenController.fieldName = 'Nomenclature';
             nomenController.fetchAttributions();
+            openEditorPopup();
+        };
+
+        function openEditorPopup() {
             $('#evidence-modal')
                 .modal({
-                    escapeClose: false,
-                    clickClose: false,
-                    showClose: false,
+                    escapeClose: true,
+                    clickClose: true,
+                    showClose: true,
                     fadeDuration: 100
                 })
                 .on($.modal.AFTER_CLOSE, function () {
                 });
         }
 
-    }]);
+        nomenController.openGeneEditor = function (ID, name, type) {
+            nomenController.nomenID = ID;
+            nomenController.fieldName = type;
+            nomenController.geneNameOrAbbreviation = name;
+            nomenController.hasGeneEdit = true;
+            openEditorPopup();
+        }
+
+    }])
+;
 
 
