@@ -7,6 +7,7 @@
      <tr>
      <th>Figure Data:</th>
      </tr>
+          <tr>
      <td>
           <c:if test="${!empty expressionSummaryMap[image.figure].startStage}">
                <div style="margin-top: 1em;">
@@ -14,6 +15,8 @@
                </div>
           </c:if>
      </td>
+          </tr>
+          <tr>
 
       <td>
            <c:if test="${!empty phenotypeSummaryMap[image.figure].fish}">
@@ -24,10 +27,19 @@
 
 
       </td>
+          </tr>
+          <tr>
           <td>
 
                <zfin-figure:constructLinks figure="${image.figure}"/>
           </td>
+          </tr>
+          <tr>
+               <td>
+
+                    <zfin-figure:termLinks image="${image}"/>
+               </td>
+          </tr>
      </table>
 
 
