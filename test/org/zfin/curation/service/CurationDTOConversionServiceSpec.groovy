@@ -6,6 +6,9 @@ import org.zfin.curation.Curation
 import org.zfin.curation.PublicationNote
 import org.zfin.profile.Person
 import org.zfin.publication.Publication
+import org.zfin.publication.PublicationTrackingHistory
+import org.zfin.publication.PublicationTrackingLocation
+import org.zfin.publication.PublicationTrackingStatus
 import spock.lang.Shared
 import spock.lang.Unroll
 
@@ -195,25 +198,27 @@ class CurationDTOConversionServiceSpec extends AbstractZfinIntegrationSpec {
         dto.closedDate == correspondence.giveUpDate
     }
 
-    def "convert Publication to Status DTO"() {
+    def "convert PublicationTrackingHistory to Status DTO"() {
         setup:
-        def pub = new Publication(
-            closeDate: new GregorianCalendar(),
-            indexed: true,
-            indexedDate: new GregorianCalendar(),
-            zdbID: "ZDB-PUB-122334-1",
-            type: Publication.Type.JOURNAL
+        def status = new PublicationTrackingHistory(
+                publication: new Publication(zdbID: "ZDB-PUB-123456-7"),
+                status: new PublicationTrackingStatus(id: 5, type: PublicationTrackingStatus.Type.CURATING, name: "Curating"),
+                location: new PublicationTrackingLocation(id: 2, name: "Bin 2", role: PublicationTrackingLocation.Role.CURATOR),
+                owner: person.patrick,
+                updater: person.monte,
+                date: new GregorianCalendar(2015, 8, 30, 3, 4, 5),
+                isCurrent: true
         )
 
         when:
-        def dto = converter.toCurationStatusDTO(pub)
+        def dto = converter.toCurationStatusDTO(status)
 
         then:
-        dto.closedDate == pub.closeDate
-        dto.indexed == pub.indexed
-        dto.indexedDate == pub.indexedDate
-        dto.pubZdbID == pub.zdbID
-        dto.curationAllowed
+        dto.pubZdbID == status.publication.zdbID
+        dto.updateDate == status.date
+        dto.status == status.status
+        dto.location == status.location
+        dto.owner.zdbID == status.owner.zdbID
     }
 
 }
