@@ -14,13 +14,16 @@ import org.zfin.feature.Feature;
 import org.zfin.figure.presentation.FigureExpressionSummary;
 import org.zfin.figure.presentation.FigurePhenotypeSummary;
 import org.zfin.figure.service.FigureViewService;
+import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
+import org.zfin.marker.Transcript;
 import org.zfin.marker.presentation.GeneBean;
+import org.zfin.marker.presentation.MarkerBean;
 import org.zfin.marker.presentation.MarkerReferenceBean;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.DiseaseAnnotation;
@@ -30,6 +33,7 @@ import org.zfin.orthology.Ortholog;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -320,7 +324,7 @@ public class PublicationViewController {
 
 
         model.addAttribute("image", image);
-        Figure figure=image.getFigure();
+        Figure figure = image.getFigure();
 
        /* List<PhenotypeWarehouse> warehouseList = getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID());
         FigureExpressionSummary expressionSummary = figureViewService.getFigureExpressionSummary(figure);
@@ -344,13 +348,13 @@ public class PublicationViewController {
         model.addAttribute("phenotypeTableRows", phenotypeTableRows);*/
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Image: " + figureViewService.getFullFigureLabel(image.getFigure()));
-        model.addAttribute("expressionGeneList",figureViewService.getExpressionGenes(image.getFigure()));
-        model.addAttribute("antibodyList",figureViewService.getAntibodies(image.getFigure()));
+        model.addAttribute("expressionGeneList", figureViewService.getExpressionGenes(image.getFigure()));
+        model.addAttribute("antibodyList", figureViewService.getAntibodies(image.getFigure()));
         Map<Figure, FigureExpressionSummary> expressionSummaryMap = new HashMap<>();
         Map<Figure, FigurePhenotypeSummary> phenotypeSummaryMap = new HashMap<>();
 
-            expressionSummaryMap.put(figure, figureViewService.getFigureExpressionSummary(figure));
-            phenotypeSummaryMap.put(figure, figureViewService.getFigurePhenotypeSummary(figure));
+        expressionSummaryMap.put(figure, figureViewService.getFigureExpressionSummary(figure));
+        phenotypeSummaryMap.put(figure, figureViewService.getFigurePhenotypeSummary(figure));
 
         model.addAttribute("expressionSummaryMap", expressionSummaryMap);
         model.addAttribute("phenotypeSummaryMap", phenotypeSummaryMap);
@@ -361,5 +365,25 @@ public class PublicationViewController {
         return "figure/image-view.page";
     }
 
-}
+
+    @RequestMapping("/image-edit")
+    public String getImageEdit(Model model,@RequestParam("zdbID") String zdbID) {
+
+        Image image = publicationRepository.getImageById(zdbID);
+        if (image == null) {
+            return null;
+        }
+
+
+        model.addAttribute("image", image);
+        Figure figure = image.getFigure();
+
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Image: " + figureViewService.getFullFigureLabel(image.getFigure()));
+
+                return "figure/image-edit.page";
+            }
+        }
+
+
+
 
