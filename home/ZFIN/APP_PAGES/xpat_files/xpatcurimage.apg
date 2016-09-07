@@ -101,7 +101,7 @@ Message: $MI_ERRORMSG
     </td>
     <td>  
       <?MIVAR COND=$(NC,$xpcurimg_thumbnail,NULL)>
-        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$xpcurimg_image_zdb_id">
+        <a href="/$xpcurimg_image_zdb_id">
         <img src="<!--|IMAGE_LOAD|-->/$xpcurimg_thumbnail"></a>
       <?/MIVAR>
         <input name="xpcur_G_image_label" type=textbox size=5 value="$xpcurimg_image_label">
