@@ -11,7 +11,7 @@
 <c:set var="UNPUBLISHED" value="<%=Publication.Type.UNPUBLISHED %>"/>
 <c:set var="CURATION" value="<%=Publication.Type.CURATION %>"/>
 
-<c:set var="editURL">/<%=ZfinProperties.getWebDriver()%>?MIval=aa-imageview.apg&UPDATE=1&orgOID=&OID=${image.zdbID}</c:set>
+<c:set var="editURL">/action/publication/image-edit?zdbID=${image.zdbID}</c:set>
 <c:set var="deleteURL">/action/infrastructure/deleteRecord/${image.zdbID}</c:set>
 
 
