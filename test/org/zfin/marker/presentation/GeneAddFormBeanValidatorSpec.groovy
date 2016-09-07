@@ -71,7 +71,7 @@ class GeneAddFormBeanValidatorSpec extends AbstractZfinIntegrationSpec {
         Marker.Type.GENEP.name() | "abbreviation already used" | "abbreviation"  | "hoxa10ap"              || "gene.abbreviation.inuse"
         Marker.Type.GENE.name()  | "pub not provided"          | "publicationId" | ""                      || "pub.empty"
         Marker.Type.EFG.name()   | "pub not valid"             | "publicationId" | "ZDB-PUB-111111-111111" || "pub.notfound"
-        Marker.Type.EFG.name()   | "name with gene abbrev"     | "name"          | "pax2a"                 || "gene.name.inuse"
+        Marker.Type.EFG.name()   | "name with gene abbrev"     | "name"          | "paired box 2a"         || "gene.name.inuse"
         Marker.Type.GENE.name()  | "abbrev with upper case"    | "abbreviation"  | "LoLz1"                 || "gene.abbreviation.invalidcharacters"
     }
 
