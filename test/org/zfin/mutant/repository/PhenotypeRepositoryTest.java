@@ -461,7 +461,6 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
     }
 
     @Test
-    @Ignore("Needs to run with -XX:useSplitVerifier until we switch over to Java 8. Ignoring for now.")
     public void getPhenotypeStatementWarehouse() {
         String ID = "68641";
         PhenotypeStatementWarehouse psw = (PhenotypeStatementWarehouse) HibernateUtil.currentSession().get(PhenotypeStatementWarehouse.class, 68641L);
