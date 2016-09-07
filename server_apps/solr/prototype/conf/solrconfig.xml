@@ -1019,7 +1019,10 @@
             <str name="echoParams">explicit</str>
             <str name="wt">json</str>
             <str name="indent">true</str>
-            <str name="fl">id,name,type</str>
+
+            <str name="rows">20</str>
+
+            <!-- name searching gets fancy sorting in the controller -->
 
             <str name="sort">name_sort asc</str>
 

@@ -1,6 +1,4 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ tag import="org.zfin.framework.presentation.LookupStrings" %>
-<%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 
 <%@attribute name="criteria" type="org.zfin.search.presentation.MarkerSearchCriteria" required="true" %>
 
@@ -9,12 +7,7 @@
 <link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css">
 
 
-<%--<form:form method="get" action="search-results" commandName="criteria" name="markersearchform">--%>
-
-
-
-
-<div class="search-form-top-bar" style="margin: .25em">
+<div class="search-form-top-bar">
     <div class="search-form-title" style="display: inline-block;">
         Search for Genes / Markers / Clones
     </div>

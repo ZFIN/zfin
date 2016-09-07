@@ -26,6 +26,8 @@ public class MarkerSearchCriteria {
     private List<String> typeOptions;
     private List<String> chromosomeOptions;
 
+    private Boolean searchHappened;
+
     public String getName() {
         return name;
     }
@@ -122,6 +124,14 @@ public class MarkerSearchCriteria {
         this.rows = rows;
     }
 
+    public Boolean getSearchHappened() {
+        return searchHappened;
+    }
+
+    public void setSearchHappened(Boolean searchHappened) {
+        this.searchHappened = searchHappened;
+    }
+
     public Boolean isGenedomResult() {
         //we don't store the display name in the Marker.Type enum...maybe we should?
         if (StringUtils.equals(displayType, "Gene") || StringUtils.equals(displayType, "Pseudogene")) {
@@ -134,7 +144,9 @@ public class MarkerSearchCriteria {
         if (StringUtils.equals(displayType, "BAC")
             || StringUtils.equals(displayType, "PAC")
             || StringUtils.equals(displayType, "Fosmid")
-            || StringUtils.equals(displayType, "STS")) {
+            || StringUtils.equals(displayType, "STS")
+            || StringUtils.equals(displayType, "EST")
+            || StringUtils.equals(displayType, "cDNA")) {
             return true;
         }
         return false;

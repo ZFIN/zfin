@@ -34,7 +34,12 @@
     </div>
 </c:if>
 
-<%--todo: handle 0 results --%>
+<c:if test="${criteria.searchHappened && empty criteria.results && empty criteria.typesFound}">
+    <div class="no-results-found-message">
+        No results were found matching your query.
+    </div>
+</c:if>
+
 
 <c:if test="${!empty criteria.results && !empty criteria.displayType}">
 

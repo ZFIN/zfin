@@ -105,6 +105,14 @@ public class MarkerSearchService {
             criteria.setSelectedType(criteria.getDisplayType());
         }
 
+        //sorting, handled here so that the name query can be dropped in
+        if (StringUtils.isNotEmpty(criteria.getName())) {
+            String symbolMatch = "mul(termfreq(name, '" + SolrService.luceneEscape(criteria.getName()) + "'),1000)";
+            String alphaRank = "scale(rord(name_sort),1,100)";
+            String computedScore = "sum(" + symbolMatch + "," + alphaRank + ")";
+
+            query.setSort(computedScore, SolrQuery.ORDER.desc);
+        }
 
 
         // pagination
@@ -130,6 +138,7 @@ public class MarkerSearchService {
             criteria.setNumFound((long)0);
         }
 
+        criteria.setResults(results);
 
         for( SolrDocument doc : solrDocumentList) {
             MarkerSearchResult result = buildResult(doc);
@@ -146,11 +155,11 @@ public class MarkerSearchService {
             criteria.setDisplayType(criteria.getTypesFound().iterator().next().getName());
         }
 
-        criteria.setResults(results);
         return criteria;
     }
 
     public String buildQuery(MarkerSearchCriteria criteria, SolrQuery query) {
+
         StringBuilder q = new StringBuilder();
 
         if (StringUtils.isNotEmpty(criteria.getName())) {

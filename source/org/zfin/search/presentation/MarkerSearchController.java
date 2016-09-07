@@ -38,8 +38,6 @@ public class MarkerSearchController {
     @RequestMapping(value = "/search")
     public String search(Model model) {
 
-        //todo: a solr query to fetch type & chromosome lists?  or that's an api call too...?
-
         MarkerSearchCriteria criteria = new MarkerSearchCriteria();
         criteria.setPage(1);
         criteria.setRows(20);
@@ -66,6 +64,8 @@ public class MarkerSearchController {
         if (criteria.getNumFound() != null && criteria.getNumFound() > 0) {
             model.addAttribute("paginationBean", generatePaginationBean(criteria, request.getQueryString()));
         }
+
+        criteria.setSearchHappened(true);
 
         return "search/marker-search-results.page";
     }

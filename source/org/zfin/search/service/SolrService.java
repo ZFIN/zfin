@@ -773,6 +773,9 @@ public class SolrService {
 
 
     public static String luceneEscape(String value) {
+        if (StringUtils.isEmpty(value)) {
+            return value;
+        }
         String escaped = LUCENE_PATTERN.matcher(value).replaceAll(REPLACEMENT_STRING);
         return escaped;
     }
