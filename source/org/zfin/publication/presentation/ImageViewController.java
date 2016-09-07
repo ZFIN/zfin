@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.figure.presentation.*;
+import org.zfin.figure.repository.FigureRepository;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mutant.PhenotypeWarehouse;
@@ -39,11 +40,13 @@ public class ImageViewController {
 
     @Autowired
     private PublicationRepository publicationRepository;
+    @Autowired
+    private FigureRepository figureRepository;
 
     @Autowired
     private OntologyRepository ontologyRepository;
 
-   /* @RequestMapping("/view/{zdbID}")
+    /*@RequestMapping("/view/{zdbID}")
     public String getImageView(Model model, @PathVariable("zdbID") String zdbID) {
 
         Image image = publicationRepository.getImageById(zdbID);
@@ -54,7 +57,7 @@ public class ImageViewController {
 
         model.addAttribute("image", image);
 
-       *//* List<PhenotypeWarehouse> warehouseList = getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID());
+       /*//* List<PhenotypeWarehouse> warehouseList = getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID());
         FigureExpressionSummary expressionSummary = figureViewService.getFigureExpressionSummary(figure);
         model.addAttribute("expressionSummary", expressionSummary);
         model.addAttribute("phenotypeSummary", figureViewService.getFigurePhenotypeSummary(figure));
@@ -73,21 +76,21 @@ public class ImageViewController {
         model.addAttribute("showAntibodyQualifierColumn", figureViewService.showAntibodyQualifierColumn(antibodyTableRows));
 
         List<PhenotypeTableRow> phenotypeTableRows = figureViewService.getPhenotypeTableRows(warehouseList);
-        model.addAttribute("phenotypeTableRows", phenotypeTableRows);*//*
+        model.addAttribute("phenotypeTableRows", phenotypeTableRows);*//**//*
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Image: " + figureViewService.getFullFigureLabel(image.getFigure()));
         model.addAttribute("expressionGeneList",figureViewService.getExpressionGenes(image.getFigure()));
         model.addAttribute("antibodyList",figureViewService.getAntibodies(image.getFigure()));
 
-       *//* model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(figure.getPublication()));
-        model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(figure.getPublication()));*//*
+       /*//* model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(figure.getPublication()));
+        model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(figure.getPublication()));
 
         return "image/image-view.page";
     }*/
 
 
 
-    /*@RequestMapping("/publication/image-popup/{zdbID}")
+    @RequestMapping("/publication/image-popup/{zdbID}")
     public String updateOrthologyNote(@PathVariable String zdbID,
                                       @ModelAttribute("formBean") ImageViewBean form) throws Exception {
         LOG.info("Start Image View Controller");
@@ -101,8 +104,8 @@ public class ImageViewController {
         form.setExpressionGenes(figureViewService.getExpressionGenes(image.getFigure()));
         return "image-popup.page";
     }
-*/
-   /* @RequestMapping("/image/{zdbID}/summary")
+
+    @RequestMapping("/image/{zdbID}/summary")
     public String getImageSummaryPopup(Model model,
                                        @PathVariable("zdbID") String zdbID,
                                        @RequestParam(required = false) String category,
@@ -150,6 +153,6 @@ public class ImageViewController {
 
         model.addAttribute("bean", bean);
         return "figure/figure-summary.fragment";
-    }*/
+    }
 
 }
