@@ -49,28 +49,3 @@
     </table>
 </div>
 
-
-
-
-<%--
-
-
-<div class="zdbhome-container">
-    <div class="container-fluid zdbhome-container-inner">
-        <div class="row">
-            <div class="col-sm-12 center">
-                <zfin2:homeSearchSection/>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-6">
-                <zfin2:homePrimarySection/>
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-6">
-                <zfin2:homeSecondarySection/>
-            </div>
-        </div>
-
-
-    </div>
-</div>--%>
