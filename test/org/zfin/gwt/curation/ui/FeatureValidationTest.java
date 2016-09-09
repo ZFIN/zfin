@@ -47,36 +47,6 @@ public class FeatureValidationTest {
         Assert.assertEquals("d"+testLabPrefix+testLineNumber,FeatureValidationService.getAbbreviationFromName(featureDTO)) ;
     }
 
-    @Test
-    @Ignore("broken")
-    public void transgenicInsertion(){
-        featureDTO.setFeatureType(FeatureTypeEnum.TRANSGENIC_INSERTION);
-        Assert.assertEquals(testFeatureName + testLabPrefix+testLineNumber, FeatureValidationService.generateFeatureDisplayName(featureDTO)) ;
-        Assert.assertEquals(testLabPrefix+testLineNumber,FeatureValidationService.getAbbreviationFromName(featureDTO)) ;
-        featureDTO.setName(FeatureValidationService.generateFeatureDisplayName(featureDTO)) ;
-        Assert.assertEquals(testFeatureName,FeatureValidationService.getNameFromFullName(featureDTO)) ;
-        Assert.assertEquals(testLabPrefix+testLineNumber,FeatureValidationService.getAbbreviationFromName(featureDTO)) ;
-        featureDTO.setDominant(true);
-        Assert.assertEquals("d"+testFeatureName + testLabPrefix+testLineNumber, FeatureValidationService.generateFeatureDisplayName(featureDTO)) ;
-        featureDTO.setName(FeatureValidationService.generateFeatureDisplayName(featureDTO)) ;
-        Assert.assertEquals(testFeatureName,FeatureValidationService.getNameFromFullName(featureDTO)) ;
-        Assert.assertEquals("d"+testLabPrefix+testLineNumber,FeatureValidationService.getAbbreviationFromName(featureDTO)) ;
-        featureDTO.setKnownInsertionSite(true);
-        Assert.assertEquals("d"+testLabPrefix+testLineNumber+testSuffixType, FeatureValidationService.generateFeatureDisplayName(featureDTO)) ;
-        featureDTO.setName(FeatureValidationService.generateFeatureDisplayName(featureDTO)) ;
-        Assert.assertEquals(null,FeatureValidationService.getNameFromFullName(featureDTO)) ;
-        Assert.assertEquals("d"+testLabPrefix+testLineNumber+testSuffixType,FeatureValidationService.getAbbreviationFromName(featureDTO)) ;
-        featureDTO.setKnownInsertionSite(false);
-        featureDTO.setDominant(false);
-        featureDTO.setKnownInsertionSite(false);
-        featureDTO.setFeatureType(FeatureTypeEnum.UNSPECIFIED);
-        Assert.assertEquals(testFeatureName+unspecifiedSuffix, FeatureValidationService.generateFeatureDisplayName(featureDTO)) ;
-        Assert.assertEquals(testFeatureName+unspecifiedSuffix,FeatureValidationService.getAbbreviationFromName(featureDTO)) ;
-        featureDTO.setName(FeatureValidationService.generateFeatureDisplayName(featureDTO)) ;
-        Assert.assertEquals(testFeatureName,FeatureValidationService.getNameFromFullName(featureDTO)) ;
-        Assert.assertEquals(testFeatureName+unspecifiedSuffix,FeatureValidationService.getAbbreviationFromName(featureDTO)) ;
-    }
-
     /**
      * All of these are handled the same with similar interface behavior, so just one test needed.
      */
@@ -93,25 +63,6 @@ public class FeatureValidationTest {
         featureDTO.setName(FeatureValidationService.generateFeatureDisplayName(featureDTO)) ;
         Assert.assertEquals(testFeatureName,FeatureValidationService.getNameFromFullName(featureDTO)) ;
         Assert.assertEquals("d"+testLabPrefix+testLineNumber,FeatureValidationService.getAbbreviationFromName(featureDTO)) ;
-    }
-
-    @Test
-    @Ignore("broken")
-    public void harderTransgenicInsertionProblem(){
-        featureDTO.setFeatureType(FeatureTypeEnum.TRANSGENIC_INSERTION);
-        testFeatureName = "Tg(-1.0CaTuba1:GFP)ma1234" ;
-        featureDTO.setOptionalName(testFeatureName);
-        Assert.assertEquals(testFeatureName + testLabPrefix+testLineNumber, FeatureValidationService.generateFeatureDisplayName(featureDTO)) ;
-        Assert.assertEquals(testLabPrefix+testLineNumber,FeatureValidationService.getAbbreviationFromName(featureDTO)) ;
-        featureDTO.setName(FeatureValidationService.generateFeatureDisplayName(featureDTO)) ;
-        Assert.assertEquals(testFeatureName,FeatureValidationService.getNameFromFullName(featureDTO)) ;
-        Assert.assertEquals(testLabPrefix+testLineNumber,FeatureValidationService.getAbbreviationFromName(featureDTO)) ;
-        featureDTO.setDominant(true);
-        Assert.assertEquals("d"+testFeatureName + testLabPrefix+testLineNumber, FeatureValidationService.generateFeatureDisplayName(featureDTO)) ;
-        featureDTO.setName(FeatureValidationService.generateFeatureDisplayName(featureDTO)) ;
-        Assert.assertEquals(testFeatureName,FeatureValidationService.getNameFromFullName(featureDTO)) ;
-        Assert.assertEquals("d"+testLabPrefix+testLineNumber,FeatureValidationService.getAbbreviationFromName(featureDTO)) ;
-
     }
 
     // test against:  spl: checkFeatureAbbrev
