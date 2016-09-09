@@ -198,24 +198,6 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         assertNotNull(term);
     }
 
-    /**
-     * 'decreased age' should not be part of the process slim, ensuring that children from the
-     * 'normal' term and relationship type 'decreased_in_magnitude_relative_to' are not included
-     * int the slim built.
-     * <p/>
-     * The same pertains to 'decreased rate' which should not be part of the object slim.
-     * Just two examples.
-     */
-    @Test
-    @Ignore("This test currently does not work due to FogBugz case 7669")
-    public void noRelativeRelationshipBelowNormalTermInQualityProcessOntology() {
-        // 'normal' term should be excluded in the process and object slim of PATO
-        TermDTO term = ontologyManager.getTermByID(QUALITY_TERM_DECREASED_AGE, OntologyDTO.QUALITY_PROCESSES);
-        assertNull("'decreased age' should not be part of the process slim", term);
-        term = ontologyManager.getTermByID(QUALITY_TERM_DECREASED_RATE, OntologyDTO.QUALITY_QUALITIES);
-        assertNull("'decreased rate' should not be part of the object slim", term);
-    }
-
     @Test
     public void loadAllTermsFromFiles() throws Exception {
         OntologyManager manager = OntologyManager.getInstanceFromFile(OntologyDTO.QUALITY);
