@@ -2147,7 +2147,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         }
 
         if (location != null) {
-            criteria.add(Restrictions.eq("location", getPublicationTrackingLocation(location)));
+            if (location == 0) {
+                criteria.add(Restrictions.isNull("location"));
+            } else {
+                criteria.add(Restrictions.eq("location", getPublicationTrackingLocation(location)));
+            }
         }
 
         if (StringUtils.isNotEmpty(owner)) {

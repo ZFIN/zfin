@@ -13,6 +13,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.PublicationTrackingHistory;
+import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.publication.repository.PublicationRepository;
 
 import java.util.ArrayList;
@@ -33,25 +34,35 @@ public class PublicationDashboardController {
     @Autowired
     CurationDTOConversionService converter;
 
-    @RequestMapping("/bins")
-    public String showPublicationBins(Model model) {
-        model.addAttribute("curatingStatus", publicationRepository.getPublicationStatusByName("Curating"));
-        model.addAttribute("currentUser", ProfileService.getCurrentSecurityUser());
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication Bins");
-        return "publication/publication-bins.page";
+    @RequestMapping("/curating-bin")
+    public String showReadyForCurationBin(Model model) {
+        return showBin(model,
+                publicationRepository.getPublicationStatusByName("Ready for Curation"),
+                publicationRepository.getPublicationStatusByName("Curating"),
+                "publication/curating-bin.page");
     }
 
-    @RequestMapping("/indexing-dashboard")
-    public String showIndexerDashboard(Model model) {
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Indexing Dashboard");
-        return "publication/indexing-dashboard.page";
+    @RequestMapping("/indexing-bin")
+    public String showReadyForIndexingBin(Model model) {
+        return showBin(model,
+                publicationRepository.getPublicationStatusByName("Ready for Indexing"),
+                publicationRepository.getPublicationStatusByName("Indexing"),
+                "publication/indexing-bin.page");
     }
 
-    @RequestMapping("/curating-dashboard")
-    public String showCuratorDashboad(Model model) {
+    private String showBin(Model model, PublicationTrackingStatus current, PublicationTrackingStatus next, String view) {
+        model.addAttribute("currentStatus", current);
+        model.addAttribute("nextStatus", next);
         model.addAttribute("currentUser", ProfileService.getCurrentSecurityUser());
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Curating Dashboard");
-        return "publication/curating-dashboard.page";
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, current.getName() + " Publications");
+        return view;
+    }
+
+    @RequestMapping("/dashboard")
+    public String showUserDashboad(Model model) {
+        model.addAttribute("currentUser", ProfileService.getCurrentSecurityUser());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication Dashboard");
+        return "publication/dashboard.page";
     }
 
     @ResponseBody

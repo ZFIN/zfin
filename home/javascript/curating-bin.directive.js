@@ -1,18 +1,19 @@
 ;(function () {
     angular
         .module('app')
-        .directive('dashboardBin', dashboardBin);
+        .directive('curatingBin', curatingBin);
 
-    function dashboardBin() {
+    function curatingBin() {
         var directive = {
             restrict: 'EA',
-            templateUrl: '/templates/dashboard-bin.directive.html',
+            templateUrl: '/templates/curating-bin.directive.html',
             scope: {
                 userId: '@',
-                statusId: '@'
+                currentStatus: '@',
+                nextStatus: '@'
             },
             link: link,
-            controller: DashboardBinController,
+            controller: CuratingBinController,
             controllerAs: 'vm',
             bindToController: true
         };
@@ -39,12 +40,11 @@
         return directive;
     }
 
-    DashboardBinController.$inject = ['PublicationService'];
-    function DashboardBinController(PublicationService) {
+    CuratingBinController.$inject = ['PublicationService'];
+    function CuratingBinController(PublicationService) {
         var vm = this;
 
         vm.loading = true;
-        vm.allPubs = [];
         vm.pubs = [];
         vm.searchTerm = '';
         vm.locations = [];
@@ -79,7 +79,7 @@
         function activate() {
             PublicationService.getLocations()
                 .then(function (response) {
-                    vm.locations = response.data.filter(function (loc) { return loc.role === 'CURATOR'; });
+                    vm.locations = response.data;
                     vm.location = vm.locations[0];
                     fetchPubs();
                 })
@@ -87,10 +87,14 @@
 
         function fetchPubs() {
             vm.loading = true;
-            PublicationService.getPubsInBin(vm.location, vm.sort)
+            var query = {
+                status: vm.currentStatus,
+                location: vm.location ? vm.location.id : '',
+                sort: vm.sort.value
+            };
+            PublicationService.searchPubStatus(query)
                 .then(function (response) {
-                    vm.allPubs = response.data;
-                    vm.pubs = vm.allPubs;
+                    vm.pubs = response.data;
                 })
                 .finally(function () {
                     vm.loading = false;
@@ -101,7 +105,7 @@
             pub.saving = true;
             var status = {
                 pubZdbID: pub.zdbId,
-                status: { id: vm.statusId },
+                status: { id: vm.nextStatus },
                 location: null,
                 owner: { zdbID: vm.userId }
             };
