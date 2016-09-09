@@ -277,6 +277,10 @@ public abstract class EntityPresentation {
         return sb.toString();
     }
 
+    protected static String getSpanTagWithID(String cssClassName, String title, String name, String id) {
+        return "<span class=\"" + cssClassName + "\" title=\"" + replaceSupTags(title) + "\" id=\"" + id + "\">" + name + "</span>";
+    }
+
     public static String replaceSupTags(String title) {
         title = title.replaceAll("<sup>", " [");
         title = title.replaceAll("</sup>", "]");
