@@ -30,11 +30,7 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
-import java.util.Set;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -274,24 +270,6 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         }
     }
 
-    @Ignore("this causes informix problems, and the feature was taken out of production")
-    @Test
-    public void regenGenofigGenotype() {
-        Fish fish = getMutantRepository().getFish("ZDB-FISH-150901-19724");
-        Set<FishExperiment> fishExperiments = fish.getFishExperiments();
-        assertThat(fishExperiments, not(empty()));
-
-        Set<PhenotypeExperiment> phenoExperiments = fishExperiments.iterator().next().getPhenotypeExperiments();
-        assertThat(phenoExperiments, not(empty()));
-
-        PhenotypeExperiment phenox = phenoExperiments.iterator().next();
-
-        HibernateUtil.createTransaction();
-        getPhenotypeRepository().runRegenGenotypeFigureScript(phenox);
-        HibernateUtil.flushAndCommitCurrentSession();
-
-    }
-
     @Test
     public void createPatoRecord() {
         String expressionExperimentID = "ZDB-XPAT-081003-1";
@@ -474,10 +452,10 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         assertNotNull(list);
     }
 
-   @Test
+    @Test
     public void getAllPhenotypeStatementsForSTR() {
-       //SequenceTargetingReagent reagent = getMarkerRepository().getSequenceTargetingReagent("ZDB-MRPHLNO-070126-7 ");
-       SequenceTargetingReagent reagent = getMarkerRepository().getSequenceTargetingReagent("ZDB-TALEN-160126-1");
+        //SequenceTargetingReagent reagent = getMarkerRepository().getSequenceTargetingReagent("ZDB-MRPHLNO-070126-7 ");
+        SequenceTargetingReagent reagent = getMarkerRepository().getSequenceTargetingReagent("ZDB-TALEN-160126-1");
         List<PhenotypeStatementWarehouse> list = getPhenotypeRepository().getAllPhenotypeStatementsForSTR(reagent);
         assertNotNull(list);
     }

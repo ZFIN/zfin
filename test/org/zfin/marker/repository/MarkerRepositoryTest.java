@@ -190,9 +190,9 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(gene);
         Set<MarkerHistory> markerHistory = gene.getMarkerHistory();
         assertNotNull(markerHistory);
-        for(MarkerHistory history : markerHistory){
+        for (MarkerHistory history : markerHistory) {
             // make sure that this event has an attribution
-            if(history.getZdbID().equals("ZDB-NOMEN-030723-28"))
+            if (history.getZdbID().equals("ZDB-NOMEN-030723-28"))
                 assertNotNull(history.getAttributions());
         }
     }
@@ -213,8 +213,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
             assertTrue(mhist.getReason().equals(MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES));
             assertNotNull(mhist.getMarkerAlias());
             assertNotNull(infrastructureRepository.getRecordAttribution(
-                    mhist.getMarkerAlias().getZdbID(),
-                    publication.getZdbID(), null)
+                            mhist.getMarkerAlias().getZdbID(),
+                            publication.getZdbID(), null)
             );
         } finally {
             // rollback on success or exception
@@ -688,15 +688,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         MiniGeneController miniGeneController = new MiniGeneController();
         Model model = new ExtendedModelMap();
         miniGeneController.getMiniGeneView(model, "ZDB-GENE-990603-12", null, null, null);
-    }
-
-    @Test
-    @Ignore("this is a destructive test, so don't want to run")
-    public void deleteMarker() throws Exception {
-        DeleteMarkerController deleteMarkerController = new DeleteMarkerController();
-        DeleteBean deleteBean = new DeleteBean();
-        deleteBean.setZdbIDToDelete("ZDB-ATB-081002-17");
-        deleteMarkerController.deleteMarker("ZDB-SNP-060626-88", deleteBean);
     }
 
     @Test
