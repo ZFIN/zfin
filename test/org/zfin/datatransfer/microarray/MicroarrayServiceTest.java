@@ -48,7 +48,6 @@ public class MicroarrayServiceTest extends AbstractDatabaseTest{
 
 
     @Test
-    @Ignore("broken")
     public void findGeoLinkForNCBI(){
         Marker m ;
         m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-EST-010427-5"); // af086761
@@ -66,8 +65,6 @@ public class MicroarrayServiceTest extends AbstractDatabaseTest{
         m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-110207-1"); // agbl1
         assertNotNull(m);
         assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
-        HibernateUtil.currentSession().flush();
-        assertNotNull(expressionService.getGeoLinkForMarkerIfExists(m));
     }
 
     @Test
