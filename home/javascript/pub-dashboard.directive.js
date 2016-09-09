@@ -1,17 +1,17 @@
 ;(function () {
     angular
         .module('app')
-        .directive('dashboardCurating', dashboardCurating);
+        .directive('pubDashboard', pubDashboard);
 
-    function dashboardCurating() {
+    function pubDashboard() {
         var directive = {
             restrict: 'EA',
-            templateUrl: '/templates/dashboard-curating.directive.html',
+            templateUrl: '/templates/pub-dashboard.directive.html',
             scope: {
                 userId: '@'
             },
             link: link,
-            controller: DashboardCuratingController,
+            controller: PubDashboardController,
             controllerAs: 'vm',
             bindToController: true
         };
@@ -26,8 +26,8 @@
         return directive;
     }
 
-    DashboardCuratingController.$inject = ['PublicationService', 'ZfinUtils'];
-    function DashboardCuratingController(PublicationService, zf) {
+    PubDashboardController.$inject = ['PublicationService', 'ZfinUtils'];
+    function PubDashboardController(PublicationService, zf) {
         var vm = this;
 
         vm.loading = true;
