@@ -37,14 +37,19 @@ angular.module('nomenclature', [])
                 }
                 $http.post('/action/marker/edit/' + nomenController.nomenID, parameters)
                     .then(function (success) {
-                        location.reload();
+                        if (nomenController.fieldName == 'Gene Name') {
+                            $("#markerName").text(parameters.name)
+                        } else if (nomenController.fieldName == 'Gene Symbol') {
+                            $("#markerAbbreviation").text(parameters.abbreviation)
+                        }
+                        $('#evidence-modal').modal('hide');
+                        $('#markerName').click();
                     })
                     .catch(function (error) {
 
                     });
 
             }
-
         };
 
         nomenController.updateGeneName = function () {
@@ -175,7 +180,6 @@ angular.module('nomenclature', [])
             openEditorPopup();
         }
 
-    }])
-;
+    }]);
 
 

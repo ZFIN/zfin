@@ -10,7 +10,7 @@
 <script src="/javascript/nomenclature.js" type="text/javascript"></script>
 
 <script>
-    var reasonList = new Array();
+    var reasonList = [];
     <c:forEach items="${gene.markerHistory.iterator().next().reasonArray}" var="reason" varStatus="status">
     reasonList.push('${reason.toString()}');
     </c:forEach>
@@ -21,10 +21,13 @@
         <table class="primary-entity-attributes">
             <tr>
                 <th><span class="name-label">${gene.markerType.displayName} Name:</span></th>
-                <td><span class="name-value"><zfin:name entity="${gene}"/></span>
+                <td>
+                    <span class="name-value"><zfin:name entity="${gene}"/></span>
                 <span style="cursor: pointer;"
                       ng-click="control.openGeneEditor('${gene.zdbID}','${gene.name}', 'Gene Name')">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i></span></td>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red"></i>
+                </span>
+                </td>
             </tr>
             <tr>
                 <th><span class="name-label">${gene.markerType.displayName} Symbol:</span></th>
@@ -32,7 +35,7 @@
                     <span class="name-value"><zfin:abbrev entity="${gene}"/></span>
                     <span style="cursor: pointer;"
                           ng-click="control.openGeneEditor('${gene.zdbID}','${gene.abbreviation}', 'Gene Symbol')">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i></span>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red"></i></span>
                 </td>
             </tr>
 
