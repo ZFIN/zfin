@@ -38,9 +38,9 @@
         vm.hasTopics = hasTopics;
         vm.updateStatus = updateStatus;
         vm.readyToSave = readyToSave;
-        vm.statusNeedsOwner = statusNeedsOwner;
-        vm.statusNeedsLocation = statusNeedsLocation;
-        vm.statusHasPriority = statusHasPriority;
+        vm.statusNeedsOwner = PublicationService.statusNeedsOwner;
+        vm.statusNeedsLocation = PublicationService.statusNeedsLocation;
+        vm.statusHasPriority = PublicationService.statusHasPriority;
         vm.reset = reset;
 
         activate();
@@ -52,12 +52,11 @@
                 });
             PublicationService.getLocations()
                 .then(function (response) {
-                    vm.locations = response.data.filter(function (item) {
-                        return item.role === 'CURATOR';
-                    });
-                    vm.priorities = response.data.filter(function (item) {
-                        return item.role === 'INDEXER';
-                    });
+                    vm.locations = response.data;
+                });
+            PublicationService.getPriorities()
+                .then(function (response) {
+                    vm.priorities = response.data;
                 });
             PublicationService.getCurators()
                 .then(function (response) {
@@ -73,13 +72,13 @@
             }
             // TODO: this is a lot of crazy logic -- can it be simplified?
             var statusChanged = !vm.original || vm.current.status.id !== vm.original.status.id;
-            if (statusNeedsLocation(vm.current.status) || (!statusChanged && statusHasPriority(vm.current.status))) {
+            if (vm.statusNeedsLocation(vm.current.status) || (!statusChanged && vm.statusHasPriority(vm.current.status))) {
                 if (!vm.original.location) {
                     return vm.current.location;
                 }
                 return vm.current.location && (statusChanged || vm.current.location.id !== vm.original.location.id);
             }
-            if (statusNeedsOwner(vm.current.status)) {
+            if (vm.statusNeedsOwner(vm.current.status)) {
                 if (!vm.original.owner) {
                     return vm.current.owner;
                 }
@@ -104,10 +103,10 @@
                         vm.processing = false;
                     });
             } else {
-                if (!statusNeedsLocation(vm.current.status) && !statusHasPriority(vm.current.status)) {
+                if (!vm.statusNeedsLocation(vm.current.status) && !vm.statusHasPriority(vm.current.status)) {
                     vm.current.location = null;
                 }
-                if (!statusNeedsOwner(vm.current.status)) {
+                if (!vm.statusNeedsOwner(vm.current.status)) {
                     vm.current.owner = null;
                 }
                 if (!vm.current.pubZdbID) {
@@ -131,19 +130,6 @@
 
         function hasTopics() {
             return vm.topics.some(function (t) { return t.dataFound; });
-        }
-
-        function statusNeedsOwner(status) {
-            var type = zf.get(status, 'type');
-            return type === 'CURATING' || type === 'WAIT';
-        }
-
-        function statusNeedsLocation(status) {
-            return zf.get(status, 'type') === 'READY_FOR_CURATION';
-        }
-
-        function statusHasPriority(status) {
-            return zf.get(status, 'type') === 'READY_FOR_INDEXING';
         }
 
         function reset() {

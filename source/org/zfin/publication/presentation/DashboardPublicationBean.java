@@ -1,6 +1,8 @@
 package org.zfin.publication.presentation;
 
-import java.util.Calendar;
+import org.zfin.curation.presentation.CurationStatusDTO;
+import org.zfin.publication.PublicationTrackingHistory;
+
 import java.util.List;
 
 public class DashboardPublicationBean {
@@ -11,8 +13,8 @@ public class DashboardPublicationBean {
     private String authors;
     private String abstractText;
     private List<DashboardImageBean> images;
-    private Calendar lastUpdate;
     private String pdfPath;
+    private CurationStatusDTO status;
 
     public String getZdbId() {
         return zdbId;
@@ -62,19 +64,19 @@ public class DashboardPublicationBean {
         this.images = images;
     }
 
-    public Calendar getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(Calendar lastUpdate) {
-        this.lastUpdate = lastUpdate;
-    }
-
     public String getPdfPath() {
         return pdfPath;
     }
 
     public void setPdfPath(String pdfPath) {
         this.pdfPath = pdfPath;
+    }
+
+    public CurationStatusDTO getStatus() {
+        return status;
+    }
+
+    public void setStatus(CurationStatusDTO status) {
+        this.status = status;
     }
 }

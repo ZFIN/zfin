@@ -43,6 +43,7 @@
 
         <property name="publicationDate" column="pub_date"/>
         <property name="closeDate" column="pub_completion_date"/>
+        <property name="entryDate" column="pub_arrival_date"/>
         <property name="volume" column="pub_volume" lazy="true"/>
         <property name="pages" column="pub_pages" lazy="true"/>
         <property name="type" column="jtype" type="publicationType"/>

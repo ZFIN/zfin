@@ -1,6 +1,7 @@
 package org.zfin.publication.repository;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.criterion.MatchMode;
@@ -32,6 +33,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
+import org.zfin.profile.Person;
 import org.zfin.publication.*;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
@@ -2111,6 +2113,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return HibernateUtil.currentSession().createCriteria(PublicationTrackingStatus.class).list();
     }
 
+    public PublicationTrackingStatus getPublicationTrackingStatus(long id) {
+        return (PublicationTrackingStatus) HibernateUtil.currentSession().get(PublicationTrackingStatus.class, id);
+    }
+
     public PublicationTrackingStatus getPublicationStatusByName(String name) {
         return (PublicationTrackingStatus) HibernateUtil.currentSession()
                 .createCriteria(PublicationTrackingStatus.class)
@@ -2122,20 +2128,55 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return HibernateUtil.currentSession().createCriteria(PublicationTrackingLocation.class).list();
     }
 
-    public List<PublicationTrackingHistory> getPublicationsByStatus(Long status, Long location, String owner) {
-        // Uses a technique for multiple parameters which may not be set found here:
-        // http://dev.wavemaker.com/wiki/bin/Dev/HqlTutorial#HOptionalorNullParameters
-        String hql = "FROM PublicationTrackingHistory hist " +
-                "WHERE (:status IS NULL OR status.id = :status) " +
-                "AND (:location IS NULL OR location.id = :location) " +
-                "AND (:owner IS NULL OR owner.zdbID = :owner) " +
-                "AND isCurrent = :current";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameter("status", status);
-        query.setParameter("location", location);
-        query.setParameter("owner", owner);
-        query.setParameter("current", true);
-        return query.list();
+    public PublicationTrackingLocation getPublicationTrackingLocation(long id) {
+        return (PublicationTrackingLocation) HibernateUtil.currentSession().get(PublicationTrackingLocation.class, id);
+    }
+
+    public List<PublicationTrackingHistory> getPublicationsByStatus(Long status,
+                                                                    Long location,
+                                                                    String owner,
+                                                                    int count,
+                                                                    int offset,
+                                                                    String sort) {
+        Criteria criteria = HibernateUtil.currentSession().createCriteria(PublicationTrackingHistory.class)
+                .add(Restrictions.eq("isCurrent", true))
+                .createAlias("publication", "pub");
+
+        if (status != null) {
+            criteria.add(Restrictions.eq("status", getPublicationTrackingStatus(status)));
+        }
+
+        if (location != null) {
+            criteria.add(Restrictions.eq("location", getPublicationTrackingLocation(location)));
+        }
+
+        if (StringUtils.isNotEmpty(owner)) {
+            if (owner.equals("*")) {
+                criteria.add(Restrictions.isNotNull("owner"));
+            } else {
+                criteria.add(Restrictions.eq("owner", RepositoryFactory.getProfileRepository().getPerson(owner)));
+            }
+        }
+
+        if (StringUtils.isNotEmpty(sort)) {
+            boolean isAscending = true;
+            if (sort.startsWith("-")) {
+                isAscending = false;
+                sort = sort.substring(1);
+            }
+            Order order;
+            if (isAscending) {
+                order = Order.asc(sort);
+            } else {
+                order = Order.desc(sort);
+            }
+            criteria.addOrder(order);
+        }
+        criteria.addOrder(Order.asc("status"));
+
+        criteria.setMaxResults(count);
+        criteria.setFirstResult(offset);
+        return criteria.list();
     }
 
 }

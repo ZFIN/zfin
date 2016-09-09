@@ -35,6 +35,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private String errataAndNotes;
     private GregorianCalendar publicationDate;
     private GregorianCalendar closeDate;
+    private GregorianCalendar entryDate;
     private Journal journal;
     private Set<ExpressionExperiment> expressionExperiments;
     private Set<Figure> figures;
@@ -112,6 +113,14 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     public void setCloseDate(GregorianCalendar closeDate) {
         this.closeDate = closeDate;
+    }
+
+    public GregorianCalendar getEntryDate() {
+        return entryDate;
+    }
+
+    public void setEntryDate(GregorianCalendar entryDate) {
+        this.entryDate = entryDate;
     }
 
     public GregorianCalendar getIndexedDate() {

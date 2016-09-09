@@ -7,7 +7,9 @@
         var service = {
             timeago: timeago,
             get: get,
-            isEmpty: isEmpty
+            isEmpty: isEmpty,
+            findIndex: findIndex,
+            find: find
         };
         return service;
 
@@ -76,6 +78,26 @@
 
         function isEmpty(value) {
             return Array.isArray(value) && value.length === 0;
+        }
+
+        function findIndex(arr, fn) {
+            if (isEmpty(arr)) {
+                return;
+            }
+            for (var i = 0; i < arr.length; i += 1) {
+                if (fn(arr[i])) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        function find(arr, fn) {
+            var idx = findIndex(arr, fn);
+            if (idx < 0) {
+                return;
+            }
+            return arr[idx];
         }
     }
 }());

@@ -63,7 +63,7 @@
                     </span>
                 </p>
             </td>
-            <td>{{pub.lastUpdate | timeago:true}}</td>
+            <td>{{pub.status.updateDate | timeago:true}}</td>
             <td>
                 <a ng-show="pub.pdfPath" ng-href="/PDFLoadUp/{{pub.pdfPath}}" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
             </td>

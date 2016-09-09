@@ -1,13 +1,19 @@
 package org.zfin.curation.service;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 import org.zfin.curation.Correspondence;
 import org.zfin.curation.Curation;
 import org.zfin.curation.PublicationNote;
 import org.zfin.curation.presentation.*;
+import org.zfin.expression.Figure;
+import org.zfin.expression.Image;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationTrackingHistory;
+import org.zfin.publication.presentation.DashboardImageBean;
+import org.zfin.publication.presentation.DashboardPublicationBean;
 
 import java.util.*;
 
@@ -105,6 +111,40 @@ public class CurationDTOConversionService {
         dto.setOwner(toCuratorDTO(status.getOwner()));
         dto.setUpdateDate(status.getDate());
         return dto;
+    }
+
+    public DashboardPublicationBean toDashboardPublicationBean(PublicationTrackingHistory status) {
+        if (status == null) {
+            return null;
+        }
+        Publication publication = status.getPublication();
+
+        DashboardPublicationBean bean = new DashboardPublicationBean();
+        bean.setZdbId(publication.getZdbID());
+        bean.setTitle(publication.getTitle());
+        bean.setCitation(publication.getJournalAndPages());
+        bean.setAuthors(publication.getAuthors());
+        bean.setAbstractText(publication.getAbstractText());
+        bean.setStatus(toCurationStatusDTO(status));
+        bean.setPdfPath(publication.getFileName());
+        List<DashboardImageBean> images = new ArrayList<>();
+        for (Figure figure : publication.getFigures()) {
+            for (Image image : figure.getImages()) {
+                DashboardImageBean imageBean = new DashboardImageBean();
+                imageBean.setLabel(figure.getLabel());
+                imageBean.setFullPath(image.getUrl());
+                imageBean.setMediumPath(image.getMediumUrl());
+                images.add(imageBean);
+            }
+        }
+        Collections.sort(images, new Comparator<DashboardImageBean>() {
+            @Override
+            public int compare(DashboardImageBean o1, DashboardImageBean o2) {
+                return ObjectUtils.compare(o1.getLabel(), o2.getLabel());
+            }
+        });
+        bean.setImages(images);
+        return bean;
     }
 
 }

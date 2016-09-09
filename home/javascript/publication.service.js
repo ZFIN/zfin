@@ -4,8 +4,11 @@
         .module('app')
         .factory('PublicationService', PublicationService);
 
-    PublicationService.$inject = ['$http'];
-    function PublicationService($http) {
+    PublicationService.$inject = ['$http', 'ZfinUtils'];
+    function PublicationService($http, zf) {
+
+        var locationCache = null;
+
         return {
             getTopics              : getTopics,
             addTopic               : addTopic,
@@ -26,8 +29,14 @@
             sendAuthorNotification : sendAuthorNotification,
             getStatuses            : getStatuses,
             getLocations           : getLocations,
+            getPriorities          : getPriorities,
             getCurators            : getCurators,
-            getPubsInBin           : getPubsInBin
+            getPubsInBin           : getPubsInBin,
+            getPubsByStatus        : getPubsByStatus,
+            searchPubStatus        : searchPubStatus,
+            statusNeedsOwner       : statusNeedsOwner,
+            statusNeedsLocation    : statusNeedsLocation,
+            statusHasPriority      : statusHasPriority
         };
 
         function getTopics(id) {
@@ -105,8 +114,33 @@
             return $http.get('/action/publication/statuses');
         }
 
+        function getLocationsAndPriorities() {
+            if (!locationCache) {
+                locationCache = $http.get('/action/publication/locations');
+            }
+            return locationCache;
+        }
+
         function getLocations() {
-            return $http.get('/action/publication/locations');
+            return getLocationsAndPriorities()
+                .then(function (response) {
+                    var responseCopy = angular.copy(response);
+                    responseCopy.data = responseCopy.data.filter(function (item) {
+                        return item.role === 'CURATOR';
+                    });
+                    return responseCopy;
+                });
+        }
+
+        function getPriorities() {
+            return getLocationsAndPriorities()
+                .then(function (response) {
+                    var responseCopy = angular.copy(response);
+                    responseCopy.data = responseCopy.data.filter(function (item) {
+                        return item.role === 'INDEXER';
+                    });
+                    return responseCopy;
+                });
         }
 
         function getCurators() {
@@ -119,6 +153,31 @@
                 sort: sort.value
             };
             return $http.get('/action/publication/search-status', {params: qs});
+        }
+
+        function getPubsByStatus(status, sort) {
+            var qs = {
+                status: status.id,
+                sort: sort.value
+            };
+            return $http.get('/action/publication/search-status', {params: qs});
+        }
+
+        function searchPubStatus(opts) {
+            return $http.get('/action/publication/search-status', {params: opts});
+        }
+
+        function statusNeedsOwner(status) {
+            var type = zf.get(status, 'type');
+            return type === 'CURATING' || type === 'WAIT';
+        }
+
+        function statusNeedsLocation(status) {
+            return zf.get(status, 'type') === 'READY_FOR_CURATION';
+        }
+
+        function statusHasPriority(status) {
+            return zf.get(status, 'type') === 'READY_FOR_INDEXING';
         }
     }
 

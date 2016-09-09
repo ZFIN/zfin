@@ -854,7 +854,7 @@ ul.comma-separated > li:last-child:after {
     background: #f1f1f1;
 }
 
-.pub-dashboard > .table td {
+.pub-dashboard .table td {
     vertical-align: text-top;
 }
 

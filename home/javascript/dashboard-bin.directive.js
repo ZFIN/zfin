@@ -51,20 +51,20 @@
         vm.location = null;
         vm.sortOrders = [
             {
-                value: 'update,asc',
+                value: 'date',
                 display: 'Time in bin (oldest)'
             },
             {
-                value: 'update,desc',
+                value: '-date',
                 display: 'Time in bin (newest)'
             },
             {
-                value: 'pub_date,asc',
-                display: 'Publication date (oldest)'
+                value: 'pub.entryDate',
+                display: 'Entry date (oldest)'
             },
             {
-                value: 'pub_date,desc',
-                display: 'Publication date (newest)'
+                value: '-pub.entryDate',
+                display: 'Entry date (newest)'
             }
         ];
         vm.sort = vm.sortOrders[0];
