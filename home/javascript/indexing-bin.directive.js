@@ -26,6 +26,9 @@
 
         vm.loading = true;
         vm.pubs = [];
+        vm.totalPubs = 0;
+        vm.currentPage = 1;
+        vm.pubsPerPage = 50;
         vm.priorities = [];
         vm.priority = null;
         vm.sortOrders = [
@@ -66,14 +69,18 @@
 
         function fetchPubs() {
             vm.loading = true;
+            var page = arguments[0] || vm.currentPage;
             var query = {
                 status: vm.currentStatus,
                 location: vm.priority.id,
-                sort: vm.sort.value
+                sort: vm.sort.value,
+                count: vm.pubsPerPage,
+                offset: (page - 1) * vm.pubsPerPage
             };
             PublicationService.searchPubStatus(query)
                 .then(function (response) {
-                    vm.pubs = response.data;
+                    vm.pubs = response.data.populatedResults;
+                    vm.totalPubs = response.data.totalCount;
                 })
                 .finally(function () {
                     vm.loading = false;

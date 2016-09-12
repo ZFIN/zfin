@@ -523,10 +523,10 @@ public interface PublicationRepository extends PaginationParameter {
 
     PublicationTrackingLocation getPublicationTrackingLocation(long id);
 
-    List<PublicationTrackingHistory> getPublicationsByStatus(Long status,
-                                                             Long location,
-                                                             String owner,
-                                                             int count,
-                                                             int offset,
-                                                             String sort);
+    PaginationResult<PublicationTrackingHistory> getPublicationsByStatus(Long status,
+                                                                         Long location,
+                                                                         String owner,
+                                                                         int count,
+                                                                         int offset,
+                                                                         String sort);
 }

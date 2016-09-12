@@ -7,6 +7,7 @@
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
 
 <script src="/javascript/angular/angular.min.js"></script>
+<script src="/javascript/angular/paging.min.js"></script>
 <script src="/javascript/zfin-app.module.js"></script>
 
 <script src="/javascript/publication.service.js"></script>

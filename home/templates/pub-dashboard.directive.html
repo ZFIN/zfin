@@ -60,6 +60,9 @@
             </tbody>
         </table>
     </div>
+
+    <div paging class="text-center" page="vm.currentPage" page-size="vm.pubsPerPage" total="vm.totalPubs"
+         paging-action="vm.fetchPubs(page)" show-prev-next="true" hide-if-empty="true"></div>
 </div>
 
 <div class="modal status-modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">

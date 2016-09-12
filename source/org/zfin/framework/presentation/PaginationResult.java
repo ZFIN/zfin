@@ -1,7 +1,6 @@
 package org.zfin.framework.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.marker.Marker;
 
 import java.util.List;
 
@@ -26,6 +25,12 @@ public class PaginationResult<T> {
 
     public PaginationResult(int totalCount, List<T> populatedResults) {
         this.totalCount = totalCount;
+        this.populatedResults = populatedResults;
+    }
+
+    public PaginationResult(int totalCount, int start, List<T> populatedResults) {
+        this.totalCount = totalCount;
+        this.start = start;
         this.populatedResults = populatedResults;
     }
 

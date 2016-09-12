@@ -31,7 +31,6 @@
             getLocations           : getLocations,
             getPriorities          : getPriorities,
             getCurators            : getCurators,
-            getPubsByStatus        : getPubsByStatus,
             searchPubStatus        : searchPubStatus,
             statusNeedsOwner       : statusNeedsOwner,
             statusNeedsLocation    : statusNeedsLocation,
@@ -144,14 +143,6 @@
 
         function getCurators() {
             return $http.get('/action/publication/curators');
-        }
-
-        function getPubsByStatus(status, sort) {
-            var qs = {
-                status: status.id,
-                sort: sort.value
-            };
-            return $http.get('/action/publication/search-status', {params: qs});
         }
 
         function searchPubStatus(opts) {

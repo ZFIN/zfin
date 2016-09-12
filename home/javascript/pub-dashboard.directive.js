@@ -33,6 +33,9 @@
         vm.loading = true;
         vm.pubList = null;
         vm.pubMap = {};
+        vm.totalPubs = 0;
+        vm.currentPage = 1;
+        vm.pubsPerPage = 50;
         vm.owners = [];
         vm.owner = null;
         vm.statuses = [];
@@ -74,9 +77,17 @@
         function fetchPubs() {
             vm.loading = true;
             vm.pubMap = {};
-            PublicationService.searchPubStatus({owner: vm.owner.zdbID, status: vm.status ? vm.status.id : ''})
+            var page = arguments[0] || vm.currentPage;
+            var query = {
+                owner: vm.owner.zdbID,
+                status: vm.status ? vm.status.id : '',
+                count: vm.pubsPerPage,
+                offset: (page - 1) * vm.pubsPerPage
+            };
+            PublicationService.searchPubStatus(query)
                 .then(function (response) {
-                    vm.pubList = response.data;
+                    vm.pubList = response.data.populatedResults;
+                    vm.totalPubs = response.data.totalCount;
                     vm.pubMap = groupPubs(vm.pubList);
                 })
                 .finally(function () {
@@ -85,7 +96,7 @@
         }
 
         function groupPubs(pubArray) {
-            if (pubArray.length === 0) {
+            if (!pubArray.length) {
                 return null;
             }
             var pubMap = {};

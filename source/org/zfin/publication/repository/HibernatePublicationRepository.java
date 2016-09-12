@@ -2132,12 +2132,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (PublicationTrackingLocation) HibernateUtil.currentSession().get(PublicationTrackingLocation.class, id);
     }
 
-    public List<PublicationTrackingHistory> getPublicationsByStatus(Long status,
-                                                                    Long location,
-                                                                    String owner,
-                                                                    int count,
-                                                                    int offset,
-                                                                    String sort) {
+    public PaginationResult<PublicationTrackingHistory> getPublicationsByStatus(Long status,
+                                                                                Long location,
+                                                                                String owner,
+                                                                                int count,
+                                                                                int offset,
+                                                                                String sort) {
         Criteria criteria = HibernateUtil.currentSession().createCriteria(PublicationTrackingHistory.class)
                 .add(Restrictions.eq("isCurrent", true))
                 .createAlias("publication", "pub");
@@ -2178,9 +2178,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         }
         criteria.addOrder(Order.asc("status"));
 
-        criteria.setMaxResults(count);
-        criteria.setFirstResult(offset);
-        return criteria.list();
+        return PaginationResultFactory.createResultFromScrollableResultAndClose(offset, offset + count, criteria.scroll());
     }
 
 }

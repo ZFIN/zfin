@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.zfin.curation.service.CurationDTOConversionService;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.PublicationTrackingHistory;
@@ -67,19 +68,21 @@ public class PublicationDashboardController {
 
     @ResponseBody
     @RequestMapping(value = "/search-status", method = RequestMethod.GET)
-    public List<DashboardPublicationBean> getListOfPubsInBin(@RequestParam(required = false) Long status,
-                                                             @RequestParam(required = false) Long location,
-                                                             @RequestParam(required = false) String owner,
-                                                             @RequestParam(required = false, defaultValue = "0") int offset,
-                                                             @RequestParam(required = false, defaultValue = "50") int count,
-                                                             @RequestParam(required = false) String sort) {
-        List<PublicationTrackingHistory> histories = publicationRepository.getPublicationsByStatus(status, location, owner, count, offset, sort);
+    public PaginationResult<DashboardPublicationBean> getListOfPubsInBin(@RequestParam(required = false) Long status,
+                                                                         @RequestParam(required = false) Long location,
+                                                                         @RequestParam(required = false) String owner,
+                                                                         @RequestParam(required = false, defaultValue = "0") int offset,
+                                                                         @RequestParam(required = false, defaultValue = "50") int count,
+                                                                         @RequestParam(required = false) String sort) {
 
-        List<DashboardPublicationBean> beans = new ArrayList<>(histories.size());
-        for (PublicationTrackingHistory history : histories) {
+        PaginationResult<PublicationTrackingHistory> histories = publicationRepository.getPublicationsByStatus(
+                status, location, owner, count, offset, sort);
+
+        List<DashboardPublicationBean> beans = new ArrayList<>(count);
+        for (PublicationTrackingHistory history : histories.getPopulatedResults()) {
             beans.add(converter.toDashboardPublicationBean(history));
         }
-        return beans;
-    }
 
+        return new PaginationResult<>(histories.getTotalCount(), offset, beans);
+    }
 }
