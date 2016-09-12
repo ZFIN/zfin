@@ -847,11 +847,9 @@ ul.comma-separated > li:last-child:after {
 }
 
 .pub-dashboard > .filter-bar {
-    padding: 20px 0;
-    margin: 20px 0;
-    border: 1px solid #b7b7b7;
-    border-radius: 3px;
-    background: #f1f1f1;
+    padding: 20px 15px;
+    background: #e3e8e8;
+    margin-bottom: 20px;
 }
 
 .pub-dashboard .table td {
@@ -865,3 +863,28 @@ ul.comma-separated > li:last-child:after {
     cursor: pointer;
 }
 
+nav.pub-navigator {
+    background: #669999;
+    margin-top: -4px; /* snugs it up to the main nav */
+    margin-bottom: 0;
+    color: white;
+    border: none;
+}
+
+nav.pub-navigator .navbar-nav > li > a {
+    color: white;
+}
+
+nav.pub-navigator .navbar-nav > li > a:hover,
+nav.pub-navigator .navbar-nav > li > a:focus {
+    color: white;
+    text-decoration: underline;
+}
+
+nav.pub-navigator .navbar-nav > .active > a,
+nav.pub-navigator .navbar-nav > .active > a:hover,
+nav.pub-navigator .navbar-nav > .active > a:focus {
+    background: #85aeae;
+    color: white;
+    font-weight: bold;
+}

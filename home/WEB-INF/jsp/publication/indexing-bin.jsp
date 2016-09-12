@@ -19,6 +19,8 @@
 
 <script src="/javascript/indexing-bin.directive.js"></script>
 
+<zfin2:pub-navigator pages="${page}" currentPage="${currentPage}"/>
+
 <div class="container-fluid" ng-app="app">
     <div indexing-bin
          user-id="${currentUser.zdbID}"

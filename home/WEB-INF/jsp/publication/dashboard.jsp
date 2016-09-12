@@ -16,6 +16,8 @@
 <script src="/javascript/trusted-html.filter.js"></script>
 <script src="/javascript/pub-dashboard.directive.js"></script>
 
+<zfin2:pub-navigator pages="${page}" currentPage="${currentPage}"/>
+
 <div class="container-fluid" ng-app="app">
     <div pub-dashboard user-id="${currentUser.zdbID}"></div>
 </div>

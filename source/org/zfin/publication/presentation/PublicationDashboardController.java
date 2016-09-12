@@ -4,10 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.zfin.curation.service.CurationDTOConversionService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
@@ -24,6 +21,34 @@ import java.util.List;
 @RequestMapping("/publication")
 public class PublicationDashboardController {
 
+    public enum Page {
+        INDEXING_BIN("Ready for Indexing Bin", "publication/indexing-bin.page", "/action/publication/indexing-bin"),
+        CURATING_BIN("Ready for Curation Bin", "publication/curating-bin.page", "/action/publication/curating-bin"),
+        DASHBOARD("My Dashboard", "publication/dashboard.page", "/action/publication/dashboard");
+
+        private String title;
+        private String view;
+        private String url;
+
+        Page(String title, String view, String url) {
+            this.title = title;
+            this.view = view;
+            this.url = url;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getView() {
+            return view;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+    }
+
     private final static Logger LOG = Logger.getLogger(PublicationDashboardController.class);
 
     @Autowired
@@ -35,12 +60,17 @@ public class PublicationDashboardController {
     @Autowired
     CurationDTOConversionService converter;
 
+    @ModelAttribute("pages")
+    public Page[] getDashboardPages() {
+        return Page.values();
+    }
+
     @RequestMapping("/curating-bin")
     public String showReadyForCurationBin(Model model) {
         return showBin(model,
                 publicationRepository.getPublicationStatusByName("Ready for Curation"),
                 publicationRepository.getPublicationStatusByName("Curating"),
-                "publication/curating-bin.page");
+                Page.CURATING_BIN);
     }
 
     @RequestMapping("/indexing-bin")
@@ -48,22 +78,24 @@ public class PublicationDashboardController {
         return showBin(model,
                 publicationRepository.getPublicationStatusByName("Ready for Indexing"),
                 publicationRepository.getPublicationStatusByName("Indexing"),
-                "publication/indexing-bin.page");
+                Page.INDEXING_BIN);
     }
 
-    private String showBin(Model model, PublicationTrackingStatus current, PublicationTrackingStatus next, String view) {
+    private String showBin(Model model, PublicationTrackingStatus current, PublicationTrackingStatus next, Page page) {
         model.addAttribute("currentStatus", current);
         model.addAttribute("nextStatus", next);
         model.addAttribute("currentUser", ProfileService.getCurrentSecurityUser());
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, current.getName() + " Publications");
-        return view;
+        model.addAttribute("currentPage", page);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, page.title);
+        return page.view;
     }
 
     @RequestMapping("/dashboard")
     public String showUserDashboad(Model model) {
         model.addAttribute("currentUser", ProfileService.getCurrentSecurityUser());
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication Dashboard");
-        return "publication/dashboard.page";
+        model.addAttribute("currentPage", Page.DASHBOARD);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Page.DASHBOARD.title);
+        return Page.DASHBOARD.view;
     }
 
     @ResponseBody
