@@ -60,7 +60,7 @@
         function activate() {
             PublicationService.getPriorities()
                 .then(function (response) {
-                    response.data.unshift({id: 0, name: 'Not Set'});
+                    response.data.push({id: 0, name: 'Not Set'});
                     vm.priorities = response.data;
                     vm.priority = vm.priorities[0];
                     fetchPubs();
