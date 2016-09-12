@@ -847,7 +847,7 @@ ul.comma-separated > li:last-child:after {
 }
 
 .pub-dashboard > .filter-bar {
-    padding: 20px 15px;
+    padding: 15px;
     background: #e3e8e8;
     margin-bottom: 20px;
 }
