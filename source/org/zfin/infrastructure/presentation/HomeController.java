@@ -20,7 +20,7 @@ public class HomeController {
             model.addAttribute("user", ProfileService.getCurrentSecurityUser());
         }
 
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "ZFIN: The Zebrafish Model Organism Database");
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "The Zebrafish Model Organism Database");
 
         return "infrastructure/home.page";
     }

@@ -30,6 +30,7 @@
                 <th width="115px"></th>
                 <th width="150px">ZDB-ID</th>
                 <th>Title</th>
+                <th width="100px">Last Update</th>
                 <th width="150px">Status</th>
                 <th width="100px">Owner</th>
             </tr>
@@ -54,6 +55,7 @@
                 <td>
                     <p><b ng-bind-html="pub.title | trustedHtml"></b></p>
                 </td>
+                <td>{{pub.status.updateDate | timeago:true}}</td>
                 <td>{{pub.status.status.name}}</td>
                 <td>{{pub.status.owner.name}}</td>
             </tr>

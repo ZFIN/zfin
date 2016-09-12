@@ -12,6 +12,7 @@
 
 <script src="/javascript/publication.service.js"></script>
 <script src="/javascript/zfinutils.service.js"></script>
+<script src="/javascript/timeago.filter.js"></script>
 <script src="/javascript/trusted-html.filter.js"></script>
 <script src="/javascript/pub-dashboard.directive.js"></script>
 
