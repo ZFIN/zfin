@@ -19,9 +19,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/zfishbook
 
-GENERICS = zfishbook.pl preprocess_zfishbook.pl                                   
+GENERICS = zfishbook.pl preprocess_zfishbook.pl zfishbook.sh                                   
            
-STATICS = loadZfishbookData.sql cleanupGBTfeatureNotes.sql zfishbookData.txt README
+STATICS = loadZfishbookData.sql cleanupGBTfeatureNotes.sql README
 
 # Define targets that require special handling.
 
