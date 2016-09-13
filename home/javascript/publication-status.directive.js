@@ -87,45 +87,51 @@
             return statusChanged;
         }
 
+        function validateBeforeClose() {
+            return PublicationService.validatePubForClose(vm.pubId)
+                .then(function (response) {
+                    if (!zf.isEmpty(response.data.warnings)) {
+                        vm.warnings = response.data.warnings;
+                    } else {
+                        return doStatusUpdate(true);
+                    }
+                });
+        }
+
+        function doStatusUpdate(isClosing) {
+            if (!vm.statusNeedsLocation(vm.current.status) && !vm.statusHasPriority(vm.current.status)) {
+                vm.current.location = null;
+            }
+            if (!vm.statusNeedsOwner(vm.current.status)) {
+                vm.current.owner = null;
+            }
+            if (!vm.current.pubZdbID) {
+                vm.current.pubZdbID = vm.pubId;
+            }
+            return PublicationService.updateStatus(vm.current)
+                .then(storeStatus)
+                .then(function() {
+                    if (isClosing) {
+                        return PublicationService.getTopics(vm.pubId)
+                            .then(function (response) {
+                                vm.topics = response.data;
+                            });
+                    }
+                })
+        }
+
         function updateStatus(validate) {
             vm.processing = true;
             var isClosing = vm.current.status.type == 'CLOSED';
+            var update;
             if (validate && isClosing) {
-                PublicationService.validatePubForClose(vm.pubId)
-                    .then(function (response) {
-                        if (!zf.isEmpty(response.data.warnings)) {
-                            vm.warnings = response.data.warnings;
-                        } else {
-                            updateStatus(false);
-                        }
-                    })
-                    .finally(function() {
-                        vm.processing = false;
-                    });
+                update = validateBeforeClose();
             } else {
-                if (!vm.statusNeedsLocation(vm.current.status) && !vm.statusHasPriority(vm.current.status)) {
-                    vm.current.location = null;
-                }
-                if (!vm.statusNeedsOwner(vm.current.status)) {
-                    vm.current.owner = null;
-                }
-                if (!vm.current.pubZdbID) {
-                    vm.current.pubZdbID = vm.pubId;
-                }
-                PublicationService.updateStatus(vm.current)
-                    .then(storeStatus)
-                    .then(function() {
-                        if (isClosing) {
-                            PublicationService.getTopics(vm.pubId)
-                                .then(function (response) {
-                                    vm.topics = response.data;
-                                });
-                        }
-                    })
-                    .finally(function() {
-                        vm.processing = false;
-                    });
+                update = doStatusUpdate(isClosing);
             }
+            update.finally(function() {
+                vm.processing = false;
+            });
         }
 
         function hasTopics() {
