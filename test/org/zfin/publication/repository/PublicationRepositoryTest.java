@@ -25,9 +25,13 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.orthology.Ortholog;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationTrackingHistory;
+import org.zfin.publication.PublicationTrackingLocation;
+import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
 
+import java.util.Calendar;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -687,7 +691,168 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         List<Fish> wildtypeFish = publicationRepository.getWildtypeFish();
         assertNotNull(wildtypeFish);
         assertThat(wildtypeFish.size(), greaterThan(15));
+    }
 
+    @Test
+    public void getFullTrackingHistoryForPub() {
+        String pubId = "ZDB-PUB-160506-2"; // a pub that has been indexed, curated, and closed
+        Publication pub = publicationRepository.getPublication(pubId);
+        assertThat("Was expecting to find pub with ID " + pubId + ", but didn't", pub, is(notNullValue()));
+
+        List<PublicationTrackingHistory> historyList = publicationRepository.fullTrackingHistory(pub);
+        assertThat(pubId + " should have at least two history entries", historyList, hasSize(greaterThanOrEqualTo(2)));
+    }
+
+    @Test
+    public void getCurrentTrackingStatusForPub() {
+        String pubId = "ZDB-PUB-160528-7"; // a pub that has been indexed, curated, and closed
+        Publication pub = publicationRepository.getPublication(pubId);
+        assertThat("Was expecting to find pub with ID " + pubId + ", but didn't", pub, is(notNullValue()));
+
+        PublicationTrackingHistory currentStatus = publicationRepository.currentTrackingStatus(pub);
+        assertThat(currentStatus, is(notNullValue()));
+
+        assertThat(currentStatus.getStatus(), is(notNullValue()));
+        assertThat(currentStatus.getStatus().getType(), is(PublicationTrackingStatus.Type.CLOSED));
+
+        assertThat(currentStatus.getDate(), is(notNullValue()));
+        assertThat(currentStatus.getDate().get(Calendar.YEAR), is(2016));
+        assertThat(currentStatus.getDate().get(Calendar.MONTH), is(Calendar.AUGUST));
+        assertThat(currentStatus.getDate().get(Calendar.DATE), is(9));
+
+        assertThat(currentStatus.getLocation(), is(nullValue()));
+        assertThat(currentStatus.getOwner(), is(nullValue()));
+        assertThat(currentStatus.getUpdater(), is(notNullValue()));
+        assertThat(currentStatus.isCurrent(), is(true));
+        assertThat(currentStatus.getPublication(), is(pub));
+    }
+
+    @Test
+    public void getAllPublicationStatusesShouldReturnTwelveValues() {
+        List<PublicationTrackingStatus> statuses = publicationRepository.getAllPublicationStatuses();
+        assertThat(statuses, hasSize(12));
+    }
+
+    @Test
+    public void getPublicationTrackingStatusShouldReturnObjectForValidId() {
+        PublicationTrackingStatus status = publicationRepository.getPublicationTrackingStatus(1);
+        assertThat(status, is(notNullValue()));
+    }
+
+    @Test
+    public void getPublicationTrackingStatusShouldReturnNullForInvalidId() {
+        PublicationTrackingStatus status = publicationRepository.getPublicationTrackingStatus(0);
+        assertThat(status, is(nullValue()));
+    }
+
+    @Test
+    public void getPublicationStatusByNameShouldReturnObjectForValidName() {
+        String name = "Waiting for Nomenclature";
+        PublicationTrackingStatus status = publicationRepository.getPublicationStatusByName(name);
+        assertThat(status, is(notNullValue()));
+        assertThat(status.getName(), is(name));
+    }
+
+    @Test
+    public void getPublicationStatusByNameShouldReturnNullForInvalidName() {
+        String name = "This is not a real status";
+        PublicationTrackingStatus status = publicationRepository.getPublicationStatusByName(name);
+        assertThat(status, is(nullValue()));
+    }
+
+    @Test
+    public void getAllPublicationLocationsShouldReturnNineValues() {
+        List<PublicationTrackingLocation> locations = publicationRepository.getAllPublicationLocations();
+        assertThat(locations, hasSize(9));
+    }
+
+    @Test
+    public void getPublicationTrackingLocationShouldReturnObjectForValidId() {
+        PublicationTrackingLocation location = publicationRepository.getPublicationTrackingLocation(1);
+        assertThat(location, is(notNullValue()));
+    }
+
+    @Test
+    public void getPublicationTrackingLocationShouldReturnNullForInvalidId() {
+        PublicationTrackingLocation location = publicationRepository.getPublicationTrackingLocation(0);
+        assertThat(location, is(nullValue()));
+    }
+
+    @Test
+    public void getPublicationsByStatusShouldOnlyReturnCurrentStatuses() {
+        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(null, null, null, 20, 0, null);
+        for (PublicationTrackingHistory status : statuses.getPopulatedResults()) {
+            assertThat(status.isCurrent(), is(true));
+        }
+    }
+
+    @Test
+    public void getPublicationsByStatusShouldReturnObjectsWithSpecifiedStatus() {
+        long statusId = 1;
+        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(statusId, null, null, 20, 0, null);
+        for (PublicationTrackingHistory status : statuses.getPopulatedResults()) {
+            assertThat(status.getStatus().getId(), is(statusId));
+        }
+    }
+
+    @Test
+    public void getPublicationsByStatusShouldReturnObjectsWithSpecifiedLocation() {
+        long locationId = 1;
+        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(null, locationId, null, 20, 0, null);
+        for (PublicationTrackingHistory status : statuses.getPopulatedResults()) {
+            assertThat(status.getLocation().getId(), is(locationId));
+        }
+    }
+
+    @Test
+    public void getPublicationsByStatusShouldInterpretZeroAsNullForLocation() {
+        long locationId = 0;
+        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(null, locationId, null, 20, 0, "location");
+        for (PublicationTrackingHistory status : statuses.getPopulatedResults()) {
+            assertThat(status.getLocation(), is(nullValue()));
+        }
+    }
+
+    @Test
+    public void getPublicationsByStatusShouldReturnObjectsWithSpecifiedOwner() {
+        // This is tougher than status or location since owner will be in flux a lot.
+        // The test uses Holly's id. Hopefully she continues to exist and has something
+        // assigned to her otherwise this test isn't doing anything.
+        String ownerId = "ZDB-PERS-100329-1";
+        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(null, null, ownerId, 20, 0, null);
+        for (PublicationTrackingHistory status : statuses.getPopulatedResults()) {
+            assertThat(status.getOwner().getZdbID(), is(ownerId));
+        }
+    }
+
+    @Test
+    public void getPublicationsByStatusShouldInterpretStarAsAnyOwner() {
+        String ownerId = "*";
+        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(null, null, ownerId, 50, 0, "-owner");
+        for (PublicationTrackingHistory status : statuses.getPopulatedResults()) {
+            assertThat(status.getOwner(), is(notNullValue()));
+        }
+    }
+
+    @Test
+    public void getPublicationsByStatusShouldReturnSpecifiedNumberOfObjectsAndPopulateTotalCount() {
+        int count = 33;
+        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(null, null, null, count, 0, null);
+        assertThat(statuses.getPopulatedResults(), hasSize(count));
+        assertThat(statuses.getTotalCount(), is(greaterThanOrEqualTo(count)));
+    }
+
+    @Test
+    public void getPublicationsByStatusShouldPaginateCorrectly() {
+        int count = 27;
+        PaginationResult<PublicationTrackingHistory> firstPage = publicationRepository.getPublicationsByStatus(null, null, null, count, 0, null);
+        PaginationResult<PublicationTrackingHistory> secondPage = publicationRepository.getPublicationsByStatus(null, null, null, count, count, null);
+        assertThat(firstPage.getStart(), is(0));
+        assertThat(secondPage.getStart(), is(0));
+        assertThat(firstPage.getPopulatedResults(), is(not(empty())));
+        assertThat(secondPage.getPopulatedResults(), is(not(empty())));
+        assertThat(secondPage.getPopulatedResults().get(0), not(equalTo(firstPage.getPopulatedResults().get(0))));
+        assertThat(secondPage.getPopulatedResults().get(0), not(equalTo(firstPage.getPopulatedResults().get(firstPage.getPopulatedResults().size() - 1))));
     }
 }
 
