@@ -16,35 +16,21 @@
  <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/loadGapChemDups.xml"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/updateExpcondDups.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/dropTempDupTables.sql"/>
-
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/createTempRelTables.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/14512.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/14512.sql"/>
-    <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/dropTempRelTables.sql"/>
 
-    <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/createTempRelTables.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/14512a.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/14512a.sql"/>
-    <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/dropTempRelTables.sql"/>
-
-    <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/createTempRelTables.sql"/>
      <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/14512b.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/14512b.sql"/>
-    <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/dropTempRelTables.sql"/>
-
-    <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/createTempRelTables.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/14512c.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/14512c.sql"/>
-    <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/dropTempRelTables.sql"/>
-
-    <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/createTempRelTables.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/14513.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/14513.sql"/>
-    <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/dropTempRelTables.sql"/>
-
-    <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/createTempRelTables.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/14514.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/14514.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/dropTempRelTables.sql"/>
+
 
 </databaseChangeLog>
