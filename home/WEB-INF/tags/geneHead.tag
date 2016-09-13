@@ -40,7 +40,7 @@
             </tr>
 
             <c:if test="${!empty previousNames}">
-                <zfin2:previousNamesFast label="Previous Name" previousNames="${previousNames}"/>
+                <zfin2:previousNamesFast label="Previous Name" previousNames="${previousNames}" marker="${gene}"/>
             </c:if>
             <tr>
                 <th>Location:</th>

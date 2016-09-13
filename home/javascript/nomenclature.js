@@ -13,6 +13,9 @@ angular.module('nomenclature', [])
         nomenController.fieldName;
         nomenController.showAttribution = false;
         nomenController.publicationDtoList = [];
+        nomenController.newAttribution;
+        nomenController.newAlias;
+
 
         $scope.reasonList = $window.reasonList;
 
@@ -119,6 +122,35 @@ angular.module('nomenclature', [])
                 });
         };
 
+        nomenController.createNewAlias = function () {
+            var parameters = {
+                'newAlias': nomenController.newAlias,
+                'attribution': nomenController.newAttribution
+            };
+            $http.post('/action/marker/' + nomenController.nomenID + '/addAlias/', parameters)
+                .then(function (list) {
+                    //alert("success")
+                    location.reload();
+                })
+                .catch(function (error) {
+                    alert('Error')
+                });
+            $("#alias-modal").hide();
+        };
+
+        nomenController.deleteAlias = function (aliasZdbID, geneID) {
+            if (!confirm("Do you want to delete"))
+                return;
+            $http.delete('/action/marker/' + geneID + '/remove-alias/' + aliasZdbID)
+                .then(function (list) {
+                    location.reload();
+                })
+                .catch(function (error) {
+                    alert('Error')
+                });
+            $("#alias-modal").hide();
+        };
+
         nomenController.fetchAttributions = function () {
             $http.get('/action/nomenclature/attributions/' + nomenController.nomenID)
                 .then(function (list) {
@@ -178,12 +210,35 @@ angular.module('nomenclature', [])
                 });
         }
 
+        function openAliasPopup() {
+            $('#alias-modal')
+                .modal({
+                    escapeClose: true,
+                    clickClose: true,
+                    showClose: true,
+                    fadeDuration: 100
+                })
+                .on($.modal.AFTER_CLOSE, function () {
+                });
+        }
+
         nomenController.openGeneEditor = function (ID, name, type) {
             nomenController.nomenID = ID;
             nomenController.fieldName = type;
             nomenController.geneNameOrAbbreviation = name;
             nomenController.hasGeneEdit = true;
             openEditorPopup();
+        }
+
+        nomenController.openAddNewPreviousNameEditor = function (ID) {
+            //alert("zdb ID: "+ID);
+            nomenController.nomenID = ID;
+            $("#alias-modal").show();
+            //openAliasPopup();
+        }
+
+        nomenController.closeAliasEditor = function () {
+            $("#alias-modal").hide();
         }
 
     }]);

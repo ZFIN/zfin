@@ -6,6 +6,8 @@ public class Nomenclature {
     private String reason;
     private String name;
     private String abbreviation;
+    private String newAlias;
+    private String attribution;
 
     public String getReason() {
         return reason;
@@ -45,5 +47,21 @@ public class Nomenclature {
 
     public boolean isGeneNameChange() {
         return name != null;
+    }
+
+    public String getAttribution() {
+        return attribution;
+    }
+
+    public void setAttribution(String attribution) {
+        this.attribution = attribution;
+    }
+
+    public String getNewAlias() {
+        return newAlias;
+    }
+
+    public void setNewAlias(String newAlias) {
+        this.newAlias = newAlias;
     }
 }
