@@ -1,3 +1,3 @@
-mrkrId,tgtId,relationship,pubId,mrelId,cmrelId
+mrkrzdb,tgtzdb,reltype,pubzdb,mrelid,cmrelid
 ZDB-TGCONSTRCT-151204-8,ZDB-REGION-160817-1,coding sequence of,ZDB-PUB-140710-12,mrelid,cmrelid
 ZDB-TGCONSTRCT-151204-8,ZDB-EFG-080131-4,coding sequence of,ZDB-PUB-140710-12,mrelid,cmrelid
