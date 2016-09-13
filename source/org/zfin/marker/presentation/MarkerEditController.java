@@ -12,10 +12,10 @@ import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.*;
 import org.zfin.nomenclature.presentation.Nomenclature;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  */
@@ -101,6 +101,70 @@ public class MarkerEditController {
                 marker.setName(nomenclature.getName());
             }
             getInfrastructureRepository().insertMarkerHistory(history);
+            tx.commit();
+        } catch (Exception e) {
+            try {
+                if (tx != null)
+                    tx.rollback();
+            } catch (HibernateException he) {
+                logger.error("Error during roll back of transaction", he);
+            }
+            logger.error("Error in Transaction", e);
+            throw new RuntimeException("Error during transaction. Rolled back.", e);
+        }
+
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "{zdbID}/addAlias", method = RequestMethod.POST)
+    public Boolean addAlias(@PathVariable String zdbID,
+                            @RequestBody Nomenclature nomenclature) {
+        Marker marker = getMarkerRepository().getMarkerByID(zdbID);
+        if (marker == null)
+            throw new RuntimeException("No Marker record found");
+
+        Publication publication = null;
+        if (nomenclature.getAttribution() != null) {
+            publication = getPublicationRepository().getPublication(nomenclature.getAttribution());
+            if (publication == null)
+                throw new RuntimeException("No valid publication record found");
+        }
+
+        Transaction tx = null;
+        try {
+            tx = HibernateUtil.createTransaction();
+            MarkerAlias alias = getMarkerRepository().addMarkerAlias(marker, nomenclature.getNewAlias(), publication);
+            tx.commit();
+        } catch (Exception e) {
+            try {
+                if (tx != null)
+                    tx.rollback();
+            } catch (HibernateException he) {
+                logger.error("Error during roll back of transaction", he);
+            }
+            logger.error("Error in Transaction", e);
+            throw new RuntimeException("Error during transaction. Rolled back.", e);
+        }
+
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "{zdbID}/remove-alias/{aliasZdbID}", method = RequestMethod.DELETE)
+    public Boolean deleteAlias(@PathVariable String zdbID,
+                               @PathVariable String aliasZdbID) {
+        Marker marker = getMarkerRepository().getMarkerByID(zdbID);
+        if (marker == null)
+            throw new RuntimeException("No Marker record found");
+        MarkerAlias alias = getMarkerRepository().getMarkerAlias(aliasZdbID);
+        if (alias == null)
+            throw new RuntimeException("No Marker alias record found");
+
+        Transaction tx = null;
+        try {
+            tx = HibernateUtil.createTransaction();
+            getMarkerRepository().deleteMarkerAlias(marker, alias);
             tx.commit();
         } catch (Exception e) {
             try {
