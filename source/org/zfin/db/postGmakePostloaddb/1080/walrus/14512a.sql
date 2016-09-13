@@ -1,6 +1,7 @@
 --liquibase formatted sql
 --changeset prita:14512a
 
+delete * from tmprel;
 update construct_component set cc_component_zdb_id='ZDB-REGION-160817-1' where cc_component='TagRFP' and cc_order=12;
 update construct_component set cc_component ='FMA' where cc_component='TagRFP' and cc_order=12;
 

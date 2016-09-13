@@ -1,6 +1,7 @@
 --liquibase formatted sql
 --changeset prita:14513
 
+delete * from tmprel;
 delete from construct_component where cc_component like 'Cte.';
 delete from construct_component where cc_component like 'Cte';
 delete from construct_component where cc_component like '.' and cc_construct_zdb_id='ZDB-ETCONSTRCT-150421-1';

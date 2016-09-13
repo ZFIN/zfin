@@ -1,6 +1,7 @@
 --liquibase formatted sql
 --changeset prita:14514
 
+delete * from tmprel;
 delete from construct_component where cc_component like 'Cdi.';
 update construct_component set cc_component_zdb_id='ZDB-EFG-160817-1' where cc_component='Tox';
 update construct_component set cc_component ='DipTox' where cc_component='Tox';

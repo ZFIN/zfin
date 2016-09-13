@@ -1,6 +1,7 @@
 --liquibase formatted sql
 --changeset prita:14512c
 
+delete * from tmprel;
 update construct set construct_name='Tg(5xUAS:FMAVenus-2A-3xNLS-EGFP)' where construct_zdb_id='ZDB-TGCONSTRCT-151204-8';
 
 update marker set mrkr_name='Tg(5xUAS:FMAVenus-2A-3xNLS-EGFP)' where mrkr_zdb_id='ZDB-TGCONSTRCT-151204-8';
