@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class NCBIRequest {
 
-    private final static String BASE_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
+    private final static String BASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
     private final static int MAX_ATTEMPTS = 3;
     private final static String UNAVAILABLE = "Resource temporarily unavailable";
 
