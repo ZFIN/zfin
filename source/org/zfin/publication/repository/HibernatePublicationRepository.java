@@ -2162,6 +2162,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             }
         }
 
+        criteria.addOrder(Order.asc("status"));
         if (StringUtils.isNotEmpty(sort)) {
             boolean isAscending = true;
             if (sort.startsWith("-")) {
@@ -2176,7 +2177,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             }
             criteria.addOrder(order);
         }
-        criteria.addOrder(Order.asc("status"));
 
         return PaginationResultFactory.createResultFromScrollableResultAndClose(offset, offset + count, criteria.scroll());
     }
