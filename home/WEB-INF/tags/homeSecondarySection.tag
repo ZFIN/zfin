@@ -5,11 +5,12 @@
 
 <h3>Curation</h3>
 <ul>
-    <?MICOMMENT>
-    <?MIVAR>
-    <li>View <a href="/cgi-bin/webdriver?MIval=aa-pubselect2.apg&query_results=exist&curator=$ZDB_ident&cur_status=is "><em>my open pubs</em></a></li>
-    <?/MIVAR>
-    <?/MICOMMENT>
+    <li>
+        View
+        <a href="/action/publication/dashboard"><em>my open pubs</em></a>,
+        <a href="action/publication/curating-bin"><em>curation bins</em></a>,
+        <a href="action/publication/indexing-bin"><em>indexing bin</em></a>
+    </li>
     <li>
         Add
         <a href="/action/marker/gene-add?type=GENE"><em>gene</em></a>,
