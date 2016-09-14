@@ -22,8 +22,8 @@ import java.util.List;
 public class PublicationDashboardController {
 
     public enum Page {
-        INDEXING_BIN("Ready for Indexing Bin", "publication/indexing-bin.page", "/action/publication/indexing-bin"),
-        CURATING_BIN("Ready for Curation Bin", "publication/curating-bin.page", "/action/publication/curating-bin"),
+        INDEXING_BIN("Indexing Bin", "publication/indexing-bin.page", "/action/publication/indexing-bin"),
+        CURATING_BIN("Curation Bins", "publication/curating-bin.page", "/action/publication/curating-bin"),
         DASHBOARD("My Dashboard", "publication/dashboard.page", "/action/publication/dashboard");
 
         private String title;
