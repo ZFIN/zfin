@@ -77,8 +77,9 @@
 <zfin-figure:imageView image="${image}"/>
 
 <zfin-figure:imageDetails image="${image}"/>
-
+    <c:if test="${!empty image.imageStage.start}">
  <zfin-figure:devStage image="${image}"/>
+    </c:if>
     <c:if test="${!empty image.preparation}">
     <zfin-figure:imageOrientation image="${image}"/>
     </c:if>
