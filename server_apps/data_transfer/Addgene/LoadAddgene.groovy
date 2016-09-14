@@ -157,13 +157,14 @@ if (options.report) {
     query.setParameter("addgeneDb", addgeneDb)
     count = query.uniqueResult()
 
+
     print "Generating report ... "
     ReportGenerator rg = new ReportGenerator();
     rg.setReportTitle("Report for $options.jobName")
     rg.includeTimestamp();
     rg.addIntroParagraph("With this load there are now $count Addgene links in total.")
     rg.addDataTable("${linksToDelete.size()} Links Removed", ["Gene", "Accession Number"], linksToDelete.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
-    rg.addDataTable("${linksAdded.size()} Links Added", ["Gene", "Accession Number"], linksAdded.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
+    //rg.addDataTable("${addedLinks.size()} Links Added", ["Gene", "Accession Number"], addedLinks.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
     new File("addgene-report.html").withWriter { writer ->
         rg.write(writer, ReportGenerator.Format.HTML)
     }
