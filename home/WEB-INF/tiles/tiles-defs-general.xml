@@ -158,7 +158,7 @@
 
     <!-- figure definitions -->
     <definition name="image/*.page" extends="main_layout">
-        <put-attribute name="body" value="/WEB-INF/jsp/image/{1}.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/figure/image/{1}.jsp"/>
     </definition>
 
     <!-- nomenclature -->
