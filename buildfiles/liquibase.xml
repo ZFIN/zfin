@@ -55,7 +55,7 @@
     description="Builds the database">
     
     <echo message="Building DB componentes necessary after loaddb.pl" />
-    <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/load/db.changelog.master.xml" 
+    <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/postgres/db.changelog.master.xml" 
 			      dropFirst="false" 
 			      classpathref="classpath"
 			      logLevel="debug"
