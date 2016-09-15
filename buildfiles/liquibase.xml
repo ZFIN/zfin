@@ -43,7 +43,7 @@
     <classpath refid="liquibase.lib.path" />  
   </taskdef>
 
-<!--  <liquibase:database 
+  <liquibase:database 
      id="liquidatabase" 
      driver="com.informix.jdbc.IfxDriver" 
      url="jdbc:informix-sqli://${HOSTNAME}:${INFORMIX_PORT}/${DBNAME}:INFORMIXSERVER=${INFORMIXSERVER}" 
@@ -75,9 +75,9 @@
 			      databaseref="liquidatabase"
 			      defaultSchemaName="informix">
     </liquibase:updateDatabase>
-  </target> -->
+  </target> 
  
-
+<!--
  <liquibase:database 
      id="liquidatabase" 
      driver="org.postgresql.Driver" 
@@ -97,5 +97,5 @@
 			      databaseref="liquidatabase">
     </liquibase:updateDatabase>
   </target>
- 
+ -->
 </project>
