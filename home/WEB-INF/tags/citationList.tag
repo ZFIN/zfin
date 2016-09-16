@@ -4,9 +4,7 @@
 <%@ attribute name="url" type="java.lang.String" rtexprvalue="true" required="true" %>
 
 <c:if test="${pubListBean.numOfPublishedPublications > 0}">
-    <hr>
     <table class="summary rowstripes sortable">
-        <caption>CITATION LIST (${pubListBean.numOfPublications} total)
             <c:if test="${pubListBean.numOfPublishedPublications > 1}">
                 <input type=button name=resultOrder
                        onClick="orderByDate()"
@@ -42,7 +40,7 @@
 
 <c:if test="${pubListBean.numOfUnpublishedPublications > 0}">
     <hr>
-    <b>Other Citations (${pubListBean.numOfUnpublishedPublications}):</b>
+    <b>Additional Citations (${pubListBean.numOfUnpublishedPublications}):</b>
     <table class="summary rowstripes">
     <c:forEach var="pub" items="${pubListBean.sortedUnpublishedPublications}"
                varStatus="loop">
