@@ -9,7 +9,7 @@ public class ImagePresentation extends EntityPresentation {
     private static final String uri = "?MIval=aa-imageview.apg&OID=";
     private static final String imageLoadUp = "/imageLoadUp/";
    // public static final String IMAGE_URI = "publication/image/";
-   public static final String IMAGE_URI = "/image/";
+   public static final String IMAGE_URI = "image/view/";
     public static String getLinkStartTag(Image image) {
       //return getWebdriverStartTag(uri, image.getZdbID());
         return getViewStartTag(image.getZdbID());
