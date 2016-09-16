@@ -37,7 +37,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     @Transient
     MutationDetailsConversionService mutationDetailsConversionService = new MutationDetailsConversionService();
 
-    public static final String MUTANT = "Mutant";
+    public static final String MUTANT = "Feature";
     public static final String UNRECOGNIZED = "unrecognized";
     public static final String UNSPECIFIED = "unspecified";
     public static final String UNKNOWN = "Unknown";
