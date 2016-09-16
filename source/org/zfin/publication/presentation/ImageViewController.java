@@ -92,7 +92,7 @@ public class ImageViewController {
         return "image-popup.page";
     }
 
-    @RequestMapping("/image/{zdbID}/summary")
+    @RequestMapping("/{zdbID}/summary")
     public String getImageSummaryPopup(Model model,
                                        @PathVariable("zdbID") String zdbID,
                                        @RequestParam(required = false) String category,
