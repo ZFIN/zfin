@@ -76,7 +76,7 @@ public class ImageViewController {
         return "figure/image-view.page";
     }
 
- 
+
     @RequestMapping("/publication/image-popup/{zdbID}")
     public String updateOrthologyNote(@PathVariable String zdbID,
                                       @ModelAttribute("formBean") ImageViewBean form) throws Exception {
