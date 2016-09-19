@@ -80,7 +80,8 @@
     <c:if test="${!empty image.imageStage.start}">
  <zfin-figure:devStage image="${image}"/>
     </c:if>
-    <c:if test="${!empty image.preparation}">
+    <c:if test="${image.preparation ne 'not specified'&&image.form ne 'not specified'&&image.direction ne 'not specified'&&image.view ne 'not specified'}">
+
     <zfin-figure:imageOrientation image="${image}"/>
     </c:if>
 <c:choose>
