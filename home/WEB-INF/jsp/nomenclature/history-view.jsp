@@ -50,7 +50,7 @@
                                 <span ng-click="control.openEditor('${markerHistory.zdbID}','${markerHistory.comments}','${markerHistory.reason.toString()}')"><a
                                         href>Edit</a></span>
                             </td>
-                            <td><span class="genedom">${marker.abbreviation}</span></td>
+                            <td><span class="genedom">${markerHistory.newValue}</span></td>
                             <td>${markerHistory.event.display}</td>
                             <td><span class="genedom">${markerHistory.oldSymbol}</span></td>
                             <td><fmt:formatDate value="${markerHistory.date}" pattern="yyyy-MM-dd"/></td>
@@ -186,3 +186,4 @@
         </script>
 
     </div>
+</div>

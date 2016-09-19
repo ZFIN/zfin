@@ -106,7 +106,9 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void geneByAbbreviation() {
-        assertNull(markerRepository.getGeneByAbbreviation("pax3"));
+        //MarkerHistory hist = markerRepository.getMarkerHistory("ZDB-NOMEN-040426-2959");
+        Marker adh8a = markerRepository.getGeneByAbbreviation("adh8a");
+        assertNotNull(adh8a);
         assertNotNull(markerRepository.getGeneByAbbreviation("pax3a"));
         assertNotNull(markerRepository.getGeneByAbbreviation("pax6a"));
         assertNull(markerRepository.getGeneByAbbreviation("pax6a-001"));
