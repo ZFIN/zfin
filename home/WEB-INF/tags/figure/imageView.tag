@@ -15,10 +15,11 @@
 </c:if>
 
 
-<div style="text-align:center; width:100%">
+<div style="text-align:center; max-width:100%">
     <TABLE border=0 cellpadding=20>
         <TR>
             <TD align=center bgcolor=#000000>
+               
 
 
 
@@ -48,9 +49,9 @@
                                     <c:set var="filename" value="${image.imageFilename}"/>
                                 </c:otherwise>
                             </c:choose>
-                            <img align="middle" class="figure-gallery-modal-image"  src="/imageLoadUp/${filename}"/>
-
-
+                    <%--//        <img align="middle" class="figure-gallery-modal-image"  src="/imageLoadUp/${filename}"/>--%>
+                        <%--<img class="figure-gallery-modal-image" src="/imageLoadUp/${filename}"/>--%>
+<img style="max-width:100%; max-height: 100%" src="/imageLoadUp/${filename}"/>
 
 
 
