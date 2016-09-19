@@ -920,8 +920,8 @@ while ($curGetMarkerAbbrev->fetch()) {
 $curGetMarkerAbbrev->finish();
 
 # data alias  (FB case 14531)
-$deleteMrkrHistory = "delete from marker_history where mhist_dalias_zdb_id = ?;"; 
-$curDeleteMrkrHistory = $dbh->prepare_cached($deleteMrkrHistory);
+$updateMrkrHistory = "update marker_history set mhist_dalias_zdb_id = null where mhist_dalias_zdb_id = ? ;"; 
+$curUpdateMrkrHistory = $dbh->prepare_cached($updateMrkrHistory);
 
 $getDAliases = "select dalias_zdb_id, dalias_alias from data_alias where dalias_data_zdb_id = ? ;";
 $curGetDAliases = $dbh->prepare_cached($getDAliases);
@@ -945,20 +945,20 @@ $curDelete = $dbh->prepare_cached($delete);
 foreach $dataAliasMergeId (keys %daliasesMerge) {
   $dataAliasMerge = $daliasesMerge{$dataAliasMergeId};
   if ($dataAliasMerg eq $mrkrAbbrevInto) {
-    $curDeleteMrkrHistory->execute($dataAliasMergeId);
+    $curUpdateMrkrHistory->execute($dataAliasMergeId);
     $curDelete->execute($dataAliasMergeId);
   } else {
       foreach $dataAliasIntoId (keys %daliasesInto) {
         $dataAliasInto = $daliasesInto{$dataAliasIntoId};
         if ($dataAliasInto eq $dataAliasMerge) {
-          $curDeleteMrkrHistory->execute($dataAliasMergeId);
+          $curUpdateMrkrHistory->execute($dataAliasMergeId);
           $curDelete->execute($dataAliasMergeId);
         }
       }
   }
 }
 
-$curDeleteMrkrHistory->finish();
+$curUpdateMrkrHistory->finish();
 
 # run the merge action SQLs that do not contain record_attribution
 $nonRecAttrSQL = "select mms_sql, mms_pk_id 
@@ -1001,11 +1001,11 @@ while ($curGetMarkerAbbrev2->fetch()) {
 }
 $curGetMarkerAbbrev2->finish();
 
-$deleteMarkerHistory = "delete from marker_history where mhist_dalias_zdb_id = (select dalias_zdb_id from data_alias where dalias_alias = ? and dalias_data_zdb_id = ?) ;";
-$curDeleteMarkerHistoy = $dbh->prepare_cached($deleteMarkerHistory);
-$curDeleteMarkerHistoy->execute($mrkrAbbrevInto,$mergeId);
-$curDeleteMarkerHistoy->execute($mrkrDeletedAbbrev,$intoId);
-$curDeleteMarkerHistoy->finish();
+$updateMarkerHistory = "update marker_history set mhist_dalias_zdb_id = null where mhist_dalias_zdb_id = (select dalias_zdb_id from data_alias where dalias_alias = ? and dalias_data_zdb_id = ?) ;";
+$curUpdateMarkerHistoy = $dbh->prepare_cached($updateMarkerHistory);
+$curUpdateMarkerHistoy->execute($mrkrAbbrevInto,$mergeId);
+$curUpdateMarkerHistoy->execute($mrkrDeletedAbbrev,$intoId);
+$curUpdateMarkerHistoy->finish();
 
 $deleteAlias = "delete from zdb_active_data where zactvd_zdb_id = (select dalias_zdb_id from data_alias where dalias_alias = ? and dalias_data_zdb_id = ?) ;";
 $curDeleteAlias = $dbh->prepare_cached($deleteAlias);
