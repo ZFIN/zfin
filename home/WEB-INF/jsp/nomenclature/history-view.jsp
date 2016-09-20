@@ -140,6 +140,7 @@
             </table>
             <input size="20" name="publicationID" ng-model="control.publicationID"/>
             <button ng-click="control.addAttribution()">Add</button>
+            <span class="error" id="errorMessage">{{control.errorMessage}}</span>
         </div>
 
         <script>
