@@ -7,6 +7,7 @@
      <tr>
      <th>Figure Data:</th>
      </tr>
+         <c:if test="${!empty image.figure}">
           <tr>
      <td>
           <c:if test="${!empty expressionSummaryMap[image.figure].startStage}">
@@ -28,12 +29,14 @@
 
       </td>
           </tr>
+
           <tr>
           <td>
 
                <zfin-figure:constructLinks figure="${image.figure}"/>
           </td>
           </tr>
+         </c:if>
           <tr>
                <td>
 
