@@ -19,14 +19,14 @@
     <TABLE border=0 cellpadding=20>
         <TR>
             <TD align=center bgcolor=#000000>
-               
 
 
 
+<c:if test="${!empty image.figure}">
       <c:if test="${image.figure.publication.canShowImages && empty image}">
           <img class="figure-image placeholder" src="/images/imagenotavailable.gif"/>
       </c:if>
-
+</c:if>
 
 
 
@@ -70,7 +70,7 @@
 
     </c:if>--%>
 
-
+<c:if test="${!empty image.figure}">
   <p class="fig">
 
       <strong>
@@ -105,7 +105,7 @@
        </c:choose>
 
     </p>
-
+</c:if>
 
     <%-- on all figure view, we want to also show some data tables, so they'll be passed in as the
          'body' of this tag --%>
