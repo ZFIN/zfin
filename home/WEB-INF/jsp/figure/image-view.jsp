@@ -24,18 +24,21 @@
 
 
 
-
+<c:if test="${image.figure ne null}">
 <div style="float: right">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+
         <tiles:putAttribute name="subjectName" value="${image.figure.publication.shortAuthorList} - ${image.figure.label}"/>
+
     </tiles:insertTemplate>
 </div>
+</c:if>
 
 <%--<zfin-figure:publicationInfo publication="${image.figure.publication}"
                              submitters="${submitters}"
                              showThisseInSituLink="${showThisseInSituLink}"
                              showErrataAndNotes="${showErrataAndNotes}"/>--%>
-
+<c:if test="${!empty image.figure}">
 <c:if test="${fn:length(image.figure.publication.figures) > 1}">
     <div style="margin-top: 1em;">
         <c:set var="probeUrlPart" value=""/>
@@ -49,7 +52,7 @@
         </c:if>
         </c:if>
     <c:if test="${image.figure.publication.type != CURATION}">
-        <a class="additional-figures-link" href="/action/figure/all-figure-view/${image.figure.publication.zdbID}${probeUrlPart}">All Figures for ${image.figure.publication.shortAuthorList}</a>
+        <a class="additional-figures-link" href="/action/figure/all-figure-view/${image.figure.publication.zdbID}${probeUrlPart}">Figures for ${image.figure.publication.shortAuthorList}[${probe.abbreviation}]</a>
         </c:if>
     </div>
 </c:if>
@@ -71,7 +74,7 @@
         <td> <zfin2:toggledPostcomposedList entities="${antibodyList}" maxNumber="5"/>  </td>
     </tr>
 </c:if>
-
+</c:if>
 <p>
 
 <zfin-figure:imageView image="${image}"/>
@@ -84,6 +87,7 @@
 
     <zfin-figure:imageOrientation image="${image}"/>
     </c:if>
+    <c:if test="${!empty image.figure}">
 <c:choose>
     <c:when test="${image.figure.publication.canShowImages && image.figure.publication.type != UNPUBLISHED}">
         <zfin2:acknowledgment publication="${figure.publication}" showElsevierMessage="${showElsevierMessage}" hasAcknowledgment="${hasAcknowledgment}"/>
@@ -94,6 +98,7 @@
         </zfin2:subsection>
     </c:otherwise>
 </c:choose>
+    </c:if>
 
 <script>
     jQuery(document).ready(function() {

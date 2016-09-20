@@ -24,16 +24,17 @@
 
 
 
-
+<c:if test="${image.figure ne null}">
 
 <div style="float: right">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
         <tiles:putAttribute name="subjectName" value="${image.figure.publication.shortAuthorList} - ${image.figure.label}"/>
     </tiles:insertTemplate>
 </div>
+    </c:if>
 
 
-
+<c:if test="${image.figure ne null}">
 <c:if test="${fn:length(image.figure.publication.figures) > 1}">
     <div style="margin-top: 1em;">
         <c:set var="probeUrlPart" value=""/>
@@ -51,6 +52,7 @@
         </c:if>
     </div>
 </c:if>
+</c:if>
 <p>
 
 <p>
@@ -61,22 +63,7 @@
 
 <zfin-figure:imageView image="${image}"/>
 
-<%--<zfin-figure:imageDetails image="${image}"/>
 
- <zfin-figure:devStage image="${image}"/>
-    <c:if test="${!empty image.preparation}">
-    <zfin-figure:imageOrientation image="${image}"/>
-    </c:if>
-<c:choose>
-    <c:when test="${image.figure.publication.canShowImages && image.figure.publication.type != UNPUBLISHED}">
-        <zfin2:acknowledgment publication="${figure.publication}" showElsevierMessage="${showElsevierMessage}" hasAcknowledgment="${hasAcknowledgment}"/>
-    </c:when>
-    <c:otherwise>
-        <zfin2:subsection>
-            <zfin-figure:journalAbbrev publication="${image.figure.publication}"/>
-        </zfin2:subsection>
-    </c:otherwise>
-</c:choose>--%>
             <div style="display: none;"><input type="text" name="magicvoodoo"></div>
 
             <script type="text/javascript">
