@@ -68,8 +68,7 @@ public class RunCandidatePresentationTest extends EntityPresentation {
     @Test
     public void candidateLink() {
         String link = RunCandidatePresentation.getLink(runCandidate);
-        assertEquals("<a href=\"/action/marker/view/ZDB-GENE-081507-1\" name=\"fibroblast growth factor 8 a\" id='ZDB-GENE-081507-1'>" +
-                "<span class=\"genedom\" title=\"fibroblast growth factor 8 a\">fgf8</span></a>"
+        assertEquals("<a href=\"/action/marker/view/ZDB-GENE-081507-1\" name=\"fibroblast growth factor 8 a\" id='ZDB-GENE-081507-1'><span class=\"genedom\" title=\"fibroblast growth factor 8 a\" id=\"Gene Symbol\">fgf8</span></a>"
                 ,link
         );
     }
@@ -80,7 +79,7 @@ public class RunCandidatePresentationTest extends EntityPresentation {
     @Test
     public void candidateName() {
         String name = RunCandidatePresentation.getName(runCandidate);
-        assertEquals("Span tag", "<span class=\"genedom\" title=\"fibroblast growth factor 8 a\">fgf8</span>", name);
+        assertEquals("Span tag", "<span class=\"genedom\" title=\"fibroblast growth factor 8 a\" id=\"Gene Symbol\">fgf8</span>", name);
     }
 
     /**
