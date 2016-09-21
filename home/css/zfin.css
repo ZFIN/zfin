@@ -888,3 +888,7 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
     color: white;
     font-weight: bold;
 }
+
+.edit-form-content {
+    margin-top: 30px;
+}

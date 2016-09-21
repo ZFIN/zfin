@@ -25,5 +25,18 @@
         </div>
     </div>
 
-    <zfin2:publicationForm publication="${publication}" error="${error}"/>
+    <ul class="nav nav-tabs nav-justified" role="tablist">
+        <li role="presentation" class="active"><a href="#details" aria-controls="details" role="tab" data-toggle="tab">Details</a></li>
+        <li role="presentation"><a href="#figures" aria-controls="figures" role="tab" data-toggle="tab">Figures</a></li>
+    </ul>
+
+    <div class="tab-content edit-form-content">
+        <div role="tabpanel" class="tab-pane active" id="details">
+            <zfin2:publicationForm publication="${publication}" error="${error}"/>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="figures">
+            <h1>figures!</h1>
+        </div>
+    </div>
+
 </div>

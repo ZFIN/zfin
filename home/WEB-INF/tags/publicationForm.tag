@@ -128,6 +128,15 @@
     </div>
 
     <div class="form-group">
+        <label for="canShowImages" class="col-sm-3 control-label">Has Image Permissions</label>
+        <div class="col-sm-8">
+            <div class="checkbox">
+                <label><form:checkbox path="canShowImages"/></label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
         <div class="col-sm-offset-3 col-sm-8">
             <button type="submit" class="btn btn-primary">Submit</button>
             <a class="btn btn-default" href="/${publication.zdbID}">Cancel</a>
