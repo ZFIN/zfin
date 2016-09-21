@@ -1751,6 +1751,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                     public Object transformTuple(Object[] tuple, String[] aliases) {
                         PreviousNameLight previousNameLight = new PreviousNameLight(gene.getAbbreviation());
                         previousNameLight.setMarkerZdbID(gene.getZdbID());
+                        previousNameLight.setPureAliasName(tuple[0].toString());
                         if (gene.getZdbID().startsWith("ZDB-GENE")) {
                             previousNameLight.setAlias("<i>" + tuple[0].toString() + "</i>");
                         } else {

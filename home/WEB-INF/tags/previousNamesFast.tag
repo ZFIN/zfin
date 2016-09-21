@@ -18,24 +18,45 @@
     </c:otherwise>
 </c:choose>
 
+<script>
+    markerID = '${marker.zdbID}';
+</script>
+
 <c:if test="${!empty previousNames}">
     <tr>
         <th>
                 ${label}
                      <span style="cursor: pointer;"
-                           ng-click="control.openAddNewPreviousNameEditor('${marker.zdbID}')">
+                           ng-click="control.openAddNewPreviousNameEditor()">
                          <i style="color: red">New</i>
                          </span>
         </th>
         <td>
+            <span id="previousNameListOriginal">
             <c:forEach var="markerAlias" items="${previousNames}" varStatus="loop">
                 <span id="previous-name-${loop.index}">${markerAlias.linkWithAttribution}</span>
+                                <span style="cursor: pointer;"
+                                      ng-click="control.editAttribution('${markerAlias.aliasZdbID}','${markerAlias.pureAliasName}')">
+                    <i class="fa fa-pencil" aria-hidden="true" style="color: red"></i>
+                </span>
                                 <span style="cursor: pointer;"
                                       ng-click="control.deleteAlias('${markerAlias.aliasZdbID}','${markerAlias.markerZdbID}')">
                     <i class="fa fa-trash" aria-hidden="true" style="color: red"></i>
                 </span>
                 ${(!loop.last ?", " : "")}
+
             </c:forEach>
+                </span>
+            <span id="previousNameList>" ng-repeat="previousNameItem in control.previousNameList ">
+                             <span ng-bind-html="previousNameItem.alias | unsafe"></span>  {{previousNameItem.attributionLink}}
+                                <span style="cursor: pointer;"
+                                      ng-click="control.editAttribution(previousNameItem.aliasZdbID, previousNameItem.alias)">
+                    <i class="fa fa-pencil" aria-hidden="true" style="color: red"></i> </span>
+                                <span style="cursor: pointer;"
+                                      ng-click="control.deleteAlias(previousNameItem.aliasZdbID)">
+                    <i class="fa fa-trash" aria-hidden="true" style="color: red"></i>
+            </span>{{$last ? '' : ', '}}
+            </span>
         </td>
     </tr>
     <tr>
