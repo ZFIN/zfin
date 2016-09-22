@@ -30,6 +30,7 @@ import static org.zfin.repository.RepositoryFactory.*;
 @RequestMapping("/marker")
 public class MarkerEditController {
 
+    public static final String BR = "<br/>";
     private static Logger logger = Logger.getLogger(MarkerEditController.class);
 
     @RequestMapping("/marker-edit")
@@ -78,7 +79,7 @@ public class MarkerEditController {
     @ResponseBody
     @RequestMapping(value = "edit/{zdbID}", method = RequestMethod.POST)
     public Boolean editNameAndAbbreviation(@PathVariable String zdbID,
-                                           @RequestBody Nomenclature nomenclature) {
+                                           @RequestBody Nomenclature nomenclature) throws InvalidWebRequestException {
         Marker marker = getMarkerRepository().getMarkerByID(zdbID);
         if (marker == null)
             throw new RuntimeException("No Marker record found");
@@ -117,25 +118,36 @@ public class MarkerEditController {
                 logger.error("Error during roll back of transaction", he);
             }
             logger.error("Error in Transaction", e);
-            throw new RuntimeException("Error during transaction. Rolled back.", e);
+            throw new InvalidWebRequestException(getExceptionErrorMessages("Could not update gene record", e), null);
         }
 
         return true;
     }
 
+    private String getExceptionErrorMessages(String header, Exception e) {
+        String errorMessage = "";
+        if (header != null)
+            errorMessage += header;
+        errorMessage += BR;
+        errorMessage += e.getMessage();
+        if (e.getCause() != null)
+            errorMessage += BR + e.getCause().getMessage();
+        return errorMessage;
+    }
+
     @ResponseBody
     @RequestMapping(value = "{zdbID}/addAlias", method = RequestMethod.POST)
     public Boolean addAlias(@PathVariable String zdbID,
-                            @RequestBody Nomenclature nomenclature) {
+                            @RequestBody Nomenclature nomenclature) throws InvalidWebRequestException {
         Marker marker = getMarkerRepository().getMarkerByID(zdbID);
         if (marker == null)
-            throw new RuntimeException("No Marker record found");
+            throw new InvalidWebRequestException("No Marker record found");
 
         Publication publication = null;
         if (nomenclature.getAttribution() != null) {
             publication = getPublicationRepository().getPublication(nomenclature.getAttribution());
             if (publication == null)
-                throw new RuntimeException("No valid publication record found");
+                throw new InvalidWebRequestException("No valid publication record found");
         }
 
         Transaction tx = null;
@@ -151,7 +163,7 @@ public class MarkerEditController {
                 logger.error("Error during roll back of transaction", he);
             }
             logger.error("Error in Transaction", e);
-            throw new RuntimeException("Error during transaction. Rolled back.", e);
+            throw new InvalidWebRequestException(getExceptionErrorMessages("Could not update gene record", e), null);
         }
 
         return true;

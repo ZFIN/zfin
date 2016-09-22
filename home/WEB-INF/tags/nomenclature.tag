@@ -1,24 +1,22 @@
+<%@ attribute name="geneEdit" %>
+
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<div id="evidence-modal" class="jq-modal curation">
-    <table>
-        <tr>
-            <td colspan="2">
-                <h3>
-                    {{control.fieldName}} Edit
-                </h3>
-            </td>
-        </tr>
+<div id="nomenclature-modal" class="jq-modal curation">
+    <h3>
+        {{control.fieldName}} Edit
+    </h3>
+    <table class="table">
         <tr>
             <td>ID:</td>
             <td>{{control.nomenID}}</td>
         </tr>
-        <span ng-show="control.hasGeneEdit">
+        <c:if test="${geneEdit}">
             <tr>
                 <td>{{control.fieldName}}:</td>
-                <td><input type="text" minlength="5" ng-model="control.geneNameOrAbbreviation"/></td>
+                <td><input type="text" minlength="5" size="40" ng-model="control.geneNameOrAbbreviation"/></td>
             </tr>
-        </span>
+        </c:if>
         <tr>
             <td>Reason:</td>
             <td>
@@ -31,10 +29,15 @@
             <td><textarea cols="40" ng-model="control.comments">{{control.comments}}</textarea></td>
         </tr>
         <tr>
-            <td>
-                <button ng-click="control.updateNomenclature()">Update</button>
-            </td>
             <td></td>
+            <td>
+                <c:if test="${geneEdit}">
+                    <button type="button" class="zfin-button cancel" ng-click="control.closeGeneEditor()">Cancel
+                    </button>
+                </c:if>
+                <button type="button" class="zfin-button approve" ng-click="control.updateNomenclature()">Update
+                </button>
+            </td>
         </tr>
     </table>
     <span ng-show="control.showAttribution">
@@ -49,6 +52,7 @@
             </tr>
         </table>
         <input size="20" name="publicationID" ng-model="control.publicationID"/>
-        <button ng-click="control.addAttribution()">Add</button>
+        <button type="button" class="zfin-button approve" ng-click="control.addAttribution()">Add</button>
      </span>
+    <span ng-bind-html="control.errorMessage | unsafe" class="error"></span>
 </div>

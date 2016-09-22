@@ -38,7 +38,12 @@
                     <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red"></i></span>
                 </td>
             </tr>
-
+            <tr>
+                <td></td>
+                <td>
+                    <zfin2:nomenclature geneEdit="true"/>
+                </td>
+            </tr>
             <c:if test="${!empty previousNames}">
                 <zfin2:previousNamesFast label="Previous Name" previousNames="${previousNames}" marker="${gene}"/>
             </c:if>
@@ -60,8 +65,6 @@
             <zfin2:entityNotes entity="${gene}"/>
 
         </table>
-
-        <zfin2:nomenclature/>
     </div>
 </div>
 

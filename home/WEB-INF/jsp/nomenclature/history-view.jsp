@@ -107,7 +107,7 @@
         <script>
             function openEditNomenclature(nomenID) {
                 alert("ID: " + nomenID);
-                $('#evidence-modal')
+                $('#nomenclature-modal')
                         .modal({
                             escapeClose: true,
                             clickClose: true,

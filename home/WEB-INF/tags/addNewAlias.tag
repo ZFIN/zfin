@@ -18,12 +18,12 @@
         <tr>
             <td></td>
             <td>
-                <input type="button" name="submit" value="Add Alias" class="btn btn-primary"
-                       ng-click="control.createNewAlias()">
-                <span style="text-align: right"><a href="" ng-click="control.closeAliasEditor()">Cancel</a></span>
+                <button ng-click="control.closeAliasEditor()" class="zfin-button cancel">Cancel</button>
+                <button ng-click="control.createNewAlias()" class="zfin-button approve">Add Alias</button>
             </td>
         </tr>
     </table>
+    <span ng-bind-html="control.errorMessage | unsafe" class="error"></span>
 </div>
 
 <div id="alias-attribution-modal" class="jq-modal curation">
@@ -42,10 +42,23 @@
         </tr>
         <tr>
             <td colspan="2">
-                <button ng-click="control.addAttribution()" class="btn btn-primary">Add</button>
-                <span style="text-align: right"><a href=""
-                                                   ng-click="control.closeAliasAttributionEditor()">Cancel</a></span>
+                <button ng-click="control.closeAliasAttributionEditor()" class="zfin-button cancel">Cancel</button>
+                <button ng-click="control.addAttribution()" class="zfin-button approve">Add</button>
             </td>
         </tr>
     </table>
+    <span ng-bind-html="control.errorMessage | unsafe" class="error"></span>
+</div>
+
+<div id="delete-modal" class="jq-modal curation">
+    <h3>
+        Delete Alias: <span ng-bind-html="control.newAlias | unsafe"></span>
+
+        <p/>
+    </h3>
+    (Including Attributions)
+    <div class="popup-actions">
+        <button type="button" class="zfin-button cancel" ng-click="control.cancelDeleteAlias()">Cancel</button>
+        <button type="button" class="zfin-button reject" ng-click="control.deleteAlias(control.aliasID)">Delete</button>
+    </div>
 </div>

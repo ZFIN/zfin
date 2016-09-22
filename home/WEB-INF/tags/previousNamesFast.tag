@@ -40,22 +40,19 @@
                     <i class="fa fa-pencil" aria-hidden="true" style="color: red"></i>
                 </span>
                                 <span style="cursor: pointer;"
-                                      ng-click="control.deleteAlias('${markerAlias.aliasZdbID}','${markerAlias.markerZdbID}')">
+                                      ng-click="control.confirmDeleteAlias('${markerAlias.aliasZdbID}','${markerAlias.alias}')">
                     <i class="fa fa-trash" aria-hidden="true" style="color: red"></i>
-                </span>
-                ${(!loop.last ?", " : "")}
-
+                </span>${(!loop.last ?", " : "")}
             </c:forEach>
                 </span>
             <span id="previousNameList>" ng-repeat="previousNameItem in control.previousNameList ">
-                             <span ng-bind-html="previousNameItem.alias | unsafe"></span>  {{previousNameItem.attributionLink}}
+                 <span ng-bind-html="previousNameItem.attributionLink | unsafe"></span>
                                 <span style="cursor: pointer;"
                                       ng-click="control.editAttribution(previousNameItem.aliasZdbID, previousNameItem.alias)">
                     <i class="fa fa-pencil" aria-hidden="true" style="color: red"></i> </span>
                                 <span style="cursor: pointer;"
-                                      ng-click="control.deleteAlias(previousNameItem.aliasZdbID)">
-                    <i class="fa fa-trash" aria-hidden="true" style="color: red"></i>
-            </span>{{$last ? '' : ', '}}
+                                      ng-click="control.confirmDeleteAlias(previousNameItem.aliasZdbID)">
+                    <i class="fa fa-trash" aria-hidden="true" style="color: red"></i></span>{{$last ? '' : ', '}}
             </span>
         </td>
     </tr>

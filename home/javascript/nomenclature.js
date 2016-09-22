@@ -15,6 +15,7 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
     nomenController.publicationDtoList = [];
     nomenController.newAttribution;
     nomenController.newAlias;
+    nomenController.aliasID;
     nomenController.previousNameList = [];
 
 
@@ -22,6 +23,7 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
     $scope.markerID = $window.markerID;
 
     nomenController.updateNomenclature = function () {
+        nomenController.errorMessage = '';
         var parameters = {
             'comments': nomenController.comments,
             'reason': nomenController.reason
@@ -48,11 +50,11 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
                     } else if (nomenController.fieldName == 'Gene Symbol') {
                         $("#markerAbbreviation").text(parameters.abbreviation)
                     }
-                    $('#evidence-modal').modal('hide');
-                    $('#markerName').click();
+                    $('#nomenclature-modal').hide();
+                    nomenController.fetchPreviousNameList();
                 })
                 .catch(function (error) {
-
+                    nomenController.errorMessage = error.data.message;
                 });
 
         }
@@ -76,10 +78,11 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
     nomenController.updateGeneAbbreviation = function () {
         $http.post('/action/marker/edit/' + nomenController.nomenID, parameters)
             .then(function (success) {
-                location.reload();
+                nomenController.fetchPreviousNameList();
             })
             .catch(function (error) {
-
+                alert("error")
+                nomenController.errorMessage = error.data.message;
             });
     };
 
@@ -147,20 +150,18 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
         $http.post('/action/marker/' + markerID + '/addAlias/', parameters)
             .then(function (list) {
                 //alert("success")
+                $("#alias-modal").hide();
                 nomenController.fetchPreviousNameList();
             })
             .catch(function (error) {
-                alert('Error')
+                nomenController.errorMessage = error.data.message;
             });
-        $("#alias-modal").hide();
     };
 
     nomenController.deleteAlias = function (aliasZdbID) {
-        if (!confirm("Do you want to delete " + aliasZdbID))
-            return;
         $http.delete('/action/marker/' + markerID + '/remove-alias/' + aliasZdbID)
             .then(function (list) {
-                location.reload();
+                nomenController.fetchPreviousNameList();
             })
             .catch(function (error) {
                 alert('Error')
@@ -181,7 +182,7 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
                 //alert(publicationDtoList[0].zdbID)
             })
             .catch(function (error) {
-                vm.generalError = 'Could not fetch attributions';
+                nomenController.generalError = 'Could not fetch attributions';
             });
     };
 
@@ -198,7 +199,7 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
                 //alert(publicationDtoList[0].zdbID)
             })
             .catch(function (error) {
-                vm.generalError = 'Could not fetch attributions';
+                nomenController.generalError = 'Could not fetch attributions';
             });
     };
 
@@ -218,7 +219,7 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
                 $("#previousNameListOriginal").hide();
             })
             .catch(function (error) {
-                vm.generalError = 'Could not fetch attributions';
+                nomenController.generalError = 'Could not fetch attributions';
             });
     };
 
@@ -270,7 +271,7 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
     };
 
     function openEditorPopup() {
-        $('#evidence-modal')
+        $('#nomenclature-modal')
             .modal({
                 escapeClose: true,
                 clickClose: true,
@@ -298,7 +299,9 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
         nomenController.fieldName = type;
         nomenController.geneNameOrAbbreviation = name;
         nomenController.hasGeneEdit = true;
-        openEditorPopup();
+        nomenController.errorMessage = '';
+        $("#nomenclature-modal").show();
+        //openEditorPopup();
     };
 
     nomenController.openAddNewPreviousNameEditor = function () {
@@ -312,6 +315,7 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
         //alert("name: " + name);
         nomenController.nomenID = ID;
         nomenController.newAlias = name;
+        nomenController.errorMessage = '';
         $("#alias-attribution-modal").show();
         nomenController.fetchAliasAttributions(ID);
         //openAliasPopup();
@@ -321,31 +325,41 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
         $("#alias-modal").hide();
     };
 
+    nomenController.cancelDeleteAlias = function () {
+        $.modal.close();
+    };
+
+    nomenController.closeGeneEditor = function () {
+        $("#nomenclature-modal").hide();
+    };
+
     nomenController.closeAliasAttributionEditor = function () {
         $("#alias-attribution-modal").hide();
         nomenController.publicationDtoList = [];
         nomenController.fetchPreviousNameList();
+    };
+
+    nomenController.confirmDeleteAlias = function (aliasID, alias) {
+        nomenController.newAlias = alias;
+        nomenController.aliasID = aliasID;
+        $('#delete-modal')
+            .modal({
+                escapeClose: false,
+                clickClose: false,
+                showClose: false,
+                fadeDuration: 100
+            })
+            .on($.modal.AFTER_CLOSE, function () {
+            });
     }
+
 
 }]);
 
 
-nomenApp.filter('unsafe', function () {
-    return fuction(val)
-    {
-        alert('Huhu')
-        return val;
-    }
+nomenApp.filter('unsafe', function ($sce) {
+    return function (val) {
+        return $sce.trustAsHtml(val);
+    };
 });
 
-
-// trustedHtml.$inject = ['$sce'];
-/*
-nomenApp.filter('unsafe', function ($sce) {
- return fuction(val)
- {
- alert('Huhu')
- return $sce.trustAsHtml(val);
- }
- });
-*/
