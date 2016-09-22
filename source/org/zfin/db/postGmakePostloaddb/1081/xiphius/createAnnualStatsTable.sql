@@ -3,7 +3,8 @@
 
 create table annual_stats (as_pk_id serial8 not null constraint as_pk_id_not_null,
        	     		   as_count int not null constraint as_count_not_null,
-			   as_section varchar(100) not null constraint as_section_not_null)
+			   as_section varchar(100) not null constraint as_section_not_null,
+			   as_date datetime year to second default current year to second as_date_not_null)
 in tbldbs1
 extent size 32 next size 32;
 
