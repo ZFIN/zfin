@@ -17,8 +17,8 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -31,11 +31,12 @@ public class FigureEditController {
 
     @ResponseBody
     @RequestMapping(value = "/publication/{zdbID}/figures", method = RequestMethod.GET)
-    public Set<FigurePresentationBean> getFiguresForPub(@PathVariable String zdbID) {
+    public List<FigurePresentationBean> getFiguresForPub(@PathVariable String zdbID) {
         Publication publication = publicationRepository.getPublication(zdbID);
         return publication.getFigures().stream()
+                .sorted(Comparator.comparing(Figure::getOrderingLabel).thenComparing(Figure::getZdbID))
                 .map(FigureService::convertToFigurePresentationBean)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     @ResponseBody
