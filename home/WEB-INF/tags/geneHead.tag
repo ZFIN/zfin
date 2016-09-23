@@ -43,7 +43,7 @@
     <tr>
         <th><span class="name-label">${gene.markerType.displayName} Symbol:</span></th>
         <td>
-            <span class="name-value"><zfin:abbrev entity="${gene}"/></span>
+            <span class="name-value" geneSymbol><zfin:abbrev entity="${gene}"/></span>
             <authz:authorize access="hasRole('root')">
                     <span style="cursor: pointer;"
                           ng-click="control.openGeneEditor('${gene.zdbID}','${gene.abbreviation}', 'Gene Symbol')"

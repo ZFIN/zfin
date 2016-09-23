@@ -41,7 +41,7 @@
         </tr>
         <tr>
             <td colspan="2">
-                <button ng-click="control.closeAliasAttributionEditor()" class="zfin-button cancel">Cancel</button>
+                <button ng-click="control.closeAliasAttributionEditor()" class="zfin-button cancel">Close</button>
                 <button ng-click="control.addAttribution()" class="zfin-button approve">Add</button>
             </td>
         </tr>
@@ -57,7 +57,7 @@
     </h3>
     (Including Attributions)
     <div class="popup-actions">
-        <button type="button" class="zfin-button cancel" ng-click="control.cancelDeleteAlias()">Cancel</button>
+        <button type="button" class="zfin-button cancel" ng-click="control.closeModal ()">Cancel</button>
         <button type="button" class="zfin-button reject" ng-click="control.deleteAlias(control.aliasID)">Delete</button>
     </div>
 </div>

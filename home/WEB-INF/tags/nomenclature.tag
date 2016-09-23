@@ -15,7 +15,7 @@
         <c:if test="${geneEdit}">
             <tr>
                 <td>{{control.fieldName}}:</td>
-                <td><input type="text" minlength="5" size="40" ng-model="control.geneNameOrAbbreviation"/></td>
+                <td><input type="text" minlength="2" size="40" ng-model="control.geneNameOrAbbreviation"/></td>
             </tr>
         </c:if>
         <c:if test="${showReason}">
@@ -35,7 +35,7 @@
             <td></td>
             <td>
                 <c:if test="${geneEdit}">
-                    <button type="button" class="zfin-button cancel" ng-click="control.closeGeneEditor()">Cancel
+                    <button type="button" class="zfin-button cancel" ng-click="control.closeModal()">Cancel
                     </button>
                 </c:if>
                 <button type="button" class="zfin-button approve" ng-click="control.updateNomenclature()">Update

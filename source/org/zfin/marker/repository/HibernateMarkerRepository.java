@@ -537,12 +537,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
 
     /**
-     * Create a new alias for a given marker. IF no alias is found no alias is crerated.
+     * Create a new alias for a given marker. If no alias is found no alias is created.
+     * If alias already exists do not create a new one and return null.
      *
      * @param marker      valid marker object.
      * @param alias       alias string
      * @param publication publication
-     * @return The created markerAlias
+     * @return The created markerAlias or null if it already exists.
      */
     public MarkerAlias addMarkerAlias(Marker marker, String alias, Publication publication) {
         //first handle the alias..
@@ -553,12 +554,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
         markerAlias.setAliasGroup(group);  //default for database, hibernate tries to insert null
         markerAlias.setAlias(ZfinStringUtils.escapeHighUnicode(alias));
         if (marker.getAliases() == null) {
-            Set<MarkerAlias> markerAliases = new HashSet<MarkerAlias>();
-            markerAliases.add(markerAlias);
+            Set<MarkerAlias> markerAliases = new HashSet<>();
             marker.setAliases(markerAliases);
-        } else {
-            marker.getAliases().add(markerAlias);
         }
+        if (!marker.getAliases().add(markerAlias))
+            return null;
 
         currentSession().save(markerAlias);
 

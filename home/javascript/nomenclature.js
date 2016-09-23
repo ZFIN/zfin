@@ -23,13 +23,11 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
     $scope.markerID = $window.markerID;
 
     nomenController.updateNomenclature = function () {
-        //alert("name "+nomenController.geneNameOrAbbreviation)
         nomenController.errorMessage = '';
         var parameters = {
             'comments': nomenController.comments,
             'reason': nomenController.reason
         };
-//            alert('Field Name: ' + nomenController.fieldName);
         if (nomenController.fieldName == 'Nomenclature') {
             $http.post('/action/nomenclature/update/' + nomenController.nomenID, parameters)
                 .then(function (success) {
@@ -49,10 +47,10 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
                     if (nomenController.fieldName == 'Gene Name') {
                         $("#markerName").text(parameters.name)
                     } else if (nomenController.fieldName == 'Gene Symbol') {
-                        $("#markerAbbreviation").text(parameters.abbreviation)
+                        $('body').find("[geneSymbol='']").text(parameters.abbreviation)
                         nomenController.fetchPreviousNameList();
                     }
-                    $('#nomenclature-modal').modal('hide');
+                    nomenController.closeModal();
                 })
                 .catch(function (error) {
                     nomenController.errorMessage = error.data.message;
@@ -159,7 +157,7 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
         $http.post('/action/marker/' + markerID + '/addAlias/', parameters)
             .then(function (list) {
                 //alert("success")
-                $("#alias-modal").modal('hide');
+                nomenController.closeModal();
                 nomenController.fetchPreviousNameList();
             })
             .catch(function (error) {
@@ -170,7 +168,7 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
     nomenController.deleteAlias = function (aliasZdbID) {
         $http.delete('/action/marker/' + markerID + '/remove-alias/' + aliasZdbID)
             .then(function (list) {
-                $("#alias-modal").modal('hide');
+                nomenController.closeModal();
                 nomenController.fetchPreviousNameList();
             })
             .catch(function (error) {
@@ -280,19 +278,6 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
         openModalPopup('nomenclature-modal');
     };
 
-    function openEditorPopup() {
-        $('#nomenclature-modal')
-            .modal({
-                escapeClose: true,
-                clickClose: true,
-                showClose: true,
-                fadeDuration: 100
-            })
-            .on($.modal.AFTER_CLOSE, function () {
-                alert('close')
-            });
-    }
-
     function openModalPopup(element) {
         //alert('popup: '+element);
         $('#' + element)
@@ -313,41 +298,29 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
         nomenController.hasGeneEdit = true;
         nomenController.errorMessage = '';
         //alert("name "+nomenController.geneNameOrAbbreviation)
-        //$("#nomenclature-modal").show();
         openModalPopup('nomenclature-modal');
     };
 
     nomenController.openAddNewPreviousNameEditor = function () {
         //alert("zdb ID: "+ID);
         nomenController.newAlias = '';
-        //$("#alias-modal").show();
         openModalPopup('alias-modal');
     };
 
     nomenController.editAttribution = function (ID, name) {
-        //alert("name: " + name);
         nomenController.nomenID = ID;
         nomenController.newAlias = name;
         nomenController.errorMessage = '';
-        //$("#alias-attribution-modal").show();
         nomenController.fetchAliasAttributions(ID);
         openModalPopup('alias-attribution-modal');
     };
 
-    nomenController.closeAliasEditor = function () {
-        $("#alias-modal").hide();
-    };
-
-    nomenController.cancelDeleteAlias = function () {
+    nomenController.closeModal = function () {
         $.modal.close();
     };
 
-    nomenController.closeGeneEditor = function () {
-        $("#nomenclature-modal").hide();
-    };
-
     nomenController.closeAliasAttributionEditor = function () {
-        $("#alias-attribution-modal").hide();
+        nomenController.closeModal();
         nomenController.publicationDtoList = [];
         nomenController.fetchPreviousNameList();
     };
