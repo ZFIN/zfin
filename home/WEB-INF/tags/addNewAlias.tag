@@ -1,14 +1,14 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<link rel="stylesheet" type="text/css" href="/css/bootstrap3/css/bootstrap.css">
-<link rel="stylesheet" type="text/css" href="/css/zfin-bootstrap-overrides.css">
-<script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
-
 <div id="alias-modal" class="jq-modal curation">
+    <h3>
+        Add new Alias
+    </h3>
     <table class="table table-condensed">
         <tr>
             <td>Alias</td>
-            <td><input type="text" name="newAlias" ng-model="control.newAlias"></td>
+            <td><input type="text" name="newAlias" ng-model="control.newAlias"
+                       ng-keyup="$event.keyCode == 13 && control.createNewAlias()" data-modalfocus></td>
             <td style="text-align: right"></td>
         </tr>
         <tr>
@@ -18,7 +18,6 @@
         <tr>
             <td></td>
             <td>
-                <button ng-click="control.closeAliasEditor()" class="zfin-button cancel">Cancel</button>
                 <button ng-click="control.createNewAlias()" class="zfin-button approve">Add Alias</button>
             </td>
         </tr>
@@ -27,9 +26,9 @@
 </div>
 
 <div id="alias-attribution-modal" class="jq-modal curation">
-    <h4>
+    <h3>
         Attributions for Alias: {{control.newAlias}}
-    </h4>
+    </h3>
     <table>
         <tr ng-repeat="pub in control.publicationDtoList">
             <td>{{pub.zdbID}}</td>
@@ -62,3 +61,4 @@
         <button type="button" class="zfin-button reject" ng-click="control.deleteAlias(control.aliasID)">Delete</button>
     </div>
 </div>
+

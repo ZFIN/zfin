@@ -1,3 +1,4 @@
+<%@ attribute name="showReason" %>
 <%@ attribute name="geneEdit" %>
 
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
@@ -17,13 +18,15 @@
                 <td><input type="text" minlength="5" size="40" ng-model="control.geneNameOrAbbreviation"/></td>
             </tr>
         </c:if>
-        <tr>
-            <td>Reason:</td>
-            <td>
-                <select ng-model="control.reason"
-                        ng-options="reas for reas in reasonList"></select>
-            </td>
-        </tr>
+        <c:if test="${showReason}">
+            <tr>
+                <td>Reason:</td>
+                <td>
+                    <select ng-model="control.reason"
+                            ng-options="reas for reas in reasonList"></select>
+                </td>
+            </tr>
+        </c:if>
         <tr>
             <td>Comments:</td>
             <td><textarea cols="40" ng-model="control.comments">{{control.comments}}</textarea></td>

@@ -18,51 +18,46 @@
     </c:otherwise>
 </c:choose>
 
-<script>
-    markerID = '${marker.zdbID}';
-</script>
-
-<c:if test="${!empty previousNames}">
-    <tr>
-        <th>
-                ${label}
+<tr>
+    <th>
+        ${label}
                      <span style="cursor: pointer;"
-                           ng-click="control.openAddNewPreviousNameEditor()">
+                           ng-click="control.openAddNewPreviousNameEditor()"
+                           ng-if="control.editMode">
                          <i style="color: red">New</i>
                          </span>
-        </th>
-        <td>
+    </th>
+    <td>
             <span id="previousNameListOriginal">
             <c:forEach var="markerAlias" items="${previousNames}" varStatus="loop">
-                <span id="previous-name-${loop.index}">${markerAlias.linkWithAttribution}</span>
-                                <span style="cursor: pointer;"
-                                      ng-click="control.editAttribution('${markerAlias.aliasZdbID}','${markerAlias.pureAliasName}')">
+                <span id="previous-name-${loop.index}">${markerAlias.linkWithAttribution}</span><span
+                    style="cursor: pointer;"
+                    ng-click="control.editAttribution('${markerAlias.aliasZdbID}','${markerAlias.pureAliasName}')"
+                    ng-if="control.editMode">
                     <i class="fa fa-pencil" aria-hidden="true" style="color: red"></i>
-                </span>
-                                <span style="cursor: pointer;"
-                                      ng-click="control.confirmDeleteAlias('${markerAlias.aliasZdbID}','${markerAlias.alias}')">
-                    <i class="fa fa-trash" aria-hidden="true" style="color: red"></i>
-                </span>${(!loop.last ?", " : "")}
+                </span><span style="cursor: pointer;"
+                             ng-click="control.confirmDeleteAlias('${markerAlias.aliasZdbID}','${markerAlias.alias}')"
+                             ng-if="control.editMode">
+                    <i class="fa fa-trash" aria-hidden="true" style="color: red"></i></span>${(!loop.last ?", " : "")}
             </c:forEach>
                 </span>
             <span id="previousNameList>" ng-repeat="previousNameItem in control.previousNameList ">
-                 <span ng-bind-html="previousNameItem.attributionLink | unsafe"></span>
-                                <span style="cursor: pointer;"
-                                      ng-click="control.editAttribution(previousNameItem.aliasZdbID, previousNameItem.alias)">
-                    <i class="fa fa-pencil" aria-hidden="true" style="color: red"></i> </span>
-                                <span style="cursor: pointer;"
-                                      ng-click="control.confirmDeleteAlias(previousNameItem.aliasZdbID)">
+                 <span ng-bind-html="previousNameItem.attributionLink | unsafe"></span><span style="cursor: pointer;"
+                                                                                             ng-click="control.editAttribution(previousNameItem.aliasZdbID, previousNameItem.alias)"
+                                                                                             ng-if="control.editMode">
+                    <i class="fa fa-pencil" aria-hidden="true" style="color: red"></i> </span><span
+                    style="cursor: pointer;"
+                    ng-click="control.confirmDeleteAlias(previousNameItem.aliasZdbID)"
+                    ng-if="control.editMode">
                     <i class="fa fa-trash" aria-hidden="true" style="color: red"></i></span>{{$last ? '' : ', '}}
             </span>
-        </td>
-    </tr>
-    <tr>
-        <td></td>
-        <td>
-            <zfin2:addNewAlias/>
-        </td>
-    </tr>
-</c:if>
+    </td>
+</tr>
+<tr>
+    <td>
+        <zfin2:addNewAlias/>
+    </td>
+</tr>
 
 
 

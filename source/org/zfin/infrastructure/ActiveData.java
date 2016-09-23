@@ -143,6 +143,13 @@ public class ActiveData implements ZdbID {
         return false;
     }
 
+    public static boolean isGeneOrGeneP(String ID) {
+        Type type = getType(ID);
+        if (type.equals(Type.GENE) || type.equals(Type.GENEP))
+            return true;
+        return false;
+    }
+
     public enum Type {
         ALT(DeleteFeatureRule.class, Feature.class),
         ANAT,

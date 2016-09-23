@@ -8,7 +8,7 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
     nomenController.comments;
     nomenController.publicationID;
     nomenController.errorMessage;
-    nomenController.geneNameOrAbbreviation = null;
+    nomenController.geneNameOrAbbreviation;
     nomenController.hasGeneEdit = false;
     nomenController.fieldName;
     nomenController.showAttribution = false;
@@ -16,13 +16,14 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
     nomenController.newAttribution;
     nomenController.newAlias;
     nomenController.aliasID;
+    nomenController.editMode = false;
     nomenController.previousNameList = [];
-
 
     $scope.reasonList = $window.reasonList;
     $scope.markerID = $window.markerID;
 
     nomenController.updateNomenclature = function () {
+        //alert("name "+nomenController.geneNameOrAbbreviation)
         nomenController.errorMessage = '';
         var parameters = {
             'comments': nomenController.comments,
@@ -49,9 +50,9 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
                         $("#markerName").text(parameters.name)
                     } else if (nomenController.fieldName == 'Gene Symbol') {
                         $("#markerAbbreviation").text(parameters.abbreviation)
+                        nomenController.fetchPreviousNameList();
                     }
-                    $('#nomenclature-modal').hide();
-                    nomenController.fetchPreviousNameList();
+                    $('#nomenclature-modal').modal('hide');
                 })
                 .catch(function (error) {
                     nomenController.errorMessage = error.data.message;
@@ -117,6 +118,7 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
                 }
                 nomenController.publicationID = '';
                 nomenController.errorMessage = '';
+                nomenController.fetchPreviousNameList();
             })
             .catch(function (error) {
                 nomenController.errorMessage = error.data.message;
@@ -136,6 +138,7 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
                 }
                 nomenController.publicationID = '';
                 nomenController.errorMessage = '';
+                nomenController.fetchPreviousNameList();
             })
             .catch(function (error) {
                 nomenController.errorMessage = error.data.message;
@@ -143,6 +146,12 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
     };
 
     nomenController.createNewAlias = function () {
+        nomenController.errorMessage = '';
+        if (!nomenController.newAlias) {
+            nomenController.errorMessage = 'No alias provided';
+            return;
+        }
+
         var parameters = {
             'newAlias': nomenController.newAlias,
             'attribution': nomenController.newAttribution
@@ -150,7 +159,7 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
         $http.post('/action/marker/' + markerID + '/addAlias/', parameters)
             .then(function (list) {
                 //alert("success")
-                $("#alias-modal").hide();
+                $("#alias-modal").modal('hide');
                 nomenController.fetchPreviousNameList();
             })
             .catch(function (error) {
@@ -161,12 +170,12 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
     nomenController.deleteAlias = function (aliasZdbID) {
         $http.delete('/action/marker/' + markerID + '/remove-alias/' + aliasZdbID)
             .then(function (list) {
+                $("#alias-modal").modal('hide');
                 nomenController.fetchPreviousNameList();
             })
             .catch(function (error) {
-                alert('Error')
+                nomenController.errorMessage = error.data.message;
             });
-        $("#alias-modal").hide();
     };
 
     nomenController.fetchAttributions = function () {
@@ -237,7 +246,7 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
                 }
             })
             .catch(function (error) {
-                vm.generalError = 'Could not delete attribution';
+                nomenController.generalError = 'Could not delete attribution';
             });
     };
 
@@ -252,9 +261,10 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
                         title: list.data[data].title
                     })
                 }
+                nomenController.fetchPreviousNameList();
             })
             .catch(function (error) {
-                vm.generalError = 'Could not delete attribution';
+                nomenController.generalError = 'Could not delete attribution';
             });
     };
 
@@ -267,7 +277,7 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
         nomenController.hasGeneEdit = false;
         nomenController.fieldName = 'Nomenclature';
         nomenController.fetchAttributions();
-        openEditorPopup();
+        openModalPopup('nomenclature-modal');
     };
 
     function openEditorPopup() {
@@ -279,11 +289,13 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
                 fadeDuration: 100
             })
             .on($.modal.AFTER_CLOSE, function () {
+                alert('close')
             });
     }
 
-    function openAliasPopup() {
-        $('#alias-modal')
+    function openModalPopup(element) {
+        //alert('popup: '+element);
+        $('#' + element)
             .modal({
                 escapeClose: true,
                 clickClose: true,
@@ -300,15 +312,16 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
         nomenController.geneNameOrAbbreviation = name;
         nomenController.hasGeneEdit = true;
         nomenController.errorMessage = '';
-        $("#nomenclature-modal").show();
-        //openEditorPopup();
+        //alert("name "+nomenController.geneNameOrAbbreviation)
+        //$("#nomenclature-modal").show();
+        openModalPopup('nomenclature-modal');
     };
 
     nomenController.openAddNewPreviousNameEditor = function () {
         //alert("zdb ID: "+ID);
         nomenController.newAlias = '';
-        $("#alias-modal").show();
-        //openAliasPopup();
+        //$("#alias-modal").show();
+        openModalPopup('alias-modal');
     };
 
     nomenController.editAttribution = function (ID, name) {
@@ -316,9 +329,9 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
         nomenController.nomenID = ID;
         nomenController.newAlias = name;
         nomenController.errorMessage = '';
-        $("#alias-attribution-modal").show();
+        //$("#alias-attribution-modal").show();
         nomenController.fetchAliasAttributions(ID);
-        //openAliasPopup();
+        openModalPopup('alias-attribution-modal');
     };
 
     nomenController.closeAliasEditor = function () {
@@ -340,18 +353,22 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
     };
 
     nomenController.confirmDeleteAlias = function (aliasID, alias) {
-        nomenController.newAlias = alias;
         nomenController.aliasID = aliasID;
-        $('#delete-modal')
-            .modal({
-                escapeClose: false,
-                clickClose: false,
-                showClose: false,
-                fadeDuration: 100
-            })
-            .on($.modal.AFTER_CLOSE, function () {
-            });
-    }
+        nomenController.newAlias = alias;
+        openModalPopup('delete-modal');
+    };
+
+    nomenController.editMarker = function () {
+        nomenController.editMode = true;
+        $("#viewMarker").show();
+        $("#editMarker").hide();
+    };
+
+    nomenController.viewMarker = function () {
+        nomenController.editMode = false;
+        $("#viewMarker").hide();
+        $("#editMarker").show();
+    };
 
 
 }]);
@@ -363,3 +380,8 @@ nomenApp.filter('unsafe', function ($sce) {
     };
 });
 
+$(document).ready(function () {
+    $("#alias-modal").on('shown.bs.modal', function () {
+        $("[data-modalfocus]", this).focus();
+    });
+});

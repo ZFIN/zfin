@@ -13,6 +13,7 @@ import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.*;
 import org.zfin.nomenclature.presentation.Nomenclature;
@@ -82,33 +83,38 @@ public class MarkerEditController {
                                            @RequestBody Nomenclature nomenclature) throws InvalidWebRequestException {
         Marker marker = getMarkerRepository().getMarkerByID(zdbID);
         if (marker == null)
-            throw new RuntimeException("No Marker record found");
+            throw new InvalidWebRequestException("No Marker record found");
 
         Transaction tx = null;
 
         try {
             tx = HibernateUtil.createTransaction();
-            MarkerHistory history = new MarkerHistory();
-            history.setComments(nomenclature.getComments());
-            history.setReason(MarkerHistory.Reason.getReason(nomenclature.getReason()));
-            history.setName(nomenclature.getName());
-            history.setMarker(marker);
-            if (nomenclature.isGeneAbbreviationChange()) {
-                history.setEvent(MarkerHistory.Event.REASSIGNED);
-                history.setOldMarkerName(marker.getAbbreviation());
-                history.setSymbol(nomenclature.getAbbreviation());
-                history.setName(marker.getName());
-                MarkerAlias alias = getMarkerRepository().addMarkerAlias(marker, marker.getAbbreviation(), null);
-                history.setMarkerAlias(alias);
-                marker.setAbbreviation(nomenclature.getAbbreviation());
-            } else if (nomenclature.isGeneNameChange()) {
-                history.setEvent(MarkerHistory.Event.RENAMED);
-                history.setOldMarkerName(marker.getName());
-                history.setSymbol(marker.getAbbreviation());
+            // Only genes or pseudogenes are entered in the marker history table
+            if(ActiveData.isGeneOrGeneP(zdbID)) {
+                MarkerHistory history = new MarkerHistory();
+                history.setComments(nomenclature.getComments());
+                history.setReason(MarkerHistory.Reason.getReason(nomenclature.getReason()));
                 history.setName(nomenclature.getName());
+                history.setMarker(marker);
+                if (nomenclature.isGeneAbbreviationChange()) {
+                    history.setEvent(MarkerHistory.Event.REASSIGNED);
+                    history.setOldMarkerName(marker.getAbbreviation());
+                    history.setSymbol(nomenclature.getAbbreviation());
+                    history.setName(marker.getName());
+                    MarkerAlias alias = getMarkerRepository().addMarkerAlias(marker, marker.getAbbreviation(), null);
+                    history.setMarkerAlias(alias);
+                    marker.setAbbreviation(nomenclature.getAbbreviation());
+                } else if (nomenclature.isGeneNameChange()) {
+                    history.setEvent(MarkerHistory.Event.RENAMED);
+                    history.setOldMarkerName(marker.getName());
+                    history.setSymbol(marker.getAbbreviation());
+                    history.setName(nomenclature.getName());
+                    marker.setName(nomenclature.getName());
+                }
+                getInfrastructureRepository().insertMarkerHistory(history);
+            } else {
                 marker.setName(nomenclature.getName());
             }
-            getInfrastructureRepository().insertMarkerHistory(history);
             tx.commit();
         } catch (Exception e) {
             try {
