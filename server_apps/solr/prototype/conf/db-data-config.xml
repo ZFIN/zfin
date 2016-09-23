@@ -4461,6 +4461,30 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                    cacheImpl="SortedMapBackedCache"
                    where="pub_zdb_id=publication.id"/>
 
+           <entity name="pub_tracking_location"
+                   datasource="db" query="select pth_pub_zdb_id as pub_zdb_id, nvl(ptl_location_display,'') as location
+                   from pub_tracking_history,pub_tracking_location
+                   where pth_location_id=ptl_pk_id
+                   and pth_status_is_current='t';"
+                   cacheImpl="SortedMapBackedCache"
+                   where="pub_zdb_id=publication.id"/>
+
+           <entity name="pub_tracking_status"
+                   datasource="db" query="select pth_pub_zdb_id as pub_zdb_id,  pts_status_display as curstatus
+                   from pub_tracking_history,pub_tracking_status
+                   where pth_status_id=pts_pk_id
+                   and pth_status_is_current='t';"
+                   cacheImpl="SortedMapBackedCache"
+                   where="pub_zdb_id=publication.id"/>
+
+           <entity name="pub_owner"
+                   datasource="db" query="
+                   select first_name || ' ' || last_name as pubowner,
+                           pth_pub_zdb_id as pub_zdb_id
+                    from pub_tracking_history
+                         join person on pth_claimed_by = person.zdb_id"
+                     cacheImpl="SortedMapBackedCache"
+                   where="pub_zdb_id=publication.id"/>
 
            <entity name="pub_curator"
                    datasource="db" query="
