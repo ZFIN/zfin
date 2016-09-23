@@ -5,4 +5,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 <include file="source/org/zfin/db/postGmakePostloaddb/1081/xiphius/createAnnualStatsTable.sql"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1081/xiphius/createTempStats.sql"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1081/xiphius/loadStats.xml"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1081/xiphius/migrateStats.sql"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1081/xiphius/dropTempStats.sql"/>
 </databaseChangeLog>
