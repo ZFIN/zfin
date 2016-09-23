@@ -1,5 +1,6 @@
 package org.zfin.figure.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -81,7 +82,8 @@ public class FigureEditController {
     public String deleteFigure(@PathVariable String zdbID) {
         Figure figure = figureRepository.getFigure(zdbID);
 
-        if (figure.getExpressionResults().size() > 0 || figure.getPhenotypeExperiments().size() > 0) {
+        if (CollectionUtils.isNotEmpty(figure.getExpressionResults()) ||
+                CollectionUtils.isNotEmpty(figure.getPhenotypeExperiments())) {
             throw new InvalidWebRequestException("Figure has expression or phenotype data attached", null);
         }
 
