@@ -70,3 +70,8 @@ a:hover {
     color: #FFFFFF;
     background-color: #004444;
 }
+
+.form-control-fixed-width-sm {
+    display: inline-block;
+    width: 60px;
+}
