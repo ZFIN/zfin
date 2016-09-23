@@ -13,7 +13,8 @@
         </tr>
         <tr>
             <td>Attribution</td>
-            <td><input type="text" name="newAttribution" ng-model="control.newAttribution"></td>
+            <td><input type="text" name="newAttribution" ng-model="control.newAttribution"
+                       ng-keyup="$event.keyCode == 13 && control.createNewAlias()"></td>
         </tr>
         <tr>
             <td></td>

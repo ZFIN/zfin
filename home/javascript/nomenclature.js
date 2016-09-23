@@ -128,7 +128,6 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
             .then(function (list) {
                 nomenController.publicationDtoList = [];
                 for (data in list.data) {
-                    //alert("Obje " + list.data[data].zdbID);
                     nomenController.publicationDtoList.push({
                         zdbID: list.data[data].zdbID,
                         title: list.data[data].title
@@ -180,13 +179,11 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
         $http.get('/action/nomenclature/attributions/' + nomenController.nomenID)
             .then(function (list) {
                 for (data in list.data) {
-                    //alert("Obje " + list.data[data].zdbID);
                     nomenController.publicationDtoList.push({
                         zdbID: list.data[data].zdbID,
                         title: list.data[data].title
                     })
                 }
-                //alert(publicationDtoList[0].zdbID)
             })
             .catch(function (error) {
                 nomenController.generalError = 'Could not fetch attributions';
@@ -222,7 +219,6 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
                         attributionLink: list.data[data].linkWithAttribution,
                     })
                 }
-                //alert('Success kl')
                 $("#previousNameListOriginal").hide();
             })
             .catch(function (error) {

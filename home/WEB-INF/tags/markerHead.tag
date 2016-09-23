@@ -21,13 +21,16 @@
             markerID = '${marker.zdbID}';
         </script>
 
-        <table class="primary-entity-attributes">
+        <authz:authorize access="hasRole('root')">
             <caption>
-                <div ng-click="control.editMarker()" id="editMarker" style="cursor: pointer;" class="error">Edit</div>
+                <div ng-click="control.editMarker()" id="editMarker" style="cursor: pointer;" class="error">Edit
+                </div>
                 <div ng-click="control.viewMarker()" style="display: none" id="viewMarker" style="cursor: pointer;">
                     View
                 </div>
             </caption>
+        </authz:authorize>
+        <table class="primary-entity-attributes">
             <tr>
                 <th><span class="name-label">${marker.markerType.displayName} Name:</span></th>
                 <td>
