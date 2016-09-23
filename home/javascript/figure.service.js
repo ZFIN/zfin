@@ -7,7 +7,8 @@
     function FigureService($http) {
         return {
             getFigures: getFigures,
-            addFigure: addFigure
+            addFigure: addFigure,
+            deleteFigure: deleteFigure
         };
 
         function getFigures(pubId) {
@@ -24,6 +25,14 @@
             return $http.post('/action/publication/' + pubId + '/figures', form, {
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined}
+            });
+        }
+
+        function deleteFigure(fig) {
+            return $http({
+                url: '/action/figure/' + fig.zdbId,
+                method: 'DELETE',
+                transformResponse: undefined
             });
         }
     }

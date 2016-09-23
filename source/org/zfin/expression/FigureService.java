@@ -277,16 +277,18 @@ public class FigureService {
         bean.setPubZdbId(figure.getPublication().getZdbID());
         bean.setLabel(figure.getLabel());
         bean.setCaption(figure.getCaption());
+        bean.setNumExpressionStatements(figure.getExpressionResults() == null ? 0 : figure.getExpressionResults().size());
+        bean.setNumPhenotypeStatements(figure.getPhenotypeExperiments() == null ? 0 : figure.getPhenotypeExperiments().size());
         bean.setImages(figure.getImages().stream()
-                .map(image -> {
-                    ImagePresentationBean imgBean = new ImagePresentationBean();
-                    imgBean.setZdbId(image.getZdbID());
-                    imgBean.setFullPath(image.getUrl());
-                    imgBean.setMediumPath(image.getMediumUrl());
-                    imgBean.setThumbnailPath(image.getThumbnailUrl());
-                    return imgBean;
-                })
-                .collect(Collectors.toSet())
+                        .map(image -> {
+                            ImagePresentationBean imgBean = new ImagePresentationBean();
+                            imgBean.setZdbId(image.getZdbID());
+                            imgBean.setFullPath(image.getUrl());
+                            imgBean.setMediumPath(image.getMediumUrl());
+                            imgBean.setThumbnailPath(image.getThumbnailUrl());
+                            return imgBean;
+                        })
+                        .collect(Collectors.toSet())
         );
         return bean;
     }

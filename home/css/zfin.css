@@ -923,3 +923,6 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
     white-space: nowrap;
     cursor: pointer;
 }
+.figure-delete-button {
+    display: inline-block;
+}
