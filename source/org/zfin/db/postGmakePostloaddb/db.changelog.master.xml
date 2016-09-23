@@ -10,4 +10,5 @@
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/underwater/db.changelog.master.xml"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/db.changelog.master.xml"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/db.changelog.master.xml"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1081/xiphius/db.changelog.master.xml"/>
 </databaseChangeLog>

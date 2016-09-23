@@ -162,6 +162,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.PUBLICATION.name | "curator:\"David Fashena\" curator:\"Sabrina Toro\" ZDB-PUB-100504-14"  | "13571"
         Category.PUBLICATION.name | "Doug Howe id:ZDB-PUB-990119-20"     | "13813"
         null                      | "sheturnedmeintoanewt"               | "12988"
+        null                      | "informix"                           | "14540"
 
 
     }
