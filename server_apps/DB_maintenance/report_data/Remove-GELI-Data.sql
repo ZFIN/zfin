@@ -21,6 +21,17 @@ WHERE zactvd_zdb_id IN (SELECT fig_zdb_id
                          WHERE  fig_source_zdb_id = '$PUBID'
                                 AND fig_comments = 'GELI');
 
-update publication
- set pub_geli_removed = 't'
- where zdb_id = '$PUBID';
+create temp table tmp_id (id varchar(50))
+ with no log;
+
+insert into tmp_id (id)
+ select get_id('CUR') from single;
+
+insert into zdb_active_data
+ select id from single;
+
+insert into curation (cur_zdb_id, cur_pub_Zdb_id, cur_curator_zdb_id, cur_topic,
+       	    	     cur_entry_date)
+
+select id, '$PUBID','$PERSONID','Geli Removed',current year to second
+ from tmp_id;
