@@ -169,6 +169,7 @@ public class PublicationService {
         CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("keywords", existingPub, formPub, true));
         CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("abstractText", existingPub, formPub, true));
         CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("errataAndNotes", existingPub, formPub, true));
+        CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("canShowImages", existingPub, formPub, true));
 
         return updates;
     }

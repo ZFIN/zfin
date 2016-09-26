@@ -348,6 +348,9 @@ public class FacetBuilderService {
         curation.addFacet(buildFacet("curation_status", false));
         curation.addFacet(buildFacet("indexing_status", false));
         curation.addFacet(buildFacet("publication_status", false));
+        curation.addFacet(buildFacet("location", false));
+        curation.addFacet(buildFacet("curstatus", false));
+        curation.addFacet(buildFacet("pubowner", false));
 
         facetGroups.add(curation);
 

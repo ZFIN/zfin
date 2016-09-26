@@ -42,7 +42,7 @@
             </junit>
         </sequential>
     </macrodef>
-
+    
     <target name="runFigureTests" depends="compile,build-tests">
         <runBatchTest classNamePattern="**/Image*Spec.class" outfile="figureTests" verbose="true"/>
         <runBatchTest classNamePattern="**/Figure*Spec.class" outfile="figureTests" verbose="true"/>
@@ -52,12 +52,29 @@
         <runBatchTest classNamePattern="**/Publication*Spec.class" outfile="figureTests" verbose="true"/>
     </target>
 
+    <target name="runSolrTests" depends="compile,build-tests">
+        <junit fork="true"
+               printsummary="yes"
+               haltonfailure="yes"
+               haltonerror="yes"
+               maxmemory="2024m"
+               showoutput="false"
+               includeantruntime="false">
+            <jvmarg value="-Xverify:none"/>
+            <classpath>
+                <path refid="extended.classpath"/>
+            </classpath>
 
-    <target name="runSolrTests" depends="compile,build-tests" description="Tests against the Solr server">
-        <runTest testclass="org.zfin.SolrUnitTests" outfile="${solrTestFile}" verbose="false"/>
+            <test name="org.zfin.SolrUnitTests" todir="${test.reports.dir}"
+                  haltonerror="false" haltonfailure="false"
+                  failureproperty="test.failure"
+                  outfile="${solrTestFile}">
+                <formatter type="brief"/>
+                <formatter type="xml"/>
+            </test>
+        </junit>
         <echo message=":SOLR UNIT TESTS SUCCESSFUL:"/>
     </target>
-
 
     <target name="runImageTests" depends="compile,build-tests">
         <runBatchTest classNamePattern="**/Image*Spec.class" outfile="imageTests" verbose="true"/>
@@ -218,7 +235,6 @@ test(s) need to be run before committing changes or pushing files to production 
     <!--Test for notproduction and the run tests.  This allows production to run the test if using runtests-quiet-->
     <target name="test" depends="runtests-quiet" description="Runs full suite of tests if in mode if not production">
     </target>
-
 
 
     <target name="runtests-quiet" if="notproduction" depends="compile,build-tests" description="Runs database and unit tests quietly">

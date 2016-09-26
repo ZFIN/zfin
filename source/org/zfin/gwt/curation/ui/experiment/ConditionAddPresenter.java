@@ -247,9 +247,11 @@ public class ConditionAddPresenter implements HandlesError {
             return "Zeco term requires an AO term ";
         if (!view.chebiTermEntry.getTermTextBox().hasValidateTerm() && view.chebiTermEntry.isVisible())
             return "Zeco term requires a Chebi term ";
-       /* if (!view.taxonTermEntry.getTermTextBox().hasValidateTerm() && view.taxonTermEntry.isVisible())
+       if (!view.taxonTermEntry.getTermTextBox().hasValidateTerm() && view.taxonTermEntry.isVisible())
+ if (view.zecoTermEntry.getTermText().equals("bacterial treatment")||view.zecoTermEntry.getTermText().equals("viral treatment")||view.zecoTermEntry.getTermText().equals("fungal treatment")) {
 
-            return "Zeco term requires a taxonomy term ";*/
+     return "Zeco term requires a taxonomy term ";
+ }
 
         return null;
     }

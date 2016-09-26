@@ -888,3 +888,41 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
     color: white;
     font-weight: bold;
 }
+
+.edit-form-content {
+    margin-top: 30px;
+}
+
+.figure-edit-panel .table td {
+    vertical-align: top;
+}
+.figure-edit-panel .table img:first-child {
+    margin: 0;
+}
+.figure-edit-panel .table img {
+    margin: 0 15px;
+}
+.file-drag-target {
+    padding: 2em 0;
+    border: 2px dashed lightgray;
+    text-align: center;
+}
+.file-drag-target.hover {
+    background-color: #e0e7e0;
+    border: solid #006666;
+}
+.file-drag-target > input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+.file-drag-target > label {
+    white-space: nowrap;
+    cursor: pointer;
+}
+.figure-delete-button {
+    display: inline-block;
+}

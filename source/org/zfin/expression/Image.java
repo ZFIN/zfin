@@ -111,15 +111,19 @@ public class Image implements Serializable {
     }
 
     public DevelopmentStage getStart() {
-        if (imageStage == null)
+        if (imageStage == null) {
             return null;
-        else return imageStage.getStart();
+        } else {
+            return imageStage.getStart();
+        }
     }
 
     public DevelopmentStage getEnd() {
-        if (imageStage == null) 
+        if (imageStage == null) {
             return null;
-        else return imageStage.getEnd();
+        } else {
+            return imageStage.getEnd();
+        }
     }
 
     public ImageStage getImageStage() {
@@ -195,21 +199,24 @@ public class Image implements Serializable {
     }
 
     public Video getFirstVideo() {
-        if (videos == null || videos.size() == 0)
+        if (videos == null || videos.size() == 0) {
             return null;
-        else
+        } else {
             return videos.iterator().next();
+        }
     }
 
     public void addVideo(Video video) {
-        if (videos == null)
-            videos = new HashSet<Video>();
+        if (videos == null) {
+            videos = new HashSet<>();
+        }
         videos.add(video);
     }
 
     public boolean equals(Object otherImage) {
-        if (!(otherImage instanceof Image))
+        if (!(otherImage instanceof Image)) {
             return false;
+        }
 
         Image image = (Image) otherImage;
         return getZdbID().equals(image.getZdbID());
@@ -229,8 +236,13 @@ public class Image implements Serializable {
     public String getUrl() {
         return "/imageLoadUp/" + getDisplayedImageFilename();
     }
+
     public String getMediumUrl() {
         return "/imageLoadUp/medium/" + getDisplayedImageFilename();
+    }
+
+    public String getThumbnailUrl() {
+        return "/imageLoadUp/" + getThumbnail();
     }
 
 }
