@@ -50,6 +50,9 @@
      defaultSchemaName="informix"
      />
 
+
+ <target name="postloaddb" depends="buildDatabase,gmakePostLoadDB,buildPostGmakeDatabase"/>
+
  <target
      name="buildDatabase"
     description="Builds the database">
@@ -63,6 +66,13 @@
 			      defaultSchemaName="informix">
     </liquibase:updateDatabase>
   </target>
+
+    <target name="gmakePostLoadDB">
+        <exec executable="gmake">
+            <arg value="postloaddb"/>
+        </exec>
+    </target>
+
    <target
      name="buildPostGmakeDatabase"
     description="Builds the database components necessary post gmake postloaddb">
