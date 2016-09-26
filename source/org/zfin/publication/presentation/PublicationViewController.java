@@ -37,10 +37,8 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @RequestMapping("/publication")
@@ -333,9 +331,41 @@ public class PublicationViewController {
             model.addAttribute("probe", probe);
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Image: " + figureViewService.getFullFigureLabel(image.getFigure()));
         }
-                return "figure/image-edit.page";
+
+        return "figure/image-edit.page";
+    }
+
+
+    @RequestMapping("/printable/{zdbID}")
+    public String printable (@PathVariable String zdbID, Model model, HttpServletResponse response) {
+        Publication publication = publicationRepository.getPublication(zdbID);
+        //try zdb_replaced data if necessary
+        if (publication == null) {
+            String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
+            if (replacedZdbID != null) {
+                publication = publicationRepository.getPublication(replacedZdbID);
             }
         }
+
+        //give up
+        if (publication == null) {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        model.addAttribute("publication", publication.getPrintable());
+
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        model.addAttribute("formattedDate", sdf.format(new Date()));
+
+        return "publication/printable.ajax";
+    }
+
+
+}
+
+
+
 
 
 

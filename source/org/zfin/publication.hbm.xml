@@ -120,6 +120,10 @@
             <column name="jrnl_abbrev" not-null="true"/>
         </property>
 
+        <property name="medAbbrev">
+            <column name="jrnl_medabbrev" not-null="false"/>
+        </property>
+
         <property name="publisher">
             <column name="jrnl_publisher" not-null="true"/>
         </property>

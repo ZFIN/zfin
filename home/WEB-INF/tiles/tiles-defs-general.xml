@@ -41,6 +41,8 @@
 
     <definition name="marker/*.ajax" template="/WEB-INF/jsp/marker/{1}.jsp"/>
 
+    <definition name="publication/*.ajax" template="/WEB-INF/jsp/publication/{1}.jsp"/>
+
     <definition name="antibody/*.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/antibody/{1}.jsp"/>
     </definition>

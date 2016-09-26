@@ -491,4 +491,17 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         }
     }
 
+    public String getPrintable() {
+        String printable = authors + " " + "(" + publicationDate.get(Calendar.YEAR) + ")" + " " + title + ". " + journal.getMedAbbrev() + " ";
+        if (volume != null)
+            printable =  printable + " " + volume + ":";
+        if (pages != null)
+            printable =  printable + " " + pages + ". ";
+        if (status == Status.EPUB || status == Status.PRESS)
+            printable = printable + status.toString() + ".";
+        if (journal.isZfinDierectDataSubmission())
+            printable += "(http://zfin.org).";
+        return printable;
+    }
+
 }
