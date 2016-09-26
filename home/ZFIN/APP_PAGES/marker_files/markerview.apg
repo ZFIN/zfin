@@ -2677,8 +2677,12 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
  <HR width="80%">
  <a name=ortholog><b>ORTHOLOGY</b></a><br>
 
- <script src="/javascript/angular/angular.min.js"></script>
- <script src="/javascript/ortho-edit.js"></script>
+  <script src="/javascript/angular/angular.min.js"></script>
+  <script src="/javascript/angular/paging.min.js"></script>
+  <script src="/javascript/zfin-app.module.js"></script>
+  <script src="/javascript/trusted-html.filter.js"></script>
+  <script src="/javascript/ortho-edit.js"></script>
+  <script src="/javascript/inline-edit-textarea.directive.js"></script>
 
  <div ng-app="app">
      <?MIVAR><div ortho-edit gene="$OID"></div><?/MIVAR>

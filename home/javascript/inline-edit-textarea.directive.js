@@ -8,6 +8,7 @@
             '<div ng-class="{{vm.wrapperClass}}">' +
             '  <div ng-class="{{vm.errorClass}}" ng-show="vm.error">{{vm.error}}</div>' +
             '  <div ng-click="vm.beginEdit()" ng-hide="vm.editing" class="inline-edit" title="Click to edit">' +
+            // TODO: flag for html vs plain text?
             //'    <div ng-show="vm.text" class="keep-breaks">{{vm.text}}</div>' +
             '    <div ng-show="vm.text" ng-bind-html="vm.text | trustedHtml"></div>' +
             '    <div ng-hide="vm.text" class="muted">{{vm.defaultText}}</div>' +
@@ -59,6 +60,7 @@
 
         function activate() {
             vm.defaultText = vm.defaultText || 'Click to add';
+            vm.errorClass = vm.errorClass || 'error';
             vm.textAreaClass = vm.textAreaClass || ['form-control', 'form-group'];
             vm.saveButtonClass = vm.saveButtonClass || ['btn', 'btn-primary'];
             vm.cancelButtonClass = vm.cancelButtonClass || ['btn', 'btn-default'];

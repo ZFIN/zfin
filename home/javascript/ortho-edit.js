@@ -1,6 +1,6 @@
 ;(function() {
     angular
-        .module('app', [])
+        .module('app')
         .directive('orthoEdit', orthoEdit)
         .directive('pubDisplay', pubDisplayDirective)
         .filter('pub', pubDisplayFilter);
@@ -134,8 +134,6 @@
         vm.ncbiGeneNumber = '';
         vm.ncbiError = '';
         vm.note = {};
-        vm.noteText = '';
-        vm.noteEditing = false;
 
         vm.codes = [];
         vm.defaultPub = undefined;
@@ -163,8 +161,6 @@
         vm.editEvidence = editEvidence;
         vm.deleteEvidence = deleteEvidence;
 
-        vm.editNote = editNote;
-        vm.cancelNoteEdit = cancelNoteEdit;
         vm.saveNoteEdit = saveNoteEdit;
 
         vm.selectPub = selectPub;
@@ -237,7 +233,6 @@
             $http.get('/action/gene/' + vm.gene + '/orthology-note')
                 .then(function (resp) {
                     vm.note = resp.data;
-                    vm.noteText = vm.note.note;
                 })
                 .catch(function (error) {
                     vm.noteError = 'Couldn\'t retrieve orthology note';
@@ -382,22 +377,10 @@
                 });
         }
 
-        function editNote() {
-            vm.noteText = vm.note.note;
-            vm.noteEditing = true;
-        }
-
-        function cancelNoteEdit() {
-            vm.noteEditing = false;
-            vm.noteError = '';
-        }
-
         function saveNoteEdit() {
-            $http.post('/action/gene/' + vm.gene + '/orthology-note', {note: vm.noteText})
+            return $http.post('/action/gene/' + vm.gene + '/orthology-note', {note: vm.note.note})
                 .then(function (resp) {
                     vm.note = resp.data;
-                    vm.noteEditing = false;
-                    vm.noteError = '';
                 })
                 .catch(function (error) {
                     vm.noteError = error.data.message;
