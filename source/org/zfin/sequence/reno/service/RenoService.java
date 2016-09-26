@@ -4,10 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerHistory;
-import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.MarkerType;
+import org.zfin.marker.*;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.orthology.Ortholog;
@@ -30,7 +27,7 @@ import org.zfin.sequence.reno.repository.RenoRepository;
 
 import java.util.*;
 
-import static org.zfin.repository.RepositoryFactory.getOrthologyRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Common reno services.
@@ -163,12 +160,12 @@ public class RenoService {
         }
     }
 
-    public void renameGene(Marker gene, String attributionZdbID) {
+    public void renameGene(Marker gene, String attributionZdbID, String oldSymbol, String oldGeneName) {
         Publication pub = new Publication();
         pub.setZdbID(attributionZdbID);
         //logger.info("geneToRename in renameGene method: " + gene.getAbbreviation().toString());
 
-        RepositoryFactory.getMarkerRepository().renameMarker(gene, pub, MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES);
+        RepositoryFactory.getMarkerRepository().renameMarker(gene, pub, MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES, oldSymbol, oldGeneName);
         RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(gene, "data_alias", "", "", "");
 
     }
@@ -285,17 +282,19 @@ public class RenoService {
         novelGene.setMarkerType(mt);
         mr.createMarker(novelGene, ((RedundancyRun) runCandidate.getRun()).getRelationPublication(), false);
         logger.info("novelGene zdb_id: " + novelGene.getZdbID());
-        //update marker history reason
-        MarkerHistory mhist = mr.getLastMarkerHistory(novelGene, MarkerHistory.Event.ASSIGNED);
 
-        if (mhist == null) {
-            String errorMessage = "No Marker History found. Trigger did not run! ";
-            logger.error(errorMessage);
-            throw new RuntimeException(errorMessage);
-
-        }
-        // change the reason for creating the marker in the Marker History
-        mhist.setReason(MarkerHistory.Reason.NOT_SPECIFIED);
+        MarkerHistory history = new MarkerHistory();
+        history.setEvent(MarkerHistory.Event.ASSIGNED);
+        history.setSymbol(suggestedAbbreviation);
+        history.setName(runCandidate.getCandidate().getSuggestedName());
+        history.setReason(MarkerHistory.Reason.NOT_SPECIFIED);
+        history.setMarker(novelGene);
+        MarkerAlias alias = getMarkerRepository().addMarkerAlias(novelGene, novelGene.getAbbreviation(), null);
+        history.setMarkerAlias(alias);
+        getInfrastructureRepository().insertMarkerHistory(history);
+        SortedSet<MarkerHistory> markerHistorySet = new TreeSet<>();
+        markerHistorySet.add(history);
+        novelGene.setMarkerHistory(markerHistorySet);
 
         createRedundancyRelationships(runCandidate, novelGene);
 
@@ -306,14 +305,14 @@ public class RenoService {
 
     /**
      * Creates marker relationships (or DBLinks) to connect markers (or accessions)
-     * <p/>
+     * <p>
      * the basic case is, for one est, or more than one est, we just make a marker relationship.
-     * <p/>
+     * <p>
      * if there are genes and ests both, it's a cleanup issue.  that's not handled yet
-     * <p/>
+     * <p>
      * if there is only a gene, then there's no new relationships to add, because that gene
      * came in because it already had a link to the query accession
-     * <p/>
+     * <p>
      * if there are no markers at all associated with the query accessions, then we link
      * them to the gene that the curators chose.
      *

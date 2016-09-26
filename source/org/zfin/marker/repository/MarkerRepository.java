@@ -167,7 +167,7 @@ public interface MarkerRepository {
 
     MarkerTypeGroup getMarkerTypeGroupByName(String name);
 
-    void renameMarker(Marker marker, Publication publication, MarkerHistory.Reason reason);
+    void renameMarker(Marker marker, Publication publication, MarkerHistory.Reason reason, String oldSymbol, String oldGeneName);
 
     List<MarkerFamilyName> getMarkerFamilyNamesBySubstring(String substring);
 
