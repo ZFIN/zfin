@@ -66,6 +66,7 @@
 <filter token="GOOGLE_ANALYTICS_ID" value="${GOOGLE_ANALYTICS_ID}"/>
 <filter token="GO_EMAIL_CURATOR" value="${GO_EMAIL_CURATOR}"/>
 <filter token="GO_EMAIL_ERR" value="${GO_EMAIL_ERR}"/>
+<filter token="GROOVY_CLASSPATH" value="${GROOVY_CLASSPATH}"/>
 <filter token="GROOVY_HOME" value="${GROOVY_HOME}"/>
 <filter token="HAS_PARTNER" value="${HAS_PARTNER}"/>
 <filter token="HEADER_BACKGROUND" value="${HEADER_BACKGROUND}"/>

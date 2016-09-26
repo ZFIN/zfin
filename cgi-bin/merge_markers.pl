@@ -908,6 +908,57 @@ foreach $dblinkId (keys %alternateKeysDblinkDeletedMrkr) {
   }
 }
 
+$getMarkerAbbrev = "select mrkr_abbrev, mrkr_name, get_id('DALIAS') as daliasid from marker where mrkr_zdb_id = ?;";
+$curGetMarkerAbbrev = $dbh->prepare($getMarkerAbbrev);
+$curGetMarkerAbbrev->execute($intoId);
+$curGetMarkerAbbrev->bind_columns(\$mrkrAbbrev, \$mrkrName, \$daliasID);
+while ($curGetMarkerAbbrev->fetch()) {
+  $mrkrAbbrevInto = $mrkrAbbrev;
+  $mrkrNameInto = $mrkrName;
+  $newDaliasID = $daliasID;
+}
+$curGetMarkerAbbrev->finish();
+
+# data alias  (FB case 14531)
+$updateMrkrHistory = "update marker_history set mhist_dalias_zdb_id = null where mhist_dalias_zdb_id = ? ;"; 
+$curUpdateMrkrHistory = $dbh->prepare_cached($updateMrkrHistory);
+
+$getDAliases = "select dalias_zdb_id, dalias_alias from data_alias where dalias_data_zdb_id = ? ;";
+$curGetDAliases = $dbh->prepare_cached($getDAliases);
+$curGetDAliases->execute($mergeId);
+$curGetDAliases->bind_columns(\$daliasId,\$dalias);
+%daliasesMerge = ();
+while ($curGetDAliases->fetch()) {
+   $daliasesMerge{$daliasId} = $dalias;
+}
+$curGetDAliases->execute($intoId);
+$curGetDAliases->bind_columns(\$daliasId2,\$dalias2);
+%daliasesInto = ();
+while ($curGetDAliases->fetch()) {
+   $daliasesInto{$daliasId2} = $dalias2;
+}
+$curGetDAliases->finish();
+
+$delete = "delete from zdb_active_data where zactvd_zdb_id = ?;"; 
+$curDelete = $dbh->prepare_cached($delete);
+
+foreach $dataAliasMergeId (keys %daliasesMerge) {
+  $dataAliasMerge = $daliasesMerge{$dataAliasMergeId};
+  if ($dataAliasMerg eq $mrkrAbbrevInto) {
+    $curUpdateMrkrHistory->execute($dataAliasMergeId);
+    $curDelete->execute($dataAliasMergeId);
+  } else {
+      foreach $dataAliasIntoId (keys %daliasesInto) {
+        $dataAliasInto = $daliasesInto{$dataAliasIntoId};
+        if ($dataAliasInto eq $dataAliasMerge) {
+          $curUpdateMrkrHistory->execute($dataAliasMergeId);
+          $curDelete->execute($dataAliasMergeId);
+        }
+      }
+  }
+}
+
+$curUpdateMrkrHistory->finish();
 
 # run the merge action SQLs that do not contain record_attribution
 $nonRecAttrSQL = "select mms_sql, mms_pk_id 
@@ -940,17 +991,6 @@ foreach $sqlID (keys %nonRecAttrSQLs) {
    }
 }
 
-$getMarkerAbbrev = "select mrkr_abbrev, mrkr_name, get_id('DALIAS') as daliasid from marker where mrkr_zdb_id = ?;";
-$curGetMarkerAbbrev = $dbh->prepare($getMarkerAbbrev);
-$curGetMarkerAbbrev->execute($intoId);
-$curGetMarkerAbbrev->bind_columns(\$mrkrAbbrev, \$mrkrName, \$daliasID);
-while ($curGetMarkerAbbrev->fetch()) {
-  $mrkrAbbrevInto = $mrkrAbbrev;
-  $mrkrNameInto = $mrkrName;
-  $newDaliasID = $daliasID;
-}
-$curGetMarkerAbbrev->finish();
-
 $getMarkerAbbrev2 = "select mrkr_abbrev, get_id('NOMEN') as daliasid from marker where mrkr_zdb_id = ?;";
 $curGetMarkerAbbrev2 = $dbh->prepare($getMarkerAbbrev2);
 $curGetMarkerAbbrev2->execute($mergeId);
@@ -961,9 +1001,16 @@ while ($curGetMarkerAbbrev2->fetch()) {
 }
 $curGetMarkerAbbrev2->finish();
 
-$deleteAlias = "delete from data_alias where dalias_alias = ? and dalias_data_zdb_id = ? ;";
-$curDeleteAlias = $dbh->prepare($deleteAlias);
+$updateMarkerHistory = "update marker_history set mhist_dalias_zdb_id = null where mhist_dalias_zdb_id = (select dalias_zdb_id from data_alias where dalias_alias = ? and dalias_data_zdb_id = ?) ;";
+$curUpdateMarkerHistoy = $dbh->prepare_cached($updateMarkerHistory);
+$curUpdateMarkerHistoy->execute($mrkrAbbrevInto,$mergeId);
+$curUpdateMarkerHistoy->execute($mrkrDeletedAbbrev,$intoId);
+$curUpdateMarkerHistoy->finish();
+
+$deleteAlias = "delete from zdb_active_data where zactvd_zdb_id = (select dalias_zdb_id from data_alias where dalias_alias = ? and dalias_data_zdb_id = ?) ;";
+$curDeleteAlias = $dbh->prepare_cached($deleteAlias);
 $curDeleteAlias->execute($mrkrAbbrevInto,$mergeId);
+$curDeleteAlias->execute($mrkrDeletedAbbrev,$intoId);
 $curDeleteAlias->finish();
 
 $updateAlias = "update data_alias set dalias_data_zdb_id = ? where dalias_data_zdb_id = ? ;";

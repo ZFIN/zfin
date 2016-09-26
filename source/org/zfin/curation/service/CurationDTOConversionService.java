@@ -137,12 +137,7 @@ public class CurationDTOConversionService {
                 images.add(imageBean);
             }
         }
-        Collections.sort(images, new Comparator<DashboardImageBean>() {
-            @Override
-            public int compare(DashboardImageBean o1, DashboardImageBean o2) {
-                return ObjectUtils.compare(o1.getLabel(), o2.getLabel());
-            }
-        });
+        images.sort((o1, o2) -> ObjectUtils.compare(o1.getLabel(), o2.getLabel()));
         bean.setImages(images);
         return bean;
     }

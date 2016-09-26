@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+   <changeSet author="staylor (generated)" id="1473867837658-118">
+        <createTable tableName="blast_database">
+            <column name="blastdb_zdb_id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="blastdb_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="blastdb_abbrev" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="blastdb_description" type="VARCHAR(2500)"/>
+            <column defaultValueComputed="false" name="blastdb_public" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="blastdb_type" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="blastdb_path" type="VARCHAR(255)"/>
+            <column name="blastdb_tool_display_name" type="VARCHAR(70)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="blastdb_tool_display_order" type="INT"/>
+            <column defaultValueComputed="false" name="blastdb_is_being_processed" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="blastdb_origination_id" type="INT8"/>
+            <column name="blastdb_num_seqs" type="INT"/>
+            <column name="blastdb_num_accessions" type="INT"/>
+            <column name="blastdb_last_regenerated" type="TIMESTAMP"/>
+            <column name="blastdb_old_num_seqs" type="VARCHAR(30)"/>
+        </createTable>
+   </changeSet>
+</databaseChangeLog>

@@ -82,7 +82,8 @@
                 owner: vm.owner.zdbID,
                 status: vm.status ? vm.status.id : '',
                 count: vm.pubsPerPage,
-                offset: (page - 1) * vm.pubsPerPage
+                offset: (page - 1) * vm.pubsPerPage,
+                sort: "-date"
             };
             PublicationService.searchPubStatus(query)
                 .then(function (response) {

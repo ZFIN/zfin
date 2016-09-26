@@ -3,10 +3,14 @@
 
 <jsp:useBean id="formBean" type="org.zfin.publication.presentation.ShowPublicationBean" scope="request"/>
 
-<h3 class="primary-entity-attributes">
-${formBean.entity.entityType}:
+<div class="titlebar">
+    <h1>Citations</h1> (${formBean.numOfPublications} total)
+</div>
+<p/>
+<span class="primary-entity-attributes">
+<b>${formBean.entity.entityType}:</b>
         <zfin:link entity="${formBean.entity}"/>
-</h3>
+</span>
 
 <zfin2:citationList pubListBean="${formBean}" url="?">
 

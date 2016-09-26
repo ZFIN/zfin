@@ -50,7 +50,7 @@
                                 <span ng-click="control.openEditor('${markerHistory.zdbID}','${markerHistory.comments}','${markerHistory.reason.toString()}')"><a
                                         href>Edit</a></span>
                             </td>
-                            <td><span class="genedom">${marker.abbreviation}</span></td>
+                            <td><span class="genedom">${markerHistory.newValue}</span></td>
                             <td>${markerHistory.event.display}</td>
                             <td><span class="genedom">${markerHistory.oldSymbol}</span></td>
                             <td><fmt:formatDate value="${markerHistory.date}" pattern="yyyy-MM-dd"/></td>
@@ -140,6 +140,7 @@
             </table>
             <input size="20" name="publicationID" ng-model="control.publicationID"/>
             <button ng-click="control.addAttribution()">Add</button>
+            <span class="error" id="errorMessage">{{control.errorMessage}}</span>
         </div>
 
         <script>
@@ -186,3 +187,4 @@
         </script>
 
     </div>
+</div>
