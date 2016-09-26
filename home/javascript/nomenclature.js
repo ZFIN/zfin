@@ -85,9 +85,9 @@ angular.module('nomenclature', [])
         };
 
 
-        nomenController.openEditor = function (ID, comments, reason) {
+        nomenController.openEditor = function (ID, reason, index) {
             nomenController.nomenID = ID;
-            nomenController.comments = comments;
+            nomenController.comments = $('#data-comments-' + index).html();
             nomenController.reason = reason;
             nomenController.fetchAttributions();
             $('#evidence-modal')
