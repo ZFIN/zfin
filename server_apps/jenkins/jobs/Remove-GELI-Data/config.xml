@@ -10,6 +10,7 @@
           <name>ParameterVariables</name>
           <description>The ZDB-PUBLICATION-ID of the pub you wish to remove the GELI comments of. Ensure it is the correct ID!</description>
           <defaultValue>PUBID</defaultValue>
+	  <defaultValue>PERSONID</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>ParameterValues</name>
