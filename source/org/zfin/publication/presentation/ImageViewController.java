@@ -10,20 +10,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
-import org.zfin.figure.presentation.FigureFromPublicationLink;
-import org.zfin.figure.presentation.FigureGalleryImagePresentation;
+import org.zfin.figure.presentation.*;
+import org.zfin.figure.repository.FigureRepository;
 import org.zfin.figure.service.FigureViewService;
+import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.mutant.PhenotypeWarehouse;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.search.Category;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+
+import static org.zfin.repository.RepositoryFactory.getFigureRepository;
+import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 
 /**
  * For display of figure information
  */
 @Controller
+@RequestMapping("/image")
 public class ImageViewController {
 
     private static Logger LOG = Logger.getLogger(ImageViewController.class);
@@ -33,9 +40,55 @@ public class ImageViewController {
 
     @Autowired
     private PublicationRepository publicationRepository;
+    @Autowired
+    private FigureRepository figureRepository;
 
     @Autowired
     private OntologyRepository ontologyRepository;
+
+    /*@RequestMapping("/view/{zdbID}")
+    public String getImageView(Model model, @PathVariable("zdbID") String zdbID) {
+
+        Image image = publicationRepository.getImageById(zdbID);
+        if (image == null) {
+            return null;
+        }
+
+
+        model.addAttribute("image", image);
+
+       /*//* List<PhenotypeWarehouse> warehouseList = getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID());
+        FigureExpressionSummary expressionSummary = figureViewService.getFigureExpressionSummary(figure);
+        model.addAttribute("expressionSummary", expressionSummary);
+        model.addAttribute("phenotypeSummary", figureViewService.getFigurePhenotypeSummary(figure));
+
+        model.addAttribute("submitters", figureRepository.getSubmitters(figure.getPublication(), expressionSummary.getProbe()));
+        model.addAttribute("showThisseInSituLink", figureViewService.showThisseInSituLink(figure.getPublication()));
+        model.addAttribute("showErrataAndNotes", figureViewService.showErrataAndNotes(figure.getPublication()));
+        model.addAttribute("showMultipleMediumSizedImages", figureViewService.showMultipleMediumSizedImages(figure.getPublication()));
+
+        List<ExpressionTableRow> expressionTableRows = figureViewService.getExpressionTableRows(figure);
+        model.addAttribute("expressionTableRows", expressionTableRows);
+        model.addAttribute("showExpressionQualifierColumn", figureViewService.showExpressionQualifierColumn(expressionTableRows));
+
+        List<AntibodyTableRow> antibodyTableRows = figureViewService.getAntibodyTableRows(figure);
+        model.addAttribute("antibodyTableRows", antibodyTableRows);
+        model.addAttribute("showAntibodyQualifierColumn", figureViewService.showAntibodyQualifierColumn(antibodyTableRows));
+
+        List<PhenotypeTableRow> phenotypeTableRows = figureViewService.getPhenotypeTableRows(warehouseList);
+        model.addAttribute("phenotypeTableRows", phenotypeTableRows);*//**//*
+
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Image: " + figureViewService.getFullFigureLabel(image.getFigure()));
+        model.addAttribute("expressionGeneList",figureViewService.getExpressionGenes(image.getFigure()));
+        model.addAttribute("antibodyList",figureViewService.getAntibodies(image.getFigure()));
+
+       /*//* model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(figure.getPublication()));
+        model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(figure.getPublication()));
+
+        return "image/image-view.page";
+    }*/
+
+
 
     @RequestMapping("/publication/image-popup/{zdbID}")
     public String updateOrthologyNote(@PathVariable String zdbID,

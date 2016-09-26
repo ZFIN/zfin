@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="fishGenotypeStatistics" type="org.zfin.framework.presentation.EntityStatistics" required="true" %>
-<%@ attribute name="entity" type="org.zfin.infrastructure.EntityZdbID" required="true" %>
 <%@ attribute name="link" type="java.lang.String" required="true" %>
 
 <c:if test="${fishGenotypeStatistics.numberOfFigures > 0}">
@@ -27,7 +26,4 @@
                      integerEntity="${fishGenotypeStatistics.numberOfPublications}"
                      includeNumber="true"/>
     </c:if>
-</c:if>
-<c:if test="${fishGenotypeStatistics.numberOfFigures == 0}">
-    --
 </c:if>

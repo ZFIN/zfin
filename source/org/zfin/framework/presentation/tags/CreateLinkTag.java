@@ -41,8 +41,10 @@ import org.zfin.profile.Person;
 import org.zfin.profile.presentation.ProfilePresentation;
 import org.zfin.profile.presentation.SourcePresentation;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationDbXref;
 import org.zfin.publication.presentation.FigurePresentation;
 import org.zfin.publication.presentation.ImagePresentation;
+import org.zfin.publication.presentation.PublicationDbXrefPresentation;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.DBLink;
@@ -116,6 +118,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = BlastLinkPresentation.getLink((HitViewBean) o);
         else if (o instanceof DBLink)
             link = DBLinkPresentation.getLink((DBLink) o);
+        else if (o instanceof PublicationDbXref)
+            link = PublicationDbXrefPresentation.getLink((PublicationDbXref) o);
         else if (o instanceof Accession)
             link = AccessionPresentation.getLink((Accession) o);
         else if (o instanceof PostComposedPresentationBean)

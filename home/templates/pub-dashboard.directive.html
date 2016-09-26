@@ -1,0 +1,98 @@
+<div class="pub-dashboard">
+    <div class="row filter-bar">
+        <div class="col-sm-12">
+            <form class="form-inline">
+                Pubs assigned to
+                <select class="form-control"
+                        ng-options="owner.name disable when !owner.zdbID for owner in vm.owners"
+                        ng-model="vm.owner" ng-change="vm.fetchPubs()">
+                </select>
+                with status
+                <select class="form-control"
+                        ng-options="status.name for status in vm.statuses"
+                        ng-model="vm.status" ng-change="vm.fetchPubs()">
+                    <option value="">Any</option>
+                </select>
+            </form>
+        </div>
+    </div>
+    <div class="text-center text-muted" ng-show="vm.loading">
+        <i class="fa fa-spinner fa-spin"></i> Loading...
+    </div>
+    <div class="text-center text-muted" ng-show="!vm.loading && vm.pubList.length == 0">
+        No pubs match query
+    </div>
+    <div ng-repeat="(status, pubList) in vm.pubMap">
+        <h4>{{status}} ({{pubList.length}})</h4>
+        <table class="table">
+            <thead>
+            <tr>
+                <th width="115px"></th>
+                <th width="150px">ZDB-ID</th>
+                <th>Title</th>
+                <th width="100px">Last Update</th>
+                <th width="150px">Status</th>
+                <th width="100px">Owner</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="pub in pubList">
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                            Action <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a ng-href="/cgi-bin/webdriver?MIval=aa-curation.apg&OID={{pub.zdbId}}" target="_blank">Curate</a></li>
+                            <li><a ng-href="/action/publication/{{pub.zdbId}}/track" target="_blank">Track</a></li>
+                            <li><a href ng-click="vm.openStatusModal(pub)">Set status...</a></li>
+                        </ul>
+                    </div>
+                </td>
+                <td>
+                    <a ng-href="/{{pub.zdbId}}" target="_blank">{{pub.zdbId}}</a>
+                </td>
+                <td>
+                    <p><b ng-bind-html="pub.title | trustedHtml"></b></p>
+                </td>
+                <td>{{pub.status.updateDate | timeago:true}}</td>
+                <td>{{pub.status.status.name}}</td>
+                <td>{{pub.status.owner.name}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div paging class="text-center" page="vm.currentPage" page-size="vm.pubsPerPage" total="vm.totalPubs"
+         paging-action="vm.fetchPubs(page)" show-prev-next="true" hide-if-empty="true"></div>
+</div>
+
+<div class="modal status-modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Set status for {{vm.statusModalPub.zdbId}}</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select class="form-control"
+                                ng-options="status.name for status in (vm.statuses | filter:vm.statusNeedsOwner) track by status.id"
+                                ng-model="vm.statusModalPub.status.status">
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" ng-click="vm.closeStatusModal()">Cancel</button>
+                <button type="button" class="btn btn-primary"
+                        ng-click="vm.saveStatusModal()"
+                        ng-disabled="vm.statusSaving || vm.statusModalPub.status.status.id == vm.originalPub.status.status.id">
+                    <span ng-show="!vm.statusSaving">Save</span>
+                    <span ng-show="vm.statusSaving"><i class="fa fa-spin fa-spinner"></i></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

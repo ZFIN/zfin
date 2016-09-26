@@ -1,14 +1,16 @@
 package org.zfin.mapping;
 
 import org.zfin.infrastructure.ActiveSource;
+import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.profile.Company;
 import org.zfin.profile.Person;
 
+import javax.persistence.Entity;
 import java.util.Date;
 import java.util.Map;
 
-public abstract class Panel {
+public abstract class Panel implements EntityZdbID {
 
     private String zdbID;
     private String name;
@@ -128,4 +130,21 @@ public abstract class Panel {
     public long getPanelMarkerCount() {
         return MappingService.getTotalNumberOfMarker(this);
     }
+
+
+    @Override
+    public String getAbbreviationOrder() {
+        return name;
+    }
+
+    @Override
+    public String getEntityType() {
+        return "Panel";
+    }
+
+    @Override
+    public String getEntityName() {
+        return name;
+    }
+
 }

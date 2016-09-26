@@ -75,6 +75,16 @@
             </c:choose>
         </td>
     </tr>
+    <c:if test="${!empty publication.dbXrefs}">
+        <tr>
+            <th>Microarrays:</th>
+            <td>
+                <c:forEach var="xref" items="${publication.dbXrefs}" varStatus="loop">
+                    <zfin:link entity="${xref}"/><c:if test="${!loop.last}">, </c:if>
+                </c:forEach>
+            </td>
+        </tr>
+    </c:if>
     <tr>
         <th>MeSH Terms:</th>
         <td>

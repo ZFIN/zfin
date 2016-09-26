@@ -11,13 +11,10 @@ import java.util.*;
  * http://whiteboxcomputing.com/java/prefix_tree/
  * Applied AbstractMap<V> to Trie class, adding a <Node>
  */
-public class TrieMultiMap<V extends Collection>
-//        extends AbstractMap<String, V>
-        implements Serializable
-        , MultiMap // unable to define methods as String even though paramaterized as such
+public class TrieMultiMap<V extends Collection> implements Serializable, Map // unable to define methods as String even though paramaterized as such
 {
     private int maxDepth; // Not exact, but bounding for the maximum
-    private boolean ignoreCase = true ;
+    private boolean ignoreCase = true;
 
 //    private transient Set<Entry<String,V>> entrySet = null;
 //    private transient KeySet<String> navigableKeySet = null;
@@ -65,21 +62,19 @@ public class TrieMultiMap<V extends Collection>
 
     @Override
     public Object put(Object key, Object value) {
-        if(value instanceof Collection){
-            put(key.toString(),(V) value) ;
-        }
-        else{
-            V values = get(key.toString()) ;
-            if(values!=null){
-                values.add(value) ;
-            }
-            else{
+        if (value instanceof Collection) {
+            put(key.toString(), (V) value);
+        } else {
+            V values = get(key.toString());
+            if (values != null) {
+                values.add(value);
+            } else {
                 Set set = new HashSet();
-                set.add(value) ;
-                put(key.toString(),set) ;
+                set.add(value);
+                put(key.toString(), set);
             }
         }
-        return value ;
+        return value;
     }
 
     /**
@@ -150,32 +145,31 @@ public class TrieMultiMap<V extends Collection>
 
     /**
      * Returns the value removed.
-     * @param key Key that it must contain.
+     *
+     * @param key   Key that it must contain.
      * @param value Value to remove
      * @return Value removed by specified key.
      */
-    @Override
-    public Object remove(Object key, Object value) {
-        V values = get(key) ;
-        if(values!=null){
-            values.remove(value) ;
+    public boolean remove(Object key, Object value) {
+        V values = get(key);
+        if (values != null) {
+            return values.remove(value);
         }
 
-        return null ;
+        return false;
     }
 
     @Override
     public V remove(Object key) {
-        V value = get(key) ;
-        if(value!=null){
-            if(remove(key.toString())){
-                return value ;
-            }
-            else{
-                return null ;
+        V value = get(key);
+        if (value != null) {
+            if (remove(key.toString())) {
+                return value;
+            } else {
+                return null;
             }
         }
-        return null ;
+        return null;
     }
 
     /**
@@ -183,7 +177,7 @@ public class TrieMultiMap<V extends Collection>
      *
      * @param key The word to remove.
      * @return True if the word was found and removed.
-     *
+     * <p/>
      * // this method roughly shadows remove(Object), which returns the value removd.
      */
     public boolean remove(String key) {
@@ -238,7 +232,7 @@ public class TrieMultiMap<V extends Collection>
 
     @Override
     public V get(Object key) {
-        return get(key.toString()) ;
+        return get(key.toString());
     }
 
     public V get(String key) {
@@ -325,24 +319,24 @@ public class TrieMultiMap<V extends Collection>
         return words;
     }
 
-    public Set<String> getKeys(){
+    public Set<String> getKeys() {
         return keySet();
     }
 
     // convenience accessor
-    public Set getAllValues(){
+    public Set getAllValues() {
         return (Set) values();
     }
 
-    public Collection values(){
+    public Collection values() {
         Set<V> values = new HashSet<V>(size);
 //        char[] chars = new char[maxDepth];
         values(root, values, null, 0);
 
         // converting so that we don't return a collection, but the object, albeit unmapped
-        Set<Object> returnValues = new TreeSet<Object>() ;
-        for(V value : values){
-            returnValues.addAll(value) ;
+        Set<Object> returnValues = new TreeSet<Object>();
+        for (V value : values) {
+            returnValues.addAll(value);
         }
         return returnValues;
     }
@@ -373,7 +367,7 @@ public class TrieMultiMap<V extends Collection>
             if (n.firstChild == null) {
                 values.add(value);
             } else {
-                V thisValue =  n.payload;
+                V thisValue = n.payload;
                 values(n, values, thisValue, pointer + 1);
             }
             n = n.nextSibling;
@@ -389,10 +383,9 @@ public class TrieMultiMap<V extends Collection>
     }
 
     // convenience method for accessors
-    public int getSize(){
-        return size() ;
+    public int getSize() {
+        return size();
     }
-
 
 
     /**
@@ -400,7 +393,7 @@ public class TrieMultiMap<V extends Collection>
      *
      * @param prefix The prefix to search for.
      * @return All words in this list starting with the given prefix, or if no such words are found,
-     *         an array containing only the suggested prefix.
+     * an array containing only the suggested prefix.
      */
     public String[] suggest(String prefix) {
         return suggest(root, prefix, 0);
@@ -415,7 +408,7 @@ public class TrieMultiMap<V extends Collection>
         if (offset == word.length()) {
             Set<String> words = new HashSet<String>(size);
             char[] chars = new char[maxDepth];
-            for (int i = 0; i < offset; i++){
+            for (int i = 0; i < offset; i++) {
                 chars[i] = word.charAt(i);
             }
             keySet(root, words, chars, offset);
@@ -447,7 +440,7 @@ public class TrieMultiMap<V extends Collection>
         StringBuilder buffer = new StringBuilder(n);
         int match;
         char star = '*';
-        for (int i = 0; i < n;) {
+        for (int i = 0; i < n; ) {
             match = longestMatch(root, z, i, 0, 0);
             if (match > 0) {
                 for (int j = 0; j < match; j++) {
@@ -482,42 +475,42 @@ public class TrieMultiMap<V extends Collection>
     }
 
     public boolean isEmpty() {
-        return size==0 ;
+        return size == 0;
     }
 
     public void putAll(TrieMultiMap<V> map) {
-        for(String key: map.keySet()){
-            put(key.toString(),map.get(key)) ;
+        for (String key : map.keySet()) {
+            put(key.toString(), map.get(key));
         }
     }
 
     @Override
     public void putAll(Map map) {
-        for(Object key: map.keySet()){
-            put(key.toString(),map.get(key)) ;
+        for (Object key : map.keySet()) {
+            put(key.toString(), map.get(key));
         }
     }
 
     @Override
     public boolean containsKey(Object key) {
-        return containsKey(key.toString()) ;
+        return containsKey(key.toString());
     }
 
     public boolean containsKey(String key1) {
-        return get(key1)!=null ;
+        return get(key1) != null;
     }
 
 
     // bad O(N^2)
     @Override
     public boolean containsValue(Object value) {
-        Collection values = values() ;
-        for(Object o : values){
-            if(o.equals(value)){
-                return true ;
+        Collection values = values();
+        for (Object o : values) {
+            if (o.equals(value)) {
+                return true;
             }
         }
-        return false ;
+        return false;
     }
 
     // doe this create memory leaks?
@@ -527,45 +520,45 @@ public class TrieMultiMap<V extends Collection>
     }
 
 
-
 //    @Override
 
     /**
      * TODO: make the entrySet implementation work properly
-     * @deprecated This does not work like a Map entrySet, as it does not support functions on the map.
+     *
      * @return
+     * @deprecated This does not work like a Map entrySet, as it does not support functions on the map.
      */
-    public Set<Map.Entry<String,V>> entrySet() {
-        Set<Map.Entry<String,V>> entries = new HashSet<Map.Entry<String,V>>() ;
-        for(String key: keySet()){
-            entries.add(new Entry<V>(key,get(key))) ;
+    public Set<Map.Entry<String, V>> entrySet() {
+        Set<Map.Entry<String, V>> entries = new HashSet<Map.Entry<String, V>>();
+        for (String key : keySet()) {
+            entries.add(new Entry<V>(key, get(key)));
         }
         return entries;
     }
 
-    static final class Entry<V> implements Map.Entry<String,V>{
+    static final class Entry<V> implements Map.Entry<String, V> {
 
         String key;
-        V value ;
+        V value;
 
-        Entry(String key, V value){
-            this.key = key ;
-            this.value = value ;
+        Entry(String key, V value) {
+            this.key = key;
+            this.value = value;
         }
 
         @Override
         public String getKey() {
-            return key ;  //To change body of implemented methods use File | Settings | File Templates.
+            return key;  //To change body of implemented methods use File | Settings | File Templates.
         }
 
         @Override
         public V getValue() {
-            return value ;  //To change body of implemented methods use File | Settings | File Templates.
+            return value;  //To change body of implemented methods use File | Settings | File Templates.
         }
 
         @Override
         public V setValue(V value) {
-            return this.value = value ;
+            return this.value = value;
         }
     }
 
@@ -610,7 +603,7 @@ public class TrieMultiMap<V extends Collection>
         if (size != trieMap.size) return false;
         if (root != null ? !root.equals(trieMap.root) : trieMap.root != null) return false;
 
-        if(!CollectionUtils.isEqualCollection(entrySet(),trieMap.entrySet())) return false ;
+        if (!CollectionUtils.isEqualCollection(entrySet(), trieMap.entrySet())) return false;
 
         return true;
     }
@@ -622,8 +615,8 @@ public class TrieMultiMap<V extends Collection>
         result = 31 * result + (root != null ? root.hashCode() : 0);
         result = 31 * result + size;
 
-        for(Map.Entry<String,V> entry : entrySet()){
-            result = 31 * result + entry.getKey().hashCode() ;
+        for (Map.Entry<String, V> entry : entrySet()) {
+            result = 31 * result + entry.getKey().hashCode();
             result = 31 * result + entry.getValue().hashCode();
         }
 

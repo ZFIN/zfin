@@ -28,6 +28,14 @@
         <td>${journal.abbreviation}</td>
     </tr>
     <tr>
+        <th>Synonyms:</th>
+        <td>
+            <c:forEach var="alias" items="${journal.aliases}" varStatus="loop">
+            ${alias}<c:if test="${!loop.last}">,</c:if>
+            </c:forEach>
+        </td>
+    </tr>
+    <tr>
         <th>Publisher:</th>
         <td>
             <c:if test="${!empty journal.publisher}">${journal.publisher}</c:if>

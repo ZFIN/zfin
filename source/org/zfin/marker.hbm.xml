@@ -150,7 +150,7 @@
             <one-to-many class="org.zfin.infrastructure.DataNote"/>
         </set>
 
-        <set name="markerHistory" lazy="true">
+        <set name="markerHistory" lazy="true" sort="natural">
             <key column="mhist_mrkr_zdb_id"/>
             <one-to-many class="org.zfin.marker.MarkerHistory"/>
         </set>
@@ -414,36 +414,6 @@
         <property name="name">
             <column name="mrkr_name"/>
         </property>
-    </class>
-
-    <class name="org.zfin.marker.MarkerHistory" table="marker_history">
-        <id name="zdbID">
-            <column name="mhist_zdb_id"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">NOMEN</param>
-                <param name="insertActiveData">true</param>
-            </generator>
-        </id>
-        <property name="reason" type="markerHistoryReason">
-            <column name="mhist_reason"/>
-        </property>
-        <property name="event">
-            <column name="mhist_event"/>
-        </property>
-        <property name="name">
-            <column name="mhist_mrkr_name_on_mhist_date"/>
-        </property>
-        <property name="abbreviation">
-            <column name="mhist_mrkr_abbrev_on_mhist_date"/>
-        </property>
-        <property name="date">
-            <column name="mhist_date"/>
-        </property>
-
-        <!-- todo: figure out if this should be one to one -->
-        <many-to-one name="markerAlias" column="mhist_dalias_zdb_id" class="org.zfin.marker.MarkerAlias"/>
-
-        <many-to-one name="marker" column="mhist_mrkr_zdb_id" class="org.zfin.marker.Marker"/>
     </class>
 
     <sql-query name="markerNamesFastSearchUpdate" callable="true">

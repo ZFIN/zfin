@@ -846,3 +846,45 @@ ul.comma-separated > li:last-child:after {
     border: 1px solid #ccc;
 }
 
+.pub-dashboard > .filter-bar {
+    padding: 15px;
+    background: #e3e8e8;
+    margin-bottom: 20px;
+}
+
+.pub-dashboard .table td {
+    vertical-align: text-top;
+}
+
+.pub-dashboard img {
+    max-height: 100px;
+    margin: 4px 0;
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+nav.pub-navigator {
+    background: #669999;
+    margin-top: -4px; /* snugs it up to the main nav */
+    margin-bottom: 0;
+    color: white;
+    border: none;
+}
+
+nav.pub-navigator .navbar-nav > li > a {
+    color: white;
+}
+
+nav.pub-navigator .navbar-nav > li > a:hover,
+nav.pub-navigator .navbar-nav > li > a:focus {
+    color: white;
+    text-decoration: underline;
+}
+
+nav.pub-navigator .navbar-nav > .active > a,
+nav.pub-navigator .navbar-nav > .active > a:hover,
+nav.pub-navigator .navbar-nav > .active > a:focus {
+    background: #85aeae;
+    color: white;
+    font-weight: bold;
+}

@@ -781,15 +781,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
         session.flush();
         Criteria criteria = session.createCriteria(MarkerHistory.class);
         criteria.add(Restrictions.eq("marker.zdbID", marker.getZdbID()));
-        // Todo: Check this carefully
-        if (event != null) {
-            criteria.add(Restrictions.eq("event", event.toString()));
-        }
+        criteria.add(Restrictions.eq("event", event));
         criteria.addOrder(Property.forName("date").desc());
         // very dangerous as the trigger creates two history records, one for a name change (no alias available)
         // and one for an abbrev change with an associated alias generation
         criteria.setMaxResults(1);
-        logger.debug("got to max results mhist" + marker.getAbbreviation().toString());
+        logger.debug("got to max results mhist" + marker.getAbbreviation());
         return (MarkerHistory) criteria.uniqueResult();
     }
 
@@ -797,9 +794,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
         MarkerHistory history = new MarkerHistory();
         history.setDate(new Date());
         history.setName(newMarker.getName());
-        history.setAbbreviation(newMarker.getAbbreviation());
+        history.setSymbol(newMarker.getAbbreviation());
         history.setMarker(newMarker);
-        history.setEvent(event.toString());
+        history.setEvent(event);
         history.setOldMarkerName(oldMarker.getName());
         // The reason should be passed
         history.setReason(reason);
@@ -3019,6 +3016,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         List<Marker> targetGenes = (List<Marker>) query.list();
         return targetGenes.size();
+    }
+
+    @Override
+    public MarkerHistory getMarkerHistory(String zdbID) {
+        return (MarkerHistory) HibernateUtil.currentSession().load(MarkerHistory.class, zdbID);
     }
 
 }

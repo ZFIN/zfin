@@ -24,12 +24,12 @@ open LOG, '>', "logCompareNcbiMgiOmim.rpt" or die "can not open logCompareNcbiMg
 &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Mus_musculus.gene_info.gz");
 &doSystemCommand("/local/bin/gunzip Mus_musculus.gene_info.gz");
 
-&doSystemCommand("/local/bin/wget ftp://ftp.informatics.jax.org/pub/reports/MGI_Gene.rpt -O MGIgene.gene_info");
+&doSystemCommand("/local/bin/wget ftp://ftp.informatics.jax.org/pub/reports/HGNC_homologene.rpt -O MGIgene.gene_info");
 
 &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz");
 &doSystemCommand("/local/bin/gunzip Homo_sapiens.gene_info.gz");
 
-&doSystemCommand("/local/bin/wget ftp://ftp.omim.org/OMIM/mim2gene.txt -O mim2gene.gene_info");
+&doSystemCommand("/local/bin/wget http://omim.org/static/omim/data/mim2gene.txt -O mim2gene.gene_info");
 
 open (NCBIMOUSEDATA, "Mus_musculus.gene_info") ||  die "Cannot open Mus_musculus.gene_info : $!\n";
 
@@ -78,7 +78,6 @@ while (<NCBIMOUSEDATA>) {
   undef @fieldsNCBI;
       
 }
-
 $total--;
 
 print "\ntotal number of lines from NCBI mouse gene info file: $total \n\n";
@@ -106,18 +105,25 @@ while (<MGI>) {
  @fieldsMGI = split("\t");
 
  $MGIid = $fieldsMGI[0];
- $symbol = $fieldsMGI[1] if $fieldsMGI[1] ne "null";
- $geneName = $fieldsMGI[2] if $fieldsMGI[2] ne "null";
- $ncbiGeneID = $fieldsMGI[4] if $fieldsMGI[4] ne "null";
 
- $Chr = $fieldsMGI[5] if $fieldsMGI[5] ne "null";
+ if ($MGIid =~ m/^MGI:\d+/) {
+
+   if ($fieldsMGI[4] =~ m/\d+/) {
+     $ncbiGeneID = $fieldsMGI[4];
+     $symbol = $fieldsMGI[1] if $fieldsMGI[1] ne "null";
+     $geneName = $fieldsMGI[2] if $fieldsMGI[2] ne "null";
+
+     $Chr = $fieldsMGI[5] if $fieldsMGI[5] ne "null";
  
- $mgiNCBIidsAndNamesMouse{$ncbiGeneID} = $geneName if $fieldsMGI[4] ne "null" && $fieldsMGI[2] ne "null";
- $mgiNCBIidsAndSymbols{$ncbiGeneID} = $symbol if $fieldsMGI[4] ne "null" && $fieldsMGI[1] ne "null";
+     $mgiNCBIidsAndNamesMouse{$ncbiGeneID} = $geneName if $fieldsMGI[2] ne "null";
+     $mgiNCBIidsAndSymbols{$ncbiGeneID} = $symbol if $fieldsMGI[1] ne "null";
  
- $mgiIDsAndNCBIids{$MGIid} = $ncbiGeneID if $fieldsMGI[4] ne "null";
- $ncbiIDsAndMGIids{$ncbiGeneID} = $MGIid if $fieldsMGI[4] ne "null";
- 
+     $mgiIDsAndNCBIids{$MGIid} = $ncbiGeneID;
+     $ncbiIDsAndMGIids{$ncbiGeneID} = $MGIid;
+
+   }
+ }
+
  undef @fieldsMGI;
  
 }

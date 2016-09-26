@@ -54,8 +54,27 @@ a:hover {
     align-items: flex-end;
 }
 
+<<<<<<< HEAD
 .search-form-top-bar {
     margin-top: 1em;
     margin-left: .25em;
     margin-right: .25em;
 }
+=======
+.btn-zfin {
+    color: #FFFFFF;
+    background-color: #066;
+    border-color: #066;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+
+.btn-zfin:hover,
+.btn-zfin:focus,
+.btn-zfin:active,
+.btn-zfin.active,
+.btn-zfin.disabled,
+.btn-zfin[disabled] {
+    color: #FFFFFF;
+    background-color: #004444;
+}
+>>>>>>> master

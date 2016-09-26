@@ -63,7 +63,6 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore("seems to cause getGoEvidenceDTO() to fail")
     public void validateReferenceDatabases(){
         assertNotNull(MarkerGoEvidencePresentation.getGenbankReferenceDatabase()) ;
         assertNotNull(MarkerGoEvidencePresentation.getEcReferenceDatabase()) ;

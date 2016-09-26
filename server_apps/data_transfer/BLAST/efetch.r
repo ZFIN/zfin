@@ -4,7 +4,7 @@ rebol[
     Author:  "Tom Conlin"
     Date:    [11-Mar-2005 7-Mar-2007]
     version: 0.0.2
-    website: http://eutils.ncbi.nlm.nih.gov/entrez/query/static/efetchseq_help.html
+    website: https://eutils.ncbi.nlm.nih.gov/entrez/query/static/efetchseq_help.html
     Purpose: "retrive NCBI data from the commend line"
     comment {version 0.0.2 better handles unix pipelines}
 ]
@@ -39,7 +39,7 @@ Eamples:
 
 where acc.lst can be space,tab,comma,newline separated accessions (with or without quotes)
 for more info on allowed/rational parameter combinations see:
-http://eutils.ncbi.nlm.nih.gov/entrez/query/static/efetchseq_help.html
+https://eutils.ncbi.nlm.nih.gov/entrez/query/static/efetchseq_help.html
 }
 
 ;;;
@@ -54,7 +54,7 @@ efetch-ctx: make object![
 system/schemes/http/timeout: 0:09:00
 
 ;;; where we are going
-url:       http://eutils.ncbi.nlm.nih.gov/entrez/eutils/
+url:       https://eutils.ncbi.nlm.nih.gov/entrez/eutils/
 ;;; tags on our hats and scarves
 constants: {efetch.fcgi?tool=zfin&email=zfinadmn%40zfin.org}
 

@@ -7,5 +7,7 @@
 
  <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/db.changelog.master.xml"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/db.changelog.master.xml"/>
- <include file="source/org/zfin/db/postGmakePostloaddb/1080/underwater/db.changelog.master.xml"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1079/underwater/db.changelog.master.xml"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/db.changelog.master.xml"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/db.changelog.master.xml"/>
 </databaseChangeLog>

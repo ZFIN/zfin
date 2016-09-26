@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zfin.curation.Correspondence;
 import org.zfin.curation.Curation;
 import org.zfin.curation.PublicationNote;
-import org.zfin.curation.presentation.CorrespondenceDTO;
-import org.zfin.curation.presentation.CurationDTO;
-import org.zfin.curation.presentation.CurationStatusDTO;
-import org.zfin.curation.presentation.PublicationNoteDTO;
+import org.zfin.curation.presentation.*;
 import org.zfin.curation.repository.CurationRepository;
 import org.zfin.curation.service.CurationDTOConversionService;
 import org.zfin.database.InformixUtil;
@@ -38,10 +35,10 @@ import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.profile.AccountInfo;
 import org.zfin.profile.Person;
+import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.properties.ZfinPropertiesEnum;
-import org.zfin.publication.NotificationLetter;
-import org.zfin.publication.Publication;
+import org.zfin.publication.*;
 import org.zfin.publication.repository.PublicationRepository;
 
 import javax.servlet.http.HttpServletResponse;
@@ -58,6 +55,9 @@ public class PublicationTrackingController {
 
     @Autowired
     private PublicationRepository publicationRepository;
+
+    @Autowired
+    private ProfileRepository profileRepository;
 
     @Autowired
     private PhenotypeRepository phenotypeRepository;
@@ -155,32 +155,75 @@ public class PublicationTrackingController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/statuses", method = RequestMethod.GET)
+    public Collection<PublicationTrackingStatus> getAllStatuses() {
+        return publicationRepository.getAllPublicationStatuses();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/locations", method = RequestMethod.GET)
+    public Collection<PublicationTrackingLocation> getAllLocations() {
+        return publicationRepository.getAllPublicationLocations();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/curators", method = RequestMethod.GET)
+    public Collection<CuratorDTO> getAllCurators() {
+        Set<CuratorDTO> curatorDTOs = new TreeSet<>();
+        // maybe one day we'll have a separate role for just curators?
+        List<Person> curators = profileRepository.getUsersByRole("root");
+        for (Person curator : curators) {
+            curatorDTOs.add(converter.toCuratorDTO(curator));
+        }
+        return curatorDTOs;
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/{zdbID}/status", method = RequestMethod.GET)
     public CurationStatusDTO getCurationStatus(@PathVariable String zdbID) {
         Publication publication = publicationRepository.getPublication(zdbID);
-        return converter.toCurationStatusDTO(publication);
+        PublicationTrackingHistory currentStatus = publicationRepository.currentTrackingStatus(publication);
+        return converter.toCurationStatusDTO(currentStatus);
     }
 
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/status", method = RequestMethod.POST)
     public CurationStatusDTO updateCurationStatus(@PathVariable String zdbID, @RequestBody CurationStatusDTO dto) {
+        Publication publication = publicationRepository.getPublication(zdbID);
+
+        PublicationTrackingHistory newStatus = new PublicationTrackingHistory();
+        newStatus.setPublication(publication);
+        newStatus.setStatus(dto.getStatus());
+        newStatus.setLocation(dto.getLocation());
+        newStatus.setOwner(dto.getOwner() == null ? null : profileRepository.getPerson(dto.getOwner().getZdbID()));
+        newStatus.setUpdater(ProfileService.getCurrentSecurityUser());
+        newStatus.setDate(new GregorianCalendar());
+
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
-        Publication publication = publicationRepository.getPublication(zdbID);
-        publication.setIndexed(dto.isIndexed());
-        publication.setIndexedDate((GregorianCalendar) dto.getIndexedDate());
-        if (publication.getCloseDate() == null && dto.getClosedDate() != null) {
-            // looks like this paper's getting closed. close all the topics and do some cleanup, too.
+        if (newStatus.getStatus().getType() == PublicationTrackingStatus.Type.CLOSED) {
             curationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
             expressionRepository.deleteExpressionStructuresForPub(publication);
             publicationRepository.deleteExpressionExperimentIDswithNoExpressionResult(publication);
             mutantRepository.updateGenotypeNicknameWithHandleForPublication(publication);
         }
-        publication.setCloseDate((GregorianCalendar) dto.getClosedDate());
-        session.update(publication);
+        session.save(newStatus);
         tx.commit();
 
-        return converter.toCurationStatusDTO(publication);
+        return converter.toCurationStatusDTO(publicationRepository.currentTrackingStatus(publication));
+    }
+
+    @RequestMapping(value = "/{zdbID}/status-history")
+    public String showPubStatusHistory(Model model, @PathVariable String zdbID) {
+        Publication publication = publicationRepository.getPublication(zdbID);
+        if (publication == null) {
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Status History for " + publication.getTitle());
+        model.addAttribute("publication", publication);
+        model.addAttribute("statusUpdates", publicationRepository.fullTrackingHistory(publication));
+        return "publication/status-history.page";
     }
 
     @ResponseBody

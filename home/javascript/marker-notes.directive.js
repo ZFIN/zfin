@@ -1,15 +1,7 @@
 ;(function () {
     angular
         .module('app')
-        .filter('trusted_html', trustedHtml)
         .directive('markerNotes', markerNotes);
-
-    trustedHtml.$inject = ['$sce'];
-    function trustedHtml($sce) {
-        return function (text) {
-            return $sce.trustAsHtml(text);
-        };
-    }
 
     function markerNotes() {
         var directive = {

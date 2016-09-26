@@ -54,6 +54,7 @@ create procedure regen_names_genotype_list()
     from name_precedence 
     where nmprec_precedence = namePrecedence;
 
+
   insert into regen_all_names_temp
       ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
         rgnallnm_precedence, rgnallnm_name_lower )

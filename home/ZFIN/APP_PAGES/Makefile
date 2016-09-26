@@ -20,7 +20,6 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES
 
 SUBDIRS = \
-	ZFINadmn \
 	fish_files \
 	gene_files \
 	image_files \

@@ -162,6 +162,7 @@ public enum Ontology implements Serializable {
                 Ontology.MPATH_NEOPLASM,
                 Ontology.SPATIAL,
                 Ontology.ZECO,
+                Ontology.ZECO_TAXONONY,
                 Ontology.CHEBI,
                 Ontology.SO};
     }

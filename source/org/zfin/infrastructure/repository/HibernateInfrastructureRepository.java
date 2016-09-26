@@ -166,6 +166,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         insertPublicAttribution(genotype, publication);
     }
 
+    @Override
     public void insertStandardPubAttribution(String dataZdbID, Publication publication) {
         PublicationAttribution publicationAttribution = new PublicationAttribution();
         publicationAttribution.setDataZdbID(dataZdbID);
@@ -1829,6 +1830,11 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         RecordAttribution thisPubResult = (RecordAttribution) criteriaExisting.uniqueResult();
         if (thisPubResult != null)
             HibernateUtil.currentSession().delete(thisPubResult);
+    }
+
+    @Override
+    public EntityZdbID getEntityByID(Class<? extends EntityZdbID> entity, String zdbID) {
+        return (EntityZdbID) HibernateUtil.currentSession().get(entity, zdbID);
     }
 }
 

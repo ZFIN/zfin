@@ -1,22 +1,17 @@
 package org.zfin.curation.presentation;
 
+import org.zfin.publication.PublicationTrackingLocation;
+import org.zfin.publication.PublicationTrackingStatus;
+
 import java.util.Calendar;
 
 public class CurationStatusDTO {
 
     private String pubZdbID;
-    private Calendar closedDate;
-    private boolean indexed;
-    private Calendar indexedDate;
-    private boolean curationAllowed;
-
-    public boolean isCurationAllowed() {
-        return curationAllowed;
-    }
-
-    public void setCurationAllowed(boolean curationAllowed) {
-        this.curationAllowed = curationAllowed;
-    }
+    private PublicationTrackingStatus status;
+    private PublicationTrackingLocation location;
+    private CuratorDTO owner;
+    private Calendar updateDate;
 
     public String getPubZdbID() {
         return pubZdbID;
@@ -26,28 +21,35 @@ public class CurationStatusDTO {
         this.pubZdbID = pubZdbID;
     }
 
-    public Calendar getClosedDate() {
-        return closedDate;
+    public PublicationTrackingStatus getStatus() {
+        return status;
     }
 
-    public void setClosedDate(Calendar completionDate) {
-        this.closedDate = completionDate;
+    public void setStatus(PublicationTrackingStatus status) {
+        this.status = status;
     }
 
-    public boolean isIndexed() {
-        return indexed;
+    public PublicationTrackingLocation getLocation() {
+        return location;
     }
 
-    public void setIndexed(boolean indexed) {
-        this.indexed = indexed;
+    public void setLocation(PublicationTrackingLocation location) {
+        this.location = location;
     }
 
-    public Calendar getIndexedDate() {
-        return indexedDate;
+    public CuratorDTO getOwner() {
+        return owner;
     }
 
-    public void setIndexedDate(Calendar indexedDate) {
-        this.indexedDate = indexedDate;
+    public void setOwner(CuratorDTO owner) {
+        this.owner = owner;
     }
 
+    public Calendar getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Calendar updateDate) {
+        this.updateDate = updateDate;
+    }
 }

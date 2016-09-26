@@ -5276,6 +5276,14 @@ where fig_zdb_id=xpatfig_fig_zdb_id
                    where="jrnl_zdb_id=journal.id"
                    cacheImpl="SortedMapBackedCache"/>
 
+           <entity name="journal_alias" datasource="db"
+                   query="select salias_alias as alias,
+                               salias_source_zdb_id as jrnl_zdb_id
+                        from source_alias
+                        where salias_source_zdb_id like 'ZDB-JRNL-%';"
+                   where="jrnl_zdb_id=journal.id"
+                   cacheImpl="SortedMapBackedCache"/>
+
        </entity>
 
        <entity name="condition"

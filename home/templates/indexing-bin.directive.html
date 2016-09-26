@@ -1,0 +1,69 @@
+<div class="pub-dashboard">
+    <div class="row filter-bar">
+        <div class="col-sm-12">
+            <form class="form-inline">
+                Pubs
+                with priority
+                <select class="form-control"
+                        ng-options="priority.name for priority in vm.priorities track by priority.id"
+                        ng-model="vm.priority" ng-change="vm.fetchPubs()">
+                </select>
+                by
+                <select class="form-control"
+                        ng-options="order.display for order in vm.sortOrders"
+                        ng-model="vm.sort"
+                        ng-change="vm.fetchPubs()">
+                </select>
+            </form>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th width="70px">Priority</th>
+            <th width="115px"></th>
+            <th width="150px">ZDB-ID</th>
+            <th>Details</th>
+            <th width="100px">Time in bin</th>
+            <th width="50px">PDF</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-show="vm.loading">
+            <td class="text-muted text-center" colspan="5"><i class="fa fa-spinner fa-spin"></i> Loading...</td>
+        </tr>
+        <tr ng-show="!vm.loading && vm.pubs.length == 0">
+            <td class="text-muted text-center" colspan="5">Nothing to see here! No pubs match criteria.</td>
+        </tr>
+        <tr ng-show="!vm.loading" ng-repeat="pub in vm.pubs">
+            <td>
+                <select class="form-control"
+                        ng-options="priority.name for priority in vm.priorities track by priority.id"
+                        ng-model="pub.status.location" ng-change="vm.updatePriority(pub)" ng-disabled="pub.saving">
+                </select>
+            </td>
+            <td>
+                <button ng-show="!pub.claimed" ng-click="vm.claimPub(pub, $index)" class="btn btn-default" ng-disabled="pub.saving">
+                    <span ng-show="!pub.saving">Claim</span>
+                    <span ng-show="pub.saving"><i class="fa fa-spinner fa-spin"></i></span>
+                </button>
+                <button ng-show="pub.claimed" class="btn btn-success">
+                    <i class="fa fa-check"></i> Claimed
+                </button>
+            </td>
+            <td><a ng-href="/{{pub.zdbId}}" target="_blank">{{pub.zdbId}}</a></td>
+            <td>
+                <p><b ng-bind-html="pub.title | trustedHtml"></b></p>
+                <p ng-bind-html="pub.abstractText | trustedHtml"></p>
+            </td>
+            <td>{{pub.status.updateDate | timeago:true}}</td>
+            <td>
+                <a ng-show="pub.pdfPath" ng-href="/PDFLoadUp/{{pub.pdfPath}}" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div paging class="text-center" page="vm.currentPage" page-size="vm.pubsPerPage" total="vm.totalPubs"
+         paging-action="vm.fetchPubs(page)" show-prev-next="true" hide-if-empty="true"></div>
+</div>

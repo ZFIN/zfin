@@ -1,5 +1,6 @@
 package org.zfin.publication.presentation;
 
+import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationAuthorComparator;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 public abstract class PublicationListBean {
 
+    protected EntityZdbID entity;
     private List<Publication> sortedPublications;
     private String orderBy;
     private String disassociatedPubId;
@@ -113,5 +115,13 @@ public abstract class PublicationListBean {
 
     public void setEntityID(String entityID) {
         this.entityID = entityID;
+    }
+
+    public EntityZdbID getEntity() {
+        return entity;
+    }
+
+    public void setEntity(EntityZdbID entity) {
+        this.entity = entity;
     }
 }

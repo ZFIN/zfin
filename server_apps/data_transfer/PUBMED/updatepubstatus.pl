@@ -67,7 +67,7 @@ $cur_insert_update = $dbh->prepare_cached('insert into updates (rec_id,field_nam
 
 foreach $pubZDBid (sort keys %nonActivePubAccessions) {
     $pubmedId = $nonActivePubAccessions{$pubZDBid};
-    $url = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=' . $pubmedId . '&retmode=xml';
+    $url = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=' . $pubmedId . '&retmode=xml';
     $content = get $url;
     if (defined $content) {
       if ($content =~ m/<PublicationStatus>(\w+)<\/PublicationStatus>/) {

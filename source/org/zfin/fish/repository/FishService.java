@@ -30,6 +30,10 @@ import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.*;
+import org.zfin.mutant.presentation.FishGenotypeExpressionStatistics;
+import org.zfin.mutant.presentation.FishGenotypePhenotypeStatistics;
+import org.zfin.mutant.presentation.GenotypeFishResult;
+import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -412,22 +416,17 @@ public class FishService {
      * @return set of figures
      */
     public static Set<ZfinFigureEntity> getFiguresByFishAndTerms(String fishID, List<String> termIDs) {
-/*
-        if (CollectionUtils.isEmpty(termIDs)) {
-            Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
-            if (fish == null)
-                return null;
-            return getCleanPhenotypeFigureEntitiesForFish(fish);
+        Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
+        if (fish == null) {
+            return null;
         }
-*/
 
         SolrClient server = SolrService.getSolrClient("prototype");
 
         SolrQuery query = new SolrQuery();
-
         query.setFields(FieldName.ID.getName(), FieldName.FIGURE_ID.getName(), FieldName.THUMBNAIL.getName());
         query.addFilterQuery(FieldName.CATEGORY.getName() + ":\"" + Category.PHENOTYPE.getName() + "\"");
-        query.addFilterQuery(FieldName.XREF.getName() + ":" + fishID);
+        query.addFilterQuery(FieldName.FISH.getName() + ":\"" + fish.getName() + "\"");
         query.setRows(500);
         query.add("group", "true");
         query.add("group.field", "figure_id");
@@ -505,6 +504,57 @@ public class FishService {
         }
 
         return figureEntities;
+    }
+
+    public static List<GenotypeFishResult> getFishExperiementSummaryForGenotype(Genotype genotype) {
+        MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
+        List<FishExperiment> fishExperimentList = mutantRepository.getFishExperiment(genotype);
+        List<GenotypeFishResult> fishGenotypePhenotypeStatisticsList = createResult(fishExperimentList);
+        List<Fish> fishList = mutantRepository.getFishByGenotypeNoExperiment(genotype);
+        addPureFish(fishGenotypePhenotypeStatisticsList, fishList);
+        return fishGenotypePhenotypeStatisticsList;
+    }
+
+    private static List<GenotypeFishResult> createResult(List<FishExperiment> fishExperimentList) {
+        Map<Fish, GenotypeFishResult> statisticsMap = new TreeMap<>();
+        for (FishExperiment fishExperiment : fishExperimentList) {
+            Fish fish = fishExperiment.getFish();
+            GenotypeFishResult stat = statisticsMap.get(fish);
+            if (stat == null) {
+                stat = new GenotypeFishResult(fish);
+                stat.setAffectedMarkers(getAffectedGenes(fish));
+                FishGenotypePhenotypeStatistics pheno = stat.getFishGenotypePhenotypeStatistics();
+                if (pheno == null) {
+                    pheno = new FishGenotypePhenotypeStatistics(fish);
+                    stat.setFishGenotypePhenotypeStatistics(pheno);
+                }
+                FishGenotypeExpressionStatistics expression = stat.getFishGenotypeExpressionStatistics();
+                if (expression == null) {
+                    expression = new FishGenotypeExpressionStatistics(fish);
+                    stat.setFishGenotypeExpressionStatistics(expression);
+                }
+                statisticsMap.put(fish, stat);
+            }
+            stat.getFishGenotypePhenotypeStatistics().addFishExperiment(fishExperiment);
+            stat.getFishGenotypeExpressionStatistics().addFishExperiment(fishExperiment);
+        }
+
+        return new ArrayList<>(statisticsMap.values());
+    }
+
+    private static void addPureFish(List<GenotypeFishResult> fishGenotypePhenotypeStatisticsList, List<Fish> fishList) {
+        if (CollectionUtils.isEmpty(fishList)) {
+            return;
+        }
+        if (fishGenotypePhenotypeStatisticsList == null) {
+            fishGenotypePhenotypeStatisticsList = new ArrayList<>(fishList.size());
+        }
+        for (Fish fish : fishList) {
+            GenotypeFishResult result = new GenotypeFishResult(fish);
+            if (!fishGenotypePhenotypeStatisticsList.contains(result)) {
+                fishGenotypePhenotypeStatisticsList.add(result);
+            }
+        }
     }
 
 }

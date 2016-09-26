@@ -35,6 +35,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private String errataAndNotes;
     private GregorianCalendar publicationDate;
     private GregorianCalendar closeDate;
+    private GregorianCalendar entryDate;
     private Journal journal;
     private Set<ExpressionExperiment> expressionExperiments;
     private Set<Figure> figures;
@@ -43,6 +44,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private SortedSet<MeshHeading> meshHeadings;
     private Set<PublicationNote> notes;
     private Set<Correspondence> correspondences;
+    private Set<PublicationDbXref> dbXrefs;
 
     private boolean deletable;
     private boolean indexed;
@@ -111,6 +113,14 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     public void setCloseDate(GregorianCalendar closeDate) {
         this.closeDate = closeDate;
+    }
+
+    public GregorianCalendar getEntryDate() {
+        return entryDate;
+    }
+
+    public void setEntryDate(GregorianCalendar entryDate) {
+        this.entryDate = entryDate;
     }
 
     public GregorianCalendar getIndexedDate() {
@@ -249,6 +259,14 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         this.correspondences = correspondences;
     }
 
+    public Set<PublicationDbXref> getDbXrefs() {
+        return dbXrefs;
+    }
+
+    public void setDbXrefs(Set<PublicationDbXref> dbXrefs) {
+        this.dbXrefs = dbXrefs;
+    }
+
     public String getCitation() {
         StringBuilder sb = new StringBuilder();
         sb.append(authors);
@@ -259,6 +277,12 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         }
         sb.append(title);
         sb.append(". ");
+        sb.append(getJournalAndPages());
+        return sb.toString();
+    }
+
+    public String getJournalAndPages() {
+        StringBuilder sb = new StringBuilder();
         if (journal != null) {
             sb.append(journal.getName());
             sb.append(". ");

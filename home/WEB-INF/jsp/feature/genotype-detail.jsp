@@ -271,19 +271,17 @@
                     <zfin:alternating-tr loopName="index">
                         <td><zfin:link entity="${fishGenotypeStatistics.fish}"/></td>
                         <td>
-                            <c:forEach var="marker" items="${fishGenotypeStatistics.getAffectedMarker()}"
+                            <c:forEach var="marker" items="${fishGenotypeStatistics.affectedMarkers}"
                                        varStatus="loop">
                                 <zfin:link entity="${marker}"/><c:if test="${!loop.last}">, </c:if>
                             </c:forEach>
                         </td>
                         <td>
-                            <zfin2:showFigureData entity="${genotype}"
-                                                  fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypePhenotypeStatistics}"
+                            <zfin2:showFigureData fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypePhenotypeStatistics}"
                                                   link="/action/fish/phenotype-summary?fishID=${fishGenotypeStatistics.fish.zdbID}&imagesOnly=false"/>
                         </td>
                         <td>
-                            <zfin2:showFigureData entity="${genotype}"
-                                                  fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypeExpressionStatistics}"
+                            <zfin2:showFigureData fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypeExpressionStatistics}"
                                                   link="/action/expression/fish-expression-figure-summary?fishID=${fishGenotypeStatistics.fish.zdbID}&imagesOnly=false"/>
                         </td>
                     </zfin:alternating-tr>
@@ -293,7 +291,7 @@
     </div>
 
     <p/>
-    <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${formBean.genotype.zdbID}&rtype=genotype'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.totalNumberOfPublications})
+    <a href='/action/publication/list/${formBean.genotype.zdbID}'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.totalNumberOfPublications})
 
 </c:if>
 

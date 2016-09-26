@@ -945,17 +945,19 @@
 
     <requestHandler name="/fish-search" class="org.apache.solr.handler.component.SearchHandler">
         <lst name="appends">
-            <str name="fq">(category:Fish) OR (category:"Mutation / Tg" AND (lab_of_origin:"Stemple Lab" OR lab_of_origin:"Burgess &amp; Lin Lab"))</str>
+            <str name="fq">(category:Fish) OR (category:"Mutation / Tg")</str>
         </lst>
         <lst name="defaults">
             <str name="echoParams">explicit</str>
-            <str name="sort">complexity asc, score desc, name_sort asc</str>
+            <str name="sort">score desc, name_sort asc</str>
 
             <str name="q.alt">*:*</str>
             <str name="defType">edismax</str>
             <!-- This list needs to match the fl for the primary requesthandler, or, more importantly, it needs to match the annotations in SearchResult.java  -->
             <str name="fl">name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count,  has_orthology, xpat_zdb_id, fig_zdb_id, score,pgcmid</str>
-            <str name="qf">proper_name^10.0
+            <str name="qf">
+                proper_name_k^100.0
+                proper_name^10.0
                 name
                 category_t
                 type_t

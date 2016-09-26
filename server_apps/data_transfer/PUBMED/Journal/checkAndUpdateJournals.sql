@@ -21,6 +21,32 @@ with no log;
 load from <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/journalsFromNCBI.txt
   insert into tmp_ncbi_journals;
 
+create index tnj_title_index
+ on tmp_ncbi_journals(title) using btree in idxdbs3;
+
+create index tnj_issnPrint_index
+ on tmp_ncbi_journals(issnPrint) using btree in idxdbs3;
+
+create index tnj_nlmID_index
+ on tmp_ncbi_journals(nlmID) using btree in idxdbs3;
+
+update statistics high for table tmp_ncbi_journals;
+
+-- temp table with pre-computed lower case values
+select lower(title) as title, lower(medAbbr) as medAbbr, issnPrint, issnOnline, lower(isoAbbr) as isoAbbr, nlmID
+ from tmp_ncbi_journals into temp lower_ncbi_journals;
+
+create index lnj_title_index
+ on lower_ncbi_journals(title) using btree in idxdbs3;
+
+create index lnj_issnPrint_index
+ on lower_ncbi_journals(issnPrint) using btree in idxdbs3;
+
+create index lnj_nlmID_index
+ on lower_ncbi_journals(nlmID) using btree in idxdbs3;
+
+update statistics high for table lower_ncbi_journals;
+
 select count(*) as noIssn from tmp_ncbi_journals where issnPrint is null;
 select count(*) as noTitle from tmp_ncbi_journals where title is null;
 select count(distinct lower(title)) as numTitle from tmp_ncbi_journals;
@@ -35,11 +61,7 @@ select j1.issnPrint, j1.title, j1.nlmID
    and exists(select "x" from tmp_ncbi_journals j2 
                where j2.issnPrint = j1.issnPrint 
                  and j2.nlmID != j1.nlmID) 
-group by j1.issnPrint, j1.title, j1.nlmID
-order by j1.issnPrint, j1.title, j1.nlmID
 into temp duplJournalsNCBI;
-
-unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/duplJournalsNCBI.txt select * from duplJournalsNCBI; 
 
 -- get rid of the NLM data with duplicated issn print
 
@@ -47,17 +69,17 @@ delete from tmp_ncbi_journals allJournal
  where exists(select "x" from duplJournalsNCBI del
                where del.nlmID = allJournal.nlmID);
 
-select t1.title, t1.issnPrint, t1.nlmID
-  from tmp_ncbi_journals t1
- where t1.title is not null
-   and exists(select "x" from tmp_ncbi_journals t2
-               where lower(t2.title) = lower(t1.title)
-                 and t2.nlmID != t1.nlmID)        
-  group by t1.title, t1.issnPrint, t1.nlmID
-  order by t1.title, t1.issnPrint, t1.nlmID
-into temp sameTitleNCBIjournals;
+delete from lower_ncbi_journals allJournal
+ where exists(select "x" from duplJournalsNCBI del
+               where del.nlmID = allJournal.nlmID);
 
-unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/duplTitlesNCBI.txt select * from sameTitleNCBIjournals;
+select t1.title, t1.issnPrint, t1.nlmID
+  from lower_ncbi_journals t1
+ where t1.title is not null
+   and exists(select "x" from lower_ncbi_journals t2
+               where t2.title = t1.title
+                 and t2.nlmID != t1.nlmID)        
+into temp sameTitleNCBIjournals;
 
 -- get rid of the NLM data with duplicated titles
 
@@ -65,17 +87,25 @@ delete from tmp_ncbi_journals allJournal
  where exists(select "x" from sameTitleNCBIjournals del
                where del.nlmID = allJournal.nlmID);
 
-select t1.medAbbr, t1.issnPrint, t1.nlmID
-  from tmp_ncbi_journals t1
- where t1.medAbbr is not null
-   and exists(select "x" from tmp_ncbi_journals t2
-               where lower(t2.medAbbr) = lower(t1.medAbbr)
-                 and t2.nlmID != t1.nlmID)
-  group by t1.medAbbr, t1.issnPrint, t1.nlmID
-  order by t1.medAbbr, t1.issnPrint, t1.nlmID
-into temp sameMedAbbrNCBIjournals;
+delete from lower_ncbi_journals allJournal
+ where exists(select "x" from sameTitleNCBIjournals del
+               where del.nlmID = allJournal.nlmID);
 
-unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/duplTitlesNCBI.txt select * from sameMedAbbrNCBIjournals;
+select count(*) as num_temp from tmp_ncbi_journals;
+
+select count(distinct title) as num_temp_titles from tmp_ncbi_journals;
+
+select count(*) as num_lower from lower_ncbi_journals;
+
+select count(distinct title) as num_lower_titles from lower_ncbi_journals;
+
+select t1.medAbbr, t1.issnPrint, t1.nlmID
+  from lower_ncbi_journals t1
+ where t1.medAbbr is not null
+   and exists(select "x" from lower_ncbi_journals t2
+               where t2.medAbbr = t1.medAbbr
+                 and t2.nlmID != t1.nlmID)
+into temp sameMedAbbrNCBIjournals;
 
 -- get rid of the NLM data with duplicated MedAbbr
 
@@ -83,21 +113,25 @@ delete from tmp_ncbi_journals allJournal
  where exists(select "x" from sameMedAbbrNCBIjournals del
                where del.nlmID = allJournal.nlmID);
 
+delete from lower_ncbi_journals allJournal
+ where exists(select "x" from sameMedAbbrNCBIjournals del
+               where del.nlmID = allJournal.nlmID);
+
 select t1.isoAbbr, t1.issnPrint, t1.nlmID
-  from tmp_ncbi_journals t1
+  from lower_ncbi_journals t1
  where t1.isoAbbr is not null
    and exists(select "x" from tmp_ncbi_journals t2
-               where lower(t2.isoAbbr) = lower(t1.isoAbbr)
+               where t2.isoAbbr = t1.isoAbbr
                  and t2.nlmID != t1.nlmID)
-  group by t1.isoAbbr, t1.issnPrint, t1.nlmID
-  order by t1.isoAbbr, t1.issnPrint, t1.nlmID
 into temp sameIsoAbbrNCBIjournals;
-
-unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/duplTitlesNCBI.txt select * from sameIsoAbbrNCBIjournals;
 
 -- get rid of the NLM data with duplicated IsoAbbr
 
 delete from tmp_ncbi_journals allJournal
+ where exists(select "x" from sameIsoAbbrNCBIjournals del
+               where del.nlmID = allJournal.nlmID);
+
+delete from lower_ncbi_journals allJournal
  where exists(select "x" from sameIsoAbbrNCBIjournals del
                where del.nlmID = allJournal.nlmID);
 
@@ -114,36 +148,36 @@ select count(jrnl_zdb_id) as noIssnZFIN from journal where jrnl_print_issn is nu
 -- blank journal issn print to the value of NLM based on same title
 
 update journal
-   set jrnl_print_issn = (select issnPrint from tmp_ncbi_journals
+   set jrnl_print_issn = (select issnPrint from lower_ncbi_journals
                            where issnPrint is not null
-                             and lower(jrnl_name) = lower(title))
+                             and jrnl_name = lower(title))
  where jrnl_print_issn is null
-   and exists(select "x" from tmp_ncbi_journals
-               where lower(title) = lower(jrnl_name));
+   and exists(select "x" from lower_ncbi_journals
+               where title = lower(jrnl_name));
 
 select count(jrnl_zdb_id) as noIssnZFINafter1 from journal where jrnl_print_issn is null;
 
--- blank journal issn print to the value of NLM based on same abbrev
+-- blank journal issn print to the value of NLM based on same Med abbrev
 
 update journal
-   set jrnl_print_issn = (select issnPrint from tmp_ncbi_journals
+   set jrnl_print_issn = (select issnPrint from lower_ncbi_journals
                            where issnPrint is not null
-                             and lower(jrnl_abbrev) = lower(medAbbr))
+                             and jrnl_abbrev_lower = medAbbr)
  where jrnl_print_issn is null
-   and exists(select "x" from tmp_ncbi_journals 
-               where lower(medAbbr) = lower(jrnl_abbrev));
+   and exists(select "x" from lower_ncbi_journals 
+               where medAbbr = jrnl_abbrev_lower);
 
 select count(jrnl_zdb_id) as noIssnZFINafter2 from journal where jrnl_print_issn is null;
 
--- blank journal issn print to the value of NLM based on same abbrev
+-- blank journal issn print to the value of NLM based on same Iso abbrev
 
 update journal
-   set jrnl_print_issn = (select issnPrint from tmp_ncbi_journals
+   set jrnl_print_issn = (select issnPrint from lower_ncbi_journals
                            where issnPrint is not null
-                             and lower(jrnl_abbrev) = lower(isoAbbr))
+                             and jrnl_abbrev_lower = isoAbbr)
  where jrnl_print_issn is null
-   and exists(select "x" from tmp_ncbi_journals
-               where lower(isoAbbr) = lower(jrnl_abbrev));
+   and exists(select "x" from lower_ncbi_journals
+               where isoAbbr = jrnl_abbrev_lower);
 
 select count(jrnl_zdb_id) as noIssnZFINafter3 from journal where jrnl_print_issn is null;
 
@@ -163,7 +197,7 @@ into temp wrongIssnPrint;
 
 -- dump the issn print that disagree with NLM (same title, different issn print)
 
-unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrint.txt select * from wrongIssnPrint;
+unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByTitle.txt select * from wrongIssnPrint;
 
 select j1.jrnl_zdb_id as journalZdbID, j1.jrnl_abbrev, j1.jrnl_print_issn, issnPrint, j1.jrnl_name, nlmID
   from journal j1, tmp_ncbi_journals
@@ -200,20 +234,6 @@ into temp wrongIssnPrintByIsoAbbr;
 -- dump the issn print that disagree with NLM (same abbrev/isoAbbr, different issn print)
 
 unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByIsoAbbr.txt select * from wrongIssnPrintByIsoAbbr;
-
-select j1.jrnl_print_issn, j1.jrnl_zdb_id, j1.jrnl_name, j1.jrnl_online_issn, j1.jrnl_abbrev, j1.jrnl_nlmid
-  from journal j1
- where j1.jrnl_print_issn is not null
-   and exists(select "x" from journal j2
-               where j2.jrnl_print_issn = j1.jrnl_print_issn
-                 and j2.jrnl_zdb_id != j1.jrnl_zdb_id)
-group by j1.jrnl_print_issn, j1.jrnl_name, j1.jrnl_abbrev, j1.jrnl_zdb_id, j1.jrnl_nlmid, j1.jrnl_online_issn
-order by j1.jrnl_print_issn, j1.jrnl_name, j1.jrnl_abbrev
-into temp duplJournalsByIssnPrintBeforeUpdatingIssn;    
-
--- report the possible duplicates (same issn print, different zdb id) before updating issn print
-
-unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/duplicateJournalsBeforeUpdatingIssn.txt select * from duplJournalsByIssnPrintBeforeUpdatingIssn;
 
 -- update journal issn print to the value of NLM based on same title
 
@@ -271,6 +291,7 @@ update journal
                      and nlmID != jrnl_nlmid) 
         ); 
 
+
 -- update values of medAbbr column based on same issn print
 
 update journal
@@ -299,22 +320,58 @@ update journal
                      and isoAbbr != jrnl_isoabbrev)
         ); 
 
--- SHOULD WE UPDATE jrnl_abbrev with medAbbr??????
 
--- update values of jrnl_abbrev column (with medAbbr values) based on same issn print
--- but there was error: Unique constraint (informix.jrnl_abbrev_lower_unique) violated.
+-- records of temp table that have titles which are already in journal table (for avoding breaking unique constraint)
+select issnPrint as issnP
+  from lower_ncbi_journals
+ where issnPrint is not null
+   and title is not null
+   and exists (select "x"
+                 from journal
+                where lower(jrnl_name) = title)
+into temp titleAlreadyThere with no log;
 
---update journal
---   set jrnl_abbrev = (select medAbbr from tmp_ncbi_journals
---                       where medAbbr is not null
---                         and issnPrint = jrnl_print_issn)
--- where jrnl_print_issn is not null
---   and (jrnl_abbrev is null
---        or exists(select "x" from tmp_ncbi_journals
---                   where medAbbr is not null
---                     and jrnl_abbrev is not null
---                     and medAbbr != jrnl_abbrev)
---        );
+delete from tmp_ncbi_journals
+  where exists(select "x" 
+                 from titleAlreadyThere
+                where issnP = issnPrint);
+
+delete from lower_ncbi_journals
+  where exists(select "x" 
+                 from titleAlreadyThere
+                where issnP = issnPrint); 
+
+-- update values of journal name/title based on same issn print
+
+select jrnl_print_issn as issn, jrnl_zdb_id as zdbid, jrnl_name as oldname, t.title as newname
+  from journal, tmp_ncbi_journals t, lower_ncbi_journals lowercase
+ where jrnl_print_issn = t.issnPrint
+   and jrnl_print_issn = lowercase.issnPrint
+   and lower(jrnl_name) != lowercase.title
+into temp titlesToChange;
+
+select t1.issn as issnD
+  from titlesToChange t1
+ where exists(select "x" from titlesToChange t2
+               where t2.oldname != t1.oldname
+                 and t2.newname = t1.newname)
+ into temp problemRecords;
+
+delete from titlesToChange 
+ where exists(select "x" from problemRecords
+               where issnD = issn);
+
+update journal
+   set jrnl_name = (select newname from titlesToChange
+                     where issn = jrnl_print_issn
+                       and oldname = jrnl_name
+                   )
+ where jrnl_print_issn is not null
+   and exists (select "x"
+                 from titlesToChange
+                where issn = jrnl_print_issn);
+
+unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/titlesUpdated.txt select * from titlesToChange;
 
 -- report possible duplicated journals (same issn print, different zdb id)
 
@@ -342,3 +399,4 @@ order by jrnl_name, jrnl_zdb_id, jrnl_abbrev;
 commit work;
 
 --rollback work ;
+

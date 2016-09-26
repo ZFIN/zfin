@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+<changeSet author="sierra" id="loadChebi">
+    <loadData
+            file="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/1080/vasa/toSplit.csv"
+            catalogName="${DBNAME}" schemaName="${USER}" tableName="publication_journals" encoding="UTF-8" >
+        <column name="pub_id" type="String"/>
+	<column name="pub_vol" type="String"/>
+	<column name="pub_year" type="String"/>
+	<column name="journal_title" type="String"/>
+	<column name="journal_issn" type="String"/>
+</loadData>
+</changeSet>
+</databaseChangeLog>

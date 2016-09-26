@@ -17,12 +17,11 @@ TOP = ../../../..
 include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/PUBMED/Journal
-GENERICS  = checkAndUpdateJournals.sql\
-            checkAndUpdateJournals.pl
+GENERICS  = checkAndUpdateJournals.sql insertJournalAlias.sql\
+            checkAndUpdateJournals.pl mergeJournals.pl
 
 # ---------------  Production Rules  ------------------------------------
 
 # use default rules for directories without app pages in them
 
 include $(TOP)/make.default.rules
-

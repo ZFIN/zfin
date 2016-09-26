@@ -1,15 +1,9 @@
 package org.zfin.mutant.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.zfin.fish.repository.FishService;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.GenotypeService;
-import org.zfin.mutant.SequenceTargetingReagent;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * This class is a statistics class about Fish for given genotype
@@ -17,6 +11,7 @@ import java.util.Set;
 public class GenotypeFishResult implements Comparable<GenotypeFishResult> {
 
     private Fish fish;
+    private List<Marker> affectedMarkers;
     private FishGenotypePhenotypeStatistics fishGenotypePhenotypeStatistics;
     private FishGenotypeExpressionStatistics fishGenotypeExpressionStatistics;
 
@@ -44,10 +39,13 @@ public class GenotypeFishResult implements Comparable<GenotypeFishResult> {
         this.fishGenotypePhenotypeStatistics = fishGenotypePhenotypeStatistics;
     }
 
-    public List<Marker> getAffectedMarker() {
-        return FishService.getAffectedGenes(fish);
+    public List<Marker> getAffectedMarkers() {
+        return affectedMarkers;
     }
 
+    public void setAffectedMarkers(List<Marker> affectedMarkers) {
+        this.affectedMarkers = affectedMarkers;
+    }
 
     @Override
     public boolean equals(Object o) {

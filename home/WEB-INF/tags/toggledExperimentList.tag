@@ -15,7 +15,7 @@
  --%>
 
 <%@ tag body-content="scriptless" %>
-<%@attribute name="expressionResults" type="java.util.Collection" %>
+<%@attribute name="experimentList" type="java.util.Collection" %>
 <%@attribute name="maxNumber" type="java.lang.Integer" %>
 <%@attribute name="id" type="java.lang.String" required="false" %>
 <%@attribute name="showAttributionLinks" type="java.lang.Boolean" required="false" %>
@@ -35,30 +35,33 @@
 </c:if>
 
 
-<c:if test="${fn:length(expressionResults) > 0 }">
+<c:if test="${fn:length(experimentList) > 0 }">
     <c:choose>
-        <c:when test="${fn:length(expressionResults) > maxNumber }">
+        <c:when test="${fn:length(experimentList) > maxNumber }">
             <span style="display:inline;" id="${id}-short">
-            <c:forEach var="hyperlinkEntity" items="${expressionResults}" varStatus="loop" end="${maxNumber -1}">
-                <zfin:experiment experiment="${hyperlinkEntity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity.superterm}"/></c:if><c:if test="${!loop.last}">, </c:if>
+            <c:forEach var="experiment" items="${experimentList}" varStatus="loop" end="${maxNumber -1}">
+                <zfin:experiment experiment="${experiment}"/><c:if test="${showAttributionLinks}"> </c:if><c:if
+                    test="${!loop.last}">, </c:if>
             </c:forEach>
                 <nobr>
-                    (<a href="javascript:onClick=showEntityList('${id}', true)">all ${fn:length(expressionResults)}</a>)
+                    (<a href="javascript:onClick=showEntityList('${id}', true)">all ${fn:length(experimentList)}</a>)
                     <img onclick="showEntityList('${id}', true)" class="clickable"
-                         src="/images/right_arrow.gif" alt="expand" title="Show all ${fn:length(expressionResults)} terms">
+                         src="/images/right_arrow.gif" alt="expand" title="Show all ${fn:length(experimentList)} terms">
                 </nobr>
                 </span>
             <span style="display:none;" id="${id}-long">
-            <c:forEach var="hyperlinkEntity" items="${expressionResults}" varStatus="loop">
-                <zfin:experiment experiment="${hyperlinkEntity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity.superterm}"/></c:if><c:if test="${!loop.last}">, </c:if>
+            <c:forEach var="experiment" items="${experimentList}" varStatus="loop">
+                <zfin:experiment experiment="${experiment}"/><c:if test="${showAttributionLinks}"> </c:if><c:if
+                    test="${!loop.last}">, </c:if>
             </c:forEach>&nbsp;
-                <img onclick="showEntityList('${id}', false)"  class="clickable"
+                <img onclick="showEntityList('${id}', false)" class="clickable"
                      src="/images/left_arrow.gif" alt="collapse" title="Show only first ${maxNumber+1} terms">
                 </span>
         </c:when>
         <c:otherwise>
-            <c:forEach var="hyperlinkEntity" items="${expressionResults}" varStatus="loop">
-                <zfin:experiment experiment="${hyperlinkEntity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity.superterm}"/></c:if><c:if test="${!loop.last}">, </c:if>
+            <c:forEach var="experiment" items="${experimentList}" varStatus="loop">
+                <zfin:experiment experiment="${experiment}"/><c:if test="${showAttributionLinks}"> <zfin:attribution
+                    entity="${experiment.superterm}"/></c:if><c:if test="${!loop.last}">, </c:if>
             </c:forEach>
         </c:otherwise>
     </c:choose>

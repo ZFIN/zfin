@@ -95,7 +95,7 @@ document.paramform.submit();
 <center>
 <b>ERROR! Duplicated submission.  Ignored...</b>
 <p>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg">Back to ZFIN Home Page</A>
+<A HREF="/">Back to ZFIN Home Page</A>
 </center>
 <?/MIVAR>
 

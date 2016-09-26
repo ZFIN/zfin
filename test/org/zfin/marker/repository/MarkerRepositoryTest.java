@@ -41,13 +41,14 @@ import java.util.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 
 @SuppressWarnings({"FeatureEnvy"})
 public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     private Logger logger = Logger.getLogger(MarkerRepositoryTest.class);
-    private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+    private static MarkerRepository markerRepository = getMarkerRepository();
     private static ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
     private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
@@ -182,6 +183,21 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void markerHistory() {
+
+        // egr2b
+        Marker gene = getMarkerRepository().getMarkerByID("ZDB-GENE-980526-283");
+        assertNotNull(gene);
+        Set<MarkerHistory> markerHistory = gene.getMarkerHistory();
+        assertNotNull(markerHistory);
+        for (MarkerHistory history : markerHistory) {
+            // make sure that this event has an attribution
+            if (history.getZdbID().equals("ZDB-NOMEN-030723-28"))
+                assertNotNull(history.getAttributions());
+        }
+    }
+
+    @Test
     public void testRenameMarker() {
 
         Session session = HibernateUtil.currentSession();
@@ -197,8 +213,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
             assertTrue(mhist.getReason().equals(MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES));
             assertNotNull(mhist.getMarkerAlias());
             assertNotNull(infrastructureRepository.getRecordAttribution(
-                    mhist.getMarkerAlias().getZdbID(),
-                    publication.getZdbID(), null)
+                            mhist.getMarkerAlias().getZdbID(),
+                            publication.getZdbID(), null)
             );
         } finally {
             // rollback on success or exception
@@ -672,15 +688,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         MiniGeneController miniGeneController = new MiniGeneController();
         Model model = new ExtendedModelMap();
         miniGeneController.getMiniGeneView(model, "ZDB-GENE-990603-12", null, null, null);
-    }
-
-    @Test
-    @Ignore("this is a destructive test, so don't want to run")
-    public void deleteMarker() throws Exception {
-        DeleteMarkerController deleteMarkerController = new DeleteMarkerController();
-        DeleteBean deleteBean = new DeleteBean();
-        deleteBean.setZdbIDToDelete("ZDB-ATB-081002-17");
-        deleteMarkerController.deleteMarker("ZDB-SNP-060626-88", deleteBean);
     }
 
     @Test

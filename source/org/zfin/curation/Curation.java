@@ -120,6 +120,9 @@ public class Curation {
         PHENOTYPE("Phenotype"),
         SEQUENCE("Sequence"),
         TOXICOLOGY("Toxicology"),
+	ANATOMY("Anatomy"),
+	BEHAVIOR("Behavior"),
+	ELECTROPHYSIOLOGY("Electrophysiology"),
         TRANSCRIPTS("Transcripts"),
         TRANSGENIC_CONSTRUCT("Transgenic Construct");
 

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+<changeSet author="sierra" id="loadChebi">
+    <loadData
+            file="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/term"
+            catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_term"  encoding="UTF-8" >
+        <column name="term_zdb_id" type="String"/>
+	<column name="term_ont_id" type="String"/>
+	<column name="term_name" type="String"/>
+	<column name="term_ontology" type="String"/>
+        <column name="term_is_obsolete" type="Boolean"/>
+	<column name="term_is_secondary" type="Boolean"/>
+	<column name="term_is_root" type="Boolean"/>
+	<column name="term_comment" type="String"/>
+        <column name="term_definition" type="String"/>
+	<column name="term_primary_subset_id" type="Numeric"/>
+	<column name="term_ontology_id" type="String"/>
+	<column name="term_name_order" type="String"/>
+	<column name="extra" type="String"/>
+</loadData>
+</changeSet>
+</databaseChangeLog>

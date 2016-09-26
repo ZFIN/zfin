@@ -980,4 +980,11 @@ public class HibernateProfileRepository implements ProfileRepository {
                         "and email != '';")
                 .list();
     }
+
+    public List<Person> getUsersByRole(String role) {
+        return HibernateUtil.currentSession()
+                .createCriteria(Person.class)
+                .add(Restrictions.eq("accountInfo.role", role))
+                .list();
+    }
 }

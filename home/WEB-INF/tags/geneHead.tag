@@ -29,8 +29,7 @@
     <c:if test="${formBean.hasMarkerHistory}">
         <tr>
             <td colspan="2">
-                <a class="data-note" href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()
-    %>?MIval=aa-nomenview.apg&OID=${formBean.marker.zdbID}&abbrev=${formBean.marker.abbreviation}">Nomenclature
+                <a class="data-note" href="/action/nomenclature/history/${formBean.marker.zdbID}">Nomenclature
                     History</a>
             </td>
         </tr>
