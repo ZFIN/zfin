@@ -8,6 +8,7 @@
         return {
             getFigures: getFigures,
             addFigure: addFigure,
+            updateFigure: updateFigure,
             deleteFigure: deleteFigure
         };
 
@@ -26,6 +27,10 @@
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined}
             });
+        }
+
+        function updateFigure(fig) {
+            return $http.post('/action/figure/' + fig.zdbId, fig);
         }
 
         function deleteFigure(fig) {
