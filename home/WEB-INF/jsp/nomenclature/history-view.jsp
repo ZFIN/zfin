@@ -47,7 +47,7 @@
                     <c:if test="${markerHistory.event.toString() ne 'renamed' }">
                         <tr id="reduced_${loop.index}">
                             <td id="edit_${loop.index}" style="display: none">
-                                <span ng-click="control.openNomenclatureEditor('${markerHistory.zdbID}','${markerHistory.comments}','${markerHistory.reason.toString()}')"><a
+                                <span ng-click="control.openNomenclatureEditor('${markerHistory.zdbID}','${markerHistory.reason.toString()}', '${loop.index}')"><a
                                         href>Edit</a></span>
                             </td>
                             <td><span class="genedom">${markerHistory.newValue}</span></td>
@@ -75,7 +75,9 @@
                 <c:forEach var="markerHistory" items="${marker.markerHistory}" varStatus="loop">
                     <tr style="display: none" id="all_${loop.index}">
                         <td id="edit_${loop.index}" style="display: none">
-                                <span ng-click="control.openNomenclatureEditor('${markerHistory.zdbID}','${markerHistory.comments}','${markerHistory.reason.toString()}','Nomenclature')"><a
+                                <span id="data-comments-${loop.index}"
+                                      style="display: none">${markerHistory.comments}</span>
+                                <span ng-click="control.openNomenclatureEditor('${markerHistory.zdbID}','${markerHistory.reason.toString()}', '${loop.index}')"><a
                                         href>Edit</a></span>
                         </td>
                         <td><span class="genedom">${markerHistory.newValue}</span></td>

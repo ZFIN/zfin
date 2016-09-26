@@ -21,12 +21,12 @@
 </authz:authorize>
 
 <authz:authorize access="hasRole('root')">
-<caption>
-    <div ng-click="control.editMarker()" id="editMarker" style="cursor: pointer;" class="error">Edit</div>
-    <div ng-click="control.viewMarker()" style="display: none" id="viewMarker" style="cursor: pointer;">
-        View
-    </div>
-</caption>
+    <caption>
+        <div ng-click="control.editMarker()" id="editMarker" style="cursor: pointer;" class="error">Edit</div>
+        <div ng-click="control.viewMarker()" style="display: none" id="viewMarker" style="cursor: pointer;">
+            View
+        </div>
+    </caption>
 </authz:authorize>
 <table class="primary-entity-attributes">
     <tr>
@@ -60,9 +60,7 @@
             <zfin2:nomenclature geneEdit="true" showReason="${gene.type.geneOrGenep}"/>
         </td>
     </tr>
-    <c:if test="${!empty previousNames}">
-        <zfin2:previousNamesFast label="Previous Name" previousNames="${previousNames}" marker="${gene}"/>
-    </c:if>
+    <zfin2:previousNamesFast label="Previous Name" previousNames="${previousNames}" marker="${gene}"/>
     <tr>
         <th>Location:</th>
         <td>

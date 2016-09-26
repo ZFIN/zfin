@@ -780,21 +780,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return mdb;
     }
 
-    public MarkerHistory getLastMarkerHistory(Marker marker, MarkerHistory.Event event) {
-        Session session = currentSession();
-        //flush here to ensure that triggers for marker inserts and updates are run.
-        session.flush();
-        Criteria criteria = session.createCriteria(MarkerHistory.class);
-        criteria.add(Restrictions.eq("marker.zdbID", marker.getZdbID()));
-        criteria.add(Restrictions.eq("event", event));
-        criteria.addOrder(Property.forName("date").desc());
-        // very dangerous as the trigger creates two history records, one for a name change (no alias available)
-        // and one for an abbrev change with an associated alias generation
-        criteria.setMaxResults(1);
-        logger.debug("got to max results mhist" + marker.getAbbreviation());
-        return (MarkerHistory) criteria.uniqueResult();
-    }
-
     public MarkerHistory createMarkerHistory(Marker newMarker, Marker oldMarker, MarkerHistory.Event event, MarkerHistory.Reason reason, MarkerAlias alias) {
         MarkerHistory history = new MarkerHistory();
         history.setDate(new Date());

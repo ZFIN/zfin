@@ -263,9 +263,9 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
     };
 
 
-    nomenController.openNomenclatureEditor = function (ID, comments, reason) {
+    nomenController.openNomenclatureEditor = function (ID, reason, index) {
         nomenController.nomenID = ID;
-        nomenController.comments = comments;
+        nomenController.comments = $('#data-comments-'+index).html();
         nomenController.reason = reason;
         nomenController.showAttribution = true;
         nomenController.hasGeneEdit = false;

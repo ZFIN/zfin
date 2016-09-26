@@ -159,8 +159,6 @@ public interface MarkerRepository {
 
     DBLink addDBLink(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID);
 
-    MarkerHistory getLastMarkerHistory(Marker marker, MarkerHistory.Event event);
-
     MarkerHistory createMarkerHistory(Marker newMarker, Marker oldMarker, MarkerHistory.Event event, MarkerHistory.Reason resason, MarkerAlias markerAlias);
 
     MarkerType getMarkerTypeByName(String name);
