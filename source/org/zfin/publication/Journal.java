@@ -15,6 +15,7 @@ public class Journal implements Serializable, EntityZdbID {
     private String zdbID;
     private String name;
     private String abbreviation;
+    private String medAbbrev;
     private String publisher;
     private String printIssn;
     private String onlineIssn;
@@ -108,6 +109,24 @@ public class Journal implements Serializable, EntityZdbID {
 
     public void setAliases(Set<SourceAlias> aliases) {
         this.aliases = aliases;
+    }
+
+    public String getMedAbbrev() {
+        if (medAbbrev == null)
+            return abbreviation;
+
+        return medAbbrev;
+    }
+
+    public void setMedAbbrev(String medAbbrev) {
+        this.medAbbrev = medAbbrev;
+    }
+
+    public boolean isZfinDierectDataSubmission() {
+        if (abbreviation.equals("ZFIN Direct Data Submission") || medAbbrev.equals("ZFIN Direct Data Submission"))
+            return true;
+
+        return false;
     }
 }
 

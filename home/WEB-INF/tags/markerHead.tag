@@ -1,7 +1,4 @@
-<%@ taglib prefix="zfin"    uri="/WEB-INF/tld/zfin-tags.tld"%>
-<%@ taglib prefix="zfin2" tagdir="/WEB-INF/tags"%>
-<%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core' %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="marker" type="org.zfin.marker.Marker"
               rtexprvalue="true" required="true" %>
@@ -12,36 +9,59 @@
     <c:set var="typeName">${marker.markerType.displayName}</c:set>
 </c:if>
 
-<table class="primary-entity-attributes">
 
-    <tr>
-      <th><span class="name-label">${typeName}&nbsp;Name:</span></th>
-      <td><span class="name-value"><zfin:name entity="${marker}"/></span></td>
-    </tr>
+<authz:authorize access="hasRole('root')">
+    <script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
+    <script src="/javascript/nomenclature.js" type="text/javascript"></script>
+</authz:authorize>
 
-    <c:if test="${!empty previousNames}">
-        <c:choose>
+<div ng-app="nomenclature">
+    <div ng-controller="NomenclatureController as control">
+        <script>
+            markerID = '${marker.zdbID}';
+        </script>
 
-        <c:when test="${formBean.marker.type eq 'GENE'}">
-              <zfin2:previousNamesFast label="Previous Name" previousNames="${previousNames}"/>
-        </c:when>
-        <c:otherwise>
-              <zfin2:previousNamesFast  previousNames="${previousNames}"/>
-        </c:otherwise>
-        </c:choose>
-    </c:if>
-    <c:if test="${formBean.marker.type ne 'EFG'&& formBean.marker.type ne 'REGION'&& !(fn:contains(formBean.marker.type,'CONSTRCT'))}">
-        <%--<c:if test="${formBean.marker.type ne 'REGION'}">--%>
-    <tr>
-        <th>Location:</th>
-        <td>
-            <zfin2:displayLocation entity="${formBean.marker}"/>
-        </td>
-    </tr>
-</c:if>
-    <%--</c:if>--%>
-    <zfin2:entityNotes entity="${formBean.marker}"/>
+        <authz:authorize access="hasRole('root')">
+            <caption>
+                <div ng-click="control.editMarker()" id="editMarker" style="cursor: pointer;" class="error">Edit
+                </div>
+                <div ng-click="control.viewMarker()" style="display: none" id="viewMarker" style="cursor: pointer;">
+                    View
+                </div>
+            </caption>
+        </authz:authorize>
+        <table class="primary-entity-attributes">
+            <tr>
+                <th><span class="name-label">${marker.markerType.displayName} Name:</span></th>
+                <td>
+                    <span class="name-value"><zfin:name entity="${marker}"/></span>
+                    <authz:authorize access="hasRole('root')">
+                <span style="cursor: pointer;"
+                      ng-click="control.openGeneEditor('${marker.zdbID}','${marker.name}', 'Gene Name', false)"
+                      ng-if="control.editMode">
+                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red"></i>
+                </span>
+                    </authz:authorize>
+                </td>
+            </tr>
 
-</table>
+            <zfin2:previousNamesFast previousNames="${previousNames}"/>
+            <c:if test="${formBean.marker.type ne 'EFG'&& formBean.marker.type ne 'REGION'&& !(fn:contains(formBean.marker.type,'CONSTRCT'))}">
+                <%--<c:if test="${formBean.marker.type ne 'REGION'}">--%>
+                <tr>
+                    <th>Location:</th>
+                    <td>
+                        <zfin2:displayLocation entity="${formBean.marker}"/>
+                    </td>
+                </tr>
+            </c:if>
+            <%--</c:if>--%>
+            <zfin2:entityNotes entity="${formBean.marker}"/>
+
+        </table>
+        <zfin2:nomenclature geneEdit="true" showReason="false"/>
+
+    </div>
+</div>
 
 

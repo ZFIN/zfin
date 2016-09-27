@@ -28,7 +28,11 @@ Message: $MI_ERRORMSG
 <?/MIERROR>
 
 <script src="/javascript/angular/angular.min.js"></script>
+<script src="/javascript/angular/paging.min.js"></script>
+<script src="/javascript/zfin-app.module.js"></script>
+<script src="/javascript/trusted-html.filter.js"></script>
 <script src="/javascript/ortho-edit.js"></script>
+<script src="/javascript/inline-edit-textarea.directive.js"></script>
 
 <?MICOMMENT>Stuff we need to make GWT happy<?/MICOMMENT>
 <?MIVAR>

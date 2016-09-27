@@ -60,6 +60,8 @@ import java.sql.SQLException;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 
 @Repository
@@ -537,12 +539,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
 
     /**
-     * Create a new alias for a given marker. IF no alias is found no alias is crerated.
+     * Create a new alias for a given marker. If no alias is found no alias is created.
+     * If alias already exists do not create a new one and return null.
      *
      * @param marker      valid marker object.
      * @param alias       alias string
      * @param publication publication
-     * @return The created markerAlias
+     * @return The created markerAlias or null if it already exists.
      */
     public MarkerAlias addMarkerAlias(Marker marker, String alias, Publication publication) {
         //first handle the alias..
@@ -553,11 +556,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
         markerAlias.setAliasGroup(group);  //default for database, hibernate tries to insert null
         markerAlias.setAlias(ZfinStringUtils.escapeHighUnicode(alias));
         if (marker.getAliases() == null) {
-            Set<MarkerAlias> markerAliases = new HashSet<MarkerAlias>();
+            Set<MarkerAlias> markerAliases = new HashSet<>();
             markerAliases.add(markerAlias);
             marker.setAliases(markerAliases);
         } else {
-            marker.getAliases().add(markerAlias);
+            // if alias exists do not add continue...
+            if (!marker.getAliases().add(markerAlias))
+                return null;
         }
 
         currentSession().save(markerAlias);
@@ -773,21 +778,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         runMarkerNameFastSearchUpdate(marker);
 
         return mdb;
-    }
-
-    public MarkerHistory getLastMarkerHistory(Marker marker, MarkerHistory.Event event) {
-        Session session = currentSession();
-        //flush here to ensure that triggers for marker inserts and updates are run.
-        session.flush();
-        Criteria criteria = session.createCriteria(MarkerHistory.class);
-        criteria.add(Restrictions.eq("marker.zdbID", marker.getZdbID()));
-        criteria.add(Restrictions.eq("event", event));
-        criteria.addOrder(Property.forName("date").desc());
-        // very dangerous as the trigger creates two history records, one for a name change (no alias available)
-        // and one for an abbrev change with an associated alias generation
-        criteria.setMaxResults(1);
-        logger.debug("got to max results mhist" + marker.getAbbreviation());
-        return (MarkerHistory) criteria.uniqueResult();
     }
 
     public MarkerHistory createMarkerHistory(Marker newMarker, Marker oldMarker, MarkerHistory.Event event, MarkerHistory.Reason reason, MarkerAlias alias) {
@@ -1552,26 +1542,25 @@ public class HibernateMarkerRepository implements MarkerRepository {
      * @param publication
      * @param reason
      */
-    public void renameMarker(Marker marker, Publication publication, MarkerHistory.Reason reason) {
+    public void renameMarker(Marker marker, Publication publication, MarkerHistory.Reason reason, String oldSymbol, String oldGeneName) {
         //update marker history reason
         logger.debug("Got to rename marker: " + marker.getAbbreviation().toString() + " " + marker.getZdbID() + " " + marker.getName().toString());
-        MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-        MarkerHistory mhist = mr.getLastMarkerHistory(marker, MarkerHistory.Event.REASSIGNED);
-        logger.debug("Got to last mhist: " + mhist);
-        mhist.setReason(reason);
-        mr.runMarkerNameFastSearchUpdate(marker);
+        MarkerHistory history = new MarkerHistory();
+        history.setReason(reason);
+        history.setName(oldGeneName);
+        history.setOldMarkerName(oldSymbol);
+        history.setSymbol(marker.getAbbreviation());
+        history.setMarker(marker);
+        history.setEvent(MarkerHistory.Event.REASSIGNED);
+        MarkerAlias alias = getMarkerRepository().addMarkerAlias(marker, marker.getAbbreviation(), publication);
+        history.setMarkerAlias(alias);
 
-        if (mhist.getMarkerAlias() == null) {
-            logger.error("No Marker Alias created! ");
-            throw new RuntimeException("No Marker History record found! Trigger did not run.");
-        }
-        //add record attribution for previous name if the abbreviation was changed
-        logger.info("marker history: " + mhist);
-        logger.info("marker alias: " + mhist.getMarkerAlias());
-        logger.info("publication: " + publication);
-
-        infrastructureRepository.insertRecordAttribution(mhist.getMarkerAlias().getZdbID(), publication.getZdbID());
-
+        getMarkerRepository().runMarkerNameFastSearchUpdate(marker);
+        getInfrastructureRepository().insertMarkerHistory(history);
+        SortedSet<MarkerHistory> markerHistorySet = new TreeSet<>();
+        markerHistorySet.add(history);
+        marker.setMarkerHistory(markerHistorySet);
+        infrastructureRepository.insertRecordAttribution(alias.getZdbID(), publication.getZdbID());
     }
 
     /**
@@ -1751,6 +1740,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                     public Object transformTuple(Object[] tuple, String[] aliases) {
                         PreviousNameLight previousNameLight = new PreviousNameLight(gene.getAbbreviation());
                         previousNameLight.setMarkerZdbID(gene.getZdbID());
+                        previousNameLight.setPureAliasName(tuple[0].toString());
                         if (gene.getZdbID().startsWith("ZDB-GENE")) {
                             previousNameLight.setAlias("<i>" + tuple[0].toString() + "</i>");
                         } else {

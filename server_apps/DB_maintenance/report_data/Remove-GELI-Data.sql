@@ -21,6 +21,8 @@ WHERE zactvd_zdb_id IN (SELECT fig_zdb_id
                          WHERE  fig_source_zdb_id = '$PUBID'
                                 AND fig_comments = 'GELI');
 
+
+insert into curation (cur_zdb_id, 
 update publication
  set pub_geli_removed = 't'
  where zdb_id = '$PUBID';

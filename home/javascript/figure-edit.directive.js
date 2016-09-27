@@ -23,7 +23,7 @@
             '          <img ng-src="{{image.thumbnailPath}}">' +
             '        </span>' +
             '      </p>' +
-            '      <p ng-bind-html="figure.caption | trustedHtml"></p>' +
+            '      <div inline-edit-textarea text="figure.caption" default-text="Add caption" on-save="vm.updateFigure(figure, $index)"></div>' +
             '    </td>' +
             '    <td>' +
             '      <div class="figure-delete-button pull-right" data-toggle="tooltip"' +
@@ -94,6 +94,7 @@
 
         vm.figures = [];
 
+        vm.updateFigure = updateFigure;
         vm.deleteFigure = deleteFigure;
 
         activate();
@@ -102,6 +103,13 @@
             FigureService.getFigures(vm.pubId)
                 .then(function (response) {
                     vm.figures = response.data;
+                });
+        }
+
+        function updateFigure(fig, idx) {
+            return FigureService.updateFigure(fig)
+                .then(function (response) {
+                    vm.figures[idx] = response.data;
                 });
         }
 

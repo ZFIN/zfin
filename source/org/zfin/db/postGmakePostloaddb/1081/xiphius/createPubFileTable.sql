@@ -48,14 +48,14 @@ alter table publication_file
 
 insert into publication_file_type (pft_type, pft_type_order) 
  values ('Original Article','1');
+insert into publication_file_type (pft_type, pft_type_order)
+ values ('Annotated Article','2');
 insert into publication_file_type (pft_type, pft_type_order) 
- values ('Supplemental Material','2');
+ values ('Supplemental Material','3');
 insert into publication_file_type (pft_type, pft_type_order) 
- values ('Correspondance Details','3');
+ values ('Correspondence Details','4');
 insert into publication_file_type (pft_type, pft_type_order) 
- values ('Annotated Article','4');
-insert into publication_file_type (pft_type, pft_type_order) 
- values ('Materials','5');
+ values ('Other','5');
 
 insert into publication_file (pf_pub_zdb_id, 
        	    		     		     pf_file_name,

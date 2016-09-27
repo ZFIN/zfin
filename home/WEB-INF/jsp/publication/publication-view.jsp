@@ -50,9 +50,7 @@
             ${publication.pages} (${publication.type.display})
 
             <span style="padding-left: 1em;">
-                <form style="display: inline-block" method=post action="/cgi-bin/webdriver">
-                    <input type=hidden name=MIval value=aa-pubprintable.apg>
-                    <input type=hidden name=constraint value="where zdb_id='${publication.zdbID}'">
+                <form style="display: inline-block" method=post action="/action/publication/printable/${publication.zdbID}">
                     <input type=submit name=printable value="Generate reference">
                 </form>
             </span>

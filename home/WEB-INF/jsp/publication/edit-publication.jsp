@@ -10,6 +10,7 @@
 <script src="/javascript/zfin-app.module.js"></script>
 <script src="/javascript/figure.service.js"></script>
 <script src="/javascript/trusted-html.filter.js"></script>
+<script src="/javascript/inline-edit-textarea.directive.js"></script>
 <script src="/javascript/figure-edit.directive.js"></script>
 <script src="/javascript/file-input.driective.js"></script>
 <script src="/javascript/figure-upload.directive.js"></script>
@@ -34,7 +35,7 @@
         </div>
     </div>
 
-    <ul class="nav nav-tabs nav-justified" role="tablist">
+    <ul id="fig-edit-tabs" class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation" class="active"><a href="#details" aria-controls="details" role="tab" data-toggle="tab">Details</a></li>
         <li role="presentation"><a href="#figures" aria-controls="figures" role="tab" data-toggle="tab">Figures</a></li>
     </ul>
@@ -49,4 +50,20 @@
     </div>
 
 </div>
+
+<script>
+    $(function () {
+        var hash = window.location.hash;
+        if (hash) {
+            $('#fig-edit-tabs a[href=' + hash + ']').tab('show');
+            $('#fig-edit-tabs a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+                if (history.pushState) {
+                    history.pushState(null, null, '#'+$(e.target).attr('href').substr(1));
+                } else {
+                    location.hash = '#'+$(e.target).attr('href').substr(1);
+                }
+            });
+        }
+    });
+</script>
 

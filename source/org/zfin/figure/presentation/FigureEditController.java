@@ -94,4 +94,18 @@ public class FigureEditController {
         return "OK";
     }
 
+    @ResponseBody
+    @RequestMapping(value = "figure/{zdbID}", method = RequestMethod.POST)
+    public FigurePresentationBean updateFigure(@PathVariable String zdbID,
+                                               @RequestBody FigurePresentationBean figureUpdates) {
+        Figure figure = figureRepository.getFigure(zdbID);
+        figure.setCaption(figureUpdates.getCaption());
+
+        Transaction tx = HibernateUtil.createTransaction();
+        HibernateUtil.currentSession().save(figure);
+        tx.commit();
+
+        return FigureService.convertToFigurePresentationBean(figure);
+    }
+
 }

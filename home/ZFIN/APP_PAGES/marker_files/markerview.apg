@@ -553,157 +553,6 @@ function jump(form_select){
 
 
 <?MICOMMENT>=========================================================
-            ==     Name    &   Input Welcome button
-            ==     Symbol (if genedom)
-	    =========================================================
-<?/MICOMMENT>
-<?MICOMMENT> use table to line up title and your input welcome button
-<?/MICOMMENT>
-<table width=100% cellspacing=0>
-  <tr>
-   <td width=85%>
-    <?MIVAR COND="$(XST,$UPDATE)">
-    	<INPUT TYPE=button value=Update onClick="doit('mrkr_name','text','$marker_type_display+Name','updatename')">
-    <?/MIVAR>
-
-    <?MIVAR NAME=$title>$marker_type_display Name<?/MIVAR>
-    <FONT size=+1><b>
-<?MIBLOCK COND="$(OR,$(XST,$type_of_genedom),$(XST,$type_of_construct))">
-      <?MIVAR>$title:&nbsp;<i>$name</i><?/MIVAR>
-<?MIELSE>
-      <?MIVAR>$title:&nbsp;$name<?/MIVAR>
-
-<?/MIBLOCK>
-    </b></FONT>
-   </td>
-   <?MIBLOCK COND="$(NXST,$UPDATE)">
-    <td width=15% align=right>
-     <?MIVAR>
-       <?MISQL SQL="select WebExplode(object,'subject=$abbrev') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
-      <?/MIVAR>
-    </td>
-   <?/MIBLOCK>
-  </tr>
-  <?MIVAR COND="$(XST,$type_of_genedom)">
-    <tr><td colspan=2>
-      <?MIVAR COND="$(XST,$UPDATE)">
-        <INPUT TYPE=button value=Update onClick="doit('mrkr_abbrev','text','$marker_type_display+Abbrev')">
-      <?/MIVAR>
-      <FONT size=+1><b>
-	$marker_type_display Symbol:&nbsp;<i>$abbrev</i>
-      </b></FONT>
-    </td></tr>
- <?/MIVAR>
-</table>
-
-
-<?MICOMMENT>=========================================================
-            ==     Previous Names
-	    =========================================================
-<?/MICOMMENT>
-<?MIVAR COND="$(XST,$UPDATE)">
-  <INPUT TYPE=button
-    value=Add
-    onClick="doit('dalias_alias','text','Alias','alias')">
-  <b>Previous Names:</b>
-<?/MIVAR>
-
-
-
-<?MISQL SQL="
-  select dalias_alias, dalias_zdb_id
-    from data_alias, alias_group
-    where dalias_data_zdb_id = '$OID'
-    and aliasgrp_pk_id = dalias_group_id
-    and aliasgrp_name = 'alias';">
-
-  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
-
-    <?MIVAR NAME=mrkrvw_alias_name_array>$1<?/MIVAR>
-    <?MIVAR NAME=mrkrvw_alias_zdb_id_array>$2<?/MIVAR>
-
-    <?MIBLOCK COND="$(NXST,$UPDATE)">
-      <b>Previous Names:</b>
-    <?MIELSE>
-      <form>
-      <br><b>Add Reference:</b>
-      Previous name:<input type=text name=attrib_prevname>
-      Reference:<input type=text name=attrib_prevname_pubid>
-      <input type=button value="Add" onClick=new_attrib_prevname(this.form);>
-      </form>
-    <?/MIBLOCK>
-
-  <?MIELSE>
-
-    <?MIVAR>$(VECAPPEND,$mrkrvw_alias_name_array,$1)<?/MIVAR>
-    <?MIVAR>$(VECAPPEND,$mrkrvw_alias_zdb_id_array,$2)<?/MIVAR>
-  <?/MIBLOCK>
-
-<?/MISQL>
-
-
-<?MICOMMENT>
-Only need to update clones, etc., which should be the only things that will have a problem type.
-<?/MICOMMENT>
-
-<?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA),$(EQ,$marker_type,BAC),$(EQ,$marker_type,PAC)))">
-
-    <?MIVAR name=mrkrvw_problem_type>NONE<?/MIVAR>
-    <?MISQL SQL="
-      SELECT clone_problem_type
-      FROM clone
-      WHERE clone_mrkr_zdb_id = '$OID';">
-      <?MIVAR NAME=mrkrvw_problem_type>$1<?/MIVAR>
-    <?/MISQL>
-      <form name="clone_problem">
-      <b>Update Problem Type:</b>
-      <select name=attrib_problem_type>
-      <option name="NONE" value="NONE">None</option>
-    <?MISQL SQL="
-      SELECT cpt.cpt_type from clone_problem_type cpt ;
-      ">
-      <option
-      <?MIVAR COND="$(EQ,$1,$mrkrvw_problem_type)">
-      selected
-      <?/MIVAR>
-       value="$1">$1</option>
-    <?/MISQL>
-      </select>
-      <?MIVAR>
-      <input type=button value="Update" onClick="update_problem_type('$mrkrvw_problem_type',this.form.attrib_problem_type.value)">
-      <?/MIVAR>
-      </form>
-
-<?/MIBLOCK>
-
-
-<?MIVAR NAME=mrkrvw_vec_index>1<?/MIVAR>
-<?MIVAR NAME=mrkrvw_vec_size>$(VECSIZE,$mrkrvw_alias_name_array)<?/MIVAR>
-<?MIBLOCK INDEX=$mrkrvw_alias_name FOREACH=$mrkrvw_alias_name_array>
-
-  <?MIVAR NAME=$mrkrvw_alias_name_plus>$(URLENCODE,$mrkrvw_alias_name)<?/MIVAR>
-  <?MIVAR COND="$(XST,$UPDATE)">
-    <br>
-    <INPUT TYPE=button
-      value=Delete
-      onClick="Delete_alias('$mrkrvw_alias_name_plus','$OID')">
-  <?/MIVAR>
-
-  <?MIVAR>
-
-    $mrkrvw_alias_name<?MISQL SQL="select WebExplode(object,'dataId=$mrkrvw_alias_zdb_id_array[$mrkrvw_vec_index]&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>$(IF,$(AND,$(NXST,$UPDATE),$(NE,$mrkrvw_vec_index,$mrkrvw_vec_size)),",")
-
-    $(SETVAR,$mrkrvw_vec_index,$(+,$mrkrvw_vec_index,1))
-
-  <?/MIVAR>
-<?/MIBLOCK>
-
-<?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
-    <br>
-<?/MIVAR>
-
-
-<?MICOMMENT>=========================================================
             ==     Sequence Similarities
 	    =========================================================
 <?/MICOMMENT>
@@ -983,21 +832,6 @@ Only need to update clones, etc., which should be the only things that will have
   <?/MIBLOCK>
 <?/MIBLOCK> <?MICOMMENT> end of type_of_knockdown_reagent<?/MICOMMENT>
 
-
-
-<?MICOMMENT>=========================================================
-            ==     Nomenclature History
-	    =========================================================
-<?/MICOMMENT>
-
-
-<?MISQL SQL="select * from marker_history where mhist_mrkr_zdb_id = '$OID'">
-<?/MISQL>
-<?MIVAR COND="$(AND,$(XST,$type_of_genedom),$(>,$MI_ROWCOUNT,0))">
-    <font size=-1><A HREF="/action/nomenclature/history/$OID">Nomenclature History</A>
-    </font>
-    <br>
-<?/MIVAR>
 
 
 <?MICOMMENT>
@@ -2677,8 +2511,12 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
  <HR width="80%">
  <a name=ortholog><b>ORTHOLOGY</b></a><br>
 
- <script src="/javascript/angular/angular.min.js"></script>
- <script src="/javascript/ortho-edit.js"></script>
+  <script src="/javascript/angular/angular.min.js"></script>
+  <script src="/javascript/angular/paging.min.js"></script>
+  <script src="/javascript/zfin-app.module.js"></script>
+  <script src="/javascript/trusted-html.filter.js"></script>
+  <script src="/javascript/ortho-edit.js"></script>
+  <script src="/javascript/inline-edit-textarea.directive.js"></script>
 
  <div ng-app="app">
      <?MIVAR><div ortho-edit gene="$OID"></div><?/MIVAR>

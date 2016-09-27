@@ -121,6 +121,7 @@ public class AnatomyPresentationTest {
         dag1.setSignificance(1);
         TermAlias syn1 = new TermAlias();
         syn1.setAlias("first");
+        syn1.setDataZdbID("ZDB-TERM-080911-1");
 
         syn1.setAliasGroup(dag1);
         TermAlias syn2 = new TermAlias();
@@ -128,6 +129,7 @@ public class AnatomyPresentationTest {
         dag2.setName("related alias");
         dag2.setSignificance(3);
         syn2.setAlias("second");
+        syn2.setDataZdbID("ZDB-TERM-080911-1");
         syn2.setAliasGroup(dag2);
         TermAlias syn3 = new TermAlias();
         DataAliasGroup dag3 = new DataAliasGroup();
@@ -135,12 +137,14 @@ public class AnatomyPresentationTest {
         dag3.setSignificance(2);
         syn3.setAlias("third");
         syn3.setAliasGroup(dag3);
+        syn3.setDataZdbID("ZDB-TERM-080911-1");
         TermAlias syn4 = new TermAlias();
         DataAliasGroup dag4 = new DataAliasGroup();
         dag4.setName("related plural");
         dag4.setSignificance(4);
         syn4.setAlias("fourth");
         syn4.setAliasGroup(dag4);
+        syn4.setDataZdbID("ZDB-TERM-080911-13");
         Set<TermAlias> synonyms = new HashSet<>(4);
         synonyms.add(syn1);
         synonyms.add(syn2);
@@ -161,11 +165,12 @@ public class AnatomyPresentationTest {
         Term item = new GenericTerm();
         TermAlias syn1 = new TermAlias();
         syn1.setAlias("first");
-        Set<TermAlias> synonyms = new HashSet<>(1);
-        synonyms.add(syn1);
+        syn1.setDataZdbID("ZDB-TERM-080911-1");
         DataAliasGroup group = new DataAliasGroup();
         group.setSignificance(1);
         syn1.setAliasGroup(group);
+        Set<TermAlias> synonyms = new HashSet<>(1);
+        synonyms.add(syn1);
         item.setAliases(synonyms);
 
         String list = AnatomyPresentation.createFormattedSynonymList(item);
@@ -249,6 +254,7 @@ public class AnatomyPresentationTest {
 
         TermAlias syn = new TermAlias();
         syn.setAlias("neuron");
+        syn.setDataZdbID("ZDB-TERM-080911-1");
         DataAliasGroup group = new DataAliasGroup();
         group.setSignificance(1);
         syn.setAliasGroup(group);
@@ -294,11 +300,12 @@ public class AnatomyPresentationTest {
 
         TermAlias syn = new TermAlias();
         syn.setAlias("neuron");
-        Set<TermAlias> synonyms = new HashSet<>(1);
-        synonyms.add(syn);
+        syn.setDataZdbID("ZDB-TERM-080911-1");
         DataAliasGroup group = new DataAliasGroup();
         group.setSignificance(1);
         syn.setAliasGroup(group);
+        Set<TermAlias> synonyms = new HashSet<>(1);
+        synonyms.add(syn);
         termTwo.setAliases(synonyms);
 
         // match on first term and second terms synonym
@@ -314,6 +321,7 @@ public class AnatomyPresentationTest {
 
         syn = new TermAlias();
         syn.setAlias("Neuron");
+        syn.setDataZdbID("ZDB-TERM-080911-1");
         syn.setAliasGroup(group);
         synonyms.clear();
         synonyms.add(syn);
@@ -357,6 +365,7 @@ public class AnatomyPresentationTest {
 
         TermAlias syn = new TermAlias();
         syn.setAlias("neuron  ");
+        syn.setDataZdbID("ZDB-TERM-080911-1");
         DataAliasGroup group = new DataAliasGroup();
         group.setSignificance(1);
         syn.setAliasGroup(group);
@@ -378,6 +387,7 @@ public class AnatomyPresentationTest {
         syn = new TermAlias();
         syn.setAlias("Neuron");
         syn.setAliasGroup(group);
+        syn.setDataZdbID("ZDB-TERM-080911-1");
         syns.clear();
         syns.add(syn);
         termTwo.setAliases(syns);
