@@ -48,7 +48,6 @@
         <property name="pages" column="pub_pages" lazy="true"/>
         <property name="type" column="jtype" type="publicationType"/>
         <property name="accessionNumber" column="accession_no" lazy="true"/>
-        <property name="fileName" column="pub_file" lazy="true"/>
         <property name="doi" column="pub_doi" lazy="true"/>
         <property name="canShowImages" column="pub_can_show_images"/>
         <property name="indexed" column="pub_is_indexed"/>
@@ -93,6 +92,15 @@
         <set name="dbXrefs" lazy="true" table="pub_db_xref" order-by="pdx_accession_number">
             <key column="pdx_pub_zdb_id"/>
             <one-to-many class="org.zfin.publication.PublicationDbXref"/>
+        </set>
+
+        <set name="files" lazy="true" table="publication_file">
+            <key column="pf_pub_zdb_id"/>
+            <composite-element class="org.zfin.publication.PublicationFile">
+                <parent name="publication"/>
+                <property name="fileName" column="pf_file_name"/>
+                <many-to-one name="type" column="pf_file_type_id"/>
+            </composite-element>
         </set>
 
     </class>

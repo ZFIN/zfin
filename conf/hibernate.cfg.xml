@@ -109,6 +109,7 @@
         <mapping class="org.zfin.infrastructure.ZdbFlag"/>
         <mapping class="org.zfin.marker.MarkerAlias"/>
         <mapping class="org.zfin.marker.MarkerAlias"/>
+        <mapping class="org.zfin.marker.MarkerHistory"/>
         <mapping class="org.zfin.marker.OrthologyNote"/>
         <mapping class="org.zfin.marker.presentation.HighQualityProbeAOStatistics"/>
         <mapping class="org.zfin.mutant.FishStr"/>
@@ -136,6 +137,7 @@
         <mapping class="org.zfin.ontology.TermStage"/>
         <mapping class="org.zfin.ontology.TransitiveClosure"/>
         <mapping class="org.zfin.publication.PublicationDbXref"/>
+        <mapping class="org.zfin.publication.PublicationFileType"/>
         <mapping class="org.zfin.publication.PublicationTrackingHistory"/>
         <mapping class="org.zfin.publication.PublicationTrackingLocation"/>
         <mapping class="org.zfin.publication.PublicationTrackingStatus"/>
@@ -145,9 +147,6 @@
         <mapping class="org.zfin.sequence.reno.Run"/>
         <mapping class="org.zfin.sequence.reno.RunCandidate"/>
         <mapping class="org.zfin.Species"/>
-        <mapping class="org.zfin.expression.Experiment"/>
-        <mapping class="org.zfin.expression.ExperimentCondition"/>
-        <mapping class="org.zfin.marker.MarkerHistory"/>
 
 
     </session-factory>
