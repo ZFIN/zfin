@@ -7,6 +7,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.antibody.Isotype;
+import org.zfin.curation.Curation;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.mapping.GenomeLocation;
@@ -14,6 +15,8 @@ import org.zfin.marker.*;
 import org.zfin.mutant.Genotype;
 import org.zfin.orthology.EvidenceCode;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.publication.PublicationTrackingLocation;
+import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
@@ -128,6 +131,26 @@ public class EnumValidationService {
         checkEnumVersusDatabaseCollection(typeList, RecordAttribution.SourceType.values());
     }
 
+    @ServiceTest
+    public void validateCurationTopics() throws EnumValidationException {
+        String hql = "select cur_topic from curation";
+        List topicList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        checkEnumVersusDatabaseCollection(topicList, Curation.Topic.values());
+    }
+
+    @ServiceTest
+    public void validateCurationStatus() throws EnumValidationException {
+        String hql = "select pts_status from pub_tracking_status";
+        List statusList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        checkEnumVersusDatabaseCollection(statusList, PublicationTrackingStatus.Type.values());
+    }
+
+    @ServiceTest
+    public void validateCurationRole() throws EnumValidationException {
+        String hql = "select ptl_role from pub_tracking_location";
+        List roleList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        checkEnumVersusDatabaseCollection(roleList, PublicationTrackingLocation.Role.values());
+    }
 
     /**
      * @throws EnumValidationException
