@@ -123,7 +123,9 @@ public class Journal implements Serializable, EntityZdbID {
     }
 
     public boolean isZfinDierectDataSubmission() {
-        if (abbreviation.equals("ZFIN Direct Data Submission") || medAbbrev.equals("ZFIN Direct Data Submission"))
+        if (medAbbrev != null && medAbbrev.equals("ZFIN Direct Data Submission"))
+            return true;
+        if (abbreviation != null && abbreviation.equals("ZFIN Direct Data Submission"))
             return true;
 
         return false;
