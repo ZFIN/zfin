@@ -896,11 +896,11 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
 .figure-edit-panel .table td {
     vertical-align: top;
 }
-.figure-edit-panel .table img:first-child {
+.figure-edit-panel .image-edit-image:first-child {
     margin: 0;
 }
-.figure-edit-panel .table img {
-    margin: 0 15px;
+.figure-edit-panel .image-edit-image {
+    margin: 0 2em;
 }
 .file-drag-target {
     padding: 2em 0;
@@ -925,4 +925,24 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
 }
 .figure-delete-button {
     display: inline-block;
+}
+.image-edit-image {
+    position: relative;
+    display: inline-block;
+}
+.image-edit-block:hover .image-delete-button {
+    display: inline-block;
+}
+.image-delete-button {
+    display: none;
+    position: absolute;
+    top: -2em;
+    right: -2em;
+    cursor: pointer;
+}
+.image-delete-button .fa-circle {
+    color: white;
+}
+.image-delete-button .fa-times-circle {
+    color: #0000E9;
 }

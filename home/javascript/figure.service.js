@@ -9,7 +9,8 @@
             getFigures: getFigures,
             addFigure: addFigure,
             updateFigure: updateFigure,
-            deleteFigure: deleteFigure
+            deleteFigure: deleteFigure,
+            deleteImage: deleteImage
         };
 
         function getFigures(pubId) {
@@ -36,6 +37,14 @@
         function deleteFigure(fig) {
             return $http({
                 url: '/action/figure/' + fig.zdbId,
+                method: 'DELETE',
+                transformResponse: undefined
+            });
+        }
+
+        function deleteImage(img) {
+            return $http({
+                url: '/action/image/' + img.zdbId,
                 method: 'DELETE',
                 transformResponse: undefined
             });

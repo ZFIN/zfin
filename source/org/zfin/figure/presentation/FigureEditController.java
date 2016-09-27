@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureFigure;
 import org.zfin.expression.FigureService;
-import org.zfin.figure.repository.FigureRepository;
+import org.zfin.expression.Image;
 import org.zfin.figure.service.ImageService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
@@ -29,9 +29,6 @@ import java.util.stream.Collectors;
 public class FigureEditController {
 
     public static final Logger LOG = Logger.getLogger(FigureEditController.class);
-
-    @Autowired
-    FigureRepository figureRepository;
 
     @Autowired
     InfrastructureRepository infrastructureRepository;
@@ -80,7 +77,7 @@ public class FigureEditController {
     @ResponseBody
     @RequestMapping(value = "/figure/{zdbID}", method = RequestMethod.DELETE)
     public String deleteFigure(@PathVariable String zdbID) {
-        Figure figure = figureRepository.getFigure(zdbID);
+        Figure figure = publicationRepository.getFigure(zdbID);
 
         if (CollectionUtils.isNotEmpty(figure.getExpressionResults()) ||
                 CollectionUtils.isNotEmpty(figure.getPhenotypeExperiments())) {
@@ -98,7 +95,7 @@ public class FigureEditController {
     @RequestMapping(value = "figure/{zdbID}", method = RequestMethod.POST)
     public FigurePresentationBean updateFigure(@PathVariable String zdbID,
                                                @RequestBody FigurePresentationBean figureUpdates) {
-        Figure figure = figureRepository.getFigure(zdbID);
+        Figure figure = publicationRepository.getFigure(zdbID);
         figure.setCaption(figureUpdates.getCaption());
 
         Transaction tx = HibernateUtil.createTransaction();
@@ -106,6 +103,18 @@ public class FigureEditController {
         tx.commit();
 
         return FigureService.convertToFigurePresentationBean(figure);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "image/{zdbID}", method = RequestMethod.DELETE)
+    public String deleteImage(@PathVariable String zdbID) {
+        Image image = publicationRepository.getImageById(zdbID);
+
+        Transaction tx = HibernateUtil.createTransaction();
+        HibernateUtil.currentSession().delete(image);
+        tx.commit();
+
+        return "OK";
     }
 
 }

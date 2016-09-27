@@ -18,9 +18,15 @@
             '  <tr ng-repeat="figure in vm.figures">' +
             '    <td>{{figure.label}}</td>' +
             '    <td>' +
-            '      <p ng-if="figure.images.length > 0">' +
-            '        <span ng-repeat="image in figure.images">' +
+            '      <p class="image-edit-block" ng-if="figure.images.length > 0">' +
+            '        <span class="image-edit-image" ng-repeat="image in figure.images">' +
             '          <img ng-src="{{image.thumbnailPath}}">' +
+            '          <span class="image-delete-button" ng-click="vm.deleteImage(image, figure, $index)">' +
+            '            <span class="fa-stack fa-2x">' +
+            '              <i class="fa fa-circle fa-stack-1x"></i>' +
+            '              <i class="fa fa-times-circle fa-stack-1x"></i>' +
+            '            </span>' +
+            '          </span>' +
             '        </span>' +
             '      </p>' +
             '      <div inline-edit-textarea text="figure.caption" default-text="Add caption" on-save="vm.updateFigure(figure, $index)"></div>' +
@@ -96,6 +102,7 @@
 
         vm.updateFigure = updateFigure;
         vm.deleteFigure = deleteFigure;
+        vm.deleteImage = deleteImage;
 
         activate();
 
@@ -121,6 +128,13 @@
                 })
                 .finally(function () {
                     fig.deleting = false;
+                });
+        }
+
+        function deleteImage(img, fig, idx) {
+            FigureService.deleteImage(img)
+                .then(function () {
+                    fig.images.splice(idx, 1);
                 });
         }
     }
