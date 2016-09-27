@@ -20,14 +20,6 @@ public class MicroarrayServiceTest extends AbstractDatabaseTest{
     private ExpressionService expressionService = new ExpressionService();
 
     @Test
-    @Ignore("this is more for convenience and shouldn't be run as a regular test")
-    public void testIndividualGPL() {
-        DefaultGeoSoftParser defaultSoftParser = new DefaultGeoSoftParser();
-//        defaultSoftParser.setAlwaysUseExistingFile(true);
-        defaultSoftParser.parseUniqueNumbers("GPL1319", 2, new String[]{"Danio rerio"}, new String[]{"Control"});
-    }
-
-    @Test
     public void updateGeoLink(){
         Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-030131-9286");
         HibernateUtil.createTransaction();

@@ -1,25 +1,66 @@
-<%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
-<%@ taglib prefix="zfin" uri="/WEB-INF/tld/zfin-tags.tld" %>
-<%@ taglib prefix="zfin2" tagdir="/WEB-INF/tags" %>
-<%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core' %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="gene" type="org.zfin.marker.Marker" rtexprvalue="true" required="true" %>
 <%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="false" %>
 
+<authz:authorize access="hasRole('root')">
+    <script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
+    <script src="/javascript/nomenclature.js" type="text/javascript"></script>
+    <script>
+        var reasonList = [];
+        <c:forEach items="${gene.markerHistory.iterator().next().reasonArray}" var="reason" varStatus="status">
+        reasonList.push('${reason.toString()}');
+        </c:forEach>
+    </script>
+
+    <div ng-app="nomenclature">
+    <div ng-controller="NomenclatureController as control">
+    <script>
+        markerID = '${gene.zdbID}';
+    </script>
+</authz:authorize>
+
+<authz:authorize access="hasRole('root')">
+    <caption>
+        <div ng-click="control.editMarker()" id="editMarker" style="cursor: pointer;" class="error">Edit</div>
+        <div ng-click="control.viewMarker()" style="display: none" id="viewMarker" style="cursor: pointer;">
+            View
+        </div>
+    </caption>
+</authz:authorize>
 <table class="primary-entity-attributes">
     <tr>
         <th><span class="name-label">${gene.markerType.displayName} Name:</span></th>
-        <td><span class="name-value"><zfin:name entity="${gene}"/></span></td>
+        <td>
+            <span class="name-value"><zfin:name entity="${gene}"/></span>
+            <authz:authorize access="hasRole('root')">
+                <span style="cursor: pointer;"
+                      ng-click="control.openGeneEditor('${gene.zdbID}','${gene.name}', 'Gene Name')"
+                      ng-if="control.editMode">
+                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red"></i>
+                </span>
+            </authz:authorize>
+        </td>
     </tr>
     <tr>
         <th><span class="name-label">${gene.markerType.displayName} Symbol:</span></th>
-        <td><span class="name-value"><zfin:abbrev entity="${gene}"/></span></td>
+        <td>
+            <span class="name-value" geneSymbol><zfin:abbrev entity="${gene}"/></span>
+            <authz:authorize access="hasRole('root')">
+                    <span style="cursor: pointer;"
+                          ng-click="control.openGeneEditor('${gene.zdbID}','${gene.abbreviation}', 'Gene Symbol')"
+                          ng-if="control.editMode">
+                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red"></i></span>
+            </authz:authorize>
+        </td>
     </tr>
-
-    <c:if test="${!empty previousNames}">
-        <zfin2:previousNamesFast label="Previous Name" previousNames="${previousNames}"/>
-    </c:if>
+    <tr>
+        <td></td>
+        <td>
+            <zfin2:nomenclature geneEdit="true" showReason="${gene.type.geneOrGenep}"/>
+        </td>
+    </tr>
+    <zfin2:previousNamesFast label="Previous Name" previousNames="${previousNames}" marker="${gene}"/>
     <tr>
         <th>Location:</th>
         <td>
@@ -38,6 +79,10 @@
     <zfin2:entityNotes entity="${gene}"/>
 
 </table>
+<authz:authorize access="hasRole('root')">
+    </div>
+    </div>
+</authz:authorize>
 
 
 
