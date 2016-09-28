@@ -3,13 +3,14 @@
         .module('app')
         .directive('fileInput', fileInput);
 
-    function fileInput() {
+    fileInput.$inject = ['ZfinUtils'];
+    function fileInput(zf) {
         var template =
             '<div class="file-drag-target">' +
             '  <ul class="list-unstyled">' +
-            '    <li ng-repeat="file in vm.files">{{file.name}}</li>' +
+            '    <li ng-repeat="file in files">{{file.name}}</li>' +
             '  </ul>' +
-            '  <input type="file" id="file" multiple />' +
+            '  <input type="file" id="file" multiple ng-attr-accept="{{accept}}"/>' +
             '  <label for="file"><strong>Choose a file</strong></label> or drag it here.' +
             '</div>';
 
@@ -18,22 +19,40 @@
             template: template,
             scope: {
                 files: '=',
-                multiple: '='
+                errorMessage: '=',
+                multiple: '=',
+                accept: '@'
             },
-            link: link,
-            controller: FileInputController,
-            controllerAs: 'vm',
-            bindToController: true
+            link: link
         };
 
         function link(scope, element, attrs) {
             var input = element.find('input');
             var dragTarget = element.find('.file-drag-target');
 
-            input.on('change', function () {
+            function applyFilesToScope(files) {
+                var validFiles = [];
+                var invalidFiles = [];
+                var errorMessage = '';
+                var validType = scope.accept.replace(/\*$/, '');
+                for (var i = 0; i < files.length; i++) {
+                    if (files[i].type.substr(0, validType.length) == validType) {
+                        validFiles.push(files[i]);
+                    } else {
+                        invalidFiles.push(files[i]);
+                    }
+                }
+                if (!zf.isEmpty(invalidFiles)) {
+                    errorMessage = "Invalid file type: " + invalidFiles.map(function (f) { return f.name; }).join(', ');
+                }
                 scope.$apply(function () {
-                    scope.vm.files = input[0].files;
+                    scope.files = validFiles;
+                    scope.errorMessage = errorMessage;
                 });
+            }
+
+            input.on('change', function () {
+                applyFilesToScope(input[0].files);
             });
 
             dragTarget
@@ -48,15 +67,10 @@
                 .on('drop', function (evt) {
                     evt.preventDefault();
                     $(this).removeClass('hover');
-                    scope.$apply(function () {
-                        scope.vm.files = evt.originalEvent.dataTransfer.files;
-                    });
+                    applyFilesToScope(evt.originalEvent.dataTransfer.files);
                 });
         }
 
         return directive;
-    }
-
-    function FileInputController() {
     }
 }());

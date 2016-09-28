@@ -21,7 +21,7 @@
             '    <div class="form-group">' +
             '        <label class="col-sm-2 control-label">Images</label>' +
             '        <div class="col-sm-6">' +
-            '            <div file-input files="vm.files" multiple="true"></div>' +
+            '            <div file-input files="vm.files" multiple="true" accept="image/*" error-message="vm.errorMessage"></div>' +
             '        </div>' +
             '    </div>' +
             '    <div class="form-group">' +
@@ -30,6 +30,7 @@
             '              <span ng-show="!vm.uploading">Save</span>' +
             '              <span ng-show="vm.uploading"><i class="fa fa-spin fa-spinner"></i></span>' +
             '            </button>' +
+            '            <span class="error" ng-show="vm.errorMessage">{{vm.errorMessage}}</span>' +
             '        </div>' +
             '    </div>' +
             '</form>';
@@ -57,6 +58,7 @@
         vm.caption = '';
         vm.files = [];
         vm.uploading = false;
+        vm.errorMessage = '';
 
         vm.upload = upload;
 
@@ -68,6 +70,12 @@
                     vm.label = '';
                     vm.caption = '';
                     vm.files = [];
+                    vm.errorMessage = '';
+                })
+                .catch(function (response) {
+                    if (response.data && response.data.message) {
+                        vm.errorMessage = response.data.message;
+                    }
                 })
                 .finally(function () {
                     vm.uploading = false;

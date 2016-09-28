@@ -20,8 +20,8 @@
 
         function addFigure(pubId, label, caption, fileList) {
             var form = new FormData();
-            form.set('label', label);
-            form.set('caption', caption);
+            form.append('label', label);
+            form.append('caption', caption);
             angular.forEach(fileList, function (file) {
                 form.append('files', file);
             });
@@ -45,7 +45,7 @@
 
         function addImage(fig, file) {
             var form = new FormData();
-            form.set('file', file);
+            form.append('file', file);
             return $http.post('/action/figure/' + fig.zdbId + '/images', form, {
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined}

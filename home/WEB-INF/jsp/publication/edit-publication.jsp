@@ -15,6 +15,7 @@
 <script src="/javascript/file-input.driective.js"></script>
 <script src="/javascript/figure-upload.directive.js"></script>
 <script src="/javascript/image-edit.directive.js"></script>
+<script src="/javascript/zfinutils.service.js"></script>
 
 <c:set var="linkURL">/cgi-bin/webdriver?MIval=aa-link_authors.apg&OID=${publication.zdbID}&anon1=zdb_id&anon1text=${publication.zdbID}</c:set>
 <c:set var="trackURL">/action/publication/${publication.zdbID}/track</c:set>

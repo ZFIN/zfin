@@ -50,6 +50,11 @@ public class FigureEditController {
     @RequestMapping(value = "/publication/{zdbID}/figures", method = RequestMethod.POST)
     public FigurePresentationBean createNewFigure(@PathVariable String zdbID, @RequestParam String label,
                                                   @RequestParam String caption, @RequestParam List<MultipartFile> files) {
+        for (MultipartFile file : files) {
+            if (!file.getContentType().startsWith("image/")) {
+                throw new InvalidWebRequestException("All files must be images. Invalid file type:" + file.getOriginalFilename());
+            }
+        }
 
         Publication publication = publicationRepository.getPublication(zdbID);
 
@@ -121,6 +126,10 @@ public class FigureEditController {
     @ResponseBody
     @RequestMapping(value = "/figure/{zdbID}/images", method = RequestMethod.POST)
     public ImagePresentationBean addImage(@PathVariable String zdbID, @RequestParam MultipartFile file) {
+        if (!file.getContentType().startsWith("image/")) {
+            throw new InvalidWebRequestException("File must be an image");
+        }
+
         Figure figure = publicationRepository.getFigure(zdbID);
         Image image;
 

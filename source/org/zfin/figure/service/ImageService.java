@@ -3,8 +3,8 @@ package org.zfin.figure.service;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,8 +16,9 @@ import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 
 public class ImageService {
 
@@ -27,8 +28,7 @@ public class ImageService {
     private final static String THUMB = "_thumb";
 
     public static Image processImage(Figure figure, MultipartFile file, Person owner) throws IOException {
-        CopyAction<MultipartFile> copier = MultipartFile::transferTo;
-        return processImage(figure, owner, false, file.getOriginalFilename(), file, copier);
+        return processImage(figure, owner, false, file.getOriginalFilename(), file.getInputStream());
     }
 
     public static Image processImage(Figure figure, String filePath, Boolean isVideoStill, String direction) throws IOException {
@@ -36,9 +36,7 @@ public class ImageService {
         Person owner = (Person) HibernateUtil.currentSession().createCriteria(Person.class)
                 .add(Restrictions.eq("zdbID", "ZDB-PERS-030520-2"))  //Yvonne
                 .uniqueResult();
-        File initialFile = new File(filePath);
-        CopyAction<File> copier = FileUtils::copyFile;
-        return processImage(figure, owner, isVideoStill, initialFile.getName(), initialFile, copier);
+        return processImage(figure, owner, isVideoStill, filePath, new FileInputStream(filePath));
     }
 
     private static Image createPlaceholderImage(Figure figure, Person owner, Boolean isVideoStill) {
@@ -60,7 +58,7 @@ public class ImageService {
         return image;
     }
 
-    private static <T> Image processImage(Figure figure, Person owner, Boolean isVideoStill, String fileName, T originalImage, CopyAction<T> copyAction) throws IOException {
+    private static Image processImage(Figure figure, Person owner, Boolean isVideoStill, String fileName, InputStream imageStream) throws IOException {
         Image image = createPlaceholderImage(figure, owner, isVideoStill);
 
         String extension = FilenameUtils.getExtension(fileName);
@@ -70,15 +68,23 @@ public class ImageService {
         File destinationFile = new File(IMAGE_LOADUP_DIR, destinationFilename);
         File thumbnailFile = new File(IMAGE_LOADUP_DIR, thumbnailFilename);
 
-        copyAction.copy(originalImage, destinationFile);
+        // store the bytes of the input stream because we need it twice -- once to
+        // get the image metadata and once to write to disk
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        IOUtils.copy(imageStream, byteStream);
+        byte[] imageBytes = byteStream.toByteArray();
 
-        image.setImageFilename(destinationFilename);
-        image.setThumbnail(thumbnailFilename);
-
-        BufferedImage imageData = ImageIO.read(destinationFile);
+        BufferedImage imageData = ImageIO.read(new ByteArrayInputStream(imageBytes));
+        if (imageData == null) {
+            throw new IOException("Could not decode image data");
+        }
         image.setWidth(imageData.getWidth());
         image.setHeight(imageData.getHeight());
+        image.setImageFilename(destinationFilename);
+        image.setThumbnail(thumbnailFilename);
         HibernateUtil.currentSession().save(image);
+
+        Files.write(destinationFile.toPath(), imageBytes, StandardOpenOption.CREATE);
 
         File scriptDirectory = new File(ZfinPropertiesEnum.TARGETROOT + "/server_apps/sysexecs/make_thumbnail");
         CommandLine makeThumbnail = new CommandLine("./make_thumbnail.sh");
@@ -90,10 +96,4 @@ public class ImageService {
 
         return image;
     }
-
-    @FunctionalInterface
-    private interface CopyAction<T> {
-        void copy(T t, File destination) throws IOException;
-    }
-
 }
