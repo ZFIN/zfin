@@ -894,7 +894,7 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
 }
 
 .figure-edit-panel .table td {
-    vertical-align: top;
+    vertical-align: baseline;
 }
 .figure-edit-panel .image-edit-image {
     margin: 0 2em 0 0;
@@ -936,9 +936,9 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
     z-index: -1;
 }
 .image-add-label {
-    display: none;
+    visibility: hidden;
     cursor: pointer;
-    font-size: 40px;
+    font-size: 36px;
     vertical-align: middle;
     padding: 0 10px;
     margin: 0 10px;
@@ -948,13 +948,13 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
     display: inline-block;
 }
 .image-edit-block:hover .image-add-label {
-    display: inline-block;
+    visibility: visible;
 }
 .image-delete-button {
     display: none;
     position: absolute;
-    top: -2em;
-    right: -2em;
+    top: -1.2em;
+    right: -1.2em;
     cursor: pointer;
 }
 .image-delete-button .fa-circle {

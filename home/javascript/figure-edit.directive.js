@@ -18,21 +18,7 @@
             '  <tr ng-repeat="figure in vm.figures">' +
             '    <td>{{figure.label}}</td>' +
             '    <td>' +
-            '      <p class="image-edit-block" ng-if="figure.images.length > 0">' +
-            '        <span class="image-edit-image" ng-repeat="image in figure.images">' +
-            '          <img ng-src="{{image.thumbnailPath}}">' +
-            '          <span class="image-delete-button" ng-click="vm.deleteImage(image, figure, $index)">' +
-            '            <span class="fa-stack fa-2x">' +
-            '              <i class="fa fa-circle fa-stack-1x"></i>' +
-            '              <i class="fa fa-times-circle fa-stack-1x"></i>' +
-            '            </span>' +
-            '          </span>' +
-            '        </span>' +
-            '        <input type="file" ng-attr-id="file-{{$index}}" class="image-add-input" ng-attr-data-fig-idx="{{$index}}">' +
-            '        <label ng-attr-for="file-{{$index}}" class="image-add-label">+</label>' +
-            '        <span ng-show="figure.uploading" class="image-add-uploading"><i class="fa fa-spinner fa-spin"></i></span>' +
-            '      </p>' +
-            '      <div inline-edit-textarea text="figure.caption" default-text="Add caption" on-save="vm.updateFigure(figure, $index)"></div>' +
+            '      <div image-edit figure="figure"></div>' +
             '    </td>' +
             '    <td>' +
             '      <div class="figure-delete-button pull-right" data-toggle="tooltip"' +
@@ -89,16 +75,6 @@
                             });
                         }
                     });
-
-                    element.find('.image-add-input').each(function () {
-                        var $input = angular.element(this);
-                        var idx = $input.data('fig-idx');
-                        if (angular.isDefined(idx)) {
-                            $input.on('change', function () {
-                                scope.vm.addImage(idx, this.files[0]);
-                            });
-                        }
-                    });
                 });
             });
 
@@ -112,12 +88,8 @@
         var vm = this;
 
         vm.figures = [];
-        vm.newImage = null;
 
-        vm.updateFigure = updateFigure;
         vm.deleteFigure = deleteFigure;
-        vm.addImage = addImage;
-        vm.deleteImage = deleteImage;
 
         activate();
 
@@ -125,13 +97,6 @@
             FigureService.getFigures(vm.pubId)
                 .then(function (response) {
                     vm.figures = response.data;
-                });
-        }
-
-        function updateFigure(fig, idx) {
-            return FigureService.updateFigure(fig)
-                .then(function (response) {
-                    vm.figures[idx] = response.data;
                 });
         }
 
@@ -143,25 +108,6 @@
                 })
                 .finally(function () {
                     fig.deleting = false;
-                });
-        }
-
-        function addImage(idx, file) {
-            var fig = vm.figures[idx];
-            fig.uploading = true;
-            FigureService.addImage(fig, file)
-                .then(function (response) {
-                    fig.images.push(response.data);
-                })
-                .finally(function () {
-                    fig.uploading = false;
-                })
-        }
-
-        function deleteImage(img, fig, idx) {
-            FigureService.deleteImage(img)
-                .then(function () {
-                    fig.images.splice(idx, 1);
                 });
         }
     }
