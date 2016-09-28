@@ -26,7 +26,7 @@
             '    </div>' +
             '    <div class="form-group">' +
             '        <div class="col-sm-offset-2 col-sm-6">' +
-            '            <button class="btn btn-primary" ng-click="vm.upload()" ng-disabled="vm.uploading">' +
+            '            <button class="btn btn-primary" ng-click="vm.upload()" ng-disabled="!vm.label || vm.uploading">' +
             '              <span ng-show="!vm.uploading">Save</span>' +
             '              <span ng-show="vm.uploading"><i class="fa fa-spin fa-spinner"></i></span>' +
             '            </button>' +
