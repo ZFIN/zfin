@@ -16,8 +16,8 @@
             '      </span>' +
             '    </span>' +
             '  </span>' +
-            '  <input type="file" ng-attr-id="file-{{$id}}" class="image-add-input">' +
-            '  <label ng-attr-for="file-{{$id}}" class="image-add-label">+</label>' +
+            '  <input type="file" ng-attr-id="file-{{::$id}}" class="image-add-input">' +
+            '  <label ng-attr-for="file-{{::$id}}" class="image-add-label">+</label>' +
             '  <span ng-show="vm.figure.uploading" class="image-add-uploading"><i class="fa fa-spinner fa-spin"></i></span>' +
             '</p>' +
             '<div inline-edit-textarea text="vm.figure.caption" default-text="Add caption" on-save="vm.updateFigure()"></div>';
