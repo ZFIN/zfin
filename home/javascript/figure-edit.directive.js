@@ -28,6 +28,9 @@
             '            </span>' +
             '          </span>' +
             '        </span>' +
+            '        <input type="file" ng-attr-id="file-{{$index}}" class="image-add-input" ng-attr-data-fig-idx="{{$index}}">' +
+            '        <label ng-attr-for="file-{{$index}}" class="image-add-label">+</label>' +
+            '        <span ng-show="figure.uploading" class="image-add-uploading"><i class="fa fa-spinner fa-spin"></i></span>' +
             '      </p>' +
             '      <div inline-edit-textarea text="figure.caption" default-text="Add caption" on-save="vm.updateFigure(figure, $index)"></div>' +
             '    </td>' +
@@ -61,7 +64,7 @@
 
         function link(scope, element) {
             scope.$watch('vm.figures', function () {
-                // timeout so that the data attribues are settled
+                // timeout so that the data attributes are settled
                 $timeout(function() {
                     element.find('.figure-delete-button').each(function () {
                         var $button = angular.element(this);
@@ -86,6 +89,16 @@
                             });
                         }
                     });
+
+                    element.find('.image-add-input').each(function () {
+                        var $input = angular.element(this);
+                        var idx = $input.data('fig-idx');
+                        if (angular.isDefined(idx)) {
+                            $input.on('change', function () {
+                                scope.vm.addImage(idx, this.files[0]);
+                            });
+                        }
+                    });
                 });
             });
 
@@ -99,9 +112,11 @@
         var vm = this;
 
         vm.figures = [];
+        vm.newImage = null;
 
         vm.updateFigure = updateFigure;
         vm.deleteFigure = deleteFigure;
+        vm.addImage = addImage;
         vm.deleteImage = deleteImage;
 
         activate();
@@ -129,6 +144,18 @@
                 .finally(function () {
                     fig.deleting = false;
                 });
+        }
+
+        function addImage(idx, file) {
+            var fig = vm.figures[idx];
+            fig.uploading = true;
+            FigureService.addImage(fig, file)
+                .then(function (response) {
+                    fig.images.push(response.data);
+                })
+                .finally(function () {
+                    fig.uploading = false;
+                })
         }
 
         function deleteImage(img, fig, idx) {

@@ -67,6 +67,7 @@ public class FigureEditController {
                 ImageService.processImage(newFigure, file, ProfileService.getCurrentSecurityUser());
             } catch (IOException e) {
                 LOG.error("Error processing image", e);
+                throw new InvalidWebRequestException("Error processing image");
             }
         }
 
@@ -92,7 +93,7 @@ public class FigureEditController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "figure/{zdbID}", method = RequestMethod.POST)
+    @RequestMapping(value = "/figure/{zdbID}", method = RequestMethod.POST)
     public FigurePresentationBean updateFigure(@PathVariable String zdbID,
                                                @RequestBody FigurePresentationBean figureUpdates) {
         Figure figure = publicationRepository.getFigure(zdbID);
@@ -106,7 +107,7 @@ public class FigureEditController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "image/{zdbID}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/image/{zdbID}", method = RequestMethod.DELETE)
     public String deleteImage(@PathVariable String zdbID) {
         Image image = publicationRepository.getImageById(zdbID);
 
@@ -115,6 +116,24 @@ public class FigureEditController {
         tx.commit();
 
         return "OK";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/figure/{zdbID}/images", method = RequestMethod.POST)
+    public ImagePresentationBean addImage(@PathVariable String zdbID, @RequestParam MultipartFile file) {
+        Figure figure = publicationRepository.getFigure(zdbID);
+        Image image;
+
+        Transaction tx = HibernateUtil.createTransaction();
+        try {
+            image = ImageService.processImage(figure, file, ProfileService.getCurrentSecurityUser());
+        } catch (IOException e) {
+            LOG.error("Error processing image", e);
+            throw new InvalidWebRequestException("Error processing image");
+        }
+        tx.commit();
+
+        return FigureService.convertToImagePresentationBean(image);
     }
 
 }

@@ -10,6 +10,7 @@
             addFigure: addFigure,
             updateFigure: updateFigure,
             deleteFigure: deleteFigure,
+            addImage: addImage,
             deleteImage: deleteImage
         };
 
@@ -39,6 +40,15 @@
                 url: '/action/figure/' + fig.zdbId,
                 method: 'DELETE',
                 transformResponse: undefined
+            });
+        }
+
+        function addImage(fig, file) {
+            var form = new FormData();
+            form.set('file', file);
+            return $http.post('/action/figure/' + fig.zdbId + '/images', form, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined}
             });
         }
 

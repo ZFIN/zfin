@@ -896,11 +896,8 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
 .figure-edit-panel .table td {
     vertical-align: top;
 }
-.figure-edit-panel .image-edit-image:first-child {
-    margin: 0;
-}
 .figure-edit-panel .image-edit-image {
-    margin: 0 2em;
+    margin: 0 2em 0 0;
 }
 .file-drag-target {
     padding: 2em 0;
@@ -930,7 +927,27 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
     position: relative;
     display: inline-block;
 }
+.image-add-input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+.image-add-label {
+    display: none;
+    cursor: pointer;
+    font-size: 40px;
+    vertical-align: middle;
+    padding: 0 10px;
+    margin: 0 10px;
+    color: #0000E9;
+}
 .image-edit-block:hover .image-delete-button {
+    display: inline-block;
+}
+.image-edit-block:hover .image-add-label {
     display: inline-block;
 }
 .image-delete-button {
