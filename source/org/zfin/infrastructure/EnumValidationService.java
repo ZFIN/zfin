@@ -140,14 +140,14 @@ public class EnumValidationService {
 
     @ServiceTest
     public void validateCurationStatus() throws EnumValidationException {
-        String hql = "select pts_status from pub_tracking_status";
+        String hql = "select distinct pts_status from pub_tracking_status";
         List statusList = HibernateUtil.currentSession().createSQLQuery(hql).list();
         checkEnumVersusDatabaseCollection(statusList, PublicationTrackingStatus.Type.values());
     }
 
     @ServiceTest
     public void validateCurationRole() throws EnumValidationException {
-        String hql = "select ptl_role from pub_tracking_location";
+        String hql = "select distinct ptl_role from pub_tracking_location";
         List roleList = HibernateUtil.currentSession().createSQLQuery(hql).list();
         checkEnumVersusDatabaseCollection(roleList, PublicationTrackingLocation.Role.values());
     }
