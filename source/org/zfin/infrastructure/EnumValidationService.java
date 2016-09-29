@@ -133,7 +133,7 @@ public class EnumValidationService {
 
     @ServiceTest
     public void validateCurationTopics() throws EnumValidationException {
-        String hql = "select cur_topic from curation";
+        String hql = "select distinct cur_topic from curation";
         List topicList = HibernateUtil.currentSession().createSQLQuery(hql).list();
         checkEnumVersusDatabaseCollection(topicList, Curation.Topic.values());
     }
