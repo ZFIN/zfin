@@ -15,6 +15,12 @@
             '  </tr>' +
             '  </thead>' +
             '  <tbody>' +
+            '  <tr ng-show="vm.loading">' +
+            '      <td class="text-muted text-center" colspan="3"><i class="fa fa-spinner fa-spin"></i> Loading...</td>' +
+            '  </tr>' +
+            '  <tr ng-show="!vm.loading && vm.figures.length == 0">' +
+            '    <td class="text-muted text-center" colspan="3">No figures yet.</td>' +
+            '  </tr>' +
             '  <tr ng-repeat="figure in vm.figures">' +
             '    <td>{{figure.label}}</td>' +
             '    <td>' +
@@ -87,6 +93,7 @@
     function FigureEditController(FigureService) {
         var vm = this;
 
+        vm.loading = false;
         vm.figures = [];
         vm.pubCanShowImages = false;
 
@@ -95,10 +102,14 @@
         activate();
 
         function activate() {
+            vm.loading = true;
             FigureService.getFigures(vm.pubId)
                 .then(function (response) {
                     vm.figures = response.data.figures;
                     vm.pubCanShowImages = response.data.pubCanShowImages;
+                })
+                .finally(function () {
+                    vm.loading = false;
                 });
         }
 
