@@ -3,7 +3,9 @@
 
 create table publication_file (pf_pub_zdb_id varchar(50) not null constraint pf_pub_zdb_id_not_null,
        	     		       pf_file_name varchar(255) not null constraint pf_file_name_not_null,
-			       pf_file_type_id int8 not null constraint pf_file_type_not_null)
+			       pf_file_type_id int8 not null constraint pf_file_type_not_null,
+			       pf_date_entered datetime year to second default current year to second not null constraint pf_date_entered_not_null,
+			       pf_original_file_name varchar(255))
 in tbldbs2
 extent size 8192 next size 8192;
 
@@ -59,8 +61,9 @@ insert into publication_file_type (pft_type, pft_type_order)
 
 insert into publication_file (pf_pub_zdb_id, 
        	    		     		     pf_file_name,
+					     pf_original_file_name,
 					     pf_file_type_id)
-  select zdb_id, pub_file, 1
+  select zdb_id, substr(get_date_from_id(zdb_id,'YYYYMMDD'),1,4)||"/"||pub_file,pub_file, 1
     from publication
  where pub_file is not null;
 
