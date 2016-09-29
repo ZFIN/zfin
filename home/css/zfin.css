@@ -903,6 +903,7 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
     padding: 2em 0;
     border: 2px dashed lightgray;
     text-align: center;
+    border-radius: 4px;
 }
 .file-drag-target.hover {
     background-color: #e0e7e0;
