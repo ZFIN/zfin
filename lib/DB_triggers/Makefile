@@ -104,7 +104,7 @@ TRIGGERS = \
 	stage_insert_trigger.sql \
 	stage_update_trigger.sql \
 	source_alias_insert_trigger.sql \
-	source_alias_update_trigger.sql \
+	salias_alias_update_trigger.sql \
 	term_insert_trigger.sql \
 	term_update_trigger.sql \
 	term_relationship_insert_trigger.sql \
