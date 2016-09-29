@@ -38,12 +38,17 @@ public class FigureEditController {
 
     @ResponseBody
     @RequestMapping(value = "/publication/{zdbID}/figures", method = RequestMethod.GET)
-    public List<FigurePresentationBean> getFiguresForPub(@PathVariable String zdbID) {
+    public PublicationFigureSet getFiguresForPub(@PathVariable String zdbID) {
         Publication publication = publicationRepository.getPublication(zdbID);
-        return publication.getFigures().stream()
-                .sorted(Comparator.comparing(Figure::getOrderingLabel).thenComparing(Figure::getZdbID))
-                .map(FigureService::convertToFigurePresentationBean)
-                .collect(Collectors.toList());
+        PublicationFigureSet pubFigures = new PublicationFigureSet();
+        pubFigures.setPubCanShowImages(publication.isCanShowImages());
+        pubFigures.setFigures(
+                publication.getFigures().stream()
+                        .sorted(Comparator.comparing(Figure::getOrderingLabel).thenComparing(Figure::getZdbID))
+                        .map(FigureService::convertToFigurePresentationBean)
+                        .collect(Collectors.toList())
+        );
+        return pubFigures;
     }
 
     @ResponseBody

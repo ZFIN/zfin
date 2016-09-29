@@ -14,7 +14,7 @@
 <script src="/javascript/figure-edit.directive.js"></script>
 <script src="/javascript/file-input.driective.js"></script>
 <script src="/javascript/figure-upload.directive.js"></script>
-<script src="/javascript/image-edit.directive.js"></script>
+<script src="/javascript/figure-update.directive.js"></script>
 <script src="/javascript/zfinutils.service.js"></script>
 
 <c:set var="linkURL">/cgi-bin/webdriver?MIval=aa-link_authors.apg&OID=${publication.zdbID}&anon1=zdb_id&anon1text=${publication.zdbID}</c:set>
@@ -55,17 +55,29 @@
 
 <script>
     $(function () {
+
+        function goToTab(hash) {
+            $('#fig-edit-tabs a[href=' + hash + ']').tab('show');
+        }
+
         var hash = window.location.hash;
         if (hash) {
-            $('#fig-edit-tabs a[href=' + hash + ']').tab('show');
-            $('#fig-edit-tabs a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-                if (history.pushState) {
-                    history.pushState(null, null, '#'+$(e.target).attr('href').substr(1));
-                } else {
-                    location.hash = '#'+$(e.target).attr('href').substr(1);
-                }
-            });
+            goToTab(hash);
         }
+
+        $('#fig-edit-tabs a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+            var href = $(e.target).attr('href');
+            if (history.pushState) {
+                history.pushState(null, null, href);
+            } else {
+                location.hash = href;
+            }
+        });
+
+        $('.edit-form-content').on('click', "a[href^='#']", function () {
+            var hash = $(this).attr('href');
+            goToTab(hash);
+        });
     });
 </script>
 

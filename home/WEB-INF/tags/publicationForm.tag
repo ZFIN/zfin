@@ -133,6 +133,7 @@
             <div class="checkbox">
                 <label><form:checkbox path="canShowImages"/></label>
             </div>
+            <form:errors path="canShowImages" cssClass="text-danger" />
         </div>
     </div>
 

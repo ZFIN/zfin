@@ -18,7 +18,7 @@
             '  <tr ng-repeat="figure in vm.figures">' +
             '    <td>{{figure.label}}</td>' +
             '    <td>' +
-            '      <div image-edit figure="figure"></div>' +
+            '      <div figure-update figure="figure" has-permissions="vm.pubCanShowImages"></div>' +
             '    </td>' +
             '    <td>' +
             '      <div class="figure-delete-button pull-right" data-toggle="tooltip"' +
@@ -34,7 +34,7 @@
             '  </tbody>' +
             '</table>' +
             '<h4>Create New Figure</h4>' +
-            '<div figure-upload pub-id="{{vm.pubId}}" figures="vm.figures"></div>';
+            '<div figure-upload pub-id="{{vm.pubId}}" figures="vm.figures" has-permissions="vm.pubCanShowImages"></div>';
 
         var directive = {
             restrict: 'AE',
@@ -88,6 +88,7 @@
         var vm = this;
 
         vm.figures = [];
+        vm.pubCanShowImages = false;
 
         vm.deleteFigure = deleteFigure;
 
@@ -96,7 +97,8 @@
         function activate() {
             FigureService.getFigures(vm.pubId)
                 .then(function (response) {
-                    vm.figures = response.data;
+                    vm.figures = response.data.figures;
+                    vm.pubCanShowImages = response.data.pubCanShowImages;
                 });
         }
 
