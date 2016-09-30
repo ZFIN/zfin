@@ -1544,7 +1544,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
      */
     public void renameMarker(Marker marker, Publication publication, MarkerHistory.Reason reason, String oldSymbol, String oldGeneName) {
         //update marker history reason
-        logger.debug("Got to rename marker: " + marker.getAbbreviation().toString() + " " + marker.getZdbID() + " " + marker.getName().toString());
+        logger.debug("Got to rename marker: " + marker.getAbbreviation() + " " + marker.getZdbID() + " " + marker.getName());
         MarkerHistory history = new MarkerHistory();
         history.setReason(reason);
         history.setName(oldGeneName);
@@ -1557,9 +1557,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         getMarkerRepository().runMarkerNameFastSearchUpdate(marker);
         getInfrastructureRepository().insertMarkerHistory(history);
-        SortedSet<MarkerHistory> markerHistorySet = new TreeSet<>();
-        markerHistorySet.add(history);
-        marker.setMarkerHistory(markerHistorySet);
         infrastructureRepository.insertRecordAttribution(alias.getZdbID(), publication.getZdbID());
     }
 
