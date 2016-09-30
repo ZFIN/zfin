@@ -34,7 +34,8 @@
             searchPubStatus        : searchPubStatus,
             statusNeedsOwner       : statusNeedsOwner,
             statusNeedsLocation    : statusNeedsLocation,
-            statusHasPriority      : statusHasPriority
+            statusHasPriority      : statusHasPriority,
+            getFiles               : getFiles
         };
 
         function getTopics(id) {
@@ -160,6 +161,10 @@
 
         function statusHasPriority(status) {
             return zf.get(status, 'type') === 'READY_FOR_INDEXING';
+        }
+
+        function getFiles(id) {
+            return $http.get('/action/publication/' + id + '/files');
         }
     }
 

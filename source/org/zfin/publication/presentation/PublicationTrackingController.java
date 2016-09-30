@@ -43,6 +43,7 @@ import org.zfin.publication.repository.PublicationRepository;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/publication")
@@ -73,6 +74,9 @@ public class PublicationTrackingController {
 
     @Autowired
     private CurationDTOConversionService converter;
+
+    @Autowired
+    private PublicationService publicationService;
 
     @RequestMapping(value = "/{zdbID}/track")
     public String showPubTracker(Model model, @PathVariable String zdbID) {
@@ -438,6 +442,15 @@ public class PublicationTrackingController {
         }
 
         return "OK";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{id}/files")
+    public Collection<PublicationFilePresentationBean> getPublicationFiles(@PathVariable String id) {
+        Publication publication = publicationRepository.getPublication(id);
+        return publication.getFiles().stream()
+                .map(publicationService::convertToPublicationFilePresentationBean)
+                .collect(Collectors.toList());
     }
 
 }

@@ -11,11 +11,22 @@ import javax.persistence.Table;
 public class PublicationFileType {
 
     public enum Name {
-        ORIGINAL_ARTICLE,
-        ANNOTATED_ARTICLE,
-        SUPPLEMENTAL_MATERIAL,
-        CORRESPONDENCE_DETAILS,
-        OTHER
+        ORIGINAL_ARTICLE("Original Article"),
+        ANNOTATED_ARTICLE("Annotated Article"),
+        SUPPLEMENTAL_MATERIAL("Supplemental Material"),
+        CORRESPONDENCE_DETAILS("Correspondence Details"),
+        OTHER("Other");
+
+        private String display;
+
+        Name(String display) {
+            this.display = display;
+        }
+
+        @Override
+        public String toString() {
+            return display;
+        }
     }
 
     @Id

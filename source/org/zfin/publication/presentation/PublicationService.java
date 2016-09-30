@@ -13,6 +13,7 @@ import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationFile;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.ServletContext;
@@ -237,6 +238,15 @@ public class PublicationService {
 
 
         return suggestions;
+    }
+
+    public PublicationFilePresentationBean convertToPublicationFilePresentationBean(PublicationFile file) {
+        PublicationFilePresentationBean bean = new PublicationFilePresentationBean();
+        bean.setPubZdbId(file.getPublication().getZdbID());
+        bean.setType(file.getType().getName().toString());
+        bean.setDescription("");
+        bean.setFileName(file.getFileName());
+        return bean;
     }
 
 }

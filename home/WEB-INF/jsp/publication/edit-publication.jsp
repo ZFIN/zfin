@@ -15,6 +15,8 @@
 <script src="/javascript/file-input.driective.js"></script>
 <script src="/javascript/figure-upload.directive.js"></script>
 <script src="/javascript/figure-update.directive.js"></script>
+<script src="/javascript/pub-file-edit.directive.js"></script>
+<script src="/javascript/publication.service.js"></script>
 <script src="/javascript/zfinutils.service.js"></script>
 
 <c:set var="linkURL">/cgi-bin/webdriver?MIval=aa-link_authors.apg&OID=${publication.zdbID}&anon1=zdb_id&anon1text=${publication.zdbID}</c:set>
@@ -48,7 +50,7 @@
             <zfin2:publicationForm publication="${publication}" error="${error}"/>
         </div>
         <div role="tabpanel" class="tab-pane" id="files">
-            <h1>FILES!</h1>
+            <div pub-file-edit pub-id="${publication.zdbID}"></div>
         </div>
         <div role="tabpanel" class="tab-pane figure-edit-panel" id="figures">
             <div figure-edit pub-id="${publication.zdbID}"></div>
