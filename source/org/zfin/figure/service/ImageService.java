@@ -4,7 +4,6 @@ package org.zfin.figure.service;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,11 +13,12 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Person;
 import org.zfin.properties.ZfinPropertiesEnum;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.StandardCopyOption;
 
 public class ImageService {
 
@@ -68,23 +68,14 @@ public class ImageService {
         File destinationFile = new File(IMAGE_LOADUP_DIR, destinationFilename);
         File thumbnailFile = new File(IMAGE_LOADUP_DIR, thumbnailFilename);
 
-        // store the bytes of the input stream because we need it twice -- once to
-        // get the image metadata and once to write to disk
-        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        IOUtils.copy(imageStream, byteStream);
-        byte[] imageBytes = byteStream.toByteArray();
+        // we used to attempt to set the image's width and height properties here using ImageIO.read(), but it
+        // choked on images with a CMYK color space (common for published images), so we omit that now.
 
-        BufferedImage imageData = ImageIO.read(new ByteArrayInputStream(imageBytes));
-        if (imageData == null) {
-            throw new IOException("Could not decode image data");
-        }
-        image.setWidth(imageData.getWidth());
-        image.setHeight(imageData.getHeight());
         image.setImageFilename(destinationFilename);
         image.setThumbnail(thumbnailFilename);
         HibernateUtil.currentSession().save(image);
 
-        Files.write(destinationFile.toPath(), imageBytes, StandardOpenOption.CREATE);
+        Files.copy(imageStream, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         File scriptDirectory = new File(ZfinPropertiesEnum.TARGETROOT + "/server_apps/sysexecs/make_thumbnail");
         CommandLine makeThumbnail = new CommandLine("./make_thumbnail.sh");
