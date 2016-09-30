@@ -211,6 +211,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
             marker.setName("test1 name");
             marker.setAbbreviation("testsierra");
             markerRepository.renameMarker(marker, publication, MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES, "old symbol", "old name");
+            session.flush();
+            session.refresh(marker);
             assertEquals("Created one new alias", 1, marker.getAliases().size());
             assertEquals("Created one new marker history record", 1, marker.getMarkerHistory().size());
             assertNotNull(infrastructureRepository.getRecordAttribution(

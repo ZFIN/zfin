@@ -250,7 +250,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
             assertEquals("recattrib source id is the run attrib", candidateBean.getNomenclaturePublicationZdbID(), testAttrib);
             assertEquals("recattrib data id is the mrel id", renoMrel.getZdbID(), testData);
             assertEquals("recattrib type is standard", testType, "standard");
-
+            HibernateUtil.currentSession().refresh(renoGene);
             MarkerHistory mhist = renoGene.getMarkerHistory().iterator().next();
             assertEquals("mhist reason is:", MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES, mhist.getReason());
 
