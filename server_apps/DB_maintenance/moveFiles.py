@@ -4,11 +4,11 @@ import re
 import os
 import shutil
 import sys
-files = os.listdir("<!--|LOADUP_FULL_PATH|--><!--|PDFLoadUp|-->")
+files = os.listdir("<!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->")
 
 output = {}
-path = '<!--|LOADUP_FULL_PATH|--><!--|PDFLoadUp|-->'
-origPath = '<!--|LOADUP_FULL_PATH|--><!--|PDFLoadUp|-->'
+path = '<!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->'
+origPath = '<!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->'
 
 for f in files:
         print f;
