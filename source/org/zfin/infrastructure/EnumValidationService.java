@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.junit.Ignore;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.antibody.Isotype;
 import org.zfin.curation.Curation;
@@ -50,7 +51,7 @@ public class EnumValidationService {
         Method[] methods = this.getClass().getMethods();
         int count = 0;
         for (Method method : methods) {
-            if (method.isAnnotationPresent(ServiceTest.class)) {
+            if (method.isAnnotationPresent(ServiceTest.class) && !method.isAnnotationPresent(Ignore.class)) {
                 try {
                     logger.info("running method: " + method.getName());
                     method.invoke(this);
@@ -132,6 +133,7 @@ public class EnumValidationService {
     }
 
     @ServiceTest
+    @Ignore("Don't run this until all topics are in use")
     public void validateCurationTopics() throws EnumValidationException {
         String hql = "select distinct cur_topic from curation";
         List topicList = HibernateUtil.currentSession().createSQLQuery(hql).list();
@@ -409,14 +411,14 @@ public class EnumValidationService {
         Enum enumType = null;
         for (Enum type : enumValues) {
             if (type.toString() != null || !allowNullEnumValue) {
-                enumList.add(type.toString());
+                enumList.add(type.toString().toLowerCase());
                 enumType = type;
             }
         }
 
         List<String> databaseStringList = new ArrayList<>();
         for (T type : databaseList) {
-            databaseStringList.add(type.toString());
+            databaseStringList.add(type.toString().toLowerCase());
         }
 
         String message = getCollectionDifferenceReport(enumList, databaseStringList, enumType.getClass());
