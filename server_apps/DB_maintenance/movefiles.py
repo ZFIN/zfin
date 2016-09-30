@@ -3,7 +3,6 @@
 import re
 import os
 import shutil
-import sys
 files = os.listdir("<!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->")
 
 output = {}
