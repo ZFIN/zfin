@@ -30,7 +30,7 @@
             '      <div class="figure-delete-button pull-right" data-toggle="tooltip"' +
             '           ng-attr-data-expr-count={{figure.numExpressionStatements}}' +
             '           ng-attr-data-pheno-count={{figure.numPhenotypeStatements}}>' +
-            '        <button class="btn btn-dense btn-link" ng-click="vm.deleteFigure(figure, $index)"' +
+            '        <button class="btn btn-dense btn-link" ng-click="vm.deleteFigure(figure, $index)" title="Remove figure"' +
             '                ng-disabled="figure.deleting || figure.numExpressionStatements || figure.numPhenotypeStatements">' +
             '          <i class="fa fa-trash"></i>' +
             '        </button>' +

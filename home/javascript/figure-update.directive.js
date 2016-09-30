@@ -10,7 +10,7 @@
             '    <span ng-show="vm.figure.images.length == 0" class="text-muted">No images yet</span>' +
             '    <span class="image-edit-image" ng-repeat="image in vm.figure.images">' +
             '      <img ng-src="{{image.thumbnailPath}}">' +
-            '      <span class="image-delete-button" ng-click="vm.deleteImage(image, $index)">' +
+            '      <span class="image-delete-button" ng-click="vm.deleteImage(image, $index)" title="Remove image">' +
             '        <span class="fa-stack fa-lg">' +
             '          <i class="fa fa-circle fa-stack-1x"></i>' +
             '          <i class="fa fa-times-circle fa-stack-1x"></i>' +
@@ -18,7 +18,7 @@
             '      </span>' +
             '    </span>' +
             '    <input type="file" ng-attr-id="file-{{::$id}}" class="image-add-input" accept="image/*">' +
-            '    <label ng-show="!vm.figure.uploading" ng-attr-for="file-{{::$id}}" class="image-add-label">+</label>' +
+            '    <label ng-show="!vm.figure.uploading" ng-attr-for="file-{{::$id}}" class="image-add-label" title="Add image">+</label>' +
             '    <span ng-show="vm.figure.uploading" class="image-add-uploading"><i class="fa fa-spinner fa-spin"></i></span>' +
             '  </p>' +
             '  <span class="text-danger" ng-show="vm.imageError">{{vm.imageError}}</span>' +
