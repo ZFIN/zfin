@@ -22,6 +22,7 @@
 
 <c:set var="linkURL">/cgi-bin/webdriver?MIval=aa-link_authors.apg&OID=${publication.zdbID}&anon1=zdb_id&anon1text=${publication.zdbID}</c:set>
 <c:set var="trackURL">/action/publication/${publication.zdbID}/track</c:set>
+<c:set var="viewURL">/${publication.zdbID}</c:set>
 <c:if test="${allowCuration}">
     <c:set var="curateURL">/cgi-bin/webdriver?MIval=aa-curation.apg&OID=${publication.zdbID}</c:set>
 </c:if>
@@ -32,6 +33,7 @@
                        linkURL="${linkURL}"
                        trackURL="${trackURL}"
                        curateURL="${curateURL}"
+                       viewURL="${viewURL}"
                        rtype="publication"/>
 
     <div class="row">
