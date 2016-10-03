@@ -75,9 +75,6 @@ public class PublicationTrackingController {
     @Autowired
     private CurationDTOConversionService converter;
 
-    @Autowired
-    private PublicationService publicationService;
-
     @RequestMapping(value = "/{zdbID}/track")
     public String showPubTracker(Model model, @PathVariable String zdbID) {
         Publication publication = publicationRepository.getPublication(zdbID);
@@ -442,21 +439,6 @@ public class PublicationTrackingController {
         }
 
         return "OK";
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/{id}/files")
-    public Collection<PublicationFilePresentationBean> getPublicationFiles(@PathVariable String id) {
-        Publication publication = publicationRepository.getPublication(id);
-        return publication.getFiles().stream()
-                .map(publicationService::convertToPublicationFilePresentationBean)
-                .collect(Collectors.toList());
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/file-types", method = RequestMethod.GET)
-    public Collection<PublicationFileType> getAllFileTypes() {
-        return publicationRepository.getAllPublicationFileTypes();
     }
 
 }

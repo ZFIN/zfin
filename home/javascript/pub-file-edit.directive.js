@@ -22,7 +22,7 @@
             '  </tr>' +
             '  <tr ng-repeat="file in vm.files">' +
             '    <td>{{file.type}}</td>' +
-            '    <td>{{file.fileName}}</td>' +
+            '    <td><a ng-href="{{file.fileName}}">{{file.originalFileName}}</a></td>' +
             '    <td>' +
             '      <div class="figure-delete-button pull-right">' +
             '        <button class="btn btn-dense btn-link" title="Remove file">' +

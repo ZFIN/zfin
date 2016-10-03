@@ -531,4 +531,6 @@ public interface PublicationRepository extends PaginationParameter {
                                                                          String sort);
 
     List<PublicationFileType> getAllPublicationFileTypes();
+
+    PublicationFileType getPublicationFileType(long id);
 }

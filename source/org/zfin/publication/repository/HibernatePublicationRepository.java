@@ -2185,4 +2185,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return HibernateUtil.currentSession().createCriteria(PublicationFileType.class).list();
     }
 
+    public PublicationFileType getPublicationFileType(long id) {
+        return (PublicationFileType) HibernateUtil.currentSession().get(PublicationFileType.class, id);
+    }
+
 }

@@ -11,12 +11,19 @@ import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.BeanCompareService;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationFile;
+import org.zfin.publication.PublicationFileType;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.ServletContext;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -242,10 +249,42 @@ public class PublicationService {
 
     public PublicationFilePresentationBean convertToPublicationFilePresentationBean(PublicationFile file) {
         PublicationFilePresentationBean bean = new PublicationFilePresentationBean();
+        bean.setId(file.getId());
         bean.setPubZdbId(file.getPublication().getZdbID());
         bean.setType(file.getType().getName().toString());
-        bean.setFileName(file.getFileName());
+        bean.setFileName(ZfinPropertiesEnum.PDF_LOAD + "/" + file.getFileName());
+        bean.setOriginalFileName(file.getOriginalFileName());
         return bean;
+    }
+
+    public PublicationFile processPublicationFile(Publication publication, String fileName, PublicationFileType fileType, InputStream fileData) throws IOException {
+        File fileRoot = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), ZfinPropertiesEnum.PDF_LOAD.toString());
+
+        String pubYear = Integer.toString(publication.getEntryDate().get(Calendar.YEAR));
+        File yearDirectory = new File(fileRoot, pubYear);
+        if (!yearDirectory.exists()) {
+            boolean success = yearDirectory.mkdirs();
+            if (!success) {
+                throw new IOException("Unable to create directory: " + yearDirectory.getAbsolutePath());
+            }
+        }
+
+        String storedFileName = publication.getZdbID();
+        if (fileType.getName() == PublicationFileType.Name.ORIGINAL_ARTICLE) {
+            storedFileName += ".pdf";
+        } else {
+            storedFileName += "-" + fileName;
+        }
+
+        File destination = new File(yearDirectory, storedFileName);
+        Files.copy(fileData, destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        PublicationFile pubFile = new PublicationFile();
+        pubFile.setType(fileType);
+        pubFile.setFileName(pubYear + File.separator + storedFileName);
+        pubFile.setOriginalFileName(storedFileName);
+        pubFile.setPublication(publication);
+        return pubFile;
     }
 
 }
