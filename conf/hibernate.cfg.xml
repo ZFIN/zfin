@@ -137,6 +137,7 @@
         <mapping class="org.zfin.ontology.TermStage"/>
         <mapping class="org.zfin.ontology.TransitiveClosure"/>
         <mapping class="org.zfin.publication.PublicationDbXref"/>
+        <mapping class="org.zfin.publication.PublicationFile"/>
         <mapping class="org.zfin.publication.PublicationFileType"/>
         <mapping class="org.zfin.publication.PublicationTrackingHistory"/>
         <mapping class="org.zfin.publication.PublicationTrackingLocation"/>

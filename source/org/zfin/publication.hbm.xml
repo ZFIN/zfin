@@ -96,11 +96,7 @@
 
         <set name="files" lazy="true" table="publication_file">
             <key column="pf_pub_zdb_id"/>
-            <composite-element class="org.zfin.publication.PublicationFile">
-                <parent name="publication"/>
-                <property name="fileName" column="pf_file_name"/>
-                <many-to-one name="type" column="pf_file_type_id"/>
-            </composite-element>
+            <one-to-many class="org.zfin.publication.PublicationFile"/>
         </set>
 
     </class>
