@@ -5,7 +5,6 @@ public class PublicationFilePresentationBean {
     private String pubZdbId;
     private String type;
     private String fileName;
-    private String description;
 
     public String getPubZdbId() {
         return pubZdbId;
@@ -29,13 +28,5 @@ public class PublicationFilePresentationBean {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }

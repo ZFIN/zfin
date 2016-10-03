@@ -244,7 +244,6 @@ public class PublicationService {
         PublicationFilePresentationBean bean = new PublicationFilePresentationBean();
         bean.setPubZdbId(file.getPublication().getZdbID());
         bean.setType(file.getType().getName().toString());
-        bean.setDescription("");
         bean.setFileName(file.getFileName());
         return bean;
     }
