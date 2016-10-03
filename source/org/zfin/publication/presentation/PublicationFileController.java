@@ -58,6 +58,18 @@ public class PublicationFileController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/files/{id}", method = RequestMethod.DELETE)
+    public String deletePublicationFile(@PathVariable long id) {
+        PublicationFile pubFile = publicationRepository.getPublicationFile(id);
+
+        Transaction tx = HibernateUtil.createTransaction();
+        HibernateUtil.currentSession().delete(pubFile);
+        tx.commit();
+
+        return "OK";
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/file-types", method = RequestMethod.GET)
     public Collection<PublicationFileType> getAllFileTypes() {
         return publicationRepository.getAllPublicationFileTypes();
