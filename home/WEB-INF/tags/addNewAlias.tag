@@ -14,7 +14,7 @@
         <tr>
             <td>Attribution</td>
             <td><input type="text" name="newAttribution" ng-model="control.newAttribution"
-                       ng-keyup="$event.keyCode == 13 && control.createNewAlias()"></td>
+                       ng-keyup="$event.keyCode == 13 && control.createNewAlias()" autocomplete="on"></td>
         </tr>
         <tr>
             <td></td>
@@ -38,7 +38,7 @@
         </tr>
         <tr>
             <td colspan="2">
-                <input size="20" name="publicationID" ng-model="control.publicationID"/>
+                <input size="20" name="publicationID" ng-model="control.publicationID" autocomplete="on"/>
         </tr>
         <tr>
             <td colspan="2">

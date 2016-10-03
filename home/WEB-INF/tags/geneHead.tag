@@ -13,8 +13,7 @@
         </c:forEach>
     </script>
 
-    <div ng-app="nomenclature">
-    <div ng-controller="NomenclatureController as control">
+    <div ng-app="nomenclature" ng-controller="NomenclatureController as control">
     <script>
         markerID = '${gene.zdbID}';
     </script>
@@ -37,7 +36,7 @@
                 <span style="cursor: pointer;"
                       ng-click="control.openGeneEditor('${gene.zdbID}','${gene.name}', 'Gene Name')"
                       ng-if="control.editMode">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red"></i>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit gene name"></i>
                 </span>
             </authz:authorize>
         </td>
@@ -50,7 +49,7 @@
                     <span style="cursor: pointer;"
                           ng-click="control.openGeneEditor('${gene.zdbID}','${gene.abbreviation}', 'Gene Symbol')"
                           ng-if="control.editMode">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red"></i></span>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit gene symbol"></i></span>
             </authz:authorize>
         </td>
     </tr>
@@ -80,7 +79,6 @@
 
 </table>
 <authz:authorize access="hasRole('root')">
-    </div>
     </div>
 </authz:authorize>
 

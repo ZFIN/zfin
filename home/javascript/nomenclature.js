@@ -158,6 +158,8 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
                 //alert("success")
                 nomenController.closeModal();
                 nomenController.fetchPreviousNameList();
+                nomenController.newAlias = '';
+                nomenController.newAttribution = ''
             })
             .catch(function (error) {
                 nomenController.errorMessage = error.data.message;
@@ -265,7 +267,7 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
 
     nomenController.openNomenclatureEditor = function (ID, reason, index) {
         nomenController.nomenID = ID;
-        nomenController.comments = $('#data-comments-'+index).html();
+        nomenController.comments = $('#data-comments-' + index).html();
         nomenController.reason = reason;
         nomenController.showAttribution = true;
         nomenController.hasGeneEdit = false;
@@ -335,6 +337,8 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
 
     nomenController.viewMarker = function () {
         nomenController.editMode = false;
+        nomenController.reason = '';
+        nomenController.comments = '';
         $("#viewMarker").hide();
         $("#editMarker").show();
     };
