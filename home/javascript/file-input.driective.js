@@ -11,7 +11,7 @@
             '    <li ng-repeat="file in files">{{file.name}}</li>' +
             '  </ul>' +
             '  <input type="file" ng-attr-id="file-input-{{::$id}}" ng-attr-accept="{{accept}}"/>' +
-            '  <label ng-attr-for="file-input-{{::$id}}"><strong>Choose a file</strong></label> or drag it here.' +
+            '  <label ng-attr-for="file-input-{{::$id}}"><strong>{{label}}</strong></label> or {{dragMsg}}.' +
             '</div>';
 
         var directive = {
@@ -33,6 +33,9 @@
             if (scope.multiple) {
                 input.attr('multiple', 'multiple');
             }
+
+            scope.label = scope.multiple ? 'Choose files' : 'Choose a file';
+            scope.dragMsg = scope.multiple ? 'drag them here' : 'drag it here';
 
             scope.accept = scope.accept || '';
 
