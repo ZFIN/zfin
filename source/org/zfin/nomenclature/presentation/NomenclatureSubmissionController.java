@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.MailSender;
+import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
@@ -149,13 +150,13 @@ public class NomenclatureSubmissionController {
     @ResponseBody
     @RequestMapping(value = "addAttribution/{zdbID}", method = RequestMethod.POST)
     public List<PublicationDTO> addAttribution(@PathVariable String zdbID,
-                                               @RequestBody String pubID) {
+                                               @RequestBody String pubID) throws InvalidWebRequestException {
         Publication publication = getPublicationRepository().getPublication(pubID);
         if (publication == null)
-            throw new RuntimeException("No publication found");
+            throw new InvalidWebRequestException("No publication found for ID: " + pubID, null);
         MarkerHistory history = getMarkerRepository().getMarkerHistory(zdbID);
         if (history == null)
-            throw new RuntimeException("No Marker History record found");
+            throw new InvalidWebRequestException("No Marker History record found for ID: " + zdbID, null);
 
         Transaction tx = null;
 
@@ -171,7 +172,7 @@ public class NomenclatureSubmissionController {
                 LOG.error("Error during roll back of transaction", he);
             }
             LOG.error("Error in Transaction", e);
-            throw new RuntimeException("Error during transaction. Rolled back.", e);
+            throw new InvalidWebRequestException("Error during transaction. Rolled back.", null);
         }
 
         return getAttributions(zdbID);

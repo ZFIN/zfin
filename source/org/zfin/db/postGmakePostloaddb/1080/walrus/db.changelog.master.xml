@@ -23,4 +23,5 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/dropTempRelTables.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/dropEnvironmentStaging.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/dropFishStaging.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/createAuditTable.sql"/>
 </databaseChangeLog>

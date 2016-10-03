@@ -8,9 +8,13 @@
      <th>Developmental Stage:</th>
      </tr>
      <td>
-<c:if test="${!empty image.imageStage.start}">
-     ${image.imageStage.start.nameLong} <b> to </b>${image.imageStage.end.nameLong}
+
+<c:if test="${!empty image.imageStage.start && image.imageStage.start ne image.imageStage.end}">
+     <zfin:link entity="${image.imageStage.start}"/> <b> to </b><zfin:link entity="${image.imageStage.end}"/>
 </c:if>
+          <c:if test="${image.imageStage.start eq image.imageStage.end}">
+               <zfin:link entity="${image.imageStage.start}"/>
+          </c:if>
      </td>
      </table>
 

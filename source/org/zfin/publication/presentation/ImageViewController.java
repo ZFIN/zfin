@@ -14,6 +14,7 @@ import org.zfin.figure.presentation.*;
 import org.zfin.figure.repository.FigureRepository;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.marker.Clone;
 import org.zfin.mutant.PhenotypeWarehouse;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
@@ -59,19 +60,21 @@ public class ImageViewController {
 
         model.addAttribute("image", image);
         Figure figure = image.getFigure();
+        if (figure!=null) {
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Image: " + figureViewService.getFullFigureLabel(image.getFigure()));
+            model.addAttribute("expressionGeneList", figureViewService.getExpressionGenes(image.getFigure()));
+            model.addAttribute("antibodyList", figureViewService.getAntibodies(image.getFigure()));
+            Map<Figure, FigureExpressionSummary> expressionSummaryMap = new HashMap<>();
+            Map<Figure, FigurePhenotypeSummary> phenotypeSummaryMap = new HashMap<>();
 
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Image: " + figureViewService.getFullFigureLabel(image.getFigure()));
-        model.addAttribute("expressionGeneList", figureViewService.getExpressionGenes(image.getFigure()));
-        model.addAttribute("antibodyList", figureViewService.getAntibodies(image.getFigure()));
-        Map<Figure, FigureExpressionSummary> expressionSummaryMap = new HashMap<>();
-        Map<Figure, FigurePhenotypeSummary> phenotypeSummaryMap = new HashMap<>();
+            expressionSummaryMap.put(figure, figureViewService.getFigureExpressionSummary(figure));
+            phenotypeSummaryMap.put(figure, figureViewService.getFigurePhenotypeSummary(figure));
 
-        expressionSummaryMap.put(figure, figureViewService.getFigureExpressionSummary(figure));
-        phenotypeSummaryMap.put(figure, figureViewService.getFigurePhenotypeSummary(figure));
-
-        model.addAttribute("expressionSummaryMap", expressionSummaryMap);
-        model.addAttribute("phenotypeSummaryMap", phenotypeSummaryMap);
-
+            model.addAttribute("expressionSummaryMap", expressionSummaryMap);
+            model.addAttribute("phenotypeSummaryMap", phenotypeSummaryMap);
+            Clone probe = figureViewService.getProbeForFigure(figure);
+            model.addAttribute("probe", probe);
+        }
 
         return "figure/image-view.page";
     }
@@ -92,7 +95,7 @@ public class ImageViewController {
         return "image-popup.page";
     }
 
-    @RequestMapping("/image/{zdbID}/summary")
+    @RequestMapping("/{zdbID}/summary")
     public String getImageSummaryPopup(Model model,
                                        @PathVariable("zdbID") String zdbID,
                                        @RequestParam(required = false) String category,

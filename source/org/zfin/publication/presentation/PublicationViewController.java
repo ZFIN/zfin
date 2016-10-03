@@ -20,6 +20,7 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.presentation.GeneBean;
@@ -326,9 +327,12 @@ public class PublicationViewController {
 
         model.addAttribute("image", image);
 
-
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Image: " + figureViewService.getFullFigureLabel(image.getFigure()));
-
+        Figure figure = image.getFigure();
+        if (figure!=null) {
+            Clone probe = figureViewService.getProbeForFigure(figure);
+            model.addAttribute("probe", probe);
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Image: " + figureViewService.getFullFigureLabel(image.getFigure()));
+        }
                 return "figure/image-edit.page";
             }
         }

@@ -32,7 +32,7 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/data_transfer/zfishbook/*.txt</artifacts>
+      <artifacts>server_apps/data_transfer/zfishbook/*.txt,server_apps/data_transfer/zfishbook/*.unl</artifacts>
       <allowEmptyArchive>false</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">

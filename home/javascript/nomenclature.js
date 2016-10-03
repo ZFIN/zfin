@@ -7,14 +7,17 @@ angular.module('nomenclature', [])
         nomenController.reason;
         nomenController.comments;
         nomenController.publicationID;
+        nomenController.errorMessage;
         nomenController.publicationDtoList = [];
 
         $scope.reasonList = $window.reasonList;
 
         nomenController.updateNomenclature = function () {
-            var parameters = {'comments': nomenController.comments,
-                              'reason':   nomenController.reason}
-            $http.post('/action/nomenclature/update/' + nomenController.nomenID,  parameters)
+            var parameters = {
+                'comments': nomenController.comments,
+                'reason': nomenController.reason
+            }
+            $http.post('/action/nomenclature/update/' + nomenController.nomenID, parameters)
                 .then(function (success) {
                     location.reload();
                 })
@@ -39,9 +42,10 @@ angular.module('nomenclature', [])
                         })
                     }
                     nomenController.publicationID = '';
+                    nomenController.errorMessage = '';
                 })
                 .catch(function (error) {
-                    alert('Error')
+                    nomenController.errorMessage = error.data.message;
                 });
         };
 
@@ -81,9 +85,9 @@ angular.module('nomenclature', [])
         };
 
 
-        nomenController.openEditor = function (ID, comments, reason) {
+        nomenController.openEditor = function (ID, reason, index) {
             nomenController.nomenID = ID;
-            nomenController.comments = comments;
+            nomenController.comments = $('#data-comments-' + index).html();
             nomenController.reason = reason;
             nomenController.fetchAttributions();
             $('#evidence-modal')

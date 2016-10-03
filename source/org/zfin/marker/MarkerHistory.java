@@ -59,7 +59,26 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
 
     @Override
     public int compareTo(MarkerHistory o) {
-        return -date.compareTo(o.getDate());
+        if (date.compareTo(o.getDate()) != 0)
+            return -date.compareTo(o.getDate());
+        else
+            return -event.compareTo(o.getEvent());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MarkerHistory that = (MarkerHistory) o;
+
+        return zdbID.equals(that.zdbID);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return zdbID.hashCode();
     }
 
     public enum Reason {

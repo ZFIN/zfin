@@ -23,6 +23,7 @@ insert into pub_tracking_history (pth_pub_zdb_id, pth_status_id, pth_status_set_
   where pub_completion_date is null
   and pub_indexed_date is null
   and pub_file is not null
+  and year(entry_time) > '2011'
  and status in ('active','epublish','in press','Epub ahead of print');
 
 insert into pub_tracking_history (pth_pub_zdb_id, pth_status_id, pth_status_insert_date, pth_status_set_by)
