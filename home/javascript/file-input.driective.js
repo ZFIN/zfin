@@ -10,8 +10,8 @@
             '  <ul class="list-unstyled">' +
             '    <li ng-repeat="file in files">{{file.name}}</li>' +
             '  </ul>' +
-            '  <input type="file" id="file" multiple ng-attr-accept="{{accept}}"/>' +
-            '  <label for="file"><strong>Choose a file</strong></label> or drag it here.' +
+            '  <input type="file" ng-attr-id="file-input-{{::$id}}" ng-attr-accept="{{accept}}"/>' +
+            '  <label ng-attr-for="file-input-{{::$id}}"><strong>Choose a file</strong></label> or drag it here.' +
             '</div>';
 
         var directive = {
@@ -20,7 +20,6 @@
             scope: {
                 files: '=',
                 errorMessage: '=',
-                multiple: '=',
                 accept: '@'
             },
             link: link
@@ -29,6 +28,13 @@
         function link(scope, element, attrs) {
             var input = element.find('input');
             var dragTarget = element.find('.file-drag-target');
+
+            scope.multiple = scope.$eval(attrs.multiple);
+            if (scope.multiple) {
+                input.attr('multiple', 'multiple');
+            }
+
+            scope.accept = scope.accept || '';
 
             function applyFilesToScope(files) {
                 var validFiles = [];
@@ -46,6 +52,9 @@
                     errorMessage = "Invalid file type: " + invalidFiles.map(function (f) { return f.name; }).join(', ');
                 }
                 scope.$apply(function () {
+                    if (!scope.multiple) {
+                        validFiles.splice(1, validFiles.length - 1);
+                    }
                     scope.files = validFiles;
                     scope.errorMessage = errorMessage;
                 });
