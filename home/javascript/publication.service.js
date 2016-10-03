@@ -35,7 +35,8 @@
             statusNeedsOwner       : statusNeedsOwner,
             statusNeedsLocation    : statusNeedsLocation,
             statusHasPriority      : statusHasPriority,
-            getFiles               : getFiles
+            getFiles               : getFiles,
+            getFileTypes           : getFileTypes
         };
 
         function getTopics(id) {
@@ -165,6 +166,10 @@
 
         function getFiles(id) {
             return $http.get('/action/publication/' + id + '/files');
+        }
+
+        function getFileTypes() {
+            return $http.get('/action/publication/file-types');
         }
     }
 

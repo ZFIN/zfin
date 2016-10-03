@@ -16,6 +16,7 @@
 <script src="/javascript/figure-upload.directive.js"></script>
 <script src="/javascript/figure-update.directive.js"></script>
 <script src="/javascript/pub-file-edit.directive.js"></script>
+<script src="/javascript/pub-file-upload.directive.js"></script>
 <script src="/javascript/publication.service.js"></script>
 <script src="/javascript/zfinutils.service.js"></script>
 
