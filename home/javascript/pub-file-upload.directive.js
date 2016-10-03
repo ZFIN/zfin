@@ -55,6 +55,7 @@
         vm.file = [];
         vm.type = null;
 
+        vm.upload = upload;
         vm.readyToUpload = readyToUpload;
 
         activate();
@@ -63,6 +64,19 @@
             PublicationService.getFileTypes()
                 .then(function (response) {
                     vm.fileTypes = response.data;
+                });
+        }
+
+        function upload() {
+            vm.uploading = true;
+            PublicationService.addFile(vm.pubId, vm.type.id, vm.file[0])
+                .then(function (response) {
+                    vm.files.push(response.data);
+                    vm.type = null;
+                    vm.file = [];
+                })
+                .finally(function () {
+                    vm.uploading = false;
                 });
         }
 

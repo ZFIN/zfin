@@ -36,7 +36,8 @@
             statusNeedsLocation    : statusNeedsLocation,
             statusHasPriority      : statusHasPriority,
             getFiles               : getFiles,
-            getFileTypes           : getFileTypes
+            getFileTypes           : getFileTypes,
+            addFile                : addFile
         };
 
         function getTopics(id) {
@@ -170,6 +171,16 @@
 
         function getFileTypes() {
             return $http.get('/action/publication/file-types');
+        }
+
+        function addFile(pubId, fileType, file) {
+            var form = new FormData();
+            form.append('fileType', fileType);
+            form.append('file', file);
+            return $http.post('/action/publication/' + pubId + '/files', form, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined}
+            });
         }
     }
 

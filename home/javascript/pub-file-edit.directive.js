@@ -8,7 +8,7 @@
             '<table class="table">' +
             '  <thead>' +
             '  <tr>' +
-            '    <th width="125px">Type</th>' +
+            '    <th width="175px">Type</th>' +
             '    <th>File</th>' +
             '    <th width="75px">Remove</th>' +
             '  </tr>' +
