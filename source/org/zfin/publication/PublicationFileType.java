@@ -1,5 +1,6 @@
 package org.zfin.publication;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.hibernate.annotations.*;
 
 import javax.persistence.*;
@@ -24,6 +25,7 @@ public class PublicationFileType {
         }
 
         @Override
+        @JsonValue
         public String toString() {
             return display;
         }

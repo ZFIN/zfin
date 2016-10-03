@@ -453,4 +453,10 @@ public class PublicationTrackingController {
                 .collect(Collectors.toList());
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/file-types", method = RequestMethod.GET)
+    public Collection<PublicationFileType> getAllFileTypes() {
+        return publicationRepository.getAllPublicationFileTypes();
+    }
+
 }
