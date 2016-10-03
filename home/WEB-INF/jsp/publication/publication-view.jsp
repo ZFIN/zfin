@@ -138,13 +138,6 @@
                 <c:if test="${not empty publication.fileName}">
                     <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}">PDF</a>
                 </c:if>
-                <form action="/cgi-bin/upload.cgi" method="post" enctype="multipart/form-data" class="inline-upload">
-                    <label for="pdfUploadFileInput">${not empty publication.fileName ? "Replace File" : "Upload File"}</label>
-                    <input type="file" accept="application/pdf" name="upload" id="pdfUploadFileInput">
-                    <input type="hidden" name="redirect_url" value="/action/publication/view/${publication.zdbID}">
-                    <input type="hidden" name="OID" value="${publication.zdbID}">
-                    <button type="submit">Upload</button>
-                </form>
             </td>
         </tr>
 
