@@ -25,7 +25,8 @@
             '    <td><a ng-href="{{file.fileName}}">{{file.originalFileName}}</a></td>' +
             '    <td>' +
             '      <div class="figure-delete-button pull-right">' +
-            '        <button class="btn btn-dense btn-link" title="Remove file">' +
+            '        <button class="btn btn-dense btn-link" title="Remove file" ' +
+            '                ng-click="vm.deleteFile(file, $index)" ng-disabled="file.deleting">' +
             '          <i class="fa fa-trash"></i>' +
             '        </button>' +
             '      </div>' +
@@ -59,10 +60,23 @@
 
         activate();
 
+        vm.deleteFile = deleteFile;
+
         function activate() {
             PublicationService.getFiles(vm.pubId)
                 .then(function (response) {
                     vm.files = response.data;
+                });
+        }
+
+        function deleteFile(file, idx) {
+            file.deleting = true;
+            PublicationService.deleteFile(file)
+                .then(function () {
+                    vm.files.splice(idx, 1);
+                })
+                .finally(function () {
+                    file.deleting = false;
                 });
         }
     }

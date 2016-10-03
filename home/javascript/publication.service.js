@@ -37,7 +37,8 @@
             statusHasPriority      : statusHasPriority,
             getFiles               : getFiles,
             getFileTypes           : getFileTypes,
-            addFile                : addFile
+            addFile                : addFile,
+            deleteFile             : deleteFile
         };
 
         function getTopics(id) {
@@ -180,6 +181,14 @@
             return $http.post('/action/publication/' + pubId + '/files', form, {
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined}
+            });
+        }
+
+        function deleteFile(file) {
+            return $http({
+                url: '/action/publication/files/' + file.id,
+                method: 'DELETE',
+                transformResponse: undefined
             });
         }
     }
