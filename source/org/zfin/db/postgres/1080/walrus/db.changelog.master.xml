@@ -6,5 +6,5 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 <include file="source/org/zfin/db/postgres/1080/walrus/schemaMigrationChangelog20160913prod.xml"/>
-<include file="source/org/zfin/db/postgres/1080/walrus/addConstraints20160913prod.xml"/>
+<!--<include file="source/org/zfin/db/postgres/1080/walrus/addConstraints20160913prod.xml"/>-->
 </databaseChangeLog>

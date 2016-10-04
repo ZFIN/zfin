@@ -21,6 +21,5 @@
        execute function get_pub_mini_ref(new_publication.zdb_id) 
          into publication.pub_mini_ref,
        execute function get_pub_default_permissions(new_publication.pub_jrnl_zdb_id)
-         into publication.pub_can_show_images,
-       execute procedure pushPETDateToPubHistoryTracking(new_publication.zdb_id)
+         into publication.pub_can_show_images
      );

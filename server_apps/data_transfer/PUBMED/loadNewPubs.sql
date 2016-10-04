@@ -218,6 +218,15 @@ insert into publication (
   where year is null
   and not exists (Select 'x' from publication where accession_no = pmid);
 
+insert into pub_tracking_history (pth_pub_zdb_id,
+						pth_status_id,
+						pth_status_set_by,
+						pth_status_is_current)
+          select zdb_id, (select pts_pk_id from pub_tracking_status
+ 			where pts_status= 'NEW'),'ZDB-PERS-030520-1','t')
+			;
+			
+
 create temp table tmp_mesh (
   pmid varchar(30),
   descriptor_id varchar(10),
