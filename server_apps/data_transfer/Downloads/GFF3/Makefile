@@ -33,10 +33,10 @@ E_unload_zfin_tginsertion_gff.sql unload_ZMP.sql
 
 STATICS = gather_alias.awk rollback.sql commit.sql load_drerio_vega_id.sql \
 	 update_vega_nomenclature.sql get_mo_and_crispr_seq.sql \
-	 E_zfin_ensembl_gene.sql load_BL_gff.sql load_ZMP.sql get_talen_seq_1.sql \
+	 E_zfin_ensembl_gene.sql load_BL_gff.sql get_talen_seq_1.sql \
 	 get_talen_seq_2.sql sam2gff3.groovy merge_gff3.groovy gff32unl.groovy \
 	 load_knockdown_reagents.sql load_burgess_lin.sh load_knockdown_reagents.sh \
-	 load_zmp.sh reportMissedTalens.groovy
+	 reportMissedTalens.groovy
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
