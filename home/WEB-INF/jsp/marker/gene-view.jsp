@@ -1,10 +1,12 @@
-<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <script src="/javascript/table-collapse.js"></script>
+<script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
+<script src="/javascript/editMarker.js"></script>
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.GeneBean" scope="request"/>
 
@@ -25,7 +27,8 @@
     </tiles:insertTemplate>
 </div>
 
-<zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}"/>
+<div ng-app="editMarker" ng-controller="EditController as eControl">
+    <zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}"/>
 
 
 <zfin2:uninformativeGeneName name="${formBean.marker.abbreviation}" fromChimericClone="${formBean.hasChimericClone}"/>
@@ -118,3 +121,5 @@
         jQuery("#disease").find(".marker-go-table").tableCollapse({label: "records"});
     });
 </script>
+
+    </div>

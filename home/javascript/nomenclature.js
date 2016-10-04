@@ -1,6 +1,6 @@
-var nomenApp = angular.module('nomenclature', []);
+var editMarker = angular.module('editMarker');
 
-nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$window', function ($http, $attrs, $scope, $window) {
+editMarker.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$window', function ($http, $attrs, $scope, $window) {
     var nomenController = this;
 
     nomenController.nomenID;
@@ -16,8 +16,8 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
     nomenController.newAttribution;
     nomenController.newAlias;
     nomenController.aliasID;
-    nomenController.editMode = false;
     nomenController.previousNameList = [];
+    $scope.editMode;
 
     $scope.reasonList = $window.reasonList;
     $scope.markerID = $window.markerID;
@@ -290,6 +290,7 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
     }
 
     nomenController.openGeneEditor = function (ID, name, type) {
+        alert("Hert "+ID)
         nomenController.nomenID = ID;
         nomenController.fieldName = type;
         nomenController.geneNameOrAbbreviation = name;
@@ -329,25 +330,10 @@ nomenApp.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$wi
         openModalPopup('delete-modal');
     };
 
-    nomenController.editMarker = function () {
-        nomenController.editMode = true;
-        $("#viewMarker").show();
-        $("#editMarker").hide();
-    };
-
-    nomenController.viewMarker = function () {
-        nomenController.editMode = false;
-        nomenController.reason = '';
-        nomenController.comments = '';
-        $("#viewMarker").hide();
-        $("#editMarker").show();
-    };
-
-
 }]);
 
 
-nomenApp.filter('unsafe', function ($sce) {
+editMarker.filter('unsafe', function ($sce) {
     return function (val) {
         return $sce.trustAsHtml(val);
     };

@@ -4,7 +4,6 @@
 <%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="false" %>
 
 <authz:authorize access="hasRole('root')">
-    <script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
     <script src="/javascript/nomenclature.js" type="text/javascript"></script>
     <script>
         var reasonList = [];
@@ -13,19 +12,16 @@
         </c:forEach>
     </script>
 
-    <div ng-app="nomenclature" ng-controller="NomenclatureController as control">
     <script>
         markerID = '${gene.zdbID}';
     </script>
-</authz:authorize>
-
-<authz:authorize access="hasRole('root')">
     <caption>
-        <div ng-click="control.editMarker()" id="editMarker" style="cursor: pointer;" class="error">Edit</div>
-        <div ng-click="control.viewMarker()" style="display: none" id="viewMarker" style="cursor: pointer;">
+        <div ng-click="eControl.editMarker()" id="editMarker" style="cursor: pointer;" class="error">Edit</div>
+        <div ng-click="eControl.viewMarker()" style="display: none" id="viewMarker" style="cursor: pointer;">
             View
         </div>
     </caption>
+    <div ng-controller="NomenclatureController as control">
 </authz:authorize>
 <table class="primary-entity-attributes">
     <tr>
@@ -35,7 +31,7 @@
             <authz:authorize access="hasRole('root')">
                 <span style="cursor: pointer;"
                       ng-click="control.openGeneEditor('${gene.zdbID}','${gene.name}', 'Gene Name')"
-                      ng-if="control.editMode">
+                      ng-if="editMode">
                     <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit gene name"></i>
                 </span>
             </authz:authorize>
@@ -48,7 +44,7 @@
             <authz:authorize access="hasRole('root')">
                     <span style="cursor: pointer;"
                           ng-click="control.openGeneEditor('${gene.zdbID}','${gene.abbreviation}', 'Gene Symbol')"
-                          ng-if="control.editMode">
+                          ng-if="editMode">
                     <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit gene symbol"></i></span>
             </authz:authorize>
         </td>
@@ -59,7 +55,7 @@
             <zfin2:nomenclature geneEdit="true" showReason="${gene.type.geneOrGenep}"/>
         </td>
     </tr>
-    <zfin2:previousNamesFast label="Previous Name" previousNames="${previousNames}" marker="${gene}"/>
+    <zfin2:previousNamesFast label="Previous Name" previousNames="${previousNames}" marker="${gene}" showEditControls="true"/>
     <tr>
         <th>Location:</th>
         <td>
