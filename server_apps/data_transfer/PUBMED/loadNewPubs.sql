@@ -220,10 +220,9 @@ insert into publication (
 
 insert into pub_tracking_history (pth_pub_zdb_id,
 						pth_status_id,
-						pth_status_set_by,
-						pth_status_is_current)
+						pth_status_set_by)
           select zdb_id, (select pts_pk_id from pub_tracking_status
- 			where pts_status= 'NEW'),'ZDB-PERS-030520-1','t'
+ 			where pts_status= 'NEW'),'ZDB-PERS-030520-1'
 			from tmp_new_pubs
 			where exists (Select 'x' from publication
 			      	     	     where tmp_new_pubs.zdb_id = publication.zdb_id);
