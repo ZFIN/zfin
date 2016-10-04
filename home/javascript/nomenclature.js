@@ -37,6 +37,11 @@ editMarker.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$
 
                 });
         } else {
+            if (nomenController.geneNameOrAbbreviation == nomenController.geneNameOrAbbreviationOrg) {
+                nomenController.errorMessage = "No change in name or symbol detected."
+                return;
+            }
+
             if (nomenController.fieldName == 'Gene Name') {
                 parameters.name = nomenController.geneNameOrAbbreviation;
             } else if (nomenController.fieldName == 'Gene Symbol') {
@@ -57,32 +62,6 @@ editMarker.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$
                 });
 
         }
-    };
-
-    nomenController.updateGeneName = function () {
-        var parameters = {
-            'comments': nomenController.comments,
-            'reason': nomenController.reason,
-            'name': nomenController.geneNameOrAbbreviation
-        };
-        $http.post('/action/marker/edit/' + nomenController.nomenID, parameters)
-            .then(function (success) {
-                location.reload();
-            })
-            .catch(function (error) {
-
-            });
-    };
-
-    nomenController.updateGeneAbbreviation = function () {
-        $http.post('/action/marker/edit/' + nomenController.nomenID, parameters)
-            .then(function (success) {
-                nomenController.fetchPreviousNameList();
-            })
-            .catch(function (error) {
-                alert("error")
-                nomenController.errorMessage = error.data.message;
-            });
     };
 
     nomenController.updateMarkerHistory = function () {
@@ -290,10 +269,10 @@ editMarker.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$
     }
 
     nomenController.openGeneEditor = function (ID, name, type) {
-        alert("Hert "+ID)
         nomenController.nomenID = ID;
         nomenController.fieldName = type;
         nomenController.geneNameOrAbbreviation = name;
+        nomenController.geneNameOrAbbreviationOrg = name;
         nomenController.hasGeneEdit = true;
         nomenController.errorMessage = '';
         //alert("name "+nomenController.geneNameOrAbbreviation)
