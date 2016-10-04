@@ -1,7 +1,6 @@
 package org.zfin.publication.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -93,12 +92,9 @@ public class PublicationTrackingController {
     @RequestMapping(value = "/{zdbID}/notes", method = RequestMethod.GET)
     public Collection<PublicationNoteDTO> getPublicationNotes(@PathVariable String zdbID) {
         Publication publication = publicationRepository.getPublication(zdbID);
-        return CollectionUtils.collect(publication.getNotes(), new Transformer() {
-            @Override
-            public Object transform(Object o) {
-                return converter.toPublicationNoteDTO((PublicationNote) o);
-            }
-        });
+        return publication.getNotes().stream()
+                .map(converter::toPublicationNoteDTO)
+                .collect(Collectors.toList());
     }
 
     @ResponseBody
@@ -116,9 +112,12 @@ public class PublicationTrackingController {
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
         session.save(note);
+
+        PublicationNoteDTO dto = converter.toPublicationNoteDTO(note);
+
         tx.commit();
         
-        return converter.toPublicationNoteDTO(note);
+        return dto;
     }
 
     @ResponseBody
@@ -130,9 +129,12 @@ public class PublicationTrackingController {
         PublicationNote note = (PublicationNote) session.get(PublicationNote.class, zdbID);
         note.setText(noteDTO.getText());
         session.update(note);
+
+        PublicationNoteDTO dto = converter.toPublicationNoteDTO(note);
+
         tx.commit();
 
-        return converter.toPublicationNoteDTO(note);
+        return dto;
     }
 
     @ResponseBody
@@ -277,9 +279,12 @@ public class PublicationTrackingController {
         curation.setOpenedDate(topicDTO.getOpenedDate());
         curation.setClosedDate(topicDTO.getClosedDate());
         session.save(curation);
+
+        CurationDTO dto = converter.toCurationDTO(curation);
+
         tx.commit();
 
-        return converter.toCurationDTO(curation);
+        return dto;
     }
 
     @ResponseBody
@@ -294,21 +299,21 @@ public class PublicationTrackingController {
         curation.setOpenedDate(topicDTO.getOpenedDate());
         curation.setClosedDate(topicDTO.getClosedDate());
         session.update(curation);
+
+        CurationDTO dto = converter.toCurationDTO(curation);
+
         tx.commit();
 
-        return converter.toCurationDTO(curation);
+        return dto;
     }
 
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/correspondences", method = RequestMethod.GET)
     public Collection<CorrespondenceDTO> getCorrespondences(@PathVariable String zdbID) {
         Publication publication = publicationRepository.getPublication(zdbID);
-        return CollectionUtils.collect(publication.getCorrespondences(), new Transformer() {
-            @Override
-            public Object transform(Object o) {
-                return converter.toCorrespondenceDTO((Correspondence) o);
-            }
-        });
+        return publication.getCorrespondences().stream()
+                .map(converter::toCorrespondenceDTO)
+                .collect(Collectors.toList());
     }
 
     @ResponseBody
@@ -322,9 +327,12 @@ public class PublicationTrackingController {
         correspondence.setCurator(ProfileService.getCurrentSecurityUser());
         correspondence.setContactedDate(new Date());
         session.save(correspondence);
+
+        CorrespondenceDTO dto = converter.toCorrespondenceDTO(correspondence);
+
         tx.commit();
 
-        return converter.toCorrespondenceDTO(correspondence);
+        return dto;
     }
 
     @ResponseBody
@@ -340,9 +348,12 @@ public class PublicationTrackingController {
             correspondence.setGiveUpDate(correspondenceDTO.getClosedDate());
         }
         session.update(correspondence);
+
+        CorrespondenceDTO dto = converter.toCorrespondenceDTO(correspondence);
+
         tx.commit();
 
-        return converter.toCorrespondenceDTO(correspondence);
+        return dto;
     }
 
     @ResponseBody
