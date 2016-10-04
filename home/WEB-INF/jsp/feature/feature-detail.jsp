@@ -275,9 +275,11 @@
                 <zfin2:entityNotes entity="${formBean.feature}"/>
             </table>
         </td>
+<c:if test="${fn:startsWith(formBean.feature.abbreviation, 'sa')==false}">
         <td>
             <div class="gbrowse-image"></div>
         </td>
+ </c:if>
     </tr>
 </table>
 
