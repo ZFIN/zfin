@@ -138,7 +138,7 @@ public class PublicationTrackingController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/notes/{zdbID}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/notes/{zdbID}", method = RequestMethod.DELETE, produces = "text/plain")
     public String deletePublicationNote(@PathVariable String zdbID) {
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
@@ -357,7 +357,7 @@ public class PublicationTrackingController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/correspondences/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/correspondences/{id}", method = RequestMethod.DELETE, produces = "text/plain")
     public String deleteCorrespondence(@PathVariable long id) {
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
@@ -409,7 +409,7 @@ public class PublicationTrackingController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "{id}/notification", method = RequestMethod.POST)
+    @RequestMapping(value = "{id}/notification", method = RequestMethod.POST, produces = "text/plain")
     public String sendNotificationLetter(@PathVariable String id,
                                          @RequestBody NotificationLetter letter,
                                          HttpServletResponse response) {
