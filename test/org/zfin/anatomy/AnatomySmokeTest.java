@@ -162,7 +162,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
         // 	actinotrichium [ZDB-TERM-100614-30]
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-all-clean-fish-include-substructures/ZDB-TERM-100614-30");
         // Genotype Df(Chr03:sox8,sox9b)b971/b971
-        assertThat(page.getAnchorByText("AB +MO1-plod1a"), is(notNullValue()));
+        assertThat(page.getAnchorByText("AB + MO1-plod1a"), is(notNullValue()));
     }
 
 
