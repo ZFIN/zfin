@@ -5,7 +5,7 @@
 # more confusing.
 
 # DESCRIPTION:
-# This is a cgi, called from image-upload.apg, imageupdate.apg,
+# This is a cgi, called from imageupdate.apg,
 # xpatcuration.apg, and the pub tracker. It implements upload
 # to filesytem functionality.  This script interacts with the database, 
 # and does under some conditions, create ZDB-IDs.  However, it does not
@@ -415,7 +415,7 @@ sub uploadFile() { # upload the file taking the directory (pdf or image)
     $vFilename = $_[1];
     $vDir = $_[0];
 
-    # "upload" comes from the webdatablade/html form: image-upload.apg,
+    # "upload" comes from the webdatablade/html form:
     # pub tracker, and imageupdate.apg
     
     $upload_filehandle = $query->upload("upload");

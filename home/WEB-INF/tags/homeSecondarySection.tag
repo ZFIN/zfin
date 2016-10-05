@@ -82,16 +82,10 @@
 <h3>Administration</h3>
 <ul>
     <li> Add
-        <!--
-      <a href="/cgi-bin/webdriver?rtype=person&MIval=aa-new_person.apg"><em>person</em></a>,
-        <a href="/cgi-bin/webdriver?rtype=lab&MIval=aa-new_lab.apg"><em>lab</em></a>,
-        <a href="/cgi-bin/webdriver?rtype=company&MIval=aa-new_company.apg"><em>company</em></a>,
-        -->
         <a href="/action/profile/person/create"><em>person</em></a>,
         <a href="/action/profile/lab/create"><em>lab</em></a>,
         <a href="/action/profile/company/create"><em>company</em></a>,
         <br>&nbsp;&nbsp;&nbsp;&nbsp;
-        <!--<a href="/cgi-bin/webdriver?MIval=aa-image-upload.apg"><em>image</em></a>,-->
         <a href="/action/publication/new"><em>pub</em></a>,
         <a href="/action/feature/alleleDesig-add-form"><em>line designation</em></a>
     </li>
