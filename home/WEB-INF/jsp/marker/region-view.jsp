@@ -1,4 +1,3 @@
-<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
@@ -6,7 +5,8 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.MarkerBean" scope="request"/>
 
-<c:set var="editURL">/<%=ZfinProperties.getWebDriver()%>?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=${formBean.marker.zdbID}</c:set>
+<c:set var="editURL">/<%=ZfinProperties.getWebDriver()%>?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=${formBean.marker.zdbID}
+</c:set>
 <c:set var="deleteURL">/action/infrastructure/deleteRecord/${formBean.marker.zdbID}</c:set>
 
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
@@ -21,7 +21,7 @@
     </tiles:insertTemplate>
 </div>
 
-<zfin2:markerHead marker="${formBean.marker}" previousNames="${formBean.previousNames}"/>
+<zfin2:markerHead marker="${formBean.marker}" previousNames="${formBean.previousNames}" showEditControls="true"/>
 
 <%--// EXPRESSION SECTION
 <zfin2:markerExpression marker="${formBean.marker}" markerExpression="${formBean.markerExpression}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>

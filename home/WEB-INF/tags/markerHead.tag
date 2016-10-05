@@ -4,6 +4,7 @@
               rtexprvalue="true" required="true" %>
 <%@ attribute name="typeName" type="java.lang.String" required="false" rtexprvalue="true" %>
 <%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="true" %>
+<%@ attribute name="showEditControls" required="true" %>
 
 <c:if test="${empty typeName}">
     <c:set var="typeName">${marker.markerType.displayName}</c:set>
@@ -18,16 +19,18 @@
 <script>
     markerID = '${marker.zdbID}';
 </script>
-<authz:authorize access="hasRole('root')">
-    <caption>
-        <div ng-click="eControl.editMarker()" id="editMarker" style="cursor: pointer;" class="error">Edit
-        </div>
-        <div ng-click="eControl.viewMarker()" style="display: none" id="viewMarker" style="cursor: pointer;">
-            View
-        </div>
-    </caption>
-    <div ng-controller="NomenclatureController as control">
-</authz:authorize>
+<c:if test="${showEditControls}">
+    <authz:authorize access="hasRole('root')">
+        <caption>
+            <div ng-click="eControl.editMarker()" id="editMarker" style="cursor: pointer;" class="error">Edit
+            </div>
+            <div ng-click="eControl.viewMarker()" style="display: none" id="viewMarker" style="cursor: pointer;">
+                View
+            </div>
+        </caption>
+        <div ng-controller="NomenclatureController as control">
+    </authz:authorize>
+</c:if>
 <table class="primary-entity-attributes">
     <tr>
         <th><span class="name-label">${marker.markerType.displayName} Name:</span></th>

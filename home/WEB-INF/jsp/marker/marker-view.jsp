@@ -26,7 +26,7 @@
 </div>
 
 <div ng-app="editMarker" ng-controller="EditController as eControl">
-    <zfin2:markerHead marker="${formBean.marker}" previousNames="${formBean.previousNames}"/>
+    <zfin2:markerHead marker="${formBean.marker}" previousNames="${formBean.previousNames}" showEditControls="true"/>
 
     <%--MARKER RELATIONSHIPTS--%>
     <c:if test="${formBean.marker.type ne 'RAPD'}">

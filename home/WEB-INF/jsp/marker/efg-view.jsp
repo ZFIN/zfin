@@ -21,7 +21,7 @@
     </tiles:insertTemplate>
 </div>
 
-<zfin2:markerHead marker="${formBean.marker}" previousNames="${formBean.previousNames}"/>
+<zfin2:markerHead marker="${formBean.marker}" previousNames="${formBean.previousNames}" showEditControls="true"/>
 
 <%--// EXPRESSION SECTION--%>
 <zfin2:markerExpression marker="${formBean.marker}" markerExpression="${formBean.markerExpression}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
