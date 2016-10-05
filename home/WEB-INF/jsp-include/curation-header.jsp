@@ -1,6 +1,11 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css"/>
+<script src="/javascript/angular/angular.min.js"></script>
+<script src="/javascript/angular/paging.min.js"></script>
+<script src="/javascript/zfin-app.module.js"></script>
+
+<script src="/javascript/figure.service.js"></script>
+<script src="/javascript/quick-figure.directive.js"></script>
 
 <style type="text/css">
     .sub-data-manager {
@@ -95,13 +100,16 @@
             <a class="small-new-link" href="javascript:"
                onClick=open("/action/marker/region-add?regionPublicationZdbID=${publication.zdbID}","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
                 Add New Engineered Region</a>
-            <c:if test="${module eq 'construct'}">
         </td>
+        <c:if test="${module eq 'construct'}">
+            <td>
+                <a class="small-new-link" href="javascript:"
+                   onClick=open("/action/infrastructure/controlled-vocabulary-add","helpwindow","scrollbars=yes,height=850,width=750,resizable=yes")>
+                    Add New Species</a>
+            </td>
+        </c:if>
         <td>
-            <a class="small-new-link" href="javascript:"
-               onClick=open("/action/infrastructure/controlled-vocabulary-add","helpwindow","scrollbars=yes,height=850,width=750,resizable=yes")>
-                Add New Species</a>
-            </c:if>
+            <span quick-figure pub-id="${publication.zdbID}"></span>
         </td>
         <td width="30%">
             <a class="small-new-link" href="javascript:"

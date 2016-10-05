@@ -5,7 +5,7 @@
 
     quickFigure.$inject = ['$compile'];
     function quickFigure($compile) {
-        var template = '<a href="#" data-toggle="popover" class="quick-fig" ng-click="vm.toggle()">Quick Figure</a>';
+        var template = '<a href data-toggle="popover" class="quick-fig small-new-link" ng-click="vm.toggle()">Add Figure</a>';
         var popoverTemplate =
             '<div class="quick-fig-content">' +
             '  <div>' +
@@ -22,7 +22,7 @@
             '    </form>' +
             '    <p class="text-success">{{vm.successMessage}}</p>' +
             '    <p class="text-danger" ng-show="vm.errorMessage">{{vm.errorMessage}}</p>' +
-            '    <small><a href="#">Add figure with images and caption</a></small>' +
+            '    <small><a ng-href="/action/publication/{{vm.pubId}}/edit#figures">Add figure with images and caption</a></small>' +
             '  </div>' +
             '</div>';
 

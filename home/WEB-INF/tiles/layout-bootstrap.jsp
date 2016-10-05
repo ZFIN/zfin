@@ -42,12 +42,13 @@
     <link rel=stylesheet type="text/css" href="/css/typeahead.css">
     <link rel="stylesheet" href="/css/datepicker3.css">
     <link rel=stylesheet type="text/css" href="/css/bootstrap3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css"/>
 
     <script src="/javascript/header.js" type="text/javascript"></script>
     <script type="text/javascript" src="/javascript/jquery.modal.min.js"></script>
     <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
     <script type="text/javascript" src="/javascript/sorttable.js"></script>
-    <script type="text/javascript" src="/css/bootstrap3/js/tabs.js"></script>
+    <script src="/css/bootstrap3/js/bootstrap.min.js"></script>
 
     <script>
         if (hdrGetCookie("tabCookie") === "Motto") {
@@ -61,9 +62,13 @@
 
 <tiles:insertAttribute name="header"/>
 
-<tiles:insertAttribute name="curation-header"/>
-
-<tiles:insertAttribute name="body"/>
+<%-- this file does not include any angular source files, that's left up to the pages --%>
+<%-- using this layout to do. but the ng-app attribute is here so that everything is --%>
+<%-- under control of a single app --%>
+<div ng-app="app">
+    <tiles:insertAttribute name="curation-header"/>
+    <tiles:insertAttribute name="body"/>
+</div>
 
 <tiles:insertAttribute name="footer"/>
 

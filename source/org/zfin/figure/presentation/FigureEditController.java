@@ -63,6 +63,10 @@ public class FigureEditController {
 
         Publication publication = publicationRepository.getPublication(zdbID);
 
+        if (publication == null) {
+            throw new InvalidWebRequestException("Invalid publication");
+        }
+
         boolean existingLabel = publication.getFigures().stream().anyMatch(fig -> fig.getLabel().equals(label));
         if (existingLabel) {
             throw new InvalidWebRequestException(label + " already exists");

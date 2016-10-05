@@ -1,6 +1,3 @@
-<script src="/javascript/angular/angular.min.js"></script>
-<script src="/javascript/angular/paging.min.js"></script>
-<script src="/javascript/zfin-app.module.js"></script>
 <script src="/javascript/trusted-html.filter.js"></script>
 <script src="/javascript/ortho-edit.js"></script>
 <script src="/javascript/inline-edit-textarea.directive.js"></script>
@@ -25,9 +22,7 @@
     </tr>
     <tr>
         <td>
-            <div ng-app="app">
-                <div ortho-edit pub="${publication.zdbID}"></div>
-            </div>
+            <div ortho-edit pub="${publication.zdbID}"></div>
         </td>
     </tr>
 </table>
