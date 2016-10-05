@@ -24,7 +24,9 @@ ls --hide="*.*" > filenames.txt
 for f in $data_files
 do
     echo $f
-    sed 's/|$//' $f > $f.txt
+    sed 's/\r/\\r/g' $f > $f.txt2
+    sed 's/|$//' $f.txt2 > $f.txt
+    rm f.txt2
 done
 
 
