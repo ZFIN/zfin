@@ -1708,23 +1708,6 @@ union
 
 <!---------------- end Transcripts ------------------->
 
-  <!--------------- Gene Product Description ------->
-  <?MISQL SQL="select dblink_linked_recid
-		 from external_note, db_link
-		where extnote_data_zdb_id = dblink_zdb_id
-		  and dblink_linked_recid = '$OID';">
-  <?/MISQL>
-  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
-        <?MIBLOCK COND="$(=,$titledisplay,0)">
-		<hr width = "80%">
-  		<b>GENE PRODUCTS </b>
-		<?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
-	<?/MIBLOCK>
-	<p><?MIVAR><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-geneprddescription.apg&OID=$OID><b>Gene Product Description</b></A><?/MIVAR>
-
-  <?/MIBLOCK>
-  <!-----------end of Gene Product Description ------->
-
   <!--------------- Antibody ------->
   <?MISQL SQL="select count(mrel_mrkr_2_zdb_id)
   		 from marker_relationship
