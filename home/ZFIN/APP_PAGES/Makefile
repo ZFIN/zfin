@@ -25,7 +25,6 @@ SUBDIRS = \
 	locus_files \
 	marker_files \
 	misc_files \
-	navigation_files \
 	pubbrowser \
 	security_files \
 	selection \
