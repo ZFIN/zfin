@@ -249,9 +249,9 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
     public String getOldSymbol() {
         switch (event) {
             case REASSIGNED:
-                return markerAlias.getAlias();
+                return (markerAlias == null ? "" : markerAlias.getAlias());
             case MERGED:
-                return markerAlias.getAlias();
+                return (markerAlias == null ? "" : markerAlias.getAlias());
             case RENAMED:
                 return oldMarkerName;
         }

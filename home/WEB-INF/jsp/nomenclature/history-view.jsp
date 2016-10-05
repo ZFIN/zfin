@@ -19,13 +19,13 @@
 <script src="/javascript/nomenclature.js" type="text/javascript"></script>
 
 <script>
-    var reasonList = new Array();
+    var reasonList = [];
     <c:forEach items="${marker.markerHistory.iterator().next().reasonArray}" var="reason" varStatus="status">
     reasonList.push('${reason.toString()}');
     </c:forEach>
 </script>
 
-<div ng-app="nomenclature">
+<div ng-app="editMarker">
     <div ng-controller="NomenclatureController as control">
         <zfin2:subsection title="Nomenclature History"
                           test="${!empty marker.markerHistory }"
