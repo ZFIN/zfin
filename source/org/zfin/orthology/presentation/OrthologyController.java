@@ -81,7 +81,7 @@ public class OrthologyController {
         return orthologDTOs;
     }
 
-    @RequestMapping(value = "/gene/{geneID}/ortholog/{orthoID}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/gene/{geneID}/ortholog/{orthoID}", method = RequestMethod.DELETE, produces = "text/plain")
     public
     @ResponseBody
     String deleteOrtholog(@PathVariable String geneID,
@@ -152,7 +152,7 @@ public class OrthologyController {
     }
 
 
-    @RequestMapping(value = "/gene/{geneID}/ortholog/evidence", method = RequestMethod.POST)
+    @RequestMapping(value = "/gene/{geneID}/ortholog/evidence", method = RequestMethod.POST, produces = "text/plain")
     public
     @ResponseBody
     String createOrthologFromNcbi(@PathVariable String geneID,
