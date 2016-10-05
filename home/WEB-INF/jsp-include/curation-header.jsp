@@ -88,7 +88,7 @@
         </td>
         <td>
             <a class="small-new-link" href="javascript:"
-               onClick=open("/action/marker/gene-add?type=EFG&source=='${publication.zdbID}'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
+               onClick=open("/action/marker/gene-add?type=EFG&source='${publication.zdbID}'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
                 Add New EFG</a>
         </td>
         <td>
