@@ -58,8 +58,8 @@
         return directive;
     }
 
-    QuickFigureController.$inject = ['FigureService'];
-    function QuickFigureController(FigureService) {
+    QuickFigureController.$inject = ['FigureService','$window'];
+    function QuickFigureController(FigureService, $window) {
         var vm = this;
 
         vm.types = ['Fig.', 'text only', 'Table'];
@@ -99,6 +99,7 @@
                     vm.successMessage = response.data.label + " created";
                     vm.label = '';
                     vm.errorMessage = '';
+                    $window.refreshFigures();
                 })
                 .catch(function (response) {
                     vm.successMessage = '';

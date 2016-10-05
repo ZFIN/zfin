@@ -246,7 +246,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
 
     public void retrieveConstructionZoneValues() {
         // figure list
-        curationRPCAsync.getFigures(publicationID, new RetrieveFiguresCallback());
+        refreshFigureList();
 
         // stage list
         curationRPCAsync.getStages(new RetrieveStageListCallback());
@@ -264,6 +264,10 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         // set stage selector mode from session
         sessionRPC.isStageSelectorSingleMode(publicationID, new RetrieveStageSelectorCallback(errorElement, stageSelector));
 
+    }
+
+    public void refreshFigureList() {
+        curationRPCAsync.getFigures(publicationID, new RetrieveFiguresCallback());
     }
 
     public void updateFish() {

@@ -47,6 +47,7 @@ public class PhenotypeCurationModule implements HandlesError {
         curationFilterModule = new CurationFilterModule(null, mutantExpressionModule, structureModule, publicationID);
         structureModule.setPileStructureClickListener(constructionZoneModule);
         pileConstructionZoneModule = constructionZoneModule;
+        exposeFigureRefreshMethodToJavascript(mutantExpressionModule, curationFilterModule);
     }
 
     private Map<EntityPart, List<OntologyDTO>> getTermEntryMap() {
@@ -117,4 +118,13 @@ public class PhenotypeCurationModule implements HandlesError {
     public void addHandlesErrorListener(HandlesError handlesError) {
         handlesErrorListeners.add(handlesError);
     }
+
+    private native void exposeFigureRefreshMethodToJavascript(MutantModule presenter, CurationFilterModule curationFilterModule)/*-{
+        $wnd.refreshFigures = function () {
+            presenter.@org.zfin.gwt.curation.ui.MutantModule::refreshFigureList()();
+            curationFilterModule.@org.zfin.gwt.curation.ui.CurationFilterModule::refreshFigureList()();
+        };
+
+    }-*/;
+
 }
