@@ -28,7 +28,7 @@ GENERICS = citlink.apg  \
 
 STATICS= REFERinfo.apg pubprintable.apg enterpubs.apg pubtopic_close.apg \
 	pnote_new.apg \
-	citselectlist.apg citfish.apg externallink.apg \
+	citselectlist.apg citfish.apg \
 	citjtypeoption.apg citgeneric.apg cittotalcount.apg pub_rowdisplay.apg \
 
 # use default rules for app page directories.
