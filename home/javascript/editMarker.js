@@ -6,14 +6,10 @@ editMarker.controller('EditController', ['$attrs', '$scope', function ($attrs, $
 
     eControl.editMarker = function () {
         $scope.editMode = true;
-        $("#viewMarker").show();
-        $("#editMarker").hide();
     };
 
     eControl.viewMarker = function () {
         $scope.editMode = false;
-        $("#viewMarker").hide();
-        $("#editMarker").show();
     };
 }]);
 

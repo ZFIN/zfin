@@ -16,8 +16,8 @@
         markerID = '${gene.zdbID}';
     </script>
     <caption>
-        <div ng-click="eControl.editMarker()" id="editMarker" style="cursor: pointer;" class="error">Edit</div>
-        <div ng-click="eControl.viewMarker()" style="display: none" id="viewMarker" style="cursor: pointer;">
+        <div ng-click="eControl.editMarker()" ng-if="!editMode" style="cursor: pointer;" class="error">Edit</div>
+        <div ng-click="eControl.viewMarker()" ng-if="editMode" style="cursor: pointer;" class="error">
             View
         </div>
     </caption>
@@ -55,7 +55,8 @@
             <zfin2:nomenclature geneEdit="true" showReason="${gene.type.geneOrGenep}"/>
         </td>
     </tr>
-    <zfin2:previousNamesFast label="Previous Name" previousNames="${previousNames}" marker="${gene}" showEditControls="true"/>
+    <zfin2:previousNamesFast label="Previous Name" previousNames="${previousNames}" marker="${gene}"
+                             showEditControls="true"/>
     <tr>
         <th>Location:</th>
         <td>

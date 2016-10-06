@@ -22,6 +22,17 @@ editMarker.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$
     $scope.reasonList = $window.reasonList;
     $scope.markerID = $window.markerID;
 
+    $scope.$watch("editMode", function(){
+        // reset values
+        nomenController.reset();
+    });
+
+    nomenController.reset= function () {
+        nomenController.reason = '';
+        nomenController.comments = '';
+    }
+
+
     nomenController.updateNomenclature = function () {
         nomenController.errorMessage = '';
         var parameters = {
