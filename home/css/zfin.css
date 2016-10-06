@@ -12,7 +12,7 @@ body {
     min-width: 600px;
     margin: 0;
     padding: 0;
-    background: @SITE_BACKGROUND @;
+    background: @SITE_BACKGROUND@;
 }
 
 hr {
