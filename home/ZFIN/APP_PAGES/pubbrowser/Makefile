@@ -23,7 +23,7 @@ SUBDIRS = EDITpubs
 GENERICS = citlink.apg  \
 	js-delete_attrib.apg link_authors.apg \
 	miniref_display.apg \
-	pubacknowledgement.apg pubselect2.apg \
+	pubselect2.apg \
 	showpubs.apg showsnppubs.apg
 
 STATICS= REFERinfo.apg pubprintable.apg enterpubs.apg pubtopic_close.apg \
