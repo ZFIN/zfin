@@ -271,7 +271,8 @@
                     escapeClose: false,
                     clickClose: false,
                     showClose: false,
-                    fadeDuration: 100
+                    fadeDuration: 100,
+                    modalClass: ''
                 })
                 .on($.modal.AFTER_CLOSE, function () {
                     vm.modalOrtholog = undefined;
@@ -398,7 +399,8 @@
                     escapeClose: false,
                     clickClose: false,
                     showClose: false,
-                    fadeDuration: 100
+                    fadeDuration: 100,
+                    modalClass: ''
                 })
                 .on($.modal.AFTER_CLOSE, function () {
                     vm.modalOrtholog = undefined;
