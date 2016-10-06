@@ -7,7 +7,7 @@
     <script src="/javascript/nomenclature.js" type="text/javascript"></script>
     <script>
         var reasonList = [];
-        <c:forEach items="${gene.markerHistory.iterator().next().reasonArray}" var="reason" varStatus="status">
+        <c:forEach items="${markerHistoryReasonCodes}" var="reason" varStatus="status">
         reasonList.push('${reason.toString()}');
         </c:forEach>
     </script>

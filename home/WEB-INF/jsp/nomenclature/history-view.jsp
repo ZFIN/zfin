@@ -20,7 +20,7 @@
 
 <script>
     var reasonList = [];
-    <c:forEach items="${marker.markerHistory.iterator().next().reasonArray}" var="reason" varStatus="status">
+    <c:forEach items="${markerHistoryReasonCodes}" var="reason" varStatus="status">
     reasonList.push('${reason.toString()}');
     </c:forEach>
 </script>
