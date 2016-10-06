@@ -312,6 +312,10 @@ img.clickable {
     color: red;
 }
 
+.checkbox-label > input {
+    margin-right: 5px;
+}
+
 .red-modifier-hyperlink a {
     color: red;
     font-style: italic;

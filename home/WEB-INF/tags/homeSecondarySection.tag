@@ -61,7 +61,7 @@
         </li>
         <li>
 
-            Curate ZDB-PUB-<input name="pubID" id="pubID" size="15" autocomplete="on">
+            Curate ZDB-PUB-<input name="pubID" id="pubID" size="15" autocomplete="on"/>
         </li>
     </ul>
     <script type="text/javascript">

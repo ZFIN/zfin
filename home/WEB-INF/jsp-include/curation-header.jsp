@@ -6,6 +6,9 @@
 
 <script src="/javascript/figure.service.js"></script>
 <script src="/javascript/quick-figure.directive.js"></script>
+<script src="/javascript/quick-figure.directive.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/css/zfin-bootstrap-overrides.css"/>
 
 <style type="text/css">
     .sub-data-manager {
@@ -53,16 +56,20 @@
     }
 </style>
 
-<zfin2:dataManager zdbID="" showLastUpdate="true" rtype="publication"
-                   trackURL="/action/publication/${publication.zdbID}/track"/>
+<zfin2:dataManager zdbID="${publication.zdbID}"
+                   showLastUpdate="true"
+                   rtype="publication"
+                   trackURL="/action/publication/${publication.zdbID}/track"
+        />
 
 <table class="table table-bordered" width="100%">
     <tbody>
     <tr>
         <td colspan="8">
-            <a href="/${publication.zdbID}">${publication.authors} (${publication.year}) <br/>${publication.title}
-                [${publication.journal.name}] ${publication.zdbID}
-            </a>
+            <zfin2:toggleTextLength text="${publication.authors}${publication.title}"
+                                                                    idName="${zfn:generateRandomDomID()}"
+                                                                    shortLength="80"
+                                                                    url="${publication.zdbID}"/>
         </td>
     </tr>
     <tr>
@@ -119,7 +126,7 @@
     </tr>
 </table>
 
-<ul class="nav nav-tabs" id="myTab" >
+<ul class="nav nav-tabs" id="myTab">
     <c:forEach var="curationTab" items="${curationTabs}">
         <c:choose>
             <c:when test="${curationTab.name eq module}">
@@ -129,7 +136,7 @@
                 <li>
             </c:otherwise>
         </c:choose>
-        <a  href="/action/curation/${curationTab.name}/${publication.zdbID}">${curationTab.displayName}</a></li>
+        <a href="/action/curation/${curationTab.name}/${publication.zdbID}">${curationTab.displayName}</a></li>
     </c:forEach>
 </ul>
 

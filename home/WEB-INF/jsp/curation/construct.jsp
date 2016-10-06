@@ -19,7 +19,7 @@
     <tr>
         <td>
             <span class="bold">CREATE NEW CONSTRUCT: </span>                                                                          x
-            <a onclick="showCreateConstructSection()" id="showConstructAdd">Show</a>
+            <a onclick="showCreateConstructSection()" id="showConstructAdd" style="text-decoration:underline">Show</a>
             <a style="display: none;" onclick="hideCreateConstructSection()" id="hideConstructAdd">Hide</a>
 
             <div id="constructadd" style="display: none;"></div>
@@ -28,7 +28,7 @@
     <tr>
         <td>
             <span class="bold">EDIT CONSTRUCT: </span>
-            <a onclick="showEditConstructSection()" id="showConstructEdit">Show</a>
+            <a onclick="showEditConstructSection()" id="showConstructEdit" style="text-decoration:underline">Show</a>
             <a style="display: none;" onclick="hideEditConstructSection()" id="hideConstructEdit">Hide</a>
 
             <div id="constructedit" style="display: none;"></div>

@@ -55,6 +55,7 @@ public class ConstructCurationModule extends ConstructionZoneAdapater {
     public void initGUI() {
         showHideToggle = new ShowHideToggle(constructRelationshipBox);
         HorizontalPanel titlePanel = new HorizontalPanel();
+        constructRelationshipLink.addStyleName("bold");
         titlePanel.add(constructRelationshipLink);
         titlePanel.add(new HTML("&nbsp;"));
         titlePanel.add(showHideToggle);
