@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.publication.Publication;
 
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
@@ -43,11 +44,13 @@ public class CurationController {
         model.addAttribute("module", module);
 
         Publication publication = getPublicationRepository().getPublication(pubID);
-        if (publication == null)
+        if (publication == null) {
             return "record-not-found.page";
+        }
         model.addAttribute("publication", publication);
         model.addAttribute("curationTabs", CurationTab.values());
         model.addAttribute("currentTab", module);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Curate: " + publication.getTitle());
         return "curation/" + module + ".page";
     }
 
