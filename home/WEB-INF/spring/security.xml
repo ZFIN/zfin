@@ -124,6 +124,9 @@
         <security:intercept-url pattern="/action/people/edit-user*"
                                 access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}" requires-channel="https"/>
 
+        <security:intercept-url pattern="/action/figure/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/figure/*/images" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/image/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/new" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/curating-bin" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/indexing-bin" access="hasRole('root') or ${DISABLE_SECURITY}"/>
@@ -132,13 +135,17 @@
         <security:intercept-url pattern="/action/publication/statuses" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/locations" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/curators" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/publication/file-types" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/correspondences/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/publication/files/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/notes/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/topics/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/*/correspondences" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/*/curatedEntities" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/*/details" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/*/edit" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/publication/*/figures" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/publication/*/files" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/*/notes" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/*/notification" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/*/status" access="hasRole('root') or ${DISABLE_SECURITY}"/>
