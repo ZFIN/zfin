@@ -102,7 +102,7 @@ public class ProfileService {
         }
 
         // refetch the person object so that lazy attributes can be accessed by callers of this method
-        return (Person) principal;
+        return RepositoryFactory.getProfileRepository().getPerson(((Person) principal).getZdbID());
     }
 
     /**
