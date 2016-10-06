@@ -1,5 +1,6 @@
 package org.zfin.gwt.marker;
 
+import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
@@ -22,6 +23,7 @@ import static org.junit.Assert.*;
 /**
  * DB tests for MarkerGoEvidence code.
  */
+@FixMethodOrder
 public class GoEvidenceTest extends AbstractDatabaseTest {
 
     @Test
@@ -71,7 +73,6 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
         assertNotNull(MarkerGoEvidencePresentation.getInterproReferenceDatabase()) ;
         assertNotNull(MarkerGoEvidencePresentation.getRefseqReferenceDatabase()) ;
         assertNotNull(MarkerGoEvidencePresentation.getSpkwReferenceDatabase()) ;
-        assertNotNull(MarkerGoEvidencePresentation.getUniprotReferenceDatabase()) ;
     }
 
     /**
