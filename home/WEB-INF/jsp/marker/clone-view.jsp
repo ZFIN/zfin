@@ -22,7 +22,6 @@
     </tiles:insertTemplate>
 </div>
 
-<div ng-app="editMarker" ng-controller="EditController as eControl">
     <zfin2:cloneHead cloneBean="${formBean}"/>
 
     <zfin2:uninformativeCloneName name="${formBean.marker.abbreviation}" chimericClone="${formBean.marker.chimeric}"/>
@@ -67,4 +66,3 @@
     <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}"/>
 
     <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.clone}"/>
-</div>

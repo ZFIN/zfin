@@ -9,13 +9,6 @@
     <script>
         markerID = '${cloneBean.marker.zdbID}';
     </script>
-    <caption>
-        <div ng-click="eControl.editMarker()" id="editMarker" style="cursor: pointer;" class="error">Edit</div>
-        <div ng-click="eControl.viewMarker()" style="display: none" id="viewMarker" style="cursor: pointer;">
-            View
-        </div>
-    </caption>
-    <div ng-controller="NomenclatureController as control">
 </authz:authorize>
 <table class="primary-entity-attributes">
     <tr>
@@ -23,7 +16,7 @@
         <td><span class="name-value"><zfin:name entity="${cloneBean.clone}"/> </span>
         </td>
     </tr>
-    <zfin2:previousNamesFast label="Previous Name" previousNames="${cloneBean.previousNames}" showEditControls="true"/>
+    <zfin2:previousNamesFast label="Previous Name" previousNames="${cloneBean.previousNames}"/>
 
     <c:if test="${!empty cloneBean.clone.problem}">
     <tr>
@@ -42,10 +35,7 @@
     <zfin2:entityNotes entity="${cloneBean.clone}"/>
 
 </table>
-<authz:authorize access="hasRole('root')">
-    <zfin2:nomenclature geneEdit="true" showReason="false"/>
-    </div>
-</authz:authorize>
+
 
 
 
