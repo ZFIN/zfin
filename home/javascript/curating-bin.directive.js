@@ -110,15 +110,24 @@
 
         function claimPub(pub) {
             pub.saving = true;
+           
             var status = {
                 pubZdbID: pub.zdbId,
                 status: { id: vm.nextStatus },
                 location: null,
                 owner: { zdbID: vm.userId }
             };
-            PublicationService.updateStatus(status)
-                .then(function () {
+
+            PublicationService.updateStatus(status,false)
+                .then(function (response) {
                     pub.claimed = true;
+                   
+                })
+                .catch(function (response) {
+                   
+                    if (response.data && response.data.message) {
+                        vm.claimError = response.data.message;
+                    }
                 })
                 .finally(function () {
                     pub.saving = false;

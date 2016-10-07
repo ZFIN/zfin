@@ -57,8 +57,12 @@
             return $http.get('/action/publication/' + id + '/status');
         }
 
-        function updateStatus(status) {
-            return $http.post('/action/publication/' + status.pubZdbID + '/status', status);
+        function  updateStatus(status, claimedFlag) {
+            var endpoint = '/status';
+            if (claimedFlag) {
+                endpoint += '?claimedFlag=false';
+            }
+            return $http.post('/action/publication/' + status.pubZdbID + endpoint, status);
         }
 
         function getNotes(id) {
