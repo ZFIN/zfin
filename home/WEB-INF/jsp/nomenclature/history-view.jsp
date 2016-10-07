@@ -16,16 +16,19 @@
 </div>
 
 <script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
+<script src="/javascript/editMarker.js"></script>
 <script src="/javascript/nomenclature.js" type="text/javascript"></script>
 
-<script>
-    var reasonList = [];
-    <c:forEach items="${markerHistoryReasonCodes}" var="reason" varStatus="status">
-    reasonList.push('${reason.toString()}');
-    </c:forEach>
-</script>
+<div ng-app="editMarker" ng-controller="EditController as eControl">
+    <script>
+        markerID = '${marker.zdbID}';
 
-<div ng-app="editMarker">
+        var reasonList = [];
+        <c:forEach items="${markerHistoryReasonCodes}" var="reason" varStatus="status">
+        reasonList.push('${reason.toString()}');
+        </c:forEach>
+    </script>
+
     <div ng-controller="NomenclatureController as control">
         <zfin2:subsection title="Nomenclature History"
                           test="${!empty marker.markerHistory }"
@@ -104,7 +107,7 @@
             </table>
         </zfin2:subsection>
 
-        <zfin2:nomenclature/>
+        <zfin2:nomenclature showReason="true"/>
 
         <script>
             function openEditNomenclature(nomenID) {
