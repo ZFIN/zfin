@@ -21,7 +21,7 @@
     }
 
     .nav-tabs {
-        background-color: #9c9;
+        background-color: #699;
     }
 
     .nav-tabs > li > a {
@@ -46,7 +46,7 @@
     }
 
     .table-hover > tbody > tr > td:hover, .table-hover > tbody > tr > td:hover {
-        background-color: #9c9 !important;
+        background-color: #699 !important;
     }
 
     .table-bordered > tbody > tr > td {
@@ -64,63 +64,44 @@
 <table class="table table-bordered" width="100%">
     <tbody>
     <tr>
-        <td colspan="8">
+        <td>
             <zfin2:toggleTextLength text="${publication.authors}${publication.title}"
-                                                                    idName="${zfn:generateRandomDomID()}"
-                                                                    shortLength="80"
-                                                                    url="${publication.zdbID}"/>
+                                    idName="${zfn:generateRandomDomID()}"
+                                    shortLength="80"
+                                    url="${publication.zdbID}"/>
         </td>
     </tr>
     <tr>
         <td>
             <a class="small-new-link" href="javascript:"
                onClick=open("/action/marker/gene-add?type=GENE&source=\'${publication.zdbID}\'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
-                Add New Gene</a>
-        </td>
-        <td>
+                Add New Gene</a> |
             <a class="small-new-link" href="javascript:"
                onClick=open("/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentPublicationZdbID=${publication.zdbID}&sequenceTargetingReagentType=MRPHLNO","helpwindow","scrollbars=yes,height=900,width=1150,resizable=yes")>
-                Add New Morpholino</a>
-        </td>
-        <td>
-            <a class="small-new-link" href="javascript:"
-               onClick=open("/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentPublicationZdbID=${publication.zdbID}&sequenceTargetingReagentType=TALEN","helpwindow","scrollbars=yes,height=900,width=1150,resizable=yes")>
-                Add New TALEN</a>
-        </td>
-        <td>
-            <a class="small-new-link" href="javascript:"
-               onClick=open("/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentPublicationZdbID=${publication.zdbID}&sequenceTargetingReagentType=CRISPR","helpwindow","scrollbars=yes,height=900,width=1150,resizable=yes")>
-                Add New CRISPR</a>
-        </td>
-        <td>
+                Add New STR</a> |
             <a class="small-new-link" href="javascript:"
                onClick=open("/action/antibody/add?antibodyPublicationZdbID=${publication.zdbID}","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
-                Add New Antibody</a>
-        </td>
-        <td>
+                Add New Antibody</a> |
             <a class="small-new-link" href="javascript:"
                onClick=open("/action/marker/gene-add?type=EFG&source='${publication.zdbID}'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
-                Add New EFG</a>
-        </td>
-        <td>
+                Add New EFG</a> |
             <a class="small-new-link" href="javascript:"
                onClick=open("/action/marker/region-add?regionPublicationZdbID=${publication.zdbID}","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
-                Add New Engineered Region</a>
-        </td>
-        <c:if test="${module eq 'construct'}">
-            <td>
+                Add New Engineered Region</a> |
+            <c:if test="${module eq 'construct'}">
                 <a class="small-new-link" href="javascript:"
                    onClick=open("/action/infrastructure/controlled-vocabulary-add","helpwindow","scrollbars=yes,height=850,width=750,resizable=yes")>
-                    Add New Species</a>
-            </td>
-        </c:if>
-        <td>
-            <span quick-figure pub-id="${publication.zdbID}"></span>
-        </td>
-        <td width="30%">
+                    Add New Species</a> |
+            </c:if>
+            <span quick-figure pub-id="${publication.zdbID}"></span> |
             <a class="small-new-link" href="javascript:"
                onClick=open("/action/publication/${publication.zdbID}/feature-list","helpwindow","scrollbars=yes,height=850,width=700,resizable=yes")>FEATURE
                 TABLE</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="directAttributionName"></div>
         </td>
     </tr>
 </table>

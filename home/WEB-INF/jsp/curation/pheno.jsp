@@ -4,11 +4,6 @@
 <table class="table table-borderless">
     <tr>
         <td>
-            <div id="directAttributionName"></div>
-        </td>
-    </tr>
-    <tr>
-        <td>
             <span id="show-hide-experiments"></span>
         </td>
     </tr>

@@ -6,7 +6,6 @@
         xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui.experiment'
         >
     <g:FlowPanel>
-        <zfin-ui:AttributionModule ui:field="attributionModule" styleName="flow-margin"/>
         <zfin-mod:ExperimentAddView ui:field="experimentAddView" styleName="flow-margin"/>
         <zfin-mod:ConditionAddView ui:field="conditionAddView" styleName="flow-margin"/>
     </g:FlowPanel>

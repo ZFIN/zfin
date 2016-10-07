@@ -4,7 +4,6 @@
 <table class="table table-borderless">
     <tr>
         <td>
-            <div id="directAttributionName"></div>
             <span id="show-hide-experiments"></span>
             <div id="display-experiment"></div>
             <div id="image-loading"></div>

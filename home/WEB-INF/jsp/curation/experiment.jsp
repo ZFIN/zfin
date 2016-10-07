@@ -1,9 +1,6 @@
 <script type="text/javascript" language="javascript"
         src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
 
-
-<div id="directAttributionName"></div>
-
 <div id="experimentTab"></div>
 
 <script type="text/javascript">

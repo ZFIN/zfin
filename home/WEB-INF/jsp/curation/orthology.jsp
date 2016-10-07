@@ -21,11 +21,6 @@
 <table class="table table-borderless">
     <tr>
         <td>
-            <div id="directAttributionName"></div>
-        </td>
-    </tr>
-    <tr>
-        <td>
             <div ortho-edit pub="${publication.zdbID}"></div>
         </td>
     </tr>

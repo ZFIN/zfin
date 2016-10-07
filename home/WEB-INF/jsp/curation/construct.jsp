@@ -13,12 +13,7 @@
 <table class="table table-borderless">
     <tr>
         <td>
-            <div id="directAttributionName"></div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <span class="bold">CREATE NEW CONSTRUCT: </span>                                                                          x
+            <span class="bold">CREATE NEW CONSTRUCT: </span>
             <a onclick="showCreateConstructSection()" id="showConstructAdd" style="text-decoration:underline">Show</a>
             <a style="display: none;" onclick="hideCreateConstructSection()" id="hideConstructAdd">Hide</a>
 

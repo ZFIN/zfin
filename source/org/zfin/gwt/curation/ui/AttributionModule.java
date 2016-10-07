@@ -144,15 +144,18 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
         panel.add(errorLabel);
 
         messageBox.setStyleName("clickable");
+        messageBox.setVisible(false);
         panel.add(messageBox);
     }
 
     public void setMessage(String message) {
         messageBox.setHTML(message + " [close]");
+        messageBox.setVisible(true);
     }
 
     public void clearMessage() {
         messageBox.setHTML("");
+        messageBox.setVisible(false);
     }
 
     @Override

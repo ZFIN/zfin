@@ -2,10 +2,6 @@
         src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
 
 
-<div id="directAttributionName"></div>
-
-<br>
-
 <div id="feature-module"></div>
 
 

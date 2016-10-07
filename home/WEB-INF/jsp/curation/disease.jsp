@@ -4,11 +4,6 @@
 <table class="table table-borderless">
     <tr>
         <td>
-            <div id="directAttributionName"></div>
-        </td>
-    </tr>
-    <tr>
-        <td>
             <div id="humanDiseaseZone"></div>
         </td>
     </tr>

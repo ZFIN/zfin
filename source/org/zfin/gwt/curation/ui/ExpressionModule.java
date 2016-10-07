@@ -35,8 +35,7 @@ public class ExpressionModule implements HandlesError, EntryPoint {
     // listener
     private List<HandlesError> handlesErrorListeners = new ArrayList<>();
 
-    @UiField
-    AttributionModule attributionModule;
+    private AttributionModule attributionModule = new AttributionModule();
     @UiField
     ConstructionZoneModule constructionZoneModule;
     @UiField
