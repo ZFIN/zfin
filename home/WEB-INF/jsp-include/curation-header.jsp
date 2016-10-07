@@ -52,6 +52,7 @@
     .table-bordered > tbody > tr > td {
         border-right-width: 0px;
         border-left-width: 0px;
+        border-bottom-width: 0px;
     }
 </style>
 
@@ -61,7 +62,7 @@
                    trackURL="/action/publication/${publication.zdbID}/track"
         />
 
-<table class="table table-bordered" width="100%">
+<table class="table table-bordered" width="100%" style="border-bottom-width: 0px">
     <tbody>
     <tr>
         <td>
