@@ -32,7 +32,7 @@
     </tiles:insertTemplate>
 </div>
 
-    <zfin2:markerHead marker="${formBean.marker}" previousNames="${formBean.previousNames}" showEditControls="false"/>
+    <zfin2:markerHead marker="${formBean.marker}" previousNames="${formBean.previousNames}" showEditControls="true"/>
 
     <%--Construct Features--%>
     <%--&lt;%&ndash;SEGMENT (CLONE AND PROBE) RELATIONSHIPS&ndash;%&gt;--%>
