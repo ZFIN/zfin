@@ -3,17 +3,19 @@
 <%@ attribute name="gene" type="org.zfin.marker.Marker" rtexprvalue="true" required="true" %>
 <%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="false" %>
 
+<script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
+<script src="/javascript/editMarker.js"></script>
+<script src="/javascript/nomenclature.js" type="text/javascript"></script>
+
 <authz:authorize access="hasRole('root')">
-    <script src="/javascript/nomenclature.js" type="text/javascript"></script>
+    <div ng-app="editMarker" ng-controller="EditController as eControl">
     <script>
+        markerID = '${gene.zdbID}';
+
         var reasonList = [];
         <c:forEach items="${markerHistoryReasonCodes}" var="reason" varStatus="status">
         reasonList.push('${reason.toString()}');
         </c:forEach>
-    </script>
-
-    <script>
-        markerID = '${gene.zdbID}';
     </script>
     <caption>
         <div ng-click="eControl.editMarker()" ng-if="!editMode" style="cursor: pointer;" class="error">Edit</div>
@@ -78,7 +80,6 @@
 <authz:authorize access="hasRole('root')">
     </div>
 </authz:authorize>
-
 
 
 

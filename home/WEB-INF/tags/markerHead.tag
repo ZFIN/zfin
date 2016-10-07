@@ -6,36 +6,42 @@
 <%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="true" %>
 <%@ attribute name="showEditControls" required="true" %>
 
+<script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
+<script src="/javascript/editMarker.js"></script>
+<script src="/javascript/nomenclature.js" type="text/javascript"></script>
+
 <c:if test="${empty typeName}">
     <c:set var="typeName">${marker.markerType.displayName}</c:set>
 </c:if>
 
-
-<authz:authorize access="hasRole('root')">
-    <script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
-    <script src="/javascript/nomenclature.js" type="text/javascript"></script>
-</authz:authorize>
-
-<script>
-    markerID = '${marker.zdbID}';
-</script>
-<c:if test="${showEditControls}">
     <authz:authorize access="hasRole('root')">
-        <caption>
-            <div ng-click="eControl.editMarker()" id="editMarker" style="cursor: pointer;" class="error">Edit
-            </div>
-            <div ng-click="eControl.viewMarker()" style="display: none" id="viewMarker" style="cursor: pointer;">
-                View
-            </div>
-        </caption>
+        <div ng-app="editMarker" ng-controller="EditController as eControl">
+        <script>
+            markerID = '${marker.zdbID}';
+
+            var reasonList = [];
+            <c:forEach items="${markerHistoryReasonCodes}" var="reason" varStatus="status">
+            reasonList.push('${reason.toString()}');
+            </c:forEach>
+        </script>
+
+        <c:if test="${showEditControls}">
+            <caption>
+                <div ng-click="eControl.editMarker()" ng-if="!editMode" style="cursor: pointer;" class="error">Edit</div>
+                <div ng-click="eControl.viewMarker()" ng-if="editMode" style="cursor: pointer;" class="error">
+                    View
+                </div>
+            </caption>
+        </c:if>
         <div ng-controller="NomenclatureController as control">
     </authz:authorize>
-</c:if>
+
 <table class="primary-entity-attributes">
     <tr>
         <th><span class="name-label">${marker.markerType.displayName} Name:</span></th>
         <td>
             <span class="name-value"><zfin:name entity="${marker}"/></span>
+            <c:if test="${showEditControls}">
             <authz:authorize access="hasRole('root')">
                 <span style="cursor: pointer;"
                       ng-click="control.openGeneEditor('${marker.zdbID}','${marker.name}', 'Gene Name', false)"
@@ -43,10 +49,16 @@
                     <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red"></i>
                 </span>
             </authz:authorize>
+            </c:if>
         </td>
     </tr>
 
-    <zfin2:previousNamesFast previousNames="${previousNames}" showEditControls="true"/>
+    <c:if test="${showEditControls}">
+       <zfin2:previousNamesFast previousNames="${previousNames}" showEditControls="true"/>
+    </c:if>
+    <c:if test="${!showEditControls}">
+        <zfin2:previousNamesFast previousNames="${previousNames}" showEditControls="false"/>
+    </c:if>
     <c:if test="${formBean.marker.type ne 'EFG'&& formBean.marker.type ne 'REGION'&& !(fn:contains(formBean.marker.type,'CONSTRCT'))}">
         <%--<c:if test="${formBean.marker.type ne 'REGION'}">--%>
         <tr>
@@ -62,6 +74,10 @@
 </table>
 <zfin2:nomenclature geneEdit="true" showReason="false"/>
 
-</div>
+<authz:authorize access="hasRole('root')">
+    </div>
+</authz:authorize>
+
+
 
 

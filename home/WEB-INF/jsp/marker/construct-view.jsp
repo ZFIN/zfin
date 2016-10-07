@@ -31,7 +31,7 @@
         <tiles:putAttribute name="subjectName" value="${formBean.marker.name}"/>
     </tiles:insertTemplate>
 </div>
-<div ng-app="editMarker" ng-controller="EditController as eControl">
+
     <zfin2:markerHead marker="${formBean.marker}" previousNames="${formBean.previousNames}" showEditControls="false"/>
 
     <%--Construct Features--%>
@@ -154,5 +154,3 @@
 
     <%--CITATIONS--%>
     <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>
-
-</div>

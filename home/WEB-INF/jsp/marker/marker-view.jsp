@@ -10,9 +10,6 @@
 <c:set var="deleteURL">/action/infrastructure/deleteRecord/${formBean.marker.zdbID}</c:set>
 <c:set var="mergeURL">/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}</c:set>
 
-<script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
-<script src="/javascript/editMarker.js"></script>
-
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"
@@ -25,7 +22,6 @@
     </tiles:insertTemplate>
 </div>
 
-<div ng-app="editMarker" ng-controller="EditController as eControl">
     <zfin2:markerHead marker="${formBean.marker}" previousNames="${formBean.previousNames}" showEditControls="true"/>
 
     <%--MARKER RELATIONSHIPTS--%>
@@ -48,5 +44,3 @@
 
     <%--CITATIONS--%>
     <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>
-
-</div>
