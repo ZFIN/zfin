@@ -50,6 +50,8 @@
                 <button ng-show="pub.claimed" class="btn btn-success">
                     <i class="fa fa-check"></i> Claimed
                 </button>
+                <span class="text-danger" ng-show="vm.claimError">{{vm.claimError}}</span>
+
             </td>
             <td><a ng-href="/{{pub.zdbId}}" target="_blank">{{pub.zdbId}}</a></td>
             <td>
