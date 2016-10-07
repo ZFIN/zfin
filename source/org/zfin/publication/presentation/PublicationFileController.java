@@ -1,5 +1,6 @@
 package org.zfin.publication.presentation;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,8 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/publication")
 public class PublicationFileController {
+
+    private static final Logger LOG = Logger.getLogger(PublicationFileController.class);
 
     @Autowired
     private PublicationRepository publicationRepository;
@@ -47,6 +50,7 @@ public class PublicationFileController {
             pubFile = publicationService.processPublicationFile(
                     publication, file.getOriginalFilename(), type, file.getInputStream());
         } catch (IOException e) {
+            LOG.error("Error processing pub file", e);
             throw new InvalidWebRequestException("Error processing file");
         }
 

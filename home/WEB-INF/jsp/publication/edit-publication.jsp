@@ -12,7 +12,7 @@
 <script src="/javascript/trusted-html.filter.js"></script>
 <script src="/javascript/inline-edit-textarea.directive.js"></script>
 <script src="/javascript/figure-edit.directive.js"></script>
-<script src="/javascript/file-input.driective.js"></script>
+<script src="/javascript/file-input.directive.js"></script>
 <script src="/javascript/figure-upload.directive.js"></script>
 <script src="/javascript/figure-update.directive.js"></script>
 <script src="/javascript/pub-file-edit.directive.js"></script>
