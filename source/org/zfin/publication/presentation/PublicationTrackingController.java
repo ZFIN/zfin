@@ -21,6 +21,7 @@ import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.MailSender;
+import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.EntityZdbIdDTO;
 import org.zfin.gwt.root.dto.PublicationDTO;
@@ -191,28 +192,38 @@ public class PublicationTrackingController {
 
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/status", method = RequestMethod.POST)
-    public CurationStatusDTO updateCurationStatus(@PathVariable String zdbID, @RequestBody CurationStatusDTO dto) {
+    public CurationStatusDTO updateCurationStatus(@PathVariable String zdbID,@RequestParam(required = false, defaultValue = "false") Boolean claimedFlag,@RequestBody CurationStatusDTO dto) throws InvalidWebRequestException{
         Publication publication = publicationRepository.getPublication(zdbID);
+        PublicationTrackingHistory pth=publicationRepository.currentTrackingStatus(publication);
 
-        PublicationTrackingHistory newStatus = new PublicationTrackingHistory();
-        newStatus.setPublication(publication);
-        newStatus.setStatus(dto.getStatus());
-        newStatus.setLocation(dto.getLocation());
-        newStatus.setOwner(dto.getOwner() == null ? null : profileRepository.getPerson(dto.getOwner().getZdbID()));
-        newStatus.setUpdater(ProfileService.getCurrentSecurityUser());
-        newStatus.setDate(new GregorianCalendar());
+                    /*if (!pth.getOwner().getZdbID().equals(ProfileService.getCurrentSecurityUser().getZdbID())){
+                        claimedFlag=true;
+                    }
+*/
+        if (!claimedFlag) {
 
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = session.beginTransaction();
-        if (newStatus.getStatus().getType() == PublicationTrackingStatus.Type.CLOSED) {
-            curationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
-            expressionRepository.deleteExpressionStructuresForPub(publication);
-            publicationRepository.deleteExpressionExperimentIDswithNoExpressionResult(publication);
-            mutantRepository.updateGenotypeNicknameWithHandleForPublication(publication);
+            PublicationTrackingHistory newStatus = new PublicationTrackingHistory();
+            newStatus.setPublication(publication);
+            newStatus.setStatus(dto.getStatus());
+            newStatus.setLocation(dto.getLocation());
+            newStatus.setOwner(dto.getOwner() == null ? null : profileRepository.getPerson(dto.getOwner().getZdbID()));
+            newStatus.setUpdater(ProfileService.getCurrentSecurityUser());
+            newStatus.setDate(new GregorianCalendar());
+
+            Session session = HibernateUtil.currentSession();
+            Transaction tx = session.beginTransaction();
+            if (newStatus.getStatus().getType() == PublicationTrackingStatus.Type.CLOSED) {
+                curationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
+                expressionRepository.deleteExpressionStructuresForPub(publication);
+                publicationRepository.deleteExpressionExperimentIDswithNoExpressionResult(publication);
+                mutantRepository.updateGenotypeNicknameWithHandleForPublication(publication);
+            }
+            session.save(newStatus);
+            tx.commit();
         }
-        session.save(newStatus);
-        tx.commit();
-
+        else{
+            throw new InvalidWebRequestException("Pub already claimed");
+        }
         return converter.toCurationStatusDTO(publicationRepository.currentTrackingStatus(publication));
     }
 
