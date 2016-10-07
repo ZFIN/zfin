@@ -75,6 +75,9 @@
                     vm.type = null;
                     vm.file = [];
                 })
+                .catch(function (response) {
+                    vm.errorMessage = response.data.message;
+                })
                 .finally(function () {
                     vm.uploading = false;
                 });
