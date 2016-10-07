@@ -6,7 +6,6 @@
 
 <script src="/javascript/figure.service.js"></script>
 <script src="/javascript/quick-figure.directive.js"></script>
-<script src="/javascript/quick-figure.directive.js"></script>
 
 <link rel="stylesheet" type="text/css" href="/css/zfin-bootstrap-overrides.css"/>
 
