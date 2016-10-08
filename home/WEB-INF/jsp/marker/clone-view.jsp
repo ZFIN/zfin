@@ -8,7 +8,6 @@
 
 <script src="/javascript/gbrowse-image.js"></script>
 <script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
-<script src="/javascript/editMarker.js"></script>
 
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="${editURL}"

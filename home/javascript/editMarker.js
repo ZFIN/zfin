@@ -1,4 +1,4 @@
-var editMarker = angular.module('editMarker', []);
+var editMarker = angular.module('app', []);
 
 editMarker.controller('EditController', ['$attrs', '$scope', function ($attrs, $scope) {
     var eControl = this;
