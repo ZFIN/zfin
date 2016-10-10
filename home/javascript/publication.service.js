@@ -60,7 +60,7 @@
         function  updateStatus(status, claimedFlag) {
             var endpoint = '/status';
             if (claimedFlag) {
-                endpoint += '?claimedFlag=false';
+                endpoint += '?claimedFlag=true';
             }
             return $http.post('/action/publication/' + status.pubZdbID + endpoint, status);
         }
