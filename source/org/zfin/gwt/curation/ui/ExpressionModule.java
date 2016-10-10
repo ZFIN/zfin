@@ -1,15 +1,14 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.curation.event.*;
 import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
-import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.util.AppUtils;
 
@@ -19,7 +18,7 @@ import java.util.List;
 /**
  * Entry point for FX curation module.
  */
-public class ExpressionModule implements HandlesError, EntryPoint {
+public class ExpressionModule implements ZfinCurationModule, HandlesError {
 
     public static final String EXPRESSION_ZONE = "expressionZone";
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
@@ -35,7 +34,6 @@ public class ExpressionModule implements HandlesError, EntryPoint {
     // listener
     private List<HandlesError> handlesErrorListeners = new ArrayList<>();
 
-    private AttributionModule attributionModule = new AttributionModule();
     @UiField
     ConstructionZoneModule constructionZoneModule;
     @UiField
@@ -55,17 +53,14 @@ public class ExpressionModule implements HandlesError, EntryPoint {
 
     public ExpressionModule(String publicationID) {
         this.publicationID = publicationID;
-        onModuleLoad();
+        init();
     }
 
     @Override
-    public void onModuleLoad() {
+    public void init() {
         FlowPanel outer = uiBinder.createAndBindUi(this);
         RootPanel.get(EXPRESSION_ZONE).add(outer);
 
-        RelatedEntityDTO relatedEntityDTO = new RelatedEntityDTO();
-        relatedEntityDTO.setPublicationZdbID(publicationID);
-        attributionModule.setDTO(relatedEntityDTO);
         curationFilterPresenter = new CurationFilterPresenter(curationFilterZone, publicationID);
         curationFilterPresenter.go();
         curationFilterZone.setCurationFilterPresenter(curationFilterPresenter);
@@ -80,7 +75,6 @@ public class ExpressionModule implements HandlesError, EntryPoint {
 
         ExpressionExperimentDTO dto = new ExpressionExperimentDTO();
         dto.setPublicationID(publicationID);
-        expressionZone.setExperimentFilter(dto);
         structurePile.getStructurePileTable().setExpressionSection(expressionZone);
 
         expressionExperimentZonePresenter = new ExpressionExperimentZonePresenter(expressionExperimentZone, publicationID, debug);
@@ -94,30 +88,61 @@ public class ExpressionModule implements HandlesError, EntryPoint {
 
         bindEventBusHandler();
         addHandlerEvents();
-        exposeFigureRefreshMethodToJavascript(expressionZonePresenter, curationFilterPresenter);
+    }
+
+    @Override
+    public void refresh() {
+        curationFilterPresenter.go();
+        fxCurationPresenter.go();
+        expressionExperimentZonePresenter.go();
+        expressionZonePresenter.go();
+    }
+
+    @Override
+    public void handleCurationEvent(CurationEvent event) {
+        if (event.getEventType().is(EventType.FILTER)) {
+            ChangeCurationFilterEvent changeEvent = (ChangeCurationFilterEvent) event;
+            expressionZonePresenter.updateExpressionOnCurationFilter(changeEvent.getExperimentFilter(), changeEvent.getFigureID());
+            expressionExperimentZonePresenter.updateExperimentOnCurationFilter(changeEvent.getExperimentFilter());
+            if (event.getEventType().is(EventType.PHENO_TAB)) {
+                curationFilterPresenter.setFilterValues(changeEvent.getExperimentFilter(), changeEvent.getFigureID());
+            }
+        }
+        if (event.getEventType().is(EventType.MARKER)) {
+            expressionExperimentZonePresenter.updateGenes();
+            expressionExperimentZonePresenter.updateAntibodyList();
+            curationFilterPresenter.go();
+        }
+        if (event.getEventType().is(EventType.FISH)) {
+            expressionExperimentZonePresenter.retrieveFishList();
+            curationFilterPresenter.go();
+        }
+        if (event.getEventType().is(EventType.CUD_EXPERIMENT_CONDITION)) {
+            expressionExperimentZonePresenter.updateEnvironmentList();
+        }
+        if (event.getEventType().is(EventType.REMOVE_PHENTOTYPE_EXPERIMENT)) {
+            // update possible push-to-pato reversals
+            expressionZonePresenter.retrieveExpressions();
+        }
+        if (event.getEventType().is(EventType.MARKER_ATTRIBUTION) || event.getEventType().is(EventType.MARKER_DEATTRIBUTION)) {
+            expressionExperimentZonePresenter.updateGenes();
+            curationFilterPresenter.refreshGeneList();
+        }
+        if (event.getEventType().is(EventType.ADD_REMOVE_ATTRIBUTION_FISH)) {
+            expressionExperimentZonePresenter.retrieveFishList();
+        }
+        if (event.getEventType().is(EventType.ADD_FIGURE)) {
+            expressionZonePresenter.refreshFigure();
+            curationFilterPresenter.refreshFigureList();
+        }
+    }
+
+    @Override
+    public void handleTabToggle() {
+
     }
 
     public void addHandlerEvents() {
-        attributionModule.addHandlesErrorListener(new HandlesError() {
-            @Override
-            public void setError(String message) {
-
-            }
-
-            @Override
-            public void clearError() {
-
-            }
-
-            @Override
-            public void fireEventSuccess() {
-            }
-
-            @Override
-            public void addHandlesErrorListener(HandlesError handlesError) {
-
-            }
-        });
     }
 
     private void bindEventBusHandler() {
@@ -159,14 +184,6 @@ public class ExpressionModule implements HandlesError, EntryPoint {
                         expressionZonePresenter.postUpdateStructuresOnExpression();
                     }
                 });
-        AppUtils.EVENT_BUS.addHandler(ChangeCurationFilterEvent.TYPE,
-                new ChangeCurationFilterEventHandler() {
-                    @Override
-                    public void onChange(ChangeCurationFilterEvent event) {
-                        expressionZonePresenter.updateExpressionOnCurationFilter(event.getExperimentFilter(), event.getFigureID());
-                        expressionExperimentZonePresenter.updateExperimentOnCurationFilter(event.getExperimentFilter());
-                    }
-                });
         AppUtils.EVENT_BUS.addHandler(AddExpressionExperimentEvent.TYPE,
                 new AddExpressionExperimentEventHandler() {
                     @Override
@@ -186,22 +203,6 @@ public class ExpressionModule implements HandlesError, EntryPoint {
                     @Override
                     public void onEvent(UpdateExpressionExperimentEvent event) {
                         expressionZonePresenter.retrieveExpressions();
-                    }
-                });
-        AppUtils.EVENT_BUS.addHandler(RemoveAttributeEvent.TYPE,
-                new RemoveAttributeEventHandler() {
-                    @Override
-                    public void onRemoveAttribute(RemoveAttributeEvent event) {
-                        attributionModule.populateAttributeRemoval();
-                        expressionExperimentZonePresenter.updateGenes();
-                    }
-                });
-        AppUtils.EVENT_BUS.addHandler(AddAttributeEvent.TYPE,
-                new AddAttributeEventHandler() {
-                    @Override
-                    public void onEvent(AddAttributeEvent event) {
-                        attributionModule.populateAttributeRemoval();
-                        expressionExperimentZonePresenter.updateGenes();
                     }
                 });
         AppUtils.EVENT_BUS.addHandler(RemoveExpressionExperimentEvent.TYPE,
@@ -234,13 +235,5 @@ public class ExpressionModule implements HandlesError, EntryPoint {
     public void addHandlesErrorListener(HandlesError handlesError) {
         handlesErrorListeners.add(handlesError);
     }
-
-    private native void exposeFigureRefreshMethodToJavascript(ExpressionZonePresenter presenter, CurationFilterPresenter curationFilterPresenter)/*-{
-        $wnd.refreshFigures = function () {
-            presenter.@org.zfin.gwt.curation.ui.ExpressionZonePresenter::refreshFigure()();
-            curationFilterPresenter.@org.zfin.gwt.curation.ui.CurationFilterPresenter::refreshFigureList()();
-        };
-
-    }-*/;
 
 }

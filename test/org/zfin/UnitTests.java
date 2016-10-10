@@ -24,7 +24,7 @@ import org.zfin.framework.presentation.*;
 import org.zfin.framework.search.SearchCriterionTest;
 import org.zfin.gwt.GwtStringUtilsTest;
 import org.zfin.gwt.InferenceUnitTest;
-import org.zfin.gwt.curation.ui.FeatureMarkerRelationshipTest;
+import org.zfin.gwt.curation.ui.feature.FeatureMarkerRelationshipTest;
 import org.zfin.gwt.curation.ui.FeatureValidationTest;
 import org.zfin.gwt.curation.ui.PatoPileStructureValidatorTest;
 import org.zfin.gwt.root.dto.EnvironmentDTOTest;

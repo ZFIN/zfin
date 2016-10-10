@@ -8,8 +8,11 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
+import org.zfin.gwt.curation.event.CurationEvent;
+import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.*;
+import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.gwt.root.util.WidgetUtil;
 
@@ -21,13 +24,13 @@ import java.util.*;
  * 1) Show and hide link
  * 2) Display expressions
  * 3) Construction zone to create a new expression.
- * <p/>
+ * <p>
  * Ad 1)
  * A) The expression section can be hidden by clicking on 'hide' which then hides the display
  * part and the construction zone as well.
  * B) The state of the visibility is saved in the database and remembered for this publication for future.
  * in the curation_session table.
- * <p/>
+ * <p>
  * Ad 2)
  * A) Displayed are all expressions (unless the experiment filter, aka banana bar when it was yellow instead of
  * green), ordered by figure, gene (non-gene experiments first) and fish.
@@ -42,7 +45,7 @@ import java.util.*;
  * F) expressed in: List all terms in alphabetical order by the superterm. Display composed terms using the format
  * [superterm:subterm]. If the term is 'unspecified' then highlight the term in orange. If a term is NOT expressed
  * the term should be highlighted in red (formerly [(not)])
- * <p/>
+ * <p>
  * Ad 3)
  * A) The Add-button is always enabled. Clicking it will try to create a new experiment. If the experiment is not
  * unique (compound PK: gene,fish,environment,assay, antibody and GenBank) an error message is displayed below
@@ -99,7 +102,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     private HorizontalPanel eapPanel = new HorizontalPanel();
     private Hyperlink showEapSection = new Hyperlink();
     private FlexTable eapTable = new FlexTable();
-    private HTMLTable.RowFormatter rowFormatter = eapTable.getRowFormatter();
 
     private FlexTable constructionRow = new FlexTable();
     private MutantFlexTable displayTable;
@@ -173,10 +175,11 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
      * So this method is called from the FxFilterTable.
      */
     public void runModule() {
-        if (!initialized) {
-            setInitialValues();
-            initialized = true;
-        }
+        setInitialValues();
+    }
+
+    public void reInit() {
+        setInitialValues();
     }
 
     private void initGUI() {
@@ -230,12 +233,10 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         panel.add(experimentLabel);
     }
 
-    private void setInitialValues() {
+    public void setInitialValues() {
         retrieveExpressions();
-
         retrieveConstructionZoneValues();
         retrieveEaps();
-
         retrieveSessionValues();
     }
 
@@ -250,20 +251,29 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
 
         // stage list
         curationRPCAsync.getStages(new RetrieveStageListCallback());
-        // retrieve fish list
-        String message = "Error while reading fish";
 
-       // curationRPCAsync.getFishList(publicationID, new RetrieveDTOListCallBack<FishDTO>(fishList, message, errorElement));
-        curationRPCAsync.getFishList(publicationID,
-                new RetrieveFishListCallBack(fishList, message, errorElement));
+        // retrieve fish list
+        retrieveFishList();
+
         // environment list
-        message = "Error while reading the environment";
-        curationRPCAsync.getEnvironments(publicationID,
-                new RetrieveEnvironmentListCallBack(environmentList, message, errorElement));
+        retrieveExperimentConditionList();
 
         // set stage selector mode from session
         sessionRPC.isStageSelectorSingleMode(publicationID, new RetrieveStageSelectorCallback(errorElement, stageSelector));
 
+    }
+
+    public void retrieveExperimentConditionList() {
+        String message;
+        message = "Error while reading the environment";
+        curationRPCAsync.getEnvironments(publicationID,
+                new RetrieveEnvironmentListCallBack(environmentList, message, errorElement));
+    }
+
+    public void retrieveFishList() {
+        String message = "Error while reading fish";
+        curationRPCAsync.getFishList(publicationID,
+                new RetrieveSelectionBoxValueCallback(fishList));
     }
 
     public void refreshFigureList() {
@@ -273,9 +283,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     public void updateFish() {
         String message = "Error while reading Fish";
         fishList.clear();
-        curationRPCAsync.getFishList(publicationID,new RetrieveFishListCallBack(fishList, message, errorElement));
-
-       // curationRPCAsync.getFishList(publicationID, new RetrieveDTOListCallBack<FishDTO>(fishList, message, errorElement));
+        curationRPCAsync.getFishList(publicationID, new RetrieveSelectionBoxValueCallback(fishList));
     }
 
 
@@ -573,7 +581,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         @Override
         public void onSuccess(Void exp) {
             super.onSuccess(exp);
-            //Window.alert("Success");
+            //Window.alert("Success removing");
             // remove from the dashboard list
             displayedExpressions.remove(figureAnnotation);
             selectedExpressions.remove(figureAnnotation);
@@ -583,6 +591,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             sendFigureAnnotationsToStructureSection();
             clearErrorMessages();
             postUpdateStructuresOnExpression();
+            AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.REMOVE_PHENTOTYPE_EXPERIMENT));
         }
 
     }
@@ -604,7 +613,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
                 displayedExpressions.add(id);
             }
             Collections.sort(displayedExpressions);
-            //Window.alert("SIZE: " + experiments.size());
             if (sectionVisible)
                 displayTable.createMutantTable();
             recordAllExpressedTerms();
@@ -630,8 +638,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
                 displayedEaps.add(id);
             }
             Collections.sort(displayedEaps);
-
-
             createEapTable();
         }
 
@@ -649,8 +655,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
                 eapTable.setVisible(false);
                 showEapSection.setText(SHOW);
                 sectionVisible = false;
-                // phenotypeCurationRPCAsync.setExpressionVisibilitySession(publicationID, false,
-                ///new VoidAsyncCallback(new Label(errorMessage), loadingImage));
             } else {
                 // display experiments
                 // check if it already exists
@@ -661,8 +665,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
                 }
                 showEapSection.setText(HIDE);
                 sectionVisible = true;
-                //phenotypeCurationRPCAsync.setExpressionVisibilitySession(publicationID, true,
-                /// new VoidAsyncCallback(new Label(errorMessage), loadingImage));
             }
             clearErrorMessages();
         }
@@ -1165,19 +1167,17 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         }
     }
 
-    public class RetrieveFiguresCallback extends ZfinAsyncCallback<List<FigureDTO>> {
+    public class RetrieveFiguresCallback extends RetrieveSelectionBoxValueCallback {
 
 
         public RetrieveFiguresCallback() {
-            super("Error while reading Figure Filters", errorElement);
+            super(figureList, false, errorElement);
         }
 
         @Override
-        public void onSuccess(List<FigureDTO> list) {
+        public void onSuccess(List<FilterSelectionBoxEntry> list) {
             super.onSuccess(list);
-            allFigureDtos = new ArrayList<>(list);
-            updateFigureListBox();
-            //Window.alert("SIZE: " + experiments.size());
+            allFigureDtos = new ArrayList<>((List<FigureDTO>) (List<?>) list);
         }
 
     }
@@ -1196,66 +1196,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             super.onSuccess(stages);
             //Window.alert("SIZE: " + experiments.size());
             stageSelector.setStageList(stages);
-        }
-
-    }
-
-    private class FigureAnnotationCheckmarkStatusCallback implements AsyncCallback<CheckMarkStatusDTO> {
-        public void onFailure(Throwable throwable) {
-            if (throwable instanceof PublicationNotFoundException) {
-                GWT.log(String.valueOf(throwable));
-            } else {
-                GWT.log("Fatal exception: " + throwable);
-            }
-        }
-
-        public void onSuccess(CheckMarkStatusDTO filterValues) {
-            //Window.alert("brought back: " + filterValues.getFigureAnnotations().size());
-            if (filterValues == null)
-                return;
-
-            int maxRows = displayTable.getRowCount();
-            for (int row = 1; row < maxRows; row++) {
-                if (!displayTable.isCellPresent(row, 0))
-                    continue;
-                Widget widget = displayTable.getWidget(row, 0);
-                if (widget == null || !(widget instanceof CheckBox))
-                    continue;
-
-                CheckBox checkBox = (CheckBox) widget;
-                for (ExpressionFigureStageDTO dto : filterValues.getFigureAnnotations()) {
-                    if (dto.getUniqueID().equals(checkBox.getTitle())) {
-                        checkBox.setValue(true);
-                        PhenotypeExperimentDTO checkedExpression = displayTableMap.get(row);
-                        selectedExpressions.add(checkedExpression);
-                    }
-                }
-            }
-            displayTable.showHideClearAllLink();
-            ////structurePile.updateFigureAnnotations(selectedExpressions);
-        }
-    }
-
-    private class SectionVisibilityCallback extends ZfinAsyncCallback<Boolean> {
-        public SectionVisibilityCallback(String message) {
-            super(message, errorElement);
-        }
-
-        public void onSuccess(Boolean visible) {
-            super.onSuccess(visible);
-            sectionVisible = visible;
-            //Window.alert("Show: " + sectionVisible);
-            if (displayedExpressions == null || displayedExpressions.isEmpty()) {
-                setInitialValues();
-            } else {
-                displayTable.createMutantTable();
-                displayTable.showHideClearAllLink();
-            }
-            if (sectionVisible) {
-                showExpressionSection.setText(HIDE);
-            } else {
-                showExpressionSection.setText(SHOW);
-            }
         }
 
     }

@@ -1100,7 +1100,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                     createUnspecifiedExpressionResult(result, figure);
                 }
             }
-            session.refresh(result.getExpressionExperiment());
+            session.handleCurationEvent(result.getExpressionExperiment());
         }
 */
     }

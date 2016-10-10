@@ -1,6 +1,6 @@
 package org.zfin.ontology.presentation;
 
-import org.zfin.curation.presentation.CurationTab;
+import org.zfin.gwt.curation.ui.CurationModuleType;
 import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.publication.CurationPresentation;
 
@@ -32,7 +32,7 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
     }
 
     private static String getCurationLink(PhenotypeStatementWarehouse phenotypeStatement) {
-        return getWebdriverLink(CurationPresentation.uri + CurationTab.PHENO.getName(),
+        return getWebdriverLink(CurationPresentation.uri + CurationModuleType.PHENOTYPE_CURATION.getValue(),
                 phenotypeStatement.getPhenotypeExperiment().getFigure().getPublication().getZdbID(),
                 "edit");
     }

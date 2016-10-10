@@ -1,6 +1,13 @@
 package org.zfin.gwt.curation.ui;
 
+import org.zfin.gwt.curation.ui.disease.HumanDiseaseModule;
 import org.zfin.gwt.curation.ui.experiment.ExperimentModule;
+import org.zfin.gwt.curation.ui.feature.FeatureModule;
+import org.zfin.gwt.curation.ui.fish.FishModule;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Each module that is served by the CurationEntryPoint has a corresponding
@@ -8,99 +15,96 @@ import org.zfin.gwt.curation.ui.experiment.ExperimentModule;
  */
 public enum CurationModuleType {
 
-    PHENOTYPE_CURATION {
+    CONSTRUCT("CONSTRUCT", "Construct") {
         @Override
-        public PileConstructionZoneModule initializeModule(String publicationID) {
-            PhenotypeCurationModule module = new PhenotypeCurationModule(publicationID);
-            return module.getPileConstructionZoneModule();
+        public ZfinCurationModule initializeModule(String publicationID) {
+            return new ConstructCurationModule(publicationID);
         }
     },
-    GO_CURATION {
+    FEATURE_CURATION("FEATURE", "Feature") {
         @Override
-        public ConstructionZone initializeModule(String publicationID) {
-            GoCurationModule module = new GoCurationModule(publicationID);
-            return module.getPileConstructionZoneModule();
+        public ZfinCurationModule initializeModule(String publicationID) {
+            return new FeatureModule(publicationID);
         }
     },
-    ENVIRONMENT_CURATION {
+    FISH_TAB("FISH", "Fish") {
         @Override
-        public ConstructionZone initializeModule(String publicationID) {
-            BaseCurationModule module = new BaseCurationModule(publicationID);
-            return module.getPileConstructionZoneModule();
+        public ZfinCurationModule initializeModule(String publicationID) {
+            return new FishModule(publicationID);
         }
     },
-    FIGURE_CURATION {
+    EXPERIMENT_TAB("EXPERIMENT", "Experiment") {
         @Override
-        public ConstructionZone initializeModule(String publicationID) {
-            BaseCurationModule module = new BaseCurationModule(publicationID);
-            return module.getPileConstructionZoneModule();
+        public ZfinCurationModule initializeModule(String publicationID) {
+            return new ExperimentModule(publicationID);
         }
     },
-    GENOTYPE_CURATION {
+    EXPRESSION_CURATION("FX", "FX") {
         @Override
-        public ConstructionZone initializeModule(String publicationID) {
-            BaseCurationModule module = new BaseCurationModule(publicationID);
-            return module.getPileConstructionZoneModule();
+        public ZfinCurationModule initializeModule(String publicationID) {
+            return new ExpressionModule(publicationID);
         }
     },
-    FEATURE_CURATION {
+    PHENOTYPE_CURATION("PHENO", "PHENO") {
         @Override
-        public ConstructionZone initializeModule(String publicationID) {
-            FeatureModule module = new FeatureModule(publicationID);
+        public ZfinCurationModule initializeModule(String publicationID) {
+            return new PhenotypeCurationModule(publicationID);
+        }
+    },
+    GO_CURATION("GO", "GO") {
+        @Override
+        public ZfinCurationModule initializeModule(String publicationID) {
+            return new GoCurationModule(publicationID);
+        }
+    },
+    DISEASE_CURATION("DISEASE", "Disease") {
+        @Override
+        public ZfinCurationModule initializeModule(String publicationID) {
+            return new HumanDiseaseModule(publicationID);
+        }
+    },
+    ORTHOLOGY("ORTHOLOGY", "Orthology") {
+        @Override
+        public ZfinCurationModule initializeModule(String publicationID) {
             return null;
         }
-    },
-    CONSTRUCT_CURATION {
-        @Override
-        public ConstructionZone initializeModule(String publicationID) {
-            ConstructCurationModule module = new ConstructCurationModule(publicationID);
-            return module.getPileConstructionZoneModule();
-        }
-    },
-    DISEASE_CURATION {
-        @Override
-        public ConstructionZone initializeModule(String publicationID) {
-            new HumanDiseaseModule(publicationID);
-            return null;
-        }
-    },
-    EXPRESSION_CURATION {
-        @Override
-        public ConstructionZone initializeModule(String publicationID) {
-            new ExpressionModule(publicationID);
-            return null;
-        }
-    },
-    FISH_TAB {
-        @Override
-        public ConstructionZone initializeModule(String publicationID) {
-            new FishModule(publicationID);
-            return null;
-        }
-    },
-    EXPERIMENT_TAB {
-        @Override
-        public ConstructionZone initializeModule(String publicationID) {
-            new ExperimentModule(publicationID);
-            return null;
-        }
-    },
-    ORTHO_TAB {
-        @Override
-        public ConstructionZone initializeModule(String publicationID) {
-            BaseCurationModule module = new BaseCurationModule(publicationID);
-            return module.getPileConstructionZoneModule();
-        }
-    },;
+    };
 
     public static CurationModuleType getType(String type) {
         for (CurationModuleType t : values()) {
-            if (t.toString().equals(type))
+            if (t.value.equals(type))
                 return t;
         }
         throw new RuntimeException("No module type of string " + type + " found.");
     }
 
-    public abstract ConstructionZone initializeModule(String publicationID);
+    private String value;
+    private String displayName;
 
+    CurationModuleType(String value, String displayName) {
+        this.value = value;
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public abstract ZfinCurationModule initializeModule(String publicationID);
+
+    public static List<CurationModuleType> getOtherTypes(CurationModuleType type) {
+        if (type == null) {
+            return Arrays.asList(values());
+        }
+        List<CurationModuleType> list = new ArrayList<>();
+        for (CurationModuleType typeOther : values()) {
+            if (typeOther != type)
+                list.add(typeOther);
+        }
+        return list;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

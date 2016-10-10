@@ -145,7 +145,7 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
 
 
         MarkerRPCService.App.getInstance().getWebDriverPath(
-                new MarkerEditCallBack<String>("Failed to retrieve webdriver path, may need to refresh page if adding protein: ", proteinSequenceArea) {
+                new MarkerEditCallBack<String>("Failed to retrieve webdriver path, may need to handleCurationEvent page if adding protein: ", proteinSequenceArea) {
                     public void onSuccess(String s) {
                         url = s;
                     }

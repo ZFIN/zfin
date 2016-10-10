@@ -6,6 +6,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.zfin.gwt.curation.event.CurationEvent;
+import org.zfin.gwt.root.dto.AttributionType;
 import org.zfin.gwt.root.dto.ConstructDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.ShowHideToggle;
@@ -14,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ConstructCurationModule extends ConstructionZoneAdapater {
+public class ConstructCurationModule extends ConstructionZoneAdapater implements ZfinCurationModule {
 
 
     public static final String CONSTRUCT_RELATIONSHIP_TEXT = "CONSTRUCT RELATIONSHIPS";
@@ -27,22 +29,37 @@ public class ConstructCurationModule extends ConstructionZoneAdapater {
     private String publicationID;
 
     // modules
-    private AttributionModule attributionModule = new AttributionModule();
     private ConstructRelationshipBox constructRelationshipBox = new ConstructRelationshipBox();
 
 
     public ConstructCurationModule(String publicationID) {
         this.publicationID = publicationID;
+        init();
+    }
+
+    public void init() {
         initGUI();
-        addInternalListeners(this);
+        addInternalListeners();
         loadDTO();
     }
 
+    @Override
+    public void refresh() {
+        constructRelationshipBox.setValues();
+    }
 
-    protected void addInternalListeners(HandlesError handlesError) {
+    @Override
+    public void handleCurationEvent(CurationEvent event) {
 
+    }
 
-        attributionModule.addHandlesErrorListener(this);
+    @Override
+    public void handleTabToggle() {
+
+    }
+
+    protected void addInternalListeners() {
+
         constructRelationshipBox.addHandlesErrorListener(this);
         showHideToggle.addClickHandler(new ClickHandler() {
             @Override
@@ -66,18 +83,12 @@ public class ConstructCurationModule extends ConstructionZoneAdapater {
     private void loadDTO() {
         ConstructDTO featureDTO = new ConstructDTO();
         featureDTO.setPublicationZdbID(publicationID);
-
-        attributionModule.setDTO(featureDTO);
-
         constructRelationshipBox.setDTO(featureDTO);
     }
 
 
     public void clearError() {
         setError("");
-        attributionModule.revertGUI();
-//        attributionModule.clearError();
-        //   constructRelationshipBox.setPublication(publicationID);
         constructRelationshipBox.clearError();
     }
 

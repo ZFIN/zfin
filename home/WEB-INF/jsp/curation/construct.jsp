@@ -1,15 +1,3 @@
-<script type="text/javascript" language="javascript"
-        src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
-
-<script type="text/javascript">
-    var curationProperties = {
-        zdbID: "${publication.zdbID}",
-        moduleType: "CONSTRUCT_CURATION",
-        debug: "false"
-    }
-</script>
-
-<p></p>
 <table class="table table-borderless">
     <tr>
         <td>

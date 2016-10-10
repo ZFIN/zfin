@@ -39,9 +39,8 @@
         <put-attribute name="body" value="/WEB-INF/jsp/orthology/{1}.jsp"/>
     </definition>
 
-    <definition name="curation/*.page" extends="main_layout_bootstrap">
-        <put-attribute name="curation-header" value="/WEB-INF/jsp-include/curation-header.jsp"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/curation/{1}.jsp"/>
+    <definition name="curation/curation.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/curation/curation.jsp"/>
     </definition>
 
     <definition name="marker/*.ajax" template="/WEB-INF/jsp/marker/{1}.jsp"/>

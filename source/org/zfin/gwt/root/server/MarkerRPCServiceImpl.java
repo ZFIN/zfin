@@ -17,6 +17,7 @@ import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.database.InformixUtil;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.dto.AttributionType;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.ui.BlastDatabaseAccessException;
@@ -732,7 +733,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         session.refresh(dbLink);
         logger.debug("resulting length for " + dbLink.getZdbID() + " is: " + dbLink.getLength());
 /*        dbLink.setLength(dbLinkDTO.getLength());
-        session.refresh(dbLink);*/
+        session.handleCurationEvent(dbLink);*/
 
 
         // if it fails, it will automatically roll-back and automatically throws exception up
@@ -1164,7 +1165,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
     }
 
     @Override
-    public void checkDeattributionRules(String entityID, String publicationID)
+    public String checkDeattributionRules(String entityID, String publicationID)
             throws DeAttributionException {
         if (ActiveData.Type.GENO.equals(ActiveData.getType(entityID))) {
             long count = getMutantRepository().getFishCountByGenotype(entityID, publicationID);
@@ -1180,7 +1181,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
                 throw new DeAttributionException("It's the last attribution. Please use the delete genotype feature");
             }
 
-
+            return AttributionType.GENOTYPE.name();
         }
         if (ActiveData.Type.FISH.equals(ActiveData.getType(entityID))) {
             Fish fish = getMutantRepository().getFish(entityID);
@@ -1205,10 +1206,13 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
                 throw new DeAttributionException("Cannot remove attribution as there are " + fishExpressionExpCount + " expression experiment data associated to this fish");
             }
             count = getInfrastructureRepository().getDistinctPublicationsByData(entityID);
-            if (count == 1) {
+            if (count == 1)
                 throw new DeAttributionException("It's the last attribution. Please use the delete fish feature");
-            }
+            return AttributionType.FISH.name();
         }
+        if (ActiveData.Type.ALT.equals(ActiveData.getType(entityID)))
+            return AttributionType.FEATURE.name();
+        return AttributionType.MARKER.name();
     }
 
 

@@ -6,18 +6,6 @@
     $.fn.modal.noConflict();
 </script>
 
-<script type="text/javascript" language="javascript"
-        src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
-
-<script type="text/javascript">
-    var curationProperties = {
-        zdbID: "${publication.zdbID}",
-        moduleType: "ORTHO_TAB",
-        debug: "false"
-    };
-</script>
-<?/MIVAR>
-
 <table class="table table-borderless">
     <tr>
         <td>

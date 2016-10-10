@@ -292,12 +292,14 @@ public class LookupComposite extends Composite implements Revertible {
                 suggestion = (SuggestOracle.Suggestion) event.getSelectedItem();
                 final String termID = suggestion.getReplacementString();
                 String displayString = suggestion.getDisplayString();
-                SelectAutoCompleteEvent selectEvent = new SelectAutoCompleteEvent(termID, displayString, ontology);
-                AppUtils.EVENT_BUS.fireEvent(selectEvent);
-                selectedTerm = new TermDTO();
-                selectedTerm.setOboID(termID);
-                selectedTerm.setOntology(ontology);
-                selectedTerm.setName(extractPureTermNameHtml(displayString).trim());
+                if (ontology != null) {
+                    SelectAutoCompleteEvent selectEvent = new SelectAutoCompleteEvent(termID, displayString, ontology);
+                    AppUtils.EVENT_BUS.fireEvent(selectEvent);
+                    selectedTerm = new TermDTO();
+                    selectedTerm.setOboID(termID);
+                    selectedTerm.setOntology(ontology);
+                    selectedTerm.setName(extractPureTermNameHtml(displayString).trim());
+                }
                 if (displayString == null) {
                     suggestBox.setText(extractPureTermNameHtml(displayString));
                     doSubmit(termID);

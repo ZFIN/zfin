@@ -3,7 +3,6 @@ package org.zfin.gwt.lookup.ui;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.PopupPanel;
 import org.zfin.gwt.root.ui.LookupComposite;
-import org.zfin.repository.RepositoryFactory;
 
 /**
  */

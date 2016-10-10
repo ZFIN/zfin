@@ -141,6 +141,7 @@
         vm.ncbiGeneNumber = '';
         vm.ncbiError = '';
         vm.note = {};
+        vm.fetchGenes = fetchGenes;
 
         vm.codes = [];
         vm.defaultPub = undefined;

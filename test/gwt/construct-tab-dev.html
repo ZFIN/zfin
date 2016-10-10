@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <title>
+        GWT Modules</title>
+
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="/css/zfin.css">
+    <link rel="stylesheet" type="text/css" href="/css/header.css">
+    <link rel="stylesheet" type="text/css" href="/css/footer.css">
+    <link rel=stylesheet type="text/css" href="/css/searchresults.css">
+    <link rel=stylesheet type="text/css" href="/css/summary.css">
+    <link rel=stylesheet type="text/css" href="/css/Lookup.css">
+    <link rel=stylesheet type="text/css" href="/css/datapage.css">
+    <link rel=stylesheet type="text/css" href="/css/popup.css">
+    <link rel=stylesheet type="text/css" href="/css/tipsy.css">
+    <link rel=stylesheet type="text/css" href="/css/jquery.modal.css">
+    <link rel=stylesheet type="text/css" href="/css/typeahead.css">
+    <link rel=stylesheet type="text/css" href="/css/bootstrap3/css/bootstrap.min.css">
+    <link rel=stylesheet type="text/css" href="/css/bootstrap-select/css/bootstrap-select.min.css">
+
+
+    <script src="/javascript/jquery-1.11.1.min.js" type="text/javascript"></script>
+    <script src="/javascript/header.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/javascript/jquery.modal.min.js"></script>
+    <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
+    <script type="text/javascript" src="/javascript/sorttable.js"></script>
+    <script type="text/javascript" src="/css/bootstrap3/js/tabs.js"></script>
+    <script type="text/javascript" src="/css/bootstrap-select/js/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="/css/bootstrap3/js/dropdown.js"></script>
+
+    <script src="/javascript/autocompletify.js"></script>
+
+
+</head>
+<body>
+<ul class="nav nav-pills" id="myTab">
+    <li><a data-toggle="tab">Home</a></li>
+    <li class="active"><a href="construct-tab-dev.html">Construct</a></li>
+    <li><a href="feature-tab-dev.html">Feature</a></li>
+    <li><a href="fish-tab-dev.html">Fish</a></li>
+    <li><a href="experiment-tab-dev.html">Experiment</a></li>
+    <li><a href="fx-tab-dev.html">FX</a></li>
+    <li><a href="pheno-tab-dev.html">PHENO</a></li>
+    <!--
+        <li><a href="feature-tab-dev.html">GO</a></li>
+    -->
+    <li><a href="human-disease-tab-dev.html">Disease</a></li>
+    <!--
+        <li><a href="feature-tab-dev.html">Orthology</a></li>
+    -->
+</ul>
+<script type="text/javascript" language="javascript"
+        src="org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
+
+<div id="show-hide-all-sections"></div>
+
+<div class="error"> Please use only for developmental purposes as this will make changes to the database!!!
+</div>
+<p/>
+
+<div id="title">
+    Publication: Fashena et al., 1999 &nbsp; ZDB-PUB-990507-16
+</div>
+<form method="GET">
+    Publication ID: <label>
+    <input name="publicationID" value=""/>
+</label>
+    &nbsp;<input type="submit" value="Submit"/>
+</form>
+
+<div id="directAttributionName"></div>
+
+<script type="text/javascript">
+    var curationProperties = {
+        zdbID: "ZDB-PUB-990507-16",
+        moduleType: "CONSTRUCT_CURATION",
+        debug: "false"
+    }
+    pubID = 'ZDB-PUB-990507-16';
+</script>
+
+<span class="bold">CREATE NEW CONSTRUCT: </span>
+<a onclick="showCreateConstructSection()" id="showConstructAdd" style="text-decoration:underline">Show</a>
+<a style="display: none;" onclick="hideCreateConstructSection()" id="hideConstructAdd"
+   style="text-decoration:underline">Hide</a>
+
+<div id="constructadd" style="display: none;"></div>
+
+<script type="text/javascript">
+    jQuery('#constructadd').load('/action/construct/construct-add?constructPublicationZdbID=' + pubID);
+</script>
+
+<p/>
+
+<p/>
+
+<span class="bold">EDIT CONSTRUCT: </span>
+<a onclick="showEditConstructSection()" id="showConstructEdit" style="text-decoration:underline">Show</a>
+<a style="display: none;" onclick="hideEditConstructSection()" id="hideConstructEdit" style="text-decoration:underline">Hide</a>
+
+<div id="constructedit" style="display: none;"></div>
+
+<script type="text/javascript">
+    jQuery('#constructedit').load('/action/construct/construct-update?constructPublicationZdbID=' + pubID);
+</script>
+
+<p/>
+
+<p/>
+
+<div id="construct-relationship-link"></div>
+<div id="construct-relationship"></div>
+
+<script>
+    function showCreateConstructSection() {
+        storeSession('$ZDB_ident', '${publication.zdbID}', 'featcur_featcreation', 'show', '/action/curation/' + pubID);
+        jQuery('#constructadd').show();
+        jQuery('#showConstructAdd').hide();
+        jQuery('#hideConstructAdd').show();
+    }
+    function hideCreateConstructSection() {
+        storeSession('$ZDB_ident', '${publication.zdbID}', 'featcur_featcreation', 'hide', '/action/curation/' + pubID);
+        jQuery('#constructadd').hide();
+        jQuery('#showConstructAdd').show();
+        jQuery('#hideConstructAdd').hide();
+    }
+    function showEditConstructSection() {
+        storeSession('$ZDB_ident', '${publication.zdbID}', 'featcur_featediting', 'show', '/action/curation/' + pubID);
+        jQuery('#constructedit').show();
+        jQuery('#showConstructEdit').hide();
+        jQuery('#hideConstructEdit').show();
+    }
+    function hideEditConstructSection() {
+        storeSession('$ZDB_ident', '${publication.zdbID}', 'featcur_featediting', 'hide', '/action/curation/' + pubID);
+        jQuery('#constructedit').hide();
+        jQuery('#showConstructEdit').show();
+        jQuery('#hideConstructEdit').hide();
+    }
+</script>
+</body>
+</html>

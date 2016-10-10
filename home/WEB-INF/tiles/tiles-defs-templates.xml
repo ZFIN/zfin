@@ -12,12 +12,6 @@
         <put-attribute name="footer" value="/WEB-INF/tiles/footer.jsp" />
     </definition>
 
-    <definition name="main_layout_bootstrap" template="/WEB-INF/tiles/layout-bootstrap.jsp">
-        <put-attribute name="staticTitle" value="ZFIN " />
-        <put-attribute name="header" value="/WEB-INF/tiles/header.jsp" />
-        <put-attribute name="footer" value="/WEB-INF/tiles/footer.jsp" />
-    </definition>
-
     <definition name="dev_layout" extends="main_layout">
         <put-attribute name="header" value="/WEB-INF/tiles/header_dev_tools.jsp"/>
     </definition>

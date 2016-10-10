@@ -192,7 +192,7 @@ public class FeatureRPCServiceTest extends RemoteServiceServlet implements Featu
             }
         }
         //currentSession().flush();
-        //currentSession().refresh(feature);
+        //currentSession().handleCurationEvent(feature);
         HibernateUtil.flushAndCommitCurrentSession();
 
         return getFeature(featureDTO.getZdbID());

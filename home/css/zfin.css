@@ -995,4 +995,37 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
 }
 .icon-toggle.open {
     transform: rotate(90deg);
+
+.history-popup-panel {
+    border: 3px solid #000000;
+    padding: 3px;
+    background: white;
+    width: 500px;
 }
+
+.history-popup-panel-content {
+    border: none;
+    padding: 3px;
+}
+
+.table > tbody > tr > td.topAlign {
+    vertical-align: top;
+}
+
+.table > tbody > tr > td.centerAlign {
+    text-align: center;
+}
+
+.table > tbody > tr > td.alignPadding {
+    padding: 5px;
+}
+
+input + label {
+    margin-left: 5px;
+}
+
+.tooltip-arrow,
+.zfin-tooltip + .tooltip > .tooltip-inner {background-color: #000000;}
+
+.tooltip-arrow,
+.zfin-tooltip + .tooltip {background-color: transparent; width: 100px; box-decoration-break: clone}

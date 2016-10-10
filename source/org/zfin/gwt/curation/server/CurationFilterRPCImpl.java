@@ -17,7 +17,6 @@ import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.profile.CuratorSession;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Publication;
@@ -26,6 +25,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * GWT class to facilitate ajax calls related to the curation filter bar.
@@ -34,7 +34,6 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
 
     private static ProfileRepository profileRep = RepositoryFactory.getProfileRepository();
     private static PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
-    private static MutantRepository mutantRep = RepositoryFactory.getMutantRepository();
     private static FeatureRepository featureRep = RepositoryFactory.getFeatureRepository();
 
     private static final String FX_GENE_FILTER = "fx-gene-filter: ";
@@ -96,18 +95,17 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
         List<MarkerDTO> genes = createGeneList(publicationID);
         values.setMarkers(genes);
 
-        List<FeatureDTO> features = createFeatureList(publicationID);
+        List<FeatureDTO> features = getFeatureValues(publicationID);
         values.setFeatures(features);
 
         return values;
     }
 
-    private List<FeatureDTO> createFeatureList(String publicationID) {
+    @Override
+    public List<FeatureDTO> getFeatureValues(String publicationID) {
         List<Feature> features = featureRep.getFeaturesByPublication(publicationID);
-        List<FeatureDTO> dtos = new ArrayList<FeatureDTO>(10);
-        for (Feature feature : features) {
-            dtos.add(DTOConversionService.convertToFeatureDTO(feature));
-        }
+        List<FeatureDTO> dtos = new ArrayList<>(10);
+        dtos.addAll(features.stream().map(DTOConversionService::convertToFeatureDTO).collect(Collectors.toList()));
         return dtos;
     }
 
@@ -119,7 +117,7 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
         }
 
         List<Marker> markers = pubRepository.getGenesByPublication(publicationID);
-        List<MarkerDTO> genes = new ArrayList<MarkerDTO>(10);
+        List<MarkerDTO> genes = new ArrayList<>(10);
 
         for (Marker marker : markers) {
             MarkerDTO gene = new MarkerDTO();
@@ -135,7 +133,7 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
         if (figures == null)
             return null;
 
-        List<FigureDTO> figureDTOs = new ArrayList<FigureDTO>();
+        List<FigureDTO> figureDTOs = new ArrayList<>();
         for (Figure figure : figures) {
             FigureDTO dto = new FigureDTO();
             dto.setLabel(figure.getLabel());
@@ -220,7 +218,7 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
             getServletContext().setAttribute(uniqueKey, zdbID);
         }
         // save fish info in session
-        if (type == ActiveData.Type.GENO) {
+        if (type == ActiveData.Type.FISH) {
             String uniqueKey = createSessionVariableName(publicationID, FX_FISH_FILTER);
             getServletContext().setAttribute(uniqueKey, zdbID);
         }

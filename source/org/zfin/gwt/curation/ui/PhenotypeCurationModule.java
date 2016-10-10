@@ -1,5 +1,9 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.user.client.Window;
+import org.zfin.gwt.curation.event.ChangeCurationFilterEvent;
+import org.zfin.gwt.curation.event.CurationEvent;
+import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.root.dto.EntityPart;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.ui.HandlesError;
@@ -12,29 +16,24 @@ import java.util.TreeMap;
 /**
  * Entry Point for Phenotype curation tab module.
  */
-public class PhenotypeCurationModule implements HandlesError {
+public class PhenotypeCurationModule implements ZfinCurationModule, HandlesError {
 
     // data
     private String publicationID;
 
     // gui
-    private PileConstructionZoneModule pileConstructionZoneModule;
-    private AttributionModule attributionModule = new AttributionModule();
     private CurationFilterModule curationFilterModule;
     private MutantModule mutantExpressionModule;
 
     // listener
-    private List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
+    private List<HandlesError> handlesErrorListeners = new ArrayList<>();
 
     public PhenotypeCurationModule(String publicationID) {
         this.publicationID = publicationID;
         init();
     }
 
-    private void init() {
-        attributionModule.setPublication(publicationID);
-        attributionModule.addHandlesErrorListener(this);
-
+    public void init() {
         mutantExpressionModule = new MutantModule(publicationID);
         StructurePile structureModule = new PhenotypeStructureModule(publicationID);
         mutantExpressionModule.setPileStructure(structureModule);
@@ -44,22 +43,61 @@ public class PhenotypeCurationModule implements HandlesError {
         PileConstructionZoneModule constructionZoneModule = new PileConstructionZoneModule(publicationID, termEntryMap);
         constructionZoneModule.setStructureValidator(new PatoPileStructureValidator(termEntryMap));
         constructionZoneModule.setStructurePile(structureModule);
-        curationFilterModule = new CurationFilterModule(null, mutantExpressionModule, structureModule, publicationID);
+        curationFilterModule = new CurationFilterModule(mutantExpressionModule, structureModule, publicationID);
         structureModule.setPileStructureClickListener(constructionZoneModule);
-        pileConstructionZoneModule = constructionZoneModule;
-        exposeFigureRefreshMethodToJavascript(mutantExpressionModule, curationFilterModule);
+    }
+
+    @Override
+    public void refresh() {
+        mutantExpressionModule.reInit();
+    }
+
+    @Override
+    public void handleCurationEvent(CurationEvent event) {
+        if (event.getEventType().is(EventType.FILTER)) {
+            ChangeCurationFilterEvent changeEvent = (ChangeCurationFilterEvent) event;
+            //curationFilterModule.readSavedFilterValues();
+            if (event.getEventType().is(EventType.FX_TAB)) {
+                mutantExpressionModule.setExperimentFilter(changeEvent.getExperimentFilter());
+                mutantExpressionModule.setFigureID(changeEvent.getFigureID());
+                mutantExpressionModule.runModule();
+                curationFilterModule.setFilterValues(changeEvent.getExperimentFilter(), changeEvent.getFigureID());
+            }
+        }
+        if (event.getEventType().is(EventType.FISH)) {
+            mutantExpressionModule.retrieveFishList();
+            curationFilterModule.refreshFishList();
+        }
+        if (event.getEventType().is(EventType.CUD_EXPERIMENT_CONDITION)) {
+            mutantExpressionModule.retrieveExperimentConditionList();
+        }
+        if (event.getEventType().is(EventType.ADD_REMOVE_ATTRIBUTION_FEATURE)) {
+            curationFilterModule.refreshFeatureList();
+        }
+        if (event.getEventType().is(EventType.PUSH_TO_PATO)) {
+            mutantExpressionModule.retrieveExpressions();
+        }
+        if (event.getEventType().is(EventType.ADD_FIGURE)) {
+            mutantExpressionModule.refreshFigureList();
+            curationFilterModule.refreshFigureList();
+        }
+    }
+
+    @Override
+    public void handleTabToggle() {
+        mutantExpressionModule.retrieveEaps();
     }
 
     private Map<EntityPart, List<OntologyDTO>> getTermEntryMap() {
-        Map<EntityPart, List<OntologyDTO>> termEntryMap = new TreeMap<EntityPart, List<OntologyDTO>>();
-        List<OntologyDTO> superterm = new ArrayList<OntologyDTO>(4);
+        Map<EntityPart, List<OntologyDTO>> termEntryMap = new TreeMap<>();
+        List<OntologyDTO> superterm = new ArrayList<>(4);
         superterm.add(OntologyDTO.ANATOMY);
         superterm.add(OntologyDTO.GO_BP_MF);
         superterm.add(OntologyDTO.GO_MF);
         superterm.add(OntologyDTO.GO_BP);
         termEntryMap.put(EntityPart.ENTITY_SUPERTERM, superterm);
 
-        List<OntologyDTO> subterm = new ArrayList<OntologyDTO>(4);
+        List<OntologyDTO> subterm = new ArrayList<>(4);
         subterm.add(OntologyDTO.ANATOMY);
         subterm.add(OntologyDTO.GO_CC);
         subterm.add(OntologyDTO.GO_MF);
@@ -68,17 +106,17 @@ public class PhenotypeCurationModule implements HandlesError {
         subterm.add(OntologyDTO.MPATH_NEOPLASM);
         termEntryMap.put(EntityPart.ENTITY_SUBTERM, subterm);
 
-        List<OntologyDTO> quality = new ArrayList<OntologyDTO>(1);
+        List<OntologyDTO> quality = new ArrayList<>(1);
         quality.add(OntologyDTO.QUALITY_QUALITIES);
         quality.add(OntologyDTO.QUALITY_PROCESSES);
 
-        List<OntologyDTO> relatedSuperterm = new ArrayList<OntologyDTO>(3);
+        List<OntologyDTO> relatedSuperterm = new ArrayList<>(3);
         relatedSuperterm.add(OntologyDTO.ANATOMY);
         relatedSuperterm.add(OntologyDTO.GO_MF);
         relatedSuperterm.add(OntologyDTO.GO_BP);
         termEntryMap.put(EntityPart.RELATED_ENTITY_SUPERTERM, relatedSuperterm);
 
-        List<OntologyDTO> relatedSubterm = new ArrayList<OntologyDTO>(3);
+        List<OntologyDTO> relatedSubterm = new ArrayList<>(3);
         relatedSubterm.add(OntologyDTO.ANATOMY);
         relatedSubterm.add(OntologyDTO.GO_CC);
         relatedSubterm.add(OntologyDTO.SPATIAL);
@@ -91,11 +129,6 @@ public class PhenotypeCurationModule implements HandlesError {
         return termEntryMap;
     }
 
-    public PileConstructionZoneModule getPileConstructionZoneModule() {
-        return pileConstructionZoneModule;
-    }
-
-
     @Override
     public void setError(String message) {
     }
@@ -104,7 +137,6 @@ public class PhenotypeCurationModule implements HandlesError {
     public void clearError() {
         mutantExpressionModule.updateFish();
         curationFilterModule.setInitialValues();
-        attributionModule.revertGUI();
     }
 
     @Override
@@ -118,13 +150,5 @@ public class PhenotypeCurationModule implements HandlesError {
     public void addHandlesErrorListener(HandlesError handlesError) {
         handlesErrorListeners.add(handlesError);
     }
-
-    private native void exposeFigureRefreshMethodToJavascript(MutantModule presenter, CurationFilterModule curationFilterModule)/*-{
-        $wnd.refreshFigures = function () {
-            presenter.@org.zfin.gwt.curation.ui.MutantModule::refreshFigureList()();
-            curationFilterModule.@org.zfin.gwt.curation.ui.CurationFilterModule::refreshFigureList()();
-        };
-
-    }-*/;
 
 }

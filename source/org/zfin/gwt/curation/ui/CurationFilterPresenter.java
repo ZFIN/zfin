@@ -5,13 +5,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
 import org.zfin.gwt.curation.event.ChangeCurationFilterEvent;
+import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ListBoxWrapper;
-import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StringUtils;
-
-import java.util.List;
 
 /**
  * Filter bar aka banana bar.
@@ -41,7 +39,7 @@ import java.util.List;
 public class CurationFilterPresenter extends Composite {
 
     private String publicationID;
-    private CurationFilterView view;
+    protected CurationFilterView view;
     private CurationFilterRPCAsync curationFilterRPCAsync = CurationFilterRPC.Application.getInstance();
     private CurationExperimentRPCAsync curationRPCAsync = CurationExperimentRPC.App.getInstance();
     public static final String ALL = "ALL";
@@ -59,18 +57,22 @@ public class CurationFilterPresenter extends Composite {
     }
 
     public void setInitialValues() {
-        curationFilterRPCAsync.getPossibleFilterValues(publicationID, new RetrieveFishCallback());
+        curationFilterRPCAsync.getPossibleFilterValues(publicationID, new RetrieveFilterValuesCallback());
     }
 
     public void refreshFigureList() {
-        curationRPCAsync.getFigures(publicationID, new RetrieveFiguresCallback());
+        curationRPCAsync.getFigures(publicationID, new RetrieveSelectionBoxValueCallback(view.getFigureList()));
+    }
+
+    public void refreshGeneList() {
+        curationRPCAsync.getGenes(publicationID, new RetrieveSelectionBoxValueCallback(view.getGeneList()));
     }
 
 
     public void applyFigureListChange(ListBox list) {
         String figureID = applyGeneralChanges(list);
         saveFilterInfo(figureID, FilterType.FIG);
-        fireFilterEvent();
+        AppUtils.EVENT_BUS.fireEvent(new ChangeCurationFilterEvent(EventType.SELECT_FIGURE_FX, experimentFilter, view.getFigureID()));
     }
 
     private String applyGeneralChanges(ListBox list) {
@@ -91,25 +93,19 @@ public class CurationFilterPresenter extends Composite {
         gene.setZdbID(geneID);
         experimentFilter.setGene(gene);
         saveFilterInfo(geneID, FilterType.GENE);
-
-        fireFilterEvent();
-
+        AppUtils.EVENT_BUS.fireEvent(new ChangeCurationFilterEvent(EventType.SELECT_GENE_FX, experimentFilter, view.getFigureID()));
     }
 
     public void applyFishListChange(ListBoxWrapper listBox) {
         String fishID = applyGeneralChanges(listBox);
         saveFilterInfo(fishID, FilterType.FISH);
-
         experimentFilter.setFishID(fishID);
-        fireFilterEvent();
-
+        AppUtils.EVENT_BUS.fireEvent(new ChangeCurationFilterEvent(EventType.SELECT_FISH_FX, experimentFilter, view.getFigureID()));
     }
 
-    private void fireFilterEvent() {
-        ChangeCurationFilterEvent event = new ChangeCurationFilterEvent(experimentFilter, view.getFigureID());
-        AppUtils.EVENT_BUS.fireEvent(event);
+    public ExpressionExperimentDTO getExperimentFilter() {
+        return experimentFilter;
     }
-
 
     private void saveFilterInfo(String value, FilterType type) {
         String errorMessage = "Error while saving session info";
@@ -124,10 +120,45 @@ public class CurationFilterPresenter extends Composite {
         // update the filter state on the server
         saveFilterInfo(null, FilterType.FIG);
         saveFilterInfo(null, FilterType.GENE);
-        saveFilterInfo(null, FilterType.GENO);
-        fireFilterEvent();
+        saveFilterInfo(null, FilterType.FISH);
+        AppUtils.EVENT_BUS.fireEvent(new ChangeCurationFilterEvent(EventType.FILTER_FX, experimentFilter, null));
     }
 
+    public void setFilterValues(ExpressionExperimentDTO experimentFilter, String figureID) {
+        if (figureID != null) {
+            selectFilterElement(view.getFigureList(), figureID);
+        } else {
+            view.getFigureList().setSelectedIndex(0);
+            view.setBackgroundColorForListBox(null, view.getFigureList());
+        }
+        if (experimentFilter.getFishID() == null) {
+            view.getFishList().setSelectedIndex(0);
+        } else {
+            selectFilterElement(view.getFishList(), experimentFilter.getFishID());
+            view.setBackgroundColorForListBox(null, view.getFishList());
+        }
+    }
+
+
+    /**
+     * Select an entry from a filter box that was used.
+     *
+     * @param list List box
+     * @param id   ID
+     */
+    private void selectFilterElement(ListBox list, String id) {
+        if (StringUtils.isEmpty(id))
+            return;
+
+        int numberOfEntries = list.getItemCount();
+        for (int row = 0; row < numberOfEntries; row++) {
+            String gene = list.getValue(row);
+            if (gene.equals(id)) {
+                list.setSelectedIndex(row);
+                break;
+            }
+        }
+    }
 
     public enum FilterType {
         ALT,
@@ -140,7 +171,7 @@ public class CurationFilterPresenter extends Composite {
     ///// handler and listener
 
 
-    private class RetrieveFishCallback implements AsyncCallback<FilterValuesDTO> {
+    private class RetrieveFilterValuesCallback implements AsyncCallback<FilterValuesDTO> {
         public void onFailure(Throwable throwable) {
             if (throwable instanceof PublicationNotFoundException) {
                 GWT.log(String.valueOf(throwable));
@@ -170,15 +201,6 @@ public class CurationFilterPresenter extends Composite {
                 view.getGeneList().addItem(gene.getName(), gene.getZdbID());
             }
 
-/*
-            if (view.isUseFeatureFilter()) {
-                view.getFeatureList().clear();
-                view.getFeatureList().addItem(ALL, "");
-                for (FeatureDTO feature : valuesDTO.getFeatures()) {
-                    view.getFeatureList().addItem(feature.getAbbreviation(), feature.getZdbID());
-                }
-            }
-*/
             readSavedFilterValues();
         }
 
@@ -221,53 +243,9 @@ public class CurationFilterPresenter extends Composite {
                 experimentFilter.setGene(gene);
                 view.setBackgroundColorForListBox(geneID, view.getGeneList());
             }
-            if (filterValues.getFeature() != null) {
-                String featureID = filterValues.getFeature().getZdbID();
-/*
-                selectFilterElement(view.getFeatureList(), featureID);
-                experimentFilter.setFeatureID(filterValues.getFeature().getZdbID());
-                view.setBackgroundColorForListBox(featureID, view.getFeatureList());
-*/
-            }
-            fireFilterEvent();
-
+            AppUtils.EVENT_BUS.fireEvent(new ChangeCurationFilterEvent(EventType.FILTER, experimentFilter, view.getFigureID()));
         }
 
-        /**
-         * Select an entry from a filter box that was used.
-         *
-         * @param list List box
-         * @param id   ID
-         */
-        private void selectFilterElement(ListBox list, String id) {
-            if (StringUtils.isEmpty(id))
-                return;
-
-            int numberOfEntries = list.getItemCount();
-            for (int row = 0; row < numberOfEntries; row++) {
-                String gene = list.getValue(row);
-                if (gene.equals(id)) {
-                    list.setSelectedIndex(row);
-                    break;
-                }
-            }
-        }
-
-    }
-
-    public class RetrieveFiguresCallback extends ZfinAsyncCallback<List<FigureDTO>> {
-
-        public RetrieveFiguresCallback() {
-            super("Error while reading Figure Filters", null);
-        }
-
-        public void onSuccess(List<FigureDTO> valuesDTO) {
-            view.getFigureList().clear();
-            view.getFigureList().addItem(ALL, "");
-            for (FigureDTO figureDTO : valuesDTO) {
-                view.getFigureList().addItem(figureDTO.getLabel(), figureDTO.getZdbID());
-            }
-        }
 
     }
 

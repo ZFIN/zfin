@@ -101,7 +101,7 @@
                 <arg value="-war"/>
                 <arg value="@{target}"/>
                 <arg value="-style"/>
-                <arg value="PRETTY"/>
+                <arg value="DETAILED"/>
                 <arg value="@{module}"/>
                 <jvmarg value="-Xms256m"  />
                 <jvmarg value="-Xmx512m"  />

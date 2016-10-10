@@ -24,7 +24,10 @@ public class RetrieveRelatedEntityDTOListCallBack<T extends RelatedEntityDTO> ex
         if (leaveFirstEntryBlank) {
             entityList.addItem("");
         }
+        if (dtoList == null || dtoList.size() == 0)
+            return;
         this.dtoList = dtoList;
+
         for (T dto : dtoList) {
             entityList.addItem(dto.getName(), dto.getZdbID());
         }

@@ -67,7 +67,7 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
     }
 
 
-    protected void setAvailableValues() {
+    public void setAvailableValues() {
         if (inferenceCategoryList.getItemCount() == 0) {
             availableList.setVisible(false);
             lookupBox.setVisible(false);

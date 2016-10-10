@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * GWT Data Transfer Object corresponding to {@link org.zfin.mutant.Genotype}
  */
-public class FishDTO extends RelatedEntityDTO implements Comparable {
+public class FishDTO extends RelatedEntityDTO implements Comparable, FilterSelectionBoxEntry {
 
     private String zdbID;
     private String name;
@@ -127,5 +127,15 @@ public class FishDTO extends RelatedEntityDTO implements Comparable {
 
     public boolean isWildtype() {
         return genotypeDTO.isWildtype() && (strList == null || strList.size() == 0);
+    }
+
+    @Override
+    public String getValue() {
+        return zdbID;
+    }
+
+    @Override
+    public String getLabel() {
+        return name;
     }
 }

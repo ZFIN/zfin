@@ -5,44 +5,67 @@
         xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
         >
 
-    <g:HorizontalPanel>
-        <g:VerticalPanel spacing="10" title="Construction Zone">
-            <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
-                <g:Label text="Anatomy" addStyleNames="bold" width="100" horizontalAlignment="left"/>
-                <g:Label text=":" addStyleNames="bold"/>
-                <g:Label text="Substructure" addStyleNames="bold" width="150" horizontalAlignment="right"/>
-            </g:HorizontalPanel>
-            <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
-                <g:HTML width="10" styleName="green-pad" height="100%">&nbsp;<p/>&nbsp;
-                </g:HTML>
-                <g:VerticalPanel spacing="10">
-                    <zfin:TermEntry ui:field="subTermEntry"
-                                    listOFOntologies="zebrafish_anatomy,cellular_component,spatial,mouse_pathology.ontology"
-                                    entityPart="ENTITY_SUBTERM"
-                                    termInfoTable="{termInfoBox}"/>
-                    <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
-                        <g:Label text="within the" addStyleNames="bold"/>
-                        <g:Label text="&nbps;" addStyleNames="bold"/>
-                        <g:Button ui:field="swapTerms" text="Swap Terms &uarr;&darr;"/>
-                    </g:HorizontalPanel>
-                </g:VerticalPanel>
-            </g:HorizontalPanel>
-            <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
-                <zfin:TermEntry ui:field="superTermEntry"
-                                listOFOntologies="zebrafish_anatomy"
-                                entityPart="ENTITY_SUPERTERM"
-                                termInfoTable="{termInfoBox}"/>
-            </g:HorizontalPanel>
-            <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
-                <g:VerticalPanel ui:field="qualityListLeft" verticalAlignment="top" horizontalAlignment="left"/>
-                <g:VerticalPanel ui:field="qualityListRight" verticalAlignment="top" horizontalAlignment="left"/>
-            </g:HorizontalPanel>
+    <ui:style>
+        .cellTable {
+            border-bottom: 1px solid #ccc;
+            text-align: center;
+            margin-bottom: 4px;
+            vertical-align: middle;
+            padding: 15px;
+        }
+
+    </ui:style>
+
+    <g:HorizontalPanel styleName="table table-borderless searchresults">
+        <g:HTMLPanel>
+            <table class="table table-borderless searchresults">
+                <tbody>
+                    <tr>
+                        <th class="col-xs-1 align-text-top bold">Subterm</th>
+                        <td colspan="2">
+                            <zfin:TermEntry ui:field="subTermEntry"
+                                            listOFOntologies="zebrafish_anatomy,cellular_component,spatial,mouse_pathology.ontology"
+                                            entityPart="ENTITY_SUBTERM"
+                                            termInfoTable="{termInfoBox}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="align-text-top bold">
+                            <span
+                                    style="font-size: x-small; font-style: italic">within the
+                            </span>
+                        </th>
+                        <td class="centerAlign" colspan="2">
+                            <g:Button ui:field="swapTerms" text="Swap Terms &uarr;&darr;"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="align-text-top bold">Anatomy</th>
+                        <td colspan="2">
+                            <zfin:TermEntry ui:field="superTermEntry"
+                                            listOFOntologies="zebrafish_anatomy"
+                                            entityPart="ENTITY_SUPERTERM"
+                                            termInfoTable="{termInfoBox}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="align-text-top bold">EaP</th>
+                        <td class="align-text-top topAlign">
+                            <g:VerticalPanel ui:field="qualityListLeft"/>
+                        </td>
+                        <td class="align-text-top topAlign">
+                            <g:VerticalPanel ui:field="qualityListRight"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p></p>
             <g:HorizontalPanel verticalAlignment="middle" horizontalAlignment="left">
-                <g:Button ui:field="addButton" text="Add"/>
-                <g:Button ui:field="resetButton" text="Reset"/>
+                <g:Button ui:field="addButton" text="Add" addStyleNames="btn btn-primary"/>
+                <g:Button ui:field="resetButton" text="Reset" addStyleNames="btn btn-link"/>
             </g:HorizontalPanel>
             <zfin:SimpleErrorElement ui:field="errorElement"/>
-        </g:VerticalPanel>
+        </g:HTMLPanel>
         <zfin:TermInfoComposite ui:field='termInfoBox' styleName="searchresults" cellSpacing='0' cellPadding='5'
                                 ontologyName="zebrafish_anatomy"/>
     </g:HorizontalPanel>

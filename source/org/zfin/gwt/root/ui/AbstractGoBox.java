@@ -312,6 +312,10 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO> {
         });
     }
 
+    public AbstractInferenceListBox getInferenceListBox() {
+        return inferenceListBox;
+    }
+
     @Override
     protected void setValues() {
         if (dto == null) return;

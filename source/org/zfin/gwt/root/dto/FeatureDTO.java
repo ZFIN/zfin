@@ -9,19 +9,18 @@ import java.util.Set;
 
 /**
  * Transcript RPC object.
-
  */
 
-public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes {
+public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes, FilterSelectionBoxEntry {
 
 
-    private String optionalName ; // this is the name entered from the GUI, not stored in the database
+    private String optionalName; // this is the name entered from the GUI, not stored in the database
     private String abbreviation;  // this is the name (the full name) without the optionalName except for some cases
     private Boolean dominant = false;
     private String mutagen;
     private String mutagee;
     private String featureAssay;
-    private Boolean knownInsertionSite = false ;
+    private Boolean knownInsertionSite = false;
     private NoteDTO publicNote;
     private List<NoteDTO> publicNoteList;
     private List<CuratorNoteDTO> curatorNotes;
@@ -58,7 +57,8 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes {
     protected String transgenicSuffix;
     protected int labPrefixID;
 
-    public FeatureDTO() { }
+    public FeatureDTO() {
+    }
 
     public FeatureDTO(RelatedEntityDTO relatedEntityDTO) {
         this.dataZdbID = relatedEntityDTO.getDataZdbID();
@@ -77,7 +77,6 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes {
     public void setOptionalName(String optionalName) {
         this.optionalName = optionalName;
     }
-
 
 
     public List<String> getFeatureAliases() {
@@ -242,8 +241,8 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes {
         this.transcriptChangeDTOSet = transcriptChangeDTOSet;
     }
 
-    public void addTranscriptChange(MutationDetailTranscriptChangeDTO dto){
-        if(transcriptChangeDTOSet == null)
+    public void addTranscriptChange(MutationDetailTranscriptChangeDTO dto) {
+        if (transcriptChangeDTOSet == null)
             transcriptChangeDTOSet = new HashSet<>(5);
         transcriptChangeDTOSet.add(dto);
     }
@@ -256,27 +255,27 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes {
     public FeatureDTO deepCopy() {
         FeatureDTO featureDTO = new FeatureDTO();
         featureDTO.zdbID = zdbID;
-        featureDTO.dataZdbID = dataZdbID ;
+        featureDTO.dataZdbID = dataZdbID;
         featureDTO.name = name;
         featureDTO.link = link;
         featureDTO.publicationZdbID = publicationZdbID;
-        featureDTO.abbreviation = abbreviation ;
-        featureDTO.alias = alias ;
+        featureDTO.abbreviation = abbreviation;
+        featureDTO.alias = alias;
         featureDTO.curatorNotes = curatorNotes;
-        featureDTO.dominant = dominant ;
-        featureDTO.featureAliases = featureAliases ;
-        featureDTO.featureSequence = featureSequence ;
-        featureDTO.featureAssay = featureAssay ;
-        featureDTO.featureType = featureType ;
-        featureDTO.knownInsertionSite = knownInsertionSite ;
-        featureDTO.labOfOrigin = labOfOrigin ;
+        featureDTO.dominant = dominant;
+        featureDTO.featureAliases = featureAliases;
+        featureDTO.featureSequence = featureSequence;
+        featureDTO.featureAssay = featureAssay;
+        featureDTO.featureType = featureType;
+        featureDTO.knownInsertionSite = knownInsertionSite;
+        featureDTO.labOfOrigin = labOfOrigin;
         featureDTO.labPrefix = labPrefix;
-        featureDTO.labPrefixID = labPrefixID ;
-        featureDTO.lineNumber = lineNumber ;
-        featureDTO.publicNote = publicNote ;
-        featureDTO.transgenicSuffix = transgenicSuffix ;
-        featureDTO.mutagee = mutagee ;
-        featureDTO.mutagen = mutagen ;
+        featureDTO.labPrefixID = labPrefixID;
+        featureDTO.lineNumber = lineNumber;
+        featureDTO.publicNote = publicNote;
+        featureDTO.transgenicSuffix = transgenicSuffix;
+        featureDTO.mutagee = mutagee;
+        featureDTO.mutagen = mutagen;
         return featureDTO;
     }
 
@@ -307,8 +306,18 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes {
 
 
     public void addPublicNote(NoteDTO publicNoteDTO) {
-        if(publicNoteList == null)
+        if (publicNoteList == null)
             publicNoteList = new ArrayList<>(2);
         publicNoteList.add(publicNoteDTO);
+    }
+
+    @Override
+    public String getLabel() {
+        return abbreviation;
+    }
+
+    @Override
+    public String getValue() {
+        return zdbID;
     }
 }

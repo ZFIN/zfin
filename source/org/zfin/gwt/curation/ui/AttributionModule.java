@@ -10,7 +10,9 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.curation.event.AddAttributeEvent;
+import org.zfin.gwt.curation.event.CurationEvent;
+import org.zfin.gwt.curation.event.EventType;
+import org.zfin.gwt.root.dto.AttributionType;
 import org.zfin.gwt.root.dto.DeAttributionException;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
@@ -24,7 +26,7 @@ import java.util.List;
 
 /**
  */
-public class AttributionModule extends AbstractRevertibleComposite<RelatedEntityDTO> {
+public class AttributionModule extends AbstractRevertibleComposite<RelatedEntityDTO> implements ZfinCurationModule {
 
     private HorizontalPanel container = new HorizontalPanel();
     private LookupComposite markerLookupComposite = new LookupComposite(false);
@@ -36,38 +38,39 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
 
     private MarkerRPCServiceAsync markerService = MarkerRPCService.App.getInstance();
 
-    public enum RemoveHeader {
-        MARKER,
-        FEATURE,
-        GENOTYPE,
-        FISH;
-
-        private static final String STARS = "**";
-
-        public String toString() {
-            return STARS + name();
-        }
-
-        public static boolean isHeader(String value) {
-            return (value == null || value.startsWith(STARS));
-        }
-    }
-
     public AttributionModule() {
-        this(StandardDivNames.directAttributionDiv);
+        init();
     }
 
-    public AttributionModule(String div) {
+    public void init() {
         initWidget(panel);
         initGUI();
         setValues();
         addInternalListeners(this);
-        if (div != null) {
-            RootPanel.get(div).add(this);
-        }
+        RootPanel.get(StandardDivNames.directAttributionDiv).add(this);
         exposeAttributionMethodsToJavascript(this);
     }
 
+    @Override
+    public void refresh() {
+        populateAttributeRemoval();
+    }
+
+    @Override
+    public void handleCurationEvent(CurationEvent event) {
+        if (event == null)
+            return;
+        if (event.getEventType().equals(EventType.CREATE_MARKER) ||
+                event.getEventType().equals(EventType.CREATE_FEATURE) ||
+                event.getEventType().equals(EventType.CREATE_FISH)) {
+            populateAttributeRemoval();
+        }
+    }
+
+    @Override
+    public void handleTabToggle() {
+
+    }
 
     @Override
     public boolean isDirty() {
@@ -179,7 +182,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
                 final String attributionToRemoveID = removeListBox.getSelectedValue();
                 final String attributionToRemoveLabel = removeListBox.getSelectedText();
 
-                if (RemoveHeader.isHeader(attributionToRemoveID)) {
+                if (AttributionType.isHeader(attributionToRemoveID)) {
                     return;
                 }
                 String cannotRemove = getCannotRemoveMessage(attributionToRemoveID, attributionToRemoveLabel);
@@ -259,10 +262,11 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
                     public void onSuccess(Void result) {
                         notWorking();
                         fireEventSuccess();
-                        AppUtils.EVENT_BUS.fireEvent(new AddAttributeEvent());
+                        AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.MARKER_ATTRIBUTION, value));
                         clearError();
                         setMessage("Marker attribution added: " + value);
                         resetInput();
+                        populateAttributeRemoval();
                     }
                 });
     }
@@ -293,10 +297,11 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
                     public void onSuccess(Void result) {
                         notWorking();
                         fireEventSuccess();
-                        AppUtils.EVENT_BUS.fireEvent(new AddAttributeEvent());
+                        AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.ATTRIBUTE_FEATURE, value));
                         clearError();
                         setMessage("Feature attribution added:" + value);
                         resetInput();
+                        populateAttributeRemoval();
                     }
                 });
     }
@@ -347,7 +352,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     }
 
 
-    class DeAttributionRuleCallBack extends ZfinAsyncCallback<Void> {
+    class DeAttributionRuleCallBack extends ZfinAsyncCallback<String> {
 
         private String entityID;
         private HandlesError errorLabel;
@@ -358,7 +363,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
         }
 
         @Override
-        public void onSuccess(Void result) {
+        public void onSuccess(final String attributionType) {
             markerService.removeAttribution(entityID, dto.getPublicationZdbID(),
                     new MarkerEditCallBack<String>("Failed to remove attribution: ", errorLabel) {
 
@@ -373,10 +378,19 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
                             notWorking();
                             if (message == null) {
                                 fireEventSuccess();
-                                AppUtils.EVENT_BUS.fireEvent(new RemoveAttributeEvent());
+                                if (attributionType.equals(AttributionType.MARKER.name())) {
+                                    AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.MARKER_DEATTRIBUTION, entityID));
+                                }
+                                if (attributionType.equals(AttributionType.FEATURE.name()))
+                                    AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.DEATTRIBUTE_FEATURE, entityID));
+                                if (attributionType.equals(AttributionType.FISH.name()))
+                                    AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.DEATTRIBUTE_FISH, entityID));
+                                if (attributionType.equals(AttributionType.GENOTYPE.name()))
+                                    AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.DEATTRIBUTE_GENOTYPE, entityID));
                                 clearError();
                                 setMessage("Removed attribution: ");
                                 resetInput();
+                                populateAttributeRemoval();
                             } else if (!message.isEmpty()) {
                                 setError(message);
                                 clearMessage();

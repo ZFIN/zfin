@@ -27,7 +27,7 @@ public interface CurationExperimentRPCAsync {
      * @param publicationID pub ID
      * @param async         callback
      */
-    void getFishList(String publicationID, AsyncCallback<List<FishDTO>> async);
+    void getFishList(String publicationID, AsyncCallback<List<FilterSelectionBoxEntry>> async);
 
     /**
      * Retrieve antibodies that are attributed to a given publication
@@ -115,7 +115,7 @@ public interface CurationExperimentRPCAsync {
      */
     void readFigures(String publicationID, AsyncCallback<List<String>> async);
 
-    void getGenes(String pubID, AsyncCallback<List<MarkerDTO>> async);
+    void getGenes(String pubID, AsyncCallback<List<FilterSelectionBoxEntry>> async);
 
     //// Expression Section
 
@@ -123,7 +123,7 @@ public interface CurationExperimentRPCAsync {
 
     void getExpressionsByFilter(ExpressionExperimentDTO experimentFilter, String figureID, AsyncCallback<List<ExpressionFigureStageDTO>> async);
 
-    void getFigures(String publicationID, AsyncCallback<List<FigureDTO>> async);
+    void getFigures(String publicationID, AsyncCallback<List<FilterSelectionBoxEntry>> async);
 
     void getStages(AsyncCallback<List<StageDTO>> async);
 

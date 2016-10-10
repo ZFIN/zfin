@@ -79,7 +79,7 @@ public abstract class HandlesErrorCallBack<T> implements AsyncCallback<T> {
     protected boolean handleOutOfDateError(Throwable t) {
         if (t instanceof IncompatibleRemoteServiceException) {
             IncompatibleRemoteServiceException remoteServiceException = (IncompatibleRemoteServiceException) t;
-            Window.alert("This application is out of date, please click the refresh button on your browser");
+            Window.alert("This application is out of date, please click the handleCurationEvent button on your browser");
             return true;
         }
         return false;

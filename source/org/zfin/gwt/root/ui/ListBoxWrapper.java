@@ -1,5 +1,6 @@
 package org.zfin.gwt.root.ui;
 
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.ListBox;
 
 import java.util.List;
@@ -119,6 +120,23 @@ public class ListBoxWrapper extends ListBox {
         return -1;
     }
 
+    public int setSelectedItemByValue(String value) {
+        int count = getItemCount();
+        String itemValue;
+        for (int i = 0; i < count; i++) {
+            itemValue = getValue(i);
+            if (
+                    (value != null && value.equals(itemValue))
+                            ||
+                            (value == null && (getValue(0).equals(EMPTY_CHOICE) || getValue(0) == null))
+                    ) {
+                setItemSelected(i, true);
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public int setIndexForValue(Integer value) {
         int count = getItemCount();
         for (int i = 0; i < count; i++) {
@@ -164,5 +182,13 @@ public class ListBoxWrapper extends ListBox {
             }
         }
         return false ;
+    }
+
+    public void setBackgroundColor() {
+        if (getSelectedIndex() == 0)
+            setStyleName("list-box-unselected");
+        else
+            setStyleName("list-box-selected");
+
     }
 }

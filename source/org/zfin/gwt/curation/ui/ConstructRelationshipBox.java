@@ -48,10 +48,8 @@ public class ConstructRelationshipBox extends AbstractComposite<ConstructDTO>{
         initWidget(panel);
 
         panel.add(new HTML("<br>"));
-  //      panel.add(constructFilterModule);
         panel.add(new HTML("<br>"));
         panel.setWidth("100%");
-
 
         constructToAddList.setName("constructToAddList");
         constructTable.setStyleName(CssStyles.SEARCHRESULTS + " " + CssStyles.GROUPSTRIPES_HOVER);
@@ -64,8 +62,6 @@ public class ConstructRelationshipBox extends AbstractComposite<ConstructDTO>{
         panel.add(errorLabel);
         errorLabel.setStyleName("error");
     }
-
-
 
     protected void setValues() {
         if(dto!=null && dto.getPublicationZdbID()!=null){

@@ -1,6 +1,3 @@
-<script type="text/javascript" language="javascript"
-        src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
-
 <table class="table table-borderless">
     <tr>
         <td>
@@ -91,51 +88,36 @@
             <div id="display-structure-errors"></div>
             <div id="construction-zone"></div>
 
-            <script type="text/javascript">
-                var curationProperties = {
-                    zdbID: "${publication.zdbID}",
-                    moduleType: "PHENOTYPE_CURATION",
-                    debug: "false"
-                };
-            </script>
-
             <a name="structure-construction-zone"></a>
 
             <div id="structure-pile-construction-zone" style="display:inline;">
-                <table>
+                <table class="searchresults">
                     <tbody>
                     <tr>
                         <td valign="top">
-                            <table>
+                            <table class="table table-borderless searchresults">
+                                <tbody>
                                 <tr>
-                                    <td align="left" width="100" class="bold">Superterm
-                                    </td>
-                                    <td class="bold">:</td>
-                                    <td align="right" width="150" class="bold">Subterm
-                                    </td>
-                                </tr>
-                            </table>
-
-                            <table border="0" cellpadding="5" cellspacing="3">
-                                <tr>
-                                    <td align="center" bgcolor="#006666" width="1">
-                                    </td>
-                                    <td align="top">
+                                    <th class="col-xs-1 align-text-top bold">Subterm</th>
+                                    <td>
                                         <div id="structure-pile-construction-zone-entity_subterm-info"></div>
-                                        <p>
-                                        </p>
-                                        <span class="indent2"><b><i>within the</i></b></span>
-                                        <span id="structure-pile-construction-zone-swap-terms" class="indent3"></span>
                                     </td>
                                 </tr>
-                            </table>
-
-                            <table>
                                 <tr>
+                                    <th class="align-text-top bold"><span
+                                            style="font-size: x-small; font-style: italic">within the</span>
+                                    </td>
+                                    <td class="text-right">
+                                        <span id="structure-pile-construction-zone-swap-terms"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="align-text-top bold">Superterm</th>
                                     <td>
                                         <div id="structure-pile-construction-zone-entity_superterm-info"></div>
                                     </td>
                                 </tr>
+                                </tbody>
                             </table>
                             <div class="dots"></div>
                             <table>
@@ -147,33 +129,24 @@
                             </table>
                             <div id="related-terms-panel">
                                 <div class="dots"></div>
-                                <table>
+                                <table class="table table-borderless searchresults">
+                                    <tbody>
                                     <tr>
-                                        <td align="left" width="100" class="bold">Superterm
-                                        </td>
-                                        <td class="bold">:</td>
-                                        <td align="right" width="150" class="bold">Subterm
-                                        </td>
-                                    </tr>
-                                </table>
-
-                                <table border="0" cellpadding="5" cellspacing="3">
-                                    <tr>
-                                        <td align="center" bgcolor="#006666" width="1">
-                                        </td>
+                                        <th class="col-xs-1 align-text-top bold">Subterm</th>
                                         <td align="top">
                                             <div id="structure-pile-construction-zone-related_entity_subterm-info"></div>
-                                            <p>
-                                            </p>
-                                            <span class="indent2"><b><i>within the</i></b></span>
-                                            <span id="structure-pile-construction-zone-swap-related-terms"
-                                                  class="indent3"></span>
                                         </td>
                                     </tr>
-                                </table>
-
-                                <table>
                                     <tr>
+                                        <th class="align-text-top bold"><span
+                                                style="font-size: x-small; font-style: italic">within the</span>
+                                        </td>
+                                        <td>
+                                            <span id="structure-pile-construction-zone-swap-related-terms"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="align-text-top bold">Superterm</th>
                                         <td>
                                             <div id="structure-pile-construction-zone-related_entity_superterm-info"></div>
                                         </td>
@@ -228,5 +201,3 @@
         margin-left: 70px;
     }
 </style>
-<script type="text/javascript" src="/javascript/zfin-gwt-autocomplete-helper.js">
-</script>
