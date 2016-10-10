@@ -14,7 +14,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/Reports/AnnualStatistics/ &amp;&amp; runStats.sh</command>
+      <command>cd $TARGETROOT/server_apps/Reports/AnnualStats/ &amp;&amp; runStats.sh</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
