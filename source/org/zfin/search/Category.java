@@ -86,6 +86,9 @@ public enum Category {
             CURATION_STATUS,
             PUBLICATION_STATUS,
             INDEXING_STATUS,
+            CURATION_LOCATION,
+            PUB_OWNER,
+            PUB_CURATION_STATUS,
             CURATOR
     ),
     FIGURE("Figure",
