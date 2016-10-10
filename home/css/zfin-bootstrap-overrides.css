@@ -93,7 +93,7 @@ a:hover {
     border: 0 !important;
     border-spacing: 0 !important;
     margin: 0;
-    line-height: 1.1;
+    line-height: 0.7;
 }
 
 .table-condensed > input > label {
