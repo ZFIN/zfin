@@ -109,6 +109,17 @@
         }
 
         function claimPub(pub) {
+
+            PublicationService.getStatus(pub.zdbId)
+            //if owner hasnt been set, set claimedFlag to false
+                .then(function (response) {
+                    if (response.data.owner.zdbID!=vm.userId){
+                        claimedFlag=false
+                        }
+                    else {
+                        claimedFlag = true
+                    }
+                })
             pub.saving = true;
            
             var status = {
@@ -118,7 +129,7 @@
                 owner: { zdbID: vm.userId }
             };
 
-            PublicationService.updateStatus(status,false)
+            PublicationService.updateStatus(status,claimedFlag)
                 .then(function (response) {
                     pub.claimed = true;
                    
