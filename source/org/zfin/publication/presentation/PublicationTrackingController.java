@@ -195,13 +195,10 @@ public class PublicationTrackingController {
     public CurationStatusDTO updateCurationStatus(@PathVariable String zdbID,@RequestParam(required = false, defaultValue = "false") Boolean claimedFlag,@RequestBody CurationStatusDTO dto) throws InvalidWebRequestException{
         Publication publication = publicationRepository.getPublication(zdbID);
         PublicationTrackingHistory pth=publicationRepository.currentTrackingStatus(publication);
-
-                    /*if (!pth.getOwner().getZdbID().equals(ProfileService.getCurrentSecurityUser().getZdbID())){
-                        claimedFlag=true;
-                    }
-*/
-        if (!claimedFlag) {
-
+        if (claimedFlag &&pth.getOwner() != null && dto.getOwner() != null && pth.getOwner().getZdbID() != dto.getOwner().getZdbID()) {
+            throw new InvalidWebRequestException("Pub already claimed");
+        }
+        else{
             PublicationTrackingHistory newStatus = new PublicationTrackingHistory();
             newStatus.setPublication(publication);
             newStatus.setStatus(dto.getStatus());
@@ -221,9 +218,7 @@ public class PublicationTrackingController {
             session.save(newStatus);
             tx.commit();
         }
-        else{
-            throw new InvalidWebRequestException("Pub already claimed");
-        }
+
         return converter.toCurationStatusDTO(publicationRepository.currentTrackingStatus(publication));
     }
 
