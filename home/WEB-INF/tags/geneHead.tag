@@ -8,7 +8,7 @@
 <script src="/javascript/nomenclature.js" type="text/javascript"></script>
 
 <authz:authorize access="hasRole('root')">
-    <div ng-app="editMarker" ng-controller="EditController as eControl">
+    <div ng-app="app" ng-controller="EditController as eControl">
     <script>
         markerID = '${gene.zdbID}';
 

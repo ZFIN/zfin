@@ -19,7 +19,7 @@
 <script src="/javascript/editMarker.js"></script>
 <script src="/javascript/nomenclature.js" type="text/javascript"></script>
 
-<div ng-app="editMarker" ng-controller="EditController as eControl">
+<div ng-app="app" ng-controller="EditController as eControl">
     <script>
         markerID = '${marker.zdbID}';
 

@@ -15,7 +15,7 @@
 </c:if>
 
     <authz:authorize access="hasRole('root')">
-        <div ng-app="editMarker" ng-controller="EditController as eControl">
+        <div ng-app="app" ng-controller="EditController as eControl">
         <script>
             markerID = '${marker.zdbID}';
 
