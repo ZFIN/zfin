@@ -110,16 +110,6 @@
 
         function claimPub(pub) {
 
-            /*PublicationService.getStatus(pub.zdbId)
-            //if owner hasnt been set, set claimedFlag to false
-                .then(function (response) {
-                    if (response.data.owner.zdbID!=vm.userId){
-                        claimedFlag=false
-                        }
-                    else {
-                        claimedFlag = true
-                    }
-                })*/
             pub.saving = true;
           
             var status = {
@@ -137,7 +127,7 @@
                 .catch(function (response) {
                    
                     if (response.data && response.data.message) {
-                        vm.claimError = response.data.message;
+                        pub.claimError = response.data.message;
                     }
                 })
                 .finally(function () {
