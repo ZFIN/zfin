@@ -180,8 +180,7 @@
 }
 
 .uber-banner {
-    /*background: #740C56;*/
-    background: #a21d26;
+    background: #740C56;
     padding: 0.7em;
     margin-bottom: 0.25em;
     text-align: center;
@@ -189,7 +188,6 @@
     box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.5);
     font-size: 14.4px;
     line-height: normal;
-    color: white;
 }
 
 .uber-banner a {

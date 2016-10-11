@@ -28,9 +28,6 @@ else{
 
 document.write(
     '<body id="body">' +
-    '<div class="uber-banner">' +
-    '  ZFIN is currently experiencing technical difficulties. You may find some features unavailable at this time. We are working to resolve this as quickly as possible.' +
-    '</div>' +
     '<header class="zfin-header">' +
     '<a href="/">' +
     '  <img id="logo-img" src="/images/zfinlogo.png">' +
