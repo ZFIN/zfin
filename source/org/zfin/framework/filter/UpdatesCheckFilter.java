@@ -60,10 +60,10 @@ public class UpdatesCheckFilter implements Filter {
             if (person != null) {
                 logoutUser(request, response);
                 logger.info("System is currently being updated. No login session are allowed.");
+                return;
             }
-        } else {
-            filterChain.doFilter(servletRequest, servletResponse);
         }
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 
     private boolean isReadOnlyUrl(String url) {
