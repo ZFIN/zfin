@@ -69,6 +69,16 @@
             <zfin:link entity="${image}"/>
 
     </c:if>--%>
+<table class="summary">
+    <tr>
+        <th>Figure Caption/Comments:</th>
+    </tr>
+</table>
+<c:if test="${!empty image.comments}">
+    <p class="fig">
+${image.comments}
+    </p>
+    </c:if>
 
 <c:if test="${!empty image.figure}">
   <p class="fig">
