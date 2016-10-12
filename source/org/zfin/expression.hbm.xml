@@ -95,6 +95,7 @@
         <property name="form" column="img_form" not-null="true"/>
         <property name="preparation" column="img_preparation" not-null="true"/>
         <property name="label" column="img_label"/>
+        <property name="comments" column="img_comments"/>
 
         <many-to-one name="owner" column="img_owner_zdb_id" class="org.zfin.profile.Person" not-null="true"/>
 
