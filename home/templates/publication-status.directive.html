@@ -5,6 +5,7 @@
             <div class="col-sm-4">
                 <select class="form-control" id="pub-status"
                         ng-options="status.name for status in vm.statuses track by status.id"
+                        ng-change="vm.handleStatusChange()"
                         ng-model="vm.current.status">
                 </select>
             </div>

@@ -42,6 +42,7 @@
 
   <div publication-tracker
        pub-id="${publication.zdbID}"
+       curator-id="${loggedInUser.zdbID}"
        curator-first="${loggedInUser.firstName}"
        curator-last="${loggedInUser.lastName}"
        curator-email="${loggedInUser.email}">
