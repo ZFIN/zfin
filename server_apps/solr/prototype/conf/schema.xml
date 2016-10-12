@@ -943,7 +943,7 @@
    <copyField source="coding_sequence" dest="coding_sequence_t"/>
    <copyField source="inserted_in_gene" dest="inserted_in_gene_t"/>
    <copyField source="lab" dest="lab_t"/>
-   <copyField source="curator" dest="curator_t"/>
+   <!--<copyField source="curator" dest="curator_t"/>-->
    <copyField source="sequence_alteration" dest="sequence_alteration_t"/>
    <copyField source="background" dest="background_t"/>
    <copyField source="full_mesh_term" dest="full_mesh_term_t"/>
