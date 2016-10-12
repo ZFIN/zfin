@@ -9,6 +9,7 @@
             templateUrl: '/templates/publication-status.directive.html',
             scope: {
                 pubId: '@',
+                curatorId: '@',
                 topics: '=',
                 notes: '='
             },
@@ -28,6 +29,7 @@
         vm.locations = [];
         vm.priorities = [];
         vm.curators = [];
+        vm.curator = null;
 
         vm.current = null;
         vm.original = null;
@@ -38,6 +40,7 @@
         vm.hasTopics = hasTopics;
         vm.updateStatus = updateStatus;
         vm.readyToSave = readyToSave;
+        vm.handleStatusChange = handleStatusChange;
         vm.statusNeedsOwner = PublicationService.statusNeedsOwner;
         vm.statusNeedsLocation = PublicationService.statusNeedsLocation;
         vm.statusHasPriority = PublicationService.statusHasPriority;
@@ -61,6 +64,7 @@
             PublicationService.getCurators()
                 .then(function (response) {
                     vm.curators = response.data;
+                    vm.curator = vm.curators.find(function (c) { return c.zdbID === vm.curatorId; });
                 });
             PublicationService.getStatus(vm.pubId)
                 .then(storeStatus);
@@ -85,6 +89,14 @@
                 return vm.current.owner && (statusChanged || vm.current.owner.zdbID !== vm.original.owner.zdbID);
             }
             return statusChanged;
+        }
+
+        function handleStatusChange() {
+            if (vm.current.status.type === 'CURATING') {
+                vm.current.owner = vm.curator;
+            } else {
+                vm.current.owner = vm.original.owner;
+            }
         }
 
         function validateBeforeClose() {
