@@ -4146,9 +4146,6 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                              case when status = 'active' then 'Active'
                                   when status = 'inactive' then 'Inactive'
                                   else status end as publication_status,
-                             case when pub_completion_date is null
-                                  then 'Open'
-                                  else 'Closed' end as curation_status,
                              keywords as keyword,
                              authors as author_string
                              from publication">
@@ -4486,16 +4483,6 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                      cacheImpl="SortedMapBackedCache"
                    where="pub_zdb_id=publication.id"/>
 
-           <entity name="pub_curator"
-                   datasource="db" query="
-                   select first_name || ' ' || last_name as curator,
-                           publication.zdb_id as pub_zdb_id
-                    from publication
-                         join curation on cur_pub_zdb_id = zdb_id
-                         join person on cur_curator_zdb_id = person.zdb_id
-                     where cur_topic != 'Linked Authors'"
-                   cacheImpl="SortedMapBackedCache"
-                   where="pub_zdb_id=publication.id"/>
 
 <!--
            This is commented out because it causes locks
