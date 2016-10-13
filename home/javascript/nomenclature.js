@@ -4,6 +4,8 @@ editMarker.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$
     var nomenController = this;
 
     nomenController.nomenID;
+    nomenController.geneName;
+    nomenController.geneAbbreviation;
     nomenController.reason;
     nomenController.comments;
     nomenController.publicationID;
@@ -30,7 +32,12 @@ editMarker.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$
     nomenController.reset= function () {
         nomenController.reason = '';
         nomenController.comments = '';
-    }
+    };
+
+    $scope.init = function(name, abbreviation){
+        nomenController.geneName = name;
+        nomenController.geneAbbreviation = abbreviation;
+    };
 
 
     nomenController.updateNomenclature = function () {
@@ -62,9 +69,11 @@ editMarker.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$
                 .then(function (success) {
                     if (nomenController.fieldName == 'Gene Name') {
                         $("#markerName").text(parameters.name)
+                        nomenController.geneName = nomenController.geneNameOrAbbreviation;
                     } else if (nomenController.fieldName == 'Gene Symbol') {
                         $('body').find("[geneSymbol='']").text(parameters.abbreviation)
                         nomenController.fetchPreviousNameList();
+                        nomenController.geneAbbreviation = nomenController.geneNameOrAbbreviation;
                     }
                     nomenController.closeModal();
                 })

@@ -23,7 +23,7 @@
             View
         </div>
     </caption>
-    <div ng-controller="NomenclatureController as control">
+    <div ng-controller="NomenclatureController as control" ng-init="init('${gene.name}','${gene.abbreviation}')">
 </authz:authorize>
 <table class="primary-entity-attributes">
     <tr>
@@ -32,7 +32,7 @@
             <span class="name-value"><zfin:name entity="${gene}"/></span>
             <authz:authorize access="hasRole('root')">
                 <span style="cursor: pointer;"
-                      ng-click="control.openGeneEditor('${gene.zdbID}','${gene.name}', 'Gene Name')"
+                      ng-click="control.openGeneEditor(markerID, control.geneName, 'Gene Name')"
                       ng-if="editMode">
                     <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit gene name"></i>
                 </span>
@@ -45,7 +45,7 @@
             <span class="name-value" geneSymbol><zfin:abbrev entity="${gene}"/></span>
             <authz:authorize access="hasRole('root')">
                     <span style="cursor: pointer;"
-                          ng-click="control.openGeneEditor('${gene.zdbID}','${gene.abbreviation}', 'Gene Symbol')"
+                          ng-click="control.openGeneEditor(markerID, control.geneAbbreviation, 'Gene Symbol')"
                           ng-if="editMode">
                     <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit gene symbol"></i></span>
             </authz:authorize>

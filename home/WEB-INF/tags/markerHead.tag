@@ -14,27 +14,27 @@
     <c:set var="typeName">${marker.markerType.displayName}</c:set>
 </c:if>
 
-    <authz:authorize access="hasRole('root')">
-        <div ng-app="app" ng-controller="EditController as eControl">
-        <script>
-            markerID = '${marker.zdbID}';
+<authz:authorize access="hasRole('root')">
+    <div ng-app="app" ng-controller="EditController as eControl" ng-init="init('${gene.name}','${gene.abbreviation}')">
+    <script>
+        markerID = '${marker.zdbID}';
 
-            var reasonList = [];
-            <c:forEach items="${markerHistoryReasonCodes}" var="reason" varStatus="status">
-            reasonList.push('${reason.toString()}');
-            </c:forEach>
-        </script>
+        var reasonList = [];
+        <c:forEach items="${markerHistoryReasonCodes}" var="reason" varStatus="status">
+        reasonList.push('${reason.toString()}');
+        </c:forEach>
+    </script>
 
-        <c:if test="${showEditControls}">
-            <caption>
-                <div ng-click="eControl.editMarker()" ng-if="!editMode" style="cursor: pointer;" class="error">Edit</div>
-                <div ng-click="eControl.viewMarker()" ng-if="editMode" style="cursor: pointer;" class="error">
-                    View
-                </div>
-            </caption>
-        </c:if>
-        <div ng-controller="NomenclatureController as control">
-    </authz:authorize>
+    <c:if test="${showEditControls}">
+        <caption>
+            <div ng-click="eControl.editMarker()" ng-if="!editMode" style="cursor: pointer;" class="error">Edit</div>
+            <div ng-click="eControl.viewMarker()" ng-if="editMode" style="cursor: pointer;" class="error">
+                View
+            </div>
+        </caption>
+    </c:if>
+    <div ng-controller="NomenclatureController as control">
+</authz:authorize>
 
 <table class="primary-entity-attributes">
     <tr>
@@ -42,19 +42,19 @@
         <td>
             <span class="name-value"><zfin:name entity="${marker}"/></span>
             <c:if test="${showEditControls}">
-            <authz:authorize access="hasRole('root')">
+                <authz:authorize access="hasRole('root')">
                 <span style="cursor: pointer;"
-                      ng-click="control.openGeneEditor('${marker.zdbID}','${marker.name}', 'Gene Name', false)"
+                      ng-click="control.openGeneEditor('${marker.zdbID}', control.geneName, 'Gene Name', false)"
                       ng-if="editMode">
                     <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red"></i>
                 </span>
-            </authz:authorize>
+                </authz:authorize>
             </c:if>
         </td>
     </tr>
 
     <c:if test="${showEditControls}">
-       <zfin2:previousNamesFast previousNames="${previousNames}" showEditControls="true"/>
+        <zfin2:previousNamesFast previousNames="${previousNames}" showEditControls="true"/>
     </c:if>
     <c:if test="${!showEditControls}">
         <zfin2:previousNamesFast previousNames="${previousNames}" showEditControls="false"/>
