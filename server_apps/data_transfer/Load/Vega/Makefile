@@ -71,9 +71,9 @@ run_commit: begin  fetch_vega novel_check withdrawn_check blast_transcripts load
 
 VEGADIR = /research/zprod/data/VEGA
 
-DEST = $(VEGADIR)/2016-06
-FTP  = ftp.sanger.ac.uk/pub/users/st3/vega66/zebrafish/
-PREV = $(VEGADIR)/2015-12
+DEST = $(VEGADIR)/2016-09
+FTP  = ftp.sanger.ac.uk/pub/users/st3/vega67/zebrafish/
+PREV = $(VEGADIR)/2016-06
 
 ZFIN_DOWNLOADS = http://zfin.org/data_transfer/Downloads
 
@@ -315,7 +315,7 @@ $(DEST)/vega_reno_gene.out:  $(DEST)/vega_reno_gene.nt
 	./blast_reno.sh $<
 
 Vega_%_NEW_.ctx: $(DEST)/vega_reno_gene.out
-	/opt/zfin/bin/parse-blast-reno.r  $<   Vega_`date +%Y%m%d`_NEW_
+	../../BLAST/parse-blast-reno.r  $<   Vega_`date +%Y%m%d`_NEW_
 
 blast_transcripts: Vega_%_NEW_.ctx  push_local_blast
 	@echo "\nFeed Vega_%_NEW_.ctx to the reno pipeline"
