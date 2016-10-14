@@ -33,7 +33,6 @@ select ottdarT,tscript_mrkr_zdb_id[1,25] geneless
 	   and mrel_mrkr_2_zdb_id == tscript_mrkr_zdb_id
 );
 
-
 ! echo "are all alt_transcripts associated with same zfin gene"
 --! echo "           note only top N are taken! "
 --! echo "if list does not go till  zfin_genes = 1 then EDIT ME"
