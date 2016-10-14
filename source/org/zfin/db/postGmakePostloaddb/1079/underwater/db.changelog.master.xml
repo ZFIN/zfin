@@ -14,6 +14,7 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1079/underwater/14375_post.sql"/>
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1079/underwater/14118.sql"/>
+   <include file="source/org/zfin/db/postGmakePostloaddb/1079/underwater/fixConstraint.sql"/>
 
 
 

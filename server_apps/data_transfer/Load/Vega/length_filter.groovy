@@ -6,8 +6,8 @@ import org.zfin.properties.ZfinProperties
 import org.zfin.repository.*
 
 def vegaDir = "/research/zprod/data/VEGA"
-def thisLoad = "2016-06"
-def prevLoad = "2015-12"
+def thisLoad = "2016-09"
+def prevLoad = "2016-06"
 
 Map lengthMap = [:]
 Map ottdartToOttdargMap = [:]
