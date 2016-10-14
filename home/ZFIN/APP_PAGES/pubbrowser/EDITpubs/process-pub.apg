@@ -244,11 +244,6 @@ Message: $MI_ERRORMSG
       <?MIVAR NAME=encoded_note>$(URLENCODE,$new_comments)<?/MIVAR>
       <?MISQL SQL="select WebExplode(object,'pnotenew_PUB=$OID&pnotenew_CUR=$ZDB_ident&pnotenew_NOTE=$encoded_note') from webPages where ID='aa-pnote_new.apg';">$1<?/MISQL>
     <?/MIBLOCK>
-   
-    <?MIBLOCK COND=$(XST,$linkauth_pub_file)>
-      <?MISQL SQL="UPDATE publication SET pub_file = NULL WHERE zdb_id = '$OID';"><?/MISQL>
-      <?MISQL SQL="UPDATE publication SET pub_file = FILETOBLOB('$linkauth_pub_file', 'client') WHERE zdb_id = '$OID';"><?/MISQL>
-    <?/MIBLOCK>
   <?/MIBLOCK>
 
 

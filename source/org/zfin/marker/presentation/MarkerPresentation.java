@@ -31,6 +31,7 @@ public class MarkerPresentation extends EntityPresentation {
 
     private static final Logger logger = Logger.getLogger(MarkerPresentation.class);
     public static final String marker_uri = "marker/view/";
+    public static final String MARKER_NAME = "markerName";
 
     /**
      * Generates an html formatted marker name
@@ -47,7 +48,7 @@ public class MarkerPresentation extends EntityPresentation {
         } else {
             cssClassName = NONGENEDOMMARKER;
         }
-        return getSpanTag(cssClassName, marker.getAbbreviation(), marker.getName());
+        return getSpanTagWithID(cssClassName, marker.getAbbreviation(), marker.getName(), MARKER_NAME);
     }
 
     /**
@@ -263,7 +264,7 @@ public class MarkerPresentation extends EntityPresentation {
         } else {
             cssClassName = NONGENEDOMMARKER;
         }
-        return getSpanTag(cssClassName, marker.getName(), marker.getAbbreviation());
+        return getSpanTagWithID(cssClassName, marker.getName(), marker.getAbbreviation(), "Gene Symbol");
     }
 
     /**

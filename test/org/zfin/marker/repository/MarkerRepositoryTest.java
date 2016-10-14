@@ -210,14 +210,14 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
             Publication publication = publicationRepository.getPublication("ZDB-PUB-070122-15");
             marker.setName("test1 name");
             marker.setAbbreviation("testsierra");
-            markerRepository.renameMarker(marker, publication, MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES);
-            MarkerHistory mhist = markerRepository.getLastMarkerHistory(marker, MarkerHistory.Event.REASSIGNED);
-            assertTrue(mhist.getReason().equals(MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES));
-            assertNotNull(mhist.getMarkerAlias());
+            markerRepository.renameMarker(marker, publication, MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES, "old symbol", "old name");
+            session.flush();
+            session.refresh(marker);
+            assertEquals("Created one new alias", 1, marker.getAliases().size());
+            assertEquals("Created one new marker history record", 1, marker.getMarkerHistory().size());
             assertNotNull(infrastructureRepository.getRecordAttribution(
-                            mhist.getMarkerAlias().getZdbID(),
-                            publication.getZdbID(), null)
-            );
+                    marker.getMarkerHistory().iterator().next().getMarkerAlias().getZdbID(),
+                    publication.getZdbID(), null));
         } finally {
             // rollback on success or exception
             tx.rollback();
@@ -631,7 +631,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     /**
      * Check for an existent marker by abbreviation.
      * Check the the lookup is case insensitive.
-     * <p/>
+     * <p>
      * Check for the non-existence as well.
      */
     @Test

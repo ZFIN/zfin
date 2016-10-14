@@ -4,9 +4,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.root.dto.ConstructDTO;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.ShowHideToggle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,15 +17,13 @@ import java.util.List;
 public class ConstructCurationModule extends ConstructionZoneAdapater {
 
 
-    public static final String CONSTRUCT_RELATIONSHIP_TEXT = "[Construct Relationships]";
+    public static final String CONSTRUCT_RELATIONSHIP_TEXT = "CONSTRUCT RELATIONSHIPS";
     public static final String CONSTRUCT_RELATIONSHIP = "construct-relationship";
 
-    private final static String RIGHT_ARROW_FEATURE_LINK = "<img align=\"top\" src=\"/images/right.gif\" >" + CONSTRUCT_RELATIONSHIP_TEXT;
-    private final static String DOWN_ARROW_FEATURE_LINK = "<img align=\"top\" src=\"/images/down.gif\" >" + CONSTRUCT_RELATIONSHIP_TEXT;
-
-    private HTML constructRelationshipLink = new HTML(RIGHT_ARROW_FEATURE_LINK);
+    private HTML constructRelationshipLink = new HTML(CONSTRUCT_RELATIONSHIP_TEXT);
     public static final String CONSTRUCT_RELATIONSHIP_LINK = "construct-relationship-link";
-    List<HandlesError> handlesErrorList = new ArrayList<HandlesError>();
+    List<HandlesError> handlesErrorList = new ArrayList<>();
+    private ShowHideToggle showHideToggle;
     private String publicationID;
 
     // modules
@@ -36,31 +36,30 @@ public class ConstructCurationModule extends ConstructionZoneAdapater {
         initGUI();
         addInternalListeners(this);
         loadDTO();
-
-
-        openFeatureRelationshipsBox(false);
     }
 
 
     protected void addInternalListeners(HandlesError handlesError) {
 
 
-        constructRelationshipLink.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                openFeatureRelationshipsBox(!constructRelationshipBox.isVisible());
-            }
-
-        });
         attributionModule.addHandlesErrorListener(this);
-
         constructRelationshipBox.addHandlesErrorListener(this);
+        showHideToggle.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                showHideToggle.toggleVisibility();
+            }
+        });
     }
 
     public void initGUI() {
-
-        constructRelationshipLink.setStyleName("relatedEntityPubLink");
-        RootPanel.get(CONSTRUCT_RELATIONSHIP_LINK).add(constructRelationshipLink);
+        showHideToggle = new ShowHideToggle(constructRelationshipBox);
+        HorizontalPanel titlePanel = new HorizontalPanel();
+        constructRelationshipLink.addStyleName("bold");
+        titlePanel.add(constructRelationshipLink);
+        titlePanel.add(new HTML("&nbsp;"));
+        titlePanel.add(showHideToggle);
+        RootPanel.get(CONSTRUCT_RELATIONSHIP_LINK).add(titlePanel);
         RootPanel.get(CONSTRUCT_RELATIONSHIP).add(constructRelationshipBox);
     }
 
@@ -96,11 +95,6 @@ public class ConstructCurationModule extends ConstructionZoneAdapater {
         return this;
     }
 
-
-    public void openFeatureRelationshipsBox(boolean b) {
-        constructRelationshipBox.setVisible(b);
-        constructRelationshipLink.setHTML((b ? DOWN_ARROW_FEATURE_LINK : RIGHT_ARROW_FEATURE_LINK));
-    }
 
     public void setError(String message) {
         if (!message.isEmpty()) {

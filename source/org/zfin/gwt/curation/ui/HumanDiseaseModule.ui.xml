@@ -7,7 +7,6 @@
         >
 
     <g:FlowPanel>
-        <zfin-mod:AttributionModule ui:field="attributionModule"/>
         <zfin-mod:DiseaseModelView ui:field="diseaseModelView"/>
         <g:HTML><hr/></g:HTML>
         <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">

@@ -14,6 +14,7 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -123,7 +124,7 @@ public class GeneViewController {
         geneBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(gene));
 
         model.addAttribute(LookupStrings.FORM_BEAN, geneBean);
-
+        model.addAttribute("markerHistoryReasonCodes", MarkerHistory.Reason.values());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.GENE.getTitleString() + gene.getAbbreviation());
 
         return "marker/gene-view.page";

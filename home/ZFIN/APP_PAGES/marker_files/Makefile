@@ -20,7 +20,7 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/marker_files
 
 GENERICS = clonebox.apg cloneorderlink.apg \
 curatornote.apg dnote_editor.apg \
-do-markerupdate.apg geneprddescription.apg \
+do-markerupdate.apg \
 markerselect.apg markerupdate.apg \
 markerview.apg msegselect.apg newmrkrselect.apg \
 searchform.apg sequence.apg sequence_data_entry.apg

@@ -144,7 +144,7 @@ public class MarkerGoEvidencePresentation {
     }
 
     /**
-     * From gocuration.apg
+     * From go curation
      *
      * @param inferredFrom Inference to display ;
      * @return Link to be displayed.

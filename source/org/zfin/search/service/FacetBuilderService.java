@@ -344,10 +344,10 @@ public class FacetBuilderService {
         FacetGroup curation = new FacetGroup("Curation", true);
         curation.setRootOnly(true);
         curation.addFacet(buildFacet("topic", false));
-        curation.addFacet(buildFacet("curator", false));
         curation.addFacet(buildFacet("curation_status", false));
-        curation.addFacet(buildFacet("indexing_status", false));
         curation.addFacet(buildFacet("publication_status", false));
+        curation.addFacet(buildFacet("location", false));
+        curation.addFacet(buildFacet("owner", false));
 
         facetGroups.add(curation);
 

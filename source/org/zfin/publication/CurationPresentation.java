@@ -11,7 +11,7 @@ public class CurationPresentation extends EntityPresentation {
         GO,PHENO,FX,Experiment,Figure,Genotype,Feature,Construct ;
     }
 
-    private static final String uri = "?MIval=aa-curation.apg&OID=";
+    public static final String uri = "/action/curation/";
     private static final String noteuri="?MIval=aa-curatornote.apg&OID=";
     private static final String cookie = "&cookie=tab";
     private static String constructID;
@@ -27,10 +27,9 @@ public class CurationPresentation extends EntityPresentation {
     }
 
     public static String getLink(Publication publication, CurationTab tab) {
-        StringBuilder sb = getWebdriverHyperLinkStart();
+        StringBuilder sb = getTomcatHyperLinkStart();
         sb.append(uri);
         sb.append(publication.getZdbID());
-        sb.append(cookie);
         sb.append(tab.name());
         sb.append("\">");
         sb.append(publication.getShortAuthorList());

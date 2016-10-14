@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+<changeSet author="sierra" id="loadStats">
+    <loadData
+            file="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/1081/xiphius/tableValues.csv"
+            catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_stats" encoding="UTF-8" >
+        <column name="date" type="Date"/>
+	<column name="section" type="String"/>
+	<column name="type" type="String"/>
+	<column name="counter" type="Numeric"/>
+</loadData>
+</changeSet>
+</databaseChangeLog>

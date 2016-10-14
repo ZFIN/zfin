@@ -141,6 +141,8 @@ insert into pub_tracking_status (pts_status, pts_status_display, pts_terminal_st
 insert into pub_tracking_status (pts_status, pts_status_display, pts_terminal_status)
  values ('ARCHIVED','Archived','t');
 
+
+
 alter table pub_tracking_history
   add constraint (foreign key (pth_location_id)
  references pub_tracking_location  constraint pth_location_fk);

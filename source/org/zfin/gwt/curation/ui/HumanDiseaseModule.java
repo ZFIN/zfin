@@ -41,8 +41,7 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
     // listener
     private List<HandlesError> handlesErrorListeners = new ArrayList<>();
 
-    @UiField
-    AttributionModule attributionModule;
+    private AttributionModule attributionModule = new AttributionModule();
     @UiField
     DiseaseModelView diseaseModelView;
     @UiField

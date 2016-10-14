@@ -47,6 +47,8 @@ public class NomenclatureSubmissionController {
             model.addAttribute(LookupStrings.ZDB_ID, "No marker with ID " + zdbID + " found");
         }
         model.addAttribute("marker", marker);
+        model.addAttribute("markerHistoryReasonCodes", MarkerHistory.Reason.values());
+
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "ZFIN Marker History");
         return "nomenclature/history-view.page";
     }

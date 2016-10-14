@@ -1,5 +1,5 @@
-<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -118,3 +118,4 @@
         jQuery("#disease").find(".marker-go-table").tableCollapse({label: "records"});
     });
 </script>
+

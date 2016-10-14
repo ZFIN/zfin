@@ -1,7 +1,6 @@
 package org.zfin.publication.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -22,6 +21,7 @@ import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.MailSender;
+import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.EntityZdbIdDTO;
 import org.zfin.gwt.root.dto.PublicationDTO;
@@ -43,6 +43,7 @@ import org.zfin.publication.repository.PublicationRepository;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/publication")
@@ -92,12 +93,9 @@ public class PublicationTrackingController {
     @RequestMapping(value = "/{zdbID}/notes", method = RequestMethod.GET)
     public Collection<PublicationNoteDTO> getPublicationNotes(@PathVariable String zdbID) {
         Publication publication = publicationRepository.getPublication(zdbID);
-        return CollectionUtils.collect(publication.getNotes(), new Transformer() {
-            @Override
-            public Object transform(Object o) {
-                return converter.toPublicationNoteDTO((PublicationNote) o);
-            }
-        });
+        return publication.getNotes().stream()
+                .map(converter::toPublicationNoteDTO)
+                .collect(Collectors.toList());
     }
 
     @ResponseBody
@@ -115,9 +113,12 @@ public class PublicationTrackingController {
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
         session.save(note);
+
+        PublicationNoteDTO dto = converter.toPublicationNoteDTO(note);
+
         tx.commit();
         
-        return converter.toPublicationNoteDTO(note);
+        return dto;
     }
 
     @ResponseBody
@@ -129,9 +130,12 @@ public class PublicationTrackingController {
         PublicationNote note = (PublicationNote) session.get(PublicationNote.class, zdbID);
         note.setText(noteDTO.getText());
         session.update(note);
+
+        PublicationNoteDTO dto = converter.toPublicationNoteDTO(note);
+
         tx.commit();
 
-        return converter.toPublicationNoteDTO(note);
+        return dto;
     }
 
     @ResponseBody
@@ -188,27 +192,32 @@ public class PublicationTrackingController {
 
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/status", method = RequestMethod.POST)
-    public CurationStatusDTO updateCurationStatus(@PathVariable String zdbID, @RequestBody CurationStatusDTO dto) {
+    public CurationStatusDTO updateCurationStatus(@PathVariable String zdbID,@RequestParam(required = false, defaultValue = "false") Boolean claimedFlag,@RequestBody CurationStatusDTO dto) throws InvalidWebRequestException{
         Publication publication = publicationRepository.getPublication(zdbID);
-
-        PublicationTrackingHistory newStatus = new PublicationTrackingHistory();
-        newStatus.setPublication(publication);
-        newStatus.setStatus(dto.getStatus());
-        newStatus.setLocation(dto.getLocation());
-        newStatus.setOwner(dto.getOwner() == null ? null : profileRepository.getPerson(dto.getOwner().getZdbID()));
-        newStatus.setUpdater(ProfileService.getCurrentSecurityUser());
-        newStatus.setDate(new GregorianCalendar());
-
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = session.beginTransaction();
-        if (newStatus.getStatus().getType() == PublicationTrackingStatus.Type.CLOSED) {
-            curationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
-            expressionRepository.deleteExpressionStructuresForPub(publication);
-            publicationRepository.deleteExpressionExperimentIDswithNoExpressionResult(publication);
-            mutantRepository.updateGenotypeNicknameWithHandleForPublication(publication);
+        PublicationTrackingHistory pth=publicationRepository.currentTrackingStatus(publication);
+        if (claimedFlag &&pth.getOwner() != null && dto.getOwner() != null && pth.getOwner().getZdbID() != dto.getOwner().getZdbID()) {
+            throw new InvalidWebRequestException("Pub already claimed");
         }
-        session.save(newStatus);
-        tx.commit();
+        else{
+            PublicationTrackingHistory newStatus = new PublicationTrackingHistory();
+            newStatus.setPublication(publication);
+            newStatus.setStatus(dto.getStatus());
+            newStatus.setLocation(dto.getLocation());
+            newStatus.setOwner(dto.getOwner() == null ? null : profileRepository.getPerson(dto.getOwner().getZdbID()));
+            newStatus.setUpdater(ProfileService.getCurrentSecurityUser());
+            newStatus.setDate(new GregorianCalendar());
+
+            Session session = HibernateUtil.currentSession();
+            Transaction tx = session.beginTransaction();
+            if (newStatus.getStatus().getType() == PublicationTrackingStatus.Type.CLOSED) {
+                curationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
+                expressionRepository.deleteExpressionStructuresForPub(publication);
+                publicationRepository.deleteExpressionExperimentIDswithNoExpressionResult(publication);
+                mutantRepository.updateGenotypeNicknameWithHandleForPublication(publication);
+            }
+            session.save(newStatus);
+            tx.commit();
+        }
 
         return converter.toCurationStatusDTO(publicationRepository.currentTrackingStatus(publication));
     }
@@ -276,9 +285,12 @@ public class PublicationTrackingController {
         curation.setOpenedDate(topicDTO.getOpenedDate());
         curation.setClosedDate(topicDTO.getClosedDate());
         session.save(curation);
+
+        CurationDTO dto = converter.toCurationDTO(curation);
+
         tx.commit();
 
-        return converter.toCurationDTO(curation);
+        return dto;
     }
 
     @ResponseBody
@@ -293,21 +305,21 @@ public class PublicationTrackingController {
         curation.setOpenedDate(topicDTO.getOpenedDate());
         curation.setClosedDate(topicDTO.getClosedDate());
         session.update(curation);
+
+        CurationDTO dto = converter.toCurationDTO(curation);
+
         tx.commit();
 
-        return converter.toCurationDTO(curation);
+        return dto;
     }
 
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/correspondences", method = RequestMethod.GET)
     public Collection<CorrespondenceDTO> getCorrespondences(@PathVariable String zdbID) {
         Publication publication = publicationRepository.getPublication(zdbID);
-        return CollectionUtils.collect(publication.getCorrespondences(), new Transformer() {
-            @Override
-            public Object transform(Object o) {
-                return converter.toCorrespondenceDTO((Correspondence) o);
-            }
-        });
+        return publication.getCorrespondences().stream()
+                .map(converter::toCorrespondenceDTO)
+                .collect(Collectors.toList());
     }
 
     @ResponseBody
@@ -321,9 +333,12 @@ public class PublicationTrackingController {
         correspondence.setCurator(ProfileService.getCurrentSecurityUser());
         correspondence.setContactedDate(new Date());
         session.save(correspondence);
+
+        CorrespondenceDTO dto = converter.toCorrespondenceDTO(correspondence);
+
         tx.commit();
 
-        return converter.toCorrespondenceDTO(correspondence);
+        return dto;
     }
 
     @ResponseBody
@@ -339,9 +354,12 @@ public class PublicationTrackingController {
             correspondence.setGiveUpDate(correspondenceDTO.getClosedDate());
         }
         session.update(correspondence);
+
+        CorrespondenceDTO dto = converter.toCorrespondenceDTO(correspondence);
+
         tx.commit();
 
-        return converter.toCorrespondenceDTO(correspondence);
+        return dto;
     }
 
     @ResponseBody

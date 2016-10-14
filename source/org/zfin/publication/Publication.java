@@ -27,7 +27,6 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private String pages;
     private Type type;
     private String accessionNumber;
-    private String fileName;
     private String doi;
     private String acknowledgment;
     private Status status;
@@ -45,6 +44,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private Set<PublicationNote> notes;
     private Set<Correspondence> correspondences;
     private Set<PublicationDbXref> dbXrefs;
+    private Set<PublicationFile> files;
 
     private boolean deletable;
     private boolean indexed;
@@ -160,11 +160,12 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     }
 
     public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+        for (PublicationFile file : files) {
+            if (file.getType().getName() == PublicationFileType.Name.ORIGINAL_ARTICLE) {
+                return file.getFileName();
+            }
+        }
+        return null;
     }
 
     public String getDoi() {
@@ -265,6 +266,14 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     public void setDbXrefs(Set<PublicationDbXref> dbXrefs) {
         this.dbXrefs = dbXrefs;
+    }
+
+    public Set<PublicationFile> getFiles() {
+        return files;
+    }
+
+    public void setFiles(Set<PublicationFile> files) {
+        this.files = files;
     }
 
     public String getCitation() {
@@ -489,6 +498,19 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
             }
             return null;
         }
+    }
+
+    public String getPrintable() {
+        String printable = authors + " " + "(" + publicationDate.get(Calendar.YEAR) + ")" + " " + title + ". " + journal.getMedAbbrev() + " ";
+        if (volume != null)
+            printable =  printable + " " + volume + ":";
+        if (pages != null)
+            printable =  printable + " " + pages + ". ";
+        if (status == Status.EPUB || status == Status.PRESS)
+            printable = printable + status.toString() + ".";
+        if (journal.isZfinDierectDataSubmission())
+            printable += "(http://zfin.org).";
+        return printable;
     }
 
 }

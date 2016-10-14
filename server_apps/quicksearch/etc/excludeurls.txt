@@ -62,7 +62,6 @@ aa-xpatexpcdndisplay.apg
 aa-zirclist.apg
 aa-showpubs.apg
 aa-externalredirect.apg
-aa-externallink.apg
 aa-pubmedredirect.apg
 aa-markergoview.apg
 

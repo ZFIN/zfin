@@ -35,8 +35,7 @@ public class ExpressionModule implements HandlesError, EntryPoint {
     // listener
     private List<HandlesError> handlesErrorListeners = new ArrayList<>();
 
-    @UiField
-    AttributionModule attributionModule;
+    private AttributionModule attributionModule = new AttributionModule();
     @UiField
     ConstructionZoneModule constructionZoneModule;
     @UiField
@@ -95,7 +94,7 @@ public class ExpressionModule implements HandlesError, EntryPoint {
 
         bindEventBusHandler();
         addHandlerEvents();
-
+        exposeFigureRefreshMethodToJavascript(expressionZonePresenter, curationFilterPresenter);
     }
 
     public void addHandlerEvents() {
@@ -236,5 +235,12 @@ public class ExpressionModule implements HandlesError, EntryPoint {
         handlesErrorListeners.add(handlesError);
     }
 
+    private native void exposeFigureRefreshMethodToJavascript(ExpressionZonePresenter presenter, CurationFilterPresenter curationFilterPresenter)/*-{
+        $wnd.refreshFigures = function () {
+            presenter.@org.zfin.gwt.curation.ui.ExpressionZonePresenter::refreshFigure()();
+            curationFilterPresenter.@org.zfin.gwt.curation.ui.CurationFilterPresenter::refreshFigureList()();
+        };
+
+    }-*/;
 
 }

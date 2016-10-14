@@ -31,8 +31,7 @@ public class ExperimentModule implements EntryPoint {
     // data
     private String publicationID;
     private boolean debug;
-    @UiField
-    AttributionModule attributionModule;
+    private AttributionModule attributionModule = new AttributionModule();
     @UiField
     ExperimentAddView experimentAddView;
     @UiField

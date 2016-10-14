@@ -68,18 +68,13 @@
 
 <div class="summary" ng-show="vm.gene">
     <b>Orthology Note</b>
-    <div class="curation-form">
-        <div class="error" ng-show="vm.noteError">{{vm.noteError}}</div>
-        <div ng-click="vm.editNote()" ng-hide="vm.noteEditing" class="inline-edit" title="Click to edit">
-            <div ng-show="vm.note.note" class="keep-breaks">{{vm.note.note}}</div>
-            <div ng-hide="vm.note.note" class="muted">Click to add</div>
-        </div>
-        <div ng-show="vm.noteEditing">
-            <textarea ng-model="vm.noteText" rows="5"></textarea>
-            <button type="button" ng-click="vm.saveNoteEdit()" class="zfin-button approve">Save</button>
-            <button type="button" ng-click="vm.cancelNoteEdit()" class="zfin-button cancel">Cancel</button>
-        </div>
-    </div>
+    <div inline-edit-textarea
+         text="vm.note.note"
+         error="vm.noteError"
+         on-save="vm.saveNoteEdit()"
+         wrapper-class="'curation-form'"
+         save-button-class="'zfin-button approve'"
+         cancel-button-class="'zfin-button cancel'"></div>
 </div>
 
 <div id="evidence-modal" class="jq-modal curation">

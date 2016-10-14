@@ -3,6 +3,8 @@ package org.zfin.expression;
 import org.apache.log4j.Logger;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
+import org.zfin.figure.presentation.FigurePresentationBean;
+import org.zfin.figure.presentation.ImagePresentationBean;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
@@ -10,6 +12,7 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
@@ -90,18 +93,19 @@ public class FigureService {
      * @param fish         fish
      * @param gene         gene
      * @param withImgsOnly require that figures joined in have images
-     * @para environmentGroup  environment group
      * @return expressionsummarycriteria object
+     * @para environmentGroup  environment group
      */
     public static ExpressionSummaryCriteria createExpressionCriteriaEnvironmentGroup(Fish fish, Marker gene, boolean withImgsOnly, String environmentGroup) {
         ExpressionSummaryCriteria criteria = new ExpressionSummaryCriteria();
         criteria.setFish(fish);
         criteria.setGene(gene);
         criteria.setWithImagesOnly(withImgsOnly);
-        if (environmentGroup.equalsIgnoreCase("chemical"))
+        if (environmentGroup.equalsIgnoreCase("chemical")) {
             criteria.setChemicalEnvironment(true);
-        else if (environmentGroup.equalsIgnoreCase("heatshock"))
+        } else if (environmentGroup.equalsIgnoreCase("heatshock")) {
             criteria.setHeatShockEnvironment(true);
+        }
         criteria.setWildtypeOnly(false);
         return criteria;
     }
@@ -131,8 +135,9 @@ public class FigureService {
         for (Figure figure : figures) {
 
             Set<Image> imgs = figure.getImages();
-            if (expressionCriteria.isWithImagesOnly() && imgs != null && imgs.isEmpty())
+            if (expressionCriteria.isWithImagesOnly() && imgs != null && imgs.isEmpty()) {
                 continue;
+            }
             Publication pub = figure.getPublication();
             String key = pub.getZdbID() + figure.getZdbID();
 
@@ -144,8 +149,9 @@ public class FigureService {
                 figureData.setFigure(figure);
                 figureData.setExpressionStatementList(getFigureExpressionStatementList(figure, expressionCriteria));
                 for (Image img : figure.getImages()) {
-                    if (figureData.getThumbnail() == null)
+                    if (figureData.getThumbnail() == null) {
                         figureData.setThumbnail(img.getThumbnail());
+                    }
                 }
 
                 map.put(key, figureData);
@@ -200,8 +206,9 @@ public class FigureService {
                 figureData.setFigure(figure);
                 figureData.addPhenotypeStatement(statement);
                 for (Image img : figure.getImages()) {
-                    if (figureData.getThumbnail() == null)
+                    if (figureData.getThumbnail() == null) {
                         figureData.setThumbnail(img.getThumbnail());
+                    }
                 }
                 map.put(key, figureData);
             } else {
@@ -233,8 +240,9 @@ public class FigureService {
                 figureData.setPublication(pub);
                 figureData.setFigure(figure);
                 for (Image img : figure.getImages()) {
-                    if (figureData.getThumbnail() == null)
+                    if (figureData.getThumbnail() == null) {
                         figureData.setThumbnail(img.getThumbnail());
+                    }
                 }
                 map.put(key, figureData);
             }
@@ -250,13 +258,43 @@ public class FigureService {
     }
 
     private static Set<Figure> getDistinctFiguresFromPhenotypeStatements(List<PhenotypeStatement> statements) {
-        if (statements == null)
+        if (statements == null) {
             return null;
+        }
         Set<Figure> figures = new HashSet<Figure>(statements.size());
         for (PhenotypeStatement statement : statements) {
             figures.add(statement.getPhenotypeExperiment().getFigure());
         }
         return figures;
+    }
+
+    public static FigurePresentationBean convertToFigurePresentationBean(Figure figure) {
+        if (figure == null) {
+            return null;
+        }
+        FigurePresentationBean bean = new FigurePresentationBean();
+        bean.setZdbId(figure.getZdbID());
+        bean.setPubZdbId(figure.getPublication().getZdbID());
+        bean.setLabel(figure.getLabel());
+        bean.setCaption(figure.getCaption());
+        bean.setNumExpressionStatements(figure.getExpressionResults() == null ? 0 : figure.getExpressionResults().size());
+        bean.setNumPhenotypeStatements(figure.getPhenotypeExperiments() == null ? 0 : figure.getPhenotypeExperiments().size());
+        if (figure.getImages() != null) {
+            bean.setImages(figure.getImages().stream()
+                            .map(FigureService::convertToImagePresentationBean)
+                            .collect(Collectors.toSet())
+            );
+        }
+        return bean;
+    }
+
+    public static ImagePresentationBean convertToImagePresentationBean(Image image) {
+        ImagePresentationBean imgBean = new ImagePresentationBean();
+        imgBean.setZdbId(image.getZdbID());
+        imgBean.setFullPath(image.getUrl());
+        imgBean.setMediumPath(image.getMediumUrl());
+        imgBean.setThumbnailPath(image.getThumbnailUrl());
+        return imgBean;
     }
 
 }

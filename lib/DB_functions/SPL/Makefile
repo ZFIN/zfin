@@ -95,7 +95,7 @@ MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
 PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 	       pub_xpat_curation_status.sql jrnl_acknowledgment.sql \
 	       get_pub_default_permissions.sql p_check_state_country.sql \
-	       p_delete_curator_session.sql populate_lab_address_update_tracking.sql addSourceAlias.sql checkPubTrackingLocationOwner.sql pushPETDateToPubHistoryTracking.sql \
+	       p_delete_curator_session.sql populate_lab_address_update_tracking.sql addSourceAlias.sql checkPubTrackingLocationOwner.sql \
 
 PER_STATS    = get_person_full_name.sql	 
 

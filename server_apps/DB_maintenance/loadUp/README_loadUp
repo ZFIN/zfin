@@ -4,21 +4,18 @@ These directories were created in December of 2004 to hold images (imageLoadUp)
 and PDFs (PDFLoadUp) that had been stored in the database as blobs.
 
 Currently, these directories are owned by zfishweb (the user that .cgi
-scripts run as) and belong to the apache www group.  The .cgi that adds and 
-moves files within these directories is ZFIN_WWW/cgi-bin/upload.cgi.
+scripts run as) and belong to the apache www group.
 
 ***IMPORTANT***
 When moving zfin.org to development machine:
 After creating a good copy of the filesystems under the development machine-specific
 loadUp/ tree, you *must* change the file
-permissions on the rsync'd directory to be owned zfishweb:www.  Otherwise
-the upload.cgi will fail silently.  You must also alter the apache config
+permissions on the rsync'd directory to be owned zfishweb:www. You must also alter the apache config
 files to allow open access to the development machine-specific images on development
 ***IMPORTANT***
 
 The /bkup/ directories in each of the PDF and image directories hold
-copies of images that have been replaced by users (see documentation in
-upload.cgi). 
+copies of images that have been replaced by users.
 
 
 APACHE CONFIGURATION:
@@ -80,8 +77,8 @@ Note, the '/' required after the image tag and before
 the filename. 
 
 While the above apache configuration makes it easy to find the files
-via an apg page, scripts that do not run through the apache server (like
-upload.cgi) need a full path to know where to store an uploaded file).
+via an apg page, scripts that do not run through the apache server need
+a full path to know where to store an uploaded file).
 <!--|LOADUP_FULL_PATH|--> is used for this purpose.
 
 In these kinds of scripts it is not uncommon to see

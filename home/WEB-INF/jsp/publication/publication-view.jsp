@@ -2,6 +2,21 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        var $overlay = jQuery("#generate-reference-overlay"), $triggerButton = jQuery("#generate-reference-button");
+        $overlay.appendTo(jQuery("body"));
+        $overlay.on(jQuery.modal.CLOSE, function () {
+        });
+        $triggerButton.click(function (evt) {
+            evt.preventDefault();
+            $overlay.modal({
+                fadeDuration: 100
+            });
+        });
+    });
+</script>
+
 <c:set var="editURL">/action/publication/${publication.zdbID}/edit</c:set>
 
 <c:if test="${allowDelete}">
@@ -13,7 +28,7 @@
 <c:set var="linkURL">/cgi-bin/webdriver?MIval=aa-link_authors.apg&OID=${publication.zdbID}&anon1=zdb_id&anon1text=${publication.zdbID}</c:set>
 
 <c:if test="${allowCuration}">
-    <c:set var="curateURL">/cgi-bin/webdriver?MIval=aa-curation.apg&OID=${publication.zdbID}</c:set>
+    <c:set var="curateURL">/action/curation/${publication.zdbID}</c:set>
 </c:if>
 
 <zfin2:dataManager zdbID="${publication.zdbID}"
@@ -50,11 +65,7 @@
             ${publication.pages} (${publication.type.display})
 
             <span style="padding-left: 1em;">
-                <form style="display: inline-block" method=post action="/cgi-bin/webdriver">
-                    <input type=hidden name=MIval value=aa-pubprintable.apg>
-                    <input type=hidden name=constraint value="where zdb_id='${publication.zdbID}'">
-                    <input type=submit name=printable value="Generate reference">
-                </form>
+                <a href="#" id="generate-reference-button" rel="#generate-reference-overlay"><button>Generate reference</button></a>
             </span>
         </td>
     </tr>
@@ -123,13 +134,6 @@
                 <c:if test="${not empty publication.fileName}">
                     <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}">PDF</a>
                 </c:if>
-                <form action="/cgi-bin/upload.cgi" method="post" enctype="multipart/form-data" class="inline-upload">
-                    <label for="pdfUploadFileInput">${not empty publication.fileName ? "Replace File" : "Upload File"}</label>
-                    <input type="file" accept="application/pdf" name="upload" id="pdfUploadFileInput">
-                    <input type="hidden" name="redirect_url" value="/action/publication/view/${publication.zdbID}">
-                    <input type="hidden" name="OID" value="${publication.zdbID}">
-                    <button type="submit">Upload</button>
-                </form>
             </td>
         </tr>
 
@@ -140,6 +144,17 @@
     </authz:authorize>
 
 </table>
+
+<div class="jq-modal" id="generate-reference-overlay" style="width: auto; height: auto; padding: 15px 15px;">
+    <div class="popup-content">
+        <div class="popup-header">
+            Citation
+        </div>
+        <div class="popup-body" id="generate-reference-body">
+            ${publication.printable}
+        </div>
+    </div>
+</div>
 
 <%--todo: this should probably change both visually and in the code, doesn't match UI guidelines, so there's no classes for it and it seems wrong to make them --%>
 
@@ -237,5 +252,6 @@
         top.zfinhelp = open("/<%=ZfinProperties.getWebDriver()%>?MIval=aa-xpatselect_note.apg", "notewindow", "scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
     }
 </script>
+
 
 

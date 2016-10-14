@@ -350,13 +350,6 @@ function updateAuthor(strURL) {
     <TEXTAREA rows=4 cols=75 NAME="new_comments"></TEXTAREA>
       </TD>
     </TR>
-    <?MISQL SQL="
-      select pub_file, title
-      from publication
-      where zdb_id = '$OID'
-        and pub_file is not null;">
-      <?MIVAR NAME=linkauth_pub_file>$1<?/MIVAR>
-    <?/MISQL>
   </TABLE>
 
   <P>

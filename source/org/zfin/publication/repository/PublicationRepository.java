@@ -529,4 +529,10 @@ public interface PublicationRepository extends PaginationParameter {
                                                                          int count,
                                                                          int offset,
                                                                          String sort);
+
+    List<PublicationFileType> getAllPublicationFileTypes();
+
+    PublicationFileType getPublicationFileType(long id);
+
+    PublicationFile getPublicationFile(long id);
 }

@@ -178,12 +178,6 @@ $(IF,$(>,$(POSITION,$OID,XPAT),0),
       $(SETVAR,$target_table,expression_experiment)
       )
 
-$(IF,$(>,$(POSITION,$OID,IMAGE),0),
-       $(SETVAR,$return_page1,aa-imageupdate.apg)
-       $(SETVAR,$return_page2,aa-do-imageupdate.apg)
-       $(SETVAR,$target_table,"")
-       )
-
 $(IF,$(>,$(POSITION,$rtype,locus),0),
        $(SETVAR,$return_page1,aa-locusupdate.apg)
        $(SETVAR,$return_page2,aa-do-locusupdate.apg)

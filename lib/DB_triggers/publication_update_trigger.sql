@@ -21,5 +21,5 @@ create trigger publication_update_trigger update of
         execute function scrub_char(new_publication.pub_mini_ref
     ) into publication.pub_mini_ref,
         execute function scrub_char(new_publication.pub_pages
-    ) into publication.pub_pages
-);
+    ) into publication.pub_pages);
+

@@ -25,8 +25,7 @@ public class FeatureModule implements EntryPoint {
 
     private String publicationID;
     private boolean debug;
-    @UiField
-    AttributionModule attributionModule;
+    private AttributionModule attributionModule = new AttributionModule();
     @UiField
     FeatureAddView featureAddView;
     @UiField

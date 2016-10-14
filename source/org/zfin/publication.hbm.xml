@@ -48,7 +48,6 @@
         <property name="pages" column="pub_pages" lazy="true"/>
         <property name="type" column="jtype" type="publicationType"/>
         <property name="accessionNumber" column="accession_no" lazy="true"/>
-        <property name="fileName" column="pub_file" lazy="true"/>
         <property name="doi" column="pub_doi" lazy="true"/>
         <property name="canShowImages" column="pub_can_show_images"/>
         <property name="indexed" column="pub_is_indexed"/>
@@ -95,6 +94,11 @@
             <one-to-many class="org.zfin.publication.PublicationDbXref"/>
         </set>
 
+        <set name="files" lazy="true" table="publication_file">
+            <key column="pf_pub_zdb_id"/>
+            <one-to-many class="org.zfin.publication.PublicationFile"/>
+        </set>
+
     </class>
 
     <class name="org.zfin.publication.DOIAttempt" table="doi_attempts">
@@ -118,6 +122,10 @@
 
         <property name="abbreviation">
             <column name="jrnl_abbrev" not-null="true"/>
+        </property>
+
+        <property name="medAbbrev">
+            <column name="jrnl_medabbrev" not-null="false"/>
         </property>
 
         <property name="publisher">

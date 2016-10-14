@@ -26,7 +26,7 @@
             <a href="/action/devtool/phenotype-curation-history-statements/${phenotypeExperiment.id}">${phenotypeExperiment.id}</a></td>
             <td>
                 <zfin:link entity="${phenotypeExperiment.figure.publication}"/>
-                <a href="/<%=ZfinPropertiesEnum.MUTANT_NAME%>/webdriver?MIval=aa-curation.apg&OID=${phenotypeExperiment.figure.publication.zdbID}&cookie=tabPHENO">(Pheno</a>)
+                <a href="/action/curation/pheno/${phenotypeExperiment.figure.publication.zdbID}">(Pheno</a>)
             </td>
             <td><zfin:link entity="${phenotypeExperiment.figure}"/></td>
             <td><zfin:link entity="${phenotypeExperiment.genotypeExperiment.genotype}"/></td>

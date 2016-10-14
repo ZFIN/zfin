@@ -437,6 +437,13 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             return false;
         }
 
+        public boolean isGeneOrGenep() {
+            for (Type markerType : values())
+                if (markerType.equals(Type.GENE) || markerType.equals(Type.GENEP))
+                    return true;
+            return false;
+        }
+
     }
 
     public static enum TypeGroup {

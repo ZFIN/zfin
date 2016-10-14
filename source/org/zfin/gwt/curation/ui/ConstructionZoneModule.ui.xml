@@ -3,7 +3,6 @@
         xmlns:ui='urn:ui:com.google.gwt.uibinder'
         xmlns:g='urn:import:com.google.gwt.user.client.ui'
         xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
-        xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui'
         >
 
     <g:HorizontalPanel>
