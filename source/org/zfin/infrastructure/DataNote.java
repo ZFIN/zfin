@@ -4,6 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.zfin.profile.Person;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
@@ -70,9 +71,13 @@ public class DataNote implements Comparable<DataNote> {
         this.date = date;
     }
 
+    public String getDateString() {
+	        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+    }
+
     public int compareTo(DataNote anotherNote) {
 
-        return getDate().compareTo(anotherNote.getDate());
+        return 0 - getDate().compareTo(anotherNote.getDate());
     }
 }
 

@@ -853,33 +853,6 @@ function jump(form_select){
 
 
 <?MICOMMENT>=========================================================
-            ==    Curator Note
-	    =========================================================
-<?/MICOMMENT>
-<?MIBLOCK COND="$(NXST,$mrkrview_no_update)">
-<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
-  <br>
-  <B>Curator Notes:</B>
-    <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID">(View/Add Notes)</a><?/MIVAR>
-  <?MISQL SQL="select count(*)
-		from data_note
-		where dnote_data_zdb_id = '$OID' ;">
-
-  <?MIVAR COND="$(NC,$1,0)">
-    <?MISQL SQL="select first 1 dnote_text from data_note
-                 where dnote_data_zdb_id='$OID'
-                order by dnote_date desc">
-     <?MIVAR NAME=$mrkrview_datanote>$1<?/MIVAR>
-     <?/MISQL>
-<br>
-     <?MIVAR>$(SUBSTR,$mrkrview_datanote,1,100)<?/MIVAR>...
-  <?/MIVAR>
- <?/MISQL>
- <br>
-<?/MIBLOCK>
-<?/MIBLOCK>
-
-<?MICOMMENT>=========================================================
             ==    Note
 	    =========================================================
 <?/MICOMMENT>

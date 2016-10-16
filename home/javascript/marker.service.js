@@ -29,7 +29,9 @@
             addLink: addLink,
             removeLink: removeLink,
             addLinkReference: addLinkReference,
-            removeLinkReference: removeLinkReference
+            removeLinkReference: removeLinkReference,
+            openModalPopup: openModalPopup,
+            closeModal: closeModal
         };
 
         function returnResponseData(response) {
@@ -173,6 +175,22 @@
 
         function removeLinkReference(link, reference) {
             return $http.delete('/action/marker/link/' + link.dblinkZdbID + '/references/' + reference.zdbID);
+        }
+        
+        function openModalPopup(element) {
+            $('#' + element)
+                .modal({
+                    escapeClose: true,
+                    clickClose: true,
+                    showClose: true,
+                    fadeDuration: 100
+                })
+                .on($.modal.AFTER_CLOSE, function () {
+                });
+        }
+
+        function closeModal() {
+            $.modal.close();
         }
     }
 }());

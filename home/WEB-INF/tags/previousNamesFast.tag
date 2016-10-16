@@ -53,7 +53,7 @@
                 </span>
         <c:if test="${showEditControls}">
             <authz:authorize access="hasRole('root')">
-    <span id="previousNameList>" ng-repeat="previousNameItem in control.previousNameList ">
+    <span id="previousNameList" ng-repeat="previousNameItem in control.previousNameList ">
                  <span ng-bind-html="previousNameItem.attributionLink | unsafe"></span><span style="cursor: pointer;"
                                                                                              ng-click="control.editAttribution(previousNameItem.aliasZdbID, previousNameItem.alias)"
                                                                                              ng-if="editMode">

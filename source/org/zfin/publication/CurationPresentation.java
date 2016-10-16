@@ -37,16 +37,6 @@ public class CurationPresentation extends EntityPresentation {
         return sb.toString();
     }
 
-    public static String getNoteLink(String constructID) {
-        StringBuilder sb = getWebdriverHyperLinkStart();
-        sb.append(noteuri);
-        sb.append(constructID);
-
-        sb.append("\">");
-        sb.append("Add/UpdateCurator Notes");
-        sb.append("</a>");
-        return sb.toString();
-    }
 }
 
 

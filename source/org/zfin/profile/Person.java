@@ -462,4 +462,6 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     public String getEntityName() {
         return fullName;
     }
+
+    public String getDisplay() { return lastName + ", " + firstName; }
 }
