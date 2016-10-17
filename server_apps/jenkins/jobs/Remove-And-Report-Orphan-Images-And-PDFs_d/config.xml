@@ -18,7 +18,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/DB_maintenance/loadUp/ &amp;&amp; remove_orphan_files.pl</command>
+      <command>cd $TARGETROOT/server_apps/DB_maintenance/loadUp/ &amp;&amp; remove_orphan_files.groovy</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
