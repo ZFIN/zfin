@@ -193,8 +193,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         recordAttribution.setSourceType(sourceType);
 
         RecordAttribution result = (RecordAttribution) session.createCriteria(RecordAttribution.class).add(Example.create(recordAttribution)).uniqueResult();
-        if (result == null)
+        if (result == null) {
             session.save(recordAttribution);
+        }
         return recordAttribution;
     }
 
@@ -511,8 +512,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @Override
-    public void insertUpdatesTable(String recID, String comments, String submitterZdbID, Date updateDate) {
-        insertUpdatesTable(recID, submitterZdbID, null, null, null, null, comments, updateDate);
+    public List<Updates> getUpdates(String zdbID) {
+        return HibernateUtil.currentSession()
+                .createCriteria(Updates.class)
+                .add(Restrictions.eq("recID", zdbID))
+                .addOrder(Order.desc("whenUpdated"))
+                .list();
     }
 
     @Override
@@ -566,17 +571,17 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         if (submitter == null) {
             insertUpdatesTable(recId, null, null, fieldName, oldValue, newValue, comments, when);
         } else {
-            insertUpdatesTable(recId, submitter.getZdbID(), submitter.getFullName(), fieldName, oldValue, newValue, comments, when);
+            insertUpdatesTable(recId, submitter, submitter.getFullName(), fieldName, oldValue, newValue, comments, when);
         }
     }
 
-    private void insertUpdatesTable(String recID, String submitterID, String submitterName, String fieldName,
+    private void insertUpdatesTable(String recID, Person submitter, String submitterName, String fieldName,
                                     String oldValue, String newValue, String comments, Date when) {
         Session session = HibernateUtil.currentSession();
 
         Updates updates = new Updates();
         updates.setRecID(recID);
-        updates.setSubmitterID(submitterID);
+        updates.setSubmitter(submitter);
         updates.setSubmitterName(submitterName);
         updates.setFieldName(fieldName);
         updates.setOldValue(oldValue);
@@ -1802,8 +1807,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         criteriaExisting.add(Example.create(recordAttribution));
         RecordAttribution thisPubResult = (RecordAttribution) criteriaExisting.uniqueResult();
         // done if record already exists
-        if (thisPubResult != null)
+        if (thisPubResult != null) {
             return;
+        }
 
         Criteria criteria = session.createCriteria(RecordAttribution.class);
         criteria.add(Restrictions.eq("dataZdbID", dataZdbID));
@@ -1829,8 +1835,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Criteria criteriaExisting = session.createCriteria(RecordAttribution.class);
         criteriaExisting.add(Example.create(recordAttribution));
         RecordAttribution thisPubResult = (RecordAttribution) criteriaExisting.uniqueResult();
-        if (thisPubResult != null)
+        if (thisPubResult != null) {
             HibernateUtil.currentSession().delete(thisPubResult);
+        }
     }
 
     @Override

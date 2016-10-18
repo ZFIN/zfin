@@ -979,3 +979,7 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
 .table-borderless td, .table-borderless th {
     border: none !important;
 }
+
+.profile-image {
+    max-width: 500px;
+}

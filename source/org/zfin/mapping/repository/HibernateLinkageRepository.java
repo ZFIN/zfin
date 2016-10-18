@@ -351,7 +351,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
         Updates updates = new Updates();
         updates.setOldValue(linkage.getComments());
         updates.setNewValue(newComment);
-        updates.setSubmitterID(ProfileService.getCurrentSecurityUser().getZdbID());
+        updates.setSubmitter(ProfileService.getCurrentSecurityUser());
         updates.setSubmitterName(ProfileService.getCurrentSecurityUser().getFullName());
         updates.setFieldName("Linkage.comments");
         updates.setComments("Updated Linkage Comment field");
