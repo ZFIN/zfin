@@ -4,8 +4,6 @@
 <jsp:useBean id="marker" type="org.zfin.marker.Marker" scope="request"/>
 
 <zfin2:dataManager zdbID="${marker.zdbID}"
-                   deleteURL="none"
-                   rtype="marker"
                    showLastUpdate="true"
                    editURL="javascript:editNomenclature();"/>
 

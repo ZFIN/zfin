@@ -18,7 +18,6 @@
 <zfin2:dataManager zdbID="${lab.zdbID}"
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"
-                   rtype="lab"
                    isOwner="${isOwner}"
         />
 

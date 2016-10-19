@@ -2,7 +2,7 @@
 
 <jsp:useBean id="marker" class="org.zfin.marker.Marker" scope="request"/>
 
-<zfin2:dataManager zdbID="${marker.zdbID}" rtype="marker"/>
+<zfin2:dataManager zdbID="${marker.zdbID}"/>
 <p/>
 
 <div class="titlebar">

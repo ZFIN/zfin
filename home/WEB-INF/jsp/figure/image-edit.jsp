@@ -18,8 +18,7 @@
 
 
 <zfin2:dataManager zdbID="${image.zdbID}"
-                   viewURL="${viewURL}"
-                   rtype="image"/>
+                   viewURL="${viewURL}"/>
 
 
 

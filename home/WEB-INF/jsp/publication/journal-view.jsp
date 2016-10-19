@@ -8,8 +8,7 @@
 
 <c:set var="authorized" value="yes"/>
 
-<zfin2:dataManager zdbID="${journal.zdbID}"
-                   rtype="publication"/>
+<zfin2:dataManager zdbID="${journal.zdbID}"/>
 
 <div style="float: right">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">

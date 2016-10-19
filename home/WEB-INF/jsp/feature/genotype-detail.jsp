@@ -20,7 +20,7 @@
     });
 </script>
 
-<zfin2:dataManager zdbID="${formBean.genotype.zdbID}" rtype="genotype"/>
+<zfin2:dataManager zdbID="${formBean.genotype.zdbID}"/>
 
 
 <div style="float: right;">

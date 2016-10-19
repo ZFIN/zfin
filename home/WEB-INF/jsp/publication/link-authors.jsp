@@ -24,8 +24,7 @@
   <zfin2:dataManager zdbID="${publication.zdbID}"
                      editURL="${editURL}"
                      trackURL="${trackURL}"
-                     curateURL="${curateURL}"
-                     rtype="publication"/>
+                     curateURL="${curateURL}"/>
 
     <div class="row">
     <div class="col-xs-12">

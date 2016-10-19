@@ -36,8 +36,7 @@
 <zfin2:dataManager zdbID="${str.zdbID}"
                    viewURL="${viewURL}"
                    deleteURL="${deleteURL}"
-                   mergeURL="${mergeURL}"
-                   rtype="marker"/>
+                   mergeURL="${mergeURL}"/>
 
 <div class="container-fluid" ng-app="app">
     <h2 class="page-header">Editing ${str.zdbID}</h2>

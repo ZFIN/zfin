@@ -24,8 +24,7 @@
 
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="${editURL}"
-                   deleteURL="${deleteURL}"
-                   rtype="marker"/>
+                   deleteURL="${deleteURL}"/>
 
 
 <div style="float: right">
