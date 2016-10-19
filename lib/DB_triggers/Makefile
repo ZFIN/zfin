@@ -98,10 +98,13 @@ TRIGGERS = \
 	publication_insert_trigger.sql \
 	publication_update_trigger.sql \
 	publication_completion_date_update_trigger.sql \
+	pub_tracking_history_insert_trigger.sql \
 	record_attribution_insert_trigger.sql \
 	run_candidate_insert_trigger.sql \
 	stage_insert_trigger.sql \
 	stage_update_trigger.sql \
+	source_alias_insert_trigger.sql \
+	salias_alias_update_trigger.sql \
 	term_insert_trigger.sql \
 	term_update_trigger.sql \
 	term_relationship_insert_trigger.sql \

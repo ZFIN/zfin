@@ -88,7 +88,7 @@ public class MarkerRelationshipController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/relationship/{relationshipId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/relationship/{relationshipId}", method = RequestMethod.DELETE, produces = "text/plain")
     public String removeMarkerRelationship(@PathVariable String relationshipId) {
         MarkerRelationship relationship = markerRepository.getMarkerRelationshipByID(relationshipId);
 
@@ -126,7 +126,7 @@ public class MarkerRelationshipController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/relationship/{relationshipId}/references/{pubID}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/relationship/{relationshipId}/references/{pubID}", method = RequestMethod.DELETE, produces = "text/plain")
     public String removeMarkerRelationshipReference(@PathVariable String relationshipId,
                                                     @PathVariable String pubID) {
         HibernateUtil.createTransaction();

@@ -1,6 +1,8 @@
 package org.zfin.ontology.presentation;
 
+import org.zfin.curation.presentation.CurationTab;
 import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.publication.CurationPresentation;
 
 
 /**
@@ -33,7 +35,7 @@ public class PhenotypePresentation extends TermPresentation {
     }
 
     private static String getCurationLink(PhenotypeStatement phenotypeStatement) {
-        return getWebdriverLink(CURATION_URI + "&pubcur_c_tab=PHENO&OID=", phenotypeStatement.getPhenotypeExperiment().getFigure().getPublication().getZdbID(),
+        return getWebdriverLink(CurationPresentation.uri + CurationTab.PHENO.getName(), phenotypeStatement.getPhenotypeExperiment().getFigure().getPublication().getZdbID(),
                 "edit");
     }
 

@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.ExpressionExperiment;
+import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mutant.FishExperiment;
@@ -26,7 +27,7 @@ public class MergeMarkerUnitTest {
     // C - markertomergeinto already has alias of markertodelete name, do not create new alias (no attribution to add), but move rest over
     // D - markertodelete has alias that is name of markertomergeinto, I think that this is case A
     @Test
-    public void mergeAliasesNoOverlap(){
+    public void mergeAliasesNoOverlap() {
         // we have one alias, here
         Marker markerToDelete = new Marker();
         markerToDelete.setAbbreviation("dogz");
@@ -34,63 +35,66 @@ public class MergeMarkerUnitTest {
         MarkerAlias alias1 = new MarkerAlias();
         alias1.setMarker(markerToDelete);
         alias1.setAlias("mammal");
+        alias1.setDataZdbID("ZDB-GENE090807-1");
+        DataAliasGroup group = new DataAliasGroup();
+        group.setName("alias");
+        alias1.setAliasGroup(group);
         PublicationAttribution publicationAttribution = new PublicationAttribution();
-        Publication pub1 = new Publication() ;
+        Publication pub1 = new Publication();
         pub1.setZdbID("A");
         publicationAttribution.setPublication(pub1);
         publicationAttribution.setSourceType(RecordAttribution.SourceType.STANDARD);
         alias1.addPublication(publicationAttribution);
-        Set<MarkerAlias> markerToDeleteAliases = new HashSet<MarkerAlias>() ;
-        markerToDeleteAliases.add(alias1) ;
+        Set<MarkerAlias> markerToDeleteAliases = new HashSet<>();
+        markerToDeleteAliases.add(alias1);
         markerToDelete.setAliases(markerToDeleteAliases);
 
 
         // also has mammal alias, but with different pub
-        Marker markerToMergeInto = new Marker() ;
+        Marker markerToMergeInto = new Marker();
         markerToMergeInto.setAbbreviation("catz");
-        Set<MarkerAlias> markerToMergeIntoAliases = new HashSet<MarkerAlias>() ;
+        Set<MarkerAlias> markerToMergeIntoAliases = new HashSet<MarkerAlias>();
 
         MarkerAlias alias2 = new MarkerAlias();
         alias2.setMarker(markerToMergeInto);
         alias2.setAlias("mammal");
+        alias2.setDataZdbID("ZDB-GENE090807-2");
+        alias2.setAliasGroup(group);
         PublicationAttribution publicationAttribution2 = new PublicationAttribution();
-        Publication pub2 = new Publication() ;
+        Publication pub2 = new Publication();
         pub2.setZdbID("B");
         publicationAttribution2.setPublication(pub2);
         publicationAttribution2.setSourceType(RecordAttribution.SourceType.STANDARD);
         alias2.addPublication(publicationAttribution2);
-        markerToMergeIntoAliases.add(alias2) ;
+        markerToMergeIntoAliases.add(alias2);
 
         MarkerAlias alias3 = new MarkerAlias();
         alias3.setMarker(markerToMergeInto);
         alias3.setAlias("dogz");
-        markerToMergeIntoAliases.add(alias3) ;
+        alias3.setDataZdbID("ZDB-GENE090807-3");
+        alias3.setAliasGroup(group);
+        markerToMergeIntoAliases.add(alias3);
 
         markerToMergeInto.setAliases(markerToMergeIntoAliases);
 
 
         // thing to test
-        MarkerAlias markerAlias = MergeService.mergeAliases(markerToDelete,markerToMergeInto);
+        MarkerAlias markerAlias = MergeService.mergeAliases(markerToDelete, markerToMergeInto);
 
 
-        assertNotNull(markerAlias) ;
-        assertEquals("dogz",markerAlias.getAlias());
-        Set<MarkerAlias> markerAliasSet = markerToMergeInto.getAliases() ;
-        assertEquals(2,markerAliasSet.size()) ;
-        for(MarkerAlias aMarkerAlias : markerAliasSet){
-            if(aMarkerAlias.getAlias().equals("dogz")){
-                assertEquals(0,aMarkerAlias.getPublications().size());
-            }
-            else
-            if(aMarkerAlias.getAlias().equals("catz")){
-                assertEquals(1,aMarkerAlias.getPublications().size());
-            }
-            else
-            if(aMarkerAlias.getAlias().equals("mammal")){
-                assertEquals(2,aMarkerAlias.getPublications().size());
-            }
-            else{
-                fail("Alias undefined: "+ markerAlias);
+        assertNotNull(markerAlias);
+        assertEquals("dogz", markerAlias.getAlias());
+        Set<MarkerAlias> markerAliasSet = markerToMergeInto.getAliases();
+        assertEquals(2, markerAliasSet.size());
+        for (MarkerAlias aMarkerAlias : markerAliasSet) {
+            if (aMarkerAlias.getAlias().equals("dogz")) {
+                assertEquals(0, aMarkerAlias.getPublications().size());
+            } else if (aMarkerAlias.getAlias().equals("catz")) {
+                assertEquals(1, aMarkerAlias.getPublications().size());
+            } else if (aMarkerAlias.getAlias().equals("mammal")) {
+                assertEquals(2, aMarkerAlias.getPublications().size());
+            } else {
+                fail("Alias undefined: " + markerAlias);
             }
         }
     }
@@ -99,20 +103,20 @@ public class MergeMarkerUnitTest {
      * Here we are testing alternate keys for when we merge expression experiment between to antibodies.
      */
     @Test
-    public void mergeExpressionExperiments(){
+    public void mergeExpressionExperiments() {
         Antibody a1 = new Antibody();
         a1.setZdbID("antibodyZdbID");
         Publication publication = new Publication();
         publication.setZdbID("pubZdbID");
         FishExperiment fishExperiment = new FishExperiment();
         fishExperiment.setZdbID("genotypeExperimentZdbID");
-        ExpressionAssay expressionAssay = new ExpressionAssay() ;
+        ExpressionAssay expressionAssay = new ExpressionAssay();
         expressionAssay.setName("dogz");
-        Clone probe = new Clone() ;
+        Clone probe = new Clone();
         probe.setZdbID("probeZdbID");
-        Marker gene = new Marker() ;
+        Marker gene = new Marker();
         gene.setZdbID("geneZdbID");
-        MarkerDBLink markerDBLink = new MarkerDBLink() ;
+        MarkerDBLink markerDBLink = new MarkerDBLink();
         markerDBLink.setMarker(gene);
         markerDBLink.setAccessionNumber("geneAccession");
         ReferenceDatabase referenceDatabase = new ReferenceDatabase();
@@ -138,8 +142,8 @@ public class MergeMarkerUnitTest {
         e2.setMarkerDBLink(markerDBLink);
         e2.setAntibody(a1);
 
-        Set<ExpressionExperiment> antibodyLabelings = new HashSet<ExpressionExperiment>() ;
-        antibodyLabelings.add(e1) ;
+        Set<ExpressionExperiment> antibodyLabelings = new HashSet<ExpressionExperiment>();
+        antibodyLabelings.add(e1);
         a1.setAntibodyLabelings(antibodyLabelings);
 
         assertNotNull(a1.getMatchingAntibodyLabeling(e2));

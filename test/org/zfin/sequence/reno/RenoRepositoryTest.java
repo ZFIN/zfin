@@ -3,7 +3,6 @@ package org.zfin.sequence.reno;
 import org.hibernate.Criteria;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
@@ -30,9 +29,9 @@ import static org.junit.Assert.*;
 
 public class RenoRepositoryTest extends AbstractDatabaseTest {
 
-    private static RenoRepository repository= RepositoryFactory.getRenoRepository();
+    private static RenoRepository repository = RepositoryFactory.getRenoRepository();
 
-    private RenoService renoService = new RenoService() ;
+    private RenoService renoService = new RenoService();
 
 
     @Test
@@ -296,7 +295,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
             runCandidate = (RunCandidate) runCandidates.get(0);
             bestHit = runCandidate.getBestHit();
             Hit hit1 = (Hit) returnMap.get("hit1");
-            assertEquals(bestHit.getExpectValue(), hit1.getExpectValue(),0.001f);
+            assertEquals(bestHit.getExpectValue(), hit1.getExpectValue(), 0.001f);
             assertEquals(bestHit.getScore(), hit1.getScore());
 
             // should choose the same score, because still has the best expect value
@@ -305,7 +304,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
             runCandidates = repository.getSortedRunCandidates(run1, "other", 3);
             runCandidate = (RunCandidate) runCandidates.get(0);
             bestHit = runCandidate.getBestHit();
-            assertEquals(bestHit.getExpectValue(), hit1.getExpectValue(),0.001f);
+            assertEquals(bestHit.getExpectValue(), hit1.getExpectValue(), 0.001f);
             assertEquals(bestHit.getScore(), hit1.getScore());
 
             // make hit1 and hit2 the same expect value, so now should take hit2 value as 800 > 600
@@ -315,7 +314,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
             runCandidates = repository.getSortedRunCandidates(run1, "other", 3);
             runCandidate = (RunCandidate) runCandidates.get(0);
             bestHit = runCandidate.getBestHit();
-            assertEquals(bestHit.getExpectValue(), hit2.getExpectValue(),0.001f);// would work for either hit1 or hit2
+            assertEquals(bestHit.getExpectValue(), hit2.getExpectValue(), 0.001f);// would work for either hit1 or hit2
             assertEquals(bestHit.getScore(), hit2.getScore());
         } finally {
             // rollback on success or exception to leave no new records in the database
@@ -590,26 +589,6 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
         renoService.populateLinkageGroups(rc);
     }
 
-    @Test
-    @Ignore("Test performs no assertions")
-    public void findReversedStrand(){
-
-        ScrollableResults results = HibernateUtil.currentSession().createCriteria(Hit.class).scroll();
-
-        int numHits = 10 ;
-        int hits = 0 ;
-
-        while(results.next() && hits < numHits ){
-            Hit hit = (Hit) results.get(0) ;
-
-            if(hit.isReversed()){
-                System.out.println(hit.getQuery().getRunCandidate().getZdbID());
-                ++hits ;
-            }
-
-        }
-
-    }
-} 
+}
 
 

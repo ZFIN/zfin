@@ -1,6 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -70,9 +71,7 @@ public class ExpressionZonePresenter implements Presenter {
     }
 
     private void retrieveConstructionZoneValues() {
-        // figure list
-        curationRPCAsync.getFigures(publicationID, new RetrieveFiguresCallback());
-
+        refreshFigure();
         // stage list
         curationRPCAsync.getStages(new RetrieveStageListCallback());
 
@@ -80,6 +79,9 @@ public class ExpressionZonePresenter implements Presenter {
         sessionRPC.isStageSelectorSingleMode(publicationID, new RetrieveStageSelectorCallback(view.getErrorElement(), view.getStageSelector()));
     }
 
+    public void refreshFigure() {
+        curationRPCAsync.getFigures(publicationID, new RetrieveFiguresCallback());
+    }
 
     public void setError(String message) {
         view.getErrorElement().setText(message);

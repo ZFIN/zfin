@@ -112,6 +112,20 @@ query = session.createQuery(hql)
 query.setParameter("addgeneDb", addgeneDb)
 query.setParameter("entrezGeneDb", entrezGeneDb)
 query.setParameterList("accNums", entrezIdsFromAddgene)
+newLinks=query.list()
+
+hql = """from MarkerDBLink
+         where referenceDatabase = :entrezGeneDb
+         and accessionNumber in (:accNums)
+         and dataZdbID not in (
+             select dataZdbID
+             from MarkerDBLink
+             where referenceDatabase = :addgeneDb
+         )"""
+query = session.createQuery(hql)
+query.setParameter("addgeneDb", addgeneDb)
+query.setParameter("entrezGeneDb", entrezGeneDb)
+query.setParameterList("accNums", entrezIdsFromAddgene)
 addedLinks = query.list().collect { entrezLink ->
     addgeneLink = new MarkerDBLink()
     addgeneLink.with {
@@ -145,7 +159,7 @@ query.setParameter("addgeneDb", addgeneDb)
 linksAdded = query.list()
 linksAdded.each { link ->
     println "  $link.zdbID"
-    
+
 }
 
 if (options.report) {
@@ -163,7 +177,7 @@ if (options.report) {
     rg.includeTimestamp();
     rg.addIntroParagraph("With this load there are now $count Addgene links in total.")
     rg.addDataTable("${linksToDelete.size()} Links Removed", ["Gene", "Accession Number"], linksToDelete.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
-    rg.addDataTable("${linksAdded.size()} Links Added", ["Gene", "Accession Number"], linksAdded.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
+    rg.addDataTable("${newLinks.size()} Links Added", ["Gene", "Accession Number"], newLinks.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
     new File("addgene-report.html").withWriter { writer ->
         rg.write(writer, ReportGenerator.Format.HTML)
     }

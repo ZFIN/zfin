@@ -66,6 +66,8 @@ update tmp_zeco_tt
 where ccTermId = 'none';
 
 
+
+
 update experiment_condition
  set expcond_zeco_term_zdb_id = (select zecoid  from tmp_zeco_tt
      			      		where expcond_exp_zdb_id = expid
@@ -84,3 +86,10 @@ update experiment_condition
  set expcond_go_cc_term_zdb_id = (select cctermid from tmp_zeco_tt
      			      		where expid = expcond_exp_zdb_id
 					and cdtid = expcond_cdt_zdb_id);
+update experiment_condition
+ set expcond_taxon_term_zdb_id = (select term_zdb_id from term, tmp_zeco_tt 
+     			       	 	 where othertermid = term_ont_id
+     			      		and expid = expcond_exp_zdb_id
+					and cdtid = expcond_cdt_zdb_id
+					and othertermid like 'NCBI%')
+ where expcond_taxon_term_zdb_id is null;

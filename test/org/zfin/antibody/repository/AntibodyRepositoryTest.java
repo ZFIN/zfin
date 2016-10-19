@@ -864,9 +864,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
             PublicationRepository pr = RepositoryFactory.getPublicationRepository();
             Publication pub = pr.getPublication("ZDB-PUB-000104-1");
             MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-            Marker marker = mr.getMarkerByID("ZDB-GENE-030131-4362");
-            marker.setAbbreviation("newman");
-            mr.renameMarker(marker, pub, MarkerHistory.Reason.NOT_SPECIFIED);
+            mr.renameMarker(antibody, pub, MarkerHistory.Reason.NOT_SPECIFIED, abName, abName);
             session.flush();
         } finally {
             tx.rollback();

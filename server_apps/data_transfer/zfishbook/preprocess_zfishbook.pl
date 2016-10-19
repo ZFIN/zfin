@@ -85,7 +85,9 @@ $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
 %gtCnstructIds = ();
 
 $gtCnstructIds{"RP2"} = "ZDB-GTCONSTRCT-111117-2";
+$gtCnstructIds{"RP2.1"} = "ZDB-GTCONSTRCT-111117-2";
 $gtCnstructIds{"RP8"} = "ZDB-GTCONSTRCT-121023-1";
+$gtCnstructIds{"RP8.1"} = "ZDB-GTCONSTRCT-121023-1";
 $gtCnstructIds{"RP8 pr. 18"} = "ZDB-GTCONSTRCT-121023-1";
 $gtCnstructIds{"R14.5"} = "ZDB-GTCONSTRCT-100624-1";
 $gtCnstructIds{"RP15"} = "ZDB-GTCONSTRCT-100121-2";
@@ -94,7 +96,7 @@ $gtCnstructIds{"RP4"} = "ZDB-GTCONSTRCT-130315-2";
 $gtCnstructIds{"RP7"} = "ZDB-GTCONSTRCT-130315-1";
 
 
-open (ZFISHBOOKDATA, "zfishbookData.txt") || die "Cannot open zfishbookData.txt : $!\n";
+open (ZFISHBOOKDATA, "/research/zarchive/load_files/Zfishbook/zfishbookData.txt") || die "Cannot open zfishbookData.txt : $!\n";
 @lines=<ZFISHBOOKDATA>;
 close(ZFISHBOOKDATA);
 %prviousNames = ();

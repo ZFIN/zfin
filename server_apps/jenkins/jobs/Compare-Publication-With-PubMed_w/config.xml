@@ -92,7 +92,7 @@ the records at PubMed. Comparison is done on the following attributes:&#xd;
     <EnvInjectBuildWrapper plugin="envinject@1.89">
       <info>
         <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
-        <propertiesContent>ANT_OPTS=-XX:PermSize=256m -XX:MaxPermSize=1024m -Xms256m -Xmx2048m -XX:-UseSplitVerifier</propertiesContent>
+        <propertiesContent>ANT_OPTS=-Xms256m -Xmx2048m -Xverify:none</propertiesContent>
         <loadFilesFromMaster>false</loadFilesFromMaster>
       </info>
     </EnvInjectBuildWrapper>

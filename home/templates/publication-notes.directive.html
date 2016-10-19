@@ -1,0 +1,36 @@
+<div class="panel-body">
+    <form role="form">
+        <div class="form-group">
+            <label for="new-note-text">New Note</label>
+            <textarea ng-model="vm.newNote" class="form-control" rows="3" id="new-note-text"></textarea>
+        </div>
+        <button ng-click="vm.addNote()" type="submit" class="btn btn-primary">Post</button>
+    </form>
+    <hr>
+    <p ng-if="!vm.notes.length" class="text-muted text-center">No notes yet</p>
+    <div class="media" ng-repeat="note in vm.notes" ng-cloak>
+        <div class="media-left">
+            <div class="thumb-container">
+                <img class="thumb-image" ng-src="{{note.curator.imageURL}}">
+            </div>
+        </div>
+        <div class="media-body">
+            <h4 class="media-heading">
+                {{note.curator.name}}
+                <small>{{note.date | date:'yyyy-MM-dd'}}</small>
+            </h4>
+            <ul class="list-inline" ng-show="note.editable">
+                <li><small><a href ng-click="vm.beginEditingNote(note)">Edit</a></small></li>
+                <li><small><a href ng-click="vm.deleteNote(note, $index)">Delete</a></small></li>
+            </ul>
+            <p ng-hide="note.editing" class="keep-breaks">{{note.text}}</p>
+            <div ng-show="note.editing">
+                <div class="form-group">
+                    <textarea class="form-control" ng-model="note.text"></textarea>
+                </div>
+                <button ng-click="vm.editNote(note)" type="submit" class="btn btn-primary">Done Editing</button>
+                <button ng-click="vm.cancelEditingNote(note)" type="submit" class="btn btn-default">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

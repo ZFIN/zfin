@@ -53,3 +53,49 @@ a:hover {
     display: flex;
     align-items: flex-end;
 }
+
+.btn-zfin {
+    color: #FFFFFF;
+    background-color: #066;
+    border-color: #066;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+
+.btn-zfin:hover,
+.btn-zfin:focus,
+.btn-zfin:active,
+.btn-zfin.active,
+.btn-zfin.disabled,
+.btn-zfin[disabled] {
+    color: #FFFFFF;
+    background-color: #004444;
+}
+
+.form-control-fixed-width-sm {
+    display: inline-block;
+    width: 60px !important;
+}
+
+.quick-fig-content .close {
+    margin-top: -5px;
+}
+.quick-fig-content form {
+    margin-bottom: 10px;
+}
+
+.table-condensed>thead>tr>th,
+.table-condensed>tbody>tr>th,
+.table-condensed>tfoot>tr>th,
+.table-condensed>thead>tr>td,
+.table-condensed>tbody>tr>td,
+.table-condensed>tfoot>tr>td {
+    padding: 0 !important;
+    border: 0 !important;
+    border-spacing: 0 !important;
+    margin: 0;
+    line-height: 0.7;
+}
+
+.table-condensed > input > label {
+    margin-right: 5px;
+}

@@ -1,4 +1,3 @@
-
 rollback work;
 
 drop table tmp_run;

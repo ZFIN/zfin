@@ -48,6 +48,12 @@ public class FigureViewController {
         }
 
         model.addAttribute("figure", figure);
+        Clone probe = figureViewService.getProbeForFigure(figure);
+        model.addAttribute("probe", probe);
+        if (probe != null) {
+            List<OrganizationLink> suppliers = RepositoryFactory.getProfileRepository().getSupplierLinksForZdbId(probe.getZdbID());
+            model.addAttribute("probeSuppliers", suppliers);
+        }
 
         List<PhenotypeWarehouse> warehouseList = getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID());
         FigureExpressionSummary expressionSummary = figureViewService.getFigureExpressionSummary(figure);

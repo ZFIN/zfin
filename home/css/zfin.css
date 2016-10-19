@@ -177,6 +177,7 @@ table.data_manager a.root {
     color: #33cc99;
     text-align: left;
 }
+
 .phenotype-ameliorated {
     color: #A461E8;
     text-align: left;
@@ -309,6 +310,10 @@ img.clickable {
 
 .red {
     color: red;
+}
+
+.checkbox-label > input {
+    margin-right: 5px;
 }
 
 .red-modifier-hyperlink a {
@@ -819,12 +824,15 @@ ul.comma-separated {
     margin: 0;
     padding: 0;
 }
+
 ul.comma-separated > li {
     display: inline;
 }
+
 ul.comma-separated > li:after {
     content: ", ";
 }
+
 ul.comma-separated > li:last-child:after {
     content: "";
 }
@@ -846,3 +854,132 @@ ul.comma-separated > li:last-child:after {
     border: 1px solid #ccc;
 }
 
+.pub-dashboard > .filter-bar {
+    padding: 15px;
+    background: #e3e8e8;
+    margin-bottom: 20px;
+}
+
+.pub-dashboard .table td {
+    vertical-align: text-top;
+}
+
+.pub-dashboard img {
+    max-height: 100px;
+    margin: 4px 0;
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+nav.pub-navigator {
+    background: #669999;
+    margin-top: -4px; /* snugs it up to the main nav */
+    margin-bottom: 0;
+    color: white;
+    border: none;
+}
+
+nav.pub-navigator .navbar-nav > li > a {
+    color: white;
+}
+
+nav.pub-navigator .navbar-nav > li > a:hover,
+nav.pub-navigator .navbar-nav > li > a:focus {
+    color: white;
+    text-decoration: underline;
+}
+
+nav.pub-navigator .navbar-nav > .active > a,
+nav.pub-navigator .navbar-nav > .active > a:hover,
+nav.pub-navigator .navbar-nav > .active > a:focus {
+    background: #85aeae;
+    color: white;
+    font-weight: bold;
+}
+
+.edit-form-content {
+    margin-top: 30px;
+}
+
+.figure-edit-panel .table td {
+    vertical-align: baseline;
+}
+.figure-edit-panel .image-edit-image {
+    margin: 0 2em 0 0;
+}
+.file-drag-target {
+    padding: 2em 0;
+    border: 2px dashed lightgray;
+    text-align: center;
+    border-radius: 4px;
+}
+
+.file-drag-target.hover {
+    background-color: #e0e7e0;
+    border: solid #006666;
+}
+
+.file-drag-target > input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.file-drag-target > label {
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.figure-delete-button {
+    display: inline-block;
+}
+.image-edit-image {
+    position: relative;
+    display: inline-block;
+}
+.image-add-input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+.image-add-label {
+    visibility: hidden;
+    cursor: pointer;
+    font-size: 36px;
+    vertical-align: middle;
+    padding: 0 10px;
+    margin: 0 10px;
+    color: #0000E9;
+}
+.image-edit-block:hover .image-delete-button {
+    display: inline-block;
+}
+.image-edit-block:hover .image-add-label {
+    visibility: visible;
+}
+.image-delete-button {
+    display: none;
+    position: absolute;
+    top: -1.2em;
+    right: -1.2em;
+    cursor: pointer;
+}
+.image-delete-button .fa-circle {
+    color: white;
+}
+.image-delete-button .fa-times-circle {
+    color: #0000E9;
+}
+.table-borderless td, .table-borderless th {
+    border: none !important;
+}
+
+.profile-image {
+    max-width: 500px;
+}

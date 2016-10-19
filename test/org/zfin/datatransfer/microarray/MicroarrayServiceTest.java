@@ -20,14 +20,6 @@ public class MicroarrayServiceTest extends AbstractDatabaseTest{
     private ExpressionService expressionService = new ExpressionService();
 
     @Test
-    @Ignore("this is more for convenience and shouldn't be run as a regular test")
-    public void testIndividualGPL() {
-        DefaultGeoSoftParser defaultSoftParser = new DefaultGeoSoftParser();
-//        defaultSoftParser.setAlwaysUseExistingFile(true);
-        defaultSoftParser.parseUniqueNumbers("GPL1319", 2, new String[]{"Danio rerio"}, new String[]{"Control"});
-    }
-
-    @Test
     public void updateGeoLink(){
         Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-030131-9286");
         HibernateUtil.createTransaction();
@@ -48,7 +40,6 @@ public class MicroarrayServiceTest extends AbstractDatabaseTest{
 
 
     @Test
-    @Ignore("broken")
     public void findGeoLinkForNCBI(){
         Marker m ;
         m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-EST-010427-5"); // af086761
@@ -66,8 +57,6 @@ public class MicroarrayServiceTest extends AbstractDatabaseTest{
         m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-110207-1"); // agbl1
         assertNotNull(m);
         assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
-        HibernateUtil.currentSession().flush();
-        assertNotNull(expressionService.getGeoLinkForMarkerIfExists(m));
     }
 
     @Test

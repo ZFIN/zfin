@@ -39,10 +39,13 @@ public class GeneAddFormBeanValidator implements Validator {
             }
         } else {
             // if this is not an EFG, there is an abbrevation field on the form. make sure
-            // it is filled out and not already used
+            // it is filled out, not already used, and is just lowercase letters and numebrs
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "abbreviation", "gene.abbreviation.empty");
             if (markerRepository.isMarkerExists(form.getAbbreviation())) {
                 errors.rejectValue("abbreviation", "gene.abbreviation.inuse");
+            }
+            if (!form.getAbbreviation().matches("[a-z0-9:.-]+")) {
+                errors.rejectValue("abbreviation", "gene.abbreviation.invalidcharacters");
             }
         }
     }

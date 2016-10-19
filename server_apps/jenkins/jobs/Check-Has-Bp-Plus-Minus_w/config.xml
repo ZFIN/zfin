@@ -52,7 +52,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Has-Bp-Plus-Minus_w/Check-Has-Bp-Plus-Minus_w.html&quot;}
+                            ${FILE,path="server_apps/DB_maintenance/validatedata/Check-Has-Bp-Plus-Minus_w/Check-Has-Bp-Plus-Minus_w.html"}
 
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
@@ -72,7 +72,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Has-Bp-Plus-Minus_w/Check-Has-Bp-Plus-Minus_w.html&quot;}
+                            ${FILE,path="server_apps/DB_maintenance/validatedata/Check-Has-Bp-Plus-Minus_w/Check-Has-Bp-Plus-Minus_w.html"}
 
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>

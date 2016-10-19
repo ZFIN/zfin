@@ -1,0 +1,110 @@
+<div class="pub-dashboard">
+    <div class="row filter-bar">
+        <div class="col-sm-6">
+            <form class="form-inline">
+                Pubs in
+                <select class="form-control"
+                        ng-options="location.name for location in vm.locations"
+                        ng-model="vm.location"
+                        ng-change="vm.fetchPubs()">
+                </select>
+                by
+                <select class="form-control"
+                        ng-options="order.display for order in vm.sortOrders"
+                        ng-model="vm.sort"
+                        ng-change="vm.fetchPubs()">
+                </select>
+            </form>
+        </div>
+        <div class="col-sm-6">
+            <form class="form-inline">
+                <input class="form-control pull-right" type="text" placeholder="Search bin..."
+                       ng-model="vm.searchTerm">
+            </form>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th width="115px"></th>
+            <th width="150px">ZDB-ID</th>
+            <th>Details</th>
+            <th width="100px">Time in bin</th>
+            <th width="50px">PDF</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-show="vm.loading">
+            <td class="text-muted text-center" colspan="5"><i class="fa fa-spinner fa-spin"></i> Loading...</td>
+        </tr>
+        <tr ng-show="!vm.loading && vm.pubs.length == 0">
+            <td class="text-muted text-center" colspan="5">Woo hoo! Bin is empty!</td>
+        </tr>
+        <tr ng-show="!vm.loading" ng-repeat="pub in vm.pubs | filter:vm.searchTerm">
+            <td>
+                <button ng-show="!pub.claimed" ng-click="vm.claimPub(pub, $index)" class="btn btn-default" ng-disabled="pub.saving">
+                    <span ng-show="!pub.saving">Claim</span>
+                    <span ng-show="pub.saving"><i class="fa fa-spinner fa-spin"></i></span>
+                </button>
+                <button ng-show="pub.claimed" class="btn btn-success">
+                    <i class="fa fa-check"></i> Claimed
+                </button>
+
+                <p class="text-danger" ng-show="pub.claimError">{{pub.claimError}}</p>
+
+
+            </td>
+            <td><a ng-href="/{{pub.zdbId}}" target="_blank">{{pub.zdbId}}</a></td>
+            <td>
+                <p><b ng-bind-html="pub.title | trustedHtml"></b></p>
+                <p>{{pub.citation}}</p>
+                <p>{{pub.authors}}</p>
+                <p ng-bind-html="pub.abstractText | trustedHtml"></p>
+                <p>
+                    <span ng-repeat="image in pub.images">
+                        <img ng-click="vm.openModal(pub, $index)" ng-src="{{image.mediumPath}}">
+                    </span>
+                </p>
+            </td>
+            <td>{{pub.status.updateDate | timeago:true}}</td>
+            <td>
+                <a ng-show="pub.pdfPath" ng-href="/PDFLoadUp/{{pub.pdfPath}}" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div paging class="text-center" page="vm.currentPage" page-size="vm.pubsPerPage" total="vm.totalPubs"
+         paging-action="vm.fetchPubs(page)" show-prev-next="true" hide-if-empty="true"></div>
+</div>
+
+<div class="modal figure-gallery-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fa fa-fw fa-close"></i></span>
+                </button>
+                <h4 class="modal-title">
+                    {{vm.modal.image.label}}
+                </h4>
+            </div>
+            <div class="modal-body figure-gallery-modal-body">
+                <a href class="figure-gallery-modal-nav prev" role="button"
+                   ng-show="vm.modal.prev !== null" ng-click="vm.openModal(vm.modal.pub, vm.modal.prev)">
+                    <i class="fa fa-chevron-left"></i>
+                </a>
+                <img class="figure-gallery-modal-image" ng-show="vm.modal" ng-src="{{vm.modal.image.fullPath}}">
+                <a href class="figure-gallery-modal-nav next" role="button"
+                   ng-show="vm.modal.next !== null" ng-click="vm.openModal(vm.modal.pub, vm.modal.next)">
+                    <i class="fa fa-chevron-right"></i>
+                </a>
+                <div class="figure-gallery-modal-loader hidden">
+                    <i class="fa fa-spinner fa-spin"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

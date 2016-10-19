@@ -7,7 +7,6 @@
 <tiles-definitions>
     <definition name="gene-family-autocomplete.page" template="/WEB-INF/jsp/autocomplete/gene-family-autocomplete.jsp"/>
     <definition name="anatomy-terms-autocomplete.page" template="/WEB-INF/jsp/autocomplete/anatomy_terms_autocomplete.jsp"/>
-    <definition name="home-page-redirect.page" template="/redirect.html"/>
     <definition name="pagination.page" template="/WEB-INF/jsp-include/apg-pagination.jsp"/>
     <definition name="def-pub.page" template="/WEB-INF/jsp-include/def-pub.jsp"/>
     <definition name="ajax/login-required" template="/WEB-INF/jsp/ajax_login_required.jsp"/>

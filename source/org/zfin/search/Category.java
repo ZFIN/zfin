@@ -85,9 +85,9 @@ public enum Category {
             TOPIC,
             CURATION_STATUS,
             PUBLICATION_STATUS,
-            INDEXING_STATUS,
-            CURATOR
-    ),
+            CURATION_LOCATION,
+            PUB_OWNER
+                ),
     FIGURE("Figure",
             ZEBRAFISH_GENE,
             REPORTER_GENE,

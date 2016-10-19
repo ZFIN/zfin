@@ -12,6 +12,7 @@ import org.zfin.expression.ExpressionAssay;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
+import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerType;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
@@ -22,7 +23,6 @@ import org.zfin.publication.Publication;
 import org.zfin.util.DatabaseJdbcStatement;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 public interface InfrastructureRepository {
@@ -98,9 +98,11 @@ public interface InfrastructureRepository {
 
     void insertPublicAttribution(Genotype genotype, String sourceZdbID);
 
+    void insertStandardPubAttribution(String dataZdbID, Publication publication);
+
     RecordAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType);
 
-    void insertUpdatesTable(String recID, String comments, String submitterZdbID, Date updateDate);
+    List<Updates> getUpdates(String zdbID);
 
     void insertUpdatesTable(String recID, String fieldName, String comments);
 
@@ -376,6 +378,7 @@ public interface InfrastructureRepository {
 
     /**
      * Used to execute a dynamic query, i.e. a query with a sub query.
+     *
      * @param statement
      * @return
      */
@@ -409,6 +412,7 @@ public interface InfrastructureRepository {
 
     /**
      * Retrieve the meta data for all columns of a given table.
+     *
      * @param table table
      * @return list of column objects
      */
@@ -416,6 +420,7 @@ public interface InfrastructureRepository {
 
     /**
      * execute SQL query for each provided data row individually (for debugging purposes).
+     *
      * @param statement
      * @param data
      */
@@ -426,6 +431,7 @@ public interface InfrastructureRepository {
     /**
      * Retrieve the date when the database was loaded from. For dev sites it's the date of the production database that
      * was used for loading.
+     *
      * @return UnloadInfo of the production database.
      */
     UnloadInfo getUnloadInfo();
@@ -434,6 +440,7 @@ public interface InfrastructureRepository {
 
     /**
      * Generic deletion of ActiveData and ActiveSource
+     *
      * @param zdbID
      */
     void deleteActiveEntity(String zdbID);
@@ -461,6 +468,11 @@ public interface InfrastructureRepository {
     void insertMutationDetailAttribution(String dataZdbID, String publicationID);
 
     void deleteMutationDetailAttribution(String zdbID, String publicationZdbID);
+
+    EntityZdbID getEntityByID(Class<? extends EntityZdbID> entity, String zdbID);
+
+    void insertMarkerHistory(MarkerHistory history);
+
 }
 
 

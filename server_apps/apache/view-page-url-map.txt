@@ -16,13 +16,14 @@ FIG	/action/figure/view/ZDB-FIG
 FISH	/action/fish/fish-detail/ZDB-FISH
 FOSMID	/action/marker/view/ZDB-FOSMID
 GENE	/action/marker/view/ZDB-GENE
+NOMEN	/action/nomenclature/view/ZDB-NOMEN
 GENEFAMILY	/action/marker/view/ZDB-GENEFAMILY
 GENEP	/action/marker/view/ZDB-GENEP
 GENO	/action/genotype/view/ZDB-GENO
 GO	/action/ontology/term-detail/GO
 GTCONSTRCT	/action/marker/view/ZDB-GTCONSTRCT
-IMAGE	/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=ZDB-IMAGE
 JRNL    /action/publication/journal/ZDB-JRNL
+IMAGE    /action/image/view/ZDB-IMAGE
 LAB	/action/profile/view/ZDB-LAB
 LINK /action/mapping/linkage/ZDB-LINK
 MRPHLNO	/action/marker/view/ZDB-MRPHLNO

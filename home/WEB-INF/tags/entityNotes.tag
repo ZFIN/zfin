@@ -4,18 +4,9 @@
 
 
 <authz:authorize access="hasRole('root')">
-    <c:if test="${!empty entity.dataNotes}">
-        <tr>
-            <th valign="top">Curator Note:</th>
-            <td>
-                <c:forEach var="curatorNote" items="${entity.sortedDataNotes}" varStatus="loopCurNote">
-                    ${curatorNote.curator.shortName}&nbsp;&nbsp;${curatorNote.date}<br/>
-                    <zfin2:toggleTextLength text="${curatorNote.note}" idName="${zfn:generateRandomDomID()}" shortLength="80"/>
-                    ${!loopCurNote.last ? "<br/>&nbsp;<br>" : ""}
-                </c:forEach>
-            </td>
-        </tr>
-    </c:if>
+   <tr ng-if="editMode" curator-notes marker-id="${entity.zdbID}" edit="1">
+   <tr ng-if="!editMode" curator-notes marker-id="${entity.zdbID}" edit="0">
+   </tr>
 </authz:authorize>
 
 <c:if test="${!(empty entity.publicComments)}">

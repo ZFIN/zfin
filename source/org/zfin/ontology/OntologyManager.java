@@ -289,10 +289,8 @@ public class OntologyManager {
         initOntologyMapFast(Ontology.GO_BP);
         serializeOntology(Ontology.GO_BP);
 
-/*
         initOntologyMapFast(Ontology.CHEBI);
         serializeOntology(Ontology.CHEBI);
-*/
 
         ontologySerializationService.serializeLoadData(loadingData);
     }

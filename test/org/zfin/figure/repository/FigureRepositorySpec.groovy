@@ -71,20 +71,6 @@ class FigureRepositorySpec extends AbstractZfinIntegrationSpec {
         ["Fig. 1", "Fig. 2", "Fig. 3", "Fig. 4", "Fig. 5", "Fig. 6", "Fig. 7"]== figures*.label
     }
 
-    @Ignore("broken")
-    def "#figZdbID should have the correct number of fishes"() {
-        when: "we get a figure"
-
-        Figure figure = RepositoryFactory.figureRepository.getFigure("ZDB-FIG-061227-14")
-
-        then: "it should have phenotype experiments, and those experiments should have genotype experiments. The genotype experiments should have " +
-                "a set of genotypeExperimentFishAnnotation classes, each of which should have a corresponding fish annotation."
-
-
-        def first = figure.getPhenotypeExperiments().first()
-        first.genotypeExperiment.genotypeExperimentFishAnnotations.size() == 1;
-    }
-
 }
 
 

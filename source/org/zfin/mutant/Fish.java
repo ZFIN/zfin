@@ -1,5 +1,6 @@
 package org.zfin.mutant;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.fish.repository.FishService;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.marker.Marker;
@@ -153,7 +154,7 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
 
     public String getDisplayName() {
         String newGenoName = genotype.getName();
-        if (genotype.getAssociatedGenotypes() != null) {
+        if (CollectionUtils.isNotEmpty(genotype.getAssociatedGenotypes())) {
             newGenoName += " ";
             newGenoName += genotype.getBackgroundDisplayName();
         }

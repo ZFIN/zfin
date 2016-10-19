@@ -1,7 +1,6 @@
 package org.zfin.publication.presentation;
 
-import org.apache.bcel.Repository;
-import org.apache.http.HttpResponse;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -35,7 +34,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.repository.RepositoryFactory.getProfileRepository;
 
 @Controller
 @RequestMapping("/publication")
@@ -124,6 +122,7 @@ public class PublicationEditController {
         }
         model.addAttribute("publication", publication);
         model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Editing " + publication.getCitation());
         return "publication/edit-publication.page";
     }
 
@@ -133,13 +132,18 @@ public class PublicationEditController {
                                             @Valid @ModelAttribute Publication publication,
                                             BindingResult result,
                                             RedirectAttributes ra) {
-        if (result.hasErrors()) {
-            return "publication/edit-publication.page";
-        }
-
         Publication existingPublication = publicationRepository.getPublication(zdbID);
+
         if (existingPublication == null) {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        if (!publication.isCanShowImages() && CollectionUtils.isNotEmpty(existingPublication.getFigures())) {
+            result.rejectValue("canShowImages", "canShowImages.existingFigures");
+        }
+
+        if (result.hasErrors()) {
+            return "publication/edit-publication.page";
         }
 
         try {

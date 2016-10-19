@@ -25,8 +25,7 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN
 
 SUBDIRS = APP_PAGES help_files misc_html Workgroup_dirs Methods
 
-GENERICS = index.html
-
+STATICS = index.html
 
 # --------------------------  Rules  ------------------------------------
 

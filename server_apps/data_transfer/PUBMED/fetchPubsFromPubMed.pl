@@ -18,7 +18,7 @@ unlink glob "<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/*.clob";
 open (my $log, ">:encoding(UTF-8)", "<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePubs.log") || die "Cannot open <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePub.log : $!\n";
 open (my $mesh, ">:encoding(UTF-8)", "<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parseMesh.log") || die "Cannot open <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parseMesh.log : $!\n";
 
-$base = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
+$base = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
 $db = 'pubmed';
 my $pubCount = 0;
 if (scalar @ARGV > 0) {

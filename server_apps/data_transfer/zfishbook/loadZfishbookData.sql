@@ -329,14 +329,6 @@ select  predalias_dalias_zdb_id,
 
 ! echo "         into record_attribution table."
 
--- find what zfishbook record(s) does not have feature_comments
---select * from feature where feature_comments not like '%zfishbook.org%'
---                        and exists (select 'x' from ekkerLabData where feature_zdb_id = ekker_featureId);
-
-update feature set feature_comments = '' where feature_comments like '%zfishbook.org%'
-                                           and exists (select 'x' from ekkerLabData where feature_zdb_id = ekker_featureId);
-
-
 create table pre_geno (
         pregeno_feature_id varchar(50) not null,
         pregeno_display_name varchar(255) not null,
@@ -422,6 +414,10 @@ alter table pre_geno add pregeno_geno_id varchar(50);
 
 update pre_geno set pregeno_geno_id = get_id('GENO');
 
+alter table pre_geno add pregeno_fish_id varchar(50);
+
+update pre_geno set pregeno_fish_id = get_id('FISH');
+
 unload to 'pre_geno.unl' select * from pre_geno order by pregeno_feature_id;
 ! echo "         to pre_geno.unl"
 
@@ -456,6 +452,36 @@ select  pregeno_geno_id,
 
 ! echo "         into record_attribution table."
 
+insert into zdb_active_data select pregeno_fish_id from pre_geno;
+
+! echo "         into zdb_active_data table."
+
+-- load fish table
+insert into fish (
+    fish_zdb_id,
+    fish_genotype_zdb_id,    
+    fish_name,
+    fish_handle
+)
+select  pregeno_fish_id,
+        pregeno_geno_id,
+        pregeno_display_name,
+        pregeno_handle
+ from pre_geno;
+
+! echo "         into fish table."
+
+
+-- load record_attribution table
+insert into record_attribution (
+    recattrib_data_zdb_id,
+    recattrib_source_zdb_id
+)
+select  pregeno_fish_id,
+        'ZDB-PUB-120111-1'
+ from pre_geno;
+
+! echo "         into record_attribution table."
 
 -- load genotype_background table
 insert into genotype_background (

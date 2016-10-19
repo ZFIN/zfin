@@ -12,7 +12,6 @@
 <%@ attribute name="viewURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="oboID" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="termID" type="java.lang.String" rtexprvalue="true" required="false" %>
-<%@ attribute name="rtype" type="java.lang.String" rtexprvalue="true" description="Needed for linking to updates apg" %>
 <%@ attribute name="showLastUpdate" type="java.lang.Boolean" rtexprvalue="true" required="false"
               description="Should the Last Updated link show?" %>
 
@@ -48,7 +47,7 @@
         <authz:authorize access="hasRole('root')">
             <zfin2:dataManagerPrivileged zdbID="${zdbID}" editURL="${editURL}" editLinkText="${editLinkText}"
                                          deleteURL="${deleteURL}" linkURL="${linkURL}" curateURL="${curateURL}" viewURL="${viewURL}"
-                                         mergeURL="${mergeURL}" trackURL="${trackURL}" oboID="${oboID}" rtype="${rtype}"
+                                         mergeURL="${mergeURL}" trackURL="${trackURL}" oboID="${oboID}"
                                          showLastUpdate="${showLastUpdate}"/>
         </authz:authorize>
         <authz:authorize access="hasRole('submit')">
@@ -56,7 +55,7 @@
                 <zfin2:dataManagerPrivileged zdbID="${zdbID}" editURL="${editURL}" deleteURL="${deleteURL}"
                                              linkURL="${linkURL}" curateURL="${curateURL}" viewURL="${viewURL}"
                                              mergeURL="${mergeURL}" trackURL="${trackURL}" oboID="${oboID}"
-                                             rtype="${rtype}" showLastUpdate="${showLastUpdate}"/>
+                                             showLastUpdate="${showLastUpdate}"/>
             </c:if>
         </authz:authorize>
 

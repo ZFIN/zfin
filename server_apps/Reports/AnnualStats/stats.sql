@@ -1,8 +1,5 @@
 begin work ;
 
-create temp table tmp_output (counter int8, section varchar(100))
-with no log;
-
 {
 
 -- shell commmands run against
@@ -26,51 +23,51 @@ grep OTTDART0 db_link | wc -l
 
 -------------------------------------------------------------- Genes --------------------------------------------------------------------------
 -- Genes
-insert into tmp_output(counter, section)
-select count(*), "genes" from marker
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Genes", "Genes", current year to second from marker
  where mrkr_type[1,4] = 'GENE'
 --and mrkr_zdb_id not like "ZDB-%-12____-%"
 ;
 -- Genes on Vega Assembly
-insert into tmp_output(counter, section)
-select count(distinct mrel_mrkr_1_zdb_id), "gene_on_assembly"
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(distinct mrel_mrkr_1_zdb_id), "Genes", "Genes on Assembly", current year to second
  from marker_relationship
  where mrel_type == 'gene produces transcript'
 ;
 
 -- Transcripts
-insert into tmp_output(counter, section)
-select count(*), "transcripts" from db_link
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Genes", "Transcripts", current year to second from db_link
  where dblink_acc_num[1,8] = 'OTTDART0'
 ;
 --
 --grep OTTDART0 db_link | wc -l
 
 -- EST/cDNAs
-insert into tmp_output(counter, section)
-select count(*), "EST/cDNA" from marker
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Genes", "EST/cDNAs", current year to second from marker
  where mrkr_type in ('EST','CDNA')
 --and mrkr_zdb_id not like 'ZDB-%-12____-%'
 ;
 
 --------------------------------------------------------------------- Genetics----------------------
 -- Features          (Alleles)
-insert into tmp_output(counter, section)
-select count(*), "alleles" from feature --alteration -- fish
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Genetics", "Features", current year to second from feature --alteration -- fish
 --where feature_zdb_id not like 'ZDB-%-12____-%'
 ;
 
 --  Transgenic Features
-insert into tmp_output(counter, section)
-select count(*), "Transgenic Features"
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Genetics", "Transgenic Features", current year to second
 from feature
 where feature_type = 'TRANSGENIC_INSERTION'
   and feature_name not like "%;%"
 ;
 
 --  Transgenic Construct
-insert into tmp_output(counter, section)
-select count(distinct mrkr_zdb_id), "Transgenic Constructs"
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(distinct mrkr_zdb_id), "Genetics", "Transgenic Constructs", current year to second
 from marker
 where mrkr_type in  ('TGCONSTRCT','PTCONSTRCT','GTCONSTRCT','ETCONSTRCT')
   and mrkr_abbrev not like "%;%"
@@ -78,37 +75,37 @@ where mrkr_type in  ('TGCONSTRCT','PTCONSTRCT','GTCONSTRCT','ETCONSTRCT')
 
 
 --  Transgenic Genotypes
-insert into tmp_output(counter, section)
-select  count(distinct genofeat_geno_zdb_id), "Transgenic Genotypes"
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select  count(distinct genofeat_geno_zdb_id), "Genetics", "Transgenic Constructs", current year to second
  from genotype_feature, feature
  where genofeat_feature_zdb_id = feature_zdb_id
    and feature_type = 'TRANSGENIC_INSERTION'
 ;
 
 -- Genotypes (non-Wildtype)
-insert into tmp_output(counter, section)
-select count(*), "Non-Wildtype, Genotypes"
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Genetics", "Genotypes", current year to second
  from genotype where  geno_is_wildtype == 'f'
 ;
 
 
 -- Genes with GO annotation
-insert into tmp_output(counter, section)
-select count(distinct mrkrgoev_mrkr_zdb_id), "Genes With GO Annotation" from marker_go_term_evidence
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(distinct mrkrgoev_mrkr_zdb_id), "Genetics", "Genes with GO annotations", current year to second from marker_go_term_evidence
 -- cut -f 2 -d\| < marker_go_term_evidence | sort -u | wc -l
 ;
 
 -- IEA GO annotations
-insert into tmp_output(counter, section)
-select count(distinct mrkrgoev_mrkr_zdb_id), "IEA GO Annotations" from marker_go_term_evidence
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(distinct mrkrgoev_mrkr_zdb_id), "Genetics", "Genes with IEA GO annotations", current year to second from marker_go_term_evidence
 where mrkrgoev_evidence_code = 'IEA'
 -- cut -f 2,5 -d\| < marker_go_term_evidence | grep "|IEA" |sort -u | wc -l
 
 ;
 
 -- Non-IEA GO annotations
-insert into tmp_output(counter, section)
-select count(distinct mrkrgoev_mrkr_zdb_id), "Non-IEA GO Annotations" 
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(distinct mrkrgoev_mrkr_zdb_id), "Genetics", "Genes with Non-IEA GO anotations", current year to second 
 from marker_go_term_evidence
 where mrkrgoev_evidence_code != 'IEA'
 -- cut -f 2,5 -d\| < marker_go_term_evidence | grep -v "IEA" | cut -f1 -d \|| sort -u | wc -l
@@ -116,39 +113,39 @@ where mrkrgoev_evidence_code != 'IEA'
 ;
 
 -- Total GO annotations
-insert into tmp_output(counter, section)
-select count(*), "All GO Annotations" from marker_go_term_evidence
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Genetics", "Total GO Annotations", current year to second from marker_go_term_evidence
 -- wc -l marker_go_term_evidence
 
 ;
 
 --Genes with OMIM disease phenotypes
-insert into tmp_output(counter, section)
-select count(distinct omimp_ortho_zdb_id), "Human Orthology With OMIM Disease Phenotypes"
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(distinct omimp_ortho_zdb_id), "Genetics", "Genes with OMIM phenotypes", current year to second
  from omim_phenotype ;
 
 
 ---------------------------------------------------------------Reagents ----------------------------
 --Morpholinos
-insert into tmp_output(counter, section)
-select count(*), "morpholinos" from marker
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Reagents", "Morpholinos", current year to second from marker
  where mrkr_zdb_id[1,12] = 'ZDB-MRPHLNO-'
 --and mrkr_zdb_id not like 'ZDB-%-12____-%'
 ; --grep 'ZDB-MRPHLNO-' marker | wc -l
 
 --TALEN
-insert into tmp_output(counter, section)
-select count(*), "talens" from marker
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Reagents", "TALEN", current year to second from marker
  where mrkr_zdb_id like 'ZDB-TALEN%';
 
 --CRISPR
-insert into tmp_output(counter, section)
-select count(*), "crisprs" from marker
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Reagents", "CRISPR", current year to second from marker
   where mrkr_zdb_id like 'ZDB-CRISPR%';
 
 -- Antibodies
-insert into tmp_output(counter, section)
-select count(*), "antibodies" from marker
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Reagents", "Antibodies", current year to second from marker
  where mrkr_zdb_id[1,8] = 'ZDB-ATB-'
 --and mrkr_zdb_id not like 'ZDB-%-12____-%'
 ; --grep 'ZDB-ATB-' marker | wc -l
@@ -164,41 +161,41 @@ select count(*), "antibodies" from marker
 
 ------------------------------------------Expression & Phenotypes---------------------------------
 -- Gene expression patterns
-insert into tmp_output(counter, section)
-select count(*), "expression patterns" from expression_experiment2
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Expression & Phenotype", "Gene expression patterns", current year to second from expression_experiment2
 --
 where xpatex_zdb_id not like 'ZDB-%-10____-%'
 ;
 
 -- clean Gene expression patterns
-insert into tmp_output(counter, section)
-select count(distinct xpatex_gene_zdb_id), "genes clean expression patterns" from expression_experiment2, clean_expression_fast_search
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(distinct xpatex_gene_zdb_id), "Expression & Phenotype", "Genes wiht expression data", current year to second from expression_experiment2, clean_expression_fast_search
   where xpatex_genox_zdb_id = cefs_genox_zdb_id;
 
 
 --Phenotype Statements
-insert into tmp_output(counter, section)
-select count(*), "phenotype statements" from phenotype_statement;
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Expression & Phenotype", "Phenotype statements", current year to second from phenotype_statement;
 
 
 --Clean phenotype
-insert into tmp_output(counter, section)
-select count(distinct (mfs_mrkr_Zdb_id)), "clean phenotype statements" from phenotype_statement, phenotype_Experiment, mutant_fast_search
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(distinct (mfs_mrkr_Zdb_id)), "Expression & Phenotype", "Genes with a phenotype", current year to second from phenotype_statement, phenotype_Experiment, mutant_fast_search
  where phenox_pk_id = phenos_phenox_pk_id 
  and phenox_genox_zdb_id = mfs_genox_zdb_id
 and mfs_mrkr_zdb_id like 'ZDB-GENE%';
 
 -- Images annotated for expression
-insert into tmp_output(counter, section)
-select count(*), "fish images" from image
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Expression & Phenotype", "Images", current year to second from image
  --fish_image
 --where img_zdb_id not like 'ZDB-%-12____-%'
 ;
 
 
 -- Anatomical structures
-insert into tmp_output(counter, section)
-select count(*), "anatomical structures" from term
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Expression & Phenotype", "Anatomical structures", current year to second from term
  where term_ontology in ('zebrafish_anatomy','zebrafish_anatomical_ontology');
 --where anatitem_zdb_id not like 'ZDB-%-12____-%'
 
@@ -210,8 +207,8 @@ select count(*), "anatomical structures" from term
 --where zdb_id not like 'ZDB-%-12____-%';
 
 -- Mapped markers
-insert into tmp_output(counter, section)
-select count(*), "mapped markers" from paneled_markers
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Genomics", "Mapped markers", current year to second from paneled_markers
 --where zdb_id not like 'ZDB-%-12____-%'
 ;
 
@@ -236,8 +233,8 @@ select count(*), "mapped markers" from paneled_markers
 --  order by 5,1,2,3
 --;
 {***********************************************************************}
-insert into tmp_output(counter, section)
-select count(*), "externalLinks" from db_link, foreign_db_contains,foreign_db
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Genomics", "Links to other databases", current year to second from db_link, foreign_db_contains,foreign_db
  where fdbcont_fdb_db_id == fdb_db_pk_id
    and  dblink_fdbcont_zdb_id = fdbcont_zdb_id
    and  fdb_db_name in (
@@ -287,34 +284,34 @@ select count(*), "externalLinks" from db_link, foreign_db_contains,foreign_db
 
 -----------------------Community information-------------------------------------
 -- Publications
-insert into tmp_output(counter, section)
-select count(*), "publications" from publication
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Community information", "Publications", current year to second from publication
 --where zdb_id not like 'ZDB-%-12____-%'
 ;
 
 -- Researchers
-insert into tmp_output(counter, section)
-select count(*), "researchers" from person
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Community information", "Researchers", current year to second from person
 --where zdb_id not like 'ZDB-%-12____-%'
 ;
 
 -- Laboratories
-insert into tmp_output(counter, section)
-select count(*), "laboratories" from lab
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Community information", "Laboratories", current year to second from lab
 --where zdb_id not like 'ZDB-%-12____-%'
 ;
 
 -- Companies
-insert into tmp_output(counter, section)
-select count(*), "companies" from company
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Community information", "Companies", current year to second from company
 --where zdb_id not like 'ZDB-%-12____-%'
 ;
 
 ---------------------------------------------------------------- Orthology ---------------------
 
 --Genes w/Human Orthology
-insert into tmp_output(counter, section)
-select count( distinct ortho_zebrafish_gene_zdb_id), "Genes with Human Orthology"
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count( distinct ortho_zebrafish_gene_zdb_id), "Orthology", "Genes w/Human Orthology", current year to second
  from ortholog_evidence, organism, ortholog
   where organism_common_name like "%Human%"
  and organism_taxid = ortho_other_species_taxid
@@ -323,8 +320,8 @@ select count( distinct ortho_zebrafish_gene_zdb_id), "Genes with Human Orthology
 
 
 --Genes w/Mouse Orthology
-insert into tmp_output(counter, section)
-select count( distinct ortho_zebrafish_gene_zdb_id), "Genes with Mouse Orthology"
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count( distinct ortho_zebrafish_gene_zdb_id), "Orthology", "Genes w/Mouse Orthology", current year to second
  from ortholog_evidence, organism, ortholog
   where organism_common_name like "%Mouse%"
  and organism_taxid = ortho_other_species_taxid
@@ -332,6 +329,7 @@ select count( distinct ortho_zebrafish_gene_zdb_id), "Genes with Mouse Orthology
 ;
 
 unload to stats.txt
-select * from tmp_output;
+select year(as_date), as_pk_id, as_section, as_type, as_count from annual_stats
+ order by year(as_date) desc, as_pk_id asc;
 
 commit work ;

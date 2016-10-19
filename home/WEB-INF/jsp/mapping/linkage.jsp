@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<zfin2:dataManager zdbID="${linkage.zdbID}" rtype="linkage"/>
+<zfin2:dataManager zdbID="${linkage.zdbID}"/>
 
 <p/>
 

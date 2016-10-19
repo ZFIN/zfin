@@ -1,17 +1,12 @@
 package org.zfin.mapping;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.marker.Marker;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
@@ -53,6 +48,7 @@ public class MappingServiceTest extends AbstractDatabaseTest {
         Marker marker = getMarkerRepository().getMarkerByAbbreviation("pax2a");
         String location = MappingService.getChromosomeLocationDisplay(marker);
         assertNotNull(location);
+        assertThat(location, is("13"));
 
         marker = getMarkerRepository().getMarkerByID("ZDB-SSLP-980528-1241");
         location = MappingService.getChromosomeLocationDisplay(marker);
@@ -62,28 +58,6 @@ public class MappingServiceTest extends AbstractDatabaseTest {
         location = MappingService.getChromosomeLocationDisplay(marker);
         assertNotNull(location);
 
-    }
-
-    @Test
-    @Ignore("test has no assertions")
-    public void getAllGenomeLocation() {
-        List<Marker> markerList = getMarkerRepository().getMarkersByAbbreviation("");
-        List<String> line = new ArrayList<>();
-        for (Marker marker : markerList) {
-            StringBuilder builder = new StringBuilder();
-            builder.append(marker.getZdbID());
-            builder.append("\t");
-            builder.append(marker.getAbbreviation());
-            builder.append("\t");
-            builder.append(MappingService.getChromosomeLocationDisplay(marker));
-            System.out.println();
-            line.add(builder.toString());
-        }
-        try {
-            FileUtils.writeLines(new File("test.log"), line, true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 }

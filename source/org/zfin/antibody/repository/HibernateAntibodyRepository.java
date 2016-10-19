@@ -560,10 +560,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             hql = "  from AntibodyAOStatistics stat fetch all properties" +
                     "     where stat.superterm = :aoterm";
         } else {
-            hql = " select distinct stat, stat.antibody.abbreviation from AntibodyAOStatistics stat fetch all properties" +
+            hql = " select distinct stat, stat.antibody.name from AntibodyAOStatistics stat fetch all properties" +
                     "     where stat.superterm = :aoterm and " +
                     "           stat.subterm = :aoterm " +
-                    "           order by stat.antibody.abbreviation";
+                    "           order by stat.antibody.name";
         }
 
         ScrollableResults scrollableResults = HibernateUtil.currentSession().createQuery(hql)

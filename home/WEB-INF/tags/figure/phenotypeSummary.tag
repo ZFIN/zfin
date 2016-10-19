@@ -20,7 +20,7 @@
                     <th>
                         <zfin:choice choicePattern="0#Conditions:| 1#Condition:| 2#Conditions:" integerEntity="${fn:length(summary.experiments)}"/>
                     </th>
-                    <td> <zfin2:toggledExperimentList expressionResults="${summary.experiments}" maxNumber="5"/>  </td>
+                    <td> <zfin2:toggledExperimentList experimentList="${summary.experiments}" maxNumber="5"/>  </td>
                 </tr>
             </c:if>
             <c:if test="${!empty summary.sequenceTargetingReagents}">

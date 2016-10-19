@@ -16,8 +16,7 @@ create trigger marker_insert_trigger insert on
 	into marker.mrkr_abbrev,
         execute procedure p_check_mrkr_abbrev(new_marker.mrkr_name 
     ,new_marker.mrkr_abbrev ,new_marker.mrkr_type ),
-        execute procedure mhist_event(new_marker.mrkr_zdb_id 
-    ,'assigned' ,new_marker.mrkr_name ,new_marker.mrkr_abbrev ),
+        execute procedure mhist_event(new_marker.mrkr_zdb_id, '',new_marker.mrkr_abbrev, '',new_marker.mrkr_name),
         --      ,
         --      execute procedure p_insert_clone_from_marker (new_marker.mrkr_zdb_id,
         --      new_marker.mrkr_type)

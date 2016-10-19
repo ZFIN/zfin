@@ -26,6 +26,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
+import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerType;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
@@ -166,6 +167,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         insertPublicAttribution(genotype, publication);
     }
 
+    @Override
     public void insertStandardPubAttribution(String dataZdbID, Publication publication) {
         PublicationAttribution publicationAttribution = new PublicationAttribution();
         publicationAttribution.setDataZdbID(dataZdbID);
@@ -510,8 +512,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @Override
-    public void insertUpdatesTable(String recID, String comments, String submitterZdbID, Date updateDate) {
-        insertUpdatesTable(recID, submitterZdbID, null, null, null, null, comments, updateDate);
+    public List<Updates> getUpdates(String zdbID) {
+        return HibernateUtil.currentSession()
+                .createCriteria(Updates.class)
+                .add(Restrictions.eq("recID", zdbID))
+                .addOrder(Order.desc("whenUpdated"))
+                .list();
     }
 
     @Override
@@ -565,17 +571,17 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         if (submitter == null) {
             insertUpdatesTable(recId, null, null, fieldName, oldValue, newValue, comments, when);
         } else {
-            insertUpdatesTable(recId, submitter.getZdbID(), submitter.getFullName(), fieldName, oldValue, newValue, comments, when);
+            insertUpdatesTable(recId, submitter, submitter.getFullName(), fieldName, oldValue, newValue, comments, when);
         }
     }
 
-    private void insertUpdatesTable(String recID, String submitterID, String submitterName, String fieldName,
+    private void insertUpdatesTable(String recID, Person submitter, String submitterName, String fieldName,
                                     String oldValue, String newValue, String comments, Date when) {
         Session session = HibernateUtil.currentSession();
 
         Updates updates = new Updates();
         updates.setRecID(recID);
-        updates.setSubmitterID(submitterID);
+        updates.setSubmitter(submitter);
         updates.setSubmitterName(submitterName);
         updates.setFieldName(fieldName);
         updates.setOldValue(oldValue);
@@ -1828,6 +1834,18 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         if (thisPubResult != null) {
             HibernateUtil.currentSession().delete(thisPubResult);
         }
+    }
+
+    @Override
+    public EntityZdbID getEntityByID(Class<? extends EntityZdbID> entity, String zdbID) {
+        return (EntityZdbID) HibernateUtil.currentSession().get(entity, zdbID);
+    }
+
+    @Override
+    public void insertMarkerHistory(MarkerHistory history) {
+        Session session = HibernateUtil.currentSession();
+        history.setDate(new Date());
+        session.save(history);
     }
 }
 

@@ -24,14 +24,14 @@ import java.util.List;
 public class ImageEditController extends Composite {
 
     public static final String LOOKUP_ZDBID = "zdbID";
-    private static final String ANATOMY_CONTAINER_DIV = "imageEditDiv";
-    private static final String STAGE_CONTAINER_DIV = "imageStageEditDiv";
-    private static final String CONSTRUCT_CONTAINER_DIV = "imageConstructEditDiv";
+    public static final String ANATOMY_CONTAINER_DIV = "imageEditDiv";
+    public static final String STAGE_CONTAINER_DIV = "imageStageEditDiv";
+    public static final String CONSTRUCT_CONTAINER_DIV = "imageConstructEditDiv";
     private ImageDTO dto;
 
-    private ImageAnatomyBox imageAnatomyBox;
-    private ImageEditStageSelector stageSelector;
-    private ImageConstructBox imageConstructBox;
+    public ImageAnatomyBox imageAnatomyBox;
+    public ImageEditStageSelector stageSelector;
+    public ImageConstructBox imageConstructBox;
 
     public void initGUI() {
 

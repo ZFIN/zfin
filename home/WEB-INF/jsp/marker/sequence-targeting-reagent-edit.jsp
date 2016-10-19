@@ -9,15 +9,13 @@
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
 
 <script src="/javascript/angular/angular.min.js"></script>
-<script>
-    ;(function() {
-        angular.module('app', []);
-    }());
-</script>
-
+<script src="/javascript/angular/paging.min.js"></script>
+<script src="/javascript/zfin-app.module.js"></script>
 <script src="/javascript/field-error.service.js"></script>
 <script src="/javascript/str.service.js"></script>
 <script src="/javascript/marker.service.js"></script>
+
+<script src="/javascript/trusted-html.filter.js"></script>
 
 <script src="/javascript/autocompletify.directive.js"></script>
 <script src="/javascript/pub-lookup.directive.js"></script>
@@ -38,8 +36,7 @@
 <zfin2:dataManager zdbID="${str.zdbID}"
                    viewURL="${viewURL}"
                    deleteURL="${deleteURL}"
-                   mergeURL="${mergeURL}"
-                   rtype="marker"/>
+                   mergeURL="${mergeURL}"/>
 
 <div class="container-fluid" ng-app="app">
     <h2 class="page-header">Editing ${str.zdbID}</h2>

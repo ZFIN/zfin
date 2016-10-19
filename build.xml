@@ -382,7 +382,7 @@
                includeAntRuntime="no"
                memoryMaximumSize="556m"
                debug="true"
-               target="1.7"/>
+               target="1.8"/>
         <echo message=":JAVA COMPILE SUCCESSFUL:"/>
     </target>
 
@@ -608,7 +608,7 @@
     <target name="pre-deploy" depends="do,notify-deploy,prepareDeploy,gwt,copy-to-pre-release,generateVersionInfo"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
         <copy-indexer-build-file-with-env-variables/>
-        <jsp-compile/>
+<!--        <jsp-compile/> -->
     </target>
 
     <target name="generateVersionInfo" depends="generateJSPVersionFile,generateStaticJavaFile"/>

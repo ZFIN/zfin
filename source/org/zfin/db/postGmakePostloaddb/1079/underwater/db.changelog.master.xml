@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-<include file="source/org/zfin/db/postGmakePostloaddb/1079/underwater/notNullConstraints.sql"/>
+<!--<include file="source/org/zfin/db/postGmakePostloaddb/1079/underwater/notNullConstraints.sql"/> -->
 <include file="source/org/zfin/db/postGmakePostloaddb/1079/underwater/14378.sql"/>
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1079/underwater/14375_pre.sql"/>
@@ -14,10 +14,8 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1079/underwater/14375_post.sql"/>
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1079/underwater/14118.sql"/>
+   <include file="source/org/zfin/db/postGmakePostloaddb/1079/underwater/fixConstraint.sql"/>
 
-<!-- you can not write load statements in liquibase, instead you have to use xml style file loaders commenting out for rework -->
-<!--    <include file="source/org/zfin/db/postGmakePostloaddb/1079/underwater/14381splitBBAjournals.sql"/>-->
-<!--    <include file="source/org/zfin/db/postGmakePostloaddb/1079/underwater/14381splitBBAjournals.sql"/>
-    <include file="source/org/zfin/db/postGmakePostloaddb/1079/underwater/14381splitBBAjournals.sql"/>-->
+
 
 </databaseChangeLog>

@@ -2,6 +2,8 @@ package org.zfin.gwt.curation.ui.experiment;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import org.zfin.gwt.curation.ui.RemoveAttributeEvent;
+import org.zfin.gwt.curation.ui.RemoveAttributeEventHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
@@ -29,8 +31,7 @@ public class ExperimentModule implements EntryPoint {
     // data
     private String publicationID;
     private boolean debug;
-    @UiField
-    AttributionModule attributionModule;
+    private AttributionModule attributionModule = new AttributionModule();
     @UiField
     ExperimentAddView experimentAddView;
     @UiField
@@ -87,7 +88,6 @@ public class ExperimentModule implements EntryPoint {
 
                 });
 
-
         AppUtils.EVENT_BUS.addHandler(ChangeConditionEvent.TYPE,
                 new ChangeConditionEventHandler() {
                     @Override
@@ -96,6 +96,22 @@ public class ExperimentModule implements EntryPoint {
                     }
 
                 });
+
+        AppUtils.EVENT_BUS.addHandler(AddAttributeEvent.TYPE,
+                new AddAttributeEventHandler() {
+                    @Override
+                    public void onEvent(AddAttributeEvent event) {
+                        attributionModule.populateAttributeRemoval();
+                    }
+                });
+        AppUtils.EVENT_BUS.addHandler(RemoveAttributeEvent.TYPE,
+                new RemoveAttributeEventHandler() {
+                    @Override
+                    public void onRemoveAttribute(RemoveAttributeEvent event) {
+                        attributionModule.populateAttributeRemoval();
+                    }
+                });
+
     }
 
 

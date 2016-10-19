@@ -67,10 +67,10 @@ public class SimplePassThroughController {
     protected String showimageEditTest() throws Exception {
         return "image-edit-test";
     }
-
-    @RequestMapping("/http-redirect")
-    protected String showLookupTestPage(@ModelAttribute("formBean") ApgPaginationBean bean) throws Exception {
-        return "home-page-redirect.page";
+    @RequestMapping("/gwt/image-edit")
+    protected String showimageEdit() throws Exception {
+        return "image-edit";
     }
+
 
 }

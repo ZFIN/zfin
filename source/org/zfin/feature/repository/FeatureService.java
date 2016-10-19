@@ -289,7 +289,7 @@ public class FeatureService {
     }
 
     public static ReferenceDatabase getForeignDbMutationDetailProtein(String accessionNumber) {
-        ForeignDB.AvailableName[] databases = {AvailableName.GENBANK, AvailableName.REFSEQ, AvailableName.UNIPROTKB};
+        ForeignDB.AvailableName[] databases = {AvailableName.GENBANK, AvailableName.REFSEQ, AvailableName.UNIPROTKB,AvailableName.GENPEPT};
         ForeignDBDataType.DataType[] dataTypes = {DataType.POLYPEPTIDE};
 
         List<ReferenceDatabase> genBankRefDB = getSequenceRepository().getReferenceDatabases(Arrays.asList(databases),

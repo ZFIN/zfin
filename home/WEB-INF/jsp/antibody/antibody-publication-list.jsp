@@ -56,7 +56,7 @@
                         &nbsp;
                     </td>
                     <td>
-                        <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-update-vframeset.apg&OID=${formBean.antibody.zdbID}&rtype=antibody">
+                        <a href="/action/updates/${formBean.antibody.zdbID}">
                             <font size=-1><b>Updated:</b>
                                 <c:choose>
                                     <c:when test="${zfn:getLastUpdate(zdbID) != null}">

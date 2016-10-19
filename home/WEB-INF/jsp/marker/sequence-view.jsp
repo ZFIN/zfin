@@ -6,9 +6,7 @@
 <zfin2:dataManager
         zdbID="${formBean.marker.zdbID}"
         editURL="${editURL}"
-        deleteURL="${deleteURL}"
-        rtype="marker"
-        />
+        deleteURL="${deleteURL}"/>
 
 <%--&lt;%&ndash;latestUpdate="${formBean.latestUpdate}"&ndash;%&gt;--%>
 <%--editURL="${editURL}"--%>

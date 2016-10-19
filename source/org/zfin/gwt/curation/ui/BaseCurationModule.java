@@ -1,6 +1,5 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.user.client.Window;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 
@@ -18,7 +17,7 @@ public class BaseCurationModule extends ConstructionZoneAdapater {
     private String publicationID;
 
     // listeners
-    List<HandlesError> handlesErrorList = new ArrayList<HandlesError>();
+    List<HandlesError> handlesErrorList = new ArrayList<>();
 
     public BaseCurationModule(String publicationID) {
         this.publicationID = publicationID;
@@ -48,13 +47,6 @@ public class BaseCurationModule extends ConstructionZoneAdapater {
 
     @Override
     public void clearError() {
-        // to propagate stuff
-        String queryString = Window.Location.getQueryString();
-        if(queryString ==null || queryString.trim().length()==0){
-            queryString = "?MIval=aa-curation.apg&OID="+publicationID+"&randomNum="+Math.random();
-        }
-        String url = Window.Location.getPath() + queryString ;
-        Window.open(url, "_self", "");
     }
 
     @Override

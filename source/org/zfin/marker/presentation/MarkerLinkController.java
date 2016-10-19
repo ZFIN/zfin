@@ -124,7 +124,7 @@ public class MarkerLinkController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/link/{linkId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/link/{linkId}", method = RequestMethod.DELETE, produces = "text/plain")
     public String deleteMarkerLink(@PathVariable String linkId) {
         DBLink link = sequenceRepository.getDBLinkByID(linkId);
         sequenceRepository.removeDBLinks(Collections.singletonList(link));
@@ -155,7 +155,7 @@ public class MarkerLinkController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/link/{linkId}/references/{pubID}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/link/{linkId}/references/{pubID}", method = RequestMethod.DELETE, produces = "text/plain")
     public String removeLinkReference(@PathVariable String linkId,
                                       @PathVariable String pubID) {
         HibernateUtil.createTransaction();

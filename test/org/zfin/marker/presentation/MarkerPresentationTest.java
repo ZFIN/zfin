@@ -39,8 +39,7 @@ public class MarkerPresentationTest {
     @Test
     public void markerLink() {
         String link = MarkerPresentation.getLink(marker);
-        assertEquals("<a href=\"/action/marker/view/ZDB-GENE-081507-1\" name=\"fibroblast growth factor 8 a\" id='ZDB-GENE-081507-1'>" +
-                "<span class=\"genedom\" title=\"fibroblast growth factor 8 a\">fgf8</span></a>" ,
+        assertEquals("<a href=\"/action/marker/view/ZDB-GENE-081507-1\" name=\"fibroblast growth factor 8 a\" id='ZDB-GENE-081507-1'><span class=\"genedom\" title=\"fibroblast growth factor 8 a\" id=\"Gene Symbol\">fgf8</span></a>" ,
                 link
         );
 
@@ -53,7 +52,7 @@ public class MarkerPresentationTest {
     @Test
     public void markerName() {
         String name = MarkerPresentation.getName(marker);
-        assertEquals("Span tag", "<span class=\"genedom\" title=\"fgf8\">fibroblast growth factor 8 a</span>", name);
+        assertEquals("Span tag", "<span class=\"genedom\" title=\"fgf8\" id=\"markerName\">fibroblast growth factor 8 a</span>", name);
     }
 
     /**
@@ -62,7 +61,7 @@ public class MarkerPresentationTest {
     @Test
     public void markerAbbreviation() {
         String abbreviation = MarkerPresentation.getAbbreviation(marker);
-        assertEquals("Span tag", "<span class=\"genedom\" title=\"fibroblast growth factor 8 a\">fgf8</span>", abbreviation);
+        assertEquals("Span tag", "<span class=\"genedom\" title=\"fibroblast growth factor 8 a\" id=\"Gene Symbol\">fgf8</span>", abbreviation);
     }
 
     @Test

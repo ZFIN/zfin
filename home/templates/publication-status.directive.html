@@ -1,0 +1,75 @@
+<div class="panel-body" ng-cloak ng-show="vm.statuses.length">
+    <form class="form-horizontal clearfix">
+        <div class="form-group">
+            <label for="pub-status" class="col-sm-2 control-label">Status</label>
+            <div class="col-sm-4">
+                <select class="form-control" id="pub-status"
+                        ng-options="status.name for status in vm.statuses track by status.id"
+                        ng-change="vm.handleStatusChange()"
+                        ng-model="vm.current.status">
+                </select>
+            </div>
+        </div>
+        <div class="form-group" ng-show="vm.statusNeedsLocation(vm.current.status)">
+            <label for="pub-location" class="col-sm-2 control-label">Location</label>
+            <div class="col-sm-4">
+                <select class="form-control" id="pub-location"
+                        ng-options="location.name for location in vm.locations track by location.id"
+                        ng-model="vm.current.location">
+                </select>
+            </div>
+        </div>
+        <div class="form-group" ng-show="vm.statusHasPriority(vm.current.status)">
+            <label for="pub-location" class="col-sm-2 control-label">Priority</label>
+            <div class="col-sm-4">
+                <select class="form-control" id="pub-priority"
+                        ng-options="priority.name for priority in vm.priorities track by priority.id"
+                        ng-model="vm.current.location">
+                    <option value="">Not set</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group" ng-show="vm.statusNeedsOwner(vm.current.status)">
+            <label for="pub-owner" class="col-sm-2 control-label">Owner</label>
+            <div class="col-sm-4">
+                <select class="form-control" id="pub-owner"
+                        ng-options="curator.name for curator in vm.curators track by curator.zdbID"
+                        ng-model="vm.current.owner">
+                </select>
+            </div>
+        </div>
+        <div class="form-group" ng-show="vm.warnings.length == 0">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="button" class="btn btn-default" ng-disabled="vm.processing" ng-click="vm.reset()">Reset</button>
+                <button type="submit" class="btn btn-primary" ng-disabled="!vm.readyToSave() || vm.processing" ng-click="vm.updateStatus(true)">
+                    <span ng-show="!vm.processing">Save</span>
+                    <span ng-show="vm.processing"><i class="fa fa-spinner fa-spin"></i></span>
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-offset-2 col-sm-8 alert alert-warning" role="alert" ng-show="vm.warnings.length > 0">
+            <h4>Heads up!</h4>
+            <p class="bottom-buffer-sm">You might not want to close this publication yet. Are you sure you want to close it?</p>
+            <ul class="bottom-buffer">
+                <li ng-repeat="warning in vm.warnings">
+                    {{warning}}
+                </li>
+            </ul>
+            <p>
+                <button class="btn btn-default" ng-disabled="vm.processing" ng-click="vm.reset()">Cancel</button>
+                <button class="btn btn-warning" ng-disabled="vm.processing" ng-click="vm.updateStatus(false)">
+                    <span ng-show="!vm.processing">Yes, close it</span>
+                    <span ng-show="vm.processing"><i class="fa fa-spinner fa-spin"></i></span>
+                </button>
+            </p>
+        </div>
+    </form>
+    <p>
+        <small>
+            <a ng-href="/action/publication/{{vm.pubId}}/status-history" target="_blank">
+                <i class="fa fa-external-link"></i> History
+            </a>
+        </small>
+    </p>
+</div>
+

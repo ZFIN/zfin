@@ -153,23 +153,45 @@ public class MutationDetailPresenter {
     }
 
     protected void setMissenseTerm() {
-        if (getDtoSet().isEmpty()) {
-            MutationDetailTranscriptChangeDTO dto = new MutationDetailTranscriptChangeDTO();
-            dto.setConsequenceOboID(MISSENSE);
-            dto.setConsequenceName("missense");
-            dtoSet.add(dto);
-            populateTranscriptDataTable();
-        }
+        setTranscriptConsequenceTerm(getMissenseDTO(), getStopGainDTO());
     }
 
     public void setStopGainTerm() {
-        if (getDtoSet().isEmpty()) {
-            MutationDetailTranscriptChangeDTO dto = new MutationDetailTranscriptChangeDTO();
-            dto.setConsequenceOboID(STOP_GAIN);
-            dto.setConsequenceName("premature stop");
-            dtoSet.add(dto);
-            populateTranscriptDataTable();
+        setTranscriptConsequenceTerm(getStopGainDTO(), getMissenseDTO());
+    }
+
+    public void setTranscriptConsequenceTerm(MutationDetailTranscriptChangeDTO newDto, MutationDetailTranscriptChangeDTO oldDto) {
+        // if transcript consequences exist make sure oldDto is removed
+        if (!getDtoSet().isEmpty()) {
+            for (MutationDetailTranscriptChangeDTO dto : getDtoSet()) {
+                if (dto.getConsequenceOboID().equals(oldDto.getConsequenceOboID())) {
+                    getDtoSet().remove(dto);
+                }
+            }
+            // if newDto consequence already exists we are done
+            for (MutationDetailTranscriptChangeDTO dto : getDtoSet()) {
+                if (dto.getConsequenceOboID().equals(newDto.getConsequenceOboID())) {
+                    return;
+                }
+            }
         }
+        dtoSet.add(newDto);
+        populateTranscriptDataTable();
+    }
+
+    private MutationDetailTranscriptChangeDTO getStopGainDTO() {
+        return getTranscriptDTO(STOP_GAIN, "premature stop");
+    }
+
+    private MutationDetailTranscriptChangeDTO getMissenseDTO() {
+        return getTranscriptDTO(MISSENSE, "missense");
+    }
+
+    private MutationDetailTranscriptChangeDTO getTranscriptDTO(String oboID, String consequenceName) {
+        MutationDetailTranscriptChangeDTO dto = new MutationDetailTranscriptChangeDTO();
+        dto.setConsequenceOboID(oboID);
+        dto.setConsequenceName(consequenceName);
+        return dto;
     }
 
     public void setDto(FeatureDTO dto) {
@@ -194,6 +216,7 @@ public class MutationDetailPresenter {
             if (proteinChanges.getMutantAATermOboID() != null && proteinChanges.getWildtypeAATermOboID() == null ||
                     proteinChanges.getMutantAATermOboID() == null && proteinChanges.getWildtypeAATermOboID() != null)
                 return "Please select both the amino acids for a change or none.";
+
         }
         return null;
     }

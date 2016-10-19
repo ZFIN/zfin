@@ -23,8 +23,7 @@
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"
-                   mergeURL="${mergeURL}"
-                   rtype="marker"/>
+                   mergeURL="${mergeURL}"/>
 
 <div style="float: right">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">

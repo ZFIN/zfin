@@ -246,14 +246,16 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
 
     public void retrieveConstructionZoneValues() {
         // figure list
-        curationRPCAsync.getFigures(publicationID, new RetrieveFiguresCallback());
+        refreshFigureList();
 
         // stage list
         curationRPCAsync.getStages(new RetrieveStageListCallback());
         // retrieve fish list
         String message = "Error while reading fish";
-        curationRPCAsync.getFishList(publicationID, new RetrieveDTOListCallBack<FishDTO>(fishList, message, errorElement));
 
+       // curationRPCAsync.getFishList(publicationID, new RetrieveDTOListCallBack<FishDTO>(fishList, message, errorElement));
+        curationRPCAsync.getFishList(publicationID,
+                new RetrieveFishListCallBack(fishList, message, errorElement));
         // environment list
         message = "Error while reading the environment";
         curationRPCAsync.getEnvironments(publicationID,
@@ -264,10 +266,16 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
 
     }
 
+    public void refreshFigureList() {
+        curationRPCAsync.getFigures(publicationID, new RetrieveFiguresCallback());
+    }
+
     public void updateFish() {
         String message = "Error while reading Fish";
         fishList.clear();
-        curationRPCAsync.getFishList(publicationID, new RetrieveDTOListCallBack<FishDTO>(fishList, message, errorElement));
+        curationRPCAsync.getFishList(publicationID,new RetrieveFishListCallBack(fishList, message, errorElement));
+
+       // curationRPCAsync.getFishList(publicationID, new RetrieveDTOListCallBack<FishDTO>(fishList, message, errorElement));
     }
 
 

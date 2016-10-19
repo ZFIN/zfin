@@ -39,7 +39,14 @@
         <put-attribute name="body" value="/WEB-INF/jsp/orthology/{1}.jsp"/>
     </definition>
 
+    <definition name="curation/*.page" extends="main_layout_bootstrap">
+        <put-attribute name="curation-header" value="/WEB-INF/jsp-include/curation-header.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/curation/{1}.jsp"/>
+    </definition>
+
     <definition name="marker/*.ajax" template="/WEB-INF/jsp/marker/{1}.jsp"/>
+
+    <definition name="publication/*.ajax" template="/WEB-INF/jsp/publication/{1}.jsp"/>
 
     <definition name="antibody/*.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/antibody/{1}.jsp"/>
@@ -156,6 +163,11 @@
         <put-attribute name="body" value="/WEB-INF/jsp/infrastructure/{1}.jsp" />
     </definition>
 
+    <!-- figure definitions -->
+    <definition name="image/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/figure/image/{1}.jsp"/>
+    </definition>
+
     <!-- nomenclature -->
     <definition name="nomenclature/gene-name-form.page" extends="main_layout">
         <put-attribute name="body">
@@ -163,6 +175,22 @@
                 <put-attribute name="headerText" value="Submit a Proposed Gene Name" />
                 <put-attribute name="resources-list" value="/WEB-INF/jsp/nomenclature/gene-resources-list.jsp" />
                 <put-attribute name="submission-form" value="/WEB-INF/jsp/nomenclature/gene-name-form.jsp" />
+            </definition>
+        </put-attribute>
+    </definition>
+
+    <definition name="nomenclature/history-view.page" extends="main_layout">
+        <put-attribute name="body">
+            <definition template="/WEB-INF/jsp/nomenclature/history-view.jsp">
+                <put-attribute name="headerText" value="Nomenclature History" />
+            </definition>
+        </put-attribute>
+    </definition>
+
+    <definition name="nomenclature/event-view.page" extends="main_layout">
+        <put-attribute name="body">
+            <definition template="/WEB-INF/jsp/nomenclature/event-view.jsp">
+                <put-attribute name="headerText" value="Nomenclature History: Event" />
             </definition>
         </put-attribute>
     </definition>
@@ -200,9 +228,4 @@
         <put-attribute name="body" value="/WEB-INF/jsp/gbrowse/{1}.jsp" />
     </definition>
 
-    <definition name="publication/*.page" extends="main_layout">
-        <put-attribute name="body" value="/WEB-INF/jsp/publication/{1}.jsp" />
-    </definition>
-
 </tiles-definitions>
-

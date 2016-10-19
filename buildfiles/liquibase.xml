@@ -49,9 +49,8 @@
      url="jdbc:informix-sqli://${HOSTNAME}:${INFORMIX_PORT}/${DBNAME}:INFORMIXSERVER=${INFORMIXSERVER};DB_LOCALE=en_US.utf8"
      defaultSchemaName="informix"
      />
-  
 
-  <target
+ <target
      name="buildDatabase"
     description="Builds the database">
     
@@ -76,7 +75,27 @@
 			      databaseref="liquidatabase"
 			      defaultSchemaName="informix">
     </liquibase:updateDatabase>
+  </target> 
+ 
+<!--
+ <liquibase:database 
+     id="liquidatabase" 
+     driver="org.postgresql.Driver" 
+     url="jdbc:postgresql://localhost:5432/${DBNAME}"
+     user="staylor"
+     />
+
+  <target
+     name="buildDatabase"
+    description="Builds the database">
+    
+    <echo message="Building DB componentes necessary after loaddb.pl" />
+    <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/postgres/db.changelog.master.xml" 
+			      dropFirst="false" 
+			      classpathref="classpath"
+			      logLevel="debug"
+			      databaseref="liquidatabase">
+    </liquibase:updateDatabase>
   </target>
- 
- 
+-->
 </project>

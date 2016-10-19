@@ -15,7 +15,7 @@ import java.util.*;
 /**
  * This class is responsible for the construction zone that creates post-composed structures.
  * Initially, it's used for FX but should be extended to also create annotations for PATO.
- * <p/>
+ * <p>
  * Requirements:<br/>
  * A) Subterm Field: A subterm field in which either AO or GO terms are auto-completed depending on the ontology selector.
  * This field is optional.<br/>
@@ -23,7 +23,7 @@ import java.util.*;
  * C) Swap Terms: Swapping terms will exchange the superterm's and the subterm's entry. If the subterm is a GO term no swapping is
  * possible as the superterm has to be an AO term.<br/>
  * D) Reset Button: Clicking this button will empty both term fields and set the subterm ontology to AO.
- * <p/>
+ * <p>
  * Usage:<br/>
  * 1) Constructor with publication ID and termEntryMap that initializes the term parts being used and the Ontologies
  * used for each term.<br/>
@@ -70,7 +70,7 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
     public ConstructionZoneModule() {
         initWidget(uiBinder.createAndBindUi(this));
         createTermEntryUnits();
-        notExpressedCheckBox.setStyleName("small red");
+        notExpressedCheckBox.setStyleName("small red checkbox-label");
     }
 
     @UiHandler("resetButton")
@@ -108,6 +108,7 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
             box.addStyleName("phenotype-normal");
         if (name.equals(EapQualityTermDTO.ABSENT_PHENOTYPIC))
             box.addStyleName("red");
+        box.addStyleName("checkbox-label");
         return box;
     }
 
@@ -300,6 +301,7 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
                 panel = qualityListLeft;
             else
                 panel = qualityListRight;
+            panel.addStyleName("table table-condensed");
             CheckBox qualityCheckBox = getQualityCheckBox(qualityTerm.getNickName());
             qualityCheckBoxList.add(qualityCheckBox);
             panel.add(qualityCheckBox);

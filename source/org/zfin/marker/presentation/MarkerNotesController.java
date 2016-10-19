@@ -173,7 +173,7 @@ public class MarkerNotesController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/{markerId}/curator-notes/{noteID}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{markerId}/curator-notes/{noteID}", method = RequestMethod.DELETE, produces = "text/plain")
     public String deleteCuratorNote(@PathVariable String markerId,
                                     @PathVariable String noteID) {
         Marker marker = markerRepository.getMarkerByID(markerId);

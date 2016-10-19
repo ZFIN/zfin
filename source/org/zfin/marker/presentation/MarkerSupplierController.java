@@ -71,7 +71,7 @@ public class MarkerSupplierController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/{markerID}/suppliers/{orgID}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{markerID}/suppliers/{orgID}", method = RequestMethod.DELETE, produces = "text/plain")
     public String removeSupplier(@PathVariable String markerID,
                                  @PathVariable String orgID) {
         Marker marker = markerRepository.getMarkerByID(markerID);

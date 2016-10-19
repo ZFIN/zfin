@@ -8,14 +8,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.zfin.expression.Figure;
+import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
+import org.zfin.figure.presentation.FigureExpressionSummary;
+import org.zfin.figure.presentation.FigurePhenotypeSummary;
+import org.zfin.figure.service.FigureViewService;
+import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
+import org.zfin.marker.Transcript;
 import org.zfin.marker.presentation.GeneBean;
+import org.zfin.marker.presentation.MarkerBean;
 import org.zfin.marker.presentation.MarkerReferenceBean;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.DiseaseAnnotation;
@@ -25,10 +34,11 @@ import org.zfin.orthology.Ortholog;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @RequestMapping("/publication")
@@ -44,6 +54,9 @@ public class PublicationViewController {
 
     @Autowired
     private PhenotypeRepository phenotypeRepository;
+    @Autowired
+    private FigureViewService figureViewService;
+
 
     @RequestMapping("/view/{zdbID}")
     public String view(@PathVariable String zdbID, Model model, HttpServletResponse response) {
@@ -300,5 +313,60 @@ public class PublicationViewController {
         return "publication/journal-view.page";
     }
 
+
+    @RequestMapping("/image-edit")
+    public String getImageEdit(Model model,@RequestParam("zdbID") String zdbID) {
+
+        Image image = publicationRepository.getImageById(zdbID);
+        if (image == null) {
+            return null;
+        }
+
+
+        model.addAttribute("image", image);
+
+        Figure figure = image.getFigure();
+        if (figure!=null) {
+            Clone probe = figureViewService.getProbeForFigure(figure);
+            model.addAttribute("probe", probe);
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Image: " + figureViewService.getFullFigureLabel(image.getFigure()));
+        }
+
+        return "figure/image-edit.page";
+    }
+
+
+    @RequestMapping("/printable/{zdbID}")
+    public String printable (@PathVariable String zdbID, Model model, HttpServletResponse response) {
+        Publication publication = publicationRepository.getPublication(zdbID);
+        //try zdb_replaced data if necessary
+        if (publication == null) {
+            String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
+            if (replacedZdbID != null) {
+                publication = publicationRepository.getPublication(replacedZdbID);
+            }
+        }
+
+        //give up
+        if (publication == null) {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        model.addAttribute("publication", publication.getPrintable());
+
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        model.addAttribute("formattedDate", sdf.format(new Date()));
+
+        return "publication/printable.ajax";
+    }
+
+
 }
+
+
+
+
+
+
 

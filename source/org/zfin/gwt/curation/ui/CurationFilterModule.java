@@ -10,24 +10,27 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ListBoxWrapper;
+import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.StringUtils;
+
+import java.util.List;
 
 /**
  * Filter bar aka banana bar.
  * This bar contains three filter elements: figure, gene and fish.
  * Setting a value filters out only experiments and expressions with
  * those characteristics. The filter bar is always visible.
- * <p/>
+ * <p>
  * General: Selecting a non-default value will set the background color of the list box to red to make
  * it very visible to the user that he filtered the records. Setting it back to 'ALL' will remove the background
  * color. Any change to one of the filter elements will re-read the appropriate records.
- * <p/>
+ * <p>
  * Life cycle: The filter values have a certain life cycle, i.e. they are remembered as follows:
  * A) Figure: saved in the database and stored forever
  * B) Fish and Gene: The values are stored in the user session and thus are lost after session timeout or logging out.
  * Reloading the page or coming back to the FX page will prepopulate the filter with the values that are available
  * at that point in time.
- * <p/>
+ * <p>
  * 1) Only Fig: Selecting a Figure applies only to expressions as only they are associated with figures.
  * The list of figure annotations is reread.
  * 2) Only Gene: Selecting a gene applies to both sections and displays only record with experiments that
@@ -69,6 +72,7 @@ public class CurationFilterModule extends Composite {
 
     // RPC class being used for this section.
     private CurationFilterRPCAsync curationFilterRPCAsync = CurationFilterRPC.Application.getInstance();
+    private CurationExperimentRPCAsync curationRPCAsync = CurationExperimentRPC.App.getInstance();
 
     public CurationFilterModule(ExperimentSection experimentModule, ExpressionSection expressionModule, StructurePile structureModule, String publicationID) {
         this.experimentModule = experimentModule;
@@ -91,6 +95,10 @@ public class CurationFilterModule extends Composite {
 
     public void setInitialValues() {
         curationFilterRPCAsync.getPossibleFilterValues(publicationID, new RetrieveFishCallback());
+    }
+
+    public void refreshFigureList() {
+        curationRPCAsync.getFigures(publicationID, new RetrieveFiguresCallback());
     }
 
     private void initGUI() {
@@ -395,6 +403,22 @@ public class CurationFilterModule extends Composite {
         FIG,
         GENO,
         GENE
+    }
+
+    public class RetrieveFiguresCallback extends ZfinAsyncCallback<List<FigureDTO>> {
+
+        public RetrieveFiguresCallback() {
+            super("Error while reading Figure Filters", null);
+        }
+
+        public void onSuccess(List<FigureDTO> valuesDTO) {
+            figureList.clear();
+            figureList.addItem(ALL, "");
+            for (FigureDTO figureDTO : valuesDTO) {
+                figureList.addItem(figureDTO.getLabel(), figureDTO.getZdbID());
+            }
+        }
+
     }
 
 }

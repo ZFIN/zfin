@@ -32,7 +32,7 @@ import static org.zfin.framework.HibernateUtil.currentSession;
  */
 public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest {
 
-    private final RenoTestData renoTestData = new RenoTestData() ;
+    private final RenoTestData renoTestData = new RenoTestData();
 
     private static Logger logger = Logger.getLogger(RenoRedundancyCandidateControllerTest.class);
     private static RenoRepository renoRepository = RepositoryFactory.getRenoRepository();
@@ -44,10 +44,10 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
     private final static String BASIC_NOTE = "This is a basic note";
     private final static String RENAME = "stest";
 
-    private RenoService renoService = new RenoService();
     private RedundancyCandidateController redundancyCandidateController = new RedundancyCandidateController();
 
-    public RenoRedundancyCandidateControllerTest(){
+    public RenoRedundancyCandidateControllerTest() {
+        RenoService renoService = new RenoService();
         redundancyCandidateController.setRenoService(renoService);
         redundancyCandidateController.setRenoRepository(renoRepository);
     }
@@ -64,7 +64,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
      * Note is saved on marker data note and then cleared from the
      * candidate.
      */
-   @Test
+    @Test
     public void moveNoteToGeneForRedundancy() {
 
         try {
@@ -74,8 +74,8 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
 
             //assume the curator picks the best hit (aka the first existing gene from the pulldown that is not novel).
 //            Marker geneFromSelectList = null ;
-            
-            redundancyCandidateController.handleDone(candidateBeanRedun,new BindException(candidateBeanRedun,"targetName"));
+
+            redundancyCandidateController.handleDone(candidateBeanRedun, new BindException(candidateBeanRedun, "targetName"));
 
             //I want to only test the handlNote method here, but the handleNote method
             //is private; so I need to call public method like handleDone() to get handleNote()
@@ -118,7 +118,6 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
     }
 
 
-
     @Test
     public void associateWithExistingGeneNoRename() {
         logger.debug("Enter associateWithExistingGeneNoRename()");
@@ -126,7 +125,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
 
         try {
             HibernateUtil.createTransaction();
-            CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();        
+            CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
 
             //assume the curator picks the best hit (aka the first existing gene from the pulldown that is not novel).
             Marker geneFromSelectList = markerRepository.getMarkerByAbbreviation("reno");
@@ -164,8 +163,8 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
             String testData = renoMrelAttribution.getDataZdbID();
             String testAttrib = renoMrelAttribution.getSourceZdbID();
             String testType = renoMrelAttribution.getSourceType().toString();
-            logger.debug("renoMrelAttribution: "+renoMrelAttribution) ;
-            
+            logger.debug("renoMrelAttribution: " + renoMrelAttribution);
+
             assertEquals("recattrib source id is the run attrib", candidateBean.getNomenclaturePublicationZdbID(), testAttrib);
             assertEquals("recattrib data id is the mrel id", renoMrel.getZdbID(), testData);
             assertEquals("recattrib type is standard", testType, "standard");
@@ -179,7 +178,6 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
 
     @Test
     public void associateWithExistingGeneWithRename() {
-
 
 
         try {
@@ -252,20 +250,9 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
             assertEquals("recattrib source id is the run attrib", candidateBean.getNomenclaturePublicationZdbID(), testAttrib);
             assertEquals("recattrib data id is the mrel id", renoMrel.getZdbID(), testData);
             assertEquals("recattrib type is standard", testType, "standard");
-
-            //this is the difference between existing gene with rename and
-            //existing gene w/o rename
-            MarkerHistory mhist = markerRepository.getLastMarkerHistory(renoGene, MarkerHistory.Event.REASSIGNED);
-
+            HibernateUtil.currentSession().refresh(renoGene);
+            MarkerHistory mhist = renoGene.getMarkerHistory().iterator().next();
             assertEquals("mhist reason is:", MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES, mhist.getReason());
-
-            /*  RecordAttribution mhistRecattribData =
-                     infrastructureRepository.getRecordAttribution(mhist.getZdbID(),
-                                                                    run.getEntity().getZdbID(),
-                                                                    null);
-            //we should have a record_attribution record for the name change.
-            assertNotNull("record attribution for mhist record exists",mhistRecattribData);
-            */
 
         } finally {
             // rollback on success or exception
@@ -309,11 +296,11 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
 
             logger.info("tell the candidateController to handleDone");
 
-            redundancyCandidateController.handleDone(candidateBean,new BindException(candidateBean,"targetName"));
+            redundancyCandidateController.handleDone(candidateBean, new BindException(candidateBean, "targetName"));
 
             ///Here is the start of the test that should be true
             //gene should be created
-            //mrel should be created (as idendified marker is present on our test candidate
+            //mrel should be created (as identified marker is present on our test candidate
             //mrel attribution should be created
             //mhist should be created
             //mhist reason should be changed
@@ -328,17 +315,17 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
                     renoGene,
                     renoCdna,
                     MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
-            logger.info("renoMrel: " + renoMrel) ;
+            logger.info("renoMrel: " + renoMrel);
             //the gene has a relationship to the cdna
-            assertNotNull("renoMrel not null",renoMrel);
+            assertNotNull("renoMrel not null", renoMrel);
 
             logger.debug("mrel zdb_id: " + renoMrel.getZdbID());
 
-            MarkerHistory mhist = markerRepository.getLastMarkerHistory(renoGene, null);
-
             //the renoGene has a marker_history record, this basically tests the trigger is working.
+/*
             assertNotNull("renoGene has marker_history record", mhist);
             assertTrue(mhist.getReason().equals(MarkerHistory.Reason.NOT_SPECIFIED));
+*/
         } finally {
             // rollback on success or exception
             HibernateUtil.rollbackTransaction();
@@ -375,17 +362,11 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
             logger.info("novelgene zdb_id: " + renoGene.getZdbID());
             assertNotNull(renoGene);
 
-            //Marker renoCdna = markerRepository.getMarkerByAbbreviation("MGC:test");
-
-            MarkerHistory mhist = markerRepository.getLastMarkerHistory(renoGene, null);
-
+            MarkerHistory mhist = renoGene.getMarkerHistory().iterator().next();
             logger.info("mhist " + mhist.toString());
             //the renoGene has a marker_history record
             assertNotNull(mhist);
-
-            //the mhist record has a reno reason
-            // assertTrue(mhist.getReason().equals(MarkerHistory.RENAMED_THROUGH_THE_NOMENCLATURE_PIPELINE));
-            assertEquals("Marker history has same reason", mhist.getReason(), (MarkerHistory.Reason.NOT_SPECIFIED));
+            assertEquals("Marker history has a reason", mhist.getReason(), (MarkerHistory.Reason.NOT_SPECIFIED));
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -425,7 +406,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
     }
 
 
-    @Test 
+    @Test
     public void testProblemFlag() {
 
         try {
@@ -459,7 +440,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
         }
     }
 
-    @Test 
+    @Test
     public void testIgnoreFlag() {
 
         try {
@@ -475,7 +456,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
 
             logger.info("tell the candidateController to handleDone");
             //tell the controller to execute handle done with the bean that was created here.
-            redundancyCandidateController.handleDone(candidateBean,new BindException(candidateBean,"targetName"));
+            redundancyCandidateController.handleDone(candidateBean, new BindException(candidateBean, "targetName"));
 
             ///Here is the start of the test that should be true
             //done flag in candidate is set, and that is it.
@@ -507,7 +488,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
             logger.info("tell the candidateController to handleDone");
             //tell the controller to execute handle done with the bean that was created here.
 
-            redundancyCandidateController.handleDone(candidateBean,new BindException(candidateBean,"targetBean"));
+            redundancyCandidateController.handleDone(candidateBean, new BindException(candidateBean, "targetBean"));
             currentSession().flush();
 
             assertTrue(runCandidate.isDone());
@@ -541,7 +522,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
         }
     }
 
-    @Test 
+    @Test
     public void testRedunBeanSetUp() {
 
         try {
@@ -558,27 +539,27 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
     }
 
 
-
     /**
      * Basic Candidate Bean object, mimicking a 'Done' submission.
      * Rename checkbox unchecked
      * Basic note
+     *
      * @return candidate bean
      */
     private CandidateBean setUpBasicBeanRedunDoneSubmission() {
         return setUpBasicBeanRedunDoneSubmission(null);
     }
+
     private CandidateBean setUpBasicBeanRedunDoneSubmission(String candidateName) {
         renoTestData.setUpSharedRedundancyAndNomenclatureData();
-        String redundancyRunCandidateZdbID ;
-        if(candidateName ==null){
+        String redundancyRunCandidateZdbID;
+        if (candidateName == null) {
             redundancyRunCandidateZdbID = renoTestData.createRedundancyData();
-        }
-        else {
+        } else {
             redundancyRunCandidateZdbID = renoTestData.createRedundancyData(candidateName);
         }
         CandidateBean candidateBean = new CandidateBean();
-         
+
         RunCandidate runCandidate = renoRepository.getRunCandidateByID(redundancyRunCandidateZdbID);
         candidateBean.setRunCandidate(runCandidate);
         candidateBean.setGeneZdbID("");
@@ -589,12 +570,11 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
         //casses where they do want to rename.
         candidateBean.setRename(false);
         candidateBean.setAction(CandidateBean.DONE);
-        candidateBean.setNomenclaturePublicationZdbID( ((RedundancyRun) candidateBean.getRunCandidate().getRun()).getRelationPublication().getZdbID());
+        candidateBean.setNomenclaturePublicationZdbID(((RedundancyRun) candidateBean.getRunCandidate().getRun()).getRelationPublication().getZdbID());
 
         logger.info(candidateBean.getAction());
         return candidateBean;
     }
-
 
 
 }

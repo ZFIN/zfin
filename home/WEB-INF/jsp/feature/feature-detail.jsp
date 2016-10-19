@@ -7,7 +7,7 @@
 <script src="/javascript/gbrowse-image.js"></script>
 <script src="/javascript/table-collapse.js"></script>
 
-<zfin2:dataManager zdbID="${formBean.feature.zdbID}" rtype="feature"/>
+<zfin2:dataManager zdbID="${formBean.feature.zdbID}"/>
 
 <div style="float: right;">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
@@ -52,7 +52,7 @@
                                                     test="${!loop.last}">, </c:if>
                                             </c:when>
                                             <c:otherwise>
-                                                (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureAlias.zdbID}&rtype=genotype">${featureAlias.publicationCount}</a>)<c:if
+                                                (<a href="/action/publication/list/${featureAlias.zdbID}">${featureAlias.publicationCount}</a>)<c:if
                                                     test="${!loop.last}">, </c:if>
                                             </c:otherwise>
                                         </c:choose>
@@ -275,9 +275,11 @@
                 <zfin2:entityNotes entity="${formBean.feature}"/>
             </table>
         </td>
+<c:if test="${fn:startsWith(formBean.feature.abbreviation, 'sa')==false}">
         <td>
             <div class="gbrowse-image"></div>
         </td>
+ </c:if>
     </tr>
 </table>
 
@@ -410,7 +412,7 @@
 </div>
 
 <hr width="80%">
-<a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${formBean.feature.zdbID}&total_count=${formBean.numPubs}&rtype=genotype'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.numPubs})
+<a href='/action/publication/list/${formBean.feature.zdbID}'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.numPubs})
 
 <script type="text/javascript">
     $('#genotype').tableCollapse({label: 'rows'});

@@ -1,6 +1,8 @@
 package org.zfin.curation.presentation;
 
-public class CuratorDTO {
+import org.apache.commons.lang3.ObjectUtils;
+
+public class CuratorDTO implements Comparable<CuratorDTO> {
 
     private String zdbID;
     private String name;
@@ -28,5 +30,10 @@ public class CuratorDTO {
 
     public void setImageURL(String imageURL) {
         this.imageURL = imageURL;
+    }
+
+    @Override
+    public int compareTo(CuratorDTO o) {
+        return ObjectUtils.compare(name, o.getName());
     }
 }

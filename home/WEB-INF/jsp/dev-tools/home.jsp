@@ -29,6 +29,7 @@
 </tr>
 <tr>
     <td>
+        <a href="/action/curation/">Curation</a>
     </td>
     <td>
         <a href="/action/blast/blast-files">Downloadable Blast Files</a>

@@ -104,7 +104,7 @@ $(function() {
     var loginCookie = hdrGetCookie('zfin_login');
     var login = $('#hdr-login-link');
     var logout = $('#hdr-logout-link');
-    if (!loginCookie || loginCookie.lastIndexOf('GUEST') === 0) {
+    if (!loginCookie || loginCookie.substr(0, 5) === 'GUEST') {
         login.show();
         logout.hide();
     } else {

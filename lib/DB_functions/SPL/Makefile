@@ -76,7 +76,9 @@ FISH_STATS   = get_image_stats.sql \
 		updateAbbrevEqualName.sql \
 		regen_construct_marker.sql \
 		regen_construct.sql \
-		regen_expression_mart_per_pub.sql 
+		regen_expression_mart_per_pub.sql \
+		updateCurrentPubStatus.sql \
+		updateMaxStatusAsCurrent.sql 
 LOAD_STATS   = p_zgc_load.sql 
 XPAT_STATS   = populate_direct_submission_date.sql p_check_EFG_WT_expression.sql
 MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
@@ -93,7 +95,7 @@ MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
 PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 	       pub_xpat_curation_status.sql jrnl_acknowledgment.sql \
 	       get_pub_default_permissions.sql p_check_state_country.sql \
-	       p_delete_curator_session.sql populate_lab_address_update_tracking.sql addSourceAlias.sql \
+	       p_delete_curator_session.sql populate_lab_address_update_tracking.sql addSourceAlias.sql checkPubTrackingLocationOwner.sql \
 
 PER_STATS    = get_person_full_name.sql	 
 
