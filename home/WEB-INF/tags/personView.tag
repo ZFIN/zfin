@@ -13,7 +13,6 @@
 <zfin2:dataManager zdbID="${person.zdbID}"
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"
-                   rtype="person"
                    isOwner="${isOwner}"
         />
 

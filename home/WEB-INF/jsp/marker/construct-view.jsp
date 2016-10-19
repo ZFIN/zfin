@@ -34,9 +34,7 @@
 <%--Currently, not possible to merge these (not provided as an option on the merge page--%>
 <%--mergeURL="${deleteURL}"--%>
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
-
-                   deleteURL="${deleteURL}"
-                   rtype="marker"/>
+                   deleteURL="${deleteURL}"/>
 
 
 <div style="float: right">

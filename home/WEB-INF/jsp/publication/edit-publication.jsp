@@ -33,8 +33,7 @@
                        linkURL="${linkURL}"
                        trackURL="${trackURL}"
                        curateURL="${curateURL}"
-                       viewURL="${viewURL}"
-                       rtype="publication"/>
+                       viewURL="${viewURL}"/>
 
     <div class="row">
         <div class="col-xs-12">

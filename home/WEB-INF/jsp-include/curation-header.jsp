@@ -58,7 +58,6 @@
 
 <zfin2:dataManager zdbID="${publication.zdbID}"
                    showLastUpdate="true"
-                   rtype="publication"
                    trackURL="/action/publication/${publication.zdbID}/track"
         />
 

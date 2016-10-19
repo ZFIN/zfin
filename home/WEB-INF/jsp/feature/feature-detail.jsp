@@ -7,7 +7,7 @@
 <script src="/javascript/gbrowse-image.js"></script>
 <script src="/javascript/table-collapse.js"></script>
 
-<zfin2:dataManager zdbID="${formBean.feature.zdbID}" rtype="feature"/>
+<zfin2:dataManager zdbID="${formBean.feature.zdbID}"/>
 
 <div style="float: right;">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">

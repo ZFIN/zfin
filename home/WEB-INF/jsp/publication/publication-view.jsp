@@ -36,8 +36,7 @@
                    deleteURL="${deleteURL}"
                    trackURL="${trackURL}"
                    linkURL="${linkURL}"
-                   curateURL="${curateURL}"
-                   rtype="publication"/>
+                   curateURL="${curateURL}"/>
 
 <div style="float: right">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">

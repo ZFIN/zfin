@@ -29,8 +29,7 @@
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="${editURL}"
                    deleteURL="none"
-                   mergeURL="${mergeURL}"
-                   rtype="marker"/>
+                   mergeURL="${mergeURL}"/>
 
 
 <div style="float: right">
