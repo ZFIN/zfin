@@ -1310,7 +1310,7 @@ union
    <?MICOMMENT>==============================
                ==    Mutants
 	       ==============================
-   <?/MICOMMENT>
+
 <?MIBLOCK COND="$(XST,$type_of_genedom)">
 
    <?MISQL SQL="select WebExplode(object,'OID=$OID') from webPages where ID='aa-allelelist.apg';">
@@ -1318,7 +1318,7 @@ union
    <?/MISQL>
 
 <?/MIBLOCK><?MICOMMENT> -- end if genedom ---<?/MICOMMENT>
-
+ <?/MICOMMENT>
   <?MICOMMENT>=========================================================
             == Phenotype
             ==========================================================
@@ -1387,7 +1387,7 @@ union
   <?/MISQL>
 
 
-    <?MICOMMENT> *** DISPLAY MUTANTS & MORPHOLINOS TABLE *** <?/MICOMMENT>
+    <?MICOMMENT> *** DISPLAY MUTANTS & MORPHOLINOS TABLE ***
 
 
   <?MIBLOCK COND="$(OR,$(NC,$mrkrview_allele_display,),$(NC,$mrkrview_morpholino_display,))">
@@ -1417,6 +1417,7 @@ union
     <?/MIBLOCK>
 
 <?/MIBLOCK><?MICOMMENT>end of type_of_genedom<?/MICOMMENT>
+<?/MICOMMENT>
 
 <?MISQL COND=$(XST,$debug_timing) SQL="
         execute function get_time()">
