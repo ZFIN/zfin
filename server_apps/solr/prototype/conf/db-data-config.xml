@@ -4459,7 +4459,7 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                    where="pub_zdb_id=publication.id"/>
 
            <entity name="pub_tracking_location"
-                   datasource="db" query="nvl(ptl_location_display,'') as location,select pth_pub_zdb_id as pub_zdb_id
+                   datasource="db" query="select nvl(ptl_location_display,'') as location, pth_pub_zdb_id as pub_zdb_id
                    from pub_tracking_history,pub_tracking_location
                    where pth_location_id=ptl_pk_id
                    and pth_status_is_current='t';"
