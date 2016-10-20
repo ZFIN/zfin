@@ -6,11 +6,14 @@
 <%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="true" %>
 <%@ attribute name="showEditControls" required="true" %>
 
+<c:set var="loggedIn">no</c:set>
+
 <c:if test="${empty typeName}">
     <c:set var="typeName">${marker.markerType.displayName}</c:set>
 </c:if>
 
 <authz:authorize access="hasRole('root')">
+    <c:set var="loggedIn">yes</c:set>
     <script>
         markerID = '${marker.zdbID}';
 
@@ -63,8 +66,25 @@
             </td>
         </tr>
     </c:if>
-    <%--</c:if>--%>
-    <zfin2:entityNotes entity="${formBean.marker}"/>
+
+    <c:if test="${loggedIn eq 'yes'}">
+      <authz:authorize access="hasRole('root')">
+        <c:set var="loggedIn">yes</c:set>
+
+        <tr ng-if="editMode" curator-notes marker-id="${formBean.marker.zdbID}" edit="1">
+        <tr ng-if="!editMode" curator-notes marker-id="${formBean.marker.zdbID}" edit="0">
+        </tr>
+
+        <tr ng-if="editMode" public-note marker-id="${formBean.marker.zdbID}" edit="1">
+        <tr ng-if="!editMode" public-note marker-id="${formBean.marker.zdbID}" edit="0">
+        </tr>
+
+      </authz:authorize>
+    </c:if>
+
+    <c:if test="${loggedIn eq 'no'}">
+        <zfin2:entityNotes entity="${formBean.marker}"/>
+    </c:if>
 
 </table>
 <zfin2:nomenclature geneEdit="true" showReason="false"/>

@@ -1,0 +1,79 @@
+<th valign="top">Note:  <span ng-show="pn.edit > 0 && !pn.publicNote.noteData" style="cursor: pointer;"
+                              ng-click="pn.openAddNewPublicNote()" >
+                       <i style="color: red"
+                          title="Create the new note">New</i></span>
+</th>
+
+<td>
+    <span>{{pn.publicNote.noteData}}</span>
+    <span ng-show="pn.edit > 0 && pn.publicNote.noteData" style="cursor: pointer;"
+          ng-click="pn.openEditNote()">
+                       <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit the note"></i></span>
+    <span ng-show="pn.edit > 0 && pn.publicNote.noteData" style="cursor: pointer;"
+          ng-click="pn.openDeleteNote()">
+                       <i class="fa fa-trash" aria-hidden="true" style="color: red"
+                          title="Delete the curator note"></i></span>
+    <span ng-bind-html="pn.errorMessage | unsafe" class="error"></span>
+
+    <div id="new-public-note-modal" class="jq-modal curation">
+        <h3>
+            Add New Marker Note
+        </h3>
+        <table class="table table-condensed">
+            <tr>
+                <td><textarea name="newPublicNote" ng-model="pn.noteText" rows="4" cols="50" required></textarea></td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="popup-actions">
+                        <button type="button" class="zfin-button cancel" ng-click="pn.close()">Cancel</button>
+                        <button type="button" class="zfin-button reject" ng-click="pn.addNote()">Add</button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <span ng-bind-html="pn.errorMessage | unsafe" class="error"></span>
+    </div>
+    <div id="edit-public-note-modal" class="jq-modal curation">
+        <h3>
+            Edit Marker Note
+        </h3>
+        <table class="table table-condensed">
+            <tr>
+                <td><textarea name="editPublicNote" placeholder="{{pn.noteText}}" ng-model="pn.noteText" rows="4" cols="50" required></textarea></td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="popup-actions">
+                        <button type="button" class="zfin-button cancel" ng-click="pn.close()">Cancel</button>
+                        <button type="button" class="zfin-button reject" ng-click="pn.editNote()">Update</button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <span ng-bind-html="pn.errorMessage | unsafe" class="error"></span>
+    </div>
+    <div id="delete-public-note-modal" class="jq-modal curation">
+        <h3>
+            Delete Marker Note
+        </h3>
+        <table class="table table-condensed">
+            <tr>
+                <td>
+                    <span ng-if="pn.noteText.length < 80">{{pn.noteText}}</span>
+                    <span ng-if="pn.noteText.length >= 80">{{pn.noteText | limitTo:55}}...
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="popup-actions">
+                        <button type="button" class="zfin-button cancel" ng-click="pn.close()">Cancel</button>
+                        <button type="button" class="zfin-button reject" ng-click="pn.deleteNote()">Delete</button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <span ng-bind-html="pn.errorMessage | unsafe" class="error"></span>
+    </div>
+</td>
