@@ -3,7 +3,10 @@
 <%@ attribute name="gene" type="org.zfin.marker.Marker" rtexprvalue="true" required="true" %>
 <%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="false" %>
 
+<c:set var="loggedIn">no</c:set>
+
 <authz:authorize access="hasRole('root')">
+    <c:set var="loggedIn">yes</c:set>
     <script>
         markerID = '${gene.zdbID}';
 
@@ -69,7 +72,23 @@
         </tr>
     </c:if>
 
-    <zfin2:entityNotes entity="${gene}"/>
+    <c:if test="${loggedIn eq 'yes'}">
+      <authz:authorize access="hasRole('root')">
+        <c:set var="loggedIn">yes</c:set>
+
+        <tr ng-if="editMode" curator-notes marker-id="${gene.zdbID}" edit="1">
+        <tr ng-if="!editMode" curator-notes marker-id="${gene.zdbID}" edit="0">
+        </tr>
+
+        <tr ng-if="editMode" public-note marker-id="${gene.zdbID}" edit="1">
+        <tr ng-if="!editMode" public-note marker-id="${gene.zdbID}" edit="0">
+        </tr>
+      </authz:authorize>
+    </c:if>
+
+    <c:if test="${loggedIn eq 'no'}">
+        <zfin2:entityNotes entity="${gene}"/>
+    </c:if>
 
 </table>
 
