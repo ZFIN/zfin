@@ -9,7 +9,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "publication_file_type")
-public class PublicationFileType {
+public class PublicationFileType implements Comparable<PublicationFileType> {
 
     public enum Name {
         ORIGINAL_ARTICLE("Original Article"),
@@ -67,5 +67,10 @@ public class PublicationFileType {
 
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    @Override
+    public int compareTo(PublicationFileType o) {
+        return Integer.compare(order, o.getOrder());
     }
 }

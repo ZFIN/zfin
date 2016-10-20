@@ -535,4 +535,8 @@ public interface PublicationRepository extends PaginationParameter {
     PublicationFileType getPublicationFileType(long id);
 
     PublicationFile getPublicationFile(long id);
+
+    PublicationFileType getPublicationFileTypeByName(PublicationFileType.Name name);
+
+    PublicationFile getOriginalArticle(Publication publication);
 }
