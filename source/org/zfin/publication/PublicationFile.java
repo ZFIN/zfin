@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "publication_file")
-public class PublicationFile {
+public class PublicationFile implements Comparable<PublicationFile> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,5 +63,14 @@ public class PublicationFile {
 
     public void setType(PublicationFileType type) {
         this.type = type;
+    }
+
+    @Override
+    public int compareTo(PublicationFile o) {
+        int typeCompare = type.compareTo(o.getType());
+        if (typeCompare != 0) {
+            return typeCompare;
+        }
+        return originalFileName.compareTo(o.getOriginalFileName());
     }
 }

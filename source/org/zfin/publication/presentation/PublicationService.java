@@ -282,7 +282,7 @@ public class PublicationService {
         PublicationFile pubFile = new PublicationFile();
         pubFile.setType(fileType);
         pubFile.setFileName(pubYear + File.separator + storedFileName);
-        pubFile.setOriginalFileName(storedFileName);
+        pubFile.setOriginalFileName(fileName);
         pubFile.setPublication(publication);
         return pubFile;
     }

@@ -40,12 +40,26 @@ public class PublicationFileController {
 
     @ResponseBody
     @RequestMapping(value = "/{id}/files", method = RequestMethod.POST)
-    public PublicationFilePresentationBean addPublicationFile(@PathVariable String id,
-                                                              @RequestParam int fileType,
-                                                              @RequestParam MultipartFile file) {
+    public Collection<PublicationFilePresentationBean> addPublicationFile(@PathVariable String id,
+                                                                          @RequestParam int fileType,
+                                                                          @RequestParam MultipartFile file) {
         Publication publication = publicationRepository.getPublication(id);
         PublicationFileType type = publicationRepository.getPublicationFileType(fileType);
         PublicationFile pubFile;
+
+
+        Transaction tx = HibernateUtil.createTransaction();
+
+        if (type.getName() == PublicationFileType.Name.ORIGINAL_ARTICLE) {
+            // if there already is an original article for this pub, we need to delete that
+            // record because there can be only one of those.
+            PublicationFile existingArticle = publicationRepository.getOriginalArticle(publication);
+            if (existingArticle != null) {
+                HibernateUtil.currentSession().delete(existingArticle);
+                HibernateUtil.currentSession().flush();
+            }
+        }
+
         try {
             pubFile = publicationService.processPublicationFile(
                     publication, file.getOriginalFilename(), type, file.getInputStream());
@@ -54,11 +68,13 @@ public class PublicationFileController {
             throw new InvalidWebRequestException("Error processing file");
         }
 
-        Transaction tx = HibernateUtil.createTransaction();
         HibernateUtil.currentSession().save(pubFile);
         tx.commit();
 
-        return publicationService.convertToPublicationFilePresentationBean(pubFile);
+        // return the whole list because we might have replaced the original article, and to keep the sorting right
+        return publication.getFiles().stream()
+                .map(publicationService::convertToPublicationFilePresentationBean)
+                .collect(Collectors.toList());
     }
 
     @ResponseBody

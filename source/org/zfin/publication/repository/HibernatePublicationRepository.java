@@ -33,7 +33,6 @@ import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
-import org.zfin.profile.Person;
 import org.zfin.publication.*;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
@@ -2193,4 +2192,19 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (PublicationFile) HibernateUtil.currentSession().get(PublicationFile.class, id);
     }
 
+    public PublicationFileType getPublicationFileTypeByName(PublicationFileType.Name name) {
+        return (PublicationFileType) HibernateUtil.currentSession()
+                .createCriteria(PublicationFileType.class)
+                .add(Restrictions.eq("name", name))
+                .uniqueResult();
+    }
+
+    public PublicationFile getOriginalArticle(Publication publication) {
+        PublicationFileType originalArticle = getPublicationFileTypeByName(PublicationFileType.Name.ORIGINAL_ARTICLE);
+        return (PublicationFile) HibernateUtil.currentSession()
+                .createCriteria(PublicationFile.class)
+                .add(Restrictions.eq("publication", publication))
+                .add(Restrictions.eq("type", originalArticle))
+                .uniqueResult();
+    }
 }
