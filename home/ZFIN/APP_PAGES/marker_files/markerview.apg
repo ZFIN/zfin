@@ -851,39 +851,6 @@ function jump(form_select){
 <b>Problem Type:</b> &nbsp; &nbsp; $mrkrvw_problem_type <img src="/images/warning-noborder.gif" width=20 height=20 align=top>
 <?/MIVAR>
 
-
-<?MICOMMENT>=========================================================
-            ==    Note
-	    =========================================================
-<?/MICOMMENT>
-<p>
-<?MISQL SQL="
-     select mrkr_comments
-       from marker
-      where mrkr_Zdb_id='$OID'
-        and mrkr_comments is not null
-        and mrkr_comments != '';">
-
-  <?MIVAR NAME=$mrkrview_mrkr_comments>$1<?/MIVAR>
-
-  <?MIVAR COND="$(>,$MI_CURRENTROW,0)">
-     <b>Note:</b>
-     &nbsp;$mrkrview_mrkr_comments
-     <?MIVAR COND="$(XST,$UPDATE)">
-	  <INPUT TYPE=button value="Update Note" onClick="doit('mrkr_comments','textarea','Note')">
-     <?/MIVAR>
-     <br>
-  <?/MIVAR>
-<?/MISQL>
-
-<?MIVAR COND="$(=,$MI_ROWCOUNT,0)">
-   <?MIVAR COND="$(XST,$UPDATE)">
-      <INPUT TYPE=button value="Add New Marker Note" onClick="doit('mrkr_comments','textarea','Note')">
-      <br>
-   <?/MIVAR>
-<?/MIVAR>
-
-</P>
 <?MIVAR COND="$(AND,$(NE,$marker_type,CRISPR),$(NE,$marker_type,MRPHLNO),$(NE,$marker_type,TALEN))">
 To view the Gene Expression section go to the
 <a href="/$OID">view page</a>
