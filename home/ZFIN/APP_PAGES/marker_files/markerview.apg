@@ -1300,25 +1300,7 @@ union
 
 
 
-<?MICOMMENT>=========================================================
-            ==    MUTANTS AND TARGETED KNOCKDOWNS
-	    =========================================================
-<?/MICOMMENT>
-<?MIVAR NAME=display_mut_trg_title>f<?/MIVAR>
 
-
-   <?MICOMMENT>==============================
-               ==    Mutants
-	       ==============================
-
-<?MIBLOCK COND="$(XST,$type_of_genedom)">
-
-   <?MISQL SQL="select WebExplode(object,'OID=$OID') from webPages where ID='aa-allelelist.apg';">
-     <?MIVAR NAME="mrkrview_allele_display">$1<?/MIVAR>
-   <?/MISQL>
-
-<?/MIBLOCK><?MICOMMENT> -- end if genedom ---<?/MICOMMENT>
- <?/MICOMMENT>
   <?MICOMMENT>=========================================================
             == Phenotype
             ==========================================================
@@ -1386,38 +1368,7 @@ union
     <?/MIVAR>
   <?/MISQL>
 
-
-    <?MICOMMENT> *** DISPLAY MUTANTS & MORPHOLINOS TABLE ***
-
-
-  <?MIBLOCK COND="$(OR,$(NC,$mrkrview_allele_display,),$(NC,$mrkrview_morpholino_display,))">
-
-  <div class="summary">
-	<div class="summaryTitle">MUTANTS AND TARGETED KNOCKDOWNS</div>
-
-    <table class="summary horizontal-solidblock">
-
-        <?MIBLOCK COND="$(NC,$mrkrview_allele_display,)">
-          <tr>
-            <th>Alleles:</th>
-            <td><?MIVAR>$mrkrview_allele_display<?/MIVAR></td>
-          </tr>
-        <?/MIBLOCK>
-
-        <?MIBLOCK COND="$(NC,$mrkrview_morpholino_display,)">
-          <tr>
-            <th>Knockdown&nbsp;reagents:</th>
-            <td><?MIVAR>$mrkrview_morpholino_display<?/MIVAR></td>
-          </tr>
-        <?/MIBLOCK>
-
-    </table>
-    </div>
-
-    <?/MIBLOCK>
-
-<?/MIBLOCK><?MICOMMENT>end of type_of_genedom<?/MICOMMENT>
-<?/MICOMMENT>
+<?/MIBLOCK>
 
 <?MISQL COND=$(XST,$debug_timing) SQL="
         execute function get_time()">
