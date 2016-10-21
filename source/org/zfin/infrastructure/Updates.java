@@ -1,5 +1,9 @@
 package org.zfin.infrastructure;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+import org.zfin.profile.Person;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -13,8 +17,10 @@ public class Updates {
     private Long ID;
     @Column(name = "rec_id")
     private String recID;
-    @Column(name = "submitter_id")
-    private String submitterID;
+    @ManyToOne
+    @JoinColumn(name = "submitter_id")
+    @NotFound(action = NotFoundAction.IGNORE)
+    private Person submitter;
     @Column(name = "field_name")
     private String fieldName;
     @Column(name = "old_value")
@@ -78,13 +84,12 @@ public class Updates {
         this.comments = comments;
     }
 
-
-    public String getSubmitterID() {
-        return submitterID;
+    public Person getSubmitter() {
+        return submitter;
     }
 
-    public void setSubmitterID(String submitterID) {
-        this.submitterID = submitterID;
+    public void setSubmitter(Person submitter) {
+        this.submitter = submitter;
     }
 
     public Date getWhenUpdated() {

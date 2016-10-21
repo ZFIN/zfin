@@ -13,7 +13,6 @@
 <zfin2:dataManager zdbID="${person.zdbID}"
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"
-                   rtype="person"
                    isOwner="${isOwner}"
         />
 
@@ -87,7 +86,7 @@
         </td>
 
         <td width="30%" style="vertical-align: top; text-align: right;">
-            <zfin2:viewSnapshot value="${person}"/>
+            <zfin2:viewSnapshot value="${person}" className="profile-image"/>
         </td>
     </tr>
 </table>

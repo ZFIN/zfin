@@ -36,6 +36,7 @@ public class UpdatesCheckFilter implements Filter {
         readOnlyUrls.add("/anatomy/");
         readOnlyUrls.add("/marker/transcript-view/");
         readOnlyUrls.add("/ajax/anatomylookup");
+        readOnlyUrls.add("/wiki/summary");
     }
 
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -72,6 +73,8 @@ public class UpdatesCheckFilter implements Filter {
                 return true;
         }
         if (!(url.contains("action/") || url.contains("ajax/")))
+            return true;
+        if (url.equals("/action/"))
             return true;
         return false;
     }

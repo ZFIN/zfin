@@ -10,6 +10,9 @@
             '        <label class="col-sm-2 control-label">Type</label>' +
             '        <div class="col-sm-3">' +
             '            <select class="form-control" ng-model="vm.type" ng-options="type.name for type in vm.fileTypes track by type.id"></select>' +
+            '            <p class="text-warning" ng-show="vm.checkOriginalArticle()">' +
+            '                Pub can have only one original article. The existing file will be replaced.' +
+            '            </p>' +
             '        </div>' +
             '    </div>' +
             '    <div class="form-group">' +
@@ -44,8 +47,8 @@
         return directive;
     }
 
-    PubFileUploadController.$inject = ['PublicationService'];
-    function PubFileUploadController(PublicationService) {
+    PubFileUploadController.$inject = ['PublicationService', 'ZfinUtils'];
+    function PubFileUploadController(PublicationService, zf) {
         var vm = this;
 
         vm.fileTypes = [];
@@ -57,6 +60,7 @@
 
         vm.upload = upload;
         vm.readyToUpload = readyToUpload;
+        vm.checkOriginalArticle = checkOriginalArticle;
 
         activate();
 
@@ -71,7 +75,7 @@
             vm.uploading = true;
             PublicationService.addFile(vm.pubId, vm.type.id, vm.file[0])
                 .then(function (response) {
-                    vm.files.push(response.data);
+                    vm.files = response.data;
                     vm.type = null;
                     vm.file = [];
                 })
@@ -85,6 +89,13 @@
 
         function readyToUpload() {
             return vm.type !== null && vm.file.length > 0;
+        }
+
+        function checkOriginalArticle() {
+            var orig = 'Original Article';
+            return vm.type &&
+                vm.type.name === orig &&
+                zf.find(vm.files, function (f) { return f.type === orig; });
         }
     }
 }());

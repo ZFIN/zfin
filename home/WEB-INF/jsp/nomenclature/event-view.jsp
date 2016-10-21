@@ -4,8 +4,6 @@
 <jsp:useBean id="markerHistory" type="org.zfin.marker.MarkerHistory" scope="request"/>
 
 <zfin2:dataManager zdbID="${markerHistory.zdbID}"
-                   deleteURL="none"
-                   rtype="marker"
                    showLastUpdate="false"/>
 
 <div style="float: right">

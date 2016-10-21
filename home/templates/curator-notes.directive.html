@@ -1,0 +1,92 @@
+
+
+<th ng-show="cn.edit > 0 || cn.curatorNotes.length" valign="top">Curator Note:  <span ng-show="cn.edit > 0" style="cursor: pointer;"
+                                      ng-click="cn.openAddNewCuratorNotes()">
+                       <i style="color: red"
+                          title="Create a new curator note">New</i></span>
+</th>
+
+<td>
+    <div class="media" ng-repeat="note in cn.curatorNotes">
+        {{note.curator.display}}&nbsp;&nbsp;{{note.date | date:'yyyy-MM-dd HH:mm:ss'}}   <br/>
+        <span ng-if="note.noteData.length < 80">{{note.noteData}}
+        </span>
+        <span ng-if="note.noteData.length >= 80 && !note.collapsable">{{note.noteData | limitTo:80}}<img ng-click="note.collapsable = !note.collapsable"
+                                                                                                        src="/images/right_arrow.gif" alt="expand" title="Show full text" border="0">
+        </span>
+        <span ng-if="note.noteData.length >= 80 && note.collapsable">{{note.noteData}}<img ng-click="note.collapsable = !note.collapsable"
+                                                                                          src="/images/left_arrow.gif" alt="collapse" title="Show beginning text" border="0">
+        </span>
+        <span ng-show="cn.edit > 0" style="cursor: pointer;"
+              ng-click="cn.openEditCuratorNotes(note, $index)">
+                       <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit the curator note"></i></span>
+        <span ng-show="cn.edit > 0" style="cursor: pointer;"
+              ng-click="cn.openDeleteCuratorNotes(note, $index)">
+                       <i class="fa fa-trash" aria-hidden="true" style="color: red"
+                          title="Delete the curator note"></i></span>
+    </div>
+    <span ng-bind-html="cn.errorMessage | unsafe" class="error"></span>
+    <div id="new-curator-note-modal" class="jq-modal curation">
+        <h3>
+            Add New Curator Note
+        </h3>
+        <table class="table table-condensed">
+            <tr>
+                <td><textarea ng-model="cn.noteText" name="newCuratorNote" rows="4" cols="50" required></textarea></td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="popup-actions">
+                        <button type="button" class="zfin-button cancel" ng-click="cn.close()">Cancel</button>
+                        <button type="button" class="zfin-button reject" ng-click="cn.addCuratorNote()">Add</button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <span ng-bind-html="cn.errorMessage | unsafe" class="error"></span>
+    </div>
+    <div id="edit-curator-note-modal" class="jq-modal curation">
+        <h3>
+            Edit Curator Note
+        </h3>
+        <table class="table table-condensed">
+            <tr>
+                <td><textarea placeholder="{{cn.noteText}}" ng-model="cn.noteText" name="editCuratorNote" rows="4" cols="50" required></textarea></td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="popup-actions">
+                        <button type="button" class="zfin-button cancel" ng-click="cn.close()">Cancel</button>
+                        <button type="button" class="zfin-button reject" ng-click="cn.editCuratorNote()">Update</button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <span ng-bind-html="cn.errorMessage | unsafe" class="error"></span>
+    </div>
+    <div id="delete-curator-note-modal" class="jq-modal curation">
+        <h3>
+            Delete the curator note
+        </h3>
+        <table class="table table-condensed">
+            <tr>
+                <td>
+                    <span ng-if="cn.noteText.length < 80">{{cn.noteText}}</span>
+                    <span ng-if="cn.noteText.length >= 80">{{cn.noteText | limitTo:55}}...
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="popup-actions">
+                        <button type="button" class="zfin-button cancel" ng-click="cn.close()">Cancel</button>
+                        <button type="button" class="zfin-button reject" ng-click="cn.deleteCuratorNote()">Delete</button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <span ng-bind-html="cn.errorMessage | unsafe" class="error"></span>
+    </div>
+</td>
+
+

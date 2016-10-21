@@ -39,8 +39,9 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
      */
     public void saveOrthology(Ortholog ortholog, Publication publication) {
         // need to be root user for this.
-        if (!isRootUser())
+        if (!isRootUser()) {
             throw new RuntimeException("No Authenticated User. Please log in first.");
+        }
 
         currentSession().save(ortholog);
 
@@ -49,7 +50,7 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         up.setFieldName("Ortholog");
         up.setNewValue(ortholog.getNcbiOtherSpeciesGene().getOrganism().getCommonName());
         up.setComments("Create new ortholog record.");
-        up.setSubmitterID(getCurrentSecurityUser().getZdbID());
+        up.setSubmitter(getCurrentSecurityUser());
         up.setSubmitterName(getCurrentSecurityUser().getUsername());
         up.setWhenUpdated(new Date());
         currentSession().save(up);
@@ -174,10 +175,11 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     @Override
     public void deleteOrtholog(Ortholog ortholog) {
         Person currentSecurityUser = getCurrentSecurityUser();
-	
-	// remove attributions for the zebrafish gene
-        for (OrthologEvidence evidence : ortholog.getEvidenceSet())
+
+        // remove attributions for the zebrafish gene
+        for (OrthologEvidence evidence : ortholog.getEvidenceSet()) {
             getInfrastructureRepository().deleteRecordAttribution(ortholog.getZebrafishGene().getZdbID(), evidence.getPublication().getZdbID());
+        }
 
         Session session = HibernateUtil.currentSession();
         session.delete(ortholog);
@@ -188,7 +190,7 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         up.setOldValue(ortholog.getZdbID());
         up.setComments("Delete Ortholog");
         up.setWhenUpdated(new Date());
-        up.setSubmitterID(currentSecurityUser.getZdbID());
+        up.setSubmitter(currentSecurityUser);
         up.setSubmitterName(currentSecurityUser.getUsername());
         session.save(up);
     }

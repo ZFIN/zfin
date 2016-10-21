@@ -18,7 +18,6 @@
 <zfin2:dataManager zdbID="${lab.zdbID}"
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"
-                   rtype="lab"
                    isOwner="${isOwner}"
         />
 
@@ -90,7 +89,7 @@
             </table>
         </td>
         <td width="30%" style="vertical-align: top; text-align: right;">
-            <zfin2:viewSnapshot value="${lab}"/>
+            <zfin2:viewSnapshot value="${lab}" className="profile-image"/>
         </td>
 </table>
 

@@ -3,12 +3,10 @@
 <%@ attribute name="gene" type="org.zfin.marker.Marker" rtexprvalue="true" required="true" %>
 <%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="false" %>
 
-<script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
-<script src="/javascript/editMarker.js"></script>
-<script src="/javascript/nomenclature.js" type="text/javascript"></script>
+<c:set var="loggedIn">no</c:set>
 
 <authz:authorize access="hasRole('root')">
-    <div ng-app="app" ng-controller="EditController as eControl">
+    <c:set var="loggedIn">yes</c:set>
     <script>
         markerID = '${gene.zdbID}';
 
@@ -74,12 +72,26 @@
         </tr>
     </c:if>
 
-    <zfin2:entityNotes entity="${gene}"/>
+    <c:if test="${loggedIn eq 'yes'}">
+      <authz:authorize access="hasRole('root')">
+        <c:set var="loggedIn">yes</c:set>
+
+        <tr ng-if="editMode" curator-notes marker-id="${gene.zdbID}" edit="1">
+        <tr ng-if="!editMode" curator-notes marker-id="${gene.zdbID}" edit="0">
+        </tr>
+
+        <tr ng-if="editMode" public-note marker-id="${gene.zdbID}" edit="1">
+        <tr ng-if="!editMode" public-note marker-id="${gene.zdbID}" edit="0">
+        </tr>
+      </authz:authorize>
+    </c:if>
+
+    <c:if test="${loggedIn eq 'no'}">
+        <zfin2:entityNotes entity="${gene}"/>
+    </c:if>
 
 </table>
-<authz:authorize access="hasRole('root')">
-    </div>
-</authz:authorize>
+
 
 
 

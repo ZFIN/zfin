@@ -23,7 +23,6 @@ import org.zfin.publication.Publication;
 import org.zfin.util.DatabaseJdbcStatement;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 public interface InfrastructureRepository {
@@ -103,7 +102,7 @@ public interface InfrastructureRepository {
 
     RecordAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType);
 
-    void insertUpdatesTable(String recID, String comments, String submitterZdbID, Date updateDate);
+    List<Updates> getUpdates(String zdbID);
 
     void insertUpdatesTable(String recID, String fieldName, String comments);
 

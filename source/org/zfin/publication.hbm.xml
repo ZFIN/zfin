@@ -94,7 +94,7 @@
             <one-to-many class="org.zfin.publication.PublicationDbXref"/>
         </set>
 
-        <set name="files" lazy="true" table="publication_file">
+        <set name="files" lazy="true" table="publication_file" sort="natural">
             <key column="pf_pub_zdb_id"/>
             <one-to-many class="org.zfin.publication.PublicationFile"/>
         </set>

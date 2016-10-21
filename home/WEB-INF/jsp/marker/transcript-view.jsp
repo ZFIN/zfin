@@ -5,8 +5,7 @@
 
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="/action/marker/marker-edit?zdbID=${formBean.marker.zdbID}"
-                   deleteURL="none"
-                   rtype="marker"/>
+                   deleteURL="none"/>
 
 <div style="float: right">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">

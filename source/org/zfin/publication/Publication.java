@@ -44,7 +44,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private Set<PublicationNote> notes;
     private Set<Correspondence> correspondences;
     private Set<PublicationDbXref> dbXrefs;
-    private Set<PublicationFile> files;
+    private SortedSet<PublicationFile> files;
 
     private boolean deletable;
     private boolean indexed;
@@ -268,11 +268,11 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         this.dbXrefs = dbXrefs;
     }
 
-    public Set<PublicationFile> getFiles() {
+    public SortedSet<PublicationFile> getFiles() {
         return files;
     }
 
-    public void setFiles(Set<PublicationFile> files) {
+    public void setFiles(SortedSet<PublicationFile> files) {
         this.files = files;
     }
 

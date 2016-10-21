@@ -36,8 +36,7 @@
                    deleteURL="${deleteURL}"
                    trackURL="${trackURL}"
                    linkURL="${linkURL}"
-                   curateURL="${curateURL}"
-                   rtype="publication"/>
+                   curateURL="${curateURL}"/>
 
 <div style="float: right">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
@@ -129,11 +128,14 @@
     <authz:authorize access="hasRole('root')">
 
         <tr>
-            <th>File:</th>
+            <th>Files:</th>
             <td>
-                <c:if test="${not empty publication.fileName}">
-                    <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}">PDF</a>
-                </c:if>
+                <c:forEach items="${publication.files}" var="file" varStatus="loop">
+                    <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${file.fileName}">
+                        ${file.type.name.toString() eq 'Original Article' ? 'Original Article' : file.originalFileName}
+                    </a>${loop.last ? " &mdash; " : ", "}
+                </c:forEach>
+                <a href="/action/publication/${publication.zdbID}/edit#files">Add/Update Files</a>
             </td>
         </tr>
 

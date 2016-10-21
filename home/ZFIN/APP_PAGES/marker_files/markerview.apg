@@ -851,66 +851,6 @@ function jump(form_select){
 <b>Problem Type:</b> &nbsp; &nbsp; $mrkrvw_problem_type <img src="/images/warning-noborder.gif" width=20 height=20 align=top>
 <?/MIVAR>
 
-
-<?MICOMMENT>=========================================================
-            ==    Curator Note
-	    =========================================================
-<?/MICOMMENT>
-<?MIBLOCK COND="$(NXST,$mrkrview_no_update)">
-<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
-  <br>
-  <B>Curator Notes:</B>
-    <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID">(View/Add Notes)</a><?/MIVAR>
-  <?MISQL SQL="select count(*)
-		from data_note
-		where dnote_data_zdb_id = '$OID' ;">
-
-  <?MIVAR COND="$(NC,$1,0)">
-    <?MISQL SQL="select first 1 dnote_text from data_note
-                 where dnote_data_zdb_id='$OID'
-                order by dnote_date desc">
-     <?MIVAR NAME=$mrkrview_datanote>$1<?/MIVAR>
-     <?/MISQL>
-<br>
-     <?MIVAR>$(SUBSTR,$mrkrview_datanote,1,100)<?/MIVAR>...
-  <?/MIVAR>
- <?/MISQL>
- <br>
-<?/MIBLOCK>
-<?/MIBLOCK>
-
-<?MICOMMENT>=========================================================
-            ==    Note
-	    =========================================================
-<?/MICOMMENT>
-<p>
-<?MISQL SQL="
-     select mrkr_comments
-       from marker
-      where mrkr_Zdb_id='$OID'
-        and mrkr_comments is not null
-        and mrkr_comments != '';">
-
-  <?MIVAR NAME=$mrkrview_mrkr_comments>$1<?/MIVAR>
-
-  <?MIVAR COND="$(>,$MI_CURRENTROW,0)">
-     <b>Note:</b>
-     &nbsp;$mrkrview_mrkr_comments
-     <?MIVAR COND="$(XST,$UPDATE)">
-	  <INPUT TYPE=button value="Update Note" onClick="doit('mrkr_comments','textarea','Note')">
-     <?/MIVAR>
-     <br>
-  <?/MIVAR>
-<?/MISQL>
-
-<?MIVAR COND="$(=,$MI_ROWCOUNT,0)">
-   <?MIVAR COND="$(XST,$UPDATE)">
-      <INPUT TYPE=button value="Add New Marker Note" onClick="doit('mrkr_comments','textarea','Note')">
-      <br>
-   <?/MIVAR>
-<?/MIVAR>
-
-</P>
 <?MIVAR COND="$(AND,$(NE,$marker_type,CRISPR),$(NE,$marker_type,MRPHLNO),$(NE,$marker_type,TALEN))">
 To view the Gene Expression section go to the
 <a href="/$OID">view page</a>
@@ -1327,24 +1267,6 @@ union
 
 
 
-<?MICOMMENT>=========================================================
-            ==    MUTANTS AND TARGETED KNOCKDOWNS
-	    =========================================================
-<?/MICOMMENT>
-<?MIVAR NAME=display_mut_trg_title>f<?/MIVAR>
-
-
-   <?MICOMMENT>==============================
-               ==    Mutants
-	       ==============================
-   <?/MICOMMENT>
-<?MIBLOCK COND="$(XST,$type_of_genedom)">
-
-   <?MISQL SQL="select WebExplode(object,'OID=$OID') from webPages where ID='aa-allelelist.apg';">
-     <?MIVAR NAME="mrkrview_allele_display">$1<?/MIVAR>
-   <?/MISQL>
-
-<?/MIBLOCK><?MICOMMENT> -- end if genedom ---<?/MICOMMENT>
 
   <?MICOMMENT>=========================================================
             == Phenotype
@@ -1413,37 +1335,7 @@ union
     <?/MIVAR>
   <?/MISQL>
 
-
-    <?MICOMMENT> *** DISPLAY MUTANTS & MORPHOLINOS TABLE *** <?/MICOMMENT>
-
-
-  <?MIBLOCK COND="$(OR,$(NC,$mrkrview_allele_display,),$(NC,$mrkrview_morpholino_display,))">
-
-  <div class="summary">
-	<div class="summaryTitle">MUTANTS AND TARGETED KNOCKDOWNS</div>
-
-    <table class="summary horizontal-solidblock">
-
-        <?MIBLOCK COND="$(NC,$mrkrview_allele_display,)">
-          <tr>
-            <th>Alleles:</th>
-            <td><?MIVAR>$mrkrview_allele_display<?/MIVAR></td>
-          </tr>
-        <?/MIBLOCK>
-
-        <?MIBLOCK COND="$(NC,$mrkrview_morpholino_display,)">
-          <tr>
-            <th>Knockdown&nbsp;reagents:</th>
-            <td><?MIVAR>$mrkrview_morpholino_display<?/MIVAR></td>
-          </tr>
-        <?/MIBLOCK>
-
-    </table>
-    </div>
-
-    <?/MIBLOCK>
-
-<?/MIBLOCK><?MICOMMENT>end of type_of_genedom<?/MICOMMENT>
+<?/MIBLOCK>
 
 <?MISQL COND=$(XST,$debug_timing) SQL="
         execute function get_time()">

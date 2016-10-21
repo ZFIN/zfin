@@ -159,6 +159,8 @@
 
         <security:intercept-url pattern="/action/str/*/edit" access="hasRole('root') or ${DISABLE_SECURITY}"/>
 
+        <security:intercept-url pattern="/action/updates/**" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+
         <security:intercept-url pattern="/action/feature/alleleDesig-add-form"
                                 access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/antibody/add" access="hasRole('root') or ${DISABLE_SECURITY}"/>

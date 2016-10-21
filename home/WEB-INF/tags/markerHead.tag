@@ -6,16 +6,14 @@
 <%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="true" %>
 <%@ attribute name="showEditControls" required="true" %>
 
-<script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
-<script src="/javascript/editMarker.js"></script>
-<script src="/javascript/nomenclature.js" type="text/javascript"></script>
+<c:set var="loggedIn">no</c:set>
 
 <c:if test="${empty typeName}">
     <c:set var="typeName">${marker.markerType.displayName}</c:set>
 </c:if>
 
 <authz:authorize access="hasRole('root')">
-    <div ng-app="app" ng-controller="EditController as eControl" ng-init="init('${gene.name}','${gene.abbreviation}')">
+    <c:set var="loggedIn">yes</c:set>
     <script>
         markerID = '${marker.zdbID}';
 
@@ -68,15 +66,29 @@
             </td>
         </tr>
     </c:if>
-    <%--</c:if>--%>
-    <zfin2:entityNotes entity="${formBean.marker}"/>
+
+    <c:if test="${loggedIn eq 'yes'}">
+      <authz:authorize access="hasRole('root')">
+        <c:set var="loggedIn">yes</c:set>
+
+        <tr ng-if="editMode" curator-notes marker-id="${formBean.marker.zdbID}" edit="1">
+        <tr ng-if="!editMode" curator-notes marker-id="${formBean.marker.zdbID}" edit="0">
+        </tr>
+
+        <tr ng-if="editMode" public-note marker-id="${formBean.marker.zdbID}" edit="1">
+        <tr ng-if="!editMode" public-note marker-id="${formBean.marker.zdbID}" edit="0">
+        </tr>
+
+      </authz:authorize>
+    </c:if>
+
+    <c:if test="${loggedIn eq 'no'}">
+        <zfin2:entityNotes entity="${formBean.marker}"/>
+    </c:if>
 
 </table>
 <zfin2:nomenclature geneEdit="true" showReason="false"/>
 
-<authz:authorize access="hasRole('root')">
-    </div>
-</authz:authorize>
 
 
 

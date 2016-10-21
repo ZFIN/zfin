@@ -17,8 +17,7 @@
 
 <zfin2:dataManager zdbID="${image.zdbID}"
                    editURL="${editURL}"
-                   deleteURL="${deleteURL}"
-                   rtype="image"/>
+                   deleteURL="${deleteURL}"/>
 
 
 

@@ -3,8 +3,7 @@
 <jsp:useBean id="formBean" class="org.zfin.fish.presentation.FishBean" scope="request"/>
 
 
-    <zfin2:dataManager zdbID="${fish.fishID}"
-                       rtype="fish"/>
+    <zfin2:dataManager zdbID="${fish.fishID}"/>
 
 
 <div style="float: right;">

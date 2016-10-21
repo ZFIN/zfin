@@ -27,7 +27,6 @@ SUBDIRS = \
 	pubbrowser \
 	security_files \
 	selection \
-	updating \
 	xpat_files
 
 

@@ -137,12 +137,11 @@ NIGHTLY RSYNC:
 Every night, via a cron job, the production image/pdf filesystem is 
 compared to the development filesystem.  If there are differences, the 
 production filesystem is automatically echoed in development.  This job is
-run by a crontab file owned by zfishweb.  The script "remove_orphan_files.pl"
+run by a crontab file owned by zfishweb.  The script "remove_orphan_files.groovy"
 controls the syncing.  
 
-remove_orphan_files.pl checks filesystem files against records
-in the database and emails annomolies (see remove_orphan_files.pl for 
-more details) to the owner of the database--on production that is informix.  
+remove_orphan_files.groovy checks filesystem files against records
+in the database and emails annomolies to the owner of the database--on production that is informix.
 remove_orphan_files also calls "rsync.pl" which does the
 actual syncing of production and development filesystems.
 

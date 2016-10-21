@@ -32,8 +32,7 @@
   <zfin2:dataManager zdbID="${publication.zdbID}"
                      editURL="${editURL}"
                      linkURL="${linkURL}"
-                     curateURL="${curateURL}"
-                     rtype="publication"/>
+                     curateURL="${curateURL}"/>
 
   <p class="lead">
     <a href="/${publication.zdbID}">${publication.title}</a>
