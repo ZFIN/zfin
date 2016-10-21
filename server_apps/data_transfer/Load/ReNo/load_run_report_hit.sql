@@ -348,7 +348,7 @@ create temp table tmp_ottdart_length(
        tol_len integer
 );
 
-load from 'ottdarT_length.unl' insert into tmp_ottdart_length;
+--load from 'ottdarT_length.unl' insert into tmp_ottdart_length;
 
 --delete from accession_bank 
 --where accbk_acc_num in (select tol_acc from tmp_ottdart_length);
