@@ -29,9 +29,8 @@
         <c:if test="${showEditControls}">
             <authz:authorize access="hasRole('root')">
                      <span style="cursor: pointer;"
-                           ng-click="control.openAddNewRelationships()"
-                           ng-if="editMode">
-                         <i style="color: red" title="Create a new marker relationship">New</i>
+                           ng-click="mkrreln.openAddNewRelationship()">
+                           <i style="color: red" title="Create a new marker relationship">New</i>
                          </span>
             </authz:authorize>
         </c:if>
@@ -84,6 +83,10 @@
                     <c:set var="markerType" value="${entry.markerType}"/>
                 </c:forEach>
     </table>
-
+    <tr>
+        <td>
+            <zfin2:addNewRelationship/>
+        </td>
+    </tr>
 </zfin2:subsection>
 
