@@ -207,7 +207,7 @@ sub pubMedArticle {
     my @fields = ('pmid', 'keywords', 'title', 'pages', 'abstract', 'authors',
                   'numAuthors', 'year', 'month', 'day', 'issn', 'volume',
                   'issue', 'journaltitle', 'iso', 'status');
-    print LOG join('|', map { escape_utf8($row{$_}) } @fields), "\n";
+    print LOG join('|', map { escape_utf8($row{$_} =~ s/\|/\\\|/rg) } @fields), "\n";
 }
 
 sub escape_utf8 {
