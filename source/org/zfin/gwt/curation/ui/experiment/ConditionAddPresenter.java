@@ -28,6 +28,7 @@ public class ConditionAddPresenter implements HandlesError {
     private List<CheckBox> copyConditionsCheckBoxList = new ArrayList<>();
     private Map<String, Set<String>> childMap;
 
+
     public ConditionAddPresenter(ConditionAddView view, String publicationID) {
         this.publicationID = publicationID;
         this.view = view;
@@ -243,15 +244,18 @@ public class ConditionAddPresenter implements HandlesError {
     }
 
     private String validatePostCompositions() {
+
         if (!view.aoTermEntry.getTermTextBox().hasValidateTerm() && view.aoTermEntry.isVisible())
             return "Zeco term requires an AO term ";
         if (!view.chebiTermEntry.getTermTextBox().hasValidateTerm() && view.chebiTermEntry.isVisible())
             return "Zeco term requires a Chebi term ";
        if (!view.taxonTermEntry.getTermTextBox().hasValidateTerm() && view.taxonTermEntry.isVisible())
- if (view.zecoTermEntry.getTermText().equals("bacterial treatment")||view.zecoTermEntry.getTermText().equals("viral treatment")||view.zecoTermEntry.getTermText().equals("fungal treatment")) {
+              if (view.zecoTermEntry.getTermText().equals("bacterial treatment")||view.zecoTermEntry.getTermText().equals("viral treatment")||view.zecoTermEntry.getTermText().equals("fungal treatment")||
+                  view.zecoTermEntry.getTermText().equals("bacterial treatment by exposure to environment")||view.zecoTermEntry.getTermText().equals("viral treatment by exposure to environment")||view.zecoTermEntry.getTermText().equals("fungal treatment by exposure to environment")||
+                  view.zecoTermEntry.getTermText().equals("bacterial treatment by injection")||view.zecoTermEntry.getTermText().equals("viral treatment by injection")||view.zecoTermEntry.getTermText().equals("fungal treatment by injection")) {
 
-     return "Zeco term requires a taxonomy term ";
- }
+                     return "Zeco term requires a taxonomy term ";
+               }
 
         return null;
     }
