@@ -851,7 +851,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void getMarkerZdbIdsForType() {
         List<String> zdbIds = markerRepository.getMarkerZdbIdsForType(Marker.Type.GENEP);
         assertThat(zdbIds.size(), greaterThan(150));
-        assertThat(zdbIds.size(), lessThan(200));
     }
 
     @Test
