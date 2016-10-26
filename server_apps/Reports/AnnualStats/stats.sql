@@ -76,7 +76,7 @@ where mrkr_type in  ('TGCONSTRCT','PTCONSTRCT','GTCONSTRCT','ETCONSTRCT')
 
 --  Transgenic Genotypes
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select  count(distinct genofeat_geno_zdb_id), "Genetics", "Transgenic Constructs", current year to second
+select  count(distinct genofeat_geno_zdb_id), "Genetics", "Transgenic Genotypes", current year to second
  from genotype_feature, feature
  where genofeat_feature_zdb_id = feature_zdb_id
    and feature_type = 'TRANSGENIC_INSERTION'
