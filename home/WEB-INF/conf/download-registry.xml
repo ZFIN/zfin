@@ -1634,6 +1634,41 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="4">Affected Gene Symbol</Column>
             <Column id="5">Corresponding ZFIN Gene ID</Column>
         </Download>
+        <Download orderIndex="5">
+            <Name>
+                Experiment Details 
+            </Name>
+            <Category>
+                Fish Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>experiment_details</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                      select expcond_exp_zdb_id, z.term_ont_id, a.term_ont_id, g.term_ont_id, c.term_ont_id, t.term_ont_id
+		      from experiment_condition,
+		      outer term z,
+		      outer term a,
+		      outer term g,
+		      outer term c,
+		      outer term t
+		      where expcond_zeco_Term_Zdb_id = z.term_zdb_id
+		      and expcond_ao_Term_zdb_id = a.term_Zdb_id
+		      and expcond_go_cc_term_Zdb_id = g.term_Zdb_id
+		      and expcond_chebi_term_zdb_id = c.term_Zdb_id
+		      and expcond_taxon_Term_zdb_id = t.term_Zdb_id;
+                ]]>
+            </Query>
+            <Column id="1" >Experiment ID</Column>
+            <Column id="2">ZECO Term ID</Column>
+            <Column id="3">ZFA Term ID</Column>
+            <Column id="4">GO Cellular Component Term ID</Column>
+            <Column id="5">Chebi Term ID</Column>
+	    <Column id="6">NCBI Taxon Term ID</Column>
+        </Download>
         <Download orderIndex="3">
             <Name>
                 Fish-Publication relation
