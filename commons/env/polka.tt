@@ -5,6 +5,7 @@
 <!--|BACKGROUND_COLOR|-->	#FFFFCC
 <!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/devBlastRegeneration
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
+<!--|CLIENT_LOCALE|-->	en_US.utf8
 <!--|COUNT_PATO_ERR|-->	pm\@zfin.org
 <!--|COUNT_PATO_OUT|-->	pm\@zfin.org
 <!--|COUNT_THISSE_VEGA_ERR|-->	pm\@zfin.org
@@ -16,6 +17,7 @@
 <!--|CURATION_DBNAME|-->	false
 <!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	pm\@zfin.org
+<!--|DB_LOCALE|-->	en_US.utf8
 <!--|DB_NAME|-->	plkdb
 <!--|DB_OWNER|-->	pm
 <!--|DEFAULT_EMAIL|-->	pm\@zfin.org

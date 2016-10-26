@@ -18,8 +18,7 @@
         </id>
 
         <!--<property name="ownerID" column="owner"/>-->
-        <property name="nonZfinPublications" column="nonzf_pubs" type="org.hibernate.type.MaterializedClobType"
-                  lazy="true"/>
+        <property name="nonZfinPublications" column="nonzf_pubs" lazy="true"/>
         <property name="personalBio" column="pers_bio" lazy="true"/>
 
         <property name="snapshot" column="snapshot" type="blob" lazy="true"/>

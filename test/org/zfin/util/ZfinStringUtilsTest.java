@@ -69,29 +69,6 @@ public class ZfinStringUtilsTest {
     }
 
     @Test
-    public void stripHighUnicodeTest() {
-        //European characters in names should pass through
-        String before = "Torres-Nuñez";
-        String after = ZfinStringUtils.escapeHighUnicode(before);
-        logger.debug("BEFORE: " + before);
-        logger.debug(" AFTER: " + after);
-        assertThat(after, is(before));
-
-        //bullet & endash characters should not!
-        before = "Am Klopferspitz 18 • D-82152 Martinsried, phone +49 89 8578 3263 • fax +49 89 8578 3240";
-        after = ZfinStringUtils.escapeHighUnicode(before);
-        logger.debug("BEFORE: " + before);
-        logger.debug(" AFTER: " + after);
-        assertThat(after, is(not(before)));
-
-        before = Character.toString((char) 2012);
-        after = ZfinStringUtils.escapeHighUnicode(before);
-        logger.debug("BEFORE: " + before);
-        logger.debug(" AFTER: " + after);
-        assertThat(after, is("&#2012;"));
-    }
-
-    @Test
     public void isValidNucleotideSequenceShouldReturnTrueForValidSequence() {
         String input = "GCGCCATTGCTTTGCAAGAATTG";
         Boolean output = ZfinStringUtils.isValidNucleotideSequence(input);

@@ -1144,11 +1144,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                         long number = Long.valueOf(column);
                         statement.setLong(index++, number);
                     } else {
-                        String unicoded = column;
-                        if (column != null) {
-                            unicoded = ZfinStringUtils.escapeHighUnicode(column);
-                        }
-                        statement.setString(index++, unicoded);
+                        statement.setString(index++, column);
                     }
                 }
                 statement.addBatch();

@@ -456,7 +456,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         logger.debug("markerZdbId for datanote: " + marker.getZdbID());
         dnote.setCurator(curator);
         dnote.setDate(new Date());
-        dnote.setNote(ZfinStringUtils.escapeHighUnicode(note));
+        dnote.setNote(note);
         logger.debug("data note curator: " + curator);
         Set<DataNote> dataNotes = marker.getDataNotes();
         if (dataNotes == null) {
@@ -477,7 +477,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         logger.debug("enter addExtDataNote");
         AntibodyExternalNote externalNote = new AntibodyExternalNote();
         externalNote.setAntibody(antibody);
-        externalNote.setNote(ZfinStringUtils.escapeHighUnicode(note));
+        externalNote.setNote(note);
         if (!sourceZdbID.equals("")) {
             PublicationRepository pr = RepositoryFactory.getPublicationRepository();
             Publication publication = pr.getPublication(sourceZdbID);
@@ -492,7 +492,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         } else {
             antibody.getExternalNotes().add(externalNote);
         }
-        infrastructureRepository.insertUpdatesTable(antibody, "notes", "", ZfinStringUtils.escapeHighUnicode(note), "");
+        infrastructureRepository.insertUpdatesTable(antibody, "notes", "", note, "");
         return externalNote;
     }
 
@@ -533,7 +533,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public void editAntibodyExternalNote(String notezdbid, String note) {
         logger.debug("enter addExtDataNote");
         ExternalNote extnote = infrastructureRepository.getExternalNoteByID(notezdbid);
-        extnote.setNote(ZfinStringUtils.escapeHighUnicode(note));
+        extnote.setNote(note);
         HibernateUtil.currentSession().update(extnote);
     }
 
@@ -554,7 +554,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         String groupName = DataAliasGroup.Group.ALIAS.toString();
         DataAliasGroup group = infrastructureRepository.getDataAliasGroupByName(groupName);
         markerAlias.setAliasGroup(group);  //default for database, hibernate tries to insert null
-        markerAlias.setAlias(ZfinStringUtils.escapeHighUnicode(alias));
+        markerAlias.setAlias(alias);
         if (marker.getAliases() == null) {
             Set<MarkerAlias> markerAliases = new HashSet<>();
             markerAliases.add(markerAlias);
