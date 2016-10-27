@@ -16,7 +16,8 @@ public enum GBrowseTrack {
     INSERTION("insertion"),
     CNE("CNE"),
     COMPLETE_CLONES("fullclone"),
-    ZMP("allzmp");
+    ALLZMP("allzmp"),
+    ZMP("zmp");
 
     GBrowseTrack(String trackName) {
         this.trackName = trackName;
