@@ -27,7 +27,7 @@
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/data_transfer/LoadOntology/Load-Mouse-Pathology-Ontology_d/*,server_apps/data_transfer/LoadOntology/obo-files/gene*.obo</artifacts>
+            <artifacts>server_apps/data_transfer/LoadOntology/Load-Mouse-Pathology-Ontology_d/*,server_apps/data_transfer/LoadOntology/obo-files/mouse*.obo</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
