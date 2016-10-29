@@ -265,6 +265,10 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         return markerType.getTypeGroups().contains(typeGroup);
     }
 
+    public boolean isGenedom() {
+        return isInTypeGroup(Marker.TypeGroup.GENEDOM);
+    };
+
     public MarkerType getMarkerType() {
         if (markerType == null)
             return null;

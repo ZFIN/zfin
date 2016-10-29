@@ -2289,61 +2289,6 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
     <?/MIBLOCK>
     <?/MIBLOCK>
 
-  <?MIBLOCK COND=$(OR,$(XST,$dblink_other),$(XST,$UPDATE))>
-    <?MIBLOCK COND="$(NE,$marker_type,REGION)">
-    <HR width="80%">
-    <?MIVAR><b>OTHER &nbsp;<i>$abbrev</i>&nbsp; GENE / MARKER PAGES</b><?/MIVAR>
-    <?/MIBLOCK>
-<?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(NE,$marker_type,REGION))">
-
-  <form name=updateother>
-  <?MIVAR NAME=seq_tab>&nbsp;&nbsp;&nbsp;<?/MIVAR>
-  <br><br>
-  <?MIVAR>$seq_tab<?/MIVAR>
-  <b>Link Other page:</b> &nbsp;
-  DBname:<SELECT name=seqdb>
-  <?MISQL SQL="
-    select distinct fdb_db_name
-      from foreign_db_contains, foreign_db, foreign_db_data_type
-     where fdbdt_super_type = 'summary page'
-      and fdbdt_pk_id = fdbcont_fdbdt_id
-      and fdbcont_fdb_db_id = fdb_db_pk_id
-      and fdbcont_zdb_id != 'ZDB-FDBCONT-040412-1'
-      order by fdb_db_name;">
-    <option value="$1" $(IF,$(EC,$1,VEGA),SELECTED)>$1</option>
-  <?/MISQL>
-  </SELECT>
-  Accession:<input type=text size=25 name=seq_acc>
-  Type:<SELECT name=seq_super>
-  <?MISQL SQL="
-    select distinct fdbdt_data_type, fdbdt_super_type
-      from foreign_db_data_type
-     where fdbdt_super_type = 'summary page'
-     order by fdbdt_data_type;">
-    <option value="$2&fdbcont_data=$1" $(IF,$(EC,$1,other),SELECTED)>$1</option>
-  <?/MISQL>
-  </SELECT>
-  <input type=button value="Add it!" onClick=new_othernum();>
-
-  <br>
-  <?MIVAR>$seq_tab<?/MIVAR>
-  <b>Add reference:</b> &nbsp;
-  Accession: <input type=text size=15 name=attrib_seq_acc>
-  Reference: <input type=text size=15 name=attrib_seq_pubid>
-  <input type=button value="Add it!" onClick=new_attrib_other();>
-  <br><br>
-<?/MIBLOCK>  <?MICOMMENT> end update OTHER GENE / MARKER PAGES:<?/MICOMMENT>
-
-    <?MIBLOCK COND="$(XST,$dblink_other)">
-        <?MIVAR NAME=dblink_other_table_row><TR><TD>$(SEPARATE,$dblink_other,</TD><TD>)</TD></TR><?/MIVAR>
-        <?MIVAR>
-            <TABLE  class="summary">
-                $dblink_other_table_row
-            </TABLE>
-        <?/MIVAR>
-    <?/MIBLOCK>
-
-  <?/MIBLOCK>
 <?MIBLOCK COND="$(XST,$UPDATE)">
   </form>  <?MICOMMENT> end form updateother <?/MICOMMENT>
 <?/MIBLOCK>
