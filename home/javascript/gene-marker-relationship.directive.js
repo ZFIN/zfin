@@ -34,7 +34,7 @@
         mkrreln.addAttribution = addAttribution;
         mkrreln.removeAttribution = removeAttribution;
         mkrreln.grpname = "GENEDOM";
-        mkrreln.errors = {};
+        mkrreln.errorMessage = '';
         init();
 
         function init() {
@@ -71,13 +71,13 @@
                          mkrreln.relationships.unshift(relationship);
                         mkrreln.newGene = '';
                         mkrreln.newAttribution = '';
+                        mkrreln.errorMessage='';
                         close();
                     })
-                    .catch(function (errors) {
-                        mkrreln.errors = errors.data.message;
+                    .catch(function (error) {
+                        mkrreln.errorMessage = error.data.message;
                     })
                     .finally(function () {
-
                     });
             }
         }
@@ -115,6 +115,8 @@
         function close() {
         
             mkrreln.errorMessage = '';
+            mkrreln.newGene = '';
+            mkrreln.newAttribution = '';
             MarkerService.closeModal();
         }
     }
