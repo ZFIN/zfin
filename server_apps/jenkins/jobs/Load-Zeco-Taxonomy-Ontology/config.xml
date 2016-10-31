@@ -27,7 +27,7 @@
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/data_transfer/LoadOntology/Load-Zeco-Taxonomy-Ontology/*,server_apps/data_transfer/LoadOntology/obo-files/zebrafish*.obo</artifacts>
+            <artifacts>server_apps/data_transfer/LoadOntology/Load-Zeco-Taxonomy-Ontology/*,server_apps/data_transfer/LoadOntology/obo-files/zeco-tax*.obo</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>

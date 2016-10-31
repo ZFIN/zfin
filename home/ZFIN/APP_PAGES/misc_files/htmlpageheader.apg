@@ -1,5 +1,6 @@
 
 <!-- Server: <!--|INSTANCE|--> -->
+<?MIVAR>$(HTTPHEADER,content-type,text/html;charset=utf-8)<?/MIVAR>
 
 <?MICOMMENT>
 prefix: hdr_

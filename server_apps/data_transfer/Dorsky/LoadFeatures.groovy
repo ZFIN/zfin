@@ -353,7 +353,7 @@ def getDB() {
     this.getClass().classLoader.rootLoader.addURL(new File("${env['TARGETROOT']}/lib/Java/ifxjdbc.jar").toURL())
 
     //make the database connection
-    db = Sql.newInstance("jdbc:informix-sqli://${props['SQLHOSTS_HOST']}:${props['INFORMIX_PORT']}/${props['DBNAME']}:INFORMIXSERVER=${props['INFORMIXSERVER']}",'com.informix.jdbc.IfxDriver'
+    db = Sql.newInstance("jdbc:informix-sqli://${props['SQLHOSTS_HOST']}:${props['INFORMIX_PORT']}/${props['DBNAME']}:INFORMIXSERVER=${props['INFORMIXSERVER']};DB_LOCALE=en_US.utf8",'com.informix.jdbc.IfxDriver'
     )
 
     db

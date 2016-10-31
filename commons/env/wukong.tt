@@ -5,6 +5,7 @@
 <!--|BACKGROUND_COLOR|-->	#FFFFFF
 <!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/dev_blastdb
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
+<!--|CLIENT_LOCALE|-->	en_US.utf8
 <!--|COUNT_PATO_ERR|-->	xshao\@zfin.org
 <!--|COUNT_PATO_OUT|-->	xshao\@zfin.org
 <!--|COUNT_THISSE_VEGA_ERR|-->	xshao\@zfin.org
@@ -16,6 +17,7 @@
 <!--|CURATION_DBNAME|-->	false
 <!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	xshao\@zfin.org
+<!--|DB_LOCALE|-->	en_US.utf8
 <!--|DB_NAME|-->	wukdb
 <!--|DB_OWNER|-->	xshao
 <!--|DEFAULT_EMAIL|-->	xshao\@zfin.org

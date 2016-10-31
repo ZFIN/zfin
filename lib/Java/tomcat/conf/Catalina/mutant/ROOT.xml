@@ -15,7 +15,7 @@ preferredTestQuery. If unhealthy, a new connection will be created.-->
            type="com.mchange.v2.c3p0.ComboPooledDataSource" 
            driverClass="com.informix.jdbc.IfxDriver"
            
-jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=20;IFX_ISOLATION_LEVEL=DR;IFX_DIRTY_WAIT=10"
+jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=20;IFX_ISOLATION_LEVEL=DR;IFX_DIRTY_WAIT=10;CLIENT_LOCALE=en_US.utf8;DB_LOCALE=en_US.utf8"
            maxPoolSize="8" minPoolSize="6"  
            idleConnectionTestPeriod="1200" preferredTestQuery="select * from single"
 />
@@ -25,7 +25,7 @@ jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSER
            type="com.mchange.v2.c3p0.ComboPooledDataSource" 
            driverClass="com.informix.jdbc.IfxDriver"
            
-jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/sysmaster:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=20;IFX_ISOLATION_LEVEL=DR"
+jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/sysmaster:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=20;IFX_ISOLATION_LEVEL=DR;CLIENT_LOCALE=en_US.utf8;DB_LOCALE=en_US.utf8"
            maxPoolSize="8" minPoolSize="2" />
 
 <Valve className="org.apache.catalina.valves.AccessLogValve"

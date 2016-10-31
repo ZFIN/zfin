@@ -18,7 +18,7 @@ def informixServer = System.getenv('INFORMIXSERVER')
 
 
 args = [driver: 'com.informix.jdbc.IfxDriver',
-        url: "jdbc:informix-sqli://$host:$port/$dbname:INFORMIXSERVER=$informixServer"
+        url: "jdbc:informix-sqli://$host:$port/$dbname:INFORMIXSERVER=$informixServer;DB_LOCALE=en_US.utf8"
 ]
 
 Class.forName("com.informix.jdbc.IfxDriver")

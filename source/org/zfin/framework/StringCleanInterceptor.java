@@ -3,7 +3,6 @@ package org.zfin.framework;
 import org.apache.log4j.Logger;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
-import org.zfin.util.ZfinStringUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -41,28 +40,32 @@ public class StringCleanInterceptor extends EmptyInterceptor {
 
 
     private Object processState(Object state) {
-        if (state == null)
+        if (state == null) {
             return null;
-        if (state instanceof String)
+        }
+        if (state instanceof String) {
             return processState((String) state);
-        else {
+        } else {
             Field[] fields = state.getClass().getDeclaredFields();
-            if (fields != null)
+            if (fields != null) {
                 for (Field field : fields) {
-                    if (field.getType() == String.class)
+                    if (field.getType() == String.class) {
                         runSetter(field, state, processState(runGetter(field, state)));
+                    }
                 }
+            }
         }
         return state;
     }
 
     private Object processState(String state) {
-        if (logger.isDebugEnabled())
+        if (logger.isDebugEnabled()) {
             logger.debug("before: " + state);
-        state = ZfinStringUtils.escapeHighUnicode(state);
+        }
         state = state.trim();
-        if (logger.isDebugEnabled())
+        if (logger.isDebugEnabled()) {
             logger.debug(" after: " + state);
+        }
         return state;
     }
 

@@ -39,7 +39,7 @@
             <column name="pub_mini_ref"/>
         </property>
 
-        <property name="abstractText" type="org.hibernate.type.MaterializedClobType" lazy="true" column="pub_abstract"/>
+        <property name="abstractText" lazy="true" column="pub_abstract"/>
 
         <property name="publicationDate" column="pub_date"/>
         <property name="closeDate" column="pub_completion_date"/>

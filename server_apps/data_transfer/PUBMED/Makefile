@@ -21,7 +21,6 @@ SUBDIRS   = LinkOut Journal
 GENERICS  = addMeshTermsToAllPubs.groovy \
             addGeoIdsToAllPubs.groovy \
             fetchPubsFromPubMed.pl \
-            fixBadCharacterEncoding.pl \
             loadNewPubs.sql \
             updatePublicationDate.groovy \
             updatepubstatus.pl 

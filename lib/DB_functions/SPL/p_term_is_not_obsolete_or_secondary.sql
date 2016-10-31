@@ -5,29 +5,7 @@ define objtype varchar(30);
 
 let objtype = get_obj_type(vTerm);
 
-if objtype = 'GOTERM'
-then
-	let ok = (select goterm_is_obsolete 
-        	   from go_term 
-          	   where vTerm = goterm_zdb_id);
-
-	if ok then
-
-  	raise exception -746,0,'FAIL!: GO Term is OBSOLETE!';
-
-	elif not ok then 
-
-  	let ok = (select goterm_is_secondary
-             	    from go_term 
-             	    where vTerm = goterm_zdb_id);
-  		if ok then 
-
-    		raise exception -746,0,'FAIL!: GO Term is SECONDARY!';
-
-  		end if ;
-
-	end if ;
-elif objtype = "ANAT"
+if objtype = "ANAT"
 then
   	raise exception -746,0,'FAIL!: ZDB-ANAT values are not in use any longer. Use TERM table records instead.';
 elif objtype = "TERM"
@@ -38,7 +16,7 @@ then
 
 	if ok then
 
-  	raise exception -746,0,'FAIL!: PATO Term is OBSOLETE!';
+  	raise exception -746,0,'FAIL!: Term is OBSOLETE!';
 
 	elif not ok then 
 
@@ -47,7 +25,7 @@ then
              	    where vTerm = term_zdb_id);
   		if ok then 
 
-    		raise exception -746,0,'FAIL!: PATO Term is SECONDARY!';
+    		raise exception -746,0,'FAIL!: Term is SECONDARY!';
 
   		end if ;
 	end if ;

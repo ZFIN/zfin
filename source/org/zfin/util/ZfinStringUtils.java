@@ -1,7 +1,5 @@
 package org.zfin.util;
 
-import org.apache.commons.lang3.text.translate.NumericEntityEscaper;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -129,20 +127,6 @@ public class ZfinStringUtils {
         return concatenatedZDBIdsDelimitedByComma;
     }
 
-    /**
-     * Escape characters into character entities if they are outside of the range supported by informix
-     *
-     * @param name String to escape
-     * @return escaped String
-     */
-    public static String escapeHighUnicode(String name) {
-        if (name == null) {
-            return null;
-        }
-
-        return NumericEntityEscaper.above(0xFF).translate(name);
-    }
-
     public static boolean isValidNucleotideSequence(final String sequenceString) {
         if (sequenceString == null) {
             return false;
@@ -157,15 +141,15 @@ public class ZfinStringUtils {
         // generated with
         // http://txt2re.com/index-java.php3?s=ZDB-GENE-160119-12&-7&-28&4&-29&2&-30&9
 
-        String re1="(ZDB)";	// Word 1
-        String re2="(-)";	// Any Single Character 1
-        String re3="((?:[a-z][a-z]+))";	// Word 2
-        String re4="(-)";	// Any Single Character 2
-        String re5="((?:(?:[1]{1}\\d{1}\\d{1}\\d{1})|(?:[2]{1}\\d{3}))(?:[0]?[1-9]|[1][012])(?:(?:[0-2]?\\d{1})|(?:[3][01]{1})))(?![\\d])";	// YYYYMMDD 1
-        String re6="(-)";	// Any Single Character 3
-        String re7="(\\d+)";	// Integer Number 1
+        String re1 = "(ZDB)";    // Word 1
+        String re2 = "(-)";    // Any Single Character 1
+        String re3 = "((?:[a-z][a-z]+))";    // Word 2
+        String re4 = "(-)";    // Any Single Character 2
+        String re5 = "((?:(?:[1]{1}\\d{1}\\d{1}\\d{1})|(?:[2]{1}\\d{3}))(?:[0]?[1-9]|[1][012])(?:(?:[0-2]?\\d{1})|(?:[3][01]{1})))(?![\\d])";    // YYYYMMDD 1
+        String re6 = "(-)";    // Any Single Character 3
+        String re7 = "(\\d+)";    // Integer Number 1
 
-        Pattern p = Pattern.compile(re1+re2+re3+re4+re5+re6+re7,Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
         Matcher m = p.matcher(txt);
         return m.find();
     }
