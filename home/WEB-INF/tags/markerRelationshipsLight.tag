@@ -15,33 +15,24 @@
 <c:if test="${empty title}">
     <c:set var="title" value="MARKER RELATIONSHIPS"/>
 </c:if>
-<script>
-    markerID = '${marker.zdbID}';
-    var relnTypeList = [];
-    <c:forEach items="${markerRelationshipTypes}" var="reln" varStatus="status">
-    relnTypeList.push('${reln.toString()}');
-    </c:forEach>
-</script>
 
 <authz:authorize access="hasRole('root')">
-    <c:set var="loggedIn">yes</c:set>
+
+    <div class="summary horizontal-solidblock" ng-if="editMode">
+        <c:set var="loggedIn">yes</c:set>
+        <gene-marker-relationship marker-id="${marker.zdbID}" marker-abbrev="${marker.abbreviation}" edit="1">
+        </gene-marker-relationship>
+    </div>
+    <div class="summary horizontal-solidblock" ng-if="!editMode">
+
+        <gene-marker-relationship marker-id="${marker.zdbID}" marker-abbrev="${marker.abbreviation}" edit="0">
+        </gene-marker-relationship>
+    </div>
 </authz:authorize>
 
-<c:if test="${loggedIn eq 'yes'}">
-    <authz:authorize access="hasRole('root')">
-        <c:set var="loggedIn">yes</c:set>
+<c:if test="${loggedIn eq 'no'}">
 
-        <div ng-if="editMode" gene-marker-relationship marker-id="${marker.zdbID}" edit="1" group="summary page">
-        <div ng-if="!editMode"gene-marker-relationship marker-id="${marker.zdbID}" edit="0" relnTypeList=relnTypeList>
-        </div>
-    </authz:authorize>
-
-
-
-
-
-
-<zfin2:subsection title="${title}"
+   <zfin2:subsection title="${title}"
                   test="${!empty relationships}" showNoData="true">
 
     <table class="summary horizontal-solidblock">
