@@ -50,7 +50,7 @@ Reported Sequence: GGCAGAGGTGAGATTA was reversed and complemented.'
 where dnote_zdb_id = 'ZDB-DNOTE-151016-4';
 
 update data_note
- set dnote_text = "Approximately 8 kb of the 5' upstream sequence of tal1\
+ set dnote_text = "Approximately 8 kb of the 5 prime upstream sequence of tal1\
 [24,25] was polymerase chain reaction (PCR)-amplified from\
 zebrafish genomic DNA. The amplified tal1 promoter, EGFP,\
 and SV40 poly(A) were placed in the pT2KXIGDin vector\
