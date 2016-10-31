@@ -4,7 +4,6 @@
 
 <%@ attribute name="relationships" required="true"
               rtexprvalue="true" type="java.util.List" %>
-
 <%@ attribute name="marker" required="true" rtexprvalue="true" type="org.zfin.marker.Marker" %>
 <%@ attribute name="showEditControls" type="java.lang.Boolean" rtexprvalue="true" required="false" %>
 
@@ -17,9 +16,11 @@
 </c:if>
 
 <authz:authorize access="hasRole('root')">
-
+    <c:set var="loggedIn">yes</c:set>
+</authz:authorize>
+<c:if test="${loggedIn eq 'yes' && marker.genedom}">
     <div class="summary horizontal-solidblock" ng-if="editMode">
-        <c:set var="loggedIn">yes</c:set>
+
         <gene-marker-relationship marker-id="${marker.zdbID}" marker-abbrev="${marker.abbreviation}" edit="1">
         </gene-marker-relationship>
     </div>
@@ -28,9 +29,9 @@
         <gene-marker-relationship marker-id="${marker.zdbID}" marker-abbrev="${marker.abbreviation}" edit="0">
         </gene-marker-relationship>
     </div>
-</authz:authorize>
+</c:if>
 
-<c:if test="${loggedIn eq 'no'}">
+<c:if test="${loggedIn eq 'no' || !marker.genedom}">
 
    <zfin2:subsection title="${title}"
                   test="${!empty relationships}" showNoData="true">
