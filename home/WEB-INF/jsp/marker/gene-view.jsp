@@ -8,14 +8,15 @@
 
 <script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
 <script src="/javascript/angular/angular-sanitize.js"></script>
-<script src="/javascript/trusted-html.filter.js"></script>
-
 <script src="/javascript/editMarker.js"></script>
+<script src="/javascript/trusted-html.filter.js"></script>
 <script src="/javascript/nomenclature.js" type="text/javascript"></script>
 <script src="/javascript/curator-notes.directive.js"></script>
 <script src="/javascript/public-note.directive.js"></script>
+<script src="/javascript/field-error.service.js"></script>
 <script src="/javascript/gene-marker-relationship.directive.js"></script>
 <script src="/javascript/marker.service.js"></script>
+<script src="/javascript/autocompletify.directive.js"></script>
 
 <authz:authorize access="hasRole('root')">
     <div ng-app="app" ng-controller="EditController as eControl">
@@ -106,9 +107,9 @@
 <zfin2:constructsWithSequences formBean="${formBean}"/>
 
 <%--SEGMENT (CLONE AND PROBE) RELATIONSHIPS--%>
-<zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}" marker="${formBean.marker}"
-                                title="SEGMENT (CLONE AND PROBE) RELATIONSHIPS" showEditControls="true"/>
 
+<zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}" marker="${formBean.marker}"
+                                title="SEGMENT (CLONE AND PROBE) RELATIONSHIPS"/>
 <%--SEQUENCE INFORMATION--%>
 <zfin2:markerSequenceInformationSummary marker="${formBean.marker}" sequenceInfo="${formBean.sequenceInfo}" title="${fn:toUpperCase('Sequence Information')}" showAllSequences="false"/>
 
