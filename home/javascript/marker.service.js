@@ -14,7 +14,9 @@
             removeAlias: removeAlias,
             addAliasReference: addAliasReference,
             removeAliasReference: removeAliasReference,
+            getRelationshipTypes: getRelationshipTypes,
             getRelationships: getRelationships,
+            getRelationshipsForEdit: getRelationshipsForEdit,
             addRelationship: addRelationship,
             removeRelationship: removeRelationship,
             addRelationshipReference: addRelationshipReference,
@@ -85,9 +87,17 @@
         }
 
         // === RELATIONSHIPS ===
+        function getRelationshipTypes() {
+                return $http.get('/action/marker/relationship/relationshipTypes/')
+                .then(returnResponseData);
+        }
 
         function getRelationships(markerId) {
             return $http.get('/action/marker/' + markerId + '/relationships')
+                .then(returnResponseData);
+        }
+        function getRelationshipsForEdit(markerId) {
+            return $http.get('/action/marker/' + markerId + '/relationshipsForEdit')
                 .then(returnResponseData);
         }
 
