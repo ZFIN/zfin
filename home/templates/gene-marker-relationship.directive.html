@@ -1,0 +1,125 @@
+
+
+<div ng-show="mkrreln.edit > 0 " valign="top">Relationship:  <span ng-show="mkrreln.edit > 0" style="cursor: pointer;"
+                                                                                      ng-click="mkrreln.openAddNewRelationship()">
+                       <i style="color: red"
+                          title="Create a new Relationship">New</i></span>
+</div>
+
+<div id="new-relationship-modal" class="jq-modal curation">
+    <h3>
+        Add new Relationship
+    </h3>
+    <table class="table table-condensed">
+        <tr>
+            <td>Relationship Type</td>
+
+            <td><select ng-model="mkrreln.newRelationship">
+            <option value="gene contains small segment">gene contains small segment</option>
+                <option value="gene hybridized by small segment">gene hybridized by small segment</option>
+                <option value="gene encodes small segment">gene encodes small segment</option>
+                <option value="gene has artifact">gene has artifact</option>
+                <option value="gene contains polymorphism">gene contains polymorphism</option>
+                <option value="clone contains gene">clone contains gene</option>
+
+
+            </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Partner Symbol</td>
+            <p class="text-danger" ng-repeat="error in mkrreln.errors.second">{{error}}</p>
+                <td><input class="form-control"
+                       url="/action/quicksearch/autocomplete?q=%QUERY&category=Marker+%2F+Clone"
+                       ng-model="mkrreln.newGene"
+                       autocompletify>
+                    </td>
+            </tr>
+        <tr>
+            <td>Attribution</td>
+
+            <td><input type="text" name="newAttribution" ng-model="mkrreln.newAttribution"
+                       ng-keyup="$event.keyCode == 13 && mkrreln.addNewRelationship()" autocomplete="on"></td>
+        </tr>
+        <tr>
+            <td>
+            <td>
+            <div class="popup-actions">
+                <button type="button" class="zfin-button cancel" ng-click="mkrreln.close()">Cancel</button>
+                <button type="button" class="zfin-button reject" ng-click="mkrreln.addNewRelationship()">Add</button>
+            </div>
+
+            </td>
+        </tr>
+    </table>
+    <span ng-bind-html="mkrreln.errorMessage | unsafe" class="error"></span>
+</div>
+
+<!--<div class="row">
+    <div class="col-sm-6">-->
+
+        <table class="summary horizontal-solidblock" ng-show="mkrreln.relationships.length">
+            <tr ng-repeat="relationship in mkrreln.relationships">
+                <td class="data-label">
+                    {{mkrreln.markerAbbrev}} {{relationship.name}} </td>
+               <td>
+                    {{relationship.relationshipType}} [{{relationship.markerType}}]  <span ng-bind-html="relationship.linkWithAttributionAndOrderThis | unsafe"></span>{{relationship.abbrev}}
+                    <span
+                            style="cursor: pointer;"
+                            ng-click="mkrreln.editRelationship(relationship)">
+                        <i class="fa fa-pencil" aria-hidden="true" style="color: red"
+                           title="Edit attributions on alias"></i>   </span>
+                      <span style="cursor: pointer;"
+                            ng-click="mkrreln.removeRelationship(relationship, $index)">
+
+                    <i class="fa fa-trash" aria-hidden="true"
+                       style="color: red"
+                       title="Delete Relationship and its attributions"></i></span>
+
+
+                </td>
+            </tr>
+        </table>
+   <!-- </div>
+</div>
+</div>-->
+
+
+<div id="relationship-attribution-modal" class="jq-modal curation">
+    <h3>
+        Attributions for Relationships:
+    </h3>
+    <table>
+        <tr ng-repeat="pub in relationship.references">
+            <td>{{pub.zdbID}}</td>
+            <td><a href><img src="/images/delete-button.png" ng-click="mkrreln.deleteAliasAttribution(pub.zdbID)"/>
+            </a></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="20" name="publicationID" ng-model="mkrreln.publicationID" autocomplete="on"/>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button ng-click="mkrreln.closeRelnshipAttributionEditor()" class="zfin-button cancel">Close</button>
+                <button ng-click="mkrreln.addAttribution()" class="zfin-button approve">Add</button>
+            </td>
+        </tr>
+    </table>
+    <span ng-bind-html="mkrreln.errorMessage | unsafe" class="error"></span>
+</div>
+
+<div id="delete-modal" class="jq-modal curation">
+    <h3>
+        Delete Relationship: <span ng-bind-html="mkrreln.newAlias | unsafe"></span>
+
+        <p/>
+    </h3>
+    (Including Attributions)
+    <div class="popup-actions">
+        <button type="button" class="zfin-button cancel" ng-click="mkrreln.closeModal ()">Cancel</button>
+        <button type="button" class="zfin-button reject" ng-click="mkrreln.deleteRelationship(mkrreln.aliasID)">Delete</button>
+    </div>
+</div>
+
+
