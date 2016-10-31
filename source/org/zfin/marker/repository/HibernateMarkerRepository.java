@@ -333,6 +333,25 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return markerRelationships;
     }
 
+    public List<MarkerRelationship> getMarkerRelationshipTypesForMarkerEdit(String grpName) {
+        List<MarkerRelationship.Type> markerRelationshipList = new ArrayList<MarkerRelationship.Type>();
+        markerRelationshipList.add(MarkerRelationship.Type.PROMOTER_OF);
+        markerRelationshipList.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
+        markerRelationshipList.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+
+        Session session = currentSession();
+        String hql = "select distinct mr from MarkerRelationship as mr " +
+                   "where mr.type not in (:markerRelationshipType)";
+
+
+        Query query = session.createQuery(hql);
+
+        query.setParameterList("markerRelationshipType", markerRelationshipList);
+        List<MarkerRelationship> markerRelationshipTypes = (List<MarkerRelationship>) query.list();
+
+        return markerRelationshipTypes;
+    }
+
     public TreeSet<String> getLG(Marker marker) {
         Session session = currentSession();
         TreeSet<String> lgList = new TreeSet<String>();
