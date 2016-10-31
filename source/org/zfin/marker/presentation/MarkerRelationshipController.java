@@ -9,18 +9,27 @@ import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.dto.MarkerRelationshipDTO;
+import org.zfin.gwt.root.dto.MarkerRelationshipEnumTypeGWTHack;
+import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.MarkerRelationshipType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.sequence.DisplayGroup;
+import org.zfin.sequence.ReferenceDatabase;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @Controller
 @RequestMapping("/marker")
@@ -45,6 +54,7 @@ public class MarkerRelationshipController {
         binder.setValidator(new MarkerReferenceBeanValidator());
     }
 
+
     @ResponseBody
     @RequestMapping(value = "/{markerId}/relationships", method = RequestMethod.GET)
     public Collection<MarkerRelationshipBean> getMarkerRelationships(@PathVariable String markerId) {
@@ -57,6 +67,20 @@ public class MarkerRelationshipController {
             beans.add(MarkerRelationshipBean.convert(relationship));
         }
         return beans;
+        }
+
+    @ResponseBody
+    @RequestMapping(value = "/{markerId}/relationshipsForEdit", method = RequestMethod.GET)
+    public Collection<MarkerRelationshipPresentation> getMarkerRelationshipsForEdit(@PathVariable String markerId) {
+       MarkerRelationshipSupplierComparator markerRelationshipSupplierComparator = new MarkerRelationshipSupplierComparator();
+
+        Marker marker = markerRepository.getMarkerByID(markerId);
+        List<MarkerRelationshipPresentation> cloneRelationships = new ArrayList<>();
+        cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, true));
+        cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, false));
+        Collections.sort(cloneRelationships, markerRelationshipSupplierComparator);
+
+        return cloneRelationships;
     }
 
     @ResponseBody
