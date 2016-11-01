@@ -57,7 +57,9 @@
     </tr>
     <zfin2:previousNamesFast label="Previous Name" previousNames="${previousNames}" marker="${gene}"
                              showEditControls="true"/>
-    <tr>
+
+
+<tr>
         <th>Location:</th>
         <td>
             <zfin2:displayLocation entity="${gene}" longDetail="true"/>

@@ -5,33 +5,35 @@
 <%@ attribute name="relationships" required="true"
               rtexprvalue="true" type="java.util.List" %>
 <%@ attribute name="marker" required="true" rtexprvalue="true" type="org.zfin.marker.Marker" %>
-<%@ attribute name="showEditControls" type="java.lang.Boolean" rtexprvalue="true" required="false" %>
-
 <%@ attribute name="title" required="false" %>
 
 
 <c:set var="loggedIn">no</c:set>
-<c:if test="${empty title}">
-    <c:set var="title" value="MARKER RELATIONSHIPS"/>
-</c:if>
+
 
 <authz:authorize access="hasRole('root')">
     <c:set var="loggedIn">yes</c:set>
 </authz:authorize>
 <c:if test="${loggedIn eq 'yes' && marker.genedom}">
     <div class="summary horizontal-solidblock" ng-if="editMode">
-
+        <c:if test="${empty title}">
+            <c:set var="title" value="MARKER RELATIONSHIPS"/>
+        </c:if>
+        <span class="summaryTitle">${title}</span>
         <gene-marker-relationship marker-id="${marker.zdbID}" marker-abbrev="${marker.abbreviation}" edit="1">
         </gene-marker-relationship>
     </div>
     <div class="summary horizontal-solidblock" ng-if="!editMode">
-
+        <c:if test="${empty title}">
+            <c:set var="title" value="MARKER RELATIONSHIPS"/>
+        </c:if>
+        <span class="summaryTitle">${title}</span>
         <gene-marker-relationship marker-id="${marker.zdbID}" marker-abbrev="${marker.abbreviation}" edit="0">
         </gene-marker-relationship>
     </div>
 </c:if>
 
-<c:if test="${loggedIn eq 'no' || !marker.genedom}">
+<c:if test="${loggedIn eq 'no' || marker.genedom}">
 
    <zfin2:subsection title="${title}"
                   test="${!empty relationships}" showNoData="true">
