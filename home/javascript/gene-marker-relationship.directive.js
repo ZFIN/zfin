@@ -10,8 +10,7 @@
             scope: {
                 markerId: '@',
                 edit: '@',
-                markerAbbrev: '@',
-                relationshipType:   '@'
+                markerAbbrev: '@'
                 },
             controller: GeneMarkerRelationshipController,
             controllerAs: 'mkrreln',
@@ -33,7 +32,6 @@
         mkrreln.editRelationship = editRelationship;
         mkrreln.addAttribution = addAttribution;
         mkrreln.removeAttribution = removeAttribution;
-        mkrreln.grpname = "GENEDOM";
         mkrreln.errorMessage = '';
         init();
 
