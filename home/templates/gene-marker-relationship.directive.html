@@ -1,7 +1,6 @@
 
 
-<div ng-show="mkrreln.edit > 0 " valign="top">Relationship:  <span ng-show="mkrreln.edit > 0" style="cursor: pointer;"
-                                                                                      ng-click="mkrreln.openAddNewRelationship()">
+ <span ng-show="mkrreln.edit > 0" style="cursor: pointer;" ng-click="mkrreln.openAddNewRelationship()">
                        <i style="color: red"
                           title="Create a new Relationship">New</i></span>
 </div>
@@ -21,14 +20,11 @@
                 <option value="gene has artifact">gene has artifact</option>
                 <option value="gene contains polymorphism">gene contains polymorphism</option>
                 <option value="clone contains gene">clone contains gene</option>
-
-
             </select>
             </td>
         </tr>
         <tr>
             <td>Partner Symbol</td>
-            <p class="text-danger" ng-repeat="error in mkrreln.errors.second">{{error}}</p>
                 <td><input class="form-control"
                        url="/action/quicksearch/autocomplete?q=%QUERY&category=Marker+%2F+Clone"
                        ng-model="mkrreln.newGene"
@@ -65,11 +61,11 @@
                <td>
                     {{relationship.relationshipType}} [{{relationship.markerType}}]  <span ng-bind-html="relationship.linkWithAttributionAndOrderThis | unsafe"></span>{{relationship.abbrev}}
                     <span
-                            style="cursor: pointer;"
+                            ng-show="mkrreln.edit > 0" style="cursor: pointer;"
                             ng-click="mkrreln.editRelationship(relationship)">
                         <i class="fa fa-pencil" aria-hidden="true" style="color: red"
                            title="Edit attributions on alias"></i>   </span>
-                      <span style="cursor: pointer;"
+                      <span ng-show="mkrreln.edit > 0" style="cursor: pointer;"
                             ng-click="mkrreln.removeRelationship(relationship, $index)">
 
                     <i class="fa fa-trash" aria-hidden="true"
