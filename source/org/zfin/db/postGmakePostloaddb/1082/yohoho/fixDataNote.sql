@@ -80,7 +80,7 @@ update data_note
 where dnote_zdb_id = 'ZDB-DNOTE-070117-301';
 
 update data_note
- set dnote_text = "Hi Ken, Sridhar<BR><BR>I have extended this gene locus using new evidence to give a full length protein product.&nbsp;&nbsp;Species \
+ set dnote_text = 'Hi Ken, Sridhar<BR><BR>I have extended this gene locus using new evidence to give a full length protein product.&nbsp;&nbsp;Species \
  specific EST and cross-species protein support is very good.<BR><BR>Thanks, Jeff<BR><BR>>16.38264663-38442933 DNA CH211-135D14.2-001 9122 \
  bp<BR>ggcggcatgtggatgaggaggttgtatatttcagctcttctgttgttttt<BR>ggcgaagaaaacacacattctcaaaacgaacccgtaaaaaataagaaaaa<BR\
  >aagccccacacaaaatcatttacccgggatcgagcccatgacgtccattc<BR>acttcgtggttcacccgttacccgggaccgaagaccagcttaatgacaga<BR\
@@ -174,7 +174,7 @@ update data_note
  >acgtggacggcttgttcttattttttgtttcttttttttattattattat<BR>tattattatttccggttatcggagtataacgcaacattcctgcattggct<BR\
  >tttgtaaagttgaagcctgcagctccattggcttgaactgtaacttcccg<BR>tgactttggcctgacggtaaactgtcccgccaaacccagccaaagacgac<BR\
  >agcaggagtatttaaagaaaaagaaggttacactgtgatttatgattttt<BR>tttttcctgccctaaacataaatattactatcactgagagttcactgctg<BR\
- >cctttgtggaaagtcattttttcttgtatagagggagtagggaatttcaa<BR>aaataaacttggatgcaaacta<BR>"
+ >cctttgtggaaagtcattttttcttgtatagagggagtagggaatttcaa<BR>aaataaacttggatgcaaacta<BR>'
 where dnote_zdb_id = 'ZDB-DNOTE-080226-3';
 
 
