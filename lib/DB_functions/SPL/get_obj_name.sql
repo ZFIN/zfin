@@ -277,7 +277,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from fish_experiment
       where genox_zdb_id = zdbId;
-
+  elif (objType = "SALIAS") then
+    select salias_zdb_id		-- don't have names, use ZDB ID
+      into objName
+      from source_alias
+      where salias_zdb_id = zdbId;
   elif (objType = "TERMDEF") then
     select termdef_zdb_id		-- don't have names, use ZDB ID
       into objName
