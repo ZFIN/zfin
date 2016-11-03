@@ -210,7 +210,7 @@
             appendSection(vm.curatedData.antibodies, 'Antibodies', nameOnly);
 
             if (vm.curatedData.expressionGenes && vm.curatedData.expressionGenes.some(isSelected)) {
-                notif += '<p><a href="http://' + $location.host() + '/action/figure/all-figure-view/' + pubId + '"><b>Curated Gene Expression</b></a><br>';
+                notif += '<p><a href="http://' + $location.host() + '/action/figure/all-figure-view/' + vm.pubId + '"><b>Curated Gene Expression</b></a><br>';
                 vm.curatedData.expressionGenes.forEach(function (g) {
                     if (g.selected) {
                         notif += nameAndAbbrev(g) + '<br>';
