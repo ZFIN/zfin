@@ -60,8 +60,6 @@ public class ProfileService {
         Person p = getCurrentSecurityUser();
         if (p.getZdbID() != null) {
             p = profileRepository.getPerson(p.getZdbID());
-//            SecurityContext context = SecurityContextHolder.getContext();
-//            Authentication authentication = context.getAuthentication();
         }
         return p;
     }
@@ -97,12 +95,10 @@ public class ProfileService {
                     (User) principal;
             Person person = new Person();
             person.setShortName(user.getUsername());
-//            person.setFullName(user.getUsername());
             return person;
         }
-
-        // refetch the person object so that lazy attributes can be accessed by callers of this method
-        return RepositoryFactory.getProfileRepository().getPerson(((Person) principal).getZdbID());
+        // make sure this object
+        return (Person) principal;
     }
 
     /**
