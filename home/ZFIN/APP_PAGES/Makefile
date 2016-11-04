@@ -21,7 +21,6 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES
 
 SUBDIRS = \
 	fish_files \
-	locus_files \
 	marker_files \
 	misc_files \
 	pubbrowser \

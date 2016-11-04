@@ -63,6 +63,5 @@ aa-zirclist.apg
 aa-showpubs.apg
 aa-externalredirect.apg
 aa-pubmedredirect.apg
-aa-markergoview.apg
 
 action/marker/note/external
