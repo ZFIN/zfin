@@ -1,16 +1,19 @@
-#!/bin/tcsh -e
+#!/bin/bash
 
-source /private/ZfinLinks/Commons/env/<!--|INSTANCE|-->.env
+#source /private/ZfinLinks/Commons/env/watson.env
+echo "set process id"
 
-set processID=`ps aux | grep '[o]ntape' | awk '{print $2}'`;
+currentLog=`readlink -f logs`;
+processID=`pgrep 'ontape'`;
 echo $processID;
 kill $processID;
 
 cd <!--|SOURCEROOT|-->/server_apps/DB_maintenance/
 
+echo "dump logs continuous"
 gmake dumplogscontinuous
 
-cd <!--|TARGETROOT|-->/server_apps/DB_maintenance/
-
-
+echo "dump server"
 <!--|TARGETROOT|-->/server_apps/DB_maintenance/dumpServer.pl
+
+rm -rf $currentLog

@@ -2,8 +2,7 @@
     <div class="row filter-bar">
         <div class="col-sm-12">
             <form class="form-inline">
-                Pubs
-                with priority
+                <b>{{vm.loading ? '' : vm.totalPubs}}</b> Pubs with priority
                 <select class="form-control"
                         ng-options="priority.name for priority in vm.priorities track by priority.id"
                         ng-model="vm.priority" ng-change="vm.fetchPubs()">

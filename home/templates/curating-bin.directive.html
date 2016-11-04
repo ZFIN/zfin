@@ -2,7 +2,7 @@
     <div class="row filter-bar">
         <div class="col-sm-6">
             <form class="form-inline">
-                Pubs in
+                <b>{{vm.loading ? '' : vm.totalPubs}}</b> Pubs in
                 <select class="form-control"
                         ng-options="location.name for location in vm.locations"
                         ng-model="vm.location"
