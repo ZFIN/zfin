@@ -28,7 +28,7 @@ searchform.apg sequence.apg sequence_data_entry.apg
 STATICS = markerview_placeholder_note.apg \
 	marker_history_correction.apg attrib_check.apg sequence_tools.apg \
 	markerrelationship.apg  \
-	mapframe.apg mrkrgenolist.apg
+	mrkrgenolist.apg
 
 
 # Use default rules for app page directories.
