@@ -178,18 +178,6 @@ $(IF,$(>,$(POSITION,$OID,XPAT),0),
       $(SETVAR,$target_table,expression_experiment)
       )
 
-$(IF,$(>,$(POSITION,$rtype,locus),0),
-       $(SETVAR,$return_page1,aa-locusupdate.apg)
-       $(SETVAR,$return_page2,aa-do-locusupdate.apg)
-       $(SETVAR,$target_table,"")
-       )
-
-$(IF,$(>,$(POSITION,$rtype,goview),0),
-       $(SETVAR,$return_page1,aa-markergoview.apg)
-       $(SETVAR,$return_page2,aa-do-markergoedit.apg)
-       $(SETVAR,$target_table,"")
-       )
-
 
 <?/MIVAR>
 
