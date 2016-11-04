@@ -1,6 +1,5 @@
 package org.zfin.publication.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -138,7 +137,8 @@ public class PublicationEditController {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
-        if (!publication.isCanShowImages() && CollectionUtils.isNotEmpty(existingPublication.getFigures())) {
+        boolean hasFigureWithImages = existingPublication.getFigures().stream().anyMatch(f -> !f.isImgless());
+        if (!publication.isCanShowImages() && existingPublication.isCanShowImages() && hasFigureWithImages) {
             result.rejectValue("canShowImages", "canShowImages.existingFigures");
         }
 
