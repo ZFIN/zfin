@@ -4,7 +4,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Simple controller that serves the developers home page.
@@ -15,7 +14,7 @@ public class LoginController {
     public static final String ACCESS_DENIED = "access-denied";
 
     @RequestMapping("/login")
-    protected String login(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    protected String login(HttpServletRequest request) throws Exception {
 
         // Check if we came through /action/login
         // this is a jumper page that can be accessed insecurely and thus creates a no-ssl session if not already created.
@@ -31,7 +30,7 @@ public class LoginController {
     }
 
     @RequestMapping("/login-redirect")
-    protected String loginRedirect(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    protected String loginRedirect(HttpServletRequest request) throws Exception {
 
         // Check if we came through /action/login
         // this is a jumper page that can be accessed insecurely and thus creates a no-ssl session if not already created.
