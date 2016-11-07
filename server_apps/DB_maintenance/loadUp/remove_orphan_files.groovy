@@ -82,9 +82,9 @@ Sql.withInstance(db) { Sql sql ->
     }
 }
 
-processDirectory(imageLoadUpDir, 'movedImageFiles.txt') { !imageFiles.contains(it) }
-processDirectory(pdfLoadUpDir, 'movedPdfFiles.txt') { !pubFiles.contains(it) }
-processDirectory(videoLoadUpDir, 'movedVideoFiles.txt') { !videoFiles.contains(it) }
+processDirectory(imageLoadUpDir, 'removedImageFiles.txt') { !imageFiles.contains(it) }
+processDirectory(pdfLoadUpDir, 'removedPdfFiles.txt') { !pubFiles.contains(it) }
+processDirectory(videoLoadUpDir, 'removedVideoFiles.txt') { !videoFiles.contains(it) }
 
 cmd = "${ZfinPropertiesEnum.ROOT_PATH}/server_apps/DB_maintenance/loadUp/rsync.pl"
 println(cmd)
