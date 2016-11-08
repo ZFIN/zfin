@@ -2,7 +2,7 @@
     <div class="row filter-bar">
         <div class="col-sm-12">
             <form class="form-inline">
-                <b>{{vm.loading ? '' : vm.totalPubs}}</b> Pubs with priority
+                <b>{{vm.loading ? '&#9618;' : vm.totalPubs}}</b> Pubs with priority
                 <select class="form-control"
                         ng-options="priority.name for priority in vm.priorities track by priority.id"
                         ng-model="vm.priority" ng-change="vm.fetchPubs()">
@@ -13,6 +13,9 @@
                         ng-model="vm.sort"
                         ng-change="vm.fetchPubs()">
                 </select>
+                <button title="Refresh query" class="btn btn-link pub-dashboard-reload" ng-disabled="vm.loading" ng-click="vm.fetchPubs()">
+                    <i class="fa fa-refresh" ng-class="{'fa-spin': vm.loading}"></i>
+                </button>
             </form>
         </div>
     </div>

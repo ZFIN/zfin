@@ -13,6 +13,9 @@
                         ng-model="vm.status" ng-change="vm.fetchPubs()">
                     <option value="">Any</option>
                 </select>
+                <button title="Refresh query" class="btn btn-link pub-dashboard-reload" ng-disabled="vm.loading" ng-click="vm.fetchPubs()">
+                    <i class="fa fa-refresh" ng-class="{'fa-spin': vm.loading}"></i>
+                </button>
             </form>
         </div>
     </div>

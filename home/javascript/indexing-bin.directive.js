@@ -3,7 +3,8 @@
         .module('app')
         .directive('indexingBin', indexingBin);
 
-    function indexingBin() {
+    indexingBin.$inject = ['IntertabEventService'];
+    function indexingBin(IntertabEventService) {
         var directive = {
             restrict: 'EA',
             templateUrl: '/templates/indexing-bin.directive.html',
@@ -12,10 +13,17 @@
                 currentStatus: '@',
                 nextStatus: '@'
             },
+            link: link,
             controller: IndexingBinController,
             controllerAs: 'vm',
             bindToController: true
         };
+
+        function link(scope) {
+            IntertabEventService.receiveEvents('pub-status-update', function () {
+                scope.vm.fetchPubs();
+            });
+        }
 
         return directive;
     }

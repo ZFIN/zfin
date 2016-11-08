@@ -3,7 +3,8 @@
         .module('app')
         .directive('pubDashboard', pubDashboard);
 
-    function pubDashboard() {
+    pubDashboard.$inject = ['IntertabEventService'];
+    function pubDashboard(IntertabEventService) {
         var directive = {
             restrict: 'EA',
             templateUrl: '/templates/pub-dashboard.directive.html',
@@ -20,6 +21,9 @@
             var $statusModal = element.find('.status-modal');
             scope.$watch('vm.statusModalPub', function (value) {
                 $statusModal.modal(value ? 'show' : 'hide');
+            });
+            IntertabEventService.receiveEvents('pub-status-update', function () {
+                scope.vm.fetchPubs();
             });
         }
 

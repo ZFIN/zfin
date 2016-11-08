@@ -9,6 +9,7 @@
 <script src="/javascript/angular/paging.min.js"></script>
 <script src="/javascript/zfin-app.module.js"></script>
 
+<script src="/javascript/intertab-event.service.js"></script>
 <script src="/javascript/publication.service.js"></script>
 <script src="/javascript/zfinutils.service.js"></script>
 
