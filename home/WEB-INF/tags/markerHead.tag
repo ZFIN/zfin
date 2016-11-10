@@ -5,6 +5,7 @@
 <%@ attribute name="typeName" type="java.lang.String" required="false" rtexprvalue="true" %>
 <%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="true" %>
 <%@ attribute name="showEditControls" required="true" %>
+<%@ attribute name="userID" type="java.lang.String" rtexprvalue="true" required="false" %>
 
 <c:set var="loggedIn">no</c:set>
 
@@ -71,7 +72,7 @@
       <authz:authorize access="hasRole('root')">
         <c:set var="loggedIn">yes</c:set>
 
-        <tr curator-notes marker-id="${formBean.marker.zdbID}" edit="editMode">
+        <tr curator-notes marker-id="${formBean.marker.zdbID}" edit="editMode" curator="${userID}">
         </tr>
 
         <tr public-note marker-id="${formBean.marker.zdbID}" edit="editMode">

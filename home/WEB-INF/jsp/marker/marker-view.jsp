@@ -36,7 +36,7 @@
     </tiles:insertTemplate>
 </div>
 
-    <zfin2:markerHead marker="${formBean.marker}" previousNames="${formBean.previousNames}" showEditControls="true"/>
+    <zfin2:markerHead marker="${formBean.marker}" previousNames="${formBean.previousNames}" showEditControls="true" userID="${formBean.user.zdbID}" />
 
     <%--MARKER RELATIONSHIPTS--%>
     <c:if test="${formBean.marker.type ne 'RAPD'}">

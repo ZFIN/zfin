@@ -14,10 +14,10 @@
         <tr ng-if="note.noteData.length < 80">
             <td nowrap>
                 <span class="keep-breaks">{{note.noteData}}</span>
-                <span ng-show="cn.edit" style="cursor: pointer;"
+                <span ng-show="cn.edit && cn.curator == note.curator.zdbID" style="cursor: pointer;"
                       ng-click="cn.openEditCuratorNotes(note, $index)">
                        <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit the curator note"></i></span>
-                <span ng-show="cn.edit" style="cursor: pointer;" ng-click="cn.openDeleteCuratorNotes(note, $index)">
+                <span ng-show="cn.edit && cn.curator == note.curator.zdbID" style="cursor: pointer;" ng-click="cn.openDeleteCuratorNotes(note, $index)">
                        <i class="fa fa-trash" aria-hidden="true" style="color: red"
                           title="Delete the curator note"></i>
                 </span>
@@ -27,10 +27,10 @@
             <td nowrap>
                 <span class="keep-breaks">{{note.noteData | limitTo:80}}<img ng-click="note.collapsable = !note.collapsable" src="/images/right_arrow.gif" alt="expand" title="Show full text" border="0">
                 </span>
-                <span ng-show="cn.edit" style="cursor: pointer;"
+                <span ng-show="cn.edit && cn.curator == note.curator.zdbID" style="cursor: pointer;"
                       ng-click="cn.openEditCuratorNotes(note, $index)">
                        <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit the curator note"></i></span>
-                <span ng-show="cn.edit" style="cursor: pointer;" ng-click="cn.openDeleteCuratorNotes(note, $index)">
+                <span ng-show="cn.edit && cn.curator == note.curator.zdbID" style="cursor: pointer;" ng-click="cn.openDeleteCuratorNotes(note, $index)">
                        <i class="fa fa-trash" aria-hidden="true" style="color: red"
                           title="Delete the curator note"></i>
                 </span>
@@ -40,10 +40,10 @@
             <td nowrap>
                 <span class="keep-breaks">{{note.noteData}}<img ng-click="note.collapsable = !note.collapsable" src="/images/left_arrow.gif" alt="collapse" title="Show beginning text" border="0">
                 </span>
-                <span ng-show="cn.edit" style="cursor: pointer;"
+                <span ng-show="cn.edit && cn.curator == note.curator.zdbID" style="cursor: pointer;"
                       ng-click="cn.openEditCuratorNotes(note, $index)">
                        <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit the curator note"></i></span>
-                <span ng-show="cn.edit" style="cursor: pointer;" ng-click="cn.openDeleteCuratorNotes(note, $index)">
+                <span ng-show="cn.edit && cn.curator == note.curator.zdbID" style="cursor: pointer;" ng-click="cn.openDeleteCuratorNotes(note, $index)">
                        <i class="fa fa-trash" aria-hidden="true" style="color: red"
                           title="Delete the curator note"></i>
                 </span>
