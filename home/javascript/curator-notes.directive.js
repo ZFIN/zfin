@@ -9,7 +9,7 @@
             templateUrl: '/templates/curator-notes.directive.html',
             scope: {
                 markerId: '@',
-                edit: '@'
+                edit: '='
             },
             controller: CuratorNotesController,
             controllerAs: 'cn',
@@ -19,8 +19,8 @@
         return directive;
     }
 
-    CuratorNotesController.$inject = [$window, 'MarkerService'];
-    function CuratorNotesController($window, MarkerService) {
+    CuratorNotesController.$inject = ['MarkerService'];
+    function CuratorNotesController(MarkerService) {
 
         var cn = this;
 

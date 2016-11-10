@@ -1,13 +1,13 @@
 
-<span ng-show="om.edit > 0" style="cursor: pointer;">
+<span ng-show="om.edit" style="cursor: pointer;">
     <i style="color: red; font-weight: bold;" title="Create new other marker link" ng-click="om.openAddOtherMarkerLink()">New</i>
 </span>
 <table class="summary" ng-show="om.links.length">
     <tr><td ng-repeat="link in om.links"><a ng-href="{{link.urlPrefix + link.accession}}">{{link.referenceDatabaseName}}:{{link.accession}}</a>
-        <span ng-bind-html="link.refLink"></span><span ng-show="om.edit > 0" style="cursor: pointer;"
+        <span ng-bind-html="link.refLink"></span><span ng-show="om.edit" style="cursor: pointer;"
                                            ng-click="om.openEditAttribution(link, $index)"><i class="fa fa-pencil" aria-hidden="true" style="color: red"
                                                                                               title="Edit attributions"></i></span>
-            <span ng-show="om.edit > 0" style="cursor: pointer;"
+            <span ng-show="om.edit" style="cursor: pointer;"
                                            ng-click="om.openDeleteOtherMarkerLink(link,$index)">
                        <i class="fa fa-trash" aria-hidden="true" style="color: red"
                           title="Delete the link"></i></span>
@@ -32,8 +32,8 @@
         <tr>
             <td>
                 <div class="popup-actions">
-                    <button type="button" class="zfin-button cancel" ng-click="om.close()">Cancel</button>
-                    <button type="button" class="zfin-button reject" ng-click="om.addOtherMarkerLink()">Add</button>
+                    <button class="zfin-button cancel" ng-click="om.close()">Cancel</button>
+                    <button class="zfin-button approve" ng-click="om.addOtherMarkerLink()">Add</button>
                 </div>
             </td>
         </tr>
@@ -62,8 +62,8 @@
         <tr>
             <td>
                 <div class="popup-actions">
-                    <button type="button" class="zfin-button cancel" ng-click="om.close()">Cancel</button>
-                    <button type="button" class="zfin-button reject" ng-click="om.deleteOtherMarkerLink()">Delete</button>
+                    <button class="zfin-button cancel" ng-click="om.close()">Cancel</button>
+                    <button class="zfin-button reject" ng-click="om.deleteOtherMarkerLink()">Delete</button>
                 </div>
             </td>
         </tr>
