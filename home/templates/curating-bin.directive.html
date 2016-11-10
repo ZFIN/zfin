@@ -2,7 +2,7 @@
     <div class="row filter-bar">
         <div class="col-sm-6">
             <form class="form-inline">
-                <b>{{vm.loading ? '' : vm.totalPubs}}</b> Pubs in
+                <b>{{vm.loading ? '&#9618;' : vm.totalPubs}}</b> Pubs in
                 <select class="form-control"
                         ng-options="location.name for location in vm.locations"
                         ng-model="vm.location"
@@ -14,6 +14,9 @@
                         ng-model="vm.sort"
                         ng-change="vm.fetchPubs()">
                 </select>
+                <button title="Refresh query" class="btn btn-link pub-dashboard-reload" ng-disabled="vm.loading" ng-click="vm.fetchPubs()">
+                    <i class="fa fa-refresh" ng-class="{'fa-spin': vm.loading}"></i>
+                </button>
             </form>
         </div>
         <div class="col-sm-6">

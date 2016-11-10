@@ -18,14 +18,9 @@
 </authz:authorize>
 
 <c:if test="${loggedIn eq 'yes' && marker.genedom}">
-    <div class="summary" ng-if="editMode">
+    <div class="summary">
         <span class="summaryTitle">${title}</span>
-        <other-markers marker-id="${marker.zdbID}" edit="1">
-        </other-markers>
-    </div>
-    <div class="summary" ng-if="!editMode">
-        <span class="summaryTitle">${title}</span>
-        <other-markers marker-id="${marker.zdbID}" edit="0">
+        <other-markers marker-id="${marker.zdbID}" edit="editMode">
         </other-markers>
     </div>
 </c:if>

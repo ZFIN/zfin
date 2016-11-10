@@ -21,8 +21,8 @@
         return directive;
     }
 
-    PublicationStatusController.$inject = ['PublicationService', 'ZfinUtils'];
-    function PublicationStatusController(PublicationService, zf) {
+    PublicationStatusController.$inject = ['PublicationService', 'IntertabEventService', 'ZfinUtils'];
+    function PublicationStatusController(PublicationService, IntertabEventService, zf) {
         var vm = this;
 
         vm.statuses = [];
@@ -123,6 +123,7 @@
             return PublicationService.updateStatus(vm.current)
                 .then(storeStatus)
                 .then(function() {
+                    IntertabEventService.fireEvent('pub-status-update');
                     if (isClosing) {
                         return PublicationService.getTopics(vm.pubId)
                             .then(function (response) {

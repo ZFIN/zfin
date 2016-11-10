@@ -9,7 +9,7 @@
             templateUrl: '/templates/public-note.directive.html',
             scope: {
                 markerId: '@',
-                edit: '@'
+                edit: '='
             },
             controller: PublicNotesController,
             controllerAs: 'pn',
@@ -19,8 +19,8 @@
         return directive;
     }
 
-    PublicNotesController.$inject = [$window, 'MarkerService'];
-    function PublicNotesController($window, MarkerService) {
+    PublicNotesController.$inject = ['MarkerService'];
+    function PublicNotesController(MarkerService) {
 
         var pn = this;
 

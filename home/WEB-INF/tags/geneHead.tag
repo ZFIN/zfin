@@ -78,12 +78,10 @@
       <authz:authorize access="hasRole('root')">
         <c:set var="loggedIn">yes</c:set>
 
-        <tr ng-if="editMode" curator-notes marker-id="${gene.zdbID}" edit="1">
-        <tr ng-if="!editMode" curator-notes marker-id="${gene.zdbID}" edit="0">
+        <tr curator-notes marker-id="${gene.zdbID}" edit="editMode">
         </tr>
 
-        <tr ng-if="editMode" public-note marker-id="${gene.zdbID}" edit="1">
-        <tr ng-if="!editMode" public-note marker-id="${gene.zdbID}" edit="0">
+        <tr public-note marker-id="${gene.zdbID}" edit="editMode">
         </tr>
       </authz:authorize>
     </c:if>

@@ -9,7 +9,7 @@
             templateUrl: '/templates/other-markers.directive.html',
             scope: {
                 markerId: '@',
-                edit: '@'
+                edit: '='
             },
             controller: OtherMarkersController,
             controllerAs: 'om',
@@ -19,10 +19,9 @@
         return directive;
     }
 
-    OtherMarkersController.$inject = [$window, $sce, 'MarkerService'];
-    function OtherMarkersController($window, $sce, MarkerService) {
+    OtherMarkersController.$inject = ['$sce', 'MarkerService'];
+    function OtherMarkersController($sce, MarkerService) {
         var om = this;
-
         om.links = [];
         om.databases = [];
         om.otherLink = null;
@@ -31,8 +30,6 @@
         om.newDatabase = '';
         om.newAccession = '';
         om.newReference = '';
-        om.references = [];
-
         om.openAddOtherMarkerLink = openAddOtherMarkerLink;
         om.addOtherMarkerLink = addOtherMarkerLink;
         om.openEditAttribution = openEditAttribution;
@@ -106,6 +103,7 @@
                         om.otherLink.references = link.references;
                         om.newReference = '';
                         om.errorMessage = '';
+                        init();
                     }).catch(function (error) {
                         om.errorMessage = error.data.message;
                     });
@@ -117,6 +115,7 @@
                 .then(function () {
                     om.otherLink.references.splice(ind, 1);
                     om.errorMessage = '';
+                    init();
                  }).catch(function (error) {
                      om.errorMessage = error.data.message;
                  });;
@@ -144,7 +143,6 @@
             om.newDatabase = '';
             om.newAccession = '';
             om.newReference = '';
-            om.references = [];
             om.ind = 0;
             om.otherLink = null;
             MarkerService.closeModal();

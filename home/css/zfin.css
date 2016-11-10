@@ -871,6 +871,10 @@ ul.comma-separated > li:last-child:after {
     cursor: pointer;
 }
 
+button.pub-dashboard-reload {
+    color: #666666;
+}
+
 nav.pub-navigator {
     background: #669999;
     margin-top: -4px; /* snugs it up to the main nav */
