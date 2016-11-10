@@ -9,7 +9,8 @@
             templateUrl: '/templates/curator-notes.directive.html',
             scope: {
                 markerId: '@',
-                edit: '='
+                edit: '=',
+                curator: '@'
             },
             controller: CuratorNotesController,
             controllerAs: 'cn',

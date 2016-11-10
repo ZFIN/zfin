@@ -2,6 +2,7 @@
 
 <%@ attribute name="gene" type="org.zfin.marker.Marker" rtexprvalue="true" required="true" %>
 <%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="false" %>
+<%@ attribute name="userID" type="java.lang.String" rtexprvalue="true" required="false" %>
 
 <c:set var="loggedIn">no</c:set>
 
@@ -76,7 +77,7 @@
       <authz:authorize access="hasRole('root')">
         <c:set var="loggedIn">yes</c:set>
 
-        <tr curator-notes marker-id="${gene.zdbID}" edit="editMode">
+        <tr curator-notes marker-id="${gene.zdbID}" edit="editMode" curator="${userID}">
         </tr>
 
         <tr public-note marker-id="${gene.zdbID}" edit="editMode">

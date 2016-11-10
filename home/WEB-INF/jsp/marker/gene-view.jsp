@@ -41,7 +41,7 @@
     </tiles:insertTemplate>
 </div>
 
-<zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}"/>
+<zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}" userID="${formBean.user.zdbID}" />
 
 
 <zfin2:uninformativeGeneName name="${formBean.marker.abbreviation}" fromChimericClone="${formBean.hasChimericClone}"/>
