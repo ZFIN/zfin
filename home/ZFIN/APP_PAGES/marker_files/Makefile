@@ -24,8 +24,7 @@ markerview.apg msegselect.apg newmrkrselect.apg \
 searchform.apg sequence.apg sequence_data_entry.apg
 
 
-STATICS = markerview_placeholder_note.apg \
-	marker_history_correction.apg attrib_check.apg sequence_tools.apg \
+STATICS = marker_history_correction.apg attrib_check.apg sequence_tools.apg \
 	mrkrgenolist.apg
 
 
