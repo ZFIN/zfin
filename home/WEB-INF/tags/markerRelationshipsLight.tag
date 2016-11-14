@@ -20,20 +20,20 @@
             <c:set var="title" value="MARKER RELATIONSHIPS"/>
         </c:if>
         <span class="summaryTitle">${title}</span>
-        <gene-marker-relationship marker-id="${marker.zdbID}" marker-abbrev="${marker.abbreviation}" edit="1">
+        <gene-marker-relationship marker-id="${marker.zdbID}" marker-abbrev="${marker.abbreviation}" edit="editMode">
         </gene-marker-relationship>
     </div>
-    <div class="summary horizontal-solidblock" ng-if="!editMode">
+   <%-- <div class="summary horizontal-solidblock" ng-if="!editMode">
         <c:if test="${empty title}">
             <c:set var="title" value="MARKER RELATIONSHIPS"/>
         </c:if>
         <span class="summaryTitle">${title}</span>
         <gene-marker-relationship marker-id="${marker.zdbID}" marker-abbrev="${marker.abbreviation}" edit="0">
         </gene-marker-relationship>
-    </div>
+    </div>--%>
 </c:if>
 
-<c:if test="${loggedIn eq 'no' || marker.genedom}">
+<c:if test="${loggedIn eq 'no' || !marker.genedom}">
 
    <zfin2:subsection title="${title}"
                   test="${!empty relationships}" showNoData="true">
