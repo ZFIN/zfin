@@ -21,6 +21,7 @@ import org.zfin.marker.MarkerRelationshipType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.publication.Publication;
+import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ReferenceDatabase;
@@ -112,6 +113,55 @@ public class MarkerRelationshipController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/gene-relationship", method = RequestMethod.POST)
+    public Collection<MarkerRelationshipPresentation>  addGeneMarkerRelationship(@Valid @RequestBody MarkerRelationshipBean newRelationship,
+                                                        BindingResult errors) {
+       /* if (errors.hasErrors()) {
+            throw new InvalidWebRequestException("Invalid marker relationship", errors);
+        }*/
+       String pubZDB;
+        MarkerRelationshipSupplierComparator markerRelationshipSupplierComparator = new MarkerRelationshipSupplierComparator();
+        Marker first = getMarkerByIdOrAbbrev(newRelationship.getFirst());
+        Marker second = getMarkerByIdOrAbbrev(newRelationship.getSecond());
+        MarkerRelationship.Type type = MarkerRelationship.Type.getType(newRelationship.getRelationship());
+
+        Collection<Marker> related = MarkerService.getRelatedMarker(first, type);
+        if (CollectionUtils.isNotEmpty(related) && related.contains(second)) {
+          //  errors.rejectValue("second", "marker.relationship.duplicate");
+            throw new InvalidWebRequestException("Invalid marker relationship", errors);
+        }
+
+        // assume new incoming relationship has only one reference
+        if (PublicationValidator.isShortVersion(newRelationship.getReferences().iterator().next().getZdbID())) {
+             pubZDB=PublicationValidator.completeZdbID(newRelationship.getReferences().iterator().next().getZdbID());
+        } else {
+            pubZDB=newRelationship.getReferences().iterator().next().getZdbID();
+        }
+        Publication pub=publicationRepository.getPublication(pubZDB);
+        if (pub==null){
+            throw new InvalidWebRequestException("Invalid publication", errors);
+        }
+      //  String pubId = newRelationship.getReferences().iterator().next().getZdbID();
+
+        HibernateUtil.createTransaction();
+        if (!newRelationship.getRelationship().equals("clone contains gene")) {
+            MarkerRelationship relationship = MarkerService.addMarkerRelationship(first, second,  pubZDB, type);
+        }
+        else{
+            MarkerRelationship relationship = MarkerService.addMarkerRelationship(second, first,  pubZDB, type);
+        }
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        List<MarkerRelationshipPresentation> cloneRelationships = new ArrayList<>();
+        cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(first, true));
+        cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(first, false));
+        Collections.sort(cloneRelationships, markerRelationshipSupplierComparator);
+
+        return cloneRelationships;
+
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/relationship/{relationshipId}", method = RequestMethod.DELETE, produces = "text/plain")
     public String removeMarkerRelationship(@PathVariable String relationshipId) {
         MarkerRelationship relationship = markerRepository.getMarkerRelationshipByID(relationshipId);
@@ -147,6 +197,44 @@ public class MarkerRelationshipController {
         HibernateUtil.flushAndCommitCurrentSession();
 
         return MarkerRelationshipBean.convert(relationship);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/relationship/{relationshipId}/addreferences", method = RequestMethod.POST)
+    public Collection<MarkerRelationshipPresentation> addGeneMarkerRelationshipReference(@PathVariable String relationshipId,
+                                                                 @Valid @RequestBody MarkerReferenceBean newReference,
+                                                                 BindingResult errors) {
+        String pubZDB;
+        if (errors.hasErrors()) {
+            throw new InvalidWebRequestException("Invalid reference", errors);
+        }
+        if (PublicationValidator.isShortVersion(newReference.getZdbID())) {
+            pubZDB=PublicationValidator.completeZdbID(newReference.getZdbID());
+        } else {
+            pubZDB=newReference.getZdbID();
+        }
+        MarkerRelationship relationship = markerRepository.getMarkerRelationshipByID(relationshipId);
+        Publication publication = publicationRepository.getPublication(pubZDB);
+
+        for (PublicationAttribution reference : relationship.getPublications()) {
+            if (reference.getPublication().equals(publication)) {
+                errors.rejectValue("zdbID", "marker.reference.inuse");
+                throw new InvalidWebRequestException("Invalid reference", errors);
+            }
+        }
+
+        HibernateUtil.createTransaction();
+        markerRepository.addMarkerRelationshipAttribution(relationship, publication, relationship.getFirstMarker());
+        HibernateUtil.flushAndCommitCurrentSession();
+        MarkerRelationshipSupplierComparator markerRelationshipSupplierComparator = new MarkerRelationshipSupplierComparator();
+        Marker first = relationship.getFirstMarker();
+        Marker second = relationship.getSecondMarker();
+        List<MarkerRelationshipPresentation> cloneRelationships = new ArrayList<>();
+        cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(first, true));
+        cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(first, false));
+        Collections.sort(cloneRelationships, markerRelationshipSupplierComparator);
+
+        return cloneRelationships;
     }
 
     @ResponseBody
