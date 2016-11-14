@@ -82,7 +82,7 @@ public class MarkerLinkController {
         DisplayGroup.GroupName group = DisplayGroup.GroupName.getGroup(groupName);
 
         List<LinkDisplay> links = markerRepository.getMarkerDBLinksFast(marker, group);
-        if (groupName.equals("other marker pages"))
+        if (groupName.equals(DisplayGroup.GroupName.OTHER_MARKER_PAGES.toString()))
             links.addAll(markerRepository.getVegaGeneDBLinksTranscript(marker, DisplayGroup.GroupName.SUMMARY_PAGE));
         return links;
     }
