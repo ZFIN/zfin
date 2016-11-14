@@ -4,10 +4,10 @@
 <%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="false" %>
 <%@ attribute name="userID" type="java.lang.String" rtexprvalue="true" required="false" %>
 
-<c:set var="loggedIn">no</c:set>
+<c:set var="loggedIn" value="false"/>
 
 <authz:authorize access="hasRole('root')">
-    <c:set var="loggedIn">yes</c:set>
+    <c:set var="loggedIn" value="true"/>
     <script>
         markerID = '${gene.zdbID}';
 
@@ -73,19 +73,19 @@
         </tr>
     </c:if>
 
-    <c:if test="${loggedIn eq 'yes'}">
-      <authz:authorize access="hasRole('root')">
-        <c:set var="loggedIn">yes</c:set>
+    <c:if test="${loggedIn}">
+        <authz:authorize access="hasRole('root')">
+            <c:set var="loggedIn" value="true"/>
 
-        <tr curator-notes marker-id="${gene.zdbID}" edit="editMode" curator="${userID}">
-        </tr>
+            <tr curator-notes marker-id="${gene.zdbID}" edit="editMode" curator="${userID}">
+            </tr>
 
-        <tr public-note marker-id="${gene.zdbID}" edit="editMode">
-        </tr>
-      </authz:authorize>
+            <tr public-note marker-id="${gene.zdbID}" edit="editMode">
+            </tr>
+        </authz:authorize>
     </c:if>
 
-    <c:if test="${loggedIn eq 'no'}">
+    <c:if test="${!loggedIn}">
         <zfin2:entityNotes entity="${gene}"/>
     </c:if>
 

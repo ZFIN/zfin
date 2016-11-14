@@ -1,4 +1,5 @@
-;(function() {
+;
+(function () {
     angular
         .module('app')
         .directive('orthoEdit', orthoEdit)
@@ -25,7 +26,9 @@
     function zdbIdToDate(id) {
         var parts = id.split('-');
         var date = parts[2];
-        if (!date) { return new Date(0); }
+        if (!date) {
+            return new Date(0);
+        }
         // sorry, zfinners in the year 2090 :(
         var century = date.startsWith('9') ? '19' : '20';
         return new Date(century + date.substring(0, 2), Number(date.substring(2, 4)) - 1, date.substring(4, 6));
@@ -67,7 +70,9 @@
             templateUrl: '/templates/orthoedit.directive.html',
             scope: {
                 gene: '@',
-                pub: '@'
+                pub: '@',
+                edit: '=',
+                showDownloadLink: '@'
             },
             controller: OrthoEditController,
             controllerAs: 'vm',
@@ -103,7 +108,7 @@
                 });
             });
 
-            scope.$watch('vm.orthologs', function() {
+            scope.$watch('vm.orthologs', function () {
                 var table = angular.element('.ortholog-table');
                 var overlay = angular.element('.loading-overlay');
 
@@ -118,13 +123,15 @@
                 // use $timeout because we need to get size after digest is finished
                 $timeout(setOverlaySize, false);
             });
+
+
         }
 
         return directive;
     }
 
-    OrthoEditController.$inject = ['$http'];
-    function OrthoEditController($http) {
+    OrthoEditController.$inject = ['$http', '$scope'];
+    function OrthoEditController($http, $scope) {
         var vm = this;
 
         vm.showGenePicker = typeof vm.gene === 'undefined';
@@ -165,6 +172,10 @@
 
         vm.selectPub = selectPub;
         vm.checkPub = checkPub;
+        vm.edit = !(typeof $scope.editMode === 'undefined');
+        vm.showDownloadLink = typeof vm.showDownloadLink === 'undefined';
+
+        //alert('edit: '+vm.edit);
 
         activate();
 
@@ -177,7 +188,7 @@
         }
 
         function fetchCodes() {
-            return $http.get('/action/ortholog/evidence-codes', { cache: true })
+            return $http.get('/action/ortholog/evidence-codes', {cache: true})
                 .then(function (resp) {
                     vm.codes = resp.data;
                     return vm.codes;
@@ -266,7 +277,7 @@
         function confirmDeleteOrtholog(ortholog) {
             vm.modalOrtholog = ortholog;
             vm.generalError = '';
-            $('#delete-modal')
+            $('#delete-ortholog-modal')
                 .modal({
                     escapeClose: false,
                     clickClose: false,

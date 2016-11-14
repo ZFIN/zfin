@@ -1,5 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<jsp:useBean id="expressionCriteria" class="org.zfin.expression.ExpressionSummaryCriteria" scope="request"/>
+
 <div class="data-sub-page-title">Expression Figure Summary</div>
 <div style="float: right">
 

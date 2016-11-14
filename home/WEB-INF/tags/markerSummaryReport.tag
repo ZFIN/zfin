@@ -7,17 +7,18 @@
 
 <c:if test="${empty title}">
     <c:set var="title">
-        OTHER&nbsp;<zfin:abbrev entity="${marker}"/>&nbsp;${marker.markerType.displayName eq 'cDNA' ? marker.markerType.displayName : fn:toUpperCase(marker.markerType.displayName)}&nbsp;PAGES
+        OTHER&nbsp;<zfin:abbrev
+            entity="${marker}"/>&nbsp;${marker.markerType.displayName eq 'cDNA' ? marker.markerType.displayName : fn:toUpperCase(marker.markerType.displayName)}&nbsp;PAGES
     </c:set>
 </c:if>
 
 <c:set var="loggedIn">no</c:set>
 
 <authz:authorize access="hasRole('root')">
-    <c:set var="loggedIn">yes</c:set>
+    <c:set var="loggedIn" value="true"/>
 </authz:authorize>
 
-<c:if test="${loggedIn eq 'yes' && marker.genedom}">
+<c:if test="${loggedIn && marker.genedom}">
     <div class="summary">
         <span class="summaryTitle">${title}</span>
         <other-markers marker-id="${marker.zdbID}" edit="editMode">
