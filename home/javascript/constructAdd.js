@@ -222,10 +222,10 @@ $(document).on("click","button[id^='delCoding']",function (event){
                 newInput[i].style.backgroundColor = "white";
 
                 if (newInput[i].className.substring(0, 10) == suffix + 1 + "P") {
-                    newInput[i].className = "Cassette" + counter + "Promoter";
+                    newInput[i].className = "cassette" + counter + "Promoter";
                 }
                 else {
-                    newInput[i].className = "Cassette" + counter + "Coding";
+                    newInput[i].className = "cassette" + counter + "Coding";
                 }
             }
 
@@ -604,6 +604,7 @@ function makeName(){
     cassette1Stored=((cassette1CodingString!="")?cassette1PromoterString+storedConstructSeparator+cassette1CodingString:cassette1PromoterString);
 
     $.each($('.cassette2Promoter'), function (index) {
+
         cassette2PromoterString +=$(this).val()+componentDelim;
     });
     $.each($('.cassette2Coding'), function (index) {
