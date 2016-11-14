@@ -877,19 +877,6 @@ To view the Gene Expression section go to the
 
 
 <?MICOMMENT>=========================================================
-            ==    Clone box
-	    =========================================================
-<?/MICOMMENT>
-<?MIVAR NAME="SOURCE"> <?/MIVAR>
-<?MISQL SQL="select WebExplode(object,'CLONE_MARKER_ID=$OID') from webPages where ID='aa-clonebox.apg'
-	     and exists (select 'x' from clone where clone_mrkr_zdb_id = '$OID');">
-	<hr width=80%>
-        <b>CLONE DATA </b> $1
-        <?MIVAR NAME="$mrkrview_mrkr_is_clone">1<?/MIVAR>
-<?/MISQL>
-
-
-<?MICOMMENT>=========================================================
             ==    Construct features
 	    =========================================================
 <?/MICOMMENT>
