@@ -18,9 +18,12 @@
             getRelationships: getRelationships,
             getRelationshipsForEdit: getRelationshipsForEdit,
             addRelationship: addRelationship,
+            addGeneRelationship: addGeneRelationship,
             removeRelationship: removeRelationship,
             addRelationshipReference: addRelationshipReference,
+            addGeneMarkerRelationshipReference: addGeneMarkerRelationshipReference,
             removeRelationshipReference: removeRelationshipReference,
+            removeMarkerRelationshipReference: removeMarkerRelationshipReference,
             getNotes: getNotes,
             updatePublicNote: updatePublicNote,
             addCuratorNote: addCuratorNote,
@@ -112,17 +115,41 @@
                 .then(returnResponseData);
         }
 
-        function removeRelationship(relationship) {
-            return $http.delete('/action/marker/relationship/' + relationship.zdbID);
+        function addGeneRelationship(first, second, type, pubId) {
+            var relationship = {
+                "relationship": type,
+                "first": first,
+                "second": second,
+                "references": [{"zdbID": pubId}]
+            };
+            return $http.post('/action/marker/gene-relationship', relationship)
+                .then(returnResponseData);
         }
 
-        function addRelationshipReference(alias, pubId) {
-            return $http.post('/action/marker/relationship/' + alias.zdbID + '/references', {zdbID: pubId})
+        function removeRelationship(relationship) {
+          //  return $http.delete('/action/marker/relationship/' + relationship.zdbID);
+            return $http.delete('/action/marker/relationship/' + relationship.markerRelationshipZdbId);
+        }
+
+        function addRelationshipReference(relationship, pubId) {
+
+            return $http.post('/action/marker/relationship/' + relationship.zdbID + '/references', {zdbID: pubId})
+                .then(returnResponseData);
+        }
+        function addGeneMarkerRelationshipReference(relationship, pubId) {
+
+            return $http.post('/action/marker/relationship/' + relationship.markerRelationshipZdbId + '/addreferences', {zdbID: pubId})
                 .then(returnResponseData);
         }
 
         function removeRelationshipReference(alias, reference) {
-            return $http.delete('/action/marker/relationship/' + alias.zdbID + '/references/' + reference.zdbID);
+
+            return $http.delete('/action/marker/relationship/' + alias.markerRelationshipZdbId  + '/references/' + reference.zdbID);
+        }
+
+        function removeMarkerRelationshipReference(alias, reference) {
+
+            return $http.delete('/action/marker/relationship/' + alias.markerRelationshipZdbId  + '/references/' + reference);
         }
 
         // === NOTES ===
