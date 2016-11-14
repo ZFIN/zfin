@@ -9,7 +9,7 @@
             templateUrl: '/templates/gene-marker-relationship.directive.html',
             scope: {
                 markerId: '@',
-                edit: '@',
+                edit: '=',
                 markerAbbrev: '@'
                 },
             controller: GeneMarkerRelationshipController,
@@ -28,11 +28,14 @@
         mkrreln.openAddNewRelationship = openAddNewRelationship;
         mkrreln.close = close;
         mkrreln.addNewRelationship = addNewRelationship;
-        mkrreln.removeRelationship = removeRelationship;
-        mkrreln.editRelationship = editRelationship;
+        mkrreln.openEditAttribution = openEditAttribution;
         mkrreln.addAttribution = addAttribution;
-        mkrreln.removeAttribution = removeAttribution;
+        mkrreln.deleteAttribution = deleteAttribution;
+        mkrreln.openDeleteRelationship = openDeleteRelationship;
+        mkrreln.deleteRelationship = deleteRelationship;
         mkrreln.errorMessage = '';
+        mkrreln.otherLink = null;
+        mkrreln.ind = 0;
         init();
 
         function init() {
@@ -64,49 +67,74 @@
                 var first = {zdbID: mkrreln.markerId};
                 var second = {name: mkrreln.newGene};
                 //var reln="gene contains small segment"
-                MarkerService.addRelationship(first, second, mkrreln.newRelationship, mkrreln.newAttribution)
+                MarkerService.addGeneRelationship(first, second, mkrreln.newRelationship, mkrreln.newAttribution)
                     .then(function (relationship) {
                          mkrreln.relationships.unshift(relationship);
                         mkrreln.newGene = '';
                         mkrreln.newAttribution = '';
                         mkrreln.errorMessage='';
                         close();
+                        init();
                     })
                     .catch(function (error) {
                         mkrreln.errorMessage = error.data.message;
                     })
                     .finally(function () {
                     });
+
             }
         }
 
-        function removeRelationship(relationship, index) {
-            MarkerService.removeRelationship(relationship)
+
+        function openEditAttribution(obj, ind) {
+
+            mkrreln.otherLink = obj;
+            mkrreln.ind = ind;
+            MarkerService.openModalPopup('relationship-attribution-modal');
+        }
+
+        function addAttribution() {
+            if (!mkrreln.newAttribution) {
+                mkrreln.errorMessage = 'Attribution/reference cannot be empty.';
+            } else {
+                MarkerService.addGeneMarkerRelationshipReference(mkrreln.otherLink, mkrreln.newAttribution)
+                    .then(function (relationship) {
+                        mkrreln.relationships.attributionZdbIDs = relationship.attributionZdbIDs;
+                        mkrreln.newAttribution = '';
+                        mkrreln.errorMessage = '';
+                        init();close();
+                    }).catch(function (error) {
+                    mkrreln.errorMessage = error.data.message;
+                });
+            }
+        }
+
+        function deleteAttribution(ind) {
+
+            MarkerService.removeMarkerRelationshipReference(mkrreln.otherLink, mkrreln.otherLink.attributionZdbIDs[ind])
                 .then(function () {
-                    mkrreln.relationships.splice(index, 1);
+                    mkrreln.otherLink.attributionZdbIDs.splice(ind, 1);
+                    mkrreln.errorMessage = '';
+                    init();
+                }).catch(function (error) {
+                mkrreln.errorMessage = error.data.message;
+            });
+        }
+
+        function openDeleteRelationship(obj, ind) {
+            mkrreln.otherLink = obj;
+            mkrreln.ind = ind;
+            MarkerService.openModalPopup('delete-relationship-modal');
+        }
+
+        function deleteRelationship() {
+            MarkerService.removeRelationship(mkrreln.otherLink)
+                .then(function () {
+                    mkrreln.relationships.splice(mkrreln.ind, 1);
+                    close();
                 })
                 .catch(function (error) {
-                    mkrreln.error(error);
-                });
-        }
-
-        function editRelationship(relationship) {
-            // MarkerService.getAttributionForRelationship(relationship)
-         MarkerService.openModalPopup('relationship-attribution-modal');
-           
-        }
-
-        function addAttribution(pubId) {
-            return MarkerService.addRelationshipAttribution(mkrreln.editing, pubId)
-                .then(function (relationship) {
-                    mkrreln.editing.Attributions = relationship.Attributions;
-                });
-        }
-
-        function removeAttribution(Attribution, index) {
-            return MarkerService.removeRelationshipAttribution(mkrreln.editing, Attribution)
-                .then(function () {
-                    mkrreln.editing.Attributions.splice(index, 1);
+                    mkrreln.errorMessage = error.data.message;
                 });
         }
         
