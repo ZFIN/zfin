@@ -23,7 +23,6 @@
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             rateLimitWait: 50,
-            limit: options.limit,
             remote: {
                 url: url,
                 wildcard: '%QUERY'
@@ -36,7 +35,8 @@
             name: 'search',
             displayKey: 'value',
             templates: options.templates,
-            source: hound
+            source: hound,
+            limit: options.limit,
         });
 
         return this;

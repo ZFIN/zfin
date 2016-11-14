@@ -148,7 +148,7 @@
 <script>
     $(function () {
         $("#journal-autocomplete").autocompletify(
-                "/action/quicksearch/autocomplete?q=%QUERY&category=Autocomplete&type=Journal&rows=10000", {
+                "/action/quicksearch/autocomplete?q=%QUERY&category=Journal&rows=10000", {
                     templates: {
                         suggestion: function (item) {
                             return '<div><p class="journal-abbrev">' + item.value + '</p>' +
