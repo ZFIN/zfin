@@ -18,8 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/marker_files
 
-GENERICS = cloneorderlink.apg \
-do-markerupdate.apg \
+GENERICS = do-markerupdate.apg \
 markerselect.apg markerupdate.apg \
 markerview.apg msegselect.apg newmrkrselect.apg \
 searchform.apg sequence.apg sequence_data_entry.apg
