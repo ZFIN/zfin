@@ -23,65 +23,7 @@
                   test="${!empty orthologyPresentationBean.orthologs || !empty orthologyPresentationBean.note}"
                   showNoData="true">
 
-    <c:if test="${!empty orthologyPresentationBean.orthologs}">
-        <table class="summary rowstripes">
-            <tr>
-                <th width="10%">Species</th>
-                <th width="10%">Symbol</th>
-                <th width="20%">Chromosome</th>
-                <th width="20%">Accession #</th>
-                <th width="40%">Evidence</th>
-            </tr>
-
-            <c:forEach var="ortholog" items="${orthologyPresentationBean.orthologs}" varStatus="loop">
-                <zfin:alternating-tr loopName="loop">
-                    <td>
-                        <b>${ortholog.species}</b>
-                    </td>
-                    <td>
-                        <i>${ortholog.abbreviation}</i>
-                    </td>
-                    <td>
-                        ${ortholog.chromosome}
-                    </td>
-                    <td>
-                        <c:forEach var="accession" items="${ortholog.accessions}">
-                            <li style="list-style-type: none;">
-                                <zfin:link entity="${accession}"/>
-                            </li>
-                        </c:forEach>
-                    </td>
-                    <td>
-                    <c:forEach var="evidence" items="${ortholog.evidence}">
-                        <c:set var="numPubs" value="${fn:length(evidence.publications)}"/>
-                        ${evidence.code.name}
-                        <c:if test="${!hideCounts}">
-                            <c:choose>
-                                <c:when test="${numPubs > 1}">
-                                    (<a href="/action/ortholog/${ortholog.orthoID}/citation-list?evidenceCode=${evidence.code.code}">${numPubs}</a>)
-                                </c:when>
-                                <c:otherwise>
-                                    (<a href="/${evidence.publications.iterator().next().zdbID}">1</a>)
-                                </c:otherwise>
-                            </c:choose>
-                        </c:if>
-                        <br>
-                    </c:forEach>
-                    </td>
-                </zfin:alternating-tr>
-            </c:forEach>
-        </table>
-        <c:if test="${!hideDownloadLink}">
-            <a href="/action/marker/${marker.zdbID}/download/orthology"><i class="fa fa-download"></i> Download Curated Orthology</a>
-        </c:if>
-    </c:if>
-
-    <c:if test="${!empty orthologyPresentationBean.note}">
-        <div class="summary">
-            <b>Orthology Note</b>
-            <div class="keep-breaks">${orthologyPresentationBean.note}</div>
-        </div>
-    </c:if>
+    <div ortho-edit gene="${marker.zdbID}" edit="editMode"></div>
 
 </zfin2:subsection>
 

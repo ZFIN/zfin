@@ -13,6 +13,8 @@ import org.zfin.gwt.root.dto.NcbiOtherSpeciesGeneDTO;
 import org.zfin.gwt.root.dto.OrthologDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.OrthologyPresentationBean;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.orthology.EvidenceCode;
 import org.zfin.orthology.NcbiOtherSpeciesGene;
 import org.zfin.orthology.Ortholog;
@@ -74,9 +76,27 @@ public class OrthologyController {
             throw new InvalidWebRequestException("No gene with ID " + geneID + " found!", null);
         List<Ortholog> orthologList = getOrthologyRepository().getOrthologs(gene);
         List<OrthologDTO> orthologDTOs = new ArrayList<>(orthologList.size());
+        OrthologyPresentationBean bean = MarkerService.getOrthologyPresentationBean(orthologList, gene, null);
         for (Ortholog ortholog : orthologList) {
             OrthologDTO orthologDTO = DTOConversionService.convertToOrthologDTO(ortholog);
             orthologDTOs.add(orthologDTO);
+            if (bean != null) {
+                for (OrthologyPresentationRow row : bean.getOrthologs()) {
+                    if (orthologDTO.getZdbID().equals(row.getOrthoID())) {
+                        Set<OrthologEvidenceGroupedByCode> orthEvidenceSet = new HashSet<>();
+                        for (OrthologEvidencePresentation presentation : row.getEvidence()) {
+                            Set<String> pubIdsSet = new HashSet<>();
+                            for (Publication pub : presentation.getPublications()) {
+                                pubIdsSet.add(pub.getZdbID());
+                            }
+                            OrthologEvidenceGroupedByCode evidenceGroupedByCode =
+                                    new OrthologEvidenceGroupedByCode(presentation.getCode().getCode(), presentation.getCode().getName(), pubIdsSet);
+                            orthEvidenceSet.add(evidenceGroupedByCode);
+                        }
+                        orthologDTO.setEvidenceSetGroupedByCode(orthEvidenceSet);
+                    }
+                }
+            }
         }
         return orthologDTOs;
     }

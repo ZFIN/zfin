@@ -21,7 +21,7 @@
 <table class="table table-borderless">
     <tr>
         <td>
-            <div ortho-edit pub="${publication.zdbID}"></div>
+            <div ortho-edit pub="${publication.zdbID}" edit="true" showDownloadLink="false"></div>
         </td>
     </tr>
 </table>
