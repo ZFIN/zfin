@@ -12,10 +12,10 @@
 
 
 <authz:authorize access="hasRole('root')">
-    <c:set var="loggedIn">yes</c:set>
+    <c:set var="loggedIn" value="true"/>
 </authz:authorize>
-<c:if test="${loggedIn eq 'yes' && marker.genedom}">
-    <div class="summary horizontal-solidblock" ng-if="editMode">
+<c:if test="${loggedIn && marker.genedom}">
+    <div class="summary horizontal-solidblock">
         <c:if test="${empty title}">
             <c:set var="title" value="MARKER RELATIONSHIPS"/>
         </c:if>
@@ -23,14 +23,6 @@
         <gene-marker-relationship marker-id="${marker.zdbID}" marker-abbrev="${marker.abbreviation}" edit="editMode">
         </gene-marker-relationship>
     </div>
-   <%-- <div class="summary horizontal-solidblock" ng-if="!editMode">
-        <c:if test="${empty title}">
-            <c:set var="title" value="MARKER RELATIONSHIPS"/>
-        </c:if>
-        <span class="summaryTitle">${title}</span>
-        <gene-marker-relationship marker-id="${marker.zdbID}" marker-abbrev="${marker.abbreviation}" edit="0">
-        </gene-marker-relationship>
-    </div>--%>
 </c:if>
 
 <c:if test="${loggedIn eq 'no' || !marker.genedom}">
