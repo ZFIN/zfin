@@ -98,24 +98,136 @@ public class HibernateSessionCreator {
 
             ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
             provider.addIncludeFilter(new RegexPatternTypeFilter(Pattern.compile(".*")));
-            final Set<BeanDefinition> classes = provider.findCandidateComponents("org.zfin");
-            for (BeanDefinition bbean : classes) {
-                try {
-                    ScannedGenericBeanDefinition bean = (ScannedGenericBeanDefinition) bbean;
+           /* final Set<BeanDefinition> classes = provider.findCandidateComponents("org.zfin");
+            for (BeanDefinition bbean : classes) {*/
+            /*    try {
+                    //ScannedGenericBeanDefinition bean = (ScannedGenericBeanDefinition) bbean;
+                    ScannedGenericBeanDefinition bean = (ScannedGenericBeanDefinition);
                     Set<String> annotationSet = bean.getMetadata().getAnnotationTypes();
                     if (annotationSet.contains("javax.persistence.Entity")) {
-                        Class<?> clazz = Class.forName(bean.getBeanClassName());
-                        config.addAnnotatedClass(clazz);
-                        LOG.info("Loaded Annotated Class: " + clazz.getName());
-                    }
+                        Class<?> clazz = Class.forName(bean.getBeanClassName());*/
+                      /*  config.addAnnotatedClass(clazz);
+                        LOG.info("Loaded Annotated Class: " + clazz.getName());*/
+                   /* }
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
-                }
+                }*/
+            //Class<?> clazz = Class.forName(org.zfin.infrastructure.DataNote.class);
+            config.addAnnotatedClass(org.zfin.infrastructure.DataNote.class);
+            config.addAnnotatedClass(org.zfin.marker.MarkerHistory.class);
+            config.addAnnotatedClass(org.zfin.marker.MarkerAlias.class);
+            config.addAnnotatedClass(org.zfin.infrastructure.DataAliasGroup.class);
+            config.addAnnotatedClass(org.zfin.infrastructure.ActiveSource.class);
+            config.addAnnotatedClass(org.zfin.marker.OrthologyNote.class);
+            config.addAnnotatedClass(org.zfin.antibody.AntibodyExternalNote.class);
+            config.addAnnotatedClass(org.zfin.curation.PublicationNote.class);
+            config.addAnnotatedClass(org.zfin.curation.Correspondence.class);
+            config.addAnnotatedClass(org.zfin.publication.PublicationDbXref.class);
+           config.addAnnotatedClass(org.zfin.anatomy.AnatomyStatistics.class);
+       config.addAnnotatedClass(org.zfin.anatomy.AnatomyTreeInfo.class);
+       config.addAnnotatedClass(org.zfin.anatomy.DevelopmentStage.class);
+       config.addAnnotatedClass(org.zfin.antibody.AntibodyExternalNote.class);
+       config.addAnnotatedClass(org.zfin.antibody.presentation.AntibodyAOStatistics.class);
+       config.addAnnotatedClass(org.zfin.audit.AuditLogItem.class);
+       config.addAnnotatedClass(org.zfin.curation.Correspondence.class);
+       config.addAnnotatedClass(org.zfin.curation.Curation.class);
+       config.addAnnotatedClass(org.zfin.curation.PublicationNote.class);
+       config.addAnnotatedClass(org.zfin.database.UnloadInfo.class);
+       config.addAnnotatedClass(org.zfin.expression.Experiment.class);
+       config.addAnnotatedClass(org.zfin.expression.ExperimentCondition.class);
+       config.addAnnotatedClass(org.zfin.expression.ExpressionExperiment2.class);
+       config.addAnnotatedClass(org.zfin.expression.ExpressionFigureStage.class);
+       config.addAnnotatedClass(org.zfin.expression.ExpressionPhenotypeTerm.class);
+       config.addAnnotatedClass(org.zfin.expression.ExpressionResult2.class);
+       config.addAnnotatedClass(org.zfin.ExternalNote.class);
+       config.addAnnotatedClass(org.zfin.feature.AminoAcidTerm.class);
+       config.addAnnotatedClass(org.zfin.feature.DnaMutationTerm.class);
+       config.addAnnotatedClass(org.zfin.feature.Feature.class);
+       config.addAnnotatedClass(org.zfin.feature.FeatureAlias.class);
+       config.addAnnotatedClass(org.zfin.feature.FeatureAlias.class);
+       config.addAnnotatedClass(org.zfin.feature.FeatureAssay.class);
+       config.addAnnotatedClass(org.zfin.feature.FeatureDnaMutationDetail.class);
+       config.addAnnotatedClass(org.zfin.feature.FeatureHistory.class);
+       config.addAnnotatedClass(org.zfin.feature.FeatureMarkerRelationship.class);
+       config.addAnnotatedClass(org.zfin.feature.FeatureMarkerRelationshipType.class);
+       config.addAnnotatedClass(org.zfin.feature.FeatureNote.class);
+       config.addAnnotatedClass(org.zfin.feature.FeaturePrefix.class);
+       config.addAnnotatedClass(org.zfin.feature.FeatureProteinMutationDetail.class);
+       config.addAnnotatedClass(org.zfin.feature.FeatureTracking.class);
+       config.addAnnotatedClass(org.zfin.feature.FeatureTranscriptMutationDetail.class);
+       config.addAnnotatedClass(org.zfin.feature.FeatureTranscriptMutationDetail.class);
+       config.addAnnotatedClass(org.zfin.feature.FeatureTypeGroup.class);
+       config.addAnnotatedClass(org.zfin.feature.GeneLocalizationTerm.class);
+       config.addAnnotatedClass(org.zfin.feature.MutationDetailControlledVocabularyTerm.class);
+       config.addAnnotatedClass(org.zfin.feature.ProteinConsequence.class);
+       config.addAnnotatedClass(org.zfin.feature.TranscriptConsequence.class);
+       config.addAnnotatedClass(org.zfin.fish.WarehouseSummary.class);
+       config.addAnnotatedClass(org.zfin.framework.presentation.AnatomyFact.class);
+       config.addAnnotatedClass(org.zfin.infrastructure.ActiveData.class);
+       config.addAnnotatedClass(org.zfin.infrastructure.ActiveSource.class);
+       config.addAnnotatedClass(org.zfin.infrastructure.AllMarkerNamesFastSearch.class);
+       config.addAnnotatedClass(org.zfin.infrastructure.AllNamesFastSearch.class);
+       config.addAnnotatedClass(org.zfin.infrastructure.ControlledVocab.class);
+       config.addAnnotatedClass(org.zfin.infrastructure.DataAliasGroup.class);
+       config.addAnnotatedClass(org.zfin.infrastructure.DataNote.class);
+       config.addAnnotatedClass(org.zfin.infrastructure.PersonAttribution.class);
+       config.addAnnotatedClass(org.zfin.infrastructure.PublicationAttribution.class);
+       config.addAnnotatedClass(org.zfin.infrastructure.RecordAttribution.class);
+       config.addAnnotatedClass(org.zfin.infrastructure.ReplacementZdbID.class);
+       config.addAnnotatedClass(org.zfin.infrastructure.SourceAlias.class);
+       config.addAnnotatedClass(org.zfin.infrastructure.TermAttribution.class);
+       config.addAnnotatedClass(org.zfin.infrastructure.Updates.class);
+       config.addAnnotatedClass(org.zfin.infrastructure.WithdrawnZdbID.class);
+       config.addAnnotatedClass(org.zfin.infrastructure.ZdbFlag.class);
+       config.addAnnotatedClass(org.zfin.marker.MarkerAlias.class);
+       config.addAnnotatedClass(org.zfin.marker.MarkerAlias.class);
+       config.addAnnotatedClass(org.zfin.marker.MarkerHistory.class);
+       config.addAnnotatedClass(org.zfin.marker.OrthologyNote.class);
+       config.addAnnotatedClass(org.zfin.marker.presentation.HighQualityProbeAOStatistics.class);
+       config.addAnnotatedClass(org.zfin.mutant.FishStr.class);
+       config.addAnnotatedClass(org.zfin.mutant.Genotype.class);
+       config.addAnnotatedClass(org.zfin.mutant.GenotypeAlias.class);
+       config.addAnnotatedClass(org.zfin.mutant.GenotypeAlias.class);
+       config.addAnnotatedClass(org.zfin.mutant.GenotypeExternalNote.class);
+       config.addAnnotatedClass(org.zfin.mutant.GenotypeFigure.class);
+       config.addAnnotatedClass(org.zfin.mutant.PhenotypeCurationSearch.class);
+       config.addAnnotatedClass(org.zfin.mutant.PhenotypeStatementWarehouse.class);
+       config.addAnnotatedClass(org.zfin.mutant.PhenotypeTermFastSearch.class);
+       config.addAnnotatedClass(org.zfin.mutant.PhenotypeWarehouse.class);
+       config.addAnnotatedClass(org.zfin.ontology.ConsiderTerm.class);
+       config.addAnnotatedClass(org.zfin.ontology.GenericTerm.class);
+       config.addAnnotatedClass(org.zfin.ontology.GenericTerm.class);
+       config.addAnnotatedClass(org.zfin.ontology.GenericTermRelationship.class);
+       config.addAnnotatedClass(org.zfin.ontology.GenericTermRelationship.class);
+       config.addAnnotatedClass(org.zfin.ontology.OntologyMetadata.class);
+       config.addAnnotatedClass(org.zfin.ontology.ReplacementTerm.class);
+       config.addAnnotatedClass(org.zfin.ontology.Subset.class);
+       config.addAnnotatedClass(org.zfin.ontology.TermAlias.class);
+       config.addAnnotatedClass(org.zfin.ontology.TermAlias.class);
+       config.addAnnotatedClass(org.zfin.ontology.TermDefinitionReference.class);
+       config.addAnnotatedClass(org.zfin.ontology.TermExternalReference.class);
+       config.addAnnotatedClass(org.zfin.ontology.TermStage.class);
+       config.addAnnotatedClass(org.zfin.ontology.TransitiveClosure.class);
+
+       config.addAnnotatedClass(org.zfin.publication.PublicationFile.class);
+       config.addAnnotatedClass(org.zfin.publication.PublicationFileType.class);
+       config.addAnnotatedClass(org.zfin.publication.PublicationTrackingHistory.class);
+       config.addAnnotatedClass(org.zfin.publication.PublicationTrackingLocation.class);
+       config.addAnnotatedClass(org.zfin.publication.PublicationTrackingStatus.class);
+       config.addAnnotatedClass(org.zfin.sequence.reno.Candidate.class);
+       config.addAnnotatedClass(org.zfin.sequence.reno.NomenclatureRun.class);
+       config.addAnnotatedClass(org.zfin.sequence.reno.RedundancyRun.class);
+       config.addAnnotatedClass(org.zfin.sequence.reno.Run.class);
+       config.addAnnotatedClass(org.zfin.sequence.reno.RunCandidate.class);
+       config.addAnnotatedClass(org.zfin.Species.class);
+
+
+            // LOG.info("Loaded Annotated Class: " + clazz.getName());
             }
 
             HibernateUtil.init(config.buildSessionFactory());
         }
-    }
+//    }
 
     public static File[] getHibernateConfigurationFiles() {
         // first in the source directory
