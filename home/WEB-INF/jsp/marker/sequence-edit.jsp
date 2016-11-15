@@ -28,7 +28,13 @@
 
       <zfin2:sequenceHead gene="${formBean.marker}"/>
 
-      <div id="newProteinSequence"></div>
+        <script type="text/javascript">
+            var MarkerProperties= {
+                zdbID: "${formBean.marker.zdbID}"
+            };
+        </script>
+
+        <div id="newProteinSequence"></div>
 
       <div id="newStemLoopSequence"></div>
 
