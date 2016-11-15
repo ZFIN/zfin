@@ -45,7 +45,6 @@ def markerPrefix = "CRISPR"
 def markerDelim = "-"
 
 
-//def burgessCRISPR = parseCsv(new FileReader("/research/zunloads/projects/CRISPRz/crisprLoad.csv"))
 def burgessCRISPR = parseCsv(new FileReader("/research/zunloads/projects/CRISPRz/crisprLoad201610.csv"))
 
 burgessCRISPR.each { csv ->
