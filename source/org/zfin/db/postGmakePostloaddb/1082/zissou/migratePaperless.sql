@@ -15,7 +15,7 @@ update pub_tracking_status
  where pts_Status = 'CLOSED';
 
 update pub_tracking_status
- set pts_status_display = 'Closed-Curated'
+ set pts_status_display = 'Closed, Curated'
  where pts_Status = 'CLOSED';
 
 
