@@ -71,7 +71,7 @@
                         and !suppressComma ? ", ": ""}
 
                     <c:set var="relationshipType" value="${entry.relationshipType}"/>
-                    <c:set var="markerType" value="${entry.markerType}"/>
+                    <c:set var="markerType" value="${entry.markerType}"/>N
                 </c:forEach>
     </table>
     <tr>
