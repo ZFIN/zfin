@@ -17,9 +17,11 @@
     <c:set var="showAllSequences" value="true"/>
 </c:if>
 
+<authz:authorize access="hasRole('root')">
+    <sequence-info-edit-link marker-id="${marker.zdbID}" edit="editMode"></sequence-info-edit-link>
+</authz:authorize>
+
 <%-- Should always have atleast one sequence, so won't ever hide --%>
-
-
 
 <zfin2:subsection title="${title}" test="${!empty sequenceInfo && !empty sequenceInfo.dbLinks}" showNoData="true">
     <table class="summary rowstripes">
