@@ -16,7 +16,7 @@ update pub_tracking_status
 
 update pub_tracking_status
  set pts_status_display = 'Closed-Curated'
- where pts_Status = 'CLOSED'
+ where pts_Status = 'CLOSED';
 
 
 insert into pub_tracking_status (pts_status,
@@ -29,7 +29,7 @@ insert into pub_tracking_status (pts_status,
 					pts_terminal_status,
 					pts_status_display,
 					pts_status_qualifier)
-  values ('CLOSED','t','Closed, no PDF', 'no data');
+  values ('CLOSED','t','Closed, no PDF', 'no PDF');
 
 
 insert into pub_tracking_status (pts_status, 
