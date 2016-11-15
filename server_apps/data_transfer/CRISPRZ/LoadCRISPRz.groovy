@@ -1,44 +1,32 @@
-import org.apache.commons.lang.StringUtils
 import org.apache.log4j.Logger
-import org.hibernate.Query
-import org.hibernate.Session
 import org.hibernate.criterion.Restrictions
 import org.zfin.Species
-import org.zfin.anatomy.DevelopmentStage
-import org.zfin.expression.*
-import org.zfin.figure.service.ImageService
-import org.zfin.figure.service.VideoService
-import org.zfin.framework.HibernateUtil
 import org.zfin.infrastructure.DataAliasGroup
+import org.zfin.infrastructure.DataNote
 import org.zfin.marker.Marker
+import org.hibernate.Session
+import org.zfin.framework.HibernateSessionCreator
+import org.zfin.framework.HibernateUtil
 import org.zfin.marker.MarkerRelationship
 import org.zfin.marker.MarkerAlias
-import org.zfin.marker.MarkerRelationshipType
 import org.zfin.marker.MarkerType
-import org.zfin.marker.repository.HibernateMarkerRepository
-import org.zfin.marker.service.MarkerService
-import org.zfin.mutant.Genotype
-import org.zfin.mutant.Fish
-import org.zfin.feature.Feature
-import org.zfin.mutant.FishExperiment
 import org.zfin.mutant.SequenceTargetingReagent
-import org.zfin.ontology.Ontology
-import org.zfin.ontology.Term
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper
 import org.zfin.profile.Person
+import org.zfin.properties.ZfinProperties
 import org.zfin.publication.Publication
-
 import org.zfin.repository.RepositoryFactory
 import org.zfin.sequence.ForeignDB
 import org.zfin.sequence.ForeignDBDataType
 import org.zfin.sequence.MarkerDBLink
 import org.zfin.sequence.ReferenceDatabase
 import org.zfin.sequence.STRMarkerSequence
-import org.zfin.infrastructure.DataAlias
 import org.zfin.sequence.DBLink
+import javax.persistence.*
+import org.hibernate.Session
 
 import static com.xlson.groovycsv.CsvParser.parseCsv
-import static org.zfin.framework.HibernateUtil.currentSession
+
 
 Logger log = Logger.getLogger(getClass())
 
@@ -57,7 +45,8 @@ def markerPrefix = "CRISPR"
 def markerDelim = "-"
 
 
-def burgessCRISPR = parseCsv(new FileReader("/research/zunloads/projects/CRISPRz/crisprLoad.csv"))
+//def burgessCRISPR = parseCsv(new FileReader("/research/zunloads/projects/CRISPRz/crisprLoad.csv"))
+def burgessCRISPR = parseCsv(new FileReader("/research/zunloads/projects/CRISPRz/crisprLoad201610.csv"))
 
 burgessCRISPR.each { csv ->
 
@@ -191,7 +180,7 @@ DBLink createNewDBLink(Marker newCrispr,String accession,Publication pub) {
         newCrispr.setDbLinks(markerDBLinks);
     } else
         newCrispr.getDbLinks().add(mdb);
-    currentSession().save(mdb);
+    HibernateUtil.currentSession().save(mdb);
 
 
 
