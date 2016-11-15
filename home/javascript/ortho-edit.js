@@ -294,7 +294,7 @@
             var idx = vm.orthologs.indexOf(vm.modalOrtholog);
             $http.delete('/action/gene/' + vm.gene + '/ortholog/' + vm.modalOrtholog.zdbID)
                 .then(function () {
-                    vm.orthologs.splice(idx, 1);
+                    fetchOrthology();
                 })
                 .catch(function (error) {
                     vm.generalError = 'Couldn\'t delete ortholog';
@@ -341,14 +341,8 @@
                 'evidenceCodeList': vm.modalEvidence.asArray()
             };
             $http.post('/action/gene/' + vm.gene + '/ortholog/evidence', payload)
-                .then(function () {
-                    addToPubList(vm.modalEvidence.publication);
-                    if (vm.modalEvidenceIndex < 0) {
-                        vm.modalOrtholog.evidenceArray.push(angular.copy(vm.modalEvidence));
-                        vm.modalOrtholog.evidenceArray.sort(evidenceComparator);
-                    } else {
-                        vm.modalOrtholog.evidenceArray[vm.modalEvidenceIndex] = angular.copy(vm.modalEvidence);
-                    }
+                .then(function success() {
+                    fetchOrthology();
                     $.modal.close();
                 })
                 .catch(function (error) {
@@ -381,7 +375,7 @@
             };
             $http.post('/action/gene/' + vm.gene + '/ortholog/evidence', payload)
                 .then(function () {
-                    ortholog.evidenceArray.splice(index, 1);
+                    fetchOrthology();
                 })
                 .catch(function (error) {
                     vm.generalError = 'Couldn\'t delete evidence';
