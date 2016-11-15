@@ -1,0 +1,81 @@
+<div>
+    <br/>
+    <table class="summary rowstripes" ng-show="si.links.length">
+      <tbody>
+        <tr>
+          <th width="30%">Type</th>
+          <th width="50%"> Accession # </th>
+          <th width="20%"> Length (bp/aa) </th>
+        </tr>
+        <tr ng-repeat="link in si.links" ng-class-odd="'odd'" ng-class-even="'even'">
+            <td>{{link.dataType}}</td>
+            <td><a ng-href="{{link.urlPrefix + link.accession}}">{{link.referenceDatabaseName}}:{{link.accession}}</a>
+                <span ng-bind-html="link.refLink"></span>
+                <span style="cursor: pointer;"
+                      ng-click="si.openEditAttribution(link, $index)"><i class="fa fa-pencil" aria-hidden="true" style="color: red"
+                                                                         title="Edit attributions"></i></span>
+                <span style="cursor: pointer;"
+                      ng-click="si.openDeleteOtherMarkerLink(link,$index)">
+                       <i class="fa fa-trash" aria-hidden="true" style="color: red"
+                          title="Delete the sequence information"></i></span>
+            </td>
+            <td>{{link.length}}</td>
+        </tr>
+      </tbody>
+    </table>
+</div>
+
+<div id="delete-sequence-info-modal" class="jq-modal curation">
+    <h3>
+        Delete Sequence Information
+    </h3>
+    <table class="table table-condensed">
+        <tr>
+            <td>
+                <a style="font-weight: bold;" target="_blank" ng-href="{{si.seqenceInfo.urlPrefix + si.seqenceInfo.accession}}">{{si.seqenceInfo.referenceDatabaseName}}:{{si.seqenceInfo.accession}}</a>
+            </td>
+        </tr>
+        <tr ng-repeat="ref in si.seqenceInfo.references">
+            <td>
+                {{ref.zdbID}}<br>
+                  <span ng-if="ref.title.length < 80"><a target="_blank" ng-href="/{{ref.zdbID}}">{{ref.title}}</a>
+                      </span>
+                  <span ng-if="ref.title.length >= 80"><a target="_blank" ng-href="/{{ref.zdbID}}">{{ref.title | limitTo:55}}...</a>
+                      </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="popup-actions">
+                    <button class="zfin-button cancel" ng-click="si.close()">Cancel</button>
+                    <button class="zfin-button reject" ng-click="si.deleteSeqenceInfo()">Delete</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <span class="error">{{si.errorMessage}}</span>
+</div>
+
+<div id="sequence-information-attribution-modal" class="jq-modal curation">
+    <h3>
+        Attributions for <a style="font-weight: bold;" target="_blank" ng-href="{{si.seqenceInfo.urlPrefix + si.seqenceInfo.accession}}">{{si.seqenceInfo.referenceDatabaseName}}:{{si.seqenceInfo.accession}}</a>
+    </h3>
+    <table>
+        <tr ng-repeat="ref in si.seqenceInfo.references">
+            <td><a target="_blank" ng-href="/{{ref.zdbID}}">{{ref.zdbID}}</a></td>
+            <td><a ng-show="si.seqenceInfo.references.length > 1" ng-click="si.deleteAttribution($index)" href><img src="/images/delete-button.png" />
+            </a></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input size="20" name="publicationID" ng-model="si.newReference" /></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button ng-click="si.close()" class="zfin-button cancel">Close</button>
+                <button ng-click="si.addAttribution()" class="zfin-button approve">Add</button>
+            </td>
+        </tr>
+    </table>
+    <span class="error">{{si.errorMessage}}</span>
+</div>

@@ -61,4 +61,40 @@ public class SequenceViewController {
         return "marker/sequence-view.page";
     }
 
+
+    @RequestMapping(value ="/sequence/edit/{zdbID}")
+    public String getSequenceEditView(
+            Model model
+            ,@PathVariable("zdbID") String zdbID)
+            throws Exception {
+
+        logger.debug("Start SequenceView Controller");
+
+        Marker marker = markerRepository.getMarkerByID(zdbID);
+
+        if (marker == null){
+            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
+            if(replacedZdbID !=null){
+                logger.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
+                marker = markerRepository.getMarkerByID(replacedZdbID);
+            }
+        }
+
+        if (marker == null){
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID) ;
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
+        }
+
+        //setting supporting sequences
+        SequencePageInfoBean sequenceInfo = MarkerService.getSequenceInfoFull(marker);
+        sequenceInfo.setMarker(marker);
+
+        AuditLogItem lastUpdated = RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID);
+
+        model.addAttribute("lastUpdated", lastUpdated);
+        model.addAttribute(LookupStrings.FORM_BEAN, sequenceInfo);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Sequences for Gene: " + marker.getAbbreviation());
+
+        return "marker/sequence-edit.page";
+    }
 }

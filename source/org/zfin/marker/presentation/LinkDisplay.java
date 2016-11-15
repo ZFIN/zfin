@@ -21,6 +21,8 @@ public class LinkDisplay implements ProvidesLink {
     private String urlSuffix;
     private Integer significance;
     private String dblinkZdbID;
+    private String length;
+    private String dataType;
 
     public String getDisplayName() {
         return referenceDatabaseName + ":" + accession;
@@ -153,5 +155,21 @@ public class LinkDisplay implements ProvidesLink {
 
     public void setReferenceDatabaseZdbID(String referenceDatabaseZdbID) {
         this.referenceDatabaseZdbID = referenceDatabaseZdbID;
+    }
+
+    public String getLength() {
+        return length;
+    }
+
+    public void setLength(String length) {
+        this.length = length;
+    }
+
+    public String getDataType() {
+        return dataType;
+    }
+
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
     }
 }
