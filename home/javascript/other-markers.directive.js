@@ -77,7 +77,7 @@
             } else {
                 MarkerService.addLink(om.markerId, om.newDatabase, om.newAccession, om.newReference)
                     .then(function (link) {
-                        om.links.unshift(link);
+                        init();
                         close();
                     })
                     .catch(function (error) {
