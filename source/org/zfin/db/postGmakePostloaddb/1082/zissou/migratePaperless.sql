@@ -18,29 +18,41 @@ update pub_tracking_status
  set pts_status_display = 'Closed, Curated'
  where pts_Status = 'CLOSED';
 
+update pub_tracking_status 
+ set pts_status_qualifier = 'archived'
+ where pts_Status = 'ARCHIVED';
+
+update pub_tracking_status
+ set pts_status_display = 'Closed, archived'
+ where pts_Status = 'ARCHIVED';
+
+update pub_tracking_status
+ set pts_status = 'CLOSED'
+ where pts_Status = 'ARCHIVED';
+
 
 insert into pub_tracking_status (pts_status,
 					pts_terminal_status,
 					pts_status_display,
-					pts_status_qualifier)
-  values ('CLOSED','t','Closed, no data', 'no data');
+					pts_status_qualifier, pts_pipeline_pull_down_order)
+  values ('CLOSED','t','Closed, no data', 'no data',13);
 
 insert into pub_tracking_status (pts_status,
 					pts_terminal_status,
 					pts_status_display,
-					pts_status_qualifier)
-  values ('CLOSED','t','Closed, no PDF', 'no PDF');
+					pts_status_qualifier, pts_pipeline_pull_down_order)
+  values ('CLOSED','t','Closed, no PDF', 'no PDF',14);
 
 
 insert into pub_tracking_status (pts_status, 
        	    		         pts_terminal_status, 
-				 pts_status_display)
- values ('INDEXED','f','Indexed');
+				 pts_status_display, pts_pipeline_pull_down_order)
+ values ('INDEXED','f','Indexed',4);
 
 insert into pub_tracking_status (pts_status, 
        	    		         pts_terminal_status, 
-				 pts_status_display)
- values ('CURATION_COMPLETED','f','Curation Completed');
+				 pts_status_display, pts_pipeline_pull_down_order)
+ values ('CURATION_COMPLETED','f','Curation Completed',7);
 
 insert into pub_tracking_history (pth_pub_zdb_id, pth_status_id, pth_status_insert_date, pth_status_set_by)
  select distinct zdb_id, (select pts_pk_id from pub_tracking_status
@@ -48,6 +60,38 @@ insert into pub_tracking_history (pth_pub_zdb_id, pth_status_id, pth_status_inse
   from publication
   where pub_indexed_date is not null
  and pub_is_indexed = 't';
+
+update pub_tracking_Status
+ set pts_pipeline_pull_down_order = 5
+ where pts_status_display = 'Ready for Curating';
+
+update pub_tracking_Status
+ set pts_pipeline_pull_down_order = 6
+ where pts_status_display = 'Curating';
+
+update pub_tracking_Status
+ set pts_pipeline_pull_down_order = 8
+ where pts_status_display = 'Waiting for Curator Review';
+
+update pub_tracking_Status
+ set pts_pipeline_pull_down_order = 9
+ where pts_status_display = 'Waiting for Software Fix';
+
+update pub_tracking_Status
+ set pts_pipeline_pull_down_order = 10
+ where pts_status_display = 'Waiting for Curator Review';
+
+update pub_tracking_Status
+ set pts_pipeline_pull_down_order = 11
+ where pts_status_display = 'Waiting for Author';
+
+update pub_tracking_Status
+ set pts_pipeline_pull_down_order = 12
+ where pts_status_display = 'Waiting for Ontology';
+
+update pub_tracking_Status
+ set pts_pipeline_pull_down_order = 13
+ where pts_status_display = 'Waiting for Nomenclature';
 
 
 alter table publication
