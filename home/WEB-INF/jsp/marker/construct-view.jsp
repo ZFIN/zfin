@@ -28,8 +28,6 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.ConstructBean" scope="request"/>
 
-<c:set var="editURL">/<%=ZfinProperties.getWebDriver()%>?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=${formBean.marker.zdbID}
-</c:set>
 <c:set var="deleteURL">/action/infrastructure/deleteRecord/${formBean.marker.zdbID}</c:set>
 
 <%--Currently, not possible to merge these (not provided as an option on the merge page--%>

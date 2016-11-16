@@ -24,14 +24,6 @@
         </c:forEach>
     </script>
 
-    <c:if test="${showEditControls}">
-        <caption>
-            <div ng-click="eControl.editMarker()" ng-if="!editMode" style="cursor: pointer;" class="error">Edit</div>
-            <div ng-click="eControl.viewMarker()" ng-if="editMode" style="cursor: pointer;" class="error">
-                View
-            </div>
-        </caption>
-    </c:if>
     <div ng-controller="NomenclatureController as control">
 </authz:authorize>
 

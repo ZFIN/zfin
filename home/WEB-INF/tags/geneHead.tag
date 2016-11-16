@@ -16,12 +16,6 @@
         reasonList.push('${reason.toString()}');
         </c:forEach>
     </script>
-    <caption>
-        <div ng-click="eControl.editMarker()" ng-if="!editMode" style="cursor: pointer;" class="error">Edit</div>
-        <div ng-click="eControl.viewMarker()" ng-if="editMode" style="cursor: pointer;" class="error">
-            View
-        </div>
-    </caption>
     <div ng-controller="NomenclatureController as control" ng-init="init('${gene.name}','${gene.abbreviation}')">
 </authz:authorize>
 <table class="primary-entity-attributes">
@@ -60,7 +54,7 @@
                              showEditControls="true"/>
 
 
-<tr>
+    <tr>
         <th>Location:</th>
         <td>
             <zfin2:displayLocation entity="${gene}" longDetail="true"/>

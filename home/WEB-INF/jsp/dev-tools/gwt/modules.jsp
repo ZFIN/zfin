@@ -93,7 +93,7 @@
     <tr>
         <td class="sectionTitle">Gene Edit</td>
         <td>
-            <a href="/action/devtool/gwt/gene-edit">Marker Edit: Gene on markerview.apg</a>
+            <a href="/action/devtool/gwt/gene-edit">Marker Edit: Gene on markerview</a>
         </td>
     </tr>
     <tr>

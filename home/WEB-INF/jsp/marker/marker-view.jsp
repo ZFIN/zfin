@@ -20,15 +20,13 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.MarkerBean" scope="request"/>
 
-<c:set var="editURL">/<%=ZfinProperties.getWebDriver()%>?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=${formBean.marker.zdbID}
-</c:set>
 <c:set var="deleteURL">/action/infrastructure/deleteRecord/${formBean.marker.zdbID}</c:set>
 <c:set var="mergeURL">/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}</c:set>
 
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
-                   editURL="${editURL}"
                    deleteURL="${deleteURL}"
-                   mergeURL="${mergeURL}"/>
+                   mergeURL="${mergeURL}"
+                   editMarker="true"/>
 
 <div style="float: right">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
