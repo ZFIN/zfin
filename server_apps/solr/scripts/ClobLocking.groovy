@@ -51,12 +51,15 @@ pubQuery = """
     case when status = 'active' then 'Active'
       when status = 'inactive' then 'Inactive'
       else status end as publication_status,
-    case when pub_completion_date is null
+    case when pts_status != 'CLOSED'
       then 'Open'
       else 'Closed' end as curation_status,
     keywords as keyword,
     authors as author_string
-    from publication
+    from publication, pub_tracking_history, pub_tracking_status
+    where pth_pub_zdb_id = zdb_id
+    and pth_status_id = pts_pk_id
+    and pth_status_is_current = 't'
 """
 
 ResultSet rs = conn.createStatement().executeQuery(pubQuery);
