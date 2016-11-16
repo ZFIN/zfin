@@ -103,8 +103,8 @@ alter table publication
 alter table publication
  drop pub_geli_removed;
 
-drop table curation;
-drop table curation_topic;
+--drop table curation;
+--drop table curation_topic;
 
 --create table pub_data_recorded_topics (pdnc_pk_id serial8 not null constraint dnc_pk_id_not_null,
 --       	     		             pdnc_pub_zdb_id varchar(50) not null constraint pdnc_pub_zdb_id_not_null,
