@@ -5,8 +5,8 @@ create procedure checkPubTrackingLocationOwner(vPthPubZdbId varchar(50), vPthSta
        let status = (Select pts_status from pub_tracking_status
        	   	    	    where pts_pk_id = vPthStatusId);
 
-       if status in ('Curating','Indexing')
-        and (vPthLocationId is null or vPthClaimedBy is null)
+       if status in ('Curating','Indexing') 
+        and (vPthLocationId is null or vPthClaimedBy is null)f
           then 
        	    raise exception -746,0,'FAIL!: status of curating or indexing need locations';
        end if;

@@ -13,10 +13,11 @@
 
 <zfin2:subsection title="${title}"
                   test="${geneOntologyOnMarker.goTermCount>0}" showNoData="true">
-    <div ng-if="editMode">
-        <a href="/action/marker/marker-go-edit/${marker.zdbID}" class="error">Update </a>
-    </div>
-
+    <authz:authorize access="hasRole('root')">
+        <div ng-if="editMode">
+            <a href="/action/marker/marker-go-edit/${marker.zdbID}" class="error">Update </a>
+        </div>
+    </authz:authorize>
     <table class="summary">
         <tr>
             <th width="25%">Ontology<A class="popup-link info-popup-link" HREF="/zf_info/GO.html"></A></th>

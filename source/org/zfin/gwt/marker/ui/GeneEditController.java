@@ -19,7 +19,7 @@ import org.zfin.gwt.root.ui.PublicationLookupBox;
 import java.util.List;
 
 /**
- * A GWT class for adding proteins to genes on the markerview.apg page.
+ * A GWT class for adding proteins to genes on the markerview page.
  */
 public final class GeneEditController extends AbstractMarkerEditController<MarkerDTO> {
 
@@ -44,8 +44,6 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
 
     // internal data
     private String url;
-    private final String urlHeader = "?MIval=aa-markerview.apg&UPDATE=1&OID=";
-
 
     private class NotificationPanel extends Composite {
 
@@ -70,7 +68,7 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
                     setVisible(false);
                     proteinSequenceArea.activate();
                     proteinSequenceArea.resetAndHide();
-                    Window.open(url + urlHeader + dto.getZdbID(), "_self", "");
+                    Window.open(url + dto.getZdbID(), "_self", "");
                 }
             });
         }

@@ -63,7 +63,7 @@ public class GenePerformanceTest extends AbstractUnitSmokeTest {
     }
 
     public String getApgPageUrl(){
-        return  ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()+"?MIval=aa-markerview.apg&OID=";
+        return  "/";
     }
 
     public void testInit() throws Exception{

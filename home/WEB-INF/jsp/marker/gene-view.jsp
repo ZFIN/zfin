@@ -31,14 +31,13 @@
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.GeneBean" scope="request"/>
 
 <c:set var="markerID">${formBean.marker.zdbID}</c:set>
-<c:set var="editURL">/<%=ZfinProperties.getWebDriver()%>?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=${markerID}</c:set>
 <c:set var="deleteURL">/action/infrastructure/deleteRecord/${markerID}</c:set>
 <c:set var="mergeURL">/action/marker/merge?zdbIDToDelete=${markerID}</c:set>
 
 <zfin2:dataManager zdbID="${markerID}"
-                   editURL="${editURL}"
                    deleteURL="none"
-                   mergeURL="${mergeURL}"/>
+                   mergeURL="${mergeURL}"
+                   editMarker="true"/>
 
 
 <div style="float: right">

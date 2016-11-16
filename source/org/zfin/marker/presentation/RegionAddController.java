@@ -17,7 +17,6 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.presentation.PublicationValidator;
@@ -54,7 +53,8 @@ public class RegionAddController {
         return "marker/region-add.page";
     }
 
-    private @Autowired
+    private
+    @Autowired
     HttpServletRequest request;
 
     @InitBinder
@@ -63,10 +63,10 @@ public class RegionAddController {
     }
 
     @RequestMapping(value = "/region-do-submit", method = RequestMethod.POST)
-    public String addRegion ( @Valid @ModelAttribute("formBean") RegionAddBean formBean,
-                              BindingResult result) throws Exception {
+    public String addRegion(@Valid @ModelAttribute("formBean") RegionAddBean formBean,
+                            BindingResult result) throws Exception {
 
-        if(result.hasErrors())
+        if (result.hasErrors())
             return "marker/region-add.page";
 
         String regionName = formBean.getRegionName();
@@ -91,7 +91,7 @@ public class RegionAddController {
             HibernateUtil.createTransaction();
 
             mr.createMarker(newRegion, regionPub);
-            PublicationService.addRecentPublications(request.getSession().getServletContext(), regionPub, PublicationSessionKey.GENE) ;
+            PublicationService.addRecentPublications(request.getSession().getServletContext(), regionPub, PublicationSessionKey.GENE);
 
             HibernateUtil.flushAndCommitCurrentSession();
 
@@ -109,28 +109,27 @@ public class RegionAddController {
         Marker createdRegion = mr.getMarkerByName(newRegion.getName());
         String alias = formBean.getRegionAlias();
 
-        if(!StringUtils.isEmpty(alias)) {
-          if (!addRegionAlias(createdRegion, alias, regionPub).equalsIgnoreCase("successful")) {
-            return "redirect:/action/dev-tools/test-error-page";
-          }
+        if (!StringUtils.isEmpty(alias)) {
+            if (!addRegionAlias(createdRegion, alias, regionPub).equalsIgnoreCase("successful")) {
+                return "redirect:/action/dev-tools/test-error-page";
+            }
         }
 
         String curationNote = formBean.getRegionCuratorNote();
-        if(!StringUtils.isEmpty(curationNote)) {
-          if (!addCuratorNote(createdRegion, curationNote).equalsIgnoreCase(curationNote)) {
-            return "redirect:/action/dev-tools/test-error-page";
-          }
+        if (!StringUtils.isEmpty(curationNote)) {
+            if (!addCuratorNote(createdRegion, curationNote).equalsIgnoreCase(curationNote)) {
+                return "redirect:/action/dev-tools/test-error-page";
+            }
         }
 
-        return "redirect:/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() +
-               "?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=" + newRegion.getZdbID();
+        return "redirect:/" + newRegion.getZdbID()+"#edit";
     }
 
     private String addRegionAlias(Marker marker, String alias, Publication pub) {
         try {
             HibernateUtil.createTransaction();
 
-            mr.addMarkerAlias(marker,alias,pub);
+            mr.addMarkerAlias(marker, alias, pub);
 
             HibernateUtil.flushAndCommitCurrentSession();
 
@@ -149,7 +148,7 @@ public class RegionAddController {
     private String addCuratorNote(Marker marker, String dNote) {
         try {
             HibernateUtil.createTransaction();
-            DataNote dn = mr.addMarkerDataNote(marker,dNote);
+            DataNote dn = mr.addMarkerDataNote(marker, dNote);
             HibernateUtil.flushAndCommitCurrentSession();
             return dn.getNote();
         } catch (Exception e) {
