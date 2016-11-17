@@ -78,6 +78,8 @@ FISH_STATS   = get_image_stats.sql \
 		regen_construct.sql \
 		regen_expression_mart_per_pub.sql \
 		updateCurrentPubStatus.sql \
+		updatePubCompletionDate.sql \
+		updatePubIndexedDate.sql \
 		updateMaxStatusAsCurrent.sql 
 LOAD_STATS   = p_zgc_load.sql 
 XPAT_STATS   = populate_direct_submission_date.sql p_check_EFG_WT_expression.sql

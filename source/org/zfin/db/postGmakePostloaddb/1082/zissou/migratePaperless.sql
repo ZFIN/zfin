@@ -1,14 +1,9 @@
 --liquibase formatted sql
 --changeset sierra:migratePaperless
 
---alter table publication
--- drop entry_time;
+alter table publication
+ drop entry_time;
 
---alter table publication
--- drop pub_completion_date;
-
---alter table publication
--- drop pub_arrival_date;
 
 update pub_tracking_status 
  set pts_status_qualifier = 'curated'
