@@ -85,15 +85,14 @@ update pub_tracking_Status
  set pts_pipeline_pull_down_order = 12
  where pts_status_display = 'Waiting for Nomenclature';
 
+alter table publication
+ drop pub_is_indexed;
 
---alter table publication
--- drop pub_is_indexed;
+alter table publication
+ drop pub_indexed_date;
 
---alter table publication
--- drop pub_indexed_date;
-
---alter table publication
---- drop pub_geli_removed;
+alter table publication
+ drop pub_geli_removed;
 
 --drop table curation;
 --drop table curation_topic;
