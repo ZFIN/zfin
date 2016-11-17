@@ -1,14 +1,14 @@
 --liquibase formatted sql
 --changeset sierra:migratePaperless
 
-alter table publication
- drop entry_time;
+--alter table publication
+-- drop entry_time;
 
-alter table publication
- drop pub_completion_date;
+--alter table publication
+-- drop pub_completion_date;
 
-alter table publication
- drop pub_arrival_date;
+--alter table publication
+-- drop pub_arrival_date;
 
 update pub_tracking_status 
  set pts_status_qualifier = 'curated'
@@ -23,7 +23,7 @@ update pub_tracking_status
  where pts_Status = 'ARCHIVED';
 
 update pub_tracking_status
- set pts_status_display = 'Closed, archived'
+ set pts_status_display = 'Closed, Archived'
  where pts_Status = 'ARCHIVED';
 
 update pub_tracking_status
@@ -35,13 +35,13 @@ insert into pub_tracking_status (pts_status,
 					pts_terminal_status,
 					pts_status_display,
 					pts_status_qualifier, pts_pipeline_pull_down_order)
-  values ('CLOSED','t','Closed, no data', 'no data',13);
+  values ('CLOSED','t','Closed, No data', 'no data',13);
 
 insert into pub_tracking_status (pts_status,
 					pts_terminal_status,
 					pts_status_display,
 					pts_status_qualifier, pts_pipeline_pull_down_order)
-  values ('CLOSED','t','Closed, no PDF', 'no PDF',14);
+  values ('CLOSED','t','Closed, No PDF', 'no PDF',14);
 
 
 insert into pub_tracking_status (pts_status, 
@@ -49,10 +49,6 @@ insert into pub_tracking_status (pts_status,
 				 pts_status_display, pts_pipeline_pull_down_order)
  values ('INDEXED','f','Indexed',4);
 
-insert into pub_tracking_status (pts_status, 
-       	    		         pts_terminal_status, 
-				 pts_status_display, pts_pipeline_pull_down_order)
- values ('CURATION_COMPLETED','f','Curation Completed',7);
 
 insert into pub_tracking_history (pth_pub_zdb_id, pth_status_id, pth_status_insert_date, pth_status_set_by)
  select distinct zdb_id, (select pts_pk_id from pub_tracking_status
@@ -79,29 +75,25 @@ update pub_tracking_Status
 
 update pub_tracking_Status
  set pts_pipeline_pull_down_order = 10
- where pts_status_display = 'Waiting for Curator Review';
-
-update pub_tracking_Status
- set pts_pipeline_pull_down_order = 11
  where pts_status_display = 'Waiting for Author';
 
 update pub_tracking_Status
- set pts_pipeline_pull_down_order = 12
+ set pts_pipeline_pull_down_order = 11
  where pts_status_display = 'Waiting for Ontology';
 
 update pub_tracking_Status
- set pts_pipeline_pull_down_order = 13
+ set pts_pipeline_pull_down_order = 12
  where pts_status_display = 'Waiting for Nomenclature';
 
 
-alter table publication
- drop pub_is_indexed;
+--alter table publication
+-- drop pub_is_indexed;
 
-alter table publication
- drop pub_indexed_date;
+--alter table publication
+-- drop pub_indexed_date;
 
-alter table publication
- drop pub_geli_removed;
+--alter table publication
+--- drop pub_geli_removed;
 
 --drop table curation;
 --drop table curation_topic;
