@@ -11,7 +11,7 @@ define status varchar(50);
 let status = (Select pts_status from pub_tracking_Status
     	     	     where pts_pk_id = vPubStatusId);
 
-if (status like 'Closed%')
+if (status like 'CLOSED%')
   then 
   update publication 
   	 set pub_completion_date = current year to second

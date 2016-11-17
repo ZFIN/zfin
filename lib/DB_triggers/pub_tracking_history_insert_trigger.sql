@@ -9,5 +9,8 @@ for each row (execute function updateMaxStatusAsCurrent(new_pth.pth_pub_zdb_id) 
     execute procedure updatePubCompletionDate(new_pth.pth_pub_zdb_id,
 						new_pth.pth_status_id),
     execute procedure updatePubIndexedDate(new_pth.pth_pub_zdb_id,
-						new_pth.pth_status_id)
+						new_pth.pth_status_id),
+    execute procedure insertIndexedStatus(new_pth.pth_pub_zdb_id,
+					 new_pth.pth_status_id,
+					 new_pth.pth_status_set_by)
 );
