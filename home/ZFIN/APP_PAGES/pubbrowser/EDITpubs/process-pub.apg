@@ -133,7 +133,7 @@ Message: $MI_ERRORMSG
 					pub_jrnl_zdb_id,
 					pub_date,
 					owner,
-					entry_time,
+					pub_arrival_date,
 					jtype) 
 			values ('$OID',
 				'temp',
