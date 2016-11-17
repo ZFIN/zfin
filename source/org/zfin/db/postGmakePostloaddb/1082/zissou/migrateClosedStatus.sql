@@ -71,7 +71,14 @@ update pub_tracking_history
      		     	     where pts_status_display = 'Closed, Curated');
 
 
-
+update pub_tracking_history
+ set pth_status_id = (Select pts_pk_id
+     		     	     from pub_tracking_status
+			     where pts_status = 'Closed, Archived')
+ where not exists  (Select 'x' from publication_note
+    	   	   where pnote_text = 'This paper closed unread')
+ and pth_status_id = (select pts_pk_id from pub_tracking_status
+     		     	     where pts_status_display = 'Closed, Curated');
 
 update pub_tracking_history
  set pth_status_id = (Select pts_pk_id
