@@ -771,6 +771,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     public DBLink addDBLink(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID) {
+        List<String> list = new ArrayList<>();
+        list.add(attributionZdbID);
+        return addDBLink(marker, accessionNumber, refdb, list);
+    }
+    public DBLink addDBLink(Marker marker, String accessionNumber, ReferenceDatabase refdb, List<String> attributionZdbID) {
         MarkerDBLink mdb = new MarkerDBLink();
         mdb.setMarker(marker);
         mdb.setAccessionNumber(accessionNumber);
