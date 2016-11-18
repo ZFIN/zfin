@@ -52,8 +52,13 @@
         </groovy>
     </target>
 
-    <target name="loadCrisprOldCommit">
-        <groovy src="LoadCRISPRz1.groovy"/>
+    <target name="loadCrisprOld">
+        <exec executable="groovy" failifexecutionfails="true">
+            <arg value="-cp"/>
+            <arg value="${classbin.dir}/:${web.lib}/*:${lib}/*"/>
+            <arg value="LoadCRISPRz1.groovy"/>
+        </exec>
+        
     </target>
 
     <target name="loadCrisprOldRollback">
