@@ -80,7 +80,6 @@ FISH_STATS   = get_image_stats.sql \
 		updateCurrentPubStatus.sql \
 		updatePubCompletionDate.sql \
 		updatePubIndexedDate.sql \
-		insertIndexedStatus.sql \
 		updateMaxStatusAsCurrent.sql 
 LOAD_STATS   = p_zgc_load.sql 
 XPAT_STATS   = populate_direct_submission_date.sql p_check_EFG_WT_expression.sql
