@@ -1,5 +1,10 @@
 <div>
     <br/>
+    <div class="summaryTitle">SEQUENCE INFORMATION
+        <span style="cursor: pointer;">
+            <i style="color: red; font-weight: bold;" title="Create new sequence information" ng-click="si.openAddSequenceInfo()">New</i>
+        </span>
+    </div>
     <table class="summary rowstripes" ng-show="si.links.length">
       <tbody>
         <tr>
@@ -11,9 +16,9 @@
             <td>{{link.dataType}}</td>
             <td><a ng-href="{{link.urlPrefix + link.accession}}">{{link.referenceDatabaseName}}:{{link.accession}}</a>
                 <span ng-bind-html="link.refLink"></span>
-                <span style="cursor: pointer;"
-                      ng-click="si.openEditAttribution(link, $index)"><i class="fa fa-pencil" aria-hidden="true" style="color: red"
-                                                                         title="Edit attributions"></i></span>
+                <span style="cursor: pointer;" ng-click="si.openEditSequenceInfo(link, $index)">
+                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit the sequence information"></i>
+                </span>
                 <span style="cursor: pointer;"
                       ng-click="si.openDeleteOtherMarkerLink(link,$index)">
                        <i class="fa fa-trash" aria-hidden="true" style="color: red"
@@ -23,6 +28,34 @@
         </tr>
       </tbody>
     </table>
+</div>
+
+<div id="new-sequence-information-modal" class="jq-modal curation">
+    <h3>
+        Add New Sequence Information
+    </h3>
+    <table class="table table-condensed">
+        <tr>
+            <td>Database:</td><td><select class="form-control"
+                                          ng-model="si.newDatabase"
+                                          ng-options="database.zdbID as database.label for database in si.databases"></select></td>
+        </tr>
+        <tr>
+            <td>Accession:</td><td><input name="newAcc" ng-model="si.newAccession" /></td>
+        </tr>
+        <tr>
+            <td>Reference:</td><td><input name="newRef" ng-model="si.newReference" /></td>
+        </tr>
+        <tr>
+            <td>
+                <div class="popup-actions">
+                    <button class="zfin-button cancel" ng-click="si.close()">Cancel</button>
+                    <button class="zfin-button approve" ng-click="si.addSequenceInfo()">Add</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <span class="error">{{si.errorMessage}}</span>
 </div>
 
 <div id="delete-sequence-info-modal" class="jq-modal curation">
@@ -56,10 +89,27 @@
     <span class="error">{{si.errorMessage}}</span>
 </div>
 
-<div id="sequence-information-attribution-modal" class="jq-modal curation">
+<div id="edit-sequence-information-modal" class="jq-modal curation">
     <h3>
-        Attributions for <a style="font-weight: bold;" target="_blank" ng-href="{{si.seqenceInfo.urlPrefix + si.seqenceInfo.accession}}">{{si.seqenceInfo.referenceDatabaseName}}:{{si.seqenceInfo.accession}}</a>
+        Update <a style="font-weight: bold;" target="_blank" ng-href="{{si.seqenceInfo.urlPrefix + si.seqenceInfo.accession}}">{{si.seqenceInfo.referenceDatabaseName}}:{{si.seqenceInfo.accession}}</a>
     </h3>
+    <table class="table table-condensed">
+        <tr>
+            <td>Database:</td><td>{{si.seqenceInfo.referenceDatabaseName}}</td>
+        </tr>
+        <tr>
+            <td>Accession:</td><td><input name="newAcc" placeholder="{{si.newAccession}}" ng-model="si.newAccession" /></td>
+        </tr>
+        <tr>
+            <td>
+                <div class="popup-actions">
+                    <button class="zfin-button cancel" ng-click="si.close()">Cancel</button>
+                    <button class="zfin-button approve" ng-click="si.updateSequenceInfo()">Update</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <span class="error">{{si.errorMessage}}</span>
     <table>
         <tr ng-repeat="ref in si.seqenceInfo.references">
             <td><a target="_blank" ng-href="/{{ref.zdbID}}">{{ref.zdbID}}</a></td>
