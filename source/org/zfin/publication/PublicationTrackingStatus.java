@@ -13,7 +13,6 @@ public class PublicationTrackingStatus {
 	INDEXED,
         READY_FOR_CURATION,
         CURATING,
-	CURATION_COMPLETED,
         WAIT,
         CLOSED
     }
