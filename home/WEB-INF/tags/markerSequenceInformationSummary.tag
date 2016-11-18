@@ -18,7 +18,8 @@
 </c:if>
 
 <authz:authorize access="hasRole('root')">
-    <sequence-info-edit-link marker-id="${marker.zdbID}" edit="editMode"></sequence-info-edit-link>
+    <br/><span class="summaryTitle">SEQUENCE INFORMATION <sequence-info-edit-link marker-id="${marker.zdbID}" edit="editMode"></sequence-info-edit-link></span>
+    <c:set var="title" value=""/>
 </authz:authorize>
 
 <%-- Should always have atleast one sequence, so won't ever hide --%>

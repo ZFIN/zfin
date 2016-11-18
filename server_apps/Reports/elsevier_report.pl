@@ -113,7 +113,7 @@ openReport();
 
 open (REPORT, "> reportElsevier.txt") or die "can not open report.txt" ;
 
-$elsevier_query = "select distinct zdb_id,jrnl_name,entry_time from record_attribution, publication, journal
+$elsevier_query = "select distinct zdb_id,jrnl_name,pub_arrival_date from record_attribution, publication, journal
                     where recattrib_source_zdb_id = zdb_id
                       and pub_jrnl_zdb_id = jrnl_zdb_id
                       and jrnl_publisher in ('Elsevier','Cell Press') 

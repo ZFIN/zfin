@@ -7,4 +7,6 @@
 <include file="source/org/zfin/db/postGmakePostloaddb/1082/zissou/addOrder.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1082/zissou/migratePaperless.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1082/zissou/migrateGap.sql"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1082/zissou/migrateClosedStatus.sql"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1082/zissou/updateHiddenStatus.sql"/>
 </databaseChangeLog>

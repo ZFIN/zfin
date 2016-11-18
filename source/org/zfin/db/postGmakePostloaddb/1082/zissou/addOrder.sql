@@ -14,15 +14,14 @@ alter table pub_tracking_status
 alter table pub_tracking_status
  add (pts_hidden_status boolean default 'f' not null constraint pts_hidden_status_not_null);
 
-
 update pub_tracking_status
   set pts_hidden_status = 't'
  where pts_status = 'INDEXED';
 
-update pub_tracking_status
-  set pts_hidden_status = 't'
- where pts_status = 'CURATED';
-
-update pub_tracking_status
-  set pts_hidden_status = 't'
- where pts_status = 'CLOSED';
+-- update pub_tracking_status
+--   set pts_hidden_status = 't'
+--  where pts_status = 'CURATED';
+--
+-- update pub_tracking_status
+--   set pts_hidden_status = 't'
+--  where pts_status = 'CLOSED';
