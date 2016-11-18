@@ -45,5 +45,14 @@
         </groovy>
     </target>
 
+    <target name="loadCrisprOldCommit">
+        <groovy src="LoadCRISPRz1.groovy"/>
+    </target>
+
+    <target name="loadCrisprOldRollback">
+        <groovy src="LoadCRISPRz1.groovy">
+            <arg value="--rollback"/>
+        </groovy>
+    </target>
 
 </project>
