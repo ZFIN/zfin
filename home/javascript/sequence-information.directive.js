@@ -5,9 +5,8 @@
 
     function sequenceInfoEditLink() {
         var seqInfoEditLink =
-            '<br/>' +
-            '<a ng-show="edit" style="color: red; font-weight: bold;" title="Edit sequence information" ng-href="/action/marker/sequence/edit/{{markerId}}">' +
-            'Edit Sequence Information' +
+            '<a ng-show="edit" style="color: red; font-style: italic; font-weight: bold;" title="Edit sequence information" ng-href="/action/marker/sequence/edit/{{markerId}}">' +
+            'Edit' +
             '</a>';
 
         var directive = {
