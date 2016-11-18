@@ -1,6 +1,6 @@
 <project name="crispr load" basedir=".">
 
-    <property name="root.dir" value="${basedir}/../../../"/>
+    <property name="root.dir" value="${basedir}/../../.."/>
     <property name="web.dir" value="${root.dir}/home"/>
     <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
     <property name="classbin.dir" value="${web-inf.dir}/classes"/>
@@ -15,11 +15,11 @@
         <pathelement location="${classbin.dir}"/>
         <fileset dir="${web.lib}">
             <exclude name="*validation*.jar"/>
-<!--
-            <exclude name="*commons-validator*.jar"/>
-            <exclude name="*hibernate-validator*.jar"/>
-            <exclude name="*validation-api*.jar"/>
--->
+            <!--
+                        <exclude name="*commons-validator*.jar"/>
+                        <exclude name="*hibernate-validator*.jar"/>
+                        <exclude name="*validation-api*.jar"/>
+            -->
             <include name="*.jar"/>
         </fileset>
         <fileset dir="${env.SOURCEROOT}/lib/Java">
@@ -34,9 +34,16 @@
              classpathref="classpath"/>
 
 
-
     <target name="loadCrisprCommit">
         <groovy src="LoadCRISPRz.groovy"/>
+    </target>
+
+    <target name="loadCrispr">
+        <exec executable="groovy" failifexecutionfails="true">
+            <arg value="-cp"/>
+            <arg value="${classbin.dir}/:${web.lib}/*:${lib}/*"/>
+            <arg value="LoadCRISPRz.groovy"/>
+        </exec>
     </target>
 
     <target name="loadCrisprRollback">
