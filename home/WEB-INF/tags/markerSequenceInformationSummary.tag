@@ -18,13 +18,12 @@
 </c:if>
 
 <authz:authorize access="hasRole('root')">
-    <br/><span class="summaryTitle">SEQUENCE INFORMATION <sequence-info-edit-link marker-id="${marker.zdbID}" edit="editMode"></sequence-info-edit-link></span>
-    <c:set var="title" value=""/>
+    <c:set var="title" value="SEQUENCE INFORMATION"/>
 </authz:authorize>
 
 <%-- Should always have atleast one sequence, so won't ever hide --%>
 
-<zfin2:subsection title="${title}" test="${!empty sequenceInfo && !empty sequenceInfo.dbLinks}" showNoData="true">
+<zfin2:subsection title="${title}" test="${!empty sequenceInfo && !empty sequenceInfo.dbLinks}" showNoData="true" markerID="${marker.zdbID}">
     <table class="summary rowstripes">
         <tr>
             <th width="25%">Type</th>

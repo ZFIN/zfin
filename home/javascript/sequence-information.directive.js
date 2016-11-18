@@ -43,10 +43,11 @@
     SequenceInformationController.$inject = ['$sce', 'MarkerService'];
     function SequenceInformationController($sce, MarkerService) {
         var si = this;
-        si.links = [];
+        si.linkDisplays = [];
         si.databases = [];
         si.ind = 0;
         si.errorMessage = '';
+        si.errorAdd = '';
         si.newDatabase = '';
         si.newAccession = '';
         si.newReference = '';
@@ -67,9 +68,15 @@
         function init() {
             MarkerService.getLinks(si.markerId,"marker linked sequence")
                 .then(function (links) {
-                    si.links = links;
-                    for (i = 0; i < si.links.length; i++) {
-                        si.links[i].refLink = $sce.trustAsHtml(si.links[i].attributionLink);
+                    si.linkDisplays = links;
+                    var previousDataType = si.linkDisplays[0].dataType;
+                    for (i = 0; i < si.linkDisplays.length; i++) {
+                        if (i > 0 && si.linkDisplays[i].dataType === previousDataType) {
+                            si.linkDisplays[i].dataType = "";
+                        } else {
+                            previousDataType = si.linkDisplays[i].dataType;
+                        }
+                        si.linkDisplays[i].refLink = $sce.trustAsHtml(si.linkDisplays[i].attributionLink);
                     }
                 })
                 .catch(function (error) {
@@ -116,8 +123,6 @@
                     })
                     .catch(function (error) {
                         si.errorMessage = error.data.message;
-                    })
-                    .finally(function () {
                     });
             }
         }
@@ -131,7 +136,7 @@
         function deleteSeqenceInfo() {
             MarkerService.removeLink(si.seqenceInfo)
                 .then(function () {
-                    si.links.splice(si.ind, 1);
+                    si.linkDisplays.splice(si.ind, 1);
                     close();
                 })
                 .catch(function (error) {
@@ -149,9 +154,9 @@
 
         function updateSequenceInfo() {
             if (!si.newDatabase) {
-                si.errorMessage = 'Database cannot be empty.';
+                si.errorAdd = 'Database cannot be empty.';
             } else if (!si.newAccession) {
-                si.errorMessage = 'Accession number cannot be empty.';
+                si.errorAdd = 'Accession number cannot be empty.';
             } else {
                 si.references = si.seqenceInfo.references;
                 MarkerService.removeLink(si.seqenceInfo)
@@ -172,9 +177,9 @@
                                                 si.seqenceInfo = seq;
                                                 si.seqenceInfo.references = seq.references;
                                                 si.newReference = '';
-                                                si.errorMessage = '';
+                                                si.errorAdd = '';
                                             }).catch(function (error) {
-                                                si.errorMessage = error.data.message;
+                                                si.errorAdd = error.data.message;
                                             }).finally(function () {
                                                 init();
                                             });
@@ -184,11 +189,11 @@
                                 close();
                             })
                             .catch(function (error) {
-                                si.errorMessage = error.data.message;
+                                si.errorAdd = error.data.message;
                             });
                     })
                     .catch(function (error) {
-                        si.errorMessage = error.data.message;
+                        si.errorAdd = error.data.message;
                     });
             }
         }
@@ -222,6 +227,7 @@
 
         function close() {
             si.errorMessage = '';
+            si.errorAdd = '';
             si.newDatabase = '';
             si.newAccession = '';
             si.newReference = '';

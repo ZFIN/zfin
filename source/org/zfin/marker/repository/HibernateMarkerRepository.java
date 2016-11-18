@@ -1965,6 +1965,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
             if (tuple.length > 10) {
                 linkDisplay.setReferenceDatabaseZdbID(tuple[10].toString());
             }
+            if (tuple.length > 12 && tuple[12] != null) {
+                linkDisplay.setTypeOrder(Integer.valueOf(tuple[12].toString()));
+            }
             return linkDisplay;
         }
 
@@ -1994,7 +1997,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public List<LinkDisplay> getMarkerLinkDisplay(String dbLinkId) {
         String sql = "select fdbdt.fdbdt_data_type, dbl.dblink_length, dbl.dblink_linked_recid, dbl.dblink_acc_num, fdb.fdb_db_display_name, fdb.fdb_db_query, fdb.fdb_url_suffix, " +
-                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id, pub.title " +
+                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id, pub.title, fdbdt.fdbdt_display_order " +
                 "from db_link dbl  " +
                 "join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
                 "join foreign_db fdb on fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id " +
@@ -2012,7 +2015,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public List<LinkDisplay> getMarkerDBLinksFast(Marker marker, DisplayGroup.GroupName groupName) {
         String sql = "select fdbdt.fdbdt_data_type,dbl.dblink_length,dbl.dblink_linked_recid,dbl.dblink_acc_num,fdb.fdb_db_display_name,fdb.fdb_db_query,fdb.fdb_url_suffix, " +
-                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id, pub.title " +
+                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id, pub.title, fdbdt.fdbdt_display_order " +
                 "from db_link dbl  " +
                 "join foreign_db_contains_display_group_member m on m.fdbcdgm_fdbcont_zdb_id=dbl.dblink_fdbcont_zdb_id " +
                 "join foreign_db_contains_display_group g on g.fdbcdg_pk_id=m.fdbcdgm_group_id " +
@@ -2038,9 +2041,23 @@ public class HibernateMarkerRepository implements MarkerRepository {
             @Override
             public int compare(LinkDisplay linkA, LinkDisplay linkB) {
                 int compare;
+                if (linkA.getTypeOrder() != null & linkB.getTypeOrder() != null) {
+                    compare = linkA.getTypeOrder().compareTo(linkB.getTypeOrder());
+                    if (compare != 0) return compare;
+                }
+
                 if (linkA.getSignificance() != null & linkB.getSignificance() != null) {
                     compare = linkA.getSignificance().compareTo(linkB.getSignificance());
                     if (compare != 0) return compare;
+                }
+
+                if (linkA.getLength() != null & linkB.getLength() != null) {
+                    compare = linkA.getLength().compareTo(linkB.getLength());
+                    if (compare != 0) return compare;
+                } else if (linkA.getLength() != null & (linkB.getLength() == null)) {
+                    return 1;
+                } else if (linkA.getLength() == null & (linkB.getLength() != null)) {
+                    return -1;
                 }
 
                 compare = linkA.getReferenceDatabaseName().compareTo(linkB.getReferenceDatabaseName());

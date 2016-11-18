@@ -1,18 +1,17 @@
 <div>
-    <br/>
     <div class="summaryTitle">SEQUENCE INFORMATION
         <span style="cursor: pointer;">
             <i style="color: red; font-weight: bold;" title="Create new sequence information" ng-click="si.openAddSequenceInfo()">New</i>
         </span>
     </div>
-    <table class="summary rowstripes" ng-show="si.links.length">
+    <table class="summary rowstripes" ng-show="si.linkDisplays.length">
       <tbody>
         <tr>
           <th width="30%">Type</th>
           <th width="50%"> Accession # </th>
           <th width="20%"> Length (bp/aa) </th>
         </tr>
-        <tr ng-repeat="link in si.links" ng-class-odd="'odd'" ng-class-even="'even'">
+        <tr ng-repeat="link in si.linkDisplays" ng-class-odd="'odd'" ng-class-even="'even'">
             <td>{{link.dataType}}</td>
             <td><a ng-href="{{link.urlPrefix + link.accession}}">{{link.referenceDatabaseName}}:{{link.accession}}</a>
                 <span ng-bind-html="link.refLink"></span>
@@ -109,7 +108,7 @@
             </td>
         </tr>
     </table>
-    <span class="error">{{si.errorMessage}}</span>
+    <span class="error">{{si.errorAdd}}</span>
     <table>
         <tr ng-repeat="ref in si.seqenceInfo.references">
             <td><a target="_blank" ng-href="/{{ref.zdbID}}">{{ref.zdbID}}</a></td>

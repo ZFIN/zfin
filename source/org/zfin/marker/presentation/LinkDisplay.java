@@ -23,6 +23,7 @@ public class LinkDisplay implements ProvidesLink {
     private String dblinkZdbID;
     private String length;
     private String dataType;
+    private Integer typeOrder;
 
     public String getDisplayName() {
         return referenceDatabaseName + ":" + accession;
@@ -171,5 +172,13 @@ public class LinkDisplay implements ProvidesLink {
 
     public void setDataType(String dataType) {
         this.dataType = dataType;
+    }
+
+    public Integer getTypeOrder() {
+        return typeOrder;
+    }
+
+    public void setTypeOrder(Integer typeOrder) {
+        this.typeOrder = typeOrder;
     }
 }
