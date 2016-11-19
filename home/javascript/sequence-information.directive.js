@@ -90,8 +90,7 @@
                         if (databases[i].zdbID === 'ZDB-FDBCONT-040412-37' ||    //GenBank (RNA)
                             databases[i].zdbID === 'ZDB-FDBCONT-040412-36' ||    //GenBank (Genomic)
                             databases[i].zdbID === 'ZDB-FDBCONT-040412-42' ||    //GenPept (Polypeptide)
-                            databases[i].zdbID === 'ZDB-FDBCONT-040412-47' ||   //UniProt (Polypeptide)
-                            databases[i].zdbID === 'ZDB-FDBCONT-060417-1'       //Vega_Trans
+                            databases[i].zdbID === 'ZDB-FDBCONT-040412-47'       //UniProt (Polypeptide)
                         ) {
                             databases[i].label = databases[i].name + " - " + databases[i].type;
                             si.databases.push(databases[i]);
