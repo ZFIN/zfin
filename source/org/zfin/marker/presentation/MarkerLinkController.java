@@ -12,6 +12,7 @@ import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.infrastructure.presentation.JSONMessageList;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
@@ -175,6 +176,29 @@ public class MarkerLinkController {
             LOG.error("too many LinkDisplays returned for " + linkId);
         }
         return linkDisplays.get(0);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/link/reference/{zdbID}/validate", method = RequestMethod.POST)
+    public JSONMessageList validateReference(@PathVariable String zdbID) {
+
+        Publication publication = publicationRepository.getPublication(zdbID);
+        if (publication == null) {
+            String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
+            if (replacedZdbID != null) {
+                publication = publicationRepository.getPublication(replacedZdbID);
+            }
+        }
+
+        Collection<String> errors = new ArrayList<>();
+        JSONMessageList messages = new JSONMessageList();
+
+        if (publication == null) {
+            String error = "Invalid reference";
+            errors.add(error);
+            messages.setErrors(errors);
+        }
+        return messages;
     }
 
 }

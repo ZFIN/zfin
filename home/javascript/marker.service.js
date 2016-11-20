@@ -36,7 +36,8 @@
             addLinkReference: addLinkReference,
             removeLinkReference: removeLinkReference,
             openModalPopup: openModalPopup,
-            closeModal: closeModal
+            closeModal: closeModal,
+            validateReference: validateReference
         };
 
         function returnResponseData(response) {
@@ -228,6 +229,10 @@
 
         function closeModal() {
             $.modal.close();
+        }
+
+        function validateReference(pubID) {
+            return $http.post('/action/marker/link/reference/' + pubID + '/validate', {});
         }
     }
 }());

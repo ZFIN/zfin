@@ -47,9 +47,12 @@
         si.databases = [];
         si.ind = 0;
         si.errorMessage = '';
-        si.errorAdd = '';
+        si.errorDb = '';
+        si.errorAcc = '';
+        si.errorRef = '';
         si.newDatabase = '';
         si.newAccession = '';
+        si.referenceEdit = '';
         si.newReference = '';
         si.references = [];
         si.seqenceInfo = null;
@@ -57,7 +60,7 @@
         si.addSequenceInfo = addSequenceInfo;
         si.openDeleteOtherMarkerLink = openDeleteOtherMarkerLink;
         si.deleteSeqenceInfo = deleteSeqenceInfo;
-        si.openEditSequenceInfo = openEditSequenceInfo;
+        si.openUpdateSequenceInfo = openUpdateSequenceInfo;
         si.updateSequenceInfo = updateSequenceInfo;
         si.addAttribution = addAttribution;
         si.deleteAttribution = deleteAttribution;
@@ -108,14 +111,8 @@
         }
 
         function addSequenceInfo() {
-            if (!si.newDatabase) {
-                si.errorMessage = 'Database cannot be empty.';
-            } else if (!si.newAccession) {
-                si.errorMessage = 'Accession number cannot be empty.';
-            } else if (!si.newReference) {
-                si.errorMessage = 'Reference cannot be empty.';
-            } else {
-                MarkerService.addLink(si.markerId, si.newDatabase, si.newAccession, si.newReference)
+            if (validated(1)) {
+                MarkerService.addLink(si.markerId, si.newDatabase, si.newAccession.toUpperCase(), si.newReference)
                     .then(function (link) {
                         init();
                         close();
@@ -135,7 +132,7 @@
         function deleteSeqenceInfo() {
             MarkerService.removeLink(si.seqenceInfo)
                 .then(function () {
-                    si.linkDisplays.splice(si.ind, 1);
+                    init();
                     close();
                 })
                 .catch(function (error) {
@@ -143,24 +140,20 @@
                 });
         }
 
-        function openEditSequenceInfo(obj, ind) {
+        function openUpdateSequenceInfo(obj, ind) {
             si.seqenceInfo = obj;
             si.newAccession = obj.accession;
             si.newDatabase = obj.referenceDatabaseZdbID;
             si.ind = ind;
-            MarkerService.openModalPopup('edit-sequence-information-modal');
+            MarkerService.openModalPopup('update-sequence-information-modal');
         }
 
         function updateSequenceInfo() {
-            if (!si.newDatabase) {
-                si.errorAdd = 'Database cannot be empty.';
-            } else if (!si.newAccession) {
-                si.errorAdd = 'Accession number cannot be empty.';
-            } else {
+            if (validated(0)) {
                 si.references = si.seqenceInfo.references;
                 MarkerService.removeLink(si.seqenceInfo)
                     .then(function () {
-                        MarkerService.addLink(si.markerId, si.seqenceInfo.referenceDatabaseZdbID, si.newAccession, si.seqenceInfo.references[0].zdbID)
+                        MarkerService.addLink(si.markerId, si.seqenceInfo.referenceDatabaseZdbID, si.newAccession.toUpperCase(), si.seqenceInfo.references[0].zdbID)
                             .then(function (link) {
                                 si.seqenceInfo = link;
                                 var referenceIds = [];
@@ -176,9 +169,8 @@
                                                 si.seqenceInfo = seq;
                                                 si.seqenceInfo.references = seq.references;
                                                 si.newReference = '';
-                                                si.errorAdd = '';
                                             }).catch(function (error) {
-                                                si.errorAdd = error.data.message;
+                                                si.errorAcc = error.data.message;
                                             }).finally(function () {
                                                 init();
                                             });
@@ -188,24 +180,28 @@
                                 close();
                             })
                             .catch(function (error) {
-                                si.errorAdd = error.data.message;
+                                si.errorAcc = error.data.message;
                             });
                     })
                     .catch(function (error) {
-                        si.errorAdd = error.data.message;
+                        si.errorAcc = error.data.message;
                     });
             }
         }
 
         function addAttribution() {
-            if (!si.newReference) {
-                si.errorMessage = 'Attribution/reference cannot be empty.';
+            if (!si.referenceEdit) {
+                si.errorAcc = '';
+                si.errorMessage = 'Reference cannot be empty.';
             } else {
-                MarkerService.addLinkReference(si.seqenceInfo, si.newReference)
+                MarkerService.addLinkReference(si.seqenceInfo, si.referenceEdit)
                     .then(function (link) {
                         si.seqenceInfo.references = link.references;
-                        si.newReference = '';
+                        si.referenceEdit = '';
                         si.errorMessage = '';
+                        si.errorDb = '';
+                        si.errorAcc = '';
+                        si.errorRef = '';
                         init();
                     }).catch(function (error) {
                         si.errorMessage = error.data.message;
@@ -218,20 +214,75 @@
                 .then(function () {
                     si.seqenceInfo.references.splice(ind, 1);
                     si.errorMessage = '';
+                    si.errorDb = '';
+                    si.errorAcc = '';
+                    si.errorRef = '';
                     init();
                 }).catch(function (error) {
                     si.errorMessage = error.data.message;
-                });;
+                });
         }
 
         function close() {
             si.errorMessage = '';
-            si.errorAdd = '';
+            si.errorDb = '';
+            si.errorAcc = '';
+            si.errorRef = '';
             si.newDatabase = '';
             si.newAccession = '';
             si.newReference = '';
+            si.referenceEdit = '';
             si.seqenceInfo = null;
             MarkerService.closeModal();
+        }
+
+        function isGenBank() {
+            if (!si.newAccession) {
+                return false;
+            } else if (si.newDatabase === 'ZDB-FDBCONT-040412-37' ||
+                       si.newDatabase === 'ZDB-FDBCONT-040412-36') {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function validated(checkRef) {
+            si.errorMessage = '';
+            si.errorDb = '';
+            si.errorAcc = '';
+            si.errorRef = '';
+            if (!si.newDatabase) {
+                si.errorDb = 'Database cannot be empty.';
+                return false;
+            } else if (!si.newAccession) {
+                si.errorAcc = 'Accession cannot be empty.';
+                return false;
+            } else if (/\s/g.test(si.newAccession)) {
+                si.errorAcc = 'Cannot have whitespace.';
+                return false;
+            } else if (checkRef && !si.newReference) {
+                si.errorRef = 'Reference cannot be empty.';
+                return false;
+            } else if ( isGenBank() &&
+                        !si.newAccession.charAt(0).match(/[a-z]/i) ) {
+                si.errorAcc = 'GenBank acc starts with letter';
+                return false;
+            } else if (checkRef && si.newReference) {
+                MarkerService.validateReference(si.newReference)
+                    .then(function (response) {
+                        if (response.data.errors.length > 0) {
+                            si.errorRef = response.data.errors[0];
+                        }
+                    }).catch(function (error) {
+                        si.errorMessage = error.data.message;
+                });
+                if(si.errorRef || si.errorMessage) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
     }

@@ -27,6 +27,7 @@
         om.otherLink = null;
         om.ind = 0;
         om.errorMessage = '';
+        om.errorRef = '';
         om.newDatabase = '';
         om.newAccession = '';
         om.newReference = '';
@@ -72,9 +73,7 @@
                 om.errorMessage = 'Database cannot be empty.';
             } else if (!om.newAccession) {
                 om.errorMessage = 'Accession number cannot be empty.';
-            } else if (!om.newReference) {
-                om.errorMessage = 'Reference cannot be empty.';
-            } else {
+            } else if (publicationIdValidated()) {
                 MarkerService.addLink(om.markerId, om.newDatabase, om.newAccession, om.newReference)
                     .then(function (link) {
                         init();
@@ -95,9 +94,7 @@
         }
 
         function addAttribution() {
-            if (!om.newReference) {
-                om.errorMessage = 'Attribution/reference cannot be empty.';
-            } else {
+            if (publicationIdValidated()) {
                  MarkerService.addLinkReference(om.otherLink, om.newReference)
                     .then(function (link) {
                         om.otherLink.references = link.references;
@@ -143,9 +140,28 @@
             om.newDatabase = '';
             om.newAccession = '';
             om.newReference = '';
+            om.errorRef = '';
             om.ind = 0;
             om.otherLink = null;
             MarkerService.closeModal();
+        }
+        
+        function publicationIdValidated() {
+            om.errorRef = "";
+            om.errorMessage = "";
+            if (!om.newReference) {
+                om.errorMessage = 'Attribution/reference cannot be empty.';
+                return false;
+            } 
+            MarkerService.validateReference(om.newReference)
+                .then(function (response) {
+                    if (response.data.errors.length > 0) {
+                        om.errorRef = response.data.errors[0];
+                    }
+                }).catch(function (error) {
+                    om.errorMessage = error.data.message;
+                });
+            return (om.errorRef === "");
         }
     }
 }());

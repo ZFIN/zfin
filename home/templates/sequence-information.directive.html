@@ -15,7 +15,7 @@
             <td>{{link.dataType}}</td>
             <td><a ng-href="{{link.urlPrefix + link.accession}}">{{link.referenceDatabaseName}}:{{link.accession}}</a>
                 <span ng-bind-html="link.refLink"></span>
-                <span style="cursor: pointer;" ng-click="si.openEditSequenceInfo(link, $index)">
+                <span style="cursor: pointer;" ng-click="si.openUpdateSequenceInfo(link, $index)">
                     <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit the sequence information"></i>
                 </span>
                 <span style="cursor: pointer;"
@@ -35,26 +35,26 @@
     </h3>
     <table class="table table-condensed">
         <tr>
-            <td>Database:</td><td><select class="form-control"
-                                          ng-model="si.newDatabase"
-                                          ng-options="database.zdbID as database.label for database in si.databases"></select></td>
+            <td>Database:&nbsp;&nbsp;<select class="form-control"  ng-model="si.newDatabase" ng-change="si.errorDb=''"
+                                  ng-options="database.zdbID as database.label for database in si.databases"></select></td>
+            <td><span class="error">{{si.errorDb}}</span></td>
         </tr>
         <tr>
-            <td>Accession:</td><td><input name="newAcc" ng-model="si.newAccession" /></td>
+            <td>Accession:&nbsp;<input ng-model="si.newAccession" ng-keyup="si.errorAcc = ''" /></td>
+            <td><span class="error">{{si.errorAcc}}</span></td>
         </tr>
         <tr>
-            <td>Reference:</td><td><input name="newRef" ng-model="si.newReference" /></td>
+            <td>Reference:&nbsp;<input ng-model="si.newReference" ng-keyup="si.errorRef = ''" /></td>
+            <td><span class="error">{{si.errorRef}}</span></td>
         </tr>
         <tr>
-            <td>
-                <div class="popup-actions">
+            <td colspan="2" nowrap>
                     <button class="zfin-button cancel" ng-click="si.close()">Cancel</button>
                     <button class="zfin-button approve" ng-click="si.addSequenceInfo()">Add</button>
-                </div>
             </td>
         </tr>
     </table>
-    <span class="error">{{si.errorMessage}}</span>
+    <span class="error" ng-show="si.errorRef === ''">{{si.errorMessage}}</span>
 </div>
 
 <div id="delete-sequence-info-modal" class="jq-modal curation">
@@ -88,27 +88,27 @@
     <span class="error">{{si.errorMessage}}</span>
 </div>
 
-<div id="edit-sequence-information-modal" class="jq-modal curation">
+<div id="update-sequence-information-modal" class="jq-modal curation">
     <h3>
         Update <a style="font-weight: bold;" target="_blank" ng-href="{{si.seqenceInfo.urlPrefix + si.seqenceInfo.accession}}">{{si.seqenceInfo.referenceDatabaseName}}:{{si.seqenceInfo.accession}}</a>
     </h3>
     <table class="table table-condensed">
         <tr>
-            <td>Database:</td><td>{{si.seqenceInfo.referenceDatabaseName}}</td>
+            <td>Database:&nbsp;&nbsp;{{si.seqenceInfo.referenceDatabaseName}} - {{si.seqenceInfo.dataType}}</td>
+            <td><span class="error">{{si.errorDb}}</span></td>
         </tr>
         <tr>
-            <td>Accession:</td><td><input name="newAcc" placeholder="{{si.newAccession}}" ng-model="si.newAccession" /></td>
+            <td>Accession:&nbsp;<input placeholder="{{si.newAccession}}" ng-model="si.newAccession" ng-keyup="si.errorAcc = ''" /></td>
+            <td><span class="error">{{si.errorAcc}}</span></td>
         </tr>
         <tr>
-            <td>
-                <div class="popup-actions">
+            <td colspan="2" nowrap>
                     <button class="zfin-button cancel" ng-click="si.close()">Cancel</button>
                     <button class="zfin-button approve" ng-click="si.updateSequenceInfo()">Update</button>
-                </div>
             </td>
         </tr>
+        <tr></tr>
     </table>
-    <span class="error">{{si.errorAdd}}</span>
     <table>
         <tr ng-repeat="ref in si.seqenceInfo.references">
             <td><a target="_blank" ng-href="/{{ref.zdbID}}">{{ref.zdbID}}</a></td>
@@ -116,11 +116,11 @@
             </a></td>
         </tr>
         <tr>
-            <td colspan="2">
-                <input size="20" name="publicationID" ng-model="si.newReference" /></td>
+            <td>Reference:&nbsp;<input size="20" name="publicationID" ng-model="si.referenceEdit" ng-keyup="si.errorRef = ''" /></td>
+            <td><span class="error">{{si.errorRef}}</span></td>
         </tr>
         <tr>
-            <td colspan="2">
+            <td colspan="2" nowrap>
                 <button ng-click="si.close()" class="zfin-button cancel">Close</button>
                 <button ng-click="si.addAttribution()" class="zfin-button approve">Add</button>
             </td>

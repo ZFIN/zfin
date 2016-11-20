@@ -38,7 +38,8 @@
             </td>
         </tr>
     </table>
-    <span ng-bind-html="om.errorMessage | unsafe" class="error"></span>
+    <span ng-bind-html="om.errorRef | unsafe" class="error"></span>
+    <span ng-bind-html="om.errorMessage | unsafe" class="error" ng-show="om.errorRef === ''"></span>
 </div>
 <div id="delete-other-marker-link-modal" class="jq-modal curation">
     <h3>
