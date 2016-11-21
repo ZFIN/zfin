@@ -60,7 +60,7 @@
         function activate() {
             PublicationService.getStatuses()
                 .then(function (response) {
-                    vm.statuses = response.data;
+                    vm.statuses = response.data.filter(function (s) { return !s.hidden; });
                 });
             PublicationService.getCurators()
                 .then(function (response) {
