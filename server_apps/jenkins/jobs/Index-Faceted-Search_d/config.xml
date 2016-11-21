@@ -17,6 +17,14 @@
   <concurrentBuild>false</concurrentBuild>
   <customWorkspace>$SOURCEROOT</customWorkspace>
   <builders>
+    <hudson.tasks.Ant plugin="ant@1.2">
+      <targets>stop-solr</targets>
+      <buildFile>$SOURCEROOT/build.xml</buildFile>
+    </hudson.tasks.Ant>
+    <hudson.tasks.Ant plugin="ant@1.2">
+      <targets>start-solr</targets>
+      <buildFile>$SOURCEROOT/build.xml</buildFile>
+    </hudson.tasks.Ant>
      <hudson.tasks.Shell>
       <command>cd $TARGETROOT/server_apps/DB_maintenance/warehouse &amp;&amp; regenPhenotypeMart.sh </command>
     </hudson.tasks.Shell>
@@ -35,14 +43,6 @@
     </hudson.tasks.Ant>
     <hudson.tasks.Ant plugin="ant@1.2">
       <targets>add-abstracts-to-pubs</targets>
-      <buildFile>$SOURCEROOT/build.xml</buildFile>
-    </hudson.tasks.Ant>
-    <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>stop-solr</targets>
-      <buildFile>$SOURCEROOT/build.xml</buildFile>
-    </hudson.tasks.Ant>
-    <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>start-solr</targets>
       <buildFile>$SOURCEROOT/build.xml</buildFile>
     </hudson.tasks.Ant>
   </builders>
