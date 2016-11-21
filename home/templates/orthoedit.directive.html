@@ -59,9 +59,9 @@
                     {{ev.publication.zdbID | pub}}
                 </a>: {{ev.asList()}}
                 <a href class="clickable" ng-click="vm.editEvidence(ortholog, ev, $index)"><i
-                        class="fa fa-fw fa-pencil"style="color: red"></i></a>
+                        class="fa fa-fw fa-pencil red"></i></a>
                 <a href class="clickable" ng-click="vm.deleteEvidence(ortholog, ev, $index)"><i
-                        class="fa fa-fw fa-trash"style="color: red"></i></a>
+                        class="fa fa-fw fa-trash red"></i></a>
             </div>
             <a href ng-click="vm.addEvidence(ortholog)">Add</a>
         </td>
@@ -75,7 +75,7 @@
         </td>
     </tr>
 </table>
-<a href="/action/marker/${marker.zdbID}/download/orthology" ng-if="vm.showDownloadLink"><i class="fa fa-download"></i>
+<a href="/action/marker/{{vm.gene}}/download/orthology" ng-if="(vm.showDownloadLink && !vm.edit)"><i class="fa fa-download"></i>
     Download Curated Orthology</a>
 
 

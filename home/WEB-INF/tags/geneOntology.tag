@@ -11,12 +11,12 @@
     <c:set var="title" value="GENE ONTOLOGY"/>
 </c:if>
 
-<zfin2:subsection title="${title}"
+<zfin2:subsection title=""
                   test="${geneOntologyOnMarker.goTermCount>0}" showNoData="true">
     <authz:authorize access="hasRole('root')">
-        <div ng-if="editMode">
-            <a href="/action/marker/marker-go-edit/${marker.zdbID}" class="error">Update </a>
-        </div>
+        <span class="summaryTitle">${title}</span> <span ng-if="editMode">
+            <a href="/action/marker/marker-go-edit/${marker.zdbID}" class="error">Edit </a>
+        </span>
     </authz:authorize>
     <table class="summary">
         <tr>

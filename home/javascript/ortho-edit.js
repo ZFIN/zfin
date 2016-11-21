@@ -130,8 +130,8 @@
         return directive;
     }
 
-    OrthoEditController.$inject = ['$http', '$scope'];
-    function OrthoEditController($http, $scope) {
+    OrthoEditController.$inject = ['$http'];
+    function OrthoEditController($http) {
         var vm = this;
 
         vm.showGenePicker = typeof vm.gene === 'undefined';
@@ -172,8 +172,8 @@
 
         vm.selectPub = selectPub;
         vm.checkPub = checkPub;
-        vm.edit = !(typeof $scope.editMode === 'undefined');
-        vm.showDownloadLink = typeof vm.showDownloadLink === 'undefined';
+        vm.edit = false;
+        vm.showDownloadLink = true;
 
         //alert('edit: '+vm.edit);
 
