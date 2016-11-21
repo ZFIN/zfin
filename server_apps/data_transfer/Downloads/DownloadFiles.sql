@@ -2262,7 +2262,7 @@ unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 !echo "inno/pheno construct report"
 unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/innophenoconstructs.txt' DELIMITER "	"
 
-select fmrel_mrkr_zdb_id, mrkr_name, fmrel_type, fmrel_feature_zdb_id, feautre_name
+select fmrel_mrkr_zdb_id, mrkr_name, fmrel_type, fmrel_ftr_zdb_id, feautre_name
   from feature, marker, feature_marker_relationship
  where feature_zdb_id = fmrel_ftr_zdb_id
  and fmrel_mrkr_Zdb_id = mrkr_zdb_id 
