@@ -86,8 +86,6 @@
                     .catch(function (error) {
                         console.error(error);
                         cn.errorMessage = 'Unable to add the note. Please try again later.';
-                    })
-                    .finally(function () {
                     });
                 close();
 
@@ -115,8 +113,6 @@
                     .catch(function (error) {
                         console.error(error);
                         cn.errorMessage = 'Unable to save the note. Please try again later.';
-                    })
-                    .finally(function () {
                     });
                 cn.existingNoteText = '';
                 close();

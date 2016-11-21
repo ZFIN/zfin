@@ -81,8 +81,6 @@
                     })
                     .catch(function (error) {
                        om.errorMessage = error.data.message;
-                    })
-                    .finally(function () {
                     });
             }
         }
