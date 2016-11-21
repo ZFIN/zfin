@@ -1,11 +1,12 @@
 package org.zfin.profile;
 
 import java.util.Set;
+import java.io.Serializable;
 
 /**
  * Lab domain model.
  */
-public class Lab extends Organization {
+public class Lab extends Organization implements Serializable  {
 
     public int compareTo(Organization org) {
         if (org == null)
