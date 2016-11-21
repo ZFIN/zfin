@@ -52,6 +52,7 @@
         si.errorRef = '';
         si.newDatabase = '';
         si.newAccession = '';
+        si.accessionEdit = '';
         si.referenceEdit = '';
         si.newReference = '';
         si.references = [];
@@ -142,7 +143,7 @@
 
         function openUpdateSequenceInfo(obj, ind) {
             si.seqenceInfo = obj;
-            si.newAccession = obj.accession;
+            si.accessionEdit = obj.accession;
             si.newDatabase = obj.referenceDatabaseZdbID;
             si.ind = ind;
             MarkerService.openModalPopup('update-sequence-information-modal');
@@ -153,7 +154,7 @@
                 si.references = si.seqenceInfo.references;
                 MarkerService.removeLink(si.seqenceInfo)
                     .then(function () {
-                        MarkerService.addLink(si.markerId, si.seqenceInfo.referenceDatabaseZdbID, si.newAccession.toUpperCase(), si.seqenceInfo.references[0].zdbID)
+                        MarkerService.addLink(si.markerId, si.seqenceInfo.referenceDatabaseZdbID, si.accessionEdit.toUpperCase(), si.seqenceInfo.references[0].zdbID)
                             .then(function (link) {
                                 si.seqenceInfo = link;
                                 var referenceIds = [];
@@ -230,6 +231,7 @@
             si.errorRef = '';
             si.newDatabase = '';
             si.newAccession = '';
+            si.accessionEdit = '';
             si.newReference = '';
             si.referenceEdit = '';
             si.seqenceInfo = null;
@@ -252,6 +254,9 @@
             si.errorDb = '';
             si.errorAcc = '';
             si.errorRef = '';
+            if (!checkRef) {
+                si.newAccession = si.accessionEdit;
+            }
             if (!si.newDatabase) {
                 si.errorDb = 'Database cannot be empty.';
                 return false;
@@ -280,6 +285,10 @@
                 if(si.errorRef || si.errorMessage) {
                     return false;
                 }
+            }
+
+            if (!checkRef) {
+                si.newAccession = '';
             }
 
             return true;
