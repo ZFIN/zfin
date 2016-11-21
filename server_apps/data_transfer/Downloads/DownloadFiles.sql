@@ -2259,4 +2259,13 @@ unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
     and expcond_chebi_term_zdb_id = c.term_Zdb_id
     and expcond_taxon_Term_zdb_id = t.term_Zdb_id;
 
+!echo "inno/pheno construct report"
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/innophenoconstructs.txt' DELIMITER "	"
+
+select fmrel_mrkr_zdb_id, mrkr_name, fmrel_type, fmrel_feature_zdb_id, feautre_name
+  from feature, marker, feature_marker_relationship
+ where feature_zdb_id = fmrel_feature_zdb_id
+ and fmrel_mrkr_Zdb_id = mrkr_zdb_id 
+ and fmrel_type in ('contains innocuous sequence feature','contains phenotypic sequence feature');
+
 commit work;
