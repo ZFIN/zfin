@@ -14,7 +14,7 @@ public class HibernateUserRepository implements UserRepository {
 
     public Person getPersonByLoginName(String username) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select person from Person person left join person.labs " +
+        String hql = "select person from Person person left join fetch person.labs " +
                 "where person.accountInfo.login = :login ";
         Query query = session.createQuery(hql);
         query.setString("login", username);
