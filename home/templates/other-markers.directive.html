@@ -5,12 +5,11 @@
 <table class="summary" ng-show="om.links.length">
     <tr><td ng-repeat="link in om.links"><a ng-href="{{link.urlPrefix + link.accession}}">{{link.referenceDatabaseName}}:{{link.accession}}</a>
         <span ng-bind-html="link.refLink"></span><span ng-show="om.edit" style="cursor: pointer;"
-                                           ng-click="om.openEditAttribution(link, $index)"><i class="fa fa-pencil" aria-hidden="true" style="color: red"
+                                           ng-click="om.openEditAttribution(link, $index)"><i class="fa fa-pencil red" aria-hidden="true"
                                                                                               title="Edit attributions"></i></span>
             <span ng-show="om.edit" style="cursor: pointer;"
                                            ng-click="om.openDeleteOtherMarkerLink(link,$index)">
-                       <i class="fa fa-trash" aria-hidden="true" style="color: red"
-                          title="Delete the link"></i></span>
+                       <i class="fa fa-trash red" aria-hidden="true" title="Delete the link"></i></span>
     </td></tr>
 </table>
 <div id="new-other-marker-link-modal" class="jq-modal curation">
