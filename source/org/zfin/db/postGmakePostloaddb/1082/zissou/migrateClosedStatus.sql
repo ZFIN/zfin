@@ -101,6 +101,7 @@ where pnote_text = 'Upon Review by L. Bayraktaroglu, this publication contains n
 delete from publication_note
  where pnote_text = 'Closed Paper';
 
+set triggers for pub_tracking_history disabled;
 
 insert into pub_tracking_history (pth_pub_zdb_id, pth_status_set_by, pth_status_id)
  select zdb_id, 'ZDB-PERS-100329-1', pts_pk_id
@@ -124,3 +125,15 @@ where zdb_id = pnote_pub_zdb_id
 and not exists (Select 'x' from pub_tracking_history b
     	       	       where b.pth_pub_zdb_id = zdb_id
 		       and b.pth_status_id = pts_pk_id);
+
+set triggers for pub_tracking_history enabled;
+
+update publication
+ set pub_indexed_date = (select max(pth_status_insert_date)
+     		      		from pub_tracking_history, pub_tracking_status
+				where pth_pub_zdb_id = zdb_id
+				and pth_status_id = pts_pk_id
+				and pts_status = 'INDEXED')
+ where pub_indexed_date is null
+ and exists (Select 'x' from pub_tracking_history
+     	    	   where pth_pub_zdb_id = zdb_id);

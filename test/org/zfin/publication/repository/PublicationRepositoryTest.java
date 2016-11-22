@@ -730,7 +730,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getAllPublicationStatusesShouldReturnTwelveValues() {
         List<PublicationTrackingStatus> statuses = publicationRepository.getAllPublicationStatuses();
-        assertThat(statuses, hasSize(12));
+        assertThat(statuses, hasSize(15));
     }
 
     @Test

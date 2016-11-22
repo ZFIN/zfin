@@ -45,12 +45,27 @@ insert into pub_tracking_status (pts_status,
  values ('INDEXED','f','Indexed',4);
 
 
+set triggers for pub_tracking_history disabled;
+
 insert into pub_tracking_history (pth_pub_zdb_id, pth_status_id, pth_status_insert_date, pth_status_set_by)
  select distinct zdb_id, (select pts_pk_id from pub_tracking_status
  			where pts_status= 'INDEXED'),pub_indexed_date, 'ZDB-PERS-030520-1'
   from publication
   where pub_indexed_date is not null
  and pub_is_indexed = 't';
+
+
+set triggers for pub_tracking_history enabled;
+
+update publication
+ set pub_indexed_date = (select max(pth_status_insert_date)
+     		      		from pub_tracking_history, pub_tracking_status
+				where pth_pub_zdb_id = zdb_id
+				and pth_status_id = pts_pk_id
+				and pts_status = 'INDEXED')
+ where pub_indexed_date is null
+ and exists (Select 'x' from pub_tracking_history
+     	    	   where pth_pub_zdb_id = zdb_id);
 
 update pub_tracking_Status
  set pts_pipeline_pull_down_order = 5
