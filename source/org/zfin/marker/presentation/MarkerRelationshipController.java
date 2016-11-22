@@ -123,6 +123,9 @@ public class MarkerRelationshipController {
         MarkerRelationshipSupplierComparator markerRelationshipSupplierComparator = new MarkerRelationshipSupplierComparator();
         Marker first = getMarkerByIdOrAbbrev(newRelationship.getFirst());
         Marker second = getMarkerByIdOrAbbrev(newRelationship.getSecond());
+        if (second==null){
+            throw new InvalidWebRequestException("Invalid marker", errors);
+        }
         MarkerRelationship.Type type = MarkerRelationship.Type.getType(newRelationship.getRelationship());
 
         Collection<Marker> related = MarkerService.getRelatedMarker(first, type);
