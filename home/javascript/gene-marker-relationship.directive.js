@@ -102,7 +102,8 @@
                         mkrreln.relationships.attributionZdbIDs = relationship.attributionZdbIDs;
                         mkrreln.newAttribution = '';
                         mkrreln.errorMessage = '';
-                        init();close();
+                        init();
+                        close();
                     }).catch(function (error) {
                     mkrreln.errorMessage = error.data.message;
                 });
