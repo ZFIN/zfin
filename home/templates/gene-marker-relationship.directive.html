@@ -115,7 +115,7 @@
     <table class="table table-condensed">
         <tr>
             <td>
-                <a style="font-weight: bold;" target="_blank" ng-href="{{mkrreln.markerId}}"><i>{{mkrreln.markerAbbrev}}</i></a>  {{mkrreln.otherLink.relationshipType}} [{{mkrreln.otherLink.markerType}}]{{mkrreln.otherLink.relationship.attributionZdbIDs.length}}  <span ng-bind-html="mkrreln.otherLink.linkWithAttribution | unsafe"></span>{{relationship.abbrev}}
+                <a style="font-weight: bold;" target="_blank" ng-href="{{mkrreln.markerId}}"><i>{{mkrreln.markerAbbrev}}</i></a>  {{mkrreln.otherLink.relationshipType}} [{{mkrreln.otherLink.markerType}}] <span ng-bind-html="mkrreln.otherLink.link | unsafe"></span>{{relationship.abbrev}}
             </td>
         </tr>
         <tr ng-repeat="pub in mkrreln.otherLink.attributionZdbIDs">
