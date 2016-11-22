@@ -56,7 +56,7 @@
         <table class="summary horizontal-solidblock" ng-show="mkrreln.relationships.length">
             <tr ng-repeat="relationship in mkrreln.relationships">
                 <td class="data-label">
-                    {{mkrreln.markerAbbrev}} {{relationship.name}} </td>
+                    <a style="font-weight: bold;" target="_blank" ng-href="{{mkrreln.markerId}}"><i>{{mkrreln.markerAbbrev}}</i></a> {{relationship.name}} </td>
                <td>
                     {{relationship.relationshipType}} [{{relationship.markerType}}]{{mkrreln.relationship.attributionZdbIDs.length}}  <span ng-bind-html="relationship.linkWithAttributionAndOrderThis | unsafe"></span>{{relationship.abbrev}}
                     <span
@@ -115,16 +115,13 @@
     <table class="table table-condensed">
         <tr>
             <td>
-                <a style="font-weight: bold;" target="_blank" ng-href="{{mkrreln.markerAbbrev}}">{{mkrreln.markerAbbrev}}</a>
+                <a style="font-weight: bold;" target="_blank" ng-href="{{mkrreln.markerId}}"><i>{{mkrreln.markerAbbrev}}</i></a>  {{mkrreln.otherLink.relationshipType}} [{{mkrreln.otherLink.markerType}}]{{mkrreln.otherLink.relationship.attributionZdbIDs.length}}  <span ng-bind-html="mkrreln.otherLink.linkWithAttribution | unsafe"></span>{{relationship.abbrev}}
             </td>
         </tr>
         <tr ng-repeat="pub in mkrreln.otherLink.attributionZdbIDs">
             <td>
                 {{pub}}<br>
-              <!--  <span ng-if="ref.title.length < 80"><a target="_blank" ng-href="/{{ref.zdbID}}">{{ref.title}}</a>
-                    </span>
-                <span ng-if="ref.title.length >= 80"><a target="_blank" ng-href="/{{ref.zdbID}}">{{ref.title | limitTo:55}}...</a>
-                    </span>-->
+
             </td>
         </tr>
         <tr>
