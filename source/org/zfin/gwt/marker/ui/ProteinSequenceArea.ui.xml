@@ -1,0 +1,25 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        xmlns:zfin-marker='urn:import:org.zfin.gwt.marker.ui'
+        >
+
+    <g:VerticalPanel spacing="10" title="Protein Sequence" styleName="table table-borderless"
+                     horizontalAlignment="left">
+        <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
+            <g:Label text="Add Protein" addStyleNames="bold" horizontalAlignment="left"/>
+            <g:Label text=":&nbsp;" addStyleNames="bold"/>
+            <zfin:ShowHideToggle widget="{fullSequencePanel}" ui:field="showHideToggle" show="false"/>
+        </g:HorizontalPanel>
+        <g:VerticalPanel ui:field="fullSequencePanel" width="100%">
+            <g:HorizontalPanel>
+                <g:Label ui:field="listBoxLabel" text="Blast Database:"/>
+                <zfin:StringListBox ui:field="databaseListBoxWrapper"/>
+            </g:HorizontalPanel>
+            <g:Label ui:field="errorLabel" styleName="error"/>
+            <zfin-marker:NewSequenceBox ui:field="newSequenceBox"/>
+        </g:VerticalPanel>
+    </g:VerticalPanel>
+</ui:UiBinder>

@@ -26,8 +26,11 @@
 
 .publicationlookup {
     background-color: darkgray;
-    padding: 10px;
     text-align: center;
+}
+
+table.publicationlookup > tbody > tr > td {
+    padding: 10px;
 }
 
 .publicationAbstract {

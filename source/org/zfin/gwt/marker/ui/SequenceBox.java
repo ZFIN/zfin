@@ -32,7 +32,7 @@ class SequenceBox extends Composite implements RelatedEntityChangeListener<Seque
 
 
     // listeners
-    private final List<RelatedEntityChangeListener> sequenceBoxChangeListeners = new ArrayList<RelatedEntityChangeListener>();
+    private final List<RelatedEntityChangeListener> sequenceBoxChangeListeners = new ArrayList<>();
 
     public SequenceBox(String type) {
         if (type.equals(NUCLEOTIDE_SEQUENCE) || type.equals(PROTEIN_SEQUENCE)) {
@@ -71,7 +71,6 @@ class SequenceBox extends Composite implements RelatedEntityChangeListener<Seque
                 fireSequenceBoxChangeEvent();
             }
         });
-        sequenceArea.setStyleName("sequenceArea");
         sequenceBoxChangeListeners.add(this); // adds self as a listener
     }
 

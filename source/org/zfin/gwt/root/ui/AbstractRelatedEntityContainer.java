@@ -1,5 +1,6 @@
 package org.zfin.gwt.root.ui;
 
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
@@ -28,10 +29,11 @@ public abstract class AbstractRelatedEntityContainer<U extends RelatedEntityDTO>
     private final List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
 
     // common GUI elements
-    final protected Label publicationLabel = new Label();
+    public Label publicationLabel = new Label();
 
     // error label
-    final protected Label errorLabel = new Label();
+    @UiField(provided = true)
+    public Label errorLabel = new Label();
 
     protected abstract List<String> getRelatedEntityAttributionsForName(String relatedEntityName);
 

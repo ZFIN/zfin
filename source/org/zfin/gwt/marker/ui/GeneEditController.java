@@ -92,16 +92,11 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
         horizontalSpaceLabel.setWidth("30px");
         proteinAddPanel.add(horizontalSpaceLabel, DockPanel.CENTER);
         proteinAddPanel.add(proteinPublicationPanel, DockPanel.EAST);
+        proteinAddPanel.setSpacing(10);
 
         proteinPublicationPanel.setVisible(false);
 
         RootPanel.get(newProteinSequenceDiv).add(proteinAddPanel);
-
-        nucleotideSequenceArea.setRightArrowHTMLString("<a href=#addStemLoop><img align=\"top\" src=\"/images/right.gif\" >Add Stem Loop Sequence</a>");
-        nucleotideSequenceArea.setDownArrowHTMLString("<a href=#addStemLoop><img align=\"top\" src=\"/images/down.gif\" >Add Stem Loop Sequence</a>");
-//        nucleotideSequenceArea.setHistoryToken("addStemLoop");
-        nucleotideSequenceArea.closeBox();
-
 
         stemLoopAddPanel.add(nucleotideSequenceArea, DockPanel.WEST);
         stemLoopAddPanel.add(stemLoopNotificationPanel, DockPanel.SOUTH);
@@ -191,18 +186,19 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
 
                                 proteinNotificationPanel.showMessage("Added Sequence: " + dbLinkDTO.getName());
                                 proteinSequenceArea.activate();
+                                refreshSequenceInformation();
                             }
                         });
             }
 
             public void cancel(SequenceAddEvent sequenceAddEvent) {
                 proteinSequenceArea.resetAndHide();
-                proteinSequenceArea.activate();
                 proteinPublicationPanel.setVisible(false);
             }
 
             public void start(SequenceAddEvent sequenceAddEvent) {
                 proteinPublicationPanel.setVisible(true);
+                proteinSequenceArea.newSequenceBox.setVisible(true);
             }
         });
 
@@ -231,6 +227,7 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
                                 nucleotideSequenceArea.activate();
                                 stemLoopPublicationLookupBox.setVisible(false);
                                 stemLoopNotificationPanel.showMessage("Added Sequence: " + dbLinkDTO.getName());
+                                refreshSequenceInformation();
                             }
                         });
             }
@@ -241,8 +238,8 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
             }
 
             public void start(SequenceAddEvent sequenceAddEvent) {
-                // do nothing here
                 stemLoopPublicationPanel.setVisible(true);
+                stemLoopPublicationLookupBox.setVisible(true);
             }
         });
 
@@ -271,5 +268,10 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
         this.dto = dto;
         nucleotideSequenceArea.setMarkerDTO(this.dto);
     }
+
+    public native void refreshSequenceInformation() /*-{
+        $wnd.refreshSequenceInformation();
+    }-*/;
+
 
 }

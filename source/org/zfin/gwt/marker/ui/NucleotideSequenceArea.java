@@ -2,9 +2,14 @@ package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import org.zfin.gwt.marker.event.SequenceAddEvent;
 import org.zfin.gwt.marker.event.SequenceAddListener;
 import org.zfin.gwt.root.dto.*;
@@ -19,65 +24,79 @@ import java.util.List;
 
 public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelatedEntityContainer<U> {
 
+    private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
+
+    @UiTemplate("NucleotideSequenceArea.ui.xml")
+    interface MyUiBinder extends UiBinder<VerticalPanel, NucleotideSequenceArea> {
+    }
+
+    @UiField
+    ShowHideToggle showHideToggle;
+    @UiField
+    VerticalPanel fullSequencePanel;
+    @UiField
+    Button addSequenceButton;
+    @UiField
+    Button cancelButton;
+    @UiField
+    Label listBoxLabel;
+    @UiField
+    StringListBox databaseListBoxWrapper;
+    @UiField(provided = true)
+    SequenceBox newSequenceBox = new SequenceBox(SequenceBox.NUCLEOTIDE_SEQUENCE);
+
     // internal data
     private MarkerDTO markerDTO;
-
-    // gui elements
-    private final VerticalPanel panel = new VerticalPanel();
-
-    // gui data
-    private String rightArrowHTMLString = "<a href=#sequence><img align=\"top\" src=\"/images/right.gif\" >Add Nucleotide Sequence</a>";
-    private String downArrowHTMLString = "<a href=#sequence><img align=\"top\" src=\"/images/down.gif\" >Add Nucleotide Sequence</a>";
-    private String historyToken = "sequence";
-
-    // link
-    private final HTML link = new HTML();
-    private final VerticalPanel sequenceBoxPanel = new VerticalPanel();
-    private final HorizontalPanel blastDatabasePanel = new HorizontalPanel();
-    private final Label listBoxLabel = new Label("Blast Database:");
-    private StringListBox databaseListBoxWrapper = new StringListBox();
-    private final SequenceBox newSequenceBox = new SequenceBox(SequenceBox.NUCLEOTIDE_SEQUENCE);
-    private final HorizontalPanel buttonPanel = new HorizontalPanel();
-    private final Button addSequenceButton = new Button("Add Sequence");
-    private final Button cancelButton = new Button("Cancel");
 
     // sequence panel
     final SequenceList sequenceList = new SequenceList();
 
     // listeners
-    private final List<SequenceAddListener> sequenceAddListeners = new ArrayList<SequenceAddListener>();
+    private final List<SequenceAddListener> sequenceAddListeners = new ArrayList<>();
 
     public NucleotideSequenceArea() {
-        initGUI();
+        initWidget(uiBinder.createAndBindUi(this));
         addInternalListeners(this);
-        initWidget(panel);
     }
 
-    void initGUI() {
-
-        link.setHTML(rightArrowHTMLString);
-//        link.setTargetHistoryToken(historyToken);
-
-        errorLabel.setStyleName("error");
-
-        panel.add(errorLabel);
-        panel.add(publicationLabel);
-
-        publicationLabel.setStyleName("relatedEntityDefaultPub");
-        panel.add(link);
-
-        sequenceBoxPanel.setVisible(false);
-        blastDatabasePanel.add(listBoxLabel);
-        blastDatabasePanel.add(databaseListBoxWrapper);
-        sequenceBoxPanel.add(blastDatabasePanel);
-        sequenceBoxPanel.add(newSequenceBox);
-        buttonPanel.add(addSequenceButton);
-        buttonPanel.add(cancelButton);
-        sequenceBoxPanel.add(buttonPanel);
-        panel.add(sequenceBoxPanel);
-        panel.add(sequenceList);
-
+    @UiHandler("showHideToggle")
+    void onClickShowHide(@SuppressWarnings("unused") ClickEvent event) {
+        showHideToggle.toggleVisibility();
+        if(showHideToggle.isVisible())
+            fireSequenceAddStartListeners(new SequenceAddEvent());
+        else
+            fireSequenceAddCancelListeners(new SequenceAddEvent());
     }
+
+    @UiHandler("cancelButton")
+    void onCancelReset(@SuppressWarnings("unused") ClickEvent event) {
+        newSequenceBox.clearSequence();
+        closeBox();
+        fireSequenceAddCancelListeners(new SequenceAddEvent());
+    }
+
+    @UiHandler("addSequenceButton")
+    void onAddSequence(@SuppressWarnings("unused") ClickEvent event) {
+        if (false == attributionIsValid()) return;
+        if (databaseListBoxWrapper.getSelected() == null
+                ||
+                AbstractListBox.NULL_STRING.equals(databaseListBoxWrapper.getSelected())) {
+            setError("Please select a blast database.");
+            return;
+        }
+        String validationError = newSequenceBox.checkSequence();
+        if (validationError != null) {
+            setError(validationError);
+            return;
+        }
+        final SequenceDTO outgoingSequenceDTO = new SequenceDTO();
+        outgoingSequenceDTO.setSequence(newSequenceBox.getSequenceAsString());
+        outgoingSequenceDTO.setPublicationZdbID(getPublication());
+        ReferenceDatabaseDTO referenceDatabaseDTO = new ReferenceDatabaseDTO();
+        referenceDatabaseDTO.setZdbID(databaseListBoxWrapper.getSelected());
+        fireSequenceAdded(new SequenceAddEvent(markerDTO, outgoingSequenceDTO, referenceDatabaseDTO));
+    }
+
 
     public void inactivate() {
         addSequenceButton.setEnabled(false);
@@ -100,48 +119,6 @@ public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelat
     }
 
     void addInternalListeners(final NucleotideSequenceArea nucleotideSequenceArea) {
-
-        link.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                if (sequenceBoxPanel.isVisible() == false) {
-                    openBox();
-                } else {
-                    closeBox();
-                    fireSequenceAddCancelListeners(new SequenceAddEvent());
-                }
-            }
-        });
-
-        cancelButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                newSequenceBox.clearSequence();
-                closeBox();
-            }
-        });
-
-        addSequenceButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                if (false == attributionIsValid()) return;
-                if (databaseListBoxWrapper.getSelected() == null
-                        ||
-                        AbstractListBox.NULL_STRING.equals(databaseListBoxWrapper.getSelected())) {
-                    setError("Please select a blast database.");
-                    return;
-                }
-                String validationError = newSequenceBox.checkSequence();
-                if (validationError != null) {
-                    setError(validationError);
-                    return;
-                }
-                final SequenceDTO outgoingSequenceDTO = new SequenceDTO();
-                outgoingSequenceDTO.setSequence(newSequenceBox.getSequenceAsString());
-                outgoingSequenceDTO.setPublicationZdbID(getPublication());
-                ReferenceDatabaseDTO referenceDatabaseDTO = new ReferenceDatabaseDTO();
-                referenceDatabaseDTO.setZdbID(databaseListBoxWrapper.getSelected());
-
-                fireSequenceAdded(new SequenceAddEvent(markerDTO, outgoingSequenceDTO, referenceDatabaseDTO));
-            }
-        });
 
         addRelatedEntityCompositeListener(new RelatedEntityListener<U>() {
             public void addRelatedEntity(RelatedEntityEvent<U> relatedEntityEvent) {
@@ -172,12 +149,6 @@ public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelat
                 if (confirm == false) {
                     return;
                 }
-//                TranscriptRPCService.App.getInstance().removeNucleotideSequenceFromTranscript(sequenceDTO,
-//                        new MarkerEditCallBack<Void>("failed to remove nucleotide sequence: ", handlesError) {
-//                            public void onSuccess(Void result) {
-//                                removeRelatedEntity((RelatedEntityDTO) relatedEntityEvent.getRelatedEntityDTO());
-//                            }
-//                        });
                 MarkerRPCService.App.getInstance().removeDBLink(sequenceDTO,
                         new MarkerEditCallBack<DBLinkDTO>("failed to remove nucleotide sequence: ", nucleotideSequenceArea) {
                             public void onSuccess(DBLinkDTO dbLinkDTO) {
@@ -205,18 +176,15 @@ public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelat
         sequenceList.clear();
         addSequences(markerDTO.getRnaSequences());
         newSequenceBox.clearSequence();
-        sequenceBoxPanel.setVisible(false);
     }
 
     void openBox() {
-        link.setHTML(downArrowHTMLString);
-        sequenceBoxPanel.setVisible(true);
+        showHideToggle.setVisibilityToShow();
         fireSequenceAddStartListeners(new SequenceAddEvent());
     }
 
     public void closeBox() {
-        link.setHTML(rightArrowHTMLString);
-        sequenceBoxPanel.setVisible(false);
+        showHideToggle.setVisibilityToHide();
     }
 
     void handleAddSequenceView() {
@@ -224,12 +192,11 @@ public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelat
     }
 
     void hideAddSequence() {
-        link.setVisible(false);
-        sequenceBoxPanel.setVisible(false);
+        showHideToggle.setVisibilityToHide();
     }
 
     void showAddSequence() {
-        link.setVisible(true);
+        showHideToggle.setVisibilityToShow();
     }
 
     public void resetAndHide() {
@@ -276,7 +243,7 @@ public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelat
      * @return A list of publications with this name
      */
     protected List<String> getRelatedEntityAttributionsForName(String relatedEntityName) {
-        List<String> attributionList = new ArrayList<String>();
+        List<String> attributionList = new ArrayList<>();
         for (DeletableSequenceEntry deletableSequenceEntry : sequenceList.getSequences()) {
             if (deletableSequenceEntry.getSequenceDTO().getName().equals(relatedEntityName)) {
                 for (PublicationAttributionLabel attributionLabel : deletableSequenceEntry.getAttributions()) {
@@ -373,14 +340,6 @@ public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelat
         return databaseListBoxWrapper;
     }
 
-    public void setRightArrowHTMLString(String rightArrowHTMLString) {
-        this.rightArrowHTMLString = rightArrowHTMLString;
-    }
-
-    public void setDownArrowHTMLString(String downArrowHTMLString) {
-        this.downArrowHTMLString = downArrowHTMLString;
-    }
-
     void fireSequenceAddStartListeners(SequenceAddEvent sequenceAddEvent) {
         for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.start(sequenceAddEvent);
@@ -398,7 +357,7 @@ public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelat
     }
 
     protected List<U> getRelatedEntityDTOs() {
-        List<U> entities = new ArrayList<U>();
+        List<U> entities = new ArrayList<>();
 
         for (DeletableSequenceEntry deletableSequenceEntry : sequenceList.getSequences()) {
             entities.add((U) deletableSequenceEntry.getSequenceDTO());
@@ -424,7 +383,7 @@ public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelat
         }
 
         public List<DeletableSequenceEntry> getSequences() {
-            List<DeletableSequenceEntry> sequences = new ArrayList<DeletableSequenceEntry>();
+            List<DeletableSequenceEntry> sequences = new ArrayList<>();
             for (int i = 0; i < getNumSequences(); i++) {
                 sequences.add(getSequence(i));
             }
