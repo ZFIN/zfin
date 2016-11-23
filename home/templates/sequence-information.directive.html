@@ -1,4 +1,9 @@
 <div>
+    <br/>
+    <div id="newProteinSequence"></div>
+
+    <div id="newStemLoopSequence"></div><br/>
+
     <div class="summaryTitle">SEQUENCE INFORMATION
         <span style="cursor: pointer;">
             <i style="color: red; font-weight: bold;" title="Create new sequence information" ng-click="si.openAddSequenceInfo()">New</i>
@@ -19,7 +24,7 @@
                     <i class="fa fa-pencil-square-o red" aria-hidden="true" title="Edit the sequence information"></i>
                 </span>
                 <span style="cursor: pointer;"
-                      ng-click="si.openDeleteOtherMarkerLink(link,$index)">
+                      ng-click="si.openDeleteSequenceInfo(link,$index)">
                        <i class="fa fa-trash red" aria-hidden="true" title="Delete the sequence information"></i></span>
             </td>
             <td>{{link.length}}</td>

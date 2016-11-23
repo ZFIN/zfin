@@ -59,13 +59,14 @@
         si.seqenceInfo = null;
         si.openAddSequenceInfo = openAddSequenceInfo;
         si.addSequenceInfo = addSequenceInfo;
-        si.openDeleteOtherMarkerLink = openDeleteOtherMarkerLink;
+        si.openDeleteSequenceInfo = openDeleteSequenceInfo;
         si.deleteSeqenceInfo = deleteSeqenceInfo;
         si.openUpdateSequenceInfo = openUpdateSequenceInfo;
         si.updateSequenceInfo = updateSequenceInfo;
         si.addAttribution = addAttribution;
         si.deleteAttribution = deleteAttribution;
         si.close = close;
+        si.init = init;
 
         init();
 
@@ -124,7 +125,7 @@
             }
         }
 
-        function openDeleteOtherMarkerLink(obj, ind) {
+        function openDeleteSequenceInfo(obj, ind) {
             si.seqenceInfo = obj;
             si.ind = ind;
             MarkerService.openModalPopup('delete-sequence-info-modal');

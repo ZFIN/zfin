@@ -34,11 +34,7 @@
             };
         </script>
 
-        <div id="newProteinSequence"></div>
-
-      <div id="newStemLoopSequence"></div>
-
-      <sequence-information marker-id="${formBean.marker.zdbID}"></sequence-information>
+      <sequence-information id="seqenceInfo" marker-id="${formBean.marker.zdbID}"></sequence-information>
 
     </div>
 
