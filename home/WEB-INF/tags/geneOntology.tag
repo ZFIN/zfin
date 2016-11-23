@@ -14,8 +14,9 @@
 <zfin2:subsection title=""
                   test="${geneOntologyOnMarker.goTermCount>0}" showNoData="true">
     <authz:authorize access="hasRole('root')">
-        <span class="summaryTitle">${title}</span> <span ng-if="editMode">
-            <a href="/action/marker/marker-go-edit/${marker.zdbID}" class="error">Edit </a>
+        <span class="summaryTitle">${title} <span ng-if="editMode">
+            <a href="/action/marker/marker-go-edit/${marker.zdbID}" class="red-modifier">Edit </a>
+        </span>
         </span>
     </authz:authorize>
     <table class="summary">
