@@ -71,6 +71,7 @@ class SequenceBox extends Composite implements RelatedEntityChangeListener<Seque
                 fireSequenceBoxChangeEvent();
             }
         });
+        sequenceArea.setStyleName("sequenceArea");
         sequenceBoxChangeListeners.add(this); // adds self as a listener
     }
 
