@@ -35,6 +35,7 @@ update pub_tracking_history
 		      and pf_file_type_id = '1')
 and not exists  (Select 'x' from publication_note
     	   	   where pnote_text = 'Upon Review by L. Bayraktaroglu, this publication contains no information currently curated by ZFIN.')
+
  and pth_status_id = (select pts_pk_id from pub_tracking_status
      		     	     where pts_status_display = 'Closed, Curated');
 
