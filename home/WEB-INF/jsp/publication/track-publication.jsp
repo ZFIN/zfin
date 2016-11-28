@@ -40,11 +40,26 @@
     <c:if test="${!empty publication.fileName}"> <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}" target="_blank"><i class="fa fa-file-pdf-o"></i></a></c:if>
   </p>
 
-  <div publication-tracker
-       pub-id="${publication.zdbID}"
-       curator-id="${loggedInUser.zdbID}"
-       curator-first="${loggedInUser.firstName}"
-       curator-last="${loggedInUser.lastName}"
-       curator-email="${loggedInUser.email}">
+  <div>
+    <ul class="nav nav-tabs nav-justified nav-padded" role="tablist">
+      <li role="presentation" class="active"><a href="#status" aria-controls="status" role="tab" data-toggle="tab">Status</a></li>
+      <li role="presentation"><a href="#correspondence" aria-controls="correspondence" role="tab" data-toggle="tab">Correspondence</a></li>
+    </ul>
+
+    <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="status">
+        <div publication-tracker
+             pub-id="${publication.zdbID}"
+             curator-id="${loggedInUser.zdbID}"
+             curator-first="${loggedInUser.firstName}"
+             curator-last="${loggedInUser.lastName}"
+             curator-email="${loggedInUser.email}">
+        </div>
+      </div>
+      <div role="tabpanel" class="tab-pane" id="correspondence">
+        <div publication-correspondence pub-id="${publication.zdbID}"></div>
+      </div>
+    </div>
   </div>
+
 </div>

@@ -19,12 +19,6 @@
             '</div>' +
             '<div class="panel panel-default">' +
             '  <div class="panel-heading">' +
-            '    <h3 class="panel-title">Correspondence</h3>' +
-            '  </div>' +
-            '  <div publication-correspondence pub-id="{{vm.pubId}}"></div>' +
-            '</div>' +
-            '<div class="panel panel-default">' +
-            '  <div class="panel-heading">' +
             '    <h3 class="panel-title">Notes</h3>' +
             '  </div>' +
             '  <div publication-notes pub-id="{{vm.pubId}}" notes="vm.notes"></div>' +

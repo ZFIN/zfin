@@ -41,13 +41,13 @@
         </div>
     </div>
 
-    <ul id="fig-edit-tabs" class="nav nav-tabs nav-justified" role="tablist">
+    <ul id="fig-edit-tabs" class="nav nav-tabs nav-justified nav-padded" role="tablist">
         <li role="presentation" class="active"><a href="#details" aria-controls="details" role="tab" data-toggle="tab">Details</a></li>
         <li role="presentation"><a href="#files" aria-controls="files" role="tab" data-toggle="tab">Files</a></li>
         <li role="presentation"><a href="#figures" aria-controls="figures" role="tab" data-toggle="tab">Figures</a></li>
     </ul>
 
-    <div class="tab-content edit-form-content" ng-app="app">
+    <div class="tab-content" ng-app="app">
         <div role="tabpanel" class="tab-pane active" id="details">
             <zfin2:publicationForm publication="${publication}" error="${error}"/>
         </div>
@@ -82,7 +82,7 @@
             }
         });
 
-        $('.edit-form-content').on('click', "a[href^='#']", function () {
+        $('.tab-content').on('click', "a[href^='#']", function () {
             var hash = $(this).attr('href');
             goToTab(hash);
         });

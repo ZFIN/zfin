@@ -901,10 +901,6 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
     font-weight: bold;
 }
 
-.edit-form-content {
-    margin-top: 30px;
-}
-
 .figure-edit-panel .table td {
     vertical-align: baseline;
 }

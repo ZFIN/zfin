@@ -99,3 +99,7 @@ a:hover {
 .table-condensed > input > label {
     margin-right: 5px;
 }
+
+.nav.nav-padded {
+    margin-bottom: 30px;
+}
