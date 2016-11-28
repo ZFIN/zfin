@@ -728,6 +728,18 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getPubStatusClosedCurated() {
+        String pubId = "ZDB-PUB-040708-1"; // a pub that has been indexed, curated, and closed
+        Publication pub = publicationRepository.getPublication(pubId);
+
+        PublicationTrackingHistory currentStatus = publicationRepository.currentTrackingStatus(pub);
+        assertThat(currentStatus.getStatus().getType(), is(PublicationTrackingStatus.Type.CLOSED));
+        assertThat(currentStatus.getStatus().getQualifier(), is("curated"));
+
+    }
+
+
+    @Test
     public void getAllPublicationStatusesShouldReturnTwelveValues() {
         List<PublicationTrackingStatus> statuses = publicationRepository.getAllPublicationStatuses();
         assertThat(statuses, hasSize(15));

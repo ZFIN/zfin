@@ -66,7 +66,7 @@ and exists (Select 'x' from publication_note
 update pub_tracking_history
  set pth_status_id = (Select pts_pk_id
      		     	     from pub_tracking_status
-			     where pts_status_display = 'Closed, Not a zebrafish paper')
+			     where pts_status_display = 'Closed, No data')
  where exists  (Select 'x' from publication_note
     	   	   where pnote_text = 'This paper closed unread'
 		   and pnote_pub_Zdb_id = pth_pub_Zdb_id)
