@@ -36,6 +36,12 @@ insert into pub_tracking_status (pts_status,
 					pts_terminal_status,
 					pts_status_display,
 					pts_status_qualifier, pts_pipeline_pull_down_order)
+  values ('CLOSED','t','Closed, Not a zebrafish paper', 'not a zebrafish paper',13);
+
+insert into pub_tracking_status (pts_status,
+					pts_terminal_status,
+					pts_status_display,
+					pts_status_qualifier, pts_pipeline_pull_down_order)
   values ('CLOSED','t','Closed, No PDF', 'no PDF',14);
 
 
