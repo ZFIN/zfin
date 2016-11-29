@@ -23,9 +23,6 @@ msegselect.apg newmrkrselect.apg \
 searchform.apg
 
 
-STATICS = 	mrkrgenolist.apg
-
-
 # Use default rules for app page directories.
 
 include $(TOP)/make.default.apg.rules
