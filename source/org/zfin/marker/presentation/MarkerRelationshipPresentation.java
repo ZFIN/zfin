@@ -63,7 +63,7 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
             StringBuilder uri = new StringBuilder("?MIval=aa-showpubs.apg");
             uri.append("&orgOID=");
             uri.append(zdbId);
-            uri.append("&rtype=marker&recattrsrctype=standard");
+            uri.append("&recattrsrctype=standard");
             uri.append("&OID=");
             String count = String.valueOf(attributionZdbIDs.size());
 

@@ -160,12 +160,6 @@ Message: $MI_ERRORMSG
     <?/MISQL>
 <?/MIBLOCK>
 <?MIVAR>
-$(IF,$(>,$(POSITION,$rtype,marker),0),
-      $(SETVAR,$return_page1,aa-markerupdate.apg)
-      $(SETVAR,$return_page2,aa-do-markerupdate.apg)
-      $(SETVAR,$target_table,marker)
-      )
-
 $(IF,$(>,$(POSITION,$rtype,genotype),0),
       $(SETVAR,$return_page1,aa-genotypeview.apg)
       $(SETVAR,$return_page2,aa-do-markerupdate.apg)

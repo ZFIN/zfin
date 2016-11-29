@@ -42,7 +42,6 @@ Disallow: /action/webdriver
 Disallow: /action/pagination
 Disallow: /action/quicksearch
 #bots should not do updates or submit feedback
-Disallow: /cgi-bin/webdriver?MIval=aa-markerupdate.apg
 Disallow: /cgi-bin/webdriver?MIval=aa-your_input_welcome.apg
 
 Disallow: /downloads/archive

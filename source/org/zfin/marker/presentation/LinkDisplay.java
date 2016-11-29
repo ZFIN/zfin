@@ -59,7 +59,7 @@ public class LinkDisplay implements ProvidesLink {
             StringBuilder uri = new StringBuilder("?MIval=aa-showpubs.apg");
             uri.append("&orgOID=");
             uri.append(markerZdbID);
-            uri.append("&rtype=marker&recattrsrctype=standard");
+            uri.append("&recattrsrctype=standard");
             uri.append("&OID=");
             String count = String.valueOf(references.size());
 

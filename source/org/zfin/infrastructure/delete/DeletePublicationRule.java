@@ -21,27 +21,6 @@ public class DeletePublicationRule extends AbstractDeleteEntityRule implements D
 
         entity = publication;
         return validationReportList;
-
-        /// Needs to be implemented, currently placed in edit_pub.apg
-/*
-        select recattrib_source_zdb_id
-        from record_attribution, figure
-        where recattrib_source_zdb_id = '$OID'
-        and recattrib_data_zdb_id = fig_zdb_id
-        and (exists (select 'x'
-        from phenotype_experiment
-        where phenox_fig_zdb_id = fig_zdb_id)
-        or exists (select 'x'
-        from construct_figure
-        where consfig_fig_zdb_id = fig_zdb_id)
-        or exists (select 'x'
-        from expression_pattern_figure
-        where xpatfig_fig_zdb_id = fig_zdb_id)
-        or exists (select 'x'
-        from genotype_figure_fast_search
-        where gffs_fig_zdb_id = fig_zdb_id)
-        )
-                */
     }
 
     private Logger logger = Logger.getLogger(DeletePublicationRule.class);
