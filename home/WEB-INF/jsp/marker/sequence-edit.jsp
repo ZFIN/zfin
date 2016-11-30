@@ -134,7 +134,7 @@
             </h3>
             <table class="table table-condensed">
                 <tr>
-                    <td>Database:&nbsp;&nbsp;{{si.seqenceInfo.referenceDatabaseName}} - {{si.seqenceInfo.dataType}}</td>
+                    <td>Database:&nbsp;&nbsp;{{si.seqenceInfo.referenceDatabaseDisplay}}</td>
                     <td><span class="error">{{si.errorDb}}</span></td>
                 </tr>
                 <tr>

@@ -25,11 +25,6 @@
         .controller('sequenceInfoCtrl', ['$scope', '$http', '$sce', function ($scope, $http, $sce) {
             var seqInfoCtrl = this;
 
-            $scope.firstName = "John";
-            $scope.lastName = "Doe";
-            $scope.displayFullName = displayFullName;
-            $scope.displayId = displayId;
-
             seqInfoCtrl.linkDisplays = [];
             seqInfoCtrl.newDatabase = '';
             seqInfoCtrl.errorMessage = "";
@@ -60,6 +55,9 @@
                         seqInfoCtrl.linkDisplays = links;
                         var previousDataType = seqInfoCtrl.linkDisplays[0].dataType;
                         for (i = 0; i < seqInfoCtrl.linkDisplays.length; i++) {
+                            seqInfoCtrl.linkDisplays[i].referenceDatabaseDisplay = seqInfoCtrl.linkDisplays[i].referenceDatabaseName
+                                                                                 + " - "
+                                                                                 + seqInfoCtrl.linkDisplays[i].dataType;
                             if (i > 0 && seqInfoCtrl.linkDisplays[i].dataType === previousDataType) {
                                 seqInfoCtrl.linkDisplays[i].dataType = "";
                             } else {
@@ -197,14 +195,6 @@
                         });
                 }
             };
-
-            function displayId() {
-                return "The gene Id is: " + $scope.markerId;
-            }
-
-            function displayFullName() {
-                return "Full name: " + $scope.firstName + $scope.lastName;
-            }
 
             seqInfoCtrl.openAddSequenceInfo = function() {
                 openModalPopup('new-sequence-information-modal');
