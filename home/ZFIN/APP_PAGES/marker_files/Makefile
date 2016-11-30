@@ -18,14 +18,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/marker_files
 
-GENERICS = do-markerupdate.apg \
-markerselect.apg markerupdate.apg \
-markerview.apg msegselect.apg newmrkrselect.apg \
-searchform.apg sequence.apg sequence_data_entry.apg
-
-
-STATICS = marker_history_correction.apg attrib_check.apg sequence_tools.apg \
-	mrkrgenolist.apg
+GENERICS = markerselect.apg \
+msegselect.apg newmrkrselect.apg \
+searchform.apg
 
 
 # Use default rules for app page directories.
