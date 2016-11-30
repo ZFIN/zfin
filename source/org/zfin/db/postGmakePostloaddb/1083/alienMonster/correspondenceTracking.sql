@@ -1,5 +1,7 @@
 --liquibase formatted sql
---changeset sierra:correspondanceTracking
+--changeset sierra:correspondenceTracking
+
+
 
 create table pub_correspondence_recipient (pubcr_pk_id serial8 not null constraint pubcr_pk_id_not_null,
        	     				        pubcr_recipient_first_name varchar(100),
@@ -25,11 +27,11 @@ alter table pub_correspondence_recipient_group
 
 
 create table pub_correspondence_sent_email (pubcse_pk_id serial8 not null constraint pubcse_pk_id_not_null,
-       	     				   pubcse_date_composed datetime year to day default datetime year to day not null constraint pubcse_date_composed_not_null,
+       	     				   pubcse_date_composed datetime year to day default current year to day not null constraint pubcse_date_composed_not_null,
 					   pubcse_from varchar(50) not null constraint pubcse_text_composer_not_null,
 					   pubcse_text lvarchar(10000) not null constraint pubcse_text_not_null,
 					   pubcse_subject varchar(100) not null constraint pubcse_subject_not_null,
-					   pubcse_recipient_group_id int8 not null cosntraint pubcse_recipient_group_not_null,
+					   pubcse_recipient_group_id int8 not null constraint pubcse_recipient_group_not_null,
 					   pubcse_pub_zdb_id varchar(50) not null constraint pubcse_pub_zdb_id_not_null
 					   )
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
@@ -44,7 +46,7 @@ extent size 4096 next size 4096;
 
 create table pub_correspondence_subject (pcs_subject_pk_id serial8 not null constraint pcs_subject_pk_id_not_null,
        	     				 pcs_subject_text lvarchar(1000) not null constraint pcs_subject_text_not_null,
-					 pcs_subject_type varchar(20) not null constraint pcs_subject_text_not_null,
+					 pcs_subject_type varchar(20) not null constraint pcs_subject_type_not_null,
 					 pcs_handle varchar(100) not null constraint pcs_handle_not_null)
 in tbldbs2
 extent size 32 next size 32;
@@ -53,7 +55,7 @@ extent size 32 next size 32;
 
 create table pub_correspondence_sent_tracker (pubcst_pk_id serial8 not null constraint pubcst_pk_id_not_null,
        	     			     	pubcst_sent_by varchar(50) not null constraint pubcst_sent_by_not_null,
-					pubcst_date_sent datetime year to day default datetime year to day not null constraint pubcst_date_sent_not_null,
+					pubcst_date_sent datetime year to day default current year to day not null constraint pubcst_date_sent_not_null,
 					pubcst_sent_email_id int8 not null constraint pubcst_sent_email_id_not_null,
 					pubcst_pub_zdb_id varchar(50) not null constraint pubcst_pub_Zdb_id_not_null,
 					pubcst_resend boolean default 'f' not null constraint pubcst_resend_not_null)
@@ -74,4 +76,5 @@ create table pub_correspondence_received_email (pubcre_pk_id serial8 not null co
 					       pubcre_subject varchar(100) not null constraint pubcre_subject_not_null)
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 4096 next size 4096;
+
 

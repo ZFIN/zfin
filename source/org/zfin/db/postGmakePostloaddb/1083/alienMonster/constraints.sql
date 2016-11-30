@@ -3,20 +3,21 @@
 
 --pub_correspondence_sent_recipient
 
+
 create unique index pub_correspondence_recipient_pk_index 
        on pub_correspondence_recipient (pubcr_pk_id)
        using btree in idxdbs2;
 
 create unique index pub_correspondence_recipient_ak_index 
-       on pub_correspondence_recipient (pubcr_recipient_email_address, pubcr_pubcs_id, pubcr_recipient_group_id)
+       on pub_correspondence_recipient (pubcr_recipient_email_address, pubcr_recipient_group_id)
        using btree in idxdbs1;
 
 create index pub_correspondence_recipient_person_fk_index
-    on pub_correspondence_recipient (pubcsr_recipient_person_zdb_id)
+    on pub_correspondence_recipient (pubcr_recipient_person_zdb_id)
        using btree in idxdbs3;
 
 create index pub_correspondence_recipient_group_fk_index
-    on pub_correspondence_recipient (pubcsr_recipient_group_id)
+    on pub_correspondence_recipient (pubcr_recipient_group_id)
        using btree in idxdbs3;
 
 alter table pub_correspondence_recipient
@@ -32,7 +33,7 @@ alter table pub_correspondence_recipient
  constraint pub_corresspondence_recipient_person_zdb_id_fk);
 
 alter table pub_correspondence_recipient
-  add constraint (foreign key (pubcr_recipient_group_id) references person 
+  add constraint (foreign key (pubcr_recipient_group_id) references  pub_correspondence_recipient_group
  constraint pub_corresspondence_recipient_group_id_fk);
 
 
@@ -106,20 +107,20 @@ create unique index pub_correspondence_sent_tracker_pk_index
        on pub_correspondence_sent_tracker (pubcst_pk_id)
        using btree in idxdbs2;
 
-create unique index pub_correspondence_sent_tracker_pk_index 
+create unique index pub_correspondence_sent_tracker_ak_index 
        on pub_correspondence_sent_tracker (pubcst_sent_by, pubcst_date_sent, pubcst_sent_email_id, pubcst_pub_zdb_id)
        using btree in idxdbs1;
 
 create index pub_correspondence_sent_tracker_email_id_fk_index
- on on pub_correspondence_sent_tracker (pubcst_sent_email_id)
+ on  pub_correspondence_sent_tracker (pubcst_sent_email_id)
        using btree in idxdbs2;
 
 create index pub_correspondence_sent_tracker_pub_zdb_id_fk_index
- on on pub_correspondence_sent_tracker (pubcst_pub_zdb_id)
+ on pub_correspondence_sent_tracker (pubcst_pub_zdb_id)
        using btree in idxdbs3;
 
 create index pub_correspondence_sent_tracker_sent_by_zdb_id_fk_index
- on on pub_correspondence_sent_tracker (pubcst_sent_by)
+ on  pub_correspondence_sent_tracker (pubcst_sent_by)
        using btree in idxdbs3;
 
 alter table pub_correspondence_sent_tracker
@@ -147,10 +148,6 @@ references publication on delete cascade constraint pub_correspondence_sent_trac
 
 ---TODO: check pub in tracker matches pub in sent email --- 
 
-create unique index pub_correspondence_sent_tracker_ak_index 
-       on pub_correspondence_sent_tracker (pubcst_date_sent, pubcst_pubc_text_id, pubcst_pub_zdb_id, pubcst_resend_)
-       using btree in idxdbs1;
-
 --pub_correspondence_recieved_email
 
 create unique index pub_correspondence_received_email_pk_index
@@ -166,23 +163,21 @@ create index pub_correspondence_received_email_pub_fk_index
 using btree in idxdbs1;
 
 create index pub_correspondence_received_email_from_person_zdb_id_fk_index
- on pub_correspondence_received_email (pubcre_from_person_zdb_id) 
+ on pub_correspondence_received_email (pubcre_correspondence_from_person_zdb_id) 
 using btree in idxdbs1;
 
-alter table pub_correspondence_recieved_email
+alter table pub_correspondence_received_email
  add constraint primary key (pubcre_pk_id) 
  constraint pubcre_pk;
 
-alter table pub_correspondence_recieved_email
+alter table pub_correspondence_received_email
  add constraint unique (pubcre_correspondence_from_email_address, pubcre_subject,pubcre_pub_zdb_id,pubcre_received_date) 
  constraint pubcre_ak;
 
-alter table pub_correspondence_recieved_email
+alter table pub_correspondence_received_email
  add constraint (foreign key (pubcre_pub_zdb_id) 
-references publication on delete cascade constraint pub_correspondence_recieved_email_pub_fk_odc);
+references publication on delete cascade constraint pub_correspondence_received_email_pub_fk_odc);
 
-alter table pub_correspondence_recieved_email
- add constraint (foreign key (pubcre_from_person_zdb_id) 
-references person constraint pub_correspondence_recieved_email_from_person_fk);
-
-
+alter table pub_correspondence_received_email
+ add constraint (foreign key (pubcre_correspondence_from_person_zdb_id) 
+references person constraint pub_correspondence_received_email_from_person_fk);
