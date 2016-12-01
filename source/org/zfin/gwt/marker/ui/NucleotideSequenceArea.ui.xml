@@ -13,7 +13,7 @@
             <g:Label text=":&nbsp;" addStyleNames="bold"/>
             <zfin:ShowHideToggle widget="{fullSequencePanel}" ui:field="showHideToggle" show="false"/>
         </g:HorizontalPanel>
-        <g:VerticalPanel ui:field="fullSequencePanel" width="100%">
+        <g:VerticalPanel ui:field="fullSequencePanel" width="100%" visible="false">
             <g:Label ui:field="errorLabel" styleName="error"/>
             <g:VerticalPanel>
                 <g:HorizontalPanel>

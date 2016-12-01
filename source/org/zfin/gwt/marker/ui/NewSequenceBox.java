@@ -75,17 +75,13 @@ class NewSequenceBox extends Composite {
         sequenceBox.inactivate();
     }
 
-    public void hideProteinBox() {
-        sequencePanel.setVisible(false);
-    }
-
-    void fireSequenceAddListeners(SequenceAddEvent sequenceAddEvent) {
+    private void fireSequenceAddListeners(SequenceAddEvent sequenceAddEvent) {
         for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.add(sequenceAddEvent);
         }
     }
 
-    void fireSequenceAddCancelListeners(SequenceAddEvent sequenceAddEvent) {
+    private void fireSequenceAddCancelListeners(SequenceAddEvent sequenceAddEvent) {
         for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.cancel(sequenceAddEvent);
         }
