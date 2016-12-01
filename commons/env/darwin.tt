@@ -3,7 +3,7 @@
 <!--|AO_EMAIL_CURATOR|-->	informix\@zfin.org
 <!--|AO_EMAIL_ERR|-->	informix\@zfin.org
 <!--|BACKGROUND_COLOR|-->	#FFFFFF
-<!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/dev_blastdb
+<!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/trunk
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
 <!--|CLIENT_LOCALE|-->	en_US.utf8
 <!--|COUNT_PATO_ERR|-->	informix\@zfin.org
