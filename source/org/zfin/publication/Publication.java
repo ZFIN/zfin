@@ -46,6 +46,8 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private Set<PublicationDbXref> dbXrefs;
     private SortedSet<PublicationFile> files;
 
+    private Set<CorrespondenceSentMessage> sentMessages;
+
     private boolean deletable;
     private boolean indexed;
     private boolean canShowImages;
@@ -274,6 +276,14 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     public void setFiles(SortedSet<PublicationFile> files) {
         this.files = files;
+    }
+
+    public Set<CorrespondenceSentMessage> getSentMessages() {
+        return sentMessages;
+    }
+
+    public void setSentMessages(Set<CorrespondenceSentMessage> sentMessages) {
+        this.sentMessages = sentMessages;
     }
 
     public String getCitation() {

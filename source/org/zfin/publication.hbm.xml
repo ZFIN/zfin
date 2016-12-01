@@ -99,6 +99,11 @@
             <one-to-many class="org.zfin.publication.PublicationFile"/>
         </set>
 
+        <set name="sentMessages" lazy="true" table="pub_correspondence_sent_tracker" order-by="pubcse_date_composed desc">
+            <key column="pubcst_pub_zdb_id"/>
+            <one-to-many class="org.zfin.publication.CorrespondenceSentMessage"/>
+        </set>
+
     </class>
 
     <class name="org.zfin.publication.DOIAttempt" table="doi_attempts">
