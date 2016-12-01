@@ -76,14 +76,8 @@
                     .then(function (databases) {
                         seqInfoCtrl.databases = [];
                         for (var i in databases) {
-                            if (databases[i].zdbID === 'ZDB-FDBCONT-040412-37' ||    //GenBank (RNA)
-                                databases[i].zdbID === 'ZDB-FDBCONT-040412-36' ||    //GenBank (Genomic)
-                                databases[i].zdbID === 'ZDB-FDBCONT-040412-42' ||    //GenPept (Polypeptide)
-                                databases[i].zdbID === 'ZDB-FDBCONT-040412-47'       //UniProt (Polypeptide)
-                            ) {
                                 databases[i].label = databases[i].name + " - " + databases[i].type;
                                 seqInfoCtrl.databases.push(databases[i]);
-                            }
                         }
                     })
                     .catch(function (error) {
