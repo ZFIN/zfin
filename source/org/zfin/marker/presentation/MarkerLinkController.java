@@ -121,7 +121,13 @@ public class MarkerLinkController {
         String pubId = newLink.getReferences().iterator().next().getZdbID();
 
         HibernateUtil.createTransaction();
-        DBLink link = markerRepository.addDBLink(marker, accessionNo, refDB, pubId);
+        DBLink link = null;
+        if (newLink.getLength() != null) {
+            int len = Integer.parseInt(newLink.getLength());
+            link = markerRepository.addDBLinkWithLenth(marker, accessionNo, refDB, pubId, len);
+        } else {
+            link = markerRepository.addDBLink(marker, accessionNo, refDB, pubId);
+        }
         HibernateUtil.flushAndCommitCurrentSession();
 
         return getLinkDisplayById(link.getZdbID());

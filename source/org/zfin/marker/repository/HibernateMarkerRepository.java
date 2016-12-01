@@ -3047,5 +3047,37 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (MarkerHistory) HibernateUtil.currentSession().load(MarkerHistory.class, zdbID);
     }
 
+    public DBLink addDBLinkWithLenth(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID, int length) {
+        if (length < 1) {
+           return addDBLink(marker, accessionNumber, refdb, attributionZdbID);
+        }
+        MarkerDBLink mdb = new MarkerDBLink();
+        mdb.setMarker(marker);
+        mdb.setAccessionNumber(accessionNumber);
+        mdb.setReferenceDatabase(refdb);
+        mdb.setLength(length);
+        Set<MarkerDBLink> markerDBLinks = marker.getDbLinks();
+        if (markerDBLinks == null) {
+            markerDBLinks = new HashSet<MarkerDBLink>();
+            markerDBLinks.add(mdb);
+            marker.setDbLinks(markerDBLinks);
+        } else {
+            marker.getDbLinks().add(mdb);
+        }
+        currentSession().save(mdb);
+        if (StringUtils.isNotEmpty(attributionZdbID)) {
+            infrastructureRepository.insertRecordAttribution(mdb.getZdbID(), attributionZdbID);
+        }
+
+        String updateComment = "Adding dblink " + mdb.getReferenceDatabase().getForeignDB().getDisplayName() + ":" + mdb.getAccessionNumber();
+        updateComment += StringUtils.isNotBlank(attributionZdbID) ? (" with attribution " + attributionZdbID) : " without attribution";
+        InfrastructureService.insertUpdate(marker, updateComment);
+
+        //accessions will end up in the fast search table associated with the marker
+        runMarkerNameFastSearchUpdate(marker);
+
+        return mdb;
+    }
+
 }
 

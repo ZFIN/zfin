@@ -486,4 +486,6 @@ public interface MarkerRepository {
     int getCrisprCount(String geneAbbrev);
 
     MarkerHistory getMarkerHistory(String zdbID);
+
+    DBLink addDBLinkWithLenth(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID, int length);
 }

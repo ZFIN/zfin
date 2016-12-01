@@ -87,7 +87,7 @@
 
             seqInfoCtrl.addSequenceInfo = function() {
                 if (validated(1)) {
-                    addLink($scope.markerId, seqInfoCtrl.newDatabase, seqInfoCtrl.newAccession.toUpperCase(), seqInfoCtrl.newReference)
+                    addLink($scope.markerId, seqInfoCtrl.newDatabase, seqInfoCtrl.newAccession.toUpperCase(), seqInfoCtrl.newReference, null)
                         .then(function (link) {
                             getSequences();
                             if (!seqInfoCtrl.errorRef) {
@@ -154,7 +154,7 @@
                     removeLink(seqInfoCtrl.seqenceInfo)
                         .then(function () {
                             addLink($scope.markerId, seqInfoCtrl.seqenceInfo.referenceDatabaseZdbID,
-                                    seqInfoCtrl.accessionEdit.toUpperCase(), seqInfoCtrl.seqenceInfo.references[0].zdbID)
+                                    seqInfoCtrl.accessionEdit.toUpperCase(), seqInfoCtrl.seqenceInfo.references[0].zdbID, seqInfoCtrl.seqenceInfo.length)
                                 .then(function (link) {
                                     seqInfoCtrl.seqenceInfo = link;
                                     var referenceIds = [];
@@ -220,11 +220,12 @@
                     });
             }
 
-            function addLink(markerId, fdbId, accession, pubId) {
+            function addLink(markerId, fdbId, accession, pubId, len) {
                 var link = {
                     referenceDatabaseZdbID: fdbId,
                     accession: accession,
-                    references: [{zdbID: pubId}]
+                    references: [{zdbID: pubId}],
+                    length: len
                 };
                 return $http.post('/action/marker/' + markerId + '/links', link)
                     .then(returnResponseData).catch(function (error) {
