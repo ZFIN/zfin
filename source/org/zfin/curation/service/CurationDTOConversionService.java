@@ -2,7 +2,6 @@ package org.zfin.curation.service;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
-import org.zfin.curation.Correspondence;
 import org.zfin.curation.Curation;
 import org.zfin.curation.PublicationNote;
 import org.zfin.curation.presentation.*;
@@ -10,12 +9,15 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.publication.CorrespondenceRecipient;
+import org.zfin.publication.CorrespondenceSentMessage;
 import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationTrackingHistory;
 import org.zfin.publication.presentation.DashboardImageBean;
 import org.zfin.publication.presentation.DashboardPublicationBean;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CurationDTOConversionService {
@@ -27,7 +29,7 @@ public class CurationDTOConversionService {
         dto.setZdbID(note.getZdbID());
         dto.setDate(note.getDate());
         dto.setText(note.getText());
-        dto.setCurator(toCuratorDTO(note.getCurator()));
+        dto.setCurator(toPersonDTO(note.getCurator()));
 
         Person currentUser = ProfileService.getCurrentSecurityUser();
         dto.setEditable(
@@ -38,18 +40,30 @@ public class CurationDTOConversionService {
         return dto;
     }
 
-    public CuratorDTO toCuratorDTO(Person curator) {
-        if (curator == null) {
+    public PersonDTO toPersonDTO(Person person) {
+        if (person == null) {
             return null;
         }
-        CuratorDTO dto = new CuratorDTO();
-        dto.setZdbID(curator.getZdbID());
-        dto.setName(curator.getFirstName() + " " + curator.getLastName());
-        if (curator.getSnapshot() == null) {
+        PersonDTO dto = new PersonDTO();
+        dto.setZdbID(person.getZdbID());
+        dto.setFirstName(person.getFirstName());
+        dto.setLastName(person.getLastName());
+        dto.setName(person.getFirstName() + " " + person.getLastName());
+        dto.setEmail(person.getEmail());
+        if (person.getSnapshot() == null) {
             dto.setImageURL(DEFAULT_IMAGE);
         } else {
-            dto.setImageURL("/action/profile/image/view/" + curator.getZdbID() + ".jpg");
+            dto.setImageURL("/action/profile/image/view/" + person.getZdbID() + ".jpg");
         }
+        return dto;
+    }
+
+    public PersonDTO toPersonDTO(CorrespondenceRecipient recipient) {
+        if (recipient.getPerson() != null) {
+            return toPersonDTO(recipient.getPerson());
+        }
+        PersonDTO dto = new PersonDTO();
+        dto.setEmail(recipient.getEmail());
         return dto;
     }
 
@@ -57,7 +71,7 @@ public class CurationDTOConversionService {
         CurationDTO dto = new CurationDTO();
         dto.setZdbID(curation.getZdbID());
         dto.setTopic(curation.getTopic().toString());
-        dto.setCurator(toCuratorDTO(curation.getCurator()));
+        dto.setCurator(toPersonDTO(curation.getCurator()));
         dto.setDataFound(curation.isDataFound());
         dto.setEntryDate(curation.getEntryDate());
         dto.setOpenedDate(curation.getOpenedDate());
@@ -65,14 +79,20 @@ public class CurationDTOConversionService {
         return dto;
     }
 
-    public CorrespondenceDTO toCorrespondenceDTO(Correspondence correspondence) {
+    public CorrespondenceDTO toCorrespondenceDTO(CorrespondenceSentMessage sent) {
         CorrespondenceDTO dto = new CorrespondenceDTO();
-        dto.setPub(correspondence.getPublication().getZdbID());
-        dto.setCurator(toCuratorDTO(ProfileService.getCurrentSecurityUser()));
-        dto.setId(correspondence.getId());
-        dto.setOpenedDate(correspondence.getContactedDate());
-        dto.setReplyReceived(correspondence.getRespondedDate() != null);
-        dto.setClosedDate(dto.isReplyReceived() ? correspondence.getRespondedDate() : correspondence.getGiveUpDate());
+        dto.setId(sent.getId());
+        dto.setPub(sent.getPublication().getZdbID());
+        dto.setOutgoing(true);
+        dto.setSentDate(sent.getSentDate());
+        dto.setComposedDate(sent.getMessage().getComposedDate());
+        dto.setFrom(toPersonDTO(sent.getFrom()));
+        dto.setTo(sent.getMessage().getRecipients().stream()
+                .map(this::toPersonDTO)
+                .collect(Collectors.toList()));
+        dto.setSubject(sent.getMessage().getSubject());
+        dto.setMessage(sent.getMessage().getText());
+        dto.setResend(sent.isResend());
         return dto;
     }
 
@@ -108,7 +128,7 @@ public class CurationDTOConversionService {
         dto.setPubZdbID(status.getPublication().getZdbID());
         dto.setStatus(status.getStatus());
         dto.setLocation(status.getLocation());
-        dto.setOwner(toCuratorDTO(status.getOwner()));
+        dto.setOwner(toPersonDTO(status.getOwner()));
         dto.setUpdateDate(status.getDate());
         return dto;
     }

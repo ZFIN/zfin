@@ -172,12 +172,12 @@ public class PublicationTrackingController {
 
     @ResponseBody
     @RequestMapping(value = "/curators", method = RequestMethod.GET)
-    public Collection<CuratorDTO> getAllCurators() {
-        Set<CuratorDTO> curatorDTOs = new TreeSet<>();
+    public Collection<PersonDTO> getAllCurators() {
+        Set<PersonDTO> curatorDTOs = new TreeSet<>();
         // maybe one day we'll have a separate role for just curators?
         List<Person> curators = profileRepository.getUsersByRole("root");
         for (Person curator : curators) {
-            curatorDTOs.add(converter.toCuratorDTO(curator));
+            curatorDTOs.add(converter.toPersonDTO(curator));
         }
         return curatorDTOs;
     }
@@ -317,50 +317,79 @@ public class PublicationTrackingController {
     @RequestMapping(value = "/{zdbID}/correspondences", method = RequestMethod.GET)
     public Collection<CorrespondenceDTO> getCorrespondences(@PathVariable String zdbID) {
         Publication publication = publicationRepository.getPublication(zdbID);
-        return publication.getCorrespondences().stream()
+        return publication.getSentMessages().stream()
                 .map(converter::toCorrespondenceDTO)
                 .collect(Collectors.toList());
     }
 
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/correspondences", method = RequestMethod.POST)
-    public CorrespondenceDTO newCorrespondence(@PathVariable String zdbID) {
+    public CorrespondenceDTO newCorrespondence(@PathVariable String zdbID, @RequestBody CorrespondenceDTO dto) {
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
 
-        Correspondence correspondence = new Correspondence();
-        correspondence.setPublication(publicationRepository.getPublication(zdbID));
-        correspondence.setCurator(ProfileService.getCurrentSecurityUser());
-        correspondence.setContactedDate(new Date());
+        Publication publication = publicationRepository.getPublication(zdbID);
+
+        CorrespondenceSentMessage correspondence = new CorrespondenceSentMessage();
+        correspondence.setPublication(publication);
+        correspondence.setFrom(ProfileService.getCurrentSecurityUser());
+        correspondence.setResend(false);
+        correspondence.setSentDate(new Date());
+
+        CorrespondenceComposedMessage message = new CorrespondenceComposedMessage();
+        message.setFrom(ProfileService.getCurrentSecurityUser());
+        message.setPublication(publication);
+        message.setComposedDate(new Date());
+        message.setSubject(dto.getSubject());
+        message.setText(dto.getMessage());
+        message.setRecipientEmailList(dto.getTo().stream()
+                .map(PersonDTO::getEmail)
+                .collect(Collectors.joining(", ")));
+
+        Set<CorrespondenceRecipient> recipients = new HashSet<>();
+        for (PersonDTO to : dto.getTo()) {
+            CorrespondenceRecipient recipient = new CorrespondenceRecipient();
+            recipient.setFirstName(to.getFirstName());
+            recipient.setLastName(to.getLastName());
+            recipient.setEmail(to.getEmail());
+            recipient.setPerson(profileRepository.getPerson(to.getZdbID()));
+            recipient.setMessage(message);
+            recipients.add(recipient);
+        }
+
+        message.setRecipients(recipients);
+        correspondence.setMessage(message);
+
+        session.save(message);
         session.save(correspondence);
 
-        CorrespondenceDTO dto = converter.toCorrespondenceDTO(correspondence);
+        dto = converter.toCorrespondenceDTO(correspondence);
 
         tx.commit();
 
         return dto;
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/correspondences/{id}", method = RequestMethod.POST)
-    public CorrespondenceDTO editCorrespondence(@PathVariable long id, @RequestBody CorrespondenceDTO correspondenceDTO) {
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = session.beginTransaction();
-
-        Correspondence correspondence = (Correspondence) session.get(Correspondence.class, id);
-        if (correspondenceDTO.isReplyReceived()) {
-            correspondence.setRespondedDate(correspondenceDTO.getClosedDate());
-        } else {
-            correspondence.setGiveUpDate(correspondenceDTO.getClosedDate());
-        }
-        session.update(correspondence);
-
-        CorrespondenceDTO dto = converter.toCorrespondenceDTO(correspondence);
-
-        tx.commit();
-
-        return dto;
-    }
+//    @ResponseBody
+//    @RequestMapping(value = "/correspondences/{id}", method = RequestMethod.POST)
+//    public CorrespondenceDTO editCorrespondence(@PathVariable long id, @RequestBody CorrespondenceDTO correspondenceDTO) {
+//        Session session = HibernateUtil.currentSession();
+//        Transaction tx = session.beginTransaction();
+//
+//        Correspondence correspondence = (Correspondence) session.get(Correspondence.class, id);
+//        if (correspondenceDTO.isReplyReceived()) {
+//            correspondence.setRespondedDate(correspondenceDTO.getClosedDate());
+//        } else {
+//            correspondence.setGiveUpDate(correspondenceDTO.getClosedDate());
+//        }
+//        session.update(correspondence);
+//
+//        CorrespondenceDTO dto = converter.toCorrespondenceDTO(correspondence);
+//
+//        tx.commit();
+//
+//        return dto;
+//    }
 
     @ResponseBody
     @RequestMapping(value = "/correspondences/{id}", method = RequestMethod.DELETE, produces = "text/plain")

@@ -1,15 +1,20 @@
 package org.zfin.curation.presentation;
 
 import java.util.Date;
+import java.util.List;
 
 public class CorrespondenceDTO {
 
     private long id;
     private String pub;
-    private CuratorDTO curator;
-    private Date openedDate;
-    private Date closedDate;
-    private boolean replyReceived;
+    private boolean outgoing;
+    private Date sentDate;
+    private Date composedDate;
+    private PersonDTO from;
+    private List<PersonDTO> to;
+    private String subject;
+    private String message;
+    private boolean resend;
 
     public long getId() {
         return id;
@@ -27,36 +32,67 @@ public class CorrespondenceDTO {
         this.pub = pub;
     }
 
-    public CuratorDTO getCurator() {
-        return curator;
+    public boolean isOutgoing() {
+        return outgoing;
     }
 
-    public void setCurator(CuratorDTO curator) {
-        this.curator = curator;
+    public void setOutgoing(boolean outgoing) {
+        this.outgoing = outgoing;
     }
 
-    public Date getOpenedDate() {
-        return openedDate;
+    public Date getSentDate() {
+        return sentDate;
     }
 
-    public void setOpenedDate(Date openedDate) {
-        this.openedDate = openedDate;
+    public void setSentDate(Date sentDate) {
+        this.sentDate = sentDate;
     }
 
-    public Date getClosedDate() {
-        return closedDate;
+    public Date getComposedDate() {
+        return composedDate;
     }
 
-    public void setClosedDate(Date closedDate) {
-        this.closedDate = closedDate;
+    public void setComposedDate(Date composedDate) {
+        this.composedDate = composedDate;
     }
 
-    public boolean isReplyReceived() {
-        return replyReceived;
+    public PersonDTO getFrom() {
+        return from;
     }
 
-    public void setReplyReceived(boolean replyReceived) {
-        this.replyReceived = replyReceived;
+    public void setFrom(PersonDTO from) {
+        this.from = from;
     }
 
+    public List<PersonDTO> getTo() {
+        return to;
+    }
+
+    public void setTo(List<PersonDTO> to) {
+        this.to = to;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public boolean isResend() {
+        return resend;
+    }
+
+    public void setResend(boolean resend) {
+        this.resend = resend;
+    }
 }

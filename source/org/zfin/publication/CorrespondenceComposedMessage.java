@@ -19,7 +19,7 @@ public class CorrespondenceComposedMessage {
     private Date composedDate;
 
     @ManyToOne
-    @JoinColumn(name = "pubcse_from")
+    @JoinColumn(name = "pubcse_sent_by")
     private Person from;
 
     @Column(name = "pubcse_text")
@@ -32,7 +32,10 @@ public class CorrespondenceComposedMessage {
     @JoinColumn(name = "pubcse_pub_zdb_id")
     private Publication publication;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "message")
+    @Column(name = "pubcse_recipient_group")
+    private String recipientEmailList;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "message")
     private Set<CorrespondenceRecipient> recipients;
 
     public long getId() {
@@ -81,6 +84,14 @@ public class CorrespondenceComposedMessage {
 
     public void setPublication(Publication publication) {
         this.publication = publication;
+    }
+
+    public String getRecipientEmailList() {
+        return recipientEmailList;
+    }
+
+    public void setRecipientEmailList(String recipientEmailList) {
+        this.recipientEmailList = recipientEmailList;
     }
 
     public Set<CorrespondenceRecipient> getRecipients() {

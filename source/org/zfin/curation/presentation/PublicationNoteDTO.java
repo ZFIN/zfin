@@ -7,7 +7,7 @@ public class PublicationNoteDTO {
     private String zdbID;
     private String text;
     private Date date;
-    private CuratorDTO curator;
+    private PersonDTO curator;
     private boolean editable;
 
     public String getZdbID() {
@@ -34,11 +34,11 @@ public class PublicationNoteDTO {
         this.date = date;
     }
 
-    public CuratorDTO getCurator() {
+    public PersonDTO getCurator() {
         return curator;
     }
 
-    public void setCurator(CuratorDTO curator) {
+    public void setCurator(PersonDTO curator) {
         this.curator = curator;
     }
 

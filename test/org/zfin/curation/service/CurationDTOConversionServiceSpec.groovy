@@ -103,7 +103,7 @@ class CurationDTOConversionServiceSpec extends AbstractZfinIntegrationSpec {
 
     def "convert Person to DTO for person without snapshot"() {
         when:
-        def dto = converter.toCuratorDTO(person.patrick)
+        def dto = converter.toPersonDTO(person.patrick)
 
         then:
         dto.name == "$person.patrick.firstName $person.patrick.lastName"
@@ -113,7 +113,7 @@ class CurationDTOConversionServiceSpec extends AbstractZfinIntegrationSpec {
 
     def "convert Person to DTO for person with snapshot"() {
         when:
-        def dto = converter.toCuratorDTO(person.monte)
+        def dto = converter.toPersonDTO(person.monte)
 
         then:
         dto.name == "$person.monte.firstName $person.monte.lastName"
