@@ -77,7 +77,7 @@ public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelat
 
     @UiHandler("addSequenceButton")
     void onAddSequence(@SuppressWarnings("unused") ClickEvent event) {
-        if (false == attributionIsValid()) return;
+        if (!attributionIsValid()) return;
         if (databaseListBoxWrapper.getSelected() == null
                 ||
                 AbstractListBox.NULL_STRING.equals(databaseListBoxWrapper.getSelected())) {
@@ -146,7 +146,7 @@ public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelat
                 // todo: take implementation for the RemoveSequenceListener
                 final SequenceDTO sequenceDTO = relatedEntityEvent.getDTO();
                 boolean confirm = Window.confirm("Remove sequence: " + sequenceDTO.getName() + "?");
-                if (confirm == false) {
+                if (!confirm) {
                     return;
                 }
                 MarkerRPCService.App.getInstance().removeDBLink(sequenceDTO,
@@ -183,7 +183,7 @@ public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelat
         fireSequenceAddStartListeners(new SequenceAddEvent());
     }
 
-    public void closeBox() {
+    private void closeBox() {
         showHideToggle.setVisibilityToHide();
     }
 
@@ -231,7 +231,7 @@ public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelat
 
 
     protected List<String> getRelatedEntityNames() {
-        List<String> relatedEntityList = new ArrayList<String>();
+        List<String> relatedEntityList = new ArrayList<>();
         for (DeletableSequenceEntry deletableSequenceEntry : sequenceList.getSequences()) {
             relatedEntityList.add(deletableSequenceEntry.getSequenceDTO().getName());
         }
@@ -270,7 +270,7 @@ public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelat
     }
 
 
-    void addSequences(List<SequenceDTO> sequences) {
+    private void addSequences(List<SequenceDTO> sequences) {
         if (sequences == null || sequences.size() == 0) {
             return;
         }
@@ -304,7 +304,7 @@ public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelat
     }
 
 
-    public int getNumberOfSequences() {
+    int getNumberOfSequences() {
         return sequenceList.getSequences().size();
     }
 
@@ -325,7 +325,7 @@ public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelat
         return null;
     }
 
-    void fireSequenceAdded(SequenceAddEvent sequenceAddedEvent) {
+    private void fireSequenceAdded(SequenceAddEvent sequenceAddedEvent) {
         fireEventSuccess();
         for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.add(sequenceAddedEvent);
@@ -340,13 +340,13 @@ public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelat
         return databaseListBoxWrapper;
     }
 
-    void fireSequenceAddStartListeners(SequenceAddEvent sequenceAddEvent) {
+    private void fireSequenceAddStartListeners(SequenceAddEvent sequenceAddEvent) {
         for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.start(sequenceAddEvent);
         }
     }
 
-    void fireSequenceAddCancelListeners(SequenceAddEvent sequenceAddEvent) {
+    private void fireSequenceAddCancelListeners(SequenceAddEvent sequenceAddEvent) {
         for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.cancel(sequenceAddEvent);
         }

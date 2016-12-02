@@ -1,20 +1,17 @@
-<%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <script src="/javascript/table-collapse.js"></script>
-<script src="/javascript/field-error.service.js"></script>
 <script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
 <script src="/javascript/angular/angular-sanitize.js"></script>
-<script src="/javascript/editMarker.js"></script>
 <script src="/javascript/trusted-html.filter.js"></script>
+<script src="/javascript/editMarker.js"></script>
 <script src="/javascript/nomenclature.js" type="text/javascript"></script>
 <script src="/javascript/curator-notes.directive.js"></script>
 <script src="/javascript/public-note.directive.js"></script>
 <script src="/javascript/field-error.service.js"></script>
-<script src="/javascript/gene-marker-relationship.directive.js"></script>
 <script src="/javascript/other-markers.directive.js"></script>
 <script src="/javascript/marker.service.js"></script>
 <script src="/javascript/autocompletify.directive.js"></script>
@@ -46,13 +43,14 @@
     </tiles:insertTemplate>
 </div>
 
-<zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}" userID="${formBean.user.zdbID}" />
+<zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}" userID="${formBean.user.zdbID}"/>
 
 
 <zfin2:uninformativeGeneName name="${formBean.marker.abbreviation}" fromChimericClone="${formBean.hasChimericClone}"/>
 
 <%--// EXPRESSION SECTION--%>
-<zfin2:markerExpression marker="${formBean.marker}" markerExpression="${formBean.markerExpression}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
+<zfin2:markerExpression marker="${formBean.marker}" markerExpression="${formBean.markerExpression}"
+                        webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
 
 <%--// MUTANTS AND TARGETED KNOCKDOWNS--%>
 <div id="mutant-info">
@@ -61,7 +59,8 @@
 
 <%--// PHENOTYPE --%>
 
-<zfin2:phenotype phenotypeOnMarkerBean="${formBean.phenotypeOnMarkerBeans}" marker="${formBean.marker}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
+<zfin2:phenotype phenotypeOnMarkerBean="${formBean.phenotypeOnMarkerBeans}" marker="${formBean.marker}"
+                 webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
 
 <%--// DISEASE --%>
 <div id="disease">
@@ -76,7 +75,7 @@
 
 <%--Transcripts--%>
 <zfin2:markerTranscriptSummary relatedTranscriptDisplay="${formBean.relatedTranscriptDisplay}"
-                               title="TRANSCRIPTS" showAllTranscripts="true" />
+                               title="TRANSCRIPTS" showAllTranscripts="true"/>
 
 <zfin2:geneProductsDescription geneBean="${formBean}"/>
 
@@ -93,7 +92,8 @@
 </zfin2:subsection>
 
 <%--Antibodies--%>
-<zfin2:markerRelationshipsLightSingleType relationships="${formBean.relatedAntibodies}" marker="${formBean.marker}" title="ANTIBODIES" maxNumber="5"/>
+<zfin2:markerRelationshipsLightSingleType relationships="${formBean.relatedAntibodies}" marker="${formBean.marker}"
+                                          title="ANTIBODIES" maxNumber="5"/>
 
 <%--Plasmid Links--%>
 <zfin2:subsection title="PLASMIDS" anchor="plasmid_links"
@@ -108,19 +108,20 @@
 </zfin2:subsection>
 
 
-
 <%--Constructs--%>
 <zfin2:constructsWithSequences formBean="${formBean}"/>
 
 <%--SEGMENT (CLONE AND PROBE) RELATIONSHIPS--%>
 
-<zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}" marker="${formBean.marker}" title="SEGMENT (CLONE AND PROBE) RELATIONSHIPS"/>
+<zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}"
+                                marker="${formBean.marker}" title="SEGMENT (CLONE AND PROBE) RELATIONSHIPS"/>
 <%--SEQUENCE INFORMATION--%>
-<zfin2:markerSequenceInformationSummary marker="${formBean.marker}" sequenceInfo="${formBean.sequenceInfo}" title="${fn:toUpperCase('Sequence Information')}" showAllSequences="false"/>
+<zfin2:markerSequenceInformationSummary marker="${formBean.marker}" sequenceInfo="${formBean.sequenceInfo}"
+                                        title="${fn:toUpperCase('Sequence Information')}" showAllSequences="false"/>
 
 
 <%--other GENE/Marker Pages--%>
-<zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}" />
+<zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}"/>
 
 
 <%--ORTHOLOGY--%>
@@ -137,7 +138,7 @@
 </authz:authorize>
 
 <script>
-    jQuery(function() {
+    jQuery(function () {
         jQuery("#mutant-info").find(".alleles").tableCollapse({label: "alleles"});
         jQuery("#disease").find(".marker-go-table").tableCollapse({label: "records"});
     });

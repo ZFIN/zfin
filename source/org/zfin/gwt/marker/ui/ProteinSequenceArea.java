@@ -10,12 +10,15 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import org.zfin.gwt.curation.event.AddNewFeatureEvent;
+import org.zfin.gwt.curation.event.AddNewFeatureEventHandler;
 import org.zfin.gwt.marker.event.SequenceAddEvent;
 import org.zfin.gwt.marker.event.SequenceAddListener;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.event.PublicationChangeEvent;
 import org.zfin.gwt.root.event.PublicationChangeListener;
 import org.zfin.gwt.root.ui.*;
+import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +43,8 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
     public Label errorLabel;
 
     // listeners
-    private final List<SequenceAddListener> sequenceAddListeners = new ArrayList<SequenceAddListener>();
-    private final List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
+    private final List<SequenceAddListener> sequenceAddListeners = new ArrayList<>();
+    private final List<HandlesError> handlesErrorListeners = new ArrayList<>();
     private boolean attributionRequired = true;
     private String publicationZdbID = "";
 
@@ -73,7 +76,7 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
 
         newSequenceBox.addSequenceAddListener(new SequenceAddListener() {
             public void add(final SequenceAddEvent sequenceAddEvent) {
-                if (false == publicationValidator.validate(publicationZdbID, handlesError)) return;
+                if (!publicationValidator.validate(publicationZdbID, handlesError)) return;
                 if (databaseListBoxWrapper.getSelected() == null
                         ||
                         AbstractListBox.NULL_STRING.equals(databaseListBoxWrapper.getSelected())) {
@@ -98,6 +101,7 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
 
             public void cancel(SequenceAddEvent sequenceAddEvent) {
                 fireSequenceAddCancelListeners(sequenceAddEvent);
+                showHideToggle.setVisibilityToHide();
             }
 
             public void start(SequenceAddEvent sequenceAddEvent) {
@@ -129,7 +133,7 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
         newSequenceBox.setVisible(false);
     }
 
-    void fireSequenceAddListeners(SequenceAddEvent sequenceAddEvent) {
+    private void fireSequenceAddListeners(SequenceAddEvent sequenceAddEvent) {
         clearError();
         for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.add(sequenceAddEvent);
@@ -137,14 +141,14 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
     }
 
 
-    void fireSequenceAddStartListeners(SequenceAddEvent sequenceAddEvent) {
+    private void fireSequenceAddStartListeners(SequenceAddEvent sequenceAddEvent) {
         clearError();
         for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.start(sequenceAddEvent);
         }
     }
 
-    void fireSequenceAddCancelListeners(SequenceAddEvent sequenceAddEvent) {
+    private void fireSequenceAddCancelListeners(SequenceAddEvent sequenceAddEvent) {
         clearError();
         for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.cancel(sequenceAddEvent);
@@ -154,7 +158,6 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
     public void addSequenceAddListener(SequenceAddListener sequenceAddListener) {
         clearError();
         sequenceAddListeners.add(sequenceAddListener);
-        newSequenceBox.addSequenceAddListener(sequenceAddListener);
     }
 
     public AbstractListBox getDatabaseListBoxWrapper() {
