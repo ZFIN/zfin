@@ -317,9 +317,15 @@ public class PublicationTrackingController {
     @RequestMapping(value = "/{zdbID}/correspondences", method = RequestMethod.GET)
     public Collection<CorrespondenceDTO> getCorrespondences(@PathVariable String zdbID) {
         Publication publication = publicationRepository.getPublication(zdbID);
-        return publication.getSentMessages().stream()
+        List<CorrespondenceDTO> correspondences = new ArrayList<>();
+        correspondences.addAll(publication.getSentMessages().stream()
                 .map(converter::toCorrespondenceDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+        correspondences.addAll(publication.getReceivedMessages().stream()
+                .map(converter::toCorrespondenceDTO)
+                .collect(Collectors.toList()));
+        Collections.sort(correspondences);
+        return correspondences;
     }
 
     @ResponseBody

@@ -47,6 +47,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private SortedSet<PublicationFile> files;
 
     private Set<CorrespondenceSentMessage> sentMessages;
+    private Set<CorrespondenceReceivedMessage> receivedMessages;
 
     private boolean deletable;
     private boolean indexed;
@@ -284,6 +285,14 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     public void setSentMessages(Set<CorrespondenceSentMessage> sentMessages) {
         this.sentMessages = sentMessages;
+    }
+
+    public Set<CorrespondenceReceivedMessage> getReceivedMessages() {
+        return receivedMessages;
+    }
+
+    public void setReceivedMessages(Set<CorrespondenceReceivedMessage> receivedMessages) {
+        this.receivedMessages = receivedMessages;
     }
 
     public String getCitation() {

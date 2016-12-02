@@ -104,6 +104,11 @@
             <one-to-many class="org.zfin.publication.CorrespondenceSentMessage"/>
         </set>
 
+        <set name="receivedMessages" lazy="true" table="pub_correspondence_received_email" order-by="pubcre_received_date desc">
+            <key column="pubcre_pub_zdb_id"/>
+            <one-to-many class="org.zfin.publication.CorrespondenceReceivedMessage"/>
+        </set>
+
     </class>
 
     <class name="org.zfin.publication.DOIAttempt" table="doi_attempts">

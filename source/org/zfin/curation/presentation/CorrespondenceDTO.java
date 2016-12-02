@@ -1,9 +1,11 @@
 package org.zfin.curation.presentation;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import java.util.Date;
 import java.util.List;
 
-public class CorrespondenceDTO {
+public class CorrespondenceDTO implements Comparable<CorrespondenceDTO> {
 
     private long id;
     private String pub;
@@ -94,5 +96,10 @@ public class CorrespondenceDTO {
 
     public void setResend(boolean resend) {
         this.resend = resend;
+    }
+
+    @Override
+    public int compareTo(CorrespondenceDTO o) {
+        return ObjectUtils.compare(date, o.getDate());
     }
 }

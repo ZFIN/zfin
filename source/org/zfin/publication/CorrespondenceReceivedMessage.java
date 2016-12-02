@@ -11,7 +11,7 @@ public class CorrespondenceReceivedMessage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pubcrg_group_id")
+    @Column(name = "pubcre_pk_id")
     private long id;
 
     @Column(name = "pubcre_correspondence_from_first_name")
