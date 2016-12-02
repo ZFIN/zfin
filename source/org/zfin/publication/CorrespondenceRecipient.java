@@ -26,6 +26,10 @@ public class CorrespondenceRecipient {
     @JoinColumn(name = "pubcr_recipient_person_zdb_id")
     private Person person;
 
+    @ManyToOne
+    @JoinColumn(name = "pubcr_recipient_sent_email_id")
+    private CorrespondenceComposedMessage message;
+
     public long getId() {
         return id;
     }
@@ -64,5 +68,13 @@ public class CorrespondenceRecipient {
 
     public void setPerson(Person person) {
         this.person = person;
+    }
+
+    public CorrespondenceComposedMessage getMessage() {
+        return message;
+    }
+
+    public void setMessage(CorrespondenceComposedMessage message) {
+        this.message = message;
     }
 }

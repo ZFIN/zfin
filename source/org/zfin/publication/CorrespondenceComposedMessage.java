@@ -4,6 +4,7 @@ import org.zfin.profile.Person;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "pub_correspondence_sent_email")
@@ -31,9 +32,8 @@ public class CorrespondenceComposedMessage {
     @JoinColumn(name = "pubcse_pub_zdb_id")
     private Publication publication;
 
-    @ManyToOne
-    @JoinColumn(name = "pubcse_recipient_group_id")
-    private CorrespondenceRecipientGroup recipientGroup;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "message")
+    private Set<CorrespondenceRecipient> recipients;
 
     public long getId() {
         return id;
@@ -83,11 +83,11 @@ public class CorrespondenceComposedMessage {
         this.publication = publication;
     }
 
-    public CorrespondenceRecipientGroup getRecipientGroup() {
-        return recipientGroup;
+    public Set<CorrespondenceRecipient> getRecipients() {
+        return recipients;
     }
 
-    public void setRecipientGroup(CorrespondenceRecipientGroup recipientGroup) {
-        this.recipientGroup = recipientGroup;
+    public void setRecipients(Set<CorrespondenceRecipient> recipients) {
+        this.recipients = recipients;
     }
 }
