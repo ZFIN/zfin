@@ -13,19 +13,6 @@ fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 4096 next size 4096;
 
 
-create table pub_correspondence_recipient_group (pubcrg_group_id varchar(100) not null constraint pubcrg_group_id_not_null)
-fragment by round robin in tbldbs1, tbldbs2, tbldbs3
-extent size 4096 next size 4096;
-
-create unique index pubcrg_pk_index
-  on pub_correspondence_recipient_group (pubcrg_group_id)
- using btree in idxdbs2;
-
-alter table pub_correspondence_recipient_group
- add constraint primary key (pubcrg_group_id) 
- constraint pubcrg_group_id_pk;
-
-
 create table pub_correspondence_sent_email (pubcse_pk_id serial8 not null constraint pubcse_pk_id_not_null,
        	     				   pubcse_date_composed datetime year to day default current year to day not null constraint pubcse_date_composed_not_null,
 					   pubcse_from varchar(50) not null constraint pubcse_text_composer_not_null,
