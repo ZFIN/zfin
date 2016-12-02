@@ -40,6 +40,10 @@ public class CorrespondenceReceivedMessage {
     @Column(name = "pubcre_subject")
     private String subject;
 
+    @ManyToOne
+    @JoinColumn(name = "pubcre_received_by")
+    private Person to;
+
     public long getId() {
         return id;
     }
@@ -110,5 +114,13 @@ public class CorrespondenceReceivedMessage {
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    public Person getTo() {
+        return to;
+    }
+
+    public void setTo(Person to) {
+        this.to = to;
     }
 }
