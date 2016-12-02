@@ -60,7 +60,8 @@ create table pub_correspondence_received_email (pubcre_pk_id serial8 not null co
 					       pubcre_received_date datetime year to second default current year to second 
 					       	        not null constraint pubcre_received_date_not_null,
 					       pubcre_text lvarchar(10000),
-					       pubcre_subject varchar(100) not null constraint pubcre_subject_not_null)
+					       pubcre_subject varchar(100) not null constraint pubcre_subject_not_null,
+					       pubcre_received_by varchar(50))
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 4096 next size 4096;
 
