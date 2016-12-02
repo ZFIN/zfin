@@ -8,7 +8,7 @@ public class CorrespondenceDTO {
     private long id;
     private String pub;
     private boolean outgoing;
-    private Date sentDate;
+    private Date date;
     private Date composedDate;
     private PersonDTO from;
     private List<PersonDTO> to;
@@ -40,12 +40,12 @@ public class CorrespondenceDTO {
         this.outgoing = outgoing;
     }
 
-    public Date getSentDate() {
-        return sentDate;
+    public Date getDate() {
+        return date;
     }
 
-    public void setSentDate(Date sentDate) {
-        this.sentDate = sentDate;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public Date getComposedDate() {

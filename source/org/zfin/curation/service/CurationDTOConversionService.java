@@ -9,10 +9,7 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
-import org.zfin.publication.CorrespondenceRecipient;
-import org.zfin.publication.CorrespondenceSentMessage;
-import org.zfin.publication.Publication;
-import org.zfin.publication.PublicationTrackingHistory;
+import org.zfin.publication.*;
 import org.zfin.publication.presentation.DashboardImageBean;
 import org.zfin.publication.presentation.DashboardPublicationBean;
 
@@ -84,7 +81,7 @@ public class CurationDTOConversionService {
         dto.setId(sent.getId());
         dto.setPub(sent.getPublication().getZdbID());
         dto.setOutgoing(true);
-        dto.setSentDate(sent.getSentDate());
+        dto.setDate(sent.getSentDate());
         dto.setComposedDate(sent.getMessage().getComposedDate());
         dto.setFrom(toPersonDTO(sent.getFrom()));
         dto.setTo(sent.getMessage().getRecipients().stream()
@@ -93,6 +90,22 @@ public class CurationDTOConversionService {
         dto.setSubject(sent.getMessage().getSubject());
         dto.setMessage(sent.getMessage().getText());
         dto.setResend(sent.isResend());
+        return dto;
+    }
+
+    public CorrespondenceDTO toCorrespondenceDTO(CorrespondenceReceivedMessage received) {
+        CorrespondenceDTO dto = new CorrespondenceDTO();
+        dto.setId(received.getId());
+        dto.setPub(received.getPublication().getZdbID());
+        dto.setOutgoing(false);
+        dto.setDate(received.getDate());
+        PersonDTO from = new PersonDTO();
+        from.setEmail(received.getFromEmail());
+        dto.setFrom(from);
+        dto.setTo(Collections.singletonList(toPersonDTO(received.getTo())));
+        dto.setSubject(received.getSubject());
+        dto.setMessage(received.getText());
+        dto.setResend(false);
         return dto;
     }
 

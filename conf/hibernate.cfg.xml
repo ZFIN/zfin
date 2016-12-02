@@ -137,6 +137,7 @@
         <mapping class="org.zfin.ontology.TermStage"/>
         <mapping class="org.zfin.ontology.TransitiveClosure"/>
         <mapping class="org.zfin.publication.CorrespondenceComposedMessage"/>
+        <mapping class="org.zfin.publication.CorrespondenceReceivedMessage"/>
         <mapping class="org.zfin.publication.CorrespondenceRecipient"/>
         <mapping class="org.zfin.publication.CorrespondenceSentMessage"/>
         <mapping class="org.zfin.publication.PublicationDbXref"/>

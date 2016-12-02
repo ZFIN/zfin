@@ -1,6 +1,7 @@
 package org.zfin.publication.repository;
 
 import org.zfin.antibody.Antibody;
+import org.zfin.curation.presentation.CorrespondenceDTO;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
@@ -539,4 +540,9 @@ public interface PublicationRepository extends PaginationParameter {
     PublicationFileType getPublicationFileTypeByName(PublicationFileType.Name name);
 
     PublicationFile getOriginalArticle(Publication publication);
+
+    CorrespondenceSentMessage addSentCorrespondence(Publication publication, CorrespondenceDTO dto);
+
+    CorrespondenceReceivedMessage addReceivedCorrespondence(Publication publication, CorrespondenceDTO dto);
+
 }

@@ -330,40 +330,13 @@ public class PublicationTrackingController {
 
         Publication publication = publicationRepository.getPublication(zdbID);
 
-        CorrespondenceSentMessage correspondence = new CorrespondenceSentMessage();
-        correspondence.setPublication(publication);
-        correspondence.setFrom(ProfileService.getCurrentSecurityUser());
-        correspondence.setResend(false);
-        correspondence.setSentDate(new Date());
-
-        CorrespondenceComposedMessage message = new CorrespondenceComposedMessage();
-        message.setFrom(ProfileService.getCurrentSecurityUser());
-        message.setPublication(publication);
-        message.setComposedDate(new Date());
-        message.setSubject(dto.getSubject());
-        message.setText(dto.getMessage());
-        message.setRecipientEmailList(dto.getTo().stream()
-                .map(PersonDTO::getEmail)
-                .collect(Collectors.joining(", ")));
-
-        Set<CorrespondenceRecipient> recipients = new HashSet<>();
-        for (PersonDTO to : dto.getTo()) {
-            CorrespondenceRecipient recipient = new CorrespondenceRecipient();
-            recipient.setFirstName(to.getFirstName());
-            recipient.setLastName(to.getLastName());
-            recipient.setEmail(to.getEmail());
-            recipient.setPerson(profileRepository.getPerson(to.getZdbID()));
-            recipient.setMessage(message);
-            recipients.add(recipient);
+        if (dto.isOutgoing()) {
+            CorrespondenceSentMessage correspondence = publicationRepository.addSentCorrespondence(publication, dto);
+            dto = converter.toCorrespondenceDTO(correspondence);
+        } else {
+            CorrespondenceReceivedMessage correspondence = publicationRepository.addReceivedCorrespondence(publication, dto);
+            dto = converter.toCorrespondenceDTO(correspondence);
         }
-
-        message.setRecipients(recipients);
-        correspondence.setMessage(message);
-
-        session.save(message);
-        session.save(correspondence);
-
-        dto = converter.toCorrespondenceDTO(correspondence);
 
         tx.commit();
 
