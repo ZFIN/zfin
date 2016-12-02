@@ -17,7 +17,7 @@ create index pub_correspondence_recipient_person_fk_index
        using btree in idxdbs3;
 
 create index pub_correspondence_recipient_group_fk_index
-    on pub_correspondence_recipient (pubcr_recipient_group_id)
+    on pub_correspondence_recipient (pubcr_recipient_sent_email_id)
        using btree in idxdbs3;
 
 alter table pub_correspondence_recipient
@@ -33,8 +33,8 @@ alter table pub_correspondence_recipient
  constraint pub_corresspondence_recipient_person_zdb_id_fk);
 
 alter table pub_correspondence_recipient
-  add constraint (foreign key (pubcr_recipient_group_id) references  pub_correspondence_recipient_group
- constraint pub_corresspondence_recipient_group_id_fk);
+  add constraint (foreign key (pubcr_recipient_sent_email_id) references  pub_correspondence_sent_email
+ constraint pub_corresspondence_recipient_sent_email_id_fk);
 
 
 --pub_correspondence_sent_email
@@ -68,9 +68,6 @@ alter table pub_correspondence_sent_email
   add constraint (foreign key (pubcse_pub_zdb_id)
  references publication on delete cascade constraint pubcse_pub_zdb_id_foreign_key_odc);
 
-alter table pub_correspondence_sent_email
-  add constraint (foreign key (pubcse_recipient_group_id)
- references pub_correspondence_recipient_group constraint pubcse_recipient_group_id_foreign_key);
 
 alter table pub_correspondence_sent_email
   add constraint primary key (pubcse_pk_id)
