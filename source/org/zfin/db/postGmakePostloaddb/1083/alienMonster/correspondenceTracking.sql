@@ -1,21 +1,19 @@
 --liquibase formatted sql
 --changeset sierra:correspondenceTracking
 
-
-
 create table pub_correspondence_recipient (pubcr_pk_id serial8 not null constraint pubcr_pk_id_not_null,
        	     				        pubcr_recipient_first_name varchar(100),
-						pubcr_recipient_last_name varchar(100),
+					sent	pubcr_recipient_last_name varchar(100),
 						pubcr_recipient_email_address varchar(100),
 						pubcr_recipient_person_zdb_id varchar(50),
-						pubcr_recipient_sent_email_id varchar(100) not null constraint pubcr_recipient_sent_email_id_not_null)
+						pubcr_recipient_sent_email_id int8 not null constraint pubcr_recipient_sent_email_id_not_null)
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 4096 next size 4096;
 
 
 create table pub_correspondence_sent_email (pubcse_pk_id serial8 not null constraint pubcse_pk_id_not_null,
        	     				   pubcse_date_composed datetime year to day default current year to day not null constraint pubcse_date_composed_not_null,
-					   pubcse_from varchar(50) not null constraint pubcse_text_composer_not_null,
+					   pubcse_sent_by varchar(50) not null constraint pubcse_sent_by_not_null,
 					   pubcse_text lvarchar(10000) not null constraint pubcse_text_not_null,
 					   pubcse_subject varchar(100) not null constraint pubcse_subject_not_null,
 					   pubcse_recipient_group varchar(100) not null constraint pubcse_recipient_group_not_null,

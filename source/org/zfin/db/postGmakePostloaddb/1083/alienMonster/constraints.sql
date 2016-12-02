@@ -1,6 +1,48 @@
 --liquibase formatted sql
 --changeset sierra:constraints
 
+
+
+--pub_correspondence_sent_email
+
+create unique index pub_correspondence_sent_email_pk_index
+ on pub_correspondence_sent_email (pubcse_pk_id)
+ using btree in idxdbs1;
+
+create unique index pub_correspondence_sent_email_ak_index
+ on pub_correspondence_sent_email (pubcse_sent_by, pubcse_subject, pubcse_recipient_group, pubcse_date_composed)
+ using btree in idxdbs2;
+
+create index pubcse_sent_by_foreign_key_index
+ on pub_correspondence_sent_email (pubcse_sent_by)
+ using btree in idxdbs3;
+
+create index pubcse_pub_foreign_key_index
+ on pub_correspondence_sent_email (pubcse_pub_zdb_id)
+ using btree in idxdbs3;
+
+
+create index pubcse_recipient_group_id_foreign_key_index
+ on pub_correspondence_sent_email (pubcse_recipient_Group)
+ using btree in idxdbs3;
+
+alter table pub_correspondence_sent_email
+  add constraint (foreign key (pubcse_sent_by)
+ references person constraint pubcse_sent_by_foreign_key);
+
+alter table pub_correspondence_sent_email
+  add constraint (foreign key (pubcse_pub_zdb_id)
+ references publication on delete cascade constraint pubcse_pub_zdb_id_foreign_key_odc);
+
+
+alter table pub_correspondence_sent_email
+  add constraint primary key (pubcse_pk_id)
+ constraint pub_correspondence_sent_email_pk;
+
+alter table pub_correspondence_sent_email
+ add constraint unique (pubcse_sent_by, pubcse_subject, pubcse_recipient_group, pubcse_date_composed)
+ constraint pub_correspondence_sent_email_ak;
+
 --pub_correspondence_sent_recipient
 
 
@@ -9,7 +51,7 @@ create unique index pub_correspondence_recipient_pk_index
        using btree in idxdbs2;
 
 create unique index pub_correspondence_recipient_ak_index 
-       on pub_correspondence_recipient (pubcr_recipient_email_address, pubcr_recipient_group_id)
+       on pub_correspondence_recipient (pubcr_recipient_email_address, pubcr_recipient_sent_email_id)
        using btree in idxdbs1;
 
 create index pub_correspondence_recipient_person_fk_index
@@ -21,7 +63,7 @@ create index pub_correspondence_recipient_group_fk_index
        using btree in idxdbs3;
 
 alter table pub_correspondence_recipient
-  add constraint unique (pubcr_recipient_email_address, pubcr_recipient_group_id)
+  add constraint unique (pubcr_recipient_email_address, pubcr_recipient_sent_email_id)
  constraint pub_corresspondence_recipient_ak;
 
 alter table pub_correspondence_recipient
@@ -36,46 +78,6 @@ alter table pub_correspondence_recipient
   add constraint (foreign key (pubcr_recipient_sent_email_id) references  pub_correspondence_sent_email
  constraint pub_corresspondence_recipient_sent_email_id_fk);
 
-
---pub_correspondence_sent_email
-
-create unique index pub_correspondence_sent_email_pk_index
- on pub_correspondence_sent_email (pubcse_pk_id)
- using btree in idxdbs1;
-
-create unique index pub_correspondence_sent_email_ak_index
- on pub_correspondence_sent_email (pubcse_from, pubcse_subject, pubcse_recipient_group_id, pubcse_date_composed)
- using btree in idxdbs2;
-
-create index pubcse_from_foreign_key_index
- on pub_correspondence_sent_email (pubcse_from)
- using btree in idxdbs3;
-
-create index pubcse_pub_foreign_key_index
- on pub_correspondence_sent_email (pubcse_pub_zdb_id)
- using btree in idxdbs3;
-
-
-create index pubcse_recipient_group_id_foreign_key_index
- on pub_correspondence_sent_email (pubcse_recipient_Group_id)
- using btree in idxdbs3;
-
-alter table pub_correspondence_sent_email
-  add constraint (foreign key (pubcse_from)
- references person constraint pubcse_from_foreign_key);
-
-alter table pub_correspondence_sent_email
-  add constraint (foreign key (pubcse_pub_zdb_id)
- references publication on delete cascade constraint pubcse_pub_zdb_id_foreign_key_odc);
-
-
-alter table pub_correspondence_sent_email
-  add constraint primary key (pubcse_pk_id)
- constraint pub_correspondence_sent_email_pk;
-
-alter table pub_correspondence_sent_email
- add constraint unique (pubcse_from, pubcse_subject, pubcse_recipient_group_id, pubcse_date_composed)
- constraint pub_correspondence_sent_email_ak;
 
 --pub_correspondence_subject
 

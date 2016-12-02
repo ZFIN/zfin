@@ -77,6 +77,22 @@
     </liquibase:updateDatabase>
   </target> 
  
+   <target
+     name="rollback"
+    description="Calls any rollback tasks available">
+    
+    <echo message="Building DB..." />
+    <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/db.changelog.master.xml" 
+			      dropFirst="false" 
+			      classpathref="classpath"
+			      logLevel="debug"
+			      databaseref="liquidatabase"
+			      defaultSchemaName="informix">
+    </liquibase:updateDatabase>
+  </target> 
+ 
+
+
 <!--
  <liquibase:database 
      id="liquidatabase" 
