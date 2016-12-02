@@ -3,7 +3,7 @@
 
 create table pub_correspondence_recipient (pubcr_pk_id serial8 not null constraint pubcr_pk_id_not_null,
        	     				        pubcr_recipient_first_name varchar(100),
-					sent	pubcr_recipient_last_name varchar(100),
+						pubcr_recipient_last_name varchar(100),
 						pubcr_recipient_email_address varchar(100),
 						pubcr_recipient_person_zdb_id varchar(50),
 						pubcr_recipient_sent_email_id int8 not null constraint pubcr_recipient_sent_email_id_not_null)
