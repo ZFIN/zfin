@@ -69,6 +69,16 @@ close NCBIJOURNALS;
 
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> checkAndUpdateJournals.sql") && die "Checking and updating journals failed.";
 
+open (WRONGISSN, "><!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbr.txt") ||  die "Cannot open wrongIssnPrintByMedAbbr.txt : $!\n";
+
+print WRONGISSN "journal zdbID|journal abbrev|issn print currently stored|issn print at nlm|journal name|nlm ID|\n";
+
+close WRONGISSN;
+
+system("/bin/cat <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbrWithNoHeader >> <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbr.txt");
+
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbrWithNoHeader");
+
 exit;
 
 
