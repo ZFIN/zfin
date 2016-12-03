@@ -8,23 +8,13 @@
             restrict: 'EA',
             templateUrl: '/templates/publication-correspondence.directive.html',
             scope: {
-                pubId: '@'
+                pubId: '@',
+                curatorEmail: '@'
             },
-            link: link,
             controller: PublicationCorrespondenceController,
             controllerAs: 'vm',
             bindToController: true
         };
-
-        function link(scope, element) {
-            element
-                .on("mouseenter", ".hover-trigger", function () {
-                    angular.element(this).find(".hover-reveal").show();
-                })
-                .on("mouseleave", ".hover-trigger", function () {
-                    angular.element(this).find(".hover-reveal").hide();
-                });
-        }
 
         return directive;
     }
@@ -33,6 +23,9 @@
     function PublicationCorrespondenceController(PublicationService) {
         var vm = this;
 
+        vm.authors = [];
+        vm.newEmail = null;
+
         vm.correspondences = [];
 
         vm.allCorrespondencesClosed = allCorrespondencesClosed;
@@ -40,10 +33,19 @@
         vm.deleteCorrespondence = deleteCorrespondence;
         vm.reopenCorrespondence = reopenCorrespondence;
         vm.closeCorrespondence = closeCorrespondence;
+        vm.emailList = emailList;
+
+        vm.openSendForm = openSendForm;
+        vm.openResponseForm = openResponseForm;
+        vm.closeForm = closeForm;
 
         activate();
 
         function activate() {
+            PublicationService.getPublicationDetails(vm.pubId)
+                .then(function (response) {
+                    vm.authors = response.data.registeredAuthors.filter(function (r) { return r.email; });
+                });
             PublicationService.getCorrespondences(vm.pubId)
                 .then(function (response) {
                     vm.correspondences = response.data;
@@ -84,6 +86,34 @@
                 .then(function (response) {
                     vm.correspondences[idx] = response.data;
                 });
+        }
+
+        function emailList(recipients) {
+            return recipients.map(function (r) { return r.email; }).join(', ');
+        }
+
+        function openSendForm() {
+            vm.newEmail = {
+                outgoing: true,
+                to: '',
+                from: vm.curatorEmail,
+                subject: '',
+                message: ''
+            };
+        }
+
+        function openResponseForm() {
+            vm.newEmail = {
+                outgoing: false,
+                to: vm.curatorEmail,
+                from: '',
+                subject: '',
+                message: ''
+            };
+        }
+
+        function closeForm() {
+            vm.newEmail = null;
         }
     }
 

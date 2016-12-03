@@ -98,7 +98,7 @@
         }
 
         function getPublicationDetails(id) {
-            return $http.get('/action/publication/' + id + '/details');
+            return $http.get('/action/publication/' + id + '/details', {cache: true});
         }
 
         function getCuratedEntities(id) {

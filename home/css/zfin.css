@@ -642,6 +642,12 @@ video {
     white-space: pre-wrap;
 }
 
+.one-line-preview {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .inline-upload {
     display: inline-block;
 }
@@ -982,4 +988,11 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
 
 .profile-image {
     max-width: 500px;
+}
+
+.icon-toggle {
+    transition: transform 200ms;
+}
+.icon-toggle.open {
+    transform: rotate(90deg);
 }
