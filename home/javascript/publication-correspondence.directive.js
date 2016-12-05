@@ -9,6 +9,7 @@
             templateUrl: '/templates/publication-correspondence.directive.html',
             scope: {
                 pubId: '@',
+                curatorId: '@',
                 curatorEmail: '@'
             },
             controller: PublicationCorrespondenceController,
@@ -38,6 +39,7 @@
         vm.openSendForm = openSendForm;
         vm.openResponseForm = openResponseForm;
         vm.closeForm = closeForm;
+        vm.sendMessage = sendMessage;
 
         activate();
 
@@ -95,8 +97,8 @@
         function openSendForm() {
             vm.newEmail = {
                 outgoing: true,
-                to: '',
-                from: vm.curatorEmail,
+                additionalTo: '',
+                from: {zdbID: vm.curatorId, email: vm.curatorEmail},
                 subject: '',
                 message: ''
             };
@@ -114,6 +116,21 @@
 
         function closeForm() {
             vm.newEmail = null;
+        }
+
+        function sendMessage() {
+            vm.newEmail.to = vm.authors
+                .filter(function (a) { return a.send; })
+                .concat(vm.newEmail.additionalTo
+                    .split(/[,;\s]+/)
+                    .filter(function (e) { return e.length; })
+                    .map(function (e) { return {email: e}; })
+                );
+            PublicationService.addCorrespondence(vm.pubId, vm.newEmail)
+                .then(function (response) {
+                    vm.correspondences.unshift(response.data);
+                    closeForm();
+                });
         }
     }
 

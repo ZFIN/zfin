@@ -85,8 +85,8 @@
             return $http.get('/action/publication/' + id + '/correspondences');
         }
 
-        function addCorrespondence(id) {
-            return $http.post('/action/publication/' + id + '/correspondences', {});
+        function addCorrespondence(id, message) {
+            return $http.post('/action/publication/' + id + '/correspondences', message);
         }
 
         function updateCorrespondence(correspondence) {

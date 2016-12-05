@@ -9,13 +9,15 @@
     <div class="form-group">
         <label class="col-sm-2 control-label">To</label>
         <div class="col-sm-4">
-            <div class="checkbox" ng-repeat="author in vm.authors">
-                <label>
-                    <input class="author-email" type="checkbox" checked ng-model="author.send"> {{author.display}}
-                </label>
-            </div>
-            <div ng-class="{checkbox: vm.authors.length}">
-                <input class="form-control" placeholder="alice@example.edu">
+            <div ng-show="vm.newEmail.outgoing">
+                <div class="checkbox" ng-repeat="author in vm.authors">
+                    <label>
+                        <input class="author-email" type="checkbox" ng-model="author.send"> {{author.display}}
+                    </label>
+                </div>
+                <div ng-class="{checkbox: vm.authors.length}">
+                    <input class="form-control" placeholder="alice@example.edu" ng-model="vm.newEmail.additionalTo">
+                </div>
             </div>
             <p class="form-control-static" ng-show="!vm.newEmail.outgoing">{{vm.newEmail.to}}</p>
         </div>
@@ -24,25 +26,25 @@
         <label class="col-sm-2 control-label">From</label>
         <div class="col-sm-4">
             <input class="form-control" ng-show="!vm.newEmail.outgoing" placeholder="alice@example.edu" ng-model="vm.newEmail.from">
-            <p class="form-control-static" ng-show="vm.newEmail.outgoing">{{vm.newEmail.from}}</p>
+            <p class="form-control-static" ng-show="vm.newEmail.outgoing">{{vm.newEmail.from.email}}</p>
         </div>
     </div>
     <div class="form-group">
         <label class="col-sm-2 control-label">Subject</label>
         <div class="col-sm-6">
-            <input class="form-control">
+            <input class="form-control" ng-model="vm.newEmail.subject">
         </div>
     </div>
     <div class="form-group">
         <label class="col-sm-2 control-label">Message</label>
         <div class="col-sm-6">
-            <textarea class="form-control" rows="5"></textarea>
+            <textarea class="form-control" rows="5" ng-model="vm.newEmail.message"></textarea>
         </div>
     </div>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <button class="btn btn-default" ng-click="vm.closeForm()">Cancel</button>
-            <button class="btn btn-primary">Send</button>
+            <button class="btn btn-primary" ng-click="vm.sendMessage()">Send</button>
         </div>
     </div>
 </form>

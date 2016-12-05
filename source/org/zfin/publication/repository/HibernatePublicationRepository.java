@@ -2220,12 +2220,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public CorrespondenceSentMessage addSentCorrespondence(Publication publication, CorrespondenceDTO dto) {
         CorrespondenceSentMessage correspondence = new CorrespondenceSentMessage();
         correspondence.setPublication(publication);
-        correspondence.setFrom(ProfileService.getCurrentSecurityUser());
+        correspondence.setFrom(profileRepository.getPerson(dto.getFrom().getZdbID()));
         correspondence.setResend(false);
         correspondence.setSentDate(new Date());
 
         CorrespondenceComposedMessage message = new CorrespondenceComposedMessage();
-        message.setFrom(ProfileService.getCurrentSecurityUser());
+        message.setFrom(profileRepository.getPerson(dto.getFrom().getZdbID()));
         message.setPublication(publication);
         message.setComposedDate(new Date());
         message.setSubject(dto.getSubject());

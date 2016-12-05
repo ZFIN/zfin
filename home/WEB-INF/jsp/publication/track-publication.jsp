@@ -57,7 +57,7 @@
         </div>
       </div>
       <div role="tabpanel" class="tab-pane" id="correspondence">
-        <div publication-correspondence pub-id="${publication.zdbID}" curator-email="${loggedInUser.email}"></div>
+        <div publication-correspondence pub-id="${publication.zdbID}" curator-id="${loggedInUser.zdbID}" curator-email="${loggedInUser.email}"></div>
       </div>
     </div>
   </div>
