@@ -39,7 +39,7 @@ create table monthly_curated_metric (mcm_pk_id serial8 not null constraint mcm_p
 				      mcm_number_in_expression_bin int default 0 not null constraint mcm_number_in_expression_bin_not_null,
 				      mcm_paper_in_expression_bin_longest varchar(50),
 				      mcm_longest_expression_number_of_days int default 0 not null constraint mcm_longest_expression_number_of_days,
-				      mcm_number_in_ortho_bin int default 0 not null constraint mcm_number_in_expression_bin_not_null,
+				      mcm_number_in_ortho_bin int default 0 not null constraint mcm_number_in_ortho_bin_not_null,
 				      mcm_paper_in_ortho_bin_longest varchar(50),
 				      mcm_longest_ortho_number_of_days int default 0 not null constraint mcm_longest_ortho_number_of_days,
 				      mcm_number_archived int default 0 not null constraint mcm_number_archived_not_null,
