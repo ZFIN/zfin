@@ -52,9 +52,26 @@
 
 <div ng-repeat="correspondence in vm.correspondences">
     <hr>
-    <div><strong>Date:</strong> {{correspondence.date | date: 'yyyy-MM-dd'}}</div>
-    <div><strong>From:</strong> {{correspondence.from.email}}</div>
-    <div><strong>To:</strong> {{vm.emailList(correspondence.to)}}</div>
-    <div><strong>Subject:</strong> {{correspondence.subject}}</div>
-    <div ng-class="correspondence.expanded ? 'keep-breaks' : 'one-line-preview'"><i ng-class="['icon-toggle', 'fa', 'fa-fw', 'fa-chevron-right', {open: correspondence.expanded}]" ng-click="correspondence.expanded = !correspondence.expanded"></i> {{correspondence.message}}</div>
+    <div ng-if="correspondence.resend">
+        <strong>{{correspondence.date | date: 'yyyy-MM-dd'}}</strong> <span class="text-muted">Resent email from {{correspondence.composedDate | date: 'yyyy-MM-dd'}}</span>
+    </div>
+    <div ng-if="!correspondence.resend">
+        <div class="dropdown pull-right">
+            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                <i class="fa fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu" ng-show="correspondence.outgoing">
+                <li><a href ng-click="vm.resendMessage(correspondence)">Resend</a></li>
+                <li><a href>Record Reply</a></li>
+            </ul>
+            <ul class="dropdown-menu" ng-show="!correspondence.outgoing">
+                <li><a href>Reply</a></li>
+            </ul>
+        </div>
+        <div><strong>{{correspondence.date | date: 'yyyy-MM-dd'}}</strong></div>
+        <div><strong>From:</strong> {{correspondence.from.email}}</div>
+        <div><strong>To:</strong> {{vm.emailList(correspondence.to)}}</div>
+        <div><strong>Subject:</strong> {{correspondence.subject}}</div>
+        <div ng-class="correspondence.expanded ? 'keep-breaks' : 'one-line-preview'"><i ng-class="['icon-toggle', 'fa', 'fa-fw', 'fa-chevron-right', {open: correspondence.expanded}]" ng-click="correspondence.expanded = !correspondence.expanded"></i> {{correspondence.message}}</div>
+    </div>
 </div>

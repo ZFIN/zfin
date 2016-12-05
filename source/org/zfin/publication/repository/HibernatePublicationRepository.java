@@ -2255,6 +2255,23 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return correspondence;
     }
 
+    public CorrespondenceSentMessage addResentCorrespondence(Publication publication, CorrespondenceDTO dto) {
+        Session session = HibernateUtil.currentSession();
+        CorrespondenceSentMessage originalCorrespondence = (CorrespondenceSentMessage) session
+                .get(CorrespondenceSentMessage.class, dto.getId());
+        if (originalCorrespondence == null) {
+            return null;
+        }
+        CorrespondenceSentMessage resentCorrespondence = new CorrespondenceSentMessage();
+        resentCorrespondence.setFrom(profileRepository.getPerson(dto.getFrom().getZdbID()));
+        resentCorrespondence.setPublication(publication);
+        resentCorrespondence.setSentDate(new Date());
+        resentCorrespondence.setResend(true);
+        resentCorrespondence.setMessage(originalCorrespondence.getMessage());
+        session.save(resentCorrespondence);
+        return resentCorrespondence;
+    }
+
     public CorrespondenceReceivedMessage addReceivedCorrespondence(Publication publication, CorrespondenceDTO dto) {
         CorrespondenceReceivedMessage correspondence = new CorrespondenceReceivedMessage();
         correspondence.setPublication(publication);

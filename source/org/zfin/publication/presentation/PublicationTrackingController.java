@@ -337,7 +337,12 @@ public class PublicationTrackingController {
         Publication publication = publicationRepository.getPublication(zdbID);
 
         if (dto.isOutgoing()) {
-            CorrespondenceSentMessage correspondence = publicationRepository.addSentCorrespondence(publication, dto);
+            CorrespondenceSentMessage correspondence;
+            if (dto.isResend()) {
+                correspondence = publicationRepository.addResentCorrespondence(publication, dto);
+            } else {
+                correspondence = publicationRepository.addSentCorrespondence(publication, dto);
+            }
 
             MailSender mailer = AbstractZfinMailSender.getInstance();
             if (mailer == null) {

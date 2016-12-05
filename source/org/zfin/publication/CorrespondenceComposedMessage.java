@@ -28,7 +28,7 @@ public class CorrespondenceComposedMessage {
     @Column(name = "pubcse_subject")
     private String subject;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pubcse_pub_zdb_id")
     private Publication publication;
 

@@ -543,6 +543,8 @@ public interface PublicationRepository extends PaginationParameter {
 
     CorrespondenceSentMessage addSentCorrespondence(Publication publication, CorrespondenceDTO dto);
 
+    CorrespondenceSentMessage addResentCorrespondence(Publication publication, CorrespondenceDTO dto);
+
     CorrespondenceReceivedMessage addReceivedCorrespondence(Publication publication, CorrespondenceDTO dto);
 
 }

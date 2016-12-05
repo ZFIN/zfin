@@ -41,6 +41,7 @@
         vm.closeForm = closeForm;
         vm.sendMessage = sendMessage;
         vm.saveReply = saveReply;
+        vm.resendMessage = resendMessage;
 
         activate();
 
@@ -139,6 +140,15 @@
                 .then(function (response) {
                     vm.correspondences.unshift(response.data);
                     closeForm();
+                });
+        }
+
+        function resendMessage(correspondence) {
+            var newMessage = angular.copy(correspondence);
+            newMessage.resend = true;
+            PublicationService.addCorrespondence(vm.pubId, newMessage)
+                .then(function (response) {
+                    vm.correspondences.unshift(response.data);
                 });
         }
     }

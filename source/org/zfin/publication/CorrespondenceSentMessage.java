@@ -25,7 +25,7 @@ public class CorrespondenceSentMessage {
     @JoinColumn(name = "pubcst_sent_email_id")
     private CorrespondenceComposedMessage message;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pubcst_pub_zdb_id")
     private Publication publication;
 

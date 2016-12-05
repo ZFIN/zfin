@@ -352,6 +352,8 @@
                 <include name="org/zfin/expression/TextOnlyFigure.class"/>
                 <include name="org/zfin/expression/FigureFigure.class"/>
                 <include name="org/zfin/ontology/**Term.class"/>
+                <include name="org/zfin/publication/CorrespondenceComposedMessage.class"/>
+                <include name="org/zfin/publication/CorrespondenceSentMessage.class"/>
                 <include name="org/zfin/publication/Publication.class"/>
             </fileset>
             <fileset dir="${SOURCEROOT}/home/WEB-INF/classes">
@@ -360,6 +362,8 @@
                 <include name="org/zfin/expression/TextOnlyFigure.class"/>
                 <include name="org/zfin/expression/FigureFigure.class"/>
                 <include name="org/zfin/ontology/**Term.class"/>
+                <include name="org/zfin/publication/CorrespondenceComposedMessage.class"/>
+                <include name="org/zfin/publication/CorrespondenceSentMessage.class"/>
                 <include name="org/zfin/publication/Publication.class"/>
             </fileset>
         </instrument>
