@@ -6,7 +6,6 @@
 <script src="/javascript/angular/angular-sanitize.js"></script>
 <script src="/javascript/editMarker.js"></script>
 <script src="/javascript/sequence-information-edit.js"></script>
-<link rel=stylesheet type="text/css" href="/css/bootstrap3/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="/css/Marker.css">
 
 <script type="text/javascript">
