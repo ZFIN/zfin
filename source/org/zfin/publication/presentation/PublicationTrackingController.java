@@ -338,6 +338,41 @@ public class PublicationTrackingController {
 
         if (dto.isOutgoing()) {
             CorrespondenceSentMessage correspondence = publicationRepository.addSentCorrespondence(publication, dto);
+
+            MailSender mailer = AbstractZfinMailSender.getInstance();
+            if (mailer == null) {
+                throw new InvalidWebRequestException("no mail sender available");
+            }
+
+            List<String> recipients = new ArrayList<>();
+            Person currentUser = ProfileService.getCurrentSecurityUser();
+            if (currentUser == null) {
+                throw new InvalidWebRequestException("unauthorized");
+            }
+            recipients.add(currentUser.getEmail());
+            List<String> externalRecipients = correspondence.getMessage().getRecipients().stream()
+                    .map(CorrespondenceRecipient::getEmail)
+                    .collect(Collectors.toList());
+
+            String message = correspondence.getMessage().getText();
+
+            if (Boolean.valueOf(ZfinPropertiesEnum.SEND_AUTHOR_NOTIF_EMAIL.value())) {
+                recipients.addAll(externalRecipients);
+            } else {
+                message = "[[ Recipient list on production environment: " + String.join(", ", externalRecipients) + " ]]\n\n" + message;
+            }
+
+            String sender = correspondence.getFrom().getFirstName() + " " +
+                    correspondence.getFrom().getLastName() +
+                    " <" + correspondence.getFrom().getEmail() + ">";
+
+            boolean sent = mailer.sendHtmlMail(correspondence.getMessage().getSubject(),
+                    message, false, sender, recipients.toArray(new String[]{}));
+
+            if (!sent) {
+                throw new InvalidWebRequestException("error sending email");
+            }
+
             dto = converter.toCorrespondenceDTO(correspondence);
         } else {
             CorrespondenceReceivedMessage correspondence = publicationRepository.addReceivedCorrespondence(publication, dto);
