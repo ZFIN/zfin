@@ -10,7 +10,7 @@ create unique index pub_correspondence_sent_email_pk_index
  using btree in idxdbs1;
 
 create unique index pub_correspondence_sent_email_ak_index
- on pub_correspondence_sent_email (pubcse_sent_by, pubcse_subject, pubcse_recipient_group, pubcse_date_composed)
+ on pub_correspondence_sent_email (pubcse_sent_by, pubcse_subject, pubcse_recipient_group, pubcse_date_composed, pubcse_pub_zdb_id)
  using btree in idxdbs2;
 
 create index pubcse_sent_by_foreign_key_index
@@ -40,7 +40,7 @@ alter table pub_correspondence_sent_email
  constraint pub_correspondence_sent_email_pk;
 
 alter table pub_correspondence_sent_email
- add constraint unique (pubcse_sent_by, pubcse_subject, pubcse_recipient_group, pubcse_date_composed)
+ add constraint unique (pubcse_sent_by, pubcse_subject, pubcse_recipient_group, pubcse_date_composed, pubcse_pub_Zdb_id)
  constraint pub_correspondence_sent_email_ak;
 
 --pub_correspondence_sent_recipient

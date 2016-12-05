@@ -43,7 +43,8 @@ create table pub_correspondence_sent_tracker (pubcst_pk_id serial8 not null cons
 					pubcst_date_sent datetime year to day default current year to day not null constraint pubcst_date_sent_not_null,
 					pubcst_sent_email_id int8 not null constraint pubcst_sent_email_id_not_null,
 					pubcst_pub_zdb_id varchar(50) not null constraint pubcst_pub_Zdb_id_not_null,
-					pubcst_resend boolean default 'f' not null constraint pubcst_resend_not_null)
+					pubcst_resend boolean default 'f' not null constraint pubcst_resend_not_null,
+					pubcst_gave_up_date datetime year to second)
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 4096 next size 4096;
 

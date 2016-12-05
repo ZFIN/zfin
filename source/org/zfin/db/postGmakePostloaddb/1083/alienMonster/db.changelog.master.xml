@@ -9,4 +9,5 @@
 <include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/constraints.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/addSubjects.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/14784.sql"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/migrateData.sql"/>
 </databaseChangeLog>
