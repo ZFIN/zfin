@@ -17,13 +17,11 @@
 TOP = ../..
 include $(TOP)/make.include
 
-TARGETDIR = $(TARGETROOT)/server_apps/Reports
-
-SUBDIRS = ZGC Vega PATO GO Nomenclature AnnualStats PubTracking
+TARGETDIR = $(TARGETROOT)/server_apps/Reports/PubTracking
 
 
-GENERICS = Count-ZGC.pl Count-Vega.pl Count-Vega-Thisse.pl Count-phenotype.pl elsevier_report.pl reportPubsForGeneAndFeature.pl
-STATICS  =  
+GENERICS = 
+STATICS  =  paperlessPubTrackingDailyIndexedStats.sql runPaperlessPubTrackingDailyIndexedMetrics.sh
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -33,8 +31,4 @@ STATICS  =
 include $(TOP)/make.default.rules
 
 
-# ---------------  Misc Targets  ----------------------------------------
-
-run : $(TARGETDIR)/Count.pl
-	$(TARGETDIR)/Count.pl
 
