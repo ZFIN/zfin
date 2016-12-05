@@ -349,27 +349,6 @@ public class PublicationTrackingController {
         return dto;
     }
 
-//    @ResponseBody
-//    @RequestMapping(value = "/correspondences/{id}", method = RequestMethod.POST)
-//    public CorrespondenceDTO editCorrespondence(@PathVariable long id, @RequestBody CorrespondenceDTO correspondenceDTO) {
-//        Session session = HibernateUtil.currentSession();
-//        Transaction tx = session.beginTransaction();
-//
-//        Correspondence correspondence = (Correspondence) session.get(Correspondence.class, id);
-//        if (correspondenceDTO.isReplyReceived()) {
-//            correspondence.setRespondedDate(correspondenceDTO.getClosedDate());
-//        } else {
-//            correspondence.setGiveUpDate(correspondenceDTO.getClosedDate());
-//        }
-//        session.update(correspondence);
-//
-//        CorrespondenceDTO dto = converter.toCorrespondenceDTO(correspondence);
-//
-//        tx.commit();
-//
-//        return dto;
-//    }
-
     @ResponseBody
     @RequestMapping(value = "/correspondences/{id}", method = RequestMethod.DELETE, produces = "text/plain")
     public String deleteCorrespondence(@PathVariable long id) {
