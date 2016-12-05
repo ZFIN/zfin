@@ -40,6 +40,7 @@
         vm.openResponseForm = openResponseForm;
         vm.closeForm = closeForm;
         vm.sendMessage = sendMessage;
+        vm.saveReply = saveReply;
 
         activate();
 
@@ -107,8 +108,8 @@
         function openResponseForm() {
             vm.newEmail = {
                 outgoing: false,
-                to: vm.curatorEmail,
-                from: '',
+                to: [{zdbID: vm.curatorId, email: vm.curatorEmail}],
+                from: {email: ''},
                 subject: '',
                 message: ''
             };
@@ -126,6 +127,14 @@
                     .filter(function (e) { return e.length; })
                     .map(function (e) { return {email: e}; })
                 );
+            PublicationService.addCorrespondence(vm.pubId, vm.newEmail)
+                .then(function (response) {
+                    vm.correspondences.unshift(response.data);
+                    closeForm();
+                });
+        }
+
+        function saveReply() {
             PublicationService.addCorrespondence(vm.pubId, vm.newEmail)
                 .then(function (response) {
                     vm.correspondences.unshift(response.data);

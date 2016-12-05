@@ -2260,7 +2260,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         correspondence.setPublication(publication);
         correspondence.setFromEmail(dto.getFrom().getEmail());
         correspondence.setDate(new Date());
-        correspondence.setTo(ProfileService.getCurrentSecurityUser());
+        correspondence.setTo(profileRepository.getPerson(dto.getTo().get(0).getZdbID()));
         correspondence.setSubject(dto.getSubject());
         correspondence.setText(dto.getMessage());
         HibernateUtil.currentSession().save(correspondence);

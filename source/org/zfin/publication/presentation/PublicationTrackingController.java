@@ -324,7 +324,7 @@ public class PublicationTrackingController {
         correspondences.addAll(publication.getReceivedMessages().stream()
                 .map(converter::toCorrespondenceDTO)
                 .collect(Collectors.toList()));
-        Collections.sort(correspondences);
+        Collections.sort(correspondences, Collections.reverseOrder());
         return correspondences;
     }
 

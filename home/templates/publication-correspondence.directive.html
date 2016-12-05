@@ -19,13 +19,13 @@
                     <input class="form-control" placeholder="alice@example.edu" ng-model="vm.newEmail.additionalTo">
                 </div>
             </div>
-            <p class="form-control-static" ng-show="!vm.newEmail.outgoing">{{vm.newEmail.to}}</p>
+            <p class="form-control-static" ng-show="!vm.newEmail.outgoing">{{vm.newEmail.to[0].email}}</p>
         </div>
     </div>
     <div class="form-group">
         <label class="col-sm-2 control-label">From</label>
         <div class="col-sm-4">
-            <input class="form-control" ng-show="!vm.newEmail.outgoing" placeholder="alice@example.edu" ng-model="vm.newEmail.from">
+            <input class="form-control" ng-show="!vm.newEmail.outgoing" placeholder="alice@example.edu" ng-model="vm.newEmail.from.email">
             <p class="form-control-static" ng-show="vm.newEmail.outgoing">{{vm.newEmail.from.email}}</p>
         </div>
     </div>
@@ -44,7 +44,8 @@
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <button class="btn btn-default" ng-click="vm.closeForm()">Cancel</button>
-            <button class="btn btn-primary" ng-click="vm.sendMessage()">Send</button>
+            <button class="btn btn-primary" ng-click="vm.sendMessage()" ng-show="vm.newEmail.outgoing">Send</button>
+            <button class="btn btn-primary" ng-click="vm.saveReply()" ng-show="!vm.newEmail.outgoing">Save</button>
         </div>
     </div>
 </form>
