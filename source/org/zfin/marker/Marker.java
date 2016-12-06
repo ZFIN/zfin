@@ -25,7 +25,7 @@ import java.util.*;
  * Domain model for the abstract marker object, which can be a gene, EST, CDNA, ...
  * ToDo: needs more modelling...
  */
-public class Marker extends SequenceFeature implements Serializable, Comparable, EntityAlias, EntityNotes, EntityZdbID {
+public class Marker extends SequenceFeature implements Serializable, Comparable, EntityAlias, EntityNotes, EntityID {
 
     public static final String WITHDRAWN = "WITHDRAWN:";
     private static Logger LOG = Logger.getLogger(Marker.class);

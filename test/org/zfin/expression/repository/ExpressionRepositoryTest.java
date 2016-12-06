@@ -128,7 +128,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            CurationExperimentRPCImpl.populateExpressionExperiment(dto, expressionExperiment);
+////            CurationExperimentRPCImpl.populateExpressionExperiment(dto, expressionExperiment);
             expRep.createExpressionExperiment(expressionExperiment);
             assertTrue(expressionExperiment.getZdbID() != null);
         } finally {

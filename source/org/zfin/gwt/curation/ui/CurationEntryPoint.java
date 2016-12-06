@@ -6,7 +6,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.UmbrellaException;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import org.zfin.gwt.curation.event.CurationEvent;
@@ -55,6 +54,9 @@ public class CurationEntryPoint implements EntryPoint {
     private AjaxCallBaseManager callBaseManager = new AjaxCallBaseManager();
     private CurationExperimentRPCAsync curationExperimentRPCAsync = CurationExperimentRPC.App.getInstance();
     private static List<FishDTO> wildtypeFishList;
+
+    public static CurationService curationService = GWT.create(CurationService.class);
+    public static ExpressionCurationService expressionService = GWT.create(ExpressionCurationService.class);
 
     public void onModuleLoad() {
         loadPublicationAndFilterElements();
