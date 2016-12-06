@@ -19,8 +19,6 @@
 <script src="/javascript/ortho-edit.js"></script>
 <script src="/javascript/inline-edit-textarea.directive.js"></script>
 
-<script src="/javascript/sequence-information-edit.js"></script>
-
 <authz:authorize access="hasRole('root')">
     <div ng-app="app" ng-controller="EditController as eControl">
 </authz:authorize>
