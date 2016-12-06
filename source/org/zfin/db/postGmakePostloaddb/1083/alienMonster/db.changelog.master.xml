@@ -12,4 +12,5 @@
 <include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/migrateData.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/addDefinition.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/createStatsTables.sql"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/loadChromosome.sql"/>
 </databaseChangeLog>
