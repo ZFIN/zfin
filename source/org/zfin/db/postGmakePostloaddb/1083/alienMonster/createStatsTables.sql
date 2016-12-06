@@ -50,9 +50,12 @@ alter table monthly_curated_metric
  constraint monthly_curated_metric_primary_key;
 
 create table monthly_average_curated_metric (macm_pk_id serial8 not null constraint macm_pk_id_not_null,
-       	     			      macm_average_time_in_bins int default 0 not null constraint macm_average_time_in_bins_not_null,
-				      macm_median_time_in_bins int default 0 not null constraint macm_median_time_in_bins,
-				      macm_stdev_time_in_bins decimal default 0 not null constraint macm_stdev_time_in_bins, 
+       	     			      macm_average_stay_in_bin_1 int not null constraint macm_average_stay_in_bin_1_not_null,
+				      macm_average_stay_in_bin_2 int not null constraint macm_average_Stay_in_bin_2_not_null,
+				      macm_average_stay_in_bin_3 int not null constraint macm_average_Stay_in_bin_3_not_null,
+				      macm_average_stay_in_pheno_bin int not null constraint macm_average_Stay_in_pheno_not_null,
+				      macm_average_stay_in_xpat_bin int not null constraint macm_average_Stay_in_xpat_not_null,
+				      macm_average_stay_in_ortho_bin int not null constraint macm_average_Stay_in_ortho_not_null,
 				      macm_paper_in_bin_1_longest varchar(50),
 				      macm_longest_bin1_number_of_days int default 0 not null constraint macm_longest_bin1_number_of_days, 
 				      macm_paper_in_bin_2_longest varchar(50),
