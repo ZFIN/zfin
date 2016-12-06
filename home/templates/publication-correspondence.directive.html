@@ -56,6 +56,16 @@
     </div>
 </form>
 
+<div class="alert alert-success" role="alert" ng-show="vm.successMessage">
+    <button type="button" class="close" ng-click="vm.successMessage = ''">&times;</button>
+    {{vm.successMessage}}
+</div>
+
+<div class="alert alert-danger" role="alert" ng-show="vm.errorMessage">
+    <button type="button" class="close" ng-click="vm.errorMessage = ''">&times;</button>
+    {{vm.errorMessage}}
+</div>
+
 <div ng-repeat="correspondence in vm.correspondences">
     <hr>
     <div ng-if="correspondence.resend">

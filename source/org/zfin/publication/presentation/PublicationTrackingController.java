@@ -338,11 +338,17 @@ public class PublicationTrackingController {
 
         if (dto.isOutgoing()) {
             CorrespondenceSentMessage correspondence;
-            if (dto.isResend()) {
-                correspondence = publicationRepository.addResentCorrespondence(publication, dto);
-            } else {
-                correspondence = publicationRepository.addSentCorrespondence(publication, dto);
+            try {
+                if (dto.isResend()) {
+                    correspondence = publicationRepository.addResentCorrespondence(publication, dto);
+                } else {
+                    correspondence = publicationRepository.addSentCorrespondence(publication, dto);
+                }
+            } catch (Exception e) {
+                LOG.error("error saving correspondence", e);
+                throw new InvalidWebRequestException("error saving correspondence");
             }
+
 
             MailSender mailer = AbstractZfinMailSender.getInstance();
             if (mailer == null) {

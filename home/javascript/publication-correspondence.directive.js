@@ -27,6 +27,8 @@
         vm.authors = [];
         vm.newEmail = null;
         vm.processing = false;
+        vm.successMessage = '';
+        vm.errorMessage = '';
 
         vm.correspondences = [];
 
@@ -122,6 +124,8 @@
         function closeForm() {
             vm.newEmail = null;
             vm.authors.forEach(function (a) { a.send = false; });
+            vm.successMessage = '';
+            vm.errorMessage = '';
         }
 
         function sendMessage() {
@@ -137,6 +141,10 @@
                 .then(function (response) {
                     vm.correspondences.unshift(response.data);
                     closeForm();
+                    vm.successMessage = 'Email successfully sent.';
+                })
+                .catch(function () {
+                    vm.errorMessage = 'Error sending email.';
                 })
                 .finally(function () {
                     vm.processing = false;
@@ -149,6 +157,10 @@
                 .then(function (response) {
                     vm.correspondences.unshift(response.data);
                     closeForm();
+                    vm.successMessage = 'Reply saved.';
+                })
+                .catch(function () {
+                    vm.errorMessage = 'Error saving reply.';
                 })
                 .finally(function () {
                     vm.processing = false;
@@ -161,6 +173,10 @@
             PublicationService.addCorrespondence(vm.pubId, newMessage)
                 .then(function (response) {
                     vm.correspondences.unshift(response.data);
+                    vm.successMessage = 'Email successfully sent.';
+                })
+                .catch(function () {
+                    vm.errorMessage = 'Error sending email.';
                 });
         }
 
