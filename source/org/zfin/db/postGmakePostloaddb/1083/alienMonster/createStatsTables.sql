@@ -49,13 +49,22 @@ alter table monthly_curated_metric
  add constraint primary key (mcm_pk_id)
  constraint monthly_curated_metric_primary_key;
 
+create table longest_bin_resident_metric (lbrm_pk_id serial8 not null constraint lbrm_pk_id_not_null,
+       	     			      lbrm_date_Captured datetime year to second default current year to second not null constraint lbrm_date_captured_not_null,
+				      lbrm_pub_zdb_id varchar(50) not null constraint lbrm_pub_Zdb_id_not_null,
+				      lbrm_status_counted varchar(20) not null constraint lbrm_status_counted_not_null,
+				      lbrm_days_in_status_on_this_date int not null constraint lbrm_days_in_this_status_on_this_date_not_null)
+fragment by round robin in tbldbs1, tbldbs2, tbldbs3
+extent size 2048 next size 2048;
+
 create table monthly_average_curated_metric (macm_pk_id serial8 not null constraint macm_pk_id_not_null,
-       	     			      macm_average_stay_in_bin_1 int not null constraint macm_average_stay_in_bin_1_not_null,
-				      macm_average_stay_in_bin_2 int not null constraint macm_average_Stay_in_bin_2_not_null,
-				      macm_average_stay_in_bin_3 int not null constraint macm_average_Stay_in_bin_3_not_null,
-				      macm_average_stay_in_pheno_bin int not null constraint macm_average_Stay_in_pheno_not_null,
-				      macm_average_stay_in_xpat_bin int not null constraint macm_average_Stay_in_xpat_not_null,
-				      macm_average_stay_in_ortho_bin int not null constraint macm_average_Stay_in_ortho_not_null,
+       	     			      macm_date_captured datetime year to second default current year to second not null constraint macm_date_captured_not_null,
+       	     			      macm_average_stay_in_bin_1 int  default 0  not null constraint macm_average_stay_in_bin_1_not_null,
+				      macm_average_stay_in_bin_2 int  default 0  not null constraint macm_average_Stay_in_bin_2_not_null,
+				      macm_average_stay_in_bin_3 int  default 0  not null constraint macm_average_Stay_in_bin_3_not_null,
+				      macm_average_stay_in_pheno_bin int  default 0 not null constraint macm_average_Stay_in_pheno_not_null,
+				      macm_average_stay_in_xpat_bin int  default 0 not null constraint macm_average_Stay_in_xpat_not_null,
+				      macm_average_stay_in_ortho_bin int  default 0 not null constraint macm_average_Stay_in_ortho_not_null,
 				      macm_paper_in_bin_1_longest varchar(50),
 				      macm_longest_bin1_number_of_days int default 0 not null constraint macm_longest_bin1_number_of_days, 
 				      macm_paper_in_bin_2_longest varchar(50),
