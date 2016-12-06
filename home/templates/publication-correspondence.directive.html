@@ -10,7 +10,7 @@
         <label class="col-sm-2 control-label">To</label>
         <div class="col-sm-4">
             <div ng-show="vm.newEmail.outgoing">
-                <div class="checkbox" ng-repeat="author in vm.authors">
+                <div class="checkbox" ng-repeat="author in vm.authors" ng-show="!vm.newEmail.reply">
                     <label>
                         <input class="author-email" type="checkbox" ng-model="author.send"> {{author.display}}
                     </label>
@@ -65,7 +65,7 @@
                 <li><a href ng-click="vm.openReplyForMessage(correspondence)">Record Reply</a></li>
             </ul>
             <ul class="dropdown-menu" ng-show="!correspondence.outgoing">
-                <li><a href>Reply</a></li>
+                <li><a href ng-click="vm.sendReply(correspondence)">Reply</a></li>
             </ul>
         </div>
         <div><strong>{{correspondence.date | date: 'yyyy-MM-dd'}}</strong></div>
