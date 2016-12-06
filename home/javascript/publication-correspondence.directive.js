@@ -26,6 +26,7 @@
 
         vm.authors = [];
         vm.newEmail = null;
+        vm.processing = false;
 
         vm.correspondences = [];
 
@@ -124,6 +125,7 @@
         }
 
         function sendMessage() {
+            vm.processing = true;
             vm.newEmail.to = vm.authors
                 .filter(function (a) { return a.send; })
                 .concat(vm.newEmail.additionalTo
@@ -135,14 +137,21 @@
                 .then(function (response) {
                     vm.correspondences.unshift(response.data);
                     closeForm();
+                })
+                .finally(function () {
+                    vm.processing = false;
                 });
         }
 
         function saveReply() {
+            vm.processing = true;
             PublicationService.addCorrespondence(vm.pubId, vm.newEmail)
                 .then(function (response) {
                     vm.correspondences.unshift(response.data);
                     closeForm();
+                })
+                .finally(function () {
+                    vm.processing = false;
                 });
         }
 
