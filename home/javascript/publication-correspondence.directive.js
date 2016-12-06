@@ -47,6 +47,7 @@
         vm.resendMessage = resendMessage;
         vm.openReplyForMessage = openReplyForMessage;
         vm.sendReply = sendReply;
+        vm.isValid = isValid;
 
         activate();
 
@@ -206,6 +207,22 @@
                 subject = 'Re: ' + subject;
             }
             return subject;
+        }
+
+        function isValid() {
+            if (!vm.newEmail) {
+                return false;
+            }
+            if (vm.newEmail.outgoing) {
+                if (!vm.authors.some(function (a) { return a.send;}) && !vm.newEmail.additionalTo) {
+                    return false;
+                }
+            } else {
+                if (!vm.newEmail.from.email) {
+                    return false;
+                }
+            }
+            return vm.newEmail.subject && vm.newEmail.message;
         }
     }
 
