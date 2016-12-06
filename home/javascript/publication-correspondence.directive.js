@@ -42,6 +42,7 @@
         vm.sendMessage = sendMessage;
         vm.saveReply = saveReply;
         vm.resendMessage = resendMessage;
+        vm.openReplyForMessage = openReplyForMessage;
 
         activate();
 
@@ -150,6 +151,20 @@
                 .then(function (response) {
                     vm.correspondences.unshift(response.data);
                 });
+        }
+
+        function openReplyForMessage(correspondence) {
+            var subject = correspondence.subject;
+            if (subject.toLowerCase().substr(0, 3) !== 're:') {
+                subject = 'Re: ' + subject;
+            }
+            vm.newEmail = {
+                outgoing: false,
+                to: [{zdbID: vm.curatorId, email: vm.curatorEmail}],
+                from: {email: emailList(correspondence.to)},
+                subject: subject,
+                message: ''
+            };
         }
     }
 

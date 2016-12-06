@@ -62,7 +62,7 @@
             </button>
             <ul class="dropdown-menu" ng-show="correspondence.outgoing">
                 <li><a href ng-click="vm.resendMessage(correspondence)">Resend</a></li>
-                <li><a href>Record Reply</a></li>
+                <li><a href ng-click="vm.openReplyForMessage(correspondence)">Record Reply</a></li>
             </ul>
             <ul class="dropdown-menu" ng-show="!correspondence.outgoing">
                 <li><a href>Reply</a></li>
