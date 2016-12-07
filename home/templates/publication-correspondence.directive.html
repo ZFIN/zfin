@@ -66,6 +66,11 @@
     {{vm.errorMessage}}
 </div>
 
+<div ng-show="!vm.correspondences.length">
+    <hr>
+    <div class="text-muted text-center">No correspondences yet</div>
+</div>
+
 <div ng-repeat="correspondence in vm.correspondences">
     <hr>
     <div ng-if="correspondence.resend">
