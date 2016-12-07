@@ -338,11 +338,17 @@ public class PublicationTrackingController {
 
         if (dto.isOutgoing()) {
             CorrespondenceSentMessage correspondence;
-            if (dto.isResend()) {
-                correspondence = publicationRepository.addResentCorrespondence(publication, dto);
-            } else {
-                correspondence = publicationRepository.addSentCorrespondence(publication, dto);
+            try {
+                if (dto.isResend()) {
+                    correspondence = publicationRepository.addResentCorrespondence(publication, dto);
+                } else {
+                    correspondence = publicationRepository.addSentCorrespondence(publication, dto);
+                }
+            } catch (Exception e) {
+                LOG.error("error saving correspondence", e);
+                throw new InvalidWebRequestException("error saving correspondence");
             }
+
 
             MailSender mailer = AbstractZfinMailSender.getInstance();
             if (mailer == null) {
@@ -364,7 +370,9 @@ public class PublicationTrackingController {
             if (Boolean.valueOf(ZfinPropertiesEnum.SEND_AUTHOR_NOTIF_EMAIL.value())) {
                 recipients.addAll(externalRecipients);
             } else {
-                message = "[[ Recipient list on production environment: " + String.join(", ", externalRecipients) + " ]]\n\n" + message;
+                message = "[[ Recipient list on production environment: " + String.join(", ", externalRecipients) + " ]]<br><br>" +
+                        "------------------<br><br>" +
+                        message;
             }
 
             String sender = correspondence.getFrom().getFirstName() + " " +

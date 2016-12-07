@@ -26,6 +26,9 @@
 
         vm.authors = [];
         vm.newEmail = null;
+        vm.processing = false;
+        vm.successMessage = '';
+        vm.errorMessage = '';
 
         vm.correspondences = [];
 
@@ -43,6 +46,8 @@
         vm.saveReply = saveReply;
         vm.resendMessage = resendMessage;
         vm.openReplyForMessage = openReplyForMessage;
+        vm.sendReply = sendReply;
+        vm.isValid = isValid;
 
         activate();
 
@@ -119,9 +124,13 @@
 
         function closeForm() {
             vm.newEmail = null;
+            vm.authors.forEach(function (a) { a.send = false; });
+            vm.successMessage = '';
+            vm.errorMessage = '';
         }
 
         function sendMessage() {
+            vm.processing = true;
             vm.newEmail.to = vm.authors
                 .filter(function (a) { return a.send; })
                 .concat(vm.newEmail.additionalTo
@@ -133,14 +142,29 @@
                 .then(function (response) {
                     vm.correspondences.unshift(response.data);
                     closeForm();
+                    vm.successMessage = 'Email successfully sent.';
+                })
+                .catch(function () {
+                    vm.errorMessage = 'Error sending email.';
+                })
+                .finally(function () {
+                    vm.processing = false;
                 });
         }
 
         function saveReply() {
+            vm.processing = true;
             PublicationService.addCorrespondence(vm.pubId, vm.newEmail)
                 .then(function (response) {
                     vm.correspondences.unshift(response.data);
                     closeForm();
+                    vm.successMessage = 'Reply saved.';
+                })
+                .catch(function () {
+                    vm.errorMessage = 'Error saving reply.';
+                })
+                .finally(function () {
+                    vm.processing = false;
                 });
         }
 
@@ -150,21 +174,55 @@
             PublicationService.addCorrespondence(vm.pubId, newMessage)
                 .then(function (response) {
                     vm.correspondences.unshift(response.data);
+                    vm.successMessage = 'Email successfully sent.';
+                })
+                .catch(function () {
+                    vm.errorMessage = 'Error sending email.';
                 });
         }
 
         function openReplyForMessage(correspondence) {
-            var subject = correspondence.subject;
-            if (subject.toLowerCase().substr(0, 3) !== 're:') {
-                subject = 'Re: ' + subject;
-            }
             vm.newEmail = {
                 outgoing: false,
                 to: [{zdbID: vm.curatorId, email: vm.curatorEmail}],
                 from: {email: emailList(correspondence.to)},
-                subject: subject,
+                subject: prependSubject(correspondence.subject),
                 message: ''
             };
+        }
+
+        function sendReply(correspondence) {
+            vm.newEmail = {
+                reply: true,
+                outgoing: true,
+                additionalTo: correspondence.from.email,
+                from: {zdbID: vm.curatorId, email: vm.curatorEmail},
+                subject: prependSubject(correspondence.subject),
+                message: ''
+            };
+        }
+
+        function prependSubject(subject) {
+            if (subject.toLowerCase().substr(0, 3) !== 're:') {
+                subject = 'Re: ' + subject;
+            }
+            return subject;
+        }
+
+        function isValid() {
+            if (!vm.newEmail) {
+                return false;
+            }
+            if (vm.newEmail.outgoing) {
+                if (!vm.authors.some(function (a) { return a.send;}) && !vm.newEmail.additionalTo) {
+                    return false;
+                }
+            } else {
+                if (!vm.newEmail.from.email) {
+                    return false;
+                }
+            }
+            return vm.newEmail.subject && vm.newEmail.message;
         }
     }
 

@@ -61,7 +61,7 @@
             </c:when>
             <c:otherwise>
                 <div class="summaryTitle">${title}<c:if test="${not empty titleEntityAppended}">&nbsp;<zfin:name entity="${titleEntityAppended}"/></c:if>
-                    <c:if test="${showEditLink}">&nbsp;<a ng-show="editMode" style="color: red; font-style: italic; font-weight: bold;" title="Edit sequence information" href="/action/marker/sequence/edit/{{markerId}}">Edit</a></c:if>
+                    <c:if test="${showEditLink}">&nbsp;<a ng-show="editMode" style="color: red; font-style: italic; font-weight: bold;" title="Edit sequence information" href="/action/marker/sequence/edit/${markerID}">Edit</a></c:if>
                     <c:if test="${!test and showNoData}">
                         <span class="no-data-tag">${noDataText}</span>
                     </c:if>

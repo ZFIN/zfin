@@ -10,7 +10,7 @@
         <label class="col-sm-2 control-label">To</label>
         <div class="col-sm-4">
             <div ng-show="vm.newEmail.outgoing">
-                <div class="checkbox" ng-repeat="author in vm.authors">
+                <div class="checkbox" ng-repeat="author in vm.authors" ng-show="!vm.newEmail.reply">
                     <label>
                         <input class="author-email" type="checkbox" ng-model="author.send"> {{author.display}}
                     </label>
@@ -44,11 +44,32 @@
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <button class="btn btn-default" ng-click="vm.closeForm()">Cancel</button>
-            <button class="btn btn-primary" ng-click="vm.sendMessage()" ng-show="vm.newEmail.outgoing">Send</button>
-            <button class="btn btn-primary" ng-click="vm.saveReply()" ng-show="!vm.newEmail.outgoing">Save</button>
+            <button class="btn btn-primary" ng-click="vm.sendMessage()" ng-show="vm.newEmail.outgoing" ng-disabled="!vm.isValid() || vm.processing">
+                <span ng-show="!vm.processing">Send</span>
+                <span ng-show="vm.processing"><i class="fa fa-spinner fa-spin"></i></span>
+            </button>
+            <button class="btn btn-primary" ng-click="vm.saveReply()" ng-show="!vm.newEmail.outgoing" ng-disabled="!vm.isValid() || vm.processing">
+                <span ng-show="!vm.processing">Save</span>
+                <span ng-show="vm.processing"><i class="fa fa-spinner fa-spin"></i></span>
+            </button>
         </div>
     </div>
 </form>
+
+<div class="alert alert-success" role="alert" ng-show="vm.successMessage">
+    <button type="button" class="close" ng-click="vm.successMessage = ''">&times;</button>
+    {{vm.successMessage}}
+</div>
+
+<div class="alert alert-danger" role="alert" ng-show="vm.errorMessage">
+    <button type="button" class="close" ng-click="vm.errorMessage = ''">&times;</button>
+    {{vm.errorMessage}}
+</div>
+
+<div ng-show="!vm.correspondences.length">
+    <hr>
+    <div class="text-muted text-center">No correspondences yet</div>
+</div>
 
 <div ng-repeat="correspondence in vm.correspondences">
     <hr>
@@ -65,7 +86,7 @@
                 <li><a href ng-click="vm.openReplyForMessage(correspondence)">Record Reply</a></li>
             </ul>
             <ul class="dropdown-menu" ng-show="!correspondence.outgoing">
-                <li><a href>Reply</a></li>
+                <li><a href ng-click="vm.sendReply(correspondence)">Reply</a></li>
             </ul>
         </div>
         <div><strong>{{correspondence.date | date: 'yyyy-MM-dd'}}</strong></div>
