@@ -14,7 +14,7 @@
 
 # ---------------  Variable Definitions  --------------------------------
 
-TOP = ../..
+TOP = ../../..
 include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/Reports/PubTracking
