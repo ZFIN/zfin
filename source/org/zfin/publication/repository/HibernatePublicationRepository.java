@@ -37,9 +37,9 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
 import org.zfin.profile.repository.ProfileRepository;
-import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.*;
 import org.zfin.repository.PaginationResultFactory;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 
@@ -54,11 +54,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     Logger logger = Logger.getLogger(HibernatePublicationRepository.class);
 
-    @Autowired
-    private MarkerRepository markerRepository;
+    private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
 
-    @Autowired
-    private ProfileRepository profileRepository;
+    private ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
 
     public int getNumberOfPublications(String abstractText) {
 
@@ -1587,11 +1585,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     @Override
     public int getNumberDirectPublications(String zdbID) {
         return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery("select count(*) " +
-                        "from record_attribution ra " +
-                        "where ra.recattrib_data_zdb_id=:zdbID ")
-                        .setString("zdbID", zdbID)
-                        .uniqueResult()
-                        .toString()
+                "from record_attribution ra " +
+                "where ra.recattrib_data_zdb_id=:zdbID ")
+                .setString("zdbID", zdbID)
+                .uniqueResult()
+                .toString()
         );
     }
 

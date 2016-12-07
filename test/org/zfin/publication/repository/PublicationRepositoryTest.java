@@ -139,7 +139,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         PaginationBean bean = new PaginationBean();
         bean.setMaxDisplayRecords(4);
         PaginationResult<Fish> genotypeResult = mutantRepository.getFishByAnatomyTerm(item, false, bean);
-//        assertEquals("8 genes", 4, list.size());
         assertNotNull(genotypeResult.getPopulatedResults());
         assertEquals(genotypeResult.getPopulatedResults().size(), 4);
         assertTrue(genotypeResult.getTotalCount() > 4);
