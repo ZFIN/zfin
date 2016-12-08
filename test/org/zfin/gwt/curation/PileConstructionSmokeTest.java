@@ -25,50 +25,9 @@ public class PileConstructionSmokeTest extends AbstractSecureSmokeTest {
         try {
             // retrieve curation page for given publication
             //  Johnson et al., 1995, Genetic control of adult pigment stripe development in zebrafish
-            HtmlPage page = webClient.getPage(secureUrlDomain + "/action/devtool/gwt/phenotype-curation");
+            HtmlPage page = webClient.getPage(secureUrlDomain + "/action/curation/ZDB-PUB-990507-16");
             webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-            assertEquals("GWT Modules", page.getTitleText());
-            HtmlInput inputField = (HtmlInput) page.getByXPath("//input[@id='ENTITY_SUPERTERM']").get(0);
-            assertNotNull(inputField);
-
-            // check that unvalidated entry has red characters (error css class)
-            // enter unvalidated MF term
-            inputField.setValueAttribute("triglyceride lipase activity");
-            String cssClass = inputField.getAttribute("class");
-            assertEquals("error", cssClass);
-
-            // validate entered term
-            HtmlSelect entitySuperTerm = validateSelectionBox(EntityPart.ENTITY_SUPERTERM_NAME, "AO", page);
-            entitySuperTerm.setSelectedAttribute("molecular_function", true);
-            List<?> options = entitySuperTerm.getSelectedOptions();
-            HtmlOption option = (HtmlOption) options.get(0);
-            assertEquals("GO-MF", option.asText());
-            webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-            // check that the term is validate and the string is black again
-            inputField = (HtmlInput) page.getByXPath("//input[@id='ENTITY_SUPERTERM']").get(0);
-            cssClass = inputField.getAttribute("class");
-            assertEquals("", cssClass);
-            // check that the Quality is Process
-            validateSelectionBox(EntityPart.QUALITY_NAME, "Quality - Processes", page);
-
-            // ADD: MF[triglyceride lipase activity] : AO[] - PATO[] - AO[] : AO[] gives error
-            validateErrorOnSubmission(page);
-
-            // ADD: MF[triglyceride lipase activity] : AO[] - PATO[decreased distance] - AO[] : AO[]
-            // gives error: Cannot add MF with related quality
-            setSingleTermEntry("quality.process", "decreased distance", EntityPart.QUALITY_NAME, page);
-            // no related entity box available
-            checkNoRelatedEntityIsDisplayed(page);
-            //validateErrorOnSubmission(page);
-
-            // ADD: MF[triglyceride lipase activity] : AO[eye] - PATO[decreased rate] - AO[] : AO[]
-            // gives error: Cannot post-compose MF with AO
-            setSingleTermEntry("quality.process", "decreased sensitivity of a process", EntityPart.QUALITY_NAME, page);
-            setSingleTermEntry("zebrafish_anatomy", "eye", EntityPart.ENTITY_SUBTERM_NAME, page);
-            validateErrorOnSubmission(page);
-
-            // add
-
+            assertTrue(page.getTitleText().startsWith("ZFIN Curate"));
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.toString());

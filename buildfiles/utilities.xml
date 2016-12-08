@@ -70,4 +70,18 @@
         <delete dir="${indexerDir}"/>
     </target>
 
+    <macrodef name="remove-old-files" description="Remove files older that a given date">
+        <attribute name="removal.date"/>
+        <attribute name="cleanup.dir"/>
+        <sequential>
+            <echo>Deleting files older than @{removal.date}</echo>
+            <echo>Deleting files from dir: @{cleanup.dir}</echo>
+            <delete includeemptydirs="true" verbose="true" failonerror="false">
+                <fileset dir="@{cleanup.dir}" includes="**/*">
+                    <date datetime="@{removal.date}" when="before"/>
+                </fileset>
+            </delete>
+        </sequential>
+    </macrodef>
+
 </project>
