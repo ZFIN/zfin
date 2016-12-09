@@ -1,26 +1,4 @@
 ;(function () {
-    angular
-        .module('app')
-        .directive('sequenceInfoEditLink', sequenceInfoEditLink);
-
-    function sequenceInfoEditLink() {
-        var seqInfoEditLink =
-            '<a ng-show="edit" style="color: red; font-style: italic; font-weight: bold;" title="Edit sequence information" ng-href="/action/marker/sequence/edit/{{markerId}}">' +
-            'Edit' +
-            '</a>';
-
-        var directive = {
-            restrict: 'EA',
-            template: seqInfoEditLink,
-            scope: {
-                markerId: '@',
-                edit: '='
-            }
-        };
-
-        return directive;
-    }
-
     angular.module('app', [])
         .controller('sequenceInfoCtrl', ['$scope', '$http', '$sce', function ($scope, $http, $sce) {
             var seqInfoCtrl = this;
@@ -105,11 +83,13 @@
                 removeLink(seqInfoCtrl.seqenceInfo)
                     .then(function () {
                         getSequences();
+                        close();
                     })
                     .catch(function (error) {
                         seqInfoCtrl.errorMessage = error.data.message;
                     });
                 if (!seqInfoCtrl.errorMessage) {
+                    getSequences();
                     close();
                 }
             };
