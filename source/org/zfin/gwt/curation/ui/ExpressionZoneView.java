@@ -1071,7 +1071,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             loadingImage.setVisible(false);
             clearErrorMessages();
             stageSelector.resetGui();
-            expressionExperimentZonePresenter.notifyAddedExpression();
+            expressionExperimentZonePresenter.notifyAddedExpression(newAnnotations.size());
             loadingImage.setVisible(false);
         }
 

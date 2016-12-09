@@ -332,8 +332,11 @@ public class ExpressionZonePresenter implements Presenter {
 
     private class AddExpressionCallback extends ZfinAsyncCallback<List<ExpressionFigureStageDTO>> {
 
-        public AddExpressionCallback(List<ExpressionFigureStageDTO> experiment) {
+        private List<ExpressionFigureStageDTO> expressionFigureStageDTOS;
+
+        public AddExpressionCallback(List<ExpressionFigureStageDTO> expressionFigureStageDTOS) {
             super("Error while creating experiment", view.errorElement);
+            this.expressionFigureStageDTOS = expressionFigureStageDTOS;
         }
 
         public void onSuccess(List<ExpressionFigureStageDTO> newAnnotations) {
@@ -345,7 +348,7 @@ public class ExpressionZonePresenter implements Presenter {
             view.addButton.setEnabled(true);
             clearErrorMessages();
             view.stageSelector.resetGui();
-            AppUtils.EVENT_BUS.fireEvent(new AddExpressionExperimentEvent());
+            AppUtils.EVENT_BUS.fireEvent(new AddExpressionExperimentEvent(expressionFigureStageDTOS.size()));
             view.loadingImage.setVisible(false);
         }
 

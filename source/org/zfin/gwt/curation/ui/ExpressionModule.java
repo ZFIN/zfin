@@ -188,7 +188,7 @@ public class ExpressionModule implements ZfinCurationModule, HandlesError {
                 new AddExpressionExperimentEventHandler() {
                     @Override
                     public void onEvent(AddExpressionExperimentEvent event) {
-                        expressionExperimentZonePresenter.notifyAddedExpression();
+                        expressionExperimentZonePresenter.notifyAddedExpression(event.getNumberOfNewExpressions());
                     }
                 });
         AppUtils.EVENT_BUS.addHandler(RemoveExpressionEvent.TYPE,

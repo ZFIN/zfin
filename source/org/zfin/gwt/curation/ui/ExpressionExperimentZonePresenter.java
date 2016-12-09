@@ -59,11 +59,11 @@ public class ExpressionExperimentZonePresenter implements Presenter {
      * When an expression record is added update the experiment section about it, ie the number
      * of expression records is incremented by 1.
      */
-    public void notifyAddedExpression() {
+    public void notifyAddedExpression(int numberOfNewExpressions) {
         for (ExpressionExperimentDTO experiment : experimentList) {
             for (ExpressionExperimentDTO sourceExperiment : selectedExperiments) {
                 if (experiment.equals(sourceExperiment))
-                    experiment.setNumberOfExpressions(experiment.getNumberOfExpressions() + 1);
+                    experiment.setNumberOfExpressions(experiment.getNumberOfExpressions() + numberOfNewExpressions);
             }
         }
         finishExpressionNotification();
@@ -120,8 +120,9 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         curationExperimentRPCAsync.createExpressionExperiment(zoneExperiment, new AddExperimentCallback());
 
     }
+
     private boolean isEfgWildtypeCombo(ExpressionExperimentDTO experimentDTO) {
-        if (experimentDTO.getGene()!=null) {
+        if (experimentDTO.getGene() != null) {
             if (experimentDTO.getFishDTO().isWildtype() && experimentDTO.getGene().getMarkerType().equals("Engineered Foreign Gene"))
                 return true;
         }
@@ -844,7 +845,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             geneMap.clear();
             geneList.addItem("");
             int rowIndex = 1;
-            for (MarkerDTO gene : (List<MarkerDTO>)(List<?>)genes) {
+            for (MarkerDTO gene : (List<MarkerDTO>) (List<?>) genes) {
                 geneList.addItem(gene.getName(), gene.getZdbID());
                 if (selectedGene != null && selectedGene.getZdbID() != null && gene.getZdbID().equals(selectedGene.getZdbID())) {
                     geneList.setSelectedIndex(rowIndex);
@@ -867,7 +868,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             int index = 0;
             StringListBox listBox = view.getFishList();
             listBox.clear();
-            for (FishDTO fish : (List<FishDTO>) (List<?>)fishDTOList) {
+            for (FishDTO fish : (List<FishDTO>) (List<?>) fishDTOList) {
                 if (fish.getName().startsWith("---")) {
                     listBox.addItem(fish.getHandle(), fish.getZdbID());
                     listBox.getElement().getElementsByTagName("option").getItem(index).setAttribute("disabled", "disabled");
