@@ -215,7 +215,8 @@ into temp wrongIssnPrintByMedAbbr;
 
 -- dump the issn print that disagree with NLM (same abbrev/MedAbbr, different issn print)
 
-unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/wrongIssnPrintByMedAbbrWithNoHeader select * from wrongIssnPrintByMedAbbr;
+! echo "                           from wrongIssnPrintByMedAbbr."
+unload to <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/wrongIssnPrintByMedAbbrWithNoHeader.txt select * from wrongIssnPrintByMedAbbr;
 
 select j1.jrnl_zdb_id as journalZdbID, j1.jrnl_abbrev, j1.jrnl_print_issn, issnPrint, j1.jrnl_name, nlmID           
   from journal j1, tmp_ncbi_journals

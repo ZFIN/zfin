@@ -75,9 +75,7 @@ print WRONGISSN "journal zdbID|journal abbrev|issn print currently stored|issn p
 
 close WRONGISSN;
 
-system("/bin/cat <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbrWithNoHeader >> <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbr.txt");
-
-system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbrWithNoHeader");
+system("/bin/cat <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbrWithNoHeader.txt >> <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbr.txt");
 
 exit;
 
