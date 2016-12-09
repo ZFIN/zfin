@@ -21,7 +21,7 @@
         <property name="nonZfinPublications" column="nonzf_pubs" lazy="true"/>
         <property name="personalBio" column="pers_bio" lazy="true"/>
 
-        <property name="snapshot" column="snapshot" type="blob" lazy="true"/>
+        <property name="snapshot" column="snapshot" type="blob"/>
         <property name="url"/>
         <property name="email"/>
         <property name="fax"/>
