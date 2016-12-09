@@ -153,51 +153,6 @@ class CurationDTOConversionServiceSpec extends AbstractZfinIntegrationSpec {
         dtos.contains(converter.toCurationDTO(emptyTopic))
     }
 
-    def "convert Correspondence to DTO with no reply received"() {
-        when:
-        def dto = converter.toCorrespondenceDTO(correspondence)
-
-        then:
-        dto.pub == correspondence.publication.zdbID
-        dto.curator.zdbID == person.patrick.zdbID
-        dto.id == correspondence.id
-        dto.openedDate == correspondence.contactedDate
-        !dto.replyReceived
-        dto.closedDate == null
-    }
-
-    def "convert Correspondence to DTO with reply received"() {
-        setup:
-        correspondence.respondedDate = new Date()
-
-        when:
-        def dto = converter.toCorrespondenceDTO(correspondence)
-
-        then:
-        dto.pub == correspondence.publication.zdbID
-        dto.curator.zdbID == person.patrick.zdbID
-        dto.id == correspondence.id
-        dto.openedDate == correspondence.contactedDate
-        dto.replyReceived
-        dto.closedDate == correspondence.respondedDate
-    }
-
-    def "convert Correspondence to DTO closed with no reply"() {
-        setup:
-        correspondence.giveUpDate = new Date()
-
-        when:
-        def dto = converter.toCorrespondenceDTO(correspondence)
-
-        then:
-        dto.pub == correspondence.publication.zdbID
-        dto.curator.zdbID == person.patrick.zdbID
-        dto.id == correspondence.id
-        dto.openedDate == correspondence.contactedDate
-        !dto.replyReceived
-        dto.closedDate == correspondence.giveUpDate
-    }
-
     def "convert PublicationTrackingHistory to Status DTO"() {
         setup:
         def status = new PublicationTrackingHistory(
