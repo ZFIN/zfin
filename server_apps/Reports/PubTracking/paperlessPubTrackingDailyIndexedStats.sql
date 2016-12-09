@@ -1,4 +1,4 @@
-
+begin work;
 insert into daily_indexed_metric (dim_date_captured,
        	    			  dim_number_indexed_bin_1,
        	    			  dim_number_indexed_bin_2,
@@ -64,3 +64,4 @@ select  current year to second, (select count(*) from pub_tracking_history, pub_
 ) from single ;			  
 
 
+commit work;

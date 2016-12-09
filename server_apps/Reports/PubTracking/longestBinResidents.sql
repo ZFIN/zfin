@@ -190,7 +190,7 @@ insert into longest_bin_resident_metric (lbrm_date_captured,
        	    			         lbrm_pub_zdb_id,
 					 lbrm_status_counted,
 					 lbrm_days_in_status_on_this_date)
- select distinct id, pth_pub_zdb_id, 'NEW_ORTHO',(date(id)-date(pth_status_insert_date)
+ select distinct id, pth_pub_zdb_id, 'NEW_ORTHO',(date(id)-date(pth_status_insert_date))
 		from pub_tracking_history, pub_tracking_location, pub_tracking_status, publication, tmp_id
 		     where pth_location_id = ptl_pk_id
 		     and ptl_location = 'NEW_ORTHO'
@@ -205,6 +205,4 @@ insert into longest_bin_resident_metric (lbrm_date_captured,
 
 select * from longest_bin_resident_metric;
 
---commit work;
-
-rollback work;
+commit work;
