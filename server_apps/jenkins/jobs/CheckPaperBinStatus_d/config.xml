@@ -17,6 +17,9 @@
     <concurrentBuild>false</concurrentBuild>
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
+    <hudson.tasks.Shell>
+      <command>cd $TARGETROOT/server_apps/Reports/PubTracking &amp;&amp; runPaperlessPubTrackingDailyIndexedMetrics.sh </command>
+    </hudson.tasks.Shell>
         <hudson.tasks.Ant plugin="ant@1.2">
             <targets>validate-data-report-simple -DJobName=CheckPaperBinStatus_d</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
