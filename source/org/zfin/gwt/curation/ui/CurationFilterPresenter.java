@@ -186,7 +186,7 @@ public class CurationFilterPresenter extends Composite {
             view.getFishList().clear();
             view.getFishList().addItem(ALL, "");
             for (FishDTO fishDTO : valuesDTO.getFishes()) {
-                view.getFishList().addItem(fishDTO.getName(), fishDTO.getZdbID());
+                view.getFishList().addItem(fishDTO.getHandle(), fishDTO.getZdbID());
             }
 
             view.getFigureList().clear();

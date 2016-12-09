@@ -221,7 +221,7 @@ public class CurationFilterModule extends Composite {
             fishList.clear();
             fishList.addItem(ALL, "");
             for (FishDTO fishDTO : valuesDTO.getFishes()) {
-                fishList.addItem(fishDTO.getName(), fishDTO.getZdbID());
+                fishList.addItem(fishDTO.getHandle(), fishDTO.getZdbID());
             }
 
             figureList.clear();
