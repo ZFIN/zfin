@@ -52,8 +52,12 @@
         function activate() {
             PublicationService.getStatuses()
                 .then(function (response) {
-                    vm.indexedStatus = zf.find(response.data, function (s) { return s.type === 'INDEXED'; });
-                    vm.statuses = response.data.filter(function (s) { return !s.hidden; });
+                    vm.indexedStatus = zf.find(response.data, function (s) {
+                        return s.type === 'INDEXED';
+                    });
+                    vm.statuses = response.data.filter(function (s) {
+                        return !s.hidden;
+                    });
                 });
             PublicationService.getLocations()
                 .then(function (response) {
@@ -66,7 +70,9 @@
             PublicationService.getCurators()
                 .then(function (response) {
                     vm.curators = response.data;
-                    vm.curator = vm.curators.find(function (c) { return c.zdbID === vm.curatorId; });
+                    vm.curator = vm.curators.find(function (c) {
+                        return c.zdbID === vm.curatorId;
+                    });
                 });
             PublicationService.getStatus(vm.pubId)
                 .then(storeStatus);
@@ -124,7 +130,7 @@
             }
             return PublicationService.updateStatus(vm.current)
                 .then(storeStatus)
-                .then(function() {
+                .then(function () {
                     IntertabEventService.fireEvent('pub-status-update');
                     if (isClosing) {
                         return PublicationService.getTopics(vm.pubId)
@@ -138,12 +144,15 @@
         function updateStatus(validate) {
             vm.processing = true;
             var isClosing = vm.current.status.type === 'CLOSED';
-            var isIndexed = vm.original.status.type === 'INDEXING' &&
+            var isIndexed = false;
+            if (vm.original.status != null)
+                isIndexed = vm.original.status.type === 'INDEXING' &&
                     vm.current.status.type === 'READY_FOR_CURATION';
             var update;
             if (validate && isClosing) {
                 update = validateBeforeClose();
-            } if (isIndexed) {
+            }
+            if (isIndexed) {
                 var indexed = {
                     location: null,
                     owner: vm.curator,
@@ -151,17 +160,21 @@
                     status: vm.indexedStatus
                 };
                 update = PublicationService.updateStatus(indexed)
-                    .then(function () { doStatusUpdate(isClosing) });
+                    .then(function () {
+                        doStatusUpdate(isClosing)
+                    });
             } else {
                 update = doStatusUpdate(isClosing);
             }
-            update.finally(function() {
+            update.finally(function () {
                 vm.processing = false;
             });
         }
 
         function hasTopics() {
-            return vm.topics.some(function (t) { return t.dataFound; });
+            return vm.topics.some(function (t) {
+                return t.dataFound;
+            });
         }
 
         function reset() {
