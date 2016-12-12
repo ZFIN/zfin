@@ -110,7 +110,7 @@ select current year to second,
 		where pth_location_id = ptl_pk_id
 		and ptl_location = 'NEW_ORTHO'
 		and pth_days_in_status is not null
-		and pth_status_is_current = 'f'),
+		and pth_status_is_current = 'f'),0),
 	nvl((select stdev(pth_days_in_status)
 		from pub_tracking_history, pub_tracking_location
 		where pth_location_id = ptl_pk_id
