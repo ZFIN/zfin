@@ -87,11 +87,11 @@
                     })
                     .catch(function (error) {
                         seqInfoCtrl.errorMessage = error.data.message;
+                    })
+                    .finally(function () {
+                        getSequences();
+                        close();
                     });
-                if (!seqInfoCtrl.errorMessage) {
-                    getSequences();
-                    close();
-                }
             };
 
             seqInfoCtrl.addAttribution = function() {
