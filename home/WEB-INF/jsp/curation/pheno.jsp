@@ -176,7 +176,7 @@
                         <td>
                             <iframe src="javascript:''" id='__gwt_historyFrame'
                                     style='position:absolute;width:0;height:0;border:0'></iframe>
-                            <table style="width:550px; overflow: auto; border: 0.1px; border-style:solid">
+                            <table style="width:550px; overflow: auto; border: 0.1px; border-style:solid; vertical-align: top">
                                 <tr>
                                     <td>
                                         <div id="structure-pile-construction-zone-terminfo"></div>
