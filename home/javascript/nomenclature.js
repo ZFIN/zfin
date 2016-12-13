@@ -24,17 +24,17 @@ editMarker.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$
     $scope.reasonList = $window.reasonList;
     $scope.markerID = $window.markerID;
 
-    $scope.$watch("editMode", function(){
+    $scope.$watch("editMode", function () {
         // reset values
         nomenController.reset();
     });
 
-    nomenController.reset= function () {
+    nomenController.reset = function () {
         nomenController.reason = '';
         nomenController.comments = '';
     };
 
-    $scope.init = function(name, abbreviation){
+    $scope.init = function (name, abbreviation) {
         nomenController.geneName = name;
         nomenController.geneAbbreviation = abbreviation;
     };
@@ -277,14 +277,12 @@ editMarker.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$
 
     function openModalPopup(element) {
         //alert('popup: '+element);
-        $('#' + element)
+        return $('#' + element)
             .modal({
                 escapeClose: true,
                 clickClose: true,
                 showClose: true,
                 fadeDuration: 100
-            })
-            .on($.modal.AFTER_CLOSE, function () {
             });
     }
 
@@ -295,7 +293,6 @@ editMarker.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$
         nomenController.geneNameOrAbbreviationOrg = name;
         nomenController.hasGeneEdit = true;
         nomenController.errorMessage = '';
-        //alert("name "+nomenController.geneNameOrAbbreviation)
         openModalPopup('nomenclature-modal');
     };
 
@@ -310,7 +307,9 @@ editMarker.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$
         nomenController.newAlias = name;
         nomenController.errorMessage = '';
         nomenController.fetchAliasAttributions(ID);
-        openModalPopup('alias-attribution-modal');
+        openModalPopup('alias-attribution-modal').on($.modal.AFTER_CLOSE, function () {
+            nomenController.closeAliasAttributionEditor();
+        });
     };
 
     nomenController.closeModal = function () {

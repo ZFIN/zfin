@@ -138,7 +138,9 @@
         function updateStatus(validate) {
             vm.processing = true;
             var isClosing = vm.current.status.type === 'CLOSED';
-            var isIndexed = vm.original.status.type === 'INDEXING' &&
+            var isIndexed = false;
+            if (vm.original.status != null)
+                isIndexed = vm.original.status.type === 'INDEXING' &&
                     vm.current.status.type === 'READY_FOR_CURATION';
             var update;
             if (validate && isClosing) {
