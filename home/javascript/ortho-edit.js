@@ -349,7 +349,7 @@
                 .catch(function (error) {
                     var message = error.data.message;
                     // todo: hackity hack hack -- we should really use the fieldErrors attribute instead
-                    if (message.indexOf('publication') < 0) {
+                    if (message != null && message.indexOf('publication') < 0) {
                         vm.evidenceCodeError = message;
                     } else {
                         vm.evidencePublicationError = message;
