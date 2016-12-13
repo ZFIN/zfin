@@ -23,7 +23,8 @@ update tmp_report
      		    	    from marker_go_term_evidence, publication
 			    where jtype = 'Journal'
 			    and mrkrgoev_source_zdb_id = publication.zdb_id
-			    and mrkrgoev_mrkr_zdb_id = tmp_report.zdb_id)
+			    and mrkrgoev_mrkr_zdb_id = tmp_report.zdb_id
+			    and pub_completion_date is not null)
  where exists (Select 'x' from marker_go_term_evidence
 			    where mrkrgoev_mrkr_zdb_id = zdb_id);
 
@@ -45,7 +46,8 @@ update tmp_report
      		      	      from expression_experiment2, publication
 			    where jtype = 'Journal'
 			    and publication.zdb_id = xpatex_source_zdb_id
-			      and xpatex_gene_zdb_id = tmp_report.zdb_id)
+			      and xpatex_gene_zdb_id = tmp_report.zdb_id
+			      and pub_completion_date is not null)
  where exists (Select 'x' from expression_experiment2
 			      where xpatex_gene_zdb_id = zdb_id);
 
