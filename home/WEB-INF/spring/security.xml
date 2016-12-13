@@ -123,6 +123,8 @@
                                 access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/people/edit-user*"
                                 access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}" requires-channel="https"/>
+        <security:intercept-url pattern="/action/profile/edit/**"
+                                access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}"/>
 
         <security:intercept-url pattern="/action/figure/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/figure/*/images" access="hasRole('root') or ${DISABLE_SECURITY}"/>
