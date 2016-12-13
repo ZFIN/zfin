@@ -50,11 +50,6 @@
         <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
             <recipientList></recipientList>
             <configuredTriggers>
-	      <hudson.plugins.logparser.LogParserPublisher plugin="log-parser@1.0.8">
-		<unstableOnWarning>true</unstableOnWarning>
-		<failBuildOnError>false</failBuildOnError>
-		<parsingRulesPath></parsingRulesPath>
-	      </hudson.plugins.logparser.LogParserPublisher>
                 <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
                     <email>
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
