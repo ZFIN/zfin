@@ -1,7 +1,7 @@
 begin work;
 
 insert into monthly_curated_metric (mcm_pub_arrival_date_month,
-       	    			  mcm_pub_arrival_date_year
+       	    			  mcm_pub_arrival_date_year)
 select distinct month(pub_arrival_date), year(pub_arrival_date)
   from publication
  where exists (Select 'x' from pub_tracking_history, pub_tracking_status
