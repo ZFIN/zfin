@@ -1,4 +1,3 @@
-begin work ;
 
 create temp table tmp_id (id datetime year to second)
  with no log;
@@ -203,6 +202,4 @@ insert into longest_bin_resident_metric (lbrm_date_captured,
 		     							  and pts_pk_id = pth_status_id
 		     							  and pts_status = 'READY_FOR_CURATION');			 
 
-select * from longest_bin_resident_metric;
 
-commit work;
