@@ -21,13 +21,13 @@
             <command>cd $TARGETROOT/server_apps/data_transfer/LoadOntology</command>
         </hudson.tasks.Shell>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>load-chebi -DJobName=Load-Chebi-Ontology_w</targets>
+            <targets>load-chebi -DJobName=Load-Chebi-Ontology_m</targets>
             <buildFile>$TARGETROOT/server_apps/data_transfer/LoadOntology/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/data_transfer/LoadOntology/Load-Chebi-Ontology_w/*,server_apps/data_transfer/LoadOntology/obo-files/chebi*.obo</artifacts>
+            <artifacts>server_apps/data_transfer/LoadOntology/Load-Chebi-Ontology_m/*,server_apps/data_transfer/LoadOntology/obo-files/chebi*.obo</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -35,7 +35,7 @@
             <reportTargets>
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Report</reportName>
-                    <reportDir>server_apps/data_transfer/LoadOntology/Load-Chebi-Ontology_w</reportDir>
+                    <reportDir>server_apps/data_transfer/LoadOntology/Load-Chebi-Ontology_m</reportDir>
                     <reportFiles>statistics.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>true</allowMissing>
@@ -50,7 +50,7 @@
               <email>
                   <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
                   <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-                  <body>${FILE,path=&quot;server_apps/data_transfer/LoadOntology/Load-Chebi-Ontology_w/statistics.html&quot;}
+                  <body>${FILE,path=&quot;server_apps/data_transfer/LoadOntology/Load-Chebi-Ontology_m/statistics.html&quot;}
 
                       See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                   </body>
@@ -85,7 +85,7 @@
       <contentType>default</contentType>
       <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
-      <attachmentsPattern>server_apps/data_transfer/LoadOntology/Load-Chebi-Ontology_w/*</attachmentsPattern>
+      <attachmentsPattern>server_apps/data_transfer/LoadOntology/Load-Chebi-Ontology_m/*</attachmentsPattern>
       <presendScript></presendScript>
       <attachBuildLog>false</attachBuildLog>
       <compressBuildLog>false</compressBuildLog>
