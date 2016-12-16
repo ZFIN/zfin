@@ -15,7 +15,8 @@ use URI::Escape qw/uri_escape/;
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
 $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
-
+$ENV{"CLIENT_LOCALE"}="en_US.utf8";
+$ENV{"DB_LOCALE"}="en_US.utf8";
 
 # permission variables
 
