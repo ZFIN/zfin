@@ -487,7 +487,8 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         TGCONSTRUCT("TGCONSTRUCT"),
         TRANSCRIPT("TRANSCRIPT"),
         DEFICIENCY_TLOC_MARK("DEFICIENCY_TLOC_MARK"),
-        GENEDOM_EFG_REGION("GENEDOM_EFG_REGION");
+        GENEDOM_EFG_REGION("GENEDOM_EFG_REGION"),
+        GENEDOM_EFG_REGION_K("GENEDOM_EFG_REGION_K");
 
         private final String value;
 
