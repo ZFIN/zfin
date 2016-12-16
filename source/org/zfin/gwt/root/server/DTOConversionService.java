@@ -1033,7 +1033,8 @@ public class DTOConversionService {
         return term;
     }
 
-    public static TermDTO convertToTermDTO(GenericTerm term) {
+    // Shallow means: do not populate synonym and subset collections
+    public static TermDTO convertToTermDTO(GenericTerm term, boolean shallow) {
         if (term == null) {
             return null;
         }
@@ -1045,7 +1046,8 @@ public class DTOConversionService {
         dto.setObsolete(term.isObsolete());
         dto.setDefinition(term.getDefinition());
         dto.setComment(term.getComment());
-        dto.setAliases(convertToAliasDTO(term.getAliases()));
+        if (!shallow)
+            dto.setAliases(convertToAliasDTO(term.getAliases()));
 
         if (term.getOntology() == Ontology.ANATOMY) {
             DevelopmentStage startStage = OntologyService.getStartStageForTerm(term);
@@ -1054,27 +1056,26 @@ public class DTOConversionService {
             dto.setEndStage(convertToStageDTO(endStage));
         }
 
-        // set stages here
-
-
         // set the ontology section here
         Ontology ontology = term.getOntology();
         // ToDo: generalize this better...
-//        String qualityOntologyName = term.getOntology().getOntologyName();
-//        dto.setOntology(OntologyDTO.getOntologyByDescriptor(qualityOntologyName));
-        // if QUALITY, then get the most specific instance for the ontology
         if (ontology == Ontology.QUALITY) {
             ontology = RepositoryFactory.getOntologyRepository().getProcessOrPhysicalObjectQualitySubOntologyForTerm(term);
         }
         if (ontology == Ontology.MPATH) {
             ontology = Ontology.MPATH_NEOPLASM;
         }
-        dto.setSubsets(convertToSubsetDTO(term.getSubsets()));
+        if (!shallow)
+            dto.setSubsets(convertToSubsetDTO(term.getSubsets()));
         OntologyDTO ontologyDTO = convertToOntologyDTO(ontology);
         dto.setOntology(ontologyDTO);
-        dto.setDoNotAnnotateWith(term.useForAnnotations());
+        if (!shallow)
+            dto.setDoNotAnnotateWith(term.useForAnnotations());
         return dto;
+    }
 
+    public static TermDTO convertToTermDTO(GenericTerm term) {
+        return convertToTermDTO(term, false);
     }
 
     public static TermDTO convertQualityToTermDTO(PhenotypeStructure structure) {
@@ -1695,12 +1696,13 @@ public class DTOConversionService {
         return genotype;
     }
 
-    public static FishDTO convertToFishDtoFromFish(Fish fish) {
+    public static FishDTO convertToFishDtoFromFish(Fish fish, boolean shallow) {
         FishDTO dto = new FishDTO();
         dto.setZdbID(fish.getZdbID());
         dto.setName(fish.getDisplayName());
         dto.setHandle(fish.getHandle());
-        dto.setGenotypeDTO(DTOConversionService.convertToGenotypeDTO(fish.getGenotype(), false));
+        if (!shallow)
+            dto.setGenotypeDTO(DTOConversionService.convertToGenotypeDTO(fish.getGenotype(), false));
         if (CollectionUtils.isNotEmpty(fish.getStrList())) {
             List<RelatedEntityDTO> strs = new ArrayList<>(fish.getStrList().size());
             for (SequenceTargetingReagent str : fish.getStrList()) {
@@ -1711,6 +1713,11 @@ public class DTOConversionService {
         dto.setOrder(fish.getOrder());
         dto.setNameOrder(fish.getNameOrder());
         return dto;
+
+    }
+
+    public static FishDTO convertToFishDtoFromFish(Fish fish) {
+        return convertToFishDtoFromFish(fish, false);
     }
 
     public static DiseaseAnnotation convertToDiseaseFromDiseaseDTO(DiseaseAnnotationDTO diseaseAnnotationDTO) throws TermNotFoundException {
@@ -1949,7 +1956,7 @@ public class DTOConversionService {
         MutationDetailControlledVocabularyTermDTO dto = new MutationDetailControlledVocabularyTermDTO();
         dto.setAbbreviation(controlledVocab.getAbbreviation());
         dto.setDisplayName(controlledVocab.getDisplayName());
-        dto.setTerm(DTOConversionService.convertToTermDTO(controlledVocab.getTerm()));
+        dto.setTerm(DTOConversionService.convertToTermDTO(controlledVocab.getTerm(), true));
         dto.setOrder(controlledVocab.getOrder());
         return dto;
     }

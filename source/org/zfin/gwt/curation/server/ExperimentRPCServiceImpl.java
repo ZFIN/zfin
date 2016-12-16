@@ -10,12 +10,14 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.ui.experiment.ExperimentRPCService;
 import org.zfin.gwt.root.dto.ConditionDTO;
 import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.dto.TermNotFoundException;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.OntologyManager;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
@@ -254,10 +256,10 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
     public HashMap<String, Set<String>> getChildMap() {
         HashMap<String, Set<String>> map = new HashMap<>();
         for (String zecoTermRootID : zecoRootTerms) {
-            GenericTerm term = getOntologyRepository().getTermByOboID(zecoTermRootID);
+            TermDTO term = OntologyManager.getInstance().getTermByID(zecoTermRootID);
             Set<String> termSet = new HashSet<>();
             termSet.add(zecoTermRootID);
-            for (GenericTerm childTerm : term.getAllChildren()) {
+            for (TermDTO childTerm : term.getAllChildren()) {
                 termSet.add(childTerm.getOboID());
             }
             map.put(zecoTermRootID, termSet);
