@@ -7,7 +7,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.expression.Figure;
 import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateSessionCreator;
@@ -26,6 +25,7 @@ import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertNotNull;
 import static org.zfin.repository.RepositoryFactory.*;
 
 public class MutantRepositoryTest {
@@ -495,5 +495,12 @@ public class MutantRepositoryTest {
         String publicationID = "ZDB-PUB-040617-4";
         long count = getMutantRepository().getInferredFromCountByGenotype(genoID, publicationID);
         assertThat(count, greaterThan(0L));
+    }
+
+    @Test
+    public void getRecAttributions() {
+        String publicationID = "ZDB-PUB-040617-4";
+        List<Genotype> count = getMutantRepository().getGenotypesForStandardAttribution(getPublicationRepository().getPublication(publicationID));
+        assertNotNull(count);
     }
 }
