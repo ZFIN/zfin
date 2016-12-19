@@ -59,13 +59,15 @@ Sql.withInstance(db) { Sql sql ->
 
             def day = pubDate.Day
             if (day == '') {
-                day = '1'
+                day = '01'
             }
 
-            newDate = "$year-$month-$day" as String
+            newDate = "$month/$day/$year" as String
             pubsUpdated.add([idMap[id], id, newDate])
         }
     }
+
+    pubsUpdated.each { println(it) }
 
     // for pubs with a new date, update the publication record and insert an update record
     sql.withTransaction {
