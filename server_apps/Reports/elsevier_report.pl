@@ -27,66 +27,6 @@ sub openReport()
     system("/bin/touch reportElsevier.txt");
   }
 
-sub openReport()
-  {
-    system("/bin/rm -f reportElsevier.txt");
-    system("/bin/touch reportElsevier.txt");
-  }
-
-sub openReport()
-  {
-    system("/bin/rm -f reportElsevier.txt");
-    system("/bin/touch reportElsevier.txt");
-  }
-
-sub openReport()
-  {
-    system("/bin/rm -f reportElsevier.txt");
-    system("/bin/touch reportElsevier.txt");
-  }
-
-sub openReport()
-  {
-    system("/bin/rm -f reportElsevier.txt");
-    system("/bin/touch reportElsevier.txt");
-  }
-
-sub openReport()
-  {
-    system("/bin/rm -f reportElsevier.txt");
-    system("/bin/touch reportElsevier.txt");
-  }
-
-sub openReport()
-  {
-    system("/bin/rm -f reportElsevier.txt");
-    system("/bin/touch reportElsevier.txt");
-  }
-
-sub openReport()
-  {
-    system("/bin/rm -f reportElsevier.txt");
-    system("/bin/touch reportElsevier.txt");
-  }
-
-sub openReport()
-  {
-    system("/bin/rm -f reportElsevier.txt");
-    system("/bin/touch reportElsevier.txt");
-  }
-
-sub openReport()
-  {
-    system("/bin/rm -f reportElsevier.txt");
-    system("/bin/touch reportElsevier.txt");
-  }
-
-sub openReport()
-  {
-    system("/bin/rm -f reportElsevier.txt");
-    system("/bin/touch reportElsevier.txt");
-  }
-
 ## -------  MAIN -------- ##
 
 # open a handle on the db
@@ -118,7 +58,7 @@ $elsevier_query = "select distinct zdb_id,jrnl_name,pub_arrival_date from record
                       and pub_jrnl_zdb_id = jrnl_zdb_id
                       and jrnl_publisher in ('Elsevier','Cell Press') 
                       and jrnl_is_nice = 't' 
-                 order by jrnl_name, entry_time desc;";
+                 order by jrnl_name, pub_arrival_date desc;";
 
 
 # execute the query
