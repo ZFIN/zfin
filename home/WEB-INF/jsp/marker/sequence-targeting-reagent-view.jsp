@@ -61,7 +61,7 @@
         }
     });
 </script>
-
+<zfin2:constructsWithSequences formBean="${formBean}"/>
 <%--// GENOTYPE CREATED BY TALEN OR CRISPR --%>
 <c:if test="${formBean.marker.markerType.name eq 'TALEN' || formBean.marker.markerType.name eq 'CRISPR'}">
     <div id="genomicFeature" class="summary">
