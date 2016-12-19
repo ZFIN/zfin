@@ -22,6 +22,7 @@ public final class WidgetUtil {
     public static final String GREEN = "green";
     public static final String PHENOTYPE_NORMAL = "phenotype-normal";
     public static final String PHENOTYPE_AMELIORATED = "phenotype-ameliorated";
+    public static final String PHENOTYPE_EXACERBATED = "phenotype-exacerbated";
     public static final String CSS_CLASS_DELIMITER = " ";
     public static final String RED_HYPERLINK = "red-modifier-hyperlink";
     public static final String CSS_CURATION_BOX_CONTROL_TEXT = "curation-box-control-text";
