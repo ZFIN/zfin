@@ -79,7 +79,11 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
         } else if (statement.getTag().equals("ameliorated")) {
             return "This annotation denotes a significantly rescued phenotype resulting from an additional reagent " +
                     "or mutation.";
-        } else {
+        }
+        else if (statement.getTag().equals("exacerbated")) {
+            return "This annotation denotes a significantly exaggerated phenotype resulting from an additional reagent " +
+                    "or mutation.";
+        }else {
             return "";
         }
     }
