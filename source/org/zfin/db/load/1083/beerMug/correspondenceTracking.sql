@@ -12,7 +12,7 @@ extent size 4096 next size 4096;
 
 
 create table pub_correspondence_sent_email (pubcse_pk_id serial8 not null constraint pubcse_pk_id_not_null,
-       	     				   pubcse_date_composed datetime year to day default current year to day not null constraint pubcse_date_composed_not_null,
+       	     				   pubcse_date_composed datetime year to second default current year to second not null constraint pubcse_date_composed_not_null,
 					   pubcse_sent_by varchar(50) not null constraint pubcse_sent_by_not_null,
 					   pubcse_text lvarchar(10000) not null constraint pubcse_text_not_null,
 					   pubcse_subject varchar(100) not null constraint pubcse_subject_not_null,
@@ -40,7 +40,7 @@ extent size 32 next size 32;
 
 create table pub_correspondence_sent_tracker (pubcst_pk_id serial8 not null constraint pubcst_pk_id_not_null,
        	     			     	pubcst_sent_by varchar(50) not null constraint pubcst_sent_by_not_null,
-					pubcst_date_sent datetime year to day default current year to day not null constraint pubcst_date_sent_not_null,
+					pubcst_date_sent datetime year to second default current year to second not null constraint pubcst_date_sent_not_null,
 					pubcst_sent_email_id int8 not null constraint pubcst_sent_email_id_not_null,
 					pubcst_pub_zdb_id varchar(50) not null constraint pubcst_pub_Zdb_id_not_null,
 					pubcst_resend boolean default 'f' not null constraint pubcst_resend_not_null,

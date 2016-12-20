@@ -440,6 +440,7 @@ public class ResultService {
         }
 
         addSynonyms(result, marker);
+        result.addAttribute(TYPE, marker.getType().toString());
         if (marker.getType().equals(Marker.Type.REGION)) {
             addComments(result, marker);
         }

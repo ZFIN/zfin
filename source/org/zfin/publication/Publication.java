@@ -8,10 +8,7 @@ import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.profile.Person;
 
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 
 /**
  * ToDo:
@@ -48,6 +45,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     private Set<CorrespondenceSentMessage> sentMessages;
     private Set<CorrespondenceReceivedMessage> receivedMessages;
+    private Date lastSentEmailDate;
 
     private boolean deletable;
     private boolean indexed;
@@ -293,6 +291,14 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     public void setReceivedMessages(Set<CorrespondenceReceivedMessage> receivedMessages) {
         this.receivedMessages = receivedMessages;
+    }
+
+    public Date getLastSentEmailDate() {
+        return lastSentEmailDate;
+    }
+
+    public void setLastSentEmailDate(Date lastSentEmailDate) {
+        this.lastSentEmailDate = lastSentEmailDate;
     }
 
     public String getCitation() {
