@@ -1,4 +1,4 @@
-create procedure updatePubLastSentEmailDate (vPubZdbId varchar(50), vDateReceived datetime year to day )
+create procedure updatePubLastSentEmailDate (vPubZdbId varchar(50), vDateReceived datetime year to second )
 
 
   update publication 

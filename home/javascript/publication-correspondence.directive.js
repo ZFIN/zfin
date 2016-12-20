@@ -143,8 +143,10 @@
                     vm.correspondences.unshift(response.data);
                     closeForm();
                     vm.successMessage = 'Email successfully sent.';
+                    vm.errorMessage = '';
                 })
                 .catch(function () {
+                    vm.successMessage = '';
                     vm.errorMessage = 'Error sending email.';
                 })
                 .finally(function () {
@@ -159,8 +161,10 @@
                     vm.correspondences.unshift(response.data);
                     closeForm();
                     vm.successMessage = 'Reply saved.';
+                    vm.errorMessage = '';
                 })
                 .catch(function () {
+                    vm.successMessage = '';
                     vm.errorMessage = 'Error saving reply.';
                 })
                 .finally(function () {
@@ -169,14 +173,20 @@
         }
 
         function resendMessage(correspondence) {
+            if (correspondence.to.length == 0) {
+                return;
+            }
+
             var newMessage = angular.copy(correspondence);
             newMessage.resend = true;
             PublicationService.addCorrespondence(vm.pubId, newMessage)
                 .then(function (response) {
                     vm.correspondences.unshift(response.data);
                     vm.successMessage = 'Email successfully sent.';
+                    vm.errorMessage = '';
                 })
                 .catch(function () {
+                    vm.successMessage = '';
                     vm.errorMessage = 'Error sending email.';
                 });
         }

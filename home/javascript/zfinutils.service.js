@@ -18,7 +18,7 @@
         //   local: compared to what time? default: now
         //   raw: whether you want in a format of '5 minutes ago', or '5 minutes'
         function timeago(time, local, raw) {
-            if (!time) return 'never';
+            if (!time) return '';
 
             if (!local) {
                 (local = Date.now())
@@ -51,7 +51,7 @@
                 YEAR = 31556926,
                 DECADE = 315569260;
 
-            if (offset <= MINUTE)              span = [ '', raw ? 'now' : 'less than a minute' ];
+            if (offset <= MINUTE)              span = [ '', raw ? 'moments ago' : 'less than a minute' ];
             else if (offset < (MINUTE * 60))   span = [ Math.round(Math.abs(offset / MINUTE)), 'minute' ];
             else if (offset < (HOUR * 24))     span = [ Math.round(Math.abs(offset / HOUR)), 'hour' ];
             else if (offset < (DAY * 7))       span = [ Math.round(Math.abs(offset / DAY)), 'day' ];

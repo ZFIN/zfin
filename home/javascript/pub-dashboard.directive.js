@@ -44,6 +44,25 @@
         vm.owner = null;
         vm.statuses = [];
         vm.status = null;
+        vm.sortOrders = [
+            {
+                value: 'date',
+                display: 'Last status change (oldest)'
+            },
+            {
+                value: '-date',
+                display: 'Last status change (newest)'
+            },
+            {
+                value: 'pub.lastSentEmailDate',
+                display: 'Last correspondence (oldest)'
+            },
+            {
+                value: '-pub.lastSentEmailDate',
+                display: 'Last correspondence (newest)'
+            }
+        ];
+        vm.sort = vm.sortOrders[0];
 
         vm.originalPub = null;
         vm.statusModalPub = null;
@@ -87,7 +106,7 @@
                 status: vm.status ? vm.status.id : '',
                 count: vm.pubsPerPage,
                 offset: (page - 1) * vm.pubsPerPage,
-                sort: "-date"
+                sort: vm.sort.value
             };
             PublicationService.searchPubStatus(query)
                 .then(function (response) {
