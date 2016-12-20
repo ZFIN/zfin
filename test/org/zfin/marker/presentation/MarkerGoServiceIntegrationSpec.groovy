@@ -5,6 +5,7 @@ import org.zfin.ZfinIntegrationSpec
 import org.zfin.marker.Marker
 import org.zfin.marker.service.MarkerGoService
 import org.zfin.repository.RepositoryFactory
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Unroll
 
@@ -37,6 +38,7 @@ class MarkerGoServiceIntegrationSpec extends ZfinIntegrationSpec {
 
     }
 
+    @Ignore
     def "#abbreviation should get a non-empty collection of MarkerGoViewTableRows"() {
         when:
         Marker marker = RepositoryFactory.markerRepository.getMarkerByAbbreviation(abbreviation)

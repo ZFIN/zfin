@@ -146,7 +146,7 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
     public List<FishDTO> createFishList(String publicationID) {
         List<FishDTO> fishDTOList = new ArrayList<>();
         Fish wtFish = pubRepository.getFishByHandle("WT");
-        FishDTO fish = DTOConversionService.convertToFishDtoFromFish(wtFish);
+        FishDTO fish = DTOConversionService.convertToFishDtoFromFish(wtFish, true);
         fishDTOList.add(fish);
         fish = new FishDTO();
         fish.setZdbID(null);
@@ -157,7 +157,7 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
         for (Fish nonWTFish : fishList) {
             if (nonWTFish.getHandle().equals("WT"))
                 continue;
-            FishDTO fishy = DTOConversionService.convertToFishDtoFromFish(nonWTFish);
+            FishDTO fishy = DTOConversionService.convertToFishDtoFromFish(nonWTFish, true);
             fishDTOList.add(fishy);
         }
         FishDTO separator = new FishDTO();
@@ -167,7 +167,7 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
         fishDTOList.add(separator);
         List<Fish> wildtypeList = pubRepository.getWildtypeFish();
         for (Fish wFish : wildtypeList) {
-            FishDTO fishy = DTOConversionService.convertToFishDtoFromFish(wFish);
+            FishDTO fishy = DTOConversionService.convertToFishDtoFromFish(wFish, true);
             fishDTOList.add(fishy);
         }
         return fishDTOList;

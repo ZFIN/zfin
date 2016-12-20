@@ -182,7 +182,10 @@ table.data_manager a.root {
     color: #A461E8;
     text-align: left;
 }
-
+.phenotype-exacerbated {
+    font-weight: bold;
+    text-align: left;
+}
 .curation-filter {
     background-color: #33CC99;
     text-align: center;

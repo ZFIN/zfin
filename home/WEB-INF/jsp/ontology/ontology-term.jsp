@@ -140,7 +140,7 @@
             <zfin-ontology:phenogrid doid="${formBean.term.oboID}"/>
         </c:if>
     </authz:authorize>
-
+<c:if test="${isDiseaseTerm}">
     <div class="summary">
         <c:choose>
             <c:when test="${numberOfCitations == 0}"><span class="name-label"> CITATIONS:</span> None</c:when>
@@ -149,6 +149,7 @@
             </c:otherwise>
         </c:choose>
     </div>
+</c:if>
 
 </div>
 <script>

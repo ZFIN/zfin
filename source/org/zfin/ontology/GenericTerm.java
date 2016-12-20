@@ -43,7 +43,7 @@ public class GenericTerm implements Term<GenericTermRelationship> {
     protected boolean secondary;
     @Column(name = "term_comment")
     protected String comment;
-    @OneToMany(mappedBy = "term")
+    @OneToMany(mappedBy = "term", fetch = FetchType.LAZY)
     protected Set<TermAlias> synonyms;
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "term_definition")
@@ -54,7 +54,7 @@ public class GenericTerm implements Term<GenericTermRelationship> {
             inverseJoinColumns = {@JoinColumn(name = "iit_img_zdb_id",
                     nullable = false, updatable = false)})
     protected Set<Image> images;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "term_subset", joinColumns = {
             @JoinColumn(name = "termsub_term_zdb_id", nullable = false, updatable = false)},
             inverseJoinColumns = {@JoinColumn(name = "termsub_subset_id",
@@ -98,7 +98,7 @@ public class GenericTerm implements Term<GenericTermRelationship> {
     protected DevelopmentStage start;
     */
 
-    @OneToOne(mappedBy = "term", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "term", fetch = FetchType.LAZY, optional = false)
     protected TermStage termStage;
     // attribute that is populated lazily
     // transient modifier because we do not want to serialize the whole relationship tree

@@ -180,7 +180,6 @@ public class OrthologyController {
 
         Transaction tx = HibernateUtil.createTransaction();
         try {
-            tx.begin();
             checkValidGene(geneID);
             Publication publication = checkValidPublication(orthologDTO.getPublicationID());
             Ortholog ortholog = checkValidOrtholog(orthologDTO.getOrthologID());

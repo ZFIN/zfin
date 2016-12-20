@@ -75,7 +75,6 @@
                         .catch(function (error) {
                             seqInfoCtrl.errorMessage = error.data.message;
                         });
-                } else {
                 }
             };
 
@@ -131,42 +130,45 @@
             seqInfoCtrl.updateSequenceInfo = function() {
                 if (validated(0)) {
                     seqInfoCtrl.references = seqInfoCtrl.seqenceInfo.references;
+                    seqInfoCtrl.newDatabase = seqInfoCtrl.seqenceInfo.referenceDatabaseZdbID;
+                    var len = seqInfoCtrl.seqenceInfo.length;
                     removeLink(seqInfoCtrl.seqenceInfo)
                         .then(function () {
-                            addLink($scope.markerId, seqInfoCtrl.seqenceInfo.referenceDatabaseZdbID,
-                                    seqInfoCtrl.accessionEdit.toUpperCase(), seqInfoCtrl.seqenceInfo.references[0].zdbID, seqInfoCtrl.seqenceInfo.length)
-                                .then(function (link) {
-                                    seqInfoCtrl.seqenceInfo = link;
-                                    var referenceIds = [];
-                                    for(var i = 0; i < seqInfoCtrl.references.length; i++) {
-                                        referenceIds.push(seqInfoCtrl.references[i].zdbID);
-                                    }
-                                    if (referenceIds.length > 1) {
-                                        var pubID = "";
-                                        for(var i = 1; i < referenceIds.length; i++) {
-                                            pubID = referenceIds[i];
-                                            addLinkReference(seqInfoCtrl.seqenceInfo, pubID)
-                                                .then(function (seq) {
-                                                    seqInfoCtrl.seqenceInfo = seq;
-                                                    seqInfoCtrl.seqenceInfo.references = seq.references;
-                                                    seqInfoCtrl.newReference = '';
-                                                }).catch(function (error) {
-                                                    seqInfoCtrl.errorAcc = error.data.message;
-                                                }).finally(function () {
-                                                    getSequences();
-                                                });
-                                        }
-                                    }
-                                    getSequences();
-                                    close();
-                                })
-                                .catch(function (error) {
-                                    seqInfoCtrl.errorAcc = error.data.message;
-                                });
                         })
                         .catch(function (error) {
                             seqInfoCtrl.errorAcc = error.data.message;
-                        });
+                        })
+                        .finally(function () {
+                        addLink($scope.markerId, seqInfoCtrl.newDatabase, seqInfoCtrl.accessionEdit.toUpperCase(), seqInfoCtrl.references[0].zdbID, len)
+                            .then(function (link) {
+                                seqInfoCtrl.seqenceInfo = link;
+                                var referenceIds = [];
+                                for(var i = 0; i < seqInfoCtrl.references.length; i++) {
+                                    referenceIds.push(seqInfoCtrl.references[i].zdbID);
+                                }
+                                if (referenceIds.length > 1) {
+                                    var pubID = "";
+                                    for(var i = 1; i < referenceIds.length; i++) {
+                                        pubID = referenceIds[i];
+                                        addLinkReference(seqInfoCtrl.seqenceInfo, pubID)
+                                            .then(function (seq) {
+                                                seqInfoCtrl.seqenceInfo = seq;
+                                                seqInfoCtrl.seqenceInfo.references = seq.references;
+                                                seqInfoCtrl.newReference = '';
+                                            }).catch(function (error) {
+                                                seqInfoCtrl.errorAcc = error.data.message;
+                                            }).finally(function () {
+                                                getSequences();
+                                            });
+                                    }
+                                }
+                                getSequences();
+                                close();
+                            })
+                            .catch(function (error) {
+                                seqInfoCtrl.errorAcc = error.data.message;
+                            });
+                    });
                 }
             };
 

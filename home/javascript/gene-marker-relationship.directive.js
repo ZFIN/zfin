@@ -20,8 +20,8 @@
         return directive;
     }
 
-    GeneMarkerRelationshipController.$inject = [$window,'MarkerService'];
-    function GeneMarkerRelationshipController($window,MarkerService) {
+    GeneMarkerRelationshipController.$inject = ['MarkerService'];
+    function GeneMarkerRelationshipController(MarkerService) {
         var mkrreln = this;
         mkrreln.newGene = '';
         mkrreln.newRelationship = '';

@@ -13,7 +13,9 @@ import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gbrowse.GBrowseService;
 import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
@@ -86,7 +88,12 @@ public class SequenceTargetingReagentViewController {
         // set targetGenes
         addKnockdownRelationships(sequenceTargetingReagent, sequenceTargetingReagentBean);
 
-        // Expression data
+        populateConstructList(sequenceTargetingReagentBean, sequenceTargetingReagent);
+
+        // (Antibodies)
+
+
+   // Expression data
         ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
         List<ExpressionResult> strExpressionResults = expressionRepository.getExpressionResultsBySequenceTargetingReagent(sequenceTargetingReagent);
         List<String> expressionFigureIDs = expressionRepository.getExpressionFigureIDsBySequenceTargetingReagent(sequenceTargetingReagent);
@@ -206,6 +213,42 @@ public class SequenceTargetingReagentViewController {
         }
         return knockdownRelationships.size();
     }
+
+    protected void populateConstructList(SequenceTargetingReagentBean sequenceTargetingReagentBean, SequenceTargetingReagent sequenceTargetingReagent) {
+        Set<MarkerRelationship.Type> types = new HashSet<>();
+        types.add(MarkerRelationship.Type.PROMOTER_OF);
+        types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
+        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        Set<Marker> markerSet = new TreeSet<>();
+        PaginationResult<Marker> relatedMarker = MarkerService.getRelatedMarker(sequenceTargetingReagent, types, 7);
+        markerSet.addAll(relatedMarker.getPopulatedResults());
+        sequenceTargetingReagentBean.setConstructs(markerSet);
+        sequenceTargetingReagentBean.setNumberOfConstructs(relatedMarker.getTotalCount());
+    }
+    @RequestMapping(value = "/str/constructs/{zdbID}")
+    public String getAllConstructs(Model model,
+                                   @PathVariable("zdbID") String zdbID
+    ) throws Exception {
+        // set base bean
+        SequenceTargetingReagentBean strBean = new SequenceTargetingReagentBean();
+        Marker str = markerRepository.getMarkerByID(zdbID);
+        logger.info("gene: " + str);
+        strBean.setMarker(str);
+        // (CONSTRUCTS)
+        Set<MarkerRelationship.Type> types = new HashSet<>();
+        types.add(MarkerRelationship.Type.PROMOTER_OF);
+        types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
+        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        Set<Marker> markerSet = new TreeSet<>();
+        // get all constructs
+        PaginationResult<Marker> relatedMarker = MarkerService.getRelatedMarker(str, types, -1);
+        markerSet.addAll(relatedMarker.getPopulatedResults());
+        strBean.setConstructs(markerSet);
+        strBean.setNumberOfConstructs(relatedMarker.getTotalCount());
+        model.addAttribute(LookupStrings.FORM_BEAN, strBean);
+        return "marker/str-all-constructs.ajax";
+    }
+
 
     private void addKnockdownRelationships(SequenceTargetingReagent sequenceTargetingReagent,
                                                   SequenceTargetingReagentBean sequenceTargetingReagentBean) {
