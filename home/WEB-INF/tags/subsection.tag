@@ -42,7 +42,7 @@
     </c:when>
 
     <c:when test="${empty noDataText}">
-        <c:set var="noDataText" value="No data available"/>
+        <c:set var="noDataText" value="No data available"/>class="no-data-tag"
     </c:when>
 </c:choose>
 
@@ -61,7 +61,7 @@
             </c:when>
             <c:otherwise>
                 <div class="summaryTitle">${title}<c:if test="${not empty titleEntityAppended}">&nbsp;<zfin:name entity="${titleEntityAppended}"/></c:if>
-                    <c:if test="${showEditLink}">&nbsp;<a ng-show="editMode" style="color: red; font-style: italic; font-weight: bold;" title="Edit sequence information" href="/action/marker/sequence/edit/${markerID}">Edit</a></c:if>
+                    <c:if test="${showEditLink}">&nbsp;<a ng-show="editMode" class="edit-link" title="Edit sequence information" href="/action/marker/sequence/edit/${markerID}">Edit</a></c:if>
                     <c:if test="${!test and showNoData}">
                         <span class="no-data-tag">${noDataText}</span>
                     </c:if>

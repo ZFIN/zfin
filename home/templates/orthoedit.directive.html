@@ -23,6 +23,7 @@
 
 <div class="error" ng-show="vm.generalError">{{vm.generalError}}</div>
 <div ng-show="vm.orthologsLoading" class="loading-overlay"><i class="fa fa-spinner fa-spin"></i></div>
+<span ng-if="vm.showOrthology">
 <table class="ortholog-table summary basicstripes">
     <thead>
     <tr>
@@ -75,7 +76,8 @@
         </td>
     </tr>
 </table>
-<a href="/action/marker/{{vm.gene}}/download/orthology" ng-if="(vm.showDownloadLink && !vm.edit)"><i class="fa fa-download"></i>
+<a href="/action/marker/{{vm.gene}}/download/orthology" ng-if="(vm.showDownloadLink && !vm.edit)"><i
+        class="fa fa-download"></i>
     Download Curated Orthology</a>
 
 
@@ -94,6 +96,8 @@
         {{vm.note.note}}
     </div>
 </div>
+</span>
+
 
 <div id="evidence-modal" class="jq-modal curation">
     <h3>

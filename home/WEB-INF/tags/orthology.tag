@@ -2,8 +2,6 @@
 
 <%-- Display of marker relationships in a table --%>
 
-<%@ attribute name="orthologyPresentationBean" required="true" rtexprvalue="true"
-              type="org.zfin.marker.presentation.OrthologyPresentationBean" %>
 <%@ attribute name="marker" required="true" rtexprvalue="true" type="org.zfin.marker.Marker" %>
 <%@ attribute name="title" required="false" %>
 <%@ attribute name="showTitle" required="false" type="java.lang.Boolean" %>
@@ -16,14 +14,9 @@
     </c:set>
 </c:if>
 
-<c:set var="hideCounts" value="${empty hideCounts ? false : hideCounts}"/>
+<span class="summaryTitle" id="orthology-title">${title}</span>
+<span id="no-data-available" class="no-data-tag">No data available</span>
 
-<zfin2:subsection title="${title}"
-                  anchor="orthology"
-                  test="${!empty orthologyPresentationBean.orthologs || !empty orthologyPresentationBean.note}"
-                  showNoData="true">
+<div ortho-edit gene="${marker.zdbID}" edit="editMode"></div>
 
-    <div ortho-edit gene="${marker.zdbID}" edit="editMode"></div>
-
-</zfin2:subsection>
 
