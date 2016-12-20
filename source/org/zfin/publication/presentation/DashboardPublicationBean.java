@@ -1,8 +1,8 @@
 package org.zfin.publication.presentation;
 
 import org.zfin.curation.presentation.CurationStatusDTO;
-import org.zfin.publication.PublicationTrackingHistory;
 
+import java.util.Date;
 import java.util.List;
 
 public class DashboardPublicationBean {
@@ -15,6 +15,7 @@ public class DashboardPublicationBean {
     private List<DashboardImageBean> images;
     private String pdfPath;
     private CurationStatusDTO status;
+    private Date lastCorrespondenceDate;
 
     public String getZdbId() {
         return zdbId;
@@ -78,5 +79,13 @@ public class DashboardPublicationBean {
 
     public void setStatus(CurationStatusDTO status) {
         this.status = status;
+    }
+
+    public Date getLastCorrespondenceDate() {
+        return lastCorrespondenceDate;
+    }
+
+    public void setLastCorrespondenceDate(Date lastCorrespondenceDate) {
+        this.lastCorrespondenceDate = lastCorrespondenceDate;
     }
 }
