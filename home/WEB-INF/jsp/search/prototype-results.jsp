@@ -12,6 +12,7 @@
 <c:set var="strCategoryName" value="<%=Category.SEQUENCE_TARGETING_REAGENT.getName()%>"/>
 <c:set var="abCategoryName" value="<%=Category.ANTIBODY.getName()%>"/>
 <c:set var="anatomyCategoryName" value="<%=Category.ANATOMY.getName()%>"/>
+<c:set var="markerCategoryName" value="<%=Category.MARKER.getName()%>"/>
 
 <script src="/javascript/list-collapse.js"></script>
 <script src="/javascript/figure-gallery-resize.jquery.js"></script>
@@ -297,6 +298,9 @@
                         </c:when>
                         <c:when test="${category eq anatomyCategoryName}">
                             <zfin-search:anatomyResultTable results="${results}"/>
+                        </c:when>
+                        <c:when test="${category eq markerCategoryName}">
+                            <zfin-search:cloneResultTable results="${results}"/>
                         </c:when>
                         <c:otherwise>
                             <zfin-search:mixedResultTable results="${results}"/>
