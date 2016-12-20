@@ -4,12 +4,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
-<!--<include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/rollback.sql"/>-->
-<include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/correspondenceTracking.sql"/>
-<include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/constraints.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/addSubjects.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/14784.sql"/>
-<include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/migrateData.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/addDefinition.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/createStatsTables.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/createSanger10.sql"/>
