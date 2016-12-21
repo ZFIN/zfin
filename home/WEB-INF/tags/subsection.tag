@@ -42,7 +42,7 @@
     </c:when>
 
     <c:when test="${empty noDataText}">
-        <c:set var="noDataText" value="No data available"/>class="no-data-tag"
+        <c:set var="noDataText" value="No data available"/>
     </c:when>
 </c:choose>
 
