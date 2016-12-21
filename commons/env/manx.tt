@@ -3,7 +3,7 @@
 <!--|AO_EMAIL_CURATOR|-->	xshao\@zfin.org
 <!--|AO_EMAIL_ERR|-->	xshao\@zfin.org
 <!--|BACKGROUND_COLOR|-->	#FFFFCC
-<!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/dev_blastdb
+<!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/trunk
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
 <!--|CLIENT_LOCALE|-->	en_US.utf8
 <!--|COUNT_PATO_ERR|-->	xshao\@zfin.org
@@ -88,8 +88,8 @@
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WAREHOUSE_REGN_EMAIL|-->	xshao\@zfin.org
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver
-<!--|WEBHOST_BLASTDB_TO_COPY|-->	/research/watson/blastdb
-<!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/dev_blastdb
+<!--|WEBHOST_BLASTDB_TO_COPY|-->	/research/crick/blastdb
+<!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/trunk
 <!--|WEBHOST_FASTA_FILE_PATH|-->	/research/zblastfiles/dev_files
 <!--|WEB_ADMIN_EMAIL|-->	xshao\@zfin.org
 <!--|WIKI_HOST|-->	devwiki.zfin.org

@@ -88,7 +88,7 @@
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/production
 <!--|WAREHOUSE_REGN_EMAIL|-->	informix\@zfin.org kevin\@zfin.org cmpich\@zfin.org
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver
-<!--|WEBHOST_BLASTDB_TO_COPY|-->	/research/watson/blastdb
+<!--|WEBHOST_BLASTDB_TO_COPY|-->	/research/crick/blastdb
 <!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/watson/blastdb
 <!--|WEBHOST_FASTA_FILE_PATH|-->	/research/watson/zblastfiles/files
 <!--|WEB_ADMIN_EMAIL|-->	kevin\@zfin.org smoxon\@zfin.org
