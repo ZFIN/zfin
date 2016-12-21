@@ -17,7 +17,6 @@ unload to metrics
        			      from monthly_average_curated_metric)
 ;
        
-;
 
 unload to pubs-with-longest-days-in-status
  select lbrm_date_captured,
