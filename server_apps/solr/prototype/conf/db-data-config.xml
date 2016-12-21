@@ -1361,8 +1361,8 @@ WHERE  ( NOT g.geno_is_wildtype
 
 
 
-           <entity name="fish_disease"
-                   datasource="db" query="select distinct term_name as disease,
+           <entity name="fish_disease" transformer="RegexTransformer"
+                   datasource="db" query="select distinct term_name || '|Any' as disease,
                                                  term_ont_id,
                                                  genox_fish_zdb_id
                                           from term
@@ -1370,7 +1370,9 @@ WHERE  ( NOT g.geno_is_wildtype
                                           inner join disease_annotation_model on disease_annotation.dat_zdb_id = disease_annotation_model.damo_dat_zdb_id
                                           inner join fish_experiment on fish_experiment.genox_zdb_id = disease_annotation_model.damo_genox_zdb_id;"
                    cacheImpl="SortedMapBackedCache"
-                   where="genox_fish_zdb_id=fish.id"/>
+                   where="genox_fish_zdb_id=fish.id">
+               <field name="disease" column="disease" splitBy="\|"/>
+           </entity>
 
 
 
