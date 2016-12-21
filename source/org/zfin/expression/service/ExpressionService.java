@@ -626,6 +626,20 @@ public class ExpressionService {
                     xpDisplay.setFigures(new HashSet<Figure>());
                     xpDisplay.getFigures().addAll(qualifiedFigures);
 
+                    SortedMap<Publication, SortedSet<Figure>> figuresPerPub = new TreeMap<>();
+                    for (Figure figure : qualifiedFigures) {
+                        Publication publication = figure.getPublication();
+                        if (!figuresPerPub.containsKey(publication)) {
+                            SortedSet<Figure> sortedFigs = new TreeSet<>();
+                            sortedFigs.add(figure);
+                            figuresPerPub.put(publication, sortedFigs);
+                        } else {
+                            figuresPerPub.get(publication).add(figure);
+                        }
+                    }
+
+                    xpDisplay.setFiguresPerPub(figuresPerPub);
+
                     xpDisplay.setPublications(new HashSet<Publication>());
                     if (expressionPublicationIDs.contains(pub.getZdbID())) {
                         xpDisplay.getPublications().add(pub);
@@ -647,6 +661,18 @@ public class ExpressionService {
                     xpDisplay.getFigures().addAll(qualifiedFigures);
                     if (expressionPublicationIDs.contains(pub.getZdbID())) {
                         xpDisplay.getPublications().add(pub);
+                    }
+
+                    SortedMap<Publication, SortedSet<Figure>> figuresPerPub = xpDisplay.getFiguresPerPub();
+                    for (Figure figure : qualifiedFigures) {
+                        Publication publication = figure.getPublication();
+                        if (!figuresPerPub.containsKey(publication)) {
+                            SortedSet<Figure> sortedFigs = new TreeSet<>();
+                            sortedFigs.add(figure);
+                            xpDisplay.getFiguresPerPub().put(publication, sortedFigs);
+                        } else {
+                            xpDisplay.getFiguresPerPub().get(publication).add(figure);
+                        }
                     }
                 }
 
