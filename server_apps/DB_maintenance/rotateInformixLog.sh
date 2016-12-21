@@ -4,6 +4,7 @@
 echo "set process id"
 
 logToBeDeleted=`readlink -f logs`;
+echo $logToBeDeleted;
 processID=`pgrep 'ontape'`;
 echo $processID;
 kill $processID;
