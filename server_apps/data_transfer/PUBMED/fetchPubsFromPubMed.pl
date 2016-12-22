@@ -36,8 +36,8 @@ if (scalar @ARGV > 0) {
     $query = 'zebrafish[TW]+OR+"zebra fish"[TW]+OR+"danio rerio"[ALL]';
 
     #assemble the esearch URL
-    $retmax = '200';
-    $url = $base . "esearch.fcgi?db=$db&term=$query&usehistory=y&reldate=80&datetype=edat&retmax=$retmax";
+    $retmax = '1000';
+    $url = $base . "esearch.fcgi?db=$db&term=$query&usehistory=y&reldate=1000&datetype=edat&retmax=$retmax";
 
     #get the esearch URL
     #the usehistory key creates a url key that we can use to access the return: suggested for larger queries by NCBI
