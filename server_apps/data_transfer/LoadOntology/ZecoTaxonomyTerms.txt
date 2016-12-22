@@ -1,6 +1,6 @@
 # This is the list of organism for the ZECO taxonomy ontology, a slim of the full NCBI taxonomy ontology
 #
-# To create a new slim:
+# To create a new slim from the Web interface:
 # 1. Add additional organism to the list of leaf terms
 # 2. Add new root organism to list of root terms if needed:
 #    For now we have bacteria, viruses and fungi
@@ -8,16 +8,18 @@
 # 4. Select the NCBITaxon ontology
 # 5. Paste the list of root taxa into the ' Include low level source term URIs' field
 # 6. Paste the list of leaf taxa into the '  Include top level source term URIs and target direct superclass URIs' field
-# 7. select 'include NoIntermediates'
+# 7. select 'includeNoIntermediates'
 # 8. paste 'includeAllAxioms' into the ' Annotation/Axiom Specification: Include source annotation URIs' field
 # 9. Hit 'Get OWL Output File'
 
-# list of root terms
-http://purl.obolibrary.org/obo/NCBITaxon_2     #Bacteria
-http://purl.obolibrary.org/obo/NCBITaxon_4751  #Fungi
-http://purl.obolibrary.org/obo/NCBITaxon_10239 #Virus
 
-# list of leaf terms
+[URI of the OWL(RDF/XML) output file]
+http://purl.obolibrary.org/obo/vo/external/NCBITaxon_ZFIN.owl
+
+[Source ontology]
+NCBITaxon
+
+[Low level source term URIs]
 http://purl.obolibrary.org/obo/NCBITaxon_1781
 http://purl.obolibrary.org/obo/NCBITaxon_216594
 http://purl.obolibrary.org/obo/NCBITaxon_1131442
@@ -66,3 +68,14 @@ http://purl.obolibrary.org/obo/NCBITaxon_169963
 http://purl.obolibrary.org/obo/NCBITaxon_1642
 http://purl.obolibrary.org/obo/NCBITaxon_36809
 http://purl.obolibrary.org/obo/NCBITaxon_1590 #Lactobacillus plantarum
+
+[Top level source term URIs and target direct superclass URIs]
+http://purl.obolibrary.org/obo/NCBITaxon_2     #Bacteria
+http://purl.obolibrary.org/obo/NCBITaxon_4751  #Fungi
+http://purl.obolibrary.org/obo/NCBITaxon_10239 #Virus
+
+[Source term retrieval setting]
+includeNoIntermediates
+
+[Source annotation URIs]
+includeAllAxioms
