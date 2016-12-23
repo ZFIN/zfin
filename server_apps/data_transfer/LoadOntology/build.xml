@@ -88,7 +88,8 @@
     </target>
 
     <target name="setHeaderForZeco">
-        <replaceregexp replace="ontology: zeco taxonomy ${line.separator}default-namespace: zeco_taxonomy" byline="true" file="obo-files/zeco-taxonomy.obo">
+        <replaceregexp replace="ontology: zeco taxonomy ${line.separator}default-namespace: zeco_taxonomy
+         ${line.separator}date: ${time.now}" byline="true" file="obo-files/zeco-taxonomy.obo">
             <regexp pattern="ontology: (.*)"/>
         </replaceregexp>
 <!--
@@ -377,6 +378,11 @@
     </target>
 
     <property name="zeco-taxon-file" value="ZecoTaxonomyTerms.txt"/>
+
+    <tstamp>
+        <format property="time.now" pattern="dd:MM:yyyy HH:mm"/>
+    </tstamp>
+
     <target name="create-zeco-taxonomy-owl-file">
         <echo message="Create a new ZECO-taxonomy.owl file from ${zecoTaxonomySourceURL}"/>
         <echo message="Connecting to ontofox.hegroup.org..."/>
