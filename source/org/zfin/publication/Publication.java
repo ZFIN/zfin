@@ -321,7 +321,9 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
             sb.append(journal.getName());
             sb.append(". ");
         }
-        sb.append(volume);
+        if (volume != null) {
+            sb.append(volume);
+        }
         if (pages != null) {
             sb.append(":").append(pages);
         }
