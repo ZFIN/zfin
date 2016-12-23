@@ -197,7 +197,7 @@
 
     <target name="load-chebi" depends="download-chebi-ontology,load-chebi-ontology"/>
 
-    <target name="load-zeco-taxonomy" depends="download-zeco-taxonomy-ontology,load-zeco-taxonomy-ontology"/>
+    <target name="load-zeco-taxonomy" depends="load-zeco-taxonomy-ontology"/>
 
     <target name="load-anatomy" depends="download-anatomy-ontology,load-anatomy-ontology"/>
 
