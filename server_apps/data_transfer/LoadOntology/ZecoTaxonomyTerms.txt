@@ -19,6 +19,17 @@ http://purl.obolibrary.org/obo/vo/external/NCBITaxon_ZFIN.owl
 [Source ontology]
 NCBITaxon
 
+[Top level source term URIs and target direct superclass URIs]
+http://purl.obolibrary.org/obo/NCBITaxon_2     #Bacteria
+http://purl.obolibrary.org/obo/NCBITaxon_4751  #Fungi
+http://purl.obolibrary.org/obo/NCBITaxon_10239 #Virus
+
+[Source term retrieval setting]
+includeNoIntermediates
+
+[Source annotation URIs]
+includeAllAxioms
+
 [Low level source term URIs]
 http://purl.obolibrary.org/obo/NCBITaxon_1781
 http://purl.obolibrary.org/obo/NCBITaxon_216594
@@ -68,14 +79,3 @@ http://purl.obolibrary.org/obo/NCBITaxon_169963
 http://purl.obolibrary.org/obo/NCBITaxon_1642
 http://purl.obolibrary.org/obo/NCBITaxon_36809
 http://purl.obolibrary.org/obo/NCBITaxon_1590 #Lactobacillus plantarum
-
-[Top level source term URIs and target direct superclass URIs]
-http://purl.obolibrary.org/obo/NCBITaxon_2     #Bacteria
-http://purl.obolibrary.org/obo/NCBITaxon_4751  #Fungi
-http://purl.obolibrary.org/obo/NCBITaxon_10239 #Virus
-
-[Source term retrieval setting]
-includeNoIntermediates
-
-[Source annotation URIs]
-includeAllAxioms

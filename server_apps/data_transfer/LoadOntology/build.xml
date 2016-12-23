@@ -15,6 +15,7 @@
     <property name="soOboURL"
               value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/so-xp-simple.obo"/>
     <property name="zecoTaxonomyOboURL" value="file:///home/informix/Curation/zeco-taxonomy.obo"/>
+    <property name="zecoTaxonomySourceURL" value="file:///home/informix/Curation/zeco-taxonomy-source.txt"/>
     <property name="zecoOboURL" value="file:///home/informix/Curation/zeco.obo"/>
     <property name="anatomyOboURL" value="file:///home/informix/Curation/anatomy.obo"/>
 
@@ -87,15 +88,14 @@
     </target>
 
     <target name="setHeaderForZeco">
-        <replaceregexp replace="default-namespace: zeco_taxonomy" byline="true" file="obo-files/zeco-taxonomy.obo">
-            <regexp pattern="default-namespace: (.*)"/>
-        </replaceregexp>
-        <replaceregexp replace="ontology: zeco taxonomy" byline="true" file="obo-files/zeco-taxonomy.obo">
+        <replaceregexp replace="ontology: zeco taxonomy ${line.separator}default-namespace: zeco_taxonomy" byline="true" file="obo-files/zeco-taxonomy.obo">
             <regexp pattern="ontology: (.*)"/>
         </replaceregexp>
+<!--
         <replaceregexp replace="namespace: zeco_taxonomy" byline="true" file="obo-files/zeco-taxonomy.obo">
             <regexp pattern="namespace: (.*)"/>
         </replaceregexp>
+-->
     </target>
 
     <target name="load-zeco-taxonomy-ontology" depends="init,setHeaderForZeco">
@@ -376,12 +376,26 @@
         <mkdir dir="${run-directory}"/>
     </target>
 
+    <property name="zeco-taxon-file" value="ZecoTaxonomyTerms.txt"/>
     <target name="create-zeco-taxonomy-owl-file">
-        <echo message="Create a new ZECO-taxonomy.owl file"/>
+        <echo message="Create a new ZECO-taxonomy.owl file from ${zecoTaxonomySourceURL}"/>
         <echo message="Connecting to ontofox.hegroup.org..."/>
+
+        <!-- Generate owl file at ontofox.hegroup.org from source file-->
         <exec executable="curl">
-            <arg line="-F file=@'ZecoTaxonomyTerms.txt' -o zeco-taxonomy.owl http://ontofox.hegroup.org/service.php"/>
+            <arg line="-F file=@'${zecoTaxonomySourceURL}' -o obo-files/zeco-taxonomy.owl http://ontofox.hegroup.org/service.php"/>
         </exec>
+
+        <!-- convert owl file into an obo file -->
+        <java fork="true" jar="../../../lib/Java/robot.jar">
+            <arg value="convert"/>
+            <arg value="--input"/>
+            <arg value="obo-files/zeco-taxonomy.owl"/>
+            <arg value="--output"/>
+            <arg value="obo-files/zeco-taxonomy.obo"/>
+        </java>
+
+        <antcall target="setHeaderForZeco"/>
     </target>
 
     <target name="test">
