@@ -393,7 +393,7 @@
         </exec>
 
         <!-- convert owl file into an obo file -->
-        <java fork="true" jar="../../../lib/Java/robot.jar">
+        <java fork="true" jar="${env.SOURCEROOT}/lib/Java/robot.jar">
             <arg value="convert"/>
             <arg value="--input"/>
             <arg value="obo-files/zeco-taxonomy.owl"/>
