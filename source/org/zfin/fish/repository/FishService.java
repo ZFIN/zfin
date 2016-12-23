@@ -20,6 +20,7 @@ import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.fish.FeatureGene;
 import org.zfin.fish.FishSearchCriteria;
 import org.zfin.fish.FishSearchResult;
+import org.zfin.fish.MutationType;
 import org.zfin.fish.presentation.FishResult;
 import org.zfin.fish.presentation.FishSearchFormBean;
 import org.zfin.fish.presentation.PhenotypeSummaryCriteria;
@@ -115,15 +116,15 @@ public class FishService {
         }
 
         if (criteria.getExcludeTransgenicsCriteria() != null && criteria.getExcludeTransgenicsCriteria().isTrue()) {
-            query.addFilterQuery("-" + FieldName.CONSTRUCT.getName() + ":[* TO *]");
+            query.addFilterQuery("-(" + mutationTypeQuery(MutationType.TRANSGENIC_INSERTION.getName()) + ")");
         }
 
         if (criteria.getRequireTransgenicsCriteria() != null && criteria.getRequireTransgenicsCriteria().isTrue()) {
-            query.addFilterQuery(FieldName.CONSTRUCT.getName() + ":[* TO *]");
+            query.addFilterQuery(mutationTypeQuery(MutationType.TRANSGENIC_INSERTION.getName()));
         }
 
         if (criteria.getMutationTypeCriteria() != null && criteria.getMutationTypeCriteria().hasValues()) {
-            query.addFilterQuery(FieldName.MUTATION_TYPE.getName() + ":\"" + criteria.getMutationTypeCriteria().getValue() + "\"");
+            query.addFilterQuery(mutationTypeQuery(criteria.getMutationTypeCriteria().getValue()));
         }
 
         if (criteria.getPhenotypeAnatomyCriteria() != null && criteria.getPhenotypeAnatomyCriteria().hasValues()) {
@@ -583,6 +584,10 @@ public class FishService {
                 fishGenotypePhenotypeStatisticsList.add(result);
             }
         }
+    }
+
+    private static String mutationTypeQuery(String value) {
+        return FieldName.MUTATION_TYPE.getName() + ":\"" + value + "\" OR " + FieldName.TYPE.getName() + ":\"" + value + "\"";
     }
 
 }
