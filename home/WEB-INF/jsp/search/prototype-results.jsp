@@ -302,6 +302,9 @@
                         <c:when test="${category eq markerCategoryName}">
                             <zfin-search:cloneResultTable results="${results}"/>
                         </c:when>
+                        <c:when test="${category eq publicationCategoryName}">
+                            <zfin-search:publicationResultTable results="${results}"/>
+                        </c:when>
                         <c:otherwise>
                             <zfin-search:mixedResultTable results="${results}"/>
                         </c:otherwise>
