@@ -92,11 +92,9 @@
          ${line.separator}date: ${time.now}" byline="true" file="obo-files/zeco-taxonomy.obo">
             <regexp pattern="ontology: (.*)"/>
         </replaceregexp>
-<!--
         <replaceregexp replace="namespace: zeco_taxonomy" byline="true" file="obo-files/zeco-taxonomy.obo">
             <regexp pattern="namespace: (.*)"/>
         </replaceregexp>
--->
     </target>
 
     <target name="load-zeco-taxonomy-ontology" depends="init,setHeaderForZeco">
