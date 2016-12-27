@@ -13,6 +13,7 @@
 <c:set var="abCategoryName" value="<%=Category.ANTIBODY.getName()%>"/>
 <c:set var="anatomyCategoryName" value="<%=Category.ANATOMY.getName()%>"/>
 <c:set var="markerCategoryName" value="<%=Category.MARKER.getName()%>"/>
+<c:set var="communityCategoryName" value="<%=Category.COMMUNITY.getName()%>"/>
 
 <script src="/javascript/list-collapse.js"></script>
 <script src="/javascript/figure-gallery-resize.jquery.js"></script>
@@ -301,6 +302,9 @@
                         </c:when>
                         <c:when test="${category eq markerCategoryName}">
                             <zfin-search:cloneResultTable results="${results}"/>
+                        </c:when>
+                        <c:when test="${category eq communityCategoryName}">
+                            <zfin-search:communityResultTable results="${results}"/>
                         </c:when>
                         <c:otherwise>
                             <zfin-search:mixedResultTable results="${results}"/>
