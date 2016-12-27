@@ -179,7 +179,6 @@
 
     <target name="unittests-quiet" depends="compile,build-tests" description="Runs database and unit tests quietly">
         <runTest testclass="org.zfin.UnitTests" outfile="${unitTestFile}" verbose="false"/>
-        <runTest testclass="org.zfin.infrastructure.EnumValidationTest" outfile="${validateTestFile}" verbose="false"/>
     </target>
 
     <target name="ontology-test" depends="compile,build-tests" description="Runs database and unit tests quietly">

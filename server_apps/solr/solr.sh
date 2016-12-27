@@ -9,18 +9,19 @@ cd $SOLR_HOME/..
 echo SOURCEROOT  $SOURCEROOT
 echo SOLR_HOME   $SOLR_HOME
 echo SOLR_PORT   $SOLR_PORT
+echo SOLR_MEMORY $SOLR_MEMORY
 
 start_solr() {
 echo 'Starting Solr...'
-	$SOLR_HOME/bin/solr start -s $SOLR_HOME -p $SOLR_PORT -m 5g -noprompt
+	$SOLR_HOME/bin/solr start -s $SOLR_HOME -p $SOLR_PORT -m $SOLR_MEMORY -noprompt
 }
 
 stop_solr() {
-	$SOLR_HOME/bin/solr stop -s $SOLR_HOME -p $SOLR_PORT -m 5g -noprompt
+	$SOLR_HOME/bin/solr stop -s $SOLR_HOME -p $SOLR_PORT -m $SOLR_MEMORY -noprompt
 }
 
 kill_solr() {
-	$SOLR_HOME/bin/solr stop -s $SOLR_HOME -p $SOLR_PORT -m 5g -noprompt
+	$SOLR_HOME/bin/solr stop -s $SOLR_HOME -p $SOLR_PORT -m $SOLR_MEMORY -noprompt
 }
 
 case $1 in

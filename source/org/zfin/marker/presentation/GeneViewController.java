@@ -120,9 +120,6 @@ public class GeneViewController {
         geneBean.setPathwayDBLinks(
                 markerRepository.getMarkerDBLinksFast(gene, DisplayGroup.GroupName.PATHWAYS));
 
-        // ORTHOLOGY
-        geneBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(gene));
-
         model.addAttribute(LookupStrings.FORM_BEAN, geneBean);
         model.addAttribute("markerHistoryReasonCodes", MarkerHistory.Reason.values());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.GENE.getTitleString() + gene.getAbbreviation());

@@ -75,4 +75,21 @@ class GeneAddFormBeanValidatorSpec extends AbstractZfinIntegrationSpec {
         Marker.Type.GENE.name()  | "abbrev with upper case"    | "abbreviation"  | "LoLz1"                 || "gene.abbreviation.invalidcharacters"
     }
 
+    @Unroll
+    def "validator should accept underscore in abbreviation"(String type, String description, String field, String value) {
+        given:
+        form."$field" = value
+        Errors errors = new BeanPropertyBindingResult(form, "form")
+
+        when:
+        validator.validate(form, errors)
+
+        then:
+        !errors.hasFieldErrors(field)
+
+        where:
+        type                     | description                 | field           | value
+        Marker.Type.GENE.name()  | "abbrev with underscore"    | "abbreviation"  | "fgf8_1"
+    }
+
 }

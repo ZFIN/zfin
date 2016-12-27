@@ -20,6 +20,7 @@ import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.fish.FeatureGene;
 import org.zfin.fish.FishSearchCriteria;
 import org.zfin.fish.FishSearchResult;
+import org.zfin.fish.MutationType;
 import org.zfin.fish.presentation.FishResult;
 import org.zfin.fish.presentation.FishSearchFormBean;
 import org.zfin.fish.presentation.PhenotypeSummaryCriteria;
@@ -115,15 +116,15 @@ public class FishService {
         }
 
         if (criteria.getExcludeTransgenicsCriteria() != null && criteria.getExcludeTransgenicsCriteria().isTrue()) {
-            query.addFilterQuery("-" + FieldName.CONSTRUCT.getName() + ":[* TO *]");
+            query.addFilterQuery("-(" + mutationTypeQuery(MutationType.TRANSGENIC_INSERTION.getName()) + ")");
         }
 
         if (criteria.getRequireTransgenicsCriteria() != null && criteria.getRequireTransgenicsCriteria().isTrue()) {
-            query.addFilterQuery(FieldName.CONSTRUCT.getName() + ":[* TO *]");
+            query.addFilterQuery(mutationTypeQuery(MutationType.TRANSGENIC_INSERTION.getName()));
         }
 
         if (criteria.getMutationTypeCriteria() != null && criteria.getMutationTypeCriteria().hasValues()) {
-            query.addFilterQuery(FieldName.MUTATION_TYPE.getName() + ":\"" + criteria.getMutationTypeCriteria().getValue() + "\"");
+            query.addFilterQuery(mutationTypeQuery(criteria.getMutationTypeCriteria().getValue()));
         }
 
         if (criteria.getPhenotypeAnatomyCriteria() != null && criteria.getPhenotypeAnatomyCriteria().hasValues()) {
@@ -154,13 +155,41 @@ public class FishService {
             Set<FeatureGene> featureGeneSet = new HashSet<>();
             for (GenotypeFeature genotypeFeature : fish.getGenotype().getGenotypeFeatures()) {
                 Feature feature = genotypeFeature.getFeature();
-                for (FeatureGene fg : getFeatureGeneList(feature)) {
+                SortedSet<Marker> affectedGenes = feature.getAffectedGenes();
+                Set<FeatureMarkerRelationship> constructRelationships = feature.getConstructs();
+                if (CollectionUtils.isEmpty(affectedGenes) && CollectionUtils.isEmpty(constructRelationships)) {
+                    FeatureGene fg = new FeatureGene();
+                    fg.setFeature(feature);
                     fg.setParentalZygosityDisplay(genotypeFeature.getParentalZygosityDisplay());
                     featureGeneSet.add(fg);
+                } else {
+                    if (feature.getType().isTransgenic()) {
+                        // one or more constructs, zero or one genes
+                        for (FeatureMarkerRelationship constructRelationship : constructRelationships) {
+                            FeatureGene fg = new FeatureGene();
+                            fg.setFeature(feature);
+                            fg.setParentalZygosityDisplay(genotypeFeature.getParentalZygosityDisplay());
+                            fg.setConstruct(constructRelationship.getMarker());
+                            if (CollectionUtils.isNotEmpty(affectedGenes)) {
+                                fg.setGene(affectedGenes.first());
+                            }
+                            featureGeneSet.add(fg);
+                        }
+                    } else {
+                        // zero constructs, one or more genes
+                        for (Marker affectedGene : affectedGenes) {
+                            FeatureGene fg = new FeatureGene();
+                            fg.setFeature(feature);
+                            fg.setParentalZygosityDisplay(genotypeFeature.getParentalZygosityDisplay());
+                            fg.setGene(affectedGene);
+                            featureGeneSet.add(fg);
+                        }
+                    }
                 }
             }
             featureGenes.addAll(featureGeneSet);
         }
+        
         if (includeStrs) {
             for (Marker str : fish.getStrList()) {
                 Set<MarkerRelationship> mrels = str.getFirstMarkerRelationships();
@@ -555,6 +584,10 @@ public class FishService {
                 fishGenotypePhenotypeStatisticsList.add(result);
             }
         }
+    }
+
+    private static String mutationTypeQuery(String value) {
+        return FieldName.MUTATION_TYPE.getName() + ":\"" + value + "\" OR " + FieldName.TYPE.getName() + ":\"" + value + "\"";
     }
 
 }

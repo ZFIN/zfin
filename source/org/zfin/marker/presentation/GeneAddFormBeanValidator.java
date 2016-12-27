@@ -44,7 +44,7 @@ public class GeneAddFormBeanValidator implements Validator {
             if (markerRepository.isMarkerExists(form.getAbbreviation())) {
                 errors.rejectValue("abbreviation", "gene.abbreviation.inuse");
             }
-            if (!form.getAbbreviation().matches("[a-z0-9:.-]+")) {
+            if (!form.getAbbreviation().matches("[a-z0-9_:.-]+")) {
                 errors.rejectValue("abbreviation", "gene.abbreviation.invalidcharacters");
             }
         }

@@ -106,9 +106,9 @@ public class OrthologyController {
     @ResponseBody
     String deleteOrtholog(@PathVariable String geneID,
                           @PathVariable String orthoID) throws InvalidWebRequestException {
-        Transaction tx = HibernateUtil.createTransaction();
+        Transaction tx = null;
         try {
-            tx.begin();
+            tx = HibernateUtil.createTransaction();
             Marker gene = getMarkerRepository().getMarkerByID(geneID);
             if (gene == null)
                 throw new InvalidWebRequestException("No gene with ID " + geneID + " found!", null);
@@ -122,7 +122,8 @@ public class OrthologyController {
             getOrthologyRepository().deleteOrtholog(ortholog);
             tx.commit();
         } catch (Exception e) {
-            tx.rollback();
+            if (tx != null)
+                tx.rollback();
             throw new InvalidWebRequestException("Error while deleting Ortholog: " + orthoID + ":" +
                     e.getMessage(), null);
         }
@@ -144,10 +145,10 @@ public class OrthologyController {
     @ResponseBody
     OrthologDTO createOrthologFromNcbi(@PathVariable String geneID,
                                        @PathVariable String ncbiID) throws InvalidWebRequestException {
-        Transaction tx = HibernateUtil.createTransaction();
+        Transaction tx = null;
         Ortholog ortholog;
         try {
-            tx.begin();
+            tx = HibernateUtil.createTransaction();
             NcbiOtherSpeciesGene ncbiGene = getOrthologyRepository().getNcbiGene(ncbiID);
             if (ncbiGene == null)
                 throw new InvalidWebRequestException("Couldn\'t find gene with this ID", null);
@@ -161,7 +162,8 @@ public class OrthologyController {
             getOrthologyRepository().saveOrthology(ortholog, null);
             tx.commit();
         } catch (Exception e) {
-            tx.rollback();
+            if (tx != null)
+                tx.rollback();
             if (e instanceof InvalidWebRequestException) {
                 throw e;
             }

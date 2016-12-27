@@ -173,6 +173,12 @@ table.data_manager a.root {
     text-align: center;
 }
 
+.edit-link {
+    color: red;
+    font-style: italic;
+    font-weight: bold;
+}
+
 .phenotype-normal {
     color: #33cc99;
     text-align: left;

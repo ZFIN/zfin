@@ -3,7 +3,7 @@
 <!--|AO_EMAIL_CURATOR|-->	jknight\@zfin.org
 <!--|AO_EMAIL_ERR|-->	jknight\@zfin.org
 <!--|BACKGROUND_COLOR|-->	#FFFFCC
-<!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/dev_blastdb
+<!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/trunk
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
 <!--|COUNT_PATO_ERR|-->	jknight\@zfin.org
 <!--|COUNT_PATO_OUT|-->	jknight\@zfin.org
@@ -85,7 +85,7 @@
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WAREHOUSE_REGN_EMAIL|-->	jknight\@zfin.org
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver
-<!--|WEBHOST_BLASTDB_TO_COPY|-->	/research/watson/blastdb
+<!--|WEBHOST_BLASTDB_TO_COPY|-->	/research/crick/blastdb
 <!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/dev_blastdb
 <!--|WEBHOST_FASTA_FILE_PATH|-->	/research/zblastfiles/dev_files
 <!--|WEB_ADMIN_EMAIL|-->	jknight\@zfin.org

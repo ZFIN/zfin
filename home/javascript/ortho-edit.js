@@ -71,6 +71,7 @@
             scope: {
                 gene: '@',
                 pub: '@',
+                header: '@',
                 edit: '=',
                 showDownloadLink: '@'
             },
@@ -140,6 +141,8 @@
         vm.orthologsLoading = false;
         vm.ncbiGeneNumber = '';
         vm.ncbiError = '';
+        vm.showOrthology = false;
+        vm.header = '';
         vm.note = {};
         vm.fetchGenes = fetchGenes;
 
@@ -210,6 +213,14 @@
                 });
         }
 
+        function hideNoDataElement() {
+            jQuery("#no-data-available").hide()
+        }
+
+        function showNoDataElement() {
+            jQuery("#no-data-available").show()
+        }
+
         function fetchOrthology() {
             vm.orthologsLoading = true;
             fetchCodes()
@@ -217,6 +228,12 @@
                 .then(function (resp) {
                     resetPubList();
                     vm.orthologs = resp.data;
+                    if (vm.orthologs != null && vm.orthologs.length > 0) {
+                        hideNoDataElement();
+                        vm.showOrthology = true;
+                    } else {
+                        showNoDataElement();
+                    }
                     vm.orthologs.forEach(function (ortholog) {
                         var evidenceArray = [];
                         ortholog.evidenceSet.forEach(function (e) {
@@ -269,6 +286,8 @@
                     vm.orthologs.push(newOrtholog);
                     vm.ncbiGeneNumber = '';
                     vm.generalError = '';
+                    vm.showOrthology = true;
+                    hideNoDataElement();
                 })
                 .catch(function (error) {
                     vm.ncbiError = error.data.message;

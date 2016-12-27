@@ -52,5 +52,35 @@ public class GenotypeFeatureDTO extends RelatedEntityDTO {
         return builder.toString();
 
     }
+
+    @Override
+    public String toString() {
+        String display = featureDTO.getAbbreviation();
+        return display;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        GenotypeFeatureDTO that = (GenotypeFeatureDTO) o;
+
+        if (!featureDTO.equals(that.featureDTO)) return false;
+        if (!zygosity.equals(that.zygosity)) return false;
+        if (!maternalZygosity.equals(that.maternalZygosity)) return false;
+        return paternalZygosity.equals(that.paternalZygosity);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + featureDTO.hashCode();
+        result = 31 * result + zygosity.hashCode();
+        result = 31 * result + maternalZygosity.hashCode();
+        result = 31 * result + paternalZygosity.hashCode();
+        return result;
+    }
 }
 

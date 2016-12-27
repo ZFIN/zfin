@@ -337,7 +337,7 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
 
     public Set<TermDTO> getAllChildren() {
         if (getChildrenTerms() == null)
-            return null;
+            return new HashSet<>();
         Set<TermDTO> childSet = new HashSet<>();
         for (TermDTO child : getChildrenTerms()) {
             childSet.add(child);

@@ -59,28 +59,23 @@
             </c:if>
             <td valign="top">
                 <c:choose>
-                    <c:when test="${xp.numberOfFigures == 1}">
-                        <a href='/${xp.singleFigure.zdbID}'>
-                            <zfin2:figureOrTextOnlyLink figure="${xp.singleFigure}"
-                                                        integerEntity="${xp.numberOfFigures}"/></a>
+                    <c:when test="${xp.numberOfFigures < 10}">
+                        <c:forEach var="figsPub" items="${xp.figuresPerPub}">
+                            <c:forEach var="fig" items="${figsPub.value}" varStatus="figloop">
+                                <a href='/${fig.zdbID}'>${fig.label}</a><c:if test="${!fig.imgless}">&nbsp;<img src="/images/camera_icon.gif" alt="with image" image="" border="0"></c:if><c:if test="${!figloop.last}">,&nbsp;</c:if>
+                            </c:forEach>
+                            from <zfin:link entity="${figsPub.key}"/><br/>
+                        </c:forEach>
                     </c:when>
                     <c:otherwise>
                         <c:choose>
                             <c:when test="${showCondition}">
-                                <c:if test="${(xp.numberOfFigures >1) && !xp.experiment.standard && !xp.experiment.chemical && !xp.experiment.heatShock}">
+                                <c:if test="${!xp.experiment.standard}">
                                     <a href='/action/expression/fish-expression-figure-summary-experiment?fishZdbID=${fishZdbID}&expZdbID=${xp.experiment.zdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
                                             ${xp.numberOfFigures} figures</a>
                                 </c:if>
-                                <c:if test="${(xp.numberOfFigures >1) && xp.experiment.standard && !xp.experiment.chemical && !xp.experiment.heatShock}">
+                                <c:if test="${xp.experiment.standard}">
                                     <a href='/action/expression/fish-expression-figure-summary-standard?fishZdbID=${fishZdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
-                                            ${xp.numberOfFigures} figures</a>
-                                </c:if>
-                                <c:if test="${(xp.numberOfFigures >1) && !xp.experiment.standard && xp.experiment.chemical}">
-                                    <a href='/action/expression/fish-expression-figure-summary-envgroup?fishZdbID=${fishZdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false&envGroup=chemical'>
-                                            ${xp.numberOfFigures} figures</a>
-                                </c:if>
-                                <c:if test="${(xp.numberOfFigures >1) && !xp.experiment.standard && xp.experiment.heatShock}">
-                                    <a href='/action/expression/fish-expression-figure-summary-envgroup?fishZdbID=${fishZdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false&envGroup=heatshock'>
                                             ${xp.numberOfFigures} figures</a>
                                 </c:if>
                             </c:when>
@@ -89,15 +84,15 @@
                                         ${xp.numberOfFigures} figures</a>
                             </c:otherwise>
                         </c:choose>
-                    </c:otherwise>
-                </c:choose>
-                <zfin2:showCameraIcon hasImage="${xp.imgInFigure}"/> from
-                <c:choose>
-                    <c:when test="${xp.numberOfPublications > 1 }">
-                        ${xp.numberOfPublications} publications
-                    </c:when>
-                    <c:otherwise>
-                        <zfin:link entity="${xp.singlePublication}"/>
+                        <zfin2:showCameraIcon hasImage="${xp.imgInFigure}"/> from
+                        <c:choose>
+                            <c:when test="${xp.numberOfPublications > 1 }">
+                                ${xp.numberOfPublications} publications
+                            </c:when>
+                            <c:otherwise>
+                                <zfin:link entity="${xp.singlePublication}"/>
+                            </c:otherwise>
+                        </c:choose>
                     </c:otherwise>
                 </c:choose>
             </td>
