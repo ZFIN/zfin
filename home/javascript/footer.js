@@ -15,7 +15,7 @@ document.write(
     '  <div id="footercredits" class="center">' +
     '    <span id="footer-generous-support">Development of the Zebrafish Database is generously supported by the National Human Genome Research Institute (HG004838, and HG004834) of the National Institutes of Health. <br></span>' + 
     '    <a href="/warranty.html">Disclaimer, limitations, copyright &copy;  </a> <a href="http://www.uoregon.edu">' + 
-    '    University of Oregon</a>, 1994-2016,<a href="http://www.ci.eugene.or.us"> Eugene</a>, Oregon. <br>' +
+    '    University of Oregon</a>, 1994-2017,<a href="http://www.ci.eugene.or.us"> Eugene</a>, Oregon. <br>' +
     '    <small>ZFIN logo design by Kari Pape, <A HREF="http://www.uoregon.edu">University of Oregon</a></small>' + 
     '  </div>' + 
     '</div>'
