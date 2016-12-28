@@ -15,8 +15,17 @@
             },
             controller: PublicationStatusController,
             controllerAs: 'vm',
-            bindToController: true
+            bindToController: true,
+            link: link
         };
+
+        function link(scope) {
+            scope.$watch('vm.statusForm.$dirty', function (isDirty) {
+                if (isDirty) {
+                    scope.vm.saved = false;
+                }
+            });
+        }
 
         return directive;
     }
@@ -37,6 +46,7 @@
 
         vm.warnings = [];
         vm.processing = false;
+        vm.saved = false;
 
         vm.hasTopics = hasTopics;
         vm.updateStatus = updateStatus;
@@ -131,6 +141,8 @@
             return PublicationService.updateStatus(vm.current)
                 .then(storeStatus)
                 .then(function () {
+                    vm.saved = true;
+                    vm.statusForm.$setPristine();
                     IntertabEventService.fireEvent('pub-status-update');
                     if (isClosing) {
                         return PublicationService.getTopics(vm.pubId)

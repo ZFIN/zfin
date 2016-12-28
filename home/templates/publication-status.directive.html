@@ -6,7 +6,7 @@
             </a>
         </small>
     </span>
-    <form class="form-horizontal clearfix">
+    <form class="form-horizontal clearfix" name="vm.statusForm">
         <div class="form-group">
             <label for="pub-status" class="col-sm-2 control-label">Status</label>
             <div class="col-sm-4">
@@ -47,11 +47,12 @@
         </div>
         <div class="form-group" ng-show="vm.warnings.length == 0">
             <div class="col-sm-offset-2 col-sm-10">
-                <button type="button" class="btn btn-default" ng-disabled="vm.processing" ng-click="vm.reset()">Reset</button>
+                <button type="button" class="btn btn-default" ng-disabled="!vm.readyToSave() || vm.processing" ng-click="vm.reset()">Reset</button>
                 <button type="submit" class="btn btn-primary" ng-disabled="!vm.readyToSave() || vm.processing" ng-click="vm.updateStatus(true)">
                     <span ng-show="!vm.processing">Save</span>
                     <span ng-show="vm.processing"><i class="fa fa-spinner fa-spin"></i></span>
                 </button>
+                <span ng-show="vm.saved" class="text-success"><i class="fa fa-check"></i> Saved</span>
             </div>
         </div>
         <div class="col-sm-offset-2 col-sm-8 alert alert-warning" role="alert" ng-show="vm.warnings.length > 0">
