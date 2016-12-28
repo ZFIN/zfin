@@ -1,18 +1,21 @@
 package org.zfin.gwt.curation.event;
 
 import com.google.gwt.event.shared.GwtEvent;
+import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
+
+import java.util.Map;
 
 public class AddExpressionExperimentEvent extends GwtEvent<AddExpressionExperimentEventHandler> {
     public static Type<AddExpressionExperimentEventHandler> TYPE = new Type<>();
 
-    private int numberOfNewExpressions;
+    private Map<ExpressionExperimentDTO, Integer> expressionExperimentDTOMap;
 
-    public AddExpressionExperimentEvent(int numberOfNewExpressions) {
-        this.numberOfNewExpressions = numberOfNewExpressions;
+    public AddExpressionExperimentEvent(Map<ExpressionExperimentDTO, Integer> expressionExperimentDTOMap) {
+        this.expressionExperimentDTOMap = expressionExperimentDTOMap;
     }
 
-    public int getNumberOfNewExpressions() {
-        return numberOfNewExpressions;
+    public Map<ExpressionExperimentDTO, Integer> getExpressionExperimentDTOMap() {
+        return expressionExperimentDTOMap;
     }
 
     @Override

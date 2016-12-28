@@ -59,11 +59,12 @@ public class ExpressionExperimentZonePresenter implements Presenter {
      * When an expression record is added update the experiment section about it, ie the number
      * of expression records is incremented by 1.
      */
-    public void notifyAddedExpression(int numberOfNewExpressions) {
+    public void notifyAddedExpression(Map<ExpressionExperimentDTO, Integer> expressionExperimentDTOMap) {
         for (ExpressionExperimentDTO experiment : experimentList) {
             for (ExpressionExperimentDTO sourceExperiment : selectedExperiments) {
                 if (experiment.equals(sourceExperiment))
-                    experiment.setNumberOfExpressions(experiment.getNumberOfExpressions() + numberOfNewExpressions);
+                    if (expressionExperimentDTOMap.get(experiment) != null)
+                        experiment.setNumberOfExpressions(experiment.getNumberOfExpressions() + expressionExperimentDTOMap.get(experiment));
             }
         }
         finishExpressionNotification();

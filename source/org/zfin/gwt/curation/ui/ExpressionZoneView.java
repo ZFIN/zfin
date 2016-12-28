@@ -1071,7 +1071,16 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             loadingImage.setVisible(false);
             clearErrorMessages();
             stageSelector.resetGui();
-            expressionExperimentZonePresenter.notifyAddedExpression(newAnnotations.size());
+            Map<ExpressionExperimentDTO, Integer> expressionExperimentDTOMap = new HashMap<>();
+            for (ExpressionFigureStageDTO dto : newAnnotations) {
+                ExpressionExperimentDTO experimentDTO = dto.getExperiment();
+                if (expressionExperimentDTOMap.containsKey(experimentDTO)) {
+                    expressionExperimentDTOMap.put(experimentDTO, expressionExperimentDTOMap.get(experimentDTO) + 1);
+                } else {
+                    expressionExperimentDTOMap.put(experimentDTO, 1);
+                }
+            }
+            expressionExperimentZonePresenter.notifyAddedExpression(expressionExperimentDTOMap);
             loadingImage.setVisible(false);
         }
 
@@ -1128,7 +1137,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         private String value;
         Alignment alignment;
 
-        private HeaderName(int index, String value, Alignment alignment) {
+        HeaderName(int index, String value, Alignment alignment) {
             this.index = index;
             this.value = value;
             this.alignment = alignment;

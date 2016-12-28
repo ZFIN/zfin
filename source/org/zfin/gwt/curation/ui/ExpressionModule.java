@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class ExpressionModule implements ZfinCurationModule, HandlesError {
 
-    public static final String EXPRESSION_ZONE = "expressionZone";
+    private static final String EXPRESSION_ZONE = "expressionZone";
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @UiTemplate("ExpressionModule.ui.xml")
@@ -51,7 +51,7 @@ public class ExpressionModule implements ZfinCurationModule, HandlesError {
     private ExpressionExperimentZonePresenter expressionExperimentZonePresenter;
     private CurationFilterPresenter curationFilterPresenter;
 
-    public ExpressionModule(String publicationID) {
+    ExpressionModule(String publicationID) {
         this.publicationID = publicationID;
         init();
     }
@@ -188,7 +188,7 @@ public class ExpressionModule implements ZfinCurationModule, HandlesError {
                 new AddExpressionExperimentEventHandler() {
                     @Override
                     public void onEvent(AddExpressionExperimentEvent event) {
-                        expressionExperimentZonePresenter.notifyAddedExpression(event.getNumberOfNewExpressions());
+                        expressionExperimentZonePresenter.notifyAddedExpression(event.getExpressionExperimentDTOMap());
                     }
                 });
         AppUtils.EVENT_BUS.addHandler(RemoveExpressionEvent.TYPE,

@@ -348,7 +348,16 @@ public class ExpressionZonePresenter implements Presenter {
             view.addButton.setEnabled(true);
             clearErrorMessages();
             view.stageSelector.resetGui();
-            AppUtils.EVENT_BUS.fireEvent(new AddExpressionExperimentEvent(expressionFigureStageDTOS.size()));
+            Map<ExpressionExperimentDTO, Integer> expressionExperimentDTOMap = new HashMap<>();
+            for (ExpressionFigureStageDTO dto : newAnnotations) {
+                ExpressionExperimentDTO experimentDTO = dto.getExperiment();
+                if (expressionExperimentDTOMap.containsKey(experimentDTO)) {
+                    expressionExperimentDTOMap.put(experimentDTO, expressionExperimentDTOMap.get(experimentDTO) + 1);
+                } else {
+                    expressionExperimentDTOMap.put(experimentDTO, 1);
+                }
+            }
+            AppUtils.EVENT_BUS.fireEvent(new AddExpressionExperimentEvent(expressionExperimentDTOMap));
             view.loadingImage.setVisible(false);
         }
 
