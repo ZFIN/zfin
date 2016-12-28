@@ -13,6 +13,7 @@ import org.zfin.antibody.Antibody;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExperimentPresentation;
 import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.feature.FeaturePrefix;
 import org.zfin.feature.FeatureTranscriptMutationDetail;
 import org.zfin.feature.service.MutationDetailsConversionService;
@@ -25,10 +26,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.presentation.MarkerRelationshipPresentation;
-import org.zfin.mutant.Fish;
-import org.zfin.mutant.PhenotypeStatementWarehouse;
-import org.zfin.mutant.PhenotypeWarehouse;
-import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.mutant.*;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.presentation.TermPresentation;
@@ -687,6 +685,7 @@ public class ResultService {
         String psgID = result.getPgcmid();
         PhenotypeWarehouse phenotypeExperiment = RepositoryFactory.getPhenotypeRepository().getPhenotypeWarehouseBySourceID(psgID);
         if (phenotypeExperiment != null) {
+            result.setEntity(phenotypeExperiment);
 
             String conditionsLink = ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true);
             if (StringUtils.isNotBlank(conditionsLink)) {
@@ -704,7 +703,23 @@ public class ResultService {
                 statements.add(statement.getShortName());
             }
             if (CollectionUtils.isNotEmpty(statements)) {
-                result.addAttribute(PHENOTYPE, withBreaks(statements));
+                result.addAttribute(PHENOTYPE, asUnorderedList(statements));
+            }
+
+            List<Marker> constructs = new ArrayList<>();
+            Genotype genotype = phenotypeExperiment.getFishExperiment().getFish().getGenotype();
+            if (genotype.getGenotypeFeatures() != null) {
+                for (GenotypeFeature genotypeFeature : genotype.getGenotypeFeatures()) {
+                    Feature feature = genotypeFeature.getFeature();
+                    if (feature != null && feature.getConstructs() != null) {
+                        for (FeatureMarkerRelationship construct : feature.getConstructs()) {
+                            constructs.add(construct.getMarker());
+                        }
+                    }
+                }
+            }
+            if (CollectionUtils.isNotEmpty(constructs)) {
+                result.addAttribute(CONSTRUCT, withCommasAndLink(constructs, "name", "zdbID"));
             }
 
             result.setFeatureGenes(FishService.getFeatureGenes(phenotypeExperiment.getFishExperiment().getFish()));
