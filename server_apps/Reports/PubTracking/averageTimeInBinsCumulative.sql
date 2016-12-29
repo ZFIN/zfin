@@ -190,5 +190,5 @@ select current year to second,
 from single;
 
 
---commit work;
-rollback work;
+commit work;
+--rollback work;
