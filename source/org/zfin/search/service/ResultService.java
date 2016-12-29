@@ -264,6 +264,7 @@ public class ResultService {
     public void injectFigureAttributes(SearchResult result) {
         Figure figure = RepositoryFactory.getPublicationRepository().getFigure(result.getId());
 
+        result.setEntity(figure);
         result.setDisplayedID(result.getId());
 
         if (figure != null) {
