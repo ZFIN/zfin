@@ -9,7 +9,7 @@ insert into daily_indexed_metric (dim_date_captured,
 				  dim_number_closed_no_data)
 select  current year to second, (select count(*) from pub_tracking_history, pub_tracking_status, pub_tracking_location
        	       	       	       	       where pth_status_id = pts_pk_id
-				       and pts_status = 'INDEXED'
+				       and pts_status = 'READY_FOR_CURATION'
 				       and day(pth_status_insert_date) = day(current year to second)
 				       and year(pth_status_insert_date) = year(current year to second)
 				       and month(pth_status_insert_date) = month(current year to second)
@@ -17,7 +17,7 @@ select  current year to second, (select count(*) from pub_tracking_history, pub_
 				       and ptl_pk_id = pth_location_id ),
 			       (select count(*) from pub_tracking_history, pub_tracking_status, pub_tracking_location
        	       	       	       	       where pth_status_id = pts_pk_id
-				       and pts_status = 'INDEXED'
+				       and pts_status = 'READY_FOR_CURATION'
 				       and day(pth_status_insert_date) = day(current year to second)
 				       and year(pth_status_insert_date) = year(current year to second)
 				       and month(pth_status_insert_date) = month(current year to second)
@@ -25,7 +25,7 @@ select  current year to second, (select count(*) from pub_tracking_history, pub_
 				       and ptl_pk_id = pth_location_id ),
 			       (select count(*) from pub_tracking_history, pub_tracking_status, pub_tracking_location
        	       	       	       	       where pth_status_id = pts_pk_id
-				       and pts_status = 'INDEXED'
+				       and pts_status = 'READY_FOR_CURATION'
 				       and day(pth_status_insert_date) = day(current year to second)
 				       and year(pth_status_insert_date) = year(current year to second)
 				       and month(pth_status_insert_date) = month(current year to second)
@@ -33,7 +33,7 @@ select  current year to second, (select count(*) from pub_tracking_history, pub_
 				       and ptl_pk_id = pth_location_id ),
 			       (select count(*) from pub_tracking_history, pub_tracking_status, pub_tracking_location
        	       	       	       	       where pth_status_id = pts_pk_id
-				       and pts_status = 'INDEXED'
+				       and pts_status = 'READY_FOR_CURATION'
 				       and day(pth_status_insert_date) = day(current year to second)
 				       and year(pth_status_insert_date) = year(current year to second)
 				       and month(pth_status_insert_date) = month(current year to second)
@@ -41,7 +41,7 @@ select  current year to second, (select count(*) from pub_tracking_history, pub_
 				       and ptl_pk_id = pth_location_id ),
 			       (select count(*) from pub_tracking_history, pub_tracking_status, pub_tracking_location
        	       	       	       	       where pth_status_id = pts_pk_id
-				       and pts_status = 'INDEXED'
+				       and pts_status = 'READY_FOR_CURATION'
 				       and day(pth_status_insert_date) = day(current year to second)
 				       and year(pth_status_insert_date) = year(current year to second)
 				       and month(pth_status_insert_date) = month(current year to second)
