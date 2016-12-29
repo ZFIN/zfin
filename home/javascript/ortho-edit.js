@@ -160,6 +160,7 @@
         vm.selectPub = selectPub;
         vm.checkPub = checkPub;
         vm.showDownloadLink = (typeof vm.showDownloadLink === 'undefined') ? true : vm.showDownloadLink;
+        vm.loading = []
 
         activate();
 
@@ -172,9 +173,11 @@
         }
 
         function fetchCodes() {
+            vm.loading.push(true);
             return $http.get('/action/ortholog/evidence-codes', {cache: true})
                 .then(function (resp) {
                     vm.codes = resp.data;
+                    finishAjaxCall();
                     return vm.codes;
                 });
         }
@@ -184,13 +187,23 @@
         }
 
         function fetchGenes() {
+            vm.loading.push(true);
             $http.get('/action/publication/' + vm.pub + '/genes')
                 .then(function (resp) {
                     vm.genes = resp.data;
+                    finishAjaxCall()
                 })
                 .catch(function (error) {
                     vm.generalError = 'Couldn\'t fetch genes for pub';
+                    finishAjaxCall()
+
                 });
+        }
+
+        function finishAjaxCall() {
+            vm.loading.pop();
+            if (typeof displayLoadingStatus === 'function')
+                displayLoadingStatus('ORTHOLOGY', vm.loading.length > 0)
         }
 
         function fetchOrthology() {

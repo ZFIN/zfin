@@ -152,4 +152,8 @@ public class HumanDiseaseModule implements ZfinCurationModule, HandlesError {
         handlesErrorListeners.add(handlesError);
     }
 
+    public static ZfinModule getModuleInfo() {
+        return new ZfinModule(CurationTab.DISEASE.getName(), HumanDiseaseModule.class.getName());
+    }
+
 }

@@ -994,6 +994,7 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
 }
 .icon-toggle.open {
     transform: rotate(90deg);
+}
 
 .history-popup-panel {
     border: 3px solid #000000;
@@ -1031,4 +1032,8 @@ input + label {
 
 .term-construction-zone-width td:first-child {
     width: 250px !important;
+}
+
+.nav-tabs-loading {
+    color: orange !important;
 }

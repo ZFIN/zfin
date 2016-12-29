@@ -7,11 +7,12 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import org.zfin.gwt.curation.event.CloneFishEvent;
-import org.zfin.gwt.curation.event.CloneFishEventHandler;
-import org.zfin.gwt.curation.event.CurationEvent;
-import org.zfin.gwt.curation.event.EventType;
+import org.zfin.gwt.curation.event.*;
+import org.zfin.gwt.curation.ui.CurationModuleType;
+import org.zfin.gwt.root.ui.AjaxCallBaseManager;
+import org.zfin.gwt.curation.ui.CurationTab;
 import org.zfin.gwt.curation.ui.ZfinCurationModule;
+import org.zfin.gwt.root.ui.ZfinModule;
 import org.zfin.gwt.root.util.AppUtils;
 
 /**
@@ -21,6 +22,7 @@ public class FishModule extends Composite implements ZfinCurationModule {
 
     public static final String FISH_TAB = "fishTab";
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
+    private AjaxCallBaseManager ajaxCallBaseManager = new AjaxCallBaseManager();
 
     @UiTemplate("FishModule.ui.xml")
     interface MyUiBinder extends UiBinder<VerticalPanel, FishModule> {
@@ -103,7 +105,9 @@ public class FishModule extends Composite implements ZfinCurationModule {
                         genotypeConstructionPresenter.populate(event.getFish());
                     }
                 });
-
     }
 
+    public static ZfinModule getModuleInfo(){
+        return new ZfinModule(CurationTab.FISH.getName(), FishModule.class.getName());
+    }
 }

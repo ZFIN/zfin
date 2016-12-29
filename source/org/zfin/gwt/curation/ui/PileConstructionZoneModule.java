@@ -7,6 +7,7 @@ import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.event.CheckSubsetEventHandler;
 import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.*;
@@ -189,14 +190,15 @@ public class PileConstructionZoneModule extends Composite implements Constructio
         // ToDo: go through each TermEntryPart in a more scalable way. Requires ExpressedTermDTO to
         // to make use of EntityPart object
         //Window.alert(selectedEntity.name());
+        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_TERM_INFO_START);
         switch (selectedEntity) {
             case ENTITY_SUPERTERM:
                 lookupRPC.getTermInfo(term.getEntity().getSuperTerm().getOntology(), term.getEntity().getSuperTerm().getZdbID(),
-                        new TermInfoCallBack(termInfoTable, term.getEntity().getSuperTerm().getZdbID()));
+                        new TermInfoCallBack(termInfoTable, term.getEntity().getSuperTerm().getZdbID(),PhenotypeCurationModule.getModuleInfo()));
                 break;
             case ENTITY_SUBTERM:
                 lookupRPC.getTermInfo(term.getEntity().getSubTerm().getOntology(), term.getEntity().getSubTerm().getZdbID(),
-                        new TermInfoCallBack(termInfoTable, term.getEntity().getSubTerm().getZdbID()));
+                        new TermInfoCallBack(termInfoTable, term.getEntity().getSubTerm().getZdbID(),PhenotypeCurationModule.getModuleInfo()));
                 break;
         }
         populateTermEntryUnits(term);
@@ -207,27 +209,28 @@ public class PileConstructionZoneModule extends Composite implements Constructio
         // ToDo: go through each TermEntryPart in a more scalable way. Requires ExpressedTermDTO to
         // to make use of EntityPart object
         //Window.alert(selectedEntity.name());
+        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_TERM_INFO_START);
         switch (selectedEntity) {
             case ENTITY_SUPERTERM:
                 lookupRPC.getTermInfo(term.getEntity().getSuperTerm().getOntology(), term.getEntity().getSuperTerm().getZdbID(),
-                        new TermInfoCallBack(termInfoTable, term.getEntity().getSuperTerm().getZdbID()));
+                        new TermInfoCallBack(termInfoTable, term.getEntity().getSuperTerm().getZdbID(),PhenotypeCurationModule.getModuleInfo()));
                 break;
             case ENTITY_SUBTERM:
                 lookupRPC.getTermInfo(term.getEntity().getSubTerm().getOntology(), term.getEntity().getSubTerm().getZdbID(),
-                        new TermInfoCallBack(termInfoTable, term.getEntity().getSubTerm().getZdbID()));
+                        new TermInfoCallBack(termInfoTable, term.getEntity().getSubTerm().getZdbID(),PhenotypeCurationModule.getModuleInfo()));
                 break;
             case QUALITY:
                 lookupRPC.getTermInfo(term.getQuality().getOntology(), term.getQuality().getZdbID(),
-                        new TermInfoCallBack(termInfoTable, term.getQuality().getZdbID()));
+                        new TermInfoCallBack(termInfoTable, term.getQuality().getZdbID(),PhenotypeCurationModule.getModuleInfo()));
                 isQualityRelational = term.getQuality().isSubsetOf(SubsetDTO.RELATIONAL_SLIM);
                 break;
             case RELATED_ENTITY_SUPERTERM:
                 lookupRPC.getTermInfo(term.getRelatedEntity().getSuperTerm().getOntology(), term.getRelatedEntity().getSuperTerm().getZdbID(),
-                        new TermInfoCallBack(termInfoTable, term.getRelatedEntity().getSuperTerm().getZdbID()));
+                        new TermInfoCallBack(termInfoTable, term.getRelatedEntity().getSuperTerm().getZdbID(),PhenotypeCurationModule.getModuleInfo()));
                 break;
             case RELATED_ENTITY_SUBTERM:
                 lookupRPC.getTermInfo(term.getRelatedEntity().getSubTerm().getOntology(), term.getRelatedEntity().getSubTerm().getZdbID(),
-                        new TermInfoCallBack(termInfoTable, term.getRelatedEntity().getSubTerm().getZdbID()));
+                        new TermInfoCallBack(termInfoTable, term.getRelatedEntity().getSubTerm().getZdbID(),PhenotypeCurationModule.getModuleInfo()));
                 break;
         }
         errorElement.clearAllErrors();
@@ -385,7 +388,9 @@ public class PileConstructionZoneModule extends Composite implements Constructio
     public void updateTermInfoBox(String termName, String ontologyName) {
         if (termName != null && !termName.startsWith(ItemSuggestCallback.END_ELLIPSIS)) {
             OntologyDTO ontology = OntologyDTO.getOntologyByName(ontologyName);
-            LookupRPCService.App.getInstance().getTermByName(ontology, termName, new TermInfoCallBack(termInfoTable, termName));
+            AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_TERM_INFO_START);
+            LookupRPCService.App.getInstance().getTermByName(ontology, termName,
+                    new TermInfoCallBack(termInfoTable, termName,PhenotypeCurationModule.getModuleInfo()));
         }
     }
 
@@ -442,7 +447,9 @@ public class PileConstructionZoneModule extends Composite implements Constructio
                     @Override
                     public void onSuccess(TermDTO termDTO) {
                         if (termDTO != null) {
-                            lookupRPC.getTermInfo(ontology, termDTO.getZdbID(), new TermInfoCallBack(termInfoTable, termDTO.getZdbID()));
+                            AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_TERM_INFO_START);
+                            lookupRPC.getTermInfo(ontology, termDTO.getZdbID(),
+                                    new TermInfoCallBack(termInfoTable, termDTO.getZdbID(),PhenotypeCurationModule.getModuleInfo()));
                         }
                     }
                 });
@@ -610,11 +617,14 @@ public class PileConstructionZoneModule extends Composite implements Constructio
             }
             // check if the new term name is valid
             if (termInfo.getOntology() == OntologyDTO.QUALITY) {
+                AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_TERM_BY_NAME_START);
                 lookupRPC.getTermByName(termEntry.getSelectedOntology(), termInfo.getTermName(),
                         new ZfinAsyncCallback<TermDTO>(
-                                "Failed to find term: " + termInfo.getTermName() + " for ontology: " + termEntry.getSelectedOntology(), null) {
+                                "Failed to find term: " + termInfo.getTermName() + " for ontology: " + termEntry.getSelectedOntology(), null,
+                                PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_TERM_BY_NAME_STOP) {
                             @Override
                             public void onFailure(Throwable throwable) {
+                                super.onFinish();
                                 termEntry.getTermTextBox().setValidationStyle(false);
                             }
                         });

@@ -63,7 +63,7 @@
     <zfin2:dataManager zdbID="${publication.zdbID}"
                        showLastUpdate="true"
                        trackURL="/action/publication/${publication.zdbID}/track"
-            />
+    />
 
     <table class="table table-bordered" width="100%" style="border-bottom-width: 0px">
         <tbody>
@@ -120,19 +120,22 @@
         <li>
             </c:otherwise>
             </c:choose>
-            <a href="#${curationTab.value}" aria-controls="${curationTab.value}" role="tab"   onclick="handleTabToggle('${curationTab.value}')"
-               data-toggle="tab">${curationTab.displayName}</a>
+            <a href="#${curationTab.value}" aria-controls="${curationTab.value}" role="tab" class="nav-tabs-loading"
+               onclick="handleTabToggle('${curationTab.value}')"
+               data-toggle="tab" id="${curationTab.value}-tab">${curationTab.displayName}</a>
             </c:forEach>
-            <li>
-                <a aria-controls="refresh" onclick="refresh()" title="Refresh current tab" data-toggle="tooltip" class="zfin-tooltip">
-                    <div role="tab" style="cursor: pointer"><i class="fa fa-refresh" aria-hidden="true" ></i>
-                    </div>
-                </a>
-            <li>
-                <a aria-controls="history" onclick="showHistory()" title="Show history" data-toggle="tooltip" class="zfin-tooltip">
-                    <div role="tab" style="cursor: pointer"><i class="fa fa-history" aria-hidden="true"></i>
-                    </div>
-                </a>
+        <li>
+            <a aria-controls="refresh" onclick="refresh()" title="Refresh current tab" data-toggle="tooltip"
+               class="zfin-tooltip">
+                <div role="tab" style="cursor: pointer"><i class="fa fa-refresh" aria-hidden="true"></i>
+                </div>
+            </a>
+        <li>
+            <a aria-controls="history" onclick="showHistory()" title="Show history" data-toggle="tooltip"
+               class="zfin-tooltip">
+                <div role="tab" style="cursor: pointer"><i class="fa fa-history" aria-hidden="true"></i>
+                </div>
+            </a>
     </ul>
 
     <div class="tab-content edit-form-content">
@@ -165,6 +168,18 @@
             angular.element(document.getElementById("evidence-modal")).scope().vm.fetchGenes()
         }
 
+        function displayLoadingStatus(tabName, isLoading) {
+            /*
+             if (tabName == 'fish') {
+             alert(tabName + ": " + isLoading);
+             }
+             */
+            if (isLoading) {
+                $('#' + tabName.toUpperCase() + '-tab').addClass("nav-tabs-loading");
+            } else
+                $('#' + tabName.toUpperCase() + '-tab').removeClass("nav-tabs-loading");
+        }
+
         $(function () {
 
             function goToTab(hash) {
@@ -188,7 +203,7 @@
                     handleTabToggle('pheno');
                 }
                 jQuery.ajax({
-                    url: '/action/curation/currentTab/'+tabName,
+                    url: '/action/curation/currentTab/' + tabName,
                     type: 'GET',
 
                     success: function (response) {
@@ -213,7 +228,7 @@
                 e.preventDefault();
             });
 
-            window.addEventListener("popstate", function(e) {
+            window.addEventListener("popstate", function (e) {
                 var hash = window.location.hash;
                 if (hash) {
                     goToTab(hash);
@@ -269,7 +284,7 @@
     </script>
 
     <script>
-        $(document).ready(function(){
+        $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip();
         });
     </script>

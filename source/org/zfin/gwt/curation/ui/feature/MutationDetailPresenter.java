@@ -3,12 +3,14 @@ package org.zfin.gwt.curation.ui.feature;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.curation.ui.FeatureRPCService;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.MutationDetailControlledVocabularyTermDTO;
 import org.zfin.gwt.root.dto.MutationDetailProteinChangeDTO;
 import org.zfin.gwt.root.dto.MutationDetailTranscriptChangeDTO;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -28,10 +30,12 @@ public class MutationDetailPresenter {
 
     public void go() {
         // retrieve DNA change list
+        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_DNA_CHANGE_LIST_START);
         FeatureRPCService.App.getInstance().getDnaChangeList(new ZfinAsyncCallback<List<MutationDetailControlledVocabularyTermDTO>>("Failed to read Curator info", null) {
             @Override
             public void onSuccess(List<MutationDetailControlledVocabularyTermDTO> termList) {
                 setNucleotideChangeList(termList, view);
+                AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_DNA_CHANGE_LIST_STOP);
             }
 
             private void setNucleotideChangeList(List<MutationDetailControlledVocabularyTermDTO> termList, AbstractFeatureView featureView) {
@@ -42,10 +46,12 @@ public class MutationDetailPresenter {
             }
         });
         // retrieve DNA localization
+        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_DNA_LOCALIZATION_CHANGE_LIST_START);
         FeatureRPCService.App.getInstance().getDnaLocalizationChangeList(new ZfinAsyncCallback<List<MutationDetailControlledVocabularyTermDTO>>("Failed to read Curator info", null) {
             @Override
             public void onSuccess(List<MutationDetailControlledVocabularyTermDTO> termList) {
                 setGeneLocalizationList(termList, view);
+                AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_DNA_LOCALIZATION_CHANGE_LIST_STOP);
             }
 
             private void setGeneLocalizationList(List<MutationDetailControlledVocabularyTermDTO> termList, AbstractFeatureView featureView) {
@@ -56,10 +62,12 @@ public class MutationDetailPresenter {
             }
         });
         // retrieve Protein consequence list
+        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_PROTEIN_CONSEQUENCE_LIST_START);
         FeatureRPCService.App.getInstance().getProteinConsequenceList(new ZfinAsyncCallback<List<MutationDetailControlledVocabularyTermDTO>>("Failed to read Curator info", null) {
             @Override
             public void onSuccess(List<MutationDetailControlledVocabularyTermDTO> termList) {
                 setProteinConsequenceList(termList, view);
+                AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_PROTEIN_CONSEQUENCE_LIST_STOP);
             }
 
             private void setProteinConsequenceList(List<MutationDetailControlledVocabularyTermDTO> termList, AbstractFeatureView featureView) {
@@ -70,10 +78,12 @@ public class MutationDetailPresenter {
             }
         });
         // retrieve amino acid list
+        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_AMINO_ACID_LIST_START);
         FeatureRPCService.App.getInstance().getAminoAcidList(new ZfinAsyncCallback<List<MutationDetailControlledVocabularyTermDTO>>("Failed to read Curator info", null) {
             @Override
             public void onSuccess(List<MutationDetailControlledVocabularyTermDTO> termList) {
                 setProteinLists(termList, view);
+                AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_AMINO_ACID_LIST_STOP);
             }
 
             private void setProteinLists(List<MutationDetailControlledVocabularyTermDTO> termList, AbstractFeatureView featureView) {
@@ -96,10 +106,12 @@ public class MutationDetailPresenter {
             }
         });
         // retrieve transcript consequence list
+        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_TRANSCRIPT_CONSEQUENCE_LIST_START);
         FeatureRPCService.App.getInstance().getTranscriptConsequenceList(new ZfinAsyncCallback<List<MutationDetailControlledVocabularyTermDTO>>("Failed to read Curator info", null) {
             @Override
             public void onSuccess(List<MutationDetailControlledVocabularyTermDTO> termList) {
                 setTranscriptConsequenceList(termList, view);
+                AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_TRANSCRIPT_CONSEQUENCE_LIST_STOP);
             }
 
             private void setTranscriptConsequenceList(List<MutationDetailControlledVocabularyTermDTO> termList, AbstractFeatureView featureView) {

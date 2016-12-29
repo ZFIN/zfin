@@ -120,7 +120,7 @@ public class TranscriptHeaderEdit extends AbstractHeaderEdit<TranscriptDTO> {
 //                            TranscriptRPCService.App.getInstance().getTranscriptForZdbID(dto.getZdbID(),
 //                                    new MarkerEditCallBack<TranscriptDTO>("failed to retrieve transcript: " ,handlesError){
 //                                        @Override
-//                                        public void onSuccess(TranscriptDTO result) {
+//                                        public void onFinish(TranscriptDTO result) {
 //                                            dto.copyFrom(result);
 //                                            DeferredCommand.addCommand(new CompareCommand());
 //                                        }

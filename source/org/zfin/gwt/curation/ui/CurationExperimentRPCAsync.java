@@ -27,7 +27,7 @@ public interface CurationExperimentRPCAsync {
      * @param publicationID pub ID
      * @param async         callback
      */
-    void getFishList(String publicationID, AsyncCallback<List<FishDTO>> async);
+    void getFishList(String publicationID, AsyncCallback<List<FilterSelectionBoxEntry>> async);
 
     /**
      * Retrieve antibodies that are attributed to a given publication

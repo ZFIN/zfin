@@ -7,10 +7,10 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.curation.event.CurationEvent;
-import org.zfin.gwt.root.dto.AttributionType;
 import org.zfin.gwt.root.dto.ConstructDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.ShowHideToggle;
+import org.zfin.gwt.root.ui.ZfinModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,5 +117,10 @@ public class ConstructCurationModule extends ConstructionZoneAdapater implements
             GWT.log("Error: " + message);
         }
     }
+
+    static ZfinModule getModuleInfo() {
+        return new ZfinModule(CurationTab.CONSTRUCT.getName(), ConstructCurationModule.class.getName());
+    }
+
 
 }

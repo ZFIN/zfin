@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Widget;
 import org.zfin.gwt.curation.event.AddExpressionExperimentEvent;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.RetrieveStageSelectorCallback;
 import org.zfin.gwt.root.ui.SessionSaveService;
 import org.zfin.gwt.root.ui.SessionSaveServiceAsync;
@@ -66,19 +67,26 @@ public class ExpressionZonePresenter implements Presenter {
 
     public void retrieveExpressions() {
         view.getLoadingImage().setVisible(true);
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_EXPRESSIONS_BY_FILTER_START);
         curationRPCAsync.getExpressionsByFilter(experimentFilter, figureID, new RetrieveExpressionsCallback());
     }
 
     private void retrieveConstructionZoneValues() {
         refreshFigure();
         // stage list
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_STAGE_LIST_START);
         curationRPCAsync.getStages(new RetrieveStageListCallback());
 
         // stage selector
-        sessionRPC.isStageSelectorSingleMode(publicationID, new RetrieveStageSelectorCallback(view.getErrorElement(), view.getStageSelector()));
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.IS_STAGE_SELECTOR_SINGLE_MODE_START);
+        sessionRPC.isStageSelectorSingleMode(publicationID, new RetrieveStageSelectorCallback(view.getErrorElement(),
+                                                                view.getStageSelector(),
+                                                                ExpressionModule.getModuleInfo(),
+                                                                AjaxCallEventType.IS_STAGE_SELECTOR_SINGLE_MODE_STOP));
     }
 
     public void refreshFigure() {
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_FIGURE_LIST_START);
         curationRPCAsync.getFigures(publicationID, new RetrieveFiguresCallback());
     }
 
@@ -265,10 +273,12 @@ public class ExpressionZonePresenter implements Presenter {
 
 
         public RetrieveFiguresCallback() {
-            super(view.figureList, view.errorElement);
+            super(view.figureList, view.errorElement,
+                    ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_FIGURE_LIST_STOP);
         }
 
         public void onSuccess(List<FilterSelectionBoxEntry> list) {
+            super.onFinish();
             super.onSuccess(list);
             allFigureDtos = new ArrayList<>((List<FigureDTO>) (List<?>) list);
             view.setLoadingImageVisibility(false);
@@ -285,11 +295,12 @@ public class ExpressionZonePresenter implements Presenter {
     public class RetrieveStageListCallback extends ZfinAsyncCallback<List<StageDTO>> {
 
         public RetrieveStageListCallback() {
-            super("Error while reading Figure Filters", view.getErrorElement());
+            super("Error while reading Figure Filters", view.getErrorElement(),
+                    ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_STAGE_LIST_STOP);
         }
 
         public void onSuccess(List<StageDTO> stages) {
-
+            super.onFinish();
             //Window.alert("SIZE: " + experiments.size());
             view.getStageSelector().setStageList(stages);
             view.setLoadingImageVisibility(false);
@@ -303,11 +314,12 @@ public class ExpressionZonePresenter implements Presenter {
     private class RetrieveExpressionsCallback extends ZfinAsyncCallback<List<ExpressionFigureStageDTO>> {
 
         public RetrieveExpressionsCallback() {
-            super("Error while reading Experiment Filters", view.getErrorElement());
+            super("Error while reading Experiment Filters", view.getErrorElement(),
+                    ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_EXPRESSIONS_BY_FILTER_STOP);
         }
 
         public void onSuccess(List<ExpressionFigureStageDTO> list) {
-
+            super.onFinish();
             displayedExpressions.clear();
             if (list == null)
                 return;
