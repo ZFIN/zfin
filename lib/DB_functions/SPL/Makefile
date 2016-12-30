@@ -77,6 +77,7 @@ FISH_STATS   = get_image_stats.sql \
 		regen_construct_marker.sql \
 		regen_construct.sql \
 		regen_expression_mart_per_pub.sql \
+		check_xpat_null_valid.sql \
 		updateCurrentPubStatus.sql \
 		updatePubCompletionDate.sql \
 		updatePubIndexedDate.sql \
