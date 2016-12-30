@@ -14,6 +14,7 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14538_setup.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14538_load.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14538.sql"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14895.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14737.sql"/>
 
 </databaseChangeLog>

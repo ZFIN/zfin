@@ -1,17 +1,17 @@
 --liquibase formatted sql
 --changeset sierra:14737
 
---update expression_experiment2
--- set xpatex_gene_zdb_id = null
--- where xpatex_zdb_id in ('ZDB-XPAT-060710-148',
---'ZDB-XPAT-060810-204',
---'ZDB-XPAT-030521-35',
---'ZDB-XPAT-060810-395',
---'ZDB-XPAT-070503-338',
---'ZDB-XPAT-050107-212',
---'ZDB-XPAT-050208-350',
---'ZDB-XPAT-050208-473',
---'ZDB-XPAT-050809-180');
+update expression_experiment2
+ set xpatex_gene_zdb_id = null
+ where xpatex_zdb_id in ('ZDB-XPAT-060710-148',
+'ZDB-XPAT-060810-204',
+'ZDB-XPAT-030521-35',
+'ZDB-XPAT-060810-395',
+'ZDB-XPAT-070503-338',
+'ZDB-XPAT-050107-212',
+'ZDB-XPAT-050208-350',
+'ZDB-XPAT-050208-473',
+'ZDB-XPAT-050809-180');
 
 update expression_experiment2
  set xpatex_gene_zdb_id = (select distinct mrel_mrkr_1_zdb_id from
