@@ -18,12 +18,12 @@ public class ExperimentPresentation extends EntityPresentation {
         if (experiment == null)
             return null;
 
-        if (experiment.isOnlyStandard())
-            return "standard";
+        //if (experiment.isOnlyStandard())
+        //    return "standard";
         if (experiment.isOnlyControl())
             return "control";
-        if (experiment.isStandard())
-            return "standard or control";
+        //if (experiment.isStandard())
+        //    return "standard or control";
         TreeSet<ExperimentCondition> conditions = new TreeSet<>();
         conditions.addAll(experiment.getExperimentConditions());
 
