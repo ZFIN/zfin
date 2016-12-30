@@ -265,6 +265,16 @@
                                     <c:if test="${!status.last}"><br/></c:if>
                                 </c:forEach>
                             </c:when>
+                            <c:when test="${!empty formBean.genotypeDisplays}">
+                                
+                                <c:forEach var="genotypeDisplay" items="${formBean.genotypeDisplays}" varStatus="loop">
+                                    <c:if test="${genotypeDisplay.genotype.extinct}">
+                                        <font size="3" color="red">extinct</font> <img src="/images/warning-noborder.gif"
+                                                                                       alt="extinct" width="20" align="top"
+                                                                                       height="20">
+                                    </c:if>
+                                </c:forEach>
+                            </c:when>
                             <c:otherwise>
                                 <span class="no-data-tag"></span>
                             </c:otherwise>
