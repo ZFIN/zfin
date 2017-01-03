@@ -8,10 +8,7 @@ update expression_experiment2
 'ZDB-XPAT-030521-35',
 'ZDB-XPAT-060810-395',
 'ZDB-XPAT-070503-338',
-'ZDB-XPAT-050107-212',
-'ZDB-XPAT-050208-350',
-'ZDB-XPAT-050208-473',
-'ZDB-XPAT-050809-180')
+'ZDB-XPAT-050107-212')
  and exists (select 'x' from marker
      	    	    where mrkr_zdb_id = xpatex_gene_zdb_id
 		    and mrkr_name like 'WITHDRAWN%');
