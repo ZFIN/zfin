@@ -11,7 +11,11 @@ update expression_experiment2
 'ZDB-XPAT-050107-212',
 'ZDB-XPAT-050208-350',
 'ZDB-XPAT-050208-473',
-'ZDB-XPAT-050809-180');
+'ZDB-XPAT-050809-180')
+ and exists (select 'x' from marker
+     	    	    where mrkr_zdb_id = xpatex_gene_zdb_id
+		    and mrkr_name like 'WITHDRAWN%');
+
 
 update expression_experiment2
  set xpatex_gene_zdb_id = (select distinct mrel_mrkr_1_zdb_id from
