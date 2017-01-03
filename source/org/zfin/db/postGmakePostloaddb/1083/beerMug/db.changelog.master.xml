@@ -18,5 +18,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14737.sql"/>
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14800.sql"/>
+ <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14717.sql"/>
 
 </databaseChangeLog>
