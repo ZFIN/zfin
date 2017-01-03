@@ -27,6 +27,7 @@ public class AccountInfo implements Serializable {
     private String cookie;
     // Hibernate uses field access to set this variable
     private String zdbID;
+    private boolean curator;
 
     public String getLogin() {
         return login;
@@ -118,6 +119,14 @@ public class AccountInfo implements Serializable {
 
     public void setAccountCreationDate(Date accountCreationDate) {
         this.accountCreationDate = accountCreationDate;
+    }
+
+    public boolean isCurator() {
+        return curator;
+    }
+
+    public void setCurator(boolean curator) {
+        this.curator = curator;
     }
 
     @Override

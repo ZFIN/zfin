@@ -173,12 +173,12 @@ public class PublicationTrackingController {
     @ResponseBody
     @RequestMapping(value = "/curators", method = RequestMethod.GET)
     public Collection<PersonDTO> getAllCurators() {
-        Set<PersonDTO> curatorDTOs = new TreeSet<>();
-        // maybe one day we'll have a separate role for just curators?
-        List<Person> curators = profileRepository.getUsersByRole("root");
-        for (Person curator : curators) {
-            curatorDTOs.add(converter.toPersonDTO(curator));
-        }
+        List<PersonDTO> curatorDTOs = profileRepository.getCurators().stream()
+                .map(converter::toPersonDTO)
+                .collect(Collectors.toList());
+        // Add currently logged in user to allow developers to act like curators on their own sites
+        curatorDTOs.add(converter.toPersonDTO(ProfileService.getCurrentSecurityUser()));
+        Collections.sort(curatorDTOs);
         return curatorDTOs;
     }
 

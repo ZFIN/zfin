@@ -990,10 +990,10 @@ public class HibernateProfileRepository implements ProfileRepository {
                 .list();
     }
 
-    public List<Person> getUsersByRole(String role) {
+    public List<Person> getCurators() {
         return HibernateUtil.currentSession()
                 .createCriteria(Person.class)
-                .add(Restrictions.eq("accountInfo.role", role))
+                .add(Restrictions.eq("accountInfo.curator", true))
                 .list();
     }
 }
