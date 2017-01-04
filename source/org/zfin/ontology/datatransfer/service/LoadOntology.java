@@ -27,6 +27,7 @@ import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
 import org.zfin.ontology.datatransfer.CronJobReport;
 import org.zfin.ontology.datatransfer.CronJobUtil;
+import org.zfin.ontology.datatransfer.InvalidOBOFileException;
 import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.properties.ZfinProperties;
@@ -1059,6 +1060,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         String obsolete = "";
         if (term.isObsolete())
             obsolete = "t";
+        if (term.getName() == null) {
+            throw new InvalidOBOFileException("Term with id " + term.getID() + " has no name attribute");
+        }
         appendFormattedRecord(UnloadFile.TERM_PARSED, term.getID(),
                 term.getName(), term.getNamespace().getID(), term.getDefinition(), term.getComment(), obsolete);
         if (term.getDefDbxrefs() != null) {
