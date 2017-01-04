@@ -43,7 +43,6 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/publication")
 public class PublicationViewController {
 
     private Logger logger = Logger.getLogger(PublicationViewController.class);
@@ -60,7 +59,7 @@ public class PublicationViewController {
     private FigureViewService figureViewService;
 
 
-    @RequestMapping("/view/{zdbID}")
+    @RequestMapping("/publication/view/{zdbID}")
     public String view(@PathVariable String zdbID, Model model, HttpServletResponse response) {
         Publication publication = publicationRepository.getPublication(zdbID);
         //try zdb_replaced data if necessary
@@ -147,7 +146,7 @@ public class PublicationViewController {
         return "publication/publication-view.page";
     }
 
-    @RequestMapping("/view")
+    @RequestMapping("/publication/view")
     public String viewByAccession(@RequestParam(value = "accession", required = false) String accession,
                                   HttpServletResponse response) {
         Publication publication = null;
@@ -167,7 +166,7 @@ public class PublicationViewController {
         return "redirect:/" + publication.getZdbID();
     }
 
-    @RequestMapping("/{pubID}/orthology-list")
+    @RequestMapping("/publication/{pubID}/orthology-list")
     public String showOrthologyList(@PathVariable String pubID,
                                     @ModelAttribute("formBean") GeneBean geneBean,
                                     Model model) {
@@ -212,7 +211,7 @@ public class PublicationViewController {
         return "publication/publication-orthology-list.page";
     }
 
-    @RequestMapping("/{pubID}/feature-list")
+    @RequestMapping("/publication/{pubID}/feature-list")
     public String showFeatureList(@PathVariable String pubID,
                                   @ModelAttribute("formBean") GeneBean geneBean,
                                   Model model) {
@@ -226,7 +225,7 @@ public class PublicationViewController {
         return "feature/feature-per-publication.page";
     }
 
-    @RequestMapping("/{pubID}/fish-list")
+    @RequestMapping("/publication/{pubID}/fish-list")
     public String showFishList(@PathVariable String pubID,
                                @ModelAttribute("formBean") GeneBean geneBean,
                                Model model) {
@@ -241,7 +240,7 @@ public class PublicationViewController {
     }
 
 
-    @RequestMapping("/{zdbID}/disease")
+    @RequestMapping("/publication/{zdbID}/disease")
     public String disease(@PathVariable String zdbID, Model model, HttpServletResponse response) {
 
         Publication publication = publicationRepository.getPublication(zdbID);
@@ -267,7 +266,7 @@ public class PublicationViewController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "{zdbID}/genes", method = RequestMethod.GET)
+    @RequestMapping(value = "/publication{zdbID}/genes", method = RequestMethod.GET)
     public List<MarkerDTO> getPublicationGenes(@PathVariable String zdbID) {
         List<Marker> genes = publicationRepository.getGenesByPublication(zdbID, false);
         List<MarkerDTO> dtos = new ArrayList<>();
@@ -278,7 +277,7 @@ public class PublicationViewController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/lookup", method = RequestMethod.GET)
+    @RequestMapping(value = "/publication/lookup", method = RequestMethod.GET)
     public List<MarkerReferenceBean> publicationLookup(@RequestParam("q") String query) {
         List<MarkerReferenceBean> results = new ArrayList<>();
         Publication publication = publicationRepository.getPublication(query);
@@ -288,7 +287,7 @@ public class PublicationViewController {
         return results;
     }
 
-    @RequestMapping("/journal/{zdbID}")
+    @RequestMapping("/publication/journal/{zdbID}")
     public String viewJournal(@PathVariable String zdbID, Model model, HttpServletResponse response) {
         Journal journal = publicationRepository.getJournalByID(zdbID);
         //try zdb_replaced data if necessary
@@ -316,7 +315,7 @@ public class PublicationViewController {
     }
 
 
-    @RequestMapping("/image-edit")
+    @RequestMapping("/publication/image-edit")
     public String getImageEdit(Model model,@RequestParam("zdbID") String zdbID) {
 
         Image image = publicationRepository.getImageById(zdbID);

@@ -8,6 +8,7 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.ejb.HibernateQuery;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.transform.ResultTransformer;
@@ -23,6 +24,7 @@ import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.ActiveData;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.GeneBean;
@@ -41,6 +43,7 @@ import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * ToDO: include documentation
@@ -1799,6 +1802,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
+
     public Long getMarkerCount(Publication publication) {
         String sql = "select count(*) FROM (\n" +
                 "  SELECT fmrel_mrkr_zdb_id\n" +
@@ -1833,6 +1837,27 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 ");";
 
         return getCount(sql, publication.getZdbID());
+    }
+
+    public List<Marker> getMarkers(Publication publication) {
+        //return new ArrayList<Marker>();
+        String hql = "from PublicationAttribution pa where pa.publication.zdbID = :pubZdbID";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("pubZdbID", publication.getZdbID() );
+        List<PublicationAttribution> publicationAttributionList = query.list();
+        List<Marker> markerList = new ArrayList<>();
+        logger.error(publicationAttributionList);
+/*        for (PublicationAttribution pa : publicationAttributionList) {
+            if (!markerList.contains(pa.getMarker())) {
+                markerList.add(pa.getMarker());
+            }
+        }
+        logger.error(markerList);*/
+        return markerList;
+/*        return publicationAttributionList
+                .stream()
+                .map(PublicationAttribution::getMarker)
+                .collect(Collectors.toList());*/
     }
 
 

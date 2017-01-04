@@ -20,7 +20,7 @@
         <attribute name="verbose"/>
         <attribute name="outFile"/>
         <sequential>
-            <junit fork="true"
+            <junit fork="false"
                    printsummary="yes"
                    haltonfailure="false"
                    haltonerror="false"
