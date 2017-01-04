@@ -177,6 +177,7 @@ editMarker.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$
     };
 
     nomenController.fetchAttributions = function () {
+        nomenController.publicationDtoList = [];
         $http.get('/action/nomenclature/attributions/' + nomenController.nomenID)
             .then(function (list) {
                 for (data in list.data) {
