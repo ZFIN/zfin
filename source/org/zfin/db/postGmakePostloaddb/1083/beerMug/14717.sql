@@ -45,3 +45,4 @@ insert into marker_relationship (mrel_zdb_id, mrel_mrkr_1_zdb_id,
        	   	  	  where mrel_mrkr_1_zdb_id = gene_id
 			  and mrel_mrkr_2_zdb_id = snp_id
 			  and mrel_type = 'contains polymorphism');
+
