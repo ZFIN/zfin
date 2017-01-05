@@ -46,3 +46,8 @@ insert into marker_relationship (mrel_zdb_id, mrel_mrkr_1_zdb_id,
 			  and mrel_mrkr_2_zdb_id = snp_id
 			  and mrel_type = 'contains polymorphism');
 
+
+--update  marker set mrkr_name=replace(mrkr_name,'AL935210.8','nprl3') where mrkr_name like '%AL935210.8%';
+--update  marker set mrkr_abbrev=replace(mrkr_abbrev,'AL935210.8','nprl3') where mrkr_abbrev like '%AL935210.8%';
+--update  marker set mrkr_name=replace(mrkr_name,'Hsa.SLC25A42','slc25a42') where mrkr_name like '%Hsa.SLC25A42%';
+--update  marker set mrkr_abbrev=replace(mrkr_abbrev,'Hsa.SLC25A42','slc25a42') where mrkr_abbrev like '%Hsa.SLC25A4%2%';

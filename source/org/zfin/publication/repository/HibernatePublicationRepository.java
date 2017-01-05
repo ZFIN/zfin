@@ -951,6 +951,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                     " select xpatex_source_zdb_id  " +
                     " from expression_experiment " +
                     " where :markerZdbID = xpatex_gene_zdb_id ";
+        // nomenclature
+        if (ActiveData.isMarker(dataType))
+            commonPubSQL += " union " +
+                    " select ra.recattrib_source_zdb_id  " +
+                    " from record_attribution ra, marker_history mh " +
+                    " where mh.mhist_zdb_id  = ra.recattrib_data_zdb_id " +
+                    " and  :markerZdbID = mh.mhist_mrkr_zdb_id ";
         commonPubSQL += " ) where recattrib_source_zdb_id like 'ZDB-PUB%'  ";
         return commonPubSQL;
     }

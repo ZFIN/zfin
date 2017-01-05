@@ -7,6 +7,7 @@
     <!--<include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/rollback.sql"/>-->
     <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14637.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14749.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14602.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14603.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14815.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14850.sql"/>
