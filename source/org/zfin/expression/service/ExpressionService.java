@@ -656,7 +656,7 @@ public class ExpressionService {
                         xpDisplay.getExpressionTerms().add(term);
                     }
 
-                    Collections.sort(xpDisplay.getExpressionResults(), new ExpressionResultTermComparator());
+                    (xpDisplay.getExpressionResults()).sort(new ExpressionResultTermComparator());
 
                     xpDisplay.getFigures().addAll(qualifiedFigures);
                     if (expressionPublicationIDs.contains(pub.getZdbID())) {
