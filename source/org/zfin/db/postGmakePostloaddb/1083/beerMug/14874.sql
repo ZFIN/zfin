@@ -39,3 +39,6 @@ where ptl_pk_id = '8';
 update pub_tracking_location
  set ptl_location_definition = 'Papers likely destined for Bin 3, likely toxicology papers.'
 where ptl_pk_id = '9';
+
+alter table pub_tracking_location
+ modify (ptl_location_definition varchar(255) not null constraint ptl_location_definition_not_null);
