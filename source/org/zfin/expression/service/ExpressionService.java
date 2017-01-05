@@ -55,7 +55,7 @@ public class ExpressionService {
     public ExpressionService() {
     }
 
-    public Set<String> getThissePublicationZdbIDs() {
+    private Set<String> getThissePublicationZdbIDs() {
         if (thissePubs == null) {
             thissePubs = new HashSet<>();
             thissePubs.add("ZDB-PUB-051025-1");
@@ -614,16 +614,16 @@ public class ExpressionService {
                 // otherwise, get the display object from the map
                 if (!map.containsKey(key)) {
                     xpDisplay = new ExpressionDisplay(expressedGene);
-                    xpDisplay.setExpressionResults(new ArrayList<ExpressionResult>());
+                    xpDisplay.setExpressionResults(new ArrayList<>());
                     xpDisplay.setExperiment(exp);
-                    xpDisplay.setExpressionTerms(new HashSet<GenericTerm>());
+                    xpDisplay.setExpressionTerms(new HashSet<>());
 
                     xpDisplay.getExpressionResults().add(xpResult);
                     xpDisplay.getExpressionTerms().add(term);
 
                     xpDisplay.setExpressedGene(expressedGene);
 
-                    xpDisplay.setFigures(new HashSet<Figure>());
+                    xpDisplay.setFigures(new HashSet<>());
                     xpDisplay.getFigures().addAll(qualifiedFigures);
 
                     SortedMap<Publication, SortedSet<Figure>> figuresPerPub = new TreeMap<>();
@@ -640,7 +640,7 @@ public class ExpressionService {
 
                     xpDisplay.setFiguresPerPub(figuresPerPub);
 
-                    xpDisplay.setPublications(new HashSet<Publication>());
+                    xpDisplay.setPublications(new HashSet<>());
                     if (expressionPublicationIDs.contains(pub.getZdbID())) {
                         xpDisplay.getPublications().add(pub);
 
