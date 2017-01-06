@@ -201,6 +201,42 @@
         </groovy>
     </target>
 
+    <target name="remove-non-production-jobs-from-target"
+            description="Remove jobs into Jenkins_home that are not defined in the source for production">
+        <tstamp/>
+        <echo message="Remove undefined production jobs in ${JENKINS_HOME}/jobs"/>
+        <property name="sourceJobFile"
+                  value="${basedir}/server_apps/jenkins/jobs.production.properties"/>
+        <groovy>
+            def dir = new File(properties.sourceJobsDir)
+            def jobs = dir.list()
+            // load defined jobs
+            def props = new Properties()
+
+            new File(properties.sourceJobFile).withInputStream {
+                stream -> props.load(stream)
+            }
+
+            def file = new File(properties.jobTargetDirectory)
+            def targetJobs = file.listFiles()
+            println(targetJobs.size() + " jobs in target")
+            println "Total jobs: " + jobs.size()
+            targetJobs.each { targetJob ->
+                boolean existsInTarget = false;
+                jobs.each { sourceJob ->
+                    if (props[sourceJob] != null) {
+                        if (sourceJob.equals(targetJob.getName()))
+                            existsInTarget = true;
+                    }
+                }
+                if (!existsInTarget) {
+                    println("Removing target job: " + targetJob.getName())
+                    targetJob.deleteDir()
+                }
+            }
+        </groovy>
+    </target>
+
     <target name="create-views" description="Create views">
         <tstamp/>
         <echo message="Deploy views into: ${JENKINS_HOME}"/>
@@ -610,10 +646,10 @@
 
     <macrodef name="add-new-cron-expression-for-job">
         <sequential>
-<!--
-            <echo message="Schedule: ${schedule}"/>
-            <echo message="Job: ${jobName}"/>
--->
+            <!--
+                        <echo message="Schedule: ${schedule}"/>
+                        <echo message="Job: ${jobName}"/>
+            -->
             <if>
                 <not>
                     <equals arg1="${schedule}" arg2=""/>
