@@ -314,6 +314,10 @@ $(IF,$(>,$(POSITION,$OID,XPAT),0),
                                         from genotype_feature, feature
                                         where genofeat_feature_zdb_id = feature_zdb_id
                                           and feature_zdb_id = '$OID')
+   or
+      recattrib_data_zdb_id in (select mhist_zdb_id
+                                        from marker_history
+                                        where mhist_mrkr_zdb_id = '$OID')
   <?/MIVAR>
    
 
@@ -351,8 +355,8 @@ $(IF,$(>,$(POSITION,$OID,XPAT),0),
            and get_obj_type(recattrib_source_zdb_id) = 'PUB'
            $(IF,$(XST,$recattrsrctype),and recattrib_source_type = '$recattrsrctype');">
 	<?MIVAR NAME=$sp_counter>$1<?/MIVAR>
-	<?MIVAR>	($sp_counter total)<?/MIVAR> 
-      <?/MISQL>	
+	<?MIVAR>	($sp_counter total)<?/MIVAR>
+      <?/MISQL>
     <?MIELSE>
       <br>
       <i>Click on a publication to view summary of gene expression reported.</i>

@@ -18,3 +18,7 @@ insert into data_alias (dalias_zdb_id,
  select id, 'ZDB-GENO-161020-2', 'β-ruby', 1
    from tmp_id;
 
+insert into record_attribution
+ (recattrib_datA_zdb_id, recattrib_source_zdb_id)
+ select id, 'ZDB-PUB-160226-2'
+  from tmp_id;

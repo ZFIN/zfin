@@ -3,6 +3,7 @@ package org.zfin.ontology.datatransfer.service;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.obo.dataadapter.AbstractParseEngine;
@@ -17,7 +18,6 @@ import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.infrastructure.ant.DataReportTask;
 import org.zfin.infrastructure.ant.ReportConfiguration;
@@ -1060,7 +1060,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         String obsolete = "";
         if (term.isObsolete())
             obsolete = "t";
-        if (term.getName() == null) {
+        if (StringUtils.isEmpty(term.getName())) {
             throw new InvalidOBOFileException("Term with id " + term.getID() + " has no name attribute");
         }
         appendFormattedRecord(UnloadFile.TERM_PARSED, term.getID(),

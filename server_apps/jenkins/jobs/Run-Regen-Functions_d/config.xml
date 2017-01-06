@@ -23,11 +23,6 @@
  </hudson.tasks.Shell>
   </builders>
   <publishers>
-    <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/regen-log.txt</artifacts>
-      <latestOnly>false</latestOnly>
-      <allowEmptyArchive>true</allowEmptyArchive>
-    </hudson.tasks.ArtifactArchiver>
     <hudson.plugins.logparser.LogParserPublisher plugin="log-parser@1.0.8">
       <unstableOnWarning>false</unstableOnWarning>
       <failBuildOnError>true</failBuildOnError>
