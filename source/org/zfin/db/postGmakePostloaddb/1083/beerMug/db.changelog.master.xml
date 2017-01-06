@@ -22,4 +22,5 @@
  <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14717.sql"/>
  <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14678.sql"/>
  <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14874.sql"/>
+ <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/fishFullNameUpdate.sql"/>
 </databaseChangeLog>
