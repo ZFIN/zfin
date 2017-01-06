@@ -3,5 +3,5 @@
 
 
 alter table fish
- add (fish_full_name varchar(30))
+ add (fish_full_name varchar(255))
 ;

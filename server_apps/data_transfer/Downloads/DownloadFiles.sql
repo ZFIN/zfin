@@ -494,7 +494,7 @@ select exp_zdb_id, "standard environment", " ", " ", " ", " ", " ", " ", " ", " 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish.txt'
  DELIMITER "	"
- select distinct f.fish_zdb_id, f.fish_name,
+ select distinct f.fish_zdb_id, f.fish_full_name,
             pg_start_stg_zdb_id,
             (select stg_name
                 from stage
@@ -1100,7 +1100,7 @@ select distinct a.geno_zdb_id, a.geno_display_name, genoback_background_zdb_id,b
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtypes_fish.tx'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtypes_fish.txt'
  DELIMITER "	"
-select distinct fish_zdb_id, fish_name, fish_handle, geno_zdb_id
+select distinct fish_zdb_id, fish_full_name, fish_handle, geno_zdb_id
  from genotype, fish
  where geno_is_wildtype = 't'
   and fish_genotype_Zdb_id = geno_zdb_id
@@ -1110,7 +1110,7 @@ select distinct fish_zdb_id, fish_name, fish_handle, geno_zdb_id
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_components_fish.tx'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_components_fish.txt'
  DELIMITER "	"
-select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_zdb_id, b.mrkr_abbrev, fc_construct_zdb_id, c.mrkr_abbrev, genoback_background_zdb_id, d.geno_handle, fc_genotype_Zdb_id, e.geno_display_name
+select fc_fish_zdb_id, fc_fish_full_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_zdb_id, b.mrkr_abbrev, fc_construct_zdb_id, c.mrkr_abbrev, genoback_background_zdb_id, d.geno_handle, fc_genotype_Zdb_id, e.geno_display_name
    from fish_components,genotype e, outer (genotype_background,genotype d), outer marker a, outer marker b, outer marker c
    where fc_genotype_zdb_id = genoback_geno_zdb_id
    and a.mrkr_Zdb_id = fc_gene_zdb_id
@@ -1120,7 +1120,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
    and c.mrkr_Zdb_id = fc_construct_zdb_id
    and fc_affector_zdb_id not like 'ZDB-ALT%'
 union
-select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_zdb_id, b.feature_abbrev, fc_construct_zdb_id, c.mrkr_abbrev, genoback_background_zdb_id, d.geno_handle, fc_genotype_Zdb_id, e.geno_display_name
+select fc_fish_zdb_id, fc_fish_full_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_zdb_id, b.feature_abbrev, fc_construct_zdb_id, c.mrkr_abbrev, genoback_background_zdb_id, d.geno_handle, fc_genotype_Zdb_id, e.geno_display_name
    from fish_components,genotype e, outer (genotype_background,genotype d), outer marker a, outer feature b, outer marker c
    where fc_genotype_zdb_id = genoback_geno_zdb_id
    and a.mrkr_Zdb_id = fc_gene_zdb_id
@@ -1422,7 +1422,7 @@ FROM publication pub, tmp_pubs
  and mrkr_zdb_id like 'ZDB-GENE%';
 
 
-select mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
+select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
        "" as subontid, 
        "" as subname, startStage.stg_name as start, endStage.stg_name as end, xpatex_assay_name,
         xpatex_source_zdb_id,
@@ -1447,11 +1447,11 @@ select mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
    and xpatres_end_stg_zdb_id = endStage.stg_zdb_id
    and fish_genotype_zdb_id = geno_zdb_id
 and xpatres_subterm_zdb_id is null
- group by mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
+ group by mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
         subontid, subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
         xpatex_source_zdb_id,  probe_id,xpatex_atb_zdb_id, fish_Zdb_id
 union
-select mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
+select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
        "" as subontid, 
        "" as subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
         xpatex_source_zdb_id,
@@ -1476,7 +1476,7 @@ select mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
    and xpatres_end_stg_zdb_id = endStage.stg_zdb_id
    and fish_genotype_zdb_id = geno_zdb_id
 and xpatres_subterm_zdb_id is null
- group by mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
+ group by mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
         subontid, subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
         xpatex_source_zdb_id,  probe_id,xpatex_atb_zdb_id, fish_Zdb_id
 into temp tmp_wtxpat;
@@ -2052,7 +2052,7 @@ DROP TABLE tmp_mutation_details;
  select  psg_id as phenos_id,
          pg_id as phenox_id,
          mfs_mrkr_zdb_id as gene_Zdb_id,
-         "                                                                     " as fish_name,
+         "                                                                     " as fish_full_name,
                  pg_fig_zdb_id as fig_id,
                  fig_source_zdb_id as pub_id,
                  genox_zdb_id as id,
@@ -2075,7 +2075,7 @@ union
  select  psg_id,
          pg_id as phenox_id,
          mfs_mrkr_zdb_id as gene_Zdb_id,
-         "                                                                     " as fish_name,
+         "                                                                     " as fish_full_name,
          pg_fig_zdb_id as fig_id,
          fig_source_zdb_id,
                  genox_zdb_id,
@@ -2101,7 +2101,7 @@ into temp tmp_dumpCleanPheno;
 
 ! echo "update gene_display name"
 update tmp_dumpCleanPheno
-  set fish_name = (select fish_name
+  set fish_full_name = (select fish_full_name
       			  	  from fish
 				  where fish_zdb_id = fish_id);
 
@@ -2109,7 +2109,7 @@ update tmp_dumpCleanPheno
 
 ! echo "update gene_display name"
 update tmp_dumpCleanPheno
-  set fish_name = (select fish_name
+  set fish_full_name = (select fish_full_name
       			  	  from fish
 				  where fish_zdb_id = fish_id);
 
@@ -2140,7 +2140,7 @@ unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 	 tps.bsuperterm_ont_id,
 	 tps.bsuperterm_name,
 	 fish_id,
-	 fish_name,
+	 fish_full_name,
 	 stage_start_id,
 	 stage_end_id,
 	 genox_id,
