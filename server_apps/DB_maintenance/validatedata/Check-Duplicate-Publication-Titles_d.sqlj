@@ -30,7 +30,7 @@ WHERE zdb_id NOT IN (
     , "ZDB-PUB-160608-12" {, "ZDB-PUB-050128-12"}, "ZDB-PUB-160608-19"
     , "ZDB-PUB-050128-4" {, "ZDB-PUB-160618-11"}, "ZDB-PUB-150711-1"
     , "ZDB-PUB-160430-3" {, "ZDB-PUB-160313-4"}, "ZDB-PUB-041213-5"
-    , "ZDB-PUB-160219-10"
+    , "ZDB-PUB-160219-10" {, "ZDB-PUB-110921-14"},"ZDB-PUB-160725-24"
 )
     AND jrnl_abbrev <> "ZFIN Direct Data Submission"
     AND jrnl_zdb_id = pub_jrnl_zdb_id
