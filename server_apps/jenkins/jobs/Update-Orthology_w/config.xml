@@ -39,7 +39,7 @@
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>erver_apps/data_transfer/ORTHO/*.txt,server_apps/data_transfer/ORTHO/*.log</attachmentsPattern>
+            <attachmentsPattern>erver_apps/data_transfer/ORTHO/*.txt</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>
@@ -55,7 +55,7 @@
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>server_apps/data_transfer/ORTHO/*.txt</attachmentsPattern>
+            <attachmentsPattern>erver_apps/data_transfer/ORTHO/*.txt</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
