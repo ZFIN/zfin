@@ -1,6 +1,8 @@
 package org.zfin.curation.service
-import org.zfin.AbstractZfinIntegrationSpec
+
+import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.TestConfiguration
+import org.zfin.ZfinIntegrationSpec
 import org.zfin.curation.Correspondence
 import org.zfin.curation.Curation
 import org.zfin.curation.PublicationNote
@@ -14,11 +16,14 @@ import spock.lang.Unroll
 
 import javax.sql.rowset.serial.SerialBlob
 
-class CurationDTOConversionServiceSpec extends AbstractZfinIntegrationSpec {
+class CurationDTOConversionServiceSpec extends ZfinIntegrationSpec {
+
+    @Autowired
+    CurationDTOConversionService converter
 
     @Shared person = [
             patrick: new Person(
-                zdbID: "ZDB-PERS-140612-1",
+                zdbID: "ZDB-PERS-140616-1",
                 firstName: "Patrick",
                 lastName: "Kalita",
                 shortName: "Kalita-P."
@@ -54,10 +59,8 @@ class CurationDTOConversionServiceSpec extends AbstractZfinIntegrationSpec {
     ]
 
     def setupSpec() {
-        TestConfiguration.setAuthenticatedUser(person.patrick);
+        TestConfiguration.setAuthenticatedUser(person.patrick)
     }
-
-    def converter = new CurationDTOConversionService();
 
     def note = new PublicationNote(
         zdbID: "ZDB-PNOTE-030801-6",
@@ -141,7 +144,7 @@ class CurationDTOConversionServiceSpec extends AbstractZfinIntegrationSpec {
 
     def "get list of all curation topics"() {
         setup:
-        def emptyTopic = new Curation();
+        def emptyTopic = new Curation()
         emptyTopic.setTopic(Curation.Topic.TOXICOLOGY)
 
         when:
