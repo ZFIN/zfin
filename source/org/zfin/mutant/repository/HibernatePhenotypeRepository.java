@@ -921,4 +921,11 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         query.setParameter("figureID", figureID);
         return (List<PhenotypeWarehouse>) query.list();
     }
+
+    public boolean getRegenPhenoMartFlag() {
+        return Boolean.valueOf(HibernateUtil.currentSession().createSQLQuery("select " +
+                "        zflag_is_on  " +
+                "    from  zdb_flag " +
+                "    where zflag_name='regen_phenotypemart'").uniqueResult().toString());
+    }
 }

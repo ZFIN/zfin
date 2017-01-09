@@ -272,4 +272,6 @@ public interface PhenotypeRepository {
     List<PhenotypeStatementWarehouse> getAllPhenotypeStatementsForSTR (SequenceTargetingReagent sequenceTargetingReagent);
 
     List<PhenotypeWarehouse> getPhenotypeWarehouse(String figureID);
+
+    boolean getRegenPhenoMartFlag();
 }
