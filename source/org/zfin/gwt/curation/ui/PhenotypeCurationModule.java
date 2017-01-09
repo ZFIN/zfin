@@ -103,6 +103,7 @@ public class PhenotypeCurationModule implements ZfinCurationModule, HandlesError
         subterm.add(OntologyDTO.GO_MF);
         subterm.add(OntologyDTO.GO_BP);
         subterm.add(OntologyDTO.SPATIAL);
+        subterm.add(OntologyDTO.CHEBI);
         subterm.add(OntologyDTO.MPATH_NEOPLASM);
         termEntryMap.put(EntityPart.ENTITY_SUBTERM, subterm);
 
@@ -121,6 +122,7 @@ public class PhenotypeCurationModule implements ZfinCurationModule, HandlesError
         relatedSubterm.add(OntologyDTO.GO_CC);
         relatedSubterm.add(OntologyDTO.SPATIAL);
         relatedSubterm.add(OntologyDTO.GO_MF);
+        relatedSubterm.add(OntologyDTO.CHEBI);
         relatedSubterm.add(OntologyDTO.MPATH_NEOPLASM);
         termEntryMap.put(EntityPart.RELATED_ENTITY_SUBTERM, relatedSubterm);
 

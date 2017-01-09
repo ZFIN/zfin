@@ -140,6 +140,7 @@ public class PatoPileStructureValidator extends AbstractPileStructureValidator<P
         AO_SP(ANATOMY, SPATIAL),
         AO_MF(ANATOMY, GO_MF),
         AO_BP(ANATOMY, GO_BP),
+        AO_CHEBI(ANATOMY, CHEBI),
         AO_MPATH(ANATOMY, MPATH_NEOPLASM),
         BP_x(GO_BP, null),
         MF_x(GO_MF, null),
