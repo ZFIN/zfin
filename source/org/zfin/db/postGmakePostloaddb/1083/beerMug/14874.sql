@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changestat sierra:14874
+--changeset sierra:14874
 
 alter table pub_tracking_location
  add ptl_location_definition varchar(255);
