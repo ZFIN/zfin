@@ -1701,6 +1701,7 @@ public class DTOConversionService {
         dto.setZdbID(fish.getZdbID());
         dto.setName(fish.getDisplayName());
         dto.setHandle(fish.getHandle());
+        dto.setWildtype(fish.isWildtype());
         if (!shallow)
             dto.setGenotypeDTO(DTOConversionService.convertToGenotypeDTO(fish.getGenotype(), false));
         if (CollectionUtils.isNotEmpty(fish.getStrList())) {
