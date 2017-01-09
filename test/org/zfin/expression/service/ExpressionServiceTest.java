@@ -33,12 +33,9 @@ public class ExpressionServiceTest extends AbstractDatabaseTest {
         MarkerExpression markerExpression = expressionService.getExpressionForEfg(marker);
         assertNotNull(markerExpression);
         assertThat(markerExpression.getTotalCountForStuff(), greaterThan(35));
-        assertThat(markerExpression.getTotalCountForStuff(), lessThan(200));
         assertThat(markerExpression.getAllExpressionData().getPublicationCount(), greaterThan(20));
-        assertThat(markerExpression.getAllExpressionData().getPublicationCount(), lessThan(100));
         assertNull(markerExpression.getGeoLink());
         assertThat(markerExpression.getAllExpressionData().getFigureCount(), greaterThan(35));
-        assertThat(markerExpression.getAllExpressionData().getFigureCount(), lessThan(200));
         assertNotNull(markerExpression.getDirectlySubmittedExpression());
         assertNull(markerExpression.getWildTypeStageExpression());
     }
