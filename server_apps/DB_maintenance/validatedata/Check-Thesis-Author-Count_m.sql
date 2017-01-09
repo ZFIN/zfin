@@ -6,3 +6,4 @@ FROM publication
 INNER JOIN journal ON journal.jrnl_zdb_id = publication.pub_jrnl_zdb_id
 WHERE journal.jrnl_name LIKE '%Thesis%'
 AND publication.authors LIKE '%,%,%'
+ and publication.zdb_id not in ('ZDB-PUB-150818-80')
