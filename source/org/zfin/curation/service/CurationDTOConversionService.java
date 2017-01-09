@@ -1,7 +1,6 @@
 package org.zfin.curation.service;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.curation.Curation;
 import org.zfin.curation.PublicationNote;
@@ -9,7 +8,6 @@ import org.zfin.curation.presentation.*;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.profile.Person;
-import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.*;
 import org.zfin.publication.presentation.DashboardImageBean;
@@ -20,9 +18,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class CurationDTOConversionService {
-
-    @Autowired
-    private ProfileRepository profileRepository;
 
     private static final String DEFAULT_IMAGE = "/images/LOCAL/smallogo.gif";
 
@@ -52,10 +47,10 @@ public class CurationDTOConversionService {
         dto.setLastName(person.getLastName());
         dto.setName(person.getFirstName() + " " + person.getLastName());
         dto.setEmail(person.getEmail());
-        if (profileRepository.personHasSnapshot(person)) {
-            dto.setImageURL("/action/profile/image/view/" + person.getZdbID() + ".jpg");
-        } else {
+        if (person.getSnapshot() == null) {
             dto.setImageURL(DEFAULT_IMAGE);
+        } else {
+            dto.setImageURL("/action/profile/image/view/" + person.getZdbID() + ".jpg");
         }
         return dto;
     }
