@@ -9,6 +9,7 @@
 <include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/addDefinition.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/createStatsTables.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/createSanger10.sql"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/loadChromosome.xml"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/loadChromosome.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/dropTempSanger10.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/addLastSentEmailDate.sql"/>
