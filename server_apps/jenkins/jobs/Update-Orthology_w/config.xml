@@ -2,7 +2,7 @@
 <project>
   <actions/>
   <description>Update Orthology Information in ZFIN for Human (NCBI), Mouse (MGI) and Fly (Flybase)</description>
-  <keepDependencies>false</keepDependencies>
+   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
@@ -18,7 +18,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/ORTHO &amp;&amp; runOrthology.pl</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/ORTHO &amp;&amp; runOrthology.pl </command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -27,59 +27,59 @@
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
-    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
-      <recipientList></recipientList>
-      <configuredTriggers>
-        <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
-          <email>
-            <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
-            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${SCRIPT, template=&quot;reportBody.template&quot;}</body>
-            <sendToDevelopers>false</sendToDevelopers>
-            <sendToRequester>false</sendToRequester>
-            <includeCulprits>false</includeCulprits>
-            <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>server_apps/data_transfer/ORTHO/*.txt</attachmentsPattern>
-            <attachBuildLog>false</attachBuildLog>
-            <compressBuildLog>false</compressBuildLog>
-            <replyTo></replyTo>
-            <contentType>project</contentType>
-          </email>
-        </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
-        <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
-          <email>
-            <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
-            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>$PROJECT_DEFAULT_CONTENT</body>
-            <sendToDevelopers>false</sendToDevelopers>
-            <sendToRequester>false</sendToRequester>
-            <includeCulprits>false</includeCulprits>
-            <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>server_apps/data_transfer/ORTHO/*.txt</attachmentsPattern>
-            <attachBuildLog>false</attachBuildLog>
-            <compressBuildLog>false</compressBuildLog>
-            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
-            <contentType>project</contentType>
-          </email>
-        </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
-      </configuredTriggers>
-     <contentType>text/html</contentType>
-      <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
-      <defaultContent>$DEFAULT_CONTENT</defaultContent>
-      <attachmentsPattern>server_apps/data_transfer/ORTHO/ortho_statistics.txt</attachmentsPattern>
-      <presendScript></presendScript>
-      <attachBuildLog>true</attachBuildLog>
-      <compressBuildLog>false</compressBuildLog>
-      <replyTo>${DB_OWNER}@zfin.org</replyTo>
-      <saveOutput>false</saveOutput>
-    </hudson.plugins.emailext.ExtendedEmailPublisher>
+      <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.36">
+          <recipientList></recipientList>
+          <configuredTriggers>
+              <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+                  <email>
+                      <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
+                      <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+                      <body>$PROJECT_DEFAULT_CONTENT</body>
+                      <sendToDevelopers>false</sendToDevelopers>
+                      <sendToRequester>false</sendToRequester>
+                      <includeCulprits>false</includeCulprits>
+                      <sendToRecipientList>true</sendToRecipientList>
+                      <attachmentsPattern></attachmentsPattern>
+                      <attachBuildLog>false</attachBuildLog>
+                      <compressBuildLog>false</compressBuildLog>
+                      <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+                      <contentType>project</contentType>
+                  </email>
+              </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+              <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+                  <email>
+                      <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+                      <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+                      <body>$PROJECT_DEFAULT_CONTENT</body>
+                      <sendToDevelopers>false</sendToDevelopers>
+                      <sendToRequester>false</sendToRequester>
+                      <includeCulprits>false</includeCulprits>
+                      <sendToRecipientList>true</sendToRecipientList>
+                      <attachmentsPattern></attachmentsPattern>
+                      <attachBuildLog>false</attachBuildLog>
+                      <compressBuildLog>false</compressBuildLog>
+                      <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+                      <contentType>project</contentType>
+                  </email>
+              </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+          </configuredTriggers>
+          <contentType>default</contentType>
+          <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
+          <defaultContent>$DEFAULT_CONTENT</defaultContent>
+          <attachmentsPattern>server_apps/DB_maintenance/warehouse/constructMart/*.txt</attachmentsPattern>
+          <presendScript></presendScript>
+          <attachBuildLog>false</attachBuildLog>
+          <compressBuildLog>false</compressBuildLog>
+          <replyTo>${DB_OWNER}@zfin.org</replyTo>
+          <saveOutput>false</saveOutput>
+      </hudson.plugins.emailext.ExtendedEmailPublisher>
   </publishers>
-  <buildWrappers>
-    <EnvInjectBuildWrapper plugin="envinject@1.89">
-      <info>
-        <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
-        <loadFilesFromMaster>false</loadFilesFromMaster>
-      </info>
-    </EnvInjectBuildWrapper>
-  </buildWrappers>
+    <buildWrappers>
+        <EnvInjectBuildWrapper plugin="envinject@1.89">
+            <info>
+                <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
+                <loadFilesFromMaster>false</loadFilesFromMaster>
+            </info>
+        </EnvInjectBuildWrapper>
+    </buildWrappers>
 </project>
