@@ -16,14 +16,14 @@
   </triggers>
   <concurrentBuild>false</concurrentBuild>
   <customWorkspace>$TARGETROOT</customWorkspace>
-  <builders>
+<!--  <builders>
     <hudson.tasks.Shell>
       <command>cd $TARGETROOT/server_apps/data_transfer/ORTHO &amp;&amp; runOrthology.pl</command>
     </hudson.tasks.Shell>
-  </builders>
+  </builders> -->
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/data_transfer/ORTHO/*.txt,server_apps/data_transfer/ORTHO/*.log</artifacts>
+      <artifacts>server_apps/data_transfer/ORTHO/*.txt</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -39,7 +39,7 @@
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>erver_apps/data_transfer/ORTHO/*.txt,server_apps/data_transfer/ORTHO/*.log</attachmentsPattern>
+            <attachmentsPattern>$TARGETROOT/server_apps/data_transfer/ORTHO/orth*.txt</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>
@@ -55,7 +55,7 @@
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>server_apps/data_transfer/ORTHO/*.txt</attachmentsPattern>
+            <attachmentsPattern>server_apps/data_transfer/ORTHO/orth*.txt</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
@@ -66,7 +66,7 @@
          <contentType>default</contentType>
           <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
           <defaultContent>$DEFAULT_CONTENT</defaultContent>
-          <attachmentsPattern>server_apps/data_transfer/ORTHO/*.txt</attachmentsPattern>
+          <attachmentsPattern>server_apps/data_transfer/ORTHO/orth*.txt</attachmentsPattern>
           <presendScript></presendScript>
           <attachBuildLog>false</attachBuildLog>
           <compressBuildLog>false</compressBuildLog>

@@ -239,7 +239,7 @@ $cur->bind_columns(\$organism,\$orthoName,\$orthoAbbrev,\$ncbiID,\$zdbGeneId,\$z
 
 %namesFlyOrthNCBI = ();
 
-open (NOTFOUND, ">ncbiIdsNotFoundReport.txt") || die "Cannot open ncbiIdsNotFoundReport.txt : $!\n";
+open (NOTFOUND, ">orthoNcbiIdsNotFoundReport.txt") || die "Cannot open orthoNcbiIdsNotFoundReport.txt : $!\n";
 
 $ctNotFound = 0;
 
@@ -305,9 +305,9 @@ $ctAll3NamesIdentical = $ctIdenticalToHumanAndNoMouse = $ctIdenticalToMouseAndNo
 $total = 0;
 $ctDiffrentZFgeneNames = $ctUpdatedOrthNames = 0;
 
-open (ORTHNAMEREPORT, ">orthNamesUpdatedReport.txt") || die "Cannot open orthNamesUpdatedReport : $!\n";
-open (ORTHNAMEUPDATE, ">orthNamesUpdateList.txt") || die "Cannot open orthNamesUpdateList.unl : $!\n";
-open (ZFNAMEREPORT, ">inconsistentZebrafishGeneNamesReport.txt") ||  die "Cannot open inconsistentZebrafishGeneNamesReport : $!\n";
+open (ORTHNAMEREPORT, ">orthoNamesUpdatedReport.txt") || die "Cannot open orthNamesUpdatedReport : $!\n";
+open (ORTHNAMEUPDATE, ">orthoNamesUpdateList.txt") || die "Cannot open orthNamesUpdateList.unl : $!\n";
+open (ZFNAMEREPORT, ">orthoInconsistentZebrafishGeneNamesReport.txt") ||  die "Cannot open inconsistentZebrafishGeneNamesReport : $!\n";
 open (PREVIOUSLYREPORTED, ">>alreadyExamined") ||  die "Cannot open alreadyExamined : $!\n";
 
 %zdbGeneIdsAlreadyReported = ();
