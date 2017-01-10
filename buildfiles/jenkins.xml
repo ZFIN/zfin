@@ -217,8 +217,8 @@
                 stream -> props.load(stream)
             }
 
-            def file = new File(properties.jobTargetDirectory)
-            def targetJobs = file.listFiles()
+            def jobTargetDirectory = new File(properties.jobTargetDirectory)
+            def targetJobs = jobTargetDirectory.listFiles()
             println(targetJobs.size() + " jobs in target")
             println "Total jobs: " + jobs.size()
             targetJobs.each { targetJob ->
