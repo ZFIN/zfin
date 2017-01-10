@@ -102,13 +102,10 @@ public class SequenceTargetingReagentViewController {
         sequenceTargetingReagentBean.setExpressionDisplays(strExpressionDisplays);
 
         // PHENOTYPE
+        boolean phenoMartRegening = RepositoryFactory.getPhenotypeRepository().getPhenoMartStatus().isSystemUpdateDisabled();
+        sequenceTargetingReagentBean.setPhenoMartBeingRegened(phenoMartRegening);
 
-        boolean phenoMartRegening = RepositoryFactory.getPhenotypeRepository().getRegenPhenoMartFlag();
-
-        if (phenoMartRegening) {
-            sequenceTargetingReagentBean.setPhenoMartBeingRegened(true);
-        } else {
-            sequenceTargetingReagentBean.setPhenoMartBeingRegened(false);
+        if (!phenoMartRegening) {
             List<GenotypeFigure> genotypeFigures = MarkerService.getPhenotypeDataForSTR(sequenceTargetingReagent);
 
             if (genotypeFigures == null || genotypeFigures.size() == 0)  {

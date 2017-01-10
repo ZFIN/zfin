@@ -1,6 +1,7 @@
 package org.zfin.mutant.repository;
 
 import org.zfin.expression.Figure;
+import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.PostComposedPresentationBean;
@@ -273,5 +274,10 @@ public interface PhenotypeRepository {
 
     List<PhenotypeWarehouse> getPhenotypeWarehouse(String figureID);
 
-    boolean getRegenPhenoMartFlag();
+    /**
+     * Retrieve the status of the pheno mart
+     *
+     * @return status
+     */
+     ZdbFlag getPhenoMartStatus();
 }
