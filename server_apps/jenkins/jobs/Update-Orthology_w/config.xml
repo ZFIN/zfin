@@ -66,7 +66,7 @@
          <contentType>default</contentType>
           <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
           <defaultContent>$DEFAULT_CONTENT</defaultContent>
-          <attachmentsPattern>server_apps/data_transfer/ORTHO/orth*.txt</attachmentsPattern>
+          <attachmentsPattern></attachmentsPattern>
           <presendScript></presendScript>
           <attachBuildLog>false</attachBuildLog>
           <compressBuildLog>false</compressBuildLog>
