@@ -23,11 +23,11 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/data_transfer/ORTHO/ortho_statistics.txt</artifacts>
+      <artifacts>server_apps/data_transfer/ORTHO/*.txt</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
-    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
+    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.41">
       <recipientList></recipientList>
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
@@ -39,7 +39,7 @@
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>erver_apps/data_transfer/ORTHO/ortho_statistics.txt</attachmentsPattern>
+            <attachmentsPattern>erver_apps/data_transfer/ORTHO/*.txt</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>
