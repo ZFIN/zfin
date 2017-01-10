@@ -16,11 +16,11 @@
   </triggers>
   <concurrentBuild>false</concurrentBuild>
   <customWorkspace>$TARGETROOT</customWorkspace>
-<!--  <builders>
+  <builders>
     <hudson.tasks.Shell>
       <command>cd $TARGETROOT/server_apps/data_transfer/ORTHO &amp;&amp; runOrthology.pl</command>
     </hudson.tasks.Shell>
-  </builders> -->
+  </builders> 
   <publishers>
     <hudson.tasks.ArtifactArchiver>
       <artifacts>server_apps/data_transfer/ORTHO/*.txt</artifacts>
