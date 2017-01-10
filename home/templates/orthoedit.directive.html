@@ -1,4 +1,7 @@
-<table class="primary-entity-attributes">
+<ng-transclude></ng-transclude>
+<span class="no-data-tag" ng-hide="vm.edit || vm.orthologs.length > 0">No data available</span>
+
+<table class="primary-entity-attributes" ng-show="vm.edit">
     <tr ng-show="vm.showGenePicker">
         <th>Zebrafish gene</th>
         <td>
@@ -9,7 +12,7 @@
             </form>
         </td>
     </tr>
-    <tr ng-show="vm.edit">
+    <tr>
         <th>Import from NCBI</th>
         <td>
             <form class="curation-form curation-inline">
@@ -23,8 +26,7 @@
 
 <div class="error" ng-show="vm.generalError">{{vm.generalError}}</div>
 <div ng-show="vm.orthologsLoading" class="loading-overlay"><i class="fa fa-spinner fa-spin"></i></div>
-<span ng-if="vm.showOrthology">
-<table class="ortholog-table summary basicstripes">
+<table class="ortholog-table summary basicstripes" ng-show="vm.edit || vm.orthologs.length > 0">
     <thead>
     <tr>
         <th ng-show="vm.edit"></th>
@@ -76,12 +78,12 @@
         </td>
     </tr>
 </table>
-<a href="/action/marker/{{vm.gene}}/download/orthology" ng-if="(vm.showDownloadLink && !vm.edit)"><i
-        class="fa fa-download"></i>
-    Download Curated Orthology</a>
 
+<a href="/action/marker/{{vm.gene}}/download/orthology" ng-show="vm.showDownloadLink && !vm.edit && vm.orthologs.length > 0">
+    <i class="fa fa-download"></i> Download Curated Orthology
+</a>
 
-<div class="summary" >
+<div class="summary" ng-show="vm.edit || vm.note.note">
     <b>Orthology Note</b>
 
     <div inline-edit-textarea
@@ -91,13 +93,11 @@
          wrapper-class="'curation-form'"
          save-button-class="'zfin-button approve'"
          cancel-button-class="'zfin-button cancel'"
-         ng-if="vm.edit"></div>
-    <div ng-if="!vm.edit">
+         ng-show="vm.edit"></div>
+    <div ng-show="!vm.edit">
         {{vm.note.note}}
     </div>
 </div>
-</span>
-
 
 <div id="evidence-modal" class="jq-modal curation">
     <h3>

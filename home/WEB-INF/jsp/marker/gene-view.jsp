@@ -121,12 +121,8 @@
 <%--other GENE/Marker Pages--%>
 <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}"/>
 
-    <p/>
-
 <%--ORTHOLOGY--%>
-<zfin2:orthology
-        marker="${formBean.marker}"
-        showTitle="true"/>
+<zfin2:orthology marker="${formBean.marker}" showTitle="true"/>
 
 <%--CITATIONS--%>
 <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>
