@@ -3,10 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import org.zfin.gwt.root.dto.*;
-import org.zfin.gwt.root.ui.ErrorHandler;
-import org.zfin.gwt.root.ui.TermEntry;
-import org.zfin.gwt.root.ui.TermInfoCallBack;
-import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.LookupRPCServiceAsync;
@@ -175,6 +172,13 @@ public class FxCurationPresenter implements Presenter {
             });
         }
 
+    }
+
+    public void updateTermInfo(String termName, String ontologyName) {
+        if (termName != null && !termName.startsWith(ItemSuggestCallback.END_ELLIPSIS)) {
+            OntologyDTO ontology = OntologyDTO.getOntologyByName(ontologyName);
+            LookupRPCService.App.getInstance().getTermByName(ontology, termName, new TermInfoCallBack(view.termInfoBox, termName));
+        }
     }
 
 

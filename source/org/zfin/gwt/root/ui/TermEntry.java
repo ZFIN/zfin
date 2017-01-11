@@ -46,6 +46,14 @@ public class TermEntry extends HorizontalPanel {
         addInternalListeners();
     }
 
+    public TermEntry(List<OntologyDTO> ontologies, EntityPart termPart, TermInfoComposite termInfoComposite, String tabName) {
+        this(ontologies, termPart, tabName);
+        this.termInfoComposite = termInfoComposite;
+        termTextBox.markUnValidateText();
+        termTextBox.setTermInfoTable(termInfoComposite);
+        addInternalListeners();
+    }
+
     public TermEntry(List<OntologyDTO> ontologies, EntityPart termPart, ErrorHandler errorHandler) {
         this(ontologies, termPart);
         this.errorHandler = errorHandler;
@@ -63,10 +71,25 @@ public class TermEntry extends HorizontalPanel {
         init();
     }
 
+    public TermEntry(List<OntologyDTO> ontologies, EntityPart termPart, String tabName) {
+        if (ontologies == null || ontologies.isEmpty())
+            throw new NullpointerException("no ontology provided");
+        if (termPart == null)
+            throw new NullpointerException("no term part provided");
+        this.ontologies = ontologies;
+        this.termPart = termPart;
+        termTextBox = new LookupComposite(true, termPart.name());
+        this.tabName = tabName;
+        ontologySelector.addStyleName(termPart.name() + "_" + tabName);
+        init();
+    }
+
+    private String tabName;
+
     public
     @UiConstructor
-    TermEntry(String listOFOntologies, String entityPart, TermInfoComposite termInfoTable) {
-        this(getOntologyDTOs(listOFOntologies), EntityPart.valueOf(entityPart), termInfoTable);
+    TermEntry(String listOFOntologies, String entityPart, TermInfoComposite termInfoTable, String tabName) {
+        this(getOntologyDTOs(listOFOntologies), EntityPart.valueOf(entityPart), termInfoTable, tabName);
         copyFromTerminfoToTextButton.addClickHandler(new CopyTermToEntryFieldClickListener());
     }
 
@@ -222,7 +245,7 @@ public class TermEntry extends HorizontalPanel {
             add(panel1);
             // hidden field that contains the ontology name used for the term info call
             Widget hidden = new HTML(ontologies.get(0).getOntologyName());
-            hidden.setStyleName(termPart.name() + "_single");
+            hidden.setStyleName(termPart.name() + "_single_" + tabName);
             hidden.setVisible(false);
             add(hidden);
         }

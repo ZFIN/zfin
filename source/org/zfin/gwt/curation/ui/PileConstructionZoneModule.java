@@ -4,7 +4,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
@@ -115,7 +114,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
     private void createTermEntryUnits() {
         for (Map.Entry<EntityPart, List<OntologyDTO>> postComposedEntry : termEntryMap.entrySet()) {
             List<OntologyDTO> ontologies = postComposedEntry.getValue();
-            TermEntry termEntry = new TermEntry(ontologies, postComposedEntry.getKey(), termInfoTable);
+            TermEntry termEntry = new TermEntry(ontologies, postComposedEntry.getKey(), termInfoTable, CurationTab.PHENO.getName());
             termEntry.getCopyFromTerminfoToTextButton().addClickHandler(
                     new CopyTermToEntryFieldClickListener(termEntry));
             String divName = getDivName(postComposedEntry.getKey());
@@ -381,6 +380,13 @@ public class PileConstructionZoneModule extends Composite implements Constructio
                 return part;
         }
         return null;
+    }
+
+    public void updateTermInfoBox(String termName, String ontologyName) {
+        if (termName != null && !termName.startsWith(ItemSuggestCallback.END_ELLIPSIS)) {
+            OntologyDTO ontology = OntologyDTO.getOntologyByName(ontologyName);
+            LookupRPCService.App.getInstance().getTermByName(ontology, termName, new TermInfoCallBack(termInfoTable, termName));
+        }
     }
 
     // ************************* ClickHandler, ChangeHandler, Callbacks, ....

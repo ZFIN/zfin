@@ -12,12 +12,11 @@ import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.curation.ui.*;
+import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
-import org.zfin.gwt.root.ui.HandlesError;
-import org.zfin.gwt.root.ui.SimpleErrorElement;
-import org.zfin.gwt.root.ui.TermEntry;
-import org.zfin.gwt.root.ui.TermInfoComposite;
+import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.AppUtils;
+import org.zfin.gwt.root.util.LookupRPCService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,8 +73,14 @@ public class HumanDiseaseModule implements ZfinCurationModule, HandlesError {
     }
 
     @Override
-    public void handleTabToggle() {
+    public void handleTabToggle() { }
 
+    @Override
+    public void updateTermInfo(String termName, String ontologyName) {
+        if (termName != null && !termName.startsWith(ItemSuggestCallback.END_ELLIPSIS)) {
+            OntologyDTO ontology = OntologyDTO.getOntologyByName(ontologyName);
+            LookupRPCService.App.getInstance().getTermByName(ontology, termName, new TermInfoCallBack(termInfoBox, termName));
+        }
     }
 
     @UiHandler("resetButton")
