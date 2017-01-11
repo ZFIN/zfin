@@ -31,7 +31,7 @@ eval `grep -i blast /private/ZfinLinks/Commons/env/blast-default.properties | gr
 # keep hardcoding till someone gets it right
 WEBHOST_FASTA_FILE_PATH="/research/zblastfiles/files"
 
-if [ "watson.zfin.org" == ${HOSTNAME} ] ; then 
+if [ "crick.zfin.org" == ${HOSTNAME} ] ; then 
 	# idealy, this line by itself would allways do the right thing on any machine
 	eval `grep -i blast /private/ZfinLinks/Commons/env/${HOSTNAME}.properties | grep "/"`
 fi
