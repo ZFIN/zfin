@@ -94,7 +94,7 @@
                 <table class="searchresults">
                     <tbody>
                     <tr>
-                        <td valign="top">
+                        <td style="vertical-align: top">
                             <table class="table table-borderless searchresults">
                                 <tbody>
                                 <tr>
@@ -173,7 +173,7 @@
                             <br>
                         </td>
                         <td></td>
-                        <td>
+                        <td style="vertical-align: top">
                             <iframe src="javascript:''" id='__gwt_historyFrame'
                                     style='position:absolute;width:0;height:0;border:0'></iframe>
                             <table style="width:550px; overflow: auto; border: 0.1px; border-style:solid; vertical-align: top">

@@ -13,10 +13,12 @@
             vertical-align: middle;
             padding: 15px;
         }
-
+        .term-construction-zone-width td:first-child {
+            width: 250px;
+        }
     </ui:style>
 
-    <g:HorizontalPanel styleName="table table-borderless searchresults">
+    <g:HorizontalPanel styleName="table table-borderless searchresults {style.term-construction-zone-width}">
         <g:HTMLPanel>
             <table class="table table-borderless searchresults">
                 <tbody>
@@ -26,7 +28,8 @@
                             <zfin:TermEntry ui:field="subTermEntry"
                                             listOFOntologies="zebrafish_anatomy,cellular_component,spatial,mouse_pathology.ontology"
                                             entityPart="ENTITY_SUBTERM"
-                                            termInfoTable="{termInfoBox}"/>
+                                            termInfoTable="{termInfoBox}"
+                                            tabName="fx"/>
                         </td>
                     </tr>
                     <tr>
@@ -45,7 +48,8 @@
                             <zfin:TermEntry ui:field="superTermEntry"
                                             listOFOntologies="zebrafish_anatomy"
                                             entityPart="ENTITY_SUPERTERM"
-                                            termInfoTable="{termInfoBox}"/>
+                                            termInfoTable="{termInfoBox}"
+                                            tabName="fx"/>
                         </td>
                     </tr>
                     <tr>

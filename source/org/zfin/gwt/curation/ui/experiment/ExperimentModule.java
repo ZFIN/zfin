@@ -81,6 +81,11 @@ public class ExperimentModule implements ZfinCurationModule {
 
     }
 
+    @Override
+    public void updateTermInfo(String termName, String ontologyName) {
+        conditionPresenter.updateTermInfoBox(termName, ontologyName);
+    }
+
     private void bindEventBusHandler() {
         AppUtils.EVENT_BUS.addHandler(SelectAutoCompleteEvent.TYPE,
                 new SelectAutoCompleteEventHandler() {

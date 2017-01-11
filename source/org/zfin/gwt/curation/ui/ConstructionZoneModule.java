@@ -95,6 +95,10 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
         fxCurationPresenter.populateTermInfo(subTermEntry);
     }
 
+    public void updateTermInfo(String termName, String ontologyName) {
+
+    }
+
     private void clearQualityChecks() {
         for (CheckBox checkBox : qualityCheckBoxList)
             checkBox.setValue(false);

@@ -73,6 +73,11 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     }
 
     @Override
+    public void updateTermInfo(String termName, String ontologyName) {
+
+    }
+
+    @Override
     public boolean isDirty() {
         return false;
     }
