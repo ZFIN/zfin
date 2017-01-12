@@ -1,6 +1,5 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.user.client.Window;
 import org.zfin.gwt.curation.event.ChangeCurationFilterEvent;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
@@ -24,7 +23,7 @@ public class PhenotypeCurationModule implements ZfinCurationModule, HandlesError
     // gui
     private CurationFilterModule curationFilterModule;
     private MutantModule mutantExpressionModule;
-
+    private PileConstructionZoneModule constructionZoneModule;
     // listener
     private List<HandlesError> handlesErrorListeners = new ArrayList<>();
 
@@ -40,7 +39,7 @@ public class PhenotypeCurationModule implements ZfinCurationModule, HandlesError
         structureModule.setExpressionSection(mutantExpressionModule);
         Map<EntityPart, List<OntologyDTO>> termEntryMap = getTermEntryMap();
 
-        PileConstructionZoneModule constructionZoneModule = new PileConstructionZoneModule(publicationID, termEntryMap);
+        constructionZoneModule = new PileConstructionZoneModule(publicationID, termEntryMap);
         constructionZoneModule.setStructureValidator(new PatoPileStructureValidator(termEntryMap));
         constructionZoneModule.setStructurePile(structureModule);
         curationFilterModule = new CurationFilterModule(mutantExpressionModule, structureModule, publicationID);
@@ -86,6 +85,11 @@ public class PhenotypeCurationModule implements ZfinCurationModule, HandlesError
     @Override
     public void handleTabToggle() {
         mutantExpressionModule.retrieveEaps();
+    }
+
+    @Override
+    public void updateTermInfo(String termName, String ontologyName) {
+        constructionZoneModule.updateTermInfoBox(termName, ontologyName);
     }
 
     private Map<EntityPart, List<OntologyDTO>> getTermEntryMap() {

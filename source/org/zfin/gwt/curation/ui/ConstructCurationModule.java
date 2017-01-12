@@ -58,6 +58,11 @@ public class ConstructCurationModule extends ConstructionZoneAdapater implements
 
     }
 
+    @Override
+    public void updateTermInfo(String termName, String ontologyName) {
+
+    }
+
     protected void addInternalListeners() {
 
         constructRelationshipBox.addHandlesErrorListener(this);
