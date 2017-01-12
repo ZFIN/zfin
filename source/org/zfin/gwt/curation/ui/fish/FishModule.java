@@ -67,7 +67,7 @@ public class FishModule extends Composite implements ZfinCurationModule {
 
     @Override
     public void handleCurationEvent(CurationEvent event) {
-        if (event.getEventType().is(EventType.ATTRIBUTE_MARKER))
+        if (event.getEventType().is(EventType.MARKER_ATTRIBUTION))
             genotypeConstructionPresenter.updateStrList();
         if (event.getEventType().is(EventType.ADD_REMOVE_ATTRIBUTION_FEATURE) || event.getEventType().is(EventType.CUD_FEATURE)) {
             genotypeConstructionPresenter.updateFeatureList();
