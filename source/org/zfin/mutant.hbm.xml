@@ -35,6 +35,7 @@
 
         <property name="name" column="fish_name"/>
         <property name="nameOrder" column="fish_name_order"/>
+        <property name="displayName" column="fish_full_name"/>
         <property name="handle" column="fish_handle"/>
         <property name="order" column="fish_order"/>
         <property name="wildtype" column="fish_is_wildtype"/>
