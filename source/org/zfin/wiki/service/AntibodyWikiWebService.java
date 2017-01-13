@@ -1,6 +1,7 @@
 package org.zfin.wiki.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.anatomy.presentation.AnatomyLabel;
@@ -284,8 +285,9 @@ public class AntibodyWikiWebService extends WikiWebService {
             for (MarkerSupplier supplier : suppliers) {
                 String wikiLink = SourcePresentation.getWikiLink(supplier.getOrganization());
                 supplierStringBuilder.append(wikiLink);
-                if (++index < count)
+                if (++index < count) {
                     supplierStringBuilder.append(" &nbsp;");
+                }
             }
         }
         content = content.replace("{text-data:Suppliers}{text-data}", supplierStringBuilder);
@@ -344,34 +346,10 @@ public class AntibodyWikiWebService extends WikiWebService {
     }
 
     public static String getEncodedString(String value) {
-        if (value == null)
+        if (value == null) {
             return null;
-        value = value.replace("ü", "&uuml;");
-        value = value.replace("ä", "&auml;");
-        value = value.replace("ö", "&ouml;");
-        value = value.replace("ó", "&oacute;");
-        value = value.replace("õ", "&otilde;");
-        value = value.replace("ñ", "&ntilde;");
-        value = value.replace("é", "&eacute;");
-        value = value.replace("á", "&aacute;");
-        value = value.replace("à", "&agrave;");
-        value = value.replace("î", "&icirc;");
-        value = value.replace("í", "&iacute;");
-        value = value.replace("è", "&egrave;");
-        value = value.replace("ø", "&oslash;");
-        value = value.replace("&#945;", "&alpha;");
-        value = value.replace("&#946;", "&beta;");
-        value = value.replace("&#947;", "&gamma;");
-        value = value.replace("&#8211;", "&ndash;");
-        value = value.replace("&#8220;", "&rdquo;");
-        value = value.replace("®", "&reg;");
-        value = value.replaceAll("R&D", "R&amp;D");
-        value = value.replaceAll("\"", "&quot;");
-        value = value.replaceAll(">", "&gt;");
-        value = value.replaceAll("<", "&lt;");
-        value = value.replaceAll(" \\& ", " &amp; ");
-        //value = value.replaceAll("\\&&&[^\\&alpha;]", "&amp;");
-        return value;
+        }
+        return StringEscapeUtils.escapeXml(value);
     }
 
     private StringBuilder getHyperlink(String name, String url) {
@@ -638,8 +616,9 @@ public class AntibodyWikiWebService extends WikiWebService {
                             if (isZfinAntibody) {
                                 logger.info("trying to drop!: " + remoteSearchResult.getTitle());
                                 wikiSynchronizationReport = dropPage(remoteSearchResult, wikiSynchronizationReport);
-                            } else
+                            } else {
                                 communityAntibodies.add(remoteSearchResult);
+                            }
                         }
                     } catch (Exception e) {
                         logger.error("failed to drop page: " + remoteSearchResult.getTitle(), e);
@@ -728,8 +707,9 @@ public class AntibodyWikiWebService extends WikiWebService {
                         sb.append("/display/AB/");
                         sb.append(name);
                         return sb.toString();
-                    } else
+                    } else {
                         return page.getUrl();
+                    }
 
                 } else {
                     return null;

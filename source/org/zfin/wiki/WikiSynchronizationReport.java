@@ -117,13 +117,14 @@ public class WikiSynchronizationReport {
         return updatedPages;
     }
 
+    public List<String> getErrorPages() {
+        return errorPages;
+    }
+
     public boolean hasChanges() {
-        if (CollectionUtils.isNotEmpty(createdPages))
-            return true;
-        if (CollectionUtils.isNotEmpty(droppedPages))
-            return true;
-        if (CollectionUtils.isNotEmpty(updatedPages))
-            return true;
-        return false;
+        return CollectionUtils.isNotEmpty(errorPages) ||
+                CollectionUtils.isNotEmpty(createdPages) ||
+                CollectionUtils.isNotEmpty(droppedPages) ||
+                CollectionUtils.isNotEmpty(updatedPages);
     }
 }
