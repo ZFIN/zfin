@@ -6,7 +6,9 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ZfinFlexTable;
@@ -49,6 +51,14 @@ public class GenotypeView extends SingleGridBaseComposite {
     FlowPanel viewPanel;
 
     private String publicationID;
+
+    @UiHandler("showHideToggle")
+    void onClickShowHide(@SuppressWarnings("unused") ClickEvent event) {
+        showHideToggle.toggleVisibility();
+        if(showHideToggle.isVisible())
+            presenter.go();
+    }
+
 
     public void setData(List<GenotypeDTO> genotypeDTOList) {
         genotypeListTable.removeAllRows();

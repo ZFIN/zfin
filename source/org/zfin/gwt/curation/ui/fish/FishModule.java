@@ -50,7 +50,6 @@ public class FishModule extends Composite implements ZfinCurationModule {
         VerticalPanel outer = uiBinder.createAndBindUi(this);
         RootPanel.get(FISH_TAB).add(outer);
         presenter = new GenotypePresenter(genotypeView, publicationID);
-        presenter.go();
 
         fishPresenter = new FishPresenter(fishView, publicationID);
         fishPresenter.go();
