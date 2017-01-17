@@ -15,7 +15,13 @@ import org.zfin.feature.presentation.FeatureLabEntry;
 import org.zfin.feature.presentation.FeaturePrefixLight;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
+import org.zfin.gwt.curation.server.CurationFilterRPCImpl;
+import org.zfin.gwt.curation.server.FeatureRPCServiceImpl;
+import org.zfin.gwt.curation.ui.FeatureRPCService;
+import org.zfin.gwt.curation.ui.PublicationNotFoundException;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
+import org.zfin.gwt.root.dto.FilterValuesDTO;
+import org.zfin.gwt.root.dto.MutationDetailControlledVocabularyTermDTO;
 import org.zfin.marker.Marker;
 import org.zfin.profile.Organization;
 import org.zfin.repository.RepositoryFactory;
@@ -406,6 +412,25 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         } finally {
             HibernateUtil.rollbackTransaction();
         }
+    }
+
+    @Test
+    public void getDnaChangeList() {
+        FeatureRPCService service = new FeatureRPCServiceImpl();
+        List<MutationDetailControlledVocabularyTermDTO> list = service.getAminoAcidList();
+        assertNotNull(list);
+    }
+
+    @Test
+    public void getPossibleValues() {
+        CurationFilterRPCImpl service = new CurationFilterRPCImpl();
+        FilterValuesDTO dto = null;
+        try {
+            dto = service.getPossibleFilterValues("ZDB-PUB-151007-1");
+        } catch (PublicationNotFoundException e) {
+            fail();
+        }
+        assertNotNull(dto);
     }
 
 }

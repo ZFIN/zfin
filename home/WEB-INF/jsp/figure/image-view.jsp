@@ -17,8 +17,7 @@
 
 <zfin2:dataManager zdbID="${image.zdbID}"
                    editURL="${editURL}"
-                   deleteURL="${deleteURL}"
-                   rtype="image"/>
+                   deleteURL="${deleteURL}"/>
 
 
 
@@ -48,14 +47,15 @@
             <c:set var="probeDisplay" value="[${probe.abbreviation}]"/>
         </c:if>
 
-    <c:if test="${image.figure.publication.type == CURATION}">
-        <c:if test="${!empty probe}">
-        <a class="additional-figures-link" href="/action/figure/all-figure-view/${image.figure.publication.zdbID}${probeUrlPart}">All Figures for ${image.figure.publication.shortAuthorList}</a>
+        <c:if test="${image.figure.publication.type == CURATION}">
+            <c:if test="${!empty probe}">
+                <a class="additional-figures-link" href="/action/figure/all-figure-view/${image.figure.publication.zdbID}${probeUrlPart}">All Figures for ${image.figure.publication.shortAuthorList}</a>
+            </c:if>
         </c:if>
+        <c:if test="${image.figure.publication.type != CURATION}">
+            <a class="additional-figures-link" href="/action/figure/all-figure-view/${image.figure.publication.zdbID}${probeUrlPart}">Figures for ${image.figure.publication.shortAuthorList}${probeDisplay}</a>
         </c:if>
-    <c:if test="${image.figure.publication.type != CURATION}">
-        <a class="additional-figures-link" href="/action/figure/all-figure-view/${image.figure.publication.zdbID}${probeUrlPart}">Figures for ${image.figure.publication.shortAuthorList}${probeDisplay}</a>
-        </c:if>
+
     </div>
 </c:if>
 <p>

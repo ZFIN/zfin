@@ -36,7 +36,7 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable {
     // interface parameter
     private String queryType = QueryTypes.FASTA.toString();
 
-    private int refreshTime = 10; // refresh time in seconds
+    private int refreshTime = 10; // handleCurationEvent time in seconds
 
     // *blast* parameters
     private String querySequence;

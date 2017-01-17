@@ -57,13 +57,10 @@ action/expression/assay-abbrev-popup
 action/figure/all-figure-view
 aa-geneprddescription.apg
 aa-quickfindpers.apg
-aa-sequence.apg
 aa-xpatexpcdndisplay.apg
 aa-zirclist.apg
 aa-showpubs.apg
 aa-externalredirect.apg
-aa-externallink.apg
 aa-pubmedredirect.apg
-aa-markergoview.apg
 
 action/marker/note/external

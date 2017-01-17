@@ -1,28 +1,40 @@
 package org.zfin.gwt.curation.event;
 
-import com.google.gwt.event.shared.GwtEvent;
 import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
+import org.zfin.gwt.root.util.StringUtils;
 
-public class ChangeCurationFilterEvent extends GwtEvent<ChangeCurationFilterEventHandler> {
-    public static Type<ChangeCurationFilterEventHandler> TYPE = new Type<>();
+public class ChangeCurationFilterEvent extends CurationEvent {
 
     private ExpressionExperimentDTO experimentFilter;
     private String figureID;
 
 
-    public ChangeCurationFilterEvent(ExpressionExperimentDTO experimentFilter, String figureID) {
+    public ChangeCurationFilterEvent(EventType type, ExpressionExperimentDTO experimentFilter, String figureID) {
+        super(type, getFilterValues(experimentFilter, figureID));
         this.experimentFilter = experimentFilter;
-        this.figureID = figureID;
+        if (StringUtils.isNotEmpty(figureID))
+            this.figureID = figureID;
     }
 
-    @Override
-    public Type<ChangeCurationFilterEventHandler> getAssociatedType() {
-        return TYPE;
+    private static String getFilterValues(ExpressionExperimentDTO experimentFilter, String figureID) {
+        String filter = getFilterElementDisplay("Figure", figureID);
+        if (experimentFilter != null) {
+            if (experimentFilter.getGene() != null)
+                filter += getFilterElementDisplay("Gene", experimentFilter.getGene().getZdbID());
+            filter += getFilterElementDisplay("Fish", experimentFilter.getFishID());
+            return filter;
+        }
+        return null;
     }
 
-    @Override
-    protected void dispatch(ChangeCurationFilterEventHandler handler) {
-        handler.onChange(this);
+    private static String getFilterElementDisplay(String entity, String value) {
+        if (value != null) {
+            String display = entity;
+            display += ": ";
+            display += value;
+            return display;
+        }
+        return "";
     }
 
     public ExpressionExperimentDTO getExperimentFilter() {

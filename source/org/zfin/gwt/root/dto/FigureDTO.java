@@ -5,7 +5,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 /**
  * Figure domain object for GWT.
  */
-public class FigureDTO implements IsSerializable {
+public class FigureDTO implements IsSerializable, FilterSelectionBoxEntry {
 
     private String zdbID;
     private String label;
@@ -33,5 +33,10 @@ public class FigureDTO implements IsSerializable {
 
     public void setOrderingLabel(String orderingLabel) {
         this.orderingLabel = orderingLabel;
+    }
+
+    @Override
+    public String getValue() {
+        return zdbID;
     }
 }

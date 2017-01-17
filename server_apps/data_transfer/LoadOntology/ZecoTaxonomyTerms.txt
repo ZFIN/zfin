@@ -1,0 +1,81 @@
+# This is the list of organism for the ZECO taxonomy ontology, a slim of the full NCBI taxonomy ontology
+#
+# To create a new slim from the Web interface:
+# 1. Add additional organism to the list of leaf terms
+# 2. Add new root organism to list of root terms if needed:
+#    For now we have bacteria, viruses and fungi
+# 3. Go to ontofox web site: http://ontofox.hegroup.org/
+# 4. Select the NCBITaxon ontology
+# 5. Paste the list of root taxa into the ' Include low level source term URIs' field
+# 6. Paste the list of leaf taxa into the '  Include top level source term URIs and target direct superclass URIs' field
+# 7. select 'includeNoIntermediates'
+# 8. paste 'includeAllAxioms' into the ' Annotation/Axiom Specification: Include source annotation URIs' field
+# 9. Hit 'Get OWL Output File'
+
+
+[URI of the OWL(RDF/XML) output file]
+http://purl.obolibrary.org/obo/vo/external/NCBITaxon_ZFIN.owl
+
+[Source ontology]
+NCBITaxon
+
+[Top level source term URIs and target direct superclass URIs]
+http://purl.obolibrary.org/obo/NCBITaxon_2     #Bacteria
+http://purl.obolibrary.org/obo/NCBITaxon_4751  #Fungi
+http://purl.obolibrary.org/obo/NCBITaxon_10239 #Virus
+
+[Source term retrieval setting]
+includeNoIntermediates
+
+[Source annotation URIs]
+includeAllAxioms
+
+[Low level source term URIs]
+http://purl.obolibrary.org/obo/NCBITaxon_1781
+http://purl.obolibrary.org/obo/NCBITaxon_216594
+http://purl.obolibrary.org/obo/NCBITaxon_1131442
+http://purl.obolibrary.org/obo/NCBITaxon_28901
+http://purl.obolibrary.org/obo/NCBITaxon_90371
+http://purl.obolibrary.org/obo/NCBITaxon_562
+http://purl.obolibrary.org/obo/NCBITaxon_668369
+http://purl.obolibrary.org/obo/NCBITaxon_83333
+http://purl.obolibrary.org/obo/NCBITaxon_1301
+http://purl.obolibrary.org/obo/NCBITaxon_1311
+http://purl.obolibrary.org/obo/NCBITaxon_1346
+http://purl.obolibrary.org/obo/NCBITaxon_1313
+http://purl.obolibrary.org/obo/NCBITaxon_170187
+http://purl.obolibrary.org/obo/NCBITaxon_636
+http://purl.obolibrary.org/obo/NCBITaxon_642
+http://purl.obolibrary.org/obo/NCBITaxon_654
+http://purl.obolibrary.org/obo/NCBITaxon_644
+http://purl.obolibrary.org/obo/NCBITaxon_645
+http://purl.obolibrary.org/obo/NCBITaxon_413502
+http://purl.obolibrary.org/obo/NCBITaxon_662
+http://purl.obolibrary.org/obo/NCBITaxon_55601
+http://purl.obolibrary.org/obo/NCBITaxon_672
+http://purl.obolibrary.org/obo/NCBITaxon_629
+http://purl.obolibrary.org/obo/NCBITaxon_29486
+http://purl.obolibrary.org/obo/NCBITaxon_287
+http://purl.obolibrary.org/obo/NCBITaxon_652611
+http://purl.obolibrary.org/obo/NCBITaxon_1009714
+http://purl.obolibrary.org/obo/NCBITaxon_262
+http://purl.obolibrary.org/obo/NCBITaxon_657445
+http://purl.obolibrary.org/obo/NCBITaxon_5475
+http://purl.obolibrary.org/obo/NCBITaxon_5476
+http://purl.obolibrary.org/obo/NCBITaxon_237561
+http://purl.obolibrary.org/obo/NCBITaxon_5052
+http://purl.obolibrary.org/obo/NCBITaxon_746128
+http://purl.obolibrary.org/obo/NCBITaxon_4830
+http://purl.obolibrary.org/obo/NCBITaxon_36080
+http://purl.obolibrary.org/obo/NCBITaxon_11270
+http://purl.obolibrary.org/obo/NCBITaxon_103603
+http://purl.obolibrary.org/obo/NCBITaxon_696863
+http://purl.obolibrary.org/obo/NCBITaxon_11287
+http://purl.obolibrary.org/obo/NCBITaxon_11288
+http://purl.obolibrary.org/obo/NCBITaxon_35297
+http://purl.obolibrary.org/obo/NCBITaxon_11309
+http://purl.obolibrary.org/obo/NCBITaxon_37124
+http://purl.obolibrary.org/obo/NCBITaxon_169963
+http://purl.obolibrary.org/obo/NCBITaxon_1642
+http://purl.obolibrary.org/obo/NCBITaxon_36809
+http://purl.obolibrary.org/obo/NCBITaxon_1590 #Lactobacillus plantarum

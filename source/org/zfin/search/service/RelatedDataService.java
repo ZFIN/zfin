@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.infrastructure.ActiveData;
+import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
@@ -34,6 +35,7 @@ import org.zfin.search.presentation.SearchResult;
 import java.lang.reflect.Field;
 import java.util.*;
 
+import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
 import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
@@ -78,7 +80,7 @@ public class RelatedDataService {
         List<String> links = new ArrayList<>();
         String gBrowseLink;
         if (StringUtils.equals(category, Category.GENE.getName())
-                || (StringUtils.equals(category, Category.MUTANT.getName()) && (StringUtils.startsWith(result.getName(), "la0")))) {
+                || (StringUtils.equals(category, Category.MUTANT.getName()))) {
 
             //String gBrowseLink = getGBrowseLink(id);
             if (ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
@@ -102,6 +104,17 @@ public class RelatedDataService {
                 List<MarkerGenomeLocation> genomeLocations = getLinkageRepository().getGenomeLocation(getMarkerRepository().getMarkerByID(id));
                 for (MarkerGenomeLocation genomeLocation : genomeLocations) {
                     if (genomeLocation.getSource() == GenomeLocation.Source.ZFIN) {
+
+
+                        gBrowseLink = makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
+                        links.add(gBrowseLink);
+                    }
+                }
+            }
+            if (ActiveData.isValidActiveData(id, ActiveData.Type.ALT)) {
+                List<FeatureGenomeLocation> genomeLocations = getLinkageRepository().getGenomeLocation(getFeatureRepository().getFeatureByID(id));
+                for (FeatureGenomeLocation genomeLocation : genomeLocations) {
+                    if (genomeLocation.getSource() == GenomeLocation.Source.DIRECT  || genomeLocation.getSource() == GenomeLocation.Source.ZFIN_Zv9) {
 
 
                         gBrowseLink = makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);

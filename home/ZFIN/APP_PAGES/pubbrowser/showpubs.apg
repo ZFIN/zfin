@@ -160,12 +160,6 @@ Message: $MI_ERRORMSG
     <?/MISQL>
 <?/MIBLOCK>
 <?MIVAR>
-$(IF,$(>,$(POSITION,$rtype,marker),0),
-      $(SETVAR,$return_page1,aa-markerupdate.apg)
-      $(SETVAR,$return_page2,aa-do-markerupdate.apg)
-      $(SETVAR,$target_table,marker)
-      )
-
 $(IF,$(>,$(POSITION,$rtype,genotype),0),
       $(SETVAR,$return_page1,aa-genotypeview.apg)
       $(SETVAR,$return_page2,aa-do-markerupdate.apg)
@@ -177,24 +171,6 @@ $(IF,$(>,$(POSITION,$OID,XPAT),0),
       $(SETVAR,$return_page2,aa-do-xpatupdatePubs.apg)
       $(SETVAR,$target_table,expression_experiment)
       )
-
-$(IF,$(>,$(POSITION,$OID,IMAGE),0),
-       $(SETVAR,$return_page1,aa-imageupdate.apg)
-       $(SETVAR,$return_page2,aa-do-imageupdate.apg)
-       $(SETVAR,$target_table,"")
-       )
-
-$(IF,$(>,$(POSITION,$rtype,locus),0),
-       $(SETVAR,$return_page1,aa-locusupdate.apg)
-       $(SETVAR,$return_page2,aa-do-locusupdate.apg)
-       $(SETVAR,$target_table,"")
-       )
-
-$(IF,$(>,$(POSITION,$rtype,goview),0),
-       $(SETVAR,$return_page1,aa-markergoview.apg)
-       $(SETVAR,$return_page2,aa-do-markergoedit.apg)
-       $(SETVAR,$target_table,"")
-       )
 
 
 <?/MIVAR>

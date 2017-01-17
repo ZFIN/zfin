@@ -6,18 +6,18 @@ public class CurationDTO {
 
     private String zdbID;
     private String topic;
-    private CuratorDTO curator;
+    private PersonDTO curator;
     private boolean dataFound;
     private Date entryDate;
     private Date openedDate;
     private Date closedDate;
 
 
-    public CuratorDTO getCurator() {
+    public PersonDTO getCurator() {
         return curator;
     }
 
-    public void setCurator(CuratorDTO curator) {
+    public void setCurator(PersonDTO curator) {
         this.curator = curator;
     }
 

@@ -36,6 +36,7 @@ public class UpdatesCheckFilter implements Filter {
         readOnlyUrls.add("/anatomy/");
         readOnlyUrls.add("/marker/transcript-view/");
         readOnlyUrls.add("/ajax/anatomylookup");
+        readOnlyUrls.add("/wiki/summary");
     }
 
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -60,10 +61,10 @@ public class UpdatesCheckFilter implements Filter {
             if (person != null) {
                 logoutUser(request, response);
                 logger.info("System is currently being updated. No login session are allowed.");
+                return;
             }
-        } else {
-            filterChain.doFilter(servletRequest, servletResponse);
         }
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 
     private boolean isReadOnlyUrl(String url) {
@@ -72,6 +73,8 @@ public class UpdatesCheckFilter implements Filter {
                 return true;
         }
         if (!(url.contains("action/") || url.contains("ajax/")))
+            return true;
+        if (url.equals("/action/"))
             return true;
         return false;
     }

@@ -15,21 +15,22 @@
             '  </tr>' +
             '  </thead>' +
             '  <tbody>' +
+            '  <tr ng-show="vm.loading">' +
+            '      <td class="text-muted text-center" colspan="3"><i class="fa fa-spinner fa-spin"></i> Loading...</td>' +
+            '  </tr>' +
+            '  <tr ng-show="!vm.loading && vm.figures.length == 0">' +
+            '    <td class="text-muted text-center" colspan="3">No figures yet.</td>' +
+            '  </tr>' +
             '  <tr ng-repeat="figure in vm.figures">' +
             '    <td>{{figure.label}}</td>' +
             '    <td>' +
-            '      <p ng-if="figure.images.length > 0">' +
-            '        <span ng-repeat="image in figure.images">' +
-            '          <img ng-src="{{image.thumbnailPath}}">' +
-            '        </span>' +
-            '      </p>' +
-            '      <p ng-bind-html="figure.caption | trustedHtml"></p>' +
+            '      <div figure-update figure="figure" has-permissions="vm.pubCanShowImages"></div>' +
             '    </td>' +
             '    <td>' +
             '      <div class="figure-delete-button pull-right" data-toggle="tooltip"' +
             '           ng-attr-data-expr-count={{figure.numExpressionStatements}}' +
             '           ng-attr-data-pheno-count={{figure.numPhenotypeStatements}}>' +
-            '        <button class="btn btn-dense btn-link" ng-click="vm.deleteFigure(figure, $index)"' +
+            '        <button class="btn btn-dense btn-link" ng-click="vm.deleteFigure(figure, $index)" title="Remove figure"' +
             '                ng-disabled="figure.deleting || figure.numExpressionStatements || figure.numPhenotypeStatements">' +
             '          <i class="fa fa-trash"></i>' +
             '        </button>' +
@@ -39,7 +40,7 @@
             '  </tbody>' +
             '</table>' +
             '<h4>Create New Figure</h4>' +
-            '<div figure-upload pub-id="{{vm.pubId}}" figures="vm.figures"></div>';
+            '<div figure-upload pub-id="{{vm.pubId}}" figures="vm.figures" has-permissions="vm.pubCanShowImages"></div>';
 
         var directive = {
             restrict: 'AE',
@@ -55,7 +56,7 @@
 
         function link(scope, element) {
             scope.$watch('vm.figures', function () {
-                // timeout so that the data attribues are settled
+                // timeout so that the data attributes are settled
                 $timeout(function() {
                     element.find('.figure-delete-button').each(function () {
                         var $button = angular.element(this);
@@ -92,16 +93,23 @@
     function FigureEditController(FigureService) {
         var vm = this;
 
+        vm.loading = false;
         vm.figures = [];
+        vm.pubCanShowImages = false;
 
         vm.deleteFigure = deleteFigure;
 
         activate();
 
         function activate() {
+            vm.loading = true;
             FigureService.getFigures(vm.pubId)
                 .then(function (response) {
-                    vm.figures = response.data;
+                    vm.figures = response.data.figures;
+                    vm.pubCanShowImages = response.data.pubCanShowImages;
+                })
+                .finally(function () {
+                    vm.loading = false;
                 });
         }
 

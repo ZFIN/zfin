@@ -12,24 +12,37 @@
             '            Fig. <input class="form-control form-control-fixed-width-sm" ng-model="vm.label">' +
             '        </div>' +
             '    </div>' +
-            '    <div class="form-group">' +
-            '        <label class="col-sm-2 control-label">Caption</label>' +
-            '        <div class="col-sm-6">' +
-            '            <textarea class="form-control" rows="6" ng-model="vm.caption"></textarea>' +
-            '        </div>' +
+            '    <div ng-show="vm.hasPermissions">' +
+            '      <div class="form-group">' +
+            '          <label class="col-sm-2 control-label">Caption</label>' +
+            '          <div class="col-sm-6">' +
+            '              <textarea class="form-control" rows="6" ng-model="vm.caption"></textarea>' +
+            '          </div>' +
+            '      </div>' +
+            '      <div class="form-group">' +
+            '          <label class="col-sm-2 control-label">Images</label>' +
+            '          <div class="col-sm-6">' +
+            '              <div file-input files="vm.files" multiple="true" accept="image/*" error-message="vm.errorMessage"></div>' +
+            '          </div>' +
+            '      </div>' +
             '    </div>' +
-            '    <div class="form-group">' +
-            '        <label class="col-sm-2 control-label">Images</label>' +
-            '        <div class="col-sm-6">' +
-            '            <div file-input files="vm.files" multiple="true"></div>' +
+            '    <div ng-show="!vm.hasPermissions">' +
+            '      <div class="row">' +
+            '        <div class="col-sm-offset-2 col-sm-6">' +
+            '          <div class="alert alert-warning">' +
+            '            Publication\'s journal does not grant automatic permission to display captions and images. If ' +
+            '            this publication has permission, indicate so in the <a href="#details">Details</a> tab.' +
+            '          </div>' +
             '        </div>' +
+            '      </div>' +
             '    </div>' +
             '    <div class="form-group">' +
             '        <div class="col-sm-offset-2 col-sm-6">' +
-            '            <button class="btn btn-primary" ng-click="vm.upload()" ng-disabled="vm.uploading">' +
+            '            <button class="btn btn-primary" ng-click="vm.upload()" ng-disabled="!vm.label || vm.uploading">' +
             '              <span ng-show="!vm.uploading">Save</span>' +
             '              <span ng-show="vm.uploading"><i class="fa fa-spin fa-spinner"></i></span>' +
             '            </button>' +
+            '            <span class="text-danger" ng-show="vm.errorMessage">{{vm.errorMessage}}</span>' +
             '        </div>' +
             '    </div>' +
             '</form>';
@@ -39,7 +52,8 @@
             template: template,
             scope: {
                 pubId: '@',
-                figures: '='
+                figures: '=',
+                hasPermissions: '='
             },
             controller: FigureUploadController,
             controllerAs: 'vm',
@@ -57,6 +71,7 @@
         vm.caption = '';
         vm.files = [];
         vm.uploading = false;
+        vm.errorMessage = '';
 
         vm.upload = upload;
 
@@ -68,6 +83,12 @@
                     vm.label = '';
                     vm.caption = '';
                     vm.files = [];
+                    vm.errorMessage = '';
+                })
+                .catch(function (response) {
+                    if (response.data && response.data.message) {
+                        vm.errorMessage = response.data.message;
+                    }
                 })
                 .finally(function () {
                     vm.uploading = false;

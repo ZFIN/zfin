@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <!DOCTYPE tiles-definitions PUBLIC
         "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
@@ -39,7 +39,13 @@
         <put-attribute name="body" value="/WEB-INF/jsp/orthology/{1}.jsp"/>
     </definition>
 
+    <definition name="curation/curation.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/curation/curation.jsp"/>
+    </definition>
+
     <definition name="marker/*.ajax" template="/WEB-INF/jsp/marker/{1}.jsp"/>
+
+    <definition name="publication/*.ajax" template="/WEB-INF/jsp/publication/{1}.jsp"/>
 
     <definition name="antibody/*.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/antibody/{1}.jsp"/>
@@ -221,7 +227,4 @@
         <put-attribute name="body" value="/WEB-INF/jsp/gbrowse/{1}.jsp" />
     </definition>
 
-
-
 </tiles-definitions>
-

@@ -181,4 +181,25 @@ public class DataAlias implements Comparable, EntityAttribution, Serializable, E
     public String getEntityName() {
         return alias;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DataAlias dataAlias = (DataAlias) o;
+
+        if (!alias.equals(dataAlias.alias)) return false;
+        if (!dataZdbID.equals(dataAlias.dataZdbID)) return false;
+        return aliasGroup.equals(dataAlias.aliasGroup);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = alias.hashCode();
+        result = 31 * result + dataZdbID.hashCode();
+        result = 31 * result + aliasGroup.hashCode();
+        return result;
+    }
 }

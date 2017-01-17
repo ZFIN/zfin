@@ -13,6 +13,8 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
+import org.zfin.gwt.curation.event.CurationEvent;
+import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.curation.event.RemoveExpressionEvent;
 import org.zfin.gwt.curation.event.SelectExpressionExperimentEvent;
 import org.zfin.gwt.root.dto.*;
@@ -67,7 +69,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     }
 
     // GUI elements
-    private Hyperlink showExpressionSection = new Hyperlink();
     private ExpressionFlexTable displayTable;
 
     // all annotations that are selected
@@ -82,16 +83,10 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     protected String duplicateRowOriginalStyle;
     protected int duplicateRowIndex;
 
-    // used to control that this module is loaded only once.
-    private boolean initialized;
-
     // RPC class being used for this section.
     private CurationExperimentRPCAsync curationRPCAsync = CurationExperimentRPC.App.getInstance();
-    public static final String HIDE = "hide";
-    public static final String SHOW = "show";
-    public static final String PUSH_TO_PATO = "to pato";
-    public static final String IN_PATO = "in pato";
-    public static final String PUSHED = "pushed";
+    public static final String PUSH_TO_PATO = "to pheno";
+    public static final String IN_PATO = "in pheno";
 
     // 20 expressed terms is a bit higher than the average
     // number of expressed terms used in a single publication.
@@ -104,47 +99,14 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     // injected variables
     private ExpressionExperimentZonePresenter expressionExperimentZonePresenter;
 
-    // filter set by the banana bar
-    private ExpressionExperimentDTO experimentFilter = new ExpressionExperimentDTO();
-
-/*
-    @UiConstructor
-    public ExpressionZoneView(ExpressionExperimentZoneView experimentSection) {
-        this.experimentSection = experimentSection;
-//        stageSelector.setPublicationID(publicationID);
-    }
-*/
-
     public void setExpressionExperimentZonePresenter(ExpressionExperimentZonePresenter expressionExperimentZonePresenter) {
         this.expressionExperimentZonePresenter = expressionExperimentZonePresenter;
     }
 
-    /**
-     * The data should only be loaded when the filter bar is initialized.
-     * So this method is called from the FxFilterTable.
-     */
-/*
-    public void runModule() {
-        if (!initialized) {
-            loadSectionVisibility();
-            initialized = true;
-        }
-    }
-*/
     @UiHandler("addButton")
     void onClickAddExpression(@SuppressWarnings("unused") ClickEvent event) {
         expressionZonePresenter.addExpressions();
     }
-
-    /**
-     * Check curator session if this section should be displayed or hidden.
-     */
-/*
-    private void loadSectionVisibility() {
-        String message = "Error while reading Section Visibility";
-        curationRPCAsync.readExpressionSectionVisibility(publicationID, new SectionVisibilityCallback(message));
-    }
-*/
 
     // Retrieve experiments from the server
     protected void recordAllExpressedTerms() {
@@ -328,8 +290,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     }
 
     public void applyFilterElements(String figureID, ExpressionExperimentDTO experimentFilter) {
-        // needed for new expression retrieval
-        this.experimentFilter = experimentFilter;
         // un-check all checked expressions if any of the filters is set except the ones that are not hidden
         // by the filter
         if (StringUtils.isNotEmpty(figureID) || experimentFilter.getGene() != null
@@ -552,10 +512,11 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         }
 
         public void onSuccess(Void exp) {
-            //Window.alert("Success");
-            Label pushed = new Label(PUSHED);
+            Label pushed = new Label(IN_PATO);
             displayTable.setWidget(row, HeaderName.PUSH.getIndex(), pushed);
             clearErrorMessages();
+            //Window.alert("Success");
+            AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.PUSH_TO_PATO));
         }
 
         public void onFailureCleanup() {
@@ -1110,7 +1071,16 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             loadingImage.setVisible(false);
             clearErrorMessages();
             stageSelector.resetGui();
-            expressionExperimentZonePresenter.notifyAddedExpression();
+            Map<ExpressionExperimentDTO, Integer> expressionExperimentDTOMap = new HashMap<>();
+            for (ExpressionFigureStageDTO dto : newAnnotations) {
+                ExpressionExperimentDTO experimentDTO = dto.getExperiment();
+                if (expressionExperimentDTOMap.containsKey(experimentDTO)) {
+                    expressionExperimentDTOMap.put(experimentDTO, expressionExperimentDTOMap.get(experimentDTO) + 1);
+                } else {
+                    expressionExperimentDTOMap.put(experimentDTO, 1);
+                }
+            }
+            expressionExperimentZonePresenter.notifyAddedExpression(expressionExperimentDTOMap);
             loadingImage.setVisible(false);
         }
 
@@ -1118,10 +1088,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             loadingImage.setVisible(false);
         }
 
-    }
-
-    public void setExperimentFilter(ExpressionExperimentDTO experimentFilter) {
-        this.experimentFilter = experimentFilter;
     }
 
     public void updateFigureListBox(List<FigureDTO> allFigureDtos) {
@@ -1171,7 +1137,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         private String value;
         Alignment alignment;
 
-        private HeaderName(int index, String value, Alignment alignment) {
+        HeaderName(int index, String value, Alignment alignment) {
             this.index = index;
             this.value = value;
             this.alignment = alignment;

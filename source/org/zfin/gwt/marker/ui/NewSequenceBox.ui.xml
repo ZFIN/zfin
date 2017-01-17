@@ -1,0 +1,15 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin-marker='urn:import:org.zfin.gwt.marker.ui'>
+
+    <g:VerticalPanel spacing="10" title="Sequence" ui:field="sequencePanel" styleName="table table-borderless" horizontalAlignment="left">
+        <g:Label text="Sequence:" addStyleNames="name-label text-left"/>
+        <zfin-marker:SequenceBox ui:field="sequenceBox"/>
+        <g:HorizontalPanel>
+            <g:Button ui:field="addButton" text="Add Protein Sequence" addStyleNames="btn btn-primary"/>
+            <g:Button ui:field="cancelButton" text="Cancel" addStyleNames="btn btn-link"/>
+        </g:HorizontalPanel>
+    </g:VerticalPanel>
+</ui:UiBinder>

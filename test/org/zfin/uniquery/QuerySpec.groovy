@@ -2,21 +2,18 @@ package org.zfin.uniquery
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.log4j.Logger
-import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.SolrClient
+import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.response.QueryResponse
 import org.apache.solr.common.SolrDocument
 import org.spockframework.runtime.extension.builtin.UnrollExtension
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
-import org.zfin.search.presentation.SearchResult
+import org.zfin.search.Category
 import org.zfin.search.service.QueryManipulationService
+import org.zfin.search.service.SolrService
 import spock.lang.Shared
 import spock.lang.Unroll
-import org.zfin.search.service.SolrService
-import org.zfin.search.Category
-
-
 /* Test specific queries that rely on rules of text analysis in the solr schema or setup in solrconfig */
 class QuerySpec extends ZfinIntegrationSpec {
 
@@ -107,6 +104,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.FISH.name             | "ZDB-GENO-960809-7"                              | "13315"
         Category.FISH.name             | "sequence_alteration:bw6Tg ZDB-FISH-150901-26882"| "13808"
         Category.FISH.name             | "trpv6 misexpression id:ZDB-FISH-160128-1"       | "12776"
+        Category.FISH.name             | "disease:Any"                                    | "14738"
         Category.PUBLICATION.name      | "kraus 1993"                                     | "11699"
         Category.PHENOTYPE.name        | "stage:Unknown"                                  | "13741"
         Category.PHENOTYPE.name        | "trpv6 misexpression Kwong 2015"                 | "12776"
@@ -130,7 +128,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.ANATOMY.name          | "(-)-isopiperitenone reductase activity GO:0052581" | "12299"
         Category.DISEASE.name          | "DOID:10609 ICD10CM:E55"                            | "12560"
         Category.DISEASE.name          | "DOID:10609 UMLS_CUI:C0221468"                      | "12560"
-        Category.DISEASE.name          | "DOID:10609 MSH:D012279"                            | "12560"
+        Category.DISEASE.name          | "DOID:10609 MESH:D012279"                            | "12560"
         Category.DISEASE.name          | "DOID:10609 NCI:C26878"                             | "12560"
         Category.MUTANT.name           | "ZMP:sa28 sa28"                                 | "13840"
     }

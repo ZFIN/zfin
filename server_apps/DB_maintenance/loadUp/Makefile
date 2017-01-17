@@ -18,8 +18,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/loadUp
 
-GENERICS = remove_orphan_files.pl rsync.pl load_upload_file_list.sql
-STATICS =  makeEmbryFiles.pl
+GENERICS = rsync.pl
+STATICS =  makeEmbryFiles.pl remove_orphan_files.groovy
 
 # ---------------  Production Rules  ------------------------------------
 

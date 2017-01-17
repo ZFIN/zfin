@@ -13,56 +13,35 @@ import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.util.ZfinStringUtils;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test for non-UTF characters (case 6544)
  */
-public class GwtConversionTest extends AbstractDatabaseTest{
+public class GwtConversionTest extends AbstractDatabaseTest {
 
     private static Logger logger = Logger.getLogger(GwtConversionTest.class);
-      private static FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
+    private static FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
     private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
 
-    // This is the correct character if it looks like a N with a tilde on top of it.
-    // Off of solaris, it is rendered correctly (a long mdash).  
-    private final String unescapedName = "(\u2014Tg:123)" ;
+    private final String unescapedName = "(\u2014Tg:123)";
     private final String escapedName = "(&#8212;Tg:123)";
-     private final String unescapedNote = "(\u0392Tg:123)" ;
+    private final String unescapedNote = "(\u0392Tg:123)";
     private final String escapedNote = "(&Beta;Tg:123)";
 
     @Test
-    public void testConverterCollection(){
-        Set<String> strings = new HashSet<String>();
-        strings.add(unescapedName);
-        Collection<String> converted = DTOConversionService.escapeStrings(strings);
-        assertNotNull(converted);
-        String convertedString = converted.iterator().next() ;
-        assertEquals(ZfinStringUtils.escapeHighUnicode(unescapedName), convertedString);
-        assertEquals(escapedName, convertedString);
-
-        Collection<String> unescapedCollection = DTOConversionService.unescapeStrings(converted);
-        convertedString = unescapedCollection.iterator().next() ;
-        assertEquals(unescapedName, convertedString);
-    }
-
-    @Test
-    public void testNewName(){
+    public void testNewName() {
 
         HibernateUtil.createTransaction();
         try {
             Feature feature = (Feature) HibernateUtil.currentSession()
                     .createCriteria(Feature.class)
                     .setMaxResults(1)
-                    .uniqueResult()
-                    ;
+                    .uniqueResult();
             assertNotNull(feature);
 
             FeatureAlias featureAlias = new FeatureAlias();
@@ -76,7 +55,7 @@ public class GwtConversionTest extends AbstractDatabaseTest{
 
             List<DataAlias> dataAliasList = RepositoryFactory.getInfrastructureRepository().getDataAliases(DTOConversionService.escapeString(unescapedName.toLowerCase()));
             assertNotNull(dataAliasList);
-            assertEquals(1,dataAliasList.size());
+            assertEquals(1, dataAliasList.size());
             assertEquals(DTOConversionService.escapeString(unescapedName), dataAliasList.get(0).getAlias());
         } finally {
             HibernateUtil.rollbackTransaction();
@@ -84,11 +63,11 @@ public class GwtConversionTest extends AbstractDatabaseTest{
     }
 
     @Test
-    public void testMarkerPublicNote(){
+    public void testMarkerPublicNote() {
 
         HibernateUtil.createTransaction();
         try {
-             Marker marker = markerRepository.getMarkerByID("ZDB-ATB-090831-1");
+            Marker marker = markerRepository.getMarkerByID("ZDB-ATB-090831-1");
 
             String newNote = DTOConversionService.escapeString(unescapedNote);
             marker.setPublicComments(newNote);
@@ -100,11 +79,11 @@ public class GwtConversionTest extends AbstractDatabaseTest{
     }
 
     @Test
-    public void testFeaturePublicNote(){
+    public void testFeaturePublicNote() {
 
         HibernateUtil.createTransaction();
         try {
-             Feature ftr = featureRepository.getFeatureByID("ZDB-ALT-070628-4");
+            Feature ftr = featureRepository.getFeatureByID("ZDB-ALT-070628-4");
             assertEquals(DTOConversionService.escapeString(unescapedNote), escapedNote);
 
             String newNote = DTOConversionService.escapeString(unescapedNote);

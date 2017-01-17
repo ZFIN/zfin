@@ -1,18 +1,28 @@
 --liquibase formatted sql
 --changeset sierra:createPubFileTable
 
-create table publication_file (pf_pub_zdb_id varchar(50) not null constraint pf_pub_zdb_id_not_null,
+create table publication_file (pf_pk_id serial8 not null constraint pf_pk_id_not_null,
+       	     		       pf_pub_zdb_id varchar(50) not null constraint pf_pub_zdb_id_not_null,
        	     		       pf_file_name varchar(255) not null constraint pf_file_name_not_null,
-			       pf_file_type_id int8 not null constraint pf_file_type_not_null)
+			       pf_file_type_id int8 not null constraint pf_file_type_not_null,
+			       pf_date_entered datetime year to second default current year to second not null constraint pf_date_entered_not_null,
+			       pf_original_file_name varchar(255))
 in tbldbs2
 extent size 8192 next size 8192;
 
-create unique index publication_file_primary_key  on publication_file (pf_pub_zdb_id, pf_file_name, pf_file_type_id)
+create unique index publication_file_primary_key  on publication_file (pf_pk_id)
+ using btree in idxdbs1;
+
+create unique index publication_file_alternate_key  on publication_file (pf_pub_zdb_id, pf_file_name, pf_file_type_id)
  using btree in idxdbs2;
 
 alter table publication_file
  add constraint unique (pf_pub_zdb_id, pf_file_name, pf_file_type_id)
- constraint publication_file_primary_key ;
+ constraint publication_file_alternate_key ;
+
+alter table publication_file 
+ add constraint unique (pf_pk_id)
+ constraint publication_file_primary_key;
 
 create index pf_file_type_index
   on publication_file (pf_file_type_id)
@@ -48,19 +58,20 @@ alter table publication_file
 
 insert into publication_file_type (pft_type, pft_type_order) 
  values ('Original Article','1');
+insert into publication_file_type (pft_type, pft_type_order)
+ values ('Annotated Article','2');
 insert into publication_file_type (pft_type, pft_type_order) 
- values ('Supplemental Material','2');
+ values ('Supplemental Material','3');
 insert into publication_file_type (pft_type, pft_type_order) 
- values ('Correspondance Details','3');
+ values ('Correspondence Details','4');
 insert into publication_file_type (pft_type, pft_type_order) 
- values ('Annotated Article','4');
-insert into publication_file_type (pft_type, pft_type_order) 
- values ('Materials','5');
+ values ('Other','5');
 
 insert into publication_file (pf_pub_zdb_id, 
        	    		     		     pf_file_name,
+					     pf_original_file_name,
 					     pf_file_type_id)
-  select zdb_id, pub_file, 1
+  select zdb_id, substr(get_date_from_id(zdb_id,'YYYYMMDD'),1,4)||"/"||pub_file,pub_file, 1
     from publication
  where pub_file is not null;
 

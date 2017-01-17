@@ -13,13 +13,15 @@
             <zfin:ShowHideToggle widget="{structurePile}" ui:field="showHideToggle" show="true"/>
         </g:HorizontalPanel>
         <g:VerticalPanel ui:field="structurePile" width="100%">
-            <g:Button text="Update Structures for Expressions" ui:field="updateStructuresTop"/>
+            <g:Button text="Update Structures for Expressions" ui:field="updateStructuresTop"
+                      addStyleNames="btn btn-primary"/>
             <zfin:SimpleErrorElement ui:field="errorElementTop"/>
             <g:Hyperlink text="Re-Create Structure Pile" ui:field="reCreatePile"/>
             <zfin-mod:StructureAlternateComposite ui:field="alternateStructurePanel"/>
             <zfin-mod:StructurePileTable ui:field="structurePileTable" suggestionDiv="{alternateStructurePanel}"
                                          errorLabel="{errorElement}"/>
-            <g:Button text="Update Structures for Expressions" ui:field="updateStructuresBottom"/>
+            <g:Button text="Update Structures for Expressions" ui:field="updateStructuresBottom"
+                      addStyleNames="btn btn-primary"/>
             <zfin:SimpleErrorElement ui:field="errorElement"/>
             <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="false"/>
         </g:VerticalPanel>

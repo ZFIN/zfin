@@ -4,6 +4,8 @@ import org.apache.log4j.Logger;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.presentation.ExpressionStatementPresentation;
+import org.zfin.gwt.curation.ui.CurationModuleType;
+import org.zfin.publication.CurationPresentation;
 
 /**
  * Display the full list of post composed terms and their hyperlink.
@@ -32,7 +34,7 @@ public class ExpressionResultPresentation extends ExpressionStatementPresentatio
     }
 
     private static String getCurationLink(ExpressionResult expressionResult) {
-        return getWebdriverLink(CURATION_URI+"&pubcur_c_tab=FX", expressionResult.getExpressionExperiment().getPublication().getZdbID(),
+        return getWebdriverLink(CurationPresentation.uri + CurationModuleType.EXPRESSION_CURATION.getValue(), expressionResult.getExpressionExperiment().getPublication().getZdbID(),
                 "edit");
     }
 

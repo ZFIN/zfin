@@ -19,7 +19,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/Reports
 
-SUBDIRS = ZGC Vega PATO GO Nomenclature AnnualStats
+SUBDIRS = ZGC Vega PATO GO Nomenclature AnnualStats PubTracking
 
 
 GENERICS = Count-ZGC.pl Count-Vega.pl Count-Vega-Thisse.pl Count-phenotype.pl elsevier_report.pl reportPubsForGeneAndFeature.pl

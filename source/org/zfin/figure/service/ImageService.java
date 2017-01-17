@@ -3,7 +3,6 @@ package org.zfin.figure.service;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
@@ -14,10 +13,12 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Person;
 import org.zfin.properties.ZfinPropertiesEnum;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class ImageService {
 
@@ -27,8 +28,7 @@ public class ImageService {
     private final static String THUMB = "_thumb";
 
     public static Image processImage(Figure figure, MultipartFile file, Person owner) throws IOException {
-        CopyAction<MultipartFile> copier = MultipartFile::transferTo;
-        return processImage(figure, owner, false, file.getOriginalFilename(), file, copier);
+        return processImage(figure, owner, false, file.getOriginalFilename(), file.getInputStream());
     }
 
     public static Image processImage(Figure figure, String filePath, Boolean isVideoStill, String direction) throws IOException {
@@ -36,9 +36,7 @@ public class ImageService {
         Person owner = (Person) HibernateUtil.currentSession().createCriteria(Person.class)
                 .add(Restrictions.eq("zdbID", "ZDB-PERS-030520-2"))  //Yvonne
                 .uniqueResult();
-        File initialFile = new File(filePath);
-        CopyAction<File> copier = FileUtils::copyFile;
-        return processImage(figure, owner, isVideoStill, initialFile.getName(), initialFile, copier);
+        return processImage(figure, owner, isVideoStill, filePath, new FileInputStream(filePath));
     }
 
     private static Image createPlaceholderImage(Figure figure, Person owner, Boolean isVideoStill) {
@@ -60,7 +58,7 @@ public class ImageService {
         return image;
     }
 
-    private static <T> Image processImage(Figure figure, Person owner, Boolean isVideoStill, String fileName, T originalImage, CopyAction<T> copyAction) throws IOException {
+    private static Image processImage(Figure figure, Person owner, Boolean isVideoStill, String fileName, InputStream imageStream) throws IOException {
         Image image = createPlaceholderImage(figure, owner, isVideoStill);
 
         String extension = FilenameUtils.getExtension(fileName);
@@ -70,15 +68,14 @@ public class ImageService {
         File destinationFile = new File(IMAGE_LOADUP_DIR, destinationFilename);
         File thumbnailFile = new File(IMAGE_LOADUP_DIR, thumbnailFilename);
 
-        copyAction.copy(originalImage, destinationFile);
+        // we used to attempt to set the image's width and height properties here using ImageIO.read(), but it
+        // choked on images with a CMYK color space (common for published images), so we omit that now.
 
         image.setImageFilename(destinationFilename);
         image.setThumbnail(thumbnailFilename);
-
-        BufferedImage imageData = ImageIO.read(destinationFile);
-        image.setWidth(imageData.getWidth());
-        image.setHeight(imageData.getHeight());
         HibernateUtil.currentSession().save(image);
+
+        Files.copy(imageStream, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         File scriptDirectory = new File(ZfinPropertiesEnum.TARGETROOT + "/server_apps/sysexecs/make_thumbnail");
         CommandLine makeThumbnail = new CommandLine("./make_thumbnail.sh");
@@ -90,10 +87,4 @@ public class ImageService {
 
         return image;
     }
-
-    @FunctionalInterface
-    private interface CopyAction<T> {
-        void copy(T t, File destination) throws IOException;
-    }
-
 }

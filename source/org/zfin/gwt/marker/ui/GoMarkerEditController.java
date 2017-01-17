@@ -16,7 +16,7 @@ import org.zfin.gwt.root.event.RelatedEntityEvent;
 import org.zfin.gwt.root.ui.*;
 
 /**
- * A GWT class for adding proteins to genes on the markerview.apg page.
+ * A GWT class for adding proteins to genes on the markerview page.
  */
 public final class GoMarkerEditController extends AbstractRelatedEntityEditController<MarkerDTO> {
 

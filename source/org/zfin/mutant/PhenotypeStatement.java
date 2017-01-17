@@ -250,7 +250,8 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement>, Entit
     public static enum Tag {
         NORMAL("normal"),
         ABNORMAL("abnormal"),
-        AMELIORATED("ameliorated");
+        AMELIORATED("ameliorated"),
+        EXACERBATED("exacerbated");
 
         private String value;
 

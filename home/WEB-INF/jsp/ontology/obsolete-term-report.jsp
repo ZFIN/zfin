@@ -111,7 +111,7 @@ Back to <a href="/action/ontology/reports"> Ontology Reports</a>
 
     function urlSetCookie(name,value,prefix) {
       setCookie(name,value,prefix);
-    	replaceLocation("<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT%>?MIval=aa-curation.apg&OID=$OID&cookie="+name+value+"&randomNum="+Math.random()+"#"+name);
+    	replaceLocation("/action/curation/$OID&cookie="+name+value+"&randomNum="+Math.random()+"#"+name);
     }
 
 </script>

@@ -5,6 +5,7 @@
 <!--|BACKGROUND_COLOR|-->	#FFFFFF
 <!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/watson/blastdb
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
+<!--|CLIENT_LOCALE|-->	en_US.utf8
 <!--|COUNT_PATO_ERR|-->	smoxon\@zfin.org
 <!--|COUNT_PATO_OUT|-->	van_slyke\@uoneuro.uoregon.edu
 <!--|COUNT_THISSE_VEGA_ERR|-->	smoxon\@zfin.org
@@ -16,6 +17,7 @@
 <!--|CURATION_DBNAME|-->	false
 <!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	curators\@zfin.org
+<!--|DB_LOCALE|-->	en_US.utf8
 <!--|DB_NAME|-->	zfindb
 <!--|DB_OWNER|-->	informix
 <!--|DEFAULT_EMAIL|-->	informix\@zfin.org
@@ -86,7 +88,7 @@
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/production
 <!--|WAREHOUSE_REGN_EMAIL|-->	informix\@zfin.org kevin\@zfin.org cmpich\@zfin.org
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver
-<!--|WEBHOST_BLASTDB_TO_COPY|-->	/research/watson/blastdb
+<!--|WEBHOST_BLASTDB_TO_COPY|-->	/research/crick/blastdb
 <!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/watson/blastdb
 <!--|WEBHOST_FASTA_FILE_PATH|-->	/research/watson/zblastfiles/files
 <!--|WEB_ADMIN_EMAIL|-->	kevin\@zfin.org smoxon\@zfin.org

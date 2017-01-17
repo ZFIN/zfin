@@ -24,8 +24,14 @@ public class MarkerGoViewController {
     @RequestMapping("/marker-go-view/{markerZdbId}")
     public String markerGoView(Model model, @PathVariable String markerZdbId) {
 
-        MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-        Marker marker = markerRepository.getMarkerByID(markerZdbId);
+
+        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerOrReplacedByID(markerZdbId);
+        if (marker == null) {
+            model.addAttribute("markerZdbId", markerZdbId);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+
 
         model.addAttribute("marker",marker);
         model.addAttribute("markerGoViewTableRows",markerGoService.getMarkerGoViewTableRows(marker));

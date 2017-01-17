@@ -23,8 +23,7 @@
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"
-                   mergeURL="${mergeURL}"
-                   rtype="marker"/>
+                   mergeURL="${mergeURL}"/>
 
 <div style="float: right">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
@@ -62,7 +61,7 @@
         }
     });
 </script>
-
+<zfin2:constructsWithSequences formBean="${formBean}"/>
 <%--// GENOTYPE CREATED BY TALEN OR CRISPR --%>
 <c:if test="${formBean.marker.markerType.name eq 'TALEN' || formBean.marker.markerType.name eq 'CRISPR'}">
     <div id="genomicFeature" class="summary">

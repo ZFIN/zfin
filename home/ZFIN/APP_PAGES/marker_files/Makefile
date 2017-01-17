@@ -18,19 +18,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/marker_files
 
-GENERICS = clonebox.apg cloneorderlink.apg \
-curatornote.apg dnote_editor.apg \
-do-markerupdate.apg geneprddescription.apg \
-markerselect.apg markerupdate.apg \
-markerview.apg msegselect.apg newmrkrselect.apg \
-searchform.apg sequence.apg sequence_data_entry.apg
-
-
-STATICS =  dnote_new.apg make_map.apg \
-	markerview_placeholder_note.apg \
-	marker_history_correction.apg attrib_check.apg sequence_tools.apg \
-	markerrelationship.apg  \
-	mapframe.apg mrkrgenolist.apg
+GENERICS = markerselect.apg \
+msegselect.apg newmrkrselect.apg \
+searchform.apg
 
 
 # Use default rules for app page directories.

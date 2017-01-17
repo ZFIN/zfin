@@ -220,4 +220,7 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
     public boolean isQualityAmeliorated() {
         return false;
     }
+    public boolean isQualityExacerbated() {
+        return false;
+    }
 }

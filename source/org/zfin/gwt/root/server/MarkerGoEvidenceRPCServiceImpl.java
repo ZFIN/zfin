@@ -106,11 +106,11 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
         // add or remove inferences depending on sets returned
         Set<InferenceGroupMember> existingInferenceGroupMembers = markerGoTermEvidence.getInferredFrom();
 
-        Set<String> existingInferenceStrings = new TreeSet<String>();
+        Set<String> existingInferenceStrings = new TreeSet<>();
         for (InferenceGroupMember inferenceGroupMember : existingInferenceGroupMembers) {
             existingInferenceStrings.add(inferenceGroupMember.getInferredFrom());
         }
-        Set<String> newInferenceStrings = new TreeSet<String>(goEvidenceDTO.getInferredFrom());
+        Set<String> newInferenceStrings = new TreeSet<>(goEvidenceDTO.getInferredFrom());
 
         Collection<String> inferencesToAdd = CollectionUtils.subtract(newInferenceStrings, existingInferenceStrings);
         Collection<String> inferencesToRemove = CollectionUtils.subtract(existingInferenceStrings, newInferenceStrings);
@@ -148,7 +148,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
     @Override
     public List<MarkerDTO> getGenesForGOAttributions(GoEvidenceDTO dto) {
         Publication publication = publicationRepository.getPublication(dto.getPublicationZdbID());
-        List<MarkerDTO> relatedEntityDTOs = new ArrayList<MarkerDTO>();
+        List<MarkerDTO> relatedEntityDTOs = new ArrayList<>();
 
         if (publication != null) {
             List<Marker> genes = markerRepository.getMarkersForStandardAttributionAndType(publication, "GENE");
@@ -165,7 +165,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
     @Override
     public List<RelatedEntityDTO> getGenotypesAndMorpholinosForGOAttributions(GoEvidenceDTO dto) {
         Publication publication = publicationRepository.getPublication(dto.getPublicationZdbID());
-        List<RelatedEntityDTO> relatedEntityDTOs = new ArrayList<RelatedEntityDTO>();
+        List<RelatedEntityDTO> relatedEntityDTOs = new ArrayList<>();
 
         if (publication != null) {
             List<Marker> morpholinos = markerRepository.getMarkersForStandardAttributionAndType(publication, "MRPHLNO");
@@ -216,7 +216,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
     @Override
     public List<GoEvidenceDTO> getGOTermsForPubAndMarker(GoEvidenceDTO dto) {
         Publication publication = publicationRepository.getPublication(dto.getPublicationZdbID());
-        List<GoEvidenceDTO> goEvidenceDTOs = new ArrayList<GoEvidenceDTO>();
+        List<GoEvidenceDTO> goEvidenceDTOs = new ArrayList<>();
 
         if (publication != null) {
             // get genes
@@ -246,7 +246,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
      */
     @SuppressWarnings("unchecked")
     protected Set<String> getInferencesFromPreviousInferences(String zdbID, String inferenceCategory) {
-        Set<String> inferredFromSet = new TreeSet<String>();
+        Set<String> inferredFromSet = new TreeSet<>();
 
         // for interpro and EC, these should come form db_links and for SP_KW, from previous inferences
         List<MarkerGoTermEvidence> markerGoTermEvidenceList = markerGoTermEvidenceRepository.getMarkerGoTermEvidencesForMarkerZdbID(zdbID);
@@ -265,7 +265,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
     @Override
     public Set<String> getInferencesByMarkerAndType(GoEvidenceDTO dto, String inferenceCategory) {
         // treeset to sort by string order
-        Set<String> inferredFromSet = new TreeSet<String>();
+        Set<String> inferredFromSet = new TreeSet<>();
         // for interpro and EC, these should come form db_links and for SP_KW, from previous inferences
 
         if (inferenceCategory.startsWith(InferenceCategory.EC.prefix())) {
@@ -294,7 +294,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
     protected Set<String> getInferencesByDBLink(String zdbID, ReferenceDatabase referenceDatabase) {
         Marker marker = (Marker) HibernateUtil.currentSession().get(Marker.class, zdbID);
         List<MarkerDBLink> dbLinks = RepositoryFactory.getSequenceRepository().getDBLinksForMarker(marker, referenceDatabase);
-        Set<String> inferredFromSet = new TreeSet<String>();
+        Set<String> inferredFromSet = new TreeSet<>();
         for (MarkerDBLink dbLink : dbLinks) {
             inferredFromSet.add(referenceDatabase.getForeignDB().getDbName() + ":" + dbLink.getAccessionNumber());
         }
@@ -358,7 +358,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
         markerGoTermEvidenceRepository.addEvidence(markerGoTermEvidence);
 
         // have to do this after we add inferences
-        Set<String> newInferenceStrings = new TreeSet<String>(goEvidenceDTO.getInferredFrom());
+        Set<String> newInferenceStrings = new TreeSet<>(goEvidenceDTO.getInferredFrom());
         for (String inference : newInferenceStrings) {
             mutantRepository.addInferenceToGoMarkerTermEvidence(markerGoTermEvidence, inference);
         }
@@ -406,7 +406,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
     public List<GoEvidenceDTO> getMarkerGoTermEvidencesForPub(String publicationID) {
         List<MarkerGoTermEvidence> evidences = markerGoTermEvidenceRepository.getMarkerGoTermEvidencesForPubZdbID(publicationID);
 
-        List<GoEvidenceDTO> goEvidenceDTOs = new ArrayList<GoEvidenceDTO>();
+        List<GoEvidenceDTO> goEvidenceDTOs = new ArrayList<>();
         for (MarkerGoTermEvidence markerGoTermEvidence : evidences) {
             goEvidenceDTOs.add(DTOConversionService.convertToGoEvidenceDTO(markerGoTermEvidence));
         }
@@ -420,7 +420,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
         HibernateUtil.currentSession();
         List<MarkerGoTermEvidence> evidences = markerGoTermEvidenceRepository.getMarkerGoTermEvidencesForMarkerZdbIDOrdered(markerID);
 
-        List<GoEvidenceDTO> goEvidenceDTOs = new ArrayList<GoEvidenceDTO>();
+        List<GoEvidenceDTO> goEvidenceDTOs = new ArrayList<>();
         for (MarkerGoTermEvidence markerGoTermEvidence : evidences) {
             goEvidenceDTOs.add(DTOConversionService.convertToGoEvidenceDTO(markerGoTermEvidence));
         }
@@ -430,7 +430,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
 
     @Override
     public List<MarkerDTO> getGenesForPub(String publicationID) {
-        List<MarkerDTO> markerDTOs = new ArrayList<MarkerDTO>();
+        List<MarkerDTO> markerDTOs = new ArrayList<>();
         List<Marker> markers = RepositoryFactory.getMarkerRepository().getMarkersForAttribution(publicationID);
         if (CollectionUtils.isNotEmpty(markers)) {
             for (Marker m : markers) {

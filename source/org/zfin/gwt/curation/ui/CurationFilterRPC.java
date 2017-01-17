@@ -3,7 +3,10 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.FilterValuesDTO;
+
+import java.util.List;
 
 /**
  * GWT class to facilitate curation filtering on FX and Pheno.
@@ -33,6 +36,8 @@ public interface CurationFilterRPC extends RemoteService {
      * @param zdbID         zdbID
      */
     void setFilterType(String publicationID, String zdbID, String type);
+
+    List<FeatureDTO> getFeatureValues(String publicationID);
 
 
     /**

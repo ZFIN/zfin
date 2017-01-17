@@ -36,7 +36,7 @@ public class OntologyManagerController {
 
         form.setOntologyManager(OntologyManager.getInstance());
         // If this was an action request redirect to the normal page to
-        // allow refresh of the page without submitting the action again.
+        // allow handleCurationEvent of the page without submitting the action again.
         if (actionType != null)
             return "redirect:ontology-caching";
         return "dev-tools/ontology-manager.page";

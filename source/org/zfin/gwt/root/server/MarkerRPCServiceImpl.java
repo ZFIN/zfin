@@ -15,9 +15,9 @@ import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
 import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.database.InformixUtil;
-import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.dto.AttributionType;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.ui.BlastDatabaseAccessException;
@@ -43,7 +43,6 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.MountedWublastBlastService;
-import org.zfin.util.ZfinStringUtils;
 
 import java.util.*;
 
@@ -84,7 +83,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         Set<DataNote> dataNotes = marker.getDataNotes();
         for (DataNote dataNote : dataNotes) {
             if (dataNote.getZdbID().equals(noteDTO.getZdbID())) {
-                dataNote.setNote(ZfinStringUtils.escapeHighUnicode(noteDTO.getNoteData()));
+                dataNote.setNote(noteDTO.getNoteData());
                 HibernateUtil.currentSession().update(dataNote);
                 HibernateUtil.currentSession().flush();
                 return;
@@ -117,9 +116,9 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         HibernateUtil.createTransaction();
         Marker marker = markerRepository.getMarkerByID(noteDTO.getDataZdbID());
         String oldNote = marker.getPublicComments();
-        String newNote = ZfinStringUtils.escapeHighUnicode(noteDTO.getNoteData());
+        String newNote = noteDTO.getNoteData();
         if (!StringUtils.equals(newNote, oldNote)) {
-            marker.setPublicComments(ZfinStringUtils.escapeHighUnicode(noteDTO.getNoteData()));
+            marker.setPublicComments(noteDTO.getNoteData());
             // InfrastructureService.insertUpdate(marker, "Public Note", oldNote, newNote);
             HibernateUtil.currentSession().update(marker);
             HibernateUtil.flushAndCommitCurrentSession();
@@ -329,7 +328,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
         Marker marker = markerRepository.getMarkerByID(relatedEntityDTO.getDataZdbID());
         Session session = HibernateUtil.currentSession();
-        String aliasName = ZfinStringUtils.escapeHighUnicode(relatedEntityDTO.getName());
+        String aliasName = relatedEntityDTO.getName();
         session.beginTransaction();
         Publication publication = null;
         if (StringUtils.isNotEmpty(relatedEntityDTO.getPublicationZdbID())) {
@@ -371,7 +370,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
     public RelatedEntityDTO addDataAliasAttribution(RelatedEntityDTO relatedEntityDTO) {
         logger.debug(relatedEntityDTO.toString());
-        String aliasName = ZfinStringUtils.escapeHighUnicode(relatedEntityDTO.getName());
+        String aliasName = relatedEntityDTO.getName();
 
         Marker marker = markerRepository.getMarkerByID(relatedEntityDTO.getDataZdbID());
         Session session = HibernateUtil.currentSession();
@@ -412,7 +411,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
      * @param relatedEntityDTO bindle of data with data id, name & pub for attribution
      */
     public void removeDataAliasAttribution(RelatedEntityDTO relatedEntityDTO) {
-        String aliasName = ZfinStringUtils.escapeHighUnicode(relatedEntityDTO.getName());
+        String aliasName = relatedEntityDTO.getName();
         String pub = relatedEntityDTO.getPublicationZdbID();
         Marker marker = markerRepository.getMarkerByID(relatedEntityDTO.getDataZdbID());
         DataAlias dataAlias = markerRepository.getSpecificDataAlias(marker, aliasName);
@@ -734,7 +733,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         session.refresh(dbLink);
         logger.debug("resulting length for " + dbLink.getZdbID() + " is: " + dbLink.getLength());
 /*        dbLink.setLength(dbLinkDTO.getLength());
-        session.refresh(dbLink);*/
+        session.handleCurationEvent(dbLink);*/
 
 
         // if it fails, it will automatically roll-back and automatically throws exception up
@@ -905,7 +904,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         }
         if (true == markerDTO.isZdbIDThenAbbrev()) {
             MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.getType(markerDTO.getMarkerRelationshipType()));
-        //    ExpressionExperiment2 expExpt=RepositoryFactory.getExpressionRepository().get
+            //    ExpressionExperiment2 expExpt=RepositoryFactory.getExpressionRepository().get
         } else {
             MarkerService.addMarkerRelationship(secondMarker, firstMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.getType(markerDTO.getMarkerRelationshipType()));
         }
@@ -1166,20 +1165,23 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
     }
 
     @Override
-    public void checkDeattributionRules(String entityID, String publicationID)
+    public String checkDeattributionRules(String entityID, String publicationID)
             throws DeAttributionException {
         if (ActiveData.Type.GENO.equals(ActiveData.getType(entityID))) {
             long count = getMutantRepository().getFishCountByGenotype(entityID, publicationID);
-            if (count > 0)
+            if (count > 0) {
                 throw new DeAttributionException("Cannot remove attribution as there are  " + count + " fish using this genotype");
+            }
             count = getMutantRepository().getInferredFromCountByGenotype(entityID, publicationID);
-            if (count > 0)
+            if (count > 0) {
                 throw new DeAttributionException("Cannot remove attribution as there are  " + count + " inferred-from usage in GO annotation for this genotype");
+            }
             count = getInfrastructureRepository().getDistinctPublicationsByData(entityID);
-            if (count == 1)
+            if (count == 1) {
                 throw new DeAttributionException("It's the last attribution. Please use the delete genotype feature");
+            }
 
-
+            return AttributionType.GENOTYPE.name();
         }
         if (ActiveData.Type.FISH.equals(ActiveData.getType(entityID))) {
             Fish fish = getMutantRepository().getFish(entityID);
@@ -1192,8 +1194,9 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
                 throw new DeAttributionException("Cannot remove attribution as there is phenotype data associated to this fish");
             }
             long count = getMutantRepository().getFishExperimentCountByGenotype(fish, publicationID);
-            if (count > 0)
+            if (count > 0) {
                 throw new DeAttributionException("Cannot remove attribution as there are  " + count + " fish experiments using this fish");
+            }
             long fishExpressionResultsCount = getExpressionRepository().getExpressionResultsByFishAndPublication(fish, publicationID);
             if (fishExpressionResultsCount > 0) {
                 throw new DeAttributionException("Cannot remove attribution as there is expression data associated to this fish");
@@ -1205,7 +1208,11 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
             count = getInfrastructureRepository().getDistinctPublicationsByData(entityID);
             if (count == 1)
                 throw new DeAttributionException("It's the last attribution. Please use the delete fish feature");
+            return AttributionType.FISH.name();
         }
+        if (ActiveData.Type.ALT.equals(ActiveData.getType(entityID)))
+            return AttributionType.FEATURE.name();
+        return AttributionType.MARKER.name();
     }
 
 

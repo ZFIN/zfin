@@ -21,8 +21,7 @@ public class FeatureAttributeSubmitAction extends AbstractAttributeSubmitAction 
         if (value != null) {
             setCookieInPage("attribution_update", "update", "pubcur_c_");
             setCookieInPage("anchor", "attrib", "pubcur_c_");
-            Window.open("?MIval=aa-curation.apg&OID=" + OID + "&pubcur_G_fish_attrib=" + value + "#attrib",
-                    "_self", "");
+            Window.open("action/curation/" + OID, "_self", "");
         }
     }
 }

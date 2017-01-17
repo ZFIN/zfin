@@ -46,7 +46,6 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.presentation.DBLinkPresentation;
-import org.zfin.util.ZfinStringUtils;
 
 import java.util.*;
 
@@ -83,16 +82,6 @@ public class DTOConversionService {
         cleansedCharacter = StringEscapeUtils.unescapeJava(cleansedCharacter);
         //     cleansedCharacter=StringEscapeUtils.unescapeHtml3(cleansedCharacter);
         return cleansedCharacter;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static Collection<String> escapeStrings(Collection<String> uncleansedCharacter) {
-        return CollectionUtils.collect(uncleansedCharacter, new Transformer() {
-            @Override
-            public String transform(Object o) {
-                return ZfinStringUtils.escapeHighUnicode(o.toString());
-            }
-        });
     }
 
     @SuppressWarnings("unchecked")
@@ -423,8 +412,9 @@ public class DTOConversionService {
         genotypeDTO.setNickName(genotype.getNickname());
         genotypeDTO.setWildtype(genotype.isWildtype());
         if (genotype.getAssociatedGenotypes() != null) {
-            for (Genotype background : genotype.getAssociatedGenotypes())
+            for (Genotype background : genotype.getAssociatedGenotypes()) {
                 genotypeDTO.addBackgroundGenotype(convertToPureGenotypeDTOs(background));
+            }
         }
         if (CollectionUtils.isNotEmpty(genotype.getExternalNotes())) {
             createExternalNotesOnGenotype(genotype, genotypeDTO);
@@ -458,8 +448,9 @@ public class DTOConversionService {
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
         if (genotype.getAssociatedGenotypes() != null) {
-            for (Genotype background : genotype.getAssociatedGenotypes())
+            for (Genotype background : genotype.getAssociatedGenotypes()) {
                 genotypeDTO.addBackgroundGenotype(convertToPureGenotypeDTOs(background));
+            }
         }
         return genotypeDTO;
     }
@@ -609,8 +600,9 @@ public class DTOConversionService {
                 FeatureNote featureNote = new FeatureNote();
                 featureNote.setFeature(feature);
                 featureNote.setNote(note.getNoteData());
-                if (note.getPublicationZdbID() != null)
+                if (note.getPublicationZdbID() != null) {
                     featureNote.setPublication(getPublicationRepository().getPublication(note.getPublicationZdbID()));
+                }
                 feature.getExternalNotes().add(featureNote);
             }
         }
@@ -641,8 +633,9 @@ public class DTOConversionService {
     }
 
     private static FeatureDnaMutationDetail convertToDnaMutationDetail(FeatureDnaMutationDetail detail, MutationDetailDnaChangeDTO dnaChangeDTO) {
-        if (detail == null)
+        if (detail == null) {
             detail = new FeatureDnaMutationDetail();
+        }
         DnaMutationTerm term = getDnaMutationTermRepository().getControlledVocabularyTerm(dnaChangeDTO.getChangeTermOboId());
         detail.setDnaMutationTerm(term);
         detail.setExonNumber(dnaChangeDTO.getExonNumber());
@@ -658,19 +651,20 @@ public class DTOConversionService {
 
             detail.setDnaSequenceReferenceAccessionNumber(sequenceReferenceAccessionNumber);
             ReferenceDatabase referenceDatabase = FeatureService.getForeignDbMutationDetailDna(sequenceReferenceAccessionNumber);
-            if (referenceDatabase == null)
+            if (referenceDatabase == null) {
                 throw new NullpointerException("Accession number not found in Genbank, RefSeq or Ensembl: " + sequenceReferenceAccessionNumber);
+            }
             detail.setReferenceDatabase(referenceDatabase);
-        }
-        else{
+        } else {
             detail.setDnaSequenceReferenceAccessionNumber(sequenceReferenceAccessionNumber);
         }
         return detail;
     }
 
     public static FeatureTranscriptMutationDetail convertToTranscriptMutationDetail(FeatureTranscriptMutationDetail detail, MutationDetailTranscriptChangeDTO dto) {
-        if (detail == null)
+        if (detail == null) {
             detail = new FeatureTranscriptMutationDetail();
+        }
         detail.setExonNumber(dto.getExonNumber());
         detail.setIntronNumber(dto.getIntronNumber());
         detail.setTranscriptConsequence(getTranscriptTermRepository().getControlledVocabularyTerm(dto.getConsequenceOboID()));
@@ -680,8 +674,9 @@ public class DTOConversionService {
 
     private static FeatureProteinMutationDetail convertToProteinMutationDetail(FeatureProteinMutationDetail detail,
                                                                                MutationDetailProteinChangeDTO proteinChangeDTO) {
-        if (detail == null)
+        if (detail == null) {
             detail = new FeatureProteinMutationDetail();
+        }
         ProteinConsequence term = getProteinConsequenceTermRepository().getControlledVocabularyTerm(proteinChangeDTO.getConsequenceTermOboID());
         detail.setProteinConsequences(term);
         detail.setNumberAminoAcidsAdded(proteinChangeDTO.getNumberAddedAminoAcid());
@@ -696,8 +691,9 @@ public class DTOConversionService {
         if (StringUtils.isNotEmpty(sequenceReferenceAccessionNumber)) {
             detail.setProteinSequenceReferenceAccessionNumber(sequenceReferenceAccessionNumber);
             ReferenceDatabase referenceDatabase = FeatureService.getForeignDbMutationDetailProtein(sequenceReferenceAccessionNumber);
-            if (referenceDatabase == null)
+            if (referenceDatabase == null) {
                 throw new NullpointerException("Accession number not found in Genank, RefSeq or UniProt: " + sequenceReferenceAccessionNumber);
+            }
             detail.setReferenceDatabase(referenceDatabase);
         }
         return detail;
@@ -796,8 +792,9 @@ public class DTOConversionService {
     }
 
     private static MutationDetailTranscriptChangeDTO convertToMutationDetailTranscriptDTO(FeatureTranscriptMutationDetail detail) {
-        if (detail == null)
+        if (detail == null) {
             return null;
+        }
         MutationDetailTranscriptChangeDTO dto = new MutationDetailTranscriptChangeDTO();
         dto.setZdbID(detail.getZdbID());
         if (detail.getTranscriptConsequence() != null) {
@@ -810,14 +807,17 @@ public class DTOConversionService {
     }
 
     private static MutationDetailDnaChangeDTO convertToMutationDetailDnaDTO(FeatureDnaMutationDetail detail) {
-        if (detail == null)
+        if (detail == null) {
             return null;
+        }
         MutationDetailDnaChangeDTO dto = new MutationDetailDnaChangeDTO();
         dto.setZdbID(detail.getZdbID());
-        if (detail.getDnaMutationTerm() != null)
+        if (detail.getDnaMutationTerm() != null) {
             dto.setChangeTermOboId(detail.getDnaMutationTerm().getTerm().getOboID());
-        if (detail.getGeneLocalizationTerm() != null)
+        }
+        if (detail.getGeneLocalizationTerm() != null) {
             dto.setLocalizationTermOboID(detail.getGeneLocalizationTerm().getTerm().getOboID());
+        }
         dto.setNumberAddedBasePair(detail.getNumberAddedBasePair());
         dto.setNumberRemovedBasePair(detail.getNumberRemovedBasePair());
         dto.setPositionStart(detail.getDnaPositionStart());
@@ -829,16 +829,20 @@ public class DTOConversionService {
     }
 
     private static MutationDetailProteinChangeDTO convertToMutationDetailProteinDTO(FeatureProteinMutationDetail detail) {
-        if (detail == null)
+        if (detail == null) {
             return null;
+        }
         MutationDetailProteinChangeDTO dto = new MutationDetailProteinChangeDTO();
         dto.setZdbID(detail.getZdbID());
-        if (detail.getProteinConsequence() != null)
+        if (detail.getProteinConsequence() != null) {
             dto.setConsequenceTermOboID(detail.getProteinConsequence().getTerm().getOboID());
-        if (detail.getMutantAminoAcid() != null)
+        }
+        if (detail.getMutantAminoAcid() != null) {
             dto.setMutantAATermOboID(detail.getMutantAminoAcid().getTerm().getOboID());
-        if (detail.getWildtypeAminoAcid() != null)
+        }
+        if (detail.getWildtypeAminoAcid() != null) {
             dto.setWildtypeAATermOboID(detail.getWildtypeAminoAcid().getTerm().getOboID());
+        }
         dto.setNumberAddedAminoAcid(detail.getNumberAminoAcidsAdded());
         dto.setNumberRemovedAminoAcid(detail.getNumberAminoAcidsRemoved());
         dto.setPositionStart(detail.getProteinPositionStart());
@@ -1029,7 +1033,8 @@ public class DTOConversionService {
         return term;
     }
 
-    public static TermDTO convertToTermDTO(GenericTerm term) {
+    // Shallow means: do not populate synonym and subset collections
+    public static TermDTO convertToTermDTO(GenericTerm term, boolean shallow) {
         if (term == null) {
             return null;
         }
@@ -1041,7 +1046,8 @@ public class DTOConversionService {
         dto.setObsolete(term.isObsolete());
         dto.setDefinition(term.getDefinition());
         dto.setComment(term.getComment());
-        dto.setAliases(convertToAliasDTO(term.getAliases()));
+        if (!shallow)
+            dto.setAliases(convertToAliasDTO(term.getAliases()));
 
         if (term.getOntology() == Ontology.ANATOMY) {
             DevelopmentStage startStage = OntologyService.getStartStageForTerm(term);
@@ -1050,27 +1056,26 @@ public class DTOConversionService {
             dto.setEndStage(convertToStageDTO(endStage));
         }
 
-        // set stages here
-
-
         // set the ontology section here
         Ontology ontology = term.getOntology();
         // ToDo: generalize this better...
-//        String qualityOntologyName = term.getOntology().getOntologyName();
-//        dto.setOntology(OntologyDTO.getOntologyByDescriptor(qualityOntologyName));
-        // if QUALITY, then get the most specific instance for the ontology
         if (ontology == Ontology.QUALITY) {
             ontology = RepositoryFactory.getOntologyRepository().getProcessOrPhysicalObjectQualitySubOntologyForTerm(term);
         }
         if (ontology == Ontology.MPATH) {
             ontology = Ontology.MPATH_NEOPLASM;
         }
-        dto.setSubsets(convertToSubsetDTO(term.getSubsets()));
+        if (!shallow)
+            dto.setSubsets(convertToSubsetDTO(term.getSubsets()));
         OntologyDTO ontologyDTO = convertToOntologyDTO(ontology);
         dto.setOntology(ontologyDTO);
-        dto.setDoNotAnnotateWith(term.useForAnnotations());
+        if (!shallow)
+            dto.setDoNotAnnotateWith(term.useForAnnotations());
         return dto;
+    }
 
+    public static TermDTO convertToTermDTO(GenericTerm term) {
+        return convertToTermDTO(term, false);
     }
 
     public static TermDTO convertQualityToTermDTO(PhenotypeStructure structure) {
@@ -1128,8 +1133,9 @@ public class DTOConversionService {
     public static FigureDTO convertToFigureDTO(Figure figure) {
         FigureDTO dto = new FigureDTO();
         dto.setZdbID(figure.getZdbID());
-        if (figure.getLabel() == null)
+        if (figure.getLabel() == null) {
             figure = getPublicationRepository().getFigureByID(figure.getZdbID());
+        }
         dto.setLabel(figure.getLabel());
         dto.setOrderingLabel(figure.getOrderingLabel());
         return dto;
@@ -1190,6 +1196,7 @@ public class DTOConversionService {
 
         return environment;
     }
+
     public static ExperimentDTO convertToEnvironmentTabDTO(Experiment experiment) {
         ExperimentDTO environment = new ExperimentDTO();
         environment.setZdbID(experiment.getZdbID());
@@ -1369,8 +1376,9 @@ public class DTOConversionService {
     }
 
     public static EapQualityTermDTO convertToEapQualityTermDTO(ExpressionStructure structure) {
-        if (structure.getEapQualityTerm() == null)
+        if (structure.getEapQualityTerm() == null) {
             return null;
+        }
         EapQualityTermDTO dto = new EapQualityTermDTO();
         dto.setTerm(convertToTermDTO(structure.getEapQualityTerm()));
         dto.setTag(structure.getTag());
@@ -1688,12 +1696,13 @@ public class DTOConversionService {
         return genotype;
     }
 
-    public static FishDTO convertToFishDtoFromFish(Fish fish) {
+    public static FishDTO convertToFishDtoFromFish(Fish fish, boolean shallow) {
         FishDTO dto = new FishDTO();
         dto.setZdbID(fish.getZdbID());
         dto.setName(fish.getDisplayName());
         dto.setHandle(fish.getHandle());
-        dto.setGenotypeDTO(DTOConversionService.convertToGenotypeDTO(fish.getGenotype(), false));
+        if (!shallow)
+            dto.setGenotypeDTO(DTOConversionService.convertToGenotypeDTO(fish.getGenotype(), false));
         if (CollectionUtils.isNotEmpty(fish.getStrList())) {
             List<RelatedEntityDTO> strs = new ArrayList<>(fish.getStrList().size());
             for (SequenceTargetingReagent str : fish.getStrList()) {
@@ -1704,6 +1713,11 @@ public class DTOConversionService {
         dto.setOrder(fish.getOrder());
         dto.setNameOrder(fish.getNameOrder());
         return dto;
+
+    }
+
+    public static FishDTO convertToFishDtoFromFish(Fish fish) {
+        return convertToFishDtoFromFish(fish, false);
     }
 
     public static DiseaseAnnotation convertToDiseaseFromDiseaseDTO(DiseaseAnnotationDTO diseaseAnnotationDTO) throws TermNotFoundException {
@@ -1810,8 +1824,9 @@ public class DTOConversionService {
     }
 
     public static NcbiOtherSpeciesGeneDTO convertToNcbiOtherSpeciesGeneDTO(NcbiOtherSpeciesGene ncbiGene) {
-        if (ncbiGene == null)
+        if (ncbiGene == null) {
             return null;
+        }
         NcbiOtherSpeciesGeneDTO geneDTO = new NcbiOtherSpeciesGeneDTO();
         geneDTO.setID(ncbiGene.getID());
         geneDTO.setAbbreviation(ncbiGene.getAbbreviation());
@@ -1882,8 +1897,9 @@ public class DTOConversionService {
         dto.setId(result.getID());
         List<EapQualityTermDTO> dtoList = new ArrayList<>();
         if (result.getPhenotypeTermSet() != null) {
-            for (ExpressionPhenotypeTerm qualTerm : result.getPhenotypeTermSet())
+            for (ExpressionPhenotypeTerm qualTerm : result.getPhenotypeTermSet()) {
                 dtoList.add(convertToEapQualityTermDTO(qualTerm));
+            }
             dto.setQualityTermDTOList(dtoList);
         }
         return dto;
@@ -1940,7 +1956,7 @@ public class DTOConversionService {
         MutationDetailControlledVocabularyTermDTO dto = new MutationDetailControlledVocabularyTermDTO();
         dto.setAbbreviation(controlledVocab.getAbbreviation());
         dto.setDisplayName(controlledVocab.getDisplayName());
-        dto.setTerm(DTOConversionService.convertToTermDTO(controlledVocab.getTerm()));
+        dto.setTerm(DTOConversionService.convertToTermDTO(controlledVocab.getTerm(), true));
         dto.setOrder(controlledVocab.getOrder());
         return dto;
     }

@@ -139,7 +139,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         PaginationBean bean = new PaginationBean();
         bean.setMaxDisplayRecords(4);
         PaginationResult<Fish> genotypeResult = mutantRepository.getFishByAnatomyTerm(item, false, bean);
-//        assertEquals("8 genes", 4, list.size());
         assertNotNull(genotypeResult.getPopulatedResults());
         assertEquals(genotypeResult.getPopulatedResults().size(), 4);
         assertTrue(genotypeResult.getTotalCount() > 4);
@@ -728,9 +727,22 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getAllPublicationStatusesShouldReturnTwelveValues() {
+    public void getPubStatusClosedCurated() {
+        String pubId = "ZDB-PUB-040708-1"; // a pub that has been indexed, curated, and closed
+        Publication pub = publicationRepository.getPublication(pubId);
+
+        PublicationTrackingHistory currentStatus = publicationRepository.currentTrackingStatus(pub);
+        assertThat(currentStatus.getStatus().getType(), is(PublicationTrackingStatus.Type.CLOSED));
+        assertThat(currentStatus.getStatus().getQualifier(), is("curated"));
+
+    }
+
+
+    @Test
+
+    public void getAllPublicationStatusesShouldReturnSixteenValues() {
         List<PublicationTrackingStatus> statuses = publicationRepository.getAllPublicationStatuses();
-        assertThat(statuses, hasSize(12));
+        assertThat(statuses, hasSize(16));
     }
 
     @Test

@@ -162,7 +162,7 @@ select sfcl_chromosome, sfcl_feature_zdb_id, sfcl_start_position, sfcl_end_posit
   left outer join record_attribution on recattrib_data_zdb_id = sfcl_zdb_id;
 
 update sequence_feature_chromosome_location_generated
-set sfclg_gbrowse_track = 'allzmp'
+set sfclg_gbrowse_track = 'zmp'
 where sfclg_pub_zdb_id = 'ZDB-PUB-130425-4';
 
 insert into sequence_feature_chromosome_location_generated (sfclg_chromosome, sfclg_data_zdb_id,

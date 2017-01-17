@@ -109,8 +109,9 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     public CuratorSession getCuratorSession(String pubID, CuratorSession.Attribute field) {
         Person curator = profileService.getCurrentSecurityUser();
-        if (curator == null)
+        if (curator == null) {
             return null;
+        }
 
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(CuratorSession.class);
@@ -131,8 +132,9 @@ public class HibernateProfileRepository implements ProfileRepository {
         CuratorSession cs = new CuratorSession();
 
         cs.setCurator(getPerson(curatorZdbID));
-        if (pubZdbID != null)
+        if (pubZdbID != null) {
             cs.setPublication(publicationRepository.getPublication(pubZdbID));
+        }
         cs.setField(field);
         cs.setValue(value);
 
@@ -142,8 +144,9 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     public void deleteAccountInfo(Person person) {
         AccountInfo accountInfo = person.getAccountInfo();
-        if (accountInfo == null)
+        if (accountInfo == null) {
             return;
+        }
 
         Session session = HibernateUtil.currentSession();
         AccountInfo info = (AccountInfo) session.get(AccountInfo.class, person.getZdbID());
@@ -160,11 +163,13 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     public void updateAccountInfo(Person currentPerson, AccountInfo newAccountInfo) {
         AccountInfo currentAccountInfo = currentPerson.getAccountInfo();
-        if (currentAccountInfo == null)
+        if (currentAccountInfo == null) {
             return;
+        }
 
-        if (newAccountInfo == null)
+        if (newAccountInfo == null) {
             return;
+        }
 
         Session session = HibernateUtil.currentSession();
         String newName = newAccountInfo.getName();
@@ -175,7 +180,7 @@ public class HibernateProfileRepository implements ProfileRepository {
             update.setNewValue(newName);
             update.setOldValue(currentAccountInfo.getName());
             update.setRecID(currentPerson.getZdbID());
-            update.setSubmitterID(submittingPerson.getZdbID());
+            update.setSubmitter(submittingPerson);
             update.setSubmitterName(submittingPerson.getUsername());
             update.setWhenUpdated(new Date());
             session.save(update);
@@ -187,7 +192,7 @@ public class HibernateProfileRepository implements ProfileRepository {
             Updates update = new Updates();
             update.setFieldName("password");
             update.setRecID(currentPerson.getZdbID());
-            update.setSubmitterID(submittingPerson.getZdbID());
+            update.setSubmitter(submittingPerson);
             update.setSubmitterName(submittingPerson.getUsername());
             update.setWhenUpdated(new Date());
             session.save(update);
@@ -199,7 +204,7 @@ public class HibernateProfileRepository implements ProfileRepository {
             update.setRecID(currentPerson.getZdbID());
             update.setNewValue(role);
             update.setOldValue(currentAccountInfo.getRole());
-            update.setSubmitterID(submittingPerson.getZdbID());
+            update.setSubmitter(submittingPerson);
             update.setSubmitterName(submittingPerson.getUsername());
             update.setWhenUpdated(new Date());
             currentAccountInfo.setRole(role);
@@ -212,7 +217,7 @@ public class HibernateProfileRepository implements ProfileRepository {
             update.setRecID(currentPerson.getZdbID());
             update.setNewValue(login);
             update.setOldValue(currentAccountInfo.getLogin());
-            update.setSubmitterID(submittingPerson.getZdbID());
+            update.setSubmitter(submittingPerson);
             update.setSubmitterName(submittingPerson.getUsername());
             update.setWhenUpdated(new Date());
             currentAccountInfo.setLogin(login);
@@ -231,13 +236,14 @@ public class HibernateProfileRepository implements ProfileRepository {
     public void setCuratorSession(String pubID, CuratorSession.Attribute showSection, boolean visibility) {
         Session session = HibernateUtil.currentSession();
         CuratorSession curationAttribute = getCuratorSession(pubID, showSection);
-        if (curationAttribute != null)
+        if (curationAttribute != null) {
             curationAttribute.setValue(String.valueOf(visibility));
-        else {
+        } else {
             Person curator = profileService.getCurrentSecurityUser();
             // ToDo: IS this the right thing to do?
-            if (curator == null)
+            if (curator == null) {
                 return;
+            }
 
             Publication pub = RepositoryFactory.getPublicationRepository().getPublication(pubID);
             curationAttribute = new CuratorSession();
@@ -259,13 +265,14 @@ public class HibernateProfileRepository implements ProfileRepository {
     public void setCuratorSession(String publicationID, CuratorSession.Attribute attributeName, String zdbID) {
         Session session = HibernateUtil.currentSession();
         CuratorSession curationAttribute = getCuratorSession(publicationID, attributeName);
-        if (curationAttribute != null)
+        if (curationAttribute != null) {
             curationAttribute.setValue(zdbID);
-        else {
+        } else {
             Person curator = profileService.getCurrentSecurityUser();
             // ToDo: IS this the right thing to do?
-            if (curator == null)
+            if (curator == null) {
                 return;
+            }
 
             Publication pub = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
             curationAttribute = new CuratorSession();
@@ -303,7 +310,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         List<Person> people = new ArrayList<Person>();
         Session session = HibernateUtil.currentSession();
 
-        people.addAll((List<Person>)session.createCriteria(Person.class)
+        people.addAll((List<Person>) session.createCriteria(Person.class)
                 .add(Restrictions.eq("fullName", fullName))
                 .list());
         return people;
@@ -662,15 +669,15 @@ public class HibernateProfileRepository implements ProfileRepository {
         return HibernateUtil.currentSession()
                 .createSQLQuery(sql)
                 .setResultTransformer(new BasicTransformerAdapter() {
-                    @Override
-                    public Object transformTuple(Object[] tuple, String[] aliases) {
-                        OrganizationPosition organizationPosition = new OrganizationPosition();
-                        organizationPosition.setName(tuple[0].toString());
-                        organizationPosition.setId(Integer.parseInt(tuple[1].toString()));
-                        return organizationPosition;
+                                          @Override
+                                          public Object transformTuple(Object[] tuple, String[] aliases) {
+                                              OrganizationPosition organizationPosition = new OrganizationPosition();
+                                              organizationPosition.setName(tuple[0].toString());
+                                              organizationPosition.setId(Integer.parseInt(tuple[1].toString()));
+                                              return organizationPosition;
 
-                    }
-                }
+                                          }
+                                      }
                 )
                 .list();
     }
@@ -681,15 +688,15 @@ public class HibernateProfileRepository implements ProfileRepository {
         return HibernateUtil.currentSession()
                 .createSQLQuery(sql)
                 .setResultTransformer(new BasicTransformerAdapter() {
-                    @Override
-                    public Object transformTuple(Object[] tuple, String[] aliases) {
-                        OrganizationPosition organizationPosition = new OrganizationPosition();
-                        organizationPosition.setName(tuple[0].toString());
-                        organizationPosition.setId(Integer.parseInt(tuple[1].toString()));
-                        return organizationPosition;
+                                          @Override
+                                          public Object transformTuple(Object[] tuple, String[] aliases) {
+                                              OrganizationPosition organizationPosition = new OrganizationPosition();
+                                              organizationPosition.setName(tuple[0].toString());
+                                              organizationPosition.setId(Integer.parseInt(tuple[1].toString()));
+                                              return organizationPosition;
 
-                    }
-                }
+                                          }
+                                      }
                 ).list();
     }
 
@@ -835,7 +842,7 @@ public class HibernateProfileRepository implements ProfileRepository {
     }
 
     @Override
-    public List<Person> getPersonByLastNameStartsWithAndFirstNameStartsWith(String lastNameStartsWith,String firstNameStartsWith) {
+    public List<Person> getPersonByLastNameStartsWithAndFirstNameStartsWith(String lastNameStartsWith, String firstNameStartsWith) {
 
         return HibernateUtil.currentSession().createCriteria(Person.class)
                 .add(Restrictions.ilike("lastName", lastNameStartsWith + "%"))
@@ -846,7 +853,7 @@ public class HibernateProfileRepository implements ProfileRepository {
     }
 
     @Override
-    public List<Person> getPersonByLastNameEqualsAndFirstNameStartsWith(String lastName,String firstNameStartsWith) {
+    public List<Person> getPersonByLastNameEqualsAndFirstNameStartsWith(String lastName, String firstNameStartsWith) {
 
         return HibernateUtil.currentSession().createCriteria(Person.class)
                 .add(Restrictions.eq("lastName", lastName))
@@ -917,7 +924,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     /**
      * Doing multi-word searching is something that's useful in all of these searches
-     * <p/>
+     * <p>
      * Returning the criteria doesn't really do anything, but it feels like it's a little
      * more immediately obvious what's going on if I do it that way.
      *
@@ -927,9 +934,11 @@ public class HibernateProfileRepository implements ProfileRepository {
      * @return
      */
     private Criteria addTokenizedLikeRestriction(String fieldName, String queryString, Criteria criteria) {
-        if (fieldName != null && queryString != null && criteria != null)
-            for (String queryTerm : Arrays.asList(queryString.split(" ")))
+        if (fieldName != null && queryString != null && criteria != null) {
+            for (String queryTerm : Arrays.asList(queryString.split(" "))) {
                 criteria.add(Restrictions.ilike(fieldName, "%" + queryTerm + "%"));
+            }
+        }
 
         return criteria;
     }
@@ -981,10 +990,10 @@ public class HibernateProfileRepository implements ProfileRepository {
                 .list();
     }
 
-    public List<Person> getUsersByRole(String role) {
+    public List<Person> getCurators() {
         return HibernateUtil.currentSession()
                 .createCriteria(Person.class)
-                .add(Restrictions.eq("accountInfo.role", role))
+                .add(Restrictions.eq("accountInfo.curator", true))
                 .list();
     }
 }

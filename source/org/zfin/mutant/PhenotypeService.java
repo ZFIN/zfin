@@ -439,10 +439,12 @@ public class PhenotypeService {
                 if (groupBy.equals("condition")) {
                     if (fishExp.isStandardOrGenericControl()) {
                         key = keyPheno + "standard";
-                    } else if (exp.isChemical()) {
-                        key = keyPheno + "chemical";
                     } else {
                         key = keyPheno + exp.getZdbID();
+                    }
+
+                    if (sortBy.equals("fish")) {
+                        key += pheno.getPhenotypeWarehouse().getFishExperiment().getFish().getZdbID();
                     }
                 } else {
                     key = keyPheno + pheno.getPhenotypeWarehouse().getFishExperiment().getFish().getZdbID();

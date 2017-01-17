@@ -832,7 +832,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
 //            public Object transformTuple(Object[] tuple, String[] aliases) {
 //                DBLink linkDisplay = new MarkerDBLink();
 //                linkDisplay.setZdbID(tuple[0].toString());
-//                HibernateUtil.currentSession().refresh(linkDisplay);
+//                HibernateUtil.currentSession().handleCurationEvent(linkDisplay);
 //                return linkDisplay;
 //            }
 //        };

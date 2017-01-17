@@ -148,7 +148,27 @@
 
     <target name="unittests" depends="compile,build-tests" description="Unit tests.">
         <runTest testClass="org.zfin.framework.GroovyTest" outfile="groovy-${unitTestFile}" verbose="true"/>
-        <runTest testclass="org.zfin.UnitTests" outfile="${unitTestFile}" verbose="true"/>
+        <junit fork="true"
+               printsummary="yes"
+               haltonfailure="yes"
+               haltonerror="yes"
+               maxmemory="2024m"
+               showoutput="false"
+	       includeantruntime="false">
+
+            <test name="org.zfin.UnitTests" todir="${test.reports.dir}"
+		  haltonerror="false" haltonfailure="false"
+                  failureproperty="test.failure"
+                  outfile="${unitTestFile}">
+                <formatter type="brief"/>
+                <formatter type="xml"/>
+            </test>
+            <classpath refid="unittest.classpath"/>
+            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
+            <jvmarg line="${junit.jvmargs}"/>
+            <jvmarg value="-Xverify:none"/>
+            <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
+        </junit>
         <echo message=":UNIT TESTS SUCCESSFUL:"/>
     </target>
 
@@ -159,7 +179,6 @@
 
     <target name="unittests-quiet" depends="compile,build-tests" description="Runs database and unit tests quietly">
         <runTest testclass="org.zfin.UnitTests" outfile="${unitTestFile}" verbose="false"/>
-        <runTest testclass="org.zfin.infrastructure.EnumValidationTest" outfile="${validateTestFile}" verbose="false"/>
     </target>
 
     <target name="ontology-test" depends="compile,build-tests" description="Runs database and unit tests quietly">

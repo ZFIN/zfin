@@ -1,17 +1,18 @@
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<c:set var="editURL">/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString() %>?MIval=aa-sequence.apg&UPDATE=1&OID=${formBean.marker.zdbID}&rtype=marker</c:set>
+<script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
+<script src="/javascript/angular/angular-sanitize.js"></script>
+<script src="/javascript/editMarker.js"></script>
+<script src="/javascript/marker.service.js"></script>
+<script src="/javascript/sequence-information-edit.js"></script>
+
+<c:set var="editURL">/action/marker/sequence/edit/${formBean.marker.zdbID}</c:set>
 <c:set var="deleteURL">none</c:set>
 <zfin2:dataManager
         zdbID="${formBean.marker.zdbID}"
         editURL="${editURL}"
-        deleteURL="${deleteURL}"
-        rtype="marker"
-        />
-
-<%--&lt;%&ndash;latestUpdate="${formBean.latestUpdate}"&ndash;%&gt;--%>
-<%--editURL="${editURL}"--%>
+        deleteURL="${deleteURL}"/>
 
 <div style="float: right">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
@@ -19,7 +20,7 @@
     </tiles:insertTemplate>
 </div>
 
-    <%--<jsp:useBean id="formBean"  class="org.zfin.marker.presentation.SequencePageInfoBean"/>--%>
+<%--<jsp:useBean id="formBean"  class="org.zfin.marker.presentation.SequencePageInfoBean"/>--%>
 
 <zfin2:sequenceHead gene="${formBean.marker}"/>
 

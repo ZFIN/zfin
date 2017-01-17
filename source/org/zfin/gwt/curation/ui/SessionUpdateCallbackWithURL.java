@@ -22,6 +22,6 @@ public class SessionUpdateCallbackWithURL implements AsyncCallback {
     }
 
     public void onFailure(Throwable throwable) {
-        GWT.log("SessionSave update failed when URL refresh: " + throwable);
+        GWT.log("SessionSave update failed when URL handleCurationEvent: " + throwable);
     }
 }

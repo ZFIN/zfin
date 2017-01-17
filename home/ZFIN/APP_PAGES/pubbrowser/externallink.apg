@@ -1,8 +1,0 @@
-<?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
-
-<?MIVAR COND="$(NC,$pubview2_doi_no,)">
-<?MIVAR NAME=$externallink>http://dx.doi.org/$pubview2_doi_no<?/MIVAR>
-    <A HREF="$externallink">Full text @ $pubview2_jrnl_abbrev</A>
-<?/MIVAR>
-<?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
-

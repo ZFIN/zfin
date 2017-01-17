@@ -13,6 +13,15 @@
                         ng-model="vm.status" ng-change="vm.fetchPubs()">
                     <option value="">Any</option>
                 </select>
+                by
+                <select class="form-control"
+                        ng-options="order.display for order in vm.sortOrders"
+                        ng-model="vm.sort"
+                        ng-change="vm.fetchPubs()">
+                </select>
+                <button title="Refresh query" class="btn btn-link pub-dashboard-reload" ng-disabled="vm.loading" ng-click="vm.fetchPubs()">
+                    <i class="fa fa-refresh" ng-class="{'fa-spin': vm.loading}"></i>
+                </button>
             </form>
         </div>
     </div>
@@ -30,7 +39,8 @@
                 <th width="115px"></th>
                 <th width="150px">ZDB-ID</th>
                 <th>Title</th>
-                <th width="100px">Last Update</th>
+                <th width="100px">Last Status Change</th>
+                <th width="130px" ng-if="status == 'Waiting for Author'">Last Correspondence</th>
                 <th width="150px">Status</th>
                 <th width="100px">Owner</th>
             </tr>
@@ -43,7 +53,7 @@
                             Action <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a ng-href="/cgi-bin/webdriver?MIval=aa-curation.apg&OID={{pub.zdbId}}" target="_blank">Curate</a></li>
+                            <li><a ng-href="/action/curation/{{pub.zdbId}}" target="_blank">Curate</a></li>
                             <li><a ng-href="/action/publication/{{pub.zdbId}}/track" target="_blank">Track</a></li>
                             <li><a href ng-click="vm.openStatusModal(pub)">Set status...</a></li>
                         </ul>
@@ -56,6 +66,7 @@
                     <p><b ng-bind-html="pub.title | trustedHtml"></b></p>
                 </td>
                 <td>{{pub.status.updateDate | timeago:true}}</td>
+                <td ng-if="status == 'Waiting for Author'">{{pub.lastCorrespondenceDate | timeago:true}}</td>
                 <td>{{pub.status.status.name}}</td>
                 <td>{{pub.status.owner.name}}</td>
             </tr>

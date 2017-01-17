@@ -21,6 +21,9 @@ public class LinkDisplay implements ProvidesLink {
     private String urlSuffix;
     private Integer significance;
     private String dblinkZdbID;
+    private String length;
+    private String dataType;
+    private Integer typeOrder;
 
     public String getDisplayName() {
         return referenceDatabaseName + ":" + accession;
@@ -56,7 +59,7 @@ public class LinkDisplay implements ProvidesLink {
             StringBuilder uri = new StringBuilder("?MIval=aa-showpubs.apg");
             uri.append("&orgOID=");
             uri.append(markerZdbID);
-            uri.append("&rtype=marker&recattrsrctype=standard");
+            uri.append("&recattrsrctype=standard");
             uri.append("&OID=");
             String count = String.valueOf(references.size());
 
@@ -153,5 +156,29 @@ public class LinkDisplay implements ProvidesLink {
 
     public void setReferenceDatabaseZdbID(String referenceDatabaseZdbID) {
         this.referenceDatabaseZdbID = referenceDatabaseZdbID;
+    }
+
+    public String getLength() {
+        return length;
+    }
+
+    public void setLength(String length) {
+        this.length = length;
+    }
+
+    public String getDataType() {
+        return dataType;
+    }
+
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
+    }
+
+    public Integer getTypeOrder() {
+        return typeOrder;
+    }
+
+    public void setTypeOrder(Integer typeOrder) {
+        this.typeOrder = typeOrder;
     }
 }

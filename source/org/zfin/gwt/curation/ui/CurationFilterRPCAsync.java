@@ -1,7 +1,11 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.zfin.gwt.root.dto.FeatureDTO;
+import org.zfin.gwt.root.dto.FilterSelectionBoxEntry;
 import org.zfin.gwt.root.dto.FilterValuesDTO;
+
+import java.util.List;
 
 /**
  * RPC Async Class for the Curation module: Filter bar being shared by FX and Pheno tab.
@@ -20,5 +24,5 @@ public interface CurationFilterRPCAsync {
 
     void setFilterType(String publicationID, String value, String type, AsyncCallback callback);
 
-    
+    void getFeatureValues(String publicationID, AsyncCallback<List<FilterSelectionBoxEntry>> callback);
 }

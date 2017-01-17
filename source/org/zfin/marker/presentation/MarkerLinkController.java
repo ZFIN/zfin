@@ -12,6 +12,7 @@ import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.infrastructure.presentation.JSONMessageList;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
@@ -81,7 +82,10 @@ public class MarkerLinkController {
         Marker marker = markerRepository.getMarkerByID(markerId);
         DisplayGroup.GroupName group = DisplayGroup.GroupName.getGroup(groupName);
 
-        return markerRepository.getMarkerDBLinksFast(marker, group);
+        List<LinkDisplay> links = markerRepository.getMarkerDBLinksFast(marker, group);
+        if (groupName.equals(DisplayGroup.GroupName.OTHER_MARKER_PAGES.toString()))
+            links.addAll(markerRepository.getVegaGeneDBLinksTranscript(marker, DisplayGroup.GroupName.SUMMARY_PAGE));
+        return links;
     }
 
     @ResponseBody
@@ -117,14 +121,20 @@ public class MarkerLinkController {
         String pubId = newLink.getReferences().iterator().next().getZdbID();
 
         HibernateUtil.createTransaction();
-        DBLink link = markerRepository.addDBLink(marker, accessionNo, refDB, pubId);
+        DBLink link = null;
+        if (newLink.getLength() != null) {
+            int len = Integer.parseInt(newLink.getLength());
+            link = markerRepository.addDBLinkWithLenth(marker, accessionNo, refDB, pubId, len);
+        } else {
+            link = markerRepository.addDBLink(marker, accessionNo, refDB, pubId);
+        }
         HibernateUtil.flushAndCommitCurrentSession();
 
         return getLinkDisplayById(link.getZdbID());
     }
 
     @ResponseBody
-    @RequestMapping(value = "/link/{linkId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/link/{linkId}", method = RequestMethod.DELETE, produces = "text/plain")
     public String deleteMarkerLink(@PathVariable String linkId) {
         DBLink link = sequenceRepository.getDBLinkByID(linkId);
         sequenceRepository.removeDBLinks(Collections.singletonList(link));
@@ -155,7 +165,7 @@ public class MarkerLinkController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/link/{linkId}/references/{pubID}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/link/{linkId}/references/{pubID}", method = RequestMethod.DELETE, produces = "text/plain")
     public String removeLinkReference(@PathVariable String linkId,
                                       @PathVariable String pubID) {
         HibernateUtil.createTransaction();
@@ -172,6 +182,29 @@ public class MarkerLinkController {
             LOG.error("too many LinkDisplays returned for " + linkId);
         }
         return linkDisplays.get(0);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/link/reference/{zdbID}/validate", method = RequestMethod.POST)
+    public JSONMessageList validateReference(@PathVariable String zdbID) {
+
+        Publication publication = publicationRepository.getPublication(zdbID);
+        if (publication == null) {
+            String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
+            if (replacedZdbID != null) {
+                publication = publicationRepository.getPublication(replacedZdbID);
+            }
+        }
+
+        Collection<String> errors = new ArrayList<>();
+        JSONMessageList messages = new JSONMessageList();
+
+        if (publication == null) {
+            String error = "Invalid reference";
+            errors.add(error);
+            messages.setErrors(errors);
+        }
+        return messages;
     }
 
 }

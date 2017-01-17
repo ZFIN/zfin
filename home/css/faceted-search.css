@@ -125,19 +125,19 @@ table.search-result-entity-attributes td {
     visibility: visible;
 }
 
-.collapsible-attribute {
+.boxy-search-result .collapsible-attribute {
     cursor: pointer;
 }
 
 /*  todo: deal with collapsing attributes, genotype superscripts mess this bit up, but it's getting there */
-.collapsed-attribute {
+.boxy-search-result .collapsed-attribute {
     overflow: hidden;
     text-overflow: ellipsis;
     position: relative;
     max-height: 54px;
 }
 
-.collapsed-attribute:after {
+.boxy-search-result .collapsed-attribute:after {
     content: "";
     text-align: right;
     position: absolute;
@@ -401,13 +401,6 @@ li.facet-value {
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
-}
-
-.icon-toggle {
-    transition: transform 200ms;
-}
-.icon-toggle.open {
-    transform: rotate(90deg);
 }
 
 .facet-label {

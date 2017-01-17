@@ -1,3 +1,4 @@
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%--
 
   Parameters:
@@ -13,20 +14,25 @@
 <%@attribute name="text" type="java.lang.String" %>
 <%@attribute name="idName" type="java.lang.String" %>
 <%@attribute name="shortLength" type="java.lang.Integer" %>
-<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+<%@ attribute name="url" %>
 
 <span id="notesS_${idName}">
-    <zfin:toggleTextLength text="${text}" shortLength="${shortLength}" shortVersion="true" escape="html" escapeHtml="false"/>
+    <c:if test="${  not empty url}"><a href="/${url}"></c:if>
+    <zfin:toggleTextLength text="${text}" shortLength="${shortLength}" shortVersion="true"
+                           escape="html" escapeHtml="false"/>
+    <c:if test="${  not empty url}"></a></c:if>
     <c:if test="${fn:length(text) > shortLength}">
-        <a href="javascript:toggleVersion('${idName}', true)"  title="Show full text">
+        <span onclick="toggleVersion('${idName}', true)" title="Show full text">
             &nbsp;...
             <img onclick="toggleVersion('${idName}', true)"
                  src="/images/right_arrow.gif" alt="expand" title="Show full text" border="0">
-        </a>
+        </span>
     </c:if>
 </span>
 <span style="display:none;" id="notesL_${idName}">
+    <c:if test="${  not empty url}"><a href="/${url}"></c:if>
     ${zfn:escapeHtml(text, false)}
+    <c:if test="${  not empty url}"></a></c:if>
 &nbsp;
     <img onclick="toggleVersion('${idName}', false)"
          src="/images/left_arrow.gif" alt="collapse" title="Show beginning text" border="0">

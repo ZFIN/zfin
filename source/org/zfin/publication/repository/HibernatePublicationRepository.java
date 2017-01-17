@@ -8,12 +8,16 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.ejb.HibernateQuery;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.transform.ResultTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 import org.zfin.antibody.Antibody;
+import org.zfin.curation.presentation.CorrespondenceDTO;
+import org.zfin.curation.presentation.PersonDTO;
 import org.zfin.database.SearchUtil;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionExperiment;
@@ -35,7 +39,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
-import org.zfin.profile.Person;
+import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.*;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
@@ -52,6 +56,10 @@ import java.util.stream.Collectors;
 public class HibernatePublicationRepository extends PaginationUtil implements PublicationRepository {
 
     Logger logger = Logger.getLogger(HibernatePublicationRepository.class);
+
+    private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+
+    private ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
 
     public int getNumberOfPublications(String abstractText) {
 
@@ -301,9 +309,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "GROUP BY exp.xpatex_gene_zdb_id, gene.mrkr_abbrev " +
                 "ORDER BY numOfFig DESC, geneSymbol ";
         SQLQuery query = session.createSQLQuery(hql);
-        query.addScalar("geneID", Hibernate.STRING);
-        query.addScalar("geneSymbol", Hibernate.STRING);
-        query.addScalar("numOfFig", Hibernate.INTEGER);
+        query.addScalar("geneID", StringType.INSTANCE);
+        query.addScalar("geneSymbol", StringType.INSTANCE);
+        query.addScalar("numOfFig", IntegerType.INSTANCE);
         query.setParameter("termID", anatomyTerm.getZdbID());
         query.setBoolean("expressionFound", true);
         query.setBoolean("isWildtype", true);
@@ -392,8 +400,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         List<MarkerStatistic> markers = new ArrayList<MarkerStatistic>();
         for (Object[] stats : list) {
             String markerZdbID = (String) stats[0];
-            MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-            Marker marker = mr.getMarkerByID(markerZdbID);
+            Marker marker = markerRepository.getMarkerByID(markerZdbID);
             MarkerStatistic statistic = new MarkerStatistic(anatomyTerm, marker);
             statistic.setNumberOfFigures((Integer) stats[2]);
             //statistic.setNumberOfPublications(getNumberOfExpressedGenePublicationsWithFigures(marker.getZdbID(), anatomyTerm.getZdbID()));
@@ -1135,7 +1142,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<Marker> getGenesByPublication(String pubID, boolean includeEFGs) {
         Session session = HibernateUtil.currentSession();
 
-        MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
         Marker.TypeGroup typeGroup = includeEFGs ? Marker.TypeGroup.GENEDOM_AND_EFG : Marker.TypeGroup.GENEDOM;
         List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(typeGroup);
 
@@ -1582,11 +1588,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     @Override
     public int getNumberDirectPublications(String zdbID) {
         return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery("select count(*) " +
-                        "from record_attribution ra " +
-                        "where ra.recattrib_data_zdb_id=:zdbID ")
-                        .setString("zdbID", zdbID)
-                        .uniqueResult()
-                        .toString()
+                "from record_attribution ra " +
+                "where ra.recattrib_data_zdb_id=:zdbID ")
+                .setString("zdbID", zdbID)
+                .uniqueResult()
+                .toString()
         );
     }
 
@@ -2183,7 +2189,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             if (owner.equals("*")) {
                 criteria.add(Restrictions.isNotNull("owner"));
             } else {
-                criteria.add(Restrictions.eq("owner", RepositoryFactory.getProfileRepository().getPerson(owner)));
+                criteria.add(Restrictions.eq("owner", profileRepository.getPerson(owner)));
             }
         }
 
@@ -2206,4 +2212,99 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return PaginationResultFactory.createResultFromScrollableResultAndClose(offset, offset + count, criteria.scroll());
     }
 
+    public List<PublicationFileType> getAllPublicationFileTypes() {
+        return HibernateUtil.currentSession().createCriteria(PublicationFileType.class).list();
+    }
+
+    public PublicationFileType getPublicationFileType(long id) {
+        return (PublicationFileType) HibernateUtil.currentSession().get(PublicationFileType.class, id);
+    }
+
+    public PublicationFile getPublicationFile(long id) {
+        return (PublicationFile) HibernateUtil.currentSession().get(PublicationFile.class, id);
+    }
+
+    public PublicationFileType getPublicationFileTypeByName(PublicationFileType.Name name) {
+        return (PublicationFileType) HibernateUtil.currentSession()
+                .createCriteria(PublicationFileType.class)
+                .add(Restrictions.eq("name", name))
+                .uniqueResult();
+    }
+
+    public PublicationFile getOriginalArticle(Publication publication) {
+        PublicationFileType originalArticle = getPublicationFileTypeByName(PublicationFileType.Name.ORIGINAL_ARTICLE);
+        return (PublicationFile) HibernateUtil.currentSession()
+                .createCriteria(PublicationFile.class)
+                .add(Restrictions.eq("publication", publication))
+                .add(Restrictions.eq("type", originalArticle))
+                .uniqueResult();
+    }
+
+    public CorrespondenceSentMessage addSentCorrespondence(Publication publication, CorrespondenceDTO dto) {
+        CorrespondenceSentMessage correspondence = new CorrespondenceSentMessage();
+        correspondence.setPublication(publication);
+        correspondence.setFrom(profileRepository.getPerson(dto.getFrom().getZdbID()));
+        correspondence.setResend(false);
+        correspondence.setSentDate(new Date());
+
+        CorrespondenceComposedMessage message = new CorrespondenceComposedMessage();
+        message.setFrom(profileRepository.getPerson(dto.getFrom().getZdbID()));
+        message.setPublication(publication);
+        message.setComposedDate(new Date());
+        message.setSubject(dto.getSubject());
+        message.setText(dto.getMessage());
+        message.setRecipientEmailList(dto.getTo().stream()
+                .map(PersonDTO::getEmail)
+                .collect(Collectors.joining(", ")));
+
+        Set<CorrespondenceRecipient> recipients = new HashSet<>();
+        for (PersonDTO to : dto.getTo()) {
+            CorrespondenceRecipient recipient = new CorrespondenceRecipient();
+            recipient.setFirstName(to.getFirstName());
+            recipient.setLastName(to.getLastName());
+            recipient.setEmail(to.getEmail());
+            recipient.setPerson(profileRepository.getPerson(to.getZdbID()));
+            recipient.setMessage(message);
+            recipients.add(recipient);
+        }
+
+        message.setRecipients(recipients);
+        correspondence.setMessage(message);
+
+        Session session = HibernateUtil.currentSession();
+        session.save(message);
+        session.save(correspondence);
+
+        return correspondence;
+    }
+
+    public CorrespondenceSentMessage addResentCorrespondence(Publication publication, CorrespondenceDTO dto) {
+        Session session = HibernateUtil.currentSession();
+        CorrespondenceSentMessage originalCorrespondence = (CorrespondenceSentMessage) session
+                .get(CorrespondenceSentMessage.class, dto.getId());
+        if (originalCorrespondence == null) {
+            return null;
+        }
+        CorrespondenceSentMessage resentCorrespondence = new CorrespondenceSentMessage();
+        resentCorrespondence.setFrom(profileRepository.getPerson(dto.getFrom().getZdbID()));
+        resentCorrespondence.setPublication(publication);
+        resentCorrespondence.setSentDate(new Date());
+        resentCorrespondence.setResend(true);
+        resentCorrespondence.setMessage(originalCorrespondence.getMessage());
+        session.save(resentCorrespondence);
+        return resentCorrespondence;
+    }
+
+    public CorrespondenceReceivedMessage addReceivedCorrespondence(Publication publication, CorrespondenceDTO dto) {
+        CorrespondenceReceivedMessage correspondence = new CorrespondenceReceivedMessage();
+        correspondence.setPublication(publication);
+        correspondence.setFromEmail(dto.getFrom().getEmail());
+        correspondence.setFrom(profileRepository.getPerson(dto.getFrom().getZdbID()));
+        correspondence.setDate(new Date());
+        correspondence.setTo(profileRepository.getPerson(dto.getTo().get(0).getZdbID()));
+        correspondence.setSubject(dto.getSubject());
+        correspondence.setText(dto.getMessage());
+        HibernateUtil.currentSession().save(correspondence);
+        return correspondence;
+    }
 }

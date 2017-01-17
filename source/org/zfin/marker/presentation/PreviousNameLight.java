@@ -12,6 +12,7 @@ public class PreviousNameLight implements ProvidesLink , Comparable<PreviousName
 
     private String markerZdbID;
     private String aliasZdbID;
+    private String pureAliasName;
     private String alias;
     private String publicationZdbID;
     private String realName ;
@@ -47,6 +48,13 @@ public class PreviousNameLight implements ProvidesLink , Comparable<PreviousName
     }
 
 
+    public String getPureAliasName() {
+        return pureAliasName;
+    }
+
+    public void setPureAliasName(String pureAliasName) {
+        this.pureAliasName = pureAliasName;
+    }
 
     @Override
     public String getLink() {

@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureFigure;
 import org.zfin.expression.FigureService;
-import org.zfin.figure.repository.FigureRepository;
+import org.zfin.expression.Image;
 import org.zfin.figure.service.ImageService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
@@ -31,9 +31,6 @@ public class FigureEditController {
     public static final Logger LOG = Logger.getLogger(FigureEditController.class);
 
     @Autowired
-    FigureRepository figureRepository;
-
-    @Autowired
     InfrastructureRepository infrastructureRepository;
 
     @Autowired
@@ -41,20 +38,39 @@ public class FigureEditController {
 
     @ResponseBody
     @RequestMapping(value = "/publication/{zdbID}/figures", method = RequestMethod.GET)
-    public List<FigurePresentationBean> getFiguresForPub(@PathVariable String zdbID) {
+    public PublicationFigureSet getFiguresForPub(@PathVariable String zdbID) {
         Publication publication = publicationRepository.getPublication(zdbID);
-        return publication.getFigures().stream()
-                .sorted(Comparator.comparing(Figure::getOrderingLabel).thenComparing(Figure::getZdbID))
-                .map(FigureService::convertToFigurePresentationBean)
-                .collect(Collectors.toList());
+        PublicationFigureSet pubFigures = new PublicationFigureSet();
+        pubFigures.setPubCanShowImages(publication.isCanShowImages());
+        pubFigures.setFigures(
+                publication.getFigures().stream()
+                        .sorted(Comparator.comparing(Figure::getOrderingLabel).thenComparing(Figure::getZdbID))
+                        .map(FigureService::convertToFigurePresentationBean)
+                        .collect(Collectors.toList())
+        );
+        return pubFigures;
     }
 
     @ResponseBody
     @RequestMapping(value = "/publication/{zdbID}/figures", method = RequestMethod.POST)
     public FigurePresentationBean createNewFigure(@PathVariable String zdbID, @RequestParam String label,
                                                   @RequestParam String caption, @RequestParam List<MultipartFile> files) {
+        for (MultipartFile file : files) {
+            if (!file.getContentType().startsWith("image/")) {
+                throw new InvalidWebRequestException("All files must be images. Invalid file type:" + file.getOriginalFilename());
+            }
+        }
 
         Publication publication = publicationRepository.getPublication(zdbID);
+
+        if (publication == null) {
+            throw new InvalidWebRequestException("Invalid publication");
+        }
+
+        boolean existingLabel = publication.getFigures().stream().anyMatch(fig -> fig.getLabel().equals(label));
+        if (existingLabel) {
+            throw new InvalidWebRequestException(label + " already exists");
+        }
 
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
@@ -70,6 +86,7 @@ public class FigureEditController {
                 ImageService.processImage(newFigure, file, ProfileService.getCurrentSecurityUser());
             } catch (IOException e) {
                 LOG.error("Error processing image", e);
+                throw new InvalidWebRequestException("Error processing image");
             }
         }
 
@@ -80,7 +97,7 @@ public class FigureEditController {
     @ResponseBody
     @RequestMapping(value = "/figure/{zdbID}", method = RequestMethod.DELETE)
     public String deleteFigure(@PathVariable String zdbID) {
-        Figure figure = figureRepository.getFigure(zdbID);
+        Figure figure = publicationRepository.getFigure(zdbID);
 
         if (CollectionUtils.isNotEmpty(figure.getExpressionResults()) ||
                 CollectionUtils.isNotEmpty(figure.getPhenotypeExperiments())) {
@@ -92,6 +109,54 @@ public class FigureEditController {
         tx.commit();
 
         return "OK";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/figure/{zdbID}", method = RequestMethod.POST)
+    public FigurePresentationBean updateFigure(@PathVariable String zdbID,
+                                               @RequestBody FigurePresentationBean figureUpdates) {
+        Figure figure = publicationRepository.getFigure(zdbID);
+        figure.setCaption(figureUpdates.getCaption());
+
+        Transaction tx = HibernateUtil.createTransaction();
+        HibernateUtil.currentSession().save(figure);
+        tx.commit();
+
+        return FigureService.convertToFigurePresentationBean(figure);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/image/{zdbID}", method = RequestMethod.DELETE)
+    public String deleteImage(@PathVariable String zdbID) {
+        Image image = publicationRepository.getImageById(zdbID);
+
+        Transaction tx = HibernateUtil.createTransaction();
+        HibernateUtil.currentSession().delete(image);
+        tx.commit();
+
+        return "OK";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/figure/{zdbID}/images", method = RequestMethod.POST)
+    public ImagePresentationBean addImage(@PathVariable String zdbID, @RequestParam MultipartFile file) {
+        if (!file.getContentType().startsWith("image/")) {
+            throw new InvalidWebRequestException("File must be an image");
+        }
+
+        Figure figure = publicationRepository.getFigure(zdbID);
+        Image image;
+
+        Transaction tx = HibernateUtil.createTransaction();
+        try {
+            image = ImageService.processImage(figure, file, ProfileService.getCurrentSecurityUser());
+        } catch (IOException e) {
+            LOG.error("Error processing image", e);
+            throw new InvalidWebRequestException("Error processing image");
+        }
+        tx.commit();
+
+        return FigureService.convertToImagePresentationBean(image);
     }
 
 }

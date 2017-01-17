@@ -20,7 +20,10 @@
               description="An additional class to add to the wrapping tag" %>
 <%@ attribute name="titleEntityAppended" required="false" rtexprvalue="true" type="org.zfin.infrastructure.EntityZdbID"
               description="An additional class to add to the wrapping tag" %>
-
+<%@ attribute name="markerID" required="false" rtexprvalue="true" type="java.lang.String"
+              description="marker ID" %>
+<%@ attribute name="showEditLink" required="false" rtexprvalue="true" type="java.lang.Boolean"
+              description="for SEQUENCE INFORMATION edit link" %>
 
 
 <%--
@@ -58,6 +61,7 @@
             </c:when>
             <c:otherwise>
                 <div class="summaryTitle">${title}<c:if test="${not empty titleEntityAppended}">&nbsp;<zfin:name entity="${titleEntityAppended}"/></c:if>
+                    <c:if test="${showEditLink}">&nbsp;<a ng-show="editMode" class="edit-link" title="Edit sequence information" href="/action/marker/sequence/edit/${markerID}">Edit</a></c:if>
                     <c:if test="${!test and showNoData}">
                         <span class="no-data-tag">${noDataText}</span>
                     </c:if>

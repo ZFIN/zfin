@@ -12,6 +12,7 @@ import org.zfin.expression.ExpressionAssay;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
+import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerType;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
@@ -22,7 +23,6 @@ import org.zfin.publication.Publication;
 import org.zfin.util.DatabaseJdbcStatement;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 public interface InfrastructureRepository {
@@ -102,7 +102,7 @@ public interface InfrastructureRepository {
 
     RecordAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType);
 
-    void insertUpdatesTable(String recID, String comments, String submitterZdbID, Date updateDate);
+    List<Updates> getUpdates(String zdbID);
 
     void insertUpdatesTable(String recID, String fieldName, String comments);
 
@@ -470,6 +470,9 @@ public interface InfrastructureRepository {
     void deleteMutationDetailAttribution(String zdbID, String publicationZdbID);
 
     EntityZdbID getEntityByID(Class<? extends EntityZdbID> entity, String zdbID);
+
+    void insertMarkerHistory(MarkerHistory history);
+
 }
 
 

@@ -210,14 +210,14 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
             Publication publication = publicationRepository.getPublication("ZDB-PUB-070122-15");
             marker.setName("test1 name");
             marker.setAbbreviation("testsierra");
-            markerRepository.renameMarker(marker, publication, MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES);
-            MarkerHistory mhist = markerRepository.getLastMarkerHistory(marker, MarkerHistory.Event.REASSIGNED);
-            assertTrue(mhist.getReason().equals(MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES));
-            assertNotNull(mhist.getMarkerAlias());
+            markerRepository.renameMarker(marker, publication, MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES, "old symbol", "old name");
+            session.flush();
+            session.refresh(marker);
+            assertEquals("Created one new alias", 1, marker.getAliases().size());
+            assertEquals("Created one new marker history record", 1, marker.getMarkerHistory().size());
             assertNotNull(infrastructureRepository.getRecordAttribution(
-                            mhist.getMarkerAlias().getZdbID(),
-                            publication.getZdbID(), null)
-            );
+                    marker.getMarkerHistory().iterator().next().getMarkerAlias().getZdbID(),
+                    publication.getZdbID(), null));
         } finally {
             // rollback on success or exception
             tx.rollback();
@@ -555,8 +555,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         Session session = HibernateUtil.currentSession();
         OntologyRepository anatomyRep = RepositoryFactory.getOntologyRepository();
         GenericTerm aoTerm = anatomyRep.getTermByName(aoTermName, Ontology.ANATOMY);
-        String hql = " select distinct(stat.fstat_feat_zdb_id), probe.mrkr_abbrev, gene.mrkr_zdb_id," +
-                "                       gene.mrkr_abbrev,gene.mrkr_abbrev_order  " +
+        String hql = " select distinct(stat.fstat_feat_zdb_id) as featureID, probe.mrkr_abbrev as probeAbbrev, gene.mrkr_zdb_id as geneID," +
+                "                       gene.mrkr_abbrev as geneAbbrev,gene.mrkr_abbrev_order  as geneAbbrevOrder " +
                 "from feature_stats as stat, marker as gene, marker as probe " +
                 "     where fstat_superterm_zdb_id = :aoterm " +
                 "           and fstat_gene_zdb_id = gene.mrkr_zdb_id " +
@@ -631,7 +631,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     /**
      * Check for an existent marker by abbreviation.
      * Check the the lookup is case insensitive.
-     * <p/>
+     * <p>
      * Check for the non-existence as well.
      */
     @Test
@@ -824,7 +824,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         logger.debug(linkWithAttribution);
 
         assertTrue(linkWithAttribution.startsWith("<a href=\"/action/marker/view/ZDB-MRPHLNO-060317-4\">"));
-        assertTrue(linkWithAttribution.contains("/webdriver?MIval=aa-showpubs.apg&orgOID=ZDB-MRPHLNO-060317-4&rtype=marker&recattrsrctype=standard&OID=ZDB-MREL-060317-4\">2</a>)"));
+        assertTrue(linkWithAttribution.contains("/webdriver?MIval=aa-showpubs.apg&orgOID=ZDB-MRPHLNO-060317-4&recattrsrctype=standard&OID=ZDB-MREL-060317-4\">2</a>)"));
     }
 
     @Test
@@ -851,7 +851,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void getMarkerZdbIdsForType() {
         List<String> zdbIds = markerRepository.getMarkerZdbIdsForType(Marker.Type.GENEP);
         assertThat(zdbIds.size(), greaterThan(150));
-        assertThat(zdbIds.size(), lessThan(200));
     }
 
     @Test

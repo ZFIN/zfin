@@ -4,11 +4,17 @@
 
 <%--<%@ attribute name="isThisseProbe" type="java.lang.Boolean" rtexprvalue="true" required="true" %>--%>
 <%--<%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="true" %>--%>
-
+<authz:authorize access="hasRole('root')">
+    <script src="/javascript/nomenclature.js" type="text/javascript"></script>
+    <script>
+        markerID = '${cloneBean.marker.zdbID}';
+    </script>
+</authz:authorize>
 <table class="primary-entity-attributes">
     <tr>
         <th><span class="name-label">${cloneBean.clone.markerType.displayName}&nbsp;Name: </span></th>
-        <td><span class="name-value"><zfin:name entity="${cloneBean.clone}"/> </span></td>
+        <td><span class="name-value"><zfin:name entity="${cloneBean.clone}"/> </span>
+        </td>
     </tr>
     <zfin2:previousNamesFast label="Previous Name" previousNames="${cloneBean.previousNames}"/>
 
@@ -29,6 +35,7 @@
     <zfin2:entityNotes entity="${cloneBean.clone}"/>
 
 </table>
+
 
 
 

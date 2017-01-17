@@ -515,7 +515,7 @@ $(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER
 
 <?MIBLOCK COND="$(AND,$(NC,$pubsel2_jtype,Unpublished),$(NC,$pubsel2_jtype,Curation))">
 <?MIVAR>
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$3"><br>CURATE</A>&nbsp;&nbsp;&nbsp;")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/action/curation/$3"><br>CURATE</A>&nbsp;&nbsp;&nbsp;")
 <?/MIVAR>
 <?/MIBLOCK>
 

@@ -31,7 +31,11 @@ public class Image implements Serializable {
     private String form;
     private String preparation;
     private Person owner;
+
+
+
     private String externalName;
+    private String comments;
 
     private Set<Video> videos;
 
@@ -243,6 +247,14 @@ public class Image implements Serializable {
 
     public String getThumbnailUrl() {
         return "/imageLoadUp/" + getThumbnail();
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
 }

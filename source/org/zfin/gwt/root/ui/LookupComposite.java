@@ -16,6 +16,7 @@ import org.zfin.gwt.root.event.SingleOntologySelectionEventHandler;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.LookupRPCServiceAsync;
+import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -291,12 +292,14 @@ public class LookupComposite extends Composite implements Revertible {
                 suggestion = (SuggestOracle.Suggestion) event.getSelectedItem();
                 final String termID = suggestion.getReplacementString();
                 String displayString = suggestion.getDisplayString();
-                SelectAutoCompleteEvent selectEvent = new SelectAutoCompleteEvent(termID, displayString, ontology);
-                AppUtils.EVENT_BUS.fireEvent(selectEvent);
-                selectedTerm = new TermDTO();
-                selectedTerm.setOboID(termID);
-                selectedTerm.setOntology(ontology);
-                selectedTerm.setName(extractPureTermNameHtml(displayString).trim());
+                if (ontology != null) {
+                    SelectAutoCompleteEvent selectEvent = new SelectAutoCompleteEvent(termID, displayString, ontology);
+                    AppUtils.EVENT_BUS.fireEvent(selectEvent);
+                    selectedTerm = new TermDTO();
+                    selectedTerm.setOboID(termID);
+                    selectedTerm.setOntology(ontology);
+                    selectedTerm.setName(extractPureTermNameHtml(displayString).trim());
+                }
                 if (displayString == null) {
                     suggestBox.setText(extractPureTermNameHtml(displayString));
                     doSubmit(termID);
@@ -373,7 +376,7 @@ public class LookupComposite extends Composite implements Revertible {
     }
 
     void initNoteGui() {
-        noteLabel.setVisible(true);
+        noteLabel.setVisible(false);
         noteLabel.setWordWrap(true);
         rootPanel.add(noteLabel);
     }
@@ -446,7 +449,10 @@ public class LookupComposite extends Composite implements Revertible {
         errorString = text;
         noteString = "";
         noteLabel.setHTML(errorString);
-        noteLabel.setVisible(true);
+        if (StringUtils.isNotEmptyTrim(text))
+            noteLabel.setVisible(true);
+        else
+            noteLabel.setVisible(false);
     }
 
     public void setNoteString(String note) {
@@ -454,7 +460,10 @@ public class LookupComposite extends Composite implements Revertible {
         noteString = note;
         errorString = "";
         noteLabel.setHTML(noteString);
-        noteLabel.setVisible(true);
+        if (StringUtils.isNotEmptyTrim(note))
+            noteLabel.setVisible(true);
+        else
+            noteLabel.setVisible(false);
     }
 
     public String getNoteString() {
@@ -463,13 +472,13 @@ public class LookupComposite extends Composite implements Revertible {
 
     public void clearError() {
         if (errorString.length() > 0 && false == errorString.equals(EMPTY_STRING)) {
-            setErrorString(EMPTY_STRING);
+            setErrorString("");
         }
     }
 
     public void clearNote() {
         if (noteString.length() > 0 && false == noteString.equals(EMPTY_STRING)) {
-            setNoteString(EMPTY_STRING);
+            setNoteString("");
         }
     }
 

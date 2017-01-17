@@ -12,7 +12,7 @@ def months = ['Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', '
               'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12']
 
 def db = [
-        url: "jdbc:informix-sqli://${ZfinPropertiesEnum.SQLHOSTS_HOST}:${ZfinPropertiesEnum.INFORMIX_PORT}/${ZfinPropertiesEnum.DBNAME}:INFORMIXSERVER=${ZfinPropertiesEnum.INFORMIXSERVER}",
+        url: "jdbc:informix-sqli://${ZfinPropertiesEnum.SQLHOSTS_HOST}:${ZfinPropertiesEnum.INFORMIX_PORT}/${ZfinPropertiesEnum.DBNAME}:INFORMIXSERVER=${ZfinPropertiesEnum.INFORMIXSERVER};DB_LOCALE=en_US.utf8",
         driver: 'com.informix.jdbc.IfxDriver'
 ]
 
@@ -59,13 +59,15 @@ Sql.withInstance(db) { Sql sql ->
 
             def day = pubDate.Day
             if (day == '') {
-                day = '1'
+                day = '01'
             }
 
-            newDate = "$year-$month-$day" as String
+            newDate = "$month/$day/$year" as String
             pubsUpdated.add([idMap[id], id, newDate])
         }
     }
+
+    pubsUpdated.each { println(it) }
 
     // for pubs with a new date, update the publication record and insert an update record
     sql.withTransaction {

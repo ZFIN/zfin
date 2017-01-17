@@ -27,6 +27,7 @@ while (<NCBI>) {
   $taxonId = $fieldsNCBI[0];
   ## excluding species other than human, mouse, fly and the documentation lines
   next if ($taxonId eq "#Format:");
+  next if ($taxonId eq "#tax_id");
   $ctLines++;
   
   $ncbiGeneId = $fieldsNCBI[1];

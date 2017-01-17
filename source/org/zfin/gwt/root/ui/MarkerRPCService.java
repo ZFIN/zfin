@@ -1,9 +1,9 @@
 package org.zfin.gwt.root.ui;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import org.zfin.gwt.root.dto.AttributionType;
 import org.zfin.gwt.root.dto.*;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public interface MarkerRPCService extends RemoteService {
 
     void addConstructMarkerRelationShip(ConstructRelationshipDTO constructRelationshipDTO);
 
-    void checkDeattributionRules(String attributionToRemoveID, String publicationZdbID) throws DeAttributionException;
+    String checkDeattributionRules(String attributionToRemoveID, String publicationZdbID) throws DeAttributionException;
 
     /**
      */

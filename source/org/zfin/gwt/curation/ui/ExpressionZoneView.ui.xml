@@ -3,7 +3,6 @@
         xmlns:ui='urn:ui:com.google.gwt.uibinder'
         xmlns:g='urn:import:com.google.gwt.user.client.ui'
         xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
-        xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui'
         >
 
     <g:VerticalPanel spacing="10" title="Expression Zone" width="100%">
@@ -16,15 +15,15 @@
             <g:HTMLPanel>
                 <table>
                     <tr>
-                        <td>
-                            <g:Button ui:field="addButton" text="Add"/>
+                        <td style="padding:10px">
+                            <g:Button ui:field="addButton" text="Add" addStyleNames="btn btn-primary"/>
                             <g:ListBox ui:field="figureList"/>
                         </td>
-                        <td>
+                        <td style="padding:10px">
                             <zfin:StageSelector ui:field="stageSelector"/>
                         </td>
-                        <td>
-                            <g:Button ui:field="resetButton" text="Reset"/>
+                        <td style="padding:10px">
+                            <g:Button ui:field="resetButton" text="Reset" addStyleNames="btn btn-link" />
                         </td>
                     </tr>
                 </table>

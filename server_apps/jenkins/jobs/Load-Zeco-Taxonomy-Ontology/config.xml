@@ -21,13 +21,17 @@
             <command>cd $TARGETROOT/server_apps/data_transfer/LoadOntology</command>
         </hudson.tasks.Shell>
         <hudson.tasks.Ant plugin="ant@1.2">
+            <targets>create-zeco-taxonomy-owl-file</targets>
+            <buildFile>$TARGETROOT/server_apps/data_transfer/LoadOntology/build.xml</buildFile>
+        </hudson.tasks.Ant>
+        <hudson.tasks.Ant plugin="ant@1.2">
             <targets>load-zeco-taxonomy -DJobName=Load-Zeco-Taxonomy-Ontology</targets>
             <buildFile>$TARGETROOT/server_apps/data_transfer/LoadOntology/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/data_transfer/LoadOntology/Load-Zeco-Taxonomy-Ontology/*,server_apps/data_transfer/LoadOntology/obo-files/zebrafish*.obo</artifacts>
+            <artifacts>server_apps/data_transfer/LoadOntology/Load-Zeco-Taxonomy-Ontology/*,server_apps/data_transfer/LoadOntology/obo-files/zeco-tax*.obo</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>

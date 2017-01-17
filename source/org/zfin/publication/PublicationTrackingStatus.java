@@ -10,11 +10,11 @@ public class PublicationTrackingStatus {
         NEW,
         READY_FOR_INDEXING,
         INDEXING,
+        INDEXED,
         READY_FOR_CURATION,
         CURATING,
         WAIT,
-        CLOSED,
-        ARCHIVED
+        CLOSED
     }
 
     @Id
@@ -34,6 +34,9 @@ public class PublicationTrackingStatus {
 
     @Column(name = "pts_terminal_status")
     private boolean isTerminal;
+
+    @Column(name = "pts_hidden_status")
+    private boolean hidden;
 
     public long getId() {
         return id;
@@ -73,5 +76,13 @@ public class PublicationTrackingStatus {
 
     public void setIsTerminal(boolean isTerminal) {
         this.isTerminal = isTerminal;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 }

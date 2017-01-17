@@ -97,14 +97,14 @@
     </target>
 
     <target name="build-solr-publication-index-jenkins">
-       <antcall target="build-solr-publication-index"/>
-       <antcall target="check-indexer"/>
+        <antcall target="build-solr-publication-index"/>
+        <antcall target="check-indexer"/>
     </target>
 
     <target name="delete-solr-fish-documents">
         <exec executable="curl">
             <arg value="http://localhost:${SOLR_PORT}/solr/prototype/update?commit=true"/>
-            <arg value="-sH" />
+            <arg value="-sH"/>
             <arg value="Content-Type: text/xml"/>
             <arg value="--data-binary"/>
             <arg value="&lt;delete&gt;&lt;query&gt;category:Fish&lt;/query&gt;&lt;/delete&gt;"/>
@@ -193,7 +193,8 @@
             </fileset>
         </copy>
         <echo message="Moving db-data-config.xml aside, contains site-specific jdbc connect info"/>
-        <move file="${this.backup.dir}/conf/db-data-config.xml" tofile="${this.backup.dir}/conf/archived-db-data-config.xml"/>
+        <move file="${this.backup.dir}/conf/db-data-config.xml"
+              tofile="${this.backup.dir}/conf/archived-db-data-config.xml"/>
     </target>
 
     <target name="restore-solr-core">
@@ -272,5 +273,13 @@
             <arg value="${SOLR_HOME}/server/logs/solr.log"/>
         </exec>
     </target>
+
+    <target name="cleanup-solr-backup-files" description="Remove solr backup directories older than 2 weeks.">
+        <tstamp>
+            <format property="last.week" pattern="MM/dd/yyyy MM:hh aa" offset="-14" unit="day"/>
+        </tstamp>
+        <remove-old-files removal.date="${last.week}" cleanup.dir="${solr.backup.dir}/${DBNAME}/"/>
+    </target>
+
 
 </project>

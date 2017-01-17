@@ -7,7 +7,7 @@ ${empty value.snapshot ? '<div style="color: red;">Please provide a snapshot</di
       action="/action/profile/image/edit/${value.zdbID}" enctype="multipart/form-data"
       style="border: 2px solid gray; padding:  10px; "
         >
-    <zfin2:viewSnapshot value="${value}"/>
+    <zfin2:viewSnapshot value="${value}" className="profile-image"/>
     <br/>
     <input type="file" name="file" onchange="form.submit();"/>
     <br/>

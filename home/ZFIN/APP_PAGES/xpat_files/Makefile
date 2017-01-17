@@ -20,20 +20,15 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/xpat_files
 
-GENERICS = curation.apg \
-figurecuration.apg \
-xpatcurfigure.apg xpatcurimage.apg xpatcurpermission.apg \
- xpatselect.apg \
+GENERICS = xpatselect.apg \
 xpatselect_detailedresults.apg xpatselect_note.apg xpatselect_summaryresults.apg \
 xpatselectanatverify.apg
 
-STATICS = xpatselectquery.apg xpatcuration.apg xpatexdisplayname.apg xpatcurupdate.apg \
-diseasecuration.apg experimentcuration.apg fishcuration.apg\
+STATICS = xpatselectquery.apg xpatexdisplayname.apg \
 fxfigstgrng.apg fxfigfishlist.apg \
-fxgenestgrng.apg record_web_update.apg attribupdate.apg \
-orthocuration.apg patocuration.apg xpatcurreset.apg \
-gocuration.apg xpatselect_resultsasimages.apg \
-fxfiganatlist.apg fxfiggenelist.apg
+fxgenestgrng.apg \
+xpatselect_resultsasimages.apg \
+fxfiganatlist.apg fxfiggenelist.apg 
 
 # Use default rules for app page directories.
 

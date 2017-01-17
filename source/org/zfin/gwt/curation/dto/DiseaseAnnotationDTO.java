@@ -1,7 +1,10 @@
 package org.zfin.gwt.curation.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.FishDTO;
+import org.zfin.gwt.root.dto.PublicationDTO;
+import org.zfin.gwt.root.dto.TermDTO;
 
 import java.util.List;
 
@@ -71,5 +74,16 @@ public class DiseaseAnnotationDTO implements IsSerializable {
 
     public void setEvidenceCode(String evidenceCode) {
         this.evidenceCode = evidenceCode;
+    }
+
+    @Override
+    public String toString() {
+        String name = disease.getTermName();
+        if (environment != null)
+            name += ", " + environment.getName();
+        name += ", " + evidenceCode;
+        if (fish != null)
+            name += ", " + fish.getName();
+        return name;
     }
 }

@@ -1,10 +1,11 @@
 package org.zfin.framework;
 
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.internal.util.ReflectHelper;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
-import org.hibernate.util.ReflectHelper;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.ontology.Ontology;
 
@@ -68,7 +69,7 @@ public class StringEnumValueUserType implements UserType, ParameterizedType {
         return x.hashCode();
     }
 
-    public Object nullSafeGet(ResultSet rs, String[] names, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws HibernateException, SQLException {
         String name = rs.getString(names[0]);
         if (rs.wasNull()) {
             return null;
@@ -96,7 +97,7 @@ public class StringEnumValueUserType implements UserType, ParameterizedType {
         return Enum.valueOf(enumClass, name);
     }
 
-    public void nullSafeSet(PreparedStatement st, Object value, int index) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException, SQLException {
         if (value == null) {
             st.setNull(index, StandardBasicTypes.STRING.sqlType());
         } else {

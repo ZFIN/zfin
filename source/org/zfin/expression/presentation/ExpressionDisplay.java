@@ -9,6 +9,8 @@ import org.zfin.publication.Publication;
 
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
 
 /**
  *  TODO: add comments
@@ -20,6 +22,7 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
     private List<ExpressionResult> expressionResults;
     private Experiment experiment;
     private Set<GenericTerm> expressionTerms;
+    private SortedMap<Publication, SortedSet<Figure>> figuresPerPub;
 
     public ExpressionDisplay(Marker expressedGene) {
         this .expressedGene = expressedGene;
@@ -147,5 +150,13 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
 
     public void setExpressionTerms(Set<GenericTerm> expressionTerms) {
         this.expressionTerms = expressionTerms;
+    }
+
+    public SortedMap<Publication, SortedSet<Figure>> getFiguresPerPub() {
+        return figuresPerPub;
+    }
+
+    public void setFiguresPerPub(SortedMap<Publication, SortedSet<Figure>> figuresPerPub) {
+        this.figuresPerPub = figuresPerPub;
     }
 }

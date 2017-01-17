@@ -227,19 +227,26 @@ public class FeatureService {
         if (CollectionUtils.isEmpty(locations)) {
             return null;
         }
+        FeatureGenomeLocation featureLocation = locations.get(0);
 
         // gbrowse has a location for this feature. if there is a feature marker relationship AND we know where
         // that marker is, show the feature in the context of the marker. Otherwise just show the feature with
-        // some appropriate amount of padding. We don't yet have GRCz10 coordinates for any features, so for
-        // now, they're all Zv9 still
+        // some appropriate amount of padding.
         GBrowseImage.GBrowseImageBuilder imageBuilder = GBrowseImage.builder()
-                .genomeBuild(GBrowseImage.GenomeBuild.ZV9)
                 .highlight(feature);
 
-        FeatureGenomeLocation featureLocation = locations.get(0);
+        GenomeLocation.Source source;
+        if (featureLocation.getAssembly().equals("Zv9")) {
+            imageBuilder.genomeBuild(GBrowseImage.GenomeBuild.ZV9);
+            source = GenomeLocation.Source.ZFIN_Zv9;
+        } else {
+            imageBuilder.genomeBuild(GBrowseImage.GenomeBuild.CURRENT);
+            source = GenomeLocation.Source.ZFIN;
+        }
+
         if (featureMarkerRelationships.size() == 1) {
             Marker related = featureMarkerRelationships.iterator().next().getMarker();
-            List<MarkerGenomeLocation> markerLocations = RepositoryFactory.getLinkageRepository().getGenomeLocation(related, GenomeLocation.Source.ZFIN_Zv9);
+            List<MarkerGenomeLocation> markerLocations = RepositoryFactory.getLinkageRepository().getGenomeLocation(related, source);
             if (CollectionUtils.isNotEmpty(markerLocations)) {
                 imageBuilder.landmark(markerLocations.get(0)).withPadding(0.1);
             } else {

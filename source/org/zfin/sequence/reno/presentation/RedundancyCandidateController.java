@@ -39,7 +39,7 @@ public class RedundancyCandidateController extends AbstractCandidateController {
 
     @RequestMapping(value = "/redundancy-candidate-view/{zdbID}", method = RequestMethod.POST)
     protected ModelAndView onSubmit(@PathVariable String zdbID, CandidateBean candidateBean, BindingResult errors) throws Exception {
-        if(doLock(zdbID, candidateBean)){
+        if (doLock(zdbID, candidateBean)) {
             return new ModelAndView("redirect:/action/reno/redundancy-candidate-view/" + zdbID);
         }
         candidateBean.createRunCandidateForZdbID(zdbID);
@@ -169,9 +169,11 @@ public class RedundancyCandidateController extends AbstractCandidateController {
 
         if (candidateBean.isRename()) {
             String abbreviation = candidateBean.getGeneAbbreviation();
+            String oldSymbolName = existingGene.getAbbreviation();
+            String oldName = existingGene.getName();
             existingGene.setAbbreviation(abbreviation);
             existingGene.setName(abbreviation);
-            renoService.renameGene(existingGene, rc.getRun().getNomenclaturePublication().getZdbID());
+            renoService.renameGene(existingGene, rc.getRun().getNomenclaturePublication().getZdbID(), oldSymbolName, oldName);
         }
 
         //create data note, copy curator note to data note, set curator note to nu

@@ -1634,6 +1634,68 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="4">Affected Gene Symbol</Column>
             <Column id="5">Corresponding ZFIN Gene ID</Column>
         </Download>
+        <Download orderIndex="5">
+            <Name>
+                Experiment Details 
+            </Name>
+            <Category>
+                Fish Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>experiment_details</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                      select expcond_exp_zdb_id, z.term_ont_id, a.term_ont_id, g.term_ont_id, c.term_ont_id, t.term_ont_id
+		      from experiment_condition,
+		      outer term z,
+		      outer term a,
+		      outer term g,
+		      outer term c,
+		      outer term t
+		      where expcond_zeco_Term_Zdb_id = z.term_zdb_id
+		      and expcond_ao_Term_zdb_id = a.term_Zdb_id
+		      and expcond_go_cc_term_Zdb_id = g.term_Zdb_id
+		      and expcond_chebi_term_zdb_id = c.term_Zdb_id
+		      and expcond_taxon_Term_zdb_id = t.term_Zdb_id;
+                ]]>
+            </Query>
+            <Column id="1" >Experiment ID</Column>
+            <Column id="2">ZECO Term ID</Column>
+            <Column id="3">ZFA Term ID</Column>
+            <Column id="4">GO Cellular Component Term ID</Column>
+            <Column id="5">Chebi Term ID</Column>
+	    <Column id="6">NCBI Taxon Term ID</Column>
+        </Download>
+        <Download orderIndex="6">
+            <Name>
+                Innocuous/Phenotypic Construct Details 
+            </Name>
+            <Category>
+                Fish Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>innophenoconstructs</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                     select fmrel_mrkr_zdb_id, mrkr_name, fmrel_type, fmrel_feature_zdb_id, feautre_name
+  from feature, marker, feature_marker_relationship
+ where feature_zdb_id = fmrel_feature_zdb_id
+ and fmrel_mrkr_Zdb_id = mrkr_zdb_id 
+ and fmrel_type in ('contains innocuous sequence feature','contains phenotypic sequence feature');
+                ]]>
+            </Query>
+            <Column id="1">Construct ID</Column>
+            <Column id="2">Construct Name</Column>
+            <Column id="3">Innocuous/Phenotypic</Column>
+            <Column id="4">Feature ID</Column>
+            <Column id="5">Feature Name</Column>
+        </Download>
         <Download orderIndex="3">
             <Name>
                 Fish-Publication relation

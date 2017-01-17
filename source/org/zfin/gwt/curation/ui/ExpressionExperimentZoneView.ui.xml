@@ -43,7 +43,7 @@
                 </g:row>
                 <g:row>
                     <g:customCell>
-                        <g:Button ui:field="addButton" text="Add"/>
+                        <g:Button ui:field="addButton" text="Add" addStyleNames="btn btn-primary"/>
                     </g:customCell>
                     <g:customCell>
                         <zfin:StringListBox ui:field="geneList"/>
@@ -64,7 +64,7 @@
                         <zfin:StringListBox ui:field="genbankList"/>
                     </g:customCell>
                     <g:customCell>
-                        <g:Button ui:field="updateButton" text="Update" enabled="false"/>
+                        <g:Button ui:field="updateButton" text="Update" enabled="false" addStyleNames="btn btn-primary"/>
                     </g:customCell>
                 </g:row>
             </g:Grid>

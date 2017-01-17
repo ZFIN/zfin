@@ -103,7 +103,7 @@ class CurationDTOConversionServiceSpec extends AbstractZfinIntegrationSpec {
 
     def "convert Person to DTO for person without snapshot"() {
         when:
-        def dto = converter.toCuratorDTO(person.patrick)
+        def dto = converter.toPersonDTO(person.patrick)
 
         then:
         dto.name == "$person.patrick.firstName $person.patrick.lastName"
@@ -113,7 +113,7 @@ class CurationDTOConversionServiceSpec extends AbstractZfinIntegrationSpec {
 
     def "convert Person to DTO for person with snapshot"() {
         when:
-        def dto = converter.toCuratorDTO(person.monte)
+        def dto = converter.toPersonDTO(person.monte)
 
         then:
         dto.name == "$person.monte.firstName $person.monte.lastName"
@@ -151,51 +151,6 @@ class CurationDTOConversionServiceSpec extends AbstractZfinIntegrationSpec {
         dtos.size() == Curation.Topic.values().size() - 1 // no Linked Authors
         dtos.contains(converter.toCurationDTO(curation.open))
         dtos.contains(converter.toCurationDTO(emptyTopic))
-    }
-
-    def "convert Correspondence to DTO with no reply received"() {
-        when:
-        def dto = converter.toCorrespondenceDTO(correspondence)
-
-        then:
-        dto.pub == correspondence.publication.zdbID
-        dto.curator.zdbID == person.patrick.zdbID
-        dto.id == correspondence.id
-        dto.openedDate == correspondence.contactedDate
-        !dto.replyReceived
-        dto.closedDate == null
-    }
-
-    def "convert Correspondence to DTO with reply received"() {
-        setup:
-        correspondence.respondedDate = new Date()
-
-        when:
-        def dto = converter.toCorrespondenceDTO(correspondence)
-
-        then:
-        dto.pub == correspondence.publication.zdbID
-        dto.curator.zdbID == person.patrick.zdbID
-        dto.id == correspondence.id
-        dto.openedDate == correspondence.contactedDate
-        dto.replyReceived
-        dto.closedDate == correspondence.respondedDate
-    }
-
-    def "convert Correspondence to DTO closed with no reply"() {
-        setup:
-        correspondence.giveUpDate = new Date()
-
-        when:
-        def dto = converter.toCorrespondenceDTO(correspondence)
-
-        then:
-        dto.pub == correspondence.publication.zdbID
-        dto.curator.zdbID == person.patrick.zdbID
-        dto.id == correspondence.id
-        dto.openedDate == correspondence.contactedDate
-        !dto.replyReceived
-        dto.closedDate == correspondence.giveUpDate
     }
 
     def "convert PublicationTrackingHistory to Status DTO"() {

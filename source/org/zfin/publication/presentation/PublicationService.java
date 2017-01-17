@@ -11,11 +11,17 @@ import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.BeanCompareService;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.profile.service.ProfileService;
-import org.zfin.publication.Journal;
-import org.zfin.publication.Publication;
+import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.publication.*;
+import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.ServletContext;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -69,41 +75,44 @@ public class PublicationService {
 
     public static Boolean showFiguresLink(Publication publication) {
 
-        if (publication == null) { return false; }
-        if (publication.isUnpublished()) { return false; }
+        if (publication == null) {
+            return false;
+        }
+        if (publication.isUnpublished()) {
+            return false;
+        }
 
         //if there any non-GELI figures, return true
         for (Figure figure : publication.getFigures()) {
-            if (!figure.isGeli()) { return true; }
+            if (!figure.isGeli()) {
+                return true;
+            }
         }
         return false;
     }
 
     public static String getCurationStatusDisplay(Publication publication) {
         StringBuilder sb = new StringBuilder();
-
-        if (publication.getCloseDate() != null) {
-            sb.append("Closed ");
-            sb.append( DateFormat.getDateInstance(DateFormat.SHORT).format(publication.getCloseDate().getTime()));
-        } else {
-            sb.append("Open");
+        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+        PublicationTrackingHistory status = publicationRepository.currentTrackingStatus(publication);
+        if (status != null) {
+            sb.append(status.getStatus().getName())
+                    .append(", ")
+                    .append(DateFormat.getDateInstance(DateFormat.SHORT).format(status.getDate().getTime()));
         }
-
-        if (publication.isIndexed()) {
-            sb.append(", Indexed ");
-            sb.append(DateFormat.getDateInstance(DateFormat.SHORT).format(publication.getIndexedDate().getTime()));
-        } else {
-
-        }
-
-
         return sb.toString();
     }
 
     public static Boolean allowCuration(Publication publication) {
-        if (publication.isUnpublished()){ return false; }
-        if (publication.getType() == Publication.Type.ACTIVE_CURATION) { return false; }
-        if (publication.getType() == Publication.Type.CURATION) { return false; }
+        if (publication.isUnpublished()) {
+            return false;
+        }
+        if (publication.getType() == Publication.Type.ACTIVE_CURATION) {
+            return false;
+        }
+        if (publication.getType() == Publication.Type.CURATION) {
+            return false;
+        }
 
         return true;
     }
@@ -111,17 +120,23 @@ public class PublicationService {
     /* Rather than take a pub, this takes all of the separately generated counts
      * and returns true if any are non-zero */
     public static Boolean hasAdditionalData(Long... counts) {
-        for (Long count : counts) { if (count > 0) return true; }
+        for (Long count : counts) {
+            if (count > 0) return true;
+        }
         return false;
     }
 
 
-    public static String getExpressionAndPhenotypeLabel(Long expressionCount,Long phenotypeCount) {
+    public static String getExpressionAndPhenotypeLabel(Long expressionCount, Long phenotypeCount) {
         String label = "";
 
-        if (expressionCount > 0 && phenotypeCount > 0) { label = "Expression and Phenotype Data"; }
-        else if (expressionCount == 0 && phenotypeCount > 0) { label = "Phenotype Data"; }
-        else if (expressionCount > 0 && phenotypeCount == 0) { label = "Expression Data"; }
+        if (expressionCount > 0 && phenotypeCount > 0) {
+            label = "Expression and Phenotype Data";
+        } else if (expressionCount == 0 && phenotypeCount > 0) {
+            label = "Phenotype Data";
+        } else if (expressionCount > 0 && phenotypeCount == 0) {
+            label = "Expression Data";
+        }
 
         return label;
     }
@@ -188,7 +203,7 @@ public class PublicationService {
 
         //regex would be nice, but this is more straightforward
         String[] authorStringArray = authorListString.split(",");
-        for (int i = 0 ; i < authorStringArray.length ; i = i + 2) {
+        for (int i = 0; i < authorStringArray.length; i = i + 2) {
             if (i + 1 < authorStringArray.length) {
                 String lastName = authorStringArray[i];
                 String initials = authorStringArray[i + 1];
@@ -197,7 +212,7 @@ public class PublicationService {
                     lastName = lastName.replace(" and ", "");
                 }
 
-                strings.add( lastName.trim() + ", " + initials.trim());
+                strings.add(lastName.trim() + ", " + initials.trim());
             }
         }
 
@@ -223,7 +238,7 @@ public class PublicationService {
 
         suggestions.addAll(profileRepository.getPersonByLastNameEqualsAndFirstNameStartsWith(lastName, firstInitial));
 
-        for (Person person : profileRepository.getPersonByLastNameStartsWithAndFirstNameStartsWith(lastName.trim(),firstInitial)) {
+        for (Person person : profileRepository.getPersonByLastNameStartsWithAndFirstNameStartsWith(lastName.trim(), firstInitial)) {
             if (!suggestions.contains(person)) {
                 suggestions.add(person);
             }
@@ -237,6 +252,46 @@ public class PublicationService {
 
 
         return suggestions;
+    }
+
+    public PublicationFilePresentationBean convertToPublicationFilePresentationBean(PublicationFile file) {
+        PublicationFilePresentationBean bean = new PublicationFilePresentationBean();
+        bean.setId(file.getId());
+        bean.setPubZdbId(file.getPublication().getZdbID());
+        bean.setType(file.getType().getName().toString());
+        bean.setFileName(ZfinPropertiesEnum.PDF_LOAD + "/" + file.getFileName());
+        bean.setOriginalFileName(file.getOriginalFileName());
+        return bean;
+    }
+
+    public PublicationFile processPublicationFile(Publication publication, String fileName, PublicationFileType fileType, InputStream fileData) throws IOException {
+        File fileRoot = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), ZfinPropertiesEnum.PDF_LOAD.toString());
+
+        String pubYear = Integer.toString(publication.getEntryDate().get(Calendar.YEAR));
+        File yearDirectory = new File(fileRoot, pubYear);
+        if (!yearDirectory.exists()) {
+            boolean success = yearDirectory.mkdirs();
+            if (!success) {
+                throw new IOException("Unable to create directory: " + yearDirectory.getAbsolutePath());
+            }
+        }
+
+        String storedFileName = publication.getZdbID();
+        if (fileType.getName() == PublicationFileType.Name.ORIGINAL_ARTICLE) {
+            storedFileName += ".pdf";
+        } else {
+            storedFileName += "-" + fileName;
+        }
+
+        File destination = new File(yearDirectory, storedFileName);
+        Files.copy(fileData, destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        PublicationFile pubFile = new PublicationFile();
+        pubFile.setType(fileType);
+        pubFile.setFileName(pubYear + File.separator + storedFileName);
+        pubFile.setOriginalFileName(fileName);
+        pubFile.setPublication(publication);
+        return pubFile;
     }
 
 }

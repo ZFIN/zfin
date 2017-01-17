@@ -109,8 +109,9 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
     }
 
     public void addImage(Image image) {
-        if (images == null)
-            images = new HashSet<Image>();
+        if (images == null) {
+            images = new HashSet<>();
+        }
         images.add(image);
     }
 
@@ -133,8 +134,9 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
     public abstract Type getType();
 
     public boolean equals(Object otherFigure) {
-        if (!(otherFigure instanceof Figure))
+        if (!(otherFigure instanceof Figure)) {
             return false;
+        }
 
         Figure figure = (Figure) otherFigure;
         return getZdbID().equals(figure.getZdbID());
@@ -145,7 +147,9 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
     }
 
     public int compareTo(Figure compFig) {
-        if (orderingLabel == null) { return -1; }
+        if (orderingLabel == null) {
+            return -1;
+        }
         if (compFig == null || compFig.getOrderingLabel() == null) {
             return 1;
         }
@@ -154,41 +158,43 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
 
 
     public boolean isImgless() {
-        if (images == null || images.isEmpty())
-            return true;
-        else
-            return false;
+        return images == null || images.isEmpty();
     }
 
 
     public Image getImg() {
-        if (isImgless())
-          return null;
+        if (isImgless()) {
+            return null;
+        }
 
         return getImages().iterator().next();
     }
 
     public int getCaptionWordCount() {
-        if (caption == null)
+        if (caption == null) {
             return 0;
+        }
         return caption.length();
     }
 
     public String getConciseCaption() {
         if (getCaptionWordCount() > 780) {
-           return caption.substring(0,780);
+            return caption.substring(0, 780);
         }
         return caption;
     }
 
     public int getConciseCaptionWordCount() {
-        if (getConciseCaption() == null)
+        if (getConciseCaption() == null) {
             return 0;
+        }
         return getConciseCaption().length();
     }
 
     public boolean isGeli() {
-        if (comments != null && comments.equals(GELI)) { return true; }
+        if (comments != null && comments.equals(GELI)) {
+            return true;
+        }
         return false;
     }
 

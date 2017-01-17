@@ -279,18 +279,22 @@ public class FigureService {
         bean.setCaption(figure.getCaption());
         bean.setNumExpressionStatements(figure.getExpressionResults() == null ? 0 : figure.getExpressionResults().size());
         bean.setNumPhenotypeStatements(figure.getPhenotypeExperiments() == null ? 0 : figure.getPhenotypeExperiments().size());
-        bean.setImages(figure.getImages().stream()
-                        .map(image -> {
-                            ImagePresentationBean imgBean = new ImagePresentationBean();
-                            imgBean.setZdbId(image.getZdbID());
-                            imgBean.setFullPath(image.getUrl());
-                            imgBean.setMediumPath(image.getMediumUrl());
-                            imgBean.setThumbnailPath(image.getThumbnailUrl());
-                            return imgBean;
-                        })
-                        .collect(Collectors.toSet())
-        );
+        if (figure.getImages() != null) {
+            bean.setImages(figure.getImages().stream()
+                            .map(FigureService::convertToImagePresentationBean)
+                            .collect(Collectors.toSet())
+            );
+        }
         return bean;
+    }
+
+    public static ImagePresentationBean convertToImagePresentationBean(Image image) {
+        ImagePresentationBean imgBean = new ImagePresentationBean();
+        imgBean.setZdbId(image.getZdbID());
+        imgBean.setFullPath(image.getUrl());
+        imgBean.setMediumPath(image.getMediumUrl());
+        imgBean.setThumbnailPath(image.getThumbnailUrl());
+        return imgBean;
     }
 
 }

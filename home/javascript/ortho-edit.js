@@ -1,6 +1,7 @@
-;(function() {
+;
+(function () {
     angular
-        .module('app', [])
+        .module('app')
         .directive('orthoEdit', orthoEdit)
         .directive('pubDisplay', pubDisplayDirective)
         .filter('pub', pubDisplayFilter);
@@ -25,7 +26,9 @@
     function zdbIdToDate(id) {
         var parts = id.split('-');
         var date = parts[2];
-        if (!date) { return new Date(0); }
+        if (!date) {
+            return new Date(0);
+        }
         // sorry, zfinners in the year 2090 :(
         var century = date.startsWith('9') ? '19' : '20';
         return new Date(century + date.substring(0, 2), Number(date.substring(2, 4)) - 1, date.substring(4, 6));
@@ -67,7 +70,10 @@
             templateUrl: '/templates/orthoedit.directive.html',
             scope: {
                 gene: '@',
-                pub: '@'
+                pub: '@',
+                header: '@',
+                edit: '=',
+                showDownloadLink: '@'
             },
             controller: OrthoEditController,
             controllerAs: 'vm',
@@ -103,7 +109,7 @@
                 });
             });
 
-            scope.$watch('vm.orthologs', function() {
+            scope.$watch('vm.orthologs', function () {
                 var table = angular.element('.ortholog-table');
                 var overlay = angular.element('.loading-overlay');
 
@@ -118,6 +124,8 @@
                 // use $timeout because we need to get size after digest is finished
                 $timeout(setOverlaySize, false);
             });
+
+
         }
 
         return directive;
@@ -133,9 +141,10 @@
         vm.orthologsLoading = false;
         vm.ncbiGeneNumber = '';
         vm.ncbiError = '';
+        vm.showOrthology = false;
+        vm.header = '';
         vm.note = {};
-        vm.noteText = '';
-        vm.noteEditing = false;
+        vm.fetchGenes = fetchGenes;
 
         vm.codes = [];
         vm.defaultPub = undefined;
@@ -163,12 +172,14 @@
         vm.editEvidence = editEvidence;
         vm.deleteEvidence = deleteEvidence;
 
-        vm.editNote = editNote;
-        vm.cancelNoteEdit = cancelNoteEdit;
         vm.saveNoteEdit = saveNoteEdit;
 
         vm.selectPub = selectPub;
         vm.checkPub = checkPub;
+        vm.edit = false;
+        vm.showDownloadLink = true;
+
+        //alert('edit: '+vm.edit);
 
         activate();
 
@@ -181,7 +192,7 @@
         }
 
         function fetchCodes() {
-            return $http.get('/action/ortholog/evidence-codes', { cache: true })
+            return $http.get('/action/ortholog/evidence-codes', {cache: true})
                 .then(function (resp) {
                     vm.codes = resp.data;
                     return vm.codes;
@@ -202,6 +213,14 @@
                 });
         }
 
+        function hideNoDataElement() {
+            jQuery("#no-data-available").hide()
+        }
+
+        function showNoDataElement() {
+            jQuery("#no-data-available").show()
+        }
+
         function fetchOrthology() {
             vm.orthologsLoading = true;
             fetchCodes()
@@ -209,6 +228,12 @@
                 .then(function (resp) {
                     resetPubList();
                     vm.orthologs = resp.data;
+                    if (vm.orthologs != null && vm.orthologs.length > 0) {
+                        hideNoDataElement();
+                        vm.showOrthology = true;
+                    } else {
+                        showNoDataElement();
+                    }
                     vm.orthologs.forEach(function (ortholog) {
                         var evidenceArray = [];
                         ortholog.evidenceSet.forEach(function (e) {
@@ -237,7 +262,6 @@
             $http.get('/action/gene/' + vm.gene + '/orthology-note')
                 .then(function (resp) {
                     vm.note = resp.data;
-                    vm.noteText = vm.note.note;
                 })
                 .catch(function (error) {
                     vm.noteError = 'Couldn\'t retrieve orthology note';
@@ -262,6 +286,8 @@
                     vm.orthologs.push(newOrtholog);
                     vm.ncbiGeneNumber = '';
                     vm.generalError = '';
+                    vm.showOrthology = true;
+                    hideNoDataElement();
                 })
                 .catch(function (error) {
                     vm.ncbiError = error.data.message;
@@ -271,12 +297,13 @@
         function confirmDeleteOrtholog(ortholog) {
             vm.modalOrtholog = ortholog;
             vm.generalError = '';
-            $('#delete-modal')
+            $('#delete-ortholog-modal')
                 .modal({
                     escapeClose: false,
                     clickClose: false,
                     showClose: false,
-                    fadeDuration: 100
+                    fadeDuration: 100,
+                    modalClass: ''
                 })
                 .on($.modal.AFTER_CLOSE, function () {
                     vm.modalOrtholog = undefined;
@@ -287,7 +314,7 @@
             var idx = vm.orthologs.indexOf(vm.modalOrtholog);
             $http.delete('/action/gene/' + vm.gene + '/ortholog/' + vm.modalOrtholog.zdbID)
                 .then(function () {
-                    vm.orthologs.splice(idx, 1);
+                    fetchOrthology();
                 })
                 .catch(function (error) {
                     vm.generalError = 'Couldn\'t delete ortholog';
@@ -334,20 +361,14 @@
                 'evidenceCodeList': vm.modalEvidence.asArray()
             };
             $http.post('/action/gene/' + vm.gene + '/ortholog/evidence', payload)
-                .then(function () {
-                    addToPubList(vm.modalEvidence.publication);
-                    if (vm.modalEvidenceIndex < 0) {
-                        vm.modalOrtholog.evidenceArray.push(angular.copy(vm.modalEvidence));
-                        vm.modalOrtholog.evidenceArray.sort(evidenceComparator);
-                    } else {
-                        vm.modalOrtholog.evidenceArray[vm.modalEvidenceIndex] = angular.copy(vm.modalEvidence);
-                    }
+                .then(function success() {
+                    fetchOrthology();
                     $.modal.close();
                 })
                 .catch(function (error) {
                     var message = error.data.message;
                     // todo: hackity hack hack -- we should really use the fieldErrors attribute instead
-                    if (message.indexOf('publication') < 0) {
+                    if (message != null && message.indexOf('publication') < 0) {
                         vm.evidenceCodeError = message;
                     } else {
                         vm.evidencePublicationError = message;
@@ -374,7 +395,7 @@
             };
             $http.post('/action/gene/' + vm.gene + '/ortholog/evidence', payload)
                 .then(function () {
-                    ortholog.evidenceArray.splice(index, 1);
+                    fetchOrthology();
                 })
                 .catch(function (error) {
                     vm.generalError = 'Couldn\'t delete evidence';
@@ -382,22 +403,10 @@
                 });
         }
 
-        function editNote() {
-            vm.noteText = vm.note.note;
-            vm.noteEditing = true;
-        }
-
-        function cancelNoteEdit() {
-            vm.noteEditing = false;
-            vm.noteError = '';
-        }
-
         function saveNoteEdit() {
-            $http.post('/action/gene/' + vm.gene + '/orthology-note', {note: vm.noteText})
+            return $http.post('/action/gene/' + vm.gene + '/orthology-note', {note: vm.note.note})
                 .then(function (resp) {
                     vm.note = resp.data;
-                    vm.noteEditing = false;
-                    vm.noteError = '';
                 })
                 .catch(function (error) {
                     vm.noteError = error.data.message;
@@ -415,7 +424,8 @@
                     escapeClose: false,
                     clickClose: false,
                     showClose: false,
-                    fadeDuration: 100
+                    fadeDuration: 100,
+                    modalClass: ''
                 })
                 .on($.modal.AFTER_CLOSE, function () {
                     vm.modalOrtholog = undefined;

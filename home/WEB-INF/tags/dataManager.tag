@@ -12,12 +12,13 @@
 <%@ attribute name="viewURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="oboID" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="termID" type="java.lang.String" rtexprvalue="true" required="false" %>
-<%@ attribute name="rtype" type="java.lang.String" rtexprvalue="true" description="Needed for linking to updates apg" %>
 <%@ attribute name="showLastUpdate" type="java.lang.Boolean" rtexprvalue="true" required="false"
               description="Should the Last Updated link show?" %>
 
 <%@ attribute name="isOwner" type="java.lang.Boolean" rtexprvalue="true" description="Determines if owner."
               required="false" %>
+<%@ attribute name="editMarker" type="java.lang.Boolean" rtexprvalue="true" description="This is the marker edit link"
+              required="false"%>
 
 
 <%-- default showLastUpdate to false --%>
@@ -48,15 +49,15 @@
         <authz:authorize access="hasRole('root')">
             <zfin2:dataManagerPrivileged zdbID="${zdbID}" editURL="${editURL}" editLinkText="${editLinkText}"
                                          deleteURL="${deleteURL}" linkURL="${linkURL}" curateURL="${curateURL}" viewURL="${viewURL}"
-                                         mergeURL="${mergeURL}" trackURL="${trackURL}" oboID="${oboID}" rtype="${rtype}"
-                                         showLastUpdate="${showLastUpdate}"/>
+                                         mergeURL="${mergeURL}" trackURL="${trackURL}" oboID="${oboID}"
+                                         showLastUpdate="${showLastUpdate}" editMarker="${editMarker}"/>
         </authz:authorize>
         <authz:authorize access="hasRole('submit')">
             <c:if test="${isOwner}">
                 <zfin2:dataManagerPrivileged zdbID="${zdbID}" editURL="${editURL}" deleteURL="${deleteURL}"
                                              linkURL="${linkURL}" curateURL="${curateURL}" viewURL="${viewURL}"
                                              mergeURL="${mergeURL}" trackURL="${trackURL}" oboID="${oboID}"
-                                             rtype="${rtype}" showLastUpdate="${showLastUpdate}"/>
+                                             showLastUpdate="${showLastUpdate}"/>
             </c:if>
         </authz:authorize>
 

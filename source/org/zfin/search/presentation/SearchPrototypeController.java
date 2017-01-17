@@ -683,6 +683,9 @@ public class SearchPrototypeController {
     @RequestMapping(value = "/phenotype/{geneZdbID}")
     public String phenotypeModal(Model model, @PathVariable String geneZdbID) {
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbID);
+        // graceful return.
+        if(gene == null)
+            return "No gene found by ID: "+geneZdbID;
         SolrService.getPhenotypeLink(gene.getAbbreviation());
         Map<String, String> phenotypeLinks = SolrService.getPhenotypeLink(gene.getAbbreviation());
         model.addAttribute("phenotypeLinks", phenotypeLinks);

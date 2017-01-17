@@ -1,6 +1,6 @@
 <dataConfig>
 
-    <dataSource name="db" driver="com.informix.jdbc.IfxDriver" url="jdbc:informix-sqli://@SQLHOSTS_HOST@:@INFORMIX_PORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@"
+    <dataSource name="db" driver="com.informix.jdbc.IfxDriver" url="jdbc:informix-sqli://@SQLHOSTS_HOST@:@INFORMIX_PORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@;DB_LOCALE=en_US.utf8"
 	        transactionIsolation="TRANSACTION_READ_UNCOMMITTED"/>
 
 
@@ -1361,8 +1361,8 @@ WHERE  ( NOT g.geno_is_wildtype
 
 
 
-           <entity name="fish_disease"
-                   datasource="db" query="select distinct term_name as disease,
+           <entity name="fish_disease" transformer="RegexTransformer"
+                   datasource="db" query="select distinct term_name || '|Any' as disease,
                                                  term_ont_id,
                                                  genox_fish_zdb_id
                                           from term
@@ -1370,7 +1370,9 @@ WHERE  ( NOT g.geno_is_wildtype
                                           inner join disease_annotation_model on disease_annotation.dat_zdb_id = disease_annotation_model.damo_dat_zdb_id
                                           inner join fish_experiment on fish_experiment.genox_zdb_id = disease_annotation_model.damo_genox_zdb_id;"
                    cacheImpl="SortedMapBackedCache"
-                   where="genox_fish_zdb_id=fish.id"/>
+                   where="genox_fish_zdb_id=fish.id">
+               <field name="disease" column="disease" splitBy="\|"/>
+           </entity>
 
 
 
@@ -2164,10 +2166,23 @@ select
                                         'pg-' || pg_id as pg_id
                             from phenotype_source_generated
                                  join phenotype_observation_generated on psg_pg_id = pg_id
-                                 join marker on mrkr_zdb_id = psg_mrkr_zdb_id;"
+                                 join marker on mrkr_zdb_id = psg_mrkr_zdb_id
+                            where mrkr_type != 'ATB';"
                    cacheImpl="SortedMapBackedCache"
                    where="pg_id=phenotype.id">
                <field name="misexpressed_gene" column="misexpressed_gene" splitBy=","/>
+           </entity>
+
+           <entity name="phenotype_misexpressed_gene_antibodies" datasource="db" transformer="RegexTransformer"
+                   query="select mrkr_abbrev || ',Any' as misexpressed_gene,
+                                 mrkr_abbrev || ' misexpression' as expression_observation,
+                                        'pg-' || pg_id as pg_id
+                            from phenotype_source_generated
+                                 join phenotype_observation_generated on psg_pg_id = pg_id
+                                 join marker on mrkr_zdb_id = psg_mrkr_zdb_id
+                            where mrkr_type = 'ATB';"
+                   cacheImpl="SortedMapBackedCache"
+                   where="pg_id=phenotype.id">
            </entity>
 
            <entity name="phenotype_image"
@@ -4146,9 +4161,6 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                              case when status = 'active' then 'Active'
                                   when status = 'inactive' then 'Inactive'
                                   else status end as publication_status,
-                             case when pub_completion_date is null
-                                  then 'Open'
-                                  else 'Closed' end as curation_status,
                              keywords as keyword,
                              authors as author_string
                              from publication">
@@ -4462,7 +4474,7 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                    where="pub_zdb_id=publication.id"/>
 
            <entity name="pub_tracking_location"
-                   datasource="db" query="select pth_pub_zdb_id as pub_zdb_id, nvl(ptl_location_display,'') as location
+                   datasource="db" query="select nvl(ptl_location_display,'') as location, pth_pub_zdb_id as pub_zdb_id
                    from pub_tracking_history,pub_tracking_location
                    where pth_location_id=ptl_pk_id
                    and pth_status_is_current='t';"
@@ -4470,7 +4482,7 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                    where="pub_zdb_id=publication.id"/>
 
            <entity name="pub_tracking_status"
-                   datasource="db" query="select pth_pub_zdb_id as pub_zdb_id,  pts_status_display as curstatus
+                   datasource="db" query="select pts_status_display as curation_status,pth_pub_zdb_id as pub_zdb_id
                    from pub_tracking_history,pub_tracking_status
                    where pth_status_id=pts_pk_id
                    and pth_status_is_current='t';"
@@ -4478,24 +4490,14 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                    where="pub_zdb_id=publication.id"/>
 
            <entity name="pub_owner"
-                   datasource="db" query="
-                   select first_name || ' ' || last_name as pubowner,
+                   datasource="db" query="select nvl(first_name || ' ' || last_name,'None') as owner,
                            pth_pub_zdb_id as pub_zdb_id
                     from pub_tracking_history
-                         join person on pth_claimed_by = person.zdb_id"
+                         join person on pth_claimed_by = person.zdb_id
+                         where pth_status_is_current='t';"
                      cacheImpl="SortedMapBackedCache"
                    where="pub_zdb_id=publication.id"/>
 
-           <entity name="pub_curator"
-                   datasource="db" query="
-                   select first_name || ' ' || last_name as curator,
-                           publication.zdb_id as pub_zdb_id
-                    from publication
-                         join curation on cur_pub_zdb_id = zdb_id
-                         join person on cur_curator_zdb_id = person.zdb_id
-                     where cur_topic != 'Linked Authors'"
-                   cacheImpl="SortedMapBackedCache"
-                   where="pub_zdb_id=publication.id"/>
 
 <!--
            This is commented out because it causes locks

@@ -4,7 +4,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
-import org.zfin.gwt.curation.event.ChangeConditionEvent;
+import org.zfin.gwt.curation.event.CurationEvent;
+import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.root.dto.ConditionDTO;
 import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.OntologyDTO;
@@ -27,6 +28,7 @@ public class ConditionAddPresenter implements HandlesError {
     private List<ExperimentDTO> dtoList;
     private List<CheckBox> copyConditionsCheckBoxList = new ArrayList<>();
     private Map<String, Set<String>> childMap;
+
 
     public ConditionAddPresenter(ConditionAddView view, String publicationID) {
         this.publicationID = publicationID;
@@ -57,7 +59,7 @@ public class ConditionAddPresenter implements HandlesError {
     // or it is called from outside then no notification needed.
     public void loadExperiments(boolean notify) {
         ExperimentRPCService.App.getInstance().getExperimentList(publicationID,
-                new ExperimentListCallBack(notify, "Failed to retrieve experiments: "));
+                new ExperimentListCallBack(notify, "Failed to retrieve experiments: ", null));
 
     }
 
@@ -122,7 +124,7 @@ public class ConditionAddPresenter implements HandlesError {
         }
         String experimentID = view.experimentCopyToSelectionList.getSelected();
         ExperimentRPCService.App.getInstance().copyConditions(experimentID, copyConditionIdList,
-                new ExperimentListCallBack(true, "Failed to copy conditions: "));
+                new ExperimentListCallBack(true, "Failed to copy conditions: ", null));
     }
 
     private void enableCopyControls(boolean enable) {
@@ -239,19 +241,22 @@ public class ConditionAddPresenter implements HandlesError {
         ConditionDTO conditionDTO = getConditionFromFrom();
         view.clearError();
         ExperimentRPCService.App.getInstance().createCondition(publicationID, conditionDTO,
-                new ExperimentListCallBack(true, "Failed to save condition: "));
+                new ExperimentListCallBack(true, "Failed to save condition: ", conditionDTO));
     }
 
     private String validatePostCompositions() {
+
         if (!view.aoTermEntry.getTermTextBox().hasValidateTerm() && view.aoTermEntry.isVisible())
             return "Zeco term requires an AO term ";
         if (!view.chebiTermEntry.getTermTextBox().hasValidateTerm() && view.chebiTermEntry.isVisible())
             return "Zeco term requires a Chebi term ";
-       if (!view.taxonTermEntry.getTermTextBox().hasValidateTerm() && view.taxonTermEntry.isVisible())
- if (view.zecoTermEntry.getTermText().equals("bacterial treatment")||view.zecoTermEntry.getTermText().equals("viral treatment")||view.zecoTermEntry.getTermText().equals("fungal treatment")) {
+        if (!view.taxonTermEntry.getTermTextBox().hasValidateTerm() && view.taxonTermEntry.isVisible())
+            if (view.zecoTermEntry.getTermText().equals("bacterial treatment") || view.zecoTermEntry.getTermText().equals("viral treatment") || view.zecoTermEntry.getTermText().equals("fungal treatment") ||
+                    view.zecoTermEntry.getTermText().equals("bacterial treatment by exposure to environment") || view.zecoTermEntry.getTermText().equals("viral treatment by exposure to environment") || view.zecoTermEntry.getTermText().equals("fungal treatment by exposure to environment") ||
+                    view.zecoTermEntry.getTermText().equals("bacterial treatment by injection") || view.zecoTermEntry.getTermText().equals("viral treatment by injection") || view.zecoTermEntry.getTermText().equals("fungal treatment by injection")) {
 
-     return "Zeco term requires a taxonomy term ";
- }
+                return "Zeco term requires a taxonomy term ";
+            }
 
         return null;
     }
@@ -307,8 +312,7 @@ public class ConditionAddPresenter implements HandlesError {
                     populateData();
                     view.loadingImage.setVisible(false);
                     // notify the create-experiment section
-                    ChangeConditionEvent event = new ChangeConditionEvent();
-                    AppUtils.EVENT_BUS.fireEvent(event);
+                    AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.REMOVE_EXPERIMENT_CONDITION, conditionDTO.getName()));
                 }
             });
         }
@@ -317,11 +321,13 @@ public class ConditionAddPresenter implements HandlesError {
 
     private class ExperimentListCallBack extends ZfinAsyncCallback<List<ExperimentDTO>> {
         private boolean notify;
+        private ConditionDTO conditionDTO;
 
-        public ExperimentListCallBack(boolean notify, String errorMessage) {
+        public ExperimentListCallBack(boolean notify, String errorMessage, ConditionDTO conditionDTO) {
             super(errorMessage, ConditionAddPresenter.this.view.errorLabel);
             view.loadingImage.setVisible(false);
             this.notify = notify;
+            this.conditionDTO = conditionDTO;
         }
 
         public void onSuccess(List<ExperimentDTO> experimentList) {
@@ -337,8 +343,7 @@ public class ConditionAddPresenter implements HandlesError {
             view.loadingImage.setVisible(false);
             // notify the create-experiment section
             if (notify) {
-                ChangeConditionEvent event = new ChangeConditionEvent();
-                AppUtils.EVENT_BUS.fireEvent(event);
+                AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.CREATE_EXPERIMENT_CONDITION, conditionDTO.getName()));
             }
         }
     }

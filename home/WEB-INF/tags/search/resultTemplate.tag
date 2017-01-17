@@ -51,7 +51,9 @@
                 </td>
                 <td align="right" valign="top">
                     <c:if test="${not empty result.image}">
-                        <zfin-search:imageModal result="${result}"/>
+                        <div class="result-thumbnail-container pull-right" style="min-width: 100px;">
+                            <zfin-search:imageModal result="${result}"/>
+                        </div>
                     </c:if>
                     <c:if test="${not empty result.snapshot}">
                         <div class="pull-right result-thumbnail-container">

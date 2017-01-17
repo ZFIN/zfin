@@ -21,6 +21,7 @@ public class MarkerAlias extends DataAlias {
 
     public void setMarker(Marker marker) {
         this.marker = marker;
+        dataZdbID = marker.getZdbID();
     }
 
 }

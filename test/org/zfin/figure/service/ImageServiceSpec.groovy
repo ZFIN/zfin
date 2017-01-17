@@ -83,13 +83,13 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
     }
 
 
-    def "Image should have it's dimensions when piped through processImage"() {
+    def "Image should have placeholder dimensions when piped through processImage"() {
         when: "a new image is created"
         Image image = ImageService.processImage(figure,  "test/resources/${width}x${height}.jpg", false,Image.NOT_SPECIFIED)
 
         then: "main image has correct dimensions"
-        image.width == width
-        image.height == height
+        image.width == -1
+        image.height == -1
 
         where:
         width << [540, 900]

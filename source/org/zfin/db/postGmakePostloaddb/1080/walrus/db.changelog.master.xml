@@ -17,11 +17,12 @@
 <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/updateExpcondDups.sql"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/dropTempDupTables.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/createTempRelTables.sql"/>
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/createAuditTable.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/14512.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/14512.sql"/>
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/dropTempRelTables.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/dropEnvironmentStaging.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/dropFishStaging.sql"/>
-    <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/createAuditTable.sql"/>
 </databaseChangeLog>

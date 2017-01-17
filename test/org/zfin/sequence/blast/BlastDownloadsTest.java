@@ -24,7 +24,6 @@ public class BlastDownloadsTest extends AbstractDatabaseTest{
 
     @Before
     public void setUp() {
-        RepositoryFactory.getBlastRepository().setAllDatabaseLock(false);
     }
 
     // the test should be to write it out to a temp file and reread it without error

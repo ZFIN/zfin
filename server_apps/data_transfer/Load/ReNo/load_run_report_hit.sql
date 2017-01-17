@@ -328,24 +328,43 @@ update accession_bank set accbk_length = (
 );
 
 --! echo "update accession_bank with NEW length  *** ACTION SKIPPED FOR EXCESSIVE TIME ***"
---! echo "`date`"
---update accession_bank set accbk_length = (
---    select trpt_acc_len
---     from tmp_report
---     where trpt_query_id = accbk_pk_id
---) where accbk_length is NOT NULL
---    and exists (
---    select 1 from tmp_report
---     where trpt_query_id = accbk_pk_id
---       and trpt_acc_len > 0
---       and trpt_acc_len != accbk_length
---);
+! echo "`date`"
+update accession_bank set accbk_length = (
+    select max(trpt_acc_len)
+     from tmp_report
+     where trpt_query_id = accbk_pk_id
+) where accbk_length is NOT NULL
+    and exists (
+    select 1 from tmp_report
+     where trpt_query_id = accbk_pk_id
+      and trpt_acc_len > 0
+       and trpt_acc_len != accbk_length
+);
+
+! echo "clean up"
+
+create temp table tmp_ottdart_length(
+       tol_acc varchar(50),
+       tol_len integer
+);
+
+--load from 'ottdarT_length.unl' insert into tmp_ottdart_length;
+
+--delete from accession_bank 
+--where accbk_acc_num in (select tol_acc from tmp_ottdart_length);
+
+--delete from tmp_report
+--where trpt_acc in (select tol_acc from tmp_ottdart_length)
+--  and not exists (select 'x' from tmp_ottdart_length
+--                  where trpt_acc = tol_acc
+--                    and trpt_acc_len != tol_len);
+
 
 
 ! echo "clobber existing VEGA accession_bank deflines if they are changed"
 ! echo "`date`"
 update accession_bank set accbk_defline = (
-    select trpt_defline
+    select (max (length(trpt_defline)))
      from tmp_report
      where trpt_query_id = accbk_pk_id
 )
@@ -360,23 +379,21 @@ update accession_bank set accbk_defline = (
 ! echo "how many Queries still need to be added to accession bank?"
 select count(*) howmany from tmp_report where trpt_query_id is NULL;
 
-! echo "add new *QUERIES* to accession_bank"
-! echo "`date`"
-insert into  accession_bank (
-    accbk_acc_num ,
-    accbk_length ,
-    --accbk_pk_id ,
-    accbk_fdbcont_zdb_id ,
-    accbk_defline
-)
+create temp table tmp_distinct_acc (
+       tdc_acc varchar(50),
+       tdc_fdbcont varchar(50),
+       tdc_defline lvarchar
+);
+
+--- make a temp table with acc, fdb and defline 
+insert into tmp_distinct_acc
 select distinct
     trpt_acc,      -- BC146618
-    trpt_acc_len,  -- 3498
     case  -- all QUERIES are assumed to be zebrafish
         when trpt_acc_type = 'protein'
-         and trpt_acc_db = 'ref'  then 'ZDB-FDBCONT-040412-39'
+     and trpt_acc_db = 'ref'  then 'ZDB-FDBCONT-040412-39'
         when trpt_acc_type = 'protein'
-         and trpt_acc_db = 'gb'   then 'ZDB-FDBCONT-040412-42'
+     and trpt_acc_db = 'gb'   then 'ZDB-FDBCONT-040412-42'
         when trpt_acc_type = 'protein'
          and trpt_acc_db = 'wz'   then 'ZDB-FDBCONT-090929-8'
         when trpt_acc_type = 'protein'
@@ -389,9 +406,30 @@ select distinct
          and trpt_acc_db = 'tpe'  then 'ZDB-FDBCONT-050210-1' --TODO: should be internal prevega
         else trun_query_fdbcont
     end,
-    trpt_defline
+    max(trpt_defline)
  from tmp_report, tmp_run
  where trpt_query_id is NULL
+ group by 1,2
+;
+
+
+! echo "add new *QUERIES* to accession_bank"
+! echo "`date`"
+insert into  accession_bank (
+    accbk_acc_num ,
+    accbk_length ,
+    --accbk_pk_id ,
+    accbk_fdbcont_zdb_id ,
+    accbk_defline
+)
+select distinct
+    tdc_acc,      -- BC146618    
+    trpt_acc_len,  -- 3498
+    tdc_fdbcont,
+    tdc_defline
+ from tmp_run, tmp_distinct_acc, tmp_report
+ where trpt_query_id is NULL
+   and trpt_defline = tdc_defline
 ;
 -- clean up after the informix's superior conditional operator skillz
 update accession_bank set accbk_fdbcont_zdb_id = trim (accbk_fdbcont_zdb_id)
@@ -818,7 +856,7 @@ insert into blast_hit (
 -- where so far, it has not been needed. nor has it been needed for Vega or ZGC
 -- loads to date.  *BUT* it has been needed for at least one 'paper' load of RNA
 -- for now I am going to enable it only if need be for a particular load
-select --DISTINCT -- ***
+select distinct
     thit_zad,
     tbqry_zad,
     thit_target_id,

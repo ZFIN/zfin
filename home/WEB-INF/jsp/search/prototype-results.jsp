@@ -5,6 +5,7 @@
 
 <c:set var="geneCategoryName" value="<%=Category.GENE.getName()%>"/>
 <c:set var="expressionCategoryName" value="<%=Category.EXPRESSIONS.getName()%>"/>
+<c:set var="phenotypeCategoryName" value="<%=Category.PHENOTYPE.getName()%>"/>
 <c:set var="diseaseCategoryName" value="<%=Category.DISEASE.getName()%>"/>
 <c:set var="mutationCategoryName" value="<%=Category.MUTANT.getName()%>"/>
 <c:set var="publicationCategoryName" value="<%=Category.PUBLICATION.getName()%>"/>
@@ -12,6 +13,9 @@
 <c:set var="strCategoryName" value="<%=Category.SEQUENCE_TARGETING_REAGENT.getName()%>"/>
 <c:set var="abCategoryName" value="<%=Category.ANTIBODY.getName()%>"/>
 <c:set var="anatomyCategoryName" value="<%=Category.ANATOMY.getName()%>"/>
+<c:set var="markerCategoryName" value="<%=Category.MARKER.getName()%>"/>
+<c:set var="communityCategoryName" value="<%=Category.COMMUNITY.getName()%>"/>
+<c:set var="figureCategoryName" value="<%=Category.FIGURE.getName()%>"/>
 
 <script src="/javascript/list-collapse.js"></script>
 <script src="/javascript/figure-gallery-resize.jquery.js"></script>
@@ -280,6 +284,9 @@
                         <c:when test="${category eq expressionCategoryName}">
                             <zfin-search:expressionResultTable results="${results}"/>
                         </c:when>
+                        <c:when test="${category eq phenotypeCategoryName}">
+                            <zfin-search:phenotypeResultTable results="${results}"/>
+                        </c:when>
                         <c:when test="${category eq diseaseCategoryName}">
                             <zfin-search:diseaseResultTable results="${results}"/>
                         </c:when>
@@ -297,6 +304,18 @@
                         </c:when>
                         <c:when test="${category eq anatomyCategoryName}">
                             <zfin-search:anatomyResultTable results="${results}"/>
+                        </c:when>
+                        <c:when test="${category eq markerCategoryName}">
+                            <zfin-search:cloneResultTable results="${results}"/>
+                        </c:when>
+                        <c:when test="${category eq publicationCategoryName}">
+                            <zfin-search:publicationResultTable results="${results}"/>
+                        </c:when>
+                        <c:when test="${category eq communityCategoryName}">
+                            <zfin-search:communityResultTable results="${results}"/>
+                        </c:when>
+                        <c:when test="${category eq figureCategoryName}">
+                            <zfin-search:figureResultTable results="${results}"/>
                         </c:when>
                         <c:otherwise>
                             <zfin-search:mixedResultTable results="${results}"/>

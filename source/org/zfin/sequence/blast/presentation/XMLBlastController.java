@@ -16,16 +16,14 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.support.StringMultipartFileEditor;
-import org.springframework.web.servlet.ModelAndView;
-import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.profile.Person;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.Sequence;
 import org.zfin.sequence.blast.*;
 import org.zfin.sequence.blast.results.BlastOutput;
 import org.zfin.sequence.blast.results.view.BlastResultMapper;
-import org.zfin.util.ZfinStringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
@@ -294,7 +292,6 @@ public class XMLBlastController {
                                    BindingResult result) throws Exception {
         onBind(inputXMLBlastBean, result);
         String querySequence = inputXMLBlastBean.getQuerySequence();
-        querySequence = ZfinStringUtils.escapeHighUnicode(querySequence);
         StringReader in = new StringReader(querySequence);
         logger.debug("onsubmit enter");
 

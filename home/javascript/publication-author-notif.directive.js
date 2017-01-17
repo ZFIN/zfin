@@ -22,8 +22,8 @@
         return directive;
     }
 
-    PublicationAuthorNotifController.$inject = ['$location', '$sce', 'PublicationService'];
-    function PublicationAuthorNotifController($location, $sce, PublicationService) {
+    PublicationAuthorNotifController.$inject = ['$sce', 'PublicationService'];
+    function PublicationAuthorNotifController($sce, PublicationService) {
         var vm = this;
 
         vm.loading = false;
@@ -183,14 +183,14 @@
 
             function appendEntityLink(e, formatter) {
                 if (e.selected) {
-                    notif += '<a href="http://' + $location.host() + '/' + e.zdbID + '">' + formatter(e) + '</a><br>';
+                    notif += '<a href="http://' + window.location.hostname + '/' + e.zdbID + '">' + formatter(e) + '</a><br>';
                 }
             }
 
             var notif =
                 '<p>' + vm.salutation + ' ' + vm.names + ',</p>' +
                 '<p>' + vm.intro + '</p>' +
-                '<p><a href="http://' + $location.host() + vm.pubLink + '">' + vm.pubReference + '</a></p>' +
+                '<p><a href="http://' + window.location.hostname + vm.pubLink + '">' + vm.pubReference + '</a></p>' +
                 '<p>' + vm.dataNote + '</p>';
             if (vm.customNote) {
                 notif += '<p>' + vm.customNote + '</p>';
@@ -210,7 +210,7 @@
             appendSection(vm.curatedData.antibodies, 'Antibodies', nameOnly);
 
             if (vm.curatedData.expressionGenes && vm.curatedData.expressionGenes.some(isSelected)) {
-                notif += '<p><a href="http://' + $location.host() + '/action/figure/all-figure-view/' + pubId + '"><b>Curated Gene Expression</b></a><br>';
+                notif += '<p><a href="http://' + window.location.hostname + '/action/figure/all-figure-view/' + vm.pubId + '"><b>Curated Gene Expression</b></a><br>';
                 vm.curatedData.expressionGenes.forEach(function (g) {
                     if (g.selected) {
                         notif += nameAndAbbrev(g) + '<br>';

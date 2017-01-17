@@ -4,17 +4,30 @@
 
 <%@ attribute name="relationships" required="true"
               rtexprvalue="true" type="java.util.List" %>
-
 <%@ attribute name="marker" required="true" rtexprvalue="true" type="org.zfin.marker.Marker" %>
-
 <%@ attribute name="title" required="false" %>
 
 
-<c:if test="${empty title}">
-    <c:set var="title" value="MARKER RELATIONSHIPS"/>
+<c:set var="loggedIn">no</c:set>
+
+
+<authz:authorize access="hasRole('root')">
+    <c:set var="loggedIn" value="true"/>
+</authz:authorize>
+<c:if test="${loggedIn && marker.genedom}">
+    <div class="summary horizontal-solidblock">
+        <c:if test="${empty title}">
+            <c:set var="title" value="MARKER RELATIONSHIPS"/>
+        </c:if>
+        <span class="summaryTitle">${title}</span>
+        <gene-marker-relationship marker-id="${marker.zdbID}" marker-abbrev="${marker.abbreviation}" edit="editMode">
+        </gene-marker-relationship>
+    </div>
 </c:if>
 
-<zfin2:subsection title="${title}"
+<c:if test="${loggedIn eq 'no' || !marker.genedom}">
+
+   <zfin2:subsection title="${title}"
                   test="${!empty relationships}" showNoData="true">
 
     <table class="summary horizontal-solidblock">
@@ -61,6 +74,9 @@
                     <c:set var="markerType" value="${entry.markerType}"/>
                 </c:forEach>
     </table>
+    <tr>
+
+    </tr>
 
 </zfin2:subsection>
-
+</c:if>

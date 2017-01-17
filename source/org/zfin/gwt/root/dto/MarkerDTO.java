@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Transcript RPC object.
  */
-public class MarkerDTO extends RelatedEntityDTO {
+public class MarkerDTO extends RelatedEntityDTO implements FilterSelectionBoxEntry {
 
     protected List<DBLinkDTO> supportingSequenceLinks;
     /**
@@ -226,5 +226,15 @@ public class MarkerDTO extends RelatedEntityDTO {
         sb.append(", supportingSequenceLinks=").append(supportingSequenceLinks);
         sb.append('}');
         return sb.toString();
+    }
+
+    @Override
+    public String getValue() {
+        return zdbID;
+    }
+
+    @Override
+    public String getLabel() {
+        return name;
     }
 }

@@ -213,7 +213,7 @@ public class HibernateSessionCreator {
         String sqlHostsHost = ZfinPropertiesEnum.SQLHOSTS_HOST.value();
 
         String jdbcUrl = "jdbc:informix-sqli://" + sqlHostsHost + ":" + informixPort + "/" + db + ":INFORMIXSERVER=" + informixServer;
-        jdbcUrl += ";IFX_LOCK_MODE_WAIT=7;defaultIsolationLevel=1";
+	jdbcUrl += ";IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=20;IFX_ISOLATION_LEVEL=DR;IFX_DIRTY_WAIT=10;CLIENT_LOCALE=en_US.utf8;DB_LOCALE=en_US.utf8";
         return jdbcUrl;
     }
 

@@ -5,6 +5,7 @@
 <!--|BACKGROUND_COLOR|-->	#CCFFFF
 <!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/trunk
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
+<!--|CLIENT_LOCALE|-->	en_US.utf8
 <!--|COUNT_PATO_ERR|-->	smoxon\@zfin.org
 <!--|COUNT_PATO_OUT|-->	van_slyke\@uoneuro.uoregon.edu
 <!--|COUNT_THISSE_VEGA_ERR|-->	smoxon\@zfin.org
@@ -16,6 +17,7 @@
 <!--|CURATION_DBNAME|-->	false
 <!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	curators\@zfin.org
+<!--|DB_LOCALE|-->	en_US.utf8
 <!--|DB_NAME|-->	mirrordb
 <!--|DB_OWNER|-->	informix
 <!--|DEFAULT_EMAIL|-->	informix\@zfin.org
@@ -47,7 +49,7 @@
 <!--|LN54_CONTACT_EMAIL|-->	zfinadmn\@zfin.org
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	locusreg\@zfin.org
-<!--|MACHINE_NAME|-->	thorax
+<!--|MACHINE_NAME|-->	testbed
 <!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false
 <!--|MUTANT_NAME|-->	mirror
 <!--|NOMEN_COORDINATOR|-->	nomenclature_coordinators\@zfin.org
@@ -66,7 +68,7 @@
 <!--|SITE_BACKGROUND|-->	#CCFFFF
 <!--|SOURCEROOT|-->	/opt/zfin/source_roots/mirror/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
-<!--|SQLHOSTS_HOST|-->	thorax.zfin.org
+<!--|SQLHOSTS_HOST|-->	testbed.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	ksf\@zfin.org dhowe\@zfin.org sabrina\@zfin.org
 <!--|SWISSPROT_EMAIL_ERR|-->	informix\@zfin.org xshao\@zfin.org
 <!--|SWISSPROT_EMAIL_REPORT|-->	ksf\@zfin.org dhowe\@zfin.org smoxon\@zfin.org xshao\@zfin.org sramachandran\@zfin.org
@@ -86,7 +88,7 @@
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WAREHOUSE_REGN_EMAIL|-->	informix\@zfin.org kevin\@zfin.org cmpich\@zfin.org
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver
-<!--|WEBHOST_BLASTDB_TO_COPY|-->	/research/watson/blastdb
+<!--|WEBHOST_BLASTDB_TO_COPY|-->	/research/crick/blastdb
 <!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/trunk
 <!--|WEBHOST_FASTA_FILE_PATH|-->	/research/zblastfiles/dev_files
 <!--|WEB_ADMIN_EMAIL|-->	kevin\@zfin.org smoxon\@zfin.org

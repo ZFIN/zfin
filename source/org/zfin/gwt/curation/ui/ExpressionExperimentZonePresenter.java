@@ -9,9 +9,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.Widget;
-import org.zfin.gwt.curation.event.RemoveExpressionExperimentEvent;
-import org.zfin.gwt.curation.event.SelectExperimentEvent;
-import org.zfin.gwt.curation.event.UpdateExpressionExperimentEvent;
+import org.zfin.gwt.curation.event.*;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.StringListBox;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
@@ -61,11 +59,12 @@ public class ExpressionExperimentZonePresenter implements Presenter {
      * When an expression record is added update the experiment section about it, ie the number
      * of expression records is incremented by 1.
      */
-    public void notifyAddedExpression() {
+    public void notifyAddedExpression(Map<ExpressionExperimentDTO, Integer> expressionExperimentDTOMap) {
         for (ExpressionExperimentDTO experiment : experimentList) {
             for (ExpressionExperimentDTO sourceExperiment : selectedExperiments) {
                 if (experiment.equals(sourceExperiment))
-                    experiment.setNumberOfExpressions(experiment.getNumberOfExpressions() + 1);
+                    if (expressionExperimentDTOMap.get(experiment) != null)
+                        experiment.setNumberOfExpressions(experiment.getNumberOfExpressions() + expressionExperimentDTOMap.get(experiment));
             }
         }
         finishExpressionNotification();
@@ -122,8 +121,9 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         curationExperimentRPCAsync.createExpressionExperiment(zoneExperiment, new AddExperimentCallback());
 
     }
+
     private boolean isEfgWildtypeCombo(ExpressionExperimentDTO experimentDTO) {
-        if (experimentDTO.getGene()!=null) {
+        if (experimentDTO.getGene() != null) {
             if (experimentDTO.getFishDTO().isWildtype() && experimentDTO.getGene().getMarkerType().equals("Engineered Foreign Gene"))
                 return true;
         }
@@ -358,25 +358,38 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(null));
 
         // fish (genotype) list
-        curationExperimentRPCAsync.getFishList(publicationID, new FishSelectionListAsyncCallback());
+        retrieveFishList();
 
         // environment list
-        String message = "Error while reading the environment";
-        curationExperimentRPCAsync.getEnvironments(publicationID,
-                new RetrieveEnvironmentListCallBack(view.getEnvironmentList(), message, view.errorElement));
+        updateEnvironmentList();
+        String message;
 
         // assay list
         message = "Error while reading the assay list";
         curationExperimentRPCAsync.getAssays(new RetrieveAssayListCallback(message));
 
         // antibody list
-        curationExperimentRPCAsync.getAntibodies(publicationID, new AntibodySelectionListAsyncCallback(null));
+        updateAntibodyList();
         Scheduler.get().scheduleDeferred(new Command() {
             @Override
             public void execute() {
                 view.getLoadingImage().setVisible(false);
             }
         });
+    }
+
+    public void updateEnvironmentList() {
+        String message = "Error while reading the environment";
+        curationExperimentRPCAsync.getEnvironments(publicationID,
+                new RetrieveEnvironmentListCallBack(view.getEnvironmentList(), message, view.errorElement));
+    }
+
+    public void updateAntibodyList() {
+        curationExperimentRPCAsync.getAntibodies(publicationID, new AntibodySelectionListAsyncCallback(null));
+    }
+
+    public void retrieveFishList() {
+        curationExperimentRPCAsync.getFishList(publicationID, new FishSelectionListAsyncCallback());
     }
 
     // Retrieve experiments from the server
@@ -437,6 +450,8 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     public void updateGenes() {
         if (lastSelectedExperiment != null)
             curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(lastSelectedExperiment.getGene()));
+        else
+            curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(null));
 
     }
 
@@ -634,6 +649,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             super.onSuccess(newExperiment);
             addButtonInProgress = false;
             retrieveExperiments();
+            AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.CREATE_EXPRESSION_EXPERIMENT, newExperiment.toString()));
         }
 
     }
@@ -813,7 +829,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
      * 2) copying an existing experiment into the construction zone and
      * selecting the gene of the selected experiment
      */
-    private class GeneSelectionListAsyncCallback extends ZfinAsyncCallback<List<MarkerDTO>> {
+    private class GeneSelectionListAsyncCallback extends ZfinAsyncCallback<List<FilterSelectionBoxEntry>> {
 
         private MarkerDTO selectedGene;
 
@@ -823,14 +839,14 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         }
 
         @Override
-        public void onSuccess(List<MarkerDTO> genes) {
+        public void onSuccess(List<FilterSelectionBoxEntry> genes) {
             //Window.alert("brought back genes: " + genes.size());
             StringListBox geneList = view.getGeneList();
             geneList.clear();
             geneMap.clear();
             geneList.addItem("");
             int rowIndex = 1;
-            for (MarkerDTO gene : genes) {
+            for (MarkerDTO gene : (List<MarkerDTO>) (List<?>) genes) {
                 geneList.addItem(gene.getName(), gene.getZdbID());
                 if (selectedGene != null && selectedGene.getZdbID() != null && gene.getZdbID().equals(selectedGene.getZdbID())) {
                     geneList.setSelectedIndex(rowIndex);
@@ -841,19 +857,19 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         }
     }
 
-    private class FishSelectionListAsyncCallback extends ZfinAsyncCallback<List<FishDTO>> {
+    private class FishSelectionListAsyncCallback extends ZfinAsyncCallback<List<FilterSelectionBoxEntry>> {
 
         private FishSelectionListAsyncCallback() {
             super("Error retrieving fish selection list", view.errorElement);
         }
 
         @Override
-        public void onSuccess(List<FishDTO> fishDTOList) {
+        public void onSuccess(List<FilterSelectionBoxEntry> fishDTOList) {
             fishMap.clear();
             int index = 0;
             StringListBox listBox = view.getFishList();
             listBox.clear();
-            for (FishDTO fish : fishDTOList) {
+            for (FishDTO fish : (List<FishDTO>) (List<?>) fishDTOList) {
                 if (fish.getName().startsWith("---")) {
                     listBox.addItem(fish.getHandle(), fish.getZdbID());
                     listBox.getElement().getElementsByTagName("option").getItem(index).setAttribute("disabled", "disabled");

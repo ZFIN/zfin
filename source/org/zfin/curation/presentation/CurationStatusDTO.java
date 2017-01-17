@@ -10,7 +10,7 @@ public class CurationStatusDTO {
     private String pubZdbID;
     private PublicationTrackingStatus status;
     private PublicationTrackingLocation location;
-    private CuratorDTO owner;
+    private PersonDTO owner;
     private Calendar updateDate;
 
     public String getPubZdbID() {
@@ -37,11 +37,11 @@ public class CurationStatusDTO {
         this.location = location;
     }
 
-    public CuratorDTO getOwner() {
+    public PersonDTO getOwner() {
         return owner;
     }
 
-    public void setOwner(CuratorDTO owner) {
+    public void setOwner(PersonDTO owner) {
         this.owner = owner;
     }
 

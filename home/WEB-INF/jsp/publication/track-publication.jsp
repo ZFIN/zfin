@@ -9,6 +9,7 @@
 <script src="/javascript/angular/paging.min.js"></script>
 <script src="/javascript/zfin-app.module.js"></script>
 
+<script src="/javascript/intertab-event.service.js"></script>
 <script src="/javascript/publication.service.js"></script>
 <script src="/javascript/zfinutils.service.js"></script>
 
@@ -25,25 +26,40 @@
 <c:set var="linkURL">/cgi-bin/webdriver?MIval=aa-link_authors.apg&OID=${publication.zdbID}&anon1=zdb_id&anon1text=${publication.zdbID}</c:set>
 
 <c:if test="${allowCuration}">
-  <c:set var="curateURL">/cgi-bin/webdriver?MIval=aa-curation.apg&OID=${publication.zdbID}</c:set>
+  <c:set var="curateURL">/action/curation/${publication.zdbID}</c:set>
 </c:if>
 
 <div class="container-fluid" ng-app="app">
   <zfin2:dataManager zdbID="${publication.zdbID}"
                      editURL="${editURL}"
                      linkURL="${linkURL}"
-                     curateURL="${curateURL}"
-                     rtype="publication"/>
+                     curateURL="${curateURL}"/>
 
   <p class="lead">
     <a href="/${publication.zdbID}">${publication.title}</a>
     <c:if test="${!empty publication.fileName}"> <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}" target="_blank"><i class="fa fa-file-pdf-o"></i></a></c:if>
   </p>
 
-  <div publication-tracker
-       pub-id="${publication.zdbID}"
-       curator-first="${loggedInUser.firstName}"
-       curator-last="${loggedInUser.lastName}"
-       curator-email="${loggedInUser.email}">
+  <div>
+    <ul class="nav nav-tabs nav-justified nav-padded" role="tablist">
+      <li role="presentation" class="active"><a href="#status" aria-controls="status" role="tab" data-toggle="tab">Status</a></li>
+      <li role="presentation"><a href="#correspondence" aria-controls="correspondence" role="tab" data-toggle="tab">Correspondence</a></li>
+    </ul>
+
+    <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="status">
+        <div publication-tracker
+             pub-id="${publication.zdbID}"
+             curator-id="${loggedInUser.zdbID}"
+             curator-first="${loggedInUser.firstName}"
+             curator-last="${loggedInUser.lastName}"
+             curator-email="${loggedInUser.email}">
+        </div>
+      </div>
+      <div role="tabpanel" class="tab-pane" id="correspondence">
+        <div publication-correspondence pub-id="${publication.zdbID}" curator-id="${loggedInUser.zdbID}" curator-email="${loggedInUser.email}"></div>
+      </div>
+    </div>
   </div>
+
 </div>

@@ -8,7 +8,10 @@
         return {
             getFigures: getFigures,
             addFigure: addFigure,
-            deleteFigure: deleteFigure
+            updateFigure: updateFigure,
+            deleteFigure: deleteFigure,
+            addImage: addImage,
+            deleteImage: deleteImage
         };
 
         function getFigures(pubId) {
@@ -17,8 +20,8 @@
 
         function addFigure(pubId, label, caption, fileList) {
             var form = new FormData();
-            form.set('label', label);
-            form.set('caption', caption);
+            form.append('label', label);
+            form.append('caption', caption);
             angular.forEach(fileList, function (file) {
                 form.append('files', file);
             });
@@ -28,9 +31,30 @@
             });
         }
 
+        function updateFigure(fig) {
+            return $http.post('/action/figure/' + fig.zdbId, fig);
+        }
+
         function deleteFigure(fig) {
             return $http({
                 url: '/action/figure/' + fig.zdbId,
+                method: 'DELETE',
+                transformResponse: undefined
+            });
+        }
+
+        function addImage(fig, file) {
+            var form = new FormData();
+            form.append('file', file);
+            return $http.post('/action/figure/' + fig.zdbId + '/images', form, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined}
+            });
+        }
+
+        function deleteImage(img) {
+            return $http({
+                url: '/action/image/' + img.zdbId,
                 method: 'DELETE',
                 transformResponse: undefined
             });

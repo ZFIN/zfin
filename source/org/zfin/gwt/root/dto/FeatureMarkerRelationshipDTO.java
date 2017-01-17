@@ -2,12 +2,12 @@ package org.zfin.gwt.root.dto;
 
 /**
  */
-public class FeatureMarkerRelationshipDTO extends RelatedEntityDTO{
+public class FeatureMarkerRelationshipDTO extends RelatedEntityDTO {
 
-    private String zdbID ;
-    private FeatureDTO featureDTO ;
-    private MarkerDTO markerDTO ;
-    private String relationshipType ;
+    private String zdbID;
+    private FeatureDTO featureDTO;
+    private MarkerDTO markerDTO;
+    private String relationshipType;
 
     public String getZdbID() {
         return zdbID;
@@ -45,18 +45,16 @@ public class FeatureMarkerRelationshipDTO extends RelatedEntityDTO{
     public boolean equals(Object obj) {
 
         // compare primary key if they both exist
-        if(obj instanceof FeatureMarkerRelationshipDTO){
-            FeatureMarkerRelationshipDTO otherDTO = (FeatureMarkerRelationshipDTO) obj ;
-            if(otherDTO.getZdbID()!=null && zdbID !=null){
-                return otherDTO.getZdbID().equals(zdbID) ;
-            }
-            else
-            if(otherDTO.getRelationshipType()!=null
-                    && otherDTO.getFeatureDTO()!=null && otherDTO.getFeatureDTO().getName()!=null
-                    && otherDTO.getMarkerDTO()!=null && otherDTO.getMarkerDTO().getName()!=null
-                    && featureDTO!=null && featureDTO.getName()!=null
-                    && markerDTO!=null && markerDTO.getName()!=null
-                    ){
+        if (obj instanceof FeatureMarkerRelationshipDTO) {
+            FeatureMarkerRelationshipDTO otherDTO = (FeatureMarkerRelationshipDTO) obj;
+            if (otherDTO.getZdbID() != null && zdbID != null) {
+                return otherDTO.getZdbID().equals(zdbID);
+            } else if (otherDTO.getRelationshipType() != null
+                    && otherDTO.getFeatureDTO() != null && otherDTO.getFeatureDTO().getName() != null
+                    && otherDTO.getMarkerDTO() != null && otherDTO.getMarkerDTO().getName() != null
+                    && featureDTO != null && featureDTO.getName() != null
+                    && markerDTO != null && markerDTO.getName() != null
+                    ) {
                 return (
                         otherDTO.getFeatureDTO().getName().equals(featureDTO.getName())
                                 &&
@@ -67,7 +65,16 @@ public class FeatureMarkerRelationshipDTO extends RelatedEntityDTO{
             }
         }
 
-        return false ;
+        return false;
 
+    }
+
+    public String toString() {
+        String displayName = featureDTO.getName();
+        displayName += " ";
+        displayName += relationshipType;
+        displayName += " ";
+        displayName += markerDTO.getName();
+        return displayName;
     }
 }

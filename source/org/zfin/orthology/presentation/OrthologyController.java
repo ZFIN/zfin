@@ -13,6 +13,8 @@ import org.zfin.gwt.root.dto.NcbiOtherSpeciesGeneDTO;
 import org.zfin.gwt.root.dto.OrthologDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.OrthologyPresentationBean;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.orthology.EvidenceCode;
 import org.zfin.orthology.NcbiOtherSpeciesGene;
 import org.zfin.orthology.Ortholog;
@@ -74,21 +76,39 @@ public class OrthologyController {
             throw new InvalidWebRequestException("No gene with ID " + geneID + " found!", null);
         List<Ortholog> orthologList = getOrthologyRepository().getOrthologs(gene);
         List<OrthologDTO> orthologDTOs = new ArrayList<>(orthologList.size());
+        OrthologyPresentationBean bean = MarkerService.getOrthologyPresentationBean(orthologList, gene, null);
         for (Ortholog ortholog : orthologList) {
             OrthologDTO orthologDTO = DTOConversionService.convertToOrthologDTO(ortholog);
             orthologDTOs.add(orthologDTO);
+            if (bean != null) {
+                for (OrthologyPresentationRow row : bean.getOrthologs()) {
+                    if (orthologDTO.getZdbID().equals(row.getOrthoID())) {
+                        Set<OrthologEvidenceGroupedByCode> orthEvidenceSet = new HashSet<>();
+                        for (OrthologEvidencePresentation presentation : row.getEvidence()) {
+                            Set<String> pubIdsSet = new HashSet<>();
+                            for (Publication pub : presentation.getPublications()) {
+                                pubIdsSet.add(pub.getZdbID());
+                            }
+                            OrthologEvidenceGroupedByCode evidenceGroupedByCode =
+                                    new OrthologEvidenceGroupedByCode(presentation.getCode().getCode(), presentation.getCode().getName(), pubIdsSet);
+                            orthEvidenceSet.add(evidenceGroupedByCode);
+                        }
+                        orthologDTO.setEvidenceSetGroupedByCode(orthEvidenceSet);
+                    }
+                }
+            }
         }
         return orthologDTOs;
     }
 
-    @RequestMapping(value = "/gene/{geneID}/ortholog/{orthoID}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/gene/{geneID}/ortholog/{orthoID}", method = RequestMethod.DELETE, produces = "text/plain")
     public
     @ResponseBody
     String deleteOrtholog(@PathVariable String geneID,
                           @PathVariable String orthoID) throws InvalidWebRequestException {
-        Transaction tx = HibernateUtil.createTransaction();
+        Transaction tx = null;
         try {
-            tx.begin();
+            tx = HibernateUtil.createTransaction();
             Marker gene = getMarkerRepository().getMarkerByID(geneID);
             if (gene == null)
                 throw new InvalidWebRequestException("No gene with ID " + geneID + " found!", null);
@@ -102,7 +122,8 @@ public class OrthologyController {
             getOrthologyRepository().deleteOrtholog(ortholog);
             tx.commit();
         } catch (Exception e) {
-            tx.rollback();
+            if (tx != null)
+                tx.rollback();
             throw new InvalidWebRequestException("Error while deleting Ortholog: " + orthoID + ":" +
                     e.getMessage(), null);
         }
@@ -124,10 +145,10 @@ public class OrthologyController {
     @ResponseBody
     OrthologDTO createOrthologFromNcbi(@PathVariable String geneID,
                                        @PathVariable String ncbiID) throws InvalidWebRequestException {
-        Transaction tx = HibernateUtil.createTransaction();
+        Transaction tx = null;
         Ortholog ortholog;
         try {
-            tx.begin();
+            tx = HibernateUtil.createTransaction();
             NcbiOtherSpeciesGene ncbiGene = getOrthologyRepository().getNcbiGene(ncbiID);
             if (ncbiGene == null)
                 throw new InvalidWebRequestException("Couldn\'t find gene with this ID", null);
@@ -141,7 +162,8 @@ public class OrthologyController {
             getOrthologyRepository().saveOrthology(ortholog, null);
             tx.commit();
         } catch (Exception e) {
-            tx.rollback();
+            if (tx != null)
+                tx.rollback();
             if (e instanceof InvalidWebRequestException) {
                 throw e;
             }
@@ -152,7 +174,7 @@ public class OrthologyController {
     }
 
 
-    @RequestMapping(value = "/gene/{geneID}/ortholog/evidence", method = RequestMethod.POST)
+    @RequestMapping(value = "/gene/{geneID}/ortholog/evidence", method = RequestMethod.POST, produces = "text/plain")
     public
     @ResponseBody
     String createOrthologFromNcbi(@PathVariable String geneID,
@@ -160,7 +182,6 @@ public class OrthologyController {
 
         Transaction tx = HibernateUtil.createTransaction();
         try {
-            tx.begin();
             checkValidGene(geneID);
             Publication publication = checkValidPublication(orthologDTO.getPublicationID());
             Ortholog ortholog = checkValidOrtholog(orthologDTO.getOrthologID());

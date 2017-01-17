@@ -134,7 +134,7 @@ c.clone_mrkr_zdb_id='$OID';
 
 <?MIVAR>
 <TD> <font size=-1>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-update-vframeset.apg&OID=$OID&rtype=$rtype">
+<A HREF="/action/updates/$OID">
 <b>Updated:</b> $mod_date </A> </font>
 </TD>
 <?/MIVAR>

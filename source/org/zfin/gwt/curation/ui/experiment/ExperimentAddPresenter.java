@@ -5,7 +5,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextBox;
-import org.zfin.gwt.curation.event.ChangeExperimentEvent;
+import org.zfin.gwt.curation.event.CurationEvent;
+import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
@@ -91,12 +92,11 @@ public class ExperimentAddPresenter implements HandlesError {
     }
 
     public void createExperiment() {
-        ExperimentDTO environmentDTO = getEnvironmentFromForm();
+        final ExperimentDTO environmentDTO = getEnvironmentFromForm();
 
         ExperimentRPCService.App.getInstance().createExperiment(publicationID, environmentDTO, new ZfinAsyncCallback<List<ExperimentDTO>>("Failed to save a Experiment: ", view.errorLabel) {
             public void onSuccess(List<ExperimentDTO> experimentList) {
-                ChangeExperimentEvent event = new ChangeExperimentEvent();
-                AppUtils.EVENT_BUS.fireEvent(event);
+                AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.CREATE_EXPERIMENT, environmentDTO.getName()));
                 dtoList = experimentList;
                 resetGUI();
                 populateExperiments();
@@ -113,7 +113,7 @@ public class ExperimentAddPresenter implements HandlesError {
 
     private class DeleteExperimentClickHandler implements ClickHandler {
 
-        private ExperimentDTO environmentDTO;
+        private final ExperimentDTO environmentDTO;
 
         public DeleteExperimentClickHandler(ExperimentDTO environmentDTO) {
             this.environmentDTO = environmentDTO;
@@ -129,8 +129,7 @@ public class ExperimentAddPresenter implements HandlesError {
                 @Override
                 public void onSuccess(List<ExperimentDTO> list) {
                     fireEventSuccess();
-                    ChangeExperimentEvent event = new ChangeExperimentEvent();
-                    AppUtils.EVENT_BUS.fireEvent(event);
+                    AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.REMOVE_EXPERIMENT, environmentDTO.getName()));
                     dtoList = list;
                     resetGUI();
                     populateExperiments();
@@ -159,8 +158,7 @@ public class ExperimentAddPresenter implements HandlesError {
                     fireEventSuccess();
                     //Window.alert("Feature successfully created");
 
-                    ChangeExperimentEvent event = new ChangeExperimentEvent();
-                    AppUtils.EVENT_BUS.fireEvent(event);
+                    AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.UPDATE_EXPERIMENT));
                     dtoList = list;
                     resetGUI();
                     populateExperiments();

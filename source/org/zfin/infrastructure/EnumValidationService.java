@@ -5,8 +5,10 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.junit.Ignore;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.antibody.Isotype;
+import org.zfin.curation.Curation;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.mapping.GenomeLocation;
@@ -14,6 +16,8 @@ import org.zfin.marker.*;
 import org.zfin.mutant.Genotype;
 import org.zfin.orthology.EvidenceCode;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.publication.PublicationTrackingLocation;
+import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
@@ -47,7 +51,7 @@ public class EnumValidationService {
         Method[] methods = this.getClass().getMethods();
         int count = 0;
         for (Method method : methods) {
-            if (method.isAnnotationPresent(ServiceTest.class)) {
+            if (method.isAnnotationPresent(ServiceTest.class) && !method.isAnnotationPresent(Ignore.class)) {
                 try {
                     logger.info("running method: " + method.getName());
                     method.invoke(this);
@@ -128,6 +132,27 @@ public class EnumValidationService {
         checkEnumVersusDatabaseCollection(typeList, RecordAttribution.SourceType.values());
     }
 
+    @ServiceTest
+    @Ignore("Don't run this until all topics are in use")
+    public void validateCurationTopics() throws EnumValidationException {
+        String hql = "select distinct cur_topic from curation";
+        List topicList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        checkEnumVersusDatabaseCollection(topicList, Curation.Topic.values());
+    }
+
+    @ServiceTest
+    public void validateCurationStatus() throws EnumValidationException {
+        String hql = "select distinct pts_status from pub_tracking_status";
+        List statusList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        checkEnumVersusDatabaseCollection(statusList, PublicationTrackingStatus.Type.values());
+    }
+
+    @ServiceTest
+    public void validateCurationRole() throws EnumValidationException {
+        String hql = "select distinct ptl_role from pub_tracking_location";
+        List roleList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        checkEnumVersusDatabaseCollection(roleList, PublicationTrackingLocation.Role.values());
+    }
 
     /**
      * @throws EnumValidationException
@@ -386,14 +411,14 @@ public class EnumValidationService {
         Enum enumType = null;
         for (Enum type : enumValues) {
             if (type.toString() != null || !allowNullEnumValue) {
-                enumList.add(type.toString());
+                enumList.add(type.toString().toLowerCase());
                 enumType = type;
             }
         }
 
         List<String> databaseStringList = new ArrayList<>();
         for (T type : databaseList) {
-            databaseStringList.add(type.toString());
+            databaseStringList.add(type.toString().toLowerCase());
         }
 
         String message = getCollectionDifferenceReport(enumList, databaseStringList, enumType.getClass());

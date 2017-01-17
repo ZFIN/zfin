@@ -173,15 +173,25 @@ table.data_manager a.root {
     text-align: center;
 }
 
+.edit-link {
+    color: red;
+    font-style: italic;
+    font-weight: bold;
+}
+
 .phenotype-normal {
     color: #33cc99;
     text-align: left;
 }
+
 .phenotype-ameliorated {
     color: #A461E8;
     text-align: left;
 }
-
+.phenotype-exacerbated {
+    font-weight: bold;
+    text-align: left;
+}
 .curation-filter {
     background-color: #33CC99;
     text-align: center;
@@ -309,6 +319,10 @@ img.clickable {
 
 .red {
     color: red;
+}
+
+.checkbox-label > input {
+    margin-right: 5px;
 }
 
 .red-modifier-hyperlink a {
@@ -637,6 +651,12 @@ video {
     white-space: pre-wrap;
 }
 
+.one-line-preview {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .inline-upload {
     display: inline-block;
 }
@@ -819,12 +839,15 @@ ul.comma-separated {
     margin: 0;
     padding: 0;
 }
+
 ul.comma-separated > li {
     display: inline;
 }
+
 ul.comma-separated > li:after {
     content: ", ";
 }
+
 ul.comma-separated > li:last-child:after {
     content: "";
 }
@@ -863,6 +886,10 @@ ul.comma-separated > li:last-child:after {
     cursor: pointer;
 }
 
+button.pub-dashboard-reload {
+    color: #666666;
+}
+
 nav.pub-navigator {
     background: #669999;
     margin-top: -4px; /* snugs it up to the main nav */
@@ -889,28 +916,24 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
     font-weight: bold;
 }
 
-.edit-form-content {
-    margin-top: 30px;
-}
-
 .figure-edit-panel .table td {
-    vertical-align: top;
+    vertical-align: baseline;
 }
-.figure-edit-panel .table img:first-child {
-    margin: 0;
-}
-.figure-edit-panel .table img {
-    margin: 0 15px;
+.figure-edit-panel .image-edit-image {
+    margin: 0 2em 0 0;
 }
 .file-drag-target {
     padding: 2em 0;
     border: 2px dashed lightgray;
     text-align: center;
+    border-radius: 4px;
 }
+
 .file-drag-target.hover {
     background-color: #e0e7e0;
     border: solid #006666;
 }
+
 .file-drag-target > input {
     width: 0.1px;
     height: 0.1px;
@@ -919,10 +942,99 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
     position: absolute;
     z-index: -1;
 }
+
 .file-drag-target > label {
     white-space: nowrap;
     cursor: pointer;
 }
+
 .figure-delete-button {
     display: inline-block;
 }
+.image-edit-image {
+    position: relative;
+    display: inline-block;
+}
+.image-add-input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+.image-add-label {
+    visibility: hidden;
+    cursor: pointer;
+    font-size: 36px;
+    vertical-align: middle;
+    padding: 0 10px;
+    margin: 0 10px;
+    color: #0000E9;
+}
+.image-edit-block:hover .image-delete-button {
+    display: inline-block;
+}
+.image-edit-block:hover .image-add-label {
+    visibility: visible;
+}
+.image-delete-button {
+    display: none;
+    position: absolute;
+    top: -1.2em;
+    right: -1.2em;
+    cursor: pointer;
+}
+.image-delete-button .fa-circle {
+    color: white;
+}
+.image-delete-button .fa-times-circle {
+    color: #0000E9;
+}
+.table-borderless td, .table-borderless th {
+    border: none !important;
+}
+
+.profile-image {
+    max-width: 500px;
+}
+
+.icon-toggle {
+    transition: transform 200ms;
+}
+.icon-toggle.open {
+    transform: rotate(90deg);
+
+.history-popup-panel {
+    border: 3px solid #000000;
+    padding: 3px;
+    background: white;
+    width: 500px;
+}
+
+.history-popup-panel-content {
+    border: none;
+    padding: 3px;
+}
+
+.table > tbody > tr > td.topAlign {
+    vertical-align: top;
+}
+
+.table > tbody > tr > td.centerAlign {
+    text-align: center;
+}
+
+.table > tbody > tr > td.alignPadding {
+    padding: 5px;
+}
+
+input + label {
+    margin-left: 5px;
+}
+
+.tooltip-arrow,
+.zfin-tooltip + .tooltip > .tooltip-inner {background-color: #000000;}
+
+.tooltip-arrow,
+.zfin-tooltip + .tooltip {background-color: transparent; width: 100px; box-decoration-break: clone}

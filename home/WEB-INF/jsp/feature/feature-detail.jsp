@@ -7,7 +7,7 @@
 <script src="/javascript/gbrowse-image.js"></script>
 <script src="/javascript/table-collapse.js"></script>
 
-<zfin2:dataManager zdbID="${formBean.feature.zdbID}" rtype="feature"/>
+<zfin2:dataManager zdbID="${formBean.feature.zdbID}"/>
 
 <div style="float: right;">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
@@ -263,6 +263,16 @@
                                     <c:if test="${supplier.riken}">&nbsp;(<a href="http://www.shigen.nig.ac.jp/zebrafish/strainDetailAction.do?zfinId=${formBean.feature.singleRelatedGenotype.zdbID}"><font size="-1">order this</font></a>)
                                     </c:if>
                                     <c:if test="${!status.last}"><br/></c:if>
+                                </c:forEach>
+                            </c:when>
+                            <c:when test="${!empty formBean.genotypeDisplays}">
+                                
+                                <c:forEach var="genotypeDisplay" items="${formBean.genotypeDisplays}" varStatus="loop">
+                                    <c:if test="${genotypeDisplay.genotype.extinct}">
+                                        <font size="3" color="red">extinct</font> <img src="/images/warning-noborder.gif"
+                                                                                       alt="extinct" width="20" align="top"
+                                                                                       height="20">
+                                    </c:if>
                                 </c:forEach>
                             </c:when>
                             <c:otherwise>

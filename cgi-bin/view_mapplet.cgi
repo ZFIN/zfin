@@ -32,6 +32,7 @@
   $ENV{INFORMIXDIR}      = '<!--|INFORMIX_DIR|-->';
   $ENV{INFORMIXSERVER}   = '<!--|INFORMIX_SERVER|-->';
   $ENV{INFORMIXSQLHOSTS} = '<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->';
+  $ENV{DB_LOCALE}        = '<!--|DB_LOCALE|-->';
   ### open a handle on the db
   my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->', '', '', {AutoCommit => 1, RaiseError => 1})
   || die "Failed while connecting to <!--|DB_NAME|--> "; #$DBI::errstr";
@@ -222,7 +223,7 @@
 	if( $unique > 1) {	#defined @$rowref[1] ){ # # not unique shunt off to search result page
 	 ### $note = $note . $unique . " ->Too Many Choices  <p>\n";
 
-	  print "Content-Type: text/html; charset=ISO-8859-1\r\n\r\n";
+	  print "Content-Type: text/html; charset=UTF-8\r\n\r\n";
           print "<meta http-equiv=\"refresh\" content=\"0; url=\/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg&compare=contains&input_name=$marker&input_acc=&marker_type=all&lg=0&WINSIZE=25&query_results=exist&START=1&action=SEARCH\"> \n";
           exit 0;
 

@@ -222,6 +222,6 @@ public interface ProfileRepository {
 
     List<String> getUsaDistributionList();
 
-    List<Person> getUsersByRole(String role);
+    List<Person> getCurators();
 
 }

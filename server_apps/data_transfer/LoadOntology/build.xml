@@ -5,7 +5,8 @@
     <property name="qualityOboURL"
               value="http://purl.obolibrary.org/obo/pato.obo"/>
     <property name="geneOboURL" value="http://purl.obolibrary.org/obo/go.obo"/>
-    <property name="diseaseOboURL" value="https://raw.githubusercontent.com/DiseaseOntology/HumanDiseaseOntology/master/src/ontology/doid.obo"/>
+    <property name="diseaseOboURL"
+              value="https://raw.githubusercontent.com/DiseaseOntology/HumanDiseaseOntology/master/src/ontology/doid.obo"/>
     <property name="mpathOboURL" value="https://raw.githubusercontent.com/PaulNSchofield/mpath/master/mpath.obo"/>
     <property name="sequenceOboURL" value="http://www.berkeleybop.org/ontologies/obo-all/sequence/sequence.obo"/>
     <property name="spatialOboURL"
@@ -14,17 +15,18 @@
     <property name="soOboURL"
               value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/so-xp-simple.obo"/>
     <property name="zecoTaxonomyOboURL" value="file:///home/informix/Curation/zeco-taxonomy.obo"/>
-   <property name="zecoOboURL" value="file:///home/informix/Curation/zeco.obo"/>
-   <property name="anatomyOboURL" value="file:///home/informix/Curation/anatomy.obo"/>
-  
-  <property name="root.dir" value="${basedir}/../../../"/>
+    <property name="zecoTaxonomySourceURL" value="/home/informix/Curation/zeco-taxonomy-source.txt"/>
+    <property name="zecoOboURL" value="file:///home/informix/Curation/zeco.obo"/>
+    <property name="anatomyOboURL" value="file:///home/informix/Curation/anatomy.obo"/>
+
+    <property name="root.dir" value="${basedir}/../../../"/>
     <property name="web.dir" value="${root.dir}/home"/>
     <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
     <property name="classbin.dir" value="${web-inf.dir}/classes"/>
     <property name="lib" value="${root.dir}/lib/Java"/>
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="log.dir" value="${basedir}/logs"/>
-    <property name="jvm.args" value="-XX:-UseSplitVerifier"/>
+    <property name="jvm.args" value="-Xverify:none"/>
     <property name="run-directory" value="./obo-files"/>
 
     <property environment="env"/>
@@ -77,7 +79,7 @@
 
     <target name="load-anatomy-ontology" depends="init">
         <property name="localOboFilePath" value="${run-directory}/zebrafish_anatomy.obo"/>
-	<echo message="${localOboFilePath}"/>
+        <echo message="${localOboFilePath}"/>
         <antcall target="load-ontology-with-stages"/>
     </target>
 
@@ -86,10 +88,8 @@
     </target>
 
     <target name="setHeaderForZeco">
-        <replaceregexp replace="default-namespace: zeco_taxonomy" byline="true" file="obo-files/zeco-taxonomy.obo">
-            <regexp pattern="default-namespace: (.*)"/>
-        </replaceregexp>
-        <replaceregexp replace="ontology: zeco taxonomy" byline="true" file="obo-files/zeco-taxonomy.obo">
+        <replaceregexp replace="ontology: zeco taxonomy ${line.separator}default-namespace: zeco_taxonomy
+         ${line.separator}date: ${time.now}" byline="true" file="obo-files/zeco-taxonomy.obo">
             <regexp pattern="ontology: (.*)"/>
         </replaceregexp>
         <replaceregexp replace="namespace: zeco_taxonomy" byline="true" file="obo-files/zeco-taxonomy.obo">
@@ -98,7 +98,8 @@
     </target>
 
     <target name="load-zeco-taxonomy-ontology" depends="init,setHeaderForZeco">
-        <load-ontology oboDirectory="${run-directory}" oboFileName="zeco-taxonomy.obo" scripts="${scriptFilesNoAnnotation}"/>
+        <load-ontology oboDirectory="${run-directory}" oboFileName="zeco-taxonomy.obo"
+                       scripts="${scriptFilesNoAnnotation}"/>
     </target>
 
 
@@ -163,10 +164,10 @@
         <property name="localOboFile" value="zeco-taxonomy.obo"/>
         <property name="oboFileURL" value="${zecoTaxonomyOboURL}"/>
         <antcall target="download-ontology"/>
-	<antcall target="setHeaderForZeco"/>
+        <antcall target="setHeaderForZeco"/>
     </target>
 
-     <target name="download-zeco-ontology">
+    <target name="download-zeco-ontology">
         <property name="localOboFile" value="zeco.obo"/>
         <property name="oboFileURL" value="${zecoOboURL}"/>
         <antcall target="download-ontology"/>
@@ -194,7 +195,7 @@
 
     <target name="load-chebi" depends="download-chebi-ontology,load-chebi-ontology"/>
 
-    <target name="load-zeco-taxonomy" depends="download-zeco-taxonomy-ontology,load-zeco-taxonomy-ontology"/>
+    <target name="load-zeco-taxonomy" depends="load-zeco-taxonomy-ontology"/>
 
     <target name="load-anatomy" depends="download-anatomy-ontology,load-anatomy-ontology"/>
 
@@ -328,7 +329,7 @@
 
     </target>
 
-     <macrodef name="run-db-query">
+    <macrodef name="run-db-query">
         <attribute name="db-query-file"/>
         <attribute name="instanceName"/>
         <sequential>
@@ -374,6 +375,53 @@
         <mkdir dir="${run-directory}"/>
     </target>
 
+    <property name="zeco-taxon-file" value="ZecoTaxonomyTerms.txt"/>
+
+    <tstamp>
+        <format property="time.now" pattern="dd:MM:yyyy HH:mm"/>
+    </tstamp>
+
+    <target name="create-zeco-taxonomy-owl-file">
+        <echo message="Create a new ZECO-taxonomy.owl file from ${zecoTaxonomySourceURL}"/>
+        <echo message="Connecting to ontofox.hegroup.org..."/>
+
+        <!-- Generate owl file at ontofox.hegroup.org from source file-->
+        <exec executable="curl">
+            <arg line="-F file=@'${zecoTaxonomySourceURL}' -o obo-files/zeco-taxonomy.owl http://ontofox.hegroup.org/service.php"/>
+        </exec>
+
+        <!-- convert owl file into an obo file -->
+        <java fork="true" jar="${env.SOURCEROOT}/lib/Java/robot.jar">
+            <arg value="convert"/>
+            <arg value="--input"/>
+            <arg value="obo-files/zeco-taxonomy.owl"/>
+            <arg value="--output"/>
+            <arg value="obo-files/zeco-taxonomy.obo"/>
+        </java>
+
+        <antcall target="setHeaderForZeco"/>
+    </target>
+
+    <target name="test">
+        <filedate file="zeco-taxonomy.owl" property="file.modified.date"/>
+        <echo>The file "${file}" was modified on ${file.modified.date}</echo>
+    </target>
+
+    <scriptdef name="filedate" language="javascript">
+        <attribute name="file"/>
+        <attribute name="property"/>
+        <![CDATA[
+            file_name = attributes.get("file");
+            property_to_set = attributes.get("property");
+
+            file = new java.io.File(file_name);
+            file_date = file.lastModified();
+
+            date_format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            formated_date = date_format.format(new java.util.Date(file_date));
+            project.setProperty(property_to_set, formated_date);
+        ]]>
+    </scriptdef>
 
     <target name="usage">
         <echo>

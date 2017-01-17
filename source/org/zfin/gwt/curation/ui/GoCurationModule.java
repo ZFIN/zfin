@@ -9,6 +9,8 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import org.zfin.gwt.curation.event.CurationEvent;
+import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
 import org.zfin.gwt.root.event.RelatedEntityChangeListener;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
@@ -23,9 +25,8 @@ import java.util.List;
 /**
  * Entry Point for GO curation tab module.
  */
-public class GoCurationModule extends ConstructionZoneAdapater {
+public class GoCurationModule extends ConstructionZoneAdapater implements ZfinCurationModule {
 
-    private AttributionModule attributionModule = new AttributionModule();
     private GoCurationViewTable goViewTable = new GoCurationViewTable();
     public static final String GO_EVIDENCE_DISPLAY = "go-evidence-display";
     public static final String GO_EVIDENCE_DISPLAY_FILTER = "go-evidence-display-filter";
@@ -50,15 +51,37 @@ public class GoCurationModule extends ConstructionZoneAdapater {
     private String publicationID;
 
     // listeners
-    List<HandlesError> handlesErrorList = new ArrayList<HandlesError>();
+    List<HandlesError> handlesErrorList = new ArrayList<>();
 
 
     public GoCurationModule(String publicationID) {
         this.publicationID = publicationID;
+        init();
+    }
+
+    public void init() {
         initGUI();
         addInternalListeners(this);
         loadDTO();
         openBox(false);
+    }
+
+    @Override
+    public void refresh() {
+        loadDTO();
+    }
+
+    @Override
+    public void handleCurationEvent(CurationEvent event) {
+        if (event.getEventType().is(EventType.MARKER_ATTRIBUTION) || event.getEventType().is(EventType.MARKER_DEATTRIBUTION))
+            goAddBox.updateGenes();
+        if (event.getEventType().is(EventType.CREATE_FISH))
+            goAddBox.getInferenceListBox().setAvailableValues();
+    }
+
+    @Override
+    public void handleTabToggle() {
+
     }
 
     protected void addInternalListeners(HandlesError handlesError) {
@@ -84,7 +107,6 @@ public class GoCurationModule extends ConstructionZoneAdapater {
             }
         });
 
-        attributionModule.addHandlesErrorListener(this);
         goAddBox.addHandlesErrorListener(this);
         goViewTable.addHandlesErrorListener(this);
     }
@@ -99,6 +121,8 @@ public class GoCurationModule extends ConstructionZoneAdapater {
         filterPanel.add(new HTML("<b valign=\"top\">Filter Gene:</b>"));
         filterPanel.add(geneFilterListBox);
         RootPanel.get(GO_EVIDENCE_DISPLAY_FILTER).add(filterPanel);
+        filterPanel.setStyleName("curation-filter");
+        filterPanel.setWidth("100%");
 
         openBox(false);
     }
@@ -106,11 +130,10 @@ public class GoCurationModule extends ConstructionZoneAdapater {
     private void loadDTO() {
         GoEvidenceDTO goEvidenceDTO = new GoEvidenceDTO();
         goEvidenceDTO.setPublicationZdbID(publicationID);
-
         goAddBox.setDTO(goEvidenceDTO);
-        attributionModule.setDTO(goEvidenceDTO);
         goViewTable.setZdbID(publicationID);
         updateGeneFilter();
+        goAddBox.updateGenes();
     }
 
     private void updateGeneFilter() {
@@ -140,7 +163,6 @@ public class GoCurationModule extends ConstructionZoneAdapater {
 
     @Override
     public void clearError() {
-        attributionModule.revertGUI();
         goAddBox.updateGenes();
         goViewTable.refreshGUI();
         updateGeneFilter();

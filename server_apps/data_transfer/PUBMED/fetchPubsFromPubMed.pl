@@ -15,8 +15,8 @@ foreach my $file (@filesToRemove) {
 }
 unlink glob "<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/*.clob";
 
-open (LOG, "><!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePubs.log") || die "Cannot open <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePub.log : $!\n";
-open (MESH, "><!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parseMesh.log") || die "Cannot open <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parseMesh.log : $!\n";
+open (my $log, ">:encoding(UTF-8)", "<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePubs.log") || die "Cannot open <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePub.log : $!\n";
+open (my $mesh, ">:encoding(UTF-8)", "<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parseMesh.log") || die "Cannot open <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parseMesh.log : $!\n";
 
 $base = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
 $db = 'pubmed';
@@ -36,8 +36,8 @@ if (scalar @ARGV > 0) {
     $query = 'zebrafish[TW]+OR+"zebra fish"[TW]+OR+"danio rerio"[ALL]';
 
     #assemble the esearch URL
-    $retmax = '200';
-    $url = $base . "esearch.fcgi?db=$db&term=$query&usehistory=y&reldate=80&datetype=edat&retmax=$retmax";
+    $retmax = '1000';
+    $url = $base . "esearch.fcgi?db=$db&term=$query&usehistory=y&reldate=1000&datetype=edat&retmax=$retmax";
 
     #get the esearch URL
     #the usehistory key creates a url key that we can use to access the return: suggested for larger queries by NCBI
@@ -117,9 +117,9 @@ sub pubMedArticle {
                     $joinedParagraphs =~ s/\|/\\|/g;
 
                     my $abstractFileName = sprintf("<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/abstract%08d.clob", $pubCount);
-                    open(ABS, ">", $abstractFileName);
-                    print ABS escape_utf8($joinedParagraphs);
-                    close ABS;
+                    open(my $abs, ">:encoding(UTF-8)", $abstractFileName);
+                    print $abs $joinedParagraphs;
+                    close $abs;
                     $row{'abstract'} = $abstractFileName;
                 }
             }
@@ -182,7 +182,7 @@ sub pubMedArticle {
                         my $descId = $descriptor->att('UI');
                         my $descIsMajor = $descriptor->att('MajorTopicYN');
                         $descIsMajor =~ tr/YN/tf/;
-                        print MESH "$row{pmid}|$descId||$descIsMajor\n";
+                        print $mesh "$row{pmid}|$descId||$descIsMajor\n";
                         if (defined $meshHeading->children('QualifierName')) {
                             my @qualifiers = $meshHeading->children('QualifierName');
                             if (@qualifiers) {
@@ -190,7 +190,7 @@ sub pubMedArticle {
                                     my $qualId = $qualifier->att('UI');
                                     my $qualIsMajor = $qualifier->att('MajorTopicYN');
                                     $qualIsMajor =~ tr/YN/tf/;
-                                    print MESH "$row{pmid}|$descId|$qualId|$qualIsMajor\n";
+                                    print $mesh "$row{pmid}|$descId|$qualId|$qualIsMajor\n";
                                 }
                             }
                         }
@@ -207,15 +207,12 @@ sub pubMedArticle {
     my @fields = ('pmid', 'keywords', 'title', 'pages', 'abstract', 'authors',
                   'numAuthors', 'year', 'month', 'day', 'issn', 'volume',
                   'issue', 'journaltitle', 'iso', 'status');
-    print LOG join('|', map { escape_utf8($row{$_}) } @fields), "\n";
+
+    print $log join('|', map { $row{$_} =~ s/\|/\\\|/rg } @fields), "\n";
 }
 
-sub escape_utf8 {
-    return encode("iso-8859-1", $_[0], Encode::FB_HTMLCREF);
-}
-
-close LOG;
-close MESH;
+close $log;
+close $mesh;
 
 
 exit;

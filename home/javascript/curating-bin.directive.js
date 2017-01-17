@@ -3,7 +3,8 @@
         .module('app')
         .directive('curatingBin', curatingBin);
 
-    function curatingBin() {
+    curatingBin.$inject = ['IntertabEventService'];
+    function curatingBin(IntertabEventService) {
         var directive = {
             restrict: 'EA',
             templateUrl: '/templates/curating-bin.directive.html',
@@ -34,6 +35,9 @@
                 } else {
                     $modal.modal('hide');
                 }
+            });
+            IntertabEventService.receiveEvents('pub-status-update', function () {
+                scope.vm.fetchPubs();
             });
         }
 
@@ -109,16 +113,26 @@
         }
 
         function claimPub(pub) {
+
             pub.saving = true;
+          
             var status = {
                 pubZdbID: pub.zdbId,
                 status: { id: vm.nextStatus },
                 location: null,
                 owner: { zdbID: vm.userId }
             };
-            PublicationService.updateStatus(status)
-                .then(function () {
+
+            PublicationService.updateStatus(status,true)
+                .then(function (response) {
                     pub.claimed = true;
+                   
+                })
+                .catch(function (response) {
+                   
+                    if (response.data && response.data.message) {
+                        pub.claimError = response.data.message;
+                    }
                 })
                 .finally(function () {
                     pub.saving = false;

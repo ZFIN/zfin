@@ -1,0 +1,18 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui.feature'
+        >
+    <ui:style>
+        .flow-margin {
+            margin: 10px;
+        }
+    </ui:style>
+
+    <g:FlowPanel>
+        <zfin-mod:FeatureAddView ui:field="featureAddView" styleName="flow-margin"/>
+        <zfin-mod:FeatureEditView ui:field="featureEditView" styleName="flow-margin"/>
+        <zfin-mod:FeatureRelationshipView ui:field="featureRelationshipView" styleName="flow-margin"/>
+    </g:FlowPanel>
+</ui:UiBinder>

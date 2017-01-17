@@ -6,11 +6,8 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.SnpMarkerBean" scope="request"/>
 
-<c:set var="editURL">/<%=ZfinProperties.getWebDriver()%>?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=${formBean.marker.zdbID}</c:set>
-
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
-                   deleteURL="none"
-                   rtype="marker"/>
+                   deleteURL="none"/>
 
 
 <div style="float: right">

@@ -265,6 +265,10 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         return markerType.getTypeGroups().contains(typeGroup);
     }
 
+    public boolean isGenedom() {
+        return isInTypeGroup(Marker.TypeGroup.GENEDOM);
+    };
+
     public MarkerType getMarkerType() {
         if (markerType == null)
             return null;
@@ -437,6 +441,13 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             return false;
         }
 
+        public boolean isGeneOrGenep() {
+            for (Type markerType : values())
+                if (markerType.equals(Type.GENE) || markerType.equals(Type.GENEP))
+                    return true;
+            return false;
+        }
+
     }
 
     public static enum TypeGroup {
@@ -476,7 +487,8 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         TGCONSTRUCT("TGCONSTRUCT"),
         TRANSCRIPT("TRANSCRIPT"),
         DEFICIENCY_TLOC_MARK("DEFICIENCY_TLOC_MARK"),
-        GENEDOM_EFG_REGION("GENEDOM_EFG_REGION");
+        GENEDOM_EFG_REGION("GENEDOM_EFG_REGION"),
+        GENEDOM_EFG_REGION_K("GENEDOM_EFG_REGION_K");
 
         private final String value;
 

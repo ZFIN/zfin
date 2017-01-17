@@ -75,9 +75,9 @@ public class BlastDatabaseInfoController {
     protected BlastInfoBean cacheStatistics(BlastInfoBean blastInfoBean) {
         DatabaseStatisticsCache databaseStatisticsCache = WebHostDatabaseStatisticsCache.getInstance();
 
-        logger.debug("do refresh: " + blastInfoBean.isDoRefresh());
+        logger.debug("do handleCurationEvent: " + blastInfoBean.isDoRefresh());
 
-        // handle refresh
+        // handle handleCurationEvent
         if (blastInfoBean.isDoRefresh() || !databaseStatisticsCache.isCached()) {
             databaseStatisticsCache.clearCache();
             databaseStatisticsCache.cacheAll();

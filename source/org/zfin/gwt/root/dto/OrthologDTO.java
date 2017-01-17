@@ -1,6 +1,7 @@
 package org.zfin.gwt.root.dto;
 
 import org.zfin.orthology.presentation.OrthologEvidenceDTO;
+import org.zfin.orthology.presentation.OrthologEvidenceGroupedByCode;
 import org.zfin.orthology.presentation.OrthologExternalReferenceDTO;
 
 import java.util.Set;
@@ -11,6 +12,7 @@ public class OrthologDTO {
     private MarkerDTO zebrafishGene;
     private NcbiOtherSpeciesGeneDTO ncbiOtherSpeciesGeneDTO;
     private Set<OrthologEvidenceDTO> evidenceSet;
+    private Set<OrthologEvidenceGroupedByCode> evidenceSetGroupedByCode;
     private Set<OrthologExternalReferenceDTO> orthologExternalReferenceDTOSet;
     private String name;
     private String symbol;
@@ -88,5 +90,13 @@ public class OrthologDTO {
 
     public void setSymbol(String symbol) {
         this.symbol = symbol;
+    }
+
+    public Set<OrthologEvidenceGroupedByCode> getEvidenceSetGroupedByCode() {
+        return evidenceSetGroupedByCode;
+    }
+
+    public void setEvidenceSetGroupedByCode(Set<OrthologEvidenceGroupedByCode> evidenceSetGroupedByCode) {
+        this.evidenceSetGroupedByCode = evidenceSetGroupedByCode;
     }
 }

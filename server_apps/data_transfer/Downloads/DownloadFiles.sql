@@ -579,11 +579,11 @@ select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb
                 "expressed in",
                 "RO:0002206",
                 psg_e1a_name,
-                psg_e1a_zdb_id,
+                (select term_ont_id from term where term_zdb_id = psg_e1a_zdb_id),
                 psg_e1b_name,
-                psg_e1b_zdb_id,
+                (select term_ont_id from term where term_zdb_id = psg_e1b_zdb_id),
                 psg_quality_name,
-                psg_quality_zdb_id,
+                (select term_ont_id from term where term_zdb_id = psg_quality_zdb_id),
                 psg_tag,
                 (select stg_name from stage where stg_zdb_id = pg_start_stg_zdb_id),
                 pg_start_stg_zdb_id,
@@ -624,11 +624,11 @@ select distinct (select mrkr_name from marker where mrkr_zdb_id = psg_mrkr_zdb_i
                 "expressed in",
                 "RO:0002206",
                 psg_e1a_name,
-                psg_e1a_zdb_id,
+                (select term_ont_id from term where term_zdb_id = psg_e1a_zdb_id),
                 psg_e1b_name,
-                psg_e1b_zdb_id,
+                (select term_ont_id from term where term_zdb_id = psg_e1b_zdb_id),
                 psg_quality_name,
-                psg_quality_zdb_id,
+                (select term_ont_id from term where term_zdb_id = psg_quality_zdb_id),
                 psg_tag,
                 (select stg_name from stage where stg_zdb_id = pg_start_stg_zdb_id),
                 pg_start_stg_zdb_id,
@@ -2244,6 +2244,28 @@ update tmp_identifiers
 --  select id, id2
 --    from tmp_identifiers;
 	 
+!echo "experiment details file"
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/experiment_details.txt' DELIMITER "	"
+  select expcond_exp_zdb_id, z.term_ont_id, a.term_ont_id, g.term_ont_id, c.term_ont_id, t.term_ont_id
+    from experiment_condition,
+    outer term z,
+    outer term a,
+    outer term g,
+    outer term c,
+    outer term t
+    where expcond_zeco_Term_Zdb_id = z.term_zdb_id
+    and expcond_ao_Term_zdb_id = a.term_Zdb_id
+    and expcond_go_cc_term_Zdb_id = g.term_Zdb_id
+    and expcond_chebi_term_zdb_id = c.term_Zdb_id
+    and expcond_taxon_Term_zdb_id = t.term_Zdb_id;
 
+!echo "inno/pheno construct report"
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/innophenoconstructs.txt' DELIMITER "	"
+
+select fmrel_mrkr_zdb_id, mrkr_name, fmrel_type, fmrel_ftr_zdb_id, feature_name
+  from feature, marker, feature_marker_relationship
+ where feature_zdb_id = fmrel_ftr_zdb_id
+ and fmrel_mrkr_Zdb_id = mrkr_zdb_id 
+ and fmrel_type in ('contains innocuous sequence feature','contains phenotypic sequence feature');
 
 commit work;

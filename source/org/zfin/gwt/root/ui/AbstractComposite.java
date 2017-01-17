@@ -1,11 +1,13 @@
 package org.zfin.gwt.root.ui;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.event.PublicationChangeEvent;
 import org.zfin.gwt.root.event.PublicationChangeListener;
+import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.ArrayList;
 import java.util.List;

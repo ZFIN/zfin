@@ -21,19 +21,12 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES
 
 SUBDIRS = \
 	fish_files \
-	gene_files \
-	image_files \
-	locus_files \
 	marker_files \
 	misc_files \
-	navigation_files \
 	pubbrowser \
 	security_files \
 	selection \
-	updating \
-	xpat_files \
-        feature_files \
-        curation_files
+	xpat_files
 
 
 

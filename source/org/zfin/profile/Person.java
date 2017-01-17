@@ -316,8 +316,9 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     }
 
     public Collection<GrantedAuthority> getAuthorities() {
-        if (accountInfo == null)
+        if (accountInfo == null) {
             return null;
+        }
         String role = accountInfo.getRole();
         GrantedAuthority gr = new SimpleGrantedAuthority(role);
         Collection<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
@@ -326,14 +327,16 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     }
 
     public String getPassword() {
-        if (accountInfo == null)
+        if (accountInfo == null) {
             return null;
+        }
         return accountInfo.getPassword();
     }
 
     public String getUsername() {
-        if (accountInfo == null)
+        if (accountInfo == null) {
             return null;
+        }
         return accountInfo.getUsername();
     }
 
@@ -376,21 +379,25 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     }
 
     public boolean equals(Object o) {
-        if (!(o instanceof Person))
+        if (!(o instanceof Person)) {
             return false;
+        }
 
         Person p = (Person) o;
         return getZdbID().equals(p.getZdbID());
     }
 
     public int compareTo(Person anotherPerson) {
-        if (getFullName() == null)
+        if (getFullName() == null) {
             return -1;
-        if (anotherPerson.getFullName() == null)
+        }
+        if (anotherPerson.getFullName() == null) {
             return +1;
+        }
         int personComparison = 0 - getFullName().compareTo(anotherPerson.getFullName());
-        if (personComparison != 0)
+        if (personComparison != 0) {
             return personComparison;
+        }
 
         // in case the 2 persons have the same name?
         // I guess as a tie-breaker we can use the zdbID, which includes date
@@ -461,5 +468,9 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     @Override
     public String getEntityName() {
         return fullName;
+    }
+
+    public String getDisplay() {
+        return firstName + " " + lastName;
     }
 }

@@ -3,7 +3,8 @@
         .module('app')
         .directive('pubDashboard', pubDashboard);
 
-    function pubDashboard() {
+    pubDashboard.$inject = ['IntertabEventService'];
+    function pubDashboard(IntertabEventService) {
         var directive = {
             restrict: 'EA',
             templateUrl: '/templates/pub-dashboard.directive.html',
@@ -20,6 +21,9 @@
             var $statusModal = element.find('.status-modal');
             scope.$watch('vm.statusModalPub', function (value) {
                 $statusModal.modal(value ? 'show' : 'hide');
+            });
+            IntertabEventService.receiveEvents('pub-status-update', function () {
+                scope.vm.fetchPubs();
             });
         }
 
@@ -40,6 +44,25 @@
         vm.owner = null;
         vm.statuses = [];
         vm.status = null;
+        vm.sortOrders = [
+            {
+                value: 'date',
+                display: 'Last status change (oldest)'
+            },
+            {
+                value: '-date',
+                display: 'Last status change (newest)'
+            },
+            {
+                value: 'pub.lastSentEmailDate',
+                display: 'Last correspondence (oldest)'
+            },
+            {
+                value: '-pub.lastSentEmailDate',
+                display: 'Last correspondence (newest)'
+            }
+        ];
+        vm.sort = vm.sortOrders[0];
 
         vm.originalPub = null;
         vm.statusModalPub = null;
@@ -56,7 +79,7 @@
         function activate() {
             PublicationService.getStatuses()
                 .then(function (response) {
-                    vm.statuses = response.data;
+                    vm.statuses = response.data.filter(function (s) { return !s.hidden; });
                 });
             PublicationService.getCurators()
                 .then(function (response) {
@@ -83,7 +106,7 @@
                 status: vm.status ? vm.status.id : '',
                 count: vm.pubsPerPage,
                 offset: (page - 1) * vm.pubsPerPage,
-                sort: "-date"
+                sort: vm.sort.value
             };
             PublicationService.searchPubStatus(query)
                 .then(function (response) {

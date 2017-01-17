@@ -9,19 +9,13 @@
             '  <div class="panel-heading">' +
             '    <h3 class="panel-title">Status</h3>' +
             '  </div>' +
-            '  <div publication-status pub-id="{{vm.pubId}}" topics="vm.topics" notes="vm.notes"></div>' +
+            '  <div publication-status pub-id="{{vm.pubId}}" curator-id="{{vm.curatorId}}" topics="vm.topics" notes="vm.notes"></div>' +
             '</div>' +
             '<div class="panel panel-default">' +
             '  <div class="panel-heading">' +
             '    <h3 class="panel-title">Topics</h3>' +
             '  </div>' +
             '  <div publication-topics pub-id="{{vm.pubId}}" topics="vm.topics"></div>' +
-            '</div>' +
-            '<div class="panel panel-default">' +
-            '  <div class="panel-heading">' +
-            '    <h3 class="panel-title">Correspondence</h3>' +
-            '  </div>' +
-            '  <div publication-correspondence pub-id="{{vm.pubId}}"></div>' +
             '</div>' +
             '<div class="panel panel-default">' +
             '  <div class="panel-heading">' +
@@ -41,6 +35,7 @@
             template: template,
             scope: {
                 pubId: '@',
+                curatorId: '@',
                 curatorFirst: '@',
                 curatorLast: '@',
                 curatorEmail: '@'

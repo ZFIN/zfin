@@ -61,7 +61,6 @@ public class ExpressionServiceTest extends AbstractDatabaseTest {
     }
 
 
-    @Test
     public void testMicroarrayWebserviceJob() {
 
         MicroarrayWebServiceBean microarrayWebServiceBean = new MicroarrayWebServiceBean();

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <!--<include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/rollback.sql"/>-->
+    <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14637.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14749.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14603.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14815.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14850.sql"/>
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14538_setup.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14538_load.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14538.sql"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14895.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14737.sql"/>
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14800.sql"/>
+ <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/14717.sql"/>
+
+</databaseChangeLog>

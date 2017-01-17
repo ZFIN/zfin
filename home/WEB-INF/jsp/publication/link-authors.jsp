@@ -12,7 +12,7 @@
 <c:set var="editURL">/action/publication/${publication.zdbID}/edit</c:set>
 <c:set var="trackURL">/action/publication/${publication.zdbID}/track</c:set>
 <c:if test="${allowCuration}">
-  <c:set var="curateURL">/cgi-bin/webdriver?MIval=aa-curation.apg&OID=${publication.zdbID}</c:set>
+  <c:set var="curateURL">/action/curation/${publication.zdbID}</c:set>
 </c:if>
 
 <style>
@@ -24,8 +24,7 @@
   <zfin2:dataManager zdbID="${publication.zdbID}"
                      editURL="${editURL}"
                      trackURL="${trackURL}"
-                     curateURL="${curateURL}"
-                     rtype="publication"/>
+                     curateURL="${curateURL}"/>
 
     <div class="row">
     <div class="col-xs-12">

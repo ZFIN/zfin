@@ -14,11 +14,16 @@
             removeAlias: removeAlias,
             addAliasReference: addAliasReference,
             removeAliasReference: removeAliasReference,
+            getRelationshipTypes: getRelationshipTypes,
             getRelationships: getRelationships,
+            getRelationshipsForEdit: getRelationshipsForEdit,
             addRelationship: addRelationship,
+            addGeneRelationship: addGeneRelationship,
             removeRelationship: removeRelationship,
             addRelationshipReference: addRelationshipReference,
+            addGeneMarkerRelationshipReference: addGeneMarkerRelationshipReference,
             removeRelationshipReference: removeRelationshipReference,
+            removeMarkerRelationshipReference: removeMarkerRelationshipReference,
             getNotes: getNotes,
             updatePublicNote: updatePublicNote,
             addCuratorNote: addCuratorNote,
@@ -29,7 +34,10 @@
             addLink: addLink,
             removeLink: removeLink,
             addLinkReference: addLinkReference,
-            removeLinkReference: removeLinkReference
+            removeLinkReference: removeLinkReference,
+            openModalPopup: openModalPopup,
+            closeModal: closeModal,
+            validateReference: validateReference
         };
 
         function returnResponseData(response) {
@@ -83,9 +91,17 @@
         }
 
         // === RELATIONSHIPS ===
+        function getRelationshipTypes() {
+                return $http.get('/action/marker/relationship/relationshipTypes/')
+                .then(returnResponseData);
+        }
 
         function getRelationships(markerId) {
             return $http.get('/action/marker/' + markerId + '/relationships')
+                .then(returnResponseData);
+        }
+        function getRelationshipsForEdit(markerId) {
+            return $http.get('/action/marker/' + markerId + '/relationshipsForEdit')
                 .then(returnResponseData);
         }
 
@@ -100,17 +116,41 @@
                 .then(returnResponseData);
         }
 
-        function removeRelationship(relationship) {
-            return $http.delete('/action/marker/relationship/' + relationship.zdbID);
+        function addGeneRelationship(first, second, type, pubId) {
+            var relationship = {
+                "relationship": type,
+                "first": first,
+                "second": second,
+                "references": [{"zdbID": pubId}]
+            };
+            return $http.post('/action/marker/gene-relationship', relationship)
+                .then(returnResponseData);
         }
 
-        function addRelationshipReference(alias, pubId) {
-            return $http.post('/action/marker/relationship/' + alias.zdbID + '/references', {zdbID: pubId})
+        function removeRelationship(relationship) {
+          //  return $http.delete('/action/marker/relationship/' + relationship.zdbID);
+            return $http.delete('/action/marker/relationship/' + relationship.markerRelationshipZdbId);
+        }
+
+        function addRelationshipReference(relationship, pubId) {
+
+            return $http.post('/action/marker/relationship/' + relationship.zdbID + '/references', {zdbID: pubId})
+                .then(returnResponseData);
+        }
+        function addGeneMarkerRelationshipReference(relationship, pubId) {
+
+            return $http.post('/action/marker/relationship/' + relationship.markerRelationshipZdbId + '/addreferences', {zdbID: pubId})
                 .then(returnResponseData);
         }
 
         function removeRelationshipReference(alias, reference) {
-            return $http.delete('/action/marker/relationship/' + alias.zdbID + '/references/' + reference.zdbID);
+
+            return $http.delete('/action/marker/relationship/' + alias.markerRelationshipZdbId  + '/references/' + reference.zdbID);
+        }
+
+        function removeMarkerRelationshipReference(alias, reference) {
+
+            return $http.delete('/action/marker/relationship/' + alias.markerRelationshipZdbId  + '/references/' + reference);
         }
 
         // === NOTES ===
@@ -173,6 +213,26 @@
 
         function removeLinkReference(link, reference) {
             return $http.delete('/action/marker/link/' + link.dblinkZdbID + '/references/' + reference.zdbID);
+        }
+        
+        function openModalPopup(element) {
+            $('#' + element)
+                .modal({
+                    escapeClose: true,
+                    clickClose: true,
+                    showClose: true,
+                    fadeDuration: 100
+                })
+                .on($.modal.AFTER_CLOSE, function () {
+                });
+        }
+
+        function closeModal() {
+            $.modal.close();
+        }
+
+        function validateReference(pubID) {
+            return $http.post('/action/marker/link/reference/' + pubID + '/validate', {});
         }
     }
 }());

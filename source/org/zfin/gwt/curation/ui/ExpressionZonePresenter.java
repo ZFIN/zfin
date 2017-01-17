@@ -70,9 +70,7 @@ public class ExpressionZonePresenter implements Presenter {
     }
 
     private void retrieveConstructionZoneValues() {
-        // figure list
-        curationRPCAsync.getFigures(publicationID, new RetrieveFiguresCallback());
-
+        refreshFigure();
         // stage list
         curationRPCAsync.getStages(new RetrieveStageListCallback());
 
@@ -80,6 +78,9 @@ public class ExpressionZonePresenter implements Presenter {
         sessionRPC.isStageSelectorSingleMode(publicationID, new RetrieveStageSelectorCallback(view.getErrorElement(), view.getStageSelector()));
     }
 
+    public void refreshFigure() {
+        curationRPCAsync.getFigures(publicationID, new RetrieveFiguresCallback());
+    }
 
     public void setError(String message) {
         view.getErrorElement().setText(message);
@@ -260,18 +261,16 @@ public class ExpressionZonePresenter implements Presenter {
 
 
     // Handlers
-    public class RetrieveFiguresCallback extends ZfinAsyncCallback<List<FigureDTO>> {
+    public class RetrieveFiguresCallback extends RetrieveSelectionBoxValueCallback {
 
 
         public RetrieveFiguresCallback() {
-            super("Error while reading Figure Filters", view.getErrorElement());
+            super(view.figureList, view.errorElement);
         }
 
-        public void onSuccess(List<FigureDTO> list) {
-
-            allFigureDtos = new ArrayList<>(list);
-            view.updateFigureListBox(allFigureDtos);
-            //Window.alert("SIZE: " + experiments.size());
+        public void onSuccess(List<FilterSelectionBoxEntry> list) {
+            super.onSuccess(list);
+            allFigureDtos = new ArrayList<>((List<FigureDTO>) (List<?>) list);
             view.setLoadingImageVisibility(false);
         }
 
@@ -333,8 +332,11 @@ public class ExpressionZonePresenter implements Presenter {
 
     private class AddExpressionCallback extends ZfinAsyncCallback<List<ExpressionFigureStageDTO>> {
 
-        public AddExpressionCallback(List<ExpressionFigureStageDTO> experiment) {
+        private List<ExpressionFigureStageDTO> expressionFigureStageDTOS;
+
+        public AddExpressionCallback(List<ExpressionFigureStageDTO> expressionFigureStageDTOS) {
             super("Error while creating experiment", view.errorElement);
+            this.expressionFigureStageDTOS = expressionFigureStageDTOS;
         }
 
         public void onSuccess(List<ExpressionFigureStageDTO> newAnnotations) {
@@ -346,7 +348,16 @@ public class ExpressionZonePresenter implements Presenter {
             view.addButton.setEnabled(true);
             clearErrorMessages();
             view.stageSelector.resetGui();
-            AppUtils.EVENT_BUS.fireEvent(new AddExpressionExperimentEvent());
+            Map<ExpressionExperimentDTO, Integer> expressionExperimentDTOMap = new HashMap<>();
+            for (ExpressionFigureStageDTO dto : newAnnotations) {
+                ExpressionExperimentDTO experimentDTO = dto.getExperiment();
+                if (expressionExperimentDTOMap.containsKey(experimentDTO)) {
+                    expressionExperimentDTOMap.put(experimentDTO, expressionExperimentDTOMap.get(experimentDTO) + 1);
+                } else {
+                    expressionExperimentDTOMap.put(experimentDTO, 1);
+                }
+            }
+            AppUtils.EVENT_BUS.fireEvent(new AddExpressionExperimentEvent(expressionExperimentDTOMap));
             view.loadingImage.setVisible(false);
         }
 

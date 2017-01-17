@@ -1,8 +1,15 @@
 package org.zfin.gwt.marker.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import org.zfin.gwt.marker.event.SequenceAddEvent;
 import org.zfin.gwt.marker.event.SequenceAddListener;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
@@ -15,21 +22,26 @@ import java.util.List;
 
 public class ProteinSequenceArea extends Composite implements HandlesError, RequiresAttribution, PublicationChangeListener {
 
-    // gui
-    private final VerticalPanel panel = new VerticalPanel();
-    private final HorizontalPanel blastDatabasePanel = new HorizontalPanel();
-    private final Label listBoxLabel = new Label("Blast Database:");
-    private final StringListBox databaseListBoxWrapper = new StringListBox();
-    private final HTML link = new HTML();
-    private final NewSequenceBox newSequenceBox = new NewSequenceBox();
-    private final Label errorLabel = new Label();
+    private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-    private final static String RIGHT_ARROW = "<a href=#proteinLookup><img align=\"top\" src=\"/images/right.gif\" >Add Protein</a>";
-    private final static String DOWN_ARROW = "<a href=#proteinLookup><img align=\"top\" src=\"/images/down.gif\" >Add Protein</a>";
+    @UiTemplate("ProteinSequenceArea.ui.xml")
+    interface MyUiBinder extends UiBinder<VerticalPanel, ProteinSequenceArea> {
+    }
+
+    @UiField
+    ShowHideToggle showHideToggle;
+    @UiField
+    Label listBoxLabel;
+    @UiField
+    StringListBox databaseListBoxWrapper;
+    @UiField
+    NewSequenceBox newSequenceBox;
+    @UiField()
+    public Label errorLabel;
 
     // listeners
-    private final List<SequenceAddListener> sequenceAddListeners = new ArrayList<SequenceAddListener>();
-    private final List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
+    private final List<SequenceAddListener> sequenceAddListeners = new ArrayList<>();
+    private final List<HandlesError> handlesErrorListeners = new ArrayList<>();
     private boolean attributionRequired = true;
     private String publicationZdbID = "";
 
@@ -38,61 +50,30 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
 
 
     public ProteinSequenceArea(String div) {
-        this();
-        RootPanel.get(div).add(this);
+        VerticalPanel outer = uiBinder.createAndBindUi(this);
+        RootPanel.get(div).add(outer);
     }
 
     public ProteinSequenceArea() {
-        initGUI();
+        initWidget(uiBinder.createAndBindUi(this));
+//        initGUI();
         addInternalListeners(this);
-        initWidget(panel);
     }
 
-
-    void initGUI() {
-//        link.setTargetHistoryToken("proteinLookup");
-        link.setHTML(RIGHT_ARROW);
-
-        link.setVisible(true);
-
-        blastDatabasePanel.add(listBoxLabel);
-        blastDatabasePanel.add(databaseListBoxWrapper);
-        blastDatabasePanel.setVisible(false);
-        newSequenceBox.setVisible(false);
-        blastDatabasePanel.setVisible(false);
-
-        panel.add(link);
-
-        panel.add(blastDatabasePanel);
-        errorLabel.setStyleName("error");
-        panel.add(errorLabel);
-        panel.add(newSequenceBox);
-
-
+    @UiHandler("showHideToggle")
+    void onClickShowHide(@SuppressWarnings("unused") ClickEvent event) {
+        showHideToggle.toggleVisibility();
+        if (showHideToggle.isVisible()) {
+            fireSequenceAddStartListeners(new SequenceAddEvent());
+        } else
+            fireSequenceAddCancelListeners(new SequenceAddEvent());
     }
 
     private void addInternalListeners(final HandlesError handlesError) {
 
-        link.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                if (newSequenceBox.isVisible()) {
-                    link.setHTML(RIGHT_ARROW);
-                    newSequenceBox.setVisible(false);
-                    blastDatabasePanel.setVisible(false);
-                    fireSequenceAddCancelListeners(new SequenceAddEvent());
-                } else {
-                    link.setHTML(DOWN_ARROW);
-                    newSequenceBox.setVisible(true);
-                    blastDatabasePanel.setVisible(true);
-                    fireSequenceAddStartListeners(new SequenceAddEvent());
-                }
-            }
-        });
-
-
         newSequenceBox.addSequenceAddListener(new SequenceAddListener() {
             public void add(final SequenceAddEvent sequenceAddEvent) {
-                if (false == publicationValidator.validate(publicationZdbID, handlesError)) return;
+                if (!publicationValidator.validate(publicationZdbID, handlesError)) return;
                 if (databaseListBoxWrapper.getSelected() == null
                         ||
                         AbstractListBox.NULL_STRING.equals(databaseListBoxWrapper.getSelected())) {
@@ -117,6 +98,7 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
 
             public void cancel(SequenceAddEvent sequenceAddEvent) {
                 fireSequenceAddCancelListeners(sequenceAddEvent);
+                showHideToggle.setVisibilityToHide();
             }
 
             public void start(SequenceAddEvent sequenceAddEvent) {
@@ -145,12 +127,10 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
 
     public void resetAndHide() {
         newSequenceBox.reset();
-        newSequenceBox.hideProteinBox();
-        blastDatabasePanel.setVisible(false);
-        link.setHTML(RIGHT_ARROW);
+        newSequenceBox.setVisible(false);
     }
 
-    void fireSequenceAddListeners(SequenceAddEvent sequenceAddEvent) {
+    private void fireSequenceAddListeners(SequenceAddEvent sequenceAddEvent) {
         clearError();
         for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.add(sequenceAddEvent);
@@ -158,14 +138,14 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
     }
 
 
-    void fireSequenceAddStartListeners(SequenceAddEvent sequenceAddEvent) {
+    private void fireSequenceAddStartListeners(SequenceAddEvent sequenceAddEvent) {
         clearError();
         for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.start(sequenceAddEvent);
         }
     }
 
-    void fireSequenceAddCancelListeners(SequenceAddEvent sequenceAddEvent) {
+    private void fireSequenceAddCancelListeners(SequenceAddEvent sequenceAddEvent) {
         clearError();
         for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.cancel(sequenceAddEvent);
@@ -214,4 +194,6 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
             handlesError.clearError();
         }
     }
+
+
 }

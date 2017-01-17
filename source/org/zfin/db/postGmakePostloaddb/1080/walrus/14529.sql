@@ -9,3 +9,4 @@ insert into curation_topic (curtopic_name)
 
 insert into curation_topic (curtopic_name)
  values ('Electrophysiology');
+

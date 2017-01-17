@@ -11,4 +11,8 @@
 <include file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/db.changelog.master.xml"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/db.changelog.master.xml"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1081/xiphius/db.changelog.master.xml"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1082/yohoho/db.changelog.master.xml"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1082/zissou/db.changelog.master.xml"/>
+<include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/db.changelog.master.xml"/>
+ <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/db.changelog.master.xml"/>
 </databaseChangeLog>

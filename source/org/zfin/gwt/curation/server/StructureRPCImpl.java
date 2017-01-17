@@ -231,7 +231,7 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
             String tag = token[1];
             EapQualityTermDTO qualityTermDTO = new EapQualityTermDTO();
             GenericTerm term = getOntologyRepository().getTermByOboID(oboID);
-            TermDTO termDTO = DTOConversionService.convertToTermDTO(term);
+            TermDTO termDTO = DTOConversionService.convertToTermDTO(term, true);
             qualityTermDTO.setTag(tag);
             qualityTermDTO.setTerm(termDTO);
             qualityTermDTO.setNickName(nicknameMap.get(oboIDTag));

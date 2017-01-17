@@ -1,7 +1,6 @@
 package org.zfin.publication.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -22,6 +21,7 @@ import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.MailSender;
+import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.EntityZdbIdDTO;
 import org.zfin.gwt.root.dto.PublicationDTO;
@@ -43,6 +43,7 @@ import org.zfin.publication.repository.PublicationRepository;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/publication")
@@ -92,12 +93,9 @@ public class PublicationTrackingController {
     @RequestMapping(value = "/{zdbID}/notes", method = RequestMethod.GET)
     public Collection<PublicationNoteDTO> getPublicationNotes(@PathVariable String zdbID) {
         Publication publication = publicationRepository.getPublication(zdbID);
-        return CollectionUtils.collect(publication.getNotes(), new Transformer() {
-            @Override
-            public Object transform(Object o) {
-                return converter.toPublicationNoteDTO((PublicationNote) o);
-            }
-        });
+        return publication.getNotes().stream()
+                .map(converter::toPublicationNoteDTO)
+                .collect(Collectors.toList());
     }
 
     @ResponseBody
@@ -115,9 +113,12 @@ public class PublicationTrackingController {
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
         session.save(note);
+
+        PublicationNoteDTO dto = converter.toPublicationNoteDTO(note);
+
         tx.commit();
         
-        return converter.toPublicationNoteDTO(note);
+        return dto;
     }
 
     @ResponseBody
@@ -129,13 +130,16 @@ public class PublicationTrackingController {
         PublicationNote note = (PublicationNote) session.get(PublicationNote.class, zdbID);
         note.setText(noteDTO.getText());
         session.update(note);
+
+        PublicationNoteDTO dto = converter.toPublicationNoteDTO(note);
+
         tx.commit();
 
-        return converter.toPublicationNoteDTO(note);
+        return dto;
     }
 
     @ResponseBody
-    @RequestMapping(value = "/notes/{zdbID}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/notes/{zdbID}", method = RequestMethod.DELETE, produces = "text/plain")
     public String deletePublicationNote(@PathVariable String zdbID) {
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
@@ -168,13 +172,13 @@ public class PublicationTrackingController {
 
     @ResponseBody
     @RequestMapping(value = "/curators", method = RequestMethod.GET)
-    public Collection<CuratorDTO> getAllCurators() {
-        Set<CuratorDTO> curatorDTOs = new TreeSet<>();
-        // maybe one day we'll have a separate role for just curators?
-        List<Person> curators = profileRepository.getUsersByRole("root");
-        for (Person curator : curators) {
-            curatorDTOs.add(converter.toCuratorDTO(curator));
-        }
+    public Collection<PersonDTO> getAllCurators() {
+        List<PersonDTO> curatorDTOs = profileRepository.getCurators().stream()
+                .map(converter::toPersonDTO)
+                .collect(Collectors.toList());
+        // Add currently logged in user to allow developers to act like curators on their own sites
+        curatorDTOs.add(converter.toPersonDTO(ProfileService.getCurrentSecurityUser()));
+        Collections.sort(curatorDTOs);
         return curatorDTOs;
     }
 
@@ -188,27 +192,32 @@ public class PublicationTrackingController {
 
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/status", method = RequestMethod.POST)
-    public CurationStatusDTO updateCurationStatus(@PathVariable String zdbID, @RequestBody CurationStatusDTO dto) {
+    public CurationStatusDTO updateCurationStatus(@PathVariable String zdbID,@RequestParam(required = false, defaultValue = "false") Boolean claimedFlag,@RequestBody CurationStatusDTO dto) throws InvalidWebRequestException{
         Publication publication = publicationRepository.getPublication(zdbID);
-
-        PublicationTrackingHistory newStatus = new PublicationTrackingHistory();
-        newStatus.setPublication(publication);
-        newStatus.setStatus(dto.getStatus());
-        newStatus.setLocation(dto.getLocation());
-        newStatus.setOwner(dto.getOwner() == null ? null : profileRepository.getPerson(dto.getOwner().getZdbID()));
-        newStatus.setUpdater(ProfileService.getCurrentSecurityUser());
-        newStatus.setDate(new GregorianCalendar());
-
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = session.beginTransaction();
-        if (newStatus.getStatus().getType() == PublicationTrackingStatus.Type.CLOSED) {
-            curationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
-            expressionRepository.deleteExpressionStructuresForPub(publication);
-            publicationRepository.deleteExpressionExperimentIDswithNoExpressionResult(publication);
-            mutantRepository.updateGenotypeNicknameWithHandleForPublication(publication);
+        PublicationTrackingHistory pth=publicationRepository.currentTrackingStatus(publication);
+        if (claimedFlag &&pth.getOwner() != null && dto.getOwner() != null && pth.getOwner().getZdbID() != dto.getOwner().getZdbID()) {
+            throw new InvalidWebRequestException("Pub already claimed");
         }
-        session.save(newStatus);
-        tx.commit();
+        else{
+            PublicationTrackingHistory newStatus = new PublicationTrackingHistory();
+            newStatus.setPublication(publication);
+            newStatus.setStatus(dto.getStatus());
+            newStatus.setLocation(dto.getLocation());
+            newStatus.setOwner(dto.getOwner() == null ? null : profileRepository.getPerson(dto.getOwner().getZdbID()));
+            newStatus.setUpdater(ProfileService.getCurrentSecurityUser());
+            newStatus.setDate(new GregorianCalendar());
+
+            Session session = HibernateUtil.currentSession();
+            Transaction tx = session.beginTransaction();
+            if (newStatus.getStatus().getType() == PublicationTrackingStatus.Type.CLOSED) {
+                curationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
+                expressionRepository.deleteExpressionStructuresForPub(publication);
+                publicationRepository.deleteExpressionExperimentIDswithNoExpressionResult(publication);
+                mutantRepository.updateGenotypeNicknameWithHandleForPublication(publication);
+            }
+            session.save(newStatus);
+            tx.commit();
+        }
 
         return converter.toCurationStatusDTO(publicationRepository.currentTrackingStatus(publication));
     }
@@ -276,9 +285,12 @@ public class PublicationTrackingController {
         curation.setOpenedDate(topicDTO.getOpenedDate());
         curation.setClosedDate(topicDTO.getClosedDate());
         session.save(curation);
+
+        CurationDTO dto = converter.toCurationDTO(curation);
+
         tx.commit();
 
-        return converter.toCurationDTO(curation);
+        return dto;
     }
 
     @ResponseBody
@@ -293,59 +305,100 @@ public class PublicationTrackingController {
         curation.setOpenedDate(topicDTO.getOpenedDate());
         curation.setClosedDate(topicDTO.getClosedDate());
         session.update(curation);
+
+        CurationDTO dto = converter.toCurationDTO(curation);
+
         tx.commit();
 
-        return converter.toCurationDTO(curation);
+        return dto;
     }
 
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/correspondences", method = RequestMethod.GET)
     public Collection<CorrespondenceDTO> getCorrespondences(@PathVariable String zdbID) {
         Publication publication = publicationRepository.getPublication(zdbID);
-        return CollectionUtils.collect(publication.getCorrespondences(), new Transformer() {
-            @Override
-            public Object transform(Object o) {
-                return converter.toCorrespondenceDTO((Correspondence) o);
-            }
-        });
+        List<CorrespondenceDTO> correspondences = new ArrayList<>();
+        correspondences.addAll(publication.getSentMessages().stream()
+                .map(converter::toCorrespondenceDTO)
+                .collect(Collectors.toList()));
+        correspondences.addAll(publication.getReceivedMessages().stream()
+                .map(converter::toCorrespondenceDTO)
+                .collect(Collectors.toList()));
+        Collections.sort(correspondences, Collections.reverseOrder());
+        return correspondences;
     }
 
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/correspondences", method = RequestMethod.POST)
-    public CorrespondenceDTO newCorrespondence(@PathVariable String zdbID) {
+    public CorrespondenceDTO newCorrespondence(@PathVariable String zdbID, @RequestBody CorrespondenceDTO dto) {
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
 
-        Correspondence correspondence = new Correspondence();
-        correspondence.setPublication(publicationRepository.getPublication(zdbID));
-        correspondence.setCurator(ProfileService.getCurrentSecurityUser());
-        correspondence.setContactedDate(new Date());
-        session.save(correspondence);
-        tx.commit();
+        Publication publication = publicationRepository.getPublication(zdbID);
 
-        return converter.toCorrespondenceDTO(correspondence);
-    }
+        if (dto.isOutgoing()) {
+            CorrespondenceSentMessage correspondence;
+            try {
+                if (dto.isResend()) {
+                    correspondence = publicationRepository.addResentCorrespondence(publication, dto);
+                } else {
+                    correspondence = publicationRepository.addSentCorrespondence(publication, dto);
+                }
+            } catch (Exception e) {
+                LOG.error("error saving correspondence", e);
+                throw new InvalidWebRequestException("error saving correspondence");
+            }
 
-    @ResponseBody
-    @RequestMapping(value = "/correspondences/{id}", method = RequestMethod.POST)
-    public CorrespondenceDTO editCorrespondence(@PathVariable long id, @RequestBody CorrespondenceDTO correspondenceDTO) {
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = session.beginTransaction();
 
-        Correspondence correspondence = (Correspondence) session.get(Correspondence.class, id);
-        if (correspondenceDTO.isReplyReceived()) {
-            correspondence.setRespondedDate(correspondenceDTO.getClosedDate());
+            MailSender mailer = AbstractZfinMailSender.getInstance();
+            if (mailer == null) {
+                throw new InvalidWebRequestException("no mail sender available");
+            }
+
+            List<String> recipients = new ArrayList<>();
+            Person currentUser = ProfileService.getCurrentSecurityUser();
+            if (currentUser == null) {
+                throw new InvalidWebRequestException("unauthorized");
+            }
+            recipients.add(currentUser.getEmail());
+            List<String> externalRecipients = correspondence.getMessage().getRecipients().stream()
+                    .map(CorrespondenceRecipient::getEmail)
+                    .collect(Collectors.toList());
+
+            String message = correspondence.getMessage().getText();
+
+            if (Boolean.valueOf(ZfinPropertiesEnum.SEND_AUTHOR_NOTIF_EMAIL.value())) {
+                recipients.addAll(externalRecipients);
+            } else {
+                message = "[[ Recipient list on production environment: " + String.join(", ", externalRecipients) + " ]]<br><br>" +
+                        "------------------<br><br>" +
+                        message;
+            }
+
+            String sender = correspondence.getFrom().getFirstName() + " " +
+                    correspondence.getFrom().getLastName() +
+                    " <" + correspondence.getFrom().getEmail() + ">";
+
+            boolean sent = mailer.sendHtmlMail(correspondence.getMessage().getSubject(),
+                    message, false, sender, recipients.toArray(new String[]{}));
+
+            if (!sent) {
+                throw new InvalidWebRequestException("error sending email");
+            }
+
+            dto = converter.toCorrespondenceDTO(correspondence);
         } else {
-            correspondence.setGiveUpDate(correspondenceDTO.getClosedDate());
+            CorrespondenceReceivedMessage correspondence = publicationRepository.addReceivedCorrespondence(publication, dto);
+            dto = converter.toCorrespondenceDTO(correspondence);
         }
-        session.update(correspondence);
+
         tx.commit();
 
-        return converter.toCorrespondenceDTO(correspondence);
+        return dto;
     }
 
     @ResponseBody
-    @RequestMapping(value = "/correspondences/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/correspondences/{id}", method = RequestMethod.DELETE, produces = "text/plain")
     public String deleteCorrespondence(@PathVariable long id) {
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
@@ -397,7 +450,7 @@ public class PublicationTrackingController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "{id}/notification", method = RequestMethod.POST)
+    @RequestMapping(value = "{id}/notification", method = RequestMethod.POST, produces = "text/plain")
     public String sendNotificationLetter(@PathVariable String id,
                                          @RequestBody NotificationLetter letter,
                                          HttpServletResponse response) {

@@ -8,10 +8,7 @@ import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.profile.Person;
 
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 
 /**
  * ToDo:
@@ -27,7 +24,6 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private String pages;
     private Type type;
     private String accessionNumber;
-    private String fileName;
     private String doi;
     private String acknowledgment;
     private Status status;
@@ -45,6 +41,11 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private Set<PublicationNote> notes;
     private Set<Correspondence> correspondences;
     private Set<PublicationDbXref> dbXrefs;
+    private SortedSet<PublicationFile> files;
+
+    private Set<CorrespondenceSentMessage> sentMessages;
+    private Set<CorrespondenceReceivedMessage> receivedMessages;
+    private Date lastSentEmailDate;
 
     private boolean deletable;
     private boolean indexed;
@@ -160,11 +161,12 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     }
 
     public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+        for (PublicationFile file : files) {
+            if (file.getType().getName() == PublicationFileType.Name.ORIGINAL_ARTICLE) {
+                return file.getFileName();
+            }
+        }
+        return null;
     }
 
     public String getDoi() {
@@ -267,6 +269,38 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         this.dbXrefs = dbXrefs;
     }
 
+    public SortedSet<PublicationFile> getFiles() {
+        return files;
+    }
+
+    public void setFiles(SortedSet<PublicationFile> files) {
+        this.files = files;
+    }
+
+    public Set<CorrespondenceSentMessage> getSentMessages() {
+        return sentMessages;
+    }
+
+    public void setSentMessages(Set<CorrespondenceSentMessage> sentMessages) {
+        this.sentMessages = sentMessages;
+    }
+
+    public Set<CorrespondenceReceivedMessage> getReceivedMessages() {
+        return receivedMessages;
+    }
+
+    public void setReceivedMessages(Set<CorrespondenceReceivedMessage> receivedMessages) {
+        this.receivedMessages = receivedMessages;
+    }
+
+    public Date getLastSentEmailDate() {
+        return lastSentEmailDate;
+    }
+
+    public void setLastSentEmailDate(Date lastSentEmailDate) {
+        this.lastSentEmailDate = lastSentEmailDate;
+    }
+
     public String getCitation() {
         StringBuilder sb = new StringBuilder();
         sb.append(authors);
@@ -287,7 +321,9 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
             sb.append(journal.getName());
             sb.append(". ");
         }
-        sb.append(volume);
+        if (volume != null) {
+            sb.append(volume);
+        }
         if (pages != null) {
             sb.append(":").append(pages);
         }
@@ -489,6 +525,19 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
             }
             return null;
         }
+    }
+
+    public String getPrintable() {
+        String printable = authors + " " + "(" + publicationDate.get(Calendar.YEAR) + ")" + " " + title + ". " + journal.getMedAbbrev() + " ";
+        if (volume != null)
+            printable =  printable + " " + volume + ":";
+        if (pages != null)
+            printable =  printable + " " + pages + ". ";
+        if (status == Status.EPUB || status == Status.PRESS)
+            printable = printable + status.toString() + ".";
+        if (journal.isZfinDierectDataSubmission())
+            printable += "(http://zfin.org).";
+        return printable;
     }
 
 }

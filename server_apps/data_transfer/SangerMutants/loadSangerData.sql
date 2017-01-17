@@ -98,6 +98,22 @@ insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id) s
 
 insert into marker(mrkr_zdb_id, mrkr_abbrev, mrkr_name, mrkr_owner,mrkr_type) select distinct gene_zdb_id,gene_abbrev,gene_name,"ZDB-PERS-040722-4","GENE" from pre_gene;
 
+insert
+into
+   marker_history
+   (mhist_zdb_id, mhist_mrkr_zdb_id, mhist_event, mhist_reason, mhist_data, mhist_mrkr_name_on_mhist_date, mhist_mrkr_abbrev_on_mhist_date)
+VALUES
+   select
+      distinct get_Id('NOMEN'),
+      gene_zdb_id,
+      'assigned',
+      'Not Specified',
+      current,
+      gene_name,
+      gene_abbrev
+   from
+      pre_gene;
+
 insert into db_link (dblink_linked_recid,dblink_acc_num,dblink_zdb_id,dblink_fdbcont_zdb_id) select distinct gene_zdb_id,ensdarg_id,dblink_id,"ZDB-FDBCONT-061018-1" from pre_gene; 
 
 --updatng inuput table with gene ids 

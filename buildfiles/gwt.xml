@@ -101,7 +101,7 @@
                 <arg value="-war"/>
                 <arg value="@{target}"/>
                 <arg value="-style"/>
-                <arg value="PRETTY"/>
+                <arg value="DETAILED"/>
                 <arg value="@{module}"/>
                 <jvmarg value="-Xms256m"  />
                 <jvmarg value="-Xmx512m"  />
@@ -135,6 +135,33 @@
             <arg line="${gwt.args}"/>
 -->
             <arg value="org.zfin.gwt.curation.Curation"/>
+        </java>
+    </target>
+
+    <target name="devmodeMarker" depends="compile,copy-testing-pages"
+            description="Run development mode (pass -Dgwt.args=-nosuperDevMode to fallback to classic DevMode)">
+        <java failonerror="true" fork="true" classname="com.google.gwt.dev.DevMode" maxmemory="1g">
+            <classpath>
+                <pathelement location="source"/>
+                <path refid="extended.classpath"/>
+                <pathelement location="${gwt.sdk}/gwt-codeserver.jar"/>
+            </classpath>
+            <arg value="-startupUrl"/>
+            <arg value="http://${env.DOMAIN_NAME}/gwt-modules-for-testing.html"/>
+            <arg line="-war"/>
+            <arg value="home"/>
+            <arg line="-logLevel"/>
+            <arg value="INFO"/>
+            <arg line="-noserver"/>
+<!--
+            <arg line="-logLevel"/>
+            <arg line="TRACE"/>
+-->
+            <!-- Additional arguments like -style PRETTY, -logLevel DEBUG or -nosuperDevMode -->
+<!--
+            <arg line="${gwt.args}"/>
+-->
+            <arg value="org.zfin.gwt.marker.Marker"/>
         </java>
     </target>
 

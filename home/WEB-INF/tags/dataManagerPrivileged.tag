@@ -1,4 +1,3 @@
-<%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="zdbID" type="java.lang.String"
@@ -12,10 +11,11 @@
 <%@ attribute name="curateURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="viewURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="oboID" type="java.lang.String" rtexprvalue="true" %>
-<%@ attribute name="rtype" type="java.lang.String" rtexprvalue="true" description="Needed for linking to updates apg" %>
-<%@ attribute name="showLastUpdate" type="java.lang.Boolean" rtexprvalue="true" required="false" description="Should the Last Updated: xxxx link show?" %>
-
+<%@ attribute name="showLastUpdate" type="java.lang.Boolean" rtexprvalue="true" required="false"
+              description="Should the Last Updated: xxxx link show?" %>
 <%@ attribute name="isOwner" type="java.lang.Boolean" rtexprvalue="true" description="Determines if owner."
+              required="false" %>
+<%@ attribute name="editMarker" type="java.lang.Boolean" rtexprvalue="true" description="This is the marker edit link"
               required="false" %>
 
 <c:if test="${!empty viewURL}">
@@ -31,6 +31,12 @@
                 <c:otherwise>${editLinkText}</c:otherwise>
             </c:choose>
         </a>
+    </td>
+</c:if>
+<c:if test="${editMarker}">
+    <td>
+        <div ng-click="eControl.editMarker()" ng-if="!editMode" style="cursor: pointer;" class="error">Edit</div>
+        <div ng-click="eControl.viewMarker()" ng-if="editMode" style="cursor: pointer;" class="error">View</div>
     </td>
 </c:if>
 <c:if test="${!empty deleteURL
@@ -65,11 +71,9 @@
 </c:if>
 
 
-<%-- I'm not sure how sound this logic is, but I'm gonna say if no rtype is passed in, don't
-even try to look for a last update..  (it could also be an explicit flag)--%>
-<c:if test="${!empty rtype && showLastUpdate}">
+<c:if test="${showLastUpdate}">
     <td>
-        <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-update-vframeset.apg&OID=${zdbID}&rtype=${rtype}">
+        <a href="/action/updates/${zdbID}">
 
             Last Update:
             <c:set var="latestUpdate" value="${zfn:getLastUpdate(zdbID)}"/>

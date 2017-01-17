@@ -19,7 +19,7 @@ import org.zfin.gwt.root.ui.PublicationLookupBox;
 import java.util.List;
 
 /**
- * A GWT class for adding proteins to genes on the markerview.apg page.
+ * A GWT class for adding proteins to genes on the markerview page.
  */
 public final class GeneEditController extends AbstractMarkerEditController<MarkerDTO> {
 
@@ -44,8 +44,6 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
 
     // internal data
     private String url;
-    private final String urlHeader = "?MIval=aa-markerview.apg&UPDATE=1&OID=";
-
 
     private class NotificationPanel extends Composite {
 
@@ -70,7 +68,7 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
                     setVisible(false);
                     proteinSequenceArea.activate();
                     proteinSequenceArea.resetAndHide();
-                    Window.open(url + urlHeader + dto.getZdbID(), "_self", "");
+                    Window.open(url + dto.getZdbID(), "_self", "");
                 }
             });
         }
@@ -94,16 +92,11 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
         horizontalSpaceLabel.setWidth("30px");
         proteinAddPanel.add(horizontalSpaceLabel, DockPanel.CENTER);
         proteinAddPanel.add(proteinPublicationPanel, DockPanel.EAST);
+        proteinAddPanel.setSpacing(10);
 
         proteinPublicationPanel.setVisible(false);
 
         RootPanel.get(newProteinSequenceDiv).add(proteinAddPanel);
-
-        nucleotideSequenceArea.setRightArrowHTMLString("<a href=#addStemLoop><img align=\"top\" src=\"/images/right.gif\" >Add Stem Loop Sequence</a>");
-        nucleotideSequenceArea.setDownArrowHTMLString("<a href=#addStemLoop><img align=\"top\" src=\"/images/down.gif\" >Add Stem Loop Sequence</a>");
-//        nucleotideSequenceArea.setHistoryToken("addStemLoop");
-        nucleotideSequenceArea.closeBox();
-
 
         stemLoopAddPanel.add(nucleotideSequenceArea, DockPanel.WEST);
         stemLoopAddPanel.add(stemLoopNotificationPanel, DockPanel.SOUTH);
@@ -152,7 +145,7 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
 
 
         MarkerRPCService.App.getInstance().getWebDriverPath(
-                new MarkerEditCallBack<String>("Failed to retrieve webdriver path, may need to refresh page if adding protein: ", proteinSequenceArea) {
+                new MarkerEditCallBack<String>("Failed to retrieve webdriver path, may need to handleCurationEvent page if adding protein: ", proteinSequenceArea) {
                     public void onSuccess(String s) {
                         url = s;
                     }
@@ -193,18 +186,19 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
 
                                 proteinNotificationPanel.showMessage("Added Sequence: " + dbLinkDTO.getName());
                                 proteinSequenceArea.activate();
+                                refreshSequenceInformation();
                             }
                         });
             }
 
             public void cancel(SequenceAddEvent sequenceAddEvent) {
                 proteinSequenceArea.resetAndHide();
-                proteinSequenceArea.activate();
                 proteinPublicationPanel.setVisible(false);
             }
 
             public void start(SequenceAddEvent sequenceAddEvent) {
                 proteinPublicationPanel.setVisible(true);
+                proteinSequenceArea.newSequenceBox.setVisible(true);
             }
         });
 
@@ -233,6 +227,7 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
                                 nucleotideSequenceArea.activate();
                                 stemLoopPublicationLookupBox.setVisible(false);
                                 stemLoopNotificationPanel.showMessage("Added Sequence: " + dbLinkDTO.getName());
+                                refreshSequenceInformation();
                             }
                         });
             }
@@ -243,8 +238,8 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
             }
 
             public void start(SequenceAddEvent sequenceAddEvent) {
-                // do nothing here
                 stemLoopPublicationPanel.setVisible(true);
+                stemLoopPublicationLookupBox.setVisible(true);
             }
         });
 
@@ -273,5 +268,10 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
         this.dto = dto;
         nucleotideSequenceArea.setMarkerDTO(this.dto);
     }
+
+    public native void refreshSequenceInformation() /*-{
+        $wnd.refreshSequenceInformation();
+    }-*/;
+
 
 }

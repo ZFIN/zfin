@@ -34,7 +34,11 @@
             searchPubStatus        : searchPubStatus,
             statusNeedsOwner       : statusNeedsOwner,
             statusNeedsLocation    : statusNeedsLocation,
-            statusHasPriority      : statusHasPriority
+            statusHasPriority      : statusHasPriority,
+            getFiles               : getFiles,
+            getFileTypes           : getFileTypes,
+            addFile                : addFile,
+            deleteFile             : deleteFile
         };
 
         function getTopics(id) {
@@ -53,8 +57,12 @@
             return $http.get('/action/publication/' + id + '/status');
         }
 
-        function updateStatus(status) {
-            return $http.post('/action/publication/' + status.pubZdbID + '/status', status);
+        function  updateStatus(status, claimedFlag) {
+            var endpoint = '/status';
+            if (claimedFlag) {
+                endpoint += '?claimedFlag=true';
+            }
+            return $http.post('/action/publication/' + status.pubZdbID + endpoint, status);
         }
 
         function getNotes(id) {
@@ -77,8 +85,8 @@
             return $http.get('/action/publication/' + id + '/correspondences');
         }
 
-        function addCorrespondence(id) {
-            return $http.post('/action/publication/' + id + '/correspondences', {});
+        function addCorrespondence(id, message) {
+            return $http.post('/action/publication/' + id + '/correspondences', message);
         }
 
         function updateCorrespondence(correspondence) {
@@ -90,7 +98,7 @@
         }
 
         function getPublicationDetails(id) {
-            return $http.get('/action/publication/' + id + '/details');
+            return $http.get('/action/publication/' + id + '/details', {cache: true});
         }
 
         function getCuratedEntities(id) {
@@ -160,6 +168,32 @@
 
         function statusHasPriority(status) {
             return zf.get(status, 'type') === 'READY_FOR_INDEXING';
+        }
+
+        function getFiles(id) {
+            return $http.get('/action/publication/' + id + '/files');
+        }
+
+        function getFileTypes() {
+            return $http.get('/action/publication/file-types');
+        }
+
+        function addFile(pubId, fileType, file) {
+            var form = new FormData();
+            form.append('fileType', fileType);
+            form.append('file', file);
+            return $http.post('/action/publication/' + pubId + '/files', form, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined}
+            });
+        }
+
+        function deleteFile(file) {
+            return $http({
+                url: '/action/publication/files/' + file.id,
+                method: 'DELETE',
+                transformResponse: undefined
+            });
         }
     }
 

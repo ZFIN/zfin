@@ -5,11 +5,16 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.RootPanel;
+import org.zfin.gwt.curation.event.ChangeCurationFilterEvent;
+import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ListBoxWrapper;
+import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StringUtils;
 
 /**
@@ -17,17 +22,17 @@ import org.zfin.gwt.root.util.StringUtils;
  * This bar contains three filter elements: figure, gene and fish.
  * Setting a value filters out only experiments and expressions with
  * those characteristics. The filter bar is always visible.
- * <p/>
+ * <p>
  * General: Selecting a non-default value will set the background color of the list box to red to make
  * it very visible to the user that he filtered the records. Setting it back to 'ALL' will remove the background
  * color. Any change to one of the filter elements will re-read the appropriate records.
- * <p/>
+ * <p>
  * Life cycle: The filter values have a certain life cycle, i.e. they are remembered as follows:
  * A) Figure: saved in the database and stored forever
  * B) Fish and Gene: The values are stored in the user session and thus are lost after session timeout or logging out.
  * Reloading the page or coming back to the FX page will prepopulate the filter with the values that are available
  * at that point in time.
- * <p/>
+ * <p>
  * 1) Only Fig: Selecting a Figure applies only to expressions as only they are associated with figures.
  * The list of figure annotations is reread.
  * 2) Only Gene: Selecting a gene applies to both sections and displays only record with experiments that
@@ -40,7 +45,6 @@ import org.zfin.gwt.root.util.StringUtils;
 public class CurationFilterModule extends Composite {
 
     // GUI elements
-    public static final String FILTER_BAR_GENES = "curation-filter-genes";
     public static final String FILTER_BAR_FISH = "curation-filter-fish";
     public static final String FILTER_BAR_FIGURE = "curation-filter-figure";
     public static final String FILTER_BAR_FEATURE = "curation-filter-feature";
@@ -48,12 +52,10 @@ public class CurationFilterModule extends Composite {
     public static final String ALL = "ALL";
 
     // filter bar (aka banana bar)
-    private ListBoxWrapper geneList = new ListBoxWrapper(false);
     private ListBoxWrapper fishList = new ListBoxWrapper(false);
     private ListBoxWrapper figureList = new ListBoxWrapper(false);
     private ListBoxWrapper featureList = new ListBoxWrapper(false);
 
-    private String geneID;
     private String fishID;
     private String figureID;
     private String featureID;
@@ -62,23 +64,12 @@ public class CurationFilterModule extends Composite {
 
     // Attributes are injected through constructor
     private String publicationID;
-    //private CurationEntryPoint curationEntryPoint;
-    private ExperimentSection experimentModule = null;
     private ExpressionSection expressionModule;
     private StructurePile structureModule;
 
     // RPC class being used for this section.
     private CurationFilterRPCAsync curationFilterRPCAsync = CurationFilterRPC.Application.getInstance();
-
-    public CurationFilterModule(ExperimentSection experimentModule, ExpressionSection expressionModule, StructurePile structureModule, String publicationID) {
-        this.experimentModule = experimentModule;
-        this.expressionModule = expressionModule;
-        this.structureModule = structureModule;
-        this.publicationID = publicationID;
-        experimentFilter.setPublicationID(publicationID);
-        initGUI();
-        setInitialValues();
-    }
+    private CurationExperimentRPCAsync curationRPCAsync = CurationExperimentRPC.App.getInstance();
 
     public CurationFilterModule(ExpressionSection expressionModule, StructurePile structureModule, String publicationID) {
         this.expressionModule = expressionModule;
@@ -90,17 +81,20 @@ public class CurationFilterModule extends Composite {
     }
 
     public void setInitialValues() {
-        curationFilterRPCAsync.getPossibleFilterValues(publicationID, new RetrieveFishCallback());
+        curationFilterRPCAsync.getPossibleFilterValues(publicationID, new RetrieveFilterValueCallback());
+    }
+
+    public void refreshFigureList() {
+        curationRPCAsync.getFigures(publicationID, new RetrieveSelectionBoxValueCallback(figureList));
+    }
+
+    public void refreshFishList() {
+        curationRPCAsync.getFishList(publicationID, new RetrieveSelectionBoxValueCallback(fishList));
     }
 
     private void initGUI() {
-        if (experimentModule != null) {
-            RootPanel.get(FILTER_BAR_GENES).add(geneList);
-            geneList.addChangeHandler(new ChangeFilterHandler(FilterType.GENE));
-        }
-
         RootPanel.get(FILTER_BAR_FISH).add(fishList);
-        fishList.addChangeHandler(new ChangeFilterHandler(FilterType.GENO));
+        fishList.addChangeHandler(new ChangeFilterHandler(FilterType.FISH));
 
         RootPanel.get(FILTER_BAR_FIGURE).add(figureList);
         figureList.addChangeHandler(new ChangeFilterHandler(FilterType.FIG));
@@ -119,20 +113,14 @@ public class CurationFilterModule extends Composite {
 
     @SuppressWarnings({"AssignmentToNull", "SuppressionAnnotation"})
     public void applyExperimentFilter(FilterType type) {
-        if (experimentModule != null)
-            experimentModule.clearErrorMessages();
-        geneID = geneList.getValue(geneList.getSelectedIndex());
         String fishName = fishList.getItemText(fishList.getSelectedIndex());
         fishID = fishList.getValue(fishList.getSelectedIndex());
         figureID = figureList.getValue(figureList.getSelectedIndex());
         if (useFeatureFilter)
             featureID = featureList.getValue(featureList.getSelectedIndex());
         //Window.alert("gene box changed to: " + geneName + "(" + geneID + ")");
-        //Window.alert("fish box changed to: " + fishName );
 
         // need to do this as GWT converts null to "null' string!!!!!!!!!
-        if (geneID.length() == 0)
-            geneID = null;
         if (fishID.length() == 0)
             fishID = null;
         if (figureID.length() == 0)
@@ -142,42 +130,30 @@ public class CurationFilterModule extends Composite {
                 featureID = null;
 
         experimentFilter = new ExpressionExperimentDTO();
-        MarkerDTO gene = new MarkerDTO();
-        gene.setZdbID(geneID);
-        experimentFilter.setGene(gene);
         experimentFilter.setFeatureID(featureID);
-        setBackgroundColorForListBox(fishID, fishList);
-        setBackgroundColorForListBox(geneID, geneList);
-        setBackgroundColorForListBox(figureID, figureList);
-        if (useFeatureFilter)
-            setBackgroundColorForListBox(featureID, featureList);
+        fishList.setBackgroundColor();
+        figureList.setBackgroundColor();
+        featureList.setBackgroundColor();
         if (!fishName.equals(ALL))
             experimentFilter.setFishName(fishName);
         experimentFilter.setFishID(fishID);
         experimentFilter.setPublicationID(publicationID);
-        if (experimentModule != null)
-            experimentModule.setExperimentFilter(experimentFilter);
         expressionModule.setExperimentFilter(experimentFilter);
         expressionModule.setFigureID(figureID);
         switch (type) {
             case FIG:
                 saveFilterInfo(figureID, FilterType.FIG);
-            case GENO:
-                saveFilterInfo(fishID, FilterType.GENO);
-            case GENE:
-                saveFilterInfo(geneID, FilterType.GENE);
+                AppUtils.EVENT_BUS.fireEvent(new ChangeCurationFilterEvent(EventType.SELECT_FIGURE_PHENO, experimentFilter, figureID));
+                break;
+            case FISH:
+                saveFilterInfo(fishID, FilterType.FISH);
+                AppUtils.EVENT_BUS.fireEvent(new ChangeCurationFilterEvent(EventType.SELECT_FISH_PHENO, experimentFilter, figureID));
+                break;
             case ALT:
                 saveFilterInfo(featureID, FilterType.ALT);
+                AppUtils.EVENT_BUS.fireEvent(new ChangeCurationFilterEvent(EventType.SELECT_FEATURE_PHENO, experimentFilter, figureID));
         }
         updateExperimentAndExpressionSection(type);
-    }
-
-    @SuppressWarnings({"MethodParameterOfConcreteClass"})
-    private void setBackgroundColorForListBox(String fishID, UIObject fishList) {
-        if (fishID != null)
-            DOM.setStyleAttribute(fishList.getElement(), "backgroundColor", "khaki");
-        else
-            DOM.setStyleAttribute(fishList.getElement(), "backgroundColor", "white");
     }
 
     private void saveFilterInfo(String value, FilterType type) {
@@ -185,7 +161,52 @@ public class CurationFilterModule extends Composite {
         curationFilterRPCAsync.setFilterType(publicationID, value, type.toString(), new VoidAsyncCallback(errorMessage, null, null));
     }
 
-    private class RetrieveFishCallback implements AsyncCallback<FilterValuesDTO> {
+    public void readSavedFilterValues() {
+        curationFilterRPCAsync.getFilterValues(publicationID, new RetrieveSelectFilterValuesCallback());
+    }
+
+    public void setFilterValues(ExpressionExperimentDTO experimentFilter, String figureID) {
+        if (figureID != null) {
+            selectFilterElement(figureList, figureID);
+        } else {
+            figureList.setSelectedIndex(0);
+        }
+        if (experimentFilter.getFishID() == null) {
+            fishList.setSelectedIndex(0);
+        } else {
+            fishList.setSelectedItemByValue(experimentFilter.getFishID());
+            selectFilterElement(fishList, experimentFilter.getFishID());
+        }
+        fishList.setBackgroundColor();
+        figureList.setBackgroundColor();
+    }
+
+    /**
+     * Select an entry from a filter box that was used.
+     *
+     * @param list List box
+     * @param id   ID
+     */
+    private void selectFilterElement(ListBox list, String id) {
+        if (StringUtils.isEmpty(id))
+            return;
+
+        int numberOfEntries = list.getItemCount();
+        for (int row = 0; row < numberOfEntries; row++) {
+            String gene = list.getValue(row);
+            if (gene.equals(id)) {
+                list.setSelectedIndex(row);
+                break;
+            }
+        }
+    }
+
+    public void refreshFeatureList() {
+        curationFilterRPCAsync.getFeatureValues(publicationID, new RetrieveSelectionBoxValueCallback(featureList));
+    }
+
+
+    private class RetrieveFilterValueCallback implements AsyncCallback<FilterValuesDTO> {
         public void onFailure(Throwable throwable) {
             if (throwable instanceof PublicationNotFoundException) {
                 GWT.log(String.valueOf(throwable));
@@ -200,19 +221,13 @@ public class CurationFilterModule extends Composite {
             fishList.clear();
             fishList.addItem(ALL, "");
             for (FishDTO fishDTO : valuesDTO.getFishes()) {
-                fishList.addItem(fishDTO.getName(), fishDTO.getZdbID());
+                fishList.addItem(fishDTO.getHandle(), fishDTO.getZdbID());
             }
 
             figureList.clear();
             figureList.addItem(ALL, "");
             for (FigureDTO figureDTO : valuesDTO.getFigures()) {
                 figureList.addItem(figureDTO.getLabel(), figureDTO.getZdbID());
-            }
-
-            geneList.clear();
-            geneList.addItem(ALL, "");
-            for (MarkerDTO gene : valuesDTO.getMarkers()) {
-                geneList.addItem(gene.getName(), gene.getZdbID());
             }
 
             if (useFeatureFilter) {
@@ -223,10 +238,6 @@ public class CurationFilterModule extends Composite {
                 }
             }
             readSavedFilterValues();
-        }
-
-        private void readSavedFilterValues() {
-            curationFilterRPCAsync.getFilterValues(publicationID, new RetrieveSelectFilterValuesCallback());
         }
 
     }
@@ -248,27 +259,19 @@ public class CurationFilterModule extends Composite {
                 selectFilterElement(fishList, filterValues.getFish().getZdbID());
                 fishID = filterValues.getFish().getZdbID();
                 experimentFilter.setFishID(fishID);
-                setBackgroundColorForListBox(fishID, fishList);
             }
             if (filterValues.getFigure() != null) {
                 selectFilterElement(figureList, filterValues.getFigure().getZdbID());
                 figureID = filterValues.getFigure().getZdbID();
-                setBackgroundColorForListBox(figureID, figureList);
-            }
-            if (filterValues.getMarker() != null) {
-                String geneID = filterValues.getMarker().getZdbID();
-                selectFilterElement(geneList, geneID);
-                MarkerDTO gene = new MarkerDTO();
-                gene.setZdbID(filterValues.getMarker().getZdbID());
-                experimentFilter.setGene(gene);
-                setBackgroundColorForListBox(geneID, geneList);
             }
             if (filterValues.getFeature() != null) {
                 featureID = filterValues.getFeature().getZdbID();
                 selectFilterElement(featureList, featureID);
                 experimentFilter.setFeatureID(filterValues.getFeature().getZdbID());
-                setBackgroundColorForListBox(featureID, featureList);
             }
+            fishList.setBackgroundColor();
+            figureList.setBackgroundColor();
+            featureList.setBackgroundColor();
             runDependentModules();
         }
 
@@ -280,34 +283,10 @@ public class CurationFilterModule extends Composite {
          */
         private void runDependentModules() {
             structureModule.runModule();
-            if (experimentModule != null) {
-                experimentModule.setExperimentFilter(experimentFilter);
-                experimentModule.runModule();
-            }
             expressionModule.setExperimentFilter(experimentFilter);
             expressionModule.setFigureID(figureID);
             expressionModule.runModule();
 
-        }
-
-        /**
-         * Select an entry from a filter box that was used.
-         *
-         * @param list List box
-         * @param id   ID
-         */
-        private void selectFilterElement(ListBox list, String id) {
-            if (StringUtils.isEmpty(id))
-                return;
-
-            int numberOfEntries = list.getItemCount();
-            for (int row = 0; row < numberOfEntries; row++) {
-                String gene = list.getValue(row);
-                if (gene.equals(id)) {
-                    list.setSelectedIndex(row);
-                    break;
-                }
-            }
         }
 
     }
@@ -336,32 +315,25 @@ public class CurationFilterModule extends Composite {
                 return;
 
             figureList.setSelectedIndex(0);
-            geneList.setSelectedIndex(0);
             fishList.setSelectedIndex(0);
             featureList.setSelectedIndex(0);
             figureID = null;
-            geneID = null;
             featureID = null;
-            setBackgroundColorForListBox(null, fishList);
-            setBackgroundColorForListBox(null, geneList);
-            setBackgroundColorForListBox(null, figureList);
-            setBackgroundColorForListBox(null, featureList);
-            experimentFilter.setGene(null);
+            fishList.setBackgroundColor();
+            figureList.setBackgroundColor();
+            featureList.setBackgroundColor();
             experimentFilter.setFishID(null);
             experimentFilter.setFeatureID(null);
             updateExperimentAndExpressionSection(null);
             // update the filter state on the server
             saveFilterInfo(null, FilterType.FIG);
-            saveFilterInfo(null, FilterType.GENE);
-            saveFilterInfo(null, FilterType.GENO);
+            saveFilterInfo(null, FilterType.FISH);
             saveFilterInfo(null, FilterType.ALT);
         }
 
         private boolean isOneOrMOreFilterSet() {
             boolean resetNeeded = false;
             if (figureList.getSelectedIndex() > 0)
-                resetNeeded = true;
-            if (geneList.getSelectedIndex() > 0)
                 resetNeeded = true;
             if (fishList.getSelectedIndex() > 0)
                 resetNeeded = true;
@@ -382,18 +354,15 @@ public class CurationFilterModule extends Composite {
      * @param type Filter Type
      */
     private void updateExperimentAndExpressionSection(FilterType type) {
-        if (type == null || type != FilterType.FIG) {
-            if (experimentModule != null)
-                experimentModule.applyFilterElements(experimentFilter);
-        }
         expressionModule.applyFilterElements(figureID, experimentFilter);
+        //AppUtils.EVENT_BUS.fireEvent(new ChangeCurationFilterEvent(EventType.FILTER_PHENO, experimentFilter, figureID));
     }
 
     public enum FilterType {
         // Feature 
         ALT,
         FIG,
-        GENO,
+        FISH,
         GENE
     }
 

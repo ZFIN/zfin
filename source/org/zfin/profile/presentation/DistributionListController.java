@@ -44,7 +44,7 @@ public class DistributionListController {
 
         response.addHeader("Content-disposition", String.format("attachment;filename=%s_%s.txt", prefix, fileName));
         response.setContentType("txt/plain");
-        IOUtils.write(StringUtils.join(distList, "\n"), response.getOutputStream(), StandardCharsets.ISO_8859_1);
+        IOUtils.write(StringUtils.join(distList, "\n"), response.getOutputStream(), StandardCharsets.UTF_8);
         response.flushBuffer();
     }
 }
