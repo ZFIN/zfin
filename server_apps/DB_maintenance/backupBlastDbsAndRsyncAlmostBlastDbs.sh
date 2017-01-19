@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # This scripts pushes newly updated databases to VMs using rsync.
 

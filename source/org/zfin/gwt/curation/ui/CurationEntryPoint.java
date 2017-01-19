@@ -12,9 +12,14 @@ import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.curation.event.TabEventHandler;
 import org.zfin.gwt.root.dto.CuratorSessionDTO;
+import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.ui.ItemSuggestCallback;
+import org.zfin.gwt.root.ui.LookupComposite;
 import org.zfin.gwt.root.ui.SessionSaveService;
+import org.zfin.gwt.root.ui.TermInfoCallBack;
 import org.zfin.gwt.root.util.AppUtils;
+import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.ArrayList;
@@ -168,6 +173,9 @@ public class CurationEntryPoint implements EntryPoint {
         };
 
 
+        $wnd.updateTermInfoBox = function (termName, ontologyName, tabName) {
+            curationModule .@org.zfin.gwt.curation.ui.CurationEntryPoint::updateTermInfo(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(termName, ontologyName, tabName);
+        };
     }-*/;
 
     private native void exposeSessionSaveMethodsToJavascript()/*-{
@@ -196,6 +204,16 @@ public class CurationEntryPoint implements EntryPoint {
         module.refresh();
         attributionModule.refresh();
     }
+
+    public void updateTermInfo(String termName, String ontologyName, String tabName) {
+        ZfinCurationModule module = allModules.get(tabName.toUpperCase());
+        if (module == null) {
+            return;
+        }
+        module.updateTermInfo(termName, ontologyName);
+    }
+
+
 
     public void handleTabToggle(String tabName) {
         ZfinCurationModule module = allModules.get(tabName.toUpperCase());

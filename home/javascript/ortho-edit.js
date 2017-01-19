@@ -68,11 +68,12 @@
         var directive = {
             restrict: 'EA',
             templateUrl: '/templates/orthoedit.directive.html',
+            transclude: true,
             scope: {
                 gene: '@',
                 pub: '@',
                 header: '@',
-                edit: '=',
+                edit: '<',
                 showDownloadLink: '@'
             },
             controller: OrthoEditController,
@@ -176,10 +177,7 @@
 
         vm.selectPub = selectPub;
         vm.checkPub = checkPub;
-        vm.edit = false;
         vm.showDownloadLink = true;
-
-        //alert('edit: '+vm.edit);
 
         activate();
 
@@ -213,14 +211,6 @@
                 });
         }
 
-        function hideNoDataElement() {
-            jQuery("#no-data-available").hide()
-        }
-
-        function showNoDataElement() {
-            jQuery("#no-data-available").show()
-        }
-
         function fetchOrthology() {
             vm.orthologsLoading = true;
             fetchCodes()
@@ -228,12 +218,6 @@
                 .then(function (resp) {
                     resetPubList();
                     vm.orthologs = resp.data;
-                    if (vm.orthologs != null && vm.orthologs.length > 0) {
-                        hideNoDataElement();
-                        vm.showOrthology = true;
-                    } else {
-                        showNoDataElement();
-                    }
                     vm.orthologs.forEach(function (ortholog) {
                         var evidenceArray = [];
                         ortholog.evidenceSet.forEach(function (e) {
@@ -287,7 +271,6 @@
                     vm.ncbiGeneNumber = '';
                     vm.generalError = '';
                     vm.showOrthology = true;
-                    hideNoDataElement();
                 })
                 .catch(function (error) {
                     vm.ncbiError = error.data.message;

@@ -138,7 +138,7 @@ addedLinks = query.list().collect { entrezLink ->
     session.save(addgeneLink)
     println "  $addgeneLink.zdbID"
     addgeneLink
-   /* println "Adding new attributions test "
+   println "Adding new attributions test "
     recAttr = new RecordAttribution()
     recAttr.with {
 
@@ -147,7 +147,7 @@ addedLinks = query.list().collect { entrezLink ->
         sourceType=RecordAttribution.SourceType.STANDARD
     }
     session.save(recAttr)
-    recAttr*/
+    recAttr
 }
 println "getting db links for IDs  "
 hql = """from MarkerDBLink dbl

@@ -84,6 +84,11 @@ public class GoCurationModule extends ConstructionZoneAdapater implements ZfinCu
 
     }
 
+    @Override
+    public void updateTermInfo(String termName, String ontologyName) {
+
+    }
+
     protected void addInternalListeners(HandlesError handlesError) {
         goAddBox.addChangeListener(new RelatedEntityChangeListener<GoEvidenceDTO>() {
             @Override

@@ -50,7 +50,6 @@ public class FishModule extends Composite implements ZfinCurationModule {
         VerticalPanel outer = uiBinder.createAndBindUi(this);
         RootPanel.get(FISH_TAB).add(outer);
         presenter = new GenotypePresenter(genotypeView, publicationID);
-        presenter.go();
 
         fishPresenter = new FishPresenter(fishView, publicationID);
         fishPresenter.go();
@@ -67,7 +66,7 @@ public class FishModule extends Composite implements ZfinCurationModule {
 
     @Override
     public void handleCurationEvent(CurationEvent event) {
-        if (event.getEventType().is(EventType.ATTRIBUTE_MARKER))
+        if (event.getEventType().is(EventType.MARKER_ATTRIBUTION))
             genotypeConstructionPresenter.updateStrList();
         if (event.getEventType().is(EventType.ADD_REMOVE_ATTRIBUTION_FEATURE) || event.getEventType().is(EventType.CUD_FEATURE)) {
             genotypeConstructionPresenter.updateFeatureList();
@@ -88,6 +87,11 @@ public class FishModule extends Composite implements ZfinCurationModule {
 
     @Override
     public void handleTabToggle() {
+
+    }
+
+    @Override
+    public void updateTermInfo(String termName, String ontologyName) {
 
     }
 

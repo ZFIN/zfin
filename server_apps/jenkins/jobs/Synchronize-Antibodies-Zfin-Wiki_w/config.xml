@@ -38,7 +38,6 @@
           <reportFiles>Synchronize-Antibodies-Zfin-Wiki_w.updated-antibodies.html</reportFiles>
           <keepAll>false</keepAll>
           <allowMissing>true</allowMissing>
-          <wrapperName>htmlpublisher-wrapper.html</wrapperName>
         </htmlpublisher.HtmlPublisherTarget>
         <htmlpublisher.HtmlPublisherTarget>
           <reportName>New Antibody Report</reportName>
@@ -46,7 +45,6 @@
           <reportFiles>Synchronize-Antibodies-Zfin-Wiki_w.created-antibodies.html</reportFiles>
           <keepAll>false</keepAll>
           <allowMissing>true</allowMissing>
-          <wrapperName>htmlpublisher-wrapper.html</wrapperName>
         </htmlpublisher.HtmlPublisherTarget>
         <htmlpublisher.HtmlPublisherTarget>
           <reportName>Dropped Antibody Report</reportName>
@@ -54,7 +52,13 @@
           <reportFiles>Synchronize-Antibodies-Zfin-Wiki_w.dropped-antibodies.html</reportFiles>
           <keepAll>false</keepAll>
           <allowMissing>true</allowMissing>
-          <wrapperName>htmlpublisher-wrapper.html</wrapperName>
+        </htmlpublisher.HtmlPublisherTarget>
+        <htmlpublisher.HtmlPublisherTarget>
+          <reportName>Error Report</reportName>
+          <reportDir>server_apps/DB_maintenance/report_data/Synchronize-Antibodies-Zfin-Wiki_w</reportDir>
+          <reportFiles>Synchronize-Antibodies-Zfin-Wiki_w.errors.html</reportFiles>
+          <keepAll>false</keepAll>
+          <allowMissing>true</allowMissing>
         </htmlpublisher.HtmlPublisherTarget>
       </reportTargets>
     </htmlpublisher.HtmlPublisher>
@@ -65,7 +69,7 @@
               <email>
                   <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
                   <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-                  <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Synchronize-Antibodies-Zfin-Wiki_w/Synchronize-Antibodies-Zfin-Wiki_w.statistics.html&quot;}
+                  <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Synchronize-Antibodies-Zfin-Wiki_w.statistics.html&quot;}
 
                     See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                   </body>

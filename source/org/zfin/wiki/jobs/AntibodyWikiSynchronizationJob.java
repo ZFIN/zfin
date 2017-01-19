@@ -1,5 +1,6 @@
 package org.zfin.wiki.jobs;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.infrastructure.ant.ReportConfiguration;
@@ -53,6 +54,10 @@ public class AntibodyWikiSynchronizationJob extends AbstractValidateDataReportTa
         reportConfiguration = new ReportConfiguration(jobName, dataDirectory, reportName, true);
         createErrorReport(null, getStringifiedList(report.getDroppedPages()), reportConfiguration);
 
+        reportName = jobName + ".errors";
+        reportConfiguration = new ReportConfiguration(jobName, dataDirectory, reportName, true);
+        createErrorReport(null, getStringifiedList(report.getErrorPages()), reportConfiguration);
+
         System.out.print(report);
     }
 
@@ -70,12 +75,16 @@ public class AntibodyWikiSynchronizationJob extends AbstractValidateDataReportTa
             logger.error(e);
             exitCode = 1;
         }
+        if (CollectionUtils.isNotEmpty(report.getErrorPages())) {
+            exitCode = 1;
+        }
         if (report != null && report.hasChanges()) {
             createReportFiles(report);
         }
 
         ReportGenerator statistics = new ReportGenerator();
         Map<String, Object> summary = new HashMap<>();
+        summary.put("Error Wiki Pages", report.getErrorPages().size());
         summary.put("Created Wiki Pages", report.getCreatedPages().size());
         summary.put("Updated Wiki Pages", report.getUpdatedPages().size());
         summary.put("Dropped Wiki Pages", report.getDroppedPages().size());

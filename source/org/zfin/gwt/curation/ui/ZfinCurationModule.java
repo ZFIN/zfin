@@ -11,4 +11,6 @@ public interface ZfinCurationModule {
     void handleCurationEvent(CurationEvent event);
 
     void handleTabToggle();
+
+    void updateTermInfo(String termName, String ontologyName);
 }

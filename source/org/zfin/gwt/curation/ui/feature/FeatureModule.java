@@ -85,6 +85,11 @@ public class FeatureModule implements ZfinCurationModule {
 
     }
 
+    @Override
+    public void updateTermInfo(String termName, String ontologyName) {
+
+    }
+
     private void bindEventBusHandler() {
         AppUtils.EVENT_BUS.addHandler(DirtyValueEvent.TYPE,
                 new DirtyValueEventHandler() {
