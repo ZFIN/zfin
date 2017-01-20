@@ -323,7 +323,12 @@ public class LoadOntology extends AbstractValidateDataReportTask {
 
     private void postLoadProcess() {
         // report annotations on obsoleted terms
-        List<PhenotypeStatement> phenotypes = getMutantRepository().getPhenotypesOnObsoletedTerms(ontology);
+        Ontology reportOntology = ontology;
+        if(ontology.equals(Ontology.GO_ONTOLOGY))
+            reportOntology = Ontology.GO;
+
+
+        List<PhenotypeStatement> phenotypes = getMutantRepository().getPhenotypesOnObsoletedTerms(reportOntology);
         if (phenotypes != null && phenotypes.size() > 0) {
             LOG.warn("Pato annotations found that use obsoleted terms");
             List<List<String>> rows = new ArrayList<>(phenotypes.size());
@@ -333,25 +338,19 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                 row.add(pheno.getPhenotypeExperiment().getFigure().getPublication().getTitle());
                 row.add(pheno.getDisplayName());
                 Set<GenericTerm> obsoletedTerms = PhenotypeService.getObsoleteTerm(pheno);
-                StringBuilder hyperlink = new StringBuilder();
                 StringBuilder replaceLinks = new StringBuilder();
                 StringBuilder considerLinks = new StringBuilder();
                 for (GenericTerm obsoletedTerm : obsoletedTerms) {
-                    hyperlink.append(TermPresentation.getLink(obsoletedTerm, true));
                     replaceLinks.append(getListOfHyperlinksOfReplacedByTerms(obsoletedTerm));
                     considerLinks.append(getListOfHyperlinksOfConsiderTerms(obsoletedTerm));
                 }
-                row.add(hyperlink.toString());
                 row.add(replaceLinks.toString());
                 row.add(considerLinks.toString());
                 rows.add(row);
             }
-            CronJobReport cronReport = new CronJobReport(report.getJobName());
-            cronReport.setRows(rows);
-            cronReport.appendToSubject(" - " + rows.size() + " annotations with obsoleted terms");
-            cronReport.warning("Found phenotypes with obsoleted terms.");
-            cronJobUtil.addObjectToTemplateMap("domain", ZfinPropertiesEnum.DOMAIN_NAME.value());
-            cronJobUtil.emailReport("ontology-loader-obsolete-terms-used.ftl", cronReport);
+            String key = "obsolete_terms_on_phenotype";
+            ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, loadDirectory, key, true);
+            createErrorReport(null, rows, reportConfiguration);
         }
         // check if any secondary IDs are used in any expression annotation:
         List<ExpressionResult2> obsoletedTermsUsedExpression = RepositoryFactory.getExpressionRepository().getExpressionOnObsoletedTerms();
@@ -368,25 +367,19 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                 row.add(expressionResult.getExpressionFigureStage().getExpressionExperiment().getPublication().getTitle());
                 row.add(expressionResult.getEntity().getDisplayName());
                 Set<GenericTerm> obsoletedTerms = expressionService.getObsoleteTerm(expressionResult);
-                StringBuilder hyperlink = new StringBuilder();
                 StringBuilder replaceLinks = new StringBuilder();
                 StringBuilder considerLinks = new StringBuilder();
                 for (GenericTerm obsoletedTerm : obsoletedTerms) {
-                    hyperlink.append(TermPresentation.getLink(obsoletedTerm, true));
                     replaceLinks.append(getListOfHyperlinksOfReplacedByTerms(obsoletedTerm));
                     considerLinks.append(getListOfHyperlinksOfConsiderTerms(obsoletedTerm));
                 }
-                row.add(hyperlink.toString());
                 row.add(replaceLinks.toString());
                 row.add(considerLinks.toString());
                 rows.add(row);
             }
-            CronJobReport cronReport = new CronJobReport(report.getJobName());
-            cronReport.setRows(rows);
-            cronReport.appendToSubject(" - " + rows.size() + " expression annotations with obsolete terms");
-            cronReport.warning("Found expressions with obsolete terms.");
-            cronJobUtil.addObjectToTemplateMap("domain", ZfinPropertiesEnum.DOMAIN_NAME.value());
-            cronJobUtil.emailReport("ontology-loader-obsolete-terms-used.ftl", cronReport);
+            String key = "obsolete_terms_on_expression";
+            ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, loadDirectory, key, true);
+            createErrorReport(null, rows, reportConfiguration);
         }
         // check if any secondary IDs are used in any annotation:
         List<PhenotypeStatement> secondaryTermsUsed = getMutantRepository().getPhenotypesOnSecondaryTerms();
@@ -420,11 +413,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                 row.add(secondaryTerm.getOboID());
                 rows.add(row);
             }
-            CronJobReport cronReport = new CronJobReport(report.getJobName());
-            cronReport.setRows(rows);
-            cronReport.appendToSubject(" - " + rows.size() + " annotations with secondary terms");
-            cronReport.warning("Found phenotypes with secondary terms.");
-            cronJobUtil.emailReport("ontology-loader-secondary-terms-used.ftl", cronReport);
+            String key = "secondary_terms_on_phenotype";
+            ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, loadDirectory, key, true);
+            createErrorReport(null, rows, reportConfiguration);
         }
         // check if any secondary IDs are used in any expression annotation:
         List<ExpressionResult> secondaryTermsUsedExpression = RepositoryFactory.getExpressionRepository().getExpressionOnSecondaryTerms();
@@ -450,11 +441,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                 row.add(secondaryTerm.getOboID());
                 rows.add(row);
             }
-            CronJobReport cronReport = new CronJobReport(report.getJobName());
-            cronReport.setRows(rows);
-            cronReport.appendToSubject(" - " + rows.size() + " expression annotations with secondary terms");
-            cronReport.warning("Found expressions with secondary terms.");
-            cronJobUtil.emailReport("ontology-loader-secondary-terms-used.ftl", cronReport);
+            String key = "secondary_terms_on_expression";
+            ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, loadDirectory, key, true);
+            createErrorReport(null, rows, reportConfiguration);
         }
         // missing terms with OBO id report.
         if (dataMapHasValues(UnloadFile.TERMS_MISSING_OBO_ID)) {
@@ -609,7 +598,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         StringBuilder considerBuilder = new StringBuilder();
         if (CollectionUtils.isNotEmpty(considerTerms)) {
             for (ConsiderTerm term : considerTerms) {
-                String hyperlink = TermPresentation.getLink(term.getConsiderTerm(), true);
+                String hyperlink = term.getConsiderTerm().getTermName();
                 considerBuilder.append(hyperlink);
                 considerBuilder.append(", ");
             }
@@ -625,7 +614,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         if (CollectionUtils.isNotEmpty(replacedByTerms)) {
             LOG.info("creating replaced by Term list");
             for (ReplacementTerm term : replacedByTerms) {
-                String hyperlink = TermPresentation.getLink(term.getReplacementTerm(), true);
+                String hyperlink = term.getReplacementTerm().getTermName();
                 builder.append(hyperlink);
                 builder.append(", ");
             }
@@ -918,18 +907,18 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                             if (ontology.equals(Ontology.CHEBI)) {
                                 if (synonym.getXrefs() != null) {
                                     for (Dbxref ref : synonym.getXrefs()) {
-                                        if (ref.getDatabase().toLowerCase().startsWith("chebi") )
+                                        if (ref.getDatabase().toLowerCase().startsWith("chebi"))
                                             isChebiSynonym = true;
                                     }
                                 }
                             }
                             // don't create synonyms for entries dbxrefs of type chebi:! they have huge strings....
-                            if(isChebiSynonym)
+                            if (isChebiSynonym)
                                 continue;
                             // Make sure not to create distinct synonyms per these three keys.
-                            String synonymText =synonym.getText().trim().replaceAll(" +"," ");
-                            if(synonymText.length() > 255)
-                                synonymText = synonymText.substring(0,255);
+                            String synonymText = synonym.getText().trim().replaceAll(" +", " ");
+                            if (synonymText.length() > 255)
+                                synonymText = synonymText.substring(0, 255);
                             String synonymKey = term.getID() + ":" + synonymText;
                             if (synonymKeySet.contains(synonymKey))
                                 continue;
@@ -943,7 +932,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                     if (term.getConsiderReplacements() != null) {
                         for (org.obo.datamodel.ObsoletableObject considerObject : term.getConsiderReplacements())
                             appendFormattedRecord(UnloadFile.TERM_CONSIDER, term.getID(), considerObject.getID(), "consider");
-                       }
+                    }
                     if (term.getDbxrefs() != null) {
                         for (Dbxref dbxref : term.getDbxrefs()) {
                             //  appendFormattedRecord(UnloadFile.TERM_XREF, term.getID(), dbxref.getDatabase(), dbxref.getDatabaseID(), "xref");
