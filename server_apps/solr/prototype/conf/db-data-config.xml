@@ -2161,28 +2161,15 @@ select
            </entity>
 
            <entity name="phenotype_misexpressed_gene" datasource="db" transformer="RegexTransformer"
-                   query="select mrkr_abbrev || ',Any' as misexpressed_gene,
+                   query="select mrkr_abbrev || '!Any' as misexpressed_gene,
                                  mrkr_abbrev || ' misexpression' as expression_observation,
                                         'pg-' || pg_id as pg_id
                             from phenotype_source_generated
                                  join phenotype_observation_generated on psg_pg_id = pg_id
-                                 join marker on mrkr_zdb_id = psg_mrkr_zdb_id
-                            where mrkr_type != 'ATB';"
+                                 join marker on mrkr_zdb_id = psg_mrkr_zdb_id;"
                    cacheImpl="SortedMapBackedCache"
                    where="pg_id=phenotype.id">
-               <field name="misexpressed_gene" column="misexpressed_gene" splitBy=","/>
-           </entity>
-
-           <entity name="phenotype_misexpressed_gene_antibodies" datasource="db" transformer="RegexTransformer"
-                   query="select mrkr_abbrev || ',Any' as misexpressed_gene,
-                                 mrkr_abbrev || ' misexpression' as expression_observation,
-                                        'pg-' || pg_id as pg_id
-                            from phenotype_source_generated
-                                 join phenotype_observation_generated on psg_pg_id = pg_id
-                                 join marker on mrkr_zdb_id = psg_mrkr_zdb_id
-                            where mrkr_type = 'ATB';"
-                   cacheImpl="SortedMapBackedCache"
-                   where="pg_id=phenotype.id">
+               <field name="misexpressed_gene" column="misexpressed_gene" splitBy="!"/>
            </entity>
 
            <entity name="phenotype_image"

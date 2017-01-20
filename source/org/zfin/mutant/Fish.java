@@ -1,6 +1,5 @@
 package org.zfin.mutant;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.zfin.fish.repository.FishService;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.marker.Marker;
@@ -19,6 +18,7 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
     private Genotype genotype;
     private String name;
     private String nameOrder;
+    private String displayName;
     private String handle;
     private long order;
     private boolean wildtype;
@@ -153,12 +153,11 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
     }
 
     public String getDisplayName() {
-        String newGenoName = genotype.getName();
-        if (CollectionUtils.isNotEmpty(genotype.getAssociatedGenotypes())) {
-            newGenoName += " ";
-            newGenoName += genotype.getBackgroundDisplayName();
-        }
-        return name.replace(genotype.getName(), newGenoName);
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public boolean isClean() {

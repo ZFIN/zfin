@@ -14,9 +14,10 @@
     </c:set>
 </c:if>
 
-<span class="summaryTitle" id="orthology-title">${title}</span>
-<span id="no-data-available" class="no-data-tag">No data available</span>
-
-<div ortho-edit gene="${marker.zdbID}" edit="editMode"></div>
-
+<a name="orthology"></a>
+<div class="summary">
+    <div ortho-edit gene="${marker.zdbID}" edit="editMode">
+        <span class="summaryTitle">${title}</span>
+    </div>
+</div>
 

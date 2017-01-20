@@ -236,8 +236,38 @@
         }
     </script>
 
-    <script type="text/javascript" src="/javascript/zfin-gwt-autocomplete-helper.js">
+    <script type="text/javascript">
+        // this attaches onMouseOver handlers to each of the items in the
+        // auto suggest box (popup panel). changes in the selected item should
+        // trigger an update of the term info box.
+        // ony body
+        var showTermInfo = function () {
+            var selectedTerm = $(".item-selected").text();
+            var tabName = window.location.hash.substr(1).toLowerCase();
+            if (selectedTerm.length > 0) {
+                var div = $(".termInfoUsed").attr("class");
+                if ($(".termInfoUsed").length > 0) {
+                    var classArray = div.split(" ");
+                    var entityName = classArray[2];
+                    var selector = "select." + entityName + "_" + tabName;
+                    var selectionBox = $(selector);
+                    var selectedOption;
+                    if (!selectionBox.length) {
+                        var element = "." + entityName + "_single_" + tabName;
+                        selectedOption = $(element).text();
+                    } else {
+                        selectedOption = selectionBox.val();
+                    }
+                    updateTermInfoBox(selectedTerm, selectedOption, tabName);
+                }
+            }
+        };
+
+        jQuery("body").on("mouseover", ".item-selected", showTermInfo)
+            .on("keydown", "input", showTermInfo);
+
     </script>
+
     <script>
         $(document).ready(function(){
             $('[data-toggle="tooltip"]').tooltip();

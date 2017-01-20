@@ -14,6 +14,7 @@ public class FishDTO extends RelatedEntityDTO implements Comparable, FilterSelec
     private List<RelatedEntityDTO> strList;
     private long order;
     private String nameOrder;
+    private boolean wildtype;
 
     public String getZdbID() {
         return zdbID;
@@ -125,8 +126,12 @@ public class FishDTO extends RelatedEntityDTO implements Comparable, FilterSelec
 
     }
 
+    public void setWildtype(boolean wildtype) {
+        this.wildtype = wildtype;
+    }
+
     public boolean isWildtype() {
-        return genotypeDTO.isWildtype() && (strList == null || strList.size() == 0);
+        return wildtype;
     }
 
     @Override

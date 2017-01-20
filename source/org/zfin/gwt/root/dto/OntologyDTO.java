@@ -159,7 +159,7 @@ public enum OntologyDTO implements IsSerializable {
     CHEBI(15, "CHEBI", "chebi_ontology", false) {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
-            return null;
+            return QUALITY_QUALITIES;
         }
     },
     ZECO_TAXONONY(19, "Zeco Taxonomy", "zeco_taxonomy", false) {

@@ -57,9 +57,16 @@
 
                 <td style="word-wrap: break-word">${result.attributes[addressAttribute]}</td>
                 <td>
-                <c:if test="${not empty result.image}">
-                    <zfin-search:imageModal result="${result}"/>
-                </c:if>
+                    <c:if test="${not empty result.snapshot}">
+                        <div class="pull-right result-thumbnail-container">
+                            <div class="search-result-thumbnail">
+                                <a href="${result.url}">
+                                    <img style="max-width: 150px; max-height: 70px;"
+                                         src="/action/profile/image/view/${result.snapshot}.jpg">
+                                </a>
+                            </div>
+                        </div>
+                    </c:if>
                 </td>
                 <td>${result.attributes[lineDesigAttribute]}</td>
                 <td>${result.id}</td>

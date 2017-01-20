@@ -1,13 +1,16 @@
 package org.zfin.mutant.repository;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
 import org.zfin.database.InformixUtil;
 import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.*;
@@ -920,5 +923,18 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("figureID", figureID);
         return (List<PhenotypeWarehouse>) query.list();
+    }
+
+    /**
+     * Retrieve the status of the pheno mart
+     *
+     * @return status
+     */
+    @Override
+    public ZdbFlag getPhenoMartStatus() {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(ZdbFlag.class);
+        criteria.add(Restrictions.eq("type", ZdbFlag.Type.REGEN_PHENOTYPEMART));
+        return (ZdbFlag) criteria.uniqueResult();
     }
 }

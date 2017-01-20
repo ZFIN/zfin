@@ -10,12 +10,10 @@ import org.zfin.gwt.root.dto.ConditionDTO;
 import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.event.SelectAutoCompleteEvent;
-import org.zfin.gwt.root.ui.FeatureEditCallBack;
-import org.zfin.gwt.root.ui.HandlesError;
-import org.zfin.gwt.root.ui.TermEntry;
-import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.DeleteImage;
+import org.zfin.gwt.root.util.LookupRPCService;
 
 import java.util.*;
 
@@ -284,6 +282,14 @@ public class ConditionAddPresenter implements HandlesError {
         dto.setTaxonTerm(view.taxonTermEntry.getTermTextBox().getSelectedTerm());
         dto.setChebiTerm(view.chebiTermEntry.getTermTextBox().getSelectedTerm());
         return dto;
+    }
+
+    public void updateTermInfoBox(String termName, String ontologyName) {
+        if (termName != null && !termName.startsWith(ItemSuggestCallback.END_ELLIPSIS)) {
+            OntologyDTO ontology = OntologyDTO.getOntologyByName(ontologyName);
+            LookupRPCService.App.getInstance().getTermByName(ontology, termName, new TermInfoCallBack(view.termInfoBox, termName));
+        }
+
     }
 
     private class DeleteConditionClickHandler implements ClickHandler {

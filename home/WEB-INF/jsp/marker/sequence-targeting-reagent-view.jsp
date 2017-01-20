@@ -124,29 +124,39 @@
     <b>PHENOTYPE</b>&nbsp;
     <small><a class='popup-link info-popup-link' href='/action/marker/note/phenotype'></a></small>
     <br/>
-    <b>Phenotype resulting from ${formBean.marker.name}</b>
-    <div id="phenotype">
     <c:choose>
-        <c:when test="${formBean.phenotypeDisplays != null && fn:length(formBean.phenotypeDisplays) > 0 }">
-            <zfin2:all-phenotype phenotypeDisplays="${formBean.phenotypeDisplays}" suppressMoDetails="true" fishAndCondition="false" secondColumn="fish"/>
+        <c:when test="${formBean.phenoMartBeingRegened}">
+            <div>
+                <img src="/images/warning-noborder.gif" alt="transcript withdrawn" width="20" height="20" align="top" class="blast-key" />
+                Data in this section is temporarily unavailable, please reload in a few minutes.
+            </div>
         </c:when>
         <c:otherwise>
-            <span class="no-data-tag">No data available</span>
+           <b>Phenotype resulting from ${formBean.marker.name}</b>
+           <div id="phenotype">
+           <c:choose>
+              <c:when test="${formBean.phenotypeDisplays != null && fn:length(formBean.phenotypeDisplays) > 0 }">
+                  <zfin2:all-phenotype phenotypeDisplays="${formBean.phenotypeDisplays}" suppressMoDetails="true" fishAndCondition="false" secondColumn="fish"/>
+              </c:when>
+              <c:otherwise>
+                 <span class="no-data-tag">No data available</span>
+              </c:otherwise>
+           </c:choose>
+           </div>
+           <br/>
+           <b>Phenotype of all Fish created by or utilizing ${formBean.marker.name}</b>
+           <div id="allPhenotype">
+           <c:choose>
+               <c:when test="${formBean.allPhenotypeDisplays != null && fn:length(formBean.allPhenotypeDisplays) > 0 }">
+                   <zfin2:all-phenotype phenotypeDisplays="${formBean.allPhenotypeDisplays}" suppressMoDetails="true" fishAndCondition="true" secondColumn="fish"/>
+               </c:when>
+               <c:otherwise>
+                   <span class="no-data-tag">No data available</span>
+               </c:otherwise>
+           </c:choose>
+           </div>
         </c:otherwise>
     </c:choose>
-    </div>
-    <br/>
-    <b>Phenotype of all Fish created by or utilizing ${formBean.marker.name}</b>
-    <div id="allPhenotype">
-        <c:choose>
-            <c:when test="${formBean.allPhenotypeDisplays != null && fn:length(formBean.allPhenotypeDisplays) > 0 }">
-                <zfin2:all-phenotype phenotypeDisplays="${formBean.allPhenotypeDisplays}" suppressMoDetails="true" fishAndCondition="true" secondColumn="fish"/>
-            </c:when>
-            <c:otherwise>
-                <span class="no-data-tag">No data available</span>
-            </c:otherwise>
-        </c:choose>
-    </div>
 </div>
 
 <%--OTHER GENE/Marker Pages--%>

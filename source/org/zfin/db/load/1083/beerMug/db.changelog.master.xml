@@ -9,5 +9,6 @@
 <include file="source/org/zfin/db/load/1083/beerMug/correspondenceTracking.sql"/>
 <include file="source/org/zfin/db/load/1083/beerMug/constraints.sql"/>
 <include file="source/org/zfin/db/load/1083/beerMug/migrateData.sql"/>
+<include file="source/org/zfin/db/load/1083/beerMug/13190.sql"/>
 
 </databaseChangeLog>

@@ -426,7 +426,7 @@ public class DTOConversionService {
         if (CollectionUtils.isNotEmpty(genotype.getGenotypeFeatures())) {
             List<GenotypeFeatureDTO> genotypeFeatureDTOList = new ArrayList<>(4);
             for (GenotypeFeature genotypeFeature : genotype.getGenotypeFeatures()) {
-                genotypeFeatureDTOList.add(convertToGenotypeFeawtureDTO(genotypeFeature));
+                genotypeFeatureDTOList.add(convertToGenotypeFeatureDTO(genotypeFeature, true));
             }
             genotypeDTO.setGenotypeFeatureList(genotypeFeatureDTOList);
         }
@@ -436,6 +436,15 @@ public class DTOConversionService {
     private static GenotypeFeatureDTO convertToGenotypeFeawtureDTO(GenotypeFeature genotypeFeature) {
         GenotypeFeatureDTO dto = new GenotypeFeatureDTO();
         dto.setFeatureDTO(convertToFeatureDTO(genotypeFeature.getFeature()));
+        dto.setZygosity(convertToZygosityDTO(genotypeFeature.getZygosity()));
+        dto.setMaternalZygosity(convertToZygosityDTO(genotypeFeature.getMomZygosity()));
+        dto.setPaternalZygosity(convertToZygosityDTO(genotypeFeature.getDadZygosity()));
+        return dto;
+    }
+
+    private static GenotypeFeatureDTO convertToGenotypeFeatureDTO(GenotypeFeature genotypeFeature, boolean shallow) {
+        GenotypeFeatureDTO dto = new GenotypeFeatureDTO();
+        dto.setFeatureDTO(convertToFeatureDTO(genotypeFeature.getFeature(), !shallow));
         dto.setZygosity(convertToZygosityDTO(genotypeFeature.getZygosity()));
         dto.setMaternalZygosity(convertToZygosityDTO(genotypeFeature.getMomZygosity()));
         dto.setPaternalZygosity(convertToZygosityDTO(genotypeFeature.getDadZygosity()));
@@ -1701,14 +1710,16 @@ public class DTOConversionService {
         dto.setZdbID(fish.getZdbID());
         dto.setName(fish.getDisplayName());
         dto.setHandle(fish.getHandle());
-        if (!shallow)
+        dto.setWildtype(fish.isWildtype());
+        if (!shallow) {
             dto.setGenotypeDTO(DTOConversionService.convertToGenotypeDTO(fish.getGenotype(), false));
-        if (CollectionUtils.isNotEmpty(fish.getStrList())) {
-            List<RelatedEntityDTO> strs = new ArrayList<>(fish.getStrList().size());
-            for (SequenceTargetingReagent str : fish.getStrList()) {
-                strs.add(DTOConversionService.convertStrToRelatedEntityDTO(str));
+            if (CollectionUtils.isNotEmpty(fish.getStrList())) {
+                List<RelatedEntityDTO> strs = new ArrayList<>(fish.getStrList().size());
+                for (SequenceTargetingReagent str : fish.getStrList()) {
+                    strs.add(DTOConversionService.convertStrToRelatedEntityDTO(str));
+                }
+                dto.setStrList(strs);
             }
-            dto.setStrList(strs);
         }
         dto.setOrder(fish.getOrder());
         dto.setNameOrder(fish.getNameOrder());
@@ -1870,7 +1881,7 @@ public class DTOConversionService {
         }
         experimentDTO.setFishName(experiment.getFishExperiment().getFish().getHandle());
         experimentDTO.setFishID(experiment.getFishExperiment().getFish().getZdbID());
-        experimentDTO.setFishDTO(convertToFishDtoFromFish(experiment.getFishExperiment().getFish()));
+        experimentDTO.setFishDTO(convertToFishDtoFromFish(experiment.getFishExperiment().getFish(), true));
         experimentDTO.setEnvironment(convertToExperimentDTO(experiment.getFishExperiment().getExperiment()));
         experimentDTO.setAssay(experiment.getAssay().getName());
         experimentDTO.setAssayAbbreviation(experiment.getAssay().getAbbreviation());

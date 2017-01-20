@@ -102,26 +102,31 @@ public class SequenceTargetingReagentViewController {
         sequenceTargetingReagentBean.setExpressionDisplays(strExpressionDisplays);
 
         // PHENOTYPE
-        List<GenotypeFigure> genotypeFigures = MarkerService.getPhenotypeDataForSTR(sequenceTargetingReagent);
+        boolean phenoMartRegening = RepositoryFactory.getPhenotypeRepository().getPhenoMartStatus().isSystemUpdateDisabled();
+        sequenceTargetingReagentBean.setPhenoMartBeingRegened(phenoMartRegening);
 
-        if (genotypeFigures == null || genotypeFigures.size() == 0)  {
-            sequenceTargetingReagentBean.setPhenotypeDisplays(null);
-        } else {
-            List<PhenotypeStatementWarehouse> phenotypeStatements = new ArrayList<>();
-            for (GenotypeFigure genotypeFigure : genotypeFigures) {
-                PhenotypeStatementWarehouse phenotypeStatement = genotypeFigure.getPhenotypeStatement();
-                if (phenotypeStatement != null)
-                    phenotypeStatements.add(phenotypeStatement);
+        if (!phenoMartRegening) {
+            List<GenotypeFigure> genotypeFigures = MarkerService.getPhenotypeDataForSTR(sequenceTargetingReagent);
+
+            if (genotypeFigures == null || genotypeFigures.size() == 0)  {
+                sequenceTargetingReagentBean.setPhenotypeDisplays(null);
+            } else {
+                List<PhenotypeStatementWarehouse> phenotypeStatements = new ArrayList<>();
+                for (GenotypeFigure genotypeFigure : genotypeFigures) {
+                    PhenotypeStatementWarehouse phenotypeStatement = genotypeFigure.getPhenotypeStatement();
+                    if (phenotypeStatement != null)
+                        phenotypeStatements.add(phenotypeStatement);
+                }
+                sequenceTargetingReagentBean.setPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(phenotypeStatements,"str", "phenotypeStatement"));
             }
-            sequenceTargetingReagentBean.setPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(phenotypeStatements,"str", "phenotypeStatement"));
-        }
 
-        List<PhenotypeStatementWarehouse> allPhenotypeStatements = RepositoryFactory.getPhenotypeRepository().getAllPhenotypeStatementsForSTR(sequenceTargetingReagent);
+            List<PhenotypeStatementWarehouse> allPhenotypeStatements = RepositoryFactory.getPhenotypeRepository().getAllPhenotypeStatementsForSTR(sequenceTargetingReagent);
 
-        if (allPhenotypeStatements == null || allPhenotypeStatements.size() == 0)  {
-            sequenceTargetingReagentBean.setAllPhenotypeDisplays(null);
-        } else {
-            sequenceTargetingReagentBean.setAllPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(allPhenotypeStatements,"condition", "fish"));
+            if (allPhenotypeStatements == null || allPhenotypeStatements.size() == 0)  {
+                sequenceTargetingReagentBean.setAllPhenotypeDisplays(null);
+            } else {
+                sequenceTargetingReagentBean.setAllPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(allPhenotypeStatements,"condition", "fish"));
+            }
         }
 
         // Genomic Features created by STR (CRISPR and TALEN only at this time)

@@ -55,7 +55,8 @@
                                         <zfin:TermEntry ui:field="zecoTermEntry"
                                                         listOFOntologies="zebrafish_experimental_conditions_ontology"
                                                         entityPart="ENTITY_SUPERTERM"
-                                                        termInfoTable="{termInfoBox}"/>
+                                                        termInfoTable="{termInfoBox}"
+                                                        tabName="experiment"/>
                                     </g:FlowPanel>
                                 </g:customCell>
                             </g:row>
@@ -66,11 +67,13 @@
                                         <zfin:TermEntry ui:field="chebiTermEntry"
                                                         listOFOntologies="chebi_ontology"
                                                         entityPart="ENTITY_SUBTERM"
-                                                        termInfoTable="{termInfoBox}"/>
+                                                        termInfoTable="{termInfoBox}"
+                                                        tabName="experiment"/>
                                         <zfin:TermEntry ui:field="goCcTermEntry"
                                                         listOFOntologies="cellular_component"
                                                         entityPart="ENTITY_SUBTERM"
-                                                        termInfoTable="{termInfoBox}"/>
+                                                        termInfoTable="{termInfoBox}"
+                                                        tabName="experiment"/>
                                     </g:FlowPanel>
                                 </g:customCell>
                             </g:row>
@@ -81,11 +84,13 @@
                                         <zfin:TermEntry ui:field="aoTermEntry"
                                                         listOFOntologies="zebrafish_anatomy"
                                                         entityPart="ENTITY_SUBTERM"
-                                                        termInfoTable="{termInfoBox}"/>
+                                                        termInfoTable="{termInfoBox}"
+                                                        tabName="experiment"/>
                                         <zfin:TermEntry ui:field="taxonTermEntry"
                                                         listOFOntologies="zeco_taxonomy"
                                                         entityPart="ENTITY_SUBTERM"
-                                                        termInfoTable="{termInfoBox}"/>
+                                                        termInfoTable="{termInfoBox}"
+                                                        tabName="experiment"/>
                                     </g:FlowPanel>
                                 </g:customCell>
                             </g:row>

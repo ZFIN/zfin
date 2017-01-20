@@ -952,6 +952,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                     " select xpatex_source_zdb_id  " +
                     " from expression_experiment " +
                     " where :markerZdbID = xpatex_gene_zdb_id ";
+        // nomenclature
+        if (ActiveData.isMarker(dataType))
+            commonPubSQL += " union " +
+                    " select ra.recattrib_source_zdb_id  " +
+                    " from record_attribution ra, marker_history mh " +
+                    " where mh.mhist_zdb_id  = ra.recattrib_data_zdb_id " +
+                    " and  :markerZdbID = mh.mhist_mrkr_zdb_id ";
         commonPubSQL += " ) where recattrib_source_zdb_id like 'ZDB-PUB%'  ";
         return commonPubSQL;
     }
@@ -1808,7 +1815,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
-
     public Long getMarkerCount(Publication publication) {
         String sql = "select count(*) FROM (\n" +
                 "  SELECT fmrel_mrkr_zdb_id\n" +
@@ -2023,8 +2029,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     @Override
     public List<Fish> getWildtypeFish() {
         String hql = "from Fish as fish where " +
-                "   fish.genotype.wildtype = 't' AND" +
-                "   fish.strList is empty " +
+                "   fish.wildtype = 't' " +
                 "   order by fish.name";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         return query.list();

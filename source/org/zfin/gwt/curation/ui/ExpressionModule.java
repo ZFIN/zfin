@@ -99,6 +99,11 @@ public class ExpressionModule implements ZfinCurationModule, HandlesError {
     }
 
     @Override
+    public void updateTermInfo(String termName, String ontologyName) {
+        fxCurationPresenter.updateTermInfo(termName, ontologyName);
+    }
+
+    @Override
     public void handleCurationEvent(CurationEvent event) {
         if (event.getEventType().is(EventType.FILTER)) {
             ChangeCurationFilterEvent changeEvent = (ChangeCurationFilterEvent) event;

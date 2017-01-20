@@ -12,6 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
+import org.zfin.feature.Feature;
+import org.zfin.feature.repository.FeatureService;
+import org.zfin.feature.repository.HibernateFeatureRepository;
+import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.GenomeLocation;
@@ -112,15 +116,14 @@ public class RelatedDataService {
                 }
             }
             if (ActiveData.isValidActiveData(id, ActiveData.Type.ALT)) {
-                List<FeatureGenomeLocation> genomeLocations = getLinkageRepository().getGenomeLocation(getFeatureRepository().getFeatureByID(id));
-                for (FeatureGenomeLocation genomeLocation : genomeLocations) {
-                    if (genomeLocation.getSource() == GenomeLocation.Source.DIRECT  || genomeLocation.getSource() == GenomeLocation.Source.ZFIN_Zv9) {
 
-
-                        gBrowseLink = makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
-                        links.add(gBrowseLink);
-                    }
+                Feature feature = RepositoryFactory.getFeatureRepository().getFeatureByID(id);
+                GBrowseImage gBrowseImage = FeatureService.getGbrowseImage(feature);
+                if (gBrowseImage != null) {
+                    gBrowseLink = makeLink(GENOME_BROWSER, gBrowseImage.getLinkUrl());
+                    links.add(gBrowseLink);
                 }
+                
             }
         }
 

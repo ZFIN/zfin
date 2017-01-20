@@ -38,6 +38,8 @@ public class SequenceTargetingReagentBean extends MarkerBean{
     private List<ExpressionDisplay> expressionDisplays;
     private List<PhenotypeDisplay> allPhenotypeDisplays;
 
+    private boolean phenoMartBeingRegened;
+
     public Set<Marker> getTargetGenes() {
         return targetGenes;
     }
@@ -152,6 +154,14 @@ public class SequenceTargetingReagentBean extends MarkerBean{
 
     public void setAllPhenotypeDisplays(List<PhenotypeDisplay> allPhenotypeDisplays) {
         this.allPhenotypeDisplays = allPhenotypeDisplays;
+    }
+
+    public boolean isPhenoMartBeingRegened() {
+        return phenoMartBeingRegened;
+    }
+
+    public void setPhenoMartBeingRegened(boolean phenoMartBeingRegened) {
+        this.phenoMartBeingRegened = phenoMartBeingRegened;
     }
 }
 

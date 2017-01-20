@@ -95,6 +95,10 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
         fxCurationPresenter.populateTermInfo(subTermEntry);
     }
 
+    public void updateTermInfo(String termName, String ontologyName) {
+
+    }
+
     private void clearQualityChecks() {
         for (CheckBox checkBox : qualityCheckBoxList)
             checkBox.setValue(false);
@@ -102,7 +106,7 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
     }
 
     private CheckBox getQualityCheckBox(String name) {
-        CheckBox box = new CheckBox(" "+name);
+        CheckBox box = new CheckBox(name);
         box.setStyleName("small");
         if (name.contains("ok"))
             box.addStyleName("phenotype-normal");

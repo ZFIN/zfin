@@ -12,17 +12,15 @@ import spock.lang.Specification
 abstract class ZfinIntegrationSpec extends Specification {
 
     public def setupSpec() {
-        TestConfiguration.configure();
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        TestConfiguration.configure()
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory()
         if (sessionFactory == null) {
-            new HibernateSessionCreator(false);
+            new HibernateSessionCreator(false)
         }
     }
 
     public def cleanupSpec() {
-        HibernateUtil.closeSession();
+        HibernateUtil.closeSession()
     }
-
-
 
 }
