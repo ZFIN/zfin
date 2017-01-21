@@ -40,12 +40,10 @@
                                                             integerEntity="${expressedGene.markerStat.numberOfFigures}"/>
                             </a>
                         </c:if>
-                    </c:if>
-                    <zfin2:showCameraIcon hasImage="${expressedGene.markerStat.numberOfFigures > 1}"/>
+                    </c:if>&nbsp;<zfin2:showCameraIcon hasImage="${expressedGene.markerStat.numberOfFigures > 1}"/>
                     <c:if test="${expressedGene.markerStat.numberOfFigures == 1 }">
                         <c:if test="${expressedGene.markerStat.figure.label ne 'text only' }"><img src="/images/camera_icon.gif" border="0" alt="with image">&nbsp;</c:if>
-                        from
-                    </c:if>
+                    </c:if>from
                     <c:if test="${expressedGene.markerStat.numberOfPublications ==1}">
                         <zfin:link entity="${expressedGene.markerStat.singlePublication}"/>
                     </c:if>
