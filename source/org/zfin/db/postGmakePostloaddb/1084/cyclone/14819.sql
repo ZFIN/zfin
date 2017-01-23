@@ -2,10 +2,8 @@
 --changeset pm:14819
 
 UPDATE db_link
-SET dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-131021-1'
-  where dblink_zdb_id in (SELECT tmp_dblink_id
-  FROM tmp_old_ensdargs)
-
+SET dblink_fdbcont_zdb_id =  (SELECT tmp_gene_id
+  FROM tmp_old_ensdargs where dblink_zdb_id=tmp_dblink_id)
 WHERE EXISTS (
   SELECT 'x'
   FROM tmp_old_Ensdargs
