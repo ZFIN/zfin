@@ -2007,8 +2007,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     @Override
     public List<Fish> getWildtypeFish() {
         String hql = "from Fish as fish where " +
-                "   fish.genotype.wildtype = 't' AND" +
-                "   fish.strList is empty " +
+                "   fish.wildtype = 't' " +
                 "   order by fish.name";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         return query.list();

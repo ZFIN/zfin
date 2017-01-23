@@ -119,9 +119,11 @@ public class RelatedDataService {
 
                 Feature feature = RepositoryFactory.getFeatureRepository().getFeatureByID(id);
                 GBrowseImage gBrowseImage = FeatureService.getGbrowseImage(feature);
-                gBrowseLink = makeLink(GENOME_BROWSER, gBrowseImage.getLinkUrl());
-                links.add(gBrowseLink);
-
+                if (gBrowseImage != null) {
+                    gBrowseLink = makeLink(GENOME_BROWSER, gBrowseImage.getLinkUrl());
+                    links.add(gBrowseLink);
+                }
+                
             }
         }
 
