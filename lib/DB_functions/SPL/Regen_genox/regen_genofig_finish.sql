@@ -83,7 +83,10 @@ if (vUpdate != 't') then
 
         -- Make changes public for genotype_figure_fast_search_new
       --let errorHint = "drop genotype_figure_fast_search table ";
-      drop table genotype_figure_fast_search;
+      
+       if (exists (select * from systables where tabname = "genotype_figure_fast_search")) then
+      drop table genotype_figure_fast_search_new;
+      end if
 
       --let errorHint = "rename table gffs";
       rename table genotype_figure_fast_search_new to genotype_figure_fast_search;
