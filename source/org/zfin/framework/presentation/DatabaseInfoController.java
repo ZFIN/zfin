@@ -1,11 +1,13 @@
 package org.zfin.framework.presentation;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.hibernate.Session;
 import org.hibernate.jdbc.ReturningWork;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.zfin.database.presentation.Table;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.mutant.PhenotypeExperiment;
@@ -13,6 +15,8 @@ import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.InformixLuceneIndexInspection;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.management.ManagementFactory;
@@ -209,6 +213,23 @@ public class DatabaseInfoController {
         });
     }
 
+
+    @ResponseBody
+    @RequestMapping("/db-connections")
+    public DBConnectionPoolBean viewPhenotypeHistoryStatementsByID() throws NamingException, SQLException {
+
+        InitialContext ictx = new InitialContext();
+        ComboPooledDataSource pds = (ComboPooledDataSource) ictx.lookup("java:comp/env/jdbc/zfin");
+
+        DBConnectionPoolBean bean = new DBConnectionPoolBean(pds.getNumConnectionsDefaultUser(),
+                                                             pds.getNumBusyConnectionsDefaultUser(),
+                                                             pds.getNumIdleConnectionsDefaultUser());
+
+        return bean;
+    }
+
+
+
     class ThreadInfoSorting implements Comparator<ThreadInfo> {
 
 
@@ -218,4 +239,28 @@ public class DatabaseInfoController {
         }
     }
 
+    private class DBConnectionPoolBean {
+        private int totalNumber;
+        private int busyNumber;
+        private int idleNumber;
+
+
+        public DBConnectionPoolBean(int totalNumber, int busyNumber, int idleNumber) {
+            this.totalNumber = totalNumber;
+            this.busyNumber = busyNumber;
+            this.idleNumber = idleNumber;
+        }
+
+        public int getTotalNumber() {
+            return totalNumber;
+        }
+
+        public int getBusyNumber() {
+            return busyNumber;
+        }
+
+        public int getIdleNumber() {
+            return idleNumber;
+        }
+    }
 }

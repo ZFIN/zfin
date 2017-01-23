@@ -1121,6 +1121,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         infrastructureRepository.insertRecordAttribution(markerZdbID, pubZdbID);
         infrastructureRepository.insertUpdatesTable(markerZdbID, "record attribution", "", pubZdbID, "Added direct attribution");
         HibernateUtil.flushAndCommitCurrentSession();
+        HibernateUtil.closeSession();
     }
 
     @Override
@@ -1137,6 +1138,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         infrastructureRepository.insertRecordAttribution(featureZdbID, pubZdbID);
         infrastructureRepository.insertUpdatesTable(featureZdbID, "record attribution", pubZdbID, "Added direct attribution");
         HibernateUtil.flushAndCommitCurrentSession();
+        HibernateUtil.closeSession();
     }
 
 

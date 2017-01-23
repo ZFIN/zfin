@@ -6,102 +6,155 @@
 
 
 -- update zeco terms
-unload to 'zeco_updates'
-    select distinct expcond_zdb_id, super.term_zdb_id, super.term_name, replacement.term_zdb_id, replacement.term_name
-      from experiment_condition, term as super, term as replacement, sec_oks
-      where exists (Select 'x' from term
-                       where term_is_Secondary = 't'
-                   and expcond_zeco_term_zdb_id = term_zdb_id)
-      and super.term_zdb_id = expcond_zeco_term_zdb_id
-      and replacement.term_zdb_id = prim_zdb_id
-      and sec_zdb_id = expcond_zeco_term_zdb_id;
 
-update experiment_condition
-  set expcond_zeco_term_zdb_id = (Select prim_zdb_id
-      			        from sec_oks
-				where sec_zdb_id = expcond_zeco_term_zdb_id)
-  where exists (Select term_zdb_id from term , sec_oks
-  	       	       where term_is_Secondary = 't'
-		       and expcond_zeco_term_zdb_id = term_zdb_id
-		       and term_zdb_id = sec_zdb_id );
+------------------------------------------------------
+-- Reports for obsolete term usage
+------------------------------------------------------
+-- report obsoleted zeco term usage
+unload to 'obsoleted_terms'
+SELECT term_zdb_id,
+       term_ont_id,
+       term_name,
+       term_comment
+FROM   term
+WHERE  EXISTS (SELECT 'x'
+               FROM   experiment_condition
+               WHERE  expcond_zeco_term_zdb_id = term_zdb_id)
+       AND term_is_obsolete = 't';
 
--- update chebi terms
-unload to 'zeco_updates'
-    select distinct expcond_zdb_id, super.term_zdb_id, super.term_name, replacement.term_zdb_id, replacement.term_name
-      from experiment_condition, term as super, term as replacement, sec_oks
-      where exists (Select 'x' from term
-                       where term_is_Secondary = 't'
-                         and expcond_chebi_term_zdb_id = term_zdb_id)
-      and super.term_zdb_id = expcond_chebi_term_zdb_id
-      and replacement.term_zdb_id = prim_zdb_id
-      and sec_zdb_id = expcond_chebi_term_zdb_id;
+-- report obsoleted zeco-taxa term usage
+unload to 'obsoleted_terms'
+SELECT term_zdb_id,
+       term_ont_id,
+       term_name,
+       term_comment
+FROM   term
+WHERE  EXISTS (SELECT 'x'
+               FROM   experiment_condition
+               WHERE  expcond_taxon_term_zdb_id = term_zdb_id)
+       AND term_is_obsolete = 't';
 
-update experiment_condition
-  set expcond_zeco_term_zdb_id = (Select prim_zdb_id
-      			        from sec_oks
-				where sec_zdb_id = expcond_chebi_term_zdb_id)
-  where exists (Select term_zdb_id from term , sec_oks
-  	       	       where term_is_Secondary = 't'
-		       and expcond_chebi_term_zdb_id = term_zdb_id
-		       and term_zdb_id = sec_zdb_id );
+-- report obsoleted chebi term usage
+unload to 'obsoleted_terms'
+SELECT term_zdb_id,
+       term_ont_id,
+       term_name,
+       term_comment
+FROM   term
+WHERE  EXISTS (SELECT 'x'
+               FROM   experiment_condition
+               WHERE  expcond_chebi_term_zdb_id = term_zdb_id)
+       AND term_is_obsolete = 't';
 
--- update zeco-taxonomy terms
-unload to 'zeco_updates'
-    select distinct expcond_zdb_id, super.term_zdb_id, super.term_name, replacement.term_zdb_id, replacement.term_name
-      from experiment_condition, term as super, term as replacement, sec_oks
-      where exists (Select 'x' from term
-                       where term_is_Secondary = 't'
-                   and expcond_taxon_term_zdb_id = term_zdb_id)
-      and super.term_zdb_id = expcond_taxon_term_zdb_id
-      and replacement.term_zdb_id = prim_zdb_id
-      and sec_zdb_id = expcond_taxon_term_zdb_id;
+-- report obsoleted ao term usage
+unload to 'obsoleted_terms'
+SELECT term_zdb_id,
+       term_ont_id,
+       term_name,
+       term_comment
+FROM   term
+WHERE  EXISTS (SELECT 'x'
+               FROM   experiment_condition
+               WHERE  expcond_ao_term_zdb_id = term_zdb_id)
+       AND term_is_obsolete = 't';
 
-update experiment_condition
-  set expcond_zeco_term_zdb_id = (Select prim_zdb_id
-      			        from sec_oks
-				where sec_zdb_id = expcond_taxon_term_zdb_id)
-  where exists (Select term_zdb_id from term , sec_oks
-  	       	       where term_is_Secondary = 't'
-		       and expcond_taxon_term_zdb_id = term_zdb_id
-		       and term_zdb_id = sec_zdb_id );
+-- report obsoleted go-cc term usage
+unload to 'obsoleted_terms'
+SELECT term_zdb_id,
+       term_ont_id,
+       term_name,
+       term_comment
+FROM   term
+WHERE  EXISTS (SELECT 'x'
+               FROM   experiment_condition
+               WHERE  expcond_go_cc_term_zdb_id = term_zdb_id)
+       AND term_is_obsolete = 't';
 
--- update AO terms
-unload to 'zeco_updates'
-    select distinct expcond_zdb_id, super.term_zdb_id, super.term_name, replacement.term_zdb_id, replacement.term_name
-      from experiment_condition, term as super, term as replacement, sec_oks
-      where exists (Select 'x' from term
-                       where term_is_Secondary = 't'
-                   and expcond_ao_term_zdb_id = term_zdb_id)
-      and super.term_zdb_id = expcond_ao_term_zdb_id
-      and replacement.term_zdb_id = prim_zdb_id
-      and sec_zdb_id = expcond_ao_term_zdb_id;
+-- report obsoleted disease term usage
+unload to 'obsoleted_terms'
+SELECT term_zdb_id,
+       term_ont_id,
+       term_name,
+       term_comment
+FROM   term
+WHERE  EXISTS (SELECT 'x'
+               FROM   disease_annotation
+               WHERE  dat_term_zdb_id = term_zdb_id)
+       AND term_is_obsolete = 't';
 
-update experiment_condition
-  set expcond_zeco_term_zdb_id = (Select prim_zdb_id
-      			        from sec_oks
-				where sec_zdb_id = expcond_ao_term_zdb_id)
-  where exists (Select term_zdb_id from term , sec_oks
-  	       	       where term_is_Secondary = 't'
-		       and expcond_ao_term_zdb_id = term_zdb_id
-		       and term_zdb_id = sec_zdb_id );
+------------------------------------------------------
+-- Reports for secondary term usage
+------------------------------------------------------
 
--- update AO terms
-unload to 'zeco_updates'
-    select distinct expcond_zdb_id, super.term_zdb_id, super.term_name, replacement.term_zdb_id, replacement.term_name
-      from experiment_condition, term as super, term as replacement, sec_oks
-      where exists (Select 'x' from term
-                       where term_is_Secondary = 't'
-                   and expcond_go_cc_term_zdb_id = term_zdb_id)
-      and super.term_zdb_id = expcond_go_cc_term_zdb_id
-      and replacement.term_zdb_id = prim_zdb_id
-      and sec_zdb_id = expcond_go_cc_term_zdb_id;
+-- report secondary zeco term usage
+unload to 'merged_terms'
+SELECT term_zdb_id,
+       term_ont_id,
+       term_name,
+       term_comment
+FROM   term
+WHERE  EXISTS (SELECT 'x'
+               FROM   experiment_condition
+               WHERE  expcond_zeco_term_zdb_id = term_zdb_id)
+       AND term_is_secondary = 't';
 
-update experiment_condition
-  set expcond_zeco_term_zdb_id = (Select prim_zdb_id
-      			        from sec_oks
-				where sec_zdb_id = expcond_go_cc_term_zdb_id)
-  where exists (Select term_zdb_id from term , sec_oks
-  	       	       where term_is_Secondary = 't'
-		       and expcond_go_cc_term_zdb_id = term_zdb_id
-		       and term_zdb_id = sec_zdb_id );
+-- report secondary zeco-taxa term usage
+unload to 'merged_terms'
+SELECT term_zdb_id,
+       term_ont_id,
+       term_name,
+       term_comment
+FROM   term
+WHERE  EXISTS (SELECT 'x'
+               FROM   experiment_condition
+               WHERE  expcond_taxon_term_zdb_id = term_zdb_id)
+       AND term_is_secondary = 't';
+
+-- report secondary chebi term usage
+unload to 'merged_terms'
+SELECT term_zdb_id,
+       term_ont_id,
+       term_name,
+       term_comment
+FROM   term
+WHERE  EXISTS (SELECT 'x'
+               FROM   experiment_condition
+               WHERE  expcond_chebi_term_zdb_id = term_zdb_id)
+       AND term_is_secondary = 't';
+
+-- report secondary ao term usage
+unload to 'merged_terms'
+SELECT term_zdb_id,
+       term_ont_id,
+       term_name,
+       term_comment
+FROM   term
+WHERE  EXISTS (SELECT 'x'
+               FROM   experiment_condition
+               WHERE  expcond_ao_term_zdb_id = term_zdb_id)
+       AND term_is_secondary = 't';
+
+-- report secondary go-cc term usage
+unload to 'merged_terms'
+SELECT term_zdb_id,
+       term_ont_id,
+       term_name,
+       term_comment
+FROM   term
+WHERE  EXISTS (SELECT 'x'
+               FROM   experiment_condition
+               WHERE  expcond_go_cc_term_zdb_id = term_zdb_id)
+       AND term_is_secondary = 't';
+
+-- report secondary disease term usage
+unload to 'merged_terms'
+SELECT term_zdb_id,
+       term_ont_id,
+       term_name,
+       term_comment
+FROM   term
+WHERE  EXISTS (SELECT 'x'
+               FROM   disease_annotation
+               WHERE  dat_term_zdb_id = term_zdb_id)
+       AND term_is_secondary = 't';
 
