@@ -1,14 +1,29 @@
 package org.zfin.framework.filter;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.nocrala.tools.texttablefmt.CellStyle;
+import org.nocrala.tools.texttablefmt.Table;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.zfin.database.DatabaseLock;
+import org.zfin.database.DbSystemUtil;
+import org.zfin.database.TableLock;
+import org.zfin.database.repository.SysmasterRepository;
+import org.zfin.framework.GBrowseHibernateUtil;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.SysmasterHibernateUtil;
+import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.util.ZfinSMTPAppender;
+import org.zfin.util.log4j.Log4jService;
+import org.zfin.util.servlet.RequestBean;
+import org.zfin.util.servlet.ServletService;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -64,8 +79,55 @@ public class UpdatesCheckFilter implements Filter {
                 return;
             }
         }
-        filterChain.doFilter(servletRequest, servletResponse);
+        List<TableLock> locks = null;
+        try {
+            filterChain.doFilter(servletRequest, servletResponse);
+        } catch (Exception e) {
+            HttpServletRequest req = (HttpServletRequest) request;
+            StringBuffer message = new StringBuffer("Unhandled Exception");
+            String gwtRequestString = (String) req.getAttribute(ZfinRemoteServiceServlet.GWT_REQUEST_STRING);
+            if (StringUtils.isNotEmpty(gwtRequestString)) {
+                message.append(getDebugMessage(gwtRequestString));
+            }
+            logger.error(message, e);
+            List<DatabaseLock> dbLocks = SysmasterRepository.getLocks();
+            locks = DbSystemUtil.getLockSummary(dbLocks);
+        } finally {
+            // ensure that the Hibernate session is closed, meaning, the threadLocal object is detached from
+            // the current threadLocal
+            HibernateUtil.closeSession();
+            GBrowseHibernateUtil.closeSession();
+            SysmasterHibernateUtil.closeSession();
+            callSmtpAppender((HttpServletRequest) request, locks);
+        }
     }
+
+    private void callSmtpAppender(HttpServletRequest request, List<TableLock> locks) {
+        ZfinSMTPAppender smtpAppender = Log4jService.getSmtpAppender();
+        if (smtpAppender != null) {
+            RequestBean bean = ServletService.getRequestBean(request);
+            bean.setLocks(locks);
+            smtpAppender.sendEmailOfEvents(bean);
+        }
+    }
+
+    private String getDebugMessage(String contents) {
+        Table output = new Table(2);
+        if (ProfileService.getCurrentSecurityUser() != null) {
+            output.addCell("User Name");
+            output.addCell(ProfileService.getCurrentSecurityUser().getShortName());
+        }
+        output.addCell("GWT Data");
+        output.addCell("");
+        String[] values = contents.split("\\|");
+        int index = 1;
+        for (String val : values) {
+            output.addCell("" + index++ + " ", new CellStyle(CellStyle.HorizontalAlign.right));
+            output.addCell(val);
+        }
+        return output.render();
+    }
+
 
     private boolean isReadOnlyUrl(String url) {
         for (String value : readOnlyUrls) {

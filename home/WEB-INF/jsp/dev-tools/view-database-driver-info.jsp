@@ -57,7 +57,17 @@
             %>
             <table>
                 <tr>
-                    <td>Number of Connections:</td>
+                    <td>Max Number of Connections</td>:</td>
+                    <td><%=pds.getMaxPoolSize()%>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Min Number of Connections</td>:</td>
+                    <td><%=pds.getMinPoolSize()%>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Number of Connections in the Pool:</td>
                     <td><%=pds.getNumConnectionsDefaultUser()%>
                     </td>
                 </tr>
@@ -82,6 +92,8 @@
 </table>
 
 Current DB connections: <a href="#" onclick="clearTable()">Clear Table</a>
+<br/>
+<b>Note:</b> One DB connection is used for this page / info update!
 <table id="connections" class="summary" style="width: 250px">
     <thead>
     <tr>
