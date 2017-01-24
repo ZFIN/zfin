@@ -422,7 +422,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         public void run() {
             labsOfOrigin = null;
             getLabsOfOriginWithPrefix();
-
+            HibernateUtil.closeSession();
         }
     }
 
