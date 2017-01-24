@@ -66,6 +66,13 @@
         </exec>
     </target>
 
+    <target name="tail-connections" description="tail -f on db-connection-pool-monitor.txt file">
+        <exec executable="tail">
+            <arg value="-f"/>
+            <arg value="${CATALINA_BASE}/temp/data-transfer/db-connection-pool-monitor.txt"/>
+        </exec>
+    </target>
+
     <target name="tail-tomcat-access" description="tail -f on access_log txt file">
         <property name="currentFileName" value=""/>
 

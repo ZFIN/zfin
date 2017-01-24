@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.Species;
 import org.zfin.expression.service.ExpressionService;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gbrowse.GBrowseTrack;
@@ -45,6 +46,7 @@ public class CloneViewController {
                 ,ForeignDBDataType.SuperType.SUMMARY_PAGE
                 , Species.Type.ZEBRAFISH
         );
+        HibernateUtil.closeSession();
     }
 
     @RequestMapping(value = "/clone/view/{zdbID}")
