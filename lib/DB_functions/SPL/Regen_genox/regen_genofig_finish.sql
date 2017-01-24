@@ -85,7 +85,7 @@ if (vUpdate != 't') then
       --let errorHint = "drop genotype_figure_fast_search table ";
       
        if (exists (select * from systables where tabname = "genotype_figure_fast_search")) then
-      drop table genotype_figure_fast_search_new;
+      drop table genotype_figure_fast_search;
       end if
 
       --let errorHint = "rename table gffs";
