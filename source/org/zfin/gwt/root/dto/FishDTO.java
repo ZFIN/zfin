@@ -90,7 +90,9 @@ public class FishDTO extends RelatedEntityDTO implements Comparable, FilterSelec
         if (!super.equals(o)) return false;
 
         FishDTO fishDTO = (FishDTO) o;
-        if (!genotypeDTO.equals(fishDTO.genotypeDTO)) return false;
+        if (genotypeDTO != null)
+            if (!genotypeDTO.equals(fishDTO.genotypeDTO))
+                return false;
         if (strList != null ? !strList.equals(fishDTO.strList) : fishDTO.strList != null) return false;
 
         return true;
