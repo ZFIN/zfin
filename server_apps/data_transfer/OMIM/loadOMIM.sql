@@ -110,10 +110,6 @@ select omimp_name as pheno, omimp_ortho_zdb_id as ortho, omimp_pk_id as pk, omim
  group by omimp_name, omimp_ortho_zdb_id, omimp_omim_id, omimp_pk_id, omim.phenotype_omim_id
  into temp toUpdate;
 
---select distinct old_id, new_id
-  --from toUpdate
-  --into temp toUpdateUnique 
-
 --!echo 'update the omimp_omim_id in omim_phenotype table where omimp_omim_id is different from phenotype_omim_id in table omimPhenotypesAndGenes'
 update omim_phenotype set omimp_omim_id = (
  select new_id 
