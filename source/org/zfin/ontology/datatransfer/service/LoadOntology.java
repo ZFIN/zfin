@@ -166,6 +166,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         if (loader.initialize(oboFile, cronJobUtil)) {
             loader.runOntologyUpdateProcess();
         }
+	System.exit(0);
     }
 
     public void runOntologyUpdateProcess() {
