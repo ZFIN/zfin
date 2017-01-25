@@ -224,4 +224,6 @@ public interface ProfileRepository {
 
     List<Person> getCurators();
 
+    boolean personHasSnapshot(Person person);
+
 }
