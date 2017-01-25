@@ -412,7 +412,22 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         TSCRIPT("TSCRIPT"),
         TALEN("TALEN"),
         CRISPR("CRISPR"),
-        CNE("CNE");
+        CNE("CNE"),
+        LNCRNA("LNCRNA"),
+        LINCRNA("LINCRNA"),
+        MIRNA("MIRNA"),
+        PIRNA("PIRNA"),
+        SCRNA("SCRNA"),
+        SNORNA("SNORNA"),
+        TRNA("TRNA"),
+        RRNA("RRNA"),
+        CNCREGION("CNCREGION"),
+        HISTBS("HISTBS"),
+        PROTBS("PROTBS"),
+        CPGISLAND("CPGISLAND"),
+        SRPRNA("SRPRNA"),
+        TSCRIPTREG("TSCRIPTREG")
+        ;
 
         private final String value;
 
@@ -488,7 +503,25 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         TRANSCRIPT("TRANSCRIPT"),
         DEFICIENCY_TLOC_MARK("DEFICIENCY_TLOC_MARK"),
         GENEDOM_EFG_REGION("GENEDOM_EFG_REGION"),
-        GENEDOM_EFG_REGION_K("GENEDOM_EFG_REGION_K");
+        GENEDOM_EFG_REGION_K("GENEDOM_EFG_REGION_K"),
+        SRPRNA("SRPRNA"),
+        LNCRNA("LNCRNA"),
+        LINCRNA("LINCRNA"),
+        MIRNA("MIRNA"),
+        PIRNA("PIRNA"),
+        SCRNA("SCRNA"),
+        SNORNA("SNORNA"),
+        TRNA("TRNA"),
+        RRNA("RRNA"),
+        CNCREGION("CNCREGION"),
+        HISTBS("HISTBS"),
+        PROTBS("PROTBS"),
+        CPGISLAND("CPGISLAND"),
+        TSCRIPTREGREGION("TSCRIPTREGREGION"),
+        ENGINEERED_REGION("ENGINEERED_REGION"),
+        GENEDOM_PRODUCE_PRO("GENEDOM_PRODUCES_PRO"),
+        NONTRANSCRIBED_REGIO("NONTRANSCRIBED_REGIO")
+        ;
 
         private final String value;
 
