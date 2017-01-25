@@ -49,6 +49,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
     public ReferenceDatabase getReferenceDatabase(ForeignDB.AvailableName foreignDBName, ForeignDBDataType.DataType type, ForeignDBDataType.SuperType superType, Species.Type organism) {
 
         String hql = " from ReferenceDatabase referenceDatabase " +
+                " join fetch referenceDatabase.foreignDB " +
                 " where referenceDatabase.foreignDB.dbName = :dbName " +
                 " and referenceDatabase.foreignDBDataType.dataType = :type" +
                 " and referenceDatabase.foreignDBDataType.superType = :superType" +
