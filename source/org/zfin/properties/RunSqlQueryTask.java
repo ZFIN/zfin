@@ -46,7 +46,7 @@ public class RunSqlQueryTask extends AbstractScriptWrapper {
             ZfinProperties.init(propertyPath);
             initDatabase();
         }
-        //runQueryFile(dbQueryFile);
+        runQueryFile(dbQueryFile);
     }
 
     private void runQueryFile(File dbQueryFile) {
