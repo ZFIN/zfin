@@ -5,6 +5,8 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.w3c.dom.Document;
@@ -51,6 +53,7 @@ public class NCBIRequest {
         }
         try {
             HttpClient client = new DefaultHttpClient();
+            client.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.IGNORE_COOKIES);
             HttpPost post = new HttpPost(BASE_URL + eutil.getPath());
             List<NameValuePair> nvps = new ArrayList<>();
             for (Map.Entry<String, String> param : params.entrySet()) {
