@@ -8,9 +8,15 @@ import org.apache.solr.client.solrj.response.Group;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.ExpressionSearchCriteria;
 import org.zfin.expression.presentation.FigureResult;
 import org.zfin.expression.presentation.GeneResult;
+import org.zfin.marker.Marker;
+import org.zfin.mutant.Fish;
+import org.zfin.publication.Publication;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.service.SolrService;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,15 +29,6 @@ public class ExpressionSearchService {
 
 
     private static SolrClient solrClient;
-
-    public static SolrClient getSolrClient() {
-        //this method should be replaced with ZFIN SolrService call
-        if (solrClient == null) {
-            solrClient = new HttpSolrClient("http://localhost:9500/solr/prototype");
-        }
-
-        return solrClient;
-    }
 
     public static SolrDocumentList getGeneResults(ExpressionSearchCriteria criteria) {
 
@@ -49,7 +46,7 @@ public class ExpressionSearchService {
 
         QueryResponse queryResponse = null;
         try {
-            queryResponse = getSolrClient().query(solrQuery);
+            queryResponse = SolrService.getSolrClient().query(solrQuery);
         } catch (SolrServerException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -72,9 +69,11 @@ public class ExpressionSearchService {
         solrQuery.add("group.ngroups", "true");
         solrQuery.add("group.field", "fig_zdb_id");
 
+        solrQuery.setFields("id", "fig_zdb_id", "pub_zdb_id", "fish_zdb_id");
+
         QueryResponse queryResponse = null;
         try {
-            queryResponse = getSolrClient().query(solrQuery);
+            queryResponse = SolrService.getSolrClient().query(solrQuery);
         } catch (SolrServerException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -97,8 +96,14 @@ public class ExpressionSearchService {
 
     public static FigureResult buildFigureResult(SolrDocument document) {
         FigureResult figureResult = new FigureResult();
-        figureResult.setFigure((String)document.get("name"));
-        figureResult.setPublication((String)document.get("publication"));
+
+        Figure figure = RepositoryFactory.getPublicationRepository().getFigure((String) document.get("fig_zdb_id"));
+        Publication publication = RepositoryFactory.getPublicationRepository().getPublication((String) document.get("pub_zdb_id"));
+        Fish fish = RepositoryFactory.getMutantRepository().getFish((String) document.get("fish_zdb_id"));
+
+        figureResult.setFigure(figure);
+        figureResult.setPublication(publication);
+        figureResult.setFish(fish);
 
         return figureResult;
     }
@@ -111,10 +116,14 @@ public class ExpressionSearchService {
 
     public static GeneResult buildGeneResult(SolrDocument document, ExpressionSearchCriteria criteria) {
         GeneResult geneResult =  new GeneResult();
+
         geneResult.setId(document.get("id").toString());
         geneResult.setSymbol(document.get("name").toString());
         geneResult.setPublicationCount(getPublicationCount(geneResult.getSymbol(), criteria.getAnatomy()));
         geneResult.setFigureCount(getFigureCount(geneResult.getSymbol(), criteria.getAnatomy()));
+
+        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneResult.getId());
+        geneResult.setGene(gene);
 
         return geneResult;
     }
@@ -143,7 +152,7 @@ public class ExpressionSearchService {
 
         QueryResponse queryResponse = null;
         try {
-            queryResponse = getSolrClient().query(solrQuery);
+            queryResponse = SolrService.getSolrClient().query(solrQuery);
         } catch (SolrServerException e) {
             e.printStackTrace();
         } catch (IOException e) {

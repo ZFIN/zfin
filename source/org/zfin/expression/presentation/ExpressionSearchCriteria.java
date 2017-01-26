@@ -9,6 +9,9 @@ public class ExpressionSearchCriteria {
     String exactGene;
     List<String> anatomy;
 
+    List<GeneResult> geneResults;
+    List<FigureResult> figureResults;
+
     public String getGeneField() {
         return geneField;
     }
@@ -31,5 +34,21 @@ public class ExpressionSearchCriteria {
 
     public void setAnatomy(List<String> anatomy) {
         this.anatomy = anatomy;
+    }
+
+    public List<GeneResult> getGeneResults() {
+        return geneResults;
+    }
+
+    public void setGeneResults(List<GeneResult> geneResults) {
+        this.geneResults = geneResults;
+    }
+
+    public List<FigureResult> getFigureResults() {
+        return figureResults;
+    }
+
+    public void setFigureResults(List<FigureResult> figureResults) {
+        this.figureResults = figureResults;
     }
 }

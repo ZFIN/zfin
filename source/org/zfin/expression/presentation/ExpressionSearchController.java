@@ -14,7 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 
-@Controller("/expression")
+@Controller
+@RequestMapping("/expression")
 public class ExpressionSearchController {
 
     private static Logger logger = Logger.getLogger(ExpressionSearchController.class);
@@ -23,7 +24,6 @@ public class ExpressionSearchController {
     @RequestMapping("/geneResults")
     public String genes(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria, HttpServletRequest request) {
 
-        logger.error("expression search controller? please?");
 
         criteria.setGeneField("fgf");
         criteria.setAnatomy(Arrays.asList("brain", "eye"));
@@ -31,14 +31,18 @@ public class ExpressionSearchController {
         SolrDocumentList documentList = ExpressionSearchService.getGeneResults(criteria);
         List<GeneResult> geneResults = ExpressionSearchService.buildGeneResults(documentList, criteria);
 
+        logger.error(documentList);
+        logger.error(geneResults);
+
+        model.addAttribute("criteria", criteria);
+        model.addAttribute("results", geneResults);
+
         return "expression/gene-results.page";
 
     }
 
-    @ResponseBody
     @RequestMapping("/figureResults")
-    public static List<FigureResult> figures(ExpressionSearchCriteria criteria) {
-
+    public String figures(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria) {
 
         criteria.setExactGene("fgf8a");
         criteria.setAnatomy(Arrays.asList("brain", "eye"));
@@ -47,8 +51,10 @@ public class ExpressionSearchController {
         List<SolrDocument> documentList = ExpressionSearchService.getFigureResults(criteria);
         List<FigureResult> figureResults = ExpressionSearchService.buildFigureResults(documentList);
 
-        return figureResults;
+        model.addAttribute("criteria",criteria);
+        model.addAttribute("results",figureResults);
 
+        return "expression/figure-results.page";
 
     }
 

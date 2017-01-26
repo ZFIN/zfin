@@ -18,6 +18,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.zfin.expression.presentation.ExpressionSearchCriteria;
+import org.zfin.expression.presentation.GeneResult;
+import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.infrastructure.service.ZdbIDService;
 import org.zfin.marker.Marker;
@@ -68,6 +71,22 @@ public class SearchPrototypeController {
     public void initBinder(WebDataBinder binder) {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
+
+    @RequestMapping("/geneResults")
+    public String genes(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria, HttpServletRequest request) {
+
+        logger.error("expression search controller? please?");
+
+        criteria.setGeneField("fgf");
+        criteria.setAnatomy(Arrays.asList("brain", "eye"));
+
+        SolrDocumentList documentList = ExpressionSearchService.getGeneResults(criteria);
+        List<GeneResult> geneResults = ExpressionSearchService.buildGeneResults(documentList, criteria);
+
+        return "expression/gene-results.page";
+
+    }
+
 
     @RequestMapping(value = "/prototype")
     public String viewResults(@RequestParam(value = "q", required = false) String q,
