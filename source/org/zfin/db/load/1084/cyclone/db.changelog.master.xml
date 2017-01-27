@@ -6,7 +6,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 <include file="source/org/zfin/db/load/1084/cyclone/newRegions.sql"/>
-    <!--<include file="source/org/zfin/db/load/1084/cyclone/14985.sql"/>-->
+    <include file="source/org/zfin/db/load/1084/cyclone/14985.sql"/>
     <include file="source/org/zfin/db/load/1084/cyclone/14957deleteMO.sql"/>
 
 </databaseChangeLog>
