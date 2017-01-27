@@ -3,6 +3,7 @@ package org.zfin.ontology.datatransfer.service;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -166,7 +167,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         if (loader.initialize(oboFile, cronJobUtil)) {
             loader.runOntologyUpdateProcess();
         }
-	System.exit(0);
+        System.exit(0);
     }
 
     public void runOntologyUpdateProcess() {
@@ -185,6 +186,13 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                     long startTimeLong = System.currentTimeMillis();
                     startMessage.append("Start Time: " + new Date() + "\n");
                     report.addMessageToSection(startMessage.toString(), sectionName);
+                    // If the last script is to be executed run obsolete / merge scripts for a given ontology
+                    if (index == dbScriptFiles.length + 1) {
+                        String camelCasedOntologyName = WordUtils.capitalize(ontology.getOntologyName(), new char[]{'_'});
+                        camelCasedOntologyName = camelCasedOntologyName.replaceAll("_", "");
+                        camelCasedOntologyName = camelCasedOntologyName.replaceAll("Ontology", "");
+                        runDbScriptFile("obsoleteMerge" + camelCasedOntologyName + ".sql");
+                    }
                     runDbScriptFile(dbScriptFile);
                     LOG.info("Duration of Script Execution: " + DateUtil.getTimeDuration(sectionTime));
                     report.addMessageToSection("Finish Time: " + new Date() + "\n", sectionName);
@@ -325,7 +333,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
     private void postLoadProcess() {
         // report annotations on obsoleted terms
         Ontology reportOntology = ontology;
-        if(ontology.equals(Ontology.GO_ONTOLOGY))
+        if (ontology.equals(Ontology.GO_ONTOLOGY))
             reportOntology = Ontology.GO;
 
 

@@ -223,10 +223,10 @@
     </target>
 
     <property name="scriptFiles"
-              value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,fixZecoAnnotations.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,dropTempTables.sql"/>
+              value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,dropTempTables.sql"/>
 
     <property name="scriptFilesNoAnnotation"
-              value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,fixZecoAnnotations.sql,dropTempTables.sql"/>
+              value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,dropTempTables.sql"/>
 
     <macrodef name="load-ontology" description="Run the ontology loader">
         <attribute name="oboFileName"/>
