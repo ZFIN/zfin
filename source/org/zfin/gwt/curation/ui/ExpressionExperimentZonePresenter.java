@@ -857,19 +857,19 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         }
     }
 
-    private class FishSelectionListAsyncCallback extends ZfinAsyncCallback<List<FilterSelectionBoxEntry>> {
+    private class FishSelectionListAsyncCallback extends ZfinAsyncCallback<List<FishDTO>> {
 
         private FishSelectionListAsyncCallback() {
             super("Error retrieving fish selection list", view.errorElement);
         }
 
         @Override
-        public void onSuccess(List<FilterSelectionBoxEntry> fishDTOList) {
+        public void onSuccess(List<FishDTO> fishDTOList) {
             fishMap.clear();
             int index = 0;
             StringListBox listBox = view.getFishList();
             listBox.clear();
-            for (FishDTO fish : (List<FishDTO>) (List<?>) fishDTOList) {
+            for (FishDTO fish : fishDTOList) {
                 if (fish.getName().startsWith("---")) {
                     listBox.addItem(fish.getHandle(), fish.getZdbID());
                     listBox.getElement().getElementsByTagName("option").getItem(index).setAttribute("disabled", "disabled");

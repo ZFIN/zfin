@@ -1,12 +1,10 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
@@ -271,9 +269,8 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     }
 
     public void retrieveFishList() {
-        String message = "Error while reading fish";
         curationRPCAsync.getFishList(publicationID,
-                new RetrieveSelectionBoxValueCallback(fishList));
+                new RetrieveFishListCallBack(fishList));
     }
 
     public void refreshFigureList() {
@@ -281,9 +278,8 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     }
 
     public void updateFish() {
-        String message = "Error while reading Fish";
         fishList.clear();
-        curationRPCAsync.getFishList(publicationID, new RetrieveSelectionBoxValueCallback(fishList));
+        curationRPCAsync.getFishList(publicationID, new RetrieveFishListCallBack(fishList));
     }
 
 
@@ -1014,10 +1010,9 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
                     classSpan = createSpanElement(pheno, WidgetUtil.PHENOTYPE_NORMAL);
                 } else if (pheno.getTag().equals("ameliorated")) {
                     classSpan = createSpanElement(pheno, WidgetUtil.PHENOTYPE_AMELIORATED);
-                }
-             else if (pheno.getTag().equals("exacerbated")) {
-                classSpan = createSpanElement(pheno, WidgetUtil.PHENOTYPE_EXACERBATED);
-            }else if (pheno.getEntity().getSuperTerm().getTermName().equals("unspecified")) {
+                } else if (pheno.getTag().equals("exacerbated")) {
+                    classSpan = createSpanElement(pheno, WidgetUtil.PHENOTYPE_EXACERBATED);
+                } else if (pheno.getEntity().getSuperTerm().getTermName().equals("unspecified")) {
                     classSpan = createSpanElement(pheno, "term-unspecified");
                 } else {
                     classSpan = createSpanElement(pheno, null);
