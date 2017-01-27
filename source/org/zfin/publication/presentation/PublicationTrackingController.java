@@ -173,12 +173,11 @@ public class PublicationTrackingController {
     @ResponseBody
     @RequestMapping(value = "/curators", method = RequestMethod.GET)
     public Collection<PersonDTO> getAllCurators() {
-        List<PersonDTO> curatorDTOs = profileRepository.getCurators().stream()
+        SortedSet<PersonDTO> curatorDTOs = profileRepository.getCurators().stream()
                 .map(converter::toPersonDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(TreeSet::new));
         // Add currently logged in user to allow developers to act like curators on their own sites
         curatorDTOs.add(converter.toPersonDTO(ProfileService.getCurrentSecurityUser()));
-        Collections.sort(curatorDTOs);
         return curatorDTOs;
     }
 
