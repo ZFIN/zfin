@@ -120,9 +120,9 @@ public class FishDTO extends RelatedEntityDTO implements Comparable, FilterSelec
     }
 
     public int compareToWildtypeFirst(FishDTO fish) {
-        if (genotypeDTO.isWildtype() && !fish.getGenotypeDTO().isWildtype())
+        if (wildtype && !fish.isWildtype())
             return -1;
-        if (!genotypeDTO.isWildtype() && fish.getGenotypeDTO().isWildtype())
+        if (!wildtype && fish.isWildtype())
             return 1;
         return fish.getNameOrder().compareTo(fish.getNameOrder());
 
