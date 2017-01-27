@@ -13,15 +13,16 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.util.StringUtils;
+import org.zfin.marker.presentation.PreviousNameLight;
 import org.zfin.profile.*;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.BeanFieldUpdate;
+import org.zfin.profile.service.Country;
 import org.zfin.profile.service.ProfileService;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  */
@@ -77,7 +78,13 @@ public class PersonController {
         Person person = profileRepository.getPerson(zdbID);
         model.addAttribute(LookupStrings.FORM_BEAN, person);
         model.addAttribute("securityPersonZdbID", securityPersonZdbID);
-
+        List<Country> countries = profileService.getCountries(Locale.ENGLISH);
+        Map<String, String> country = new HashMap<String, String>(countries.size());
+        country.put("","");
+        for (Country countriesMap : countries) {
+            country.put(countriesMap.getCountryCode(), countriesMap.getName());
+        }
+        model.addAttribute("countryList",country);
         boolean showDeceasedCheckBox = false;
         if (profileService.getCurrentSecurityUser() != null   // it's a logged-in user
                 && profileService.isCurrentSecurityUserRoot()) {  //  the user logged in as root

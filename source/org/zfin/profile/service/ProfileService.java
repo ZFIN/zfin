@@ -23,10 +23,7 @@ import org.zfin.repository.RepositoryFactory;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.sql.Blob;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  */
@@ -133,6 +130,7 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("shortName", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("email", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("address", oldPerson, newPerson));
+        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("country", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("fax", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("phone", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("url", oldPerson, newPerson));
@@ -190,6 +188,7 @@ public class ProfileService {
             throws Exception {
 
         beanCompareService.applyUpdates(person, fields);
+
         HibernateUtil.currentSession().update(person);
         for (BeanFieldUpdate beanFieldUpdate : fields) {
             RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(person.getZdbID(), beanFieldUpdate);
@@ -400,7 +399,22 @@ public class ProfileService {
         logger.error("failed trying to remove a person to something that was not a lab or company: " + organizationZdbID);
         return false;
     }
-
+    /**
+     * using this method to get a list of Contries for use in Person edit
+     */
+    public static List<Country> getCountries(final Locale inLocale) {
+        String[] countryCodes = Locale.getISOCountries();
+        List<Country> countries = new ArrayList<Country>(countryCodes.length);
+        for (String countryCode : countryCodes) {
+            countries.add(new Country(countryCode, new Locale("", countryCode).getDisplayCountry(inLocale)));
+        }
+        Collections.sort(countries, new Comparator<Country>() {
+            public int compare(Country c1, Country c2) {
+                return c1.getCountryCode().compareTo(c2.getCountryCode());
+            }
+        });
+        return countries;
+    }
     /**
      * If there is not an address for this person then insert the join record.
      * If there is one, then update the join record.
