@@ -89,7 +89,7 @@ public class CurationFilterModule extends Composite {
     }
 
     public void refreshFishList() {
-        curationRPCAsync.getFishList(publicationID, new RetrieveSelectionBoxValueCallback(fishList));
+        curationRPCAsync.getFishList(publicationID, new RetrieveFishListCallBack(fishList, true));
     }
 
     private void initGUI() {
