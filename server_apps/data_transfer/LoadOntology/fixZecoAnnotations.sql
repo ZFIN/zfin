@@ -12,74 +12,84 @@
 ------------------------------------------------------
 -- report obsoleted zeco term usage
 unload to 'obsoleted_terms'
-SELECT term_zdb_id,
+SELECT exp_source_zdb_id,
+       term_zdb_id,
        term_ont_id,
        term_name,
        term_comment
-FROM   term
-WHERE  EXISTS (SELECT 'x'
-               FROM   experiment_condition
-               WHERE  expcond_zeco_term_zdb_id = term_zdb_id)
+FROM   term,
+       experiment_condition,
+       experiment
+WHERE  expcond_zeco_term_zdb_id = term_zdb_id
+       AND exp_zdb_id = expcond_exp_zdb_id
        AND term_is_obsolete = 't';
 
 -- report obsoleted zeco-taxa term usage
 unload to 'obsoleted_terms'
-SELECT term_zdb_id,
+SELECT exp_source_zdb_id,
+       term_zdb_id,
        term_ont_id,
        term_name,
        term_comment
-FROM   term
-WHERE  EXISTS (SELECT 'x'
-               FROM   experiment_condition
-               WHERE  expcond_taxon_term_zdb_id = term_zdb_id)
+FROM   term,
+       experiment_condition,
+       experiment
+WHERE  expcond_taxon_term_zdb_id = term_zdb_id
+       AND exp_zdb_id = expcond_exp_zdb_id
        AND term_is_obsolete = 't';
 
 -- report obsoleted chebi term usage
 unload to 'obsoleted_terms'
-SELECT term_zdb_id,
+SELECT exp_source_zdb_id,
+       term_zdb_id,
        term_ont_id,
        term_name,
        term_comment
-FROM   term
-WHERE  EXISTS (SELECT 'x'
-               FROM   experiment_condition
-               WHERE  expcond_chebi_term_zdb_id = term_zdb_id)
+FROM   term,
+       experiment_condition,
+       experiment
+WHERE  expcond_chebi_term_zdb_id = term_zdb_id
+       AND exp_zdb_id = expcond_exp_zdb_id
        AND term_is_obsolete = 't';
 
 -- report obsoleted ao term usage
 unload to 'obsoleted_terms'
-SELECT term_zdb_id,
+SELECT exp_source_zdb_id,
+       term_zdb_id,
        term_ont_id,
        term_name,
        term_comment
-FROM   term
-WHERE  EXISTS (SELECT 'x'
-               FROM   experiment_condition
-               WHERE  expcond_ao_term_zdb_id = term_zdb_id)
+FROM   term,
+       experiment_condition,
+       experiment
+WHERE  expcond_ao_term_zdb_id = term_zdb_id
+       AND exp_zdb_id = expcond_exp_zdb_id
        AND term_is_obsolete = 't';
 
 -- report obsoleted go-cc term usage
 unload to 'obsoleted_terms'
-SELECT term_zdb_id,
+SELECT exp_source_zdb_id,
+       term_zdb_id,
        term_ont_id,
        term_name,
        term_comment
-FROM   term
-WHERE  EXISTS (SELECT 'x'
-               FROM   experiment_condition
-               WHERE  expcond_go_cc_term_zdb_id = term_zdb_id)
+FROM   term,
+       experiment_condition,
+       experiment
+WHERE  expcond_go_cc_term_zdb_id = term_zdb_id
+       AND exp_zdb_id = expcond_exp_zdb_id
        AND term_is_obsolete = 't';
 
 -- report obsoleted disease term usage
 unload to 'obsoleted_terms'
-SELECT term_zdb_id,
+SELECT dat_source_zdb_id,
+       term_zdb_id,
        term_ont_id,
        term_name,
        term_comment
-FROM   term
-WHERE  EXISTS (SELECT 'x'
-               FROM   disease_annotation
-               WHERE  dat_term_zdb_id = term_zdb_id)
+FROM   term,
+       disease_annotation
+WHERE  dat_term_zdb_id = term_zdb_id
        AND term_is_obsolete = 't';
 
 ------------------------------------------------------
@@ -88,73 +98,83 @@ WHERE  EXISTS (SELECT 'x'
 
 -- report secondary zeco term usage
 unload to 'merged_terms'
-SELECT term_zdb_id,
+SELECT exp_source_zdb_id,
+       term_zdb_id,
        term_ont_id,
        term_name,
        term_comment
-FROM   term
-WHERE  EXISTS (SELECT 'x'
-               FROM   experiment_condition
-               WHERE  expcond_zeco_term_zdb_id = term_zdb_id)
+FROM   term,
+       experiment_condition,
+       experiment
+WHERE  expcond_zeco_term_zdb_id = term_zdb_id
+       AND exp_zdb_id = expcond_exp_zdb_id
        AND term_is_secondary = 't';
 
 -- report secondary zeco-taxa term usage
 unload to 'merged_terms'
-SELECT term_zdb_id,
+SELECT exp_source_zdb_id,
+       term_zdb_id,
        term_ont_id,
        term_name,
        term_comment
-FROM   term
-WHERE  EXISTS (SELECT 'x'
-               FROM   experiment_condition
-               WHERE  expcond_taxon_term_zdb_id = term_zdb_id)
+FROM   term,
+       experiment_condition,
+       experiment
+WHERE  expcond_taxon_term_zdb_id = term_zdb_id
+       AND exp_zdb_id = expcond_exp_zdb_id
        AND term_is_secondary = 't';
 
 -- report secondary chebi term usage
 unload to 'merged_terms'
-SELECT term_zdb_id,
+SELECT exp_source_zdb_id,
+       term_zdb_id,
        term_ont_id,
        term_name,
        term_comment
-FROM   term
-WHERE  EXISTS (SELECT 'x'
-               FROM   experiment_condition
-               WHERE  expcond_chebi_term_zdb_id = term_zdb_id)
+FROM   term,
+       experiment_condition,
+       experiment
+WHERE  expcond_chebi_term_zdb_id = term_zdb_id
+       AND exp_zdb_id = expcond_exp_zdb_id
        AND term_is_secondary = 't';
 
 -- report secondary ao term usage
 unload to 'merged_terms'
-SELECT term_zdb_id,
+SELECT exp_source_zdb_id,
+       term_zdb_id,
        term_ont_id,
        term_name,
        term_comment
-FROM   term
-WHERE  EXISTS (SELECT 'x'
-               FROM   experiment_condition
-               WHERE  expcond_ao_term_zdb_id = term_zdb_id)
+FROM   term,
+       experiment_condition,
+       experiment
+WHERE  expcond_ao_term_zdb_id = term_zdb_id
+       AND exp_zdb_id = expcond_exp_zdb_id
        AND term_is_secondary = 't';
 
 -- report secondary go-cc term usage
 unload to 'merged_terms'
-SELECT term_zdb_id,
+SELECT exp_source_zdb_id,
+       term_zdb_id,
        term_ont_id,
        term_name,
        term_comment
-FROM   term
-WHERE  EXISTS (SELECT 'x'
-               FROM   experiment_condition
-               WHERE  expcond_go_cc_term_zdb_id = term_zdb_id)
+FROM   term,
+       experiment_condition,
+       experiment
+WHERE  expcond_go_cc_term_zdb_id = term_zdb_id
+       AND exp_zdb_id = expcond_exp_zdb_id
        AND term_is_secondary = 't';
 
 -- report secondary disease term usage
 unload to 'merged_terms'
-SELECT term_zdb_id,
+SELECT dat_source_zdb_id,
+       term_zdb_id,
        term_ont_id,
        term_name,
        term_comment
-FROM   term
-WHERE  EXISTS (SELECT 'x'
-               FROM   disease_annotation
-               WHERE  dat_term_zdb_id = term_zdb_id)
+FROM   term,
+       disease_annotation
+WHERE  dat_term_zdb_id = term_zdb_id
        AND term_is_secondary = 't';
 
