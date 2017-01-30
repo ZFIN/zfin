@@ -128,8 +128,7 @@
         }
 
         function removeRelationship(relationship) {
-          //  return $http.delete('/action/marker/relationship/' + relationship.zdbID);
-            return $http.delete('/action/marker/relationship/' + relationship.markerRelationshipZdbId);
+            return $http.delete('/action/marker/relationship/' + relationship.zdbID);
         }
 
         function addRelationshipReference(relationship, pubId) {

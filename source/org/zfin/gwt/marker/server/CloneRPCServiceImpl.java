@@ -225,7 +225,6 @@ public class CloneRPCServiceImpl extends ZfinRemoteServiceServlet implements Clo
     public void updateCloneHeaders(CloneDTO cloneDTO) {
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
-        HibernateUtil.createTransaction();
         Clone clone = (Clone) session.get(Clone.class, cloneDTO.getZdbID());
 
         // set name
