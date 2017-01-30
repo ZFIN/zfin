@@ -790,16 +790,6 @@ a + .inline-upload {
     color: #9A9A9A;
 }
 
-.loading-overlay {
-    position: absolute;
-    background: rgba(0, 0, 0, 0.5);
-    font-size: 3em;
-    color: rgba(255, 255, 255, 0.8);
-    text-align: center;
-    padding: 30px;
-    box-sizing: border-box;
-}
-
 .login-box {
     border-radius: 5px;
     background: #e0e7e0;

@@ -74,7 +74,7 @@
                 pub: '@',
                 header: '@',
                 edit: '<',
-                showDownloadLink: '@'
+                showDownloadLink: '<'
             },
             controller: OrthoEditController,
             controllerAs: 'vm',
@@ -109,24 +109,6 @@
                     angular.element(document).on('click', hideOptions.bind(null, container, opts));
                 });
             });
-
-            scope.$watch('vm.orthologs', function () {
-                var table = angular.element('.ortholog-table');
-                var overlay = angular.element('.loading-overlay');
-
-                function setOverlaySize() {
-                    var tableRect = table[0].getBoundingClientRect();
-                    overlay.css({
-                        width: tableRect.width,
-                        height: tableRect.height
-                    });
-                }
-
-                // use $timeout because we need to get size after digest is finished
-                $timeout(setOverlaySize, false);
-            });
-
-
         }
 
         return directive;
@@ -177,7 +159,7 @@
 
         vm.selectPub = selectPub;
         vm.checkPub = checkPub;
-        vm.showDownloadLink = true;
+        vm.showDownloadLink = (typeof vm.showDownloadLink === 'undefined') ? true : vm.showDownloadLink;
 
         activate();
 
