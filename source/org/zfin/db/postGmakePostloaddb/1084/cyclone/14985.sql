@@ -2,7 +2,7 @@
 --changeset pm:14985
 
 UPDATE person
-SET country =  (SELECT tmp_pers_country
+SET person_country =  (SELECT tmp_pers_country
   FROM tmp_person_country where zdb_id=tmp_pers_id)
 WHERE EXISTS (
   SELECT 'x'
