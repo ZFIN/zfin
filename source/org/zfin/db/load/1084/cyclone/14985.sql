@@ -3,5 +3,5 @@
 
 
 alter table person
- add person_country varchar(10))
+ add person_country varchar(10)
 ;
