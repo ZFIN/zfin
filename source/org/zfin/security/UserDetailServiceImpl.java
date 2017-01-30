@@ -14,7 +14,7 @@ import org.zfin.security.repository.UserRepository;
 public class UserDetailServiceImpl implements UserDetailsService {
 
     public UserDetails loadUserByUsername(String username) {
-        Person person;
+        Person person = null;
         try {
             UserRepository userRep = RepositoryFactory.getUserRepository();
             person = userRep.getPersonByLoginName(username);
@@ -22,6 +22,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
             if (person == null) {
                 throw new UsernameNotFoundException("User not found: " + username);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             HibernateUtil.closeSession();
         }
