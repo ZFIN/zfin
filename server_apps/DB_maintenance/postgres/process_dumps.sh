@@ -1,14 +1,23 @@
 #!/bin/bash
 
-unloadDirectory=$1
+startTime=$(date)
+echo $startTime
 
-if [[ -d $1 ]]; then
-    echo "$1 is a directory"
-   
-else
-    echo "$1 is not valid"
-    exit 1
-fi
+cd /research/zunloads/databases/zfindb/
+
+latestDump=`ls -td -- */ | head -n 1 | cut -d'/' -f1`
+echo $latestDump
+
+
+echo "*** Removing previous working directories"
+rm -rf /research/zunloads/databases/postgres_dumps/$latestDump;
+
+cp -R /research/zunloads/databases/zfindb/$latestDump /research/zunloads/databases/postgres_dumps/
+cd /research/zunloads/databases/postgres_dumps/
+
+echo "*** latest dump: "
+echo $unloadDirectory
+unloadDirectory=/research/zunloads/databases/postgres_dumps/$latestDump
 
 cd $unloadDirectory
 
@@ -17,8 +26,6 @@ rm *.err
 rm *.out
 rm btsfse*
 rm done
-rm environment_staging
-rm fish_staging
 #not sure why these two didn't come thru in the schema file
 rm paneled_markers
 rm pub_db_xref
@@ -47,18 +54,38 @@ data_files=`ls *`
 
 ls --hide="*.*" > filenames.txt
 
-for f in $data_files
+echo "*** save off blobs/clobs so they don't have to be processed for special characters."
+
+mkdir savedBlobsClobs
+mv blob* savedBlobsClobs
+mv clob* savedBlobsClobs
+
+echo "*** for each file, weed out characters: "
+
+for loadFile in $data_files
 do
-    echo $f
-    sed 's/|$//' $f > $f.t
-# data_note needs not to have \r replaced.
-#external_note had to hand edit file to remove ^M line 1331 then look for ^M
-  #  sed 's/\r/\\r/g' $f.t > $f.txt
-    sed 's/\r/\n/g' $f.t > $f.txt
-    #this is just for figure, lab, lab_address_update_tracking, publication, updates so far...
-    #sed 's/\r//g' $f.txt > temp
-    mv temp $f.txt
-    rm f.t
+    echo $loadFile
+    
+    #remove pipe at the end of the file b/c postgres thinks end of line pile is a delimiter 
+    sed 's/|$//' $loadFile > $loadFile.t
+
+    # data_note needs not to have \r replaced.
+    # external_note had to hand edit file to remove ^M line 1331 then look for ^M
+    #  sed 's/\r/\\r/g' $f.t > $f.txt
+
+    #replace ^M with newline characters
+    sed 's/\r/\n/g' $loadFile.t > $loadFile.txt
+
+    #this is just for figure, lab, lab_address_update_tracking, publication, updates so far...strip
+    #^M inline if necessary.
+    sed 's/\r//g' $loadFile.txt > temp
+
+    
+    mv temp $loadFile.txt
+    
+    #clean up processing steps
+    
+    rm $loadFile.t
 done
 
 
