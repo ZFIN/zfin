@@ -61,7 +61,7 @@ select  current year to second, (select count(*) from pub_tracking_history, pub_
 				       and pts_status_qualifier = 'no data'
 				       and day(pth_status_insert_date) = day(current year to second)
 				       and year(pth_status_insert_date) = year(current year to second)
-				       and month(pth_status_insert_date) = month(current year to second),
+				       and month(pth_status_insert_date) = month(current year to second)),
 				 (select count(*) from pub_tracking_history, pub_tracking_status
        	       	       	       	       where pth_status_id = pts_pk_id
 				       and pts_status = 'CLOSED'
