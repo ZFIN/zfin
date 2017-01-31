@@ -64,7 +64,7 @@ select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_d
 					     publication
 					     where pth_location_id = ptl_pk_id
 					     and pth_pub_Zdb_id = zdb_id
-					     and ptl_location = 'NEW_ORTHO'
+					     and ptl_location = 'ORTHO'
 					     and pth_status_is_current = 't'
 	 group by month, year
  into temp newortho;
@@ -76,7 +76,7 @@ select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_d
 					     publication
 					     where pth_location_id = ptl_pk_id
 					     and pth_pub_Zdb_id = zdb_id
-					     and ptl_location = 'NEW_XPAT'
+					     and ptl_location = 'NEW_EXPR'
 					     and pth_status_is_current = 't'
 	 group by month, year
  into temp newxpat;
