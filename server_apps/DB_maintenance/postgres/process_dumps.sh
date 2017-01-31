@@ -50,15 +50,11 @@ rm webpages
 rm webtags
 rm webudrs
 
-data_files=`ls *`
+echo "*** save off blobs/clobs so they don't have to be processed for special characters."
 
 ls --hide="*.*" > filenames.txt
 
-echo "*** save off blobs/clobs so they don't have to be processed for special characters."
-
-mkdir savedBlobsClobs
-mv blob* savedBlobsClobs
-mv clob* savedBlobsClobs
+data_files=`ls *`
 
 echo "*** for each file, weed out characters: "
 
