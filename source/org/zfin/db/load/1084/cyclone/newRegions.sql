@@ -2,46 +2,46 @@
 --changeset sierra:newRegions
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('LNCRNA','2','');
+  values ('LNCRNA','2','LncRNA');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('LINCRNA','2','');
+  values ('LINCRNA','2','LincRNA');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('MIRNA','2','');
+  values ('MIRNA','2','miRNA');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('PIRNA','2','');
+  values ('PIRNA','2','piRNA');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('SCRNA','2','');
+  values ('SCRNA','2','scRNA');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('SNORNA','2','');
+  values ('SNORNA','2','snoRNA');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('TRNA','2','');
+  values ('TRNA','2','tRNA');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('RRNA','2','');
+  values ('RRNA','2','rRNA');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('CNCREGION','22','');
+  values ('NCRNA','22','ncRNA');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('HISTBS','22','');
+  values ('HISTBS','22','Histone Binding Site');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('PROTBS','22','');
+  values ('PROTBS','22','Protein Binding Site');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('CPGISLAND','22','');
+  values ('CPGISLAND','22','CpG island');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('SRPRNA','22','');
+  values ('SRPRNA','22','spRNA');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('TSCRIPTREGREGION','22','');
+  values ('TSCRIPTREGREGION','22','Transcript Regulatory Region');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
  values ('TSCRIPTREGREGION', 'transcript region');
@@ -56,7 +56,7 @@ insert into marker_type_group (mtgrp_name, mtgrp_comments)
  values ('RRNA', 'r_rna');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
- values ('CNCREGION', 'cn_region');
+ values ('NCRNA','ncRNA');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
  values ('HISTBS', 'histone binding site');
@@ -126,9 +126,7 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
 values ('CPGISLAND','NONTRANSCRIBED_REGIONS');
 
-insert into marker_type_group_member(mtgrpmem_mrkr_type,
-    mtgrpmem_mrkr_type_group)
-values ('CNCREGION','NONTRANSCRIBED_REGIONS');
+
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
@@ -161,6 +159,10 @@ values ('SNORNA','GENEDOM');
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
 values ('TRNA','GENEDOM');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('NCRNA','GENEDOM');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
