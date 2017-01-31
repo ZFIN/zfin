@@ -1,7 +1,7 @@
 --liquibase formatted sql
 --changeset pm:14819
 
-UPDATE foreign_db
+UPDATE foreign_db_contains_display_group_member
 SET fdbcdgm_group_id=18
 WHERE  fdbcdgm_fdbcont_zdb_id ='ZDB-FDBCONT-131021-1';
 
