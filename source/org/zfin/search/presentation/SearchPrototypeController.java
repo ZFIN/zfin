@@ -72,21 +72,6 @@ public class SearchPrototypeController {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
-    @RequestMapping("/geneResults")
-    public String genes(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria, HttpServletRequest request) {
-
-        logger.error("expression search controller? please?");
-
-        criteria.setGeneField("fgf");
-        criteria.setAnatomy(Arrays.asList("brain", "eye"));
-
-        SolrDocumentList documentList = ExpressionSearchService.getGeneResults(criteria);
-        List<GeneResult> geneResults = ExpressionSearchService.buildGeneResults(documentList, criteria);
-
-        return "expression/gene-results.page";
-
-    }
-
 
     @RequestMapping(value = "/prototype")
     public String viewResults(@RequestParam(value = "q", required = false) String q,

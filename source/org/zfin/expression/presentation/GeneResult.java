@@ -13,6 +13,7 @@ public class GeneResult {
     String matchingText;
     DevelopmentStage startStage;
     DevelopmentStage endStage;
+    String figureResultUrl;
 
 
     public String getUrl() { return "http://zfin.org/" + id; }
@@ -79,5 +80,13 @@ public class GeneResult {
 
     public void setEndStage(DevelopmentStage endStage) {
         this.endStage = endStage;
+    }
+
+    public String getFigureResultUrl() {
+        return figureResultUrl;
+    }
+
+    public void setFigureResultUrl(String figureResultUrl) {
+        this.figureResultUrl = figureResultUrl;
     }
 }

@@ -742,6 +742,7 @@
 
    <field name="pub_zdb_id" type="string" indexed="true" stored="true"/>
    <field name="fish_zdb_id" type="string" indexed="true" stored="true"/>
+   <field name="gene_zdb_id" type="string" indexed="true" stored="true"/>
 
    <field name="attribution_count" type="sint" indexed="true" stored="true"/>
 

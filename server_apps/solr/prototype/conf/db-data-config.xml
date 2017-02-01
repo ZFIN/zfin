@@ -2650,6 +2650,7 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                         fig_zdb_id as fig_zdb_id,
                         fish_name as fish,
                         fish_zdb_id as fish_zdb_id,
+                        xpatex_gene_zdb_id as gene_zdb_id,
                         xpatex_assay_name as assay,
                         fig_label as figure,
                         '/' || fig_zdb_id as url,
