@@ -5,8 +5,6 @@ from psycopg2.extensions import AsIs
 conn = psycopg2.connect("host='localhost' port='5432' dbname='$DBNAME' user='$USERNAME'")
 cur = conn.cursor()
 
-
-
 f= open(r'/research/zunloads/databases/postgres_dumps/2016.08.26.1_replaced/filenames.txt','r');
 
 for line in f:
