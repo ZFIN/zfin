@@ -568,17 +568,12 @@
     </target>
 
     <target name="notify-deploy" if="isproduction">
-        <emailMessage message="Production is beginning the deployment cycle and will be restarted within a few minutes."
-                      email="${PRODUCTION_NOTIFICATION_EMAIL}"/>
     </target>
 
     <target name="notify-up" if="isproduction">
-        <emailMessage message="Production should now be available." email="${PRODUCTION_NOTIFICATION_EMAIL}"/>
     </target>
 
     <target name="notify-restart" if="isproduction">
-        <emailMessage message="Production is restarting and will be available momentarily."
-                      email="${PRODUCTION_NOTIFICATION_EMAIL}"/>
     </target>
 
 
