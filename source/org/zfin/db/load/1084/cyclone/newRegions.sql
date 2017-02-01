@@ -254,9 +254,9 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
 values ('CPGISLAND','SEARCH_MKSEG');
 
-insert into marker_type_group_member(mtgrpmem_mrkr_type,
+/*insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('CNCREGION','SEARCH_MKSEG');
+values ('CNCREGION','SEARCH_MKSEG');*/
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
