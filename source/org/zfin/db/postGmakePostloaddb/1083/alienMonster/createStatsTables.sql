@@ -14,6 +14,7 @@ create table daily_indexed_metric (dim_pk_id serial8 not null constraint dim_pk_
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 2048 next size 2048;
 
+
 create unique index daily_indexed_metric_pk_index
   on daily_indexed_metric (dim_pk_id)
  using btree in idxdbs3;
