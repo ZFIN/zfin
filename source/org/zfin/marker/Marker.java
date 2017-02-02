@@ -7,7 +7,9 @@ import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.infrastructure.*;
 import org.zfin.mapping.MappedMarkerImpl;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.MarkerGoTermEvidence;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Ortholog;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Person;
@@ -221,6 +223,10 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         return markers;
     }
 
+
+    public GenericTerm getSoTerm() {
+        return MarkerService.getSoTerm(this);
+    }
 
     public Set<Figure> getFigures() {
         return figures;

@@ -1003,6 +1003,18 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getAllGenedom() {
+        List<Marker> allGeneList = markerRepository.getMarkerByGroup(Marker.TypeGroup.GENEDOM, 0);
+        assertNotNull(allGeneList);
+    }
+
+    @Test
+    public void getZFinSoTermMapping() {
+        Map<String, GenericTerm> zfinEntityMapping = markerRepository.getSoTermMapping();
+        assertNotNull(zfinEntityMapping);
+    }
+
+    @Test
     public void getWeakReferenceMarker() {
         List<MarkerRelationshipPresentation> markerRelationshipPresentationList = markerRepository.getWeakReferenceMarker("ZDB-GENE-010606-1"
                 , MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT

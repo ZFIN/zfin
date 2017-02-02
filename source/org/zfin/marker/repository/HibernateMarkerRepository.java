@@ -53,7 +53,6 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
 import org.zfin.util.NumberAwareStringComparator;
-import org.zfin.util.ZfinStringUtils;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -61,8 +60,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 
 @Repository
@@ -342,7 +340,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         Session session = currentSession();
         String hql = "select distinct mr from MarkerRelationship as mr " +
-                   "where mr.type not in (:markerRelationshipType)";
+                "where mr.type not in (:markerRelationshipType)";
 
 
         Query query = session.createQuery(hql);
@@ -385,7 +383,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         Set<MarkerRelationship> secondSegmentRelationships = marker2.getSecondMarkerRelationships();
         if (secondSegmentRelationships == null) {
-            secondSegmentRelationships = new HashSet<MarkerRelationship>();
+            secondSegmentRelationships = new HashSet<>();
             secondSegmentRelationships.add(mrel);
             marker2.setSecondMarkerRelationships(secondSegmentRelationships);
         } else {
@@ -412,8 +410,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
             pa.setSourceZdbID(sourceZdbID);
             pa.setDataZdbID(mrel.getZdbID());
             pa.setSourceType(RecordAttribution.SourceType.STANDARD);
-            Set<PublicationAttribution> pubattr = new HashSet<PublicationAttribution>();
-            pubattr.add(pa);
             //mrel.setPublications(pubattr);
             currentSession().save(pa);
             Publication publication = RepositoryFactory.getPublicationRepository().getPublication(sourceZdbID);
@@ -856,7 +852,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
      */
     public void runMarkerNameFastSearchUpdate(final Marker marker) {
         Session session = currentSession();
-        session.doWork(new Work(){
+        session.doWork(new Work() {
             @Override
             public void execute(Connection connection) throws SQLException {
                 CallableStatement statement = null;
@@ -3054,7 +3050,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public DBLink addDBLinkWithLenth(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID, int length) {
         if (length < 1) {
-           return addDBLink(marker, accessionNumber, refdb, attributionZdbID);
+            return addDBLink(marker, accessionNumber, refdb, attributionZdbID);
         }
         MarkerDBLink mdb = new MarkerDBLink();
         mdb.setMarker(marker);
@@ -3063,7 +3059,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         mdb.setLength(length);
         Set<MarkerDBLink> markerDBLinks = marker.getDbLinks();
         if (markerDBLinks == null) {
-            markerDBLinks = new HashSet<MarkerDBLink>();
+            markerDBLinks = new HashSet<>();
             markerDBLinks.add(mdb);
             marker.setDbLinks(markerDBLinks);
         } else {
@@ -3082,6 +3078,30 @@ public class HibernateMarkerRepository implements MarkerRepository {
         runMarkerNameFastSearchUpdate(marker);
 
         return mdb;
+    }
+
+    @Override
+    public List<Marker> getMarkerByGroup(Marker.TypeGroup group, int number) {
+        MarkerTypeGroup type = getMarkerTypeGroupByName(group.name());
+        String hql = "from Marker as marker " +
+                "where marker.markerType.name in (:names) order by marker.abbreviationOrder ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("names", type.getTypeStrings());
+        if (number > 0)
+            query.setMaxResults(number);
+        return query.list();
+    }
+
+    @Override
+    public Map<String, GenericTerm> getSoTermMapping() {
+        String hql = "from ZfinSoTerm";
+
+        List<ZfinSoTerm> terms = HibernateUtil.currentSession().createQuery(hql).list();
+        Map<String, GenericTerm> map = new HashMap<>(terms.size());
+        for (ZfinSoTerm term : terms) {
+            map.put(term.getEntityName(), getOntologyRepository().getTermByOboID(term.getOboID()));
+        }
+        return map;
     }
 
 }
