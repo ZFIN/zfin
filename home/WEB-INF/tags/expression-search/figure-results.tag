@@ -4,6 +4,9 @@
 <%@attribute name="criteria" type="org.zfin.expression.presentation.ExpressionSearchCriteria" required="true" %>
 
 <table class="searchresults groupstripes">
+    <caption>
+        ${criteria.numFound} Figures
+    </caption>
     <tr>
         <th>Publication</th>
         <th>Data</th>

@@ -4,6 +4,9 @@
 <%@attribute name="criteria" type="org.zfin.expression.presentation.ExpressionSearchCriteria" required="true" %>
 
 <table class="searchresults">
+    <caption>
+        ${criteria.numFound} Genes
+    </caption>
     <tr>
         <th>Gene</th>
         <th>Expression Data</th>
@@ -14,7 +17,6 @@
         <zfin:alternating-tr loopName="loop" groupBeanCollection="${criteria.geneResults}" groupByBean="gene.zdbID">
             <td><zfin:link entity="${result.gene}"/></td>
             <td>
-<%-- /action/expression/results?geneZdbId=${result.gene.zdbID} --%>
                 <a href="${criteria.getUrl(result.gene)}">
                         ${result.figureCount} Figures
                 </a>
