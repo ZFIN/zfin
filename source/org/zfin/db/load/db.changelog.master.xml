@@ -13,5 +13,5 @@
   <include file="source/org/zfin/db/load/1080/vasa/db.changelog.master.xml"/>
  <include file="source/org/zfin/db/load/1080/walrus/db.changelog.master.xml"/>
  <include file="source/org/zfin/db/load/1083/beerMug/db.changelog.master.xml"/>
-  
+  <include file="source/org/zfin/db/load/1084/cyclone/db.changelog.master.xml"/> 
 </databaseChangeLog>
