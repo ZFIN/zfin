@@ -31,15 +31,16 @@ def main(argv):
     cs = "dbname=%s user=%s host=%s port=%s" % (dbname,user,hostname,port)
     conn = psycopg2.connect(cs)
     cur = conn.cursor()
-
-    print loadDirectory +"/" +fileLister
-    fileToProcess = loadDirectory
-    f= open(loadDirectory +"/filenames.txt",'r');
+    
+    filePath=os.path.join(loadDirectory,fileLister)
+    print filePath
+    f= open(os.path.join(loadDirectory,fileLister),'r');
     
     for line in f:
         print "processing file: " + line
         tablename = line.rstrip('\n')
-        tablef = open(loadDirectory +"/" + tablename +'.txt', 'r')
+        tablenameFile = tablename+".txt"
+        tablef = open(os.path.join(loadDirectory,tablenameFile), 'r')
         print "truncating table " + tablename
         cur.execute("truncate %(table)s", {"table": AsIs(tablename)})
         print "loading table " + tablename
