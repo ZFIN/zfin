@@ -6,7 +6,7 @@ import org.hibernate.annotations.DiscriminatorFormula;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-@Entity
+//@Entity
 @Table(name = "zdb_replaced_data")
 @DiscriminatorFormula("CASE get_obj_type(zrepld_new_zdb_id)" +
         "                                    WHEN 'GENE' THEN 'Marker'" +

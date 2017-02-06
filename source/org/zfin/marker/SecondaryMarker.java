@@ -3,7 +3,7 @@ package org.zfin.marker;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-@Entity
+//@Entity
 @DiscriminatorValue("Marker")
 public class SecondaryMarker extends ReplacedData {
 

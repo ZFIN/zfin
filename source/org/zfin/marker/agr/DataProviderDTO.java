@@ -2,19 +2,19 @@ package org.zfin.marker.agr;
 
 public class DataProviderDTO {
 
-    private String taxonID = "7955";
-    private String name;
+    private String taxonId = "7955";
+    private String dataProvider;
 
     public DataProviderDTO(String name) {
-        this.name = name;
+        this.dataProvider = name;
     }
 
-    public String getTaxonID() {
-        return taxonID;
+    public String getTaxonId() {
+        return taxonId;
     }
 
-    public String getName() {
-        return name;
+    public String getDataProvider() {
+        return dataProvider;
     }
 
 }

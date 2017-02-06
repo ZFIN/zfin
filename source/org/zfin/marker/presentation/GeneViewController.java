@@ -266,9 +266,9 @@ public class GeneViewController {
 
     enum AgrDataProvider {
         ZFIN("ZFIN", ForeignDB.AvailableName.ZFIN),
-        NCBI_GENE("NCBIGENE", ForeignDB.AvailableName.GENE),
+        NCBI_GENE("NCBIGene", ForeignDB.AvailableName.GENE),
         UNITPROT_KB("UniProtKB", ForeignDB.AvailableName.UNIPROTKB, ForeignDB.AvailableName.UNIPROTKB_KW),
-        ENSEMBL("ENSEMBL", ForeignDB.AvailableName.ENSEMBL, ForeignDB.AvailableName.ENSEMBL_CLONE, ForeignDB.AvailableName.ENSEMBL_GRCZ10_);
+        ENSEMBL("Ensembl", ForeignDB.AvailableName.ENSEMBL, ForeignDB.AvailableName.ENSEMBL_CLONE, ForeignDB.AvailableName.ENSEMBL_GRCZ10_);
 
         private String displayName;
         private List<ForeignDB.AvailableName> nameList;

@@ -8,7 +8,7 @@ public class GeneDTO {
     private String symbol;
     private String name;
     private String primaryId;
-    private String taxonID = "7955";
+    private String taxonId = "7955";
     private String soTermId;
     private List<String> synonyms = new ArrayList<>();
     private List<CrossReferenceDTO> crossReferences = new ArrayList<>();
@@ -38,12 +38,12 @@ public class GeneDTO {
         this.primaryId = primaryId;
     }
 
-    public String getTaxonID() {
-        return taxonID;
+    public String getTaxonId() {
+        return taxonId;
     }
 
-    public void setTaxonID(String taxonID) {
-        this.taxonID = taxonID;
+    public void setTaxonId(String taxonID) {
+        this.taxonId = taxonID;
     }
 
     public String getSoTermId() {
