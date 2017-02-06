@@ -3,7 +3,7 @@
 startTime=$(date)
 echo $startTime
 
-cd /research/zunloads/databases/zfindb/
+cd /research/zunloads/databases/trunkdb/
 
 latestDump=`ls -td -- */ | head -n 1 | cut -d'/' -f1`
 echo $latestDump
@@ -12,7 +12,7 @@ echo $latestDump
 echo "*** Removing previous working directories"
 rm -rf /research/zunloads/databases/postgres_dumps/$latestDump;
 
-cp -R /research/zunloads/databases/zfindb/$latestDump /research/zunloads/databases/postgres_dumps/
+cp -R /research/zunloads/databases/trunkdb/$latestDump /research/zunloads/databases/postgres_dumps/
 cd /research/zunloads/databases/postgres_dumps/
 
 echo "*** latest dump: "
