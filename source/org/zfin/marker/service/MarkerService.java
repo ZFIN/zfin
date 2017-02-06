@@ -20,6 +20,7 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.GenotypeFigure;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.TermExternalReference;
 import org.zfin.ontology.presentation.DiseaseDisplay;
@@ -58,6 +59,8 @@ public class MarkerService {
 
     private static Pattern typePattern = Pattern.compile("ZDB-([\\p{Alpha}_]+)-.*");
 
+    private static Map<String, GenericTerm> soTermMapping;
+
     /**
      * Looks for firstMarkers in Genedom and returns the entire relation.
      *
@@ -87,8 +90,8 @@ public class MarkerService {
         SequenceInfo sequenceInfo = new SequenceInfo();
 
         sequenceInfo.setDbLinks(RepositoryFactory.getSequenceRepository()
-                        .getDBLinksForMarkerAndDisplayGroup(marker
-                                , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE)
+                .getDBLinksForMarkerAndDisplayGroup(marker
+                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE)
         );
 
         List<RelatedMarkerDBLinkDisplay> relatedLinks = RepositoryFactory.getSequenceRepository()
@@ -104,10 +107,10 @@ public class MarkerService {
 
         Set<RelatedMarkerDBLinkDisplay> markerDBLinks = new TreeSet<>();
         markerDBLinks.addAll(RepositoryFactory.getSequenceRepository()
-                        .getDBLinksForSecondRelatedMarker(marker
-                                , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
-                                , MarkerRelationship.Type.CLONE_CONTAINS_GENE
-                        )
+                .getDBLinksForSecondRelatedMarker(marker
+                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
+                        , MarkerRelationship.Type.CLONE_CONTAINS_GENE
+                )
         );
 
         markerDBLinks.addAll(getTranscriptReferences(marker));
@@ -156,10 +159,10 @@ public class MarkerService {
                         MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT
                 );
         relatedLinks.addAll(RepositoryFactory.getSequenceRepository()
-                        .getDBLinksForSecondRelatedMarker(marker
-                                , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
-                                , MarkerRelationship.Type.CLONE_CONTAINS_GENE
-                        )
+                .getDBLinksForSecondRelatedMarker(marker
+                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
+                        , MarkerRelationship.Type.CLONE_CONTAINS_GENE
+                )
         );
         relatedLinks.addAll(getTranscriptReferences(marker));
         for (RelatedMarkerDBLinkDisplay relatedLink : relatedLinks) {
@@ -962,4 +965,10 @@ public class MarkerService {
         return note;
     }
 
+    public static GenericTerm getSoTerm(Marker marker) {
+        if (soTermMapping == null) {
+            soTermMapping = getMarkerRepository().getSoTermMapping();
+        }
+        return soTermMapping.get(marker.getMarkerType().getName());
+    }
 }

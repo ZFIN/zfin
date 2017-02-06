@@ -1,5 +1,8 @@
 package org.zfin.profile.service;
 
+import java.text.Collator;
+import java.util.Comparator;
+
 /**
  * Created by prita on 1/26/2017.
  */
@@ -8,7 +11,7 @@ public class Country {
 
         private String countryCode;
 
-        private String name;
+        public String name;
 
         public Country(String countryCode, String name)
 
@@ -53,3 +56,4 @@ public class Country {
         }
 
     }
+

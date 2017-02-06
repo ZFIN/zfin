@@ -15,6 +15,7 @@ import org.zfin.feature.FeaturePrefix;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.*;
+
 import org.zfin.profile.presentation.PersonMemberPresentation;
 import org.zfin.profile.presentation.ProfileUpdateMessageBean;
 import org.zfin.profile.repository.ProfileRepository;
@@ -24,6 +25,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.sql.Blob;
 import java.util.*;
+import java.text.Collator;
 
 /**
  */
@@ -402,20 +404,19 @@ public class ProfileService {
     /**
      * using this method to get a list of Contries for use in Person edit
      */
-    public static List<Country> getCountries(final Locale inLocale) {
+    public static List<String> getCountries(final Locale inLocale) {
         String[] countryCodes = Locale.getISOCountries();
-        List<Country> countries = new ArrayList<Country>(countryCodes.length);
+        List<String> countries = new ArrayList<String>(countryCodes.length);
         for (String countryCode : countryCodes) {
-            countries.add(new Country(countryCode, new Locale("", countryCode).getDisplayCountry(inLocale)));
+            Locale obj = new Locale("", countryCode);
+            countries.add(obj.getDisplayCountry(inLocale));
+
         }
-        Collections.sort(countries, new Comparator<Country>() {
-            public int compare(Country c1, Country c2) {
-                return c1.getCountryCode().compareTo(c2.getCountryCode());
-            }
-        });
+        Collections.sort(countries);
         return countries;
     }
-    /**
+
+        /**
      * If there is not an address for this person then insert the join record.
      * If there is one, then update the join record.
      * If there are multiple . . . create an error log and update both records.
