@@ -40,7 +40,11 @@ public class ExpressionSearchService {
         //not sure if this should be a request handler, or maybe aliasing
         //a fake field name to match all...
         if (StringUtils.isNotEmpty(criteria.getGeneField())) {
-            solrQuery.addFilterQuery("name:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
+            StringBuilder gfq = new StringBuilder();
+            gfq.append("name:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
+            gfq.append(" OR full_name:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
+            gfq.append(" OR alias:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
+            solrQuery.addFilterQuery(gfq.toString());
         }
 
         if (criteria.getAnatomy() != null) {
