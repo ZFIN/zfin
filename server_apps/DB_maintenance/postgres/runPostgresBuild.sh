@@ -32,7 +32,7 @@ grep -A100000 "<addPrimaryKey" /tmp/changelogMigrationFile.xml -C 1 > /tmp/const
 
 cat $SOURCEROOT/server_apps/DB_maintenance/postgres/xmlHeader.xml /tmp/constraints.xml > $SOURCEROOT/source/org/zfin/db/postgres/changelogConstraintFile.xml 
 
-
+cat $SOURCEROOT/source/org/zfin/db/postgres/changelogMigrationFile.xml $SOURCEROOT/server_apps/DB_maintenance/postgres/xmlFooter.xml > cat $SOURCEROOT/source/org/zfin/db/postgres/tableMigration.xml
 
 
 
