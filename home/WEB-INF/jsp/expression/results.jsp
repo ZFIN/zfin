@@ -14,7 +14,7 @@
   <div id="imagebox_maxnote" style="display: none;"></div>
   <div id="xpresimg_imagePreload"></div>
 </div>
-
+<br>
 <c:choose>
   <c:when test="${!empty criteria.figureResults}">
     <zfin-expression-search:figure-results criteria="${criteria}"/>
@@ -27,7 +27,7 @@
   </c:otherwise>
 </c:choose>
 
-<zfin-expression-search:search-form criteria="${criteria}"/>
+<zfin-expression-search:search-form criteria="${criteria}" title="Modify your search"/>
 
 <script type="text/javascript">
     var imageBox = new ImageBox();

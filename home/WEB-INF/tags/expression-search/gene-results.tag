@@ -5,7 +5,8 @@
 
 <table class="searchresults">
     <caption>
-        ${criteria.numFound} Genes
+        Expression Pattern Search Results<br>
+        <small>(${criteria.numFound} genes with expression)
     </caption>
     <tr>
         <th>Gene</th>
@@ -30,6 +31,6 @@
 
 </table>
 
-<div style="clear: both ; width: 80%" class="clearfix">
+<div style="padding: 10px 0">
     <zfin2:pagination paginationBean="${paginationBean}"/>
 </div>

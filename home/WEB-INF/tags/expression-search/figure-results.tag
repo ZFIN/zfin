@@ -31,6 +31,6 @@
 
 </table>
 
-<div style="clear: both ; width: 80%" class="clearfix">
+<div style="padding: 10px 0">
     <zfin2:pagination paginationBean="${paginationBean}"/>
 </div>
