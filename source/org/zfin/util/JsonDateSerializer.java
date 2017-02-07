@@ -7,14 +7,14 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
-public class JsonDateSerializer extends JsonSerializer<Date> {
-
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+public class JsonDateSerializer extends JsonSerializer<GregorianCalendar> {
 
     @Override
-    public void serialize(Date date, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-        String formattedDate = dateFormat.format(date);
-        jsonGenerator.writeString(formattedDate);
+    public void serialize(GregorianCalendar date, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+        String dateString = date.toZonedDateTime().toString();
+        dateString = dateString.substring(0,dateString.indexOf("["));
+        jsonGenerator.writeString(dateString);
     }
 }
