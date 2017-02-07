@@ -11,6 +11,7 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.ExpressionSearchCriteria;
 import org.zfin.expression.presentation.FigureResult;
 import org.zfin.expression.presentation.GeneResult;
+import org.zfin.expression.presentation.ImageResult;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
@@ -20,6 +21,7 @@ import org.zfin.search.service.QueryManipulationService;
 import org.zfin.search.service.SolrService;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -112,11 +114,43 @@ public class ExpressionSearchService {
 
         List<SolrDocument> solrDocumentList = queryResponse.getGroupResponse().getValues().get(0).getValues()
                 .stream()
-                .map((Group g) -> g.getResult().get(0))
+                .map(ExpressionSearchService::getFirstDocumentFromGroup)
                 .collect(Collectors.toList());
 
         return buildFigureResults(solrDocumentList);
 
+    }
+
+    public static List<ImageResult> getImageResults(ExpressionSearchCriteria criteria) {
+        SolrQuery solrQuery = new SolrQuery();
+
+        solrQuery.addFilterQuery("category:(" + "Expression" + ")");
+        if (criteria.getAnatomy() != null) {
+            String termQuery = criteria.getAnatomy().stream()
+                    .collect(Collectors.joining(" OR "));
+            solrQuery.addFilterQuery("expression_anatomy_tf:(" + termQuery + ")");
+        }
+
+        solrQuery.addFilterQuery("zebrafish_gene_t:(" + criteria.getGeneField() + ")");
+
+        solrQuery.setFields("id", "img_zdb_id", "thumbnail");
+        solrQuery.add("group", "true");
+        solrQuery.add("group.ngroups", "true");
+        solrQuery.add("group.field", "fig_zdb_id");
+        solrQuery.setRows(5000);
+        solrQuery.addSort("date", SolrQuery.ORDER.asc);
+
+        QueryResponse queryResponse = null;
+        try {
+            queryResponse = SolrService.getSolrClient().query(solrQuery);
+        } catch (SolrServerException | IOException e) {
+            e.printStackTrace();
+        }
+        return queryResponse.getGroupResponse().getValues().get(0).getValues().stream()
+                .map(ExpressionSearchService::getFirstDocumentFromGroup)
+                .map(ExpressionSearchService::buildImageResults)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
     public static List<FigureResult> buildFigureResults(List<SolrDocument> solrDocumentList) {
@@ -145,6 +179,10 @@ public class ExpressionSearchService {
                 .collect(Collectors.toList());
     }
 
+    public static SolrDocument getFirstDocumentFromGroup(Group group) {
+        return group.getResult().get(0);
+    }
+
     public static GeneResult buildGeneResult(SolrDocument document, ExpressionSearchCriteria criteria) {
         GeneResult geneResult =  new GeneResult();
 
@@ -164,6 +202,21 @@ public class ExpressionSearchService {
 
 
         return geneResult;
+    }
+
+    public static List<ImageResult> buildImageResults(SolrDocument document) {
+        ArrayList idList = (ArrayList) document.get("img_zdb_id");
+        ArrayList thumbList = (ArrayList) document.get("thumbnail");
+        ArrayList<ImageResult> imageResults = new ArrayList<>();
+        if (idList != null && thumbList != null && idList.size() == thumbList.size()) {
+            for (int i = 0; i < idList.size(); i++) {
+                ImageResult result = new ImageResult();
+                result.setImageZdbId(idList.get(i).toString());
+                result.setImageThumbnail(thumbList.get(i).toString());
+                imageResults.add(result);
+            }
+        }
+        return imageResults;
     }
 
     public static Integer getPublicationCount(Marker gene, ExpressionSearchCriteria criteria) {

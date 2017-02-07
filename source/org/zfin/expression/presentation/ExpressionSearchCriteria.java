@@ -15,7 +15,7 @@ public class ExpressionSearchCriteria {
 
     private List<GeneResult> geneResults;
     private List<FigureResult> figureResults;
-
+    private List<ImageResult> imageResults;
 
     private Long numFound;
     private Integer rows;
@@ -75,6 +75,14 @@ public class ExpressionSearchCriteria {
 
     public void setFigureResults(List<FigureResult> figureResults) {
         this.figureResults = figureResults;
+    }
+
+    public List<ImageResult> getImageResults() {
+        return imageResults;
+    }
+
+    public void setImageResults(List<ImageResult> imageResults) {
+        this.imageResults = imageResults;
     }
 
     public Long getNumFound() {

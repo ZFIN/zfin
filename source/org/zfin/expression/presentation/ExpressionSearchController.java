@@ -1,15 +1,12 @@
 package org.zfin.expression.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrDocumentList;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.expression.service.ExpressionSearchService;
-import org.springframework.ui.Model;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.util.URLCreator;
 
@@ -33,6 +30,9 @@ public class ExpressionSearchController {
 
         if (criteria.getRows() == null) { criteria.setRows(20); }
         if (criteria.getPage() == null) { criteria.setPage(1); }
+
+        List<ImageResult> images = ExpressionSearchService.getImageResults(criteria);
+        criteria.setImageResults(images);
 
         if (StringUtils.isNotEmpty(criteria.getGeneZdbID())) {
             List<FigureResult> figureResults = ExpressionSearchService.getFigureResults(criteria);
