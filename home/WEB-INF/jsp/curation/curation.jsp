@@ -120,7 +120,7 @@
         <li>
             </c:otherwise>
             </c:choose>
-            <a href="#${curationTab.value}" aria-controls="${curationTab.value}" role="tab"
+            <a href="#${curationTab.value}" aria-controls="${curationTab.value}" role="tab"   onclick="handleTabToggle('${curationTab.value}')"
                data-toggle="tab">${curationTab.displayName}</a>
             </c:forEach>
             <li>
