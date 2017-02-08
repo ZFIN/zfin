@@ -253,8 +253,11 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
         zecoRootTerms.add("ZECO:0000105");
     }
 
+    private HashMap<String, Set<String>> childMapZECO = new HashMap<>();
+
     public HashMap<String, Set<String>> getChildMap() {
-        HashMap<String, Set<String>> map = new HashMap<>();
+        if(childMapZECO.size() > 0)
+            return childMapZECO;
         for (String zecoTermRootID : zecoRootTerms) {
             GenericTerm term = getOntologyRepository().getTermByOboID(zecoTermRootID);
             Set<String> termSet = new HashSet<>();
@@ -262,9 +265,9 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
             for (GenericTerm childTerm : term.getAllChildren()) {
                 termSet.add(childTerm.getOboID());
             }
-            map.put(zecoTermRootID, termSet);
+            childMapZECO.put(zecoTermRootID, termSet);
         }
-        return map;
+        return childMapZECO;
     }
 
 }
