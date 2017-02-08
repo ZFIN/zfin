@@ -256,10 +256,10 @@ public class ExperimentRPCServiceImpl extends ZfinRemoteServiceServlet implement
     public HashMap<String, Set<String>> getChildMap() {
         HashMap<String, Set<String>> map = new HashMap<>();
         for (String zecoTermRootID : zecoRootTerms) {
-            TermDTO term = OntologyManager.getInstance().getTermByID(zecoTermRootID);
+            GenericTerm term = getOntologyRepository().getTermByOboID(zecoTermRootID);
             Set<String> termSet = new HashSet<>();
             termSet.add(zecoTermRootID);
-            for (TermDTO childTerm : term.getAllChildren()) {
+            for (GenericTerm childTerm : term.getAllChildren()) {
                 termSet.add(childTerm.getOboID());
             }
             map.put(zecoTermRootID, termSet);
