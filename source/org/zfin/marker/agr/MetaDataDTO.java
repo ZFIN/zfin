@@ -8,27 +8,24 @@ import java.util.GregorianCalendar;
 public class MetaDataDTO {
 
     private GregorianCalendar dateProduced = new GregorianCalendar();
-    private DataProviderDTO dataProvider;
-//    private String loadingURI = "http://zfin.org";
+    private String dataProvider;
 
+    public MetaDataDTO(String dataProvider) {
+        this.dataProvider = dataProvider;
+    }
 
     @JsonSerialize(using = JsonDateSerializer.class)
     public GregorianCalendar getDateProduced() {
         return dateProduced;
     }
 
-    public DataProviderDTO getDataProvider() {
+
+    public String getDataProvider() {
         return dataProvider;
     }
 
-    public void setDataProvider(DataProviderDTO dataProvider) {
+    public void setDataProvider(String dataProvider) {
         this.dataProvider = dataProvider;
     }
-
-/*
-    public String getLoadingURI() {
-        return loadingURI;
-    }
-*/
 }
 

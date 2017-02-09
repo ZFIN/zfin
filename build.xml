@@ -98,6 +98,7 @@
     <loadProperties file="home/WEB-INF/zfin.properties"/>
 
 
+    <import file="${buildfiles.dir}/agr.xml"/>
     <import file="${buildfiles.dir}/allfilter.xml"/>
     <import file="${buildfiles.dir}/properties.xml"/>
     <import file="${buildfiles.dir}/gwt.xml"/>

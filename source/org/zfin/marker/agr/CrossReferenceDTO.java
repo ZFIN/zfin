@@ -2,22 +2,19 @@ package org.zfin.marker.agr;
 
 public class CrossReferenceDTO {
 
-    private DataProviderDTO dataProvider;
+    private String dataProvider;
     private String id;
+
+    public CrossReferenceDTO(String dataProvider, String id) {
+        this.dataProvider = dataProvider;
+        this.id = id;
+    }
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public DataProviderDTO getDataProvider() {
+    public String getDataProvider() {
         return dataProvider;
-    }
-
-    public void setDataProvider(DataProviderDTO dataProvider) {
-        this.dataProvider = dataProvider;
     }
 }

@@ -13,7 +13,8 @@ public class GeneDTO {
     private String primaryId;
     private String taxonId = "7955";
     private String soTermId;
-    private List<SynonymDTO> synonyms;
+    //private List<SynonymDTO> synonyms;
+    private List<String> synonyms;
     private List<CrossReferenceDTO> crossReferences;
     private List<String> secondaryIds;
 
@@ -57,11 +58,22 @@ public class GeneDTO {
         this.soTermId = soTermId;
     }
 
+/*
     public List<SynonymDTO> getSynonyms() {
         return synonyms;
     }
 
     public void setSynonyms(List<SynonymDTO> synonyms) {
+        this.synonyms = synonyms;
+    }
+*/
+
+
+    public List<String> getSynonyms() {
+        return synonyms;
+    }
+
+    public void setSynonyms(List<String> synonyms) {
         this.synonyms = synonyms;
     }
 
