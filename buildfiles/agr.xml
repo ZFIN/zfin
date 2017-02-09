@@ -5,7 +5,7 @@
             description="Tests to make sure that the system is alive and working properly.">
         <echo message="Check entity changes"/>
         <java classname="org.zfin.marker.agr.BasicGeneInfo" fork="yes" classpathref="extended.classpath"
-              failonerror="true" maxmemory="1024M">
+              failonerror="true" maxmemory="2048M">
             <classpath refid="classpath"/>
         </java>
     </target>
