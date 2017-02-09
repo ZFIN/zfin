@@ -233,9 +233,10 @@ public class GeneViewController {
             dto.setPrimaryId(gene.getZdbID());
             dto.setSoTermId(gene.getSoTerm().getOboID());
             if (CollectionUtils.isNotEmpty(gene.getAliases())) {
-                List<String> aliasList = new ArrayList<>(gene.getAliases().size());
+                List<SynonymDTO> aliasList = new ArrayList<>(gene.getAliases().size());
                 for (MarkerAlias alias : gene.getAliases()) {
-                    aliasList.add(alias.getAlias());
+                    SynonymDTO syn = new SynonymDTO(alias.getAlias());
+                    aliasList.add(syn);
                 }
                 dto.setSynonyms(aliasList);
             }

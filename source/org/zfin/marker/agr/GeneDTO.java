@@ -1,8 +1,11 @@
 package org.zfin.marker.agr;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class GeneDTO {
 
     private String symbol;
@@ -10,9 +13,9 @@ public class GeneDTO {
     private String primaryId;
     private String taxonId = "7955";
     private String soTermId;
-    private List<String> synonyms = new ArrayList<>();
-    private List<CrossReferenceDTO> crossReferences = new ArrayList<>();
-    private List<String> secondaryIds = new ArrayList<>();
+    private List<SynonymDTO> synonyms;
+    private List<CrossReferenceDTO> crossReferences;
+    private List<String> secondaryIds;
 
     public String getSymbol() {
         return symbol;
@@ -54,11 +57,11 @@ public class GeneDTO {
         this.soTermId = soTermId;
     }
 
-    public List<String> getSynonyms() {
+    public List<SynonymDTO> getSynonyms() {
         return synonyms;
     }
 
-    public void setSynonyms(List<String> synonyms) {
+    public void setSynonyms(List<SynonymDTO> synonyms) {
         this.synonyms = synonyms;
     }
 

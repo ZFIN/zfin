@@ -9,7 +9,7 @@ public class MetaDataDTO {
 
     private GregorianCalendar dateProduced = new GregorianCalendar();
     private DataProviderDTO dataProvider;
-    private String loadingURI = "http://zfin.org";
+//    private String loadingURI = "http://zfin.org";
 
 
     @JsonSerialize(using = JsonDateSerializer.class)
@@ -25,8 +25,10 @@ public class MetaDataDTO {
         this.dataProvider = dataProvider;
     }
 
+/*
     public String getLoadingURI() {
         return loadingURI;
     }
+*/
 }
 
