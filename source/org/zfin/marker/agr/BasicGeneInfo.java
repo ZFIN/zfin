@@ -33,6 +33,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
         }
         BasicGeneInfo basicGeneInfo = new BasicGeneInfo(number);
         basicGeneInfo.init();
+        System.exit(0);
     }
 
     private void init() throws IOException {
@@ -56,8 +57,8 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
         List<GeneDTO> allGeneDTOList = new ArrayList<>(allGenes.size());
         int index = 0;
         for (Marker gene : allGenes) {
-            if (index % 100 == 0)
-                System.out.println("Record " + index++);
+            if (index++ % 1000 == 0)
+                System.out.println("Record " + index);
             GeneDTO dto = new GeneDTO();
             dto.setName(gene.name);
             dto.setSymbol(gene.getAbbreviation());

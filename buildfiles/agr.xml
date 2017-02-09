@@ -7,7 +7,16 @@
         <java classname="org.zfin.marker.agr.BasicGeneInfo" fork="yes" classpathref="extended.classpath"
               failonerror="true" maxmemory="1024M">
             <classpath refid="classpath"/>
-            <arg value="10"/>
+        </java>
+    </target>
+
+    <target name="create-basic-gene-info-file-test" depends=""
+            description="Tests to make sure that the system is alive and working properly.">
+        <echo message="Check entity changes"/>
+        <java classname="org.zfin.marker.agr.BasicGeneInfo" fork="yes" classpathref="extended.classpath"
+              failonerror="true" maxmemory="1024M">
+            <classpath refid="classpath"/>
+            <arg value="1000"/>
         </java>
     </target>
 
