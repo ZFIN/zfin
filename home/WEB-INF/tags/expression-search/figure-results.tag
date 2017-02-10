@@ -15,6 +15,7 @@
     <tr>
         <th>Publication</th>
         <th>Data</th>
+        <th></th>
         <th>Fish</th>
         <th>Stage Range</th>
         <th>Anatomy</th>
@@ -27,6 +28,15 @@
             </zfin:groupByDisplay>
             <td>
                 <zfin:link entity="${result.figure}"/>
+            </td>
+            <td>
+                <c:if test="${!empty result.figure.images}">
+                    <a href="/${result.figure.zdbID}">
+                        <img border="1" height="50" src="${result.figure.img.thumbnailUrl}"/><c:if test="${fn:length(result.figure.images) > 1}">
+                            <img border="0" src="/images/multibars.gif">
+                        </c:if>
+                    </a>
+                </c:if>
             </td>
             <td><zfin:link entity="${result.fish}"/></td>
             <td></td>
