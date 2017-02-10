@@ -623,7 +623,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             for (PhenotypeExperimentDTO id : list) {
                 displayedExpressions.add(id);
             }
-            Collections.sort(displayedExpressions);
             if (sectionVisible)
                 displayTable.createMutantTable();
             recordAllExpressedTerms();
