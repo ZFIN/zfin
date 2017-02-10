@@ -2202,6 +2202,7 @@ select
            <entity name="phenotype_gene"
                    datasource="db" query="select
                             mrkr_abbrev as gene,
+                            mrkr_name as gene_full_name,
                             mrkr_zdb_id as xref,
                             'pg-' || pg_id as pg_id
                             from phenotype_source_generated
@@ -2211,6 +2212,20 @@ select
                                  join feature_marker_relationship on fmrel_ftr_zdb_id = genofeat_feature_zdb_id
                                                                      and fmrel_type	= 'is allele of'
                                  join marker on fmrel_mrkr_zdb_id = mrkr_zdb_id;"
+                   cacheImpl="SortedMapBackedCache"
+                   where="pg_id=phenotype.id"/>
+
+           <entity name="phenotype_gene_alias"
+                   datasource="db" query="select
+                            dalias_alias as gene_previous_name,
+                            'pg-' || pg_id as pg_id
+                            from phenotype_source_generated
+                                 join fish_experiment on genox_zdb_id = pg_genox_zdb_id
+                                 join fish on fish_zdb_id = genox_fish_zdb_id
+                                 join genotype_feature on genofeat_geno_zdb_id = fish_genotype_zdb_id
+                                 join feature_marker_relationship on fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+                                                                     and fmrel_type	= 'is allele of'
+                                 join data_alias on fmrel_mrkr_zdb_id = dalias_data_zdb_id;"
                    cacheImpl="SortedMapBackedCache"
                    where="pg_id=phenotype.id"/>
 
@@ -2239,6 +2254,19 @@ select
                              join marker on mrel_mrkr_2_zdb_id = mrkr_zdb_id;"
                    cacheImpl="SortedMapBackedCache"
                    where="pg_id=phenotype.id"/>
+
+           <entity name="phenotype_str_gene"
+                   datasource="db" query="select dalias_alias as gene_previous_name,
+                               'pg-' || pg_id as pg_id
+                        from phenotype_source_generated
+                             join fish_experiment on genox_zdb_id = pg_genox_zdb_id
+                             join fish on fish_zdb_id = genox_fish_zdb_id
+                             join fish_str on fishstr_fish_zdb_id = fish_zdb_id
+                             join marker_relationship on mrel_mrkr_1_zdb_id = fishstr_str_zdb_id and mrel_type = 'knockdown reagent targets gene'
+                             join data_alias on mrel_mrkr_2_zdb_id = dalias_data_zdb_id;"
+                   cacheImpl="SortedMapBackedCache"
+                   where="pg_id=phenotype.id"/>
+
 
            <entity name="phenotype_standard_or_control"
                    datasource="db" query="select 

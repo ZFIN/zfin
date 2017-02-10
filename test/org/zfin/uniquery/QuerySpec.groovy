@@ -107,6 +107,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.PUBLICATION.name      | "kraus 1993"                                     | "11699"
         Category.PHENOTYPE.name        | "stage:Unknown"                                  | "13741"
         Category.PHENOTYPE.name        | "trpv6 misexpression Kwong 2015"                 | "12776"
+        Category.PHENOTYPE.name        | "ntl"                                            | "14339"
         Category.PUBLICATION.name      | "bohni"                                          | "11699"
         Category.PUBLICATION.name      | "abstract:\"motor control requires circuits\""   | "n/a"
         Category.PUBLICATION.name      | "thesis id:ZDB-PUB-150918-21"                    | "13042"
