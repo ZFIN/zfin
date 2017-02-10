@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.expression.service.ExpressionSearchService;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.util.URLCreator;
@@ -26,6 +27,7 @@ public class ExpressionSearchController {
 
     @RequestMapping("/search")
     public String search(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria) {
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Expression Search");
         return "expression/search.page";
     }
 
@@ -63,6 +65,7 @@ public class ExpressionSearchController {
         }
 
         model.addAttribute("criteria", criteria);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Expression Search Results");
         return "expression/results.page";
     }
 
