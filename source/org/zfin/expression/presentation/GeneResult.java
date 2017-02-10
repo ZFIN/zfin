@@ -5,16 +5,15 @@ import org.zfin.marker.Marker;
 
 public class GeneResult {
 
-    String symbol;
-    String id;
-    Integer publicationCount;
-    Integer figureCount;
-    Marker gene;
-    String matchingText;
-    DevelopmentStage startStage;
-    DevelopmentStage endStage;
-    String figureResultUrl;
-
+    private String symbol;
+    private String id;
+    private Integer publicationCount;
+    private Integer figureCount;
+    private Marker gene;
+    private String matchingText;
+    private DevelopmentStage startStage;
+    private DevelopmentStage endStage;
+    private String figureResultUrl;
 
     public String getUrl() { return "http://zfin.org/" + id; }
 

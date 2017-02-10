@@ -9,12 +9,13 @@ import org.zfin.publication.Publication;
 import java.util.List;
 
 public class FigureResult {
-    Publication publication;
-    Figure figure;
-    DevelopmentStage startStage;
-    DevelopmentStage endStage;
-    Fish fish;
-    List<Term> anatomy;
+
+    private Publication publication;
+    private Figure figure;
+    private DevelopmentStage startStage;
+    private DevelopmentStage endStage;
+    private Fish fish;
+    private List<Term> anatomy;
 
     public Publication getPublication() {
         return publication;
