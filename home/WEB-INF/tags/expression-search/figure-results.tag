@@ -5,7 +5,12 @@
 
 <table class="searchresults groupstripes">
     <caption>
-        ${criteria.numFound} Figures
+        Expression Pattern Search Results for <zfin:link entity="${criteria.gene}"/><br>
+        <small>
+            (<zfin:choice choicePattern="0#figures|1#figure|2#figures" includeNumber="true" integerEntity="${criteria.numFound}"/>
+            with expression from
+            <zfin:choice choicePattern="0#publications|1#publication|2#publications" includeNumber="true" integerEntity="${criteria.pubCount}"/>)
+        </small>
     </caption>
     <tr>
         <th>Publication</th>

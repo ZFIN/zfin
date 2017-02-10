@@ -10,6 +10,7 @@ public class ExpressionSearchCriteria {
 
     private String geneField;
     private String geneZdbID;
+    private Marker gene;
 
     private List<String> anatomy;
 
@@ -17,7 +18,8 @@ public class ExpressionSearchCriteria {
     private List<FigureResult> figureResults;
     private List<ImageResult> imageResults;
 
-    private Long numFound;
+    private long numFound;
+    private long pubCount;
     private Integer rows;
     private Integer page;
 
@@ -44,13 +46,20 @@ public class ExpressionSearchCriteria {
         this.geneZdbID = geneZdbID;
     }
 
-
     public String getGeneZdbID() {
         return geneZdbID;
     }
 
     public void setGeneZdbId(String geneZdbID) {
         this.geneZdbID = geneZdbID;
+    }
+
+    public Marker getGene() {
+        return gene;
+    }
+
+    public void setGene(Marker gene) {
+        this.gene = gene;
     }
 
     public List<String> getAnatomy() {
@@ -85,12 +94,20 @@ public class ExpressionSearchCriteria {
         this.imageResults = imageResults;
     }
 
-    public Long getNumFound() {
+    public long getNumFound() {
         return numFound;
     }
 
-    public void setNumFound(Long numFound) {
+    public void setNumFound(long numFound) {
         this.numFound = numFound;
+    }
+
+    public long getPubCount() {
+        return pubCount;
+    }
+
+    public void setPubCount(long pubCount) {
+        this.pubCount = pubCount;
     }
 
     public Integer getRows() {

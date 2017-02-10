@@ -92,6 +92,7 @@ public class ExpressionSearchService {
         solrQuery.add("group", "true");
         solrQuery.add("group.ngroups", "true");
         solrQuery.add("group.field", "fig_zdb_id");
+        solrQuery.add("group.field", "pub_zdb_id");
 
         solrQuery.setFields("id", "fig_zdb_id", "pub_zdb_id", "fish_zdb_id");
 
@@ -107,10 +108,11 @@ public class ExpressionSearchService {
             e.printStackTrace();
         }
 
-        //needs to be more null safe, I'm sure...
-        criteria.setNumFound(new Long(queryResponse.getGroupResponse().getValues().iterator().next().getNGroups()));
-
-
+        // needs to be more null safe, I'm sure...
+        // also this is assuming that the groups come back in the same order that they were
+        // specified. not sure if that's guaranteed.
+        criteria.setNumFound(queryResponse.getGroupResponse().getValues().get(0).getNGroups());
+        criteria.setPubCount(queryResponse.getGroupResponse().getValues().get(1).getNGroups());
 
         List<SolrDocument> solrDocumentList = queryResponse.getGroupResponse().getValues().get(0).getValues()
                 .stream()
