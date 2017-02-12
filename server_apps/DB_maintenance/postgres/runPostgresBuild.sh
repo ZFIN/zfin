@@ -3,9 +3,9 @@
 startTime=$(date)
 echo $startTime
 
-echo "****Process an informix dump for loading into postgres."
-cd $SOURCEROOT/server_apps/DB_maintenance/postgres
-./process_dumps.sh
+#echo "****Process an informix dump for loading into postgres."
+#cd $SOURCEROOT/server_apps/DB_maintenance/postgres
+#./process_dumps.sh
 
 echo "****Build liquibase changelog"
 
