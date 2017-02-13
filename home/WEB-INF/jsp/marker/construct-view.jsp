@@ -66,7 +66,7 @@
     <%--link to the facet search result if there are more than 50 features --%>
     <c:choose>
         <c:when test="${formBean.transgenics != null && fn:length(formBean.transgenics) > 50 }">
-            <zfin2:subsection title="TRANSGENICS THAT UTILIZE <i>${formBean.marker.name}</i>">
+            <zfin2:subsection title="TRANSGENIC INSERTIONS  THAT UTILIZE <i>${formBean.marker.name}</i>">
                 <table class="summary horizontal-solidblock">
                     <tr>
                         <td>
@@ -120,12 +120,12 @@
     </c:choose>
 <c:choose>
     <c:when test="${formBean.transgenics != null && fn:length(formBean.transgenics) > 50 }">
-        <zfin2:subsection title="TRANSGENIC INSERTIONS THAT UTILIZE <i>${formBean.marker.name}</i>">
+        <zfin2:subsection title="TRANSGENICS THAT UTILIZE <i>${formBean.marker.name}</i>">
             <table class="summary horizontal-solidblock">
                 <tr>
                     <td>
                         <a href="/prototype?q=&fq=category:%22Fish%22&fq=xref:${formBean.marker.zdbID}">View
-                            genomic features that utilize <i>${formBean.marker.name}</i></a>
+                            all transgenics that utilize <i>${formBean.marker.name}</i></a>
                     </td>
                 </tr>
             </table>
