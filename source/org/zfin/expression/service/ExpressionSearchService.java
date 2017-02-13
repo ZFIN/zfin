@@ -13,6 +13,8 @@ import org.zfin.expression.presentation.ExpressionSearchCriteria;
 import org.zfin.expression.presentation.FigureResult;
 import org.zfin.expression.presentation.GeneResult;
 import org.zfin.expression.presentation.ImageResult;
+import org.zfin.gwt.root.util.CollectionUtils;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.publication.Publication;
@@ -81,7 +83,7 @@ public class ExpressionSearchService {
         SolrQuery solrQuery = new SolrQuery();
 
         solrQuery.addFilterQuery("category:(" + "Expression" + ")");
-        if (criteria.getAnatomy() != null) {
+        if (criteria.getAnatomy() != null && criteria.getAnatomy().size() > 0) {
             String termQuery = criteria.getAnatomy().stream()
                     .collect(Collectors.joining(" OR "));
             solrQuery.addFilterQuery("expression_anatomy_tf:(" + termQuery + ")");

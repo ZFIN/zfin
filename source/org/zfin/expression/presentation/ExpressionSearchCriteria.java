@@ -4,6 +4,7 @@ package org.zfin.expression.presentation;
 import org.zfin.marker.Marker;
 import org.zfin.util.URLCreator;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ExpressionSearchCriteria {
@@ -12,7 +13,8 @@ public class ExpressionSearchCriteria {
     private String geneZdbID;
     private Marker gene;
 
-    private List<String> anatomy;
+    private String anatomyTermNames;
+    private String anatomyTermIDs;
 
     private List<GeneResult> geneResults;
     private List<FigureResult> figureResults;
@@ -31,6 +33,11 @@ public class ExpressionSearchCriteria {
         urlCreator.addNamevaluePair("geneField", gene.getAbbreviation());
 
         return urlCreator.getURL();
+    }
+
+    public List<String> getAnatomy() {
+        if (anatomyTermNames == null || anatomyTermNames.equals("")) { return null; }
+        return Arrays.asList(anatomyTermNames.split("\\|"));
     }
 
 
@@ -62,12 +69,20 @@ public class ExpressionSearchCriteria {
         this.gene = gene;
     }
 
-    public List<String> getAnatomy() {
-        return anatomy;
+    public String getAnatomyTermNames() {
+        return anatomyTermNames;
     }
 
-    public void setAnatomy(List<String> anatomy) {
-        this.anatomy = anatomy;
+    public void setAnatomyTermNames(String anatomyTermNames) {
+        this.anatomyTermNames = anatomyTermNames;
+    }
+
+    public String getAnatomyTermIDs() {
+        return anatomyTermIDs;
+    }
+
+    public void setAnatomyTermIDs(String anatomyTermIDs) {
+        this.anatomyTermIDs = anatomyTermIDs;
     }
 
     public List<GeneResult> getGeneResults() {
