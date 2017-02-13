@@ -2,7 +2,10 @@ package org.zfin.publication.presentation;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
+import org.zfin.framework.presentation.InvalidWebRequestException;
+import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -16,7 +19,10 @@ import java.util.regex.Pattern;
  * 2) a) Publication found with given zdbID OR
  * b) zdb ID has nnnnnn-n* pattern and ZDB-PUB- prefixed to it gives a valid Publication.
  */
+
 public class PublicationValidator {
+    @Autowired
+    private PublicationRepository publicationRepository;
 
     private static Logger LOG = Logger.getLogger(PublicationValidator.class);
     private static final String ZDB_PUB = "ZDB-PUB-";
@@ -36,27 +42,24 @@ public class PublicationValidator {
     public static void validatePublicationID(String publicationID, String field, Errors errors) {
         // trim off trailing blanks
         publicationID = publicationID.trim();
+        String pubZDB;
 
         if (StringUtils.isEmpty(publicationID)) {
             LOG.debug("------- Failed not-null validation. ---");
             errors.rejectValue(field, "pub.empty");
             return;
         }
-
-        if (!publicationID.startsWith(ZDB_PUB)) {
-            if (!isValidTimeStamp(publicationID)) {
-                errors.rejectValue(field, "pub.invalid");
-                return;
-            } else {
-                publicationID = ZDB_PUB + publicationID;
-            }
+        if (isShortVersion(publicationID)) {
+            pubZDB=PublicationValidator.completeZdbID(publicationID);
+        } else {
+            pubZDB=publicationID;
         }
-
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-        if (pr.getPublication(publicationID) == null) {
-            LOG.debug("----------Failed zdb id validation --");
-            errors.rejectValue(field, "pub.notfound");
+        Publication pub=pr.getPublication(pubZDB);
+        if (pub==null){
+            errors.rejectValue(field, "pub.invalid");
         }
+
     }
 
     private static boolean isValidTimeStamp(String publicationID) {
