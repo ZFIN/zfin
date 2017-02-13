@@ -2,6 +2,7 @@ package org.zfin.gwt.curation.ui.disease;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
 import org.zfin.gwt.curation.event.CurationEvent;
@@ -12,6 +13,8 @@ import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
+import org.zfin.gwt.root.util.LookupRPCService;
+import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +27,7 @@ public class DiseaseModelPresenter implements Presenter {
 
     private CurationDiseaseRPCAsync diseaseRpcService = CurationDiseaseRPC.App.getInstance();
     private CurationExperimentRPCAsync curationRPCService = CurationExperimentRPC.App.getInstance();
+    private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
     private DiseaseModelView view;
     private String publicationID;
     private List<FishDTO> fishList = new ArrayList<>();
@@ -139,10 +143,8 @@ public class DiseaseModelPresenter implements Presenter {
     }
 
     public void addDiseaseToSelectionBox(TermDTO disease) {
-        if (diseaseList.contains(disease))
-            return;
-        diseaseList.add(disease);
-        reCreateDiseaseListBox();
+        AppUtils.fireAjaxCall(HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.GET_TERM_INFO_START);
+        lookupRPC.getTermInfo(OntologyDTO.DISEASE_ONTOLOGY, disease.getOboID(), new DiseaseInfoCallBack("Could not retrieve Term Info", view.getErrorLabel()));
     }
 
     public void updateConditions() {
@@ -349,4 +351,24 @@ public class DiseaseModelPresenter implements Presenter {
     }
 
 
+    private class DiseaseInfoCallBack extends ZfinAsyncCallback<TermDTO> {
+
+        public DiseaseInfoCallBack(String errorMessage, ErrorHandler errorLabel) {
+            super(errorMessage, errorLabel,
+                    HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.GET_TERM_INFO_STOP);
+        }
+
+        @Override
+        public void onSuccess(TermDTO disease) {
+            super.onFinish();
+            if (disease.isObsolete()) {
+                errorHandler.setError("Cannot use obsolete term");
+            } else {
+                if (diseaseList.contains(disease))
+                    return;
+                diseaseList.add(disease);
+                reCreateDiseaseListBox();
+            }
+        }
+    }
 }
