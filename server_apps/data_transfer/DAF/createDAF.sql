@@ -156,7 +156,8 @@ insert into tmp_da_full (taxon_id,
 				evidenceCodes,
 				reference,
 				dateAnnotated,
-				assignedBy)
+				assignedBy,
+				inferredGeneAssociation)
  select distinct '7955',
 	'GENE',
 	'ZFIN',
@@ -166,7 +167,8 @@ insert into tmp_da_full (taxon_id,
 	'ISS',
 	'ZDB-PUB-170210-12',
 	current year to second,
-	'ZFIN'
+	'ZFIN',
+	ortho_zebrafish_gene_zdb_id
    from ortholog, omim_phenotype, omimp_termxref_mapping, term_xref, term
    	where tx_term_zdb_id = term_zdb_id
 	and otm_omimp_id = omimp_pk_id
