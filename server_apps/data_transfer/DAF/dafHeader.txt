@@ -4,3 +4,4 @@
 !URL: http://zfin.org/
 !Contact Email: zfinadmn@zfin.org
 
+Taxon DB Object Type DB Object ID DB Object Symbol Inferred gene association  Experimental conditions Association type DO ID  Evidence Code genetic sex DB:Reference Date Assigned by
