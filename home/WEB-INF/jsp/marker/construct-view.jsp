@@ -118,7 +118,20 @@
             </div>
         </c:otherwise>
     </c:choose>
-
+<c:choose>
+    <c:when test="${formBean.transgenics != null && fn:length(formBean.transgenics) > 50 }">
+        <zfin2:subsection title="TRANSGENIC INSERTIONS THAT UTILIZE <i>${formBean.marker.name}</i>">
+            <table class="summary horizontal-solidblock">
+                <tr>
+                    <td>
+                        <a href="/prototype?q=&fq=category:%22Fish%22&fq=xref:${formBean.marker.zdbID}">View
+                            genomic features that utilize <i>${formBean.marker.name}</i></a>
+                    </td>
+                </tr>
+            </table>
+        </zfin2:subsection>
+    </c:when>
+    <c:otherwise>
     <div id="transgenic-lines" class="summary">
         <zfin2:subsection title="TRANSGENIC LINES" showNoData="true"
                           test="${!empty formBean.fish}">
@@ -154,6 +167,8 @@
             </table>
         </zfin2:subsection>
     </div>
+    </c:otherwise>
+</c:choose>
 
     <%--SEQUENCE INFORMATION--%>
     <zfin2:markerSequenceInformationSummary marker="${formBean.marker}" sequenceInfo="${formBean.sequenceInfo}"
