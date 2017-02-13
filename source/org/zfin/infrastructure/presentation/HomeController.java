@@ -23,7 +23,7 @@ public class HomeController {
             model.addAttribute("user", person);
         }
 
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "The Zebrafish Model Organism Database");
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "The Zebrafish Information Network");
 
         return "infrastructure/home.page";
     }

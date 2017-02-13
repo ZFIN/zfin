@@ -230,7 +230,17 @@ public class ActiveData implements ZdbID {
         XPAT,
         XPATINF,
         XPATRES,
-        ZYG;
+        ZYG,
+        MIRNA,
+        SNORNA,
+        RRNA,
+        LNCRNA,
+        LINCRNA,
+        PIRNA,
+        TRNA,
+        SRPRNA,
+        SCRNA,
+        NCRNA;
 
         private Class<? extends DeleteEntityRule> ruleClass;
         private static String allValues;
