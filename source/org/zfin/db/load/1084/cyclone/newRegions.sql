@@ -38,7 +38,7 @@ insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_disp
   values ('CPGISLAND','22','CpG island');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('SRPRNA','22','spRNA');
+  values ('SRPRNA','22','srpRNA');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
   values ('TSCRIPTREGREGION','22','Transcript Regulatory Region');
@@ -110,9 +110,7 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
  values ('TSCRIPT','GENEDOM_PRODUCES_PROTEIN');
 
-insert into marker_type_group_member(mtgrpmem_mrkr_type,
-    mtgrpmem_mrkr_type_group)
-values ('SRPRNA','NONTRANSCRIBED_REGIONS');
+
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
@@ -126,6 +124,117 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
 values ('CPGISLAND','NONTRANSCRIBED_REGIONS');
 
+
+
+insert into zdb_object_type (zobjtype_name,
+                    zobjtype_day,
+        zobjtype_app_page,
+        zobjtype_home_table,
+        zobjtype_home_zdb_id_column,
+        zobjtype_is_data,
+        zobjtype_is_source)
+ values ('LNCRNA',current,'marker','marker','mrkr_zdb_id','t','f');
+
+create sequence lncrna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+
+insert into zdb_object_type (zobjtype_name,
+                    zobjtype_day,
+        zobjtype_app_page,
+        zobjtype_home_table,
+        zobjtype_home_zdb_id_column,
+        zobjtype_is_data,
+        zobjtype_is_source)
+ values ('LINCRNA',current,'marker','marker','mrkr_zdb_id','t','f');
+
+create sequence lincrna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+
+insert into zdb_object_type (zobjtype_name,
+                    zobjtype_day,
+        zobjtype_app_page,
+        zobjtype_home_table,
+        zobjtype_home_zdb_id_column,
+        zobjtype_is_data,
+        zobjtype_is_source)
+ values ('MIRNA',current,'marker','marker','mrkr_zdb_id','t','f');
+
+create sequence mirna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+
+insert into zdb_object_type (zobjtype_name,
+                    zobjtype_day,
+        zobjtype_app_page,
+        zobjtype_home_table,
+        zobjtype_home_zdb_id_column,
+        zobjtype_is_data,
+        zobjtype_is_source)
+ values ('PIRNA',current,'marker','marker','mrkr_zdb_id','t','f');
+
+create sequence pirna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+
+insert into zdb_object_type (zobjtype_name,
+                    zobjtype_day,
+        zobjtype_app_page,
+        zobjtype_home_table,
+        zobjtype_home_zdb_id_column,
+        zobjtype_is_data,
+        zobjtype_is_source)
+ values ('RRNA',current,'marker','marker','mrkr_zdb_id','t','f');
+
+create sequence rrna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+
+insert into zdb_object_type (zobjtype_name,
+                    zobjtype_day,
+        zobjtype_app_page,
+        zobjtype_home_table,
+        zobjtype_home_zdb_id_column,
+        zobjtype_is_data,
+        zobjtype_is_source)
+ values ('SNORNA',current,'marker','marker','mrkr_zdb_id','t','f');
+
+create sequence snorna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+
+insert into zdb_object_type (zobjtype_name,
+                    zobjtype_day,
+        zobjtype_app_page,
+        zobjtype_home_table,
+        zobjtype_home_zdb_id_column,
+        zobjtype_is_data,
+        zobjtype_is_source)
+ values ('SCRNA',current,'marker','marker','mrkr_zdb_id','t','f');
+
+create sequence scrna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+
+insert into zdb_object_type (zobjtype_name,
+                    zobjtype_day,
+        zobjtype_app_page,
+        zobjtype_home_table,
+        zobjtype_home_zdb_id_column,
+        zobjtype_is_data,
+        zobjtype_is_source)
+ values ('TRNA',current,'marker','marker','mrkr_zdb_id','t','f');
+
+create sequence trna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+
+insert into zdb_object_type (zobjtype_name,
+                    zobjtype_day,
+        zobjtype_app_page,
+        zobjtype_home_table,
+        zobjtype_home_zdb_id_column,
+        zobjtype_is_data,
+        zobjtype_is_source)
+ values ('NCRNA',current,'marker','marker','mrkr_zdb_id','t','f');
+
+create sequence ncrna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+
+insert into zdb_object_type (zobjtype_name,
+                    zobjtype_day,
+        zobjtype_app_page,
+        zobjtype_home_table,
+        zobjtype_home_zdb_id_column,
+        zobjtype_is_data,
+        zobjtype_is_source)
+ values ('SRPRNA',current,'marker','marker','mrkr_zdb_id','t','f');
+
+create sequence srprna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
@@ -143,6 +252,11 @@ values ('LINCRNA','GENEDOM');
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
 values ('MIRNA','GENEDOM');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('SRPRNA','GENEDOM');
+
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
@@ -216,6 +330,10 @@ values ('LNCRNA','SEARCH_MKSEG');
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
 values ('LINCRNA','SEARCH_MKSEG');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('NCRNA','SEARCH_MKSEG');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
