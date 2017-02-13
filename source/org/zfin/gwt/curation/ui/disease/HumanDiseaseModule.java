@@ -91,9 +91,7 @@ public class HumanDiseaseModule implements ZfinCurationModule, HandlesError {
 
     @UiHandler("addButton")
     void onClickAdd(@SuppressWarnings("unused") ClickEvent event) {
-       // TermDTO disease = termInfoBox.getCurrentTermInfoDTO();
         TermDTO disease = termEntry.getTermTextBox().getSelectedTerm();
-
         AppUtils.EVENT_BUS.fireEvent(new AddNewDiseaseTermEvent(disease));
         diseaseModelView.clearErrorMessage();
     }
