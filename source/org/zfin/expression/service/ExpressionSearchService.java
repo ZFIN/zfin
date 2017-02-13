@@ -1,5 +1,6 @@
 package org.zfin.expression.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.Group;
@@ -12,7 +13,6 @@ import org.zfin.expression.presentation.ExpressionSearchCriteria;
 import org.zfin.expression.presentation.FigureResult;
 import org.zfin.expression.presentation.GeneResult;
 import org.zfin.expression.presentation.ImageResult;
-import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.publication.Publication;
@@ -133,7 +133,9 @@ public class ExpressionSearchService {
             solrQuery.addFilterQuery("expression_anatomy_tf:(" + termQuery + ")");
         }
 
-        solrQuery.addFilterQuery("zebrafish_gene_t:(" + criteria.getGeneField() + ")");
+        if (StringUtils.isNotEmpty(criteria.getGeneField())) {
+            solrQuery.addFilterQuery("zebrafish_gene_t:(" + criteria.getGeneField() + ")");
+        }
 
         solrQuery.setFields("id", "img_zdb_id", "thumbnail");
         solrQuery.add("group", "true");
