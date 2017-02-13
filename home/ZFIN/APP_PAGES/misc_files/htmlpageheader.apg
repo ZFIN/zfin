@@ -169,7 +169,7 @@ INPUT VARS:
         <div id="hdr-motto" class="hdr-linkbar"
              style="<?MIBLOCK COND="$(XST,$hdr_showmotto)"> display: block;
                     <?MIELSE> display: none; <?/MIBLOCK> ">
-          The Zebrafish Model Organism Database
+          The Zebrafish Information Network
         </div>
 
       </div> <!-- navlinks -->

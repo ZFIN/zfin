@@ -103,7 +103,7 @@ document.write(
     '      <a href="https://wiki.zfin.org/display/general/ZFIN+db+information" title="About ZFIN and citing ZFIN resources in publications">About</A>' +
     '    </div>' +
     '    <div id="hdr-motto" style="display:none;"  class="hdr-linkbar">' +
-    '      The Zebrafish Model Organism Database' +
+    '      The Zebrafish Information Network' +
     '    </div>' +
     '  </div>' +
     '</div>' +
