@@ -8,6 +8,16 @@ COMPANY	/action/profile/view/ZDB-COMPANY
 CONSTRCT	/action/marker/view/ZDB-CONSTRCT
 CRISPR   /action/marker/view/ZDB-CRISPR
 CNE	 /action/marker/view/ZDB-CNE
+LNCRNA /action/marker/view/ZDB-LNCRNA
+LINCRNA /action/marker/view/ZDB-LINCRNA
+MIRNA /action/marker/view/ZDB-MIRNA
+SNORNA /action/marker/view/ZDB-SNORNA
+RRNA /action/marker/view/ZDB-RRNA
+PIRNA /action/marker/view/ZDB-PIRNA
+TRNA /action/marker/view/ZDB-TRNA
+NCRNA /action/marker/view/ZDB-NCRNA
+SCRNA /action/marker/view/ZDB-SCRNA
+SRPNA /action/marker/view/ZDB-SRPNA
 EFG	/action/marker/view/ZDB-EFG
 EST	/action/marker/view/ZDB-EST
 ETCONSTRCT	/action/marker/view/ZDB-ETCONSTRCT
