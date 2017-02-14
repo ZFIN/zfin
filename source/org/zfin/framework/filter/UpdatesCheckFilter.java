@@ -90,15 +90,17 @@ public class UpdatesCheckFilter implements Filter {
                 message.append(getDebugMessage(gwtRequestString));
             }
             logger.error(message, e);
+/*
             List<DatabaseLock> dbLocks = SysmasterRepository.getLocks();
             locks = DbSystemUtil.getLockSummary(dbLocks);
+*/
         } finally {
             // ensure that the Hibernate session is closed, meaning, the threadLocal object is detached from
             // the current threadLocal
             HibernateUtil.closeSession();
             GBrowseHibernateUtil.closeSession();
             SysmasterHibernateUtil.closeSession();
-            callSmtpAppender((HttpServletRequest) request, locks);
+//            callSmtpAppender((HttpServletRequest) request, locks);
         }
     }
 
