@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections.CollectionUtils;
+import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
@@ -13,8 +14,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 public class BasicGeneInfo extends AbstractScriptWrapper {
@@ -91,6 +95,20 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                     dbLinkList.add(xRefDto);
                 }
                 dto.setCrossReferences(dbLinkList);
+            }
+            // get genomic data
+            List<MarkerGenomeLocation> locations = getLinkageRepository().getGenomeLocation(gene);
+            Set<GenomeLocationDTO> locationDTOList = new HashSet<>();
+            if (locations != null) {
+                for (MarkerGenomeLocation loc : locations) {
+                    GenomeLocationDTO genomeDto = new GenomeLocationDTO(loc.getAssembly(), loc.getChromosome());
+                    if (loc.getStart() != null)
+                        genomeDto.setStartPosition(loc.getStart());
+                    if (loc.getEnd() != null)
+                        genomeDto.setEndPosition(loc.getEnd());
+                    locationDTOList.add(genomeDto);
+                }
+                dto.setGenomeLocations(locationDTOList);
             }
             allGeneDTOList.add(dto);
         }

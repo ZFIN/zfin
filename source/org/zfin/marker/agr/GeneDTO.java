@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GeneDTO {
@@ -17,6 +18,7 @@ public class GeneDTO {
     private List<String> synonyms;
     private List<CrossReferenceDTO> crossReferences;
     private List<String> secondaryIds;
+    private Set<GenomeLocationDTO> genomeLocations;
 
     public String getSymbol() {
         return symbol;
@@ -91,5 +93,13 @@ public class GeneDTO {
 
     public void setSecondaryIds(List<String> secondaryIds) {
         this.secondaryIds = secondaryIds;
+    }
+
+    public Set<GenomeLocationDTO> getGenomeLocations() {
+        return genomeLocations;
+    }
+
+    public void setGenomeLocations(Set<GenomeLocationDTO> genomeLocations) {
+        this.genomeLocations = genomeLocations;
     }
 }
