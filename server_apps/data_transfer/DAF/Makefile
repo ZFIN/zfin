@@ -20,8 +20,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/DAF
 
-GENERICS = generateDafFile.pl
-STATICS  = createDAF.sql
+GENERICS = 
+STATICS  = createDAF.sql createDAF.sh
 
 # Define targets that require special handling.  
 
