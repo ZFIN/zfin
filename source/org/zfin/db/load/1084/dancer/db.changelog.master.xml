@@ -6,6 +6,5 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 <include file="source/org/zfin/db/load/1084/dancer/zdbReplacedDataSerialID.sql"/>
- <include file="source/org/zfin/db/load/1084/dancer/constraintsZdbReplacedData.sql"/> 
 
 </databaseChangeLog>
