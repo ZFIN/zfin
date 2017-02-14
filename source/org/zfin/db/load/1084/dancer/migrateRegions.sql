@@ -25,6 +25,9 @@ update marker_types
  set marker_type = 'EREGION'
  where marker_type = 'REGION';
 
+update marker_types
+ set mrkrtype_type_display = 'Engineered Region'
+ where marker_type = 'EREGION';
 
 update marker_type_group_member
   set mtgrpmem_mrkr_type = 'EREGION'
