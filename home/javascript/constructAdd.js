@@ -469,8 +469,8 @@ var pubID=$('#constructPublicationZdbID').val();
         data: $("form").serialize(),
         success: function (response) {
 
-            //the 2 functions are for teh GWT to recognixe that new constructs have been added for them to reflect right away in the "Attribute marker" section
-            //as well as the relationships section
+            //the 2 functions are for GWT to recognize that new constructs have been added for them to reflect right away in the "Attribute marker" section
+            //as well as the relationship section
             refreshAttribution(pubID);
             refreshRelationship(pubID);
 
@@ -494,6 +494,7 @@ var pubID=$('#constructPublicationZdbID').val();
                // $('#add-construct-error').hide();
                 resetFields();
             }
+            jQuery('#constructedit').load('/action/construct/construct-update?constructPublicationZdbID='+pubID);
 
 
         },
