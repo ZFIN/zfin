@@ -131,7 +131,7 @@ public class ActiveData implements ZdbID {
                 type.equals(Type.MRPHLNO) ||
                 type.equals(Type.PAC) ||
                 type.equals(Type.RAPD) ||
-                type.equals(Type.REGION) ||
+                type.equals(Type.EREGION) ||
                 type.equals(Type.SNP) ||
                 type.equals(Type.SSLP) ||
                 type.equals(Type.STS) ||
@@ -214,7 +214,7 @@ public class ActiveData implements ZdbID {
         PTCONSTRCT(DeleteConstructRule.class),
         RAPD,
         REFCROSS(null, Panel.class),
-        REGION(DeleteRegionRule.class),
+        EREGION(DeleteRegionRule.class),
         RUN,
         SNP,
         SSLP,
