@@ -34,6 +34,8 @@ public class ExpressionSearchCriteria {
         URLCreator urlCreator = new URLCreator("/action/expression/results");
         urlCreator.addNamevaluePair("geneZdbID", gene.getZdbID());
         urlCreator.addNamevaluePair("geneField", gene.getAbbreviation());
+        urlCreator.addNamevaluePair("anatomyTermNames", getAnatomyTermNames());
+        urlCreator.addNamevaluePair("anatomyTermIDs", getAnatomyTermIDs());
 
         return urlCreator.getURL();
     }

@@ -1,5 +1,6 @@
 package org.zfin.expression.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -34,33 +35,55 @@ public class ExpressionSearchService {
 
     QueryManipulationService queryManipulationService;
 
+
+    public static SolrQuery applyCriteria(SolrQuery solrQuery,
+                                          ExpressionSearchCriteria criteria,
+                                          String anatomyBoolean) {
+        solrQuery.addFilterQuery("category:(" + "Expression" + ")");
+
+        //only interested in expression where there is a gene, no AB expression
+        solrQuery.addFilterQuery("gene_zdb_id:[* TO *]");
+
+        if (CollectionUtils.isNotEmpty(criteria.getAnatomy())) {
+            String termQuery = criteria.getAnatomy().stream()
+                    .collect(Collectors.joining(" " + anatomyBoolean + " "));
+            solrQuery.addFilterQuery("expression_anatomy_tf:(" + termQuery + ")");
+        }
+
+        if (StringUtils.isNotEmpty(criteria.getGeneField())) {
+            StringBuilder gfq = new StringBuilder();
+            gfq.append("zebrafish_gene:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
+            gfq.append(" OR zebrafish_gene_t:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
+            gfq.append(" OR expressed_gene_full_name:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
+            gfq.append(" OR expressed_gene_previous_name:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
+            solrQuery.addFilterQuery(gfq.toString());
+        }
+
+        if (StringUtils.isNotEmpty(criteria.getGeneZdbID())) {
+            solrQuery.addFilterQuery("gene_zdb_id:(" + criteria.getGeneZdbID() + ")");
+        }
+
+        if (criteria.isOnlyFiguresWithImages()) {
+            solrQuery.addFilterQuery("has_image:(true)");
+        }
+        
+        solrQuery.setRows(criteria.getRows());
+        solrQuery.setStart((criteria.getPage() - 1) * criteria.getRows());
+
+        return solrQuery;
+    }
+
     public static List<GeneResult> getGeneResults(ExpressionSearchCriteria criteria) {
 
         SolrQuery solrQuery = new SolrQuery();
 
-        //todo: this should match against names, symbols, aliases, etc
-        //not sure if this should be a request handler, or maybe aliasing
-        //a fake field name to match all...
-        if (StringUtils.isNotEmpty(criteria.getGeneField())) {
-            StringBuilder gfq = new StringBuilder();
-            gfq.append("name:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
-            gfq.append(" OR full_name:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
-            gfq.append(" OR alias:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
-            solrQuery.addFilterQuery(gfq.toString());
-        }
+        solrQuery = applyCriteria(solrQuery, criteria, "AND");
 
-        if (criteria.getAnatomy() != null) {
-            for (String term : criteria.getAnatomy()) {
-                solrQuery.addFilterQuery("anatomy_tf:(" + term + ")");
-            }
-        }
-        solrQuery.addFilterQuery("type:Gene");
+        solrQuery.add("group", "true");
+        solrQuery.add("group.ngroups", "true");
+        solrQuery.add("group.field", "gene_zdb_id");
 
-        //this is to say "this gene has expression" - but that should probably be more explicit..
-        solrQuery.addFilterQuery("anatomy_tf:[* TO *]");
-
-        solrQuery.setRows(criteria.getRows());
-        solrQuery.setStart((criteria.getPage() - 1) * criteria.getRows());
+        solrQuery.setFields("gene_zdb_id");
 
         QueryResponse queryResponse = null;
         try {
@@ -70,9 +93,13 @@ public class ExpressionSearchService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        criteria.setNumFound(queryResponse.getResults().getNumFound());
 
-        SolrDocumentList solrDocumentList = queryResponse.getResults();
+        criteria.setNumFound(queryResponse.getGroupResponse().getValues().get(0).getNGroups());
+
+        List<SolrDocument> solrDocumentList = queryResponse.getGroupResponse().getValues().get(0).getValues()
+                .stream()
+                .map(ExpressionSearchService::getFirstDocumentFromGroup)
+                .collect(Collectors.toList());
 
         return buildGeneResults(solrDocumentList, criteria);
     }
@@ -80,16 +107,13 @@ public class ExpressionSearchService {
     public static List<FigureResult> getFigureResults(ExpressionSearchCriteria criteria) {
         SolrQuery solrQuery = new SolrQuery();
 
-        solrQuery.addFilterQuery("category:(Expression)");
+        solrQuery.addFilterQuery("category:(" + "Expression" + ")");
         if (criteria.getAnatomy() != null && criteria.getAnatomy().size() > 0) {
             String termQuery = criteria.getAnatomy().stream()
                     .collect(Collectors.joining(" OR "));
             solrQuery.addFilterQuery("expression_anatomy_tf:(" + termQuery + ")");
         }
 
-        if (criteria.isOnlyFiguresWithImages()) {
-            solrQuery.addFilterQuery("has_image:(true)");
-        }
 
         solrQuery.addFilterQuery("gene_zdb_id:(" + criteria.getGeneZdbID() + ")");
         solrQuery.add("group", "true");
@@ -98,9 +122,6 @@ public class ExpressionSearchService {
         solrQuery.add("group.field", "pub_zdb_id");
 
         solrQuery.setFields("id", "fig_zdb_id", "pub_zdb_id", "fish_zdb_id");
-
-        solrQuery.setRows(criteria.getRows());
-        solrQuery.setStart((criteria.getPage() - 1) * criteria.getRows());
 
         QueryResponse queryResponse = null;
         try {
@@ -129,22 +150,14 @@ public class ExpressionSearchService {
     public static List<ImageResult> getImageResults(ExpressionSearchCriteria criteria) {
         SolrQuery solrQuery = new SolrQuery();
 
-        solrQuery.addFilterQuery("category:(" + "Expression" + ")");
-        if (criteria.getAnatomy() != null) {
-            String termQuery = criteria.getAnatomy().stream()
-                    .collect(Collectors.joining(" OR "));
-            solrQuery.addFilterQuery("expression_anatomy_tf:(" + termQuery + ")");
-        }
-
-        if (StringUtils.isNotEmpty(criteria.getGeneField())) {
-            solrQuery.addFilterQuery("zebrafish_gene_t:(" + criteria.getGeneField() + ")");
-        }
+        solrQuery = applyCriteria(solrQuery, criteria, "OR");
 
         solrQuery.setFields("id", "img_zdb_id", "thumbnail");
         solrQuery.add("group", "true");
         solrQuery.add("group.ngroups", "true");
         solrQuery.add("group.field", "fig_zdb_id");
         solrQuery.setRows(5000);
+        solrQuery.setStart(1);
         solrQuery.addSort("date", SolrQuery.ORDER.asc);
 
         QueryResponse queryResponse = null;
@@ -180,7 +193,7 @@ public class ExpressionSearchService {
         return figureResult;
     }
 
-    public static List<GeneResult> buildGeneResults(SolrDocumentList solrDocumentList, ExpressionSearchCriteria criteria) {
+    public static List<GeneResult> buildGeneResults(List<SolrDocument> solrDocumentList, ExpressionSearchCriteria criteria) {
         return solrDocumentList.stream()
                 .map(d -> buildGeneResult(d, criteria))
                 .collect(Collectors.toList());
@@ -191,13 +204,13 @@ public class ExpressionSearchService {
     }
 
     public static GeneResult buildGeneResult(SolrDocument document, ExpressionSearchCriteria criteria) {
-        GeneResult geneResult =  new GeneResult();
+        GeneResult geneResult = new GeneResult();
 
-        geneResult.setId(document.get("id").toString());
-        geneResult.setSymbol(document.get("name").toString());
+        geneResult.setId(document.get("gene_zdb_id").toString());
 
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneResult.getId());
         geneResult.setGene(gene);
+        geneResult.setSymbol(gene.getAbbreviation());
 
         //throw exception maybe?
         if (gene == null) {
@@ -236,13 +249,11 @@ public class ExpressionSearchService {
 
     public static Integer getCount(Marker gene, ExpressionSearchCriteria criteria, String groupingField) {
         SolrQuery solrQuery = new SolrQuery();
-        solrQuery.addFilterQuery("category:(" + "Expression" + ")");
-        if (criteria.getAnatomy() != null) {
-            String termQuery = criteria.getAnatomy().stream()
-                    .collect(Collectors.joining(" OR "));
-            solrQuery.addFilterQuery("expression_anatomy_tf:(" + termQuery + ")");
-        }
+
+        solrQuery = applyCriteria(solrQuery, criteria, "OR");
+
         solrQuery.addFilterQuery("gene_zdb_id:(" + gene.getZdbID() + ")");
+
         solrQuery.add("group", "true");
         solrQuery.add("group.ngroups", "true");
         solrQuery.add("group.field", groupingField);
