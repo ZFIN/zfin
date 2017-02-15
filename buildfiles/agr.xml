@@ -35,8 +35,8 @@
     </target>
 
     <property name="version" value="0.3.0"/>
-    <property name="index" value="2"/>
-    <property name="bgi-file" value="ZFIN_${version}_2"/>
+    <property name="index" value="3"/>
+    <property name="bgi-file" value="ZFIN_${version}_${index}"/>
 
     <target name="archive-agr" depends="">
         <copy file="basic-gene-info-zfin.json" tofile="${bgi-file}.json"/>
