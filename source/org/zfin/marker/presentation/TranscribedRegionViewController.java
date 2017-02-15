@@ -68,7 +68,7 @@ public class TranscribedRegionViewController {
         markerBean.setSequenceInfo(MarkerService.getSequenceInfoSummary(region));
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         model.addAttribute("markerHistoryReasonCodes", MarkerHistory.Reason.values());
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.REGION.getTitleString() + region.getAbbreviation());
+       // model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.REGION.getTitleString() + region.getAbbreviation());
 
         return "marker/region-view.page";
     }

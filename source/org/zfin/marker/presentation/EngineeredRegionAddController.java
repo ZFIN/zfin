@@ -85,7 +85,7 @@ public class EngineeredRegionAddController {
         Publication regionPub = pr.getPublication(zdbID);
 
 
-        MarkerType mt = mr.getMarkerTypeByName(Marker.Type.REGION.toString());
+        MarkerType mt = mr.getMarkerTypeByName(Marker.Type.EREGION.toString());
         newRegion.setMarkerType(mt);
         try {
             HibernateUtil.createTransaction();

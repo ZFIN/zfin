@@ -125,7 +125,7 @@ public class MarkerViewController {
                 return pseudoGeneViewController.getGeneView(model, zdbID);
             } else if (type.equals(Marker.Type.EFG.name())) {
                 return efgViewController.getView(model, zdbID);
-            } else if (type.equals(Marker.Type.REGION.name())) {
+            } else if (type.equals(Marker.Type.EREGION.name())) {
                 return engrRegionViewController.getView(model, zdbID);
             } else if (type.equals(Marker.Type.ETCONSTRCT.name())
                     || type.equals(Marker.Type.GTCONSTRCT.name())

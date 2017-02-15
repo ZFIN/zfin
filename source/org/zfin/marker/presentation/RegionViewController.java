@@ -100,7 +100,7 @@ public class RegionViewController {
         markerBean.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberAssociatedPublicationsForZdbID(region.getZdbID()));
         markerBean.setSequenceInfo(MarkerService.getSequenceInfoSummary(region));
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.REGION.getTitleString() + region.getAbbreviation());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.EREGION.getTitleString() + region.getAbbreviation());
 
         return "marker/region-view.page";
     }

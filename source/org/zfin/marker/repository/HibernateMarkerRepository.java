@@ -271,7 +271,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "    record_attribution" +
                 "    where mrkr_zdb_id = recattrib_data_zdb_id" +
                 "    and recattrib_source_zdb_id=:pubZdbID " +
-                "    and mrkr_type in ('REGION','CNE')";
+                "    and mrkr_type in ('EREGION','CNE')";
 
 
         List<String> markerZdbIds = (List<String>) HibernateUtil.currentSession().createSQLQuery(sql)
@@ -2421,7 +2421,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public List<Marker> getAllEngineeredRegions() {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Marker.class);
-        criteria.add(Restrictions.eq("markerType.name", Marker.Type.REGION.toString()));
+        criteria.add(Restrictions.eq("markerType.name", Marker.Type.EREGION.toString()));
         criteria.addOrder(Order.asc("abbreviationOrder"));
         return (List<Marker>) criteria.list();
     }
@@ -2600,7 +2600,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         String sqlQuery = "select mrkr_abbrev as abbrev, mrkr_type as type from marker, record_attribution ra " +
                 "where " +
                 "lower(mrkr_abbrev) like :lookupString " +
-                "and mrkr_type in ('GENE','EFG','REGION','GENEP','TSCRIPT','CRISPR','TALEN','MRPHLNO') " +
+                "and mrkr_type in ('GENE','EFG','EREGION','GENEP','TSCRIPT','CRISPR','TALEN','MRPHLNO') " +
                 "and mrkr_zdb_id=ra.recattrib_data_zdb_id and ra.recattrib_source_type = :standard and ra.recattrib_source_zdb_id = :pubZdbID " +
                 "UNION " +
                 "select cv_term_name as abbrev,cv_name_definition as type from controlled_vocabulary " +
