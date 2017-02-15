@@ -33,6 +33,10 @@ update marker_type_group_member
   set mtgrpmem_mrkr_type = 'EREGION'
  where mtgrpmem_mrkr_type = 'REGION';
 
+update marker_type_group_member
+  set mtgrpmem_mrkr_type_group = 'ENGINEERED_REGION'
+ where mtgrpmem_mrkr_type_group = 'REGION';
+
 update marker
  set mrkr_zdb_id = replace(mrkr_Zdb_id, 'REGION','EREGION')
 where mrkr_zdb_id like 'ZDB-REGION%';
@@ -68,7 +72,6 @@ update data_alias
 
 --!echo "data note";
 
-
 update data_note
  set dnote_data_zdb_id = replace(dnote_data_zdb_id, 'REGION','EREGION')
  where dnote_data_zdb_id like 'ZDB-REGION%';
@@ -80,7 +83,6 @@ update construct_marker_relationship
 update construct_component
  set cc_component_zdb_id = replace(cc_component_zdb_id, 'REGION','EREGION')
  where cc_component_zdb_id like 'ZDB-REGION%';
-
 
 update all_map_names
  set allmapnm_zdb_id = replace(allmapnm_zdb_id, 'REGION','EREGION')
@@ -102,7 +104,16 @@ update marker_history
  set mhist_mrkr_zdb_id = replace(mhist_mrkr_zdb_id, 'REGION','EREGION')
  where mhist_mrkr_zdb_id like 'ZDB-REGION%';
 
+update marker_relationship_type
+ set mreltype_mrkr_type_group_1 = 'ENGINEERED_REGION'
+ where mreltype_mrkr_type_group_1 = 'REGION';
 
+update marker_relationship_type
+ set mreltype_mrkr_type_group_2 = 'ENGINEERED_REGION'
+ where mreltype_mrkr_type_group_2 = 'REGION';
+
+delete from marker_Type_group
+ where mtgrp_name = 'REGION';
 
 set constraints all immediate;
 
