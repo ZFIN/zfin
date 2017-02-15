@@ -30,7 +30,7 @@ create procedure p_check_mrkr_abbrev (vMrkrName   like marker.mrkr_name,
   elif
         (vMrkrAbbrev != lower(vMrkrAbbrev)  AND
                      vMrkrAbbrev[1,10] <> 'WITHDRAWN:'  AND
-                     vMrkrType not in ('EFG','REGION','ATB','TGCONSTRCT','PTCONSTRCT','ETCONSTRCT','GTCONSTRCT'))
+                     vMrkrType not in ('EFG','EREGION','ATB','TGCONSTRCT','PTCONSTRCT','ETCONSTRCT','GTCONSTRCT'))
      then
 
       raise exception -746, 0,
@@ -38,7 +38,7 @@ create procedure p_check_mrkr_abbrev (vMrkrName   like marker.mrkr_name,
     elif
         (vMrkrAbbrev != upper(vMrkrAbbrev)  AND
          vMrkrName != upper(vMrkrName) AND
-                     vMrkrType = 'REGION')
+                     vMrkrType = 'EREGION')
      then
       
       raise exception -746, 0,
