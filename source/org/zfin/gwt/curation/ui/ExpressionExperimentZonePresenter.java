@@ -134,6 +134,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
 
     protected void populateDataTable() {
+        Collections.sort(experimentList);
         int elementIndex = 0;
         for (ExpressionExperimentDTO experiment : experimentList) {
             if (showSelectedExperimentsOnly && !selectedExperiments.contains(experiment))
@@ -666,12 +667,12 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         public void onSuccess(ExpressionExperimentDTO newExperiment) {
             super.onSuccess(newExperiment);
             addButtonInProgress = false;
-            retrieveExperiments();
+            experimentList.add(newExperiment);
+            populateDataTable();
             AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.CREATE_EXPRESSION_EXPERIMENT, newExperiment.toString()));
         }
 
     }
-
 
     private class RetrieveExperimentsCallback extends ZfinAsyncCallback<List<ExpressionExperimentDTO>> {
 
@@ -684,12 +685,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         public void onSuccess(List<ExpressionExperimentDTO> list) {
             super.onSuccess(list);
             experimentList.clear();
-            for (ExpressionExperimentDTO experiment : list) {
-                if (experiment.getEnvironment().getName().startsWith("_"))
-                    experiment.getEnvironment().setName(experiment.getEnvironment().getName().substring(1));
-                experimentList.add(experiment);
-            }
-            Collections.sort(experimentList);
+            experimentList.addAll(list);
             //Window.alert("SIZE: " + experiments.size());
             populateDataTable();
         }
