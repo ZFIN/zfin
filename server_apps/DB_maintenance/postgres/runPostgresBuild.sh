@@ -13,7 +13,8 @@ cd $SOURCEROOT/server_apps/DB_maintenance/postgres/liquibase
 
 rm -rf /tmp/changelogMigrationFile.xml
 rm -rf $SOURCEROOT/source/org/zfin/db/postgres/changelogMigrationFile.xml
-
+rm -rf $SOURCEROOT/source/org/zfin/db/postgres/changelogConstraintFile.xml
+rm -rf $SOURCEROOT/source/org/zfin/db/postgres/tableMigration.xml
 
 ./liquibase --driver=com.informix.jdbc.IfxDriver --url="jdbc:informix-sqli://${HOSTNAME}:${INFORMIX_PORT}/${DBNAME}:INFORMIXSERVER=${INFORMIXSERVER};DB_LOCALE=en_US.utf8" --defaultSchemaName="informix" --classpath="/opt/zfin/source_roots/swirl/ZFIN_WWW/lib/Java/ifxjdbc-3.70.JC1.jar" --changeLogFile="/tmp/changelogMigrationFile.xml" generateChangeLog
 
@@ -25,14 +26,12 @@ cp /tmp/changelogMigrationFile.xml $SOURCEROOT/source/org/zfin/db/postgres/chang
 # and then take the previous line and all the rest of the file off and put it in /tmp/constraints.xml This
 # gets the first instance of the first key in the file and grabs its changeset definition.
 
-grep -A100000 "<addPrimaryKey" /tmp/changelogMigrationFile.xml -C 1 > /tmp/constraints.xml
+grep -A100000 "<addPrimaryKey" /tmp/changelogMigrationFile.xml -C 1  > /tmp/changelogConstraintFile.xml 
+cat $SOURCEROOT/server_apps/DB_maintenance/postgres/ /tmp/changelogConstraintFile.xml > $SOURCEROOT/source/org/zfin/db/postgres/changelogConstraintFile.xml 
 
-# xmlHeader is a copied version of the header required by liquibase to manage XML data definition 
-# language.  
+sed '/<addPrimaryKey/q' /tmp/changelogMigrationFile.xml | head -n -2 > /tmp/tableMigration.xml
+cat $SOURCEROOT/source/org/zfin/db/postgres/tableMigration.xml $SOURCEROOT/server_apps/DB_maintenance/postgres/xmlFooter.xml > $SOURCEROOT/server_apps/DB_maintenance/postgres/tableMigration.xml
 
-cat $SOURCEROOT/server_apps/DB_maintenance/postgres/xmlHeader.xml /tmp/constraints.xml > $SOURCEROOT/source/org/zfin/db/postgres/changelogConstraintFile.xml 
-
-cat $SOURCEROOT/source/org/zfin/db/postgres/changelogMigrationFile.xml $SOURCEROOT/server_apps/DB_maintenance/postgres/xmlFooter.xml > cat $SOURCEROOT/source/org/zfin/db/postgres/tableMigration.xml
 
 
 
