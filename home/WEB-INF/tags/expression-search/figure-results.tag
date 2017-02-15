@@ -7,9 +7,16 @@
     <caption>
         Expression Pattern Search Results for <zfin:link entity="${criteria.gene}"/><br>
         <small>
-            (<zfin:choice choicePattern="0#figures|1#figure|2#figures" includeNumber="true" integerEntity="${criteria.numFound}"/>
-            with expression from
-            <zfin:choice choicePattern="0#publications|1#publication|2#publications" includeNumber="true" integerEntity="${criteria.pubCount}"/>)
+            <div>
+                (<zfin:choice choicePattern="0#figures|1#figure|2#figures" includeNumber="true" integerEntity="${criteria.numFound}"/>
+                with expression from
+                <zfin:choice choicePattern="0#publications|1#publication|2#publications" includeNumber="true" integerEntity="${criteria.pubCount}"/>)
+            </div>
+            <c:if test="${!criteria.onlyFiguresWithImages}">
+                <div>
+                    [ <a href="${criteria.linkWithImagesOnly}">Show only figures with images</a> ]
+                </div>
+            </c:if>
         </small>
     </caption>
     <tr>

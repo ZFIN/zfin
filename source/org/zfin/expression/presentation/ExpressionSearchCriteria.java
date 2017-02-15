@@ -12,6 +12,7 @@ public class ExpressionSearchCriteria {
     private String geneField;
     private String geneZdbID;
     private Marker gene;
+    private boolean onlyFiguresWithImages;
 
     private String anatomyTermNames;
     private String anatomyTermIDs;
@@ -24,6 +25,8 @@ public class ExpressionSearchCriteria {
     private long pubCount;
     private Integer rows;
     private Integer page;
+
+    private String linkWithImagesOnly;
 
     public String getUrl(Marker gene) {
         //todo: put all of the criteria into the url
@@ -67,6 +70,14 @@ public class ExpressionSearchCriteria {
 
     public void setGene(Marker gene) {
         this.gene = gene;
+    }
+
+    public boolean isOnlyFiguresWithImages() {
+        return onlyFiguresWithImages;
+    }
+
+    public void setOnlyFiguresWithImages(boolean onlyFiguresWithImages) {
+        this.onlyFiguresWithImages = onlyFiguresWithImages;
     }
 
     public String getAnatomyTermNames() {
@@ -139,5 +150,13 @@ public class ExpressionSearchCriteria {
 
     public void setPage(Integer page) {
         this.page = page;
+    }
+
+    public String getLinkWithImagesOnly() {
+        return linkWithImagesOnly;
+    }
+
+    public void setLinkWithImagesOnly(String linkWithImagesOnly) {
+        this.linkWithImagesOnly = linkWithImagesOnly;
     }
 }

@@ -22,6 +22,8 @@ public class ExpressionSearchController {
 
     private static Logger logger = Logger.getLogger(ExpressionSearchController.class);
 
+    private static final String BASE_URL = "/action/expression/results";
+
     @Autowired
     MarkerRepository markerRepository;
 
@@ -62,6 +64,7 @@ public class ExpressionSearchController {
 
         if (criteria.getNumFound() > 0) {
             model.addAttribute("paginationBean", generatePaginationBean(criteria, request.getQueryString()));
+            criteria.setLinkWithImagesOnly(generateImagesOnlyUrl(request.getQueryString()));
         }
 
         model.addAttribute("criteria", criteria);
@@ -72,7 +75,7 @@ public class ExpressionSearchController {
 
     private PaginationBean generatePaginationBean(ExpressionSearchCriteria criteria, String queryString) {
         PaginationBean paginationBean = new PaginationBean();
-        URLCreator paginationUrlCreator = new URLCreator("/action/expression/results?" + queryString);
+        URLCreator paginationUrlCreator = new URLCreator(BASE_URL + "?" + queryString);
         paginationUrlCreator.removeNameValuePair("page");
         paginationBean.setActionUrl(paginationUrlCreator.getFullURLPlusSeparator());
 
@@ -89,6 +92,14 @@ public class ExpressionSearchController {
         paginationBean.setMaxDisplayRecords(criteria.getRows());
 
         return paginationBean;
+    }
+
+    private String generateImagesOnlyUrl(String queryString) {
+        URLCreator urlCreator = new URLCreator(BASE_URL + "?" + queryString);
+        urlCreator.removeNameValuePair("page");
+        urlCreator.removeNameValuePair("onlyFiguresWithImages");
+        urlCreator.addNamevaluePair("onlyFiguresWithImages", "true");
+        return urlCreator.getURL();
     }
 
     private void populateFigureResults(ExpressionSearchCriteria criteria) {

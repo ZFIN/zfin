@@ -16,7 +16,9 @@
     <table class="primary-entity-attributes">
         <tr>
             <th><form:label path="geneField" cssClass="namesearchLabel">Gene/EST</form:label></th>
-            <td><form:input type="text" path="geneField" cssClass="form-control"/></td>
+            <td><form:input type="text" path="geneField"/></td>
+            <th></th>
+            <td><form:checkbox path="onlyFiguresWithImages"/> <label>Show only figures with images</label></td>
         </tr>
         <tr>
             <th><form:label path="anatomy">Anatomy:</form:label></th>
