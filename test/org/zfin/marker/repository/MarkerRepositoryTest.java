@@ -1015,6 +1015,13 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void setReplacedData() {
+        Marker marker = markerRepository.getGeneByID("ZDB-GENE-990415-8");
+        Set<SecondaryMarker> secondaryMarkers = marker.getSecondaryMarkerSet();
+        assertNotNull(secondaryMarkers);
+    }
+
+    @Test
     public void getWeakReferenceMarker() {
         List<MarkerRelationshipPresentation> markerRelationshipPresentationList = markerRepository.getWeakReferenceMarker("ZDB-GENE-010606-1"
                 , MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT

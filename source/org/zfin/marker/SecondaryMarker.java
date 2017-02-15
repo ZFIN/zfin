@@ -1,12 +1,13 @@
 package org.zfin.marker;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
-//@Entity
+@Entity
 @DiscriminatorValue("Marker")
 public class SecondaryMarker extends ReplacedData {
 
+    @ManyToOne
+    @JoinColumn(name = "zrepld_new_zdb_id")
     private Marker marker;
 
     public Marker getMarker() {

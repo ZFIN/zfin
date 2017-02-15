@@ -54,6 +54,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     private Set<MarkerSupplier> suppliers;
     private String chromosome;
     private Set<MarkerGoTermEvidence> goTermEvidence;
+    private Set<SecondaryMarker> secondaryMarkerSet;
 
     // cashed attribute
     private transient List<Marker> markers;
@@ -614,5 +615,13 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
 
     public void setGoTermEvidence(Set<MarkerGoTermEvidence> goTermEvidence) {
         this.goTermEvidence = goTermEvidence;
+    }
+
+    public Set<SecondaryMarker> getSecondaryMarkerSet() {
+        return secondaryMarkerSet;
+    }
+
+    public void setSecondaryMarkerSet(Set<SecondaryMarker> secondaryMarkerSet) {
+        this.secondaryMarkerSet = secondaryMarkerSet;
     }
 }
