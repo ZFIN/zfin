@@ -440,7 +440,7 @@ public class ResultService {
 
         addSynonyms(result, marker);
         result.addAttribute(TYPE, marker.getType().toString());
-        if (marker.getType().equals(Marker.Type.REGION)) {
+        if (marker.getType().equals(Marker.Type.EREGION)) {
             addComments(result, marker);
         }
         addLocationInfo(result, marker);
