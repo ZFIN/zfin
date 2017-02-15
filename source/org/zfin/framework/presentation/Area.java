@@ -17,7 +17,7 @@ public enum Area {
     PERSON("Person")     ,
     LAB("Lab")     ,
     COMPANY("Company")     ,
-    REGION("Engineered Region")    ,
+    EREGION("Engineered Region")    ,
     EFG("Engineered Foreign Gene")
 
     ;
