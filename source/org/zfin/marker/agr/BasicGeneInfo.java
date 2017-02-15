@@ -7,6 +7,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
+import org.zfin.marker.SecondaryMarker;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.sequence.MarkerDBLink;
 
@@ -109,6 +110,13 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                     locationDTOList.add(genomeDto);
                 }
                 dto.setGenomeLocations(locationDTOList);
+            }
+            if (CollectionUtils.isNotEmpty(gene.getSecondaryMarkerSet())) {
+                Set<String> secondaryDTOs = new HashSet<>();
+                for (SecondaryMarker secMarker : gene.getSecondaryMarkerSet()) {
+                    secondaryDTOs.add(secMarker.getOldID());
+                }
+                dto.setSecondaryIds(secondaryDTOs);
             }
             allGeneDTOList.add(dto);
         }

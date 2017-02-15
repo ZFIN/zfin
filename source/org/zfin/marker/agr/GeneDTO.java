@@ -2,7 +2,6 @@ package org.zfin.marker.agr;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -17,7 +16,7 @@ public class GeneDTO {
     //private List<SynonymDTO> synonyms;
     private List<String> synonyms;
     private List<CrossReferenceDTO> crossReferences;
-    private List<String> secondaryIds;
+    private Set<String> secondaryIds;
     private Set<GenomeLocationDTO> genomeLocations;
 
     public String getSymbol() {
@@ -87,11 +86,11 @@ public class GeneDTO {
         this.crossReferences = crossReferences;
     }
 
-    public List<String> getSecondaryIds() {
+    public Set<String> getSecondaryIds() {
         return secondaryIds;
     }
 
-    public void setSecondaryIds(List<String> secondaryIds) {
+    public void setSecondaryIds(Set<String> secondaryIds) {
         this.secondaryIds = secondaryIds;
     }
 

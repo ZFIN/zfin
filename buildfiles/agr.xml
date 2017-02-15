@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="agr" basedir=".">
 
+
+
+    <target name="create-bgi-test" >
+        <antcall target="create-basic-gene-info-file-test"  />
+    </target>
+
+    <target name="agr-test" >
+        <antcall target="create-basic-gene-info-file-test"  />
+    </target>
+
+    <target name="create-bgi" >
+        <antcall target="create-basic-gene-info-file"  />
+    </target>
+
     <target name="create-basic-gene-info-file" depends=""
             description="Tests to make sure that the system is alive and working properly.">
         <echo message="Check entity changes"/>
@@ -18,6 +32,39 @@
             <classpath refid="classpath"/>
             <arg value="5"/>
         </java>
+    </target>
+
+    <property name="version" value="0.3.0"/>
+    <property name="index" value="2"/>
+    <property name="bgi-file" value="ZFIN_${version}_2"/>
+
+    <target name="archive-agr" depends="">
+        <copy file="basic-gene-info-zfin.json" tofile="${bgi-file}.json"/>
+        <echo message="Create tar/gzip file of BGI"/>
+        <tar compression="gzip" destfile="${bgi-file}.tar.gz" >
+            <tarfileset dir="${basedir}" >
+                <include name="basic-gene-info-zfin.json" />
+            </tarfileset>
+        </tar>
+    </target>
+
+    <target name="aws" depends="">
+        <echo message="Upload to AWS S3"/>
+        <exec executable="aws" failifexecutionfails="true">
+            <arg value="s3"/>
+            <arg value="cp"/>
+            <arg value="${bgi-file}.tar.gz"/>
+            <arg value="s3://mod-datadumps/"/>
+        </exec>
+    </target>
+
+    <target name="aws-ls" depends="">
+        <echo message="List directory AWS S3"/>
+        <exec executable="aws" failifexecutionfails="true">
+            <arg value="s3"/>
+            <arg value="ls"/>
+            <arg value="s3://mod-datadumps/"/>
+        </exec>
     </target>
 
 

@@ -185,6 +185,11 @@
             <one-to-many class="org.zfin.sequence.MarkerDBLink"/>
         </set>
 
+        <set name="secondaryMarkerSet" lazy="true">
+            <key column="zrepld_new_zdb_id"/>
+            <one-to-many class="SecondaryMarker"/>
+        </set>
+
         <set name="orthologyNotes" lazy="true">
             <key column="extnote_data_zdb_id"/>
             <one-to-many class="org.zfin.marker.OrthologyNote"/>
