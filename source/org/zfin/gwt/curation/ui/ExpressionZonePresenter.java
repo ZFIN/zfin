@@ -14,7 +14,10 @@ import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * construction zone
@@ -30,17 +33,9 @@ public class ExpressionZonePresenter implements Presenter {
     // filter set by the banana bar
     private ExpressionExperimentDTO experimentFilter = new ExpressionExperimentDTO();
     private String figureID;
-    // all expressions displayed on the page (all or a subset defined by the filter elements)
-    private List<ExpressionFigureStageDTO> displayedExpressions = new ArrayList<>(15);
     // This maps the display table and contains the full objects that each
     // row is made up from
     private Map<Integer, ExpressionFigureStageDTO> displayTableMap = new HashMap<>(15);
-
-    // 20 expressed terms is a bit higher than the average
-    // number of expressed terms used in a single publication.
-    // Contains all distinct expressed terms for this publication
-    private Set<ExpressedTermDTO> expressedTerms = new HashSet<>(20);
-
 
     private CurationExperimentRPCAsync curationRPCAsync = CurationExperimentRPC.App.getInstance();
     private SessionSaveServiceAsync sessionRPC = SessionSaveService.App.getInstance();
@@ -80,9 +75,9 @@ public class ExpressionZonePresenter implements Presenter {
         // stage selector
         AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.IS_STAGE_SELECTOR_SINGLE_MODE_START);
         sessionRPC.isStageSelectorSingleMode(publicationID, new RetrieveStageSelectorCallback(view.getErrorElement(),
-                                                                view.getStageSelector(),
-                                                                ExpressionModule.getModuleInfo(),
-                                                                AjaxCallEventType.IS_STAGE_SELECTOR_SINGLE_MODE_STOP));
+                view.getStageSelector(),
+                ExpressionModule.getModuleInfo(),
+                AjaxCallEventType.IS_STAGE_SELECTOR_SINGLE_MODE_STOP));
     }
 
     public void refreshFigure() {
@@ -103,19 +98,10 @@ public class ExpressionZonePresenter implements Presenter {
         clearErrorMessages();
     }
 
-    public void postUpdateStructuresOnExpression() {
-        view.postUpdateStructuresOnExpression();
-        // re-load expression table
-        retrieveExpressions();
+    public void postUpdateStructuresOnExpression(List<ExpressionFigureStageDTO> figureStageDTOList) {
+        view.getDisplayTable().postUpdateStructures(figureStageDTOList);
     }
 
-
-    private void recordAllExpressedTerms() {
-        expressedTerms.clear();
-        for (ExpressionFigureStageDTO expression : this.displayedExpressions) {
-            expressedTerms.addAll(expression.getExpressedTerms());
-        }
-    }
 
     public void addExpressions() {
         // do not proceed if it just has been clicked once
@@ -151,7 +137,7 @@ public class ExpressionZonePresenter implements Presenter {
         if (expressionsExist)
             return;
         view.loadingImage.setVisible(true);
-        curationRPCAsync.createFigureAnnotations(newFigureAnnotations, new AddExpressionCallback(newFigureAnnotations));
+        curationRPCAsync.createFigureAnnotations(newFigureAnnotations, new AddExpressionCallback());
 
     }
 
@@ -170,7 +156,7 @@ public class ExpressionZonePresenter implements Presenter {
      */
     public boolean expressionFigureStageExists(ExpressionFigureStageDTO expression) {
         int rowIndex = 1;
-        for (ExpressionFigureStageDTO existingExpression : displayedExpressions) {
+        for (ExpressionFigureStageDTO existingExpression : view.getDisplayTable().getDisplayExpressionList()) {
             if (existingExpression.getUniqueID().equals(expression.getUniqueID())) {
                 view.duplicateRowIndex = rowIndex;
                 view.duplicateRowOriginalStyle = view.getDisplayTable().getRowFormatter().getStyleName(rowIndex);
@@ -320,20 +306,11 @@ public class ExpressionZonePresenter implements Presenter {
 
         public void onSuccess(List<ExpressionFigureStageDTO> list) {
             super.onFinish();
-            displayedExpressions.clear();
             if (list == null)
                 return;
-
-            for (ExpressionFigureStageDTO id : list) {
-                ExpressionExperimentDTO experiment = id.getExperiment();
-                if (experiment.getEnvironment().getName().startsWith("_"))
-                    experiment.getEnvironment().setName(experiment.getEnvironment().getName().substring(1));
-                displayedExpressions.add(id);
-            }
-            view.getDisplayTable().createExpressionTable();
-            view.recordAllExpressedTerms();
+            //Window.alert("Size "+list.size());
+            view.getDisplayTable().createExpressionTable(list);
             curationRPCAsync.getFigureAnnotationCheckmarkStatus(publicationID, new FigureAnnotationCheckmarkStatusCallback());
-            view.getDisplayTable().createExpressionTable(displayedExpressions);
             view.setLoadingImageVisibility(false);
         }
 
@@ -344,18 +321,12 @@ public class ExpressionZonePresenter implements Presenter {
 
     private class AddExpressionCallback extends ZfinAsyncCallback<List<ExpressionFigureStageDTO>> {
 
-        private List<ExpressionFigureStageDTO> expressionFigureStageDTOS;
-
-        public AddExpressionCallback(List<ExpressionFigureStageDTO> expressionFigureStageDTOS) {
+        public AddExpressionCallback() {
             super("Error while creating experiment", view.errorElement);
-            this.expressionFigureStageDTOS = expressionFigureStageDTOS;
         }
 
         public void onSuccess(List<ExpressionFigureStageDTO> newAnnotations) {
-            displayedExpressions.addAll(newAnnotations);
-            Collections.sort(displayedExpressions);
-            view.getDisplayTable().createExpressionTable();
-            recordAllExpressedTerms();
+            view.getDisplayTable().addNewExpressions(newAnnotations);
             addButtonInProgress = false;
             view.addButton.setEnabled(true);
             clearErrorMessages();
@@ -404,15 +375,13 @@ public class ExpressionZonePresenter implements Presenter {
 
                 CheckBox checkBox = (CheckBox) widget;
                 for (ExpressionFigureStageDTO dto : filterValues.getFigureAnnotations()) {
-                    if (dto.getUniqueID().equals(checkBox.getTitle())) {
+                    if (String.valueOf(dto.getID()).equals(checkBox.getTitle())) {
                         checkBox.setValue(true);
                         ExpressionFigureStageDTO checkedExpression = displayTableMap.get(row);
-///                        selectedExpressions.add(checkedExpression);
                     }
                 }
             }
             view.getDisplayTable().showHideClearAllLink();
-///            structurePile.updateFigureAnnotations(selectedExpressions);
         }
     }
 

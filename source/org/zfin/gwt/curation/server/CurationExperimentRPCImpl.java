@@ -504,19 +504,8 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
 
         List<ExpressionFigureStageDTO> dtos = new ArrayList<>();
         for (ExpressionFigureStage efs : experiments) {
-            ExpressionFigureStageDTO dto = new ExpressionFigureStageDTO();
-            dto.setExperiment(DTOConversionService.convertToExperimentDTO(efs.getExpressionExperiment()));
-            dto.setFigure(DTOConversionService.convertToFigureDTO(efs.getFigure()));
-            dto.setStart(DTOConversionService.convertToStageDTO(efs.getStartStage()));
-            dto.setEnd((DTOConversionService.convertToStageDTO(efs.getEndStage())));
-
-            List<ExpressedTermDTO> termStrings = new ArrayList<>();
-            for (ExpressionResult2 result : efs.getExpressionResultSet()) {
-                termStrings.add(DTOConversionService.convertToExpressedTermDTO(result));
-            }
-            Collections.sort(termStrings);
-            dto.setExpressedTerms(termStrings);
-            dto.setPatoExists(mutantRep.isPatoExists(efs.getExpressionExperiment().getFishExperiment().getZdbID(),
+            ExpressionFigureStageDTO dto = DTOConversionService.convertToExpressionFigureStageDTO(efs);
+            dto.setPatoExists(getMutantRepository().isPatoExists(efs.getExpressionExperiment().getFishExperiment().getZdbID(),
                     efs.getFigure().getZdbID(), efs.getStartStage().getZdbID(), efs.getEndStage().getZdbID(), experimentFilter.getPublicationID()));
             dtos.add(dto);
         }
@@ -681,15 +670,9 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
     public void deleteFigureAnnotation(ExpressionFigureStageDTO figureAnnotation) {
         if (figureAnnotation == null)
             return;
-        ExpressionExperimentDTO experiment = figureAnnotation.getExperiment();
-        if (experiment == null || experiment.getExperimentZdbID() == null)
+        if (figureAnnotation.getID() == 0)
             return;
-        if (figureAnnotation.getFigure() == null ||
-                figureAnnotation.getStart().getZdbID() == null ||
-                figureAnnotation.getEnd().getZdbID() == null)
-            return;
-        ExpressionFigureStage efs = expRepository.getExperimentFigureStage(experiment.getExperimentZdbID(), figureAnnotation.getFigure().getZdbID(),
-                figureAnnotation.getStart().getZdbID(), figureAnnotation.getEnd().getZdbID());
+        ExpressionFigureStage efs = expRepository.getExperimentFigureStage(figureAnnotation.getID());
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
             expRepository.deleteFigureAnnotation(efs);
@@ -785,12 +768,12 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
     public void setFigureAnnotationStatus(ExpressionFigureStageDTO checkedExpression, boolean checked) {
         String publicationID = checkedExpression.getExperiment().getPublicationID();
         String key = createSessionVariableName(publicationID, FX_FIGURE_ANNOTATION_CHECKBOX);
-        Set<String> currentState = (Set<String>) getServletContext().getAttribute(key);
+        Set<Long> currentState = (Set<Long>) getServletContext().getAttribute(key);
         if (currentState == null) {
             currentState = new HashSet<>(10);
             getServletContext().setAttribute(key, currentState);
         }
-        updateFigureAnnotationSessionSet(checkedExpression.getUniqueID(), currentState, checked);
+        updateFigureAnnotationSessionSet(checkedExpression.getID(), currentState, checked);
     }
 
 
@@ -803,7 +786,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      * @param currentState set of unique ids
      * @param checked      add or remove object
      */
-    public void updateFigureAnnotationSessionSet(String uniqueID, Set<String> currentState, boolean checked) {
+    public void updateFigureAnnotationSessionSet(Long uniqueID, Set<Long> currentState, boolean checked) {
         if (checked) {
             boolean success = currentState.add(uniqueID);
             if (!success)
@@ -911,15 +894,13 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             return null;
 
 
-        List<ExpressionFigureStageDTO> updatedAnnotations = new ArrayList<>(figureAnnotations.size());
+        List<ExpressionFigureStage> updatedAnnotationList = new ArrayList<>(figureAnnotations.size());
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
             // for each figure annotation check which structures need to be added or removed
             for (ExpressionFigureStageDTO dto : figureAnnotations) {
-                ExpressionFigureStage experiment = expRepository.getExperimentFigureStage(dto.getExperiment().getExperimentZdbID(),
-                        dto.getFigure().getZdbID(),
-                        dto.getStart().getZdbID(),
-                        dto.getEnd().getZdbID());
+                ExpressionFigureStage experiment = expRepository.getExperimentFigureStage(dto.getID());
+                updatedAnnotationList.add(experiment);
                 // sort: first deletions then additions. This will allow to remove a non-EaP structure and replace it with an eap.
                 // we do not allow to add an eap to a non-EaP annotation.
                 Collections.sort(pileStructures);
@@ -941,7 +922,6 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
                             throw new ValidationException("Cannot add 'absent phenotypic with a non-absent phenotypic term");
                         if (expTerm != null) {
                             dto.addExpressedTerm(expTerm);
-                            updatedAnnotations.add(dto);
                         }
                     }
                     // remove expression if marked as such
@@ -961,6 +941,10 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         }
         for (ExpressionFigureStageDTO dto : figureAnnotations) {
             setFigureAnnotationStatus(dto, false);
+        }
+        List<ExpressionFigureStageDTO> updatedAnnotations = new ArrayList<>(figureAnnotations.size());
+        for (ExpressionFigureStage figureStage : updatedAnnotationList) {
+            updatedAnnotations.add(DTOConversionService.convertToExpressionFigureStageDTO(figureStage));
         }
         return updatedAnnotations;
     }

@@ -4,6 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.curation.event.*;
@@ -186,7 +187,8 @@ public class ExpressionModule implements ZfinCurationModule, HandlesError {
                 new CreateExpressionEventHandler() {
                     @Override
                     public void onEvent(CreateExpressionEvent event) {
-                        expressionZonePresenter.postUpdateStructuresOnExpression();
+                        expressionZonePresenter.postUpdateStructuresOnExpression(event.getFigureStageDTOList());
+                        expressionExperimentZonePresenter.finishExpressionNotification();
                     }
                 });
         AppUtils.EVENT_BUS.addHandler(AddExpressionExperimentEvent.TYPE,

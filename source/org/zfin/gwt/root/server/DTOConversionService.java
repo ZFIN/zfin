@@ -1947,10 +1947,28 @@ public class DTOConversionService {
 
     public static ExpressionFigureStageDTO convertToExpressionFigureStageDTOShallow(ExpressionFigureStage efs) {
         ExpressionFigureStageDTO dto = new ExpressionFigureStageDTO();
+        dto.setID(efs.getId());
         dto.setExperiment(DTOConversionService.convertToExperimentDTO(efs.getExpressionExperiment()));
         dto.setFigure(DTOConversionService.convertToFigureDTO(efs.getFigure()));
         dto.setStart(DTOConversionService.convertToStageDTO(efs.getStartStage()));
         dto.setEnd((DTOConversionService.convertToStageDTO(efs.getEndStage())));
+        return dto;
+    }
+
+    public static ExpressionFigureStageDTO convertToExpressionFigureStageDTO(ExpressionFigureStage efs) {
+        ExpressionFigureStageDTO dto = new ExpressionFigureStageDTO();
+        dto.setID(efs.getId());
+        dto.setExperiment(DTOConversionService.convertToExperimentDTO(efs.getExpressionExperiment()));
+        dto.setFigure(DTOConversionService.convertToFigureDTO(efs.getFigure()));
+        dto.setStart(DTOConversionService.convertToStageDTO(efs.getStartStage()));
+        dto.setEnd((DTOConversionService.convertToStageDTO(efs.getEndStage())));
+
+        List<ExpressedTermDTO> termStrings = new ArrayList<>();
+        for (ExpressionResult2 result : efs.getExpressionResultSet()) {
+            termStrings.add(DTOConversionService.convertToExpressedTermDTO(result));
+        }
+        Collections.sort(termStrings);
+        dto.setExpressedTerms(termStrings);
         return dto;
     }
 

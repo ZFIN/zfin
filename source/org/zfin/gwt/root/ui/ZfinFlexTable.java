@@ -70,6 +70,10 @@ public class ZfinFlexTable extends FlexTable implements ClickHandler {
     }
 
     // Returns the group index
+    public int setRowStyle(int rowIndex, long currentID, long previousID, int groupIndex) {
+        return setRowStyle(rowIndex, ""+currentID, ""+previousID, groupIndex);
+    }
+
     public int setRowStyle(int rowIndex, String currentID, String previousID, int groupIndex) {
         StringBuilder sb = new StringBuilder(50);
         // check even/odd row

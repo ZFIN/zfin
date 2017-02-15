@@ -71,7 +71,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         finishExpressionNotification();
     }
 
-    private void finishExpressionNotification() {
+    protected void finishExpressionNotification() {
         unselectAllExperiments();
         if (view.showHideToggle.isVisible())
             populateDataTable();
