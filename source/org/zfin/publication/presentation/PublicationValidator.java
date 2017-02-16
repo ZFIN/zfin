@@ -43,21 +43,26 @@ public class PublicationValidator {
         // trim off trailing blanks
         publicationID = publicationID.trim();
 
-
         if (StringUtils.isEmpty(publicationID)) {
             LOG.debug("------- Failed not-null validation. ---");
             errors.rejectValue(field, "pub.empty");
             return;
         }
-        if (isShortVersion(publicationID)) {
-            publicationID=PublicationValidator.completeZdbID(publicationID);
-        } 
-        PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-        Publication pub=pr.getPublication(publicationID);
-        if (pub==null){
-            errors.rejectValue(field, "pub.invalid");
+
+        if (!publicationID.startsWith(ZDB_PUB)) {
+            if (!isValidTimeStamp(publicationID)) {
+                errors.rejectValue(field, "pub.invalid");
+                return;
+            } else {
+                publicationID = ZDB_PUB + publicationID;
+            }
         }
 
+        PublicationRepository pr = RepositoryFactory.getPublicationRepository();
+        if (pr.getPublication(publicationID) == null) {
+            LOG.debug("----------Failed zdb id validation --");
+            errors.rejectValue(field, "pub.notfound");
+        }
     }
 
     private static boolean isValidTimeStamp(String publicationID) {
