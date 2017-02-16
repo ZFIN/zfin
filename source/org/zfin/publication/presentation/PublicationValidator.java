@@ -42,7 +42,7 @@ public class PublicationValidator {
     public static void validatePublicationID(String publicationID, String field, Errors errors) {
         // trim off trailing blanks
         publicationID = publicationID.trim();
-        String pubZDB;
+
 
         if (StringUtils.isEmpty(publicationID)) {
             LOG.debug("------- Failed not-null validation. ---");
@@ -50,12 +50,10 @@ public class PublicationValidator {
             return;
         }
         if (isShortVersion(publicationID)) {
-            pubZDB=PublicationValidator.completeZdbID(publicationID);
-        } else {
-            pubZDB=publicationID;
-        }
+            publicationID=PublicationValidator.completeZdbID(publicationID);
+        } 
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-        Publication pub=pr.getPublication(pubZDB);
+        Publication pub=pr.getPublication(publicationID);
         if (pub==null){
             errors.rejectValue(field, "pub.invalid");
         }
