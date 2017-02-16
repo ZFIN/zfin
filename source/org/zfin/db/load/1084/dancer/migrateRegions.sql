@@ -4,6 +4,16 @@
 begin work;
 set constraints all deferred;
 
+insert into zdb_object_type (zobjtype_name,
+                    zobjtype_day,
+        zobjtype_app_page,
+        zobjtype_home_table,
+        zobjtype_home_zdb_id_column,
+        zobjtype_is_data,
+        zobjtype_is_source)
+ values ('EREGION',current,'marker','marker','mrkr_zdb_id','t','f');
+create sequence eregion_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+
 update zdb_replaced_data
  set zrepld_old_zdb_id = replace(zrepld_old_Zdb_id, 'REGION','EREGION')
  where zrepld_old_zdb_id like 'ZDB-REGION%';
