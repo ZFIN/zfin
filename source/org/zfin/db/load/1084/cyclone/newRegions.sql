@@ -89,26 +89,26 @@ insert into marker_type_group (mtgrp_name, mtgrp_comments)
  values ('ENGINEERED_REGION', 'Group containing engineered regions.');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
- values ('GENEDOM_PRODUCES_PROTEIN', 'Group containing transcribed elements that produce proteins.');
+ values ('GENEDOM_PROD_PROTEIN', 'Group containing transcribed elements that produce proteins.');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
  values ('NONTRANSCRIBED_REGIONS','Group containing non-transcribed regions.');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('GENE','GENEDOM_PRODUCES_PROTEIN');
+values ('GENE','GENEDOM_PROD_PROTEIN');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('GENEP','GENEDOM_PRODUCES_PROTEIN');
+values ('GENEP','GENEDOM_PROD_PROTEIN');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('GENEFAMILY','GENEDOM_PRODUCES_PROTEIN');
+values ('GENEFAMILY','GENEDOM_PROD_PROTEIN');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
- values ('TSCRIPT','GENEDOM_PRODUCES_PROTEIN');
+ values ('TSCRIPT','GENEDOM_PROD_PROTEIN');
 
 
 
@@ -283,7 +283,7 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
 values ('RRNA','GENEDOM');
 
 update marker_relationship_type 
- set mreltype_mrkr_type_group_1 = 'GENEDOM_PRODUCES_PROTEIN'
+ set mreltype_mrkr_type_group_1 = 'GENEDOM_PROD_PROTEIN'
 where mreltype_name = 'gene product recognized by antibody'; 
 
 update marker_relationship_type 
@@ -291,7 +291,7 @@ update marker_relationship_type
 where mreltype_name = 'clone contains gene'; 
 
 update marker_relationship_type 
- set mreltype_mrkr_type_group_1 = 'GENEDOM_PRODUCES_PROTEIN'
+ set mreltype_mrkr_type_group_1 = 'GENEDOM_PROD_PROTEIN'
 where mreltype_name = 'gene encodes small segment'; 
 
 update marker_relationship_type 
@@ -311,11 +311,11 @@ update marker_relationship_type
 where mreltype_name = 'knockdown reagen targets gene'; 
 
 update marker_relationship_type 
- set mreltype_mrkr_type_group_1 = 'GENEDOM_PRODUCES_PROTEIN'
+ set mreltype_mrkr_type_group_1 = 'GENEDOM_PROD_PROTEIN'
 where mreltype_name = 'transcript targets gene'; 
 
 update marker_relationship_type 
- set mreltype_mrkr_type_group_1 = 'GENEDOM_PRODUCES_PROTEIN'
+ set mreltype_mrkr_type_group_1 = 'GENEDOM_PROD_PROTEIN'
 where mreltype_name = 'gene produces transcript'; 
 
 
