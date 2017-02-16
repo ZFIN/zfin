@@ -143,7 +143,7 @@ public class DeleteRuleTest extends AbstractDatabaseTest {
     @Test
     public void regionValidation() {
         // UAS
-        String zdbID = "ZDB-REGION-070122-1";
+        String zdbID = "ZDB-EREGION-070122-1";
         DeleteEntityRule feature = service.getDeleteRule(zdbID);
         List<DeleteValidationReport> reportList = feature.validate();
         assertNotNull(reportList);
