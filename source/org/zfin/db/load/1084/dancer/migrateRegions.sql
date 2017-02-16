@@ -33,9 +33,6 @@ update marker_type_group_member
   set mtgrpmem_mrkr_type = 'EREGION'
  where mtgrpmem_mrkr_type = 'REGION';
 
-update marker_type_group_member
-  set mtgrpmem_mrkr_type_group = 'ENGINEERED_REGION'
- where mtgrpmem_mrkr_type_group = 'REGION';
 
 update marker
  set mrkr_zdb_id = replace(mrkr_Zdb_id, 'REGION','EREGION')
@@ -104,6 +101,10 @@ update marker_history
  set mhist_mrkr_zdb_id = replace(mhist_mrkr_zdb_id, 'REGION','EREGION')
  where mhist_mrkr_zdb_id like 'ZDB-REGION%';
 
+update marker_type_group_member
+  set mtgrpmem_mrkr_type_group = 'ENGINEERED_REGION'
+ where mtgrpmem_mrkr_type_group = 'REGION';
+
 update marker_relationship_type
  set mreltype_mrkr_type_group_1 = 'ENGINEERED_REGION'
  where mreltype_mrkr_type_group_1 = 'REGION';
@@ -114,6 +115,9 @@ update marker_relationship_type
 
 delete from marker_Type_group
  where mtgrp_name = 'REGION';
+
+
+
 
 set constraints all immediate;
 

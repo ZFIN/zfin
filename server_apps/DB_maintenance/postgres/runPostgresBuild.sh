@@ -3,21 +3,27 @@
 startTime=$(date)
 echo $startTime
 
-#echo "****Process an informix dump for loading into postgres."
-#cd $SOURCEROOT/server_apps/DB_maintenance/postgres
-#./process_dumps.sh
+echo "drop tables in informixdb that are not migrating to postgres"
+
+$INFORMIXDIR/bin/dbaccess $DBNAME $SOURCEROOT/server_apps/DB_maintenance/postgres/dropTables.sql
+
+echo "drop and recreate database in $DBNAME value"
+
+/opt/postgres/bin/dropdb $DBNAME
+/opt/postgres/bin/createdb $DBNAME
 
 echo "****Build liquibase changelog"
 
 cd $SOURCEROOT/server_apps/DB_maintenance/postgres/liquibase
-
+rm -rf /tmp/changelogConstraintFile.xml 
+rm -rf /tmp/tableMigration.xml
+rm -rf /tmp/tables.xml
 rm -rf /tmp/changelogMigrationFile.xml
 rm -rf $SOURCEROOT/source/org/zfin/db/postgres/changelogMigrationFile.xml
 rm -rf $SOURCEROOT/source/org/zfin/db/postgres/changelogConstraintFile.xml
 rm -rf $SOURCEROOT/source/org/zfin/db/postgres/tableMigration.xml
 
 ./liquibase --driver=com.informix.jdbc.IfxDriver --url="jdbc:informix-sqli://${HOSTNAME}:${INFORMIX_PORT}/${DBNAME}:INFORMIXSERVER=${INFORMIXSERVER};DB_LOCALE=en_US.utf8" --defaultSchemaName="informix" --classpath="/opt/zfin/source_roots/swirl/ZFIN_WWW/lib/Java/ifxjdbc-3.70.JC1.jar" --changeLogFile="/tmp/changelogMigrationFile.xml" generateChangeLog
-
 
 cp /tmp/changelogMigrationFile.xml $SOURCEROOT/source/org/zfin/db/postgres/changelogMigrationFile.xml
 
@@ -27,12 +33,28 @@ cp /tmp/changelogMigrationFile.xml $SOURCEROOT/source/org/zfin/db/postgres/chang
 # gets the first instance of the first key in the file and grabs its changeset definition.
 
 grep -A100000 "<addPrimaryKey" /tmp/changelogMigrationFile.xml -C 1  > /tmp/changelogConstraintFile.xml 
-cat $SOURCEROOT/server_apps/DB_maintenance/postgres/ /tmp/changelogConstraintFile.xml > $SOURCEROOT/source/org/zfin/db/postgres/changelogConstraintFile.xml 
 
-sed '/<addPrimaryKey/q' /tmp/changelogMigrationFile.xml | head -n -2 > /tmp/tableMigration.xml
-cat $SOURCEROOT/source/org/zfin/db/postgres/tableMigration.xml $SOURCEROOT/server_apps/DB_maintenance/postgres/xmlFooter.xml > $SOURCEROOT/server_apps/DB_maintenance/postgres/tableMigration.xml
+cat $SOURCEROOT/server_apps/DB_maintenance/postgres/xmlHeader.xml /tmp/changelogConstraintFile.xml > $SOURCEROOT/source/org/zfin/db/postgres/changelogConstraintFile.xml 
 
+echo "process changelog files to help lvarchar and dates into postgres syntax"
 
+# strip the top part of the liquibase file off to a file so we can just load the tables first without the constraints.
+sed '/<addPrimaryKey/q' /tmp/changelogMigrationFile.xml | head -n -2 > /tmp/tables.xml
+
+# change lvarchar() to text, reorganize timestamps and defaults to postgres syntax
+sed 's/LVARCHAR([0-9]*)/text/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
+sed 's/DATETIME YEAR TO SECOND NOT NULL/CURRENT_TIMESTAMP/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
+sed 's/current year to second/CURRENT_TIMESTAMP/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
+sed 's/defaultValueComputed="current year to day"/defaultValueComputed="CURRENT_TIMESTAMP"/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
+sed 's/BOOLEAN(1)/BOOLEAN/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
+sed 's/="f"/="false"/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
+sed 's/="t"/="true"/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
+sed 's/smallfloat/numeric/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
+
+cat /tmp/tables.xml $SOURCEROOT/server_apps/DB_maintenance/postgres/xmlFooter.xml > $SOURCEROOT/source/org/zfin/db/postgres/tableMigration.xml
+
+cd $SOURCEROOT
+ant buildPostgresDatabase
 
 
 
