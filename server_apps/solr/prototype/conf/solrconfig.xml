@@ -1014,6 +1014,7 @@
                 OR category:"Marker / Clone"
                 OR category:"Construct"
                 OR category:"STR Relationship"
+                OR category:"Antibody"
             </str>
         </lst>
         

@@ -39,7 +39,7 @@ public enum Category {
             ENGINEERED_REGION
     ),
     ANTIBODY("Antibody",
-            TYPE,
+            ANTIBODY_TYPE,
             ANTIGEN_GENE,
             LABELED_STRUCTURE_TF,
             ASSAY,

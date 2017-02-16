@@ -21,6 +21,7 @@ public enum FieldName {
     ALIAS_AC("alias_ac", "synonym"),
     ANATOMY("anatomy"),
     ANATOMY_TF("anatomy_tf"),
+    ANTIBODY_TYPE("antibody_type","Type"),
     ANTIGEN_GENE("antigen_gene"),
     ASSAY("assay"),
     AUTHOR("registered_author"),

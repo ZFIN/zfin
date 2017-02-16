@@ -3029,7 +3029,8 @@ SELECT trim(CASE Length(Get_genotype_backgrounds(geno_zdb_id))
                             mrkr_abbrev_order as name_sort,
                             mrkr_comments as note,
                                '/' || mrkr_zdb_id as url,
-                            atb_type as type,
+                            atb_type as antibody_type,
+                            'Antibody' as type,
                             atb_host_organism as host_organism,
                             to_date(get_date_from_id(mrkr_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
 

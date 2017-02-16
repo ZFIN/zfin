@@ -17,6 +17,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.MarkerTypeSignificanceComparator;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.FacetValueAlphanumComparator;
@@ -63,7 +64,9 @@ public class MarkerSearchService {
         }
 
         criteria.setChromosomeOptions(getFacetStrings(response, FieldName.CHROMOSOME));
-        criteria.setTypeOptions(sortMarkerTypes(getFacetStrings(response, FieldName.TYPE)));
+
+        List<MarkerType> markerTypes = RepositoryFactory.getMarkerRepository().getMarkerTypesByGroup(Marker.TypeGroup.SEARCH_MKSEG);
+        criteria.setTypeOptions(sortMarkerTypes(markerTypes));
 
         return criteria;
     }
@@ -279,10 +282,8 @@ public class MarkerSearchService {
 
     }
 
-    //This is the slower, but "safer" (less redundant?) option, alternatively,
-    // we could store the display name and signficiance in the Marker.Type enumeration
-    public List<String> sortMarkerTypes(List<String> typeStrings) {
-        List<MarkerType> markerTypes = getSortedMarkerTypes(typeStrings);
+
+    public List<String> sortMarkerTypes(List<MarkerType> markerTypes) {
         List<String> returnStrings = new ArrayList<>();
         Collections.sort(markerTypes, new MarkerTypeSignificanceComparator<MarkerType>());
         returnStrings.addAll(CollectionUtils.collect(markerTypes, new BeanToPropertyValueTransformer("displayName")));
@@ -294,13 +295,6 @@ public class MarkerSearchService {
         return countList;
     }
 
-    public List<MarkerType> getSortedMarkerTypes(List<String> typeStrings) {
-        List<MarkerType> markerTypes = new ArrayList<>();
 
-        for (String typeString : typeStrings) {
-            markerTypes.add(RepositoryFactory.getMarkerRepository().getMarkerTypeByDisplayName(typeString));
-        }
-        return markerTypes;
-    }
 
 }
