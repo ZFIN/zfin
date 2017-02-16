@@ -161,6 +161,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.PUBLICATION.name | "Doug Howe id:ZDB-PUB-990119-20"     | "13813"
         null                      | "sheturnedmeintoanewt"               | "12988"
         null                      | "informix"                           | "14540"
+        Category.MUTANT.name      | "contacting authors"                 | "15114"
 
 
     }

@@ -3266,9 +3266,9 @@ SELECT trim(CASE Length(Get_genotype_backgrounds(geno_zdb_id))
            </entity>
 
            <entity name="feature_note"
-                   query="select feature_zdb_id, dnote_text as note
+                   query="select feature_zdb_id, extnote_note as note
                             from feature
-                                 join data_note on dnote_data_zdb_id = feature_zdb_id"
+                                 join external_note on extnote_data_zdb_id = feature_zdb_id"
                    cacheImpl="SortedMapBackedCache"
                    where="feature_zdb_id=feature.id"/>
 
