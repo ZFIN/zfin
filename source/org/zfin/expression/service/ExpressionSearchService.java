@@ -32,13 +32,10 @@ import java.util.stream.Collectors;
 @Service
 public class ExpressionSearchService {
 
-
-    QueryManipulationService queryManipulationService;
-
-
     public static SolrQuery applyCriteria(SolrQuery solrQuery,
                                           ExpressionSearchCriteria criteria,
                                           String anatomyBoolean) {
+
         solrQuery.addFilterQuery("category:(" + "Expression" + ")");
 
         //only interested in expression where there is a gene, no AB expression
