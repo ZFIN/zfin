@@ -31,6 +31,7 @@ rm paneled_markers
 rm pub_db_xref
 #remove more datablade bits
 #also had to remove most recent schema changes: TODO: apply liquibase changes to postgres schema as well.
+rm affected_gene_group
 rm staging_webpages
 rm sysblderrorlog
 rm sysbldiprovided

@@ -49,7 +49,7 @@ sed 's/defaultValueComputed="current year to day"/defaultValueComputed="CURRENT_
 sed 's/BOOLEAN(1)/BOOLEAN/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
 sed 's/="f"/="false"/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
 sed 's/="t"/="true"/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
-sed 's/smallfloat/numeric/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
+sed 's/SMALLFLOAT([0-9]*)/numeric/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
 
 cat /tmp/tables.xml $SOURCEROOT/server_apps/DB_maintenance/postgres/xmlFooter.xml > $SOURCEROOT/source/org/zfin/db/postgres/tableMigration.xml
 
