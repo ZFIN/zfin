@@ -14,8 +14,9 @@
 <authz:authorize access="hasRole('root')">
     <c:set var="loggedIn" value="true"/>
 </authz:authorize>
+
 <c:if test="${loggedIn && marker.genedom}">
-    sdkjhaskjfdhaskfh
+
     <div class="summary horizontal-solidblock">
         <c:if test="${empty title}">
             <c:set var="title" value="MARKER RELATIONSHIPS"/>
