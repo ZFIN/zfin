@@ -1,6 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -264,7 +265,6 @@ public class ExpressionZonePresenter implements Presenter {
         }
 
         public void onSuccess(List<FilterSelectionBoxEntry> list) {
-            super.onFinish();
             super.onSuccess(list);
             allFigureDtos = new ArrayList<>((List<FigureDTO>) (List<?>) list);
             view.setLoadingImageVisibility(false);
