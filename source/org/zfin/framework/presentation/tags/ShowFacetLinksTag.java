@@ -96,11 +96,11 @@ public class ShowFacetLinksTag extends TagSupport {
 
         URLCreator alphaSortUrl = new URLCreator(baseUrl);
         alphaSortUrl.removeNameValuePair(fieldName);
-        alphaSortUrl.addNamevaluePair(fieldName,"index");
+        alphaSortUrl.addNameValuePair(fieldName,"index");
 
         URLCreator countSortUrl = new URLCreator(baseUrl);
         countSortUrl.removeNameValuePair(fieldName);
-        countSortUrl.addNamevaluePair(fieldName,"count");
+        countSortUrl.addNameValuePair(fieldName,"count");
 
 
         StringBuilder sb = new StringBuilder();

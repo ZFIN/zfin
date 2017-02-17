@@ -22,7 +22,7 @@ public class ExpressionSearchController {
 
     private static Logger logger = Logger.getLogger(ExpressionSearchController.class);
 
-    private static final String BASE_URL = "/action/expression/results";
+    private static final String BASE_URL = "/action/expression/results?";
 
     @Autowired
     MarkerRepository markerRepository;
@@ -75,8 +75,11 @@ public class ExpressionSearchController {
 
     private PaginationBean generatePaginationBean(ExpressionSearchCriteria criteria, String queryString) {
         PaginationBean paginationBean = new PaginationBean();
-        URLCreator paginationUrlCreator = new URLCreator(BASE_URL + "?" + queryString);
+        URLCreator paginationUrlCreator = new URLCreator(BASE_URL + queryString);
         paginationUrlCreator.removeNameValuePair("page");
+        if (StringUtils.isNotEmpty(criteria.getGeneZdbID())) {
+            paginationUrlCreator.replaceNameValuePair("geneZdbID", criteria.getGeneZdbID());
+        }
         paginationBean.setActionUrl(paginationUrlCreator.getFullURLPlusSeparator());
 
         if (criteria.getPage() == null) {
@@ -95,10 +98,9 @@ public class ExpressionSearchController {
     }
 
     private String generateImagesOnlyUrl(String queryString) {
-        URLCreator urlCreator = new URLCreator(BASE_URL + "?" + queryString);
+        URLCreator urlCreator = new URLCreator(BASE_URL + queryString);
         urlCreator.removeNameValuePair("page");
-        urlCreator.removeNameValuePair("onlyFiguresWithImages");
-        urlCreator.addNamevaluePair("onlyFiguresWithImages", "true");
+        urlCreator.replaceNameValuePair("onlyFiguresWithImages", "true");
         return urlCreator.getURL();
     }
 

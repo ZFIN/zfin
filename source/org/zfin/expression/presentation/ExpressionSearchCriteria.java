@@ -32,11 +32,10 @@ public class ExpressionSearchCriteria {
         //todo: put all of the criteria into the url
 
         URLCreator urlCreator = new URLCreator("/action/expression/results");
-        urlCreator.addNamevaluePair("geneZdbID", gene.getZdbID());
-        urlCreator.addNamevaluePair("geneField", gene.getAbbreviation());
-        urlCreator.addNamevaluePair("anatomyTermNames", getAnatomyTermNames());
-        urlCreator.addNamevaluePair("anatomyTermIDs", getAnatomyTermIDs());
-
+        urlCreator.addNameValuePair("geneZdbID", gene.getZdbID());
+        urlCreator.addNameValuePair("geneField", gene.getAbbreviation());
+        urlCreator.addNameValuePair("anatomyTermNames", getAnatomyTermNames());
+        urlCreator.addNameValuePair("anatomyTermIDs", getAnatomyTermIDs());
         return urlCreator.getURL();
     }
 

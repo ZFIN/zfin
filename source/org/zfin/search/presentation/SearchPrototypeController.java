@@ -18,9 +18,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.zfin.expression.presentation.ExpressionSearchCriteria;
-import org.zfin.expression.presentation.GeneResult;
-import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.infrastructure.service.ZdbIDService;
 import org.zfin.marker.Marker;
@@ -140,7 +137,7 @@ public class SearchPrototypeController {
 
         URLCreator resubmitUrlCreator = new URLCreator(baseUrl);
         resubmitUrlCreator.removeNameValuePair("q");
-        resubmitUrlCreator.addNamevaluePair("q", "");
+        resubmitUrlCreator.addNameValuePair("q", "");
         model.addAttribute("baseUrlWithoutQ", resubmitUrlCreator.getURL());
 
         query = handleFacetSorting(query, request);
@@ -187,7 +184,7 @@ public class SearchPrototypeController {
         if (appendCategoryToBaseUrl) {
             URLCreator baseUrlWithCategory = new URLCreator(baseUrl);
             baseUrlWithCategory.removeNameValuePair("category");
-            baseUrlWithCategory.addNamevaluePair("category", category);
+            baseUrlWithCategory.addNameValuePair("category", category);
             baseUrl = baseUrlWithCategory.getURL();
         }
 

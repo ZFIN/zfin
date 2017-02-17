@@ -462,7 +462,7 @@ public class SolrService {
         //if this is the category breadbox link, set category to Any
         if (StringUtils.equals(nameValuePair.getName(), "category")) {
             urlCreator.removeNameValuePair("category");
-            urlCreator.addNamevaluePair("category", "Any");
+            urlCreator.addNameValuePair("category", "Any");
         }
         out.append(urlCreator.getURL());
 
@@ -475,11 +475,11 @@ public class SolrService {
         String quotedFq = facetField.getName() + ":\"" + count.getName() + "\"";
 
         URLCreator urlCreator = new URLCreator(baseUrl);
-        urlCreator.addNamevaluePair("fq", quotedFq);
+        urlCreator.addNameValuePair("fq", quotedFq);
         urlCreator.removeNameValuePair("page");
         if (StringUtils.equals("category", facetField.getName())) {
             urlCreator.removeNameValuePair("category");
-            urlCreator.addNamevaluePair("category", count.getName());
+            urlCreator.addNameValuePair("category", count.getName());
         }
         return urlCreator.getURL();
     }
@@ -487,7 +487,7 @@ public class SolrService {
     public static String getNotFacetUrl(FacetField facetField, FacetField.Count count, String baseUrl) {
         String quotedFq = "-" + facetField.getName() + ":\"" + count.getName() + "\"";
         URLCreator urlCreator = new URLCreator(baseUrl);
-        urlCreator.addNamevaluePair("fq", quotedFq);
+        urlCreator.addNameValuePair("fq", quotedFq);
         urlCreator.removeNameValuePair("page");
         if (StringUtils.equals("category", facetField.getName())) {
             urlCreator.removeNameValuePair("category");

@@ -13,6 +13,7 @@
 
 <form:form action="/action/expression/results" method="get" modelAttribute="criteria">
     <form:hidden path="rows"/>
+    <form:hidden path="geneZdbID"/>
     <table class="primary-entity-attributes">
         <tr>
             <th><form:label path="geneField" cssClass="namesearchLabel">Gene/EST</form:label></th>

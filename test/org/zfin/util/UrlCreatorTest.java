@@ -37,7 +37,7 @@ public class UrlCreatorTest {
         URLCreator url = new URLCreator(url1);
         String name = "name";
         String value = "value";
-        url.addNamevaluePair(name, value);
+        url.addNameValuePair(name, value);
         String fullUrl = url.getURL();
         Assert.assertEquals("http://zfin.org/?name=value", fullUrl);
     }
@@ -49,10 +49,10 @@ public class UrlCreatorTest {
         URLCreator url = new URLCreator(url1);
         String name = "name";
         String value = "value";
-        url.addNamevaluePair(name, value);
+        url.addNameValuePair(name, value);
         String name2 = "name2";
         String value2 = "value2";
-        url.addNamevaluePair(name2, value2);
+        url.addNameValuePair(name2, value2);
         String fullUrl = url.getURL();
         Assert.assertEquals("http://zfin.org/?name=value&name2=value2", fullUrl);
     }
@@ -64,8 +64,8 @@ public class UrlCreatorTest {
         URLCreator url = new URLCreator(url1);
         String name = "name";
         String value = "value";
-        url.addNamevaluePair(name, value);
-        url.addNamevaluePair(name, value);
+        url.addNameValuePair(name, value);
+        url.addNameValuePair(name, value);
         String fullUrl = url.getURL();
         Assert.assertEquals("http://zfin.org/?name=value", fullUrl);
     }
@@ -185,8 +185,30 @@ public class UrlCreatorTest {
     public void addParameterWithPipeCharacter() {
         String url = "http://zfin.org/do-something?a=1";
         URLCreator urlCreator = new URLCreator(url);
-        urlCreator.addNamevaluePair("b", "lorem|ipsum");
+        urlCreator.addNameValuePair("b", "lorem|ipsum");
         assertThat(urlCreator.getURL(), is(url + "&b=lorem%7Cipsum"));
+    }
+
+    @Test
+    public void replaceParameterWasBlank() {
+        String url = "http://zfin.org/do-something?a=&b=2";
+        URLCreator urlCreator = new URLCreator(url);
+        urlCreator.replaceNameValuePair("a", "3");
+
+        String actualUrl = urlCreator.getURL();
+        String expectedUrl = "http://zfin.org/do-something?b=2&a=3";
+        assertThat(actualUrl, is(expectedUrl));
+    }
+
+    @Test
+    public void replaceParameterWasPopulated() {
+        String url = "http://zfin.org/do-something?a=1&b=2";
+        URLCreator urlCreator = new URLCreator(url);
+        urlCreator.replaceNameValuePair("a", "4");
+
+        String actualUrl = urlCreator.getURL();
+        String expectedUrl = "http://zfin.org/do-something?b=2&a=4";
+        assertThat(actualUrl, is(expectedUrl));
     }
 
 }
