@@ -57,5 +57,11 @@ cd $SOURCEROOT
 ant buildPostgresDatabase
 
 
+cd /research/zunloads/databases/postgres_dumps/
 
+latestDump=`ls -td -- */ | head -n 1 | cut -d'/' -f1`
+echo $latestDump
+
+cd $SOURCEROOT/server_apps/DB_maintenance/postgres/
+./loaddatabase.py -d /research/zunloads/databases/postgres_dumps/$latestDump
 

@@ -41,6 +41,8 @@ def main(argv):
         tablename = line.rstrip('\n')
         tablenameFile = tablename+".txt"
         tablef = open(os.path.join(loadDirectory,tablenameFile), 'r')
+        print dbname
+        print user
         print "truncating table " + tablename
         cur.execute("truncate %(table)s", {"table": AsIs(tablename)})
         print "loading table " + tablename
