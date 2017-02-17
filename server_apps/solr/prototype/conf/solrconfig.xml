@@ -1087,7 +1087,6 @@
                 regulatory_region_t
                 related_accession
                 related_accession_t
-                related_gene_symbol
                 related_marker
                 reporter_gene
                 reporter_gene_full_name
@@ -1116,7 +1115,7 @@
             <str name="hl.fragsize">80</str>
 
             <!-- Specifies the maximum number of entries in a multi-valued field to examine before stopping. -->
-            <str name="hl.maxMultiValuedToExamine">1000</str>
+            <str name="hl.maxMultiValuedToExamine">20000</str>
             <!-- Specifies the maximum number of matches in a multi-valued field that are found before stopping -->
             <str name="hl.maxMultiValuedToMatch">1</str>
 
