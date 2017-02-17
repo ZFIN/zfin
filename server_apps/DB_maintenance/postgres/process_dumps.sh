@@ -68,16 +68,15 @@ do
 
     # data_note needs not to have \r replaced.
     # external_note had to hand edit file to remove ^M line 1331 then look for ^M
-    #  sed 's/\r/\\r/g' $f.t > $f.txt
+    sed 's/\r/\\r/g' $loadFile.t > $f.txt
 
     #replace ^M with newline characters
-    sed 's/\r/\n/g' $loadFile.t > $loadFile.txt
+    sed 's/\r/\n/g' $f.t > $loadFile.txt
 
     #this is just for figure, lab, lab_address_update_tracking, publication, updates so far...strip
     #^M inline if necessary.
     sed 's/\r//g' $loadFile.txt > temp
 
-    
     mv temp $loadFile.txt
     
     #clean up processing steps
