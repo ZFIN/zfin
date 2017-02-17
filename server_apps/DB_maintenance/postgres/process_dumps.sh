@@ -71,7 +71,7 @@ do
     sed 's/\r/\\r/g' $loadFile.t > $f.txt
 
     #replace ^M with newline characters
-    sed 's/\r/\n/g' $f.t > $loadFile.txt
+    sed 's/\r/\n/g' $f.txt > $loadFile.txt
 
     #this is just for figure, lab, lab_address_update_tracking, publication, updates so far...strip
     #^M inline if necessary.
