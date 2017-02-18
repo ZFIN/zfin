@@ -3,7 +3,7 @@
 startTime=$(date)
 echo $startTime
 
-echo "drop tables in informixdb that are not migrating to postgres"
+echo "drop tables in informixd that are not migrating to postgres"
 
 $INFORMIXDIR/bin/dbaccess $DBNAME $SOURCEROOT/server_apps/DB_maintenance/postgres/dropTables.sql
 
