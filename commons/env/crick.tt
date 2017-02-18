@@ -60,6 +60,7 @@
 <!--|PARTNER_SOURCEROOT|-->	false
 <!--|PATO_EMAIL_CURATOR|-->	informix\@zfin.org ksf\@zfin.org xshao\@zfin.org
 <!--|PDF_LOAD|-->	/PDFLoadUp
+<!--|PGDATA|-->	/opt/postgres/postgresql/data
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	yvonne\@uoneuro.uoregon.edu van_slyke\@uoneuro.uoregon.edu
 <!--|ROOT_PATH|-->	/opt/zfin/www_homes/crick
 <!--|SECURE_HTTP|-->	https://

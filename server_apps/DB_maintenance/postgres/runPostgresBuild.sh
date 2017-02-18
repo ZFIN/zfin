@@ -34,7 +34,7 @@ cp /tmp/changelogMigrationFile.xml $SOURCEROOT/source/org/zfin/db/postgres/chang
 
 grep -A100000 "<addPrimaryKey" /tmp/changelogMigrationFile.xml -C 1  > /tmp/changelogConstraintFile.xml 
 
-cat $SOURCEROOT/server_apps/DB_maintenance/postgres/xmlHeader.xml /tmp/changelogConstraintFile.xml > $SOURCEROOT/source/org/zfin/db/postgres/changelogConstraintFile.xml 
+cat $SOURCEROOT/server_apps/DB_maintenance/postgres/xmlHeader.xml /tmp/changelogConstraintFile.xml > $SOURCEROOT/source/org/zfin/db/postgres/constraints/changelogConstraintFile.xml 
 
 echo "process changelog files to help lvarchar and dates into postgres syntax"
 
@@ -65,3 +65,5 @@ echo $latestDump
 cd $SOURCEROOT/server_apps/DB_maintenance/postgres/
 ./loaddatabase.py -d /research/zunloads/databases/postgres_dumps/$latestDump
 
+cd $SOURCEROOT
+ant addPostgresConstraints

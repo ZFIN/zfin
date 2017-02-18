@@ -57,6 +57,7 @@
 <!--|PARTNER_SOURCEROOT|-->	false
 <!--|PATO_EMAIL_CURATOR|-->	kevin\@zfin.org
 <!--|PDF_LOAD|-->	/PDFLoadUp
+<!--|PGDATA|-->	/opt/postgres/postgresql/data
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	kevin\@zfin.org
 <!--|ROOT_PATH|-->	/research/zcentral/www_homes/coral
 <!--|SECURE_HTTP|-->	https://
