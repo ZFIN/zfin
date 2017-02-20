@@ -56,7 +56,6 @@ cat /tmp/tables.xml $SOURCEROOT/server_apps/DB_maintenance/postgres/xmlFooter.xm
 cd $SOURCEROOT
 ant buildPostgresDatabase
 
-
 cd /research/zunloads/databases/postgres_dumps/
 
 latestDump=`ls -td -- */ | head -n 1 | cut -d'/' -f1`
