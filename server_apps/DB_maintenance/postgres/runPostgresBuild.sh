@@ -20,7 +20,7 @@ rm -rf /tmp/tableMigration.xml
 rm -rf /tmp/tables.xml
 rm -rf /tmp/changelogMigrationFile.xml
 rm -rf $SOURCEROOT/source/org/zfin/db/postgres/changelogMigrationFile.xml
-rm -rf $SOURCEROOT/source/org/zfin/db/postgres/changelogConstraintFile.xml
+rm -rf $SOURCEROOT/source/org/zfin/db/postgres/constraints/changelogConstraintFile.xml
 rm -rf $SOURCEROOT/source/org/zfin/db/postgres/tableMigration.xml
 
 ./liquibase --driver=com.informix.jdbc.IfxDriver --url="jdbc:informix-sqli://${HOSTNAME}:${INFORMIX_PORT}/${DBNAME}:INFORMIXSERVER=${INFORMIXSERVER};DB_LOCALE=en_US.utf8" --defaultSchemaName="informix" --classpath="/opt/zfin/source_roots/$INSTANCE/ZFIN_WWW/lib/Java/ifxjdbc-3.70.JC1.jar" --changeLogFile="/tmp/changelogMigrationFile.xml" generateChangeLog
