@@ -3104,5 +3104,28 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return map;
     }
 
+    @Override
+    public void copyStrSequence(SequenceTargetingReagent str1, SequenceTargetingReagent str2) {
+        String seq1 = str1.getSequence().getSequence();
+        HibernateUtil.currentSession().createSQLQuery(
+                "UPDATE marker_sequence " +
+                        "SET seq_sequence = :seq_sequence " +
+                        "WHERE seq_mrkr_zdb_id = :zdbID ")
+                .setString("seq_sequence", seq1)
+                .setString("zdbID", str2.getZdbID())
+                .executeUpdate();
+        String seq2;
+        if (str1.getSequence().getSecondSequence() != null) {
+            seq2 = str1.getSequence().getSecondSequence();
+            HibernateUtil.currentSession().createSQLQuery(
+                    "UPDATE marker_sequence " +
+                            "SET seq_sequence_2 = :seq_sequence_2 " +
+                            "WHERE seq_mrkr_zdb_id = :zdbID ")
+                    .setString("seq_sequence_2", seq2)
+                    .setString("zdbID", str2.getZdbID())
+                    .executeUpdate();
+        }
+    }
+
 }
 

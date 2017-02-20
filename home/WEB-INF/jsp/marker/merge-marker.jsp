@@ -18,6 +18,8 @@ var LookupProperties0 = {
     wildcard: false
 };
 
+var mergedIntoId;
+
 function confirmMergeAntibody(){
     var markerAbbrevToMergeInto = document.getElementById('markerToMergeIntoViewString').value ;
     if(confirm('Merge and delete ${formBean.markerToDeleteViewString} into '+markerToMergeInto+'?')){
@@ -95,6 +97,7 @@ jQuery(document).ready(function () {
             //geneZdbId = ui.item.id;
             markerZdbIdToDelete = "${formBean.markerToDelete.zdbID}";
             markerZdbIdToBeMergedInto = ui.item.id;
+            mergedIntoId = markerZdbIdToBeMergedInto;
             jQuery('#mergedIntoGeneAbbrev').val("");
             jQuery('#mergedIntoGeneAbbrev').next().val("");
             event.preventDefault();
@@ -156,8 +159,8 @@ jQuery(document).ready(function () {
     jQuery('#ignoreTranscript').hide();
     jQuery('#ignoreOrth').hide();
     jQuery('#ignoreMapping').hide();
-    jQuery('#ignoreDifferentFishForSTR').hide();
-
+    jQuery('#useSeqencesForSTR').hide();
+    jQuery('#ignoreSeqencesForSTR').hide();
 });
 
 var validateUnspecifiedAlleles = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
@@ -881,7 +884,7 @@ var validateTargetGenesForMergingSRTs = function(strIDdelete, strZdbIdMergedInto
         }
     }
 
-    validateSequencesForMergingSRTs(strIDdelete, strZdbIdMergedInto, strAbbrevMergedInto);
+    validateFishListForMergingSRTs(strIDdelete, strZdbIdMergedInto, strAbbrevMergedInto);
 };
 
 var validateSequencesForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, strAbbrevMergedInto) {
@@ -926,17 +929,19 @@ var validateSequencesForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, 
         } else {
             jQuery('#validationSTRText').append('<div>'+ sequenceSTR1 + '</div>');
         }
+        if(!differentTargets)
+            jQuery('#useSeqencesForSTR').show();
 
-        jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> has the following sequence:</h4>');
+        jQuery('#validationSTRText2').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> has the following sequence:</h4>');
         if(isTALEN) {
-            jQuery('#validationSTRText').append('<div>Sequence 1: '+ sequenceSTR2 + '</div>');
-            jQuery('#validationSTRText').append('<div>Sequence 2: '+ secondSequenceSTR2 + '</div>');
+            jQuery('#validationSTRText2').append('<div>Sequence 1: '+ sequenceSTR2 + '</div>');
+            jQuery('#validationSTRText2').append('<div>Sequence 2: '+ secondSequenceSTR2 + '</div>');
         } else {
-            jQuery('#validationSTRText').append('<div>'+ sequenceSTR2 + '</div>');
+            jQuery('#validationSTRText2').append('<div>'+ sequenceSTR2 + '</div>');
         }
+        if(!differentTargets)
+            jQuery('#ignoreSeqencesForSTR').show();
     }
-
-    validateFishListForMergingSRTs(strIDdelete, strZdbIdMergedInto, strAbbrevMergedInto);
 };
 
 var validateFishListForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, strAbbrevMergedInto) {
@@ -997,37 +1002,37 @@ var validateFishListForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, s
 
 
     if (differentFish) {
-        jQuery('#validationSTRText').append('<h4>Merging these two sequence targeting reagents is not allowed because they have been with different fish.</h4>');
+        jQuery('#validationSTRText3').append('<h4>Merging these two sequence targeting reagents is not allowed because they have been with different fish.</h4>');
         if (str1UsedInFish === "Yes") {
-            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> is associated with the following fish:</h4>');
+            jQuery('#validationSTRText3').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> is associated with the following fish:</h4>');
             for (var i = 0; i < fishNamesOfSTR1.length; i++) {
-                jQuery('#validationSTRText').append('<div>'
+                jQuery('#validationSTRText3').append('<div>'
                         + '<a target="_blank" href="/' + fishIDsOfSTR1[i] +'">'
                         + fishNamesOfSTR1[i] + '</a>'
                         + '</div>');
             }
         } else {
-            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> is associated with no fish.</h4>');
+            jQuery('#validationSTRText3').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> is associated with no fish.</h4>');
         }
 
         if (str2UsedInFish === "Yes") {
-            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is associated with the following fish:</h4>');
+            jQuery('#validationSTRText3').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is associated with the following fish:</h4>');
             for (var i = 0; i < fishNamesOfSTR2.length; i++) {
-                jQuery('#validationSTRText').append('<div>'
+                jQuery('#validationSTRText3').append('<div>'
                         + '<a target="_blank" href="/' + fishIDsOfSTR2[i] +'">'
                         + fishNamesOfSTR2[i] + '</a>'
                         + '</div>');
             }
         } else {
-            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is associated with no fish.</h4>');
+            jQuery('#validationSTRText3').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is associated with no fish.</h4>');
         }
     }
 
-    if (!differentTargets && !differentSequence && !differentFish)
+    if (!differentFish) {
         jQuery('#submitMerge').removeAttr('disabled');
+        validateSequencesForMergingSRTs(strIDdelete, strZdbIdMergedInto, strAbbrevMergedInto);
+    }
 
-    if (!differentTargets && !differentSequence && differentFish)
-        jQuery('#ignoreDifferentFishForSTR').show();
 }
 
 function ignoreUnspecifiedAlleles(formObj) {
@@ -1112,17 +1117,40 @@ function ignoreMappingInfo(formObj) {
     enableMerge();
 }
 
-function ignoreFishListForSTRs(formObj) {
-    differentFish = false;
-    jQuery('#ignoreDifferentFishForSTR').hide();
+function ignoreSequencesForSTRs(formObj) {
+    differentSequence = false;
+    jQuery('#validationSTRText').hide();
+    jQuery('#useSeqencesForSTR').hide();
+    jQuery('#validationSTRText2').hide();
+    jQuery('#ignoreSeqencesForSTR').hide();
+
+    enableMerge();
+}
+
+function useSequence(formObj) {
+    differentSequence = false;
+    jQuery('#validationSTRText').hide();
+    jQuery('#useSeqencesForSTR').hide();
+    jQuery('#validationSTRText2').hide();
+    jQuery('#ignoreSeqencesForSTR').hide();
+
+   jQuery.ajax({type: "POST",
+        url: "/action/marker/update-str-sequence?source=${formBean.zdbIDToDelete}&target=" + mergedIntoId,
+        dataType: "json"
+    });
 
     enableMerge();
 }
 
 function enableMerge() {
-    if (unspecifiedAllelesIgnored && sequenceTargetingReagentsIgnored && antibodiesIgnored && ncbiGeneIdsIgnored && uniGeneIdsIgnored && vegaIdsIgnored && EnsemblGRCz10IdsIgnored && transcriptsIgnored && orthologyIgnored && mapInfoIgnored && !differentFish) {
+    if (unspecifiedAllelesIgnored && sequenceTargetingReagentsIgnored && antibodiesIgnored && ncbiGeneIdsIgnored && uniGeneIdsIgnored && vegaIdsIgnored && EnsemblGRCz10IdsIgnored && transcriptsIgnored && orthologyIgnored && mapInfoIgnored && !differentSequence && !differentFish && !differentTargets) {
         jQuery('#submitMerge').removeAttr('disabled');
     }
+}
+
+function goToEdit() {
+    url = '/action/str/'+ mergedIntoId +'/edit';
+    window.location.replace(url);
 }
 
 </script>
@@ -1186,9 +1214,15 @@ function enableMerge() {
     <form id="ignoreMapping">
         <input type="button" value="Ignore Mapping Info" onclick="ignoreMappingInfo(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, the mapping info with ${formBean.markerToDeleteViewString} will be associated with the gene retained regardless of whether it conflicts or not.">
     </form>
+    <div id="validationSTRText3"></div>
     <div id="validationSTRText"></div>
-    <form id="ignoreDifferentFishForSTR">
-        <input type="button" value="Ignore Different Fish" onclick="ignoreFishListForSTRs(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, the above fish list with ${formBean.markerToDeleteViewString} will be associated with the sequence targeting reagent retained.">
+    <form id="useSeqencesForSTR">
+        <input type="button" value="Use the above target sequence" onclick="useSequence(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, the above target sequence will be associated with the sequence targeting reagent retained.">
+    </form>
+    <div id="validationSTRText2"></div>
+    <form id="ignoreSeqencesForSTR">
+        <input type="button" value="Use the above target sequence" onclick="ignoreSequencesForSTRs(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, the above target sequence will be associated with the sequence targeting reagent retained.">
+        &nbsp;&nbsp;<input type="button" value="Edit the above target sequence" onclick="goToEdit();" title="Edit the above sequence">
     </form>
 </c:if>
 

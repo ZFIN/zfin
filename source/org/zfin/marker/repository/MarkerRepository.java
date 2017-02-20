@@ -492,4 +492,6 @@ public interface MarkerRepository {
     List<Marker> getMarkerByGroup(Marker.TypeGroup group, int number);
 
     Map<String,GenericTerm> getSoTermMapping();
+
+    void copyStrSequence(SequenceTargetingReagent str1, SequenceTargetingReagent str2);
 }
