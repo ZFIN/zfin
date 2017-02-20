@@ -92,7 +92,7 @@ insert into marker_type_group (mtgrp_name, mtgrp_comments)
  values ('GENEDOM_PROD_PROTEIN', 'Group containing transcribed elements that produce proteins.');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
- values ('NONTRANSCRIBED_REGIONS','Group containing non-transcribed regions.');
+ values ('NONTSCRBD_REGIONS','Group containing non-transcribed regions.');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)

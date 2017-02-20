@@ -1036,4 +1036,5 @@ input + label {
 
 .nav-tabs-loading {
     color: red !important;
+    font-weight: normal !important;
 }
