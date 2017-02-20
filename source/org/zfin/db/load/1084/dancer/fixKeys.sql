@@ -56,3 +56,5 @@ set constraints all immediate;
 set triggers for feature_marker_relationship enabled; 
 set triggers for marker_relationship enabled; 
 set triggers for marker enabled;
+
+commit work ;
