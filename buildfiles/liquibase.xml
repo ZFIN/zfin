@@ -96,7 +96,7 @@
      id="liquidatabasePG" 
      driver="org.postgresql.Driver" 
      url="jdbc:postgresql://localhost:5432/${DBNAME}"
-     user="staylor"
+     user="${USER}"
      />
 
   <target
