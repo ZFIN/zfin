@@ -58,7 +58,7 @@
 <!--|PATO_EMAIL_CURATOR|-->	pm\@zfin.org
 <!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|PGBINDIR|-->	/opt/postgres/postgresql/bin
-<!--|PGDATA|-->	/opt/postgres/postgresql/data
+<!--|PGDATA|-->	/opt/postgres/data
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	pm\@zfin.org
 <!--|ROOT_PATH|-->	/research/zcentral/www_homes/fishy
 <!--|SECURE_HTTP|-->	https://

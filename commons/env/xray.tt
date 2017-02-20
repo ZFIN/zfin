@@ -61,7 +61,7 @@
 <!--|PATO_EMAIL_CURATOR|-->	pkalita\@zfin.org
 <!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|PGBINDIR|-->	/opt/postgres/postgresql/bin
-<!--|PGDATA|-->	/opt/postgres/postgresql/data
+<!--|PGDATA|-->	/opt/postgres/data
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	pkalita\@zfin.org
 <!--|ROOT_PATH|-->	/opt/zfin/www_homes/xray
 <!--|SECURE_HTTP|-->	https://
