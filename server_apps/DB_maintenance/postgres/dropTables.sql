@@ -1,7 +1,9 @@
 begin work ;
 
 set constraints all deferred;
-set triggers disabled; 
+set triggers for feature_marker_relationship disabled; 
+set triggers for marker_Relationship disabled;
+set triggers for marker disabled;
 
 drop table staging_webpages;
 drop table sysblderrorlog;
@@ -78,6 +80,8 @@ alter table genotype
 
 set constraints all immediate;
 
-set triggers enabled; 
+set triggers for feature_marker_relationship enabled; 
+set triggers for marker_relationship enabled; 
+set triggers for marker enabled;
 
 commit work;
