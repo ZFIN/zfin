@@ -9,6 +9,7 @@ import org.zfin.gwt.root.dto.CuratorNoteDTO;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.FeaturePrefixDTO;
 import org.zfin.gwt.root.dto.NoteDTO;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.util.AppUtils;
@@ -64,6 +65,7 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
 
     public void onLabOfOriginChange(String labOfOriginSelected) {
 
+        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_PREFIX_LIST_START);
         FeatureRPCService.App.getInstance().getPrefix(labOfOriginSelected,
                 new FeatureEditCallBack<List<FeaturePrefixDTO>>("Failed to load lab prefixes", this) {
 
@@ -92,9 +94,14 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
                         view.labDesignationBox.setIndexForValue(dto.getLabPrefix());
                         handleDirty();
                         clearError();
-
+                        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_PREFIX_LIST_STOP);
                     }
 
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        super.onFailure(throwable);
+                        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_PREFIX_LIST_STOP);
+                    }
                 });
 
     }
@@ -148,6 +155,7 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
             return;
         }
         view.working();
+        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.CREATE_FEATURE_START);
         FeatureRPCService.App.getInstance().createFeature(featureDTO, new FeatureEditCallBack<FeatureDTO>("Failed to create feature:", this) {
 
             @Override
@@ -155,8 +163,7 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
                 super.onFailure(throwable);
                 view.featureSequenceBox.getAccessionNumber().setEnabled(true);
                 view.notWorking();
-
-
+                AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.CREATE_FEATURE_STOP);
                 handleDirty();
             }
 
@@ -171,6 +178,7 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
                 AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.CREATE_FEATURE, featureDTO.getName()));
                 view.resetInterface();
                 view.hideMutationDetail();
+                AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.CREATE_FEATURE_STOP);
             }
         });
 

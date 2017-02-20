@@ -112,6 +112,7 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
     public void onLabOfOriginChange(String labOfOriginSelected, final String labPrefix) {
         if (view.labOfOriginBox.isSelectedNull())
             return;
+        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_PREFIX_LIST_START);
         FeatureRPCService.App.getInstance().getPrefix(labOfOriginSelected,
                 new FeatureEditCallBack<List<FeaturePrefixDTO>>("Failed to load lab prefixes", this) {
 
@@ -141,9 +142,14 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                             view.labDesignationBox.setIndexForValue(dto.getLabPrefix());
                         handleDirty();
                         clearError();
-
+                        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_PREFIX_LIST_STOP);
                     }
 
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        super.onFailure(throwable);
+                        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_PREFIX_LIST_STOP);
+                    }
                 });
 
     }

@@ -149,6 +149,12 @@ public class FeatureRelationshipPresenter implements HandlesError {
                         }
                         AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_STOP);
                     }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        super.onFailure(throwable);
+                        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_STOP);
+                    }
                 }, forceLoad);
     }
 
