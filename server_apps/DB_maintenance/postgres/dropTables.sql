@@ -1,7 +1,8 @@
 begin work ;
 
 set constraints all deferred;
- 
+set triggers disabled; 
+
 drop table staging_webpages;
 drop table sysblderrorlog;
 drop table sysbldiprovided;
@@ -74,5 +75,9 @@ alter table person
 
 alter table genotype
   modify (geno_date_entered datetime year to second default current year to second);
+
+set constraints all immediate;
+
+set triggers enabled; 
 
 commit work;
