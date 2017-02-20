@@ -462,7 +462,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             for (Fish fish : fishList) {
                 RelatedEntityDTO genotypeDTO = new RelatedEntityDTO();
                 genotypeDTO.setZdbID(fish.getZdbID());
-                genotypeDTO.setName(fish.getName());
+                genotypeDTO.setName(fish.getHandle());
                 relatedEntityDTOs.add(genotypeDTO);
             }
         }

@@ -1187,7 +1187,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         }
         if (ActiveData.Type.FISH.equals(ActiveData.getType(entityID))) {
             Fish fish = getMutantRepository().getFish(entityID);
-            List<DiseaseAnnotationModel> diseaseAnnotationList = getPhenotypeRepository().getHumanDiseaseModelsByFish(entityID);
+            List<DiseaseAnnotationModel> diseaseAnnotationList = getPhenotypeRepository().getHumanDiseaseModelsByFish(entityID, publicationID);
             if (CollectionUtils.isNotEmpty(diseaseAnnotationList)) {
                 throw new DeAttributionException("Cannot remove attribution as there is human disease data associated to this fish");
             }

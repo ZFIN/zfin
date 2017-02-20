@@ -280,4 +280,7 @@ public interface PhenotypeRepository {
      * @return status
      */
      ZdbFlag getPhenoMartStatus();
+
+    List<DiseaseAnnotationModel> getHumanDiseaseModelsByFish(String entityID, String publicationID);
+
 }
