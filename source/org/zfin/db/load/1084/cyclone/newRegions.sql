@@ -308,7 +308,7 @@ where mreltype_name = 'gene hybridized by small segment';
 
 update marker_relationship_type 
  set mreltype_mrkr_type_group_1 = 'NONTRANSCRIBED_REGION'
-where mreltype_name = 'knockdown reagen targets gene'; 
+where mreltype_name = 'knockdown reagent targets gene';
 
 update marker_relationship_type 
  set mreltype_mrkr_type_group_1 = 'GENEDOM_PROD_PROTEIN'
