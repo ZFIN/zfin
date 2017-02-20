@@ -57,4 +57,6 @@ set triggers for feature_marker_relationship enabled;
 set triggers for marker_relationship enabled; 
 set triggers for marker enabled;
 
+drop table obo_file;
+
 commit work ;
