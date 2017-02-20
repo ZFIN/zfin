@@ -9,8 +9,8 @@ $INFORMIXDIR/bin/dbaccess $DBNAME $SOURCEROOT/server_apps/DB_maintenance/postgre
 
 echo "drop and recreate database in $DBNAME value"
 
-/opt/postgres/postgresql/bin/dropdb $DBNAME
-/opt/postgres/postgresql/bin/createdb $DBNAME
+$PGBINDIR/dropdb $DBNAME
+$PGBINDIR/createdb $DBNAME
 
 echo "****Build liquibase changelog"
 
