@@ -2255,7 +2255,7 @@ select
                    cacheImpl="SortedMapBackedCache"
                    where="pg_id=phenotype.id"/>
 
-           <entity name="phenotype_str_gene"
+           <entity name="phenotype_str_gene_alias"
                    datasource="db" query="select dalias_alias as gene_previous_name,
                                'pg-' || pg_id as pg_id
                         from phenotype_source_generated

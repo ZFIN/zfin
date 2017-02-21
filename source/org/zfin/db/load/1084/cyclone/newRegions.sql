@@ -376,6 +376,7 @@ update marker_relationship_type
  set mreltype_mrkr_type_group_1 = 'NONTSCRBD_REGIONS'
 where mreltype_name = 'knockdown reagen targets gene'; 
 
+
 update marker_relationship_type 
  set mreltype_mrkr_type_group_1 = 'GENEDOM_PROD_PROTEIN'
 where mreltype_name = 'transcript targets gene'; 

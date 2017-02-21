@@ -73,6 +73,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                     public void onSuccess(List<FeatureDTO> results) {
                         if (results == null || results.size() == 0) {
                             view.showHideToggle.setVisibility(false);
+                            AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_STOP);
                             return;
                         }
                         view.featureEditList.clear();
