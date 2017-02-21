@@ -94,6 +94,38 @@ insert into marker_type_group (mtgrp_name, mtgrp_comments)
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
  values ('NONTSCRBD_REGIONS','Group containing non-transcribed regions.');
 
+<<<<<<< HEAD
+=======
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('GENE','GENEDOM_PROD_PROTEIN');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('GENEP','GENEDOM_PROD_PROTEIN');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('GENEFAMILY','GENEDOM_PROD_PROTEIN');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+ values ('TSCRIPT','GENEDOM_PROD_PROTEIN');
+
+
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+
+values ('TSCRIPTREGREGION','NONTSCRBD_REGIONS');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('GENE','GENEDOM_PROD_PROTEIN');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('GENEP','GENEDOM_PROD_PROTEIN');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
@@ -105,16 +137,8 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('GENE','GENEDOM_PROD_PROTEIN');
-
-insert into marker_type_group_member(mtgrpmem_mrkr_type,
-    mtgrpmem_mrkr_type_group)
-values ('GENEP','GENEDOM_PROD_PROTEIN');
-
-
-insert into marker_type_group_member(mtgrpmem_mrkr_type,
-    mtgrpmem_mrkr_type_group)
 values ('TSCRIPTREGREGION','NONTSCRBD_REGIONS');
+
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
