@@ -114,15 +114,81 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('TSCRIPTREGREGION','NONTRANSCRIBED_REGIONS');
+values ('TSCRIPTREGREGION','NONTSCRBD_REGIONS','Group containing non-transcribed regions.');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('PROTBS','NONTRANSCRIBED_REGIONS');
+values ('GENE','GENEDOM_PROD_PROTEIN');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('CPGISLAND','NONTRANSCRIBED_REGIONS');
+values ('GENEP','GENEDOM_PROD_PROTEIN');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('GENEFAMILY','GENEDOM_PROD_PROTEIN');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+ values ('TSCRIPT','GENEDOM_PROD_PROTEIN');
+
+
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('TSCRIPTREGREGION','NONTSCRBD_REGIONS','Group containing non-transcribed regions.');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('GENE','GENEDOM_PROD_PROTEIN');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('GENEP','GENEDOM_PROD_PROTEIN');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('GENEFAMILY','GENEDOM_PROD_PROTEIN');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+ values ('TSCRIPT','GENEDOM_PROD_PROTEIN');
+
+
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('TSCRIPTREGREGION','NONTSCRBD_REGIONS');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('PROTBS','NONTSCRBD_REGIONS');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('CPGISLAND','NONTSCRBD_REGIONS','Group containing non-transcribed regions.');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('GENE','GENEDOM_PROD_PROTEIN');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('GENEP','GENEDOM_PROD_PROTEIN');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('GENEFAMILY','GENEDOM_PROD_PROTEIN');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+ values ('TSCRIPT','GENEDOM_PROD_PROTEIN');
+
+
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('TSCRIPTREGREGION','NONTSCRBD_REGIONS');
 
 
 
@@ -239,7 +305,7 @@ create sequence srprna_seq increment by 1 maxvalue 9223372036854775807 minvalue 
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('HISTBS','NONTRANSCRIBED_REGIONS');
+values ('HISTBS','NONTSCRBD_REGIONS');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
@@ -295,19 +361,19 @@ update marker_relationship_type
 where mreltype_name = 'gene encodes small segment'; 
 
 update marker_relationship_type 
- set mreltype_mrkr_type_group_1 = 'NONTRANSCRIBED_REGION'
+ set mreltype_mrkr_type_group_1 = 'NONTSCRBD_REGIONS'
 where mreltype_name = 'gene contains small segment'; 
 
 update marker_relationship_type 
- set mreltype_mrkr_type_group_1 = 'NONTRANSCRIBED_REGION'
+ set mreltype_mrkr_type_group_1 = 'NONTSCRBD_REGIONS'
 where mreltype_name = 'gene has artifact'; 
 
 update marker_relationship_type 
- set mreltype_mrkr_type_group_1 = 'NONTRANSCRIBED_REGION'
+ set mreltype_mrkr_type_group_1 = 'NONTSCRBD_REGIONS'
 where mreltype_name = 'gene hybridized by small segment'; 
 
 update marker_relationship_type 
- set mreltype_mrkr_type_group_1 = 'NONTRANSCRIBED_REGION'
+ set mreltype_mrkr_type_group_1 = 'NONTSCRBD_REGIONS'
 where mreltype_name = 'knockdown reagen targets gene'; 
 
 update marker_relationship_type 
