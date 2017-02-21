@@ -133,7 +133,6 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
  values ('TSCRIPT','GENEDOM_PROD_PROTEIN');
 
 
-
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
 values ('TSCRIPTREGREGION','NONTSCRBD_REGIONS');
