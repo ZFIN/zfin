@@ -114,7 +114,7 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('TSCRIPTREGREGION','NONTSCRBD_REGIONS','Group containing non-transcribed regions.');
+values ('NONTSCRBD_REGIONS','Group containing non-transcribed regions.');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
