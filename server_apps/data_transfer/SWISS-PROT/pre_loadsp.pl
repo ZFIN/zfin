@@ -6,6 +6,7 @@ use strict ;
 #
  
 use MIME::Lite;
+use LWP::Simple;
 use DBI;
 
 
@@ -260,12 +261,78 @@ system("rm -f *.dat");
 system("mkdir ./ccnote");
 
 
-&downloadGOtermFiles();
-
-
 my $dbname = "<!--|DB_NAME|-->";
 my $username = "";
 my $password = "";
+
+########################################################################################################
+#
+#  for FB case 15015, Validate manually-added UniProt IDs attributed to the new publication, ZDB-PUB-170131-9
+#
+########################################################################################################
+
+### open a handle on the db
+my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
+    or die "Cannot connect to Informix database: $DBI::errstr\n";
+
+my $sqlGetMunallyEnteredUniProtIDs = "select dblink_acc_num from db_link
+                                       where exists(select 'x' from record_attribution
+                                                     where dblink_zdb_id = recattrib_data_zdb_id
+                                                       and recattrib_source_zdb_id = 'ZDB-PUB-170131-9');";
+
+my $curGetMunallyEnteredUniProtIDs = $dbh->prepare_cached($sqlGetMunallyEnteredUniProtIDs);
+$curGetMunallyEnteredUniProtIDs->execute();
+my $munallyEnteredUniProtID;
+$curGetMunallyEnteredUniProtIDs->bind_columns(\$munallyEnteredUniProtID);
+my @munallyEnteredUniProtIDs = ();
+my $ctMunallyEnteredUniProtIDs = 0;
+while ($curGetMunallyEnteredUniProtIDs->fetch()) {
+    $munallyEnteredUniProtIDs[$ctMunallyEnteredUniProtIDs] = $munallyEnteredUniProtID;
+    $ctMunallyEnteredUniProtIDs++;
+}
+$curGetMunallyEnteredUniProtIDs->finish();
+
+my $uniprotId;
+my $url;
+my $uniProtURL = "http://www.uniprot.org/uniprot/";
+open INVALID, ">invalidMunallyCuratedUniProtIDs.txt" || die ("Cannot open invalidMunallyCuratedUniProtIDs.txt !");
+my $numInvalidUniProtIDs = 0;
+if ($ctMunallyEnteredUniProtIDs > 0) {
+  foreach $uniprotId (@munallyEnteredUniProtIDs) {
+     $url = $uniProtURL . $uniprotId;
+     my $content = get $url;
+     if (defined $content) {
+       if ($content =~ m/this page was not found/) {
+          print INVALID "$uniprotId\n";
+          $numInvalidUniProtIDs++;
+        }
+      }
+      undef $content;
+  }
+}
+
+close(INVALID);
+
+print "\nNumber of Invalid Manually curated UniProt IDs: $numInvalidUniProtIDs\n\n";
+
+if ($numInvalidUniProtIDs > 0) {
+  my $msgReportInvalid = new MIME::Lite
+    From    => "$ENV{LOGNAME}",
+    To      => "<!--|SWISSPROT_EMAIL_ERR|-->",
+    Subject => "Auto from SWISS-PROT: invalid manually curated UniProt IDs",
+    Type    => 'multipart/mixed';
+
+  attach $msgReportInvalid
+   Type     => 'text/plain',
+   Path     => "./invalidMunallyCuratedUniProtIDs.txt";
+
+  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
+  $msgReportInvalid->print(\*SENDMAIL);
+  close (SENDMAIL);
+}
+
+
+&downloadGOtermFiles();
 
 ########################################################################################################
 #
@@ -273,10 +340,6 @@ my $password = "";
 #
 ########################################################################################################
 
-### open a handle on the db
-my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) 
-    or die "Cannot connect to Informix database: $DBI::errstr\n";
-    
 my $cur;
 
 $/ = "//\n";
