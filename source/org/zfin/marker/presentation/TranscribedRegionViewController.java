@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
@@ -13,6 +14,11 @@ import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.DisplayGroup;
+import org.zfin.sequence.service.TranscriptService;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  */
@@ -24,6 +30,10 @@ public class TranscribedRegionViewController {
 
 //    @Autowired
 //    private ExpressionService expressionService ;
+private LinkDisplayOtherComparator linkDisplayOtherComparator = new LinkDisplayOtherComparator();
+
+    @Autowired
+    private ExpressionService expressionService;
 
     @Autowired
     private MarkerRepository markerRepository ;
@@ -32,7 +42,7 @@ public class TranscribedRegionViewController {
     private EfgViewController efgViewController;
 
     @RequestMapping(value ="/transcribedregion/view/{zdbID}")
-    public String getGeneView(
+    public String getTranscribedRegionView(
             Model model
             ,@PathVariable("zdbID") String zdbID
     ) throws Exception {
@@ -41,34 +51,45 @@ public class TranscribedRegionViewController {
 
         logger.info("zdbID: " + zdbID);
         Marker region = markerRepository.getMarkerByID(zdbID);
-        logger.info("gene: " + region);
+        logger.info("region: " + region);
         markerBean.setMarker(region);
 
         // not used, too much stuff excluded
-//        MarkerService.createDefaultViewForMarker(markerBean);
+       MarkerService.createDefaultViewForMarker(markerBean);
+//        MarkerService.pullClonesOntoGeneFromTranscript(markerBean);
+        /*List<LinkDisplay> otherMarkerDBLinksLinks = markerBean.getOtherMarkerPages();
+        otherMarkerDBLinksLinks.addAll(markerRepository.getVegaGeneDBLinksTranscript(
+                region, DisplayGroup.GroupName.SUMMARY_PAGE));
+        Collections.sort(otherMarkerDBLinksLinks, linkDisplayOtherComparator);
+        markerBean.setOtherMarkerPages(otherMarkerDBLinksLinks);*/
 
-        markerBean.setMarkerTypeDisplay(MarkerService.getMarkerTypeString(region));
-        markerBean.setPreviousNames(markerRepository.getPreviousNamesLight(region));
-        markerBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID)) ;
+
+//        markerBean.setHasChimericClone(markerRepository.isFromChimericClone(region.getZdbID()));
 
         // EXPRESSION SECTION
-//        markerBean.setMarkerExpression(expressionService.getExpressionForEfg(region));
+        markerBean.setMarkerExpression(expressionService.getExpressionForGene(region));
 
-        // (CONSTRUCTS)
-        efgViewController.populateConstructList(markerBean, region);
+        // MUTANTS AND TARGETED KNOCKDOWNS
+        markerBean.setMutantOnMarkerBeans(MarkerService.getMutantsOnGene(region));
 
-        // (Antibodies)
-//        markerBean.setRelatedAntibodies(markerRepository
-//                .getRelatedMarkerDisplayForTypes(region, true
-//                        , MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
+        // PHENOTYPE
+        markerBean.setPhenotypeOnMarkerBeans(MarkerService.getPhenotypeOnGene(region));
 
+        // region Ontology
         markerBean.setGeneOntologyOnMarkerBeans(MarkerService.getGeneOntologyOnMarker(region));
-//      CITATIONS
+
+        //region Transcripts
+//        markerBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(region));
+        // (CONSTRUCTS)
+        if (efgViewController != null) {
+            efgViewController.populateConstructList(markerBean, region);
+        }
+
         markerBean.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberAssociatedPublicationsForZdbID(region.getZdbID()));
         markerBean.setSequenceInfo(MarkerService.getSequenceInfoSummary(region));
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         model.addAttribute("markerHistoryReasonCodes", MarkerHistory.Reason.values());
-       // model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.REGION.getTitleString() + region.getAbbreviation());
+      //  model.addAttribute(LookupStrings.DYNAMIC_TITLE, Marker.Type.getType(markerBean.getMarkerTypeDisplay()) + region.getAbbreviation());
 
         return "marker/region-view.page";
     }
