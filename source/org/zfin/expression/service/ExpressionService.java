@@ -201,10 +201,7 @@ public class ExpressionService {
 
     public MarkerExpression getExpressionForGene(Marker marker) {
         MarkerExpression markerExpression = new MarkerExpression();
-        if (marker.getMarkerType().getType() != Marker.Type.GENE
-                &&
-                marker.getMarkerType().getType() != Marker.Type.GENEP
-                ) {
+        if (!marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
 
             logger.error("should not be trying to get gene expression for marker: \n" + marker);
             return markerExpression;
