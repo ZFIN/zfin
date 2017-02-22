@@ -357,6 +357,44 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
 values ('RRNA','SEARCH_MKSEG');
 
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('LNCRNA','GENEDOM_EFG_REGION_K');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('LINCRNA','GENEDOM_EFG_REGION_K');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('NCRNA','GENEDOM_EFG_REGION_K');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('MIRNA','GENEDOM_EFG_REGION_K');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('PIRNA','GENEDOM_EFG_REGION_K');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('SCRNA','GENEDOM_EFG_REGION_K');
+
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('SNORNA','GENEDOM_EFG_REGION_K');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('TRNA','GENEDOM_EFG_REGION_K');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('RRNA','GENEDOM_EFG_REGION_K');
+
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
 values ('HISTBS','SEARCH_MKSEG');
