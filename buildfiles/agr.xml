@@ -35,15 +35,19 @@
     </target>
 
     <property name="version" value="0.3.0"/>
-    <property name="index" value="3"/>
-    <property name="bgi-file" value="ZFIN_${version}_${index}"/>
+    <property name="index" value="5"/>
+    <property name="daf-file" value="ZFIN_${version}_DAF.txt"/>
+    <property name="bgi-file" value="ZFIN_${version}_BGI.json"/>
+    <property name="agr-file" value="ZFIN_${version}_${index}"/>
 
     <target name="archive-agr" depends="">
-        <copy file="basic-gene-info-zfin.json" tofile="${bgi-file}.json"/>
+        <copy file="basic-gene-info-zfin.json" tofile="${bgi-file}"/>
+        <copy file="disease_association_file.zfin.txt" tofile="${daf-file}"/>
         <echo message="Create tar/gzip file of BGI"/>
-        <tar compression="gzip" destfile="${bgi-file}.tar.gz" >
+        <tar compression="gzip" destfile="${agr-file}.tar.gz" >
             <tarfileset dir="${basedir}" >
-                <include name="basic-gene-info-zfin.json" />
+                <include name="${bgi-file}" />
+                <include name="${daf-file}" />
             </tarfileset>
         </tar>
     </target>
@@ -53,7 +57,7 @@
         <exec executable="aws" failifexecutionfails="true">
             <arg value="s3"/>
             <arg value="cp"/>
-            <arg value="${bgi-file}.tar.gz"/>
+            <arg value="${agr-file}.tar.gz"/>
             <arg value="s3://mod-datadumps/"/>
         </exec>
     </target>
