@@ -2032,6 +2032,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
         if (marker.getZdbID().startsWith("ZDB-TSCRIPT")) {
             sql += " and fdb.fdb_db_name != 'VEGA' ";
         }
+        if (marker.getZdbID().startsWith("ZDB-GENE")) {
+            sql += " and dbl.dblink_acc_num not like  'ENSDARP%' ";
+        }
         Query query = HibernateUtil.currentSession().createSQLQuery(sql)
                 .setParameter("markerZdbId", marker.getZdbID())
                 .setParameter("displayGroup", groupName.toString())
