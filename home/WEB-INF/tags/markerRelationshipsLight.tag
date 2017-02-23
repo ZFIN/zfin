@@ -22,6 +22,7 @@
             <c:set var="title" value="MARKER RELATIONSHIPS"/>
         </c:if>
         <span class="summaryTitle">${title}</span>
+
         <gene-marker-relationship marker-id="${marker.zdbID}" marker-abbrev="${marker.abbreviation}" edit="editMode">
         </gene-marker-relationship>
     </div>
