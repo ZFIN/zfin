@@ -1,7 +1,9 @@
 package org.zfin.marker.agr;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.zfin.properties.ZfinPropertiesEnum;
 
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Set;
 
@@ -13,6 +15,8 @@ public class GeneDTO {
     private String primaryId;
     private String taxonId = "7955";
     private String soTermId;
+    private String geneLiteratureUrl;
+    private static final String geneLiteratureUrlPrefix = "http://zfin.org/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() + "?MIval=aa-showpubs.apg";
     //private List<SynonymDTO> synonyms;
     private List<String> synonyms;
     private List<CrossReferenceDTO> crossReferences;
@@ -100,5 +104,13 @@ public class GeneDTO {
 
     public void setGenomeLocations(Set<GenomeLocationDTO> genomeLocations) {
         this.genomeLocations = genomeLocations;
+    }
+
+    public String getGeneLiteratureUrl() {
+        String returnString = geneLiteratureUrlPrefix;
+        returnString += "&OID=" + primaryId;
+        returnString += "&name=" + name;
+        returnString += "&abbrev=" + symbol;
+        return URLEncoder.encode(returnString);
     }
 }

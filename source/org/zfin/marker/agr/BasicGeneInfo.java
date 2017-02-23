@@ -9,6 +9,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.SecondaryMarker;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
+import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.io.FileOutputStream;
@@ -91,6 +92,8 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                 for (MarkerDBLink link : gene.getDbLinks()) {
                     String dbName = DataProvider.getExternalDatabaseName(link.getReferenceDatabase().getForeignDB().getDbName());
                     if (dbName == null)
+                        continue;
+                    if (dbName.equals(ForeignDB.AvailableName.ENSEMBL.toString()) && link.getAccessionNumber().startsWith("ENSDARP"))
                         continue;
                     CrossReferenceDTO xRefDto = new CrossReferenceDTO(dbName, link.getAccessionNumber());
                     dbLinkList.add(xRefDto);
