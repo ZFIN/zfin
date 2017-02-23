@@ -4,16 +4,25 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
+<script src="/javascript/table-collapse.js"></script>
 <script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
 <script src="/javascript/angular/angular-sanitize.js"></script>
-<script src="/javascript/trusted-html.filter.js"></script>
-
 <script src="/javascript/editMarker.js"></script>
 <script src="/javascript/nomenclature.js" type="text/javascript"></script>
 <script src="/javascript/curator-notes.directive.js"></script>
 <script src="/javascript/public-note.directive.js"></script>
+<script src="/javascript/field-error.service.js"></script>
+<script src="/javascript/other-markers.directive.js"></script>
+<script src="/javascript/gene-marker-relationship.directive.js"></script>
 <script src="/javascript/marker.service.js"></script>
+<script src="/javascript/autocompletify.directive.js"></script>
 
+<script src="/javascript/trusted-html.filter.js"></script>
+<script src="/javascript/ortho-edit.js"></script>
+<script src="/javascript/inline-edit-textarea.directive.js"></script>
+
+
+<div ng-app="app" ng-controller="EditController as eControl">
 <authz:authorize access="hasRole('root')">
     <div ng-app="app" ng-controller="EditController as eControl" ng-init="init('${gene.name}','${gene.abbreviation}')">
 </authz:authorize>
