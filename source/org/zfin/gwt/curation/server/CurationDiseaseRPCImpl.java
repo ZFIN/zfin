@@ -371,7 +371,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             return null;
         List<FishDTO> fishDtoList = new ArrayList<>(fishList.size());
         for (Fish fish : fishList)
-            fishDtoList.add(DTOConversionService.convertToFishDtoFromFish(fish));
+            fishDtoList.add(DTOConversionService.convertToFishDtoFromFish(fish, true));
         return fishDtoList;
     }
 

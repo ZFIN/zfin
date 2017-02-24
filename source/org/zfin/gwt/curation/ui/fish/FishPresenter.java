@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import org.zfin.gwt.curation.event.CloneFishEvent;
 import org.zfin.gwt.curation.ui.CurationDiseaseRPC;
 import org.zfin.gwt.curation.ui.CurationDiseaseRPCAsync;
+import org.zfin.gwt.curation.ui.FishServiceGWT;
 import org.zfin.gwt.curation.ui.Presenter;
 import org.zfin.gwt.root.dto.FishDTO;
 import org.zfin.gwt.root.event.AjaxCallEventType;
@@ -41,9 +42,8 @@ public class FishPresenter implements Presenter {
 
     private void createFishList() {
         AppUtils.fireAjaxCall(FishModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_START);
-        diseaseRpcService.getFishList(publicationID, new RetrieveFishListCallBack("Fish List",
-                null,
-                AjaxCallEventType.GET_FISH_LIST_STOP));
+        FishServiceGWT.callServer(publicationID, new RetrieveFishListCallBack("Fish List",
+                null, AjaxCallEventType.GET_FISH_LIST_STOP));
 
     }
 
