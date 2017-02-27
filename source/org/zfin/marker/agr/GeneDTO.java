@@ -3,7 +3,6 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.zfin.properties.ZfinPropertiesEnum;
 
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.Set;
 
@@ -111,6 +110,6 @@ public class GeneDTO {
         returnString += "&OID=" + primaryId;
         returnString += "&name=" + name;
         returnString += "&abbrev=" + symbol;
-        return URLEncoder.encode(returnString);
+        return returnString;
     }
 }
