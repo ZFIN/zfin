@@ -369,8 +369,7 @@ public class PublicationTrackingController {
             if (Boolean.valueOf(ZfinPropertiesEnum.SEND_AUTHOR_NOTIF_EMAIL.value())) {
                 recipients.addAll(externalRecipients);
             } else {
-                message = "[[ Recipient list on production environment: " + String.join(", ", externalRecipients) + " ]]<br><br>" +
-                        "------------------<br><br>" +
+                message = "[[ Recipient list on production environment: " + String.join(", ", externalRecipients) + " ]]\n\n" +
                         message;
             }
 
@@ -378,7 +377,7 @@ public class PublicationTrackingController {
                     correspondence.getFrom().getLastName() +
                     " <" + correspondence.getFrom().getEmail() + ">";
 
-            boolean sent = mailer.sendHtmlMail(correspondence.getMessage().getSubject(),
+            boolean sent = mailer.sendMail(correspondence.getMessage().getSubject(),
                     message, false, sender, recipients.toArray(new String[]{}));
 
             if (!sent) {
