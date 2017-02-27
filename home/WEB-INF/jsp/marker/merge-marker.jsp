@@ -882,9 +882,9 @@ var validateTargetGenesForMergingSRTs = function(strIDdelete, strZdbIdMergedInto
         } else {
             jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> has no target gene.</h4>');
         }
+    } else {
+        validateFishListForMergingSRTs(strIDdelete, strZdbIdMergedInto, strAbbrevMergedInto);
     }
-
-    validateFishListForMergingSRTs(strIDdelete, strZdbIdMergedInto, strAbbrevMergedInto);
 };
 
 var validateSequencesForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, strAbbrevMergedInto) {
@@ -1136,10 +1136,13 @@ function useSequence(formObj) {
 
    jQuery.ajax({type: "POST",
         url: "/action/marker/update-str-sequence?source=${formBean.zdbIDToDelete}&target=" + mergedIntoId,
-        dataType: "json"
+        success: function() {
+            enableMerge();
+        },
+        error: function() {
+           alert('There was a problem with the action ');
+        }
     });
-
-    enableMerge();
 }
 
 function enableMerge() {
