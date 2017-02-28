@@ -130,6 +130,12 @@
                 })
                 .catch(function (error) {
                     om.errorMessage = error.data.message;
+                    init();
+                    close();
+                })
+                .finally(function () {
+                    init();
+                    close();
                 });
         }
 

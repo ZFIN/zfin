@@ -637,11 +637,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     public List<ExpressionExperiment2> getExpressionByExperiment(String experimentID) {
         String hql = "select experiment from ExpressionExperiment2 experiment "
-                            + "     where experiment.fishExperiment.experiment.zdbID = :experimentID ";
+                + "     where experiment.fishExperiment.experiment.zdbID = :experimentID ";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setString("experimentID", experimentID);
-
 
 
         return (List<ExpressionExperiment2>) query.list();
@@ -912,7 +911,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     public void runAntibodyAnatomyFastSearchUpdate(ExpressionResult result) {
         Session session = currentSession();
-        session.doWork(new Work(){
+        session.doWork(new Work() {
             @Override
             public void execute(Connection connection) throws SQLException {
                 CallableStatement statement = null;
@@ -2168,5 +2167,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     @Override
     public void saveExperiment(Experiment experiment) {
         HibernateUtil.currentSession().save(experiment);
+    }
+
+    @Override
+    public ExpressionFigureStage getExperimentFigureStage(long id) {
+        return (ExpressionFigureStage) HibernateUtil.currentSession().get(ExpressionFigureStage.class, id);
     }
 }

@@ -91,9 +91,7 @@ public class HumanDiseaseModule implements ZfinCurationModule, HandlesError {
 
     @UiHandler("addButton")
     void onClickAdd(@SuppressWarnings("unused") ClickEvent event) {
-       // TermDTO disease = termInfoBox.getCurrentTermInfoDTO();
         TermDTO disease = termEntry.getTermTextBox().getSelectedTerm();
-
         AppUtils.EVENT_BUS.fireEvent(new AddNewDiseaseTermEvent(disease));
         diseaseModelView.clearErrorMessage();
     }
@@ -150,6 +148,10 @@ public class HumanDiseaseModule implements ZfinCurationModule, HandlesError {
     @Override
     public void addHandlesErrorListener(HandlesError handlesError) {
         handlesErrorListeners.add(handlesError);
+    }
+
+    public static ZfinModule getModuleInfo() {
+        return new ZfinModule(CurationTab.DISEASE.getName(), HumanDiseaseModule.class.getName());
     }
 
 }

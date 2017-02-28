@@ -54,8 +54,7 @@ public final class FileUtil {
      * @return boolean
      */
     public static boolean isOntologyFileExist(String fileName) {
-        String tempDir = System.getProperty("java.io.tmpdir");
-        File file = new File(tempDir, DATA_TRANSFER);
+        File file = getTomcatDataTransferDirectory();
         File fullFile = new File(file, fileName);
         return fullFile.isFile();
     }
@@ -346,14 +345,18 @@ public final class FileUtil {
     }
 
     public static File createOntologySerializationFile(String serializedFileName) {
-        String tempDir = System.getProperty("java.io.tmpdir");
-        File file = new File(tempDir, DATA_TRANSFER);
+        File file = getTomcatDataTransferDirectory();
         if (!file.exists()) {
             if (!file.mkdir())
                 LOG.error("Could not create the directory: " + file.getAbsolutePath());
         }
         return new File(file, serializedFileName);
 
+    }
+
+    public static File getTomcatDataTransferDirectory() {
+        String tempDir = System.getProperty("java.io.tmpdir");
+        return new File(tempDir, DATA_TRANSFER);
     }
 
     public static File serializeObject(Object object, File file) {

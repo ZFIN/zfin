@@ -3,6 +3,9 @@ package org.zfin.properties;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 import static org.junit.Assert.*;
 
 /**

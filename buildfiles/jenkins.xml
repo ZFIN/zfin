@@ -280,25 +280,16 @@
         </copy>
     </target>
 
-    <property name="mail-config.xml" value="hudson.task.Mailer.xml"/>
+    <property name="mail-config.xml" value="hudson.tasks.Mailer.xml"/>
 
     <target name="_deploy-email-configuration">
-        <available file="${JENKINS_HOME}/${mail-config.xml}" property="mail-config.present"/>
-        <if>
-            <equals arg1="${mail-config.present}" arg2="true"/>
-            <then/>
-            <else>
-                <echo>${mail-config.present}: Copying ${mail-config.xml} with default Email ${DEFAULT_EMAIL} to
-                    JENKINS_HOME
-                </echo>
-                <copy todir="${JENKINS_HOME}/">
-                    <fileset file="${jenkins}/hudson.task.Mailer.xml"/>
-                    <filterset>
-                        <filter token="DEFAULT_EMAIL" value="${DEFAULT_EMAIL}"/>
-                    </filterset>
-                </copy>
-            </else>
-        </if>
+        <echo>Copying ${mail-config.xml} with default Email ${DEFAULT_EMAIL} to JENKINS_HOME</echo>
+        <copy todir="${JENKINS_HOME}/" overwrite="true">
+            <fileset file="${jenkins}/${mail-config.xml}"/>
+            <filterset>
+                <filter token="DEFAULT_EMAIL" value="${DEFAULT_EMAIL}"/>
+            </filterset>
+        </copy>
     </target>
 
     <target name="_deploy-trigger-emails" description="Populate the success/failure emails">

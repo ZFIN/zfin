@@ -5,7 +5,6 @@
 <%@ attribute name="marker" required="true" rtexprvalue="true" type="org.zfin.marker.Marker" %>
 <%@ attribute name="title" required="false" %>
 <%@ attribute name="showTitle" required="false" type="java.lang.Boolean" %>
-<%@ attribute name="hideCounts" required="false" type="java.lang.Boolean" %>
 <%@ attribute name="hideDownloadLink" required="false" type="java.lang.Boolean" %>
 
 <c:if test="${empty title && showTitle}">
@@ -16,8 +15,8 @@
 
 <a name="orthology"></a>
 <div class="summary">
-    <div ortho-edit gene="${marker.zdbID}" edit="editMode">
-        <span class="summaryTitle">${title}</span>
+    <div ortho-edit gene="${marker.zdbID}" edit="editMode" <c:if test="${hideDownloadLink}">show-download-link="false"</c:if>>
+        <c:if test="${!empty title}"><span class="summaryTitle">${title}</span></c:if>
     </div>
 </div>
 

@@ -94,8 +94,6 @@
         </property>-->
 
 
-
-
         <property name="abbreviation">
             <column name="mrkr_abbrev" not-null="true"/>
         </property>
@@ -187,6 +185,11 @@
             <one-to-many class="org.zfin.sequence.MarkerDBLink"/>
         </set>
 
+        <set name="secondaryMarkerSet" lazy="true">
+            <key column="zrepld_new_zdb_id"/>
+            <one-to-many class="SecondaryMarker"/>
+        </set>
+
         <set name="orthologyNotes" lazy="true">
             <key column="extnote_data_zdb_id"/>
             <one-to-many class="org.zfin.marker.OrthologyNote"/>
@@ -217,7 +220,7 @@
 
         </joined-subclass>
 
-        <joined-subclass name="org.zfin.mutant.SequenceTargetingReagent" table="marker_sequence" >
+        <joined-subclass name="org.zfin.mutant.SequenceTargetingReagent" table="marker_sequence">
             <key column="seq_mrkr_zdb_id"/>
             <component name="sequence">
                 <property name="sequence" not-null="true" column="seq_sequence"/>
@@ -240,7 +243,6 @@
                 <property name="leftEnd" column="seq_left_end" type="string" not-null="true"/>
             </component>
         </joined-subclass>
-
 
 
         <joined-subclass name="org.zfin.marker.Clone" table="clone">
@@ -277,39 +279,36 @@
         </joined-subclass>
 
 
+    </class>
+
+    <!-- <class name="Construct" table="construct">
+         <id name="zdbID" column="construct_zdb_id"/>
+
+         <property name="constructGeneratedName" not-null="true" column="construct_generated_name"/>
 
 
+         <many-to-one name="constructType" column="construct_type"
+                      foreign-key="construct_type" not-null="true"
+                      class="org.zfin.marker.MarkerType"/>
 
-</class>
+        &lt;!&ndash; <property name="abbreviationOrder">
+             <column name="mrkr_abbrev_order"/>
+         </property>
 
-   <!-- <class name="Construct" table="construct">
-        <id name="zdbID" column="construct_zdb_id"/>
-
-        <property name="constructGeneratedName" not-null="true" column="construct_generated_name"/>
-
-
-        <many-to-one name="constructType" column="construct_type"
-                     foreign-key="construct_type" not-null="true"
-                     class="org.zfin.marker.MarkerType"/>
-
-       &lt;!&ndash; <property name="abbreviationOrder">
-            <column name="mrkr_abbrev_order"/>
-        </property>
-
-        <property name="publicComments">
-            <column name="mrkr_comments"/>
-        </property>&ndash;&gt;
-        <property name="name">
-            <column name="construct_name" not-null="true"/>
-        </property>
-        <property name="nameOrder">
-            <column name="construct_name_order" not-null="true"/>
-        </property>
+         <property name="publicComments">
+             <column name="mrkr_comments"/>
+         </property>&ndash;&gt;
+         <property name="name">
+             <column name="construct_name" not-null="true"/>
+         </property>
+         <property name="nameOrder">
+             <column name="construct_name_order" not-null="true"/>
+         </property>
 
 
-    </class>-->
+     </class>-->
 
-<class name="org.zfin.marker.Vector" table="vector">
+    <class name="org.zfin.marker.Vector" table="vector">
         <id name="name" type="string">
             <column name="vector_name" not-null="true"/>
         </id>
@@ -406,6 +405,15 @@
         <property name="name">
             <column name="mrkr_name"/>
         </property>
+    </class>
+
+    <class name="ZfinSoTerm" table="so_zfin_mapping">
+        <id name="ID">
+            <column name="szm_pk_id"/>
+        </id>
+        <property name="entityName" column="szm_object_type"/>
+        <property name="oboID" column="szm_term_ont_id"/>
+        <property name="termName" column="szm_term_name"/>
     </class>
 
     <sql-query name="markerNamesFastSearchUpdate" callable="true">

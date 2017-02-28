@@ -112,5 +112,6 @@ public class RunSqlQueryTask extends AbstractScriptWrapper {
         initLog4J();
         setLoggerToInfoLevel(LOG);
         task.execute();
+        System.exit(0);
     }
 }

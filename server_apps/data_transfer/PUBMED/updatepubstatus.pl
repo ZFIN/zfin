@@ -64,7 +64,7 @@ $ctUpdated = 0;
 
 $cur_update_pub = $dbh->prepare_cached('update publication set status = "active" where accession_no = ?;');
 $cur_insert_update = $dbh->prepare_cached('insert into updates (rec_id,field_name,new_value,when) select zdb_id,"status","active",current from publication where accession_no = ?;');
-$cur_insert_tracking = $dbh->prepare_cached('insert into pub_tracking_history (pth_pub_zdb_id, pth_status_id,  pth_status_set_by, pth_status_insert_date, pth_status_is_current) select zdb_id, pts_pk_id, "ZDB-PERS-030612-1", current year to second, "t" from publication,  pub_tracking_status where accession_no = ? and pts_status = "NEW";');
+$cur_insert_tracking = $dbh->prepare_cached('insert into pub_tracking_history (pth_pub_zdb_id, pth_status_id,  pth_status_set_by) select zdb_id, (select pts_pk_id from pub_tracking_status where pts_status= "NEW"), "ZDB-PERS-030612-1" from publication where accession_no = ?;');
 
 foreach $pubZDBid (sort keys %nonActivePubAccessions) {
     $pubmedId = $nonActivePubAccessions{$pubZDBid};

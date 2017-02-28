@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.zfin.expression.FigureService;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.service.ExpressionService;
@@ -16,6 +17,8 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.agr.AllGeneDTO;
+import org.zfin.marker.agr.BasicGeneInfo;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.orthology.OrthologExternalReference;
@@ -163,7 +166,7 @@ public class GeneViewController {
         }
 
         response.setContentType("data:text/csv;charset=utf-8");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + marker.getAbbreviation() + "-" + marker.getZdbID() +  "-orthology.csv\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + marker.getAbbreviation() + "-" + marker.getZdbID() + "-orthology.csv\"");
 
 
         try {
@@ -176,21 +179,21 @@ public class GeneViewController {
             OrthologyPresentationBean orthologyBean = MarkerService.getOrthologyEvidence(marker);
 
             //print column headers
-            csvPrinter.printRecord("species","symbol","location", "accession", "pub_id", "evidence");
+            csvPrinter.printRecord("species", "symbol", "location", "accession", "pub_id", "evidence");
 
             for (OrthologyPresentationRow row : orthologyBean.getOrthologs()) {
                 for (OrthologExternalReference orthologExternalReference : row.getAccessions()) {
-                   for (OrthologEvidencePresentation orthologEvidencePresentation : row.getEvidence()) {
-                       for (Publication publication : orthologEvidencePresentation.getPublications()) {
-                           csvPrinter.printRecord(
-                                   row.getSpecies(),
-                                   row.getAbbreviation(),
-                                   row.getChromosome(),
-                                   orthologExternalReference.getReferenceDatabase().getForeignDB().getDbName() + ":" + orthologExternalReference.getAccessionNumber(),
-                                   publication.getZdbID(),
-                                   orthologEvidencePresentation.getCode().getName()
-                                   );
-                       }
+                    for (OrthologEvidencePresentation orthologEvidencePresentation : row.getEvidence()) {
+                        for (Publication publication : orthologEvidencePresentation.getPublications()) {
+                            csvPrinter.printRecord(
+                                    row.getSpecies(),
+                                    row.getAbbreviation(),
+                                    row.getChromosome(),
+                                    orthologExternalReference.getReferenceDatabase().getForeignDB().getDbName() + ":" + orthologExternalReference.getAccessionNumber(),
+                                    publication.getZdbID(),
+                                    orthologEvidencePresentation.getCode().getName()
+                            );
+                        }
 
                     }
                 }
@@ -204,8 +207,20 @@ public class GeneViewController {
         } catch (IOException e) {
             logger.error(e);
         }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/all-genes")
+    public AllGeneDTO getAllGenes() throws Exception {
+        return getFirstGenes(0);
+    }
 
 
+    @ResponseBody
+    @RequestMapping(value = "/all-genes/{number}")
+    public AllGeneDTO getFirstGenes(@PathVariable("number") int number) throws Exception {
+        BasicGeneInfo info = new BasicGeneInfo(number);
+        return info.getAllGeneInfo();
     }
 
 }

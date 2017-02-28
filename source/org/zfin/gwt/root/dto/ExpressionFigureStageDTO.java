@@ -10,6 +10,7 @@ import java.util.List;
  */
 public class ExpressionFigureStageDTO extends AbstractFigureStageDTO<ExpressedTermDTO> implements Comparable<ExpressionFigureStageDTO> {
 
+    private long ID;
     private ExpressionExperimentDTO experiment;
     private String expressedIn;
     private boolean patoExists;
@@ -40,6 +41,14 @@ public class ExpressionFigureStageDTO extends AbstractFigureStageDTO<ExpressedTe
 
     public void setPatoExists(boolean patoExists) {
         this.patoExists = patoExists;
+    }
+
+    public long getID() {
+        return ID;
+    }
+
+    public void setID(long ID) {
+        this.ID = ID;
     }
 
     public String getUniqueID() {

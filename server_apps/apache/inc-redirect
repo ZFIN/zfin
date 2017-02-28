@@ -181,8 +181,6 @@ RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpat
 
 RewriteRule ^/action/ontology/ontology-search /action/ontology/search [NC,R=301]
 
-RewriteRule ^/action/mutant/construct-search /action/construct/search [NC,R=301]
-
 RewriteRule ^/action/antibody/antibody-search /action/antibody/search [NC,R=301]
 
 # normal ZFIN_jump requests

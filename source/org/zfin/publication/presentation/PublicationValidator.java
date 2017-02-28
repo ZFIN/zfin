@@ -2,7 +2,10 @@ package org.zfin.publication.presentation;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
+import org.zfin.framework.presentation.InvalidWebRequestException;
+import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -16,7 +19,10 @@ import java.util.regex.Pattern;
  * 2) a) Publication found with given zdbID OR
  * b) zdb ID has nnnnnn-n* pattern and ZDB-PUB- prefixed to it gives a valid Publication.
  */
+
 public class PublicationValidator {
+    @Autowired
+    private PublicationRepository publicationRepository;
 
     private static Logger LOG = Logger.getLogger(PublicationValidator.class);
     private static final String ZDB_PUB = "ZDB-PUB-";

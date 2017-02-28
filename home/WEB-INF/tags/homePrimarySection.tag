@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <ul>
-    <li><a href="/action/marker/search"
+    <li><a href="/cgi-bin/webdriver?MIval=aa-newmrkrselect.apg"
            title="Search by name, accession number, chromosome, vector or sequence type">
         <strong>Genes / Markers / Clones</strong></a></li>
     <ul>
@@ -46,7 +46,7 @@
     </ul>
 </ul>
 <ul>
-    <li><a href="/action/construct/search"
+    <li><a href="/search?q=&fq=category%3A%22Construct%22&category=Construct"
            title="Search for constructs"><strong>Constructs</strong></a></li>
 
 </ul>

@@ -50,7 +50,7 @@
     <c:if test="${!showEditControls}">
         <zfin2:previousNamesFast previousNames="${previousNames}" showEditControls="false"/>
     </c:if>
-    <c:if test="${formBean.marker.type ne 'EFG'&& formBean.marker.type ne 'REGION'&& !(fn:contains(formBean.marker.type,'CONSTRCT'))}">
+    <c:if test="${formBean.marker.type ne 'EFG'&& formBean.marker.type ne 'EREGION'&& !(fn:contains(formBean.marker.type,'CONSTRCT'))}">
         <%--<c:if test="${formBean.marker.type ne 'REGION'}">--%>
         <tr>
             <th>Location:</th>

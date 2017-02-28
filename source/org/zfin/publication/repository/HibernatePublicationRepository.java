@@ -1132,7 +1132,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      */
     @SuppressWarnings("unchecked")
     public List<Marker> getGenesByPublication(String pubID) {
-        return getGenesByPublication(pubID, true);
+        //return getGenesByPublication(pubID, true);
+        return getGenesByPublication(pubID, false);
     }
 
     /**

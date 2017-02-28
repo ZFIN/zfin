@@ -12,14 +12,12 @@ import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.curation.event.TabEventHandler;
 import org.zfin.gwt.root.dto.CuratorSessionDTO;
-import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
-import org.zfin.gwt.root.ui.ItemSuggestCallback;
-import org.zfin.gwt.root.ui.LookupComposite;
+import org.zfin.gwt.root.event.AjaxCallEvent;
+import org.zfin.gwt.root.event.AjaxCallEventHandler;
+import org.zfin.gwt.root.ui.AjaxCallBaseManager;
 import org.zfin.gwt.root.ui.SessionSaveService;
-import org.zfin.gwt.root.ui.TermInfoCallBack;
 import org.zfin.gwt.root.util.AppUtils;
-import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.ArrayList;
@@ -51,6 +49,7 @@ public class CurationEntryPoint implements EntryPoint {
     private static final int DEFAULT_DELAY_TIME = 400;
     private static int delayTime = DEFAULT_DELAY_TIME;
     private HistoryModule historyModule = new HistoryModule();
+    private AjaxCallBaseManager callBaseManager = new AjaxCallBaseManager();
 
     public void onModuleLoad() {
         loadPublicationAndFilterElements();
@@ -59,6 +58,7 @@ public class CurationEntryPoint implements EntryPoint {
         RelatedEntityDTO relatedEntityDTO = new RelatedEntityDTO();
         relatedEntityDTO.setPublicationZdbID(publicationID);
         attributionModule.setDTO(relatedEntityDTO);
+        bindEventBusHandler();
 
         // use only the session save module if no pub id is provided.
         if (publicationID != null) {
@@ -81,7 +81,6 @@ public class CurationEntryPoint implements EntryPoint {
 
         }
         exposeRefreshTabMethodsToJavascript(this);
-        bindEventBusHandler();
 /*
         GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
             @Override
@@ -118,6 +117,13 @@ public class CurationEntryPoint implements EntryPoint {
                     public void onEvent(CurationEvent event) {
                         notifyModules(event);
                         logEvent(event);
+                    }
+                });
+        AppUtils.EVENT_BUS.addHandler(AjaxCallEvent.TYPE,
+                new AjaxCallEventHandler() {
+                    @Override
+                    public void onAjaxCall(AjaxCallEvent event) {
+                        callBaseManager.handleAjaxCallEvent(event);
                     }
                 });
 

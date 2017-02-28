@@ -100,19 +100,17 @@
 			      defaultSchemaName="informix">
     </liquibase:updateDatabase>
   </target> 
- 
 
 
-<!--
  <liquibase:database 
-     id="liquidatabase" 
+     id="liquidatabasePG" 
      driver="org.postgresql.Driver" 
      url="jdbc:postgresql://localhost:5432/${DBNAME}"
-     user="staylor"
+     user="${USER}"
      />
 
   <target
-     name="buildDatabase"
+     name="buildPostgresDatabase"
     description="Builds the database">
     
     <echo message="Building DB componentes necessary after loaddb.pl" />
@@ -120,8 +118,21 @@
 			      dropFirst="false" 
 			      classpathref="classpath"
 			      logLevel="debug"
-			      databaseref="liquidatabase">
+			      databaseref="liquidatabasePG">
     </liquibase:updateDatabase>
-  </target>
--->
+
+</target> 
+   <target
+   name="addPostgresConstraints"
+    description="adds constraints">
+    
+    <echo message="Building DB componentes necessary after loaddb.pl" />
+   <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/postgres/constraints/db.changelog.master.xml" 
+			      dropFirst="false" 
+			      classpathref="classpath"
+			      logLevel="debug"
+			      databaseref="liquidatabasePG">
+    </liquibase:updateDatabase>
+ </target> 
+
 </project>

@@ -100,17 +100,24 @@ update omim_phenotype set omimp_omim_id = null
                     and omimp_ortho_zdb_id = ortho_id 
                     and phenotype_omim_id is null);    
 
+select omimp_name as pheno, omimp_ortho_zdb_id as ortho, omimp_pk_id as pk, omimp_omim_id as old_id, omim.phenotype_omim_id as new_id
+  from omimPhenotypesAndGenesOrtho omim, omim_phenotype
+ where omimp_name = omim.phenotype
+   and omimp_ortho_zdb_id = omim.ortho_id
+   and omimp_omim_id is not null
+   and omim.phenotype_omim_id is not null
+   and omim.phenotype_omim_id != omimp_omim_id
+ group by omimp_name, omimp_ortho_zdb_id, omimp_omim_id, omimp_pk_id, omim.phenotype_omim_id
+ into temp toUpdate;
+
 --!echo 'update the omimp_omim_id in omim_phenotype table where omimp_omim_id is different from phenotype_omim_id in table omimPhenotypesAndGenes'
 update omim_phenotype set omimp_omim_id = (
- select phenotype_omim_id
-   from omimPhenotypesAndGenesOrtho
-  where omimp_name = phenotype
-    and omimp_ortho_zdb_id = ortho_id
- ) where exists (select "x" from omimPhenotypesAndGenesOrtho
-                  where omimp_name = phenotype
-                    and omimp_ortho_zdb_id = ortho_id 
-                    and omimp_omim_id <> phenotype_omim_id);    
-
+ select new_id 
+   from toUpdate
+  where omimp_pk_id = pk 
+ ) where omimp_omim_id is not null
+     and exists (select "x" from toUpdate
+                  where pk = omimp_pk_id);
 
 --!echo 'check what new records will have been added into the omim_phenotype table'
 unload to whatHaveBeenInsertedIntoOmimPhenotypeTable.txt

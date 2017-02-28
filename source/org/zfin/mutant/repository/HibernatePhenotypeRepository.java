@@ -937,4 +937,15 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         criteria.add(Restrictions.eq("type", ZdbFlag.Type.REGEN_PHENOTYPEMART));
         return (ZdbFlag) criteria.uniqueResult();
     }
+
+    @Override
+    public List<DiseaseAnnotationModel> getHumanDiseaseModelsByFish(String fishID, String publicationID) {
+        String hql = "from DiseaseAnnotationModel as disease where" +
+                " disease.fishExperiment.fish.zdbID = :fishID AND " +
+                " disease.diseaseAnnotation.publication.zdbID = :pubID";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("fishID", fishID);
+        query.setParameter("pubID", publicationID);
+        return (List<DiseaseAnnotationModel>) query.list();
+    }
 }

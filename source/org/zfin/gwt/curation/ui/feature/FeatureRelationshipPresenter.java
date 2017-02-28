@@ -11,6 +11,7 @@ import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.FeatureMarkerRelationshipDTO;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.ValidationException;
@@ -74,6 +75,7 @@ public class FeatureRelationshipPresenter implements HandlesError {
         loadFilterValues(forcedLoad);
 
         // get Feature-Marker-Relationships
+        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_MARKER_RELATIONSHIPS_FOR_PUB_START);
         FeatureRPCService.App.getInstance().getFeatureMarkerRelationshipsForPub(publicationID,
                 new FeatureEditCallBack<List<FeatureMarkerRelationshipDTO>>(
                         "Failed to find feature marker relationships for this pub: "
@@ -82,6 +84,7 @@ public class FeatureRelationshipPresenter implements HandlesError {
                     public void onSuccess(List<FeatureMarkerRelationshipDTO> featureMarkerRelationshipDTOList) {
                         featureMarkerRelationshipDTOs = featureMarkerRelationshipDTOList;
                         populateDataTable();
+                        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_MARKER_RELATIONSHIPS_FOR_PUB_STOP);
                     }
                 });
 
@@ -91,6 +94,7 @@ public class FeatureRelationshipPresenter implements HandlesError {
     }
 
     private void loadFeatureList() {
+        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_START);
         FeatureServiceGWT.getFeatureList(publicationID,
                 new FeatureEditCallBack<List<FeatureDTO>>("Problem finding features for pub: " + publicationID + " ", this) {
 
@@ -98,6 +102,7 @@ public class FeatureRelationshipPresenter implements HandlesError {
                     public void onFailure(Throwable throwable) {
                         super.onFailure(throwable);
                         view.featureList.setEnabled(false);
+                        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_STOP);
                     }
 
                     @Override
@@ -116,11 +121,13 @@ public class FeatureRelationshipPresenter implements HandlesError {
                             view.featureList.setIndexForValue(lastSelectedFeatureZdbId);
                             lastSelectedFeatureZdbId = null;
                         }
+                        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_STOP);
                     }
                 });
     }
 
     private void loadFilterValues(boolean forceLoad) {
+        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_START);
         FeatureServiceGWT.getFeatureList(publicationID,
                 new FeatureEditCallBack<List<FeatureDTO>>("Problem finding features for pub: " + publicationID + " ", this) {
                     @Override
@@ -140,6 +147,13 @@ public class FeatureRelationshipPresenter implements HandlesError {
                                 view.featureTypeList.addItem(type, type);
                             }
                         }
+                        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_STOP);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        super.onFailure(throwable);
+                        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_STOP);
                     }
                 }, forceLoad);
     }
@@ -179,6 +193,7 @@ public class FeatureRelationshipPresenter implements HandlesError {
     }
 
     public void loadRelationshipTypes() {
+        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_RELATIONSHIP_TYPES_FOR_FEATURE_TYPE_START);
         FeatureRPCService.App.getInstance().getRelationshipTypesForFeatureType(selectedFeatureDTO.getFeatureType(),
                 new FeatureEditCallBack<List<String>>("Failed to return feature relationships for type: " + selectedFeatureDTO.getFeatureType().getDisplay(), this) {
                     @Override
@@ -207,6 +222,7 @@ public class FeatureRelationshipPresenter implements HandlesError {
                             }
                             view.relationshipList.setEnabled(true);
                         }
+                        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_RELATIONSHIP_TYPES_FOR_FEATURE_TYPE_STOP);
                     }
                 }
         );
@@ -216,6 +232,7 @@ public class FeatureRelationshipPresenter implements HandlesError {
         view.addButton.setEnabled(false);
         view.targetMarkerList.setEnabled(false);
         final String mutagenForFeature = getFeatureDTOForName(selectedFeature).getMutagen();
+        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_RELATIONSHIP_TYPES_FOR_FEATURE_TYPE_START);
         FeatureRPCService.App.getInstance().getMarkersForFeatureRelationAndSource(selectedRelationship, publicationID,
                 new FeatureEditCallBack<List<MarkerDTO>>("Failed to find markers for type[" + view.featureType.getText() + "] and pub: " +
                         publicationID, this) {

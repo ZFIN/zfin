@@ -26,6 +26,9 @@
 
 use English;			# enable longer special variable names
 
+use lib "<!--|ROOT_PATH|-->/server_apps/";
+use ZFINPerlModules;
+
 #
 # set environment variables
 #
@@ -91,7 +94,7 @@ my $sql = "select tabname "
         . "    and tabname not like \"sysbld%\" "
         . "  order by tabname;";
 
-system("echo '$sql' | $dbaccess $database - > $tablesFile 2>/dev/null");
+ZFINPerlModules->doSystemCommand("echo '$sql' | $dbaccess $database - > $tablesFile 2>/dev/null");
 
 open(TABLESFILE, $tablesFile) 
     or die "Unable to open $tablesFile";
@@ -131,7 +134,7 @@ while (my $line = <TABLESFILE>) {
 			    $sql = "select $colName from $tableName where $condition";
 			    my $resultsFile = "$resultsBase.$tableName";
 			    my $msgFile = "$resultsBase.$tableName.messages";
-			    system("echo '$sql' | $dbaccess $database - > $resultsFile 2>$msgFile ");
+			    ZFINPerlModules->doSystemCommand("echo '$sql' | $dbaccess $database - > $resultsFile 2>$msgFile ");
 			    # open message file.  We care about 2 things:
 			    #  The number of rows selected, and
 			    #  error messages.

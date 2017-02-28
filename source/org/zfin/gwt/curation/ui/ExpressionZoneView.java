@@ -13,6 +13,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
+import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.curation.event.RemoveExpressionEvent;
@@ -210,25 +211,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         }
         displayTable.createExpressionTable();
         markStructures = false;
-    }
-
-    /**
-     * Update the given figure annotation with new expressed terms.
-     * This is called from the structure section.
-     *
-     * @param updatedFigureAnnotations ExpressionFigureStageDTO
-     */
-    public void updateFigureAnnotations(List<ExpressionFigureStageDTO> updatedFigureAnnotations) {
-
-        for (ExpressionFigureStageDTO updatedEfs : updatedFigureAnnotations) {
-            for (ExpressionFigureStageDTO efs : displayedExpressions) {
-                if (efs.getUniqueID().equals(updatedEfs.getUniqueID()))
-                    efs.setExpressedTerms(updatedEfs.getExpressedTerms());
-            }
-        }
-        displayTable.createExpressionTable();
-        recordAllExpressedTerms();
-        // remove check marks from annotations.
     }
 
     /**
@@ -650,87 +632,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
     // avoid double updates
     private boolean addButtonInProgress;
 
-    private class AddExpressionClickListener implements ClickHandler {
-
-        public void onClick(ClickEvent event) {
-            // do not proceed if it just has been clicked once
-            // and is being worked on
-            if (addButtonInProgress) {
-                addButton.setEnabled(false);
-                return;
-            }
-            addButtonInProgress = true;
-            boolean expressionsExist = false;
-            List<ExpressionFigureStageDTO> newFigureAnnotations = getExpressionsFromConstructionZone();
-            for (ExpressionFigureStageDTO expression : newFigureAnnotations) {
-                if (!isValidExperiment(expression)) {
-                    cleanupOnExit();
-                    return;
-                }
-                if (expressionFigureStageExists(expression)) {
-                    errorElement.setError("Expression already exists. Expressions have to be unique!");
-                    cleanupOnExit();
-                    expressionsExist = true;
-                }
-            }
-            if (stageSelector.isMultiStageMode() && !stageSelector.isMultiStageSelected()) {
-                errorElement.setError("No stage selected.  Please select at least one stage.");
-                cleanupOnExit();
-                return;
-            }
-            if (newFigureAnnotations.isEmpty()) {
-                errorElement.setError("No experiment selected. Please select at least one experiment!");
-                cleanupOnExit();
-                return;
-            }
-            if (expressionsExist)
-                return;
-            loadingImage.setVisible(true);
-            curationRPCAsync.createFigureAnnotations(newFigureAnnotations, new AddExpressionCallback(newFigureAnnotations));
-        }
-
-        private void cleanupOnExit() {
-            addButton.setEnabled(true);
-            addButtonInProgress = false;
-        }
-
-    }
-
-    /**
-     * Reset figure, experiments and stage info to default values.
-     */
-    private class ResetExpressionConstructionClickListener implements ClickHandler {
-
-        public void onClick(ClickEvent event) {
-            figureList.setSelectedIndex(0);
-            stageSelector.setGuiToDefault();
-            clearErrorMessages();
-        }
-
-    }
-
-    /**
-     * Check if the expression already exists in the list.
-     * Expressions have to be unique.
-     *
-     * @param expression expression figure stage DTO
-     * @return true if experiment is found in the full list (new experiment) or in the list except itself
-     * false if experiment is different from all other experiments
-     */
-    public boolean expressionFigureStageExists(ExpressionFigureStageDTO expression) {
-        int rowIndex = 1;
-        for (ExpressionFigureStageDTO existingExpression : displayedExpressions) {
-            if (existingExpression.getUniqueID().equals(expression.getUniqueID())) {
-                duplicateRowIndex = rowIndex;
-                duplicateRowOriginalStyle = displayTable.getRowFormatter().getStyleName(rowIndex);
-                displayTable.getRowFormatter().setStyleName(rowIndex, "experiment-duplicate");
-                return true;
-            }
-            rowIndex++;
-        }
-        return false;
-    }
-
     /**
      * Check that the expression is valid:
      * 1) figure defined
@@ -792,25 +693,59 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             initCopyExpressionPanel();
         }
 
-        protected void createExpressionTable(List<ExpressionFigureStageDTO> list) {
-            displayedExpressions = list;
+        public void postUpdateStructures(List<ExpressionFigureStageDTO> figureStageDTOList) {
+            postUpdateStructuresOnExpression();
+            // update those records that have been changed
+            List<ExpressionFigureStageDTO> newList = new ArrayList<>(displayedExpressions.size());
+            for (ExpressionFigureStageDTO dto : displayedExpressions) {
+                boolean hasUpdate = false;
+                for (ExpressionFigureStageDTO updatedDTO : figureStageDTOList) {
+                    if (updatedDTO.getID() == dto.getID()) {
+                        newList.add(updatedDTO);
+                        hasUpdate = true;
+                    }
+                }
+                if (!hasUpdate)
+                    newList.add(dto);
+            }
+            displayedExpressions.clear();
+            displayedExpressions.addAll(newList);
+            createExpressionTable();
+            recordAllExpressedTerms();
+        }
+
+
+        public void addNewExpressions(List<ExpressionFigureStageDTO> newAnnotations) {
+            displayedExpressions.addAll(newAnnotations);
+            Collections.sort(displayedExpressions);
+            recordAllExpressedTerms();
             createExpressionTable();
         }
 
-        protected void createExpressionTable() {
+        protected List<ExpressionFigureStageDTO> getDisplayExpressionList(){
+            return displayedExpressions;
+        }
+
+        void createExpressionTable(List<ExpressionFigureStageDTO> list) {
+            displayedExpressions.clear();
+            displayedExpressions.addAll(list);
+            recordAllExpressedTerms();
+            createExpressionTable();
+        }
+
+        void createExpressionTable() {
             clearTable();
             // header row index = 0
             createTableHeader();
             int rowIndex = 1;
-            //Window.alert("Experiment List Size: " + experiments.size());
             ExpressionFigureStageDTO previousExpression = null;
             // first element is an odd group element
             int groupIndex = 1;
 
+            //Window.alert("Select List Size: " + selectedExpressions.size());
             List<ExpressionFigureStageDTO> expressionFigureStageDTOs;
             if (showSelectedExpressionOnly) {
-                expressionFigureStageDTOs = new ArrayList<>();
-                expressionFigureStageDTOs.addAll(selectedExpressions);
+                expressionFigureStageDTOs = new ArrayList<>(selectedExpressions);
             } else {
                 expressionFigureStageDTOs = displayedExpressions;
             }
@@ -820,7 +755,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
                 // rowindex minus the header row
                 displayTableMap.put(rowIndex, expression);
                 CheckBox checkBox = new CheckBox();
-                checkBox.setTitle(expression.getUniqueID());
+                checkBox.setTitle("" + expression.getID());
                 // if any figure annotations are already selected make sure they stay checked
                 if (selectedExpressions.contains(expression)) {
                     checkBox.setValue(true);
@@ -853,7 +788,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
                 setWidget(rowIndex, HeaderName.EXPRESSED_IN.getIndex(), terms);
 
                 Button delete = new Button("X");
-                delete.setTitle(expression.getUniqueID());
+                delete.setTitle("" + expression.getID());
                 delete.addClickHandler(new DeleteFigureAnnotationClickHandler(expression));
                 setWidget(rowIndex, HeaderName.DELETE.getIndex(), delete);
 
@@ -866,11 +801,11 @@ public class ExpressionZoneView extends Composite implements HandlesError {
                     pushToPato.addClickHandler(new CreatePatoHandler(rowIndex, expression));
                     setWidget(rowIndex, HeaderName.PUSH.getIndex(), pushToPato);
                 }
-                String previousID = null;
+                long previousID = 0;
                 if (previousExpression != null)
-                    previousID = previousExpression.getUniqueID();
+                    previousID = previousExpression.getID();
 
-                groupIndex = setRowStyle(rowIndex, expression.getUniqueID(), previousID, groupIndex);
+                groupIndex = setRowStyle(rowIndex, expression.getID(), previousID, groupIndex);
                 rowIndex++;
                 previousExpression = expression;
             }

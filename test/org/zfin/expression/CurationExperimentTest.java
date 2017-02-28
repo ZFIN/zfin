@@ -19,8 +19,8 @@ public class CurationExperimentTest {
     public void testFigureAnnotationSessionSetNewAddition() {
         CurationExperimentRPCImpl service = new CurationExperimentRPCImpl();
         boolean checked = true;
-        String unique = "eins";
-        Set<String> set = new HashSet<String>();
+        long unique = 100;
+        Set<Long> set = new HashSet<>();
         service.updateFigureAnnotationSessionSet(unique, set, checked);
         assertEquals(1, set.size());
     }
@@ -29,8 +29,8 @@ public class CurationExperimentTest {
     public void testFigureAnnotationSessionSetNewAdditionExist() {
         CurationExperimentRPCImpl service = new CurationExperimentRPCImpl();
         boolean checked = true;
-        String unique = "eins";
-        Set<String> set = new HashSet<String>();
+        long unique = 100;
+        Set<Long> set = new HashSet<>();
         service.updateFigureAnnotationSessionSet(unique, set, checked);
         assertEquals(1, set.size());
         // try to add it again
@@ -42,8 +42,8 @@ public class CurationExperimentTest {
     public void testFigureAnnotationSessionSetRemove() {
         CurationExperimentRPCImpl service = new CurationExperimentRPCImpl();
         boolean checked = true;
-        String unique = "eins";
-        Set<String> set = new HashSet<String>();
+        long unique = 100;
+        Set<Long> set = new HashSet<>();
         service.updateFigureAnnotationSessionSet(unique, set, checked);
         assertEquals(1, set.size());
         // remove

@@ -38,6 +38,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
@@ -544,16 +545,16 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public int getZFINInferences(String zdbID, String publicationZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery("" +
-                        " select count(*) from marker_go_term_evidence  ev  " +
-                        " join  inference_group_member inf on ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id " +
-                        " where " +
-                        " ev.mrkrgoev_source_zdb_id=:pubZdbID " +
-                        " and " +
-                        " inf.infgrmem_inferred_from=:zdbID " +
-                        " ")
-                        .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix() + zdbID)
-                        .setString("pubZdbID", publicationZdbID)
-                        .uniqueResult().toString()
+                " select count(*) from marker_go_term_evidence  ev  " +
+                " join  inference_group_member inf on ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id " +
+                " where " +
+                " ev.mrkrgoev_source_zdb_id=:pubZdbID " +
+                " and " +
+                " inf.infgrmem_inferred_from=:zdbID " +
+                " ")
+                .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix() + zdbID)
+                .setString("pubZdbID", publicationZdbID)
+                .uniqueResult().toString()
         );
     }
 
@@ -776,7 +777,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public void runFeatureNameFastSearchUpdate(final Feature feature) {
         Session session = currentSession();
-        session.doWork(new Work(){
+        session.doWork(new Work() {
             @Override
             public void execute(Connection connection) throws SQLException {
                 CallableStatement statement = null;
@@ -1250,68 +1251,70 @@ public class HibernateMutantRepository implements MutantRepository {
      */
     @Override
     public List<PhenotypeStatement> getPhenotypesOnObsoletedTerms(Ontology ontology) {
-        boolean getAll = false;
-        if (ontology == null) {
-            getAll = true;
-        }
+        boolean individualOnly = ontology != null;
+
         Session session = HibernateUtil.currentSession();
         List<PhenotypeStatement> allPhenotypes = new ArrayList<PhenotypeStatement>();
 
-        if (getAll || ontology.equals(Ontology.QUALITY)) {
+        if (!individualOnly || ontology.equals(Ontology.QUALITY)) {
             String hql = "select phenotype from PhenotypeStatement phenotype " +
                     "     where phenotype.quality is not null AND phenotype.quality.obsolete = :obsolete";
             Query query = session.createQuery(hql);
             query.setBoolean("obsolete", true);
             allPhenotypes.addAll((List<PhenotypeStatement>) query.list());
-            return allPhenotypes;
+            if (individualOnly)
+                return allPhenotypes;
         }
 
+        List<String> ontologyList = null;
+        if (individualOnly)
+            ontologyList = ontology.getIndividualOntologies().stream().map(Ontology::getDbOntologyName).collect(Collectors.toList());
         String hql = "select phenotype from PhenotypeStatement phenotype " +
                 "     where phenotype.entity.superterm is not null AND phenotype.entity.superterm.obsolete = :obsolete ";
-        if (!getAll) {
-            hql += "      AND phenotype.entity.superterm.ontology = :ontology";
+        if (individualOnly) {
+            hql += "      AND phenotype.entity.superterm.ontology in (:ontologyList)";
         }
         Query queryEntitySuper = session.createQuery(hql);
         queryEntitySuper.setBoolean("obsolete", true);
-        if (!getAll) {
-            queryEntitySuper.setParameter("ontology", ontology);
+        if (individualOnly) {
+            queryEntitySuper.setParameterList("ontologyList", ontologyList);
         }
 
         allPhenotypes.addAll((List<PhenotypeStatement>) queryEntitySuper.list());
 
         hql = "select phenotype from PhenotypeStatement phenotype " +
                 "     where phenotype.entity.subterm is not null AND phenotype.entity.subterm.obsolete = :obsolete";
-        if (!getAll) {
-            hql += "      AND phenotype.entity.subterm.ontology = :ontology";
+        if (individualOnly) {
+            hql += "      AND phenotype.entity.subterm.ontology in (:ontologyList)";
         }
         Query queryEntitySub = session.createQuery(hql);
         queryEntitySub.setBoolean("obsolete", true);
-        if (!getAll) {
-            queryEntitySub.setParameter("ontology", ontology);
+        if (individualOnly) {
+            queryEntitySub.setParameterList("ontologyList", ontologyList);
         }
         allPhenotypes.addAll((List<PhenotypeStatement>) queryEntitySub.list());
 
         hql = "select phenotype from PhenotypeStatement phenotype " +
                 "     where phenotype.relatedEntity.superterm is not null AND phenotype.relatedEntity.superterm.obsolete = :obsolete";
-        if (!getAll) {
-            hql += "      AND phenotype.relatedEntity.superterm.ontology = :ontology";
+        if (individualOnly) {
+            hql += "      AND phenotype.relatedEntity.superterm.ontology in (:ontologyList)";
         }
         Query queryRelatedEntitySuper = session.createQuery(hql);
         queryRelatedEntitySuper.setBoolean("obsolete", true);
-        if (!getAll) {
-            queryRelatedEntitySuper.setParameter("ontology", ontology);
+        if (individualOnly) {
+            queryRelatedEntitySuper.setParameterList("ontologyList", ontologyList);
         }
         allPhenotypes.addAll((List<PhenotypeStatement>) queryRelatedEntitySuper.list());
 
         hql = "select phenotype from PhenotypeStatement phenotype " +
                 "     where phenotype.relatedEntity.subterm is not null AND phenotype.relatedEntity.subterm.obsolete = :obsolete";
-        if (!getAll) {
-            hql += "      AND phenotype.relatedEntity.subterm.ontology = :ontology";
+        if (individualOnly) {
+            hql += "      AND phenotype.relatedEntity.subterm.ontology in (:ontologyList)";
         }
         Query queryRelatedEntitySub = session.createQuery(hql);
         queryRelatedEntitySub.setBoolean("obsolete", true);
-        if (!getAll) {
-            queryRelatedEntitySub.setParameter("ontology", ontology);
+        if (individualOnly) {
+            queryRelatedEntitySub.setParameterList("ontologyList", ontologyList);
         }
         allPhenotypes.addAll((List<PhenotypeStatement>) queryRelatedEntitySub.list());
 

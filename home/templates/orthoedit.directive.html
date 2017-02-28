@@ -1,5 +1,5 @@
 <ng-transclude></ng-transclude>
-<span class="no-data-tag" ng-hide="vm.edit || vm.orthologs.length > 0">No data available</span>
+<span class="no-data-tag" ng-hide="vm.orthologsLoading || vm.edit || vm.orthologs.length > 0">No data available</span>
 
 <table class="primary-entity-attributes" ng-show="vm.edit">
     <tr ng-show="vm.showGenePicker">
@@ -26,7 +26,7 @@
 
 <div class="error" ng-show="vm.generalError">{{vm.generalError}}</div>
 <div ng-show="vm.orthologsLoading" class="loading-overlay"><i class="fa fa-spinner fa-spin"></i></div>
-<table class="ortholog-table summary basicstripes" ng-show="vm.edit || vm.orthologs.length > 0">
+<table class="ortholog-table summary basicstripes" ng-show="!vm.orthologsLoading && (vm.edit || vm.orthologs.length > 0)">
     <thead>
     <tr>
         <th ng-show="vm.edit"></th>

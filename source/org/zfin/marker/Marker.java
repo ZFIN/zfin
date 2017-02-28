@@ -7,7 +7,9 @@ import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.infrastructure.*;
 import org.zfin.mapping.MappedMarkerImpl;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.MarkerGoTermEvidence;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Ortholog;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Person;
@@ -52,6 +54,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     private Set<MarkerSupplier> suppliers;
     private String chromosome;
     private Set<MarkerGoTermEvidence> goTermEvidence;
+    private Set<SecondaryMarker> secondaryMarkerSet;
 
     // cashed attribute
     private transient List<Marker> markers;
@@ -221,6 +224,10 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         return markers;
     }
 
+
+    public GenericTerm getSoTerm() {
+        return MarkerService.getSoTerm(this);
+    }
 
     public Set<Figure> getFigures() {
         return figures;
@@ -404,7 +411,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         PAC_END("PAC_END"),
         PTCONSTRCT("PTCONSTRCT"),
         RAPD("RAPD"),
-        REGION("REGION"),
+        EREGION("EREGION"),
         SNP("SNP"),
         SSLP("SSLP"),
         STS("STS"),
@@ -412,7 +419,22 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         TSCRIPT("TSCRIPT"),
         TALEN("TALEN"),
         CRISPR("CRISPR"),
-        CNE("CNE");
+        CNE("CNE"),
+        LNCRNA("LNCRNA"),
+        LINCRNA("LINCRNA"),
+        MIRNA("MIRNA"),
+        PIRNA("PIRNA"),
+        SCRNA("SCRNA"),
+        SNORNA("SNORNA"),
+        TRNA("TRNA"),
+        RRNA("RRNA"),
+        NCRNA("NCRNA"),
+        HISTBS("HISTBS"),
+        PROTBS("PROTBS"),
+        CPGISLAND("CPGISLAND"),
+        SRPRNA("SRPRNA"),
+        TSCRIPTREG("TSCRIPTREG")
+        ;
 
         private final String value;
 
@@ -477,7 +499,6 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         PAC_END("PAC_END"),
         POLYMORPH("POLYMORPH"),
         RAPD("RAPD"),
-        REGION("REGION"),
         SEARCH_MK("SEARCH_MK"),
         SEARCH_MKSEG("SEARCH_MKSEG"),
         SEARCH_SEG("SEARCH_SEG"),
@@ -488,7 +509,25 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         TRANSCRIPT("TRANSCRIPT"),
         DEFICIENCY_TLOC_MARK("DEFICIENCY_TLOC_MARK"),
         GENEDOM_EFG_REGION("GENEDOM_EFG_REGION"),
-        GENEDOM_EFG_REGION_K("GENEDOM_EFG_REGION_K");
+        GENEDOM_EFG_REGION_K("GENEDOM_EFG_REGION_K"),
+        SRPRNA("SRPRNA"),
+        LNCRNA("LNCRNA"),
+        LINCRNA("LINCRNA"),
+        MIRNA("MIRNA"),
+        PIRNA("PIRNA"),
+        SCRNA("SCRNA"),
+        SNORNA("SNORNA"),
+        TRNA("TRNA"),
+        RRNA("RRNA"),
+        NCRNA("NCRNA"),
+        HISTBS("HISTBS"),
+        PROTBS("PROTBS"),
+        CPGISLAND("CPGISLAND"),
+        TSCRIPTREGREGION("TSCRIPTREGREGION"),
+        ENGINEERED_REGION("ENGINEERED_REGION"),
+        GENEDOM_PROD_PROTEIN("GENEDOM_PROD_PROTEIN"),
+        NONTRANSCRIBED_REGIO("NONTRANSCRIBED_REGIO")
+        ;
 
         private final String value;
 
@@ -575,5 +614,13 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
 
     public void setGoTermEvidence(Set<MarkerGoTermEvidence> goTermEvidence) {
         this.goTermEvidence = goTermEvidence;
+    }
+
+    public Set<SecondaryMarker> getSecondaryMarkerSet() {
+        return secondaryMarkerSet;
+    }
+
+    public void setSecondaryMarkerSet(Set<SecondaryMarker> secondaryMarkerSet) {
+        this.secondaryMarkerSet = secondaryMarkerSet;
     }
 }

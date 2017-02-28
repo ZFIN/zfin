@@ -50,7 +50,6 @@ public class ZfinActionServlet extends DispatcherServlet {
         // to the right context. There might be parameters that should only apply on a session scope...
         config.getServletContext().setAttribute("webdriverURL", ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
         initDatabase();
-        startupTests();
         if(Boolean.valueOf(ZfinPropertiesEnum.BLAST_CACHE_AT_STARTUP.value())){
             initBlast();
         }
@@ -72,30 +71,6 @@ public class ZfinActionServlet extends DispatcherServlet {
             }
         };
         t.start();
-    }
-
-    public void startupTests() {
-        EnumValidationService service = new EnumValidationService();
-        try {
-            service.checkAllEnums();
-            if (service.getReport() != null) {
-                throw new EnumValidationException(service.getReport());
-            }
-        }
-        catch (EnumValidationException eve) {
-            logger.error("Error in enumeration validation.", eve);
-            Throwable rootCause = eve; // set a default
-            while (rootCause.getCause() != null) {
-                rootCause = rootCause.getCause();
-            }
-            StackTraceElement[] elements = rootCause.getStackTrace();
-            String errorString = rootCause.getMessage() + "\n";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            logger.error("notification sent: " + (new IntegratedJavaMailSender()).sendMail("Enumeration Mapping Failure", "Enumeration mapping failure." +
-                    "\n" + errorString, ZfinProperties.getValidationOtherEmailAddresses()));
-        }
     }
 
     private void initDatabase() {

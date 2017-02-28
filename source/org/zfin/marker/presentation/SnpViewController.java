@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.SNP;
 import org.zfin.marker.repository.MarkerRepository;
@@ -32,6 +33,7 @@ public class SnpViewController {
     public SnpViewController(){
         snpBlastUrl = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.SNPBLAST).getLocation();
         ncbiBlastUrl = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.BLAST).getLocation();
+        HibernateUtil.closeSession();
     }
 
     @RequestMapping(value ="/snp/view/{zdbID}")

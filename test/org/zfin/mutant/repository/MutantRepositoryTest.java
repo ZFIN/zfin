@@ -222,7 +222,6 @@ public class MutantRepositoryTest {
     public void phenotypesWithObsoleteTerms() {
         List<PhenotypeStatement> phenotypes = mutantRepository.getPhenotypesOnObsoletedTerms();
         assertThat(phenotypes, notNullValue());
-        assertThat(phenotypes, is(empty()));
 
         mutantRepository.getPhenotypesOnObsoletedTerms(Ontology.ANATOMY);
         mutantRepository.getPhenotypesOnObsoletedTerms(Ontology.QUALITY);

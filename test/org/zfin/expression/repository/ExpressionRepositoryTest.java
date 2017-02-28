@@ -580,4 +580,10 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(experimentCondition);
     }
 
+    @Test
+    public void getExpressionById() {
+        ExpressionFigureStage stage = getExpressionRepository().getExperimentFigureStage(78214);
+        assertNotNull(stage);
+    }
+
 }

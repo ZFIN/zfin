@@ -16,7 +16,7 @@
               value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/so-xp-simple.obo"/>
     <property name="zecoTaxonomyOboURL" value="file:///home/informix/Curation/zeco-taxonomy.obo"/>
     <property name="zecoTaxonomySourceURL" value="/home/informix/Curation/zeco-taxonomy-source.txt"/>
-    <property name="zecoOboURL" value="file:///home/informix/Curation/zeco.obo"/>
+    <property name="zecoOboURL" value="/home/informix/Curation/zeco.obo"/>
     <property name="anatomyOboURL" value="file:///home/informix/Curation/anatomy.obo"/>
 
     <property name="root.dir" value="${basedir}/../../../"/>
@@ -170,7 +170,7 @@
     <target name="download-zeco-ontology">
         <property name="localOboFile" value="zeco.obo"/>
         <property name="oboFileURL" value="${zecoOboURL}"/>
-        <antcall target="download-ontology"/>
+        <copy file="${zecoOboURL}" tofile="${run-directory}/${localOboFile}"/>
     </target>
 
     <target name="download-anatomy-ontology">
@@ -223,10 +223,10 @@
     </target>
 
     <property name="scriptFiles"
-              value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,fixZecoAnnotations.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,dropTempTables.sql"/>
+              value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,dropTempTables.sql"/>
 
     <property name="scriptFilesNoAnnotation"
-              value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,fixZecoAnnotations.sql,dropTempTables.sql"/>
+              value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,dropTempTables.sql"/>
 
     <macrodef name="load-ontology" description="Run the ontology loader">
         <attribute name="oboFileName"/>

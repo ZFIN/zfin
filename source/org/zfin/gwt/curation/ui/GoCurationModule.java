@@ -12,12 +12,11 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.event.RelatedEntityChangeListener;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
-import org.zfin.gwt.root.ui.HandlesError;
-import org.zfin.gwt.root.ui.ListBoxWrapper;
-import org.zfin.gwt.root.ui.MarkerEditCallBack;
-import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
+import org.zfin.gwt.root.ui.*;
+import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,10 +141,12 @@ public class GoCurationModule extends ConstructionZoneAdapater implements ZfinCu
     }
 
     private void updateGeneFilter() {
+        AppUtils.fireAjaxCall(GoCurationModule.getModuleInfo(), AjaxCallEventType.GET_FIGURE_LIST_START);
         MarkerGoEvidenceRPCService.App.getInstance().getMarkerGoTermEvidencesForPub(publicationID,
                 new MarkerEditCallBack<List<GoEvidenceDTO>>("Failed to find pub: " + publicationID + " ") {
                     @Override
                     public void onSuccess(List<GoEvidenceDTO> result) {
+                        AppUtils.fireAjaxCall(GoCurationModule.getModuleInfo(), AjaxCallEventType.GET_FIGURE_LIST_STOP);
                         geneFilterListBox.clear();
                         geneFilterListBox.addItem(GENE_FILTER_ALL);
                         for (GoEvidenceDTO goEvidenceDTO : result) {
@@ -154,7 +155,19 @@ public class GoCurationModule extends ConstructionZoneAdapater implements ZfinCu
                             }
                         }
                     }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        super.onFailure(throwable);
+                        AppUtils.fireAjaxCall(GoCurationModule.getModuleInfo(), AjaxCallEventType.GET_FIGURE_LIST_STOP);
+                    }
                 });
+
+
+    }
+
+    public static ZfinModule getModuleInfo() {
+        return new ZfinModule(CurationTab.GO.getName(), GoCurationModule.class.getName());
     }
 
     public ConstructionZone getPileConstructionZoneModule() {

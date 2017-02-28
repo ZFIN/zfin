@@ -70,6 +70,17 @@
         <delete dir="${indexerDir}"/>
     </target>
 
+    <target name="move-crick-to-watson" description="Synchornize Jenkins on crick with watson">
+        <echo message="Synchronizing Jenkins jobs: copy Crick files onto Watson"/>
+        <exec executable="rsync" failifexecutionfails="true">
+            <arg value="-avz"/>
+            <arg value="/net/crick.zfin.org/opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home/jobs/"/>
+            <arg value="/opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home/jobs/"/>
+        </exec>
+        <echo message=":rsync SUCCESSFUL:"/>
+    </target>
+
+
     <macrodef name="remove-old-files" description="Remove files older that a given date">
         <attribute name="removal.date"/>
         <attribute name="cleanup.dir"/>

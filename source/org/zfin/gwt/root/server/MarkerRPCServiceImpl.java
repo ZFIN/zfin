@@ -1121,6 +1121,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         infrastructureRepository.insertRecordAttribution(markerZdbID, pubZdbID);
         infrastructureRepository.insertUpdatesTable(markerZdbID, "record attribution", "", pubZdbID, "Added direct attribution");
         HibernateUtil.flushAndCommitCurrentSession();
+        HibernateUtil.closeSession();
     }
 
     @Override
@@ -1137,6 +1138,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         infrastructureRepository.insertRecordAttribution(featureZdbID, pubZdbID);
         infrastructureRepository.insertUpdatesTable(featureZdbID, "record attribution", pubZdbID, "Added direct attribution");
         HibernateUtil.flushAndCommitCurrentSession();
+        HibernateUtil.closeSession();
     }
 
 
@@ -1185,7 +1187,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         }
         if (ActiveData.Type.FISH.equals(ActiveData.getType(entityID))) {
             Fish fish = getMutantRepository().getFish(entityID);
-            List<DiseaseAnnotationModel> diseaseAnnotationList = getPhenotypeRepository().getHumanDiseaseModelsByFish(entityID);
+            List<DiseaseAnnotationModel> diseaseAnnotationList = getPhenotypeRepository().getHumanDiseaseModelsByFish(entityID, publicationID);
             if (CollectionUtils.isNotEmpty(diseaseAnnotationList)) {
                 throw new DeAttributionException("Cannot remove attribution as there is human disease data associated to this fish");
             }

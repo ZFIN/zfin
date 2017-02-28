@@ -6,6 +6,7 @@
 <%@ attribute name="person" type="org.zfin.profile.Person" required="true" %>
 <%@ attribute name="securityPersonZdbID" type="java.lang.String" required="true" %>
 <%@ attribute name="showDeceasedCheckBox" type="java.lang.Boolean" required="true" %>
+<%@ attribute name="countryList" type="java.util.HashMap" required="false" %>
 <%@ attribute name="selected" type="java.lang.String" required="false" %>
 
 
@@ -110,6 +111,18 @@
                         </td>
                         <td>
                             <form:textarea path="address" rows="5" cols="80"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <form:label cssStyle="vertical-align: top;" path="country">Country:</form:label>
+                        </td>
+                        <td>
+                            <form:select path="country">
+
+                                <form:options items="${countryList}" />
+                            </options>
+                            </form:select>
                         </td>
                     </tr>
                     <tr>

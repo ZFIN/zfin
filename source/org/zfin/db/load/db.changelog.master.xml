@@ -5,12 +5,14 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-  <include file="source/org/zfin/db/load/1078/regatta/db.changelog.master.xml"/>
-  <include file="source/org/zfin/db/load/1079/shipwreck/db.changelog.master.xml"/>
+ <include file="source/org/zfin/db/load/1078/regatta/db.changelog.master.xml"/>
+ <include file="source/org/zfin/db/load/1079/shipwreck/db.changelog.master.xml"/>
 
-  <include file="source/org/zfin/db/load/1079/titanic/db.changelog.master.xml"/>
-  <include file="source/org/zfin/db/load/1079/underwater/db.changelog.master.xml"/>
-  <include file="source/org/zfin/db/load/1080/vasa/db.changelog.master.xml"/>
+ <include file="source/org/zfin/db/load/1079/titanic/db.changelog.master.xml"/>
+ <include file="source/org/zfin/db/load/1079/underwater/db.changelog.master.xml"/>
+ <include file="source/org/zfin/db/load/1080/vasa/db.changelog.master.xml"/>
  <include file="source/org/zfin/db/load/1080/walrus/db.changelog.master.xml"/>
  <include file="source/org/zfin/db/load/1083/beerMug/db.changelog.master.xml"/>
+ <include file="source/org/zfin/db/load/1084/cyclone/db.changelog.master.xml"/>
+ <include file="source/org/zfin/db/load/1084/dancer/db.changelog.master.xml"/>
 </databaseChangeLog>
