@@ -33,7 +33,6 @@
 <c:set var="mergeURL">/action/marker/merge?zdbIDToDelete=${markerID}</c:set>
 
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
-                   deleteURL="${deleteURL}"
                    mergeURL="${mergeURL}"
                    editMarker="true"/>
 
