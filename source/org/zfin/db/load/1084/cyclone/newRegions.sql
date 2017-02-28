@@ -131,7 +131,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_is_source)
  values ('LNCRNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
-create sequence lncrna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+create sequence lncrnag_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
 insert into zdb_object_type (zobjtype_name,
                     zobjtype_day,
@@ -142,7 +142,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_is_source)
  values ('LINCRNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
-create sequence lincrna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+create sequence lincrnag_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
 insert into zdb_object_type (zobjtype_name,
                     zobjtype_day,
@@ -153,7 +153,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_is_source)
  values ('MIRNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
-create sequence mirna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+create sequence mirnag_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
 insert into zdb_object_type (zobjtype_name,
                     zobjtype_day,
@@ -164,7 +164,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_is_source)
  values ('PIRNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
-create sequence pirna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+create sequence pirnag_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
 insert into zdb_object_type (zobjtype_name,
                     zobjtype_day,
@@ -175,7 +175,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_is_source)
  values ('RRNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
-create sequence rrna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+create sequence rrnag_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
 insert into zdb_object_type (zobjtype_name,
                     zobjtype_day,
@@ -186,7 +186,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_is_source)
  values ('SNORNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
-create sequence snorna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+create sequence snornag_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
 insert into zdb_object_type (zobjtype_name,
                     zobjtype_day,
@@ -197,7 +197,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_is_source)
  values ('SCRNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
-create sequence scrna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+create sequence scrnag_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
 insert into zdb_object_type (zobjtype_name,
                     zobjtype_day,
@@ -208,7 +208,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_is_source)
  values ('TRNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
-create sequence trna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+create sequence trnag_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
 insert into zdb_object_type (zobjtype_name,
                     zobjtype_day,
@@ -219,7 +219,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_is_source)
  values ('NCRNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
-create sequence ncrna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+create sequence ncrnag_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
 insert into zdb_object_type (zobjtype_name,
                     zobjtype_day,
@@ -230,7 +230,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_is_source)
  values ('SRPRNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
-create sequence srprna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+create sequence srprnag_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
