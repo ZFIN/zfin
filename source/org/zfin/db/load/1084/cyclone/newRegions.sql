@@ -38,7 +38,7 @@ insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_disp
   values ('CPGISLAND','22','CpG island');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('SRPRNA','22','srpRNA');
+  values ('SRPRNAG','22','srpRNA Gene');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
   values ('TSCRIPTREGREGION','22','Transcript Regulatory Region');
@@ -47,7 +47,7 @@ insert into marker_type_group (mtgrp_name, mtgrp_comments)
  values ('TSCRIPTREGREGION', 'transcript region');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
- values ('SRPRNA', 'srp_rna');
+ values ('SRPRNAG', 'srp_rna');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
  values ('TRNAG', 't_rna');
