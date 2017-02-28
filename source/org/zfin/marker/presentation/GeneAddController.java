@@ -9,16 +9,22 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.anatomy.presentation.StagePresentation;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 
 import javax.validation.Valid;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+
+import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
 
 @Controller
 @RequestMapping("/marker")
@@ -43,11 +49,19 @@ public class GeneAddController {
         GeneAddFormBean form = new GeneAddFormBean();
         form.setPublicationId(source);
         form.setType(type);
-        Map<String, String> allTypes = new LinkedHashMap<>(3);
-        allTypes.put(Marker.Type.GENE.name(), "Gene");
-        allTypes.put(Marker.Type.GENEP.name(), "Pseudogene");
-        allTypes.put(Marker.Type.EFG.name(), "Engineered Foreign Gene");
+        List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM);
+        Map<String, String> allTypes = new LinkedHashMap<>(markerTypes.size());
+        for (MarkerType  markerType: markerTypes) {
+            if (!markerType.getDisplayName().equals("Transcript")) {
+                allTypes.put(markerType.getType().name(), markerType.getDisplayName());
+            }
+        }
+
+       allTypes.put(Marker.Type.EFG.name(), "Engineered Foreign Gene");
         form.setAllTypes(allTypes);
+
+
+
         return form;
     }
 

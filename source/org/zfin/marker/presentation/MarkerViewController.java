@@ -134,11 +134,11 @@ public class MarkerViewController {
                     ) {
                 return constructViewController.getGeneView(model, zdbID);
             }
-            else if (type.equals(Marker.Type.SRPRNA.name())
-                    || type.equals(Marker.Type.RRNA.name())
-                    || type.equals(Marker.Type.MIRNA.name())
-                    || type.equals(Marker.Type.NCRNA.name())
-                    || type.equals(Marker.Type.SNORNA.name())|| type.equals(Marker.Type.PIRNA.name())|| type.equals(Marker.Type.LINCRNA.name())|| type.equals(Marker.Type.LNCRNA.name())|| type.equals(Marker.Type.SRPRNA.name())|| type.equals(Marker.Type.TRNA.name())
+            else if (type.equals(Marker.Type.SRPRNAG.name())
+                    || type.equals(Marker.Type.RRNAG.name())
+                    || type.equals(Marker.Type.MIRNAG.name())
+                    || type.equals(Marker.Type.NCRNAG.name())
+                    || type.equals(Marker.Type.SNORNAG.name())|| type.equals(Marker.Type.PIRNAG.name())|| type.equals(Marker.Type.LINCRNAG.name())|| type.equals(Marker.Type.LNCRNAG.name())|| type.equals(Marker.Type.SRPRNAG.name())|| type.equals(Marker.Type.TRNAG.name())
                     ) {
                 return transcribedRegionViewController.getTranscribedRegionView(model, zdbID);
             }
