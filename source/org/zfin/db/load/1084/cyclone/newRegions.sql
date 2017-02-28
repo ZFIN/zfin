@@ -243,7 +243,7 @@ values ('LNCRNAG','GENEDOM');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('LINCRNAg','GENEDOM');
+values ('LINCRNAG','GENEDOM');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
