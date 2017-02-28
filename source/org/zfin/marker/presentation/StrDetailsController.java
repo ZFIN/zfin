@@ -58,9 +58,10 @@ public class StrDetailsController {
 
         if (!Objects.equals(bean.getName(), str.getName())) {
             infrastructureRepository.insertUpdatesTable(str.getZdbID(), "name", str.getName(), bean.getName(), "");
+            markerRepository.addMarkerAlias(str,str.getName(),null);
             str.setName(bean.getName());
             str.setAbbreviation(bean.getName());
-            markerRepository.addMarkerAlias(str,str.getName(),null);
+
         }
 
         if (!Objects.equals(bean.getSequence1(), sequence.getSequence())) {

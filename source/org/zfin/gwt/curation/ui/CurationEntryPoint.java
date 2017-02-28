@@ -8,15 +8,19 @@ import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Widget;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.curation.event.TabEventHandler;
 import org.zfin.gwt.root.dto.CuratorSessionDTO;
+import org.zfin.gwt.root.dto.FishDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.event.AjaxCallEvent;
 import org.zfin.gwt.root.event.AjaxCallEventHandler;
 import org.zfin.gwt.root.ui.AjaxCallBaseManager;
 import org.zfin.gwt.root.ui.SessionSaveService;
+import org.zfin.gwt.root.ui.SessionSaveServiceAsync;
+import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StringUtils;
 
@@ -50,6 +54,9 @@ public class CurationEntryPoint implements EntryPoint {
     private static int delayTime = DEFAULT_DELAY_TIME;
     private HistoryModule historyModule = new HistoryModule();
     private AjaxCallBaseManager callBaseManager = new AjaxCallBaseManager();
+    private CurationExperimentRPCAsync curationExperimentRPCAsync = CurationExperimentRPC.App.getInstance();
+    private SessionSaveServiceAsync sessionRPC = SessionSaveService.App.getInstance();
+    private static List<FishDTO> wildtypeFishList;
 
     public void onModuleLoad() {
         loadPublicationAndFilterElements();
@@ -60,6 +67,25 @@ public class CurationEntryPoint implements EntryPoint {
         attributionModule.setDTO(relatedEntityDTO);
         bindEventBusHandler();
 
+        curationExperimentRPCAsync.getWildTypeFishList(new ZfinAsyncCallback<List<FishDTO>>(null, null, (Widget) null) {
+            @Override
+            public void onSuccess(List<FishDTO> fishDTOS) {
+                wildtypeFishList = fishDTOS;
+                initModules();
+            }
+        });
+
+/*
+        GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
+            @Override
+            public void onUncaughtException(Throwable e) {
+                ensureNotUmbrellaError(e);
+            }
+        });
+*/
+    }
+
+    private void initModules(){
         // use only the session save module if no pub id is provided.
         if (publicationID != null) {
             if (type != null) {
@@ -81,14 +107,10 @@ public class CurationEntryPoint implements EntryPoint {
 
         }
         exposeRefreshTabMethodsToJavascript(this);
-/*
-        GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
-            @Override
-            public void onUncaughtException(Throwable e) {
-                ensureNotUmbrellaError(e);
-            }
-        });
-*/
+    }
+
+    public static List<FishDTO> getWildtypeFishList() {
+        return wildtypeFishList;
     }
 
     private static void ensureNotUmbrellaError(Throwable e) {
@@ -180,7 +202,7 @@ public class CurationEntryPoint implements EntryPoint {
 
 
         $wnd.updateTermInfoBox = function (termName, ontologyName, tabName) {
-            curationModule .@org.zfin.gwt.curation.ui.CurationEntryPoint::updateTermInfo(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(termName, ontologyName, tabName);
+            curationModule.@org.zfin.gwt.curation.ui.CurationEntryPoint::updateTermInfo(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(termName, ontologyName, tabName);
         };
     }-*/;
 
@@ -218,7 +240,6 @@ public class CurationEntryPoint implements EntryPoint {
         }
         module.updateTermInfo(termName, ontologyName);
     }
-
 
 
     public void handleTabToggle(String tabName) {

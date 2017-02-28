@@ -401,7 +401,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     public void retrieveFishList() {
         AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_START);
-        curationExperimentRPCAsync.getFishList(publicationID, new FishSelectionListAsyncCallback());
+        FishServiceGWT.callServer(publicationID, new FishSelectionListAsyncCallback(fishMap, view.getFishList(), view.errorElement));
     }
 
     // Retrieve experiments from the server
@@ -880,32 +880,6 @@ public class ExpressionExperimentZonePresenter implements Presenter {
                 }
                 geneMap.put(gene.getZdbID(), gene);
                 rowIndex++;
-            }
-        }
-    }
-
-    private class FishSelectionListAsyncCallback extends ZfinAsyncCallback<List<FilterSelectionBoxEntry>> {
-
-        private FishSelectionListAsyncCallback() {
-            super("Error retrieving fish selection list", view.errorElement,
-                    ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_STOP);
-        }
-
-        @Override
-        public void onSuccess(List<FilterSelectionBoxEntry> fishDTOList) {
-            super.onFinish();
-            fishMap.clear();
-            int index = 0;
-            StringListBox listBox = view.getFishList();
-            listBox.clear();
-            for (FishDTO fish : (List<FishDTO>) (List<?>)fishDTOList) {
-                if (fish.getName().startsWith("---")) {
-                    listBox.addItem(fish.getHandle(), fish.getZdbID());
-                    listBox.getElement().getElementsByTagName("option").getItem(index).setAttribute("disabled", "disabled");
-                } else
-                    listBox.addItem(fish.getHandle(), fish.getZdbID());
-                index++;
-                fishMap.put(fish.getZdbID(), fish);
             }
         }
     }

@@ -157,7 +157,7 @@ public class DiseaseModelPresenter implements Presenter {
         // fish list
         String message = "Error while reading Fish";
         AppUtils.fireAjaxCall(HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_START);
-        diseaseRpcService.getFishList(publicationID, new RetrieveFishListCallBack(message, view.getErrorLabel()));
+        FishServiceGWT.callServer(publicationID, new RetrieveFishListCallBack(message, view.getErrorLabel()));
     }
 
     class RetrieveEnvironmentListCallBack extends ZfinAsyncCallback<List<ExperimentDTO>> {

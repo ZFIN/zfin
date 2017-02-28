@@ -2,31 +2,31 @@
 --changeset sierra:newRegions
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('LNCRNA','2','LncRNA');
+  values ('LNCRNAG','2','LncRNA Gene');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('LINCRNA','2','LincRNA');
+  values ('LINCRNAG','2','LincRNA Gene');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('MIRNA','2','miRNA');
+  values ('MIRNAG','2','miRNA Gene');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('PIRNA','2','piRNA');
+  values ('PIRNAG','2','piRNA Gene');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('SCRNA','2','scRNA');
+  values ('SCRNAG','2','scRNA Gene');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('SNORNA','2','snoRNA');
+  values ('SNORNAG','2','snoRNA Gene');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('TRNA','2','tRNA');
+  values ('TRNAG','2','tRNA Gene');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('RRNA','2','rRNA');
+  values ('RRNAG','2','rRNA Gene');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('NCRNA','22','ncRNA');
+  values ('NCRNAG','22','ncRNA Gene');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
   values ('HISTBS','22','Histone Binding Site');
@@ -38,7 +38,7 @@ insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_disp
   values ('CPGISLAND','22','CpG island');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('SRPRNA','22','srpRNA');
+  values ('SRPRNAG','22','srpRNA Gene');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
   values ('TSCRIPTREGREGION','22','Transcript Regulatory Region');
@@ -47,16 +47,16 @@ insert into marker_type_group (mtgrp_name, mtgrp_comments)
  values ('TSCRIPTREGREGION', 'transcript region');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
- values ('SRPRNA', 'srp_rna');
+ values ('SRPRNAG', 'srp_rna');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
- values ('TRNA', 't_rna');
+ values ('TRNAG', 't_rna');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
- values ('RRNA', 'r_rna');
+ values ('RRNAG', 'r_rna');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
- values ('NCRNA','ncRNA');
+ values ('NCRNAG','ncRNA');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
  values ('HISTBS', 'histone binding site');
@@ -68,22 +68,22 @@ insert into marker_type_group (mtgrp_name, mtgrp_comments)
  values ('CPGISLAND', 'cpg_island');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
- values ('LNCRNA', 'lnc_rna');
+ values ('LNCRNAG', 'lnc_rna');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
- values ('LINCRNA', 'li_rna');
+ values ('LINCRNAG', 'li_rna');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
- values ('MIRNA', 'mi_rna');
+ values ('MIRNAG', 'mi_rna');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
- values ('PIRNA', 'pi_rna');
+ values ('PIRNAG', 'pi_rna');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
- values ('SCRNA', 'sc_rna');
+ values ('SCRNAG', 'sc_rna');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
- values ('SNORNA', 'sno_rna');
+ values ('SNORNAG', 'sno_rna');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
  values ('ENGINEERED_REGION', 'Group containing engineered regions.');
@@ -129,7 +129,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_home_zdb_id_column,
         zobjtype_is_data,
         zobjtype_is_source)
- values ('LNCRNA',current,'marker','marker','mrkr_zdb_id','t','f');
+ values ('LNCRNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
 create sequence lncrna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
@@ -140,7 +140,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_home_zdb_id_column,
         zobjtype_is_data,
         zobjtype_is_source)
- values ('LINCRNA',current,'marker','marker','mrkr_zdb_id','t','f');
+ values ('LINCRNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
 create sequence lincrna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
@@ -151,7 +151,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_home_zdb_id_column,
         zobjtype_is_data,
         zobjtype_is_source)
- values ('MIRNA',current,'marker','marker','mrkr_zdb_id','t','f');
+ values ('MIRNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
 create sequence mirna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
@@ -162,7 +162,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_home_zdb_id_column,
         zobjtype_is_data,
         zobjtype_is_source)
- values ('PIRNA',current,'marker','marker','mrkr_zdb_id','t','f');
+ values ('PIRNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
 create sequence pirna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
@@ -173,7 +173,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_home_zdb_id_column,
         zobjtype_is_data,
         zobjtype_is_source)
- values ('RRNA',current,'marker','marker','mrkr_zdb_id','t','f');
+ values ('RRNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
 create sequence rrna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
@@ -184,7 +184,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_home_zdb_id_column,
         zobjtype_is_data,
         zobjtype_is_source)
- values ('SNORNA',current,'marker','marker','mrkr_zdb_id','t','f');
+ values ('SNORNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
 create sequence snorna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
@@ -195,7 +195,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_home_zdb_id_column,
         zobjtype_is_data,
         zobjtype_is_source)
- values ('SCRNA',current,'marker','marker','mrkr_zdb_id','t','f');
+ values ('SCRNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
 create sequence scrna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
@@ -206,7 +206,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_home_zdb_id_column,
         zobjtype_is_data,
         zobjtype_is_source)
- values ('TRNA',current,'marker','marker','mrkr_zdb_id','t','f');
+ values ('TRNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
 create sequence trna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
@@ -217,7 +217,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_home_zdb_id_column,
         zobjtype_is_data,
         zobjtype_is_source)
- values ('NCRNA',current,'marker','marker','mrkr_zdb_id','t','f');
+ values ('NCRNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
 create sequence ncrna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
@@ -228,7 +228,7 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_home_zdb_id_column,
         zobjtype_is_data,
         zobjtype_is_source)
- values ('SRPRNA',current,'marker','marker','mrkr_zdb_id','t','f');
+ values ('SRPRNAG',current,'marker','marker','mrkr_zdb_id','t','f');
 
 create sequence srprna_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
@@ -239,44 +239,44 @@ values ('HISTBS','NONTSCRBD_REGIONS');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('LNCRNA','GENEDOM');
+values ('LNCRNAG','GENEDOM');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('LINCRNA','GENEDOM');
+values ('LINCRNAG','GENEDOM');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('MIRNA','GENEDOM');
+values ('MIRNAG','GENEDOM');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('SRPRNA','GENEDOM');
+values ('SRPRNAG','GENEDOM');
 
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('PIRNA','GENEDOM');
+values ('PIRNAG','GENEDOM');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('SCRNA','GENEDOM');
+values ('SCRNAG','GENEDOM');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('SNORNA','GENEDOM');
+values ('SNORNAG','GENEDOM');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('TRNA','GENEDOM');
+values ('TRNAG','GENEDOM');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('NCRNA','GENEDOM');
+values ('NCRNAG','GENEDOM');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('RRNA','GENEDOM');
+values ('RRNAG','GENEDOM');
 
 update marker_relationship_type 
  set mreltype_mrkr_type_group_1 = 'GENEDOM_PROD_PROTEIN'
@@ -322,78 +322,78 @@ where mreltype_name = 'gene produces transcript';
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('LNCRNA','SEARCH_MKSEG');
+values ('LNCRNAG','SEARCH_MKSEG');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('LINCRNA','SEARCH_MKSEG');
+values ('LINCRNAG','SEARCH_MKSEG');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('NCRNA','SEARCH_MKSEG');
+values ('NCRNAG','SEARCH_MKSEG');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('MIRNA','SEARCH_MKSEG');
+values ('MIRNAG','SEARCH_MKSEG');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('PIRNA','SEARCH_MKSEG');
+values ('PIRNAG','SEARCH_MKSEG');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('SCRNA','SEARCH_MKSEG');
-
-
-insert into marker_type_group_member(mtgrpmem_mrkr_type,
-    mtgrpmem_mrkr_type_group)
-values ('SNORNA','SEARCH_MKSEG');
-
-insert into marker_type_group_member(mtgrpmem_mrkr_type,
-    mtgrpmem_mrkr_type_group)
-values ('TRNA','SEARCH_MKSEG');
-
-insert into marker_type_group_member(mtgrpmem_mrkr_type,
-    mtgrpmem_mrkr_type_group)
-values ('RRNA','SEARCH_MKSEG');
+values ('SCRNAG','SEARCH_MKSEG');
 
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('LNCRNA','GENEDOM_EFG_REGION_K');
+values ('SNORNAG','SEARCH_MKSEG');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('LINCRNA','GENEDOM_EFG_REGION_K');
+values ('TRNAG','SEARCH_MKSEG');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('NCRNA','GENEDOM_EFG_REGION_K');
-
-insert into marker_type_group_member(mtgrpmem_mrkr_type,
-    mtgrpmem_mrkr_type_group)
-values ('MIRNA','GENEDOM_EFG_REGION_K');
-
-insert into marker_type_group_member(mtgrpmem_mrkr_type,
-    mtgrpmem_mrkr_type_group)
-values ('PIRNA','GENEDOM_EFG_REGION_K');
-
-insert into marker_type_group_member(mtgrpmem_mrkr_type,
-    mtgrpmem_mrkr_type_group)
-values ('SCRNA','GENEDOM_EFG_REGION_K');
+values ('RRNAG','SEARCH_MKSEG');
 
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('SNORNA','GENEDOM_EFG_REGION_K');
+values ('LNCRNAG','GENEDOM_EFG_REGION_K');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('TRNA','GENEDOM_EFG_REGION_K');
+values ('LINCRNAG','GENEDOM_EFG_REGION_K');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('RRNA','GENEDOM_EFG_REGION_K');
+values ('NCRNAG','GENEDOM_EFG_REGION_K');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('MIRNAG','GENEDOM_EFG_REGION_K');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('PIRNAG','GENEDOM_EFG_REGION_K');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('SCRNAG','GENEDOM_EFG_REGION_K');
+
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('SNORNAG','GENEDOM_EFG_REGION_K');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('TRNAG','GENEDOM_EFG_REGION_K');
+
+insert into marker_type_group_member(mtgrpmem_mrkr_type,
+    mtgrpmem_mrkr_type_group)
+values ('RRNAG','GENEDOM_EFG_REGION_K');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
@@ -413,7 +413,7 @@ values ('CNCREGION','SEARCH_MKSEG');*/
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('SRPRNA','SEARCH_MKSEG');
+values ('SRPRNAG','SEARCH_MKSEG');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)

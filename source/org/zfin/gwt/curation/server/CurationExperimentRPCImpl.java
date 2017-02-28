@@ -28,6 +28,7 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.PhenotypeExperiment;
@@ -65,7 +66,6 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
     private static MutantRepository mutantRep = RepositoryFactory.getMutantRepository();
     private static PhenotypeRepository phenotypeRep = RepositoryFactory.getPhenotypeRepository();
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
-    private CurationFilterRPCImpl curationFilterRPC = new CurationFilterRPCImpl();
 
     public List<MarkerDTO> getGenes(String pubID) throws PublicationNotFoundException {
 
@@ -189,10 +189,55 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         return assayDtos;
     }
 
-    @Override
-    public List<FishDTO> getFishList(String publicationID) {
-        return curationFilterRPC.createFishList(publicationID);
+    // Will be cached
+    private static List<FishDTO> wildtypeFishList;
+
+    public List<FishDTO> getWildTypeFishList() {
+        if (wildtypeFishList != null)
+            return wildtypeFishList;
+
+        List<FishDTO> fishDTOList = new ArrayList<>();
+        List<Fish> wildtypeList = pubRepository.getWildtypeFish();
+        for (Fish wFish : wildtypeList) {
+            FishDTO fishy = DTOConversionService.convertToFishDtoFromFish(wFish, true);
+            fishDTOList.add(fishy);
+        }
+        wildtypeFishList = fishDTOList;
+        return fishDTOList;
     }
+
+    // THe presentation elements - empty fish records indicating a divider - should be removed here
+    // and go into the GWT code.
+    public List<FishDTO> getFishList(String publicationID) {
+        List<FishDTO> fishDTOList = new ArrayList<>();
+        Fish wtFish = pubRepository.getFishByHandle("WT");
+        FishDTO fish = DTOConversionService.convertToFishDtoFromFish(wtFish, true);
+        fishDTOList.add(fish);
+        fish = new FishDTO();
+        fish.setZdbID(null);
+        fish.setName("---------");
+        fish.setHandle("---------");
+        fishDTOList.add(fish);
+        List<Fish> fishList = pubRepository.getNonWTFishByPublication(publicationID);
+        for (Fish nonWTFish : fishList) {
+            if (nonWTFish.getHandle().equals("WT"))
+                continue;
+            FishDTO fishy = DTOConversionService.convertToFishDtoFromFish(nonWTFish, true);
+            fishDTOList.add(fishy);
+        }
+        FishDTO separator = new FishDTO();
+        separator.setZdbID(null);
+        separator.setName("---------");
+        separator.setHandle("---------");
+        fishDTOList.add(separator);
+        List<Fish> wildtypeList = pubRepository.getWildtypeFish();
+        for (Fish wFish : wildtypeList) {
+            FishDTO fishy = DTOConversionService.convertToFishDtoFromFish(wFish, true);
+            fishDTOList.add(fishy);
+        }
+        return fishDTOList;
+    }
+
 
     public List<GenotypeDTO> getGenotypes(String publicationID) {
         List<GenotypeDTO> genotypes = new ArrayList<>();

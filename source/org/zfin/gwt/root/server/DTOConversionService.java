@@ -1044,6 +1044,10 @@ public class DTOConversionService {
 
     // Shallow means: do not populate synonym and subset collections
     public static TermDTO convertToTermDTO(GenericTerm term, boolean shallow) {
+        return convertToTermDTO(term, shallow, false);
+    }
+
+    public static TermDTO convertToTermDTO(GenericTerm term, boolean shallow, boolean supershallow) {
         if (term == null) {
             return null;
         }
@@ -1058,7 +1062,7 @@ public class DTOConversionService {
         if (!shallow)
             dto.setAliases(convertToAliasDTO(term.getAliases()));
 
-        if (term.getOntology() == Ontology.ANATOMY) {
+        if (!supershallow && term.getOntology() == Ontology.ANATOMY) {
             DevelopmentStage startStage = OntologyService.getStartStageForTerm(term);
             dto.setStartStage(convertToStageDTO(startStage));
             DevelopmentStage endStage = OntologyService.getEndStageForTerm(term);
@@ -1505,13 +1509,21 @@ public class DTOConversionService {
     }
 
     public static EntityDTO convertToEntityDTO(PostComposedEntity entity) {
+        return convertToEntityDTO(entity, false);
+    }
+
+    public static EntityDTO convertToEntityDTO(PostComposedEntity entity, boolean shallow) {
+        return convertToEntityDTO(entity, shallow, false);
+    }
+
+    public static EntityDTO convertToEntityDTO(PostComposedEntity entity, boolean shallow, boolean superShallow) {
         if (entity == null) {
             return null;
         }
 
         EntityDTO dto = new EntityDTO();
-        dto.setSuperTerm(convertToTermDTO(entity.getSuperterm()));
-        dto.setSubTerm(convertToTermDTO(entity.getSubterm()));
+        dto.setSuperTerm(convertToTermDTO(entity.getSuperterm(), shallow, superShallow));
+        dto.setSubTerm(convertToTermDTO(entity.getSubterm(), shallow, superShallow));
         return dto;
     }
 
@@ -1533,8 +1545,8 @@ public class DTOConversionService {
     public static ExpressedTermDTO convertToExpressedTermDTO(ExpressionStructure expressionStructure) {
         ExpressedTermDTO expressedDTO = new ExpressedTermDTO();
         EntityDTO entity = new EntityDTO();
-        entity.setSuperTerm(DTOConversionService.convertToTermDTO(expressionStructure.getSuperterm()));
-        entity.setSubTerm(DTOConversionService.convertToTermDTO(expressionStructure.getSubterm()));
+        entity.setSuperTerm(DTOConversionService.convertToTermDTO(expressionStructure.getSuperterm(), true));
+        entity.setSubTerm(DTOConversionService.convertToTermDTO(expressionStructure.getSubterm(), true));
         expressedDTO.setEntity(entity);
         if (expressionStructure.getEapQualityTerm() != null) {
             expressedDTO.setQualityTerm(convertToEapQualityTermDTO(expressionStructure));
@@ -1902,9 +1914,13 @@ public class DTOConversionService {
     }
 
     public static ExpressedTermDTO convertToExpressedTermDTO(ExpressionResult2 result) {
+        return convertToExpressedTermDTO(result, false);
+    }
+
+    public static ExpressedTermDTO convertToExpressedTermDTO(ExpressionResult2 result, boolean shallow) {
         ExpressedTermDTO dto = new ExpressedTermDTO();
         dto.setExpressionFound(result.isExpressionFound());
-        dto.setEntity(convertToEntityDTO(result.getEntity()));
+        dto.setEntity(convertToEntityDTO(result.getEntity(), shallow, true));
         dto.setId(result.getID());
         List<EapQualityTermDTO> dtoList = new ArrayList<>();
         if (result.getPhenotypeTermSet() != null) {

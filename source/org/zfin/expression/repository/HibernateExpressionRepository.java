@@ -681,6 +681,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         String hql = "select efs from ExpressionFigureStage as efs "
                 + "       left join efs.expressionExperiment.gene as gene "
+                + "       left join fetch efs.startStage "
+                + "       left join fetch efs.endStage "
                 + "       join efs.expressionExperiment.fishExperiment.fish as fish "
                 + "       where efs.expressionExperiment.publication.zdbID = :pubID ";
         if (geneZdbID != null) {
