@@ -407,9 +407,11 @@ public class ProfileService {
     public static List<String> getCountries(final Locale inLocale) {
         String[] countryCodes = Locale.getISOCountries();
         List<String> countries = new ArrayList<String>(countryCodes.length);
+        countries.add("");
         for (String countryCode : countryCodes) {
             Locale obj = new Locale("", countryCode);
-            countries.add(obj.getDisplayCountry(inLocale));
+          //  countries.add(obj.getDisplayCountry(inLocale));
+            countries.add(obj.getCountry());
 
         }
         Collections.sort(countries);
