@@ -92,7 +92,7 @@ insert into marker_type_group (mtgrp_name, mtgrp_comments)
  values ('GENEDOM_PROD_PROTEIN', 'Group containing transcribed elements that produce proteins.');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
- values ('NONTSCRBD_REGIONS','Group containing non-transcribed regions.');
+ values ('NONTSCRBD_REGION', 'Group containing nontranscribed elements');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
@@ -110,16 +110,14 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
  values ('TSCRIPT','GENEDOM_PROD_PROTEIN');
 
-
-
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
 
-values ('TSCRIPTREGREGION','NONTSCRBD_REGIONS');
+values ('TSCRIPTREGREGION','NONCODINGRNA');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('PROTBS','NONTSCRBD_REGIONS');
+values ('PROTBS','NONCODINGRNA');
 
 
 insert into zdb_object_type (zobjtype_name,
@@ -233,9 +231,9 @@ insert into zdb_object_type (zobjtype_name,
 create sequence srprnag_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 
 
-insert into marker_type_group_member(mtgrpmem_mrkr_type,
-    mtgrpmem_mrkr_type_group)
-values ('HISTBS','NONTSCRBD_REGIONS');
+--insert into marker_type_group_member(mtgrpmem_mrkr_type,
+ --   mtgrpmem_mrkr_type_group)
+--values ('HISTBS','NONCODINGRNA');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
@@ -283,29 +281,8 @@ update marker_relationship_type
 where mreltype_name = 'gene product recognized by antibody'; 
 
 update marker_relationship_type 
- set mreltype_mrkr_type_group_1 = 'NONTSCRBD_REGIONS'
-where mreltype_name = 'clone contains gene'; 
-
-update marker_relationship_type 
  set mreltype_mrkr_type_group_1 = 'GENEDOM_PROD_PROTEIN'
 where mreltype_name = 'gene encodes small segment'; 
-
-update marker_relationship_type 
- set mreltype_mrkr_type_group_1 = 'NONTSCRBD_REGIONS'
-where mreltype_name = 'gene contains small segment'; 
-
-update marker_relationship_type 
- set mreltype_mrkr_type_group_1 = 'NONTSCRBD_REGIONS'
-where mreltype_name = 'gene has artifact'; 
-
-update marker_relationship_type 
- set mreltype_mrkr_type_group_1 = 'NONTSCRBD_REGIONS'
-where mreltype_name = 'gene hybridized by small segment'; 
-
-update marker_relationship_type 
- set mreltype_mrkr_type_group_1 = 'NONTSCRBD_REGIONS'
-where mreltype_name = 'knockdown reagen targets gene'; 
-
 
 update marker_relationship_type 
  set mreltype_mrkr_type_group_1 = 'GENEDOM_PROD_PROTEIN'
@@ -314,6 +291,15 @@ where mreltype_name = 'transcript targets gene';
 update marker_relationship_type 
  set mreltype_mrkr_type_group_1 = 'GENEDOM_PROD_PROTEIN'
 where mreltype_name = 'gene produces transcript'; 
+
+insert into marker_relationship_type (mreltype_mrkr_type_group_1, mreltype_mrkr_type_group_2, mreltype_name, mreltype_1_to_2_comments, mreltype_2_to_1_comments)
+ values ('NONTSCRBD_REGION','GENEDOM','region regulates region','regulates','regulated by');
+
+insert into marker_relationship_type (mreltype_mrkr_type_group_1, mreltype_mrkr_type_group_2, mreltype_name, mreltype_1_to_2_comments, mreltype_2_to_1_comments)
+ values ('GENEDOM','NONTSCRBD_REGION','region regulates region','regulates','regulated by');
+
+insert into marker_relationship_type (mreltype_mrkr_type_group_1, mreltype_mrkr_type_group_2, mreltype_name, mreltype_1_to_2_comments, mreltype_2_to_1_comments)
+ values ('GENEDOM','GENEDOM','region regulates region','regulates','regulated by');
 
 
 --update marker_relationship_type 
