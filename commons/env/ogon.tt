@@ -18,7 +18,7 @@
 <!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	cmpich\@zfin.org
 <!--|DB_LOCALE|-->	en_US.utf8
-<!--|DB_NAME|-->	ogondb
+<!--|DB_NAME|-->	ogodb
 <!--|DB_OWNER|-->	cmpich
 <!--|DEFAULT_EMAIL|-->	cmpich\@zfin.org
 <!--|DOMAIN_NAME|-->	ogon.zfin.org
