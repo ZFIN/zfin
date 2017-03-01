@@ -113,11 +113,11 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
 
-values ('TSCRIPTREGREGION','NONCODINGRNA');
+values ('TSCRIPTREGREGION','NONTSCRBD_REGION');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('PROTBS','NONCODINGRNA');
+values ('PROTBS','NONTSCRBD_REGION');
 
 
 insert into zdb_object_type (zobjtype_name,
@@ -293,13 +293,13 @@ update marker_relationship_type
 where mreltype_name = 'gene produces transcript'; 
 
 insert into marker_relationship_type (mreltype_mrkr_type_group_1, mreltype_mrkr_type_group_2, mreltype_name, mreltype_1_to_2_comments, mreltype_2_to_1_comments)
- values ('NONTSCRBD_REGION','GENEDOM','region regulates region','regulates','regulated by');
+ values ('NONTSCRBD_REGION','GENEDOM','region regulates gene','regulates','regulated by');
 
 insert into marker_relationship_type (mreltype_mrkr_type_group_1, mreltype_mrkr_type_group_2, mreltype_name, mreltype_1_to_2_comments, mreltype_2_to_1_comments)
- values ('GENEDOM','NONTSCRBD_REGION','region regulates region','regulates','regulated by');
+ values ('GENEDOM','NONTSCRBD_REGION','gene regulates region','regulates','regulated by');
 
 insert into marker_relationship_type (mreltype_mrkr_type_group_1, mreltype_mrkr_type_group_2, mreltype_name, mreltype_1_to_2_comments, mreltype_2_to_1_comments)
- values ('GENEDOM','GENEDOM','region regulates region','regulates','regulated by');
+ values ('GENEDOM','GENEDOM','gene regulates gene','regulates','regulated by');
 
 
 --update marker_relationship_type 
