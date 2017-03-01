@@ -233,7 +233,7 @@ create sequence srprnag_seq increment by 1 maxvalue 9223372036854775807 minvalue
 
 --insert into marker_type_group_member(mtgrpmem_mrkr_type,
  --   mtgrpmem_mrkr_type_group)
---values ('HISTBS','NONCODINGRNA');
+--values ('HISTBS','NONTSCRBD_REGION');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
