@@ -14,6 +14,7 @@ public enum Ontology implements Serializable {
     STAGE("zebrafish_stages", "Zebrafish Stage Ontology", false, "ZFS:"),
     CHEBI("chebi_ontology","Chebi",false,"CHEBI:"),
     DISEASE_ONTOLOGY("disease_ontology", "Human Disease", false, "DOID:"),
+    ECO("eco", "Evidence Ontology", false, "ECO:"),
     GO_ONTOLOGY("gene_ontology", "Full Gene Ontology: Default namespace", true),
     // full GO ontology
     GO("cellular_component,molecular_function,biological_process", "Gene Ontology", true, "GO:"),
@@ -164,6 +165,7 @@ public enum Ontology implements Serializable {
                 Ontology.ZECO,
                 Ontology.ZECO_TAXONONY,
                 Ontology.CHEBI,
+                Ontology.ECO,
                 Ontology.SO};
     }
 

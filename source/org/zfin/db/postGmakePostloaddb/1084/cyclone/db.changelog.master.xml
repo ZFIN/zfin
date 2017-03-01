@@ -11,5 +11,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1084/cyclone/14985_setup.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1084/cyclone/14985_load.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1084/cyclone/14985.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1084/cyclone/14901.sql"/>
 
 </databaseChangeLog>
