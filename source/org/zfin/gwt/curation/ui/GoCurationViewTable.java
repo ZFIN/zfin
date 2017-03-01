@@ -9,10 +9,12 @@ import org.zfin.gwt.lookup.ui.LookupPopup;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.AbstractGoViewTable;
 import org.zfin.gwt.root.ui.GoActionComposite;
 import org.zfin.gwt.root.ui.MarkerEditCallBack;
 import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
+import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.List;
 
@@ -25,12 +27,20 @@ public class GoCurationViewTable extends AbstractGoViewTable {
     private String geneFilter = GENE_FILTER_ALL;
 
     public void setValues() {
-        MarkerGoEvidenceRPCService.App.getInstance().getMarkerGoTermEvidencesForPub(zdbID,
+        AppUtils.fireAjaxCall(GoCurationModule.getModuleInfo(), AjaxCallEventType.GET_MARKER_GO_LIST_START);
+        MarkerGoEvidenceServiceGWT.getMarkerGoTermEvidencesForPub(zdbID,
                 new MarkerEditCallBack<List<GoEvidenceDTO>>("Failed to find pub: " + zdbID + " ") {
                     @Override
                     public void onSuccess(List<GoEvidenceDTO> result) {
+                        AppUtils.fireAjaxCall(GoCurationModule.getModuleInfo(), AjaxCallEventType.GET_MARKER_GO_LIST_STOP);
                         goEvidences = result;
                         refreshGUI();
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        super.onFailure(throwable);
+                        AppUtils.fireAjaxCall(GoCurationModule.getModuleInfo(), AjaxCallEventType.GET_MARKER_GO_LIST_STOP);
                     }
                 });
     }

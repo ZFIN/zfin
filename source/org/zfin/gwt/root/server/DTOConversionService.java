@@ -725,37 +725,6 @@ public class DTOConversionService {
             featureDTO.setLineNumber(feature.getLineNumber());
         }
 
-        FeatureAssay ftrAssay = feature.getFeatureAssay();
-        if (ftrAssay != null) {
-            if (feature.getFeatureAssay().getMutagee() != null) {
-                featureDTO.setMutagee(feature.getFeatureAssay().getMutagee().toString());
-            }
-            if (feature.getFeatureAssay().getMutagen() != null) {
-                featureDTO.setMutagen(feature.getFeatureAssay().getMutagen().toString());
-            }
-        }
-
-        Set<FeatureNote> featureNotes = feature.getExternalNotes();
-        if (CollectionUtils.isNotEmpty(featureNotes)) {
-            List<NoteDTO> curatorNoteDTOs = new ArrayList<>();
-            for (FeatureNote dataNote : featureNotes) {
-                NoteDTO noteDTO = new NoteDTO(dataNote.getZdbID(), feature.getZdbID(), NoteEditMode.PUBLIC, DTOConversionService.unescapeString(dataNote.getNote()));
-                noteDTO.setPublicationDTO(convertToPublicationDTO(dataNote.getPublication()));
-                curatorNoteDTOs.add(noteDTO);
-            }
-            featureDTO.setPublicNoteList(curatorNoteDTOs);
-        }
-
-        Set<DataNote> curatorNotes = feature.getDataNotes();
-        if (CollectionUtils.isNotEmpty(curatorNotes)) {
-            List<CuratorNoteDTO> curatorNoteDTOs = new ArrayList<>();
-            for (DataNote dataNote : curatorNotes) {
-                CuratorNoteDTO noteDTO = new CuratorNoteDTO(dataNote.getZdbID(), dataNote.getDataZdbID(), DTOConversionService.unescapeString(dataNote.getNote()));
-                noteDTO.setCurator(convertToPersonDTO(dataNote.getCurator()));
-                curatorNoteDTOs.add(noteDTO);
-            }
-            featureDTO.setCuratorNotes(curatorNoteDTOs);
-        }
 
         featureDTO.setDominant(feature.getDominantFeature());
         featureDTO.setKnownInsertionSite(feature.getKnownInsertionSite());
@@ -764,29 +733,61 @@ public class DTOConversionService {
         if (featurePrefix != null) {
             featureDTO.setLabPrefix(featurePrefix.getPrefixString());
         }
-        Organization labByFeature = RepositoryFactory.getFeatureRepository().getLabByFeature(feature);
-        if (labByFeature != null) {
-            featureDTO.setLabOfOrigin(labByFeature.getZdbID());
-            logger.debug("Feature does not have a lab: " + feature.getAbbreviation() + " " + feature.getZdbID());
-        }
-
-        if (feature.getAliases() != null) {
-            featureDTO.setFeatureAliases(new ArrayList<>(unescapeStrings(FeatureService.getFeatureAliases(feature))));
-        }
-        if (feature.getDbLinks() != null) {
-            featureDTO.setFeatureSequences(new ArrayList<>(unescapeStrings(FeatureService.getFeatureSequences(feature))));
-        }
-
-        if (feature.getFeatureMarkerRelations() != null) {
-            for (FeatureMarkerRelationship relationship : feature.getFeatureMarkerRelations()) {
-                if (relationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF)) {
-                    featureDTO.setDisplayNameForGenotypeBase(relationship.getMarker().getAbbreviation());
-                    featureDTO.setDisplayNameForGenotypeSuperior(feature.getAbbreviation());
+        if (includeDetails) {
+            FeatureAssay ftrAssay = feature.getFeatureAssay();
+            if (ftrAssay != null) {
+                if (feature.getFeatureAssay().getMutagee() != null) {
+                    featureDTO.setMutagee(feature.getFeatureAssay().getMutagee().toString());
                 }
+                if (feature.getFeatureAssay().getMutagen() != null) {
+                    featureDTO.setMutagen(feature.getFeatureAssay().getMutagen().toString());
+                }
+            }
+
+            Set<FeatureNote> featureNotes = feature.getExternalNotes();
+            if (CollectionUtils.isNotEmpty(featureNotes)) {
+                List<NoteDTO> curatorNoteDTOs = new ArrayList<>();
+                for (FeatureNote dataNote : featureNotes) {
+                    NoteDTO noteDTO = new NoteDTO(dataNote.getZdbID(), feature.getZdbID(), NoteEditMode.PUBLIC, DTOConversionService.unescapeString(dataNote.getNote()));
+                    noteDTO.setPublicationDTO(convertToPublicationDTO(dataNote.getPublication()));
+                    curatorNoteDTOs.add(noteDTO);
+                }
+                featureDTO.setPublicNoteList(curatorNoteDTOs);
+            }
+
+            Set<DataNote> curatorNotes = feature.getDataNotes();
+            if (CollectionUtils.isNotEmpty(curatorNotes)) {
+                List<CuratorNoteDTO> curatorNoteDTOs = new ArrayList<>();
+                for (DataNote dataNote : curatorNotes) {
+                    CuratorNoteDTO noteDTO = new CuratorNoteDTO(dataNote.getZdbID(), dataNote.getDataZdbID(), DTOConversionService.unescapeString(dataNote.getNote()));
+                    noteDTO.setCurator(convertToPersonDTO(dataNote.getCurator()));
+                    curatorNoteDTOs.add(noteDTO);
+                }
+                featureDTO.setCuratorNotes(curatorNoteDTOs);
+            }
+
+            Organization labByFeature = RepositoryFactory.getFeatureRepository().getLabByFeature(feature);
+            if (labByFeature != null) {
+                featureDTO.setLabOfOrigin(labByFeature.getZdbID());
+                logger.debug("Feature does not have a lab: " + feature.getAbbreviation() + " " + feature.getZdbID());
+            }
+            if (feature.getAliases() != null) {
+                featureDTO.setFeatureAliases(new ArrayList<>(unescapeStrings(FeatureService.getFeatureAliases(feature))));
+            }
+            if (feature.getDbLinks() != null) {
+                featureDTO.setFeatureSequences(new ArrayList<>(unescapeStrings(FeatureService.getFeatureSequences(feature))));
             }
         }
 
         if (includeDetails) {
+            if (feature.getFeatureMarkerRelations() != null) {
+                for (FeatureMarkerRelationship relationship : feature.getFeatureMarkerRelations()) {
+                    if (relationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF)) {
+                        featureDTO.setDisplayNameForGenotypeBase(relationship.getMarker().getAbbreviation());
+                        featureDTO.setDisplayNameForGenotypeSuperior(feature.getAbbreviation());
+                    }
+                }
+            }
             featureDTO.setProteinChangeDTO(convertToMutationDetailProteinDTO(feature.getFeatureProteinMutationDetail()));
             featureDTO.setDnaChangeDTO(convertToMutationDetailDnaDTO(feature.getFeatureDnaMutationDetail()));
             if (CollectionUtils.isNotEmpty(feature.getFeatureTranscriptMutationDetailSet())) {
@@ -1072,7 +1073,7 @@ public class DTOConversionService {
         // set the ontology section here
         Ontology ontology = term.getOntology();
         // ToDo: generalize this better...
-        if (ontology == Ontology.QUALITY) {
+        if (!supershallow && ontology == Ontology.QUALITY) {
             ontology = RepositoryFactory.getOntologyRepository().getProcessOrPhysicalObjectQualitySubOntologyForTerm(term);
         }
         if (ontology == Ontology.MPATH) {
@@ -1092,6 +1093,10 @@ public class DTOConversionService {
     }
 
     public static TermDTO convertQualityToTermDTO(PhenotypeStructure structure) {
+        return convertQualityToTermDTO(structure, false);
+    }
+
+    public static TermDTO convertQualityToTermDTO(PhenotypeStructure structure, boolean shallow) {
         if (structure == null) {
             return null;
         }
@@ -1111,7 +1116,9 @@ public class DTOConversionService {
                 ontology = Ontology.QUALITY_QUALITIES;
             }
         }
-        dto.setSubsets(convertToSubsetDTO(term.getSubsets()));
+        if (!shallow) {
+            dto.setSubsets(convertToSubsetDTO(term.getSubsets()));
+        }
         OntologyDTO ontologyDTO = convertToOntologyDTO(ontology);
         dto.setOntology(ontologyDTO);
         dto.setOboID(term.getOboID());
@@ -1266,18 +1273,22 @@ public class DTOConversionService {
     public static PhenotypePileStructureDTO convertToPhenotypePileStructureDTO(PhenotypeStructure structure) {
         PhenotypePileStructureDTO dto = new PhenotypePileStructureDTO();
         dto.setZdbID(structure.getZdbID());
-        dto.setPhenotypeTerm(convertToPhenotypeTermDTO(structure));
+        dto.setPhenotypeTerm(convertToPhenotypeTermDTO(structure, true));
         dto.setCreator(structure.getPerson().getShortName());
         dto.setDate(structure.getDate());
         return dto;
     }
 
     public static PhenotypeStatementDTO convertToPhenotypeTermDTO(PhenotypeStructure structure) {
+        return convertToPhenotypeTermDTO(structure, false);
+    }
+
+    public static PhenotypeStatementDTO convertToPhenotypeTermDTO(PhenotypeStructure structure, boolean shallow) {
         PhenotypeStatementDTO phenotypeTerm = new PhenotypeStatementDTO();
-        TermDTO quality = convertQualityToTermDTO(structure);
+        TermDTO quality = convertQualityToTermDTO(structure, true);
         phenotypeTerm.setQuality(quality);
-        phenotypeTerm.setEntity(convertToEntityDTO(structure.getEntity()));
-        phenotypeTerm.setRelatedEntity(convertToEntityDTO(structure.getRelatedEntity()));
+        phenotypeTerm.setEntity(convertToEntityDTO(structure.getEntity(), shallow, shallow));
+        phenotypeTerm.setRelatedEntity(convertToEntityDTO(structure.getRelatedEntity(), shallow, shallow));
         phenotypeTerm.setTag(structure.getTag().toString());
         return phenotypeTerm;
     }
@@ -1981,7 +1992,7 @@ public class DTOConversionService {
 
         List<ExpressedTermDTO> termStrings = new ArrayList<>();
         for (ExpressionResult2 result : efs.getExpressionResultSet()) {
-            termStrings.add(DTOConversionService.convertToExpressedTermDTO(result));
+            termStrings.add(DTOConversionService.convertToExpressedTermDTO(result, true));
         }
         Collections.sort(termStrings);
         dto.setExpressedTerms(termStrings);

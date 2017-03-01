@@ -7,6 +7,8 @@ import org.zfin.AbstractDatabaseTest;
 import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
+import org.zfin.gwt.root.dto.GoEvidenceDTO;
+import org.zfin.gwt.root.server.MarkerGoEvidenceRPCServiceImpl;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.InferenceGroupMember;
 import org.zfin.mutant.MarkerGoTermEvidence;
@@ -62,7 +64,7 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getMarkerGoTermEvidencesForPubZdbID() {
-        String pubId = "ZDB-PUB-000309-33";
+        String pubId = "ZDB-PUB-160828-8";
         List<MarkerGoTermEvidence> evidences = markerGoTermEvidenceRepository.getMarkerGoTermEvidencesForPubZdbID(pubId);
         assertNotNull(evidences);
         logger.debug(evidences.size());
@@ -214,5 +216,12 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(markerGoTermEvidenceRepository.getFirstEvidenceForMarkerOntology(m, Ontology.GO_BP));
         assertNotNull(markerGoTermEvidenceRepository.getFirstEvidenceForMarkerOntology(m, Ontology.GO_MF));
         assertNotNull(markerGoTermEvidenceRepository.getFirstEvidenceForMarkerOntology(m, Ontology.GO_CC));
+    }
+
+    @Test
+    public void getMarkerGoEvidence(){
+        MarkerGoEvidenceRPCServiceImpl service = new MarkerGoEvidenceRPCServiceImpl();
+        List<GoEvidenceDTO> list = service.getMarkerGoTermEvidencesForPub("ZDB-PUB-160828-8");
+        assertNotNull(list);
     }
 }

@@ -9,7 +9,6 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.ui.CurationDiseaseRPC;
-import org.zfin.gwt.curation.ui.CurationExperimentRPC;
 import org.zfin.gwt.curation.ui.CurationFilterRPC;
 import org.zfin.gwt.curation.ui.PublicationNotFoundException;
 import org.zfin.gwt.root.dto.*;
@@ -107,7 +106,9 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
     public List<FeatureDTO> getFeatureValues(String publicationID) {
         List<Feature> features = featureRep.getFeaturesByPublication(publicationID);
         List<FeatureDTO> dtos = new ArrayList<>(10);
-        dtos.addAll(features.stream().map(DTOConversionService::convertToFeatureDTO).collect(Collectors.toList()));
+        dtos.addAll(features.stream().map(feature -> {
+            return DTOConversionService.convertToFeatureDTO(feature, false);
+        }).collect(Collectors.toList()));
         return dtos;
     }
 

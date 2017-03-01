@@ -2,7 +2,8 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
+import org.zfin.gwt.curation.event.CurationEvent;
+import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
@@ -104,6 +105,7 @@ public class GoCurationAddBox extends GoInlineCurationAddBox {
                 return;
             }
             working();
+            AppUtils.fireAjaxCall(GoCurationModule.getModuleInfo(), AjaxCallEventType.CREATE_MARKER_GO_START);
             MarkerGoEvidenceRPCService.App.getInstance().createMarkerGoTermEvidence(goEvidenceDTO,
                     new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:", this) {
                         @Override
@@ -115,11 +117,13 @@ public class GoCurationAddBox extends GoInlineCurationAddBox {
                                 revertGUI();
                             }
                             notWorking();
+                            AppUtils.fireAjaxCall(GoCurationModule.getModuleInfo(), AjaxCallEventType.CREATE_MARKER_GO_STOP);
                         }
 
                         @Override
                         public void onSuccess(final GoEvidenceDTO result) {
-                            fireChangeEvent(new RelatedEntityEvent<GoEvidenceDTO>(result));
+                            AppUtils.fireAjaxCall(GoCurationModule.getModuleInfo(), AjaxCallEventType.CREATE_MARKER_GO_STOP);
+                            AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.CREATE_MARKER_GO_EVIDENCE));
                             notWorking();
                             revertGUI();
                             fireEventSuccess();

@@ -51,7 +51,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
         for (Feature feature : featureList) {
             // do not include features that do not have a feature_marker_relationship
             if (CollectionUtils.isNotEmpty(feature.getFeatureMarkerRelations()))
-                featureDTOList.add(DTOConversionService.convertToFeatureDTO(feature));
+                featureDTOList.add(DTOConversionService.convertToFeatureDTO(feature, false));
         }
         return featureDTOList;
     }

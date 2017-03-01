@@ -429,7 +429,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         }
 
 
-        List<Feature> features = getFeatureRepository().getFeaturesForAttribution(publicationZdbID);
+        List<Feature> features = getFeatureRepository().getFeaturesByPublication(publicationZdbID);
         if (CollectionUtils.isNotEmpty(features)) {
             RelatedEntityDTO spacer = new RelatedEntityDTO();
             spacer.setName(AttributionType.FEATURE.toString());

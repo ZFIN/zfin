@@ -1,6 +1,5 @@
 package org.zfin.gwt.curation.server;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -35,7 +34,7 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
         List<ExpressionResult2> expressionResultList = getExpressionRepository().getPhenotypeFromExpressionsByFigureFish(experimentFilter.getPublicationID(),
                 figureID, experimentFilter.getFishID(), experimentFilter.getFeatureID());
         List<ExpressionPhenotypeExperimentDTO> phenotypeList = ExpressionService.createPhenotypeFromExpressions(expressionResultList);
-       Collections.sort(phenotypeList);
+        Collections.sort(phenotypeList);
         return phenotypeList;
     }
 
@@ -55,9 +54,9 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
             List<PhenotypeStatementDTO> termStrings = new ArrayList<>(5);
             for (PhenotypeStatement phenotype : phenotypeExperiment.getPhenotypeStatements()) {
                 PhenotypeStatementDTO termDto = new PhenotypeStatementDTO();
-                termDto.setEntity(DTOConversionService.convertToEntityDTO(phenotype.getEntity()));
-                termDto.setRelatedEntity(DTOConversionService.convertToEntityDTO(phenotype.getRelatedEntity()));
-                termDto.setQuality(DTOConversionService.convertToTermDTO(phenotype.getQuality()));
+                termDto.setEntity(DTOConversionService.convertToEntityDTO(phenotype.getEntity(), true, true));
+                termDto.setRelatedEntity(DTOConversionService.convertToEntityDTO(phenotype.getRelatedEntity(), true, true));
+                termDto.setQuality(DTOConversionService.convertToTermDTO(phenotype.getQuality(), true, true));
                 termDto.setTag(phenotype.getTag());
                 termDto.setId(phenotype.getId());
                 termStrings.add(termDto);
@@ -216,9 +215,9 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
         Publication publication = getPublicationRepository().getPublication(publicationID);
         if (publication.getCloseDate() != null)
             return false;
-        Collection<PhenotypeExperiment> mutants = getPhenotypeRepository().getMutantExpressionsByFigureFish(publicationID, null, null, null);
-        Collection<PhenotypeStructure> structures = getPhenotypeRepository().retrievePhenotypeStructures(publicationID);
-        return CollectionUtils.isNotEmpty(mutants) && CollectionUtils.isEmpty(structures);
+        boolean hasMutants = getPhenotypeRepository().hasMutantExpressions(publicationID);
+        boolean hasStructures = getPhenotypeRepository().hasPhenotypeStructures(publicationID);
+        return hasMutants && !hasStructures;
     }
 
     /**

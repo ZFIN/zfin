@@ -297,24 +297,15 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
     }
 
-    public List<FeatureDTO> getFeaturesForPub(String pubZdbId) {
-        Publication pub = pubRepository.getPublication(pubZdbId);
+    public List<FeatureDTO> getFeaturesForPub(String publicationId) {
         List<FeatureDTO> featureDTOs = new ArrayList<>();
-        List<Feature> features = featureRepository.getFeaturesForStandardAttribution(pub);
+        List<Feature> features = featureRepository.getFeaturesByPublication(publicationId);
         if (CollectionUtils.isNotEmpty(features)) {
             for (Feature f : features) {
-
-                featureDTOs.add(DTOConversionService.convertToFeatureDTO(f));
-
+                featureDTOs.add(DTOConversionService.convertToFeatureDTO(f, false));
             }
         }
-        Collections.sort(featureDTOs, new Comparator<FeatureDTO>() {
-            @Override
-            public int compare(FeatureDTO o1, FeatureDTO o2) {
-                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-            }
-        });
-
+        Collections.sort(featureDTOs, Comparator.comparing(o -> o.getName().toLowerCase()));
         return featureDTOs;
     }
 

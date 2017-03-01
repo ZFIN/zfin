@@ -100,10 +100,6 @@ public interface FeatureRepository {
 
     List<Feature> getFeaturesForStandardAttribution(Publication publication);
 
-    List<Feature> getFeatureForAttribution(String publicationZdbID);
-
-    List<Feature> getFeaturesForAttribution(String publicationZdbID);
-
     Feature getFeatureByAbbreviation(String featureAbbrev);
 
     String getFeatureByAbbreviationInTrackingTable(String featureAbbrev);
