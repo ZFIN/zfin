@@ -292,6 +292,7 @@ update marker_relationship_type
  set mreltype_mrkr_type_group_1 = 'GENEDOM_PROD_PROTEIN'
 where mreltype_name = 'gene produces transcript'; 
 
+
 --update marker_relationship_type 
 -- set mreltype_mrkr_type_group_2 = 'ENGINEERED_REGION'
 --where mreltype_name = 'contains engineered region'; 
