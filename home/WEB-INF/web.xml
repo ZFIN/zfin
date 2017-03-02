@@ -329,7 +329,7 @@
     <!--other sessions are validated via IP and the remember_me token and are valid for 4 days
      or the time in ZFIN_LOGIN_SECONDS -->
     <session-config>
-        <session-timeout>720</session-timeout>
+        <session-timeout>-1</session-timeout>
     </session-config>
 
     <!-- The Usual Welcome File List -->
