@@ -1,6 +1,68 @@
 --liquibase formatted sql
 --changeset sierra:newRegions
 
+alter table marker_type_group_member
+ drop constraint mtgrpmem_mrkr_type_group_foreign_key;
+
+drop index mtgrpmem_mrkr_type_foreign_key_index;
+
+alter table marker_relationship_type
+drop constraint mreltype_mrkr_type_group_2_foreign_key;
+
+alter table marker_relationship_type
+drop constraint mreltype_mrkr_type_group_1_foreign_key;
+
+drop index mreltype_mrkr_type_group_1_index;
+drop index mreltype_mrkr_type_group_2_index;
+
+alter table marker_type_group
+ modify (mtgrp_name varchar(60) not null constraint mtgrp_name_not_null);
+
+    
+alter table marker_type_group add constraint primary 
+    key (mtgrp_name) constraint marker_type_group_primary_key 
+     ;
+
+--create index mtgrpmem_mrkr_type_foreign_key_index 
+--    on marker_type_group_member (mtgrpmem_mrkr_type) 
+--    using btree  in idxdbs1;
+
+alter table marker_type_group_member 
+ modify (mtgrpmem_mrkr_type_group varchar(60) not null constraint mtgrpmem_mrkr_type_group_not_null);
+
+alter table marker_type_group_member add constraint 
+    (foreign key (mtgrpmem_mrkr_type_group) references marker_type_group constraint mtgrpmem_mrkr_type_group_foreign_key);
+
+
+
+alter table marker_relationship_type 
+ modify (mreltype_mrkr_type_group_1 varchar(60) not null constraint mreltype_mrkr_type_group_1_not_null);
+
+alter table marker_relationship_type 
+ modify (mreltype_mrkr_type_group_2 varchar(60) not null constraint mreltype_mrkr_type_group_2_not_null);
+
+create index mreltype_mrkr_type_group_1_index on marker_relationship_type (mreltype_mrkr_type_group_1) using 
+    btree  in idxdbs2;
+create index mreltype_mrkr_type_group_2_index on marker_relationship_type (mreltype_mrkr_type_group_2) using 
+    btree  in idxdbs2;
+
+alter table marker_relationship_type add constraint 
+    (foreign key (mreltype_mrkr_type_group_2) references
+    marker_type_group  constraint mreltype_mrkr_type_group_2_foreign_key);
+    
+alter table marker_relationship_type add constraint 
+    (foreign key (mreltype_mrkr_type_group_1) references 
+   marker_type_group  constraint mreltype_mrkr_type_group_1_foreign_key);
+
+
+alter table feature_marker_relationship_type
+  modify (fmreltype_mrkr_type_group varchar(60) not null constraint fmreltype_mrkr_type_group_not_null);
+
+
+alter table feature_marker_relationship_type add constraint 
+    (foreign key (fmreltype_mrkr_type_group) references marker_type_group  constraint fmreltype_ftr_type_group_mrkr_foreign_key);
+
+
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
   values ('LNCRNAG','2','LncRNA Gene');
 
@@ -41,10 +103,10 @@ insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_disp
   values ('SRPRNAG','22','srpRNA Gene');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('TSCRIPTREGREGION','22','Transcript Regulatory Region');
+  values ('TSCRIPTNREGREGION','22','Transcript Regulatory Region');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
- values ('TSCRIPTREGREGION', 'transcript region');
+ values ('TSCRIPTMREGREGION', 'Transcript Region');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
  values ('SRPRNAG', 'srp_rna');
@@ -113,7 +175,7 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
 
-values ('TSCRIPTREGREGION','NONTSCRBD_REGION');
+values ('TSCRIPTNREGREGION','NONTSCRBD_REGION');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
@@ -394,5 +456,5 @@ values ('SRPRNAG','SEARCH_MKSEG');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
-values ('TSCRIPTREGREGION','SEARCH_MKSEG');
+values ('TSCRIPTNREGREGION','SEARCH_MKSEG');
 
