@@ -126,6 +126,14 @@ update marker_relationship_type
 delete from marker_Type_group
  where mtgrp_name = 'REGION';
 
+update marker_relationship_type
+ set mreltype_mrkr_type_group_1 = 'GENEDOM_EFG_EREGION_K'
+ where mreltype_mrkr_type_group_1 = 'GENEDOM_EFG_REGION_K';
+
+update marker_relationship_type
+ set mreltype_mrkr_type_group_2 = 'GENEDOM_EFG_EREGION_K'
+ where mreltype_mrkr_type_group_2 = 'GENEDOM_EFG_REGION_K';
+
 update marker_type_group
  set mtgrp_name = 'GENEDOM_EFG_EREGION_K'
  where mtgrp_name = 'GENEDOM_EFG_REGION_K';
