@@ -64,10 +64,10 @@ alter table feature_marker_relationship_type add constraint
 
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('LNCRNAG','2','LncRNA Gene');
+  values ('LNCRNAG','2','lncRNA Gene');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('LINCRNAG','2','LincRNA Gene');
+  values ('LINCRNAG','2','lincRNA Gene');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
   values ('MIRNAG','2','miRNA Gene');
