@@ -11,9 +11,7 @@
 select 
     mrkr_zdb_id as id,
     'Gene / Transcript' as category,
-    case when mrkr_type = 'GENEP' then 'Pseudogene'
-         when mrkr_type = 'EFG' then 'Engineered Foreign Gene'
-         else 'Gene' end as type,
+    mrkrtype_type_display as type,
     mrkr_comments as note,
     mrkr_abbrev as name,
     mrkr_abbrev as proper_name,
@@ -24,7 +22,9 @@ select
        '/' || mrkr_zdb_id as url,
     to_date(get_date_from_id(mrkr_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
 from marker, marker_types
-where mrkr_type in ('GENE','GENEP','EFG')
+inner join marker_type_group_member
+on marker_types.marker_type = marker_type_group_member.mtgrpmem_mrkr_type
+where mtgrpmem_mrkr_type_group IN ('GENEDOM', 'EFG')
   and mrkr_type = marker_type
        ;">
 
@@ -825,9 +825,11 @@ select
        '/' || mrkr_zdb_id as url,
        (select min(when) from updates where rec_id = mrkr_zdb_id) as date
 from marker, marker_types
-where mrkr_type != 'GENE'
-  and mrkr_type != 'GENEP'
-  and mrkr_type != 'EFG'
+where mrkr_type not in (
+    SELECT mtgrpmem_mrkr_type
+    FROM marker_type_group_member
+    WHERE mtgrpmem_mrkr_type_group in ('GENEDOM', 'EFG')
+  )
   and mrkr_type != 'ATB'
   and mrkr_zdb_id[1,9] != 'ZDB-TGCON'
   and mrkr_type != 'MRPHLNO'

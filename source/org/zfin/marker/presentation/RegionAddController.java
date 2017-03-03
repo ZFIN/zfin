@@ -48,7 +48,7 @@ public class RegionAddController {
         form.setType(type);
         Map<String, String> allTypes = new LinkedHashMap<>(10);
 
-        allTypes.put(Marker.Type.LINCRNA.name(), "lincRNA");
+       /* allTypes.put(Marker.Type.LINCRNA.name(), "lincRNA");
         allTypes.put(Marker.Type.LNCRNA.name(), "lncRNA");
         allTypes.put(Marker.Type.MIRNA.name(), "miRNA");
         allTypes.put(Marker.Type.NCRNA.name(), "ncRNA");
@@ -58,7 +58,7 @@ public class RegionAddController {
         allTypes.put(Marker.Type.SRPRNA.name(), "srpRNA");
         allTypes.put(Marker.Type.PIRNA.name(), "piRNA");
         allTypes.put(Marker.Type.TRNA.name(), "tRNA");
-        form.setAllTypes(allTypes);
+        form.setAllTypes(allTypes);*/
         return form;
     }
 

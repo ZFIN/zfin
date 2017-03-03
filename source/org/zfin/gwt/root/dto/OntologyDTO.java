@@ -150,6 +150,12 @@ public enum OntologyDTO implements IsSerializable {
             return null;
         }
     },
+     ECO(20, "ECO","eco", false) {
+        @Override
+        public OntologyDTO getAssociatedQualityOntology() {
+            return null;
+        }
+    },
     ZECO(15, "ZECO", "zebrafish_experimental_conditions_ontology", false, "ZECO:0000100") {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
