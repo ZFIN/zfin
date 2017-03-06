@@ -2,6 +2,7 @@ package org.zfin.marker.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,11 @@ import javax.validation.Valid;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.zfin.search.Category;
+import org.zfin.search.FieldName;
+import org.zfin.search.service.SolrService;
+import java.io.IOException;
+import java.util.*;
 
 @Controller
 @RequestMapping("/marker")
@@ -29,10 +35,10 @@ public class GeneAddController {
     private static Logger LOG = Logger.getLogger(GeneAddController.class);
 
     @Autowired
-    MarkerRepository markerRepository;
+    private MarkerRepository markerRepository;
 
     @Autowired
-    PublicationRepository publicationRepository;
+    private PublicationRepository publicationRepository;
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
@@ -56,12 +62,11 @@ public class GeneAddController {
         allTypes.put(Marker.Type.EFG.name(), "Engineered Foreign Gene");
         form.setAllTypes(allTypes);
 
-
         return form;
     }
 
     @RequestMapping(value = "/gene-add", method = RequestMethod.GET)
-    public String showGeneAddForm(Model model) {
+    public String showGeneAddForm(Model model) throws IOException, SolrServerException {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add New Gene");
         return "marker/gene-add.page";
     }
@@ -69,7 +74,7 @@ public class GeneAddController {
     @RequestMapping(value = "/gene-add", method = RequestMethod.POST)
     public String processGeneAddForm(Model model,
                                      @Valid @ModelAttribute("formBean") GeneAddFormBean formBean,
-                                     BindingResult result) {
+                                     BindingResult result) throws IOException, SolrServerException {
         if (result.hasErrors()) {
             return showGeneAddForm(model);
         }
@@ -95,6 +100,21 @@ public class GeneAddController {
             }
 
             HibernateUtil.flushAndCommitCurrentSession();
+
+            Map<FieldName, Object> solrDoc = new HashMap<>(12);
+            solrDoc.put(FieldName.ID, newGene.getZdbID());
+            solrDoc.put(FieldName.CATEGORY, Category.GENE.getName());
+            solrDoc.put(FieldName.TYPE, newGene.getMarkerType().getDisplayName());
+            solrDoc.put(FieldName.NOTE, newGene.getPublicComments());
+            solrDoc.put(FieldName.NAME, newGene.getAbbreviation());
+            solrDoc.put(FieldName.PROPER_NAME, newGene.getAbbreviation());
+            solrDoc.put(FieldName.GENE, newGene.getAbbreviation());
+            solrDoc.put(FieldName.FULL_NAME, newGene.getName());
+            solrDoc.put(FieldName.GENE_FULL_NAME, newGene.getName());
+            solrDoc.put(FieldName.NAME_SORT, newGene.getAbbreviationOrder());
+            solrDoc.put(FieldName.URL, "/" + newGene.getZdbID());
+            solrDoc.put(FieldName.DATE, new Date());
+            SolrService.addDocument(solrDoc);
         } catch (Exception e) {
             try {
                 HibernateUtil.rollbackTransaction();

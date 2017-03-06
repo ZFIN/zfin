@@ -7,15 +7,21 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.request.DirectXmlRequest;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.util.NamedList;
 import org.springframework.stereotype.Service;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.search.*;
 import org.zfin.util.URLCreator;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -39,6 +45,8 @@ public class SolrService {
     private static final String SEARCH_URL = "/search";
 
     private static final String PRIMARY_CORE = "prototype";
+
+    private static final String IDLE = "idle";
 
     private static SolrClient prototype;
 
@@ -808,5 +816,27 @@ public class SolrService {
     public static boolean queryHasFilterQueries(SolrQuery query) {
         String[] filterQueries = query.getFilterQueries();
         return filterQueries != null && !(filterQueries.length == 1 && filterQueries[0].startsWith("root_only:"));
+    }
+
+    public static void addDocument(Map<FieldName, Object> fields) throws IOException, SolrServerException {
+        SolrInputDocument document = new SolrInputDocument();
+        SolrClient solr = getSolrClient();
+        for (Map.Entry<FieldName, Object> field : fields.entrySet()) {
+            document.addField(field.getKey().getName(), field.getValue());
+        }
+        solr.add(document);
+        if (!isIndexingInProgress()) {
+            solr.commit();
+        }
+    }
+
+    public static String getServerStatus() throws IOException, SolrServerException {
+        SolrRequest req = new DirectXmlRequest("/dataimport", null);
+        NamedList<Object> response = getSolrClient().request(req);
+        return (String) response.get("status");
+    }
+
+    public static boolean isIndexingInProgress() throws IOException, SolrServerException {
+        return !getServerStatus().equals(IDLE);
     }
 }

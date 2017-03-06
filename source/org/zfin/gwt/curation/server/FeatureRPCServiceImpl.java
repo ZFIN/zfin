@@ -32,6 +32,9 @@ import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.Category;
+import org.zfin.search.FieldName;
+import org.zfin.search.service.SolrService;
 import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
 
@@ -525,6 +528,32 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             HibernateUtil.currentSession().update(feature);
             HibernateUtil.flushAndCommitCurrentSession();
             newFeatureDTO = getFeature(feature.getZdbID());
+
+            Map<String, String> screens = new HashMap<>(3);
+            screens.put("la", "Burgess / Lin");
+            screens.put("sa", "Sanger");
+            screens.put("mn", "Zfishbook");
+
+            Map<FieldName, Object> solrDoc = new HashMap<>(12);
+            solrDoc.put(FieldName.ID, feature.getZdbID());
+            solrDoc.put(FieldName.CATEGORY, Category.MUTANT.getName());
+            solrDoc.put(FieldName.TYPE, feature.getType().getDisplay());
+            solrDoc.put(FieldName.NAME, feature.getName());
+            solrDoc.put(FieldName.PROPER_NAME, feature.getName());
+            solrDoc.put(FieldName.FULL_NAME, feature.getName());
+            solrDoc.put(FieldName.NAME_SORT, feature.getNameOrder());
+            solrDoc.put(FieldName.ALIAS, feature.getAbbreviation());
+            solrDoc.put(FieldName.URL, "/" + feature.getZdbID());
+
+            String prefix = feature.getFeaturePrefix().getPrefixString();
+            if (screens.containsKey(prefix)) {
+                solrDoc.put(FieldName.SCREEN, screens.get(prefix));
+            }
+
+            solrDoc.put(FieldName.DATE, new Date());
+            solrDoc.put(FieldName.MUTAGEN, feature.getFeatureAssay().getMutagen().toString());
+            SolrService.addDocument(solrDoc);
+
         } catch (ValidationException e) {
             HibernateUtil.rollbackTransaction();
             logger.info("Error during Creation ", e);
