@@ -39,10 +39,10 @@ public class FeatureDnaMutationDetail implements Cloneable {
     private Integer exonNumber;
     @Column(name = "fdmd_intron_number")
     private Integer intronNumber;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fdmd_gene_localization_term_zdb_id")
     private GeneLocalizationTerm geneLocalizationTerm;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fdmd_dna_mutation_term_zdb_id")
     private DnaMutationTerm dnaMutationTerm;
 

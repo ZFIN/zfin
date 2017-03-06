@@ -683,6 +683,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 + "       left join efs.expressionExperiment.gene as gene "
                 + "       left join fetch efs.startStage "
                 + "       left join fetch efs.endStage "
+                + "       left join fetch efs.expressionExperiment "
+                + "       left join fetch efs.expressionResultSet "
+                + "       join fetch efs.figure "
                 + "       join efs.expressionExperiment.fishExperiment.fish as fish "
                 + "       where efs.expressionExperiment.publication.zdbID = :pubID ";
         if (geneZdbID != null) {

@@ -6,7 +6,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.UmbrellaException;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import org.zfin.gwt.curation.event.CurationEvent;
@@ -55,7 +54,6 @@ public class CurationEntryPoint implements EntryPoint {
     private HistoryModule historyModule = new HistoryModule();
     private AjaxCallBaseManager callBaseManager = new AjaxCallBaseManager();
     private CurationExperimentRPCAsync curationExperimentRPCAsync = CurationExperimentRPC.App.getInstance();
-    private SessionSaveServiceAsync sessionRPC = SessionSaveService.App.getInstance();
     private static List<FishDTO> wildtypeFishList;
 
     public void onModuleLoad() {
@@ -85,7 +83,7 @@ public class CurationEntryPoint implements EntryPoint {
 */
     }
 
-    private void initModules(){
+    private void initModules() {
         // use only the session save module if no pub id is provided.
         if (publicationID != null) {
             if (type != null) {
@@ -244,11 +242,9 @@ public class CurationEntryPoint implements EntryPoint {
 
     public void handleTabToggle(String tabName) {
         ZfinCurationModule module = allModules.get(tabName.toUpperCase());
-        if (module == null) {
-            Window.alert("Could not find tab " + tabName);
-            return;
+        if (module != null) {
+            module.handleTabToggle();
         }
-        module.handleTabToggle();
     }
 
     public static void refreshFigureLists() {
@@ -272,7 +268,7 @@ public class CurationEntryPoint implements EntryPoint {
         curatorSessionUpdate.setPublicationZdbID(publicationZdbID);
         curatorSessionUpdate.setField(field);
         curatorSessionUpdate.setValue(value);
-        List<CuratorSessionDTO> sessionList = new ArrayList<CuratorSessionDTO>(1);
+        List<CuratorSessionDTO> sessionList = new ArrayList<>(1);
         sessionList.add(curatorSessionUpdate);
         AsyncCallback callbackRefresh = new SessionUpdateCallbackWithURL(anchor);
         SessionSaveService.App.getInstance().saveCuratorUpdate(sessionList, callbackRefresh);

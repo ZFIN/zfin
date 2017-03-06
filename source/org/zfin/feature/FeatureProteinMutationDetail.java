@@ -22,7 +22,7 @@ public class FeatureProteinMutationDetail implements Cloneable {
     @OneToOne
     @JoinColumn(name = "fpmd_feature_zdb_id")
     private Feature feature;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fpmd_protein_consequence_term_zdb_id")
     private ProteinConsequence proteinConsequence;
     @Column(name = "fpmd_protein_position_start")
@@ -38,10 +38,10 @@ public class FeatureProteinMutationDetail implements Cloneable {
     private Integer numberAminoAcidsRemoved;
     @Column(name = "fpmd_number_amino_acids_added")
     private Integer numberAminoAcidsAdded;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fpmd_wt_protein_term_zdb_id")
     private AminoAcidTerm wildtypeAminoAcid;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fpmd_mutant_or_stop_protein_term_zdb_id")
     private AminoAcidTerm mutantAminoAcid;
 

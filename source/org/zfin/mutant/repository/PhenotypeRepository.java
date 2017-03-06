@@ -79,12 +79,19 @@ public interface PhenotypeRepository {
     List<PhenotypeExperiment> getMutantExpressionsByFigureFish(String publicationID, String figureID, String genotypeID, String featureID);
 
     /**
-     * Retrieve phenotype experiment record from the unique key
-     *
-     * @param phenotypeExperimentFilter phenotype experiment:
-     *                                  unique figure, stage, genotype, environment
-     * @return full mutant figure stage record
+     * Chek if there are any mutant expression records available.
+     * @param publicationID
+     * @return
      */
+    boolean hasMutantExpressions(String publicationID);
+
+        /**
+         * Retrieve phenotype experiment record from the unique key
+         *
+         * @param phenotypeExperimentFilter phenotype experiment:
+         *                                  unique figure, stage, genotype, environment
+         * @return full mutant figure stage record
+         */
     PhenotypeExperiment getPhenotypeExperiment(PhenotypeExperiment phenotypeExperimentFilter);
 
     /**
@@ -283,4 +290,5 @@ public interface PhenotypeRepository {
 
     List<DiseaseAnnotationModel> getHumanDiseaseModelsByFish(String entityID, String publicationID);
 
+    boolean hasPhenotypeStructures(String publicationID);
 }

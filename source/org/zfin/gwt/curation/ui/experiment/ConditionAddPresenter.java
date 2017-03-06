@@ -250,7 +250,7 @@ public class ConditionAddPresenter implements HandlesError {
         AppUtils.fireAjaxCall(ExperimentModule.getModuleInfo(), AjaxCallEventType.CREATE_CONDITION_START);
         ExperimentRPCService.App.getInstance().createCondition(publicationID, conditionDTO,
                 new ExperimentListCallBack(true, "Failed to save condition: ", conditionDTO,
-                        ExperimentModule.getModuleInfo(), AjaxCallEventType.CREATE_CONDITION_START));
+                        ExperimentModule.getModuleInfo(), AjaxCallEventType.CREATE_CONDITION_STOP));
     }
 
     private String validatePostCompositions() {

@@ -4,7 +4,9 @@ import com.google.gwt.user.client.Window;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
 import org.zfin.gwt.root.dto.TermNotFoundException;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.*;
+import org.zfin.gwt.root.util.AppUtils;
 
 /**
  * This class creates a MarkerGoEntry instance, but then refers to the Edit instance for editing.
@@ -67,6 +69,7 @@ public class GoInlineCurationAddBox extends AbstractGoCurationBox {
                 return;
             }
             working();
+            AppUtils.fireAjaxCall(GoCurationModule.getModuleInfo(), AjaxCallEventType.CREATE_MARKER_GO_START);
             MarkerGoEvidenceRPCService.App.getInstance().createMarkerGoTermEvidence(goEvidenceDTO,
                     new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:", this) {
                         @Override
@@ -80,6 +83,7 @@ public class GoInlineCurationAddBox extends AbstractGoCurationBox {
                             notWorking();
                             saveButton.setEnabled(true);
                             revertButton.setEnabled(true);
+                            AppUtils.fireAjaxCall(GoCurationModule.getModuleInfo(), AjaxCallEventType.CREATE_MARKER_GO_STOP);
                         }
 
                         @Override
@@ -87,6 +91,7 @@ public class GoInlineCurationAddBox extends AbstractGoCurationBox {
                             notWorking();
                             revertGUI();
                             parent.clearError();
+                            AppUtils.fireAjaxCall(GoCurationModule.getModuleInfo(), AjaxCallEventType.CREATE_MARKER_GO_STOP);
                         }
                     });
         }

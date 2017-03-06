@@ -255,17 +255,6 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void attributedFeatures() {
-        // Uemura, et al.
-        String pubID = "ZDB-PUB-050202-4";
-        List<Feature> features = featureRepository.getFeaturesForAttribution(pubID);
-        assertNotNull(features);
-
-        List<Marker> markers = getMarkerRepository().getMarkersForAttribution(pubID);
-        assertNotNull(markers);
-    }
-
-    @Test
     public void getFeaturesByPrefixAndLineNumber() {
         assertNull(featureRepository.getFeatureByPrefixAndLineNumber("notavalidprefix", "1"));
         assertNull(featureRepository.getFeatureByPrefixAndLineNumber("b", "notavalidlinenumber"));

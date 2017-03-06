@@ -49,7 +49,7 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
             return null;
 
         Collections.sort(structures);
-        List<PhenotypePileStructureDTO> phenotypePileStructures = new ArrayList<PhenotypePileStructureDTO>(structures.size());
+        List<PhenotypePileStructureDTO> phenotypePileStructures = new ArrayList<>(structures.size());
         for (PhenotypeStructure structure : structures) {
             PhenotypePileStructureDTO dto = DTOConversionService.convertToPhenotypePileStructureDTO(structure);
             phenotypePileStructures.add(dto);
@@ -220,10 +220,14 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
         return getExpressionPileStructures(publicationID);
     }
 
+    List<EapQualityTermDTO> eapQualityList;
+
     @Override
     public List<EapQualityTermDTO> getEapQualityListy() {
+        if(eapQualityList != null)
+            return eapQualityList;
 
-        List<EapQualityTermDTO> qualityList = new ArrayList<>();
+        eapQualityList = new ArrayList<>();
         Map<String, String> nicknameMap = EapQualityTermDTO.nicknameMap;
         for (String oboIDTag : nicknameMap.keySet()) {
             String token[] = oboIDTag.split(",");
@@ -235,10 +239,10 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
             qualityTermDTO.setTag(tag);
             qualityTermDTO.setTerm(termDTO);
             qualityTermDTO.setNickName(nicknameMap.get(oboIDTag));
-            qualityList.add(qualityTermDTO);
+            eapQualityList.add(qualityTermDTO);
         }
 
-        return qualityList;
+        return eapQualityList;
     }
 
 
