@@ -202,8 +202,9 @@
 
         function finishAjaxCall() {
             vm.loading.pop();
-            if (typeof displayLoadingStatus === 'function')
+            if (typeof displayLoadingStatus === 'function') {
                 displayLoadingStatus('ORTHOLOGY', vm.loading.length > 0)
+            }
         }
 
         function fetchOrthology() {
