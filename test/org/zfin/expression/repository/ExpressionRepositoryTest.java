@@ -172,27 +172,22 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         List<ExpressionFigureStage> experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, null, null, null);
         // this represents 5 unique experiments
         assertThat(experiments.size(), greaterThan(14));
-        assertThat(experiments.size(), lessThan(16));
 
         // Fig. 1
         experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, null, null, "ZDB-FIG-070109-23");
         assertThat(experiments.size(), greaterThan(2));
-        assertThat(experiments.size(), lessThan(4));
 
         // Fig. S3
         experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, null, null, "ZDB-FIG-070109-26");
         assertThat(experiments.size(), greaterThan(1));
-        assertThat(experiments.size(), lessThan(3));
 
         // mir206-1
         experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, "ZDB-GENE-050609-28", null, null);
         assertThat(experiments.size(), greaterThan(4));
-        assertThat(experiments.size(), lessThan(6));
 
         // mir122
         experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, "ZDB-GENE-050609-27", null, null);
         assertThat(experiments.size(), greaterThan(3));
-        assertThat(experiments.size(), lessThan(5));
 
         // genotype . .  .all the same
         //TODO needs a FISH rather than a genotype?
@@ -208,7 +203,6 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         //TODO needs a FISH rather than a genotype?
         experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, "ZDB-GENE-050609-28", "ZDB-GENO-050209-5", "ZDB-FIG-070109-23");
         assertThat(experiments.size(), equalTo(0));
-        assertThat(experiments.size(), lessThan(2));
 
     }
 
