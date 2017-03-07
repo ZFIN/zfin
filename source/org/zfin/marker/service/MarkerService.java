@@ -842,6 +842,7 @@ public class MarkerService {
         }
 
         markerBean.setMarkerTypeDisplay(getMarkerTypeString(marker));
+        markerBean.setZfinSoTerm(getSoTerm(marker));
 
         markerBean.setPreviousNames(markerRepository.getPreviousNamesLight(marker));
 
