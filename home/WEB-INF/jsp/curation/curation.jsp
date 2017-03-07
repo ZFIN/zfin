@@ -172,15 +172,7 @@
         }
 
         function displayLoadingStatus(tabName, isLoading) {
-            /*
-             if (tabName == 'fish') {
-             alert(tabName + ": " + isLoading);
-             }
-             */
-            if (isLoading) {
-                $('#' + tabName.toUpperCase() + '-tab').addClass("nav-tabs-loading");
-            } else
-                $('#' + tabName.toUpperCase() + '-tab').removeClass("nav-tabs-loading");
+            $('#' + tabName.toUpperCase() + '-tab').toggleClass("nav-tabs-loading", isLoading);
         }
 
         $(function () {
