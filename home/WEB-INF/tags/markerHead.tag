@@ -4,6 +4,7 @@
               rtexprvalue="true" required="true" %>
 <%@ attribute name="typeName" type="java.lang.String" required="false" rtexprvalue="true" %>
 <%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="true" %>
+<%@ attribute name="soTerm" type="org.zfin.ontology.GenericTerm" rtexprvalue="true" required="false" %>
 <%@ attribute name="showEditControls" required="true" %>
 <%@ attribute name="userID" type="java.lang.String" rtexprvalue="true" required="false" %>
 
@@ -43,7 +44,12 @@
             </c:if>
         </td>
     </tr>
-
+    <tr>
+        <th>Sequence Ontology ID :</th>
+        <td>
+            <a href="http://www.sequenceontology.org/browser/current_svn/term/${soTerm.oboID}"/> ${soTerm.oboID}</td></a>
+        </td>
+    </tr>
     <c:if test="${showEditControls}">
         <zfin2:previousNamesFast previousNames="${previousNames}" showEditControls="true"/>
     </c:if>
