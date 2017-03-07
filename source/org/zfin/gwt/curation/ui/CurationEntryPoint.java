@@ -6,6 +6,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.UmbrellaException;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import org.zfin.gwt.curation.event.CurationEvent;
@@ -18,7 +19,6 @@ import org.zfin.gwt.root.event.AjaxCallEvent;
 import org.zfin.gwt.root.event.AjaxCallEventHandler;
 import org.zfin.gwt.root.ui.AjaxCallBaseManager;
 import org.zfin.gwt.root.ui.SessionSaveService;
-import org.zfin.gwt.root.ui.SessionSaveServiceAsync;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StringUtils;
@@ -198,9 +198,12 @@ public class CurationEntryPoint implements EntryPoint {
             curationModule.@org.zfin.gwt.curation.ui.CurationEntryPoint::showHistory()();
         };
 
-
         $wnd.updateTermInfoBox = function (termName, ontologyName, tabName) {
             curationModule.@org.zfin.gwt.curation.ui.CurationEntryPoint::updateTermInfo(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(termName, ontologyName, tabName);
+        };
+
+        $wnd.fireCreateMarkerEvent = function () {
+            curationModule.@org.zfin.gwt.curation.ui.CurationEntryPoint::fireCreateMarkerEvent()();
         };
     }-*/;
 
@@ -249,6 +252,10 @@ public class CurationEntryPoint implements EntryPoint {
 
     public static void refreshFigureLists() {
         AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.ADD_FIGURE));
+    }
+
+    public void fireCreateMarkerEvent() {
+        notifyModules(new CurationEvent(EventType.CREATE_MARKER));
     }
 
     @SuppressWarnings({"FeatureEnvy"})

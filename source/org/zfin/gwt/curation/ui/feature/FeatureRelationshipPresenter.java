@@ -110,7 +110,7 @@ public class FeatureRelationshipPresenter implements HandlesError {
                         featureDTOs = features;
                         if (featureDTOs != null) {
                             view.featureList.clear();
-                            view.featureList.addItem("-----------");
+                            view.featureList.addItem("");
                             for (FeatureDTO featureDTO : featureDTOs) {
                                 view.featureList.addItem(featureDTO.getName(), featureDTO.getZdbID());
                             }
@@ -204,7 +204,7 @@ public class FeatureRelationshipPresenter implements HandlesError {
                                 // this is probably correct so we don't need to screen it
                                 view.relationshipList.addItem(result.get(0));
                             } else {
-                                view.relationshipList.addItem("-------");
+                                view.relationshipList.addItem("", "");
                                 for (String rel : result) {
                                     // see case 6337
                                     // is_allele relationship should only be available for transgenic insertions where the known insertion site box is checked
@@ -231,13 +231,18 @@ public class FeatureRelationshipPresenter implements HandlesError {
     protected void updateTargetGeneList(String selectedFeature, final String selectedRelationship) {
         view.addButton.setEnabled(false);
         view.targetMarkerList.setEnabled(false);
-        final String mutagenForFeature = getFeatureDTOForName(selectedFeature).getMutagen();
+        final String mutagenForFeature;
+        if (!selectedFeature.isEmpty())
+            mutagenForFeature = getFeatureDTOForName(selectedFeature).getMutagen();
+        else
+            mutagenForFeature = null;
         AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_RELATIONSHIP_TYPES_FOR_FEATURE_TYPE_START);
         FeatureRPCService.App.getInstance().getMarkersForFeatureRelationAndSource(selectedRelationship, publicationID,
                 new FeatureEditCallBack<List<MarkerDTO>>("Failed to find markers for type[" + view.featureType.getText() + "] and pub: " +
                         publicationID, this) {
                     @Override
                     public void onSuccess(List<MarkerDTO> markers) {
+                        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_RELATIONSHIP_TYPES_FOR_FEATURE_TYPE_STOP);
                         view.targetMarkerList.clear();
                         Collections.sort(markers);
                         if (markers.size() > 0) {

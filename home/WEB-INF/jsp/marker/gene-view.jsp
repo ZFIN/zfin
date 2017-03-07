@@ -23,109 +23,115 @@
 
 <div ng-app="app" ng-controller="EditController as eControl">
 
-<jsp:useBean id="formBean" class="org.zfin.marker.presentation.GeneBean" scope="request"/>
+    <jsp:useBean id="formBean" class="org.zfin.marker.presentation.GeneBean" scope="request"/>
 
-<c:set var="markerID">${formBean.marker.zdbID}</c:set>
-<c:set var="deleteURL">/action/infrastructure/deleteRecord/${markerID}</c:set>
-<c:set var="mergeURL">/action/marker/merge?zdbIDToDelete=${markerID}</c:set>
+    <c:set var="markerID">${formBean.marker.zdbID}</c:set>
+    <c:set var="deleteURL">/action/infrastructure/deleteRecord/${markerID}</c:set>
+    <c:set var="mergeURL">/action/marker/merge?zdbIDToDelete=${markerID}</c:set>
+    <script>
+        if (opener != null)
+            opener.fireCreateMarkerEvent();
+    </script>
 
-<zfin2:dataManager zdbID="${markerID}"
-                   deleteURL="none"
-                   mergeURL="${mergeURL}"
-                   editMarker="true"/>
-
-
-<div style="float: right">
-    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:putAttribute name="subjectName" value="${formBean.marker.name}"/>
-    </tiles:insertTemplate>
-</div>
-
-<zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}" userID="${formBean.user.zdbID}"/>
+    <zfin2:dataManager zdbID="${markerID}"
+                       deleteURL="none"
+                       mergeURL="${mergeURL}"
+                       editMarker="true"/>
 
 
-<zfin2:uninformativeGeneName name="${formBean.marker.abbreviation}" fromChimericClone="${formBean.hasChimericClone}"/>
+    <div style="float: right">
+        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+            <tiles:putAttribute name="subjectName" value="${formBean.marker.name}"/>
+        </tiles:insertTemplate>
+    </div>
 
-<%--// EXPRESSION SECTION--%>
-<zfin2:markerExpression marker="${formBean.marker}" markerExpression="${formBean.markerExpression}"
-                        webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
-
-<%--// MUTANTS AND TARGETED KNOCKDOWNS--%>
-<div id="mutant-info">
-    <zfin2:mutantsInGene mutantsOnMarkerBean="${formBean.mutantOnMarkerBeans}" marker="${formBean.marker}"/>
-</div>
-
-<%--// PHENOTYPE --%>
-
-<zfin2:phenotype phenotypeOnMarkerBean="${formBean.phenotypeOnMarkerBeans}" marker="${formBean.marker}"
-                 webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
-
-<%--// DISEASE --%>
-<div id="disease">
-    <zfin2:humanDiseaseOnGene gene="${formBean.marker}" diseases="${formBean.diseaseDisplays}"/>
-</div>
-
-<%-- gene ontology--%>
-<zfin2:geneOntology geneOntologyOnMarker="${formBean.geneOntologyOnMarkerBeans}" marker="${formBean.marker}"/>
-
-<%--protein families, domains, and sites--%>
-<zfin2:proteinProductsLight referenceDBs="${formBean.proteinProductDBLinkDisplay}"/>
-
-<%--Transcripts--%>
-<zfin2:markerTranscriptSummary relatedTranscriptDisplay="${formBean.relatedTranscriptDisplay}"
-                               title="TRANSCRIPTS" showAllTranscripts="true"/>
-
-<zfin2:geneProductsDescription geneBean="${formBean}"/>
+    <zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}"
+                    userID="${formBean.user.zdbID}"/>
 
 
-<zfin2:subsection title="INTERACTIONS AND PATHWAYS" anchor="pathway_links"
-                  test="${!empty formBean.pathwayDBLinks}" showNoData="true" noDataText="No data available">
-    <table class="summary">
-        <c:forEach var="link" items="${formBean.pathwayDBLinks}" varStatus="loop">
-            <tr>
-                <td><a href="${link.link}">${link.referenceDatabaseName}</a></td>
-            </tr>
-        </c:forEach>
-    </table>
-</zfin2:subsection>
+    <zfin2:uninformativeGeneName name="${formBean.marker.abbreviation}"
+                                 fromChimericClone="${formBean.hasChimericClone}"/>
 
-<%--Antibodies--%>
-<zfin2:markerRelationshipsLightSingleType relationships="${formBean.relatedAntibodies}" marker="${formBean.marker}"
-                                          title="ANTIBODIES" maxNumber="5"/>
+    <%--// EXPRESSION SECTION--%>
+    <zfin2:markerExpression marker="${formBean.marker}" markerExpression="${formBean.markerExpression}"
+                            webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
 
-<%--Plasmid Links--%>
-<zfin2:subsection title="PLASMIDS" anchor="plasmid_links"
-                  test="${!empty formBean.plasmidDBLinks}" showNoData="true" noDataText="No data available">
-    <table class="summary">
-        <c:forEach var="link" items="${formBean.plasmidDBLinks}" varStatus="loop">
-            <tr>
-                <td><a href="${link.link}">${link.referenceDatabaseName}</a></td>
-            </tr>
-        </c:forEach>
-    </table>
-</zfin2:subsection>
+    <%--// MUTANTS AND TARGETED KNOCKDOWNS--%>
+    <div id="mutant-info">
+        <zfin2:mutantsInGene mutantsOnMarkerBean="${formBean.mutantOnMarkerBeans}" marker="${formBean.marker}"/>
+    </div>
 
+    <%--// PHENOTYPE --%>
 
-<%--Constructs--%>
-<zfin2:constructsWithSequences formBean="${formBean}"/>
+    <zfin2:phenotype phenotypeOnMarkerBean="${formBean.phenotypeOnMarkerBeans}" marker="${formBean.marker}"
+                     webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
 
-<%--SEGMENT (CLONE AND PROBE) RELATIONSHIPS--%>
+    <%--// DISEASE --%>
+    <div id="disease">
+        <zfin2:humanDiseaseOnGene gene="${formBean.marker}" diseases="${formBean.diseaseDisplays}"/>
+    </div>
 
-<zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}"
-                                marker="${formBean.marker}" title="SEGMENT (CLONE AND PROBE) RELATIONSHIPS"/>
-<%--SEQUENCE INFORMATION--%>
-<zfin2:markerSequenceInformationSummary marker="${formBean.marker}" sequenceInfo="${formBean.sequenceInfo}"
-                                        title="${fn:toUpperCase('Sequence Information')}" showAllSequences="false"/>
+    <%-- gene ontology--%>
+    <zfin2:geneOntology geneOntologyOnMarker="${formBean.geneOntologyOnMarkerBeans}" marker="${formBean.marker}"/>
+
+    <%--protein families, domains, and sites--%>
+    <zfin2:proteinProductsLight referenceDBs="${formBean.proteinProductDBLinkDisplay}"/>
+
+    <%--Transcripts--%>
+    <zfin2:markerTranscriptSummary relatedTranscriptDisplay="${formBean.relatedTranscriptDisplay}"
+                                   title="TRANSCRIPTS" showAllTranscripts="true"/>
+
+    <zfin2:geneProductsDescription geneBean="${formBean}"/>
 
 
-<%--other GENE/Marker Pages--%>
-<zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}"/>
+    <zfin2:subsection title="INTERACTIONS AND PATHWAYS" anchor="pathway_links"
+                      test="${!empty formBean.pathwayDBLinks}" showNoData="true" noDataText="No data available">
+        <table class="summary">
+            <c:forEach var="link" items="${formBean.pathwayDBLinks}" varStatus="loop">
+                <tr>
+                    <td><a href="${link.link}">${link.referenceDatabaseName}</a></td>
+                </tr>
+            </c:forEach>
+        </table>
+    </zfin2:subsection>
 
-<%--ORTHOLOGY--%>
-<zfin2:orthology marker="${formBean.marker}" showTitle="true"/>
+    <%--Antibodies--%>
+    <zfin2:markerRelationshipsLightSingleType relationships="${formBean.relatedAntibodies}" marker="${formBean.marker}"
+                                              title="ANTIBODIES" maxNumber="5"/>
 
-<%--CITATIONS--%>
-<zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>
+    <%--Plasmid Links--%>
+    <zfin2:subsection title="PLASMIDS" anchor="plasmid_links"
+                      test="${!empty formBean.plasmidDBLinks}" showNoData="true" noDataText="No data available">
+        <table class="summary">
+            <c:forEach var="link" items="${formBean.plasmidDBLinks}" varStatus="loop">
+                <tr>
+                    <td><a href="${link.link}">${link.referenceDatabaseName}</a></td>
+                </tr>
+            </c:forEach>
+        </table>
+    </zfin2:subsection>
+
+
+    <%--Constructs--%>
+    <zfin2:constructsWithSequences formBean="${formBean}"/>
+
+    <%--SEGMENT (CLONE AND PROBE) RELATIONSHIPS--%>
+
+    <zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}"
+                                    marker="${formBean.marker}" title="SEGMENT (CLONE AND PROBE) RELATIONSHIPS"/>
+    <%--SEQUENCE INFORMATION--%>
+    <zfin2:markerSequenceInformationSummary marker="${formBean.marker}" sequenceInfo="${formBean.sequenceInfo}"
+                                            title="${fn:toUpperCase('Sequence Information')}" showAllSequences="false"/>
+
+
+    <%--other GENE/Marker Pages--%>
+    <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}"/>
+
+    <%--ORTHOLOGY--%>
+    <zfin2:orthology marker="${formBean.marker}" showTitle="true"/>
+
+    <%--CITATIONS--%>
+    <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>
 
 </div>
 

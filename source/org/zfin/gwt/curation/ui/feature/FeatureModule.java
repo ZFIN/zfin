@@ -76,7 +76,8 @@ public class FeatureModule implements ZfinCurationModule {
         if (event == null)
             return;
         EventType eventType = event.getEventType();
-        if (eventType.is(EventType.ATTRIBUTE_MARKER) || eventType.is(EventType.DEATTRIBUTE_MARKER)) {
+        if (eventType.is(EventType.ATTRIBUTE_MARKER) || eventType.is(EventType.DEATTRIBUTE_MARKER) ||
+                event.getEventType().equals(EventType.CREATE_MARKER)) {
             featureRelationshipView.onChangeFeatureRelationship(null);
         }
         if (eventType.is(EventType.ADD_REMOVE_ATTRIBUTION_FEATURE) || eventType.is(EventType.CREATE_FEATURE)) {

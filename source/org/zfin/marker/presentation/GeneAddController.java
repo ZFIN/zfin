@@ -9,8 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.anatomy.presentation.StagePresentation;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
@@ -23,8 +21,6 @@ import javax.validation.Valid;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
 
 @Controller
 @RequestMapping("/marker")
@@ -51,15 +47,14 @@ public class GeneAddController {
         form.setType(type);
         List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM);
         Map<String, String> allTypes = new LinkedHashMap<>(markerTypes.size());
-        for (MarkerType  markerType: markerTypes) {
+        for (MarkerType markerType : markerTypes) {
             if (!markerType.getDisplayName().equals("Transcript")) {
                 allTypes.put(markerType.getType().name(), markerType.getDisplayName());
             }
         }
 
-       allTypes.put(Marker.Type.EFG.name(), "Engineered Foreign Gene");
+        allTypes.put(Marker.Type.EFG.name(), "Engineered Foreign Gene");
         form.setAllTypes(allTypes);
-
 
 
         return form;
