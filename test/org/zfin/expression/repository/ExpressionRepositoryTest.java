@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.DirectlySubmittedExpression;
 import org.zfin.expression.presentation.ExpressedStructurePresentation;
@@ -26,7 +25,6 @@ import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
-import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.TermFigureStageRange;
@@ -44,8 +42,6 @@ import static org.zfin.repository.RepositoryFactory.*;
 public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
     private ExpressionRepository expRep = RepositoryFactory.getExpressionRepository();
-    private AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
-    private PublicationRepository pubRep = RepositoryFactory.getPublicationRepository();
 
     private ExpressionService expressionService = new ExpressionService();
 
@@ -160,9 +156,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
         Marker gene = getMarkerRepository().getMarkerByAbbreviation(geneSymbol);
         List<ExpressionResult2> list = getExpressionRepository().getExpressionResultList(gene);
-
-        //// TODO: uncomment this once we have a stable EaP annotation.
-        //assertNotNull(list);
+        assertNotNull(list);
     }
 
     @Test
@@ -236,18 +230,15 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         String geneID = "ZDB-GENE-990415-30";
         experiments = expRep.getExperimentsByGeneAndFish(zdbID, geneID, null);
         Set<ExpressionFigureStage> figureStageSet = experiments.get(0).getFigureStageSet();
+/*
         System.out.println(figureStageSet.iterator().next().getExpressionResultSet());
         System.out.println(figureStageSet.iterator().next().getExpressionResultSet().size());
         for (ExpressionResult2 result : figureStageSet.iterator().next().getExpressionResultSet())
             System.out.println(result.getID() + " " + result.getSuperTerm());
-        assertTrue(experiments != null);
+*/
 
-        // alcam and WT
-//        String fishName = "WT";
-//        experiments = expRep.getExperimentsByGeneAndFish(zdbID, geneID, fishName);
-//        assertTrue(experiments != null);
         String fishZdbID = "ZDB-GENO-030619-2";
-        //experiments = expRep.getExperimentsByGeneAndFish(zdbID, geneID, fishZdbID);
+        experiments = expRep.getExperimentsByGeneAndFish(zdbID, geneID, fishZdbID);
         assertTrue(experiments != null);
     }
 
@@ -257,22 +248,16 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
         List<ExpressionExperiment> experiments = expRep.getExperiments(zdbID);
         assertThat(experiments.size(), greaterThan(3));
-        assertThat(experiments.size(), lessThan(40));
 
         // alcam
         String geneID = "ZDB-GENE-990415-30";
         experiments = expRep.getExperimentsByGeneAndFish2(zdbID, geneID, null);
         assertThat(experiments.size(), greaterThan(2));
-        assertThat(experiments.size(), lessThan(40));
 
         // alcam and WT
-        // TODO: once we have fish in prod we can adjust this test
-        String fishZdbID = "ZDB-GENO-030619-2";
+        String fishZdbID = "ZDB-FISH-150901-29105";
         experiments = expRep.getExperimentsByGeneAndFish2(zdbID, geneID, fishZdbID);
-/*
         assertThat(experiments.size(), greaterThan(2));
-        assertThat(experiments.size(), lessThan(4));
-*/
     }
 
 
@@ -385,7 +370,6 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void getExpressionPubCount() {
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
         int count = expRep.getExpressionPubCountForGene(m);
-        Assert.assertTrue(count < 40);
         Assert.assertTrue(count > 10);
     }
 
@@ -393,7 +377,6 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void getExpressionFigureCount() {
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
         int count = expRep.getExpressionFigureCountForEfg(m);
-        Assert.assertTrue(count < 50);
         Assert.assertTrue(count > 20);
     }
 
