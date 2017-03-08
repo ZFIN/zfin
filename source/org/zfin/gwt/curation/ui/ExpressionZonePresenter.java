@@ -262,6 +262,7 @@ public class ExpressionZonePresenter implements Presenter {
         public RetrieveFiguresCallback() {
             super(view.figureList, view.errorElement,
                     ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_FIGURE_LIST_STOP);
+            setAddAllItem(false);
         }
 
         public void onSuccess(List<FilterSelectionBoxEntry> list) {

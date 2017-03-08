@@ -36,6 +36,10 @@ public class RetrieveSelectionBoxValueCallback extends ZfinAsyncCallback<List<Fi
         this.listBox = listBox;
     }
 
+    public void setAddAllItem(boolean addAllItem) {
+        this.addAllItem = addAllItem;
+    }
+
     public void onSuccess(List<FilterSelectionBoxEntry> valuesDTO) {
         super.onFinish();
         String selectedID = listBox.getSelectedValue();
