@@ -92,9 +92,9 @@
                 <a class="small-new-link" href="javascript:"
                    onClick=open("/action/marker/engineeredRegion-add?regionPublicationZdbID=${publication.zdbID}","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
                     Add New Engineered Region</a> |
-                <a class="small-new-link" href="javascript:"
+                <%--<a class="small-new-link" href="javascript:"
                    onClick=open("/action/marker/transcribedRegion-add?source=${publication.zdbID}","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
-                    Add New Region</a> |
+                    Add New Region</a> |--%>
                 <c:if test="${currentTab eq 'construct'}">
                     <a class="small-new-link" href="javascript:"
                        onClick=open("/action/infrastructure/controlled-vocabulary-add","helpwindow","scrollbars=yes,height=850,width=750,resizable=yes")>
