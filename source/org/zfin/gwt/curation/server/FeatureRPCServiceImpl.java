@@ -18,10 +18,7 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.ui.DuplicateEntryException;
 import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.gwt.root.util.NullpointerException;
-import org.zfin.infrastructure.DataAliasGroup;
-import org.zfin.infrastructure.DataNote;
-import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.repository.MutantRepository;
@@ -39,6 +36,7 @@ import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.*;
@@ -548,6 +546,13 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             String prefix = feature.getFeaturePrefix().getPrefixString();
             if (screens.containsKey(prefix)) {
                 solrDoc.put(FieldName.SCREEN, screens.get(prefix));
+            }
+
+            if (feature.getAliases() != null) {
+                List<String> aliases = feature.getAliases().stream()
+                        .map(DataAlias::getAlias)
+                        .collect(Collectors.toList());
+                solrDoc.put(FieldName.ALIAS, aliases);
             }
 
             solrDoc.put(FieldName.DATE, new Date());

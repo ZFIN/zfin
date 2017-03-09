@@ -52,6 +52,7 @@ public enum FieldName {
     FULL_NAME_AC("full_name_ac", "name"),
     GENE("gene"),
     GENE_FULL_NAME("gene_full_name"),
+    GENE_PREVIOUS_NAME("gene_previous_name"),
     GENES_WITH_ALTERED_EXPRESSION("genes_with_altered_expression"),
     GENOTYPE("genotype"),
     GENOTYPE_FULL_NAME("genotype_full_name"),

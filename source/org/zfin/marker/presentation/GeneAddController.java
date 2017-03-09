@@ -12,21 +12,20 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.DataAlias;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
-
-import javax.validation.Valid;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import org.zfin.search.Category;
 import org.zfin.search.FieldName;
 import org.zfin.search.service.SolrService;
+
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/marker")
@@ -114,6 +113,15 @@ public class GeneAddController {
             solrDoc.put(FieldName.NAME_SORT, newGene.getAbbreviationOrder());
             solrDoc.put(FieldName.URL, "/" + newGene.getZdbID());
             solrDoc.put(FieldName.DATE, new Date());
+
+            if (newGene.getAliases() != null) {
+                List<String> aliases = newGene.getAliases().stream()
+                        .map(DataAlias::getAlias)
+                        .collect(Collectors.toList());
+                solrDoc.put(FieldName.ALIAS, aliases);
+                solrDoc.put(FieldName.GENE_PREVIOUS_NAME, aliases);
+            }
+
             SolrService.addDocument(solrDoc);
         } catch (Exception e) {
             try {
