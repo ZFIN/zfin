@@ -48,6 +48,7 @@ sed '/<addPrimaryKey/q' /tmp/changelogMigrationFile.xml | head -n -2 > /tmp/tabl
 # change lvarchar() to text, reorganize timestamps and defaults to postgres syntax
 sed 's/LVARCHAR([0-9]*)/text/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
 sed 's/DATETIME YEAR TO SECOND NOT NULL/CURRENT_TIMESTAMP/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
+sed 's/VARCHAR([0-9]*)/VARCHAR/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
 sed 's/current year to second/CURRENT_TIMESTAMP/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
 sed 's/defaultValueComputed="current year to day"/defaultValueComputed="CURRENT_TIMESTAMP"/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
 sed 's/BOOLEAN(1)/BOOLEAN/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
