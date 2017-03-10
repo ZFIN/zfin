@@ -140,7 +140,8 @@ public class MarkerViewController {
                     || type.equals(Marker.Type.NCRNAG.name())
                     || type.equals(Marker.Type.SNORNAG.name())|| type.equals(Marker.Type.PIRNAG.name())|| type.equals(Marker.Type.LINCRNAG.name())|| type.equals(Marker.Type.LNCRNAG.name())|| type.equals(Marker.Type.SRPRNAG.name())|| type.equals(Marker.Type.TRNAG.name())
                     ) {
-                return transcribedRegionViewController.getTranscribedRegionView(model, zdbID);
+
+                return geneViewController.getGeneView(zdbID, model);
             }
         else if (type.equals(Marker.Type.MRPHLNO.name()) || type.equals(Marker.Type.TALEN.name()) || type.equals(Marker.Type.CRISPR.name())) {
                 return sequenceTargetingReagentViewController.getView(model, zdbID);
