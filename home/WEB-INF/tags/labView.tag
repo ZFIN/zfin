@@ -13,7 +13,7 @@
 <%@ attribute name="isOwner" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
 <%@ attribute name="hasCoPi" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
 <%@ attribute name="noPrefixes" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
-<%@ attribute name="featuresForTheLab" type="java.util.Collection" required="true" %>
+<%@ attribute name="featuresExist" type="java.lang.Boolean" required="true" %>
 
 <zfin2:dataManager zdbID="${lab.zdbID}"
                    editURL="${editURL}"
@@ -117,11 +117,11 @@
     }
 </script>
 
-<c:if test="${!empty featuresForTheLab}">
-   <a id="showAlleleLink" href="javascript:;" onclick="showAlleles('${lab.zdbID}');"><img src="/images/plus-13.png" style="border:none;"></a>
+<c:if test="${featuresExist}">
+   <a id="showAlleleLink" href="javascript:" onclick="showAlleles('${lab.zdbID}');"><img src="/images/plus-13.png" style="border:none;"></a>
 </c:if>
 
-<a id="hideAlleleLink" style="display: none;" href="javascript:;hideAlleles()" onclick="hideAlleles()"><img src="/images/minus-13.png" style="border:none;"></a>
+<a id="hideAlleleLink" style="display: none;" href="javascript:hideAlleles()" onclick="hideAlleles()"><img src="/images/minus-13.png" style="border:none;"></a>
 
 <span class="summaryTitle">GENOMIC FEATURES ORIGINATING FROM THIS LAB</span>
 
@@ -148,7 +148,7 @@
 <br>
 
 <span class="summaryTitle">ZEBRAFISH PUBLICATIONS OF LAB MEMBERS</span>
-
+                                                                                                                  x
 <zfin2:listPublications publications="${publications}"/>
 
 

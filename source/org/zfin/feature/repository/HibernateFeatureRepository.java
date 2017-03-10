@@ -740,7 +740,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
     @SuppressWarnings("unchecked")
     @Override
     public List<Feature> getFeaturesForLab(String zdbID) {
-        String hql = " select f from Feature f join f.sources s " +
+/*
+        String hql = " select f from Feature f " +
+                " join f.sources s " +
                 " where s.organization.zdbID = :zdbID " +
                 " order by f.abbreviationOrder asc " +
                 "";
@@ -748,6 +750,19 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 .setString("zdbID", zdbID)
                 .list();
         return features;
+*/
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(Feature.class);
+        criteria.setFetchMode("featureAssay", FetchMode.JOIN);
+        criteria.setFetchMode("featureMarkerRelations", FetchMode.JOIN);
+        criteria.setFetchMode("featureDnaMutationDetail", FetchMode.JOIN);
+        criteria.setFetchMode("featureProteinMutationDetail", FetchMode.JOIN);
+        criteria.createAlias("sources", "source");
+        criteria.add(Restrictions.eq("source.organization.zdbID", zdbID));
+        criteria.addOrder(Order.asc("abbreviationOrder"));
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        List<Feature> list = criteria.list();
+        return list;
     }
 
     @Override
@@ -1063,6 +1078,14 @@ public class HibernateFeatureRepository implements FeatureRepository {
     public void deleteFeatureProteinMutationDetail(FeatureProteinMutationDetail detail) {
         //I changed this to delete this record entirely from zdb active data so as to remove lingering record attributions as well.
         infrastructureRepository.deleteActiveDataByZdbID(detail.getZdbID());
+    }
+
+    @Override
+    public boolean getFeaturesForLabExist(String zdbID) {
+        String hql = " select count(*) from Feature f join f.sources s " +
+                " where s.organization.zdbID = :zdbID ";
+        Long count = (Long) HibernateUtil.currentSession().createQuery(hql).setString("zdbID", zdbID).uniqueResult();
+        return count > 0;
     }
 }
 

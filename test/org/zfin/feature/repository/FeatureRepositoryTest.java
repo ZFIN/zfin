@@ -266,8 +266,13 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     public void getFeaturesForLab() {
         List<Feature> features = featureRepository.getFeaturesForLab("ZDB-LAB-970408-1");
         assertNotNull(features);
-        assertTrue(features.size() < 100 && features.size() > 10);
+        assertThat(features.size(), greaterThan(10));
+    }
 
+    @Test
+    public void getFeaturesForLabExist() {
+        boolean exists = featureRepository.getFeaturesForLabExist("ZDB-LAB-970408-1");
+        assertTrue(exists);
     }
 
     @Test

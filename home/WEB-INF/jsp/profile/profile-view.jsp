@@ -17,7 +17,7 @@
         <zfin2:labView lab="${formBean}" publications="${publications}" members="${members}" prefixes="${prefixes}"
                        editURL="/action/profile/lab/edit/${formBean.zdbID}"
                        deleteURL="${deleteURL}" isOwner="${isOwner}"
-                       hasCoPi="${hasCoPi}" noPrefixes="${noPrefixes}" featuresForTheLab="${featuresForTheLab}"
+                       hasCoPi="${hasCoPi}" noPrefixes="${noPrefixes}" featuresExist="${featuresExist}"
                 />
     </c:when>
 </c:choose>

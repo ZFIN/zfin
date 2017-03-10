@@ -177,4 +177,6 @@ public interface FeatureRepository {
     void update(Feature feature, Set<FeatureTranscriptMutationDetail> addTranscriptAttribution, String publicationID);
 
     void deleteFeatureProteinMutationDetail(FeatureProteinMutationDetail detail);
+
+    boolean getFeaturesForLabExist(String zdbID);
 }

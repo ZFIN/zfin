@@ -170,7 +170,7 @@ public class LabController {
         if (!noPrefixes) {
             int ctNoneActiveForSet = 0;
             for (FeaturePrefix fpf : featurePrefixes) {
-                logger.info("featurePrefix is:" + fpf.getPrefixString().toString());
+                logger.info("featurePrefix is:" + fpf.getPrefixString());
                 if (!fpf.isActiveForSet())
                     ctNoneActiveForSet++;
             }
@@ -181,7 +181,7 @@ public class LabController {
         model.addAttribute("noPrefixes", noPrefixes);
 
         // a lab could have prefixes while having no features (example as of 2013-01-24: ZDB-LAB-111031-1
-        model.addAttribute("featuresForTheLab", RepositoryFactory.getFeatureRepository().getFeaturesForLab(zdbID));
+        model.addAttribute("featuresExist", RepositoryFactory.getFeatureRepository().getFeaturesForLabExist(zdbID));
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.LAB.getTitleString() + lab.getName());
         return "profile/profile-view.page";
