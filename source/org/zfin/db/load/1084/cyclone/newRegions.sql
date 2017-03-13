@@ -126,8 +126,8 @@ insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_disp
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
   values ('TSCRIPTNREGREGION','22','Transcript Regulatory Region');
 
-insert into marker_type_group (mtgrp_name, mtgrp_comments)
- values ('TSCRIPTREGION', 'Transcript Region');
+--insert into marker_type_group (mtgrp_name, mtgrp_comments)
+-- values ('TSCRIPTREGION', 'Transcript Region');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
  values ('SRPRNAG', 'srp_rna');

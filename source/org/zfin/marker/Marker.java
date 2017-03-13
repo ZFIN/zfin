@@ -433,8 +433,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         PROTBS("PROTBS"),
         CPGISLAND("CPGISLAND"),
         SRPRNAG("SRPRNAG"),
-        TSCRIPTNREGREGION("TSCRIPTNREGREGION"),
-        TSCRIPTREGION("TSCRIPTREGION")
+        TSCRIPTNREGREGION("TSCRIPTNREGREGION")
         ;
 
         private final String value;
@@ -524,10 +523,9 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         HISTBS("HISTBS"),
         PROTBS("PROTBS"),
         CPGISLAND("CPGISLAND"),
-        TSCRIPTNREGREGION("TSCRIPTNREGREGION"),
         ENGINEERED_REGION("ENGINEERED_REGION"),
         GENEDOM_PROD_PROTEIN("GENEDOM_PROD_PROTEIN"),
-        NONTSCRBD_REGIONS("NONTSCRBD_REGIONS")
+        NONTSCRBD_REGION("NONTSCRBD_REGION")
         ;
 
         private final String value;
