@@ -1,6 +1,27 @@
 --liquibase formatted sql
 --changeset sierra:newRegions
 
+alter table marker
+  drop constraint mrkr_type_foreign_key;
+
+alter table marker
+  modify (mrkr_type varchar(60) not null constraint mrkr_type_not_null);
+  
+
+alter table marker_types
+  drop constraint marker_types_primary_key;
+
+alter table marker_types
+  modify (marker_type varchar(60) not null constraint marker_type_not_null);
+
+alter table marker_types add constraint primary key 
+    (marker_type) constraint marker_types_primary_key 
+     ;
+
+alter table marker add constraint (foreign key (mrkr_type) 
+    references marker_types  constraint mrkr_type_foreign_key);
+
+
 alter table marker_type_group_member
  drop constraint mtgrpmem_mrkr_type_group_foreign_key;
 
