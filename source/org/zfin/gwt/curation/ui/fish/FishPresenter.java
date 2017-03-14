@@ -3,12 +3,13 @@ package org.zfin.gwt.curation.ui.fish;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Widget;
 import org.zfin.gwt.curation.event.CloneFishEvent;
 import org.zfin.gwt.curation.ui.CurationDiseaseRPC;
 import org.zfin.gwt.curation.ui.CurationDiseaseRPCAsync;
+import org.zfin.gwt.curation.ui.FishServiceGWT;
 import org.zfin.gwt.curation.ui.Presenter;
 import org.zfin.gwt.root.dto.FishDTO;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
@@ -29,7 +30,7 @@ public class FishPresenter implements Presenter {
 
     private List<FishDTO> fishList = new ArrayList<>(10);
 
-    public FishPresenter(FishView view, String publicationID) {
+    FishPresenter(FishView view, String publicationID) {
         this.view = view;
         this.publicationID = publicationID;
     }
@@ -40,18 +41,21 @@ public class FishPresenter implements Presenter {
     }
 
     private void createFishList() {
-        diseaseRpcService.getFishList(publicationID, new RetrieveFishListCallBack("Fish List", null));
+        AppUtils.fireAjaxCall(FishModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_START);
+        FishServiceGWT.callServer(publicationID, new RetrieveFishListCallBack("Fish List",
+                null, AjaxCallEventType.GET_FISH_LIST_STOP));
 
     }
 
     class RetrieveFishListCallBack extends ZfinAsyncCallback<List<FishDTO>> {
 
-        public RetrieveFishListCallBack(String errorMessage, ErrorHandler errorLabel) {
-            super(errorMessage, errorLabel, (Widget) null);
+        RetrieveFishListCallBack(String errorMessage, ErrorHandler errorLabel, AjaxCallEventType eventType) {
+            super(errorMessage, errorLabel, FishModule.getModuleInfo(), eventType);
         }
 
         @Override
         public void onSuccess(List<FishDTO> list) {
+            super.onFinish();
             if (list == null) {
                 view.emptyDataTable();
                 return;

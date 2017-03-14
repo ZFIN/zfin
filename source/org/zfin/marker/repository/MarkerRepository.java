@@ -163,6 +163,8 @@ public interface MarkerRepository {
 
     MarkerType getMarkerTypeByName(String name);
 
+    MarkerType getMarkerTypeByDisplayName(String displayName);
+
     MarkerTypeGroup getMarkerTypeGroupByName(String name);
 
     void renameMarker(Marker marker, Publication publication, MarkerHistory.Reason reason, String oldSymbol, String oldGeneName);
@@ -488,4 +490,10 @@ public interface MarkerRepository {
     MarkerHistory getMarkerHistory(String zdbID);
 
     DBLink addDBLinkWithLenth(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID, int length);
+
+    List<Marker> getMarkerByGroup(Marker.TypeGroup group, int number);
+
+    Map<String,GenericTerm> getSoTermMapping();
+
+    void copyStrSequence(SequenceTargetingReagent str1, SequenceTargetingReagent str2);
 }

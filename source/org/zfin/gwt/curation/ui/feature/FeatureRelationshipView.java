@@ -79,7 +79,10 @@ public class FeatureRelationshipView extends Composite {
 
     @UiHandler("relationshipList")
     void onChangeFeatureRelationship(@SuppressWarnings("unused") ChangeEvent event) {
-        presenter.updateTargetGeneList(featureList.getSelectedText(), relationshipList.getSelectedText());
+        String relationshipText = null;
+        if (relationshipList.getItemCount() > 0)
+            relationshipText = relationshipList.getSelectedText();
+        presenter.updateTargetGeneList(featureList.getSelectedText(), relationshipText);
     }
 
     private int currentGroupIndex;

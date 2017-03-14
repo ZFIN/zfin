@@ -2175,7 +2175,7 @@ from marker, marker_sequence
  and mrkr_zdb_id like "ZDB-TALEN%";
 
 
-!echo "unload disease.txt"
+!echo "unload fish_model_disease.txt"
 unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_model_disease.txt'
  DELIMITER "	"
 SELECT genox_fish_zdb_id,
@@ -2187,7 +2187,12 @@ SELECT genox_fish_zdb_id,
        term_ont_id,
        term_name,
        dat_source_zdb_id,
-       accession_no
+       accession_no,
+       CASE dat_evidence_code
+         WHEN "IC" THEN "IC, ECO:0000205"
+         WHEN "TAS" THEN "TAS, ECO:0000033"
+         ELSE dat_evidence_code
+       END
 FROM   disease_annotation_model,
        disease_annotation,publication,
        term,

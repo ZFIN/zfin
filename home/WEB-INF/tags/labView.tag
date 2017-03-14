@@ -13,13 +13,13 @@
 <%@ attribute name="isOwner" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
 <%@ attribute name="hasCoPi" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
 <%@ attribute name="noPrefixes" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
-<%@ attribute name="featuresForTheLab" type="java.util.Collection" required="true" %>
+<%@ attribute name="numOfFeatures" type="java.lang.Long" required="true" %>
 
 <zfin2:dataManager zdbID="${lab.zdbID}"
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"
                    isOwner="${isOwner}"
-        />
+/>
 
 <zfin2:listAllFromOrganization/>
 
@@ -117,13 +117,25 @@
     }
 </script>
 
-<c:if test="${!empty featuresForTheLab}">
-   <a id="showAlleleLink" href="javascript:;" onclick="showAlleles('${lab.zdbID}');"><img src="/images/plus-13.png" style="border:none;"></a>
-</c:if>
+<zfin2:subsection title="GENOMIC FEATURES ORIGINATING FROM THIS LAB"
+                  test="${numOfFeatures>0}" showNoData="true">
+    <c:choose>
+        <c:when test="${numOfFeatures > 50}">
+            <span id="showAlleleLink">
+                <a href="javascript:" onclick="showAlleles('${lab.zdbID}');">Show </a>
+            first 50 of <fmt:formatNumber value="${numOfFeatures}" pattern="##,###"/> genomic features
+            </span>
+        </c:when>
+        <c:otherwise>
+            <span id="showAlleleLink">
+            <a href="javascript:" onclick="showAlleles('${lab.zdbID}');">Show
+                all </a> ${numOfFeatures} genomic features
+            </span>
+        </c:otherwise>
+    </c:choose>
+    <a id="hideAlleleLink" style="display: none;" href="javascript:hideAlleles()" onclick="hideAlleles()">Hide</a>
 
-<a id="hideAlleleLink" style="display: none;" href="javascript:;hideAlleles()" onclick="hideAlleles()"><img src="/images/minus-13.png" style="border:none;"></a>
-
-<span class="summaryTitle">GENOMIC FEATURES ORIGINATING FROM THIS LAB</span>
+</zfin2:subsection>
 
 <div style="display: none;" id="alleleDesignation"></div>
 <br>
@@ -148,7 +160,7 @@
 <br>
 
 <span class="summaryTitle">ZEBRAFISH PUBLICATIONS OF LAB MEMBERS</span>
-
+x
 <zfin2:listPublications publications="${publications}"/>
 
 

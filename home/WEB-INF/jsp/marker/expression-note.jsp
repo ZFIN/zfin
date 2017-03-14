@@ -28,7 +28,7 @@
     <p>
         Reporter gene constructs can employ a variety of different engineered foreign genes. If, for example, a search
         for GFP expression yields no results, try RFP, YFP etc. For a full list, see
-        <a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-markerselect.apg&marker_type=EFG&query_results=t"
+        <a href="/search?q=&fq=category%3A%22Gene+%2F+Transcript%22&category=Gene+%2F+Transcript&fq=type%3A%22Engineered+Foreign+Gene%22"
            target=new>all current EFG's</a>
 
     <p>If you have questions or suggestions or would like to submit

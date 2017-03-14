@@ -20,7 +20,7 @@
     </tiles:insertTemplate>
 </div>
 
-    <zfin2:cloneHead cloneBean="${formBean}"/>
+    <zfin2:cloneHead cloneBean="${formBean}" soTerm="${formBean.zfinSoTerm}"/>
 
     <zfin2:uninformativeCloneName name="${formBean.marker.abbreviation}" chimericClone="${formBean.marker.chimeric}"/>
 

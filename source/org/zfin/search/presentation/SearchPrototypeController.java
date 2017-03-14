@@ -120,7 +120,7 @@ public class SearchPrototypeController {
             model.addAttribute("newQuery", q.substring(1));
         }
 
-        SolrClient client = SolrService.getSolrClient("prototype");
+        SolrClient client = SolrService.getSolrClient();
         SolrQuery query = new SolrQuery();
 
         String queryStringInput;
@@ -404,7 +404,7 @@ public class SearchPrototypeController {
                       HttpServletRequest request) {
         List<FacetLookupEntry> facets = new ArrayList<FacetLookupEntry>();
 
-        SolrClient server = SolrService.getSolrClient("prototype");
+        SolrClient server = SolrService.getSolrClient();
         SolrQuery query = new SolrQuery();
 
         query = handleFacetSorting(query, request);

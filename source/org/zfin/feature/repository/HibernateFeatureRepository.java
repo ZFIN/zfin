@@ -3,18 +3,20 @@ package org.zfin.feature.repository;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.hibernate.transform.BasicTransformerAdapter;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
+import org.zfin.antibody.Antibody;
 import org.zfin.feature.*;
 import org.zfin.feature.presentation.FeatureLabEntry;
 import org.zfin.feature.presentation.FeaturePrefixLight;
 import org.zfin.feature.presentation.LabLight;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.Mutagee;
@@ -33,10 +35,12 @@ import org.zfin.profile.Organization;
 import org.zfin.profile.OrganizationFeaturePrefix;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
+import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 
@@ -73,17 +77,18 @@ public class HibernateFeatureRepository implements FeatureRepository {
     @SuppressWarnings("unchecked")
     public List<Feature> getFeaturesByPublication(String publicationID) {
         Session session = currentSession();
-        String hql = "select feature from Feature as feature, " +
-                "PublicationAttribution as attribution " +
-                "where  attribution.dataZdbID = feature.zdbID AND " +
-                "      attribution.publication.zdbID = :pubID AND" +
-                "      attribution.sourceType = :type" +
-                "     order by feature.abbreviationOrder";
-
-        Query query = session.createQuery(hql);
-        query.setParameter("pubID", publicationID);
-        query.setParameter("type", RecordAttribution.SourceType.STANDARD);
-        return (List<Feature>) query.list();
+        Criteria criteria = session.createCriteria(Feature.class);
+        criteria.setFetchMode("featureAssay", FetchMode.JOIN);
+        criteria.setFetchMode("featureMarkerRelations", FetchMode.JOIN);
+        criteria.setFetchMode("featureDnaMutationDetail", FetchMode.JOIN);
+        criteria.setFetchMode("featureProteinMutationDetail", FetchMode.JOIN);
+        criteria.createAlias("publications", "pubAttributions");
+        criteria.add(Restrictions.eq("pubAttributions.publication.zdbID", publicationID));
+        criteria.add(Restrictions.eq("pubAttributions.sourceType", RecordAttribution.SourceType.STANDARD));
+        criteria.addOrder(Order.asc("abbreviationOrder"));
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        List<Feature> list = criteria.list();
+        return list;
     }
 
 
@@ -91,31 +96,26 @@ public class HibernateFeatureRepository implements FeatureRepository {
     public List<FeatureMarkerRelationship> getFeatureRelationshipsByPublication(String publicationZdbID) {
 
         Session session = currentSession();
-        String hql = "select distinct fmr from FeatureMarkerRelationship as fmr, " +
-                "PublicationAttribution as attribution " +
-                "where  attribution.dataZdbID = fmr.feature.zdbID AND " +
-                "      attribution.publication.zdbID = :pubID ";
-
-        Query query = session.createQuery(hql);
-        query.setParameter("pubID", publicationZdbID);
-        List<FeatureMarkerRelationship> featureMarkerRelationships = (List<FeatureMarkerRelationship>) query.list();
+        Criteria criteria = session.createCriteria(FeatureMarkerRelationship.class);
+        criteria.setFetchMode("feature", FetchMode.JOIN);
+        criteria.setFetchMode("feature.featureProteinMutationDetail", FetchMode.JOIN);
+        criteria.setFetchMode("feature.featureDnaMutationDetail", FetchMode.JOIN);
+        criteria.createAlias("feature.publications", "pubAttributions");
+        criteria.add(Restrictions.eq("pubAttributions.publication.zdbID", publicationZdbID));
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        List<FeatureMarkerRelationship> featureMarkerRelationships = criteria.list();
 
         // order
-        Collections.sort(featureMarkerRelationships, new Comparator<FeatureMarkerRelationship>() {
-            @Override
-            public int compare(FeatureMarkerRelationship o1, FeatureMarkerRelationship o2) {
-                return o1.getFeature().getAbbreviationOrder().compareTo(o2.getFeature().getAbbreviationOrder());
-            }
-        });
-        return featureMarkerRelationships;
+        return featureMarkerRelationships.stream()
+                .sorted((o1, o2) -> o1.getFeature().getAbbreviationOrder().compareTo(o2.getFeature().getAbbreviationOrder()))
+                .collect(Collectors.toList());
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<String> getRelationshipTypesForFeatureType(FeatureTypeEnum featureTypeEnum) {
 
-        String sql = "\n" +
-                "select distinct fmreltype_name " +
+        String sql = "select distinct fmreltype_name " +
                 "   from " +
                 "   feature_marker_relationship_type, feature_type_group," +
                 "   feature_type_group_member" +
@@ -472,22 +472,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return ftrAss;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<Feature> getFeaturesForAttribution(String publicationZdbID) {
-        String hql = "" +
-                " select distinct f from Feature f , RecordAttribution ra " +
-                " where ra.dataZdbID=f.zdbID and ra.sourceType = :standard and ra.sourceZdbID = :pubZdbID " +
-                " order by f.abbreviationOrder " +
-                " ";
-
-        return (List<Feature>) HibernateUtil.currentSession().createQuery(hql)
-                .setString("pubZdbID", publicationZdbID)
-                .setString("standard", RecordAttribution.SourceType.STANDARD.toString())
-                .list();
-    }
-
-
     @Override
     public DataNote addFeatureDataNote(Feature feature, String note) {
         logger.debug("enter addMarDataNote");
@@ -646,20 +630,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return (String) queryLab.uniqueResult();
     }
 
-    public List<Feature> getFeatureForAttribution(String publicationZdbID) {
-
-        String hql = "" +
-                " select distinct f from Feature f , RecordAttribution ra " +
-                " where ra.dataZdbID=f.zdbID and ra.sourceType = :standard and ra.sourceZdbID = :pubZdbID " +
-                " order by f.abbreviationOrder " +
-                " ";
-
-        return (List<Feature>) HibernateUtil.currentSession().createQuery(hql)
-                .setString("pubZdbID", publicationZdbID)
-                .setString("standard", RecordAttribution.SourceType.STANDARD.toString())
-                .list();
-    }
-
     @SuppressWarnings({"unchecked"})
     public List<Feature> getFeaturesForStandardAttribution(Publication publication) {
         String hql = "select f from PublicationAttribution pa , Feature f " +
@@ -771,14 +741,18 @@ public class HibernateFeatureRepository implements FeatureRepository {
     @SuppressWarnings("unchecked")
     @Override
     public List<Feature> getFeaturesForLab(String zdbID) {
-        String hql = " select f from Feature f join f.sources s " +
-                " where s.organization.zdbID = :zdbID " +
-                " order by f.abbreviationOrder asc " +
-                "";
-        List<Feature> features = HibernateUtil.currentSession().createQuery(hql)
-                .setString("zdbID", zdbID)
-                .list();
-        return features;
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(Feature.class);
+        criteria.setFetchMode("featureAssay", FetchMode.JOIN);
+        criteria.setFetchMode("featureDnaMutationDetail", FetchMode.JOIN);
+        criteria.setFetchMode("featureProteinMutationDetail", FetchMode.JOIN);
+        criteria.createAlias("sources", "source");
+        criteria.add(Restrictions.eq("source.organization.zdbID", zdbID));
+        criteria.addOrder(Order.asc("abbreviationOrder"));
+        criteria.setMaxResults(50);
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        List<Feature> list = criteria.list();
+        return list;
     }
 
     @Override
@@ -1028,7 +1002,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         }
         // create attributions for mutation details: DNA
         if (feature.getFeatureProteinMutationDetail() != null) {
-           savePublicationAttribution(publication, feature.getFeatureProteinMutationDetail().getZdbID());
+            savePublicationAttribution(publication, feature.getFeatureProteinMutationDetail().getZdbID());
         }
         // create attributions for mutation details: Protein
         if (feature.getFeatureDnaMutationDetail() != null) {
@@ -1094,6 +1068,13 @@ public class HibernateFeatureRepository implements FeatureRepository {
     public void deleteFeatureProteinMutationDetail(FeatureProteinMutationDetail detail) {
         //I changed this to delete this record entirely from zdb active data so as to remove lingering record attributions as well.
         infrastructureRepository.deleteActiveDataByZdbID(detail.getZdbID());
+    }
+
+    @Override
+    public Long getFeaturesForLabCount(String zdbID) {
+        String hql = " select count(*) from Feature f join f.sources s " +
+                " where s.organization.zdbID = :zdbID ";
+        return (Long) HibernateUtil.currentSession().createQuery(hql).setString("zdbID", zdbID).uniqueResult();
     }
 }
 

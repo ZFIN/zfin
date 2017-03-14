@@ -54,6 +54,13 @@ a:hover {
     align-items: flex-end;
 }
 
+
+.search-form-top-bar {
+    margin-top: 1em;
+    margin-left: .25em;
+    margin-right: .25em;
+}
+
 .btn-zfin {
     color: #FFFFFF;
     background-color: #066;

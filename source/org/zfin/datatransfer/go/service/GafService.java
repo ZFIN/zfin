@@ -489,7 +489,6 @@ public class GafService {
             logger.debug("adding " + markerGoTermEvidenceToAdd);
 
             markerGoTermEvidenceRepository.addEvidence(markerGoTermEvidenceToAdd);
-            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerGoTermEvidenceToAdd.getZdbID(), "MarkerGoTermEvidence", markerGoTermEvidenceToAdd.toString(), "Created new MarkerGoTermEvidence record from GafService load");
 
             logger.debug("added " + markerGoTermEvidenceToAdd);
         } catch (Exception e) {

@@ -46,7 +46,7 @@
     </ul>
 </ul>
 <ul>
-    <li><a href="/action/construct/search"
+    <li><a href="/search?q=&fq=category%3A%22Construct%22&category=Construct"
            title="Search for constructs"><strong>Constructs</strong></a></li>
 
 </ul>

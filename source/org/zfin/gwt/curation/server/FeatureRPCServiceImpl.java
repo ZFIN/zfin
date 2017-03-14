@@ -18,10 +18,7 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.ui.DuplicateEntryException;
 import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.gwt.root.util.NullpointerException;
-import org.zfin.infrastructure.DataAliasGroup;
-import org.zfin.infrastructure.DataNote;
-import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.repository.MutantRepository;
@@ -32,10 +29,14 @@ import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.Category;
+import org.zfin.search.FieldName;
+import org.zfin.search.service.SolrService;
 import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.*;
@@ -297,24 +298,15 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
     }
 
-    public List<FeatureDTO> getFeaturesForPub(String pubZdbId) {
-        Publication pub = pubRepository.getPublication(pubZdbId);
+    public List<FeatureDTO> getFeaturesForPub(String publicationId) {
         List<FeatureDTO> featureDTOs = new ArrayList<>();
-        List<Feature> features = featureRepository.getFeaturesForStandardAttribution(pub);
+        List<Feature> features = featureRepository.getFeaturesByPublication(publicationId);
         if (CollectionUtils.isNotEmpty(features)) {
             for (Feature f : features) {
-
-                featureDTOs.add(DTOConversionService.convertToFeatureDTO(f));
-
+                featureDTOs.add(DTOConversionService.convertToFeatureDTO(f, false));
             }
         }
-        Collections.sort(featureDTOs, new Comparator<FeatureDTO>() {
-            @Override
-            public int compare(FeatureDTO o1, FeatureDTO o2) {
-                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-            }
-        });
-
+        Collections.sort(featureDTOs, Comparator.comparing(o -> o.getName().toLowerCase()));
         return featureDTOs;
     }
 
@@ -422,7 +414,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         public void run() {
             labsOfOrigin = null;
             getLabsOfOriginWithPrefix();
-
+            HibernateUtil.closeSession();
         }
     }
 
@@ -534,6 +526,39 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             HibernateUtil.currentSession().update(feature);
             HibernateUtil.flushAndCommitCurrentSession();
             newFeatureDTO = getFeature(feature.getZdbID());
+
+            Map<String, String> screens = new HashMap<>(3);
+            screens.put("la", "Burgess / Lin");
+            screens.put("sa", "Sanger");
+            screens.put("mn", "Zfishbook");
+
+            Map<FieldName, Object> solrDoc = new HashMap<>(12);
+            solrDoc.put(FieldName.ID, feature.getZdbID());
+            solrDoc.put(FieldName.CATEGORY, Category.MUTANT.getName());
+            solrDoc.put(FieldName.TYPE, feature.getType().getDisplay());
+            solrDoc.put(FieldName.NAME, feature.getName());
+            solrDoc.put(FieldName.PROPER_NAME, feature.getName());
+            solrDoc.put(FieldName.FULL_NAME, feature.getName());
+            solrDoc.put(FieldName.NAME_SORT, feature.getNameOrder());
+            solrDoc.put(FieldName.ALIAS, feature.getAbbreviation());
+            solrDoc.put(FieldName.URL, "/" + feature.getZdbID());
+
+            String prefix = feature.getFeaturePrefix().getPrefixString();
+            if (screens.containsKey(prefix)) {
+                solrDoc.put(FieldName.SCREEN, screens.get(prefix));
+            }
+
+            if (feature.getAliases() != null) {
+                List<String> aliases = feature.getAliases().stream()
+                        .map(DataAlias::getAlias)
+                        .collect(Collectors.toList());
+                solrDoc.put(FieldName.ALIAS, aliases);
+            }
+
+            solrDoc.put(FieldName.DATE, new Date());
+            solrDoc.put(FieldName.MUTAGEN, feature.getFeatureAssay().getMutagen().toString());
+            SolrService.addDocument(solrDoc);
+
         } catch (ValidationException e) {
             HibernateUtil.rollbackTransaction();
             logger.info("Error during Creation ", e);

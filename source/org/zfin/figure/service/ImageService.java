@@ -12,6 +12,7 @@ import org.zfin.expression.Image;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Person;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.repository.RepositoryFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -74,6 +75,9 @@ public class ImageService {
         image.setImageFilename(destinationFilename);
         image.setThumbnail(thumbnailFilename);
         HibernateUtil.currentSession().save(image);
+
+        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(figure.getPublication(), "img_zdb_id",
+                "create new record", image.getZdbID(), null);
 
         Files.copy(imageStream, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 

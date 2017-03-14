@@ -8,18 +8,19 @@ import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Widget;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.curation.event.TabEventHandler;
 import org.zfin.gwt.root.dto.CuratorSessionDTO;
-import org.zfin.gwt.root.dto.OntologyDTO;
+import org.zfin.gwt.root.dto.FishDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
-import org.zfin.gwt.root.ui.ItemSuggestCallback;
-import org.zfin.gwt.root.ui.LookupComposite;
+import org.zfin.gwt.root.event.AjaxCallEvent;
+import org.zfin.gwt.root.event.AjaxCallEventHandler;
+import org.zfin.gwt.root.ui.AjaxCallBaseManager;
 import org.zfin.gwt.root.ui.SessionSaveService;
-import org.zfin.gwt.root.ui.TermInfoCallBack;
+import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
-import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.ArrayList;
@@ -51,6 +52,9 @@ public class CurationEntryPoint implements EntryPoint {
     private static final int DEFAULT_DELAY_TIME = 400;
     private static int delayTime = DEFAULT_DELAY_TIME;
     private HistoryModule historyModule = new HistoryModule();
+    private AjaxCallBaseManager callBaseManager = new AjaxCallBaseManager();
+    private CurationExperimentRPCAsync curationExperimentRPCAsync = CurationExperimentRPC.App.getInstance();
+    private static List<FishDTO> wildtypeFishList;
 
     public void onModuleLoad() {
         loadPublicationAndFilterElements();
@@ -59,7 +63,27 @@ public class CurationEntryPoint implements EntryPoint {
         RelatedEntityDTO relatedEntityDTO = new RelatedEntityDTO();
         relatedEntityDTO.setPublicationZdbID(publicationID);
         attributionModule.setDTO(relatedEntityDTO);
+        bindEventBusHandler();
 
+        curationExperimentRPCAsync.getWildTypeFishList(new ZfinAsyncCallback<List<FishDTO>>(null, null, (Widget) null) {
+            @Override
+            public void onSuccess(List<FishDTO> fishDTOS) {
+                wildtypeFishList = fishDTOS;
+                initModules();
+            }
+        });
+
+/*
+        GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
+            @Override
+            public void onUncaughtException(Throwable e) {
+                ensureNotUmbrellaError(e);
+            }
+        });
+*/
+    }
+
+    private void initModules() {
         // use only the session save module if no pub id is provided.
         if (publicationID != null) {
             if (type != null) {
@@ -81,15 +105,10 @@ public class CurationEntryPoint implements EntryPoint {
 
         }
         exposeRefreshTabMethodsToJavascript(this);
-        bindEventBusHandler();
-/*
-        GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
-            @Override
-            public void onUncaughtException(Throwable e) {
-                ensureNotUmbrellaError(e);
-            }
-        });
-*/
+    }
+
+    public static List<FishDTO> getWildtypeFishList() {
+        return wildtypeFishList;
     }
 
     private static void ensureNotUmbrellaError(Throwable e) {
@@ -118,6 +137,13 @@ public class CurationEntryPoint implements EntryPoint {
                     public void onEvent(CurationEvent event) {
                         notifyModules(event);
                         logEvent(event);
+                    }
+                });
+        AppUtils.EVENT_BUS.addHandler(AjaxCallEvent.TYPE,
+                new AjaxCallEventHandler() {
+                    @Override
+                    public void onAjaxCall(AjaxCallEvent event) {
+                        callBaseManager.handleAjaxCallEvent(event);
                     }
                 });
 
@@ -172,9 +198,12 @@ public class CurationEntryPoint implements EntryPoint {
             curationModule.@org.zfin.gwt.curation.ui.CurationEntryPoint::showHistory()();
         };
 
-
         $wnd.updateTermInfoBox = function (termName, ontologyName, tabName) {
-            curationModule .@org.zfin.gwt.curation.ui.CurationEntryPoint::updateTermInfo(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(termName, ontologyName, tabName);
+            curationModule.@org.zfin.gwt.curation.ui.CurationEntryPoint::updateTermInfo(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(termName, ontologyName, tabName);
+        };
+
+        $wnd.fireCreateMarkerEvent = function () {
+            curationModule.@org.zfin.gwt.curation.ui.CurationEntryPoint::fireCreateMarkerEvent()();
         };
     }-*/;
 
@@ -214,18 +243,19 @@ public class CurationEntryPoint implements EntryPoint {
     }
 
 
-
     public void handleTabToggle(String tabName) {
         ZfinCurationModule module = allModules.get(tabName.toUpperCase());
-        if (module == null) {
-            Window.alert("Could not find tab " + tabName);
-            return;
+        if (module != null) {
+            module.handleTabToggle();
         }
-        module.handleTabToggle();
     }
 
     public static void refreshFigureLists() {
         AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.ADD_FIGURE));
+    }
+
+    public void fireCreateMarkerEvent() {
+        notifyModules(new CurationEvent(EventType.CREATE_MARKER));
     }
 
     @SuppressWarnings({"FeatureEnvy"})
@@ -245,7 +275,7 @@ public class CurationEntryPoint implements EntryPoint {
         curatorSessionUpdate.setPublicationZdbID(publicationZdbID);
         curatorSessionUpdate.setField(field);
         curatorSessionUpdate.setValue(value);
-        List<CuratorSessionDTO> sessionList = new ArrayList<CuratorSessionDTO>(1);
+        List<CuratorSessionDTO> sessionList = new ArrayList<>(1);
         sessionList.add(curatorSessionUpdate);
         AsyncCallback callbackRefresh = new SessionUpdateCallbackWithURL(anchor);
         SessionSaveService.App.getInstance().saveCuratorUpdate(sessionList, callbackRefresh);

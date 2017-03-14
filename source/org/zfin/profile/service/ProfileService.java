@@ -15,6 +15,7 @@ import org.zfin.feature.FeaturePrefix;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.*;
+
 import org.zfin.profile.presentation.PersonMemberPresentation;
 import org.zfin.profile.presentation.ProfileUpdateMessageBean;
 import org.zfin.profile.repository.ProfileRepository;
@@ -23,10 +24,8 @@ import org.zfin.repository.RepositoryFactory;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.sql.Blob;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.text.Collator;
 
 /**
  */
@@ -133,6 +132,7 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("shortName", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("email", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("address", oldPerson, newPerson));
+        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("country", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("fax", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("phone", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("url", oldPerson, newPerson));
@@ -190,6 +190,7 @@ public class ProfileService {
             throws Exception {
 
         beanCompareService.applyUpdates(person, fields);
+
         HibernateUtil.currentSession().update(person);
         for (BeanFieldUpdate beanFieldUpdate : fields) {
             RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(person.getZdbID(), beanFieldUpdate);
@@ -400,8 +401,24 @@ public class ProfileService {
         logger.error("failed trying to remove a person to something that was not a lab or company: " + organizationZdbID);
         return false;
     }
-
     /**
+     * using this method to get a list of Contries for use in Person edit
+     */
+    public static List<String> getCountries(final Locale inLocale) {
+        String[] countryCodes = Locale.getISOCountries();
+        List<String> countries = new ArrayList<String>(countryCodes.length);
+        countries.add("");
+        for (String countryCode : countryCodes) {
+            Locale obj = new Locale("", countryCode);
+          //  countries.add(obj.getDisplayCountry(inLocale));
+            countries.add(obj.getCountry());
+
+        }
+        Collections.sort(countries);
+        return countries;
+    }
+
+        /**
      * If there is not an address for this person then insert the join record.
      * If there is one, then update the join record.
      * If there are multiple . . . create an error log and update both records.

@@ -53,7 +53,6 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
 import org.zfin.util.NumberAwareStringComparator;
-import org.zfin.util.ZfinStringUtils;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -61,8 +60,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 
 @Repository
@@ -273,7 +271,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "    record_attribution" +
                 "    where mrkr_zdb_id = recattrib_data_zdb_id" +
                 "    and recattrib_source_zdb_id=:pubZdbID " +
-                "    and mrkr_type in ('REGION','CNE')";
+                "    and mrkr_type in ('EREGION','CNE')";
 
 
         List<String> markerZdbIds = (List<String>) HibernateUtil.currentSession().createSQLQuery(sql)
@@ -342,7 +340,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         Session session = currentSession();
         String hql = "select distinct mr from MarkerRelationship as mr " +
-                   "where mr.type not in (:markerRelationshipType)";
+                "where mr.type not in (:markerRelationshipType)";
 
 
         Query query = session.createQuery(hql);
@@ -385,7 +383,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         Set<MarkerRelationship> secondSegmentRelationships = marker2.getSecondMarkerRelationships();
         if (secondSegmentRelationships == null) {
-            secondSegmentRelationships = new HashSet<MarkerRelationship>();
+            secondSegmentRelationships = new HashSet<>();
             secondSegmentRelationships.add(mrel);
             marker2.setSecondMarkerRelationships(secondSegmentRelationships);
         } else {
@@ -412,8 +410,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
             pa.setSourceZdbID(sourceZdbID);
             pa.setDataZdbID(mrel.getZdbID());
             pa.setSourceType(RecordAttribution.SourceType.STANDARD);
-            Set<PublicationAttribution> pubattr = new HashSet<PublicationAttribution>();
-            pubattr.add(pa);
             //mrel.setPublications(pubattr);
             currentSession().save(pa);
             Publication publication = RepositoryFactory.getPublicationRepository().getPublication(sourceZdbID);
@@ -856,7 +852,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
      */
     public void runMarkerNameFastSearchUpdate(final Marker marker) {
         Session session = currentSession();
-        session.doWork(new Work(){
+        session.doWork(new Work() {
             @Override
             public void execute(Connection connection) throws SQLException {
                 CallableStatement statement = null;
@@ -1548,6 +1544,14 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return type;
     }
 
+    public MarkerType getMarkerTypeByDisplayName(String displayName) {
+        Session session = currentSession();
+
+        return (MarkerType) session.createCriteria(MarkerType.class)
+                .add(Restrictions.eq("displayName", displayName)).uniqueResult();
+
+    }
+
     public MarkerTypeGroup getMarkerTypeGroupByName(String name) {
         Session session = currentSession();
         MarkerTypeGroup markerTypeGroup = (MarkerTypeGroup) session.get(MarkerTypeGroup.class, name);
@@ -2036,6 +2040,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
         if (marker.getZdbID().startsWith("ZDB-TSCRIPT")) {
             sql += " and fdb.fdb_db_name != 'VEGA' ";
         }
+        if (marker.getZdbID().startsWith("ZDB-GENE")) {
+            sql += " and dbl.dblink_acc_num not like  'ENSDARP%' ";
+        }
         Query query = HibernateUtil.currentSession().createSQLQuery(sql)
                 .setParameter("markerZdbId", marker.getZdbID())
                 .setParameter("displayGroup", groupName.toString())
@@ -2425,7 +2432,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public List<Marker> getAllEngineeredRegions() {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Marker.class);
-        criteria.add(Restrictions.eq("markerType.name", Marker.Type.REGION.toString()));
+        criteria.add(Restrictions.eq("markerType.name", Marker.Type.EREGION.toString()));
         criteria.addOrder(Order.asc("abbreviationOrder"));
         return (List<Marker>) criteria.list();
     }
@@ -2601,10 +2608,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public List<LookupEntry> getConstructComponentsForString(String lookupString, String zdbId) {
 
 
-        String sqlQuery = "select mrkr_abbrev as abbrev, mrkr_type as type from marker, record_attribution ra " +
+        String sqlQuery = "select mrkr_abbrev as abbrev, mrkr_type as type from marker, record_attribution ra,marker_type_group_member m " +
                 "where " +
                 "lower(mrkr_abbrev) like :lookupString " +
-                "and mrkr_type in ('GENE','EFG','REGION','GENEP','TSCRIPT','CRISPR','TALEN','MRPHLNO') " +
+                "and mrkr_type=m.mtgrpmem_mrkr_type and m.mtgrpmem_mrkr_type_group in ('GENEDOM_EFG_EREGION_K') " +
                 "and mrkr_zdb_id=ra.recattrib_data_zdb_id and ra.recattrib_source_type = :standard and ra.recattrib_source_zdb_id = :pubZdbID " +
                 "UNION " +
                 "select cv_term_name as abbrev,cv_name_definition as type from controlled_vocabulary " +
@@ -3054,7 +3061,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public DBLink addDBLinkWithLenth(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID, int length) {
         if (length < 1) {
-           return addDBLink(marker, accessionNumber, refdb, attributionZdbID);
+            return addDBLink(marker, accessionNumber, refdb, attributionZdbID);
         }
         MarkerDBLink mdb = new MarkerDBLink();
         mdb.setMarker(marker);
@@ -3063,7 +3070,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         mdb.setLength(length);
         Set<MarkerDBLink> markerDBLinks = marker.getDbLinks();
         if (markerDBLinks == null) {
-            markerDBLinks = new HashSet<MarkerDBLink>();
+            markerDBLinks = new HashSet<>();
             markerDBLinks.add(mdb);
             marker.setDbLinks(markerDBLinks);
         } else {
@@ -3082,6 +3089,53 @@ public class HibernateMarkerRepository implements MarkerRepository {
         runMarkerNameFastSearchUpdate(marker);
 
         return mdb;
+    }
+
+    @Override
+    public List<Marker> getMarkerByGroup(Marker.TypeGroup group, int number) {
+        MarkerTypeGroup type = getMarkerTypeGroupByName(group.name());
+        String hql = "from Marker as marker " +
+                "where marker.markerType.name in (:names) order by marker.abbreviationOrder ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("names", type.getTypeStrings());
+        if (number > 0)
+            query.setMaxResults(number);
+        return query.list();
+    }
+
+    @Override
+    public Map<String, GenericTerm> getSoTermMapping() {
+        String hql = "from ZfinSoTerm";
+
+        List<ZfinSoTerm> terms = HibernateUtil.currentSession().createQuery(hql).list();
+        Map<String, GenericTerm> map = new HashMap<>(terms.size());
+        for (ZfinSoTerm term : terms) {
+            map.put(term.getEntityName(), getOntologyRepository().getTermByOboID(term.getOboID()));
+        }
+        return map;
+    }
+
+    @Override
+    public void copyStrSequence(SequenceTargetingReagent str1, SequenceTargetingReagent str2) {
+        String seq1 = str1.getSequence().getSequence();
+        HibernateUtil.currentSession().createSQLQuery(
+                "UPDATE marker_sequence " +
+                        "SET seq_sequence = :seq_sequence " +
+                        "WHERE seq_mrkr_zdb_id = :zdbID ")
+                .setString("seq_sequence", seq1)
+                .setString("zdbID", str2.getZdbID())
+                .executeUpdate();
+        String seq2;
+        if (str1.getSequence().getSecondSequence() != null) {
+            seq2 = str1.getSequence().getSecondSequence();
+            HibernateUtil.currentSession().createSQLQuery(
+                    "UPDATE marker_sequence " +
+                            "SET seq_sequence_2 = :seq_sequence_2 " +
+                            "WHERE seq_mrkr_zdb_id = :zdbID ")
+                    .setString("seq_sequence_2", seq2)
+                    .setString("zdbID", str2.getZdbID())
+                    .executeUpdate();
+        }
     }
 
 }

@@ -102,7 +102,6 @@
         </set>
     </class>
 
-
     <class name="org.zfin.sequence.ForeignDB" table="foreign_db">
         <id name="dbID" type="long">
             <column name="fdb_db_pk_id" not-null="true"/>

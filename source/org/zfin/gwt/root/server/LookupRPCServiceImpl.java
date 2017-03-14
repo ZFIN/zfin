@@ -265,7 +265,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
      * @return response
      */
     public SuggestOracle.Response getGenedomSuggestions(SuggestOracle.Request req) {
-        return getMarkerSuggestionsForType(req, Marker.TypeGroup.GENEDOM);
+        return getMarkerSuggestionsForType(req, Marker.TypeGroup.GENEDOM_PROD_PROTEIN);
     }
 
     public SuggestOracle.Response getMarkerSuggestionsForType(SuggestOracle.Request req, Marker.TypeGroup typeGroup) {
@@ -429,7 +429,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         }
 
 
-        List<Feature> features = getFeatureRepository().getFeaturesForAttribution(publicationZdbID);
+        List<Feature> features = getFeatureRepository().getFeaturesByPublication(publicationZdbID);
         if (CollectionUtils.isNotEmpty(features)) {
             RelatedEntityDTO spacer = new RelatedEntityDTO();
             spacer.setName(AttributionType.FEATURE.toString());
@@ -462,7 +462,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             for (Fish fish : fishList) {
                 RelatedEntityDTO genotypeDTO = new RelatedEntityDTO();
                 genotypeDTO.setZdbID(fish.getZdbID());
-                genotypeDTO.setName(fish.getName());
+                genotypeDTO.setName(fish.getHandle());
                 relatedEntityDTOs.add(genotypeDTO);
             }
         }

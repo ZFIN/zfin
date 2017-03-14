@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="agr" basedir=".">
+
+
+
+    <target name="create-bgi-test" >
+        <antcall target="create-basic-gene-info-file-test"  />
+    </target>
+
+    <target name="agr-test" >
+        <antcall target="create-basic-gene-info-file-test"  />
+    </target>
+
+    <target name="create-bgi" >
+        <antcall target="create-basic-gene-info-file"  />
+    </target>
+
+    <target name="create-basic-gene-info-file" depends=""
+            description="Tests to make sure that the system is alive and working properly.">
+        <echo message="Check entity changes"/>
+        <java classname="org.zfin.marker.agr.BasicGeneInfo" fork="yes" classpathref="extended.classpath"
+              failonerror="true" maxmemory="2048M">
+            <classpath refid="classpath"/>
+        </java>
+    </target>
+
+    <target name="create-basic-gene-info-file-test" depends=""
+            description="Tests to make sure that the system is alive and working properly.">
+        <echo message="Check entity changes"/>
+        <java classname="org.zfin.marker.agr.BasicGeneInfo" fork="yes" classpathref="extended.classpath"
+              failonerror="true" maxmemory="1024M">
+            <classpath refid="classpath"/>
+            <arg value="5"/>
+        </java>
+    </target>
+
+    <property name="version" value="0.3.0"/>
+    <property name="index" value="6"/>
+    <property name="daf-file" value="ZFIN_${version}_DAF.txt"/>
+    <property name="bgi-file" value="ZFIN_${version}_BGI.json"/>
+    <property name="agr-file" value="ZFIN_${version}_${index}"/>
+
+    <target name="archive-agr" depends="">
+        <copy file="basic-gene-info-zfin.json" tofile="${bgi-file}"/>
+        <copy file="disease_association_file.zfin.txt" tofile="${daf-file}"/>
+        <echo message="Create tar/gzip file of BGI"/>
+        <tar compression="gzip" destfile="${agr-file}.tar.gz" >
+            <tarfileset dir="${basedir}" >
+                <include name="${bgi-file}" />
+                <include name="${daf-file}" />
+            </tarfileset>
+        </tar>
+    </target>
+
+    <target name="aws" depends="">
+        <echo message="Upload to AWS S3"/>
+        <exec executable="aws" failifexecutionfails="true">
+            <arg value="s3"/>
+            <arg value="cp"/>
+            <arg value="${agr-file}.tar.gz"/>
+            <arg value="s3://mod-datadumps/"/>
+        </exec>
+    </target>
+
+    <target name="aws-ls" depends="">
+        <echo message="List directory AWS S3"/>
+        <exec executable="aws" failifexecutionfails="true">
+            <arg value="s3"/>
+            <arg value="ls"/>
+            <arg value="s3://mod-datadumps/"/>
+        </exec>
+    </target>
+
+
+</project>

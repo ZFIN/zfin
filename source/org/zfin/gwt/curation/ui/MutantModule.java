@@ -1,16 +1,15 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StringUtils;
@@ -250,6 +249,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         refreshFigureList();
 
         // stage list
+        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_STAGE_LIST_START);
         curationRPCAsync.getStages(new RetrieveStageListCallback());
 
         // retrieve fish list
@@ -259,41 +259,49 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         retrieveExperimentConditionList();
 
         // set stage selector mode from session
-        sessionRPC.isStageSelectorSingleMode(publicationID, new RetrieveStageSelectorCallback(errorElement, stageSelector));
+        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.IS_STAGE_SELECTOR_SINGLE_MODE_START);
+        sessionRPC.isStageSelectorSingleMode(publicationID, new RetrieveStageSelectorCallback(errorElement, stageSelector,
+                PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.IS_STAGE_SELECTOR_SINGLE_MODE_STOP));
 
     }
 
     public void retrieveExperimentConditionList() {
         String message;
         message = "Error while reading the environment";
+        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_ENVIRONMENT_LIST_START);
         curationRPCAsync.getEnvironments(publicationID,
-                new RetrieveEnvironmentListCallBack(environmentList, message, errorElement));
+                new RetrieveEnvironmentListCallBack(environmentList, message, errorElement, PhenotypeCurationModule.getModuleInfo()));
     }
 
     public void retrieveFishList() {
         String message = "Error while reading fish";
+        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_START);
         curationRPCAsync.getFishList(publicationID,
-                new RetrieveSelectionBoxValueCallback(fishList));
+                new RetrieveSelectionBoxValueCallback(fishList, null, PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_STOP));
     }
 
     public void refreshFigureList() {
+        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FIGURE_LIST_START);
         curationRPCAsync.getFigures(publicationID, new RetrieveFiguresCallback());
     }
 
     public void updateFish() {
-        String message = "Error while reading Fish";
         fishList.clear();
-        curationRPCAsync.getFishList(publicationID, new RetrieveSelectionBoxValueCallback(fishList));
+        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_START);
+        curationRPCAsync.getFishList(publicationID, new RetrieveSelectionBoxValueCallback(fishList, null,
+                PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_START));
     }
 
 
     // Retrieve experiments from the server
 
     public void retrieveExpressions() {
+        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_EXPRESSIONS_BY_FILTER_START);
         phenotypeCurationRPCAsync.getExpressionsByFilter(experimentFilter, figureID, new RetrieveExpressionsCallback());
     }
 
     public void retrieveEaps() {
+        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_EXPRESSION_AS_PHENOTYPE_START);
         phenotypeCurationRPCAsync.getPhenotypeFromExpressionsByFilter(experimentFilter, figureID, new RetrieveEapsCallback());
     }
 
@@ -546,6 +554,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         }
 
         private void deleteExperiment(PhenotypeExperimentDTO figureAnnotation) {
+            AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.DELETE_FIGURE_ANNOTATION_START);
             phenotypeCurationRPCAsync.deleteFigureAnnotation(figureAnnotation, new DeleteFigureAnnotationCallback(figureAnnotation));
         }
 
@@ -574,7 +583,8 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         private PhenotypeExperimentDTO figureAnnotation;
 
         DeleteFigureAnnotationCallback(PhenotypeExperimentDTO figureAnnotation) {
-            super("Error while deleting Figure Annotation", errorElement);
+            super("Error while deleting Figure Annotation", errorElement,
+                    PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.DELETE_FIGURE_ANNOTATION_STOP);
             this.figureAnnotation = figureAnnotation;
         }
 
@@ -599,7 +609,8 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     private class RetrieveExpressionsCallback extends ZfinAsyncCallback<List<PhenotypeExperimentDTO>> {
 
         public RetrieveExpressionsCallback() {
-            super("Error while reading Experiment Filters", errorElement, IMAGE_LOADING_EXPRESSION_SECTION);
+            super("Error while reading Experiment Filters", errorElement, IMAGE_LOADING_EXPRESSION_SECTION,
+                    PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_EXPRESSIONS_BY_FILTER_STOP);
         }
 
         @Override
@@ -612,7 +623,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             for (PhenotypeExperimentDTO id : list) {
                 displayedExpressions.add(id);
             }
-            Collections.sort(displayedExpressions);
             if (sectionVisible)
                 displayTable.createMutantTable();
             recordAllExpressedTerms();
@@ -624,7 +634,8 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     private class RetrieveEapsCallback extends ZfinAsyncCallback<List<ExpressionPhenotypeExperimentDTO>> {
 
         public RetrieveEapsCallback() {
-            super("Error while reading Experiment Filters", errorElement, IMAGE_LOADING_EXPRESSION_SECTION);
+            super("Error while reading Experiment Filters", errorElement, IMAGE_LOADING_EXPRESSION_SECTION,
+                    PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_EXPRESSION_AS_PHENOTYPE_STOP);
         }
 
         @Override
@@ -709,6 +720,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             }
             if (expressionsExist)
                 return;
+            AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.CREATE_PHENOTYPE_EXPERIMENT_START);
             phenotypeCurationRPCAsync.createPhenotypeExperiments(newFigureAnnotations, new AddMutantCallback(newFigureAnnotations));
         }
 
@@ -1014,10 +1026,9 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
                     classSpan = createSpanElement(pheno, WidgetUtil.PHENOTYPE_NORMAL);
                 } else if (pheno.getTag().equals("ameliorated")) {
                     classSpan = createSpanElement(pheno, WidgetUtil.PHENOTYPE_AMELIORATED);
-                }
-             else if (pheno.getTag().equals("exacerbated")) {
-                classSpan = createSpanElement(pheno, WidgetUtil.PHENOTYPE_EXACERBATED);
-            }else if (pheno.getEntity().getSuperTerm().getTermName().equals("unspecified")) {
+                } else if (pheno.getTag().equals("exacerbated")) {
+                    classSpan = createSpanElement(pheno, WidgetUtil.PHENOTYPE_EXACERBATED);
+                } else if (pheno.getEntity().getSuperTerm().getTermName().equals("unspecified")) {
                     classSpan = createSpanElement(pheno, "term-unspecified");
                 } else {
                     classSpan = createSpanElement(pheno, null);
@@ -1132,7 +1143,8 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         private List<PhenotypeExperimentDTO> figureAnnotations;
 
         public AddMutantCallback(List<PhenotypeExperimentDTO> experiment) {
-            super("Error while creating experiment", errorElement);
+            super("Error while creating experiment", errorElement,
+                    PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.CREATE_PHENOTYPE_EXPERIMENT_STOP);
             this.figureAnnotations = experiment;
         }
 
@@ -1174,7 +1186,8 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
 
 
         public RetrieveFiguresCallback() {
-            super(figureList, false, errorElement);
+            super(figureList, false, errorElement,
+                    PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FIGURE_LIST_STOP);
         }
 
         @Override
@@ -1191,7 +1204,8 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     public class RetrieveStageListCallback extends ZfinAsyncCallback<List<StageDTO>> {
 
         public RetrieveStageListCallback() {
-            super("Error while reading Figure Filters", errorElement);
+            super("Error while reading Figure Filters", errorElement,
+                    PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_STAGE_LIST_STOP);
         }
 
         @Override

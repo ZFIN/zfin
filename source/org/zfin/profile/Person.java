@@ -72,6 +72,7 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     private String phone;
 
     private String address;
+    private String country;
 
     @Size(max = 150, message = "Must not be empty and less than 150 characters.")
     private String url;
@@ -137,6 +138,14 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
         return snapshot;
     }
 
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
     public String getSnapshotAsString() throws Exception {
         if (snapshot == null) return null;
 
@@ -154,6 +163,7 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
         while ((aux = br.readLine()) != null) {
             strOut.append(aux);
         }
+
         return strOut.toString();
     }
 

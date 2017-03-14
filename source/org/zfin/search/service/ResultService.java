@@ -286,17 +286,9 @@ public class ResultService {
         if (gene != null) {
 
             result.setEntity(gene);
-
-            if (gene.getType() == Marker.Type.GENE) {
-                result.addAttribute(GENE_NAME, "<span class=\"genedom\">" + gene.getName() + "</span>");
-            }
-            if (gene.getType() == Marker.Type.GENEP) {
-                result.addAttribute(PSEUDOGENE_NAME, "<span class=\"genedom\">" + gene.getName() + "</span>");
-            }
-            if (gene.getType() == Marker.Type.EFG) {
-                result.addAttribute(EFG_NAME, "<span class=\"genedom\">" + gene.getName() + "</span>");
-            }
-            if (gene.getType() == Marker.Type.TSCRIPT) {
+            if (gene.isInTypeGroup(Marker.TypeGroup.GENEDOM) || gene.isInTypeGroup(Marker.TypeGroup.EFG)) {
+                result.addAttribute(gene.getMarkerType().getDisplayName() + " Name:", "<span class=\"genedom\">" + gene.getName() + "</span>");
+            } else if (gene.getType() == Marker.Type.TSCRIPT) {
                 result.addAttribute(TRANSCRIPT_NAME, MarkerPresentation.getAbbreviation(gene));
             }
             if (gene.getAliases() != null && gene.getAliases().size() > 0) {
@@ -440,7 +432,7 @@ public class ResultService {
 
         addSynonyms(result, marker);
         result.addAttribute(TYPE, marker.getType().toString());
-        if (marker.getType().equals(Marker.Type.REGION)) {
+        if (marker.getType().equals(Marker.Type.EREGION)) {
             addComments(result, marker);
         }
         addLocationInfo(result, marker);

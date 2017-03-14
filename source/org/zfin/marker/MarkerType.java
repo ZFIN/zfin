@@ -11,6 +11,7 @@ public class MarkerType implements Comparable, Serializable {
     private Set<String> typeGroupStrings;
     private Set<Marker.TypeGroup> typeGroups;
     private String displayName;
+    private Integer significance;
 
     public String toString() {
         String returnString = "";
@@ -79,6 +80,14 @@ public class MarkerType implements Comparable, Serializable {
 
     public void setTypeGroups(Set<Marker.TypeGroup> typeGroups) {
         this.typeGroups = typeGroups;
+    }
+
+    public Integer getSignificance() {
+        return significance;
+    }
+
+    public void setSignificance(Integer significance) {
+        this.significance = significance;
     }
 
     //todo: this comparison should be something a little more interesting than type name

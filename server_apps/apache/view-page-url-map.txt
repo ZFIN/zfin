@@ -8,6 +8,16 @@ COMPANY	/action/profile/view/ZDB-COMPANY
 CONSTRCT	/action/marker/view/ZDB-CONSTRCT
 CRISPR   /action/marker/view/ZDB-CRISPR
 CNE	 /action/marker/view/ZDB-CNE
+LNCRNAG /action/marker/view/ZDB-LNCRNAG
+LINCRNAG /action/marker/view/ZDB-LINCRNAG
+MIRNAG /action/marker/view/ZDB-MIRNAG
+SNORNAG /action/marker/view/ZDB-SNORNAG
+RRNAG /action/marker/view/ZDB-RRNAG
+PIRNAG /action/marker/view/ZDB-PIRNAG
+TRNAG /action/marker/view/ZDB-TRNAG
+NCRNAG /action/marker/view/ZDB-NCRNAG
+SCRNAG /action/marker/view/ZDB-SCRNAG
+SRPNAG /action/marker/view/ZDB-SRPNAG
 EFG	/action/marker/view/ZDB-EFG
 EST	/action/marker/view/ZDB-EST
 ETCONSTRCT	/action/marker/view/ZDB-ETCONSTRCT
@@ -37,7 +47,7 @@ PTCONSTRCT	/action/marker/view/ZDB-PTCONSTRCT
 PUB	/action/publication/view/ZDB-PUB
 RAPD	/action/marker/view/ZDB-RAPD
 REFCROSS	/action/mapping/panel-detail/ZDB-REFCROSS
-REGION	/action/marker/view/ZDB-REGION
+EREGION	/action/marker/view/ZDB-EREGION
 SNP	/action/marker/view/ZDB-SNP
 SSLP	/action/marker/view/ZDB-SSLP
 STS	/action/marker/view/ZDB-STS
@@ -57,3 +67,4 @@ DOID     /action/ontology/term-detail/DOID
 ZECO     /action/ontology/term-detail/ZECO
 CHEBI     /action/ontology/term-detail/CHEBI
 NCBITaxon     /action/ontology/term-detail/NCBITaxon
+ECO     /action/ontology/term-detail/ECO

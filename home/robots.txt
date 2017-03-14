@@ -20,9 +20,8 @@ Disallow: /cgi-bin/webdriver?MIval=aa-showpubs.apg
 Disallow: /cgi-bin/webdriver?MIval=aa-quickfindpers.apg
 Disallow: /cgi-bin/webdriver?MIval=aa-newmrkrselect.apg
 # disallow search form, simply gives results
-Disallow: /cgi-bin/webdriver?MIval=aa-markerselect.apg
+Disallow: /action/marker/search
 # need to set explicitly on the page
-#Allow: /cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=ZDB-PUB-*&type=pub_
 Disallow: /cgi-bin/webdriver?MIval=aa-labselect.apg
 Disallow: /cgi-bin/webdriver?MIval=aa-pubselect2.apg
 Disallow: /cgi-bin/webdriver?MIval=aa-showpubs.apg

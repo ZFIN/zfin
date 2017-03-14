@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelationshipType;
-import org.zfin.gwt.root.dto.StageDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
@@ -32,32 +31,34 @@ public class OntologyManager {
 
     protected final static String QUALITY_PROCESSES_ROOT = "PATO:0001236";
     protected final static String QUALITY_QUALITIES_ROOT = "PATO:0001241";
-    protected static final String QUALITATIVE_TERM = "PATO:0000068";
+    protected static final String QUALITATIVE_TERM_AMOUNT = "PATO:0000070";
+    protected static final String QUALITATIVE_TERM_MAGNITUDE = "PATO:0002016";
+    protected static final String QUALITATIVE_TERM_INTENSITY = "PATO:0000049";
+    protected static final String QUALITATIVE_TERM_CONSPICUOUSNESS = "PATO:0001998";
     protected static final String QUALITY_TERM_NORMAL = "PATO:0000461";
     protected static final String QUALITY_TERM_ABNORMAL = "PATO:0000460";
     protected static final String MPATH_NEOPLASM_ROOT = "MPATH:218";
 
 
     public static final int NUMBER_OF_SERIALIZABLE_ONTOLOGIES = Ontology.getSerializableOntologies().length;
-    private static Map<OntologyDTO, PatriciaTrieMultiMap<TermDTO>> ontologyTermDTOMap = new HashMap<OntologyDTO, PatriciaTrieMultiMap<TermDTO>>(NUMBER_OF_SERIALIZABLE_ONTOLOGIES);
+    private static Map<OntologyDTO, PatriciaTrieMultiMap<TermDTO>> ontologyTermDTOMap = new HashMap<>(NUMBER_OF_SERIALIZABLE_ONTOLOGIES);
     private OntologyTokenizer tokenizer = new OntologyTokenizer(3);
 
     /**
      * A map of all terms as a key and a list of terms that are children of the key term given by the transitive closure.
      */
-//    private Map<TermDTO, List<TransitiveClosure>> allRelatedChildrenMap;
-    private Map<OntologyDTO, OntologyLoadingEntity> loadingData = new TreeMap<OntologyDTO, OntologyLoadingEntity>(new OntologyNameComparator());
+    private Map<OntologyDTO, OntologyLoadingEntity> loadingData = new TreeMap<>(new OntologyNameComparator());
     // sole singleton instance
     private static OntologyManager ontologyManager = null;
     transient private static final Logger logger = Logger.getLogger(OntologyManager.class);
 
     private static final double MILLISECONDS_PER_SECOND = 1000.0;
 
-    private static Map<OntologyDTO, Double> loadingTimeMap = new HashMap<OntologyDTO, Double>(10);
+    private static Map<OntologyDTO, Double> loadingTimeMap = new HashMap<>(10);
     private static final Object LOADING_FLAG = new Object();
 
     private static Ontology singleOntology = null;
-    private Map<Ontology, Set> excludedTerms = new HashMap<Ontology, Set>(5);
+    private Map<Ontology, Set> excludedTerms = new HashMap<>(5);
     private static OntologySerializationService ontologySerializationService;
 
     private static int activeCount, aliasCount, obsoleteCount;
@@ -264,17 +265,14 @@ public class OntologyManager {
         // Root is "process quality"
         // Quality Processes and Objects
         // exclude 'normal' and 'abnormal' terms from process and quality ontology.
-        Set<String> excludedTermsIds = new HashSet<String>(2);
+        Set<String> excludedTermsIds = new HashSet<>(2);
         excludedTermsIds.add(QUALITY_TERM_NORMAL);
         excludedTermsIds.add(QUALITY_TERM_ABNORMAL);
         excludedTerms.put(Ontology.QUALITY_PROCESSES, excludedTermsIds);
         excludedTerms.put(Ontology.QUALITY_QUALITIES, excludedTermsIds);
         excludedTerms.put(Ontology.MPATH_NEOPLASM, excludedTermsIds);
 
-        initRootOntologyFast(Ontology.QUALITY_PROCESSES, QUALITY_PROCESSES_ROOT, QUALITATIVE_TERM);
-        serializeOntology(Ontology.QUALITY_PROCESSES);
-        initRootOntologyFast(Ontology.QUALITY_QUALITIES, QUALITY_QUALITIES_ROOT, QUALITATIVE_TERM);
-        serializeOntology(Ontology.QUALITY_QUALITIES);
+        initQualityOontologies();
         initRootOntologyFast(Ontology.MPATH_NEOPLASM, MPATH_NEOPLASM_ROOT);
         serializeOntology(Ontology.MPATH_NEOPLASM);
         initOntologyMapFast(Ontology.SO);
@@ -307,7 +305,7 @@ public class OntologyManager {
         int averageMaximumNumOfChildren = 30;
 
         List<TermDTO> children = new ArrayList<TermDTO>(averageMaximumNumOfChildren);
-        Set<TermDTO> childrenSet = new HashSet<TermDTO>(averageMaximumNumOfChildren);
+        Set<TermDTO> childrenSet = new HashSet<>(averageMaximumNumOfChildren);
         for (String rootOboID : rootOboIDs) {
             GenericTerm rootTerm = getOntologyRepository().getTermByOboID(rootOboID);
             for (GenericTerm childTerm : rootTerm.getChildTerms()) {
@@ -316,7 +314,7 @@ public class OntologyManager {
                 childrenSet.add(childTermDTO);
             }
         }
-        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>();
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<>();
         int obsoleteCount = 0;
         int aliasCount = 0;
         int activeCount = 0;
@@ -404,7 +402,6 @@ public class OntologyManager {
     private void addFullStageInfo(Collection<TermDTO> termDTOs) {
         if (termDTOs == null)
             return;
-        Collection<TermDTO> newCollection = new ArrayList<TermDTO>(termDTOs.size());
         for (TermDTO dto : termDTOs) {
             DevelopmentStage stage = getAnatomyRepository().getStageByOboID(dto.getOboID());
             dto.setStartStage(DTOConversionService.convertToStageDTO(stage));
@@ -414,7 +411,7 @@ public class OntologyManager {
 
     private PatriciaTrieMultiMap<TermDTO> createMapForTerms(Collection<TermDTO> termDTOs, Ontology ontology) {
         long nextTime = System.currentTimeMillis();
-        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>();
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<>();
         if (termDTOs == null) {
             logger.error("No terms for ontology <" + ontology.getOntologyName() + "> found.");
             return termMap;
@@ -457,7 +454,7 @@ public class OntologyManager {
 
         long nextTime = System.currentTimeMillis();
 
-        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>();
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<>();
         if (terms == null) {
             logger.info("No terms for ontology <" + ontology.getOntologyName() + "> found.");
             return;
@@ -499,7 +496,7 @@ public class OntologyManager {
      */
     private Map<String, DevelopmentStage> getAllStageMap() {
         List<DevelopmentStage> allStages = RepositoryFactory.getAnatomyRepository().getAllStages();
-        Map<String, DevelopmentStage> allStagesMap = new HashMap<String, DevelopmentStage>(allStages.size());
+        Map<String, DevelopmentStage> allStagesMap = new HashMap<>(allStages.size());
         for (DevelopmentStage stage : allStages) {
             allStagesMap.put(stage.getOboID(), stage);
         }
@@ -527,7 +524,7 @@ public class OntologyManager {
      * @return map
      */
     public PatriciaTrieMultiMap<TermDTO> getTermOntologyMapCopy(Ontology ontology) {
-        PatriciaTrieMultiMap<TermDTO> map = new PatriciaTrieMultiMap<TermDTO>();
+        PatriciaTrieMultiMap<TermDTO> map = new PatriciaTrieMultiMap<>();
 
         if (ontology.isComposedOntologies()) {
             // now we construct a map
@@ -634,7 +631,7 @@ public class OntologyManager {
      */
     public TermDTO getTermByName(String termName, Ontology ontology, boolean allowObsolete) {
 //        PatriciaTrieMultiMap<TermDTO> termMap = getTermOntologyMapCopy(ontology);
-        Set<TermDTO> terms = new HashSet<TermDTO>();
+        Set<TermDTO> terms = new HashSet<>();
         String lookupValue = termName.trim().toLowerCase();
         // String lookupValue = termName.trim();
 
@@ -780,7 +777,7 @@ public class OntologyManager {
     }
 
     public Set<OntologyDTO> getOntologies(Ontology ontology) {
-        Set<OntologyDTO> ontologyDTOs = new HashSet<OntologyDTO>();
+        Set<OntologyDTO> ontologyDTOs = new HashSet<>();
 
         if (ontology.isComposedOntologies()) {
             for (Ontology subOntology : ontology.getIndividualOntologies()) {
@@ -814,7 +811,7 @@ public class OntologyManager {
         Ontology rootOntology = ontology.getRootOntology();
         OntologyDTO rootOntologyDTO = DTOConversionService.convertToOntologyDTO(rootOntology);
         resetCounter();
-        Set<TermDTO> termsToProcess = new HashSet<TermDTO>();
+        Set<TermDTO> termsToProcess = new HashSet<>();
         for (String rootID : rootIDs) {
             TermDTO termDTO = getTermByID(rootID, rootOntologyDTO);
             termsToProcess.add(termDTO);
@@ -841,11 +838,11 @@ public class OntologyManager {
     }
 
     public void initQualityProcessesRootOntology() {
-        initRootOntologyFast(Ontology.QUALITY_PROCESSES, QUALITY_PROCESSES_ROOT);
+        initRootOntologyFast(Ontology.QUALITY_PROCESSES, QUALITY_PROCESSES_ROOT, QUALITATIVE_TERM_MAGNITUDE);
     }
 
     public void initQualityQualitiesRootOntology() {
-        //To change body of created methods use File | Settings | File Templates.
+        initRootOntologyFast(Ontology.QUALITY_QUALITIES, QUALITY_QUALITIES_ROOT, QUALITATIVE_TERM_AMOUNT, QUALITATIVE_TERM_CONSPICUOUSNESS, QUALITATIVE_TERM_INTENSITY);
     }
 
 
@@ -854,7 +851,7 @@ public class OntologyManager {
     }
 
     public Set<TermDTO> getTermsByNames(String termName) {
-        Set<TermDTO> terms = new HashSet<TermDTO>(5);
+        Set<TermDTO> terms = new HashSet<>(5);
         for (Ontology ontology : Ontology.values()) {
             TermDTO term = getTermByName(termName, ontology);
             if (term != null)
@@ -897,10 +894,7 @@ public class OntologyManager {
         initOntologyMapFast(ontology);
         serializeOntology(ontology);
         if (ontology.equals(Ontology.QUALITY)) {
-            initRootOntologyFast(Ontology.QUALITY_PROCESSES, QUALITY_PROCESSES_ROOT, QUALITATIVE_TERM);
-            serializeOntology(Ontology.QUALITY_PROCESSES);
-            initRootOntologyFast(Ontology.QUALITY_QUALITIES, QUALITY_QUALITIES_ROOT, QUALITATIVE_TERM);
-            serializeOntology(Ontology.QUALITY_QUALITIES);
+            initQualityOontologies();
         }
         if (ontology.equals(Ontology.MPATH)) {
             initRootOntologyFast(Ontology.MPATH_NEOPLASM, MPATH_NEOPLASM_ROOT);
@@ -908,10 +902,17 @@ public class OntologyManager {
         }
     }
 
+    public void initQualityOontologies() {
+        initQualityProcessesRootOntology();
+        serializeOntology(Ontology.QUALITY_PROCESSES);
+        initQualityQualitiesRootOntology();
+        serializeOntology(Ontology.QUALITY_QUALITIES);
+    }
+
     public List<TermDTO> getAllTerms(Ontology ontology) {
         getTermByID("ZFA:0009277");
         List<TermDTO> set = ontologyTermDTOMap.get(DTOConversionService.convertToOntologyDTO(ontology)).getListOfValues();
-        List<TermDTO> finalList = new ArrayList<TermDTO>();
+        List<TermDTO> finalList = new ArrayList<>();
         for (TermDTO term : set)
             if (term.getStartStage() != null)
                 if (!finalList.contains(term))

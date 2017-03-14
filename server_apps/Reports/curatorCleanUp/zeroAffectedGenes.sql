@@ -1,4 +1,4 @@
-select distinct fish_zdb_id as id, fish_name as name
+select distinct fish_zdb_id as id, fish_name as name, genox_zdb_id
  from fish, fish_experiment, phenotype_experiment
  where fish_Zdb_id = genox_fish_zdb_id
  and phenox_genox_zdb_id = genox_zdb_id
@@ -17,4 +17,8 @@ delete from tmp_fish
 
 unload to fishes.txt
 select * from tmp_fish;
+
+select * from tmp_fish, fish_experiment
+ where id = 'ZDB-FISH-150901-10243'
+ and genox_fish_zdb_id = id;
        	       

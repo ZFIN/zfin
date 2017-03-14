@@ -2,15 +2,19 @@ package org.zfin.gwt.curation.ui.disease;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.curation.ui.*;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
+import org.zfin.gwt.root.util.LookupRPCService;
+import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,6 +27,7 @@ public class DiseaseModelPresenter implements Presenter {
 
     private CurationDiseaseRPCAsync diseaseRpcService = CurationDiseaseRPC.App.getInstance();
     private CurationExperimentRPCAsync curationRPCService = CurationExperimentRPC.App.getInstance();
+    private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
     private DiseaseModelView view;
     private String publicationID;
     private List<FishDTO> fishList = new ArrayList<>();
@@ -47,7 +52,10 @@ public class DiseaseModelPresenter implements Presenter {
             return;
         }
 
-        diseaseRpcService.addHumanDiseaseAnnotation(disease, new RetrieveDiseaseModelListCallBack(disease, "Could not add a new disease model", view.getErrorLabel()));
+        AppUtils.fireAjaxCall(HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.ADD_HUMAN_DISEASE_ANNOTATIONS_START);
+        diseaseRpcService.addHumanDiseaseAnnotation(disease,
+                new RetrieveDiseaseModelListCallBack(disease, "Could not add a new disease model", view.getErrorLabel(),
+                        AjaxCallEventType.ADD_HUMAN_DISEASE_ANNOTATIONS_STOP));
         view.getLoadingImage().setVisible(true);
     }
 
@@ -92,7 +100,9 @@ public class DiseaseModelPresenter implements Presenter {
 
     private void retrieveAllRecords() {
         // human disease model list
-        diseaseRpcService.getHumanDiseaseModelList(publicationID, new RetrieveDiseaseModelListCallBack(null, view.getErrorLabel()));
+        AppUtils.fireAjaxCall(HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.GET_HUMAN_DISEASE_LIST_START);
+        diseaseRpcService.getHumanDiseaseModelList(publicationID,
+                new RetrieveDiseaseModelListCallBack(null, view.getErrorLabel(), AjaxCallEventType.GET_HUMAN_DISEASE_LIST_STOP));
 
         // environment list
         retrieveEnvironmentList();
@@ -102,6 +112,7 @@ public class DiseaseModelPresenter implements Presenter {
 
     public void retrieveEnvironmentList() {
         String message = "Error while reading the environment";
+        AppUtils.fireAjaxCall(HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.GET_ENVIRONMENT_LIST_START);
         curationRPCService.getEnvironments(publicationID, new RetrieveEnvironmentListCallBack(message, view.getErrorLabel()));
     }
 
@@ -132,31 +143,33 @@ public class DiseaseModelPresenter implements Presenter {
     }
 
     public void addDiseaseToSelectionBox(TermDTO disease) {
-        if (diseaseList.contains(disease))
-            return;
-        diseaseList.add(disease);
-        reCreateDiseaseListBox();
+        AppUtils.fireAjaxCall(HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.GET_TERM_INFO_START);
+        lookupRPC.getTermInfo(OntologyDTO.DISEASE_ONTOLOGY, disease.getOboID(), new DiseaseInfoCallBack("Could not retrieve Term Info", view.getErrorLabel()));
     }
 
     public void updateConditions() {
         String message = "getting wildtype";
+        AppUtils.fireAjaxCall(HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.GET_BACKGROUND_GENOTYPES_START);
         curationRPCService.getBackgroundGenotypes(publicationID, new RetrieveBackgroundNewGenoCallback(message, view.getErrorLabel()));
     }
 
     public void retrieveFishList() {
         // fish list
         String message = "Error while reading Fish";
-        diseaseRpcService.getFishList(publicationID, new RetrieveFishListCallBack(message, view.getErrorLabel()));
+        AppUtils.fireAjaxCall(HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_START);
+        FishServiceGWT.callServer(publicationID, new RetrieveFishListCallBack(message, view.getErrorLabel()));
     }
 
     class RetrieveEnvironmentListCallBack extends ZfinAsyncCallback<List<ExperimentDTO>> {
 
         public RetrieveEnvironmentListCallBack(String errorMessage, ErrorHandler errorLabel) {
-            super(errorMessage, errorLabel);
+            super(errorMessage, errorLabel,
+                    HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.GET_ENVIRONMENT_LIST_STOP);
         }
 
         @Override
         public void onSuccess(List<ExperimentDTO> list) {
+            super.onFinish();
             view.getEnvironmentSelectionBox().clear();
             environmentList = list;
             view.getEnvironmentSelectionBox().addItem("None");
@@ -170,11 +183,13 @@ public class DiseaseModelPresenter implements Presenter {
     class RetrieveBackgroundNewGenoCallback extends ZfinAsyncCallback<List<GenotypeDTO>> {
 
         public RetrieveBackgroundNewGenoCallback(String errorMessage, ErrorHandler errorLabel) {
-            super(errorMessage, errorLabel);
+            super(errorMessage, errorLabel,
+                    HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.GET_BACKGROUND_GENOTYPES_STOP);
         }
 
         @Override
         public void onSuccess(List<GenotypeDTO> list) {
+            super.onFinish();
             List<String> genos = new ArrayList<>();
             String termSel = view.getFishSelectionBox().getItemText(view.getFishSelectionBox().getSelectedIndex());
 
@@ -204,11 +219,15 @@ public class DiseaseModelPresenter implements Presenter {
     class RetrieveFishListCallBack extends ZfinAsyncCallback<List<FishDTO>> {
 
         public RetrieveFishListCallBack(String errorMessage, ErrorHandler errorLabel) {
-            super(errorMessage, errorLabel);
+            super(errorMessage, errorLabel,
+                    HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_STOP);
         }
 
         @Override
         public void onSuccess(List<FishDTO> list) {
+            super.onFinish();
+            if (list == null)
+                return;
             view.getFishSelectionBox().clear();
             fishList = list;
             view.getFishSelectionBox().addItem("None");
@@ -223,17 +242,20 @@ public class DiseaseModelPresenter implements Presenter {
 
         private DiseaseAnnotationDTO diseaseAnnotation;
 
-        public RetrieveDiseaseModelListCallBack(String errorMessage, ErrorHandler errorLabel) {
-            super(errorMessage, errorLabel, view.loadingImage);
+        public RetrieveDiseaseModelListCallBack(String errorMessage, ErrorHandler errorLabel, AjaxCallEventType event) {
+            super(errorMessage, errorLabel, view.loadingImage,
+                    HumanDiseaseModule.getModuleInfo(), event);
         }
 
-        public RetrieveDiseaseModelListCallBack(DiseaseAnnotationDTO diseaseAnnotation, String errorMessage, ErrorHandler errorLabel) {
-            super(errorMessage, errorLabel, view.loadingImage);
+        public RetrieveDiseaseModelListCallBack(DiseaseAnnotationDTO diseaseAnnotation, String errorMessage, ErrorHandler errorLabel, AjaxCallEventType event) {
+            super(errorMessage, errorLabel, view.loadingImage,
+                    HumanDiseaseModule.getModuleInfo(), event);
             this.diseaseAnnotation = diseaseAnnotation;
         }
 
         @Override
         public void onSuccess(List<DiseaseAnnotationDTO> modelDTOs) {
+            super.onFinish();
             if (modelDTOs == null) {
                 diseaseModelList.clear();
             } else {
@@ -293,7 +315,10 @@ public class DiseaseModelPresenter implements Presenter {
         }
 
         public void onClick(ClickEvent event) {
-            diseaseRpcService.deleteDiseaseModel(diseaseAnnotationDTO, new RetrieveDiseaseModelListCallBack("Could not delete Disease model", view.getErrorLabel()));
+            AppUtils.fireAjaxCall(HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.DELETE_DISEASE_MODEL_START);
+            diseaseRpcService.deleteDiseaseModel(diseaseAnnotationDTO,
+                    new RetrieveDiseaseModelListCallBack("Could not delete Disease model", view.getErrorLabel(),
+                            AjaxCallEventType.DELETE_DISEASE_MODEL_STOP));
         }
     }
 
@@ -306,7 +331,9 @@ public class DiseaseModelPresenter implements Presenter {
         }
 
         public void onClick(ClickEvent event) {
-            diseaseRpcService.deleteDiseaseAnnotationModel(diseaseAnnotationModelDTO, new RetrieveDiseaseModelListCallBack("Could not delete Disease model", view.getErrorLabel()));
+            AppUtils.fireAjaxCall(HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.DELETE_DISEASE_ANNOTATION_MODEL_START);
+            diseaseRpcService.deleteDiseaseAnnotationModel(diseaseAnnotationModelDTO,
+                    new RetrieveDiseaseModelListCallBack("Could not delete Disease model", view.getErrorLabel(), AjaxCallEventType.DELETE_DISEASE_ANNOTATION_MODEL_STOP));
         }
     }
 
@@ -324,4 +351,24 @@ public class DiseaseModelPresenter implements Presenter {
     }
 
 
+    private class DiseaseInfoCallBack extends ZfinAsyncCallback<TermDTO> {
+
+        public DiseaseInfoCallBack(String errorMessage, ErrorHandler errorLabel) {
+            super(errorMessage, errorLabel,
+                    HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.GET_TERM_INFO_STOP);
+        }
+
+        @Override
+        public void onSuccess(TermDTO disease) {
+            super.onFinish();
+            if (disease.isObsolete()) {
+                errorHandler.setError("Cannot use obsolete term");
+            } else {
+                if (diseaseList.contains(disease))
+                    return;
+                diseaseList.add(disease);
+                reCreateDiseaseListBox();
+            }
+        }
+    }
 }

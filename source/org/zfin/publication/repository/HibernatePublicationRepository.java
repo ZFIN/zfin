@@ -28,6 +28,7 @@ import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.ActiveData;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.GeneBean;
@@ -1132,6 +1133,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     @SuppressWarnings("unchecked")
     public List<Marker> getGenesByPublication(String pubID) {
         return getGenesByPublication(pubID, true);
+        //return getGenesByPublication(pubID, false);
     }
 
     /**
@@ -1148,8 +1150,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<Marker> getGenesByPublication(String pubID, boolean includeEFGs) {
         Session session = HibernateUtil.currentSession();
 
-        Marker.TypeGroup typeGroup = includeEFGs ? Marker.TypeGroup.GENEDOM_AND_EFG : Marker.TypeGroup.GENEDOM;
+        Marker.TypeGroup typeGroup = Marker.TypeGroup.GENEDOM;
         List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(typeGroup);
+        if (includeEFGs){
+            markerTypes.add(markerRepository.getMarkerTypeByName(Marker.Type.EFG.toString()));
+        }
 
         String hql = "select distinct marker from Marker marker, PublicationAttribution pub" +
                 "     where pub.dataZdbID = marker.zdbID" +
@@ -1848,6 +1853,27 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 ");";
 
         return getCount(sql, publication.getZdbID());
+    }
+
+    public List<Marker> getMarkers(Publication publication) {
+        //return new ArrayList<Marker>();
+        String hql = "from PublicationAttribution pa where pa.publication.zdbID = :pubZdbID";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("pubZdbID", publication.getZdbID() );
+        List<PublicationAttribution> publicationAttributionList = query.list();
+        List<Marker> markerList = new ArrayList<>();
+        logger.error(publicationAttributionList);
+/*        for (PublicationAttribution pa : publicationAttributionList) {
+            if (!markerList.contains(pa.getMarker())) {
+                markerList.add(pa.getMarker());
+            }
+        }
+        logger.error(markerList);*/
+        return markerList;
+/*        return publicationAttributionList
+                .stream()
+                .map(PublicationAttribution::getMarker)
+                .collect(Collectors.toList());*/
     }
 
 

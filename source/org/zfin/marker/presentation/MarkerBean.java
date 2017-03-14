@@ -5,6 +5,7 @@ import org.zfin.expression.presentation.MarkerExpression;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.presentation.DiseaseDisplay;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
@@ -39,6 +40,7 @@ public class MarkerBean extends PaginationBean {
     private List<MarkerRelationshipPresentation> relatedAntibodies;
     private int numberOfConstructs;
     private List<DiseaseDisplay> diseaseDisplays;
+    private GenericTerm zfinSoTerm;
 
     public String getMarkerTypeDisplay() {
         return markerTypeDisplay;
@@ -70,6 +72,14 @@ public class MarkerBean extends PaginationBean {
 
     public MarkerExpression getMarkerExpression() {
         return markerExpression;
+    }
+
+    public GenericTerm getZfinSoTerm() {
+        return zfinSoTerm;
+    }
+
+    public void setZfinSoTerm(GenericTerm zfinSoTerm) {
+        this.zfinSoTerm = zfinSoTerm;
     }
 
     public void setMarkerExpression(MarkerExpression markerExpression) {

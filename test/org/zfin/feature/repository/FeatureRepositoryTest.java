@@ -255,17 +255,6 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void attributedFeatures() {
-        // Uemura, et al.
-        String pubID = "ZDB-PUB-050202-4";
-        List<Feature> features = featureRepository.getFeaturesForAttribution(pubID);
-        assertNotNull(features);
-
-        List<Marker> markers = getMarkerRepository().getMarkersForAttribution(pubID);
-        assertNotNull(markers);
-    }
-
-    @Test
     public void getFeaturesByPrefixAndLineNumber() {
         assertNull(featureRepository.getFeatureByPrefixAndLineNumber("notavalidprefix", "1"));
         assertNull(featureRepository.getFeatureByPrefixAndLineNumber("b", "notavalidlinenumber"));
@@ -277,8 +266,14 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     public void getFeaturesForLab() {
         List<Feature> features = featureRepository.getFeaturesForLab("ZDB-LAB-970408-1");
         assertNotNull(features);
-        assertTrue(features.size() < 100 && features.size() > 10);
+        assertThat(features.size(), greaterThan(10));
+    }
 
+    @Test
+    public void getFeaturesForLabExist() {
+        Long count = featureRepository.getFeaturesForLabCount("ZDB-LAB-970408-1");
+        assertNotNull(count);
+        assertThat(count, greaterThan(20L));
     }
 
     @Test

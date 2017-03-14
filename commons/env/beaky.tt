@@ -57,6 +57,8 @@
 <!--|PARTNER_SOURCEROOT|-->	false
 <!--|PATO_EMAIL_CURATOR|-->	cmpich\@zfin.org
 <!--|PDF_LOAD|-->	/PDFLoadUp
+<!--|PGBINDIR|-->	/opt/postgres/postgresql/bin
+<!--|PGDATA|-->	/opt/postgres/data
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	cmpich\@zfin.org
 <!--|ROOT_PATH|-->	/research/zcentral/www_homes/beaky
 <!--|SECURE_HTTP|-->	https://

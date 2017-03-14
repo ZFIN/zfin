@@ -124,6 +124,8 @@
 <filter token="PATO_EMAIL_CURATOR" value="${PATO_EMAIL_CURATOR}"/>
 <filter token="PDF_LOAD" value="${PDF_LOAD}"/>
 <filter token="PDF_PATH" value="${PDF_PATH}"/>
+<filter token="PGBINDIR" value="${PGBINDIR}"/>
+<filter token="PGDATA" value="${PGDATA}"/>
 <filter token="PRODUCTION_NOTIFICATION_EMAIL" value="${PRODUCTION_NOTIFICATION_EMAIL}"/>
 <filter token="REQUEST_NEW_ANATOMY_EMAIL" value="${REQUEST_NEW_ANATOMY_EMAIL}"/>
 <filter token="ROOT_PATH" value="${ROOT_PATH}"/>

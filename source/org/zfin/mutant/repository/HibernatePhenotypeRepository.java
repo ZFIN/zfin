@@ -40,10 +40,25 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
 
     @SuppressWarnings("unchecked")
+    public boolean hasPhenotypeStructures(String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select count(structure) from PhenotypeStructure structure " +
+                " where structure.publication.zdbID = :pubID ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", publicationID);
+        Long count = (Long) query.uniqueResult();
+        return count > 0;
+    }
+
     public List<PhenotypeStructure> retrievePhenotypeStructures(String publicationID) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select structure from PhenotypeStructure structure where structure.publication.zdbID = :pubID " +
+        String hql = "select structure from PhenotypeStructure structure " +
+                "       join fetch structure.qualityTerm " +
+                "       join fetch structure.entity.superterm " +
+                "       join fetch structure.entity.subterm " +
+                " where structure.publication.zdbID = :pubID " +
                 "       order by structure.entity.superterm.termName";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
@@ -184,6 +199,18 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
             session.delete(structure);
     }
 
+    public boolean hasMutantExpressions(String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select count(phenox) from PhenotypeExperiment phenox";
+        hql += "     where phenox.figure.publication.zdbID = :pubID ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", publicationID);
+
+        Long count = (Long) query.uniqueResult();
+        return count > 0;
+    }
+
     /**
      * Retrieve all phenotypes for a given publication filtered by figure and fish.
      *
@@ -197,11 +224,15 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     public List<PhenotypeExperiment> getMutantExpressionsByFigureFish(String publicationID, String figureID, String fishID, String featureID) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select phenox from PhenotypeExperiment phenox";
+        String hql = "select phenox, phenox.fishExperiment.fish from PhenotypeExperiment phenox";
         if (featureID != null) {
             hql += ", GenotypeFeature genoFeature ";
         }
-        hql += "       left join phenox.fishExperiment fishox ";
+        hql += "       join fetch phenox.startStage ";
+        hql += "       join fetch phenox.endStage ";
+        hql += "       join fetch phenox.figure ";
+        hql += "       left join fetch phenox.phenotypeStatements ";
+        hql += "       left join fetch phenox.fishExperiment ";
         if (fishID != null) {
             hql += "       join phenox.fishExperiment.fish fish";
         }
@@ -215,7 +246,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
             hql += "           and genoFeature.feature.zdbID = :featureID ";
         }
         hql += "    order by phenox.figure.orderingLabel, " +
-                "             fishox.fish.name, " +
+                "             phenox.fishExperiment.fish.handle, " +
                 "             phenox.startStage.abbreviation ";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
@@ -226,7 +257,12 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         if (featureID != null)
             query.setString("featureID", featureID);
 
-        return (List<PhenotypeExperiment>) query.list();
+        List<Object[]> list = query.list();
+        Set<PhenotypeExperiment> phenoSet = new LinkedHashSet<>();
+        for (Object[] object : list) {
+            phenoSet.add((PhenotypeExperiment) object[0]);
+        }
+        return new ArrayList<>(phenoSet);
     }
 
     /**
@@ -303,6 +339,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         query.setParameter("publicationID", publicationID);
         return (List<PhenotypeExperiment>) query.list();
     }
+
     public List<PhenotypeExperiment> getPhenoByExperimentID(String experimentID) {
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct experiment from PhenotypeExperiment experiment where" +
@@ -629,7 +666,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     }
 
     @Override
-    public PhenotypeWarehouse getPhenotypeWarehouseBySourceID(String psgID){
+    public PhenotypeWarehouse getPhenotypeWarehouseBySourceID(String psgID) {
 
         String[] psgAttributes = psgID.split("\\|");
 
@@ -640,7 +677,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
         Session session = HibernateUtil.currentSession();
 
-        String hql="select pgcm.phenoWarehouse from PhenotypeCurationSearch pgcm" +
+        String hql = "select pgcm.phenoWarehouse from PhenotypeCurationSearch pgcm" +
                 " where pgcm.phenoOrExpID=:psgID  " +
                 "                  and pgcm.phenoWarehouse.figure.zdbID=:figureZdbID " +
                 "                  and pgcm.phenoWarehouse.start.zdbID=:startStageZdbID" +
@@ -648,13 +685,14 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
         Query query = session.createQuery(hql);
         query.setParameter("psgID", id);
-        query.setParameter("figureZdbID",figureZdbID);
-        query.setParameter("startStageZdbID",startStageZdbID);
-        query.setParameter("endStageZdbID",endStageZdbID);
-        return  (PhenotypeWarehouse) query.uniqueResult();
+        query.setParameter("figureZdbID", figureZdbID);
+        query.setParameter("startStageZdbID", startStageZdbID);
+        query.setParameter("endStageZdbID", endStageZdbID);
+        return (PhenotypeWarehouse) query.uniqueResult();
 
 
     }
+
     public List<PostComposedPresentationBean> getPhenotypeAnatomy(Marker gene) {
 
         PostComposedResultTransformer postComposedResultTransformer = new PostComposedResultTransformer();
@@ -865,6 +903,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         query.setParameter("exptID", exptID);
         return (List<DiseaseAnnotationModel>) query.list();
     }
+
     @Override
 
     public List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease) {
@@ -936,5 +975,16 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         Criteria criteria = session.createCriteria(ZdbFlag.class);
         criteria.add(Restrictions.eq("type", ZdbFlag.Type.REGEN_PHENOTYPEMART));
         return (ZdbFlag) criteria.uniqueResult();
+    }
+
+    @Override
+    public List<DiseaseAnnotationModel> getHumanDiseaseModelsByFish(String fishID, String publicationID) {
+        String hql = "from DiseaseAnnotationModel as disease where" +
+                " disease.fishExperiment.fish.zdbID = :fishID AND " +
+                " disease.diseaseAnnotation.publication.zdbID = :pubID";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("fishID", fishID);
+        query.setParameter("pubID", publicationID);
+        return (List<DiseaseAnnotationModel>) query.list();
     }
 }

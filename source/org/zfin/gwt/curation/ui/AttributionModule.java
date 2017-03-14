@@ -364,6 +364,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
 
         public DeAttributionRuleCallBack(String entityID, HandlesError errorLabel) {
             super(entityID, null);
+            this.errorLabel = errorLabel;
             this.entityID = entityID;
         }
 
@@ -408,9 +409,10 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
 
         @Override
         public void onFailure(Throwable throwable) {
-            if (throwable instanceof DeAttributionException)
+            if (throwable instanceof DeAttributionException) {
                 GWT.log(throwable.getMessage());
-            else
+                errorLabel.setError(throwable.getMessage());
+            }else
                 super.onFailure(throwable);
             notWorking();
         }

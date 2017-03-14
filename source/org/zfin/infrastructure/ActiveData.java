@@ -3,9 +3,12 @@ package org.zfin.infrastructure;
 import org.zfin.feature.Feature;
 import org.zfin.infrastructure.delete.*;
 import org.zfin.mapping.Panel;
+import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
+import org.zfin.marker.repository.HibernateMarkerRepository;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
+import org.zfin.repository.RepositoryFactory;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -131,7 +134,7 @@ public class ActiveData implements ZdbID {
                 type.equals(Type.MRPHLNO) ||
                 type.equals(Type.PAC) ||
                 type.equals(Type.RAPD) ||
-                type.equals(Type.REGION) ||
+                type.equals(Type.EREGION) ||
                 type.equals(Type.SNP) ||
                 type.equals(Type.SSLP) ||
                 type.equals(Type.STS) ||
@@ -146,6 +149,12 @@ public class ActiveData implements ZdbID {
     public static boolean isGeneOrGeneP(String ID) {
         Type type = getType(ID);
         if (type.equals(Type.GENE) || type.equals(Type.GENEP))
+            return true;
+        return false;
+    }
+    public static boolean isInGroupGenedom(String ID) {
+        Marker marker= RepositoryFactory.getMarkerRepository().getMarkerByID(ID);
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM))
             return true;
         return false;
     }
@@ -214,7 +223,7 @@ public class ActiveData implements ZdbID {
         PTCONSTRCT(DeleteConstructRule.class),
         RAPD,
         REFCROSS(null, Panel.class),
-        REGION(DeleteRegionRule.class),
+        EREGION(DeleteRegionRule.class),
         RUN,
         SNP,
         SSLP,
@@ -230,7 +239,17 @@ public class ActiveData implements ZdbID {
         XPAT,
         XPATINF,
         XPATRES,
-        ZYG;
+        ZYG,
+        MIRNAG,
+        SNORNAG,
+        RRNAG,
+        LNCRNAG,
+        LINCRNAG,
+        PIRNAG,
+        TRNAG,
+        SRPRNAG,
+        SCRNAG,
+        NCRNAG;
 
         private Class<? extends DeleteEntityRule> ruleClass;
         private static String allValues;

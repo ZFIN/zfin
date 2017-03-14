@@ -435,4 +435,6 @@ public interface ExpressionRepository {
     void saveExperimentCondition(ExperimentCondition condition);
 
     void saveExperiment(Experiment experiment);
+
+    ExpressionFigureStage getExperimentFigureStage(long id);
 }

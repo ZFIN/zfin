@@ -11,91 +11,92 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.gwt.root.ui.PublicationSessionKey;
-import org.zfin.infrastructure.DataNote;
-import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.profile.Person;
+import org.zfin.profile.presentation.PersonLookupEntry;
 import org.zfin.publication.Publication;
-import org.zfin.publication.presentation.PublicationService;
-import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.repository.RepositoryFactory;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/marker")
 public class RegionAddController {
 
     private static Logger LOG = Logger.getLogger(RegionAddController.class);
-    private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-    private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-    private static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
 
-    @ModelAttribute("formBean")
-    private RegionAddBean getDefaultSearchForm(@RequestParam(value = "regionPublicationZdbID", required = false) String zdbID) {
-        RegionAddBean regionBean = new RegionAddBean();
-
-        if (StringUtils.isNotEmpty(zdbID))
-            regionBean.setRegionPublicationZdbID(zdbID);
-
-        return regionBean;
-
-    }
-
-    @RequestMapping("/region-add")
-    protected String showForm(Model model) throws Exception {
-
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Engineered Region");
-        return "marker/region-add.page";
-    }
-
-    private
     @Autowired
-    HttpServletRequest request;
+    MarkerRepository markerRepository;
+
+    @Autowired
+    PublicationRepository publicationRepository;
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
-        binder.setValidator(new RegionAddBeanValidator());
+        binder.setValidator(new RegionAddFormBeanValidator());
     }
 
-    @RequestMapping(value = "/region-do-submit", method = RequestMethod.POST)
-    public String addRegion(@Valid @ModelAttribute("formBean") RegionAddBean formBean,
-                            BindingResult result) throws Exception {
+    @ModelAttribute("formBean")
+    public RegionAddFormBean getDefaultForm(@RequestParam(required = false) String type,
+                                          @RequestParam(required = false) String source) {
+        RegionAddFormBean form = new RegionAddFormBean();
+        form.setPublicationId(source);
+        form.setType(type);
+        Map<String, String> allTypes = new LinkedHashMap<>(10);
 
-        if (result.hasErrors())
-            return "marker/region-add.page";
+       /* allTypes.put(Marker.Type.LINCRNA.name(), "lincRNA");
+        allTypes.put(Marker.Type.LNCRNA.name(), "lncRNA");
+        allTypes.put(Marker.Type.MIRNA.name(), "miRNA");
+        allTypes.put(Marker.Type.NCRNA.name(), "ncRNA");
+        allTypes.put(Marker.Type.RRNA.name(), "rRNA");
+        allTypes.put(Marker.Type.SCRNA.name(), "scRNA");
+        allTypes.put(Marker.Type.SNORNA.name(), "snoRNA");
+        allTypes.put(Marker.Type.SRPRNA.name(), "srpRNA");
+        allTypes.put(Marker.Type.PIRNA.name(), "piRNA");
+        allTypes.put(Marker.Type.TRNA.name(), "tRNA");
+        form.setAllTypes(allTypes);*/
+        return form;
+    }
 
-        String regionName = formBean.getRegionName();
+    @RequestMapping(value = "/transcribedRegion-add", method = RequestMethod.GET)
+    public String showRegionAddForm(Model model) {
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add New Region");
+        return "marker/transcribedRegion-add.page";
+    }
+
+    @RequestMapping(value = "/transcribedRegion-add", method = RequestMethod.POST)
+    public String processRegionAddForm(Model model,
+                                     @Valid @ModelAttribute("formBean") RegionAddFormBean formBean,
+                                     BindingResult result) {
+        if (result.hasErrors()) {
+            return showRegionAddForm(model);
+        }
 
         Marker newRegion = new Marker();
-        newRegion.setAbbreviation(regionName.toLowerCase());
-        newRegion.setName(formBean.getRegionName());
-        newRegion.setPublicComments(formBean.getRegionComment());
+        newRegion.setMarkerType(markerRepository.getMarkerTypeByName(formBean.getType()));
+        newRegion.setName(formBean.getName());
+        newRegion.setAbbreviation(formBean.getAbbreviation());
+        newRegion.setPublicComments(formBean.getPublicNote());
 
-        String pubZdbID = formBean.getRegionPublicationZdbID().trim();
-        if (PublicationValidator.isShortVersion(pubZdbID))
-            formBean.setRegionPublicationZdbID(PublicationValidator.completeZdbID(pubZdbID));
-        else
-            formBean.setRegionPublicationZdbID(pubZdbID);
-        String zdbID = formBean.getRegionPublicationZdbID();
-        Publication regionPub = pr.getPublication(zdbID);
+        Publication reference = publicationRepository.getPublication(formBean.getPublicationId());
 
-
-        MarkerType mt = mr.getMarkerTypeByName(Marker.Type.REGION.toString());
-        newRegion.setMarkerType(mt);
         try {
             HibernateUtil.createTransaction();
+            markerRepository.createMarker(newRegion, reference);
 
-            mr.createMarker(newRegion, regionPub);
-            PublicationService.addRecentPublications(request.getSession().getServletContext(), regionPub, PublicationSessionKey.GENE);
+            if (StringUtils.isNotEmpty(formBean.getAlias())) {
+                markerRepository.addMarkerAlias(newRegion, formBean.getAlias(), reference);
+            }
+
+            if (StringUtils.isNotEmpty(formBean.getCuratorNote())) {
+                markerRepository.addMarkerDataNote(newRegion, formBean.getCuratorNote());
+            }
 
             HibernateUtil.flushAndCommitCurrentSession();
-
-            HibernateUtil.currentSession().merge(newRegion);
         } catch (Exception e) {
             try {
                 HibernateUtil.rollbackTransaction();
@@ -106,63 +107,7 @@ public class RegionAddController {
             throw new RuntimeException("Error during transaction. Rolled back.", e);
         }
 
-        Marker createdRegion = mr.getMarkerByName(newRegion.getName());
-        String alias = formBean.getRegionAlias();
-
-        if (!StringUtils.isEmpty(alias)) {
-            if (!addRegionAlias(createdRegion, alias, regionPub).equalsIgnoreCase("successful")) {
-                return "redirect:/action/dev-tools/test-error-page";
-            }
-        }
-
-        String curationNote = formBean.getRegionCuratorNote();
-        if (!StringUtils.isEmpty(curationNote)) {
-            if (!addCuratorNote(createdRegion, curationNote).equalsIgnoreCase(curationNote)) {
-                return "redirect:/action/dev-tools/test-error-page";
-            }
-        }
-
-        return "redirect:/" + newRegion.getZdbID()+"#edit";
-    }
-
-    private String addRegionAlias(Marker marker, String alias, Publication pub) {
-        try {
-            HibernateUtil.createTransaction();
-
-            mr.addMarkerAlias(marker, alias, pub);
-
-            HibernateUtil.flushAndCommitCurrentSession();
-
-            return "successful";
-        } catch (Exception e) {
-            try {
-                HibernateUtil.rollbackTransaction();
-            } catch (HibernateException he) {
-                LOG.error("Error during roll back of transaction", he);
-            }
-            LOG.error("Error in Transaction", e);
-            throw new RuntimeException("Error during transaction. Rolled back.", e);
-        }
-    }
-
-    private String addCuratorNote(Marker marker, String dNote) {
-        try {
-            HibernateUtil.createTransaction();
-            DataNote dn = mr.addMarkerDataNote(marker, dNote);
-            HibernateUtil.flushAndCommitCurrentSession();
-            return dn.getNote();
-        } catch (Exception e) {
-            try {
-                HibernateUtil.rollbackTransaction();
-            } catch (HibernateException he) {
-                LOG.error("Error during roll back of transaction", he);
-            }
-            LOG.error("Error in Transaction", e);
-            throw new RuntimeException("Error during transaction. Rolled back.", e);
-        }
+        return "redirect:/" + newRegion.getZdbID();
     }
 
 }
-
-
-

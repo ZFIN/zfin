@@ -60,7 +60,11 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
     public List<MarkerGoTermEvidence> getMarkerGoTermEvidencesForPubZdbID(String publicationID) {
         return (List<MarkerGoTermEvidence>)
                 HibernateUtil.currentSession().createQuery(" " +
-                        " from MarkerGoTermEvidence ev where ev.source = :pubZdbID " +
+                        " from MarkerGoTermEvidence ev" +
+                        " left join fetch ev.inferredFrom " +
+                        " left join fetch ev.inferredFrom " +
+                        " join fetch ev.marker " +
+                        " where ev.source = :pubZdbID " +
                         " order by ev.marker.abbreviation , ev.goTerm.termName " +
                         "")
                         .setString("pubZdbID", publicationID)

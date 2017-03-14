@@ -8,9 +8,12 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
+import org.zfin.gwt.curation.ui.CurationTab;
 import org.zfin.gwt.curation.ui.ZfinCurationModule;
+import org.zfin.gwt.curation.ui.feature.FeatureModule;
 import org.zfin.gwt.root.event.SelectAutoCompleteEvent;
 import org.zfin.gwt.root.event.SelectAutoCompleteEventHandler;
+import org.zfin.gwt.root.ui.ZfinModule;
 import org.zfin.gwt.root.util.AppUtils;
 
 /**
@@ -97,4 +100,8 @@ public class ExperimentModule implements ZfinCurationModule {
     }
 
 
+
+    static ZfinModule getModuleInfo(){
+        return new ZfinModule(CurationTab.EXPERIMENT.getName(), FeatureModule.class.getName());
+    }
 }
