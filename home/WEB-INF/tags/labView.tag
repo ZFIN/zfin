@@ -121,12 +121,16 @@
                   test="${numOfFeatures>0}" showNoData="true">
     <c:choose>
         <c:when test="${numOfFeatures > 50}">
-            <a id="showAlleleLink" href="javascript:" onclick="showAlleles('${lab.zdbID}');">Show first 50
-                of ${numOfFeatures}</a> genomic features
+            <span id="showAlleleLink">
+                <a href="javascript:" onclick="showAlleles('${lab.zdbID}');">Show </a>
+            first 50 of <fmt:formatNumber value="${numOfFeatures}" pattern="##,###"/> genomic features
+            </span>
         </c:when>
         <c:otherwise>
-            <a id="showAlleleLink" href="javascript:" onclick="showAlleles('${lab.zdbID}');">Show
+            <span id="showAlleleLink">
+            <a href="javascript:" onclick="showAlleles('${lab.zdbID}');">Show
                 all </a> ${numOfFeatures} genomic features
+            </span>
         </c:otherwise>
     </c:choose>
     <a id="hideAlleleLink" style="display: none;" href="javascript:hideAlleles()" onclick="hideAlleles()">Hide</a>
