@@ -6,17 +6,17 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.hibernate.transform.BasicTransformerAdapter;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
+import org.zfin.antibody.Antibody;
 import org.zfin.feature.*;
 import org.zfin.feature.presentation.FeatureLabEntry;
 import org.zfin.feature.presentation.FeaturePrefixLight;
 import org.zfin.feature.presentation.LabLight;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.Mutagee;
@@ -35,6 +35,7 @@ import org.zfin.profile.Organization;
 import org.zfin.profile.OrganizationFeaturePrefix;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
+import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 
@@ -740,26 +741,15 @@ public class HibernateFeatureRepository implements FeatureRepository {
     @SuppressWarnings("unchecked")
     @Override
     public List<Feature> getFeaturesForLab(String zdbID) {
-/*
-        String hql = " select f from Feature f " +
-                " join f.sources s " +
-                " where s.organization.zdbID = :zdbID " +
-                " order by f.abbreviationOrder asc " +
-                "";
-        List<Feature> features = HibernateUtil.currentSession().createQuery(hql)
-                .setString("zdbID", zdbID)
-                .list();
-        return features;
-*/
         Session session = currentSession();
         Criteria criteria = session.createCriteria(Feature.class);
         criteria.setFetchMode("featureAssay", FetchMode.JOIN);
-        criteria.setFetchMode("featureMarkerRelations", FetchMode.JOIN);
         criteria.setFetchMode("featureDnaMutationDetail", FetchMode.JOIN);
         criteria.setFetchMode("featureProteinMutationDetail", FetchMode.JOIN);
         criteria.createAlias("sources", "source");
         criteria.add(Restrictions.eq("source.organization.zdbID", zdbID));
         criteria.addOrder(Order.asc("abbreviationOrder"));
+        criteria.setMaxResults(50);
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         List<Feature> list = criteria.list();
         return list;
@@ -1081,11 +1071,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
     @Override
-    public boolean getFeaturesForLabExist(String zdbID) {
+    public Long getFeaturesForLabCount(String zdbID) {
         String hql = " select count(*) from Feature f join f.sources s " +
                 " where s.organization.zdbID = :zdbID ";
-        Long count = (Long) HibernateUtil.currentSession().createQuery(hql).setString("zdbID", zdbID).uniqueResult();
-        return count > 0;
+        return (Long) HibernateUtil.currentSession().createQuery(hql).setString("zdbID", zdbID).uniqueResult();
     }
 }
 

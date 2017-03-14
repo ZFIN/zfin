@@ -271,8 +271,9 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getFeaturesForLabExist() {
-        boolean exists = featureRepository.getFeaturesForLabExist("ZDB-LAB-970408-1");
-        assertTrue(exists);
+        Long count = featureRepository.getFeaturesForLabCount("ZDB-LAB-970408-1");
+        assertNotNull(count);
+        assertThat(count, greaterThan(20L));
     }
 
     @Test

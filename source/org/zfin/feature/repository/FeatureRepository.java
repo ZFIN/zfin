@@ -3,6 +3,7 @@ package org.zfin.feature.repository;
 import org.zfin.feature.*;
 import org.zfin.feature.presentation.FeatureLabEntry;
 import org.zfin.feature.presentation.FeaturePrefixLight;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.Mutagen;
@@ -178,5 +179,5 @@ public interface FeatureRepository {
 
     void deleteFeatureProteinMutationDetail(FeatureProteinMutationDetail detail);
 
-    boolean getFeaturesForLabExist(String zdbID);
+    Long getFeaturesForLabCount(String zdbID);
 }
