@@ -1,7 +1,6 @@
 package org.zfin.expression.presentation;
 
 
-import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.marker.Marker;
 import org.zfin.util.URLCreator;
 
@@ -35,12 +34,12 @@ public class ExpressionSearchCriteria {
         //todo: put all of the criteria into the url
 
         URLCreator urlCreator = new URLCreator("/action/expression/results");
-        urlCreator.addNamevaluePair("geneZdbID", gene.getZdbID());
-        urlCreator.addNamevaluePair("geneField", gene.getAbbreviation());
-        urlCreator.addNamevaluePair("anatomyTermNames", getAnatomyTermNames());
-        urlCreator.addNamevaluePair("anatomyTermIDs", getAnatomyTermIDs());
-        urlCreator.addNamevaluePair("startStageId", getStartStageId());
-        urlCreator.addNamevaluePair("endStageId", getEndStageId());
+        urlCreator.addNameValuePair("geneZdbID", gene.getZdbID());
+        urlCreator.addNameValuePair("geneField", gene.getAbbreviation());
+        urlCreator.addNameValuePair("anatomyTermNames", getAnatomyTermNames());
+        urlCreator.addNameValuePair("anatomyTermIDs", getAnatomyTermIDs());
+        urlCreator.addNameValuePair("startStageId", getStartStageId());
+        urlCreator.addNameValuePair("endStageId", getEndStageId());
         return urlCreator.getURL();
     }
 
