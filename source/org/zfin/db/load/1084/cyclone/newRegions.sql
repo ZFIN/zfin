@@ -51,6 +51,14 @@ alter table marker_type_group add constraint primary
 alter table marker_type_group_member 
  modify (mtgrpmem_mrkr_type_group varchar(60) not null constraint mtgrpmem_mrkr_type_group_not_null);
 
+alter table marker_type_group_member
+  modify (mtgrpmem_mrkr_type varchar(60) not null constraint mtgrpmem_mrkr_type_not_null);
+
+
+alter table marker_type_group_member add constraint
+ (foreign key (mtgrpmem_mrkr_type) references marker_types 
+  constraint mtgrpmem_mrkr_type_fk);
+
 alter table marker_type_group_member add constraint 
     (foreign key (mtgrpmem_mrkr_type_group) references marker_type_group constraint mtgrpmem_mrkr_type_group_foreign_key);
 
