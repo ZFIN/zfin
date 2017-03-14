@@ -7,14 +7,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.URLCreator;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.SortedMap;
 
 @Controller
 @RequestMapping("/expression")
@@ -29,12 +32,20 @@ public class ExpressionSearchController {
 
     @RequestMapping("/search")
     public String search(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria) {
+
+        SortedMap<String,String> stages = ExpressionSearchService.getStageOptions();
+        model.addAttribute("stages", stages);
+        criteria.setStartStageId(stages.firstKey());
+        criteria.setEndStageId(stages.lastKey());
+
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Expression Search");
         return "expression/search.page";
     }
 
     @RequestMapping("/results")
     public String results(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria, HttpServletRequest request) {
+
+        model.addAttribute("stages",ExpressionSearchService.getStageOptions());
 
         if (criteria.getRows() == null) {
             criteria.setRows(20);

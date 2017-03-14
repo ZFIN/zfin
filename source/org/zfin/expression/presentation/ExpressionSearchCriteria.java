@@ -1,6 +1,7 @@
 package org.zfin.expression.presentation;
 
 
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.marker.Marker;
 import org.zfin.util.URLCreator;
 
@@ -13,6 +14,8 @@ public class ExpressionSearchCriteria {
     private String geneZdbID;
     private Marker gene;
     private boolean onlyFiguresWithImages;
+    private String startStageId;
+    private String endStageId;
 
     private String anatomyTermNames;
     private String anatomyTermIDs;
@@ -32,10 +35,12 @@ public class ExpressionSearchCriteria {
         //todo: put all of the criteria into the url
 
         URLCreator urlCreator = new URLCreator("/action/expression/results");
-        urlCreator.addNameValuePair("geneZdbID", gene.getZdbID());
-        urlCreator.addNameValuePair("geneField", gene.getAbbreviation());
-        urlCreator.addNameValuePair("anatomyTermNames", getAnatomyTermNames());
-        urlCreator.addNameValuePair("anatomyTermIDs", getAnatomyTermIDs());
+        urlCreator.addNamevaluePair("geneZdbID", gene.getZdbID());
+        urlCreator.addNamevaluePair("geneField", gene.getAbbreviation());
+        urlCreator.addNamevaluePair("anatomyTermNames", getAnatomyTermNames());
+        urlCreator.addNamevaluePair("anatomyTermIDs", getAnatomyTermIDs());
+        urlCreator.addNamevaluePair("startStageId", getStartStageId());
+        urlCreator.addNamevaluePair("endStageId", getEndStageId());
         return urlCreator.getURL();
     }
 
@@ -79,6 +84,22 @@ public class ExpressionSearchCriteria {
 
     public void setOnlyFiguresWithImages(boolean onlyFiguresWithImages) {
         this.onlyFiguresWithImages = onlyFiguresWithImages;
+    }
+
+    public String getStartStageId() {
+        return startStageId;
+    }
+
+    public void setStartStageId(String startStageId) {
+        this.startStageId = startStageId;
+    }
+
+    public String getEndStageId() {
+        return endStageId;
+    }
+
+    public void setEndStageId(String endStageId) {
+        this.endStageId = endStageId;
     }
 
     public String getAnatomyTermNames() {

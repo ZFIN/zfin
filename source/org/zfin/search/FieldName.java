@@ -86,6 +86,8 @@ public enum FieldName {
     SEQUENCE_TARGETING_REAGENT("sequence_targeting_reagent"),
     SOURCE("source"),
     STAGE("stage"),
+    STAGE_HOURS_END("stage_hours_end"),
+    STAGE_HOURS_START("stage_hours_start"),
     STATUS("pub_status"),
     TARGETED_GENE("targeted_gene"),
     TERM_STATUS("term_status"),

@@ -18,8 +18,19 @@
         <tr>
             <th><form:label path="geneField" cssClass="namesearchLabel">Gene/EST</form:label></th>
             <td><form:input type="text" path="geneField"/></td>
-            <th></th>
-            <td><form:checkbox path="onlyFiguresWithImages"/> <label>Show only figures with images</label></td>
+            <th>Stage Between</th>
+            <td>
+                <div>
+                    <form:select path="startStageId" items="${stages}"/>
+                    &nbsp;<label>&</label>
+                </div>
+                <div>
+                    <form:select path="endStageId" items="${stages}"/>
+                </div>
+                <div>
+                    <a href="/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
+                </div>
+            </td>
         </tr>
         <tr>
             <th><form:label path="anatomy">Anatomy:</form:label></th>
@@ -57,6 +68,8 @@
                 <div id="anatomyTermInput"></div>
                 <div id="searchTermList"></div>
             </td>
+            <th></th>
+            <td><form:checkbox path="onlyFiguresWithImages"/> <label>Show only figures with images</label></td>
         </tr>
     </table>
     <div class="submitbar">

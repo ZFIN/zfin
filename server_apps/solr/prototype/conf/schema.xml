@@ -421,6 +421,7 @@
               <filter class="solr.LowerCaseFilterFactory"/>
           </analyzer>
       </fieldType>
+
 <!--
       &lt;!&ndash; experimental, can be removed &ndash;&gt;
       <fieldtype name="phrase_suggest" class="solr.TextField">
@@ -673,6 +674,8 @@
    <field name="clone" type="keyword" indexed="true" stored="true" multiValued="true" />
 
    <field name="stage" type="superstage" indexed="true" stored="true" multiValued="true" />
+   <field name="stage_hours_start" type="tfloat" indexed="true" stored="true" />
+   <field name="stage_hours_end" type="tfloat" indexed="true" stored="true" />
 
    <field name="conditions" type="keyword" indexed="true" stored="true" multiValued="true" />
 

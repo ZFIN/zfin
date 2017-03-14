@@ -17,6 +17,7 @@ import org.zfin.util.URLCreator;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -800,5 +801,21 @@ public class SolrService {
     public static boolean queryHasFilterQueries(SolrQuery query) {
         String[] filterQueries = query.getFilterQueries();
         return filterQueries != null && !(filterQueries.length == 1 && filterQueries[0].startsWith("root_only:"));
+    }
+
+    public static String buildStageRangeQuery(FieldName fieldName, String leftBracket,
+                                              float start, float end, String rightBracket) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(fieldName.getName());
+        sb.append(":");
+        sb.append(leftBracket);
+        sb.append(start);
+        sb.append(" TO ");
+        sb.append(end);
+        sb.append(rightBracket);
+        sb.append(" ");
+
+        return sb.toString();
     }
 }

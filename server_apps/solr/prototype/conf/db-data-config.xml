@@ -2854,6 +2854,18 @@ term_name as expression_anatomy_direct,
                    cacheImpl="SortedMapBackedCache"
                    where="xpatex_zdb_id=expression.id"/>
 
+           <entity name="expression_stage_hours"
+                   datasource="db" query="select start_stage.stg_hours_start as stage_hours_start,
+                                                 end_stage.stg_hours_end as stage_hours_end,
+                                                 'xpatex-' || efs_pk_id as efs_pk_id
+                                         from expression_experiment2
+                                             join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                             join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
+                                             join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
+                   "
+                   cacheImpl="SortedMapBackedCache"
+                   where="efs_pk_id=expression.id"/>
+
            <entity name="expression_stage"
                    datasource="db" query="select this_stage.stg_name as stage, 'xpatex-' || efs_pk_id as efs_pk_id
                             from expression_experiment2

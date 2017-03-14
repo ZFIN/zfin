@@ -1,5 +1,6 @@
 package org.zfin.expression.service;
 
+import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -9,6 +10,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.springframework.stereotype.Service;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.ExpressionSearchCriteria;
 import org.zfin.expression.presentation.FigureResult;
@@ -18,12 +20,13 @@ import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.FieldName;
 import org.zfin.search.service.QueryManipulationService;
 import org.zfin.search.service.SolrService;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Field;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -36,23 +39,23 @@ public class ExpressionSearchService {
                                           ExpressionSearchCriteria criteria,
                                           String anatomyBoolean) {
 
-        solrQuery.addFilterQuery("category:(" + "Expression" + ")");
+        solrQuery.addFilterQuery(FieldName.CATEGORY.getName() + ":(" + "Expression" + ")");
 
-        //only interested in expression where there is a gene, no AB expression
-        solrQuery.addFilterQuery("gene_zdb_id:[* TO *]");
+        //only interested in expression where there is a zebrafish gene, no reporter & no AB expression
+        solrQuery.addFilterQuery(FieldName.ZEBRAFISH_GENE.getName() + ":[* TO *]");
 
         if (CollectionUtils.isNotEmpty(criteria.getAnatomy())) {
             String termQuery = criteria.getAnatomy().stream()
                     .collect(Collectors.joining(" " + anatomyBoolean + " "));
-            solrQuery.addFilterQuery("expression_anatomy_tf:(" + termQuery + ")");
+            solrQuery.addFilterQuery(FieldName.EXPRESSION_ANATOMY_TF.getName() + ":(" + termQuery + ")");
         }
 
         if (StringUtils.isNotEmpty(criteria.getGeneField())) {
             StringBuilder gfq = new StringBuilder();
-            gfq.append("zebrafish_gene:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
+            gfq.append(FieldName.ZEBRAFISH_GENE.getName() + ":(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
             gfq.append(" OR zebrafish_gene_t:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
-            gfq.append(" OR expressed_gene_full_name:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
-            gfq.append(" OR expressed_gene_previous_name:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
+            gfq.append(" OR " + "expressed_gene_full_name:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
+            gfq.append(" OR " + "expressed_gene_previous_name:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
             solrQuery.addFilterQuery(gfq.toString());
         }
 
@@ -60,8 +63,26 @@ public class ExpressionSearchService {
             solrQuery.addFilterQuery("gene_zdb_id:(" + criteria.getGeneZdbID() + ")");
         }
 
+        if (StringUtils.isNotEmpty(criteria.getStartStageId()) && StringUtils.isNotEmpty(criteria.getEndStageId())) {
+            DevelopmentStage start = RepositoryFactory.getAnatomyRepository().getStageByOboID(criteria.getStartStageId());
+            DevelopmentStage end = RepositoryFactory.getAnatomyRepository().getStageByOboID(criteria.getEndStageId());
+
+            if (start != null && end != null) {
+                solrQuery.addFilterQuery(SolrService.buildStageRangeQuery(
+                        FieldName.STAGE_HOURS_START,
+                        "[", DevelopmentStage.MIN, end.getHoursEnd(),  "}"
+                ));
+                solrQuery.addFilterQuery(SolrService.buildStageRangeQuery(
+                        FieldName.STAGE_HOURS_END,
+                        "{", start.getHoursStart(), DevelopmentStage.MAX, "]"
+                ));
+            }
+
+        }
+
+
         if (criteria.isOnlyFiguresWithImages()) {
-            solrQuery.addFilterQuery("has_image:(true)");
+            solrQuery.addFilterQuery(FieldName.HAS_IMAGE.getName() + ":(true)");
         }
         
         solrQuery.setRows(criteria.getRows());
@@ -81,6 +102,8 @@ public class ExpressionSearchService {
         solrQuery.add("group.field", "gene_zdb_id");
 
         solrQuery.setFields("gene_zdb_id");
+
+        solrQuery.setRows(100);
 
         QueryResponse queryResponse = null;
         try {
@@ -104,15 +127,10 @@ public class ExpressionSearchService {
     public static List<FigureResult> getFigureResults(ExpressionSearchCriteria criteria) {
         SolrQuery solrQuery = new SolrQuery();
 
-        solrQuery.addFilterQuery("category:(" + "Expression" + ")");
-        if (criteria.getAnatomy() != null && criteria.getAnatomy().size() > 0) {
-            String termQuery = criteria.getAnatomy().stream()
-                    .collect(Collectors.joining(" OR "));
-            solrQuery.addFilterQuery("expression_anatomy_tf:(" + termQuery + ")");
-        }
-
+        solrQuery = applyCriteria(solrQuery, criteria, "OR");
 
         solrQuery.addFilterQuery("gene_zdb_id:(" + criteria.getGeneZdbID() + ")");
+
         solrQuery.add("group", "true");
         solrQuery.add("group.ngroups", "true");
         solrQuery.add("group.field", "fig_zdb_id");
@@ -270,6 +288,14 @@ public class ExpressionSearchService {
 
     }
 
+    public static SortedMap<String, String> getStageOptions() {
+        List<DevelopmentStage> stages = RepositoryFactory.getAnatomyRepository().getAllStagesWithoutUnknown();
 
+        SortedMap<String,String> options = new TreeMap<>();
+
+        stages.stream().sorted().forEach(s -> options.put(s.getOboID(), s.getName()));
+
+        return options;
+    }
 
 }
