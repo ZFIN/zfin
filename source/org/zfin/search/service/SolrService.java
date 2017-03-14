@@ -7,15 +7,21 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.request.DirectXmlRequest;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.util.NamedList;
 import org.springframework.stereotype.Service;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.search.*;
 import org.zfin.util.URLCreator;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -39,6 +45,8 @@ public class SolrService {
     private static final String SEARCH_URL = "/search";
 
     private static final String PRIMARY_CORE = "prototype";
+
+    private static final String IDLE = "idle";
 
     private static SolrClient prototype;
 
@@ -94,20 +102,25 @@ public class SolrService {
         List<FacetField.Count> unselectedValues = getUnselectedValues(facetField, fqMap);
         List<FacetField.Count> selectedValues = getSelectedValues(facetField, fqMap);
 
-        //always 'human sort' the chromosome facets, unless it's been asked for as count sort
-        if (SolrService.isToBeHumanSorted(facetField.getName())) {
-            Collections.sort(selectedValues, new FacetValueAlphanumComparator());
-            Collections.sort(unselectedValues, new FacetValueAlphanumComparator());
-        }
-        if (facetField.getName().equals("category")) {
-            Collections.sort(selectedValues, new FacetCategoryComparator());
-            Collections.sort(unselectedValues, new FacetCategoryComparator());
-        }
+        selectedValues = sortFacets(facetField, selectedValues);
+        unselectedValues = sortFacets(facetField, unselectedValues);
 
         facetValues.addAll(unselectedValues);
         facetValues.addAll(selectedValues);
 
         return facetValues;
+    }
+
+    public static List<FacetField.Count> sortFacets(FacetField facetField, List<FacetField.Count> inputValues) {
+        List<FacetField.Count> outputValues = new ArrayList<>();
+        outputValues.addAll(inputValues);
+        if (SolrService.isToBeHumanSorted(facetField.getName())) {
+            Collections.sort(outputValues, new FacetValueAlphanumComparator());
+        }
+        if (facetField.getName().equals("category")) {
+            Collections.sort(outputValues, new FacetCategoryComparator());
+        }
+        return outputValues;
     }
 
     private static List<FacetField.Count> getSelectedValues(FacetField facetField, Map<String, Boolean> fqMap) {
@@ -768,6 +781,9 @@ public class SolrService {
 
 
     public static String luceneEscape(String value) {
+        if (StringUtils.isEmpty(value)) {
+            return value;
+        }
         String escaped = LUCENE_PATTERN.matcher(value).replaceAll(REPLACEMENT_STRING);
         return escaped;
     }
@@ -800,5 +816,27 @@ public class SolrService {
     public static boolean queryHasFilterQueries(SolrQuery query) {
         String[] filterQueries = query.getFilterQueries();
         return filterQueries != null && !(filterQueries.length == 1 && filterQueries[0].startsWith("root_only:"));
+    }
+
+    public static void addDocument(Map<FieldName, Object> fields) throws IOException, SolrServerException {
+        SolrInputDocument document = new SolrInputDocument();
+        SolrClient solr = getSolrClient();
+        for (Map.Entry<FieldName, Object> field : fields.entrySet()) {
+            document.addField(field.getKey().getName(), field.getValue());
+        }
+        solr.add(document);
+        if (!isIndexingInProgress()) {
+            solr.commit();
+        }
+    }
+
+    public static String getServerStatus() throws IOException, SolrServerException {
+        SolrRequest req = new DirectXmlRequest("/dataimport", null);
+        NamedList<Object> response = getSolrClient().request(req);
+        return (String) response.get("status");
+    }
+
+    public static boolean isIndexingInProgress() throws IOException, SolrServerException {
+        return !getServerStatus().equals(IDLE);
     }
 }

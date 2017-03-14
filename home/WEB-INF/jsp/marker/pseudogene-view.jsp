@@ -5,22 +5,22 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <script src="/javascript/table-collapse.js"></script>
-
 <script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
 <script src="/javascript/angular/angular-sanitize.js"></script>
-<script src="/javascript/trusted-html.filter.js"></script>
-
 <script src="/javascript/editMarker.js"></script>
 <script src="/javascript/nomenclature.js" type="text/javascript"></script>
 <script src="/javascript/curator-notes.directive.js"></script>
 <script src="/javascript/public-note.directive.js"></script>
-<script src="/javascript/gene-marker-relationship.directive.js"></script>
+<script src="/javascript/field-error.service.js"></script>
 <script src="/javascript/other-markers.directive.js"></script>
+<script src="/javascript/gene-marker-relationship.directive.js"></script>
 <script src="/javascript/marker.service.js"></script>
+<script src="/javascript/autocompletify.directive.js"></script>
+<script src="/javascript/trusted-html.filter.js"></script>
+<script src="/javascript/ortho-edit.js"></script>
+<script src="/javascript/inline-edit-textarea.directive.js"></script>
 
-<authz:authorize access="hasRole('root')">
-    <div ng-app="app" ng-controller="EditController as eControl">
-</authz:authorize>
+<div ng-app="app" ng-controller="EditController as eControl">
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.GeneBean" scope="request"/>
 
@@ -61,16 +61,10 @@
 <%--OTHER GENE/Marker Pages--%>
 <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}" />
 
-
 <%--ORTHOLOGY--%>
-<c:set var="geneSymbol">
-    <zfin:abbrev entity="${formBean.marker}"/>
-</c:set>
-<zfin2:orthology
-        orthologyPresentationBean="${formBean.orthologyPresentationBean}"
-        marker="${formBean.marker}"
-        title="ORTHOLOGY for ${geneSymbol}"/>
+<zfin2:orthology marker="${formBean.marker}" showTitle="true"/>
 
 <%--CITATIONS--%>
 <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>
 
+</div>

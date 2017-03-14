@@ -11,9 +11,7 @@
 select 
     mrkr_zdb_id as id,
     'Gene / Transcript' as category,
-    case when mrkr_type = 'GENEP' then 'Pseudogene'
-         when mrkr_type = 'EFG' then 'Engineered Foreign Gene'
-         else 'Gene' end as type,
+    mrkrtype_type_display as type,
     mrkr_comments as note,
     mrkr_abbrev as name,
     mrkr_abbrev as proper_name,
@@ -24,7 +22,9 @@ select
        '/' || mrkr_zdb_id as url,
     to_date(get_date_from_id(mrkr_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
 from marker, marker_types
-where mrkr_type in ('GENE','GENEP','EFG')
+inner join marker_type_group_member
+on marker_types.marker_type = marker_type_group_member.mtgrpmem_mrkr_type
+where mtgrpmem_mrkr_type_group IN ('GENEDOM', 'EFG')
   and mrkr_type = marker_type
        ;">
 
@@ -825,9 +825,11 @@ select
        '/' || mrkr_zdb_id as url,
        (select min(when) from updates where rec_id = mrkr_zdb_id) as date
 from marker, marker_types
-where mrkr_type != 'GENE'
-  and mrkr_type != 'GENEP'
-  and mrkr_type != 'EFG'
+where mrkr_type not in (
+    SELECT mtgrpmem_mrkr_type
+    FROM marker_type_group_member
+    WHERE mtgrpmem_mrkr_type_group in ('GENEDOM', 'EFG')
+  )
   and mrkr_type != 'ATB'
   and mrkr_zdb_id[1,9] != 'ZDB-TGCON'
   and mrkr_type != 'MRPHLNO'
@@ -2010,7 +2012,7 @@ select
 
    <entity name="str_accession"
                         datasource="db" query="select fdb_db_name || ':' || dblink_acc_num as related_accession,
-                                                     dblink_linked_recid as feature_zdb_id
+                                                     dblink_linked_recid as mrkr_zdb_id
                                              from db_link, foreign_db_contains, foreign_db
                                              where dblink_fdbcont_zdb_id = fdbcont_zdb_id
                                                and fdbcont_fdb_db_id = fdb_db_pk_id
@@ -2202,6 +2204,7 @@ select
            <entity name="phenotype_gene"
                    datasource="db" query="select
                             mrkr_abbrev as gene,
+                            mrkr_name as gene_full_name,
                             mrkr_zdb_id as xref,
                             'pg-' || pg_id as pg_id
                             from phenotype_source_generated
@@ -2211,6 +2214,20 @@ select
                                  join feature_marker_relationship on fmrel_ftr_zdb_id = genofeat_feature_zdb_id
                                                                      and fmrel_type	= 'is allele of'
                                  join marker on fmrel_mrkr_zdb_id = mrkr_zdb_id;"
+                   cacheImpl="SortedMapBackedCache"
+                   where="pg_id=phenotype.id"/>
+
+           <entity name="phenotype_gene_alias"
+                   datasource="db" query="select
+                            dalias_alias as gene_previous_name,
+                            'pg-' || pg_id as pg_id
+                            from phenotype_source_generated
+                                 join fish_experiment on genox_zdb_id = pg_genox_zdb_id
+                                 join fish on fish_zdb_id = genox_fish_zdb_id
+                                 join genotype_feature on genofeat_geno_zdb_id = fish_genotype_zdb_id
+                                 join feature_marker_relationship on fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+                                                                     and fmrel_type	= 'is allele of'
+                                 join data_alias on fmrel_mrkr_zdb_id = dalias_data_zdb_id;"
                    cacheImpl="SortedMapBackedCache"
                    where="pg_id=phenotype.id"/>
 
@@ -2239,6 +2256,19 @@ select
                              join marker on mrel_mrkr_2_zdb_id = mrkr_zdb_id;"
                    cacheImpl="SortedMapBackedCache"
                    where="pg_id=phenotype.id"/>
+
+           <entity name="phenotype_str_gene_alias"
+                   datasource="db" query="select dalias_alias as gene_previous_name,
+                               'pg-' || pg_id as pg_id
+                        from phenotype_source_generated
+                             join fish_experiment on genox_zdb_id = pg_genox_zdb_id
+                             join fish on fish_zdb_id = genox_fish_zdb_id
+                             join fish_str on fishstr_fish_zdb_id = fish_zdb_id
+                             join marker_relationship on mrel_mrkr_1_zdb_id = fishstr_str_zdb_id and mrel_type = 'knockdown reagent targets gene'
+                             join data_alias on mrel_mrkr_2_zdb_id = dalias_data_zdb_id;"
+                   cacheImpl="SortedMapBackedCache"
+                   where="pg_id=phenotype.id"/>
+
 
            <entity name="phenotype_standard_or_control"
                    datasource="db" query="select 
@@ -3032,7 +3062,8 @@ SELECT trim(CASE Length(Get_genotype_backgrounds(geno_zdb_id))
                             mrkr_abbrev_order as name_sort,
                             mrkr_comments as note,
                                '/' || mrkr_zdb_id as url,
-                            atb_type as type,
+                            atb_type as antibody_type,
+                            'Antibody' as type,
                             atb_host_organism as host_organism,
                             to_date(get_date_from_id(mrkr_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
 
@@ -3269,9 +3300,9 @@ SELECT trim(CASE Length(Get_genotype_backgrounds(geno_zdb_id))
            </entity>
 
            <entity name="feature_note"
-                   query="select feature_zdb_id, dnote_text as note
+                   query="select feature_zdb_id, extnote_note as note
                             from feature
-                                 join data_note on dnote_data_zdb_id = feature_zdb_id"
+                                 join external_note on extnote_data_zdb_id = feature_zdb_id"
                    cacheImpl="SortedMapBackedCache"
                    where="feature_zdb_id=feature.id"/>
 
@@ -5340,6 +5371,72 @@ where fig_zdb_id=xpatfig_fig_zdb_id
                         from condition_data_type
                         where cdt_group || ':' || cdt_name not in ('chemical:other','morpholino:morpholino','TALEN:TALEN');"/>
 
+
+        <!-- this fills the STR categories on marker search, but is excluded from site search -->
+        <entity name="str_relationship"
+                datasource="db" query="select mrel_zdb_id as id,
+                                       'STR Relationship' as Category,
+                                       mrkrtype_type_display as type,
+                                       str.mrkr_abbrev as name,
+                                       str.mrkr_abbrev as proper_name,
+                                       str.mrkr_abbrev as full_name,
+                                       gene.mrkr_abbrev_order || ' ' || str.mrkr_abbrev_order as name_sort,
+                                       '/' || str.mrkr_zdb_id as url,
+                                       to_date(get_date_from_id(mrel_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
+                                from marker_relationship
+                                     join marker gene on mrel_mrkr_2_zdb_id = gene.mrkr_zdb_id
+                                     join marker str on mrel_mrkr_1_zdb_id = str.mrkr_zdb_id
+                                     join marker_types on str.mrkr_type = marker_type
+                                where mrel_type = 'knockdown reagent targets gene';">
+
+            <entity name="str_alias" datasource="db"
+                    query="select
+                            dalias_alias as alias,
+                            mrel_zdb_id
+                            from data_alias
+                                 join marker_relationship on mrel_mrkr_1_zdb_id = dalias_data_zdb_id
+                                                         and mrel_type = 'knockdown reagent targets gene';"
+                    where="mrel_zdb_id=str_relationship.id"
+                    cacheImpl="SortedMapBackedCache"/>
+
+            <entity name="str_accession"
+                    datasource="db" query="select fdb_db_name || ':' || dblink_acc_num as related_accession,
+                                                     mrel_zdb_id
+                                             from db_link, marker_relationship, foreign_db_contains, foreign_db
+                                             where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                                               and mrel_mrkr_1_zdb_id = dblink_linked_recid
+                                               and mrel_type = 'knockdown reagent targets gene'
+                                               and fdbcont_fdb_db_id = fdb_db_pk_id;"
+                    where="mrel_zdb_id=str_relationship.id"
+                    cacheImpl="SortedMapBackedCache"/>
+
+            <entity name="str_targeted_gene"
+                    datasource="db" query="select
+                            mrkr_abbrev as targeted_gene,
+                            mrkr_name as targeted_gene_full_name,
+                            mrel_zdb_id
+                            from marker_relationship
+                                 join marker gene on mrel_mrkr_2_zdb_id = mrkr_zdb_id
+                            where mrel_type = 'knockdown reagent targets gene';"
+                    where="mrel_zdb_id=str_relationship.id"
+                    cacheImpl="SortedMapBackedCache"/>
+
+
+            <entity name="str_targeted_gene_previous_name"
+                    datasource="db" query="select
+                            dalias_alias as targeted_gene_previous_name,
+                            mrel_zdb_id
+                            from data_alias
+                                 join marker_relationship on mrel_mrkr_2_zdb_id = dalias_data_zdb_id
+                                 join marker gene on mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id
+                            where mrel_type = 'knockdown reagent targets gene';"
+                    where="mrel_zdb_id=str_relationship.id"
+                    cacheImpl="SortedMapBackedCache"/>
+
+        </entity>
+
    </document>
+
+
 </dataConfig>
 

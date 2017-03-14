@@ -2,6 +2,7 @@ package org.zfin.uniquery;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.database.LuceneQueryService;
 import org.zfin.util.downloads.ArchiveService;
@@ -31,6 +32,7 @@ public class SiteSearchIndexService extends ArchiveService {
         rootArchiveDirectory = ZfinPropertiesEnum.INDEXER_DIRECTORY.value();
         readAllArchiveDirectories();
         luceneQueryService = new LuceneQueryService(getFullPathMatchingIndexDirectory());
+        HibernateUtil.closeSession();
     }
 
     public SiteSearchIndexService(String indexDirectory) throws IOException {

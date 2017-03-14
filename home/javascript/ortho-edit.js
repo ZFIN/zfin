@@ -74,7 +74,7 @@
                 pub: '@',
                 header: '@',
                 edit: '<',
-                showDownloadLink: '@'
+                showDownloadLink: '<'
             },
             controller: OrthoEditController,
             controllerAs: 'vm',
@@ -109,24 +109,6 @@
                     angular.element(document).on('click', hideOptions.bind(null, container, opts));
                 });
             });
-
-            scope.$watch('vm.orthologs', function () {
-                var table = angular.element('.ortholog-table');
-                var overlay = angular.element('.loading-overlay');
-
-                function setOverlaySize() {
-                    var tableRect = table[0].getBoundingClientRect();
-                    overlay.css({
-                        width: tableRect.width,
-                        height: tableRect.height
-                    });
-                }
-
-                // use $timeout because we need to get size after digest is finished
-                $timeout(setOverlaySize, false);
-            });
-
-
         }
 
         return directive;
@@ -177,7 +159,8 @@
 
         vm.selectPub = selectPub;
         vm.checkPub = checkPub;
-        vm.showDownloadLink = true;
+        vm.showDownloadLink = (typeof vm.showDownloadLink === 'undefined') ? true : vm.showDownloadLink;
+        vm.loading = []
 
         activate();
 
@@ -190,9 +173,11 @@
         }
 
         function fetchCodes() {
+            vm.loading.push(true);
             return $http.get('/action/ortholog/evidence-codes', {cache: true})
                 .then(function (resp) {
                     vm.codes = resp.data;
+                    finishAjaxCall();
                     return vm.codes;
                 });
         }
@@ -202,13 +187,24 @@
         }
 
         function fetchGenes() {
+            vm.loading.push(true);
             $http.get('/action/publication/' + vm.pub + '/genes')
                 .then(function (resp) {
                     vm.genes = resp.data;
+                    finishAjaxCall()
                 })
                 .catch(function (error) {
                     vm.generalError = 'Couldn\'t fetch genes for pub';
+                    finishAjaxCall()
+
                 });
+        }
+
+        function finishAjaxCall() {
+            vm.loading.pop();
+            if (typeof displayLoadingStatus === 'function') {
+                displayLoadingStatus('ORTHOLOGY', vm.loading.length > 0)
+            }
         }
 
         function fetchOrthology() {

@@ -1,18 +1,28 @@
 package org.zfin.framework;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.apache.log4j.Logger;
 import org.zfin.ontology.OntologyDataManager;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.util.FileUtil;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Background Servlet that should not be called directly.
@@ -45,6 +55,9 @@ public class OntologyManagerServlet extends HttpServlet {
         LOG.info("Ontology Manager Thread started: ");
         WatchOntologyDirectoryThread watchThread = new WatchOntologyDirectoryThread();
         watchThread.start();
+        MonitorDbConnectionPoolThread monitor = new MonitorDbConnectionPoolThread();
+        monitor.start();
+
     }
 
     private void reLoadFormDatabase() {
@@ -52,6 +65,59 @@ public class OntologyManagerServlet extends HttpServlet {
             OntologyManager.getInstance(OntologyManager.LoadingMode.DATABASE);
         } catch (Exception e) {
             LOG.error("Problem during re-loading ontologies from database", e);
+        }
+    }
+
+    private class MonitorDbConnectionPoolThread extends Thread {
+
+        /**
+         * Reload the ontology cache: OntologyManager
+         */
+        public MonitorDbConnectionPoolThread() {
+            super("Monitor DB Connection Pool Thread");
+            setDaemon(true);
+        }
+
+        @Override
+        public void run() {
+            InitialContext ictx = null;
+            try {
+                ictx = new InitialContext();
+                ComboPooledDataSource pds = (ComboPooledDataSource) ictx.lookup("java:comp/env/jdbc/zfin");
+
+                File outputFile = new File(FileUtil.getTomcatDataTransferDirectory(), "db-connection-pool-monitor.txt");
+
+                // write the connection pool info every 10 seconds into an output file.
+                while (true) {
+                    // re-create the output file in case it does not exist or was removed.
+                    if (!outputFile.exists()) {
+                        outputFile.createNewFile();
+                        String header = "Date and Time, Max Pool Size, Min Pool Size, Total in Pool, Num in use, Num idle";
+                        header += System.lineSeparator();
+                        Files.write(Paths.get(outputFile.getAbsolutePath()), header.getBytes(), StandardOpenOption.APPEND);
+                    }
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    Date date = new Date();
+                    String outputString = dateFormat.format(date);
+                    outputString += ", ";
+                    outputString += pds.getMaxPoolSize();
+                    outputString += ", ";
+                    outputString += pds.getMinPoolSize();
+                    outputString += ", ";
+                    outputString += pds.getNumConnectionsDefaultUser();
+                    outputString += ", ";
+                    outputString += pds.getNumBusyConnectionsDefaultUser();
+                    outputString += ", ";
+                    outputString += pds.getNumIdleConnectionsDefaultUser();
+                    outputString += System.lineSeparator();
+                    Files.write(Paths.get(outputFile.getAbsolutePath()), outputString.getBytes(), StandardOpenOption.APPEND);
+                    Thread.sleep(10000);
+                }
+            } catch (NamingException | IOException | SQLException e) {
+                LOG.error(e);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -79,6 +145,7 @@ public class OntologyManagerServlet extends HttpServlet {
         }
 
     }
+
     /**
      * Thread that does the ontology loading.
      */
@@ -104,6 +171,7 @@ public class OntologyManagerServlet extends HttpServlet {
             // initialize ontology data manager
             // has to happen after the ontology manager is fully loaded.
             OntologyDataManager.getInstance();
+            HibernateUtil.closeSession();
         }
     }
 

@@ -58,7 +58,7 @@ public class AntibodyWikiWebServiceTest extends AbstractDatabaseTest {
     @Test
     public void checkReplacementsString() {
         String value = "G&#945; & s/olf";
-        assertEquals("G&alpha; &amp; s/olf", AntibodyWikiWebService.getEncodedString(value));
+        assertEquals("G&amp;#945; &amp; s/olf", AntibodyWikiWebService.getEncodedString(value));
         value = "Piperno & Fuller";
         assertEquals("Piperno &amp; Fuller", AntibodyWikiWebService.getEncodedString(value));
 /*

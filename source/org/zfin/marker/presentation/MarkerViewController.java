@@ -42,7 +42,9 @@ public class MarkerViewController {
     @Autowired
     private EfgViewController efgViewController;
     @Autowired
-    private RegionViewController regionViewController;
+    private EngrRegionViewController engrRegionViewController;
+    @Autowired
+    private TranscribedRegionViewController transcribedRegionViewController;
     @Autowired
     private ConstructViewController constructViewController;
     @Autowired
@@ -123,14 +125,23 @@ public class MarkerViewController {
                 return pseudoGeneViewController.getGeneView(model, zdbID);
             } else if (type.equals(Marker.Type.EFG.name())) {
                 return efgViewController.getView(model, zdbID);
-            } else if (type.equals(Marker.Type.REGION.name())) {
-                return regionViewController.getView(model, zdbID);
+            } else if (type.equals(Marker.Type.EREGION.name())) {
+                return engrRegionViewController.getView(model, zdbID);
             } else if (type.equals(Marker.Type.ETCONSTRCT.name())
                     || type.equals(Marker.Type.GTCONSTRCT.name())
                     || type.equals(Marker.Type.PTCONSTRCT.name())
                     || type.equals(Marker.Type.TGCONSTRCT.name())
                     ) {
                 return constructViewController.getGeneView(model, zdbID);
+            }
+            else if (type.equals(Marker.Type.SRPRNAG.name())
+                    || type.equals(Marker.Type.RRNAG.name())
+                    || type.equals(Marker.Type.MIRNAG.name())
+                    || type.equals(Marker.Type.NCRNAG.name())
+                    || type.equals(Marker.Type.SNORNAG.name())|| type.equals(Marker.Type.PIRNAG.name())|| type.equals(Marker.Type.LINCRNAG.name())|| type.equals(Marker.Type.LNCRNAG.name())|| type.equals(Marker.Type.SRPRNAG.name())|| type.equals(Marker.Type.TRNAG.name())
+                    ) {
+
+                return geneViewController.getGeneView(zdbID, model);
             }
         else if (type.equals(Marker.Type.MRPHLNO.name()) || type.equals(Marker.Type.TALEN.name()) || type.equals(Marker.Type.CRISPR.name())) {
                 return sequenceTargetingReagentViewController.getView(model, zdbID);

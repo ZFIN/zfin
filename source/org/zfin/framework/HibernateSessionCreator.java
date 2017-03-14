@@ -194,6 +194,8 @@ public class HibernateSessionCreator {
             ComboPooledDataSource cpds = new ComboPooledDataSource();
             cpds.setDriverClass("com.informix.jdbc.IfxDriver"); //loads the jdbc driver
             cpds.setJdbcUrl(jdbcUrl);
+            cpds.setUser("zfinner");
+            cpds.setPassword("Rtwm4ts");
             cpds.setMaxPoolSize(4);
             cpds.setMinPoolSize(2);
             cpds.setIdleConnectionTestPeriod(1200);
@@ -214,6 +216,7 @@ public class HibernateSessionCreator {
 
         String jdbcUrl = "jdbc:informix-sqli://" + sqlHostsHost + ":" + informixPort + "/" + db + ":INFORMIXSERVER=" + informixServer;
 	jdbcUrl += ";IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=20;IFX_ISOLATION_LEVEL=DR;IFX_DIRTY_WAIT=10;CLIENT_LOCALE=en_US.utf8;DB_LOCALE=en_US.utf8";
+	jdbcUrl += ";user=zfinner;password=Rtwm4ts";
         return jdbcUrl;
     }
 

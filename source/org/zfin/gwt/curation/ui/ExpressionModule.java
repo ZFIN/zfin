@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.curation.event.*;
 import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.ZfinModule;
 import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.ArrayList;
@@ -186,7 +187,8 @@ public class ExpressionModule implements ZfinCurationModule, HandlesError {
                 new CreateExpressionEventHandler() {
                     @Override
                     public void onEvent(CreateExpressionEvent event) {
-                        expressionZonePresenter.postUpdateStructuresOnExpression();
+                        expressionZonePresenter.postUpdateStructuresOnExpression(event.getFigureStageDTOList());
+                        expressionExperimentZonePresenter.finishExpressionNotification();
                     }
                 });
         AppUtils.EVENT_BUS.addHandler(AddExpressionExperimentEvent.TYPE,
@@ -241,4 +243,7 @@ public class ExpressionModule implements ZfinCurationModule, HandlesError {
         handlesErrorListeners.add(handlesError);
     }
 
+    public static ZfinModule getModuleInfo() {
+        return new ZfinModule(CurationTab.FX.getName(), ExpressionModule.class.getName());
+    }
 }

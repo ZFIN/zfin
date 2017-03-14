@@ -450,9 +450,8 @@ print LOG "For all $ctFoundMIMwithSymbolOnGenemap records that found with symbol
 
 ##################################################################################################################################################################
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> loadOMIM.sql");
-
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> update_omimp_termxref_mapping.sql");
+ZFINPerlModules->doSystemCommand("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> loadOMIM.sql");
+ZFINPerlModules->doSystemCommand("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> update_omimp_termxref_mapping.sql");
 
 print LOG "\nAll done!\n\n\n";
 
@@ -509,6 +508,8 @@ system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/alreadyReportedHum
 
 
 exit;
+
+
 
 
 

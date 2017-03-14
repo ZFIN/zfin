@@ -28,6 +28,7 @@
         <property name="phone"/>
         <property name="orcidID" column="orcid_id"/>
         <property name="address" column="address"/>
+        <property name="country" column="person_country"/>
         <property name="shortName" column="name"/>
         <property name="fullName" column="full_name"/>
 

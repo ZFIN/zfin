@@ -60,6 +60,8 @@
 <!--|PARTNER_SOURCEROOT|-->	false
 <!--|PATO_EMAIL_CURATOR|-->	smoxon\@zfin.org
 <!--|PDF_LOAD|-->	/PDFLoadUp
+<!--|PGBINDIR|-->	/opt/postgres/postgresql/bin
+<!--|PGDATA|-->	/opt/postgres/data
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	smoxon\@zfin.org
 <!--|ROOT_PATH|-->	/opt/zfin/www_homes/swirl
 <!--|SECURE_HTTP|-->	https://

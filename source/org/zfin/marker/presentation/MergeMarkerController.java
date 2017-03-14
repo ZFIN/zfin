@@ -413,4 +413,16 @@ public class MergeMarkerController {
         }
         return fishes;
     }
+
+    @RequestMapping(value = "/update-str-sequence", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    void updateStrSequence(@RequestParam("source") String source, @RequestParam("target") String target) {
+        MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
+        SequenceTargetingReagent sourceStr = mutantRepository.getSequenceTargetingReagentByID(source);
+        SequenceTargetingReagent targetStr = mutantRepository.getSequenceTargetingReagentByID(target);
+        MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+        markerRepository.copyStrSequence(sourceStr, targetStr);
+        return;
+    }
 }

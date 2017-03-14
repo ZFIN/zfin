@@ -37,13 +37,13 @@
         vm.salutation = 'Dear';
         vm.names = '';
         vm.intro = 'I am pleased to report that information about your paper has been entered ' +
-            'into ZFIN, the Zebrafish Model Organism Database.';
+            'into ZFIN, the Zebrafish Information Network.';
         vm.pubReference = '';
         vm.pubLink = '';
         vm.dataNote = 'Genes and mutants associated with your paper are listed on the publication ' +
             'page and are also appended at the end of this message.';
         vm.customNote = '';
-        vm.zfinDescription = 'ZFIN is the zebrafish model organism database, a centralized community ' +
+        vm.zfinDescription = 'ZFIN is The Zebrafish Information Network, a centralized community ' +
             'resource for zebrafish genetic, genomic, and developmental data. We ' +
             'encourage you to share this message with your co-authors and appreciate ' +
             'any feedback that you are able to offer. Community input is vital to our ' +
@@ -57,7 +57,7 @@
             email: vm.curatorEmail
         };
         vm.address = [
-            'Zebrafish Model Organism Database',
+            'Zebrafish Information Network',
             '5291 University of Oregon',
             'Eugene, Oregon, USA 97403-5291'
         ];

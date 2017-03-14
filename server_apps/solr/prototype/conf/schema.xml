@@ -487,8 +487,9 @@
    <field name="disease" type="keyword" indexed="true" stored="true" multiValued="true"  />
    <field name="omim_id" type="keyword" indexed="true" stored="true" multiValued="true" />
 
-     <!-- feature type? marker type? antibody type?  whatever!-->
+     <!-- feature type? marker type? whatever!-->
    <field name="type" type="keyword" indexed="true" stored="true"   />
+   <field name="antibody_type" type="keyword" indexed="true" stored="true"   />
    <field name="publication_type" type="keyword" indexed="true" stored="true"   />
    <field name="ontology" type="keyword" indexed="true" stored="true"   />
    <field name="root_only" type="boolean" indexed="true" stored="true" default="false"/>
@@ -735,7 +736,7 @@
 
    <!-- these are used to join expression records by natural key rather than primary key -->
    <field name="xpat_zdb_id" type="string" indexed="false" stored="true" />
-   <field name="fig_zdb_id" type="string" indexed="true" stored="true" />
+   <field name="fig_zdb_id" type="keyword" indexed="true" stored="true" />
 
    <!-- used for the figure gallery -->
    <field name="img_zdb_id" type="string" indexed="true" stored="true" multiValued="true"/>

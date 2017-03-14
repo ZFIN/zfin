@@ -31,22 +31,6 @@
         <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.36">
             <recipientList></recipientList>
             <configuredTriggers>
-                <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
-                    <email>
-                        <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
-                        <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-                        <body>$PROJECT_DEFAULT_CONTENT</body>
-                        <sendToDevelopers>false</sendToDevelopers>
-                        <sendToRequester>false</sendToRequester>
-                        <includeCulprits>false</includeCulprits>
-                        <sendToRecipientList>true</sendToRecipientList>
-                        <attachmentsPattern></attachmentsPattern>
-                        <attachBuildLog>false</attachBuildLog>
-                        <compressBuildLog>false</compressBuildLog>
-                        <replyTo>@REPLY_TO@</replyTo>
-                        <contentType>project</contentType>
-                    </email>
-                </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
                 <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
                     <email>
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>

@@ -489,6 +489,7 @@ public interface PublicationRepository extends PaginationParameter {
 
 
     public Long getMarkerCount(Publication publication);
+    public List<Marker> getMarkers(Publication publication);
     public Long getMorpholinoCount(Publication publication);
     public Long getTalenCount(Publication publication);
     public Long getCrisprCount(Publication publication);

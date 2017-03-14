@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.Species;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.repository.RepositoryFactory;
@@ -37,6 +38,7 @@ public class StemLoopController {
                 ForeignDBDataType.SuperType.SUMMARY_PAGE,
                 Species.Type.ZEBRAFISH
         );
+        HibernateUtil.closeSession();
     }
 
     @RequestMapping(value="/stemloop-sequence")

@@ -3,6 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.StageRangeIntersectionService;
 
 import java.util.List;
@@ -170,5 +171,7 @@ public interface CurationExperimentRPCAsync {
     void getGenotypes(String publicationID, AsyncCallback<List<GenotypeDTO>> async);
 
     void getBackgroundGenotypes(String publicationID, AsyncCallback<List<GenotypeDTO>> callback);
+
+    void getWildTypeFishList(AsyncCallback<List<FishDTO>> async);
 }
 

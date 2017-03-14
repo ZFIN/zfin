@@ -13,6 +13,7 @@ import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
@@ -66,6 +67,7 @@ public class SequenceTargetingReagentViewController {
         ReferenceDatabase referenceDatabase = RepositoryFactory.getSequenceRepository()
                 .getZebrafishSequenceReferenceDatabase(ForeignDB.AvailableName.PUBRNA, ForeignDBDataType.DataType.RNA);
         databases = referenceDatabase.getOrderedRelatedBlastDB();
+        HibernateUtil.closeSession();
     }
 
     @RequestMapping(value = "/marker/view/{zdbID}")

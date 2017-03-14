@@ -5,5 +5,5 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
- <include file="source/org/zfin/db/postgres/1080/walrus/db.changelog.master.xml"/>
+ <include file="source/org/zfin/db/postgres/tableMigration.xml"/>
 </databaseChangeLog>

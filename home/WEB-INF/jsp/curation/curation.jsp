@@ -63,7 +63,7 @@
     <zfin2:dataManager zdbID="${publication.zdbID}"
                        showLastUpdate="true"
                        trackURL="/action/publication/${publication.zdbID}/track"
-            />
+    />
 
     <table class="table table-bordered" width="100%" style="border-bottom-width: 0px">
         <tbody>
@@ -78,7 +78,7 @@
         <tr>
             <td>
                 <a class="small-new-link" href="javascript:"
-                   onClick=open("/action/marker/gene-add?type=GENE&source=\'${publication.zdbID}\'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
+                   onClick=open("/action/marker/gene-add?type=GENE&source=${publication.zdbID}","helpwindow","scrollbars=yes,height=850,width=650,resizable=yes")>
                     Add New Gene</a> |
                 <a class="small-new-link" href="javascript:"
                    onClick=open("/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentPublicationZdbID=${publication.zdbID}&sequenceTargetingReagentType=MRPHLNO","helpwindow","scrollbars=yes,height=900,width=1150,resizable=yes")>
@@ -87,11 +87,14 @@
                    onClick=open("/action/antibody/add?antibodyPublicationZdbID=${publication.zdbID}","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
                     Add New Antibody</a> |
                 <a class="small-new-link" href="javascript:"
-                   onClick=open("/action/marker/gene-add?type=EFG&source='${publication.zdbID}'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
+                   onClick=open("/action/marker/gene-add?type=EFG&source=${publication.zdbID}","helpwindow","scrollbars=yes,height=850,width=650,resizable=yes")>
                     Add New EFG</a> |
                 <a class="small-new-link" href="javascript:"
-                   onClick=open("/action/marker/region-add?regionPublicationZdbID=${publication.zdbID}","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
+                   onClick=open("/action/marker/engineeredRegion-add?regionPublicationZdbID=${publication.zdbID}","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
                     Add New Engineered Region</a> |
+                <%--<a class="small-new-link" href="javascript:"
+                   onClick=open("/action/marker/transcribedRegion-add?source=${publication.zdbID}","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
+                    Add New Region</a> |--%>
                 <c:if test="${currentTab eq 'construct'}">
                     <a class="small-new-link" href="javascript:"
                        onClick=open("/action/infrastructure/controlled-vocabulary-add","helpwindow","scrollbars=yes,height=850,width=750,resizable=yes")>
@@ -120,19 +123,22 @@
         <li>
             </c:otherwise>
             </c:choose>
-            <a href="#${curationTab.value}" aria-controls="${curationTab.value}" role="tab"
-               data-toggle="tab">${curationTab.displayName}</a>
+            <a href="#${curationTab.value}" aria-controls="${curationTab.value}" role="tab" class="nav-tabs-loading"
+               onclick="handleTabToggle('${curationTab.value}')"
+               data-toggle="tab" id="${curationTab.value}-tab">${curationTab.displayName}</a>
             </c:forEach>
-            <li>
-                <a aria-controls="refresh" onclick="refresh()" title="Refresh current tab" data-toggle="tooltip" class="zfin-tooltip">
-                    <div role="tab" style="cursor: pointer"><i class="fa fa-refresh" aria-hidden="true" ></i>
-                    </div>
-                </a>
-            <li>
-                <a aria-controls="history" onclick="showHistory()" title="Show history" data-toggle="tooltip" class="zfin-tooltip">
-                    <div role="tab" style="cursor: pointer"><i class="fa fa-history" aria-hidden="true"></i>
-                    </div>
-                </a>
+        <li>
+            <a aria-controls="refresh" onclick="refresh()" title="Refresh current tab" data-toggle="tooltip"
+               class="zfin-tooltip">
+                <div role="tab" style="cursor: pointer"><i class="fa fa-refresh" aria-hidden="true"></i>
+                </div>
+            </a>
+        <li>
+            <a aria-controls="history" onclick="showHistory()" title="Show history" data-toggle="tooltip"
+               class="zfin-tooltip">
+                <div role="tab" style="cursor: pointer"><i class="fa fa-history" aria-hidden="true"></i>
+                </div>
+            </a>
     </ul>
 
     <div class="tab-content edit-form-content">
@@ -165,6 +171,10 @@
             angular.element(document.getElementById("evidence-modal")).scope().vm.fetchGenes()
         }
 
+        function displayLoadingStatus(tabName, isLoading) {
+            $('#' + tabName.toUpperCase() + '-tab').toggleClass("nav-tabs-loading", isLoading);
+        }
+
         $(function () {
 
             function goToTab(hash) {
@@ -188,7 +198,7 @@
                     handleTabToggle('pheno');
                 }
                 jQuery.ajax({
-                    url: '/action/curation/currentTab/'+tabName,
+                    url: '/action/curation/currentTab/' + tabName,
                     type: 'GET',
 
                     success: function (response) {
@@ -213,7 +223,7 @@
                 e.preventDefault();
             });
 
-            window.addEventListener("popstate", function(e) {
+            window.addEventListener("popstate", function (e) {
                 var hash = window.location.hash;
                 if (hash) {
                     goToTab(hash);
@@ -269,7 +279,7 @@
     </script>
 
     <script>
-        $(document).ready(function(){
+        $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip();
         });
     </script>

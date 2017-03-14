@@ -659,30 +659,52 @@ $curUpdateSfclg->execute($intoId,$mergeId,$intoId);
 
 $curUpdateSfclg->finish();
 
-## for STRs to be merged, if used in fish, delete the fish_str record so as to avoid duplicated one afgter merge
+## for STRs to be merged, if used in fish, delete the fish records with str1 so as to
+## avoid unique constraint (informix.fish_name_alternate_key) violation
+## same for marker_relationship_alternate_key 
 if ($mergeId =~ m/MRPHLNO/ || $mergeId =~ m/CRISP/ || $mergeId =~ m/TALEN/) {
-  $getFishStr = "select fstr1.fishstr_fish_zdb_id 
-                   from fish_str fstr1
-                  where fstr1.fishstr_str_zdb_id = ?
-                    and exists(select 'x' from fish_str fstr2
-                                where fstr2.fishstr_str_zdb_id = ?
-                                  and fstr2.fishstr_fish_zdb_id = fstr1.fishstr_fish_zdb_id);";
- 
-  $curGetFishStr = $dbh->prepare($getFishStr);
-  $curGetFishStr->execute($intoId,$mergeId);
-  $curGetFishStr->bind_columns(\$fishStrID);
-  @fishStrIDs = ();
-  $ctFishStrIDs = 0;
-  while ($curGetFishStr->fetch()) {
-    $fishStrIDs[$ctFishStrIDs] = $fishStrID;
-    $ctFishStrIDs++;
+  $getFishIdsToDelete = "select distinct fstr1.fishstr_fish_zdb_id
+                           from fish_str fstr1
+                          where fstr1.fishstr_str_zdb_id = ?
+                            and exists(select 'x' from fish_str fstr2
+                                        where fstr2.fishstr_str_zdb_id = ?
+                                          and fstr2.fishstr_fish_zdb_id = fstr1.fishstr_fish_zdb_id);";
+
+  $curFishIdsToDelete = $dbh->prepare($getFishIdsToDelete);
+  $curFishIdsToDelete->execute($mergeId, $intoId);
+  $curFishIdsToDelete->bind_columns(\$fishIDtoDelete);
+  %fishIDs = ();
+  while ($curFishIdsToDelete->fetch()) {
+    $fishIDs{$fishIDtoDelete} = 1;
   }
-  $curGetFishStr->finish();
-  foreach $fishStrTodelete (@fishStrIDs) {
-     $sqlDeleteFishStr = "delete from fish_str where fishstr_str_zdb_id = $intoIdintoId and fishstr_str_zdb_id = $fishStrTodelete;";
-     $curDeleteFishStr = $dbh->prepare($sqlDeleteFishStr);
-     $curDeleteFishStr->execute();
-     $curDeleteFishStr->finish();
+  $curFishIdsToDelete->finish();
+  $getMrkrRelIds = "select distinct mrkrrel1.mrel_zdb_id
+                      from marker_relationship mrkrrel1
+                     where mrkrrel1.mrel_mrkr_1_zdb_id = ?
+                       and exists(select 'x' from marker_relationship mrkrrel2
+                                   where mrkrrel2.mrel_mrkr_1_zdb_id = ?
+                                     and mrkrrel2.mrel_mrkr_2_zdb_id = mrkrrel1.mrel_mrkr_2_zdb_id
+                                     and mrkrrel2.mrel_type = mrkrrel1.mrel_type);";
+
+  $curGetMrkrRelIds = $dbh->prepare($getMrkrRelIds);
+  $curGetMrkrRelIds->execute($mergeId, $intoId);
+  $curGetMrkrRelIds->bind_columns(\$mrkrRelID);
+  %mrkrRelIDs = ();
+  while ($curGetMrkrRelIds->fetch()) {
+     $mrkrRelIDs{$mrkrRelID} = 1;  
+  }
+  $curGetMrkrRelIds->finish();
+    
+
+  $delete = "delete from zdb_active_data where zactvd_zdb_id = ?;"; 
+  $curDelete = $dbh->prepare_cached($delete);
+
+  foreach $fishId (keys %fishIDs) {
+     $curDelete->execute($fishId);              
+  }
+
+  foreach $mrkrRelId (keys %mrkrRelIDs) {
+     $curDelete->execute($mrkrRelId);
   }
 }
 
@@ -940,9 +962,6 @@ while ($curGetDAliases->fetch()) {
 }
 $curGetDAliases->finish();
 
-$delete = "delete from zdb_active_data where zactvd_zdb_id = ?;"; 
-$curDelete = $dbh->prepare_cached($delete);
-
 foreach $dataAliasMergeId (keys %daliasesMerge) {
   $dataAliasMerge = $daliasesMerge{$dataAliasMergeId};
   if ($dataAliasMerg eq $mrkrAbbrevInto) {
@@ -960,6 +979,7 @@ foreach $dataAliasMergeId (keys %daliasesMerge) {
 }
 
 $curUpdateMrkrHistory->finish();
+$curDelete->finish();
 
 # run the merge action SQLs that do not contain record_attribution
 $nonRecAttrSQL = "select mms_sql, mms_pk_id 

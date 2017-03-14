@@ -507,7 +507,11 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     @Override
     public List<Publication> getPublicationsForLab(String zdbID) {
-        String hql = " select distinct pub , pub.publicationDate, lower(pub.authors) from Person pers join pers.publications pub join pers.labs l " +
+        String hql = " select distinct pub , pub.publicationDate, lower(pub.authors) " +
+                " from Person pers " +
+                " join pers.publications pub " +
+                " join pers.labs l " +
+                " join fetch pub.journal " +
                 "  where l.zdbID = :zdbID " +
                 "  order by pub.publicationDate desc, lower(pub.authors) " +
                 " ";
@@ -995,5 +999,13 @@ public class HibernateProfileRepository implements ProfileRepository {
                 .createCriteria(Person.class)
                 .add(Restrictions.eq("accountInfo.curator", true))
                 .list();
+    }
+
+    public boolean personHasSnapshot(Person person) {
+        return HibernateUtil.currentSession()
+                .createCriteria(Person.class)
+                .add(Restrictions.eq("zdbID", person.getZdbID()))
+                .add(Restrictions.isNotNull("snapshot"))
+                .uniqueResult() != null;
     }
 }

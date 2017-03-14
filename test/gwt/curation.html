@@ -10,7 +10,6 @@
 
     <link href="/css/font-awesome.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" type="text/css" href="/css/zfin.css">
     <link rel="stylesheet" type="text/css" href="/css/header.css">
     <link rel="stylesheet" type="text/css" href="/css/footer.css">
     <link rel=stylesheet type="text/css" href="/css/searchresults.css">
@@ -22,6 +21,7 @@
     <link rel=stylesheet type="text/css" href="/css/jquery.modal.css">
     <link rel=stylesheet type="text/css" href="/css/typeahead.css">
     <link rel=stylesheet type="text/css" href="/css/bootstrap3/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/zfin.css">
 
 
     <script src="/javascript/jquery-1.11.1.min.js" type="text/javascript"></script>
@@ -91,7 +91,10 @@
 </style>
 
 <script>
+    //var pubID = "ZDB-PUB-970210-32";
+    //var pubID = "ZDB-PUB-111111-1";
     var pubID = "ZDB-PUB-990507-16";
+    //var pubID = "ZDB-PUB-160828-8";
 </script>
 
 <div ng-app="app">
@@ -101,7 +104,7 @@
         <tr>
             <td>
                 <a class="small-new-link" href="javascript:"
-                   onClick=open("/action/marker/gene-add?type=GENE&source=\'"+pubID+"\'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
+                   onClick=open("/action/marker/gene-add?type=GENE&source=\'"+pubID+"\'&fireCreateMarkerEvent=true","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
                     Add New Gene</a> |
                 <a class="small-new-link" href="javascript:"
                    onClick=open("/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentPublicationZdbID="+pubID+"&sequenceTargetingReagentType=MRPHLNO","helpwindow","scrollbars=yes,height=900,width=1150,resizable=yes")>
@@ -131,31 +134,32 @@
 
     <ul class="nav nav-tabs" id="curation-tabs">
         <li class="active">
-            <a href="#construct" aria-controls="construct" role="tab"
+            <a href="#construct" aria-controls="construct" role="tab" class="nav-tabs-loading"
                data-toggle="tab">Construct</a>
         <li>
-            <a href="#feature" aria-controls="feature" role="tab"
-               data-toggle="tab">Feature</a>
+            <a href="#feature" aria-controls="feature" role="tab" class="nav-tabs-loading"
+               data-toggle="tab" id="feature-tab">Feature</a>
         <li>
-            <a href="#fish" aria-controls="fish" role="tab"
-               data-toggle="tab">Fish</a>
+            <a href="#fish" aria-controls="fish" role="tab" class="nav-tabs-loading"
+               data-toggle="tab" id="fish-tab">Fish</a>
         <li>
-            <a href="#experiment" aria-controls="experiment" role="tab"
-               data-toggle="tab">Experiment</a>
+            <a href="#experiment" aria-controls="experiment" role="tab" class="nav-tabs-loading"
+               data-toggle="tab" id="experiment-tab">Experiment</a>
         <li>
-            <a href="#fx" aria-controls="fx" role="tab"
-               data-toggle="tab">FX</a>
+            <a href="#fx" aria-controls="fx" role="tab" class="nav-tabs-loading"
+               data-toggle="tab" id="fx-tab">FX</a>
         <li>
-            <a href="#pheno" aria-controls="pheno" role="tab"
-               data-toggle="tab">Pheno</a>
+            <a href="#pheno" aria-controls="pheno" role="tab" onclick="handleTabToggle('pheno')"
+               class="nav-tabs-loading"
+               data-toggle="tab" id="pheno-tab">Pheno</a>
         <li>
-            <a href="#go" aria-controls="go" role="tab"
-               data-toggle="tab">GO</a>
+            <a href="#go" aria-controls="go" role="tab" class="nav-tabs-loading"
+               data-toggle="tab" id="go-tab">GO</a>
         <li>
-            <a href="#disease" aria-controls="disease" role="tab"
-               data-toggle="tab">Disease</a>
+            <a href="#disease" aria-controls="disease" role="tab" class="nav-tabs-loading"
+               data-toggle="tab" id="disease-tab">Disease</a>
         <li>
-            <a href="#orthology" aria-controls="ortholog" role="tab"
+            <a href="#orthology" aria-controls="ortholog" role="tab" class="nav-tabs-loading"
                data-toggle="tab">Orthology</a>
         <li>
             <div role="tab" onclick="refresh()" style="cursor: pointer"><i class="fa fa-refresh" aria-hidden="true"></i>
@@ -334,7 +338,7 @@
                         <a name="structure-construction-zone"></a>
 
                         <div id="structure-pile-construction-zone" style="display:inline;">
-                            <table>
+                            <table class="term-construction-zone">
                                 <tbody>
                                 <tr>
                                     <td valign="top">
@@ -357,8 +361,8 @@
                                                     <p>
                                                     </p>
                                                     <span class="indent2"><b><i>within the</i></b></span>
-                                                <span id="structure-pile-construction-zone-swap-terms"
-                                                      class="indent3"></span>
+                                                    <span id="structure-pile-construction-zone-swap-terms"
+                                                          class="indent3"></span>
                                                 </td>
                                             </tr>
                                         </table>
@@ -399,8 +403,8 @@
                                                         <p>
                                                         </p>
                                                         <span class="indent2"><b><i>within the</i></b></span>
-                                            <span id="structure-pile-construction-zone-swap-related-terms"
-                                                  class="indent3"></span>
+                                                        <span id="structure-pile-construction-zone-swap-related-terms"
+                                                              class="indent3"></span>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -523,10 +527,19 @@
                 angular.element(document.getElementById("evidence-modal")).scope().vm.fetchGenes()
             }
 
+            function displayLoadingStatus(tabName, isLoading) {
+                /*
+                 if (tabName = "pheno")
+                 alert(tabName + ": " + isLoading);
+                 */
+                $('#' + tabName + '-tab').toggleClass("nav-tabs-loading", isLoading);
+            }
+
             $(function () {
 
                 function goToTab(hash) {
                     $('#curation-tabs a[href=' + hash + ']').tab('show');
+                    //alert("Hash:"+hash)
                 }
 
                 var hash = window.location.hash;
@@ -570,11 +583,41 @@
             }
         </script>
 
-        <script type="text/javascript" src="/javascript/zfin-gwt-autocomplete-helper.js">
+        <script type="text/javascript">
+            // this attaches onMouseOver handlers to each of the items in the
+            // auto suggest box (popup panel). changes in the selected item should
+            // trigger an update of the term info box.
+            // ony body
+            var showTermInfo = function () {
+                var selectedTerm = $(".item-selected").text();
+                var tabName = window.location.hash.substr(1);
+                if (selectedTerm.length > 0) {
+                    var div = $(".termInfoUsed").attr("class");
+                    if ($(".termInfoUsed").length > 0) {
+                        var classArray = div.split(" ");
+                        var entityName = classArray[2];
+                        var selector = "select." + entityName + "_" + tabName;
+                        var selectionBox = $(selector);
+                        var selectedOption;
+                        if (!selectionBox.length) {
+                            var element = "." + entityName + "_single_" + tabName;
+                            selectedOption = $(element).text();
+                        } else {
+                            selectedOption = selectionBox.val();
+                        }
+                        updateTermInfoBox(selectedTerm, selectedOption, tabName);
+                    }
+                }
+            };
+
+            jQuery("body").on("mouseover", ".item-selected", showTermInfo)
+                .on("keydown", "input", showTermInfo);
+
         </script>
 
 
     </div>
+</div>
 </body>
 
 </html>

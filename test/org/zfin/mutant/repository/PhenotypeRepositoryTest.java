@@ -79,6 +79,14 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         }
     }
 
+    @Test
+    public void hasPhenotypeStructures() {
+        String pubID = "ZDB-PUB-961014-496";
+
+        boolean hasStructures = getPhenotypeRepository().hasPhenotypeStructures(pubID);
+        assertFalse(hasStructures);
+    }
+
     @SuppressWarnings({"NonBooleanMethodNameMayNotStartWithQuestion"})
     @Test
     public void isPhenotypeStructureOnPile() throws TermNotFoundException {
@@ -207,10 +215,17 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         String publicationID = "ZDB-PUB-090731-2";
         List<PhenotypeExperiment> structure = getPhenotypeRepository().getMutantExpressionsByFigureFish(publicationID, null, null, null);
         assertNotNull(structure);
-
     }
 
     @Test
+    public void hasMutantExpressions() {
+        String publicationID = "ZDB-PUB-090731-2";
+        boolean hasMutantExpressions = getPhenotypeRepository().hasMutantExpressions(publicationID);
+        assertTrue(hasMutantExpressions);
+    }
+
+
+        @Test
     public void retrievePhenotypePileStructure() {
         String patoID = "ZDB-API-100331-10";
         PhenotypeStructure structure = getPhenotypeRepository().getPhenotypePileStructure(patoID);

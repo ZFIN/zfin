@@ -14,17 +14,21 @@
         <li>
             Add
             <a href="/action/marker/gene-add?type=GENE"><em>gene</em></a>,
+            <%--<a href="/action/marker/transcribedRegion-add"><em>region</em></a>,--%>
             <a href="/action/marker/gene-add?type=GENEP"><em>pseudogene</em></a>,
             <a href="/action/marker/gene-add?type=EFG"><em>foreign gene</em></a>,
-            <a href="/action/marker/clone-add"><em>clone</em></a>,
             <br>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="/action/marker/clone-add"><em>clone</em></a>,
             <a href="/action/antibody/add"><em>antibody</em></a>,
+            <a href="/action/marker/transcript-add"><em>transcript</em></a>,
+            <br>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="/action/marker/engineeredRegion-add"><em>engineered region</em></a>,
+            <br>&nbsp;&nbsp;&nbsp;&nbsp;
             <a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=MRPHLNO"><em>morpholino</em></a>,
             <a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=TALEN"><em>TALEN</em></a>,
-            <a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=CRISPR"><em>CRISPR</em></a>,
-            <br>&nbsp;&nbsp;&nbsp;&nbsp;
-            <a href="/action/marker/transcript-add"><em>transcript</em></a>,
-            <a href="/action/marker/region-add"><em>engineered region</em></a>
+            <a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=CRISPR"><em>CRISPR</em></a>
+
+
         </li>
         <li>
             Surf <a href="/action/reno/run-list"><em>ReNo pipeline</em></a>

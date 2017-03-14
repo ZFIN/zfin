@@ -6,6 +6,7 @@ import org.apache.solr.client.solrj.SolrClient
 import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.response.QueryResponse
 import org.apache.solr.common.SolrDocument
+import org.spockframework.runtime.extension.builtin.UnrollExtension
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
 import org.zfin.search.Category
@@ -107,6 +108,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.PUBLICATION.name      | "kraus 1993"                                     | "11699"
         Category.PHENOTYPE.name        | "stage:Unknown"                                  | "13741"
         Category.PHENOTYPE.name        | "trpv6 misexpression Kwong 2015"                 | "12776"
+        Category.PHENOTYPE.name        | "ntl"                                            | "14339"
         Category.PUBLICATION.name      | "bohni"                                          | "11699"
         Category.PUBLICATION.name      | "abstract:\"motor control requires circuits\""   | "n/a"
         Category.PUBLICATION.name      | "thesis id:ZDB-PUB-150918-21"                    | "13042"
@@ -161,6 +163,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.PUBLICATION.name | "Doug Howe id:ZDB-PUB-990119-20"     | "13813"
         null                      | "sheturnedmeintoanewt"               | "12988"
         null                      | "informix"                           | "14540"
+        Category.MUTANT.name      | "contacting authors"                 | "15114"
 
 
     }
@@ -304,10 +307,6 @@ class QuerySpec extends ZfinIntegrationSpec {
         where:
         symbol << ["fgf3","kita","lamb1a","csf1ra"]
     }
-
-/*    def "the first feature returned when searching for #symbol should not be the unspecified feature"() {
-
-    }*/
 
 
 }

@@ -43,10 +43,13 @@ public class DeleteSTRRule extends AbstractDeleteEntityRule implements DeleteEnt
         if (CollectionUtils.isNotEmpty(sortedGOpubs)) {
             addToValidationReport(entity.getAbbreviation() + " is used in  \"inferred from\" field of GO annotation in the following publications: ", sortedGOpubs);
         }
+
         List<Publication> publications = RepositoryFactory.getPublicationRepository().getPubsForDisplay(sequenceTargetingReagent.getZdbID());
         SortedSet<Publication> sortedPublications = new TreeSet<>();
         sortedPublications.addAll(publications);
-        addToValidationReport(entity.getAbbreviation() + " is associated with the following publications: ", sortedPublications);
+        if (sortedPublications.size() > 1) {
+            addToValidationReport(entity.getAbbreviation() + " is associated with the following publications: ", sortedPublications);
+        }
         return validationReportList;
     }
 

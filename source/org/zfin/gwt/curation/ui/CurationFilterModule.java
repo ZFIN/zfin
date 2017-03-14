@@ -13,7 +13,9 @@ import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.curation.event.ChangeCurationFilterEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.ListBoxWrapper;
+import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StringUtils;
 
@@ -81,15 +83,20 @@ public class CurationFilterModule extends Composite {
     }
 
     public void setInitialValues() {
+        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FILTER_VALUES_START);
         curationFilterRPCAsync.getPossibleFilterValues(publicationID, new RetrieveFilterValueCallback());
     }
 
     public void refreshFigureList() {
-        curationRPCAsync.getFigures(publicationID, new RetrieveSelectionBoxValueCallback(figureList));
+        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FIGURE_LIST_START);
+        curationRPCAsync.getFigures(publicationID, new RetrieveSelectionBoxValueCallback(figureList, null,
+                PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FIGURE_LIST_STOP));
     }
 
     public void refreshFishList() {
-        curationRPCAsync.getFishList(publicationID, new RetrieveSelectionBoxValueCallback(fishList));
+        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_START);
+        curationRPCAsync.getFishList(publicationID, new RetrieveSelectionBoxValueCallback(fishList, null,
+                PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_STOP));
     }
 
     private void initGUI() {
@@ -162,6 +169,7 @@ public class CurationFilterModule extends Composite {
     }
 
     public void readSavedFilterValues() {
+        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FILTER_VALUES_START);
         curationFilterRPCAsync.getFilterValues(publicationID, new RetrieveSelectFilterValuesCallback());
     }
 
@@ -202,12 +210,15 @@ public class CurationFilterModule extends Composite {
     }
 
     public void refreshFeatureList() {
-        curationFilterRPCAsync.getFeatureValues(publicationID, new RetrieveSelectionBoxValueCallback(featureList));
+        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_START);
+        curationFilterRPCAsync.getFeatureValues(publicationID, new RetrieveSelectionBoxValueCallback(featureList, null,
+                PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_STOP));
     }
 
 
     private class RetrieveFilterValueCallback implements AsyncCallback<FilterValuesDTO> {
         public void onFailure(Throwable throwable) {
+            AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FILTER_VALUES_STOP);
             if (throwable instanceof PublicationNotFoundException) {
                 GWT.log(String.valueOf(throwable));
             } else {
@@ -218,12 +229,14 @@ public class CurationFilterModule extends Composite {
         @SuppressWarnings({"MethodParameterOfConcreteClass"})
         public void onSuccess(FilterValuesDTO valuesDTO) {
 //                Window.alert("brought back: " + genes.size() );
+            AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FILTER_VALUES_STOP);
             fishList.clear();
             fishList.addItem(ALL, "");
-            for (FishDTO fishDTO : valuesDTO.getFishes()) {
-                fishList.addItem(fishDTO.getHandle(), fishDTO.getZdbID());
+            if (valuesDTO.getFishes() != null) {
+                for (FishDTO fishDTO : valuesDTO.getFishes()) {
+                    fishList.addItem(fishDTO.getHandle(), fishDTO.getZdbID());
+                }
             }
-
             figureList.clear();
             figureList.addItem(ALL, "");
             for (FigureDTO figureDTO : valuesDTO.getFigures()) {
@@ -242,8 +255,14 @@ public class CurationFilterModule extends Composite {
 
     }
 
-    private class RetrieveSelectFilterValuesCallback implements AsyncCallback<FilterValuesDTO> {
+    private class RetrieveSelectFilterValuesCallback extends ZfinAsyncCallback<FilterValuesDTO> {
+        public RetrieveSelectFilterValuesCallback() {
+            super("Error in Retrieving Filter Values", null,
+                    PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FILTER_VALUES_STOP);
+        }
+
         public void onFailure(Throwable throwable) {
+            super.onFinish();
             if (throwable instanceof PublicationNotFoundException) {
                 GWT.log(String.valueOf(throwable));
             } else {
@@ -254,7 +273,7 @@ public class CurationFilterModule extends Composite {
         @SuppressWarnings({"MethodParameterOfConcreteClass"})
         public void onSuccess(FilterValuesDTO filterValues) {
 //                Window.alert("brought back: " + genes.size() );
-
+            super.onFinish();
             if (filterValues.getFish() != null) {
                 selectFilterElement(fishList, filterValues.getFish().getZdbID());
                 fishID = filterValues.getFish().getZdbID();

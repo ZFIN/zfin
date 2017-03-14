@@ -20,6 +20,7 @@ public class Clone extends Marker{
     private String pcrAmplification ;
     private String cloneComments;
     private String cloningSite ;
+    private String sequenceType;
 
     public boolean isRnaClone(){
         return
@@ -170,5 +171,13 @@ public class Clone extends Marker{
 
     public void setCloningSite(String cloningSite) {
         this.cloningSite = cloningSite;
+    }
+
+    public String getSequenceType() {
+        return sequenceType;
+    }
+
+    public void setSequenceType(String sequenceType) {
+        this.sequenceType = sequenceType;
     }
 }

@@ -7,7 +7,9 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextBox;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
+import org.zfin.gwt.curation.ui.fish.FishModule;
 import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
@@ -33,10 +35,13 @@ public class ExperimentAddPresenter implements HandlesError {
     }
 
     private void loadExperiments() {
-        ExperimentRPCService.App.getInstance().getExperimentList(publicationID, new ZfinAsyncCallback<List<ExperimentDTO>>("Failed to retrieve experiments: ", view.errorLabel) {
+        AppUtils.fireAjaxCall(ExperimentModule.getModuleInfo(), AjaxCallEventType.GET_EXPERIMENT_LIST_START);
+        ExperimentRPCService.App.getInstance().getExperimentList(publicationID,
+                new ZfinAsyncCallback<List<ExperimentDTO>>("Failed to retrieve experiments: ", view.errorLabel,
+                        ExperimentModule.getModuleInfo(), AjaxCallEventType.GET_EXPERIMENT_LIST_STOP) {
             public void onSuccess(List<ExperimentDTO> experimentList) {
+                super.onFinish();
                 dtoList = experimentList;
-
                 populateExperiments();
             }
         });

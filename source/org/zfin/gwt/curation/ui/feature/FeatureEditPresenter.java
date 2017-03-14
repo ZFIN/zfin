@@ -1,5 +1,6 @@
 package org.zfin.gwt.curation.ui.feature;
 
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.curation.ui.*;
@@ -57,6 +58,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
     }
 
     public void loadFeaturesForPub(boolean forceLoad) {
+        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_START);
         FeatureServiceGWT.getFeatureList(publicationID,
                 new FeatureEditCallBack<List<FeatureDTO>>("Failed to find features for pub: " + publicationID, this) {
 
@@ -64,12 +66,14 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                     public void onFailure(Throwable throwable) {
                         super.onFailure(throwable);
                         view.featureEditList.setEnabled(true);
+                        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_STOP);
                     }
 
                     @Override
                     public void onSuccess(List<FeatureDTO> results) {
                         if (results == null || results.size() == 0) {
                             view.showHideToggle.setVisibility(false);
+                            AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_STOP);
                             return;
                         }
                         view.featureEditList.clear();
@@ -86,6 +90,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                         view.featureSequenceList.setDTO(dto);
                         revertGUI();
                         view.onChangeFeatureType();
+                        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_STOP);
                     }
                 }, forceLoad);
 

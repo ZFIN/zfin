@@ -56,6 +56,7 @@ public class ApgAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
                 setCookieAndSession(login, id, value);
             }
         }
+        HibernateUtil.closeSession();
         super.onAuthenticationSuccess(request, response, authentication);
     }
 

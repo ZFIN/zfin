@@ -8,6 +8,7 @@ import org.zfin.expression.Figure;
 import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.curation.ui.CurationDiseaseRPC;
 import org.zfin.gwt.curation.ui.CurationFilterRPC;
 import org.zfin.gwt.curation.ui.PublicationNotFoundException;
 import org.zfin.gwt.root.dto.*;
@@ -16,7 +17,6 @@ import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.Fish;
 import org.zfin.profile.CuratorSession;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Publication;
@@ -35,6 +35,7 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
     private static ProfileRepository profileRep = RepositoryFactory.getProfileRepository();
     private static PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
     private static FeatureRepository featureRep = RepositoryFactory.getFeatureRepository();
+    private CurationDiseaseRPC curationDiseaseRPC = new CurationDiseaseRPCImpl();
 
     private static final String FX_GENE_FILTER = "fx-gene-filter: ";
     private static final String FX_FISH_FILTER = "fx-fish-filter: ";
@@ -84,7 +85,7 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
         // read all fish : check if genotype has record attribution with given pub.
         FilterValuesDTO values = new FilterValuesDTO();
 
-        List<FishDTO> fishDTOs = createFishList(publicationID);
+        List<FishDTO> fishDTOs = curationDiseaseRPC.getFishList(publicationID);
         values.setFishes(fishDTOs);
 
         List<FigureDTO> figureDTOs = createFigureList(publicationID);
@@ -105,7 +106,9 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
     public List<FeatureDTO> getFeatureValues(String publicationID) {
         List<Feature> features = featureRep.getFeaturesByPublication(publicationID);
         List<FeatureDTO> dtos = new ArrayList<>(10);
-        dtos.addAll(features.stream().map(DTOConversionService::convertToFeatureDTO).collect(Collectors.toList()));
+        dtos.addAll(features.stream().map(feature -> {
+            return DTOConversionService.convertToFeatureDTO(feature, false);
+        }).collect(Collectors.toList()));
         return dtos;
     }
 
@@ -141,36 +144,6 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
             figureDTOs.add(dto);
         }
         return figureDTOs;
-    }
-
-    public List<FishDTO> createFishList(String publicationID) {
-        List<FishDTO> fishDTOList = new ArrayList<>();
-        Fish wtFish = pubRepository.getFishByHandle("WT");
-        FishDTO fish = DTOConversionService.convertToFishDtoFromFish(wtFish, true);
-        fishDTOList.add(fish);
-        fish = new FishDTO();
-        fish.setZdbID(null);
-        fish.setName("---------");
-        fish.setHandle("---------");
-        fishDTOList.add(fish);
-        List<Fish> fishList = pubRepository.getNonWTFishByPublication(publicationID);
-        for (Fish nonWTFish : fishList) {
-            if (nonWTFish.getHandle().equals("WT"))
-                continue;
-            FishDTO fishy = DTOConversionService.convertToFishDtoFromFish(nonWTFish, true);
-            fishDTOList.add(fishy);
-        }
-        FishDTO separator = new FishDTO();
-        separator.setZdbID(null);
-        separator.setName("---------");
-        separator.setHandle("---------");
-        fishDTOList.add(separator);
-        List<Fish> wildtypeList = pubRepository.getWildtypeFish();
-        for (Fish wFish : wildtypeList) {
-            FishDTO fishy = DTOConversionService.convertToFishDtoFromFish(wFish, true);
-            fishDTOList.add(fishy);
-        }
-        return fishDTOList;
     }
 
     /**

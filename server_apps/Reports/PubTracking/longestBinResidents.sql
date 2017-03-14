@@ -48,13 +48,13 @@ insert into monthly_average_curated_metric (macm_date_captured,
 	(select nvl( avg(date(current year to second)-date(pth_status_insert_date)),0)
 		from pub_tracking_history, pub_tracking_location, pub_tracking_status
 		     where pth_location_id = ptl_pk_id
-		     and ptl_location = 'NEW_XPAT'
+		     and ptl_location = 'NEW_EXPR'
 		     and pts_pk_id = pth_status_id
 		     and pts_status = 'READY_FOR_CURATION'),
 	(select nvl( avg(date(current year to second)-date(pth_status_insert_date)),0)
 		from pub_tracking_history, pub_tracking_location, pub_tracking_status
 		     where pth_location_id = ptl_pk_id
-		     and ptl_location = 'NEW_ORTHO'
+		     and ptl_location = 'ORTHO'
 		     and pts_pk_id = pth_status_id
 		     and pts_status = 'READY_FOR_CURATION'),
         (select nvl( max(date(current year to second)-date(pth_status_insert_date)),0)

@@ -2,6 +2,7 @@
 
 <%@ attribute name="gene" type="org.zfin.marker.Marker" rtexprvalue="true" required="true" %>
 <%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="false" %>
+<%@ attribute name="soTerm" type="org.zfin.ontology.GenericTerm" rtexprvalue="true" required="false" %>
 <%@ attribute name="userID" type="java.lang.String" rtexprvalue="true" required="false" %>
 
 <c:set var="loggedIn" value="false"/>
@@ -42,6 +43,12 @@
                           ng-if="editMode">
                     <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit gene symbol"></i></span>
             </authz:authorize>
+        </td>
+    </tr>
+    <tr>
+        <th>Sequence Ontology ID :</th>
+        <td>
+            <a href="http://www.sequenceontology.org/browser/current_svn/term/${soTerm.oboID}"/> ${soTerm.oboID}</td></a>
         </td>
     </tr>
     <tr>

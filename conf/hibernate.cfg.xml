@@ -152,7 +152,8 @@
         <mapping class="org.zfin.sequence.reno.Run"/>
         <mapping class="org.zfin.sequence.reno.RunCandidate"/>
         <mapping class="org.zfin.Species"/>
-
+        <mapping class="org.zfin.marker.SecondaryMarker"/>
+        <mapping class="org.zfin.marker.ReplacedData"/>
 
     </session-factory>
 </hibernate-configuration>

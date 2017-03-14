@@ -52,7 +52,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         facetValues.contains(category.name)
 
         where:
-        category << Category.values()
+        category << Category.values().findAll { it != Category.STR_RELATIONSHIP }
     }
 
     @Unroll
@@ -194,7 +194,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                         FieldName.HOST_ORGANISM,
                         FieldName.LABELED_STRUCTURE_TF,
                         FieldName.SOURCE,
-                        FieldName.TYPE
+                        FieldName.ANTIBODY_TYPE
                 ],
                 (Category.DISEASE)                   : [
                         FieldName.GENE,

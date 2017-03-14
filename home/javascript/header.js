@@ -83,7 +83,7 @@ document.write(
     '      <a href="/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-xpatselect.apg" title="Search by gene, developmental stage, anatomy and other attributes">Expression</a>' +
     '      <a href="/action/antibody/search" title="Search for antibodies by gene, labeled anatomy and other attributes">Antibodies</a>' +
     '      <a href="/action/fish/search">Mutants / Knockdowns / Tg</a>' +
-    '      <a href="/action/construct/search">Constructs</a>' +
+    '      <a href="/search?q=&fq=category%3A%22Construct%22&category=Construct">Constructs</a>' +
     '      <a href="/action/ontology/search" title="Search anatomy and gene ontology">Anatomy / GO / Human Disease</a>' +
     '      <a href="/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-pubselect2.apg&select_from=PUBLICATION" title="Search for zebrafish research publications by author, title or citation">Publications</a>' +
     '      <a href="/@CGI_BIN_DIR_NAME@/mapper_select.cgi" title="View genetic, radiation hybrid or consolidated maps">Maps</a>' +
@@ -103,7 +103,7 @@ document.write(
     '      <a href="https://wiki.zfin.org/display/general/ZFIN+db+information" title="About ZFIN and citing ZFIN resources in publications">About</A>' +
     '    </div>' +
     '    <div id="hdr-motto" style="display:none;"  class="hdr-linkbar">' +
-    '      The Zebrafish Model Organism Database' +
+    '      The Zebrafish Information Network' +
     '    </div>' +
     '  </div>' +
     '</div>' +

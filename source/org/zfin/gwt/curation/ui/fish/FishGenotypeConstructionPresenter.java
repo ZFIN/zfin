@@ -9,6 +9,7 @@ import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.curation.ui.*;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.StringListBox;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
@@ -141,8 +142,10 @@ public class FishGenotypeConstructionPresenter implements Presenter {
 
     public void retrieveInitialEntities() {
         // set wildtype background list for new Geno generation
-        retrieveBackgroundNewGenoCallback = new RetrieveRelatedEntityDTOListCallBack<>(view.backgroundListBox, "Background List", view.getErrorLabel());
+        retrieveBackgroundNewGenoCallback = new RetrieveRelatedEntityDTOListCallBack<>(view.backgroundListBox, "Background List", view.getErrorLabel(),
+                FishModule.getModuleInfo(), AjaxCallEventType.GET_BACKGROUND_GENOTYPES_STOP);
         retrieveBackgroundNewGenoCallback.setLeaveFirstEntryBlank(true);
+        AppUtils.fireAjaxCall(FishModule.getModuleInfo(), AjaxCallEventType.GET_BACKGROUND_GENOTYPES_START);
         curationExperimentRpcService.getBackgroundGenotypes(publicationID, retrieveBackgroundNewGenoCallback);
         updateFeatureList();
         diseaseRpcService.getZygosityLists(new RetrieveZygosityListCallBack("Zygosity List", view.getErrorLabel()));
@@ -150,12 +153,16 @@ public class FishGenotypeConstructionPresenter implements Presenter {
     }
 
     public void updateStrList() {
+        AppUtils.fireAjaxCall(FishModule.getModuleInfo(), AjaxCallEventType.GET_STR_LIST_START);
         diseaseRpcService.getStrList(publicationID, strListCallBack);
     }
 
     public void updateFeatureList() {
         // get Feature List  from new Genotypes
-        featureGenotypeListCallBack = new RetrieveRelatedEntityDTOListCallBack<>(view.getFeatureForGenotypeListBox(), "Feature Geno List", view.getErrorLabel());
+        featureGenotypeListCallBack = new RetrieveRelatedEntityDTOListCallBack<>(view.getFeatureForGenotypeListBox(),
+                "Feature Geno List", view.getErrorLabel(),
+                FishModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_STOP);
+        AppUtils.fireAjaxCall(FishModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_START);
         diseaseRpcService.getFeatureList(publicationID, featureGenotypeListCallBack);
     }
 
@@ -169,6 +176,7 @@ public class FishGenotypeConstructionPresenter implements Presenter {
         if (!isValidFishGenotype()) {
             return;
         }
+        AppUtils.fireAjaxCall(FishModule.getModuleInfo(), AjaxCallEventType.CREATE_GENOTYPE_FISH_START);
         diseaseRpcService.createGenotypeFish(publicationID,
                 genotypeFeatureDTOList,
                 backgroundGenoList,
@@ -292,11 +300,13 @@ public class FishGenotypeConstructionPresenter implements Presenter {
     class CreateGenotypeAndFishCallBack extends ZfinAsyncCallback<GenotypeCreationReportDTO> {
 
         public CreateGenotypeAndFishCallBack(String errorMessage, ErrorHandler errorLabel, Image loadingImg) {
-            super(errorMessage, errorLabel, loadingImg);
+            super(errorMessage, errorLabel, loadingImg,
+                    FishModule.getModuleInfo(), AjaxCallEventType.CREATE_GENOTYPE_FISH_STOP);
         }
 
         @Override
         public void onSuccess(GenotypeCreationReportDTO report) {
+            super.onFinish();
             resetNewGenotypeUI();
             view.getLoadingImage().setVisible(false);
             view.setMessage(report.getReportMessage());
@@ -330,12 +340,13 @@ public class FishGenotypeConstructionPresenter implements Presenter {
         private List<RelatedEntityDTO> strList = new ArrayList<>();
 
         public RetrieveSTRListCallBack(StringListBox listBox, String errorMessage, ErrorHandler errorLabel) {
-            super(errorMessage, errorLabel);
+            super(errorMessage, errorLabel, FishModule.getModuleInfo(), AjaxCallEventType.GET_STR_LIST_STOP);
             this.listBox = listBox;
         }
 
         @Override
         public void onSuccess(List<RelatedEntityDTO> dtoList) {
+            super.onFinish();
             listBox.clear();
             strList = new ArrayList<>();
             strList.add(new RelatedEntityDTO());

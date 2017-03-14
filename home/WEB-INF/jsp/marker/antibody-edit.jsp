@@ -5,6 +5,11 @@
     String antibodyDefPubZdbID = request.getParameter("antibodyDefPubZdbID");
 %>
 
+<script>
+    if (opener != null)
+        opener.fireCreateMarkerEvent();
+</script>
+
 <script type="text/javascript">
     var MarkerProperties= {
         zdbID : "${formBean.marker.zdbID}",

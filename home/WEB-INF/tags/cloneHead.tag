@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="cloneBean" type="org.zfin.marker.presentation.CloneBean" rtexprvalue="true" required="true" %>
+<%@ attribute name="soTerm" type="org.zfin.ontology.GenericTerm" rtexprvalue="true" required="false" %>
 
 <%--<%@ attribute name="isThisseProbe" type="java.lang.Boolean" rtexprvalue="true" required="true" %>--%>
 <%--<%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="true" %>--%>
@@ -14,6 +15,12 @@
     <tr>
         <th><span class="name-label">${cloneBean.clone.markerType.displayName}&nbsp;Name: </span></th>
         <td><span class="name-value"><zfin:name entity="${cloneBean.clone}"/> </span>
+        </td>
+    </tr>
+    <tr>
+        <th>Sequence Ontology ID :</th>
+        <td>
+            <a href="http://www.sequenceontology.org/browser/current_svn/term/${soTerm.oboID}"/> ${soTerm.oboID}</td></a>
         </td>
     </tr>
     <zfin2:previousNamesFast label="Previous Name" previousNames="${cloneBean.previousNames}"/>

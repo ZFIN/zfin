@@ -39,7 +39,7 @@ public enum Category {
             ENGINEERED_REGION
     ),
     ANTIBODY("Antibody",
-            TYPE,
+            ANTIBODY_TYPE,
             ANTIGEN_GENE,
             LABELED_STRUCTURE_TF,
             ASSAY,
@@ -161,8 +161,8 @@ public enum Category {
             SEQUENCE_ALTERATION,
             BACKGROUND),
     REPORTER_LINE("Reporter Line", REPORTER_GENE, EXPRESSION_ANATOMY_TF,REGULATORY_REGION, STAGE),
-    JOURNAL("Journal", RELATED_ACCESSION);
-
+    JOURNAL("Journal", RELATED_ACCESSION),
+    STR_RELATIONSHIP("STR Relationship");
 
 
     Category(String name, FieldName... fieldNames) {

@@ -223,11 +223,11 @@
         </id>
         <property name="dateCreated" column="phenos_created_date" not-null="true"/>
         <many-to-one name="phenotypeExperiment" column="phenos_phenox_pk_id" not-null="true"/>
-        <component name="entity" class="org.zfin.ontology.PostComposedEntity">
+        <component name="entity" class="org.zfin.ontology.PostComposedEntity" lazy="false">
             <many-to-one name="superterm"
-                         column="phenos_entity_1_superterm_zdb_id"/>
+                         column="phenos_entity_1_superterm_zdb_id" lazy="false"/>
             <many-to-one name="subterm"
-                         column="phenos_entity_1_subterm_zdb_id"/>
+                         column="phenos_entity_1_subterm_zdb_id" lazy="false"/>
         </component>
         <many-to-one name="quality" column="phenos_quality_zdb_id"/>
         <component name="relatedEntity" class="org.zfin.ontology.PostComposedEntity">

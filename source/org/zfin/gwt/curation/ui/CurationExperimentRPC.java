@@ -6,6 +6,7 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ValidationException;
+import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.StageRangeIntersectionService;
 
 import java.util.List;
@@ -106,6 +107,8 @@ public interface CurationExperimentRPC extends RemoteService {
     boolean isReCreatePhenotypePileLinkNeeded(String publicationID);
 
     List<RelatedEntityDTO> getBackgroundGenotypes(String publicationID);
+
+    List<FishDTO> getWildTypeFishList();
 
     /**
      * Utility/Convenience class.

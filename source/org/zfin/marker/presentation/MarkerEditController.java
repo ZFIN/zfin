@@ -89,8 +89,8 @@ public class MarkerEditController {
 
         try {
             tx = HibernateUtil.createTransaction();
-            // Only genes or pseudogenes are entered in the marker history table
-            if(ActiveData.isGeneOrGeneP(zdbID)) {
+
+            if(ActiveData.isInGroupGenedom(zdbID)||marker.isInTypeGroup(Marker.TypeGroup.KNOCKDOWN_REAGENT)) {
                 MarkerHistory history = new MarkerHistory();
                 history.setComments(nomenclature.getComments());
                 history.setReason(MarkerHistory.Reason.getReason(nomenclature.getReason()));

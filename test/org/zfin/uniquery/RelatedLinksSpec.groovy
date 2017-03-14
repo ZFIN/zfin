@@ -30,9 +30,9 @@ class RelatedLinksSpec extends ZfinIntegrationSpec {
 
     }
 
-    def "pxnb should not have sequence related link"() {
+    def "20kx18 should not have sequence related link"() {
         when:
-        SearchResult result = new SearchResult(id: "ZDB-GENE-130530-697", name: "pxnb", categories: [Category.GENE.name])
+        SearchResult result = new SearchResult(id: "ZDB-GENE-990706-1", name: "20kx18", categories: [Category.GENE.name])
         List<String> links = relatedDataService.getRelatedDataLinks(result)
 
         then:
