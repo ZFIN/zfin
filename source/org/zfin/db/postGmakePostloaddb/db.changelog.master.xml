@@ -15,5 +15,6 @@
 <include file="source/org/zfin/db/postGmakePostloaddb/1082/zissou/db.changelog.master.xml"/>
 <include file="source/org/zfin/db/postGmakePostloaddb/1083/alienMonster/db.changelog.master.xml"/>
  <include file="source/org/zfin/db/postGmakePostloaddb/1083/beerMug/db.changelog.master.xml"/>
- <include file="source/org/zfin/db/postGmakePostloaddb/1084/cyclone/db.changelog.master.xml"/> 
+ <include file="source/org/zfin/db/postGmakePostloaddb/1084/cyclone/db.changelog.master.xml"/>
+ <include file="source/org/zfin/db/postGmakePostloaddb/1085/fire/db.changelog.master.xml"/>
 </databaseChangeLog>
