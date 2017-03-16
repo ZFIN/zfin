@@ -277,10 +277,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         // todo: note that when in SQL, start at 1 (current) , but when in HQL, start at 0
         String hql = "SELECT exp.xpatex_gene_zdb_id as geneID, gene.mrkr_abbrev as geneSymbol, " +
                 "count(distinct fig.fig_zdb_id) as numOfFig  " +
-                "FROM  Expression_Experiment exp, outer marker probe, Term item_, Marker gene, Figure fig," +
+                "FROM  Expression_Experiment exp, Term item_, Marker gene, Figure fig," +
                 "      Genotype geno, fish_Experiment genox, expression_pattern_figure results, expression_result result, fish fish " +
-                "WHERE  exp.xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id AND" +
-                "       exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND         " +
+                "      left outer join marker as probe on exp.xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id " +
+                "WHERE  exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND         " +
                 "       item_.term_zdb_id = :termID AND " +
                 "       result.xpatres_xpatex_zdb_id = exp.xpatex_zdb_id AND " +
                 "       (result.xpatres_superterm_zdb_id = item_.term_zdb_id OR result.xpatres_subterm_zdb_id = item_.term_zdb_id) AND " +
@@ -294,7 +294,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "       fish.fish_is_wildtype = :isWildtype AND " +
                 "       exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND " +
                 "       genox.genox_is_std_or_generic_control = :condition AND " +
-                "       gene.mrkr_abbrev[1,10] <> :withdrawn  AND   " +
+                "       SUBSTRING (gene.mrkr_abbrev from  1 for 9) <> :withdrawn  AND   " +
                 "       not exists( " +
                 "           select 'x' from clone " +
                 "           where clone.clone_mrkr_zdb_id = exp.xpatex_probe_feature_zdb_id " +
@@ -304,7 +304,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "       not exists( " +
                 "           select 'x' from marker m2" +
                 "           where m2.mrkr_zdb_id = exp.xpatex_probe_feature_zdb_id " +
-                "           and m2.mrkr_abbrev[1,10] = :withdrawn  " +
+                "           and SUBSTRING (m2.mrkr_abbrev from 1 for 9) = :withdrawn  " +
                 "       ) " +
                 "GROUP BY exp.xpatex_gene_zdb_id, gene.mrkr_abbrev " +
                 "ORDER BY numOfFig DESC, geneSymbol ";
@@ -322,7 +322,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         results.last();
         int totalResults = results.getRowNumber() + 1;
 
-        List<Object[]> list = new ArrayList<Object[]>();
+        List<Object[]> list = new ArrayList<>();
 
         results.beforeFirst();
         while (results.next() && results.getRowNumber() < numberOfRecords) {
@@ -959,7 +959,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                     " from record_attribution ra, marker_history mh " +
                     " where mh.mhist_zdb_id  = ra.recattrib_data_zdb_id " +
                     " and  :markerZdbID = mh.mhist_mrkr_zdb_id ";
-        commonPubSQL += " ) where recattrib_source_zdb_id like 'ZDB-PUB%'  ";
+        commonPubSQL += " ) as qt where recattrib_source_zdb_id like 'ZDB-PUB%'  ";
         return commonPubSQL;
     }
 
@@ -991,7 +991,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     @Override
     public int getNumberAssociatedPublicationsForZdbID(String zdbID) {
-        String sql = " select count(*) from ( " + getCommonPublicationSQL(zdbID) + " )";
+        String sql = " select count(*) from ( " + getCommonPublicationSQL(zdbID) + " ) as query ";
 
         int count = Integer.valueOf(HibernateUtil.currentSession()
                 .createSQLQuery(sql)
@@ -1153,7 +1153,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Marker.TypeGroup typeGroup = Marker.TypeGroup.GENEDOM_AND_NTR;
 
         List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(typeGroup);
-
         if (includeEFGs){
             markerTypes.add(markerRepository.getMarkerTypeByName(Marker.Type.EFG.toString()));
         }
@@ -1161,12 +1160,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = "select distinct marker from Marker marker, PublicationAttribution pub" +
                 "     where pub.dataZdbID = marker.zdbID" +
                 "           and pub.publication.zdbID = :pubID " +
-                "           and marker.markerType in (:markerType)" +
+                "           and marker.markerType in (:markerType)  " +
                 "    order by marker.abbreviationOrder ";
         Query query = session.createQuery(hql);
         query.setString("pubID", pubID);
         query.setParameterList("markerType", markerTypes);
-
 
         return (List<Marker>) query.list();
     }

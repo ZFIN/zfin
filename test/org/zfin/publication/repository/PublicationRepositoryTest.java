@@ -1,6 +1,7 @@
 package org.zfin.publication.repository;
 
 import org.hibernate.Session;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.DevelopmentStage;
@@ -184,6 +185,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @Ignore("postgres")
     public void getNumOfPublicationsPerAOAndGli1Mutant() {
         // lateral floor plate
         String aoZdbID = "ZDB-TERM-100331-1214";
@@ -362,7 +364,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getFeatureCountForPub() {
         //  genotype adss^hi1433Tg
-        String pubZdbID = "ZDB-PUB-140403-2 ";
+        String pubZdbID = "ZDB-PUB-140403-2";
         Publication pub = publicationRepository.getPublication(pubZdbID);
         long ftrCount = publicationRepository.getFeatureCount(pub);
         assertTrue(ftrCount > 0);
