@@ -532,61 +532,61 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
 
 values ('RNAMO','SEARCH_MKSEG');
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
 values ('NCCR','SO:0000334','nc_conserved_region');
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
 values ('BR','SO:0001411','biological_region');
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
 values ('BINDSITE','SO:0000409','binding_site');
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
 values ('LIGANDBS','SO:0001657','ligand_binding_site');
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
 values ('TFBS','SO:0000235','tf_binding_site');
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
 values ('EBS','SO:0001461','enhancer_binding_site');
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
 values ('NCBS','SO:0001655','nucleotide_binding_site'); 
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
 values ('EMR','SO:0001720','epigenetically_modified_region'); 
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
 values ('HMR','SO:0001700','histone_modification');
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
 values ('MDNAB','SO:0000305','modified_dna_base');
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
 values ('RR','SO:0005836','regulatory_region');
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
 values ('TRR','SO:0001679','transcriptional_regulatory_region');
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
 values ('PROMOTER','SO:0000167','promoter');
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
 values ('ENHANCER','SO:0000165','enhancer');
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
 values ('LCR','SO:0000037','locus_control_region');
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
 values ('NUCMO','SO:0000714','nucleotide motif');
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
 values ('DNAMO','SO:0000713','dna_motif');
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
-values ('RNAMO','SO:000071','rna_motif');
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
+values ('RNAMO','SO:0000710','rna_motif');
 
-insert into so_zfin_mapping(szm_term_ont_id, szm_object_type, szm_term_name) 
+insert into so_zfin_mapping(szm_object_type, szm_term_ont_id, szm_term_name) 
 values ('TLNRR','SO:0001680','translation_regulatory_region');
 
 
