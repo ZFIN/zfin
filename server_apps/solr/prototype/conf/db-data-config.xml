@@ -2940,6 +2940,37 @@ term_name as expression_anatomy_direct,
                    cacheImpl="SortedMapBackedCache"
                    where="efs_pk_id=expression.id"/>
 
+           <entity name="expression_target_gene"
+                   datasource="db" query="
+                       SELECT
+                         'xpatex-' || efs_pk_id as efs_pk_id,
+                         mrkr_abbrev as targeted_gene
+                         mrkr_abbrev as targeted_gene_full_name
+                       FROM expression_experiment2
+                       join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                       join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id
+                       join fish_str on fishstr_fish_zdb_id = genox_fish_zdb_id
+                       join marker_relationship on fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
+                       join marker on mrkr_zdb_id = mrel_mrkr_2_zdb_id
+                       where mrel_type = 'knockdown reagent targets gene'"
+                   cacheImpl="SortedMapBackedCache"
+                   where="efs_pk_id=expression.id"/>
+
+           <entity name="expression_target_gene_previous_name"
+                   datasource="db" query="
+                       SELECT
+                         'xpatex-' || efs_pk_id as efs_pk_id,
+                         dalias_alias as targeted_gene_previous_name
+                       FROM expression_experiment2
+                       join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                       join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id
+                       join fish_str on fishstr_fish_zdb_id = genox_fish_zdb_id
+                       join marker_relationship on fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
+                       join data_alias on dalias_data_zdb_id = mrel_mrkr_2_zdb_id
+                       where mrel_type = 'knockdown reagent targets gene'"
+                   cacheImpl="SortedMapBackedCache"
+                   where="efs_pk_id=expression.id"/>
+
            <entity name="expression_genotype"
                    datasource="db" query="
 SELECT trim(CASE Length(Get_genotype_backgrounds(geno_zdb_id))

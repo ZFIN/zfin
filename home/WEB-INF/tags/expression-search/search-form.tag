@@ -18,6 +18,7 @@
         <tr>
             <th><form:label path="geneField" cssClass="namesearchLabel">Gene/EST</form:label></th>
             <td><form:input type="text" path="geneField"/></td>
+
             <th>Stage Between</th>
             <td>
                 <div>
@@ -31,6 +32,10 @@
                     <a href="/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
                 </div>
             </td>
+        </tr>
+        <tr>
+            <th><form:label path="targetGeneField" cssClass="namesearchLabel">Target Gene</form:label></th>
+            <td><form:input type="text" path="targetGeneField"/></td>
         </tr>
         <tr>
             <th><form:label path="anatomy">Anatomy:</form:label></th>

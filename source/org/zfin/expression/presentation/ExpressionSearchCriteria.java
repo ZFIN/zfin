@@ -12,6 +12,7 @@ public class ExpressionSearchCriteria {
     private String geneField;
     private String geneZdbID;
     private Marker gene;
+    private String targetGeneField;
     private boolean onlyFiguresWithImages;
     private String startStageId;
     private String endStageId;
@@ -40,6 +41,7 @@ public class ExpressionSearchCriteria {
         urlCreator.addNameValuePair("anatomyTermIDs", getAnatomyTermIDs());
         urlCreator.addNameValuePair("startStageId", getStartStageId());
         urlCreator.addNameValuePair("endStageId", getEndStageId());
+        urlCreator.addNameValuePair("targetGeneField", getTargetGeneField());
         return urlCreator.getURL();
     }
 
@@ -75,6 +77,14 @@ public class ExpressionSearchCriteria {
 
     public void setGene(Marker gene) {
         this.gene = gene;
+    }
+
+    public String getTargetGeneField() {
+        return targetGeneField;
+    }
+
+    public void setTargetGeneField(String targetGeneField) {
+        this.targetGeneField = targetGeneField;
     }
 
     public boolean isOnlyFiguresWithImages() {

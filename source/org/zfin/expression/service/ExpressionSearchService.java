@@ -1,6 +1,5 @@
 package org.zfin.expression.service;
 
-import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -8,7 +7,6 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.Group;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrDocumentList;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Figure;
@@ -21,11 +19,9 @@ import org.zfin.mutant.Fish;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.FieldName;
-import org.zfin.search.service.QueryManipulationService;
 import org.zfin.search.service.SolrService;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,7 +35,7 @@ public class ExpressionSearchService {
                                           ExpressionSearchCriteria criteria,
                                           String anatomyBoolean) {
 
-        solrQuery.addFilterQuery(FieldName.CATEGORY.getName() + ":(" + "Expression" + ")");
+        solrQuery.addFilterQuery(fq(FieldName.CATEGORY, "Expression"));
 
         //only interested in expression where there is a zebrafish gene, no reporter & no AB expression
         solrQuery.addFilterQuery(FieldName.ZEBRAFISH_GENE.getName() + ":[* TO *]");
@@ -47,20 +43,30 @@ public class ExpressionSearchService {
         if (CollectionUtils.isNotEmpty(criteria.getAnatomy())) {
             String termQuery = criteria.getAnatomy().stream()
                     .collect(Collectors.joining(" " + anatomyBoolean + " "));
-            solrQuery.addFilterQuery(FieldName.EXPRESSION_ANATOMY_TF.getName() + ":(" + termQuery + ")");
+            solrQuery.addFilterQuery(fq(FieldName.EXPRESSION_ANATOMY_TF, termQuery));
         }
 
-        if (StringUtils.isNotEmpty(criteria.getGeneField())) {
-            StringBuilder gfq = new StringBuilder();
-            gfq.append(FieldName.ZEBRAFISH_GENE.getName() + ":(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
-            gfq.append(" OR zebrafish_gene_t:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
-            gfq.append(" OR " + "expressed_gene_full_name:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
-            gfq.append(" OR " + "expressed_gene_previous_name:(" + SolrService.luceneEscape(criteria.getGeneField()) + ")");
-            solrQuery.addFilterQuery(gfq.toString());
+        String geneField = criteria.getGeneField();
+        if (StringUtils.isNotEmpty(geneField)) {
+            solrQuery.addFilterQuery(any(
+                    fq(FieldName.ZEBRAFISH_GENE, geneField),
+                    fq(FieldName.ZEBRAFISH_GENE_T, geneField),
+                    fq(FieldName.EXPRESSED_GENE_FULL_NAME, geneField),
+                    fq(FieldName.EXPRESSED_GENE_PREVIOUS_NAME, geneField)
+            ));
         }
 
         if (StringUtils.isNotEmpty(criteria.getGeneZdbID())) {
-            solrQuery.addFilterQuery("gene_zdb_id:(" + criteria.getGeneZdbID() + ")");
+            solrQuery.addFilterQuery(fq(FieldName.GENE_ZDB_ID, criteria.getGeneZdbID()));
+        }
+
+        String targetGene = criteria.getTargetGeneField();
+        if (StringUtils.isNotEmpty(targetGene)) {
+            solrQuery.addFilterQuery(any(
+                    fq(FieldName.TARGETED_GENE, targetGene),
+                    fq(FieldName.TARGETED_GENE_FULL_NAME, targetGene),
+                    fq(FieldName.TARGETED_GENE_PREVIOUS_NAME, targetGene)
+            ));
         }
 
         if (StringUtils.isNotEmpty(criteria.getStartStageId()) && StringUtils.isNotEmpty(criteria.getEndStageId())) {
@@ -82,7 +88,7 @@ public class ExpressionSearchService {
 
 
         if (criteria.isOnlyFiguresWithImages()) {
-            solrQuery.addFilterQuery(FieldName.HAS_IMAGE.getName() + ":(true)");
+            solrQuery.addFilterQuery(fq(FieldName.HAS_IMAGE, "true"));
         }
         
         solrQuery.setRows(criteria.getRows());
@@ -129,7 +135,7 @@ public class ExpressionSearchService {
 
         solrQuery = applyCriteria(solrQuery, criteria, "OR");
 
-        solrQuery.addFilterQuery("gene_zdb_id:(" + criteria.getGeneZdbID() + ")");
+        solrQuery.addFilterQuery(fq(FieldName.GENE_ZDB_ID, criteria.getGeneZdbID()));
 
         solrQuery.add("group", "true");
         solrQuery.add("group.ngroups", "true");
@@ -267,7 +273,7 @@ public class ExpressionSearchService {
 
         solrQuery = applyCriteria(solrQuery, criteria, "OR");
 
-        solrQuery.addFilterQuery("gene_zdb_id:(" + gene.getZdbID() + ")");
+        solrQuery.addFilterQuery(fq(FieldName.GENE_ZDB_ID, gene.getZdbID()));
 
         solrQuery.add("group", "true");
         solrQuery.add("group.ngroups", "true");
@@ -296,6 +302,14 @@ public class ExpressionSearchService {
         stages.stream().sorted().forEach(s -> options.put(s.getOboID(), s.getName()));
 
         return options;
+    }
+
+    private static String fq(FieldName fieldName, String value) {
+        return fieldName.getName() + ":(" + SolrService.luceneEscape(value) + ")";
+    }
+
+    private static String any(String... fqs) {
+        return String.join(" OR ", fqs);
     }
 
 }

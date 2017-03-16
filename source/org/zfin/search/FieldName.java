@@ -43,6 +43,8 @@ public enum FieldName {
     DISEASE("disease", "Human Disease"),
     DISEASE_MODEL("disease_model"),
     ENGINEERED_REGION("engineered_region"),
+    EXPRESSED_GENE_FULL_NAME("expressed_gene_full_name"),
+    EXPRESSED_GENE_PREVIOUS_NAME("expressed_gene_previous_name"),
     EXPRESSED_IN_TF("expressed_in_tf"),
     EXPRESSION_ANATOMY_TF("expression_anatomy_tf"),
     EXPRESSION_ANATOMY("expression_anatomy"),
@@ -53,6 +55,7 @@ public enum FieldName {
     GENE("gene"),
     GENE_FULL_NAME("gene_full_name"),
     GENE_PREVIOUS_NAME("gene_previous_name"),
+    GENE_ZDB_ID("gene_zdb_id"),
     GENES_WITH_ALTERED_EXPRESSION("genes_with_altered_expression"),
     GENOTYPE("genotype"),
     GENOTYPE_FULL_NAME("genotype_full_name"),
@@ -101,13 +104,16 @@ public enum FieldName {
     STAGE_HOURS_START("stage_hours_start"),
     STATUS("pub_status"),
     TARGETED_GENE("targeted_gene"),
+    TARGETED_GENE_FULL_NAME("targeted_gene_full_name"),
+    TARGETED_GENE_PREVIOUS_NAME("targeted_gene_previous_name"),
     TERM_STATUS("term_status"),
     THUMBNAIL("thumbnail"),
     TOPIC("topic"),
     TYPE("type"),
     URL("url"),
     XREF("xref"),
-    ZEBRAFISH_GENE("zebrafish_gene");
+    ZEBRAFISH_GENE("zebrafish_gene"),
+    ZEBRAFISH_GENE_T("zebrafish_gene_t");
 
     private String name;
     private String prettyName;
