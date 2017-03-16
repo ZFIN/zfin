@@ -187,7 +187,7 @@
                                             <c:if test="${!loop.last}">,&nbsp;</c:if>
 
                                         </c:forEach>
-                                       
+
                                     </c:when>
                                     <c:otherwise>
                                         ${mutagee.toString()} treated with ${mutagen.toString()}
