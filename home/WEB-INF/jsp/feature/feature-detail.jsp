@@ -167,15 +167,27 @@
                             <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen eq zfn:getMutagen('not specified')}">
                             </c:when>
                             <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen ne zfn:getMutagen('not specified')}">
-                                ${mutagen.toString()}&nbsp; <c:if
-                                    test="${formBean.createdByRelationship ne null}"><zfin:link
-                                    entity="${formBean.createdByRelationship.marker}"/></c:if>
-                            </c:when>
+                                ${mutagen.toString()}&nbsp;
+                                <c:if test="${formBean.createdByRelationship ne null}">
+                                    <c:forEach var="createdBy" items="${formBean.createdByRelationship}" varStatus="loop">
+                                        <zfin:link entity="${createdBy.marker}"/>
+
+                                        <c:if test="${!loop.last}">,&nbsp;</c:if>
+
+                                    </c:forEach>
+                                </c:if>
+          </c:when>
                             <c:otherwise>
                                 <c:choose>
                                     <c:when test="${formBean.createdByRelationship ne null}">
-                                        ${mutagee.toString()} treated with <zfin:link
-                                            entity="${formBean.createdByRelationship.marker}"/>
+                                        ${mutagee.toString()} treated with
+                                        <c:forEach var="createdBy" items="${formBean.createdByRelationship}" varStatus="loop">
+                                            <zfin:link entity="${createdBy.marker}"/>
+
+                                            <c:if test="${!loop.last}">,&nbsp;</c:if>
+
+                                        </c:forEach>
+                                       
                                     </c:when>
                                     <c:otherwise>
                                         ${mutagee.toString()} treated with ${mutagen.toString()}
