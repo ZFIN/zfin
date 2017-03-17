@@ -8,5 +8,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1085/fire/ZFIN2945.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1085/fire/ZFIN2943.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1085/fire/ZFIN2950.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1085/fire/ZFIN2930.sql"/>
 
 </databaseChangeLog>

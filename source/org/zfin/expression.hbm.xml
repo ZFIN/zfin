@@ -308,7 +308,7 @@
             <column name="etfs_pk_id" not-null="true"/>
             <generator class="identity"/>
         </id>
-        <many-to-one name="expressionResult" column="etfs_xpatres_zdb_id" not-null="true"/>
+        <many-to-one name="expressionResult" column="etfs_xpatres_pk_id" not-null="true"/>
         <many-to-one name="term" column="etfs_term_zdb_id" not-null="true"/>
         <property name="dateCreated" column="etfs_created_date"/>
         <property name="originalAnnotation" column="etfs_is_xpatres_term"/>
