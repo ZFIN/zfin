@@ -59,6 +59,15 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         assertEquals("Test publication has the right title", "LZIC regulates neuronal survival during zebrafish development", testPublication.getTitle());
     }
 
+    @Test
+    public void getMappingDetailsCount() {
+        String pubZdbId = "ZDB-PUB-050607-10";
+        Publication testPublication = publicationRepository.getPublication(pubZdbId);
+        long number = publicationRepository.getMappingDetailsCount(testPublication);
+        assertNotNull("Test publication is retrieved", testPublication);
+        assertEquals("Test publication has the right title", "LZIC regulates neuronal survival during zebrafish development", testPublication.getTitle());
+    }
+
 
     /**
      * Get all expressed genes for a given anatomy structure

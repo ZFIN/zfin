@@ -176,6 +176,8 @@ public interface MutantRepository {
      */
     List<PhenotypeStatementWarehouse> getPhenotypeWithEntity(GenericTerm term);
 
+    public boolean hasPhenotype(GenericTerm term);
+
     List<PhenotypeStatementWarehouse> getPhenotypeWithEntity(List<GenericTerm> terms);
 
     List<MarkerGoTermEvidence> getMarkerGoEvidence(List<GenericTerm> terms);

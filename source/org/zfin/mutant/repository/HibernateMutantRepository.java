@@ -526,11 +526,11 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public int getZFINInferences(String zdbID, String publicationZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery("" +
-                " select count(*) from marker_go_term_evidence  ev  " +
-                " join  inference_group_member inf on ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id " +
-                " where " +
+                " SELECT count(*) FROM marker_go_term_evidence  ev  " +
+                " JOIN  inference_group_member inf ON ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id " +
+                " WHERE " +
                 " ev.mrkrgoev_source_zdb_id=:pubZdbID " +
-                " and " +
+                " AND " +
                 " inf.infgrmem_inferred_from=:zdbID " +
                 " ")
                 .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix() + zdbID)
@@ -639,6 +639,17 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameter("term", term);
         query.setString("tag", PhenotypeStatement.Tag.ABNORMAL.toString());
         return (List<PhenotypeStatementWarehouse>) query.list();
+    }
+
+    public boolean hasPhenotype(GenericTerm term) {
+        String hql = "select count(*) from PhenotypeStatementWarehouse where " +
+                "(e1a = :term OR e1b = :term OR " +
+                "e2a = :term OR e2b = :term ) " +
+                "AND tag = :tag";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("term", term);
+        query.setString("tag", PhenotypeStatement.Tag.ABNORMAL.toString());
+        return ((long) query.uniqueResult()) > 0;
     }
 
     /**
@@ -1151,15 +1162,15 @@ public class HibernateMutantRepository implements MutantRepository {
         }
         List fishOxList = new ArrayList(fishOx);
 
-        String sql = "select count(*) from figure, expression_experiment, expression_result, expression_pattern_figure, fish_experiment,fish" +
-                "  where fig_zdb_id = xpatfig_fig_zdb_id" +
-                " and xpatex_zdb_id = xpatres_xpatex_zdb_id" +
-                " and xpatres_zdb_id = xpatfig_xpatres_zdb_id" +
-                " and genox_fish_zdb_id = fish_zdb_id" +
-                " and fish_genotype_zdb_id = :genotypeID" +
-                " and xpatex_genox_zdb_id = genox_zdb_id" +
-                " and genox_zdb_id in (:fishOxList)" +
-                " and exists (Select 'x' from image where img_fig_Zdb_id = fig_zdb_id)";
+        String sql = "SELECT count(*) FROM figure, expression_experiment, expression_result, expression_pattern_figure, fish_experiment,fish" +
+                "  WHERE fig_zdb_id = xpatfig_fig_zdb_id" +
+                " AND xpatex_zdb_id = xpatres_xpatex_zdb_id" +
+                " AND xpatres_zdb_id = xpatfig_xpatres_zdb_id" +
+                " AND genox_fish_zdb_id = fish_zdb_id" +
+                " AND fish_genotype_zdb_id = :genotypeID" +
+                " AND xpatex_genox_zdb_id = genox_zdb_id" +
+                " AND genox_zdb_id IN (:fishOxList)" +
+                " AND exists (SELECT 'x' FROM image WHERE img_fig_Zdb_id = fig_zdb_id)";
 
         Query query = currentSession().createSQLQuery(sql);
         query.setString("genotypeID", genotypeID);
