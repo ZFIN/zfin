@@ -1,9 +1,8 @@
 package org.zfin.expression.presentation;
 
-import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.marker.Marker;
 
-public class GeneResult {
+public class GeneResult extends ExpressionSearchResult {
 
     private String symbol;
     private String id;
@@ -11,8 +10,6 @@ public class GeneResult {
     private Integer figureCount;
     private Marker gene;
     private String matchingText;
-    private DevelopmentStage startStage;
-    private DevelopmentStage endStage;
     private String figureResultUrl;
 
     public String getUrl() { return "http://zfin.org/" + id; }
@@ -63,22 +60,6 @@ public class GeneResult {
 
     public void setMatchingText(String matchingText) {
         this.matchingText = matchingText;
-    }
-
-    public DevelopmentStage getStartStage() {
-        return startStage;
-    }
-
-    public void setStartStage(DevelopmentStage startStage) {
-        this.startStage = startStage;
-    }
-
-    public DevelopmentStage getEndStage() {
-        return endStage;
-    }
-
-    public void setEndStage(DevelopmentStage endStage) {
-        this.endStage = endStage;
     }
 
     public String getFigureResultUrl() {

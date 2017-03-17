@@ -4,20 +4,20 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.FieldStatsInfo;
 import org.apache.solr.client.solrj.response.Group;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.Figure;
-import org.zfin.expression.presentation.ExpressionSearchCriteria;
-import org.zfin.expression.presentation.FigureResult;
-import org.zfin.expression.presentation.GeneResult;
-import org.zfin.expression.presentation.ImageResult;
+import org.zfin.expression.presentation.*;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.Category;
 import org.zfin.search.FieldName;
 import org.zfin.search.service.SolrService;
 
@@ -25,17 +25,18 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * Created by kschaper on 1/17/17.
- */
 @Service
 public class ExpressionSearchService {
+
+    private static final String TRUE = "true";
+    private static final String AND = "AND";
+    private static final String OR = "OR";
 
     public static SolrQuery applyCriteria(SolrQuery solrQuery,
                                           ExpressionSearchCriteria criteria,
                                           String anatomyBoolean) {
 
-        solrQuery.addFilterQuery(fq(FieldName.CATEGORY, "Expression"));
+        solrQuery.addFilterQuery(fq(FieldName.CATEGORY, Category.EXPRESSIONS.getName()));
 
         //only interested in expression where there is a zebrafish gene, no reporter & no AB expression
         solrQuery.addFilterQuery(FieldName.ZEBRAFISH_GENE.getName() + ":[* TO *]");
@@ -88,7 +89,7 @@ public class ExpressionSearchService {
 
 
         if (criteria.isOnlyFiguresWithImages()) {
-            solrQuery.addFilterQuery(fq(FieldName.HAS_IMAGE, "true"));
+            solrQuery.addFilterQuery(fq(FieldName.HAS_IMAGE, TRUE));
         }
         
         solrQuery.setRows(criteria.getRows());
@@ -101,13 +102,13 @@ public class ExpressionSearchService {
 
         SolrQuery solrQuery = new SolrQuery();
 
-        solrQuery = applyCriteria(solrQuery, criteria, "AND");
+        solrQuery = applyCriteria(solrQuery, criteria, AND);
 
-        solrQuery.add("group", "true");
-        solrQuery.add("group.ngroups", "true");
-        solrQuery.add("group.field", "gene_zdb_id");
+        solrQuery.add("group", TRUE);
+        solrQuery.add("group.ngroups", TRUE);
+        solrQuery.add("group.field", FieldName.GENE_ZDB_ID.getName());
 
-        solrQuery.setFields("gene_zdb_id");
+        solrQuery.setFields(FieldName.GENE_ZDB_ID.getName());
 
         solrQuery.setRows(100);
 
@@ -133,16 +134,21 @@ public class ExpressionSearchService {
     public static List<FigureResult> getFigureResults(ExpressionSearchCriteria criteria) {
         SolrQuery solrQuery = new SolrQuery();
 
-        solrQuery = applyCriteria(solrQuery, criteria, "OR");
+        solrQuery = applyCriteria(solrQuery, criteria, OR);
 
         solrQuery.addFilterQuery(fq(FieldName.GENE_ZDB_ID, criteria.getGeneZdbID()));
 
-        solrQuery.add("group", "true");
-        solrQuery.add("group.ngroups", "true");
-        solrQuery.add("group.field", "fig_zdb_id");
-        solrQuery.add("group.field", "pub_zdb_id");
+        solrQuery.add("group", TRUE);
+        solrQuery.add("group.ngroups", TRUE);
+        solrQuery.add("group.field", FieldName.FIG_ZDB_ID.getName());
+        solrQuery.add("group.field", FieldName.PUB_ZDB_ID.getName());
 
-        solrQuery.setFields("id", "fig_zdb_id", "pub_zdb_id", "fish_zdb_id");
+        solrQuery.setFields(
+                FieldName.ID.getName(),
+                FieldName.FIG_ZDB_ID.getName(),
+                FieldName.PUB_ZDB_ID.getName(),
+                FieldName.FISH_ZDB_ID.getName()
+        );
 
         QueryResponse queryResponse = null;
         try {
@@ -164,19 +170,23 @@ public class ExpressionSearchService {
                 .map(ExpressionSearchService::getFirstDocumentFromGroup)
                 .collect(Collectors.toList());
 
-        return buildFigureResults(solrDocumentList);
+        return buildFigureResults(solrDocumentList, criteria);
 
     }
 
     public static List<ImageResult> getImageResults(ExpressionSearchCriteria criteria) {
         SolrQuery solrQuery = new SolrQuery();
 
-        solrQuery = applyCriteria(solrQuery, criteria, "OR");
+        solrQuery = applyCriteria(solrQuery, criteria, OR);
 
-        solrQuery.setFields("id", "img_zdb_id", "thumbnail");
-        solrQuery.add("group", "true");
-        solrQuery.add("group.ngroups", "true");
-        solrQuery.add("group.field", "fig_zdb_id");
+        solrQuery.setFields(
+                FieldName.ID.getName(),
+                FieldName.IMG_ZDB_ID.getName(),
+                FieldName.THUMBNAIL.getName()
+        );
+        solrQuery.add("group", TRUE);
+        solrQuery.add("group.ngroups", TRUE);
+        solrQuery.add("group.field", FieldName.FIG_ZDB_ID.getName());
         solrQuery.setRows(5000);
         solrQuery.setStart(1);
         solrQuery.addSort("date", SolrQuery.ORDER.asc);
@@ -194,22 +204,23 @@ public class ExpressionSearchService {
                 .collect(Collectors.toList());
     }
 
-    public static List<FigureResult> buildFigureResults(List<SolrDocument> solrDocumentList) {
+    public static List<FigureResult> buildFigureResults(List<SolrDocument> solrDocumentList, ExpressionSearchCriteria criteria) {
         return solrDocumentList.stream()
-                .map(it -> buildFigureResult(it))
+                .map(it -> buildFigureResult(it, criteria))
                 .collect(Collectors.toList());
     }
 
-    public static FigureResult buildFigureResult(SolrDocument document) {
+    public static FigureResult buildFigureResult(SolrDocument document, ExpressionSearchCriteria criteria) {
         FigureResult figureResult = new FigureResult();
 
-        Figure figure = RepositoryFactory.getPublicationRepository().getFigure((String) document.get("fig_zdb_id"));
-        Publication publication = RepositoryFactory.getPublicationRepository().getPublication((String) document.get("pub_zdb_id"));
-        Fish fish = RepositoryFactory.getMutantRepository().getFish((String) document.get("fish_zdb_id"));
+        Figure figure = RepositoryFactory.getPublicationRepository().getFigure((String) document.get(FieldName.FIG_ZDB_ID.getName()));
+        Publication publication = RepositoryFactory.getPublicationRepository().getPublication((String) document.get(FieldName.PUB_ZDB_ID.getName()));
+        Fish fish = RepositoryFactory.getMutantRepository().getFish((String) document.get(FieldName.FISH_ZDB_ID.getName()));
 
         figureResult.setFigure(figure);
         figureResult.setPublication(publication);
         figureResult.setFish(fish);
+        populateStageRange(figureResult, criteria, OR, fq(FieldName.FIG_ZDB_ID, figure.getZdbID()));
 
         return figureResult;
     }
@@ -227,7 +238,7 @@ public class ExpressionSearchService {
     public static GeneResult buildGeneResult(SolrDocument document, ExpressionSearchCriteria criteria) {
         GeneResult geneResult = new GeneResult();
 
-        geneResult.setId(document.get("gene_zdb_id").toString());
+        geneResult.setId(document.get(FieldName.GENE_ZDB_ID.getName()).toString());
 
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneResult.getId());
         geneResult.setGene(gene);
@@ -240,14 +251,14 @@ public class ExpressionSearchService {
 
         geneResult.setPublicationCount(getPublicationCount(gene, criteria));
         geneResult.setFigureCount(getFigureCount(gene, criteria));
-
+        populateStageRange(geneResult, criteria, AND, fq(FieldName.GENE_ZDB_ID, gene.getZdbID()));
 
         return geneResult;
     }
 
     public static List<ImageResult> buildImageResults(SolrDocument document) {
-        ArrayList idList = (ArrayList) document.get("img_zdb_id");
-        ArrayList thumbList = (ArrayList) document.get("thumbnail");
+        ArrayList idList = (ArrayList) document.get(FieldName.IMG_ZDB_ID.getName());
+        ArrayList thumbList = (ArrayList) document.get(FieldName.THUMBNAIL.getName());
         ArrayList<ImageResult> imageResults = new ArrayList<>();
         if (idList != null && thumbList != null && idList.size() == thumbList.size()) {
             for (int i = 0; i < idList.size(); i++) {
@@ -261,23 +272,23 @@ public class ExpressionSearchService {
     }
 
     public static Integer getPublicationCount(Marker gene, ExpressionSearchCriteria criteria) {
-        return getCount(gene, criteria, "publication");
+        return getCount(gene, criteria, FieldName.PUBLICATION);
     }
 
     public static Integer getFigureCount(Marker gene, ExpressionSearchCriteria criteria) {
-        return getCount(gene, criteria, "fig_zdb_id");
+        return getCount(gene, criteria, FieldName.FIG_ZDB_ID);
     }
 
-    public static Integer getCount(Marker gene, ExpressionSearchCriteria criteria, String groupingField) {
+    public static Integer getCount(Marker gene, ExpressionSearchCriteria criteria, FieldName groupingField) {
         SolrQuery solrQuery = new SolrQuery();
 
-        solrQuery = applyCriteria(solrQuery, criteria, "OR");
+        solrQuery = applyCriteria(solrQuery, criteria, OR);
 
         solrQuery.addFilterQuery(fq(FieldName.GENE_ZDB_ID, gene.getZdbID()));
 
-        solrQuery.add("group", "true");
-        solrQuery.add("group.ngroups", "true");
-        solrQuery.add("group.field", groupingField);
+        solrQuery.add("group", TRUE);
+        solrQuery.add("group.ngroups", TRUE);
+        solrQuery.add("group.field", groupingField.getName());
         solrQuery.setRows(0);
 
         QueryResponse queryResponse = null;
@@ -292,6 +303,33 @@ public class ExpressionSearchService {
         //todo: needs to be a little more null safe...
         return queryResponse.getGroupResponse().getValues().iterator().next().getNGroups();
 
+    }
+
+    public static void populateStageRange(ExpressionSearchResult result, ExpressionSearchCriteria criteria,
+                                          String anatomyBoolean, String... filters) {
+        SolrQuery solrQuery = new SolrQuery();
+        applyCriteria(solrQuery, criteria, anatomyBoolean);
+        for (String filter : filters) {
+            solrQuery.addFilterQuery(filter);
+        }
+        solrQuery.add("stats", TRUE);
+        solrQuery.add("stats.field", FieldName.STAGE_HOURS_START.getName());
+        solrQuery.add("stats.field", FieldName.STAGE_HOURS_END.getName());
+        solrQuery.setRows(0);
+
+        QueryResponse response = null;
+        try {
+            response = SolrService.getSolrClient().query(solrQuery);
+        } catch (SolrServerException | IOException e) {
+            e.printStackTrace();
+        }
+
+        AnatomyRepository ar = RepositoryFactory.getAnatomyRepository();
+        Map<String, FieldStatsInfo> stats = response.getFieldStatsInfo();
+        Double startHours = (double) stats.get(FieldName.STAGE_HOURS_START.getName()).getMin();
+        Double endHours = (double) stats.get(FieldName.STAGE_HOURS_END.getName()).getMax();
+        result.setStartStage(ar.getStageByStartHours(startHours.floatValue()));
+        result.setEndStage(ar.getStageByEndHours(endHours.floatValue()));
     }
 
     public static SortedMap<String, String> getStageOptions() {
@@ -309,7 +347,7 @@ public class ExpressionSearchService {
     }
 
     private static String any(String... fqs) {
-        return String.join(" OR ", fqs);
+        return String.join(" " + OR + " ", fqs);
     }
 
 }

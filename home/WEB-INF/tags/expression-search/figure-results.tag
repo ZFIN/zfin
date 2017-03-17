@@ -46,7 +46,9 @@
                 </c:if>
             </td>
             <td><zfin:link entity="${result.fish}"/></td>
-            <td></td>
+            <td>
+                <zfin2:stageRange earliestStartStage="${result.startStage}" latestEndStage="${result.endStage}" />
+            </td>
             <td></td>
         </zfin:alternating-tr>
     </c:forEach>

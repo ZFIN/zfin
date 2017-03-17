@@ -2944,7 +2944,7 @@ term_name as expression_anatomy_direct,
                    datasource="db" query="
                        SELECT
                          'xpatex-' || efs_pk_id as efs_pk_id,
-                         mrkr_abbrev as targeted_gene
+                         mrkr_abbrev as targeted_gene,
                          mrkr_abbrev as targeted_gene_full_name
                        FROM expression_experiment2
                        join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
