@@ -6,6 +6,9 @@ import org.zfin.expression.Experiment;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.framework.presentation.EntityPresentation;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.TreeSet;
 
 public class ExperimentPresentation extends EntityPresentation {
@@ -24,8 +27,9 @@ public class ExperimentPresentation extends EntityPresentation {
             return "control";
         //if (experiment.isStandard())
         //    return "standard or control";
-        TreeSet<ExperimentCondition> conditions = new TreeSet<>();
+        List<ExperimentCondition> conditions = new ArrayList<>();
         conditions.addAll(experiment.getExperimentConditions());
+        Collections.sort(conditions);
 
         return ExperimentConditionPresentation.getLink(conditions, experiment, suppressPopupLink);
     }
