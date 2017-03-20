@@ -24,7 +24,7 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/gafLoad/Load-GAF-P* </artifacts>
+      <artifacts>server_apps/DB_maintenance/gafLoad/Load-GAF-Paint_m/Load-GAF-P* </artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -35,9 +35,9 @@
           <email>
             <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/gafLoad/Load-GAF-Paint_m_summary.txt&quot;}
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/gafLoad/Load-GAF-Paint_m/Load-GAF-Paint_m_summary.txt&quot;}
 
-See full details at ${BUILD_URL}/artifact/server_apps/DB_maintenance/gafLoad/Load-GAF-Paint_m_details.txt</body>
+See full details at ${BUILD_URL}/artifact/server_apps/DB_maintenance/gafLoad/Load-GAF-Paint_m/Load-GAF-Paint_m_details.txt</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
@@ -53,7 +53,7 @@ See full details at ${BUILD_URL}/artifact/server_apps/DB_maintenance/gafLoad/Loa
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/gafLoad/Load-GAF-Paint_m_errors.txt&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/gafLoad/Load-GAF-Paint_m/Load-GAF-Paint_m_errors.txt&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>

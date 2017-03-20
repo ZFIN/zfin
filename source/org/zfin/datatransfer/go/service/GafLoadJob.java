@@ -78,10 +78,12 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
     public int execute() {
         int exitCode = 0;
 
+        clearReportDirectory();
+
         GafOrganization.OrganizationEnum organizationEnum = GafOrganization.OrganizationEnum.getType(organization);
 
         try {
-            localDownloadFile = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + "Load-GAF-" + organizationEnum.name() + "-gene_association";
+            localDownloadFile = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association";
             gafService = new GafService(organizationEnum);
 
             // 1. download gzipped GAF file
@@ -90,13 +92,13 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                     , false);
 
             if(organization.equals("GOA")) {
-                localDownloadFile2 = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + "Load-GAF-" + organizationEnum.name() + "-gene_association2";
+                localDownloadFile2 = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association2";
                 File downloadedFile2 = downloadService.downloadFile(new File(localDownloadFile2)
                         , new URL(downloadUrl2)
                         , false);
                 String downloadFile2Str = FileUtils.readFileToString(downloadedFile2);
                 FileUtils.write(downloadedFile, downloadFile2Str, true); // true for append
-                localDownloadFile3 = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + "Load-GAF-" + organizationEnum.name() + "-gene_association3";
+                localDownloadFile3 = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association3";
                 File downloadedFile3 = downloadService.downloadFile(new File(localDownloadFile3)
                         , new URL(downloadUrl3)
                         , false);
@@ -129,9 +131,8 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             gafService.generateRemovedEntries(gafJobData, gafOrganization);
 
             removeAnnotations(gafJobData);
-
-            FileWriter summary = new FileWriter(new File(dataDirectory, jobName + "_summary.txt"));
-            FileWriter details = new FileWriter(new File(dataDirectory, jobName + "_details.txt"));
+            FileWriter summary = new FileWriter(new File(new File(dataDirectory, jobName), jobName + "_summary.txt"));
+            FileWriter details = new FileWriter(new File(new File(dataDirectory, jobName), jobName + "_details.txt"));
 
             summary.append(gafJobData.toString());
             summary.flush();
@@ -176,7 +177,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                 HibernateUtil.rollbackTransaction();
             }
             try {
-                FileWriter errors = new FileWriter(new File(dataDirectory, jobName + "_errors.txt"));
+                FileWriter errors = new FileWriter(new File(new File(dataDirectory, jobName), jobName + "_errors.txt"));
                 errors.append("Error in ").append(organizationEnum.toString()).append(" load.\n");
                 errors.append(ExceptionUtils.getStackTrace(e));
                 errors.flush();
