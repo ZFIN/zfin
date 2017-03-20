@@ -26,8 +26,8 @@ drop view vmrkrgoevsamesize;
 drop view vgroupsize;
 
 --TODO: why don't these process with the schema file
-drop table paneled_markers;
-drop table pub_db_xref;
+--drop table paneled_markers;
+--drop table pub_db_xref;
 
 
 commit work;
