@@ -6,6 +6,9 @@ home/WEB-INF/zfin.properties
 lib/DB_functions/**/*.so
 reports/tests/
 server_apps/jenkins/jenkins.war
+server_apps/data_transfer/LoadOntology/reload-status/
+server_apps/data_transfer/LoadOntology/obo-files
+server_apps/data_transfer/LoadOntology/logs
 
 # IntelliJ things
 .idea
