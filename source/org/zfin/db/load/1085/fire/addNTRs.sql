@@ -2,7 +2,7 @@
 --changeset sierra:RGNS-35
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('NCCR','10','NC Conserved Region');
+  values ('NCCR','10','NC Conserved Region (CNE, CNS)');
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
   values ('TLNRR','10','Translation Regulatory Region');
