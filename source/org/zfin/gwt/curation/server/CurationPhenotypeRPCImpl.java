@@ -71,6 +71,7 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
             dto.setPublicationID(experimentFilter.getPublicationID());
             dtos.add(dto);
         }
+        Collections.sort(dtos);
         return dtos;
     }
 
