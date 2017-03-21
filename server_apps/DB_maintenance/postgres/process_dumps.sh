@@ -10,14 +10,14 @@ echo $latestDump
 
 
 echo "*** Removing previous working directories"
-rm -rf /research/zunloads/databases/postgres_dumps/$latestDump;
+rm -rf /research/zunloads/databases/postgres_dumps/$DBNAME/$latestDump;
 
-cp -R /research/zunloads/databases/$DBNAME/$latestDump /research/zunloads/databases/postgres_dumps/
-cd /research/zunloads/databases/postgres_dumps/
+cp -R /research/zunloads/databases/$DBNAME/$latestDump /research/zunloads/databases/postgres_dumps/$DNAME/
+cd /research/zunloads/databases/postgres_dumps/$DBNAME
 
 echo "*** latest dump: "
 echo $unloadDirectory
-unloadDirectory=/research/zunloads/databases/postgres_dumps/$latestDump
+unloadDirectory=/research/zunloads/databases/postgres_dumps/$DBNAME/$latestDump
 
 cd $unloadDirectory
 
