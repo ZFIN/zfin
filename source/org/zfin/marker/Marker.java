@@ -451,8 +451,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
 	DNAMO("DNAMO"),
 	RNAMO("RNAMO"),
         CPGISLAND("CPGISLAND"),
-        SRPRNAG("SRPRNAG"),
-        TSCRIPTNREGREGION("TSCRIPTNREGREGION")
+        SRPRNAG("SRPRNAG")
         ;
 
         private final String value;
