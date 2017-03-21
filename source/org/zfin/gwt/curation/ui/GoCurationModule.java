@@ -75,7 +75,8 @@ public class GoCurationModule extends ConstructionZoneAdapater implements ZfinCu
 
     @Override
     public void handleCurationEvent(CurationEvent event) {
-        if (event.getEventType().is(EventType.MARKER_ATTRIBUTION) || event.getEventType().is(EventType.MARKER_DEATTRIBUTION))
+        if (event.getEventType().is(EventType.MARKER_ATTRIBUTION) || event.getEventType().is(EventType.MARKER_DEATTRIBUTION)
+                || event.getEventType().is(EventType.CREATE_MARKER))
             goAddBox.updateGenes();
         if (event.getEventType().is(EventType.CREATE_FISH))
             goAddBox.getInferenceListBox().setAvailableValues();

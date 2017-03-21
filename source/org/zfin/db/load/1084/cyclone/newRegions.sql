@@ -131,8 +131,8 @@ insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_disp
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
   values ('SRPRNAG','22','srpRNA Gene');
 
-insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('TSCRIPTNREGREGION','22','Transcript Regulatory Region');
+--insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
+--  values ('TSCRIPTNREGREGION','22','Transcript Regulatory Region');
 
 --insert into marker_type_group (mtgrp_name, mtgrp_comments)
 -- values ('TSCRIPTREGION', 'Transcript Region');
@@ -201,10 +201,10 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
  values ('TSCRIPT','GENEDOM_PROD_PROTEIN');
 
-insert into marker_type_group_member(mtgrpmem_mrkr_type,
-    mtgrpmem_mrkr_type_group)
+--insert into marker_type_group_member(mtgrpmem_mrkr_type,
+--    mtgrpmem_mrkr_type_group)
 
-values ('TSCRIPTNREGREGION','NONTSCRBD_REGION');
+--values ('TSCRIPTNREGREGION','NONTSCRBD_REGION');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
@@ -481,7 +481,7 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
 values ('SRPRNAG','SEARCH_MKSEG');
 
-insert into marker_type_group_member(mtgrpmem_mrkr_type,
-    mtgrpmem_mrkr_type_group)
-values ('TSCRIPTNREGREGION','SEARCH_MKSEG');
+--insert into marker_type_group_member(mtgrpmem_mrkr_type,
+--    mtgrpmem_mrkr_type_group)
+--values ('TSCRIPTNREGREGION','SEARCH_MKSEG');
 
