@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.profile.Person;
 import org.zfin.profile.presentation.PersonLookupEntry;
@@ -46,26 +47,22 @@ public class RegionAddController {
         RegionAddFormBean form = new RegionAddFormBean();
         form.setPublicationId(source);
         form.setType(type);
-        Map<String, String> allTypes = new LinkedHashMap<>(10);
+        List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.NONTSCRBD_REGION);
+        Map<String, String> allTypes = new LinkedHashMap<>(markerTypes.size());
+        for (MarkerType markerType : markerTypes) {
+                            allTypes.put(markerType.getType().name(), markerType.getDisplayName());
+                    }
 
-       /* allTypes.put(Marker.Type.LINCRNA.name(), "lincRNA");
-        allTypes.put(Marker.Type.LNCRNA.name(), "lncRNA");
-        allTypes.put(Marker.Type.MIRNA.name(), "miRNA");
-        allTypes.put(Marker.Type.NCRNA.name(), "ncRNA");
-        allTypes.put(Marker.Type.RRNA.name(), "rRNA");
-        allTypes.put(Marker.Type.SCRNA.name(), "scRNA");
-        allTypes.put(Marker.Type.SNORNA.name(), "snoRNA");
-        allTypes.put(Marker.Type.SRPRNA.name(), "srpRNA");
-        allTypes.put(Marker.Type.PIRNA.name(), "piRNA");
-        allTypes.put(Marker.Type.TRNA.name(), "tRNA");
-        form.setAllTypes(allTypes);*/
+
+
+        form.setAllTypes(allTypes);
         return form;
     }
 
-    @RequestMapping(value = "/transcribedRegion-add", method = RequestMethod.GET)
+    @RequestMapping(value = "/nonTranscribedRegion-add", method = RequestMethod.GET)
     public String showRegionAddForm(Model model) {
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add New Region");
-        return "marker/transcribedRegion-add.page";
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add New NTR");
+        return "marker/nonTranscribedRegion-add.page";
     }
 
     @RequestMapping(value = "/transcribedRegion-add", method = RequestMethod.POST)

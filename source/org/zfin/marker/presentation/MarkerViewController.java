@@ -44,7 +44,7 @@ public class MarkerViewController {
     @Autowired
     private EngrRegionViewController engrRegionViewController;
     @Autowired
-    private TranscribedRegionViewController transcribedRegionViewController;
+    private NTRViewController ntrViewController;
     @Autowired
     private ConstructViewController constructViewController;
     @Autowired
@@ -142,6 +142,9 @@ public class MarkerViewController {
                     ) {
 
                 return geneViewController.getGeneView(zdbID, model);
+            }
+            else if (type.equals(Marker.TypeGroup.NONTSCRBD_REGION.name())){
+                return ntrViewController.getNontranscribedRegionView(model, zdbID);
             }
         else if (type.equals(Marker.Type.MRPHLNO.name()) || type.equals(Marker.Type.TALEN.name()) || type.equals(Marker.Type.CRISPR.name())) {
                 return sequenceTargetingReagentViewController.getView(model, zdbID);
