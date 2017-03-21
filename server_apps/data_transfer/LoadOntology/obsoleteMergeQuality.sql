@@ -1,52 +1,26 @@
--- report obsoleted MPath term usage
-unload to 'obsoleted_terms'
+-- report obsoleted PATO term usage
+unload to 'obsoleted_quality_terms'
 SELECT term_zdb_id,
        term_ont_id,
        term_name,
        xpatex_source_zdb_id
 FROM   term
-       join phenotype_statement on phenos_entity_1_subterm_zdb_id = term_zdb_id
+       join phenotype_statement on phenos_quality_zdb_id = term_zdb_id
        join phenotype_experiment on phenos_Phenox_pk_id = phenox_pk_id
        join fish_experiment on phenox_genox_zdb_id = genox_zdb_id
        join expression_experiment on xpatex_genox_zdb_id = genox_zdb_id
-WHERE  term_ontology = 'mouse_pathology.ontology'
-	  AND term_is_obsolete = 't'
-UNION
-SELECT term_zdb_id,
-       term_ont_id,
-       term_name,
-       xpatex_source_zdb_id
-FROM   term
-       join phenotype_statement on phenos_entity_2_subterm_zdb_id = term_zdb_id
-       join phenotype_experiment on phenos_Phenox_pk_id = phenox_pk_id
-       join fish_experiment on phenox_genox_zdb_id = genox_zdb_id
-       join expression_experiment on xpatex_genox_zdb_id = genox_zdb_id
-WHERE  term_ontology = 'mouse_pathology.ontology'
-	  AND term_is_obsolete = 't';
+WHERE  term_is_obsolete = 't';
 
 
--- report secondary MPath term usage
-unload to 'merged_terms'
+-- report secondary PATO term usage
+unload to 'secondary_terms_on_quality'
 SELECT term_zdb_id,
        term_ont_id,
        term_name,
        xpatex_source_zdb_id
 FROM   term
-       join phenotype_statement on phenos_entity_1_subterm_zdb_id = term_zdb_id
+       join phenotype_statement on phenos_quality_zdb_id = term_zdb_id
        join phenotype_experiment on phenos_Phenox_pk_id = phenox_pk_id
        join fish_experiment on phenox_genox_zdb_id = genox_zdb_id
        join expression_experiment on xpatex_genox_zdb_id = genox_zdb_id
-WHERE  term_ontology = 'mouse_pathology.ontology'
-	    AND term_is_secondary = 't'
-UNION
-SELECT term_zdb_id,
-       term_ont_id,
-       term_name,
-       xpatex_source_zdb_id
-FROM   term
-       join phenotype_statement on phenos_entity_2_subterm_zdb_id = term_zdb_id
-       join phenotype_experiment on phenos_Phenox_pk_id = phenox_pk_id
-       join fish_experiment on phenox_genox_zdb_id = genox_zdb_id
-       join expression_experiment on xpatex_genox_zdb_id = genox_zdb_id
-WHERE  term_ontology = 'mouse_pathology.ontology'
-	    AND term_is_secondary = 't';
+WHERE  term_is_secondary = 't';
