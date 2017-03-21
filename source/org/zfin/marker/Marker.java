@@ -432,8 +432,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         HISTBS("HISTBS"),
         PROTBS("PROTBS"),
         CPGISLAND("CPGISLAND"),
-        SRPRNAG("SRPRNAG"),
-        TSCRIPTNREGREGION("TSCRIPTNREGREGION")
+        SRPRNAG("SRPRNAG")
         ;
 
         private final String value;
