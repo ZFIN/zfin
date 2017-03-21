@@ -16,7 +16,7 @@ Table Name: OMIM_Phenotype
 Column: omimp_pk_id		primary key
 Column: omimp_name		description provided by the OMIM download file
 Column: omimp_omim_id		(optional) omim phenotype id
-Column: omimp_gene_zdb_id	(foreign key to marker) gene zdb id
+Column: omimp_ortho_zdb_id	(foreign key to ortholog) orthologue zdb id
 }
 
 create temp table omimPhenotypesAndGenes (
@@ -80,7 +80,7 @@ unload to whatPhenoOMIMnumInOmimPhenotypeTableHaveBeenUpdated.txt
 
 --!echo 'update the null omimp_omim_id in omim_phenotype table'
 update omim_phenotype set omimp_omim_id = (
- select phenotype_omim_id
+ select distinct phenotype_omim_id
    from omimPhenotypesAndGenesOrtho
   where omimp_name = phenotype
     and omimp_ortho_zdb_id = ortho_id
@@ -147,6 +147,6 @@ unload to genesWithMIMnotFoundOnOMIMPtable.txt delimiter "	"
                      where omimp_ortho_zdb_id = ortho_zdb_id);
 
 
---rollback work;
+rollback work;
 
-commit work;
+--commit work;
