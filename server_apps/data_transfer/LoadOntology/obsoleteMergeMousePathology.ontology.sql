@@ -1,5 +1,5 @@
 -- report obsoleted PATO term usage
-unload to 'obsoleted_terms'
+unload to 'obsoleted_mpath_terms'
 SELECT term_zdb_id,
        term_ont_id,
        term_name,
@@ -25,7 +25,7 @@ WHERE  term_is_obsolete = 't';
 
 
 -- report secondary PATO term usage
-unload to 'merged_terms'
+unload to 'secondary_terms_on_mpath'
 SELECT term_zdb_id,
        term_ont_id,
        term_name,

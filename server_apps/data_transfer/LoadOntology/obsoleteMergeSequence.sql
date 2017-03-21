@@ -1,5 +1,5 @@
 -- report obsoleted SO term usage
-unload to 'obsoleted_terms'
+unload to 'obsoleted_sequence_terms'
 SELECT term_zdb_id,
        term_ont_id,
        term_name,
@@ -38,7 +38,7 @@ WHERE  term_ontology = 'sequence'
 
 
 -- report secondary SO term usage
-unload to 'merged_terms'
+unload to 'secondary_terms_on_sequence'
 SELECT term_zdb_id,
        term_ont_id,
        term_name,
