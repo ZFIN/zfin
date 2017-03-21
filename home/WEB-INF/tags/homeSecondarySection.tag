@@ -14,7 +14,7 @@
         <li>
             Add
             <a href="/action/marker/gene-add?type=GENE"><em>gene</em></a>,
-            <%--<a href="/action/marker/transcribedRegion-add"><em>region</em></a>,--%>
+            <a href="/action/marker/nonTranscribedRegion-add"><em>NTR</em></a>,
             <a href="/action/marker/gene-add?type=GENEP"><em>pseudogene</em></a>,
             <a href="/action/marker/gene-add?type=EFG"><em>foreign gene</em></a>,
             <br>&nbsp;&nbsp;&nbsp;&nbsp;
