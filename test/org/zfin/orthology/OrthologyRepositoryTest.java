@@ -66,7 +66,6 @@ public class OrthologyRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-GENE-991207-24";
         Marker gene = getMarkerRepository().getMarkerByID(zdbID);
         List<Ortholog> orthologList = getOrthologyRepository().getOrthologs(gene);
-        System.out.println(orthologList.get(0).getEvidenceSet());
         assertNotNull(orthologList);
     }
 

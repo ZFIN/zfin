@@ -366,7 +366,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     public void getDnaProteinMutationDetail() {
         Feature feature = featureRepository.getFeatureByID("ZDB-ALT-100412-3");
         for (FeatureTranscriptMutationDetail detail : feature.getFeatureTranscriptMutationDetailSet()) {
-            System.out.println(detail.getTranscriptConsequence().getDisplayName());
+            detail.getTranscriptConsequence().getDisplayName();
         }
         Assert.assertNotNull(feature);
     }

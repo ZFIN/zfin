@@ -418,7 +418,7 @@ public class MutantRepositoryTest {
         Genotype genotype = getMutantRepository().getGenotypeByID("ZDB-GENO-071127-8");
         List<FishExperiment> fishList = mutantRepository.getFishExperiment(genotype);
         for (FishExperiment experiment : fishList) {
-            System.out.println(experiment.getFish().getHandle());
+            experiment.getFish().getHandle();
         }
         assertThat(fishList, notNullValue());
         assertThat(fishList, not(empty()));

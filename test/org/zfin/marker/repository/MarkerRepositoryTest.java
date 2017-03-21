@@ -431,7 +431,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     @Ignore("Just used for assessing performance")
     public void markerLookupPerformance() {
         List<Marker> markers = markerRepository.getMarkersByAbbreviation("fgf");
-        System.out.println(markers.size());
         long startTime = System.currentTimeMillis();
         for (Marker marker : markers) {
             List<Marker> groupMarkerList = markerRepository.getMarkersByAbbreviationAndGroup(marker.getAbbreviation(), Marker.TypeGroup.GENEDOM_AND_EFG);
