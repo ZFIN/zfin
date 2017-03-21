@@ -128,6 +128,8 @@
             MarkerService.openModalPopup('delete-relationship-modal');
         }
 
+
+
         function deleteRelationship() {
             MarkerService.removeRelationship(mkrreln.otherLink)
                 .then(function () {
