@@ -659,6 +659,9 @@ $curUpdateSfclg->execute($intoId,$mergeId,$intoId);
 
 $curUpdateSfclg->finish();
 
+$delete = "delete from zdb_active_data where zactvd_zdb_id = ?;";
+$curDelete = $dbh->prepare_cached($delete);
+
 ## for STRs to be merged, if used in fish, delete the fish records with str1 so as to
 ## avoid unique constraint (informix.fish_name_alternate_key) violation
 ## same for marker_relationship_alternate_key 
@@ -695,10 +698,6 @@ if ($mergeId =~ m/MRPHLNO/ || $mergeId =~ m/CRISP/ || $mergeId =~ m/TALEN/) {
   }
   $curGetMrkrRelIds->finish();
     
-
-  $delete = "delete from zdb_active_data where zactvd_zdb_id = ?;"; 
-  $curDelete = $dbh->prepare_cached($delete);
-
   foreach $fishId (keys %fishIDs) {
      $curDelete->execute($fishId);              
   }
