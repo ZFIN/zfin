@@ -175,7 +175,7 @@
         <table class="summary rowstripes">
             <tr>
                 <th width="20%">Knockdown(s)</th>
-                <th width=20%>Targeted Gene</th>
+                <th width=20%>Targets</th>
             </tr>
 
                 <c:forEach var="str" items="${formBean.sequenceTargetingReagents}" varStatus="loop">
