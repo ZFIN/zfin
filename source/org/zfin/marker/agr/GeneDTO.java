@@ -7,12 +7,11 @@ import java.util.List;
 import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GeneDTO {
+public class GeneDTO extends ZfinDTO {
 
     private String symbol;
     private String name;
     private String primaryId;
-    private String taxonId = "7955";
     private String soTermId;
     private String geneLiteratureUrl;
     private static final String geneLiteratureUrlPrefix = "http://zfin.org/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() + "?MIval=aa-showpubs.apg";
@@ -44,14 +43,6 @@ public class GeneDTO {
 
     public void setPrimaryId(String primaryId) {
         this.primaryId = primaryId;
-    }
-
-    public String getTaxonId() {
-        return taxonId;
-    }
-
-    public void setTaxonId(String taxonID) {
-        this.taxonId = taxonID;
     }
 
     public String getSoTermId() {

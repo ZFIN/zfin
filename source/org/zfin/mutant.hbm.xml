@@ -195,6 +195,11 @@
             <one-to-many class="org.zfin.expression.ExpressionExperiment"/>
         </set>
 
+        <set name="geneGenotypeExperiments" lazy="true">
+            <key column="mfs_genox_zdb_id"/>
+            <one-to-many class="GeneGenotypeExperiment"/>
+        </set>
+
     </class>
 
     <class name="org.zfin.mutant.PhenotypeExperiment" table="phenotype_experiment">
