@@ -6,3 +6,4 @@ create user pm with superuser;
 create user kschaper with superuser;
 create user cmpich with superuser;
 create user xshao with superuser;
+create user informix with superuser;
