@@ -35,7 +35,7 @@ private LinkDisplayOtherComparator linkDisplayOtherComparator = new LinkDisplayO
     @Autowired
     private EfgViewController efgViewController;
 
-    @RequestMapping(value ="/nontranscribedregion/view/{zdbID}")
+    @RequestMapping(value ="/region/view/{zdbID}")
     public String getNontranscribedRegionView(
             Model model
             ,@PathVariable("zdbID") String zdbID
@@ -61,7 +61,7 @@ private LinkDisplayOtherComparator linkDisplayOtherComparator = new LinkDisplayO
 //        markerBean.setHasChimericClone(markerRepository.isFromChimericClone(region.getZdbID()));
 
         // EXPRESSION SECTION
-        markerBean.setMarkerExpression(expressionService.getExpressionForGene(region));
+
 
         // MUTANTS AND TARGETED KNOCKDOWNS
         markerBean.setMutantOnMarkerBeans(MarkerService.getMutantsOnGene(region));

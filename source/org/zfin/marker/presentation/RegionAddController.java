@@ -65,7 +65,7 @@ public class RegionAddController {
         return "marker/nonTranscribedRegion-add.page";
     }
 
-    @RequestMapping(value = "/transcribedRegion-add", method = RequestMethod.POST)
+    @RequestMapping(value = "/nonTranscribedRegion-add", method = RequestMethod.POST)
     public String processRegionAddForm(Model model,
                                      @Valid @ModelAttribute("formBean") RegionAddFormBean formBean,
                                      BindingResult result) {
