@@ -1243,7 +1243,8 @@ public class HibernateMutantRepository implements MutantRepository {
                 "join fetch model.diseaseAnnotation.publication ";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setMaxResults(numfOfRecords);
+        if (numfOfRecords > 0)
+            query.setMaxResults(numfOfRecords);
         return (List<DiseaseAnnotationModel>) query.list();
     }
 
@@ -1251,10 +1252,11 @@ public class HibernateMutantRepository implements MutantRepository {
     public List<OmimPhenotype> getDiseaseModelsFromGenes(int numfOfRecords) {
         String hql = " from OmimPhenotype model " +
                 "where model.externalReferences is not empty " +
-                "order by model.ortholog.zebrafishGene.abbreviationOrder" ;
+                "order by model.ortholog.zebrafishGene.abbreviationOrder";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setMaxResults(numfOfRecords);
+        if (numfOfRecords > 0)
+            query.setMaxResults(numfOfRecords);
         return (List<OmimPhenotype>) query.list();
     }
 
