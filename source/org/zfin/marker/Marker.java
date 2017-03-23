@@ -562,7 +562,8 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         CPGISLAND("CPGISLAND"),
         ENGINEERED_REGION("ENGINEERED_REGION"),
         GENEDOM_PROD_PROTEIN("GENEDOM_PROD_PROTEIN"),
-        NONTSCRBD_REGION("NONTSCRBD_REGION")
+        NONTSCRBD_REGION("NONTSCRBD_REGION"),
+	GENEDOM_AND_NTR("GENEDOM_AND_NTR")
         ;
 
         private final String value;

@@ -2,6 +2,7 @@
 
 startTime=$(date)
 echo $startTime
+echo ${DBNAME}
 
 cd /research/zunloads/databases/$DBNAME/
 
@@ -10,14 +11,34 @@ echo $latestDump
 
 
 echo "*** Removing previous working directories"
-rm -rf /research/zunloads/databases/postgres_dumps/$DBNAME/$latestDump;
+dumpToRemove=/research/zunloads/databases/postgres_dumps/${DBNAME}/$latestDump;
+echo $dumpToRemove
 
-cp -R /research/zunloads/databases/$DBNAME/$latestDump /research/zunloads/databases/postgres_dumps/$DNAME/
-cd /research/zunloads/databases/postgres_dumps/$DBNAME
+rm -rf $dumpToRemove;
+
+echo "removed" 
+pwd 
+
+dirToCopy=/research/zunloads/databases/${DBNAME}/$latestDump;
+echo $dirToCopy
+
+destination=/research/zunloads/databases/postgres_dumps/${DBNAME};
+echo $destination
+
+cp -R $dirToCopy $destination
+echo "copied"
+
+ls -lrt $destination
+
+cd $destination
+pwd
 
 echo "*** latest dump: "
+
+
+unloadDirectory=/research/zunloads/databases/postgres_dumps/${DBNAME}/$latestDump
+
 echo $unloadDirectory
-unloadDirectory=/research/zunloads/databases/postgres_dumps/$DBNAME/$latestDump
 
 cd $unloadDirectory
 
@@ -83,5 +104,3 @@ do
     
     rm $loadFile.t
 done
-
-
