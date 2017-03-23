@@ -120,7 +120,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
             diseaseDTOList.add(dto);
         });
 
-        List<OmimPhenotype> geneModels = getMutantRepository().getDiseaseModelsFromGenes(10);
+        List<OmimPhenotype> geneModels = getMutantRepository().getDiseaseModelsFromGenes(numberOrRecords);
         geneModels.forEach((OmimPhenotype omimPhenotype) -> {
             omimPhenotype.getExternalReferences().forEach(termReference -> {
                 DiseaseDTO dto = new DiseaseDTO();
