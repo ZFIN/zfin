@@ -12,35 +12,35 @@ echo $latestDump
 
 echo "*** Removing previous working directories"
 dumpToRemove=/research/zunloads/databases/postgres_dumps/${DBNAME}/$latestDump;
+
+echo "*** Dump to remove"
 echo $dumpToRemove
 
 rm -rf $dumpToRemove;
 
-echo "removed" 
-pwd 
+echo "removed"  
 
 dirToCopy=/research/zunloads/databases/${DBNAME}/$latestDump;
+echo "*** Directory to cp:"
 echo $dirToCopy
 
 destination=/research/zunloads/databases/postgres_dumps/${DBNAME};
+echo "*** Destination to cp:"
+
 echo $destination
 
 cp -R $dirToCopy $destination
 echo "copied"
 
-ls -lrt $destination
-
-cd $destination
-pwd
-
-echo "*** latest dump: "
-
-
+echo "*** latest db specific dump to process: "
 unloadDirectory=/research/zunloads/databases/postgres_dumps/${DBNAME}/$latestDump
 
 echo $unloadDirectory
 
 cd $unloadDirectory
+
+echo "in current directory:"
+pwd
 
 rm unload_*
 rm *.err

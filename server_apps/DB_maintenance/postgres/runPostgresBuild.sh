@@ -67,7 +67,7 @@ latestDump=`ls -td -- */ | head -n 1 | cut -d'/' -f1`
 echo $latestDump
 
 cd $SOURCEROOT/server_apps/DB_maintenance/postgres/
-./loaddatabase.py -d /research/zunloads/databases/postgres_dumps/$latestDump
+./loaddatabase.py -d /research/zunloads/databases/postgres_dumps/${DBNAME}/$latestDump
 
 cd $SOURCEROOT
 ant addPostgresConstraints
