@@ -13,6 +13,7 @@ import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
+import org.zfin.marker.agr.*;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -501,5 +502,20 @@ public class MutantRepositoryTest {
         String publicationID = "ZDB-PUB-040617-4";
         List<Genotype> count = getMutantRepository().getGenotypesForStandardAttribution(getPublicationRepository().getPublication(publicationID));
         assertNotNull(count);
+    }
+
+    @Test
+    public void getDiseaseAgr() {
+        List<DiseaseAnnotationModel> models = getMutantRepository().getDiseaseAnnotationModels(10);
+        assertNotNull(models);
+        assertThat(models.size(), greaterThan(5));
+    }
+
+    @Test
+    public void getDiseaseFromGeneAgr() {
+        List<OmimPhenotype> models = getMutantRepository().getDiseaseModelsFromGenes(0);
+        assertNotNull(models);
+        assertThat(models.size(), greaterThan(5));
+
     }
 }

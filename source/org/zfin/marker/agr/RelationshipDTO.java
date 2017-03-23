@@ -6,7 +6,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class RelationshipDTO  {
 
     public static final String IS_MODEL_OF = "is_model_of";
+    public static final String IS_MARKER_OF = "is_marker_of";
     public static final String FISH = "fish";
+    public static final String GENE = "gene";
 
     private String associationType;
     private String objectType;

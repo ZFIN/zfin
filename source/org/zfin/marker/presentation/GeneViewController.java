@@ -235,7 +235,7 @@ public class GeneViewController {
     @RequestMapping(value = "/diseases/{number}")
     public AllDiseaseDTO getFirstDiseases(@PathVariable("number") int number) throws Exception {
         DiseaseInfo info = new DiseaseInfo(number);
-        return info.getDiseaseInfo();
+        return info.getDiseaseInfo(number);
     }
 
 }

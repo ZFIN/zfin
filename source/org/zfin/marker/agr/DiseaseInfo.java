@@ -7,6 +7,7 @@ import org.zfin.expression.ExperimentCondition;
 import org.zfin.mutant.DiseaseAnnotation;
 import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.Fish;
+import org.zfin.mutant.OmimPhenotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.publication.Publication;
@@ -41,7 +42,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
 
     private void init() throws IOException {
         initAll();
-        AllDiseaseDTO allDiseaseDTO = getDiseaseInfo();
+        AllDiseaseDTO allDiseaseDTO = getDiseaseInfo(numfOfRecords);
         ObjectMapper mapper = new ObjectMapper();
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
         String jsonInString = writer.writeValueAsString(allDiseaseDTO);
@@ -52,13 +53,13 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         String name = "";
     }
 
-    public AllDiseaseDTO getDiseaseInfo() {
+    public AllDiseaseDTO getDiseaseInfo(int numberOrRecords) {
         List<DiseaseDTO> diseaseDTOList = new ArrayList<>();
 
-        List<DiseaseAnnotationModel> models = getMutantRepository().getDiseaseAnnotationModels(0);
+        List<DiseaseAnnotationModel> diseaseModels = getMutantRepository().getDiseaseAnnotationModels(numberOrRecords);
 
         Map<Fish, Set<DiseaseAnnotation>> modelList =
-                models.stream().collect(
+                diseaseModels.stream().collect(
                         Collectors.groupingBy(w -> w.getFishExperiment().getFish(),
                                 Collectors.mapping(DiseaseAnnotationModel::getDiseaseAnnotation, Collectors.toSet())
                         )
@@ -118,6 +119,25 @@ public class DiseaseInfo extends AbstractScriptWrapper {
             dto.setExperimentalConditions(experimentalConditionDTOS);
             diseaseDTOList.add(dto);
         });
+
+        List<OmimPhenotype> geneModels = getMutantRepository().getDiseaseModelsFromGenes(10);
+        geneModels.forEach((OmimPhenotype omimPhenotype) -> {
+            omimPhenotype.getExternalReferences().forEach(termReference -> {
+                DiseaseDTO dto = new DiseaseDTO();
+                dto.setObjectId(omimPhenotype.getOrtholog().getZebrafishGene().getZdbID());
+                dto.setObjectName(omimPhenotype.getOrtholog().getZebrafishGene().getAbbreviation());
+                RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.IS_MARKER_OF, RelationshipDTO.GENE);
+                dto.setObjectRelation(relationship);
+                dto.setDataProvider(DataProvider.ZFIN);
+                dto.setDOid(termReference.getTerm().getOboID());
+                EvidenceDTO evidenceDTO = new EvidenceDTO("ISS");
+                evidenceDTO.setPublications(Collections.singletonList(new PublicationAgrDTO("ZDB-PUB-170210-12", "")));
+                dto.setEvidence(Collections.singletonList(evidenceDTO));
+                dto.setInferredGeneAssociation(Collections.singleton(omimPhenotype.getOrtholog().getZebrafishGene().getZdbID()));
+                diseaseDTOList.add(dto);
+            });
+        });
+
 
         AllDiseaseDTO allDiseaseDTO = new AllDiseaseDTO();
         //allDiseaseDTO.setGenes(allGeneDTOList);

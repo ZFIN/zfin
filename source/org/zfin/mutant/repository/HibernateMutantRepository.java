@@ -1247,6 +1247,17 @@ public class HibernateMutantRepository implements MutantRepository {
         return (List<DiseaseAnnotationModel>) query.list();
     }
 
+    @Override
+    public List<OmimPhenotype> getDiseaseModelsFromGenes(int numfOfRecords) {
+        String hql = " from OmimPhenotype model " +
+                "where model.externalReferences is not empty " +
+                "order by model.ortholog.zebrafishGene.abbreviationOrder" ;
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setMaxResults(numfOfRecords);
+        return (List<OmimPhenotype>) query.list();
+    }
+
     public List<Genotype> getGenotypes(List<String> genotypeExperimentIDs) {
         String hql = "select distinct " +
                 "fish.genotype from  FishExperiment genoExp " +
