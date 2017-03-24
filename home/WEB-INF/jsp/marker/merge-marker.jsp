@@ -57,19 +57,24 @@ jQuery(document).ready(function () {
 
     <c:if test="${formBean.markerToDelete.markerType.name eq 'GENE' || formBean.markerToDelete.markerType.name eq 'GENEP'}">
             autocompleteSource = '/action/marker/find-gene-to-merge-into';
-    dropdownWidth = 85;
+            dropdownWidth = 85;
+    </c:if>
+    <c:if test="${formBean.markerToDelete.markerType.name ne 'GENE' && formBean.markerToDelete.markerType.name ne 'GENEP'
+                  && formBean.markerToDelete.markerType.name ne 'MRPHLNO' && formBean.markerToDelete.markerType.name ne 'TALEN' && formBean.markerToDelete.markerType.name ne 'CRISPR'}">
+            autocompleteSource = '/action/marker/find-region-to-merge-into';
+            dropdownWidth = 100;
     </c:if>
     <c:if test="${formBean.markerToDelete.markerType.name eq 'MRPHLNO'}">
             autocompleteSource = '/action/marker/find-mo-to-merge-into';
-    dropdownWidth = 100;
+            dropdownWidth = 100;
     </c:if>
     <c:if test="${formBean.markerToDelete.markerType.name eq 'TALEN'}">
             autocompleteSource = '/action/marker/find-talen-to-merge-into';
-    dropdownWidth = 140;
+            dropdownWidth = 140;
     </c:if>
     <c:if test="${formBean.markerToDelete.markerType.name eq 'CRISPR'}">
             autocompleteSource = '/action/marker/find-crispr-to-merge-into';
-    dropdownWidth = 140;
+            dropdownWidth = 140;
     </c:if>
     jQuery('#submitMerge').attr("disabled", "disabled");
     jQuery('#mergedIntoGeneAbbrev').autocomplete({
@@ -106,6 +111,10 @@ jQuery(document).ready(function () {
             jQuery('#into').html('<a target="_blank" class="external" href="/action/marker/view/' + markerZdbIdToBeMergedInto + '">' + markerAbbrevToMergeInto + '</a>');
             <c:if test="${formBean.markerToDelete.markerType.name eq 'GENE' || formBean.markerToDelete.markerType.name eq 'GENEP'}">
                     validateEap(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
+            </c:if>
+            <c:if test="${formBean.markerToDelete.markerType.name ne 'GENE' && formBean.markerToDelete.markerType.name ne 'GENEP'
+                  && formBean.markerToDelete.markerType.name ne 'MRPHLNO' && formBean.markerToDelete.markerType.name ne 'TALEN' && formBean.markerToDelete.markerType.name ne 'CRISPR'}">
+                    enableMerge();
             </c:if>
             <c:if test="${formBean.markerToDelete.markerType.name eq 'MRPHLNO' || formBean.markerToDelete.markerType.name eq 'TALEN' || formBean.markerToDelete.markerType.name eq 'CRISPR'}">
                     validateTargetGenesForMergingSRTs(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
