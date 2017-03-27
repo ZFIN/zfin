@@ -61,13 +61,17 @@ cat /tmp/tables.xml ${SOURCEROOT}/server_apps/DB_maintenance/postgres/xmlFooter.
 cd ${SOURCEROOT}
 ant buildPostgresDatabase
 
-cd /research/zunloads/databases/postgres_dumps/${DBNAME}
+dumpLocation=/research/zunloads/databases/postgres_dumps/${DBNAME}
+echo "dumpLocation"
+echo $dumpLocation
+
+cd $dumpLocation
 
 latestDump=`ls -td -- */ | head -n 1 | cut -d'/' -f1`
 echo $latestDump
 
 cd ${SOURCEROOT}/server_apps/DB_maintenance/postgres/
-./loaddatabase.py -d /research/zunloads/databases/postgres_dumps/${DBNAME}/$latestDump
+./loaddatabase.py -d $dumpLocation/$latestDump
 
 cd ${SOURCEROOT}
 ant addPostgresConstraints
