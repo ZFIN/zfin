@@ -851,5 +851,4 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             return referenceDatabase != null ? referenceDatabase.getForeignDB().getDbName().toString() : null;
         }
     }
-
 }
