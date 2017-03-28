@@ -34,7 +34,7 @@
     <tr>
 
         <%--targeted genes--%>
-        <th><span class="name-label">Targeted Gene${fn:length(formBean.markerRelationshipPresentationList)>1 ? "s" : ""}:</span>
+        <th><span class="name-label">Target${fn:length(formBean.markerRelationshipPresentationList)>1 ? "s" : ""}:</span>
         </th>
         <td>
             <span class="">

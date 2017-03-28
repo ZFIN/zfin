@@ -27,12 +27,12 @@ public class SuffixTreeTest {
             AlphabetManager.registerAlphabet(alphanumeric.getName(),alphanumeric);
             SimpleAlphabet alpha1 = (SimpleAlphabet) AlphabetManager.alphabetForName(alphanumeric.getName());
 
-            System.out.println(simpleAlphabet.size());
+            //System.out.println(simpleAlphabet.size());
 //            for(Iterator iterator = simpleAlphabet.iterator() ; iterator.hasNext() ; ){
 //                System.out.println(iterator.next().toString()) ;
 //            }
             SuffixTree suffixTree = new SuffixTree(alpha1)  ;
-            System.out.println(suffixTree.getRoot().isTerminal()) ; 
+            //System.out.println(suffixTree.getRoot().isTerminal()) ;
 //            List<Symbol> list = new ArrayList<Symbol>() ;
 //            list.add(AlphabetManager.createSymbol("d",Annotation.EMPTY_ANNOTATION)) ;
 //            list.add(AlphabetManager.createSymbol("o",Annotation.EMPTY_ANNOTATION)) ;

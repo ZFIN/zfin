@@ -506,5 +506,8 @@ public interface MutantRepository {
     List<PhenotypeStatementWarehouse> getPhenotypeObserved(GenericTerm term, Fish fish, boolean includeSubstructures);
 
     List<PhenotypeStatementWarehouse> getPhenotypeStatementObservedForMutantSummary(GenericTerm term, Fish fish, boolean includeSubstructures);
+
+    List<DiseaseAnnotationModel> getDiseaseAnnotationModels(int numfOfRecords);
+    List<OmimPhenotype> getDiseaseModelsFromGenes(int numfOfRecords);
 }
 

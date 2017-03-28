@@ -180,4 +180,6 @@ public interface FeatureRepository {
     void deleteFeatureProteinMutationDetail(FeatureProteinMutationDetail detail);
 
     Long getFeaturesForLabCount(String zdbID);
+
+    List<Feature> getFeaturesForLab(String zdbID, int i);
 }

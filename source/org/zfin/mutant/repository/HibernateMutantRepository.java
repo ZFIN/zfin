@@ -1230,6 +1230,36 @@ public class HibernateMutantRepository implements MutantRepository {
         return (List<PhenotypeStatementWarehouse>) query.list();
     }
 
+    @Override
+    public List<DiseaseAnnotationModel> getDiseaseAnnotationModels(int numfOfRecords) {
+        String hql = " from DiseaseAnnotationModel model " +
+                "join fetch model.fishExperiment " +
+                "join fetch model.fishExperiment.fish " +
+                "join fetch model.fishExperiment.experiment " +
+                "join fetch model.fishExperiment.geneGenotypeExperiments " +
+                "join fetch model.fishExperiment.experiment.experimentConditions " +
+                "join fetch model.diseaseAnnotation " +
+                "join fetch model.diseaseAnnotation.disease " +
+                "join fetch model.diseaseAnnotation.publication ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        if (numfOfRecords > 0)
+            query.setMaxResults(numfOfRecords);
+        return (List<DiseaseAnnotationModel>) query.list();
+    }
+
+    @Override
+    public List<OmimPhenotype> getDiseaseModelsFromGenes(int numfOfRecords) {
+        String hql = " from OmimPhenotype model " +
+                "where model.externalReferences is not empty " +
+                "order by model.ortholog.zebrafishGene.abbreviationOrder";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        if (numfOfRecords > 0)
+            query.setMaxResults(numfOfRecords);
+        return (List<OmimPhenotype>) query.list();
+    }
+
     public List<Genotype> getGenotypes(List<String> genotypeExperimentIDs) {
         String hql = "select distinct " +
                 "fish.genotype from  FishExperiment genoExp " +

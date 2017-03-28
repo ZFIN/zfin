@@ -171,7 +171,7 @@ public class OntologyService {
                     //  omimDisplay.setHumanAccession(getSequenceRepository().getDBLinkByData(omimResult.getOrtholog().getZdbID(), sequenceService.getOMIMHumanOrtholog()));
                     NcbiOtherSpeciesGene ncbiOtherGene = omimResult.getOrtholog().getNcbiOtherSpeciesGene();
                     Set<NcbiOrthoExternalReference> ncbiExternalReferenceList = ncbiOtherGene.getNcbiExternalReferenceList();
-                    List<String> accessions = new ArrayList();
+                    List<String> accessions = new ArrayList<>();
                     for (NcbiOrthoExternalReference othrRef : ncbiExternalReferenceList) {
                         if (othrRef.getReferenceDatabase().getForeignDB().getDbName() == ForeignDB.AvailableName.OMIM) {
                             accessions.add(othrRef.getAccessionNumber());
@@ -198,8 +198,7 @@ public class OntologyService {
         if (map.values().size() > 0) {
             omimDisplays.addAll(map.values());
         }
-        ////ToDo
-        Collections.sort(omimDisplays, new OmimPhenotypeDisplayComparator());
+        omimDisplays.sort(new OmimPhenotypeDisplayComparator());
 
 
         return omimDisplays;

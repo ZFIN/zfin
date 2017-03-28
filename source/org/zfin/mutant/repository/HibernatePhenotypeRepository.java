@@ -57,7 +57,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         String hql = "select structure from PhenotypeStructure structure " +
                 "       join fetch structure.qualityTerm " +
                 "       join fetch structure.entity.superterm " +
-                "       join fetch structure.entity.subterm " +
+                "       left outer join fetch structure.entity.subterm " +
                 " where structure.publication.zdbID = :pubID " +
                 "       order by structure.entity.superterm.termName";
         Query query = session.createQuery(hql);

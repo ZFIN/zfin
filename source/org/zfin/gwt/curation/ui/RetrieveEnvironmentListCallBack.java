@@ -1,10 +1,11 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.user.client.ui.ListBox;
+import org.fusesource.restygwt.client.Method;
 import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.ErrorHandler;
-import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.ui.ZfinAsynchronousCallback;
 import org.zfin.gwt.root.ui.ZfinModule;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * ToDo: ADD DOCUMENTATION!
  */
-public class RetrieveEnvironmentListCallBack extends ZfinAsyncCallback<List<ExperimentDTO>> {
+public class RetrieveEnvironmentListCallBack extends ZfinAsynchronousCallback<List<ExperimentDTO>> {
 
     private ListBox environmentList;
 
@@ -21,7 +22,7 @@ public class RetrieveEnvironmentListCallBack extends ZfinAsyncCallback<List<Expe
         this.environmentList = environmentList;
     }
 
-    public void onSuccess(List<ExperimentDTO> environments) {
+    public void onSuccess(Method method, List<ExperimentDTO> environments) {
         //Window.alert("brought back: " + experiments.size() );
         super.onFinish();
         environmentList.clear();

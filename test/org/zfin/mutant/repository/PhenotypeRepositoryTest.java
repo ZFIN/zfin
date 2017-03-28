@@ -5,7 +5,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.anatomy.DevelopmentStage;
@@ -74,8 +73,8 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         List<PhenotypeStructure> structures = getPhenotypeRepository().retrievePhenotypeStructures(pubID);
         assertNotNull(structures);
         for (PhenotypeStructure structure : structures) {
-            System.out.println(structure.getEntity().getSuperterm().getTermName());
-            System.out.println(structure.getQualityTerm().getTermName());
+            structure.getEntity().getSuperterm().getTermName();
+            structure.getQualityTerm().getTermName();
         }
     }
 
@@ -225,7 +224,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
     }
 
 
-        @Test
+    @Test
     public void retrievePhenotypePileStructure() {
         String patoID = "ZDB-API-100331-10";
         PhenotypeStructure structure = getPhenotypeRepository().getPhenotypePileStructure(patoID);

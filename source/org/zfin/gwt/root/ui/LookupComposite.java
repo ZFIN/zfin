@@ -69,7 +69,7 @@ public class LookupComposite extends Composite implements Revertible {
     private Collection<String> types = new ArrayList<String>(10);
     private OntologyDTO ontology;
     private String pubZdb;
-    boolean validatedTerm;
+    private boolean validatedTerm = true;
 
     // variables
     private final static String EMPTY_STRING = "&nbsp;";
@@ -759,6 +759,8 @@ public class LookupComposite extends Composite implements Revertible {
 
     // Check if the term is validated (black) or un-validated (red)
     public boolean hasValidateTerm() {
+        if (textBox.getText().trim().equals(""))
+            return true;
         return validatedTerm;
     }
 

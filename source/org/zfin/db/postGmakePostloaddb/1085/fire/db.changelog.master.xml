@@ -7,5 +7,8 @@
     <!--<include file="source/org/zfin/db/postGmakePostloaddb/1084/alienMonster/rollback.sql"/>-->
     <include file="source/org/zfin/db/postGmakePostloaddb/1085/fire/ZFIN2945.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1085/fire/ZFIN2943.sql"/>
-
+    <include file="source/org/zfin/db/postGmakePostloaddb/1085/fire/ZFIN2950.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1085/fire/ZFIN2930.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1085/fire/PUB337.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1085/fire/ZFIN1983.sql"/>
 </databaseChangeLog>
