@@ -241,6 +241,8 @@
         </delete>
     </target>
 
+    <target name="upgrade-solr" depends="stop-solr,remove-solr-home,remove-solr-client-lib,deploy-solr,start-solr,build-solr-index-jenkins"/>
+
     <target name="start-solr" description="Start up Solr ">
         <echo message="Source: ${solr}"/>
         <exec executable="${solr}/solr.sh">
