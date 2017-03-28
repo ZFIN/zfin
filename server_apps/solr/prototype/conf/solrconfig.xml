@@ -258,130 +258,22 @@
          <str name="hl.simple.post"><![CDATA[</span>]]></str>
 
          <str name="hl">true</str>
-         <str name="hl.useFastVectorHighligter">true</str>
+         <str name="hl.method">unified</str>
          <str name="hl.snippets">2</str>
+
          <str name="hl.fragsize">80</str>
          <str name="f.abstract.hl.fragsize">400</str>
          <str name="f.abstract.hl.snippets">1</str>
          <str name="hl.phraseLimit">10</str>
 
          <!-- Specifies the maximum number of entries in a multi-valued field to examine before stopping. -->
-         <str name="hl.maxMultiValuedToExamine">1000</str>
+<!--         <str name="hl.maxMultiValuedToExamine">1000</str>-->
          <!-- Specifies the maximum number of matches in a multi-valued field that are found before stopping -->
-         <str name="hl.maxMultiValuedToMatch">1</str>
-
-       <!-- hl.fl ** Which fields should be highlighted.
-              Unfortunately highlighting lots of fields is very expensive.
-              Because we're using the FastVectorHighlighter, fields that are listed here need to have additional
-                flags set in the schema
-              http://wiki.apache.org/solr/HighlightingParameters#hl.useFastVectorHighlighter
-                 These should have termVectors=on, termPositions=on and termOffsets=on
-              -->
-          <!-- The sad minimum fallback of dumping everything into a single text field for highlighting: -->
-
-          <str name="hl.fl">
-              abstract
-              affected_anatomy_hl
-              affected_biological_process_hl
-              affected_cellular_component_hl
-              affected_gene
-              affected_gene_full_name
-              affected_gene_previous_name
-              affected_gene_t
-              affected_molecular_function_hl
-              alias_t
-              allele
-              allele_t
-              anatomy_hl
-              antigen_gene
-              antigen_gene_full_name
-              antigen_gene_previous_name
-              attributed_publication
-              author_string
-              author_year
-              background background_t
-              biography
-              biological_process_hl
-              caption
-              category_t
-              cellular_component_hl
-              chromosome
-              clone
-              coding_sequence
-              coding_sequence_full_name
-              construct_name
-              construct_t
-              definition
-              disease_model_t
-              disease_t
-              email_address
-              engineered_region_full_name
-              expressed_gene
-              expressed_gene_full_name
-              expressed_gene_previous_name
-              expressed_in_hl
-              expression_anatomy_hl
-              expression_observation
-              full_mesh_term_t
-              full_name_t
-              gene
-              gene_full_name
-              gene_previous_name
-              genotype_full_name
-              id_t
-              inserted_in_gene
-              inserted_in_gene_full_name
-              inserted_in_gene_previous_name
-              institution_t
-              journal
-              journal_t
-              lab_member_name
-              lab_of_origin
-              labeled_anatomy_hl
-              labeled_anatomy_parent_hl
-              labeled_cellular_component_hl
-              marker_abbrev
-              misexpressed_gene
-              molecular_function_hl
-              mutagen
-              name
-              note
-              omim_id
-              ortholog_organism
-              ortholog_organism_t
-              ortholog_other_species_name_t
-              ortholog_other_species_symbol
-              phenotype_quality_hl
-              phenotype_statement_t
-              postal_address
-              prefix
-              probe
-              promoter_full_name
-              registered_author_t
-              regulatory_region
-              related_accession_t
-              related_gene_symbol
-              related_marker
-              related_marker
-              reporter_gene
-              reporter_gene_full_name
-              reporter_gene_previous_name
-              rna_consequence
-              sequence_alteration
-              sequence_targeting_reagent_t
-              synonym_phenotype_statement_t
-              targeted_gene
-              targeted_gene_full_name
-              targeted_gene_previous_name
-              type_t
-              zebrafish_gene
-              zebrafish_gene_full_name
-              zebrafish_gene_previous_name
-          </str>
+<!--         <str name="hl.maxMultiValuedToMatch">1</str>-->
 
 
-
-
+          <!-- Solr seems to prefer that these all be on a single line. -->
+          <str name="hl.fl"> abstract affected_gene affected_gene_full_name affected_gene_previous_name affected_gene_t affected_anatomy_hl affected_biological_process_hl affected_cellular_component_hl affected_molecular_function_hl alias_t allele allele_t anatomy_hl antigen_gene antigen_gene_full_name antigen_gene_previous_name attributed_publication author_string author_year background background_t biography biological_process_hl caption category_t cellular_component_hl chromosome clone coding_sequence coding_sequence_full_name construct_name construct_t definition disease_model_t disease_t email_address engineered_region_full_name expressed_gene expressed_gene_full_name expressed_gene_previous_name expressed_in_hl expression_anatomy_hl expression_observation full_mesh_term_t full_name_t gene gene_full_name gene_previous_name genotype_full_name id_t inserted_in_gene inserted_in_gene_full_name inserted_in_gene_previous_name institution_t journal journal_t lab_member_name lab_of_origin labeled_anatomy_hl labeled_anatomy_parent_hl labeled_cellular_component_hl marker_abbrev misexpressed_gene molecular_function_hl mutagen name note omim_id ortholog_organism ortholog_organism_t ortholog_other_species_name_t ortholog_other_species_symbol phenotype_quality_hl phenotype_statement_t postal_address prefix probe promoter_full_name registered_author_t regulatory_region related_accession_t related_gene_symbol related_marker related_marker reporter_gene reporter_gene_full_name reporter_gene_previous_name rna_consequence sequence_alteration sequence_targeting_reagent_t synonym_phenotype_statement_t targeted_gene targeted_gene_full_name targeted_gene_previous_name type_t zebrafish_gene zebrafish_gene_full_name zebrafish_gene_previous_name</str>
 
           <!-- an experiment for phrase boosting -->
 

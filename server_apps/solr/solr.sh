@@ -2,7 +2,7 @@
 
 #Not used right now, can be turned back on by appending to the solr command: -a "$SOLR_GC_LOGGING_OPTS"
 SOLR_GC_LOGGING_OPTS="-verbose:gc -verbose:sizes -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintTenuringDistribution -Xloggc:$SOLR_HOME/solr-gc.log"
-export SOLR_LOGS_DIR="$SOLR_HOME/server"
+export SOLR_LOGS_DIR="$SOLR_HOME/server/logs"
 
 # solr seems to need to be a subdir of the working directory
 cd $SOLR_HOME/..
