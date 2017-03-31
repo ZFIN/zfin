@@ -7,6 +7,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
+import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateSessionCreator;
@@ -96,26 +97,16 @@ public class MutantRepositoryTest {
 
     @Test
     public void checkForPatoRecord() {
-        String genoxID = "ZDB-GENOX-041102-700";
-        String figureID = "ZDB-FIG-050720-1";
-        String startID = "ZDB-STAGE-010723-4";
-        String endID = "ZDB-STAGE-010723-4";
-        String publicationID = "ZDB-PUB-090828-23";
-
-        boolean patoExists = getMutantRepository().isPatoExists(genoxID, figureID, startID, endID, publicationID);
+        ExpressionFigureStage expressionFigureStage = getExpressionRepository().getExperimentFigureStage(107628);
+        boolean patoExists = getMutantRepository().isPatoExists(expressionFigureStage);
         assertThat(patoExists, is(false));
-
     }
 
     @Test
     public void checkForPatoRecordPerformance() {
-        String genoxID = "ZDB-GENOX-041102-1540";
-        String figureID = "ZDB-FIG-110413-2";
-        String startID = "ZDB-STAGE-010723-10";
-        String endID = "ZDB-STAGE-010723-10";
-        String publicationID = "ZDB-PUB-090828-23";
+        ExpressionFigureStage expressionFigureStage = getExpressionRepository().getExperimentFigureStage(107642);
         long start = System.currentTimeMillis();
-        getMutantRepository().isPatoExists(genoxID, figureID, startID, endID, publicationID);
+        getMutantRepository().isPatoExists(expressionFigureStage);
         long end = System.currentTimeMillis();
         assertThat("Time to execute getMutantRepository().isPatoExists() is too long", end - start, lessThan(4000L));
     }
