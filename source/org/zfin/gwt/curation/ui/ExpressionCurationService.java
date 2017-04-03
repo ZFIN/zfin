@@ -11,7 +11,6 @@ import org.zfin.gwt.root.event.ZfinDispatcher;
 import javax.ws.rs.*;
 import java.util.List;
 
-@Path("/action/curation/")
 public interface ExpressionCurationService extends DirectRestService {
 
 

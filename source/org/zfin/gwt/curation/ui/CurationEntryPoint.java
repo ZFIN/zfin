@@ -6,8 +6,11 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.UmbrellaException;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
+import org.fusesource.restygwt.client.Resource;
+import org.fusesource.restygwt.client.RestServiceProxy;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.curation.event.TabEventHandler;
@@ -74,7 +77,6 @@ public class CurationEntryPoint implements EntryPoint {
                 initModules();
             }
         });
-
 /*
         GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
             @Override
