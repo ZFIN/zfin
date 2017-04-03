@@ -177,61 +177,64 @@ my $password = "";
 my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
     or die "Cannot connect to Informix database: $DBI::errstr\n";
 
-my $sqlGetMunallyEnteredUniProtIDsWithMultGenes = "select distinct db1.dblink_acc_num from db_link db1
-                                                    where exists(select 'x' from record_attribution
-                                                                  where db1.dblink_zdb_id = recattrib_data_zdb_id
-                                                                    and recattrib_source_zdb_id = 'ZDB-PUB-170131-9')
-                                                      and exists(select 'x' from db_link db2
-                                                                  where db2.dblink_acc_num = db1.dblink_acc_num
-                                                                    and db2.dblink_linked_recid != db1.dblink_linked_recid);";
+my $sqlGetManuallyEnteredUniProtIDsWithMultGenes = "select distinct db1.dblink_acc_num from db_link db1
+                                                     where exists(select 'x' from record_attribution
+                                                                   where db1.dblink_zdb_id = recattrib_data_zdb_id
+                                                                     and recattrib_source_zdb_id = 'ZDB-PUB-170131-9')
+                                                       and exists(select 'x' from db_link db2
+                                                                   where db2.dblink_acc_num = db1.dblink_acc_num
+                                                                     and db2.dblink_linked_recid != db1.dblink_linked_recid);";
 
-my $curGetMunallyEnteredUniProtIDsWithMultGenes = $dbh->prepare_cached($sqlGetMunallyEnteredUniProtIDsWithMultGenes);
-$curGetMunallyEnteredUniProtIDsWithMultGenes->execute();
-my $munallyEnteredUniProtIDWithMultGenes;
-$curGetMunallyEnteredUniProtIDsWithMultGenes->bind_columns(\$munallyEnteredUniProtIDWithMultGenes);
+my $curGetManuallyEnteredUniProtIDsWithMultGenes = $dbh->prepare_cached($sqlGetManuallyEnteredUniProtIDsWithMultGenes);
+$curGetManuallyEnteredUniProtIDsWithMultGenes->execute();
+my $manuallyEnteredUniProtIDWithMultGenes;
+$curGetManuallyEnteredUniProtIDsWithMultGenes->bind_columns(\$manuallyEnteredUniProtIDWithMultGenes);
 open MULTIPLE, ">manuallyCuratedUniProtIDsWithMultipleGenes.txt" || die ("Cannot open manuallyCuratedUniProtIDsWithMultipleGenes.txt !");
-my $ctMunallyEnteredUniProtIDsWithMultGenes = 0;
-while ($curGetMunallyEnteredUniProtIDsWithMultGenes->fetch()) {
-    print MULTIPLE "$munallyEnteredUniProtIDWithMultGenes\n";
-    $ctMunallyEnteredUniProtIDsWithMultGenes++;
+my $ctManuallyEnteredUniProtIDsWithMultGenes = 0;
+while ($curGetManuallyEnteredUniProtIDsWithMultGenes->fetch()) {
+    print MULTIPLE "$manuallyEnteredUniProtIDWithMultGenes\n";
+    $ctManuallyEnteredUniProtIDsWithMultGenes++;
 }
-$curGetMunallyEnteredUniProtIDsWithMultGenes->finish();
+$curGetManuallyEnteredUniProtIDsWithMultGenes->finish();
 
 close(MULTIPLE);
 
-print "\nNumber of manually curated UniProt IDs with multiple genes: $ctMunallyEnteredUniProtIDsWithMultGenes\n\n";
+print "\nNumber of manually curated UniProt IDs with multiple genes: $ctManuallyEnteredUniProtIDsWithMultGenes\n\n";
 
-if ($ctMunallyEnteredUniProtIDsWithMultGenes > 0) {
+if ($ctManuallyEnteredUniProtIDsWithMultGenes > 0) {
   my $subject = "Auto from SWISS-PROT: manually curated UniProt IDs with multiple genes";
   ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","manuallyCuratedUniProtIDsWithMultipleGenes.txt");
 }
 
-my $sqlGetMunallyEnteredUniProtIDs = "select dblink_acc_num from db_link
-                                       where exists(select 'x' from record_attribution
-                                                     where dblink_zdb_id = recattrib_data_zdb_id
-                                                       and recattrib_source_zdb_id = 'ZDB-PUB-170131-9');";
+my $sqlGetManuallyEnteredUniProtIDs = "select dblink_acc_num from db_link
+                                        where exists(select 'x' from record_attribution
+                                                      where dblink_zdb_id = recattrib_data_zdb_id
+                                                        and recattrib_source_zdb_id = 'ZDB-PUB-170131-9');";
 
-my $curGetMunallyEnteredUniProtIDs = $dbh->prepare_cached($sqlGetMunallyEnteredUniProtIDs);
-$curGetMunallyEnteredUniProtIDs->execute();
-my $munallyEnteredUniProtID;
-$curGetMunallyEnteredUniProtIDs->bind_columns(\$munallyEnteredUniProtID);
-my @munallyEnteredUniProtIDs = ();
-my $ctMunallyEnteredUniProtIDs = 0;
-while ($curGetMunallyEnteredUniProtIDs->fetch()) {
-    $munallyEnteredUniProtIDs[$ctMunallyEnteredUniProtIDs] = $munallyEnteredUniProtID;
-    $ctMunallyEnteredUniProtIDs++;
+my $curGetManuallyEnteredUniProtIDs = $dbh->prepare_cached($sqlGetManuallyEnteredUniProtIDs);
+$curGetManuallyEnteredUniProtIDs->execute();
+my $manuallyEnteredUniProtID;
+$curGetManuallyEnteredUniProtIDs->bind_columns(\$manuallyEnteredUniProtID);
+my @manuallyEnteredUniProtIDs = ();
+my $ctManuallyEnteredUniProtIDs = 0;
+open MCIDS, ">manuallyCuratedUniProtIDs.txt" || die ("Cannot open manuallyCuratedUniProtIDs.txt !");
+while ($curGetManuallyEnteredUniProtIDs->fetch()) {
+    $manuallyEnteredUniProtIDs[$ctManuallyEnteredUniProtIDs] = $manuallyEnteredUniProtID;
+    print MCIDS "$manuallyEnteredUniProtID\n";
+    $ctManuallyEnteredUniProtIDs++;
 }
-$curGetMunallyEnteredUniProtIDs->finish();
+$curGetManuallyEnteredUniProtIDs->finish();
+close(MCIDS);
 
-print "\nNumber of manually curated UniProt IDs: $ctMunallyEnteredUniProtIDs\n\n";
+print "\nNumber of manually curated UniProt IDs: $ctManuallyEnteredUniProtIDs\n\n";
 
 my $uniprotId;
 my $url;
 my $uniProtURL = "http://www.uniprot.org/uniprot/";
-open INVALID, ">invalidManuaallyCuratedUniProtIDs.txt" || die ("Cannot open invalidManuaallyCuratedUniProtIDs.txt !");
+open INVALID, ">invalidManuallyCuratedUniProtIDs.txt" || die ("Cannot open invalidManuallyCuratedUniProtIDs.txt !");
 my $numInvalidUniProtIDs = 0;
-if ($ctMunallyEnteredUniProtIDs > 0) {
-  foreach $uniprotId (@munallyEnteredUniProtIDs) {
+if ($ctManuallyEnteredUniProtIDs > 0) {
+  foreach $uniprotId (@manuallyEnteredUniProtIDs) {
      $url = $uniProtURL . $uniprotId;
      my $content = get $url;
      if (defined $content) {
@@ -250,7 +253,7 @@ print "\nNumber of Invalid Manually curated UniProt IDs: $numInvalidUniProtIDs\n
 
 if ($numInvalidUniProtIDs > 0) {
   my $subject = "Auto from SWISS-PROT: invalid manually curated UniProt IDs";
-  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","invalidManuaallyCuratedUniProtIDs.txt");
+  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","invalidManuallyCuratedUniProtIDs.txt");
 }
 
 &downloadGOtermFiles();
@@ -517,6 +520,8 @@ print "\nfailed to run sp_check.pl.............\n\n";
 
 # concatenate all the sub problem files
 system("cat prob1 prob2 prob3 prob4 prob5 prob6 prob7 prob8 > allproblems.txt");
+
+system("sp_match.pl manuallyCuratedUniProtIDs.txt");
 
 &sendRunningResult($dbname);
 

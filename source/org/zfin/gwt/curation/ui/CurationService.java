@@ -15,7 +15,6 @@ import java.util.List;
  * General access web services (mostly by publication).
  */
 
-@Path("/action/curation/")
 public interface CurationService extends DirectRestService {
 
     @GET

@@ -1,6 +1,5 @@
 package org.zfin.curation.presentation;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.RootLogger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,24 +7,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.antibody.Antibody;
-import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.curation.ui.CurationModuleType;
 import org.zfin.gwt.curation.ui.CurationService;
 import org.zfin.gwt.curation.ui.PublicationNotFoundException;
-import org.zfin.gwt.root.dto.ExperimentDTO;
-import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
-import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.EntityID;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.MarkerDBLink;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +32,7 @@ import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 @Controller
 @RequestMapping("/curation")
 @SessionAttributes({"currentTab"})
-public class CurationController implements CurationService{
+public class CurationController implements CurationService {
 
     @Autowired
     private ExpressionRepository expRepository;
