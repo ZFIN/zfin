@@ -20,7 +20,7 @@
 <script src="/javascript/publication.service.js"></script>
 <script src="/javascript/zfinutils.service.js"></script>
 
-<c:set var="linkURL">/cgi-bin/webdriver?MIval=aa-link_authors.apg&OID=${publication.zdbID}&anon1=zdb_id&anon1text=${publication.zdbID}</c:set>
+<c:set var="linkURL">/action/publication/${publication.zdbID}/link</c:set>
 <c:set var="trackURL">/action/publication/${publication.zdbID}/track</c:set>
 <c:set var="viewURL">/${publication.zdbID}</c:set>
 <c:if test="${allowCuration}">
