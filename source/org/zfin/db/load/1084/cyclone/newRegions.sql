@@ -211,6 +211,7 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
 values ('PROTBS','NONTSCRBD_REGION');
 
 
+create sequence lncrnag_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 insert into zdb_object_type (zobjtype_name,
                     zobjtype_day,
         zobjtype_app_page,

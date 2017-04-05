@@ -180,7 +180,15 @@ insert into zdb_object_type (zobjtype_name,
         zobjtype_is_source)
  values ('MDNAB',current,'marker','marker','mrkr_zdb_id','t','f');
 
-create sequence rr_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+create sequence protbs_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
+insert into zdb_object_type (zobjtype_name,
+                    zobjtype_day,
+        zobjtype_app_page,
+        zobjtype_home_table,
+        zobjtype_home_zdb_id_column,
+        zobjtype_is_data,
+        zobjtype_is_source)
+ values ('PROTBS',current,'marker','marker','mrkr_zdb_id','t','f');
 
 insert into zdb_object_type (zobjtype_name,
                     zobjtype_day,
