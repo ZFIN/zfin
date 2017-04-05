@@ -64,6 +64,9 @@ public class CurationEntryPoint implements EntryPoint {
     public void onModuleLoad() {
         loadPublicationAndFilterElements();
         exposeSessionSaveMethodsToJavascript();
+        ((RestServiceProxy)curationService).setResource(new Resource("/"));
+        ((RestServiceProxy)expressionService).setResource(new Resource("/"));
+
 
         RelatedEntityDTO relatedEntityDTO = new RelatedEntityDTO();
         relatedEntityDTO.setPublicationZdbID(publicationID);

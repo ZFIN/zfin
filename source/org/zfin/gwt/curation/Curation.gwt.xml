@@ -4,8 +4,6 @@
     <inherits name='com.google.gwt.query.Query'/>
     <inherits name='org.zfin.gwt.lookup.Lookup'/>
     <inherits name='org.zfin.gwt.root.Root'/>
-    <inherits name='org.fusesource.restygwt.RestyGWT'/>
-    <inherits name="com.github.nmorel.gwtjackson.GwtJackson" />
     <inherits name="com.google.gwt.logging.Logging"/>
 
     <add-linker name="xsiframe" />
