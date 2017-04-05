@@ -268,7 +268,9 @@ public class ActiveData implements ZdbID {
         LCR,
         NUCMO,
         DNAMO,
-        RNAMO;
+        RNAMO,
+        PROTBS,
+        TRR;
 
         private Class<? extends DeleteEntityRule> ruleClass;
         private static String allValues;
