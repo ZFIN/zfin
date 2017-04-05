@@ -8,7 +8,7 @@
 <script src="/javascript/angular/angular.min.js"></script>
 <script src="/javascript/author-linking.js"></script>
 
-
+<c:set var="viewURL">/${publication.zdbID}</c:set>
 <c:set var="editURL">/action/publication/${publication.zdbID}/edit</c:set>
 <c:set var="trackURL">/action/publication/${publication.zdbID}/track</c:set>
 <c:if test="${allowCuration}">
@@ -22,6 +22,7 @@
 
 <div class="container-fluid" ng-app="authorLinkingApp">
   <zfin2:dataManager zdbID="${publication.zdbID}"
+                     viewURL="${viewURL}"
                      editURL="${editURL}"
                      trackURL="${trackURL}"
                      curateURL="${curateURL}"/>

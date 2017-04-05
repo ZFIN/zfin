@@ -62,7 +62,10 @@
 
     <zfin2:dataManager zdbID="${publication.zdbID}"
                        showLastUpdate="true"
+                       viewURL="/${publication.zdbID}"
                        trackURL="/action/publication/${publication.zdbID}/track"
+                       editURL="/action/publication/${publication.zdbID}/edit"
+                       linkURL="/action/publication/${publication.zdbID}/link"
     />
 
     <table class="table table-bordered" width="100%" style="border-bottom-width: 0px">

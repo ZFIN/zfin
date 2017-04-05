@@ -189,6 +189,7 @@ public class PublicationEditController {
 
         model.addAttribute("publication", publication);
         model.addAttribute("authorStrings", publicationService.splitAuthorListString(publication.getAuthors()));
+        model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Link Authors: " + publication.getTitle());
 
         return "publication/link-authors.page";
