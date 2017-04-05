@@ -121,7 +121,7 @@ public class PublicationEditController {
         }
         model.addAttribute("publication", publication);
         model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Editing " + publication.getCitation());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit Pub: " + publication.getTitle());
         return "publication/edit-publication.page";
     }
 
@@ -172,10 +172,6 @@ public class PublicationEditController {
 
     @RequestMapping(value = "/{zdbID}/link")
     public String linkAuthors(@PathVariable String zdbID, Model model, HttpServletResponse response) {
-
-        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-
-
         Publication publication = publicationRepository.getPublication(zdbID);
         //try zdb_replaced data if necessary
         if (publication == null) {
@@ -191,10 +187,9 @@ public class PublicationEditController {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
-
-        model.addAttribute("publication",publication);
-
+        model.addAttribute("publication", publication);
         model.addAttribute("authorStrings", publicationService.splitAuthorListString(publication.getAuthors()));
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Link Authors: " + publication.getTitle());
 
         return "publication/link-authors.page";
     }
