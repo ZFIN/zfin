@@ -8,10 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.zfin.database.DatabaseLock;
-import org.zfin.database.DbSystemUtil;
 import org.zfin.database.TableLock;
-import org.zfin.database.repository.SysmasterRepository;
 import org.zfin.framework.GBrowseHibernateUtil;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.SysmasterHibernateUtil;
@@ -29,7 +26,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,21 +35,14 @@ import java.util.List;
 public class UpdatesCheckFilter implements Filter {
 
     private static Logger logger = Logger.getLogger(UpdatesCheckFilter.class);
-    private static boolean systemUpdatesDisabled = false;
+    private static Boolean readOnlyMode = null;
     private static final String REDIRECT_URL = "/action/login";
     private List<LogoutHandler> logoutHandlers;
     private LogoutSuccessHandler logoutSuccessHandler;
-    private static final List<String> readOnlyUrls = new ArrayList<>();
+
     private InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 
-    static {
-        readOnlyUrls.add("/ontology/");
-        readOnlyUrls.add("/anatomy/");
-        readOnlyUrls.add("/marker/transcript-view/");
-        readOnlyUrls.add("/ajax/anatomylookup");
-        readOnlyUrls.add("/wiki/summary");
-    }
-
+    // This is never called as it is part of the Spring FilterChainProxy line
     public void init(FilterConfig filterConfig) throws ServletException {
         logger.info("Start Updates Check Filter");
     }
@@ -63,37 +52,32 @@ public class UpdatesCheckFilter implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+        if(readOnlyMode == null)
+            readOnlyMode = infrastructureRepository.getUpdatesFlag().isSystemUpdateDisabled();
 
         String url = request.getRequestURI();
-        boolean readOnlyUrl = isReadOnlyUrl(url);
-        if (!readOnlyUrl) {
-            systemUpdatesDisabled = infrastructureRepository.getDisableUpdatesFlag();
-        }
 
         // redirect if user is logged in and database is locked
-        if (systemUpdatesDisabled && !url.equals(REDIRECT_URL)) {
+        if (readOnlyMode && !url.equals(REDIRECT_URL)) {
             Person person = ProfileService.getCurrentSecurityUser();
-            if (person != null) {
-                logoutUser(request, response);
-                logger.info("System is currently being updated. No login session are allowed.");
-                return;
+            if (person != null && person.getAccountInfo() != null) {
+                if (!person.getAccountInfo().isAdmin()) {
+                    logoutUser(request, response);
+                    logger.info("System is currently being updated. No login sessions are allowed.");
+                    return;
+                }
             }
         }
         List<TableLock> locks = null;
         try {
             filterChain.doFilter(servletRequest, servletResponse);
         } catch (Exception e) {
-            HttpServletRequest req = (HttpServletRequest) request;
             StringBuffer message = new StringBuffer("Unhandled Exception");
-            String gwtRequestString = (String) req.getAttribute(ZfinRemoteServiceServlet.GWT_REQUEST_STRING);
+            String gwtRequestString = (String) request.getAttribute(ZfinRemoteServiceServlet.GWT_REQUEST_STRING);
             if (StringUtils.isNotEmpty(gwtRequestString)) {
                 message.append(getDebugMessage(gwtRequestString));
             }
             logger.error(message, e);
-/*
-            List<DatabaseLock> dbLocks = SysmasterRepository.getLocks();
-            locks = DbSystemUtil.getLockSummary(dbLocks);
-*/
         } finally {
             // ensure that the Hibernate session is closed, meaning, the threadLocal object is detached from
             // the current threadLocal
@@ -131,18 +115,6 @@ public class UpdatesCheckFilter implements Filter {
     }
 
 
-    private boolean isReadOnlyUrl(String url) {
-        for (String value : readOnlyUrls) {
-            if (url.contains(value))
-                return true;
-        }
-        if (!(url.contains("action/") || url.contains("ajax/")))
-            return true;
-        if (url.equals("/action/"))
-            return true;
-        return false;
-    }
-
     private void logoutUser(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         // logout user
@@ -167,8 +139,12 @@ public class UpdatesCheckFilter implements Filter {
         }
     }
 
-    public static boolean getSystemUpdatesFlag() {
-        return systemUpdatesDisabled;
+    public static Boolean getReadOnlyMode() {
+        return readOnlyMode;
+    }
+
+    public static void setReadOnlyMode(Boolean readOnlyMode) {
+        UpdatesCheckFilter.readOnlyMode = readOnlyMode;
     }
 
     public void setLogoutSuccessHandler(LogoutSuccessHandler logoutSuccessHandler) {

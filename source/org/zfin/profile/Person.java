@@ -366,6 +366,10 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
         return true;
     }
 
+    public boolean isLoginAccount() {
+        return accountInfo != null;
+    }
+
     /**
      * This returns a Person object of the current security person.
      * If no authorized Person is found return null.

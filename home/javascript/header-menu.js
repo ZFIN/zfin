@@ -101,14 +101,21 @@ $(function() {
     $(".header-tab.zirc").click(showZIRCLinks);
     hdrSetTabs();
 
-    var loginCookie = hdrGetCookie('zfin_login');
     var login = $('#hdr-login-link');
     var logout = $('#hdr-logout-link');
-    if (!loginCookie || loginCookie.substr(0, 5) === 'GUEST') {
-        login.show();
-        logout.hide();
-    } else {
-        login.hide();
-        logout.show();
-    }
+    jQuery.ajax({
+        url: "/action/login-status",
+        success: function (data) {
+            if (data) {
+                login.hide();
+                logout.show();
+            } else {
+                login.show();
+                logout.hide();
+            }
+        },
+        error: function () {
+            console.log("could not validate login status");
+        }
+    });
 });

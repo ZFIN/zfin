@@ -144,10 +144,8 @@ public interface InfrastructureRepository {
      */
     ZdbFlag getUpdatesFlag();
 
-    boolean getDisableUpdatesFlag();
-
     /**
-     * retrive an external note by zdb ID (PK)
+     * retrieve an external note by zdb ID (PK)
      *
      * @param zdbID String
      * @return external note
@@ -472,6 +470,8 @@ public interface InfrastructureRepository {
     EntityZdbID getEntityByID(Class<? extends EntityZdbID> entity, String zdbID);
 
     void insertMarkerHistory(MarkerHistory history);
+
+    void setDisableUpdatesFlag(boolean readonlyMode);
 
 }
 
