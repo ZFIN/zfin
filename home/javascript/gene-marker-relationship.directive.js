@@ -63,6 +63,7 @@
             } else if (!mkrreln.newAttribution) {
                 mkrreln.errorMessage = 'Reference cannot be empty.';
             } else {
+                mkrreln.errorMessage='';
                 mkrreln.processing = true;
                 var first = {zdbID: mkrreln.markerId};
                 var second = {name: mkrreln.newGene};
@@ -77,6 +78,7 @@
                         init();
                     })
                     .catch(function (error) {
+                        Window.alert(error.data.message);
                         mkrreln.errorMessage = error.data.message;
                     })
                     .finally(function () {
