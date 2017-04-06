@@ -1,28 +1,34 @@
 package org.zfin.marker.agr;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.zfin.util.JsonDateSerializer;
 
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DiseaseDTO extends ZfinDTO {
 
-    private String DOid;
+    @JsonProperty("DOid")
+    private String doid;
     private String objectId;
     private String objectName;
-    private RelationshipDTO objectRelation;
+    @JsonSerialize(using = JsonDateSerializer.class)
+    private GregorianCalendar dateAssigned = new GregorianCalendar();
     private DataProvider dataProvider;
     private List<EvidenceDTO> evidence;
     private Set<ExperimentalConditionDTO> experimentalConditions;
-    private Set<String> inferredGeneAssociation;
+    private RelationshipDTO objectRelation;
 
-    public String getDOid() {
-        return DOid;
+    public String getDoid() {
+        return doid;
     }
 
-    public void setDOid(String DOid) {
-        this.DOid = DOid;
+    public void setDoid(String doid) {
+        this.doid = doid;
     }
 
     public String getObjectId() {
@@ -49,14 +55,6 @@ public class DiseaseDTO extends ZfinDTO {
         this.objectRelation = objectRelation;
     }
 
-    public Set<String> getInferredGeneAssociation() {
-        return inferredGeneAssociation;
-    }
-
-    public void setInferredGeneAssociation(Set<String> inferredGeneAssociation) {
-        this.inferredGeneAssociation = inferredGeneAssociation;
-    }
-
     public DataProvider getDataProvider() {
         return dataProvider;
     }
@@ -79,5 +77,13 @@ public class DiseaseDTO extends ZfinDTO {
 
     public void setExperimentalConditions(Set<ExperimentalConditionDTO> experimentalConditions) {
         this.experimentalConditions = experimentalConditions;
+    }
+
+    public GregorianCalendar getDateAssigned() {
+        return dateAssigned;
+    }
+
+    public void setDateAssigned(GregorianCalendar dateAssigned) {
+        this.dateAssigned = dateAssigned;
     }
 }

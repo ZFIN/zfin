@@ -512,6 +512,13 @@ public class MutantRepositoryTest {
     }
 
     @Test
+    public void getDiseaseGeneAgr() {
+        List<GeneGenotypeExperiment> models = getMutantRepository().getGeneDiseaseAnnotationModels(10);
+        assertNotNull(models);
+        assertThat(models.size(), greaterThan(5));
+    }
+
+    @Test
     public void getDiseaseFromGeneAgr() {
         List<OmimPhenotype> models = getMutantRepository().getDiseaseModelsFromGenes(0);
         assertNotNull(models);

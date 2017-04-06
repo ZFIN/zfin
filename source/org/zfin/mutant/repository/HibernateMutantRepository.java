@@ -1249,6 +1249,20 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
+    public List<GeneGenotypeExperiment> getGeneDiseaseAnnotationModels(int numfOfRecords) {
+        String hql = "select distinct geneGenotype from GeneGenotypeExperiment geneGenotype, DiseaseAnnotationModel diseaseAnnotationModel " +
+                "where geneGenotype.fishExperiment = diseaseAnnotationModel.fishExperiment " +
+                "and geneGenotype.gene.markerType.name = :genedom "                ;
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        if (numfOfRecords > 0)
+            query.setMaxResults(numfOfRecords);
+        //query.setString("genedom", "ZDB-GENE")
+        query.setParameter("genedom", Marker.Type.GENE.toString());
+        return (List<GeneGenotypeExperiment>) query.list();
+    }
+
+    @Override
     public List<OmimPhenotype> getDiseaseModelsFromGenes(int numfOfRecords) {
         String hql = " from OmimPhenotype model " +
                 "where model.externalReferences is not empty " +
