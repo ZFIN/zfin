@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.zfin.marker.MarkerRelationship.Type.*;
+
 @Controller
 @RequestMapping("/marker")
 public class MarkerRelationshipController {
@@ -101,6 +103,12 @@ public class MarkerRelationshipController {
             errors.rejectValue("second", "marker.relationship.duplicate");
             throw new InvalidWebRequestException("Invalid marker relationship", errors);
         }
+        if ((type==GENE_CONTAINS_SMALL_SEGMENT)|| (type==GENE_ENCODES_SMALL_SEGMENT) || (type==GENE_HAS_ARTIFACT )|| (type==GENE_HYBRIDIZED_BY_SMALL_SEGMENT)){
+            if (!second.isInTypeGroup(Marker.TypeGroup.SMALLSEG)){
+                errors.rejectValue("second", "marker.relationship.invalid");
+                throw new InvalidWebRequestException("Second marker not in correct group", errors);
+            }
+        }
 
         // assume new incoming relationship has only one reference
         String pubId = newRelationship.getReferences().iterator().next().getZdbID();
@@ -145,7 +153,12 @@ public class MarkerRelationshipController {
             throw new InvalidWebRequestException("Invalid publication", errors);
         }
       //  String pubId = newRelationship.getReferences().iterator().next().getZdbID();
-
+        if ((type==GENE_CONTAINS_SMALL_SEGMENT)|| (type==GENE_ENCODES_SMALL_SEGMENT) || (type==GENE_HAS_ARTIFACT )|| (type==GENE_HYBRIDIZED_BY_SMALL_SEGMENT)){
+            if (!second.isInTypeGroup(Marker.TypeGroup.SMALLSEG)){
+              //  errors.rejectValue("second", "marker.relationship.invalid");
+                throw new InvalidWebRequestException("Second marker not in correct group", errors);
+            }
+        }
         HibernateUtil.createTransaction();
         if (!newRelationship.getRelationship().equals("clone contains gene")) {
             MarkerRelationship relationship = MarkerService.addMarkerRelationship(first, second,  pubZDB, type);
