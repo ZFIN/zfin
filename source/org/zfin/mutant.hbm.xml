@@ -200,6 +200,11 @@
             <one-to-many class="GeneGenotypeExperiment"/>
         </set>
 
+        <set name="diseaseAnnotationModels" lazy="true">
+            <key column="damo_genox_zdb_id"/>
+            <one-to-many class="DiseaseAnnotationModel"/>
+        </set>
+
     </class>
 
     <class name="org.zfin.mutant.PhenotypeExperiment" table="phenotype_experiment">
