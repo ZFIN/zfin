@@ -87,7 +87,7 @@
                                 Genomic Feature
                             </th>
                             <th width="25%">
-                                Affected Genes
+                                Affected Genomic Regions
                             </th>
                             <th width="25%">
                                 &nbsp;
@@ -138,7 +138,7 @@
             <table class="summary rowstripes">
                 <tr>
                     <th>Fish</th>
-                    <th>Affected Genes</th>
+                    <th>Affected Genomic Regions</th>
                     <th>Phenotype</th>
                     <th>Gene Expression</th>
                 </tr>

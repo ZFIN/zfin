@@ -67,7 +67,7 @@
                 </c:if>
                 <tr>
                     <th>
-                        Affected Genes:
+                        Affected Genomic Regions:
                     </th>
                     <c:choose>
                         <c:when test="${fn:length(formBean.feature.affectedGenes) > 0 }">
@@ -400,7 +400,7 @@
                     Genotype (Background)
                 </th>
                 <th width="25%">
-                    Affected Genes
+                    Affected Genomic Regions
                 </th>
                 <th width="25%">
                     Parental Zygosity

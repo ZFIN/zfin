@@ -1631,7 +1631,7 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="1" unique="true">Genotype ID</Column>
             <Column id="2">Genotype Name</Column>
             <Column id="3">Genotye Unique Name</Column>
-            <Column id="4">Affected Gene Symbol</Column>
+            <Column id="4">Affected Genomic Region Symbol</Column>
             <Column id="5">Corresponding ZFIN Gene ID</Column>
         </Download>
         <Download orderIndex="5">

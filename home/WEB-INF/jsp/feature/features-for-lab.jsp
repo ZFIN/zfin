@@ -5,7 +5,7 @@
     <tr>
         <th width="5%">Allele</th>
         <th width="7%">Type</th>
-        <th width="10%">Affected Gene</th>
+        <th width="10%">Affected Genomic Region</th>
         <th width="10%">Construct</th>
     </tr>
     <c:forEach var="feature" items="${features}" varStatus="loop">
