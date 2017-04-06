@@ -78,8 +78,7 @@
                         init();
                     })
                     .catch(function (error) {
-                        Window.alert(error.data.message);
-                        mkrreln.errorMessage = error.data.message;
+                                                mkrreln.errorMessage = error.data.message;
                     })
                     .finally(function () {
                     });
