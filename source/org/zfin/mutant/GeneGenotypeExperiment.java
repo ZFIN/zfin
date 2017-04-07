@@ -5,7 +5,8 @@ import org.zfin.marker.Marker;
 import java.io.Serializable;
 
 /**
- * Created by cmpich on 4/22/14.
+ * Convenience entity that maps to fast search table: MUTANT_FAST_SEARCH
+ * which relates genes to clean fish experiments
  */
 public class GeneGenotypeExperiment implements Serializable {
 

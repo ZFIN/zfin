@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.DiseaseAnnotation;
-import org.zfin.mutant.DiseaseAnnotationModel;
-import org.zfin.mutant.Fish;
-import org.zfin.mutant.GeneGenotypeExperiment;
+import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.publication.Publication;
@@ -125,8 +122,11 @@ public class DiseaseInfo extends AbstractScriptWrapper {
             diseaseDTOList.add(dto);
         });
 
+
+        // get all genes from mutant_fast_search table and list their disease info
         List<GeneGenotypeExperiment> geneGenotypeExperiments = getMutantRepository().getGeneDiseaseAnnotationModels(numberOrRecords);
 
+        // group by gene records
         Map<Marker, Set<DiseaseAnnotation>> geneMap =
                 geneGenotypeExperiments.stream().collect(
                         Collectors.toMap(GeneGenotypeExperiment::getGene,
@@ -136,6 +136,15 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                     p1.addAll(p2);
                                     return p1;
                                 }));
+
+        // keep track of the fishexperiments for each gene
+        // need this to retrieve the experimental conditions later
+        Map<Marker, Set<FishExperiment>> diseaseModelMap =
+                geneGenotypeExperiments.stream().collect(
+                        Collectors.groupingBy(GeneGenotypeExperiment::getGene,
+                                Collectors.mapping(GeneGenotypeExperiment::getFishExperiment, Collectors.toSet())));
+
+        // loop over all genes
         geneMap.forEach((gene, diseaseAnnotationSet) -> {
             Map<GenericTerm, Set<DiseaseAnnotation>> termMap = geneMap.get(gene)
                     .stream()
@@ -168,23 +177,26 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                             .map(p -> new PublicationAgrDTO(p.getZdbID(), p.getAccessionNumber()))
                             .collect(Collectors.toList());
                     evDto.setPublications(pubDtoList);
+                    // hard-coded pub added to every evidence
+                    PublicationAgrDTO fixedPub = new PublicationAgrDTO("ZDB-PUB-170406-10", "");
+                    evDto.getPublications().add(fixedPub);
                     evidenceList.add(evDto);
                 });
+
+                // experimental conditions
+                Set<ExperimentCondition> expConditionSet = new HashSet<>();
+                diseaseModelMap.get(gene).forEach(fishExperiment -> {
+                    if (fishExperiment.getExperiment() != null)
+                        expConditionSet.addAll(fishExperiment.getExperiment().getExperimentConditions());
+                });
+                Set<ExperimentalConditionDTO> experimentalConditionDTOS = expConditionSet.stream()
+                        .map(expCondition -> new ExperimentalConditionDTO(expCondition.getDisplayName(), expCondition.getZecoTerm().getOboID()))
+                        .collect(Collectors.toSet());
+                dto.setExperimentalConditions(experimentalConditionDTOS);
 
             });
 
             // experimental conditions
-            Set<ExperimentCondition> expConditionSet = new HashSet<>();
-/*
-            fish.getFishExperiments().forEach(fishExperiment -> {
-                if (fishExperiment.getExperiment() != null)
-                    expConditionSet.addAll(fishExperiment.getExperiment().getExperimentConditions());
-            });
-*/
-            Set<ExperimentalConditionDTO> experimentalConditionDTOS = expConditionSet.stream()
-                    .map(expCondition -> new ExperimentalConditionDTO(expCondition.getDisplayName(), expCondition.getZecoTerm().getOboID()))
-                    .collect(Collectors.toSet());
-            dto.setExperimentalConditions(experimentalConditionDTOS);
             diseaseDTOList.add(dto);
         });
 

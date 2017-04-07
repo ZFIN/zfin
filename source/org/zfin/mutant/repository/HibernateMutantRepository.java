@@ -1251,6 +1251,8 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<GeneGenotypeExperiment> getGeneDiseaseAnnotationModels(int numfOfRecords) {
         String hql = "select distinct geneGenotype from GeneGenotypeExperiment geneGenotype, DiseaseAnnotationModel diseaseAnnotationModel " +
+                "join fetch geneGenotype.gene " +
+                "join fetch geneGenotype.fishExperiment " +
                 "where geneGenotype.fishExperiment = diseaseAnnotationModel.fishExperiment " +
                 "and geneGenotype.gene.markerType.name = :genedom "                ;
 
