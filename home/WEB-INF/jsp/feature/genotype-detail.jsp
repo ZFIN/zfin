@@ -81,8 +81,8 @@
         </tr>
         <tr>
             <th>
-                <zfin2:pluralization list="${affectedMarkerList}" singular="Affected Gene:"
-                                     nonSingular="Affected Genes:"/>
+                <zfin2:pluralization list="${affectedMarkerList}" singular="Affected Genomic Region:"
+                                     nonSingular="Affected Genomic Regions:"/>
             </th>
             <td>
                 <c:forEach var="affectedGene" items="${affectedMarkerList}" varStatus="loop">
@@ -263,7 +263,7 @@
             <table class="summary rowstripes">
                 <tr>
                     <th>Fish</th>
-                    <th>Affected Genes</th>
+                    <th>Affected Genomic Regions</th>
                     <th>Phenotype</th>
                     <th>Gene Expression</th>
                 </tr>

@@ -180,7 +180,6 @@
 <h3><strong>Zebrafish Programs</strong></h3>
 <ul>
     <li>
-        <a href="http://www.nih.gov/science/models/zebrafish/">Trans-NIH Zebrafish Initiative</a>,<br>
         <a href="http://www.zf-health.org">ZF-HEALTH</a>,
         <a href="https://wiki.zfin.org/display/general/Zebrafish+Programs#husbandry">Husbandry Resources</a>,
         <a href="https://wiki.zfin.org/display/general/Zebrafish+Programs">more...</a>

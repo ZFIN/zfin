@@ -4,10 +4,8 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.zfin.expression.ExperimentCondition;
-import org.zfin.mutant.DiseaseAnnotation;
-import org.zfin.mutant.DiseaseAnnotationModel;
-import org.zfin.mutant.Fish;
-import org.zfin.mutant.OmimPhenotype;
+import org.zfin.marker.Marker;
+import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.publication.Publication;
@@ -81,10 +79,14 @@ public class DiseaseInfo extends AbstractScriptWrapper {
             dto.setDataProvider(DataProvider.ZFIN);
             Set<String> inferredSet = new HashSet<>();
             fish.getFishExperiments().forEach(fishExperiment -> {
-                fishExperiment.getGeneGenotypeExperiments().forEach(geneGenotypeExperiment ->
-                        inferredSet.add(geneGenotypeExperiment.getGene().getZdbID()));
+                fishExperiment.getGeneGenotypeExperiments()
+                        .stream()
+                        .filter(geneGenotypeExperiment -> geneGenotypeExperiment.getGene().isGenedom())
+                        .forEach(geneGenotypeExperiment ->
+                                inferredSet.add(geneGenotypeExperiment.getGene().getZdbID()));
             });
-            dto.setInferredGeneAssociation(inferredSet);
+            relationship.setInferredGeneAssociation(inferredSet);
+
             termMap.forEach((disease, diseaseAnnotationEvSet) -> {
                 Map<String, List<Publication>> evidenceMap = diseaseAnnotationEvSet
                         .stream()
@@ -93,7 +95,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                         Collectors.mapping(DiseaseAnnotation::getPublication, Collectors.toList())
                                 )
                         );
-                dto.setDOid(disease.getOboID());
+                dto.setDoid(disease.getOboID());
                 List<EvidenceDTO> evidenceList = new ArrayList<>();
                 dto.setEvidence(evidenceList);
                 evidenceMap.forEach((evidence, publicationList) -> {
@@ -120,6 +122,87 @@ public class DiseaseInfo extends AbstractScriptWrapper {
             diseaseDTOList.add(dto);
         });
 
+
+        // get all genes from mutant_fast_search table and list their disease info
+        List<GeneGenotypeExperiment> geneGenotypeExperiments = getMutantRepository().getGeneDiseaseAnnotationModels(numberOrRecords);
+
+        // group by gene records
+        Map<Marker, Set<DiseaseAnnotation>> geneMap =
+                geneGenotypeExperiments.stream().collect(
+                        Collectors.toMap(GeneGenotypeExperiment::getGene,
+                                (w) -> w.getFishExperiment().getDiseaseAnnotationModels().stream()
+                                        .map(DiseaseAnnotationModel::getDiseaseAnnotation)
+                                        .collect(Collectors.toSet()), (p1, p2) -> {
+                                    p1.addAll(p2);
+                                    return p1;
+                                }));
+
+        // keep track of the fishexperiments for each gene
+        // need this to retrieve the experimental conditions later
+        Map<Marker, Set<FishExperiment>> diseaseModelMap =
+                geneGenotypeExperiments.stream().collect(
+                        Collectors.groupingBy(GeneGenotypeExperiment::getGene,
+                                Collectors.mapping(GeneGenotypeExperiment::getFishExperiment, Collectors.toSet())));
+
+        // loop over all genes
+        geneMap.forEach((gene, diseaseAnnotationSet) -> {
+            Map<GenericTerm, Set<DiseaseAnnotation>> termMap = geneMap.get(gene)
+                    .stream()
+                    .collect(
+                            Collectors.groupingBy(DiseaseAnnotation::getDisease,
+                                    Collectors.mapping(d -> d, Collectors.toSet())
+                            )
+                    );
+            DiseaseDTO dto = new DiseaseDTO();
+            dto.setObjectId(gene.getZdbID());
+            dto.setObjectName(gene.getAbbreviation());
+            RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.CONTRIBUTES_TO_CONDITION, RelationshipDTO.GENE);
+            dto.setObjectRelation(relationship);
+            dto.setDataProvider(DataProvider.ZFIN);
+
+            termMap.forEach((disease, diseaseAnnotationEvSet) -> {
+                Map<String, List<Publication>> evidenceMap = diseaseAnnotationEvSet
+                        .stream()
+                        .collect(
+                                Collectors.groupingBy(DiseaseAnnotation::getEvidenceCode,
+                                        Collectors.mapping(DiseaseAnnotation::getPublication, Collectors.toList())
+                                )
+                        );
+                dto.setDoid(disease.getOboID());
+                List<EvidenceDTO> evidenceList = new ArrayList<>();
+                dto.setEvidence(evidenceList);
+                evidenceMap.forEach((evidence, publicationList) -> {
+                    EvidenceDTO evDto = new EvidenceDTO(evidence);
+                    List<PublicationAgrDTO> pubDtoList = publicationList.stream()
+                            .map(p -> new PublicationAgrDTO(p.getZdbID(), p.getAccessionNumber()))
+                            .collect(Collectors.toList());
+                    evDto.setPublications(pubDtoList);
+                    // hard-coded pub added to every evidence
+                    PublicationAgrDTO fixedPub = new PublicationAgrDTO("ZDB-PUB-170406-10", "");
+                    evDto.getPublications().add(fixedPub);
+                    evidenceList.add(evDto);
+                });
+
+                // experimental conditions
+                Set<ExperimentCondition> expConditionSet = new HashSet<>();
+                diseaseModelMap.get(gene).forEach(fishExperiment -> {
+                    if (fishExperiment.getExperiment() != null)
+                        expConditionSet.addAll(fishExperiment.getExperiment().getExperimentConditions());
+                });
+                Set<ExperimentalConditionDTO> experimentalConditionDTOS = expConditionSet.stream()
+                        .map(expCondition -> new ExperimentalConditionDTO(expCondition.getDisplayName(), expCondition.getZecoTerm().getOboID()))
+                        .collect(Collectors.toSet());
+                dto.setExperimentalConditions(experimentalConditionDTOS);
+
+            });
+
+            // experimental conditions
+            diseaseDTOList.add(dto);
+        });
+
+
+/*
+ * might ceom from an external source fro AGR
         List<OmimPhenotype> geneModels = getMutantRepository().getDiseaseModelsFromGenes(numberOrRecords);
         geneModels.forEach((OmimPhenotype omimPhenotype) -> {
             omimPhenotype.getExternalReferences().forEach(termReference -> {
@@ -137,6 +220,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                 diseaseDTOList.add(dto);
             });
         });
+*/
 
 
         AllDiseaseDTO allDiseaseDTO = new AllDiseaseDTO();

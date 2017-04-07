@@ -8,7 +8,7 @@
 <table class="table-results searchresults" style="display: none;">
     <th>Name</th>
     <th>Synonym</th>
-    <th>Affected Genes</th>
+    <th>Affected Genomic Regions</th>
     <th>Feature Type</th>
     <th>Related Data</th>
     <c:forEach var="result" items="${results}" varStatus="loop">

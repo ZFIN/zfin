@@ -28,7 +28,7 @@
             <tr>
                 <th width="10%">Allele</th>
                 <th width="10%">Type</th>
-                <th width="10%">Affected Gene</th>
+                <th width="10%">Affected Genomic Region</th>
                 <th width="10%">Construct</th>
                 <th width="10%">Lab of Origin</th>
             </tr>

@@ -4,11 +4,11 @@ import java.util.List;
 
 public class EvidenceDTO {
 
-    private String evidence;
+    private String evidenceCode;
     private List<PublicationAgrDTO> publications;
 
-    public EvidenceDTO(String evidence) {
-        this.evidence = evidence;
+    public EvidenceDTO(String evidenceCode) {
+        this.evidenceCode = evidenceCode;
     }
 
 
@@ -20,7 +20,7 @@ public class EvidenceDTO {
         this.publications = publications;
     }
 
-    public String getEvidence() {
-        return evidence;
+    public String getEvidenceCode() {
+        return evidenceCode;
     }
 }

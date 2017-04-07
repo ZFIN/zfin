@@ -18,7 +18,7 @@
                     <th>Allele</th>
                     <th>Construct</th>
                     <th>Type</th>
-                    <th>Affected Gene(s)</th>
+                    <th>Affected Genomic Region(s)</th>
 
     </tr>
     <c:forEach var="feature" items="${featureList}"  varStatus="loop">

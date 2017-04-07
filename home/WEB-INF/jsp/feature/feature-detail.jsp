@@ -67,7 +67,7 @@
                 </c:if>
                 <tr>
                     <th>
-                        Affected Genes:
+                        Affected Genomic Regions:
                     </th>
                     <c:choose>
                         <c:when test="${fn:length(formBean.feature.affectedGenes) > 0 }">
@@ -168,7 +168,7 @@
                             </c:when>
                             <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen ne zfn:getMutagen('not specified')}">
                                 ${mutagen.toString()}&nbsp;
-                                <c:if test="${formBean.createdByRelationship ne null}">
+                                <c:if test="${formBean.createdByRelationship ne null && fn:length(formBean.createdByRelationship) > 0}">
                                     <c:forEach var="createdBy" items="${formBean.createdByRelationship}" varStatus="loop">
                                         <zfin:link entity="${createdBy.marker}"/>
 
@@ -179,7 +179,7 @@
           </c:when>
                             <c:otherwise>
                                 <c:choose>
-                                    <c:when test="${formBean.createdByRelationship ne null}">
+                                    <c:when test="${formBean.createdByRelationship ne null && fn:length(formBean.createdByRelationship) > 0}">
                                         ${mutagee.toString()} treated with
                                         <c:forEach var="createdBy" items="${formBean.createdByRelationship}" varStatus="loop">
                                             <zfin:link entity="${createdBy.marker}"/>
@@ -400,7 +400,7 @@
                     Genotype (Background)
                 </th>
                 <th width="25%">
-                    Affected Genes
+                    Affected Genomic Regions
                 </th>
                 <th width="25%">
                     Parental Zygosity

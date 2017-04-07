@@ -5,6 +5,16 @@
            title="Search by name, accession number, chromosome, vector or sequence type">
         <strong>Genes / Markers / Clones</strong></a></li>
     <ul>
+        <authz:authorize access="hasRole('root')">
+            <li>
+                <a href="/action/marker/search"
+                   title="Search by name, accession number, chromosome, vector or sequence type">
+                    <img src="/images/new1.gif"/>
+                    <em>Please try the new Genes / Markers / Clones</em>
+                    <img src="/images/new1.gif"/></em>
+                </a>
+            </li>
+        </authz:authorize>
         <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Zebrafish+Nomenclature+Guidelines"
                title="Zebrafish nomenclature guidelines">Nomenclature Conventions</a></li>
         <li><a href="/action/nomenclature/gene-name"

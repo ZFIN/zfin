@@ -18,7 +18,7 @@ public enum SearchCriterionType {
     PROMOTER_GENE("Promoter Gene"),
     EXPRESSED_GENE("Expressed Gene"),
     ENGINEERED_REGION("Engineered Region"),
-    AFFECTED_GENE("Affected Gene"),
+    AFFECTED_GENE("Affected Genomic Region"),
     LINE_AVAILABLE("Lines available"),
     CONSTRUCT_TYPE("Construct Type");
 

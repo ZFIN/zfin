@@ -1416,14 +1416,14 @@ into temp tmp_pubs;
 unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_publication.txt'
  DELIMITER "	"
 SELECT distinct mrkr_abbrev,
-       mrkr_zdb_id,marker_type_group_member
+       mrkr_zdb_id
        source_id,
        CASE pub.jtype
            WHEN "Unpublished" THEN "Data Submission"
            ELSE pub.jtype
        END,
        pub.accession_no
-FROM publication pub, tmp_pubs
+FROM publication pub, tmp_pubs,marker_type_group_member
  where source_id = zdb_id
  and mrkr_type=mtgrpmem_mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM';
 
