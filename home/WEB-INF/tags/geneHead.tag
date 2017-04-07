@@ -27,9 +27,9 @@
             <span class="name-value"><zfin:name entity="${gene}"/></span>
             <authz:authorize access="hasRole('root')">
                 <span style="cursor: pointer;"
-                      ng-click="control.openGeneEditor(markerID, control.geneName, 'Gene Name')"
+                      ng-click="control.openGeneEditor(markerID, control.geneName, 'Name')"
                       ng-if="editMode">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit gene name"></i>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit name"></i>
                 </span>
             </authz:authorize>
         </td>
@@ -40,9 +40,9 @@
             <span class="name-value" geneSymbol><zfin:abbrev entity="${gene}"/></span>
             <authz:authorize access="hasRole('root')">
                     <span style="cursor: pointer;"
-                          ng-click="control.openGeneEditor(markerID, control.geneAbbreviation, markerType+'Symbol')"
+                          ng-click="control.openGeneEditor(markerID, control.geneAbbreviation, 'Symbol')"
                           ng-if="editMode">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit gene symbol"></i></span>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit symbol"></i></span>
             </authz:authorize>
         </td>
     </tr>
