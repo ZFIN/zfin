@@ -15,7 +15,6 @@ import org.zfin.feature.FeaturePrefix;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.*;
-
 import org.zfin.profile.presentation.PersonMemberPresentation;
 import org.zfin.profile.presentation.ProfileUpdateMessageBean;
 import org.zfin.profile.repository.ProfileRepository;
@@ -25,7 +24,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.sql.Blob;
 import java.util.*;
-import java.text.Collator;
+import java.util.stream.Collectors;
 
 /**
  */
@@ -402,20 +401,29 @@ public class ProfileService {
         return false;
     }
     /**
-     * using this method to get a list of Contries for use in Person edit
+     * using this method to get a list of countries for use in profile edit
      */
-    public static List<String> getCountries(final Locale inLocale) {
-        String[] countryCodes = Locale.getISOCountries();
-        List<String> countries = new ArrayList<String>(countryCodes.length);
-        countries.add("");
-        for (String countryCode : countryCodes) {
-            Locale obj = new Locale("", countryCode);
-          //  countries.add(obj.getDisplayCountry(inLocale));
-            countries.add(obj.getCountry());
+    public Map<String, String> getCountries() {
+        return Arrays.stream(Locale.getISOCountries())
+                .map(code -> {
+                    Locale locale = new Locale("", code);
+                    return new Country(locale.getCountry(), locale.getDisplayName());
+                })
+                .sorted(Comparator.comparing(Country::getName))
+                .collect(Collectors.toMap(
+                        Country::getCode,
+                        Country::getName,
+                        (a, b) -> b, // shouldn't be duplicates anyway, so whatever just take the last one
+                        LinkedHashMap::new
+                ));
+    }
 
+    public String getCountryDisplayName(String countryCode) {
+        if (countryCode == null) {
+            return null;
         }
-        Collections.sort(countries);
-        return countries;
+        Locale locale = new Locale("", countryCode);
+        return locale.getDisplayCountry();
     }
 
         /**

@@ -72,7 +72,7 @@
                 </tr>
                 <tr>
                     <th>Country:</th>
-                    <td>${person.country}</td>
+                    <td>${country}</td>
                 </tr>
                 <tr>
                     <th>Phone:</th>
