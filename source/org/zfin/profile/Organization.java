@@ -51,6 +51,7 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
 
     //    @Size(max=450,message = "Must be less than 450 characters.")
     private String address;
+    private String country;
 
     private boolean active;
     protected Set<SourceUrl> sourceUrls;
@@ -87,6 +88,14 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public Person getContactPerson() {

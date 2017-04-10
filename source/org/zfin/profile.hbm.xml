@@ -109,6 +109,7 @@
         <property name="fax"/>
         <property name="phone"/>
         <property name="address" column="address"/>
+        <property name="country" />
         <property name="status"/>
         <property name="bio"/>
         <property name="snapshot" column="snapshot" type="blob"/>
