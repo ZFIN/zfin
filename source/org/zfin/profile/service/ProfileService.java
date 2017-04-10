@@ -267,10 +267,11 @@ public class ProfileService {
 
     public void updateImage(String zdbID, String securityPersonZdbID, Blob snapshot) throws Exception {
 
-        if (snapshot != null)
+        if (snapshot != null) {
             RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(zdbID, "snapsnot", "updating snapshot " + snapshot.length() + " bytes");
-        else
+        } else {
             RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(zdbID, "snapshot", "deleting snapshot");
+        }
 
         if (zdbID.startsWith("ZDB-PERS")) {
             Person person = profileRepository.getPerson(zdbID);
@@ -303,6 +304,7 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("fax", oldLab, newLab));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("email", oldLab, newLab));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("url", oldLab, newLab));
+        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("country", oldLab, newLab));
         BeanFieldUpdate beanFieldUpdate = beanCompareService.compareBeanField("address", oldLab, newLab);
         if (beanFieldUpdate != null) {
             beanFieldUpdate.setNullToTrueNull();
@@ -400,6 +402,7 @@ public class ProfileService {
         logger.error("failed trying to remove a person to something that was not a lab or company: " + organizationZdbID);
         return false;
     }
+
     /**
      * using this method to get a list of countries for use in profile edit
      */
@@ -426,7 +429,7 @@ public class ProfileService {
         return locale.getDisplayCountry();
     }
 
-        /**
+    /**
      * If there is not an address for this person then insert the join record.
      * If there is one, then update the join record.
      * If there are multiple . . . create an error log and update both records.
@@ -581,8 +584,9 @@ public class ProfileService {
         positions = profileRepository.getLabPositions();
 
         for (OrganizationPosition op : positions) {
-            if (op.getId().equals(positionId))
+            if (op.getId().equals(positionId)) {
                 positionTitle = op.getName();
+            }
         }
         return positionTitle;
     }
@@ -594,8 +598,9 @@ public class ProfileService {
         positions = profileRepository.getCompanyPositions();
 
         for (OrganizationPosition op : positions) {
-            if (op.getId().equals(positionId))
+            if (op.getId().equals(positionId)) {
                 positionTitle = op.getName();
+            }
         }
         return positionTitle;
     }
@@ -631,9 +636,7 @@ public class ProfileService {
             for (ConstraintViolation constraintViolation : cve.getConstraintViolations()) {
                 errors.rejectValue(constraintViolation.getPropertyPath().toString(), ""
                         , "Invalid formatting of field [" + constraintViolation.getPropertyPath() + "].  "
-//                        + "] value["+constraintViolation.getInvalidValue()+"].  "
-//                        + constraintViolation.getMessageTemplate());
-                        + constraintViolation.getMessage());
+                                + constraintViolation.getMessage());
             }
             return "profile/profile-edit.page";
         } catch (Exception e) {
@@ -669,8 +672,9 @@ public class ProfileService {
     protected void setEmptyFieldToNull(BeanFieldUpdate field) {
         if (field.getFrom() == null
                 && field.getTo() instanceof String
-                && StringUtils.equals((String) field.getTo(), ""))
+                && StringUtils.equals((String) field.getTo(), "")) {
             field.setTo(null);
+        }
     }
 
     public String processUrl(String url) {
@@ -679,10 +683,11 @@ public class ProfileService {
         String newUrl;
 
         //if the url is set and doesn't start with http://, magically make it happen, just like browsers do
-        if (!StringUtils.isEmpty(url) && !url.startsWith("http://"))
+        if (!StringUtils.isEmpty(url) && !url.startsWith("http://")) {
             newUrl = "http://" + url;
-        else
+        } else {
             newUrl = url;
+        }
 
         logger.debug("processing url, after: " + newUrl);
 
@@ -690,8 +695,9 @@ public class ProfileService {
     }
 
     public static boolean isRootUser() {
-        if (getCurrentSecurityUser() == null)
+        if (getCurrentSecurityUser() == null) {
             return false;
+        }
         return getCurrentSecurityUser().getAccountInfo().getRoot();
     }
 }
