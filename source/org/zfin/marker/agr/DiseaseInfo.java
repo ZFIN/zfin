@@ -47,8 +47,6 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         try (PrintStream out = new PrintStream(new FileOutputStream("disease-info-zfin.json"))) {
             out.print(jsonInString);
         }
-        System.out.println(jsonInString);
-        String name = "";
     }
 
     public AllDiseaseDTO getDiseaseInfo(int numberOrRecords) {

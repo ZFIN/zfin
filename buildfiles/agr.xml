@@ -62,8 +62,8 @@
     </target>
 
     <property name="version" value="0.6.0"/>
-    <property name="index" value="7"/>
-    <property name="daf-file" value="ZFIN_${version}_DAF.txt"/>
+    <property name="index" value="8"/>
+    <property name="daf-file" value="ZFIN_${version}_DAF.json"/>
     <property name="bgi-file" value="ZFIN_${version}_BGI.json"/>
     <property name="agr-file" value="ZFIN_${version}_${index}"/>
 
