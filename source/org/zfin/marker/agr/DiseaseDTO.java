@@ -3,6 +3,7 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.zfin.infrastructure.ActiveData;
 import org.zfin.util.JsonDateSerializer;
 
 import java.util.GregorianCalendar;
@@ -36,7 +37,9 @@ public class DiseaseDTO extends ZfinDTO {
     }
 
     public void setObjectId(String objectId) {
-        this.objectId = objectId;
+        if (ActiveData.validateActiveData(objectId))
+            this.objectId = ZFIN;
+        this.objectId += objectId;
     }
 
     public String getObjectName() {

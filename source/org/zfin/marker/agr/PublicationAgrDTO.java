@@ -1,12 +1,16 @@
 package org.zfin.marker.agr;
 
+import org.zfin.infrastructure.ActiveSource;
+
 public class PublicationAgrDTO {
 
     private String publicationModId;
     private String pubMedId;
 
     public PublicationAgrDTO(String publicationModId, String pubMedId) {
-        this.publicationModId = publicationModId;
+        if (ActiveSource.validateActiveData(publicationModId))
+            this.publicationModId = ZfinDTO.ZFIN;
+        this.publicationModId += publicationModId;
         this.pubMedId = pubMedId;
     }
 

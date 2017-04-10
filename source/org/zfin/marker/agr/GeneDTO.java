@@ -1,10 +1,12 @@
 package org.zfin.marker.agr;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.zfin.infrastructure.ActiveData;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GeneDTO extends ZfinDTO {
@@ -42,7 +44,9 @@ public class GeneDTO extends ZfinDTO {
     }
 
     public void setPrimaryId(String primaryId) {
-        this.primaryId = primaryId;
+        if (ActiveData.validateActiveData(primaryId))
+            this.primaryId = ZFIN;
+        this.primaryId += primaryId;
     }
 
     public String getSoTermId() {
@@ -85,7 +89,17 @@ public class GeneDTO extends ZfinDTO {
     }
 
     public void setSecondaryIds(Set<String> secondaryIds) {
-        this.secondaryIds = secondaryIds;
+        if (secondaryIds == null)
+            return;
+        this.secondaryIds = secondaryIds.stream()
+                .map((id) -> {
+                    String modifiedId = "";
+                    if (ActiveData.validateActiveData(id))
+                        modifiedId = ZFIN;
+                    modifiedId += id;
+                    return modifiedId;
+                })
+                .collect(Collectors.toSet());
     }
 
     public Set<GenomeLocationDTO> getGenomeLocations() {
@@ -98,7 +112,8 @@ public class GeneDTO extends ZfinDTO {
 
     public String getGeneLiteratureUrl() {
         String returnString = geneLiteratureUrlPrefix;
-        returnString += "&OID=" + primaryId;
+        if (primaryId.startsWith(ZFIN))
+            returnString += "&OID=" + primaryId.replace(ZFIN, "");
         returnString += "&name=" + name;
         returnString += "&abbrev=" + symbol;
         return returnString;
