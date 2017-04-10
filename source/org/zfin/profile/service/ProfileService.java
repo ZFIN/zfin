@@ -349,6 +349,7 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("email", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("url", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("address", oldCompany, newCompany));
+        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("country", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("bio", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("contactPerson", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("prefix", oldCompany, newCompany));

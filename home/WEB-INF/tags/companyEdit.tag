@@ -90,6 +90,17 @@
                     </tr>
                     <tr>
                         <td>
+                            <form:label path="country">Country:</form:label>
+                        </td>
+                        <td>
+                            <form:select path="country">
+                                <form:option value="" />
+                                <form:options items="${countryList}" />
+                            </form:select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             <form:label path="contactPerson">Contact Person:</form:label>
                         </td>
                         <td>
