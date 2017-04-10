@@ -49,6 +49,7 @@ import org.zfin.sequence.MarkerDBLink;
 
 import java.util.*;
 
+import static java.util.stream.Collectors.toList;
 import static org.zfin.repository.RepositoryFactory.*;
 
 /**
@@ -392,8 +393,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         List<ExpressionFigureStageDTO> dtos = new ArrayList<>();
         for (ExpressionFigureStage efs : experiments) {
             ExpressionFigureStageDTO dto = DTOConversionService.convertToExpressionFigureStageDTO(efs);
-            dto.setPatoExists(getMutantRepository().isPatoExists(efs.getExpressionExperiment().getFishExperiment().getZdbID(),
-                    efs.getFigure().getZdbID(), efs.getStartStage().getZdbID(), efs.getEndStage().getZdbID(), experimentFilter.getPublicationID()));
+            dto.setPatoExists(getMutantRepository().isPatoExists(efs));
             dtos.add(dto);
         }
         Collections.sort(dtos);
@@ -504,6 +504,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             expressionFigureStage.setExpressionExperiment(expressionExperiment);
             RepositoryFactory.getExpressionRepository().createExpressionFigureStage(expressionFigureStage);
             fullDto = DTOConversionService.convertToExpressionFigureStageDTOShallow(expressionFigureStage);
+            fullDto.setPatoExists(getMutantRepository().isPatoExists(expressionFigureStage));
             tx.commit();
         } catch (ConstraintViolationException e) {
             tx.rollback();
@@ -829,10 +830,17 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         for (ExpressionFigureStageDTO dto : figureAnnotations) {
             setFigureAnnotationStatus(dto, false);
         }
-        List<ExpressionFigureStageDTO> updatedAnnotations = new ArrayList<>(figureAnnotations.size());
-        for (ExpressionFigureStage figureStage : updatedAnnotationList) {
-            updatedAnnotations.add(DTOConversionService.convertToExpressionFigureStageDTO(figureStage));
-        }
+        List<ExpressionFigureStageDTO> updatedAnnotations =
+                updatedAnnotationList.stream()
+                        .map(expressionFigureStage ->
+                                {
+                                    ExpressionFigureStageDTO dto = DTOConversionService.convertToExpressionFigureStageDTO(expressionFigureStage);
+                                    dto.setPatoExists(getMutantRepository().isPatoExists(expressionFigureStage));
+                                    return dto;
+                                }
+                        )
+                        .collect(toList());
+
         return updatedAnnotations;
     }
 

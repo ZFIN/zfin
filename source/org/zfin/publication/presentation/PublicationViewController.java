@@ -264,7 +264,7 @@ public class PublicationViewController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/publication{zdbID}/genes", method = RequestMethod.GET)
+    @RequestMapping(value = "/publication/{zdbID}/genes.json", method = RequestMethod.GET)
     public List<MarkerDTO> getPublicationGenes(@PathVariable String zdbID) {
         List<Marker> genes = publicationRepository.getGenesByPublication(zdbID, false);
         List<MarkerDTO> dtos = new ArrayList<>();
