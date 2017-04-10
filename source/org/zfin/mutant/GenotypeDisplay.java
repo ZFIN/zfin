@@ -109,7 +109,8 @@ public class GenotypeDisplay implements Comparable<GenotypeDisplay> {
                if (featureMarkerRelationship != null) {
                    if (featureMarkerRelationship.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
                        affectedGene = featureMarkerRelationship.getMarker();
-                       if (affectedGene.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+                       if (affectedGene.isInTypeGroup(Marker.TypeGroup.GENEDOM)|| affectedGene.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)){
+                           
                            affectedGenes.add(affectedGene);
                        }
                    }
