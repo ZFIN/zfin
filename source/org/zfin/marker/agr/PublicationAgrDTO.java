@@ -4,6 +4,7 @@ import org.zfin.infrastructure.ActiveSource;
 
 public class PublicationAgrDTO {
 
+    public static final String PMID = "PMID:";
     private String publicationModId;
     private String pubMedId;
 
@@ -11,7 +12,7 @@ public class PublicationAgrDTO {
         if (ActiveSource.validateActiveData(publicationModId))
             this.publicationModId = ZfinDTO.ZFIN;
         this.publicationModId += publicationModId;
-        this.pubMedId = pubMedId;
+        this.pubMedId = PMID + pubMedId;
     }
 
     public String getPublicationModId() {
